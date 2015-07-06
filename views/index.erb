@@ -4,7 +4,7 @@
   <h3>Processed: <%= @processed %></h3>
   <h3>Queues: <%= @queues.inspect %></h3>
 
-  <form target="_self" method="post" action="/interactive">
+  <form target="_self" method="post" action="/v1/interactive">
     <!-- <select name="task" id="task_name"> -->
     Task: <select name="task" id="task_name" onchange="get_task_data();">
       <% @task_names.each do |task_name| %>
@@ -114,9 +114,4 @@ Available Task Details:
 </pre>
 -->
 
-<div id="footer">
-  <a href="/">Home</a> |
-  <a href="/news">News</a> |
-  <a href="/task_runs">View task runs</a> |
-  <a href="/task_runs.json"> Export all task runs (JSON)</a>
-</div>
+<%= erb :_footer, :layout => false %>

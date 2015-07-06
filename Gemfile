@@ -2,11 +2,10 @@ source 'https://rubygems.org'
 
 # API
 gem 'sinatra'
-
+gem 'sinatra-contrib'
 
 # Application Server
 gem 'puma'
-
 # Background Tasks
 gem 'sidekiq'
 
@@ -20,8 +19,8 @@ gem 'iconv'
 gem 'rest-client'
 
 # UI
-gem 'haml'
-gem 'sass'
+#gem 'haml'
+#gem 'sass'
 
 # Testing
 gem 'rspec'

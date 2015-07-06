@@ -8,7 +8,7 @@
 <ul>
   <% @task_run['entities'].each do |entity| %>
     <li>
-      <a href="/?type=<%=h entity["type"]%>&<%= h entity["attributes"].map{|k,v| "attrib_#{k}=#{v}"}.join("&")%>">
+      <a href="/v1/?type=<%=h entity["type"]%>&<%= h entity["attributes"].map{|k,v| "attrib_#{k}=#{v}"}.join("&")%>">
         <%= h entity["type"] %>: <%= h entity["attributes"]["name"] %>
       </a>
       <%= "<a href=\'#{h entity["attributes"]["uri"]}\'>[link]</a>" if entity["attributes"]["uri"] %>
@@ -22,10 +22,4 @@ Log:
 <%= h @task_run['task_log'] %>
 </span>
 
-<div id="footer">
-  <a href="/">Home</a> |
-  <a href="/news">News</a> |
-  <a href="/task_runs/<%=@task_run['id']%>.json">Export data (JSON)</a> |
-  <a href="/task_runs">View task runs</a> |
-  <a href="/task_runs.json"> Export all data (JSON)</a>
-</div>
+<%= erb :_footer, :layout => false %>
