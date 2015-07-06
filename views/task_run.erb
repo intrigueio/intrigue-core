@@ -1,0 +1,31 @@
+<h1>TaskRun: <%=@task_run['task_name']%> </h1>
+<p>ID: <%=@task_run['id']%> </p>
+<p>Start: <%=@task_run['timestamp_start']%> </p>
+<p>End: <%=@task_run['timestamp_end']%> </p>
+<p>Elapsed (s): <%=Time.parse(@task_run['timestamp_end']).to_i - Time.parse(@task_run['timestamp_start']).to_i%> </p>
+<p>Entity: <%= h @task_run['entity']%> </p>
+<p>New Entities:
+<ul>
+  <% @task_run['entities'].each do |entity| %>
+    <li>
+      <a href="/?type=<%=h entity["type"]%>&<%= h entity["attributes"].map{|k,v| "attrib_#{k}=#{v}"}.join("&")%>">
+        <%= h entity["type"] %>: <%= h entity["attributes"]["name"] %>
+      </a>
+      <%= "<a href=\'#{h entity["attributes"]["uri"]}\'>[link]</a>" if entity["attributes"]["uri"] %>
+      <span class="like-pre">(<%=h entity.inspect %>)</span>
+    </li>
+  <% end %>
+</ul>
+</p>
+Log:
+<span class="like-pre">
+<%= h @task_run['task_log'] %>
+</span>
+
+<div id="footer">
+  <a href="/">Home</a> |
+  <a href="/news">News</a> |
+  <a href="/task_runs/<%=@task_run['id']%>.json">Export data (JSON)</a> |
+  <a href="/task_runs">View task runs</a> |
+  <a href="/task_runs.json"> Export all data (JSON)</a>
+</div>

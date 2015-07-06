@@ -1,0 +1,11 @@
+# Require the individual social services
+require_relative 'social/base'
+require_relative 'social/facebook'
+require_relative 'social/foursquare'
+require_relative 'social/google'
+require_relative 'social/linkedin'
+require_relative 'social/myspace'
+require_relative 'social/soundcloud'
+require_relative 'social/twitpic'
+require_relative 'social/twitter'
+require_relative 'social/yfrog'

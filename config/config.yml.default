@@ -1,0 +1,13 @@
+---
+intrigue_engine_id: XXX               # generated at startup
+intrigue_api_hackerone: XXX           # http://intrigue.io/signup/
+bing_api_key: XXX                     # https://datamarket.azure.com/dataset/bing/search
+corpwatch_api_key: XXX                # http://api.corpwatch.org/register.php
+pipl_api_key: samplekey               # http://dev.pipl.com/choosekey
+shodan_api_key: XXX                   # https://account.shodan.io/login
+data_gov_key: XXX                     # https://api.data.gov/signup/
+google_safebrowsing_lookup_key: XXX   # https://developers.google.com/safe-browsing/lookup_guide#GettingStarted
+twitter_consumer_key: XXX             # https://dev.twitter.com
+twitter_consumer_secret: XXX          # https://dev.twitter.com
+twitter_access_token: XXX             # https://dev.twitter.com
+twitter_access_token_secret: XXX      # https://dev.twitter.com

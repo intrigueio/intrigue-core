@@ -1,0 +1,1698 @@
+{
+   "authors" : ["webreacher", "jcran"],
+   "sources" : ["https://bitbucket.org/LaNMaSteR53/recon-ng/raw/c006ecdf27648cec2bb20216cccce24e49e03107/data/profiler_sites.json"],
+   "sites" : [
+      {
+         "name" : "about.me",
+         "check_uri" : "http://about.me/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["g.PAGE_USER_NAME ="],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "aNobil",
+         "check_uri" : "http://www.anobii.com/{account}/books",
+         "response_code" : "200",
+         "account_existence_strings" : ["- aNobii</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["books"]
+      },
+      {
+         "name" : "ask.fm",
+         "check_uri" : "http://ask.fm/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["| ask.fm/"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "AudioBoom",
+         "check_uri" : "http://audioboom.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["<title>audioBoom / "],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["videos"]
+      },
+      {
+         "name" : "authorSTREAM",
+         "check_uri" : "http://www.authorstream.com/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["Presentations on authorSTREAM"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["preso"]
+      },
+      {
+         "name" : "badoo",
+         "check_uri" : "http://badoo.com/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["| Badoo</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "Bebo",
+         "check_uri" : "http://bebo.com/{account}",
+         "response_code" : "302",
+         "account_existence_strings" : ["Location: /Profile.jsp?MemberId="],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "Behance",
+         "check_uri" : "https://www.behance.net/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : [" on Behance\" />"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "Bitbucket",
+         "check_uri" : "https://bitbucket.org/api/2.0/users/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["\"username\": "],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["coding"]
+      },
+      {
+         "name" : "Bitly",
+         "check_uri" : "http://bit.ly/u/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["| Public Profile</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : "url shortener"
+      },
+      {
+         "name" : "blinklist",
+         "check_uri" : "https://app.blinklist.com/users/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : [" BlinkList Page.</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "BLIP.fm",
+         "check_uri" : "http://blip.fm/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["<title>Free Music | Listen to Music Online |"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["music"]
+      },
+      {
+         "name" : "Blogmarks",
+         "check_uri" : "http://blogmarks.net/user/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["<title>Blogmarks : Public marks from"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["bookmarks"]
+      },
+      {
+         "name" : "Blogspot",
+         "check_uri" : "http://{account}.blogspot.com",
+         "response_code" : "200",
+         "account_existence_strings" : ["Blogger Template Style"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["blog"]
+      },
+      {
+         "name" : "BodyBuilding.com",
+         "check_uri" : "http://bodyspace.bodybuilding.com/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["s BodySpace - Bodybuilding.com</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["health"]
+      },
+      {
+         "name" : "Break",
+         "check_uri" : "http://www.break.com/user/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : [" | Break.com</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["videos"]
+      },
+      {
+         "name" : "Buzznet",
+         "check_uri" : "http://{account}.buzznet.com/user/",
+         "response_code" : "200",
+         "account_existence_strings" : ["body class=\"userhome\""],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "cafemom",
+         "check_uri" : "http://www.cafemom.com/home/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["h3 id=\"profile-user\""],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "CarDomain",
+         "check_uri" : "http://www.cardomain.com/member/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["s Profile in"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["hobby"]
+      },
+      {
+         "name" : "CodePlex",
+         "check_uri" : "http://www.codeplex.com/site/users/view/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["property=\"profile:username\" />"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["coding"]
+      },
+      {
+         "name" : "CoderStats",
+         "check_uri" : "http://coderstats.net/github/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["var repos = [{\""],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["coding"]
+      },
+      {
+         "name" : "COLOURlovers",
+         "check_uri" : "http://www.colourlovers.com/lover/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["Send A Love Note"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["hobby"]
+      },
+      {
+         "name" : "Conferize",
+         "check_uri" : "https://www.conferize.com/u/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["| Conferize - Never miss a Conference</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "copytaste",
+         "check_uri" : "http://copytaste.com/profile/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : [" property=\"og:title\" content=\""],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : "sharing"
+      },
+      {
+         "name" : "CruiseMates",
+         "check_uri" : "http://www.cruisemates.com/forum/members/{account}.html",
+         "response_code" : "200",
+         "account_existence_strings" : ["- View Profile: "],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["travel"]
+      },
+      {
+         "name" : "Dailymotion",
+         "check_uri" : "http://www.dailymotion.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : [" - Dailymotion</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["videos"]
+      },
+      {
+         "name" : "DATEHOOKUP",
+         "check_uri" : "http://www.datehookup.com/profile/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["DateHookup | Profile</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["dating"]
+      },
+      {
+         "name" : "Delicious",
+         "check_uri" : "https://avosapi.delicious.com/api/v1/tags/bundles/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["\"owner_id\":\""],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["bookmarks"]
+      },
+      {
+         "name" : "DeviantArt",
+         "check_uri" : "http://{account}.deviantart.com/",
+         "response_code" : "200",
+         "account_existence_strings" : ["s Journal\""],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["images"]
+      },
+      {
+         "name" : "diigo",
+         "check_uri" : "https://www.diigo.com/profile/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : [" Public Profile in the Diigo Community</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "Disqus",
+         "check_uri" : "http://disqus.com/api/3.0/users/details?user=username%%3A{account}&api_key=E8Uh5l5fHZ6gD8U3KycjAIAk46f68Zw7C6eW8WSjZvCLXebZ7p0r1yrYDrLilk2F",
+         "response_code" : "200",
+         "account_existence_strings" : ["\"username\":\""],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "DIY",
+         "check_uri" : "https://diy.org/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["iphone\" content=\"diy://diy.org/"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["videos"]
+      },
+      {
+         "name" : "Docstoc",
+         "check_uri" : "http://www.docstoc.com/profile/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["h1 class=\"name\">"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["business"]
+      },
+      {
+         "name" : "dribble",
+         "check_uri" : "https://www.dribbble.com/players/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["<title>Dribbble - "],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["images"]
+      },
+      {
+         "name" : "eBay",
+         "check_uri" : "http://www.ebay.com/usr/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["on eBay</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["shopping"]
+      },
+      {
+         "name" : "EightBit",
+         "check_uri" : "http://eightbit.me/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["on EightBit</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["gaming"]
+      },
+      {
+         "name" : "Engadget",
+         "check_uri" : "http://www.engadget.com/profile/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["profile - Engadget</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["tech"]
+      },
+      {
+         "name" : "Epinions",
+         "check_uri" : "http://www.epinions.com/user-{account}?sb=1",
+         "response_code" : "200",
+         "account_existence_strings" : ["s Profile Reviews and Products | Epinions.com</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "Etsy",
+         "check_uri" : "https://www.etsy.com/people/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : [" on Etsy</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["shopping"]
+      },
+      {
+        "name" : "facebook.com",
+        "check_uri" : "https://www.facebook.com/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : [],
+        "account_missing_strings" : ["The link you followed may be broken, or the page may have been removed","Sorry, this page isn't available"],
+        "known_accounts" : ["intrigueio"],
+        "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+        "tags" : ["social"]
+      },
+      {
+         "name" : "families.com",
+         "check_uri" : "http://www.families.com/author/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["  </title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["news"]
+      },
+      {
+         "name" : "fanpop",
+         "check_uri" : "http://www.fanpop.com/fans/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["s Profile Page</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["movies"]
+      },
+      {
+         "name" : "Favstar",
+         "check_uri" : "http://favstar.fm/users/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["Best Tweets</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "FFFFOUND!",
+         "check_uri" : "http://ffffound.com/home/{account}/found/",
+         "response_code" : "200",
+         "account_existence_strings" : ["<title>FFFFOUND!</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["images"]
+      },
+      {
+         "name" : "Flavors",
+         "check_uri" : "http://{account}.flavors.me",
+         "response_code" : "200",
+         "account_existence_strings" : [": Flavors.me"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["blog"]
+      },
+      {
+         "name" : "Flickr",
+         "check_uri" : "https://www.flickr.com/photos/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["s Photostream</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["images"]
+      },
+      {
+         "name" : "Foodspotting",
+         "check_uri" : "http://www.foodspotting.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : [" - Foodspotting</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "Fotolog",
+         "check_uri" : "http://www.fotolog.com/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : [" - Fotolog</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["images"]
+      },
+      {
+         "name" : "Foursquare",
+         "check_uri" : "https://foursquare.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["on Foursquare</title>"],
+         "account_missing_strings" : ["We couldn't find the page you're looking for."],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : "location"
+      },
+      {
+         "name" : "freesound",
+         "check_uri" : "http://www.freesound.org/people/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["START of Content area"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["music"]
+      },
+      {
+         "name" : "FriendFeed",
+         "check_uri" : "http://friendfeed.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : [" - FriendFeed</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "FriendFinder-X",
+         "check_uri" : "http://www.friendfinder-x.com/profile/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["Member Profile - FriendFinder-x</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["dating"]
+      },
+      {
+         "name" : "FunnyOrDie",
+         "check_uri" : "http://www.funnyordie.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : [" - Home on Funny or Die</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["videos"]
+      },
+      {
+         "name" : "Garmin connect",
+         "check_uri" : "http://connect.garmin.com/modern/profile/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["VIEWER_USERPREFERENCES ="],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : "exercise"
+      },
+      {
+         "name" : "GeekGrade",
+         "check_uri" : "http://www.geekgrade.com/geeksheet/{account}/blogs",
+         "response_code" : "200",
+         "account_existence_strings" : ["- Geek Grade</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "Geocaching",
+         "check_uri" : "http://www.geocaching.com/seek/nearest.aspx?u={account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["By Username (Hidden) - User:"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["hobby"]
+      },
+      {
+         "name" : "GETItON",
+         "check_uri" : "http://getiton.com/profile/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["s Profile</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["dating"]
+      },
+      {
+         "name" : "GitHub",
+         "check_uri" : "https://api.github.com/users/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["\"login\": \""],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["coding"]
+      },
+      {
+         "name" : "GodTube",
+         "check_uri" : "http://www.godtube.com/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["Last Visit Date:</span>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["videos"]
+      },
+      {
+         "name" : "gogobot",
+         "check_uri" : "http://www.gogobot.com/user/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["Travel Tips &amp; Activities"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["travel"]
+      },
+      {
+         "name" : "goodreads",
+         "check_uri" : "http://www.goodreads.com/{account}",
+         "response_code" : "301",
+         "account_existence_strings" : ["www.goodreads.com/user/show/"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["books"]
+      },
+      {
+         "name" : "Google",
+         "check_uri" : "https://profiles.google.com/u/0/{account}/about",
+         "response_code" : "301",
+         "account_format" : "email",
+         "account_existence_strings" : [""],
+         "account_missing_strings" : ["The requested URL was not found on this server"],
+         "known_accounts" : [],
+         "known_missing_accounts" : [],
+         "tags" : ["social","popular"]
+      },
+      {
+         "name" : "Gravatar",
+         "check_uri" : "http://en.gravatar.com/profiles/{account}.json",
+         "response_code" : "200",
+         "account_existence_strings" : ["\"displayName\" : "],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["images"]
+      },
+      {
+         "name" : "howaboutwe",
+         "check_uri" : "http://www.howaboutwe.com/users/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["location font_20\""],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["dating"]
+      },
+      {
+         "name" : "HubPages",
+         "check_uri" : "http://{account}.hubpages.com/",
+         "response_code" : "200",
+         "account_existence_strings" : ["on HubPages</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["blog"]
+      },
+      {
+         "name" : "I-am-pregnant",
+         "check_uri" : "http://www.i-am-pregnant.com/vip/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["This is the stylesheet for your pages. Add your own rules below this line"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["health"]
+      },
+      {
+         "name" : "IFTTT",
+         "check_uri" : "https://ifttt.com/p/{account}/shared",
+         "response_code" : "200",
+         "account_existence_strings" : ["s Published Recipes - IFTTT"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["hobby"]
+      },
+      {
+         "name" : "ImageShack",
+         "check_uri" : "https://imageshack.com/user/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["s Images</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["images"]
+      },
+      {
+         "name" : "imgur",
+         "check_uri" : "http://imgur.com/user/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["on Imgur</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["images"]
+      },
+      {
+         "name" : "Instagram",
+         "check_uri" : "http://instagram.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["on Instagram\" />"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["images"]
+      },
+      {
+         "name" : "instructables",
+         "check_uri" : "http://www.instructables.com/member/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["<title>Instructables Member:"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["hobby"]
+      },
+      {
+         "name" : "Internet Archive",
+         "check_uri" : "http://archive.org/search.php?query=subject%%3A%%22{account}%%22",
+         "response_code" : "200",
+         "account_existence_strings" : ["<tr class=\"hitRow\">"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : "search"
+      },
+      {
+         "name" : "interpals",
+         "check_uri" : "http://www.interpals.net/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["s Profile</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["hobby"]
+      },
+      {
+         "name" : "JamBase",
+         "check_uri" : "http://www.jambase.com/Fans/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["on JamBase"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["music"]
+      },
+      {
+         "name" : "kaboodle",
+         "check_uri" : "http://www.kaboodle.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["s Kaboodle profile</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["shopping"]
+      },
+      {
+         "name" : "Keybase",
+         "check_uri" : "https://keybase.io/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["| Keybase</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["business"]
+      },
+      {
+         "name" : "Klout",
+         "check_uri" : "https://klout.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["| Klout.com\">"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "Kongregate",
+         "check_uri" : "http://www.kongregate.com/accounts/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["s profile on Kongregate</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["gaming"]
+      },
+      {
+         "name" : "Lanyrd",
+         "check_uri" : "http://lanyrd.com/profile/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["s conference talks and presentations | Lanyrd</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "Last.fm",
+         "check_uri" : "http://www.last.fm/user/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["s Music Profile - Users"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["music"]
+      },
+      {
+         "name" : "LawOfAttraction",
+         "check_uri" : "http://www.lawofattractionsingles.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["s profile on Law Of Attraction Singles</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["dating"]
+      },
+      {
+         "name" : "LibraryThing",
+         "check_uri" : "http://www.librarything.com/profile/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["| LibraryThing</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["books"]
+      },
+      {
+         "name" : "LinkedIn",
+         "check_uri" : "https://www.linkedin.com/in/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["summary=\"Overview for "],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "Marketing Land",
+         "check_uri" : "http://marketingland.com/author/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["property=\"og:url\" content="],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["business"]
+      },
+      {
+         "name" : "Match.com",
+         "check_uri" : "http://www.match.com/Profile/Display/About//?handle={account}&tp=prtbk",
+         "response_code" : "200",
+         "account_existence_strings" : ["property=\"og:title\" content=\""],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["dating"]
+      },
+      {
+         "name" : "mate1",
+         "check_uri" : "http://www.mate1.com/profiles/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["basicInfoTitle\">Basic Info"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["dating"]
+      },
+      {
+         "name" : "Medium",
+         "check_uri" : "https://medium.com/@{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["name=\"description\" content=\""],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["news"]
+      },
+      {
+         "name" : "Meetzur",
+         "check_uri" : "http://www.meetzur.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["MEETZUR_PROFILE_300x250"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["dating"]
+      },
+      {
+         "name" : "Mixcloud",
+         "check_uri" : "http://www.mixcloud.com/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["s Favorites | Mixcloud</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["music"]
+      },
+      {
+         "name" : "Mixcrate",
+         "check_uri" : "http://www.mixcrate.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["- Mixcrate</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["music"]
+      },
+      {
+         "name" : "Mixlr",
+         "check_uri" : "http://mixlr.com/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["is on Mixlr. Mixlr is a simple way to share live"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["music"]
+      },
+      {
+         "name" : "Mod DB",
+         "check_uri" : "http://www.moddb.com/members/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["View the Mod DB  member "],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["gaming"]
+      },
+      {
+         "name" : "Muck Rack",
+         "check_uri" : "http://muckrack.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["on Muck Rack</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["news"]
+      },
+      {
+         "name" : "Muzy",
+         "check_uri" : "http://{account}.muzy.com/",
+         "response_code" : "200",
+         "account_existence_strings" : ["' property='og:title' />"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["images"]
+      },
+      {
+         "name" : "MyBuilder.com",
+         "check_uri" : "http://www.mybuilder.com/profile/view/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["s profile</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : "jobs"
+      },
+      {
+         "name" : "myLot",
+         "check_uri" : "http://www.mylot.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["on myLot</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "myspace",
+         "check_uri" : "https://www.myspace.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : [") on Myspace</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "netvibes",
+         "check_uri" : "https://www.netvibes.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["s Public Page</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "OkCupid",
+         "check_uri" : "http://www.okcupid.com/profile/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["<title>OkCupid |"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["dating"]
+      },
+      {
+         "name" : "Open Source Report Card",
+         "check_uri" : "https://osrc.dfm.io/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["s Open Source Report Card</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["coding"]
+      },
+      {
+         "name" : "Overcast Network",
+         "check_uri" : "https://oc.tc/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["https://avatar.oc.tc/"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["gaming"]
+      },
+      {
+         "name" : "Pandora",
+         "check_uri" : "http://www.pandora.com/profile/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["div class=\"profile_container_static\""],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["music"]
+      },
+      {
+         "name" : "Photoblog!",
+         "check_uri" : "http://www.photoblog.com/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["photoblog_username = \""],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["images"]
+      },
+      {
+         "name" : "PhotoBucket",
+         "check_uri" : "http://smg.photobucket.com/user/{account}/profile/",
+         "response_code" : "200",
+         "account_existence_strings" : [" Pictures, Photos & Images | Photobucket</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["images"]
+      },
+      {
+         "name" : "Picasa",
+         "check_uri" : "https://picasaweb.google.com/{account}/",
+         "response_code" : "302",
+         "account_existence_strings" : ["s Picasa Web Gallery\"/>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["images"]
+      },
+      {
+         "name" : "PictureTrail",
+         "check_uri" : "http://picturetrail.com/homepage/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["<title>PictureTrail</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["images"]
+      },
+      {
+         "name" : "PinkBike",
+         "check_uri" : "http://www.pinkbike.com/u/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["on Pinkbike</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags": [["hobby"]]
+      },
+      {
+         "name" : "Pinterest",
+         "check_uri" : "https://www.pinterest.com/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["on Pinterest</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "Plancast",
+         "check_uri" : "http://plancast.com/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["<title>Attend Events with"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "plaxo",
+         "check_uri" : "http://www.plaxo.com/profile/showPublic/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["s Public Profile</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "Playlists.net",
+         "check_uri" : "http://playlists.net/members/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["<title>Profile for "],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["music"]
+      },
+      {
+         "name" : "Plurk",
+         "check_uri" : "http://www.plurk.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["] on Plurk - Plurk</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "POF",
+         "check_uri" : "http://www.pof.com/basicusersearch.aspx?usernamet={account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["div class=\"results\""],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["dating"]
+      },
+      {
+         "name" : "Printfection",
+         "check_uri" : "http://www.printfection.com/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["- Printfection.com</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["shopping"]
+      },
+      {
+         "name" : "Rate Your Music",
+         "check_uri" : "http://rateyourmusic.com/~{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["Rate Your Music</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["music"]
+      },
+      {
+         "name" : "Readability",
+         "check_uri" : "https://www.readability.com/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["on Readability"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "reddit",
+         "check_uri" : "http://www.reddit.com/user/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["<title>overview for "],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["news"]
+      },
+      {
+         "name" : "Reunion.com",
+         "check_uri" : "http://www.reunion.com/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["@ Reunion.com</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "scratch",
+         "check_uri" : "http://scratch.mit.edu/users/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["on Scratch</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["coding"]
+      },
+      {
+         "name" : "Security Street",
+         "check_uri" : "https://community.rapid7.com/people/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["s Profile     | SecurityStreet"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "setlist.fm",
+         "check_uri" : "http://www.setlist.fm/user/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["s setlist.fm | setlist.fm</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["music"]
+      },
+      {
+         "name" : "shelfari",
+         "check_uri" : "http://www.shelfari.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["s Profile</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["books"]
+      },
+      {
+         "name" : "Shopcade",
+         "check_uri" : "http://www.shopcade.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : [") on Shopcade</title"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["shopping"]
+      },
+      {
+         "name" : "singlemuslim",
+         "check_uri" : "http://www.singlemuslim.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["- Single Muslim Rest of the World</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["dating"]
+      },
+      {
+         "name" : "Slashdot",
+         "check_uri" : "http://slashdot.org/~{account}",
+         "response_code" : "200",
+         "account_existence_strings" : [" - Slashdot User</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["news"]
+      },
+      {
+         "name" : "slideshare",
+         "check_uri" : "http://www.slideshare.net/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["s presentations</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["presos"]
+      },
+      {
+         "name" : "SmiteGuru",
+         "check_uri" : "https://smite.guru/stats/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["<title>SmiteGuru - "],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["gaming"]
+      },
+      {
+         "name" : "SmugMug",
+         "check_uri" : "http://{account}.smugmug.com",
+         "response_code" : "200",
+         "account_existence_strings" : ["pageon: homepage"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["images"]
+      },
+      {
+         "name" : "smule",
+         "check_uri" : "http://www.smule.com/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["s Profile on Smule</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["music"]
+      },
+      {
+         "name" : "snooth",
+         "check_uri" : "http://www.snooth.com/profiles/{account}/",
+         "response_code" : "301",
+         "account_existence_strings" : ["Location: http://www.snooth.com/profiles/John/"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["food"]
+      },
+      {
+         "name" : "SoldierX",
+         "check_uri" : "https://www.soldierx.com/hdb/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["div id=\"node-"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["hacker"]
+      },
+      {
+         "name" : "SoundCloud",
+         "check_uri" : "https://soundcloud.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["profile - Hear the world"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["music"]
+      },
+      {
+         "name" : "Soup",
+         "check_uri" : "http://{account}.soup.io",
+         "response_code" : "200",
+         "account_existence_strings" : ["s soup</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["blog"]
+      },
+      {
+         "name" : "SourceForge",
+         "check_uri" : "http://sourceforge.net/u/{account}/profile/",
+         "response_code" : "200",
+         "account_existence_strings" : [" / Profile</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["coding"]
+      },
+      {
+         "name" : "Speaker Deck",
+         "check_uri" : "https://speakerdeck.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["<title>Presentations by"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["presos"]
+      },
+      {
+         "name" : "sporcle",
+         "check_uri" : "http://www.sporcle.com/user/{account}/connections",
+         "response_code" : "200",
+         "account_existence_strings" : ["id='UserBox'>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["gaming"]
+      },
+      {
+         "name" : "Steam",
+         "check_uri" : "http://steamcommunity.com/id/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["g_rgProfileData ="],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["gaming"]
+      },
+      {
+         "name" : "StumbleUpon",
+         "check_uri" : "http://www.stumbleupon.com/stumbler/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["s Likes | StumbleUpon.com</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "stupidcancer",
+         "check_uri" : "http://stupidcancer.org/community/profile/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["- Stupid Cancer Community</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["health"]
+      },
+      {
+         "name" : "Technorati",
+         "check_uri" : "http://technorati.com/author/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : [" | Technorati</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["business"]
+      },
+      {
+         "name" : "TF2 Backpack Examiner",
+         "check_uri" : "http://www.tf2items.com/id/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["<title>TF2 Backpack -"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["gaming"]
+      },
+      {
+         "name" : "theguardian",
+         "check_uri" : "https://id.theguardian.com/profile/{account}/public",
+         "response_code" : "200",
+         "account_existence_strings" : ["profile | The Guardian"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["news"]
+      },
+      {
+         "name" : "tribe",
+         "check_uri" : "http://people.tribe.net/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["Profile - tribe.net</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["dating"]
+      },
+      {
+         "name" : "tripadvisor",
+         "check_uri" : "http://www.tripadvisor.com/members/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["<title>Member Profile - "],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["travel"]
+      },
+      {
+         "name" : "Tripit",
+         "check_uri" : "https://www.tripit.com/people/{account}#/profile/basic-info",
+         "response_code" : "200",
+         "account_existence_strings" : ["Travel Profile - TripIt</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["travel"]
+      },
+      {
+         "name" : "tumblr",
+         "check_uri" : "http://{account}.tumblr.com",
+         "response_code" : "200",
+         "account_existence_strings" : ["X-Tumblr-User:"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["images"]
+      },
+      {
+         "name" : "Twitpic",
+         "check_uri" : "http://twitpic.com/photos/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["<title>Twitpic /"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "Twitter",
+         "check_uri" : "https://twitter.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["| Twitter</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "twtrland",
+         "check_uri" : "http://twtrland.com/profile/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["var query_global ="],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "untappd",
+         "check_uri" : "https://untappd.com/user/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["on Untappd</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["food"]
+      },
+      {
+         "name" : "viddler",
+         "check_uri" : "http://www.viddler.com/explore/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["s profile - Viddler</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["videos"]
+      },
+      {
+         "name" : "VideoLike",
+         "check_uri" : "http://videolike.org/video/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : [":: VideoLike</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["videos"]
+      },
+      {
+         "name" : "Vimeo",
+         "check_uri" : "http://vimeo.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["on Vimeo</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["videos"]
+      },
+      {
+         "name" : "VisualizeUs",
+         "check_uri" : "http://vi.sualize.us/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["favorite pictures on VisualizeUs</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["images"]
+      },
+      {
+         "name" : "Voices.com",
+         "check_uri" : "https://www.voices.com/people/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["/assets/images/branding/default_profile_avatar"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["business"]
+      },
+      {
+         "name" : "Wanelo",
+         "check_uri" : "http://wanelo.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["on Wanelo</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["shopping"]
+      },
+      {
+         "name" : "wattpad",
+         "check_uri" : "http://www.wattpad.com/user/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["- Wattpad </title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "WeeWorld",
+         "check_uri" : "http://www.weeworld.com/home/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["s Home) - WeeMee"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["gaming"]
+      },
+      {
+         "name" : "Wefollow",
+         "check_uri" : "http://wefollow.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["on Wefollow</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      },
+      {
+         "name" : "wishlistr",
+         "check_uri" : "http://www.wishlistr.com/profile/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : ["s profile</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["shopping"]
+      },
+      {
+         "name" : "WordPress",
+         "check_uri" : "https://profiles.wordpress.org/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["alt=\"Profile picture of"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["blog"]
+      },
+      {
+         "name" : "WordPress Support",
+         "check_uri" : "https://wordpress.org/support/profile/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["User Favorites: "],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : "support"
+      },
+      {
+         "name" : "Xbox Gamertag",
+         "check_uri" : "http://www.xboxgamertag.com/search/{account}/",
+         "response_code" : "200",
+         "account_existence_strings" : [" - Xbox Live Gamertag </title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["gaming"]
+      },
+      {
+         "name" : "XboxLiveScore",
+         "check_uri" : "http://www.xboxlivescore.com/profile/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["on the Gamerscore Leaderboard</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["gaming"]
+      },
+      {
+         "name" : "Xfire Main",
+         "check_uri" : "http://www.xfire.com/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["<h1 class=\"username\">"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["gaming"]
+      },
+      {
+         "name" : "Xfire Social",
+         "check_uri" : "http://social.xfire.com/profile/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["s Profile</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["gaming"]
+      },
+      {
+        "name" : "YFrog",
+        "check_uri" : "https://yfrog.com/user/{account}/profile",
+        "response_code" : "200",
+        "account_format" : "username",
+        "account_existence_strings" : [],
+        "account_missing_strings" : [],
+        "known_accounts" : ["intrigueio"],
+        "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+        "tags" : ["twitter","pics"]
+      },
+      {
+         "name" : "YouTube",
+         "check_uri" : "https://www.youtube.com/user/{account}/videos",
+         "response_code" : "200",
+         "account_existence_strings" : ["- YouTube</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["videos"]
+      },
+      {
+         "name" : "Zooppa",
+         "check_uri" : "http://zooppa.com/en-us/users/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["<title>Zooppa</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : ["intrigueio"],
+         "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
+         "tags" : ["social"]
+      }
+   ]
+}

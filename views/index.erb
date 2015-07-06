@@ -1,0 +1,122 @@
+<h2>Intrigue Core (<%=$intrigue_server_uri%>)</h2>
+  <h3>Version: <%= $intrigue_version %></h3>
+  <h3>Failed: <%= @failed %></h3>
+  <h3>Processed: <%= @processed %></h3>
+  <h3>Queues: <%= @queues.inspect %></h3>
+
+  <form target="_self" method="post" action="/interactive">
+    <!-- <select name="task" id="task_name"> -->
+    Task: <select name="task" id="task_name" onchange="get_task_data();">
+      <% @task_names.each do |task_name| %>
+        <%
+          # Create the task
+          task = TaskFactory.create_by_pretty_name(task_name)
+
+          # Check that the supplied type is allowed
+          if params[:type]
+            # Skip to the next task unless the current type is allowed
+            next unless (task.metadata[:allowed_types].include?(params[:type]) ||
+                          task.metadata[:allowed_types].include?("*") )
+          end
+        %>
+        <!-- set up the task in an option box, default to search_bing -->
+        <option value="<%= task.metadata[:name] %>"
+          <% if params[:task_name] %>
+            <%= "selected='selected'" if params[:task_name] == task.metadata[:name] %>
+          <% else %>
+            <%= "selected='selected'" if task.metadata[:name] == "search_bing" %>
+          <% end %>
+          ><%= task_name %>
+        </option>
+    <% end %>
+    </select><br/>
+
+    <!-- Get all attributes and use this to create an entity -->
+    <% attribs = {}; params.each{|k,v| attribs[k.gsub("attrib_","").to_sym] = v if (k =~/^attrib/ && v.length<100) } %>
+    <% if params[:type] %>
+      <%= EntityFactory.create_by_type(params[:type],attribs).form  %>
+    <% else %>
+      Type: <input type="text" id="entity_type" name="entity_type" value="<%= h params[:type] || "String" %>"><br/>
+      Name: <input type="text" id="attrib_name" name="attrib_name" value="<%= h params[:attrib_name] || "intrigue.io" %>"><br/>
+
+    <% end %>
+
+    <div id="options"></div>
+    <input type="submit" value="Run Task">
+  </form>
+
+  <div id="metadata"></div>
+
+  <script type="text/javascript">
+
+      function get_task_data(){
+        url = document.URL.concat("/tasks.json");
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                var hash = JSON.parse(xmlhttp.responseText);
+                //alert(xmlhttp.responseText);
+                parse_tasks(hash);
+            }
+        }
+        xmlhttp.open("GET", url, true);
+        xmlhttp.send();
+      }
+
+      function set_options(options){
+        // alert(options[0]["name"])
+        //alert(document.getElementById("options"));
+        // create a new div element
+        // and give it some content
+        //var newDiv = document.createElement("input");
+        //var newContent = document.createTextNode("Options go here!");
+        //newDiv.appendChild(newContent); //add the text node to the newly created div.
+
+        // add the newly created element and its content into the DOM
+        //alert(options)
+        //document.getElementById("options").innerHTML = "";
+        $( "#options" ).empty();
+
+        var arrayLength = options.length;
+        var option_html = "";
+        for (var i = 0; i < arrayLength; i++) {
+          option_html = option_html + options[i]['name'] + ": <input name=option_" + options[i]['name'] + " value="+ options[i]["default"] +"></input>";
+        }
+        // set the html
+        $( "#options" ).html( option_html );
+      }
+
+      function parse_tasks(task_hash){
+        var task_count = task_hash.length;
+
+        // go through the hash
+        for (var i = 0; i < task_count; i++) {
+          // configure the form
+          if(task_hash[i]["name"] == document.forms[0]["task_name"].value){
+            document.forms[0]["entity_type"].value = task_hash[i]["example_entities"][0]["type"];
+            document.forms[0]["attrib_name"].value = task_hash[i]["example_entities"][0]["attributes"]["name"];
+            document.getElementById("metadata").innerHTML = "<pre>" + JSON.stringify(task_hash[i],null, 2);  + "</pre>";
+            set_options(task_hash[i]["allowed_options"]);
+            //alert(JSON.stringify(task_hash[i]));
+          }
+          //alert(task_hash[i]["name"] + " " + document.forms[0]["task_name"].value)
+        }
+        //alert("out: " + out)
+      }
+  </script>
+
+<!--
+Available Task Details:
+<pre>
+  <% @tasks.each do |t| %>
+    <%= t.metadata.to_json %>
+  <% end %>
+</pre>
+-->
+
+<div id="footer">
+  <a href="/">Home</a> |
+  <a href="/news">News</a> |
+  <a href="/task_runs">View task runs</a> |
+  <a href="/task_runs.json"> Export all task runs (JSON)</a>
+</div>

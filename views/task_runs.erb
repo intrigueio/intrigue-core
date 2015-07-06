@@ -1,0 +1,12 @@
+Task Runs:
+<% @results.each do |x| %>
+<ul>
+<%= "<li><a href=\'/task_runs/#{x["id"]}\'> #{x["task_name"]} on #{ h x["entity"]["attributes"]["name"]} (#{x["entities"].count})</a></li>" %>
+</ul>
+<% end %>
+<div id="footer">
+  <a href="/">Home</a> |
+  <a href="/news">News</a> |
+  <a href="/task_runs">View task runs</a> |
+  <a href="/task_runs.json"> Export all task runs (JSON)</a>
+</div>

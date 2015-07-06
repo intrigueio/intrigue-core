@@ -1,0 +1,127 @@
+<style type="text/css" src="https://cdnjs.cloudflare.com/ajax/libs/vis/3.11.0/vis.css"></style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/3.11.0/vis.min.js"></script>
+
+<div class="wrap">
+    <div class="floatleft">
+      <div id="result"></div>
+      <div id="mynetwork"></div>
+    </div>
+    <div class="floatright">
+      <div id="nodedetails"></div>
+    </div>
+    <div style="clear: both;">
+</div>
+
+<style>
+.wrap {
+    width: 100%;
+}
+
+.floatleft {
+    float:left;
+    width: 80%;
+    background-color: #ffffff;
+    height: 400px;
+}
+
+.floatright {
+float: right;
+    background-color: #ffffff;
+    height: 400px;
+    width: 20%;
+}
+</style>
+
+<script type="text/javascript">
+
+    function request_task(){
+      url = document.URL.substring(0,document.URL.lastIndexOf("/")).concat(".json");
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.onreadystatechange = function() {
+          if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+              var hash = JSON.parse(xmlhttp.responseText);
+              parse_graph(hash);
+          }
+      }
+      xmlhttp.open("GET", url, true);
+      xmlhttp.send();
+    }
+
+    function on_select(prop) {
+      var info = 'selected row(s): ' + prop.nodes;
+
+      document.getElementById("nodedetails").innerHTML = info
+    }
+
+    function parse_graph(task_hash) {
+
+      // set the output for the task
+      var out = "";
+      out += "<h1> Name: " + task_hash["task_name"] + "</h1>"
+      out += "<p> ID: " + task_hash["id"] + "</p>"
+      out += "<p> Entity: " + task_hash["entity"]["type"] + " " + task_hash["entity"]["attributes"]["name"] + "</p>"
+
+      // parse the entities, and create nodes
+      nodes = [];
+      var edges = [];
+
+      // First node
+      type = task_hash['entity']["type"];
+      name = task_hash['entity']["attributes"]["name"];
+      nodes.push({id: 0, label: type + ": " + name})
+
+      var entities_count = task_hash['entities'].length;
+      for (var i = 0; i < entities_count; i++) {
+          this_id = i+1
+          type = task_hash["entities"][i]["type"];
+          name = task_hash["entities"][i]["attributes"]["name"];
+          entity_id = task_hash["entities"][i]["id"];
+          nodes.push({ id: this_id, label: type + ": " + name })
+          edges.push({from: 0, to: this_id})
+      }
+
+      // create a network
+      var container = document.getElementById('mynetwork');
+      var data = {
+          nodes: nodes,
+          edges: edges
+      };
+
+      //  alert(out);
+
+      // set the content
+      document.getElementById("result").innerHTML = out;
+
+      // Set the network graph
+      var network = new vis.Network(container, data, {});
+
+      var options = {
+        keyboard: false,
+        dataManipulation: {
+          enabled: true,
+          initiallyVisible: true
+        },
+        width:  '100%',
+        height: '100%',
+        edges: {
+          color: 'black',
+          width: 2
+        }
+      }
+
+      network.setOptions(options)
+
+      // add event listener
+      network.on('select', on_select);
+    }
+
+    request_task();
+
+</script>
+
+<div id="footer">
+  <a href="/">Home</a> |
+  <a href="/news">News</a> |
+  <a href="/task_runs">View task runs</a> |
+  <a href="/task_runs.json"> Export all task runs (JSON)</a>
+</div>
