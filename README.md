@@ -17,8 +17,6 @@ bundle exec rackup ## start the UI
 bundle exec sidekiq -r ./core.rb ## Start the background processing
 ```
 
-
-
 ### curl usage:
 
 Request the task type, specify an entity, and the appropriate options:
@@ -55,5 +53,5 @@ Host#129.186.23.166
 
 Check the top 1000 domains for the existence of security headers:
 ```
-for x in `cat data/domains.txt | head -n 1000`; do ./core-cli.rb start_and_wait dns_sub_brute DnsRecord#http://$x;done
+for x in `cat data/domains.txt | head -n 1000`; do ./core-cli.rb start_and_wait dns_sub_brute DnsRecord#$x;done
 ```
