@@ -19,9 +19,9 @@ class IntrigueCli < Thor
 
     # Set the appropriate environment
     if ENV["INTRIGUE_ENV"] == "production"
-      @server_uri = "http://core.intrigue.io"
+      @server_uri = "http://core.intrigue.io/v1"
     else
-      @server_uri = "http://localhost:9292"
+      @server_uri = "http://localhost:9292/v1"
     end
 
     @delim = "#"
@@ -127,12 +127,12 @@ class IntrigueCli < Thor
     ### Get the response
     ###
     response = JSON.parse(RestClient.get "#{@server_uri}/task_runs/#{task_id}.json")
-    #response["entities"].each do |entity|
-    #  puts "#{entity["type"]}#{@delim}#{entity["attributes"]["name"]}"
-    #end
+    response["entities"].each do |entity|
+      puts "#{entity["type"]}#{@delim}#{entity["attributes"]["name"]}"
+    end
 
     #puts "Full Response (JSON):"
-    puts response.to_json
+    #puts response.to_json
 
   end
 
