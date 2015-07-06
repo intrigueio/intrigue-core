@@ -227,9 +227,7 @@ post '/interactive' do
         "entity" => entity,
         "hook_uri" => "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/task_runs/#{task_id}"
   }
-
-  puts "making request with #{x}"
-
+  
   start_task_run(task_id, x)
 
   redirect "/task_runs/#{task_id}"
