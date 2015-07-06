@@ -22,7 +22,7 @@ class DnsBruteSubTask < BaseTask
           ]
         },
         {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
-        {:name => "brute_file", :type => "String", :regex => "filename", :default => "data/dns_sub.list" },
+        {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_sub.list" },
 
       ],
       :created_types => ["DnsRecord","IpAddress"]
@@ -77,7 +77,7 @@ Some cases to think through:
     if use_file
       filename = _get_option("brute_file")
       @task_log.log "Using file #{filename}"
-      subdomain_list = File.open(filename,"r").read.split("\n")
+      subdomain_list = File.open("#{$intrigue_basedir}/data/#{filename}","r").read.split("\n")
     else
       @task_log.log "Using provided brute list"
       subdomain_list = _get_option("brute_list")
