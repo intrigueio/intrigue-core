@@ -8,13 +8,12 @@ The following are presumed available and configured in your environment
  - masscan
  - API keys (copy config/config.yml.default -> config/config.yml)
 
-### To start:
+### To start the API and background task processing:
 
 Make sure you have redis installed and running.
 
 ```
-bundle exec rackup ## start the UI
-bundle exec sidekiq -r ./core.rb ## Start the background processing
+$ foreman start
 ```
 
 ### API usage via curl:
@@ -24,7 +23,7 @@ Request the task type, specify an entity, and the appropriate options:
 curl -s -X POST -H "Content-Type: application/json" -d '{ "task": "example", "entity": { "type": "IpAddress", "attributes": { "name": "8.8.8.8" } }, "options": {} }' http://localhost:9292/v1/task_runs/
 ````
 
-### core-cli usage:
+### API usage via core-cli:
 
 A command line utility has been added for convenience, core-cli.
 

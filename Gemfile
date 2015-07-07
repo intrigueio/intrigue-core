@@ -1,33 +1,21 @@
 source 'https://rubygems.org'
 
-# API
-gem 'sinatra'
+gem 'sinatra' # API
 gem 'sinatra-contrib'
+gem 'puma' # Application Server
+gem 'sidekiq' # Background Tasks
+gem 'foreman'
+gem 'redis' # Redis access
+gem 'iconv' # Encoding
+gem 'rest-client' # Web hooks
+#gem 'haml' # UI
+#gem 'sass' # UI
+gem 'rspec' # Testing
+gem 'rack-test' # Testing
+gem 'pry' # Debugging
 
-# Application Server
-gem 'puma'
-# Background Tasks
-gem 'sidekiq'
-
-# Redis access
-gem 'redis'
-
-# Encoding
-gem 'iconv'
-
-# Web hooks
-gem 'rest-client'
-
-# UI
-#gem 'haml'
-#gem 'sass'
-
-# Testing
-gem 'rspec'
-gem 'rack-test'
-
-# Debugging
-gem 'pry'
+# Client::Search::*Scraper
+gem 'nokogiri'
 
 # Tasks
 gem 'net-dns'           # dns_cache_snoop
@@ -42,9 +30,6 @@ gem 'nmap-parser'       # nmap_scan
 gem 'screencap'         # phantom_js
 gem 'twitter'           # twitter_account_following, etc
 
-# Client::Search::*Scraper
-gem 'nokogiri'
-
-# Cli
+# CLI
 gem 'thor'
-gem 'diffy'
+#gem 'diffy'
