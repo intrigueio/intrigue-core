@@ -20,7 +20,7 @@ $ foreman start
 
 Request the task type, specify an entity, and the appropriate options:
 ````
-curl -s -X POST -H "Content-Type: application/json" -d '{ "task": "example", "entity": { "type": "IpAddress", "attributes": { "name": "8.8.8.8" } }, "options": {} }' http://localhost:9292/v1/task_runs/
+curl -s -X POST -H "Content-Type: application/json" -d '{ "task": "example", "entity": { "type": "IpAddress", "attributes": { "name": "8.8.8.8" } }, "options": {} }' http://localhost:5000/v1/task_runs/
 ````
 
 ### API usage via core-cli:

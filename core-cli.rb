@@ -21,7 +21,7 @@ class IntrigueCli < Thor
     if ENV["INTRIGUE_ENV"] == "production"
       @server_uri = "http://core.intrigue.io/v1"
     else
-      @server_uri = "http://localhost:9292/v1"
+      @server_uri = "http://localhost:5000/v1"
     end
 
     @delim = "#"
