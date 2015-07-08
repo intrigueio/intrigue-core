@@ -21,6 +21,8 @@ class DnsBruteSubTask < BaseTask
             "search", "staging"
           ]
         },
+        {:name => "use_mashed_domains", :type => "Boolean", :regex => "boolean", :default => false },
+        {:name => "use_permutations", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_sub.list" },
 
@@ -58,7 +60,12 @@ Some cases to think through:
 =end
 
     # get options
-    resolver = _get_option "resolver"
+    opt_resolver = _get_option "resolver"
+    opt_use_file = _get_option("use_file")
+    opt_filename = _get_option("brute_file")
+    opt_mashed_domains = _get_option "use_mashed_domains"
+    opt_brute_list = _get_option("brute_list")
+    opt_use_permutations = _get_option("use_permutations")
 
     # Set the suffix
     suffix = _get_entity_attribute "name"
@@ -72,15 +79,13 @@ Some cases to think through:
       suffix = suffix[2..-1]
     end
 
-    # Create the brute list
-    use_file = _get_option("use_file")
-    if use_file
-      filename = _get_option("brute_file")
-      @task_log.log "Using file #{filename}"
-      subdomain_list = File.open("#{$intrigue_basedir}/data/#{filename}","r").read.split("\n")
+    # Create the brute list (from a file, or a provided list)
+    if opt_use_file
+      @task_log.log "Using file #{opt_filename}"
+      subdomain_list = File.open("#{$intrigue_basedir}/data/#{opt_filename}","r").read.split("\n")
     else
       @task_log.log "Using provided brute list"
-      subdomain_list = _get_option("brute_list")
+      subdomain_list = opt_brute_list
       subdomain_list = subdomain_list.split(",") if subdomain_list.kind_of? String
     end
 
@@ -103,18 +108,13 @@ Some cases to think through:
       subdomain = subdomain.chomp
 
       begin
-
-        # Calculate the domain name
-        #mashed_domains = nil
-        #@user_options.find{ |opt| mashed_domains = opt["mashed_domains"] }
-
-        #if mashed_domains
+        if opt_mashed_domains
           # See HDM's info on password stealing, try without a dot to see if this
           # domain has been hijacked by someone - great for finding phishing attempts
-          #brute_domain = "#{subdomain}#{suffix}"
-        #else
+          brute_domain = "#{subdomain}#{suffix}"
+        else
           brute_domain = "#{subdomain}.#{suffix}"
-        #end
+        end
 
         # Try to resolve
         resolved_address = resolver.getaddress(brute_domain)
@@ -125,6 +125,16 @@ Some cases to think through:
           # create new host and domain entities
           _create_entity("DnsRecord", {:name => brute_domain })
           _create_entity("IpAddress", {:name => resolved_address})
+
+          if opt_use_permutations
+            # Create a list of permutations based on this success
+            permutation_list = ["#{subdomain}1",
+
+            @task_log.log "Adding permutations: #{permutation_list.join(", ")}"
+
+            subdomain_list.concat permutation_list
+          end
+
         end
 
       rescue Exception => e
