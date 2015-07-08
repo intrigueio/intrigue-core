@@ -14,7 +14,7 @@ class UriNomNomTask < BaseTask
         {:type => "Uri", :attributes => {:name => "http://www.intrigue.io"}}
       ],
       :allowed_options => [
-        {:name => "depth_limit", :type => "Integer", :regex => "Integer", :default => 2 },
+        {:name => "depth_limit", :type => "Integer", :regex => "integer", :default => 2 },
       ],
       :created_types =>  ["DnsRecord", "EmailAddress", "File", "Info", "Person", "PhoneNumber" "SoftwarePackage"]
     }
@@ -26,8 +26,8 @@ class UriNomNomTask < BaseTask
 
     uri = _get_entity_attribute "name"
 
-    api_uri = "http://nomnom.api.intrigue.io/crawl"
-    #api_uri = "http://localhost:9393/crawl"
+    #api_uri = "http://nomnom.api.intrigue.io/crawl"
+    api_uri = "http://localhost:9393/crawl"
 
     resource = RestClient::Resource.new api_uri,
                                         :timeout => nil,
@@ -35,7 +35,7 @@ class UriNomNomTask < BaseTask
 
     response = resource.post({ "key" => "intrigue",
                                "uri" => uri,
-                               "depth" => 1 })
+                               "depth" => 2 })
 
     begin
       result =  JSON.parse response

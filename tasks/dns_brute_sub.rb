@@ -122,19 +122,24 @@ Some cases to think through:
 
         # If we resolved, create the right entities
         if (resolved_address && !(wildcard_domain))
-          # create new host and domain entities
+
+          # Create new host and domain entities
           _create_entity("DnsRecord", {:name => brute_domain })
           _create_entity("IpAddress", {:name => resolved_address})
 
+          #
+          # This section will add permutations to our list, if the
+          # opt_use_permutations option is set to true (it is, by default).
+          #
+          # This allows us to take items like 'www' and add a check for
+          # www1 and www2, etc
+          #
           if opt_use_permutations
             # Create a list of permutations based on this success
-            permutation_list = ["#{subdomain}1", "#{subdomain}2"] 
-
+            permutation_list = ["#{subdomain}1", "#{subdomain}2"]
             @task_log.log "Adding permutations: #{permutation_list.join(", ")}"
-
             subdomain_list.concat permutation_list
           end
-
         end
 
       rescue Exception => e
