@@ -128,7 +128,7 @@ Some cases to think through:
 
           if opt_use_permutations
             # Create a list of permutations based on this success
-            permutation_list = ["#{subdomain}1",
+            permutation_list = ["#{subdomain}1", "#{subdomain}2"] 
 
             @task_log.log "Adding permutations: #{permutation_list.join(", ")}"
 
