@@ -16,6 +16,10 @@ Make sure you have redis installed and running.
 $ foreman start
 ```
 
+### Web Interface
+
+To use the (admittedly minimal) web interface, browse to http://localhost:5000
+
 ### API usage via curl:
 
 Request the task type, specify an entity, and the appropriate options:
