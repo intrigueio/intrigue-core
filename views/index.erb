@@ -41,7 +41,9 @@
 
     <% end %>
 
+    Options:<br/>
     <div id="options"></div>
+    <br/>
     <input type="submit" value="Run Task">
   </form>
 
@@ -80,7 +82,7 @@
         var arrayLength = options.length;
         var option_html = "";
         for (var i = 0; i < arrayLength; i++) {
-          option_html = option_html + options[i]['name'] + ": <input name=option_" + options[i]['name'] + " value="+ options[i]["default"] +"></input>";
+          option_html = option_html + options[i]['name'] + ": <input name=option_" + options[i]['name'] + " value="+ options[i]["default"] +"></input><br/>";
         }
         // set the html
         $( "#options" ).html( option_html );
