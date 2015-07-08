@@ -1,10 +1,12 @@
 <h1>Configuration</h1>
 
 <form action="/v1/config/save" method="post">
+<table>
 <% $intrigue_config.each do |k,v| %>
-  <%= k %>: <input type="text" name="<%=k%>" value="<%=v%>"><br/>
+  <tr><td><%= k %>:</td><td><input type="text" name="<%=k%>" value="<%=v%>"></td></tr>
   <% end %>
-<input type="submit">
+<tr><td><input type="submit"></td><td></td></tr>
+</table>
 </form>
 
 <%= erb :_footer, :layout => false %>
