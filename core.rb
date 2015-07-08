@@ -26,6 +26,7 @@ require 'pry'
 ### XXX - this is not threadsafe :(
 $intrigue_global_timeout = 900
 $intrigue_basedir = File.dirname(__FILE__)
+
 # Check to see if the config exists
 config_file = "#{$intrigue_basedir}/config/config.yml"
 default_config_file = "#{$intrigue_basedir}/config/config.yml.default"
@@ -34,24 +35,22 @@ default_config_file = "#{$intrigue_basedir}/config/config.yml.default"
 $intrigue_default_config = YAML.load_file(default_config_file)
 
 if File.exist? config_file
+
   # Okay, so we have a file - lets load that
   $intrigue_config = YAML.load_file(config_file)
-
   $intrigue_config = $intrigue_default_config.merge $intrigue_config
 
   # Check to make sure we have an engine_id config
   if $intrigue_config[:engine_id] == "XXX" or $intrigue_config[:engine_id] == ""
-    # we need to generate it
+    # We need to generate it
     $intrigue_config[:engine_id] = SecureRandom.uuid
   end
 else  # No config exists
-  # Create a blank config
-  $intrigue_config = $intrigue_default_config
-  # Create the Engine ID
-  $intrigue_config[:engine_id] = SecureRandom.uuid
+  $intrigue_config = $intrigue_default_config # Create a blank default config
+  $intrigue_config[:engine_id] = SecureRandom.uuid # Create the Engine ID
 end
 
-# Regardless, write our config back to the file
+# Regardless, write our config back to the file, is was likely updated above
 File.open("#{$intrigue_basedir}/config/config.yml", 'w') do |f|
   f.write $intrigue_config.to_yaml
 end
@@ -59,7 +58,7 @@ end
 set :views, "#{$intrigue_basedir}/views"
 set :public_folder, 'public'
 
-#Setup redis for resque
+# Setup redis for resque
 $intrigue_redis = Redis.new
 
 ###
