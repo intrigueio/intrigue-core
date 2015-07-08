@@ -3,7 +3,6 @@
 require 'thor'
 require 'json'
 require 'rest-client'
-require 'diffy'
 
 #DEBUG
 require 'pry'
@@ -111,6 +110,7 @@ class IntrigueCli < Thor
     ###
     ### Construct the request
     ###
+    puts "[+] Starting task"
     task_id = start_and_background(task_name,entity,options)
 
     ###
@@ -123,13 +123,21 @@ class IntrigueCli < Thor
       complete = true if(RestClient.get("#{@server_uri}/task_runs/#{task_id}/complete") == "true")
     end
 
+    puts "[+] Task complete!"
+
+
     ###
     ### Get the response
     ###
+    puts "[+] Start Results"
     response = JSON.parse(RestClient.get "#{@server_uri}/task_runs/#{task_id}.json")
     response["entities"].each do |entity|
-      puts "#{entity["type"]}#{@delim}#{entity["attributes"]["name"]}"
+      puts "  #{entity["type"]}#{@delim}#{entity["attributes"]["name"]}"
     end
+    puts "[ ] End Results"
+
+    puts "[+] Task Log:\n"
+    puts response["task_log"]
 
     #puts "Full Response (JSON):"
     #puts response.to_json
@@ -174,21 +182,6 @@ class IntrigueCli < Thor
       puts "Created task #{task_id} for entity #{entity}"
     end
   end
-
-  desc "compare [File] [File]", "Compare two JSON task files"
-  def compare(filename1, filename2)
-
-    puts "Comparing #{filename1} with #{filename2}"
-
-    task_one = File.open(filename1).read
-    task_two = File.open(filename2).read
-
-    j = JSON.parse task_one
-    k = JSON.parse task_two
-
-    puts Diffy::Diff.new(j["task_log"],k["task_log"])
-  end
-
 
 end # end class
 

@@ -12,7 +12,7 @@ class DnsLookupMxTask < BaseTask
       :allowed_types => ["DnsRecord"],
       :example_entities => [{:type => "DnsRecord", :attributes => {:name => "intrigue.io"}}],
       :allowed_options => [
-        {:name => "resolver", :type => "String", :regex => "IPAddress", :default => "8.8.8.8" }
+        {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
       ],
       :created_types => ["DnsRecord", "IpAddress"]
     }

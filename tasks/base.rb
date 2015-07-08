@@ -224,6 +224,8 @@ class BaseTask
             ### Match the user option against it's specified regex
             ###
 
+            @task_log.log "Allowed option: #{allowed_option}"
+
             # XXX - we need to regex the option in order to accept it
             if allowed_option[:regex] == "integer"
               @task_log.log "Regex should match an integer"
@@ -242,7 +244,7 @@ class BaseTask
               regex = /(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/
             else
               @task_log.error "Unspecified regex for this option #{allowed_option[:name]}"
-              return
+              raise "Unable to continue!"
             end
 
             # Run the regex
