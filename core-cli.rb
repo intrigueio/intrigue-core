@@ -99,7 +99,6 @@ class IntrigueCli < Thor
     ###
 
     task_id = RestClient.post "#{@server_uri}/task_runs", payload.to_json, :content_type => "application/json"
-    #puts "#{@server_uri}/task_runs/#{task_id}" if task_id
 
     task_id
   end
@@ -113,6 +112,11 @@ class IntrigueCli < Thor
     puts "[+] Starting task"
     task_id = start_and_background(task_name,entity,options)
 
+    if task_id == "" # technically a nil is returned , but becomes an empty string
+      puts "[-] Task not started. Unknown Error. Exiting"
+      return
+    end
+
     ###
     ### XXX - wait for the appropriate amount of time to collect
     ###  the response
@@ -120,7 +124,13 @@ class IntrigueCli < Thor
     complete = false
     until complete
       sleep 1
-      complete = true if(RestClient.get("#{@server_uri}/task_runs/#{task_id}/complete") == "true")
+      begin
+        uri = "#{@server_uri}/task_runs/#{task_id}/complete"
+        complete = true if(RestClient.get(uri) == "true")
+      rescue URI::InvalidURIError => e
+        puts "[-] Invalid URI: #{uri}"
+        return
+      end
     end
 
     puts "[+] Task complete!"
@@ -130,10 +140,15 @@ class IntrigueCli < Thor
     ### Get the response
     ###
     puts "[+] Start Results"
-    response = JSON.parse(RestClient.get "#{@server_uri}/task_runs/#{task_id}.json")
-    response["entities"].each do |entity|
-      puts "  #{entity["type"]}#{@delim}#{entity["attributes"]["name"]}"
+    begin
+      response = JSON.parse(RestClient.get "#{@server_uri}/task_runs/#{task_id}.json")
+      response["entities"].each do |entity|
+        puts "  #{entity["type"]}#{@delim}#{entity["attributes"]["name"]}"
+      end
+    rescue Exception => e
+      puts "[-] Error fetching and parsing response"
     end
+
     puts "[ ] End Results"
 
     puts "[+] Task Log:\n"

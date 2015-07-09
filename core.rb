@@ -267,7 +267,7 @@ namespace '/v1' do
     ###
     ### Do some upfront sanity checking of the user parameters
     ###
-    return "Invalid Task name!" unless TaskFactory.include?(task_run_info["task"])
+    return nil unless TaskFactory.include?(task_run_info["task"])
 
     # Start the task _run
     start_task_run task_id, task_run_info
