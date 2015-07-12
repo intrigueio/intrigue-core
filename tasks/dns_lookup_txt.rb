@@ -9,7 +9,10 @@ class DnsLookupTxtTask < BaseTask
       :pretty_name => "DNS TXT Lookup",
       :authors => ["jcran"],
       :description => "DNS TXT Lookup",
-      :references => [],
+      :references => [
+        "http://webmasters.stackexchange.com/questions/27910/txt-vs-spf-record-for-google-servers-spf-record-either-or-both",
+        "https://community.rapid7.com/community/infosec/blog/2015/02/23/osint-through-sender-policy-framework-spf-records"
+      ],
       :allowed_types => ["DnsRecord"],
       :example_entities => [{:type => "DnsRecord", :attributes => {:name => "intrigue.io"}}],
       :allowed_options => [
