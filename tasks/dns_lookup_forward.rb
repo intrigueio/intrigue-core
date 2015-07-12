@@ -26,11 +26,14 @@ class DnsLookupForwardTask < BaseTask
 
     begin
       # Get the addresses
+      @task_log.log "Resolving address for #{name}"
       resolved_addresses = Resolv.new.getaddresses(name)
 
       # XXX - we should probably .getaddresses() a couple times to deal
       # with round-robin DNS & load balancers. We'd need to merge results
       # across the queries
+
+      @task_log.error "Nothing?" if resolved_addresses.empty?
 
       # For each of the found addresses
       resolved_addresses.map{ |address|
