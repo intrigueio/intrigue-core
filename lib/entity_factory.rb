@@ -65,6 +65,7 @@ class EntityFactory
         else
 
           # Fail!
+          ### XXX - we'll need to deal with this
           raise "Unable to validate entity"
 
         end
