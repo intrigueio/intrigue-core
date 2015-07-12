@@ -374,6 +374,12 @@ class BaseTask
       # Create the entity, validating the attributes
       entity = EntityFactory.create_by_type(type,attributes)
 
+      # If we don't get anything back, safe to assume we can't move on
+      unless entity
+        @task_log.error "FATAL Unable to verify entity: #{type} #{attributes}"
+        return
+      end
+
       # Add to our result set for this task
       @result[:entities] << entity.to_json
 
