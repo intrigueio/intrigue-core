@@ -247,14 +247,15 @@ class BaseTask
               regex = /(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/
             else
               @task_log.error "Unspecified regex for this option #{allowed_option[:name]}"
-              raise "Unable to continue!"
+              @task_log.error "FATAL! Unable to continue!"
+              return
             end
 
             # Run the regex
             unless user_option["value"].match regex
               @task_log.error "Regex didn't match"
               @task_log.error "Option #{user_option["name"]} does not match regex: #{regex.to_s} (#{user_option["value"]})!"
-              @task_log.error "STOPPING! No task processing since regex didn't match option!"
+              @task_log.error "FATAL! No task processing since regex didn't match option!"
               return
             end
 
@@ -284,7 +285,7 @@ class BaseTask
                 user_option["value"] = user_option["value"].to_bool
             else
               # throw an error, we likely have a string we don't know how to cast
-              raise "FATAL - Don't know how to handle this option when it's given to us as a string."
+              @task_log.error "FATAL! Don't know how to handle this option when it's given to us as a string."
             end
 
             # hurray, we can accept this value
