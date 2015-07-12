@@ -106,8 +106,17 @@
         for (var i = 0; i < task_count; i++) {
           // configure the form
           if(task_hash[i]["name"] == document.forms[0]["task_name"].value){
-            document.forms[0]["entity_type"].value = task_hash[i]["example_entities"][0]["type"];
-            document.forms[0]["attrib_name"].value = task_hash[i]["example_entities"][0]["attributes"]["name"];
+
+              // get values, so we can check if they exist
+              var entity_type=document.forms[0]["entity_type"].value;
+              var entity_name=document.forms[0]["attrib_name"].value;
+
+              if (entity_type==null || entity_type=="",entity_name==null || entity_name==""){
+                // set the form fields
+                document.forms[0]["entity_type"].value = task_hash[i]["example_entities"][0]["type"];
+                document.forms[0]["attrib_name"].value = task_hash[i]["example_entities"][0]["attributes"]["name"];
+              }
+
             document.getElementById("metadata").innerHTML = "<pre>" + JSON.stringify(task_hash[i],null, 2);  + "</pre>";
             set_options(task_hash[i]["allowed_options"]);
             //alert(JSON.stringify(task_hash[i]));
