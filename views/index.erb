@@ -7,6 +7,7 @@
   <form target="_self" method="post" action="/v1/interactive">
     <!-- <select name="task" id="task_name"> -->
     Task: <select name="task" id="task_name" onchange="get_task_data();">
+
       <% @task_names.each do |task_name| %>
         <%
           # Create the task
@@ -28,6 +29,7 @@
           <% end %>
           ><%= task_name %>
         </option>
+
     <% end %>
     </select><br/>
 
@@ -52,13 +54,21 @@
   <script type="text/javascript">
 
       function get_task_data(){
-        url = document.URL.concat("/tasks.json");
+        //alert("getting task data");
+
+        // http://stackoverflow.com/questions/1420881/how-to-extract-base-url-from-a-string-in-javascript
+        if (typeof location.origin === 'undefined')
+          location.origin = location.protocol + '//' + location.host;
+
+        url = location.origin.concat("/v1/tasks.json");
+        //alert("uri: " + url)
+
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                var hash = JSON.parse(xmlhttp.responseText);
-                //alert(xmlhttp.responseText);
-                parse_tasks(hash);
+              //alert(xmlhttp.responseText);
+              var hash = JSON.parse(xmlhttp.responseText);
+              parse_tasks(hash);
             }
         }
         xmlhttp.open("GET", url, true);
@@ -66,8 +76,9 @@
       }
 
       function set_options(options){
-        // alert(options[0]["name"])
-        //alert(document.getElementById("options"));
+
+        //alert(options[0]["name"])
+        // alert(document.getElementById("options"));
         // create a new div element
         // and give it some content
         //var newDiv = document.createElement("input");
