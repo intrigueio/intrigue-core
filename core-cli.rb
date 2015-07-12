@@ -6,7 +6,6 @@ require 'rest-client'
 
 #DEBUG
 require 'pry'
-
 require_relative 'core'
 
 class IntrigueCli < Thor
@@ -16,12 +15,7 @@ class IntrigueCli < Thor
 
     $intrigue_basedir = File.dirname(__FILE__)
 
-    # Set the appropriate environment
-    if ENV["INTRIGUE_ENV"] == "production"
-      @server_uri = "http://core.intrigue.io/v1"
-    else
-      @server_uri = "http://localhost:5000/v1"
-    end
+    @server_uri = "http://localhost:7777/v1"
 
     @delim = "#"
   end

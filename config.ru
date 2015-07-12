@@ -1,5 +1,4 @@
-#\ -s puma
-
+# -s puma
 require './core'
 
 #run Sinatra::Application

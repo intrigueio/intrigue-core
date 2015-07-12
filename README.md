@@ -18,13 +18,13 @@ $ foreman start
 
 ### Web Interface
 
-To use the (admittedly minimal) web interface, browse to http://localhost:5000
+To use the minimal web interface, browse to http://localhost:7777
 
 ### API usage via curl:
 
 Request the task type, specify an entity, and the appropriate options:
 ````
-$ curl -s -X POST -H "Content-Type: application/json" -d '{ "task": "example", "entity": { "type": "IpAddress", "attributes": { "name": "8.8.8.8" } }, "options": {} }' http://localhost:5000/v1/task_runs/
+$ curl -s -X POST -H "Content-Type: application/json" -d '{ "task": "example", "entity": { "type": "IpAddress", "attributes": { "name": "8.8.8.8" } }, "options": {} }' http://localhost:7777/v1/task_runs/
 ````
 
 ### API usage via core-cli:
@@ -90,7 +90,7 @@ $ bundle exec ./core-cli.rb start dns_brute_sub DnsRecord#intrigue.io resolver=8
 [-] : Hit exception: no address for www1.intrigue.io
 [-] : Hit exception: no address for www2.intrigue.io
 [+] : Ship it!
-[ ] : Sending to Webhook: http://localhost:5000/v1/task_runs/fddc7313-52f6-4d5a-9aad-fd39b0428ca5
+[ ] : Sending to Webhook: http://localhost:7777/v1/task_runs/fddc7313-52f6-4d5a-9aad-fd39b0428ca5
 ```
 
 Check for a list of subdomains on intrigue.io:
