@@ -86,7 +86,7 @@ class NmapScanTask < BaseTask
             ssl = true if [443,8443].include?(entity.attributes[:port_num])
             protocol = ssl ? "https://" : "http://" # construct uri
             uri = "#{protocol}#{host.addr}:#{entity.attributes[:port_num]}"
-            _create_entity("Uri", :name => uri  ) # create an entity
+            _create_entity("Uri", :name => uri, :uri => uri  ) # create an entity
 
             # and create the entities if we have dns
             host.hostnames.each do |hostname|

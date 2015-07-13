@@ -137,14 +137,13 @@ class IntrigueCli < Thor
     begin
       response = JSON.parse(RestClient.get "#{@server_uri}/task_runs/#{task_id}.json")
       response["entities"].each do |entity|
-        puts "  #{entity["type"]}#{@delim}#{entity["attributes"]["name"]}"
+        puts "  [x] #{entity["type"]}#{@delim}#{entity["attributes"]["name"]}"
       end
     rescue Exception => e
       puts "[-] Error fetching and parsing response"
     end
 
-    puts "[ ] End Results"
-
+    puts "[+] End Results"
     puts "[+] Task Log:\n"
     puts response["task_log"]
 

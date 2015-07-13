@@ -10,7 +10,7 @@ class String < Base
   end
 
   def validate(attributes)
-    attributes[:name] =~ /^[\d].*$/
+    attributes[:name] =~ /^.*$/
   end
 
 end

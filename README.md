@@ -6,7 +6,11 @@ The following are presumed available and configured in your environment
  - nmap
  - zmap
  - masscan
- - API keys (copy config/config.yml.default -> config/config.yml)
+
+Sudo is used to allow root access for certain commands ^ , so make sure this doesn't require a password:
+```
+your-username ALL = NOPASSWD: /usr/bin/masscan, /usr/sbin/zmap, /usr/bin/nmap
+```
 
 ### To start the API and background task processing:
 

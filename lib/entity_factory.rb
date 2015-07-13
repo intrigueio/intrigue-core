@@ -64,15 +64,15 @@ class EntityFactory
 
         else
 
-          # Fail!
-          raise "Unable to validate entity"
+          return nil # fail, couldnt' set attributes
 
         end
+
       end
+
     end
 
-    ### XXX - exception handling? Should this return nil?
-    raise "No entity with type: #{type} (#{attributes})"
+  true
   end
 
 end

@@ -119,10 +119,10 @@ get '/' do
   redirect '/v1/'
 end
 
-namespace '/v1' do
+namespace '/v1/?' do
 
   # Main Page
-  get '/' do
+  get '/?' do
     stats = Sidekiq::Stats.new
     @failed = stats.failed
     @processed = stats.processed
