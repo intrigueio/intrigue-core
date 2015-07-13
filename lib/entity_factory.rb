@@ -64,15 +64,15 @@ class EntityFactory
 
         else
 
-          # Fail!
-          return nil
+          return nil # fail, couldnt' set attributes
 
         end
+
       end
+
     end
 
-    # Fail!
-    return nil
+  true
   end
 
 end

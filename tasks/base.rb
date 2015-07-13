@@ -376,7 +376,7 @@ class BaseTask
 
       # If we don't get anything back, safe to assume we can't move on
       unless entity
-        @task_log.error "FATAL Unable to verify entity: #{type} #{attributes}"
+        @task_log.error "SKIPPING Unable to verify entity: #{type} #{attributes}"
         return
       end
 

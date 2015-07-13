@@ -10,14 +10,11 @@ class DnsLookupTxtTask < BaseTask
       :authors => ["jcran"],
       :description => "DNS TXT Lookup",
       :references => [
-        "http://webmasters.stackexchange.com/questions/27910/txt-vs-spf-record-for-google-servers-spf-record-either-or-both",
-        "https://community.rapid7.com/community/infosec/blog/2015/02/23/osint-through-sender-policy-framework-spf-records"
+        "http://webmasters.stackexchange.com/questions/27910/txt-vs-spf-record-for-google-servers-spf-record-either-or-both"
       ],
       :allowed_types => ["DnsRecord"],
       :example_entities => [{:type => "DnsRecord", :attributes => {:name => "intrigue.io"}}],
-      :allowed_options => [
-        {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
-      ],
+      :allowed_options => [],
       :created_types => ["DnsRecord", "IpAddress", "Info", "NetBlock" ]
     }
   end
@@ -25,7 +22,6 @@ class DnsLookupTxtTask < BaseTask
   def run
     super
 
-    resolver = _get_option "resolver"
     domain_name = _get_entity_attribute "name"
 
     @task_log.log "Running TXT lookup on #{domain_name}"
@@ -52,14 +48,15 @@ class DnsLookupTxtTask < BaseTask
         unless res_answer.answer.count == 0
           res_answer.answer.each do |answer|
             answer.rdata.first.split(" ").each do |record|
+
               if record =~ /^include:.*/
-                _create_entity "DnsRecord", :attributes => {:name => record.split(":").last}
+                _create_entity "DnsRecord", {:name => record.split(":").last}
               elsif record =~ /^ip4:.*/
                 s = record.split(":").last
                 if s.include? "/"
-                  _create_entity "NetBlock", :attributes => {:name => s }
+                  _create_entity "NetBlock", {:name => s }
                 else
-                  _create_entity "IpAddress", :attributes => {:name => s }
+                  _create_entity "IpAddress", {:name => s }
                 end
               elsif record =~ /^google-site-verification.*/
                 _create_entity "Info", {:name => "DNS Verification Code", :type =>"Google", :content => record.split(":").last}
@@ -68,6 +65,7 @@ class DnsLookupTxtTask < BaseTask
               end
             end
 
+            # Log an info record with full detail
             _create_entity "Info", { :name => "TXT Record", :content => answer.to_s , :details => res_answer.to_s }
 
           end
@@ -76,7 +74,7 @@ class DnsLookupTxtTask < BaseTask
       end
 
     rescue Dnsruby::Refused
-      @task_log.log "Zone Transfer against #{domain_name} refused."
+      @task_log.log "Lookup against #{domain_name} refused."
 
     rescue Dnsruby::ResolvError
       @task_log.log "Unable to resolve #{domain_name}"
@@ -86,8 +84,9 @@ class DnsLookupTxtTask < BaseTask
 
     rescue Exception => e
       @task_log.log "Unknown exception: #{e}"
-
     end
+
+    @task_log.log "done"
   end
 
 
