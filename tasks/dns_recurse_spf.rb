@@ -75,16 +75,10 @@ class DnsRecurseSpf < BaseTask
                   else
                     _create_entity "IpAddress", {:name => range }
                   end
-
-                elsif data =~ /^google-site-verification.*/
-                  _create_entity "Info", {:name => "DNS Verification Code", :type =>"Google", :content => data.split(":").last}
-
-                elsif data =~ /^yandex-verification.*/
-                  _create_entity "Info", {:name => "DNS Verification Code", :type =>"Yandex", :content => data.split(":").last}
                 end
-
               end
-            else
+
+            else  # store everything else as info
               _create_entity "Info", { :name => "Non-SPF TXT Record for #{dns_name}", :content => answer.to_s }
             end
 
