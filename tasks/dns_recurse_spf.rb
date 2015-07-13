@@ -1,5 +1,4 @@
 require 'dnsruby'
-require 'whois'
 
 class DnsRecurseSpf < BaseTask
 
