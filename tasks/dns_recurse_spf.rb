@@ -7,7 +7,7 @@ class DnsRecurseSpf < BaseTask
     { :version => "1.0",
       :name => "dns_recurse_spf",
       :pretty_name => "DNS SPF Recursive Lookup",
-      :authors => ["mstanislav","jcran"],
+      :authors => ["@markstanislav","jcran"],
       :description => "DNS SPF Recursive Lookup",
       :references => [ "https://community.rapid7.com/community/infosec/blog/2015/02/23/osint-through-sender-policy-framework-spf-records"],
       :allowed_types => ["DnsRecord"],
