@@ -130,6 +130,7 @@ module Task
           http = Net::HTTP.new(uri_obj.host, uri_obj.port)
           http.read_timeout = read_timeout
           http.use_ssl = (uri_obj.scheme == 'https')
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE if http.use_ssl?
 
           # Set up the GET request with headers
           request = Net::HTTP::Get.new(uri)
