@@ -47,32 +47,23 @@ class EntityFactory
   #  An entity (subclass of type Intrigue::Entity::Base) if successful or nil (fail)
   #
   def self.create_by_type(type,attributes)
-
     @entities.each do |e|
       # Create a new entity object
       entity_object = e.new
-
       # Check to see if this is the matching type
       if (entity_object.metadata[:type] == type)
-
         # If so, validate the attributes to make sure we can
         # create this entity with these attributes (and set them if it validates)
         if entity_object.set_attributes(attributes)
-
           # Success!
           return entity_object
-
         else
-
-          return nil # fail, couldnt' set attributes
-
+          return false # fail, couldnt' set attributes
         end
-
+      # else, move on to next
       end
-
     end
-
-  true
+  false
   end
 
 end
