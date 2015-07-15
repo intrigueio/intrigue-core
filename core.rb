@@ -307,6 +307,9 @@ namespace '/v1/?' do
 
     if result # Assuming it's available, display it
       @task_run = JSON.parse(result)
+
+      @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1?type=#{@task_run["entity"]["type"]}&#{@task_run["entity"]["attributes"].collect { |k, v| "attrib_#{k}=#{v}" }.join("?")}"
+
       erb :task_run
     else # Otherwise tell the user to wait
       "Not available yet. (Please refresh)"

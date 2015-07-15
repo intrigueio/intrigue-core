@@ -1,4 +1,4 @@
-<h1>TaskRun: <%=@task_run['task_name']%> </h1>
+<h1>TaskRun: <a href="<%=@rerun_uri%>"><%=@task_run['task_name']%></a> </h1>
 <p>ID: <%=@task_run['id']%> </p>
 <p>Start: <%=@task_run['timestamp_start']%> </p>
 <p>End: <%=@task_run['timestamp_end']%> </p>
@@ -8,7 +8,7 @@
 <ul>
   <% @task_run['entities'].each do |entity| %>
     <li>
-      <a href="/v1/?type=<%=h entity["type"]%>&<%= h entity["attributes"].map{|k,v| "attrib_#{k}=#{v}"}.join("&")%>">
+      <a href="/v1/?type=<%=h entity["type"]%>&<%= h entity["attributes"].map{|k,v| "attrib_#{k}=#{v}"}.join("&") %>">
         <%= h entity["type"] %>: <%= h entity["attributes"]["name"] %>
       </a>
       <%= "<a href=\'#{h entity["attributes"]["uri"]}\'>[link]</a>" if entity["attributes"]["uri"] %>
@@ -17,6 +17,7 @@
   <% end %>
 </ul>
 </p>
+
 Log:
 <span class="like-pre">
 <%= h @task_run['task_log'] %>

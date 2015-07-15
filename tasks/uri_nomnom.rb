@@ -26,8 +26,8 @@ class UriNomNomTask < BaseTask
 
     uri = _get_entity_attribute "name"
 
-    #api_uri = "http://nomnom.api.intrigue.io/crawl"
     api_uri = "http://nomnom.intrigue.io/crawl"
+    #api_uri = "http://localhost:9393/crawl"
 
     resource = RestClient::Resource.new api_uri,
                                         :timeout => nil,
@@ -35,7 +35,7 @@ class UriNomNomTask < BaseTask
 
     response = resource.post({ "key" => "intrigue",
                                "uri" => uri,
-                               "depth" => 3 })
+                               "depth" => 2 })
 
     begin
       result =  JSON.parse response
