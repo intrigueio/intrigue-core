@@ -49,6 +49,7 @@ class UriDirbuster  < BaseTask
 
     # Default to code
     missing_page_test = :code
+    
     # But select based on the response
     case response.code
       when "404"
@@ -65,7 +66,7 @@ class UriDirbuster  < BaseTask
 
     brute_list = _get_option "brute_list"
     brute_list = brute_list.split(",") if brute_list.kind_of? String
-    
+
     brute_list.each do |dir|
 
       ## Construct the URI and make the request

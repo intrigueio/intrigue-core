@@ -15,7 +15,7 @@ class IntrigueCli < Thor
 
     $intrigue_basedir = File.dirname(__FILE__)
 
-    @server_uri = "http://localhost:7777/v1"
+    @server_uri = "http://127.0.0.1:7777/v1"
 
     @delim = "#"
   end
@@ -64,57 +64,42 @@ class IntrigueCli < Thor
 
   end
 
-  desc "start_and_background [Task] [Type#Entity] [Option1=Value1#...#...]", "Start a task"
+  desc "start_and_background [Task] [Type#Entity] [Option1=Value1#...#...]", "Start a task and return the task id"
   def start_and_background(task_name,entity,options=nil)
 
-    entity_type = entity.split(@delim).first
-    entity_name = entity.split(@delim).last
+    entity_hash = _parse_entity entity
+    options_list = _parse_options options
 
-    entity_hash = {
-      :type => entity_type,
-      :attributes => { :name => entity_name}
-    }
-
-    # Parse out options
-    if options
-      options_list = options.split(@delim).map do |option|
-        { :name => option.split("=").first, :value => option.split("=").last }
-      end
-    end
-
-    payload = {
-      :task => task_name,
-      :options => options_list,
-      :entity => entity_hash
-    }
-
-    ###
-    ### Send to the server
-    ###
-
-    task_id = RestClient.post "#{@server_uri}/task_runs", payload.to_json, :content_type => "application/json"
-
-    task_id
-  end
-
-  desc "start [Task] [Type#Entity] [Option1=Value1#...#...]", "Start a task and wait for the result"
-  def start(task_name,entity,options=nil)
-
-    ###
     ### Construct the request
-    ###
-    puts "[+] Starting task"
-    task_id = start_and_background(task_name,entity,options)
+    task_id = _background(task_name,entity_hash,options_list)
 
     if task_id == "" # technically a nil is returned , but becomes an empty string
       puts "[-] Task not started. Unknown Error. Exiting"
       return
     end
 
-    ###
-    ### XXX - wait for the appropriate amount of time to collect
-    ###  the response
-    ###
+  puts "[+] Started task: #{task_id}"
+  end
+
+
+
+  desc "start [Task] [Type#Entity] [Option1=Value1#...#...]", "Start a task and return the result"
+  def start(task_name,entity,options=nil)
+
+    entity_hash = _parse_entity entity
+    options_list = _parse_options options
+
+    ### Construct the request
+    task_id = _background(task_name,entity_hash,options_list)
+    puts "[+] Started task: #{task_id}"
+
+
+    if task_id == "" # technically a nil is returned , but becomes an empty string
+      puts "[-] Task not started. Unknown Error. Exiting"
+      return
+    end
+
+    ### XXX - wait for the the response
     complete = false
     until complete
       sleep 1
@@ -129,10 +114,7 @@ class IntrigueCli < Thor
 
     puts "[+] Task complete!"
 
-
-    ###
     ### Get the response
-    ###
     puts "[+] Start Results"
     begin
       response = JSON.parse(RestClient.get "#{@server_uri}/task_runs/#{task_id}.json")
@@ -146,10 +128,6 @@ class IntrigueCli < Thor
     puts "[+] End Results"
     puts "[+] Task Log:\n"
     puts response["task_log"]
-
-    #puts "Full Response (JSON):"
-    #puts response.to_json
-
   end
 
   ###
@@ -163,14 +141,7 @@ class IntrigueCli < Thor
     lines.each do |line|
       line.chomp!
 
-      entity_type = line.split(@delim).first
-      entity_name = line.split(@delim).last
-
-      #puts "Entity type: #{entity_type}"
-      #puts "Entity name: #{entity_name}"
-
-      entity = {  :type => entity_type,
-                  :attributes => { :name => entity_name} }
+      entity = _parse_entity line
 
       payload = {
         :task => task_name,
@@ -189,6 +160,49 @@ class IntrigueCli < Thor
 
       puts "Created task #{task_id} for entity #{entity}"
     end
+  end
+
+private
+
+  # parse out entity from the cli
+  def _parse_entity(entity)
+    entity_type = entity.split(@delim).first
+    entity_name = entity.split(@delim).last
+
+    entity_hash = {
+      :type => entity_type,
+      :attributes => { :name => entity_name}
+    }
+
+  entity_hash
+  end
+
+  # Parse out options from cli
+  def _parse_options(options)
+
+      return [] unless options
+
+      options_list = options.split(@delim).map do |option|
+        { :name => option.split("=").first, :value => option.split("=").last }
+      end
+  options_list
+  end
+
+  def _background(task_name,entity_hash,options_list=[])
+
+    payload = {
+      :task => task_name,
+      :options => options_list,
+      :entity => entity_hash
+    }
+
+    ###
+    ### Send to the server
+    ###
+
+    task_id = RestClient.post "#{@server_uri}/task_runs", payload.to_json, :content_type => "application/json"
+
+    task_id
   end
 
 end # end class

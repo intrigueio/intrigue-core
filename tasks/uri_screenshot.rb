@@ -26,8 +26,9 @@ class UriScreenshot < BaseTask
     filename = "screenshot_#{rand(100000000000000)}.png"
     full_path = "#{Dir.pwd}/public/screenshots/#{filename}"
 
-    @task_log.log "Saving to... #{full_path}"
     begin
+      @task_log.log "Saving to... #{full_path}"
+
       f = Screencap::Fetcher.new(uri)
       screenshot = f.fetch(
         :output => full_path, # don't forget the extension!
@@ -42,9 +43,9 @@ class UriScreenshot < BaseTask
       _create_entity "Screenshot", :name => "#{uri}_screenshot", :uri => "#{$intrigue_server_uri}/screenshots/#{filename}"
 
     rescue Screencap::Error => e
-      @task_log.error "Unable to capture screenshot"
+      @task_log.error "Unable to capture screenshot: #{e}"
     end
-    
+
   end
 
 end
