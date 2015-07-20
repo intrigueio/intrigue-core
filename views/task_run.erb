@@ -1,8 +1,8 @@
-<h1>TaskRun: <a href="<%=@rerun_uri%>"><%=@task_run['task_name']%></a> </h1>
+<h1>TaskRun: <a href="<%=@rerun_uri || nil%>"><%=@task_run['task_name']%></a> </h1>
 <p>ID: <%=@task_run['id']%> </p>
 <p>Start: <%=@task_run['timestamp_start']%> </p>
 <p>End: <%=@task_run['timestamp_end']%> </p>
-<p>Elapsed (s): <%=Time.parse(@task_run['timestamp_end']).to_i - Time.parse(@task_run['timestamp_start']).to_i%> </p>
+<p>Elapsed (s): <%= @elapsed_time %> </p>
 <p>Entity: <%= h @task_run['entity']%> </p>
 <p>New Entities:
 <ul>
@@ -20,7 +20,7 @@
 
 Log:
 <span class="like-pre">
-<%= h @task_run['task_log'] %>
+<%= h @task_log %>
 </span>
 
 <%= erb :_footer, :layout => false %>

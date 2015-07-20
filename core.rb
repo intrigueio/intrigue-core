@@ -302,18 +302,25 @@ namespace '/v1/?' do
 
   # Show the results in a human readable format
   get '/task_runs/:id' do
+
+    # Get the log
+    log = $intrigue_redis.get("log:#{params[:id]}")
+    @task_log = log
+
     # Get the result from Redis
     result = $intrigue_redis.get("result:#{params[:id]}")
-
     if result # Assuming it's available, display it
       @task_run = JSON.parse(result)
-
       @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1?type=#{@task_run["entity"]["type"]}&#{@task_run["entity"]["attributes"].collect { |k, v| "attrib_#{k}=#{v}" }.join("?")}"
-
-      erb :task_run
-    else # Otherwise tell the user to wait
-      "Not available yet. (Please refresh)"
+      @elapsed_time = Time.parse(@task_run['timestamp_end']).to_i - Time.parse(@task_run['timestamp_start']).to_i
+    else
+      ## it'll just be empty for now
+      @task_run = { 'entities' => [] }
+      # and get us as close as we can
+      @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1?"
     end
+
+    erb :task_run
   end
 
   # Determine if the task run is complete
