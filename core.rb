@@ -306,6 +306,10 @@ namespace '/v1/?' do
     # Get the log
     log = $intrigue_redis.get("log:#{params[:id]}")
     reversed_log = log.split("\n").reverse.join("\n") if log
+
+    # remove newline
+    #reversed_log[0]=''
+
     @task_log = reversed_log
 
     # Get the result from Redis
@@ -318,7 +322,7 @@ namespace '/v1/?' do
       ## it'll just be empty for now
       @task_run = { 'entities' => [],
                     'task_name'  => "please wait...",
-                    'entity'  => "please wait...",
+                    'entity'  => {'type' => "please wait...", 'attributes' => {}},
                     'timestamp_start'  => "please wait...",
                     'timestamp_end'  => "please wait...",
                     'id' => "please wait..."

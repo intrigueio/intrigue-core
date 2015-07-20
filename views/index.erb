@@ -1,8 +1,7 @@
-<h2>Intrigue Core (<%=$intrigue_server_uri%>)</h2>
-  <h3>Version: <%= $intrigue_version %></h3>
-  <h3>Failed: <%= @failed %></h3>
-  <h3>Processed: <%= @processed %></h3>
-  <h3>Queues: <%= @queues.inspect %></h3>
+<h3>Intrigue Core (<%=$intrigue_server_uri%>)</h3>
+  <h4>Failed: <%= @failed %></h4>
+  <h4>Processed: <%= @processed %></h4>
+  <h4>Queues: <%= @queues.inspect %></h4>
 
   <form target="_self" method="post" action="/v1/interactive">
     <!-- <select name="task" id="task_name"> -->

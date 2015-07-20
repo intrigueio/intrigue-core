@@ -35,7 +35,10 @@ class ZmapScanTask < BaseTask
     @task_log.log "Scanning #{to_scan} and storing in #{temp_file}"
 
     # Check to see if zmap is in the path, and raise an error if not
-    raise "Unable to find zmap" unless _unsafe_system("sudo zmap 2>&1") =~ /target port/
+    unless _unsafe_system("sudo zmap 2>&1") =~ /target port/
+      @task_log.error "Unable to find zmap"
+      return
+    end
 
     zmap_string = "sudo zmap -p #{port_num} -o #{temp_file} #{to_scan}"
     @task_log.log "Running... #{zmap_string}"

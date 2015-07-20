@@ -62,28 +62,31 @@ class DnsBruteSrvTask < BaseTask
         @resolver.getresources(brute_name, Resolv::DNS::Resource::IN::SRV).collect do |rec|
 
           # split up the record
-          resolved_address = rec.target
+          name = rec.target
           port = rec.port
           weight = rec.weight
           priority = rec.priority
 
-          @task_log.good "Resolved Address #{resolved_address} for #{brute_name}" if resolved_address
-
           # If we resolved, create the right entities
-          if resolved_address
+          if name
+            @task_log.good "Resolved #{name} for #{brute_name}"
 
             # Create a dns record
-            domain = _create_entity("DnsRecord", {:name => brute_name })
+            brute_domain = _create_entity("DnsRecord", :name => brute_name )
 
-            # Create a host to store the ip address
-            host = _create_entity("IpAddress", {:name => resolved_address.to_s})
+            # Create a dnsrecord to store the name
+            _create_entity("DnsRecord", :name => "#{name}")
+
+            # ip address
+            host = @resolver.getaddress name.to_s
+            _create_entity("IpAddress", :name => "#{host}")
 
             # Create a service, and also associate that with our host.
             netsvc = _create_entity("NetSvc", {
-              :name => "#{host[:attributes][:name]}:#{port}/tcp",
+              :name => "#{host}:#{port}/tcp",
               :proto => "tcp",
-              :port => port,
-              :ip_address => "#{host[:attributes][:name]}"
+              :port_num => port,
+              :ip_address => "#{host}"
             })
 
           end

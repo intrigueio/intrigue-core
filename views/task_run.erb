@@ -3,7 +3,7 @@
 <p>Start: <%=@task_run['timestamp_start']%> </p>
 <p>End: <%=@task_run['timestamp_end']%> </p>
 <p>Elapsed (s): <%= @elapsed_time %> </p>
-<p>Entity: <%= h @task_run['entity']%> </p>
+<p>Entity: <%= h "#{@task_run['entity']['type']} #{@task_run['entity']['attributes']['name']}"%> </p>
 <p>New Entities:
 <ul>
   <% @task_run['entities'].each do |entity| %>
@@ -12,15 +12,13 @@
         <%= h entity["type"] %>: <%= h entity["attributes"]["name"] %>
       </a>
       <%= "<a href=\'#{h entity["attributes"]["uri"]}\'>[link]</a>" if entity["attributes"]["uri"] %>
-      <span class="like-pre">(<%=h entity.inspect %>)</span>
+      <span class="like-pre-white">(<%=h entity.inspect %>)</span>
     </li>
   <% end %>
 </ul>
 </p>
 
 Log:
-<span class="like-pre">
-<%= h @task_log %>
-</span>
+<span class="like-pre-dark"><%= h @task_log %></span><br/>
 
 <%= erb :_footer, :layout => false %>
