@@ -106,3 +106,31 @@ Check the Alexa top 1000 domains for the existence of security headers:
 ```
 $ for x in `cat data/domains.txt | head -n 1000`; do bundle exec ./core-cli.rb start dns_brute_sub DnsRecord#$x;done
 ```
+
+### API usage via rubygem
+[![Gem Version](https://badge.fury.io/rb/intrigue.svg)](http://badge.fury.io/rb/intrigue)
+````
+x =  Intrigue.new
+
+  #
+  # Create an entity hash, must have a :type key
+  # and (in the case of most tasks)  a :attributes key
+  # with a hash containing a :name key (as shown below)
+  #
+  entity = {
+    :type => "String",
+    :attributes => { :name => "intrigue.io"}
+  }
+
+  #
+  # Create a list of options (this can be empty)
+  #
+  options_list = [
+    { :name => "resolver", :value => "8.8.8.8" }
+  ]
+
+x.start "example", entity_hash, options_list
+id  = x.start "search_bing", entity_hash, options_list
+puts x.get_log id
+puts x.get_result id
+````
