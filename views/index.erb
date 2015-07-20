@@ -40,7 +40,6 @@
     <% else %>
       Type: <input type="text" id="entity_type" name="entity_type" value="<%= h params[:type] || "String" %>"><br/>
       Name: <input type="text" id="attrib_name" name="attrib_name" value="<%= h params[:attrib_name] || "intrigue.io" %>"><br/>
-
     <% end %>
 
     Options:<br/>
@@ -104,6 +103,7 @@
 
         // go through the hash
         for (var i = 0; i < task_count; i++) {
+
           // configure the form
           if(task_hash[i]["name"] == document.forms[0]["task_name"].value){
 
@@ -111,10 +111,11 @@
               var entity_type=document.forms[0]["entity_type"].value;
               var entity_name=document.forms[0]["attrib_name"].value;
 
-              if (entity_type==null || entity_type=="",entity_name==null || entity_name==""){
-                // set the form fields
-                document.forms[0]["entity_type"].value = task_hash[i]["example_entities"][0]["type"];
-                document.forms[0]["attrib_name"].value = task_hash[i]["example_entities"][0]["attributes"]["name"];
+              if (! location.search.split('type=')[1]){ // if we don't have a set type
+                //if (entity_type==null || entity_type=="", entity_name==null || entity_name==""){ // and the form isn't filled
+                  document.forms[0]["entity_type"].value = task_hash[i]["example_entities"][0]["type"];
+                  document.forms[0]["attrib_name"].value = task_hash[i]["example_entities"][0]["attributes"]["name"];
+                //}
               }
 
             document.getElementById("metadata").innerHTML = "<pre>" + JSON.stringify(task_hash[i],null, 2);  + "</pre>";
