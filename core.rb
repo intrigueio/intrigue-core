@@ -325,6 +325,11 @@ namespace '/v1/?' do
   result
   end
 
+  # Get the task log
+  get '/task_runs/:id/log' do
+    $intrigue_redis.get("log:#{params[:id]}")
+  end
+
   # GET CONFIG
   get '/config' do
     erb :config
