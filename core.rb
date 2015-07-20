@@ -313,6 +313,7 @@ namespace '/v1/?' do
       erb :task_run
     else # Otherwise tell the user to wait
       "Not available yet. (Please refresh)"
+      "<pre> #{$intrigue_redis.get("log:#{params[:id]}")} </pre>"
     end
   end
 
@@ -325,7 +326,12 @@ namespace '/v1/?' do
   result
   end
 
-  # GET CONFIG
+  # Get the task log
+  get '/task_runs/:id/log' do
+    $intrigue_redis.get("log:#{params[:id]}")
+  end
+
+  # CONFIG
   get '/config' do
     erb :config
   end

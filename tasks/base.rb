@@ -166,6 +166,8 @@ class BaseTask
 =end
     end
 
+    @task_log.good "EOM"
+
     # Run Cleanup
     cleanup() unless broken_input
   end
@@ -322,11 +324,8 @@ class BaseTask
 
   private
 
-    #
     # Convenience Method to execute a system command semi-safely
-    #
     #  !!!! Don't send anything to this without first whitelisting user input!!!
-    #
     def _unsafe_system(command)
 
       ###                  ###
@@ -335,7 +334,7 @@ class BaseTask
 
       if command =~ /(\||\;|\`)/
         #raise "Illegal character"
-        @task_log.error "Illegal character in #{command}"
+        @task_log.error "FATAL Illegal character in #{command}"
         return
       end
 
