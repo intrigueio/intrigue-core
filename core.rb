@@ -311,11 +311,20 @@ namespace '/v1/?' do
     result = $intrigue_redis.get("result:#{params[:id]}")
     if result # Assuming it's available, display it
       @task_run = JSON.parse(result)
-      @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1?type=#{@task_run["entity"]["type"]}&#{@task_run["entity"]["attributes"].collect { |k, v| "attrib_#{k}=#{v}" }.join("?")}"
+      @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1?task_name=#{@task_run["task_name"]}&type=#{@task_run["entity"]["type"]}&#{@task_run["entity"]["attributes"].collect { |k, v| "attrib_#{k}=#{v}" }.join("?")}"
       @elapsed_time = Time.parse(@task_run['timestamp_end']).to_i - Time.parse(@task_run['timestamp_start']).to_i
     else
       ## it'll just be empty for now
-      @task_run = { 'entities' => [] }
+      @task_run = { 'entities' => [],
+                    'task_name'  => "please wait...",
+                    'entity'  => "please wait...",
+                    'timestamp_start'  => "please wait...",
+                    'timestamp_end'  => "please wait...",
+                    'id' => "please wait..."
+                  }
+
+      @elapsed_time = "please wait..."
+
       # and get us as close as we can
       @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1?"
     end
