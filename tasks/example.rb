@@ -9,7 +9,7 @@ class ExampleTask < BaseTask
       :references => [],
       :allowed_types => ["String"],
       :example_entities => [
-        {:type => "DnsRecord", :attributes => {:name => "intrigue.io"}}
+        {:type => "String", :attributes => {:name => "intrigue.io"}}
       ],
       :allowed_options => [
         {:name => "unused_option", :type => "Integer", :regex=> "integer", :default => 100 },
