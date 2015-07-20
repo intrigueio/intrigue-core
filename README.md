@@ -1,4 +1,4 @@
-### Environment and external dependencies
+### Setting up environment and external dependencies
 
 The following are presumed available and configured in your environment
  - redis
@@ -14,22 +14,25 @@ your-username ALL = NOPASSWD: /usr/bin/masscan, /usr/sbin/zmap, /usr/bin/nmap
 
 ### To start the API and background task processing:
 
-Make sure you have redis installed and running.
+Make sure you have redis installed and running. (Use Homebrew if you're on OSX).
 
+Install all gem dependencies with Bundler (http://bundler.io/)
+```
+$ bundle install
+```
+
+Start the web and background workers. Intrigue will start on 127.0.0.0:7777.
 ```
 $ foreman start
 ```
 
+Now, browse to the web interface.
+
 ### Web Interface
 
-To use the minimal web interface, browse to http://localhost:7777
+To use the web interface, browse to http://127.0.0.1:7777
 
-### API usage via curl:
-
-Request the task type, specify an entity, and the appropriate options:
-````
-$ curl -s -X POST -H "Content-Type: application/json" -d '{ "task": "example", "entity": { "type": "IpAddress", "attributes": { "name": "8.8.8.8" } }, "options": {} }' http://localhost:7777/v1/task_runs/
-````
+Getting started should be pretty straightforward, try running a "dns_brute_sub" task on your domain. Now, try with the "use_file" option set to true.
 
 ### API usage via core-cli:
 
@@ -109,28 +112,36 @@ $ for x in `cat data/domains.txt | head -n 1000`; do bundle exec ./core-cli.rb s
 
 ### API usage via rubygem
 [![Gem Version](https://badge.fury.io/rb/intrigue.svg)](http://badge.fury.io/rb/intrigue)
-````
-x =  Intrigue.new
 
-  #
+```
+$ gem install intrigue
+$ irb
+
+> require 'intrigue'
+> x =  Intrigue.new
+
   # Create an entity hash, must have a :type key
   # and (in the case of most tasks)  a :attributes key
   # with a hash containing a :name key (as shown below)
-  #
-  entity = {
+> entity = {
     :type => "String",
     :attributes => { :name => "intrigue.io"}
   }
 
-  #
   # Create a list of options (this can be empty)
-  #
-  options_list = [
+> options_list = [
     { :name => "resolver", :value => "8.8.8.8" }
   ]
 
-x.start "example", entity_hash, options_list
-id  = x.start "search_bing", entity_hash, options_list
-puts x.get_log id
-puts x.get_result id
-````
+> x.start "example", entity_hash, options_list
+> id  = x.start "example", entity_hash, options_list
+> puts x.get_log id
+> puts x.get_result id
+``
+
+### API usage via curl:
+
+You can use the tried and true curl utility to request a task run. Specify the task type, specify an entity, and the appropriate options:
+```
+$ curl -s -X POST -H "Content-Type: application/json" -d '{ "task": "example", "entity": { "type": "IpAddress", "attributes": { "name": "8.8.8.8" } }, "options": {} }' http://127.0.0.1:7777/v1/task_runs
+``
