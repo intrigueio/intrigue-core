@@ -20,6 +20,12 @@ class BaseTask
     ###################
     @task_log = TaskLog.new(task_id, self.metadata[:task_name], false)
 
+    #
+    # Do a little logging. Do it for the kids.
+    #
+    @task_log.log "Id: #{task_id}"
+    @task_log.log "Entity: #{entity}"
+
     ###################
     # Sanity Checking #
     ###################
@@ -54,20 +60,23 @@ class BaseTask
       # @entity - the entity we're operating on
       # @user_options - a hash of task options
       # @result - the final result to be passed back to the caller
-      setup(task_id, entity, options)
-
-      # Call run(), which will use _create_entity
-      # to fill out the @result[:entities] array
-      begin
-        complete_results = Timeout.timeout($intrigue_global_timeout) do # 15 minutes should be enough time to hit a class b for a single port w/ masscan
-          run()
+      @task_log.log "Calling Setup()"
+      if setup(task_id, entity, options)
+        # Call run(), which will use _create_entity
+        # to fill out the @result[:entities] array
+        begin
+          Timeout.timeout($intrigue_global_timeout) do # 15 minutes should be enough time to hit a class b for a single port w/ masscan
+            @task_log.log "Calling Run()"
+            run # run the tas
+            @result[:entities].uniq! # Clean up the resulting entities
+          end
+        rescue Timeout::Error
+          @task_log.error "FATAL: Timed out"
         end
-      rescue Timeout::Error
-        @task_log.error "TIMED OUT"
-      end
 
-      # Clean up the resulting entities
-      @result[:entities].uniq!
+      else
+        @task_log.error "Setup failed, bailing out!"
+      end
     end
 
     # Grab the task log & html escape before posting
@@ -168,7 +177,8 @@ class BaseTask
 
 
     # Run Cleanup
-    cleanup() unless broken_input
+    @task_log.log "Calling cleanup()"
+    cleanup unless broken_input
   end
 
   #########################################################
@@ -177,8 +187,6 @@ class BaseTask
   # individual tasks must always call super()
   #
   def setup(task_id, entity, user_options)
-
-    puts "user_options: #{user_options}"
 
     # XXX - we should do some sanity checking on this entity
     # because it's coming directly from the user - at least
@@ -209,6 +217,8 @@ class BaseTask
     @user_options = []
 
     if user_options
+
+      @task_log.log "Got user options #{user_options}"
 
       # for each of the user-supplied options
       user_options.each do |user_option|
@@ -245,11 +255,11 @@ class BaseTask
               regex = /(?:\..*(?!\/))+/
             elsif allowed_option[:regex] == "ip_address"
               @task_log.log "Regex should match an IP Address"
-              regex = /(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/
+              regex = /^(\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*)|((\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3}))$/
             else
               @task_log.error "Unspecified regex for this option #{allowed_option[:name]}"
               @task_log.error "FATAL! Unable to continue!"
-              return
+              return nil
             end
 
             # Run the regex
@@ -257,7 +267,7 @@ class BaseTask
               @task_log.error "Regex didn't match"
               @task_log.error "Option #{user_option["name"]} does not match regex: #{regex.to_s} (#{user_option["value"]})!"
               @task_log.error "FATAL! No task processing since regex didn't match option!"
-              return
+              return nil
             end
 
             ###
@@ -287,6 +297,7 @@ class BaseTask
             else
               # throw an error, we likely have a string we don't know how to cast
               @task_log.error "FATAL! Don't know how to handle this option when it's given to us as a string."
+              return nil
             end
 
             # hurray, we can accept this value
@@ -294,19 +305,17 @@ class BaseTask
             @user_options << { allowed_option[:name] => user_option["value"] }
           end
         end
-      end
 
-      @task_log.log "user_options: #{@user_options}"
+      end
+      @task_log.log "Task configured with the following options: #{@user_options}"
+
+    else
+      @task_log.log "No User options"
+
 
     end
 
-    #
-    # Do a little logging. Do it for the kids.
-    #
-    @task_log.log "Task: #{@result[:task_name]}"
-    @task_log.log "Id: #{task_id}"
-    @task_log.log "Task entity: #{@entity}"
-    @task_log.log "Task options: #{@user_options.inspect}"
+  true
   end
 
   def run()
