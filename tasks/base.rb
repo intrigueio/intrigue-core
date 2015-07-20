@@ -166,7 +166,6 @@ class BaseTask
 =end
     end
 
-    @task_log.good "EOM"
 
     # Run Cleanup
     cleanup() unless broken_input

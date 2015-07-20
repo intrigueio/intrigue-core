@@ -305,7 +305,8 @@ namespace '/v1/?' do
 
     # Get the log
     log = $intrigue_redis.get("log:#{params[:id]}")
-    @task_log = log
+    reversed_log = log.split("\n").reverse.join("\n") if log
+    @task_log = reversed_log
 
     # Get the result from Redis
     result = $intrigue_redis.get("result:#{params[:id]}")
