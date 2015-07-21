@@ -93,7 +93,9 @@ Some cases to think through:
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)
     begin
-      if resolver.getaddress("noforkingway#{rand(100000)}.#{suffix}")
+      wildcard = resolver.getaddress("noforkingway#{rand(100000)}.#{suffix}")
+      if wildcard
+        _create_entity "IpAddress", :name => "#{wildcard}"
         wildcard_domain = true
         @task_log.error "WARNING! Wildcard domain detected, only saving validated domains/hosts."
       end
