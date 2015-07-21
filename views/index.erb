@@ -37,22 +37,30 @@
       </select>
       </div>
     </div>
-    <div class="form-group">
 
     <!-- Get all attributes and use this to create an entity -->
     <% attribs = {}; params.each{|k,v| attribs[k.gsub("attrib_","").to_sym] = v if (k =~/^attrib/ && v.length<100) } %>
     <% if params[:type] %>
       <%= EntityFactory.create_by_type(params[:type],attribs).form  %>
     <% else %>
-      Type: <input type="text" id="entity_type" name="entity_type" value="<%= h params[:type] || "String" %>">
-      Name: <input type="text" id="attrib_name" name="attrib_name" value="<%= h params[:attrib_name] || "intrigue.io" %>">
+      <div class="form-group">
+        <label for="entity_type" class="col-sm-2 control-label">Type</label>
+        <div class="col-sm-4">
+          <input type="text" id="entity_type" name="entity_type" value="<%= h params[:type] || "String" %>">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="attrib_name" class="col-sm-2 control-label">Name</label>
+        <div class="col-sm-4">
+          <input type="text" id="attrib_name" name="attrib_name" value="<%= h params[:attrib_name] || "intrigue.io" %>">
+        </div>
+      </div>
     <% end %>
 
     Options:
     <div id="options"></div>
 
     <input type="submit" value="Run Task">
-    </div>
   </form>
   </div>
   <div id="metadata" class="col-md-6"></div>
