@@ -31,20 +31,20 @@
         </option>
 
     <% end %>
-    </select><br/>
+    </select>
 
     <!-- Get all attributes and use this to create an entity -->
     <% attribs = {}; params.each{|k,v| attribs[k.gsub("attrib_","").to_sym] = v if (k =~/^attrib/ && v.length<100) } %>
     <% if params[:type] %>
       <%= EntityFactory.create_by_type(params[:type],attribs).form  %>
     <% else %>
-      Type: <input type="text" id="entity_type" name="entity_type" value="<%= h params[:type] || "String" %>"><br/>
-      Name: <input type="text" id="attrib_name" name="attrib_name" value="<%= h params[:attrib_name] || "intrigue.io" %>"><br/>
+      Type: <input type="text" id="entity_type" name="entity_type" value="<%= h params[:type] || "String" %>">
+      Name: <input type="text" id="attrib_name" name="attrib_name" value="<%= h params[:attrib_name] || "intrigue.io" %>">
     <% end %>
 
-    Options:<br/>
+    Options:
     <div id="options"></div>
-    <br/>
+
     <input type="submit" value="Run Task">
   </form>
   </div>
