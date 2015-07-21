@@ -49,7 +49,6 @@ class DnsBruteSrvTask < BaseTask
     brute_list = _get_option "brute_list"
     brute_list = brute_list.split(",") if brute_list.kind_of? String
 
-
     @task_log.good "Using srv list: #{brute_list}"
 
     brute_list.each do |srv_name|
