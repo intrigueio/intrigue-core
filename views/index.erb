@@ -8,7 +8,7 @@
     <div class="form-group">
       <!-- <select name="task" id="task_name"> -->
       <label for="task_name" class="col-sm-2 control-label">Task</label>
-      <div class="col-sm-4">
+      <div class="col-sm-6">
       <select class="form-control" name="task" id="task_name" onchange="get_task_data();">
 
         <% @task_names.each do |task_name| %>
@@ -45,13 +45,13 @@
     <% else %>
       <div class="form-group">
         <label for="entity_type" class="col-sm-2 control-label">Type</label>
-        <div class="col-sm-4">
+        <div class="col-sm-6">
           <input type="text" id="entity_type" name="entity_type" value="<%= h params[:type] || "String" %>">
         </div>
       </div>
       <div class="form-group">
         <label for="attrib_name" class="col-sm-2 control-label">Name</label>
-        <div class="col-sm-4">
+        <div class="col-sm-6">
           <input type="text" id="attrib_name" name="attrib_name" value="<%= h params[:attrib_name] || "intrigue.io" %>">
         </div>
       </div>
