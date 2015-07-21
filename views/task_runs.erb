@@ -4,4 +4,3 @@ Task Runs:
 <%= "<li><a href=\'/v1/task_runs/#{x["id"]}\'> #{x["task_name"]} on #{ h x["entity"]["attributes"]["name"]} (#{x["entities"].count})</a></li>" %>
 </ul>
 <% end %>
-<%= erb :_footer, :layout => false %>
