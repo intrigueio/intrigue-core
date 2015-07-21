@@ -41,7 +41,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
         # Collect the host
         host = URI(link).host
 
-        _create_entity "Uri", :name => link
+        _create_entity "Uri", :name => link, :uri => link
         _create_entity "DnsRecord", :name => host
 
         # Add to both arrays, so we can keep track of the original set, and a resolved set

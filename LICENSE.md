@@ -1,9 +1,3 @@
-#
-# Intrigue-core is provided under the BSD license provided below
-#
-# Last updated: 2015-07-13
-#
-
 Copyright (c) 2015, Pentestify, LLC
 All rights reserved.
 

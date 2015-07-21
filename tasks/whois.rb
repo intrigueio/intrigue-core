@@ -18,7 +18,8 @@ class WhoisTask < BaseTask
         {:type => "DnsRecord", :attributes => {:name => "intrigue.io"}},
         {:type => "IpAddress", :attributes => {:name => "192.0.78.13"}},
       ],
-      :allowed_options => [{:name => "timeout", :type => "Integer", :default => 20, :regex=> nil }],
+      :allowed_options => [
+        {:name => "timeout", :type => "Integer", :regex=> "integer", :default => 20 }],
       :created_types => ["DnsRecord","DnsServer","IpAddress"]
     }
   end

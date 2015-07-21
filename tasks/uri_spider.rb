@@ -18,9 +18,9 @@ class UriSpiderTask < BaseTask
           :name => "http://www.intrigue.io" }}
       ],
       :allowed_options => [
-        {:name => "depth_limit", :type => "Integer", :regex => "Integer", :default => 2 },
-        {:name => "obey_robots", :type => "Boolean", :regex => "(true|false)", :default => false },
-        {:name => "create_urls", :type => "Boolean", :regex => "(true|false)", :default => false },
+        {:name => "depth_limit", :type => "Integer", :regex => "integer", :default => 2 },
+        {:name => "obey_robots", :type => "Boolean", :regex => "boolean", :default => false },
+        {:name => "create_urls", :type => "Boolean", :regex => "boolean", :default => false },
       ],
       :created_types =>  ["DnsRecord", "EmailAddress", "File", "Info", "Person", "PhoneNumber" "SoftwarePackage"]
     }

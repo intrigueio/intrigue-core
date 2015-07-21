@@ -12,7 +12,7 @@ Sudo is used to allow root access for certain commands ^ , so make sure this doe
 your-username ALL = NOPASSWD: /usr/bin/masscan, /usr/sbin/zmap, /usr/bin/nmap
 ```
 
-### To start the API and background task processing:
+### To start the Web interface and background task processing:
 
 Make sure you have redis installed and running. (Use Homebrew if you're on OSX).
 
@@ -137,11 +137,12 @@ $ irb
 > id  = x.start "example", entity_hash, options_list
 > puts x.get_log id
 > puts x.get_result id
-``
+```
 
 ### API usage via curl:
 
 You can use the tried and true curl utility to request a task run. Specify the task type, specify an entity, and the appropriate options:
+
 ```
 $ curl -s -X POST -H "Content-Type: application/json" -d '{ "task": "example", "entity": { "type": "String", "attributes": { "name": "8.8.8.8" } }, "options": {} }' http://127.0.0.1:7777/v1/task_runs
-``
+```

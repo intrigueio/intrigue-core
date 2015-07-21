@@ -10,7 +10,7 @@ class DnsBruteSubTask < BaseTask
       :authors => ["jcran"],
       :description => "DNS Subdomain Bruteforce",
       :references => [],
-      :allowed_types => ["DnsRecord"],
+      :allowed_types => ["DnsRecord","String"],
       :example_entities =>   [{:type => "DnsRecord", :attributes => {:name => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
@@ -24,8 +24,7 @@ class DnsBruteSubTask < BaseTask
         {:name => "use_mashed_domains", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "use_permutations", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
-        {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_sub.list" },
-
+        {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_sub.list" }
       ],
       :created_types => ["DnsRecord","IpAddress"]
     }
@@ -94,7 +93,9 @@ Some cases to think through:
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)
     begin
-      if resolver.getaddress("noforkingway#{rand(100000)}.#{suffix}")
+      wildcard = resolver.getaddress("noforkingway#{rand(100000)}.#{suffix}")
+      if wildcard
+        _create_entity "IpAddress", :name => "#{wildcard}"
         wildcard_domain = true
         @task_log.error "WARNING! Wildcard domain detected, only saving validated domains/hosts."
       end
