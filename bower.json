@@ -1,0 +1,10 @@
+{
+  "name": "intrigue-core",
+  "version": "0.0.0",
+  "homepage": "https://github.com/intrigueio/intrigue-core",
+  "dependencies": {
+    "highlightjs": "~8.6.0",
+    "jquery": "~2.1.4",
+    "bootstrap": "~3.3.5"
+  }
+}
