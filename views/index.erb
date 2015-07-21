@@ -77,7 +77,7 @@
         if (typeof location.origin === 'undefined')
           location.origin = location.protocol + '//' + location.host;
 
-        url = location.origin.concat("/v1/tasks.json");
+        var url = location.origin.concat("/v1/tasks.json");
         //alert("uri: " + url)
 
         var xmlhttp = new XMLHttpRequest();
