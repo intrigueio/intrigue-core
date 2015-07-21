@@ -4,34 +4,40 @@
   <h4>Processed: <%= @processed %></h4>
   <h4>Queues: <%= @queues.inspect %></h4>
 
-  <form target="_self" method="post" action="/v1/interactive">
-    <!-- <select name="task" id="task_name"> -->
-    Task: <select name="task" id="task_name" onchange="get_task_data();">
+  <form class="form-horizontal" target="_self" method="post" action="/v1/interactive">
+    <div class="form-group">
+      <!-- <select name="task" id="task_name"> -->
+      <label for="task_name" class="col-sm-2 control-label">Task</label>
+      <div class="col-sm-10">
+      <select class="form-control" name="task" id="task_name" onchange="get_task_data();">
 
-      <% @task_names.each do |task_name| %>
-        <%
-          # Create the task
-          task = TaskFactory.create_by_pretty_name(task_name)
+        <% @task_names.each do |task_name| %>
+          <%
+            # Create the task
+            task = TaskFactory.create_by_pretty_name(task_name)
 
-          # Check that the supplied type is allowed
-          if params[:type]
-            # Skip to the next task unless the current type is allowed
-            next unless (task.metadata[:allowed_types].include?(params[:type]) ||
-                          task.metadata[:allowed_types].include?("*") )
-          end
-        %>
-        <!-- set up the task in an option box, default to search_bing -->
-        <option value="<%= task.metadata[:name] %>"
-          <% if params[:task_name] %>
-            <%= "selected='selected'" if params[:task_name] == task.metadata[:name] %>
-          <% else %>
-            <%= "selected='selected'" if task.metadata[:name] == "search_bing" %>
-          <% end %>
-          ><%= task_name %>
-        </option>
+            # Check that the supplied type is allowed
+            if params[:type]
+              # Skip to the next task unless the current type is allowed
+              next unless (task.metadata[:allowed_types].include?(params[:type]) ||
+                            task.metadata[:allowed_types].include?("*") )
+            end
+          %>
+          <!-- set up the task in an option box, default to search_bing -->
+          <option value="<%= task.metadata[:name] %>"
+            <% if params[:task_name] %>
+              <%= "selected='selected'" if params[:task_name] == task.metadata[:name] %>
+            <% else %>
+              <%= "selected='selected'" if task.metadata[:name] == "search_bing" %>
+            <% end %>
+            ><%= task_name %>
+          </option>
 
-    <% end %>
-    </select>
+      <% end %>
+      </select>
+      </div>
+    </div>
+    <div class="form-group">
 
     <!-- Get all attributes and use this to create an entity -->
     <% attribs = {}; params.each{|k,v| attribs[k.gsub("attrib_","").to_sym] = v if (k =~/^attrib/ && v.length<100) } %>
@@ -46,6 +52,7 @@
     <div id="options"></div>
 
     <input type="submit" value="Run Task">
+    </div>
   </form>
   </div>
   <div id="metadata" class="col-md-6"></div>
