@@ -68,6 +68,9 @@
 </style>
 </head>
 <body>
+
+<%= erb :_footer, :layout => false %>
+
 <div class="container-fluid">
 <div class="row">
   <%= yield %>
@@ -75,7 +78,6 @@
 
 <!-- <div class="navbar navbar-fixed-top"></div> -->
 
-<%= erb :_footer, :layout => false %>
 </div>
 </body>
 </html>
