@@ -12,7 +12,7 @@ Sudo is used to allow root access for certain commands ^ , so make sure this doe
 your-username ALL = NOPASSWD: /usr/bin/masscan, /usr/sbin/zmap, /usr/bin/nmap
 ```
 
-### To start the API and background task processing:
+### To start the Web interface and background task processing:
 
 Make sure you have redis installed and running. (Use Homebrew if you're on OSX).
 
