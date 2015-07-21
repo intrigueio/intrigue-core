@@ -57,6 +57,8 @@ class DnsBruteSrvTask < BaseTask
         # Calculate the domain name
         brute_name = "#{srv_name}.#{domain_name}"
 
+        @task_log.log "Checking #{brute_name}"
+
         # Try to resolve
         @resolver.getresources(brute_name, Resolv::DNS::Resource::IN::SRV).collect do |rec|
 
@@ -87,7 +89,6 @@ class DnsBruteSrvTask < BaseTask
               :port_num => port,
               :ip_address => "#{host}"
             })
-
           end
 
         end
