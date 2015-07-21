@@ -10,7 +10,7 @@ class DnsBruteSubTask < BaseTask
       :authors => ["jcran"],
       :description => "DNS Subdomain Bruteforce",
       :references => [],
-      :allowed_types => ["DnsRecord"],
+      :allowed_types => ["DnsRecord","String"],
       :example_entities =>   [{:type => "DnsRecord", :attributes => {:name => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },

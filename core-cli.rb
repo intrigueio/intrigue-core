@@ -3,20 +3,17 @@
 require 'thor'
 require 'json'
 require 'rest-client'
-
-#DEBUG
-require 'pry'
 require_relative 'core'
+
+require 'pry' #DEBUG
+
 
 class IntrigueCli < Thor
 
   def initialize(*args)
     super
-
     $intrigue_basedir = File.dirname(__FILE__)
-
     @server_uri = "http://127.0.0.1:7777/v1"
-
     @delim = "#"
   end
 
