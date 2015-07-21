@@ -7,8 +7,8 @@
   <form class="form-horizontal" target="_self" method="post" action="/v1/interactive">
     <div class="form-group">
       <!-- <select name="task" id="task_name"> -->
-      <label for="task_name" class="col-sm-2 control-label">Task</label>
-      <div class="col-sm-6">
+      <label for="task_name" class="col-xs-2 control-label">Task</label>
+      <div class="col-xs-6">
       <select class="form-control input-sm" name="task" id="task_name" onchange="get_task_data();">
 
         <% @task_names.each do |task_name| %>
@@ -44,14 +44,14 @@
       <%= EntityFactory.create_by_type(params[:type],attribs).form  %>
     <% else %>
       <div class="form-group">
-        <label for="entity_type" class="col-sm-2 control-label">Type</label>
-        <div class="col-sm-6">
+        <label for="entity_type" class="col-xs-2 control-label">Type</label>
+        <div class="col-xs-6">
           <input type="text" class="form-control input-sm" id="entity_type" name="entity_type" value="<%= h params[:type] || "String" %>">
         </div>
       </div>
       <div class="form-group">
-        <label for="attrib_name" class="col-sm-2 control-label">Name</label>
-        <div class="col-sm-6">
+        <label for="attrib_name" class="col-xs-2 control-label">Name</label>
+        <div class="col-xs-6">
           <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name" value="<%= h params[:attrib_name] || "intrigue.io" %>">
         </div>
       </div>
