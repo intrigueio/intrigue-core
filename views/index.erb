@@ -104,13 +104,30 @@
         // add the newly created element and its content into the DOM
         //alert(options)
         //document.getElementById("options").innerHTML = "";
-        $( "#options" ).empty();
 
-        var arrayLength = options.length;
         var option_html = "";
-        for (var i = 0; i < arrayLength; i++) {
-          option_html = option_html + options[i]['name'] + ": <input name=option_" + options[i]['name'] + " value="+ options[i]["default"] +"></input><br/>";
-        }
+        $( "#options" ).empty();
+        window.obj = options
+
+        $.each(options, function(index, value) {
+          option_html += [
+            '<div class="form-group">',
+              '<label class="col-xs-2 control-label" for="' + value.name + '">',
+                value.name,
+              '</label>',
+              '<div class="col-xs-8">',
+              '<input id="' + value.name + '" class="form-control input-sm" type="text" value="'
+              + value.default + '" name="option_"' + value.name + '></input>',
+              '</div>',
+            '</div>'
+          ].join('');
+        });
+
+        // var arrayLength = options.length;
+        // var option_html = "";
+        // for (var i = 0; i < arrayLength; i++) {
+        //   option_html = option_html + options[i]['name'] + ": <input name=option_" + options[i]['name'] + " value="+ options[i]["default"] +"></input><br/>";
+        // }
         // set the html
         $( "#options" ).html( option_html );
       }
