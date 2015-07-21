@@ -118,13 +118,23 @@
                 //}
               }
 
-            document.getElementById("metadata").innerHTML = "<pre>" + JSON.stringify(task_hash[i],null, 2);  + "</pre>";
+            document.getElementById("metadata").innerHTML = "<pre><code class='json'>" + JSON.stringify(task_hash[i],null, 2);  + "</code></pre>";
             set_options(task_hash[i]["allowed_options"]);
             //alert(JSON.stringify(task_hash[i]));
           }
           //alert(task_hash[i]["name"] + " " + document.forms[0]["task_name"].value)
         }
         //alert("out: " + out)
+        highlightCode();
+      }
+
+      // Initialize highlight.js syntax highlighting
+      function highlightCode() {
+        $(document).ready(function() {
+          $('pre code').each(function(i, block) {
+            hljs.highlightBlock(block);
+          });
+        });
       }
   </script>
 
