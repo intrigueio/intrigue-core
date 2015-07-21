@@ -36,6 +36,13 @@
       .alignrightcontents {
       text-align: right !important;
     }
+
+    .footer {
+      position: absolute;
+      bottom: 0;
+      height: 60px;
+    }
+
     body
     {
       background-image:url('/img/billie_holiday.png');
@@ -61,6 +68,7 @@
 
 <!-- <div class="navbar navbar-fixed-top"></div> -->
 
+<%= erb :_footer, :layout => false %>
 </div>
 </body>
 </html>
