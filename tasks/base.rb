@@ -249,7 +249,7 @@ class BaseTask
               regex = /^[a-zA-Z0-9_]*$/
             elsif allowed_option[:regex] == "alpha_numeric_list"
               @task_log.log "Regex should match an alpha-numeric list"
-              regex = /^[a-zA-Z0-9_,?]*$/
+              regex = /^[a-zA-Z0-9_,?.]*$/
             elsif allowed_option[:regex] == "filename"
               @task_log.log "Regex should match a filename"
               regex = /(?:\..*(?!\/))+/
