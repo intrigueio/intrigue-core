@@ -93,22 +93,8 @@
       }
 
       function set_options(options){
-
-        //alert(options[0]["name"])
-        // alert(document.getElementById("options"));
-        // create a new div element
-        // and give it some content
-        //var newDiv = document.createElement("input");
-        //var newContent = document.createTextNode("Options go here!");
-        //newDiv.appendChild(newContent); //add the text node to the newly created div.
-
-        // add the newly created element and its content into the DOM
-        //alert(options)
-        //document.getElementById("options").innerHTML = "";
-
         var option_html = "";
         $( "#options" ).empty();
-        window.obj = options
 
         $.each(options, function(index, value) {
           option_html += [
@@ -123,12 +109,6 @@
             '</div>'
           ].join('');
         });
-
-        // var arrayLength = options.length;
-        // var option_html = "";
-        // for (var i = 0; i < arrayLength; i++) {
-        //   option_html = option_html + options[i]['name'] + ": <input name=option_" + options[i]['name'] + " value="+ options[i]["default"] +"></input><br/>";
-        // }
         // set the html
         $( "#options" ).html( option_html );
       }
