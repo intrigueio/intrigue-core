@@ -3,7 +3,7 @@
 <form action="/v1/config/save" method="post">
 <table>
 <% $intrigue_config.each do |k,v| %>
-  <tr><td><%= k %>:</td><td><input type="text" name="<%=k%>" value="<%=v%>"></td></tr>
+  <tr><td><%= k %>:</td><td><input class="form-control" type="text" name="<%=k%>" value="<%=v%>"></td></tr>
   <% end %>
 <tr><td><input type="submit"></td><td></td></tr>
 </table>
