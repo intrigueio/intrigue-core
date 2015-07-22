@@ -25,10 +25,20 @@ class Base
   end
 
   def form
-    output = ""
-    output << "Type: <input type=\"text\" id=\"entity_type\" name=\"entity_type\" value=\"#{ _escape_html metadata[:type]}\"><br/>"
-    output << "Name: <input type=\"text\" id=\"attrib_name\" name=\"attrib_name\" value=\"#{ _escape_html @attributes[:name]}\"><br/>"
-  output
+    %{
+    <div class="form-group">
+      <label for="entity_type" class="col-xs-4 control-label">Type</label>
+      <div class="col-xs-6">
+        <input type="text" class="form-control input-sm" id="entity_type" name="entity_type" value="#{metadata[:type]}">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="attrib_name" class="col-xs-4 control-label">Name</label>
+      <div class="col-xs-6">
+        <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name" value="#{_escape_html @attributes[:name]}">
+      </div>
+    </div>
+  }
   end
 
   # override this method
