@@ -23,15 +23,18 @@
           '<label class="col-xs-4 control-label" for="' + value.name + '">',
             value.name,
           '</label>',
-          '<div class="col-xs-8">',
+          '<div class="col-xs-6">',
           '<input id="' + value.name + '" class="form-control input-sm" type="text" value="'
           + value.default + '" name="option_"' + value.name + '></input>',
           '</div>',
         '</div>'
       ].join('');
     });
-    // set the html
-    $( "#options" ).html( option_html );
+
+    // Only show 'Option' fields if applicable
+    if (option_html) {
+      $( "#options" ).html("<h4>Options:</h4>" + option_html);
+    }
   }
 
   /* -------------------------------------------------------------------------- */
