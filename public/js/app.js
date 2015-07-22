@@ -33,7 +33,7 @@
 
     // Only show 'Option' fields if applicable
     if (option_html) {
-      $( "#options" ).html("<h4>Options:</h4>" + option_html);
+      $( "#options" ).html(option_html);
     }
   }
 
