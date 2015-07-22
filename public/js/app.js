@@ -20,7 +20,7 @@
     $.each(options, function(index, value) {
       option_html += [
         '<div class="form-group">',
-          '<label class="col-xs-2 control-label" for="' + value.name + '">',
+          '<label class="col-xs-4 control-label" for="' + value.name + '">',
             value.name,
           '</label>',
           '<div class="col-xs-8">',
