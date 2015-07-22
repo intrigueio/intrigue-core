@@ -3,7 +3,7 @@
 <p>Start: <%=@task_run['timestamp_start']%> </p>
 <p>End: <%=@task_run['timestamp_end']%> </p>
 <p>Elapsed (s): <%= @elapsed_time %> </p>
-<p>Entity: <%= h "#{@task_run['entity']['ty pe']} #{@task_run['entity']['attributes']['name']}"%> </p>
+<p>Entity: <%= h "#{@task_run['entity']['type']} #{@task_run['entity']['attributes']['name']}"%> </p>
 <p>New Entities:
 <ul>
   <% @task_run['entities'].each do |entity| %>
