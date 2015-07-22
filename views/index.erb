@@ -10,7 +10,7 @@
       <!-- <select name="task" id="task_name"> -->
       <label for="task_name" class="col-xs-2 control-label">Task</label>
       <div class="col-xs-8">
-      <select class="form-control input-sm" name="task" id="task_name" onchange="get_task_data();">
+      <select class="form-control input-sm" name="task" id="task_name">
 
         <% @task_names.each do |task_name| %>
           <%
@@ -68,77 +68,7 @@
   <div id="metadata" class="col-sm-8"></div>
 </div>
 
-  <script type="text/javascript">
-      function get_task_data(){
-        // http://stackoverflow.com/questions/1420881/how-to-extract-base-url-from-a-string-in-javascript
-        if (typeof location.origin === 'undefined') {
-          location.origin = location.protocol + '//' + location.host;
-        }
-        $.getJSON(location.origin + "/v1/tasks.json", function(data) {
-          parse_tasks(data);
-        });
-      }
-
-      function set_options(options){
-        var option_html = "";
-        $( "#options" ).empty();
-
-        $.each(options, function(index, value) {
-          option_html += [
-            '<div class="form-group">',
-              '<label class="col-xs-2 control-label" for="' + value.name + '">',
-                value.name,
-              '</label>',
-              '<div class="col-xs-8">',
-              '<input id="' + value.name + '" class="form-control input-sm" type="text" value="'
-              + value.default + '" name="option_"' + value.name + '></input>',
-              '</div>',
-            '</div>'
-          ].join('');
-        });
-        // set the html
-        $( "#options" ).html( option_html );
-      }
-
-      function parse_tasks(task_hash){
-        var task_count = task_hash.length;
-
-        // go through the hash
-        for (var i = 0; i < task_count; i++) {
-
-          // configure the form
-          if(task_hash[i]["name"] == document.forms[0]["task_name"].value){
-
-              // get values, so we can check if they exist
-              var entity_type=document.forms[0]["entity_type"].value;
-              var entity_name=document.forms[0]["attrib_name"].value;
-
-              if (! location.search.split('type=')[1]){ // if we don't have a set type
-                //if (entity_type==null || entity_type=="", entity_name==null || entity_name==""){ // and the form isn't filled
-                  document.forms[0]["entity_type"].value = task_hash[i]["example_entities"][0]["type"];
-                  document.forms[0]["attrib_name"].value = task_hash[i]["example_entities"][0]["attributes"]["name"];
-                //}
-              }
-
-            document.getElementById("metadata").innerHTML = "<pre><code class='json'>" + JSON.stringify(task_hash[i],null, 2);  + "</code></pre>";
-            set_options(task_hash[i]["allowed_options"]);
-            //alert(JSON.stringify(task_hash[i]));
-          }
-          //alert(task_hash[i]["name"] + " " + document.forms[0]["task_name"].value)
-        }
-        //alert("out: " + out)
-        highlightCode();
-      }
-
-      // Initialize highlight.js syntax highlighting
-      function highlightCode() {
-        $(document).ready(function() {
-          $('pre code').each(function(i, block) {
-            hljs.highlightBlock(block);
-          });
-        });
-      }
-  </script>
+<script src="/js/app.js"></script>
 
 <!--
 Available Task Details:
