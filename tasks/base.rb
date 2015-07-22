@@ -7,7 +7,7 @@ class BaseTask
     TaskFactory.register(base)
   end
 
-  def perform(task_id, entity, options={}, handler_type, hook_uri )
+  def perform(task_id, entity, options=[], handler_type, hook_uri )
 
     # We need a way to skip the actual setup,run,cleanup of the task if
     # the caller gave us broken input. We still want to get a result
@@ -60,18 +60,18 @@ class BaseTask
       # @entity - the entity we're operating on
       # @user_options - a hash of task options
       # @result - the final result to be passed back to the caller
-      @task_log.log "Calling Setup()"
+      @task_log.log "Calling Setup"
       if setup(task_id, entity, options)
         # Call run(), which will use _create_entity
         # to fill out the @result[:entities] array
         begin
           Timeout.timeout($intrigue_global_timeout) do # 15 minutes should be enough time to hit a class b for a single port w/ masscan
-            @task_log.log "Calling Run()"
+            @task_log.log "Calling Run"
             run # run the tas
             @result[:entities].uniq! # Clean up the resulting entities
           end
         rescue Timeout::Error
-          @task_log.error "FATAL: Timed out"
+          @task_log.error "ERROR! Timed out"
         end
 
       else
@@ -113,7 +113,10 @@ class BaseTask
     ###
     if handler_type == "webhook"
 
-      raise "Webhook URI not specified" unless hook_uri
+      unless hook_uri
+        @tasklog.error "FATAL! Webhook URI not specified"
+        return
+      end
 
       begin
         #
@@ -125,18 +128,18 @@ class BaseTask
 
       rescue Encoding::UndefinedConversionError
         # < task log has already been shipped so this won't show in the task log, only overall logs
-        @task_log.error "ERROR!! Encoding error when converting #{@result} to JSON"
+        @task_log.error "ERROR! Encoding error when converting #{@result} to JSON"
         @task_log.error "Error Character: #{$!.error_char.dump}"
         @task_log.error "Error Character Encoding: #{$!.error_char.encoding}"
 
       rescue JSON::GeneratorError => e
         # < task log has already been shipped so this won't show in the task log, only overall logs
-        @task_log.error "ERROR!!! Unable to post results to #{hook_uri}"
+        @task_log.error "ERROR! Unable to post results to #{hook_uri}"
         @task_log.error  "#{e.class}: #{e}"
 
       rescue Exception => e
         # < task log has already been shipped so this won't show in the task log, only overall logs
-        @task_log.error "ERROR!!! Unable to post results to #{hook_uri}"
+        @task_log.error "ERROR! Unable to post results to #{hook_uri}"
         @task_log.error  "#{e.class}: #{e}"
 
       end
@@ -159,6 +162,7 @@ class BaseTask
       f = File.open(filepath,"w+")
       f.write(JSON.pretty_generate(JSON.parse(@result.to_json)))
       f.close
+
 =begin
     elsif handler_type == "csv"
 
@@ -173,8 +177,8 @@ class BaseTask
 
       end
 =end
-    end
 
+    end
 
     # Run Cleanup
     @task_log.log "Calling cleanup()"
@@ -221,13 +225,17 @@ class BaseTask
       #@task_log.log "Got user options #{user_options}"
 
       # for each of the user-supplied options
-      user_options.each do |user_option|
+      user_options.each do |user_option| # should be an array of hashes
+
+        #@task_log.log "User option #{user_option}"
 
         # go through the allowed options
         allowed_options.each do |allowed_option|
 
+          #@task_log.log "Allowed option #{allowed_option}"
+
           # if we have a match
-          if user_option["name"] == allowed_option[:name]
+          if "#{user_option["name"]}" == "#{allowed_option[:name]}"
 
             #@task_log.log "Got allowed option: #{user_option["name"]}"
 
@@ -309,11 +317,9 @@ class BaseTask
 
       end
       @task_log.log "Task configured with the following options: #{@user_options}"
-
     else
       @task_log.log "No User options"
     end
-
   true
   end
 

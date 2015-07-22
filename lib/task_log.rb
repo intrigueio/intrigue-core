@@ -51,7 +51,7 @@ private
     @out.puts message
 
     # Write to STDOUT
-    #puts message
+    puts message
 
     # Write to Redis
     @redis.set @redis_key, @out.string
