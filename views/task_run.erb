@@ -1,4 +1,4 @@
-<h1>TaskRun: <a href="<%=@rerun_uri || nil%>"><%=@task_run['task_name']%></a> </h1>
+<h3>TaskRun: <a href="<%=@rerun_uri || nil%>"><%=@task_run['task_name']%></a> </h3>
 <p>ID: <%=@task_run['id']%> </p>
 <p>Start: <%=@task_run['timestamp_start']%> </p>
 <p>End: <%=@task_run['timestamp_end']%> </p>
@@ -20,5 +20,3 @@
 
 Log:
 <span class="like-pre-dark"><%= h @task_log %></span><br/>
-
-<%= erb :_footer, :layout => false %>
