@@ -2,7 +2,7 @@
 
 Intrigue-core is an API-first intelligence gathering framework for Internet reconnaissance and research.
 
-![ScreenShot](docs/home.png)
+![[https://raw.githubusercontent.com/intrigueio/intrigue-core/develop/doc/home.png|width=700px]]
 
 To get started, follow the instructions below!
 
