@@ -1,4 +1,12 @@
-### Setting up environment and external dependencies
+# Welcome, intrepid user!
+
+Intrigue-core is an API-first intelligence gathering framework for Internet reconnaissance and research.
+
+![ScreenShot](docs/home.png)
+
+To get started, follow the instructions below!
+
+### Setting up a development environment
 
 The following are presumed available and configured in your environment
  - redis
@@ -12,7 +20,7 @@ Sudo is used to allow root access for certain commands ^ , so make sure this doe
 your-username ALL = NOPASSWD: /usr/bin/masscan, /usr/sbin/zmap, /usr/bin/nmap
 ```
 
-### To start the Web interface and background task processing:
+### Starting up...
 
 Make sure you have redis installed and running. (Use Homebrew if you're on OSX).
 
@@ -28,7 +36,7 @@ $ foreman start
 
 Now, browse to the web interface.
 
-### Web Interface
+### Using the web interface
 
 To use the web interface, browse to http://127.0.0.1:7777
 
