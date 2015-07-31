@@ -3,7 +3,7 @@ class CheckGithub  < BaseTask
   include Task::Web
 
   def metadata
-    { :version => "1.0",
+    {
       :name => "check_github",
       :pretty_name => "Check Github",
       :authors => ["jcran"],

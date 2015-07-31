@@ -5,10 +5,10 @@ class UriGatherAndAnalyzeLinks  < BaseTask
   include Task::Web
 
   def metadata
-    { :version => "1.0",
+    {
       :name => "uri_gather_and_analyze_links",
       :pretty_name => "URI Gather And Analyze Links",
-      :authors => ["dan geer","jcran"],
+      :authors => ["dan_geer","jcran"],
       :description => "This task parses the main page and performs analysis on links.",
       :references => [],
       :allowed_types => ["Uri"],

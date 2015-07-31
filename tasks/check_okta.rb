@@ -3,7 +3,7 @@ class CheckOkta  < BaseTask
   include Task::Web
 
   def metadata
-    { :version => "1.0",
+    {
       :name => "check_okta",
       :pretty_name => "Check Okta",
       :authors => ["jcran"],

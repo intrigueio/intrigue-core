@@ -1,7 +1,7 @@
 class ExampleTask < BaseTask
 
   def metadata
-    { :version => "1.0",
+    { 
       :name => "example",
       :pretty_name => "Example",
       :authors => ["jcran"],

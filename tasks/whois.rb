@@ -7,7 +7,7 @@ class WhoisTask < BaseTask
   include Task::Web
 
   def metadata
-    { :version => "1.0",
+    {
       :name => "whois",
       :pretty_name => "Whois",
       :authors => ["jcran"],

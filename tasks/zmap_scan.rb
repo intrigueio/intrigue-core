@@ -5,7 +5,7 @@
 class ZmapScanTask < BaseTask
 
   def metadata
-    { :version => "1.0",
+    {
       :name => "zmap_scan",
       :pretty_name => "Zmap Scan",
       :authors => ["jcran"],
@@ -33,12 +33,6 @@ class ZmapScanTask < BaseTask
 
     # shell out to nmap and run the scan
     @task_log.log "Scanning #{to_scan} and storing in #{temp_file}"
-
-    # Check to see if zmap is in the path, and raise an error if not
-    unless _unsafe_system("sudo zmap 2>&1") =~ /target port/
-      @task_log.error "Unable to find zmap"
-      return
-    end
 
     zmap_string = "sudo zmap -p #{port_num} -o #{temp_file} #{to_scan}"
     @task_log.log "Running... #{zmap_string}"
@@ -68,7 +62,14 @@ class ZmapScanTask < BaseTask
     rescue Errno::EPERM
       @task_log.error "Unable to delete file"
     end
+  end
 
+  def check_external_dependencies
+    # Check to see if zmap is in the path, and raise an error if not
+    unless _unsafe_system("sudo zmap 2>&1") =~ /target port/
+      return false
+    end
+  true
   end
 
 end

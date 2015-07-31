@@ -3,7 +3,7 @@ class WebAccountSearchTask < BaseTask
   include Task::Web
 
   def metadata
-    { :version => "1.0",
+    { 
       :name => "web_account_search",
       :pretty_name => "Web Account Search",
       :authors => ["jcran"],

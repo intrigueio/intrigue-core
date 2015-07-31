@@ -1,7 +1,7 @@
 class SearchBingTask < BaseTask
 
   def metadata
-    { :version => "1.0",
+    { 
       :name => "search_bing",
       :pretty_name => "Search Bing",
       :authors => ["jcran"],

@@ -8,7 +8,7 @@ class HostToAsNumberTask < BaseTask
   ###
 
   def metadata
-    { :version => "1.0",
+    { 
       :name => "ip_address_to_as_number",
       :pretty_name => "IP Address to AS Number",
       :authors => ["jcran"],

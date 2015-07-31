@@ -1,13 +1,13 @@
 class SearchPiplTask < BaseTask
 
   def metadata
-    { :version => "1.0",
+    { 
       :name => "search_pipl",
       :pretty_name => "Search Pipl",
       :authors => ["jcran"],
       :description => ".",
       :references => [],
-      :allowed_types => ["EmailAddress", "PhoneNumber", "String","Person", "WebAccount"],
+      :allowed_types => ["EmailAddress", "PhoneNumber", "String", "Person", "WebAccount"],
       :example_entities => [{:type => "String", :attributes => {:name => "intrigue"}}],
       :allowed_options => [],
       :created_types => ["WebAccount","Uri"]

@@ -3,7 +3,7 @@ require 'screencap'
 class UriScreenshot < BaseTask
 
   def metadata
-    { :version => "1.0",
+    { 
       :name => "uri_screenshot",
       :pretty_name => "URI Screenshot",
       :authors => ["jcran"],

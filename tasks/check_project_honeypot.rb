@@ -3,7 +3,7 @@ class CheckProjectHoneypot  < BaseTask
   include Task::Web
 
   def metadata
-    { :version => "1.0",
+    {
       :name => "check_project_honeypot",
       :pretty_name => "Check Project Honeypot",
       :authors => ["jcran"],

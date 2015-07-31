@@ -7,7 +7,7 @@ require 'socket'
 class NetsvcFuzzRandom < BaseTask
 
   def metadata
-    { :version => "1.0",
+    { 
       :name => "netsvc_fuzz_random",
       :pretty_name => "Fuzz a NetSvc with random data",
       :authors => ["jcran"],
@@ -41,7 +41,7 @@ class NetsvcFuzzRandom < BaseTask
     @task_log.log "Port: #{port}"
     @task_log.log "Protocol: #{protocol}"
     @task_log.log "IP Address: #{ip_address}"
-    
+
     # Check to make sure we have a sane target
     if protocol.downcase == "tcp"
       if ip_address and port

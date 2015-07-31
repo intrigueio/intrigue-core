@@ -3,7 +3,7 @@ require 'geoip'
 class GeolocateHostTask < BaseTask
 
   def metadata
-    { :version => "1.0",
+    { 
       :name => "geolocate_host",
       :pretty_name => "Geolocate Host",
       :authors => ["jcran"],

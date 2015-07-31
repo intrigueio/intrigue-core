@@ -22,7 +22,7 @@ require 'net/dns'
 class DnsSnoopCacheTask < BaseTask
 
   def metadata
-    { :version => "1.0",
+    { 
       :name => "dns_snoop_cache",
       :pretty_name => "DNS Cache Snoop",
       :authors => ["Felipe Molina (@felmoltor)", "jcran"],

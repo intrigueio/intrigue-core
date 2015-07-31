@@ -3,7 +3,7 @@ require 'resolv'
 class DnsBruteTldTask < BaseTask
 
   def metadata
-    { :version => "1.0",
+    {
       :name => "dns_brute_tld",
       :pretty_name => "DNS TLD Bruteforce",
       :authors => ["jcran"],

@@ -3,7 +3,7 @@ require 'resolv'
 class DnsBruteSrvTask < BaseTask
 
   def metadata
-    { :version => "1.0",
+    {
       :name => "dns_brute_srv",
       :pretty_name => "DNS Service Record Bruteforce",
       :authors => ["jcran"],

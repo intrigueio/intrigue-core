@@ -1,7 +1,7 @@
 class UriCheckSafebrowsingApi  < BaseTask
 
   def metadata
-    { :version => "1.0",
+    { 
       :name => "uri_check_safebrowsing_api",
       :pretty_name => "URI Check Safebrowsing Api",
       :authors => ["jcran"],

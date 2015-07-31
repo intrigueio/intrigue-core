@@ -3,7 +3,7 @@ class CheckConfluence  < BaseTask
   include Task::Web
 
   def metadata
-    { :version => "1.0",
+    {
       :name => "check_confluence",
       :pretty_name => "Check Confluence",
       :authors => ["jcran"],

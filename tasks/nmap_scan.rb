@@ -3,7 +3,7 @@ require 'nmap/parser'
 class NmapScanTask < BaseTask
 
   def metadata
-    { :version => "1.0",
+    {
       :name => "nmap_scan",
       :pretty_name => "Nmap Scan",
       :authors => ["jcran"],
@@ -31,15 +31,9 @@ class NmapScanTask < BaseTask
     # Create a tempfile to store results
     temp_file = "#{Dir::tmpdir}/nmap_scan_#{rand(100000000)}.xml"
 
-    # Check to see if nmap is in the path, and raise an error if not
-    return "Unable to find nmap" unless _unsafe_system("sudo nmap") =~ /http:\/\/nmap.org/
-
-
     # Check for IPv6
-    # XXX - SECURITY!
     nmap_options = ""
     nmap_options << "-6 " if to_scan =~ /:/
-    #nmap_options << "-p #{ports}" if ports
 
     # shell out to nmap and run the scan
     @task_log.log "Scanning #{to_scan} and storing in #{temp_file}"
@@ -106,7 +100,12 @@ class NmapScanTask < BaseTask
     rescue Errno::EPERM
       @task_log.error "Unable to delete file"
     end
+  end
 
+  def check_external_dependencies
+    # Check to see if nmap is in the path, and raise an error if not
+    return false unless _unsafe_system("sudo nmap") =~ /http:\/\/nmap.org/
+  true
   end
 
 end

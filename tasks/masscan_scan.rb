@@ -5,7 +5,7 @@
 class MasscanTask < BaseTask
 
   def metadata
-    { :version => "1.0",
+    {
       :name => "masscan_scan",
       :pretty_name => "Masscan Scan",
       :authors => ["jcran"],
@@ -31,12 +31,8 @@ class MasscanTask < BaseTask
     # Create a tempfile to store result
     temp_file = "#{Dir::tmpdir}/masscan_output_#{rand(100000000)}.tmp"
 
-    # shell out to nmap and run the scan
+    # shell out to masscan and run the scan
     @task_log.log "Scanning #{to_scan} and storing in #{temp_file}"
-
-    # Check to see if masscan is in the path, and raise an error if not
-    return "Unable to find masscan" unless _unsafe_system("sudo masscan") =~ /^usage/
-
     masscan_string = "sudo masscan -p #{port_num} -oL #{temp_file} #{to_scan}"
     @task_log.log "Running... #{masscan_string}"
     _unsafe_system(masscan_string)
@@ -58,8 +54,6 @@ class MasscanTask < BaseTask
       })
 
       _create_entity("Uri", {:name => "http://#{host}", :uri => "http://#{host}" })
-
-
     end
 
     # Clean up!
@@ -68,7 +62,13 @@ class MasscanTask < BaseTask
     rescue Errno::EPERM
       @task_log.error "Unable to delete file"
     end
-
   end
+
+  def check_external_dependencies
+    # Check to see if masscan is in the path, and raise an error if not
+    return false unless _unsafe_system("sudo masscan") =~ /^usage/
+  true
+  end
+
 
 end

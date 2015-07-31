@@ -3,7 +3,7 @@ class UriGatherHeadersTask  < BaseTask
   include Task::Web
 
   def metadata
-    { :version => "1.0",
+    { 
       :name => "uri_gather_headers",
       :pretty_name => "URI Gather Headers",
       :authors => ["jcran"],

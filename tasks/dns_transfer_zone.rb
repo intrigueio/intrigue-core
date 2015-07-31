@@ -4,7 +4,7 @@ require 'whois'
 class DnsTransferZoneTask < BaseTask
 
   def metadata
-    { :version => "1.0",
+    { 
       :name => "dns_transfer_zone",
       :pretty_name => "DNS Zone Transfer",
       :authors => ["jcran"],

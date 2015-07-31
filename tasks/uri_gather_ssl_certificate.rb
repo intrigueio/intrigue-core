@@ -6,7 +6,7 @@ class UriGatherSslCertTask  < BaseTask
   include Task::Web
 
   def metadata
-    { :version => "1.0",
+    {
       :name => "uri_gather_ssl_certificate",
       :pretty_name => "URI Gather SSL Certificate",
       :authors => ["jcran"],

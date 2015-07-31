@@ -3,7 +3,7 @@ class CheckOnelogin  < BaseTask
   include Task::Web
 
   def metadata
-    { :version => "1.0",
+    {
       :name => "check_onelogin",
       :pretty_name => "Check Onelogin",
       :authors => ["jcran"],

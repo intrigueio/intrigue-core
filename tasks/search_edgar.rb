@@ -1,7 +1,7 @@
 class SearchCorpwatchTask < BaseTask
 
   def metadata
-    { :version => "1.0",
+    { 
       :name => "search_edgar",
       :pretty_name => "Search EDGAR",
       :authors => ["jcran"],

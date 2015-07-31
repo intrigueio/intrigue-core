@@ -36,8 +36,8 @@
          "name" : "AudioBoom",
          "check_uri" : "http://audioboom.com/{account}",
          "response_code" : "200",
-         "account_existence_strings" : ["<title>audioBoom / "],
-         "account_missing_strings" : [],
+         "account_existence_strings" : ["Playlists"],
+         "account_missing_strings" : ["That page doesn't seem to exist"],
          "known_accounts" : ["intrigueio"],
          "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
          "tags" : ["videos"]
@@ -116,8 +116,8 @@
          "name" : "BLIP.fm",
          "check_uri" : "http://blip.fm/{account}",
          "response_code" : "200",
-         "account_existence_strings" : ["<title>Free Music | Listen to Music Online |"],
-         "account_missing_strings" : [],
+         "account_existence_strings" : ["Listen to free music played by"],
+         "account_missing_strings" : ["Sorry, but the page you are trying to view does not exist."],
          "known_accounts" : ["intrigueio"],
          "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
          "tags" : ["music"]
@@ -156,8 +156,8 @@
          "name" : "Break",
          "check_uri" : "http://www.break.com/user/{account}",
          "response_code" : "200",
-         "account_existence_strings" : [" | Break.com</title>"],
-         "account_missing_strings" : [],
+         "account_existence_strings" : ["--No uploads yet--"],
+         "account_missing_strings" : ["Must Watch Today"],
          "known_accounts" : ["intrigueio"],
          "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
          "tags" : ["videos"]
@@ -477,7 +477,7 @@
          "check_uri" : "http://www.fotolog.com/{account}/",
          "response_code" : "200",
          "account_existence_strings" : [" - Fotolog</title>"],
-         "account_missing_strings" : [],
+         "account_missing_strings" : ["THE REQUESTED PAGE COULD NOT BE FOUND"],
          "known_accounts" : ["intrigueio"],
          "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
          "tags" : ["images"]
@@ -547,7 +547,7 @@
          "check_uri" : "http://www.geekgrade.com/geeksheet/{account}/blogs",
          "response_code" : "200",
          "account_existence_strings" : ["- Geek Grade</title>"],
-         "account_missing_strings" : [],
+         "account_missing_strings" : ["We Cannot Seem To Find The Requested Geeksheet"],
          "known_accounts" : ["intrigueio"],
          "known_missing_accounts" : ["intrigueio-#{rand(1000000)}"],
          "tags" : ["social"]

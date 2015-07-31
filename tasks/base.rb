@@ -335,6 +335,11 @@ class BaseTask
   #
   #########################################################
 
+  # Override this method if the task has external dependencies
+  def check_external_dependencies
+    true
+  end
+
   private
 
     # Convenience Method to execute a system command semi-safely

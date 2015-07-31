@@ -3,7 +3,7 @@ require 'resolv'
 class DnsLookupForwardTask < BaseTask
 
   def metadata
-    { :version => "1.0",
+    {
       :name => "dns_lookup_forward",
       :pretty_name => "DNS Forward Lookup",
       :authors => ["jcran"],

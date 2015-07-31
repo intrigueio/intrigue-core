@@ -1,7 +1,7 @@
 class EmailHarvestTask < BaseTask
 
   def metadata
-    { :version => "1.0",
+    { 
       :name => "email_harvest",
       :pretty_name => "Email Harvester",
       :authors => ["jcran"],

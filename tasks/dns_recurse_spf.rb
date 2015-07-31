@@ -3,7 +3,7 @@ require 'dnsruby'
 class DnsRecurseSpf < BaseTask
 
   def metadata
-    { :version => "1.0",
+    {
       :name => "dns_recurse_spf",
       :pretty_name => "DNS SPF Recursive Lookup",
       :authors => ["@markstanislav","jcran"],

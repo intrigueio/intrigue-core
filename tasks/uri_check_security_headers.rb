@@ -3,7 +3,7 @@ class UriCheckSecurityHeaders  < BaseTask
   include Task::Web
 
   def metadata
-    { :version => "1.0",
+    { 
       :name => "uri_check_security_headers",
       :pretty_name => "URI Check Security Headers",
       :authors => ["jcran"],

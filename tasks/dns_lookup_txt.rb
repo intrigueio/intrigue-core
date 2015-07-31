@@ -3,7 +3,7 @@ require 'dnsruby'
 class DnsLookupTxtTask < BaseTask
 
   def metadata
-    { :version => "1.0",
+    {
       :name => "dns_lookup_txt",
       :pretty_name => "DNS TXT Lookup",
       :authors => ["jcran"],

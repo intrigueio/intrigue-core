@@ -3,7 +3,7 @@ class UriDirbuster  < BaseTask
   include Task::Web
 
   def metadata
-    { :version => "1.0",
+    { 
       :name => "uri_dirbuster",
       :pretty_name => "URI Dirbuster",
       :authors => ["jcran"],
@@ -49,7 +49,7 @@ class UriDirbuster  < BaseTask
 
     # Default to code
     missing_page_test = :code
-    
+
     # But select based on the response
     case response.code
       when "404"

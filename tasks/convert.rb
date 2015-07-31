@@ -1,7 +1,7 @@
 class Convert  < BaseTask
 
   def metadata
-    { :version => "1.0",
+    {
       :name => "convert_entity",
       :pretty_name => "Convert Entity",
       :authors => ["jcran"],

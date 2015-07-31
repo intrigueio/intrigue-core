@@ -3,7 +3,7 @@ require 'resolv'
 class DnsLookupMxTask < BaseTask
 
   def metadata
-    { :version => "1.0",
+    { 
       :name => "dns_lookup_mx",
       :pretty_name => "DNS MX Lookup",
       :authors => ["jcran"],

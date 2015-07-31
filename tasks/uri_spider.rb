@@ -6,7 +6,7 @@ class UriSpiderTask < BaseTask
   include Task::Parse
 
   def metadata
-    { :version => "1.0",
+    { 
       :name => "uri_spider",
       :pretty_name => "URI Spider",
       :authors => ["jcran"],

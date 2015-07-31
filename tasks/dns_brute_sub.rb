@@ -4,7 +4,6 @@ class DnsBruteSubTask < BaseTask
 
   def metadata
     {
-      :version => "1.0",
       :name => "dns_brute_sub",
       :pretty_name => "DNS Subdomain Bruteforce",
       :authors => ["jcran"],
