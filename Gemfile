@@ -1,16 +1,18 @@
 source 'https://rubygems.org'
 
 gem 'sinatra' # API
-gem 'sinatra-contrib'
+gem 'sinatra-contrib' 
 gem 'puma' # Application Server
 gem 'sidekiq' # Background Tasks
-gem 'foreman'
+gem 'foreman' # Process management
 gem 'redis' # Redis access
 gem 'iconv' # Encoding
 gem 'rest-client' # Web hooks
 gem 'rspec' # Testing
 gem 'rack-test' # Testing
 gem 'pry' # Debugging
+
+gem 'intrigue'          # Client for calling the API
 
 # Client::Search::*Scraper
 gem 'nokogiri'
@@ -26,6 +28,8 @@ gem 'shodan'            # search_shodan
 gem 'nmap-parser'       # nmap_scan
 gem 'screencap'         # phantom_js
 gem 'twitter'           # twitter_account_following, etc
+
+
 
 # CLI
 gem 'thor'

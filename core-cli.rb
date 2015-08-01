@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-
 require 'thor'
 require 'json'
 require 'rest-client'
@@ -7,8 +6,7 @@ require_relative 'core'
 
 require 'pry' #DEBUG
 
-
-class IntrigueCli < Thor
+class CoreCli < Thor
 
   def initialize(*args)
     super
@@ -170,7 +168,6 @@ private
       :type => entity_type,
       :attributes => { :name => entity_name}
     }
-
   entity_hash
   end
 
@@ -204,4 +201,4 @@ private
 
 end # end class
 
-IntrigueCli.start
+CoreCli.start

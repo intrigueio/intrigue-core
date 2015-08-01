@@ -1,13 +1,13 @@
-class WebAccountSearchTask < BaseTask
+class WebAccountBruteTask < BaseTask
 
   include Task::Web
 
   def metadata
-    { 
-      :name => "web_account_search",
-      :pretty_name => "Web Account Search",
+    {
+      :name => "web_account_brute",
+      :pretty_name => "Web Account Brute",
       :authors => ["jcran"],
-      :description => "This task searches for web accounts by username. Discovered accounts are created.",
+      :description => "This task hits major social sites, checking for accounts by username. Discovered accounts are created.",
       :references => [],
       :allowed_types => ["Username","WebAccount"],
       :example_entities => [{:type => "Username", :attributes => {:name => "jcran"}}],
