@@ -9,3 +9,4 @@ public/screenshots/
 results/
 tmp/.gitignore
 tmp/
+log/intrigue-sidekiq.log
