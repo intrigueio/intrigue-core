@@ -161,7 +161,7 @@ class BaseTask
     if handlers.include? "csv_file"
       csv_file = "#{$intrigue_basedir}/results/results.csv"
       @task_log.log "Writing to file: #{csv_file}"
-      File.open(csv_file, "w+") do |file|
+      File.open(csv_file, "a+") do |file|
         file.flock(File::LOCK_EX)
         # Create outstring
         outstring = "#{metadata[:name]},#{@result[:entity]["attributes"]["name"]},#{@result[:entities].map{|x| x[:type] + "#" + x[:attributes][:name] }.join(";")}\n"
