@@ -1,3 +1,4 @@
+require 'timeout'
 
 class BaseTask
   include Sidekiq::Worker
@@ -6,7 +7,7 @@ class BaseTask
     TaskFactory.register(base)
   end
 
-  def perform(task_id, entity, options=[], handler_type, hook_uri )
+  def perform(task_id, entity, options=[], handlers=["webhook"], hook_uri )
 
     # We need a way to skip the actual setup,run,cleanup of the task if
     # the caller gave us broken input. We still want to get a result
@@ -110,7 +111,7 @@ class BaseTask
     ###
     ### XXX - Send the results to a webhook
     ###
-    if handler_type == "webhook"
+    if handlers.include? "webhook"
 
       unless hook_uri
         @tasklog.error "FATAL! Webhook URI not specified"
@@ -142,40 +143,31 @@ class BaseTask
         @task_log.error  "#{e.class}: #{e}"
 
       end
+    end
 
-    ###
     ### XXX - Write the results to a file
-    ###
-    elsif handler_type == "file"
-
-      ###
+    if handlers.include? "json_file"
       ### THIS IS A HACK TO GENERATE A FILENAME ... think this through a bit more
-      ###
-
       shortname = "#{metadata[:name]}-#{_get_entity_attribute("name").gsub("/","")}"
-
-      filepath = "#{$intrigue_basedir}/results/#{shortname}.json"
-
-      @task_log.log "Writing to file: #{filepath}" # < task log has already been shipped so this won't show in the task log, only overall logs
-
-      f = File.open(filepath,"w+")
-      f.write(JSON.pretty_generate(JSON.parse(@result.to_json)))
-      f.close
-
-=begin
-    elsif handler_type == "csv"
-
-      File.open("#{$intrigue_basedir}/results/results.csv", File::RDWR) do |f|
+      # vvv task log has already been shipped so this won't show in the task log, only overall logs
+      @task_log.log "Writing to file: #{shortname}"
+      File.open("#{$intrigue_basedir}/results/#{shortname}.json", "w+") do |file|
         file.flock(File::LOCK_EX)
-
-        # Create outstring
-        outstring = "#{result[:task_name]},#{result[:entity]},#{result[:task_log]}"
-
-        # Write file here.
-        f.write(outstring)
-
+        # write it out
+        file.write(JSON.pretty_generate(JSON.parse(@result.to_json)))
       end
-=end
+    end
+
+    if handlers.include? "csv_file"
+      csv_file = "#{$intrigue_basedir}/results/results.csv"
+      @task_log.log "Writing to file: #{csv_file}"
+      File.open(csv_file, "w+") do |file|
+        file.flock(File::LOCK_EX)
+        # Create outstring
+        outstring = "#{metadata[:name]},#{@result[:entity]["attributes"]["name"]},#{@result[:entities].map{|x| x[:type] + "#" + x[:attributes][:name] }.join(";")}\n"
+        # write it out
+        file.puts(outstring)
+      end
 
     end
 

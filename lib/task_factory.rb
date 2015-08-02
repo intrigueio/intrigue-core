@@ -1,4 +1,3 @@
-require 'pry'
 ###
 ### Task factory: Standardize the creation and validation of tasks
 ###
@@ -6,7 +5,7 @@ class TaskFactory
 
   def self.register(klass)
     @tasks = [] unless @tasks
-    @tasks << klass if klass
+    @tasks << klass
   end
 
   def self.list
@@ -50,7 +49,8 @@ class TaskFactory
   private
 
   def self.available_tasks
-    @tasks.select{|x| x if x.new.check_external_dependencies }
+    #@available_tasks = @tasks.select{|x| x if x.new.check_external_dependencies } unless @available_tasks
+    @tasks
   end
 
 end

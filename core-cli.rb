@@ -128,10 +128,10 @@ class CoreCli < Thor
   ###
   ### XXX - rewrite this so it uses the API
   ###
-  desc "load [Task] [Filename] [Option1=Value1#...#...]", "Load entities from a file and run task"
-  def load(task_name,file,options=nil)
+  desc "load [Task] [File] [Option1=Value1#...#...]", "Load entities from a file and run task"
+  def load(task_name,filename,options=nil)
 
-    lines = File.open(file,"r").readlines
+    lines = File.open(filename,"r").readlines
 
     lines.each do |line|
       line.chomp!
@@ -147,11 +147,9 @@ class CoreCli < Thor
 
       task_id = SecureRandom.uuid
 
-      ###
       # XXX - Create the task
-      ###
       task = TaskFactory.create_by_name(task_name)
-      jid = task.class.perform_async task_id, entity, options, "file", nil
+      jid = task.class.perform_async task_id, entity, options, ["csv_file", "json_file"], nil
 
       puts "Created task #{task_id} for entity #{entity}"
     end

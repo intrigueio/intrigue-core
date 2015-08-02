@@ -110,7 +110,7 @@ def start_task_run(task_id, task_run_info)
   end
 
   # Sending untrusted input in, so make sure we sanity check!
-  jid = task.class.perform_async task_id, entity, task_options, "webhook", webhook_uri
+  jid = task.class.perform_async task_id, entity, task_options, ["webhook"], webhook_uri
 end
 
 
