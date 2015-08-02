@@ -1,4 +1,4 @@
-
+require 'timeout'
 
 class UriNomNomTask < BaseTask
 
@@ -30,18 +30,25 @@ class UriNomNomTask < BaseTask
     #api_uri = "http://localhost:9393/crawl"
     @task_log.log "API: #{api_uri}"
 
+    # XXX
+    @task_log.log "Calling API, waiting 90s for results."
     resource = RestClient::Resource.new api_uri,
-                                        :timeout => nil,
-                                        :open_timeout => nil
+                                        :timeout => 95,
+                                        :open_timeout => 95
 
-    @task_log.log "Calling API, waiting for results"
     response = resource.post({ "key" => "intrigue",
                                "uri" => uri,
                                "depth" => 2 })
 
     begin
+      # parse the results
       @task_log.log "Parsing results"
       result =  JSON.parse response
+
+      # Show the full task log
+      result["log"].split("\n").each { |line| @task_log.log "nomnom:  #{line}" }
+
+      @task_log.log "Creating entities"
       result["entities"].each {|e| _create_entity(e["type"], e["attributes"].symbolize_keys) }
     rescue JSON::ParserError
       @task_log.error "Something went horribly wrong server-side :("
