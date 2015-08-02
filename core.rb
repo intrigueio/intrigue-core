@@ -369,6 +369,9 @@ namespace '/v1/?' do
       f.write JSON.pretty_generate $intrigue_config
     end
 
+    # Re-read the config
+    $intrigue_config = JSON.parse File.read("#{$intrigue_basedir}/config/config.json")
+
     redirect '/'
   end
 
