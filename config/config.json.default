@@ -1,0 +1,80 @@
+{
+  "intrigue_engine_id" : {
+    "value" : "XXX",
+    "uri": "http://intrigue.io",
+    "editable" : "false",
+    "comment" : "Generated at startup"
+  },
+  "bing_api_key" : {
+    "value" : "XXX",
+    "editable" : "true",
+    "uri" : "https://datamarket.azure.com/dataset/bing/search",
+    "comment" : ""
+  },
+  "corpwatch_api_key" : {
+    "value" : "XXX",
+    "uri" : "http://api.corpwatch.org/register.php",
+    "editable" : "true",
+    "comment" : ""
+  },
+  "pipl_api_key" : {
+    "value" : "XXX",
+    "uri" : "http://dev.pipl.com/choosekey",
+    "editable" : "true",
+    "comment" : ""
+  },
+  "shodan_api_key" : {
+    "value" : "XXX",
+    "uri" : "https://account.shodan.io/login",
+    "editable" : "true",
+    "comment" : ""
+  },
+  "data_gov_api_key" : {
+    "value" : "XXX",
+    "uri" : "https://api.data.gov/signup/",
+    "editable" : "true",
+    "comment" : ""
+  },
+  "google_safebrowsing_lookup_key" : {
+    "value" : "XXX",
+    "uri" : "https://developers.google.com/safe-browsing/lookup_guide#GettingStarted",
+    "editable" : "true",
+    "comment" : ""
+  },
+  "twitter_consumer_key" : {
+    "value" : "XXX",
+    "uri" : "https://dev.twitter.com",
+    "editable" : "true",
+    "comment" : "XXX"
+  },
+  "twitter_consumer_secret" : {
+    "value" : "XXX",
+    "uri" : "https://dev.twitter.com",
+    "editable" : "true",
+    "comment" : "XXX"
+  },
+  "twitter_access_token" : {
+    "value" : "XXX",
+    "uri" : "https://dev.twitter.com",
+    "editable" : "true",
+    "comment" : "XXX"
+  },
+  "twitter_access_token_secret" : {
+    "value" : "XXX",
+    "uri" : "XXX",
+    "editable" : "true",
+    "comment" : "XXX"
+  },
+  "peoplegraph_api_key" : {
+    "value" : "XXX",
+    "uri" : "http://dev.peoplegraph.io/console",
+    "editable" : "true",
+    "comment" : "https://github.com/intrigueio/intrigue-core/issues/3"
+  },
+  "fullcontact_api_key" : {
+    "value" : "XXX",
+    "uri" : "https://www.fullcontact.com/developer",
+    "editable" : "true",
+    "comment" : "https://github.com/intrigueio/intrigue-core/issues/6"
+  }
+}
