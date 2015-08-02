@@ -3,7 +3,7 @@ class UriCheckSecurityHeaders  < BaseTask
   include Task::Web
 
   def metadata
-    { 
+    {
       :name => "uri_check_security_headers",
       :pretty_name => "URI Check Security Headers",
       :authors => ["jcran"],
@@ -28,16 +28,13 @@ class UriCheckSecurityHeaders  < BaseTask
       "content-security-policy-report-only"]
 
     if response
-
       found_security_headers = []
-
       response.each_header do |name,value|
-
+        @task_log.log "Checking #{name}"
         if security_headers.include? name
           @task_log.good "Got header #{name}"
           found_security_headers << {:name => name, :value => value}
         end # end if
-
       end # end each_header
 
       # If we have identified any headers...

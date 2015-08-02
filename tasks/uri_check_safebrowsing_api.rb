@@ -20,12 +20,19 @@ class UriCheckSafebrowsingApi  < BaseTask
     # Get the target URI
     target_uri = _get_entity_attribute("name")
 
-    # Get the API Key & create a client
-    api_key = _get_global_config "google_safebrowsing_lookup_key"
-    @client = Client::Search::Google::SafebrowsingLookup.new(api_key)
+    begin
+      # Get the API Key & create a client
+      api_key = _get_global_config "google_safebrowsing_lookup_key"
+      @client = Client::Search::Google::SafebrowsingLookup.new(api_key)
 
-    ### Run the lookup and print the response
-    response_hash = @client.lookup target_uri
+      ### Run the lookup and print the response
+      response_hash = @client.lookup target_uri
+
+    # XXX - Handle a bug in the Safebrowsinglookup client where "error" can be thrown (fix this!)
+    rescue NoMethodError => e
+      @task_log.error "Unable to contact api, unknown error: #{e}"
+      response_hash = {}
+    end
 
     response_hash.each do |h,v|
       if v == "ok"
