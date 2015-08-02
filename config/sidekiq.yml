@@ -1,7 +1,7 @@
 :verbose: false
-#:logfile: ./log/intrigue-sidekiq.log
+:logfile: ./log/intrigue-sidekiq.log
 :pidfile: ./tmp/pids/intrigue-sidekiq.pid
-:concurrency: 50
+:concurrency: 25
 
 # Set timeout to 8 on Heroku, longer if you manage your own systems.
 :timeout: 30
