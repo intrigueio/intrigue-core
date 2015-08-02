@@ -54,10 +54,10 @@ class SearchBingTask < BaseTask
                                     })
 
         # Create a domain if it matches our search string or the main URI
-        dns_name = result[:DisplayUrl].split("/").first
-        @task_log.log "main_uri: #{main_uri}"
-        @task_log.log "dns_name: #{dns_name}"
-        @task_log.log "entity_name: #{entity_name}"
+        dns_name = result[:Url].split("/")[0..2].join("/").gsub("http://","").gsub("https://","")
+        #@task_log.log "main_uri: #{main_uri}"
+        #@task_log.log "dns_name: #{dns_name}"
+        #@task_log.log "entity_name: #{entity_name}"
         if /#{entity_name}/ =~ dns_name || /#{main_uri}/ =~ dns_name
           _create_entity("DnsRecord", { :name => dns_name })
         end

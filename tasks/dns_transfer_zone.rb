@@ -49,7 +49,7 @@ class DnsTransferZoneTask < BaseTask
     authoritative_nameservers.each do |nameserver|
       begin
 
-        timeout(30) do
+        timeout(300) do
 
           @task_log.log "Attempting Zone Transfer on #{domain_name} against nameserver #{nameserver}"
 
@@ -57,7 +57,7 @@ class DnsTransferZoneTask < BaseTask
             :nameserver => nameserver.to_s,
             :recurse => true,
             :use_tcp => true,
-            :query_timeout => 10)
+            :query_timeout => 20)
 
           axfr_answer = res.query(domain_name, Dnsruby::Types.AXFR)
 
@@ -73,23 +73,23 @@ class DnsTransferZoneTask < BaseTask
             _create_entity "Info", {
               :name => "Zone Transfer",
               :content => "#{nameserver} -> #{domain_name}",
-              :details => zone
+              #:details => zone
             }
 
             # Create host records for each item in the zone
             zone.each do |z|
               if z.type == "A"
-                _create_entity "IpAddress", { :name => z.address.to_s }
-                _create_entity "DnsRecord", { :name => z.name.to_s, :type => "A" }
+                _create_entity "IpAddress", { :name => z.address.to_s, :type => z.type.to_s, :content => "#{z.to_s}" }
+                _create_entity "DnsRecord", { :name => z.name.to_s, :type => z.type.to_s, :content => "#{z.to_s}" }
               elsif z.type == "CNAME"
-                # TODO - recursively lookup CNAME host
-                _create_entity "DnsRecord", { :name => z.name.to_s, :type => "CNAME" }
-              elsif z.type == "MX"
-                _create_entity "DnsRecord", { :name => z.name.to_s, :type => "MX"}
+                _create_entity "DnsRecord", { :name => z.name.to_s, :type => z.type.to_s, :content => "#{z.to_s}" }
+                _create_entity "DnsRecord", { :name => z.rdata.to_s, :type => z.type.to_s, :content => "#{z.rdata}" }
               elsif z.type == "NS"
-                _create_entity "DnsRecord", { :name => z.name.to_s, :type => "NS" }
+                _create_entity "DnsRecord", { :name => z.name.to_s, :type => z.type.to_s, :content => "#{z.to_s}" }
+                # XXX - it's possible rdata could contain an IP address, we should check for this
+                _create_entity "DnsRecord", { :name => z.rdata.to_s, :type => z.type.to_s, :content => "#{z.rdata}" }
               else
-                _create_entity "DnsRecord", { :name => z.name.to_s, :type => z.type.to_s }
+                _create_entity "DnsRecord", { :name => z.name.to_s, :type => z.type.to_s, :content => "#{z.to_s}" }
               end
             end
             # Record keeping
@@ -98,7 +98,7 @@ class DnsTransferZoneTask < BaseTask
         end
 
       rescue Timeout::Error
-        @task_log.error "Execution Timed out"
+        @task_log.error "Task Execution Timed out"
       rescue Dnsruby::Refused
         @task_log.error "Zone Transfer against #{domain_name} refused."
       rescue Dnsruby::ResolvError
