@@ -2,7 +2,7 @@
   "intrigue_engine_id" : {
     "value" : "XXX",
     "uri": "http://intrigue.io",
-    "editable" : "false",
+    "editable" : "true",
     "comment" : "Generated at startup"
   },
   "bing_api_key" : {
@@ -45,25 +45,25 @@
     "value" : "XXX",
     "uri" : "https://dev.twitter.com",
     "editable" : "true",
-    "comment" : "XXX"
+    "comment" : ""
   },
   "twitter_consumer_secret" : {
     "value" : "XXX",
     "uri" : "https://dev.twitter.com",
     "editable" : "true",
-    "comment" : "XXX"
+    "comment" : ""
   },
   "twitter_access_token" : {
     "value" : "XXX",
     "uri" : "https://dev.twitter.com",
     "editable" : "true",
-    "comment" : "XXX"
+    "comment" : ""
   },
   "twitter_access_token_secret" : {
     "value" : "XXX",
-    "uri" : "XXX",
+    "uri" : "https://dev.twitter.com",
     "editable" : "true",
-    "comment" : "XXX"
+    "comment" : ""
   },
   "peoplegraph_api_key" : {
     "value" : "XXX",

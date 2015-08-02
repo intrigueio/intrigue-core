@@ -360,13 +360,13 @@ namespace '/v1/?' do
   end
 
   # SAVE CONFIG
-  post '/config/save' do
+  post '/config' do
 
-    params.each {|k,v| $intrigue_config[k]=v}
+    params.each {|k,v| $intrigue_config[k]["value"]=v}
 
     # Write our config back to the file
-    File.open("#{$intrigue_basedir}/config/config.yml", 'w') do |f|
-      f.write $intrigue_config.to_yaml
+    File.open("#{$intrigue_basedir}/config/config.json", 'w') do |f|
+      f.write JSON.pretty_generate $intrigue_config
     end
 
     redirect '/'

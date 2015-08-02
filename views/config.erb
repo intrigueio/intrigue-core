@@ -1,10 +1,14 @@
 <h3>Configuration</h3>
 
-<form action="/v1/config/save" method="post">
+<form action="/v1/config" method="post">
 <table>
 <% $intrigue_config.each do |k,v| %>
-  <tr><td><%= k %>:</td><td><input class="form-control" style ="width:300px" type="text" name="<%=k%>" value="<%=v%>"></td></tr>
+  <tr>
+    <td><a target="_blank" href=<%=v["uri"]%>><%= k %></a>:</td>
+    <td><input class="form-control" style ="width:300px" type="text" name="<%=k%>" value="<%=v["value"]%>"></td>
+    <td><%= v["comment"] %></td>
+  </tr>
   <% end %>
-<tr><td><input class="btn btn-primary" type="submit"></td><td></td></tr>
+<tr><td><input class="btn btn-primary" type="submit"></td><td></td><td></td></tr>
 </table>
 </form>
