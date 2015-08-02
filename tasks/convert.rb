@@ -20,11 +20,8 @@ class Convert  < BaseTask
 
   def run
     super
-
     name = _get_entity_attribute "name"
-
     _create_entity( _get_option("entity_type"), :name => name )
-
   end
 
 end

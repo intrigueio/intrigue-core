@@ -1,7 +1,7 @@
 class UriCheckSafebrowsingApi  < BaseTask
 
   def metadata
-    { 
+    {
       :name => "uri_check_safebrowsing_api",
       :pretty_name => "URI Check Safebrowsing Api",
       :authors => ["jcran"],
@@ -20,9 +20,8 @@ class UriCheckSafebrowsingApi  < BaseTask
     # Get the target URI
     target_uri = _get_entity_attribute("name")
 
-    # Make sure the key is set & create a client
-    api_key = $intrigue_config["google_safebrowsing_lookup_key"]
-    raise "API KEY MISSING: google_safebrowsing_lookup_key" unless api_key
+    # Get the API Key & create a client
+    api_key = _get_global_config "google_safebrowsing_lookup_key"
     @client = Client::Search::Google::SafebrowsingLookup.new(api_key)
 
     ### Run the lookup and print the response

@@ -18,10 +18,10 @@ class SearchPiplTask < BaseTask
   def run
     super
 
-    # Make sure the key is set
-    raise "API KEY MISSING: pipl_api_key" unless $intrigue_config["pipl_api_key"]
+    # Get the API Key
+    api_key = _get_global_config "pipl_api_key"
 
-    @pipl_client = Client::Search::Pipl::ApiClient.new($intrigue_config["pipl_api_key"])
+    @pipl_client = Client::Search::Pipl::ApiClient.new(api_key)
 
     if @entity["type"] == "EmailAddress"
       response = @pipl_client.search :email, _get_entity_attribute("name")

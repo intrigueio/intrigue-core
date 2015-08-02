@@ -1,7 +1,7 @@
 class SearchBingTask < BaseTask
 
   def metadata
-    { 
+    {
       :name => "search_bing",
       :pretty_name => "Search Bing",
       :authors => ["jcran"],
@@ -19,12 +19,11 @@ class SearchBingTask < BaseTask
     super
 
     # Make sure the key is set
-    raise "API KEY MISSING: bing_api_key" unless $intrigue_config["bing_api_key"]
-
+    api_key = _get_global_config "bing_api_key"
     entity_name = _get_entity_attribute "name"
 
     # Attach to the google service & search
-    bing = Client::Search::Bing::SearchService.new($intrigue_config['bing_api_key'],50,'Web',{:Adult => 'Off'})
+    bing = Client::Search::Bing::SearchService.new(api_key,50,'Web',{:Adult => 'Off'})
 
     results = bing.search(entity_name)
     results.first[:Web].each do |result|

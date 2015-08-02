@@ -3,7 +3,7 @@
 class UriNomNomTask < BaseTask
 
   def metadata
-    { 
+    {
       :name => "uri_nomnom",
       :pretty_name => "URI NomNom",
       :authors => ["jcran"],

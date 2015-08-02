@@ -6,7 +6,6 @@ require_relative 'initialize/string'
 # Task-specific libraries
 ####
 require_relative 'task_factory'
-require_relative 'task_helper'
 require_relative 'task_log'
 
 ### Web is used by many of the other libraries, so we load it here first

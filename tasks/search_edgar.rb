@@ -1,7 +1,7 @@
 class SearchCorpwatchTask < BaseTask
 
   def metadata
-    { 
+    {
       :name => "search_edgar",
       :pretty_name => "Search EDGAR",
       :authors => ["jcran"],
@@ -18,9 +18,8 @@ class SearchCorpwatchTask < BaseTask
   def run
     super
 
-    # Make sure the key is set
-    raise "API KEY MISSING: corpwatch_api_key" unless $intrigue_config["corpwatch_api_key"]
-    api_key = $intrigue_config['corpwatch_api_key']
+    # Get the API Key
+    api_key = _get_global_config "corpwatch_api_key"
 
     # Attach to the corpwatch service & search
     x = Client::Search::Corpwatch::ApiClient.new(api_key)

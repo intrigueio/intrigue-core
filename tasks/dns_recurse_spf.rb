@@ -33,7 +33,7 @@ class DnsRecurseSpf < BaseTask
     begin
 
       res = Dnsruby::Resolver.new(
-      :recurse => true,
+      :recurse => "true",
       :query_timeout => 5)
 
       result = res.query(dns_name, Dnsruby::Types.TXT)

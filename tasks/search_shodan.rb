@@ -1,7 +1,7 @@
 class SearchShodanTask < BaseTask
 
   def metadata
-    { 
+    {
       :name => "search_shodan",
       :pretty_name => "Search Shodan",
       :authors => ["jcran"],
@@ -20,10 +20,10 @@ class SearchShodanTask < BaseTask
   def run
     super
 
-    # Make sure the key is set
-    raise "API KEY MISSING: shodan_api_key" unless $intrigue_config["shodan_api_key"]
+    # Get the API Key
+    api_key = _get_global_config "shodan_api_key"
 
-    @client = Client::Search::Shodan::ApiClient.new($intrigue_config["shodan_api_key"])
+    @client = Client::Search::Shodan::ApiClient.new(api_key)
     response = @client.search(_get_entity_attribute "name")
 
     # check to make sure we got a response.

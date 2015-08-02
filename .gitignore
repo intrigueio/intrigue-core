@@ -8,3 +8,4 @@ public/js/
 public/screenshots/
 results/
 tmp/.gitignore
+tmp/

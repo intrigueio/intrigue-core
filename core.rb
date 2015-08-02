@@ -1,10 +1,10 @@
 require 'sinatra'
 require 'sinatra/contrib'
 
-require 'yaml'
 require 'sidekiq'
 require 'sidekiq/api'
 require 'sidekiq/web'
+
 require 'redis'
 require 'timeout'
 require 'json'
@@ -21,39 +21,42 @@ require 'pry'
 
 ###
 ### START CONFIG
-###
-
 ### XXX - this is not threadsafe :(
-$intrigue_global_timeout = 900
-$intrigue_basedir = File.dirname(__FILE__)
-# Check to see if the config exists
-config_file = "#{$intrigue_basedir}/config/config.yml"
-default_config_file = "#{$intrigue_basedir}/config/config.yml.default"
+###
+begin
+  $intrigue_global_timeout = 900
+  $intrigue_basedir = File.dirname(__FILE__)
+  # Check to see if the config exists
+  config_file = "#{$intrigue_basedir}/config/config.json"
+  default_config_file = "#{$intrigue_basedir}/config/config.json.default"
 
-# Load up default config (which may include new fields)
-$intrigue_default_config = YAML.load_file(default_config_file)
+  # Load up default config (which may include new fields)
+  $intrigue_default_config = JSON.parse File.read(default_config_file)
 
-if File.exist? config_file
-  # Okay, so we have a file - lets load that
-  $intrigue_config = YAML.load_file(config_file)
+  if File.exist? config_file
+    # Okay, so we have a file - lets load that
+    $intrigue_config = JSON.parse File.read(config_file)
 
-  $intrigue_config = $intrigue_default_config.merge $intrigue_config
+    $intrigue_config = $intrigue_default_config.merge $intrigue_config
 
-  # Check to make sure we have an engine_id config
-  if $intrigue_config[:engine_id] == "XXX" or $intrigue_config[:engine_id] == ""
-    # we need to generate it
-    $intrigue_config[:engine_id] = SecureRandom.uuid
+    # Check to make sure we have an engine_id config
+    if $intrigue_config["intrigue_engine_id"]["value"] == "XXX" or $intrigue_config["intrigue_engine_id"]["value"] == ""
+      # we need to generate it
+      $intrigue_config["intrigue_engine_id"]["value"] = SecureRandom.uuid
+    end
+  else  # No config exists
+    # Create a blank config
+    $intrigue_config = $intrigue_default_config
+    # Create the Engine ID
+    $intrigue_config["intrigue_engine_id"]["value"] = SecureRandom.uuid
   end
-else  # No config exists
-  # Create a blank config
-  $intrigue_config = $intrigue_default_config
-  # Create the Engine ID
-  $intrigue_config[:engine_id] = SecureRandom.uuid
-end
 
-# Regardless, write our config back to the file
-File.open("#{$intrigue_basedir}/config/config.yml", 'w') do |f|
-  f.write $intrigue_config.to_yaml
+  # Regardless, write our config back to the file
+  File.open(config_file, 'w') do |f|
+    f.write JSON.pretty_generate($intrigue_config)
+  end
+rescue JSON::ParserError => e
+  raise "FATAL: Unable to load config: #{e}"
 end
 
 set :views, "#{$intrigue_basedir}/views"
@@ -201,7 +204,7 @@ namespace '/v1/?' do
     # Generate a task id
     task_id = SecureRandom.uuid
 
-    # This is pretty ugly and compensates for our lack of DB.
+    # This is pretty ugly and compensates for our lack of a local DB.
     # We need to convert form inputs into a reasonable
     # request. This means collecting attributes and options and arranging them
     # in way that the application can handle. Prepare yourself.

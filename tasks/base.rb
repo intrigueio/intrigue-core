@@ -1,7 +1,6 @@
 
 class BaseTask
   include Sidekiq::Worker
-  include TaskHelper
 
   def self.inherited(base)
     TaskFactory.register(base)
@@ -359,29 +358,6 @@ class BaseTask
       `#{command}`
     end
 
-    ###
-    ### XXX TODO - move this up into the setup method
-    ###
-    def _get_option(name)
-
-      # Start with nothing
-      value = nil
-
-      # First, get the default value by cycling through the allowed options
-      method = metadata[:allowed_options].each do |allowed_option|
-        value = allowed_option[:default] if allowed_option[:name] == name
-      end
-
-      # Then, cycle through the user-provided options
-      @user_options.each do |user_option|
-        value = user_option[name] if user_option[name]
-      end
-
-      #@task_log.log "Option configured: #{name}"
-
-    value
-    end
-
     #
     # This is a helper method, use this to create entities from within tasks
     #
@@ -412,5 +388,35 @@ class BaseTask
       "#{@entity["attributes"][name]}"
     end
 
+    def _get_global_config(key)
+      begin
+        $intrigue_config[key]["value"]
+      rescue NoMethodError => e
+        puts "Error, invalid config key requested (#{key}) #{e}"
+      end
+    end
+
+    ###
+    ### XXX TODO - move this up into the setup method and make it happen automatically
+    ###
+    def _get_option(name)
+
+      # Start with nothing
+      value = nil
+
+      # First, get the default value by cycling through the allowed options
+      method = metadata[:allowed_options].each do |allowed_option|
+        value = allowed_option[:default] if allowed_option[:name] == name
+      end
+
+      # Then, cycle through the user-provided options
+      @user_options.each do |user_option|
+        value = user_option[name] if user_option[name]
+      end
+
+      #@task_log.log "Option configured: #{name}"
+
+    value
+    end
 
 end
