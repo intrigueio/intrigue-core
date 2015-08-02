@@ -2,7 +2,7 @@ require 'rubygems'
 require 'json'
 require 'rest_client'
 
-class Intrigue
+class IntrigueApi
 
     def initialize(uri="http://localhost:7777/v1",key="")
       @intrigue_basedir = File.dirname(__FILE__)

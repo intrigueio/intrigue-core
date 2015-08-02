@@ -16,7 +16,7 @@ class CoreCli < Thor
     @delim = "#"
 
     # Connect to Intrigue API
-    @x = Intrigue.new
+    @x = IntrigueApi.new
   end
 
   desc "stats", "Get queue stats"
