@@ -133,6 +133,7 @@ GEM
     unf_ext (0.0.7.1)
     whois (3.6.0)
       activesupport (>= 3)
+    yomu (0.1.5)
 
 PLATFORMS
   ruby
@@ -162,3 +163,4 @@ DEPENDENCIES
   thor
   twitter
   whois
+  yomu

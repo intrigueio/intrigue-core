@@ -47,6 +47,7 @@ class EntityFactory
   #  An entity (subclass of type Intrigue::Entity::Base) if successful or nil (fail)
   #
   def self.create_by_type(type,attributes)
+
     @entities.each do |e|
       # Create a new entity object
       entity_object = e.new
@@ -58,7 +59,7 @@ class EntityFactory
           # Success!
           return entity_object
         else
-          return false # fail, couldnt' set attributes
+          return false # fail, couldn't set attributes
         end
       # else, move on to next
       end

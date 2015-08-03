@@ -14,6 +14,7 @@ The following are presumed available and configured in your environment
  - nmap
  - zmap
  - masscan
+ - java runtime
 
 Sudo is used to allow root access for certain commands ^ , so make sure this doesn't require a password:
 ```

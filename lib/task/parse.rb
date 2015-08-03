@@ -1,5 +1,5 @@
-# Yomu is used for parsing....
-#require 'yomu'
+require 'open-uri'
+require 'yomu'
 
 module Task
 module Parse
@@ -17,7 +17,6 @@ module Parse
       @task_log.error "No content to parse, returning" if @task_log
       return nil
     end
-
 
     # Scan for email addresses
     addrs = content.scan(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,8}/)
@@ -51,8 +50,45 @@ module Parse
         end
       end
     end
-
   end
+
+  def download_and_extract_metadata(uri)
+
+    # Download file and store locally. This helps prevent mime-type confusion
+    #
+    file = open(uri)
+    yomu = Yomu.new file
+
+    # General Metadata
+    #
+    _create_entity("Info", :name => "Metadata for #{uri}",:metadata => yomu.metadata)
+
+    ### PDF
+    #
+    if yomu.metadata["Content-Type"] == "application/pdf"
+
+      _create_entity "File", { :type => "PDF",
+        :name => uri,
+        :created => yomu.metadata["Creation-Date"],
+        :last_modified => yomu.metadata["Last-Modified"],
+        :created_with => yomu.metadata["xmp:CreatorTool"],
+        :plugin => yomu.metadata["producer"]
+      }
+
+      _create_entity "Person", { :name => yomu.metadata["Author"], :source => uri } if yomu.metadata["Author"]
+      _create_entity "SoftwarePackage", { :name => yomu.metadata["producer"], :source => uri } if yomu.metadata["producer"]
+      _create_entity "SoftwarePackage", { :name => yomu.metadata["xmp:CreatorTool"], :source => uri } if yomu.metadata["xmp:CreatorTool"]
+
+    end
+
+    # Look for entities in the text
+    parse_entities_from_content(uri,yomu.text)
+
+    # Clean up
+    #
+    file.unlink
+  end
+
 
 end
 end
