@@ -12,6 +12,12 @@ class Base
     EntityFactory.register(base)
   end
 
+  def set_attribute(key, value)
+    @attributes[key.to_sym] = value
+    return false unless validate(attributes)
+  true
+  end
+
   def set_attributes(attributes)
     return false unless validate(attributes)
     @attributes = attributes
