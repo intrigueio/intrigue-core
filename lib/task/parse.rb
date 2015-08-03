@@ -74,10 +74,8 @@ module Parse
         :created_with => yomu.metadata["xmp:CreatorTool"],
         :plugin => yomu.metadata["producer"]
       }
-
       _create_entity "Person", { :name => yomu.metadata["Author"], :source => uri } if yomu.metadata["Author"]
-      _create_entity "SoftwarePackage", { :name => yomu.metadata["producer"], :source => uri } if yomu.metadata["producer"]
-      _create_entity "SoftwarePackage", { :name => yomu.metadata["xmp:CreatorTool"], :source => uri } if yomu.metadata["xmp:CreatorTool"]
+      _create_entity "SoftwarePackage", { :name => "#{yomu.metadata["xmp:CreatorTool"]}" :plugin => "#{yomu.metadata["producer"]}", :source => uri } if yomu.metadata["producer"]
 
     end
 
