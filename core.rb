@@ -135,6 +135,11 @@ namespace '/v1/?' do
     erb :index
   end
 
+  # Scan
+  get '/scan/?' do
+    erb :scan
+  end
+
   # Export All Tasks
   get '/tasks.json' do
     tasks = []
