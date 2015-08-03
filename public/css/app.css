@@ -15,8 +15,16 @@ pre {
   border: 0;
 }
 
+a:link {
+  color: #33AAFF;
+}
+
+a:visited {
+  color: #33AAFF;
+}
+
 a:hover {
-  color: lightblue;
+  color: white;
 }
 
 .like-pre-dark {
@@ -24,8 +32,8 @@ a:hover {
   font-family: monospace;
   display: block;
   background-color: black;
-  background-image: none;
-  color: lightgreen;
+  background-image: url('/img/binding_dark.png');
+  color: #44FF33;
 }
 
 .like-pre-white {
