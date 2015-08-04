@@ -34,3 +34,10 @@
   </div>
   <div id="metadata" class="col-sm-7"></div>
 </div>
+<br/>
+<h4>Completed Scans</h4>
+<% @scan_ids.each do |x| %>
+<ul>
+<%= "<li><a href=\'/v1/scan_runs/#{x.split(":").last}\'> #{x.split(":").last} </a></li>" %>
+</ul>
+<% end %>

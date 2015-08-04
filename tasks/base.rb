@@ -262,7 +262,7 @@ class BaseTask
             end
 
             # Run the regex
-            unless user_option["value"].match regex
+            unless regex.match "#{user_option["value"]}"
               @task_log.error "Regex didn't match"
               @task_log.error "Option #{user_option["name"]} does not match regex: #{regex.to_s} (#{user_option["value"]})!"
               @task_log.error "FATAL! No task processing since regex didn't match option!"

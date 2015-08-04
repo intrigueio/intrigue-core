@@ -7,6 +7,9 @@ class ScanLog < IntrigueLog
     @type = "scan"
 
     puts "Scan log initialized with key #{key}"
+
+    # Placeholder for storing results
+    $intrigue_redis.set "scan_result:#{id}", "{}"
   end
 
 end
