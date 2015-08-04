@@ -14,13 +14,17 @@ class UriGatherSslCertTask  < BaseTask
       :references => [],
       :allowed_types => ["Uri"],
       :example_entities => [{:type => "Uri", :attributes => {:name => "http://www.intrigue.io"}}],
-      :allowed_options => [],
+      :allowed_options => [
+        {:name => "skip_cloudflare", :type => "Boolean", :regex => "boolean", :default => true },
+      ],
       :created_types => ["DnsRecord","SslCertificate"]
     }
   end
 
   def run
     super
+
+    opt_allow_cloudflare = _get_option "skip_cloudflare"
 
     uri = _get_entity_attribute "name"
     hostname = URI.parse(uri).host
@@ -47,6 +51,12 @@ class UriGatherSslCertTask  < BaseTask
             end
 
             alt_names.each do |alt_name|
+
+              if alt_name =~ /cloudflare.com$/
+                @task_log.log "This is a cloudflare certificate, skipping further entity creation"
+                return
+              end
+
               _create_entity "DnsRecord", { :name => alt_name }
             end
 
@@ -72,8 +82,6 @@ class UriGatherSslCertTask  < BaseTask
     rescue RuntimeError => e
       @task_log.error "Caught an error: #{e}"
     end
-
-
   end
 
 end
