@@ -56,13 +56,14 @@ module Intrigue
         ### Get SSLCert
         _start_task_and_recurse "uri_gather_ssl_certificate",entity,depth
         ### Gather links
-        _start_task_and_recurse "uri_gather_and_analyze_links",entity,depth
+        #_start_task_and_recurse "uri_gather_and_analyze_links",entity,depth
+        ### spider
+        _start_task_and_recurse "uri_spider",entity,depth
         ### Dirbuster
         _start_task_and_recurse "uri_dirbuster",entity,depth
-        ## screenshot
-        _start_task_and_recurse "uri_screenshot",entity,depth
-        ### spider
-        _start_task "uri_spider",entity,depth
+        ### screenshot
+        #_start_task_and_recurse "uri_screenshot",entity,depth
+
       elsif entity["type"] == "String"
         # Brute TLD
         _start_task_and_recurse "dns_brute_tld",entity,depth
