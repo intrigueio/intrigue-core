@@ -3,7 +3,7 @@ class UriDirbuster  < BaseTask
   include Task::Web
 
   def metadata
-    { 
+    {
       :name => "uri_dirbuster",
       :pretty_name => "URI Dirbuster",
       :authors => ["jcran"],
@@ -85,10 +85,10 @@ class UriDirbuster  < BaseTask
             @task_log.log "404 on #{request_uri}"
           when "200"
             @task_log.good "200! Creating a page for #{request_uri}"
-            _create_entity "Uri", :name => request_uri
+            _create_entity "Uri", :name => request_uri, :uri => request_uri,
           when "500"
             @task_log.good "500 error! Creating a page for #{request_uri}"
-            _create_entity "Uri", :name => request_uri, :content => "#{response.body}"
+            _create_entity "Uri", :name => request_uri, :uri => request_uri, :content => "#{response.body}"
           when missing_page_code
             @task_log.log "Got code: #{response.code}. Same as missing page code. Skipping"
           else
