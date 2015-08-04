@@ -1,4 +1,4 @@
-<h3>Task Runs</h3>
+<h3>Completed Tasks</h3>
 <% @results.each do |x| %>
 <ul>
 <%= "<li><a href=\'/v1/task_runs/#{x["id"]}\'> #{x["task_name"]} on #{ h x["entity"]["attributes"]["name"]} (#{x["entities"].count if x["entities"]})</a></li>"  %>
