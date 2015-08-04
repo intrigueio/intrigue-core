@@ -41,7 +41,7 @@ class UriSpiderTask < BaseTask
     @opt_user_agent = _get_option "user_agent"
     @opt_depth = _get_option "depth_limit"
 
-    # Entity creation option
+    # Entity creation options
     @opt_show_source_uri = _get_option "show_source_uri"
     @opt_create_urls = _get_option "create_urls"
 

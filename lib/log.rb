@@ -1,26 +1,16 @@
 require 'redis'
 
 # Simple logger class
-class TaskLog
+class IntrigueLog
+
+  def initialize(id,name)
+    @id = id
+    @name = name
+    @redis = Redis.new
+    @out = StringIO.new
+  end
 
   attr_accessor :name
-  attr_accessor :out
-
-  def initialize(id, name, write_file=false)
-    @name = name
-    @out = StringIO.new
-    @write_file = write_file
-
-    @redis = Redis.new
-    @redis_key = "log:#{id}"
-
-    # We can also write to a file at the same time...
-    if @write_file
-      @outfile = File.open(File.join("log","#{@name}_#{id}.log"), "a")
-    end
-
-    @current_log
-  end
 
   def log(message)
     _log "[ ] #{@name}: " << message
@@ -44,6 +34,10 @@ class TaskLog
     @out.string
   end
 
+  def key
+    "#{@type}:#{@id}"
+  end
+
 private
   def _log(message)
 
@@ -54,7 +48,7 @@ private
     puts message
 
     # Write to Redis
-    @redis.set @redis_key, @out.string
+    @redis.set key, @out.string
 
     #Write to file
     if @write_file
