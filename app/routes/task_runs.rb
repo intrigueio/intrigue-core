@@ -1,4 +1,5 @@
-
+class IntrigueApp < Sinatra::Base
+  namespace '/v1/?' do
 
   # Export All Data
   get '/task_runs.json' do
@@ -214,3 +215,5 @@
     @task_id = params[:id]
     erb :task_run_viz
   end
+end
+end

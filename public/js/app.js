@@ -25,7 +25,7 @@
           '</label>',
           '<div class="col-xs-6">',
           '<input id="' + value.name + '" class="form-control input-sm" type="text" value="'
-          + value.default + '" name="option_"' + value.name + '></input>',
+          + value.default + '" name="option_' + value.name + '"></input>',
           '</div>',
         '</div>'
       ].join('');

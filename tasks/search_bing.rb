@@ -9,7 +9,9 @@ class SearchBingTask < BaseTask
       :references => [],
       :allowed_types => ["*"],
       :example_entities => [{:type => "String", :attributes => {:name => "intrigue.io"}}],
-      :allowed_options => [],
+      :allowed_options => [
+        {:name => "max_results", :type => "Integer", :regex => "integer", :default => 50 },
+      ],
       :created_types => ["DnsRecord","EmailAddress","PhoneNumber","WebAccount", "Uri"]
     }
   end
@@ -21,15 +23,23 @@ class SearchBingTask < BaseTask
     # Make sure the key is set
     api_key = _get_global_config "bing_api_key"
     entity_name = _get_entity_attribute "name"
+    opt_max_results = _get_option("max_results").to_i
+
+    if opt_max_results > 50
+      @task_log.log "only 50 results allowed"
+      opt_max_results = 50
+    end
 
     # Attach to the google service & search
-    bing = Client::Search::Bing::SearchService.new(api_key,50,'Web',{:Adult => 'Off'})
+    bing = Client::Search::Bing::SearchService.new(api_key,opt_max_results,'Web',{:Adult => 'Off'})
     results = bing.search(entity_name)
 
     # the first result will often be our domain, so save that.
     main_uri = results.first[:Web].first[:DisplayUrl].split(".").last(2).join(".")
 
-    results.first[:Web].each do |result|
+
+
+    results.first[:Web][0..opt_max_results-1].each do |result|
 
       # a result will look like:
       #

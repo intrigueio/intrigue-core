@@ -59,66 +59,71 @@ rescue JSON::ParserError => e
   raise "FATAL: Unable to load config: #{e}"
 end
 
-set :views, "#{$intrigue_basedir}/views"
-set :public_folder, 'public'
+class IntrigueApp < Sinatra::Base
+  register Sinatra::Namespace
 
-#Setup redis for resque
-$intrigue_redis = Redis.new
+  set :root, "#{$intrigue_basedir}"
+  set :views, "#{$intrigue_basedir}/app/views"
+  set :public_folder, 'public'
 
-###
-### END CONFIG
-###
+  #Setup redis for resque
+  $intrigue_redis = Redis.new
 
-###
-### Helpers
-###
+  ###
+  ### END CONFIG
+  ###
 
-helpers do
-  def h(text)
-    Rack::Utils.escape_html(text)
-  end
-end
-
-before do
-  $intrigue_server_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
-end
-
-not_found do
-  "Unable to find this content."
-end
-
-
-
-###
-### Main Application
-###
-
-get '/' do
-  redirect '/v1/'
-end
-
-namespace '/v1/?' do
-
-  # Main Page
-  get '/?' do
-    stats = Sidekiq::Stats.new
-    @failed = stats.failed
-    @processed = stats.processed
-    @queues = stats.queues
-    @tasks = TaskFactory.list.map{|x| x.send(:new)}
-    @task_names = @tasks.map{|t| t.metadata[:pretty_name]}.sort
-    erb :index
+  ###
+  ### Helpers
+  ###
+  helpers do
+    def h(text)
+      Rack::Utils.escape_html(text)
+    end
   end
 
-  require_relative "app/helpers"
-  require_relative "app/routes/tasks"
-  require_relative "app/routes/task_runs"
-  require_relative "app/routes/scan"
-  require_relative "app/routes/config"
-
-  # NEWS!
-  get '/news/?' do
-    erb :news
+  before do
+    $intrigue_server_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
   end
 
+  not_found do
+    "Unable to find this content."
+  end
+
+
+  ###
+  ### Main Application
+  ###
+
+  get '/' do
+    redirect '/v1/'
+  end
+
+  namespace '/v1/?' do
+
+    # Main Page
+    get '/?' do
+      stats = Sidekiq::Stats.new
+      @failed = stats.failed
+      @processed = stats.processed
+      @queues = stats.queues
+      @tasks = TaskFactory.list.map{|x| x.send(:new)}
+      @task_names = @tasks.map{|t| t.metadata[:pretty_name]}.sort
+      erb :index
+    end
+
+    # NEWS!
+    get '/news/?' do
+      erb :news
+    end
+
+
+    require_relative "app/helpers"
+    require_relative "app/routes/tasks"
+    require_relative "app/routes/task_runs"
+    require_relative "app/routes/scan"
+    require_relative "app/routes/config"
+
+
+  end
 end

@@ -65,6 +65,8 @@ module Intrigue
         #_start_task_and_recurse "uri_screenshot",entity,depth
 
       elsif entity["type"] == "String"
+        # Search!
+        _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 10}]
         # Brute TLD
         _start_task_and_recurse "dns_brute_tld",entity,depth
       else

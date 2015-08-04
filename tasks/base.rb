@@ -213,22 +213,22 @@ class BaseTask
 
     if user_options
 
-      #@task_log.log "Got user options #{user_options}"
+      @task_log.log "Got user options list: #{user_options}"
 
       # for each of the user-supplied options
       user_options.each do |user_option| # should be an array of hashes
 
-        #@task_log.log "User option #{user_option}"
+        @task_log.log "Processing user option: #{user_option}"
 
         # go through the allowed options
         allowed_options.each do |allowed_option|
 
-          #@task_log.log "Allowed option #{allowed_option}"
+          @task_log.log "Checking against allowed option list: #{allowed_option}"
 
           # if we have a match
           if "#{user_option["name"]}" == "#{allowed_option[:name]}"
 
-            #@task_log.log "Got allowed option: #{user_option["name"]}"
+            @task_log.log "Verifying this user option: #{user_option["name"]}"
 
             ###
             ### Match the user option against it's specified regex
@@ -284,15 +284,15 @@ class BaseTask
 
             if allowed_option[:type] == "Integer"
               # convert to integer
-              #@task_log.log "Converting #{user_option["name"]} to an integer"
+              @task_log.log "Converting #{user_option["name"]} to an integer"
               user_option["value"] = user_option["value"].to_i
             elsif allowed_option[:type] == "String"
               # do nothing, we can just pass strings through
-              #@task_log.log "No need to convert #{user_option["name"]} to a string"
+              @task_log.log "No need to convert #{user_option["name"]} to a string"
               user_option["value"] = user_option["value"]
             elsif allowed_option[:type] == "Boolean"
               # use our monkeypatched .to_bool method (see initializers)
-              #@task_log.log "Converting #{user_option["name"]} to a bool"
+              @task_log.log "Converting #{user_option["name"]} to a bool"
               user_option["value"] = user_option["value"].to_bool
             else
               # throw an error, we likely have a string we don't know how to cast
@@ -301,7 +301,7 @@ class BaseTask
             end
 
             # hurray, we can accept this value
-            #@task_log.good "Allowed user_option! #{user_option}"
+            @task_log.good "Congrats! Allowed this user option: #{user_option}"
             @user_options << { allowed_option[:name] => user_option["value"] }
           end
         end

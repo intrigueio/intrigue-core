@@ -84,7 +84,7 @@ module Bing
         res = Net::HTTP.start(uri.hostname, uri.port, :use_ssl => uri.scheme == 'https'){|http|
           http.request(req)
         }
-
+        
         body = JSON.parse(res.body, :symbolize_names => true)
         result_set = body[:d][:results]
       end

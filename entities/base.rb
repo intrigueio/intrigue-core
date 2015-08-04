@@ -60,6 +60,7 @@ class Base
   private
   def _escape_html(text)
     Rack::Utils.escape_html(text)
+    text
   end
 end
 end

@@ -1,3 +1,6 @@
+class IntrigueApp < Sinatra::Base
+  namespace '/v1/?' do
+
   # Scan
   get '/scan/?' do
     erb :scan
@@ -63,3 +66,7 @@
 =end
       erb :scan_run
     end
+
+
+end
+end
