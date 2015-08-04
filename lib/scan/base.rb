@@ -52,10 +52,13 @@ module Scanner
       $results["#{task_name}_#{entity["type"]}_#{entity["attributes"]["name"]}"] = result
     end
 =end
-      # Iterate on the results
+      # Display results in the log
       result['entities'].each do |result|
-        @log.log "New Entity: #{result["type"]} #{result["attributes"]["name"]}"
+        @log.log "Entity: #{result["type"]} #{result["attributes"]["name"]}"
+      end
 
+      # Then iterate on them
+      result['entities'].each do |result|
         # create a new node
         #this = Neography::Node.create(
         #  type: y["type"],
@@ -65,6 +68,7 @@ module Scanner
         #node.outgoing(:child) << this
 
         # recurse!
+        @log.log "Iterating on #{result}"
         _recurse(result, depth-1)
       end
 
