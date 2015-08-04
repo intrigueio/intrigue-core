@@ -1,6 +1,6 @@
 require 'dnsruby'
 require 'whois'
-
+module Intrigue
 class DnsTransferZoneTask < BaseTask
 
   def metadata
@@ -113,4 +113,5 @@ class DnsTransferZoneTask < BaseTask
   end
 
 
+end
 end

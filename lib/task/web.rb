@@ -4,6 +4,7 @@ require 'uri'
 require 'iconv'
 
 # This module exists for common web functionality
+module Intrigue
 module Task
   module Web
 
@@ -291,4 +292,5 @@ module Task
 
 
   end
+end
 end

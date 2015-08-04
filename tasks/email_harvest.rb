@@ -1,7 +1,8 @@
+module Intrigue
 class EmailHarvestTask < BaseTask
 
   def metadata
-    { 
+    {
       :name => "email_harvest",
       :pretty_name => "Email Harvester",
       :authors => ["jcran"],
@@ -50,4 +51,5 @@ class EmailHarvestTask < BaseTask
 =end
   end
 
+end
 end

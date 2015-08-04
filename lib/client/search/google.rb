@@ -6,7 +6,7 @@ module Google
 
   class SearchScraper
 
-    include Task::Web
+    include Intrigue::Task::Web
 
     def search(search_string,pages=5)
       count = 5

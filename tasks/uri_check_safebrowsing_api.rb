@@ -1,3 +1,4 @@
+module Intrigue
 class UriCheckSafebrowsingApi  < BaseTask
 
   def metadata
@@ -45,4 +46,5 @@ class UriCheckSafebrowsingApi  < BaseTask
 
   end
 
+end
 end

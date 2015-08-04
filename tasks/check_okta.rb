@@ -1,6 +1,7 @@
+module Intrigue
 class CheckOkta  < BaseTask
 
-  include Task::Web
+  include Intrigue::Task::Web
 
   def metadata
     {
@@ -71,4 +72,5 @@ class CheckOkta  < BaseTask
 
   end
 
+end
 end

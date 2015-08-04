@@ -8,7 +8,7 @@ module Intrigue
     def initialize
     end
 
-    def perform(entity, id, name, depth=1)
+    def perform(id, entity, name, depth=1)
       @name= name
       @id = id
       @depth = depth

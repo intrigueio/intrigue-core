@@ -1,9 +1,9 @@
 require 'geoip'
-
+module Intrigue
 class GeolocateHostTask < BaseTask
 
   def metadata
-    { 
+    {
       :name => "geolocate_host",
       :pretty_name => "Geolocate Host",
       :authors => ["jcran"],
@@ -59,4 +59,5 @@ class GeolocateHostTask < BaseTask
 
   end
 
+end
 end

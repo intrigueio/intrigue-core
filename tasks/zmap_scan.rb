@@ -1,7 +1,7 @@
 ###
 ### Task is in good shape, just needs some option parsing, and needs to deal with paths
 ###
-
+module Intrigue
 class ZmapScanTask < BaseTask
 
   def metadata
@@ -72,4 +72,5 @@ class ZmapScanTask < BaseTask
   true
   end
 
+end
 end

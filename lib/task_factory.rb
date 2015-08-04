@@ -1,6 +1,7 @@
 ###
 ### Task factory: Standardize the creation and validation of tasks
 ###
+module Intrigue
 class TaskFactory
 
   def self.register(klass)
@@ -53,4 +54,5 @@ class TaskFactory
     @tasks
   end
 
+end
 end

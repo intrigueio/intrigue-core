@@ -4,7 +4,7 @@ module Client
   module Search
     module Shodan
       class ApiClient
-        include Task::Web
+        include Intrigue::Task::Web
 
         attr_accessor :service_name
 

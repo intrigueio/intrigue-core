@@ -1,9 +1,9 @@
 require 'screencap'
-
+module Intrigue
 class UriScreenshot < BaseTask
 
   def metadata
-    { 
+    {
       :name => "uri_screenshot",
       :pretty_name => "URI Screenshot",
       :authors => ["jcran"],
@@ -48,4 +48,5 @@ class UriScreenshot < BaseTask
 
   end
 
+end
 end

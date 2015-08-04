@@ -1,10 +1,10 @@
 require 'whois'
 require 'nokogiri'
 require 'socket'
-
+module Intrigue
 class WhoisTask < BaseTask
 
-  include Task::Web
+  include Intrigue::Task::Web
 
   def metadata
     {
@@ -237,4 +237,5 @@ class WhoisTask < BaseTask
 
   end
 
+end
 end

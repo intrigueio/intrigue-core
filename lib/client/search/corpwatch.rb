@@ -8,7 +8,7 @@ module Corpwatch
   # This class wraps the corpwatch Api
   class ApiClient
 
-    include Task::Web
+    include Intrigue::Task::Web
 
     def initialize(key)
       @api_key = key

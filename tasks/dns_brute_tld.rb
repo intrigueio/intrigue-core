@@ -1,5 +1,5 @@
 require 'resolv'
-
+module Intrigue
 class DnsBruteTldTask < BaseTask
 
   def metadata
@@ -147,4 +147,5 @@ class DnsBruteTldTask < BaseTask
     end
   end
 
+end
 end

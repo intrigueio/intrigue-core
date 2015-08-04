@@ -1,5 +1,5 @@
 require 'dnsruby'
-
+module Intrigue
 class DnsLookupTxtTask < BaseTask
 
   def metadata
@@ -89,4 +89,5 @@ class DnsLookupTxtTask < BaseTask
   end
 
 
+end
 end

@@ -18,11 +18,11 @@ require 'net/dns'
 #           * Checking the TTL compared with the autoritative server of this domain. If it is a very low TTL compared with the autoritative DNS, it was cached some time ago by the target DNS.
 #           * Checking the RTT of a packet to the server and compare with the time of the DNS query.
 #######
-
+module Intrigue
 class DnsSnoopCacheTask < BaseTask
 
   def metadata
-    { 
+    {
       :name => "dns_snoop_cache",
       :pretty_name => "DNS Cache Snoop",
       :authors => ["Felipe Molina (@felmoltor)", "jcran"],
@@ -354,4 +354,5 @@ def toHumanTime(seconds)
     humantime += "#{mm}:#{ss}"
   end
   return humantime
+end
 end

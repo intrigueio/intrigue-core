@@ -1,6 +1,7 @@
 
 # Simple logger class
-class ScanLog < IntrigueLog
+module Intrigue
+class ScanLog < Intrigue::Log
 
   def initialize(id, name)
     super(id, name)
@@ -12,4 +13,5 @@ class ScanLog < IntrigueLog
     $intrigue_redis.set "scan_result:#{id}", "{}"
   end
 
+end
 end

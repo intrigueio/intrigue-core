@@ -1,9 +1,9 @@
 require 'anemone'
-
+module Intrigue
 class UriSpiderTask < BaseTask
 
-  include Task::Web
-  include Task::Parse
+  include Intrigue::Task::Web
+  include Intrigue::Task::Parse
 
   def metadata
     {
@@ -131,4 +131,5 @@ class UriSpiderTask < BaseTask
 
   end # crawl_and_parse
 
+end
 end

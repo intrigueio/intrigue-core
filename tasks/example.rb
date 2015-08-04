@@ -1,7 +1,8 @@
+module Intrigue
 class ExampleTask < BaseTask
 
   def metadata
-    { 
+    {
       :name => "example",
       :pretty_name => "Example",
       :authors => ["jcran"],
@@ -44,4 +45,5 @@ class ExampleTask < BaseTask
 
   end
 
+end
 end

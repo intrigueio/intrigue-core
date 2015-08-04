@@ -28,7 +28,7 @@ class IntrigueApp < Sinatra::Base
       unsorted_results << JSON.parse($intrigue_redis.get(key))
     end
 
-    @results = unsorted_results.sort_by{ |k| k["timestamp_start"] }.reverse
+    @task_results = unsorted_results.sort_by{ |k| k["timestamp_start"] }.reverse
 
     erb :task_runs
   end
@@ -60,8 +60,6 @@ class IntrigueApp < Sinatra::Base
     # We need to convert form inputs into a reasonable
     # request. This means collecting attributes and options and arranging them
     # in way that the application can handle. Prepare yourself.
-
-
 
     # Construct the attributes hash from the parameters. Loop through each of the
     # parameters looking for things that look like attributes, and add them to our
@@ -104,7 +102,7 @@ class IntrigueApp < Sinatra::Base
     redirect "/v1/task_runs/#{task_id}"
   end
 
-  # Create a task run
+  # Create a task run from a json request
   post '/task_runs' do
 
     # Generate a task id
@@ -126,7 +124,7 @@ class IntrigueApp < Sinatra::Base
     ###
     ### Do some upfront sanity checking of the user parameters
     ###
-    return nil unless TaskFactory.include?(task_run_info["task"])
+    return nil unless Intrigue::TaskFactory.include?(task_run_info["task"])
 
     # Start the task _run
     start_task_run task_id, task_run_info

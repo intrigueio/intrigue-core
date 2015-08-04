@@ -1,12 +1,12 @@
 require 'socket'
 require 'openssl'
-
+module Intrigue
 class UriGatherMetadataTask  < BaseTask
 
-  include Task::Web
+  include Intrigue::Task::Web
 
   def metadata
-    { 
+    {
       :name => "uri_gather_metadata",
       :pretty_name => "URI Gather Metadata",
       :authors => ["jcran"],
@@ -104,4 +104,5 @@ class UriGatherMetadataTask  < BaseTask
       end
     end
 
+end
 end

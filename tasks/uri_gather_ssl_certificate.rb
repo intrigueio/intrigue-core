@@ -1,9 +1,9 @@
 require 'socket'
 require 'openssl'
-
+module Intrigue
 class UriGatherSslCertTask  < BaseTask
 
-  include Task::Web
+  include Intrigue::Task::Web
 
   def metadata
     {
@@ -84,4 +84,5 @@ class UriGatherSslCertTask  < BaseTask
     end
   end
 
+end
 end

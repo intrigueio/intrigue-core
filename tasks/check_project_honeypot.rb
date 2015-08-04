@@ -1,6 +1,7 @@
+module Intrigue
 class CheckProjectHoneypot  < BaseTask
 
-  include Task::Web
+  include Intrigue::Task::Web
 
   def metadata
     {
@@ -67,4 +68,5 @@ class CheckProjectHoneypot  < BaseTask
 
   end
 
+end
 end

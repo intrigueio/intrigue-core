@@ -1,5 +1,5 @@
 require 'dnsruby'
-
+module Intrigue
 class DnsRecurseSpf < BaseTask
 
   def metadata
@@ -107,4 +107,5 @@ class DnsRecurseSpf < BaseTask
   end
 
 
+end
 end

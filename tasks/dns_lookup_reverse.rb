@@ -1,5 +1,5 @@
 require 'resolv'
-
+module Intrigue
 class DnsLookupReverseTask < BaseTask
 
   def metadata
@@ -43,4 +43,5 @@ class DnsLookupReverseTask < BaseTask
     end
   end
 
+end
 end

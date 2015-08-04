@@ -1,6 +1,7 @@
+module Intrigue
 class CheckConfluence  < BaseTask
 
-  include Task::Web
+  include Intrigue::Task::Web
 
   def metadata
     {
@@ -114,4 +115,5 @@ class CheckConfluence  < BaseTask
 
   end
 
+end
 end

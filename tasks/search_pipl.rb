@@ -1,3 +1,4 @@
+module Intrigue
 class SearchPiplTask < BaseTask
 
   def metadata
@@ -149,4 +150,5 @@ class SearchPiplTask < BaseTask
       end
     end
 =end
+end
 end

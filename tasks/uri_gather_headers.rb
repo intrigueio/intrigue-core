@@ -1,9 +1,10 @@
+module Intrigue
 class UriGatherHeadersTask  < BaseTask
 
-  include Task::Web
+  include Intrigue::Task::Web
 
   def metadata
-    { 
+    {
       :name => "uri_gather_headers",
       :pretty_name => "URI Gather Headers",
       :authors => ["jcran"],
@@ -28,8 +29,9 @@ class UriGatherHeadersTask  < BaseTask
         _create_entity("UriHeader", {
           :name => "#{name}",
           :content => "#{value}" })
-        end
       end
     end
+  end
 
+  end
   end

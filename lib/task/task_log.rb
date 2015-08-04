@@ -1,6 +1,7 @@
 
 # Simple logger class
-class TaskLog < IntrigueLog
+module Intrigue
+class TaskLog < Intrigue::Log
 
   def initialize(id, name, write_file=false)
     super(id, name)
@@ -15,4 +16,5 @@ class TaskLog < IntrigueLog
 
   end
 
+end
 end

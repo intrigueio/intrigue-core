@@ -1,5 +1,5 @@
 require 'nmap/parser'
-
+module Intrigue
 class NmapScanTask < BaseTask
 
   def metadata
@@ -108,4 +108,5 @@ class NmapScanTask < BaseTask
   true
   end
 
+end
 end

@@ -1,9 +1,9 @@
 require 'resolv'
-
+module Intrigue
 class DnsLookupMxTask < BaseTask
 
   def metadata
-    { 
+    {
       :name => "dns_lookup_mx",
       :pretty_name => "DNS MX Lookup",
       :authors => ["jcran"],
@@ -57,4 +57,5 @@ class DnsLookupMxTask < BaseTask
     end
   end
 
+end
 end

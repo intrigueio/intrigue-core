@@ -1,3 +1,4 @@
+module Intrigue
 class SearchCorpwatchTask < BaseTask
 
   def metadata
@@ -42,4 +43,5 @@ class SearchCorpwatchTask < BaseTask
 
     end
   end
+end
 end

@@ -1,6 +1,7 @@
+module Intrigue
 class CheckGithub  < BaseTask
 
-  include Task::Web
+  include Intrigue::Task::Web
 
   def metadata
     {
@@ -72,4 +73,5 @@ class CheckGithub  < BaseTask
 
   end
 
+end
 end

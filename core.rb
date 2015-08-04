@@ -107,7 +107,7 @@ class IntrigueApp < Sinatra::Base
       @failed = stats.failed
       @processed = stats.processed
       @queues = stats.queues
-      @tasks = TaskFactory.list.map{|x| x.send(:new)}
+      @tasks = Intrigue::TaskFactory.list.map{|x| x.send(:new)}
       @task_names = @tasks.map{|t| t.metadata[:pretty_name]}.sort
       erb :index
     end

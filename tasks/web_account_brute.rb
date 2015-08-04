@@ -1,6 +1,7 @@
+module Intrigue
 class WebAccountBruteTask < BaseTask
 
-  include Task::Web
+  include Intrigue::Task::Web
 
   def metadata
     {
@@ -50,3 +51,4 @@ class WebAccountBruteTask < BaseTask
   end # run()
 
 end # ProfileSearch
+end

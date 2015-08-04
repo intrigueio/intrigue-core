@@ -1,8 +1,8 @@
 require 'uri'
-
+module Intrigue
 class UriGatherAndAnalyzeLinks  < BaseTask
 
-  include Task::Web
+  include Intrigue::Task::Web
 
   def metadata
     {
@@ -187,4 +187,5 @@ class UriGatherAndAnalyzeLinks  < BaseTask
 
   end
 
+end
 end

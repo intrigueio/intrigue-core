@@ -1,6 +1,7 @@
 require 'open-uri'
 require 'yomu'
 
+module Intrigue
 module Task
 module Parse
 
@@ -92,5 +93,6 @@ module Parse
   end
 
 
+end
 end
 end

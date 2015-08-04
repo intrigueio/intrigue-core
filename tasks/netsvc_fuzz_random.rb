@@ -3,11 +3,11 @@ require 'socket'
 ###
 ### XXX - This module has not been extensively tested!
 ###
-
+module Intrigue
 class NetsvcFuzzRandom < BaseTask
 
   def metadata
-    { 
+    {
       :name => "netsvc_fuzz_random",
       :pretty_name => "Fuzz a NetSvc with random data",
       :authors => ["jcran"],
@@ -74,4 +74,5 @@ class NetsvcFuzzRandom < BaseTask
     s.close
   end
 
+end
 end

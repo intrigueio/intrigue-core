@@ -1,9 +1,10 @@
+module Intrigue
 class UriGatherTechnologyTask  < BaseTask
 
-  include Task::Web
+  include Intrigue::Task::Web
 
   def metadata
-    { 
+    {
       :name => "uri_gather_technology",
       :pretty_name => "URI Gather Technology",
       :authors => ["jcran"],
@@ -95,4 +96,5 @@ class UriGatherTechnologyTask  < BaseTask
 
   end
 
+end
 end

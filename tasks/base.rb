@@ -1,5 +1,6 @@
 require 'timeout'
 
+module Intrigue
 class BaseTask
   include Sidekiq::Worker
 
@@ -411,4 +412,5 @@ class BaseTask
     value
     end
 
+end
 end

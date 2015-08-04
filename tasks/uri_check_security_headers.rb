@@ -1,6 +1,7 @@
+module Intrigue
 class UriCheckSecurityHeaders  < BaseTask
 
-  include Task::Web
+  include Intrigue::Task::Web
 
   def metadata
     {
@@ -51,4 +52,5 @@ class UriCheckSecurityHeaders  < BaseTask
     end # response
   end #end run
 
+end
 end

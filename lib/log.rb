@@ -1,7 +1,8 @@
 require 'redis'
 
 # Simple logger class
-class IntrigueLog
+module Intrigue
+class Log
 
   def initialize(id,name)
     @id = id
@@ -58,4 +59,5 @@ private
 
   end
 
+end
 end

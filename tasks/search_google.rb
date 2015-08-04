@@ -1,7 +1,8 @@
+module Intrigue
 class SearchGoogleTask < BaseTask
 
   def metadata
-    { 
+    {
       :name => "search_google",
       :pretty_name => "Search Google",
       :authors => ["jcran"],
@@ -76,3 +77,4 @@ class SearchGoogleTask < BaseTask
   end # end run()
 
 end # end Class
+end

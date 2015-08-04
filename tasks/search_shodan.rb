@@ -1,3 +1,4 @@
+module Intrigue
 class SearchShodanTask < BaseTask
 
   def metadata
@@ -110,4 +111,5 @@ class SearchShodanTask < BaseTask
     end
   end
 
+end
 end

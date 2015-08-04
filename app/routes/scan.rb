@@ -9,6 +9,7 @@ class IntrigueApp < Sinatra::Base
     erb :scan
   end
 
+  # Endpoint to start a task run from a webform
   post '/interactive/scan' do
 
     # Construct the attributes hash from the parameters. Loop through each of the
@@ -24,22 +25,34 @@ class IntrigueApp < Sinatra::Base
 
     # Construct an entity from the data we have
     entity = { :type => @params["entity_type"], :attributes => attribs }
-
     depth = @params["depth"].to_i if @params["depth"]
     name = @params["name"] || "default"
 
-    # Do the scan
-    id = SecureRandom.uuid
-    x = Intrigue::Scanner::SimpleScan.new
-    x.class.perform_async entity, id, name, depth
+    scan_id = SecureRandom.uuid
+    start_scan(scan_id, entity, name, depth)
 
     # Redirect to display the log
-    redirect "/v1/scan_runs/#{id}"
+    redirect "/v1/scan_runs/#{scan_id}"
   end
 
+  # Endpoint to start a task run programmatically
+  post '/scan_runs/?' do
+
+    scan_id = SecureRandom.uuid
+
+    scan_run_info = JSON.parse(request.body.read) if request.content_type == "application/json"
+
+    entity = scan_run_info["entity"]
+    name = scan_run_info["name"]
+    depth = scan_run_info["depth"]
+
+    start_scan(scan_id, entity, name, depth)
+
+  scan_id
+  end
 
   # Show the results in a human readable format
-  get '/scan_runs/:id' do
+  get '/scan_runs/:id/?' do
 
     # Get the log
     log = $intrigue_redis.get("scan:#{params[:id]}")

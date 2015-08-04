@@ -1,3 +1,4 @@
+module Intrigue
 class SearchBingTask < BaseTask
 
   def metadata
@@ -200,3 +201,4 @@ end
   false
   end
 end # end Class
+end

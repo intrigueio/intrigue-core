@@ -16,7 +16,7 @@ module Base
   class WebClient
 
 
-    include Task::Web
+    include Intrigue::Task::Web
     #
     # This methods requests a specified URI and greps for strings which indicate that an
     # account (doesn't) exist.

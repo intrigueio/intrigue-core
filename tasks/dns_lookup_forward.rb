@@ -1,5 +1,5 @@
 require 'resolv'
-
+module Intrigue
 class DnsLookupForwardTask < BaseTask
 
   def metadata
@@ -46,4 +46,5 @@ class DnsLookupForwardTask < BaseTask
     end
   end
 
+end
 end

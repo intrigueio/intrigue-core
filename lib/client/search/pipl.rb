@@ -3,7 +3,7 @@ module Search
 module Pipl
 
   class ApiClient
-    include Task::Web
+    include Intrigue::Task::Web
 
     attr_accessor :service_name
 

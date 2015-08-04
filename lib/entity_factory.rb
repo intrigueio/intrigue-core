@@ -1,6 +1,7 @@
 ###
 ### Entity factory: Standardize the creation and valiadation of entities
 ###
+module Intrigue
 class EntityFactory
 
   #
@@ -67,4 +68,5 @@ class EntityFactory
   false
   end
 
+end
 end

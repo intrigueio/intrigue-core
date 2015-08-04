@@ -15,7 +15,7 @@
         <% @task_names.each do |task_name| %>
           <%
             # Create the task
-            task = TaskFactory.create_by_pretty_name(task_name)
+            task = Intrigue::TaskFactory.create_by_pretty_name(task_name)
 
             # Check that the supplied type is allowed
             if params[:type]

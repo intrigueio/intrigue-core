@@ -1,3 +1,4 @@
+module Intrigue
 class Convert  < BaseTask
 
   def metadata
@@ -24,4 +25,5 @@ class Convert  < BaseTask
     _create_entity( _get_option("entity_type"), :name => name )
   end
 
+end
 end

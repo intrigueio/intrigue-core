@@ -1,6 +1,7 @@
+module Intrigue
 class UriDirbuster  < BaseTask
 
-  include Task::Web
+  include Intrigue::Task::Web
 
   def metadata
     {
@@ -111,4 +112,5 @@ class UriDirbuster  < BaseTask
 
   end
 
+end
 end
