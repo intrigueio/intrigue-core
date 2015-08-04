@@ -325,14 +325,15 @@ namespace '/v1/?' do
     # Generate a task id
     task_id = SecureRandom.uuid
 
-    @params = JSON.parse(request.body.read) if request.content_type == "application/json"
+    # Parse the incoming request
+    task_run_info = JSON.parse(request.body.read) if request.content_type == "application/json"
 
-    # Taks the parameters and turn them into a task_run request
-    task_run_info = @params
+    return nil unless task_run_info
 
     # Sensible default if the hook URI not specified (this is the case with most CLI stuff including core-cli)
-    local_hook = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1/task_runs/#{task_id}"
+    local_hook = "#{$intrigue_server_uri}/v1/task_runs/#{task_id}"
     task_run_info["hook_uri"] = local_hook unless task_run_info["hook_uri"]
+
 
     ###
     ### XXX SECURITY

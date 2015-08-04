@@ -106,18 +106,20 @@ class CoreCli < Thor
   puts "[+] Started task: #{task_id}"
   end
 
-
+  desc "start [Task] [Type#Entity] [Option1=Value1#...#...]", "Start a single task. Returns the result"
+  def start(task_name,entity_string,option_string=nil)
+    single(task_name,entity_string,option_string)
+  end
 
   desc "single [Task] [Type#Entity] [Option1=Value1#...#...]", "Start a single task. Returns the result"
-  def single(task_name,entity,options=nil)
+  def single(task_name,entity_string,option_string=nil)
 
-    entity_hash = _parse_entity entity
-    options_list = _parse_options options
+    entity_hash = _parse_entity entity_string
+    options_list = _parse_options option_string
 
     ### Construct the request
     task_id = _background(task_name,entity_hash,options_list)
     puts "[+] Started task: #{task_id}"
-
 
     if task_id == "" # technically a nil is returned , but becomes an empty string
       puts "[-] Task not started. Unknown Error. Exiting."
@@ -136,7 +138,6 @@ class CoreCli < Thor
         return
       end
     end
-
     puts "[+] Task complete!"
 
     ### Get the response
@@ -315,25 +316,32 @@ private
   end
 
   # parse out entity from the cli
-  def _parse_entity(entity)
-    entity_type = entity.split(@delim).first
-    entity_name = entity.split(@delim).last
+  def _parse_entity(entity_string)
+    entity_type = entity_string.split(@delim).first
+    entity_name = entity_string.split(@delim).last
 
     entity_hash = {
       "type" => entity_type,
       "attributes" => { "name" => entity_name}
     }
+
+    puts "Got entity: #{entity_hash}"
+
   entity_hash
   end
 
   # Parse out options from cli
-  def _parse_options(options)
+  def _parse_options(option_string)
 
-      return [] unless options
+      return [] unless option_string
 
-      options_list = options.split(@delim).map do |option|
+      options_list = []
+      options_list = option_string.split(@delim).map do |option|
         { "name" => option.split("=").first, "value" => option.split("=").last }
       end
+
+      puts "Got options: #{options_list}"
+
   options_list
   end
 
@@ -345,13 +353,13 @@ private
       "entity" => entity_hash
     }
 
+    puts "Payload: #{payload}"
     ###
     ### Send to the server
     ###
+    task_id = RestClient.post "#{@server_uri}/task_runs", payload.to_json, :content_type => "application/json"
 
-    task_id = RestClient.post "#{@server_uri}/task_runs", payload.to_json, "content_type" => "application/json"
-
-    task_id
+  task_id
   end
 
 end # end class
