@@ -27,6 +27,10 @@ a:hover {
   color: white;
 }
 
+.table-striped > tbody > tr:nth-child(2n+1) > td, .table-striped > tbody > tr:nth-child(2n+1) > th {
+   background-color: black;
+}
+
 .like-pre-dark {
   white-space: pre-wrap;
   font-family: monospace;
