@@ -12,12 +12,15 @@ module Intrigue
       @name= name
       @id = id
       @depth = depth
-      @log = ScanLog.new(@id, @name)
+      @scan_log = ScanLog.new(@id, @name)
+
+      @scan_result = Intrigue::Model::ScanResult.new(@id,@name)
+      @scan_result.save
 
       # Kick off the scan
-      @log.log  "Starting scan #{@name} of type #{self.class} with id #{@id} on entity #{entity} to depth #{@depth}"
+      @scan_log.log  "Starting scan #{@name} of type #{self.class} with id #{@id} on entity #{entity} to depth #{@depth}"
       _recurse(entity,@depth)
-      @log.good "Complete!"
+      @scan_log.good "Complete!"
     end
 
     private
@@ -63,18 +66,56 @@ module Intrigue
         _start_task_and_recurse "uri_dirbuster",entity,depth
         ### screenshot
         #_start_task_and_recurse "uri_screenshot",entity,depth
-
       elsif entity["type"] == "String"
         # Search!
         _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 10}]
         # Brute TLD
         _start_task_and_recurse "dns_brute_tld",entity,depth
       else
-        @log.log "Unhandled entity type: #{entity["type"]} #{entity["attributes"]["name"]}"
+        @scan_log.log "Unhandled entity type: #{entity["type"]} #{entity["attributes"]["name"]}"
         return
       end
     end
 
+    # List of prohibited entities - returns true or false
+    def _is_prohibited entity
+
+      if entity["type"] == "NetBlock"
+        cidr = entity["attributes"]["name"].split("/").last.to_i
+
+        @scan_log.error "Netblock too large: #{entity["type"]} #{entity["attributes"]["name"]}"
+
+        return true unless cidr >= 15
+
+      else
+        if (
+          entity["attributes"]["name"] =~ /google/             ||
+          entity["attributes"]["name"] =~ /g.co/               ||
+          entity["attributes"]["name"] =~ /goo.gl/             ||
+          entity["attributes"]["name"] =~ /android/            ||
+          entity["attributes"]["name"] =~ /urchin/             ||
+          entity["attributes"]["name"] =~ /youtube/            ||
+          entity["attributes"]["name"] =~ /schema.org/         ||
+          entity["attributes"]["description"] =~ /schema.org/  ||
+          entity["attributes"]["name"] =~ /microsoft.com/      ||
+          #entity["attributes"]["name"] =~ /yahoo.com/         ||
+          entity["attributes"]["name"] =~ /facebook.com/       ||
+          entity["attributes"]["name"] =~ /cloudfront.net/     ||
+          entity["attributes"]["name"] =~ /twitter.com/        ||
+          entity["attributes"]["name"] =~ /w3.org/             ||
+          entity["attributes"]["name"] =~ /akamai/             ||
+          entity["attributes"]["name"] =~ /akamaitechnologies/ ||
+          entity["attributes"]["name"] =~ /amazonaws/          ||
+          entity["attributes"]["name"] == "feeds2.feedburner.com"
+        )
+
+        @scan_log.error "Prohibited attribute: #{entity["type"]} #{entity["attributes"]["name"]}"
+        return
+        end
+
+      end
+    false
+    end
 
   end
 end

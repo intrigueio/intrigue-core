@@ -5,8 +5,9 @@
     <div class="form-group">
       <label for="task_name" class="col-xs-4 control-label">Scan Type</label>
       <div class="col-xs-6">
-      <select class="form-control input-sm" name="task" id="task_name">
-        <option value="simple"> Simple Scan </option>
+      <select class="form-control input-sm" name="scan_type" id="scan_type">
+        <option value="internal"> Internal Scan </option>
+        <option value="simple" selected="selected"> Simple Scan </option>
       </select>
       </div>
     </div>
@@ -36,8 +37,8 @@
 </div>
 <br/>
 <h4>Completed Scans</h4>
-<% @scan_ids.each do |x| %>
+<% @scans.each do |x| %>
 <ul>
-<%= "<li><a href=\'/v1/scan_runs/#{x.split(":").last}\'> #{x.split(":").last} </a></li>" %>
+<%= "<li><a href=\'/v1/scan_runs/#{x.id}\'> #{x.name} (#{x.id}) </a></li>"  %>
 </ul>
 <% end %>

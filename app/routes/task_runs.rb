@@ -33,23 +33,6 @@ class IntrigueApp < Sinatra::Base
     erb :task_runs
   end
 
-
-  # Get rid of all existing task runs
-  get '/task_runs/clear' do
-
-    # Clear all results
-    namespace = "result"
-    keys = $intrigue_redis.keys "#{namespace}*"
-    $intrigue_redis.del keys unless keys == []
-
-    # Clear the default queue
-    Sidekiq::Queue.new.clear
-
-    # Beam me up, scotty!
-    redirect '/v1'
-  end
-
-
   # Helper to construct the request to the API when the application is used interactively
   post '/interactive/single' do
 

@@ -123,7 +123,8 @@ class IntrigueApp < Sinatra::Base
     require_relative "app/routes/task_runs"
     require_relative "app/routes/scan"
     require_relative "app/routes/config"
-
+    
+    require_relative "app/models/scan_result"
 
   end
 end

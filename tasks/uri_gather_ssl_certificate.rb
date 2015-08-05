@@ -77,6 +77,8 @@ class UriGatherSslCertTask  < BaseTask
       @task_log.error "Caught an error: #{e}"
     rescue Errno::ECONNRESET => e
       @task_log.error "Caught an error: #{e}"
+    rescue Errno::EACCES => e
+      @task_log.error "Caught an error: #{e}"
     rescue Errno::ECONNREFUSED => e
       @task_log.error "Caught an error: #{e}"
     rescue RuntimeError => e

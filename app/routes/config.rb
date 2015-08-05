@@ -1,6 +1,24 @@
 class IntrigueApp < Sinatra::Base
   namespace '/v1/?' do
 
+    # Get rid of all existing task runs
+    get '/clear' do
+
+      # Clear all task results
+      keys = $intrigue_redis.keys "result:*"
+      $intrigue_redis.del keys unless keys == []
+
+      # Clear all scan results
+      keys = $intrigue_redis.keys "scan_result:*"
+      $intrigue_redis.del keys unless keys == []
+
+      # Clear the default queue
+      Sidekiq::Queue.new.clear
+
+      # Beam me up, scotty!
+      redirect '/v1'
+    end
+
     # GET CONFIG
     get '/config' do
       erb :config

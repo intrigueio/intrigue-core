@@ -34,4 +34,5 @@ Dir["#{entities_folder}/*.rb"].each {|f| require_relative f}
 ####
 require_relative 'scan/scan_log.rb'
 require_relative 'scan/base.rb'
+require_relative 'scan/internal_scan.rb'
 require_relative 'scan/simple_scan.rb'

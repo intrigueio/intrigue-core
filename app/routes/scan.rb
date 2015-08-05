@@ -3,8 +3,12 @@ class IntrigueApp < Sinatra::Base
 
   # Scan
   get '/scan/?' do
-    namespace = "scan_result"
-    @scan_ids = $intrigue_redis.keys("#{namespace}*")
+
+    # Get details on the scan results so we can display them
+    scan_ids = $intrigue_redis.keys("scan_result:*").reverse
+    @scans = scan_ids.map{|id| Intrigue::Model::ScanResult.find id }
+
+    puts "got scans #{@scans}"
 
     erb :scan
   end
@@ -25,11 +29,12 @@ class IntrigueApp < Sinatra::Base
 
     # Construct an entity from the data we have
     entity = { :type => @params["entity_type"], :attributes => attribs }
+    scan_type = @params["scan_type"]
     depth = @params["depth"].to_i if @params["depth"]
     name = @params["name"] || "default"
 
     scan_id = SecureRandom.uuid
-    start_scan(scan_id, entity, name, depth)
+    start_scan(scan_type, scan_id, entity, name, depth)
 
     # Redirect to display the log
     redirect "/v1/scan_runs/#{scan_id}"

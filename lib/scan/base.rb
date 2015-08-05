@@ -10,7 +10,7 @@ module Scanner
       task_id = SecureRandom.uuid
 
       # XXX - Create the task
-      @log.log "Calling #{task_name} on #{entity}"
+      @scan_log.log "Calling #{task_name} on #{entity}"
       task = TaskFactory.create_by_name(task_name)
 
       ###
@@ -54,7 +54,7 @@ module Scanner
 =end
       # Display results in the log
       result['entities'].each do |result|
-        @log.log "Entity: #{result["type"]} #{result["attributes"]["name"]}"
+        @scan_log.log "Entity: #{result["type"]} #{result["attributes"]["name"]}"
       end
 
       # Then iterate on them
@@ -68,42 +68,11 @@ module Scanner
         #node.outgoing(:child) << this
 
         # recurse!
-        @log.log "Iterating on #{result}"
+        @scan_log.log "Iterating on #{result}"
         _recurse(result, depth-1)
       end
-
     end
 
-    # List of prohibited entities - returns true or false
-    def _is_prohibited entity
-
-      if entity["type"] == "NetBlock"
-        cidr = entity["attributes"]["name"].split("/").last.to_i
-        return true unless cidr >= 22
-      else
-        return true if (
-          entity["attributes"]["name"] =~ /google/             ||
-          entity["attributes"]["name"] =~ /g.co/               ||
-          entity["attributes"]["name"] =~ /goo.gl/             ||
-          entity["attributes"]["name"] =~ /android/            ||
-          entity["attributes"]["name"] =~ /urchin/             ||
-          entity["attributes"]["name"] =~ /youtube/            ||
-          entity["attributes"]["name"] =~ /schema.org/         ||
-          entity["attributes"]["description"] =~ /schema.org/  ||
-          entity["attributes"]["name"] =~ /microsoft.com/      ||
-          #entity["attributes"]["name"] =~ /yahoo.com/         ||
-          entity["attributes"]["name"] =~ /facebook.com/       ||
-          entity["attributes"]["name"] =~ /cloudfront.net/     ||
-          entity["attributes"]["name"] =~ /twitter.com/        ||
-          entity["attributes"]["name"] =~ /w3.org/             ||
-          entity["attributes"]["name"] =~ /akamai/             ||
-          entity["attributes"]["name"] =~ /akamaitechnologies/ ||
-          entity["attributes"]["name"] =~ /amazonaws/          ||
-          entity["attributes"]["name"] == "feeds2.feedburner.com"
-        )
-      end
-    false
-    end
   end
 end
 end

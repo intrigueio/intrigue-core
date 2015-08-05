@@ -30,12 +30,18 @@ class IntrigueApp < Sinatra::Base
   ####
   #### Helper method for starting a scan run
   ####
-  def start_scan(scan_id, entity, name, depth)
+  def start_scan(type, scan_id, entity, name, depth)
 
     ###
     # Create the scan
     ###
-    scan = Intrigue::Scanner::SimpleScan.new
+    if type == "simple"
+      scan = Intrigue::Scanner::SimpleScan.new
+    elsif type == "internal"
+      scan = Intrigue::Scanner::InternalScan.new
+    else
+      raise "Unknown scan type"
+    end
 
     # note, this input is untrusted.
     jid = scan.class.perform_async scan_id, entity, name, depth
