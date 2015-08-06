@@ -6,9 +6,9 @@ class IntrigueApp < Sinatra::Base
 
     # Get details on the scan results so we can display them
     scan_ids = $intrigue_redis.keys("scan_result:*").reverse
-    @scans = scan_ids.map{|id| Intrigue::Model::ScanResult.find id }
+    @scan_results = scan_ids.map{|id| Intrigue::Model::ScanResult.find id }
 
-    puts "got scans #{@scans}"
+    puts "Got Scan Results: #{@scan_results}"
 
     erb :scan
   end
@@ -58,6 +58,9 @@ class IntrigueApp < Sinatra::Base
 
   # Show the results in a human readable format
   get '/scan_runs/:id/?' do
+
+    @scan_result = Intrigue::Model::ScanResult.find("scan_result:#{params[:id]}")
+    puts "Got Scan Result #{@scan_result}" #if @scan_result
 
     # Get the log
     log = $intrigue_redis.get("scan:#{params[:id]}")

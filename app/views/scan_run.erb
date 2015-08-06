@@ -1,3 +1,15 @@
 <h3>Scan Run</h3>
+<p>New Entities:
+  <ul>
+    <% @scan_result.entities.each do |entity| %>
+      <li>
+        <a href="/v1/?type=<%=h entity["type"]%>&<%= h entity["attributes"].map{|k,v| "attrib_#{k}=#{v}"}.join("&") %>">
+          <%= h entity["type"] %>: <%= h entity["attributes"]["name"] %>
+        </a>
+        <%= "<a target=\'_blank\' href=\'#{h entity["attributes"]["uri"]}\'>[link]</a>" if entity["attributes"]["uri"] %>
+        <span class="like-pre-white">(<%=h entity.inspect %>)</span>
+      </li>
+    <% end %>
+  </ul>
 Log:
 <span class="like-pre-dark"><%= h @scan_log %></span><br/>

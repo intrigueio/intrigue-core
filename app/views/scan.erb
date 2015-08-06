@@ -37,7 +37,7 @@
 </div>
 <br/>
 <h4>Completed Scans</h4>
-<% @scans.each do |x| %>
+<% @scan_results.each do |x| %>
 <ul>
 <%= "<li><a href=\'/v1/scan_runs/#{x.id}\'> #{x.name} (#{x.id}) </a></li>"  %>
 </ul>

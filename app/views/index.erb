@@ -42,7 +42,7 @@
     <!-- Get all attributes and use this to create an entity -->
     <% attribs = {}; params.each{|k,v| attribs[k.gsub("attrib_","").to_sym] = v if (k =~/^attrib/ && v.length<100) } %>
     <% if params[:type] %>
-      <%= EntityFactory.create_by_type(params[:type],attribs).form  %>
+      <%= Intrigue::EntityFactory.create_by_type(params[:type],attribs).form  %>
     <% else %>
       <div class="form-group">
         <label for="entity_type" class="col-xs-4 control-label">Type</label>
