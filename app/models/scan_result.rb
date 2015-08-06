@@ -5,10 +5,11 @@ module Intrigue
       attr_accessor :id, :key, :name, :task_ids, :entities
 
       def self.find(id)
-        s = ScanResult.new("aslkd;jflaskdjf","aslkd;jflaskdjf")
+        nope = SecureRandom.hex
+        s = ScanResult.new("template-#{nope}","template-#{nope}")
         s.from_json($intrigue_redis.get("#{id}"))
         # if we didn't find anything in the db, return nil
-        return nil if s.name == "aslkd;jflaskdjf"
+        return nil if s.name == "template-#{nope}"
       s
       end
 
