@@ -2,10 +2,10 @@ class IntrigueApp < Sinatra::Base
   namespace '/v1/?' do
 
   # Export All Data
-  get '/task_runs.json' do
+    get '/task_results.json' do
 
-    # Clear all results
-    namespace = "result"
+    # get all results
+    namespace = "task_result"
     keys = $intrigue_redis.keys("#{namespace}*")
 
     results = []
@@ -19,18 +19,23 @@ class IntrigueApp < Sinatra::Base
   end
 
   # Existing task runs
-  get '/task_runs' do
-    namespace = "result"
+  get '/task_results' do
+    namespace = "task_result:"
     keys = $intrigue_redis.keys("#{namespace}*")
 
     unsorted_results = []
     keys.each do |key|
-      unsorted_results << JSON.parse($intrigue_redis.get(key))
+      begin
+        puts "Finding key #{key}"
+        unsorted_results << Intrigue::Model::TaskResult.find(key.split(":").last)
+      rescue JSON::ParserError => e
+        puts "Parse Error: #{e}"
+      end
     end
 
-    @task_results = unsorted_results.sort_by{ |k| k["timestamp_start"] }.reverse
+    @task_results = unsorted_results #.sort_by{ |k| k.timestamp_start }.reverse
 
-    erb :task_runs
+    erb :task_results
   end
 
   # Helper to construct the request to the API when the application is used interactively
@@ -39,7 +44,11 @@ class IntrigueApp < Sinatra::Base
     # Generate a task id
     task_id = SecureRandom.uuid
 
-    # This is pretty ugly and compensates for our lack of a local DB.
+    # Create the task result in the DB
+    @task_result = Intrigue::Model::TaskResult.new task_id, "x"
+    @task_result.save
+
+    # This is pretty ugly and currently compensates for our lack of a local DB.
     # We need to convert form inputs into a reasonable
     # request. This means collecting attributes and options and arranging them
     # in way that the application can handle. Prepare yourself.
@@ -57,7 +66,6 @@ class IntrigueApp < Sinatra::Base
 
     # Construct an entity from the data we have
     entity = { :type => @params["entity_type"], :attributes => attribs }
-
 
     # Construct the options hash from the parameters
     options = []
@@ -77,19 +85,23 @@ class IntrigueApp < Sinatra::Base
     x = { "task" => @params["task"],
           "options" => options,
           "entity" => entity,
-          "hook_uri" => "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1/task_runs/#{task_id}"
+          "hook_uri" => "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1/task_results/#{task_id}"
     }
 
     start_task_run(task_id, x)
 
-    redirect "/v1/task_runs/#{task_id}"
+    redirect "/v1/task_results/#{task_id}"
   end
 
   # Create a task run from a json request
-  post '/task_runs' do
+  post '/task_results' do
 
     # Generate a task id
     task_id = SecureRandom.uuid
+
+    # Create the task result in the DB
+    @task_result = Intrigue::Model::TaskResult.new task_id, "x"
+    @task_result.save
 
     # Parse the incoming request
     task_run_info = JSON.parse(request.body.read) if request.content_type == "application/json"
@@ -99,7 +111,7 @@ class IntrigueApp < Sinatra::Base
     return nil unless task_run_info
 
     # Sensible default if the hook URI not specified (this is the case with most CLI stuff including core-cli)
-    local_hook = "#{$intrigue_server_uri}/v1/task_runs/#{task_id}"
+    local_hook = "#{$intrigue_server_uri}/v1/task_results/#{task_id}"
     task_run_info["hook_uri"] = local_hook unless task_run_info["hook_uri"]
 
     ###
@@ -117,7 +129,7 @@ class IntrigueApp < Sinatra::Base
   end
 
   # Accept the results of a task run (webhook POSTs here by default)
-  post '/task_runs/:id' do
+  post '/task_results/:id' do
 
     # Retrieve the request's body and parse it as JSON
     result = JSON.parse(request.body.read)
@@ -127,40 +139,32 @@ class IntrigueApp < Sinatra::Base
     job_id = result["id"]
 
     # Persist the result
-    $intrigue_redis.set("result:#{job_id}", result.to_json)
+    $intrigue_redis.set("task_result:#{job_id}", result.to_json)
 
     # Return status
     status 200 if result
   end
 
   # Get the results of a task run
-  get "/task_runs/:id.json" do
+  get "/task_results/:id.json" do
     content_type :json
-    result = $intrigue_redis.get("result:#{params[:id]}")
+    result = Intrigue::Model::TaskResult.find params[:id] #$intrigue_redis.get("task_result:#{params[:id]}")
     result if result
   end
 
   # Show the results in a human readable format
-  get '/task_runs/:id' do
+  get '/task_results/:id' do
 
-    # Get the log
-    log = $intrigue_redis.get("task:#{params[:id]}")
-    reversed_log = log.split("\n").reverse.join("\n") if log
-
-    # remove newline
-    #reversed_log[0]=''
-
-    @task_log = reversed_log
+    @task_result = Intrigue::Model::TaskResult.find(params[:id])
+    @task_log = @task_result.log
 
     # Get the result from Redis
-    result = $intrigue_redis.get("result:#{params[:id]}")
-    if result # Assuming it's available, display it
-      @task_run = JSON.parse(result)
-      @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1?task_name=#{@task_run["task_name"]}&type=#{@task_run["entity"]["type"]}&#{@task_run["entity"]["attributes"].collect { |k, v| "attrib_#{k}=#{v}" }.join("?")}"
-      @elapsed_time = Time.parse(@task_run['timestamp_end']).to_i - Time.parse(@task_run['timestamp_start']).to_i
+    if @task_result # Assuming it's available, display it
+      @rerun_uri = "TODO" #"#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1?task_name=#{@task_result.task_name}&type=#{@task_result.entity.type}&#{@task_result.entity.attributes.collect { |k, v| "attrib_#{k}=#{v}" }.join("?")}"
+      @elapsed_time = Time.parse(@task_result.timestamp_end).to_i - Time.parse(@task_result.timestamp_start).to_i
     else
       ## it'll just be empty for now
-      @task_run = { 'entities' => [],
+      @task_result = { 'entities' => [],
                     'task_name'  => "please wait...",
                     'entity'  => {'type' => "please wait...", 'attributes' => {}},
                     'timestamp_start'  => "please wait...",
@@ -174,27 +178,20 @@ class IntrigueApp < Sinatra::Base
       @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1?"
     end
 
-    erb :task_run
+    erb :task_result
   end
 
   # Determine if the task run is complete
-  get '/task_runs/:id/complete' do
-    result = "false"
-    if $intrigue_redis.get("result:#{params[:id]}")
-      result = "true"
-    end
-  result
+  get '/task_results/:id/complete' do
+    return "true" if Intrigue::Model::TaskResult.find(params[:id])
+  "false"
   end
 
   # Get the task log
-  get '/task_runs/:id/log' do
-    $intrigue_redis.get("task:#{params[:id]}")
+  get '/task_results/:id/log' do
+    #$intrigue_redis.get("task_result_log:#{params[:id]}")
+    Intrigue::Model::TaskResult.find(params[:id]).log.to_s
   end
 
-  # SHOW THE RESULTS W/ A VISUALIZATION
-  get '/task_runs/:id/viz' do
-    @task_id = params[:id]
-    erb :task_run_viz
-  end
 end
 end

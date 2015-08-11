@@ -10,12 +10,6 @@ require 'timeout'
 require 'json'
 require 'rest-client'
 
-# Core libraries
-require_relative 'lib/all'
-
-# Core tasks
-require_relative 'tasks/all'
-
 # Debug
 require 'pry'
 
@@ -119,12 +113,26 @@ class IntrigueApp < Sinatra::Base
 
 
     require_relative "app/helpers"
+
     require_relative "app/routes/tasks"
-    require_relative "app/routes/task_runs"
+    require_relative "app/routes/task_results"
     require_relative "app/routes/scan"
-    require_relative "app/routes/config"
-    
+    require_relative "app/routes/admin"
+
+    require_relative "app/models/log"
     require_relative "app/models/scan_result"
+    require_relative "app/models/scan_result_log"
+    require_relative "app/models/task_result"
+    require_relative "app/models/task_result_log"
+    require_relative "app/models/entity"
+
 
   end
 end
+
+
+# Core libraries
+require_relative 'lib/all'
+
+# Core tasks
+require_relative 'tasks/all'

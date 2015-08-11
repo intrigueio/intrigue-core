@@ -12,8 +12,7 @@ module Intrigue
       @name= name
       @id = id
       @depth = depth
-      @scan_log = ScanLog.new(@id, @name)
-
+      @scan_log = Intrigue::Model::ScanResultLog.new(@id,@name)
       @scan_result = Intrigue::Model::ScanResult.new(@id,@name)
       @scan_result.save
 

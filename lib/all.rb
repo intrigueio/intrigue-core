@@ -2,13 +2,10 @@
 require_relative 'initialize/hash'
 require_relative 'initialize/string'
 
-require_relative 'log'
-
 ####
 # Task-specific libraries
 ####
 require_relative 'task_factory'
-require_relative 'task/task_log'
 
 ### Web & Parse mixins
 require_relative 'task/web'
@@ -32,7 +29,6 @@ Dir["#{entities_folder}/*.rb"].each {|f| require_relative f}
 ####
 # Scan Libraries
 ####
-require_relative 'scan/scan_log.rb'
 require_relative 'scan/base.rb'
 require_relative 'scan/internal_scan.rb'
 require_relative 'scan/simple_scan.rb'

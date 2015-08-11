@@ -1,12 +1,6 @@
 module Intrigue
 module Entity
-class Base
-
-  attr_accessor :attributes
-
-  def initialize
-    @attributes = {}
-  end
+class Base < Intrigue::Model::Entity
 
   def self.inherited(base)
     EntityFactory.register(base)
@@ -23,12 +17,13 @@ class Base
     @attributes = attributes
   end
 
-  def to_json
-    {
-      :type => metadata[:type],
-      :attributes => @attributes
-    }
-  end
+  #def to_json
+  #  {
+  #    :id => id,
+  #    :type => metadata[:type],
+  #    :attributes => @attributes
+  #  }
+  #end
 
   def form
     %{

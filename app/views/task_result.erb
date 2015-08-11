@@ -1,0 +1,22 @@
+<h3>TaskRun: <a href="<%=@rerun_uri || nil%>"><%=@task_result.task_name %></a> </h3>
+<p>ID: <%=@task_result.id %> </p>
+<p>Start: <%=@task_result.timestamp_start %> </p>
+<p>End: <%=@task_result.timestamp_end%> </p>
+<p>Elapsed (s): <%= @elapsed_time %> </p>
+<p>Entity: <%= h "#{@task_result.entity.type} #{@task_result.entity.attributes['name']}"%> </p>
+<p>New Entities:
+<ul>
+  <% @task_result.entities.each do |entity| %>
+    <% binding.pry %>
+    <li>
+      <a href="/v1/?type=<%=h entity.type %>&<%= h entity.attributes.map{|k,v| "attrib_#{k}=#{v}"}.join("&") %>">
+        <%= h entity.type %>: <%= h entity.attributes["name"] %>
+      </a>
+      <%= "<a target=\'_blank\' href=\'#{h entity.attributes["uri"]}\'>[link]</a>" if entity.attributes["uri"] %>
+      <span class="like-pre-white">(<%=h entity.inspect %>)</span>
+    </li>
+  <% end %>
+</ul>
+</p>
+
+Log:

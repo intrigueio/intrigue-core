@@ -10,16 +10,22 @@ class BaseTask
 
   def perform(task_id, entity, options=[], handlers=["webhook"], hook_uri )
 
+    #######################
+    # Get the Task Result #
+    #######################
+    @task_result = Intrigue::Model::TaskResult.find task_id
+    puts "Task Result: #{@task_result}"
+
+    ###################
+    # Create a Logger #
+    ###################
+    @task_log = @task_result.log
+
     # We need a way to skip the actual setup,run,cleanup of the task if
     # the caller gave us broken input. We still want to get a result
     # back to the caller though. Assume it's good, and check input along
     # the way.
     broken_input = false
-
-    ###################
-    # Create a Logger #
-    ###################
-    @task_log = TaskLog.new(task_id, self.metadata[:task_name], false)
 
     #
     # Do a little logging. Do it for the kids.
@@ -49,27 +55,32 @@ class BaseTask
     ###########################
     # Perform the actual task #
     ###########################
-    @result = {}
-    @result[:task_name] = metadata[:name]
-    @result[:entity] = entity
-    @result[:timestamp_start] = Time.now.getutc
-    @result[:entities] = []
-    @result[:id] = task_id
+    @task_result.task_name = metadata[:name]
+
+    # TODO - THSI IS A HACK
+    # TODO - this should be done closer to user input.
+    # TODO - this will create duplicate entities in the DB ....  MUST FIX.
+    puts "ENTITY #{entity}"
+    source_entity = Intrigue::Model::Entity.new entity["type"], entity["attributes"]
+    source_entity.save
+
+    @task_result.entity = source_entity
+    @task_result.timestamp_start = Time.now.getutc
+    @task_result.id = task_id
 
     unless broken_input
       # Setup creates the following objects:
       # @entity - the entity we're operating on
       # @user_options - a hash of task options
-      # @result - the final result to be passed back to the caller
+      # @task_result - the final result to be passed back to the caller
       @task_log.log "Calling Setup"
       if setup(task_id, entity, options)
         # Call run(), which will use _create_entity
-        # to fill out the @result[:entities] array
         begin
           Timeout.timeout($intrigue_global_timeout) do # 15 minutes should be enough time to hit a class b for a single port w/ masscan
             @task_log.log "Calling Run"
             run # run the tas
-            @result[:entities].uniq! # Clean up the resulting entities
+            @task_result.entities.map{|x| x.to_json }.uniq! # Clean up the resulting entities
           end
         rescue Timeout::Error
           @task_log.error "ERROR! Timed out"
@@ -82,17 +93,16 @@ class BaseTask
 
     # Grab the task log & html escape before posting
     @task_log.good "Ship it!"
-    @result[:task_log] = @task_log.to_text  #Rack::Utils.escape_html(@task_log.to_text) # This is already done at display time, so no need to double up
 
     # Grab the task log & html escape before posting
     # http://stackoverflow.com/questions/178704/are-unix-timestamps-the-best-way-to-store-timestamps
-    @result[:timestamp_end] = Time.now.getutc
+    @task_result.timestamp_end = Time.now.getutc
 
     ######################################
     # Send the result back to the caller #
     ######################################
     #
-    # @result is a hash that contains these parts:
+    # @task_result is a hash that contains these parts:
     #
     #  {"task_name"=>"dns_forward_lookup",
     #   "entity"=>{"type"=>"DnsRecord", "attributes"=>{"name"=>"www.google.com}
@@ -115,7 +125,7 @@ class BaseTask
     if handlers.include? "webhook"
 
       unless hook_uri
-        @tasklog.error "FATAL! Webhook URI not specified"
+        @task_log.error "FATAL! Webhook URI not specified"
         return
       end
 
@@ -124,12 +134,12 @@ class BaseTask
         # Post the result back to /receive
         #
         @task_log.log "Sending to Webhook: #{hook_uri}" # < task log has already been shipped so this won't show in the task log, only overall logs
-        recoded_string = @result.to_json.encode('UTF-8', :invalid => :replace, :replace => '?')
+        recoded_string = @task_result.to_json.encode('UTF-8', :invalid => :replace, :replace => '?')
         RestClient.post hook_uri, recoded_string, :content_type => "application/json"
 
       rescue Encoding::UndefinedConversionError
         # < task log has already been shipped so this won't show in the task log, only overall logs
-        @task_log.error "ERROR! Encoding error when converting #{@result} to JSON"
+        @task_log.error "ERROR! Encoding error when converting #{@task_result} to JSON"
         @task_log.error "Error Character: #{$!.error_char.dump}"
         @task_log.error "Error Character Encoding: #{$!.error_char.encoding}"
 
@@ -155,7 +165,7 @@ class BaseTask
       File.open("#{$intrigue_basedir}/results/#{shortname}.json", "w+") do |file|
         file.flock(File::LOCK_EX)
         # write it out
-        file.write(JSON.pretty_generate(JSON.parse(@result.to_json)))
+        file.write(JSON.pretty_generate(JSON.parse(@task_result.to_json)))
       end
     end
 
@@ -165,7 +175,7 @@ class BaseTask
       File.open(csv_file, "a+") do |file|
         file.flock(File::LOCK_EX)
         # Create outstring
-        outstring = "#{metadata[:name]},#{@result[:entity]["attributes"]["name"]},#{@result[:entities].map{|x| x[:type] + "#" + x[:attributes][:name] }.join(";")}\n"
+        outstring = "#{metadata[:name]},#{@task_result.entity.attributes["name"]},#{@task_result.entities.map{|x| x.type + "#" + x.attributes["name"] }.join(";")}\n"
         # write it out
         file.puts(outstring)
       end
@@ -312,6 +322,9 @@ class BaseTask
     else
       @task_log.log "No User options"
     end
+
+    @task_result.save
+
   true
   end
 
@@ -322,7 +335,7 @@ class BaseTask
     @task_log = nil
     @entity = nil
     @user_options = nil
-    @result = nil
+    @task_result = nil
   end
   #
   #########################################################
@@ -362,12 +375,12 @@ class BaseTask
 
       # If we don't get anything back, safe to assume we can't move on
       unless entity
-        @task_log.error "SKIPPING Unable to verify entity: #{type} #{attributes}"
+        @task_log.error "SKIPPING Unable to verify & save entity: #{type} #{attributes}"
         return
       end
 
       # Add to our result set for this task
-      @result[:entities] << entity.to_json
+      @task_result.add_entity entity
 
     # return the entity
     entity

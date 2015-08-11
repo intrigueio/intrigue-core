@@ -13,17 +13,20 @@ class IntrigueApp < Sinatra::Base
     entity = task_run_info["entity"]        ## || {:type => "Host", :attributes => {:name => "8.8.8.8"}}
     webhook_uri = task_run_info["hook_uri"]
 
+    puts "Starting task Run with details #{task_run_info}"
+
     ###
     # Create the task
     ###
-    task =  Intrigue::TaskFactory.create_by_name(task_name)
+    task = Intrigue::TaskFactory.create_by_name(task_name)
 
     unless entity
       entity = task.metadata[:example_entities].first
     end
 
     # note, this input is untrusted.
-    jid = task.class.perform_async task_id, entity, task_options, ["webhook"], "#{$intrigue_server_uri}/v1/task_runs/#{task_id}"
+    puts "Performing task"
+    jid = task.class.perform_async task_id, entity, task_options, ["webhook"], "#{$intrigue_server_uri}/v1/task_results/#{task_id}"
 
   end
 

@@ -51,13 +51,16 @@ class EntityFactory
 
     @entities.each do |e|
       # Create a new entity object
-      entity_object = e.new
+      entity_object = e.new(type,attributes)
       # Check to see if this is the matching type
       if (entity_object.metadata[:type] == type)
         # If so, validate the attributes to make sure we can
         # create this entity with these attributes (and set them if it validates)
         if entity_object.set_attributes(attributes)
+
           # Success!
+          entity_object.save
+
           return entity_object
         else
           return false # fail, couldn't set attributes

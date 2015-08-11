@@ -3,6 +3,12 @@
 <div class="col-sm-5">
   <form class="form-horizontal" target="_self" method="post" action="/v1/interactive/scan">
     <div class="form-group">
+      <label for="entity_type" class="col-xs-4 control-label">Scan Name</label>
+      <div class="col-xs-6">
+            <input type="text" class="form-control input-sm" id="name" name="name" value="Just another scan">
+          </div>
+        </div>
+    <div class="form-group">
       <label for="task_name" class="col-xs-4 control-label">Scan Type</label>
       <div class="col-xs-6">
       <select class="form-control input-sm" name="scan_type" id="scan_type">
@@ -26,7 +32,7 @@
     <div class="form-group">
       <label for="attrib_name" class="col-xs-4 control-label">Depth</label>
       <div class="col-xs-6">
-        <input type="text" class="form-control input-sm" id="depth" name="depth" value="1">
+        <input type="text" class="form-control input-sm" id="depth" name="depth" value="3">
       </div>
     </div>
     <hr></hr>
@@ -39,6 +45,6 @@
 <h4>Completed Scans</h4>
 <% @scan_results.each do |x| %>
 <ul>
-<%= "<li><a href=\'/v1/scan_runs/#{x.id}\'> #{x.name} (#{x.id}) </a></li>"  %>
+<%= "<li><a href=\'/v1/scan_runs/#{x.id}\'> #{x.name} (#{x.id}) </a></li>"  if x %>
 </ul>
 <% end %>
