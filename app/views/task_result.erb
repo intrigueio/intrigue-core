@@ -7,7 +7,6 @@
 <p>New Entities:
 <ul>
   <% @task_result.entities.each do |entity| %>
-    <% binding.pry %>
     <li>
       <a href="/v1/?type=<%=h entity.type %>&<%= h entity.attributes.map{|k,v| "attrib_#{k}=#{v}"}.join("&") %>">
         <%= h entity.type %>: <%= h entity.attributes["name"] %>
