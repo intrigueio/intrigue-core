@@ -5,6 +5,7 @@ module Intrigue
       attr_accessor :id, :name, :tasks, :entities, :log
       attr_accessor :depth, :scan_type, :entity, :task_results
       attr_accessor :timestamp_start, :timestamp_end
+      attr_accessor :entity_count
 
       def self.key
         "scan_result"
@@ -22,6 +23,7 @@ module Intrigue
         @depth=nil
         @scan_type =nil
         @entity = nil
+        @entity_count = 0
         @task_results = []
         @options = []
         @entities = []
@@ -48,6 +50,7 @@ module Intrigue
       end
 
       def add_entity(entity)
+        @entity_count+=1
         @entities << entity
         save
       end
@@ -64,6 +67,7 @@ module Intrigue
           @entity = Entity.find(x["entity_id"])
           @task_results = x["task_result_ids"].map{|y| TaskResult.find y } if x["task_result_ids"]
           @entities = x["entity_ids"].map{|y| Entity.find y } if x["entity_ids"]
+          @entity_count = x["entity_count"]
           @log = ScanResultLog.find x["id"]
 
         rescue JSON::ParserError => e
@@ -84,6 +88,7 @@ module Intrigue
           "timestamp_start" => @timestamp_start,
           "timestamp_end" => @timestamp_end,
           "entity_id" => @entity.id,
+          "entity_count" => @entity_count,
           "task_result_ids" => @task_results.map{|y| y.id },
           "entity_ids" => @entities.map {|y| y.id },
           "options" => @options

@@ -6,7 +6,7 @@ class IntrigueApp < Sinatra::Base
 
     # Get details on the scan results so we can display them
     scan_ids = $intrigue_redis.keys("scan_result:*")
-    @scan_results = scan_ids.last(5).map{ |id| Intrigue::Model::ScanResult.find id.split(":").last }
+    @scan_results = scan_ids.map{ |id| Intrigue::Model::ScanResult.find id.split(":").last }.sort{ |x, y| x.timestamp_start <=> y.timestamp_start }.reverse
 
     erb :scan
   end

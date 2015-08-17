@@ -29,7 +29,7 @@ module Intrigue
         ### DNS Forward Lookup
         _start_task_and_recurse "dns_lookup_forward",entity,depth
         ### DNS Subdomain Bruteforce
-        _start_task_and_recurse "dns_brute_sub",entity,depth,[{"name" => "use_file", "value" => "false"}]
+        _start_task_and_recurse "dns_brute_sub",entity,depth,[{"name" => "use_file", "value" => "true"}]
       elsif entity.type == "Uri"
         ### Get SSLCert
         _start_task_and_recurse "uri_gather_ssl_certificate",entity,depth

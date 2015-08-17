@@ -103,7 +103,7 @@ module Task
     ### XXX - significant updates made to zlib, determine whether to
     ### move this over to RestClient: https://github.com/ruby/ruby/commit/3cf7d1b57e3622430065f6a6ce8cbd5548d3d894
     ###
-    def http_get(uri, headers={}, limit = 10, timeout=20, read_timeout=1000)
+    def http_get(uri, headers={}, limit = 10, timeout=60, read_timeout=1000)
 
       #@task_log.log "http_get Connecting to #{uri}" if @task_log
 

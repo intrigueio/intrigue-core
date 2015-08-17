@@ -22,8 +22,7 @@ class IntrigueApp < Sinatra::Base
 
     # Existing task runs
     get '/task_results' do
-      namespace = "task_result:"
-      keys = $intrigue_redis.keys("#{namespace}*")
+      keys = $intrigue_redis.keys("task_result:*")
 
       unsorted_results = []
       keys.each do |key|

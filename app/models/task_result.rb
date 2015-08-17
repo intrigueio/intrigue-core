@@ -4,7 +4,7 @@ module Intrigue
 
       attr_accessor :id, :name, :timestamp_start, :timestamp_end
       attr_accessor :options, :entity, :task_name, :entities, :log
-      attr_accessor :complete
+      attr_accessor :complete, :entity_count
 
       def self.key
         "task_result"
@@ -21,6 +21,7 @@ module Intrigue
         @timestamp_start = DateTime.now
         @timestamp_end = DateTime.now
         @entity = nil
+        @entity_count = 0
         @task_name = nil
         @options = []
         @entities = []
@@ -47,6 +48,7 @@ module Intrigue
       end
 
       def add_entity(entity)
+        @entity_count += 1
         @entities << entity
         save
       end
@@ -61,6 +63,7 @@ module Intrigue
           @timestamp_end = x["timestamp_end"]
           @entity = Entity.find x["entity_id"]
           @task_name = x["task_name"]
+          @entity_count = x["entity_count"]
           @options = x["options"]
           @entities = x["entity_ids"].map { |y| Entity.find y }
           @complete = x["complete"]
@@ -80,6 +83,7 @@ module Intrigue
           "entity_id" => @entity.id,
           "options" => @options,
           "complete" => @complete,
+          "entity_count" => @entity_count,
           "entity_ids" => @entities.map{ |x| x.id }
         }.to_json
       end

@@ -19,13 +19,14 @@ module Scanner
     private
 
     def _start_task_and_recurse(task_name,entity,depth,options=[])
+      @scan_log.log "Starting #{task_name} with options #{options} on #{entity.type}##{entity.attributes["name"]} at depth #{depth}"
       # Check existing task results and see if we aleady have this answer
       task_result = Object.new
       @scan_result.task_results.each do |t|
         if (t.task_name == task_name)
           if (t.entity.type == entity.type && t.entity.attributes["name"] == entity.attributes["name"])
            # We have a match
-           @scan_log.log "Found a duplicate task_result. Cloning!"
+           @scan_log.log "Found a duplicate task_result for #{task_name} on #{entity.type}##{entity.attributes["name"]}. Cloning results!"
            task_result = t.clone
           end
         end
@@ -67,7 +68,7 @@ module Scanner
 =end
       # Display results in the log
       task_result.entities.each do |entity|
-        @scan_log.log "Entity: #{entity.type} #{entity.attributes["name"]}"
+        @scan_log.log "Entity: #{entity.type}##{entity.attributes["name"]}"
         @scan_result.add_entity(entity)
       end
 
@@ -86,7 +87,7 @@ module Scanner
         #node.outgoing(:child) << this
 
         # recurse!
-        @scan_log.log "Iterating on #{entity.inspect}"
+        @scan_log.log "Iterating on #{entity.type}##{entity.attributes["name"]}"
         _recurse(entity, depth-1)
       end
     end

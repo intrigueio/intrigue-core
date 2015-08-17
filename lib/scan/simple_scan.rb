@@ -51,7 +51,7 @@ module Intrigue
         # Brute TLD
         #_start_task_and_recurse "dns_brute_tld",entity,depth
       else
-        @scan_log.log "Unhandled entity type: #{entity.type} #{entity.attributes["name"]}"
+        @scan_log.log "SKIP Unhandled entity type: #{entity.type}##{entity.attributes["name"]}"
         return
       end
     end
@@ -62,7 +62,7 @@ module Intrigue
       if entity.type == "NetBlock"
         cidr = entity.attributes["name"].split("/").last.to_i
         unless cidr >= 20
-          @scan_log.error "Netblock too large: #{entity.type} #{entity.attributes["name"]}"
+          @scan_log.error "SKIP Netblock too large: #{entity.type}##{entity.attributes["name"]}"
           return true
         end
       else
@@ -87,7 +87,7 @@ module Intrigue
           entity.attributes["name"] == "feeds2.feedburner.com"
         )
 
-          @scan_log.error "Prohibited attribute: #{entity.type} #{entity.attributes["name"]}"
+          @scan_log.error "SKIP Prohibited entity: #{entity.type}##{entity.attributes["name"]}"
           return true
 
         end
