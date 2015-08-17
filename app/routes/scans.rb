@@ -5,8 +5,8 @@ class IntrigueApp < Sinatra::Base
   get '/scan/?' do
 
     # Get details on the scan results so we can display them
-    scan_ids = $intrigue_redis.keys("scan_result:*").reverse
-    @scan_results = scan_ids.map{|id| Intrigue::Model::ScanResult.find id.split(":").last }
+    scan_ids = $intrigue_redis.keys("scan_result:*")
+    @scan_results = scan_ids.last(5).map{ |id| Intrigue::Model::ScanResult.find id.split(":").last }
 
     erb :scan
   end
@@ -85,32 +85,7 @@ class IntrigueApp < Sinatra::Base
 
     @scan_result = Intrigue::Model::ScanResult.find(params[:id])
     @scan_log = @scan_result.log
-    # Get the log
-    #log = $intrigue_redis.get("scan:#{params[:id]}")
-    #reversed_log = log.split("\n").reverse.join("\n") if log
 
-
-=begin
-  if result # Assuming it's available, display it
-    @task_run = JSON.parse(result)
-    @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1?task_name=#{@task_run["task_name"]}&type=#{@task_run["entity"]["type"]}&#{@task_run["entity"]["attributes"].collect { |k, v| "attrib_#{k}=#{v}" }.join("?")}"
-    @elapsed_time = Time.parse(@task_run['timestamp_end']).to_i - Time.parse(@task_run['timestamp_start']).to_i
-  else
-    ## it'll just be empty for now
-    @task_run = { 'entities' => [],
-                  'task_name'  => "please wait...",
-                  'entity'  => {'type' => "please wait...", 'attributes' => {}},
-                  'timestamp_start'  => "please wait...",
-                  'timestamp_end'  => "please wait...",
-                  'id' => "please wait..."
-                }
-
-    @elapsed_time = "please wait..."
-
-    # and get us as close as we can
-    @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1?"
-  end
-=end
     erb :scan_result
   end
 

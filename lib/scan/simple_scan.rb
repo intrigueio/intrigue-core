@@ -21,9 +21,9 @@ module Intrigue
         ### Whois
         _start_task_and_recurse "whois",entity,depth
         ### Shodan
-        _start_task_and_recurse "search_shodan",entity,depth
+        #_start_task_and_recurse "search_shodan",entity,depth
         ### Scan
-        _start_task_and_recurse "nmap_scan",entity,depth
+        #_start_task_and_recurse "nmap_scan",entity,depth
         ### Geolocate
         #_start_task "geolocate_host",entity,depth
       elsif  entity.type == "NetBlock"
@@ -47,9 +47,9 @@ module Intrigue
         #_start_task_and_recurse "uri_screenshot",entity,depth
       elsif entity.type == "String"
         # Search!
-        _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 10}]
+        _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 20}]
         # Brute TLD
-        _start_task_and_recurse "dns_brute_tld",entity,depth
+        #_start_task_and_recurse "dns_brute_tld",entity,depth
       else
         @scan_log.log "Unhandled entity type: #{entity.type} #{entity.attributes["name"]}"
         return
@@ -61,7 +61,7 @@ module Intrigue
 
       if entity.type == "NetBlock"
         cidr = entity.attributes["name"].split("/").last.to_i
-        unless cidr >= 13
+        unless cidr >= 20
           @scan_log.error "Netblock too large: #{entity.type} #{entity.attributes["name"]}"
           return true
         end

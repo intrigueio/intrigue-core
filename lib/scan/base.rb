@@ -7,11 +7,7 @@ module Scanner
     attr_accessor :id
 
     def perform(id)
-      puts "PERFORM CALLED ON SCAN #{id}"
-
       @scan_result = Intrigue::Model::ScanResult.find(id)
-
-      puts "Got scan result #{@scan_result}"
       @scan_log = @scan_result.log
 
       # Kick off the scan
@@ -69,15 +65,14 @@ module Scanner
       $results["#{task_name}_#{entity["type"]}_#{entity["attributes"]["name"]}"] = result
     end
 =end
-
-      # add it to the scan result
-      @scan_result.add_task_result(task_result)
-
       # Display results in the log
       task_result.entities.each do |entity|
         @scan_log.log "Entity: #{entity.type} #{entity.attributes["name"]}"
         @scan_result.add_entity(entity)
       end
+
+      # add it to the scan result
+      @scan_result.add_task_result(task_result)
 
       # Then iterate on each entity
       task_result.entities.each do |entity|
