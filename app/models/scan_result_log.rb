@@ -9,14 +9,14 @@ class ScanResultLog < Intrigue::Model::Log
   end
 
   def key
-    Intrigue::Model::ScanResultLog.key
+    "#{Intrigue::Model::ScanResultLog.key}"
   end
 
   def initialize(id, name)
     super(id, name)
     @type = "scan"
   end
-
+  
 end
 end
 end

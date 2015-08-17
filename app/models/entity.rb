@@ -2,26 +2,30 @@ module Intrigue
   module Model
     class Entity
 
-      attr_accessor :id, :key, :type, :attributes
+      attr_accessor :id, :type, :attributes
 
       def self.key
         "entity"
       end
 
       def key
-        Intrigue::Model::Entity.key
+        "#{Intrigue::Model::Entity.key}"
       end
 
       def initialize(type,attributes)
         @id = SecureRandom.uuid
-        @lookup_key = "#{key}:#{@id}"
         @type = type
         @attributes = attributes
       end
 
       def self.find(id)
+        lookup_key = "#{key}:#{id}"
+        result = $intrigue_redis.get(lookup_key)
+        raise "Unable to find #{lookup_key}" unless result
+
         s = Entity.new("nope","nope")
-        s.from_json($intrigue_redis.get("#{key}:#{id}"))
+        s.from_json(result)
+        s.save
 
         # if we didn't find anything in the db, return nil
         return nil if s.id == "nope"
@@ -31,33 +35,29 @@ module Intrigue
       def from_json(json)
         begin
           x = JSON.parse(json)
-          if x["id"]
-            @id = x["id"]
-          else
-            @id = SecureRandom.uuid
-          end
-
-          @lookup_key = "#{key}:#{@id}"
+          @id = x["id"]
           @type = x["type"]
           @attributes = x["attributes"]
-          save
-        rescue TypeError => e
-          return nil
         rescue JSON::ParserError => e
-          return nil
+          puts "OH NOES! ITEM DID NOT EXIST, OR OTHER ERROR PARSING #{json}"
         end
       end
 
-      def to_json
+      def to_hash
         {
           "id" => @id,
           "type" => @type,
           "attributes" => @attributes
-        }.to_json
+        }
+      end
+
+      def to_json
+        to_hash.to_json
       end
 
       def save
-        $intrigue_redis.set @lookup_key, to_json
+        lookup_key = "#{key}:#{@id}"
+        $intrigue_redis.set lookup_key, to_json
       end
 
     end

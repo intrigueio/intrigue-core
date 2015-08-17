@@ -2,26 +2,6 @@ module Intrigue
   module Scanner
   class SimpleScan < Intrigue::Scanner::Base
 
-    attr_accessor :id
-    attr_accessor :log
-
-    def initialize
-    end
-
-    def perform(id, entity, name, depth=1)
-      @name= name
-      @id = id
-      @depth = depth
-      @scan_log = Intrigue::Model::ScanResultLog.new(@id,@name)
-      @scan_result = Intrigue::Model::ScanResult.new(@id,@name)
-      @scan_result.save
-
-      # Kick off the scan
-      @scan_log.log  "Starting scan #{@name} of type #{self.class} with id #{@id} on entity #{entity} to depth #{@depth}"
-      _recurse(entity,@depth)
-      @scan_log.good "Complete!"
-    end
-
     private
 
     ### Main "workflow" function
@@ -31,11 +11,11 @@ module Intrigue
       return if depth <= 0
 
       # Check for prohibited entity name
-      if entity["attributes"]
+      if entity.attributes
         return if _is_prohibited entity
       end
 
-      if entity["type"] == "IpAddress"
+      if entity.type == "IpAddress"
         ### DNS Reverse Lookup
         _start_task_and_recurse "dns_lookup_reverse",entity,depth
         ### Whois
@@ -46,15 +26,15 @@ module Intrigue
         _start_task_and_recurse "nmap_scan",entity,depth
         ### Geolocate
         #_start_task "geolocate_host",entity,depth
-      elsif  entity["type"] == "NetBlock"
+      elsif  entity.type == "NetBlock"
         ### Masscan
         _start_task_and_recurse "masscan_scan",entity,depth
-      elsif entity["type"] == "DnsRecord"
+      elsif entity.type == "DnsRecord"
         ### DNS Forward Lookup
         _start_task_and_recurse "dns_lookup_forward",entity,depth
         ### DNS Subdomain Bruteforce
         _start_task_and_recurse "dns_brute_sub",entity,depth,[{"name" => "use_file", "value" => "false"}]
-      elsif entity["type"] == "Uri"
+      elsif entity.type == "Uri"
         ### Get SSLCert
         _start_task_and_recurse "uri_gather_ssl_certificate",entity,depth
         ### Gather links
@@ -65,13 +45,13 @@ module Intrigue
         _start_task_and_recurse "uri_dirbuster",entity,depth
         ### screenshot
         #_start_task_and_recurse "uri_screenshot",entity,depth
-      elsif entity["type"] == "String"
+      elsif entity.type == "String"
         # Search!
         _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 10}]
         # Brute TLD
         _start_task_and_recurse "dns_brute_tld",entity,depth
       else
-        @scan_log.log "Unhandled entity type: #{entity["type"]} #{entity["attributes"]["name"]}"
+        @scan_log.log "Unhandled entity type: #{entity.type} #{entity.attributes["name"]}"
         return
       end
     end
@@ -79,36 +59,36 @@ module Intrigue
     # List of prohibited entities - returns true or false
     def _is_prohibited entity
 
-      if entity["type"] == "NetBlock"
-        cidr = entity["attributes"]["name"].split("/").last.to_i
+      if entity.type == "NetBlock"
+        cidr = entity.attributes["name"].split("/").last.to_i
 
-        @scan_log.error "Netblock too large: #{entity["type"]} #{entity["attributes"]["name"]}"
+        @scan_log.error "Netblock too large: #{entity.type} #{entity.attributes["name"]}"
 
         return true unless cidr >= 15
 
       else
         if (
-          entity["attributes"]["name"] =~ /google/             ||
-          entity["attributes"]["name"] =~ /g.co/               ||
-          entity["attributes"]["name"] =~ /goo.gl/             ||
-          entity["attributes"]["name"] =~ /android/            ||
-          entity["attributes"]["name"] =~ /urchin/             ||
-          entity["attributes"]["name"] =~ /youtube/            ||
-          entity["attributes"]["name"] =~ /schema.org/         ||
-          entity["attributes"]["description"] =~ /schema.org/  ||
-          entity["attributes"]["name"] =~ /microsoft.com/      ||
-          #entity["attributes"]["name"] =~ /yahoo.com/         ||
-          entity["attributes"]["name"] =~ /facebook.com/       ||
-          entity["attributes"]["name"] =~ /cloudfront.net/     ||
-          entity["attributes"]["name"] =~ /twitter.com/        ||
-          entity["attributes"]["name"] =~ /w3.org/             ||
-          entity["attributes"]["name"] =~ /akamai/             ||
-          entity["attributes"]["name"] =~ /akamaitechnologies/ ||
-          entity["attributes"]["name"] =~ /amazonaws/          ||
-          entity["attributes"]["name"] == "feeds2.feedburner.com"
+          entity.attributes["name"] =~ /google/             ||
+          entity.attributes["name"] =~ /g.co/               ||
+          entity.attributes["name"] =~ /goo.gl/             ||
+          entity.attributes["name"] =~ /android/            ||
+          entity.attributes["name"] =~ /urchin/             ||
+          entity.attributes["name"] =~ /youtube/            ||
+          entity.attributes["name"] =~ /schema.org/         ||
+          entity.attributes["description"] =~ /schema.org/  ||
+          entity.attributes["name"] =~ /microsoft.com/      ||
+          #entity.attributes["name"] =~ /yahoo.com/         ||
+          entity.attributes["name"] =~ /facebook.com/       ||
+          entity.attributes["name"] =~ /cloudfront.net/     ||
+          entity.attributes["name"] =~ /twitter.com/        ||
+          entity.attributes["name"] =~ /w3.org/             ||
+          entity.attributes["name"] =~ /akamai/             ||
+          entity.attributes["name"] =~ /akamaitechnologies/ ||
+          entity.attributes["name"] =~ /amazonaws/          ||
+          entity.attributes["name"] == "feeds2.feedburner.com"
         )
 
-        @scan_log.error "Prohibited attribute: #{entity["type"]} #{entity["attributes"]["name"]}"
+        @scan_log.error "Prohibited attribute: #{entity.type} #{entity.attributes["name"]}"
         return
         end
 

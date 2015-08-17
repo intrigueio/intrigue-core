@@ -8,7 +8,7 @@ class IntrigueApp < Sinatra::Base
     scan_ids = $intrigue_redis.keys("scan_result:*").reverse
     @scan_results = scan_ids.map{|id| Intrigue::Model::ScanResult.find id.split(":").last }
 
-    #puts "Got Scan Results: #{@scan_results}"
+    puts "Got Scan Results: #{@scan_results}"
 
     erb :scan
   end
@@ -28,44 +28,70 @@ class IntrigueApp < Sinatra::Base
     end
 
     # Construct an entity from the data we have
-    entity = { :type => @params["entity_type"], :attributes => attribs }
-    scan_type = @params["scan_type"]
-    depth = @params["depth"].to_i if @params["depth"]
+    entity = Intrigue::Model::Entity.new @params["entity_type"],attribs
+    entity.save
+
+    # Create a unique identifier
+    scan_id = SecureRandom.uuid
     name = @params["name"] || "default"
 
-    scan_id = SecureRandom.uuid
-    start_scan(scan_type, scan_id, entity, name, depth)
+    # Set up the scan result
+    scan_result = Intrigue::Model::ScanResult.new scan_id, name
+    scan_result.depth = @params["depth"].to_i || "3"
+    scan_result.scan_type = @params["scan_type"]
+    scan_result.entity = entity
+
+    # Save it!
+    scan_result.save
+    puts "scan_result: #{scan_result}"
+
+    ###
+    # Create the scanner object
+    ###
+    if scan_result.scan_type == "simple"
+      scan = Intrigue::Scanner::SimpleScan.new
+    elsif scan_result.scan_type == "internal"
+      scan = Intrigue::Scanner::InternalScan.new
+    else
+      raise "Unknown scan type"
+    end
+
+    # Kick off the scan
+    jid = scan.class.perform_async scan_result.id
 
     # Redirect to display the log
-    redirect "/v1/scan_runs/#{scan_id}"
+    redirect "/v1/scan_results/#{scan_result.id}"
   end
 
+=begin
+  # XXX - this needs to be reconfigured to match new perform_async parameters.
+
   # Endpoint to start a task run programmatically
-  post '/scan_runs/?' do
+  post '/scan_result/?' do
 
     scan_id = SecureRandom.uuid
 
-    scan_run_info = JSON.parse(request.body.read) if request.content_type == "application/json"
+    scan_result_info = JSON.parse(request.body.read) if request.content_type == "application/json"
 
-    entity = scan_run_info["entity"]
-    name = scan_run_info["name"]
-    depth = scan_run_info["depth"]
+    entity = scan_result_info["entity"]
+    name = scan_result_info["name"]
+    depth = scan_result_info["depth"]
 
     start_scan(scan_id, entity, name, depth)
 
   scan_id
   end
+=end
 
   # Show the results in a human readable format
-  get '/scan_runs/:id/?' do
+  get '/scan_results/:id/?' do
 
-    @scan_result = Intrigue::Model::ScanResult.find("#{params[:id]}")
-    puts "Got Scan Result #{@scan_result}" #if @scan_result
-
+    @scan_result = Intrigue::Model::ScanResult.find(params[:id])
+    @scan_log = @scan_result.log
     # Get the log
     #log = $intrigue_redis.get("scan:#{params[:id]}")
     #reversed_log = log.split("\n").reverse.join("\n") if log
-    @scan_log = ScanResultLog.find params[:id]
+
 
 =begin
   if result # Assuming it's available, display it
@@ -88,7 +114,7 @@ class IntrigueApp < Sinatra::Base
     @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1?"
   end
 =end
-    erb :scan_run
+    erb :scan_result
   end
 
 

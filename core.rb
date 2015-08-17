@@ -113,11 +113,10 @@ class IntrigueApp < Sinatra::Base
 
 
     require_relative "app/helpers"
-
-    require_relative "app/routes/tasks"
-    require_relative "app/routes/task_results"
-    require_relative "app/routes/scan"
+    require_relative "app/routes/entities"
     require_relative "app/routes/admin"
+    require_relative "app/routes/scans"
+    require_relative "app/routes/tasks"
 
     require_relative "app/models/log"
     require_relative "app/models/scan_result"

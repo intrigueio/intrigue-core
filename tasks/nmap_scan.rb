@@ -54,7 +54,7 @@ class NmapScanTask < BaseTask
       @task_log.log "Handling nmap data for #{host.addr}"
 
       # Handle the case of a netblock or domain - where we will need to create host entity(s)
-      if @entity["type"] == "NetBlock" or @entity["type"] == "DnsRecord"
+      if @entity.type == "NetBlock" or @entity.type == "DnsRecord"
         host_entity = _create_entity("IpAddress", { :name => host.addr } )
       else
         host_entity = @entity # We already have a host

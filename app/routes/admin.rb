@@ -6,7 +6,7 @@ class IntrigueApp < Sinatra::Base
       # Get rid of all existing task runs
       get '/clear' do
 
-        to_clear = "task_result:*", "task_result_log:*","scan_result:*", "scan_result_log:*"
+        to_clear = "entity:*", "task_result:*", "task_result_log:*","scan_result:*", "scan_result_log:*"    
 
         to_clear.each do |k|
           keys = $intrigue_redis.keys k

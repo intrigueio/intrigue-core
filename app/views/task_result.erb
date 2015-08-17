@@ -12,10 +12,11 @@
         <%= h entity.type %>: <%= h entity.attributes["name"] %>
       </a>
       <%= "<a target=\'_blank\' href=\'#{h entity.attributes["uri"]}\'>[link]</a>" if entity.attributes["uri"] %>
-      <span class="like-pre-white">(<%=h entity.inspect %>)</span>
+      <!-- <span class="like-pre-white">(<% h entity.inspect %>)</span> -->
     </li>
   <% end %>
 </ul>
 </p>
 
 Log:
+<span class="like-pre-dark"><%= h @task_result.log %></span><br/>

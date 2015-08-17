@@ -24,9 +24,9 @@ class SearchPiplTask < BaseTask
 
     @pipl_client = Client::Search::Pipl::ApiClient.new(api_key)
 
-    if @entity["type"] == "EmailAddress"
+    if @entity.type == "EmailAddress"
       response = @pipl_client.search :email, _get_entity_attribute("name")
-    elsif @entity["type"] == "PhoneNumber"
+    elsif @entity.type == "PhoneNumber"
       response = @pipl_client.search :phone, _get_entity_attribute("name")
     else
       response = @pipl_client.search :username, _get_entity_attribute("name")

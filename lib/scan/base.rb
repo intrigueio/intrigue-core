@@ -2,12 +2,34 @@ module Intrigue
 module Scanner
   class Base
     include Sidekiq::Worker
+    include Intrigue::Task::Helper
+
+    attr_accessor :id
+
+    def perform(id)
+      puts "PERFORM CALLED ON SCAN #{id}"
+
+      @scan_result = Intrigue::Model::ScanResult.find(id)
+
+      puts "Got scan result #{@scan_result}"
+      @scan_log = @scan_result.log
+
+      # Kick off the scan
+      @scan_log.log  "Starting scan #{@scan_result.name} of type #{self.class} with id #{@scan_result.id} on entity #{@scan_result.entity} to depth #{@scan_result.depth}"
+      _recurse(@scan_result.entity,@scan_result.depth)
+      @scan_log.good "Complete!"
+    end
 
     private
 
     def _start_task_and_recurse(task_name,entity,depth,options=[])
+
       # Create an ID
       task_id = SecureRandom.uuid
+      start_task_run(task_id, task_name, entity, options)
+
+=begin
+
 
       # XXX - Create the task
       @scan_log.log "Calling #{task_name} on #{entity}"
@@ -20,20 +42,16 @@ module Scanner
       ### everything and make the webhooks available afterward.
       ###
 
-      jid = task.class.perform_async task_id, entity, options, ["webhook"], "http://127.0.0.1:7777/v1/task_runs/#{task_id}" # "#{$intrigue_server_uri}/task_runs/#{task_id}"
-
+      jid = task.class.perform_async task_id, entity, options, ["webhook"], "http://127.0.0.1:7777/v1/task_runs/#{task_id}"
+=end
       ### Wait for the task to complete
-      complete = false
-      until complete
+      #complete = false
+      task_result = Intrigue::Model::TaskResult.find task_id
+      until task_result.complete
+        #puts "Sleeping waiting for #{task_result}"
         sleep 1
-        response = $intrigue_redis.get("result:#{task_id}")
-        if response
-          complete = true
-        end
+        task_result = Intrigue::Model::TaskResult.find task_id
       end
-
-      # Parse the result
-      result = JSON.parse response
 
 =begin
     # XXX - Store the results for later lookup, avoid duplication (which should save a ton of time)
@@ -54,16 +72,16 @@ module Scanner
 =end
 
       # add it to the task result
-      @scan_result.add_task_id(result["id"])
+      @scan_result.add_task_result(task_result)
 
       # Display results in the log
-      result["entities"].each do |entity|
-        @scan_log.log "Entity: #{entity["type"]} #{entity["attributes"]["name"]}"
-        @scan_result.add_entity(entity) 
+      task_result.entities.each do |entity|
+        @scan_log.log "Entity: #{entity.type} #{entity.attributes["name"]}"
+        @scan_result.add_entity(entity)
       end
 
       # Then iterate on them
-      result['entities'].each do |entity|
+      task_result.entities.each do |entity|
 
         # create a new node
         #this = Neography::Node.create(

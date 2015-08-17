@@ -8,13 +8,17 @@ class BaseTask
     TaskFactory.register(base)
   end
 
-  def perform(task_id, entity, options=[], handlers=["webhook"], hook_uri )
+  def perform(task_id, entity_id, options=[], handlers=["webhook"], hook_uri )
 
     #######################
     # Get the Task Result #
     #######################
     @task_result = Intrigue::Model::TaskResult.find task_id
-    puts "Task Result: #{@task_result}"
+    entity = Intrigue::Model::Entity.find entity_id
+
+    raise "Unable to find Task of id #{task_id}" unless @task_result
+
+    puts "Processing on Task Result: #{@task_result}"
 
     ###################
     # Create a Logger #
@@ -46,7 +50,7 @@ class BaseTask
     end
 
     # Check to make sure this task can receive an entity of this type
-    unless allowed_types.include?(entity["type"]) || allowed_types.include?("*")
+    unless allowed_types.include?(entity.type) || allowed_types.include?("*")
       #raise "ERROR! Can't call #{self.metadata[:name]} on entity: #{entity}"
       @task_log.error "Unable to call #{self.metadata[:name]} on entity: #{entity}"
       broken_input = true
@@ -60,11 +64,11 @@ class BaseTask
     # TODO - THSI IS A HACK
     # TODO - this should be done closer to user input.
     # TODO - this will create duplicate entities in the DB ....  MUST FIX.
-    puts "ENTITY #{entity}"
-    source_entity = Intrigue::Model::Entity.new entity["type"], entity["attributes"]
-    source_entity.save
+    #puts "ENTITY #{entity}"
+    #source_entity = Intrigue::Model::Entity.new entity.type, entity.attributes
+    #source_entity.save
 
-    @task_result.entity = source_entity
+    @task_result.entity = entity
     @task_result.timestamp_start = Time.now.getutc
     @task_result.id = task_id
 
@@ -179,8 +183,10 @@ class BaseTask
         # write it out
         file.puts(outstring)
       end
-
     end
+
+    @task_result.complete = true
+    @task_result.save
 
     # Run Cleanup
     @task_log.log "Calling cleanup()"
@@ -391,7 +397,7 @@ class BaseTask
     end
 
     def _get_entity_attribute(name)
-      "#{@entity["attributes"][name]}"
+      "#{@entity.attributes[name]}"
     end
 
     def _get_global_config(key)

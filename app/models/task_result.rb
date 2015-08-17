@@ -2,38 +2,45 @@ module Intrigue
   module Model
     class TaskResult
 
-      attr_accessor :id, :name, :timestamp_start, :timestamp_end, :entity, :task_name, :log
+      attr_accessor :id, :name, :timestamp_start, :timestamp_end
+      attr_accessor :options, :entity, :task_name, :entities, :log
+      attr_accessor :complete
 
       def self.key
         "task_result"
       end
 
       def key
-        Intrigue::Model::TaskResult.key
+        "#{Intrigue::Model::TaskResult.key}"
       end
 
       def initialize(id,name)
-
         @id = id
         @name = name
         @lookup_key = "#{key}:#{@id}"
-        @timestamp_start = Time.now.getutc.to_s
-        @timestamp_end = Time.now.getutc.to_s
-        @entity = Entity.new("none",{})
-        @task_name = ""
+        @timestamp_start = DateTime.now
+        @timestamp_end = DateTime.now
+        @entity = nil
+        @task_name = nil
+        @options = []
         @entities = []
-
-        @log = TaskResultLog.new(id, name)
+        @complete = false
+        @log = TaskResultLog.new(id, name); @log.save # save must be called to persist objects
       end
 
       def entities
-        puts "entities: #{@entities}"
         @entities
       end
 
       def self.find(id)
+        lookup_key = "#{key}:#{id}"
+        result = $intrigue_redis.get(lookup_key)
+        raise "Unable to find #{lookup_key}" unless result
+
         s = TaskResult.new("nope","nope")
-        s.from_json($intrigue_redis.get("#{key}:#{id}"))
+        s.from_json(result)
+        s.save
+
         # if we didn't find anything in the db, return nil
         return nil if s.name == "nope"
       s
@@ -48,19 +55,16 @@ module Intrigue
         begin
           x = JSON.parse(json)
           @id = x["id"]
-          @lookup_key = "#{key}:#{@id}"
-
           @name = x["name"]
           @task_ids = x["task_ids"]
           @timestamp_start = x["timestamp_start"]
           @timestamp_end = x["timestamp_end"]
           @entity = Entity.find x["entity_id"]
           @task_name = x["task_name"]
-          @entities = x["entity_ids"].map {|y| Entity.find y }
-          @log = TaskResultLog.find x["log_id"]
-          save
-        rescue TypeError => e
-          return nil
+          @options = x["options"]
+          @entities = x["entity_ids"].map { |y| Entity.find y }
+          @complete = x["complete"]
+          @log = TaskResultLog.find x["id"]
         rescue JSON::ParserError => e
           return nil
         end
@@ -74,8 +78,9 @@ module Intrigue
           "timestamp_start" => @timestamp_start,
           "timestamp_end" => @timestamp_end,
           "entity_id" => @entity.id,
-          "entity_ids" => @entities.map{ |x| x.id },
-          "log_id" => @log.id
+          "options" => @options,
+          "complete" => @complete,
+          "entity_ids" => @entities.map{ |x| x.id }
         }.to_json
       end
 
@@ -84,9 +89,9 @@ module Intrigue
       end
 
       def save
-        $intrigue_redis.set @lookup_key, to_json
+        lookup_key = "#{key}:#{@id}"
+        $intrigue_redis.set lookup_key, to_json
       end
-
 
     end
   end

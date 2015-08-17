@@ -66,7 +66,7 @@ class WhoisTask < BaseTask
       #
       # if it was a domain, we've got a whole lot of shit we can scoop
       #
-      if @entity["type"] == "DnsRecord"
+      if @entity.type == "DnsRecord"
         #
         # We're going to have nameservers either way?
         #

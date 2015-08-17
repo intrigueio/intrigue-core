@@ -9,14 +9,12 @@ class TaskResultLog < Intrigue::Model::Log
   end
 
   def key
-    Intrigue::Model::TaskResultLog.key
+    "#{Intrigue::Model::TaskResultLog.key}"
   end
 
   def initialize(id, name, write_file=false)
     super(id, name)
-
     @type = "task"
-
     @write_file = write_file
     # We can also write to a file at the same time...
     if @write_file

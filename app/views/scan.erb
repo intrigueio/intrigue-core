@@ -45,6 +45,6 @@
 <h4>Completed Scans</h4>
 <% @scan_results.each do |x| %>
 <ul>
-<%= "<li><a href=\'/v1/scan_runs/#{x.id}\'> #{x.name} (#{x.id}) </a></li>"  if x %>
+<%= "<li><a href=\'/v1/scan_results/#{x.id}\'> (#{x.timestamp_end}) #{x.name} (#{x.entities.count}) </a></li>"  if x %>
 </ul>
 <% end %>

@@ -3,13 +3,15 @@ module Intrigue
     class ScanResult
 
       attr_accessor :id, :name, :tasks, :entities, :log
+      attr_accessor :depth, :scan_type, :entity, :task_results
+      attr_accessor :timestamp_start, :timestamp_end
 
       def self.key
         "scan_result"
       end
 
       def key
-        Intrigue::Model::ScanResult.key
+        "#{Intrigue::Model::ScanResult.key}"
       end
 
       def initialize(id,name)
@@ -17,16 +19,24 @@ module Intrigue
         @name = name
         @timestamp_start = Time.now.getutc.to_s
         @timestamp_end = Time.now.getutc.to_s
-        @entity = Entity.new("none",{})
-        @lookup_key = "#{key}:#{@id}"
+        @depth=nil
+        @scan_type =nil
+        @entity = nil
         @task_results = []
+        @options = []
         @entities = []
-        @log = ScanResultLog.new(id,name)
+        @log = ScanResultLog.new(id,name); @log.save
       end
 
       def self.find(id)
+        lookup_key = "#{key}:#{id}"
+        result = $intrigue_redis.get(lookup_key)
+        raise "Unable to find #{lookup_key}" unless result
+
         s = ScanResult.new("nope","nope")
-        s.from_json($intrigue_redis.get(@lookup_key))
+        s.from_json(result)
+        s.save
+
         # if we didn't find anything in the db, return nil
         return nil if s.name == "nope"
       s
@@ -46,35 +56,38 @@ module Intrigue
         begin
           x = JSON.parse(json)
           @id = x["id"]
-          @lookup_key = "#{key}:#{@id}"
-
+          @depth = x["depth"]
+          @scan_type = x["scan_type"]
           @name = x["name"]
           @timestamp_start = x["timestamp_start"]
           @timestamp_end = x["timestamp_end"]
-
-          @entity = Entity.find x["entity_id"]
-          @tasks = x["task_result_ids"].map{|y| TaskResult.find y } if x["task_result_ids"]
+          @entity = Entity.find(x["entity_id"])
+          @task_results = x["task_result_ids"].map{|y| TaskResult.find y } if x["task_result_ids"]
           @entities = x["entity_ids"].map{|y| Entity.find y } if x["entity_ids"]
-          @log = ScanResultLog.find x["log_id"]
-          save
-        rescue TypeError => e
-          return nil
+          @log = ScanResultLog.find x["id"]
+
         rescue JSON::ParserError => e
           return nil
         end
       end
 
       def to_json
+        to_hash.to_json
+      end
+
+      def to_hash
         {
           "id" => @id,
           "name" => @name,
+          "scan_type" => @scan_type,
+          "depth" => @depth,
           "timestamp_start" => @timestamp_start,
           "timestamp_end" => @timestamp_end,
           "entity_id" => @entity.id,
           "task_result_ids" => @task_results.map{|y| y.id },
           "entity_ids" => @entities.map {|y| y.id },
-          "log_id" => @log.id
-        }.to_json
+          "options" => @options
+        }
       end
 
       def to_s
@@ -82,7 +95,8 @@ module Intrigue
       end
 
       def save
-        $intrigue_redis.set @lookup_key, to_json
+        lookup_key = "#{key}:#{@id}"
+        $intrigue_redis.set lookup_key, to_json
       end
 
     end

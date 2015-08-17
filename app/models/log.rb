@@ -9,7 +9,7 @@ class Log
     @id = id
     @lookup_key = "#{key}:#{@id}"
     @name = name
-    @string = StringIO.new
+    @stream = StringIO.new
   end
 
   attr_accessor :name
@@ -33,49 +33,47 @@ class Log
   ######
 
   def to_text
-    @string.string
-  end
-
-  def key
-    "#{@type}:#{@id}"
+    @stream.string
   end
 
   def to_json
     {
       "id" => @id,
       "name" => @name,
-      "string" => @string.string
-    }
+      "stream" => @stream.string
+    }.to_json
   end
 
   def from_json(json)
     x = JSON.parse(json)
     @id = x["id"]
-    @lookup_key = "#{key}:#{@id}"
     @name = x["name"]
-    @string = StringIO.new
-    @string << x["string"]
+    @stream = StringIO.new
+    @stream << x["stream"]
   end
 
   def to_s
-    #@out.string
-    to_json
+    @stream.string
   end
 
   def save
-    $intrigue_redis.set @lookup_key, to_json
+    lookup_key = "#{key}:#{@id}"
+    $intrigue_redis.set lookup_key, to_json
   end
 
   def self.find(id)
+    lookup_key = "#{key}:#{id}"
+    result = $intrigue_redis.get(lookup_key)
+    raise "Unable to find #{lookup_key}" unless result
 
-    # Do the lookup out of redis
-    s = ScanResultLog.new("nope","nope")
-    s.from_json($intrigue_redis.get("#{key}:#{id}"))
-
+    # Create a new object
+    s = self.new("nope","nope")
+    # and load our json
+    s.from_json(result)
+    s.save
     # if we didn't find anything in the db, return nil
     return nil if s.name == "nope"
-
-  # return the scan log
+  # return the log
   s
   end
 
@@ -83,18 +81,18 @@ private
   def _log(message)
 
     # Write to IO stream
-    @string.puts message
+    @stream.puts message
 
     # Write to STDOUT
     puts message
 
     # Write to Redis
-    $intrigue_redis.set @lookup_key, to_json
+    save
 
     #Write to file
     if @write_file
-      @outfile.puts message
-      @outfile.flush
+      @streamfile.puts message
+      @streamfile.flush
     end
 
   end
