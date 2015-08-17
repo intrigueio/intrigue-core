@@ -23,34 +23,33 @@ module Scanner
     private
 
     def _start_task_and_recurse(task_name,entity,depth,options=[])
+      # Check existing task results and see if we aleady have this answer
+      task_result = Object.new
+      @scan_result.task_results.each do |t|
+        if (t.task_name == task_name)
+          if (t.entity.type == entity.type && t.entity.attributes["name"] == entity.attributes["name"])
+           # We have a match
+           @scan_log.log "Found a duplicate task_result. Cloning!"
+           task_result = t.clone
+          end
+        end
+      end
 
-      # Create an ID
-      task_id = SecureRandom.uuid
-      start_task_run(task_id, task_name, entity, options)
+      # Check to see if we found an already-run task_result. If not, run it.
+      unless task_result.kind_of? Intrigue::Model::TaskResult
+        # Create an ID
+        task_id = SecureRandom.uuid
 
-=begin
+        # Start the task run
+        start_task_run(task_id, task_name, entity, options)
 
-
-      # XXX - Create the task
-      @scan_log.log "Calling #{task_name} on #{entity}"
-      task = TaskFactory.create_by_name(task_name)
-
-      ###
-      ### Okay, so listen. the webhooks idea was great and all, but this is too much. We don't have a way
-      ### to get the current uri to send this guy to. So we basically have to hardcode, or try to pass it
-      ### through the database per-client. just yuck. So get rid of the webhooks in favor of redis-backing
-      ### everything and make the webhooks available afterward.
-      ###
-
-      jid = task.class.perform_async task_id, entity, options, ["webhook"], "http://127.0.0.1:7777/v1/task_runs/#{task_id}"
-=end
-      ### Wait for the task to complete
-      #complete = false
-      task_result = Intrigue::Model::TaskResult.find task_id
-      until task_result.complete
-        #puts "Sleeping waiting for #{task_result}"
-        sleep 1
+        # Wait for the task to complete
         task_result = Intrigue::Model::TaskResult.find task_id
+        until task_result.complete
+          #puts "Sleeping waiting for #{task_result}"
+          sleep 1
+          task_result = Intrigue::Model::TaskResult.find task_id
+        end
       end
 
 =begin
@@ -71,7 +70,7 @@ module Scanner
     end
 =end
 
-      # add it to the task result
+      # add it to the scan result
       @scan_result.add_task_result(task_result)
 
       # Display results in the log
@@ -80,7 +79,7 @@ module Scanner
         @scan_result.add_entity(entity)
       end
 
-      # Then iterate on them
+      # Then iterate on each entity
       task_result.entities.each do |entity|
 
         # create a new node
@@ -92,7 +91,7 @@ module Scanner
         #node.outgoing(:child) << this
 
         # recurse!
-        @scan_log.log "Iterating on #{entity}"
+        @scan_log.log "Iterating on #{entity.inspect}"
         _recurse(entity, depth-1)
       end
     end

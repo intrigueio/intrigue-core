@@ -21,7 +21,7 @@ module Intrigue
         ### Whois
         _start_task_and_recurse "whois",entity,depth
         ### Shodan
-        #_start_task "search_shodan",entity,depth
+        _start_task_and_recurse "search_shodan",entity,depth
         ### Scan
         _start_task_and_recurse "nmap_scan",entity,depth
         ### Geolocate
@@ -38,7 +38,7 @@ module Intrigue
         ### Get SSLCert
         _start_task_and_recurse "uri_gather_ssl_certificate",entity,depth
         ### Gather links
-        #_start_task_and_recurse "uri_gather_and_analyze_links",entity,depth
+        _start_task_and_recurse "uri_gather_and_analyze_links",entity,depth
         ### spider
         _start_task_and_recurse "uri_spider",entity,depth
         ### Dirbuster
@@ -61,11 +61,10 @@ module Intrigue
 
       if entity.type == "NetBlock"
         cidr = entity.attributes["name"].split("/").last.to_i
-
-        @scan_log.error "Netblock too large: #{entity.type} #{entity.attributes["name"]}"
-
-        return true unless cidr >= 15
-
+        unless cidr >= 13
+          @scan_log.error "Netblock too large: #{entity.type} #{entity.attributes["name"]}"
+          return true
+        end
       else
         if (
           entity.attributes["name"] =~ /google/             ||
@@ -88,8 +87,9 @@ module Intrigue
           entity.attributes["name"] == "feeds2.feedburner.com"
         )
 
-        @scan_log.error "Prohibited attribute: #{entity.type} #{entity.attributes["name"]}"
-        return
+          @scan_log.error "Prohibited attribute: #{entity.type} #{entity.attributes["name"]}"
+          return true
+
         end
 
       end

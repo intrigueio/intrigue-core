@@ -55,6 +55,10 @@ module Intrigue
         to_hash.to_json
       end
 
+      def to_s
+        self.inspect.to_s
+      end
+
       def save
         lookup_key = "#{key}:#{@id}"
         $intrigue_redis.set lookup_key, to_json

@@ -8,8 +8,6 @@ class IntrigueApp < Sinatra::Base
     scan_ids = $intrigue_redis.keys("scan_result:*").reverse
     @scan_results = scan_ids.map{|id| Intrigue::Model::ScanResult.find id.split(":").last }
 
-    puts "Got Scan Results: #{@scan_results}"
-
     erb :scan
   end
 
@@ -43,7 +41,6 @@ class IntrigueApp < Sinatra::Base
 
     # Save it!
     scan_result.save
-    puts "scan_result: #{scan_result}"
 
     ###
     # Create the scanner object
