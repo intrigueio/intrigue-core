@@ -8,7 +8,7 @@ class BaseTask
     TaskFactory.register(base)
   end
 
-  def perform(task_id, entity_id, options=[], handlers=["webhook"], hook_uri )
+  def perform(task_id, entity_id, options=[], handlers=["redis"], hook_uri )
 
     #######################
     # Get the Task Result #
@@ -122,6 +122,11 @@ class BaseTask
     #   "task_log" => "..."
     #  }
     #
+
+    if handlers.include? "redis"
+      @task_log.log "Saving to redis"
+      @task_result.save
+    end
 
     ###
     ### XXX - Send the results to a webhook
