@@ -55,7 +55,7 @@ class Log
   def to_s
     @stream.string
   end
-
+  
   def save
     lookup_key = "#{key}:#{@id}"
     $intrigue_redis.set lookup_key, to_json

@@ -16,7 +16,7 @@ class ScanResultLog < Intrigue::Model::Log
     super(id, name)
     @type = "scan"
   end
-  
+
 end
 end
 end

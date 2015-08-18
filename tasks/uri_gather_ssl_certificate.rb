@@ -16,6 +16,7 @@ class UriGatherSslCertTask  < BaseTask
       :example_entities => [{:type => "Uri", :attributes => {:name => "http://www.intrigue.io"}}],
       :allowed_options => [
         {:name => "skip_cloudflare", :type => "Boolean", :regex => "boolean", :default => true },
+        {:name => "skip_distil", :type => "Boolean", :regex => "boolean", :default => true }
       ],
       :created_types => ["DnsRecord","SslCertificate"]
     }
@@ -54,6 +55,11 @@ class UriGatherSslCertTask  < BaseTask
 
               if alt_name =~ /cloudflare.com$/
                 @task_log.log "This is a cloudflare certificate, skipping further entity creation"
+                return
+              end
+
+              if alt_name =~ /distilnetworks.com$/
+                @task_log.log "This is a distil networks certificate, skipping further entity creation"
                 return
               end
 

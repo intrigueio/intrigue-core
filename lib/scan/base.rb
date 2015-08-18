@@ -11,7 +11,7 @@ module Scanner
       @scan_log = @scan_result.log
 
       # Kick off the scan
-      @scan_log.log  "Starting scan #{@scan_result.name} of type #{self.class} with id #{@scan_result.id} on entity #{@scan_result.entity} to depth #{@scan_result.depth}"
+      @scan_log.log  "Starting scan #{@scan_result.name} of type #{self.class} with id #{@scan_result.id} on entity #{@scan_result.entity.type}##{@scan_result.entity.attributes["name"]} to depth #{@scan_result.depth}"
       _recurse(@scan_result.entity,@scan_result.depth)
       @scan_log.good "Complete!"
     end
@@ -20,15 +20,15 @@ module Scanner
 
     def _start_task_and_recurse(task_name,entity,depth,options=[])
       @scan_log.log "Starting #{task_name} with options #{options} on #{entity.type}##{entity.attributes["name"]} at depth #{depth}"
+
       # Check existing task results and see if we aleady have this answer
       task_result = Object.new
       @scan_result.task_results.each do |t|
-        if (t.task_name == task_name)
-          if (t.entity.type == entity.type && t.entity.attributes["name"] == entity.attributes["name"])
+        if (t.task_name == task_name && t.entity.type == entity.type && t.entity.attributes["name"] == entity.attributes["name"])
            # We have a match
            @scan_log.log "Found a duplicate task_result for #{task_name} on #{entity.type}##{entity.attributes["name"]}. Cloning results!"
            task_result = t.clone
-          end
+           next # break out of the block
         end
       end
 
@@ -37,6 +37,7 @@ module Scanner
         # Create an ID
         task_id = SecureRandom.uuid
 
+        @scan_log.log "Kicking off task!"
         # Start the task run
         start_task_run(task_id, task_name, entity, options)
 
@@ -47,6 +48,8 @@ module Scanner
           sleep 1
           task_result = Intrigue::Model::TaskResult.find task_id
         end
+
+        @scan_log.log "Got task result"
       end
 
 =begin
@@ -66,17 +69,21 @@ module Scanner
       $results["#{task_name}_#{entity["type"]}_#{entity["attributes"]["name"]}"] = result
     end
 =end
+
+      @scan_log.log "Parsing entities..."
       # Display results in the log
       task_result.entities.each do |entity|
-        @scan_log.log "Entity: #{entity.type}##{entity.attributes["name"]}"
+        #@scan_log.log "Entity: #{entity.type}##{entity.attributes["name"]}"
         @scan_result.add_entity(entity)
       end
 
       # add it to the scan result
+      #@scan_log.log "Adding task to results..."
       @scan_result.add_task_result(task_result)
 
       # Then iterate on each entity
       task_result.entities.each do |entity|
+        @scan_log.log "Iterating on #{entity.type}##{entity.attributes["name"]}"
 
         # create a new node
         #this = Neography::Node.create(
@@ -87,7 +94,6 @@ module Scanner
         #node.outgoing(:child) << this
 
         # recurse!
-        @scan_log.log "Iterating on #{entity.type}##{entity.attributes["name"]}"
         _recurse(entity, depth-1)
       end
     end

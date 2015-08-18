@@ -69,7 +69,6 @@ module Parse
     _create_entity("Info", :name => "Metadata for #{uri}",:metadata => yomu.metadata)
 
     ### PDF
-    #
     if yomu.metadata["Content-Type"] == "application/pdf"
 
       _create_entity "File", { :type => "PDF",
@@ -82,6 +81,11 @@ module Parse
       _create_entity "Person", { :name => yomu.metadata["Author"], :uri => uri } if yomu.metadata["Author"]
       _create_entity "SoftwarePackage", { :name => "#{yomu.metadata["xmp:CreatorTool"]}", :plugin => "#{yomu.metadata["producer"]}", :uri => uri } if yomu.metadata["producer"]
 
+    #MP3/4
+    elsif yomu.metadata["Content-Type"] == "audio/mpeg"
+      _create_entity "Person", :name => yomu.metadata["meta:author"]
+      _create_entity "Person", :name => yomu.metadata["creator"]
+      #_create_entity "Person", :name => yomu.metadata["xmpDM:artist"]
     end
 
     # Look for entities in the text

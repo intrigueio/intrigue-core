@@ -35,7 +35,7 @@ class BaseTask
     # Do a little logging. Do it for the kids.
     #
     @task_log.log "Id: #{task_id}"
-    @task_log.log "Entity: #{entity}"
+    @task_log.log "Entity: #{entity.type}##{entity.attributes["name"]}"
 
     ###################
     # Sanity Checking #
