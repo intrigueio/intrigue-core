@@ -15,6 +15,7 @@ module Intrigue
 
       if _is_prohibited(entity)  # Check for prohibited entity name
         @scan_log.log "Returning, #{entity.inspect} prohibited"
+        return
       end
 
       if entity.type == "IpAddress"

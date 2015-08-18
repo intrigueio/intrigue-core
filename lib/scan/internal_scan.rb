@@ -11,9 +11,7 @@ module Intrigue
       return if depth <= 0
 
       # Check for prohibited entity name
-      if entity.attributes
-        return if _is_prohibited entity
-      end
+      return if _is_prohibited entity
 
       if entity.type == "IpAddress"
         ### DNS Reverse Lookup
