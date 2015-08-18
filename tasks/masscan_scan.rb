@@ -58,14 +58,14 @@ class MasscanTask < BaseTask
       _create_entity("Uri", {:name => "http://#{host}", :uri => "http://#{host}" })
 
       ### Resolve the IP
-      resolved_name = Resolv.new.getname(address).to_s
+      resolved_name = Resolv.new.getname(host).to_s
       if resolved_name
         @task_log.good "Creating domain #{resolved_name}"
         # Create our new dns record entity with the resolved name
         _create_entity("DnsRecord", {:name => resolved_name})
         _create_entity("Uri", {:name => "http://#{resolved_name}", :uri => "http://#{resolved_name}" })
       else
-        @task_log.log "Unable to find a name for #{address}"
+        @task_log.log "Unable to find a name for #{host}"
       end
       ### End Resolution
 
