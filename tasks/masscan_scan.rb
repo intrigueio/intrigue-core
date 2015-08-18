@@ -1,3 +1,4 @@
+require 'resolv'
 ###
 ### Task is in good shape, just needs some option parsing, and needs to deal with paths
 ###
@@ -53,7 +54,21 @@ class MasscanTask < BaseTask
         :proto => "tcp"
       })
 
+      # Create a URI entity
       _create_entity("Uri", {:name => "http://#{host}", :uri => "http://#{host}" })
+
+      ### Resolve the IP
+      resolved_name = Resolv.new.getname(address).to_s
+      if resolved_name
+        @task_log.good "Creating domain #{resolved_name}"
+        # Create our new dns record entity with the resolved name
+        _create_entity("DnsRecord", {:name => resolved_name})
+        _create_entity("Uri", {:name => "http://#{resolved_name}", :uri => "http://#{resolved_name}" })
+      else
+        @task_log.log "Unable to find a name for #{address}"
+      end
+      ### End Resolution
+
     end
 
     # Clean up!
