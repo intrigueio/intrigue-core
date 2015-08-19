@@ -35,8 +35,6 @@ class SearchBingTask < BaseTask
       # Attach to the google service & search
       bing = Client::Search::Bing::SearchService.new(api_key,opt_max_results,'Web',{:Adult => 'Off'})
       results = bing.search(entity_name)
-
-      # the first result will often be our domain, so save that.
       main_uri = results.first[:Web].first[:DisplayUrl].split(".").last(2).join(".")
 
       results.first[:Web][0..opt_max_results-1].each do |result|
@@ -95,6 +93,8 @@ class SearchBingTask < BaseTask
       end # end results.each
     rescue SocketError => e
       @task_log.error "Unable to connect #{e}"
+    rescue NoMethodError => e
+      @task_log.error "No results: #{e}"
     end
   end # end run()
 
