@@ -105,6 +105,7 @@ module Intrigue
           entity.attributes["name"] =~ /plus.google.com/    ||
           entity.attributes["name"] =~ /instagram.com/      ||
           entity.attributes["name"] =~ /zepheira.com/       ||
+          entity.attributes["name"] =~ /gandi.net/          ||
           entity.attributes["name"] == "feeds2.feedburner.com" )
 
             @scan_log.error "SKIP Prohibited entity: #{entity.type}##{entity.attributes["name"]}"

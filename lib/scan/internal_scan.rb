@@ -27,7 +27,7 @@ module Intrigue
         ### DNS Forward Lookup
         _start_task_and_recurse "dns_lookup_forward",entity,depth
         ### DNS Subdomain Bruteforce
-        _start_task_and_recurse "dns_brute_sub",entity,depth,[{"name" => "use_file", "value" => "true"}]
+        _start_task_and_recurse "dns_brute_sub",entity,depth,[{"name" => "use_file", "value" => true }]
       elsif entity.type == "Uri"
         ### Get SSLCert
         _start_task_and_recurse "uri_gather_ssl_certificate",entity,depth
@@ -41,7 +41,7 @@ module Intrigue
         _start_task_and_recurse "uri_gather_and_analyze_links",entity,depth
       elsif entity.type == "String"
         # Search!
-        #_start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 10}]
+        _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 10}]
         # Brute TLD
         #_start_task_and_recurse "dns_brute_tld",entity,depth
       else

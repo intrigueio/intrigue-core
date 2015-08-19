@@ -267,7 +267,7 @@ class BaseTask
               regex = /(true|false)/
             elsif allowed_option[:regex] == "alpha_numeric"
               @task_log.log "Regex should match an alpha-numeric string"
-              regex = /^[a-zA-Z0-9\_\;\(\)\,\?\.\-\_\/\ ]*$/
+              regex = /^[a-zA-Z0-9\_\;\(\)\,\?\.\-\_\/\~\ ]*$/
             elsif allowed_option[:regex] == "alpha_numeric_list"
               @task_log.log "Regex should match an alpha-numeric list"
               regex = /^[a-zA-Z0-9_;\\(),\?\.\-\_]*$/
