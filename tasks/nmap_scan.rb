@@ -85,7 +85,7 @@ class NmapScanTask < BaseTask
             # and create the entities if we have dns
             host.hostnames.each do |hostname|
               uri = "#{protocol}#{hostname}:#{entity.attributes[:port_num]}"
-              _create_entity("Uri", :name => uri )
+              _create_entity("Uri", :name => uri, :uri => uri )
             end
 
           end # end if
