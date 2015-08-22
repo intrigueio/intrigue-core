@@ -53,12 +53,13 @@ module Scanner
         end
 
         # Parse out entities and add'm
+        @scan_log.log "Parsing entities..."
         task_result.entities.each do |entity|
-            @scan_log.log "Parsing entities..."
             @scan_result.add_entity(entity)
         end
 
         # add the task_result
+        @scan_log.log "Adding new task result..."
         @scan_result.add_task_result(task_result) unless already_completed
 
       else
