@@ -54,7 +54,6 @@ module Intrigue
         @entity_count+=1
         @entities << entity
         save
-        
       true
       end
 
