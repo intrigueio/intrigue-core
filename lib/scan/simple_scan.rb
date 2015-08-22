@@ -92,8 +92,7 @@ module Intrigue
       else
 
         if (
-          entity.attributes["name"] =~ /google/             ||
-          entity.attributes["name"] =~ /g.co/               ||
+          entity.attributes["name"] =~ /google.com/         ||
           entity.attributes["name"] =~ /goo.gl/             ||
           entity.attributes["name"] =~ /android/            ||
           entity.attributes["name"] =~ /urchin/             ||
