@@ -10,7 +10,7 @@ class DnsBruteSubTask < BaseTask
       :description => "DNS Subdomain Bruteforce",
       :references => [],
       :allowed_types => ["DnsRecord","String"],
-      :example_entities =>   [{:type => "DnsRecord", :attributes => {:name => "intrigue.io"}}],
+      :example_entities =>   [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
         {:name => "brute_list", :type => "String", :regex => "alpha_numeric_list", :default =>
@@ -94,7 +94,7 @@ Some cases to think through:
     begin
       wildcard = resolver.getaddress("noforkingway#{rand(100000)}.#{suffix}")
       if wildcard
-        _create_entity "IpAddress", :name => "#{wildcard}"
+        _create_entity "IpAddress", "name" => "#{wildcard}"
         wildcard_domain = true
         @task_log.error "WARNING! Wildcard domain detected, only saving validated domains/hosts."
       end
@@ -124,8 +124,8 @@ Some cases to think through:
         if (resolved_address && !(wildcard_domain))
 
           # Create new host and domain entities
-          _create_entity("DnsRecord", {:name => brute_domain })
-          _create_entity("IpAddress", {:name => resolved_address})
+          _create_entity("DnsRecord", {"name" => brute_domain })
+          _create_entity("IpAddress", {"name" => resolved_address})
 
           #
           # This section will add permutations to our list, if the

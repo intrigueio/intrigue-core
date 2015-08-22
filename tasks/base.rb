@@ -14,7 +14,7 @@ class BaseTask
     # Get the Task Result #
     #######################
     @task_result = Intrigue::Model::TaskResult.find task_id
-    entity = Intrigue::Model::Entity.find entity_id
+    @entity = Intrigue::Model::Entity.find entity_id
 
     ###################
     # Create a Logger #
@@ -31,7 +31,7 @@ class BaseTask
     # Do a little logging. Do it for the kids.
     #
     @task_log.log "Id: #{task_id}"
-    @task_log.log "Entity: #{entity.type}##{entity.attributes["name"]}"
+    @task_log.log "Entity: #{@entity.type}##{@entity.attributes["name"]}"
 
     ###################
     # Sanity Checking #
@@ -40,15 +40,15 @@ class BaseTask
     # XXX - should we sanity check hook_uri here? probably.
     allowed_types = self.metadata[:allowed_types]
 
-    unless entity
+    unless @entity
       @task_log.error "ERROR! No entity!!!"
       broken_input = true
     end
 
     # Check to make sure this task can receive an entity of this type
-    unless allowed_types.include?(entity.type) || allowed_types.include?("*")
+    unless allowed_types.include?(@entity.type) || allowed_types.include?("*")
       #raise "ERROR! Can't call #{self.metadata[:name]} on entity: #{entity}"
-      @task_log.error "Unable to call #{self.metadata[:name]} on entity: #{entity}"
+      @task_log.error "Unable to call #{self.metadata[:name]} on entity: #{@entity}"
       broken_input = true
     end
 
@@ -64,7 +64,7 @@ class BaseTask
     #source_entity = Intrigue::Model::Entity.new entity.type, entity.attributes
     #source_entity.save
 
-    @task_result.entity = entity
+    @task_result.entity = @entity
     @task_result.timestamp_start = Time.now.getutc
     @task_result.id = task_id
 
@@ -73,7 +73,7 @@ class BaseTask
       # @user_options - a hash of task options
       # @task_result - the final result to be passed back to the caller
       @task_log.log "Calling Setup"
-      if setup(task_id, entity, options)
+      if setup(task_id, @entity, options)
         # Call run(), which will use _create_entity
         begin
           Timeout.timeout($intrigue_global_timeout) do # 15 minutes should be enough time to hit a class b for a single port w/ masscan
@@ -399,7 +399,7 @@ class BaseTask
     end
 
     def _get_entity_attribute(name)
-      "#{@task_result.entity.attributes[name]}"
+      "#{@task_result.entity.attributes["name"]}"
     end
 
     def _get_global_config(key)

@@ -12,7 +12,7 @@ class DnsLookupTxtTask < BaseTask
         "http://webmasters.stackexchange.com/questions/27910/txt-vs-spf-record-for-google-servers-spf-record-either-or-both"
       ],
       :allowed_types => ["DnsRecord"],
-      :example_entities => [{:type => "DnsRecord", :attributes => {:name => "intrigue.io"}}],
+      :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
       :created_types => ["DnsRecord", "IpAddress", "Info", "NetBlock" ]
     }
@@ -49,18 +49,18 @@ class DnsLookupTxtTask < BaseTask
             answer.rdata.first.split(" ").each do |record|
 
               if record =~ /^include:.*/
-                _create_entity "DnsRecord", {:name => record.split(":").last}
+                _create_entity "DnsRecord", {"name" => record.split(":").last}
               elsif record =~ /^ip4:.*/
                 s = record.split(":").last
                 if s.include? "/"
-                  _create_entity "NetBlock", {:name => s }
+                  _create_entity "NetBlock", {"name" => s }
                 else
-                  _create_entity "IpAddress", {:name => s }
+                  _create_entity "IpAddress", {"name" => s }
                 end
               elsif record =~ /^google-site-verification.*/
-                _create_entity "Info", {:name => "DNS Verification Code", :type =>"Google", :content => record.split(":").last}
+                _create_entity "Info", {"name" => "DNS Verification Code", "type" =>"Google", "content" => record.split(":").last}
               elsif record =~ /^yandex-verification.*/
-                _create_entity "Info", {:name => "DNS Verification Code", :type =>"Yandex", :content => record.split(":").last}
+                _create_entity "Info", {"name" => "DNS Verification Code", "type" =>"Yandex", "content" => record.split(":").last}
               end
             end
 

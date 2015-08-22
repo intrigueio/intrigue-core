@@ -10,7 +10,7 @@ class DnsLookupForwardTask < BaseTask
       :description => "Look up the IP Address of the given hostname.",
       :references => [],
       :allowed_types => ["DnsRecord","String"],
-      :example_entities => [{:type => "DnsRecord", :attributes => {:name => "intrigue.io"}}],
+      :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
       ],
@@ -38,7 +38,7 @@ class DnsLookupForwardTask < BaseTask
       # For each of the found addresses
       resolved_addresses.map{ |address|
         _create_entity("IpAddress", {
-          :name => address }
+          "name" => address }
         )}
 
     rescue Exception => e

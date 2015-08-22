@@ -3,19 +3,19 @@ class ExampleTask < BaseTask
 
   def metadata
     {
-      :name => "example",
+      "name" => "example",
       :pretty_name => "Example",
       :authors => ["jcran"],
       :description => "This is an example task. It returns a randomly-generated host.",
       :references => [],
       :allowed_types => ["*"],
       :example_entities => [
-        {:type => "String", :attributes => {:name => "intrigue.io"}}
+        {"type" => "String", "attributes" => {"name" => "intrigue.io"}}
       ],
       :allowed_options => [
-        {:name => "unused_option", :type => "Integer", :regex=> "integer", :default => 100 },
-        {:name => "count", :type => "Integer", :regex=> "integer", :default => 10 },
-        {:name => "sleep", :type => "Integer", :regex=> "integer", :default => 0 }
+        {"name" => "unused_option", "type" => "Integer", "regex"=> "integer", "default" => 100 },
+        {"name" => "count", "type" => "Integer", "regex"=> "integer", "default" => 10 },
+        {"name" => "sleep", "type" => "Integer", "regex"=> "integer", "default" => 0 }
       ],
       :created_types => ["IpAddress"]
     }
@@ -40,7 +40,7 @@ class ExampleTask < BaseTask
       #
       # Create & return the entity
       #
-      _create_entity("IpAddress", {:name => ip_address })
+      _create_entity("IpAddress", {"name" => ip_address })
     end
 
   end

@@ -10,7 +10,7 @@ class SearchShodanTask < BaseTask
       :references => [],
       :allowed_types => ["String", "IpAddress","NetSvc","DnsRecord", "DnsServer"],
       :example_entities => [
-        {:type => "String", :attributes => {:name => "intrigue.io"}}
+        {"type" => "String", "attributes" => {"name" => "intrigue.io"}}
       ],
       :allowed_options => [],
       :created_types => ["IpAddress","NetSvc","Organization","PhysicalLocation"]
@@ -48,8 +48,8 @@ class SearchShodanTask < BaseTask
         #
         @task_log.log "IP: #{r["ip"]}"
         host = _create_entity("IpAddress",{
-          :name => "#{r["ip"]}",
-          :age => "#{updated_at}"
+          "name" => "#{r["ip"]}",
+          "age" => "#{updated_at}"
         }) if r["ip"]
 
         #
@@ -57,7 +57,7 @@ class SearchShodanTask < BaseTask
         #
         r["hostnames"].each do |h|
           @task_log.log "Hostname: #{h}"
-          _create_entity("DnsRecord",{ :name => "#{h}", :age => "#{updated_at}" })
+          _create_entity("DnsRecord",{ "name" => "#{h}", "age" => "#{updated_at}" })
         end
 
         #
@@ -66,11 +66,11 @@ class SearchShodanTask < BaseTask
         @task_log.log "Port: #{r["port"]}"
 
         port = _create_entity("NetSvc",{
-          :name => "#{host.attributes[:name]}:#{r["port"]}/tcp",
-          :proto => "tcp",
-          :port_num => r["port"],
-          :fingerprint => r["data"],
-          :age => "#{updated_at}"
+          "name" => "#{host.attributes[:name]}:#{r["port"]}/tcp",
+          "proto" => "tcp",
+          "port_num" => r["port"],
+          "fingerprint" => r["data"],
+          "age" => "#{updated_at}"
         }) if r["port"]
 
         #
@@ -78,8 +78,8 @@ class SearchShodanTask < BaseTask
         #
         @task_log.log "Org: #{r["org"]}"
         org = _create_entity("Organization",{
-          :name => "#{r["org"]}",
-          :age => "#{updated_at}"
+          "name" => "#{r["org"]}",
+          "age" => "#{updated_at}"
         }) if r["org"]
 
         #
@@ -87,13 +87,13 @@ class SearchShodanTask < BaseTask
         #
         @task_log.log "Location: #{r["postal_code"]}"
         location = _create_entity("PhysicalLocation",{
-          :name => "#{r["latitude"]} / #{r["longitude"]}",
-          :zip => "#{r["postal_code"]}",
-          :state => "#{r["region_name"]}",
-          :country => "#{r["country_name"]}",
-          :latitude => "#{r["latitude"]}",
-          :longitude => "#{r["longitude"]}",
-          :age => "#{updated_at}"
+          "name" => "#{r["latitude"]} / #{r["longitude"]}",
+          "zip" => "#{r["postal_code"]}",
+          "state" => "#{r["region_name"]}",
+          "country" => "#{r["country_name"]}",
+          "latitude" => "#{r["latitude"]}",
+          "longitude" => "#{r["longitude"]}",
+          "age" => "#{updated_at}"
         }) if r["country_name"]
 
 

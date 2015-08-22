@@ -11,7 +11,7 @@ class DnsLookupReverseTask < BaseTask
       :description => "Look up the name of the given ip address.",
       :references => [],
       :allowed_types => ["IpAddress"],
-      :example_entities => [{:type => "IpAddress", :attributes => {:name => "192.0.78.13"}}],
+      :example_entities => [{"type" => "IpAddress", "attributes" => {"name" => "192.0.78.13"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
       ],
@@ -32,7 +32,7 @@ class DnsLookupReverseTask < BaseTask
         @task_log.good "Creating domain #{resolved_name}"
 
         # Create our new dns record entity with the resolved name
-        _create_entity("DnsRecord", {:name => resolved_name})
+        _create_entity("DnsRecord", {"name" => resolved_name})
 
       else
         @task_log.log "Unable to find a name for #{address}"

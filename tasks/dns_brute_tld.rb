@@ -10,7 +10,7 @@ class DnsBruteTldTask < BaseTask
       :description => "DNS TLD Bruteforce",
       :references => [],
       :allowed_types => ["DnsRecord","String"],
-      :example_entities => [{:type => "DnsRecord", :attributes => {:name => "intrigue.io"}}],
+      :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
         {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
@@ -137,8 +137,8 @@ class DnsBruteTldTask < BaseTask
 
         # If we resolved, create the right entities
         if resolved_address
-          _create_entity("DnsRecord", {:name => domain})
-          _create_entity("IpAddress", {:name => resolved_address})
+          _create_entity("DnsRecord", {"name" => domain})
+          _create_entity("IpAddress", {"name" => resolved_address})
         end
 
       rescue Exception => e

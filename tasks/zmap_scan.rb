@@ -12,7 +12,7 @@ class ZmapScanTask < BaseTask
       :description => "This task runs a zmap scan on the target host or domain.",
       :references => [],
       :allowed_types => ["NetBlock"],
-      :example_entities => [{:type => "NetBlock", :attributes => {:name => "10.0.0.0/24"}}],
+      :example_entities => [{"type" => "NetBlock", "attributes" => {"name" => "10.0.0.0/24"}}],
       :allowed_options => [],
       :created_types => ["IpAddress", "NetSvc"]
     }
@@ -44,15 +44,15 @@ class ZmapScanTask < BaseTask
       host = host.delete("\n").strip unless host.nil?
 
       # Create entity for each discovered host + service
-      _create_entity("IpAddress", {:name => host })
+      _create_entity("IpAddress", {"name" => host })
 
       _create_entity("NetSvc", {
-        :name => "#{host}:#{port_num}/tcp",
-        :port_num => port_num,
-        :proto => "tcp"
+        "name" => "#{host}:#{port_num}/tcp",
+        "port_num" => port_num,
+        "proto" => "tcp"
       })
 
-      _create_entity("Uri", {:name => "http://#{host}", :uri => "http://#{host}" })
+      _create_entity("Uri", {"name" => "http://#{host}", "uri" => "http://#{host}" })
 
     end
 

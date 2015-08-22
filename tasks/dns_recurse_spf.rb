@@ -10,7 +10,7 @@ class DnsRecurseSpf < BaseTask
       :description => "DNS SPF Recursive Lookup",
       :references => [ "https://community.rapid7.com/community/infosec/blog/2015/02/23/osint-through-sender-policy-framework-spf-records"],
       :allowed_types => ["DnsRecord"],
-      :example_entities => [{:type => "DnsRecord", :attributes => {:name => "intrigue.io"}}],
+      :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
       :created_types => ["DnsRecord", "IpAddress", "Info", "NetBlock" ]
     }
@@ -61,7 +61,7 @@ class DnsRecurseSpf < BaseTask
 
                 elsif data =~ /^include:.*/
                   spf_data = data.split(":").last
-                  _create_entity "DnsRecord", {:name => spf_data}
+                  _create_entity "DnsRecord", {"name" => spf_data}
 
                   # RECURSE!
                   lookup_txt_record spf_data
@@ -70,15 +70,15 @@ class DnsRecurseSpf < BaseTask
                   range = data.split(":").last
 
                   if data.include? "/"
-                    _create_entity "NetBlock", {:name => range }
+                    _create_entity "NetBlock", {"name" => range }
                   else
-                    _create_entity "IpAddress", {:name => range }
+                    _create_entity "IpAddress", {"name" => range }
                   end
                 end
               end
 
             else  # store everything else as info
-              _create_entity "Info", { :name => "Non-SPF TXT Record for #{dns_name}", :content => answer.to_s }
+              _create_entity "Info", { "name" => "Non-SPF TXT Record for #{dns_name}", "content" => answer.to_s }
             end
 
           end

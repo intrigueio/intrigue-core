@@ -10,9 +10,9 @@ class NetSvc < Base
   end
 
   def validate(attributes)
-    attributes[:ip_address].to_s =~ /^.*$/ &&
-    attributes[:port_num].to_s =~ /^\d{1,5}$/ &&
-    attributes[:proto].to_s =~ /^(tcp|udp)$/
+    attributes["ip_address"].to_s =~ /^.*$/ &&
+    attributes["port_num"].to_s =~ /^\d{1,5}$/ &&
+    attributes["proto"].to_s =~ /^(tcp|udp)$/
   end
 
   def form

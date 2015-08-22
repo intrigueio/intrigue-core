@@ -29,7 +29,7 @@ class DnsSnoopCacheTask < BaseTask
       :description => "Query a DNS server for a list of domains and check if there is a recent visit of this domain in their cache..",
       :references => [],
       :allowed_types => ["DnsServer"],
-      :example_entities => [{:type => "DnsServer", :attributes => {:name => "129.186.88.249"}}],
+      :example_entities => [{"type" => "DnsServer", "attributes" => {"name" => "129.186.88.249"}}],
       :allowed_options => [
         {:name => "method", :type => "String", :default => "R", :regex=> "[A-Z]" }
       ],

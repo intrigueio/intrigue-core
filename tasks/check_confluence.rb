@@ -11,7 +11,7 @@ class CheckConfluence  < BaseTask
       :description => "This task checks Atlassian Cloud for the presence of a wiki.",
       :references => [],
       :allowed_types => ["String"],
-      :example_entities => [{:type => "String", :attributes => {:name => "intrigue"}}],
+      :example_entities => [{"type" => "String", "attributes" => {"name" => "intrigue"}}],
       :allowed_options => [],
       :created_types => ["Uri"]
     }
@@ -62,9 +62,9 @@ class CheckConfluence  < BaseTask
         @task_log.good "got match: #{match}"
 
         _create_entity("#{target[:entity_type]}",
-          { :name => "#{target[:entity_name]}",
-            :uri => "#{uri}",
-            :content => "#{target[:entity_content]} on #{uri}" })
+          { "name" => "#{target[:entity_name]}",
+            "uri" => "#{uri}",
+            "content" => "#{target[:entity_content]} on #{uri}" })
 
       end if matches # << if it exists
     end
@@ -104,9 +104,9 @@ class CheckConfluence  < BaseTask
         @task_log.good "got match: #{match}"
 
         _create_entity("#{target[:entity_type]}",
-          { :name => "#{target[:entity_name]}",
-            :uri => "#{uri}",
-            :content => "#{target[:entity_content]} on #{uri}" })
+          { "name" => "#{target[:entity_name]}",
+            "uri" => "#{uri}",
+            "content" => "#{target[:entity_content]} on #{uri}" })
 
       end if matches # << if it exists
     end

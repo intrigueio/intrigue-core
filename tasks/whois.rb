@@ -15,8 +15,8 @@ class WhoisTask < BaseTask
       :references => [],
       :allowed_types => ["DnsRecord", "IpAddress"],
       :example_entities => [
-        {:type => "DnsRecord", :attributes => {:name => "intrigue.io"}},
-        {:type => "IpAddress", :attributes => {:name => "192.0.78.13"}},
+        {"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}},
+        {"type" => "IpAddress", "attributes" => {"name" => "192.0.78.13"}},
       ],
       :allowed_options => [
         {:name => "timeout", :type => "Integer", :regex=> "integer", :default => 20 }],
@@ -76,19 +76,19 @@ class WhoisTask < BaseTask
             # If it's an ip address, let's create a host record
             #
             if nameserver.to_s =~ /\d\.\d\.\d\.\d/
-              _create_entity "IpAddress", :name => nameserver.to_s
-              _create_entity "DnsServer", :name => nameserver.to_s
+              _create_entity "IpAddress", "name" => nameserver.to_s
+              _create_entity "DnsServer", "name" => nameserver.to_s
             else
               #
               # Otherwise it's another domain, and we can't do much but add it
               #
-              _create_entity "DnsRecord", :name => nameserver.to_s
+              _create_entity "DnsRecord", "name" => nameserver.to_s
 
               # Resolve the name
               begin
                 ip_address = IPSocket::getaddress(nameserver.to_s)
-                _create_entity "IpAddress", :name => ip_address
-                _create_entity "DnsServer", :name => ip_address
+                _create_entity "IpAddress", "name" => ip_address
+                _create_entity "DnsServer", "name" => ip_address
               rescue SocketError => e
                   @task_log.log "Unable to look up host: #{e}"
               end
@@ -121,7 +121,7 @@ class WhoisTask < BaseTask
         begin
           if answer.technical_contact
             @task_log.log "Creating user from technical contact"
-            _create_entity("Person", {:name => answer.technical_contact.name})
+            _create_entity("Person", {"name" => answer.technical_contact.name})
           end
         rescue Exception => e
           @task_log.log "Unable to grab technical contact"
@@ -133,7 +133,7 @@ class WhoisTask < BaseTask
         begin
           if answer.admin_contact
             @task_log.log "Creating user from admin contact"
-            _create_entity("Person", {:name => answer.admin_contact.name})
+            _create_entity("Person", {"name" => answer.admin_contact.name})
           end
         rescue Exception => e
           @task_log.log "Unable to grab admin contact"
@@ -216,15 +216,15 @@ class WhoisTask < BaseTask
           # Create the netblock entity
           #
           entity = _create_entity "NetBlock", {
-            :name => "#{start_address}/#{cidr_length}",
-            :start_address => "#{start_address}",
-            :end_address => "#{end_address}",
-            :cidr => "#{cidr_length}",
-            :description => "#{description}",
-            :block_type => "#{block_type}",
-            :handle => handle,
-            :organization_reference => org_ref,
-            :parent_reference => parent_ref
+            "name" => "#{start_address}/#{cidr_length}",
+            "start_address" => "#{start_address}",
+            "end_address" => "#{end_address}",
+            "cidr" => "#{cidr_length}",
+            "description" => "#{description}",
+            "block_type" => "#{block_type}",
+            "handle" => handle,
+            "organization_reference" => org_ref,
+            "parent_reference" => parent_ref
           }
 
         end # End Netblocks

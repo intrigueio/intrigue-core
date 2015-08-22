@@ -9,7 +9,7 @@ class UriCheckSafebrowsingApi  < BaseTask
       :description => "Check a URI against the Google Safebrowsing (StopBadware) API",
       :references => [],
       :allowed_types => ["Uri"],
-      :example_entities => [ {:type => "Uri", :attributes => {:name => "http://intrigue.io"}} ],
+      :example_entities => [ {"type" => "Uri", "attributes" => {"name" => "http://intrigue.io"}} ],
       :allowed_options => [],
       :created_types => ["Info"]
     }
@@ -39,7 +39,7 @@ class UriCheckSafebrowsingApi  < BaseTask
       if v == "ok"
         @task_log.log "OK! #{h.to_s}"
       else
-        _create_entity "Info", :name => "SafeBrowsing Uri", :uri => "#{h}", :content=> "#{v}"
+        _create_entity "Info", "name" => "Potentially Malicious Uri: #{h}", "uri" => "#{h}", "content" => "#{v}"
         @task_log.log "Info: #{h}: #{v}"
       end
     end

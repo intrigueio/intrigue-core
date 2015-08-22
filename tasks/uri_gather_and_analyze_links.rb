@@ -12,7 +12,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
       :description => "This task parses the main page and performs analysis on links.",
       :references => [],
       :allowed_types => ["Uri"],
-      :example_entities => [{:type => "Uri", :attributes => {:name => "http://www.intrigue.io"}}],
+      :example_entities => [{"type" => "Uri", "attributes" => {"name" => "http://www.intrigue.io"}}],
       :allowed_options => [],
       :created_types => ["DnsRecord","IpAddress","Uri"]
     }
@@ -41,8 +41,8 @@ class UriGatherAndAnalyzeLinks  < BaseTask
         # Collect the host
         host = URI(link).host
 
-        _create_entity "Uri", :name => link, :uri => link
-        _create_entity "DnsRecord", :name => host
+        _create_entity "Uri", "name" => link, "uri" => link
+        _create_entity "DnsRecord", "name" => host
 
         # Add to both arrays, so we can keep track of the original set, and a resolved set
         original_dns_records << host
@@ -68,7 +68,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
     @task_log.log "Displaying DNS name counts"
     grouped_original_dns_records.sort_by{|x| x.last }.reverse.each do |dns_record,count|
       # Create an entity for each record
-      #_create_entity "DnsRecord", :name => dns_record
+      #_create_entity "DnsRecord", "name" => dns_record
       # Display the analysis in the logs
       @task_log.log "#{count} #{dns_record}"
     end
@@ -125,7 +125,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
     @task_log.log "Displaying resolved DNS Names"
     grouped_resolved_dns_records.sort_by{|x| x.last }.reverse.each do |dns_record,count|
       # Create an entity for each record
-      #_create_entity "DnsRecord", :name => dns_record
+      #_create_entity "DnsRecord", "name" => dns_record
       # Display the analysis in the logs
       @task_log.log "#{count} #{dns_record}"
     end
@@ -177,7 +177,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
     ###
     @task_log.log "Displaying IP address counts"
     grouped_ip_records.sort_by{|x| x.last }.reverse.each do |record,count|
-      _create_entity "IpAddress", :name => record[:host], :description => record[:dns_record]
+      _create_entity "IpAddress", "name" => record[:host], "description" => record[:dns_record]
       @task_log.log "#{count} #{record}"
     end
 

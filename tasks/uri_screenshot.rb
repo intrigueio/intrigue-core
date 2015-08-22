@@ -11,7 +11,7 @@ class UriScreenshot < BaseTask
       :references => [],
       :allowed_types => ["Uri"],
       :example_entities => [
-        {:type => "Uri", :attributes => {:name => "http://www.intrigue.io"}}
+        {"type" => "Uri", "attributes" => {"name" => "http://www.intrigue.io"}}
       ],
       :allowed_options => [  ],
       :created_types =>  ["Screenshot"]
@@ -40,7 +40,10 @@ class UriScreenshot < BaseTask
       )
 
       @task_log.good "Saved to #{full_path}"
-      _create_entity "Screenshot", :name => "#{uri}_screenshot", :uri => "#{$intrigue_server_uri}/screenshots/#{filename}"
+      _create_entity "Screenshot", {
+        "name" => "#{uri}_screenshot",
+        "uri" => "#{$intrigue_server_uri}/screenshots/#{filename}"
+      }
 
     rescue Screencap::Error => e
       @task_log.error "Unable to capture screenshot: #{e}"

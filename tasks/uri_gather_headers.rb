@@ -11,7 +11,7 @@ class UriGatherHeadersTask  < BaseTask
       :description =>   "This task checks for HTTP headers on a web application",
       :references => [],
       :allowed_types => ["Uri"],
-      :example_entities => [{:type => "Uri", :attributes => {:name => "http://www.intrigue.io"}}],
+      :example_entities => [{"type" => "Uri", "attributes" => {"name" => "http://www.intrigue.io"}}],
       :allowed_options => [], # TODO
       :created_types => ["UriHeader"]
     }
@@ -27,8 +27,8 @@ class UriGatherHeadersTask  < BaseTask
     if response
       response.each_header do |name,value|
         _create_entity("UriHeader", {
-          :name => "#{name}",
-          :content => "#{value}" })
+          "name" => "#{name}",
+          "content" => "#{value}" })
       end
     end
   end

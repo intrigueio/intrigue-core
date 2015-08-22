@@ -11,7 +11,7 @@ class UriGatherTechnologyTask  < BaseTask
       :description => "This task determines platform and technologies of the target.",
       :references => [],
       :allowed_types => ["Uri"],
-      :example_entities => [{:type => "Uri", :attributes => {:name => "http://www.intrigue.io"}}],
+      :example_entities => [{"type" => "Uri", "attributes" => {:name => "http://www.intrigue.io"}}],
       :allowed_options => [],
       :created_types => ["SoftwarePackage"]
     }
@@ -87,9 +87,9 @@ class UriGatherTechnologyTask  < BaseTask
       # Iterate through all matches
       matches.each do |match|
        _create_entity("SoftwarePackage",
-        { :name => "#{target[:finding_name]}",
-          :uri => "#{uri}",
-          :content => "Found #{match} on #{uri}" })
+        { "name" => "#{target[:finding_name]}",
+          "uri" => "#{uri}",
+          "content" => "Found #{match} on #{uri}" })
       end if matches
     end
     # End interation through the target strings

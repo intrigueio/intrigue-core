@@ -13,7 +13,7 @@ class UriGatherMetadataTask  < BaseTask
       :description => "Grab metadata from a URI",
       :references => [],
       :allowed_types => ["Uri"],
-      :example_entities => [{:type => "Uri", :attributes => {:name => "http://www.intrigue.io"}}],
+      :example_entities => [{"type" => "Uri", "attributes" => {"name" => "http://www.intrigue.io"}}],
       :allowed_options => [], # TODO
       :created_types => ["DnsRecord","SslCertificate"]
     }
@@ -43,8 +43,8 @@ class UriGatherMetadataTask  < BaseTask
     if response
       response.each_header do |name,value|
         _create_entity("HttpHeader", {
-          :name => "#{name}",
-          :content => "#{value}" })
+          "name" => "#{name}",
+          "content" => "#{value}" })
       end
     end
   end
@@ -73,7 +73,7 @@ class UriGatherMetadataTask  < BaseTask
             end
 
             alt_names.each do |alt_name|
-              _create_entity "DnsRecord", { :name => alt_name }
+              _create_entity "DnsRecord", { "name" => alt_name }
             end
 
           end
@@ -84,8 +84,9 @@ class UriGatherMetadataTask  < BaseTask
         tcp_client.close
 
         # Create an SSL Certificate entity
-        _create_entity "SslCertificate", {  :name => cert.subject,
-          :text => cert.to_text }
+        _create_entity "SslCertificate", {
+          "name" => cert.subject,
+          "text" => cert.to_text }
         end
       rescue TypeError => e
         @task_log.log "Couldn't connect: #{e}"

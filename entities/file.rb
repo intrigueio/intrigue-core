@@ -10,7 +10,7 @@ class File < Base
   end
 
   def validate(attributes)
-    attributes[:name] =~ /^.*$/
+    attributes["name"] =~ /^.*$/
   end
 
 end

@@ -9,7 +9,7 @@ class SearchGoogleTask < BaseTask
       :description => "This task hits the Google API and finds related content. Discovered domains are created",
       :references => [],
       :allowed_types => ["*"],
-      :example_entities => [{:type => "String", :attributes => {:name => "intrigue.io"}}],
+      :example_entities => [{"type" => "String", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
       :created_types => ["DnsRecord", "WebAccount","Uri"]
     }
@@ -31,34 +31,36 @@ class SearchGoogleTask < BaseTask
     results.each do |result|
 
       # Create a domain
-      _create_entity "DnsRecord", :name => result[:visible_url]
+      _create_entity "DnsRecord", "name" => result[:visible_url]
 
       # Create the associated top-level domain
-      _create_entity "DnsRecord", :name => result[:visible_url].split(".").last(2).join(".")
+      _create_entity "DnsRecord", "name" => result[:visible_url].split(".").last(2).join(".")
+
+      ### XXX = move this to the parse mixin
 
       # Handle Twitter search results
       if result[:title_no_formatting] =~ /Twitter/
         account_name = result[:title_no_formatting].scan(/\(.*\)/).first[2..-2]
         _create_entity("WebAccount", {
-          :name => account_name,
-          :domain => "twitter.com",
-          :uri => "http://www.twitter.com/#{account_name}" })
+          "name" => account_name,
+          "domain" => "twitter.com",
+          "uri" => "http://www.twitter.com/#{account_name}" })
 
       # Handle Facebook search results
       elsif result[:unescaped_url] =~ /https:\/\/www.facebook.com/
         account_name = result[:unescaped_url].scan(/[^\/]+$/).first
         _create_entity("WebAccount", {
-          :name => account_name,
-          :domain => "facebook.com",
-          :uri => "http://www.facebook.com/#{account_name}" })
+          "name" => account_name,
+          "domain" => "facebook.com",
+          "uri" => "http://www.facebook.com/#{account_name}" })
 
       # Handle LinkedIn search results
       elsif result[:unescaped_url] =~ /http:\/\/www.linkedin.com\/in/
         account_name = result[:unescaped_url].scan(/[^\/]+$/).first
         _create_entity("WebAccount", {
-          :name => account_name,
-          :domain =>"linkedin.com",
-          :uri => "http//www.linkedin.com/in/#{account_name}" })
+          "name" => account_name,
+          "domain" =>"linkedin.com",
+          "uri" => "http//www.linkedin.com/in/#{account_name}" })
 
       # Otherwise, just create a generic search result
 
@@ -67,9 +69,9 @@ class SearchGoogleTask < BaseTask
       ###
       else
         _create_entity("Uri", {
-          :name => result[:unescaped_url],
-          :uri => result[:unescaped_url],
-          :content => Rack::Utils.escape_html(result[:content])
+          "name" => result[:unescaped_url],
+          "uri" => result[:unescaped_url],
+          "content" => Rack::Utils.escape_html(result[:content])
         })
       end
 

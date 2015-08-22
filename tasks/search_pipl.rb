@@ -9,7 +9,7 @@ class SearchPiplTask < BaseTask
       :description => "Use the Pipl API to search for entities",
       :references => [],
       :allowed_types => ["EmailAddress", "PhoneNumber", "String", "Person", "WebAccount"],
-      :example_entities => [{:type => "String", :attributes => {:name => "intrigue"}}],
+      :example_entities => [{"type" => "String", "attributes" => {"name" => "intrigue"}}],
       :allowed_options => [],
       :created_types => ["WebAccount","Uri"]
     }
@@ -84,15 +84,15 @@ class SearchPiplTask < BaseTask
 
       @task_log.good "Found a person! This indicates there's a single person record in pipl for this query."
 
-      _create_entity "Person", :name => "#{response["person"]["names"].first["display"]}"
+      _create_entity "Person", "name" => "#{response["person"]["names"].first["display"]}"
 
 
       # Parse up the response sources
       response["person"]["sources"].each do |source|
         _create_entity "WebAccount", {
-          :domain => source["domain"],
-          :uri => source["url"],
-          :name => source["name"]
+          "domain" => source["domain"],
+          "uri" => source["url"],
+          "name" => "#{source["name"]} #{source["domain"]}"
         }
       end
     end
@@ -116,9 +116,9 @@ class SearchPiplTask < BaseTask
 
         if record["source"]["domain"]
           _create_entity "WebAccount",
-            :domain => record["source"]["domain"],
-            :name => record["source"]["url"].split("/").last,
-            :uri => record["source"]["url"]
+            "domain" => record["source"]["domain"],
+            "name" => "#{record["source"]["url"].split("/").last} #{record["source"]["domain"]}",
+            "uri" => record["source"]["url"]
         end
 
         #_create_entity "Person", :name => record["names"]["display"]
@@ -136,15 +136,15 @@ class SearchPiplTask < BaseTask
         @task_log.log "Record: #{record.to_s}\n"
 
         _create_entity "Uri", {
-          :name => record["source"]["name"],
-          :confidence => record["@query_person_match"],
-          :uri => record["source"]["url"],
-          :comment => record["content"] ? record["content"].map{|x| x.to_s.join(" ")} : ""
+          "name" => record["source"]["name"],
+          "confidence" => record["@query_person_match"],
+          "uri" => record["source"]["url"],
+          "comment" => record["content"] ? record["content"].map{|x| x.to_s.join(" ")} : ""
         }
 
         if record["usernames"]
           record["usernames"].each do |username|
-            _create_entity "Webaccount", { :name => username["content"].downcase, :domain => record[""] }
+            _create_entity "Webaccount", { "name" => username["content"].downcase, "domain" => record[""] }
           end
         end
       end

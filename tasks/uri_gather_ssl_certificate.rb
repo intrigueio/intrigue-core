@@ -13,7 +13,7 @@ class UriGatherSslCertTask  < BaseTask
       :description => "Grab the SSL certificate from an application server",
       :references => [],
       :allowed_types => ["Uri"],
-      :example_entities => [{:type => "Uri", :attributes => {:name => "http://www.intrigue.io"}}],
+      :example_entities => [{"type" => "Uri", "attributes" => {"name" => "http://www.intrigue.io"}}],
       :allowed_options => [
         {:name => "skip_cloudflare", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "skip_distil", :type => "Boolean", :regex => "boolean", :default => true }
@@ -63,7 +63,7 @@ class UriGatherSslCertTask  < BaseTask
                 return
               end
 
-              _create_entity "DnsRecord", { :name => alt_name }
+              _create_entity "DnsRecord", { "name" => alt_name }
             end
 
           end
@@ -74,8 +74,8 @@ class UriGatherSslCertTask  < BaseTask
         tcp_client.close
 
         # Create an SSL Certificate entity
-        _create_entity "SslCertificate", {  :name => cert.subject,
-                                            :text => cert.to_text }
+        _create_entity "SslCertificate", {  "name" => cert.subject,
+                                            "text" => cert.to_text }
       end
     rescue Timeout::Error
       @task_log.log "Timed out"

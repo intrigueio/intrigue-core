@@ -11,7 +11,7 @@ class CheckOkta  < BaseTask
       :description => "This task checks Okta for the presence of an account.",
       :references => [],
       :allowed_types => ["String"],
-      :example_entities => [{:type => "String", :attributes => {:name => "intrigue"}}],
+      :example_entities => [{"type" => "String", "attributes" => {"name" => "intrigue"}}],
       :allowed_options => [],
       :created_types => ["Uri"]
     }
@@ -61,9 +61,9 @@ class CheckOkta  < BaseTask
         @task_log.good "Not a default page!"
 
         _create_entity("#{target[:entity_type]}",
-         { :name => "#{target[:entity_name]}",
-           :uri => "#{uri}",
-           :content => "#{target[:entity_content]} on #{uri}" })
+         { "name" => "#{target[:entity_name]}",
+           "uri" => "#{uri}",
+           "content" => "#{target[:entity_content]} on #{uri}" })
 
       end
 

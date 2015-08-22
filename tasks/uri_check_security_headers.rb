@@ -11,7 +11,7 @@ class UriCheckSecurityHeaders  < BaseTask
       :description =>   "This task checks for typical HTTP security headers on a web application",
       :references => [],
       :allowed_types => ["Uri"],
-      :example_entities => [{:type => "Uri", :attributes => {:name => "http://www.intrigue.io"}}],
+      :example_entities => [{"type" => "Uri", "attributes" => {"name" => "http://www.intrigue.io"}}],
       :allowed_options => [],
       :created_types => ["Info"]
     }
@@ -41,11 +41,11 @@ class UriCheckSecurityHeaders  < BaseTask
       # If we have identified any headers...
       if found_security_headers.count > 0
         _create_entity("Info", {
-          :name => "#{uri} provides HTTP security headers",
-          :uri => "#{uri}",
-          :security_header_check => true,
-          :security_headers => found_security_headers,
-          #:headers => response.each_header.map{|name,value| {:name => name, :value => value}  }
+          "name" => "#{uri} provides HTTP security headers",
+          "uri" => "#{uri}",
+          "security_header_check" => true,
+          "security_headers" => found_security_headers,
+          #"headers" => response.each_header.map{|name,value| {:name => name, :value => value}  }
           })
       end
 

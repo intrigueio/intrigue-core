@@ -10,7 +10,7 @@ class Screenshot < Base
   end
 
   def validate(attributes)
-    true #attributes[:name] =~ /^.*$/ # XXX - too loose
+    attributes["name"] =~ /^.*$/ # XXX - too loose
     #attributes[:file] =~ /^.*$/ # XXX - too loose
   end
 

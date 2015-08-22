@@ -10,7 +10,7 @@ class GeolocateHostTask < BaseTask
       :description => "Performs a geolocation based on an IP address.",
       :references => [],
       :allowed_types => ["IpAddress"],
-      :example_entities => [{:type => "IpAddress", :attributes => {:name => "192.0.78.13"}}],
+      :example_entities => [{"type" => "IpAddress", "attributes" => {"name" => "192.0.78.13"}}],
       :allowed_options => [],
       :created_types => ["PhysicalLocation"]
     }
@@ -40,13 +40,13 @@ class GeolocateHostTask < BaseTask
       if loc
         @task_log.log "adding location for #{ip_address}"
         _create_entity("PhysicalLocation", {
-          :name => "#{loc.latitude} #{loc.longitude}",
-          :zip => loc.postal_code.encode('UTF-8', :invalid => :replace),
-          :city => loc.city_name.encode('UTF-8', :invalid => :replace),
-          :state => loc.region_name.encode('UTF-8', :invalid => :replace),
-          :country => loc.country_name.encode('UTF-8', :invalid => :replace),
-          :longitude => loc.longitude,
-          :latitude => loc.latitude})
+          "name" => "#{loc.latitude} #{loc.longitude}",
+          "zip" => loc.postal_code.encode('UTF-8', :invalid => :replace),
+          "city" => loc.city_name.encode('UTF-8', :invalid => :replace),
+          "state" => loc.region_name.encode('UTF-8', :invalid => :replace),
+          "country" => loc.country_name.encode('UTF-8', :invalid => :replace),
+          "longitude" => loc.longitude,
+          "latitude" => loc.latitude})
         end
       rescue ArgumentError => e
         @task_log.log "Argument Error #{e}"

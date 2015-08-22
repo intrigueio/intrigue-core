@@ -11,7 +11,7 @@ class DnsTransferZoneTask < BaseTask
       :description => "DNS Zone Transfer",
       :allowed_types => ["DnsRecord"],
       :example_entities => [
-        {:type => "DnsRecord", :attributes => {:name => "intrigue.io"}}
+        {"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}
       ],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
@@ -71,25 +71,25 @@ class DnsTransferZoneTask < BaseTask
             zone = zt.transfer(domain_name)
 
             _create_entity "Info", {
-              :name => "Zone Transfer",
-              :content => "#{nameserver} -> #{domain_name}",
-              #:details => zone
+              "name" => "Zone Transfer",
+              "content" => "#{nameserver} -> #{domain_name}",
+              "details" => zone
             }
 
             # Create host records for each item in the zone
             zone.each do |z|
               if z.type == "A"
-                _create_entity "IpAddress", { :name => z.address.to_s, :type => z.type.to_s, :content => "#{z.to_s}" }
-                _create_entity "DnsRecord", { :name => z.name.to_s, :type => z.type.to_s, :content => "#{z.to_s}" }
+                _create_entity "IpAddress", { "name" => z.address.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
+                _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
               elsif z.type == "CNAME"
-                _create_entity "DnsRecord", { :name => z.name.to_s, :type => z.type.to_s, :content => "#{z.to_s}" }
-                _create_entity "DnsRecord", { :name => z.rdata.to_s, :type => z.type.to_s, :content => "#{z.rdata}" }
+                _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
+                _create_entity "DnsRecord", { "name" => z.rdata.to_s, "type" => z.type.to_s, "content" => "#{z.rdata}" }
               elsif z.type == "NS"
-                _create_entity "DnsRecord", { :name => z.name.to_s, :type => z.type.to_s, :content => "#{z.to_s}" }
+                _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
                 # XXX - it's possible rdata could contain an IP address, we should check for this
-                _create_entity "DnsRecord", { :name => z.rdata.to_s, :type => z.type.to_s, :content => "#{z.rdata}" }
+                _create_entity "DnsRecord", { "name" => z.rdata.to_s, "type" => z.type.to_s, "content" => "#{z.rdata}" }
               else
-                _create_entity "DnsRecord", { :name => z.name.to_s, :type => z.type.to_s, :content => "#{z.to_s}" }
+                _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
               end
             end
             # Record keeping

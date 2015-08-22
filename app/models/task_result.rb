@@ -51,6 +51,7 @@ module Intrigue
         # check to see if we already have first
         return false if has_entity? entity
 
+        @log.log "Adding entity #{entity.inspect}"
         @entity_count+=1
         @entities << entity
         save
@@ -59,7 +60,9 @@ module Intrigue
 
       # Matches based on type and the attribute "name"
       def has_entity? entity
-        @entities.select{|e| e.type == entity.type && e.attributes["name"] == entity.attributes["name"]}
+        #@log.log "Checking for entity #{entity.inspect}"
+        x = @entities.select{|e| e.type == entity.type && e.attributes["name"] == entity.attributes["name"]}
+      return !x.empty?
       end
 
       def from_json(json)

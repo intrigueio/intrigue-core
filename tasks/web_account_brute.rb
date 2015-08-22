@@ -11,7 +11,7 @@ class WebAccountBruteTask < BaseTask
       :description => "This task hits major social sites, checking for accounts by username. Discovered accounts are created.",
       :references => [],
       :allowed_types => ["Username","WebAccount"],
-      :example_entities => [{:type => "Username", :attributes => {:name => "jcran"}}],
+      :example_entities => [{"type" => "Username", "attributes" => {"name" => "jcran"}}],
       :allowed_options => [],
       :created_types => ["WebAccount"]
     }
@@ -39,10 +39,11 @@ class WebAccountBruteTask < BaseTask
       account_existence_strings = site["account_existence_strings"]
       account_existence_strings.each do |string|
         if body.include? string
-          _create_entity "WebAccount", { :name => "#{username}",
-                                         :domain => "#{site["name"]}",
-                                         :username => "#{username}",
-                                         :uri => "#{account_uri}"
+          _create_entity "WebAccount", {
+                                        "name" => "#{username}",
+                                        "domain" => "#{site["name"]}",
+                                        "username" => "#{username}",
+                                        "uri" => "#{account_uri}"
                                        }
         end
       end

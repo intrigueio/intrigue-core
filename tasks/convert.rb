@@ -10,7 +10,7 @@ class Convert  < BaseTask
       :references => [],
       :allowed_types => ["*"],
       :example_entities => [
-        {:type => "String", :attributes => {:name => "intrigue"}}
+        {"type" => "String", "attributes" => {"name" => "intrigue"}}
       ],
       :allowed_options => [
         {:name => "entity_type", :type => "String", :regex => "alpha_numeric", :default => "DnsRecord" },
@@ -22,7 +22,7 @@ class Convert  < BaseTask
   def run
     super
     name = _get_entity_attribute "name"
-    _create_entity( _get_option("entity_type"), :name => name )
+    _create_entity( _get_option("entity_type"), "name" => name )
   end
 
 end

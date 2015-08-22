@@ -11,7 +11,7 @@ class CheckProjectHoneypot  < BaseTask
       :description => "This task checks the project honeypot site for information.",
       :references => [],
       :allowed_types => ["IpAddress"],
-      :example_entities => [{:type => "IpAddress", :attributes => {:name => "1.1.1.1"}}],
+      :example_entities => [{"type" => "IpAddress", "attributes" => {"name" => "1.1.1.1"}}],
       :allowed_options => [],
       :created_types => ["Info"]
     }
@@ -58,9 +58,9 @@ class CheckProjectHoneypot  < BaseTask
         @task_log.good "got match: #{match}"
 
         _create_entity("IpAddress",
-          { :name => "#{target[:entity_name]}",
-            :uri => "#{uri}",
-            :content => "#{target[:entity_content]} on #{uri}" })
+          { "name" => "#{target[:entity_name]}",
+            "uri" => "#{uri}",
+            "content" => "#{target[:entity_content]} on #{uri}" })
 
       end if matches # << if it exists
     end

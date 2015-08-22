@@ -10,9 +10,9 @@ class WebAccount < Base
   end
 
   def validate(attributes)
-    attributes[:name] =~ /^.*$/ &&
-    attributes[:domain] =~ /^.*$/ &&
-    attributes[:uri] =~ /^http.*$/ 
+    attributes["name"] =~ /^.*$/ &&
+    attributes["domain"] =~ /^.*$/ &&
+    attributes["name"] =~ /^http.*$/
   end
 
 end

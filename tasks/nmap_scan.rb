@@ -10,7 +10,7 @@ class NmapScanTask < BaseTask
       :description => "This task runs an nmap scan on the target host or domain.",
       :references => [],
       :allowed_types => ["DnsRecord", "IpAddress", "NetBlock"],
-      :example_entities => [{:type => "DnsRecord", :attributes => {:name => "intrigue.io"}}],
+      :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         #{:name => "ports", :type => "String", :regex => "AlphaNumeric", :default => "80" }
       ],
@@ -55,7 +55,7 @@ class NmapScanTask < BaseTask
 
       # Handle the case of a netblock or domain - where we will need to create host entity(s)
       if @entity.type == "NetBlock" or @entity.type == "DnsRecord"
-        host_entity = _create_entity("IpAddress", { :name => host.addr } )
+        host_entity = _create_entity("IpAddress", { "name" => host.addr } )
       else
         host_entity = @entity # We already have a host
       end
@@ -66,26 +66,26 @@ class NmapScanTask < BaseTask
 
           # Create a NetSvc for each open port
           entity = _create_entity("NetSvc", {
-            :name => "#{host.addr}:#{port.num}/#{port.proto}",
-            :ip_address => "#{host.addr}",
-            :port_num => port.num,
-            :proto => port.proto,
-            :fingerprint => "#{port.service.name}"})
+            "name" => "#{host.addr}:#{port.num}/#{port.proto}",
+            "ip_address" => "#{host.addr}",
+            "port_num" => port.num,
+            "proto" => port.proto,
+            "fingerprint" => "#{port.service.name}"})
 
           # Go ahead and create webapps if this is a known webapp port
           if entity.attributes[:proto] == "tcp" &&
-            [80,443,8080,8081,8443].include?(entity.attributes[:port_num])
+            [80,443,8080,8081,8443].include?(entity.attributes["port_num"])
 
             # determine if this is an SSL application
-            ssl = true if [443,8443].include?(entity.attributes[:port_num])
+            ssl = true if [443,8443].include?(entity.attributes["port_num"])
             protocol = ssl ? "https://" : "http://" # construct uri
-            uri = "#{protocol}#{host.addr}:#{entity.attributes[:port_num]}"
-            _create_entity("Uri", :name => uri, :uri => uri  ) # create an entity
+            uri = "#{protocol}#{host.addr}:#{entity.attributes["port_num"]}"
+            _create_entity("Uri", "name" => uri, "uri" => uri  ) # create an entity
 
             # and create the entities if we have dns
             host.hostnames.each do |hostname|
-              uri = "#{protocol}#{hostname}:#{entity.attributes[:port_num]}"
-              _create_entity("Uri", :name => uri, :uri => uri )
+              uri = "#{protocol}#{hostname}:#{entity.attributes["port_num"]}"
+              _create_entity("Uri", "name" => uri, "uri" => uri )
             end
 
           end # end if

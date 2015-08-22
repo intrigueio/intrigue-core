@@ -10,8 +10,8 @@ class UriHeader < Base
   end
 
   def validate(attributes)
-    attributes[:name] =~ /^.*$/ &&
-    attributes[:content] =~ /^.*$/
+    attributes["name"] =~ /^.*$/ &&
+    attributes["content"] =~ /^.*$/
   end
 
 end

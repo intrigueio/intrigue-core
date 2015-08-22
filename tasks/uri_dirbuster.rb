@@ -12,7 +12,7 @@ class UriDirbuster  < BaseTask
       :references => [],
       :allowed_types => ["Uri"],
       :example_entities => [
-        {:type => "Uri", :attributes => {:name => "http://intrigue.io"}}
+        {"type" => "Uri", "attributes" => {"name" => "http://intrigue.io"}}
       ],
       :allowed_options => [
         # https://github.com/danielmiessler/SecLists/blob/master/vulns/apache.txt
@@ -86,10 +86,10 @@ class UriDirbuster  < BaseTask
             @task_log.log "404 on #{request_uri}"
           when "200"
             @task_log.good "200! Creating a page for #{request_uri}"
-            _create_entity "Uri", :name => request_uri, :uri => request_uri
+            _create_entity "Uri", "name" => request_uri, "uri" => request_uri
           when "500"
             @task_log.good "500 error! Creating a page for #{request_uri}"
-            _create_entity "Uri", :name => request_uri, :uri => request_uri, :content => "#{response.body}"
+            _create_entity "Uri", "name" => request_uri, "uri" => request_uri, "content" => "#{response.body}"
           when missing_page_code
             @task_log.log "Got code: #{response.code}. Same as missing page code. Skipping"
           else
@@ -104,7 +104,7 @@ class UriDirbuster  < BaseTask
           @task_log.log "#{request_uri} looks like a missing page"
         else
           @task_log.log "#{request_uri} looks like a new page"
-          _create_entity "Uri", :name => request_uri
+          _create_entity "Uri", "name" => request_uri
         end
 
       end

@@ -15,10 +15,10 @@ class NetsvcFuzzRandom < BaseTask
       :references => [],
       :allowed_types => ["NetSvc"],
       :example_entities => [
-        {:type => "NetSvc", :attributes => {
-          :ip_address => "104.237.133.83",
-          :port => 8431,
-          :protocol => "tcp"
+        {"type" => "NetSvc", "attributes" => {
+          "ip_address" => "1.1.1.1",
+          "port" => 1111,
+          "protocol" => "tcp"
           }
         }
       ],

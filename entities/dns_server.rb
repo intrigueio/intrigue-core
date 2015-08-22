@@ -10,7 +10,7 @@ class DnsServer < Base
   end
 
   def validate(attributes)
-    attributes[:name] =~ /^[a-zA-Z0-9\.].*/
+    attributes["name"] =~ /^[a-zA-Z0-9\.].*/
   end
 
 end

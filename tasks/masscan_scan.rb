@@ -13,7 +13,7 @@ class MasscanTask < BaseTask
       :description => "This task runs a masscan scan on the target host or domain.",
       :references => [],
       :allowed_types => ["IpAddress", "NetBlock"],
-      :example_entities => [{:type => "NetBlock", :attributes => {:name => "10.0.0.0/24"}}],
+      :example_entities => [{"type" => "NetBlock", "attributes" => {"name" => "10.0.0.0/24"}}],
       :allowed_options => [],
       :created_types => ["IpAddress", "NetSvc"]
     }
@@ -46,29 +46,29 @@ class MasscanTask < BaseTask
       host = line.delete("\n").strip.split(" ")[3] unless line.nil?
 
       # Create entity for each discovered host + service
-      _create_entity("IpAddress", {:name => host })
+      _create_entity("IpAddress", {"name" => host })
 
       _create_entity("NetSvc", {
-        :name => "#{host}:#{port_num}/tcp",
-        :port_num => port_num,
-        :proto => "tcp"
+        "name" => "#{host}:#{port_num}/tcp",
+        "port_num" => port_num,
+        "proto" => "tcp"
       })
 
       # Create a URI entity
-      _create_entity("Uri", {:name => "http://#{host}", :uri => "http://#{host}" })
+      _create_entity("Uri", {"name" => "http://#{host}", "uri" => "http://#{host}" })
 
       ### Resolve the IP
       begin
         resolved_name = Resolv.new.getname(host).to_s
       rescue Resolv::ResolvError => e
-        # silently lose these for now. 
+        # silently lose these for now.
       end
 
       if resolved_name
         @task_log.good "Creating domain #{resolved_name}"
         # Create our new dns record entity with the resolved name
-        _create_entity("DnsRecord", {:name => resolved_name})
-        _create_entity("Uri", {:name => "http://#{resolved_name}", :uri => "http://#{resolved_name}" })
+        _create_entity("DnsRecord", {"name" => resolved_name})
+        _create_entity("Uri", {"name" => "http://#{resolved_name}", "uri" => "http://#{resolved_name}" })
       else
         @task_log.log "Unable to find a name for #{host}"
       end

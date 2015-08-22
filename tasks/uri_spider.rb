@@ -14,8 +14,7 @@ class UriSpiderTask < BaseTask
       :references => [],
       :allowed_types => ["Uri"],
       :example_entities => [
-        {:type => "Uri", :attributes => {
-          :name => "http://www.intrigue.io" }}
+        {"type" => "Uri", "attributes" => { "name" => "http://www.intrigue.io" }}
       ],
       :allowed_options => [
         {:name => "threads", :type => "Integer", :regex => "integer", :default => 5 },
@@ -87,7 +86,7 @@ class UriSpiderTask < BaseTask
             #
             # Create an entity for this uri
             #
-            _create_entity("Uri", { :name => page_uri, :uri => page_uri }) if @opt_create_urls
+            _create_entity("Uri", { "name" => page_uri, "uri" => page_uri }) if @opt_create_urls
 
             # If we don't have a body, we can't do anything here.
             next unless page.body

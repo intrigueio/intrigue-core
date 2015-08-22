@@ -10,9 +10,9 @@ class PhysicalLocation < Base
   end
 
   def validate(attributes)
-    attributes[:name] =~ /^.*$/ #&&
-    #attributes[:latitude] =~ /^([-+]?\d{1,2}[.]\d+)$/ &&
-    #attributes[:longitude] =~ /^([-+]?\d{1,3}[.]\d+)$/
+    attributes["name"] =~ /^.*$/ #&&
+    #attributes["latitude"] =~ /^([-+]?\d{1,2}[.]\d+)$/ &&
+    #attributes["longitude"] =~ /^([-+]?\d{1,3}[.]\d+)$/
   end
 
 end
