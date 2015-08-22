@@ -76,7 +76,7 @@ module Intrigue
       if entity.type == "NetBlock"
 
         cidr = entity.attributes["name"].split("/").last.to_i
-        unless cidr >= 20
+        unless cidr >= 22
           @scan_log.error "SKIP Netblock too large: #{entity.type}##{entity.attributes["name"]}"
           return true
         end
