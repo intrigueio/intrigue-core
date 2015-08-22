@@ -35,8 +35,19 @@ module Intrigue
       elsif entity.type == "DnsRecord"
         ### DNS Forward Lookup
         _start_task_and_recurse "dns_lookup_forward",entity,depth
+
         ### DNS Subdomain Bruteforce
-        _start_task_and_recurse "dns_brute_sub",entity,depth,[{"name" => "use_file", "value" => "false"}]
+        #
+        # If it's a TLD or primary domain, do a full brute
+        #
+        if entity.attributes["name"].split(".").count <= 2
+          _start_task_and_recurse "dns_brute_sub",entity,depth,[{"name" => "use_file", "value" => "true"}]
+        #
+        # otherwise, just quick brute
+        #
+        else
+          _start_task_and_recurse "dns_brute_sub",entity,depth,[{"name" => "use_file", "value" => "false"}]
+        end
       elsif entity.type == "Uri"
         ### Get SSLCert
         _start_task_and_recurse "uri_gather_ssl_certificate",entity,depth if entity.attributes["name"] =~ /^https/
@@ -71,6 +82,7 @@ module Intrigue
         end
 
       elsif entity.type == "IpAddress"
+
         # 23.x.x.x
         if entity.attributes["name"] =~ /^23./
           @scan_log.error "Skipping Akamai address"
@@ -86,7 +98,6 @@ module Intrigue
           entity.attributes["name"] =~ /android/            ||
           entity.attributes["name"] =~ /urchin/             ||
           entity.attributes["name"] =~ /schema.org/         ||
-          entity.attributes["description"] =~ /schema.org/  ||
           entity.attributes["name"] =~ /microsoft.com/      ||
           entity.attributes["name"] =~ /facebook.com/       ||
           entity.attributes["name"] =~ /cloudfront.net/     ||

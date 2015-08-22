@@ -83,6 +83,10 @@ class BaseTask
         begin
           Timeout.timeout($intrigue_global_timeout) do # 15 minutes should be enough time to hit a class b for a single port w/ masscan
             @task_log.log "Calling Run"
+
+            # save the task if we have redis handy
+            @task_result.save if handlers.include? "redis"
+
             run # run the task
             @task_result.entities.map{|x| x.to_json }.uniq! # Clean up the resulting entities
           end
