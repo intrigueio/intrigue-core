@@ -182,11 +182,28 @@ class CoreCli < Thor
 
       task_id = SecureRandom.uuid
 
+
+
+      # XXX - Hack - this should go away eventually. what
+      # sense is there in making the user create the task result.
+      # this should happen before, and automatically.
+
+      # Create a new entity
+      e = Intrigue::Model::Entity.new entity["type"], entity["attributes"]
+      e.save
+
+      # Create a new task result
+      task_result = Intrigue::Model::TaskResult.new task_id, "x"
+      task_result.entity = e
+      task_result.task_name = task_name
+      task_result.options = options
+      task_result.save
+
       # XXX - Create the task
       task = Intrigue::TaskFactory.create_by_name(task_name)
-      jid = task.class.perform_async task_id, entity, options, ["redis","csv_file", "json_file"], nil
+      jid = task.class.perform_async task_id, e.id, options, ["redis", "csv_file", "json_file"], nil
 
-      puts "Created task #{task_id} for entity #{entity}"
+      puts "Created task #{task_id} for entity #{e}"
     end
   end
 

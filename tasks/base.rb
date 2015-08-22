@@ -16,10 +16,6 @@ class BaseTask
     @task_result = Intrigue::Model::TaskResult.find task_id
     entity = Intrigue::Model::Entity.find entity_id
 
-    raise "Unable to find Task of id #{task_id}" unless @task_result
-
-    puts "Processing on Task Result: #{@task_result}"
-
     ###################
     # Create a Logger #
     ###################
@@ -127,6 +123,13 @@ class BaseTask
     #  }
     #
 
+    @task_result.complete = true
+    @task_result.save
+
+    ###
+    ### REPORT!
+    ###
+
     if handlers.include? "redis"
       @task_log.log "Saving to redis"
       @task_result.save
@@ -194,12 +197,10 @@ class BaseTask
       end
     end
 
-    @task_result.complete = true
-    @task_result.save
-
     # Run Cleanup
     @task_log.log "Calling cleanup()"
     cleanup unless broken_input
+
   end
 
   #########################################################
