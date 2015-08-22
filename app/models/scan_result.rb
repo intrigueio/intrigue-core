@@ -50,9 +50,13 @@ module Intrigue
       end
 
       def add_entity(entity)
+        # check to see if we already have first
+        return false if has_entity? entity
+
         @entity_count+=1
         @entities << entity
         save
+      true
       end
 
       # Matches based on type and the attribute "name"
