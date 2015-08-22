@@ -55,7 +55,9 @@ module Scanner
         # Parse out entities and add'm
         @scan_log.log "Parsing entities..."
         task_result.entities.each do |entity|
-            @scan_result.add_entity(entity)
+            unless @scan_result.has_entity? entity
+              @scan_result.add_entity(entity)
+            end
         end
 
         # add the task_result

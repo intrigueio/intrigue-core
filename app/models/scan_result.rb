@@ -55,6 +55,11 @@ module Intrigue
         save
       end
 
+      # Matches based on type and the attribute "name"
+      def has_entity? entity
+        @entities.select{|e| e.type == entity.type && e.attributes["name"] == entity.attributes["name"]}
+      end
+
       def from_json(json)
         begin
           x = JSON.parse(json)
