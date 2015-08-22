@@ -70,7 +70,6 @@ class BaseTask
 
     unless broken_input
       # Setup creates the following objects:
-      # @entity - the entity we're operating on
       # @user_options - a hash of task options
       # @task_result - the final result to be passed back to the caller
       @task_log.log "Calling Setup"
@@ -175,7 +174,7 @@ class BaseTask
     ### XXX - Write the results to a file
     if handlers.include? "json_file"
       ### THIS IS A HACK TO GENERATE A FILENAME ... think this through a bit more
-      shortname = "#{metadata[:name]}-#{_get_entity_attribute("name").gsub("/","")}"
+      shortname = "#{metadata[:name]}-#{@task_result.entity.attributes["name"].gsub("/","")}"
       # vvv task log has already been shipped so this won't show in the task log, only overall logs
       @task_log.log "Writing to file: #{shortname}"
       File.open("#{$intrigue_basedir}/results/#{shortname}.json", "w+") do |file|
@@ -209,12 +208,6 @@ class BaseTask
   # individual tasks must always call super()
   #
   def setup(task_id, entity, user_options)
-
-    # XXX - we should do some sanity checking on this entity
-    # because it's coming directly from the user - at least
-    # verify that it's a real object
-    #
-    @entity = entity
 
     # We need to parse options and make sure we're
     # allowed to accept these options. Compare to allowed_options.
@@ -349,7 +342,6 @@ class BaseTask
 
   def cleanup()
     @task_log = nil
-    @entity = nil
     @user_options = nil
     @task_result = nil
   end
@@ -407,7 +399,7 @@ class BaseTask
     end
 
     def _get_entity_attribute(name)
-      "#{@entity.attributes[name]}"
+      "#{@task_result.entity.attributes[name]}"
     end
 
     def _get_global_config(key)
