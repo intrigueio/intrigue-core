@@ -37,11 +37,18 @@ class Log
   end
 
   def to_json
-    {
-      "id" => @id,
-      "name" => @name,
-      "stream" => @stream.string
-    }.to_json
+    begin
+      {
+        "id" => @id,
+        "name" => @name,
+        "stream" => @stream.string
+      }.to_json
+    rescue JSON::GeneratorError => e
+      @stream.puts "SELF: Error writing JSON -> #{e}"
+      @stream.puts "id: #{id}"
+      @stream.puts "name: #{name}"
+      @stream.puts "stream: #{stream}"
+    end
   end
 
   def from_json(json)
@@ -55,7 +62,7 @@ class Log
   def to_s
     @stream.string
   end
-  
+
   def save
     lookup_key = "#{key}:#{@id}"
     $intrigue_redis.set lookup_key, to_json

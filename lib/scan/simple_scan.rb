@@ -59,11 +59,14 @@ module Intrigue
         #_start_task_and_recurse "uri_dirbuster",entity,depth
         ### screenshot
         #_start_task_and_recurse "uri_screenshot",entity,depth
-      elsif entity.type == "String" || entity.type == "Person"
+      elsif entity.type == "String" || entity.type == "Person" || entity.type == "EmailAddress"
         # Search!
         _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 20}]
         # Brute TLD
         #_start_task_and_recurse "dns_brute_tld",entity,depth
+      elsif entity.type == "Organization"
+        # Check EDGAR
+        _start_task_and_recurse "search_edgar",entity,depth
       else
         @scan_log.log "SKIP Unhandled entity type: #{entity.type}##{entity.attributes["name"]}"
         return
