@@ -1,6 +1,5 @@
-require 'sinatra'
-require 'rack/test'
 require_relative '../core.rb'
+require 'rack/test'
 
 set :environment, :test
 set :run, false
@@ -8,7 +7,7 @@ set :raise_errors, true
 set :logging, false
 
 def app
-  Sinatra::Application
+  IntrigueApp
 end
 
 #Rack::URLMap.new('/' => Sinatra::Application, '/sidekiq' => Sidekiq::Web)
@@ -25,7 +24,7 @@ module Intrigue
     module Integration
 
       def server_uri
-        "http://localhost:9292"
+        "http://localhost:7777"
       end
 
       def task_list

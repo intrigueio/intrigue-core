@@ -1,14 +1,15 @@
 require 'spec_helper'
 
-describe "Intrigue Task API v1" do
+describe "Intrigue" do
+describe "Task API v1" do
 
   it "should return a list of tasks" do
-    get '/tasks.json'
+    get '/v1/tasks.json'
     expect(last_response.status).to match 200
   end
 
   it "should return a list of task runs" do
-    get '/task_runs.json'
+    get '/v1/task_runs.json'
     expect(last_response.status).to match 200
   end
 
@@ -16,7 +17,7 @@ describe "Intrigue Task API v1" do
 
     header 'Content-Type', 'application/json'
 
-    post "/task_runs", {
+    post "/v1/task_runs", {
       :task => "example",
       :entity => {
         :type => "DnsRecord",
@@ -35,7 +36,7 @@ describe "Intrigue Task API v1" do
     ###
     ### Request the task results
     ###
-    get "/tasks/#{last_response.body}.json"
+    get "/v1/tasks/#{last_response.body}.json"
 
     # It should return a 200 with json as a response
     expect(last_response.status).to match 200
@@ -48,4 +49,5 @@ describe "Intrigue Task API v1" do
 
   end
 
+end
 end

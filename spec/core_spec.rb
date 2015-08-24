@@ -1,17 +1,18 @@
 require 'spec_helper'
 
-describe "Intrigue Core API v1" do
+describe "Intrigue" do
+describe "Core API" do
 
-  it "should return an index" do
-    get '/'
+  it "should redirect to the current API" do
+    get "/"
+    puts last_response
+    expect(last_response.status).to match 302
+  end
+
+  it "should have v1 as the current version" do
+    get "/v1/"
     expect(last_response.status).to match 200
   end
 
-  # Doesn't work with rack/test... why?
-  #
-  #it "should return the sidekiq interface" do
-  #  get '/sidekiq'
-  #  expect(last_response.status).to match 200
-  #end
-
+end
 end
