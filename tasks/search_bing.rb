@@ -1,6 +1,6 @@
 module Intrigue
 class SearchBingTask < BaseTask
-  include Task::Parse
+  include Intrigue::Task::Parse
 
   def metadata
     {
