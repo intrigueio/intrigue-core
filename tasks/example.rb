@@ -3,7 +3,7 @@ class ExampleTask < BaseTask
 
   def metadata
     {
-      "name" => "example",
+      :name => "example",
       :pretty_name => "Example",
       :authors => ["jcran"],
       :description => "This is an example task. It returns a randomly-generated host.",
@@ -13,9 +13,9 @@ class ExampleTask < BaseTask
         {"type" => "String", "attributes" => {"name" => "intrigue.io"}}
       ],
       :allowed_options => [
-        {"name" => "unused_option", "type" => "Integer", "regex"=> "integer", "default" => 100 },
-        {"name" => "count", "type" => "Integer", "regex"=> "integer", "default" => 10 },
-        {"name" => "sleep", "type" => "Integer", "regex"=> "integer", "default" => 0 }
+        {:name => "unused_option", :type => "Integer", :regex=> "integer", :default => 100 },
+        {:name => "count", :type => "Integer", :regex=> "integer", :default => 10 },
+        {:name => "sleep", :type => "Integer", :regex=> "integer", :default => 0 }
       ],
       :created_types => ["IpAddress"]
     }

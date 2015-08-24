@@ -22,7 +22,7 @@ module Intrigue
         task = Intrigue::TaskFactory.create_by_name(task_result.task_name)
 
         # note, this input is untrusted.
-        jid = task.class.perform_async task_id, task_result.entity.id, task_result.options, ["redis"]
+        jid = task.class.perform_async task_id, task_result.entity.id, task_result.options, []
       end
 
 end

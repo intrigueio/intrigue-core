@@ -21,14 +21,18 @@ require_relative 'entity_factory'
 
 # base entity (must be required first)
 require_relative '../entities/base'
-
-# all other entities
 entities_folder = File.expand_path('../../entities', __FILE__) # get absolute directory
 Dir["#{entities_folder}/*.rb"].each {|f| require_relative f}
 
 ####
 # Scan Libraries
 ####
-require_relative 'scan/base.rb'
-require_relative 'scan/internal_scan.rb'
-require_relative 'scan/simple_scan.rb'
+scanners_folder = File.expand_path('../scan', __FILE__) # get absolute directory
+Dir["#{scanners_folder}/*.rb"].each {|f| require_relative f}
+
+####
+# Report Libraries
+####
+require_relative 'report_factory'
+report_handlers_folder = File.expand_path('../report/handler', __FILE__) # get absolute directory
+Dir["#{report_handlers_folder}/*.rb"].each {|f| require_relative f}

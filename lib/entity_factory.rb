@@ -50,7 +50,12 @@ class EntityFactory
   def self.create_by_type(type,attributes)
 
     @entities.each do |e|
+
       # Create a new entity object
+      #
+      # XXX - can type be set on the class vs the object
+      # to prevent the need to call "new" ?
+      #
       entity_object = e.new(type,attributes)
       # Check to see if this is the matching type
       if (entity_object.metadata[:type] == type)

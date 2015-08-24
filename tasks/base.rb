@@ -8,7 +8,7 @@ class BaseTask
     TaskFactory.register(base)
   end
 
-  def perform(task_id, entity_id, options=[], handlers=["redis"], hook_uri )
+  def perform(task_id, entity_id, options=[], report_handlers, hook_uri)
 
     #######################
     # Get the Task Result #
@@ -53,21 +53,16 @@ class BaseTask
     end
 
     ###########################
-    # Perform the actual task #
+    # Setup the task result   #
     ###########################
     @task_result.task_name = metadata[:name]
-
-    # TODO - THSI IS A HACK
-    # TODO - this should be done closer to user input.
-    # TODO - this will create duplicate entities in the DB ....  MUST FIX.
-    #puts "ENTITY #{entity}"
-    #source_entity = Intrigue::Model::Entity.new entity.type, entity.attributes
-    #source_entity.save
-
     @task_result.entity = @entity
     @task_result.timestamp_start = Time.now.getutc
     @task_result.id = task_id
 
+    ###################################
+    # Perform the setup->run->cleanup #
+    ###################################
     unless broken_input
       # Setup creates the following objects:
       # @user_options - a hash of task options
@@ -79,125 +74,49 @@ class BaseTask
           Timeout.timeout($intrigue_global_timeout) do # 15 minutes should be enough time to hit a class b for a single port w/ masscan
             @task_log.log "Calling Run"
 
-            # save the task if we have redis handy
-            @task_result.save if handlers.include? "redis"
+            # Save the task locally
+            @task_result.save
 
-            run # run the task
-            @task_result.entities.map{|x| x.to_json }.uniq! # Clean up the resulting entities
+            # run the task, which will update @task_log and @task_result
+            run
+
+            # Clean up the resulting entities
+            @task_result.entities.map{|x| x.to_json }.uniq!
+
+            @task_log.good "Ship it!"
           end
         rescue Timeout::Error
           @task_log.error "ERROR! Timed out"
         end
-
       else
         @task_log.error "Setup failed, bailing out!"
       end
     end
 
-    # Grab the task log & html escape before posting
-    @task_log.good "Ship it!"
-
-    # Grab the task log & html escape before posting
+    #
+    # Mark it complete and save it
+    #
     # http://stackoverflow.com/questions/178704/are-unix-timestamps-the-best-way-to-store-timestamps
     @task_result.timestamp_end = Time.now.getutc
-
-    ######################################
-    # Send the result back to the caller #
-    ######################################
-    #
-    # @task_result is a hash that contains these parts:
-    #
-    #  {"task_name"=>"dns_forward_lookup",
-    #   "entity"=>{"type"=>"DnsRecord", "attributes"=>{"name"=>"www.google.com}
-    #   "entities"=>[{"type"=>"IpAddress", "attributes"=>{"name"=>"74.125.239.144"}},
-    #                {"type"=>"IpAddress", "attributes"=>{"name"=>"74.125.239.148"}},
-    #                {"type"=>"IpAddress", "attributes"=>{"name"=>"74.125.239.147"}},
-    #                {"type"=>"IpAddress", "attributes"=>{"name"=>"74.125.239.145"}},
-    #                {"type"=>"IpAddress", "attributes"=>{"name"=>"74.125.239.146"}},
-    #                {"type"=>"Ipv6Address", "attributes"=>{"name"=>"2607:F8B0:4005:802::1014"}}],
-    #   "id"=>"7000cc9b-4e66-4814-a4b8-00a1917a79e7",
-    #   "timestamp_start" => "2014-12-15 12:00:35 UTC",
-    #   "timestamp_end" => "2014-12-15 12:00:35 UTC"
-    #   "task_log" => "..."
-    #  }
-    #
-
     @task_result.complete = true
-    @task_result.save
+    @task_result.save # Always save to redis
 
-    ###
-    ### REPORT!
-    ###
-
-    if handlers.include? "redis"
-      @task_log.log "Saving to redis"
-      @task_result.save
-    end
-
-    ###
-    ### XXX - Send the results to a webhook
-    ###
-    if handlers.include? "webhook"
-
-      unless hook_uri
-        @task_log.error "FATAL! Webhook URI not specified"
-        return
-      end
-
-      begin
-        #
-        # Post the result back to /receive
-        #
-        @task_log.log "Sending to Webhook: #{hook_uri}" # < task log has already been shipped so this won't show in the task log, only overall logs
-        recoded_string = @task_result.to_json.encode('UTF-8', :invalid => :replace, :replace => '?')
-        RestClient.post hook_uri, recoded_string, :content_type => "application/json"
-
-      rescue Encoding::UndefinedConversionError
-        # < task log has already been shipped so this won't show in the task log, only overall logs
-        @task_log.error "ERROR! Encoding error when converting #{@task_result} to JSON"
-        @task_log.error "Error Character: #{$!.error_char.dump}"
-        @task_log.error "Error Character Encoding: #{$!.error_char.encoding}"
-
-      rescue JSON::GeneratorError => e
-        # < task log has already been shipped so this won't show in the task log, only overall logs
-        @task_log.error "ERROR! Unable to post results to #{hook_uri}"
-        @task_log.error  "#{e.class}: #{e}"
-
-      rescue Exception => e
-        # < task log has already been shipped so this won't show in the task log, only overall logs
-        @task_log.error "ERROR! Unable to post results to #{hook_uri}"
-        @task_log.error  "#{e.class}: #{e}"
-
-      end
-    end
-
-    ### XXX - Write the results to a file
-    if handlers.include? "json_file"
-      ### THIS IS A HACK TO GENERATE A FILENAME ... think this through a bit more
-      shortname = "#{metadata[:name]}-#{@task_result.entity.attributes["name"].gsub("/","")}"
-      # vvv task log has already been shipped so this won't show in the task log, only overall logs
-      @task_log.log "Writing to file: #{shortname}"
-      File.open("#{$intrigue_basedir}/results/#{shortname}.json", "w+") do |file|
-        file.flock(File::LOCK_EX)
-        # write it out
-        file.write(JSON.pretty_generate(JSON.parse(@task_result.to_json)))
-      end
-    end
-
-    if handlers.include? "csv_file"
-      csv_file = "#{$intrigue_basedir}/results/results.csv"
-      @task_log.log "Writing to file: #{csv_file}"
-      File.open(csv_file, "a+") do |file|
-        file.flock(File::LOCK_EX)
-        # Create outstring
-        outstring = "#{metadata[:name]},#{@task_result.entity.attributes["name"]},#{@task_result.entities.map{|x| x.type + "#" + x.attributes["name"] }.join(";")}\n"
-        # write it out
-        file.puts(outstring)
-      end
+    #
+    # REPORTING! (other than redis)
+    #
+    # This is currently used from the core-cli load command - both csv and
+    # json handlers are passed, and thus generated by the appropriate lclasses
+    # (see lib/report/handlers)
+    #
+    report_handlers.each do |handler_type|
+      @task_log.log "Running #{handler_type} report!"
+      options = {:hook_uri => hook_uri} if handler_type == "webhook"
+      handler = ReportFactory.create_by_type(handler_type)
+      handler.generate(@task_result, options)
     end
 
     # Run Cleanup
-    @task_log.log "Calling cleanup()"
+    @task_log.log "Calling cleanup!"
     cleanup unless broken_input
 
   end
@@ -337,7 +256,8 @@ class BaseTask
   true
   end
 
-  def run()
+  # This method is overridden
+  def run
   end
 
   def cleanup()

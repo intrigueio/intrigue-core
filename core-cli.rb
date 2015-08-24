@@ -201,7 +201,7 @@ class CoreCli < Thor
 
       # XXX - Create the task
       task = Intrigue::TaskFactory.create_by_name(task_name)
-      jid = task.class.perform_async task_id, e.id, options, ["redis", "csv_file", "json_file"], nil
+      jid = task.class.perform_async task_id, e.id, options, ["csv", "json"], nil
 
       puts "Created task #{task_id} for entity #{e}"
     end

@@ -13,6 +13,10 @@ class TaskFactory
     available_tasks
   end
 
+  #
+  # XXX - can :name be set on the class vs the object
+  # to prevent the need to call "new" ?
+  #
   def self.include?(name)
     available_tasks.each do |t|
       task_object = t.new
@@ -23,6 +27,10 @@ class TaskFactory
   false
   end
 
+  #
+  # XXX - can :name be set on the class vs the object
+  # to prevent the need to call "new" ?
+  #
   def self.create_by_name(name)
     available_tasks.each do |t|
       task_object = t.new
@@ -35,6 +43,10 @@ class TaskFactory
     raise "No task by that name!"
   end
 
+  #
+  # XXX - can :name be set on the class vs the object
+  # to prevent the need to call "new" ?
+  #
   def self.create_by_pretty_name(pretty_name)
     available_tasks.each do |t|
       task_object = t.new
