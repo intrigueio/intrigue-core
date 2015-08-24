@@ -18,17 +18,19 @@ end
 
 ###
 ### Integration test helpers
+#
+# XXX - this should be updated to use the gem
+#
 ###
 module Intrigue
   module Test
     module Integration
 
       def server_uri
-        "http://localhost:7777"
+        "http://127.0.0.1:7777"
       end
 
       def task_list
-        puts "Available tasks:"
         tasks_hash = JSON.parse(RestClient.get("#{server_uri}/tasks.json"))
       end
 
@@ -47,7 +49,6 @@ module Intrigue
         ###
         ### Send to the server
         ###
-
         task_id = RestClient.post "#{server_uri}/task_runs", payload.to_json, :content_type => "application/json"
 
         task_id
@@ -55,7 +56,6 @@ module Intrigue
 
 
       def task_start_and_wait(task_name,entity,options=nil)
-
         ###
         ### Construct the request
         ###
@@ -75,10 +75,6 @@ module Intrigue
         ### Get the response
         ###
         response = JSON.parse(RestClient.get "#{server_uri}/task_runs/#{task_id}.json")
-        #response["entities"].each do |entity|
-        #  puts "#{entity["type"]},#{entity["attributes"]["name"]}"
-        #end
-        #puts "Task Log:\n#{URI.unescape(response["task_log"])}"
       end
 
     end
