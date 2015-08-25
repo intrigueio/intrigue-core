@@ -1,13 +1,13 @@
 require 'anemone'
 module Intrigue
-class UriSpiderTask < BaseTask
+class UriSpiderAndGatherMetadataTask < BaseTask
 
   include Intrigue::Task::Web
   include Intrigue::Task::Parse
 
   def metadata
     {
-      :name => "uri_spider",
+      :name => "uri_spider_and_gather_metadata",
       :pretty_name => "URI Spider",
       :authors => ["jcran"],
       :description => "This task spiders a given URI, creating entities.",
@@ -65,9 +65,7 @@ class UriSpiderTask < BaseTask
 
       @task_log.log "Spider options: #{options}"
 
-        #
         # Spider!
-        #
         anemone.on_every_page do |page|
           begin
             # XXX - Need to set up a recursive follow-redirect function
@@ -75,17 +73,10 @@ class UriSpiderTask < BaseTask
               @task_log.log "301 Redirect on #{page.url}"
             end
 
-            ###
-            ### XXX = UNTRUSTED INPUT. VERY LIKELY TO BREAK THINGS!
-            ### http://po-ru.com/diary/fixing-invalid-utf-8-in-ruby-revisited/
-            ###
-
             # Extract the url
             page_uri = ("#{page.url}").encode('UTF-8', {:invalid => :replace, :undef => :replace, :replace => '?'})
 
-            #
             # Create an entity for this uri
-            #
             _create_entity("Uri", { "name" => page_uri, "uri" => page_uri }) if @opt_create_urls
 
             # If we don't have a body, we can't do anything here.
@@ -99,7 +90,6 @@ class UriSpiderTask < BaseTask
 
               # Get the filetype for this page
               filetype = "#{page_uri.split(".").last.gsub("/","")}".upcase
-              #@task_log.log "Found filetype: #{filetype}"
 
               # A list of all filetypes we're capable of doing something with
               interesting_types = [
@@ -114,6 +104,7 @@ class UriSpiderTask < BaseTask
               else
                 parse_entities_from_content(page_uri, page_body, @opt_show_source_uri)
               end
+
             else
               @task_log.log "Parsing as a regular file"
               parse_entities_from_content(page_uri, page_body, @opt_show_source_uri)
@@ -127,7 +118,6 @@ class UriSpiderTask < BaseTask
     rescue Exception => e
       @task_log.error "Encountered error: #{e.class} #{e}"
     end #end begin
-
   end # crawl_and_parse
 
 end
