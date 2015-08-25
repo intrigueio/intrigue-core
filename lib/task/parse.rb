@@ -105,7 +105,7 @@ module Parse
   ### Entity Parsing
   ###
 
-  def parse_entities_from_content(source_uri, content, include_uri=false, optional_strings=nil)
+  def parse_entities_from_content(source_uri, content, optional_strings=nil)
 
     @task_log.log "Parsing text from #{source_uri}" if @task_log
 
@@ -118,22 +118,19 @@ module Parse
     # Scan for email addresses
     addrs = content.scan(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,8}/)
     addrs.each do |addr|
-      x = _create_entity("EmailAddress", {"name" => addr})
-      x.set_attribute("uri", source_uri) if include_uri
+      x = _create_entity("EmailAddress", {"name" => addr, "uri" => source_uri})
     end
 
     # Scan for dns records
     dns_records = content.scan(/^[A-Za-z0-9]+\.[A-Za-z0-9]+\.[a-zA-Z]{2,6}$/)
     dns_records.each do |dns_record|
-      x = _create_entity("DnsRecord", {"name" => dns_record})
-      x.set_attribute("uri", source_uri) if include_uri
+      x = _create_entity("DnsRecord", {"name" => dns_record, "uri" => source_uri})
     end
 
     # Scan for phone numbers
     phone_numbers = content.scan(/((\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4})/)
     phone_numbers.each do |phone_number|
-      x = _create_entity("PhoneNumber", { "name" => "#{phone_number[0]}"})
-      x.set_attribute("uri", source_uri) if include_uri
+      x = _create_entity("PhoneNumber", { "name" => "#{phone_number[0]}", "uri" => source_uri})
     end
 
     # Scan for Links
@@ -146,8 +143,7 @@ module Parse
       optional_strings.each do |string|
         found = content.scan(/#{string}/)
         found.each do |x|
-          x = _create_entity("String", { "name" => "#{x[0]}"})
-          x.set_attribute("uri", source_uri) if include_uri
+          x = _create_entity("String", { "name" => "#{x[0]}", "uri" => source_uri})
         end
       end
     end
@@ -162,7 +158,7 @@ module Parse
       yomu = Yomu.new file
 
       # General Metadata
-      _create_entity("Info", "name" => "Metadata for #{uri}", "metadata" => yomu.metadata)
+      _create_entity("Info", "name" => "Metadata for #{uri}", "metadata" => yomu.metadata, "uri" => uri)
 
       ### PDF
       if yomu.metadata["Content-Type"] == "application/pdf"
@@ -172,7 +168,8 @@ module Parse
           "created" => yomu.metadata["Creation-Date"],
           "last_modified" => yomu.metadata["Last-Modified"],
           "created_with" => yomu.metadata["xmp:CreatorTool"],
-          "plugin" => yomu.metadata["producer"]
+          "plugin" => yomu.metadata["producer"],
+          "uri" => uri
         }
         _create_entity "Person",
           { "name" => yomu.metadata["Author"], "uri" => uri } if yomu.metadata["Author"]
@@ -181,8 +178,8 @@ module Parse
 
       #MP3/4
       elsif yomu.metadata["Content-Type"] == "audio/mpeg"
-        _create_entity "Person", "name" => yomu.metadata["meta:author"]
-        _create_entity "Person", "name" => yomu.metadata["creator"]
+        _create_entity "Person", {"name" => yomu.metadata["meta:author"], "uri" => uri }
+        _create_entity "Person", {"name" => yomu.metadata["creator"], "uri" => uri }
         #_create_entity "Person", "name" => yomu.metadata["xmpDM:artist"]
       end
 

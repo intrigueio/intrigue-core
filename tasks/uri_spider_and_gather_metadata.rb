@@ -21,7 +21,6 @@ class UriSpiderAndGatherMetadataTask < BaseTask
         {:name => "depth_limit", :type => "Integer", :regex => "integer", :default => 5 },
         {:name => "obey_robots", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "create_urls", :type => "Boolean", :regex => "boolean", :default => false },
-        {:name => "show_source_uri", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "user_agent",  :type => "String",  :regex => "alpha_numeric", :default => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36"}
       ],
       :created_types =>  ["DnsRecord", "EmailAddress", "File", "Info", "Person", "PhoneNumber" "SoftwarePackage"]
@@ -41,7 +40,6 @@ class UriSpiderAndGatherMetadataTask < BaseTask
     @opt_depth = _get_option "depth_limit"
 
     # Entity creation options
-    @opt_show_source_uri = _get_option "show_source_uri"
     @opt_create_urls = _get_option "create_urls"
 
     crawl_and_parse(uri)
@@ -103,12 +101,12 @@ class UriSpiderAndGatherMetadataTask < BaseTask
               if interesting_types.include? filetype
                 download_and_extract_metadata page_uri
               else
-                parse_entities_from_content(page_uri, page_body, @opt_show_source_uri)
+                parse_entities_from_content(page_uri, page_body)
               end
 
             else
               @task_log.log "Parsing as a regular file"
-              parse_entities_from_content(page_uri, page_body, @opt_show_source_uri)
+              parse_entities_from_content(page_uri, page_body)
             end
           rescue RuntimeError => e
             @task_log.error "Caught RuntimeError: #{e}"
