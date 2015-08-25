@@ -157,35 +157,45 @@ module Parse
 
     # Download file and store locally. This helps prevent mime-type confusion
     #
-    file = open(uri)
-    yomu = Yomu.new file
+    begin
+      file = open(uri)
+      yomu = Yomu.new file
 
-    # General Metadata
-    #
-    _create_entity("Info", "name" => "Metadata for #{uri}", "metadata" => yomu.metadata)
+      # General Metadata
+      _create_entity("Info", "name" => "Metadata for #{uri}", "metadata" => yomu.metadata)
 
-    ### PDF
-    if yomu.metadata["Content-Type"] == "application/pdf"
+      ### PDF
+      if yomu.metadata["Content-Type"] == "application/pdf"
 
-      _create_entity "File", { "type" => "PDF",
-        "name" => uri,
-        "created" => yomu.metadata["Creation-Date"],
-        "last_modified" => yomu.metadata["Last-Modified"],
-        "created_with" => yomu.metadata["xmp:CreatorTool"],
-        "plugin" => yomu.metadata["producer"]
-      }
-      _create_entity "Person", { "name" => yomu.metadata["Author"], "uri" => uri } if yomu.metadata["Author"]
-      _create_entity "SoftwarePackage", { "name" => "#{yomu.metadata["xmp:CreatorTool"]}", "plugin" => "#{yomu.metadata["producer"]}", "uri" => uri } if yomu.metadata["producer"]
+        _create_entity "File", { "type" => "PDF",
+          "name" => uri,
+          "created" => yomu.metadata["Creation-Date"],
+          "last_modified" => yomu.metadata["Last-Modified"],
+          "created_with" => yomu.metadata["xmp:CreatorTool"],
+          "plugin" => yomu.metadata["producer"]
+        }
+        _create_entity "Person",
+          { "name" => yomu.metadata["Author"], "uri" => uri } if yomu.metadata["Author"]
+        _create_entity "SoftwarePackage",
+        { "name" => "#{yomu.metadata["xmp:CreatorTool"]}", "plugin" => "#{yomu.metadata["producer"]}", "uri" => uri } if yomu.metadata["producer"]
 
-    #MP3/4
-    elsif yomu.metadata["Content-Type"] == "audio/mpeg"
-      _create_entity "Person", "name" => yomu.metadata["meta:author"]
-      _create_entity "Person", "name" => yomu.metadata["creator"]
-      #_create_entity "Person", "name" => yomu.metadata["xmpDM:artist"]
+      #MP3/4
+      elsif yomu.metadata["Content-Type"] == "audio/mpeg"
+        _create_entity "Person", "name" => yomu.metadata["meta:author"]
+        _create_entity "Person", "name" => yomu.metadata["creator"]
+        #_create_entity "Person", "name" => yomu.metadata["xmpDM:artist"]
+      end
+
+      # Look for entities in the text
+      parse_entities_from_content(uri,yomu.text)
+
+    # don't die if we lose our connection to the tika server
+    rescue Errno::EPIPE => e
+      @task_log.log "ERROR Unable to contact Tika server"
+    # don't die if we can't fine the file
+    rescue OpenURI::HTTPError => e
+      @task_log.log "ERROR Unable to download file: #{e}"
     end
-
-    # Look for entities in the text
-    parse_entities_from_content(uri,yomu.text)
 
     # Clean up
     #
