@@ -8,9 +8,9 @@ class UriSpiderAndGatherMetadataTask < BaseTask
   def metadata
     {
       :name => "uri_spider_and_gather_metadata",
-      :pretty_name => "URI Spider",
+      :pretty_name => "URI Spider and Gather Metadata",
       :authors => ["jcran"],
-      :description => "This task spiders a given URI, creating entities.",
+      :description => "This task spiders a given URI, creating entities from the page text, as well as from parsed files.",
       :references => [],
       :allowed_types => ["Uri"],
       :example_entities => [
