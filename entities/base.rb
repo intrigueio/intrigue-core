@@ -7,7 +7,7 @@ class Base < Intrigue::Model::Entity
   end
 
   def set_attribute(key, value)
-    @attributes[key.to_string] = value
+    @attributes[key.to_s] = value
     return false unless validate(attributes)
   true
   end
