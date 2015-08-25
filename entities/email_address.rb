@@ -10,7 +10,7 @@ class EmailAddress < Base
   end
 
   def validate(attributes)
-    attributes["name"] =~ /^[a-zA-Z0-9\.].*@[a-zA-Z0-9\.].*/
+    attributes["name"] =~ /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,8}/
   end
 
 end
