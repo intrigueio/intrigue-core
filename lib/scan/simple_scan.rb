@@ -56,7 +56,7 @@ module Intrigue
         ### Gather links
         #_start_task_and_recurse "uri_gather_and_analyze_links",entity,depth
         ### spider
-        _start_task_and_recurse "uri_spider",entity,depth
+        _start_task_and_recurse "uri_spider_and_gather_metadata",entity,depth
         ### Dirbuster
         #_start_task_and_recurse "uri_dirbuster",entity,depth
       elsif entity.type == "String" || entity.type == "Person" || entity.type == "EmailAddress"
