@@ -51,7 +51,7 @@ module Intrigue
         # check to see if we already have first
         return false if has_entity? entity
 
-        @log.log "Adding entity #{entity.inspect}"
+        #@log.log "Adding entity #{entity.inspect}"
         @entity_count+=1
         @entities << entity
         save
