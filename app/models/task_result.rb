@@ -85,7 +85,11 @@ module Intrigue
         end
       end
 
-      def to_json
+      def to_s
+        to_json
+      end
+
+      def to_hash
         {
           "id" => @id,
           "name" => @name,
@@ -97,12 +101,40 @@ module Intrigue
           "complete" => @complete,
           "entity_count" => @entity_count,
           "entity_ids" => @entities.map{ |x| x.id }
-        }.to_json
+        }
       end
 
-      def to_s
-        to_json
+      def to_json
+        to_hash.to_json
       end
+
+      ###
+      ### Export!
+      ###
+
+      def export_csv
+        "#{@task_name},#{@entity.attributes["name"]},#{@entities.map{|x| x.type + "#" + x.attributes["name"] }.join(";")}\n"
+      end
+
+      def export_hash
+        {
+          "id" => @id,
+          "name" => @name,
+          "task_name" => @task_name,
+          "timestamp_start" => @timestamp_start,
+          "timestamp_end" => @timestamp_end,
+          "entity_id" => @entity.to_s,
+          "options" => @options,
+          "complete" => @complete,
+          "entity_count" => @entity_count,
+          "entity_ids" => @entities.map{ |x| x.to_s }
+        }
+      end
+
+      def export_json
+        export_hash.to_json
+      end
+
 
       def save
         lookup_key = "#{key}:#{@id}"

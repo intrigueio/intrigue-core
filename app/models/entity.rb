@@ -43,6 +43,11 @@ module Intrigue
         end
       end
 
+
+      def to_s
+        export_hash
+      end
+
       def to_hash
         {
           "id" => @id,
@@ -55,8 +60,16 @@ module Intrigue
         to_hash.to_json
       end
 
-      def to_s
-        self.inspect.to_s
+      ###
+      ### Export!
+      ###
+
+      def export_hash
+        to_hash
+      end
+
+      def export_json
+        to_hash.to_json
       end
 
       def save

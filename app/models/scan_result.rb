@@ -87,8 +87,8 @@ module Intrigue
         end
       end
 
-      def to_json
-        to_hash.to_json
+      def to_s
+        to_json
       end
 
       def to_hash
@@ -107,8 +107,33 @@ module Intrigue
         }
       end
 
-      def to_s
-        to_json
+      def to_json
+        to_hash.to_json
+      end
+
+      ###
+      ### Export!
+      ###
+
+      def export_hash
+        {
+          "id" => @id,
+          "name" => @name,
+          "scan_type" => @scan_type,
+          "depth" => @depth,
+          "timestamp_start" => @timestamp_start,
+          "timestamp_end" => @timestamp_end,
+          "entity_id" => @entity.to_s,
+          "entity_count" => @entity_count,
+          "task_result_ids" => @task_results.map{|y| TaskResult.find(y).export_hash },
+          "entity_ids" => @entities.map {|y| Entity.find(y).to_s },
+          "options" => @options,
+          "log" => @log.to_s
+        }
+      end
+
+      def export_json
+        export_hash.to_json
       end
 
       def save

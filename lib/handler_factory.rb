@@ -1,5 +1,5 @@
 module Intrigue
-class ReportFactory
+class HandlerFactory
 
   #
   # Register a new handler
@@ -34,16 +34,8 @@ class ReportFactory
   #   - A handler, which you can call generate on
   #
   def self.create_by_type(type)
-
-    # If we don't know it, fail
-    raise "Unknown handler type: #{type}" unless include? type
-
-    return_handler = nil
-    @handlers.each do |h|
-      return_handler = h.new if "#{type}" == "#{h.type}"
-    end
-
-  return_handler
+    @handlers.each { |h| return h.new if "#{type}" == "#{h.type}" }
+  false
   end
 
 end

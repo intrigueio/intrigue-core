@@ -31,8 +31,8 @@ scanners_folder = File.expand_path('../scan', __FILE__) # get absolute directory
 Dir["#{scanners_folder}/*.rb"].each {|f| require_relative f}
 
 ####
-# Report Libraries
+# Handler Libraries
 ####
-require_relative 'report_factory'
-report_handlers_folder = File.expand_path('../report/handler', __FILE__) # get absolute directory
-Dir["#{report_handlers_folder}/*.rb"].each {|f| require_relative f}
+require_relative 'handler_factory'
+handlers_folder = File.expand_path('../handler', __FILE__) # get absolute directory
+Dir["#{handlers_folder}/*.rb"].each {|f| require_relative f}
