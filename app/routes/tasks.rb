@@ -27,10 +27,9 @@ class IntrigueApp < Sinatra::Base
       unsorted_results = []
       keys.each do |key|
         begin
-          puts "Finding key #{key}"
           unsorted_results << Intrigue::Model::TaskResult.find(key.split(":").last)
         rescue JSON::ParserError => e
-          puts "Parse Error: #{e}"
+          #puts "Parse Error: #{e}"
         end
       end
 

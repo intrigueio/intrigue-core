@@ -190,6 +190,8 @@ module Parse
       parse_entities_from_content(uri,yomu.text)
 
     # don't die if we lose our connection to the tika server
+    rescue EOFError => e
+      @task_log.log "ERROR Unable to download file: #{e}"
     rescue Errno::EPIPE => e
       @task_log.log "ERROR Unable to contact Tika server"
     # don't die if we can't fine the file
