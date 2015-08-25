@@ -27,6 +27,7 @@ Dir["#{entities_folder}/*.rb"].each {|f| require_relative f}
 ####
 # Scan Libraries
 ####
+require_relative 'scan/base'
 scanners_folder = File.expand_path('../scan', __FILE__) # get absolute directory
 Dir["#{scanners_folder}/*.rb"].each {|f| require_relative f}
 
@@ -34,5 +35,6 @@ Dir["#{scanners_folder}/*.rb"].each {|f| require_relative f}
 # Handler Libraries
 ####
 require_relative 'handler_factory'
+require_relative 'handler/base'
 handlers_folder = File.expand_path('../handler', __FILE__) # get absolute directory
 Dir["#{handlers_folder}/*.rb"].each {|f| require_relative f}
