@@ -199,7 +199,7 @@ module Parse
 
     # Clean up
     #
-    file.unlink
+    file.unlink if file
   end
 
 
