@@ -94,9 +94,9 @@ class UriSpiderAndGatherMetadataTask < BaseTask
 
               # A list of all filetypes we're capable of doing something with
               interesting_types = [
-                "DOC","DOCX","EPUB","ICA","INDD","JPG",
-                "JPEG","MP3","MP4","ODG","ODP","ODS","ODT",
-                "PDF","PNG","PPS","PPSX","PPT","PPTX","PUB",
+                "DOC","DOCX","EPUB","ICA","INDD",
+                "MP3","MP4","ODG","ODP","ODS","ODT",
+                "PDF","PPS","PPSX","PPT","PPTX","PUB",
                 "RDP","SVG","SVGZ","SXC","SXI","SXW","TIF",
                 "TXT","WPD","XLS","XLSX"]
 
