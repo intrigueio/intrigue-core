@@ -60,14 +60,14 @@ class UriSpiderAndGatherMetadataTask < BaseTask
      :redirect_limit => 10,
      :verbose => false }
 
-    begin
+    #begin
       x = Anemone.crawl(uri, options) do |anemone|
 
       @task_log.log "Spider options: #{options}"
 
         # Spider!
         anemone.on_every_page do |page|
-          #begin
+          begin
 
             # XXX - Need to set up a recursive follow-redirect function
             if page.code == 301
