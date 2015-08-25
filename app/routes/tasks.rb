@@ -153,24 +153,10 @@ class IntrigueApp < Sinatra::Base
 
       # Assuming it's available, display it
       if @task_result
-        @rerun_uri = "TODO" #"#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1?task_name=#{@task_result.task_name}&type=#{@task_result.entity.type}&#{@task_result.entity.attributes.collect { |k, v| "attrib_#{k}=#{v}" }.join("?")}"
+        @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1?task_name=#{@task_result.task_name}&entity=#{@task_result.entity.id}"
         @elapsed_time = Time.parse(@task_result.timestamp_end).to_i - Time.parse(@task_result.timestamp_start).to_i
-      else
-        ## it'll just be empty for now
-        @task_result = { 'entities' => [],
-                      'task_name'  => "please wait...",
-                      'entity'  => {'type' => "please wait...", 'attributes' => {}},
-                      'timestamp_start'  => "please wait...",
-                      'timestamp_end'  => "please wait...",
-                      'id' => "please wait..."
-                    }
-
-        @elapsed_time = "please wait..."
-
-        # and get us as close as we can
-        @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1?"
       end
-
+      
       erb :task_result
     end
 

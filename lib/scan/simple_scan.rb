@@ -49,6 +49,8 @@ module Intrigue
           _start_task_and_recurse "dns_brute_sub",entity,depth,[{"name" => "use_file", "value" => "false"}]
         end
       elsif entity.type == "Uri"
+        ### screenshot
+        #_start_task_and_recurse "uri_screenshot",entity,depth
         ### Get SSLCert
         _start_task_and_recurse "uri_gather_ssl_certificate",entity,depth if entity.attributes["name"] =~ /^https/
         ### Gather links
@@ -57,8 +59,6 @@ module Intrigue
         _start_task_and_recurse "uri_spider",entity,depth
         ### Dirbuster
         #_start_task_and_recurse "uri_dirbuster",entity,depth
-        ### screenshot
-        #_start_task_and_recurse "uri_screenshot",entity,depth
       elsif entity.type == "String" || entity.type == "Person" || entity.type == "EmailAddress"
         # Search!
         _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 20}]
