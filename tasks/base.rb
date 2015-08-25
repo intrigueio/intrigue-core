@@ -111,8 +111,7 @@ class BaseTask
     handlers.each do |handler_type|
       @task_log.log "Processing #{handler_type} handler!"
       options = {:hook_uri => hook_uri} if handler_type == "webhook"
-      handler = HandlerFactory.create_by_type(handler_type)
-      
+      handler = HandlerFactory.create_by_type(handler_type)  
       handler.process(@task_result, options)
     end
 

@@ -61,13 +61,14 @@ class UriSpiderAndGatherMetadataTask < BaseTask
      :verbose => false }
 
     begin
-      x = Anemone.crawl(uri, options ) do |anemone|
+      x = Anemone.crawl(uri, options) do |anemone|
 
       @task_log.log "Spider options: #{options}"
 
         # Spider!
         anemone.on_every_page do |page|
-          begin
+          #begin
+
             # XXX - Need to set up a recursive follow-redirect function
             if page.code == 301
               @task_log.log "301 Redirect on #{page.url}"
@@ -110,14 +111,14 @@ class UriSpiderAndGatherMetadataTask < BaseTask
               parse_entities_from_content(page_uri, page_body, @opt_show_source_uri)
             end
           rescue RuntimeError => e
-            @task_log.error "ERROR: #{e}"
+            @task_log.error "Caught RuntimeError: #{e}"
           end
         end #end .on_every_page
       end # end .crawl
 
-    rescue Exception => e
-      @task_log.error "Encountered error: #{e.class} #{e}"
-    end #end begin
+    #rescue Exception => e
+    #  @task_log.error "Encountered error: #{e.class} #{e}"
+    #end #end begin
   end # crawl_and_parse
 
 end
