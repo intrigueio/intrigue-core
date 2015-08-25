@@ -178,22 +178,22 @@ class BaseTask
 
             # XXX - we need to regex the option in order to accept it
             if allowed_option[:regex] == "integer"
-              @task_log.log "Regex should match an integer"
+              #@task_log.log "Regex should match an integer"
               regex = /^\d+$/
             elsif allowed_option[:regex] == "boolean"
-              @task_log.log "Regex should match a boolean"
+              #@task_log.log "Regex should match a boolean"
               regex = /(true|false)/
             elsif allowed_option[:regex] == "alpha_numeric"
-              @task_log.log "Regex should match an alpha-numeric string"
+              #@task_log.log "Regex should match an alpha-numeric string"
               regex = /^[a-zA-Z0-9\_\;\(\)\,\?\.\-\_\/\~\=\ \,\?]*$/
             elsif allowed_option[:regex] == "alpha_numeric_list"
-              @task_log.log "Regex should match an alpha-numeric list"
+              #@task_log.log "Regex should match an alpha-numeric list"
               regex = /^[a-zA-Z0-9_;\\(),\?\.\-\_]*$/
             elsif allowed_option[:regex] == "filename"
-              @task_log.log "Regex should match a filename"
+              #@task_log.log "Regex should match a filename"
               regex = /(?:\..*(?!\/))+/
             elsif allowed_option[:regex] == "ip_address"
-              @task_log.log "Regex should match an IP Address"
+              #@task_log.log "Regex should match an IP Address"
               regex = /^(\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*)|((\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3}))$/
             else
               @task_log.error "Unspecified regex for this option #{allowed_option[:name]}"
@@ -216,11 +216,12 @@ class BaseTask
             # We have an allowed option, with the right kind of value
             # ...Now set the correct type
 
-            # So basically, things like core-cli are parsing data as strings, and are sending us
-            # all of our options as strings. Which sucks. We have to do the explicit conversion
-            # to the right type if we want things to go smoothly. I'm sure there's a better
-            # way to do this in ruby, but i equally sure don't know what it is. We'll raise
-            # a FATAL if there's something we can't handle
+            # So basically, things like core-cli are parsing data as strings,
+            # and are sending us all of our options as strings. Which sucks. We
+            # have to do the explicit conversion to the right type if we want things to go
+            # smoothly. I'm sure there's a better way to do this in ruby, but
+            # i equally sure don't know what it is. We'll raise a FATAL if
+            # there's something we can't handle
 
             if allowed_option[:type] == "Integer"
               # convert to integer
