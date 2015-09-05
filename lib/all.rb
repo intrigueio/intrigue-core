@@ -8,27 +8,30 @@ require_relative 'initialize/string'
 require_relative 'task_factory'
 
 ### Web & Parse mixins
-require_relative 'task/web'
-require_relative 'task/parse'
+require_relative 'tasks/helpers/web'
+require_relative 'tasks/helpers/parse'
+
+require_relative 'tasks/base'
+current_folder = File.expand_path('../tasks', __FILE__) # get absolute directory
+Dir["#{current_folder}/*.rb"].each {|f| require_relative f}
 
 # Client libraries
 require_relative 'client'
 
+
 ####
 # Entity libraries
 ####
-require_relative 'entity_factory'
-
-# base entity (must be required first)
-require_relative '../entities/base'
-entities_folder = File.expand_path('../../entities', __FILE__) # get absolute directory
+require_relative 'entity_factory' # base entity (must be required first)
+require_relative 'entities/base'
+entities_folder = File.expand_path('entities', __FILE__) # get absolute directory
 Dir["#{entities_folder}/*.rb"].each {|f| require_relative f}
 
 ####
 # Scan Libraries
 ####
-require_relative 'scan/base'
-scanners_folder = File.expand_path('../scan', __FILE__) # get absolute directory
+require_relative 'scans/base'
+scanners_folder = File.expand_path('../scans', __FILE__) # get absolute directory
 Dir["#{scanners_folder}/*.rb"].each {|f| require_relative f}
 
 ####

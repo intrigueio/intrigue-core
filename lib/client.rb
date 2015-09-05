@@ -8,4 +8,4 @@ require_relative 'client/search'
 ###
 ### Task Mixins
 ###
-require_relative 'task/parse'
+require_relative 'tasks/helpers/parse'
