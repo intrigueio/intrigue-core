@@ -36,11 +36,14 @@ class SearchBingTask < BaseTask
       # Attach to the google service & search
       bing = Client::Search::Bing::SearchService.new(api_key,opt_max_results,'Web',{:Adult => 'Off'})
       results = bing.search(entity_name)
-      main_uri = results.first[:Web].first[:DisplayUrl].split(".").last(2).join(".")
+      @task_log.log "Search returned #{results.first[:Web].count} results"
 
+      return unless results.first[:Web].count > 0
+
+      main_uri = results.first[:Web].first[:DisplayUrl].split(".").last(2).join(".")
       results.first[:Web][0..opt_max_results-1].each do |result|
 
-        # a result will look like:
+        # A result will look like:
         #
         # {:__metadata=>
         # {:uri=>"https://api.datamarket.azure.com/Data.ashx/Bing/Search/v1/ExpandableSearchResultSet(guid'3033f6e3-d175-418c-a201-4a0c2c643384')/Web?$skip=0&$top=1", :type=>"WebResult"},
@@ -88,7 +91,7 @@ class SearchBingTask < BaseTask
         # Check for Email Address
         elsif result[:Description].match(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/i)
           # Grab all matches
-          matches = result[:Description].scan(/((\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})/)
+          matches = result[:Description].scan(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/i)
           matches.each do |match|
             _create_entity("EmailAddress", { "name" => "#{match[0]}" })
           end
@@ -96,9 +99,9 @@ class SearchBingTask < BaseTask
 
       end # end results.each
     rescue SocketError => e
-      @task_log.error "Unable to connect #{e}"
-    rescue NoMethodError => e
-      @task_log.error "No results: #{e}"
+      @task_log.error "Unable to connect: #{e}"
+    #rescue NoMethodError => e
+    #  @task_log.error "Caught error: #{e}"
     end
   end # end run()
 

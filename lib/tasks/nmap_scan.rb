@@ -72,13 +72,15 @@ class NmapScanTask < BaseTask
             "proto" => port.proto,
             "fingerprint" => "#{port.service.name}"})
 
-          # Go ahead and create webapps if this is a known webapp port
-          if entity.attributes[:proto] == "tcp" &&
+          # Handle WebApps
+          if entity.attributes["proto"] == "tcp" &&
             [80,443,8080,8081,8443].include?(entity.attributes["port_num"])
 
             # determine if this is an SSL application
             ssl = true if [443,8443].include?(entity.attributes["port_num"])
             protocol = ssl ? "https://" : "http://" # construct uri
+
+            # Create URI
             uri = "#{protocol}#{host.addr}:#{entity.attributes["port_num"]}"
             _create_entity("Uri", "name" => uri, "uri" => uri  ) # create an entity
 
@@ -87,6 +89,24 @@ class NmapScanTask < BaseTask
               uri = "#{protocol}#{hostname}:#{entity.attributes["port_num"]}"
               _create_entity("Uri", "name" => uri, "uri" => uri )
             end
+
+          # Handle FtpServer
+          elsif [21].include?(entity.attributes["port_num"])
+            uri = "ftp://#{entity.attributes["ip_address"]}:#{entity.attributes["port_num"]}"
+            _create_entity("FtpServer", {
+              "name" => uri,
+              "ip_address" => entity.attributes["ip_address"],
+              "port" => 21,
+              "uri" => uri  })
+
+          # Handle SshServer
+          elsif [22].include?(entity.attributes["port_num"])
+            uri = "ssh://#{entity.attributes["ip_address"]}:#{entity.attributes["port_num"]}"
+            _create_entity("SshServer", {
+              "name" => uri,
+              "ip_address" => entity.attributes["ip_address"],
+              "port" => 22,
+              "uri" => uri  })
 
           end # end if
 
