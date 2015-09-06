@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class Organization < Base
+class Organization < Intrigue::Model::Entity
 
   def metadata
     {

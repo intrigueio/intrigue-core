@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class AsNumber < Base
+class AsNumber < Intrigue::Model::Entity
 
   def metadata
     {

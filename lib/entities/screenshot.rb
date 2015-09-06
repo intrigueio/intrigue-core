@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class Screenshot < Base
+class Screenshot < Intrigue::Model::Entity
 
   def metadata
     {

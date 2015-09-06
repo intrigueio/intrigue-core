@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class SoftwarePackage < Base
+class SoftwarePackage < Intrigue::Model::Entity
 
   def metadata
     {

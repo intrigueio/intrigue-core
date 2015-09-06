@@ -18,6 +18,10 @@ module Intrigue
         @attributes = attributes
       end
 
+      def allowed_tasks
+        TaskFactory.list ### XXX - this needs to be limited to tasks that accept this type
+      end
+
       def self.find(id)
         lookup_key = "#{key}:#{id}"
         result = $intrigue_redis.get(lookup_key)
@@ -42,7 +46,6 @@ module Intrigue
           puts "OH NOES! ITEM DID NOT EXIST, OR OTHER ERROR PARSING #{json}"
         end
       end
-
 
       def to_s
         export_hash
@@ -75,6 +78,68 @@ module Intrigue
       def save
         lookup_key = "#{key}:#{@id}"
         $intrigue_redis.set lookup_key, to_json
+      end
+
+      ###
+      ### XXX - needs documentation
+      ###
+
+      def self.inherited(base)
+        EntityFactory.register(base)
+      end
+
+      def set_attribute(key, value)
+        @attributes[key.to_s] = value
+        save
+        return false unless validate(attributes)
+      true
+      end
+
+      def set_attributes(attributes)
+        return false unless validate(attributes)
+        @attributes = attributes
+        save
+      end
+
+      #def to_json
+      #  {
+      #    :id => id,
+      #    :type => metadata[:type],
+      #    :attributes => @attributes
+      #  }
+      #end
+
+      def form
+        %{
+        <div class="form-group">
+          <label for="entity_type" class="col-xs-4 control-label">Type</label>
+          <div class="col-xs-6">
+            <input type="text" class="form-control input-sm" id="entity_type" name="entity_type" value="#{@type}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="attrib_name" class="col-xs-4 control-label">Name</label>
+          <div class="col-xs-6">
+            <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name" value="#{_escape_html @attributes["name"]}">
+          </div>
+        </div>
+      }
+      end
+
+      # override this method
+      def metadata
+        raise "Metadata method should be overridden"
+      end
+
+      # override this method
+      def validate(attributes)
+        raise "Validate method missing for #{self.type}"
+      end
+
+      private
+      def _escape_html(text)
+        Rack::Utils.escape_html(text)
+        text
       end
 
     end

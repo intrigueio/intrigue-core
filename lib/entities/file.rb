@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class File < Base
+class File < Intrigue::Model::Entity
 
   def metadata
     {

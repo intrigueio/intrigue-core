@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class WebAccount < Base
+class WebAccount < Intrigue::Model::Entity
 
   def metadata
     {
@@ -12,7 +12,7 @@ class WebAccount < Base
   def validate(attributes)
     attributes["name"] =~ /^.*$/ &&
     attributes["domain"] =~ /^.*$/ &&
-    attributes["name"] =~ /^http.*$/
+    attributes["uri"] =~ /^http.*$/
   end
 
 end

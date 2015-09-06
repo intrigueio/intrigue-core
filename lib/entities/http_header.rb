@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class HttpHeader < Base
+class HttpHeader < Intrigue::Model::Entity
 
   def metadata
     {

@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class PhoneNumber < Base
+class PhoneNumber < Intrigue::Model::Entity
 
   def metadata
     {

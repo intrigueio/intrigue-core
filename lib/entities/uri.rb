@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class Uri < Base
+class Uri < Intrigue::Model::Entity
 
   def metadata
     {

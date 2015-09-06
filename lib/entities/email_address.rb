@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class EmailAddress < Base
+class EmailAddress < Intrigue::Model::Entity
 
   def metadata
     {

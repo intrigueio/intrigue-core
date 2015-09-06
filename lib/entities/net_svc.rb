@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class NetSvc < Base
+class NetSvc < Intrigue::Model::Entity
 
   def metadata
     {

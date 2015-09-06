@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class DnsRecord < Base
+class DnsRecord < Intrigue::Model::Entity
 
   def metadata
     {

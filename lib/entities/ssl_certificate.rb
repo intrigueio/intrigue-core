@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class SslCertificate < Base
+class SslCertificate < Intrigue::Model::Entity
 
   def metadata
     {

@@ -8,7 +8,7 @@
 <ul>
   <% @task_result.entities.each do |entity| %>
     <li>
-      <a href="/v1/?type=<%=h entity.type %>&<%= h entity.attributes.map{|k,v| "attrib_#{k}=#{v}"}.join("&") %>">
+      <a href="/v1/?entity_id=<%=entity.id%>">
         <%= h entity.type %>: <%= h entity.attributes["name"] %>
       </a>
       <%= "<a target=\'_blank\' href=\'#{h entity.attributes["uri"]}\'>[link]</a>" if entity.attributes["uri"] %>

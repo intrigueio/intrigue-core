@@ -18,12 +18,10 @@ Dir["#{current_folder}/*.rb"].each {|f| require_relative f}
 # Client libraries
 require_relative 'client'
 
-
 ####
 # Entity libraries
 ####
 require_relative 'entity_factory' # base entity (must be required first)
-require_relative 'entities/base'
 entities_folder = File.expand_path('entities', __FILE__) # get absolute directory
 Dir["#{entities_folder}/*.rb"].each {|f| require_relative f}
 

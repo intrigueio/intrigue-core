@@ -42,7 +42,7 @@
   function parseTasks(task_hash) {
     var task_count = task_hash.length;
     var metadata = $("#metadata");
-    console.log(task_hash)
+    //console.log(task_hash)
 
     $.each(task_hash, function(index, value) {
       var entity_type, entity_name, form = $("form")[0];
@@ -50,9 +50,9 @@
         // get values, so we can check if they exist
         entity_type = form.entity_type.value;
         entity_name = form.attrib_name.value;
-
+        
         // if we don't have a set type
-        if (!location.search.split("type=")[1]) {
+        if (!location.search.split("entity_id=")[1] && !location.search.split("task_result_id=")[1]) {
           form.entity_type.value = value.example_entities[0].type;
           form.attrib_name.value = value.example_entities[0].attributes.name;
         }

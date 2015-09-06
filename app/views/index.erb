@@ -17,17 +17,14 @@
             # Create the task
             task = Intrigue::TaskFactory.create_by_pretty_name(task_name)
 
-            # Check that the supplied type is allowed
-            if params[:type]
-              # Skip to the next task unless the current type is allowed
-              next unless (task.metadata[:allowed_types].include?(params[:type]) ||
-                            task.metadata[:allowed_types].include?("*") )
-            end
+            # Skip to the next task unless the current type is allowed
+            #next unless ( @entity.allowed_tasks.include?(task_name) ||
+            #              @entity.allowed_tasks.include?("*") ) if @entity
           %>
           <!-- set up the task in an option box, default to search_bing -->
           <option value="<%= task.metadata[:name] %>"
-            <% if params[:task_name] %>
-              <%= "selected='selected'" if params[:task_name] == task.metadata[:name] %>
+            <% if @task_result %>
+              <%= "selected='selected'" if @task_result.name == task.metadata[:name] %>
             <% else %>
               <%= "selected='selected'" if task.metadata[:name] == "search_bing" %>
             <% end %>
@@ -40,9 +37,8 @@
     </div>
 
     <!-- Get all attributes and use this to create an entity -->
-    <% attribs = {}; params.each{|k,v| attribs[k.gsub("attrib_","").to_sym] = v if (k =~/^attrib/ && v.length<100) } %>
-    <% if params[:type] %>
-      <%= Intrigue::EntityFactory.create_by_type(params[:type],attribs).form  %>
+    <% if @entity %>
+      <%= @entity.form  %>
     <% else %>
       <div class="form-group">
         <label for="entity_type" class="col-xs-4 control-label">Type</label>
