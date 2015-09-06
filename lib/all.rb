@@ -22,7 +22,7 @@ require_relative 'client'
 # Entity libraries
 ####
 require_relative 'entity_factory' # base entity (must be required first)
-entities_folder = File.expand_path('entities', __FILE__) # get absolute directory
+entities_folder = File.expand_path('../entities', __FILE__) # get absolute directory
 Dir["#{entities_folder}/*.rb"].each {|f| require_relative f}
 
 ####
