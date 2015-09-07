@@ -28,7 +28,7 @@ gem 'nmap-parser'       # nmap_scan
 gem 'screencap'         # phantom_js
 gem 'twitter'           # twitter_account_following, etc
 
-gem 'anemone'           # spider
+gem 'arachnid', :git => 'https://github.com/intrigueio/arachnid.git'
 gem 'yomu'              # spider
 
 
