@@ -76,27 +76,29 @@ class SearchPiplTask < BaseTask
     @task_log.log "Found #{response["@available_records"]} records"
     @task_log.log "Parsing #{response["@records_count"]} records"
 
-
     #
     # First, handle the rare? case of a single person record associated with the query
     #
-    if response["person"]["names"]
+    if response["person"]
 
-      @task_log.good "Found a person! This indicates there's a single person record in pipl for this query."
+      if response["person"]["names"]
 
-      _create_entity "Person", "name" => "#{response["person"]["names"].first["display"]}"
+        @task_log.good "Found a person! This indicates there's a single person record in pipl for this query."
+
+        _create_entity "Person", "name" => "#{response["person"]["names"].first["display"]}"
 
 
-      # Parse up the response sources
-      response["person"]["sources"].each do |source|
-        _create_entity "WebAccount", {
-          "domain" => source["domain"],
-          "uri" => source["url"],
-          "name" => "#{source["name"]} #{source["domain"]}"
-        }
+        # Parse up the response sources
+        response["person"]["sources"].each do |source|
+          _create_entity "WebAccount", {
+            "domain" => source["domain"],
+            "uri" => source["url"],
+            "name" => "#{source["name"]} #{source["domain"]}"
+          }
+        end
       end
     end
-
+    
     #
     # Now, handle the (less rare?) case of a multiple associated records
     #

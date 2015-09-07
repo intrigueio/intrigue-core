@@ -189,6 +189,8 @@ module Parse
     # don't die if we lose our connection to the tika server
     rescue EOFError => e
       @task_log.log "ERROR Unable to download file: #{e}"
+    rescue JSON::ParserError =>
+      @task_log.log "ERROR parsing JSON: #{e}"
     rescue Errno::EPIPE => e
       @task_log.log "ERROR Unable to contact Tika server"
     # don't die if we can't fine the file
