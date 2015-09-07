@@ -44,7 +44,7 @@
         <label for="entity_type" class="col-xs-4 control-label">Entity Type</label>
         <div class="col-xs-6">
           <select class="form-control input-sm" id="entity_type" name="entity_type">
-           <% Intrigue::EntityFactory.list.each do |x| %> <option> <%= x.to_s.split(":").last%> </option> <% end %>
+            <% Intrigue::EntityFactory.list.each do |x|  value = x.to_s.split(":").last %> <option <%= "selected=selected" if value == "String"%>> <%=value%></option> <% end %>
           </select>
         </div>
       </div>
