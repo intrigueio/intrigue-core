@@ -15,7 +15,7 @@ class UriExtract < BaseTask
         {"type" => "Uri", "attributes" => { "name" => "http://www.intrigue.io" }}
       ],
       :allowed_options => [],
-      :created_types =>  ["DnsRecord", "EmailAddress", "File", "Info", "Person", "PhoneNumber" "SoftwarePackage"]
+      :created_types =>  ["DnsRecord", "EmailAddress", "File", "Info", "Person", "PhoneNumber", "SoftwarePackage"]
     }
   end
 
