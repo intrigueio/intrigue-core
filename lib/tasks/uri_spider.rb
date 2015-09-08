@@ -21,8 +21,8 @@ class UriSpider < BaseTask
         {:name => "threads", :type => "Integer", :regex => "integer", :default => 4 },
         {:name => "max_pages", :type => "Integer", :regex => "integer", :default => 250 },
         {:name => "create_urls", :type => "Boolean", :regex => "boolean", :default => false },
-        {:name => "parse_metadata", :type => "Boolean", :regex => "boolean", :default => true },
-        {:name => "user_agent",  :type => "String",  :regex => "alpha_numeric", :default => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36"}
+        {:name => "parse_metadata", :type => "Boolean", :regex => "boolean", :default => true }
+        #{:name => "user_agent",  :type => "String",  :regex => "alpha_numeric", :default => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36"}
       ],
       :created_types =>  ["DnsRecord", "EmailAddress", "File", "Info", "Person", "PhoneNumber" "SoftwarePackage"]
     }
@@ -37,7 +37,7 @@ class UriSpider < BaseTask
     # Scanner options
     @opt_threads = _get_option("threads").to_i
     @opt_max_pages = _get_option("max_pages").to_i
-    @opt_user_agent = _get_option "user_agent"
+    #@opt_user_agent = _get_option "user_agent"
     @opt_create_urls = _get_option "create_urls" # create a Uri object for each page
     @opt_parse_metadata = _get_option "parse_metadata" # create a Uri object for each page
 
@@ -56,11 +56,6 @@ class UriSpider < BaseTask
 
         begin
 
-          # XXX - Need to set up a recursive follow-redirect function
-          #if page.code == 301
-          #  @task_log.log "301 Redirect on #{page.effective_url}"
-          #end
-
           # Extract the url
           page_uri = "#{response.effective_url}".encode('UTF-8', {
             :invalid => :replace,
@@ -74,10 +69,13 @@ class UriSpider < BaseTask
           next unless response.body
 
           # Extract the body
-          page_body = Nokogiri::HTML.parse(response.body).to_s.encode('UTF-8', {
+          page_body = Nokogiri::HTML.parse(response.body.to_s.encode('UTF-8', {
             :invalid => :replace,
             :undef => :replace,
-            :replace => '?'})
+            :replace => '?'})).to_s.encode('UTF-8', {
+              :invalid => :replace,
+              :undef => :replace,
+              :replace => '?'})
 
           if @opt_parse_metadata
 
@@ -102,8 +100,7 @@ class UriSpider < BaseTask
             @task_log.log "Parsing as a regular file"
             parse_entities_from_content(page_uri, page_body)
           end
-        #rescue RuntimeError => e
-        #  @task_log.error "Caught RuntimeError: #{e}"
+
         end
 
     end # end .crawl

@@ -28,6 +28,8 @@ class SearchPiplTask < BaseTask
       response = @pipl_client.search :email, _get_entity_attribute("name")
     elsif @entity.type == "PhoneNumber"
       response = @pipl_client.search :phone, _get_entity_attribute("name")
+    elsif @entity.type == "Person"
+      response = @pipl_client.search :name, _get_entity_attribute("name")
     else
       response = @pipl_client.search :username, _get_entity_attribute("name")
     end
@@ -87,7 +89,6 @@ class SearchPiplTask < BaseTask
 
         _create_entity "Person", "name" => "#{response["person"]["names"].first["display"]}"
 
-
         # Parse up the response sources
         response["person"]["sources"].each do |source|
           _create_entity "WebAccount", {
@@ -98,7 +99,20 @@ class SearchPiplTask < BaseTask
         end
       end
     end
-    
+
+    #
+    # First, handle the rare? case of a single person record associated with the query
+    #
+    if response["possible_persons"]
+      response["possible_persons"].each do |pp|
+        next unless pp["names"]
+        pp["names"].each do |name|
+          _create_entity("Person", { "name" => name["display"] })
+        end
+      end
+    end
+
+
     #
     # Now, handle the (less rare?) case of a multiple associated records
     #

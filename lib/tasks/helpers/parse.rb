@@ -151,16 +151,18 @@ module Parse
 
   def download_and_extract_metadata(uri)
 
-    # Download file and store locally. This helps prevent mime-type confusion
-    #
     begin
+      # Download file and store locally before parsing. This helps prevent mime-type confusion
+      #
       file = open(uri)
+
+      # Parse the file
       yomu = Yomu.new file
 
-      # General Metadata
+      # Save the full metadata
       _create_entity("Info", "name" => "Metadata for #{uri}", "metadata" => yomu.metadata, "uri" => uri)
 
-      ### PDF
+      ### Handle PDF
       if yomu.metadata["Content-Type"] == "application/pdf"
 
         _create_entity "File", { "type" => "PDF",
@@ -176,24 +178,24 @@ module Parse
         _create_entity "SoftwarePackage",
         { "name" => "#{yomu.metadata["xmp:CreatorTool"]}", "plugin" => "#{yomu.metadata["producer"]}", "uri" => uri } if yomu.metadata["producer"]
 
-      #MP3/4
+      # Handle MP3/4
       elsif yomu.metadata["Content-Type"] == "audio/mpeg"
         _create_entity "Person", {"name" => yomu.metadata["meta:author"], "uri" => uri }
         _create_entity "Person", {"name" => yomu.metadata["creator"], "uri" => uri }
-        #_create_entity "Person", "name" => yomu.metadata["xmpDM:artist"]
+        _create_entity "Person", {"name" => yomu.metadata["xmpDM:artist"] }
       end
 
-      # Look for entities in the text
+      # Look for entities in the text of the entity
       parse_entities_from_content(uri,yomu.text)
 
-    # don't die if we lose our connection to the tika server
+    # Don't die if we lose our connection to the tika server
     rescue EOFError => e
       @task_log.log "ERROR Unable to download file: #{e}"
-    rescue JSON::ParserError =>
+    rescue JSON::ParserError => e
       @task_log.log "ERROR parsing JSON: #{e}"
     rescue Errno::EPIPE => e
       @task_log.log "ERROR Unable to contact Tika server"
-    # don't die if we can't fine the file
+    # don't die if we can't find the file
     rescue OpenURI::HTTPError => e
       @task_log.log "ERROR Unable to download file: #{e}"
     end
@@ -203,6 +205,18 @@ module Parse
     #file.unlink if file
   end
 
+
+  ###
+  ### Expects a string
+  ###
+  def parse_seals(content)
+    #
+    # Trustwave Seal
+    #
+    content.scan(/sealserver.trustwave.com\/seal.js/i).each do |item|
+      _create_entity("Info", {:name => "SecuritySeal: Trustwave #{_get_entity_attribute "name"}"})
+    end
+  end
 
 end
 end
