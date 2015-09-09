@@ -64,8 +64,9 @@ module Intrigue
         _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 20}]
         # Brute TLD
         #_start_task_and_recurse "dns_brute_tld",entity,depth
-      elsif entity.type = entity.type == "Person" || entity.type == "EmailAddress"
-        _start_task_and_recurse "search_pipl",entity,depth
+      #elsif entity.type = entity.type == "Person" || entity.type == "EmailAddress"
+        # Search Pipl
+        #_start_task_and_recurse "search_pipl",entity,depth
       elsif entity.type == "Organization"
         # Check EDGAR
         _start_task_and_recurse "search_edgar",entity,depth
