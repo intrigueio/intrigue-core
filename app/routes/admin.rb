@@ -3,8 +3,12 @@ class IntrigueApp < Sinatra::Base
 
     namespace '/admin' do
 
+      get '/?' do
+        erb :"admin/index"
+      end
+
       # Get rid of all existing task runs
-      get '/clear' do
+      get '/clear/?' do
 
         to_clear = "entity:*", "task_result:*", "task_result_log:*","scan_result:*", "scan_result_log:*"
 
@@ -21,8 +25,8 @@ class IntrigueApp < Sinatra::Base
       end
 
       # GET CONFIG
-      get '/config' do
-        erb :config
+      get '/config/?' do
+        erb :"admin/config"
       end
 
       # SAVE CONFIG

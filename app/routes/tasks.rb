@@ -3,25 +3,13 @@ class IntrigueApp < Sinatra::Base
 
   namespace '/v1/?' do
 
-    # Export All Data
-      get '/task_results.json' do
+    get '/task' do
 
-      # get all results
-      namespace = "task_result"
-      keys = $intrigue_redis.keys("#{namespace}*")
+      @entity = Intrigue::Model::Entity.find params["entity_id"] if params["entity_id"]
+      @task_result = Intrigue::Model::TaskResult.find params["task_result_id"] if params["task_result_id"]
+      @tasks = Intrigue::TaskFactory.list.map{|x| x.send(:new)}
+      @task_names = @tasks.map{|t| t.metadata[:pretty_name]}.sort
 
-      results = []
-      keys.each do |key|
-        results << $intrigue_redis.get(key)
-      end
-
-      ### XXX - SECURITY - this needs to be escaped, or the individual
-      ### results need to have their fields escaped. Noodle.
-      results.to_json
-    end
-
-    # Existing task runs
-    get '/task_results' do
       keys = $intrigue_redis.keys("task_result:*")
 
       unsorted_results = []
@@ -35,7 +23,24 @@ class IntrigueApp < Sinatra::Base
 
       @task_results = unsorted_results #.sort_by{ |k| k.timestamp_start }.reverse
 
-      erb :task_results
+      erb :'tasks/index'
+    end
+
+    # Export All Data
+    get '/task_results.json' do
+
+      # get all results
+      namespace = "task_result"
+      keys = $intrigue_redis.keys("#{namespace}*")
+
+      results = []
+      keys.each do |key|
+        results << $intrigue_redis.get(key)
+      end
+
+      ### XXX - SECURITY - this needs to be escaped, or the individual
+      ### results need to have their fields escaped. Noodle.
+      results.to_json
     end
 
     # Helper to construct the request to the API when the application is used interactively
@@ -149,15 +154,13 @@ class IntrigueApp < Sinatra::Base
       # Separate out the task log
       @task_log = @task_result.log
 
-      #puts "TASK RESULT #{@task_result}"
-
       # Assuming it's available, display it
       if @task_result
-        @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1?task_result_id=#{@task_result.id}"
+        @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1/task/?task_result_id=#{@task_result.id}"
         @elapsed_time = Time.parse(@task_result.timestamp_end).to_i - Time.parse(@task_result.timestamp_start).to_i
       end
 
-      erb :task_result
+      erb :'tasks/task_result'
     end
 
     # Determine if the task run is complete

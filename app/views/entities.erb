@@ -1,5 +1,0 @@
-<ul>
-<%  $intrigue_redis.keys("entity:*").map do |x| %>
-<li> <%= x = Intrigue::Model::Entity.find(x.split(":").last); "#{x.type} #{x.attributes["name"]}" %> </li>
-<% end %>
-</ul>
