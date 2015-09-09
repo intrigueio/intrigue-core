@@ -97,16 +97,11 @@ class IntrigueApp < Sinatra::Base
 
     # Main Page
     get '/?' do
-
-      @entity = Intrigue::Model::Entity.find params["entity_id"] if params["entity_id"]
-      @task_result = Intrigue::Model::TaskResult.find params["task_result_id"] if params["task_result_id"]
-
       stats = Sidekiq::Stats.new
       @failed = stats.failed
       @processed = stats.processed
       @queues = stats.queues
-      @tasks = Intrigue::TaskFactory.list.map{|x| x.send(:new)}
-      @task_names = @tasks.map{|t| t.metadata[:pretty_name]}.sort
+
       erb :index
     end
 

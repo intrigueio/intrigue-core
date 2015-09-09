@@ -8,7 +8,7 @@ class IntrigueApp < Sinatra::Base
     scan_ids = $intrigue_redis.keys("scan_result:*")
     @scan_results = scan_ids.map{ |id| Intrigue::Model::ScanResult.find id.split(":").last }.sort{ |x, y| x.timestamp_start <=> y.timestamp_start }.reverse
 
-    erb :scan
+    erb :'scans/index'
   end
 
   # Endpoint to start a task run from a webform
@@ -86,7 +86,7 @@ class IntrigueApp < Sinatra::Base
     @scan_result = Intrigue::Model::ScanResult.find(params[:id])
     @scan_log = @scan_result.log
 
-    erb :scan_result
+    erb :'scans/scan_result'
   end
 
 
