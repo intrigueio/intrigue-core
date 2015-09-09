@@ -1,5 +1,6 @@
 <h3>Scan Result</h3>
-<p>New Entities:
+<p> Total Entities: <%=@scan_result.entities.count%></p>
+<p>New Entities:</p>
   <ul>
     <% @scan_result.entities.each do |entity| %>
       <li>
@@ -7,7 +8,7 @@
           <%= h entity.type %>: <%= h entity.attributes["name"] %>
         </a>
         <%= "<a target=\'_blank\' href=\'#{h entity.attributes["uri"]}\'>[link]</a>" if entity.attributes["uri"] %>
-        <span class="like-pre-white"><%= h entity.export_json %></span>
+        <!--<span class="like-pre-white"><%= h entity.export_json %></span>-->
       </li>
     <% end %>
   </ul>
@@ -17,5 +18,3 @@
     <li> <a href="<%=$intrigue_server_uri%>/v1/task_results/<%=x.id%>"> <%= x.task_name %> <%= "[#{x.entity.type}:#{x.entity.attributes["name"]}]" %> (<%= x.entity_count %>)</a></li>
   <% end %>
   </ul>
-Log:
-<span class="like-pre-dark"><%= h @scan_log %></span><br/>

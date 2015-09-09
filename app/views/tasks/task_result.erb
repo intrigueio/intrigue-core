@@ -4,7 +4,7 @@
 <p>End: <%=@task_result.timestamp_end%> </p>
 <p>Elapsed (s): <%= @elapsed_time %> </p>
 <p>Entity: <%= h "#{@task_result.entity.type} #{@task_result.entity.attributes['name']}"%> </p>
-<p>New Entities:
+<p>New Entities:<p>
 <ul>
   <% @task_result.entities.each do |entity| %>
     <li>
@@ -12,11 +12,8 @@
         <%= h entity.type %>: <%= h entity.attributes["name"] %>
       </a>
       <%= "<a target=\'_blank\' href=\'#{h entity.attributes["uri"]}\'>[link]</a>" if entity.attributes["uri"] %>
-      <span class="like-pre-white"><%= h entity.export_json %></span>
+      <!--<span class="like-pre-white"><%= h entity.export_json %></span>-->
     </li>
   <% end %>
 </ul>
-</p>
-
-Log:
-<span class="like-pre-dark"><%= h @task_result.log %></span><br/>
+<!-- Log: <span class="like-pre-dark"><%= h @task_result.log %></span><br/> -->
