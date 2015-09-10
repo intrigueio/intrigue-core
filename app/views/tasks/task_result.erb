@@ -5,11 +5,13 @@
 <p>Elapsed (s): <%= @elapsed_time %> </p>
 <p>Entity: <%= h "#{@task_result.entity.type} #{@task_result.entity.attributes['name']}"%> </p>
 <p>Log: <a href=<%="#{request.path}/log"%>>LOG</a></p>
+<p>Complete: <%= @task_result.complete %></p>
 <p>New Entities:<p>
 <ul>
   <% @task_result.entities.each do |entity| %>
     <li>
-      <a href="/v1/entities/<%=entity.id%>">
+      <%= "<a target=\'_blank\' href=\'/v1/task?entity_id=#{h entity.id}\'>[iterate]</a>" %>
+      <a href="/v1/entities/<%=h entity.id%>">
         <%= h entity.type %>: <%= h entity.attributes["name"] %>
       </a>
       <%= "<a target=\'_blank\' href=\'#{h entity.attributes["uri"]}\'>[link]</a>" if entity.attributes["uri"] %>

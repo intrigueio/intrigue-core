@@ -5,7 +5,7 @@ module Intrigue
       attr_accessor :id, :name, :tasks, :entities, :log
       attr_accessor :depth, :scan_type, :entity, :task_results
       attr_accessor :timestamp_start, :timestamp_end
-      attr_accessor :entity_count
+      attr_accessor :entity_count, :complete
 
       def self.key
         "scan_result"
@@ -17,6 +17,7 @@ module Intrigue
 
       def initialize(id,name)
         @id = id
+        @complete = false
         @name = name
         @timestamp_start = Time.now.getutc.to_s
         @timestamp_end = Time.now.getutc.to_s
@@ -71,6 +72,7 @@ module Intrigue
         begin
           x = JSON.parse(json)
           @id = x["id"]
+          @complete = x["complete"]
           @depth = x["depth"]
           @scan_type = x["scan_type"]
           @name = x["name"]
@@ -97,6 +99,7 @@ module Intrigue
           "name" => @name,
           "scan_type" => @scan_type,
           "depth" => @depth,
+          "complete" => @complete,
           "timestamp_start" => @timestamp_start,
           "timestamp_end" => @timestamp_end,
           "entity_id" => @entity.id,
@@ -121,6 +124,7 @@ module Intrigue
           "name" => @name,
           "scan_type" => @scan_type,
           "depth" => @depth,
+          "complete" => @complete,
           "timestamp_start" => @timestamp_start,
           "timestamp_end" => @timestamp_end,
           "entity_id" => @entity.to_s,

@@ -1,6 +1,7 @@
 <h3>Scan Result</h3>
 <p> Total Entities: <%=@scan_result.entities.count%></p>
 <p>Log: <a href=<%="#{request.path}/log"%>>LOG</a></p>
+<p>Complete: <%= @scan_result.complete %></p>
 <p>New Entities:</p>
   <ul>
     <% @scan_result.entities.each do |entity| %>
