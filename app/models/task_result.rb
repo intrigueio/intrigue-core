@@ -36,7 +36,7 @@ module Intrigue
       def self.find(id)
         lookup_key = "#{key}:#{id}"
         result = $intrigue_redis.get(lookup_key)
-        raise "Unable to find #{lookup_key}" unless result
+        return nil unless result
 
         s = TaskResult.new("nope","nope")
         s.from_json(result)

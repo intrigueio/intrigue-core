@@ -3,7 +3,7 @@
 <p>Start: <%=@task_result.timestamp_start %> </p>
 <p>End: <%=@task_result.timestamp_end%> </p>
 <p>Elapsed (s): <%= @elapsed_time %> </p>
-<p>Entity: <%= h "#{@task_result.entity.type} #{@task_result.entity.attributes['name']}"%> </p>
+<p>Entity: <a href=/v1/entities/<%=@task_result.entity.id%>><%= h "#{@task_result.entity.type} #{@task_result.entity.attributes['name']}"%></a></p>
 <p>Log: <a href=<%="#{request.path}/log"%>>LOG</a></p>
 <p>Complete: <%= @task_result.complete %></p>
 <p>New Entities:<p>

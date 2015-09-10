@@ -76,5 +76,11 @@
     "uri" : "https://www.fullcontact.com/developer",
     "editable" : "true",
     "comment" : "https://github.com/intrigueio/intrigue-core/issues/6"
+  },
+  "carrierlookup_api_key" : {
+    "value" : "XXX",
+    "uri" : "https://www.carrierlookup.com",
+    "editable" : "true",
+    "comment" : ""
   }
 }
