@@ -89,6 +89,18 @@ class IntrigueApp < Sinatra::Base
     erb :'scans/scan_result'
   end
 
+  # Determine if the scan run is complete
+  get '/scan_results/:id/complete' do
+    return true if Intrigue::Model::ScanResult.find(params[:id])
+  false
+  end
+
+  # Get the task log
+  get '/scan_results/:id/log' do
+    @result = Intrigue::Model::ScanResult.find(params[:id])
+    erb :log
+  end
+
 
 end
 end

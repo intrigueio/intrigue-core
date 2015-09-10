@@ -20,6 +20,16 @@ class IntrigueApp < Sinatra::Base
         # Clear the default queue
         Sidekiq::Queue.new.clear
 
+        # Clear the retries
+        rs = Sidekiq::RetrySet.new
+        rs.size
+        rs.clear
+
+        # Clear the dead jobs
+        ds = Sidekiq::DeadSet.new
+        ds.size
+        ds.clear
+
         # Beam me up, scotty!
         redirect '/v1'
       end

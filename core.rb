@@ -97,11 +97,10 @@ class IntrigueApp < Sinatra::Base
 
     # Main Page
     get '/?' do
-      stats = Sidekiq::Stats.new
-      @failed = stats.failed
-      @processed = stats.processed
-      @queues = stats.queues
-
+      #@queue = Sidekiq::Queue.new
+      @stats = Sidekiq::Stats.new
+      @workers = Sidekiq::Workers.new
+      
       erb :index
     end
 

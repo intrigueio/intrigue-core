@@ -1,13 +1,16 @@
 <h3>Scan Result</h3>
 <p> Total Entities: <%=@scan_result.entities.count%></p>
+<p>Log: <a href=<%="#{request.path}/log"%>>LOG</a></p>
 <p>New Entities:</p>
   <ul>
     <% @scan_result.entities.each do |entity| %>
       <li>
-        <a href="/v1/?type=<%=h entity.type%>&<%= h entity.attributes.map{|k,v| "attrib_#{k}=#{v}"}.join("&") %>">
+        <%= "<a target=\'_blank\' href=\'/v1/task?entity_id=#{h entity.id}\'>[iterate]</a>" %>
+        <a href="/v1/entities/<%=h entity.id%>">
           <%= h entity.type %>: <%= h entity.attributes["name"] %>
         </a>
         <%= "<a target=\'_blank\' href=\'#{h entity.attributes["uri"]}\'>[link]</a>" if entity.attributes["uri"] %>
+
         <!--<span class="like-pre-white"><%= h entity.export_json %></span>-->
       </li>
     <% end %>

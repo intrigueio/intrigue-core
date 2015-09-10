@@ -165,14 +165,14 @@ class IntrigueApp < Sinatra::Base
 
     # Determine if the task run is complete
     get '/task_results/:id/complete' do
-      return "true" if Intrigue::Model::TaskResult.find(params[:id])
-    "false"
+      return true if Intrigue::Model::TaskResult.find(params[:id])
+    false
     end
 
     # Get the task log
     get '/task_results/:id/log' do
-      #$intrigue_redis.get("task_result_log:#{params[:id]}")
-      Intrigue::Model::TaskResult.find(params[:id]).log.to_s
+      @result = Intrigue::Model::TaskResult.find(params[:id])
+      erb :log
     end
 
     # Export All Tasks

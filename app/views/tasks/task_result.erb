@@ -4,6 +4,7 @@
 <p>End: <%=@task_result.timestamp_end%> </p>
 <p>Elapsed (s): <%= @elapsed_time %> </p>
 <p>Entity: <%= h "#{@task_result.entity.type} #{@task_result.entity.attributes['name']}"%> </p>
+<p>Log: <a href=<%="#{request.path}/log"%>>LOG</a></p>
 <p>New Entities:<p>
 <ul>
   <% @task_result.entities.each do |entity| %>
