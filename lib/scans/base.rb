@@ -13,8 +13,11 @@ module Scanner
 
       # Kick off the scan
       @scan_log.log  "Starting scan #{@scan_result.name} of type #{self.class} with id #{@scan_result.id} on entity #{@scan_result.entity.type}##{@scan_result.entity.attributes["name"]} to depth #{@scan_result.depth}"
+
+      # Kick off the scan
       _recurse(@scan_result.entity,@scan_result.depth)
 
+      # Mark the task complete
       @scan_result.complete = true
       @scan_result.save
 

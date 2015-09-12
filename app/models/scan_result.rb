@@ -48,6 +48,7 @@ module Intrigue
       def add_task_result(task_result)
         @task_results << task_result
         save
+      true
       end
 
       def add_entity(entity)
