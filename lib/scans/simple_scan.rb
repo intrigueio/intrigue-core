@@ -56,7 +56,7 @@ module Intrigue
         ### Gather links
         #_start_task_and_recurse "uri_gather_and_analyze_links",entity,depth
         ### spider
-        _start_task_and_recurse "uri_spider",entity,depth,[{"name" => "max_pages", "value" => 100}]
+        _start_task_and_recurse "uri_spider",entity,depth,[{"name" => "max_pages", "value" => 25}]
         ### Dirbuster
         #_start_task_and_recurse "uri_dirbuster",entity,depth
       elsif entity.type == "String"
