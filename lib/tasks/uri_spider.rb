@@ -18,7 +18,7 @@ class UriSpider < BaseTask
         {"type" => "Uri", "attributes" => { "name" => "http://www.intrigue.io" }}
       ],
       :allowed_options => [
-        {:name => "threads", :type => "Integer", :regex => "integer", :default => 4 },
+        {:name => "threads", :type => "Integer", :regex => "integer", :default => 3 },
         {:name => "max_pages", :type => "Integer", :regex => "integer", :default => 250 },
         {:name => "create_urls", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "parse_metadata", :type => "Boolean", :regex => "boolean", :default => true }
