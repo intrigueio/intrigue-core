@@ -1,5 +1,7 @@
 # Welcome, intrepid user!
 
+[![Join the chat at https://gitter.im/intrigueio/intrigue-core](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/intrigueio/intrigue-core?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Intrigue-core is an API-first intelligence gathering framework for Internet reconnaissance and research.
 
 <img src="https://raw.githubusercontent.com/intrigueio/intrigue-core/develop/doc/home.png" width="700">
