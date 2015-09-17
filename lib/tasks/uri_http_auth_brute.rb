@@ -37,7 +37,6 @@ class UriHttpAuthBrute < BaseTask
 
       # first things first, check to see if it's required at all
       response = http_get_authd(uri,"not-a-real-username","not-a-real-password",10)
-      binding.pry
       unless response.class == Net::HTTPUnauthorized
         @task_log.error "No authentication required for #{uri}"
         return
