@@ -50,6 +50,10 @@ module Scanner
 
         # Start the task run
         @scan_log.log "Kicking off task!"
+
+        ### HEERE?
+
+
         start_task_run(task_id, task_name, entity, options)
 
         # Wait for the task to complete
