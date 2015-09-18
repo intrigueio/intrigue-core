@@ -9,7 +9,7 @@ class UriHttpAuthBrute < BaseTask
       :name => "uri_http_auth_brute",
       :pretty_name => "URI HTTP Auth Brute",
       :authors => ["jcran"],
-      :description => "This task bruteforces http authentication on an endpoint.",
+      :description => "This task bruteforces http authentication, given a URI.",
       :references => [],
       :allowed_types => ["Uri"],
       :example_entities => [
