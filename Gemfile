@@ -12,7 +12,7 @@ gem 'rspec' # Testing
 gem 'rack-test' # Testing
 gem 'pry' # Debugging
 
-gem 'intrigue'          # Client for calling the API
+gem 'intrigue', :path => './util/intrigue-gem'        # Client for calling the API
 
 # Client::Search::*Scraper
 gem 'nokogiri'

@@ -9,12 +9,14 @@ module Intrigue
 
         # XXX - handle
         handlers=[]
-
+        
         # Create the task result, and associate our entity and options
         task_result = Intrigue::Model::TaskResult.new task_id, task_name
         task_result.task_name = task_name
         task_result.options = options
         task_result.entity = entity
+
+
 
         # Save our task result so it can be picked up by our background processor
         task_result.save

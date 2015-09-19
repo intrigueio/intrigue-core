@@ -3,7 +3,7 @@ class IntrigueApp < Sinatra::Base
 
   namespace '/v1/?' do
 
-    get '/task' do
+    get '/task/?' do
 
       @entity = Intrigue::Model::Entity.find params["entity_id"] if params["entity_id"]
       @task_result = Intrigue::Model::TaskResult.find params["task_result_id"] if params["task_result_id"]
@@ -27,7 +27,7 @@ class IntrigueApp < Sinatra::Base
     end
 
     # Export All Data
-    get '/task_results.json' do
+    get '/task_results.json/?' do
 
       # get all results
       namespace = "task_result"
@@ -44,7 +44,7 @@ class IntrigueApp < Sinatra::Base
     end
 
     # Helper to construct the request to the API when the application is used interactively
-    post '/interactive/single' do
+    post '/interactive/single/?' do
 
       # Generate a task id
       task_id = SecureRandom.uuid
@@ -85,42 +85,40 @@ class IntrigueApp < Sinatra::Base
     end
 
     # Create a task run from a json request
-    post '/task_results' do
+    post '/task_results/?' do
+
+      # What we recieve should look like this:
+      #
+      #payload = {
+      #  "task" => task_name,
+      #  "entity" => entity_hash,
+      #  "options" => options_list,
+      #}
+
+      # Parse the incoming request
+      payload = JSON.parse(request.body.read) if request.content_type == "application/json"
+
+      ### don't take any shit
+      return nil unless payload
+
+      # Construct an entity from the entity_hash provided
+      entity = Intrigue::Model:: Entity.new payload["entity"]["type"], payload["entity"]["attributes"]
+      entity.save
 
       # Generate a task id
       task_id = SecureRandom.uuid
-
-      # Create the task result in the DB
-      @task_result = Intrigue::Model::TaskResult.new task_id, "x"
-      @task_result.save
-
-      # Parse the incoming request
-      task_run_info = JSON.parse(request.body.read) if request.content_type == "application/json"
-
-      ### XXX - do we need @params here?
-
-      return nil unless task_run_info
-
-      # Sensible default if the hook URI not specified (this is the case with most CLI stuff including core-cli)
-      local_hook = "#{$intrigue_server_uri}/v1/task_results/#{task_id}"
-      task_run_info["hook_uri"] = local_hook unless task_run_info["hook_uri"]
-
-      ###
-      ### XXX SECURITY
-      ###
-      ### Do some upfront sanity checking of the user parameters
-      ###
-      return nil unless Intrigue::TaskFactory.include?(task_run_info["task"])
+      task_name = payload["task"]
+      options = payload["options"]
 
       # Start the task _run
-      start_task_run task_id, task_run_info
+      start_task_run(task_id, task_name, entity, options)
 
       # Return a task id so the caller can store and look up results later
     task_id
     end
 
     # Accept the results of a task run (webhook POSTs here by default)
-    post '/task_results/:id' do
+    post '/task_results/:id/?' do
 
       # Retrieve the request's body and parse it as JSON
       result = JSON.parse(request.body.read)
@@ -137,14 +135,14 @@ class IntrigueApp < Sinatra::Base
     end
 
     # Get the results of a task run
-    get "/task_results/:id.json" do
+    get "/task_results/:id.json/?" do
       content_type :json
-      result = Intrigue::Model::TaskResult.find params[:id] #$intrigue_redis.get("task_result:#{params[:id]}")
-      result if result
+      result = Intrigue::Model::TaskResult.find "#{params[:id]}" #$intrigue_redis.get("task_result:#{params[:id]}")
+      result.export_json if result
     end
 
     # Show the results in a human readable format
-    get '/task_results/:id' do
+    get '/task_results/:id/?' do
       # Get the task result from the database, and fail cleanly if it doesn't exist
       @task_result = Intrigue::Model::TaskResult.find(params[:id])
 
@@ -164,19 +162,19 @@ class IntrigueApp < Sinatra::Base
     end
 
     # Determine if the task run is complete
-    get '/task_results/:id/complete' do
-      return true if Intrigue::Model::TaskResult.find(params[:id])
+    get '/task_results/:id/complete/?' do
+      return "true" if Intrigue::Model::TaskResult.find(params[:id])
     false
     end
 
     # Get the task log
-    get '/task_results/:id/log' do
+    get '/task_results/:id/log/?' do
       @result = Intrigue::Model::TaskResult.find(params[:id])
       erb :log
     end
 
     # Export All Tasks
-    get '/tasks.json' do
+    get '/tasks.json/?' do
       tasks = []
        Intrigue::TaskFactory.list.each do |t|
           tasks << t.send(:new).metadata
@@ -185,7 +183,7 @@ class IntrigueApp < Sinatra::Base
     end
 
     # Export a single task
-    get '/tasks/:id.json' do
+    get '/tasks/:id.json/?' do
       task_name = params[:id]
       Intrigue::TaskFactory.create_by_name(task_name).metadata.to_json
     end

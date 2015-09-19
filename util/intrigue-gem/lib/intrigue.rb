@@ -4,7 +4,7 @@ require 'rest_client'
 
 class IntrigueApi
 
-    def initialize(uri="http://localhost:7777/v1",key="")
+    def initialize(uri="http://127.0.0.1:7777/v1",key="")
       @intrigue_basedir = File.dirname(__FILE__)
       @server_uri = uri
       @server_key = key
@@ -39,14 +39,14 @@ class IntrigueApi
     def start_and_background(task_name,entity_hash,options_list=nil)
 
       payload = {
-        :task => task_name,
-        :options => options_list,
-        :entity => entity_hash
+        "task" => task_name,
+        "options" => options_list,
+        "entity" => entity_hash
       }
 
       ### Send to the server
-      task_id = RestClient.post "#{@server_uri}/task_runs",
-                    payload.to_json, :content_type => "application/json"
+      task_id = RestClient.post "#{@server_uri}/task_results",
+        payload.to_json, :content_type => "application/json"
 
     task_id
     end
@@ -67,7 +67,7 @@ class IntrigueApi
       until complete
         sleep 1
         begin
-          uri = "#{@server_uri}/task_runs/#{task_id}/complete"
+          uri = "#{@server_uri}/task_results/#{task_id}/complete"
           complete = true if(RestClient.get(uri) == "true")
         rescue URI::InvalidURIError => e
           puts "[-] Invalid URI: #{uri}"
@@ -76,21 +76,22 @@ class IntrigueApi
       end
 
       ### Get the response
-      begin
-        response = JSON.parse(RestClient.get "#{@server_uri}/task_runs/#{task_id}.json")
-      rescue JSON::ParserError => e
-        response = nil
-      end
+      #begin
+      response = JSON.parse(RestClient.get "#{@server_uri}/task_results/#{task_id}.json")
+      #rescue JSON::ParserError => e
+      #  response = nil
+      #end
+
     response
     end
 
     def get_log(task_id)
-      log = RestClient.get "#{@server_uri}/task_runs/#{task_id}/log"
+      log = RestClient.get "#{@server_uri}/task_results/#{task_id}/log"
     end
 
     def get_result(task_id)
       begin
-        result = JSON.parse(RestClient.get "#{@server_uri}/task_runs/#{task_id}.json")
+        result = JSON.parse(RestClient.get "#{@server_uri}/task_results/#{task_id}.json")
       rescue JSON::ParserError => e
         response = nil
       end

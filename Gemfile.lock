@@ -1,12 +1,19 @@
 GIT
   remote: https://github.com/intrigueio/arachnid.git
-  revision: a6e238517f6a929598452ddd2bffbe444185786a
+  revision: 67e64645900f0f6f34061efabf7b59e64458cc3d
   specs:
     arachnid (0.4.1)
       bloomfilter-rb (~> 2.1.1)
       domainatrix
       nokogiri (~> 1.3)
       typhoeus (~> 0.6.9)
+
+PATH
+  remote: ./util/intrigue-gem
+  specs:
+    intrigue (0.1.1)
+      json (~> 1.8)
+      rest-client (~> 1.8)
 
 GEM
   remote: https://rubygems.org/
@@ -73,7 +80,7 @@ GEM
       addressable
     dotenv (2.0.2)
     equalizer (0.0.10)
-    ethon (0.7.4)
+    ethon (0.8.0)
       ffi (>= 1.3.0)
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
@@ -83,7 +90,7 @@ GEM
     geoip (1.6.1)
     googleajax (1.0.1)
       json (>= 1.0.0)
-    hitimes (1.2.2)
+    hitimes (1.2.3)
     http (0.9.6)
       addressable (~> 2.3)
       http-cookie (~> 1.0)
@@ -95,9 +102,6 @@ GEM
     http_parser.rb (0.6.0)
     i18n (0.7.0)
     iconv (1.0.4)
-    intrigue (0.1.0)
-      json (~> 1.8)
-      rest-client (~> 1.8)
     json (1.8.3)
     memoizable (0.4.2)
       thread_safe (~> 0.3, >= 0.3.1)
@@ -107,7 +111,7 @@ GEM
     minitest (5.8.0)
     multi_json (1.11.2)
     multipart-post (2.0.0)
-    naught (1.0.0)
+    naught (1.1.0)
     nenv (0.2.0)
     net-dns (0.8.0)
     netrc (0.10.3)
@@ -119,7 +123,7 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
-    puma (2.13.4)
+    puma (2.14.0)
     rack (1.6.4)
     rack-protection (1.5.3)
       rack
@@ -192,7 +196,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.1)
-    whois (3.6.1)
+    whois (3.6.2)
       activesupport (>= 3)
     yomu (0.2.2)
       json (~> 1.8)
@@ -208,7 +212,7 @@ DEPENDENCIES
   geoip
   googleajax
   iconv
-  intrigue
+  intrigue!
   net-dns
   nmap-parser
   nokogiri
@@ -227,3 +231,6 @@ DEPENDENCIES
   twitter
   whois
   yomu
+
+BUNDLED WITH
+   1.10.6

@@ -121,7 +121,7 @@
          "account_missing_strings" : [],
          "known_accounts" : [],
          "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "allowed_types" : ["Person","WebAccount","Username","Organization"]
       },
       {
          "name" : "blinklist",
@@ -1223,7 +1223,7 @@
          "account_missing_strings" : [],
          "known_accounts" : [],
          "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "allowed_types" : ["Person","WebAccount","Username","Organization"]
       },
       {
          "name" : "Reunion.com",

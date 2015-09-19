@@ -2,7 +2,6 @@ require_relative '../spec_helper'
 
 describe "Intrigue v1.0 Tasks" do
   describe "DnsLookupReverseTask" do
-    include Intrigue::Test::Integration
 
     ###
     ### dns_lookup_reverse
@@ -11,17 +10,18 @@ describe "Intrigue v1.0 Tasks" do
     it "runs a default dns_lookup_reverse and returns the correct result" do
 
       entity = {
-        :type => "Host",
-        :attributes => {
-          :name => "8.8.8.8"
+        "type" => "IpAddress",
+        "attributes" => {
+          "name" => "8.8.8.8"
         }
       }
 
       # Returns a ruby hash of the task_run
-      result = task_start_and_wait("dns_lookup_reverse", entity)
+      @api = IntrigueApi.new
+      result = @api.start("dns_lookup_reverse", entity)
 
       # Check the result
-      expect(result["entities"].first["attributes"]["name"]).to match /google-public-dns-a.google.com/
+      expect(result["entity_ids"].first["attributes"]["name"]).to match /google-public-dns-a.google.com/
     end
 
   end
