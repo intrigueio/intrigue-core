@@ -80,10 +80,7 @@ class BaseTask
 
             # run the task, which will update @task_log and @task_result
             run
-
-            # Clean up the resulting entities
-            @task_result.entities.map{|x| x.to_json }.uniq!
-
+            
             @task_log.good "Ship it!"
           end
         rescue Timeout::Error

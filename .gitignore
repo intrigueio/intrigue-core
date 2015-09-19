@@ -11,3 +11,4 @@ tmp/.gitignore
 tmp/
 log/intrigue-sidekiq.log
 config/puma.rb
+lib/tasks_disabled

@@ -48,7 +48,7 @@ module Intrigue
       end
 
       def add_entity(entity)
-        # check to see if we already have first
+        # Check to see if we already have first
         return false if has_entity? entity
 
         #@log.log "Adding entity #{entity.inspect}"
@@ -61,7 +61,7 @@ module Intrigue
       # Matches based on type and the attribute "name"
       def has_entity? entity
         #@log.log "Checking for entity #{entity.inspect}"
-        x = @entities.select{|e| e.type == entity.type && e.attributes["name"] == entity.attributes["name"]}
+        x = @entities.select{|e| e.export_json == entity.export_json }
       return !x.empty?
       end
 

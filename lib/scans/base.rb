@@ -9,6 +9,9 @@ module Scanner
 
     def perform(id)
       @scan_result = Intrigue::Model::ScanResult.find(id)
+
+      return unless @scan_result
+
       @scan_log = @scan_result.log
 
       # Kick off the scan
@@ -52,7 +55,6 @@ module Scanner
         @scan_log.log "Kicking off task!"
 
         ### HEERE?
-
 
         start_task_run(task_id, task_name, entity, options)
 
