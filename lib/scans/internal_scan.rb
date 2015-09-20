@@ -37,7 +37,7 @@ module Intrigue
         ### Get SSLCert
         _start_task_and_recurse "uri_gather_ssl_certificate",entity,depth
         ### spider
-        _start_task_and_recurse "uri_spider",entity,depth
+        _start_task_and_recurse "uri_spider",entity,depth,[{"name" => "max_pages", "value" => 100}]
         ### Dirbuster
         _start_task_and_recurse "uri_dirbuster",entity,depth
         ### screenshot
