@@ -1,6 +1,4 @@
 {
-   "authors" : ["webreacher", "jcran"],
-   "sources" : ["https://bitbucket.org/LaNMaSteR53/recon-ng/raw/c006ecdf27648cec2bb20216cccce24e49e03107/data/profiler_sites.json"],
    "sites" : [
      {
         "name" : "Behance",
