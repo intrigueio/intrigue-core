@@ -11,9 +11,9 @@ class WebAccountCheckTask < BaseTask
       :description => "This task hits major websites, checking for the existence of accounts. Discovered accounts are created.",
       :references => [],
       :allowed_types => ["String","Person","Organization","Username","WebAccount"],
-      :example_entities => [{"type" => "Organization", "attributes" => {"name" => "intrigueio"}}],
+      :example_entities => [{"type" => "String", "attributes" => {"name" => "intrigueio"}}],
       :allowed_options => [
-        #{:name => "check_tags", :type => "String", :regex => "alpha_numeric_list", :default => "person,organization" }
+        {:name => "specific_sites", :type => "String", :regex => "alpha_numeric_list", :default => "" }
       ],
       :created_types => ["WebAccount"]
     }
@@ -24,12 +24,17 @@ class WebAccountCheckTask < BaseTask
     super
 
     account_name = _get_entity_attribute "name"
-    #tags = _get_options "check_tags"
+    opt_specific_sites = _get_option "specific_sites"
 
     account_list_data = File.open("data/web_accounts_list.json").read
     account_list = JSON.parse(account_list_data)
 
     account_list["sites"].each do |site|
+
+      # This allows us to only check specific sites - good for testing
+      unless opt_specific_sites == ""
+        next unless opt_specific_sites.split(",").include? site["name"]
+      end
 
       # craft the uri with our entity's properties
       account_uri = site["check_uri"].gsub("{account}",account_name)
