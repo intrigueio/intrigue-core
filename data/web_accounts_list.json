@@ -9,7 +9,8 @@
          "account_existence_strings" : ["g.PAGE_USER_NAME ="],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
+         "allowed_types" : ["String","Person","WebAccount","Username"],
+         "comments" : ["false negative with 'test' account"]
       },
       {
          "name" : "AngelList",
@@ -18,7 +19,8 @@
          "account_existence_strings" : ["twitter:domain"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "allowed_types" : ["String","Organization"]
+         "allowed_types" : ["String","Organization"],
+         "comments" : ["'test' returns a list of folks with skills in 'test' - dig into this"]
       },
       {
          "name" : "aNobil",
@@ -27,7 +29,8 @@
          "account_existence_strings" : ["- aNobii</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
+         "allowed_types" : ["String","Person","WebAccount","Username"],
+         "comments" : ["verified 09/18/15"]
       },
       {
          "name" : "ask.fm",
@@ -84,19 +87,10 @@
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
-         "name" : "Bebo",
-         "check_uri" : "http://bebo.com/{account}",
-         "response_code" : "302",
-         "account_existence_strings" : ["Location: /Profile.jsp?MemberId="],
-         "account_missing_strings" : [],
-         "known_accounts" : [],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
          "name" : "Behance",
          "check_uri" : "https://www.behance.net/{account}",
          "response_code" : "200",
-         "account_existence_strings" : [" on Behance\" />"],
+         "account_existence_strings" : ["profile-section-header"],
          "account_missing_strings" : [],
          "known_accounts" : [],
          "allowed_types" : ["String","Person","WebAccount","Username"]
@@ -121,20 +115,11 @@
          "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
-         "name" : "blinklist",
-         "check_uri" : "https://app.blinklist.com/users/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : [" BlinkList Page.</title>"],
-         "account_missing_strings" : [],
-         "known_accounts" : [],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
          "name" : "BLIP.fm",
          "check_uri" : "http://blip.fm/{account}",
          "response_code" : "200",
-         "account_existence_strings" : ["Listen to free music played by"],
-         "account_missing_strings" : ["Sorry, but the page you are trying to view does not exist."],
+         "account_existence_strings" : ["recommended"],
+         "account_missing_strings" : [""],
          "known_accounts" : [],
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
@@ -151,7 +136,7 @@
          "name" : "Blogspot",
          "check_uri" : "http://{account}.blogspot.com",
          "response_code" : "200",
-         "account_existence_strings" : ["Blogger Template Style"],
+         "account_existence_strings" : ["profile-container"],
          "account_missing_strings" : [],
          "known_accounts" : [],
          "allowed_types" : ["String","Person","WebAccount","Username"]
@@ -160,7 +145,7 @@
          "name" : "BodyBuilding.com",
          "check_uri" : "http://bodyspace.bodybuilding.com/{account}/",
          "response_code" : "200",
-         "account_existence_strings" : ["s BodySpace - Bodybuilding.com</title>"],
+         "account_existence_strings" : ["bbBinderOwnerFriend"],
          "account_missing_strings" : [],
          "known_accounts" : [],
          "allowed_types" : ["String","Person","WebAccount","Username"]
@@ -179,15 +164,6 @@
          "check_uri" : "http://{account}.buzznet.com/user/",
          "response_code" : "200",
          "account_existence_strings" : ["body class=\"userhome\""],
-         "account_missing_strings" : [],
-         "known_accounts" : [],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "cafemom",
-         "check_uri" : "http://www.cafemom.com/home/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["h3 id=\"profile-user\""],
          "account_missing_strings" : [],
          "known_accounts" : [],
          "allowed_types" : ["String","Person","WebAccount","Username"]
@@ -259,16 +235,7 @@
          "name" : "Dailymotion",
          "check_uri" : "http://www.dailymotion.com/{account}",
          "response_code" : "200",
-         "account_existence_strings" : [" - Dailymotion</title>"],
-         "account_missing_strings" : [],
-         "known_accounts" : [],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "DATEHOOKUP",
-         "check_uri" : "http://www.datehookup.com/profile/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["DateHookup | Profile</title>"],
+         "account_existence_strings" : ["badge"],
          "account_missing_strings" : [],
          "known_accounts" : [],
          "allowed_types" : ["String","Person","WebAccount","Username"]
@@ -277,7 +244,7 @@
          "name" : "Delicious",
          "check_uri" : "https://avosapi.delicious.com/api/v1/tags/bundles/{account}",
          "response_code" : "200",
-         "account_existence_strings" : ["\"owner_id\":\""],
+         "account_existence_strings" : ["success"],
          "account_missing_strings" : [],
          "known_accounts" : [],
          "allowed_types" : ["String","Person","WebAccount","Username"]
@@ -302,9 +269,9 @@
       },
       {
          "name" : "Disqus",
-         "check_uri" : "http://disqus.com/api/3.0/users/details?user=username%%3A{account}&api_key=E8Uh5l5fHZ6gD8U3KycjAIAk46f68Zw7C6eW8WSjZvCLXebZ7p0r1yrYDrLilk2F",
+         "check_uri" : "https://disqus.com/by/Test/",
          "response_code" : "200",
-         "account_existence_strings" : ["\"username\":\""],
+         "account_existence_strings" : ["Disqus Profile"],
          "account_missing_strings" : [],
          "known_accounts" : [],
          "allowed_types" : ["String","Person","WebAccount","Username"]
@@ -721,7 +688,7 @@
          "name" : "Klout",
          "check_uri" : "https://klout.com/{account}",
          "response_code" : "200",
-         "account_existence_strings" : ["| Klout.com\">"],
+         "account_existence_strings" : ["user-details-container"],
          "account_missing_strings" : [],
          "known_accounts" : [],
          "allowed_types" : ["String","Person","WebAccount","Username","Person"]
@@ -1497,6 +1464,15 @@
          "check_uri" : "http://www.wishlistr.com/profile/{account}/",
          "response_code" : "200",
          "account_existence_strings" : ["s profile</title>"],
+         "account_missing_strings" : [],
+         "known_accounts" : [],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
+      },
+      {
+         "name" : "Wikipedia",
+         "check_uri" : "https://en.wikipedia.org/wiki/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["toc"],
          "account_missing_strings" : [],
          "known_accounts" : [],
          "allowed_types" : ["String","Person","WebAccount","Username"]
