@@ -12,18 +12,20 @@ module Scanner
 
       return unless @scan_result
 
+      # log
       @scan_log = @scan_result.log
+
+      # list of entities we'll want filtered based on name
+      
+      @filter_list = @scan_result.filter_strings.split(",")
 
       # Kick off the scan
       @scan_log.log  "Starting scan #{@scan_result.name} of type #{self.class} with id #{@scan_result.id} on entity #{@scan_result.entity.type}##{@scan_result.entity.attributes["name"]} to depth #{@scan_result.depth}"
-
-      # Kick off the scan
       _recurse(@scan_result.entity,@scan_result.depth)
 
       # Mark the task complete
       @scan_result.complete = true
       @scan_result.save
-
       @scan_log.good "Complete!"
     end
 

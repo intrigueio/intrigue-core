@@ -80,7 +80,7 @@ class BaseTask
 
             # run the task, which will update @task_log and @task_result
             run
-            
+
             @task_log.good "Ship it!"
           end
         rescue Timeout::Error
@@ -231,7 +231,7 @@ class BaseTask
             elsif allowed_option[:type] == "Boolean"
               # use our monkeypatched .to_bool method (see initializers)
               #@task_log.log "Converting #{user_option["name"]} to a bool"
-              user_option["value"] = user_option["value"].to_bool
+              user_option["value"] = user_option["value"].to_bool if user_option["value"].kind_of? String
             else
               # throw an error, we likely have a string we don't know how to cast
               @task_log.error "FATAL! Don't know how to handle this option when it's given to us as a string."

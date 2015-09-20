@@ -86,14 +86,22 @@ class UriDirbuster  < BaseTask
             @task_log.log "404 on #{request_uri}"
           when "200"
             @task_log.good "200! Creating a page for #{request_uri}"
-            _create_entity "Uri", "name" => request_uri, "uri" => request_uri
+            _create_entity "Uri", "name" => request_uri,
+            "uri" => request_uri,
+            "response_code" => response.code
           when "500"
             @task_log.good "500 error! Creating a page for #{request_uri}"
-            _create_entity "Uri", "name" => request_uri, "uri" => request_uri, "content" => "#{response.body}"
+            _create_entity "Uri", "name" => request_uri,
+              "uri" => request_uri,
+              "content" => "#{response.body}",
+              "response_code" => response.code
           when missing_page_code
             @task_log.log "Got code: #{response.code}. Same as missing page code. Skipping"
           else
             @task_log.error "Don't know this response code? #{response.code} (#{request_uri})"
+            _create_entity "Uri", "name" => request_uri,
+              "uri" => request_uri,
+              "response_code" => response.code
         end
 
       ## Otherwise, let's guess based on the content. Does this page look

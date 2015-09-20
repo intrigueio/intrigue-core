@@ -26,7 +26,7 @@ module Intrigue
         ### Shodan
         #_start_task_and_recurse "search_shodan",entity,depth
         ### Scan
-        #_start_task_and_recurse "nmap_scan",entity,depth
+        _start_task_and_recurse "nmap_scan",entity,depth
         ### Geolocate
         #_start_task "geolocate_host",entity,depth
       elsif entity.type == "NetBlock"
@@ -50,7 +50,7 @@ module Intrigue
         end
       elsif entity.type == "Uri"
         ### screenshot
-        #_start_task_and_recurse "uri_screenshot",entity,depth
+        #_start_task_and_recurse "uri_http_screenshot",entity,depth
         ### Get SSLCert
         _start_task_and_recurse "uri_gather_ssl_certificate",entity,depth if entity.attributes["name"] =~ /^https/
         ### Gather links
@@ -78,6 +78,15 @@ module Intrigue
 
     # List of prohibited entities - returns true or false
     def _is_prohibited entity
+
+      ## First, check the filter list
+      @filter_list.each do |filter|
+        if entity.attributes["name"] =~ /#{filter}/
+          @scan_log.log "Filtering #{entity.attributes["name"]} based on filter #{filter}"
+          return true
+        end
+      end
+
 
       if entity.type == "NetBlock"
 

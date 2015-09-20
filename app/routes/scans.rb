@@ -37,6 +37,7 @@ class IntrigueApp < Sinatra::Base
     scan_result = Intrigue::Model::ScanResult.new scan_id, name
     scan_result.depth = @params["depth"].to_i || "3"
     scan_result.scan_type = @params["scan_type"]
+    scan_result.filter_strings = @params["filter_strings"]
     scan_result.entity = entity
 
     # Save it!

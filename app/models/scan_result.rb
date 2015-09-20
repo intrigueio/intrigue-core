@@ -6,6 +6,7 @@ module Intrigue
       attr_accessor :depth, :scan_type, :entity, :task_results
       attr_accessor :timestamp_start, :timestamp_end
       attr_accessor :entity_count, :complete
+      attr_accessor :filter_strings
 
       def self.key
         "scan_result"
@@ -26,6 +27,7 @@ module Intrigue
         @entity = nil
         @entity_count = 0
         @task_results = []
+        @filter_strings = ""
         @options = []
         @entities = []
         @log = ScanResultLog.new(id,name); @log.save
@@ -79,12 +81,12 @@ module Intrigue
           @name = x["name"]
           @timestamp_start = x["timestamp_start"]
           @timestamp_end = x["timestamp_end"]
+          @filter_strings = x["filter_strings"]
           @entity = Entity.find(x["entity_id"])
           @task_results = x["task_result_ids"].map{|y| TaskResult.find y } if x["task_result_ids"]
           @entities = x["entity_ids"].map{|y| Entity.find y } if x["entity_ids"]
           @entity_count = x["entity_count"]
           @log = ScanResultLog.find x["id"]
-
         rescue JSON::ParserError => e
           return nil
         end
@@ -103,6 +105,7 @@ module Intrigue
           "complete" => @complete,
           "timestamp_start" => @timestamp_start,
           "timestamp_end" => @timestamp_end,
+          "filter_strings" => @filter_strings,
           "entity_id" => @entity.id,
           "entity_count" => @entity_count,
           "task_result_ids" => @task_results.map{|y| y.id },
@@ -128,6 +131,7 @@ module Intrigue
           "complete" => @complete,
           "timestamp_start" => @timestamp_start,
           "timestamp_end" => @timestamp_end,
+          "filter_strings" => @filter_strings,
           "entity_id" => @entity.to_s,
           "entity_count" => @entity_count,
           "task_result_ids" => @task_results.map{|y| TaskResult.find(y).export_hash },
