@@ -29,6 +29,8 @@ class WebAccountCheckTask < BaseTask
     account_list_data = File.open("data/web_accounts_list.json").read
     account_list = JSON.parse(account_list_data)
 
+    @task_log.log "Checking target against #{account_list["sites"].count} possible sites"
+
     account_list["sites"].each do |site|
 
       # This allows us to only check specific sites - good for testing
