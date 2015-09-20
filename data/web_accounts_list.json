@@ -124,6 +124,15 @@
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
+         "name" : "Black Planet",
+         "check_uri" : "http://www.blackplanet.com/test/",
+         "response_code" : "200",
+         "account_existence_strings" : ["View My Guestbook"],
+         "account_missing_strings" : [""],
+         "known_accounts" : [],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
+      },
+      {
          "name" : "Blogmarks",
          "check_uri" : "http://blogmarks.net/user/{account}",
          "response_code" : "200",
@@ -299,6 +308,15 @@
          "check_uri" : "https://www.dribbble.com/players/{account}",
          "response_code" : "200",
          "account_existence_strings" : ["<title>Dribbble - "],
+         "account_missing_strings" : [],
+         "known_accounts" : [],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
+      },
+      {
+         "name" : "EasyVideoProducer",
+         "check_uri" : "http://my.easyvideoproducer.com/modvideo/users/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["Last Login:"],
          "account_missing_strings" : [],
          "known_accounts" : [],
          "allowed_types" : ["String","Person","WebAccount","Username"]
@@ -1080,6 +1098,15 @@
          "account_missing_strings" : [],
          "known_accounts" : [],
          "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
+      },
+      {
+         "name" : "RepHIM",
+         "check_uri" : "http://www.rephim.com/users/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["Last Login:"],
+         "account_missing_strings" : [],
+         "known_accounts" : [],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Reunion.com",
