@@ -3,7 +3,6 @@ require_relative '../spec_helper'
 describe "Intrigue v1.0 Tasks" do
   describe "WebAccountCheckTask" do
 
-=begin
     it "checks each site in data/web_accounts_list.json for false positives" do
 
       entity = {
@@ -16,9 +15,9 @@ describe "Intrigue v1.0 Tasks" do
       @api = IntrigueApi.new
       result = @api.start("web_account_check", entity)
 
+      # We should never get a result
       expect(result["entity_ids"].count).to be 0
     end
-=end
 
     it "checks each site in data/web_accounts_list.json for false negatives" do
 
@@ -39,11 +38,12 @@ describe "Intrigue v1.0 Tasks" do
 
         result = @api.start("web_account_check", entity, [{"name" => "specific_sites", "value" => "#{site["name"]}"}])
 
-        #expect(result["entity_ids"].count).to eq 1
-
         if result["entity_ids"].count < 1
           puts "Found #{result["entity_ids"].count} accounts. #{site["check_uri"].gsub("{account}", site["known_accounts"].first)}"
         end
+
+        # Fail if we don't get a result
+        expect(result["entity_ids"].count).to eq 1
 
       end
     end
