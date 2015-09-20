@@ -123,5 +123,386 @@
         "allowed_types" : ["String","Person","WebAccount","Username"],
         "comments" : ["Site looks busted"]
      },
+     {
+        "name" : "Flickr",
+        "check_uri" : "https://www.flickr.com/photos/{account}/",
+        "response_code" : "200",
+        "account_existence_strings" : ["s Photostream</title>"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative"]
+     },
+     {
+        "name" : "Foursquare",
+        "check_uri" : "https://foursquare.com/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : ["on Foursquare</title>"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative"]
+     },
+     {
+        "name" : "FriendFeed",
+        "check_uri" : "http://friendfeed.com/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : [" - FriendFeed</title>"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["looks like they've removed the functionality, suggest removal"]
+     },
+     {
+        "name" : "FriendFinder-X",
+        "check_uri" : "http://www.friendfinder-x.com/profile/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : ["Member Profile - FriendFinder-x</title>"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative"]
+     },
+     {
+        "name" : "FunnyOrDie",
+        "check_uri" : "http://www.funnyordie.com/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : ["channel on Funny or Die"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["walnuts"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative","should be working"]
+     },
+     {
+        "name" : "Garmin Connect",
+        "check_uri" : "https://connect.garmin.com/modern/profile/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : ["VIEWER_USERPREFERENCES ="],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative","should be working"]
+     },
+     {
+        "name" : "Google",
+        "check_uri" : "https://profiles.google.com/u/0/{account}/about",
+        "response_code" : "301",
+        "account_format" : "email",
+        "account_existence_strings" : ["social.google.com"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username","Organization"],
+        "comments" : ["functionality may have been removed? reconsider how we find google profiles"]
+     },
+     {
+        "name" : "I-am-pregnant",
+        "check_uri" : "http://www.i-am-pregnant.com/vip/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : ["This is the stylesheet for your pages. Add your own rules below this line"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative"]
+     },
+     {
+        "name" : "IFTTT",
+        "check_uri" : "https://ifttt.com/p/{account}/shared",
+        "response_code" : "200",
+        "account_existence_strings" : ["s Published Recipes - IFTTT"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative","should be working"]
+     },
+     {
+        "name" : "JamBase",
+        "check_uri" : "http://www.jambase.com/Fans/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : ["on JamBase"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative","should be working"]
+     },
+     {
+        "name" : "kaboodle",
+        "check_uri" : "http://www.kaboodle.com/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : ["s Kaboodle profile</title>"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["site down 09/20/2015?"]
+     },
+     {
+        "name" : "LaunchRock",
+        "check_uri" : "http://{account}.launchrock.co",
+        "response_code" : "200",
+        "account_existence_strings" : ["Begin LaunchRock Widget"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "known_missing_accounts" : ["does-not-exist"],
+        "allowed_types" : ["String","Person","WebAccount","Username","Organization"],
+        "comments" : ["functionality removed 09/20/2015?"]
+     },
+     {
+        "name" : "LawOfAttraction",
+        "check_uri" : "http://www.lawofattractionsingles.com/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : ["View Profile"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["walnut"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative","should be working"]
+     },
+     {
+        "name" : "Marketing Land",
+        "check_uri" : "http://marketingland.com/author/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : ["property=\"og:url\" content="],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"]
+     },
+     {
+        "name" : "Match.com",
+        "check_uri" : "http://www.match.com/Profile/Display/About//?handle={account}&tp=prtbk",
+        "response_code" : "200",
+        "account_existence_strings" : ["property=\"og:title\" content=\""],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"]
+     },
+     {
+        "name" : "Meetzur",
+        "check_uri" : "http://www.meetzur.com/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : ["MEETZUR_PROFILE_300x250"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["jammin"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative","should be working"]
+     },
+     {
+        "name" : "Muck Rack",
+        "check_uri" : "http://muckrack.com/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : ["on Muck Rack</title>"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"]
+     },
+     {
+        "name" : "myLot",
+        "check_uri" : "http://www.mylot.com/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : ["on myLot</title>"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"]
+     },
+     {
+        "name" : "myspace",
+        "check_uri" : "https://www.myspace.com/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : [") on Myspace</title>"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["enriqueiglesias"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative","should be working"]
+     },
+     {
+        "name" : "OkCupid",
+        "check_uri" : "http://www.okcupid.com/profile/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : ["<title>OkCupid |"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"]
+     },
+     {
+        "name" : "OneLogin",
+        "check_uri" : "https://{account}.onelogin.com/login",
+        "response_code" : "200",
+        "account_existence_strings" : ["style.css"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["atlassian"],
+        "allowed_types" : ["String","Organization"]
+     },
+     {
+        "name" : "Open Source Report Card",
+        "check_uri" : "https://osrc.dfm.io/{account}/",
+        "response_code" : "200",
+        "account_existence_strings" : ["s Open Source Report Card</title>"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username","Organization"],
+        "comments" : ["site down"]
+     },
+     {
+        "name" : "Overcast Network",
+        "check_uri" : "https://oc.tc/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : ["https://avatar.oc.tc/"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["functionality gone?"]
+     },
+     {
+        "name" : "Photoblog!",
+        "check_uri" : "http://www.photoblog.com/{account}/",
+        "response_code" : "200",
+        "account_existence_strings" : ["Powered by"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test123"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative","should be working"]
+     },
+     {
+        "name" : "Picasa",
+        "check_uri" : "https://picasaweb.google.com/{account}/",
+        "response_code" : "302",
+        "account_existence_strings" : ["s Picasa Web Gallery\"/>"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"]
+     },
+     {
+        "name" : "PictureTrail",
+        "check_uri" : "http://picturetrail.com/homepage/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : ["<title>PictureTrail</title>"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"]
+     },
+     {
+        "name" : "PinkBike",
+        "check_uri" : "http://www.pinkbike.com/u/{account}/",
+        "response_code" : "200",
+        "account_existence_strings" : ["followers"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types": ["String","Person","WebAccount","Username"]
+     },
+     {
+        "name" : "plaxo",
+        "check_uri" : "http://www.plaxo.com/profile/showPublic/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : ["<title>Plaxo -"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"]
+     },
+     {
+        "name" : "Printfection",
+        "check_uri" : "http://www.printfection.com/{account}/",
+        "response_code" : "200",
+        "account_existence_strings" : ["- Printfection.com</title>"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"]
+     },
+     {
+        "name" : "RepHIM",
+        "check_uri" : "http://www.rephim.com/users/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : ["Last Login:"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative","should be working"]
+     },
+     {
+        "name" : "scratch.mit.edu",
+        "check_uri" : "http://scratch.mit.edu/users/{account}/",
+        "response_code" : "200",
+        "account_existence_strings" : ["user-details"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"]
+     },
+     {
+        "name" : "Slashdot",
+        "check_uri" : "http://slashdot.org/~{account}",
+        "response_code" : "200",
+        "account_existence_strings" : [" - Slashdot User"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["cmdrtaco"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative","should be working"]
+     },
+     {
+        "name" : "SmiteGuru",
+        "check_uri" : "https://smite.guru/stats/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : ["<title>SmiteGuru - "],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["site down 09/20/2015?"]
+     },
+     {
+        "name" : "SourceForge",
+        "check_uri" : "http://sourceforge.net/u/{account}/profile/",
+        "response_code" : "200",
+        "account_existence_strings" : ["Joined:"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username","Organization"],
+        "comments" : ["falsenegative","should be working"]
+     },
+     {
+        "name" : "StumbleUpon",
+        "check_uri" : "http://www.stumbleupon.com/stumbler/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : ["s Likes | StumbleUpon.com</title>"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test123"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative","should be working"]
+     },
+     {
+        "name" : "Technorati",
+        "check_uri" : "http://technorati.com/author/{account}/",
+        "response_code" : "200",
+        "account_existence_strings" : [" | Technorati</title>"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["functionality removed?"]
+     },
+     {
+        "name" : "tribe",
+        "check_uri" : "http://people.tribe.net/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : ["Profile - tribe.net</title>"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["site broken?"]
+     },
+     {
+        "name" : "Tripit",
+        "check_uri" : "https://www.tripit.com/people/{account}#/profile/basic-info",
+        "response_code" : "200",
+        "account_existence_strings" : ["Travel Profile - TripIt</title>"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["functionality removed?"]
+     },
+     {
+       "name" : "YFrog",
+       "check_uri" : "https://yfrog.com/user/{account}/profile",
+       "response_code" : "200",
+       "account_format" : "Username",
+       "account_existence_strings" : [],
+       "account_missing_strings" : [],
+       "known_accounts" : ["test"],
+       "allowed_types" : ["String","Person","WebAccount","Username","Organization"],
+       "comments" : ["functionality removed?"]
+     },
    ]
 }

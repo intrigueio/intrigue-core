@@ -315,15 +315,6 @@
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
-         "name" : "Flickr",
-         "check_uri" : "https://www.flickr.com/photos/{account}/",
-         "response_code" : "200",
-         "account_existence_strings" : ["s Photostream</title>"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
          "name" : "Foodspotting",
          "check_uri" : "http://www.foodspotting.com/{account}",
          "response_code" : "200",
@@ -343,15 +334,6 @@
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
-         "name" : "Foursquare",
-         "check_uri" : "https://foursquare.com/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["on Foursquare</title>"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
          "name" : "freesound",
          "check_uri" : "http://www.freesound.org/people/{account}/",
          "response_code" : "200",
@@ -361,48 +343,12 @@
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
-         "name" : "FriendFeed",
-         "check_uri" : "http://friendfeed.com/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : [" - FriendFeed</title>"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "FriendFinder-X",
-         "check_uri" : "http://www.friendfinder-x.com/profile/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["Member Profile - FriendFinder-x</title>"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "FunnyOrDie",
-         "check_uri" : "http://www.funnyordie.com/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : [" - Home on Funny or Die</title>"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "Garmin connect",
-         "check_uri" : "http://connect.garmin.com/modern/profile/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["VIEWER_USERPREFERENCES ="],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
          "name" : "GeekGrade",
          "check_uri" : "http://www.geekgrade.com/geeksheet/{account}/blogs",
          "response_code" : "200",
-         "account_existence_strings" : ["badge"],
+         "account_existence_strings" : ["Blog Entries - Geek Grade"],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["walnuts"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
@@ -439,7 +385,7 @@
          "response_code" : "200",
          "account_existence_strings" : ["Last Visit Date:</span>"],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["walnuts"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
@@ -461,20 +407,11 @@
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
-         "name" : "Google",
-         "check_uri" : "https://profiles.google.com/u/0/{account}/about",
-         "response_code" : "301",
-         "account_format" : "email",
-         "account_existence_strings" : ["social.google.com"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
-      },
-      {
          "name" : "Gravatar",
          "check_uri" : "http://en.gravatar.com/profiles/{account}.json",
+         "pretty_uri" : "http://en.gravatar.com/profiles/{account}",
          "response_code" : "200",
-         "account_existence_strings" : ["\"displayName\" : "],
+         "account_existence_strings" : ["entry"],
          "account_missing_strings" : [],
          "known_accounts" : ["test"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
@@ -507,24 +444,6 @@
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
-         "name" : "I-am-pregnant",
-         "check_uri" : "http://www.i-am-pregnant.com/vip/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["This is the stylesheet for your pages. Add your own rules below this line"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "IFTTT",
-         "check_uri" : "https://ifttt.com/p/{account}/shared",
-         "response_code" : "200",
-         "account_existence_strings" : ["s Published Recipes - IFTTT"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
          "name" : "ImageShack",
          "check_uri" : "https://imageshack.com/user/{account}",
          "response_code" : "200",
@@ -546,7 +465,7 @@
          "name" : "Instagram",
          "check_uri" : "http://instagram.com/{account}",
          "response_code" : "200",
-         "account_existence_strings" : ["on Instagram\" />"],
+         "account_existence_strings" : ["Instagram photos and videos"],
          "account_missing_strings" : [],
          "known_accounts" : ["test"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
@@ -562,9 +481,9 @@
       },
       {
          "name" : "Internet Archive",
-         "check_uri" : "http://archive.org/search.php?query=subject%%3A%%22{account}%%22",
+         "check_uri" : "http://archive.org/search.php?query={account}",
          "response_code" : "200",
-         "account_existence_strings" : ["<tr class=\"hitRow\">"],
+         "account_existence_strings" : ["item-ia"],
          "account_missing_strings" : [],
          "known_accounts" : ["test"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
@@ -574,24 +493,6 @@
          "check_uri" : "http://www.interpals.net/{account}",
          "response_code" : "200",
          "account_existence_strings" : ["s Profile</title>"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "JamBase",
-         "check_uri" : "http://www.jambase.com/Fans/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["on JamBase"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "kaboodle",
-         "check_uri" : "http://www.kaboodle.com/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["s Kaboodle profile</title>"],
          "account_missing_strings" : [],
          "known_accounts" : ["test"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
@@ -611,7 +512,7 @@
          "response_code" : "200",
          "account_existence_strings" : ["user-details-container"],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["test123"],
          "allowed_types" : ["String","Person","WebAccount","Username","Person"]
       },
       {
@@ -627,7 +528,7 @@
          "name" : "Lanyrd",
          "check_uri" : "http://lanyrd.com/profile/{account}/",
          "response_code" : "200",
-         "account_existence_strings" : ["s conference talks and presentations | Lanyrd</title>"],
+         "account_existence_strings" : ["s conference schedule"],
          "account_missing_strings" : [],
          "known_accounts" : ["test"],
          "allowed_types" : ["String","Person","WebAccount","Username","Person"]
@@ -636,26 +537,7 @@
          "name" : "Last.fm",
          "check_uri" : "http://www.last.fm/user/{account}",
          "response_code" : "200",
-         "account_existence_strings" : ["s Music Profile - Users"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "LaunchRock",
-         "check_uri" : "http://{account}.launchrock.co",
-         "response_code" : "200",
-         "account_existence_strings" : ["Begin LaunchRock Widget"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "known_missing_accounts" : ["does-not-exist"],
-         "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
-      },
-      {
-         "name" : "LawOfAttraction",
-         "check_uri" : "http://www.lawofattractionsingles.com/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["s profile on Law Of Attraction Singles</title>"],
+         "account_existence_strings" : ["scrobbling since"],
          "account_missing_strings" : [],
          "known_accounts" : ["test"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
@@ -675,26 +557,8 @@
          "response_code" : "200",
          "account_existence_strings" : ["summary=\"Overview for "],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["test123"],
          "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
-      },
-      {
-         "name" : "Marketing Land",
-         "check_uri" : "http://marketingland.com/author/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["property=\"og:url\" content="],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "Match.com",
-         "check_uri" : "http://www.match.com/Profile/Display/About//?handle={account}&tp=prtbk",
-         "response_code" : "200",
-         "account_existence_strings" : ["property=\"og:title\" content=\""],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "mate1",
@@ -709,25 +573,16 @@
          "name" : "Medium",
          "check_uri" : "https://medium.com/@{account}",
          "response_code" : "200",
-         "account_existence_strings" : ["name=\"description\" content=\""],
+         "account_existence_strings" : ["Follow"],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "Meetzur",
-         "check_uri" : "http://www.meetzur.com/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["MEETZUR_PROFILE_300x250"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["test123"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Mixcloud",
          "check_uri" : "http://www.mixcloud.com/{account}/",
          "response_code" : "200",
-         "account_existence_strings" : ["s Favorites | Mixcloud</title>"],
+         "account_existence_strings" : ["Followers"],
          "account_missing_strings" : [],
          "known_accounts" : ["test"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
@@ -760,15 +615,6 @@
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
-         "name" : "Muck Rack",
-         "check_uri" : "http://muckrack.com/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["on Muck Rack</title>"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
          "name" : "Muzy",
          "check_uri" : "http://{account}.muzy.com/",
          "response_code" : "200",
@@ -781,25 +627,7 @@
          "name" : "MyBuilder.com",
          "check_uri" : "http://www.mybuilder.com/profile/view/{account}",
          "response_code" : "200",
-         "account_existence_strings" : ["s profile</title>"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "myLot",
-         "check_uri" : "http://www.mylot.com/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["on myLot</title>"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "myspace",
-         "check_uri" : "https://www.myspace.com/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : [") on Myspace</title>"],
+         "account_existence_strings" : ["Feedback score"],
          "account_missing_strings" : [],
          "known_accounts" : ["test"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
@@ -810,16 +638,7 @@
          "response_code" : "200",
          "account_existence_strings" : ["s Public Page</title>"],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "OkCupid",
-         "check_uri" : "http://www.okcupid.com/profile/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["<title>OkCupid |"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["adam"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
@@ -828,50 +647,14 @@
          "response_code" : "200",
          "account_existence_strings" : ["\"url-example\">https://workday.okta.com"],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["workday"],
          "allowed_types" : ["Organization","String"]
-      },
-      {
-         "name" : "OneLogin",
-         "check_uri" : "https://{account}.onelogin.com/login",
-         "response_code" : "200",
-         "account_existence_strings" : ["Onelogin Account Found"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["Organization",""]
-      },
-      {
-         "name" : "Open Source Report Card",
-         "check_uri" : "https://osrc.dfm.io/{account}/",
-         "response_code" : "200",
-         "account_existence_strings" : ["s Open Source Report Card</title>"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "Overcast Network",
-         "check_uri" : "https://oc.tc/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["https://avatar.oc.tc/"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Pandora",
          "check_uri" : "http://www.pandora.com/profile/{account}",
          "response_code" : "200",
          "account_existence_strings" : ["div class=\"profile_container_static\""],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "Photoblog!",
-         "check_uri" : "http://www.photoblog.com/{account}/",
-         "response_code" : "200",
-         "account_existence_strings" : ["photoblog_username = \""],
          "account_missing_strings" : [],
          "known_accounts" : ["test"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
@@ -886,39 +669,12 @@
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
-         "name" : "Picasa",
-         "check_uri" : "https://picasaweb.google.com/{account}/",
-         "response_code" : "302",
-         "account_existence_strings" : ["s Picasa Web Gallery\"/>"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "PictureTrail",
-         "check_uri" : "http://picturetrail.com/homepage/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["<title>PictureTrail</title>"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "PinkBike",
-         "check_uri" : "http://www.pinkbike.com/u/{account}/",
-         "response_code" : "200",
-         "account_existence_strings" : ["on Pinkbike</title>"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types": ["String","Person","WebAccount","Username"]
-      },
-      {
          "name" : "Pinterest",
          "check_uri" : "https://www.pinterest.com/{account}/",
          "response_code" : "200",
          "account_existence_strings" : ["on Pinterest</title>"],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["test123"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
@@ -927,16 +683,7 @@
          "response_code" : "200",
          "account_existence_strings" : ["<title>Attend Events with"],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "plaxo",
-         "check_uri" : "http://www.plaxo.com/profile/showPublic/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["s Public Profile</title>"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["test123"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
@@ -967,15 +714,6 @@
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
-         "name" : "Printfection",
-         "check_uri" : "http://www.printfection.com/{account}/",
-         "response_code" : "200",
-         "account_existence_strings" : ["- Printfection.com</title>"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
          "name" : "PSNProfiles",
          "check_uri" : "http://psnprofiles.com/{account}",
          "response_code" : "200",
@@ -999,7 +737,7 @@
          "response_code" : "200",
          "account_existence_strings" : ["on Readability"],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["test123"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
@@ -1012,28 +750,10 @@
          "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
-         "name" : "RepHIM",
-         "check_uri" : "http://www.rephim.com/users/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["Last Login:"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
          "name" : "Reunion.com",
          "check_uri" : "http://www.reunion.com/{account}/",
          "response_code" : "200",
-         "account_existence_strings" : ["@ Reunion.com</title>"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "scratch",
-         "check_uri" : "http://scratch.mit.edu/users/{account}/",
-         "response_code" : "200",
-         "account_existence_strings" : ["on Scratch</title>"],
+         "account_existence_strings" : ["Find and View People Named"],
          "account_missing_strings" : [],
          "known_accounts" : ["test"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
@@ -1042,7 +762,7 @@
          "name" : "Security Street",
          "check_uri" : "https://community.rapid7.com/people/{account}",
          "response_code" : "200",
-         "account_existence_strings" : ["s Profile     | SecurityStreet"],
+         "account_existence_strings" : ["Member Since:"],
          "account_missing_strings" : [],
          "known_accounts" : ["test"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
@@ -1053,7 +773,7 @@
          "response_code" : "200",
          "account_existence_strings" : ["s setlist.fm | setlist.fm</title>"],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["jesus"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
@@ -1062,16 +782,16 @@
          "response_code" : "200",
          "account_existence_strings" : ["s Profile</title>"],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["test123"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Shopcade",
          "check_uri" : "http://www.shopcade.com/{account}",
          "response_code" : "200",
-         "account_existence_strings" : [") on Shopcade</title"],
+         "account_existence_strings" : [") on Shopcade"],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["test123"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
@@ -1080,35 +800,17 @@
          "response_code" : "200",
          "account_existence_strings" : ["About Me..."],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "Slashdot",
-         "check_uri" : "http://slashdot.org/~{account}",
-         "response_code" : "200",
-         "account_existence_strings" : [" - Slashdot User</title>"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["mohammed"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "slideshare",
          "check_uri" : "http://www.slideshare.net/{account}",
          "response_code" : "200",
-         "account_existence_strings" : ["s presentations</title>"],
+         "account_existence_strings" : ["SlideShare Channel"],
          "account_missing_strings" : [],
          "known_accounts" : ["test"],
          "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
-      },
-      {
-         "name" : "SmiteGuru",
-         "check_uri" : "https://smite.guru/stats/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["<title>SmiteGuru - "],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "SmugMug",
@@ -1116,14 +818,14 @@
          "response_code" : "200",
          "account_existence_strings" : ["pageon: homepage"],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["wow"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "smule",
          "check_uri" : "http://www.smule.com/{account}/",
          "response_code" : "200",
-         "account_existence_strings" : ["s Profile on Smule</title>"],
+         "account_existence_strings" : ["Recommended Recordings"],
          "account_missing_strings" : [],
          "known_accounts" : ["test"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
@@ -1132,27 +834,27 @@
          "name" : "snooth",
          "check_uri" : "http://www.snooth.com/profiles/{account}/",
          "response_code" : "301",
-         "account_existence_strings" : ["Location: http://www.snooth.com/profiles/John/"],
+         "account_existence_strings" : ["recent-activity"],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["test123"],
          "allowed_types" : ["String","Person","WebAccount","Username","food"]
       },
       {
          "name" : "SoldierX",
          "check_uri" : "https://www.soldierx.com/hdb/{account}",
          "response_code" : "200",
-         "account_existence_strings" : ["div id=\"node-"],
+         "account_existence_strings" : ["field-item"],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["AC"],
          "allowed_types" : ["String","Person","WebAccount","Username","hacker"]
       },
       {
          "name" : "SoundCloud",
          "check_uri" : "https://soundcloud.com/{account}",
          "response_code" : "200",
-         "account_existence_strings" : ["profile - Hear the world"],
+         "account_existence_strings" : ["/likes"],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["test123"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
@@ -1163,15 +865,6 @@
          "account_missing_strings" : [],
          "known_accounts" : ["test"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "SourceForge",
-         "check_uri" : "http://sourceforge.net/u/{account}/profile/",
-         "response_code" : "200",
-         "account_existence_strings" : [" / Profile</title>"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
          "name" : "Speaker Deck",
@@ -1201,30 +894,12 @@
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
-         "name" : "StumbleUpon",
-         "check_uri" : "http://www.stumbleupon.com/stumbler/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["s Likes | StumbleUpon.com</title>"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
          "name" : "stupidcancer",
          "check_uri" : "http://stupidcancer.org/community/profile/{account}",
          "response_code" : "200",
          "account_existence_strings" : ["- Stupid Cancer Community</title>"],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "Technorati",
-         "check_uri" : "http://technorati.com/author/{account}/",
-         "response_code" : "200",
-         "account_existence_strings" : [" | Technorati</title>"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["myriam"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
@@ -1240,16 +915,7 @@
          "name" : "theguardian",
          "check_uri" : "https://id.theguardian.com/profile/{account}/public",
          "response_code" : "200",
-         "account_existence_strings" : ["profile | The Guardian"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "tribe",
-         "check_uri" : "http://people.tribe.net/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["Profile - tribe.net</title>"],
+         "account_existence_strings" : ["Member since"],
          "account_missing_strings" : [],
          "known_accounts" : ["test"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
@@ -1258,16 +924,7 @@
          "name" : "tripadvisor",
          "check_uri" : "http://www.tripadvisor.com/members/{account}",
          "response_code" : "200",
-         "account_existence_strings" : ["<title>Member Profile - "],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "Tripit",
-         "check_uri" : "https://www.tripit.com/people/{account}#/profile/basic-info",
-         "response_code" : "200",
-         "account_existence_strings" : ["Travel Profile - TripIt</title>"],
+         "account_existence_strings" : ["Total Points"],
          "account_missing_strings" : [],
          "known_accounts" : ["test"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
@@ -1276,7 +933,7 @@
          "name" : "tumblr",
          "check_uri" : "http://{account}.tumblr.com",
          "response_code" : "200",
-         "account_existence_strings" : ["X-Tumblr-User:"],
+         "account_existence_strings" : ["div id=\"content\""],
          "account_missing_strings" : [],
          "known_accounts" : ["test"],
          "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
@@ -1287,7 +944,7 @@
          "response_code" : "200",
          "account_existence_strings" : ["<title>Twitpic /"],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["mannequin"],
          "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
@@ -1296,7 +953,7 @@
          "response_code" : "200",
          "account_existence_strings" : ["| Twitter</title>"],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["test123"],
          "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
@@ -1305,7 +962,7 @@
          "response_code" : "200",
          "account_existence_strings" : ["var query_global ="],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["test123"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
@@ -1321,9 +978,9 @@
          "name" : "viddler",
          "check_uri" : "http://www.viddler.com/explore/{account}/",
          "response_code" : "200",
-         "account_existence_strings" : ["s profile - Viddler</title>"],
+         "account_existence_strings" : ["profile-details"],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["GamingParodies"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
@@ -1375,9 +1032,9 @@
          "name" : "wattpad",
          "check_uri" : "http://www.wattpad.com/user/{account}",
          "response_code" : "200",
-         "account_existence_strings" : ["- Wattpad </title>"],
+         "account_existence_strings" : ["Joined:"],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["test123"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
@@ -1386,16 +1043,7 @@
          "response_code" : "200",
          "account_existence_strings" : ["s Home) - WeeMee"],
          "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "Wefollow",
-         "check_uri" : "http://wefollow.com/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["on Wefollow</title>"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
+         "known_accounts" : ["test123"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
@@ -1447,38 +1095,10 @@
          "name" : "XboxLiveScore",
          "check_uri" : "http://www.xboxlivescore.com/profile/{account}",
          "response_code" : "200",
-         "account_existence_strings" : ["on the Gamerscore Leaderboard</title>"],
+         "account_existence_strings" : ["my-badges"],
          "account_missing_strings" : [],
          "known_accounts" : ["test"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "Xfire Main",
-         "check_uri" : "http://www.xfire.com/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["<h1 class=\"username\">"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-         "name" : "Xfire Social",
-         "check_uri" : "http://social.xfire.com/profile/{account}",
-         "response_code" : "200",
-         "account_existence_strings" : ["s Profile</title>"],
-         "account_missing_strings" : [],
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-        "name" : "YFrog",
-        "check_uri" : "https://yfrog.com/user/{account}/profile",
-        "response_code" : "200",
-        "account_format" : "Username",
-        "account_existence_strings" : [],
-        "account_missing_strings" : [],
-        "known_accounts" : ["test"],
-                "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
          "name" : "YouTube",
