@@ -95,7 +95,7 @@ class IntrigueApp < Sinatra::Base
     x = Intrigue::Model::ScanResult.find(params[:id])
 
     if x
-      return true if x.complete
+      return "true" if x.complete
     end
 
   false
