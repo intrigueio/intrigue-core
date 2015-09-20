@@ -91,7 +91,13 @@ class IntrigueApp < Sinatra::Base
 
   # Determine if the scan run is complete
   get '/scan_results/:id/complete' do
-    return true if Intrigue::Model::ScanResult.find(params[:id])
+
+    x = Intrigue::Model::ScanResult.find(params[:id])
+
+    if x
+      return true if x.complete
+    end
+
   false
   end
 

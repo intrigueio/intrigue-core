@@ -76,11 +76,11 @@ class IntrigueApi
       end
 
       ### Get the response
-      #begin
+      begin
       response = JSON.parse(RestClient.get "#{@server_uri}/task_results/#{task_id}.json")
-      #rescue JSON::ParserError => e
-      #  response = nil
-      #end
+      rescue JSON::ParserError => e
+        response = nil
+      end
 
     response
     end

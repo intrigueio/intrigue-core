@@ -163,7 +163,13 @@ class IntrigueApp < Sinatra::Base
 
     # Determine if the task run is complete
     get '/task_results/:id/complete/?' do
-      return "true" if Intrigue::Model::TaskResult.find(params[:id])
+
+      x = Intrigue::Model::TaskResult.find(params[:id])
+
+      if x
+        return true if x.complete
+      end
+
     false
     end
 
