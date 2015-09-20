@@ -1,0 +1,127 @@
+{
+   "authors" : ["webreacher", "jcran"],
+   "sources" : ["https://bitbucket.org/LaNMaSteR53/recon-ng/raw/c006ecdf27648cec2bb20216cccce24e49e03107/data/profiler_sites.json"],
+   "sites" : [
+     {
+        "name" : "Behance",
+        "check_uri" : "https://www.behance.net/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : [""],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative","should work, but doesn't. now needs a string. frames might be fucking it up"]
+     },
+     {
+        "name" : "Blogspot",
+        "check_uri" : "http://{account}.blogspot.com",
+        "response_code" : "200",
+        "account_existence_strings" : ["profile-container"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative","should be working"]
+     },
+     {
+        "name" : "BodyBuilding.com",
+        "check_uri" : "http://bodyspace.bodybuilding.com/{account}/",
+        "response_code" : "200",
+        "account_existence_strings" : ["bbBinderOwnerFriend"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["alphamuscledog"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative","should be working"]
+     },
+     {
+        "name" : "CruiseMates",
+        "check_uri" : "http://www.cruisemates.com/forum/members/{account}.html",
+        "response_code" : "200",
+        "account_existence_strings" : ["Last Activity"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative","should be working"]
+     },
+     {
+        "name" : "Dailymotion",
+        "check_uri" : "http://www.dailymotion.com/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : ["badge"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["walnuts"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative","should be working"]
+     },
+     {
+        "name" : "Delicious",
+        "check_uri" : "https://avosapi.delicious.com/api/v1/tags/bundles/{account}",
+        "pretty_uri" : "http://delicious.com/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : ["success"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative","should be working"]
+     },
+     {
+        "name" : "Disqus",
+        "check_uri" : "https://disqus.com/by/{account}/",
+        "response_code" : "200",
+        "account_existence_strings" : ["og:title"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative","should be working"]
+     },
+     {
+        "name" : "EasyVideoProducer",
+        "check_uri" : "http://my.easyvideoproducer.com/modvideo/users/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : ["Last Login:"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative","should be working"]
+     },
+     {
+        "name" : "Engadget",
+        "check_uri" : "http://www.engadget.com/profile/{account}/",
+        "response_code" : "200",
+        "account_existence_strings" : ["profile - Engadget</title>"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["falsenegative","should be working"]
+     },
+     {
+        "name" : "Epinions",
+        "check_uri" : "http://www.epinions.com/user-{account}?sb=1",
+        "response_code" : "200",
+        "account_existence_strings" : ["s Profile Reviews and Products | Epinions.com</title>"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["looks like they've removed the functionality, suggest removal"]
+     },
+     {
+        "name" : "families.com",
+        "check_uri" : "http://www.families.com/author/{account}",
+        "response_code" : "200",
+        "account_existence_strings" : [""],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["looks like they've removed the functionality, suggest removal"]
+     },
+     {
+        "name" : "FFFFOUND!",
+        "check_uri" : "http://ffffound.com/home/{account}/found/",
+        "response_code" : "200",
+        "account_existence_strings" : ["<title>FFFFOUND!</title>"],
+        "account_missing_strings" : [],
+        "known_accounts" : ["test"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "comments" : ["Site looks busted"]
+     },
+   ]
+}
