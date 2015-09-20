@@ -9,8 +9,18 @@
          "account_existence_strings" : ["g.PAGE_USER_NAME ="],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
+      },
+      {
+         "name" : "AngelList",
+         "check_uri" : "https://angel.co/{account}",
+         "response_code" : "200",
+         "account_existence_strings" : ["twitter:domain"],
+         "account_missing_strings" : [],
+         "known_accounts" : [],
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Organization"]
       },
       {
          "name" : "aNobil",
@@ -19,8 +29,8 @@
          "account_existence_strings" : ["- aNobii</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "ask.fm",
@@ -29,8 +39,8 @@
          "account_existence_strings" : ["| ask.fm/"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Atlassian",
@@ -39,8 +49,8 @@
          "account_existence_strings" : ["Unable to access your account"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Organization"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["Organization", "String"]
       },
       {
          "name" : "Atlassian Self-Signup",
@@ -49,8 +59,8 @@
          "account_existence_strings" : ["User management"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Organization"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["Organization", "String"]
       },
       {
          "name" : "AudioBoom",
@@ -59,8 +69,8 @@
          "account_existence_strings" : ["Playlists"],
          "account_missing_strings" : ["That page doesn't seem to exist"],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "authorSTREAM",
@@ -69,8 +79,8 @@
          "account_existence_strings" : ["Presentations on authorSTREAM"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "badoo",
@@ -79,8 +89,8 @@
          "account_existence_strings" : ["| Badoo</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Bebo",
@@ -89,8 +99,8 @@
          "account_existence_strings" : ["Location: /Profile.jsp?MemberId="],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Behance",
@@ -99,8 +109,8 @@
          "account_existence_strings" : [" on Behance\" />"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Bitbucket",
@@ -110,8 +120,8 @@
          "account_existence_strings" : ["\"username\": "],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username","Organization"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
          "name" : "Bitly",
@@ -120,8 +130,8 @@
          "account_existence_strings" : ["| Public Profile</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username","Organization"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
          "name" : "blinklist",
@@ -130,8 +140,8 @@
          "account_existence_strings" : [" BlinkList Page.</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "BLIP.fm",
@@ -140,8 +150,8 @@
          "account_existence_strings" : ["Listen to free music played by"],
          "account_missing_strings" : ["Sorry, but the page you are trying to view does not exist."],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Blogmarks",
@@ -150,8 +160,8 @@
          "account_existence_strings" : ["<title>Blogmarks : Public marks from"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Blogspot",
@@ -160,8 +170,8 @@
          "account_existence_strings" : ["Blogger Template Style"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "BodyBuilding.com",
@@ -170,8 +180,8 @@
          "account_existence_strings" : ["s BodySpace - Bodybuilding.com</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Break",
@@ -180,8 +190,8 @@
          "account_existence_strings" : ["--No uploads yet--"],
          "account_missing_strings" : ["Must Watch Today"],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Buzznet",
@@ -190,8 +200,8 @@
          "account_existence_strings" : ["body class=\"userhome\""],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "cafemom",
@@ -200,8 +210,8 @@
          "account_existence_strings" : ["h3 id=\"profile-user\""],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "CarDomain",
@@ -210,8 +220,8 @@
          "account_existence_strings" : ["s Profile in"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "CodePlex",
@@ -220,8 +230,8 @@
          "account_existence_strings" : ["property=\"profile:username\" />"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username","Organization"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
          "name" : "CoderStats",
@@ -230,8 +240,8 @@
          "account_existence_strings" : ["var repos = [{\""],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username","Organization"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
          "name" : "COLOURlovers",
@@ -240,8 +250,8 @@
          "account_existence_strings" : ["Send A Love Note"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Conferize",
@@ -250,8 +260,8 @@
          "account_existence_strings" : ["| Conferize - Never miss a Conference</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "copytaste",
@@ -260,8 +270,8 @@
          "account_existence_strings" : [" property=\"og:title\" content=\""],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "CruiseMates",
@@ -270,8 +280,8 @@
          "account_existence_strings" : ["- View Profile: "],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Dailymotion",
@@ -280,8 +290,8 @@
          "account_existence_strings" : [" - Dailymotion</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "DATEHOOKUP",
@@ -290,8 +300,8 @@
          "account_existence_strings" : ["DateHookup | Profile</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Delicious",
@@ -300,8 +310,8 @@
          "account_existence_strings" : ["\"owner_id\":\""],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "DeviantArt",
@@ -310,8 +320,8 @@
          "account_existence_strings" : ["s Journal\""],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "diigo",
@@ -320,8 +330,8 @@
          "account_existence_strings" : [" Public Profile in the Diigo Community</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Disqus",
@@ -330,8 +340,8 @@
          "account_existence_strings" : ["\"username\":\""],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "DIY",
@@ -340,8 +350,8 @@
          "account_existence_strings" : ["iphone\" content=\"diy://diy.org/"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Docstoc",
@@ -350,8 +360,8 @@
          "account_existence_strings" : ["h1 class=\"name\">"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "dribble",
@@ -360,8 +370,8 @@
          "account_existence_strings" : ["<title>Dribbble - "],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "eBay",
@@ -370,8 +380,8 @@
          "account_existence_strings" : ["on eBay</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "EightBit",
@@ -380,8 +390,8 @@
          "account_existence_strings" : ["on EightBit</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Engadget",
@@ -390,8 +400,8 @@
          "account_existence_strings" : ["profile - Engadget</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Epinions",
@@ -400,8 +410,8 @@
          "account_existence_strings" : ["s Profile Reviews and Products | Epinions.com</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Etsy",
@@ -410,8 +420,8 @@
          "account_existence_strings" : [" on Etsy</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
         "name" : "facebook.com",
@@ -420,8 +430,8 @@
         "account_existence_strings" : [],
         "account_missing_strings" : ["The link you followed may be broken, or the page may have been removed","Sorry, this page isn't available"],
         "known_accounts" : [],
-        "known_missing_accounts" : [],
-        "allowed_types" : ["Person","WebAccount","Username"]
+        "known_missing_accounts" : ["does-not-exist-intrigue"],
+        "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "families.com",
@@ -430,8 +440,8 @@
          "account_existence_strings" : ["  </title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "fanpop",
@@ -440,8 +450,8 @@
          "account_existence_strings" : ["s Profile Page</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Favstar",
@@ -450,8 +460,8 @@
          "account_existence_strings" : ["Best Tweets</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "FFFFOUND!",
@@ -460,8 +470,8 @@
          "account_existence_strings" : ["<title>FFFFOUND!</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Flavors",
@@ -470,8 +480,8 @@
          "account_existence_strings" : [": Flavors.me"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Flickr",
@@ -480,8 +490,8 @@
          "account_existence_strings" : ["s Photostream</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Foodspotting",
@@ -490,8 +500,8 @@
          "account_existence_strings" : [" - Foodspotting</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Fotolog",
@@ -501,7 +511,7 @@
          "account_missing_strings" : [],
          "known_accounts" : ["test"],
          "known_missing_accounts" : ["does-not-exist"],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Foursquare",
@@ -510,8 +520,8 @@
          "account_existence_strings" : ["on Foursquare</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "freesound",
@@ -520,8 +530,8 @@
          "account_existence_strings" : ["START of Content area"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "FriendFeed",
@@ -530,8 +540,8 @@
          "account_existence_strings" : [" - FriendFeed</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "FriendFinder-X",
@@ -540,8 +550,8 @@
          "account_existence_strings" : ["Member Profile - FriendFinder-x</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "FunnyOrDie",
@@ -550,8 +560,8 @@
          "account_existence_strings" : [" - Home on Funny or Die</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Garmin connect",
@@ -560,18 +570,18 @@
          "account_existence_strings" : ["VIEWER_USERPREFERENCES ="],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "GeekGrade",
          "check_uri" : "http://www.geekgrade.com/geeksheet/{account}/blogs",
          "response_code" : "200",
-         "account_existence_strings" : ["- Geek Grade</title>"],
+         "account_existence_strings" : ["badge"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Geocaching",
@@ -580,8 +590,8 @@
          "account_existence_strings" : ["By Username (Hidden) - User:"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "GETItON",
@@ -590,8 +600,8 @@
          "account_existence_strings" : ["s Profile</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "GitHub",
@@ -601,8 +611,8 @@
          "account_existence_strings" : ["login"],
          "account_missing_strings" : ["Not Found"],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username","Organization"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
          "name" : "GodTube",
@@ -611,8 +621,8 @@
          "account_existence_strings" : ["Last Visit Date:</span>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "gogobot",
@@ -621,8 +631,8 @@
          "account_existence_strings" : ["Travel Tips &amp; Activities"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "goodreads",
@@ -631,8 +641,8 @@
          "account_existence_strings" : ["www.goodreads.com/user/show/"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Google",
@@ -642,8 +652,8 @@
          "account_existence_strings" : ["social.google.com"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username","Organization"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
          "name" : "Gravatar",
@@ -652,8 +662,8 @@
          "account_existence_strings" : ["\"displayName\" : "],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "howaboutwe",
@@ -662,8 +672,8 @@
          "account_existence_strings" : ["location font_20\""],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "HubPages",
@@ -672,8 +682,8 @@
          "account_existence_strings" : ["on HubPages</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "I-am-pregnant",
@@ -682,8 +692,8 @@
          "account_existence_strings" : ["This is the stylesheet for your pages. Add your own rules below this line"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "IFTTT",
@@ -692,8 +702,8 @@
          "account_existence_strings" : ["s Published Recipes - IFTTT"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "ImageShack",
@@ -702,8 +712,8 @@
          "account_existence_strings" : ["s Images</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "imgur",
@@ -712,8 +722,8 @@
          "account_existence_strings" : ["on Imgur</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Instagram",
@@ -722,8 +732,8 @@
          "account_existence_strings" : ["on Instagram\" />"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "instructables",
@@ -732,8 +742,8 @@
          "account_existence_strings" : ["<title>Instructables Member:"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Internet Archive",
@@ -742,8 +752,8 @@
          "account_existence_strings" : ["<tr class=\"hitRow\">"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "interpals",
@@ -752,8 +762,8 @@
          "account_existence_strings" : ["s Profile</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "JamBase",
@@ -762,8 +772,8 @@
          "account_existence_strings" : ["on JamBase"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "kaboodle",
@@ -772,8 +782,8 @@
          "account_existence_strings" : ["s Kaboodle profile</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Keybase",
@@ -782,8 +792,8 @@
          "account_existence_strings" : ["| Keybase</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Klout",
@@ -792,8 +802,8 @@
          "account_existence_strings" : ["| Klout.com\">"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username","Person"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username","Person"]
       },
       {
          "name" : "Kongregate",
@@ -802,8 +812,8 @@
          "account_existence_strings" : ["s profile on Kongregate</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Lanyrd",
@@ -812,8 +822,8 @@
          "account_existence_strings" : ["s conference talks and presentations | Lanyrd</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username","Person"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username","Person"]
       },
       {
          "name" : "Last.fm",
@@ -822,8 +832,8 @@
          "account_existence_strings" : ["s Music Profile - Users"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "LaunchRock",
@@ -833,7 +843,7 @@
          "account_missing_strings" : [],
          "known_accounts" : ["test"],
          "known_missing_accounts" : ["does-not-exist"],
-         "allowed_types" : ["Person","WebAccount","Username","Organization"]
+         "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
          "name" : "LawOfAttraction",
@@ -842,8 +852,8 @@
          "account_existence_strings" : ["s profile on Law Of Attraction Singles</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "LibraryThing",
@@ -852,8 +862,8 @@
          "account_existence_strings" : ["| LibraryThing</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "LinkedIn",
@@ -862,8 +872,8 @@
          "account_existence_strings" : ["summary=\"Overview for "],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username","Organization"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
          "name" : "Marketing Land",
@@ -872,8 +882,8 @@
          "account_existence_strings" : ["property=\"og:url\" content="],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Match.com",
@@ -882,8 +892,8 @@
          "account_existence_strings" : ["property=\"og:title\" content=\""],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "mate1",
@@ -892,8 +902,8 @@
          "account_existence_strings" : ["basicInfoTitle\">Basic Info"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Medium",
@@ -902,8 +912,8 @@
          "account_existence_strings" : ["name=\"description\" content=\""],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Meetzur",
@@ -912,8 +922,8 @@
          "account_existence_strings" : ["MEETZUR_PROFILE_300x250"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Mixcloud",
@@ -922,8 +932,8 @@
          "account_existence_strings" : ["s Favorites | Mixcloud</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Mixcrate",
@@ -932,8 +942,8 @@
          "account_existence_strings" : ["Member since"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Mixlr",
@@ -942,8 +952,8 @@
          "account_existence_strings" : ["is on Mixlr. Mixlr is a simple way to share live"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Mod DB",
@@ -952,8 +962,8 @@
          "account_existence_strings" : ["joined"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Muck Rack",
@@ -962,8 +972,8 @@
          "account_existence_strings" : ["on Muck Rack</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Muzy",
@@ -972,8 +982,8 @@
          "account_existence_strings" : ["My Muzy"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "MyBuilder.com",
@@ -982,8 +992,8 @@
          "account_existence_strings" : ["s profile</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "myLot",
@@ -992,8 +1002,8 @@
          "account_existence_strings" : ["on myLot</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "myspace",
@@ -1002,8 +1012,8 @@
          "account_existence_strings" : [") on Myspace</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "netvibes",
@@ -1012,8 +1022,8 @@
          "account_existence_strings" : ["s Public Page</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "OkCupid",
@@ -1022,8 +1032,8 @@
          "account_existence_strings" : ["<title>OkCupid |"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Okta",
@@ -1032,8 +1042,8 @@
          "account_existence_strings" : ["\"url-example\">https://workday.okta.com"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Organization"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["Organization","String"]
       },
       {
          "name" : "OneLogin",
@@ -1042,8 +1052,8 @@
          "account_existence_strings" : ["Onelogin Account Found"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Organization"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["Organization","String"]
       },
       {
          "name" : "Open Source Report Card",
@@ -1052,8 +1062,8 @@
          "account_existence_strings" : ["s Open Source Report Card</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Overcast Network",
@@ -1062,8 +1072,8 @@
          "account_existence_strings" : ["https://avatar.oc.tc/"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Pandora",
@@ -1072,8 +1082,8 @@
          "account_existence_strings" : ["div class=\"profile_container_static\""],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Photoblog!",
@@ -1082,8 +1092,8 @@
          "account_existence_strings" : ["photoblog_username = \""],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "PhotoBucket",
@@ -1092,8 +1102,8 @@
          "account_existence_strings" : [" Pictures, Photos & Images | Photobucket</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Picasa",
@@ -1102,8 +1112,8 @@
          "account_existence_strings" : ["s Picasa Web Gallery\"/>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "PictureTrail",
@@ -1112,8 +1122,8 @@
          "account_existence_strings" : ["<title>PictureTrail</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "PinkBike",
@@ -1122,8 +1132,8 @@
          "account_existence_strings" : ["on Pinkbike</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types": ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types": ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Pinterest",
@@ -1132,8 +1142,8 @@
          "account_existence_strings" : ["on Pinterest</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Plancast",
@@ -1142,8 +1152,8 @@
          "account_existence_strings" : ["<title>Attend Events with"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "plaxo",
@@ -1152,8 +1162,8 @@
          "account_existence_strings" : ["s Public Profile</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Playlists.net",
@@ -1162,8 +1172,8 @@
          "account_existence_strings" : ["<title>Profile for "],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Plurk",
@@ -1172,8 +1182,8 @@
          "account_existence_strings" : ["] on Plurk - Plurk</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "POF",
@@ -1182,8 +1192,8 @@
          "account_existence_strings" : ["div class=\"results\""],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Printfection",
@@ -1192,8 +1202,8 @@
          "account_existence_strings" : ["- Printfection.com</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Rate Your Music",
@@ -1202,8 +1212,8 @@
          "account_existence_strings" : ["Rate Your Music</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Readability",
@@ -1212,8 +1222,8 @@
          "account_existence_strings" : ["on Readability"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "reddit",
@@ -1222,8 +1232,8 @@
          "account_existence_strings" : ["<title>overview for "],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username","Organization"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
          "name" : "Reunion.com",
@@ -1232,8 +1242,8 @@
          "account_existence_strings" : ["@ Reunion.com</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "scratch",
@@ -1242,8 +1252,8 @@
          "account_existence_strings" : ["on Scratch</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Security Street",
@@ -1252,8 +1262,8 @@
          "account_existence_strings" : ["s Profile     | SecurityStreet"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "setlist.fm",
@@ -1262,8 +1272,8 @@
          "account_existence_strings" : ["s setlist.fm | setlist.fm</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "shelfari",
@@ -1272,8 +1282,8 @@
          "account_existence_strings" : ["s Profile</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Shopcade",
@@ -1282,8 +1292,8 @@
          "account_existence_strings" : [") on Shopcade</title"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "singlemuslim",
@@ -1292,8 +1302,8 @@
          "account_existence_strings" : ["About Me..."],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Slashdot",
@@ -1302,8 +1312,8 @@
          "account_existence_strings" : [" - Slashdot User</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "slideshare",
@@ -1312,8 +1322,8 @@
          "account_existence_strings" : ["s presentations</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username","Organization"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
          "name" : "SmiteGuru",
@@ -1322,8 +1332,8 @@
          "account_existence_strings" : ["<title>SmiteGuru - "],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "SmugMug",
@@ -1332,8 +1342,8 @@
          "account_existence_strings" : ["pageon: homepage"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "smule",
@@ -1342,8 +1352,8 @@
          "account_existence_strings" : ["s Profile on Smule</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "snooth",
@@ -1352,8 +1362,8 @@
          "account_existence_strings" : ["Location: http://www.snooth.com/profiles/John/"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username","food"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username","food"]
       },
       {
          "name" : "SoldierX",
@@ -1362,8 +1372,8 @@
          "account_existence_strings" : ["div id=\"node-"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username","hacker"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username","hacker"]
       },
       {
          "name" : "SoundCloud",
@@ -1372,8 +1382,8 @@
          "account_existence_strings" : ["profile - Hear the world"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Soup",
@@ -1382,8 +1392,8 @@
          "account_existence_strings" : ["s soup</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "SourceForge",
@@ -1392,8 +1402,8 @@
          "account_existence_strings" : [" / Profile</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username","Organization"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
          "name" : "Speaker Deck",
@@ -1402,8 +1412,8 @@
          "account_existence_strings" : ["<title>Presentations by"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "sporcle",
@@ -1412,8 +1422,8 @@
          "account_existence_strings" : ["id='UserBox'>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Steam",
@@ -1422,8 +1432,8 @@
          "account_existence_strings" : ["g_rgProfileData ="],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "StumbleUpon",
@@ -1432,8 +1442,8 @@
          "account_existence_strings" : ["s Likes | StumbleUpon.com</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "stupidcancer",
@@ -1442,8 +1452,8 @@
          "account_existence_strings" : ["- Stupid Cancer Community</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Technorati",
@@ -1452,8 +1462,8 @@
          "account_existence_strings" : [" | Technorati</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "TF2 Backpack Examiner",
@@ -1462,8 +1472,8 @@
          "account_existence_strings" : ["<title>TF2 Backpack -"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "theguardian",
@@ -1472,8 +1482,8 @@
          "account_existence_strings" : ["profile | The Guardian"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "tribe",
@@ -1482,8 +1492,8 @@
          "account_existence_strings" : ["Profile - tribe.net</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "tripadvisor",
@@ -1492,8 +1502,8 @@
          "account_existence_strings" : ["<title>Member Profile - "],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Tripit",
@@ -1502,8 +1512,8 @@
          "account_existence_strings" : ["Travel Profile - TripIt</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "tumblr",
@@ -1512,8 +1522,8 @@
          "account_existence_strings" : ["X-Tumblr-User:"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
          "name" : "Twitpic",
@@ -1522,8 +1532,8 @@
          "account_existence_strings" : ["<title>Twitpic /"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
          "name" : "Twitter",
@@ -1532,8 +1542,8 @@
          "account_existence_strings" : ["| Twitter</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
          "name" : "twtrland",
@@ -1542,8 +1552,8 @@
          "account_existence_strings" : ["var query_global ="],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "untappd",
@@ -1552,8 +1562,8 @@
          "account_existence_strings" : ["on Untappd</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username","food"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username","food"]
       },
       {
          "name" : "viddler",
@@ -1562,8 +1572,8 @@
          "account_existence_strings" : ["s profile - Viddler</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "VideoLike",
@@ -1572,8 +1582,8 @@
          "account_existence_strings" : [":: VideoLike</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Vimeo",
@@ -1582,8 +1592,8 @@
          "account_existence_strings" : ["on Vimeo</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
          "name" : "VisualizeUs",
@@ -1592,8 +1602,8 @@
          "account_existence_strings" : ["favorite pictures on VisualizeUs</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Voices.com",
@@ -1602,8 +1612,8 @@
          "account_existence_strings" : ["/assets/images/branding/default_profile_avatar"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Wanelo",
@@ -1612,8 +1622,8 @@
          "account_existence_strings" : ["on Wanelo</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "wattpad",
@@ -1622,8 +1632,8 @@
          "account_existence_strings" : ["- Wattpad </title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "WeeWorld",
@@ -1632,8 +1642,8 @@
          "account_existence_strings" : ["s Home) - WeeMee"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Wefollow",
@@ -1642,8 +1652,8 @@
          "account_existence_strings" : ["on Wefollow</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "wishlistr",
@@ -1652,8 +1662,8 @@
          "account_existence_strings" : ["s profile</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "WordPress",
@@ -1662,8 +1672,8 @@
          "account_existence_strings" : ["alt=\"Profile picture of"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
          "name" : "WordPress Support",
@@ -1672,8 +1682,8 @@
          "account_existence_strings" : ["User Favorites: "],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Xbox Gamertag",
@@ -1682,8 +1692,8 @@
          "account_existence_strings" : [" - Xbox Live Gamertag </title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "XboxLiveScore",
@@ -1692,8 +1702,8 @@
          "account_existence_strings" : ["on the Gamerscore Leaderboard</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Xfire Main",
@@ -1702,8 +1712,8 @@
          "account_existence_strings" : ["<h1 class=\"username\">"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
          "name" : "Xfire Social",
@@ -1712,8 +1722,8 @@
          "account_existence_strings" : ["s Profile</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
         "name" : "YFrog",
@@ -1723,8 +1733,8 @@
         "account_existence_strings" : [],
         "account_missing_strings" : [],
         "known_accounts" : [],
-        "known_missing_accounts" : [],
-        "allowed_types" : ["Person","WebAccount","Username"]
+        "known_missing_accounts" : ["does-not-exist-intrigue"],
+        "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
          "name" : "YouTube",
@@ -1733,8 +1743,8 @@
          "account_existence_strings" : ["- YouTube</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username","Organization"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
       },
       {
          "name" : "Zooppa",
@@ -1743,8 +1753,8 @@
          "account_existence_strings" : ["<title>Zooppa</title>"],
          "account_missing_strings" : [],
          "known_accounts" : [],
-         "known_missing_accounts" : [],
-         "allowed_types" : ["Person","WebAccount","Username"]
+         "known_missing_accounts" : ["does-not-exist-intrigue"],
+         "allowed_types" : ["String","Person","WebAccount","Username"]
       }
    ]
 }

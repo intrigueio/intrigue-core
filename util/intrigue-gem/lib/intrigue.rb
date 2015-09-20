@@ -65,7 +65,7 @@ class IntrigueApi
       ### XXX - wait to collect the response
       complete = false
       until complete
-        sleep 1
+        sleep 3
         begin
           uri = "#{@server_uri}/task_results/#{task_id}/complete"
           complete = true if(RestClient.get(uri) == "true")

@@ -1,4 +1,5 @@
 require_relative '../core.rb'
+require 'intrigue'
 require 'rack/test'
 
 set :environment, :test

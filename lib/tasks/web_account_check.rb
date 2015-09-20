@@ -10,7 +10,7 @@ class WebAccountCheckTask < BaseTask
       :authors => ["jcran"],
       :description => "This task hits major websites, checking for the existence of accounts. Discovered accounts are created.",
       :references => [],
-      :allowed_types => ["Person","Organization","Username","WebAccount"],
+      :allowed_types => ["String","Person","Organization","Username","WebAccount"],
       :example_entities => [{"type" => "Organization", "attributes" => {"name" => "intrigueio"}}],
       :allowed_options => [
         #{:name => "check_tags", :type => "String", :regex => "alpha_numeric_list", :default => "person,organization" }
@@ -33,7 +33,7 @@ class WebAccountCheckTask < BaseTask
 
       # craft the uri with our entity's properties
       account_uri = site["check_uri"].gsub("{account}",account_name)
-      pretty_uri = site["pretty_uri"].gsub("{account}",account_name) if site["pretty_uri"] 
+      pretty_uri = site["pretty_uri"].gsub("{account}",account_name) if site["pretty_uri"]
 
       # Skip if the site tags don't match our type
       unless site["allowed_types"].include? @entity.type

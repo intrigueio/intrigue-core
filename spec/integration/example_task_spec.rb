@@ -1,5 +1,4 @@
 require_relative '../spec_helper'
-require 'intrigue'
 
 describe "Intrigue v1.0 Tasks" do
   describe "ExampleTask" do
