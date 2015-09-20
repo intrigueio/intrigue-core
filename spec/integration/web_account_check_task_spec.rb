@@ -5,7 +5,7 @@ describe "Intrigue v1.0 Tasks" do
     ###
     ### dns_lookup_reverse
     ###
-    it "runs with a non-existent account and returns no results" do
+    it "checks each site in data/web_accounts_list.json for false positives" do
 
       entity = {
         "type" => "String",
@@ -20,7 +20,7 @@ describe "Intrigue v1.0 Tasks" do
       expect(result["entity_ids"].count).to be 0
     end
 
-    it "runs with account that exists and returns every result" do
+    it "checks each site in data/web_accounts_list.json for false negatives" do
 
       @api = IntrigueApi.new
 
