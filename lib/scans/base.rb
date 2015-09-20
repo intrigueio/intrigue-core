@@ -16,7 +16,7 @@ module Scanner
       @scan_log = @scan_result.log
 
       # list of entities we'll want filtered based on name
-      
+
       @filter_list = @scan_result.filter_strings.split(",")
 
       # Kick off the scan
@@ -36,8 +36,8 @@ module Scanner
 
       # Make sure we can check for these later
       already_completed = false
-      task_result=nil
-      previous_task_result_id=nil
+      task_result = nil
+      previous_task_result_id = nil
 
       # Check existing task results and see if we aleady have this answer
       @scan_result.task_results.each do |t|
@@ -56,8 +56,6 @@ module Scanner
         # Start the task run
         @scan_log.log "Kicking off task!"
 
-        ### HEERE?
-
         start_task_run(task_id, task_name, entity, options)
 
         # Wait for the task to complete
@@ -70,9 +68,9 @@ module Scanner
 
         # Parse out entities and add'm
         @scan_log.log "Parsing entities..."
-        task_result.entities.each do |entity|
-            unless @scan_result.has_entity? entity
-              @scan_result.add_entity(entity)
+        task_result.entities.each do |new_entity|
+            unless @scan_result.has_entity? new_entity
+              @scan_result.add_entity(new_entity)
             end
         end
 

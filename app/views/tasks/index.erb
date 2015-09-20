@@ -62,7 +62,7 @@
 <h4>Completed Tasks</h4>
 <% @task_results.each do |x| %>
 <ul>
-<%= "<li><a href=\'/v1/task_results/#{x.id}\'> #{x.task_name} on #{ h x.entity.attributes["name"]} (#{x.entities.count})</a></li>" %>
+<%= "<li><a href=\'/v1/task_results/#{x.id}\'> #{x.task_name} on #{ h x.entity.attributes["name"] if x.entity} (#{x.entities.count if x.entity})</a></li>" %>
 </ul>
 <% end %>
 

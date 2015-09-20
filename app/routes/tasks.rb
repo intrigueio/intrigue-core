@@ -75,7 +75,7 @@ class IntrigueApp < Sinatra::Base
       end
 
       # Construct an entity from the data we have
-      entity = Intrigue::Model:: Entity.new @params["entity_type"], attribs
+      entity = Intrigue::Model::Entity.new @params["entity_type"], attribs
       entity.save
 
       # Start the task run!
@@ -102,7 +102,7 @@ class IntrigueApp < Sinatra::Base
       return nil unless payload
 
       # Construct an entity from the entity_hash provided
-      entity = Intrigue::Model:: Entity.new payload["entity"]["type"], payload["entity"]["attributes"]
+      entity = Intrigue::Model::Entity.new payload["entity"]["type"], payload["entity"]["attributes"]
       entity.save
 
       # Generate a task id

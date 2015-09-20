@@ -68,6 +68,11 @@ class EntityFactory
 
           return entity_object
         else
+
+          puts "ERROR"
+          puts "ERROR: unable to create entity with type #{type} and attributes #{attributes}"
+          puts "ERROR"
+
           return false # fail, couldn't set attributes
         end
       # else, move on to next

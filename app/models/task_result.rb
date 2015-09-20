@@ -33,6 +33,15 @@ module Intrigue
         @entities
       end
 
+      def entity_id
+        if @entity
+          @entity.id
+        else
+          nil
+        end
+      end
+
+
       def self.find(id)
         lookup_key = "#{key}:#{id}"
         result = $intrigue_redis.get(lookup_key)
@@ -96,11 +105,11 @@ module Intrigue
           "task_name" => @task_name,
           "timestamp_start" => @timestamp_start,
           "timestamp_end" => @timestamp_end,
-          "entity_id" => @entity.id,
+          "entity_id" => entity_id,
           "options" => @options,
           "complete" => @complete,
           "entity_count" => @entity_count,
-          "entity_ids" => @entities.map{ |x| x.id }
+          "entity_ids" => @entities.map{ |x| x.id if x}
         }
       end
 
