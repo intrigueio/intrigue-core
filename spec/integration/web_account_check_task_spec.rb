@@ -7,7 +7,7 @@ describe "Intrigue v1.0 Tasks" do
     ### dns_lookup_reverse
     ###
 
-    it "runs a default web_account_check and returns the correct result" do
+    it "runs with a non-existent account and returns no results" do
 
       entity = {
         "type" => "String",
@@ -16,15 +16,32 @@ describe "Intrigue v1.0 Tasks" do
         }
       }
 
-      # Returns a ruby hash of the task_run
       @api = IntrigueApi.new
       result = @api.start("web_account_check", entity)
+
       expect(result["entity_ids"].count).to be 0
-
-
-      # Check the result
-
     end
+
+    it "runs with account that exists and returns every result" do
+
+      entity = {
+        "type" => "String",
+        "attributes" => {
+          "name" => "test"
+        }
+      }
+
+      account_list_data = File.open("data/web_accounts_list.json").read
+      account_list = JSON.parse(account_list_data)
+
+      @api = IntrigueApi.new
+      result = @api.start("web_account_check", entity)
+
+      pp result.inspect
+
+      #expect(result["entity_ids"].count).to eq(account_list.count)
+    end
+
 
   end
 end
