@@ -45,9 +45,9 @@ class Log
       }.to_json
     rescue JSON::GeneratorError => e
       @stream.puts "SELF: Error writing JSON -> #{e}"
-      @stream.puts "id: #{id}"
-      @stream.puts "name: #{name}"
-      @stream.puts "stream: #{stream}"
+      @stream.puts "id: #{@id}"
+      @stream.puts "name: #{@name}"
+      @stream.puts "stream: #{@stream}"
     end
   end
 
