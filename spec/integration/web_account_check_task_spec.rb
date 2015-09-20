@@ -2,11 +2,9 @@ require_relative '../spec_helper'
 
 describe "Intrigue v1.0 Tasks" do
   describe "WebAccountCheckTask" do
-
     ###
     ### dns_lookup_reverse
     ###
-
     it "runs with a non-existent account and returns no results" do
 
       entity = {
@@ -24,24 +22,22 @@ describe "Intrigue v1.0 Tasks" do
 
     it "runs with account that exists and returns every result" do
 
-      entity = {
-        "type" => "String",
-        "attributes" => {
-          "name" => "test"
-        }
-      }
+      @api = IntrigueApi.new
 
       account_list_data = File.open("data/web_accounts_list.json").read
       account_list = JSON.parse(account_list_data)
 
-      @api = IntrigueApi.new
-      result = @api.start("web_account_check", entity)
-
-      pp result.inspect
-
-      #expect(result["entity_ids"].count).to eq(account_list.count)
+      account_list["sites"].each do |site|
+        puts "Testing: #{site["name"]}"
+        entity = {
+          "type" => "String",
+          "attributes" => {
+            "name" => "#{site["known_accounts"].first}"
+          }
+        }
+        result = @api.start("web_account_check", entity, [{"name" => "specific_sites", "value" => "#{site["name"]}"}])
+        expect(result["entity_ids"].count).to eq 1
+      end
     end
-
-
   end
 end
