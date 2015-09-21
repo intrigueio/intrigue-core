@@ -64,6 +64,23 @@ module Intrigue
         end
       end
 
+      # Skip huge netblocks, ipv6
+      if entity.type == "NetBlock"
+
+        # handle netblock
+        cidr = entity.attributes["name"].split("/").last.to_i
+        unless cidr >= 16
+          @scan_log.error "SKIP Netblock too large: #{entity.type}##{entity.attributes["name"]}"
+          return true
+        end
+
+        # skip ipv6 for now (#30)
+        if entity.attributes["name"] =~ /::/
+          @scan_log.error "SKIP IPv6 is currently unhandled"
+          return true
+        end
+      end
+
       # Standard exclusions
       if (
         entity.attributes["name"] =~ /google.com/         ||
