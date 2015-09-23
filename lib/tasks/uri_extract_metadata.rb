@@ -1,39 +1,44 @@
 require 'socket'
 require 'openssl'
-module Intrigue
-class UriGatherMetadataTask  < BaseTask
 
+module Intrigue
+class UriExtractMetadata < BaseTask
+
+  include Intrigue::Task::Parse
   include Intrigue::Task::Web
 
   def metadata
     {
-      :name => "uri_gather_metadata",
-      :pretty_name => "URI Gather Metadata",
+      :name => "uri_extract_metadata",
+      :pretty_name => "URI Extract Metadata",
       :authors => ["jcran"],
-      :description => "Grab metadata from a URI",
+      :description => "This task downloads the contents of a URI and extracts entities from the text and metadata.",
       :references => [],
       :allowed_types => ["Uri"],
-      :example_entities => [{"type" => "Uri", "attributes" => {"name" => "http://www.intrigue.io"}}],
-      :allowed_options => [], # TODO
-      :created_types => ["DnsRecord","SslCertificate"]
+      :example_entities => [
+        {"type" => "Uri", "attributes" => { "name" => "http://www.intrigue.io" }}
+      ],
+      :allowed_options => [],
+      :created_types =>  ["DnsRecord", "EmailAddress", "File", "Info", "Person", "PhoneNumber", "SoftwarePackage", "SslCertificat"]
     }
   end
 
+  ## Default method, subclasses must override this
   def run
     super
-
     uri = _get_entity_attribute "name"
-    hostname = URI.parse(uri).host
-    port = 443
 
-    ###
-    ### TODO - gather all metadata - https://metainspectordemo.herokuapp.com/scrape?url=http%3A%2F%2Fintrigue.io
-    ###
+    hostname = URI.parse(uri).host
+    port = URI.parse(uri).port
 
     _gather_ssl_cert(hostname,port)
+
     _gather_headers
 
+    download_and_extract_metadata uri
+
   end
+
 
   def _gather_headers
     uri = _get_entity_attribute "name"
@@ -104,6 +109,7 @@ class UriGatherMetadataTask  < BaseTask
         @task_log.error "Caught an error: #{e}"
       end
     end
+
 
 end
 end

@@ -96,12 +96,6 @@ module Intrigue
           return true
         end
 
-        # skip ipv6 for now (#30)
-        if entity.attributes["name"] =~ /::/
-          @scan_log.error "SKIP IPv6 is currently unhandled"
-          return true
-        end
-
       elsif entity.type == "IpAddress"
 
         # 23.x.x.x
