@@ -27,8 +27,8 @@ gem 'shodan'            # search_shodan
 gem 'nmap-parser'       # nmap_scan
 gem 'screencap'         # phantom_js
 gem 'twitter'           # twitter_account_following, etc
-
-gem 'arachnid', :git => 'https://github.com/intrigueio/arachnid.git'
+#]
+gem 'arachnid', :git => 'https://github.com/intrigueio/arachnid.git' #:path => "/Users/jcran/work/intrigue/projects/arachnid" 
 gem 'yomu'              # spider
 
 
