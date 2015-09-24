@@ -23,7 +23,8 @@ class UriSpider < BaseTask
         {:name => "max_pages", :type => "Integer", :regex => "integer", :default => 1000 },
         {:name => "extract_uris", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "extract_dns_records", :type => "Boolean", :regex => "boolean", :default => false },
-        {:name => "parse_metadata", :type => "Boolean", :regex => "boolean", :default => true }
+        {:name => "extract_patterns", :type => "String", :regex => "alpha_numeric_list", :default => "*" },
+        {:name => "extract_file_metadata", :type => "Boolean", :regex => "boolean", :default => true }
         #{:name => "user_agent",  :type => "String",  :regex => "alpha_numeric", :default => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36"}
       ],
       :created_types =>  ["DnsRecord", "EmailAddress", "File", "Info", "Person", "PhoneNumber", "SoftwarePackage"]
@@ -42,14 +43,15 @@ class UriSpider < BaseTask
     #@opt_user_agent = _get_option "user_agent"
     @opt_extract_uris = _get_option "extract_uris" # create an object for each page
     @opt_extract_dns_records = _get_option "extract_dns_records" # create an object for each dns_record
-    @opt_parse_metadata = _get_option "parse_metadata" # create a Uri object for each page
+    @opt_extract_file_metadata = _get_option "extract_file_metadata" # create a Uri object for each page
+    @opt_extract_patterns = _get_option("extract_patterns").split(",") # only extract entities withthe following patterns
 
-    crawl_and_parse(uri)
+    crawl_and_extract(uri)
 
   end # end .run
 
 
-  def crawl_and_parse(uri)
+  def crawl_and_extract(uri)
     @task_log.log "Crawling: #{uri}"
     dns_records = []
 
@@ -82,14 +84,32 @@ class UriSpider < BaseTask
 
       # Create an entity for this host
       if @opt_extract_dns_records
+
         @task_log.log "Extracting dns records from #{response.effective_url}"
         URI.extract(page_body, ["https","http"]) do |link|
           begin
             # Collect the host
             host = URI(link).host
+
+            # if we have a valid host
             if host
-              _create_entity("DnsRecord", "name" => host, "uri" => page_uri) unless dns_records.include?(host)
-              dns_records << host
+
+              # check to see if host matches a pattern we'll allow
+              pattern_allowed = false
+              if @opt_extract_patterns.include? "*"
+                pattern_allowed = true
+              else
+                pattern_allowed = @opt_extract_patterns.select{|x| host =~ /#{x}/ }.count > 0
+              end
+
+              # if we got a pass, check to make sure we don't already have it, and add it
+              if pattern_allowed
+                unless dns_records.include?(host)
+                  _create_entity("DnsRecord", "name" => host, "uri" => page_uri)
+                  dns_records << host
+                end
+              end
+
             end
           rescue URI::InvalidURIError => e
             @task_log.error "Error, unable to parse #{link} from page #{page_uri}"
@@ -97,7 +117,7 @@ class UriSpider < BaseTask
         end
       end
 
-      if @opt_parse_metadata
+      if @opt_extract_file_metadata
 
         # Get the filetype for this page
         filetype = "#{page_uri.split(".").last.gsub("/","")}".upcase
@@ -121,7 +141,7 @@ class UriSpider < BaseTask
         parse_entities_from_content(page_uri, page_body)
       end
     end # end .crawl
-  end # crawl_and_parse
+  end # crawl_and_extract
 
 end
 end

@@ -12,7 +12,7 @@ class UriExtractMetadata < BaseTask
       :name => "uri_extract_metadata",
       :pretty_name => "URI Extract Metadata",
       :authors => ["jcran"],
-      :description => "This task downloads the contents of a URI and extracts entities from the text and metadata.",
+      :description => "This task downloads the contents of a single URI and extracts entities from the text and metadata.",
       :references => [],
       :allowed_types => ["Uri"],
       :example_entities => [
