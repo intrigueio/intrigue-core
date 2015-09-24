@@ -176,7 +176,7 @@ class BaseTask
             # XXX - we need to regex the option in order to accept it
             if allowed_option[:regex] == "integer"
               #@task_log.log "Regex should match an integer"
-              regex = /^\d+$/
+              regex = /^-?\d+$/
             elsif allowed_option[:regex] == "boolean"
               #@task_log.log "Regex should match a boolean"
               regex = /(true|false)/
