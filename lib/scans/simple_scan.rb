@@ -61,7 +61,9 @@ module Intrigue
         _start_task_and_recurse "uri_dirbuster",entity,depth
       elsif entity.type == "String"
         # Search!
-        _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 30}]
+        _start_task_and_recurse "search_bing",entity,depth,[
+          {"name"=> "max_results", "value" => 30},
+          {"name" => "extract_dns_records", "value" => "true" } ]
         # Brute TLD
         #_start_task_and_recurse "dns_brute_tld",entity,depth
       elsif entity.type = entity.type == "Person" || entity.type == "EmailAddress"
@@ -88,9 +90,7 @@ module Intrigue
         end
       end
 
-
       if entity.type == "NetBlock"
-
         cidr = entity.attributes["name"].split("/").last.to_i
         unless cidr >= 22
           @scan_log.error "SKIP Netblock too large: #{entity.type}##{entity.attributes["name"]}"
@@ -98,7 +98,6 @@ module Intrigue
         end
 
       elsif entity.type == "IpAddress"
-
         # 23.x.x.x
         if entity.attributes["name"] =~ /^23./
           @scan_log.error "Skipping Akamai address"
@@ -106,7 +105,6 @@ module Intrigue
         end
 
       else
-
         if (
           entity.attributes["name"] =~ /google.com/         ||
           entity.attributes["name"] =~ /goo.gl/             ||
