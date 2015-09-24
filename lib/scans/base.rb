@@ -66,7 +66,7 @@ module Scanner
         # Wait for the task to complete
         task_result = Intrigue::Model::TaskResult.find task_id
         until task_result.complete
-          puts "Sleeping, waiting for #{task_result}"
+          #@scan_log.log "Sleeping, waiting for #{task_result}"
           sleep 3
           task_result = Intrigue::Model::TaskResult.find task_id
         end
