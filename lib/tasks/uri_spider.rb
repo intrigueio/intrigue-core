@@ -82,7 +82,7 @@ class UriSpider < BaseTask
 
       # Create an entity for this host
       if @opt_extract_dns_records
-        @task_log.log "Extracting dns records from #{response.effective_uri}"
+        @task_log.log "Extracting dns records from #{response.effective_url}"
         URI.extract(page_body, ["https","http"]) do |link|
           begin
             # Collect the host

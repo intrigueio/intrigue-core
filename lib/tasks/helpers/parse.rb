@@ -151,6 +151,8 @@ module Parse
 
   def download_and_extract_metadata(uri)
 
+    uri = uri.gsub(" ","%20")
+
     begin
       # Download file and store locally before parsing. This helps prevent mime-type confusion
       #
@@ -195,8 +197,9 @@ module Parse
       @task_log.log "ERROR parsing JSON: #{e}"
     rescue Errno::EPIPE => e
       @task_log.log "ERROR Unable to contact Tika server"
-    # don't die if we can't find the file
-    rescue OpenURI::HTTPError => e
+    rescue OpenURI::HTTPError => e     # don't die if we can't find the file
+      @task_log.log "ERROR Unable to download file: #{e}"
+    rescue URI::InvalidURIError => e     # handle invalid uris
       @task_log.log "ERROR Unable to download file: #{e}"
     end
 

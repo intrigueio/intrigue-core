@@ -40,9 +40,13 @@ module Scanner
       previous_task_result_id = nil
 
       # Check existing task results and see if we aleady have this answer
+      @scan_log.log "Checking previous results..."
       @scan_result.task_results.each do |t|
-        if (t.task_name == task_name && t.entity.type == entity.type && t.entity.attributes["name"] == entity.attributes["name"])
+        if (t.task_name == task_name &&
+            t.entity.type == entity.type &&
+            t.entity.attributes["name"] == entity.attributes["name"])
           # We have a match
+          @scan_log.log "Already have results from a task with name #{task_name} and entity #{entity.type}:#{entity.attributes["name"]}"
           already_completed = true
           previous_task_result_id = t.id
         end
@@ -53,18 +57,21 @@ module Scanner
         # Create an ID
         task_id = SecureRandom.uuid
 
-        # Start the task run
-        @scan_log.log "Kicking off task!"
+        @scan_log.log "No previous results, kicking off a task with id #{task_id}!"
 
         start_task_run(task_id, task_name, entity, options)
+
+        @scan_log.log "Task started, waiting for results"
 
         # Wait for the task to complete
         task_result = Intrigue::Model::TaskResult.find task_id
         until task_result.complete
-          #puts "Sleeping waiting for #{task_result}"
-          sleep 1
+          puts "Sleeping, waiting for #{task_result}"
+          sleep 3
           task_result = Intrigue::Model::TaskResult.find task_id
         end
+
+        @scan_log.log "Task complete!"
 
         # Parse out entities and add'm
         @scan_log.log "Parsing entities..."
@@ -79,7 +86,7 @@ module Scanner
         @scan_result.add_task_result(task_result) unless already_completed
 
       else
-        @scan_log.log "Found a duplicate task_result for #{task_name} on #{entity.type}##{entity.attributes["name"]}. Cloning results!"
+        @scan_log.log "We already have results. Grabbing existing task: #{task_name} on #{entity.type}##{entity.attributes["name"]}."
         # task result has already been cloned above, move on
         task_result = Intrigue::Model::TaskResult.find previous_task_result_id
       end

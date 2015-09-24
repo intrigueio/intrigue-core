@@ -14,7 +14,12 @@ class BaseTask
     # Get the Task Result #
     #######################
     @task_result = Intrigue::Model::TaskResult.find task_id
+    raise "Unable to find task result by id #{task_id}. Bailing." unless @task_result
+
     @entity = Intrigue::Model::Entity.find entity_id
+    raise "Unable to find entity by id #{entity_id}. Bailing." unless @entity
+
+    return false unless @task_result
 
     ###################
     # Create a Logger #
@@ -38,13 +43,7 @@ class BaseTask
     # Sanity Checking #
     ###################
 
-    # XXX - should we sanity check hook_uri here? probably.
     allowed_types = self.metadata[:allowed_types]
-
-    unless @entity
-      @task_log.error "ERROR! No entity!!!"
-      broken_input = true
-    end
 
     # Check to make sure this task can receive an entity of this type
     unless allowed_types.include?(@entity.type) || allowed_types.include?("*")
@@ -81,7 +80,8 @@ class BaseTask
             # run the task, which will update @task_log and @task_result
             run
 
-            @task_log.good "Ship it!"
+            @task_log.good "Run complete. Ship it!"
+
           end
         rescue Timeout::Error
           @task_log.error "ERROR! Timed out"
@@ -95,6 +95,7 @@ class BaseTask
     # Mark it complete and save it
     #
     # http://stackoverflow.com/questions/178704/are-unix-timestamps-the-best-way-to-store-timestamps
+    @task_log.good "Marking task complete!"
     @task_result.timestamp_end = Time.now.getutc
     @task_result.complete = true
     @task_result.save # Always save to redis
