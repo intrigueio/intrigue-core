@@ -56,14 +56,12 @@ module Intrigue
         ### Gather links
         #_start_task_and_recurse "uri_gather_and_analyze_links",entity,depth
         ### spider
-        _start_task_and_recurse "uri_spider",entity,depth,[{"name" => "max_pages", "value" => 1000}]
+        _start_task_and_recurse "uri_spider",entity,depth,[{"name" => "max_pages", "value" => 100},{"name" => "extract_dns_records", "value" => "true" }]
         ### Dirbuster
         _start_task_and_recurse "uri_dirbuster",entity,depth
       elsif entity.type == "String"
         # Search!
-        _start_task_and_recurse "search_bing",entity,depth,[
-          {"name"=> "max_results", "value" => 30},
-          {"name" => "extract_dns_records", "value" => "true" } ]
+        _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 30}]
         # Brute TLD
         #_start_task_and_recurse "dns_brute_tld",entity,depth
       elsif entity.type = entity.type == "Person" || entity.type == "EmailAddress"
