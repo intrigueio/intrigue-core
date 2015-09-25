@@ -12,10 +12,7 @@ module Handler
 
       begin
         csv_file = "#{$intrigue_basedir}/results/results.csv"
-        # Create the file if it doesn't exist
-        File.create csv_file unless File.exist? csv_file
-        # Append to it
-        File.open(csv_file, "a+") do |file|
+        File.open(csv_file, "a") do |file|
           file.flock(File::LOCK_EX)
           # Create outstring
           outstring = result.export_csv
