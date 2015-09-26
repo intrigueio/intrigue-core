@@ -5,18 +5,17 @@ class IntrigueApp < Sinatra::Base
   get '/scan/?' do
 
     # Get details on the scan results so we can display them
-    keys = $intrigue_redis.keys("scan_result:*").sort_by{|x| x["timestamp_start"]}
+    keys = $intrigue_redis.keys("scan_result:*")
 
     unsorted_results = []
     keys.each do |key|
       begin
         unsorted_results << Intrigue::Model::ScanResult.find(key.split(":").last)
       rescue JSON::ParserError => e
-        #puts "Parse Error: #{e}"
       end
     end
 
-    @scan_results = unsorted_results.sort_by{|x| x.timestamp_end}.reverse
+    @scan_results = unsorted_results.sort_by{|x| x.timestamp_end }.reverse
 
     erb :'scans/index'
   end

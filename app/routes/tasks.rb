@@ -11,7 +11,6 @@ class IntrigueApp < Sinatra::Base
       @task_names = @tasks.map{|t| t.metadata[:pretty_name]}.sort
 
       keys = $intrigue_redis.keys("task_result:*")
-
       unsorted_results = []
       keys.each do |key|
         begin
@@ -30,8 +29,7 @@ class IntrigueApp < Sinatra::Base
     get '/task_results.json/?' do
 
       # get all results
-      namespace = "task_result"
-      keys = $intrigue_redis.keys("#{namespace}*")
+      keys = $intrigue_redis.keys("task_result:*")
 
       results = []
       keys.each do |key|
