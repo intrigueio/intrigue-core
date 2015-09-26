@@ -19,7 +19,7 @@ module Intrigue
         @name = name
         @lookup_key = "#{key}:#{@id}"
         @timestamp_start = DateTime.now
-        @timestamp_end = DateTime.now
+        @timestamp_end = nil
         @entity = nil
         @entity_count = 0
         @task_name = nil

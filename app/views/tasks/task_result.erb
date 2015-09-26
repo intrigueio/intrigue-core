@@ -1,7 +1,7 @@
 <h3>Task Result: <a href="<%=@rerun_uri || nil%>"><%=@task_result.task_name %></a> </h3>
 <p>ID: <%=@task_result.id %> </p>
 <p>Start: <%=@task_result.timestamp_start %> </p>
-<p>End: <%=@task_result.timestamp_end%> </p>
+<p>End: <%= @task_result.timestamp_end %> </p>
 <p>Elapsed (s): <%= @elapsed_time %> </p>
 <p>Entity: <a href=/v1/entities/<%=@task_result.entity.id if @task_result.entity %>><%= h "#{@task_result.entity.type if @task_result.entity} #{@task_result.entity.attributes['name'] if @task_result.entity}"%></a></p>
 <p>Log: <a href=<%="#{request.path}/log"%>>LOG</a></p>

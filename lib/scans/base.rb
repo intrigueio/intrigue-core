@@ -58,19 +58,16 @@ module Scanner
         task_id = SecureRandom.uuid
 
         @scan_log.log "No previous results, kicking off a task with id #{task_id}!"
-
         start_task_run(task_id, task_name, entity, options)
 
-        @scan_log.log "Task started, waiting for results"
-
         # Wait for the task to complete
+        @scan_log.log "Task started, waiting for results"
         task_result = Intrigue::Model::TaskResult.find task_id
-        until task_result.complete
+        until task_result.complete # this will eventually time out and mark complete if the task fails. (900s)
           @scan_log.log "Sleeping, waiting for completion of task: #{task_id}"
           sleep 3
           task_result = Intrigue::Model::TaskResult.find task_id
         end
-
         @scan_log.log "Task complete!"
 
         # Parse out entities and add'm
@@ -81,12 +78,12 @@ module Scanner
             end
         end
 
-        # add the task_result
+        # add the task_result to the scan record
         @scan_log.log "Adding new task result..."
         @scan_result.add_task_result(task_result) unless already_completed
 
       else
-        @scan_log.log "We already have results. Grabbing existing task: #{task_name} on #{entity.type}##{entity.attributes["name"]}."
+        @scan_log.log "We already have results. Grabbing existing task results: #{task_name} on #{entity.type}##{entity.attributes["name"]}."
         # task result has already been cloned above, move on
         task_result = Intrigue::Model::TaskResult.find previous_task_result_id
       end
@@ -95,7 +92,7 @@ module Scanner
       task_result.entities.each do |entity|
         @scan_log.log "Iterating on #{entity.type}##{entity.attributes["name"]}"
 
-        # create a new node
+        # This is currently unused, but where we can easily create a graph of results 
         #this = Neography::Node.create(
         #  type: y["type"],
         #  name: y["attributes"]["name"],

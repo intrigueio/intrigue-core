@@ -54,7 +54,7 @@ module Intrigue
         ### Get SSLCert
         _start_task_and_recurse "uri_gather_ssl_certificate",entity,depth if entity.attributes["name"] =~ /^https/
         ### Gather links
-        #_start_task_and_recurse "uri_gather_and_analyze_links",entity,depth
+        _start_task_and_recurse "uri_gather_technology",entity,depth
         ### spider
         _start_task_and_recurse "uri_spider",entity,depth,[{"name" => "max_pages", "value" => 100}]
         ### Dirbuster
@@ -66,8 +66,9 @@ module Intrigue
         #_start_task_and_recurse "dns_brute_tld",entity,depth
       elsif entity.type = entity.type == "Person" || entity.type == "EmailAddress"
         # Search Pipl
+        @scan_log.log "SKIP Unhandled entity type: #{entity.type}##{entity.attributes["name"]}"
         #_start_task_and_recurse "search_pipl",entity,depth
-        _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 1}]
+        #_start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 1}]
       elsif entity.type == "Organization"
         # Check EDGAR
         _start_task_and_recurse "search_edgar",entity,depth

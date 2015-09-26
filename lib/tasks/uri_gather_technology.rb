@@ -27,6 +27,11 @@ class UriGatherTechnologyTask  < BaseTask
     # Gather the page body
     contents = http_get_body(uri)
 
+    unless contents
+      @task_log.log "Error! Unable to retrieve task"
+      return
+    end
+
     target_strings = [
 
       ###
