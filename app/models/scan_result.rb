@@ -110,7 +110,8 @@ module Intrigue
           "entity_count" => @entity_count,
           "task_result_ids" => @task_results.map{|y| y.id },
           "entity_ids" => @entities.map {|y| y.id },
-          "options" => @options
+          "options" => @options,
+          "log" => @log.to_text
         }
       end
 

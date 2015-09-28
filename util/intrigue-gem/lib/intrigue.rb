@@ -48,6 +48,11 @@ class IntrigueApi
       task_id = RestClient.post "#{@server_uri}/task_results",
         payload.to_json, :content_type => "application/json"
 
+      if task_id == "" # technically a nil is returned , but becomes an empty string
+        #puts "[-] Task not started. Unknown Error. Exiting"
+        return nil
+      end
+
     task_id
     end
 
@@ -58,8 +63,8 @@ class IntrigueApi
       task_id = start_and_background(task_name,entity_hash,options_list)
 
       if task_id == "" # technically a nil is returned , but becomes an empty string
-        puts "[-] Task not started. Unknown Error. Exiting"
-        return
+        #puts "[-] Task not started. Unknown Error. Exiting"
+        return nil
       end
 
       ### XXX - wait to collect the response
@@ -79,6 +84,8 @@ class IntrigueApi
       begin
       response = JSON.parse(RestClient.get "#{@server_uri}/task_results/#{task_id}.json")
       rescue JSON::ParserError => e
+        #puts "Error parsing JSON: #{e}"
+        #puts  "response: #{response}"
         response = nil
       end
 

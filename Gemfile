@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'sinatra' # API
 gem 'sinatra-contrib'
+
 gem 'puma' # Application Server
 gem 'sidekiq' # Background Tasks
 gem 'foreman' # Process management
@@ -10,6 +11,7 @@ gem 'iconv' # Encoding
 gem 'rest-client' # Web hooks
 gem 'rspec' # Testing
 gem 'rack-test' # Testing
+gem 'rack-protection' # https://github.com/sinatra/rack-protection
 gem 'pry' # Debugging
 
 gem 'intrigue', :path => './util/intrigue-gem'        # Client for calling the API
@@ -27,10 +29,11 @@ gem 'shodan'            # search_shodan
 gem 'nmap-parser'       # nmap_scan
 gem 'screencap'         # phantom_js
 gem 'twitter'           # twitter_account_following, etc
-#]
-gem 'arachnid', :git => 'https://github.com/intrigueio/arachnid.git' #:path => "/Users/jcran/work/intrigue/projects/arachnid" 
+gem 'arachnid', :git => 'https://github.com/intrigueio/arachnid.git' #:path => "/Users/jcran/work/intrigue/projects/arachnid"
 gem 'yomu'              # spider
-
 
 # CLI
 gem 'thor'
+
+# Handlers
+gem 'couchrest'

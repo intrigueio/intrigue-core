@@ -109,7 +109,8 @@ module Intrigue
           "options" => @options,
           "complete" => @complete,
           "entity_count" => @entity_count,
-          "entity_ids" => @entities.map{ |x| x.id if x}
+          "entity_ids" => @entities.map{ |x| x.id if x},
+          "log" => @log.to_text
         }
       end
 
@@ -136,7 +137,8 @@ module Intrigue
           "options" => @options,
           "complete" => @complete,
           "entity_count" => @entity_count,
-          "entity_ids" => @entities.map{ |x| x.to_s }
+          "entity_ids" => @entities.map{ |x| x.to_s },
+          "log" => @log.to_text
         }
       end
 

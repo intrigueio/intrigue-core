@@ -109,9 +109,14 @@ class BaseTask
     #
     handlers.each do |handler_type|
       @task_log.log "Processing #{handler_type} handler!"
-      options = {:hook_uri => hook_uri} if handler_type == "webhook"
-      handler = HandlerFactory.create_by_type(handler_type)
-      handler.process(@task_result, options)
+      begin
+        options = {:hook_uri => hook_uri} if handler_type == "webhook"
+        handler = HandlerFactory.create_by_type(handler_type)
+        response = handler.process(@task_result, options)
+      rescue Exception => e
+        @task_log.error "Unable to process handler #{handler_type}: #{e}\N"
+        #@task_log.error "Got response: #{response}"
+      end
     end
 
     # Run Cleanup

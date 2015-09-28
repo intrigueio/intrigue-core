@@ -73,6 +73,10 @@ GEM
       timers (>= 4.1.1)
     coderay (1.1.0)
     connection_pool (2.2.0)
+    couchrest (1.2.1)
+      mime-types (>= 1.15)
+      multi_json (~> 1.7, ~> 1.0)
+      rest-client (~> 1.8.0)
     diff-lcs (1.2.5)
     dnsruby (1.58.0)
     domain_name (0.5.24)
@@ -208,6 +212,7 @@ PLATFORMS
 
 DEPENDENCIES
   arachnid!
+  couchrest
   dnsruby
   foreman
   geoip
@@ -219,6 +224,7 @@ DEPENDENCIES
   nokogiri
   pry
   puma
+  rack-protection
   rack-test
   redis
   rest-client
@@ -232,3 +238,6 @@ DEPENDENCIES
   twitter
   whois
   yomu
+
+BUNDLED WITH
+   1.10.6

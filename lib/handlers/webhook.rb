@@ -3,7 +3,7 @@ module Handler
   class Webhook < Intrigue::Handler::Base
 
     def self.type
-      "webhook" # XXX can we get this from self.class?
+      "webhook"
     end
 
     def process(task_result, options)

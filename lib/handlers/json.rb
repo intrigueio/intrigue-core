@@ -3,7 +3,7 @@ module Handler
   class Json < Intrigue::Handler::Base
 
     def self.type
-      "json" # XXX can we get this from self.class?
+      "json" 
     end
 
     def process(task_result, options)

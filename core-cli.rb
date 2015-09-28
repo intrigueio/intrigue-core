@@ -14,7 +14,7 @@ class CoreCli < Thor
     @server_uri = "http://127.0.0.1:7777/v1"
     @sidekiq_uri = "http://127.0.0.1:7777/sidekiq"
     @delim = "#"
-
+    @debug = true
     # Connect to Intrigue API
     @x = IntrigueApi.new
   end
@@ -69,26 +69,6 @@ class CoreCli < Thor
     end
   end
 
-
-  desc "scan [Type#Entity] [Depth]", "Start a recursive scan. Returns the result"
-  def scan(entity,depth=3,options=nil)
-    entity_hash = _parse_entity entity
-
-    # create an array of results so we can shortcut
-    # anything we already know (and not repeat work) during a scan
-    $results = {}
-
-    _recurse entity_hash, depth.to_i
-
-    # Print results
-    puts "Results:"
-    $results.each do |key,value|
-      puts "#{key}:"
-      puts "#{value["entities"].map{|x| "  #{x["type"]} #{x["attributes"]["name"]}"}.join("\n")}"
-    end
-  end
-
-
   desc "background [Task] [Type#Entity] [Option1=Value1#...#...]", "Start and background a single task. Returns the ID"
   def background(task_name,entity,options=nil)
 
@@ -96,9 +76,9 @@ class CoreCli < Thor
     options_list = _parse_options options
 
     ### Construct the request
-    task_id = _background(task_name,entity_hash,options_list)
+    task_id = @x.start_and_background(task_name,entity_hash,options_list)
 
-    if task_id == "" # technically a nil is returned , but becomes an empty string
+    unless task_id # technically a nil is returned , but becomes an empty string
       puts "[-] Task not started. Unknown Error. Exiting"
       return
     end
@@ -114,53 +94,44 @@ class CoreCli < Thor
   desc "single [Task] [Type#Entity] [Option1=Value1#...#...]", "Start a single task. Returns the result"
   def single(task_name,entity_string,option_string=nil)
 
+    # Do the setup
     entity_hash = _parse_entity entity_string
     options_list = _parse_options option_string
 
-    ### Construct the request
-    task_id = _background(task_name,entity_hash,options_list)
-    puts "[+] Started task: #{task_id}"
-
-    if task_id == "" # technically a nil is returned , but becomes an empty string
-      puts "[-] Task not started. Unknown Error. Exiting."
-      return
-    end
-
-    ### XXX - wait for the the response
-    complete = false
-    until complete
-      sleep 1
-      begin
-        uri = "#{@server_uri}/task_runs/#{task_id}/complete"
-        complete = true if(RestClient.get(uri) == "true")
-      rescue URI::InvalidURIError => e
-        puts "[-] Invalid URI: #{uri}"
-        return
-      end
-    end
+    # Get the response from the API
+    puts "[+] Starting Task."
+    response = @x.start(task_name,entity_hash,options_list)
+    puts "[D] Got response: #{response}" if @debug
+    return "Error retrieving response. Failing. Response was: #{response}" unless  response
     puts "[+] Task complete!"
 
-    ### Get the response
+    # Parse the response
     puts "[+] Start Results"
-    begin
-      response = JSON.parse(RestClient.get "#{@server_uri}/task_runs/#{task_id}.json")
-      response["entities"].each do |entity|
-        puts "  [x] #{entity["type"]}#{@delim}#{entity["attributes"]["name"]}"
-      end
-    rescue Exception => e
-      puts "[-] Error fetching and parsing response"
+    response["entity_ids"].each do |entity|
+      puts "  [x] #{entity["type"]}#{@delim}#{entity["attributes"]["name"]}"
     end
-
     puts "[+] End Results"
+
+    # Print the task log
     puts "[+] Task Log:\n"
-    puts response["task_log"]
+    response["log"].each_line{|x| puts "  #{x}" }
   end
+
+=begin
+  desc "scan [Type#Entity] [Option1=Value1#...#...]", "Start a recursive scan. Returns the result"
+  def scan(entity,depth=3,options=nil)
+    entity_hash = _parse_entity entity
+    options_list = _parse_options option_string
+
+    return "Not currently implemented"
+  end
+=end
 
   ###
   ### XXX - rewrite this so it uses the API
   ###
-  desc "load [Task] [File] [Option1=Value1#...#...]", "Load entities from a file and run task on each of them"
-  def load(task_name,filename,options_string=nil)
+  desc "load [Task] [File] [Option1=Value1#...#...] [Handlers]", "Load entities from a file and run task on each of them"
+  def load(task_name,filename,options_string=nil,handler_string="csv,json")
 
     # Load in the main core file for direct access to TaskFactory and the Tasks
     # This makes this super speedy.
@@ -173,6 +144,7 @@ class CoreCli < Thor
 
       entity = _parse_entity line
       options = _parse_options options_string
+      handlers = _parse_handlers handler_string
 
       payload = {
         "task" => task_name,
@@ -181,8 +153,6 @@ class CoreCli < Thor
       }
 
       task_id = SecureRandom.uuid
-
-
 
       # XXX - Hack - this should go away eventually. what
       # sense is there in making the user create the task result.
@@ -201,7 +171,7 @@ class CoreCli < Thor
 
       # XXX - Create the task
       task = Intrigue::TaskFactory.create_by_name(task_name)
-      jid = task.class.perform_async task_id, e.id, options, ["csv", "json"], nil
+      jid = task.class.perform_async task_id, e.id, options, handlers, nil
 
       puts "Created task #{task_id} for entity #{e}"
     end
@@ -209,128 +179,6 @@ class CoreCli < Thor
 
 private
 
-  ###
-  ### Main "workflow" function
-  ###
-  def _recurse(entity, depth)
-
-    # Check for bottom of recursion
-    return if depth <= 0
-
-    # Check for prohibited entity name
-    if entity["attributes"]
-      return if is_prohibited entity
-    end
-
-    if entity["type"] == "IpAddress"
-      ### DNS Reverse Lookup
-      _start_task "dns_lookup_reverse",entity,depth
-      ### Whois
-      _start_task "whois",entity,depth
-      ### Shodan
-      #_start_task "search_shodan",entity,depth
-      ### Scan
-      _start_task "nmap_scan",entity,depth
-      ### Geolocate
-      #_start_task "geolocate_host",entity,depth
-    elsif  entity["type"] == "NetBlock"
-      ### Masscan
-      _start_task "masscan_scan",entity,depth
-    elsif entity["type"] == "DnsRecord"
-      ### DNS Forward Lookup
-      _start_task "dns_lookup_forward",entity,depth
-      ### DNS Subdomain Bruteforce
-      _start_task "dns_brute_sub",entity,depth,[{"name" => "use_file", "value" => "false"}]
-    elsif entity["type"] == "Uri"
-      ### Get SSLCert
-      _start_task "uri_gather_ssl_certificate",entity,depth
-      ### Gather links
-      _start_task "uri_gather_and_analyze_links",entity,depth
-      ### Dirbuster
-      _start_task "uri_dirbuster",entity,depth
-      ## screenshot
-      _start_task "uri_screenshot",entity,depth
-      ### spider
-      _start_task "uri_spider",entity,depth
-    elsif entity["type"] == "String"
-      # Brute TLD
-      _start_task "dns_brute_tld",entity,depth
-    else
-      puts "UNHANDLED: #{entity["type"]} #{entity["attributes"]["name"]}"
-      return
-    end
-  end
-
-  def _start_task(task_name,entity,depth,options=[])
-    puts "Calling #{task_name} on #{entity} with options #{options} at depth #{depth}"
-
-    # and run it
-    result = @x.start task_name, entity, options
-
-    # XXX - Store the results for later lookup, avoid duplication (which should save a ton of time)
-    key = "#{task_name}_#{entity["type"]}_#{entity["attributes"]["name"]}"
-    if $results[key]
-      puts "ALREADY FOUND: #{$results[key]["entity"]["attributes"]["name"]}"
-
-      ###
-      ### TODO find entity and link
-      ###
-      #old_entity = Neography::Node.find ....
-      #node.outgoing(:child) << old_entity
-
-      return
-    else
-      $results["#{task_name}_#{entity["type"]}_#{entity["attributes"]["name"]}"] = result
-    end
-
-    # Get the results and iterate
-    result['entities'].each do |result|
-      puts "NEW ENTITY: #{result["type"]} #{result["attributes"]["name"]}"
-
-      # create a new node
-      #this = Neography::Node.create(
-      #  type: y["type"],
-      #  name: y["attributes"]["name"],
-      #  task_log: y["task_log"] )
-      # store it on the current entity
-      #node.outgoing(:child) << this
-
-      # recurse!
-      _recurse(result, depth-1)
-    end
-
-  end
-
-  # List of prohibited entities - returns true or false
-  def is_prohibited entity
-
-    #puts "Checking is_prohibited #{entity}"
-
-    if entity["type"] == "NetBlock"
-      cidr = entity["attributes"]["name"].split("/").last.to_i
-      return true unless cidr >= 22
-    else
-      return true if (  entity["attributes"]["name"] =~ /google/             ||
-                        entity["attributes"]["name"] =~ /g.co/               ||
-                        entity["attributes"]["name"] =~ /goo.gl/             ||
-                        entity["attributes"]["name"] =~ /android/            ||
-                        entity["attributes"]["name"] =~ /urchin/             ||
-                        entity["attributes"]["name"] =~ /youtube/            ||
-                        entity["attributes"]["name"] =~ /schema.org/         ||
-                        entity["attributes"]["description"] =~ /schema.org/  ||
-                        entity["attributes"]["name"] =~ /microsoft.com/      ||
-                        #entity["attributes"]["name"] =~ /yahoo.com/          ||
-                        entity["attributes"]["name"] =~ /facebook.com/       ||
-                        entity["attributes"]["name"] =~ /cloudfront.net/     ||
-                        entity["attributes"]["name"] =~ /twitter.com/        ||
-                        entity["attributes"]["name"] =~ /w3.org/             ||
-                        entity["attributes"]["name"] =~ /akamai/             ||
-                        entity["attributes"]["name"] =~ /akamaitechnologies/ ||
-                        entity["attributes"]["name"] =~ /amazonaws/          ||
-                        entity["attributes"]["name"] == "feeds2.feedburner.com")
-    end
-  false
-  end
 
   # parse out entity from the cli
   def _parse_entity(entity_string)
@@ -342,7 +190,7 @@ private
       "attributes" => { "name" => entity_name}
     }
 
-    puts "Got entity: #{entity_hash}"
+    puts "Got entity: #{entity_hash}" if @debug
 
   entity_hash
   end
@@ -357,26 +205,22 @@ private
         { "name" => option.split("=").first, "value" => option.split("=").last }
       end
 
-      puts "Got options: #{options_list}"
+      puts "Got options: #{options_list}" if @debug
 
   options_list
   end
 
-  def _background(task_name,entity_hash,options_list=[])
+  # Parse out options from cli
+  def _parse_handlers(handler_string)
 
-    payload = {
-      "task" => task_name,
-      "options" => options_list,
-      "entity" => entity_hash
-    }
+      return [] unless handler_string
 
-    puts "Payload: #{payload}"
-    ###
-    ### Send to the server
-    ###
-    task_id = RestClient.post "#{@server_uri}/task_runs", payload.to_json, :content_type => "application/json"
+      handler_list = []
+      handler_list = handler_string.split(",")
 
-  task_id
+      puts "Got handlers: #{handler_list}" if @debug
+
+  handler_list
   end
 
 end # end class

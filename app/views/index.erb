@@ -3,7 +3,7 @@
 <h3>Intrigue Core (<%=$intrigue_server_uri%>)</h3>
   <h4>Failed: <%= @stats.failed %></h4>
   <h4>Processed: <%= @stats.processed %></h4>
-  <h4>Queues: <%= @stats.queues.inspect %></h4>
+  <h4>Queues: <%= @stats.queues.count %></h4>
   <h4>Enqueued Jobs: <%= @stats.enqueued %> </h4>
   <h4>Workers: <%= @workers.size %> </h4>
   <h4>Jobs:</h4>
