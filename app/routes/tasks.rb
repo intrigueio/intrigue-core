@@ -11,7 +11,6 @@ class IntrigueApp < Sinatra::Base
       @task_names = @tasks.map{|t| t.metadata[:pretty_name]}.sort
 
       keys = $intrigue_redis.keys("task_result:*")
-
       unsorted_results = []
       keys.each do |key|
         begin
@@ -21,7 +20,7 @@ class IntrigueApp < Sinatra::Base
         end
       end
 
-      @task_results = unsorted_results #.sort_by{ |k| k.timestamp_start }.reverse
+      @task_results = unsorted_results.select{|x| x.timestamp_end}.sort_by{|x| x.timestamp_end }.reverse
 
       erb :'tasks/index'
     end
@@ -30,8 +29,7 @@ class IntrigueApp < Sinatra::Base
     get '/task_results.json/?' do
 
       # get all results
-      namespace = "task_result"
-      keys = $intrigue_redis.keys("#{namespace}*")
+      keys = $intrigue_redis.keys("task_result:*")
 
       results = []
       keys.each do |key|
@@ -155,7 +153,7 @@ class IntrigueApp < Sinatra::Base
       # Assuming it's available, display it
       if @task_result
         @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1/task/?task_result_id=#{@task_result.id}"
-        @elapsed_time = Time.parse(@task_result.timestamp_end).to_i - Time.parse(@task_result.timestamp_start).to_i
+        @elapsed_time = "#{Time.parse(@task_result.timestamp_end).to_i - Time.parse(@task_result.timestamp_start).to_i}" if @task_result.timestamp_end
       end
 
       erb :'tasks/task_result'
