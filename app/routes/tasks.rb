@@ -10,7 +10,8 @@ class IntrigueApp < Sinatra::Base
       @tasks = Intrigue::TaskFactory.list.map{|x| x.send(:new)}
       @task_names = @tasks.map{|t| t.metadata[:pretty_name]}.sort
 
-      keys = $intrigue_redis.keys("task_result:*")
+      keys = $intrigue_redis.scan_each(match: "task_result:*", count: 10).to_a
+      
       unsorted_results = []
       keys.each do |key|
         begin
@@ -20,7 +21,8 @@ class IntrigueApp < Sinatra::Base
         end
       end
 
-      @task_results = unsorted_results.select{|x| x.timestamp_end}.sort_by{|x| x.timestamp_end }.reverse
+      @running_task_results = unsorted_results.select{|x| x.timestamp_end == nil }.sort_by{|x| x.timestamp_start }.reverse
+      @completed_task_results = unsorted_results.select{|x| x.timestamp_end }.sort_by{|x| x.timestamp_end }.reverse
 
       erb :'tasks/index'
     end
@@ -29,7 +31,7 @@ class IntrigueApp < Sinatra::Base
     get '/task_results.json/?' do
 
       # get all results
-      keys = $intrigue_redis.keys("task_result:*")
+      keys = $intrigue_redis.scan_each(match: "task_result:*", count: 10).to_a
 
       results = []
       keys.each do |key|

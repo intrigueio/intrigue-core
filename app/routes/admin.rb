@@ -13,7 +13,7 @@ class IntrigueApp < Sinatra::Base
         to_clear = "entity:*", "task_result:*", "task_result_log:*","scan_result:*", "scan_result_log:*"
 
         to_clear.each do |k|
-          keys = $intrigue_redis.keys k
+          keys = $intrigue_redis.scan_each(match: k, count: 1000).to_a
           $intrigue_redis.del keys unless keys == []
         end
 

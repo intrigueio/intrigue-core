@@ -59,8 +59,14 @@
   <div id="metadata" class="col-sm-7"></div>
 </div>
 <br/>
+<h4>Running Tasks</h4>
+<% @running_task_results.each do |x| %>
+<ul>
+<%= "<li><a href=\'/v1/task_results/#{x.id}\'> (#{x.timestamp_end}) #{x.task_name} on #{x.entity.type if x.entity}##{ h x.entity.attributes["name"] if x.entity} (#{x.entities.count if x.entity})</a></li>" %>
+</ul>
+<% end %>
 <h4>Completed Tasks</h4>
-<% @task_results.each do |x| %>
+<% @completed_task_results.each do |x| %>
 <ul>
 <%= "<li><a href=\'/v1/task_results/#{x.id}\'> (#{x.timestamp_end}) #{x.task_name} on #{x.entity.type if x.entity}##{ h x.entity.attributes["name"] if x.entity} (#{x.entities.count if x.entity})</a></li>" %>
 </ul>

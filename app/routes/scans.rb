@@ -5,7 +5,7 @@ class IntrigueApp < Sinatra::Base
   get '/scan/?' do
 
     # Get details on the scan results so we can display them
-    keys = $intrigue_redis.keys("scan_result:*")
+    keys = $intrigue_redis.scan_each(match: "scan_result:*", count: 10).to_a
 
     unsorted_results = []
     keys.each do |key|
