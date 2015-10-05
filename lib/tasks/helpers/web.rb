@@ -3,13 +3,22 @@ require 'tempfile'
 require 'uri'
 require 'iconv'
 
+###
+### Please note - these methods may be used inside task modules, or inside libraries within
+### Intrigue. An attempt has been made to make them abstract enough to use anywhere inside the
+### application, but they are primarily designed as helpers for tasks. This is why you'll see
+### references to @task_log in these methods. We do need to check to make sure it's available before
+### writing to it.
+###
+
 # This module exists for common web functionality
 module Intrigue
 module Task
   module Web
 
     #
-    # Download a file locally
+    # Download a file locally. Useful for situations where we need to parse the file
+    # and also useful in situations were we need to verify content-type
     #
     def download_and_store(url)
       filename = "#{SecureRandom.uuid}"
@@ -114,7 +123,6 @@ module Task
         raise ArgumentError, 'HTTP redirect too deep' if limit == 0
 
         Timeout.timeout(timeout) do
-
           ###
           ### XXX - it's possible we won't be able to parse this,
           ###  and we'll end up tripping a URI::InvalidURIError
@@ -124,7 +132,6 @@ module Task
               @task_log.error("Strange URI: #{uri}")
               #raise "Failing on URI: #{uri}"
             end
-            #@task_log.log "Falling back to #{}"
           end
 
           uri_obj = URI.parse(uri)
@@ -137,6 +144,7 @@ module Task
           request = Net::HTTP::Get.new(uri)
           headers.each{|key,value| request.add_field(key, value)}
 
+          # Set the user-agent independently
           #request.add_field('User-Agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36')
 
           # Make the actual request
@@ -160,13 +168,11 @@ module Task
                 redirect_uri = "#{response['location']}"
               else
 
-                # It's a broken URI, we need to get the base from the existing
-                # URI string
-
+                # It's a broken URI, we need to get the base from the existing URI
                 redirect_uri = "#{uri.split("/")[0..2].join("/")}#{response["location"]}"
-
               end
 
+              # GET IT!
               http_get(redirect_uri, {}, limit - 1)
 
             else
@@ -216,6 +222,39 @@ module Task
         @task_log.error "Encoding error: #{e}" if @task_log
       end
     end
+
+     #
+     # http_get_auth_resource - request a resource behind http auth
+     #
+     # This method is useful for bruteforcing authentication. Abstracted from
+     # uri_http_auth_brute
+     #
+     def http_get_auth_resource(location, username,password, depth)
+
+       unless depth > 0
+         @task_log.error "Too many redirects"
+         exit
+       end
+
+       uri = URI.parse(location)
+       http = Net::HTTP.new(uri.host, uri.port)
+       request = Net::HTTP::Get.new(uri.request_uri,{"User-Agent" => "Intrigue!"})
+       request.basic_auth(username,password)
+       response = http.request(request)
+
+       if response == Net::HTTPRedirection
+         @task_log.log "Redirecting to #{response['location']}"
+         http_get_auth_resource(response['location'],username,password, depth-1)
+       elsif response == Net::HTTPMovedPermanently
+         @task_log.log "Redirecting to #{response['location']}"
+         http_get_auth_resource(response['location'],username,password, depth-1)
+       else
+         @task_log.log "Got response: #{response}"
+       end
+
+     response
+     end
+
 
   end
 end

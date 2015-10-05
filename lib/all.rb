@@ -10,6 +10,7 @@ require_relative 'task_factory'
 ### Web & Parse mixins
 require_relative 'tasks/helpers/web'
 require_relative 'tasks/helpers/parse'
+require_relative 'tasks/helpers/lists'
 
 require_relative 'tasks/base'
 current_folder = File.expand_path('../tasks', __FILE__) # get absolute directory
