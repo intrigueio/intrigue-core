@@ -53,19 +53,16 @@ class WebAccountCheckTask < BaseTask
       body = http_get_body(account_uri)
       next unless body
 
-      # Check for each string that may indicate we found the account
-      account_existence_strings = site["account_existence_strings"]
-      account_existence_strings.each do |check_string|
-        if body.include? check_string
-          _create_entity "WebAccount", {
-              "name" => "#{account_name}",
-              "domain" => "#{site["name"]}",
-              "username" => "#{account_name}",
-              "uri" => "#{pretty_uri || account_uri}"
-             }
-          next
-        end
+      # Check the verify string
+      if body.include? site["account_existence_string"]
+        _create_entity "WebAccount", {
+            "name" => "#{account_name}",
+            "domain" => "#{site["name"]}",
+            "username" => "#{account_name}",
+            "uri" => "#{pretty_uri || account_uri}"
+           }
       end
+
     end
 
   end # run()
