@@ -29,7 +29,7 @@
          "comments" : ["verified 10/4/2015 - webbreacher"]
       },
       {
-         "resource" : "AdultMatchDoctor",
+         "name" : "AdultMatchDoctor",
          "check_uri" : "http://www.adultmatchdoctor.com/profile_{account}.html",
          "account_existence_code" : "200",
          "account_existence_string" : "Last Activity:",
@@ -146,19 +146,6 @@
          "comments" : ["verified 10/4/2015 - webbreacher"]
       },
       {
-         "name" : "Behance",
-         "check_uri" : "https://www.behance.net/{account}",
-         "account_existence_code" : "200",
-         "account_existence_string" : "profile-header-actions",
-         "account_missing_string" : "",
-         "account_missing_code" : "404",
-         "known_accounts" : ["test", "john"],
-         "allowed_types" : ["String","Person","WebAccount","Username","Organization"],
-         "category" : "coding",
-         "valid" : "",
-         "comments" : ["verified 10/4/2015 - webbreacher"]
-      },
-      {
          "name" : "Bitbucket",
          "check_uri" : "https://bitbucket.org/api/2.0/users/{account}",
          "pretty_uri" : "https://bitbucket.org/{account}/",
@@ -225,33 +212,6 @@
          "comments" : ["verified 10/4/2015 - webbreacher"]
       },
       {
-         "resource" : "Blogspot",
-         "check_uri" : "http://{account}.blogspot.com",
-         "account_existence_code" : "200",
-         "account_existence_string" : "Blogger Template Style",
-         "account_missing_string" : "Blog not found",
-         "account_missing_code" : "200",
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"],
-         "category" : "blog",
-         "valid" : "",
-         "comments" : ["verified 10/4/2015 - webbreacher"]
-      },
-      {
-         "name" : "BodyBuilding.com",
-         "check_uri" : "http://api.bodybuilding.com/api-proxy/bbc/get?slug={account}",
-         "pretty_uri" : "http://bodyspace.bodybuilding.com/{account}/",
-         "account_existence_code" : "200",
-         "account_existence_string" : "username",
-         "account_missing_string" : "data\":\"\"",
-         "account_missing_code" : "200",
-         "known_accounts" : ["mike"],
-         "allowed_types" : ["String","Person","WebAccount","Username"],
-         "category" : "health",
-         "valid" : "",
-         "comments" : ["verified 10/4/2015 - webbreacher"]
-      },
-      {
          "name" : "Break",
          "check_uri" : "http://www.break.com/user/{account}",
          "account_existence_code" : "200",
@@ -263,28 +223,6 @@
          "category" : "video",
          "valid" : "",
          "comments" : ["verified 10/4/2015 - webbreacher"]
-      },
-      {
-         "name" : "Buzznet",
-         "check_uri" : "http://{account}.buzznet.com/user/",
-         "account_existence_code" : "200",
-         "account_existence_string" : "All posts",
-         "account_missing_string" : "",
-         "account_missing_code" : "404",
-         "known_accounts" : ["test"],
-         "allowed_types" : ["String","Person","WebAccount","Username"],
-         "category" : "social",
-         "valid" : "",
-         "comments" : ["verified 10/4/2015 - webbreacher"]
-      },
-      {
-          "name" : "cafemom",
-          "check_uri": "http://www.cafemom.com/home/{account}",
-          "account_existence_code" : "200",
-          "account_existence_string" : "h3 id=\"profile-user\"",
-          "known_accounts" : ["test"],
-          "allowed_types" : ["String","Person","WebAccount","Username"],
-          "category" : "social"
       },
       {
          "name" : "CarDomain",
@@ -302,7 +240,7 @@
           "check_uri": "http://profile.cheezburger.com/{account}",
           "account_existence_code" : "200",
           "account_existence_string" : "s Profile - Dashboard -",
-          "known_accounts" : ["test"],
+          "known_accounts" : ["test123"],
           "allowed_types" : ["String","Person","WebAccount","Username"],
           "category" : "hobby"
       },
@@ -387,15 +325,6 @@
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
-          "name" : "Diply",
-          "check_uri": "http://diply.com/api/users/{account}",
-          "account_existence_code" : "200",
-          "account_existence_string" : "{\"Id\"",
-          "known_accounts" : ["test"],
-          "allowed_types" : ["String","Person","WebAccount","Username"],
-          "category" : "shopping"
-      },
-      {
          "name" : "Docstoc",
          "check_uri" : "http://www.docstoc.com/profile/{account}",
          "account_existence_code" : "200",
@@ -412,7 +341,7 @@
          "account_existence_string" : "<title>Dribbble - ",
          "account_missing_string" : "",
          "account_missing_code" : "",
-         "known_accounts" : ["test"],
+         "known_accounts" : ["bam"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
@@ -453,15 +382,6 @@
          "account_missing_code" : "",
          "known_accounts" : ["happiness"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-          "name" : "Examine.com",
-          "check_uri": "http://examine.com/user/{account}/",
-          "account_existence_code" : "200",
-          "account_existence_string" : "Profile | Examine.com</title>",
-          "known_accounts" : ["test"],
-          "allowed_types" : ["String","Person","WebAccount","Username"],
-          "category" : "health"
       },
       {
          "name" : "facebook.com",
@@ -725,15 +645,6 @@
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
-          "name" : "Kik!",
-          "check_uri": "http://www.kik.com/u/{account}",
-          "account_existence_code" : "200",
-          "account_existence_string" : "Hey! I'm on Kik - my username is",
-          "known_accounts" : ["test"],
-          "allowed_types" : ["String","Person","WebAccount","Username"],
-          "category" : "social"
-      },
-      {
          "name" : "Klout",
          "check_uri" : "https://klout.com/{account}",
          "account_existence_code" : "200",
@@ -797,7 +708,7 @@
           "name" : "LIVEJASMIN",
           "check_uri": "http://www.livejasmin.com/perfinfo.php?performerid={account}",
           "account_existence_code" : "200",
-          "account_existence_string" : "Live Sex - Hot Live Sex Shows!... LiveJasmin ..</title>",
+          "account_existence_string" : "Live Sex Chat With",
           "known_accounts" : ["test"],
           "allowed_types" : ["String","Person","WebAccount","Username"],
           "category" : "XXX PORN XXX"
@@ -877,7 +788,7 @@
           "check_uri": "http://myanimelist.net/profile/{account}",
           "account_existence_code" : "200",
           "account_existence_string" : "s Profile - MyAnimeList.net</title>",
-          "known_accounts" : ["test"],
+          "known_accounts" : ["test123"],
           "allowed_types" : ["String","Person","WebAccount","Username"],
           "category" : "hobby"
       },
@@ -1071,7 +982,7 @@
           "check_uri": "http://www.redtube.com/{account}",
           "account_existence_code" : "200",
           "account_existence_string" :         "redTube - Home of Porn - Free Porn</title>",
-          "known_accounts" : ["test"],
+          "known_accounts" : ["test123"],
           "allowed_types" : ["String","Person","WebAccount","Username"],
           "category" : "XXX PORN XXX"
       },
@@ -1092,7 +1003,7 @@
          "account_existence_string" : "Member Since:",
          "account_missing_string" : "",
          "account_missing_code" : "",
-         "known_accounts" : ["test"],
+         "known_accounts" : ["hdmoore"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
@@ -1329,7 +1240,7 @@
           "name" : "uSTREAM",
           "check_uri": "http://www.ustream.tv/channel/{account}",
           "account_existence_code" : "200",
-          "account_existence_string" : "on USTREAM:",
+          "account_existence_string" : "@ USTREAM:",
           "known_accounts" : ["test"],
           "allowed_types" : ["String","Person","WebAccount","Username"],
           "category" : "video"
@@ -1372,15 +1283,6 @@
          "account_missing_code" : "",
          "known_accounts" : ["test"],
          "allowed_types" : ["String","Person","WebAccount","Username","Organization"]
-      },
-      {
-          "name" : "Vine",
-          "check_uri": "https://platform.vine.co/api/users/profiles/vanity/{account}",
-          "account_existence_code" : "200",
-          "account_existence_string" : "success\" : true",
-          "known_accounts" : ["test"],
-          "allowed_types" : ["String","Person","WebAccount","Username"],
-          "category" : "video"
       },
       {
          "name" : "VisualizeUs",
@@ -1432,15 +1334,7 @@
          "known_accounts" : ["test123"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
-      {
-          "name" : "Wefollow",
-          "check_uri": "http://wefollow.com/{account}",
-          "account_existence_code" : "200",
-          "account_existence_string" : "on Wefollow</title>",
-          "known_accounts" : ["test"],
-          "allowed_types" : ["String","Person","WebAccount","Username"],
-          "category" : "social"
-      },
+
       {
          "name" : "wishlistr",
          "check_uri" : "http://www.wishlistr.com/profile/{account}/",
@@ -1460,15 +1354,6 @@
          "account_missing_code" : "",
          "known_accounts" : ["test"],
          "allowed_types" : ["String","Person","WebAccount","Username"]
-      },
-      {
-          "name" : "woot!",
-          "check_uri": "http://deals.woot.com/deals/users/{account}",
-          "account_existence_code" : "200",
-          "account_existence_string" : "div class=\"deal forumList clearfix",
-          "known_accounts" : ["test"],
-          "allowed_types" : ["String","Person","WebAccount","Username"],
-          "category" : "shopping"
       },
       {
          "name" : "WordPress",
@@ -1495,7 +1380,7 @@
           "check_uri": "http://{account}.xanga.com/",
           "account_existence_code" : "200",
           "account_existence_string" : "s Xanga Site | Just another Xanga site</title>",
-          "known_accounts" : ["test"],
+          "known_accounts" : ["donkey-guy-10"],
           "allowed_types" : ["String","Person","WebAccount","Username"],
           "category" : "blog"
       },
@@ -1520,24 +1405,6 @@
          "allowed_types" : ["String","Person","WebAccount","Username"]
       },
       {
-          "name" : "Xfire Main",
-          "check_uri": "http://www.xfire.com/{account}",
-          "account_existence_code" : "200",
-          "account_existence_string" : "<h1 class=\"username\">",
-          "known_accounts" : ["test"],
-          "allowed_types" : ["String","Person","WebAccount","Username"],
-          "category" : "gaming"
-      },
-      {
-          "name" : "Xfire Social",
-          "check_uri": "http://social.xfire.com/profile/{account}",
-          "account_existence_code" : "200",
-          "account_existence_string" : "s Profile</title>",
-          "known_accounts" : ["test"],
-          "allowed_types" : ["String","Person","WebAccount","Username"],
-          "category" : "gaming"
-      },
-      {
           "name" : "xHamster",
           "check_uri": "http://xhamster.com/user/{account}",
           "account_existence_code" : "200",
@@ -1560,7 +1427,7 @@
           "check_uri": "https://na.edit.yahoo.com/reg_json?PartnerName=yahoo_default&RequestVersion=1&AccountID={account}@yahoo.com&ApiName=ValidateFields&intl=us",
           "account_existence_code" : "200",
           "account_existence_string" : "\"SUCCESS\"",
-          "known_accounts" : ["test"],
+          "known_accounts" : ["gemini804"],
           "allowed_types" : ["String","Person","WebAccount","Username"],
           "category" : "email"
       },
