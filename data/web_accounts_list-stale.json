@@ -13,22 +13,50 @@
      {
         "name" : "Blogspot",
         "check_uri" : "http://{account}.blogspot.com",
-        "response_code" : "200",
-        "account_existence_strings" : ["profile-container"],
-        "account_missing_strings" : [],
-        "known_accounts" : ["test"],
+        "account_existence_code" : "200",
+        "account_existence_string" : "profile-link",
+        "account_missing_code" : "200",
+        "known_accounts" : ["test123"],
         "allowed_types" : ["String","Person","WebAccount","Username"],
-        "comments" : ["falsenegative","should be working"]
+        "category" : "blog",
+        "valid" : "",
+        "comments" : ["verified 10/4/2015 - webbreacher"]
      },
      {
         "name" : "BodyBuilding.com",
-        "check_uri" : "http://bodyspace.bodybuilding.com/{account}/",
-        "response_code" : "200",
-        "account_existence_strings" : ["bbBinderOwnerFriend"],
-        "account_missing_strings" : [],
-        "known_accounts" : ["alphamuscledog"],
+        "check_uri" : "http://api.bodybuilding.com/api-proxy/bbc/get?slug={account}",
+        "pretty_uri" : "http://bodyspace.bodybuilding.com/{account}/",
+        "account_existence_code" : "200",
+        "account_existence_string" : "username",
+        "account_missing_string" : "isFriend",
+        "account_missing_code" : "200",
+        "known_accounts" : ["mike"],
         "allowed_types" : ["String","Person","WebAccount","Username"],
-        "comments" : ["falsenegative","should be working"]
+        "category" : "health",
+        "valid" : "",
+        "comments" : ["verified 10/4/2015 - webbreacher"]
+     },
+     {
+        "name" : "Buzznet",
+        "check_uri" : "http://{account}.buzznet.com/user/",
+        "account_existence_code" : "200",
+        "account_existence_string" : "All posts",
+        "account_missing_string" : "",
+        "account_missing_code" : "404",
+        "known_accounts" : ["larry"],
+        "allowed_types" : ["String","Person","WebAccount","Username"],
+        "category" : "social",
+        "valid" : "",
+        "comments" : ["verified 10/4/2015 - webbreacher", "note that the account 'test' gives multiple accounts via search, needs to be handled separately"]
+     },
+     {
+       "name" : "cafemom",
+       "check_uri": "http://www.cafemom.com/home/{account}",
+       "account_existence_code" : "200",
+       "account_existence_string" : "h3 id=\"profile-user\"",
+       "known_accounts" : ["woot"],
+       "allowed_types" : ["String","Person","WebAccount","Username"],
+       "category" : "social"
      },
      {
         "name" : "CruiseMates",
@@ -60,6 +88,15 @@
         "known_accounts" : ["test"],
         "allowed_types" : ["String","Person","WebAccount","Username"],
         "comments" : ["falsenegative","should be working"]
+     },
+     {
+         "name" : "Diply",
+         "check_uri": "http://diply.com/api/users/{account}",
+         "account_existence_code" : "200",
+         "account_existence_string" : "{\"Id\"",
+         "known_accounts" : ["test"],
+         "allowed_types" : ["String","Person","WebAccount","Username"],
+         "category" : "shopping"
      },
      {
         "name" : "Disqus",
@@ -100,6 +137,15 @@
         "known_accounts" : ["test"],
         "allowed_types" : ["String","Person","WebAccount","Username"],
         "comments" : ["looks like they've removed the functionality, suggest removal"]
+     },
+     {
+         "name" : "Examine.com",
+         "check_uri": "http://examine.com/user/{account}/",
+         "account_existence_code" : "200",
+         "account_existence_string" : "Profile | Examine.com</title>",
+         "known_accounts" : ["larry"],
+         "allowed_types" : ["String","Person","WebAccount","Username"],
+         "category" : "health"
      },
      {
         "name" : "families.com",
@@ -492,6 +538,52 @@
         "comments" : ["functionality removed?"]
      },
      {
+         "name" : "Vine",
+         "check_uri": "https://platform.vine.co/api/users/profiles/vanity/{account}",
+         "account_existence_code" : "200",
+         "account_existence_string" : "success\" : true",
+         "known_accounts" : ["test"],
+         "allowed_types" : ["String","Person","WebAccount","Username"],
+         "category" : "video"
+     },
+     {
+         "name" : "Wefollow",
+         "check_uri": "http://wefollow.com/{account}",
+         "account_existence_code" : "200",
+         "account_existence_string" : "on Wefollow</title>",
+         "known_accounts" : ["test"],
+         "allowed_types" : ["String","Person","WebAccount","Username"],
+         "category" : "social"
+     },
+     {
+         "name" : "woot!",
+         "check_uri": "http://deals.woot.com/deals/users/{account}",
+         "account_existence_code" : "200",
+         "account_existence_string" : "div class=\"deal forumList clearfix",
+         "known_accounts" : ["test"],
+         "allowed_types" : ["String","Person","WebAccount","Username"],
+         "category" : "shopping",
+         "comments" : ["profiles working, but needs work"]
+     },
+     {
+         "name" : "Xfire Main",
+         "check_uri": "http://www.xfire.com/{account}",
+         "account_existence_code" : "200",
+         "account_existence_string" : "<h1 class=\"username\">",
+         "known_accounts" : ["test"],
+         "allowed_types" : ["String","Person","WebAccount","Username"],
+         "category" : "gaming"
+     },
+     {
+         "name" : "Xfire Social",
+         "check_uri": "http://social.xfire.com/profile/{account}",
+         "account_existence_code" : "200",
+         "account_existence_string" : "s Profile</title>",
+         "known_accounts" : ["test"],
+         "allowed_types" : ["String","Person","WebAccount","Username"],
+         "category" : "gaming"
+     },
+     {
        "name" : "YFrog",
        "check_uri" : "https://yfrog.com/user/{account}/profile",
        "response_code" : "200",
@@ -501,6 +593,6 @@
        "known_accounts" : ["test"],
        "allowed_types" : ["String","Person","WebAccount","Username","Organization"],
        "comments" : ["functionality removed?"]
-     },
+     }
    ]
 }

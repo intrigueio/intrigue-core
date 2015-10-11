@@ -4,12 +4,14 @@ require 'net/http'
 module Intrigue
 class UriHttpAuthBrute < BaseTask
 
+  include Intrigue::Task::Lists
+
   def metadata
     {
       :name => "uri_http_auth_brute",
       :pretty_name => "URI HTTP Auth Brute",
       :authors => ["jcran"],
-      :description => "This task bruteforces http authentication, given a URI.",
+      :description => "This task bruteforces authentication, given a URI requiring HTTP auth.",
       :references => [],
       :allowed_types => ["Uri"],
       :example_entities => [
@@ -24,30 +26,22 @@ class UriHttpAuthBrute < BaseTask
   def run
     super
 
-    creds = [
-      {"username" => "guest", "password" => "guest"},
-      {"username" => "test", "password" => "test"},
-      {"username" => "cisco", "password" => "cisco"},
-      {"username" => "admin", "password" => "admin"},
-      {"username" => "anonymous", "password" => "anonymous"}
-    ]
-
     begin
       uri = _get_entity_attribute "name"
 
       # first things first, check to see if it's required at all
-      response = http_get_authd(uri,"not-a-real-username","not-a-real-password",10)
+      response = http_get_auth_resource(uri,"not-a-real-username","not-a-real-password",10)
       unless response.class == Net::HTTPUnauthorized
         @task_log.error "No authentication required for #{uri}"
         return
       end
 
-      # Otherwise, continue on, and check each cred
-      creds.each do |cred|
+      # Otherwise, continue on, and check each cred (See list in Intrigue::Task::Lists)
+      simple_web_creds.each do |cred|
 
        Timeout::timeout(10) do
 
-        response = http_get_authd(uri,cred["username"],cred["password"],10)
+        response = http_get_auth_resource(uri,cred["username"],cred["password"],10)
 
         case response
           when Net::HTTPOK
@@ -69,7 +63,7 @@ class UriHttpAuthBrute < BaseTask
  end
 
 
- def http_get_authd(location, username,password, depth)
+ def http_get_auth_resource(location, username,password, depth)
 
    unless depth > 0
      @task_log.error "Too many redirects"
@@ -84,10 +78,10 @@ class UriHttpAuthBrute < BaseTask
 
    if response == Net::HTTPRedirection
      @task_log.log "Redirecting to #{response['location']}"
-     http_get_authd(response['location'],username,password, depth-1)
+     http_get_auth_resource(response['location'],username,password, depth-1)
    elsif response == Net::HTTPMovedPermanently
      @task_log.log "Redirecting to #{response['location']}"
-     http_get_authd(response['location'],username,password, depth-1)
+     http_get_auth_resource(response['location'],username,password, depth-1)
    else
      @task_log.log "Got response: #{response}"
    end
