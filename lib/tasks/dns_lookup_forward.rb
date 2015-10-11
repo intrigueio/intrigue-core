@@ -1,4 +1,5 @@
-require 'resolv'
+require 'dnsruby'
+
 module Intrigue
 class DnsLookupForwardTask < BaseTask
 
@@ -25,21 +26,37 @@ class DnsLookupForwardTask < BaseTask
     name = _get_entity_attribute "name"
 
     begin
-      # Get the addresses
-      @task_log.log "Resolving address for #{name}"
-      resolved_addresses = Resolv.new.getaddresses(name)
 
-      # XXX - we should probably .getaddresses() a couple times to deal
-      # with round-robin DNS & load balancers. We'd need to merge results
-      # across the queries
+      res = Dnsruby::Resolver.new(
+        :recurse => "true",
+        :query_timeout => 5,
+        :nameserver => resolver)
 
-      @task_log.error "Nothing?" if resolved_addresses.empty?
+      result = res.query(name, "ANY")
+      @task_log.error "Nothing?" if result.answer.empty?
 
       # For each of the found addresses
-      resolved_addresses.map{ |address|
-        _create_entity("IpAddress", {
-          "name" => address }
-        )}
+      result.answer.map{ |resource|
+
+        @task_log.log "Parsing #{resource}"
+
+        # Check to see if the entity should be a DnsRecord or an IPAddress. Simply check
+        # for the presence of alpha characters (see String initializer for this method)
+        ( "#{resource.name}".gsub(".","").alpha? ? entity_type = "DnsRecord" : entity_type = "IpAddress" )
+
+        # Create the entity
+        if resource.type == Dnsruby::Types::NS
+          _create_entity(entity_type, { "name" => "#{resource.name}", "type" => "NS", "data" => "#{resource.rdata}" })
+        elsif resource.type == Dnsruby::Types::SOA
+          _create_entity(entity_type, { "name" => "#{resource.name}", "type" => "SOA", "data" => "#{resource.rdata}" })
+        elsif resource.type == Dnsruby::Types::MX
+          _create_entity(entity_type, { "name" => "#{resource.name}", "type" => "MX", "data" => "#{resource.rdata}" })
+        elsif resource.type == Dnsruby::Types::A
+          _create_entity(entity_type, { "name" => "#{resource.name}", "type" => "A", "data" => "#{resource.rdata}"})
+        else
+          _create_entity("Info", { "name" => "#{resource.type} Record for #{name}", "type" => "#{resource.type}", "data" => "#{resource.rdata}" })
+        end
+      }
 
     rescue Exception => e
       @task_log.error "Hit exception: #{e}"

@@ -6,4 +6,8 @@ class String
     return false  if self == false  || self.blank? || self =~ (/(false|f|no|n|0)$/i)
     raise ArgumentError.new("invalid value for Boolean: \"#{self}\"")
   end
+
+  def alpha?
+    !!match(/^[[:alpha:]]+$/)
+  end
 end
