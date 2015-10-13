@@ -11,7 +11,14 @@ module Intrigue
 module Task
 module Scanner
 
-  def scan_for_webservers(to_scan)
+  # Scans for webservers on common ports
+  #
+  # @param [String] ip/hostname/netblock passed to nmap
+  # @yield  [uri| invokes a block with a uri for each result
+  #
+  # @return [Array] list of strings (uris)
+  #
+  def scan_webservers(to_scan)
 
     # Create a tempfile to store results
     temp_file = "#{Dir::tmpdir}/nmap_scan_#{rand(100000000)}.xml"
@@ -20,10 +27,12 @@ module Scanner
     nmap_options = ""
     nmap_options << "-6 " if to_scan =~ /:/
 
+    ports = "80,443,8080,8081,8443"
+
     # shell out to nmap and run the scan
     @task_log.log "Scanning #{to_scan} and storing in #{temp_file}" if @task_log
-    @task_log.log "NMap options: #{nmap_options}" if @task_log
-    nmap_string = "nmap #{to_scan} #{nmap_options} -P0 --top-ports 100 --min-parallelism 10 -oX #{temp_file}"
+    @task_log.log "nmap options: #{nmap_options}" if @task_log
+    nmap_string = "nmap #{to_scan} #{nmap_options} -P0 -p #{ports} --min-parallelism 10 -oX #{temp_file}"
     @task_log.log "Running... #{nmap_string}" if @task_log
     _unsafe_system(nmap_string)
 
@@ -43,7 +52,7 @@ module Scanner
 
         host.getports(proto_type, "open") do |port|
 
-          if proto_type == :tcp && [80,443,8080,8081,8443].include?(port.num)
+          if proto_type == :tcp && ports.split(",").include?("#{port.num}")
 
             # determine if this is an SSL application
             ssl = true if [443,8443].include?(port.num)
@@ -63,8 +72,9 @@ module Scanner
       end # end tcp/udp
     end # end parser
 
+    # Here's where we can process the options
     uris.each do |uri|
-      yield uri
+      yield uri if block_given?
     end
 
     # Clean up!
@@ -73,6 +83,7 @@ module Scanner
     rescue Errno::EPERM
       @task_log.error "Unable to delete file"
     end
+  uris
   end
 
 
