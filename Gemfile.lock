@@ -9,6 +9,13 @@ GIT
       nokogiri
       typhoeus
 
+GIT
+  remote: https://github.com/intrigueio/screencap.git
+  revision: e3af2819f083b021babff97a9a61278ccf99cc22
+  specs:
+    screencap (0.1.4)
+      phantomjs
+
 PATH
   remote: ./util/intrigue-gem
   specs:
@@ -155,8 +162,6 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.3.0)
     rspec-support (3.3.0)
-    screencap (0.1.4)
-      phantomjs
     shodan (1.0.0)
       json (>= 1.4.6)
     sidekiq (3.5.0)
@@ -229,7 +234,7 @@ DEPENDENCIES
   redis
   rest-client
   rspec
-  screencap
+  screencap!
   shodan
   sidekiq
   sinatra
