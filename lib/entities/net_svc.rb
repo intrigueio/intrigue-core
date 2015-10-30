@@ -4,15 +4,15 @@ class NetSvc < Intrigue::Model::Entity
 
   def metadata
     {
-      :type => "NetSvc",
-      :required_attributes => ["ip_address","port_num","proto"]
+      :description => "TODO"
     }
   end
 
-  def validate(attributes)
-    attributes["ip_address"].to_s =~ /^.*$/ &&
-    attributes["port_num"].to_s =~ /^\d{1,5}$/ &&
-    attributes["proto"].to_s =~ /^(tcp|udp)$/
+
+  def validate
+    @details["ip_address"].to_s =~ /^.*$/ &&
+    @details["port_num"].to_s =~ /^\d{1,5}$/ &&
+    @details["proto"].to_s =~ /^(tcp|udp)$/
   end
 
   def form

@@ -4,13 +4,13 @@ class NetBlock < Intrigue::Model::Entity
 
   def metadata
     {
-      :type => "NetBlock",
-      :required_attributes => ["name"]
+      :description => "TODO"
     }
   end
 
-  def validate(attributes)
-    attributes["name"] =~ /^.*$/
+
+  def validate
+    @name =~ /^.*$/
   end
 
 end

@@ -38,9 +38,9 @@ class NetsvcFuzzRandom < BaseTask
     protocol = _get_entity_attribute "proto"
     ip_address = _get_entity_attribute "ip_address"
 
-    @task_log.log "Port: #{port}"
-    @task_log.log "Protocol: #{protocol}"
-    @task_log.log "IP Address: #{ip_address}"
+    @task_result.log "Port: #{port}"
+    @task_result.log "Protocol: #{protocol}"
+    @task_result.log "IP Address: #{ip_address}"
 
     # Check to make sure we have a sane target
     if protocol.downcase == "tcp"
@@ -63,11 +63,11 @@ class NetsvcFuzzRandom < BaseTask
         end
       end
     rescue Timeout::Error
-      @task_log.log "Timed out"
+      @task_result.log "Timed out"
     rescue Errno::EPIPE
-      @task_log.log "Broken Pipe"
+      @task_result.log "Broken Pipe"
     rescue Errno::ECONNRESET
-      @task_log.log "Connection Reset"
+      @task_result.log "Connection Reset"
     end
 
     # Cleanup

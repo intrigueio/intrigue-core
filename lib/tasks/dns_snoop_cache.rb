@@ -50,14 +50,14 @@ class DnsSnoopCacheTask < BaseTask
     snooper = DNSSnooper.new(dns_server,method)
     #snoopresults[] = {}
 
-    @task_log.log "Recollecting response times from #{dns_server}"
+    @task_result.log "Recollecting response times from #{dns_server}"
     cachedth,noncachedth = snooper.obtainDNSThresholds
-    @task_log.log "Obtained cached thresholds for server #{dns_server}"
-    @task_log.log "- Max. response time for cached entries: #{cachedth.round(2)}ms"
-    @task_log.log "- Min. response time for non cached entries: #{noncachedth.round(2)}ms"
+    @task_result.log "Obtained cached thresholds for server #{dns_server}"
+    @task_result.log "- Max. response time for cached entries: #{cachedth.round(2)}ms"
+    @task_result.log "- Min. response time for non cached entries: #{noncachedth.round(2)}ms"
 
     if (cachedth >= noncachedth and method == "RT")
-      @task_log.error "WARNING: These values are strange. They are inversed. Maybe the following results are not very reliable...".red
+      @task_result.log_error "WARNING: These values are strange. They are inversed. Maybe the following results are not very reliable...".red
     end
 
     domains.each do |domain|
@@ -65,16 +65,16 @@ class DnsSnoopCacheTask < BaseTask
       isCached,timeToExpire,whenWasCached = snooper.isCached?(domain)
 
       if isCached.nil?
-        @task_log.error "[UNKNOWN] #{domain} (on #{dns_server})"
+        @task_result.log_error "[UNKNOWN] #{domain} (on #{dns_server})"
       else
         if isCached
           # this is for saving the results - create an entity here
           #snoopresults[dns][domain] = true
-          @task_log.good "[VISITED] #{domain}  (Cached on #{dns_server} #{toHumanTime(whenWasCached)} ago, Time To Expire #{toHumanTime(timeToExpire)})"
+          @task_result.log_good "[VISITED] #{domain}  (Cached on #{dns_server} #{toHumanTime(whenWasCached)} ago, Time To Expire #{toHumanTime(timeToExpire)})"
         else
           # this is for saving the results - create an entity here
           #snoopresults[dns][domain] = false
-          @task_log.good "[NOT VISITED] #{domain} (Not cached on #{dns_server} in the last #{toHumanTime(timeToExpire)})"
+          @task_result.log_good "[NOT VISITED] #{domain} (Not cached on #{dns_server} in the last #{toHumanTime(timeToExpire)})"
         end
       end
     end

@@ -40,7 +40,7 @@
         <label for="entity_type" class="col-xs-4 control-label">Entity Type</label>
         <div class="col-xs-6">
           <select class="form-control input-sm" id="entity_type" name="entity_type">
-            <% Intrigue::EntityFactory.list.each do |x|  value = x.to_s.split(":").last %> <option <%= "selected=selected" if value == "String"%>> <%=value%></option> <% end %>
+            <% Intrigue::Model::Entity.descendants.each do |x|  value = x.to_s.split(":").last %> <option <%= "selected=selected" if value == "String"%>> <%=value%></option> <% end %>
           </select>
         </div>
       </div>
@@ -59,16 +59,10 @@
   <div id="metadata" class="col-sm-7"></div>
 </div>
 <br/>
-<h4>Running Tasks</h4>
-<% @running_task_results.each do |x| %>
-<ul>
-<%= "<li><a href=\'/v1/task_results/#{x.id}\'> (#{x.timestamp_end}) #{x.task_name} on #{x.entity.type if x.entity}##{ h x.entity.attributes["name"] if x.entity} (#{x.entities.count if x.entity})</a></li>" %>
-</ul>
-<% end %>
 <h4>Completed Tasks</h4>
 <% @completed_task_results.each do |x| %>
 <ul>
-<%= "<li><a href=\'/v1/task_results/#{x.id}\'> (#{x.timestamp_end}) #{x.task_name} on #{x.entity.type if x.entity}##{ h x.entity.attributes["name"] if x.entity} (#{x.entities.count if x.entity})</a></li>" %>
+<%= "<li><a href=\'/v1/task_results/#{x.id}\'> (#{x.timestamp_end}) #{x.task_name} on #{x.entity.type_string if x.entity}##{ h x.entity.name if x.entity} (#{x.entity_count})</a></li>" %>
 </ul>
 <% end %>
 

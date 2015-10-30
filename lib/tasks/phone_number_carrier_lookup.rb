@@ -37,25 +37,25 @@ class PhoneNumberCarrierLookup < BaseTask
       attributes = JSON.parse response if response
 
       if attributes["Response"]["error"]
-        @task_log.error "Error querying API #{attributes["Response"]["error"]}"
+        @task_result.log_error "Error querying API #{attributes["Response"]["error"]}"
         return
       end
 
-      @task_log.log "You have #{attributes["Response"]["creditBalance"]} credits remaining."
+      @task_result.log "You have #{attributes["Response"]["creditBalance"]} credits remaining."
 
       # Edit the phone number entity
-      @entity.attributes["carrier_type"] = attributes["Response"]["carrier_type"]
-      @entity.attributes["carrier"] = attributes["Response"]["carrier"]
+      @entity.details["carrier_type"] = attributes["Response"]["carrier_type"]
+      @entity.details["carrier"] = attributes["Response"]["carrier"]
       @entity.save
 
-      @task_log.log "Carrier Type: #{@entity.attributes["carrier_type"]}"
-      @task_log.log "Carrier: #{@entity.attributes["carrier"]}"
+      @task_result.log "Carrier Type: #{@entity.details["carrier_type"]}"
+      @task_result.log "Carrier: #{@entity.details["carrier"]}"
 
       # Add an info entity_ids
       #{}_create_entity "Info", attributes.merge({"name" => "Carrier Lookup for #{phone_number}: #{attributes}"})
 
     rescue JSON::ParserError
-      @task_log.error "Unable to retrieve provider info"
+      @task_result.log_error "Unable to retrieve provider info"
     end
 
   end

@@ -28,7 +28,7 @@ class SearchBingTask < BaseTask
     opt_max_results = _get_option("max_results").to_i
 
     if opt_max_results > 50
-      @task_log.log "only 50 results allowed"
+      @task_result.log "only 50 results allowed"
       opt_max_results = 50
     end
 
@@ -36,7 +36,7 @@ class SearchBingTask < BaseTask
       # Attach to the google service & search
       bing = Client::Search::Bing::SearchService.new(api_key,opt_max_results,'Web',{:Adult => 'Off'})
       results = bing.search(entity_name)
-      @task_log.log "Search returned #{results.first[:Web].count} results"
+      @task_result.log "Search returned #{results.first[:Web].count} results"
 
       return unless results.first[:Web].count > 0
 
@@ -67,9 +67,9 @@ class SearchBingTask < BaseTask
 
           # Create a domain if it matches our search string or the main URI
           dns_name = result[:Url].split("/")[0..2].join("/").gsub("http://","").gsub("https://","")
-          #@task_log.log "main_uri: #{main_uri}"
-          #@task_log.log "dns_name: #{dns_name}"
-          #@task_log.log "entity_name: #{entity_name}"
+          #@task_result.log "main_uri: #{main_uri}"
+          #@task_result.log "dns_name: #{dns_name}"
+          #@task_result.log "entity_name: #{entity_name}"
           if /#{entity_name}/ =~ dns_name || /#{main_uri}/ =~ dns_name
             _create_entity("DnsRecord", { "name" => dns_name })
           end
@@ -99,9 +99,9 @@ class SearchBingTask < BaseTask
 
       end # end results.each
     rescue SocketError => e
-      @task_log.error "Unable to connect: #{e}"
+      @task_result.log_error "Unable to connect: #{e}"
     #rescue NoMethodError => e
-    #  @task_log.error "Caught error: #{e}"
+    #  @task_result.log_error "Caught error: #{e}"
     end
   end # end run()
 

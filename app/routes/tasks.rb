@@ -5,61 +5,36 @@ class IntrigueApp < Sinatra::Base
 
     get '/task/?' do
 
-      @entity = Intrigue::Model::Entity.find params["entity_id"] if params["entity_id"]
-      @task_result = Intrigue::Model::TaskResult.find params["task_result_id"] if params["task_result_id"]
+      @entity = Intrigue::Model::Entity.get params["entity_id"] if params["entity_id"]
+      @task_result = Intrigue::Model::TaskResult.get params["task_result_id"] if params["task_result_id"]
       @tasks = Intrigue::TaskFactory.list.map{|x| x.send(:new)}
       @task_names = @tasks.map{|t| t.metadata[:pretty_name]}.sort
-
-      keys = $intrigue_redis.scan_each(match: "task_result:*", count: 10).to_a
-      
-      unsorted_results = []
-      keys.each do |key|
-        begin
-          unsorted_results << Intrigue::Model::TaskResult.find(key.split(":").last)
-        rescue JSON::ParserError => e
-          #puts "Parse Error: #{e}"
-        end
-      end
-
-      @running_task_results = unsorted_results.select{|x| x.timestamp_end == nil }.sort_by{|x| x.timestamp_start }.reverse
-      @completed_task_results = unsorted_results.select{|x| x.timestamp_end }.sort_by{|x| x.timestamp_end }.reverse
+      #@running_task_results = Intrigue::Model::TaskResult.all(:timestamp_end => nil)
+      @completed_task_results = Intrigue::Model::TaskResult.all
 
       erb :'tasks/index'
     end
 
     # Export All Data
     get '/task_results.json/?' do
-
-      # get all results
-      keys = $intrigue_redis.scan_each(match: "task_result:*", count: 10).to_a
-
-      results = []
-      keys.each do |key|
-        results << $intrigue_redis.get(key)
-      end
-
-      ### XXX - SECURITY - this needs to be escaped, or the individual
-      ### results need to have their fields escaped. Noodle.
-      results.to_json
+      raise "Not implemented"
     end
 
     # Helper to construct the request to the API when the application is used interactively
     post '/interactive/single/?' do
 
-      # Generate a task id
-      task_id = SecureRandom.uuid
-
       # get the task name
       task_name = "#{@params["task"]}"
+      type = @params["entity_type"]
+      details = {:type => "Intrigue::Entity::#{type}"}
 
       # Construct the attributes hash from the parameters. Loop through each of the
       # parameters looking for things that look like attributes, and add them to our
-      # attribs hash
-      attribs = {}
+      # details hash
       @params.each do |name,value|
         #puts "Looking at #{name} to see if it's an attribute"
         if name =~ /^attrib/
-          attribs["#{name.gsub("attrib_","")}"] = "#{value}"
+          details["#{name.gsub("attrib_","")}"] = "#{value}"
         end
       end
 
@@ -75,11 +50,16 @@ class IntrigueApp < Sinatra::Base
       end
 
       # Construct an entity from the data we have
-      entity = Intrigue::Model::Entity.new @params["entity_type"], attribs
+      puts "details: #{details}"
+
+      create_line = "Intrigue::Entity::#{type}.new(details)"
+      puts "Calling: #{create_line}"
+
+      entity = eval create_line
       entity.save
 
       # Start the task run!
-      start_task_run(task_id, task_name, entity, options)
+      task_id = start_task_run(task_name, entity, options)
 
       redirect "/v1/task_results/#{task_id}"
     end
@@ -102,16 +82,17 @@ class IntrigueApp < Sinatra::Base
       return nil unless payload
 
       # Construct an entity from the entity_hash provided
-      entity = Intrigue::Model::Entity.new payload["entity"]["type"], payload["entity"]["attributes"]
+      type = payload["entity"]["type"]
+      attributes = payload["entity"]["attributes"]
+      entity = eval "Intrigue::Entity::#{type}.create(attributes)"
       entity.save
 
       # Generate a task id
-      task_id = SecureRandom.uuid
       task_name = payload["task"]
       options = payload["options"]
 
       # Start the task _run
-      start_task_run(task_id, task_name, entity, options)
+      task_id = start_task_run(task_name, entity, options)
 
       # Return a task id so the caller can store and look up results later
     task_id
@@ -124,11 +105,7 @@ class IntrigueApp < Sinatra::Base
       result = JSON.parse(request.body.read)
 
       # Do something with event_json
-      #puts "Got result:\n #{result}"
       job_id = result["id"]
-
-      # Persist the result
-      $intrigue_redis.set("task_result:#{job_id}", result.to_json)
 
       # Return status
       status 200 if result
@@ -137,25 +114,23 @@ class IntrigueApp < Sinatra::Base
     # Get the results of a task run
     get "/task_results/:id.json/?" do
       content_type :json
-      result = Intrigue::Model::TaskResult.find "#{params[:id]}" #$intrigue_redis.get("task_result:#{params[:id]}")
+      result = Intrigue::Model::TaskResult.get(params[:id])
       result.export_json if result
     end
 
     # Show the results in a human readable format
     get '/task_results/:id/?' do
+
+      task_result_id = params[:id].to_i
+
       # Get the task result from the database, and fail cleanly if it doesn't exist
-      @task_result = Intrigue::Model::TaskResult.find(params[:id])
-
-      # Catch any issues
+      @task_result = Intrigue::Model::TaskResult.get(task_result_id)
       return "Unknown Task ID" unless @task_result
-
-      # Separate out the task log
-      @task_log = @task_result.log
 
       # Assuming it's available, display it
       if @task_result
         @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1/task/?task_result_id=#{@task_result.id}"
-        @elapsed_time = "#{Time.parse(@task_result.timestamp_end).to_i - Time.parse(@task_result.timestamp_start).to_i}" if @task_result.timestamp_end
+        @elapsed_time = "#{(@task_result.timestamp_end - @task_result.timestamp_start).to_i}" if @task_result.timestamp_end
       end
 
       erb :'tasks/task_result'
@@ -164,7 +139,7 @@ class IntrigueApp < Sinatra::Base
     # Determine if the task run is complete
     get '/task_results/:id/complete/?' do
 
-      x = Intrigue::Model::TaskResult.find(params[:id])
+      x = Intrigue::Model::TaskResult.get(params[:id])
 
       if x
         return "true" if x.complete
@@ -175,7 +150,7 @@ class IntrigueApp < Sinatra::Base
 
     # Get the task log
     get '/task_results/:id/log/?' do
-      @result = Intrigue::Model::TaskResult.find(params[:id])
+      @result = Intrigue::Model::TaskResult.get(params[:id])
       erb :log
     end
 

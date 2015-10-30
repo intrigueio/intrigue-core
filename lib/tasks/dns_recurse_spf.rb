@@ -20,11 +20,11 @@ class DnsRecurseSpf < BaseTask
     super
 
     dns_name = _get_entity_attribute "name"
-    @task_log.log "Running SPF lookup on #{dns_name}"
+    @task_result.log "Running SPF lookup on #{dns_name}"
 
     # Run a lookup on the entity
     lookup_txt_record (dns_name)
-    @task_log.log "done!"
+    @task_result.log "done!"
 
   end
 
@@ -40,8 +40,8 @@ class DnsRecurseSpf < BaseTask
 
       # If we got a success to the query.
       if result
-        @task_log.good "TXT lookup succeeded on #{dns_name}:"
-        @task_log.good "Result:\n=======\n#{result.to_s}======"
+        @task_result.log_good "TXT lookup succeeded on #{dns_name}:"
+        @task_result.log_good "Result:\n=======\n#{result.to_s}======"
 
         # Make sure there was actually a record
         unless result.answer.count == 0
@@ -54,7 +54,7 @@ class DnsRecurseSpf < BaseTask
               # We have an SPF record, so let's process it
               answer.rdata.first.split(" ").each do |data|
 
-                @task_log.log "Processing SPF component: #{data}"
+                @task_result.log "Processing SPF component: #{data}"
 
                 if data =~ /^v=spf1/
                   next #skip!
@@ -83,26 +83,26 @@ class DnsRecurseSpf < BaseTask
 
           end
 
-          @task_log.log "No more records"
+          @task_result.log "No more records"
 
         else
-          @task_log.log "Lookup succeeded, but no records found"
+          @task_result.log "Lookup succeeded, but no records found"
         end
       else
-        @task_log.log "Lookup failed, no result"
+        @task_result.log "Lookup failed, no result"
       end
 
     rescue Dnsruby::Refused
-      @task_log.error "Lookup against #{dns_name} refused"
+      @task_result.log_error "Lookup against #{dns_name} refused"
 
     rescue Dnsruby::ResolvError
-      @task_log.error "Unable to resolve #{dns_name}"
+      @task_result.log_error "Unable to resolve #{dns_name}"
 
     rescue Dnsruby::ResolvTimeout
-      @task_log.error "Timed out while querying #{dns_name}."
+      @task_result.log_error "Timed out while querying #{dns_name}."
 
     rescue Exception => e
-      @task_log.error "Unknown exception: #{e}"
+      @task_result.log_error "Unknown exception: #{e}"
     end
   end
 

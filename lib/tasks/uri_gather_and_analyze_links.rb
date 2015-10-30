@@ -22,18 +22,18 @@ class UriGatherAndAnalyzeLinks  < BaseTask
     super
 
     uri = _get_entity_attribute "name"
-    @task_log.log "Connecting to #{uri} for #{@entity}"
+    @task_result.log "Connecting to #{uri} for #{@entity}"
 
     # Go collect the page's contents
-    @task_log.log "Gathering contents"
+    @task_result.log "Gathering contents"
     contents = http_get_body(uri)
 
-    return @task_log.error "Unable to retrieve uri: #{uri}" unless contents
+    return @task_result.log_error "Unable to retrieve uri: #{uri}" unless contents
 
     ###
     ### Now, parse out all links and do analysis on the individual links
     ###
-    @task_log.log "Parsing out DNS names from links"
+    @task_result.log "Parsing out DNS names from links"
     original_dns_records = []
     URI.extract(contents, ["https","http"]) do |link|
       begin
@@ -48,7 +48,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
         original_dns_records << host
 
       rescue URI::InvalidURIError => e
-        @task_log.error "Error, unable to parse #{link}"
+        @task_result.log_error "Error, unable to parse #{link}"
       end
     end
 
@@ -56,7 +56,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
     ### Now group the original hosts into a hash of each item and a count
     ###
     # http://stackoverflow.com/questions/20386094/ruby-count-array-objects-if-object-includes-value
-    @task_log.log "Collecting DNS name counts"
+    @task_result.log "Collecting DNS name counts"
     grouped_original_dns_records = original_dns_records.inject(Hash.new(0)) do |hash,element|
       hash[element] +=1 if hash[element]
       hash
@@ -65,27 +65,27 @@ class UriGatherAndAnalyzeLinks  < BaseTask
     ###
     ### Iterate through the original collection
     ###
-    @task_log.log "Displaying DNS name counts"
+    @task_result.log "Displaying DNS name counts"
     grouped_original_dns_records.sort_by{|x| x.last }.reverse.each do |dns_record,count|
       # Create an entity for each record
       #_create_entity "DnsRecord", "name" => dns_record
       # Display the analysis in the logs
-      @task_log.log "#{count} #{dns_record}"
+      @task_result.log "#{count} #{dns_record}"
     end
     ###
 
     total_hrefs = 0
     grouped_original_dns_records.map{|result| total_hrefs += result.last }
-    @task_log.log "#{total_hrefs} hrefs across #{grouped_original_dns_records.count} dns records"
-    @task_log.log ""
-    @task_log.log "---"
-    @task_log.log ""
+    @task_result.log "#{total_hrefs} hrefs across #{grouped_original_dns_records.count} dns records"
+    @task_result.log ""
+    @task_result.log "---"
+    @task_result.log ""
 
 
     ###
     ### For each of the hostnames, let's resolve them out
     ###
-    @task_log.log "Resolving DNS Names"
+    @task_result.log "Resolving DNS Names"
     grouped_resolved_dns_records = {}
     #x = grouped_original_dns_records.clone
     grouped_original_dns_records.each do |host,count|
@@ -101,8 +101,8 @@ class UriGatherAndAnalyzeLinks  < BaseTask
       # If there are cname records
       if cnames.count > 0
         cnames.each do |r|
-          @task_log.log "#{host}"
-          @task_log.log " --> #{r.name.to_s}"
+          @task_result.log "#{host}"
+          @task_result.log " --> #{r.name.to_s}"
 
           # add an item to the hash
           grouped_resolved_dns_records[r.name.to_s] = count
@@ -112,34 +112,34 @@ class UriGatherAndAnalyzeLinks  < BaseTask
       end
     end
 
-    #@task_log.log "X! #{x}"
+    #@task_result.log "X! #{x}"
 
-    @task_log.log ""
-    @task_log.log "---"
-    @task_log.log ""
+    @task_result.log ""
+    @task_result.log "---"
+    @task_result.log ""
 
     ###
     ### Iterate through the resolved collection
     ###
 =begin
-    @task_log.log "Displaying resolved DNS Names"
+    @task_result.log "Displaying resolved DNS Names"
     grouped_resolved_dns_records.sort_by{|x| x.last }.reverse.each do |dns_record,count|
       # Create an entity for each record
       #_create_entity "DnsRecord", "name" => dns_record
       # Display the analysis in the logs
-      @task_log.log "#{count} #{dns_record}"
+      @task_result.log "#{count} #{dns_record}"
     end
-    @task_log.log "#{total_hrefs} hrefs across #{grouped_resolved_dns_records.count} dns records"
+    @task_result.log "#{total_hrefs} hrefs across #{grouped_resolved_dns_records.count} dns records"
 
-    @task_log.log ""
-    @task_log.log "---"
-    @task_log.log ""
+    @task_result.log ""
+    @task_result.log "---"
+    @task_result.log ""
 =end
 
     ###
     ### Now, resolve those hosts into IPs, and see how deep it goes
     ###
-    @task_log.log "Resolving IP addresses from the original links"
+    @task_result.log "Resolving IP addresses from the original links"
     ip_addresses = []
     grouped_original_dns_records.each do |dns_record,count|
 
@@ -149,7 +149,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
       begin
         # Get the addresses
         Resolv.new.getaddresses(dns_record).each do |ip|
-          #@task_log.log "Resolved #{dns_record} into #{ip}"
+          #@task_result.log "Resolved #{dns_record} into #{ip}"
           ip_addresses << { :host => ip, :dns_record => dns_record }
         end
 
@@ -158,7 +158,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
         # across the queries
 
       rescue Exception => e
-        @task_log.error "Hit exception: #{e}"
+        @task_result.log_error "Hit exception: #{e}"
       end
     end
 
@@ -166,7 +166,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
     ###
     ### Now group the addresses into collections based on ip
     ###
-    @task_log.log "Collecting IP address counts"
+    @task_result.log "Collecting IP address counts"
     grouped_ip_records = ip_addresses.inject(Hash.new(0)) do |hash,element|
       hash[element] +=1 if hash[element]
       hash
@@ -175,15 +175,15 @@ class UriGatherAndAnalyzeLinks  < BaseTask
     ###
     ### Verbose Info
     ###
-    @task_log.log "Displaying IP address counts"
+    @task_result.log "Displaying IP address counts"
     grouped_ip_records.sort_by{|x| x.last }.reverse.each do |record,count|
       _create_entity "IpAddress", "name" => record[:host], "description" => record[:dns_record]
-      @task_log.log "#{count} #{record}"
+      @task_result.log "#{count} #{record}"
     end
 
     total_ips = 0
     grouped_ip_records.map{|result| total_ips += result.last }
-    @task_log.log "#{total_ips} IPs across #{grouped_resolved_dns_records.count} dns records"
+    @task_result.log "#{total_ips} IPs across #{grouped_resolved_dns_records.count} dns records"
 
   end
 

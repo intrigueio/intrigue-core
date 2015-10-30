@@ -4,15 +4,14 @@ class WebAccount < Intrigue::Model::Entity
 
   def metadata
     {
-      :type => "WebAccount",
-      :required_attributes => ["name","domain","uri"]
+      :description => "TODO"
     }
   end
 
-  def validate(attributes)
-    attributes["name"] =~ /^.*$/ &&
-    attributes["domain"] =~ /^.*$/ &&
-    attributes["uri"] =~ /^http.*$/
+  def validate
+    @name =~ /^.*$/ &&
+    @details["domain"] =~ /^.*$/ &&
+    @details["uri"] =~ /^http.*$/
   end
 
 end

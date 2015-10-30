@@ -1,41 +1,39 @@
 module Intrigue
   module Model
     class Entity
+      include DataMapper::Resource
 
-      attr_accessor :id, :type, :attributes
+      property :id,       Serial
+      property :type,     Discriminator
+      property :name,     String
+      property :details,  Object #Text, :length => 100000
 
-      def self.key
-        "entity"
-      end
+      #has n, :scan_results, through
+      belongs_to :task_result, :required => false
+      belongs_to :scan_result, :required => false
 
-      def key
-        "#{Intrigue::Model::Entity.key}"
-      end
+      #validates_with_method :validate
 
-      def initialize(type,attributes)
-        @id = SecureRandom.uuid
-        @type = type
-        @attributes = attributes
+      before :create, :configure
+
+      def configure
+        attribute_set :details, {}
+        #save
       end
 
       def allowed_tasks
         TaskFactory.list ### XXX - this needs to be limited to tasks that accept this type
       end
 
-      def self.find(id)
-        lookup_key = "#{key}:#{id}"
-        result = $intrigue_redis.get(lookup_key)
-        return nil unless result
-
-        s = Entity.new("nope","nope")
-        s.from_json(result)
-        s.save
-
-        # if we didn't find anything in the db, return nil
-        return nil if s.id == "nope"
-      s
+      def to_s
+        "#{type_string}: #{@name}"
       end
 
+      def type_string
+        attribute_get(:type).to_s.gsub(/^.*::/, '')
+      end
+
+=begin
       def from_json(json)
         begin
           x = JSON.parse(json)
@@ -75,32 +73,19 @@ module Intrigue
         to_hash.to_json
       end
 
-      def save
-        lookup_key = "#{key}:#{@id}"
-        $intrigue_redis.set lookup_key, to_json
-      end
-
       ###
       ### XXX - needs documentation
       ###
+=end
+      #def self.inherited(base)
+      #  EntityFactory.register(base)
+      #end
 
-      def self.inherited(base)
-        EntityFactory.register(base)
-      end
-
-      def set_attribute(key, value)
-        @attributes[key.to_s] = value
-        save
-        return false unless validate(attributes)
-      true
-      end
-
-      def set_attributes(attributes)
-        return false unless validate(attributes)
-        @attributes = attributes
+      def set_attributes(hash)
+        attribute_set :details,hash
         save
       end
-
+=begin
       #def to_json
       #  {
       #    :id => id,
@@ -108,7 +93,7 @@ module Intrigue
       #    :attributes => @attributes
       #  }
       #end
-
+=end
       def form
         %{
         <div class="form-group">
@@ -120,20 +105,14 @@ module Intrigue
         <div class="form-group">
           <label for="attrib_name" class="col-xs-4 control-label">Name</label>
           <div class="col-xs-6">
-            <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name" value="#{_escape_html @attributes["name"]}">
+            <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name" value="#{_escape_html @name}">
           </div>
         </div>
       }
       end
 
-      # override this method
-      def metadata
-        raise "Metadata method should be overridden"
-      end
-
-      # override this method
-      def validate(attributes)
-        raise "Validate method missing for #{self.type}"
+      def self.descendants
+        ObjectSpace.each_object(Class).select { |klass| klass < self }
       end
 
       private
@@ -141,7 +120,6 @@ module Intrigue
         Rack::Utils.escape_html(text)
         text
       end
-
     end
   end
 end

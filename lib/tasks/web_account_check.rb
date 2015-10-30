@@ -29,7 +29,7 @@ class WebAccountCheckTask < BaseTask
     account_list_data = File.open("data/web_accounts_list.json").read
     account_list = JSON.parse(account_list_data)
 
-    @task_log.log "Checking target against #{account_list["sites"].count} possible sites"
+    @task_result.log "Checking target against #{account_list["sites"].count} possible sites"
 
     account_list["sites"].each do |site|
 
@@ -44,12 +44,12 @@ class WebAccountCheckTask < BaseTask
 
       # Skip if the site tags don't match our type
       unless site["allowed_types"].include? @entity.type
-        @task_log.log "Skipping #{account_uri}, doesn't match our type"
+        @task_result.log "Skipping #{account_uri}, doesn't match our type"
         next
       end
 
       # Otherwise, go get it
-      @task_log.log "Checking #{account_uri}"
+      @task_result.log "Checking #{account_uri}"
       body = http_get_body(account_uri)
       next unless body
 

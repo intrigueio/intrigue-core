@@ -23,7 +23,7 @@ class DnsLookupTxtTask < BaseTask
 
     domain_name = _get_entity_attribute "name"
 
-    @task_log.log "Running TXT lookup on #{domain_name}"
+    @task_result.log "Running TXT lookup on #{domain_name}"
 
     begin
       res = Dnsruby::Resolver.new(
@@ -34,8 +34,8 @@ class DnsLookupTxtTask < BaseTask
 
       # If we got a success to the query.
       if res_answer
-        @task_log.good "TXT lookup succeeded on #{domain_name}:"
-        @task_log.good "Answer:\n=======\n#{res_answer.to_s}======"
+        @task_result.log_good "TXT lookup succeeded on #{domain_name}:"
+        @task_result.log_good "Answer:\n=======\n#{res_answer.to_s}======"
 
 
         # TODO - Parse for netbocks and hostnames
@@ -73,19 +73,19 @@ class DnsLookupTxtTask < BaseTask
       end
 
     rescue Dnsruby::Refused
-      @task_log.log "Lookup against #{domain_name} refused."
+      @task_result.log "Lookup against #{domain_name} refused."
 
     rescue Dnsruby::ResolvError
-      @task_log.log "Unable to resolve #{domain_name}"
+      @task_result.log "Unable to resolve #{domain_name}"
 
     rescue Dnsruby::ResolvTimeout
-      @task_log.log "Timed out while querying #{domain_name}."
+      @task_result.log "Timed out while querying #{domain_name}."
 
     rescue Exception => e
-      @task_log.log "Unknown exception: #{e}"
+      @task_result.log "Unknown exception: #{e}"
     end
 
-    @task_log.log "done"
+    @task_result.log "done"
   end
 
 

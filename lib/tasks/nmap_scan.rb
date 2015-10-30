@@ -36,25 +36,25 @@ class NmapScanTask < BaseTask
     nmap_options << "-6 " if to_scan =~ /:/
 
     # shell out to nmap and run the scan
-    @task_log.log "Scanning #{to_scan} and storing in #{temp_file}"
-    @task_log.log "NMap options: #{nmap_options}"
+    @task_result.log "Scanning #{to_scan} and storing in #{temp_file}"
+    @task_result.log "NMap options: #{nmap_options}"
     nmap_string = "nmap #{to_scan} #{nmap_options} -P0 --top-ports 100 --min-parallelism 10 -oX #{temp_file}"
-    @task_log.log "Running... #{nmap_string}"
+    @task_result.log "Running... #{nmap_string}"
     _unsafe_system(nmap_string)
 
     # Gather the XML and parse
-    #@task_log.log "Raw Result:\n #{File.open(temp_file).read}"
-    @task_log.log "Parsing #{temp_file}"
+    #@task_result.log "Raw Result:\n #{File.open(temp_file).read}"
+    @task_result.log "Parsing #{temp_file}"
 
     parser = ::Nmap::Parser.parsefile(temp_file)
 
     # Create entities for each discovered service
     parser.hosts("up") do |host|
 
-      @task_log.log "Handling nmap data for #{host.addr}"
+      @task_result.log "Handling nmap data for #{host.addr}"
 
       # Handle the case of a netblock or domain - where we will need to create host entity(s)
-      if @entity.type == "NetBlock" or @entity.type == "DnsRecord"
+      if @entity.type_string == "NetBlock" or @entity.type_string == "DnsRecord"
         host_entity = _create_entity("IpAddress", { "name" => host.addr } )
       else
         host_entity = @entity # We already have a host
@@ -73,38 +73,38 @@ class NmapScanTask < BaseTask
             "fingerprint" => "#{port.service.name}"})
 
           # Handle WebApps
-          if entity.attributes["proto"] == "tcp" &&
-            [80,443,8080,8081,8443].include?(entity.attributes["port_num"])
+          if entity.details["proto"] == "tcp" &&
+            [80,443,8080,8081,8443].include?(entity.details["port_num"])
 
             # determine if this is an SSL application
-            ssl = true if [443,8443].include?(entity.attributes["port_num"])
+            ssl = true if [443,8443].include?(entity.details["port_num"])
             protocol = ssl ? "https://" : "http://" # construct uri
 
             # Create URI
-            uri = "#{protocol}#{host.addr}:#{entity.attributes["port_num"]}"
+            uri = "#{protocol}#{host.addr}:#{entity.details["port_num"]}"
             _create_entity("Uri", "name" => uri, "uri" => uri  ) # create an entity
 
             # and create the entities if we have dns
             host.hostnames.each do |hostname|
-              uri = "#{protocol}#{hostname}:#{entity.attributes["port_num"]}"
+              uri = "#{protocol}#{hostname}:#{entity.details["port_num"]}"
               _create_entity("Uri", "name" => uri, "uri" => uri )
             end
 
           # Handle FtpServer
-          elsif [21].include?(entity.attributes["port_num"])
-            uri = "ftp://#{entity.attributes["ip_address"]}:#{entity.attributes["port_num"]}"
+          elsif [21].include?(entity.details["port_num"])
+            uri = "ftp://#{entity.details["ip_address"]}:#{entity.details["port_num"]}"
             _create_entity("FtpServer", {
               "name" => uri,
-              "ip_address" => entity.attributes["ip_address"],
+              "ip_address" => entity.details["ip_address"],
               "port" => 21,
               "uri" => uri  })
 
           # Handle SshServer
-          elsif [22].include?(entity.attributes["port_num"])
-            uri = "ssh://#{entity.attributes["ip_address"]}:#{entity.attributes["port_num"]}"
+          elsif [22].include?(entity.details["port_num"])
+            uri = "ssh://#{entity.details["ip_address"]}:#{entity.details["port_num"]}"
             _create_entity("SshServer", {
               "name" => uri,
-              "ip_address" => entity.attributes["ip_address"],
+              "ip_address" => entity.details["ip_address"],
               "port" => 22,
               "uri" => uri  })
 
@@ -118,7 +118,7 @@ class NmapScanTask < BaseTask
     begin
       File.delete(temp_file)
     rescue Errno::EPERM
-      @task_log.error "Unable to delete file"
+      @task_result.log_error "Unable to delete file"
     end
   end
 

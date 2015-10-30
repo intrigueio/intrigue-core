@@ -52,14 +52,14 @@ class UriSpider < BaseTask
 
 
   def crawl_and_extract(uri)
-    @task_log.log "Crawling: #{uri}"
+    @task_result.log "Crawling: #{uri}"
     dns_records = []
 
     Arachnid.new(uri).crawl({
         :threads => @opt_threads,
         :max_urls => @opt_max_pages}) do |response|
 
-      @task_log.log "Processing #{response.effective_url}"
+      @task_result.log "Processing #{response.effective_url}"
 
       # Extract the uri
       page_uri = "#{response.effective_url}".encode('UTF-8', {
@@ -85,7 +85,7 @@ class UriSpider < BaseTask
       # Create an entity for this host
       if @opt_extract_dns_records
 
-        @task_log.log "Extracting dns records from #{response.effective_url}"
+        @task_result.log "Extracting dns records from #{response.effective_url}"
         URI.extract(page_body, ["https","http"]) do |link|
           begin
             # Collect the host
@@ -112,7 +112,7 @@ class UriSpider < BaseTask
 
             end
           rescue URI::InvalidURIError => e
-            @task_log.error "Error, unable to parse #{link} from page #{page_uri}"
+            @task_result.log_error "Error, unable to parse #{link} from page #{page_uri}"
           end
         end
       end
@@ -137,7 +137,7 @@ class UriSpider < BaseTask
         end
 
       else
-        @task_log.log "Parsing as a regular file"
+        @task_result.log "Parsing as a regular file"
         parse_entities_from_content(page_uri, page_body)
       end
     end # end .crawl

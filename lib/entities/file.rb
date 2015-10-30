@@ -4,13 +4,13 @@ class File < Intrigue::Model::Entity
 
   def metadata
     {
-      :type => "File",
-      :required_attributes => ["name"]
+      :description => "TODO"
     }
   end
 
-  def validate(attributes)
-    attributes["name"] =~ /^.*$/
+
+  def validate
+    @name =~ /^.*$/
   end
 
 end

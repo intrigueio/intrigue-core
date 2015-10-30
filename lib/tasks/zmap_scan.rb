@@ -32,10 +32,10 @@ class ZmapScanTask < BaseTask
     temp_file = "#{Dir::tmpdir}/zmap_output_#{rand(100000000)}.tmp"
 
     # shell out to nmap and run the scan
-    @task_log.log "Scanning #{to_scan} and storing in #{temp_file}"
+    @task_result.log "Scanning #{to_scan} and storing in #{temp_file}"
 
     zmap_string = "sudo zmap -p #{port_num} -o #{temp_file} #{to_scan}"
-    @task_log.log "Running... #{zmap_string}"
+    @task_result.log "Running... #{zmap_string}"
     _unsafe_system(zmap_string)
 
     f = File.open(temp_file).each_line do |host|
@@ -60,7 +60,7 @@ class ZmapScanTask < BaseTask
     begin
       File.delete(temp_file)
     rescue Errno::EPERM
-      @task_log.error "Unable to delete file"
+      @task_result.log_error "Unable to delete file"
     end
   end
 

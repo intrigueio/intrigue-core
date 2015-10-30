@@ -3,7 +3,7 @@
 <div class="col-sm-5">
   <form class="form-horizontal" target="_self" method="post" action="/v1/interactive/scan">
     <div class="form-group">
-      <label for="task_name" class="col-xs-4 control-label">Scan Type</label>
+      <label for="scan_type" class="col-xs-4 control-label">Scan Type</label>
       <div class="col-xs-6">
       <select class="form-control input-sm" name="scan_type" id="scan_type">
         <option value="internal"> Internal Scan </option>
@@ -16,27 +16,27 @@
       <label for="entity_type" class="col-xs-4 control-label">Entity Type</label>
       <div class="col-xs-6">
         <select class="form-control input-sm" id="entity_type" name="entity_type">
-         <% Intrigue::EntityFactory.list.each do |x|  value = x.to_s.split(":").last %> <option <%= "selected=selected" if value == "String"%>> <%=value%></option> <% end %>
+         <% Intrigue::Model::Entity.descendants.each do |x|  value = x.to_s.split(":").last %> <option <%= "selected=selected" if value == "String"%>> <%=value%></option> <% end %>
         </select>
       </div>
       <label for="attrib_name" class="col-xs-4 control-label">Entity Name</label>
       <div class="col-xs-6">
         <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name" value="intrigue.io">
       </div>
-      <label for="entity_type" class="col-xs-4 control-label">Scan Name</label>
+      <label for="scan_name" class="col-xs-4 control-label">Scan Name</label>
       <div class="col-xs-6">
-        <input type="text" class="form-control input-sm" id="name" name="name" value="Just another scan">
+        <input type="text" class="form-control input-sm" id="scan_name" name="scan_name" value="Just another scan">
       </div>
     </div>
     Advanced:
     <div class="form-group">
-      <label for="attrib_name" class="col-xs-4 control-label">Depth</label>
+      <label for="scan_depth" class="col-xs-4 control-label">Depth</label>
       <div class="col-xs-6">
-        <input type="text" class="form-control input-sm" id="depth" name="depth" value="4">
+        <input type="text" class="form-control input-sm" id="scan_depth" name="scan_depth" value="4">
       </div>
-      <label for="filter_strings" class="col-xs-4 control-label">Filter Strings</label>
+      <label for="scan_filter_strings" class="col-xs-4 control-label">Filter Strings</label>
       <div class="col-xs-6">
-        <input type="text" class="form-control input-sm" id="filter_strings" name="filter_strings" value"">
+        <input type="text" class="form-control input-sm" id="scan_filter_strings" name="scan_filter_strings" value"">
       </div>
     </div>
     <hr></hr>
@@ -49,6 +49,6 @@
 <h4>Completed Scans</h4>
 <% @scan_results.each do |x| %>
 <ul>
-<%= "<li><a href=\'/v1/scan_results/#{x.id}\'> (#{x.timestamp_end}) #{x.name} on #{x.entity.type if x.entity}##{ h x.entity.attributes["name"] if x.entity} (#{x.entity_count}) </a></li>"  if x %>
+<%= "<li><a href=\'/v1/scan_results/#{x.id}\'> (#{x.timestamp_end}) #{x.name} on #{x.entity.type_string if x.entity}##{ h x.entity.name if x.entity} (#{x.entity_count}) </a></li>"  if x %>
 </ul>
 <% end %>

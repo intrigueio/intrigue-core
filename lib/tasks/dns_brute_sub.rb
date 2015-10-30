@@ -79,15 +79,15 @@ Some cases to think through:
 
     # Create the brute list (from a file, or a provided list)
     if opt_use_file
-      @task_log.log "Using file #{opt_filename}"
+      @task_result.log "Using file #{opt_filename}"
       subdomain_list = File.open("#{$intrigue_basedir}/data/#{opt_filename}","r").read.split("\n")
     else
-      @task_log.log "Using provided brute list"
+      @task_result.log "Using provided brute list"
       subdomain_list = opt_brute_list
       subdomain_list = subdomain_list.split(",") if subdomain_list.kind_of? String
     end
 
-    @task_log.good "Using subdomain list: #{subdomain_list}"
+    @task_result.log_good "Using subdomain list: #{subdomain_list}"
 
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)
@@ -96,10 +96,10 @@ Some cases to think through:
       if wildcard
         _create_entity "IpAddress", "name" => "#{wildcard}"
         wildcard_domain = true
-        @task_log.error "WARNING! Wildcard domain detected, only saving validated domains/hosts."
+        @task_result.log_error "WARNING! Wildcard domain detected, only saving validated domains/hosts."
       end
     rescue Resolv::ResolvError
-      @task_log.good "Looks like no wildcard dns. Moving on."
+      @task_result.log_good "Looks like no wildcard dns. Moving on."
     end
 
     # Iterate through the subdomain list
@@ -118,7 +118,7 @@ Some cases to think through:
 
         # Try to resolve
         resolved_address = resolver.getaddress(brute_domain)
-        @task_log.good "Resolved Address #{resolved_address} for #{brute_domain}" if resolved_address
+        @task_result.log_good "Resolved Address #{resolved_address} for #{brute_domain}" if resolved_address
 
         # If we resolved, create the right entities
         if (resolved_address && !(wildcard_domain))
@@ -137,13 +137,13 @@ Some cases to think through:
           if opt_use_permutations
             # Create a list of permutations based on this success
             permutation_list = ["#{subdomain}1", "#{subdomain}2"]
-            @task_log.log "Adding permutations: #{permutation_list.join(", ")}"
+            @task_result.log "Adding permutations: #{permutation_list.join(", ")}"
             subdomain_list.concat permutation_list
           end
         end
 
       rescue Exception => e
-        @task_log.error "Hit exception: #{e}"
+        @task_result.log_error "Hit exception: #{e}"
       end
     end
   end
