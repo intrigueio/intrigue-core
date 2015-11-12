@@ -74,8 +74,8 @@ class UriGatherSslCertTask  < BaseTask
         tcp_client.close
 
         # Create an SSL Certificate entity
-        _create_entity "SslCertificate", {  "name" => cert.subject,
-                                            "text" => cert.to_text }
+        _create_entity "SslCertificate", {  "name" => "#{cert.subject}",
+                                            "text" => "#{cert.to_text}" }
       end
     rescue Timeout::Error
       @task_result.log "Timed out"

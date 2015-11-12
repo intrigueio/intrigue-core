@@ -2,6 +2,18 @@ module Intrigue
   module Task
     module Helper
 
+      def task_result_uri(id)
+        "/v1/task_results/#{id}"
+      end
+
+      def scan_result_uri(id)
+        "/v1/scan_results/#{id}"
+      end
+
+      def entity_uri(id)
+        "/v1/entities/#{id}"
+      end
+
       ###
       ### Helper method for starting a task run
       ###
@@ -14,7 +26,7 @@ module Intrigue
         task_result = Intrigue::Model::TaskResult.create({
             :task_name => task_name,
             :options => options,
-            :entity => entity
+            :base_entity => entity
         })
 
         ###

@@ -36,8 +36,8 @@ class SearchBingTask < BaseTask
       # Attach to the google service & search
       bing = Client::Search::Bing::SearchService.new(api_key,opt_max_results,'Web',{:Adult => 'Off'})
       results = bing.search(entity_name)
-      @task_result.log "Search returned #{results.first[:Web].count} results"
 
+      @task_result.log "Search returned #{results.first[:Web].count} results"
       return unless results.first[:Web].count > 0
 
       main_uri = results.first[:Web].first[:DisplayUrl].split(".").last(2).join(".")

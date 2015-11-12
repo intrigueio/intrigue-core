@@ -1,11 +1,8 @@
 module Intrigue
 module Scanner
   class Base
-
     include Sidekiq::Worker
     include Intrigue::Task::Helper
-
-    attr_accessor :id
 
     def perform(id)
       @scan_result = Intrigue::Model::ScanResult.get(id)
@@ -16,8 +13,8 @@ module Scanner
 
       # Kick off the scan
       @scan_result.timestamp_start = DateTime.now
-      @scan_result.log "Starting scan #{@scan_result.name} of type #{self.class} with id #{@scan_result.id} on entity #{@scan_result.entity.type_string}##{@scan_result.entity.name} to depth #{@scan_result.depth}"
-      _recurse(@scan_result.entity, @scan_result.depth)
+      @scan_result.log "Starting scan #{@scan_result.name} of type #{self.class} with id #{@scan_result.id} on entity #{@scan_result.base_entity.type_string}##{@scan_result.base_entity.name} to depth #{@scan_result.depth}"
+      _recurse(@scan_result.base_entity, @scan_result.depth)
 
       # Mark the task complete
       @scan_result.log_good "Complete!"
@@ -28,6 +25,8 @@ module Scanner
     private
 
     def _start_task_and_recurse(task_name,entity,depth,options=[])
+
+      @scan_result.log "RECURSING (#{depth}) on #{entity}... #{task_name} #{options}"
       @scan_result.log "Starting #{task_name} with options #{options} on #{entity.type_string}##{entity.name} at depth #{depth}"
 
       # Make sure we can check for these later
@@ -38,12 +37,12 @@ module Scanner
       # Check existing task results and see if we aleady have this answer
       @scan_result.log "Checking previous results..."
       @scan_result.task_results.each do |t|
-        @scan_result.log "t: #{t.inspect}"
-        @scan_result.log "t.entity: #{t.entity.inspect}"
-        @scan_result.log "entity: #{entity.inspect}"
+        #@scan_result.log "t: #{t.inspect}"
+        #@scan_result.log "t.base_entity: #{t.base_entity.inspect}"
+        #@scan_result.log "entity: #{entity.inspect}"
         if (t.task_name == task_name &&
-            t.entity.type_string == entity.type_string &&
-            t.entity.name == entity.name)
+            t.base_entity.type_string == entity.type_string &&
+            t.base_entity.name == entity.name)
           # We have a match
           @scan_result.log "Already have results from a task with name #{task_name} and entity #{entity.type_string}:#{entity.name}"
           already_completed = true
@@ -60,24 +59,17 @@ module Scanner
         # Wait for the task to complete
         @scan_result.log "Task started, waiting for results"
         task_result = Intrigue::Model::TaskResult.get task_id
-        until task_result.complete # this will eventually time out and mark complete if the task fails. (900s)
+        until task_result.complete
+          # TODO - add explicit timeout here
           @scan_result.log "Sleeping, waiting for completion of task: #{task_id}"
           sleep 3
           task_result = Intrigue::Model::TaskResult.get task_id
         end
         @scan_result.log "Task complete!"
 
-        # Parse out entities and add'm
-        @scan_result.log "Parsing entities..."
-        task_result.entities.each do |new_entity|
-            unless @scan_result.has_entity? new_entity
-              @scan_result.add_entity(new_entity)
-            end
-        end
-
-        # add the task_result to the scan record
+        # add the task_result to the scan_result
         @scan_result.log "Adding new task result..."
-        @scan_result.add_task_result(task_result) unless already_completed
+        @scan_result.add_task_result(task_result)
 
       else
         @scan_result.log "We already have results. Grabbing existing task results: #{task_name} on #{entity.type_string}##{entity.name}."
@@ -85,21 +77,13 @@ module Scanner
         task_result = Intrigue::Model::TaskResult.get previous_task_result_id
       end
 
-      # Then iterate on each entity
-      task_result.entities.each do |entity|
+      # Iterate on each discovered entity
+      task_result.entities.map do |entity|
+        @scan_result.add_entity entity;
         @scan_result.log "Iterating on #{entity.type_string}##{entity.name}"
-
-        # This is currently unused, but where we can easily create a graph of results
-        #this = Neography::Node.create(
-        #  type: y["type"],
-        #  name: y["attributes"]["name"],
-        #  task_result: y["task_result"] )
-        # store it on the current entity
-        #node.outgoing(:child) << this
-
-        # recurse!
         _recurse(entity, depth-1)
       end
+
     end
 
   end

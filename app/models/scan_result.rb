@@ -5,7 +5,7 @@ module Intrigue
       include DataMapper::Resource
       include Intrigue::Model::Logger
 
-      has 1, :entity
+      has 1, :base_entity, "Intrigue::Model::Entity"
       has n, :task_results
       has n, :entities
 
@@ -13,22 +13,15 @@ module Intrigue
       property :name, String
       property :depth, Integer
       property :scan_type, String
-      property :options, Object
-      property :complete, Boolean
-      property :full_log, Text, :length => 5000000
+      property :options, Object, :default => []
+      property :complete, Boolean, :default => false
+      property :full_log, Text, :length => 5000000, :default => ""
 
       property :timestamp_start, DateTime
       property :timestamp_end, DateTime
 
-      property :entity_count, Integer
-      property :filter_strings, Text
-
-      before :create, :configure
-
-      def configure
-        #attribute_set :options, []
-        #attribute_set :full_log, ""
-      end
+      property :entity_count, Integer, :default => 0
+      property :filter_strings, Text, :default => ""
 
       def add_task_result(task_result)
         @task_results << task_result
@@ -37,18 +30,18 @@ module Intrigue
       end
 
       def add_entity(entity)
-
         return false if has_entity? entity
 
-        entity_count = 0 unless entity_count
+        attribute_set(:entity_count, (@entity_count += 1))
+        save
 
         self.entities << entity
-        entity_count += 1
+      true
       end
 
       # Matches based on type and the attribute "name"
       def has_entity? entity
-        false
+        return true if (self.entities.select {|e| e.match? entity}).length > 0
       end
 =begin
       def from_json(json)

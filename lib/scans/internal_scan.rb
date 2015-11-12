@@ -8,12 +8,12 @@ module Intrigue
     #
     def _recurse(entity, depth)
 
-      if depth <= 0      # Check for bottom of recursion
+      if depth <= 0 # Check for bottom of recursion
         @scan_result.log "Returning, depth @ #{depth}"
         return
       end
 
-      if _is_prohibited(entity)  # Check for prohibited entity name
+      if _is_prohibited(entity)   # Check for prohibited entity name
         @scan_result.log "Returning, #{entity.inspect} prohibited"
         return
       end

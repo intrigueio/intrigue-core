@@ -25,18 +25,25 @@ class IntrigueApp < Sinatra::Base
 
       # get the task name
       task_name = "#{@params["task"]}"
-      type = @params["entity_type"]
-      details = {:type => "Intrigue::Entity::#{type}"}
 
       # Construct the attributes hash from the parameters. Loop through each of the
       # parameters looking for things that look like attributes, and add them to our
       # details hash
+      entity_details = {}
       @params.each do |name,value|
         #puts "Looking at #{name} to see if it's an attribute"
         if name =~ /^attrib/
-          details["#{name.gsub("attrib_","")}"] = "#{value}"
+          entity_details["#{name.gsub("attrib_","")}"] = "#{value}"
         end
       end
+
+      # Construct an entity from the data we have
+      entity = Intrigue::Model::Entity.create(
+      {
+        :type => "Intrigue::Entity::#{@params["entity_type"]}",
+        :name => "#{@params["attrib_name"]}",
+        :details => entity_details
+      })
 
       # Construct the options hash from the parameters
       options = []
@@ -48,15 +55,6 @@ class IntrigueApp < Sinatra::Base
                       }
         end
       end
-
-      # Construct an entity from the data we have
-      puts "details: #{details}"
-
-      create_line = "Intrigue::Entity::#{type}.new(details)"
-      puts "Calling: #{create_line}"
-
-      entity = eval create_line
-      entity.save
 
       # Start the task run!
       task_id = start_task_run(task_name, entity, options)

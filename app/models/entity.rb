@@ -6,20 +6,13 @@ module Intrigue
       property :id,       Serial
       property :type,     Discriminator
       property :name,     String
-      property :details,  Object #Text, :length => 100000
+      property :details,  Object, :default => {} #Text, :length => 100000
 
       #has n, :scan_results, through
-      belongs_to :task_result, :required => false
+      belongs_to :task_result, :required => true
       belongs_to :scan_result, :required => false
 
       #validates_with_method :validate
-
-      before :create, :configure
-
-      def configure
-        attribute_set :details, {}
-        #save
-      end
 
       def allowed_tasks
         TaskFactory.list ### XXX - this needs to be limited to tasks that accept this type
@@ -31,6 +24,18 @@ module Intrigue
 
       def type_string
         attribute_get(:type).to_s.gsub(/^.*::/, '')
+      end
+
+      # Method returns true if entity has the same attributes
+      # false otherwise
+      def match?(entity)
+        if (entity.name == @name &&
+            entity.type == @type &&
+            entity.details == @details)
+            puts "DEBUG #{entity} matched #{self}"
+            return true
+        end
+      false
       end
 
 =begin
@@ -82,7 +87,7 @@ module Intrigue
       #end
 
       def set_attributes(hash)
-        attribute_set :details,hash
+        attribute_set :details, hash
         save
       end
 =begin

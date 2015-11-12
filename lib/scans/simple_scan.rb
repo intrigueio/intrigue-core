@@ -133,7 +133,6 @@ module Intrigue
 
             @scan_result.log_error "SKIP Prohibited entity: #{entity.type}##{entity.name}"
             return true
-
         end
 
       end

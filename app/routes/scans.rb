@@ -10,43 +10,43 @@ class IntrigueApp < Sinatra::Base
   # Endpoint to start a task run from a webform
   post '/interactive/scan' do
 
-    # Construct the attributes hash from the parameters. Loop through each of the
-    # parameters looking for things that look like attributes, and add them to our
-    # details hash
-    details = {}
-    @params.each do |name,value|
-      #puts "Looking at #{name} to see if it's an attribute"
-      if name =~ /^attrib/
-        details["#{name.gsub("attrib_","")}"] = "#{value}"
-      end
-    end
-
     # Collect the scan parameters
     scan_name = @params["scan_name"] || "default"
     scan_type = "#{@params["scan_type"]}"
     scan_depth = @params["scan_depth"].to_i || 3
     scan_filter_strings = @params["scan_filter_strings"]
 
-    # Collect the entity parameters
-    entity_type = "#{@params["entity_type"]}"
-    details.merge!({:type => "Intrigue::Entity::#{entity_type}"})
+    # Construct the attributes hash from the parameters. Loop through each of the
+    # parameters looking for things that look like attributes, and add them to our
+    # details hash
+    entity_details = {}
+    @params.each do |name,value|
+      #puts "Looking at #{name} to see if it's an attribute"
+      if name =~ /^attrib/
+        entity_details["#{name.gsub("attrib_","")}"] = "#{value}"
+      end
+    end
 
-    create_line = "Intrigue::Entity::#{entity_type}.create(details)"
-
-    # Create an entity object from the data we have - XXX SECURITY
-    entity = eval create_line
+    # Construct an entity from the data we have
+    entity = Intrigue::Model::Entity.create(
+    {
+      :type => "Intrigue::Entity::#{@params["entity_type"]}",
+      :name => "#{@params["attrib_name"]}",
+      :details => entity_details,
+      :task_result_id => -1
+    })
 
     # Set up the ScanResult object
     scan_result = Intrigue::Model::ScanResult.create({
       :scan_type => scan_type,
       :name => scan_name,
-      :entity => entity,
+      :base_entity => entity,
       :depth => scan_depth,
       :filter_strings => scan_filter_strings
     })
 
     ###
-    # Create the Scanner object
+    # Create the Scanner
     ###
     if scan_result.scan_type == "simple"
       scan = Intrigue::Scanner::SimpleScan.new
