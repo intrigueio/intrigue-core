@@ -52,6 +52,8 @@ class IntrigueApp < Sinatra::Base
       scan = Intrigue::Scanner::SimpleScan.new
     elsif scan_result.scan_type == "internal"
       scan = Intrigue::Scanner::InternalScan.new
+    elsif scan_result.scan_type == "dns_subdomain"
+      scan = Intrigue::Scanner::DnsSubdomainScan.new
     else
       raise "Unknown scan type"
     end
