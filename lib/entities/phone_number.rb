@@ -4,13 +4,13 @@ class PhoneNumber < Intrigue::Model::Entity
 
   def metadata
     {
-      :type => "PhoneNumber",
-      :required_attributes => ["name"]
+      :description => "TODO"
     }
   end
 
-  def validate(attributes)
-    attributes["name"] =~ /^.*$/
+
+  def validate
+    @name =~ /^.*$/
   end
 
 end

@@ -94,19 +94,19 @@ class UriExtractMetadata < BaseTask
           "text" => cert.to_text }
         end
       rescue TypeError => e
-        @task_log.log "Couldn't connect: #{e}"
+        @task_result.logger.log "Couldn't connect: #{e}"
       rescue Timeout::Error
-        @task_log.log "Timed out"
+        @task_result.logger.log "Timed out"
       rescue SocketError => e
-        @task_log.error "Caught an error: #{e}"
+        @task_result.logger.log_error "Caught an error: #{e}"
       rescue OpenSSL::SSL::SSLError => e
-        @task_log.error "Caught an error: #{e}"
+        @task_result.logger.log_error "Caught an error: #{e}"
       rescue Errno::ECONNRESET => e
-        @task_log.error "Caught an error: #{e}"
+        @task_result.logger.log_error "Caught an error: #{e}"
       rescue Errno::ECONNREFUSED => e
-        @task_log.error "Caught an error: #{e}"
+        @task_result.logger.log_error "Caught an error: #{e}"
       rescue RuntimeError => e
-        @task_log.error "Caught an error: #{e}"
+        @task_result.logger.log_error "Caught an error: #{e}"
       end
     end
 

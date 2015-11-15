@@ -35,7 +35,7 @@ class ExampleTask < BaseTask
       # Generate a fake IP address
       #
       ip_address = "#{rand(255)}.#{rand(255)}.#{rand(255)}.#{rand(255)}"
-      @task_log.log "Randomly generated an IP address: #{ip_address}"
+      @task_result.logger.log "Randomly generated an IP address: #{ip_address}"
 
       #
       # Create & return the entity

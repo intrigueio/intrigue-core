@@ -8,32 +8,32 @@ module Intrigue
     #
     def _recurse(entity, depth)
 
-      if depth <= 0      # Check for bottom of recursion
-        @scan_log.log "Returning, depth @ #{depth}"
+      if depth <= 0 # Check for bottom of recursion
+        @scan_result.logger.log "Returning, depth @ #{depth}"
         return
       end
 
-      if _is_prohibited(entity)  # Check for prohibited entity name
-        @scan_log.log "Returning, #{entity.inspect} prohibited"
+      if _is_prohibited(entity)   # Check for prohibited entity name
+        @scan_result.logger.log "Returning, #{entity.inspect} prohibited"
         return
       end
 
-      if entity.type == "IpAddress"
+      if entity.type_string == "IpAddress"
         ### DNS Reverse Lookup
         _start_task_and_recurse "dns_lookup_reverse",entity,depth
         ### Scan
         _start_task_and_recurse "nmap_scan",entity,depth
         ### Geolocate
         #_start_task "geolocate_host",entity,depth
-      elsif  entity.type == "NetBlock"
+      elsif  entity.type_string == "NetBlock"
         ### nmap
         _start_task_and_recurse "nmap_scan",entity,depth
-      elsif entity.type == "DnsRecord"
+      elsif entity.type_string == "DnsRecord"
         ### DNS Forward Lookup
         _start_task_and_recurse "dns_lookup_forward",entity,depth
         ### DNS Subdomain Bruteforce
         _start_task_and_recurse "dns_brute_sub",entity,depth,[{"name" => "use_file", "value" => "true"}]
-      elsif entity.type == "Uri"
+      elsif entity.type_string == "Uri"
         ### Get SSLCert
         _start_task_and_recurse "uri_gather_ssl_certificate",entity,depth
         ### spider
@@ -44,72 +44,74 @@ module Intrigue
         _start_task_and_recurse "uri_http_screenshot",entity,depth
         ### Gather links
         _start_task_and_recurse "uri_gather_and_analyze_links",entity,depth
-      elsif entity.type == "String"
+      elsif entity.type_string == "String"
         # Search!
         _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 10}]
         # Brute TLD
         #_start_task_and_recurse "dns_brute_tld",entity,depth
       else
-        @scan_log.log "Unhandled entity type: #{entity.type} #{entity.attributes["name"]}"
+        @scan_result.logger.log "SKIP Unhandled entity type: #{entity.type} #{entity.name}"
         return
       end
+
+      @scan_result.timestamp_end = DateTime.now
     end
 
     def _is_prohibited entity
 
       @filter_list.each do |filter|
-        if entity.attributes["name"].to_s =~ /#{filter}/
-          @scan_log.log "SKIP Filtering #{entity.attributes["name"]} based on filter #{filter}"
+        if entity.name.to_s =~ /#{filter}/
+          @scan_result.logger.log "SKIP Filtering #{entity.name} based on filter #{filter}"
           return true
         end
       end
 
       # Skip huge netblocks, ipv6
-      if entity.type == "NetBlock"
+      if entity.type_string == "NetBlock"
 
         # handle netblock
-        cidr = entity.attributes["name"].split("/").last.to_i
+        cidr = entity.name.split("/").last.to_i
         unless cidr >= 16
-          @scan_log.error "SKIP Netblock too large: #{entity.type}##{entity.attributes["name"]}"
+          @scan_result.logger.log_error "SKIP Netblock too large: #{entity.type}##{entity.name}"
           return true
         end
 
         # skip ipv6 for now (#30)
-        if entity.attributes["name"] =~ /::/
-          @scan_log.error "SKIP IPv6 is currently unhandled"
+        if entity.name =~ /::/
+          @scan_result.logger.log_error "SKIP IPv6 is currently unhandled"
           return true
         end
       end
 
       # Standard exclusions
       if (
-        entity.attributes["name"] =~ /google.com/         ||
-        entity.attributes["name"] =~ /goo.gl/             ||
-        entity.attributes["name"] =~ /android/            ||
-        entity.attributes["name"] =~ /urchin/             ||
-        entity.attributes["name"] =~ /schema.org/         ||
-        entity.attributes["name"] =~ /microsoft.com/      ||
-        entity.attributes["name"] =~ /facebook.com/       ||
-        entity.attributes["name"] =~ /cloudfront.net/     ||
-        entity.attributes["name"] =~ /twitter.com/        ||
-        entity.attributes["name"] =~ /w3.org/             ||
-        entity.attributes["name"] =~ /akamai/             ||
-        entity.attributes["name"] =~ /akamaitechnologies/ ||
-        entity.attributes["name"] =~ /amazonaws/          ||
-        entity.attributes["name"] =~ /purl.org/           ||
-        entity.attributes["name"] =~ /oclc.org/           ||
-        entity.attributes["name"] =~ /youtube.com/        ||
-        entity.attributes["name"] =~ /xmlns.com/          ||
-        entity.attributes["name"] =~ /ogp.me/             ||
-        entity.attributes["name"] =~ /rdfs.org/           ||
-        entity.attributes["name"] =~ /drupal.org/         ||
-        entity.attributes["name"] =~ /plus.google.com/    ||
-        entity.attributes["name"] =~ /instagram.com/      ||
-        entity.attributes["name"] =~ /zepheira.com/       ||
-        entity.attributes["name"] =~ /gandi.net/          ||
-        entity.attributes["name"] == "feeds2.feedburner.com" )
+        entity.name =~ /google.com/         ||
+        entity.name =~ /goo.gl/             ||
+        entity.name =~ /android/            ||
+        entity.name =~ /urchin/             ||
+        entity.name =~ /schema.org/         ||
+        entity.name =~ /microsoft.com/      ||
+        entity.name =~ /facebook.com/       ||
+        entity.name =~ /cloudfront.net/     ||
+        entity.name =~ /twitter.com/        ||
+        entity.name =~ /w3.org/             ||
+        entity.name =~ /akamai/             ||
+        entity.name =~ /akamaitechnologies/ ||
+        entity.name =~ /amazonaws/          ||
+        entity.name =~ /purl.org/           ||
+        entity.name =~ /oclc.org/           ||
+        entity.name =~ /youtube.com/        ||
+        entity.name =~ /xmlns.com/          ||
+        entity.name =~ /ogp.me/             ||
+        entity.name =~ /rdfs.org/           ||
+        entity.name =~ /drupal.org/         ||
+        entity.name =~ /plus.google.com/    ||
+        entity.name =~ /instagram.com/      ||
+        entity.name =~ /zepheira.com/       ||
+        entity.name =~ /gandi.net/          ||
+        entity.name == "feeds2.feedburner.com" )
 
-        @scan_log.error "SKIP Prohibited entity: #{entity.type}##{entity.attributes["name"]}"
+        @scan_result.logger.log_error "SKIP Prohibited entity: #{entity.type}##{entity.name}"
         return true
       end
 

@@ -7,6 +7,12 @@ gem 'puma' # Application Server
 gem 'sidekiq' # Background Tasks
 gem 'foreman' # Process management
 gem 'redis' # Redis access
+
+gem 'data_mapper'
+gem 'dm-pg-types'
+gem 'dm-sqlite-adapter'
+gem 'dm-noisy-failures'
+
 gem 'iconv' # Encoding
 gem 'rest-client' # Web hooks
 gem 'rspec' # Testing

@@ -4,13 +4,13 @@ class Organization < Intrigue::Model::Entity
 
   def metadata
     {
-      :type => "Organization",
-      :required_attributes => ["name"]
+      :description => "TODO"
     }
   end
 
-  def validate(attributes)
-    attributes["name"] =~ /^.*$/
+
+  def validate
+    @name =~ /^.*$/
   end
 
 end

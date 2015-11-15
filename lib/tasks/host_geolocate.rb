@@ -30,7 +30,7 @@ class GeolocateHostTask < BaseTask
     @db = GeoIP.new(File.join('data', 'geolitecity', 'latest.dat'))
 
     begin
-      @task_log.log "looking up location for #{ip_address}"
+      @task_result.logger.log "looking up location for #{ip_address}"
 
       #
       # This call attempts to do a lookup
@@ -38,7 +38,7 @@ class GeolocateHostTask < BaseTask
       loc = @db.city(ip_address)
 
       if loc
-        @task_log.log "adding location for #{ip_address}"
+        @task_result.logger.log "adding location for #{ip_address}"
         _create_entity("PhysicalLocation", {
           "name" => "#{loc.latitude} #{loc.longitude}",
           "zip" => loc.postal_code.encode('UTF-8', :invalid => :replace),
@@ -49,11 +49,11 @@ class GeolocateHostTask < BaseTask
           "latitude" => loc.latitude})
         end
       rescue ArgumentError => e
-        @task_log.log "Argument Error #{e}"
+        @task_result.logger.log "Argument Error #{e}"
       rescue Encoding::InvalidByteSequenceError => e
-        @task_log.log "Encoding error: #{e}"
+        @task_result.logger.log "Encoding error: #{e}"
       rescue Encoding::UndefinedConversionError => e
-        @task_log.log "Encoding error: #{e}"
+        @task_result.logger.log "Encoding error: #{e}"
 
       end
 

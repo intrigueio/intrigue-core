@@ -6,7 +6,7 @@ class IntrigueApp < Sinatra::Base
     end
 
     get '/entities/:id' do
-      @entity = Intrigue::Model::Entity.find(params[:id])
+      @entity = Intrigue::Model::Entity.get(params[:id])
       erb :'entities/detail'
     end
 

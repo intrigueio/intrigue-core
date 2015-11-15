@@ -33,12 +33,12 @@ class DnsLookupForwardTask < BaseTask
         :nameserver => resolver)
 
       result = res.query(name, "ANY")
-      @task_log.error "Nothing?" if result.answer.empty?
+      @task_result.logger.log_error "Nothing?" if result.answer.empty?
 
       # For each of the found addresses
       result.answer.map{ |resource|
 
-        @task_log.log "Parsing #{resource}"
+        @task_result.logger.log "Parsing #{resource}"
 
         # Check to see if the entity should be a DnsRecord or an IPAddress. Simply check
         # for the presence of alpha characters (see String initializer for this method)
@@ -59,7 +59,7 @@ class DnsLookupForwardTask < BaseTask
       }
 
     rescue Exception => e
-      @task_log.error "Hit exception: #{e}"
+      @task_result.logger.log_error "Hit exception: #{e}"
     end
   end
 

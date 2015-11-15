@@ -28,9 +28,9 @@ class UriHttpScreenshot < BaseTask
 
     name = _get_entity_attribute "name"
 
-    if @entity.type == "Uri"
+    if @entity.type_string == "Uri"
       screencap(name)
-    elsif @entity.type == "IpAddess" || @entity.type == "NetBlock"
+    elsif @entity.type_string == "IpAddess" || @entity.type_string == "NetBlock"
       scan_for_webservers(name) do |uri|
         screencap(uri)
       end
@@ -48,16 +48,16 @@ class UriHttpScreenshot < BaseTask
         :output => full_path, # don't forget the extension!
       )
 
-      @task_log.good "Saved to #{full_path}"
+      @task_result.logger.log_good "Saved to #{full_path}"
       _create_entity "Screenshot", {
         "name" => "#{target_uri}_screenshot",
         "uri" => "#{$intrigue_server_uri}/screenshots/#{filename}"
       }
 
-      @task_log.log "Saved to... #{full_path}"
+      @task_result.logger.log "Saved to... #{full_path}"
 
     rescue Screencap::Error => e
-      @task_log.error "Unable to capture screenshot: #{e}"
+      @task_result.logger.log_error "Unable to capture screenshot: #{e}"
     end
   end
 

@@ -4,13 +4,12 @@ class DnsServer < Intrigue::Model::Entity
 
   def metadata
     {
-      :type => "DnsServer",
-      :required_attributes => ["name"]
+      :description => "TODO"
     }
   end
 
-  def validate(attributes)
-    attributes["name"] =~ /^[a-zA-Z0-9\.].*/
+  def validate
+    @name =~ /^[a-zA-Z0-9\.].*/
   end
 
 end

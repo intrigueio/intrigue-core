@@ -159,12 +159,15 @@ class CoreCli < Thor
       # this should happen before, and automatically.
 
       # Create a new entity
-      e = Intrigue::Model::Entity.new entity["type"], entity["attributes"]
-      e.save
+      e = Intrigue::Model::Entity.create({
+        :type => entity["type"],
+        :name => entity["attributes"]["name"],
+        :details => entity["attributes"]
+      })
 
       # Create a new task result
       task_result = Intrigue::Model::TaskResult.new task_id, "x"
-      task_result.entity = e
+      task_result.base_entity = e
       task_result.task_name = task_name
       task_result.options = options
       task_result.save

@@ -4,13 +4,13 @@ class Person < Intrigue::Model::Entity
 
   def metadata
     {
-      :type => "Person",
-      :required_attributes => ["name"]
+      :description => "TODO"
     }
   end
 
-  def validate(attributes)
-    attributes["name"] =~ /^.*$/
+
+  def validate
+    @name =~ /^.*$/
   end
 
 end

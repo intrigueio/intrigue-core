@@ -49,7 +49,7 @@ class DnsBruteSrvTask < BaseTask
     brute_list = _get_option "brute_list"
     brute_list = brute_list.split(",") if brute_list.kind_of? String
 
-    @task_log.good "Using srv list: #{brute_list}"
+    @task_result.logger.log_good "Using srv list: #{brute_list}"
 
     brute_list.each do |srv_name|
       begin
@@ -57,7 +57,7 @@ class DnsBruteSrvTask < BaseTask
         # Calculate the domain name
         brute_name = "#{srv_name}.#{domain_name}"
 
-        @task_log.log "Checking #{brute_name}"
+        @task_result.logger.log "Checking #{brute_name}"
 
         # Try to resolve
         @resolver.getresources(brute_name, Resolv::DNS::Resource::IN::SRV).collect do |rec|
@@ -70,7 +70,7 @@ class DnsBruteSrvTask < BaseTask
 
           # If we resolved, create the right entities
           if name
-            @task_log.good "Resolved #{name} for #{brute_name}"
+            @task_result.logger.log_good "Resolved #{name} for #{brute_name}"
 
             # Create a dns record
             brute_domain = _create_entity("DnsRecord", "name" => brute_name )
@@ -93,7 +93,7 @@ class DnsBruteSrvTask < BaseTask
 
         end
       rescue Exception => e
-        @task_log.error "Hit exception: #{e}"
+        @task_result.logger.log_error "Hit exception: #{e}"
       end
     end
   end

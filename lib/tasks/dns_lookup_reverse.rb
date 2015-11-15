@@ -29,17 +29,17 @@ class DnsLookupReverseTask < BaseTask
       resolved_name = Resolv.new.getname(address).to_s
 
       if resolved_name
-        @task_log.good "Creating domain #{resolved_name}"
+        @task_result.logger.log_good "Creating domain #{resolved_name}"
 
         # Create our new dns record entity with the resolved name
         _create_entity("DnsRecord", {"name" => resolved_name})
 
       else
-        @task_log.log "Unable to find a name for #{address}"
+        @task_result.logger.log "Unable to find a name for #{address}"
       end
 
     rescue Exception => e
-      @task_log.error "Hit exception: #{e}"
+      @task_result.logger.log_error "Hit exception: #{e}"
     end
   end
 

@@ -4,13 +4,13 @@ class Uri < Intrigue::Model::Entity
 
   def metadata
     {
-      :type => "Uri",
-      :required_attributes => ["name","uri"]
+      :description => "TODO"
     }
   end
 
-  def validate(attributes)
-    attributes["name"] =~ /^.*$/
+
+  def validate
+    @name =~ /^.*$/
   end
 
 end

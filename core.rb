@@ -6,6 +6,12 @@ require 'sidekiq/api'
 require 'sidekiq/web'
 
 require 'redis'
+
+require 'dm-core'
+require 'dm-serializer'
+require 'dm-pg-types'
+require 'dm-noisy-failures'
+
 require 'timeout'
 require 'json'
 require 'rest-client'
@@ -18,7 +24,7 @@ require 'pry'
 ### XXX - this is not threadsafe :(
 ###
 begin
-  $intrigue_global_timeout = 900
+  $intrigue_global_timeout = 3000
   $intrigue_basedir = File.dirname(__FILE__)
   # Check to see if the config exists
   config_file = "#{$intrigue_basedir}/config/config.json"
@@ -63,6 +69,10 @@ class IntrigueApp < Sinatra::Base
   #Setup redis for resque
   $intrigue_redis = Redis.new
 
+  DataMapper::Logger.new($stdout, :debug)
+  DataMapper.setup(:default, 'sqlite:///tmp/intrigue.db')
+  DataMapper::Property::String.length(255)
+
   ###
   ### END CONFIG
   ###
@@ -97,10 +107,8 @@ class IntrigueApp < Sinatra::Base
 
     # Main Page
     get '/?' do
-      #@queue = Sidekiq::Queue.new
       @stats = Sidekiq::Stats.new
       @workers = Sidekiq::Workers.new
-      
       erb :index
     end
 
@@ -109,11 +117,16 @@ class IntrigueApp < Sinatra::Base
       erb :news
     end
 
-    require_relative "app/all"
-
   end
 end
 
 
+# App libs
+require_relative "app/all"
+
 # Core libraries
 require_relative 'lib/all'
+
+#DataMapper.auto_migrate!
+DataMapper.auto_upgrade!
+DataMapper.finalize
