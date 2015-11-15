@@ -1,6 +1,5 @@
 class IntrigueApp < Sinatra::Base
   namespace '/v1' do
-
     namespace '/admin' do
 
       get '/?' do

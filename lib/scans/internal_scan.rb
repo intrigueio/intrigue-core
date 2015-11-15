@@ -9,12 +9,12 @@ module Intrigue
     def _recurse(entity, depth)
 
       if depth <= 0 # Check for bottom of recursion
-        @scan_result.log "Returning, depth @ #{depth}"
+        @scan_result.logger.log "Returning, depth @ #{depth}"
         return
       end
 
       if _is_prohibited(entity)   # Check for prohibited entity name
-        @scan_result.log "Returning, #{entity.inspect} prohibited"
+        @scan_result.logger.log "Returning, #{entity.inspect} prohibited"
         return
       end
 
@@ -50,7 +50,7 @@ module Intrigue
         # Brute TLD
         #_start_task_and_recurse "dns_brute_tld",entity,depth
       else
-        @scan_result.log "SKIP Unhandled entity type: #{entity.type} #{entity.name}"
+        @scan_result.logger.log "SKIP Unhandled entity type: #{entity.type} #{entity.name}"
         return
       end
 
@@ -61,7 +61,7 @@ module Intrigue
 
       @filter_list.each do |filter|
         if entity.name.to_s =~ /#{filter}/
-          @scan_result.log "SKIP Filtering #{entity.name} based on filter #{filter}"
+          @scan_result.logger.log "SKIP Filtering #{entity.name} based on filter #{filter}"
           return true
         end
       end
@@ -72,13 +72,13 @@ module Intrigue
         # handle netblock
         cidr = entity.name.split("/").last.to_i
         unless cidr >= 16
-          @scan_result.log_error "SKIP Netblock too large: #{entity.type}##{entity.name}"
+          @scan_result.logger.log_error "SKIP Netblock too large: #{entity.type}##{entity.name}"
           return true
         end
 
         # skip ipv6 for now (#30)
         if entity.name =~ /::/
-          @scan_result.log_error "SKIP IPv6 is currently unhandled"
+          @scan_result.logger.log_error "SKIP IPv6 is currently unhandled"
           return true
         end
       end
@@ -111,7 +111,7 @@ module Intrigue
         entity.name =~ /gandi.net/          ||
         entity.name == "feeds2.feedburner.com" )
 
-        @scan_result.log_error "SKIP Prohibited entity: #{entity.type}##{entity.name}"
+        @scan_result.logger.log_error "SKIP Prohibited entity: #{entity.type}##{entity.name}"
         return true
       end
 

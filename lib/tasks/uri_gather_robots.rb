@@ -28,7 +28,7 @@ class UriGatherRobots  < BaseTask
       # Concat the uri to create the check
       uri = "#{base_uri}/#{check[:path]}"
 
-      @task_result.log "Connecting to #{uri}"
+      @task_result.logger.log "Connecting to #{uri}"
 
       # Grab a known-missing page so we can make sure it's not a
       # 404 disguised as a 200

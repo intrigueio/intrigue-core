@@ -46,7 +46,7 @@ class UriDirbuster  < BaseTask
     ###
     response = http_get "#{uri}/#{rand(100000000)}"
 
-    return @task_result.log_error "Unable to connect to site" unless response
+    return @task_result.logger.log_error "Unable to connect to site" unless response
 
     # Default to code
     missing_page_test = :code
@@ -74,7 +74,7 @@ class UriDirbuster  < BaseTask
       request_uri = "#{uri}#{"/" unless uri[-1] == "/"}#{dir}"
       response = http_get request_uri
 
-      #@task_result.log "Attempting #{request_uri}"
+      #@task_result.logger.log "Attempting #{request_uri}"
 
       next unless response
 
@@ -83,22 +83,22 @@ class UriDirbuster  < BaseTask
 
         case response.code
           when "404"
-            @task_result.log "404 on #{request_uri}"
+            @task_result.logger.log "404 on #{request_uri}"
           when "200"
-            @task_result.log_good "200! Creating a page for #{request_uri}"
+            @task_result.logger.log_good "200! Creating a page for #{request_uri}"
             _create_entity "Uri", "name" => request_uri,
             "uri" => request_uri,
             "response_code" => response.code
           when "500"
-            @task_result.log_good "500 error! Creating a page for #{request_uri}"
+            @task_result.logger.log_good "500 error! Creating a page for #{request_uri}"
             _create_entity "Uri", "name" => request_uri,
               "uri" => request_uri,
               "content" => "#{response.body}",
               "response_code" => response.code
           when missing_page_code
-            @task_result.log "Got code: #{response.code}. Same as missing page code. Skipping"
+            @task_result.logger.log "Got code: #{response.code}. Same as missing page code. Skipping"
           else
-            @task_result.log_error "Don't know this response code? #{response.code} (#{request_uri})"
+            @task_result.logger.log_error "Don't know this response code? #{response.code} (#{request_uri})"
             _create_entity "Uri", "name" => request_uri,
               "uri" => request_uri,
               "response_code" => response.code
@@ -109,9 +109,9 @@ class UriDirbuster  < BaseTask
       elsif missing_page_test == :content
 
         if response.body == missing_page_content
-          @task_result.log "#{request_uri} looks like a missing page"
+          @task_result.logger.log "#{request_uri} looks like a missing page"
         else
-          @task_result.log "#{request_uri} looks like a new page"
+          @task_result.logger.log "#{request_uri} looks like a new page"
           _create_entity "Uri", "name" => request_uri
         end
 

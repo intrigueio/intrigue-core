@@ -6,14 +6,14 @@
 <p>New Entities:</p>
   <ul>
     <% @scan_result.entities.each do |e| %>
-      <li>
-        <%= "<a target=\'_blank\' href=\'/v1/task?entity_id=#{h e.id}\'>[iterate]</a>" %>
-        <a href="/v1/entities/<%=h e.id%>">
-          <%= h e.type_string %>: <%= h e.name %> (<%= e.task_result.task_name if e.task_result %> on <%= e.task_result.base_entity if e.task_result %>)
-        </a>
-        <%= "<a target=\'_blank\' href=\'#{h e.details["uri"]}\'>[link]</a>" if e.details["uri"] %>
-        <!-- <span class="like-pre-white"><%= h e %></span>-->
-      </li>
+    <li>
+      <%= "<a target=\'_blank\' href=\'/v1/task?entity_id=#{h e.id}\'>[iterate]</a>" %>
+      <a href="/v1/entities/<%=h e.id%>">
+        <%= h e.type_string %>: <%= h e.name %> (<%= e.task_result.task_name if e.task_result %> on <%= e.task_result.base_entity if e.task_result %>)
+      </a>
+      <%= "<a target=\'_blank\' href=\'#{h e.details["uri"]}\'>[link]</a>" if e.details["uri"] %>
+      <!-- <span class="like-pre-white"> <%= h e %> </span>-->
+    </li>
     <% end %>
   </ul>
 <p>Task Runs:</p>
@@ -22,3 +22,4 @@
     <li> <a href="<%=$intrigue_server_uri%>/v1/task_results/<%=x.id%>"> <%= x.task_name %> <%= "[#{x.base_entity}]" %> (<%= x.entity_count %>)</a></li>
   <% end %>
   </ul>
+Log: <span class="like-pre-dark"><%= h @scan_result.logger.full_log %></span><br/>

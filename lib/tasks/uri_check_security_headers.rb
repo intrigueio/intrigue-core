@@ -31,9 +31,9 @@ class UriCheckSecurityHeaders  < BaseTask
     if response
       found_security_headers = []
       response.each_header do |name,value|
-        @task_result.log "Checking #{name}"
+        @task_result.logger.log "Checking #{name}"
         if security_headers.include? name
-          @task_result.log_good "Got header #{name}"
+          @task_result.logger.log_good "Got header #{name}"
           found_security_headers << {:name => name, :value => value}
         end # end if
       end # end each_header

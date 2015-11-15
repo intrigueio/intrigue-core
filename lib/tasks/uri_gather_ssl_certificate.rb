@@ -54,12 +54,12 @@ class UriGatherSslCertTask  < BaseTask
             alt_names.each do |alt_name|
 
               if alt_name =~ /cloudflare.com$/
-                @task_result.log "This is a cloudflare certificate, skipping further entity creation"
+                @task_result.logger.log "This is a cloudflare certificate, skipping further entity creation"
                 return
               end
 
               if alt_name =~ /distilnetworks.com$/
-                @task_result.log "This is a distil networks certificate, skipping further entity creation"
+                @task_result.logger.log "This is a distil networks certificate, skipping further entity creation"
                 return
               end
 
@@ -78,17 +78,17 @@ class UriGatherSslCertTask  < BaseTask
                                             "text" => "#{cert.to_text}" }
       end
     rescue Timeout::Error
-      @task_result.log "Timed out"
+      @task_result.logger.log "Timed out"
     rescue OpenSSL::SSL::SSLError => e
-      @task_result.log_error "Caught an error: #{e}"
+      @task_result.logger.log_error "Caught an error: #{e}"
     rescue Errno::ECONNRESET => e
-      @task_result.log_error "Caught an error: #{e}"
+      @task_result.logger.log_error "Caught an error: #{e}"
     rescue Errno::EACCES => e
-      @task_result.log_error "Caught an error: #{e}"
+      @task_result.logger.log_error "Caught an error: #{e}"
     rescue Errno::ECONNREFUSED => e
-      @task_result.log_error "Caught an error: #{e}"
+      @task_result.logger.log_error "Caught an error: #{e}"
     rescue RuntimeError => e
-      @task_result.log_error "Caught an error: #{e}"
+      @task_result.logger.log_error "Caught an error: #{e}"
     end
   end
 

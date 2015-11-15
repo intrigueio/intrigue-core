@@ -48,16 +48,16 @@ class UriHttpScreenshot < BaseTask
         :output => full_path, # don't forget the extension!
       )
 
-      @task_result.log_good "Saved to #{full_path}"
+      @task_result.logger.log_good "Saved to #{full_path}"
       _create_entity "Screenshot", {
         "name" => "#{target_uri}_screenshot",
         "uri" => "#{$intrigue_server_uri}/screenshots/#{filename}"
       }
 
-      @task_result.log "Saved to... #{full_path}"
+      @task_result.logger.log "Saved to... #{full_path}"
 
     rescue Screencap::Error => e
-      @task_result.log_error "Unable to capture screenshot: #{e}"
+      @task_result.logger.log_error "Unable to capture screenshot: #{e}"
     end
   end
 

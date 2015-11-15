@@ -30,14 +30,14 @@ module Scanner
     ports = "80,443,8080,8081,8443"
 
     # shell out to nmap and run the scan
-    @task_result.log "Scanning #{to_scan} and storing in #{temp_file}" if @task_result
-    @task_result.log "nmap options: #{nmap_options}" if @task_result
+    @task_result.logger.log "Scanning #{to_scan} and storing in #{temp_file}" if @task_result
+    @task_result.logger.log "nmap options: #{nmap_options}" if @task_result
     nmap_string = "nmap #{to_scan} #{nmap_options} -P0 -p #{ports} --min-parallelism 10 -oX #{temp_file}"
-    @task_result.log "Running... #{nmap_string}" if @task_result
+    @task_result.logger.log "Running... #{nmap_string}" if @task_result
     _unsafe_system(nmap_string)
 
     # Gather the XML and parse
-    @task_result.log "Parsing #{temp_file}" if @task_result
+    @task_result.logger.log "Parsing #{temp_file}" if @task_result
 
     parser = ::Nmap::Parser.parsefile(temp_file)
 
@@ -46,7 +46,7 @@ module Scanner
     # Create entities for each discovered service
     parser.hosts("up") do |host|
 
-      @task_result.log "Handling nmap data for #{host.addr}" if @task_result
+      @task_result.logger.log "Handling nmap data for #{host.addr}" if @task_result
 
       [:tcp].each do |proto_type|
 
@@ -81,7 +81,7 @@ module Scanner
     begin
       File.delete(temp_file)
     rescue Errno::EPERM
-      @task_result.log_error "Unable to delete file"
+      @task_result.logger.log_error "Unable to delete file"
     end
   uris
   end

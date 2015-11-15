@@ -2,9 +2,10 @@ module Intrigue
   module Model
     class TaskResult
       include DataMapper::Resource
-      include Intrigue::Model::Logger
 
-      has 1, :base_entity, 'Intrigue::Model::Entity'
+      belongs_to :base_entity, 'Intrigue::Model::Entity'
+      belongs_to :logger, 'Intrigue::Model::Logger'
+
       has n, :entities
 
       belongs_to :scan_result, :required => false
@@ -17,7 +18,7 @@ module Intrigue
       property :options, Object, :default => [] #StringArray
       property :complete, Boolean, :default => false
       property :entity_count, Integer, :default => 0
-      property :full_log, Text, :length => 5000000, :default =>""
+      
 
       def add_entity(entity)
         return false if has_entity? entity

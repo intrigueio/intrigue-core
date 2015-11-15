@@ -1,11 +1,11 @@
 module Intrigue
   module Model
-
     class ScanResult
       include DataMapper::Resource
-      include Intrigue::Model::Logger
 
-      has 1, :base_entity, "Intrigue::Model::Entity"
+      belongs_to :base_entity, 'Intrigue::Model::Entity'
+      belongs_to :logger, 'Intrigue::Model::Logger'
+
       has n, :task_results
       has n, :entities
 
@@ -15,7 +15,6 @@ module Intrigue
       property :scan_type, String
       property :options, Object, :default => []
       property :complete, Boolean, :default => false
-      property :full_log, Text, :length => 5000000, :default => ""
 
       property :timestamp_start, DateTime
       property :timestamp_end, DateTime

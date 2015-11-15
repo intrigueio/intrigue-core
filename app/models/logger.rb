@@ -1,6 +1,10 @@
 module Intrigue
   module Model
-    module Logger
+    class Logger
+      include DataMapper::Resource
+
+      property :id, Serial
+      property :full_log, Text, :length => 5000000, :default =>""
 
       def log(message)
         _log "[ ] #{@name}: " << message
@@ -24,12 +28,11 @@ module Intrigue
 
         # Write to DB
         attribute_set(:full_log, "#{@full_log}\n#{message}")
-        save
         #@full_log = "" unless @full_log
         #@full_log << "#{@full_log}\n#{message}"
 
         # Write to STDOUT
-        puts message
+        #puts message
 
         #Write to file
         #if @write_file

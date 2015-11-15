@@ -8,11 +8,8 @@ module Intrigue
       property :name,     String
       property :details,  Object, :default => {} #Text, :length => 100000
 
-      #has n, :scan_results, through
-      belongs_to :task_result, :required => true
+      belongs_to :task_result, :required => false
       belongs_to :scan_result, :required => false
-
-      #validates_with_method :validate
 
       def allowed_tasks
         ### XXX - this needs to be limited to tasks that accept this type

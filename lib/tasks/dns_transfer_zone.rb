@@ -36,13 +36,13 @@ class DnsTransferZoneTask < BaseTask
         if answer.nameservers
           authoritative_nameservers = answer.nameservers
         else
-          @task_result.log_error "Unknown nameservers for this domain, using #{authoratative_nameservers}"
+          @task_result.logger.log_error "Unknown nameservers for this domain, using #{authoratative_nameservers}"
         end
       end
     rescue Timeout::Error
-      @task_result.log_error "Execution Timed out waiting for an answer from nameserver for #{domain_name}"
+      @task_result.logger.log_error "Execution Timed out waiting for an answer from nameserver for #{domain_name}"
     rescue Exception => e
-      @task_result.log "Error querying whois: #{e}"
+      @task_result.logger.log "Error querying whois: #{e}"
     end
 
     # For each authoritive nameserver
@@ -51,7 +51,7 @@ class DnsTransferZoneTask < BaseTask
 
         timeout(300) do
 
-          @task_result.log "Attempting Zone Transfer on #{domain_name} against nameserver #{nameserver}"
+          @task_result.logger.log "Attempting Zone Transfer on #{domain_name} against nameserver #{nameserver}"
 
           res = Dnsruby::Resolver.new(
             :nameserver => nameserver.to_s,
@@ -93,20 +93,20 @@ class DnsTransferZoneTask < BaseTask
               end
             end
             # Record keeping
-            @task_result.log_good "Zone Tranfer Succeeded on #{domain_name}"
+            @task_result.logger.log_good "Zone Tranfer Succeeded on #{domain_name}"
           end
         end
 
       rescue Timeout::Error
-        @task_result.log_error "Task Execution Timed out"
+        @task_result.logger.log_error "Task Execution Timed out"
       rescue Dnsruby::Refused
-        @task_result.log_error "Zone Transfer against #{domain_name} refused."
+        @task_result.logger.log_error "Zone Transfer against #{domain_name} refused."
       rescue Dnsruby::ResolvError
-        @task_result.log_error "Unable to resolve #{domain_name} while querying #{nameserver}."
+        @task_result.logger.log_error "Unable to resolve #{domain_name} while querying #{nameserver}."
       rescue Dnsruby::ResolvTimeout
-        @task_result.log_error "Timed out while querying #{nameserver} for #{domain_name}."
+        @task_result.logger.log_error "Timed out while querying #{nameserver} for #{domain_name}."
       rescue Exception => e
-        @task_result.log_error "Unknown exception: #{e}"
+        @task_result.logger.log_error "Unknown exception: #{e}"
 
       end
     end

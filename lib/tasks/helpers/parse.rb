@@ -107,11 +107,11 @@ module Parse
 
   def parse_entities_from_content(source_uri, content, optional_strings=nil)
 
-    @task_result.log "Parsing text from #{source_uri}" if @task_result
+    @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
 
     # Make sure we have something to parse
     unless content
-      @task_result.log_error "No content to parse, returning" if @task_result
+      @task_result.logger.log_error "No content to parse, returning" if @task_result
       return nil
     end
 
@@ -192,15 +192,15 @@ module Parse
 
     # Don't die if we lose our connection to the tika server
     rescue EOFError => e
-      @task_result.log "ERROR Unable to download file: #{e}"
+      @task_result.logger.log "ERROR Unable to download file: #{e}"
     rescue JSON::ParserError => e
-      @task_result.log "ERROR parsing JSON: #{e}"
+      @task_result.logger.log "ERROR parsing JSON: #{e}"
     rescue Errno::EPIPE => e
-      @task_result.log "ERROR Unable to contact Tika server"
+      @task_result.logger.log "ERROR Unable to contact Tika server"
     rescue OpenURI::HTTPError => e     # don't die if we can't find the file
-      @task_result.log "ERROR Unable to download file: #{e}"
+      @task_result.logger.log "ERROR Unable to download file: #{e}"
     rescue URI::InvalidURIError => e     # handle invalid uris
-      @task_result.log "ERROR Unable to download file: #{e}"
+      @task_result.logger.log "ERROR Unable to download file: #{e}"
     end
 
     # Clean up

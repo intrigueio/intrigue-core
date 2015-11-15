@@ -42,7 +42,8 @@ class IntrigueApp < Sinatra::Base
       :name => scan_name,
       :base_entity => entity,
       :depth => scan_depth,
-      :filter_strings => scan_filter_strings
+      :filter_strings => scan_filter_strings,
+      :logger => Intrigue::Model::Logger.create
     })
 
     ###
@@ -94,11 +95,11 @@ class IntrigueApp < Sinatra::Base
   # Determine if the scan run is complete
   get '/scan_results/:id/complete' do
     x = Intrigue::Model::ScanResult.get(params[:id])
-
-    if x
-      return "true" if x.complete
-    end
-
+    # immediately return false unless we find the scan result
+    return false unless x
+    # check for completion
+    return "true" if x.complete
+  # default to false
   false
   end
 
@@ -107,7 +108,6 @@ class IntrigueApp < Sinatra::Base
     @result = Intrigue::Model::ScanResult.get(params[:id])
     erb :log
   end
-
 
 end
 end

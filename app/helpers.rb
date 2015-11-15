@@ -26,9 +26,10 @@ module Intrigue
         task_result = Intrigue::Model::TaskResult.create({
             :task_name => task_name,
             :options => options,
-            :base_entity => entity
+            :base_entity => entity,
+            :logger => Intrigue::Model::Logger.create
         })
-
+        
         ###
         # Create the task and start it
         ###

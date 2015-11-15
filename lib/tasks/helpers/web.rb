@@ -24,7 +24,7 @@ module Task
       filename = "#{SecureRandom.uuid}"
       file = Tempfile.new(filename, Dir.tmpdir, 'wb+')
 
-      @task_result.log_good "Attempting to download #{url} and store in #{file.path}" if @task_result
+      @task_result.logger.log_good "Attempting to download #{url} and store in #{file.path}" if @task_result
 
       begin
         uri = URI.parse(URI.encode("#{url}"))
@@ -41,7 +41,7 @@ module Task
           file.flush
         end
       rescue URI::InvalidURIError => e
-        @task_result.log_error "Invalid URI? #{e}" if @task_result
+        @task_result.logger.log_error "Invalid URI? #{e}" if @task_result
         return nil
       rescue URI::InvalidURIError => e
         #
@@ -49,40 +49,40 @@ module Task
         # due to an underscore / other acceptable character in the URI
         # http://stackoverflow.com/questions/5208851/is-there-a-workaround-to-open-urls-containing-underscores-in-ruby
         #
-        @task_result.log_error "Unable to request URI: #{uri} #{e}" if @task_result
+        @task_result.logger.log_error "Unable to request URI: #{uri} #{e}" if @task_result
         return nil
       rescue OpenSSL::SSL::SSLError => e
-        @task_result.log_error "SSL connect error : #{e}" if @task_result
+        @task_result.logger.log_error "SSL connect error : #{e}" if @task_result
         return nil
       rescue Errno::ECONNREFUSED => e
-        @task_result.log_error "Unable to connect: #{e}" if @task_result
+        @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
         return nil
       rescue Errno::ECONNRESET => e
-        @task_result.log_error "Unable to connect: #{e}" if @task_result
+        @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
         return nil
       rescue Net::HTTPBadResponse => e
-        @task_result.log_error "Unable to connect: #{e}" if @task_result
+        @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
         return nil
       rescue Zlib::BufError => e
-        @task_result.log_error "Unable to connect: #{e}" if @task_result
+        @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
         return nil
       rescue Zlib::DataError => e # "incorrect header check - may be specific to ruby 2.0"
-        @task_result.log_error "Unable to connect: #{e}" if @task_result
+        @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
         return nil
       rescue EOFError => e
-        @task_result.log_error "Unable to connect: #{e}" if @task_result
+        @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
         return nil
       rescue SocketError => e
-        @task_result.log_error "Unable to connect: #{e}" if @task_result
+        @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
         return nil
       rescue Encoding::InvalidByteSequenceError => e
-        @task_result.log_error "Encoding error: #{e}" if @task_result
+        @task_result.logger.log_error "Encoding error: #{e}" if @task_result
         return nil
       rescue Encoding::UndefinedConversionError => e
-        @task_result.log_error "Encoding error: #{e}" if @task_result
+        @task_result.logger.log_error "Encoding error: #{e}" if @task_result
         return nil
       rescue EOFError => e
-        @task_result.log_error "Unexpected end of file, consider looking at this file manually: #{url}" if @task_result
+        @task_result.logger.log_error "Unexpected end of file, consider looking at this file manually: #{url}" if @task_result
         return nil
       end
 
@@ -114,7 +114,7 @@ module Task
     ###
     def http_get(uri, headers={}, limit = 10, timeout=60, read_timeout=1000)
 
-      #@task_result.log "http_get Connecting to #{uri}" if @task_result
+      #@task_result.logger.log "http_get Connecting to #{uri}" if @task_result
 
       begin
 
@@ -129,7 +129,7 @@ module Task
           ###
           if @task_result
             unless uri =~ /^http/
-              @task_result.log_error("Strange URI: #{uri}")
+              @task_result.logger.log_error("Strange URI: #{uri}")
               #raise "Failing on URI: #{uri}"
             end
           end
@@ -188,38 +188,38 @@ module Task
       ###  global logger or logging queue?
       ###
       rescue Timeout::Error
-        @task_result.log_error "Timed out" if @task_result
+        @task_result.logger.log_error "Timed out" if @task_result
       rescue URI::InvalidURIError => e
         #
         # XXX - This is an issue. We should catch this and ensure it's not
         # due to an underscore / other acceptable character in the URI
         # http://stackoverflow.com/questions/5208851/is-there-a-workaround-to-open-urls-containing-underscores-in-ruby
         #
-        @task_result.log_error "Unable to request URI: #{uri} #{e}" if @task_result
+        @task_result.logger.log_error "Unable to request URI: #{uri} #{e}" if @task_result
       rescue OpenSSL::SSL::SSLError => e
-        @task_result.log_error "SSL connect error : #{e}" if @task_result
+        @task_result.logger.log_error "SSL connect error : #{e}" if @task_result
       rescue Errno::ECONNREFUSED => e
-        @task_result.log_error "Unable to connect: #{e}" if @task_result
+        @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
       rescue Errno::ECONNRESET => e
-        @task_result.log_error "Unable to connect: #{e}" if @task_result
+        @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
       rescue Net::HTTPBadResponse => e
-        @task_result.log_error "Unable to connect: #{e}" if @task_result
+        @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
       rescue Zlib::BufError => e
-        @task_result.log_error "Unable to connect: #{e}" if @task_result
+        @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
       rescue Zlib::DataError => e # "incorrect header check - may be specific to ruby 2.0"
-        @task_result.log_error "Unable to connect: #{e}" if @task_result
+        @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
       rescue EOFError => e
-        @task_result.log_error "Unable to connect: #{e}" if @task_result
+        @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
       rescue SocketError => e
-        @task_result.log_error "Unable to connect: #{e}" if @task_result
+        @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
       rescue SystemCallError => e
-        @task_result.log_error "Unable to connect: #{e}" if @task_result
+        @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
       rescue ArgumentError => e
-        @task_result.log_error "Argument Error: #{e}" if @task_result
+        @task_result.logger.log_error "Argument Error: #{e}" if @task_result
       rescue Encoding::InvalidByteSequenceError => e
-        @task_result.log_error "Encoding error: #{e}" if @task_result
+        @task_result.logger.log_error "Encoding error: #{e}" if @task_result
       rescue Encoding::UndefinedConversionError => e
-        @task_result.log_error "Encoding error: #{e}" if @task_result
+        @task_result.logger.log_error "Encoding error: #{e}" if @task_result
       end
     end
 
@@ -232,7 +232,7 @@ module Task
      def http_get_auth_resource(location, username,password, depth)
 
        unless depth > 0
-         @task_result.log_error "Too many redirects"
+         @task_result.logger.log_error "Too many redirects"
          exit
        end
 
@@ -243,13 +243,13 @@ module Task
        response = http.request(request)
 
        if response == Net::HTTPRedirection
-         @task_result.log "Redirecting to #{response['location']}"
+         @task_result.logger.log "Redirecting to #{response['location']}"
          http_get_auth_resource(response['location'],username,password, depth-1)
        elsif response == Net::HTTPMovedPermanently
-         @task_result.log "Redirecting to #{response['location']}"
+         @task_result.logger.log "Redirecting to #{response['location']}"
          http_get_auth_resource(response['location'],username,password, depth-1)
        else
-         @task_result.log "Got response: #{response}"
+         @task_result.logger.log "Got response: #{response}"
        end
 
      response

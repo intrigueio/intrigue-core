@@ -9,15 +9,9 @@ class IntrigueApp < Sinatra::Base
       @task_result = Intrigue::Model::TaskResult.get params["task_result_id"] if params["task_result_id"]
       @tasks = Intrigue::TaskFactory.list.map{|x| x.send(:new)}
       @task_names = @tasks.map{|t| t.metadata[:pretty_name]}.sort
-      #@running_task_results = Intrigue::Model::TaskResult.all(:timestamp_end => nil)
       @completed_task_results = Intrigue::Model::TaskResult.all
 
       erb :'tasks/index'
-    end
-
-    # Export All Data
-    get '/task_results.json/?' do
-      raise "Not implemented"
     end
 
     # Helper to construct the request to the API when the application is used interactively
@@ -62,10 +56,16 @@ class IntrigueApp < Sinatra::Base
       redirect "/v1/task_results/#{task_id}"
     end
 
-    # Create a task run from a json request
+
+    # Export All Tasks
+    get '/task_results.json/?' do
+      raise "Not implemented"
+    end
+
+    # Create a task result from a json request
     post '/task_results/?' do
 
-      # What we recieve should look like this:
+      # What we receive should look like this:
       #
       #payload = {
       #  "task" => task_name,
@@ -96,15 +96,12 @@ class IntrigueApp < Sinatra::Base
     task_id
     end
 
-    # Accept the results of a task run (webhook POSTs here by default)
+    # Accept the results of a task run
     post '/task_results/:id/?' do
-
       # Retrieve the request's body and parse it as JSON
       result = JSON.parse(request.body.read)
-
       # Do something with event_json
       job_id = result["id"]
-
       # Return status
       status 200 if result
     end
@@ -136,13 +133,13 @@ class IntrigueApp < Sinatra::Base
 
     # Determine if the task run is complete
     get '/task_results/:id/complete/?' do
-
+      # Get the task result and return unless it's false
       x = Intrigue::Model::TaskResult.get(params[:id])
+      return false unless x
+      # if we got it, and it's complete, return true
+      return "true" if x.complete
 
-      if x
-        return "true" if x.complete
-      end
-
+    # otherwise, not ready yet, return false
     false
     end
 

@@ -48,7 +48,7 @@ class DnsLookupMxTask < BaseTask
       end
 
     rescue Exception => e
-      @task_result.log_error "Hit exception: #{e}"
+      @task_result.logger.log_error "Hit exception: #{e}"
     end
   end
 

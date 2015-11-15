@@ -38,12 +38,12 @@ class SearchPiplTask < BaseTask
     # because pipl will just send us a false if we get
     # the key wrong (ie, the api key hasn't been configured)
     unless response
-      @task_result.log_error "Got no response from Pipl. Are you sure your API key is correct?"
+      @task_result.logger.log_error "Got no response from Pipl. Are you sure your API key is correct?"
       return
     end
 
     if response["error"]
-      @task_result.log_error "Got error from pipl client: #{response["error"]}"
+      @task_result.logger.log_error "Got error from pipl client: #{response["error"]}"
       return
     end
 
@@ -75,8 +75,8 @@ class SearchPiplTask < BaseTask
     #  http://api.pipl.com/search/v3/json/?first_name=Eric&last_name=Cartman&key=samplekey&pretty=true
     ###
 
-    @task_result.log "Found #{response["@available_records"]} records"
-    @task_result.log "Parsing #{response["@records_count"]} records"
+    @task_result.logger.log "Found #{response["@available_records"]} records"
+    @task_result.logger.log "Parsing #{response["@records_count"]} records"
 
     #
     # First, handle the rare? case of a single person record associated with the query
@@ -85,7 +85,7 @@ class SearchPiplTask < BaseTask
 
       if response["person"]["names"]
 
-        @task_result.log_good "Found a person! This indicates there's a single person record in pipl for this query."
+        @task_result.logger.log_good "Found a person! This indicates there's a single person record in pipl for this query."
 
         _create_entity "Person", "name" => "#{response["person"]["names"].first["display"]}"
 
@@ -141,15 +141,15 @@ class SearchPiplTask < BaseTask
       end
     end
 
-    @task_result.log "FULL RESPONSE:"
-    @task_result.log "#{response.to_json.to_s}"
+    @task_result.logger.log "FULL RESPONSE:"
+    @task_result.logger.log "#{response.to_json.to_s}"
 
   end
 =begin
     if response["records"]
       # Parse up the response records
       response["records"].each do |record|
-        @task_result.log "Record: #{record.to_s}\n"
+        @task_result.logger.log "Record: #{record.to_s}\n"
 
         _create_entity "Uri", {
           "name" => record["source"]["name"],
