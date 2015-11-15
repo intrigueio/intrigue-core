@@ -110,6 +110,8 @@ class UriDirbuster  < BaseTask
 
         if response.body == missing_page_content
           @task_result.logger.log "#{request_uri} looks like a missing page"
+        elsif response.body.include? "404"
+          @task_result.logger.log "Guessing #{request_uri} is a missing page based on it containing a string: 404"
         else
           @task_result.logger.log "#{request_uri} looks like a new page"
           _create_entity "Uri", "name" => request_uri

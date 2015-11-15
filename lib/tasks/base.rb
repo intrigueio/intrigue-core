@@ -28,7 +28,7 @@ class BaseTask
     # Do a little logging. Do it for the kids
     @task_result.logger.log "Id: #{task_id}"
     @task_result.logger.log "Entity: #{@entity.type_string}##{@entity.name}"
-    @task_result.logger.log "Options: #{options}"
+    #@task_result.logger.log "Options: #{options}"
 
     ###################
     # Sanity Checking #
@@ -125,7 +125,7 @@ class BaseTask
     allowed_options = self.metadata[:allowed_options]
     @user_options = []
     if user_options
-      @task_result.logger.log "Got user options list: #{user_options}"
+      #@task_result.logger.log "Got user options list: #{user_options}"
       # for each of the user-supplied options
       user_options.each do |user_option| # should be an array of hashes
         # go through the allowed options
@@ -204,7 +204,7 @@ class BaseTask
         end
 
       end
-      @task_result.logger.log "Task configured with the following options: #{@user_options}"
+      @task_result.logger.log "Options: #{@user_options}"
     else
       @task_result.logger.log "No User options"
     end

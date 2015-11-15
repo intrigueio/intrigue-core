@@ -23,7 +23,8 @@ class DnsBruteSubTask < BaseTask
         {:name => "use_mashed_domains", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "use_permutations", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
-        {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_sub.list" }
+        {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_sub.list" },
+        {:name => "brute_alphanumeric_size", :type => "Integer", :regex => "integer", :default => 0 }
       ],
       :created_types => ["DnsRecord","IpAddress"]
     }
@@ -62,8 +63,10 @@ Some cases to think through:
     opt_use_file = _get_option("use_file")
     opt_filename = _get_option("brute_file")
     opt_mashed_domains = _get_option "use_mashed_domains"
-    opt_brute_list = _get_option("brute_list")
     opt_use_permutations = _get_option("use_permutations")
+    opt_brute_list = _get_option("brute_list")
+    opt_brute_alphanumeric_size = _get_option("brute_alphanumeric_size")
+
 
     # Set the suffix
     suffix = _get_entity_attribute "name"
@@ -96,10 +99,16 @@ Some cases to think through:
       if wildcard
         _create_entity "IpAddress", "name" => "#{wildcard}"
         wildcard_domain = true
-        @task_result.logger.log_error "WARNING! Wildcard domain detected, only saving validated domains/hosts."
+        @task_result.logger.log_warning "Wildcard domain detected, only saving validated domains/hosts."
       end
     rescue Resolv::ResolvError
       @task_result.logger.log_good "Looks like no wildcard dns. Moving on."
+    end
+
+    # Generate alphanumeric list of hostnames and add them to the end of the list
+    if opt_brute_alphanumeric_size
+      @task_result.logger.log_warning "Alphanumeric list generation is pretty huge - this will take a long time" if opt_brute_alphanumeric_size > 3
+      subdomain_list.concat(("#{'a' * opt_brute_alphanumeric_size }".."#{'z' * opt_brute_alphanumeric_size}").map {|x| x })
     end
 
     # Iterate through the subdomain list
