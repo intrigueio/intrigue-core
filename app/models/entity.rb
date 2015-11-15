@@ -15,7 +15,8 @@ module Intrigue
       #validates_with_method :validate
 
       def allowed_tasks
-        TaskFactory.list ### XXX - this needs to be limited to tasks that accept this type
+        ### XXX - this needs to be limited to tasks that accept this type
+        TaskFactory.list
       end
 
       def to_s
@@ -38,67 +39,6 @@ module Intrigue
       false
       end
 
-=begin
-      def from_json(json)
-        begin
-          x = JSON.parse(json)
-          @id = x["id"]
-          @type = x["type"]
-          @attributes = x["attributes"]
-        rescue JSON::ParserError => e
-          puts "OH NOES! ITEM DID NOT EXIST, OR OTHER ERROR PARSING #{json}"
-        end
-      end
-
-      def to_s
-        export_hash
-      end
-
-      def to_hash
-        {
-          "id" => @id,
-          "type" => @type,
-          "attributes" => @attributes
-        }
-      end
-
-      def to_json
-        to_hash.to_json
-      end
-
-      ###
-      ### Export!
-      ###
-
-      def export_hash
-        to_hash
-      end
-
-      def export_json
-        to_hash.to_json
-      end
-
-      ###
-      ### XXX - needs documentation
-      ###
-=end
-      #def self.inherited(base)
-      #  EntityFactory.register(base)
-      #end
-
-      def set_attributes(hash)
-        attribute_set :details, hash
-        save
-      end
-=begin
-      #def to_json
-      #  {
-      #    :id => id,
-      #    :type => metadata[:type],
-      #    :attributes => @attributes
-      #  }
-      #end
-=end
       def form
         %{
         <div class="form-group">
@@ -118,6 +58,14 @@ module Intrigue
 
       def self.descendants
         ObjectSpace.each_object(Class).select { |klass| klass < self }
+      end
+
+      ###
+      ### Export!
+      ###
+
+      def export_json
+        raise "Not implemented"
       end
 
       private
