@@ -9,15 +9,15 @@ class DnsSubdomainScan < Intrigue::Scanner::Base
     def _recurse(entity, depth)
 
       if depth <= 0      # Check for bottom of recursion
-        @scan_log.log "Returning, depth @ #{depth}"
+        @scan_result.log "Returning, depth @ #{depth}"
         return
       end
 
-      if entity.type == "DnsRecord"
+      if entity.type_string == "DnsRecord"
         ### DNS Subdomain Bruteforce
         _start_task_and_recurse "dns_brute_sub",entity,depth,[{"name" => "use_file", "value" => "true"}]
       else
-        @scan_log.log "SKIP Unhandled entity type: #{entity.type}##{entity.attributes["name"]}"
+        @scan_result.log "SKIP Unhandled entity type: #{entity.type}##{entity.attributes["name"]}"
         return
       end
     end

@@ -24,6 +24,7 @@ module Intrigue
 
         # Write to DB
         attribute_set(:full_log, "#{@full_log}\n#{message}")
+        save
         #@full_log = "" unless @full_log
         #@full_log << "#{@full_log}\n#{message}"
 

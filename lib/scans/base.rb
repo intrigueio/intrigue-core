@@ -59,6 +59,11 @@ module Scanner
         # Wait for the task to complete
         @scan_result.log "Task started, waiting for results"
         task_result = Intrigue::Model::TaskResult.get task_id
+
+        # Add the task_result to the scan_result
+        @scan_result.log "Adding new task result..."
+        @scan_result.add_task_result(task_result)
+
         until task_result.complete
           # TODO - add explicit timeout here
           @scan_result.log "Sleeping, waiting for completion of task: #{task_id}"
@@ -66,10 +71,6 @@ module Scanner
           task_result = Intrigue::Model::TaskResult.get task_id
         end
         @scan_result.log "Task complete!"
-
-        # add the task_result to the scan_result
-        @scan_result.log "Adding new task result..."
-        @scan_result.add_task_result(task_result)
 
       else
         @scan_result.log "We already have results. Grabbing existing task results: #{task_name} on #{entity.type_string}##{entity.name}."
@@ -79,7 +80,7 @@ module Scanner
 
       # Iterate on each discovered entity
       task_result.entities.map do |entity|
-        @scan_result.add_entity entity;
+        @scan_result.add_entity entity # XXX - add this to the actual task run - no reason to make it an after the fact
         @scan_result.log "Iterating on #{entity.type_string}##{entity.name}"
         _recurse(entity, depth-1)
       end

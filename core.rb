@@ -24,7 +24,7 @@ require 'pry'
 ### XXX - this is not threadsafe :(
 ###
 begin
-  $intrigue_global_timeout = 900
+  $intrigue_global_timeout = 3000
   $intrigue_basedir = File.dirname(__FILE__)
   # Check to see if the config exists
   config_file = "#{$intrigue_basedir}/config/config.json"
