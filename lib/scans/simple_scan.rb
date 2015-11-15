@@ -64,7 +64,7 @@ module Intrigue
         _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 30}]
         # Brute TLD
         #_start_task_and_recurse "dns_brute_tld",entity,depth
-      elsif entity.type_string = entity.type_string == "Person" || entity.type_string == "EmailAddress"
+      elsif entity.type_string == "Person" || entity.type_string == "EmailAddress"
         # Search Pipl
         @scan_result.logger.log "SKIP Unhandled entity type: #{entity.type}##{entity.name}"
         #_start_task_and_recurse "search_pipl",entity,depth
