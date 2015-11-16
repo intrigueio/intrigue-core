@@ -30,11 +30,9 @@ module Intrigue
 
       def add_entity(entity)
         return false if has_entity? entity
-
-        attribute_set(:entity_count, (@entity_count += 1))
-        save
-
+        attribute_set(:entity_count, @entity_count + 1)
         self.entities << entity
+        save
       true
       end
 

@@ -19,7 +19,7 @@ module Scanner
       # Mark the task complete
       @scan_result.complete = true
       @scan_result.logger.log_good "Run complete. Ship it!"
-      
+
       @scan_result.logger.save
       @scan_result.save
     end
@@ -82,7 +82,11 @@ module Scanner
 
       # Iterate on each discovered entity
       task_result.entities.map do |entity|
-        @scan_result.add_entity entity # XXX - add this to the actual task run - no reason to make it an after the fact
+        @scan_result.add_entity entity # Add these in right away
+      end
+
+      # Iterate on each discovered entity
+      task_result.entities.map do |entity|
         @scan_result.logger.log "Iterating on #{entity.type_string}##{entity.name}"
         _recurse(entity, depth-1)
       end

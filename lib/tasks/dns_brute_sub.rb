@@ -1,4 +1,8 @@
 require 'resolv'
+
+require 'eventmachine'
+require 'resolv-replace'
+
 module Intrigue
 class DnsBruteSubTask < BaseTask
 
@@ -150,9 +154,10 @@ Some cases to think through:
             subdomain_list.concat permutation_list
           end
         end
-
+      rescue Resolv::ResolvError => e
+        @task_result.logger.log "No resolution for: #{brute_domain}"
       rescue Exception => e
-        @task_result.logger.log_error "Hit exception: #{e}"
+        @task_result.logger.log_error "Hit exception: #{e.class}: #{e}"
       end
     end
   end

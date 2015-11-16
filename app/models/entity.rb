@@ -38,10 +38,11 @@ module Intrigue
 
       def form
         %{
+        <!-- auto generated via entity model -->
         <div class="form-group">
-          <label for="entity_type" class="col-xs-4 control-label">Type</label>
+          <label for="entity_type" class="col-xs-4 control-label">Entity Type</label>
           <div class="col-xs-6">
-            <input type="text" class="form-control input-sm" id="entity_type" name="entity_type" value="#{@type}">
+            <input type="text" class="form-control input-sm" id="entity_type" name="entity_type" value="#{type_string}">
           </div>
         </div>
         <div class="form-group">
