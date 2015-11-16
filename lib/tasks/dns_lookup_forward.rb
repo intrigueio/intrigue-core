@@ -8,7 +8,7 @@ class DnsLookupForwardTask < BaseTask
       :name => "dns_lookup_forward",
       :pretty_name => "DNS Forward Lookup",
       :authors => ["jcran"],
-      :description => "Look up the IP Address of the given hostname. Grab all types of the record.",
+      :description => "Look up the IP Address of the given hostname. Grab all types of the recor  d.",
       :references => [],
       :allowed_types => ["DnsRecord","String"],
       :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
@@ -60,6 +60,9 @@ class DnsLookupForwardTask < BaseTask
           _create_entity(entity_type, { "name" => "#{resource.rdata.last}", "parsed_record_type" => "MX"})
 
         elsif resource.type == Dnsruby::Types::A
+          _create_entity(entity_type, { "name" => "#{resource.rdata}", "parsed_record_type" => "A"})
+
+        elsif resource.type == Dnsruby::Types::AAAA
           _create_entity(entity_type, { "name" => "#{resource.rdata}", "parsed_record_type" => "A"})
 
         elsif resource.type == Dnsruby::Types::CNAME
