@@ -82,5 +82,11 @@
     "uri" : "https://www.carrierlookup.com",
     "editable" : "true",
     "comment" : ""
+  },
+  "gmail_account_credentials": {
+    "value" : "username:password",
+    "uri" : "https://www.gmail.com",
+    "editable" : "true",
+    "comment" : ""
   }
 }
