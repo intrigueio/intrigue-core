@@ -1,5 +1,5 @@
 Entity Details: <%= h @entity.to_json %>
 <br/><br/>
-Task Result: <a href="<%= task_result_uri @entity.task_result.id %>"> <%=Intrigue::Model::TaskResult.get(@entity.task_result.id).task_name %> </a>
+Task Result: <a href="<%= task_result_uri @entity.task_result.id if @entity.task_result %>"> <%=Intrigue::Model::TaskResult.get(@entity.task_result.id).task_name if @entity.task_result %> </a>
 <br/><br/>
 Scan Result: <a href="<%= scan_result_uri @entity.scan_result.id if @entity.scan_result %>"> <%=Intrigue::Model::ScanResult.get(@entity.scan_result.id).name if @entity.scan_result %> </a>

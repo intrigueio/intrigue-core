@@ -53,6 +53,9 @@ class IntrigueApp < Sinatra::Base
       # Start the task run!
       task_id = start_task_run(task_name, entity, options)
 
+      entity.task_result_id = task_id
+      entity.save
+
       redirect "/v1/task_results/#{task_id}"
     end
 
