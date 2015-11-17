@@ -106,12 +106,12 @@ class IntrigueApp < Sinatra::Base
       status 200 if result
     end
 
-    # Get the results of a task run
-    get "/task_results/:id.json/?" do
-      content_type :json
-      result = Intrigue::Model::TaskResult.get(params[:id])
-      result.export_json if result
+    # Show the results in a human readable format
+    get '/task_results/:id.json/?' do
+      @task_result = Intrigue::Model::TaskResult.get(params[:id])
+      @task_result.export_json
     end
+
 
     # Show the results in a human readable format
     get '/task_results/:id/?' do
