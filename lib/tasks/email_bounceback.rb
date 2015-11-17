@@ -29,7 +29,8 @@ class EmailBouncebackTest < BaseTask
     password = _get_global_config("gmail_account_credentials").split(":").last
     gmail = Gmail.connect(username, password)
 
-    email_address = "#{rand(100000000)}@#{domain}"
+    email_to_field = rand(100000000)
+    email_address = "#{email_to_field}@#{domain}"
 
     @task_result.logger.log "Sending email to #{email_address}"
     email = gmail.compose do
@@ -41,15 +42,18 @@ class EmailBouncebackTest < BaseTask
     end
     email.deliver!
 
-    @task_result.logger.log "Waiting 15 seconds for the bounceback... "
+    @task_result.logger.log "Waiting 30 seconds for the bounceback... "
     @task_result.save
-    sleep 15
+    sleep 30
 
-    gmail.inbox.emails(gm: "#{email_address}").each do |email|
+    # Search the inbox for our unique to field
+    gmail.inbox.emails(gm: "#{email_to_field}").each do |email|
+      @task_result.logger.log "Processing message from: #{email.message.from}"
+      @task_result.logger.log "Email headers #{email.headers}"
+      @task_result.logger.log "Email body #{email.body}"
 
       # Parse each email address for servers
-      email.message.received.each {|server|
-        @task_result.logger.log "Processing #{server}"
+      email.message.received.each do |server|
 
         # Get the server name from the string
         server_name = server.to_s.split(' ')[1]
@@ -61,7 +65,7 @@ class EmailBouncebackTest < BaseTask
           "server" => "#{server}",
           "email" => "#{email_address}"
         }
-      }
+      end
 
       email.delete!
     end
