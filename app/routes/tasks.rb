@@ -84,7 +84,8 @@ class IntrigueApp < Sinatra::Base
 
       # Construct an entity from the entity_hash provided
       type = payload["entity"]["type"]
-      attributes = payload["entity"]["attributes"].merge(:type => "Intrigue::Entity::#{type}")
+      attributes = payload["entity"].merge("type" => "Intrigue::Entity::#{type}")
+      
       entity = Intrigue::Model::Entity.create(attributes)
       entity.save
 

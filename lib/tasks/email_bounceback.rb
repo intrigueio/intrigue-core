@@ -22,7 +22,7 @@ class EmailBouncebackTest < BaseTask
   ## Default method, subclasses must override this
   def run
     super
-
+    
     domain = _get_entity_attribute "name"
 
     username = _get_global_config("gmail_account_credentials").split(":").first

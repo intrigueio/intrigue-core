@@ -14,7 +14,7 @@ class CoreCli < Thor
     @server_uri = "http://127.0.0.1:7777/v1"
     @sidekiq_uri = "http://127.0.0.1:7777/sidekiq"
     @delim = "#"
-    @debug = true
+    @debug = false
     # Connect to Intrigue API
     @x = IntrigueApi.new
   end
@@ -57,7 +57,7 @@ class CoreCli < Thor
       puts "Example Entities:"
 
       task_info["example_entities"].each do |x|
-        puts " - #{x["type"]}:#{x["attributes"]["name"]}"
+        puts " - #{x["type"]}:#{x["details"]["name"]}"
       end
 
       puts "Creates: #{task_info["created_types"].join(", ")}"
@@ -161,8 +161,8 @@ class CoreCli < Thor
       # Create a new entity
       e = Intrigue::Model::Entity.create({
         :type => entity["type"],
-        :name => entity["attributes"]["name"],
-        :details => entity["attributes"]
+        :name => entity["details"]["name"],
+        :details => entity["details"]
       })
 
       # Create a new task result
@@ -190,7 +190,8 @@ private
 
     entity_hash = {
       "type" => entity_type,
-      "attributes" => { "name" => entity_name}
+      "name" => entity_name,
+      "details" => { "name" => entity_name}
     }
 
     puts "Got entity: #{entity_hash}" if @debug
