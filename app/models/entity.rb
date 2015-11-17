@@ -62,8 +62,16 @@ module Intrigue
       ### Export!
       ###
 
+      def export_hash
+        {
+          :type => @type,
+          :name => @name,
+          :details => @details
+        }
+      end
+
       def export_json
-        raise "Not implemented"
+        export_hash.to_json
       end
 
       private

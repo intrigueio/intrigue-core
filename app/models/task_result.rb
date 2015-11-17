@@ -48,11 +48,12 @@ module Intrigue
           "task_name" => @task_name,
           "timestamp_start" => @timestamp_start,
           "timestamp_end" => @timestamp_end,
-          "entity_id" => @entity.to_s,
           "options" => @options,
           "complete" => @complete,
+          #{}"base_entity" => @base_entity.export_hash,
           "entity_count" => @entity_count,
-          "entity_ids" => @entities.map{ |x| x.to_s } #,
+          #{}"entities" => @entities.map{ |x| x.export_hash },
+          #{}"log" => @logger.full_log
         }
       end
 

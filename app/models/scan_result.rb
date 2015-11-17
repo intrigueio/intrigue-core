@@ -55,12 +55,12 @@ module Intrigue
           "timestamp_start" => @timestamp_start,
           "timestamp_end" => @timestamp_end,
           "filter_strings" => @filter_strings,
-          "entity_id" => @entity.to_s,
+          #"base_entity" => @base_entity.export_hash,
           "entity_count" => @entity_count,
-          "task_result_ids" => @task_results.map{|y| TaskResult.get(y).export_hash },
-          "entity_ids" => @entities.map {|y| Entity.get(y).to_s },
+          #"task_results" => @task_results.map{|y| TaskResult.get(y).export_hash },
+          #"entities" => @entities.map {|y| Entity.get(y).export_hash },
           "options" => @options,
-          "log" => @log.to_s
+          #"log" => @logger.full_log
         }
       end
 
