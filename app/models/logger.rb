@@ -41,7 +41,7 @@ module Intrigue
         #@full_log << "#{@full_log}\n#{message}"
 
         # Write to STDOUT
-        #puts message
+        puts message
 
         #Write to file
         #if @write_file

@@ -8,6 +8,6 @@ class String
   end
 
   def alpha?
-    !!match(/^[[:alpha:]]+$/)
+    !!match(/^[[:alpha:]].*$/)
   end
 end
