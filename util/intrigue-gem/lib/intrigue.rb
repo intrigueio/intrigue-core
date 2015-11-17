@@ -48,6 +48,7 @@ class IntrigueApi
       task_id = RestClient.post "#{@server_uri}/task_results",
         payload.to_json, :content_type => "application/json"
 
+
       if task_id == "" # technically a nil is returned , but becomes an empty string
         #puts "[-] Task not started. Unknown Error. Exiting"
         return nil

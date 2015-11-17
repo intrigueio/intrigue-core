@@ -52,8 +52,8 @@ module Intrigue
           "complete" => @complete,
           #{}"base_entity" => @base_entity.export_hash,
           "entity_count" => @entity_count,
-          #{}"entities" => @entities.map{ |x| x.export_hash },
-          #{}"log" => @logger.full_log
+          "entities" => self.entities.map{ |x| x.export_hash },
+          "log" => self.logger.full_log
         }
       end
 

@@ -94,9 +94,10 @@ class IntrigueApp < Sinatra::Base
 
       # Start the task _run
       task_id = start_task_run(task_name, entity, options)
+      status 200 if task_id
 
-      # Return a task id so the caller can store and look up results later
-    task_id
+    # must be a string otherwise it can be interpreted as a status code
+    task_id.to_s
     end
 
     # Accept the results of a task run

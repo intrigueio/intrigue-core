@@ -107,8 +107,8 @@ class CoreCli < Thor
 
     # Parse the response
     puts "[+] Start Results"
-    response["entity_ids"].each do |entity|
-      puts "  [x] #{entity["type"]}#{@delim}#{entity["attributes"]["name"]}"
+    response["entities"].each do |entity|
+      puts "  [x] #{entity["type"]}#{@delim}#{entity["name"]}"
     end
     puts "[+] End Results"
 
