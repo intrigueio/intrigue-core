@@ -38,7 +38,7 @@ module Intrigue
       ###
 
       def export_csv
-        "#{@task_name},#{@base_entity.name},#{@entities.map{|x| x.type + "#" + x.name }.join(";")}\n"
+        "#{@task_name},#{self.base_entity.name},#{self.entities.map{|x| x.type + "#" + x.name }.join(";")}\n"
       end
 
       def export_hash
@@ -50,7 +50,7 @@ module Intrigue
           "timestamp_end" => @timestamp_end,
           "options" => @options,
           "complete" => @complete,
-          #{}"base_entity" => @base_entity.export_hash,
+          "base_entity" => self.base_entity.export_hash,
           "entity_count" => @entity_count,
           "entities" => self.entities.map{ |x| x.export_hash },
           "log" => self.logger.full_log

@@ -173,13 +173,10 @@ class CoreCli < Thor
         :logger => Intrigue::Model::Logger.create
       })
 
-
       # XXX - Create the task
       task = Intrigue::TaskFactory.create_by_name(task_name)
       jid = task.class.perform_async task_result.id, handlers
 
-      sleep 1
-      
       puts "Created task #{task_result.id} for entity #{e}"
     end
   end

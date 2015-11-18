@@ -11,6 +11,7 @@ gem 'eventmachine'
 
 gem 'data_mapper'
 gem 'dm-pg-types'
+gem 'dm-postgres-adapter'
 gem 'dm-sqlite-adapter'
 gem 'dm-noisy-failures'
 

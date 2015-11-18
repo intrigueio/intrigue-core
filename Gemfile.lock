@@ -278,6 +278,7 @@ DEPENDENCIES
   data_mapper
   dm-noisy-failures
   dm-pg-types
+  dm-postgres-adapter
   dm-sqlite-adapter
   dnsruby
   em-resolv-replace
