@@ -13,7 +13,7 @@ module Intrigue
 
       def allowed_tasks
         ### XXX - this needs to be limited to tasks that accept this type
-        TaskFactory.list
+        TaskFactory.allowed_tasks_for_entity_type(type_string)
       end
 
       def to_s

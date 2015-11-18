@@ -1,14 +1,15 @@
 require 'gmail'
 
 module Intrigue
-class EmailBouncebackTest < BaseTask
+class EmailBouncebackTask < BaseTask
 
   def metadata
     {
       :name => "email_bounceback",
       :pretty_name => "Email Bounceback",
       :authors => ["jcran"],
-      :description => "This task checks a domain for an email bounceback.",
+      :description => "This task checks a domain for an email bounceback via gmail.",
+      :requires_config => ["gmail_account_credentials"],
       :references => [],
       :allowed_types => ["DnsRecord"],
       :example_entities => [

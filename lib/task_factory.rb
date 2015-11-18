@@ -13,6 +13,9 @@ class TaskFactory
     available_tasks
   end
 
+  def self.allowed_tasks_for_entity_type(entity_type)
+    available_tasks.select {|task_class| task = task_class.new; task_class if task.metadata[:allowed_types].include? entity_type}
+  end
   #
   # XXX - can :name be set on the class vs the object
   # to prevent the need to call "new" ?
@@ -62,8 +65,7 @@ class TaskFactory
   private
 
   def self.available_tasks
-    #@available_tasks = @tasks.select{|x| x if x.new.check_external_dependencies } unless @available_tasks
-    @tasks
+    @tasks #@available_tasks = @tasks.select{|x| x if x.new.check_external_dependencies } unless @available_tasks
   end
 
 end

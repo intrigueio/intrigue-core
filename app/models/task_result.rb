@@ -19,7 +19,6 @@ module Intrigue
       property :complete, Boolean, :default => false
       property :entity_count, Integer, :default => 0
 
-
       def add_entity(entity)
         return false if has_entity? entity
         attribute_set(:entity_count, @entity_count + 1)
