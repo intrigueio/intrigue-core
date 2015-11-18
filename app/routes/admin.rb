@@ -22,6 +22,10 @@ class IntrigueApp < Sinatra::Base
         ds.size
         ds.clear
 
+        Intrigue::Model::Entity.all.destroy
+        Intrigue::Model::TaskResult.all.destroy
+        Intrigue::Model::ScanResult.all.destroy
+
         # Beam me up, scotty!
         redirect '/v1'
       end

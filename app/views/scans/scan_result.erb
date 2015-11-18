@@ -1,6 +1,5 @@
 <h3>Scan Result</h3>
 <p>Total Tasks: <%=@scan_result.task_results.count%></p>
-<p>Log: <a href=<%="#{request.path}/log"%>>LOG</a></p>
 <p>Entity: <a href=/v1/entities/<%=@scan_result.base_entity.id%>><%= h "#{@scan_result.base_entity.type_string} #{@scan_result.base_entity.name}"%></a></p>
 <p>Complete: <%= @scan_result.complete %></p>
 <p>New Entities:</p>
@@ -9,7 +8,7 @@
     <li>
       <%= "<a target=\'_blank\' href=\'/v1/task?entity_id=#{h e.id}\'>[iterate]</a>" %>
       <a href="/v1/entities/<%=h e.id%>">
-        <%= h e.type_string %>: <%= h e.name %> 
+        <%= h e.type_string %>: <%= h e.name %>
       </a>
       <%= "<a target=\'_blank\' href=\'#{h e.details["uri"]}\'>[link]</a>" if e.details["uri"] %>
       <!-- <span class="like-pre-white"> <%= h e %> </span>-->
