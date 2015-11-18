@@ -38,7 +38,7 @@ module Intrigue
       ###
 
       def export_csv
-        "#{@task_name},#{@entity.name},#{@entities.map{|x| x.type + "#" + x.attributes["name"] }.join(";")}\n"
+        "#{@task_name},#{@base_entity.name},#{@entities.map{|x| x.type + "#" + x.name }.join(";")}\n"
       end
 
       def export_hash
