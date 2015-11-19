@@ -17,9 +17,9 @@ class NetSvc < Intrigue::Model::Entity
 
   def form
     output = super
-    output << "IP Address: <input type=\"text\" name=\"attrib_ip_address\" value=#{ _escape_html @details["ip_address"]}><br/>"
-    output << "Port Num: <input type=\"text\" name=\"attrib_port_num\" value=#{ _escape_html @details["port_num"]}><br/>"
-    output << "Proto: <input type=\"text\" name=\"attrib_proto\" value=#{ _escape_html @details["proto"]}><br/>"
+    output << "<div class=\"form-group\"><label for=\"attrib_ip_address\" class=\"col-xs-4 control-label\">IPAddress</label><div class=\"col-xs-6\"><input type=\"text\" name=\"attrib_ip_address\" value=#{ _escape_html @details["ip_address"] }></div></div>"
+    output << "<div class=\"form-group\"><label for=\"attrib_ip_address\" class=\"col-xs-4 control-label\">Port Number</label><div class=\"col-xs-6\"><input type=\"text\" name=\"attrib_port_num\" value=#{ _escape_html @details["port_num"] }></div></div>"
+    output << "<div class=\"form-group\"><label for=\"attrib_ip_address\" class=\"col-xs-4 control-label\">Proto</label><div class=\"col-xs-6\"><input type=\"text\" name=\"attrib_proto\" value=#{ _escape_html @details["proto"] }></div></div>"
   output
   end
 
