@@ -46,45 +46,43 @@ class IntrigueApp < Sinatra::Base
       :logger => Intrigue::Model::Logger.create
     })
 
-    ###
-    # Create the Scanner
-    ###
-    if scan_result.scan_type == "simple"
-      scan = Intrigue::Scanner::SimpleScan.new
-    elsif scan_result.scan_type == "internal"
-      scan = Intrigue::Scanner::InternalScan.new
-    elsif scan_result.scan_type == "dns_subdomain"
-      scan = Intrigue::Scanner::DnsSubdomainScan.new
-    else
-      raise "Unknown scan type"
-    end
-
-    # Kick off the scan
-    scan.class.perform_async scan_result.id
+    scan_result.start
 
     # Redirect to display the details
     redirect "/v1/scan_results/#{scan_result.id}"
   end
 
-=begin
-  # XXX - this needs to be reconfigured to match new perform_async parameters.
-
   # Endpoint to start a task run programmatically
-  post '/scan_result/?' do
-
-    scan_id = SecureRandom.uuid
+  post '/scan_results/?' do
 
     scan_result_info = JSON.parse(request.body.read) if request.content_type == "application/json"
 
+    scan_type = scan_result_info["scan_type"]
     entity = scan_result_info["entity"]
-    name = scan_result_info["name"]
-    depth = scan_result_info["depth"]
+    options = scan_result_info["options"]
 
-    start_scan(scan_id, entity, name, depth)
+    # Construct an entity from the data we have
+    entity = Intrigue::Model::Entity.create(
+    {
+      :type => "Intrigue::Entity::#{entity['type']}",
+      :name => entity['name'],
+      :details => entity['details'],
+      :task_result_id => -1
+    })
 
-  scan_id
+    # Set up the ScanResult object
+    scan_result = Intrigue::Model::ScanResult.create({
+      :scan_type => scan_type,
+      :name => "x",
+      :base_entity => entity,
+      :depth => 4,
+      :filter_strings => "",
+      :logger => Intrigue::Model::Logger.create
+    })
+
+    id = scan_result.start
   end
-=end
+
   # Show the results in a human readable format
   get '/scan_results/:id.json/?' do
     @scan_result = Intrigue::Model::ScanResult.get(params[:id])

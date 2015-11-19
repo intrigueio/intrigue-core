@@ -2,8 +2,10 @@ module Intrigue
 module Scanner
   class Base
     include Sidekiq::Worker
-    include Intrigue::Task::Helper
+    sidekiq_options :queue => :scan
 
+    include Intrigue::Task::Helper
+    
     def perform(id)
       @scan_result = Intrigue::Model::ScanResult.get(id)
       return unless @scan_result

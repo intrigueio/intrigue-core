@@ -117,15 +117,14 @@ class CoreCli < Thor
     response["log"].each_line{|x| puts "  #{x}" }
   end
 
-=begin
-  desc "scan [Type#Entity] [Option1=Value1#...#...]", "Start a recursive scan. Returns the result"
-  def scan(entity,depth=3,options=nil)
-    entity_hash = _parse_entity entity
+  desc "scan [Scan Type] [Type#Entity] [Option1=Value1#...#...]", "Start a recursive scan. Returns the result"
+  def scan(scan_type,entity_string,option_string=nil)
+    entity_hash  = _parse_entity entity_string
     options_list = _parse_options option_string
 
-    return "Not currently implemented"
+    @x.start_scan_and_background(scan_type,entity_hash,options_list)
   end
-=end
+
 
   ###
   ### XXX - rewrite this so it uses the API

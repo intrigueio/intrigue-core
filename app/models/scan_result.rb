@@ -22,6 +22,24 @@ module Intrigue
       property :entity_count, Integer, :default => 0
       property :filter_strings, Text, :default => ""
 
+      def start
+        ###
+        # Create the Scanner
+        ###
+        if @scan_type == "simple"
+          scan = Intrigue::Scanner::SimpleScan.new
+        elsif @scan_type == "internal"
+          scan = Intrigue::Scanner::InternalScan.new
+        elsif @scan_type == "dns_subdomain"
+          scan = Intrigue::Scanner::DnsSubdomainScan.new
+        else
+          raise "Unknown scan type: #{@scan_type}"
+        end
+
+        # Kick off the scan
+        scan.class.perform_async @id
+      end
+
       def add_task_result(task_result)
         @task_results << task_result
         save

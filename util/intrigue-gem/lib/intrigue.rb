@@ -93,6 +93,37 @@ class IntrigueApi
     response
     end
 
+    # start_scan_and_background - start and background a scan
+    #
+    # entity_hash = {
+    #  :type => "String"
+    #  :details => { :name => "intrigue.io"}
+    # }
+    #
+    # options_list = [
+    #   {:name => "resolver", :value => "8.8.8.8" }
+    # ]
+    def start_scan_and_background(scan_type,entity_hash,options_list=nil)
+
+      payload = {
+        "scan_type" => scan_type,
+        "options" => options_list,
+        "entity" => entity_hash
+      }
+
+      ### Send to the server
+      scan_id = RestClient.post "#{@server_uri}/scan_results",
+        payload.to_json, :content_type => "application/json"
+
+
+      if scan_id == "" # technically a nil is returned , but becomes an empty string
+        #puts "[-] Task not started. Unknown Error. Exiting"
+        return nil
+      end
+
+    scan_id
+    end
+
     def get_log(task_id)
       log = RestClient.get "#{@server_uri}/task_results/#{task_id}/log"
     end
