@@ -38,8 +38,13 @@ module Intrigue
 
       def export_csv
         export_string = ""
-        #{}"#{@task_name},#{self.base_entity.name},#{self.entities.map{|x| x.type + "#" + x.name }.join(";")}\n"
         self.entities.map{ |x| export_string << x.export_csv + "\n" }
+      export_string
+      end
+
+      def export_tsv
+        export_string = ""
+        self.entities.map{ |x| export_string << x.export_tsv + "\n" }
       export_string
       end
 

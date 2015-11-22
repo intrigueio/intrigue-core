@@ -111,19 +111,27 @@ class IntrigueApp < Sinatra::Base
       status 200 if result
     end
 
-    # Show the results in a human readable format
+    # Show the results in a CSV format
+    get '/task_results/:id.csv/?' do
+      content_type 'text/plain'
+      @task_result = Intrigue::Model::TaskResult.get(params[:id])
+      @task_result.export_csv
+    end
+
+    # Show the results in a CSV format
+    get '/task_results/:id.tsv/?' do
+      content_type 'text/plain'
+      @task_result = Intrigue::Model::TaskResult.get(params[:id])
+      @task_result.export_tsv
+    end
+
+    # Show the results in a JSON format
     get '/task_results/:id.json/?' do
       content_type 'application/json'
       @task_result = Intrigue::Model::TaskResult.get(params[:id])
       @task_result.export_json
     end
 
-    # Show the results in a human readable format
-    get '/task_results/:id.csv/?' do
-      content_type 'text/plain'
-      @task_result = Intrigue::Model::TaskResult.get(params[:id])
-      @task_result.export_csv
-    end
 
     # Show the results in a human readable format
     get '/task_results/:id/?' do

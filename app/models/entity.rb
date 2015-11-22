@@ -79,6 +79,12 @@ module Intrigue
       export_string
       end
 
+      def export_tsv
+        export_string = "#{@id}\t#{@type}\t#{@name}\t"
+        @details.each{|k,v| export_string << "#{k}##{v};" }
+      export_string
+      end
+
       private
       def _escape_html(text)
         Rack::Utils.escape_html(text)
