@@ -18,4 +18,9 @@
     </li>
   <% end %>
 </ul>
+Export:
+<ul>
+  <li><a href=<%="#{request.url}.csv"%>> CSV </a></li>
+  <li><a href=<%="#{request.url}.json"%>> JSON </a></li>
+</ul>
 Log: <span class="like-pre-dark"><%= h @task_result.logger.full_log %></span><br/>

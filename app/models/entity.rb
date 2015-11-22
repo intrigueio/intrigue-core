@@ -61,7 +61,6 @@ module Intrigue
       ###
       ### Export!
       ###
-
       def export_hash
         {
           :type => @type,
@@ -72,6 +71,12 @@ module Intrigue
 
       def export_json
         export_hash.to_json
+      end
+
+      def export_csv
+        export_string = "#{@id},#{@type},#{@name},"
+        @details.each{|k,v| export_string << "#{k}##{v};" }
+      export_string
       end
 
       private
