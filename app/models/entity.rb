@@ -8,8 +8,15 @@ module Intrigue
       property :name,     String
       property :details,  Object, :default => {} #Text, :length => 100000
 
+      belongs_to :project, :default => lambda { |r, p| Project.first }
       belongs_to :task_result, :required => false
       belongs_to :scan_result, :required => false
+
+       #validates_uniqueness_of :name
+
+      def self.all_in_current_project
+        all(:project_id => 1)
+      end
 
       def allowed_tasks
         ### XXX - this needs to be limited to tasks that accept this type

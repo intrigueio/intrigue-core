@@ -130,3 +130,5 @@ require_relative 'lib/all'
 #DataMapper.auto_migrate!
 DataMapper.auto_upgrade!
 DataMapper.finalize
+
+Intrigue::Model::Project.create(:name => "default") unless Intrigue::Model::Project.first

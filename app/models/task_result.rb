@@ -3,12 +3,12 @@ module Intrigue
     class TaskResult
       include DataMapper::Resource
 
+      belongs_to :scan_result, :required => false
       belongs_to :base_entity, 'Intrigue::Model::Entity'
       belongs_to :logger, 'Intrigue::Model::Logger'
+      belongs_to :project, :default => lambda { |r, p| Project.first }
 
       has n, :entities
-
-      belongs_to :scan_result, :required => false
 
       property :id, Serial
       property :name, String
@@ -18,6 +18,10 @@ module Intrigue
       property :options, Object, :default => [] #StringArray
       property :complete, Boolean, :default => false
       property :entity_count, Integer, :default => 0
+
+      def self.all_in_current_project
+        all(:project_id => 1)
+      end
 
       def add_entity(entity)
         return false if has_entity? entity

@@ -3,7 +3,7 @@ class IntrigueApp < Sinatra::Base
 
   # Scan
   get '/scan/?' do
-    @scan_results = Intrigue::Model::ScanResult.all
+    @scan_results = Intrigue::Model::ScanResult.all_in_current_project
     erb :'scans/index'
   end
 
