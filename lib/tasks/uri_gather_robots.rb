@@ -1,5 +1,5 @@
 module Intrigue
-class UriGatherRobots  < BaseTask
+class UriGatherRobotsTask  < BaseTask
 
   include Intrigue::Task::Web
 

@@ -1,7 +1,7 @@
 require "rexml/document"
 
 module Intrigue
-class UriGatherRobots  < BaseTask
+class UriGatherSitemapTask  < BaseTask
 
   include Intrigue::Task::Web
 
