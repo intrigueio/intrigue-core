@@ -35,7 +35,7 @@ gem 'whois'             # dns_zone_transfer, whois
 gem 'googleajax'        # search_google
 gem 'geoip'             # geolocate_host
 gem 'shodan'            # search_shodan
-gem 'nmap-parser'       # nmap_scan
+gem 'ruby-nmap'         # nmap_scan
 gem 'screencap', :git => 'https://github.com/intrigueio/screencap.git'
 gem 'twitter'           # twitter_account_following, etc
 gem 'arachnid', :git => 'https://github.com/intrigueio/arachnid.git' #:path => "/Users/jcran/work/intrigue/projects/arachnid"
