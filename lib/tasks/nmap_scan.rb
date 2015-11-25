@@ -1,4 +1,6 @@
-require 'nmap/parser'
+require 'nmap/program'
+require 'nmap/xml'
+
 module Intrigue
 class NmapScanTask < BaseTask
 
@@ -21,6 +23,10 @@ class NmapScanTask < BaseTask
   ## Default method, subclasses must override this
   def run
     super
+
+    ###
+    ### SECURITY - sanity check to_scan
+    ###
 
     # Allow the user to set the port ranges
     #ports = _get_option "ports"
@@ -46,72 +52,68 @@ class NmapScanTask < BaseTask
     #@task_result.logger.log "Raw Result:\n #{File.open(temp_file).read}"
     @task_result.logger.log "Parsing #{temp_file}"
 
-    parser = ::Nmap::Parser.parsefile(temp_file)
+    parser = Nmap::XML.new(temp_file)
 
     # Create entities for each discovered service
-    parser.hosts("up") do |host|
-
-      @task_result.logger.log "Handling nmap data for #{host.addr}"
+    parser.each_host do |host|
+      @task_result.logger.log "Handling nmap data for #{host.ip}"
 
       # Handle the case of a netblock or domain - where we will need to create host entity(s)
       if @entity.type_string == "NetBlock" or @entity.type_string == "DnsRecord"
-        host_entity = _create_entity("IpAddress", { "name" => host.addr } )
+        host_entity = _create_entity("IpAddress", { "name" => host.ip } )
       else
         host_entity = @entity # We already have a host
       end
 
-      [:tcp, :udp].each do |proto_type|
+      host.each_port do |port|
 
-        host.getports(proto_type, "open") do |port|
+        # Create a NetSvc for each open port
+        entity = _create_entity("NetSvc", {
+          "name" => "#{host.ip}:#{port.number}/#{port.protocol}",
+          "ip_address" => "#{host.ip}",
+          "port_num" => port.number,
+          "proto" => port.protocol,
+          "fingerprint" => "#{port.service}"}) if port.state == :open
 
-          # Create a NetSvc for each open port
-          entity = _create_entity("NetSvc", {
-            "name" => "#{host.addr}:#{port.num}/#{port.proto}",
-            "ip_address" => "#{host.addr}",
-            "port_num" => port.num,
-            "proto" => port.proto,
-            "fingerprint" => "#{port.service.name}"})
+        # Handle WebApps
+        if entity.details["proto"] == :tcp &&
+          [80,443,8080,8081,8443].include?(entity.details["port_num"])
 
-          # Handle WebApps
-          if entity.details["proto"] == "tcp" &&
-            [80,443,8080,8081,8443].include?(entity.details["port_num"])
+          # determine if this is an SSL application
+          ssl = true if [443,8443].include?(entity.details["port_num"])
+          protocol = ssl ? "https://" : "http://" # construct uri
 
-            # determine if this is an SSL application
-            ssl = true if [443,8443].include?(entity.details["port_num"])
-            protocol = ssl ? "https://" : "http://" # construct uri
+          # Create URI
+          uri = "#{protocol}#{host.ip}:#{entity.details["port_num"]}"
+          _create_entity("Uri", "name" => uri, "uri" => uri  ) # create an entity
 
-            # Create URI
-            uri = "#{protocol}#{host.addr}:#{entity.details["port_num"]}"
-            _create_entity("Uri", "name" => uri, "uri" => uri  ) # create an entity
+          # and create the entities if we have dns
+          host.hostnames.each do |hostname|
+            uri = "#{protocol}#{hostname}:#{entity.details["port_num"]}"
+            _create_entity("Uri", "name" => uri, "uri" => uri )
+          end
 
-            # and create the entities if we have dns
-            host.hostnames.each do |hostname|
-              uri = "#{protocol}#{hostname}:#{entity.details["port_num"]}"
-              _create_entity("Uri", "name" => uri, "uri" => uri )
-            end
+        # Handle FtpServer
+        elsif [21].include?(entity.details["port_num"])
+          uri = "ftp://#{entity.details["ip_address"]}:#{entity.details["port_num"]}"
+          _create_entity("FtpServer", {
+            "name" => uri,
+            "ip_address" => entity.details["ip_address"],
+            "port" => 21,
+            "uri" => uri  })
 
-          # Handle FtpServer
-          elsif [21].include?(entity.details["port_num"])
-            uri = "ftp://#{entity.details["ip_address"]}:#{entity.details["port_num"]}"
-            _create_entity("FtpServer", {
-              "name" => uri,
-              "ip_address" => entity.details["ip_address"],
-              "port" => 21,
-              "uri" => uri  })
+        # Handle SshServer
+        elsif [22].include?(entity.details["port_num"])
+          uri = "ssh://#{entity.details["ip_address"]}:#{entity.details["port_num"]}"
+          _create_entity("SshServer", {
+            "name" => uri,
+            "ip_address" => entity.details["ip_address"],
+            "port" => 22,
+            "uri" => uri  })
 
-          # Handle SshServer
-          elsif [22].include?(entity.details["port_num"])
-            uri = "ssh://#{entity.details["ip_address"]}:#{entity.details["port_num"]}"
-            _create_entity("SshServer", {
-              "name" => uri,
-              "ip_address" => entity.details["ip_address"],
-              "port" => 22,
-              "uri" => uri  })
+        end # end if
 
-          end # end if
-
-        end # end host.getports
-      end # end tcp/udp
+      end # end host.each_port
     end # end parser
 
     # Clean up!
