@@ -33,7 +33,8 @@ module Intrigue
 
       # Matches based on type and the attribute "name"
       def has_entity? entity
-        return true if (self.entities.select {|e| e.match? entity}).length > 0
+        self.entities.each {|e| return true if e.match?(entity) })
+      false
       end
 
       ###
