@@ -73,8 +73,8 @@ class NmapScanTask < BaseTask
           entity = _create_entity("NetSvc", {
             "name" => "#{host.ip}:#{port.number}/#{port.protocol}",
             "ip_address" => "#{host.ip}",
-            "port_num" => "#{port.number}",
-            "proto" => "#{port.protocol}",
+            "port_num" => port.number,
+            "proto" => port.protocol,
             "fingerprint" => "#{port.service}"})
 
           # Handle WebApps
