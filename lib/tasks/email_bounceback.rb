@@ -60,7 +60,7 @@ class EmailBouncebackTask < BaseTask
         server_name = server.to_s.split(' ')[1]
 
         # Create the apropriate entities
-        ("#{server_name}".gsub(".","").alpha? ? entity_type = "DnsRecord" : entity_type = "IpAddress" )
+        ("#{server_name}".gsub(".","").is_ip_address? ? entity_type = "IpAddress" : entity_type = "DnsRecord" )
         _create_entity entity_type, {
           "name" => server_name,
           "server" => "#{server}",
