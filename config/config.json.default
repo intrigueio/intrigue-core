@@ -88,5 +88,17 @@
     "uri" : "https://www.gmail.com",
     "editable" : "true",
     "comment" : ""
+  },
+  "email_validator_apikey": {
+    "value" : "",
+    "uri" : "http://www.email-validator.net/email-address-online-verification-api.html",
+    "editable" : "true",
+    "comment" : ""
+  },
+  "mailbox_layer_apikey": {
+    "value" : "",
+    "uri" : "https://mailboxlayer.com/dashboard",
+    "editable" : "true",
+    "comment" : ""
   }
 }

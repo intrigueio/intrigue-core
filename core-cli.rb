@@ -99,22 +99,22 @@ class CoreCli < Thor
     options_list = _parse_options option_string
 
     # Get the response from the API
-    puts "[+] Starting Task."
+    #puts "[+] Starting Task."
     response = @x.start(task_name,entity_hash,options_list)
-    puts "[D] Got response: #{response}" if @debug
+    #puts "[D] Got response: #{response}" if @debug
     return "Error retrieving response. Failing. Response was: #{response}" unless  response
-    puts "[+] Task complete!"
+    #puts "[+] Task complete!"
 
     # Parse the response
-    puts "[+] Start Results"
+    #puts "[+] Start Results"
     response["entities"].each do |entity|
       puts "  [x] #{entity["type"]}#{@delim}#{entity["name"]}"
     end
-    puts "[+] End Results"
+    #puts "[+] End Results"
 
     # Print the task log
-    puts "[+] Task Log:\n"
-    response["log"].each_line{|x| puts "  #{x}" }
+    #puts "[+] Task Log:\n"
+    #response["log"].each_line{|x| puts "  #{x}" }
   end
 
   desc "scan [Scan Type] [Type#Entity] [Option1=Value1#...#...]", "Start a recursive scan. Returns the result"
