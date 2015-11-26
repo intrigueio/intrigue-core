@@ -34,7 +34,7 @@ module Intrigue
       # Method returns true if entity has the same attributes
       # false otherwise
       def match?(entity)
-        if (entity.name == @name && entity.type == @type)
+        if ( entity.name == @name && entity.type == @type )
             return true
         end
       false
