@@ -61,7 +61,7 @@ module Intrigue
         _start_task_and_recurse "uri_dirbuster",entity,depth
       elsif entity.type_string == "String"
         # Search!
-        _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 30}]
+        _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 3}]
         # Brute TLD
         #_start_task_and_recurse "dns_brute_tld",entity,depth
       elsif entity.type_string == "Person" || entity.type_string == "EmailAddress"
