@@ -5,8 +5,6 @@ require 'sidekiq'
 require 'sidekiq/api'
 require 'sidekiq/web'
 
-require 'redis'
-
 require 'dm-core'
 require 'dm-serializer'
 require 'dm-pg-types'
@@ -65,9 +63,6 @@ class IntrigueApp < Sinatra::Base
   set :root, "#{$intrigue_basedir}"
   set :views, "#{$intrigue_basedir}/app/views"
   set :public_folder, 'public'
-
-  #Setup redis for sidekiq
-  #$intrigue_redis = Redis.new
 
   DataMapper::Logger.new($stdout, :debug)
   database_config = YAML.load_file("#{$intrigue_basedir}/config/database.yml")
