@@ -29,7 +29,7 @@ class EmailValidateMailboxLayerTask < BaseTask
     uri = "https://apilayer.net/api/check?access_key=#{api_key}&email=#{email_address}&smtp=1&format=1"
 
     email_validation_results = JSON.parse http_get_body(uri)
-    @task_result.logger.log "Got result: #{email_validation_results["status"]}"
+    @task_result.logger.log "Got result: #{email_validation_results}"
 
 =begin
 {
@@ -49,14 +49,14 @@ class EmailValidateMailboxLayerTask < BaseTask
 =end
 
     if email_validation_results["smtp_check"]
-      _create_entity "Info", email_validation_results.merge({"name" => "Valid Email: #{email_address}"})
+      @task_result.logger.log_good "Got a valid address"
+      #_create_entity "Info", email_validation_results.merge({"name" => "Valid Address: #{email_address}"})
     else
-      _create_entity "Info", email_validation_results.merge({"name" => "Invalid Email: #{email_address}"})
+      @task_result.logger.log_error "Got an invalid address"
     end
 
-
+    @entity.details = @entity.details.merge(email_validation_results)
 
   end
-
 end
 end

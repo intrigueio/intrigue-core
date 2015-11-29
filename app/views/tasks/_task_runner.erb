@@ -1,3 +1,4 @@
+
 <div class="col-sm-5">
 <form class="form-horizontal" target="_self" method="post" action="/v1/interactive/single">
   <div class="form-group">
@@ -35,6 +36,7 @@
   <!-- Get all attributes and use this to create an entity -->
   <% if @entity %>
       <%= @entity.form  %>
+      <input type="hidden" name="entity_id" value="<%=@entity.id%>">
   <% else %>
     <div class="form-group">
       <label for="entity_type" class="col-xs-4 control-label">Entity Type</label>
@@ -56,3 +58,5 @@
   <input class="btn btn-primary" type="submit" value="Run Task">
 </form>
 </div>
+
+<script src="/js/app.js"></script>

@@ -19,6 +19,7 @@ class IntrigueApp < Sinatra::Base
 
       # get the task name
       task_name = "#{@params["task"]}"
+      entity_id = @params["entity_id"]
 
       # Construct the attributes hash from the parameters. Loop through each of the
       # parameters looking for things that look like attributes, and add them to our
@@ -32,12 +33,16 @@ class IntrigueApp < Sinatra::Base
       end
 
       # Construct an entity from the data we have
-      entity = Intrigue::Model::Entity.create(
-      {
-        :type => "Intrigue::Entity::#{@params["entity_type"]}",
-        :name => "#{@params["attrib_name"]}",
-        :details => entity_details
-      })
+      if entity_id
+        entity = Intrigue::Model::Entity.get(entity_id)
+      else
+        entity = Intrigue::Model::Entity.create(
+        {
+          :type => "Intrigue::Entity::#{@params["entity_type"]}",
+          :name => "#{@params["attrib_name"]}",
+          :details => entity_details
+        })
+      end
 
       # Construct the options hash from the parameters
       options = []
@@ -51,12 +56,13 @@ class IntrigueApp < Sinatra::Base
       end
 
       # Start the task run!
-      task_id = start_task_run(task_name, entity, options)
+      task_result_id = start_task_run(task_name, entity, options)
+      task_result = Intrigue::Model::TaskResult.find(task_result_id).first
 
-      entity.task_result_id = task_id
+      entity.task_results << task_result
       entity.save
 
-      redirect "/v1/task_results/#{task_id}"
+      redirect "/v1/task_results/#{task_result_id}"
     end
 
 

@@ -1,4 +1,4 @@
-require 'nmap/program'
+#require 'nmap/program'
 require 'nmap/xml'
 
 module Intrigue

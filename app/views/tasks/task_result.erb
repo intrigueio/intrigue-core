@@ -9,7 +9,6 @@
 <ul>
   <% @task_result.entities.each do |entity| %>
     <li>
-      <%= "<a target=\'_blank\' href=\'/v1/task?entity_id=#{h entity.id}\'>[iterate]</a>" %>
       <a href="/v1/entities/<%= h entity.id %>">
         <%= h entity.type_string %>: <%= h entity.name %>
       </a>

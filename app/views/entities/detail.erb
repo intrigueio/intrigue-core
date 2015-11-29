@@ -1,9 +1,34 @@
 Entity Details:
 <pre><%= h JSON.pretty_generate @entity.export_hash %></pre>
-All Task Results: <a href="<%= task_result_uri @entity.task_result.id if @entity.task_result %>"> <%= @entity.task_result.task_name if @entity.task_result %> </a>
-<br/><br/>
-<%= "Scan Result: <a href=#{scan_result_uri @entity.scan_result.id}> #{@entity.scan_result}</a>" if @entity.scan_result %>
-</br>
 
-Run a task on this entity: </br>
+Scans that created this entity:
+<ul>
+<%= out = ""; @entity.scan_results.each {|x| out << "<li><a href='/v1/task_results/#{x.id}'>#{x.name} (#{x.base_entity})</a></li>" }; out %>
+</ul>
+<br/>
+<br/>
+
+Tasks that created this entity:<br/>
+<ul>
+<%= out = ""; @entity.task_results.each {|x| out << "<li><a href='/v1/task_results/#{x.id}'>#{x.task_name} (#{x.base_entity})</a></li>" }; out %>
+</ul>
+<br/>
+<br/>
+
+Tasks run on this entity:<br/>
+<ul>
+<%= out = ""; results = Intrigue::Model::TaskResult.all(:base_entity => @entity); results.each {|r| out << "<li><a href='/v1/task_results/#{r.id}'>#{r.task_name} (#{r.base_entity})</a></li>"; }; out %>
+</ul>
+<br/>
+<br/>
+
+Entities discovered from this entity: <br/>
+<ul>
+<%=out = ""; results = Intrigue::Model::TaskResult.all(:base_entity => @entity); results.each {|r| r.entities.each {|x| out << "<li><a href='/v1/entities/#{x.id}'>#{x.type}: #{x.name}</a></li>"; }}; out %>
+</ul>
+<br/>
+<br/>
+
+
+Run a task on this entity: <br/><br/>
 <%= erb :'tasks/_task_runner' %>

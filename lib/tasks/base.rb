@@ -256,28 +256,10 @@ class BaseTask
       @task_result.logger.log_good "Creating entity: #{type}, #{hash.inspect}"
 
       # Create the entity, validating the attributes
-      #begin
-
-        #xx = eval("Intrigue::Entity::#{type}").create(
-        #  :name => hash["name"],
-        #  :details => hash
-        #)
-        #xx.details = hash
-        #xx.save
-
-        entity = Intrigue::Model::Entity.create({
-                    :type => eval("Intrigue::Entity::#{type}"),
-                    :name => hash["name"],
-                    :details => {:name => hash["name"]} })
-        # Compensating for Datamapper WEIRDNESS
-        entity.details = hash
-        entity.save
-
-        #binding.pry
-      #rescue DataMapper::SaveFailureError => e
-      #  @task_result.logger.log_error "Unable to create entity: #{type}, #{hash.inspect}"
-      #  @task_result.logger.log_error "ERROR: #{e}"
-      #end
+      entity = Intrigue::Model::Entity.create({
+                  :type => eval("Intrigue::Entity::#{type}"),
+                  :name => hash["name"],
+                  :details => hash })
 
       # If we don't get anything back, safe to assume we can't move on
       unless entity

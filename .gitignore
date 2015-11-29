@@ -1,5 +1,8 @@
 .DS_Store
 config/config.json
+config/puma.rb
+config/database.yml
+config/sidekiq.yml
 data/alexa-latest.csv
 data/geolitecity/latest.dat
 disabled_tasks/
@@ -10,5 +13,4 @@ results/
 tmp/.gitignore
 tmp/
 log/intrigue-sidekiq.log
-config/puma.rb
 lib/tasks_disabled

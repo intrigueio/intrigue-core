@@ -66,11 +66,13 @@ class IntrigueApp < Sinatra::Base
   set :views, "#{$intrigue_basedir}/app/views"
   set :public_folder, 'public'
 
-  #Setup redis for resque
-  $intrigue_redis = Redis.new
+  #Setup redis for sidekiq
+  #$intrigue_redis = Redis.new
 
   DataMapper::Logger.new($stdout, :debug)
-  DataMapper.setup(:default, 'sqlite:///tmp/intrigue.db')
+  database_config = YAML.load_file("#{$intrigue_basedir}/config/database.yml")
+  DataMapper.setup(:default, database_config)
+  #DataMapper.setup(:default, 'sqlite:///tmp/intrigue.db')
   DataMapper::Property::String.length(255)
 
   ###

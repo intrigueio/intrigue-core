@@ -6,7 +6,6 @@
   <ul>
     <% @scan_result.entities.each do |e| %>
     <li>
-      <%= "<a target=\'_blank\' href=\'/v1/task?entity_id=#{h e.id}\'>[iterate]</a>" %>
       <a href="/v1/entities/<%=h e.id%>">
         <%= h e.type_string %>: <%= h e.name %>
       </a>

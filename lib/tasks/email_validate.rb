@@ -31,8 +31,13 @@ class EmailValidateTask < BaseTask
     email_validation_results = JSON.parse http_get_body(uri)
     @task_result.logger.log "Got result: #{email_validation_results["status"]}"
 
-    if email_validation_result["info"] =~ /Valid Address/
-      _create_entity "Info", email_validation_results.merge({"name" => "Valid Address: #{email_address}"})
+    if email_validation_results["info"] =~ /Valid Address/
+      #_create_entity "Info", email_validation_results.merge({"name" => "Valid Address: #{email_address}"})
+      @entity.details["verified"] = true
+      @entity.details.merge email_validation_results
+    else
+      @entity.details["verified"] = false
+      @entity.details.merge email_validation_results
     end
   end
 

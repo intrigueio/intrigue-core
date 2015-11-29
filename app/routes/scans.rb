@@ -32,8 +32,7 @@ class IntrigueApp < Sinatra::Base
     {
       :type => "Intrigue::Entity::#{@params["entity_type"]}",
       :name => "#{@params["attrib_name"]}",
-      :details => entity_details,
-      :task_result_id => -1
+      :details => entity_details
     })
 
     # Set up the ScanResult object

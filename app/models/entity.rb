@@ -9,10 +9,14 @@ module Intrigue
       property :details,  Object, :default => {} #Text, :length => 100000
 
       belongs_to :project, :default => lambda { |r, p| Project.first }
-      belongs_to :task_result, :required => false
-      belongs_to :scan_result, :required => false
 
-       #validates_uniqueness_of :name
+      has n, :task_results, :through => Resource, :constraint => :destroy
+      has n, :scan_results, :through => Resource, :constraint => :destroy
+
+      #belongs_to :scan_result, :required => false
+
+      #has n, :children, self, :through => :task_results, :via => :base_entity
+      #validates_uniqueness_of :name
 
       def self.all_in_current_project
         all(:project_id => 1)
@@ -46,13 +50,13 @@ module Intrigue
         <div class="form-group">
           <label for="entity_type" class="col-xs-4 control-label">Entity Type</label>
           <div class="col-xs-6">
-            <input type="text" class="form-control input-sm" id="entity_type" name="entity_type" value="#{type_string}">
+            <input type="text" class="form-control input-sm" id="entity_type" name="entity_type" value="#{type_string}" readonly>
           </div>
         </div>
         <div class="form-group">
           <label for="attrib_name" class="col-xs-4 control-label">Name</label>
           <div class="col-xs-6">
-            <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name" value="#{_escape_html @name}">
+            <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name" value="#{_escape_html @name}" readonly>
           </div>
         </div>
       }
