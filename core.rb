@@ -30,11 +30,9 @@ begin
 
   # Load up default config (which may include new fields)
   $intrigue_default_config = JSON.parse File.read(default_config_file)
-
   if File.exist? config_file
     # Okay, so we have a file - lets load that
     $intrigue_config = JSON.parse File.read(config_file)
-
     $intrigue_config = $intrigue_default_config.merge $intrigue_config
 
     # Check to make sure we have an engine_id config
@@ -53,6 +51,7 @@ begin
   File.open(config_file, 'w') do |f|
     f.write JSON.pretty_generate($intrigue_config)
   end
+
 rescue JSON::ParserError => e
   raise "FATAL: Unable to load config: #{e}"
 end
@@ -66,7 +65,7 @@ class IntrigueApp < Sinatra::Base
 
   DataMapper::Logger.new($stdout, :debug)
   database_config = YAML.load_file("#{$intrigue_basedir}/config/database.yml")
-  DataMapper.setup(:default, database_config)
+  DataMapper.setup(:default, database_config["production"])
   #DataMapper.setup(:default, 'sqlite:///tmp/intrigue.db')
   DataMapper::Property::String.length(255)
 

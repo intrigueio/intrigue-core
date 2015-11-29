@@ -4,7 +4,7 @@
 staging:
   :concurrency: 5
 production:
-  :concurrency: 20
+  :concurrency: 10
 :queues:
   - [task, 2]
   - scan
