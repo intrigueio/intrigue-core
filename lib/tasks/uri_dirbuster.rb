@@ -8,7 +8,7 @@ class UriDirbuster  < BaseTask
       :name => "uri_dirbuster",
       :pretty_name => "URI Dirbuster",
       :authors => ["jcran"],
-      :description => "Bruteforce directories on a web server",
+      :description => "Bruteforce common directories on a web server",
       :references => [],
       :allowed_types => ["Uri"],
       :example_entities => [
@@ -20,14 +20,15 @@ class UriDirbuster  < BaseTask
           [
             ".htaccess",".htpasswd",".meta",".web","access.log","access_log","admin","about",
             "administrator","awstats.pl","cfappman","cfdocs","cgi","cgi-bin","cgi-pub", "cgi-script",
-            "clients","company","cpanel","dummy","error","error.log","error_log","forums",
-            "global.inc","guest","guestbook","help","htdocs","httpd","httpd.pid","icons",
-            "iisadmin","inc","inc/config.php","index.html","index.html~","index.html.bak",
+            "clients","company","cpanel","crossdomain.xml","dummy","elmah.axd","error","error.log",
+            "error_log","forums", "global.inc", "guest", "guestbook", "help", "htdocs", "httpd","httpd.pid",
+            "icons","iisadmin","inc","inc/config.php","index.html","index.html~","index.html.bak",
             "lists","login","logs","mambo","manual","phf","php.ini","phpinfo.php",
-            "printenv","profile.php","public","scripts","search","server-info",
-            "servlet","server-status","services","status","test","test-cgi","tiki",
-            "tmp","tsweb","trace.axd","webmail","wp-admin","x.aspx?aspxerrorpath=",
-            "~bin", "~ftp","~nobody","~root", "_vti_bin"
+            "printenv","profile.php","public","robots.txt","scripts","server-info",
+            "servlet","server-status","services","sitemap.xml","sitemap.xml.gz,""status",
+            "test","test-cgi","tiki", "test.php", "tmp","tsweb","trace.axd","webmail","wp-admin",
+            "x.aspx?aspxerrorpath=","~bin", "~ftp","~nobody","~root", "_vti_bin", "jmx-console",
+            "web-console", "admin-console"
           ]
         }
       ],
@@ -46,7 +47,7 @@ class UriDirbuster  < BaseTask
     ###
     response = http_get "#{uri}/#{rand(100000000)}"
 
-    return @task_log.error "Unable to connect to site" unless response
+    return @task_result.logger.log_error "Unable to connect to site" unless response
 
     # Default to code
     missing_page_test = :code
@@ -71,10 +72,10 @@ class UriDirbuster  < BaseTask
     brute_list.each do |dir|
 
       ## Construct the URI and make the request
-      request_uri = "#{uri}/#{dir}"
+      request_uri = "#{uri}#{"/" unless uri[-1] == "/"}#{dir}"
       response = http_get request_uri
 
-      #@task_log.log "Attempting #{request_uri}"
+      #@task_result.logger.log "Attempting #{request_uri}"
 
       next unless response
 
@@ -83,22 +84,22 @@ class UriDirbuster  < BaseTask
 
         case response.code
           when "404"
-            @task_log.log "404 on #{request_uri}"
+            @task_result.logger.log "404 on #{request_uri}"
           when "200"
-            @task_log.good "200! Creating a page for #{request_uri}"
+            @task_result.logger.log_good "200! Creating a page for #{request_uri}"
             _create_entity "Uri", "name" => request_uri,
             "uri" => request_uri,
             "response_code" => response.code
           when "500"
-            @task_log.good "500 error! Creating a page for #{request_uri}"
+            @task_result.logger.log_good "500 error! Creating a page for #{request_uri}"
             _create_entity "Uri", "name" => request_uri,
               "uri" => request_uri,
               "content" => "#{response.body}",
               "response_code" => response.code
           when missing_page_code
-            @task_log.log "Got code: #{response.code}. Same as missing page code. Skipping"
+            @task_result.logger.log "Got code: #{response.code}. Same as missing page code. Skipping"
           else
-            @task_log.error "Don't know this response code? #{response.code} (#{request_uri})"
+            @task_result.logger.log_error "Don't know this response code? #{response.code} (#{request_uri})"
             _create_entity "Uri", "name" => request_uri,
               "uri" => request_uri,
               "response_code" => response.code
@@ -109,9 +110,11 @@ class UriDirbuster  < BaseTask
       elsif missing_page_test == :content
 
         if response.body == missing_page_content
-          @task_log.log "#{request_uri} looks like a missing page"
+          @task_result.logger.log "#{request_uri} looks like a missing page"
+        elsif response.body.include? "404"
+          @task_result.logger.log "Guessing #{request_uri} is a missing page based on it containing a string: 404"
         else
-          @task_log.log "#{request_uri} looks like a new page"
+          @task_result.logger.log "#{request_uri} looks like a new page"
           _create_entity "Uri", "name" => request_uri
         end
 

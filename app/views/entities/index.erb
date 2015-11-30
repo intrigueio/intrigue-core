@@ -1,7 +1,5 @@
 <ul>
-<%  $intrigue_redis.keys("entity:*").map do |x|
-  x = Intrigue::Model::Entity.find(x.split(":").last);
-  %>
-<li> <a href="/v1/entities/<%=x.id%>"><%= "#{x.type} #{x.attributes["name"]}" %></a></li>
-<% end %>
+  <% Intrigue::Model::Entity.all.each do |x| %>
+    <li> <a href=<%="/v1/entities/#{x.id}"%>><%= x %></a></li>
+  <% end %>
 </ul>

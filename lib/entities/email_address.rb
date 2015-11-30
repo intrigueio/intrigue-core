@@ -4,13 +4,13 @@ class EmailAddress < Intrigue::Model::Entity
 
   def metadata
     {
-      :type => "EmailAddress",
-      :required_attributes => ["name"]
+      :description => "TODO"
     }
   end
 
-  def validate(attributes)
-    attributes["name"] =~ /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,8}/
+
+  def validate
+    @name =~ /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,8}/
   end
 
 end

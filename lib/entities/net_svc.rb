@@ -4,22 +4,22 @@ class NetSvc < Intrigue::Model::Entity
 
   def metadata
     {
-      :type => "NetSvc",
-      :required_attributes => ["ip_address","port_num","proto"]
+      :description => "TODO"
     }
   end
 
-  def validate(attributes)
-    attributes["ip_address"].to_s =~ /^.*$/ &&
-    attributes["port_num"].to_s =~ /^\d{1,5}$/ &&
-    attributes["proto"].to_s =~ /^(tcp|udp)$/
+
+  def validate
+    @details["ip_address"].to_s =~ /^.*$/ &&
+    @details["port_num"].to_s =~ /^\d{1,5}$/ &&
+    @details["proto"].to_s =~ /^(tcp|udp)$/
   end
 
   def form
     output = super
-    output << "IP Address: <input type=\"text\" name=\"attrib_ip_address\" value=#{ _escape_html @attributes[:ip_address]}><br/>"
-    output << "Port Num: <input type=\"text\" name=\"attrib_port_num\" value=#{ _escape_html @attributes[:port_num]}><br/>"
-    output << "Proto: <input type=\"text\" name=\"attrib_proto\" value=#{ _escape_html @attributes[:proto]}><br/>"
+    output << "<div class=\"form-group\"><label for=\"attrib_ip_address\" class=\"col-xs-4 control-label\">IPAddress</label><div class=\"col-xs-6\"><input type=\"text\" name=\"attrib_ip_address\" value=#{ _escape_html @details["ip_address"] } readonly></div></div>"
+    output << "<div class=\"form-group\"><label for=\"attrib_ip_address\" class=\"col-xs-4 control-label\">Port Number</label><div class=\"col-xs-6\"><input type=\"text\" name=\"attrib_port_num\" value=#{ _escape_html @details["port_num"] } readonly></div></div>"
+    output << "<div class=\"form-group\"><label for=\"attrib_ip_address\" class=\"col-xs-4 control-label\">Proto</label><div class=\"col-xs-6\"><input type=\"text\" name=\"attrib_proto\" value=#{ _escape_html @details["proto"] } readonly></div></div>"
   output
   end
 

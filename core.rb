@@ -5,7 +5,11 @@ require 'sidekiq'
 require 'sidekiq/api'
 require 'sidekiq/web'
 
-require 'redis'
+require 'dm-core'
+require 'dm-serializer'
+require 'dm-pg-types'
+require 'dm-noisy-failures'
+
 require 'timeout'
 require 'json'
 require 'rest-client'
@@ -18,7 +22,7 @@ require 'pry'
 ### XXX - this is not threadsafe :(
 ###
 begin
-  $intrigue_global_timeout = 900
+  $intrigue_global_timeout = 9000
   $intrigue_basedir = File.dirname(__FILE__)
   # Check to see if the config exists
   config_file = "#{$intrigue_basedir}/config/config.json"
@@ -26,11 +30,9 @@ begin
 
   # Load up default config (which may include new fields)
   $intrigue_default_config = JSON.parse File.read(default_config_file)
-
   if File.exist? config_file
     # Okay, so we have a file - lets load that
     $intrigue_config = JSON.parse File.read(config_file)
-
     $intrigue_config = $intrigue_default_config.merge $intrigue_config
 
     # Check to make sure we have an engine_id config
@@ -49,6 +51,7 @@ begin
   File.open(config_file, 'w') do |f|
     f.write JSON.pretty_generate($intrigue_config)
   end
+
 rescue JSON::ParserError => e
   raise "FATAL: Unable to load config: #{e}"
 end
@@ -72,6 +75,11 @@ class IntrigueApp < Sinatra::Base
     config.redis = { url: 'redis://redis:6379', namespace: 'intrigue' }
   end
 
+  DataMapper::Logger.new($stdout, :debug)
+  database_config = YAML.load_file("#{$intrigue_basedir}/config/database.yml")
+  DataMapper.setup(:default, database_config["production"])
+  #DataMapper.setup(:default, 'sqlite:///tmp/intrigue.db')
+  DataMapper::Property::String.length(255)
 
   ###
   ### END CONFIG
@@ -107,10 +115,8 @@ class IntrigueApp < Sinatra::Base
 
     # Main Page
     get '/?' do
-      #@queue = Sidekiq::Queue.new
       @stats = Sidekiq::Stats.new
       @workers = Sidekiq::Workers.new
-      
       erb :index
     end
 
@@ -119,11 +125,18 @@ class IntrigueApp < Sinatra::Base
       erb :news
     end
 
-    require_relative "app/all"
-
   end
 end
 
 
+# App libs
+require_relative "app/all"
+
 # Core libraries
 require_relative 'lib/all'
+
+#DataMapper.auto_migrate!
+DataMapper.auto_upgrade!
+DataMapper.finalize
+
+Intrigue::Model::Project.create(:name => "default") unless Intrigue::Model::Project.first

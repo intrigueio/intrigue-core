@@ -5,8 +5,22 @@ class IntrigueApp < Sinatra::Base
       erb :'entities/index'
     end
 
-    get '/entities/:id' do
-      @entity = Intrigue::Model::Entity.find(params[:id])
+    get '/entities/:id.csv' do
+      @entity = Intrigue::Model::Entity.get(params[:id])
+      @entity.export_csv
+    end
+
+    get '/entities/:id.json' do
+      @entity = Intrigue::Model::Entity.get(params[:id])
+      @entity.export_json
+    end
+
+   get '/entities/:id' do
+      @entity = Intrigue::Model::Entity.get(params[:id])
+
+      @tasks = Intrigue::TaskFactory.list.map{|x| x.send(:new)}
+      @task_names = @tasks.map{|t| t.metadata[:pretty_name]}.sort
+
       erb :'entities/detail'
     end
 

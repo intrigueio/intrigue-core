@@ -14,7 +14,9 @@ class MasscanTask < BaseTask
       :references => [],
       :allowed_types => ["IpAddress", "NetBlock"],
       :example_entities => [{"type" => "NetBlock", "attributes" => {"name" => "10.0.0.0/24"}}],
-      :allowed_options => [],
+      :allowed_options => [
+        {:name => "port_num", :type => "Integer", :regex => "integer", :default => 80 },
+      ],
       :created_types => ["IpAddress", "NetSvc"]
     }
   end
@@ -24,7 +26,7 @@ class MasscanTask < BaseTask
     super
 
     # XXX CURRENTLY HARDCODED FOR A SINGLE PORT
-    port_num = 80
+    opt_port_num = _get_option "port_num"
 
     # Get range, or host
     to_scan = _get_entity_attribute "name"
@@ -33,9 +35,9 @@ class MasscanTask < BaseTask
     temp_file = "#{Dir::tmpdir}/masscan_output_#{rand(100000000)}.tmp"
 
     # shell out to masscan and run the scan
-    @task_log.log "Scanning #{to_scan} and storing in #{temp_file}"
-    masscan_string = "sudo masscan -p #{port_num} -oL #{temp_file} #{to_scan}"
-    @task_log.log "Running... #{masscan_string}"
+    @task_result.logger.log "Scanning #{to_scan} and storing in #{temp_file}"
+    masscan_string = "sudo masscan -p #{opt_port_num} -oL #{temp_file} #{to_scan}"
+    @task_result.logger.log "Running... #{masscan_string}"
     _unsafe_system(masscan_string)
 
     f = File.open(temp_file).each_line do |line|
@@ -49,8 +51,8 @@ class MasscanTask < BaseTask
       _create_entity("IpAddress", {"name" => host })
 
       _create_entity("NetSvc", {
-        "name" => "#{host}:#{port_num}/tcp",
-        "port_num" => port_num,
+        "name" => "#{host}:#{opt_port_num}/tcp",
+        "port_num" => opt_port_num,
         "proto" => "tcp"
       })
 
@@ -65,12 +67,12 @@ class MasscanTask < BaseTask
       end
 
       if resolved_name
-        @task_log.good "Creating domain #{resolved_name}"
+        @task_result.logger.log_good "Creating domain #{resolved_name}"
         # Create our new dns record entity with the resolved name
         _create_entity("DnsRecord", {"name" => resolved_name})
         _create_entity("Uri", {"name" => "http://#{resolved_name}", "uri" => "http://#{resolved_name}" })
       else
-        @task_log.log "Unable to find a name for #{host}"
+        @task_result.logger.log "Unable to find a name for #{host}"
       end
       ### End Resolution
 
@@ -80,7 +82,7 @@ class MasscanTask < BaseTask
     begin
       File.delete(temp_file)
     rescue Errno::EPERM
-      @task_log.error "Unable to delete file"
+      @task_result.logger.log_error "Unable to delete file"
     end
   end
 

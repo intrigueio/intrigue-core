@@ -3,120 +3,114 @@ class IntrigueApp < Sinatra::Base
 
   # Scan
   get '/scan/?' do
-
-    # Get details on the scan results so we can display them
-    keys = $intrigue_redis.scan_each(match: "scan_result:*", count: 10).to_a
-
-    unsorted_results = []
-    keys.each do |key|
-      begin
-        unsorted_results << Intrigue::Model::ScanResult.find(key.split(":").last)
-      rescue JSON::ParserError => e
-      end
-    end
-
-    @scan_results = unsorted_results.sort_by{|x| x.timestamp_end }.reverse
-
+    @scan_results = Intrigue::Model::ScanResult.all_in_current_project
     erb :'scans/index'
   end
 
   # Endpoint to start a task run from a webform
   post '/interactive/scan' do
 
+    # Collect the scan parameters
+    scan_name = @params["scan_name"] || "default"
+    scan_type = "#{@params["scan_type"]}"
+    scan_depth = @params["scan_depth"].to_i || 3
+    scan_filter_strings = @params["scan_filter_strings"]
+
     # Construct the attributes hash from the parameters. Loop through each of the
     # parameters looking for things that look like attributes, and add them to our
-    # attribs hash
-    attribs = {}
+    # details hash
+    entity_details = {}
     @params.each do |name,value|
       #puts "Looking at #{name} to see if it's an attribute"
       if name =~ /^attrib/
-        attribs["#{name.gsub("attrib_","")}"] = "#{value}"
+        entity_details["#{name.gsub("attrib_","")}"] = "#{value}"
       end
     end
 
     # Construct an entity from the data we have
-    entity = Intrigue::Model::Entity.new @params["entity_type"],attribs
-    entity.save
+    entity = Intrigue::Model::Entity.create(
+    {
+      :type => "Intrigue::Entity::#{@params["entity_type"]}",
+      :name => "#{@params["attrib_name"]}",
+      :details => entity_details
+    })
 
-    # Create a unique identifier
-    scan_id = SecureRandom.uuid
-    name = @params["name"] || "default"
+    # Set up the ScanResult object
+    scan_result = Intrigue::Model::ScanResult.create({
+      :scan_type => scan_type,
+      :name => scan_name,
+      :base_entity => entity,
+      :depth => scan_depth,
+      :filter_strings => scan_filter_strings,
+      :logger => Intrigue::Model::Logger.create
+    })
 
-    # Set up the scan result
-    scan_result = Intrigue::Model::ScanResult.new scan_id, name
-    scan_result.depth = @params["depth"].to_i || "3"
-    scan_result.scan_type = @params["scan_type"]
-    scan_result.filter_strings = @params["filter_strings"]
-    scan_result.entity = entity
+    scan_result.start
 
-    # Save it!
-    scan_result.save
-
-    ###
-    # Create the scanner object
-    ###
-    if scan_result.scan_type == "simple"
-      scan = Intrigue::Scanner::SimpleScan.new
-    elsif scan_result.scan_type == "internal"
-      scan = Intrigue::Scanner::InternalScan.new
-    else
-      raise "Unknown scan type"
-    end
-
-    # Kick off the scan
-    jid = scan.class.perform_async scan_result.id
-
-    # Redirect to display the log
+    # Redirect to display the details
     redirect "/v1/scan_results/#{scan_result.id}"
   end
 
-=begin
-  # XXX - this needs to be reconfigured to match new perform_async parameters.
-
   # Endpoint to start a task run programmatically
-  post '/scan_result/?' do
-
-    scan_id = SecureRandom.uuid
+  post '/scan_results/?' do
 
     scan_result_info = JSON.parse(request.body.read) if request.content_type == "application/json"
 
+    scan_type = scan_result_info["scan_type"]
     entity = scan_result_info["entity"]
-    name = scan_result_info["name"]
-    depth = scan_result_info["depth"]
+    options = scan_result_info["options"]
 
-    start_scan(scan_id, entity, name, depth)
+    # Construct an entity from the data we have
+    entity = Intrigue::Model::Entity.create(
+    {
+      :type => "Intrigue::Entity::#{entity['type']}",
+      :name => entity['name'],
+      :details => entity['details'],
+      :task_result_id => -1
+    })
 
-  scan_id
+    # Set up the ScanResult object
+    scan_result = Intrigue::Model::ScanResult.create({
+      :scan_type => scan_type,
+      :name => "x",
+      :base_entity => entity,
+      :depth => 4,
+      :filter_strings => "",
+      :logger => Intrigue::Model::Logger.create
+    })
+
+    id = scan_result.start
   end
-=end
+
+  # Show the results in a human readable format
+  get '/scan_results/:id.json/?' do
+    content_type 'application/json'
+    @scan_result = Intrigue::Model::ScanResult.get(params[:id])
+    @scan_result.export_json
+  end
 
   # Show the results in a human readable format
   get '/scan_results/:id/?' do
-
-    @scan_result = Intrigue::Model::ScanResult.find(params[:id])
-    @scan_log = @scan_result.log
-
+    @scan_result = Intrigue::Model::ScanResult.get(params[:id])
     erb :'scans/scan_result'
   end
 
   # Determine if the scan run is complete
   get '/scan_results/:id/complete' do
-
-    x = Intrigue::Model::ScanResult.find(params[:id])
-
-    if x
-      return "true" if x.complete
-    end
-
+    x = Intrigue::Model::ScanResult.get(params[:id])
+    # immediately return false unless we find the scan result
+    return false unless x
+    # check for completion
+    return "true" if x.complete
+  # default to false
   false
   end
 
   # Get the task log
   get '/scan_results/:id/log' do
-    @result = Intrigue::Model::ScanResult.find(params[:id])
+    @result = Intrigue::Model::ScanResult.get(params[:id])
     erb :log
   end
-
 
 end
 end

@@ -41,17 +41,17 @@ class DnsBruteTldTask < BaseTask
 
     # Create the brute list (from a file, or a provided list)
     if opt_use_file
-      @task_log.log "Using file #{opt_filename}"
+      @task_result.logger.log "Using file #{opt_filename}"
       tld_list = File.open("#{$intrigue_basedir}/data/#{opt_filename}","r").read.split("\n")
       tld_list = tld_list.map {|x| x.downcase }
     else
-      @task_log.log "Using built-in list"
+      @task_result.logger.log "Using built-in list"
       tld_list = ['biz', 'cc', 'co.uk', 'com', 'cn', 'de', 'edu', 'info',
         'int', 'io', 'net', 'org', 'mobi', 'name', 'pro', 'xxx', 'us']
     end
 
   if opt_cctld
-    @task_log.log "Country code TLDs configured"
+    @task_result.logger.log "Country code TLDs configured"
 
     #short_cctld_list = ['au','co.uk', 'cn', 'de', 'fr', 'it', 'nl', 'no', 'pl', 'ru', 'se', 'sk', 'to', 'us']
 
@@ -121,7 +121,7 @@ class DnsBruteTldTask < BaseTask
 {"type"=>"IpAddress", "attributes"=>{"name"=>"127.0.53.53"}}
 =end
 
-    @task_log.good "Using tld list: #{tld_list}"
+    @task_result.logger.log_good "Using tld list: #{tld_list}"
 
     resolved_addresses = []
 
@@ -133,7 +133,7 @@ class DnsBruteTldTask < BaseTask
 
         # Try to resolve
         resolved_address = @resolver.getaddress(domain)
-        @task_log.good "Resolved Address #{resolved_address} for #{domain}" if resolved_address
+        @task_result.logger.log_good "Resolved Address #{resolved_address} for #{domain}" if resolved_address
 
         # If we resolved, create the right entities
         if resolved_address
@@ -142,7 +142,7 @@ class DnsBruteTldTask < BaseTask
         end
 
       rescue Exception => e
-        @task_log.error "Hit exception: #{e}"
+        @task_result.logger.log_error "Hit exception: #{e}"
       end
     end
   end

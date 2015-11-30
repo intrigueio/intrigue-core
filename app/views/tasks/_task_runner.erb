@@ -1,0 +1,62 @@
+
+<div class="col-sm-5">
+<form class="form-horizontal" target="_self" method="post" action="/v1/interactive/single">
+  <div class="form-group">
+    <!-- <select name="task" id="task_name"> -->
+    <label for="task_name" class="col-xs-4 control-label">Task</label>
+    <div class="col-xs-6">
+    <select class="form-control input-sm" name="task" id="task_name">
+
+      <% @task_names.each do |task_name| %>
+        <%
+          # Create the task
+          task = Intrigue::TaskFactory.create_by_pretty_name(task_name)
+
+          # Skip to the next task unless the current type is allowed
+          next unless ( @entity.allowed_tasks.include?(task.class) ||
+                        task.metadata[:allowed_types].include?("*") ) if @entity
+
+
+        %>
+        <!-- set up the task in an option box, default to search_bing -->
+        <option value="<%= task.metadata[:name] %>"
+          <% if @task_result %>
+            <%= "selected='selected'" if @task_result.name == task.metadata[:name] %>
+          <% else %>
+            <%= "selected='selected'" if task.metadata[:name] == "search_bing" %>
+          <% end %>
+          ><%= task_name %>
+        </option>
+
+    <% end %>
+    </select>
+    </div>
+  </div>
+
+  <!-- Get all attributes and use this to create an entity -->
+  <% if @entity %>
+      <%= @entity.form  %>
+      <input type="hidden" name="entity_id" value="<%=@entity.id%>">
+  <% else %>
+    <div class="form-group">
+      <label for="entity_type" class="col-xs-4 control-label">Entity Type</label>
+      <div class="col-xs-6">
+        <select class="form-control input-sm" id="entity_type" name="entity_type">
+          <% Intrigue::Model::Entity.descendants.each do |x| value = x.to_s.split(":").last %> <option <%= "selected=selected" if value == "String"%>> <%= value %></option> <% end %>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="attrib_name" class="col-xs-4 control-label">Name</label>
+      <div class="col-xs-6">
+        <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name" value="<%= h params[:attrib_name] || "intrigue.io" %>">
+      </div>
+    </div>
+  <% end %>
+  <div id="options"></div>
+  <hr></hr>
+  <input class="btn btn-primary" type="submit" value="Run Task">
+</form>
+</div>
+
+<script src="/js/app.js"></script>

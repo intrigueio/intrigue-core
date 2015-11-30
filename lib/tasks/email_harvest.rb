@@ -24,7 +24,7 @@ class EmailHarvestTask < BaseTask
     domain = _get_entity_attribute "name"
 
     # Bing
-    @task_log.log "Scraping Bing for email addresses"
+    @task_result.logger.log "Scraping Bing for email addresses"
     responses = Client::Search::Bing::SearchScraper.new.search("#{domain}+email")
     email_list = []
     responses.each do |r|
@@ -37,7 +37,7 @@ class EmailHarvestTask < BaseTask
     end
 =begin
     # Google
-    @task_log.log "Scraping Google for email addresses"
+    @task_result.logger.log "Scraping Google for email addresses"
     responses = Client::Search::Google::SearchScraper.new.search("@#{domain}+email")
     email_list = []
     responses.each do |r|

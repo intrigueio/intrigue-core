@@ -4,14 +4,14 @@ class Screenshot < Intrigue::Model::Entity
 
   def metadata
     {
-      :type => "Screenshot",
-      :required_attributes => ["name", "uri"]
+      :description => "TODO"
     }
   end
 
-  def validate(attributes)
-    attributes["name"] =~ /^.*$/ # XXX - too loose
-    #attributes[:file] =~ /^.*$/ # XXX - too loose
+
+  def validate
+    @name =~ /^.*$/ # XXX - too loose
+    #@details[:file] =~ /^.*$/ # XXX - too loose
   end
 
 end

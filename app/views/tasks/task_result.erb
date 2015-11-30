@@ -3,20 +3,24 @@
 <p>Start: <%=@task_result.timestamp_start %> </p>
 <p>End: <%= @task_result.timestamp_end %> </p>
 <p>Elapsed (s): <%= @elapsed_time %> </p>
-<p>Entity: <a href=/v1/entities/<%=@task_result.entity.id if @task_result.entity %>><%= h "#{@task_result.entity.type if @task_result.entity} #{@task_result.entity.attributes['name'] if @task_result.entity}"%></a></p>
-<p>Log: <a href=<%="#{request.path}/log"%>>LOG</a></p>
+<p>Entity: <a href=/v1/entities/<%=@task_result.base_entity.id if @task_result.base_entity %>><%= h "#{@task_result.base_entity}" %></a></p>
 <p>Complete: <%= @task_result.complete %></p>
 <p>New Entities:<p>
 <ul>
   <% @task_result.entities.each do |entity| %>
     <li>
-      <%= "<a target=\'_blank\' href=\'/v1/task?entity_id=#{h entity.id}\'>[iterate]</a>" %>
-      <a href="/v1/entities/<%=h entity.id%>">
-        <%= h entity.type %>: <%= h entity.attributes["name"] %>
+      <a href="/v1/entities/<%= h entity.id %>">
+        <%= h entity.type_string %>: <%= h entity.name %>
       </a>
-      <%= "<a target=\'_blank\' href=\'#{h entity.attributes["uri"]}\'>[link]</a>" if entity.attributes["uri"] %>
-      <span class="like-pre-white"><%= h entity.export_json %></span>
+      <%= "<a target=\'_blank\' href=\'#{h entity.details["uri"]}\'>[link]</a>" if entity.details["uri"] %>
+      <span class="like-pre-white"><%= h entity %></span>
     </li>
   <% end %>
 </ul>
-<!-- Log: <span class="like-pre-dark"><%= h @task_result.log %></span><br/> -->
+Export:
+<ul>
+  <li><a href=<%="#{request.url}.csv"%>> CSV </a></li>
+  <li><a href=<%="#{request.url}.json"%>> JSON </a></li>
+  <li><a href=<%="#{request.url}.tsv"%>> TSV </a></li>
+</ul>
+Log: <span class="like-pre-dark"><%= h @task_result.logger.full_log %></span><br/>

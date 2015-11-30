@@ -1,7 +1,12 @@
 :verbose: false
 #:logfile: ./log/intrigue-sidekiq.log
 :pidfile: ./tmp/pids/intrigue-sidekiq.pid
-:concurrency: 20
-
+staging:
+  :concurrency: 5
+production:
+  :concurrency: 10
+:queues:
+  - [task, 2]
+  - scan
 # Set timeout to 8 on Heroku, longer if you manage your own systems.
-:timeout: 910
+:timeout: 9000

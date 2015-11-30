@@ -28,10 +28,10 @@ class UriHttpScreenshot < BaseTask
 
     name = _get_entity_attribute "name"
 
-    if @entity.type == "Uri"
+    if @entity.type_string == "Uri"
       screencap(name)
-    elsif @entity.type == "IpAddess" || @entity.type == "NetBlock"
-      scan_for_webservers(name) do |uri|
+    elsif @entity.type_string == "IpAddess" || @entity.type_string == "NetBlock"
+      scan_for_uris(name).each do |uri|
         screencap(uri)
       end
     end
@@ -40,6 +40,7 @@ class UriHttpScreenshot < BaseTask
 
   def screencap(target_uri)
     begin
+      @task_result.logger.log "Screencapping #{target_uri}"
       filename = "screenshot_#{target_uri}_#{DateTime.now}".gsub(/[:|\/|\.|+]/, '_') + ".png"
       full_path = "#{Dir.pwd}/public/screenshots/#{filename}"
 
@@ -48,19 +49,67 @@ class UriHttpScreenshot < BaseTask
         :output => full_path, # don't forget the extension!
       )
 
-      @task_log.good "Saved to #{full_path}"
+      @task_result.logger.log_good "Saved to #{full_path}"
       _create_entity "Screenshot", {
         "name" => "#{target_uri}_screenshot",
         "uri" => "#{$intrigue_server_uri}/screenshots/#{filename}"
       }
 
-      @task_log.log "Saved to... #{full_path}"
+      @task_result.logger.log "Saved to... #{full_path}"
 
     rescue Screencap::Error => e
-      @task_log.error "Unable to capture screenshot: #{e}"
+      @task_result.logger.log_error "Unable to capture screenshot: #{e}"
     end
   end
 
+  # Takes a netblock and returns a list of uris
+  def scan_for_uris(to_scan, ports=[80,443,8080,8081,8443])
+
+    ###
+    ### SECURITY - sanity check to_scan
+    ###
+
+    # sanity check our ports
+    ports.each{|x| raise "NO" unless x.kind_of? Integer}
+
+    # Create a tempfile to store results
+    temp_file = "#{Dir::tmpdir}/nmap_scan_#{rand(100000000)}.xml"
+
+    # Check for IPv6
+    nmap_options = ""
+    nmap_options << "-6 " if to_scan =~ /:/
+
+    # shell out to nmap and run the scan
+    @task_result.logger.log "Scanning #{to_scan} and storing in #{temp_file}"
+    @task_result.logger.log "NMap options: #{nmap_options}"
+    nmap_string = "nmap #{to_scan} #{nmap_options} -P0 -p #{ports.join(",")} --min-parallelism 10 -oX #{temp_file}"
+    @task_result.logger.log "Running... #{nmap_string}"
+    _unsafe_system(nmap_string)
+
+    uris = []
+    Nmap::XML.new(temp_file) do |xml|
+      xml.each_host do |host|
+        host.each_port do |port|
+
+          # determine if this is an SSL application
+          ssl = true if [443,8443].include?(port.number)
+          protocol = ssl ? "https://" : "http://" # construct uri
+
+          uri = "#{protocol}#{host.ip}:#{port.number}"
+
+          if port.state == :open
+            @task_result.logger.log "Adding #{uri} to list"
+            uris << uri
+          end
+
+        end
+      end
+    end
+
+    @task_result.logger.log "Returning #{uris} to scan"
+
+  return uris
+  end
 
 end
 end

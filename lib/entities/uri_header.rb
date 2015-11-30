@@ -4,14 +4,14 @@ class UriHeader < Intrigue::Model::Entity
 
   def metadata
     {
-      :type => "UriHeader",
-      :required_attributes => ["name","content"]
+      :description => "TODO"
     }
   end
 
-  def validate(attributes)
-    attributes["name"] =~ /^.*$/ &&
-    attributes["content"] =~ /^.*$/
+
+  def validate
+    @name =~ /^.*$/ &&
+    @details["content"] =~ /^.*$/
   end
 
 end

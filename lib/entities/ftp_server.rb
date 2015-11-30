@@ -4,14 +4,14 @@ class FtpServer < Intrigue::Model::Entity
 
   def metadata
     {
-      :type => "FtpServer",
-      :required_attributes => ["name","port"]
+      :description => "TODO"
     }
   end
 
-  def validate(attributes)
-    attributes["name"] =~ /^[a-zA-Z0-9\.\:\/\ ].*/ &&
-    attributes["port"].to_s =~ /^\d{1,5}$/
+
+  def validate
+    @name =~ /^[a-zA-Z0-9\.\:\/\ ].*/ &&
+    @details["port"].to_s =~ /^\d{1,5}$/
   end
 
 end

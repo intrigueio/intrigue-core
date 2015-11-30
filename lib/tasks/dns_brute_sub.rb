@@ -1,4 +1,8 @@
 require 'resolv'
+
+require 'eventmachine'
+require 'resolv-replace'
+
 module Intrigue
 class DnsBruteSubTask < BaseTask
 
@@ -23,7 +27,8 @@ class DnsBruteSubTask < BaseTask
         {:name => "use_mashed_domains", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "use_permutations", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
-        {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_sub.list" }
+        {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_sub.list" },
+        {:name => "brute_alphanumeric_size", :type => "Integer", :regex => "integer", :default => 0 }
       ],
       :created_types => ["DnsRecord","IpAddress"]
     }
@@ -62,8 +67,10 @@ Some cases to think through:
     opt_use_file = _get_option("use_file")
     opt_filename = _get_option("brute_file")
     opt_mashed_domains = _get_option "use_mashed_domains"
-    opt_brute_list = _get_option("brute_list")
     opt_use_permutations = _get_option("use_permutations")
+    opt_brute_list = _get_option("brute_list")
+    opt_brute_alphanumeric_size = _get_option("brute_alphanumeric_size")
+
 
     # Set the suffix
     suffix = _get_entity_attribute "name"
@@ -79,15 +86,15 @@ Some cases to think through:
 
     # Create the brute list (from a file, or a provided list)
     if opt_use_file
-      @task_log.log "Using file #{opt_filename}"
+      @task_result.logger.log "Using file #{opt_filename}"
       subdomain_list = File.open("#{$intrigue_basedir}/data/#{opt_filename}","r").read.split("\n")
     else
-      @task_log.log "Using provided brute list"
+      @task_result.logger.log "Using provided brute list"
       subdomain_list = opt_brute_list
       subdomain_list = subdomain_list.split(",") if subdomain_list.kind_of? String
     end
 
-    @task_log.good "Using subdomain list: #{subdomain_list}"
+    @task_result.logger.log_good "Using subdomain list: #{subdomain_list}"
 
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)
@@ -96,10 +103,16 @@ Some cases to think through:
       if wildcard
         _create_entity "IpAddress", "name" => "#{wildcard}"
         wildcard_domain = true
-        @task_log.error "WARNING! Wildcard domain detected, only saving validated domains/hosts."
+        @task_result.logger.log_warning "Wildcard domain detected, only saving validated domains/hosts."
       end
     rescue Resolv::ResolvError
-      @task_log.good "Looks like no wildcard dns. Moving on."
+      @task_result.logger.log_good "Looks like no wildcard dns. Moving on."
+    end
+
+    # Generate alphanumeric list of hostnames and add them to the end of the list
+    if opt_brute_alphanumeric_size
+      @task_result.logger.log_warning "Alphanumeric list generation is pretty huge - this will take a long time" if opt_brute_alphanumeric_size > 3
+      subdomain_list.concat(("#{'a' * opt_brute_alphanumeric_size }".."#{'z' * opt_brute_alphanumeric_size}").map {|x| x })
     end
 
     # Iterate through the subdomain list
@@ -118,7 +131,7 @@ Some cases to think through:
 
         # Try to resolve
         resolved_address = resolver.getaddress(brute_domain)
-        @task_log.good "Resolved Address #{resolved_address} for #{brute_domain}" if resolved_address
+        @task_result.logger.log_good "Resolved Address #{resolved_address} for #{brute_domain}" if resolved_address
 
         # If we resolved, create the right entities
         if (resolved_address && !(wildcard_domain))
@@ -137,13 +150,14 @@ Some cases to think through:
           if opt_use_permutations
             # Create a list of permutations based on this success
             permutation_list = ["#{subdomain}1", "#{subdomain}2"]
-            @task_log.log "Adding permutations: #{permutation_list.join(", ")}"
+            @task_result.logger.log "Adding permutations: #{permutation_list.join(", ")}"
             subdomain_list.concat permutation_list
           end
         end
-
+      rescue Resolv::ResolvError => e
+        @task_result.logger.log "No resolution for: #{brute_domain}"
       rescue Exception => e
-        @task_log.error "Hit exception: #{e}"
+        @task_result.logger.log_error "Hit exception: #{e.class}: #{e}"
       end
     end
   end

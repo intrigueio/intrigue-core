@@ -9,16 +9,16 @@ module Intrigue
     def _recurse(entity, depth)
 
       if depth <= 0      # Check for bottom of recursion
-        @scan_log.log "Returning, depth @ #{depth}"
+        @scan_result.logger.log "Returning, depth @ #{depth}"
         return
       end
 
       if _is_prohibited(entity)  # Check for prohibited entity name
-        @scan_log.log "Returning, #{entity.inspect} prohibited"
+        @scan_result.logger.log "Returning, #{entity.inspect} prohibited"
         return
       end
 
-      if entity.type == "IpAddress"
+      if entity.type_string == "IpAddress"
         ### DNS Reverse Lookup
         _start_task_and_recurse "dns_lookup_reverse",entity,depth
         ### Whois
@@ -29,10 +29,10 @@ module Intrigue
         _start_task_and_recurse "nmap_scan",entity,depth
         ### Geolocate
         #_start_task "geolocate_host",entity,depth
-      elsif entity.type == "NetBlock"
+      elsif entity.type_string == "NetBlock"
         ### Masscan
         _start_task_and_recurse "masscan_scan",entity,depth
-      elsif entity.type == "DnsRecord"
+      elsif entity.type_string == "DnsRecord"
         ### DNS Forward Lookup
         _start_task_and_recurse "dns_lookup_forward",entity,depth
 
@@ -40,7 +40,7 @@ module Intrigue
         #
         # If it's a TLD or primary domain, do a full brute
         #
-        if entity.attributes["name"].split(".").count <= 2
+        if entity.name.split(".").count <= 2
           _start_task_and_recurse "dns_brute_sub",entity,depth,[{"name" => "use_file", "value" => "true"}]
         #
         # otherwise, just quick brute
@@ -48,32 +48,32 @@ module Intrigue
         else
           _start_task_and_recurse "dns_brute_sub",entity,depth,[{"name" => "use_file", "value" => "false"}]
         end
-      elsif entity.type == "Uri"
+      elsif entity.type_string == "Uri"
         ### screenshot
         #_start_task_and_recurse "uri_http_screenshot",entity,depth
         ### Get SSLCert
-        _start_task_and_recurse "uri_gather_ssl_certificate",entity,depth if entity.attributes["name"] =~ /^https/
+        _start_task_and_recurse "uri_gather_ssl_certificate",entity,depth if entity.name =~ /^https/
         ### Gather links
         _start_task_and_recurse "uri_gather_technology",entity,depth
         ### spider
-        _start_task_and_recurse "uri_spider",entity,depth,[{"name" => "max_pages", "value" => 100}]
+        _start_task_and_recurse "uri_spider",entity,depth,[{"name" => "max_pages", "value" => 1000}]
         ### Dirbuster
         _start_task_and_recurse "uri_dirbuster",entity,depth
-      elsif entity.type == "String"
+      elsif entity.type_string == "String"
         # Search!
-        _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 30}]
+        _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 3}]
         # Brute TLD
         #_start_task_and_recurse "dns_brute_tld",entity,depth
-      elsif entity.type = entity.type == "Person" || entity.type == "EmailAddress"
+      elsif entity.type_string == "Person" || entity.type_string == "EmailAddress"
         # Search Pipl
-        @scan_log.log "SKIP Unhandled entity type: #{entity.type}##{entity.attributes["name"]}"
+        @scan_result.logger.log "SKIP Unhandled entity type: #{entity.type}##{entity.name}"
         #_start_task_and_recurse "search_pipl",entity,depth
         #_start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 1}]
-      elsif entity.type == "Organization"
+      elsif entity.type_string == "Organization"
         # Check EDGAR
         _start_task_and_recurse "search_edgar",entity,depth
       else
-        @scan_log.log "SKIP Unhandled entity type: #{entity.type}##{entity.attributes["name"]}"
+        @scan_result.logger.log "SKIP Unhandled entity type: #{entity.type}##{entity.name}"
         return
       end
     end
@@ -83,57 +83,56 @@ module Intrigue
 
       ## First, check the filter list
       @filter_list.each do |filter|
-        if entity.attributes["name"] =~ /#{filter}/
-          @scan_log.log "Filtering #{entity.attributes["name"]} based on filter #{filter}"
+        if entity.name =~ /#{filter}/
+          @scan_result.logger.log "Filtering #{entity.name} based on filter #{filter}"
           return true
         end
       end
 
-      if entity.type == "NetBlock"
-        cidr = entity.attributes["name"].split("/").last.to_i
+      if entity.type_string == "NetBlock"
+        cidr = entity.name.split("/").last.to_i
         unless cidr >= 22
-          @scan_log.error "SKIP Netblock too large: #{entity.type}##{entity.attributes["name"]}"
+          @scan_result.logger.log_error "SKIP Netblock too large: #{entity.type}##{entity.name}"
           return true
         end
 
-      elsif entity.type == "IpAddress"
+      elsif entity.type_string == "IpAddress"
         # 23.x.x.x
-        if entity.attributes["name"] =~ /^23./
-          @scan_log.error "Skipping Akamai address"
+        if entity.name =~ /^23./
+          @scan_result.logger.log_error "Skipping Akamai address"
           return true
         end
 
       else
         if (
-          entity.attributes["name"] =~ /google.com/         ||
-          entity.attributes["name"] =~ /goo.gl/             ||
-          entity.attributes["name"] =~ /android/            ||
-          entity.attributes["name"] =~ /urchin/             ||
-          entity.attributes["name"] =~ /schema.org/         ||
-          entity.attributes["name"] =~ /microsoft.com/      ||
-          entity.attributes["name"] =~ /facebook.com/       ||
-          entity.attributes["name"] =~ /cloudfront.net/     ||
-          entity.attributes["name"] =~ /twitter.com/        ||
-          entity.attributes["name"] =~ /w3.org/             ||
-          entity.attributes["name"] =~ /akamai/             ||
-          entity.attributes["name"] =~ /akamaitechnologies/ ||
-          entity.attributes["name"] =~ /amazonaws/          ||
-          entity.attributes["name"] =~ /purl.org/           ||
-          entity.attributes["name"] =~ /oclc.org/           ||
-          entity.attributes["name"] =~ /youtube.com/        ||
-          entity.attributes["name"] =~ /xmlns.com/          ||
-          entity.attributes["name"] =~ /ogp.me/             ||
-          entity.attributes["name"] =~ /rdfs.org/           ||
-          entity.attributes["name"] =~ /drupal.org/         ||
-          entity.attributes["name"] =~ /plus.google.com/    ||
-          entity.attributes["name"] =~ /instagram.com/      ||
-          entity.attributes["name"] =~ /zepheira.com/       ||
-          entity.attributes["name"] =~ /gandi.net/          ||
-          entity.attributes["name"] == "feeds2.feedburner.com" )
+          entity.name =~ /google.com/         ||
+          entity.name =~ /goo.gl/             ||
+          entity.name =~ /android/            ||
+          entity.name =~ /urchin/             ||
+          entity.name =~ /schema.org/         ||
+          entity.name =~ /microsoft.com/      ||
+          entity.name =~ /facebook.com/       ||
+          entity.name =~ /cloudfront.net/     ||
+          entity.name =~ /twitter.com/        ||
+          entity.name =~ /w3.org/             ||
+          entity.name =~ /akamai/             ||
+          entity.name =~ /akamaitechnologies/ ||
+          entity.name =~ /amazonaws/          ||
+          entity.name =~ /purl.org/           ||
+          entity.name =~ /oclc.org/           ||
+          entity.name =~ /youtube.com/        ||
+          entity.name =~ /xmlns.com/          ||
+          entity.name =~ /ogp.me/             ||
+          entity.name =~ /rdfs.org/           ||
+          entity.name =~ /drupal.org/         ||
+          entity.name =~ /plus.google.com/    ||
+          entity.name =~ /instagram.com/      ||
+          entity.name =~ /zepheira.com/       ||
+          entity.name =~ /gandi.net/          ||
+          entity.name == "feeds2.feedburner.com" )
 
-            @scan_log.error "SKIP Prohibited entity: #{entity.type}##{entity.attributes["name"]}"
+            @scan_result.logger.log_error "SKIP Prohibited entity: #{entity.type}##{entity.name}"
             return true
-
         end
 
       end

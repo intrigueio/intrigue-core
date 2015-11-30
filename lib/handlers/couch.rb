@@ -20,7 +20,7 @@ module Handler
       db = server.database!("test")  # create db if it doesn't already exist
       response = db.save_doc(
         "_id" => "#{result.id}",
-        "unique_name" => "#{result.task_name}_#{result.entity.attributes["name"].gsub("/","")}",
+        "unique_name" => "#{result.task_name}_#{result.base_entity.name.gsub("/","")}",
         "version" => 1,
         "result" => result.export_hash)
     end

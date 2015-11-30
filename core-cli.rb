@@ -14,7 +14,7 @@ class CoreCli < Thor
     @server_uri = "http://127.0.0.1:7777/v1"
     @sidekiq_uri = "http://127.0.0.1:7777/sidekiq"
     @delim = "#"
-    @debug = true
+    @debug = false
     # Connect to Intrigue API
     @x = IntrigueApi.new
   end
@@ -57,7 +57,7 @@ class CoreCli < Thor
       puts "Example Entities:"
 
       task_info["example_entities"].each do |x|
-        puts " - #{x["type"]}:#{x["attributes"]["name"]}"
+        puts " - #{x["type"]}:#{x["details"]["name"]}"
       end
 
       puts "Creates: #{task_info["created_types"].join(", ")}"
@@ -99,33 +99,32 @@ class CoreCli < Thor
     options_list = _parse_options option_string
 
     # Get the response from the API
-    puts "[+] Starting Task."
+    #puts "[+] Starting Task."
     response = @x.start(task_name,entity_hash,options_list)
-    puts "[D] Got response: #{response}" if @debug
+    #puts "[D] Got response: #{response}" if @debug
     return "Error retrieving response. Failing. Response was: #{response}" unless  response
-    puts "[+] Task complete!"
+    #puts "[+] Task complete!"
 
     # Parse the response
-    puts "[+] Start Results"
-    response["entity_ids"].each do |entity|
-      puts "  [x] #{entity["type"]}#{@delim}#{entity["attributes"]["name"]}"
+    #puts "[+] Start Results"
+    response["entities"].each do |entity|
+      puts "  [x] #{entity["type"]}#{@delim}#{entity["name"]}"
     end
-    puts "[+] End Results"
+    #puts "[+] End Results"
 
     # Print the task log
-    puts "[+] Task Log:\n"
-    response["log"].each_line{|x| puts "  #{x}" }
+    #puts "[+] Task Log:\n"
+    #response["log"].each_line{|x| puts "  #{x}" }
   end
 
-=begin
-  desc "scan [Type#Entity] [Option1=Value1#...#...]", "Start a recursive scan. Returns the result"
-  def scan(entity,depth=3,options=nil)
-    entity_hash = _parse_entity entity
+  desc "scan [Scan Type] [Type#Entity] [Option1=Value1#...#...]", "Start a recursive scan. Returns the result"
+  def scan(scan_type,entity_string,option_string=nil)
+    entity_hash  = _parse_entity entity_string
     options_list = _parse_options option_string
 
-    return "Not currently implemented"
+    @x.start_scan_and_background(scan_type,entity_hash,options_list)
   end
-=end
+
 
   ###
   ### XXX - rewrite this so it uses the API
@@ -152,28 +151,32 @@ class CoreCli < Thor
         "options" => options,
       }
 
-      task_id = SecureRandom.uuid
+      task_result_id = SecureRandom.uuid
 
       # XXX - Hack - this should go away eventually. what
       # sense is there in making the user create the task result.
       # this should happen before, and automatically.
 
       # Create a new entity
-      e = Intrigue::Model::Entity.new entity["type"], entity["attributes"]
-      e.save
+      e = Intrigue::Model::Entity.create({
+        :type => "Intrigue::Entity::#{entity["type"]}",
+        :name => entity["details"]["name"],
+        :details => entity["details"]
+      })
 
       # Create a new task result
-      task_result = Intrigue::Model::TaskResult.new task_id, "x"
-      task_result.entity = e
-      task_result.task_name = task_name
-      task_result.options = options
-      task_result.save
+      task_result = Intrigue::Model::TaskResult.create({
+        :base_entity => e,
+        :task_name => task_name,
+        :options => options,
+        :logger => Intrigue::Model::Logger.create
+      })
 
       # XXX - Create the task
       task = Intrigue::TaskFactory.create_by_name(task_name)
-      jid = task.class.perform_async task_id, e.id, options, handlers, nil
+      jid = task.class.perform_async task_result.id, handlers
 
-      puts "Created task #{task_id} for entity #{e}"
+      puts "Created task #{task_result.id} for entity #{e}"
     end
   end
 
@@ -187,7 +190,8 @@ private
 
     entity_hash = {
       "type" => entity_type,
-      "attributes" => { "name" => entity_name}
+      "name" => entity_name,
+      "details" => { "name" => entity_name}
     }
 
     puts "Got entity: #{entity_hash}" if @debug

@@ -1,24 +1,23 @@
 <h3>Scan Result</h3>
-<p> Total Entities: <%=@scan_result.entities.count%></p>
-<p>Log: <a href=<%="#{request.path}/log"%>>LOG</a></p>
-<p>Entity: <a href=/v1/entities/<%=@scan_result.entity.id%>><%= h "#{@scan_result.entity.type} #{@scan_result.entity.attributes['name']}"%></a></p>
+<p>Total Tasks: <%=@scan_result.task_results.count%></p>
+<p>Entity: <a href=/v1/entities/<%=@scan_result.base_entity.id%>><%= h "#{@scan_result.base_entity.type_string} #{@scan_result.base_entity.name}"%></a></p>
 <p>Complete: <%= @scan_result.complete %></p>
 <p>New Entities:</p>
   <ul>
-    <% @scan_result.entities.each do |entity| %>
-      <li>
-        <%= "<a target=\'_blank\' href=\'/v1/task?entity_id=#{h entity.id}\'>[iterate]</a>" %>
-        <a href="/v1/entities/<%=h entity.id%>">
-          <%= h entity.type %>: <%= h entity.attributes["name"] %>
-        </a>
-        <%= "<a target=\'_blank\' href=\'#{h entity.attributes["uri"]}\'>[link]</a>" if entity.attributes["uri"] %>
-        <span class="like-pre-white"><%= h entity.export_json %></span>
-      </li>
+    <% @scan_result.entities.each do |e| %>
+    <li>
+      <a href="/v1/entities/<%=h e.id%>">
+        <%= h e.type_string %>: <%= h e.name %>
+      </a>
+      <%= "<a target=\'_blank\' href=\'#{h e.details["uri"]}\'>[link]</a>" if e.details["uri"] %>
+      <!-- <span class="like-pre-white"> <%= h e %> </span>-->
+    </li>
     <% end %>
   </ul>
 <p>Task Runs:</p>
   <ul>
   <% @scan_result.task_results.each do |x| %>
-    <li> <a href="<%=$intrigue_server_uri%>/v1/task_results/<%=x.id%>"> <%= x.task_name %> <%= "[#{x.entity.type}:#{x.entity.attributes["name"]}]" %> (<%= x.entity_count %>)</a></li>
+    <li> <a href="<%=$intrigue_server_uri%>/v1/task_results/<%=x.id%>"> <%= x.task_name %> <%= "[#{x.base_entity}]" %> (<%= x.entity_count %>)</a></li>
   <% end %>
   </ul>
+Log: <span class="like-pre-dark"><%= h @scan_result.logger.full_log %></span><br/>
