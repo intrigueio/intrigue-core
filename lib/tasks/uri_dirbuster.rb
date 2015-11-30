@@ -20,14 +20,15 @@ class UriDirbuster  < BaseTask
           [
             ".htaccess",".htpasswd",".meta",".web","access.log","access_log","admin","about",
             "administrator","awstats.pl","cfappman","cfdocs","cgi","cgi-bin","cgi-pub", "cgi-script",
-            "clients","company","cpanel","dummy","error","error.log","error_log","forums",
-            "global.inc","guest","guestbook","help","htdocs","httpd","httpd.pid","icons",
-            "iisadmin","inc","inc/config.php","index.html","index.html~","index.html.bak",
+            "clients","company","cpanel","crossdomain.xml","dummy","elmah.axd","error","error.log",
+            "error_log","forums", "global.inc", "guest", "guestbook", "help", "htdocs", "httpd","httpd.pid",
+            "icons","iisadmin","inc","inc/config.php","index.html","index.html~","index.html.bak",
             "lists","login","logs","mambo","manual","phf","php.ini","phpinfo.php",
-            "printenv","profile.php","public","scripts","search","server-info",
-            "servlet","server-status","services","status","test","test-cgi","tiki",
-            "tmp","tsweb","trace.axd","webmail","wp-admin","x.aspx?aspxerrorpath=",
-            "~bin", "~ftp","~nobody","~root", "_vti_bin"
+            "printenv","profile.php","public","robots.txt","scripts","server-info",
+            "servlet","server-status","services","sitemap.xml","sitemap.xml.gz,""status",
+            "test","test-cgi","tiki", "test.php", "tmp","tsweb","trace.axd","webmail","wp-admin",
+            "x.aspx?aspxerrorpath=","~bin", "~ftp","~nobody","~root", "_vti_bin", "jmx-console",
+            "web-console", "admin-console"
           ]
         }
       ],
