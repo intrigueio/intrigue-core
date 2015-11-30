@@ -8,7 +8,7 @@ class UriDirbuster  < BaseTask
       :name => "uri_dirbuster",
       :pretty_name => "URI Dirbuster",
       :authors => ["jcran"],
-      :description => "Bruteforce directories on a web server",
+      :description => "Bruteforce common directories on a web server",
       :references => [],
       :allowed_types => ["Uri"],
       :example_entities => [
