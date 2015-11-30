@@ -61,7 +61,17 @@ class IntrigueApp < Sinatra::Base
   set :public_folder, 'public'
 
   #Setup redis for resque
-  $intrigue_redis = Redis.new
+  $intrigue_redis = Redis.new(url: 'redis://redis:6379', namespace: 'intrigue')
+
+  # set sidekiq options
+  Sidekiq.configure_server do |config|
+    config.redis = { url: 'redis://redis:6379/', namespace: 'intrigue' }
+  end
+
+  Sidekiq.configure_client do |config|
+    config.redis = { url: 'redis://redis:6379', namespace: 'intrigue' }
+  end
+
 
   ###
   ### END CONFIG
