@@ -40,7 +40,7 @@ class UriHttpScreenshot < BaseTask
 
   def screencap(target_uri)
     begin
-      filename = "screenshot_#{target_uri}_#{DateTime.now}.png"
+      filename = "screenshot_#{target_uri}_#{DateTime.now}".gsub(/[:|\/|\.|+]/, '_') + ".png"
       full_path = "#{Dir.pwd}/public/screenshots/#{filename}"
 
       f = Screencap::Fetcher.new(target_uri)
