@@ -60,7 +60,7 @@ class WhoisTask < BaseTask
 
       # Log the full text of the answer
       @task_result.logger.log "== Full Text: =="
-      @task_result.logger.log answer.parts.first.body
+      @task_result.logger.log answer.content
       @task_result.logger.log "================"
 
       #
@@ -224,7 +224,8 @@ class WhoisTask < BaseTask
             "block_type" => "#{block_type}",
             "handle" => handle,
             "organization_reference" => org_ref,
-            "parent_reference" => parent_ref
+            "parent_reference" => parent_ref,
+            "whois_full_text" => "#{answer.content}"
           }
 
         end # End Netblocks

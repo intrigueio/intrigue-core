@@ -32,6 +32,7 @@ module Intrigue
       elsif entity.type_string == "NetBlock"
         ### Masscan
         _start_task_and_recurse "masscan_scan",entity,depth
+        
       elsif entity.type_string == "DnsRecord"
         ### DNS Forward Lookup
         _start_task_and_recurse "dns_lookup_forward",entity,depth

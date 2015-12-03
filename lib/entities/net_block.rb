@@ -10,7 +10,13 @@ class NetBlock < Intrigue::Model::Entity
 
 
   def validate
+
+    # required:
     @name =~ /^.*$/
+
+    # suggested:
+    # @details["organization_reference"]
+
   end
 
 end

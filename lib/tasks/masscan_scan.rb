@@ -15,7 +15,7 @@ class MasscanTask < BaseTask
       :allowed_types => ["IpAddress", "NetBlock"],
       :example_entities => [{"type" => "NetBlock", "attributes" => {"name" => "10.0.0.0/24"}}],
       :allowed_options => [
-        {:name => "port_num", :type => "Integer", :regex => "integer", :default => 80 },
+        {:name => "port", :type => "Integer", :regex => "integer", :default => 80 },
       ],
       :created_types => ["IpAddress", "NetSvc"]
     }
@@ -25,23 +25,24 @@ class MasscanTask < BaseTask
   def run
     super
 
-    # XXX CURRENTLY HARDCODED FOR A SINGLE PORT
-    opt_port_num = _get_option "port_num"
-
     # Get range, or host
     to_scan = _get_entity_attribute "name"
+
+    # Get port
+    opt_port = _get_option "port"
 
     # Create a tempfile to store result
     temp_file = "#{Dir::tmpdir}/masscan_output_#{rand(100000000)}.tmp"
 
     # shell out to masscan and run the scan
     @task_result.logger.log "Scanning #{to_scan} and storing in #{temp_file}"
-    masscan_string = "sudo masscan -p #{opt_port_num} -oL #{temp_file} #{to_scan}"
+    masscan_string = "sudo masscan -p #{opt_port} -oL #{temp_file} #{to_scan}"
     @task_result.logger.log "Running... #{masscan_string}"
     _unsafe_system(masscan_string)
 
     f = File.open(temp_file).each_line do |line|
 
+      # Skip comments
       next if line =~ /^#.*/
 
       # Get the discovered host (one per line)
@@ -51,13 +52,14 @@ class MasscanTask < BaseTask
       _create_entity("IpAddress", {"name" => host })
 
       _create_entity("NetSvc", {
-        "name" => "#{host}:#{opt_port_num}/tcp",
-        "port_num" => opt_port_num,
+        "name" => "#{host}:#{opt_port}/tcp",
+        "port_num" => opt_port,
         "proto" => "tcp"
       })
 
-      # Create a URI entity
-      _create_entity("Uri", {"name" => "http://#{host}", "uri" => "http://#{host}" })
+      # Create a URI entity if we're on a commonly known port
+      _create_entity("Uri", {"name" => "https://#{host}", "uri" => "https://#{host}" }) if opt_port == 443
+      _create_entity("Uri", {"name" => "http://#{host}", "uri" => "http://#{host}" }) if opt_port == 80
 
       ### Resolve the IP
       begin
