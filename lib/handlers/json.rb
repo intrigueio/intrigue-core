@@ -14,7 +14,7 @@ module Handler
       # Write it out
       File.open("#{$intrigue_basedir}/results/#{shortname}.json", "w+") do |file|
         file.flock(File::LOCK_EX)
-        file.write(JSON.pretty_generate(JSON.parse(task_result.export_json)))
+        file.write(JSON.pretty_generate(task_result.export_hash))
       end
     end
 
