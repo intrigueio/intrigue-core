@@ -22,7 +22,7 @@ class UriGatherRobotsTask  < BaseTask
 
     base_uri = _get_entity_attribute "name"
 
-    checks = [{ :path => "robots.txt", :signature => "User-agent" }]
+    checks = [{ :path => "robots.txt" }]
 
     checks.each do |check|
       # Concat the uri to create the check
@@ -44,7 +44,7 @@ class UriGatherRobotsTask  < BaseTask
 
       # Check to make sure this is a legit page, and create an entity if so
       # TODO - improve the checking for wildcard page returns and 404-200's
-      if content.include? check[:signature] and content != missing_page_content
+      if content != missing_page_content
 
         # for each line of the file
         content.each_line do |line|
