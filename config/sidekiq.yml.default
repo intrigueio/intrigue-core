@@ -1,10 +1,7 @@
 :verbose: false
 #:logfile: ./log/intrigue-sidekiq.log
 :pidfile: ./tmp/pids/intrigue-sidekiq.pid
-staging:
-  :concurrency: 5
-production:
-  :concurrency: 10
+:concurrency: 20
 :queues:
   - [task, 2]
   - scan
