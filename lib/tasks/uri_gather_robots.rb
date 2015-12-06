@@ -40,6 +40,8 @@ class UriGatherRobotsTask  < BaseTask
 
       return unless content
 
+      @task_result.logger.log "Got result for #{uri}:\n#{content}"
+
       # Check to make sure this is a legit page, and create an entity if so
       # TODO - improve the checking for wildcard page returns and 404-200's
       if content.include? check[:signature] and content != missing_page_content
@@ -58,12 +60,16 @@ class UriGatherRobotsTask  < BaseTask
           if line =~ /Sitemap/i
             path = line.split(" ").last.strip
             full_path = "#{path}"  # Sitemap uri is a full uri
+
           elsif line =~ /Disallow/i
             path = line.split(":").last.strip
+            next if path =~ /^Disallow/i
             full_path = "#{base_uri}#{path}" # disallow is relative
+
           elsif line =~ /Allow/i
             path = line.split(":").last.strip
-            full_path = "#{base_uri}#{path}" # allow is relative 
+            next if path =~ /^Allow/i
+            full_path = "#{base_uri}#{path}" # allow is relative
           end
 
           # if there's a wildcard in the path, it won't be a functional URI
