@@ -38,6 +38,8 @@ class UriGatherRobotsTask  < BaseTask
       # Do the request
       content = http_get_body uri
 
+      return unless content
+
       # Check to make sure this is a legit page, and create an entity if so
       # TODO - improve the checking for wildcard page returns and 404-200's
       if content.include? check[:signature] and content != missing_page_content
