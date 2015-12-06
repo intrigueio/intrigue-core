@@ -50,17 +50,28 @@ class UriGatherRobotsTask  < BaseTask
           # don't add comments
           next if line =~ /^#/
           next if line =~ /^User-agent/
+          next if line =~ /\n/
 
           # This will work for the following types
           # Disallow: /path/
           # Sitemap: http://site.com/whatever.xml.gz
-          if line =~ /Sitemap/
+          if line =~ /Sitemap/i
             path = line.split(" ").last.strip
-            full_path = "#{path}"
-          elsif line =~ /Disallow/
-            path = line.split(" ").last.strip
-            full_path = "#{base_uri}#{path}"
+            full_path = "#{path}"  # Sitemap uri is a full uri
+          elsif line =~ /Disallow/i
+            path = line.split(":").last.strip
+            full_path = "#{base_uri}#{path}" # disallow is relative
+          elsif line =~ /Allow/i
+            path = line.split(":").last.strip
+            full_path = "#{base_uri}#{path}" # allow is relative 
           end
+
+          # if there's a wildcard in the path, it won't be a functional URI
+          # example: http://alyaum.com/robots.txt
+          #
+          #if full_path =~ /\*/
+          #  full_path.split("*").first
+          #end
 
           # otherwise create a webpate
           _create_entity "Uri", { "name" => full_path, "uri" => full_path, "detail" => line }
