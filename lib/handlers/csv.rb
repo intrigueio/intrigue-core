@@ -14,10 +14,8 @@ module Handler
         csv_file = "#{$intrigue_basedir}/results/results.csv"
         File.open(csv_file, "a+") do |file|
           file.flock(File::LOCK_EX)
-          # Create outstring
-          outstring = result.export_csv
           # write it out
-          file.puts(outstring)
+          file.puts( result.export_csv)
         end
       rescue Errno::EACCES
         return false
