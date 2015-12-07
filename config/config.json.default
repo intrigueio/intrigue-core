@@ -5,6 +5,13 @@
     "editable" : "true",
     "comment" : "Generated at startup"
   },
+  "handlers" : {
+    "elasticsearch" : {
+      "username": "",
+      "password": "",
+      "hostname" : ""
+    }
+  },
   "bing_api_key" : {
     "value" : "XXX",
     "editable" : "true",

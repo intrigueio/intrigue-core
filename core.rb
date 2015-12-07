@@ -63,7 +63,7 @@ class IntrigueApp < Sinatra::Base
   set :views, "#{$intrigue_basedir}/app/views"
   set :public_folder, 'public'
 
-  DataMapper::Logger.new($stdout, :debug)
+  DataMapper::Logger.new($stdout, :warn)
   database_config = YAML.load_file("#{$intrigue_basedir}/config/database.yml")
   DataMapper.setup(:default, database_config["production"])
   #DataMapper.setup(:default, 'sqlite:///tmp/intrigue.db')

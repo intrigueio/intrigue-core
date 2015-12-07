@@ -17,10 +17,7 @@ module Intrigue
       ###
       ### Helper method for starting a task run
       ###
-      def start_task_run(task_name, entity, options)
-
-        # XXX - TODO - add the ability to specify handlers. expose this to the user
-        handlers=[]
+      def start_task_run(task_name, entity, options, handlers)
 
         # Create the task result, and associate our entity and options
         task_result = Intrigue::Model::TaskResult.create({
@@ -29,7 +26,7 @@ module Intrigue
             :base_entity => entity,
             :logger => Intrigue::Model::Logger.create
         })
-        
+
         ###
         # Create the task and start it
         ###

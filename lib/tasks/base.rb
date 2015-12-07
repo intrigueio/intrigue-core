@@ -76,6 +76,18 @@ class BaseTask
     end
 
     #
+    # Mark it complete and save it
+    #
+    # http://stackoverflow.com/questions/178704/are-unix-timestamps-the-best-way-to-store-timestamps
+    @task_result.timestamp_end = Time.now.getutc
+    @task_result.complete = true
+
+    @task_result.logger.log "Calling cleanup!"
+    cleanup
+
+    @task_result.save
+
+    #
     # Handlers!
     #
     # This is currently used from the core-cli load command - both csv and
@@ -92,18 +104,6 @@ class BaseTask
         @task_result.logger.log_error "Got response: #{response}"
       end
     end
-
-    #
-    # Mark it complete and save it
-    #
-    # http://stackoverflow.com/questions/178704/are-unix-timestamps-the-best-way-to-store-timestamps
-    @task_result.timestamp_end = Time.now.getutc
-    @task_result.complete = true
-
-    @task_result.logger.log "Calling cleanup!"
-    cleanup
-
-    @task_result.save
   end
 
   #########################################################

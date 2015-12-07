@@ -32,12 +32,11 @@ class UriGatherRobotsTask  < BaseTask
 
       # Grab a known-missing page so we can make sure it's not a
       # 404 disguised as a 200
-      test_url = "#{uri}/there-is-no-way-this-exists-#{rand(10000)}"
+      test_url = "#{uri}/there-is-no-way-this-exists-#{rand(1000000)}"
       missing_page_content = http_get_body test_url
 
       # Do the request
       content = http_get_body uri
-
       return unless content
 
       @task_result.logger.log "Got result for #{uri}:\n#{content}"
@@ -49,28 +48,32 @@ class UriGatherRobotsTask  < BaseTask
         # for each line of the file
         content.each_line do |line|
 
+
           # don't add comments
           next if line =~ /^#/
-          next if line =~ /^User-agent/
-          next if line =~ /\n/
+          next if line =~ /^User-agent/i
+          next if line =~ /^\n$/
+          next if line =~ /^\r\n$/
+
 
           # This will work for the following types
           # Disallow: /path/
           # Sitemap: http://site.com/whatever.xml.gz
           if line =~ /Sitemap/i
-            path = line.split(" ").last.strip
-            full_path = "#{path}"  # Sitemap uri is a full uri
-
+            path = line.split(":").last.strip
+            next if path =~ /^Sitemap/i
+            full_path = "#{path}"  # Sitemap uri should be a full uri
           elsif line =~ /Disallow/i
             path = line.split(":").last.strip
             next if path =~ /^Disallow/i
-            full_path = "#{base_uri}#{path}" # disallow is relative
-
+            full_path = "#{base_uri}#{path}" # disallow is relative uri
           elsif line =~ /Allow/i
             path = line.split(":").last.strip
             next if path =~ /^Allow/i
-            full_path = "#{base_uri}#{path}" # allow is relative
+            full_path = "#{base_uri}#{path}" # allow is relative uri
           end
+
+
 
           # if there's a wildcard in the path, it won't be a functional URI
           # example: http://alyaum.com/robots.txt
@@ -79,7 +82,7 @@ class UriGatherRobotsTask  < BaseTask
           #  full_path.split("*").first
           #end
 
-          # otherwise create a webpate
+          # Create the entity
           _create_entity "Uri", { "name" => full_path, "uri" => full_path, "detail" => line }
         end
       end

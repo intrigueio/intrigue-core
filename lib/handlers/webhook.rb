@@ -2,7 +2,7 @@ module Intrigue
 module Handler
   class Webhook < Intrigue::Handler::Base
 
-    def self.type
+    def type
       "webhook"
     end
 

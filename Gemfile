@@ -15,6 +15,8 @@ gem 'dm-postgres-adapter'
 gem 'dm-sqlite-adapter'
 gem 'dm-noisy-failures'
 
+gem 'elasticsearch'
+
 gem 'iconv' # Encoding
 gem 'rest-client' # Web hooks
 gem 'rspec' # Testing

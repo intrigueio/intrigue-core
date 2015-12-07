@@ -98,9 +98,10 @@ class IntrigueApp < Sinatra::Base
       # Generate a task id
       task_name = payload["task"]
       options = payload["options"]
+      handlers = payload["handlers"]
 
       # Start the task _run
-      task_id = start_task_run(task_name, entity, options)
+      task_id = start_task_run(task_name, entity, options,handlers)
       status 200 if task_id
 
     # must be a string otherwise it can be interpreted as a status code

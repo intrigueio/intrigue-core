@@ -2,7 +2,7 @@ module Intrigue
 module Handler
   class Json < Intrigue::Handler::Base
 
-    def self.type
+    def type
       "json"
     end
 

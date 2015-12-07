@@ -14,7 +14,7 @@ class CoreCli < Thor
     @server_uri = "http://127.0.0.1:7777/v1"
     @sidekiq_uri = "http://127.0.0.1:7777/sidekiq"
     @delim = "#"
-    @debug = false
+    @debug = true
     # Connect to Intrigue API
     @x = IntrigueApi.new
   end
@@ -69,14 +69,15 @@ class CoreCli < Thor
     end
   end
 
-  desc "background [Task] [Type#Entity] [Option1=Value1#...#...]", "Start and background a single task. Returns the ID"
+  desc "background [Task] [Type#Entity] [Option1=Value1#...#...] [Handlers]", "Start and background a single task. Returns the ID"
   def background(task_name,entity,options=nil)
 
     entity_hash = _parse_entity entity
     options_list = _parse_options options
+    handler_list = _parse_handlers handler_string
 
     ### Construct the request
-    task_id = @x.start_and_background(task_name,entity_hash,options_list)
+    task_id = @x.start_and_background(task_name,entity_hash,options_list,handler_list)
 
     unless task_id # technically a nil is returned , but becomes an empty string
       puts "[-] Task not started. Unknown Error. Exiting"
@@ -86,21 +87,22 @@ class CoreCli < Thor
   puts "[+] Started task: #{task_id}"
   end
 
-  desc "start [Task] [Type#Entity] [Option1=Value1#...#...]", "Start a single task. Returns the result"
-  def start(task_name,entity_string,option_string=nil)
-    single(task_name,entity_string,option_string)
+  desc "start [Task] [Type#Entity] [Option1=Value1#...#...] [Handlers]", "Start a single task. Returns the result"
+  def start(task_name,entity_string,option_string=nil, handler_string=nil)
+    single(task_name,entity_string,option_string,handler_string)
   end
 
-  desc "single [Task] [Type#Entity] [Option1=Value1#...#...]", "Start a single task. Returns the result"
-  def single(task_name,entity_string,option_string=nil)
+  desc "single [Task] [Type#Entity] [Option1=Value1#...#...] [Handlers]", "Start a single task. Returns the result"
+  def single(task_name,entity_string,option_string=nil, handler_string=nil)
 
     # Do the setup
     entity_hash = _parse_entity entity_string
     options_list = _parse_options option_string
+    handler_list = _parse_handlers handler_string
 
     # Get the response from the API
     #puts "[+] Starting Task."
-    response = @x.start(task_name,entity_hash,options_list)
+    response = @x.start(task_name,entity_hash,options_list,handler_list)
     #puts "[D] Got response: #{response}" if @debug
     return "Error retrieving response. Failing. Response was: #{response}" unless  response
     #puts "[+] Task complete!"

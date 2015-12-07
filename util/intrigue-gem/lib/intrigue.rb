@@ -36,18 +36,18 @@ class IntrigueApi
     # options_list = [
     #   {:name => "resolver", :value => "8.8.8.8" }
     # ]
-    def start_and_background(task_name,entity_hash,options_list=nil)
+    def start_and_background(task_name,entity_hash,options_list=nil,handler_list=nil)
 
       payload = {
         "task" => task_name,
         "options" => options_list,
+        "handlers" => handler_list,
         "entity" => entity_hash
       }
 
       ### Send to the server
       task_id = RestClient.post "#{@server_uri}/task_results",
         payload.to_json, :content_type => "application/json"
-
 
       if task_id == "" # technically a nil is returned , but becomes an empty string
         #puts "[-] Task not started. Unknown Error. Exiting"
@@ -58,10 +58,10 @@ class IntrigueApi
     end
 
     # start Start a task and wait for the result
-    def start(task_name,entity_hash,options_list=nil)
+    def start(task_name,entity_hash,options_list=nil,handler_list=nil)
 
       # Construct the request
-      task_id = start_and_background(task_name,entity_hash,options_list)
+      task_id = start_and_background(task_name,entity_hash,options_list,handler_list)
 
       if task_id == "" # technically a nil is returned , but becomes an empty string
         #puts "[-] Task not started. Unknown Error. Exiting"
