@@ -20,7 +20,7 @@ module Handler
       type = "task_result"
 
       client = ::Elasticsearch::Client.new(url: url)
-      client.index(index: index, type: type, body: task_result)
+      client.index(index: index, type: type, body: task_result.export_json)
     end
 
   end
