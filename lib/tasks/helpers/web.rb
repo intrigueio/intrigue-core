@@ -102,10 +102,10 @@ module Task
 
       ### filter body
       if response
-        response_body = response.body.encode('UTF-8', {:invalid => :replace, :undef => :replace, :replace => '?'})
+        return response.body.encode('UTF-8', {:invalid => :replace, :undef => :replace, :replace => '?'})
       end
 
-    response_body
+    nil
     end
 
     ###
@@ -221,6 +221,7 @@ module Task
       rescue Encoding::UndefinedConversionError => e
         @task_result.logger.log_error "Encoding error: #{e}" if @task_result
       end
+    nil
     end
 
      #

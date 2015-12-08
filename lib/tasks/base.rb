@@ -81,11 +81,8 @@ class BaseTask
     # http://stackoverflow.com/questions/178704/are-unix-timestamps-the-best-way-to-store-timestamps
     @task_result.timestamp_end = Time.now.getutc
     @task_result.complete = true
-
     @task_result.logger.log "Calling cleanup!"
     cleanup
-
-    @task_result.save
 
     #
     # Handlers!
@@ -104,6 +101,8 @@ class BaseTask
         @task_result.logger.log_error "Got response: #{response}"
       end
     end
+
+    @task_result.save
   end
 
   #########################################################
@@ -209,8 +208,6 @@ class BaseTask
     else
       @task_result.logger.log "No User options"
     end
-
-    #@task_result.save
 
   true
   end
