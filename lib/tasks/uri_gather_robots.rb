@@ -33,7 +33,7 @@ class UriGatherRobotsTask  < BaseTask
       # Grab a known-missing page so we can make sure it's not a
       # 404 disguised as a 200
       test_url = "#{uri}/there-is-no-way-this-exists-#{rand(1000000)}"
-      @task_result.logger.log "Checking for missing page: #{test_uri}"
+      @task_result.logger.log "Checking for missing page: #{test_url}"
       missing_page_content = http_get_body test_url
 
       # Do the request
