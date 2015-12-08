@@ -115,7 +115,7 @@ module Task
     def http_get(uri, headers={}, limit = 10, timeout=60, read_timeout=1000)
 
       #@task_result.logger.log "http_get Connecting to #{uri}" if @task_result
-
+      response = nil
       begin
 
         # XXX - We really should have a better exception here. See:
@@ -149,6 +149,7 @@ module Task
 
           # Make the actual request
           response = http.start {|http| http.request(request) }
+          #puts "DEBUG: #{response.body}"
 
           # See the various response classes here:
           # http://apidock.com/ruby/Net/HTTP
@@ -157,7 +158,7 @@ module Task
               ic = Iconv.new('UTF-8//IGNORE', 'UTF-8')
               response.body = ic.iconv(response.body + ' ')[0..-2]
               return response
-            when Net::HTTPRedirection # 300
+            when Net::HTTPRedirection, Net::HTTPMovedPermanently # 300
               # handle redirections with recursion
 
               # We need to construct the URI for cases where the redirect doesn't
@@ -167,19 +168,20 @@ module Task
               if response['location'] =~ /^http/
                 redirect_uri = "#{response['location']}"
               else
-
                 # It's a broken URI, we need to get the base from the existing URI
                 redirect_uri = "#{uri.split("/")[0..2].join("/")}#{response["location"]}"
               end
 
               # GET IT!
-              http_get(redirect_uri, {}, limit - 1)
+              #puts "Redirecting to... #{redirect_uri}"
+              @task_result.logger.log "Redirecting to... #{redirect_uri}" if @task_result
+              response = http_get(redirect_uri, {}, limit - 1)
 
             else
               # Return 4XX,5XX, etc directly
               return response
           end
-        end
+        end # end timeout
 
       ### TODO - this code may be be called outside the context of a task,
       ###  meaning @task_result is not available to it. Below, we check to
@@ -221,7 +223,8 @@ module Task
       rescue Encoding::UndefinedConversionError => e
         @task_result.logger.log_error "Encoding error: #{e}" if @task_result
       end
-    nil
+
+    response
     end
 
      #
