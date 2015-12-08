@@ -28,14 +28,16 @@ class UriGatherRobotsTask  < BaseTask
       # Concat the uri to create the check
       uri = "#{base_uri}/#{check[:path]}"
 
-      @task_result.logger.log "Connecting to #{uri}"
+
 
       # Grab a known-missing page so we can make sure it's not a
       # 404 disguised as a 200
       test_url = "#{uri}/there-is-no-way-this-exists-#{rand(1000000)}"
+      @task_result.logger.log "Checking for missing page: #{test_uri}"
       missing_page_content = http_get_body test_url
 
       # Do the request
+      @task_result.logger.log "Connecting to #{uri}"
       content = http_get_body uri
       return unless content
 
@@ -45,19 +47,25 @@ class UriGatherRobotsTask  < BaseTask
       # TODO - improve the checking for wildcard page returns and 404-200's
       if content != missing_page_content
 
+        # Content must contain a user-agent directive: http://www.robotstxt.org/orig.html
+        unless content =~ /User-agent/i
+          @task_result.logger.log_error "This content does not include one or more User-agent directives. Skipping"
+          return
+        end
+
         # for each line of the file
         content.each_line do |line|
 
-
           # don't add comments
-          next if line =~ /^#/
-          next if line =~ /^User-agent/i
-          next if line =~ /^\n$/
-          next if line =~ /^\r\n$/
-
+          next if line =~ /^#/              # skip comments
+          next if line =~ /^User-agent/i    # we don't care about agents for now
+          next if line =~ /^\n$/            # skip newlines
+          next if line =~ /^\r\n$/          # skip windows newlines
+          #next if line =~ /^<html$/i        # skip html (shouldn't make it through the User-agent content check but *shrug*)
 
           # This will work for the following types
           # Disallow: /path/
+          # Allow: /path
           # Sitemap: http://site.com/whatever.xml.gz
           if line =~ /Sitemap/i
             path = line.split(":").last.strip
