@@ -12,7 +12,7 @@ module Handler
       shortname = "#{task_result.task_name}-#{task_result.base_entity.name.gsub("/","")}"
 
       # Write it out
-      File.open("#{$intrigue_basedir}/results/#{shortname}.json", "w+") do |file|
+      File.open("#{$intrigue_basedir}/results/#{shortname}.json", "a+") do |file|
         file.flock(File::LOCK_EX)
         file.write(JSON.pretty_generate(task_result.export_hash))
       end

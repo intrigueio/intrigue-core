@@ -28,8 +28,6 @@ class UriGatherRobotsTask  < BaseTask
       # Concat the uri to create the check
       uri = "#{base_uri}/#{check[:path]}"
 
-
-
       # Grab a known-missing page so we can make sure it's not a
       # 404 disguised as a 200
       test_url = "#{uri}/there-is-no-way-this-exists-#{rand(1000000)}"
