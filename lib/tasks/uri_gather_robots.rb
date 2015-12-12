@@ -36,7 +36,7 @@ class UriGatherRobotsTask  < BaseTask
 
       unless missing_page_content # fail if we don't get a response
         @task_result.logger.log "Unable to retrieve missing page content"
-        return
+      #  return
       end
 
       # Do the request
