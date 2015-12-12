@@ -145,7 +145,10 @@ module Task
           headers.each{|key,value| request.add_field(key, value)}
 
           # Set the user-agent independently
-          #request.add_field('User-Agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36')
+          request.add_field('User-Agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36')
+          # https://github.com/lostisland/faraday/issues/337
+          request.add_field('Accept-Encoding', 'identity')
+
 
           # Make the actual request
           response = http.start {|http| http.request(request) }
@@ -191,6 +194,9 @@ module Task
       ###
       rescue Timeout::Error
         @task_result.logger.log_error "Timed out" if @task_result
+      rescue TypeError
+        # https://github.com/jaimeiniesta/metainspector/issues/125
+        @task_result.logger.log_error "TypeError - unknown failure" if @task_result
       rescue URI::InvalidURIError => e
         #
         # XXX - This is an issue. We should catch this and ensure it's not
@@ -224,7 +230,7 @@ module Task
         @task_result.logger.log_error "Encoding error: #{e}" if @task_result
       end
 
-    response
+    nil
     end
 
      #
