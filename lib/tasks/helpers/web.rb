@@ -112,79 +112,51 @@ module Task
     ### XXX - significant updates made to zlib, determine whether to
     ### move this over to RestClient: https://github.com/ruby/ruby/commit/3cf7d1b57e3622430065f6a6ce8cbd5548d3d894
     ###
-    def http_get(uri, headers={}, limit = 10, timeout=15, read_timeout=1000)
+    def http_get(uri_string, headers={}, limit = 10, open_timeout=15, read_timeout=15)
 
       #@task_result.logger.log "http_get Connecting to #{uri}" if @task_result
       response = nil
       begin
 
-        # XXX - We really should have a better exception here. See:
-        # http://apidock.com/ruby/Net/HTTP
-        raise ArgumentError, 'HTTP redirect too deep' if limit == 0
+        attempts=0
+        max_attempts=10
+        user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.73 Safari/537.36"
+        found = false
 
-        Timeout.timeout(timeout) do
-          ###
-          ### XXX - it's possible we won't be able to parse this,
-          ###  and we'll end up tripping a URI::InvalidURIError
-          ###
-          if @task_result
-            unless uri =~ /^http/
-              @task_result.logger.log_error("Strange URI: #{uri}")
-              #raise "Failing on URI: #{uri}"
-            end
-          end
+        uri = URI.parse uri_string
 
-          uri_obj = URI.parse(uri)
-          http = Net::HTTP.new(uri_obj.host, uri_obj.port)
-          http.read_timeout = read_timeout
-          http.use_ssl = (uri_obj.scheme == 'https')
-          http.verify_mode = OpenSSL::SSL::VERIFY_NONE if http.use_ssl?
+        until( found || attempts>=max_attempts)
+         @task_result.logger.log "Getting #{uri}, attempt #{attempts}"
+         attempts+=1
+         http=Net::HTTP.new(uri.host,uri.port)
+         http.read_timeout = 10
+         path=uri.path
+         path="/" if path==""
 
-          # Set up the GET request with headers
-          request = Net::HTTP::Get.new(uri)
-          headers.each{|key,value| request.add_field(key, value)}
+         request=Net::HTTP::Get.new(path,{'User-Agent'=>user_agent})
+         if uri.instance_of? URI::HTTPS
+           http.use_ssl=true
+           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+         end
 
-          # Set the user-agent independently
-          request.add_field('User-Agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36')
-          # https://github.com/lostisland/faraday/issues/337
-          request.add_field('Accept-Encoding', 'identity')
+         response=http.request(request)
 
+         if response.code=="200"
+           break
+         end
 
-          # Make the actual request
-          response = http.start {|http| http.request(request) }
-          #puts "DEBUG: #{response.body}"
+         if (response.header['location']!=nil)
+           newuri=URI.parse(response.header['location'])
+           if(newuri.relative?)
+               #@task_result.logger.log "url was relative" if @task_result
+               newuri=uri+response.header['location']
+           end
+           uri=newuri
 
-          # See the various response classes here:
-          # http://apidock.com/ruby/Net/HTTP
-          case response
-            when Net::HTTPSuccess
-              ic = Iconv.new('UTF-8//IGNORE', 'UTF-8')
-              response.body = ic.iconv(response.body + ' ')[0..-2]
-              return response
-            when Net::HTTPRedirection, Net::HTTPMovedPermanently # 300
-              # handle redirections with recursion
-
-              # We need to construct the URI for cases where the redirect doesn't
-              # include the base domain. For instance, when http://www.whatever.com/test
-              # redirects to /test2
-
-              if response['location'] =~ /^http/
-                redirect_uri = "#{response['location']}"
-              else
-                # It's a broken URI, we need to get the base from the existing URI
-                redirect_uri = "#{uri.split("/")[0..2].join("/")}#{response["location"]}"
-              end
-
-              # GET IT!
-              #puts "Redirecting to... #{redirect_uri}"
-              @task_result.logger.log "Redirecting to... #{redirect_uri}" if @task_result
-              response = http_get(redirect_uri, {}, limit - 1)
-
-            else
-              # Return 4XX,5XX, etc directly
-              return response
-          end
-        end # end timeout
+         else
+           found=true #resp was 404, etc
+         end #end if location
+       end #until
 
       ### TODO - this code may be be called outside the context of a task,
       ###  meaning @task_result is not available to it. Below, we check to
@@ -192,11 +164,9 @@ module Task
       ###  but there may be a cleaner way to do this (hopefully?). Maybe a
       ###  global logger or logging queue?
       ###
-      rescue Timeout::Error
-        @task_result.logger.log_error "Timed out" if @task_result
-      rescue TypeError
-        # https://github.com/jaimeiniesta/metainspector/issues/125
-        @task_result.logger.log_error "TypeError - unknown failure" if @task_result
+      #rescue TypeError
+      #  # https://github.com/jaimeiniesta/metainspector/issues/125
+      #  @task_result.logger.log_error "TypeError - unknown failure" if @task_result
       rescue URI::InvalidURIError => e
         #
         # XXX - This is an issue. We should catch this and ensure it's not
@@ -220,17 +190,17 @@ module Task
         @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
       rescue SocketError => e
         @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
-      rescue SystemCallError => e
-        @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
-      rescue ArgumentError => e
-        @task_result.logger.log_error "Argument Error: #{e}" if @task_result
+      #rescue SystemCallError => e
+      #  @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
+      #rescue ArgumentError => e
+      #  @task_result.logger.log_error "Argument Error: #{e}" if @task_result
       rescue Encoding::InvalidByteSequenceError => e
         @task_result.logger.log_error "Encoding error: #{e}" if @task_result
       rescue Encoding::UndefinedConversionError => e
         @task_result.logger.log_error "Encoding error: #{e}" if @task_result
       end
 
-    nil
+    response
     end
 
      #
