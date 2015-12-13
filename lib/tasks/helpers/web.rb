@@ -130,6 +130,7 @@ module Task
          attempts+=1
          http=Net::HTTP.new(uri.host,uri.port)
          http.read_timeout = 10
+         http.open_timeout = 10
          path=uri.path
          path="/" if path==""
 
