@@ -21,7 +21,7 @@ class DiscoveryScan < Intrigue::Scanner::Base
         ### DNS Subdomain Bruteforce
         _start_task_and_recurse "dns_brute_sub",entity,depth,[
           {"name" => "use_file", "value" => true },
-          {"name" => "brute_alphanumeric_size", "value" => 3},
+          {"name" => "brute_alphanumeric_size", "value" => 1},
           {"name" => "use_permutations", "value" => true }
         ]
 
@@ -40,7 +40,7 @@ class DiscoveryScan < Intrigue::Scanner::Base
 
         ### Masscan
         if entity.details["whois_full_text"] =~ /#{@scan_result.base_entity.name}/
-          _start_task_and_recurse "masscan_scan",entity,depth, ["port" => 443]
+          _start_task_and_recurse "masscan_scan",entity,depth, ["port" => 443] if entity
         end
 
       elsif entity.type_string == "Uri"
@@ -51,6 +51,28 @@ class DiscoveryScan < Intrigue::Scanner::Base
       else
         @scan_result.logger.log "SKIP Unhandled entity type: #{entity.type}##{entity.attributes["name"]}"
         return
+      end
+    end
+
+    def _is_prohibited entity
+
+      if entity.type_string == "NetBlock"
+        cidr = entity.name.split("/").last.to_i
+
+        if cidr <= 16
+          @scan_result.logger.log_error "SKIP Netblock too large: #{entity.type}##{entity.name}"
+          return true
+        elsif entity.name =~ /:/ # it's an ipv6 address, skip it
+          @scan_result.logger.log_error "SKIP IPv6 block: #{entity.type}##{entity.name}"
+          return true
+        end
+
+      elsif entity.type_string == "IpAddress"
+        # 23.x.x.x
+        if entity.name =~ /^23./
+          @scan_result.logger.log_error "Skipping Akamai address"
+          return true
+        end
       end
     end
 

@@ -17,7 +17,7 @@ module Intrigue
       ###
       ### Helper method for starting a task run
       ###
-      def start_task_run(task_name, entity, options, handlers)
+      def start_task_run(task_name, entity, options, handlers=[])
 
         # Create the task result, and associate our entity and options
         task_result = Intrigue::Model::TaskResult.create({
