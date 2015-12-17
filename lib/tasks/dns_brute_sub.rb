@@ -149,7 +149,7 @@ Some cases to think through:
           #
           if opt_use_permutations
             # Create a list of permutations based on this success
-            permutation_list = ["#{subdomain}1", "#{subdomain}2"]
+            permutation_list = ["#{subdomain}1", "#{subdomain}2", "#{subdomain}-staging","#{subdomain}-prod", "#{subdomain}-stage", "#{subdomain}-test"], "#{subdomain}-dev"
             @task_result.logger.log "Adding permutations: #{permutation_list.join(", ")}"
             subdomain_list.concat permutation_list
           end
