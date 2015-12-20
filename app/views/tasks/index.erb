@@ -5,11 +5,10 @@
 </div>
 <br/>
 <h4>Completed Tasks</h4>
-<% @completed_task_results.each do |x| %>
 <ul>
-<%= "<li><a href=\'/v1/task_results/#{x.id}\'> (#{x.timestamp_end}) #{x.task_name} on #{x.base_entity.type_string if x.base_entity}##{ h x.base_entity.name if x.base_entity} (#{x.entity_count})</a></li>" %>
+<% @task_results.each do |x| %> <li><a href="/v1/task_results/<%=x.id%>"><%= x.task_name %> on <%= x.base_entity %> (<%=x.entity_count%>)</a></li><% end %>
 </ul>
-<% end %>
+<%= Intrigue::Model::TaskResult.page(params[:page]).pager.to_html('/v1/task_results') %>
 
 <!--
 Available Task Details:

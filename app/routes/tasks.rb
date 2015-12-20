@@ -9,7 +9,7 @@ class IntrigueApp < Sinatra::Base
       @task_result = Intrigue::Model::TaskResult.get params["task_result_id"] if params["task_result_id"]
       @tasks = Intrigue::TaskFactory.list.map{|x| x.send(:new)}
       @task_names = @tasks.map{|t| t.metadata[:pretty_name]}.sort
-      @completed_task_results = Intrigue::Model::TaskResult.all_in_current_project
+      @task_results = Intrigue::Model::TaskResult.page(params[:page], :per_page => 10)
 
       erb :'tasks/index'
     end

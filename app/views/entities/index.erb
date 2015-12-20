@@ -1,5 +1,7 @@
 <ul>
-  <% Intrigue::Model::Entity.all.each do |x| %>
-    <li> <a href=<%="/v1/entities/#{x.id}"%>><%= x %></a></li>
+  <% @entities.each do |x| %>
+    <li><%= x %></li>
   <% end %>
 </ul>
+
+<%= Intrigue::Model::Entity.page(params[:page]).pager.to_html('/v1/entities') %>

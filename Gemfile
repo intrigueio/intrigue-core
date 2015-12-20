@@ -14,6 +14,7 @@ gem 'dm-pg-types'
 gem 'dm-postgres-adapter'
 gem 'dm-sqlite-adapter'
 gem 'dm-noisy-failures'
+gem 'dm-pager'
 
 gem 'elasticsearch'
 

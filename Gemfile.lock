@@ -73,6 +73,9 @@ GEM
       dm-core (~> 1.2.0)
     dm-noisy-failures (0.2.3)
       data_mapper
+    dm-pager (1.1.0)
+      dm-aggregates (>= 0.10.1)
+      dm-core (>= 0.10.1)
     dm-pg-types (0.8.2)
       data_mapper (~> 1.2.0)
       data_objects (~> 0.10.6)
@@ -266,6 +269,7 @@ DEPENDENCIES
   couchrest
   data_mapper
   dm-noisy-failures
+  dm-pager
   dm-pg-types
   dm-postgres-adapter
   dm-sqlite-adapter

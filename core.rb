@@ -9,6 +9,7 @@ require 'dm-core'
 require 'dm-serializer'
 require 'dm-pg-types'
 require 'dm-noisy-failures'
+require 'dm-pager'
 
 require 'timeout'
 require 'json'
