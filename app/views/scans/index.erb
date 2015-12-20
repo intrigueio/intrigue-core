@@ -48,7 +48,7 @@
   <div id="metadata" class="col-sm-7"></div>
 </div>
 <br/>
-<h4> Completed Scans </h4>
+<h4> Scans </h4>
 <ul>
   <% @scan_results.each do |x| %> <li><a href="/v1/scan_results/<%=x.id%>"><%= x.scan_type %> on <%= x.base_entity %> (<%=x.entity_count%>)</a></li><% end %>
 </ul>
