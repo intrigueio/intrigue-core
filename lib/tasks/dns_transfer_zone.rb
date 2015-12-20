@@ -34,7 +34,7 @@ class DnsTransferZoneTask < BaseTask
         answer = Whois::Client.new.lookup(domain_name)
         resolved_list = nil
         if answer.nameservers
-          authoritative_nameservers = answer.nameservers
+          answer.nameservers.map {|x| authoritative_nameservers << x }
         else
           @task_result.logger.log_error "Unknown nameservers for this domain, using #{authoritative_nameservers}"
         end
