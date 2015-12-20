@@ -36,11 +36,13 @@ class DnsTransferZoneTask < BaseTask
         if answer.nameservers
           authoritative_nameservers = answer.nameservers
         else
-          @task_result.logger.log_error "Unknown nameservers for this domain, using #{authoratative_nameservers}"
+          @task_result.logger.log_error "Unknown nameservers for this domain, using #{authoritative_nameservers}"
         end
       end
-    rescue Whois::ConnectionError
-      @task_result.logger.log_warning "Unable to gather whois information, using #{authoratative_nameservers}"
+    rescue Whois::ConnectionError => e
+      @task_result.logger.log_warning "Unable to gather whois information (#{e}), using #{authoritative_nameservers}"
+    rescue Whois::WebInterfaceError => e
+      @task_result.logger.log_warning "Unable to gather whois information (#{e}), using #{authoritative_nameservers}"
     rescue Timeout::Error
       @task_result.logger.log_error "Execution Timed out waiting for an answer from nameserver for #{domain_name}"
     #rescue Exception => e
@@ -107,8 +109,8 @@ class DnsTransferZoneTask < BaseTask
         @task_result.logger.log_error "Unable to resolve #{domain_name} while querying #{nameserver}."
       rescue Dnsruby::ResolvTimeout
         @task_result.logger.log_error "Timed out while querying #{nameserver} for #{domain_name}."
-      #rescue Exception => e
-      # @task_result.logger.log_error "Unknown exception: #{e}"
+      rescue Errno::ECONNREFUSED => e
+       @task_result.logger.log_error "Unable to connect: (#{e})"
       end
     end
   end
