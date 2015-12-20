@@ -70,10 +70,10 @@ class CoreCli < Thor
   end
 
   desc "background [Task] [Type#Entity] [Option1=Value1#...#...] [Handlers]", "Start and background a single task. Returns the ID"
-  def background(task_name,entity,options=nil)
+  def background(task_name,entity,option_string,handler_string)
 
     entity_hash = _parse_entity entity
-    options_list = _parse_options options
+    options_list = _parse_options option_string
     handler_list = _parse_handlers handler_string
 
     ### Construct the request
