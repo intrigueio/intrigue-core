@@ -41,8 +41,8 @@ class DnsTransferZoneTask < BaseTask
       end
     rescue Timeout::Error
       @task_result.logger.log_error "Execution Timed out waiting for an answer from nameserver for #{domain_name}"
-    rescue Exception => e
-      @task_result.logger.log "Error querying whois: #{e}"
+    #rescue Exception => e
+    #  @task_result.logger.log "Error querying whois: #{e}"
     end
 
     # For each authoritive nameserver
@@ -105,9 +105,8 @@ class DnsTransferZoneTask < BaseTask
         @task_result.logger.log_error "Unable to resolve #{domain_name} while querying #{nameserver}."
       rescue Dnsruby::ResolvTimeout
         @task_result.logger.log_error "Timed out while querying #{nameserver} for #{domain_name}."
-      rescue Exception => e
-        @task_result.logger.log_error "Unknown exception: #{e}"
-
+      #rescue Exception => e
+      # @task_result.logger.log_error "Unknown exception: #{e}"
       end
     end
   end
