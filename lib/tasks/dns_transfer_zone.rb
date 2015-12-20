@@ -39,6 +39,8 @@ class DnsTransferZoneTask < BaseTask
           @task_result.logger.log_error "Unknown nameservers for this domain, using #{authoratative_nameservers}"
         end
       end
+    rescue Whois::ConnectionError
+      @task_result.logger.log_warning "Unable to gather whois information, using #{authoratative_nameservers}"
     rescue Timeout::Error
       @task_result.logger.log_error "Execution Timed out waiting for an answer from nameserver for #{domain_name}"
     #rescue Exception => e
