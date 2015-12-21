@@ -30,7 +30,7 @@ class DnsTransferZoneTask < BaseTask
 
     # Get the authoritative nameservers & query each of them
     begin
-      timeout(10) do
+      timeout(20) do
         answer = Whois::Client.new.lookup(domain_name)
         resolved_list = nil
         if answer.nameservers
@@ -53,7 +53,7 @@ class DnsTransferZoneTask < BaseTask
     authoritative_nameservers.each do |nameserver|
       begin
 
-        timeout(300) do
+        timeout(600) do
 
           @task_result.logger.log "Attempting Zone Transfer on #{domain_name} against nameserver #{nameserver}"
 
