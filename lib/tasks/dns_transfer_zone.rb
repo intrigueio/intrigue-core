@@ -14,7 +14,7 @@ class DnsTransferZoneTask < BaseTask
         {"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}
       ],
       :allowed_options => [
-        {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
+        {:name => "resolver", :type => "String", :regex => "ip_address", :default => "208.67.222.222" }
       ],
       :created_types => ["DnsRecord","Finding","IpAddress"]
     }
@@ -64,6 +64,10 @@ class DnsTransferZoneTask < BaseTask
             :query_timeout => 20)
 
           axfr_answer = res.query(domain_name, Dnsruby::Types.AXFR)
+          ixfr_answer = res.query(domain_name, Dnsruby::Types.IXFR)
+
+          @task_result.logger.log_good "AXFR FOUND" if axfr_answer
+          @task_result.logger.log_good "IXFR FOUND" if ixfr_answer
 
           # If we got a success to the AXFR query.
           if axfr_answer
@@ -101,14 +105,16 @@ class DnsTransferZoneTask < BaseTask
           end
         end
 
-      rescue Timeout::Error
-        @task_result.logger.log_error "Task Execution Timed out"
-      rescue Dnsruby::Refused
-        @task_result.logger.log_error "Zone Transfer against #{domain_name} refused."
-      rescue Dnsruby::ResolvError
-        @task_result.logger.log_error "Unable to resolve #{domain_name} while querying #{nameserver}."
-      rescue Dnsruby::ResolvTimeout
-        @task_result.logger.log_error "Timed out while querying #{nameserver} for #{domain_name}."
+      rescue Timeout::Error => e
+        @task_result.logger.log_error "Task Execution Timed out: #{e}"
+      rescue Dnsruby::Refused => e
+        @task_result.logger.log "Zone Transfer against #{domain_name} refused: #{e}"
+      rescue Dnsruby::ResolvError => e
+        @task_result.logger.log_error "Unable to resolve #{domain_name} while querying #{nameserver}: #{e}"
+      rescue Dnsruby::ResolvTimeout =>  e
+        @task_result.logger.log_error "Timed out while querying #{nameserver} for #{domain_name}: #{e}"
+      rescue Errno::EHOSTUNREACH => e
+        @task_result.logger.log_error "Unable to connect: (#{e})"
       rescue Errno::ECONNREFUSED => e
        @task_result.logger.log_error "Unable to connect: (#{e})"
       end
