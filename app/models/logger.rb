@@ -7,7 +7,7 @@ module Intrigue
       property :full_log, Text, :length => 5000000, :default =>""
 
       def log(message)
-        _log "[     ] #{@name}: " << message
+        _log "[ ] #{@name}: " << message
       end
 
       def log_debug(message)
@@ -15,7 +15,7 @@ module Intrigue
       end
 
       def log_good(message)
-        _log "[+++++] #{@name}: " << message
+        _log "[+] #{@name}: " << message
       end
 
       def log_error(message)
@@ -23,7 +23,7 @@ module Intrigue
       end
 
       def log_warning(message)
-        _log "[WARN!] #{@name}: " << message
+        _log "[WARN] #{@name}: " << message
       end
 
       def log_fatal(message)

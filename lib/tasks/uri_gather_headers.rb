@@ -28,6 +28,7 @@ class UriGatherHeadersTask  < BaseTask
       response.each_header do |name,value|
         _create_entity("UriHeader", {
           "name" => "#{name}",
+          "uri" => "#{uri}",
           "content" => "#{value}" })
       end
     end

@@ -25,9 +25,6 @@
 213
 216
 237
-android
-iphone
-ios
 244
 3
 3com
@@ -58,11 +55,9 @@ ac
 academico
 acceso
 access
+account
 accounting
 accounts
-account
-exam
-exams
 acessonet
 acid
 activestat
@@ -121,6 +116,7 @@ americas
 an
 anaheim
 analyzer
+android
 anime
 ann
 announce
@@ -166,6 +162,8 @@ asia
 asianet
 ask
 asm
+asp
+aspx
 asterix
 at
 athena
@@ -182,6 +180,7 @@ auth2
 auth3
 auto
 autodiscover
+autorun
 autos
 av
 available
@@ -203,6 +202,7 @@ backend
 backoffice
 backup
 backup1
+backups
 baker
 bakersfield
 balance
@@ -645,6 +645,7 @@ desarrollo
 descargas
 design
 designer
+desktop
 detroit
 dev
 dev.movie
@@ -797,7 +798,9 @@ eur
 europe
 event
 events
+exam
 example
+exams
 exchange
 exec
 ext.webchat
@@ -973,6 +976,7 @@ helpdesk
 helponline
 henry
 hermes
+heroma
 hfc
 hi
 hidden
@@ -1099,6 +1103,7 @@ invalid
 investor
 investors
 io
+ios
 iota
 iowa
 ip
@@ -1154,6 +1159,7 @@ john
 jp
 jrun
 jsc
+jsp
 juegos
 juliet
 juliette
@@ -1249,6 +1255,7 @@ logfiles
 logger
 logging
 loghost
+logica
 login
 logs
 london
@@ -1269,7 +1276,6 @@ lw
 ly
 lyris
 m
-m.
 m.plb1
 m.plb2
 m.slb1
@@ -1399,6 +1405,7 @@ mob
 mobi
 mobil
 mobile
+mobilemail
 mobileonline
 mom
 mon
@@ -1425,6 +1432,7 @@ ms-exchange
 ms-sql
 msexchange
 msgrs.webchat
+mss
 mssnks
 mssql
 mssql0
@@ -1628,6 +1636,7 @@ page
 pager
 pages
 paginas
+palett
 papa
 paris
 parners
@@ -1726,6 +1735,7 @@ phone
 phones
 photo
 photos
+php
 pi
 pics
 pictures
@@ -2287,6 +2297,7 @@ snort
 sntcca
 so
 so-net
+soap
 socal
 soccer
 social
@@ -2499,6 +2510,7 @@ tukrga
 tukw
 tulsa
 tunnel
+tunnelunix
 tv
 tvadmin
 tw
@@ -2738,6 +2750,7 @@ wordpress
 work
 world
 wotnoh
+wpad
 write
 ws
 ws1
@@ -2866,6 +2879,7 @@ xi
 xlogan
 xmail
 xml
+xmlandzeus
 xp
 xr
 y

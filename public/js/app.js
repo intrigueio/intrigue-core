@@ -52,7 +52,7 @@
         entity_name = form.attrib_name.value;
 
         // if we don't have a set type
-        if (!location.search.split("entity_id=")[1] && !location.search.split("task_result_id=")[1]) {
+        if (!location.search.split("entity_id=")[1] && !location.search.split("task_result_id=")[1] && !!location.search.split("entities")[1]) {
           form.entity_type.value = value.example_entities[0].type;
           form.attrib_name.value = value.example_entities[0].attributes.name;
         }

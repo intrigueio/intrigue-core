@@ -13,7 +13,8 @@ class DnsLookupForwardTask < BaseTask
       :allowed_types => ["DnsRecord","String"],
       :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
-        {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
+        {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
+        {:name => "record_types", :type => "String", :regex => "alpha_numeric_list", :default => "ANY" }
       ],
       :created_types => ["IpAddress"]
     }
@@ -23,6 +24,7 @@ class DnsLookupForwardTask < BaseTask
     super
 
     resolver = _get_option "resolver"
+    record_types = _get_option "record_types"
     name = _get_entity_attribute "name"
 
     begin
@@ -49,37 +51,53 @@ class DnsLookupForwardTask < BaseTask
           # [#<Dnsruby::Name: sopcgm.ual.com.>, #<Dnsruby::Name: ualipconfig.united.com.>, 2011110851, 10800, 3600, 2592000, 600]
 
           resource.rdata.each do |x|
-            _create_entity(entity_type, { "name" => "#{x}", "parsed_record_type" => "SOA"}) if resource.rdata.class == Dnsruby::Name
+            if resource.rdata.class == Dnsruby::Name
+              _create_entity(entity_type, { "name" => "#{x}", "parsed_record_type" => "SOA"}) if record_types.include?("SOA") || record_types.include?("ANY")
+            end
           end
 
         elsif resource.type == Dnsruby::Types::NS
-          _create_entity(entity_type, { "name" => "#{resource.rdata}", "parsed_record_type" => "NS"})
+          _create_entity(entity_type, { "name" => "#{resource.rdata}", "parsed_record_type" => "NS"}) if record_types.include?("NS") || record_types.include?("ANY")
 
         elsif resource.type == Dnsruby::Types::MX
           # MX records will have the rdata as follows: [10, #<Dnsruby::Name: mail2.dmz.xxxx.com.>]
-          _create_entity(entity_type, { "name" => "#{resource.rdata.last}", "parsed_record_type" => "MX"})
+          _create_entity(entity_type, { "name" => "#{resource.rdata.last}", "parsed_record_type" => "MX"}) if record_types.include?("MX") || record_types.include?("ANY")
 
         elsif resource.type == Dnsruby::Types::A
-          _create_entity(entity_type, { "name" => "#{resource.rdata}", "parsed_record_type" => "A"})
+          _create_entity(entity_type, { "name" => "#{resource.rdata}", "parsed_record_type" => "A"}) if record_types.include?("A") || record_types.include?("ANY")
 
         elsif resource.type == Dnsruby::Types::AAAA
-          _create_entity(entity_type, { "name" => "#{resource.rdata}", "parsed_record_type" => "A"})
+          _create_entity(entity_type, { "name" => "#{resource.rdata}", "parsed_record_type" => "AAAA"}) if record_types.include?("AAAA") || record_types.include?("ANY")
 
         elsif resource.type == Dnsruby::Types::CNAME
-          _create_entity(entity_type, { "name" => "#{resource.rdata}", "parsed_record_type" => "CNAME"})
+          _create_entity(entity_type, { "name" => "#{resource.rdata}", "parsed_record_type" => "CNAME"}) if record_types.include?("CNAME") || record_types.include?("ANY")
 
         elsif resource.type == Dnsruby::Types::TXT
-          _create_entity("Info", { "name" => "TXT record for #{resource.name}", "data" => "#{resource.rdata}"})
+          if record_types.include?("TXT") || record_types.include?("ANY")
 
-          "#{resource.rdata}".split(" ").each do |x|
+            _create_entity("Info", { "name" => "TXT record for #{resource.name}", "data" => "#{resource.rdata}"})
 
-            _create_entity(entity_type, "name" => x.split(":").last ) if x =~ /^include:/
-            _create_entity("NetBlock", "name" => x.split(":").last ) if x =~ /^ip/
+            "#{resource.rdata}".split(" ").each do |x|
 
+              _create_entity(entity_type, "name" => x.split(":").last ) if x =~ /^include:/
+
+              # an ip:xxx entry could be a netblock, an ip or a dnsrecord. messy.
+              if x =~ /^ip/
+                y = x.split(":").last
+                if y.include? "/"
+                  _create_entity("NetBlock", "name" => y )
+                elsif y.is_ip_address?
+                  _create_entity("IpAddress", "name" => y )
+                else
+                  _create_entity("DnsRecord", "name" => y )
+                end
+              end
+
+            end
+
+          else
+            _create_entity("Info", { "name" => "#{resource.type} Record for #{name}", "type" => "#{resource.type}", "data" => "#{resource.rdata}" }) if  record_types.include?("ANY")
           end
-
-        else
-          _create_entity("Info", { "name" => "#{resource.type} Record for #{name}", "type" => "#{resource.type}", "data" => "#{resource.rdata}" })
         end
       }
 

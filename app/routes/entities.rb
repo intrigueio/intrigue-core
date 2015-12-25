@@ -2,6 +2,7 @@ class IntrigueApp < Sinatra::Base
   namespace '/v1' do
 
     get '/entities' do
+      @entities = Intrigue::Model::Entity.page(params[:page], :per_page => 100)
       erb :'entities/index'
     end
 

@@ -64,7 +64,7 @@ class UriDirbuster  < BaseTask
         missing_page_code = response.code
     end
 
-    puts "Missing Page Test: #{missing_page_test}"
+    @task_result.logger.log "Missing Page Test: #{missing_page_test}"
 
     brute_list = _get_option "brute_list"
     brute_list = brute_list.split(",") if brute_list.kind_of? String
@@ -81,6 +81,7 @@ class UriDirbuster  < BaseTask
 
       ## If we are able to guess based on the code, we're super lucky!
       if missing_page_test == :code
+        @task_result.logger.log "Checking if a missing page based on code"
 
         case response.code
           when "404"
@@ -108,9 +109,10 @@ class UriDirbuster  < BaseTask
       ## Otherwise, let's guess based on the content. Does this page look
       ## like a missing page?
       elsif missing_page_test == :content
+        @task_result.logger.log "checking if a missing page based on content"
 
-        if response.body == missing_page_content
-          @task_result.logger.log "#{request_uri} looks like a missing page"
+        if response.body[0..50] == missing_page_content[0..50]
+          @task_result.logger.log "#{request_uri} looks like a missing page based on the first 51 characters"
         elsif response.body.include? "404"
           @task_result.logger.log "Guessing #{request_uri} is a missing page based on it containing a string: 404"
         else

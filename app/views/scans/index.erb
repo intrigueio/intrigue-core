@@ -6,9 +6,10 @@
       <label for="scan_type" class="col-xs-4 control-label">Scan Type</label>
       <div class="col-xs-6">
       <select class="form-control input-sm" name="scan_type" id="scan_type">
+        <option value="discovery" selected="selected"> Discovery Scan </option>
+        <option value="dns_subdomain" > DNS Subdomain Scan </option>
         <option value="internal"> Internal Scan </option>
-        <option value="simple" selected="selected"> Simple Scan </option>
-        <option value="dns_subdomain" selected="selected"> DNS Subdomain Scan </option>
+        <option value="simple"> Simple Scan </option>
       </select>
       </div>
     </div>
@@ -47,9 +48,8 @@
   <div id="metadata" class="col-sm-7"></div>
 </div>
 <br/>
-<h4>Completed Scans</h4>
-<% @scan_results.each do |x| %>
+<h4> Scans </h4>
 <ul>
-<%= "<li><a href=\'/v1/scan_results/#{x.id}\'> (#{x.timestamp_end}) #{x.name} on #{x.base_entity.type_string if x.base_entity}##{ h x.base_entity.name if x.base_entity} (#{x.entity_count}) </a></li>"  if x %>
+  <% @scan_results.each do |x| %> <li><a href="/v1/scan_results/<%=x.id%>"><%= x.scan_type %> on <%= x.base_entity %> (<%=x.entity_count%>)</a></li><% end %>
 </ul>
-<% end %>
+<%= Intrigue::Model::ScanResult.page(params[:page]).pager.to_html('/v1/scan') %>

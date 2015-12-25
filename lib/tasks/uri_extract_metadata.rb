@@ -49,6 +49,7 @@ class UriExtractMetadata < BaseTask
       response.each_header do |name,value|
         _create_entity("HttpHeader", {
           "name" => "#{name}",
+          "uri" => "#{uri}",
           "content" => "#{value}" })
       end
     end

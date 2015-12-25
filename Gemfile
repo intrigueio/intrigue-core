@@ -4,16 +4,22 @@ gem 'sinatra' # API
 gem 'sinatra-contrib'
 
 gem 'puma' # Application Server
-gem 'sidekiq' # Background Tasks
 gem 'foreman' # Process management
 gem 'redis' # Redis access
 gem 'eventmachine'
+
+gem 'sidekiq' # Background Tasks
+gem 'sidekiq-failures'
+
 
 gem 'data_mapper'
 gem 'dm-pg-types'
 gem 'dm-postgres-adapter'
 gem 'dm-sqlite-adapter'
 gem 'dm-noisy-failures'
+gem 'dm-pager'
+
+gem 'elasticsearch'
 
 gem 'iconv' # Encoding
 gem 'rest-client' # Web hooks
