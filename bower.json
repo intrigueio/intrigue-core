@@ -5,6 +5,7 @@
   "dependencies": {
     "highlightjs": "~8.6.0",
     "jquery": "~2.1.4",
-    "bootstrap": "~3.3.5"
+    "bootstrap": "~3.3.5",
+    "datatables": "1.10.10"
   }
 }
