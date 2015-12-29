@@ -1,11 +1,20 @@
 <div id='content'></div>
 <script>
      function loadIt(){
-         $.getJSON(window.location + ".json",
-              function(data) {
-                  $('#content').html(JSON.stringify(data) + '<br/><br/>');
-              });
+
+        $.getJSON( window.location + ".json", function( data ) {
+          var items = [];
+          $.each( data , function( entities ) {
+              items.push( entities )
+          });
+
+        $( "<ul/>", {
+            "class": "list",
+            html: items.join( "" )
+          }).appendTo( "body" );
+        });
       }
-      setInterval(loadIt,10000);
+
+      //setInterval(loadIt,10000);
       loadIt();
 </script>

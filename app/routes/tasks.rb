@@ -36,9 +36,12 @@ class IntrigueApp < Sinatra::Base
       if entity_id
         entity = Intrigue::Model::Entity.get(entity_id)
       else
+        entity_type = @params["entity_type"]
+
+        # TODO - make sure we have a valid entity type first
+        klass = eval("Intrigue::Entity::#{entity_type}")
         entity = Intrigue::Model::Entity.create(
-        {
-          :type => "Intrigue::Entity::#{@params["entity_type"]}",
+        { :type => klass,
           :name => "#{@params["attrib_name"]}",
           :details => entity_details
         })
@@ -166,7 +169,7 @@ class IntrigueApp < Sinatra::Base
       # if we got it, and it's complete, return true
       return "true" if x.complete
 
-    # otherwise, not ready yet, return false
+    # Otherwise, not ready yet, return false
     false
     end
 

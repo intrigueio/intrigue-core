@@ -8,7 +8,7 @@ class SearchGoogleTask < BaseTask
       :authors => ["jcran"],
       :description => "This task hits the Google API and finds related content. Discovered domains are created",
       :references => [],
-      :allowed_types => ["*"],
+      :allowed_types => ["String","*"],
       :example_entities => [{"type" => "String", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
       :created_types => ["DnsRecord", "WebAccount","Uri"]
