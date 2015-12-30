@@ -1,7 +1,7 @@
 (function($) {
   "use strict";
 
-  function getTaskData() {
+  function prepTaskRunner() {
     // http://stackoverflow.com/questions/1420881/how-to-extract-base-url-from-a-string-in-javascript
     if (typeof location.origin === 'undefined') {
       location.origin = location.protocol + '//' + location.host;
@@ -12,31 +12,57 @@
       parseTasks(data);
     });
 
-    // get the specific task data
+    // get the specific task data and set the allowed entity types
     var form = $("form")[0]
     var task_name = form.task_name.value
     $.getJSON(location.origin + "/v1/tasks/" + task_name + ".json", function(data) {
-      parseEntities(data);
+      if (!(window.location.href.indexOf("entity_id=") > -1) && !(window.location.href.indexOf("task_result_id=") > -1) && !(window.location.href.indexOf("entities") > -1)) {
+        parseAllowedEntityTypes(data);
+      }
+    });
+
+    // get the specific task data and set the allowed entity types
+    var form = $("form")[0]
+    var attrib_name = form.attrib_name.value
+    $.getJSON(location.origin + "/v1/tasks/" + task_name + ".json", function(data) {
+      //alert(JSON.stringify(data["example_entities"][0]["attributes"]["name"]));
+      if (!(window.location.href.indexOf("entity_id=") > -1) && !(window.location.href.indexOf("task_result_id=") > -1) && !(window.location.href.indexOf("entities") > -1)) {
+        $('#attrib_name').attr("value",data["example_entities"][0]["attributes"]["name"]);
+        $('#entity_type').attr("value",data["example_entities"][0]["type"]);
+      }
     });
   }
 
   /* -------------------------------------------------------------------------- */
 
-    function parseEntities(task_hash) {
-      //var task_count = task_hash.length;
-      //console.log(JSON.stringify(task_hash))
-      //var form = $("form")[0]
-      //
+    function parseAllowedEntityTypes(task_hash) {
+      // Clear entity type
       $('#entity_type').empty()
 
-      $.each(task_hash["allowed_types"], function(key, value) {
-      $('#entity_type')
-         .append($("<option></option>")
-         .attr("value",value)
-         .text(value));
-      });
+      // Check to see if we have a *
+      if (task_hash["allowed_types"].indexOf("*") != -1) {
+        //alert("all entity types allowed")
 
-      $('#entity_name').text = "xys"
+        // get the full entity_types.json
+        $.getJSON(location.origin + "/v1/entity_types.json", function(data) {
+          $.each(data, function(key, value) {
+            $('#entity_type')
+               .append($("<option></option>")
+               .attr("value",value)
+               .text(value));
+            });
+        });
+
+      }
+      else {
+        // Set the values based on just this task's allowed type
+        $.each(task_hash["allowed_types"], function(key, value) {
+          $('#entity_type')
+             .append($("<option></option>")
+             .attr("value",value)
+             .text(value));
+          });
+      }
     }
 
   /* -------------------------------------------------------------------------- */
@@ -54,10 +80,11 @@
           entity_name = form.attrib_name.value;
 
           // if we don't have a set type
-          if (!location.search.split("entity_id=")[1] && !location.search.split("task_result_id=")[1] && !!location.search.split("entities")[1]) {
-            form.entity_type.value = value.example_entities[0].type;
-            form.attrib_name.value = value.example_entities[0].attributes.name;
-          }
+          //if (!window.location.href.indexOf("entity_id=")[1] && !window.location.href.indexOf("task_result_id=")[1] && !!window.location.href.indexOf("entities")[1]) {
+          //  form.entity_type.value = value.example_entities[0].type;
+          //  form.attrib_name.value = value.example_entities[0].attributes.name;
+          //}
+
           metadata.html(
             "<pre><code class='json'>" +
             JSON.stringify(value, null, 2) +
@@ -108,7 +135,6 @@
   }
 
   // Add onchange event to <select>
-  $("#task_name").on("change", getTaskData);
-
+  $("#task_name").on("change", prepTaskRunner);
 
 }(jQuery));

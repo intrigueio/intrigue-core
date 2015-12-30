@@ -3,12 +3,24 @@ class IntrigueApp < Sinatra::Base
 
   namespace '/v1/?' do
 
+    # Kick off a task
     get '/task/?' do
+      # if we receive an entity_id or a task_result_id, instanciate the object
+      if params["entity_id"]
+        @entity = Intrigue::Model::Entity.get params["entity_id"]
+      end
 
-      @entity = Intrigue::Model::Entity.get params["entity_id"] if params["entity_id"]
-      @task_result = Intrigue::Model::TaskResult.get params["task_result_id"] if params["task_result_id"]
+      # If we've been given a task result...
+      if params["task_result_id"]
+        @task_result = Intrigue::Model::TaskResult.get params["task_result_id"]
+        @entity = @task_result.base_entity
+      end
+
+      # Always get us a list of tasks and names so we can display them
       @tasks = Intrigue::TaskFactory.list.map{|x| x.send(:new)}
       @task_names = @tasks.map{|t| t.metadata[:pretty_name]}.sort
+
+      # get a list of task_results
       @task_results = Intrigue::Model::TaskResult.page(params[:page], :per_page => 10)
 
       erb :'tasks/index'

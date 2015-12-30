@@ -9,7 +9,7 @@ class SearchBingTask < BaseTask
       :authors => ["jcran"],
       :description => "This task hits the Bing API and finds related content. Discovered domains are created",
       :references => [],
-      :allowed_types => ["String", "*"],
+      :allowed_types => ["*"],
       :example_entities => [{"type" => "String", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "max_results", :type => "Integer", :regex => "integer", :default => 50 },
