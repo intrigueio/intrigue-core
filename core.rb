@@ -95,7 +95,6 @@ class IntrigueApp < Sinatra::Base
   ###
   ### Main Application
   ###
-
   get '/' do
     redirect '/v1/'
   end

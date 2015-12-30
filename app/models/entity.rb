@@ -45,21 +45,20 @@ module Intrigue
       end
 
       def form
-        %{
-        <!-- auto generated via entity model -->
-        <div class="form-group">
+         %{<div class="form-group">
           <label for="entity_type" class="col-xs-4 control-label">Entity Type</label>
           <div class="col-xs-6">
-            <input type="text" class="form-control input-sm" id="entity_type" name="entity_type" value="#{type_string}" readonly>
+            <select class="form-control input-sm" id="entity_type" name="entity_type">
+              <option> #{self.type_string} </option>
+            </select>
           </div>
         </div>
         <div class="form-group">
-          <label for="attrib_name" class="col-xs-4 control-label">Name</label>
+          <label for="attrib_name" class="col-xs-4 control-label">Entity Name</label>
           <div class="col-xs-6">
-            <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name" value="#{_escape_html @name}" readonly>
+            <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name" value="#{self.name}">
           </div>
-        </div>
-      }
+        </div>}
       end
 
       def self.descendants

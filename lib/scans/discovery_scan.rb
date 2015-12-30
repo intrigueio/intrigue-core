@@ -17,7 +17,6 @@ class DiscoveryScan < Intrigue::Scanner::Base
 
         ### DNS Forward Lookup
         _start_task_and_recurse "dns_lookup_forward",entity,depth, ["name" => "record_types", "value" => "A,AAAA,MX,NS,SOA,TXT"]
-
         ### DNS Subdomain Bruteforce
         _start_task_and_recurse "dns_brute_sub",entity,depth,[
           {"name" => "use_file", "value" => true },
@@ -29,10 +28,8 @@ class DiscoveryScan < Intrigue::Scanner::Base
 
         ### DNS Reverse Lookup
         _start_task_and_recurse "dns_lookup_reverse",entity,depth
-
         ### Whois
         _start_task_and_recurse "whois",entity,depth
-
         ### Scan
         _start_task_and_recurse "nmap_scan",entity,depth
 

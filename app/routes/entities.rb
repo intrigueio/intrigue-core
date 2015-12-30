@@ -1,6 +1,11 @@
 class IntrigueApp < Sinatra::Base
   namespace '/v1' do
 
+    # Return a JSON array of all entity type
+    get '/entity_types.json' do
+      Intrigue::Model::Entity.descendants.map {|x| x.new.type_string }.to_json
+    end
+
     get '/entities' do
       @entities = Intrigue::Model::Entity.page(params[:page], :per_page => 100)
       erb :'entities/index'

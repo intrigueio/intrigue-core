@@ -30,19 +30,17 @@ module Pipl
 
     def _get_uri(type, string)
 
-      sanitized_string = CGI::escape(string.gsub(" ","").gsub(".",""))
+      sanitized_string = string.gsub(" ","")
 
       if type == :email
         uri= "http://api.pipl.com/search/v4/?email=#{sanitized_string}&key=#{@api_key}"
       elsif type == :phone
         uri= "http://api.pipl.com/search/v4/?phone=#{sanitized_string}&key=#{@api_key}"
-      #elsif type == :name
-      #  uri= "http://api.pipl.com/search/v4/?name=#{sanitized_string}&key=#{@api_key}"
       else
         uri= "http://api.pipl.com/search/v4/?username=#{sanitized_string}&key=#{@api_key}"
       end
 
-      puts "URI: #{uri}"
+      puts "PIPL URI: #{uri}"
 
     return uri
     end
