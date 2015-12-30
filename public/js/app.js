@@ -15,22 +15,29 @@
     // get the specific task data and set the allowed entity types
     var form = $("form")[0]
     var task_name = form.task_name.value
-    $.getJSON(location.origin + "/v1/tasks/" + task_name + ".json", function(data) {
-      if (!(window.location.href.indexOf("entity_id=") > -1) && !(window.location.href.indexOf("task_result_id=") > -1) && !(window.location.href.indexOf("entities") > -1)) {
-        parseAllowedEntityTypes(data);
-      }
-    });
+    //$.getJSON(location.origin + "/v1/tasks/" + task_name + ".json", function(data) {
+    //  if (!(window.location.href.indexOf("entity_id=") > -1) && !(window.location.href.indexOf("task_result_id=") > -1) && !(window.location.href.indexOf("entities") > -1)) {
+    //  }
+    //});
 
     // get the specific task data and set the allowed entity types
     var form = $("form")[0]
     var attrib_name = form.attrib_name.value
     $.getJSON(location.origin + "/v1/tasks/" + task_name + ".json", function(data) {
-      //alert(JSON.stringify(data["example_entities"][0]["attributes"]["name"]));
+
       if (!(window.location.href.indexOf("entity_id=") > -1) && !(window.location.href.indexOf("task_result_id=") > -1) && !(window.location.href.indexOf("entities") > -1)) {
+        // This is a form that doesn't have an entity already filled out, let's provide an example
         $('#attrib_name').attr("value",data["example_entities"][0]["attributes"]["name"]);
         $('#entity_type').attr("value",data["example_entities"][0]["type"]);
+        parseAllowedEntityTypes(data);
+      }
+      else {
+            //Disabling form since we're on a pre-populated form
+            $('#attrib_name').attr('readonly', true);
+            $('#entity_type').attr('readonly', true);
       }
     });
+
   }
 
   /* -------------------------------------------------------------------------- */
@@ -41,8 +48,6 @@
 
       // Check to see if we have a *
       if (task_hash["allowed_types"].indexOf("*") != -1) {
-        //alert("all entity types allowed")
-
         // get the full entity_types.json
         $.getJSON(location.origin + "/v1/entity_types.json", function(data) {
           $.each(data, function(key, value) {
@@ -90,6 +95,7 @@
             JSON.stringify(value, null, 2) +
             "</code></pre>"
           );
+
           setOptions(value.allowed_options);
         }
       });
@@ -129,12 +135,18 @@
   function highlightCode() {
     $(document).ready(function() {
       $('pre code').each(function(i, block) {
-        hljs.highlightBlock(block);
+         hljs.highlightBlock(block);
       });
     });
   }
 
-  // Add onchange event to <select>
+  // Update the form on load
+  $("document").ready(
+  function() {
+    prepTaskRunner();
+  });
+
+  // Update the form on task change
   $("#task_name").on("change", prepTaskRunner);
 
 }(jQuery));
