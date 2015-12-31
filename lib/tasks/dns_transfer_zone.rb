@@ -88,9 +88,11 @@ class DnsTransferZoneTask < BaseTask
       rescue Errno::EHOSTUNREACH => e
         @task_result.logger.log_error "Unable to connect: (#{e})"
       rescue Errno::ECONNREFUSED => e
-       @task_result.logger.log_error "Unable to connect: (#{e})"
-     rescue Errno::ETIMEDOUT => e
-       @task_result.logger.log_error "Unable to connect: (#{e})"
+        @task_result.logger.log_error "Unable to connect: (#{e})"
+      rescue Errno::ECONNRESET => e
+        @task_result.logger.log_error "Unable to connect: (#{e})"
+      rescue Errno::ETIMEDOUT => e
+        @task_result.logger.log_error "Unable to connect: (#{e})"
       end # end begin
 
     end # end .each
