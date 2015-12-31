@@ -35,49 +35,36 @@ class DnsTransferZoneTask < BaseTask
 
         @task_result.logger.log "Attempting Zone Transfer on #{domain_name} against nameserver #{nameserver}"
 
-        #res = Dnsruby::Resolver.new(
-        #  :nameserver => nameserver,
-        #  :use_tcp => true,
-        #  :query_timeout => 20)
+        # Do the actual zone transfer
+        zt = Dnsruby::ZoneTransfer.new
+        zt.transfer_type = Dnsruby::Types.AXFR
+        zt.server = nameserver
+        zone = zt.transfer(domain_name)
 
-        #axfr_answer = res.query(domain_name, Dnsruby::Types.AXFR)
-        #ixfr_answer = res.query(domain_name, Dnsruby::Types.IXFR)
+        _create_entity "Info", {
+          "name" => "Zone Transfer",
+          "content" => "#{nameserver} -> #{domain_name}",
+          "details" => zone
+        }
 
-        #@task_result.logger.log "AXFR Response: #{axfr_answer.answer}" if axfr_answer
-        #@task_result.logger.log "IXFR Response: #{ixfr_answer.answer}" if ixfr_answer
+        # Create host records for each item in the zone
+        zone.each do |z|
+          if z.type == "A"
+            _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
+            _create_entity "IpAddress", { "name" => z.address.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
+          elsif z.type == "CNAME"
+            _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
+            _create_entity "DnsRecord", { "name" => z.rdata.to_s, "type" => z.type.to_s, "content" => "#{z.rdata}" }
+          elsif z.type == "NS"
+            _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
 
-        # If we got a success to the AXFR query.
-        #if axfr_answer.answer.length > 0
-
-          # Do the actual zone transfer
-          zt = Dnsruby::ZoneTransfer.new
-          zt.transfer_type = Dnsruby::Types.AXFR
-          zt.server = nameserver
-          zone = zt.transfer(domain_name)
-
-          _create_entity "Info", {
-            "name" => "Zone Transfer",
-            "content" => "#{nameserver} -> #{domain_name}",
-            "details" => zone
-          }
-
-          # Create host records for each item in the zone
-          zone.each do |z|
-            if z.type == "A"
-              _create_entity "IpAddress", { "name" => z.address.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
-              _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
-            elsif z.type == "CNAME"
-              _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
-              _create_entity "DnsRecord", { "name" => z.rdata.to_s, "type" => z.type.to_s, "content" => "#{z.rdata}" }
-            elsif z.type == "NS"
-              _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
-              # XXX - it's possible rdata could contain an IP address, we should check for this
-              _create_entity "DnsRecord", { "name" => z.rdata.to_s, "type" => z.type.to_s, "content" => "#{z.rdata}" }
-            else
-              _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
-            end
+            # XXX - it's possible rdata could contain an IP address, so check for this 
+            z.rdata.to_s.is_ip_address? ? type = "IpAddress" : type = "DnsRecord"
+            _create_entity type, { "name" => z.rdata.to_s, "type" => z.type.to_s, "content" => "#{z.rdata}" }
+          else
+            _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
           end
-        #end
+        end
 
       rescue Dnsruby::Refused => e
         @task_result.logger.log "Zone Transfer against #{domain_name} refused: #{e}"
@@ -94,9 +81,7 @@ class DnsTransferZoneTask < BaseTask
       rescue Errno::ETIMEDOUT => e
         @task_result.logger.log_error "Unable to connect: (#{e})"
       end # end begin
-
     end # end .each
-
   end # end run
 
 
