@@ -82,13 +82,15 @@ class DnsTransferZoneTask < BaseTask
       rescue Dnsruby::Refused => e
         @task_result.logger.log "Zone Transfer against #{domain_name} refused: #{e}"
       rescue Dnsruby::ResolvError => e
-        @task_result.logger.log_error "Unable to resolve #{domain_name} while querying #{nameserver}: #{e}"
+        @task_result.logger.log "Unable to resolve #{domain_name} while querying #{nameserver}: #{e}"
       rescue Dnsruby::ResolvTimeout =>  e
-        @task_result.logger.log_error "Timed out while querying #{nameserver} for #{domain_name}: #{e}"
-      #rescue Errno::EHOSTUNREACH => e
-      #  @task_result.logger.log_error "Unable to connect: (#{e})"
-      #rescue Errno::ECONNREFUSED => e
-      # @task_result.logger.log_error "Unable to connect: (#{e})"
+        @task_result.logger.log "Timed out while querying #{nameserver} for #{domain_name}: #{e}"
+      rescue Errno::EHOSTUNREACH => e
+        @task_result.logger.log_error "Unable to connect: (#{e})"
+      rescue Errno::ECONNREFUSED => e
+       @task_result.logger.log_error "Unable to connect: (#{e})"
+     rescue Errno::ETIMEDOUT => e
+       @task_result.logger.log_error "Unable to connect: (#{e})"
       end # end begin
 
     end # end .each
