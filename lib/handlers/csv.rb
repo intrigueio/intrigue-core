@@ -14,7 +14,6 @@ module Handler
           file.puts(result.export_csv)  # write it out
         end
       end
-
     end
 
   end

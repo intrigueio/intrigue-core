@@ -17,6 +17,6 @@ module Handler
         end
       end
     end
-
+  end
 end
 end
