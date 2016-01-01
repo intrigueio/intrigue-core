@@ -58,7 +58,7 @@ class DnsTransferZoneTask < BaseTask
           elsif z.type == "NS"
             _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
 
-            # XXX - it's possible rdata could contain an IP address, so check for this 
+            # XXX - it's possible rdata could contain an IP address, so check for this
             z.rdata.to_s.is_ip_address? ? type = "IpAddress" : type = "DnsRecord"
             _create_entity type, { "name" => z.rdata.to_s, "type" => z.type.to_s, "content" => "#{z.rdata}" }
           else
