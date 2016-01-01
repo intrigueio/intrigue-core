@@ -16,6 +16,16 @@ module Handler
         end
       end
 
+      def _lock(file)
+   	      begin
+            file.flock(File::LOCK_EX)
+   	        yield
+   	      ensure
+   	        file.flock(File::LOCK_UN)
+     	    end
+     	end
+
+=begin
       def _lock(path)
         # We need to check the file exists before we lock it.
         if File.exist?(path)
@@ -28,7 +38,8 @@ module Handler
         # Unlock the file.
         File.open(path).flock(File::LOCK_UN)
       end
-      
+=end
+
   end
 end
 end

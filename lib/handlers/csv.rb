@@ -7,13 +7,13 @@ module Handler
     end
 
     def process(task_result, options)
-      filename = "#{$intrigue_basedir}/results/#{task_result.task_name}.csv"
-
-      _lock(filename) do |file|
-        File.open(filename, "a") do |file|
-          file.puts(result.export_csv)  # write it out
+      shortname = "#{task_result.task_name}"
+      File.open("#{$intrigue_basedir}/results/#{shortname}.csv", "a") do |file|
+        _lock(file) do
+          file.puts(task_result.export_csv)  # write it out
         end
       end
+
     end
 
   end

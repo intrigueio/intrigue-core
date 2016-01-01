@@ -7,10 +7,10 @@ module Handler
     end
 
     def process(task_result, options)
-      filename = "#{$intrigue_basedir}/results/#{task_result.task_name}.bulk"
-        # Write it out
-      _lock(filename) do
-        File.open(filename, "a") do |file|
+      # Write it out
+      shortname = "#{task_result.task_name}"
+      File.open("#{$intrigue_basedir}/results/#{shortname}.bulk", "a") do |file|
+        _lock(file) do
           file.write("{ \"index\" : { \"_index\" : \"task_results\", \"_type\" : \"#{task_result.task_name}\", \"_id\" : \"#{task_result.id}\" } }\n")
           file.write(task_result.export_hash.to_json)
           file.write "\n"
