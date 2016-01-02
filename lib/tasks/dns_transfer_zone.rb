@@ -49,20 +49,14 @@ class DnsTransferZoneTask < BaseTask
 
         # Create host records for each item in the zone
         zone.each do |z|
-          if z.type == "A"
+          if z.type == "SOA"
             _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
-            _create_entity "IpAddress", { "name" => z.address.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
-          elsif z.type == "CNAME"
+          elsif z.type == "TXT"
             _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
-            _create_entity "DnsRecord", { "name" => z.rdata.to_s, "type" => z.type.to_s, "content" => "#{z.rdata}" }
-          elsif z.type == "NS"
-            _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
-
-            # XXX - it's possible rdata could contain an IP address, so check for this
-            z.rdata.to_s.is_ip_address? ? type = "IpAddress" : type = "DnsRecord"
-            _create_entity type, { "name" => z.rdata.to_s, "type" => z.type.to_s, "content" => "#{z.rdata}" }
           else
             _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
+            z.rdata.to_s.is_ip_address? ? type = "IpAddress" : type = "DnsRecord"
+            _create_entity , { "name" => z.rdata.to_s, "type" => z.type.to_s, "content" => "#{z.rdata}" }
           end
         end
 
