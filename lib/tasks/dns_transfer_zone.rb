@@ -24,9 +24,12 @@ class DnsTransferZoneTask < BaseTask
     domain_name = _get_entity_attribute "name"
 
     # Get the nameservers
-    authoritative_nameservers = Resolv::DNS.open do |dns|
-      records = dns.getresources(domain_name, Resolv::DNS::Resource::IN::NS)
-      records.empty? ? [] : records.map {|x| x.name.to_s}
+    authoritative_nameservers = []
+    Resolv::DNS.open do |dns|
+      resources = dns.getresources(domain_name, Resolv::DNS::Resource::IN::NS)
+      resources.each do |r|
+        dns.each_resource(r.name, Resolv::DNS::Resource::IN::A){ |x| authoritative_nameservers << x.address.to_s }
+      end
     end
 
     # For each authoritive nameserver
