@@ -250,7 +250,7 @@ class BaseTask
     # This is a helper method, use this to create entities from within tasks
     #
     def _create_entity(type, hash)
-      #@task_result.logger.log_good "Creating entity: #{type}, #{hash.inspect}"
+      @task_result.logger.log_good "Creating entity: #{type}, #{hash.inspect}"
 
       # Create the entity, validating the attributes
       entity = Intrigue::Model::Entity.create({
