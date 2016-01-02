@@ -57,13 +57,9 @@ class NetsvcFuzzRandom < BaseTask
 
     # Probe the port
     begin
-      Timeout.timeout(10) do
-        while true
-          s.puts "#{(0...50).map{ ('a'..'z').to_a[rand(26)] }.join}\n"
-        end
+      100.times do
+        s.puts "#{(0...50).map{ ('a'..'z').to_a[rand(26)] }.join}\n"
       end
-    rescue Timeout::Error
-      @task_result.logger.log "Timed out"
     rescue Errno::EPIPE
       @task_result.logger.log "Broken Pipe"
     rescue Errno::ECONNRESET
