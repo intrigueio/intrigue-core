@@ -5,12 +5,12 @@
     "editable" : "true",
     "comment" : "Generated at startup"
   },
-  "environment": {
+  "intrigue_environment": {
     "value": "development",
     "editable" : "true",
     "comment": "Intrigue's system enviroment"
   },
-  "handlers" : {
+  "intrigue_handlers" : {
     "elasticsearch" : {
       "username": "",
       "password": "",
