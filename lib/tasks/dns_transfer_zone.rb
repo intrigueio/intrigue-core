@@ -55,8 +55,8 @@ class DnsTransferZoneTask < BaseTask
             _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
           else
             _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
-            z.rdata.to_s.is_ip_address? ? type = "IpAddress" : type = "DnsRecord"
-            _create_entity , { "name" => z.rdata.to_s, "type" => z.type.to_s, "content" => "#{z.rdata}" }
+            z.rdata.to_s.is_ip_address? ? entity_type = "IpAddress" : entity_type = "DnsRecord"
+            _create_entity entity_type, { "name" => z.rdata.to_s, "type" => z.type.to_s, "content" => "#{z.rdata}" }
           end
         end
 
