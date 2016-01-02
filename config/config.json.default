@@ -5,6 +5,11 @@
     "editable" : "true",
     "comment" : "Generated at startup"
   },
+  "environment": {
+    "value": "development",
+    "editable" : "true",
+    "comment": "Intrigue's system enviroment"
+  },
   "handlers" : {
     "elasticsearch" : {
       "username": "",
