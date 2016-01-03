@@ -13,7 +13,7 @@ class WhoisTask < BaseTask
       :authors => ["jcran"],
       :description => "Perform a whois lookup for a given entity",
       :references => [],
-      :allowed_types => ["DnsRecord", "IpAddress"],
+      :allowed_types => ["DnsRecord", "IpAddress","NetBlock"],
       :example_entities => [
         {"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}},
         {"type" => "IpAddress", "attributes" => {"name" => "192.0.78.13"}},
