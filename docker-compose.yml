@@ -1,0 +1,20 @@
+db:
+  image: postgres
+  ports:
+    - "27018"
+
+redis:
+  image: redis
+  expose:
+    - "5432"
+    - "6379"
+
+web:
+  build: .
+  ports:
+    - "127.0.0.1:7777:7777"
+  links:
+    - redis
+  volumes:
+    - ./public/screenshots:/app/public/screenshots
+    - ./db_tmp/:/tmp/
