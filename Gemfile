@@ -6,6 +6,7 @@ gem 'sinatra-contrib'
 gem 'puma' # Application Server
 gem 'foreman' # Process management
 gem 'redis' # Redis access
+gem 'redis-namespace'
 gem 'eventmachine'
 
 gem 'sidekiq' # Background Tasks
