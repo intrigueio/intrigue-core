@@ -32,7 +32,7 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
-    addressable (2.3.8)
+    addressable (2.4.0)
     backports (3.6.7)
     bcrypt (3.1.10)
     bcrypt-ruby (3.1.5)
@@ -175,7 +175,7 @@ GEM
     naught (1.1.0)
     net-dns (0.8.0)
     netrc (0.11.0)
-    nokogiri (1.6.7)
+    nokogiri (1.6.7.1)
       mini_portile2 (~> 2.0.0.rc2)
     oauth (0.4.7)
     phantomjs (1.9.8.0)
@@ -257,7 +257,7 @@ GEM
       unf_ext
     unf_ext (0.0.7.1)
     uuidtools (2.1.5)
-    whois (3.6.3)
+    whois (3.6.5)
       activesupport (>= 3)
     yomu (0.2.4)
       json (~> 1.8)
@@ -307,4 +307,4 @@ DEPENDENCIES
   yomu
 
 BUNDLED WITH
-   1.10.6
+   1.11.2

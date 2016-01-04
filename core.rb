@@ -64,6 +64,7 @@ class IntrigueApp < Sinatra::Base
   set :views, "#{$intrigue_basedir}/app/views"
   set :public_folder, 'public'
 
+<<<<<<< HEAD
   #Setup redis for resque
   $intrigue_redis = Redis.new(url: 'redis://redis:6379', namespace: 'intrigue')
 
@@ -76,10 +77,19 @@ class IntrigueApp < Sinatra::Base
     config.redis = { url: 'redis://redis:6379', namespace: 'intrigue' }
   end
 
-  DataMapper::Logger.new($stdout, :debug)
+  ##  Set up Database
+  DataMapper::Logger.new($stdout, :warn)
+
+  # Get the database environment from our intrigue config
+  database_environment = "#{$intrigue_config["intrigue_environment"]["value"]}"
+  puts "Intrigue-core database environment: #{database_environment}"
+
+  # Pull out the database config
   database_config = YAML.load_file("#{$intrigue_basedir}/config/database.yml")
-  DataMapper.setup(:default, database_config["production"])
-  #DataMapper.setup(:default, 'sqlite:///tmp/intrigue.db')
+  exit unless database_config[database_environment]
+
+  # Run our setup with the correct enviroment
+  DataMapper.setup(:default, database_config[database_environment])
   DataMapper::Property::String.length(255)
 
   ###
@@ -107,7 +117,6 @@ class IntrigueApp < Sinatra::Base
   ###
   ### Main Application
   ###
-
   get '/' do
     redirect '/v1/'
   end

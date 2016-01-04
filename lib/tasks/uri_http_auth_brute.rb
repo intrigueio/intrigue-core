@@ -38,9 +38,6 @@ class UriHttpAuthBrute < BaseTask
 
       # Otherwise, continue on, and check each cred (See list in Intrigue::Task::Lists)
       simple_web_creds.each do |cred|
-
-       Timeout::timeout(10) do
-
         response = http_get_auth_resource(uri,cred["username"],cred["password"],10)
 
         case response
@@ -52,13 +49,7 @@ class UriHttpAuthBrute < BaseTask
           else
             @task_result.logger.log "Got response #{response.inspect} on #{uri}"
         end
-
-      end # end timeout
-    end #end creds
-   #rescue
-   #  @task_result.logger.log_error "Connection Failed: #{uri}"
-   #rescue Timeout::Error
-   #  @task_result.logger.log_error "Unable to connect: #{uri}"
+      end #end creds
    end
  end
 

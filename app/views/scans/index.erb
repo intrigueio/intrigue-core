@@ -52,4 +52,4 @@
 <ul>
   <% @scan_results.each do |x| %> <li><a href="/v1/scan_results/<%=x.id%>"><%= x.scan_type %> on <%= x.base_entity %> (<%=x.entity_count%>)</a></li><% end %>
 </ul>
-<%= Intrigue::Model::ScanResult.page(params[:page]).pager.to_html('/v1/scan') %>
+<%= Intrigue::Model::TaskResult.page(params[:page], :per_page => 10).pager.to_html('/v1/task') %>

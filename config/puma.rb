@@ -40,7 +40,8 @@ daemonize false
 
 # Store the pid of the server in the file at "path".
 #
-# pidfile '/u/apps/lolcat/tmp/pids/puma.pid'
+cwd = File.expand_path(File.dirname(__FILE__) + "/..")
+pidfile "#{cwd}/tmp/pids/intrigue-puma.pid"
 
 # Use "path" as the file to store the server info state. This is
 # used by "pumactl" to query and control the server.

@@ -1,6 +1,6 @@
 <ul>
   <% @entities.each do |x| %>
-    <li><%= x %></li>
+    <li><a href="/v1/entities/<%=x.id%>"><%= x %></a></li>
   <% end %>
 </ul>
 

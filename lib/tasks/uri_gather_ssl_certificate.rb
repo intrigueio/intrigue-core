@@ -32,53 +32,50 @@ class UriGatherSslCertTask  < BaseTask
     port = 443
 
     begin
-      Timeout.timeout(20) do
-        # Create a socket and connect
-        tcp_client = TCPSocket.new hostname, port
-        ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
+      # Create a socket and connect
+      tcp_client = TCPSocket.new hostname, port
+      ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
 
-        # Grab the cert
-        ssl_client.connect
+      # Grab the cert
+      ssl_client.connect
 
-        # Parse the cert
-        cert = OpenSSL::X509::Certificate.new(ssl_client.peer_cert)
+      # Parse the cert
+      cert = OpenSSL::X509::Certificate.new(ssl_client.peer_cert)
 
-        # Check the subjectAltName property, and if we have names, here, parse them.
-        cert.extensions.each do |ext|
-          if ext.oid =~ /subjectAltName/
+      # Check the subjectAltName property, and if we have names, here, parse them.
+      cert.extensions.each do |ext|
+        if ext.oid =~ /subjectAltName/
 
-            alt_names = ext.value.split(",").collect do |x|
-              x.gsub(/DNS:/,"").strip
-            end
-
-            alt_names.each do |alt_name|
-
-              if alt_name =~ /cloudflare.com$/
-                @task_result.logger.log "This is a cloudflare certificate, skipping further entity creation"
-                return
-              end
-
-              if alt_name =~ /distilnetworks.com$/
-                @task_result.logger.log "This is a distil networks certificate, skipping further entity creation"
-                return
-              end
-
-              _create_entity "DnsRecord", { "name" => alt_name }
-            end
-
+          alt_names = ext.value.split(",").collect do |x|
+            x.gsub(/DNS:/,"").strip
           end
+
+          alt_names.each do |alt_name|
+
+            if alt_name =~ /cloudflare.com$/
+              @task_result.logger.log "This is a cloudflare certificate, skipping further entity creation"
+              return
+            end
+
+            if alt_name =~ /distilnetworks.com$/
+              @task_result.logger.log "This is a distil networks certificate, skipping further entity creation"
+              return
+            end
+
+            _create_entity "DnsRecord", { "name" => alt_name }
+          end
+
         end
-
-        # Close the sockets
-        ssl_client.sysclose
-        tcp_client.close
-
-        # Create an SSL Certificate entity
-        _create_entity "SslCertificate", {  "name" => "#{cert.subject}",
-                                            "text" => "#{cert.to_text}" }
       end
-    rescue Timeout::Error
-      @task_result.logger.log "Timed out"
+
+      # Close the sockets
+      ssl_client.sysclose
+      tcp_client.close
+
+      # Create an SSL Certificate entity
+      _create_entity "SslCertificate", {  "name" => "#{cert.subject}",
+                                          "text" => "#{cert.to_text}" }
+
     rescue OpenSSL::SSL::SSLError => e
       @task_result.logger.log_error "Caught an error: #{e}"
     rescue Errno::ECONNRESET => e

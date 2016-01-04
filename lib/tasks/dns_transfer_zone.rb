@@ -1,5 +1,5 @@
 require 'dnsruby'
-require 'whois'
+
 module Intrigue
 class DnsTransferZoneTask < BaseTask
 
@@ -13,113 +13,74 @@ class DnsTransferZoneTask < BaseTask
       :example_entities => [
         {"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}
       ],
-      :allowed_options => [
-        {:name => "resolver", :type => "String", :regex => "ip_address", :default => "208.67.222.222" }
-      ],
-      :created_types => ["DnsRecord","Finding","IpAddress"]
+      :allowed_options => [ ],
+      :created_types => ["DnsRecord","Info","IpAddress"]
     }
   end
 
   def run
     super
 
-    resolver = _get_option "resolver"
     domain_name = _get_entity_attribute "name"
 
-    authoritative_nameservers = ["#{resolver}"]
-
-    # Get the authoritative nameservers & query each of them
-    begin
-      timeout(20) do
-        answer = Whois::Client.new.lookup(domain_name)
-        resolved_list = nil
-        if answer.nameservers
-          answer.nameservers.map {|x| authoritative_nameservers << x }
-        else
-          @task_result.logger.log_error "Unknown nameservers for this domain, using #{authoritative_nameservers}"
-        end
+    # Get the nameservers
+    authoritative_nameservers = []
+    Resolv::DNS.open do |dns|
+      resources = dns.getresources(domain_name, Resolv::DNS::Resource::IN::NS)
+      resources.each do |r|
+        dns.each_resource(r.name, Resolv::DNS::Resource::IN::A){ |x| authoritative_nameservers << x.address.to_s }
       end
-    rescue Whois::ConnectionError => e
-      @task_result.logger.log_warning "Unable to gather whois information (#{e}), using #{authoritative_nameservers}"
-    rescue Whois::WebInterfaceError => e
-      @task_result.logger.log_warning "Unable to gather whois information (#{e}), using #{authoritative_nameservers}"
-    rescue Timeout::Error
-      @task_result.logger.log_error "Execution Timed out waiting for an answer from nameserver for #{domain_name}"
-    #rescue Exception => e
-    #  @task_result.logger.log "Error querying whois: #{e}"
     end
 
     # For each authoritive nameserver
     authoritative_nameservers.each do |nameserver|
       begin
 
-        timeout(600) do
+        @task_result.logger.log "Attempting Zone Transfer on #{domain_name} against nameserver #{nameserver}"
 
-          @task_result.logger.log "Attempting Zone Transfer on #{domain_name} against nameserver #{nameserver}"
+        # Do the actual zone transfer
+        zt = Dnsruby::ZoneTransfer.new
+        zt.transfer_type = Dnsruby::Types.AXFR
+        zt.server = nameserver
+        zone = zt.transfer(domain_name)
 
-          res = Dnsruby::Resolver.new(
-            :nameserver => nameserver.to_s,
-            :recurse => true,
-            :use_tcp => true,
-            :query_timeout => 20)
+        _create_entity "Info", {
+          "name" => "Zone Transfer",
+          "content" => "#{nameserver} -> #{domain_name}",
+          "details" => zone
+        }
 
-          axfr_answer = res.query(domain_name, Dnsruby::Types.AXFR)
-          ixfr_answer = res.query(domain_name, Dnsruby::Types.IXFR)
-
-          @task_result.logger.log_good "AXFR FOUND" if axfr_answer
-          @task_result.logger.log_good "IXFR FOUND" if ixfr_answer
-
-          # If we got a success to the AXFR query.
-          if axfr_answer
-
-            # Do the actual zone transfer
-            zt = Dnsruby::ZoneTransfer.new
-            zt.transfer_type = Dnsruby::Types.AXFR
-            zt.server = nameserver
-            zone = zt.transfer(domain_name)
-
-            _create_entity "Info", {
-              "name" => "Zone Transfer",
-              "content" => "#{nameserver} -> #{domain_name}",
-              "details" => zone
-            }
-
-            # Create host records for each item in the zone
-            zone.each do |z|
-              if z.type == "A"
-                _create_entity "IpAddress", { "name" => z.address.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
-                _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
-              elsif z.type == "CNAME"
-                _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
-                _create_entity "DnsRecord", { "name" => z.rdata.to_s, "type" => z.type.to_s, "content" => "#{z.rdata}" }
-              elsif z.type == "NS"
-                _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
-                # XXX - it's possible rdata could contain an IP address, we should check for this
-                _create_entity "DnsRecord", { "name" => z.rdata.to_s, "type" => z.type.to_s, "content" => "#{z.rdata}" }
-              else
-                _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
-              end
-            end
-            # Record keeping
-            @task_result.logger.log_good "Zone Tranfer Succeeded on #{domain_name}"
+        # Create host records for each item in the zone
+        zone.each do |z|
+          if z.type == "SOA"
+            _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
+          elsif z.type == "TXT"
+            _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
+          else
+            _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
+            z.rdata.to_s.is_ip_address? ? entity_type = "IpAddress" : entity_type = "DnsRecord"
+            _create_entity entity_type, { "name" => z.rdata.to_s, "type" => z.type.to_s, "content" => "#{z.rdata}" }
           end
         end
 
-      rescue Timeout::Error => e
-        @task_result.logger.log_error "Task Execution Timed out: #{e}"
       rescue Dnsruby::Refused => e
         @task_result.logger.log "Zone Transfer against #{domain_name} refused: #{e}"
       rescue Dnsruby::ResolvError => e
-        @task_result.logger.log_error "Unable to resolve #{domain_name} while querying #{nameserver}: #{e}"
+        @task_result.logger.log "Unable to resolve #{domain_name} while querying #{nameserver}: #{e}"
       rescue Dnsruby::ResolvTimeout =>  e
-        @task_result.logger.log_error "Timed out while querying #{nameserver} for #{domain_name}: #{e}"
+        @task_result.logger.log "Timed out while querying #{nameserver} for #{domain_name}: #{e}"
       rescue Errno::EHOSTUNREACH => e
         @task_result.logger.log_error "Unable to connect: (#{e})"
       rescue Errno::ECONNREFUSED => e
-       @task_result.logger.log_error "Unable to connect: (#{e})"
-      end
-    end
-  end
+        @task_result.logger.log_error "Unable to connect: (#{e})"
+      rescue Errno::ECONNRESET => e
+        @task_result.logger.log_error "Unable to connect: (#{e})"
+      rescue Errno::ETIMEDOUT => e
+        @task_result.logger.log_error "Unable to connect: (#{e})"
+      end # end begin
+    end # end .each
+  end # end run
+
 
 
 end

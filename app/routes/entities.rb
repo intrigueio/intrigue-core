@@ -1,8 +1,18 @@
 class IntrigueApp < Sinatra::Base
   namespace '/v1' do
 
+    # Return a JSON array of all entity type
+    get '/entity_types.json' do
+      Intrigue::Model::Entity.descendants.map {|x| x.new.type_string }.to_json
+    end
+
     get '/entities' do
-      @entities = Intrigue::Model::Entity.page(params[:page], :per_page => 100)
+      if params[:type]
+        entity_type = eval "Intrigue::Entity::#{params[:type]}"
+        @entities = Intrigue::Model::Entity.all(:type.like => entity_type).page(params[:page], :per_page => 100)
+      else
+        @entities = Intrigue::Model::Entity.page(params[:page], :per_page => 100)
+      end
       erb :'entities/index'
     end
 

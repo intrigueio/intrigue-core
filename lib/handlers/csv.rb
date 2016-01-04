@@ -6,17 +6,14 @@ module Handler
       "csv"
     end
 
-    def process(result, options)
-      begin
-        csv_file = "#{$intrigue_basedir}/results/results.csv"
-        File.open(csv_file, "a+") do |file|
-          file.flock(File::LOCK_EX)
-          file.puts( result.export_csv)  # write it out
+    def process(task_result, options)
+      shortname = "#{task_result.task_name}"
+      File.open("#{$intrigue_basedir}/results/#{shortname}.csv", "a") do |file|
+        _lock(file) do
+          file.puts(task_result.export_csv)  # write it out
         end
-      rescue Errno::EACCES
-        return false
       end
-    true
+
     end
 
   end

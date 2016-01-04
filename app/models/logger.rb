@@ -4,7 +4,7 @@ module Intrigue
       include DataMapper::Resource
 
       property :id, Serial
-      property :full_log, Text, :length => 5000000, :default =>""
+      property :full_log, Text, :length => 50000000, :default =>""
 
       def log(message)
         _log "[ ] #{@name}: " << message
