@@ -64,7 +64,6 @@ class IntrigueApp < Sinatra::Base
   set :views, "#{$intrigue_basedir}/app/views"
   set :public_folder, 'public'
 
-<<<<<<< HEAD
   #Setup redis for resque
   $intrigue_redis = Redis.new(url: 'redis://redis:6379', namespace: 'intrigue')
 
