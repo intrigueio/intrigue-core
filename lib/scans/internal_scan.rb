@@ -4,8 +4,9 @@ module Intrigue
 
     private
 
+    ###
     ### Main "workflow" function
-    #
+    ###
     def _recurse(entity, depth)
 
       if depth <= 0 # Check for bottom of recursion
