@@ -68,12 +68,14 @@ task :migrate => :setup do
       return
     end
 
+    Dir["#{intrigue_basedir}/app/models/*.rb"].each { |file| require_relative file }
+
     # Run our setup with the correct enviroment
+    DataMapper::Logger.new($stdout, :debug)
     DataMapper.setup(:default, database_config[database_environment])
-    puts "Migrating... Success"
     DataMapper.auto_migrate!
   rescue Exception => e
-    puts "Error... Unable to migrate"
+    puts "Error... Unable to migrate: #{e}"
   end
 end
 
