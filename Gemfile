@@ -43,10 +43,10 @@ gem 'geoip'             # geolocate_host
 gem 'shodan'            # search_shodan
 gem 'ruby-nmap'         # nmap_scan
 gem 'screencap', :git => 'https://github.com/intrigueio/screencap.git'
-gem 'twitter'           # twitter_account_following, etc
+#gem 'twitter'           # twitter_account_following, etc
 gem 'arachnid', :git => 'https://github.com/intrigueio/arachnid.git' #:path => "/Users/jcran/work/intrigue/projects/arachnid"
 gem 'yomu'              # web spider
-gem 'gmail'        # email_bounceback
+gem 'gmail'             # email_bounceback
 #gem 'rex'              # metasploit rex library
 
 # CLI
