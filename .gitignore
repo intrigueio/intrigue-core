@@ -14,3 +14,4 @@ tmp/.gitignore
 tmp/
 log/intrigue-sidekiq.log
 lib/tasks_disabled
+lib/tasks/survey
