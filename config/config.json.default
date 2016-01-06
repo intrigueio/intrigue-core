@@ -1,10 +1,4 @@
 {
-  "intrigue_engine_id" : {
-    "value" : "XXX",
-    "uri": "http://intrigue.io",
-    "editable" : "true",
-    "comment" : "Generated at startup"
-  },
   "intrigue_environment": {
     "value": "development",
     "editable" : "true",
