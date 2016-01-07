@@ -2,6 +2,8 @@ db:
   image: postgres
   ports:
     - "27018"
+  environment:
+    - POSTGRES_DB=intrigue_prod
 
 redis:
   image: redis

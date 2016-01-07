@@ -66,7 +66,7 @@ class IntrigueApp < Sinatra::Base
   DataMapper::Logger.new($stdout, :warn)
 
   # Get the database environment from our intrigue config
-  database_environment = "#{$intrigue_config["intrigue_environment"]["value"]}"
+  database_environment = ENV.fetch('INTRIGUE_ENV', "#{$intrigue_config["intrigue_environment"]["value"]}")
   puts "Intrigue-core database environment: #{database_environment}"
 
   # Pull out the database config
