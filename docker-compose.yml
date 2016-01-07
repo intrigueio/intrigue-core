@@ -17,6 +17,12 @@ web:
     - "127.0.0.1:7777:7777"
   links:
     - redis
+    - db
   volumes:
     - ./public/screenshots:/app/public/screenshots
-    - ./db_tmp/:/tmp/
+    # replace /tmp with host folder so we can mess with the sqlite db, if needed
+    - ./intrigue_tmp/:/tmp/
+    # for easy development, mount project root at /app so we don't need to rebuild for every change
+    - .:/app
+  environment:
+    - INTRIGUE_ENV=production
