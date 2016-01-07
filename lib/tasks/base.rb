@@ -2,7 +2,7 @@ require 'timeout'
 
 module Intrigue
 class BaseTask
-  include Sidekiq::Worker
+  include Sidekiq::Workercor
   sidekiq_options :queue => :task
 
   def self.inherited(base)
