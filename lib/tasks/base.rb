@@ -281,7 +281,7 @@ class BaseTask
 
     def _get_global_config(key)
       begin
-        $intrigue_config[key]["value"]
+        $intrigue_config["intrigue_global_module_config"][key]["value"]
       rescue NoMethodError => e
         puts "Error, invalid config key requested (#{key}) #{e}"
       end
