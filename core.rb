@@ -93,9 +93,7 @@ class IntrigueApp < Sinatra::Base
 
     # Main Page
     get '/?' do
-      @stats = Sidekiq::Stats.new
-      @workers = Sidekiq::Workers.new
-      erb :index
+      erb :news
     end
 
     # NEWS!
