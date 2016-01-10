@@ -4,7 +4,7 @@ class DiscoveryScan < Intrigue::Scanner::Base
 
     private
 
-    ### 
+    ###
     ### Main "workflow" function
     ###
     def _recurse(entity, depth)
@@ -17,7 +17,7 @@ class DiscoveryScan < Intrigue::Scanner::Base
       if entity.type_string == "DnsRecord"
 
         ### DNS Forward Lookup
-        _start_task_and_recurse "dns_lookup_forward",entity,depth, ["name" => "record_types", "value" => "A,AAAA,MX,NS,SOA,TXT"]
+        _start_task_and_recurse "dns_lookup_forward",entity,depth, ["name" => "record_types", "value" => "A,AAAA"]
         ### DNS Subdomain Bruteforce
         _start_task_and_recurse "dns_brute_sub",entity,depth,[
           {"name" => "use_file", "value" => true },
