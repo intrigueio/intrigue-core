@@ -7,7 +7,7 @@
   <% next unless v["editable"] %>
   <tr>
     <td><a target="_blank" href=<%=v["uri"]%>><%= k %></a>:</td>
-    <td><input class="form-control" style="width:400px" type="text" name="<%=k%>" value="<%=v["value"]%>"></td>
+    <td><input class="form-control" style="width:400px" type="text" name="<%=k%>" value="<%="**********#{v["value"][-3..-1]}"%>"></td>
     <td><%= v["comment"] %></td>
   </tr>
   <% end %>
