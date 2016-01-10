@@ -118,7 +118,7 @@ module Parse
     # Scan for email addresses
     addrs = content.scan(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,8}/)
     addrs.each do |addr|
-      x = _create_entity("EmailAddress", {"name" => addr, "uri" => source_uri})
+      x = _create_entity("EmailAddress", {"name" => addr, "uri" => source_uri}) unless addr =~ /.png$|.jpg$|.gif$|.bmp$|.jpeg$/
     end
 
     # Scan for dns records

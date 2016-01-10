@@ -68,7 +68,7 @@ class BaseTask
             @task_result.logger.log_good "Run complete. Ship it!"
           end
         rescue Timeout::Error
-          @task_result.logger.log_error "ERROR! Timed out"
+          @task_result.logger.log_error "Timed out"
         end
       else
         @task_result.logger.log_error "Setup failed, bailing out!"
@@ -154,7 +154,7 @@ class BaseTask
               regex = /^(\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*)|((\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3}))$/
             else
               @task_result.logger.log_error "Unspecified regex for this option #{allowed_option[:name]}"
-              @task_result.logger.log_error "FATAL! Unable to continue!"
+              @task_result.logger.log_error "Unable to continue, failing!"
               return nil
             end
 
@@ -162,7 +162,7 @@ class BaseTask
             unless regex.match "#{user_option["value"]}"
               @task_result.logger.log_error "Regex didn't match"
               @task_result.logger.log_error "Option #{user_option["name"]} does not match regex: #{regex.to_s} (#{user_option["value"]})!"
-              @task_result.logger.log_error "FATAL! Regex didn't match, failing!"
+              @task_result.logger.log_error "Regex didn't match, failing!"
               return nil
             end
 
@@ -194,7 +194,7 @@ class BaseTask
               user_option["value"] = user_option["value"].to_bool if user_option["value"].kind_of? String
             else
               # throw an error, we likely have a string we don't know how to cast
-              @task_result.logger.log_error "FATAL! Don't know how to handle this option when it's given to us as a string."
+              @task_result.logger.log_error "Don't know how to handle this option when it's given to us as a string, failing!"
               return nil
             end
 
