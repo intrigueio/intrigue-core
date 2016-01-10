@@ -2,10 +2,10 @@ module Intrigue
 module Scanner
   class Base
     include Sidekiq::Worker
-    sidekiq_options :queue => :scan
+    sidekiq_options :queue => $intrigue_config["intrigue_background_processing_queues"]["scan_queue"], :backtrace => true
 
     include Intrigue::Task::Helper
-    
+
     def perform(id)
       @scan_result = Intrigue::Model::ScanResult.get(id)
       return unless @scan_result

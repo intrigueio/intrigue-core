@@ -12,6 +12,10 @@
       "hostname" : ""
     }
   },
+  "intrigue_background_processing_queues": {
+   "task_queue": "task",
+   "scan_queue": "scan"
+  },
   "intrigue_global_module_config": {
     "bing_api_key" : {
       "value" : "XXX",

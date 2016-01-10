@@ -3,7 +3,7 @@ require 'timeout'
 module Intrigue
 class BaseTask
   include Sidekiq::Worker
-  sidekiq_options :queue => :task
+  sidekiq_options :queue => $intrigue_config["intrigue_background_processing_queues"]["task_queue"], :backtrace => true
 
   def self.inherited(base)
     TaskFactory.register(base)
