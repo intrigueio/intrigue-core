@@ -3,7 +3,7 @@ Entity Details:
 
 Scans that created this entity:
 <ul>
-<%= out = ""; @entity.scan_results.each {|x| out << "<li><a href='/v1/task_results/#{x.id}'>#{x.name} (#{x.base_entity})</a></li>" }; out %>
+<%= out = ""; @entity.scan_results.each {|x| out << "<li><a href='/v1/scan_results/#{x.id}'>#{x.name} (#{x.base_entity})</a></li>" }; out %>
 </ul>
 <br/>
 <br/>
