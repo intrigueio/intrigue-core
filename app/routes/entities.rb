@@ -9,9 +9,9 @@ class IntrigueApp < Sinatra::Base
     get '/entities' do
       if params[:type]
         entity_type = eval "Intrigue::Entity::#{params[:type]}"
-        @entities = Intrigue::Model::Entity.all(:type.like => entity_type).page(params[:page], :per_page => 100)
+        @entities = Intrigue::Model::Entity.all(:type.like => entity_type).page(params[:page])
       else
-        @entities = Intrigue::Model::Entity.page(params[:page], :per_page => 100)
+        @entities = Intrigue::Model::Entity.page(params[:page])
       end
       erb :'entities/index'
     end
