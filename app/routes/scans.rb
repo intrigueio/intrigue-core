@@ -3,7 +3,7 @@ class IntrigueApp < Sinatra::Base
 
   # Scan Webform
   get '/scan/?' do
-    @scan_results = Intrigue::Model::ScanResult.page(params[:page], :per_page => 100)
+    @scan_results = Intrigue::Model::ScanResult.page(params[:page])
     erb :'scans/index'
   end
 
