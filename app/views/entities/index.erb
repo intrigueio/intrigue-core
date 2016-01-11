@@ -4,4 +4,4 @@
   <% end %>
 </ul>
 
-<%= Intrigue::Model::Entity.page(params[:page]).pager.to_html('/v1/entities') %>
+<%= @entities.pager.to_html('/v1/entities') %>
