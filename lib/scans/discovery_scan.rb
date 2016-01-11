@@ -116,7 +116,7 @@ class DiscoveryScan < Intrigue::Scanner::Base
         entity.name =~ /w3.org/             ||
         entity.name =~ /akamai/             ||
         entity.name =~ /akamaitechnologies/ ||
-        entity.name =~ /amazonaws/          ||
+        entity.name =~ /amazonaws.com/      ||
         entity.name =~ /purl.org/           ||
         entity.name =~ /oclc.org/           ||
         entity.name =~ /youtube.com/        ||
