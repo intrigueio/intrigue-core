@@ -5,7 +5,7 @@ module Intrigue
 
       property :id,       Serial
       property :type,     Discriminator
-      property :name,     Text
+      property :name,     String, :length => 200
       property :details,  Object, :default => {} #Text, :length => 100000
 
       belongs_to :project, :default => lambda { |r, p| Project.first }
