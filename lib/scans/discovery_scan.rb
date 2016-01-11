@@ -72,6 +72,39 @@ class DiscoveryScan < Intrigue::Scanner::Base
           return true
         end
       end
+
+      # Standard exclusions
+      if (
+        entity.name =~ /google.com/         ||
+        entity.name =~ /goo.gl/             ||
+        entity.name =~ /android/            ||
+        entity.name =~ /urchin/             ||
+        entity.name =~ /schema.org/         ||
+        entity.name =~ /microsoft.com/      ||
+        entity.name =~ /facebook.com/       ||
+        entity.name =~ /cloudfront.net/     ||
+        entity.name =~ /twitter.com/        ||
+        entity.name =~ /w3.org/             ||
+        entity.name =~ /akamai/             ||
+        entity.name =~ /akamaitechnologies/ ||
+        entity.name =~ /amazonaws/          ||
+        entity.name =~ /purl.org/           ||
+        entity.name =~ /oclc.org/           ||
+        entity.name =~ /youtube.com/        ||
+        entity.name =~ /xmlns.com/          ||
+        entity.name =~ /ogp.me/             ||
+        entity.name =~ /rdfs.org/           ||
+        entity.name =~ /drupal.org/         ||
+        entity.name =~ /plus.google.com/    ||
+        entity.name =~ /instagram.com/      ||
+        entity.name =~ /zepheira.com/       ||
+        entity.name =~ /gandi.net/          ||
+        entity.name == "feeds2.feedburner.com" )
+
+        @scan_result.logger.log_error "SKIP Prohibited entity: #{entity.type}##{entity.name}"
+        return true
+      end
+
     end
 
 end
