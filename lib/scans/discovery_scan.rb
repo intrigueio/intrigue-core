@@ -2,6 +2,21 @@ module Intrigue
 module Scanner
 class DiscoveryScan < Intrigue::Scanner::Base
 
+  def metadata
+    {
+      :name => "discovery",
+      :pretty_name => "Discovery Scan",
+      :authors => ["jcran"],
+      :description => "Discovery Scan",
+      :references => [],
+      :allowed_types => ["DnsRecord", "IpAddress", "NetBlock", "String", "Uri"],
+      :example_entities => [
+        {"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}
+      ],
+      :allowed_options => [ ]
+    }
+  end
+
     private
 
     ###
@@ -16,14 +31,20 @@ class DiscoveryScan < Intrigue::Scanner::Base
 
       if entity.type_string == "DnsRecord"
 
-        ### DNS Forward Lookup
-        _start_task_and_recurse "dns_lookup_forward",entity,depth, ["name" => "record_types", "value" => "A,AAAA"]
         ### DNS Subdomain Bruteforce
         _start_task_and_recurse "dns_brute_sub",entity,depth,[
           {"name" => "use_file", "value" => true },
           {"name" => "brute_alphanumeric_size", "value" => 1},
           {"name" => "use_permutations", "value" => true }
         ]
+
+        ### DNS Forward Lookup
+        _start_task_and_recurse "dns_lookup_forward",entity,depth, ["name" => "record_types", "value" => "A,AAAA"]
+
+
+      elsif entity.type_string == "String"
+        # Search!
+        _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 3}]
 
       elsif entity.type_string == "IpAddress"
 
@@ -53,6 +74,14 @@ class DiscoveryScan < Intrigue::Scanner::Base
     end
 
     def _is_prohibited entity
+
+      ## First, check the filter list
+      @filter_list.each do |filter|
+        if entity.name =~ /#{filter}/
+          @scan_result.logger.log "Filtering #{entity.name} based on filter #{filter}"
+          return true
+        end
+      end
 
       if entity.type_string == "NetBlock"
         cidr = entity.name.split("/").last.to_i

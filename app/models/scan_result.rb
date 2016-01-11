@@ -35,10 +35,6 @@ module Intrigue
           scan = Intrigue::Scanner::DiscoveryScan.new
         elsif @scan_type == "dns_subdomain"
           scan = Intrigue::Scanner::DnsSubdomainScan.new
-        elsif @scan_type == "internal"
-          scan = Intrigue::Scanner::InternalScan.new
-        elsif @scan_type == "simple"
-          scan = Intrigue::Scanner::SimpleScan.new
         else
           raise "Unknown scan type: #{@scan_type}"
         end
