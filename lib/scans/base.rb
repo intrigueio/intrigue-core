@@ -70,8 +70,8 @@ module Scanner
 
         until task_result.complete
           # TODO - add explicit timeout here
-          @scan_result.logger.log "Sleeping, waiting for completion of task: #{task_id}"
-          sleep 3
+          #@scan_result.logger.log "Sleeping, waiting for completion of task: #{task_id}"
+          sleep 1
           task_result = Intrigue::Model::TaskResult.get task_id
         end
         @scan_result.logger.log "Task complete!"

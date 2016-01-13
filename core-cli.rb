@@ -3,7 +3,6 @@ require 'thor'
 require 'json'
 require 'rest-client'
 require 'intrigue'
-
 require 'pry' #DEBUG
 
 class CoreCli < Thor

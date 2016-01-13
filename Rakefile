@@ -32,9 +32,19 @@ task :setup do
     FileUtils.cp "#{database_config_file}.default", database_config_file
   end
 
-  ## Copy sidekiq config into place
-  puts "Copying sidekiq config...."
-  sidekiq_config_file = "#{intrigue_basedir}/config/sidekiq.yml"
+  ## Copy sidekiq scan worker config into place
+  puts "Copying sidekiq scan worker config...."
+  sidekiq_config_file = "#{intrigue_basedir}/config/sidekiq-scan.yml"
+  if File.exist? sidekiq_config_file
+    puts "File exists: #{sidekiq_config_file}"
+  else
+    puts "Creating.... #{sidekiq_config_file}"
+    FileUtils.cp "#{sidekiq_config_file}.default", sidekiq_config_file
+  end
+
+  ## Copy sidekiq task worker config into place
+  puts "Copying sidekiq task worker config...."
+  sidekiq_config_file = "#{intrigue_basedir}/config/sidekiq-task.yml"
   if File.exist? sidekiq_config_file
     puts "File exists: #{sidekiq_config_file}"
   else

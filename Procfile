@@ -1,2 +1,3 @@
-web: bundle exec puma -C ./config/puma.rb 
-worker: bundle exec sidekiq -r ./core.rb
+web: bundle exec puma -C ./config/puma.rb
+task-worker: bundle exec sidekiq -C config/sidekiq-task.yml -r ./core.rb
+scan-worker: bundle exec sidekiq -C config/sidekiq-scan.yml -r ./core.rb
