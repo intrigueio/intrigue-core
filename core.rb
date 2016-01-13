@@ -115,7 +115,7 @@ require_relative "app/all"
 # Core libraries
 require_relative 'lib/all'
 
+DataMapper.finalize
+
 # Create a default project for us to work in
 Intrigue::Model::Project.create(:name => "default") unless Intrigue::Model::Project.first
-
-DataMapper.finalize
