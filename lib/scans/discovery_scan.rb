@@ -67,6 +67,9 @@ class DiscoveryScan < Intrigue::Scanner::Base
         ## Grab the SSL Certificate
         _start_task_and_recurse "uri_gather_ssl_certificate",entity,depth if entity.name =~ /^https/
 
+        # uri_exploitable
+        _start_task_and_recurse "uri_exploitable",entity,depth
+
       else
         @scan_result.logger.log "SKIP Unhandled entity type: #{entity.type}##{entity.attributes["name"]}"
         return
