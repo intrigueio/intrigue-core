@@ -29,6 +29,11 @@ class DiscoveryScan < Intrigue::Scanner::Base
         return
       end
 
+      if _is_prohibited entity
+        @scan_result.logger.log "Skipped prohibited entity: #{entity}"
+        return
+      end
+
       if entity.type_string == "DnsRecord"
 
         ### DNS Subdomain Bruteforce
