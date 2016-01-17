@@ -72,7 +72,10 @@ class DiscoveryScan < Intrigue::Scanner::Base
         ## Grab the SSL Certificate
         _start_task_and_recurse "uri_gather_ssl_certificate",entity,depth if entity.name =~ /^https/
 
-        # uri_exploitable
+        ## Spider, looking for metadata
+        _start_task_and_recurse "uri_spider",entity,depth
+
+        # Check for exploitable URIs
         _start_task_and_recurse "uri_exploitable",entity,depth
 
       else
