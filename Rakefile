@@ -94,7 +94,7 @@ task :migrate => :setup do
     # Run our setup with the correct enviroment
     DataMapper::Logger.new($stdout, :debug)
     DataMapper.setup(:default, database_config[database_environment])
-    DataMapper.auto_migrate!
+    DataMapper.auto_upgrade!
   rescue Exception => e
     puts "Error... Unable to migrate: #{e}"
   end
