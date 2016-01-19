@@ -162,7 +162,7 @@ module Parse
       yomu = Yomu.new file
 
       # Save the full metadata
-      _create_entity("Info", "name" => "Metadata for #{uri}", "metadata" => yomu.metadata, "uri" => uri)
+      _create_entity("Info", "name" => "Raw Metadata for #{uri}", "content" => yomu.metadata.to_json, "uri" => "#{uri}")
 
       ### Handle PDF
       if yomu.metadata["Content-Type"] == "application/pdf"

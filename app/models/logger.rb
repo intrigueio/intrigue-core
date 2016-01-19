@@ -35,13 +35,14 @@ module Intrigue
 
       def _log(message)
 
+        encoded_message = message.force_encoding('UTF-8')
         # Write to DB
-        attribute_set(:full_log, "#{@full_log}\n#{message}")
+        attribute_set(:full_log, "#{@full_log}\n#{encoded_message}")
         #@full_log = "" unless @full_log
         #@full_log << "#{@full_log}\n#{message}"
 
         # Write to STDOUT
-        puts message
+        puts encoded_message
 
         #Write to file
         #if @write_file
