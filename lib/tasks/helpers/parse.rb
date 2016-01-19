@@ -155,8 +155,8 @@ module Parse
 
     begin
       # Download file and store locally before parsing. This helps prevent mime-type confusion
-      #
-      file = open(uri)
+      # Note that we don't care who it is, we'll download indescriminently.
+      file = open(uri, {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE})
 
       # Parse the file
       yomu = Yomu.new file
