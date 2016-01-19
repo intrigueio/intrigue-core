@@ -58,18 +58,18 @@ class BaseTask
       # @task_result - the final result to be passed back to the caller
       @task_result.logger.log "Calling setup()"
       if setup(task_id, @entity, options)
-        begin
-          Timeout.timeout($intrigue_global_timeout) do # 15 minutes should be enough time to hit a class b for a single port w/ masscan
+        #begin
+          #Timeout.timeout($intrigue_global_timeout) do # 15 minutes should be enough time to hit a class b for a single port w/ masscan
             @task_result.logger.log "Calling run()"
             # Save the task locally
             @task_result.save
             # Run the task, which will update @task_result and @task_result
             run()
             @task_result.logger.log_good "Run complete. Ship it!"
-          end
-        rescue Timeout::Error
-          @task_result.logger.log_error "Timed out"
-        end
+          #end
+        #rescue Timeout::Error
+        #  @task_result.logger.log_error "Timed out"
+        #end
       else
         @task_result.logger.log_error "Setup failed, bailing out!"
       end
