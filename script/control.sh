@@ -57,7 +57,7 @@ case "$1" in
     start_server
     ;;
   *)
-    echo "Usage: /etc/init.d/blah {start|stop}"
+    echo "Usage: control.sh {start|stop|restart}"
     exit 1
     ;;
 esac

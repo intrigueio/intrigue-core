@@ -1,15 +1,10 @@
 {
-  "intrigue_engine_id" : {
-    "value" : "XXX",
-    "uri": "http://intrigue.io",
-    "editable" : "true",
-    "comment" : "Generated at startup"
-  },
   "intrigue_environment": {
     "value": "development",
     "editable" : "true",
-    "comment": "Intrigue's system enviroment"
+    "comment": "Intrigue's system environment"
   },
+  "intrigue_task_load_paths": [],
   "intrigue_handlers" : {
     "elasticsearch" : {
       "username": "",

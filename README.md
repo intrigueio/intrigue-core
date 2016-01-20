@@ -32,6 +32,11 @@ Install all gem dependencies with Bundler (http://bundler.io/)
 $ bundle install
 ```
 
+Run the setup and database migration task
+```
+rake setup && rake migrate
+```
+
 Start the web and background workers. Intrigue will start on 127.0.0.0:7777.
 ```
 $ foreman start

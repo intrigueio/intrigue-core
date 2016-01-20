@@ -16,7 +16,7 @@ class CoreCli < Thor
     @delim = "#"
     @debug = true
     # Connect to Intrigue API
-    @x = IntrigueApi.new
+    @api = IntrigueApi.new
   end
 
   desc "stats", "Get queue stats"
@@ -77,7 +77,7 @@ class CoreCli < Thor
     handler_list = _parse_handlers handler_string
 
     ### Construct the request
-    task_id = @x.start_and_background(task_name,entity_hash,options_list,handler_list)
+    task_id = @api.start_and_background(task_name,entity_hash,options_list,handler_list)
 
     unless task_id # technically a nil is returned , but becomes an empty string
       puts "[-] Task not started. Unknown Error. Exiting"
@@ -102,7 +102,7 @@ class CoreCli < Thor
 
     # Get the response from the API
     #puts "[+] Starting Task."
-    response = @x.start(task_name,entity_hash,options_list,handler_list)
+    response = @api.start(task_name,entity_hash,options_list,handler_list)
     #puts "[D] Got response: #{response}" if @debug
     return "Error retrieving response. Failing. Response was: #{response}" unless  response
     #puts "[+] Task complete!"
@@ -124,7 +124,7 @@ class CoreCli < Thor
     entity_hash  = _parse_entity entity_string
     options_list = _parse_options option_string
 
-    @x.start_scan_and_background(scan_type,entity_hash,options_list)
+    @api.start_scan_and_background(scan_type,entity_hash,options_list)
   end
 
 

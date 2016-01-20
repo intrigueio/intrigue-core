@@ -1,6 +1,6 @@
 development:
   adapter: sqlite3
-  database: /tmp/intrigue_dev.db
+  database: db/intrigue.db
 production:
   adapter: postgres
   host: localhost
