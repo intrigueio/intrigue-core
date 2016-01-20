@@ -62,6 +62,11 @@ class UriGatherSslCertTask  < BaseTask
               return
             end
 
+            # Remove any leading wildcards so we get a sensible domain name
+            if alt_name[0..1] == "*."
+              alt_name = alt_name[2..-1]
+            end
+
             _create_entity "DnsRecord", { "name" => alt_name }
           end
 

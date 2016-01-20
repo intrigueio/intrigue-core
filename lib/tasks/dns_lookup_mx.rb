@@ -21,14 +21,14 @@ class DnsLookupMxTask < BaseTask
   def run
     super
 
-    resolver = _get_option "resolver"
+    opt_resolver = _get_option "resolver"
     name = _get_entity_attribute "name"
 
     begin
       # XXX - we should probably call this a couple times to deal
       # with round-robin DNS & load balancers. We'd need to merge results
       # across the queries
-      resources = Resolv::DNS.open do |dns|
+      resources = Resolv::DNS.open(:nameserver => opt_resolver,:search => []) do |dns|
         dns.getresources(name, Resolv::DNS::Resource::IN::MX)
       end
 

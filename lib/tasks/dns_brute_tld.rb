@@ -37,7 +37,7 @@ class DnsBruteTldTask < BaseTask
     opt_filename = _get_option "brute_file"
     opt_cctld    = _get_option "check_cctlds"
 
-    @resolver = Resolv.new
+    @resolver = Resolv.new([Resolv::DNS.new(:nameserver => opt_resolver,:search => [])])
 
     # Create the brute list (from a file, or a provided list)
     if opt_use_file

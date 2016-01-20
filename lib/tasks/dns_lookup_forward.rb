@@ -23,7 +23,7 @@ class DnsLookupForwardTask < BaseTask
   def run
     super
 
-    resolver = _get_option "resolver"
+    opt_resolver = _get_option "resolver"
     record_types = _get_option "record_types"
     name = _get_entity_attribute "name"
 
@@ -32,7 +32,8 @@ class DnsLookupForwardTask < BaseTask
       res = Dnsruby::Resolver.new(
         :recurse => "true",
         :query_timeout => 5,
-        :nameserver => resolver)
+        :nameserver => opt_resolver,
+        :search => [])
 
       result = res.query(name, "ANY")
       @task_result.logger.log_error "Nothing?" if result.answer.empty?

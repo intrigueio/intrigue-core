@@ -11,7 +11,9 @@ class DnsRecurseSpf < BaseTask
       :references => [ "https://community.rapid7.com/community/infosec/blog/2015/02/23/osint-through-sender-policy-framework-spf-records"],
       :allowed_types => ["DnsRecord"],
       :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
-      :allowed_options => [],
+      :allowed_options => [
+        {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
+      ],
       :created_types => ["DnsRecord", "IpAddress", "Info", "NetBlock" ]
     }
   end
@@ -19,20 +21,23 @@ class DnsRecurseSpf < BaseTask
   def run
     super
 
+    opt_resolver = _get_option "resolver"
     dns_name = _get_entity_attribute "name"
     @task_result.logger.log "Running SPF lookup on #{dns_name}"
 
     # Run a lookup on the entity
-    lookup_txt_record (dns_name)
+    lookup_txt_record(opt_resolver, dns_name)
     @task_result.logger.log "done!"
 
   end
 
-  def lookup_txt_record(dns_name)
+  def lookup_txt_record(opt_resolver, dns_name)
 
     begin
 
       res = Dnsruby::Resolver.new(
+      :nameserver => opt_resolver,
+      :search => [],
       :recurse => "true",
       :query_timeout => 5)
 

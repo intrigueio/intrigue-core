@@ -1,5 +1,5 @@
 require 'resolv'
-
+require 'thread'
 require 'eventmachine'
 require 'resolv-replace'
 
@@ -24,11 +24,12 @@ class DnsBruteSubTask < BaseTask
             "search", "staging"
           ]
         },
-        {:name => "use_mashed_domains", :type => "Boolean", :regex => "boolean", :default => false },
+        #{:name => "use_mashed_domains", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "use_permutations", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_sub.list" },
-        {:name => "brute_alphanumeric_size", :type => "Integer", :regex => "integer", :default => 0 }
+        {:name => "brute_alphanumeric_size", :type => "Integer", :regex => "integer", :default => 0 },
+        {:name => "threads", :type => "Integer", :regex => "integer", :default => 1 },
       ],
       :created_types => ["DnsRecord","IpAddress"]
     }
@@ -36,47 +37,24 @@ class DnsBruteSubTask < BaseTask
 
   def run
     super
-=begin
-
-Some cases to think through:
-
-[ ] : Attempting Zone Transfer on rakuten.ne.jp against nameserver ns01c.rakuten.co.jp
-[ ] : Attempting Zone Transfer on soku.com against nameserver ns1.youku.com
-[ ] : Attempting Zone Transfer on fh21.com.cn against nameserver ns3.dnsv4.com
-[ ] : Attempting Zone Transfer on fanli.com against nameserver ns3.dnsv5.com
-[ ] : Attempting Zone Transfer on cookmates.com against nameserver ns1.zkonsult.com
-[ ] : Attempting Zone Transfer on yhd.com against nameserver dns1.yihaodian.com
-[ ] : Unable to query whois: execution expired
-[-] : Domain WHOIS failed, we don't know what nameserver to query.
-[+] : Ship it!
-[ ] : Writing to file: /home/jcran/topm/core/results/dns_transfer_zone-ted.com.json
-2015-03-16T16:03:59.491Z 3775 TID-e9nwc DnsTransferZoneTask JID-4e881cdf1f2601e05665c296 INFO: done: 10.036 sec
-2015-03-16T16:03:59.492Z 3775 TID-e9nwc DnsTransferZoneTask JID-a27d255bc26f34dc2b6e3467 INFO: start
-[ ] : Task: dns_transfer_zone
-[ ] : Id: f95ce029-1ddf-42d0-8ad2-b99bdb52504c
-[ ] : Task entity: {"type"=>"DnsRecord", "attributes"=>{"name"=>"adp.com"}}
-[ ] : Task options: []
-[ ] : Option configured: resolver=8.8.8.8
-[ ] : Unable to query whois: execution expired
-[-] : Domain WHOIS failed, we don't know what nameserver to query.
-[+] : Ship it!
-=end
 
     # get options
     opt_resolver = _get_option "resolver"
+    opt_threads = _get_option("threads")
     opt_use_file = _get_option("use_file")
     opt_filename = _get_option("brute_file")
-    opt_mashed_domains = _get_option "use_mashed_domains"
+    #opt_mashed_domains = _get_option "use_mashed_domains"
     opt_use_permutations = _get_option("use_permutations")
     opt_brute_list = _get_option("brute_list")
     opt_brute_alphanumeric_size = _get_option("brute_alphanumeric_size")
-
 
     # Set the suffix
     suffix = _get_entity_attribute "name"
 
     # XXX - use the resolver option if we have it.
-    resolver = Resolv.new
+    # Note that we have to specify an empty search list, otherwise we end up
+    # searching .local by default on osx.
+    resolver = Resolv.new([Resolv::DNS.new(:nameserver => opt_resolver,:search => [])])
 
     # Handle cases of *.test.com (pretty common when grabbing
     # DNSRecords from SSLCertificates)
@@ -115,51 +93,64 @@ Some cases to think through:
       subdomain_list.concat(("#{'a' * opt_brute_alphanumeric_size }".."#{'z' * opt_brute_alphanumeric_size}").map {|x| x })
     end
 
-    # Iterate through the subdomain list
-    subdomain_list.each do |subdomain|
+    #if opt_mashed_domains
+      # See HDM's info on password stealing, try without a dot to see if this
+      # domain has been hijacked by someone - great for finding phishing attempts
+    #  subdomain_list.concat subdomain_list.map {|x| x.sub(".","")}
+    #end
 
-      subdomain = subdomain.chomp
+    work_q = Queue.new
+    subdomain_list.each{|x| work_q.push x }
+    workers = (0...opt_threads).map do
+      Thread.new do
+        begin
+          while subdomain = work_q.pop(true).chomp
+            # Do the actual lookup work
+            begin
+              # Generate the domain
+              brute_domain = "#{subdomain}.#{suffix}"
 
-      begin
-        if opt_mashed_domains
-          # See HDM's info on password stealing, try without a dot to see if this
-          # domain has been hijacked by someone - great for finding phishing attempts
-          brute_domain = "#{subdomain}#{suffix}"
-        else
-          brute_domain = "#{subdomain}.#{suffix}"
+              # Try to resolve
+              resolved_address = resolver.getaddress(brute_domain)
+              @task_result.logger.log_good "Resolved Address #{resolved_address} for #{brute_domain}" if resolved_address
+
+              # If we resolved, create the right entities
+              if (resolved_address && !(wildcard_domain))
+
+                # Create new host and domain entities
+                _create_entity("DnsRecord", {"name" => brute_domain })
+                _create_entity("IpAddress", {"name" => resolved_address})
+
+                #
+                # This section will add permutations to our list, if the
+                # opt_use_permutations option is set to true (it is, by default).
+                #
+                # This allows us to take items like 'www' and add a check for
+                # www1 and www2, etc
+                #
+                if opt_use_permutations
+                  # Create a list of permutations based on this success
+                  permutation_list = ["#{subdomain}1", "#{subdomain}2", "#{subdomain}-staging","#{subdomain}-prod", "#{subdomain}-stage", "#{subdomain}-test", "#{subdomain}-dev"]
+                  @task_result.logger.log "Adding permutations: #{permutation_list.join(", ")}"
+                  subdomain_list.concat permutation_list
+                end
+
+              end
+            rescue Resolv::ResolvError => e
+              @task_result.logger.log "No resolution for: #{brute_domain}"
+            rescue Exception => e
+              @task_result.logger.log_error "Hit exception: #{e.class}: #{e}"
+            end
+          end # end while
+        rescue ThreadError
         end
-
-        # Try to resolve
-        resolved_address = resolver.getaddress(brute_domain)
-        @task_result.logger.log_good "Resolved Address #{resolved_address} for #{brute_domain}" if resolved_address
-
-        # If we resolved, create the right entities
-        if (resolved_address && !(wildcard_domain))
-
-          # Create new host and domain entities
-          _create_entity("DnsRecord", {"name" => brute_domain })
-          _create_entity("IpAddress", {"name" => resolved_address})
-
-          #
-          # This section will add permutations to our list, if the
-          # opt_use_permutations option is set to true (it is, by default).
-          #
-          # This allows us to take items like 'www' and add a check for
-          # www1 and www2, etc
-          #
-          if opt_use_permutations
-            # Create a list of permutations based on this success
-            permutation_list = ["#{subdomain}1", "#{subdomain}2", "#{subdomain}-staging","#{subdomain}-prod", "#{subdomain}-stage", "#{subdomain}-test", "#{subdomain}-dev"]
-            @task_result.logger.log "Adding permutations: #{permutation_list.join(", ")}"
-            subdomain_list.concat permutation_list
-          end
-        end
-      rescue Resolv::ResolvError => e
-        @task_result.logger.log "No resolution for: #{brute_domain}"
-      rescue Exception => e
-        @task_result.logger.log_error "Hit exception: #{e.class}: #{e}"
       end
-    end
+    end; "ok"
+    workers.map(&:join); "ok"
+
+    # Iterate through the subdomain list
+    #subdomain_list.each do |subdomain|
+    #end
   end
 
 
