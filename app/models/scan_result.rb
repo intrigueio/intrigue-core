@@ -5,7 +5,7 @@ module Intrigue
 
       belongs_to :base_entity, 'Intrigue::Model::Entity'
       belongs_to :logger, 'Intrigue::Model::Logger'
-      belongs_to :project, :default => lambda { |r, p| Project.first }
+      belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.current_project }
 
       has n, :task_results, :through => Resource, :constraint => :destroy
       has n, :entities, :through => Resource, :constraint => :destroy
@@ -35,10 +35,6 @@ module Intrigue
           scan = Intrigue::Scanner::DiscoveryScan.new
         elsif @scan_type == "dns_subdomain"
           scan = Intrigue::Scanner::DnsSubdomainScan.new
-        elsif @scan_type == "internal"
-          scan = Intrigue::Scanner::InternalScan.new
-        elsif @scan_type == "simple"
-          scan = Intrigue::Scanner::SimpleScan.new
         else
           raise "Unknown scan type: #{@scan_type}"
         end

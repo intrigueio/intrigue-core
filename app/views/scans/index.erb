@@ -8,8 +8,6 @@
       <select class="form-control input-sm" name="scan_type" id="scan_type">
         <option value="discovery" selected="selected"> Discovery Scan </option>
         <option value="dns_subdomain" > DNS Subdomain Scan </option>
-        <option value="internal"> Internal Scan </option>
-        <option value="simple"> Simple Scan </option>
       </select>
       </div>
     </div>
@@ -18,7 +16,7 @@
       <label for="entity_type" class="col-xs-4 control-label">Entity Type</label>
       <div class="col-xs-6">
         <select class="form-control input-sm" id="entity_type" name="entity_type">
-         <% Intrigue::Model::Entity.descendants.each do |x|  value = x.to_s.split(":").last %> <option <%= "selected=selected" if value == "String"%>> <%=value%></option> <% end %>
+         <%["DnsRecord","IpAddress","NetBlock","String", "Uri"].each do |x|  value = x %> <option <%= "selected=selected" if value == "DnsRecord  "%>> <%=value%></option> <% end %>
         </select>
       </div>
       <label for="attrib_name" class="col-xs-4 control-label">Entity Name</label>
@@ -52,4 +50,4 @@
 <ul>
   <% @scan_results.each do |x| %> <li><a href="/v1/scan_results/<%=x.id%>"><%= x.scan_type %> on <%= x.base_entity %> (<%=x.entity_count%>)</a></li><% end %>
 </ul>
-<%= Intrigue::Model::TaskResult.page(params[:page], :per_page => 10).pager.to_html('/v1/task') %>
+<%= @scan_results.pager.to_html('/v1/scan') %>

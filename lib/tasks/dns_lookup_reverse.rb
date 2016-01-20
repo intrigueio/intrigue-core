@@ -22,11 +22,11 @@ class DnsLookupReverseTask < BaseTask
   def run
     super
 
-    resolver = _get_option "resolver"
+    opt_resolver = _get_option "resolver"
     address = _get_entity_attribute "name"
 
     begin
-      resolved_name = Resolv.new.getname(address).to_s
+      resolved_name = Resolv.new([Resolv::DNS.new(:nameserver => opt_resolver,:search => [])]).getname(address).to_s
 
       if resolved_name
         @task_result.logger.log_good "Creating domain #{resolved_name}"

@@ -13,7 +13,9 @@ class DnsLookupTxtTask < BaseTask
       ],
       :allowed_types => ["DnsRecord"],
       :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
-      :allowed_options => [],
+      :allowed_options => [
+        {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
+      ],
       :created_types => ["DnsRecord", "IpAddress", "Info", "NetBlock" ]
     }
   end
@@ -22,11 +24,14 @@ class DnsLookupTxtTask < BaseTask
     super
 
     domain_name = _get_entity_attribute "name"
+    opt_resolver = _get_option "resolver"
 
     @task_result.logger.log "Running TXT lookup on #{domain_name}"
 
     begin
       res = Dnsruby::Resolver.new(
+      :nameserver => opt_resolver,
+      :search => [],
       :recurse => true,
       :query_timeout => 5)
 

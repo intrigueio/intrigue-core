@@ -8,6 +8,7 @@ gem 'redis-namespace'
 gem 'eventmachine'
 gem 'sidekiq' # Background Tasks
 gem 'sidekiq-failures'
+
 gem 'data_mapper'
 gem 'dm-pg-types'
 gem 'dm-postgres-adapter'

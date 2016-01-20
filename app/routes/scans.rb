@@ -3,7 +3,7 @@ class IntrigueApp < Sinatra::Base
 
   # Scan Webform
   get '/scan/?' do
-    @scan_results = Intrigue::Model::ScanResult.page(params[:page], :per_page => 100)
+    @scan_results = Intrigue::Model::ScanResult.page(params[:page])
     erb :'scans/index'
   end
 
@@ -65,8 +65,7 @@ class IntrigueApp < Sinatra::Base
     {
       :type => "Intrigue::Entity::#{entity['type']}",
       :name => entity['name'],
-      :details => entity['details'],
-      :task_result_id => -1
+      :details => entity['details'] 
     })
 
     # Set up the ScanResult object

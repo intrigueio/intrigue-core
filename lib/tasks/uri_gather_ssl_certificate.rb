@@ -62,6 +62,11 @@ class UriGatherSslCertTask  < BaseTask
               return
             end
 
+            # Remove any leading wildcards so we get a sensible domain name
+            if alt_name[0..1] == "*."
+              alt_name = alt_name[2..-1]
+            end
+
             _create_entity "DnsRecord", { "name" => alt_name }
           end
 
@@ -76,6 +81,8 @@ class UriGatherSslCertTask  < BaseTask
       _create_entity "SslCertificate", {  "name" => "#{cert.subject}",
                                           "text" => "#{cert.to_text}" }
 
+    rescue SocketError => e
+      @task_result.logger.log_error "Caught an error: #{e}"
     rescue OpenSSL::SSL::SSLError => e
       @task_result.logger.log_error "Caught an error: #{e}"
     rescue Errno::ECONNRESET => e
@@ -83,6 +90,8 @@ class UriGatherSslCertTask  < BaseTask
     rescue Errno::EACCES => e
       @task_result.logger.log_error "Caught an error: #{e}"
     rescue Errno::ECONNREFUSED => e
+      @task_result.logger.log_error "Caught an error: #{e}"
+    rescue Errno::ETIMEDOUT => e
       @task_result.logger.log_error "Caught an error: #{e}"
     rescue RuntimeError => e
       @task_result.logger.log_error "Caught an error: #{e}"

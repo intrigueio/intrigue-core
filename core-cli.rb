@@ -3,7 +3,6 @@ require 'thor'
 require 'json'
 require 'rest-client'
 require 'intrigue'
-
 require 'pry' #DEBUG
 
 class CoreCli < Thor
@@ -115,8 +114,8 @@ class CoreCli < Thor
     #puts "[+] End Results"
 
     # Print the task log
-    #puts "[+] Task Log:\n"
-    #response["log"].each_line{|x| puts "  #{x}" }
+    puts "[+] Task Log:\n"
+    response["log"].each_line{|x| puts "  #{x}" }
   end
 
   desc "scan [Scan Type] [Type#Entity] [Option1=Value1#...#...]", "Start a recursive scan. Returns the result"

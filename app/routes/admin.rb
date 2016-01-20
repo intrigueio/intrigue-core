@@ -38,7 +38,10 @@ class IntrigueApp < Sinatra::Base
       # SAVE CONFIG
       post '/config' do
 
-        params.each {|k,v| $intrigue_config[k]["value"]=v}
+        # Update our config if one of the fields have been changed. Note that we use ***
+        # as a way to mask out the full details in the view. If we have one that doesn't lead with ***
+        # go ahead and update it
+        params.each {|k,v| $intrigue_config["intrigue_global_module_config"][k]["value"] = v unless v =~ /^\*\*\*/ }
 
         # Write our config back to the file
         File.open("#{$intrigue_basedir}/config/config.json", 'w') do |f|

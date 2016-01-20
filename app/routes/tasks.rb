@@ -21,7 +21,7 @@ class IntrigueApp < Sinatra::Base
       @task_names = @tasks.map{|t| t.metadata[:pretty_name]}.sort
 
       # get a list of task_results
-      @task_results = Intrigue::Model::TaskResult.page(params[:page], :per_page => 10)
+      @task_results = Intrigue::Model::TaskResult.page(params[:page])
 
       erb :'tasks/index'
     end
@@ -50,7 +50,9 @@ class IntrigueApp < Sinatra::Base
       else
         entity_type = @params["entity_type"]
 
+        # TODO - make sure we catch DataMapper::SaveFailureError
         # TODO - make sure we have a valid entity type first
+
         klass = eval("Intrigue::Entity::#{entity_type}")
         entity = Intrigue::Model::Entity.create(
         { :type => klass,

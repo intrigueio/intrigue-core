@@ -5,7 +5,7 @@ module Intrigue
 
       property :id,       Serial
       property :type,     Discriminator
-      property :name,     String
+      property :name,     String, :length => 500
       property :details,  Object, :default => {} #Text, :length => 100000
 
       belongs_to :project, :default => lambda { |r, p| Project.first }
@@ -81,8 +81,9 @@ module Intrigue
       end
 
       def export_csv
-        export_string = "#{@id};#{@type};#{@name};"
-        @details.each{|k,v| export_string << "#{k}##{v};" }
+        export_string = "#{@id},#{@type},#{@name},"
+        @details.each{|k,v| export_string << "#{k}=#{v};".gsub(",","#") }
+        export_string << ","
       export_string
       end
 

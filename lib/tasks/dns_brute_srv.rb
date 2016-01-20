@@ -41,10 +41,11 @@ class DnsBruteSrvTask < BaseTask
     super
 
     # XXX = currently doesn't respect the 'resolver' option
-    @resolver = Resolv::DNS.new # uses system default
 
     domain_name = _get_entity_attribute "name"
-    resolver =  _get_option "resolver"
+    opt_resolver =  _get_option "resolver"
+
+    @resolver = Resolv::DNS.new(:nameserver => opt_resolver,:search => [])
 
     brute_list = _get_option "brute_list"
     brute_list = brute_list.split(",") if brute_list.kind_of? String

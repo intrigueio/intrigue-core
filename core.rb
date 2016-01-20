@@ -1,19 +1,19 @@
 require 'sinatra'
 require 'sinatra/contrib'
+require 'json'
+require 'rest-client'
 
+# Sidekiq
 require 'sidekiq'
 require 'sidekiq/api'
 require 'sidekiq/web'
 
+# Datamapper
 require 'dm-core'
 require 'dm-serializer'
 require 'dm-pg-types'
 require 'dm-noisy-failures'
 require 'dm-pager'
-
-#require 'timeout'
-require 'json'
-require 'rest-client'
 
 # Debug
 require 'pry'
@@ -28,7 +28,8 @@ def sanity_check_system_configuration
   configuration_files = [
     "#{$intrigue_basedir}/config/config.json",
     "#{$intrigue_basedir}/config/database.yml",
-    "#{$intrigue_basedir}/config/sidekiq.yml",
+    "#{$intrigue_basedir}/config/sidekiq-scan.yml",
+    "#{$intrigue_basedir}/config/sidekiq-task.yml",
     "#{$intrigue_basedir}/config/puma.rb"
   ]
   configuration_files.each do |file|
@@ -38,7 +39,6 @@ def sanity_check_system_configuration
       exit -1
     end
   end
-
 end
 
 sanity_check_system_configuration
@@ -62,6 +62,8 @@ class IntrigueApp < Sinatra::Base
     config.redis = { url: 'redis://redis:6379', namespace: 'intrigue' }
   end
 
+# all datamapper set up stuffs
+def setup_datamapper
   ##  Set up Database Logging
   DataMapper::Logger.new($stdout, :warn)
 
@@ -76,6 +78,17 @@ class IntrigueApp < Sinatra::Base
   # Run our setup with the correct enviroment
   DataMapper.setup(:default, database_config[database_environment])
   DataMapper::Property::String.length(255)
+end
+
+sanity_check_system_configuration
+setup_datamapper
+
+class IntrigueApp < Sinatra::Base
+  register Sinatra::Namespace
+
+  set :root, "#{$intrigue_basedir}"
+  set :views, "#{$intrigue_basedir}/app/views"
+  set :public_folder, 'public'
 
   ###
   ### Helpers
@@ -105,9 +118,7 @@ class IntrigueApp < Sinatra::Base
 
     # Main Page
     get '/?' do
-      @stats = Sidekiq::Stats.new
-      @workers = Sidekiq::Workers.new
-      erb :index
+      erb :news
     end
 
     # NEWS!
@@ -125,7 +136,6 @@ require_relative "app/all"
 # Core libraries
 require_relative 'lib/all'
 
-# Call finalize now that we have all models loaded
 DataMapper.finalize
 
 # Create a default project for us to work in

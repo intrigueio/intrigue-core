@@ -4,7 +4,7 @@ module Intrigue
       include DataMapper::Resource
 
       belongs_to :logger, 'Intrigue::Model::Logger'
-      belongs_to :project, :default => lambda { |r, p| Project.first }
+      belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.current_project }
 
       belongs_to :base_entity, 'Intrigue::Model::Entity'
 
@@ -47,8 +47,8 @@ module Intrigue
       ###
 
       def export_csv
-        output_string = "#{@task_name},#{@base_entity.name}"
-        self.entities.each{ |x| output_string << "#{x.export_csv}," }
+        output_string = ""
+        self.entities.each{ |x| output_string << x.export_csv << "\n" }
       output_string
       end
 

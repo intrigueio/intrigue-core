@@ -1,26 +1,3 @@
 <div class="row">
 <div class="col-sm-8">
 <h3>Intrigue Core (<%=$intrigue_server_uri%>)</h3>
-  <h4>Failed: <%= @stats.failed %></h4>
-  <h4>Processed: <%= @stats.processed %></h4>
-  <h4>Queues: <%= @stats.queues.count %></h4>
-  <h4>Enqueued Jobs: <%= @stats.enqueued %> </h4>
-  <h4>Workers: <%= @workers.size %> </h4>
-  <h4>Jobs:</h4>
-  <ul>
-  <% @workers.each do |process_id, thread_id, work| %>
-    <li><%=work.inspect%></li>
-    <!-- # process_id is a unique identifier per Sidekiq process
-    # thread_id is a unique identifier per thread
-    # work is a Hash which looks like:
-    # { 'queue' => name, 'run_at' => timestamp, 'payload' => msg }
-    # run_at is an epoch Integer.
-    # payload is a Hash which looks like:
-    # { 'retry' => true,
-    #   'queue' => 'default',
-    #   'class' => 'Redacted',
-    #   'args' => [1, 2, 'foo'],
-    #   'jid' => '80b1e7e46381a20c0c567285',
-    #   'enqueued_at' => 1427811033.2067106 } -->
-  <% end %>
-  </ul>

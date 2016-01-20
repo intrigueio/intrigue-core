@@ -2,8 +2,8 @@ require 'timeout'
 
 module Intrigue
 class BaseTask
-  include Sidekiq::Workercor
-  sidekiq_options :queue => :task
+  include Sidekiq::Worker
+  sidekiq_options :queue => $intrigue_config["intrigue_background_processing_queues"]["task_queue"], :backtrace => true
 
   def self.inherited(base)
     TaskFactory.register(base)
@@ -58,18 +58,18 @@ class BaseTask
       # @task_result - the final result to be passed back to the caller
       @task_result.logger.log "Calling setup()"
       if setup(task_id, @entity, options)
-        begin
-          Timeout.timeout($intrigue_global_timeout) do # 15 minutes should be enough time to hit a class b for a single port w/ masscan
+        #begin
+          #Timeout.timeout($intrigue_global_timeout) do # 15 minutes should be enough time to hit a class b for a single port w/ masscan
             @task_result.logger.log "Calling run()"
             # Save the task locally
             @task_result.save
             # Run the task, which will update @task_result and @task_result
             run()
             @task_result.logger.log_good "Run complete. Ship it!"
-          end
-        rescue Timeout::Error
-          @task_result.logger.log_error "ERROR! Timed out"
-        end
+          #end
+        #rescue Timeout::Error
+        #  @task_result.logger.log_error "Timed out"
+        #end
       else
         @task_result.logger.log_error "Setup failed, bailing out!"
       end
@@ -154,7 +154,7 @@ class BaseTask
               regex = /^(\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*)|((\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3}))$/
             else
               @task_result.logger.log_error "Unspecified regex for this option #{allowed_option[:name]}"
-              @task_result.logger.log_error "FATAL! Unable to continue!"
+              @task_result.logger.log_error "Unable to continue, failing!"
               return nil
             end
 
@@ -162,7 +162,7 @@ class BaseTask
             unless regex.match "#{user_option["value"]}"
               @task_result.logger.log_error "Regex didn't match"
               @task_result.logger.log_error "Option #{user_option["name"]} does not match regex: #{regex.to_s} (#{user_option["value"]})!"
-              @task_result.logger.log_error "FATAL! Regex didn't match, failing!"
+              @task_result.logger.log_error "Regex didn't match, failing!"
               return nil
             end
 
@@ -194,7 +194,7 @@ class BaseTask
               user_option["value"] = user_option["value"].to_bool if user_option["value"].kind_of? String
             else
               # throw an error, we likely have a string we don't know how to cast
-              @task_result.logger.log_error "FATAL! Don't know how to handle this option when it's given to us as a string."
+              @task_result.logger.log_error "Don't know how to handle this option when it's given to us as a string, failing!"
               return nil
             end
 
@@ -250,7 +250,7 @@ class BaseTask
     # This is a helper method, use this to create entities from within tasks
     #
     def _create_entity(type, hash)
-      @task_result.logger.log_good "Creating entity: #{type}, #{hash.inspect}"
+      @task_result.logger.log_good "Creating entity: #{type}, #{hash.inspect}".force_encoding('UTF-8')
 
       # Create the entity, validating the attributes
       entity = Intrigue::Model::Entity.create({
@@ -281,7 +281,7 @@ class BaseTask
 
     def _get_global_config(key)
       begin
-        $intrigue_config[key]["value"]
+        $intrigue_config["intrigue_global_module_config"][key]["value"]
       rescue NoMethodError => e
         puts "Error, invalid config key requested (#{key}) #{e}"
       end

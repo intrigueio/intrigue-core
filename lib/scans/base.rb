@@ -2,10 +2,10 @@ module Intrigue
 module Scanner
   class Base
     include Sidekiq::Worker
-    sidekiq_options :queue => :scan
+    sidekiq_options :queue => $intrigue_config["intrigue_background_processing_queues"]["scan_queue"], :backtrace => true
 
     include Intrigue::Task::Helper
-    
+
     def perform(id)
       @scan_result = Intrigue::Model::ScanResult.get(id)
       return unless @scan_result
@@ -70,8 +70,8 @@ module Scanner
 
         until task_result.complete
           # TODO - add explicit timeout here
-          @scan_result.logger.log "Sleeping, waiting for completion of task: #{task_id}"
-          sleep 3
+          #@scan_result.logger.log "Sleeping, waiting for completion of task: #{task_id}"
+          sleep 1
           task_result = Intrigue::Model::TaskResult.get task_id
         end
         @scan_result.logger.log "Task complete!"

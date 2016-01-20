@@ -6,7 +6,8 @@
 function start_server {
   # Application server
   bundle exec puma -C config/puma.rb
-  bundle exec sidekiq -C config/sidekiq.yml -r ./core.rb -d -L ./log/intrigue-sidekiq.log
+  bundle exec sidekiq -C config/sidekiq-scan.yml -r ./core.rb -d -L ./log/sidekiq-scan.log
+  bundle exec sidekiq -C config/sidekiq-task.yml -r ./core.rb -d -L ./log/sidekiq-task.log
 }
 
 function stop_server {
@@ -18,9 +19,11 @@ function stop_server {
 
   echo "Cleaning up... "
   rm -rf tmp/pids/*.pid
+}
 
-  #for x  in `pgrep -l -f puma| cut -d ' ' -f 1`;do kill -9 $x;done
-  #for x  in `pgrep -l -f sidekiq| cut -d ' ' -f 1`;do kill -9 $x;done
+function kill_all {
+  for x  in `pgrep -l -f puma| cut -d ' ' -f 1`;do kill -9 $x;done
+  for x  in `pgrep -l -f sidekiq| cut -d ' ' -f 1`;do kill -9 $x;done
 }
 
 function status_server {
@@ -30,11 +33,19 @@ function status_server {
   else
     echo "Puma not running"
   fi
-  # Sidekiq
-  if [ -f ./tmp/pids/intrigue-sidekiq.pid ]; then
-    echo "Sidekiq running"
+
+  # Sidekiq -scan
+  if [ -f ./tmp/pids/intrigue-sidekiq-scan.pid ]; then
+    echo "Sidekiq scan process running"
   else
-    echo "Sidekiq not running"
+    echo "Sidekiq scan process not running"
+  fi
+
+  # Sidekiq -task
+  if [ -f ./tmp/pids/intrigue-sidekiq-task.pid ]; then
+    echo "Sidekiq task process running"
+  else
+    echo "Sidekiq task process not running"
   fi
 }
 
@@ -56,8 +67,12 @@ case "$1" in
     stop_server
     start_server
     ;;
+  killall)
+    echo "Killing all ruby and sidekiq processes!"
+    kill_all
+    ;;
   *)
-    echo "Usage: control.sh {start|stop|restart}"
+    echo "Usage: control.sh {start|stop|restart|killall}"
     exit 1
     ;;
 esac

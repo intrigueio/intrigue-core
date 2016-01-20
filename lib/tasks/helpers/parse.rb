@@ -118,7 +118,7 @@ module Parse
     # Scan for email addresses
     addrs = content.scan(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,8}/)
     addrs.each do |addr|
-      x = _create_entity("EmailAddress", {"name" => addr, "uri" => source_uri})
+      x = _create_entity("EmailAddress", {"name" => addr, "uri" => source_uri}) unless addr =~ /.png$|.jpg$|.gif$|.bmp$|.jpeg$/
     end
 
     # Scan for dns records
@@ -155,14 +155,14 @@ module Parse
 
     begin
       # Download file and store locally before parsing. This helps prevent mime-type confusion
-      #
-      file = open(uri)
+      # Note that we don't care who it is, we'll download indescriminently.
+      file = open(uri, {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE})
 
       # Parse the file
       yomu = Yomu.new file
 
       # Save the full metadata
-      _create_entity("Info", "name" => "Metadata for #{uri}", "metadata" => yomu.metadata, "uri" => uri)
+      _create_entity("Info", "name" => "Raw Metadata for #{uri}", "content" => yomu.metadata.to_json, "uri" => "#{uri}")
 
       ### Handle PDF
       if yomu.metadata["Content-Type"] == "application/pdf"
