@@ -4,7 +4,7 @@ module Intrigue
       include DataMapper::Resource
 
       belongs_to :logger, 'Intrigue::Model::Logger'
-      belongs_to :project, :default => lambda { |r, p| Project.first }
+      belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.current_project }
 
       belongs_to :base_entity, 'Intrigue::Model::Entity'
 
