@@ -44,6 +44,22 @@ $ foreman start
 
 Now, browse to the web interface.
 
+### Starting up using Docker
+If you prefer running intrigue using docker, you can go ahead and use the provided docker-compose.yml to start up all services and intrigue.
+This, of course, requires docker and docker-compose to be installed. Also, you should git clone this repository first.
+Starting from scratch would look something like this:
+```
+# set up your config files first
+$ cp config/config.json.default config/config.json
+$ cp config/database.yml.docker config/database.yml
+# build the container and run it
+$ docker-compose build
+$ docker-compose run web rake setup
+$ docker-compose run web rake migrate
+$ docker-compose up # and we're up
+```
+You should configure the environment (dev/prod) in docker-compose.yml using INTRIGUE_ENV
+
 ### Using the web interface
 
 To use the web interface, browse to http://127.0.0.1:7777
