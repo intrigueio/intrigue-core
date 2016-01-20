@@ -168,6 +168,10 @@ module Task
       #rescue TypeError
       #  # https://github.com/jaimeiniesta/metainspector/issues/125
       #  @task_result.logger.log_error "TypeError - unknown failure" if @task_result
+      rescue Net::OpenTimeout => e
+        @task_result.logger.log_error "Timeout : #{e}" if @task_result
+      rescue Net::ReadTimeout => e
+        @task_result.logger.log_error "Timeout : #{e}" if @task_result
       rescue URI::InvalidURIError => e
         #
         # XXX - This is an issue. We should catch this and ensure it's not
