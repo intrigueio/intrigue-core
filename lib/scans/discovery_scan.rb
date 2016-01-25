@@ -73,10 +73,10 @@ class DiscoveryScan < Intrigue::Scanner::Base
         _start_task_and_recurse "uri_gather_ssl_certificate",entity,depth if entity.name =~ /^https/
 
         ## Spider, looking for metadata
-        _start_task_and_recurse "uri_spider",entity,depth
+        #_start_task_and_recurse "uri_spider",entity,depth
 
         # Check for exploitable URIs
-        _start_task_and_recurse "uri_exploitable",entity,depth
+        #_start_task_and_recurse "uri_exploitable",entity,depth
 
       else
         @scan_result.logger.log "SKIP Unhandled entity type: #{entity.type}##{entity.attributes["name"]}"
