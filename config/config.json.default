@@ -1,8 +1,15 @@
 {
   "intrigue_environment": {
     "value": "development",
-    "editable" : "true",
     "comment": "Intrigue's system environment"
+  },
+  "intrigue_sidekiq_redis_server": {
+    "value": "localhost",
+    "comment": "Sidekiq's redis server"
+  },
+  "intrigue_sidekiq_redis_client": {
+    "value": "localhost",
+    "comment": "Sidekiq's redis client"
   },
   "intrigue_task_load_paths": [],
   "intrigue_handlers" : {

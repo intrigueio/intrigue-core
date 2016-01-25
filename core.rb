@@ -41,27 +41,6 @@ def sanity_check_system_configuration
   end
 end
 
-sanity_check_system_configuration
-
-class IntrigueApp < Sinatra::Base
-  register Sinatra::Namespace
-
-  set :root, "#{$intrigue_basedir}"
-  set :views, "#{$intrigue_basedir}/app/views"
-  set :public_folder, 'public'
-
-  #Setup redis for resque
-  $intrigue_redis = Redis.new(url: 'redis://redis:6379', namespace: 'intrigue')
-
-  # set sidekiq options
-  Sidekiq.configure_server do |config|
-    config.redis = { url: 'redis://redis:6379/', namespace: 'intrigue' }
-  end
-
-  Sidekiq.configure_client do |config|
-    config.redis = { url: 'redis://redis:6379', namespace: 'intrigue' }
-  end
-
 # all datamapper set up stuffs
 def setup_datamapper
   ##  Set up Database Logging
@@ -89,6 +68,18 @@ class IntrigueApp < Sinatra::Base
   set :root, "#{$intrigue_basedir}"
   set :views, "#{$intrigue_basedir}/app/views"
   set :public_folder, 'public'
+
+  #Setup redis for resque
+  #$intrigue_redis = Redis.new(url: 'redis://localhost:6379', namespace: 'intrigue')
+
+  # set sidekiq options
+  Sidekiq.configure_server do |config|
+    config.redis = { url: "redis://#{$intrigue_config["intrigue_sidekiq_redis_server"]["value"]}:6379/", namespace: 'intrigue' }
+  end
+
+  Sidekiq.configure_client do |config|
+    config.redis = { url: "redis://#{$intrigue_config["intrigue_sidekiq_redis_server"]["value"]}:6379", namespace: 'intrigue' }
+  end
 
   ###
   ### Helpers
