@@ -141,6 +141,7 @@ class UriSpider < BaseTask
         parse_entities_from_content(page_uri, page_body)
       end
     end # end .crawl
+
   end # crawl_and_extract
 
 end
