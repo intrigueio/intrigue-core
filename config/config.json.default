@@ -119,6 +119,18 @@
       "uri" : "https://mailboxlayer.com/dashboard",
       "editable" : "true",
       "comment" : ""
+    },
+    "censys_uid" : {
+      "value" : "",
+      "uri" : "https://censys.io",
+      "editable" : "true",
+      "comment" : ""
+    },
+    "censys_secret" : {
+      "value" : "",
+      "uri" : "https://censys.io",
+      "editable" : "true",
+      "comment" : ""
     }
   }
 }
