@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/intrigueio/arachnid.git
-  revision: 329fc20ac1a1a4a1d105c5c5850be9865848652d
+  revision: b037fd17dd9b858b2d93cf858cb69542352702e0
   specs:
     arachnid (0.4.1)
       addressable
