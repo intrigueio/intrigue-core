@@ -11,6 +11,5 @@ Sidekiq::Web.use Rack::Protection::AuthenticityToken
 
 run Rack::URLMap.new({
   "/" => IntrigueApp,
-  #"/admin" => AdminApp,
   "/sidekiq" => Sidekiq::Web
 })

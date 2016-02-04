@@ -1,5 +1,5 @@
 :verbose: false
-#:logfile: ./log/intrigue-sidekiq-task.log
+#:logfile: ./log/intrigue-task.log
 :pidfile: ./tmp/pids/intrigue-sidekiq-task.pid
 :concurrency: 20
 :queues:

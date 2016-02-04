@@ -52,7 +52,23 @@ def setup_datamapper
 
   # Pull out the database config
   database_config = YAML.load_file("#{$intrigue_basedir}/config/database.yml")
-  exit unless database_config[database_environment]
+
+  # Catch an environment misconfiguraiton
+  unless database_config[database_environment]
+    puts "FATAL! No database config by the name: #{database_environment}"
+    exit
+  end
+
+  # If we've been passed a database server (like with the docker config)
+  # go ahead and set that in the config
+  if ENV["POSTGRES_SERVER"]
+    if database_config[database_environment]["host"]
+      puts "WARNING! Overwriting database configuration based on POSTGRES_SERVER configuration #{ENV["POSTGRES_SERVER"]}"
+      database_config[database_environment]["host"] = ENV["POSTGRES_SERVER"]
+    end
+  end
+
+  puts "Database config: #{database_config[database_environment]}"
 
   # Run our setup with the correct enviroment
   DataMapper.setup(:default, database_config[database_environment])
@@ -74,11 +90,13 @@ class IntrigueApp < Sinatra::Base
 
   # set sidekiq options
   Sidekiq.configure_server do |config|
-    config.redis = { url: "redis://#{$intrigue_config["intrigue_sidekiq_redis_server"]["value"]}:6379/", namespace: 'intrigue' }
+    redis_uri = ENV.fetch("REDIS_SERVER",$intrigue_config["intrigue_redis_uri"]["value"])
+    config.redis = { url: "#{redis_uri}", namespace: 'intrigue' }
   end
 
   Sidekiq.configure_client do |config|
-    config.redis = { url: "redis://#{$intrigue_config["intrigue_sidekiq_redis_server"]["value"]}:6379", namespace: 'intrigue' }
+    redis_uri = ENV.fetch("REDIS_SERVER",$intrigue_config["intrigue_redis_uri"]["value"])
+    config.redis = { url: "#{redis_uri}", namespace: 'intrigue' }
   end
 
   ###

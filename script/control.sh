@@ -6,8 +6,8 @@
 function start_server {
   # Application server
   bundle exec puma -C config/puma.rb
-  bundle exec sidekiq -C config/sidekiq-scan.yml -r ./core.rb -d -L ./log/sidekiq-scan.log
-  bundle exec sidekiq -C config/sidekiq-task.yml -r ./core.rb -d -L ./log/sidekiq-task.log
+  bundle exec sidekiq -C config/sidekiq-scan.yml -r ./core.rb -d -L ./log/intrigue-sidekiq-scan.log
+  bundle exec sidekiq -C config/sidekiq-task.yml -r ./core.rb -d -L ./log/intrigue-sidekiq-task.log
 }
 
 function stop_server {

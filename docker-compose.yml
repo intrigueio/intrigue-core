@@ -1,14 +1,13 @@
 db:
   image: postgres
   ports:
-    - "27018"
+    - "5432"
   environment:
     - POSTGRES_DB=intrigue_prod
 
 redis:
   image: redis
   expose:
-    - "5432"
     - "6379"
 
 web:
@@ -26,3 +25,5 @@ web:
     - .:/app
   environment:
     - INTRIGUE_ENV=production
+    - REDIS_SERVER=redis
+    - POSTGRES_SERVER=db
