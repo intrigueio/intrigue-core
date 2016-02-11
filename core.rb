@@ -127,7 +127,7 @@ class IntrigueApp < Sinatra::Base
 
     # Main Page
     get '/?' do
-      erb :news
+      erb :index
     end
 
     # NEWS!
@@ -141,9 +141,8 @@ end
 
 # Application libraries
 require_relative "app/all"
-
 # Core libraries
-require_relative 'lib/all'
+require_relative "lib/all"
 
 DataMapper.finalize
 

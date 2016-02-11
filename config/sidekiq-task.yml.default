@@ -1,4 +1,4 @@
-:verbose: false
+:verbose: true
 #:logfile: ./log/intrigue-task.log
 :pidfile: ./tmp/pids/intrigue-sidekiq-task.pid
 :concurrency: 20

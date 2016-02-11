@@ -2,7 +2,7 @@ module Intrigue
 module Scanner
   class Base
     include Sidekiq::Worker
-    sidekiq_options :queue => $intrigue_config["intrigue_queues"]["task_queue"], :backtrace => true
+    sidekiq_options :queue => $intrigue_config["intrigue_queues"]["scan_queue"], :backtrace => true
 
     include Intrigue::Task::Helper
 
