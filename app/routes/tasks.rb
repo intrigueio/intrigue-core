@@ -1,7 +1,6 @@
 class IntrigueApp < Sinatra::Base
   include Intrigue::Task::Helper
-
-  namespace '/v1/?' do
+  namespace '/v1' do
 
     # Kick off a task
     get '/task/?' do
@@ -83,80 +82,6 @@ class IntrigueApp < Sinatra::Base
     end
 
 
-    # Export All Tasks
-    get '/task_results.json/?' do
-      raise "Not implemented"
-    end
-
-    # Create a task result from a json request
-    post '/task_results/?' do
-
-      # What we receive should look like this:
-      #
-      #payload = {
-      #  "task" => task_name,
-      #  "entity" => entity_hash,
-      #  "options" => options_list,
-      #}
-
-      # Parse the incoming request
-      payload = JSON.parse(request.body.read) if request.content_type == "application/json"
-
-      ### don't take any shit
-      return nil unless payload
-
-      # Construct an entity from the entity_hash provided
-      type = payload["entity"]["type"]
-      attributes = payload["entity"].merge("type" => "Intrigue::Entity::#{type}")
-
-      entity = Intrigue::Model::Entity.create(attributes)
-      entity.save
-
-      # Generate a task id
-      task_name = payload["task"]
-      options = payload["options"]
-      handlers = payload["handlers"]
-
-      # Start the task _run
-      task_id = start_task_run(task_name, entity, options,handlers)
-      status 200 if task_id
-
-    # must be a string otherwise it can be interpreted as a status code
-    task_id.to_s
-    end
-
-    # Accept the results of a task run
-    post '/task_results/:id/?' do
-      # Retrieve the request's body and parse it as JSON
-      result = JSON.parse(request.body.read)
-      # Do something with event_json
-      job_id = result["id"]
-      # Return status
-      status 200 if result
-    end
-
-    # Show the results in a CSV format
-    get '/task_results/:id.csv/?' do
-      content_type 'text/plain'
-      @task_result = Intrigue::Model::TaskResult.get(params[:id])
-      @task_result.export_csv
-    end
-
-    # Show the results in a CSV format
-    get '/task_results/:id.tsv/?' do
-      content_type 'text/plain'
-      @task_result = Intrigue::Model::TaskResult.get(params[:id])
-      @task_result.export_tsv
-    end
-
-    # Show the results in a JSON format
-    get '/task_results/:id.json/?' do
-      content_type 'application/json'
-      @task_result = Intrigue::Model::TaskResult.get(params[:id])
-      @task_result.export_json
-    end
-
-
     # Show the results in a human readable format
     get '/task_results/:id/?' do
 
@@ -173,39 +98,6 @@ class IntrigueApp < Sinatra::Base
       end
 
       erb :'tasks/task_result'
-    end
-
-    # Determine if the task run is complete
-    get '/task_results/:id/complete/?' do
-      # Get the task result and return unless it's false
-      x = Intrigue::Model::TaskResult.get(params[:id])
-      return false unless x
-      # if we got it, and it's complete, return true
-      return "true" if x.complete
-
-    # Otherwise, not ready yet, return false
-    false
-    end
-
-    # Get the task log
-    get '/task_results/:id/log/?' do
-      @result = Intrigue::Model::TaskResult.get(params[:id])
-      erb :log
-    end
-
-    # Export All Tasks
-    get '/tasks.json/?' do
-      tasks = []
-       Intrigue::TaskFactory.list.each do |t|
-          tasks << t.send(:new).metadata
-      end
-    tasks.to_json
-    end
-
-    # Export a single task
-    get '/tasks/:id.json/?' do
-      task_name = params[:id]
-      Intrigue::TaskFactory.create_by_name(task_name).metadata.to_json
     end
   end
 end

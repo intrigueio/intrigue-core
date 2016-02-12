@@ -1,11 +1,6 @@
 class IntrigueApp < Sinatra::Base
   namespace '/v1' do
 
-    # Return a JSON array of all entity type
-    get '/entity_types.json' do
-      Intrigue::Model::Entity.descendants.map {|x| x.new.type_string }.to_json
-    end
-
     get '/entities' do
       if params[:type]
         entity_type = eval "Intrigue::Entity::#{params[:type]}"
@@ -14,16 +9,6 @@ class IntrigueApp < Sinatra::Base
         @entities = Intrigue::Model::Entity.page(params[:page], :per_page => 100)
       end
       erb :'entities/index'
-    end
-
-    get '/entities/:id.csv' do
-      @entity = Intrigue::Model::Entity.get(params[:id])
-      @entity.export_csv
-    end
-
-    get '/entities/:id.json' do
-      @entity = Intrigue::Model::Entity.get(params[:id])
-      @entity.export_json
     end
 
    get '/entities/:id' do

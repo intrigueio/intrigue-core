@@ -30,12 +30,12 @@ class IntrigueApp < Sinatra::Base
         redirect '/v1'
       end
 
-      # GET CONFIG
+      # get config
       get '/config/?' do
         erb :"admin/config"
       end
 
-      # SAVE CONFIG
+      # save the config
       post '/config' do
 
         # Update our config if one of the fields have been changed. Note that we use ***
