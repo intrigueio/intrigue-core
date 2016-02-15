@@ -9,7 +9,7 @@ module Handler
       "elasticsearch"
     end
 
-    def process(task_result, options)
+    def process(result, options)
 
       username = _get_handler_config("username")
       password = _get_handler_config("password")
@@ -20,7 +20,7 @@ module Handler
       type = "task_result"
 
       client = ::Elasticsearch::Client.new(url: url)
-      client.index(index: index, type: type, body: task_result.export_json)
+      client.index(index: index, type: type, body: result.export_json)
     end
 
   end

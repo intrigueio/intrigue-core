@@ -83,7 +83,7 @@ module Intrigue
       def export_csv
         export_string = "#{@id},#{@type},#{@name},"
         @details.each{|k,v| export_string << "#{k}=#{v};".gsub(",","#") }
-        export_string << ","
+        #export_string << ","
       export_string
       end
 

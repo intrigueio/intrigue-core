@@ -8,6 +8,11 @@ module Handler
 
     private
 
+      def _export_file_path(result)
+        "#{$intrigue_basedir}/results/#{result.name}_on_#{result.base_entity.name}"
+      end
+
+
       def _get_handler_config(key)
         begin
           $intrigue_config["intrigue_handlers"][self.class.type][key]
@@ -24,21 +29,6 @@ module Handler
    	        file.flock(File::LOCK_UN)
      	    end
      	end
-
-=begin
-      def _lock(path)
-        # We need to check the file exists before we lock it.
-        if File.exist?(path)
-          File.open(path).flock(File::LOCK_EX)
-        end
-
-        # Carry out the operations.
-        yield
-
-        # Unlock the file.
-        File.open(path).flock(File::LOCK_UN)
-      end
-=end
 
   end
 end

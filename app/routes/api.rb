@@ -173,7 +173,7 @@ class IntrigueApp < Sinatra::Base
       # Set up the ScanResult object
       scan_result = Intrigue::Model::ScanResult.create({
         :scan_type => scan_type,
-        :name => "x",
+        :name => "#{scan_type}",
         :base_entity => entity,
         :depth => 4,
         :filter_strings => "",

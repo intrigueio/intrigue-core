@@ -6,10 +6,10 @@ module Handler
       "webhook"
     end
 
-    def process(task_result, options)
+    def process(result, options)
       uri = options[:hook_uri]
       begin
-        recoded_string = task_result.export_json.encode('UTF-8', :invalid => :replace, :replace => '?')
+        recoded_string = result.export_json.encode('UTF-8', :invalid => :replace, :replace => '?')
         RestClient.post uri, recoded_string, :content_type => "application/json"
       rescue Encoding::UndefinedConversionError
         return false

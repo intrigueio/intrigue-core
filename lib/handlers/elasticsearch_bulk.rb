@@ -6,13 +6,13 @@ module Handler
       "elasticsearch_bulk"
     end
 
-    def process(task_result, options)
+    def process(result, options)
       # Write it out
-      shortname = "#{task_result.task_name}"
-      File.open("#{$intrigue_basedir}/results/#{shortname}.bulk", "a") do |file|
+      shortname = "#{result.name}"
+      File.open("#{_export_file_path(result)}.bulk", "a") do |file|
         _lock(file) do
-          file.write("{ \"index\" : { \"_index\" : \"task_results\", \"_type\" : \"#{task_result.task_name}\", \"_id\" : \"#{task_result.id}\" } }\n")
-          file.write(task_result.export_hash.to_json)
+          file.write("{ \"index\" : { \"_index\" : \"results\", \"_type\" : \"#{result.task_name}\", \"_id\" : \"#{result.id}\" } }\n")
+          file.write(result.export_json)
           file.write "\n"
         end
       end

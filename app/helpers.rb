@@ -21,6 +21,7 @@ module Intrigue
 
         # Create the task result, and associate our entity and options
         task_result = Intrigue::Model::TaskResult.create({
+            :name => "#{task_name}",
             :task_name => task_name,
             :options => options,
             :base_entity => entity,
