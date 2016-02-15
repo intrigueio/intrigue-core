@@ -6,7 +6,7 @@ module Handler
       "elasticsearch_bulk"
     end
 
-    def process(result, options)
+    def process(result)
       # Write it out
       shortname = "#{result.name}"
       File.open("#{_export_file_path(result)}.bulk", "a") do |file|

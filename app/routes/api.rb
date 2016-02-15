@@ -161,6 +161,7 @@ class IntrigueApp < Sinatra::Base
       scan_type = scan_result_info["scan_type"]
       entity = scan_result_info["entity"]
       options = scan_result_info["options"]
+      handlers = scan_result_info["handlers"]
 
       # Construct an entity from the data we have
       entity = Intrigue::Model::Entity.create(
@@ -177,8 +178,11 @@ class IntrigueApp < Sinatra::Base
         :base_entity => entity,
         :depth => 4,
         :filter_strings => "",
+        :handlers => handlers,
         :logger => Intrigue::Model::Logger.create
       })
+
+      #puts "CREATING SCAN RESULT: #{scan_result.inspect}"
 
       id = scan_result.start
     end

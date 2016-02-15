@@ -30,7 +30,6 @@ describe "Intrigue v1.0 Tasks" do
  "entity_id"=>{"id"=>"b42f5f4d-430b-4a90-8746-9133d34ec93c", "type"=>"DnsRecord", "attributes"=>{"name"=>"test.com"}},
  "options"=>nil,
  "complete"=>true,
- "entity_count"=>10,
  "entity_ids"=>
   [{"id"=>"7c85fa0c-01bc-4875-b8eb-91e09198cf76", "type"=>"IpAddress", "attributes"=>{"name"=>"47.132.122.212"}},
    {"id"=>"5eaba405-078d-4e3d-8f0d-b70426ae7387", "type"=>"IpAddress", "attributes"=>{"name"=>"121.141.45.247"}},

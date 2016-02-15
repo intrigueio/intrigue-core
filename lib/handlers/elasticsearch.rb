@@ -9,7 +9,7 @@ module Handler
       "elasticsearch"
     end
 
-    def process(result, options)
+    def process(result)
 
       username = _get_handler_config("username")
       password = _get_handler_config("password")

@@ -15,6 +15,7 @@ module Intrigue
       property :depth, Integer
       property :scan_type, String
       property :options, Object, :default => []
+      property :handlers, Object, :default => []
       property :complete, Boolean, :default => false
 
       property :timestamp_start, DateTime

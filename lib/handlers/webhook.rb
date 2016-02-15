@@ -6,8 +6,8 @@ module Handler
       "webhook"
     end
 
-    def process(result, options)
-      uri = options[:hook_uri]
+    def process(result)
+      uri = "http://intrigue.io/webhook"
       begin
         recoded_string = result.export_json.encode('UTF-8', :invalid => :replace, :replace => '?')
         RestClient.post uri, recoded_string, :content_type => "application/json"

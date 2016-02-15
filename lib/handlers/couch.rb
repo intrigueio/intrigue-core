@@ -8,7 +8,7 @@ module Handler
       "couch"
     end
 
-    def process(result, options={})
+    def process(result)
 
       # options
       # options[:server_uri]

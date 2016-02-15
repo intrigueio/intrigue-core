@@ -22,8 +22,23 @@ module Scanner
       @scan_result.complete = true
       @scan_result.logger.log_good "Run complete. Ship it!"
 
-      @scan_result.logger.save
+      @scan_result.handlers.each do |handler_type|
+        @scan_result.logger.log "Processing #{handler_type} handler."
+        begin
+          handler = HandlerFactory.create_by_type(handler_type)
+          response = handler.process(@scan_result)
+        rescue Exception => e
+          @scan_result.logger.log_error "Unable to process handler #{handler_type}: #{e}"
+          @scan_result.logger.log_error "Got response: #{response}"
+        end
+      end
+
+      cleanup
       @scan_result.save
+    end
+
+    def cleanup
+      @scan_result.logger.save
     end
 
     private

@@ -18,7 +18,6 @@ module Intrigue
       property :timestamp_end, DateTime
       property :options, Object, :default => [] #StringArray
       property :complete, Boolean, :default => false
-      property :entity_count, Integer, :default => 0
 
       def self.all_in_current_project
         all(:project_id => 1)
@@ -26,12 +25,12 @@ module Intrigue
 
       def add_entity(entity)
         return false if has_entity? entity
-        attribute_set(:entity_count, @entity_count + 1)
 
         entity.task_results << self
         entity.save
 
         self.entities << entity
+
         save
       true
       end
@@ -68,7 +67,6 @@ module Intrigue
           "options" => @options,
           "complete" => @complete,
           "base_entity" => self.base_entity.export_hash,
-          "entity_count" => @entity_count,
           "entities" => self.entities.map{ |x| x.export_hash },
           "log" => self.logger.full_log
         }

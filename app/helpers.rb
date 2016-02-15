@@ -28,6 +28,8 @@ module Intrigue
             :logger => Intrigue::Model::Logger.create
         })
 
+        puts "TASK RESULT: #{task_result.inspect}"
+
         ###
         # Create the task and start it
         ###

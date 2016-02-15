@@ -118,12 +118,13 @@ class CoreCli < Thor
     response["log"].each_line{|x| puts "  #{x}" }
   end
 
-  desc "scan [Scan Type] [Type#Entity] [Option1=Value1#...#...]", "Start a recursive scan. Returns the result"
-  def scan(scan_type,entity_string,option_string=nil)
+  desc "scan [Scan Type] [Type#Entity] [Option1=Value1#...#...] [Handlers]", "Start a recursive scan. Returns the result"
+  def scan(scan_type,entity_string,option_string=nil,handler_string="")
     entity_hash  = _parse_entity entity_string
     options_list = _parse_options option_string
+    handler_list = _parse_handlers handler_string
 
-    @api.start_scan_and_background(scan_type,entity_hash,options_list)
+    @api.start_scan_and_background(scan_type,entity_hash,options_list,handler_list)
   end
 
 
@@ -131,7 +132,7 @@ class CoreCli < Thor
   ### XXX - rewrite this so it uses the API
   ###
   desc "load [Task] [File] [Option1=Value1#...#...] [Handlers]", "Load entities from a file and run task on each of them"
-  def load(task_name,filename,options_string=nil,handler_string="csv,json")
+  def load(task_name,filename,options_string=nil,handler_string="")
 
     # Load in the main core file for direct access to TaskFactory and the Tasks
     # This makes this super speedy.

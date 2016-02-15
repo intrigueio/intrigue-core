@@ -103,12 +103,13 @@ class IntrigueApi
     # options_list = [
     #   {:name => "resolver", :value => "8.8.8.8" }
     # ]
-    def start_scan_and_background(scan_type,entity_hash,options_list=nil)
+    def start_scan_and_background(scan_type,entity_hash,options_list=nil,handler_list=nil)
 
       payload = {
         "scan_type" => scan_type,
         "options" => options_list,
-        "entity" => entity_hash
+        "entity" => entity_hash,
+        "handlers" => handler_list
       }
 
       ### Send to the server

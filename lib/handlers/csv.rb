@@ -6,7 +6,7 @@ module Handler
       "csv"
     end
 
-    def process(result, options)
+    def process(result)
       shortname = "#{result.name}"
       File.open("#{_export_file_path(result)}.csv", "a") do |file|
         _lock(file) do
