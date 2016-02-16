@@ -17,7 +17,7 @@
 <p>Task Runs:</p>
   <ul>
   <% @scan_result.task_results.each do |x| %>
-    <li> <a href="/v1/task_results/<%=x.id%>"> <%= x.task_name %> <%= "[#{x.base_entity}]" %> (<%= x.entity_count %>)</a></li>
+    <li> <a href="/v1/task_results/<%=x.id%>"> <%= x.task_name %> <%= "[#{x.base_entity}]" %></a></li>
   <% end %>
   </ul>
 Log: <span class="like-pre-dark"><%= h @scan_result.logger.full_log %></span><br/>
