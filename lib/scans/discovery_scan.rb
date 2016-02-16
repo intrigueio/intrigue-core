@@ -38,8 +38,8 @@ class DiscoveryScan < Intrigue::Scanner::Base
 
         ### DNS Subdomain Bruteforce
         _start_task_and_recurse "dns_brute_sub",entity,depth,[
-        #  {"name" => "use_file", "value" => true },
-        #  {"name" => "brute_alphanumeric_size", "value" => 1},
+          {"name" => "use_file", "value" => true },
+          {"name" => "brute_alphanumeric_size", "value" => 1},
           {"name" => "use_permutations", "value" => true }
         ]
 
