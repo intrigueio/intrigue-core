@@ -81,9 +81,8 @@ class UriGatherSslCertTask  < BaseTask
       _create_entity "SslCertificate", {  "name" => "#{cert.subject}",
                                           "text" => "#{cert.to_text}" }
 
+
     rescue SocketError => e
-      @task_result.logger.log_error "Caught an error: #{e}"
-    rescue OpenSSL::SSL::SSLError => e
       @task_result.logger.log_error "Caught an error: #{e}"
     rescue Errno::ECONNRESET => e
       @task_result.logger.log_error "Caught an error: #{e}"
@@ -92,6 +91,12 @@ class UriGatherSslCertTask  < BaseTask
     rescue Errno::ECONNREFUSED => e
       @task_result.logger.log_error "Caught an error: #{e}"
     rescue Errno::ETIMEDOUT => e
+      @task_result.logger.log_error "Caught an error: #{e}"
+    rescue URI::InvalidURIError => e
+      @task_result.logger.log_error "Invalid URI: #{e}"
+      # TODO this is probably an issue with an IPv6 URL... need to be adjusted:
+      # https://www.ietf.org/rfc/rfc2732.txt
+    rescue OpenSSL::SSL::SSLError => e
       @task_result.logger.log_error "Caught an error: #{e}"
     rescue RuntimeError => e
       @task_result.logger.log_error "Caught an error: #{e}"

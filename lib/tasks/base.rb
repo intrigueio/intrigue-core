@@ -253,7 +253,7 @@ class BaseTask
       # Create the entity, validating the attributes
       entity = Intrigue::Model::Entity.create({
                   :type => eval("Intrigue::Entity::#{type}"),
-                  :name => hash["name"],
+                  :name => hash["name"][0,200],
                   :details => hash })
 
       # If we don't get anything back, safe to assume we can't move on
