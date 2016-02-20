@@ -26,12 +26,12 @@ class UriGatherSslCertTask  < BaseTask
     super
 
     opt_allow_cloudflare = _get_option "skip_cloudflare"
-
     uri = _get_entity_attribute "name"
-    hostname = URI.parse(uri).host
-    port = 443
 
     begin
+      hostname = URI.parse(uri).host
+      port  443
+
       # Create a socket and connect
       tcp_client = TCPSocket.new hostname, port
       ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
