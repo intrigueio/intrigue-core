@@ -1,9 +1,0 @@
-development:
-  adapter: sqlite3
-  database: tmp/intrigue.db
-production:
-  adapter: postgres
-  host: localhost
-  user: intrigue
-  password: adsfljadsfkjl!@!@3
-  database: intrigue
