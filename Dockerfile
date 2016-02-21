@@ -1,4 +1,6 @@
 FROM ubuntu:14.04
+MAINTAINER Jonathan Cran <jcran@intrigue.io>
+
 RUN apt-get install -y software-properties-common
 RUN apt-add-repository ppa:brightbox/ruby-ng
 RUN apt-get update -qq && apt-get -y upgrade && \
@@ -13,13 +15,12 @@ RUN git clone https://github.com/robertdavidgraham/masscan
 WORKDIR /usr/share/masscan
 RUN make -j 3 && make install
 
-# get intrigue
-WORKDIR /
-ADD . /app
-WORKDIR /app
-RUN gem install bundler
+# get intrigue-core code
+COPY . /core
+WORKDIR /core
 
 ENV BUNDLE_JOBS=12
-RUN bundle install --system
+RUN gem install bundler && bundle install --system
 
-CMD ["foreman", "start"]
+EXPOSE 7777
+CMD ["./script/control.sh", "start"]

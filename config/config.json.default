@@ -1,8 +1,5 @@
 {
   "intrigue_task_load_paths": [],
-  "intrigue_environment": {
-    "value": "development",
-  },
   "intrigue_redis_uri": {
     "value": "redis://localhost:6379/",
   },

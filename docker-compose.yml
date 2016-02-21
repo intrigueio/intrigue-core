@@ -1,29 +1,22 @@
-db:
-  image: postgres
-  ports:
-    - "5432"
-  environment:
-    - POSTGRES_DB=intrigue_prod
-
-redis:
-  image: redis
-  expose:
-    - "6379"
-
-web:
-  build: .
-  ports:
-    - "127.0.0.1:7777:7777"
-  links:
-    - redis
-    - db
-  volumes:
-    - ./public/screenshots:/app/public/screenshots
-    # replace /tmp with host folder so we can mess with the sqlite db, if needed
-    - ./intrigue_tmp/:/tmp/
-    # for easy development, mount project root at /app so we don't need to rebuild for every change
-    - .:/app
-  environment:
-    - INTRIGUE_ENV=production
-    - REDIS_SERVER=redis
-    - POSTGRES_SERVER=db
+version: "2"
+services:
+  postgres:
+    image: postgres
+    expose:
+      - "5432"
+    environment:
+      - POSTGRES_DB=intrigue_prod
+  redis:
+    image: redis
+    expose:
+      - "6379"
+  web:
+    build: .
+    ports:
+      - "27777:7777"
+    links:
+      - redis
+      - postgres
+    environment:
+      - INTRIGUE_ENV=docker
+      - REDIS_URI=redis://localhost:6379/

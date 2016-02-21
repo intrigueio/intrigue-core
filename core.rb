@@ -47,31 +47,21 @@ def setup_datamapper
   DataMapper::Logger.new($stdout, :warn)
 
   # Get the database environment from our intrigue config
-  database_environment = ENV.fetch('INTRIGUE_ENV', "#{$intrigue_config["intrigue_environment"]["value"]}")
-  puts "Intrigue-core database environment: #{database_environment}"
+  system_env = ENV.fetch("INTRIGUE_ENV", "development")
+  puts "Intrigue-core system environment: #{system_env}"
 
   # Pull out the database config
   database_config = YAML.load_file("#{$intrigue_basedir}/config/database.yml")
-
-  # Catch an environment misconfiguraiton
-  unless database_config[database_environment]
-    puts "FATAL! No database config by the name: #{database_environment}"
+  unless database_config[system_env]
+    # Catch an environment misconfiguration
+    puts "FATAL! No database config by the name: #{system_env}"
     exit
   end
 
-  # If we've been passed a database server (like with the docker config)
-  # go ahead and set that in the config
-  if ENV["POSTGRES_SERVER"]
-    if database_config[database_environment]["host"]
-      puts "WARNING! Overwriting database configuration based on POSTGRES_SERVER configuration #{ENV["POSTGRES_SERVER"]}"
-      database_config[database_environment]["host"] = ENV["POSTGRES_SERVER"]
-    end
-  end
-
-  puts "Database config: #{database_config[database_environment]}"
+  puts "DEBUG: Database config: #{database_config[system_env]}"
 
   # Run our setup with the correct enviroment
-  DataMapper.setup(:default, database_config[database_environment])
+  DataMapper.setup(:default, database_config[system_env])
   DataMapper::Property::String.length(255)
 end
 
@@ -90,12 +80,12 @@ class IntrigueApp < Sinatra::Base
 
   # set sidekiq options
   Sidekiq.configure_server do |config|
-    redis_uri = ENV.fetch("REDIS_SERVER",$intrigue_config["intrigue_redis_uri"]["value"])
+    redis_uri = ENV.fetch("REDIS_URI",$intrigue_config["intrigue_redis_uri"]["value"])
     config.redis = { url: "#{redis_uri}", namespace: 'intrigue' }
   end
 
   Sidekiq.configure_client do |config|
-    redis_uri = ENV.fetch("REDIS_SERVER",$intrigue_config["intrigue_redis_uri"]["value"])
+    redis_uri = ENV.fetch("REDIS_URI",$intrigue_config["intrigue_redis_uri"]["value"])
     config.redis = { url: "#{redis_uri}", namespace: 'intrigue' }
   end
 

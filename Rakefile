@@ -82,7 +82,7 @@ task :migrate => :setup do
     end
 
     database_config = YAML.load_file("#{intrigue_basedir}/config/database.yml")
-    database_environment = ENV.fetch('INTRIGUE_ENV', "#{system_config["intrigue_environment"]["value"]}")
+    database_environment = ENV.fetch('INTRIGUE_ENV', "development")
 
     unless database_config[database_environment]
       puts "FATAL! Unable to read database configuration"

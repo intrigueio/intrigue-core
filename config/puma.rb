@@ -75,7 +75,7 @@ pidfile "#{cwd}/tmp/pids/intrigue-puma.pid"
 # The default is "tcp://0.0.0.0:9292".
 #
 # bind unix:///tmp/core_puma.sock
-bind 'tcp://127.0.0.1:7777'
+bind 'tcp://0.0.0.0:7777'
 # bind 'unix:///var/run/puma.sock'
 # bind 'unix:///var/run/puma.sock?umask=0111'
 # bind 'ssl://127.0.0.1:9292?key=path_to_key&cert=path_to_cert'

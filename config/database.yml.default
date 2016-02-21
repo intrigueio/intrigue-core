@@ -7,3 +7,9 @@ production:
   user: intrigue
   password: CHANGEME
   database: intrigue_prod
+docker:
+  adapter: postgres
+  host: postgres
+  user: postgres
+  password:
+  database: postgres

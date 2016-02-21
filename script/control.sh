@@ -3,6 +3,10 @@
 # Puma: intrigue-puma.pid
 # Sidekiq: intrigue-sidekiq.pid
 
+function setup_server {
+  bundle exec rake migrate
+}
+
 function start_server {
   # Application server
   bundle exec puma -C config/puma.rb
@@ -56,6 +60,7 @@ case "$1" in
     ;;
   start)
     echo "Starting intrigue-core"
+    setup_server
     start_server
     ;;
   stop)

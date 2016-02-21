@@ -51,7 +51,7 @@ Starting from scratch would look something like this:
 ```
 # set up your config files first
 $ cp config/config.json.default config/config.json
-$ cp config/database.yml.docker config/database.yml
+$ cp config/database.yml.default config/database.yml
 # build the container and run it
 $ docker-compose build
 $ docker-compose run web rake setup
