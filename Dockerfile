@@ -23,4 +23,4 @@ ENV BUNDLE_JOBS=12
 RUN gem install bundler && bundle install --system
 
 EXPOSE 7777
-CMD ["./script/control.sh", "start"]
+CMD ["foreman", "start"]
