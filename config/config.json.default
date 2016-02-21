@@ -1,8 +1,5 @@
 {
   "intrigue_task_load_paths": [],
-  "intrigue_redis_uri": {
-    "value": "redis://localhost:6379/",
-  },
   "intrigue_queues": {
    "task_queue": "task",
    "scan_queue": "scan"

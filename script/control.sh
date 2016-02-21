@@ -9,9 +9,13 @@ function setup_server {
 
 function start_server {
   # Application server
-  bundle exec puma -C config/puma.rb
-  bundle exec sidekiq -C config/sidekiq-scan.yml -r ./core.rb -d -L ./log/intrigue-sidekiq-scan.log
-  bundle exec sidekiq -C config/sidekiq-task.yml -r ./core.rb -d -L ./log/intrigue-sidekiq-task.log
+  echo "Starting puma..."
+  bundle exec puma -d -b "tcp://0.0.0.0:7777"  # daemonize so we background (overrides the config)
+  echo "Starting scan processing..."
+  bundle exec sidekiq -C ./config/sidekiq-scan.yml -r ./core.rb -d -L ./log/intrigue-sidekiq-scan.log
+  echo "Starting task processing..."
+  bundle exec sidekiq -C ./config/sidekiq-task.yml -r ./core.rb -d -L ./log/intrigue-sidekiq-task.log
+  #tail -f ./log/intrigue-sidekiq-task.log
 }
 
 function stop_server {
@@ -59,12 +63,12 @@ case "$1" in
     status_server
     ;;
   start)
-    echo "Starting intrigue-core"
+    echo "Starting intrigue-core processes"
     setup_server
     start_server
     ;;
   stop)
-    echo "Stopping intrigue-core"
+    echo "Stopping intrigue-core processes"
     stop_server
     ;;
   restart)
@@ -73,7 +77,7 @@ case "$1" in
     start_server
     ;;
   killall)
-    echo "Killing all ruby and sidekiq processes!"
+    echo "ALERT! Killing all ruby and sidekiq processes! This command is system-wide, so use with caution!"
     kill_all
     ;;
   *)

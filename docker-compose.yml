@@ -20,3 +20,11 @@ services:
     environment:
       - INTRIGUE_ENV=docker
       - REDIS_URI=redis://redis:6379/
+  worker:
+    build: .
+    links:
+      - redis
+      - postgres
+    environment:
+      - INTRIGUE_ENV=docker
+      - REDIS_URI=redis://redis:6379/

@@ -46,7 +46,7 @@ def setup_datamapper
   ##  Set up Database Logging
   DataMapper::Logger.new($stdout, :warn)
 
-  # Get the database environment from our intrigue config
+  # Pull intrigue config from the environment if it's available (see docker config)
   system_env = ENV.fetch("INTRIGUE_ENV", "development")
   puts "Intrigue-core system environment: #{system_env}"
 
@@ -75,14 +75,14 @@ class IntrigueApp < Sinatra::Base
   set :views, "#{$intrigue_basedir}/app/views"
   set :public_folder, 'public'
 
-  # set sidekiq options
+  # Pull sidekiq config from the environment if it's available (see docker config)
   Sidekiq.configure_server do |config|
-    redis_uri = ENV.fetch("REDIS_URI",$intrigue_config["intrigue_redis_uri"]["value"])
+    redis_uri = ENV.fetch("REDIS_URI","redis://localhost:6379/")
     config.redis = { url: "#{redis_uri}", namespace: 'intrigue' }
   end
 
   Sidekiq.configure_client do |config|
-    redis_uri = ENV.fetch("REDIS_URI",$intrigue_config["intrigue_redis_uri"]["value"])
+    redis_uri = ENV.fetch("REDIS_URI","redis://localhost:6379/")
     config.redis = { url: "#{redis_uri}", namespace: 'intrigue' }
   end
 

@@ -21,19 +21,31 @@ class SearchCensysTask < BaseTask
   def run
     super
 
-    # Make sure the key is set
-    uid = _get_global_config "censys_uid"
-    secret = _get_global_config "censys_secret"
-    entity_name = _get_entity_attribute "name"
+    begin
 
-    # Attach to the censys service & search
-    censys = Censys::Api.new(uid,secret)
-    results = censys.search(entity_name)
+      # Make sure the key is set
+      uid = _get_global_config "censys_uid"
+      secret = _get_global_config "censys_secret"
+      entity_name = _get_entity_attribute "name"
 
-    results["results"].each do |result|
-      @task_result.logger.log "Got result: #{result}"
-      _create_entity "SslCertificate", "name" => result["parsed.subject_dn"], "text" => result
+      unless uid && secret
+        @task_result.logger.log_error "No credentials?"
+        return
+      end
+
+      # Attach to the censys service & search
+      censys = Censys::Api.new(uid,secret)
+      results = censys.search(entity_name)
+
+      results["results"].each do |result|
+        @task_result.logger.log "Got result: #{result}"
+        _create_entity "SslCertificate", "name" => result["parsed.subject_dn"], "text" => result
+      end
+
+    rescue RuntimeError => e
+      @task_result.logger.log_error "Runtime error: #{e}"
     end
+
   end # end run()
 
 end # end Class
