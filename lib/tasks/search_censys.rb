@@ -32,7 +32,7 @@ class SearchCensysTask < BaseTask
 
     results["results"].each do |result|
       @task_result.logger.log "Got result: #{result}"
-      _create_entity "Info", "name" => result
+      _create_entity "SslCertificate", "name" => result["parsed.subject_dn"], "text" => result
     end
   end # end run()
 
