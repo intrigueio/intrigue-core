@@ -19,4 +19,4 @@ services:
       - postgres
     environment:
       - INTRIGUE_ENV=docker
-      - REDIS_URI=redis://localhost:6379/
+      - REDIS_URI=redis://redis:6379/
