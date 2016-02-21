@@ -1,8 +1,10 @@
 # Welcome, intrepid user!
 
+WARNING: THAR BE DRAGONS! Intrigue is currently in ALPHA and requires some effort to get set up. We will be providing installation packages at some point in the future. If you're interested in helping test, please join the chat below:
+
 [![Join the chat at https://gitter.im/intrigueio/intrigue-core](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/intrigueio/intrigue-core?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Intrigue-core is an API-first attack surface discovery framework. It can be used for for Internet (security) reconnaissance and research.
+Intrigue-core is an API-first framework for attack surface discovery. It is primarily used for for Internet (security) reconnaissance and research.
 
 <img src="https://raw.githubusercontent.com/intrigueio/intrigue-core/develop/doc/home.png" width="700">
 
@@ -44,22 +46,6 @@ $ foreman start
 
 Now, browse to the web interface.
 
-### Starting up using Docker
-If you prefer running intrigue using docker, you can go ahead and use the provided docker-compose.yml to start up all services and intrigue.
-This, of course, requires docker and docker-compose to be installed. Also, you should git clone this repository first.
-Starting from scratch would look something like this:
-```
-# set up your config files first
-$ cp config/config.json.default config/config.json
-$ cp config/database.yml.default config/database.yml
-# build the container and run it
-$ docker-compose build
-$ docker-compose run web rake setup
-$ docker-compose run web rake migrate
-$ docker-compose up # and we're up
-```
-You should configure the environment (dev/prod) in docker-compose.yml using INTRIGUE_ENV
-
 ### Using the web interface
 
 To use the web interface, browse to http://127.0.0.1:7777
@@ -85,10 +71,6 @@ Start a task with options:
 $ bundle exec ./core-cli.rb start dns_brute_sub DnsRecord#intrigue.io resolver=8.8.8.8#brute_list=1,2,3,4,www#use_permutations=true
 [+] Starting task
 [+] Task complete!
-[+] Start Results
-  DnsRecord#www.intrigue.io
-  IpAddress#192.0.78.13
-[ ] End Results
 [+] Task Log:
 [ ] : Got allowed option: resolver
 [ ] : Allowed option: {:name=>"resolver", :type=>"String", :regex=>"ip_address", :default=>"8.8.8.8"}
@@ -129,7 +111,6 @@ $ bundle exec ./core-cli.rb start dns_brute_sub DnsRecord#intrigue.io resolver=8
 [-] : Hit exception: no address for www1.intrigue.io
 [-] : Hit exception: no address for www2.intrigue.io
 [+] : Ship it!
-[ ] : Sending to Webhook: http://localhost:7777/v1/task_runs/fddc7313-52f6-4d5a-9aad-fd39b0428ca5
 ```
 
 Check for a list of subdomains on intrigue.io:
@@ -177,4 +158,17 @@ You can use the tried and true curl utility to request a task run. Specify the t
 
 ```
 $ curl -s -X POST -H "Content-Type: application/json" -d '{ "task": "example", "entity": { "type": "String", "attributes": { "name": "8.8.8.8" } }, "options": {} }' http://127.0.0.1:7777/v1/task_runs
+```
+
+### Scaling horizontally with Docker
+Using Docker, we can add many sidekiq workers, allowing us to scale horizontally. To set up the Intrigue infrastructure, we've provided a minimal docker-compose.yml. This, of course, requires docker and docker-compose to be installed.
+
+Starting up with docker-compose:
+```
+# Clone the repository to your current directory
+# Set up your config file first (this is optional, but preferrable)
+$ cp config/config.json.default config/config.json
+
+# Build the container and run it
+$ docker-compose build && docker-compose up # and we're up on :27777
 ```
