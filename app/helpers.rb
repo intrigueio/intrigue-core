@@ -27,9 +27,7 @@ module Intrigue
             :base_entity => entity,
             :logger => Intrigue::Model::Logger.create
         })
-
-        puts "TASK RESULT: #{task_result.inspect}"
-
+        
         ###
         # Create the task and start it
         ###

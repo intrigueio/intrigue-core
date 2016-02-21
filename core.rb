@@ -58,7 +58,7 @@ def setup_datamapper
     exit
   end
 
-  puts "DEBUG: Database config: #{database_config[system_env]}"
+  #puts "DEBUG: Database config: #{database_config[system_env]}"
 
   # Run our setup with the correct enviroment
   DataMapper.setup(:default, database_config[system_env])
