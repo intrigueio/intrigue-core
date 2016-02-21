@@ -36,12 +36,13 @@ class DnsLookupForwardTask < BaseTask
         :search => [])
 
       result = res.query(name, "ANY")
+      @task_result.logger.log "Processing: #{result}"
+
+      # Let us know if we got an empty result
       @task_result.logger.log_error "Nothing?" if result.answer.empty?
 
       # For each of the found addresses
-      result.answer.map{ |resource|
-        @task_result.logger.log "Parsing #{resource}"
-
+      result.answer.map do |resource|
         # Check to see if the entity should be a DnsRecord or an IPAddress. Simply check
         # for the presence of alpha characters (see String initializer for this method)
         "#{resource.rdata}".is_ip_address? ? entity_type="IpAddress" : entity_type="DnsRecord"
@@ -83,28 +84,29 @@ class DnsLookupForwardTask < BaseTask
               _create_entity(entity_type, "name" => x.split(":").last ) if x =~ /^include:/
 
               # an ip:xxx entry could be a netblock, an ip or a dnsrecord. messy.
-              if x =~ /^ip/
-                y = x.split(":").last
-                if y.include? "/"
-                  _create_entity("NetBlock", "name" => y )
-                elsif y.is_ip_address?
-                  _create_entity("IpAddress", "name" => y )
-                else
-                  _create_entity("DnsRecord", "name" => y )
-                end
+            if x =~ /^ip/
+              y = x.split(":").last
+              if y.include? "/"
+                _create_entity("NetBlock", "name" => y )
+              elsif y.is_ip_address?
+                _create_entity("IpAddress", "name" => y )
+              else
+                _create_entity("DnsRecord", "name" => y )
               end
-
             end
-
-          else
-            _create_entity("Info", { "name" => "#{resource.type} Record for #{name}", "type" => "#{resource.type}", "data" => "#{resource.rdata}" }) if  record_types.include?("ANY")
           end
+        else
+          _create_entity("Info", { "name" => "#{resource.type} Record for #{name}", "type" => "#{resource.type}", "data" => "#{resource.rdata}" }) if  record_types.include?("ANY")
         end
-      }
+
+      end # end if
+
+    end # end result.answer.map
 
     rescue Exception => e
       @task_result.logger.log_error "Hit exception: #{e}"
     end
+
   end
 
 end

@@ -90,8 +90,8 @@ class UriExtractMetadata < BaseTask
 
       # Create an SSL Certificate entity
       _create_entity "SslCertificate", {
-        "name" => cert.subject,
-        "text" => cert.to_text
+        "name" => cert.subject.to_s,
+        "text" => cert.to_text.to_s
       }
 
     rescue SocketError => e
