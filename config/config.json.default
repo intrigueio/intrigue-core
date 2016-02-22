@@ -9,6 +9,15 @@
       "username": "",
       "password": "",
       "hostname" : ""
+    },
+    "webhook_generic" : {
+      "uri" : "http://intrigue.io/webhook"
+    },
+    "s3_json" : {
+      "access_key" : "",
+      "secret_key" : "",
+      "region" : "",
+      "bucket" : ""
     }
   },
   "intrigue_global_module_config": {

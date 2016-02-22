@@ -50,7 +50,7 @@ gem 'thor'
 
 # Handlers
 gem 'couchrest'
-
+gem 'aws-sdk'
 # Installing foreman as a gem is generally not advised, but
 # we won't let it get in our way
 gem 'foreman'

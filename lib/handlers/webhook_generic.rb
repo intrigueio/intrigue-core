@@ -1,13 +1,13 @@
 module Intrigue
 module Handler
-  class Webhook < Intrigue::Handler::Base
+  class WebhookGeneric < Intrigue::Handler::Base
 
     def self.type
-      "webhook"
+      "webhook_generic"
     end
 
     def process(result)
-      uri = "http://intrigue.io/webhook"
+      uri = _get_handler_config "uri"
       begin
         recoded_string = result.export_json.encode('UTF-8', :invalid => :replace, :replace => '?')
         RestClient.post uri, recoded_string, :content_type => "application/json"
