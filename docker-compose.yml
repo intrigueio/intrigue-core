@@ -28,4 +28,3 @@ services:
     environment:
       - INTRIGUE_ENV=docker
       - REDIS_URI=redis://redis:6379/
-      - 
