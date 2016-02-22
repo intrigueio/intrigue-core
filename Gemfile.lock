@@ -10,10 +10,10 @@ GIT
       typhoeus
 
 GIT
-  remote: https://github.com/intrigueio/intrigue-api-client.git
-  revision: b2b58de3dcc71a7b9e4d13d11e7fcab97f5f661b
+  remote: https://github.com/intrigueio/intrigue_api_client.git
+  revision: e7007710df1afa06b1d9f08ce279b841065ba1b4
   specs:
-    intrigue-api-client (0.1.1)
+    intrigue_api_client (1.0.0)
       json (~> 1.8)
       rest-client (~> 1.8)
 
@@ -274,7 +274,7 @@ DEPENDENCIES
   gmail
   googleajax
   iconv
-  intrigue-api-client!
+  intrigue_api_client!
   net-dns
   nokogiri
   pry

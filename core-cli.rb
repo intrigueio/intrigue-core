@@ -2,7 +2,7 @@
 require 'thor'
 require 'json'
 require 'rest-client'
-require 'intrigue-api-client'
+require 'intrigue_api_client'
 require 'pry' #DEBUG
 
 class CoreCli < Thor
@@ -11,7 +11,7 @@ class CoreCli < Thor
     super
     $intrigue_basedir = File.dirname(__FILE__)
 
-    @server_uri = ENV.fetch("INTRIGUE_API", "http://127.0.0.1:7777/v1")
+    @server_uri = ENV.fetch("INTRIGUE_API_URI", "http://127.0.0.1:7777/v1")
     @delim = "#"
     @debug = true
     # Connect to Intrigue API

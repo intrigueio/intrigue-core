@@ -24,7 +24,7 @@ ENV BUNDLE_JOBS=12
 RUN gem install bundler && bundle install --system
 
 # get intrigue-core code
-EXPOSE 7777
+EXPOSE 7778
 COPY . /core
 
 # start the app
