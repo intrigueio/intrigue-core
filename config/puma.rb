@@ -28,15 +28,14 @@
 # The default is "development".
 # If you are deploying you will want to set INTRIGUE_ENV or change this line
 #
+puts "Setting puma environment to: #{ENV.fetch('INTRIGUE_ENV', 'development')}"
 environment ENV.fetch('INTRIGUE_ENV', 'development')
-#environment 'production'
 
 # Daemonize the server into the background. Highly suggest that
 # this be combined with "pidfile" and "stdout_redirect".
 #
 # The default is "false".
 #
-#daemonize
 daemonize false
 
 # Store the pid of the server in the file at "path".

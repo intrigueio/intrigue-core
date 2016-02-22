@@ -2,7 +2,7 @@
 require 'thor'
 require 'json'
 require 'rest-client'
-require 'intrigue'
+require 'intrigue-api-client'
 require 'pry' #DEBUG
 
 class CoreCli < Thor
@@ -10,19 +10,12 @@ class CoreCli < Thor
   def initialize(*args)
     super
     $intrigue_basedir = File.dirname(__FILE__)
-    @server_uri = "http://127.0.0.1:7777/v1"
-    @sidekiq_uri = "http://127.0.0.1:7777/sidekiq"
+
+    @server_uri = ENV.fetch("INTRIGUE_API", "http://127.0.0.1:7777/v1")
     @delim = "#"
     @debug = true
     # Connect to Intrigue API
     @api = IntrigueApi.new
-  end
-
-  desc "stats", "Get queue stats"
-  def stats
-    stats_hash = JSON.parse(RestClient.get("#{@sidekiq_uri}/stats"))
-    puts "Sidkiq: #{stats_hash["sidekiq"]}"
-    puts "Redis: #{stats_hash["redis"]}"
   end
 
   desc "list", "List all available tasks"

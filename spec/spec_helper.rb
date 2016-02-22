@@ -1,5 +1,5 @@
 require_relative '../core.rb'
-require 'intrigue'
+require 'intrigue-api-client'
 require 'rack/test'
 
 set :environment, :test

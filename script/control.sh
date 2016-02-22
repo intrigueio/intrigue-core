@@ -8,14 +8,12 @@ function setup_server {
 }
 
 function start_server {
-  # Application server
-  echo "Starting puma..."
-  bundle exec puma -d -b "tcp://0.0.0.0:7777"  # daemonize so we background (overrides the config)
   echo "Starting scan processing..."
   bundle exec sidekiq -C ./config/sidekiq-scan.yml -r ./core.rb -d -L ./log/intrigue-sidekiq-scan.log
   echo "Starting task processing..."
   bundle exec sidekiq -C ./config/sidekiq-task.yml -r ./core.rb -d -L ./log/intrigue-sidekiq-task.log
-  #tail -f ./log/intrigue-sidekiq-task.log
+  echo "Starting puma..."
+  bundle exec puma -b "tcp://0.0.0.0:7777"  # daemonize so we background (overrides the config
 }
 
 function stop_server {

@@ -10,6 +10,14 @@ GIT
       typhoeus
 
 GIT
+  remote: https://github.com/intrigueio/intrigue-api-client.git
+  revision: b2b58de3dcc71a7b9e4d13d11e7fcab97f5f661b
+  specs:
+    intrigue-api-client (0.1.1)
+      json (~> 1.8)
+      rest-client (~> 1.8)
+
+GIT
   remote: https://github.com/intrigueio/screencap.git
   revision: e3af2819f083b021babff97a9a61278ccf99cc22
   specs:
@@ -29,13 +37,6 @@ GIT
     ruby-nmap (0.9.0)
       nokogiri (~> 1.3)
       rprogram (~> 0.3)
-
-PATH
-  remote: ./util/intrigue-gem
-  specs:
-    intrigue (0.1.1)
-      json (~> 1.8)
-      rest-client (~> 1.8)
 
 GEM
   remote: https://rubygems.org/
@@ -273,7 +274,7 @@ DEPENDENCIES
   gmail
   googleajax
   iconv
-  intrigue!
+  intrigue-api-client!
   net-dns
   nokogiri
   pry

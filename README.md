@@ -127,10 +127,10 @@ $ for x in `cat data/domains.txt | head -n 1000`; do bundle exec ./core-cli.rb s
 [![Gem Version](https://badge.fury.io/rb/intrigue.svg)](http://badge.fury.io/rb/intrigue)
 
 ```
-$ gem install intrigue
+$ gem install intrigue-api-client
 $ irb
 
-> require 'intrigue'
+> require 'intrigue-api-client'
 > x =  Intrigue.new
 
   # Create an entity hash, must have a :type key
@@ -172,3 +172,8 @@ $ cp config/config.json.default config/config.json
 # Build the container and run it
 $ docker-compose build && docker-compose up # and we're up on :27777
 ```
+
+#### Runtime configuration via environment variables:
+INTRIGUE_ENV: runtime environment. This should be "docker" when running in docker
+REDIS_URI: uri for the redis server. This should be "redis://redis:6379" when running in docker
+INTRIGUE_API: uri for the api endpoint. This should be "http://127.0.0.1:7777/v1" unless you've modified the endpoint in your puma config

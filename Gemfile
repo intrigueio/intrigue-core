@@ -23,7 +23,7 @@ gem 'rack-test' # Testing
 gem 'rack-protection' # https://github.com/sinatra/rack-protection
 gem 'pry' # Debugging
 
-gem 'intrigue', :path => './util/intrigue-gem'        # Client for calling the API
+gem 'intrigue-api-client', :git => 'https://github.com/intrigueio/intrigue-api-client.git' 
 
 # Client::Search::*Scraper
 gem 'nokogiri'
