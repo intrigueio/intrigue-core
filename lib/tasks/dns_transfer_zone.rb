@@ -58,7 +58,8 @@ class DnsTransferZoneTask < BaseTask
             _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
             # Check to see what type this record's content is.
             # MX records are of form: [10, #<Dnsruby::Name: vv-cephei.ac-grenoble.fr.>
-            z.rdata.kind_of?(Dnsruby::Name) ? record = z.rdata.to_s : z.rdata.last.to_s
+            z.rdata.respond_to?("last") ? record = "#{z.rdata.last.to_s}" : record = "#{z.rdata.to_s}"
+
             # Check to see if it's an ip address or a dns record
             record.is_ip_address? ? entity_type = "IpAddress" : entity_type = "DnsRecord"
             _create_entity entity_type, { "name" => "#{record}", "type" => "#{z.type.to_s}", "content" => "#{record}" }

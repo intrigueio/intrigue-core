@@ -138,8 +138,8 @@ class DnsBruteSubTask < BaseTask
               end
             rescue Resolv::ResolvError => e
               @task_result.logger.log "No resolution for: #{brute_domain}"
-            rescue Exception => e
-              @task_result.logger.log_error "Hit exception: #{e.class}: #{e}"
+            #rescue Exception => e
+            #  @task_result.logger.log_error "Hit exception: #{e.class}: #{e}"
             end
           end # end while
         rescue ThreadError

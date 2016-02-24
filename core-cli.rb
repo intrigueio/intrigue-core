@@ -161,8 +161,9 @@ class CoreCli < Thor
 
       # Create a new task result
       task_result = Intrigue::Model::TaskResult.create({
-        :base_entity => e,
+        :name => task_name,
         :task_name => task_name,
+        :base_entity => e,
         :options => options,
         :logger => Intrigue::Model::Logger.create
       })
