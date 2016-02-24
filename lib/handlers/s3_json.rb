@@ -21,7 +21,7 @@ module Handler
       })
 
       s3 = Aws::S3::Resource.new
-      obj = s3.bucket(bucket_name).object("#{result.task_name}_on_#{result.base_entity.name}")
+      obj = s3.bucket(bucket_name).object("#{result.task_name}_on_#{result.base_entity.name}.json")
       obj.put(body: JSON.pretty_generate(result.export_hash))
 
     end
