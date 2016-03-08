@@ -1,9 +1,9 @@
-require 'gcloud'
-require 'tempfile'
+require "gcloud"
+require "tempfile"
 
 module Intrigue
 module Handler
-  class GcloudJson #< Intrigue::Handler::Base
+  class GcloudJson < Intrigue::Handler::Base
 
     def self.type
       "gcloud_json"
@@ -19,7 +19,7 @@ module Handler
       bucket_name = _get_handler_config("bucket_name")
       object_name = "#{result.task_name}_on_#{result.base_entity.name}.json"
 
-      gcloud = Gcloud.new
+      gcloud = Gcloud.new 
       storage = gcloud.storage
       bucket = storage.bucket bucket_name
 

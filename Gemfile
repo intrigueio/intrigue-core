@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+
 gem 'sinatra' # API
 gem 'sinatra-contrib'
 gem 'puma' # Application Server
@@ -49,8 +50,8 @@ gem 'censys', 			:git => 'https://github.com/pentestify/censys.git'
 gem 'thor'
 
 # Handlers
-gem 'couchrest'
 gem 'aws-sdk'
+gem 'couchrest'
 gem 'gcloud'
 
 # Installing foreman as a gem is generally not advised, but we won't let that get in our way! >:|
