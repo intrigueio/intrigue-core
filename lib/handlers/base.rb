@@ -8,8 +8,12 @@ module Handler
 
     private
 
+      def _export_file_name(result)
+        "#{result.name.gsub("http://","").gsub("/","")}_on_#{result.base_entity.name.gsub("http://","").gsub("/","")}"
+      end
+
       def _export_file_path(result)
-        "#{$intrigue_basedir}/results/#{result.name}_on_#{result.base_entity.name}"
+        "#{$intrigue_basedir}/results/#{_export_file_name(result)}"
       end
 
 

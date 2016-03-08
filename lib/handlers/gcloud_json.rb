@@ -15,7 +15,7 @@ module Handler
       bucket_name = _get_handler_config("bucket_name")
       project_id = _get_handler_config("project_id")
       path_to_keyfile = _get_handler_config("path_to_keyfile")
-      object_name = "#{result.task_name}_on_#{result.base_entity.name}.json"
+      object_name = "#{_export_file_name(result)}.json"
 
       # More info: https://github.com/GoogleCloudPlatform/gcloud-ruby
       gcloud = Gcloud.new project_id, path_to_keyfile
