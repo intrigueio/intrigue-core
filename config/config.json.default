@@ -18,6 +18,11 @@
       "secret_key" : "",
       "region" : "",
       "bucket" : ""
+      "uri" : ""
+    }, 
+    "gcloud_json" : {
+      "api_key" : "",
+      "uri" : "https://console.cloud.google.com/apis/credentials"
     }
   },
   "intrigue_global_module_config": {
