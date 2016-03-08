@@ -160,6 +160,7 @@ GEM
     ffi (1.9.10)
     foreman (0.78.0)
       thor (~> 0.19.1)
+    gcloud (0.0.7)
     geoip (1.6.1)
     gmail (0.6.0)
       gmail_xoauth (>= 0.3.0)
@@ -278,6 +279,7 @@ DEPENDENCIES
   em-resolv-replace
   eventmachine
   foreman
+  gcloud
   geoip
   gmail
   googleajax
