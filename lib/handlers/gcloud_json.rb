@@ -16,7 +16,7 @@ module Handler
       # When running on Compute Engine the credentials will be discovered automatically. 
       # More info: https://github.com/GoogleCloudPlatform/gcloud-ruby
       
-      bucket_name = "intrigue_dump" _get_handler_config("bucket_name")
+      bucket_name = _get_handler_config("bucket_name")
       object_name = "#{result.task_name}_on_#{result.base_entity.name}.json"
 
       gcloud = Gcloud.new
