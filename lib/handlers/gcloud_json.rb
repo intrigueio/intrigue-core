@@ -11,15 +11,14 @@ module Handler
 
     def process(result)
 
-      ## so this is pretty funky but.. 
-      # Gcloud uses Service Account credentials to connect to Google Cloud services. 
-      # When running on Compute Engine the credentials will be discovered automatically. 
-      # More info: https://github.com/GoogleCloudPlatform/gcloud-ruby
-      
+      # Grab configuration
       bucket_name = _get_handler_config("bucket_name")
+      project_id = _get_handler_config("project_id")
+      path_to_keyfile = _get_handler_config("path_to_keyfile")
       object_name = "#{result.task_name}_on_#{result.base_entity.name}.json"
 
-      gcloud = Gcloud.new
+      # More info: https://github.com/GoogleCloudPlatform/gcloud-ruby
+      gcloud = Gcloud.new project_id, path_to_keyfile
       storage = gcloud.storage
       bucket = storage.bucket bucket_name
 
@@ -27,6 +26,7 @@ module Handler
       temp_file = Tempfile.new("gcloud_json")
       temp_file.write JSON.pretty_generate(result.export_hash)
 
+      # Write the file to the bucket 
       bucket.create_file temp_file.path, object_name
 
       temp_file.close

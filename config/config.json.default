@@ -21,8 +21,10 @@
       "uri" : ""
     }, 
     "gcloud_json" : {
-      "uri" : "https://console.cloud.google.com/apis/credentials"
-      "bucket_name" : "intrigue_dump"
+      "uri" : "https://console.cloud.google.com/apis/credentials",
+      "bucket_name" : "intrigue_dump",
+      "project_id" : "",
+      "path_to_keyfile" : ""
     }
   },
   "intrigue_global_module_config": {
