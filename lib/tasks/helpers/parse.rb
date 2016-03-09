@@ -149,7 +149,7 @@ module Parse
     end
   end
 
-  def download_and_extract_metadata(uri)
+  def download_and_extract_metadata(uri,extract_content=true)
 
     uri = uri.gsub(" ","%20")
 
@@ -188,7 +188,7 @@ module Parse
       end
 
       # Look for entities in the text of the entity
-      parse_entities_from_content(uri,yomu.text)
+      parse_entities_from_content(uri,yomu.text) if extract_content
 
     # Don't die if we lose our connection to the tika server
     rescue EOFError => e
