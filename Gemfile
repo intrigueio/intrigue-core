@@ -1,6 +1,5 @@
 source 'https://rubygems.org'
 
-
 gem 'sinatra' # API
 gem 'sinatra-contrib'
 gem 'puma' # Application Server
@@ -17,12 +16,12 @@ gem 'dm-sqlite-adapter'
 gem 'dm-noisy-failures'
 gem 'dm-pager'
 gem 'elasticsearch'
-gem 'iconv' 			# Encoding
-gem 'rest-client' 		# Web hooks
-gem 'rspec' 			# Testing
-gem 'rack-test'			# Testing
-gem 'rack-protection' 	# https://github.com/sinatra/rack-protection
-gem 'pry' 				# Debugging
+gem 'iconv' # Encoding
+gem 'rest-client' # Web hooks
+gem 'rspec' # Testing
+gem 'rack-test' # Testing
+gem 'rack-protection' # https://github.com/sinatra/rack-protection
+gem 'pry' # Debugging
 
 gem 'intrigue_api_client', :git => 'https://github.com/intrigueio/intrigue_api_client.git'
 
@@ -39,10 +38,10 @@ gem 'geoip'             # geolocate_host
 gem 'shodan'            # search_shodan
 gem 'yomu'              # web spider
 gem 'gmail'             # email_bounceback
-gem 'ruby-nmap', 		:git => 'https://github.com/pentestify/ruby-nmap.git' #  nmap_scan
-gem 'screencap', 		:git => 'https://github.com/intrigueio/screencap.git'
-gem 'arachnid', 		:git => 'https://github.com/intrigueio/arachnid.git'
-gem 'censys', 			:git => 'https://github.com/pentestify/censys.git'
+gem 'ruby-nmap', :git => 'https://github.com/pentestify/ruby-nmap.git' #  nmap_scan
+gem 'screencap', :git => 'https://github.com/intrigueio/screencap.git'
+gem 'arachnid', :git => 'https://github.com/intrigueio/arachnid.git'
+gem 'censys', :git => 'https://github.com/pentestify/censys.git'
 #gem 'rex'              # metasploit rex library
 #gem 'twitter'           # twitter_account_following, etc
 
@@ -50,9 +49,8 @@ gem 'censys', 			:git => 'https://github.com/pentestify/censys.git'
 gem 'thor'
 
 # Handlers
-gem 'aws-sdk'
 gem 'couchrest'
-gem 'gcloud'
-
-# Installing foreman as a gem is generally not advised, but we won't let that get in our way! >:|
+gem 'aws-sdk'
+# Installing foreman as a gem is generally not advised, but
+# we won't let it get in our way
 gem 'foreman'
