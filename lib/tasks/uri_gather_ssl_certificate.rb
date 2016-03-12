@@ -30,7 +30,7 @@ class UriGatherSslCertTask  < BaseTask
 
     begin
       hostname = URI.parse(uri).host
-      port  443
+      port = 443
 
       # Create a socket and connect
       tcp_client = TCPSocket.new hostname, port
