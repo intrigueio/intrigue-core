@@ -78,8 +78,7 @@ class UriGatherTechnologyTask  < BaseTask
         :finding_name => "Amazon Cloudfront"},
 
       ### Wordpress Plugins
-      { :regex => /wp-content\/plugins\/.*?\//,
-        :finding_name => "Wordpress Plugin" },
+      { :regex => /wp-content\/plugins\/.*?\//, :finding_name => "Wordpress Plugin" },
       { :regex => /xmlrpc.php/, :finding_name => "Wordpress API"},
       #{:regex => /Yoast WordPress SEO plugin/, :finding_name => "Yoast Wordress SEO Plugin"},
       #{:regex => /PowerPressPlayer/, :finding_name => "Powerpress Wordpress Plugin"},
