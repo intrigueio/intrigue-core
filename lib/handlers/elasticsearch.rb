@@ -1,6 +1,3 @@
-require 'elasticsearch'
-require 'typhoeus/adapters/faraday'
-
 module Intrigue
 module Handler
   class Elasticsearch < Intrigue::Handler::Base
@@ -10,6 +7,9 @@ module Handler
     end
 
     def process(result)
+
+      require 'elasticsearch'
+      require 'typhoeus/adapters/faraday'
 
       username = _get_handler_config("username")
       password = _get_handler_config("password")

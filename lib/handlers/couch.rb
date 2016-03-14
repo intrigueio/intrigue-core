@@ -1,4 +1,3 @@
-require 'couchrest'
 
 module Intrigue
 module Handler
@@ -9,6 +8,7 @@ module Handler
     end
 
     def process(result)
+      require 'couchrest'
 
       # options
       # options[:server_uri]

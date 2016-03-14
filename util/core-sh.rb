@@ -4,7 +4,7 @@ require 'json'
 require 'rest-client'
 
 puts "Loading environment"
-require_relative 'core'
+require_relative '../core'
 
 ###
 ### Define the prompt
