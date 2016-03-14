@@ -17,13 +17,13 @@
       "access_key" : "",
       "secret_key" : "",
       "region" : "",
-      "bucket" : ""
+      "bucket" : "",
       "uri" : ""
     },
     "gcloud_json" : {
       "bucket_name" : "",
       "project_id" : "",
-      "developer_email" : ",
+      "developer_email" : "",
       "path_to_keyfile" : "",
       "uri" : "https://console.cloud.google.com/apis/credentials"
     }
