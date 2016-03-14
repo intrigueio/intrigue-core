@@ -19,11 +19,12 @@
       "region" : "",
       "bucket" : ""
       "uri" : ""
-    }, 
+    },
     "gcloud_json" : {
       "bucket_name" : "",
       "project_id" : "",
-      "path_to_keyfile" : ""
+      "developer_email" : ",
+      "path_to_keyfile" : "",
       "uri" : "https://console.cloud.google.com/apis/credentials"
     }
   },

@@ -9,7 +9,7 @@ gem 'eventmachine'
 gem 'sidekiq' 					# Background Tasks
 gem 'sidekiq-failures'			# Background Tasks
 gem 'thor' 						# CLI
-gem 'data_mapper'				# Database 
+gem 'data_mapper'				# Database
 gem 'dm-pg-types'				# Database
 gem 'dm-postgres-adapter'		# Database
 gem 'dm-sqlite-adapter'			# Database
@@ -21,7 +21,6 @@ gem 'rest-client' 				# Web hooks
 gem 'rspec' 					# Testing
 gem 'rack-test' 				# Testing
 gem 'rack-protection' 			# https://github.com/sinatra/rack-protection
-gem 'pry' 						# Debugging
 gem 'intrigue_api_client', :git => 'https://github.com/intrigueio/intrigue_api_client.git'
 gem 'nokogiri'					# Client::Search::*Scraper
 
@@ -35,7 +34,7 @@ gem 'whois'             # dns_zone_transfer, whois
 gem 'googleajax'        # search_google
 gem 'geoip'             # geolocate_host
 gem 'shodan'            # search_shodan
-gem 'yomu'              # web spider
+gem 'yomu'              # uri_spider
 gem 'gmail'             # email_bounceback
 gem 'ruby-nmap', 		:git => 'https://github.com/pentestify/ruby-nmap.git' 	# nmap_scan
 gem 'screencap', 		:git => 'https://github.com/intrigueio/screencap.git'
@@ -46,7 +45,11 @@ gem 'censys', 			:git => 'https://github.com/pentestify/censys.git'
 # Handlers #
 ############
 gem 'couchrest'
-gem 'aws-sdk'
-gem 'gcloud'
+#gem 'aws-sdk'
+gem 'net-ssh'
+gem 'fog'
+gem 'fog-google',   :git => 'https://github.com/fog/fog-google.git'
+gem 'google-api-client', '< 0.9', '>= 0.6.2'
 
 gem 'foreman'
+gem 'pry' 						# Debugging
