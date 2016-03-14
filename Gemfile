@@ -45,7 +45,6 @@ gem 'censys', 			:git => 'https://github.com/pentestify/censys.git'
 # Handlers #
 ############
 gem 'couchrest'
-#gem 'aws-sdk'
 gem 'net-ssh'
 gem 'fog'
 gem 'fog-google',   :git => 'https://github.com/fog/fog-google.git'
