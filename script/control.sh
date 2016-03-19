@@ -9,11 +9,11 @@ function setup_server {
 
 function start_server {
   echo "Starting scan processing..."
-  bundle exec sidekiq -C ./config/sidekiq-scan.yml -r ./core.rb -d -L ./log/intrigue-sidekiq-scan.log
+  bundle exec sidekiq -C ./config/sidekiq-scan.yml -r ./core.rb -d -L ./log/scan.log
   echo "Starting task processing..."
-  bundle exec sidekiq -C ./config/sidekiq-task.yml -r ./core.rb -d -L ./log/intrigue-sidekiq-task.log
+  bundle exec sidekiq -C ./config/sidekiq-task.yml -r ./core.rb -d -L ./log/task.log
   echo "Starting puma..."
-  bundle exec puma -b "tcp://0.0.0.0:7778" # listen on a public port 
+  bundle exec puma -b "tcp://0.0.0.0:7778" # listen on a public port
 }
 
 function stop_server {
