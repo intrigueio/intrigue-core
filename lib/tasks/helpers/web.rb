@@ -29,7 +29,7 @@ module Task
       begin
         uri = URI.parse(URI.encode("#{url}"))
         Net::HTTP.start(uri.host, uri.port) do |http|
-
+          http.read_timeout = 10
           resp = http.get(uri.path)
           response_body = resp.body.encode('UTF-8', {:invalid => :replace, :undef => :replace, :replace => '?'})
 
@@ -125,22 +125,24 @@ module Task
 
         uri = URI.parse uri_string
 
-        until( found || attempts>=max_attempts)
+        until( found || attempts >= max_attempts)
          @task_result.logger.log "Getting #{uri}, attempt #{attempts}" if @task_result
          attempts+=1
-         http=Net::HTTP.new(uri.host,uri.port)
+
+         http = Net::HTTP.new(uri.host,uri.port)
          http.read_timeout = 10
          http.open_timeout = 10
-         path=uri.path
-         path="/" if path==""
 
-         request=Net::HTTP::Get.new(path,{'User-Agent'=>user_agent})
+         path = uri.path
+         path = "/" if path==""
+
+         #request = Net::HTTP::Get.new(path,{'User-Agent'=>user_agent})
          if uri.instance_of? URI::HTTPS
            http.use_ssl=true
            http.verify_mode = OpenSSL::SSL::VERIFY_NONE
          end
 
-         response=http.request(request)
+         response = http.get(path)
 
          if response.code=="200"
            break
