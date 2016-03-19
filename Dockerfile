@@ -41,4 +41,6 @@ EXPOSE 7778
 
 # start the app
 WORKDIR /core
-CMD ["/bin/bash -l -c ./script/control.sh", "start"]
+RUN /bin/bash -l -c "rm .ruby-gemset"
+ENTRYPOINT ["/bin/bash", "-l"]
+CMD ["/core/script/control.sh start"]

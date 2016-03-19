@@ -1,5 +1,5 @@
 :verbose: true
-#:logfile: ./log/intrigue-sidekiq-scan.log
+#:logfile: ./log/scan.log
 :pidfile: ./tmp/pids/intrigue-sidekiq-scan.pid
 :concurrency: 3
 :queues:
