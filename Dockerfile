@@ -43,4 +43,4 @@ EXPOSE 7778
 WORKDIR /core
 RUN /bin/bash -l -c "rm .ruby-gemset"
 ENTRYPOINT ["/bin/bash", "-l"]
-CMD ["/core/script/control.sh start"]
+CMD ["/core/script/control.sh","start"]
