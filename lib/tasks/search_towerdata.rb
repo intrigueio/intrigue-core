@@ -23,6 +23,11 @@ class SearchTowerdataTask < BaseTask
     entity_name = _get_entity_attribute "name"
     api_key = _get_global_config "towerdata_api_key"
 
+    unless api_key
+      @task_result.logger.log_error "No api_key?"
+      return
+    end
+
     begin
       api = TowerDataApi::Api.new(api_key) # Set API key here
       hash = api.query_by_email(entity_name)

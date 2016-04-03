@@ -24,6 +24,11 @@ class SearchShodanTask < BaseTask
     # Get the API Key
     api_key = _get_global_config "shodan_api_key"
 
+    unless api_key
+      @task_result.logger.log_error "No api_key?"
+      return
+    end
+
     @client = Client::Search::Shodan::ApiClient.new(api_key)
     response = @client.search(_get_entity_attribute "name")
 

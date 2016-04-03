@@ -24,6 +24,12 @@ class SearchBingTask < BaseTask
 
     # Make sure the key is set
     api_key = _get_global_config "bing_api_key"
+
+    unless api_key
+      @task_result.logger.log_error "No api_key?"
+      return
+    end
+
     entity_name = _get_entity_attribute "name"
     opt_max_results = _get_option("max_results").to_i
 

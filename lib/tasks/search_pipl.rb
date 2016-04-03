@@ -22,6 +22,12 @@ class SearchPiplTask < BaseTask
     # Get the API Key
     api_key = _get_global_config "pipl_api_key"
 
+    unless api_key
+      @task_result.logger.log_error "No api_key?"
+      return
+    end
+
+
     @pipl_client = Client::Search::Pipl::ApiClient.new(api_key)
 
     if @entity.type_string == "EmailAddress"
