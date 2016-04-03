@@ -32,6 +32,7 @@ gem 'whois'                   # dns_zone_transfer, whois
 gem 'googleajax'              # search_google
 gem 'geoip'                   # geolocate_host
 gem 'shodan'                  # search_shodan
+gem 'towerdata_api'                  # search_towerdata
 gem 'yomu'                    # uri_spider
 gem 'gmail'                   # email_bounceback
 gem 'screencap',  :git => 'https://github.com/intrigueio/screencap.git'

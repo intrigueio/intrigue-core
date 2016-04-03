@@ -136,6 +136,12 @@
       "uri" : "https://censys.io",
       "editable" : "true",
       "comment" : ""
+    },
+    "towerdata_api_key" : {
+      "value" : "",
+      "uri" : "http://intelligence.towerdata.com/developers/personalization-api",
+      "editable" : "true",
+      "comment" : ""
     }
   }
 }
