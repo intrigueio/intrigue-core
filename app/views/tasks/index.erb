@@ -8,7 +8,7 @@
 <ul>
 <% @task_results.each do |x| %> <li><a href="/v1/task_results/<%=x.id%>"><%= x.task_name %> on <%= x.base_entity %> </a></li><% end %>
 </ul>
-<%= @task_results.pager.to_html('/task') %>
+<%= @task_results.pager.to_html('/v1/task') %>
 
 <!--
 Available Task Details:
