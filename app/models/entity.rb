@@ -70,6 +70,7 @@ module Intrigue
       ###
       def export_hash
         {
+          :id => @id.to_s,
           :type => @type,
           :name => @name,
           :details => @details
