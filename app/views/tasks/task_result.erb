@@ -1,10 +1,10 @@
-<h3>Task Result: <a href="<%=@rerun_uri || nil%>"><%=@task_result.task_name %></a> </h3>
-<p>ID: <%=@task_result.id %> </p>
-<p>Start: <%=@task_result.timestamp_start %> </p>
-<p>End: <%= @task_result.timestamp_end %> </p>
+<h3>Task Result: <a href="<%=@rerun_uri || nil%>"><%=@result.task_name %></a> </h3>
+<p>ID: <%=@result.id %> </p>
+<p>Start: <%=@result.timestamp_start %> </p>
+<p>End: <%= @result.timestamp_end %> </p>
 <p>Elapsed (s): <%= @elapsed_time %> </p>
-<p>Entity: <a href=/v1/entities/<%=@task_result.base_entity.id if @task_result.base_entity %>><%= h "#{@task_result.base_entity}" %></a></p>
-<p>Complete: <%= @task_result.complete %></p>
+<p>Entity: <a href=/v1/entities/<%=@result.base_entity.id if @result.base_entity %>><%= h "#{@result.base_entity}" %></a></p>
+<p>Complete: <%= @result.complete %></p>
 Export:
 <ul>
   <li><a href=<%="#{request.url}.csv"%>> CSV </a></li>
@@ -33,11 +33,11 @@ function getEntities(id){
 }
 
 window.setInterval(function(){
-  getEntities(<%=@task_result.id%>);  //calling every 5 seconds
-}, 10000);
+  getEntities(<%=@result.id%>);  //calling every 5 seconds
+}, 5000);
 
 //call right away
-getEntities(<%=@task_result.id%>);
+getEntities(<%=@result.id%>);
 
 </script>
 

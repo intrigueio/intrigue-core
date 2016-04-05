@@ -88,13 +88,13 @@ class IntrigueApp < Sinatra::Base
       task_result_id = params[:id].to_i
 
       # Get the task result from the database, and fail cleanly if it doesn't exist
-      @task_result = Intrigue::Model::TaskResult.get(task_result_id)
-      return "Unknown Task ID" unless @task_result
+      @result = Intrigue::Model::TaskResult.get(task_result_id)
+      return "Unknown Task ID" unless @result
 
       # Assuming it's available, display it
-      if @task_result
-        @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1/task/?task_result_id=#{@task_result.id}"
-        @elapsed_time = "#{(@task_result.timestamp_end - @task_result.timestamp_start).to_i}" if @task_result.timestamp_end
+      if @result
+        @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1/task/?task_result_id=#{@result.id}"
+        @elapsed_time = "#{(@result.timestamp_end - @result.timestamp_start).to_i}" if @result.timestamp_end
       end
 
       erb :'tasks/task_result'

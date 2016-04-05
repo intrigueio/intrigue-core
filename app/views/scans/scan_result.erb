@@ -1,10 +1,10 @@
 <h3>Scan Result</h3>
-<p>Total Tasks: <%=@scan_result.task_results.count%></p>
-<p>Entity: <a href=/v1/entities/<%=@scan_result.base_entity.id%>><%= h "#{@scan_result.base_entity.type_string} #{@scan_result.base_entity.name}"%></a></p>
-<p>Complete: <%= @scan_result.complete %></p>
+<p>Total Tasks: <%=@result.task_results.count%></p>
+<p>Entity: <a href=/v1/entities/<%=@result.base_entity.id%>><%= h "#{@result.base_entity.type_string} #{@result.base_entity.name}"%></a></p>
+<p>Complete: <%= @result.complete %></p>
 <p>New Entities:</p>
   <ul>
-    <% @scan_result.entities.each do |e| %>
+    <% @result.entities.each do |e| %>
     <li>
       <a href="/v1/entities/<%=h e.id%>">
         <%= h e.type_string %>: <%= h e.name %>
@@ -16,8 +16,9 @@
   </ul>
 <p>Task Runs:</p>
   <ul>
-  <% @scan_result.task_results.each do |x| %>
+  <% @result.task_results.each do |x| %>
     <li> <a href="/v1/task_results/<%=x.id%>"> <%= x.task_name %> <%= "[#{x.base_entity}]" %></a></li>
   <% end %>
   </ul>
-Log: <span class="like-pre-dark"><%= h @scan_result.logger.full_log %></span><br/>
+
+<%= erb :_log, :layout => false %>
