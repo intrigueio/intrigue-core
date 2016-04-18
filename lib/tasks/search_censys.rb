@@ -13,7 +13,7 @@ class SearchCensysTask < BaseTask
       :allowed_types => ["DnsRecord", "IpAddress", "String"],
       :example_entities => [{"type" => "String", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
-      :created_types => ["DnsRecord", "IpAddress"]
+      :created_types => ["IpAddress", "SslCertificate"]
     }
   end
 
@@ -35,12 +35,26 @@ class SearchCensysTask < BaseTask
 
       # Attach to the censys service & search
       censys = Censys::Api.new(uid,secret)
-      results = censys.search(entity_name)
 
-      results["results"].each do |result|
-        @task_result.logger.log "Got result: #{result}"
-        _create_entity "SslCertificate", "name" => result["parsed.subject_dn"], "text" => result
+      ## Grab IPv4 Results
+      ["ipv4"].each do |search_type|
+        response = censys.search(entity_name,search_type)
+        response["results"].each do |r|
+          @task_result.logger.log "Got result: #{r}"
+          _create_entity "IpAddress", "name" => "#{r["ip"]}", "additional" => r
+        end
       end
+
+      # TODO -Should we expect any details when searching type "websites"
+
+      ["certificates"].each do |search_type|
+        response = censys.search(entity_name,search_type)
+        response["results"].each do |r|
+          @task_result.logger.log "Got result: #{r}"
+          _create_entity "SslCertificate", "name" => r["parsed.subject_dn"], "additional" => r
+        end
+      end
+
 
     rescue RuntimeError => e
       @task_result.logger.log_error "Runtime error: #{e}"

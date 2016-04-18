@@ -35,7 +35,7 @@ GIT
 
 GIT
   remote: https://github.com/pentestify/censys.git
-  revision: 83dab46e0534def985fe3bd3dbc05eced413ad3e
+  revision: b285388276e0834368553c909b82cceab4ce5a1d
   specs:
     censys (0.1.0)
 
