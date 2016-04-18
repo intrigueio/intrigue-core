@@ -160,7 +160,7 @@ You can use the tried and true curl utility to request a task run. Specify the t
 $ curl -s -X POST -H "Content-Type: application/json" -d '{ "task": "example", "entity": { "type": "String", "attributes": { "name": "8.8.8.8" } }, "options": {} }' http://127.0.0.1:7777/v1/task_runs
 ```
 
-### Scaling horizontally with Docker
+### Starting up an scaling horizontally with Docker
 Using Docker, we can add many sidekiq workers, allowing us to scale horizontally. To set up the Intrigue infrastructure, we've provided a minimal docker-compose.yml. This, of course, requires docker and docker-compose to be installed.
 
 Starting up with docker-compose:
@@ -170,7 +170,7 @@ Starting up with docker-compose:
 $ cp config/config.json.default config/config.json
 
 # Build the container and run it
-$ docker-compose build && docker-compose up # and we're up on :27777
+$ docker-compose build && docker-compose up # and we're up on :7778
 ```
 
 #### Runtime configuration via environment variables:
