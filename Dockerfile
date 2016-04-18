@@ -37,7 +37,7 @@ RUN /bin/bash -l -c "bundle install --system"
 COPY . /core
 
 # Expose a port
-EXPOSE 7778
+EXPOSE 7777
 
 # start the app
 WORKDIR /core

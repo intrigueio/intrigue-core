@@ -13,7 +13,7 @@ function start_server {
   echo "Starting task processing..."
   bundle exec sidekiq -C ./config/sidekiq-task.yml -r ./core.rb -d -L ./log/task.log
   echo "Starting puma..."
-  bundle exec puma -b "tcp://0.0.0.0:7778" # listen on a public port
+  bundle exec puma -C ./config/puma.rb # listen on a public port
 }
 
 function stop_server {
