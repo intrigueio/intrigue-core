@@ -23,6 +23,7 @@ class SearchShodanTask < BaseTask
 
     # Get the API Key
     api_key = _get_global_config "shodan_api_key"
+    search_term = _get_entity_attribute "name"
 
     unless api_key
       @task_result.logger.log_error "No api_key?"
@@ -30,7 +31,7 @@ class SearchShodanTask < BaseTask
     end
 
     @client = Client::Search::Shodan::ApiClient.new(api_key)
-    response = @client.search(_get_entity_attribute "name")
+    response = @client.search(search_term)
 
     # check to make sure we got a response.
     raise "ERROR: No response" unless response
@@ -51,11 +52,16 @@ class SearchShodanTask < BaseTask
         #
         # Create a host record
         #
-        @task_result.logger.log "IP: #{r["ip"]}"
-        host = _create_entity("IpAddress",{
-          "name" => "#{r["ip"]}",
-          "age" => "#{updated_at}"
-        }) if r["ip"]
+        if r["ip"]
+          require 'ipaddr'
+          # TODO - assumes ipv4, which isn't always true. Make sure to check for ipv6.
+          ip_address = IPAddr.new(r['ip'],Socket::AF_INET)
+          @task_result.logger.log "IP: #{r["ip"]}"
+          host = _create_entity("IpAddress",{
+            "name" => "#{ip_address}",
+            "age" => "#{updated_at}"
+          })
+        end
 
         #
         # Create a DNS record for all hostnames
@@ -76,7 +82,7 @@ class SearchShodanTask < BaseTask
           "port_num" => r["port"],
           "fingerprint" => r["data"],
           "age" => "#{updated_at}"
-        }) if r["port"]
+        }) if r["port"] && host
 
         #
         # Create an organization

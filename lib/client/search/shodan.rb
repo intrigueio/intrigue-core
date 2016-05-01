@@ -10,7 +10,7 @@ module Client
 
         def initialize(key)
           @service_name = "shodan"
-          @api =::Shodan::WebAPI.new(key)
+          @api =::Shodan::Shodan.new(key)
         end
 
         def search(search_string)
