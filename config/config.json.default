@@ -145,7 +145,7 @@
     },
     "whoisology_api_key" : {
       "value" : "",
-      "uri" : "https://whoisology.com,",
+      "uri" : "https://whoisology.com",
       "editable" : "true",
       "comment" : ""
     }
