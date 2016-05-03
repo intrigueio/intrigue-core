@@ -3,7 +3,7 @@ require 'timeout'
 module Intrigue
 class BaseTask
   include Sidekiq::Worker
-  sidekiq_options :queue => "#{$intrigue_config["intrigue_queues"]["task_queue"]}", :backtrace => true
+  sidekiq_options :queue => "#{$intrigue_config.config["intrigue_queues"]["task_queue"]}", :backtrace => true
 
   def self.inherited(base)
     TaskFactory.register(base)
@@ -273,13 +273,19 @@ class BaseTask
       "#{self.metadata[:name]}: #{self.metadata[:version]}"
     end
 
+    # helper method, gets an attribute on the base entity
     def _get_entity_attribute(attrib_name)
       "#{@task_result.base_entity.details[attrib_name]}"
     end
 
+    # helper method, get the base entity type
+    def _get_entity_type
+      "#{@task_result.base_entity.type}"
+    end
+
     def _get_global_config(key)
       begin
-        $intrigue_config["intrigue_global_module_config"][key]["value"]
+        $intrigue_config.config["intrigue_global_module_config"][key]["value"]
       rescue NoMethodError => e
         puts "Error, invalid config key requested (#{key}) #{e}"
       end

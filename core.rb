@@ -17,11 +17,12 @@ require 'dm-pager'
 
 # Debug
 require 'pry'
-require_relative 'lib/config/global'
+require_relative 'lib/config/global_config'
 
 $intrigue_global_timeout = 9000
 $intrigue_basedir = File.dirname(__FILE__)
-$intrigue_config = Intrigue::Config::Global.new.dump_json
+$intrigue_config = Intrigue::Config::GlobalConfig.new
+
 #
 # Simple configuration check to ensure we have configs in place
 def sanity_check_system
@@ -57,8 +58,6 @@ def setup_datamapper
     puts "FATAL! No database config by the name: #{system_env}"
     exit
   end
-
-  #puts "DEBUG: Database config: #{database_config[system_env]}"
 
   # Run our setup with the correct enviroment
   DataMapper.setup(:default, database_config[system_env])

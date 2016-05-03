@@ -6,6 +6,8 @@ class IntrigueApp < Sinatra::Base
         erb :"admin/index"
       end
 
+=begin
+      # TODO - kill this
       # Get rid of all existing task runs
       get '/clear/?' do
 
@@ -29,7 +31,7 @@ class IntrigueApp < Sinatra::Base
         # Beam me up, scotty!
         redirect '/v1'
       end
-
+=end
       # get config
       get '/config/?' do
         erb :"admin/config"
@@ -41,17 +43,10 @@ class IntrigueApp < Sinatra::Base
         # Update our config if one of the fields have been changed. Note that we use ***
         # as a way to mask out the full details in the view. If we have one that doesn't lead with ***
         # go ahead and update it
-        params.each {|k,v| $intrigue_config["intrigue_global_module_config"][k]["value"] = v unless v =~ /^\*\*\*/ }
+        params.each {|k,v| $intrigue_config.config["intrigue_global_module_config"][k]["value"] = v unless v =~ /^\*\*\*/ }
+        $intrigue_config.save
 
-        # Write our config back to the file
-        File.open("#{$intrigue_basedir}/config/config.json", 'w') do |f|
-          f.write JSON.pretty_generate $intrigue_config
-        end
-
-        # Re-read the config
-        $intrigue_config = JSON.parse File.read("#{$intrigue_basedir}/config/config.json")
-
-        redirect '/'
+        redirect '/v1/admin/config'
       end
     end
   end
