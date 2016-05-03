@@ -46,7 +46,6 @@ class DiscoveryScan < Intrigue::Scanner::Base
         ### DNS Forward Lookup
         _start_task_and_recurse "dns_lookup_forward",entity,depth, ["name" => "record_types", "value" => "A,AAAA"]
 
-
       elsif entity.type_string == "String"
         # Search!
         _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 3}]

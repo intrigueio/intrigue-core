@@ -278,9 +278,8 @@ class BaseTask
       "#{@task_result.base_entity.details[attrib_name]}"
     end
 
-    # helper method, get the base entity type
     def _get_entity_type
-      "#{@task_result.base_entity.type}"
+      "#{@task_result.base_entity.type}".split(":").last
     end
 
     def _get_global_config(key)
