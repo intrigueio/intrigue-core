@@ -17,14 +17,14 @@ require 'dm-pager'
 
 # Debug
 require 'pry'
+require_relative 'lib/config/global'
 
 $intrigue_global_timeout = 9000
 $intrigue_basedir = File.dirname(__FILE__)
-$intrigue_config = JSON.parse File.read("#{$intrigue_basedir}/config/config.json")
-
+$intrigue_config = Intrigue::Config::Global.new.dump_json
 #
 # Simple configuration check to ensure we have configs in place
-def sanity_check_system_configuration
+def sanity_check_system
   configuration_files = [
     "#{$intrigue_basedir}/config/config.json",
     "#{$intrigue_basedir}/config/database.yml",
@@ -65,7 +65,7 @@ def setup_datamapper
   DataMapper::Property::String.length(255)
 end
 
-sanity_check_system_configuration
+sanity_check_system
 setup_datamapper
 
 class IntrigueApp < Sinatra::Base
