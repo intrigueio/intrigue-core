@@ -47,13 +47,10 @@ class SearchWhoisologyTask < BaseTask
       @task_result.logger.log "Got #{result["count"]} results"
       return if result["count"].to_i == 0
 
+      # do the actual search with the FLAT command
       result = whoisology.flat entity_type, entity_name
-      @task_result.logger.log "Got #{result}"
-      _create_entity "Info", {
-        "name" => "Whoisology result for #{entity_type}, #{entity_name}",
-        "details" => result
-      }
 
+      @task_logger.log_good "Creating entities for #{result["count"]} results."
       result["domains"].each {|d| _create_entity "DnsRecord", {"name" => d["domain_name"]} }
 
     rescue RuntimeError => e
