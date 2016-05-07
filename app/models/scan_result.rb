@@ -94,6 +94,20 @@ module Intrigue
         export_hash.to_json
       end
 
+      def export_csv
+        output_string = ""
+        self.entities.each{ |x| output_string << x.export_csv << "\n" }
+      output_string
+      end
+
+      def export_graph_csv
+        output_string = ""
+        # dump the entity name, all chilren entity names, and
+        # remove both spaces and commas
+        self.entities.each{ |x| output_string << x.name.gsub(/[\,,\s]/,"") << ", " << "#{x.children.map{ |y| y.name.gsub(/[\,,\s]/,"") }.join(", ")}\n" }
+      output_string
+      end
+
     end
   end
 end

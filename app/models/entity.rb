@@ -18,6 +18,12 @@ module Intrigue
       #has n, :children, self, :through => :task_results, :via => :base_entity
       #validates_uniqueness_of :name
 
+      def children
+       children = []
+       Intrigue::Model::TaskResult.all(:base_entity => self).each { |r| children.concat(r.entities) }
+      children
+      end
+
       def self.all_in_current_project
         all(:project_id => 1)
       end
