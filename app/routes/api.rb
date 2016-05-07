@@ -135,19 +135,21 @@ class IntrigueApp < Sinatra::Base
     ### SCANS ###
     ###       ###
 
-    # Show the results in a human readable format
+    # Show the results in a JSON
     get '/scan_results/:id.json/?' do
       content_type 'application/json'
       @scan_result = Intrigue::Model::ScanResult.get(params[:id])
       @scan_result.export_json
     end
 
+    # Show the results in a CSV
     get '/scan_results/:id.csv/?' do
       content_type 'text/plain'
       @scan_result = Intrigue::Model::ScanResult.get(params[:id])
       @scan_result.export_csv
     end
 
+    # Show the results in a graph format
     get '/scan_results/:id/graph.csv/?' do
       content_type 'text/plain'
       @scan_result = Intrigue::Model::ScanResult.get(params[:id])

@@ -87,10 +87,10 @@ module Intrigue
         export_hash.to_json
       end
 
+      # export id, type, name, and details on a single line, removing spaces and commas
       def export_csv
-        export_string = "#{@id},#{@type},#{@name},"
-        @details.each{|k,v| export_string << "#{k}=#{v};".gsub(",","#") }
-        #export_string << ","
+        export_string = "#{@id},#{@type},#{@name.gsub(/[\,,\s]/,"")},"
+        @details.each{|k,v| export_string << "#{k}=#{v};".gsub(/[\,,\s]/,"") }
       export_string
       end
 
