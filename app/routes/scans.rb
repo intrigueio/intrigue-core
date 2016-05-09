@@ -60,6 +60,21 @@ class IntrigueApp < Sinatra::Base
     # Show the results in a human readable format
     get '/scan_results/:id/profile/?' do
       @result = Intrigue::Model::ScanResult.get(params[:id])
+
+      @persons  = []
+      @applications = []
+      @services = []
+      @hosts = []
+      @networks = []
+
+      @result.entities.each do |item|
+        @persons << item if item.kind_of? Intrigue::Entity::Person
+        @applications << item if item.kind_of? Intrigue::Entity::Uri
+        @services << item if item.kind_of? Intrigue::Entity::NetSvc
+        @hosts << item if item.kind_of?(Intrigue::Entity::IpAddress) || item.kind_of?(Intrigue::Entity::DnsRecord)
+        @networks << item if item.kind_of? Intrigue::Entity::NetBlock
+      end
+
       erb :'scans/profile'
     end
 

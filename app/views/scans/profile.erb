@@ -5,40 +5,35 @@
 
 <p>People:</p>
 <ul>
-  <% @result.entities.each do |e| %>
-  <% next unless e.type == Intrigue::Entity::Person %>
+  <% @persons.each do |e| %>
   <li><a href="/v1/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
   <% end %>
 </ul>
 
 <p>Applications:</p>
 <ul>
-  <% @result.entities.each do |e| %>
-  <% next unless e.type == Intrigue::Entity::Uri %>
+  <% @applications.each do |e| %>
   <li><a href="/v1/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
   <% end %>
 </ul>
 
 <p>Services:</p>
 <ul>
-  <% @result.entities.each do |e| %>
-  <% next unless e.type == Intrigue::Entity::NetSvc %>
+  <% @services.each do |e| %>
   <li><a href="/v1/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
   <% end %>
 </ul>
 
 <p>Hosts:</p>
 <ul>
-  <% @result.entities.each do |e| %>
-  <% next unless e.type == Intrigue::Entity::IpAddress || e.type == Intrigue::Entity::DnsRecord %>
+  <% @hosts.each do |e| %>
   <li><a href="/v1/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
   <% end %>
 </ul>
 
 <p>Networks:</p>
 <ul>
-  <% @result.entities.each do |e| %>
-  <% next unless e.type == Intrigue::Entity::NetBlock %>
+  <% @networks.each do |e| %>
   <li><a href="/v1/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
   <% end %>
 </ul>
