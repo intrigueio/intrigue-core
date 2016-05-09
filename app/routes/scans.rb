@@ -56,5 +56,12 @@ class IntrigueApp < Sinatra::Base
       @result = Intrigue::Model::ScanResult.get(params[:id])
       erb :'scans/scan_result'
     end
+
+    # Show the results in a human readable format
+    get '/scan_results/:id/profile/?' do
+      @result = Intrigue::Model::ScanResult.get(params[:id])
+      erb :'scans/profile'
+    end
+
   end
 end

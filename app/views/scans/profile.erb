@@ -1,0 +1,44 @@
+<h3>Profile</h3>
+<p>Total Tasks: <%=@result.task_results.count%></p>
+<p>Base Entity: <a href=/v1/entities/<%=@result.base_entity.id%>><%= h "#{@result.base_entity.type_string} #{@result.base_entity.name}"%></a></p>
+<p>Complete: <%= @result.complete %></p>
+
+<p>People:</p>
+<ul>
+  <% @result.entities.each do |e| %>
+  <% next unless e.type == Intrigue::Entity::Person %>
+  <li><a href="/v1/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <% end %>
+</ul>
+
+<p>Applications:</p>
+<ul>
+  <% @result.entities.each do |e| %>
+  <% next unless e.type == Intrigue::Entity::Uri %>
+  <li><a href="/v1/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <% end %>
+</ul>
+
+<p>Services:</p>
+<ul>
+  <% @result.entities.each do |e| %>
+  <% next unless e.type == Intrigue::Entity::NetSvc %>
+  <li><a href="/v1/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <% end %>
+</ul>
+
+<p>Hosts:</p>
+<ul>
+  <% @result.entities.each do |e| %>
+  <% next unless e.type == Intrigue::Entity::IpAddress || e.type == Intrigue::Entity::DnsRecord %>
+  <li><a href="/v1/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <% end %>
+</ul>
+
+<p>Networks:</p>
+<ul>
+  <% @result.entities.each do |e| %>
+  <% next unless e.type == Intrigue::Entity::NetBlock %>
+  <li><a href="/v1/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <% end %>
+</ul>
