@@ -138,31 +138,38 @@ class IntrigueApp < Sinatra::Base
     # Show the results in a JSON
     get '/scan_results/:id.json/?' do
       content_type 'application/json'
-      @scan_result = Intrigue::Model::ScanResult.get(params[:id])
-      @scan_result.export_json
+      @result = Intrigue::Model::ScanResult.get(params[:id])
+      @result.export_json
     end
 
     # Show the results in a CSV
     get '/scan_results/:id.csv/?' do
       content_type 'text/plain'
-      @scan_result = Intrigue::Model::ScanResult.get(params[:id])
-      @scan_result.export_csv
+      @result = Intrigue::Model::ScanResult.get(params[:id])
+      @result.export_csv
     end
 
     # Show the results in a graph format
     get '/scan_results/:id/graph.csv/?' do
       content_type 'text/plain'
-      @scan_result = Intrigue::Model::ScanResult.get(params[:id])
-      @scan_result.export_graph_csv
+      @result = Intrigue::Model::ScanResult.get(params[:id])
+      @result.export_graph_csv
+    end
+
+    # Show the results in a graph format
+    get '/scan_results/:id/graph.gexf/?' do
+      content_type 'text/plain'
+      @result = Intrigue::Model::ScanResult.get(params[:id])
+      erb :'scans/gexf', :layout => false
     end
 
     # Determine if the scan run is complete
     get '/scan_results/:id/complete' do
-      x = Intrigue::Model::ScanResult.get(params[:id])
+      result = Intrigue::Model::ScanResult.get(params[:id])
       # immediately return false unless we find the scan result
-      return false unless x
+      return false unless result
       # check for completion
-      return "true" if x.complete
+      return "true" if result.complete
     # default to false
     false
     end

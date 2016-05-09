@@ -11,14 +11,6 @@
   <% end %>
 </ul>
 
-<p>Certificates:</p>
-<ul>
-  <% @result.entities.each do |e| %>
-  <% next unless e.type == Intrigue::Entity::SslCertificate %>
-  <li><a href="/v1/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
-  <% end %>
-</ul>
-
 <p>Applications:</p>
 <ul>
   <% @result.entities.each do |e| %>

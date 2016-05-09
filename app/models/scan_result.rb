@@ -104,7 +104,9 @@ module Intrigue
         output_string = ""
         # dump the entity name, all chilren entity names, and
         # remove both spaces and commas
-        self.entities.each{ |x| output_string << x.name.gsub(/[\,,\s]/,"") << ", " << "#{x.children.map{ |y| y.name.gsub(/[\,,\s]/,"") }.join(", ")}\n" }
+        self.entities.each do |x|
+          output_string << x.name.gsub(/[\,,\s]/,"") << ", " << "#{x.children.map{ |y| y.name.gsub(/[\,,\s]/,"") }.join(", ")}\n"
+        end
       output_string
       end
 

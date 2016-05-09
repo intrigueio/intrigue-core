@@ -1,4 +1,4 @@
-<h3>Scan Result</h3>
+<h3>Scan Result <a href="/v1/scan_results/<%=@result.id%>/profile">(Profile View)</a></h3>
 <p>Total Tasks: <%=@result.task_results.count%></p>
 <p>Entity: <a href=/v1/entities/<%=@result.base_entity.id%>><%= h "#{@result.base_entity.type_string} #{@result.base_entity.name}"%></a></p>
 <p>Complete: <%= @result.complete %></p>
@@ -6,7 +6,8 @@ Export:
 <ul>
   <li><a href=<%="#{request.url}.csv"%>> CSV </a></li>
   <li><a href=<%="#{request.url}.json"%>> JSON </a></li>
-  <li><a href=<%="#{request.url}/graph.csv"%>> Graph CSV </a></li>
+  <li><a href=<%="#{request.url}/graph.csv"%>> Graph (CSV) </a></li>
+  <li><a href=<%="#{request.url}/graph.gexf"%>> Graph (GEXF) </a></li>
 </ul>
 <p>New Entities:</p>
   <ul>
