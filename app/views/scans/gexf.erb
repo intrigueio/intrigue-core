@@ -2,7 +2,7 @@
 <gexf xmlns="http://www.gexf.net/1.2draft" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd" version="1.2">
     <meta lastmodifieddate="2009-03-20">
         <creator>intrigue.io</creator>
-        <description><%= @result.name %></description>
+        <description>generated graph</description>
     </meta>
     <graph defaultedgetype="undirected">
         <attributes class="node">
@@ -10,28 +10,21 @@
             <attribute id="1" title="type" type="string"/>
         </attributes>
         <nodes>
-          <% @result.task_results.each do |task_result|
-              task_result.entities.each do |entity| %>
-              <node id="<%= entity.id  %>" label="<%= entity.name %>">
-                <attvalues>
-                  <attvalue for="0" value="<%= entity.name %>"/>
-                  <attvalue for="1" value="<%= entity.type %>"/>
-                </attvalues>
-              </node>
-          <% end
-          end %>
+        <% @entity_pairs.each do |hash| %>
+            <node id="<%= hash[:entity].id %>" label="<%= hash[:entity].name %>">
+              <attvalues>
+                <attvalue for="0" value="<%= hash[:entity].name %>"/>
+                <attvalue for="1" value="<%= hash[:entity].type %>"/>
+              </attvalues>
+            </node>
+        <% end %>
         </nodes>
         <edges>
-          <%
-            count=0
-            @result.task_results.each do |task_result|
-              task_result.entities.each do |child|
-              %>
-                <edge id="<%="#{count}"%>" source="<%="#{task_result.base_entity.id}"%>" target="<%="#{child.id}"%>" label="<%=task_result.name%>"/>
-              <%
-              count+=1
-              end
-            end
+          <% count=0 %>
+          <% @entity_pairs.each do |hash| %>
+              <edge id="<%="#{count}"%>" source="<%="#{hash[:task_result].base_entity.id}"%>" target="<%="#{hash[:entity].id}"%>" label="<%=hash[:task_result].name%>"/>
+        <% count+=1
+          end
           %>
         </edges>
     </graph>

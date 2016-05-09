@@ -159,7 +159,16 @@ class IntrigueApp < Sinatra::Base
     # Show the results in a graph format
     get '/scan_results/:id/graph.gexf/?' do
       content_type 'text/plain'
-      @result = Intrigue::Model::ScanResult.get(params[:id])
+      result = Intrigue::Model::ScanResult.get(params[:id])
+
+      # Generate a list of entities and task runs to work through
+      @entity_pairs = []
+      result.task_results.each do |task_result|
+        task_result.entities.each do |entity|
+          @entity_pairs << {:task_result => task_result, :entity => entity}
+        end
+      end
+
       erb :'scans/gexf', :layout => false
     end
 
