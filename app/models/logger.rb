@@ -35,7 +35,6 @@ module Intrigue
         _log "[FATAL] #{@name}: " << message
       end
 
-
     private
 
       def _log(message)

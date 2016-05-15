@@ -1,6 +1,38 @@
 class IntrigueApp < Sinatra::Base
   namespace '/v1' do
 
+    ###               ###
+    ### System MGMT   ###
+    ###               ###
+
+    # save the config
+    post '/system' do
+
+      # Update our config if one of the fields have been changed. Note that we use ***
+      # as a way to mask out the full details in the view. If we have one that doesn't lead with ***
+      # go ahead and update it
+      params.each {|k,v| $intrigue_config.config["intrigue_global_module_config"][k]["value"] = v unless v =~ /^\*\*\*/ }
+      $intrigue_config.save
+
+      redirect '/v1/admin/config'
+    end
+
+    ###                ###
+    ### Project MGMT   ###
+    ###                ###
+
+    # save the config
+    post '/project' do
+      project_name = "#{params["project_name"]}"
+
+      # set the current session variable
+      session["project_name"] = project_name
+      response.set_cookie "project_name", :value => project_name
+
+      redirect '/v1/'
+    end
+
+
     ###          ###
     ### ENTITIES ###
     ###          ###
