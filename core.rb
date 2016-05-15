@@ -69,6 +69,7 @@ setup_datamapper
 
 class IntrigueApp < Sinatra::Base
   register Sinatra::Namespace
+  #set :sessions => true
 
   set :root, "#{$intrigue_basedir}"
   set :views, "#{$intrigue_basedir}/app/views"
@@ -92,6 +93,13 @@ class IntrigueApp < Sinatra::Base
     def h(text)
       Rack::Utils.escape_html(text)
     end
+  end
+
+  ###
+  ### (Very) Simple Auth
+  ###
+  use Rack::Auth::Basic, "Restricted" do |username, password|
+      [username, password] == ['intrigue', $intrigue_config.config["password"] ]
   end
 
   before do
