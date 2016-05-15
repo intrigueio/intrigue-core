@@ -98,8 +98,8 @@ task :migrate => :setup do
     DataMapper.finalize
 
     puts "Creating default project..."
-    Intrigue::Model::Project.create(:name => "default") unless Intrigue::Model::Project.first
-    
+    Intrigue::Model::Project.create(:name => "Default") unless Intrigue::Model::Project.first
+
   rescue Exception => e
     puts "Error... Unable to migrate: #{e}"
   end

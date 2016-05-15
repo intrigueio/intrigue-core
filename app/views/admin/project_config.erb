@@ -1,16 +1,28 @@
 <h3>Configuration</h3>
 
+<script language="JavaScript" type="text/javascript">
+<!--
+function set_project ( name )
+{
+  document.project_form.project_name.value = name;
+  document.project_form.submit() ;
+}
+-->
+</script>
+
 Known Projects:
 <p>
 <ul>
 <% Intrigue::Model::Project.all.each do |proj| %>
-  <li> <%= h proj.name %> </li>
+  <li>
+    <a href="javascript:set_project('<%= proj.name %>')"> <%= h proj.name %></a>
+  </li>
 <% end %>
 </ul>
 </p>
-<form action="/v1/admin/project_config" method="post">
+<form name="project_form" action="/v1/admin/project_config" method="post">
   <div class="form-group">
-  <label for="project_name" class="control-label">Project Name</label>
+  <label for="project_name" class="control-label">New Project</label><br/>
     <input type="text" class="form-control input-sm" id="project_name" name="project_name" style="width: 150px;" value="<%= h Intrigue::Model::Project.current_project.name %>">
     <input class="btn btn-primary" type="submit" value="Submit">
   </div>
@@ -23,5 +35,5 @@ Known Projects:
 <br/>
 <br/>
 <p>
-<a href="/v1/admin/clear"> Clear all entities in this project. (Warning: There's no coming back from clicking this!)</a>
+<a href="/v1/admin/clear"> Click this link to remove all entities in this project. (Warning: There's no coming back from clicking this!)</a>
 </p>
