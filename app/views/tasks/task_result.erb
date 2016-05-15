@@ -26,7 +26,11 @@ function getEntities(id){
     // Set the values based on just this task's allowed type
     $( "#entities" ).innerHTML= "<ul><ul/>"
     $.each(data["entities"], function(id, hash) {
-      $( "#entities" ).append( "<li><a href='/v1/entities/" + hash["id"] + "'> " + hash["type"] + ": "+  hash["name"] + "</a></br></li>" );
+      type = hash["type"].split(':')[4];
+      name = hash["name"];
+      $( "#entities" ).append("<li><a href='/v1/entities/" +
+        hash["id"] + "'> " + type + ": " + name + "</a>");
+        //if (type == "Uri") { ("<a href=" + hash["name"] + "'> [link] </a>")});
       });
     $( "#entities" ).append = "</ul>"
   });

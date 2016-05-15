@@ -8,7 +8,7 @@ module Intrigue
       belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.current_project }
 
       def self.current_project
-        all(:project_id => Project.current_project.id)
+        all(:project => Intrigue::Model::Project.current_project)
       end
 
       def log(message)

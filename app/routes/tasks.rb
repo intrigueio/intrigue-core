@@ -50,7 +50,7 @@ class IntrigueApp < Sinatra::Base
         entity_type = @params["entity_type"]
 
         # TODO - make sure we catch DataMapper::SaveFailureError... why?
-        
+
         # TODO - make sure we have a valid entity type first
         #   (check Intrigue::Model::Entity.descendants )
 

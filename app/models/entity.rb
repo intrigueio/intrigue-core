@@ -20,12 +20,12 @@ module Intrigue
 
       def children
        children = []
-       Intrigue::Model::TaskResult.current_project(:base_entity => self).each { |r| children.concat(r.entities) }
+       Intrigue::Model::TaskResult.current_project.all(:base_entity => self).each { |r| children.concat(r.entities) }
       children
       end
 
       def self.current_project
-        all(:project_id => Project.current_project.id)
+        all(:project => Intrigue::Model::Project.current_project)
       end
 
 

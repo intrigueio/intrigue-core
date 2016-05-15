@@ -17,6 +17,7 @@ class BaseTask
     raise "Unable to find task result by id #{task_id}. Bailing." unless @task_result
 
     @entity = @task_result.base_entity
+    @project_id = @task_result.project.id
     options = @task_result.options
     raise "Unable to find entity. Bailing." unless @entity
 
@@ -252,9 +253,10 @@ class BaseTask
 
       # Create the entity, validating the attributes
       entity = Intrigue::Model::Entity.create({
-                  :type => eval("Intrigue::Entity::#{type}"),
-                  :name => hash["name"][0,200],
-                  :details => hash })
+                :type => eval("Intrigue::Entity::#{type}"),
+                :name => hash["name"][0,200],
+                :details => hash,
+                :project => Intrigue::Model::Project.get(@project_id)})
 
       # If we don't get anything back, safe to assume we can't move on
       unless entity
@@ -307,8 +309,6 @@ class BaseTask
       @user_options.each do |user_option|
         value = user_option[name] if user_option[name]
       end
-
-      #@task_result.logger.log "Option configured: #{name}"
 
     value
     end

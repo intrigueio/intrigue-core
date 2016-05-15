@@ -156,7 +156,8 @@ class CoreCli < Thor
       e = Intrigue::Model::Entity.create({
         :type => "Intrigue::Entity::#{entity["type"]}",
         :name => entity["details"]["name"],
-        :details => entity["details"]
+        :details => entity["details"],
+        :project => Intrigue::Model::Project.current_project
       })
 
       # Create a new task result
@@ -165,7 +166,8 @@ class CoreCli < Thor
         :task_name => task_name,
         :base_entity => e,
         :options => options,
-        :logger => Intrigue::Model::Logger.create(:project => Intrigue::Model::Project.current_project)
+        :logger => Intrigue::Model::Logger.create(:project => Intrigue::Model::Project.current_project),
+        :project => Intrigue::Model::Project.current_project
       })
 
       # XXX - Create the task
