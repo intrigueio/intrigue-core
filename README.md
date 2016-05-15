@@ -12,45 +12,30 @@ To get started, follow the instructions below!
 
 ### Setting up a development environment
 
-The following are presumed available and configured in your environment
- - redis
- - sudo
- - nmap
- - zmap
- - masscan
- - java runtime
+Follow the appropriate setup guide:
 
-Sudo is used to allow root access for certain commands ^ , so make sure this doesn't require a password:
+ * Ubuntu Linux - https://github.com/intrigueio/intrigue-core/wiki/Setting-up-a-Test-Environment-on-Ubuntu-Linux
+ * Kali Linux - https://github.com/intrigueio/intrigue-core/wiki/Setting-up-a-Test-Environment-on-Kali-Linux
+ * OSX - https://github.com/intrigueio/intrigue-core/wiki/Setting-up-a-Test-Environment-on-OSX
+
+### Setting up a development environment using docker & docker-compose:
 ```
-your-username ALL = NOPASSWD: /usr/bin/masscan, /usr/sbin/zmap, /usr/bin/nmap
-```
+# Clone the repository to your current directory
+# Set up your config file first (this is optional, but preferrable)
+$ cp config/config.json.default config/config.json
 
-### Starting up...
-
-Make sure you have redis installed and running. (Use Homebrew if you're on OSX).
-
-Install all gem dependencies with Bundler (http://bundler.io/)
-```
-$ bundle install
+# Build the container and run it
+$ docker-compose build && docker-compose up # and we're up on :7778
 ```
 
-Run the setup and database migration task
-```
-rake setup && rake migrate
-```
-
-Start the web and background workers. Intrigue will start on 127.0.0.0:7777.
-```
-$ foreman start
-```
-
-Now, browse to the web interface.
+Now that you have a working environment, browse to the web interface.
 
 ### Using the web interface
 
 To use the web interface, browse to http://127.0.0.1:7777
 
 Getting started should be pretty straightforward, try running a "dns_brute_sub" task on your domain. Now, try with the "use_file" option set to true.
+
 
 ### API usage via core-cli:
 
@@ -163,17 +148,5 @@ $ curl -s -X POST -H "Content-Type: application/json" -d '{ "task": "example", "
 ### Starting up an scaling horizontally with Docker
 Using Docker, we can add many sidekiq workers, allowing us to scale horizontally. To set up the Intrigue infrastructure, we've provided a minimal docker-compose.yml. This, of course, requires docker and docker-compose to be installed.
 
-Starting up with docker-compose:
-```
-# Clone the repository to your current directory
-# Set up your config file first (this is optional, but preferrable)
-$ cp config/config.json.default config/config.json
 
-# Build the container and run it
-$ docker-compose build && docker-compose up # and we're up on :7778
-```
 
-#### Runtime configuration via environment variables:
-INTRIGUE_ENV: runtime environment. This should be "docker" when running in docker
-REDIS_URI: uri for the redis server. This should be "redis://redis:6379" when running in docker
-INTRIGUE_API: uri for the api endpoint. This should be "http://127.0.0.1:7777/v1" unless you've modified the endpoint in your puma config
