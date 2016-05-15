@@ -11,7 +11,7 @@ module Intrigue
       has n, :entities, :through => Resource, :constraint => :destroy
       has n, :scan_results, :through => Resource, :constraint => :destroy
 
-      property :id, Serial
+      property :id, Serial, :key => true
       property :name, String
       property :task_name, String
       property :timestamp_start, DateTime

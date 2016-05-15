@@ -15,7 +15,9 @@ module Scanner
 
       # Kick off the scan
       @scan_result.timestamp_start = DateTime.now
-      @scan_result.logger.log "Starting scan #{@scan_result.name} of type #{self.class} with id #{@scan_result.id} on entity #{@scan_result.base_entity.type_string}##{@scan_result.base_entity.name} to depth #{@scan_result.depth}"
+      @scan_result.logger.log "Starting scan #{@scan_result.name} of type " +
+          "#{self.class} with id #{@scan_result.id} on entity " + "#{@scan_result.base_entity.type_string}##{@scan_result.base_entity.name} " +
+          "to depth #{@scan_result.depth}"
       _recurse(@scan_result.base_entity, @scan_result.depth)
 
       # Mark the task complete
@@ -46,7 +48,8 @@ module Scanner
     def _start_task_and_recurse(task_name,entity,depth,options=[])
 
       @scan_result.logger.log "RECURSING (#{depth}) on #{entity}... #{task_name} #{options}"
-      @scan_result.logger.log "Starting #{task_name} with options #{options} on #{entity.type_string}##{entity.name} at depth #{depth}"
+      @scan_result.logger.log "Starting #{task_name} with options #{options} " +
+        "on #{entity.type_string}##{entity.name} at depth #{depth}"
 
       # Make sure we can check for these later
       already_completed = false
@@ -79,14 +82,18 @@ module Scanner
         @scan_result.logger.log "Task started, waiting for results"
         task_result = Intrigue::Model::TaskResult.get task_id
 
+        # Set the appropriate project, based on the scan result
+        # TODO - is there a better way to manage this?
+        task_result.project = @scan_result.project
+        task_result.save
+
         # Add the task_result to the scan_result
         @scan_result.logger.log "Adding new task result..."
         @scan_result.add_task_result(task_result)
 
         until task_result.complete
           # TODO - add explicit timeout here
-          #@scan_result.logger.log "Sleeping, waiting for completion of task: #{task_id}"
-          sleep 1
+          sleep 5
           task_result = Intrigue::Model::TaskResult.get task_id
         end
         @scan_result.logger.log "Task complete!"

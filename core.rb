@@ -45,7 +45,8 @@ end
 # all datamapper set up stuffs
 def setup_datamapper
   ##  Set up Database Logging
-  DataMapper::Logger.new($stdout, :warn)
+  #DataMapper::Logger.new($stdout, :warn)
+  DataMapper::Logger.new(STDOUT, :warn)
 
   # Pull intrigue config from the environment if it's available (see docker config)
   system_env = ENV.fetch("INTRIGUE_ENV", "development")

@@ -10,7 +10,7 @@ module Intrigue
       has n, :task_results, :through => Resource, :constraint => :destroy
       has n, :entities, :through => Resource, :constraint => :destroy
 
-      property :id, Serial
+      property :id, Serial, :key => true
       property :name, String
       property :depth, Integer
       property :scan_type, String

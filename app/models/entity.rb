@@ -3,7 +3,7 @@ module Intrigue
     class Entity
       include DataMapper::Resource
 
-      property :id,       Serial
+      property :id,       Serial, :key => true
       property :type,     Discriminator
       property :name,     String, :length => 500
       property :details,  Object, :default => {} #Text, :length => 100000

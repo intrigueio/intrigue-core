@@ -3,7 +3,7 @@ module Intrigue
     class Project
       include DataMapper::Resource
 
-      property :id,       Serial
+      property :id,       Serial, :key => true
       property :name,     String
 
       def self.current_project
@@ -14,6 +14,10 @@ module Intrigue
             Intrigue::Model::Project.create(:name => "#{$project_name}")
         end
       current_project
+      end
+
+      def entity_count
+        Intrigue::Model::Entity.all(:project_id => @id).count
       end
 
       def entities

@@ -3,7 +3,7 @@ module Intrigue
     class Logger
       include DataMapper::Resource
 
-      property :id, Serial
+      property :id, Serial, :key => true
       property :full_log, Text, :length => 50000000, :default =>""
       belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.current_project }
 
@@ -39,24 +39,13 @@ module Intrigue
     private
 
       def _log(message)
-
         encoded_message = message.force_encoding('UTF-8')
-        # Write to DB
-        attribute_set(:full_log, "#{@full_log}\n#{encoded_message}")
-        #@full_log = "" unless @full_log
-        #@full_log << "#{@full_log}\n#{message}"
+        self.update(:full_log => "#{self.full_log}\n#{message}")
 
-        # Write to STDOUT
-        puts encoded_message
-
-        #Write to file
-        #if @write_file
-        #  @streamfile.puts message
-        #  @streamfile.flush
-        #end
-
+        # PRINT TO STANDARD OUT
+        puts "#{message}"
       end
-    end
 
+    end
 end
 end

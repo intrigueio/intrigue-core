@@ -56,6 +56,7 @@ class IntrigueApp < Sinatra::Base
     # Show the results in a human readable format
     get '/scan_results/:id/?' do
       @result = Intrigue::Model::ScanResult.current_project.all(:id => params[:id]).first
+      return "Unknown Scan Result" unless @result
       erb :'scans/scan_result'
     end
 

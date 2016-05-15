@@ -92,7 +92,7 @@ class IntrigueApp < Sinatra::Base
 
       # Get the task result from the database, and fail cleanly if it doesn't exist
       @result = Intrigue::Model::TaskResult.current_project.all(:id => task_result_id).first
-      return "Unknown Task ID" unless @result
+      return "Unknown Task Result" unless @result
 
       # Assuming it's available, display it
       if @result
