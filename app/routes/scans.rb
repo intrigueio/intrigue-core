@@ -3,7 +3,7 @@ class IntrigueApp < Sinatra::Base
 
     # Scan Webform
     get '/scan/?' do
-      @scan_results = Intrigue::Model::ScanResult.page(params[:page])
+      @scan_results = Intrigue::Model::ScanResult.current_project.page(params[:page])
       erb :'scans/index'
     end
 
@@ -32,7 +32,8 @@ class IntrigueApp < Sinatra::Base
       {
         :type => "Intrigue::Entity::#{@params["entity_type"]}",
         :name => "#{@params["attrib_name"]}",
-        :details => entity_details
+        :details => entity_details,
+        :project => Intrigue::Model::Project.current_project
       })
 
       # Set up the ScanResult object
@@ -42,7 +43,8 @@ class IntrigueApp < Sinatra::Base
         :base_entity => entity,
         :depth => scan_depth,
         :filter_strings => scan_filter_strings,
-        :logger => Intrigue::Model::Logger.create
+        :logger => Intrigue::Model::Logger.create(:project => Intrigue::Model::Project.current_project),
+        :project => Intrigue::Model::Project.current_project
       })
 
       scan_result.start
@@ -53,13 +55,13 @@ class IntrigueApp < Sinatra::Base
 
     # Show the results in a human readable format
     get '/scan_results/:id/?' do
-      @result = Intrigue::Model::ScanResult.get(params[:id])
+      @result = Intrigue::Model::ScanResult.current_project.all(:id => params[:id]).first
       erb :'scans/scan_result'
     end
 
     # Show the results in a human readable format
     get '/scan_results/:id/profile/?' do
-      @result = Intrigue::Model::ScanResult.get(params[:id])
+      @result = Intrigue::Model::ScanResult.current_project.all(:id => params[:id]).first
 
       @persons  = []
       @applications = []

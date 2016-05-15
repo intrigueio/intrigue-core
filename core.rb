@@ -69,7 +69,7 @@ setup_datamapper
 
 class IntrigueApp < Sinatra::Base
   register Sinatra::Namespace
-  #set :sessions => true
+  set :sessions => true
 
   set :root, "#{$intrigue_basedir}"
   set :views, "#{$intrigue_basedir}/app/views"
@@ -104,6 +104,7 @@ class IntrigueApp < Sinatra::Base
 
   before do
     $intrigue_server_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
+    $project_name = session["project_name"] || "Default"
   end
 
   not_found do
@@ -139,6 +140,3 @@ require_relative "app/all"
 require_relative "lib/all"
 
 DataMapper.finalize
-
-# Create a default project for us to work in
-Intrigue::Model::Project.create(:name => "default") unless Intrigue::Model::Project.first

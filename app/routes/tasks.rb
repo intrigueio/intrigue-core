@@ -6,12 +6,12 @@ class IntrigueApp < Sinatra::Base
     get '/task/?' do
       # if we receive an entity_id or a task_result_id, instanciate the object
       if params["entity_id"]
-        @entity = Intrigue::Model::Entity.get params["entity_id"]
+        @entity = Intrigue::Model::Entity.current_project.all(:id => params["entity_id"]).first
       end
 
       # If we've been given a task result...
       if params["task_result_id"]
-        @task_result = Intrigue::Model::TaskResult.get params["task_result_id"]
+        @task_result = Intrigue::Model::TaskResult.current_project.all(:id => params["task_result_id"]).first
         @entity = @task_result.base_entity
       end
 
@@ -20,7 +20,7 @@ class IntrigueApp < Sinatra::Base
       @task_names = @tasks.map{|t| t.metadata[:pretty_name]}.sort
 
       # get a list of task_results
-      @task_results = Intrigue::Model::TaskResult.page(params[:page])
+      @task_results = Intrigue::Model::TaskResult.current_project.page(params[:page])
 
       erb :'tasks/index'
     end
@@ -45,7 +45,7 @@ class IntrigueApp < Sinatra::Base
 
       # Construct an entity from the data we have
       if entity_id
-        entity = Intrigue::Model::Entity.get(entity_id)
+        entity = Intrigue::Model::Entity.current_project.all(:id => entity_id).first
       else
         entity_type = @params["entity_type"]
 
@@ -56,7 +56,8 @@ class IntrigueApp < Sinatra::Base
         entity = Intrigue::Model::Entity.create(
         { :type => klass,
           :name => "#{@params["attrib_name"]}",
-          :details => entity_details
+          :details => entity_details,
+          :project => Intrigue::Model::Project.current_project
         })
       end
 
@@ -88,7 +89,7 @@ class IntrigueApp < Sinatra::Base
       task_result_id = params[:id].to_i
 
       # Get the task result from the database, and fail cleanly if it doesn't exist
-      @result = Intrigue::Model::TaskResult.get(task_result_id)
+      @result = Intrigue::Model::TaskResult.current_project.all(:id => task_result_id).first
       return "Unknown Task ID" unless @result
 
       # Assuming it's available, display it

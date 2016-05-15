@@ -24,8 +24,8 @@ module Intrigue
       property :entity_count, Integer, :default => 0
       property :filter_strings, Text, :default => ""
 
-      def self.all_in_current_project
-        all(:project_id => 1)
+      def self.current_project
+        all(:project_id => Project.current_project.id)
       end
 
       def start

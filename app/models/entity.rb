@@ -20,13 +20,14 @@ module Intrigue
 
       def children
        children = []
-       Intrigue::Model::TaskResult.all(:base_entity => self).each { |r| children.concat(r.entities) }
+       Intrigue::Model::TaskResult.current_project(:base_entity => self).each { |r| children.concat(r.entities) }
       children
       end
 
-      def self.all_in_current_project
-        all(:project_id => 1)
+      def self.current_project
+        all(:project_id => Project.current_project.id)
       end
+
 
       def allowed_tasks
         ### XXX - this needs to be limited to tasks that accept this type

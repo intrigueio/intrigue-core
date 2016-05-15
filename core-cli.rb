@@ -165,7 +165,7 @@ class CoreCli < Thor
         :task_name => task_name,
         :base_entity => e,
         :options => options,
-        :logger => Intrigue::Model::Logger.create
+        :logger => Intrigue::Model::Logger.create(:project => Intrigue::Model::Project.current_project)
       })
 
       # XXX - Create the task

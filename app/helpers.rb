@@ -25,9 +25,10 @@ module Intrigue
             :task_name => task_name,
             :options => options,
             :base_entity => entity,
-            :logger => Intrigue::Model::Logger.create
+            :logger => Intrigue::Model::Logger.create(:project => Intrigue::Model::Project.current_project),
+            :project => Intrigue::Model::Project.current_project
         })
-        
+
         ###
         # Create the task and start it
         ###

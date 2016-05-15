@@ -19,8 +19,8 @@ module Intrigue
       property :options, Object, :default => [] #StringArray
       property :complete, Boolean, :default => false
 
-      def self.all_in_current_project
-        all(:project_id => 1)
+      def self.current_project
+        all(:project_id => Project.current_project.id)
       end
 
       def add_entity(entity)

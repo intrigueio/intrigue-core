@@ -5,6 +5,11 @@ module Intrigue
 
       property :id, Serial
       property :full_log, Text, :length => 50000000, :default =>""
+      belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.current_project }
+
+      def self.current_project
+        all(:project_id => Project.current_project.id)
+      end
 
       def log(message)
         _log "[ ] #{@name}: " << message

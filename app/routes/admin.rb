@@ -6,7 +6,6 @@ class IntrigueApp < Sinatra::Base
         erb :"admin/index"
       end
 
-=begin
       # TODO - kill this
       # Get rid of all existing task runs
       get '/clear/?' do
@@ -24,14 +23,14 @@ class IntrigueApp < Sinatra::Base
         ds.size
         ds.clear
 
-        Intrigue::Model::Entity.all.destroy
-        Intrigue::Model::TaskResult.all.destroy
-        Intrigue::Model::ScanResult.all.destroy
+        Intrigue::Model::Entity.current_project.destroy
+        Intrigue::Model::TaskResult.current_project.destroy
+        Intrigue::Model::ScanResult.current_project.destroy
 
         # Beam me up, scotty!
         redirect '/v1'
       end
-=end
+
       # get config
       get '/config/?' do
         erb :"admin/config"
@@ -48,6 +47,22 @@ class IntrigueApp < Sinatra::Base
 
         redirect '/v1/admin/config'
       end
+
+      get '/project_config' do
+        erb :"admin/project_config"
+      end
+
+      # save the config
+      post '/project_config' do
+        project_name = "#{params["project_name"]}"
+
+        # set the current session variable
+        session["project_name"] = project_name
+        response.set_cookie "project_name", :value => project_name
+
+        redirect '/v1/'
+      end
+
     end
   end
 end

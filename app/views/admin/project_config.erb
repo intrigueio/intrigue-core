@@ -1,0 +1,27 @@
+<h3>Configuration</h3>
+
+Known Projects:
+<p>
+<ul>
+<% Intrigue::Model::Project.all.each do |proj| %>
+  <li> <%= h proj.name %> </li>
+<% end %>
+</ul>
+</p>
+<form action="/v1/admin/project_config" method="post">
+  <div class="form-group">
+  <label for="project_name" class="control-label">Project Name</label>
+    <input type="text" class="form-control input-sm" id="project_name" name="project_name" style="width: 150px;" value="<%= h Intrigue::Model::Project.current_project.name %>">
+    <input class="btn btn-primary" type="submit" value="Submit">
+  </div>
+</form>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<p>
+<a href="/v1/admin/clear"> Clear all entities in this project. (Warning: There's no coming back from clicking this!)</a>
+</p>

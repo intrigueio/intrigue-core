@@ -95,6 +95,11 @@ task :migrate => :setup do
     DataMapper::Logger.new($stdout, :debug)
     DataMapper.setup(:default, database_config[database_environment])
     DataMapper.auto_upgrade!
+    DataMapper.finalize
+
+    puts "Creating default project..."
+    Intrigue::Model::Project.create(:name => "default") unless Intrigue::Model::Project.first
+    
   rescue Exception => e
     puts "Error... Unable to migrate: #{e}"
   end

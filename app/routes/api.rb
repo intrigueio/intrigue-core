@@ -11,12 +11,12 @@ class IntrigueApp < Sinatra::Base
     end
 
     get '/entities/:id.csv' do
-      @entity = Intrigue::Model::Entity.get(params[:id])
+      @entity = Intrigue::Model::Entity.current_project.all(:id => params[:id]).first
       @entity.export_csv
     end
 
     get '/entities/:id.json' do
-      @entity = Intrigue::Model::Entity.get(params[:id])
+      @entity = Intrigue::Model::Entity.current_project.all(:id => params[:id]).first
       @entity.export_json
     end
 
@@ -79,30 +79,31 @@ class IntrigueApp < Sinatra::Base
     # Show the results in a CSV format
     get '/task_results/:id.csv/?' do
       content_type 'text/plain'
-      @task_result = Intrigue::Model::TaskResult.get(params[:id])
+      @task_result = Intrigue::Model::TaskResult.current_project.all(:id => params[:id]).first
       @task_result.export_csv
     end
 
     # Show the results in a CSV format
     get '/task_results/:id.tsv/?' do
       content_type 'text/plain'
-      @task_result = Intrigue::Model::TaskResult.get(params[:id])
+      @task_result = Intrigue::Model::TaskResult.current_project.all(:id => params[:id]).first
       @task_result.export_tsv
     end
 
     # Show the results in a JSON format
     get '/task_results/:id.json/?' do
       content_type 'application/json'
-      @task_result = Intrigue::Model::TaskResult.get(params[:id])
-      @task_result.export_json
+      @result = Intrigue::Model::TaskResult.current_project.all(:id => params[:id]).first
+      @result.export_json if @result
     end
 
 
     # Determine if the task run is complete
     get '/task_results/:id/complete/?' do
       # Get the task result and return unless it's false
-      x = Intrigue::Model::TaskResult.get(params[:id])
+      x = Intrigue::Model::TaskResult.current_project.all(:id => params[:id]).first
       return false unless x
+
       # if we got it, and it's complete, return true
       return "true" if x.complete
 
@@ -112,7 +113,7 @@ class IntrigueApp < Sinatra::Base
 
     # Get the task log
     get '/task_results/:id/log/?' do
-      @result = Intrigue::Model::TaskResult.get(params[:id])
+      @result = Intrigue::Model::TaskResult.current_project.all(:id => params[:id]).first
       erb :log
     end
 
@@ -138,28 +139,29 @@ class IntrigueApp < Sinatra::Base
     # Show the results in a JSON
     get '/scan_results/:id.json/?' do
       content_type 'application/json'
-      @result = Intrigue::Model::ScanResult.get(params[:id])
-      @result.export_json
+      @result = Intrigue::Model::ScanResult.current_project.all(:id => params[:id]).first
+      @result.export_json if @result
     end
 
     # Show the results in a CSV
     get '/scan_results/:id.csv/?' do
       content_type 'text/plain'
-      @result = Intrigue::Model::ScanResult.get(params[:id])
-      @result.export_csv
+      @result = Intrigue::Model::ScanResult.current_project.all(:id => params[:id]).first
+      @result.export_csv if @result
     end
 
     # Show the results in a graph format
     get '/scan_results/:id/graph.csv/?' do
       content_type 'text/plain'
-      @result = Intrigue::Model::ScanResult.get(params[:id])
-      @result.export_graph_csv
+      @result = Intrigue::Model::ScanResult.current_project.all(:id => params[:id]).first
+      @result.export_graph_csv if @result
     end
 
     # Show the results in a graph format
     get '/scan_results/:id/graph.gexf/?' do
       content_type 'text/plain'
-      result = Intrigue::Model::ScanResult.get(params[:id])
+      result = Intrigue::Model::ScanResult.current_project.all(:id => params[:id]).first
+      return unless result
 
       # Generate a list of entities and task runs to work through
       @entity_pairs = []
@@ -174,11 +176,14 @@ class IntrigueApp < Sinatra::Base
 
     # Determine if the scan run is complete
     get '/scan_results/:id/complete' do
-      result = Intrigue::Model::ScanResult.get(params[:id])
+      result = Intrigue::Model::ScanResult.current_project.all(:id => params[:id]).first
+
       # immediately return false unless we find the scan result
       return false unless result
+
       # check for completion
       return "true" if result.complete
+
     # default to false
     false
     end
@@ -198,7 +203,8 @@ class IntrigueApp < Sinatra::Base
       {
         :type => "Intrigue::Entity::#{entity['type']}",
         :name => entity['name'],
-        :details => entity['details']
+        :details => entity['details'],
+        :project => Intrigue::Model::Project.current_project
       })
 
       # Set up the ScanResult object
@@ -209,7 +215,8 @@ class IntrigueApp < Sinatra::Base
         :depth => 4,
         :filter_strings => "",
         :handlers => handlers,
-        :logger => Intrigue::Model::Logger.create
+        :logger => Intrigue::Model::Logger.create(:project => Intrigue::Model::Project.current_project),
+        :project => Intrigue::Model::Project.current_project
       })
 
       #puts "CREATING SCAN RESULT: #{scan_result.inspect}"
@@ -219,7 +226,7 @@ class IntrigueApp < Sinatra::Base
 
     # Get the task log
     get '/scan_results/:id/log' do
-      @result = Intrigue::Model::ScanResult.get(params[:id])
+      @result = Intrigue::Model::ScanResult.current_project.all(:id => params[:id]).first
       erb :log
     end
 
