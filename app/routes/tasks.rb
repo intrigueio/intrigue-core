@@ -20,7 +20,7 @@ class IntrigueApp < Sinatra::Base
       @task_names = @tasks.map{|t| t.metadata[:pretty_name]}.sort
 
       # get a list of task_results
-      @task_results = Intrigue::Model::TaskResult.current_project.page(params[:page])
+      @task_results = Intrigue::Model::TaskResult.current_project.all(:scan_results => nil).page(params[:page])
 
       erb :'tasks/index'
     end
