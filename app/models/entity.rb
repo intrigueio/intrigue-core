@@ -90,13 +90,13 @@ module Intrigue
 
       # export id, type, name, and details on a single line, removing spaces and commas
       def export_csv
-        export_string = "#{@id},#{@type},#{@name.gsub(/[\,,\s]/,"")},"
+        export_string = "#{@id},#{type_string},#{@name.gsub(/[\,,\s]/,"")},"
         @details.each{|k,v| export_string << "#{k}=#{v};".gsub(/[\,,\s]/,"") }
       export_string
       end
 
       def export_tsv
-        export_string = "#{@id}\t#{@type}\t#{@name}\t"
+        export_string = "#{@id}\t#{type_string}\t#{@name}\t"
         @details.each{|k,v| export_string << "#{k}##{v};" }
       export_string
       end

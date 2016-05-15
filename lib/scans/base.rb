@@ -18,6 +18,7 @@ module Scanner
       @scan_result.logger.log "Starting scan #{@scan_result.name} of type " +
           "#{self.class} with id #{@scan_result.id} on entity " + "#{@scan_result.base_entity.type_string}##{@scan_result.base_entity.name} " +
           "to depth #{@scan_result.depth}"
+
       _recurse(@scan_result.base_entity, @scan_result.depth)
 
       # Mark the task complete
@@ -76,16 +77,11 @@ module Scanner
       unless already_completed
 
         @scan_result.logger.log "No previous results, kicking off a task!"
-        task_id = start_task_run(task_name, entity, options)
+        task_id = start_task_run(@scan_result.project.id, task_name, entity, options)
 
         # Wait for the task to complete
         @scan_result.logger.log "Task started, waiting for results"
         task_result = Intrigue::Model::TaskResult.get task_id
-
-        # Set the appropriate project, based on the scan result
-        # TODO - is there a better way to manage this?
-        task_result.project = @scan_result.project
-        task_result.save
 
         # Add the task_result to the scan_result
         @scan_result.logger.log "Adding new task result..."

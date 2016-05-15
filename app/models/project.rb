@@ -7,7 +7,7 @@ module Intrigue
       property :name,     String
 
       def self.current_project
-        if $project_name == "" # probably a new user, no variable set. default.
+        if $project_name == "" # probably a new user, default to first project.
           current_project = Intrigue::Model::Project.first
         else # Grab it by name and if it doesn't exist, create it
           current_project = Intrigue::Model::Project.all(:name => "#{$project_name}").first ||

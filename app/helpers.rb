@@ -17,7 +17,7 @@ module Intrigue
       ###
       ### Helper method for starting a task run
       ###
-      def start_task_run(task_name, entity, options, handlers=[])
+      def start_task_run(project_id, task_name, entity, options, handlers=[])
 
         # Create the task result, and associate our entity and options
         task_result = Intrigue::Model::TaskResult.create({
@@ -25,8 +25,8 @@ module Intrigue
             :task_name => task_name,
             :options => options,
             :base_entity => entity,
-            :logger => Intrigue::Model::Logger.create(:project => Intrigue::Model::Project.current_project),
-            :project => Intrigue::Model::Project.current_project
+            :logger => Intrigue::Model::Logger.create(:project => Intrigue::Model::Project.get(project_id)),
+            :project => Intrigue::Model::Project.get(project_id)
         })
 
         ###

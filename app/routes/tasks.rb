@@ -31,6 +31,7 @@ class IntrigueApp < Sinatra::Base
       # get the task name
       task_name = "#{@params["task"]}"
       entity_id = @params["entity_id"]
+      current_project = Intrigue::Model::Project.current_project
 
       # Construct the attributes hash from the parameters. Loop through each of the
       # parameters looking for things that look like attributes, and add them to our
@@ -59,7 +60,7 @@ class IntrigueApp < Sinatra::Base
         { :type => klass,
           :name => "#{@params["attrib_name"]}",
           :details => entity_details,
-          :project => Intrigue::Model::Project.current_project
+          :project => current_project
         })
       end
 
@@ -75,7 +76,7 @@ class IntrigueApp < Sinatra::Base
       end
 
       # Start the task run!
-      task_result_id = start_task_run(task_name, entity, options)
+      task_result_id = start_task_run(current_project.id, task_name, entity, options)
       task_result = Intrigue::Model::TaskResult.find(task_result_id).first
 
       entity.task_results << task_result

@@ -62,6 +62,7 @@ class IntrigueApp < Sinatra::Base
       # What we receive should look like this:
       #
       #payload = {
+      #  "project_id" => project_id,
       #  "task" => task_name,
       #  "entity" => entity_hash,
       #  "options" => options_list,
@@ -77,17 +78,18 @@ class IntrigueApp < Sinatra::Base
       type = payload["entity"]["type"]
       attributes = payload["entity"].merge("type" => "Intrigue::Entity::#{type}")
 
-      entity = Intrigue::Model::Entity.create(
-        attributes.merge(:project => Intrigue::Model::Project.current_project))
-      entity.save
-
-      # Generate a task id
+      # get the details from the payload
+      project_id = payload["project_id"] || "1"
       task_name = payload["task"]
       options = payload["options"]
       handlers = payload["handlers"]
 
+      entity = Intrigue::Model::Entity.create(
+        attributes.merge(:project => Intrigue::Model::Project.get(project_id)))
+      entity.save
+
       # Start the task _run
-      task_id = start_task_run(task_name, entity, options, handlers)
+      task_id = start_task_run(project_id, task_name, entity, options, handlers)
       status 200 if task_id
 
     # must be a string otherwise it can be interpreted as a status code
