@@ -14,7 +14,7 @@ class IntrigueApp < Sinatra::Base
       params.each {|k,v| $intrigue_config.config["intrigue_global_module_config"][k]["value"] = v unless v =~ /^\*\*\*/ }
       $intrigue_config.save
 
-      redirect '/v1/admin/config'
+      redirect '/v1/admin/config'  # handy if we're in a browser
     end
 
     ###                ###
@@ -29,7 +29,7 @@ class IntrigueApp < Sinatra::Base
       session["project_name"] = project_name
       response.set_cookie "project_name", :value => project_name
 
-      redirect '/v1/'
+      redirect '/v1/scan' # handy if we're in a browser
     end
 
 
