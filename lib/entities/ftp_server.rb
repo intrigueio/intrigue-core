@@ -4,7 +4,7 @@ class FtpServer < Intrigue::Model::Entity
 
   def metadata
     {
-      :description => "TODO"
+      :description => "Ftp Server"
     }
   end
 

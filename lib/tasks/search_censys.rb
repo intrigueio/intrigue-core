@@ -41,7 +41,39 @@ class SearchCensysTask < BaseTask
         response = censys.search(entity_name,search_type)
         response["results"].each do |r|
           @task_result.logger.log "Got result: #{r}"
-          _create_entity "IpAddress", "name" => "#{r["ip"]}", "additional" => r
+
+          # Go ahead and create the entity
+          ip_address = r["ip"]
+          _create_entity "IpAddress", "name" => "#{ip_address}", "additional" => r
+
+          # Where we can, let's create additional entities from the scan results
+          if r["protocols"]
+            r["protocols"].each do |p|
+
+              # Pull out the protocol
+              port = p.split("/").first # format is like "80/http"
+              protocol = p.split("/").last # format is like "80/http"
+
+              # Always create a network service
+              _create_entity "NetSvc", {
+                "name" => "#{ip_address}:#{port}/tcp",
+                "port" => port,
+                "fingerprint" => protocol}
+
+              # Handle specific protocols
+              case protocol
+              when "https"
+                _create_entity "Uri", "name" => "https://#{ip_address}:#{port}"
+              when "http"
+                _create_entity "Uri", "name" => "http://#{ip_address}:#{port}"
+              when "ftp"
+                _create_entity "FtpServer", {
+                  "name" => "ftp://#{ip_address}:#{port}",
+                  "port" => "#{port}"
+                }
+              end
+            end
+          end
         end
       end
 
@@ -52,6 +84,13 @@ class SearchCensysTask < BaseTask
         response["results"].each do |r|
           @task_result.logger.log "Got result: #{r}"
           _create_entity "SslCertificate", "name" => r["parsed.subject_dn"], "additional" => r
+
+          # Pull out the CN and create a name
+          r["parsed.subject_dn"].each do |x|
+            host = x.split("CN=").last
+            _create_entity "DnsRecord", "name" => host if host
+          end
+
         end
       end
 
