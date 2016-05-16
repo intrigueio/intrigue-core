@@ -10,12 +10,12 @@ class CoreCli < Thor
   def initialize(*args)
     super
     $intrigue_basedir = File.dirname(__FILE__)
-
-    @server_uri = ENV.fetch("INTRIGUE_API_URI", "http://127.0.0.1:7777/v1")
+    $config = JSON.parse File.open("#{$intrigue_basedir}/config/config.json").read
+    @server_uri = ENV.fetch("INTRIGUE_API_URI", "http://intrigue:#{$config["password"]}@127.0.0.1:7777/v1")
     @delim = "#"
     @debug = true
     # Connect to Intrigue API
-    @api = IntrigueApi.new
+    @api = IntrigueApi.new(@server_uri)
   end
 
   desc "list", "List all available tasks"
