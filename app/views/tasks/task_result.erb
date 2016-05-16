@@ -31,7 +31,7 @@ function getEntities(id){
       name = hash["name"];
       entity_string += "<li><a href='/v1/entities/" + hash["id"] + "'> " + type + ": " + name + "</a> ";
       if (type == "Uri") {
-        entity_string += ("<a href=" + hash["name"] + "'>[link]</a>");
+        entity_string += ("<a target='_blank' href='" + hash["name"] + "'>[link]</a>");
       };
       entity_string += "</li>";
     });
