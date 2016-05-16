@@ -87,7 +87,7 @@ class SearchCensysTask < BaseTask
 
           # Pull out the CN and create a name
           r["parsed.subject_dn"].each do |x|
-            host = x.split("CN=").last
+            host = x.split("CN=").last.split(",").first
             _create_entity "DnsRecord", "name" => host if host
           end
 
