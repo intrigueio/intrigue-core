@@ -43,7 +43,7 @@ class WebAccountCheckTask < BaseTask
       pretty_uri = site["pretty_uri"].gsub("{account}",account_name) if site["pretty_uri"]
 
       # Skip if the site tags don't match our type
-      unless site["allowed_types"].include? @entity.type
+      unless site["allowed_types"].include? @entity.type_string
         @task_result.logger.log "Skipping #{account_uri}, doesn't match our type"
         next
       end
