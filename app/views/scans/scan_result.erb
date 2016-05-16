@@ -25,7 +25,7 @@ Export:
 <p>Task Runs:</p>
   <ul>
   <% @result.task_results.each do |x| %>
-    <li> <a href="/v1/task_results/<%=x.id%>"> <%= x.task_name %> <%= "[#{x.base_entity}]" %></a></li>
+    <li> <a href="/v1/task_results/<%=x.id%>"> <%= h x.task_name %> <%= h "[#{x.base_entity}]" %></a></li>
   <% end %>
   </ul>
 

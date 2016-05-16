@@ -74,7 +74,7 @@ module Intrigue
       def export_hash
         {
           "id" => @id,
-          "name" => @name,
+          "name" =>  URI.escape(@name),
           "scan_type" => @scan_type,
           "depth" => @depth,
           "complete" => @complete,

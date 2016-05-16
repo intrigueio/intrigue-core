@@ -15,6 +15,8 @@ require 'dm-pg-types'
 require 'dm-noisy-failures'
 require 'dm-pager'
 
+require 'uri'
+
 # Debug
 require 'pry'
 require_relative 'lib/config/global_config'

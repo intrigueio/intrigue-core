@@ -1,34 +1,42 @@
-Entity Details:
+<!-- name -->
+<h3>
+<% if @entity.type == Intrigue::Entity::Uri %>
+ <p><a href="<%= h @entity.name %>"><%= h @entity.name %></a><br/></p>
+<% else %>
+   <%= h @entity.name %>
+<% end %>
+</h3>
+
+Details:
 <pre><%= h JSON.pretty_generate @entity.export_hash %></pre>
 
 Scans that created this entity:
 <ul>
-<%= out = ""; @entity.scan_results.each {|x| out << "<li><a href='/v1/scan_results/#{x.id}'>#{x.name} (#{x.base_entity})</a></li>" }; out %>
+<%= out = ""; @entity.scan_results.each {|x| out << "<li><a href='/v1/scan_results/#{x.id}'>#{h x.name} (#{h x.base_entity})</a></li>" }; out %>
 </ul>
 <br/>
 <br/>
 
 Tasks that created this entity:<br/>
 <ul>
-<%= out = ""; @entity.task_results.each {|x| out << "<li><a href='/v1/task_results/#{x.id}'>#{x.task_name} (#{x.base_entity})</a></li>" }; out %>
+<%= out = ""; @entity.task_results.each {|x| out << "<li><a href='/v1/task_results/#{x.id}'>#{h x.task_name} (#{h x.base_entity})</a></li>" }; out %>
 </ul>
 <br/>
 <br/>
 
 Tasks run on this entity:<br/>
 <ul>
-<%= out = ""; results = Intrigue::Model::TaskResult.current_project.all(:base_entity => @entity); results.each {|r| out << "<li><a href='/v1/task_results/#{r.id}'>#{r.task_name} (#{r.base_entity})</a></li>"; }; out %>
+<%= out = ""; results = Intrigue::Model::TaskResult.current_project.all(:base_entity => @entity); results.each {|r| out << "<li><a href='/v1/task_results/#{r.id}'>#{h r.task_name} (#{h r.base_entity})</a></li>"; }; out %>
 </ul>
 <br/>
 <br/>
 
 Entities discovered from this entity: <br/>
 <ul>
-<%=out = ""; results = Intrigue::Model::TaskResult.current_project.all(:base_entity => @entity); results.each {|r| r.entities.each {|x| out << "<li><a href='/v1/entities/#{x.id}'>#{x.type}: #{x.name}</a></li>"; }}; out %>
+<%=out = ""; results = Intrigue::Model::TaskResult.current_project.all(:base_entity => @entity); results.each {|r| r.entities.each {|x| out << "<li><a href='/v1/entities/#{x.id}'>#{x.type}: #{h x.name}</a></li>"; }}; out %>
 </ul>
 <br/>
 <br/>
-
 
 Export this entity: <br/>
 <ul>

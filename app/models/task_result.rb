@@ -60,8 +60,8 @@ module Intrigue
       def export_hash
         {
           "id" => @id,
-          "name" => @name,
-          "task_name" => @task_name,
+          "name" =>  URI.escape(@name),
+          "task_name" => URI.escape(@task_name),
           "timestamp_start" => @timestamp_start,
           "timestamp_end" => @timestamp_end,
           "options" => @options,

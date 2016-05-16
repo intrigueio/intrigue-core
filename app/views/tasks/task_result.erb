@@ -21,18 +21,23 @@ Entities:
 function getEntities(id){
   //get the list of tasks and rewrite the task
   $.getJSON(location.origin + "/v1/task_results/"+ id +".json", function(data) {
-    console.log(data);
+    //console.log(data);
     $( "#entities" ).empty();
     // Set the values based on just this task's allowed type
-    $( "#entities" ).innerHTML= "<ul><ul/>"
+    var entity_string="<ul>";
+
     $.each(data["entities"], function(id, hash) {
       type = hash["type"].split(':')[4];
       name = hash["name"];
-      $( "#entities" ).append("<li><a href='/v1/entities/" +
-        hash["id"] + "'> " + type + ": " + name + "</a>");
-        //if (type == "Uri") { ("<a href=" + hash["name"] + "'> [link] </a>")});
-      });
-    $( "#entities" ).append = "</ul>"
+      entity_string += "<li><a href='/v1/entities/" + hash["id"] + "'> " + type + ": " + name + "</a> ";
+      if (type == "Uri") {
+        entity_string += ("<a href=" + hash["name"] + "'>[link]</a>");
+      };
+      entity_string += "</li>";
+    });
+    entity_string += "</ul>";
+    //console.log(entity_string);
+    $( "#entities" ).append(entity_string);
   });
 }
 

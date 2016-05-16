@@ -79,7 +79,7 @@ module Intrigue
         {
           :id => @id.to_s,
           :type => @type,
-          :name => @name,
+          :name =>  URI.escape(@name),
           :details => @details
         }
       end

@@ -249,7 +249,7 @@ class BaseTask
     # This is a helper method, use this to create entities from within tasks
     #
     def _create_entity(type, hash)
-      @task_result.logger.log_good "Creating entity: #{type}, #{hash.inspect}".force_encoding('UTF-8')
+      #task_result.logger.log_good "Creating entity: #{type}, #{hash["name"]}".force_encoding('UTF-8')
 
       # Create the entity, validating the attributes
       entity = Intrigue::Model::Entity.create({
@@ -260,7 +260,7 @@ class BaseTask
 
       # If we don't get anything back, safe to assume we can't move on
       unless entity
-        @task_result.logger.log_error "Unable to verify & save entity: #{type} #{hash}"
+        @task_result.logger.log_error "Unable to verify & save entity: #{type} #{hash.inspect}".force_encoding('UTF-8')
         return
       end
 

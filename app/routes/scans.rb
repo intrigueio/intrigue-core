@@ -11,7 +11,7 @@ class IntrigueApp < Sinatra::Base
     post '/interactive/scan' do
 
       # Collect the scan parameters
-      scan_name = @params["scan_name"] || "default"
+      scan_name = "#{@params["scan_type"]} on #{@params["attrib_name"]}"
       scan_type = "#{@params["scan_type"]}"
       scan_depth = @params["scan_depth"].to_i || 3
       scan_filter_strings = @params["scan_filter_strings"]
