@@ -89,7 +89,7 @@ class IntrigueApp < Sinatra::Base
       entity.save
 
       # Start the task _run
-      task_id = start_task_run(project_id, task_name, entity, options, handlers)
+      task_id = start_task_run(project_id, nil, task_name, entity, options, handlers)
       status 200 if task_id
 
     # must be a string otherwise it can be interpreted as a status code

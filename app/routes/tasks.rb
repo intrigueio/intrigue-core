@@ -20,6 +20,8 @@ class IntrigueApp < Sinatra::Base
       @task_names = @tasks.map{|t| t.metadata[:pretty_name]}.sort
 
       # get a list of task_results
+      ### TODO - figure out how to filter this based on a nil association
+      # http://stackoverflow.com/questions/7615752/datamapper-filter-records-by-association-count
       @task_results = Intrigue::Model::TaskResult.current_project.all(:scan_results => nil).page(params[:page])
 
       erb :'tasks/index'
@@ -76,7 +78,7 @@ class IntrigueApp < Sinatra::Base
       end
 
       # Start the task run!
-      task_result_id = start_task_run(current_project.id, task_name, entity, options)
+      task_result_id = start_task_run(current_project.id, nil, task_name, entity, options)
       task_result = Intrigue::Model::TaskResult.find(task_result_id).first
 
       entity.task_results << task_result

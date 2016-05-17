@@ -77,7 +77,7 @@ module Scanner
       unless already_completed
 
         @scan_result.logger.log "No previous results, kicking off a task!"
-        task_id = start_task_run(@scan_result.project.id, task_name, entity, options)
+        task_id = start_task_run(@scan_result.project.id, @scan_result.id, task_name, entity, options)
 
         # Wait for the task to complete
         @scan_result.logger.log "Task started, waiting for results"
