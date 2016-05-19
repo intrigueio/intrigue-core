@@ -72,6 +72,7 @@ setup_datamapper
 
 class IntrigueApp < Sinatra::Base
   register Sinatra::Namespace
+
   set :sessions => true
 
   set :root, "#{$intrigue_basedir}"
@@ -139,7 +140,7 @@ end
 
 # Application libraries
 require_relative "app/all"
+
 # Core libraries
 require_relative "lib/all"
-
 DataMapper.finalize

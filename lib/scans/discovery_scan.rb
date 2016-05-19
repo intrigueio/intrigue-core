@@ -183,7 +183,7 @@ class DiscoveryScan < Intrigue::Scanner::Base
         entity.name =~ /^.*youtubeeducation.com$/          ||
         entity.name =~ /^.*ytimg.com$/                     ||
         entity.name =~ /^.*zepheira.com$/
-        )
+       )
 
         @scan_result.logger.log_error "SKIP Prohibited entity: #{entity.type}##{entity.name}"
         return true
