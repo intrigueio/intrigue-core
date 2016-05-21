@@ -89,10 +89,10 @@ class DiscoveryScan < Intrigue::Scanner::Base
         _start_task_and_recurse "uri_gather_ssl_certificate",entity,depth if entity.name =~ /^https/
 
         # Check for exploitable URIs
-        _start_task_and_recurse "uri_exploitable",entity,depth
+        _start_task_and_recurse "uri_exploitable",entity,depth unless entity.details["task_name"] == "uri_exploitable"
 
         ## Spider, looking for metadata
-        _start_task_and_recurse "uri_spider",entity,depth
+        _start_task_and_recurse "uri_spider",entity,depth unless entity.details["task_name"] == "uri_exploitable"
 
       else
         @scan_result.logger.log "No actions for entity: #{entity.type}##{entity.attributes["name"]}"
