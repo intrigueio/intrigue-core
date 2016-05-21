@@ -10,6 +10,7 @@ module Intrigue
 
       belongs_to :project, :default => lambda { |r, p| Project.first }
 
+      # THESE ARE TO BE USED TO LINK PARENTS OF THIS ENTITY!!
       has n, :task_results, :through => Resource, :constraint => :destroy
       has n, :scan_results, :through => Resource, :constraint => :destroy
 

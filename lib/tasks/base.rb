@@ -256,12 +256,11 @@ class BaseTask
                 :type => eval("Intrigue::Entity::#{type}"),
                 :name => hash["name"][0,200],
                 :details => hash,
-                :project => Intrigue::Model::Project.get(@project_id),
-                :task_name => @task_result.task_name
+                :project => Intrigue::Model::Project.get(@project_id)
               })
 
-              ## TODO... link task and scan here?
-
+              entity.task_results << @task_result
+              entity.save
 
       # If we don't get anything back, safe to assume we can't move on
       unless entity

@@ -39,10 +39,10 @@ module Intrigue
 
       def _log(message)
         encoded_message = message.force_encoding('UTF-8')
-        self.update(:full_log => "#{self.full_log}\n#{message}")
+        attribute_set(:full_log, "#{@full_log}\n#{encoded_message}")
 
         # PRINT TO STANDARD OUT
-        puts "#{message}"
+        puts "#{encoded_message}"
       end
 
     end
