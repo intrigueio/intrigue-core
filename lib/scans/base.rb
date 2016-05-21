@@ -48,8 +48,7 @@ module Scanner
 
     def _start_task_and_recurse(task_name,entity,depth,options=[])
 
-      @scan_result.logger.log "RECURSING (#{depth}) on #{entity}... #{task_name} #{options}"
-      @scan_result.logger.log "Starting #{task_name} with options #{options} " +
+      @scan_result.logger.log_good "Starting #{task_name} with options #{options} " +
         "on #{entity.type_string}##{entity.name} at depth #{depth}"
 
       # Make sure we can check for these later
