@@ -37,16 +37,27 @@ class DiscoveryScan < Intrigue::Scanner::Base
       if entity.type_string == "DnsRecord"
 
         ### DNS Subdomain Bruteforce
-        _start_task_and_recurse "dns_brute_sub",entity,depth,[
-          {"name" => "use_file", "value" => true },
-          {"name" => "brute_alphanumeric_size", "value" => 1},
-          {"name" => "use_permutations", "value" => true }
-        ]
+        # do a big bruteforce if the size is small enough
+        if (entity.name.split(".").length < 3)
+          _start_task_and_recurse "dns_brute_sub",entity,depth,[
+            {"name" => "use_file", "value" => true },
+            {"name" => "brute_alphanumeric_size", "value" => 2},
+            {"name" => "use_permutations", "value" => true }
+          ]
+        else
+          # otherwise do something a little faster
+          _start_task_and_recurse "dns_brute_sub",entity,depth,[
+            {"name" => "use_file", "value" => false },
+            {"name" => "brute_alphanumeric_size", "value" => 1},
+            {"name" => "use_permutations", "value" => true }
+          ]
+        end
 
         ### DNS Forward Lookup
         _start_task_and_recurse "dns_lookup_forward",entity,depth, ["name" => "record_types", "value" => "A,AAAA"]
 
       elsif entity.type_string == "String"
+
         # Search!
         _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 3}]
 
@@ -54,16 +65,22 @@ class DiscoveryScan < Intrigue::Scanner::Base
 
         ### DNS Reverse Lookup
         _start_task_and_recurse "dns_lookup_reverse",entity,depth
-        ### Whois
-        _start_task_and_recurse "whois",entity,depth
+
         ### Scan
         _start_task_and_recurse "nmap_scan",entity,depth
 
-      elsif entity.type_string == "NetBlock"
+        ### Whois
+        _start_task_and_recurse "whois",entity,depth
 
-        ### Masscan
-        if entity.details["whois_full_text"] =~ /#{@scan_result.base_entity.name}/
-          _start_task_and_recurse "masscan_scan",entity,depth, ["port" => 443] if entity
+      elsif entity.type_string == "NetBlock"
+        # Make sure it's small enough not to be disruptive, and if it is, scan it
+
+        cidr = entity.name.split("/").last.to_i
+        if cidr >= 22
+          _start_task_and_recurse "masscan_scan",entity,depth, ["port" => 80]
+          _start_task_and_recurse "masscan_scan",entity,depth, ["port" => 443]
+        else
+          @task_result.logger.log "Not scanning this range, too large: #{entity.name}"
         end
 
       elsif entity.type_string == "Uri"
@@ -71,14 +88,14 @@ class DiscoveryScan < Intrigue::Scanner::Base
         ## Grab the SSL Certificate
         _start_task_and_recurse "uri_gather_ssl_certificate",entity,depth if entity.name =~ /^https/
 
-        ## Spider, looking for metadata
-        #_start_task_and_recurse "uri_spider",entity,depth
-
         # Check for exploitable URIs
-        #_start_task_and_recurse "uri_exploitable",entity,depth
+        _start_task_and_recurse "uri_exploitable",entity,depth
+
+        ## Spider, looking for metadata
+        _start_task_and_recurse "uri_spider",entity,depth
 
       else
-        @scan_result.logger.log "SKIP Unhandled entity type: #{entity.type}##{entity.attributes["name"]}"
+        @scan_result.logger.log "No actions for entity: #{entity.type}##{entity.attributes["name"]}"
         return
       end
     end
