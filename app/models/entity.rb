@@ -13,10 +13,12 @@ module Intrigue
       has n, :task_results, :through => Resource, :constraint => :destroy
       has n, :scan_results, :through => Resource, :constraint => :destroy
 
-      #belongs_to :scan_result, :required => false
-
       #has n, :children, self, :through => :task_results, :via => :base_entity
       #validates_uniqueness_of :name
+
+      def self.current_project
+        all(:project => Intrigue::Model::Project.current_project)
+      end
 
       def children
        children = []
@@ -24,10 +26,10 @@ module Intrigue
       children
       end
 
-      def self.current_project
-        all(:project => Intrigue::Model::Project.current_project)
+      def created_by?(task_name)
+        task_results.each {|x| return true if x.task_name == task_name }
+      false
       end
-
 
       def allowed_tasks
         ### XXX - this needs to be limited to tasks that accept this type
