@@ -18,11 +18,12 @@ class DnsBruteSubTask < BaseTask
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
         {:name => "brute_list", :type => "String", :regex => "alpha_numeric_list", :default =>
-          ["mx", "mx1", "mx2", "www", "ww2", "ns1", "ns2", "ns3", "test", "mail", "owa", "vpn", "admin", "intranet",
-            "gateway", "secure", "admin", "service", "tools", "doc", "docs", "network", "help", "en", "sharepoint", "portal",
-            "public", "private", "pub", "zeus", "mickey", "time", "web", "it", "my", "photos", "safe", "download", "dl",
-            "search", "staging"
-          ]
+          ["mx", "mx1", "mx2", "www", "ww2", "ns1", "ns2", "ns3", "test",
+            "mail", "owa", "vpn", "admin", "intranet", "gateway", "secure",
+            "admin", "service", "tools", "doc", "docs", "network", "help",
+            "en", "sharepoint", "portal", "public", "private", "pub", "zeus",
+            "mickey", "time", "web", "it", "my", "photos", "safe", "download",
+            "dl", "search", "staging"]
         },
         #{:name => "use_mashed_domains", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "use_permutations", :type => "Boolean", :regex => "boolean", :default => true },
@@ -129,8 +130,40 @@ class DnsBruteSubTask < BaseTask
                 # www1 and www2, etc
                 #
                 if opt_use_permutations
+
                   # Create a list of permutations based on this success
-                  permutation_list = ["#{subdomain}1", "#{subdomain}2", "#{subdomain}-staging","#{subdomain}-prod", "#{subdomain}-stage", "#{subdomain}-test", "#{subdomain}-dev"]
+                  permutation_list = [
+                    "#{subdomain}#{subdomain}",
+                    "#{subdomain}-#{subdomain}",
+                    "#{subdomain}001",
+                    "#{subdomain}01",
+                    "#{subdomain}1",
+                    "#{subdomain}-1",
+                    "#{subdomain}2",
+                    "#{subdomain}-3t",
+                    "#{subdomain}-city",
+                    "#{subdomain}-client",
+                    "#{subdomain}-customer",
+                    "#{subdomain}-edge",
+                    "#{subdomain}-guest",
+                    "#{subdomain}-host",
+                    "#{subdomain}-mgmt",
+                    "#{subdomain}-net",
+                    "#{subdomain}-prod",
+                    "#{subdomain}-production",
+                    "#{subdomain}-rtr",
+                    "#{subdomain}-stage",
+                    "#{subdomain}-staging",
+                    "#{subdomain}-static",
+                    "#{subdomain}-tc",
+                    "#{subdomain}-temp",
+                    "#{subdomain}-test",
+                    "#{subdomain}-vpn",
+                    "#{subdomain}-wifi",
+                    "#{subdomain}-wireless",
+                    "#{subdomain}-www"
+                  ]
+
                   @task_result.logger.log "Adding permutations: #{permutation_list.join(", ")}"
                   subdomain_list.concat permutation_list
                 end
