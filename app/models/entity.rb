@@ -3,27 +3,29 @@ module Intrigue
     class Entity
       include DataMapper::Resource
 
-      property :id,       Serial, :key => true
-      property :type,     Discriminator
-      property :name,     String, :length => 500
-      property :details,  Object, :default => {} #Text, :length => 100000
+      validates_uniqueness_of :name, :scope => :project
 
-      belongs_to :project, :default => lambda { |r, p| Project.first }
+      property :type,     Discriminator
+      property :id,       Serial, :key => true
+      property :name,     String, :length => 200, :index => true
+      property :details,  Object, :default => {}
+
+      belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
 
       # THESE ARE TO BE USED TO LINK PARENTS OF THIS ENTITY!!
       has n, :task_results, :through => Resource, :constraint => :destroy
       has n, :scan_results, :through => Resource, :constraint => :destroy
 
+      # TODO: do something about the kids
       #has n, :children, self, :through => :task_results, :via => :base_entity
-      #validates_uniqueness_of :name
 
-      def self.current_project
-        all(:project => Intrigue::Model::Project.current_project)
+      def self.scope_by_project(name)
+        all(:project => Intrigue::Model::Project.first(:name => name))
       end
 
       def children
        children = []
-       Intrigue::Model::TaskResult.current_project.all(:base_entity => self).each { |r| children.concat(r.entities) }
+       Intrigue::Model::TaskResult.scope_by_project(@project_name).all(:base_entity => self).each { |r| children.concat(r.entities) }
       children
       end
 

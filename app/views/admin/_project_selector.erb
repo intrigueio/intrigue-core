@@ -21,7 +21,7 @@ Select a project:
 <form name="project_form" action="/v1/project" method="post">
   <div class="form-group">
   <label for="project_name" class="control-label">New Project</label><br/>
-    <input type="text" class="form-control input-sm" id="project_name" name="project_name" style="width: 150px;" value="<%= h Intrigue::Model::Project.current_project.name %>" />
+    <input type="text" class="form-control input-sm" id="project_name" name="project_name" style="width: 150px;" value="<%= h Intrigue::Model::Project.all(:name => @project_name).first.name %>" />
     <input class="btn btn-primary" type="submit" value="Submit" />
   </div>
 </form>

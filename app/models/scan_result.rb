@@ -5,7 +5,7 @@ module Intrigue
 
       belongs_to :base_entity, 'Intrigue::Model::Entity'
       belongs_to :logger, 'Intrigue::Model::Logger'
-      belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.current_project }
+      belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
 
       has n, :task_results, :through => Resource, :constraint => :destroy
       has n, :entities, :through => Resource, :constraint => :destroy
@@ -24,8 +24,8 @@ module Intrigue
       property :entity_count, Integer, :default => 0
       property :filter_strings, Text, :default => ""
 
-      def self.current_project
-        all(:project => Intrigue::Model::Project.current_project)
+      def self.scope_by_project(name)
+        all(:project => Intrigue::Model::Project.first(:name => name))
       end
 
       def start

@@ -70,6 +70,7 @@ task :migrate => :setup do
     require 'json'
     require 'dm-core'
     require 'dm-migrations'
+    require 'dm-validations'
 
     intrigue_basedir = File.dirname(__FILE__)
     config_file = "#{intrigue_basedir}/config/config.json"

@@ -4,8 +4,7 @@ module Intrigue
       include DataMapper::Resource
 
       belongs_to :logger, 'Intrigue::Model::Logger'
-      belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.current_project }
-
+      belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
       belongs_to :base_entity, 'Intrigue::Model::Entity'
 
       has n, :entities, :through => Resource, :constraint => :destroy
@@ -19,9 +18,10 @@ module Intrigue
       property :options, Object, :default => [] #StringArray
       property :complete, Boolean, :default => false
 
-      def self.current_project
-        all(:project => Intrigue::Model::Project.current_project)
+      def self.scope_by_project(name)
+        all(:project => Intrigue::Model::Project.first(:name => name))
       end
+
 
       def add_entity(entity)
         return false if has_entity? entity

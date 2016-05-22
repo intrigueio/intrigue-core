@@ -23,9 +23,9 @@ class IntrigueApp < Sinatra::Base
         ds.size
         ds.clear
 
-        Intrigue::Model::Entity.current_project.destroy
-        Intrigue::Model::TaskResult.current_project.destroy
-        Intrigue::Model::ScanResult.current_project.destroy
+        Intrigue::Model::Entity.scope_by_project(@project_name).destroy
+        Intrigue::Model::TaskResult.scope_by_project(@project_name).destroy
+        Intrigue::Model::ScanResult.scope_by_project(@project_name).destroy
 
         # Beam me up, scotty!
         redirect '/v1'
@@ -35,7 +35,7 @@ class IntrigueApp < Sinatra::Base
       get '/config/?' do
         erb :"admin/config"
       end
-      
+
     end
   end
 end

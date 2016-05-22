@@ -32,7 +32,7 @@ module Intrigue
         # Associate the scan result so we can query this later
         task_result.scan_results << Intrigue::Model::ScanResult.get(scan_id) if scan_id
         task_result.save
-        
+
         ###
         # Create the task and start it
         ###

@@ -5,10 +5,10 @@ module Intrigue
 
       property :id, Serial, :key => true
       property :full_log, Text, :length => 50000000, :default =>""
-      belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.current_project }
+      belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
 
-      def self.current_project
-        all(:project => Intrigue::Model::Project.current_project)
+      def self.scope_by_project(id)
+        all(:project => Intrigue::Model::Project.first(:name => name))
       end
 
       def log(message)

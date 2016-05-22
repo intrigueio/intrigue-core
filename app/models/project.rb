@@ -6,15 +6,7 @@ module Intrigue
       property :id,       Serial, :key => true
       property :name,     String
 
-      def self.current_project
-        if $project_name == "" # probably a new user, default to first project.
-          current_project = Intrigue::Model::Project.first
-        else # Grab it by name and if it doesn't exist, create it
-          current_project = Intrigue::Model::Project.all(:name => "#{$project_name}").first ||
-            Intrigue::Model::Project.create(:name => "#{$project_name}")
-        end
-      current_project
-      end
+      validates_uniqueness_of :name
 
       def entity_count
         Intrigue::Model::Entity.all(:project_id => @id).count

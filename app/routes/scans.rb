@@ -3,7 +3,7 @@ class IntrigueApp < Sinatra::Base
 
     # Scan Webform
     get '/scan/?' do
-      @scan_results = Intrigue::Model::ScanResult.current_project.page(params[:page])
+      @scan_results = Intrigue::Model::ScanResult.scope_by_project(@project_name).page(params[:page])
       erb :'scans/index'
     end
 
@@ -15,6 +15,13 @@ class IntrigueApp < Sinatra::Base
       scan_type = "#{@params["scan_type"]}"
       scan_depth = @params["scan_depth"].to_i || 3
       scan_filter_strings = @params["scan_filter_strings"]
+
+      entity_type = "#{@params["entity_type"]}"
+      entity_name = "#{@params["attrib_name"]}"
+
+      # @project_name is collected from the session
+      current_project = Intrigue::Model::Project.first(:name => @project_name)
+      current_project_scope = Intrigue::Model::Entity.scope_by_project(@project_name)
 
       # Construct the attributes hash from the parameters. Loop through each of the
       # parameters looking for things that look like attributes, and add them to our
@@ -28,13 +35,16 @@ class IntrigueApp < Sinatra::Base
       end
 
       # Construct an entity from the data we have
-      entity = Intrigue::Model::Entity.create(
-      {
-        :type => "Intrigue::Entity::#{@params["entity_type"]}",
-        :name => "#{@params["attrib_name"]}",
-        :details => entity_details,
-        :project => Intrigue::Model::Project.current_project
-      })
+      klass = eval("Intrigue::Entity::#{entity_type}")
+      entity = current_project_scope.first(:name => entity_name)
+      unless entity
+        entity = Intrigue::Model::Entity.create(
+          { :type => klass,
+            :name => entity_name,
+            :details => entity_details,
+            :project => current_project
+          })
+      end
 
       # Set up the ScanResult object
       scan_result = Intrigue::Model::ScanResult.create({
@@ -43,8 +53,8 @@ class IntrigueApp < Sinatra::Base
         :base_entity => entity,
         :depth => scan_depth,
         :filter_strings => scan_filter_strings,
-        :logger => Intrigue::Model::Logger.create(:project => Intrigue::Model::Project.current_project),
-        :project => Intrigue::Model::Project.current_project
+        :logger => Intrigue::Model::Logger.create(:project => current_project),
+        :project => current_project
       })
 
       scan_result.start
@@ -55,14 +65,14 @@ class IntrigueApp < Sinatra::Base
 
     # Show the results in a human readable format
     get '/scan_results/:id/?' do
-      @result = Intrigue::Model::ScanResult.current_project.all(:id => params[:id]).first
+      @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).get(params[:id])
       return "Unknown Scan Result" unless @result
       erb :'scans/scan_result'
     end
 
     # Show the results in a human readable format
     get '/scan_results/:id/profile/?' do
-      @result = Intrigue::Model::ScanResult.current_project.all(:id => params[:id]).first
+      @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).get(params[:id])
 
       @persons  = []
       @applications = []

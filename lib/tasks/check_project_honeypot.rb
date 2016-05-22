@@ -57,7 +57,7 @@ class CheckProjectHoneypot  < BaseTask
 
         @task_result.logger.log_good "got match: #{match}"
 
-        _create_entity("IpAddress",
+        _create_entity("Info",
           { "name" => "#{target[:entity_name]}",
             "uri" => "#{uri}",
             "content" => "#{target[:entity_content]} on #{uri}" })

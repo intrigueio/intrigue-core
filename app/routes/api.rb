@@ -25,6 +25,11 @@ class IntrigueApp < Sinatra::Base
     post '/project' do
       project_name = "#{params["project_name"]}"
 
+      # create the project unless it exists
+      unless Intrigue::Model::Project.first(:name => project_name)
+        Intrigue::Model::Project.create(:name => project_name)
+      end
+
       # set the current session variable
       session["project_name"] = project_name
       response.set_cookie "project_name", :value => project_name
@@ -43,12 +48,12 @@ class IntrigueApp < Sinatra::Base
     end
 
     get '/entities/:id.csv' do
-      @entity = Intrigue::Model::Entity.current_project.all(:id => params[:id]).first
+      @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
       @entity.export_csv
     end
 
     get '/entities/:id.json' do
-      @entity = Intrigue::Model::Entity.current_project.all(:id => params[:id]).first
+      @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
       @entity.export_json
     end
 
@@ -114,21 +119,21 @@ class IntrigueApp < Sinatra::Base
     # Show the results in a CSV format
     get '/task_results/:id.csv/?' do
       content_type 'text/plain'
-      @task_result = Intrigue::Model::TaskResult.current_project.all(:id => params[:id]).first
+      @task_result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       @task_result.export_csv
     end
 
     # Show the results in a CSV format
     get '/task_results/:id.tsv/?' do
       content_type 'text/plain'
-      @task_result = Intrigue::Model::TaskResult.current_project.all(:id => params[:id]).first
+      @task_result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       @task_result.export_tsv
     end
 
     # Show the results in a JSON format
     get '/task_results/:id.json/?' do
       content_type 'application/json'
-      @result = Intrigue::Model::TaskResult.current_project.all(:id => params[:id]).first
+      @result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       @result.export_json if @result
     end
 
@@ -136,7 +141,7 @@ class IntrigueApp < Sinatra::Base
     # Determine if the task run is complete
     get '/task_results/:id/complete/?' do
       # Get the task result and return unless it's false
-      x = Intrigue::Model::TaskResult.current_project.all(:id => params[:id]).first
+      x = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       return false unless x
 
       # if we got it, and it's complete, return true
@@ -148,7 +153,7 @@ class IntrigueApp < Sinatra::Base
 
     # Get the task log
     get '/task_results/:id/log/?' do
-      @result = Intrigue::Model::TaskResult.current_project.all(:id => params[:id]).first
+      @result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       erb :log
     end
 
@@ -174,28 +179,28 @@ class IntrigueApp < Sinatra::Base
     # Show the results in a JSON
     get '/scan_results/:id.json/?' do
       content_type 'application/json'
-      @result = Intrigue::Model::ScanResult.current_project.all(:id => params[:id]).first
+      @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
       @result.export_json if @result
     end
 
     # Show the results in a CSV
     get '/scan_results/:id.csv/?' do
       content_type 'text/plain'
-      @result = Intrigue::Model::ScanResult.current_project.all(:id => params[:id]).first
+      @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
       @result.export_csv if @result
     end
 
     # Show the results in a graph format
     get '/scan_results/:id/graph.csv/?' do
       content_type 'text/plain'
-      @result = Intrigue::Model::ScanResult.current_project.all(:id => params[:id]).first
+      @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
       @result.export_graph_csv if @result
     end
 
     # Show the results in a graph format
     get '/scan_results/:id/graph.gexf/?' do
       content_type 'text/plain'
-      result = Intrigue::Model::ScanResult.current_project.all(:id => params[:id]).first
+      result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
       return unless result
 
       # Generate a list of entities and task runs to work through
@@ -211,7 +216,7 @@ class IntrigueApp < Sinatra::Base
 
     # Determine if the scan run is complete
     get '/scan_results/:id/complete' do
-      result = Intrigue::Model::ScanResult.current_project.all(:id => params[:id]).first
+      result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
 
       # immediately return false unless we find the scan result
       return false unless result
@@ -239,7 +244,7 @@ class IntrigueApp < Sinatra::Base
         :type => "Intrigue::Entity::#{entity['type']}",
         :name => entity['name'],
         :details => entity['details'],
-        :project => Intrigue::Model::Project.current_project
+        :project => Intrigue::Model::Project.scope_by_project(@project_name)
       })
 
       # Set up the ScanResult object
@@ -250,8 +255,8 @@ class IntrigueApp < Sinatra::Base
         :depth => 4,
         :filter_strings => "",
         :handlers => handlers,
-        :logger => Intrigue::Model::Logger.create(:project => Intrigue::Model::Project.current_project),
-        :project => Intrigue::Model::Project.current_project
+        :logger => Intrigue::Model::Logger.create(:project => Intrigue::Model::Project.scope_by_project(@project_name)),
+        :project => Intrigue::Model::Project.scope_by_project(@project_name)
       })
 
       #puts "CREATING SCAN RESULT: #{scan_result.inspect}"
@@ -261,7 +266,7 @@ class IntrigueApp < Sinatra::Base
 
     # Get the task log
     get '/scan_results/:id/log' do
-      @result = Intrigue::Model::ScanResult.current_project.all(:id => params[:id]).first
+      @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
       erb :log
     end
 

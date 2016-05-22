@@ -3,12 +3,12 @@
     <div class="navbar-header">
       <div style="width: 40px;">
         <a class="navbar-brand" href="/v1/">
-          <img src="/img/logo.png" width="100%" style="line-height: 30px;" alt="Intrigue">
+          <img src="/img/logo.png" width="100%" style="line-height: 30px;" alt="intrigue">
         </a>
       </div>
     </div>
     <ul class="nav navbar-nav">
-      <li><a href="/v1/">[<%=h Intrigue::Model::Project.current_project.name%>]</a></li>
+      <li><a href="/v1/">[<%=h Intrigue::Model::Project.all(:name => @project_name).first.name%>]</a></li>
       <li><a href="/v1/task?page=1">Task</a></li>
       <li><a href="/v1/scan?page=1">Scan</a></li>
       <li><a href="/v1/entities?page=1">Entities</a></li>

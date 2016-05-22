@@ -18,6 +18,7 @@ class BaseTask
 
     @entity = @task_result.base_entity
     @project_id = @task_result.project.id
+    @project_name = @task_result.project.name
     options = @task_result.options
     raise "Unable to find entity. Bailing." unless @entity
 
@@ -27,7 +28,7 @@ class BaseTask
     # and check input along the way.
     broken_input_flag = false
 
-    # Do a little logging. Do it for the kids
+    # Do a little logging. Do it for the kids!
     @task_result.logger.log "Id: #{task_id}"
     @task_result.logger.log "Entity: #{@entity.type_string}##{@entity.name}"
     #@task_result.logger.log "Options: #{options}"
@@ -44,7 +45,7 @@ class BaseTask
     end
 
     ###########################
-    # Setup the task result   #
+    #  Setup the task result  #
     ###########################
     @task_result.task_name = metadata[:name]
     @task_result.timestamp_start = Time.now.getutc
@@ -249,24 +250,30 @@ class BaseTask
     # This is a helper method, use this to create entities from within tasks
     #
     def _create_entity(type, hash)
-      #task_result.logger.log_good "Creating entity: #{type}, #{hash["name"]}".force_encoding('UTF-8')
 
-      # Create the entity, validating the attributes
-      entity = Intrigue::Model::Entity.create({
-                :type => eval("Intrigue::Entity::#{type}"),
-                :name => hash["name"][0,200],
-                :details => hash,
-                :project => Intrigue::Model::Project.get(@project_id)
-              })
+      # First check to see if we have the entity
+      short_name = hash["name"][0,199].force_encoding('UTF-8')
+      entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:name => short_name)
 
-              entity.task_results << @task_result
-              entity.save
-
-      # If we don't get anything back, safe to assume we can't move on
-      unless entity
-        @task_result.logger.log_error "Unable to verify & save entity: #{type} #{hash.inspect}".force_encoding('UTF-8')
-        return
+      unless entity # if not
+        # Create the entity, validating the attributes
+        entity = Intrigue::Model::Entity.create({
+                   :type => eval("Intrigue::Entity::#{type}"),
+                   :name => short_name,
+                   :details => hash,
+                   :project => Intrigue::Model::Project.get(@project_id)
+                 })
       end
+
+      # If we don't have an entity now, fail.
+      unless entity
+        @task_result.logger.log_error "Unable to verify & save entity: #{type} #{hash.inspect}"
+        return false
+      end
+
+      # Make sure we link the parent task & save
+      entity.task_results << @task_result
+      entity.save
 
       # Add to our result set for this task
       @task_result.add_entity entity

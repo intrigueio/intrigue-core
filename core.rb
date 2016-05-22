@@ -10,10 +10,11 @@ require 'sidekiq/web'
 
 # Datamapper
 require 'dm-core'
-require 'dm-serializer'
-require 'dm-pg-types'
 require 'dm-noisy-failures'
 require 'dm-pager'
+require 'dm-pg-types'
+require 'dm-serializer'
+require 'dm-validations'
 
 require 'uri'
 
@@ -108,7 +109,8 @@ class IntrigueApp < Sinatra::Base
 
   before do
     $intrigue_server_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
-    $project_name = session["project_name"] || "Default"
+    @project_name = session["project_name"] || "Default"
+    puts "Project name: #{@project_name}"
   end
 
   not_found do

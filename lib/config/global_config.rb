@@ -36,7 +36,7 @@ module Intrigue
 
       def safe_write(path, content)
         # Create a tempfile and write to it
-        temp_file = Tempfile.new
+        temp_file = Tempfile.new 'config'
         File.open(temp_file, 'w+') do |f|
           f.write(content)
         end
