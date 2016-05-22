@@ -255,7 +255,11 @@ class BaseTask
       short_name = hash["name"][0,199].force_encoding('UTF-8')
       entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:name => short_name)
 
-      unless entity # if not
+      # Merge the details if it exists
+      if entity
+        entity.details = entity.details.merge(hash)
+        entity.save
+      else
         # Create the entity, validating the attributes
         entity = Intrigue::Model::Entity.create({
                    :type => eval("Intrigue::Entity::#{type}"),

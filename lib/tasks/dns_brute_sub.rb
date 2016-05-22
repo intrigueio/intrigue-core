@@ -76,7 +76,7 @@ class DnsBruteSubTask < BaseTask
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)
     begin
-      wildcard = resolver.getaddress("noforkingway#{rand(100000)}.#{suffix}")
+      wildcard = resolver.getaddress("noforkingway#{rand(10000000)}.#{suffix}")
       if wildcard
         _create_entity "IpAddress", "name" => "#{wildcard}"
         wildcard_domain = true
@@ -92,36 +92,46 @@ class DnsBruteSubTask < BaseTask
       subdomain_list.concat(("#{'a' * opt_brute_alphanumeric_size }".."#{'z' * opt_brute_alphanumeric_size}").map {|x| x })
     end
 
-    # See HDM's info on password stealing, try without a dot to see if this
+    # Create a queue to hold our list of domains
+    work_q = Queue.new
+
+    # Handle mashed domains
+    #
+    #  See HDM's info on password stealing, try without a dot to see if this
     #  domain has been hijacked by someone - great for finding phishing attempts
     if opt_mashed_domains
       # TODO - more research needed here, are there other common versions of this?
-      subdomain_list.concat(["www","ww","w"].map {|x| "#{x}#{suffix}" })
+      # Note that this is separate from the other subdomain generation since we
+      # don't want to include a "." before the suffix
+      ["www","ww","w"].each do |d|
+        work_q.push({:subdomain => "#{d}", :fqdn => "#{d}#{suffix}"})
+      end
     end
 
-    @task_result.logger.log_good "Using subdomain list: #{subdomain_list}"
+    # Enqueue our generated subdomains
+    subdomain_list.each do |d|
+      work_q.push({:subdomain => "#{d}", :fqdn => "#{d}.#{suffix}"})
+    end
 
-    work_q = Queue.new
-    subdomain_list.each{|x| work_q.push x }
+    # Create a pool of worker threads to work on the queue
     workers = (0...opt_threads).map do
       Thread.new do
         begin
-          while subdomain = work_q.pop(true).chomp
-            # Do the actual lookup work
+          while work_item = work_q.pop(true)
             begin
-              # Generate the domain
-              brute_domain = "#{subdomain}.#{suffix}"
+              fqdn = "#{work_item[:fqdn].chomp}"
+              subdomain = "#{work_item[:subdomain].chomp}"
 
               # Try to resolve
-              resolved_address = resolver.getaddress(brute_domain)
-              @task_result.logger.log_good "Resolved Address #{resolved_address} for #{brute_domain}" if resolved_address
+              resolved_address = resolver.getaddress(fqdn)
+              @task_result.logger.log_good "Resolved Address #{resolved_address} for #{fqdn}" if resolved_address
 
               # If we resolved, create the right entities
               if (resolved_address && !(wildcard_domain))
 
                 # Create new host and domain entities
-                _create_entity("DnsRecord", {"name" => brute_domain })
-                _create_entity("IpAddress", {"name" => resolved_address})
+                _create_entity("DnsRecord", {"name" => "#{fqdn}", "ip_address" => "#{resolved_address}" })
+                _create_entity("IpAddress", {"name" => "#{resolved_address}", "dns_record" => "#{fqdn}" })
 
                 #
                 # This section will add permutations to our list, if the
@@ -166,15 +176,13 @@ class DnsBruteSubTask < BaseTask
                   ]
 
                   @task_result.logger.log "Adding permutations: #{permutation_list.join(", ")}"
-                  permutation_list.each{|x| work_q.push x }
-
+                  permutation_list.each do |p|
+                    work_q.push({:subdomain => "#{p}", :fqdn => "#{p}.#{suffix}"})
+                  end
                 end
-
               end
             rescue Resolv::ResolvError => e
-              @task_result.logger.log "No resolution for: #{brute_domain}"
-            #rescue Exception => e
-            #  @task_result.logger.log_error "Hit exception: #{e.class}: #{e}"
+              @task_result.logger.log "No resolution for: #{fqdn}"
             end
           end # end while
         rescue ThreadError
