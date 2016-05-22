@@ -25,7 +25,7 @@ class DnsBruteSubTask < BaseTask
             "mickey", "time", "web", "it", "my", "photos", "safe", "download",
             "dl", "search", "staging"]
         },
-        #{:name => "use_mashed_domains", :type => "Boolean", :regex => "boolean", :default => false },
+        {:name => "use_mashed_domains", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "use_permutations", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_sub.list" },
@@ -40,11 +40,11 @@ class DnsBruteSubTask < BaseTask
     super
 
     # get options
-    opt_resolver = _get_option "resolver"
+    opt_resolver = _get_option("resolver")
     opt_threads = _get_option("threads")
     opt_use_file = _get_option("use_file")
     opt_filename = _get_option("brute_file")
-    #opt_mashed_domains = _get_option "use_mashed_domains"
+    opt_mashed_domains = _get_option("use_mashed_domains")
     opt_use_permutations = _get_option("use_permutations")
     opt_brute_list = _get_option("brute_list")
     opt_brute_alphanumeric_size = _get_option("brute_alphanumeric_size")
@@ -73,8 +73,6 @@ class DnsBruteSubTask < BaseTask
       subdomain_list = subdomain_list.split(",") if subdomain_list.kind_of? String
     end
 
-    @task_result.logger.log_good "Using subdomain list: #{subdomain_list}"
-
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)
     begin
@@ -94,11 +92,14 @@ class DnsBruteSubTask < BaseTask
       subdomain_list.concat(("#{'a' * opt_brute_alphanumeric_size }".."#{'z' * opt_brute_alphanumeric_size}").map {|x| x })
     end
 
-    #if opt_mashed_domains
-      # See HDM's info on password stealing, try without a dot to see if this
-      # domain has been hijacked by someone - great for finding phishing attempts
-    #  subdomain_list.concat subdomain_list.map {|x| x.sub(".","")}
-    #end
+    # See HDM's info on password stealing, try without a dot to see if this
+    #  domain has been hijacked by someone - great for finding phishing attempts
+    if opt_mashed_domains
+      # TODO - more research needed here, are there other common versions of this?
+      subdomain_list.concat(["www","ww","w"].map {|x| "#{x}#{suffix}" })
+    end
+
+    @task_result.logger.log_good "Using subdomain list: #{subdomain_list}"
 
     work_q = Queue.new
     subdomain_list.each{|x| work_q.push x }
@@ -181,10 +182,6 @@ class DnsBruteSubTask < BaseTask
       end
     end; "ok"
     workers.map(&:join); "ok"
-
-    # Iterate through the subdomain list
-    #subdomain_list.each do |subdomain|
-    #end
   end
 
 

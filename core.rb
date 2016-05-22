@@ -110,7 +110,7 @@ class IntrigueApp < Sinatra::Base
   before do
     $intrigue_server_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
     @project_name = session["project_name"] || "Default"
-    puts "Project name: #{@project_name}"
+    #puts "Project name: #{@project_name}"
   end
 
   not_found do
