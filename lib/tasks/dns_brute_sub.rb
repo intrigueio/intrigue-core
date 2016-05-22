@@ -165,7 +165,8 @@ class DnsBruteSubTask < BaseTask
                   ]
 
                   @task_result.logger.log "Adding permutations: #{permutation_list.join(", ")}"
-                  subdomain_list.concat permutation_list
+                  permutation_list.each{|x| work_q.push x }
+
                 end
 
               end
