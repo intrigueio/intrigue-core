@@ -80,7 +80,7 @@ class DiscoveryScan < Intrigue::Scanner::Base
           _start_task_and_recurse "masscan_scan",entity,depth, ["port" => 80]
           _start_task_and_recurse "masscan_scan",entity,depth, ["port" => 443]
         else
-          @task_result.logger.log "Not scanning this range, too large: #{entity.name}"
+          @scan_result.logger.log "Not scanning this range, too large: #{entity.name}"
         end
 
       elsif entity.type_string == "Uri"
