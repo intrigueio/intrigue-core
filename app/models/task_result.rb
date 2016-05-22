@@ -22,7 +22,6 @@ module Intrigue
         all(:project => Intrigue::Model::Project.first(:name => name))
       end
 
-
       def add_entity(entity)
         return false if has_entity? entity
 

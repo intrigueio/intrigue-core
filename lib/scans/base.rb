@@ -49,24 +49,38 @@ module Scanner
     def _start_task_and_recurse(task_name,entity,depth,options=[])
 
       # Make sure we can check for these later
-      already_completed = false
+      task_already_completed = false
       task_result = nil
       previous_task_result_id = nil
 
-      # Check existing task results and see if we aleady have this answer
-      @scan_result.task_results.each do |t|
-        if (t.task_name == task_name &&
-            t.base_entity.type_string == entity.type_string &&
-            t.base_entity.name == entity.name)
-          # We have a match
-          @scan_result.logger.log "Already have results from a task with name #{task_name} and entity #{entity.type_string}:#{entity.name}"
-          already_completed = true
+      # We should check outside of the scan results
+      Intrigue::Model::TaskResult.scope_by_project(@scan_result.project.name).each do |t|
+
+        # Verify we have it
+        if ( t.task_name == task_name &&
+             t.base_entity.type_string == entity.type_string &&
+             t.base_entity.name == entity.name )
+
+          # Let the user know
+          @scan_result.logger.log "#{task_name} on #{entity.type_string}:#{entity.name} complete."
+
+          # Wait until it's done
+          print_flag=false
+          until t.complete
+            @scan_result.logger.log "We have a match, but it's not yet complete. Sleeping..." unless print_flag
+            print_flag=true
+            sleep 5
+          end
+
+          # Mark it as complete
+          task_already_completed = true
           previous_task_result_id = t.id
+
         end
       end
 
       # Check to see if we found an already-run task_result. If not, run it.
-      unless already_completed
+      unless task_already_completed
 
         # START A NEW TASK!
         @scan_result.logger.log_good "Starting #{task_name} with options #{options} " +
