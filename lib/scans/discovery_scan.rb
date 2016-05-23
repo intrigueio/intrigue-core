@@ -42,14 +42,16 @@ class DiscoveryScan < Intrigue::Scanner::Base
           _start_task_and_recurse "dns_brute_sub",entity,depth,[
             {"name" => "use_file", "value" => true },
             {"name" => "brute_alphanumeric_size", "value" => 2},
-            {"name" => "use_permutations", "value" => true }
+            {"name" => "use_permutations", "value" => true },
+            {"name" => "use_mashed_domains", "value" => false }
           ]
         else
           # otherwise do something a little faster
           _start_task_and_recurse "dns_brute_sub",entity,depth,[
             {"name" => "use_file", "value" => false },
             {"name" => "brute_alphanumeric_size", "value" => 1},
-            {"name" => "use_permutations", "value" => true }
+            {"name" => "use_permutations", "value" => true },
+            {"name" => "use_mashed_domains", "value" => false }
           ]
         end
 
@@ -89,10 +91,10 @@ class DiscoveryScan < Intrigue::Scanner::Base
         _start_task_and_recurse "uri_gather_ssl_certificate",entity,depth if entity.name =~ /^https/
 
         # Check for exploitable URIs, but don't recurse on things we've already found
-        _start_task_and_recurse "uri_exploitable", entity, depth unless entity.created_by? "uri_exploitable"
+        _start_task_and_recurse "uri_exploitable", entity, depth,[{"name"=> "threads", "value" => 5}] unless entity.created_by? "uri_exploitable"
 
         ## Spider, looking for metadata
-        _start_task_and_recurse "uri_spider",entity,depth unless entity.created_by? "uri_exploitable"
+        _start_task_and_recurse "uri_spider",entity,depth,[{"name"=> "threads", "value" => 5}] unless entity.created_by? "uri_exploitable"
 
       else
         @scan_result.logger.log "No actions for entity: #{entity.type}##{entity.attributes["name"]}"
