@@ -12,27 +12,27 @@ module Intrigue
       end
 
       def log(message)
-        _log "[ ] " << message
+        _log "[#{id}][LOG] " << message
       end
 
       def log_debug(message)
-        _log "[DEBUG] " << message
+        _log "[#{id}][DEBUG] " << message
       end
 
       def log_good(message)
-        _log "[+] " << message
+        _log "[#{id}][+] " << message
       end
 
       def log_error(message)
-        _log "[ERROR] " << message
+        _log "[#{id}][ERROR] " << message
       end
 
       def log_warning(message)
-        _log "[WARN] " << message
+        _log "[#{id}][WARN] " << message
       end
 
       def log_fatal(message)
-        _log "[FATAL] " << message
+        _log "[#{id}][FATAL] " << message
       end
 
     private
