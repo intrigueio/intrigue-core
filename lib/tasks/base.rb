@@ -251,7 +251,7 @@ class BaseTask
     end
 
     def _encode_hash(hash)
-      hash.each {|k,v| hash[k] = _encode_string(v) }
+      hash.each {|k,v| hash[k] = _encode_string(v) if v.kind_of? String }
     hash
     end
 
