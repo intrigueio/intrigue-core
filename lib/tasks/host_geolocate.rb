@@ -41,10 +41,10 @@ class GeolocateHostTask < BaseTask
         @task_result.logger.log "adding location for #{ip_address}"
         _create_entity("PhysicalLocation", {
           "name" => "#{loc.latitude} #{loc.longitude}",
-          "zip" => loc.postal_code.encode('UTF-8', :invalid => :replace),
-          "city" => loc.city_name.encode('UTF-8', :invalid => :replace),
-          "state" => loc.region_name.encode('UTF-8', :invalid => :replace),
-          "country" => loc.country_name.encode('UTF-8', :invalid => :replace),
+          "zip" => loc.postal_code,
+          "city" => loc.city_name,
+          "state" => loc.region_name,
+          "country" => loc.country_name,
           "longitude" => loc.longitude,
           "latitude" => loc.latitude})
         end

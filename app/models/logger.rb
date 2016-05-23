@@ -38,11 +38,15 @@ module Intrigue
     private
 
       def _log(message)
-        encoded_message = message.force_encoding('UTF-8')
+        encoded_message = _encode_string(message)
         attribute_set(:full_log, "#{@full_log}\n#{encoded_message}")
 
         # PRINT TO STANDARD OUT
         puts "#{encoded_message}"
+      end
+
+      def _encode_string(string)
+        string.encode("UTF-8", :undef => :replace, :invalid => :replace, :replace => "?")
       end
 
     end

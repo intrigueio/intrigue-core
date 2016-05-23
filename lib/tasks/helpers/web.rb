@@ -1,7 +1,6 @@
 require 'net/http'
 require 'tempfile'
 require 'uri'
-require 'iconv'
 
 ###
 ### Please note - these methods may be used inside task modules, or inside libraries within
@@ -32,10 +31,6 @@ module Task
           http.read_timeout = 10
           resp = http.get(uri.path)
           response_body = resp.body.encode('UTF-8', {:invalid => :replace, :undef => :replace, :replace => '?'})
-
-          # Convert encoding
-          ic = Iconv.new('UTF-8//IGNORE', 'UTF-8')
-          response_body = ic.iconv(resp.body + ' ')[0..-2]
 
           file.write(response_body)
           file.flush

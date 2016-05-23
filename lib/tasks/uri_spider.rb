@@ -62,10 +62,7 @@ class UriSpider < BaseTask
       @task_result.logger.log "Processing #{response.effective_url}"
 
       # Extract the uri
-      page_uri = "#{response.effective_url}".encode('UTF-8', {
-        :invalid => :replace,
-        :undef => :replace,
-        :replace => '?'})
+      page_uri = "#{response.effective_url}"
 
       # Create an entity for this uri
       _create_entity("Uri", { "name" => page_uri, "uri" => page_uri }) if @opt_extract_uris

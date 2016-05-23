@@ -1,7 +1,6 @@
 require 'whois'
 require 'nokogiri'
 require 'socket'
-require 'iconv'
 
 module Intrigue
 class WhoisTask < BaseTask

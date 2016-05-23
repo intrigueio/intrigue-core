@@ -247,8 +247,7 @@ class BaseTask
     end
 
     def _encode_string(string)
-      ic = Iconv.new('UTF-8//IGNORE', 'UTF-8')
-      ic.iconv(string << " ")[0..-2]
+      string.encode("UTF-8", :undef => :replace, :invalid => :replace, :replace => "?")
     end
 
     def _encode_hash(hash)
