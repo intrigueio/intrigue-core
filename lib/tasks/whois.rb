@@ -216,16 +216,16 @@ class WhoisTask < BaseTask
           # Create the netblock entity
           #
           entity = _create_entity "NetBlock", {
-            "name" => "#{start_address}/#{cidr_length}",
-            "start_address" => "#{start_address}",
-            "end_address" => "#{end_address}",
-            "cidr" => "#{cidr_length}",
-            "description" => "#{description.force_encoding('UTF-8')}",
-            "block_type" => "#{block_type}",
-            "handle" => handle.force_encoding('UTF-8'),
-            "organization_reference" => org_ref.force_encoding('UTF-8'),
-            "parent_reference" => parent_ref.force_encoding('UTF-8'),
-            "whois_full_text" => "#{answer.content.force_encoding('UTF-8')}"
+            "name" => "#{start_address}/#{cidr_length}".force_encoding('UTF-8'),
+            "start_address" => "#{start_address}".force_encoding('UTF-8'),
+            "end_address" => "#{end_address}".force_encoding('UTF-8'),
+            "cidr" => "#{cidr_length}".force_encoding('UTF-8'),
+            "description" => "#{description}".force_encoding('UTF-8'),
+            "block_type" => "#{block_type}".force_encoding('UTF-8'),
+            "handle" => "#{handle}".force_encoding('UTF-8'),
+            "organization_reference" => "#{org_ref}".force_encoding('UTF-8'),
+            "parent_reference" => "#{parent_ref}".force_encoding('UTF-8'),
+            "whois_full_text" => "#{answer.content}".force_encoding('UTF-8')
           }
 
         end # End Netblocks
