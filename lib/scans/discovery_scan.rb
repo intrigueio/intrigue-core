@@ -78,7 +78,7 @@ class DiscoveryScan < Intrigue::Scanner::Base
         # Make sure it's small enough not to be disruptive, and if it is, scan it
 
         cidr = entity.name.split("/").last.to_i
-        if cidr >= 22
+        if cidr >= 20
           _start_task_and_recurse "masscan_scan",entity,depth, ["port" => 80]
           _start_task_and_recurse "masscan_scan",entity,depth, ["port" => 443]
         else
