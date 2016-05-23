@@ -246,13 +246,25 @@ class BaseTask
       `#{command}`
     end
 
+    def _encode_string(string)
+      ic = Iconv.new('UTF-8//IGNORE', 'UTF-8')
+      ic.iconv(string << " ")[0..-2]
+    end
+
+    def _encode_hash(hash)
+      hash.each {|k,v| hash[k] = _encode_string(v) }
+    hash
+    end
+
     #
     # This is a helper method, use this to create entities from within tasks
     #
     def _create_entity(type, hash)
+      # Clean up in case there are encoding issues
+      hash = _encode_hash(hash)
 
       # First check to see if we have the entity
-      short_name = hash["name"][0,199].force_encoding('UTF-8')
+      short_name = hash["name"][0,199]
       entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:name => short_name)
 
       # Merge the details if it exists
