@@ -1,11 +1,11 @@
 module Intrigue
 module Scanner
-class DnsSubdomainScan < Intrigue::Scanner::Base
+class QuickDnsSubdomainScan < Intrigue::Scanner::Base
 
   def metadata
     {
-      :name => "dns_subdomain",
-      :pretty_name => "DNS Subdomain Scan",
+      :name => "quick_dns_subdomain",
+      :pretty_name => "Quick DNS Subdomain Scan",
       :authors => ["jcran"],
       :description => "Recursively scan for hostnames using an extensive wordlist, alphanumeric generation to 3 characters and permutations",
       :references => [],
@@ -31,12 +31,9 @@ class DnsSubdomainScan < Intrigue::Scanner::Base
 
       if entity.type_string == "DnsRecord"
         ### DNS Subdomain Bruteforce
-        _start_task_and_recurse "dns_brute_sub",entity,depth,[
-          {"name" => "use_file", "value" => true },
-          {"name" => "brute_alphanumeric_size", "value" => 3}
-        ]
+        _start_task_and_recurse "dns_brute_sub",entity,depth,[]
       else
-        @scan_result.logger.log "Unhandled entity type: #{entity.type}##{entity.details["name"]}"
+        @scan_result.logger.log "Unhandled entity type: #{entity.type} #{entity.details["name"]}"
         return
       end
     end

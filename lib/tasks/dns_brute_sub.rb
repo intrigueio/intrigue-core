@@ -24,7 +24,7 @@ class DnsBruteSubTask < BaseTask
             "en", "sharepoint", "portal", "public", "private", "pub", "zeus",
             "mickey", "time", "web", "it", "my", "photos", "safe", "download",
             "dl", "search", "staging"] },
-        {:name => "use_mashed_domains", :type => "Boolean", :regex => "boolean", :default => true },
+        {:name => "use_mashed_domains", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "use_permutations", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_sub.list" },

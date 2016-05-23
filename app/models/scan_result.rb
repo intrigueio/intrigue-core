@@ -36,6 +36,8 @@ module Intrigue
           scan = Intrigue::Scanner::DiscoveryScan.new
         elsif @scan_type == "dns_subdomain"
           scan = Intrigue::Scanner::DnsSubdomainScan.new
+        elsif @scan_type == "quick_dns_subdomain"
+          scan = Intrigue::Scanner::QuickDnsSubdomainScan.new
         else
           raise "Unknown scan type: #{@scan_type}"
         end
@@ -45,7 +47,7 @@ module Intrigue
       end
 
       def add_task_result(task_result)
-        @task_results << task_result
+        self.task_results << task_result
         save
       true
       end

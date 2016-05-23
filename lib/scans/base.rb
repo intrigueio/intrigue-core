@@ -47,52 +47,52 @@ module Scanner
     private
 
     def _start_task_and_recurse(task_name,entity,depth,options=[])
+      @scan_result.logger.log "Starting a task #{task_name} on #{entity.name}."
 
       # Make sure we can check for these later
       task_already_completed = false
       task_result = nil
       previous_task_result_id = nil
 
+      @scan_result.logger.log "Checking pre-existing tasks: " +
+      "#{Intrigue::Model::TaskResult.scope_by_project(@scan_result.project.name).all.count}"
+
       # We should check outside of the scan results
-      Intrigue::Model::TaskResult.scope_by_project(@scan_result.project.name).each do |t|
+      Intrigue::Model::TaskResult.scope_by_project(@scan_result.project.name).all(
+        :task_name => task_name).each do |t|
 
         # Verify we have it
-        if ( t.task_name == task_name &&
-             t.base_entity.type_string == entity.type_string &&
-             t.base_entity.name == entity.name )
-
-          # Let the user know
-          @scan_result.logger.log "#{task_name} on #{entity.type_string}:#{entity.name} complete."
-
-          # Wait until it's done
-          print_flag=false
-          until t.complete
-            @scan_result.logger.log "We have a match, but it's not yet complete. Sleeping..." unless print_flag
-            print_flag=true
-            sleep 5
-          end
+        if ( t.base_entity.type_string == entity.type_string &&
+             t.base_entity.name == entity.name &&
+             t.complete )
 
           # Mark it as complete
           task_already_completed = true
           previous_task_result_id = t.id
-
         end
+
       end
 
-      # Check to see if we found an already-run task_result. If not, run it.
-      unless task_already_completed
+      # Check to see if we found an already-run task_result.
+      if task_already_completed
 
-        # START A NEW TASK!
+        @scan_result.logger.log "We already have results. Grabbing existing task results: #{task_name} on #{entity.type_string} #{entity.name}."
+        # task result has already been cloned above, move on
+        task_result = Intrigue::Model::TaskResult.get previous_task_result_id
+
+      else # If not, run it.
+
         @scan_result.logger.log_good "Starting #{task_name} with options #{options} " +
           "on #{entity.type_string}##{entity.name} at depth #{depth}"
-        task_id = start_task_run(@scan_result.project.id, @scan_result.id, task_name, entity, options)
 
-        # Wait for the task to complete
+        # Start a new task
+        task_id = start_task_run(@scan_result.project.id, @scan_result.id, task_name, entity, options)
         task_result = Intrigue::Model::TaskResult.get task_id
 
         # Add the task_result to the scan_result
         @scan_result.add_task_result(task_result)
 
+        # Wait for the task to complete
         until task_result.complete
           # TODO - add explicit timeout here
           sleep 5
@@ -100,11 +100,6 @@ module Scanner
         end
 
         @scan_result.logger.log "Task complete!"
-
-      else
-        @scan_result.logger.log "We already have results. Grabbing existing task results: #{task_name} on #{entity.type_string}##{entity.name}."
-        # task result has already been cloned above, move on
-        task_result = Intrigue::Model::TaskResult.get previous_task_result_id
       end
 
       # Iterate on each discovered entity
