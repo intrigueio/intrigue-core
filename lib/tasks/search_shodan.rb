@@ -26,7 +26,7 @@ class SearchShodanTask < BaseTask
     search_term = _get_entity_attribute "name"
 
     unless api_key
-      @task_result.logger.log_error "No api_key?"
+      _log_error "No api_key?"
       return
     end
 
@@ -39,12 +39,12 @@ class SearchShodanTask < BaseTask
     # Check to make sure we got results
     if response["matches"]
 
-      @task_result.logger.log "Found #{response["matches"].count} matches"
+      _log "Found #{response["matches"].count} matches"
 
       # Go through the results
       response["matches"].each do |r|
 
-        @task_result.logger.log "* SHODAN Record *"
+        _log "* SHODAN Record *"
 
         #updated_at = DateTime.new(r["updated"])
         updated_at = DateTime.now
@@ -56,7 +56,7 @@ class SearchShodanTask < BaseTask
           require 'ipaddr'
           # TODO - assumes ipv4, which isn't always true. Make sure to check for ipv6.
           ip_address = IPAddr.new(r['ip'],Socket::AF_INET)
-          @task_result.logger.log "IP: #{r["ip"]}"
+          _log "IP: #{r["ip"]}"
           host = _create_entity("IpAddress",{
             "name" => "#{ip_address}",
             "age" => "#{updated_at}"
@@ -67,14 +67,14 @@ class SearchShodanTask < BaseTask
         # Create a DNS record for all hostnames
         #
         r["hostnames"].each do |h|
-          @task_result.logger.log "Hostname: #{h}"
+          _log "Hostname: #{h}"
           _create_entity("DnsRecord",{ "name" => "#{h}", "age" => "#{updated_at}" })
         end
 
         #
         # Create a netsvc
         #
-        @task_result.logger.log "Port: #{r["port"]}"
+        _log "Port: #{r["port"]}"
 
         port = _create_entity("NetSvc",{
           "name" => "#{host.attributes[:name]}:#{r["port"]}/tcp",
@@ -87,7 +87,7 @@ class SearchShodanTask < BaseTask
         #
         # Create an organization
         #
-        @task_result.logger.log "Org: #{r["org"]}"
+        _log "Org: #{r["org"]}"
         org = _create_entity("Organization",{
           "name" => "#{r["org"]}",
           "age" => "#{updated_at}"
@@ -96,7 +96,7 @@ class SearchShodanTask < BaseTask
         #
         # Create a PhysicalLocation
         #
-        @task_result.logger.log "Location: #{r["postal_code"]}"
+        _log "Location: #{r["postal_code"]}"
         location = _create_entity("PhysicalLocation",{
           "name" => "#{r["latitude"]} / #{r["longitude"]}",
           "zip" => "#{r["postal_code"]}",
@@ -108,15 +108,15 @@ class SearchShodanTask < BaseTask
         }) if r["country_name"]
 
 
-        @task_result.logger.log "Port: #{r["port"]}"
-        @task_result.logger.log "Port Data: #{r["data"]}"
-        @task_result.logger.log "Country: #{r["country_name"]}"
-        @task_result.logger.log "Country Code: #{r["country_code"]}"
-        @task_result.logger.log "Region Name: #{r["region_name"]}"
-        @task_result.logger.log "Area Code: #{r["area_code"]}"
-        @task_result.logger.log "DMA Code: #{r["dma_code"]}"
-        @task_result.logger.log "Postal Code: #{r["postal_code"]}"
-        @task_result.logger.log "Org: #{r["org"]}"
+        _log "Port: #{r["port"]}"
+        _log "Port Data: #{r["data"]}"
+        _log "Country: #{r["country_name"]}"
+        _log "Country Code: #{r["country_code"]}"
+        _log "Region Name: #{r["region_name"]}"
+        _log "Area Code: #{r["area_code"]}"
+        _log "DMA Code: #{r["dma_code"]}"
+        _log "Postal Code: #{r["postal_code"]}"
+        _log "Org: #{r["org"]}"
 
       end
     end

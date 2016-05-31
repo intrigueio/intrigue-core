@@ -31,7 +31,7 @@ class UriGatherSitemapTask  < BaseTask
       # Concat the uri to create the check unless it already looks like a sitemap
       uri = "#{uri}/#{check[:path]}" unless uri =~ /sitemaps?\.xml/
 
-      @task_result.logger.log "Connecting to #{uri}"
+      _log "Connecting to #{uri}"
 
       # Grab a known-missing page so we can make sure it's not a
       # 404 disguised as a 200
@@ -44,7 +44,7 @@ class UriGatherSitemapTask  < BaseTask
       # Check to make sure this is a legit sitemap
       if content != missing_page_content
         r = REXML::Document.new(content)
-        @task_result.logger.log "Processing #{REXML::XPath.each(r, "//loc").count} entities"
+        _log "Processing #{REXML::XPath.each(r, "//loc").count} entities"
         REXML::XPath.each(r, "//loc") do |x|
           # otherwise create a webpate
           _create_entity "Uri", { "name" => x.text, "uri" => x.text  }

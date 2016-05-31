@@ -31,16 +31,16 @@ class UriCheckSafebrowsingApi  < BaseTask
 
     # XXX - Handle a bug in the Safebrowsinglookup client where "error" can be thrown (fix this!)
     rescue NoMethodError => e
-      @task_result.logger.log_error "Unable to contact api, unknown error: #{e}"
+      _log_error "Unable to contact api, unknown error: #{e}"
       response_hash = {}
     end
 
     response_hash.each do |h,v|
       if v == "ok"
-        @task_result.logger.log "OK! #{h.to_s}"
+        _log "OK! #{h.to_s}"
       else
         _create_entity "Info", "name" => "Potentially Malicious Uri: #{h}", "uri" => "#{h}", "content" => "#{v}"
-        @task_result.logger.log "Info: #{h}: #{v}"
+        _log "Info: #{h}: #{v}"
       end
     end
 

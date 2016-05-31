@@ -30,11 +30,11 @@ class SearchWhoisologyTask < BaseTask
       case _get_entity_type
         when "EmailAddress"
           entity_type = "email"
-          @task_result.logger.log "Got entity type #{entity_type}"
+          _log "Got entity type #{entity_type}"
       end
 
       unless api_key
-        @task_result.logger.log_error "No api_key?"
+        _log_error "No api_key?"
         return
       end
 
@@ -43,8 +43,8 @@ class SearchWhoisologyTask < BaseTask
 
       # Run a PING to see if we have any results
       result = whoisology.ping entity_type, entity_name
-      @task_result.logger.log "Got #{result}"
-      @task_result.logger.log "Got #{result["count"]} results"
+      _log "Got #{result}"
+      _log "Got #{result["count"]} results"
       return if result["count"].to_i == 0
 
       # do the actual search with the FLAT command
@@ -54,7 +54,7 @@ class SearchWhoisologyTask < BaseTask
       result["domains"].each {|d| _create_entity "DnsRecord", {"name" => d["domain_name"]} }
 
     rescue RuntimeError => e
-      @task_result.logger.log_error "Runtime error: #{e}"
+      _log_error "Runtime error: #{e}"
     end
 
   end # end run()

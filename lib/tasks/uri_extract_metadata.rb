@@ -95,13 +95,13 @@ class UriExtractMetadata < BaseTask
       }
 
     rescue SocketError => e
-      @task_result.logger.log_error "Caught an error: #{e}"
+      _log_error "Caught an error: #{e}"
     rescue OpenSSL::SSL::SSLError => e
-      @task_result.logger.log_error "Caught an error: #{e}"
+      _log_error "Caught an error: #{e}"
     rescue Errno::ECONNRESET => e
-      @task_result.logger.log_error "Caught an error: #{e}"
+      _log_error "Caught an error: #{e}"
     rescue Errno::ECONNREFUSED => e
-      @task_result.logger.log_error "Caught an error: #{e}"
+      _log_error "Caught an error: #{e}"
     end
   end
 

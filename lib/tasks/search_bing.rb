@@ -26,7 +26,7 @@ class SearchBingTask < BaseTask
     api_key = _get_global_config "bing_api_key"
 
     unless api_key
-      @task_result.logger.log_error "No api_key?"
+      _log_error "No api_key?"
       return
     end
 
@@ -34,7 +34,7 @@ class SearchBingTask < BaseTask
     opt_max_results = _get_option("max_results").to_i
 
     if opt_max_results > 50
-      @task_result.logger.log "only 50 results allowed"
+      _log "only 50 results allowed"
       opt_max_results = 50
     end
 
@@ -43,7 +43,7 @@ class SearchBingTask < BaseTask
       bing = Client::Search::Bing::SearchService.new(api_key,opt_max_results,'Web',{:Adult => 'Off'})
       results = bing.search(entity_name)
 
-      @task_result.logger.log "Search returned #{results.first[:Web].count} results"
+      _log "Search returned #{results.first[:Web].count} results"
       return unless results.first[:Web].count > 0
 
       main_uri = results.first[:Web].first[:DisplayUrl].split(".").last(2).join(".")
@@ -73,9 +73,9 @@ class SearchBingTask < BaseTask
 
           # Create a domain if it matches our search string or the main URI
           dns_name = result[:Url].split("/")[0..2].join("/").gsub("http://","").gsub("https://","")
-          #@task_result.logger.log "main_uri: #{main_uri}"
-          #@task_result.logger.log "dns_name: #{dns_name}"
-          #@task_result.logger.log "entity_name: #{entity_name}"
+          #_log "main_uri: #{main_uri}"
+          #_log "dns_name: #{dns_name}"
+          #_log "entity_name: #{entity_name}"
           if /#{entity_name}/ =~ dns_name || /#{main_uri}/ =~ dns_name
             _create_entity("DnsRecord", { "name" => dns_name })
           end
@@ -105,9 +105,9 @@ class SearchBingTask < BaseTask
 
       end # end results.each
     rescue SocketError => e
-      @task_result.logger.log_error "Unable to connect: #{e}"
+      _log_error "Unable to connect: #{e}"
     #rescue NoMethodError => e
-    #  @task_result.logger.log_error "Caught error: #{e}"
+    #  _log_error "Caught error: #{e}"
     end
   end # end run()
 

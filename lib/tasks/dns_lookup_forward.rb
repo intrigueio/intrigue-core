@@ -36,10 +36,10 @@ class DnsLookupForwardTask < BaseTask
         :search => [])
 
       result = res.query(name, "ANY")
-      @task_result.logger.log "Processing: #{result}"
+      _log "Processing: #{result}"
 
       # Let us know if we got an empty result
-      @task_result.logger.log_error "Nothing?" if result.answer.empty?
+      _log_error "Nothing?" if result.answer.empty?
 
       # For each of the found addresses
       result.answer.map do |resource|
@@ -103,9 +103,9 @@ class DnsLookupForwardTask < BaseTask
 
     end # end result.answer.map
     rescue Errno::ENETUNREACH => e
-      @task_result.logger.log_error "Hit exception: #{e}. Are you sure you're connected?"
+      _log_error "Hit exception: #{e}. Are you sure you're connected?"
     rescue Exception => e
-      @task_result.logger.log_error "Hit exception: #{e}"
+      _log_error "Hit exception: #{e}"
     end
 
   end

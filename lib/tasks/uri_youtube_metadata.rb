@@ -25,7 +25,7 @@ class UriYoutubeMetadata < BaseTask
     video_uri = _get_entity_attribute "name"
 
     unless video_uri =~ /www\.youtube\.com\/watch/
-      @task_result.logger.log_error "This doesn't appear to be a valid youtube video uri."
+      _log_error "This doesn't appear to be a valid youtube video uri."
       return nil
     end
 
@@ -43,7 +43,7 @@ class UriYoutubeMetadata < BaseTask
       end
 
     rescue JSON::ParserError
-      @task_result.logger.log_error "Unable to retrieve video metadata"
+      _log_error "Unable to retrieve video metadata"
     end
 
   end

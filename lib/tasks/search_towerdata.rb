@@ -24,7 +24,7 @@ class SearchTowerdataTask < BaseTask
     api_key = _get_global_config "towerdata_api_key"
 
     unless api_key
-      @task_result.logger.log_error "No api_key?"
+      _log_error "No api_key?"
       return
     end
 
@@ -35,7 +35,7 @@ class SearchTowerdataTask < BaseTask
         "name" => "Towerdata details for #{entity_name}",
         "details" => hash }
     rescue Exception => e
-      @task_result.logger.log_error e.message
+      _log_error e.message
     end
 
   end # end run()

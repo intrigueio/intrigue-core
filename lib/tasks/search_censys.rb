@@ -29,7 +29,7 @@ class SearchCensysTask < BaseTask
       entity_name = _get_entity_attribute "name"
 
       unless uid && secret
-        @task_result.logger.log_error "No credentials?"
+        _log_error "No credentials?"
         return
       end
 
@@ -40,7 +40,7 @@ class SearchCensysTask < BaseTask
       ["ipv4"].each do |search_type|
         response = censys.search(entity_name,search_type)
         response["results"].each do |r|
-          @task_result.logger.log "Got result: #{r}"
+          _log "Got result: #{r}"
 
           # Go ahead and create the entity
           ip_address = r["ip"]
@@ -82,7 +82,7 @@ class SearchCensysTask < BaseTask
       ["certificates"].each do |search_type|
         response = censys.search(entity_name,search_type)
         response["results"].each do |r|
-          @task_result.logger.log "Got result: #{r}"
+          _log "Got result: #{r}"
           _create_entity "SslCertificate", "name" => r["parsed.subject_dn"], "additional" => r
 
           # Pull out the CN and create a name
@@ -96,7 +96,7 @@ class SearchCensysTask < BaseTask
 
 
     rescue RuntimeError => e
-      @task_result.logger.log_error "Runtime error: #{e}"
+      _log_error "Runtime error: #{e}"
     end
 
   end # end run()

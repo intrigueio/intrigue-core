@@ -22,13 +22,13 @@ class UriGatherTechnologyTask  < BaseTask
 
     uri = _get_entity_attribute "name"
 
-    @task_result.logger.log "Connecting to #{uri} for #{@entity}"
+    _log "Connecting to #{uri} for #{@entity}"
 
     # Gather the page body
     contents = http_get_body(uri)
 
     unless contents
-      @task_result.logger.log "Error! Unable to retrieve task"
+      _log "Error! Unable to retrieve task"
       return
     end
 

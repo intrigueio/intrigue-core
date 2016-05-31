@@ -30,7 +30,7 @@ class EmailBouncebackTask < BaseTask
     password = _get_global_config("gmail_account_credentials").split(":").last
 
     unless username && password
-      @task_result.logger.log_error "Fatal! No username or password specified - check the config"
+      _log_error "Fatal! No username or password specified - check the config"
       return
     end
 
@@ -40,7 +40,7 @@ class EmailBouncebackTask < BaseTask
       email_to_field = rand(100000000)
       email_address = "#{email_to_field}@#{domain}"
 
-      @task_result.logger.log "Sending email to #{email_address}"
+      _log "Sending email to #{email_address}"
       email = gmail.compose do
         to email_address
         subject "Having fun in the sun!"
@@ -50,15 +50,15 @@ class EmailBouncebackTask < BaseTask
       end
       email.deliver!
 
-      @task_result.logger.log "Waiting 30 seconds for the bounceback... "
+      _log "Waiting 30 seconds for the bounceback... "
       @task_result.save
       sleep 30
 
       # Search the inbox for our unique to field
       gmail.inbox.emails(gm: "#{email_to_field}").each do |email|
-        @task_result.logger.log "Processing message from: #{email.message.from}"
-        @task_result.logger.log "Email headers #{email.headers}"
-        @task_result.logger.log "Email body #{email.body}"
+        _log "Processing message from: #{email.message.from}"
+        _log "Email headers #{email.headers}"
+        _log "Email body #{email.body}"
 
         # Parse each email address for servers
         email.message.received.each do |server|
@@ -78,7 +78,7 @@ class EmailBouncebackTask < BaseTask
         email.delete!
       end
     rescue Net::SMTPAuthenticationError => e #Net::SMTPAuthenticationError => e
-      @task_result.logger.log_error "Fatal. Unable to authenticate. Check config! #{e}"
+      _log_error "Fatal. Unable to authenticate. Check config! #{e}"
     end
 
   end

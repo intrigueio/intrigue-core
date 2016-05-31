@@ -23,11 +23,11 @@ class DnsRecurseSpf < BaseTask
 
     opt_resolver = _get_option "resolver"
     dns_name = _get_entity_attribute "name"
-    @task_result.logger.log "Running SPF lookup on #{dns_name}"
+    _log "Running SPF lookup on #{dns_name}"
 
     # Run a lookup on the entity
     lookup_txt_record(opt_resolver, dns_name)
-    @task_result.logger.log "done!"
+    _log "done!"
 
   end
 
@@ -45,8 +45,8 @@ class DnsRecurseSpf < BaseTask
 
       # If we got a success to the query.
       if result
-        @task_result.logger.log_good "TXT lookup succeeded on #{dns_name}:"
-        @task_result.logger.log_good "Result:\n=======\n#{result.to_s}======"
+        _log_good "TXT lookup succeeded on #{dns_name}:"
+        _log_good "Result:\n=======\n#{result.to_s}======"
 
         # Make sure there was actually a record
         unless result.answer.count == 0
@@ -59,7 +59,7 @@ class DnsRecurseSpf < BaseTask
               # We have an SPF record, so let's process it
               answer.rdata.first.split(" ").each do |data|
 
-                @task_result.logger.log "Processing SPF component: #{data}"
+                _log "Processing SPF component: #{data}"
 
                 if data =~ /^v=spf1/
                   next #skip!
@@ -88,29 +88,29 @@ class DnsRecurseSpf < BaseTask
 
           end
 
-          @task_result.logger.log "No more records"
+          _log "No more records"
 
         else
-          @task_result.logger.log "Lookup succeeded, but no records found"
+          _log "Lookup succeeded, but no records found"
         end
       else
-        @task_result.logger.log "Lookup failed, no result"
+        _log "Lookup failed, no result"
       end
 
     rescue Dnsruby::Refused
-      @task_result.logger.log_error "Lookup against #{dns_name} refused"
+      _log_error "Lookup against #{dns_name} refused"
 
     rescue Dnsruby::ResolvError
-      @task_result.logger.log_error "Unable to resolve #{dns_name}"
+      _log_error "Unable to resolve #{dns_name}"
 
     rescue Dnsruby::ResolvTimeout
-      @task_result.logger.log_error "Timed out while querying #{dns_name}."
+      _log_error "Timed out while querying #{dns_name}."
 
     rescue Errno::ENETUNREACH => e
-      @task_result.logger.log_error "Hit exception: #{e}. Are you sure you're connected?"
+      _log_error "Hit exception: #{e}. Are you sure you're connected?"
 
     rescue Exception => e
-      @task_result.logger.log_error "Unknown exception: #{e}"
+      _log_error "Unknown exception: #{e}"
     end
   end
 

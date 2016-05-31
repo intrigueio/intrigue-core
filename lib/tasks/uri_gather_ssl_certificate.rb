@@ -53,12 +53,12 @@ class UriGatherSslCertTask  < BaseTask
           alt_names.each do |alt_name|
 
             if alt_name =~ /cloudflare.com$/
-              @task_result.logger.log "This is a cloudflare certificate, skipping further entity creation"
+              _log "This is a cloudflare certificate, skipping further entity creation"
               return
             end
 
             if alt_name =~ /distilnetworks.com$/
-              @task_result.logger.log "This is a distil networks certificate, skipping further entity creation"
+              _log "This is a distil networks certificate, skipping further entity creation"
               return
             end
 
@@ -83,23 +83,23 @@ class UriGatherSslCertTask  < BaseTask
 
 
     rescue SocketError => e
-      @task_result.logger.log_error "Caught an error: #{e}"
+      _log_error "Caught an error: #{e}"
     rescue Errno::ECONNRESET => e
-      @task_result.logger.log_error "Caught an error: #{e}"
+      _log_error "Caught an error: #{e}"
     rescue Errno::EACCES => e
-      @task_result.logger.log_error "Caught an error: #{e}"
+      _log_error "Caught an error: #{e}"
     rescue Errno::ECONNREFUSED => e
-      @task_result.logger.log_error "Caught an error: #{e}"
+      _log_error "Caught an error: #{e}"
     rescue Errno::ETIMEDOUT => e
-      @task_result.logger.log_error "Caught an error: #{e}"
+      _log_error "Caught an error: #{e}"
     rescue URI::InvalidURIError => e
-      @task_result.logger.log_error "Invalid URI: #{e}"
+      _log_error "Invalid URI: #{e}"
       # TODO this is probably an issue with an IPv6 URL... need to be adjusted:
       # https://www.ietf.org/rfc/rfc2732.txt
     rescue OpenSSL::SSL::SSLError => e
-      @task_result.logger.log_error "Caught an error: #{e}"
+      _log_error "Caught an error: #{e}"
     rescue RuntimeError => e
-      @task_result.logger.log_error "Caught an error: #{e}"
+      _log_error "Caught an error: #{e}"
     end
   end
 

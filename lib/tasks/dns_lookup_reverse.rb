@@ -29,19 +29,19 @@ class DnsLookupReverseTask < BaseTask
       resolved_name = Resolv.new([Resolv::DNS.new(:nameserver => opt_resolver,:search => [])]).getname(address).to_s
 
       if resolved_name
-        @task_result.logger.log_good "Creating domain #{resolved_name}"
+        _log_good "Creating domain #{resolved_name}"
 
         # Create our new dns record entity with the resolved name
         _create_entity("DnsRecord", {"name" => resolved_name})
 
       else
-        @task_result.logger.log "Unable to find a name for #{address}"
+        _log "Unable to find a name for #{address}"
       end
       
     rescue Errno::ENETUNREACH => e
-      @task_result.logger.log_error "Hit exception: #{e}. Are you sure you're connected?"
+      _log_error "Hit exception: #{e}. Are you sure you're connected?"
     rescue Exception => e
-      @task_result.logger.log_error "Hit exception: #{e}"
+      _log_error "Hit exception: #{e}"
     end
   end
 

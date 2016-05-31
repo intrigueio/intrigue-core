@@ -42,21 +42,21 @@ class NmapScanTask < BaseTask
     nmap_options << "-6 " if to_scan =~ /:/
 
     # shell out to nmap and run the scan
-    @task_result.logger.log "Scanning #{to_scan} and storing in #{temp_file}"
-    @task_result.logger.log "NMap options: #{nmap_options}"
+    _log "Scanning #{to_scan} and storing in #{temp_file}"
+    _log "NMap options: #{nmap_options}"
     nmap_string = "nmap #{to_scan} #{nmap_options} -P0 --top-ports 100 --min-parallelism 10 -oX #{temp_file}"
-    @task_result.logger.log "Running... #{nmap_string}"
+    _log "Running... #{nmap_string}"
     _unsafe_system(nmap_string)
 
     # Gather the XML and parse
-    #@task_result.logger.log "Raw Result:\n #{File.open(temp_file).read}"
-    @task_result.logger.log "Parsing #{temp_file}"
+    #_log "Raw Result:\n #{File.open(temp_file).read}"
+    _log "Parsing #{temp_file}"
 
     parser = Nmap::XML.new(temp_file)
 
     # Create entities for each discovered service
     parser.each_host do |host|
-      @task_result.logger.log "Handling nmap data for #{host.ip}"
+      _log "Handling nmap data for #{host.ip}"
 
       # Handle the case of a netblock or domain - where we will need to create host entity(s)
       if @entity.type_string == "NetBlock" or @entity.type_string == "DnsRecord"
@@ -122,7 +122,7 @@ class NmapScanTask < BaseTask
     begin
       File.delete(temp_file)
     rescue Errno::EPERM
-      @task_result.logger.log_error "Unable to delete file"
+      _log_error "Unable to delete file"
     end
   end
 

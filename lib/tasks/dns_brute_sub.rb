@@ -64,10 +64,10 @@ class DnsBruteSubTask < BaseTask
 
     # Create the brute list (from a file, or a provided list)
     if opt_use_file
-      @task_result.logger.log "Using file #{opt_filename}"
+      _log "Using file #{opt_filename}"
       subdomain_list = File.open("#{$intrigue_basedir}/data/#{opt_filename}","r").read.split("\n")
     else
-      @task_result.logger.log "Using provided brute list"
+      _log "Using provided brute list"
       subdomain_list = opt_brute_list
       subdomain_list = subdomain_list.split(",") if subdomain_list.kind_of? String
     end
@@ -79,17 +79,17 @@ class DnsBruteSubTask < BaseTask
       if wildcard
         _create_entity "IpAddress", "name" => "#{wildcard}"
         wildcard_domain = true
-        @task_result.logger.log_warning "Wildcard domain detected, only saving validated domains/hosts."
+        _log_warning "Wildcard domain detected, only saving validated domains/hosts."
       end
     rescue Errno::ENETUNREACH => e
-      @task_result.logger.log_error "Hit exception: #{e}. Are you sure you're connected?"
+      _log_error "Hit exception: #{e}. Are you sure you're connected?"
     rescue Resolv::ResolvError
-      @task_result.logger.log_good "Looks like no wildcard dns. Moving on."
+      _log_good "Looks like no wildcard dns. Moving on."
     end
 
     # Generate alphanumeric list of hostnames and add them to the end of the list
     if opt_brute_alphanumeric_size
-      @task_result.logger.log_warning "Alphanumeric list generation is pretty huge - this will take a long time" if opt_brute_alphanumeric_size > 3
+      _log_warning "Alphanumeric list generation is pretty huge - this will take a long time" if opt_brute_alphanumeric_size > 3
       subdomain_list.concat(("#{'a' * opt_brute_alphanumeric_size }".."#{'z' * opt_brute_alphanumeric_size}").map {|x| x })
     end
 
@@ -125,7 +125,7 @@ class DnsBruteSubTask < BaseTask
 
               # Try to resolve
               resolved_address = resolver.getaddress(fqdn)
-              @task_result.logger.log_good "Resolved Address #{resolved_address} for #{fqdn}" if resolved_address
+              _log_good "Resolved Address #{resolved_address} for #{fqdn}" if resolved_address
 
               # If we resolved, create the right entities
               if (resolved_address && !(wildcard_domain))
@@ -176,16 +176,16 @@ class DnsBruteSubTask < BaseTask
                     "#{subdomain}-www"
                   ]
 
-                  @task_result.logger.log "Adding permutations: #{permutation_list.join(", ")}"
+                  _log "Adding permutations: #{permutation_list.join(", ")}"
                   permutation_list.each do |p|
                     work_q.push({:subdomain => "#{p}", :fqdn => "#{p}.#{suffix}"})
                   end
                 end
               end
             rescue Errno::ENETUNREACH => e
-              @task_result.logger.log_error "Hit exception: #{e}. Are you sure you're connected?"
+              _log_error "Hit exception: #{e}. Are you sure you're connected?"
             rescue Resolv::ResolvError => e
-              @task_result.logger.log "No resolution for: #{fqdn}"
+              _log "No resolution for: #{fqdn}"
             end
           end # end while
         rescue ThreadError

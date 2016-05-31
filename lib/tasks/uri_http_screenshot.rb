@@ -40,7 +40,7 @@ class UriHttpScreenshot < BaseTask
 
   def screencap(target_uri)
     begin
-      @task_result.logger.log "Screencapping #{target_uri}"
+      _log "Screencapping #{target_uri}"
       filename = "screenshot_#{target_uri}_#{DateTime.now}".gsub(/[:|\/|\.|+]/, '_') + ".png"
       full_path = "#{Dir.pwd}/public/screenshots/#{filename}"
 
@@ -49,16 +49,16 @@ class UriHttpScreenshot < BaseTask
         :output => full_path, # don't forget the extension!
       )
 
-      @task_result.logger.log_good "Saved to #{full_path}"
+      _log_good "Saved to #{full_path}"
       _create_entity "Screenshot", {
         "name" => "#{target_uri}_screenshot",
         "uri" => "#{$intrigue_server_uri}/screenshots/#{filename}"
       }
 
-      @task_result.logger.log "Saved to... #{full_path}"
+      _log "Saved to... #{full_path}"
 
     rescue Screencap::Error => e
-      @task_result.logger.log_error "Unable to capture screenshot: #{e}"
+      _log_error "Unable to capture screenshot: #{e}"
     end
   end
 
@@ -80,10 +80,10 @@ class UriHttpScreenshot < BaseTask
     nmap_options << "-6 " if to_scan =~ /:/
 
     # shell out to nmap and run the scan
-    @task_result.logger.log "Scanning #{to_scan} and storing in #{temp_file}"
-    @task_result.logger.log "NMap options: #{nmap_options}"
+    _log "Scanning #{to_scan} and storing in #{temp_file}"
+    _log "NMap options: #{nmap_options}"
     nmap_string = "nmap #{to_scan} #{nmap_options} -P0 -p #{ports.join(",")} --min-parallelism 10 -oX #{temp_file}"
-    @task_result.logger.log "Running... #{nmap_string}"
+    _log "Running... #{nmap_string}"
     _unsafe_system(nmap_string)
 
     uris = []
@@ -98,7 +98,7 @@ class UriHttpScreenshot < BaseTask
           uri = "#{protocol}#{host.ip}:#{port.number}"
 
           if port.state == :open
-            @task_result.logger.log "Adding #{uri} to list"
+            _log "Adding #{uri} to list"
             uris << uri
           end
 
@@ -106,7 +106,7 @@ class UriHttpScreenshot < BaseTask
       end
     end
 
-    @task_result.logger.log "Returning #{uris} to scan"
+    _log "Returning #{uris} to scan"
 
   return uris
   end

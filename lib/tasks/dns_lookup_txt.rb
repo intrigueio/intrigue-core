@@ -26,7 +26,7 @@ class DnsLookupTxtTask < BaseTask
     domain_name = _get_entity_attribute "name"
     opt_resolver = _get_option "resolver"
 
-    @task_result.logger.log "Running TXT lookup on #{domain_name}"
+    _log "Running TXT lookup on #{domain_name}"
 
     begin
       res = Dnsruby::Resolver.new(
@@ -39,8 +39,8 @@ class DnsLookupTxtTask < BaseTask
 
       # If we got a success to the query.
       if res_answer
-        @task_result.logger.log_good "TXT lookup succeeded on #{domain_name}:"
-        @task_result.logger.log_good "Answer:\n=======\n#{res_answer.to_s}======"
+        _log_good "TXT lookup succeeded on #{domain_name}:"
+        _log_good "Answer:\n=======\n#{res_answer.to_s}======"
 
 
         # TODO - Parse for netbocks and hostnames
@@ -78,22 +78,22 @@ class DnsLookupTxtTask < BaseTask
       end
 
     rescue Dnsruby::Refused
-      @task_result.logger.log "Lookup against #{domain_name} refused."
+      _log "Lookup against #{domain_name} refused."
 
     rescue Dnsruby::ResolvError
-      @task_result.logger.log "Unable to resolve #{domain_name}"
+      _log "Unable to resolve #{domain_name}"
 
     rescue Dnsruby::ResolvTimeout
-      @task_result.logger.log "Timed out while querying #{domain_name}."
+      _log "Timed out while querying #{domain_name}."
 
     rescue Errno::ENETUNREACH => e
-      @task_result.logger.log_error "Hit exception: #{e}. Are you sure you're connected?"
+      _log_error "Hit exception: #{e}. Are you sure you're connected?"
       
     rescue Exception => e
-      @task_result.logger.log "Unknown exception: #{e}"
+      _log "Unknown exception: #{e}"
     end
 
-    @task_result.logger.log "done"
+    _log "done"
   end
 
 

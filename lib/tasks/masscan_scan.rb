@@ -35,9 +35,9 @@ class MasscanTask < BaseTask
     temp_file = "#{Dir::tmpdir}/masscan_output_#{rand(100000000)}.tmp"
 
     # shell out to masscan and run the scan
-    @task_result.logger.log "Scanning #{to_scan} and storing in #{temp_file}"
+    _log "Scanning #{to_scan} and storing in #{temp_file}"
     masscan_string = "sudo masscan -p #{opt_port} -oL #{temp_file} #{to_scan}"
-    @task_result.logger.log "Running... #{masscan_string}"
+    _log "Running... #{masscan_string}"
     _unsafe_system(masscan_string)
 
     f = File.open(temp_file).each_line do |line|
@@ -69,12 +69,12 @@ class MasscanTask < BaseTask
       end
 
       if resolved_name
-        @task_result.logger.log_good "Creating domain #{resolved_name}"
+        _log_good "Creating domain #{resolved_name}"
         # Create our new dns record entity with the resolved name
         _create_entity("DnsRecord", {"name" => resolved_name})
         _create_entity("Uri", {"name" => "http://#{resolved_name}", "uri" => "http://#{resolved_name}" })
       else
-        @task_result.logger.log "Unable to find a name for #{host}"
+        _log "Unable to find a name for #{host}"
       end
       ### End Resolution
 
@@ -84,7 +84,7 @@ class MasscanTask < BaseTask
     begin
       File.delete(temp_file)
     rescue Errno::EPERM
-      @task_result.logger.log_error "Unable to delete file"
+      _log_error "Unable to delete file"
     end
   end
 

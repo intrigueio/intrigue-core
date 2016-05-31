@@ -2,6 +2,7 @@ require 'timeout'
 
 module Intrigue
 class BaseTask
+  include Intrigue::Task::Generic
   include Sidekiq::Worker
   sidekiq_options :queue => "#{$intrigue_config.config["intrigue_queues"]["task_queue"]}", :backtrace => true
 
@@ -29,9 +30,9 @@ class BaseTask
     broken_input_flag = false
 
     # Do a little logging. Do it for the kids!
-    @task_result.logger.log "Id: #{task_id}"
-    @task_result.logger.log "Entity: #{@entity.type_string}##{@entity.name}"
-    #@task_result.logger.log "Options: #{options}"
+    _log "Id: #{task_id}"
+    _log "Entity: #{@entity.type_string}##{@entity.name}"
+    #_log "Options: #{options}"
 
     ###################
     # Sanity Checking #
@@ -40,7 +41,7 @@ class BaseTask
 
     # Check to make sure this task can receive an entity of this type
     unless allowed_types.include?(@entity.type_string) || allowed_types.include?("*")
-      @task_result.logger.log_error "Unable to call #{self.metadata[:name]} on entity: #{@entity}"
+      _log_error "Unable to call #{self.metadata[:name]} on entity: #{@entity}"
       broken_input_flag = true
     end
 
@@ -58,22 +59,22 @@ class BaseTask
       # Setup creates the following objects:
       # @user_options - a hash of task options
       # @task_result - the final result to be passed back to the caller
-      @task_result.logger.log "Calling setup()"
+      _log "Calling setup()"
       if setup(task_id, @entity, options)
         #begin
           #Timeout.timeout($intrigue_global_timeout) do # 15 minutes should be enough time to hit a class b for a single port w/ masscan
-            @task_result.logger.log "Calling run()"
+            _log "Calling run()"
             # Save the task locally
             @task_result.save
             # Run the task, which will update @task_result and @task_result
             run()
-            @task_result.logger.log_good "Run complete. Ship it!"
+            _log_good "Run complete. Ship it!"
           #end
         #rescue Timeout::Error
-        #  @task_result.logger.log_error "Timed out"
+        #  _log_error "Timed out"
         #end
       else
-        @task_result.logger.log_error "Setup failed, bailing out!"
+        _log_error "Setup failed, bailing out!"
       end
     end
 
@@ -83,7 +84,7 @@ class BaseTask
     # http://stackoverflow.com/questions/178704/are-unix-timestamps-the-best-way-to-store-timestamps
     @task_result.timestamp_end = Time.now.getutc
     @task_result.complete = true
-    @task_result.logger.log "Calling cleanup!"
+    _log "Calling cleanup!"
 
     #
     # Handlers!
@@ -91,13 +92,13 @@ class BaseTask
     # (see lib/report/handlers)
     @task
     handlers.each do |handler_type|
-      @task_result.logger.log "Processing #{handler_type} handler."
+      _log "Processing #{handler_type} handler."
       begin
         handler = HandlerFactory.create_by_type(handler_type)
         response = handler.process(@task_result)
       rescue Exception => e
-        @task_result.logger.log_error "Unable to process handler #{handler_type}: #{e}"
-        @task_result.logger.log_error "Got response: #{response}"
+        _log_error "Unable to process handler #{handler_type}: #{e}"
+        _log_error "Got response: #{response}"
       end
     end
 
@@ -125,7 +126,7 @@ class BaseTask
     allowed_options = self.metadata[:allowed_options]
     @user_options = []
     if user_options
-      #@task_result.logger.log "Got user options list: #{user_options}"
+      #_log "Got user options list: #{user_options}"
       # for each of the user-supplied options
       user_options.each do |user_option| # should be an array of hashes
         # go through the allowed options
@@ -135,34 +136,34 @@ class BaseTask
 
             ### Match the user option against its specified regex
             if allowed_option[:regex] == "integer"
-              #@task_result.logger.log "Regex should match an integer"
+              #_log "Regex should match an integer"
               regex = /^-?\d+$/
             elsif allowed_option[:regex] == "boolean"
-              #@task_result.logger.log "Regex should match a boolean"
+              #_log "Regex should match a boolean"
               regex = /(true|false)/
             elsif allowed_option[:regex] == "alpha_numeric"
-              #@task_result.logger.log "Regex should match an alpha-numeric string"
+              #_log "Regex should match an alpha-numeric string"
               regex = /^[a-zA-Z0-9\_\;\(\)\,\?\.\-\_\/\~\=\ \,\?\*]*$/
             elsif allowed_option[:regex] == "alpha_numeric_list"
-              #@task_result.logger.log "Regex should match an alpha-numeric list"
+              #_log "Regex should match an alpha-numeric list"
               regex = /^[a-zA-Z0-9\_\;\(\)\,\?\.\-\_\/\~\=\ \,\?\*]*$/
             elsif allowed_option[:regex] == "filename"
-              #@task_result.logger.log "Regex should match a filename"
+              #_log "Regex should match a filename"
               regex = /(?:\..*(?!\/))+/
             elsif allowed_option[:regex] == "ip_address"
-              #@task_result.logger.log "Regex should match an IP Address"
+              #_log "Regex should match an IP Address"
               regex = /^(\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*)|((\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3}))$/
             else
-              @task_result.logger.log_error "Unspecified regex for this option #{allowed_option[:name]}"
-              @task_result.logger.log_error "Unable to continue, failing!"
+              _log_error "Unspecified regex for this option #{allowed_option[:name]}"
+              _log_error "Unable to continue, failing!"
               return nil
             end
 
             # Run the regex
             unless regex.match "#{user_option["value"]}"
-              @task_result.logger.log_error "Regex didn't match"
-              @task_result.logger.log_error "Option #{user_option["name"]} does not match regex: #{regex.to_s} (#{user_option["value"]})!"
-              @task_result.logger.log_error "Regex didn't match, failing!"
+              _log_error "Regex didn't match"
+              _log_error "Option #{user_option["name"]} does not match regex: #{regex.to_s} (#{user_option["value"]})!"
+              _log_error "Regex didn't match, failing!"
               return nil
             end
 
@@ -182,19 +183,19 @@ class BaseTask
 
             if allowed_option[:type] == "Integer"
               # convert to integer
-              #@task_result.logger.log "Converting #{user_option["name"]} to an integer"
+              #_log "Converting #{user_option["name"]} to an integer"
               user_option["value"] = user_option["value"].to_i
             elsif allowed_option[:type] == "String"
               # do nothing, we can just pass strings through
-              #@task_result.logger.log "No need to convert #{user_option["name"]} to a string"
+              #_log "No need to convert #{user_option["name"]} to a string"
               user_option["value"] = user_option["value"]
             elsif allowed_option[:type] == "Boolean"
               # use our monkeypatched .to_bool method (see initializers)
-              #@task_result.logger.log "Converting #{user_option["name"]} to a bool"
+              #_log "Converting #{user_option["name"]} to a bool"
               user_option["value"] = user_option["value"].to_bool if user_option["value"].kind_of? String
             else
               # throw an error, we likely have a string we don't know how to cast
-              @task_result.logger.log_error "Don't know how to handle this option when it's given to us as a string, failing!"
+              _log_error "Don't know how to handle this option when it's given to us as a string, failing!"
               return nil
             end
 
@@ -204,9 +205,9 @@ class BaseTask
         end
 
       end
-      @task_result.logger.log "Options: #{@user_options}"
+      _log "Options: #{@user_options}"
     else
-      @task_result.logger.log "No User options"
+      _log "No User options"
     end
 
   true
@@ -226,118 +227,6 @@ class BaseTask
   def check_external_dependencies
     true
   end
-
-  private
-
-    # Convenience Method to execute a system command semi-safely
-    #  !!!! Don't send anything to this without first whitelisting user input!!!
-    def _unsafe_system(command)
-
-      ###                  ###
-      ###  XXX - SECURITY  ###
-      ###                  ###
-
-      if command =~ /(\||\;|\`)/
-        #raise "Illegal character"
-        @task_result.logger.log_error "FATAL Illegal character in #{command}"
-        return
-      end
-
-      `#{command}`
-    end
-
-    def _encode_string(string)
-      string.encode("UTF-8", :undef => :replace, :invalid => :replace, :replace => "?")
-    end
-
-    def _encode_hash(hash)
-      hash.each {|k,v| hash[k] = _encode_string(v) if v.kind_of? String }
-    hash
-    end
-
-    #
-    # This is a helper method, use this to create entities from within tasks
-    #
-    def _create_entity(type, hash)
-      # Clean up in case there are encoding issues
-      hash = _encode_hash(hash)
-
-      # First check to see if we have the entity
-      short_name = hash["name"][0,199]
-      entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:name => short_name)
-
-      # Merge the details if it exists
-      if entity
-        entity.details = entity.details.merge(hash)
-        entity.save
-      else
-        # Create the entity, validating the attributes
-        entity = Intrigue::Model::Entity.create({
-                   :type => eval("Intrigue::Entity::#{type}"),
-                   :name => short_name,
-                   :details => hash,
-                   :project => Intrigue::Model::Project.get(@project_id)
-                 })
-      end
-
-      # If we don't have an entity now, fail.
-      unless entity
-        @task_result.logger.log_error "Unable to verify & save entity: #{type} #{hash.inspect}"
-        return false
-      end
-
-      # Make sure we link the parent task & save
-      entity.task_results << @task_result
-      entity.save
-
-      # Add to our result set for this task
-      @task_result.add_entity entity
-
-    # return the entity
-    entity
-    end
-
-    def _canonical_name
-      "#{self.metadata[:name]}: #{self.metadata[:version]}"
-    end
-
-    # helper method, gets an attribute on the base entity
-    def _get_entity_attribute(attrib_name)
-      "#{@task_result.base_entity.details[attrib_name]}"
-    end
-
-    def _get_entity_type
-      "#{@task_result.base_entity.type}".split(":").last
-    end
-
-    def _get_global_config(key)
-      begin
-        $intrigue_config.config["intrigue_global_module_config"][key]["value"]
-      rescue NoMethodError => e
-        puts "Error, invalid config key requested (#{key}) #{e}"
-      end
-    end
-
-    ###
-    ### XXX TODO - move this up into the setup method and make it happen automatically
-    ###
-    def _get_option(name)
-
-      # Start with nothing
-      value = nil
-
-      # First, get the default value by cycling through the allowed options
-      method = metadata[:allowed_options].each do |allowed_option|
-        value = allowed_option[:default] if allowed_option[:name] == name
-      end
-
-      # Then, cycle through the user-provided options
-      @user_options.each do |user_option|
-        value = user_option[name] if user_option[name]
-      end
-
-    value
-    end
 
 end
 end

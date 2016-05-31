@@ -23,7 +23,7 @@ class CheckProjectHoneypot  < BaseTask
     ip_address = _get_entity_attribute "name"
     uri = "http://www.projecthoneypot.org/ip_#{ip_address}"
 
-    @task_result.logger.log "Connecting to #{uri} for #{@entity}"
+    _log "Connecting to #{uri} for #{@entity}"
 
     # Get contents
     contents = http_get_body(uri)
@@ -31,11 +31,11 @@ class CheckProjectHoneypot  < BaseTask
     # If it doesn't exist, we'll get a default page, which
     # should never happen, but worth checking.
     unless contents
-      @task_result.logger.log_error "Error getting site."
+      _log_error "Error getting site."
       return nil
     end
 
-    #@task_result.logger.log "Got contents: #{contents}"
+    #_log "Got contents: #{contents}"
 
     target_strings = [
       {
@@ -50,12 +50,12 @@ class CheckProjectHoneypot  < BaseTask
     target_strings.each do |target|
       matches = contents.scan(target[:regex])
 
-      @task_result.logger.log "matches: #{matches.inspect}"
+      _log "matches: #{matches.inspect}"
 
       # Iterate through all matches
       matches.each do |match|
 
-        @task_result.logger.log_good "got match: #{match}"
+        _log_good "got match: #{match}"
 
         _create_entity("Info",
           { "name" => "#{target[:entity_name]}",

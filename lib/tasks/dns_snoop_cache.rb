@@ -50,14 +50,14 @@ class DnsSnoopCacheTask < BaseTask
     snooper = DNSSnooper.new(dns_server,method)
     #snoopresults[] = {}
 
-    @task_result.logger.log "Recollecting response times from #{dns_server}"
+    _log "Recollecting response times from #{dns_server}"
     cachedth,noncachedth = snooper.obtainDNSThresholds
-    @task_result.logger.log "Obtained cached thresholds for server #{dns_server}"
-    @task_result.logger.log "- Max. response time for cached entries: #{cachedth.round(2)}ms"
-    @task_result.logger.log "- Min. response time for non cached entries: #{noncachedth.round(2)}ms"
+    _log "Obtained cached thresholds for server #{dns_server}"
+    _log "- Max. response time for cached entries: #{cachedth.round(2)}ms"
+    _log "- Min. response time for non cached entries: #{noncachedth.round(2)}ms"
 
     if (cachedth >= noncachedth and method == "RT")
-      @task_result.logger.log_error "WARNING: These values are strange. They are inversed. Maybe the following results are not very reliable...".red
+      _log_error "WARNING: These values are strange. They are inversed. Maybe the following results are not very reliable...".red
     end
 
     domains.each do |domain|
@@ -65,16 +65,16 @@ class DnsSnoopCacheTask < BaseTask
       isCached,timeToExpire,whenWasCached = snooper.isCached?(domain)
 
       if isCached.nil?
-        @task_result.logger.log_error "[UNKNOWN] #{domain} (on #{dns_server})"
+        _log_error "[UNKNOWN] #{domain} (on #{dns_server})"
       else
         if isCached
           # this is for saving the results - create an entity here
           #snoopresults[dns][domain] = true
-          @task_result.logger.log_good "[VISITED] #{domain}  (Cached on #{dns_server} #{toHumanTime(whenWasCached)} ago, Time To Expire #{toHumanTime(timeToExpire)})"
+          _log_good "[VISITED] #{domain}  (Cached on #{dns_server} #{toHumanTime(whenWasCached)} ago, Time To Expire #{toHumanTime(timeToExpire)})"
         else
           # this is for saving the results - create an entity here
           #snoopresults[dns][domain] = false
-          @task_result.logger.log_good "[NOT VISITED] #{domain} (Not cached on #{dns_server} in the last #{toHumanTime(timeToExpire)})"
+          _log_good "[NOT VISITED] #{domain} (Not cached on #{dns_server} in the last #{toHumanTime(timeToExpire)})"
         end
       end
     end
@@ -122,7 +122,7 @@ class DNSSnooper
       begin
         answer = @dnsserver.query(domain)
       rescue Errno::ENETUNREACH => e
-        @task_result.logger.log_error "Hit exception: #{e}. Are you sure you're connected?"
+        _log_error "Hit exception: #{e}. Are you sure you're connected?"
       rescue Exception => re
         puts "Error: #{re.message}"
       end
@@ -140,7 +140,7 @@ class DNSSnooper
       begin
         @dnsserver.query(domain)
       rescue Errno::ENETUNREACH => e
-        @task_result.logger.log_error "Hit exception: #{e}. Are you sure you're connected?"
+        _log_error "Hit exception: #{e}. Are you sure you're connected?"
       rescue Exception => re
         puts "Error: #{re.message}"
       end
@@ -233,7 +233,7 @@ class DNSSnooper
       puts "Error: #{terror.message}"
       return nil
     rescue Errno::ENETUNREACH => e
-      @task_result.logger.log_error "Hit exception: #{e}. Are you sure you're connected?"
+      _log_error "Hit exception: #{e}. Are you sure you're connected?"
     end
 
     return nil
@@ -320,7 +320,7 @@ class DNSSnooper
         begin
           dnsr = @dnsserver.query(domain)
         rescue Errno::ENETUNREACH => e
-          @task_result.logger.log_error "Hit exception: #{e}. Are you sure you're connected?"
+          _log_error "Hit exception: #{e}. Are you sure you're connected?"
         rescue Exception => e
           $stderr.puts "Error: #{e.message}"
         end

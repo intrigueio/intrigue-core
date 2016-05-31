@@ -38,9 +38,9 @@ class NetsvcFuzzRandom < BaseTask
     protocol = _get_entity_attribute "proto"
     ip_address = _get_entity_attribute "ip_address"
 
-    @task_result.logger.log "Port: #{port}"
-    @task_result.logger.log "Protocol: #{protocol}"
-    @task_result.logger.log "IP Address: #{ip_address}"
+    _log "Port: #{port}"
+    _log "Protocol: #{protocol}"
+    _log "IP Address: #{ip_address}"
 
     # Check to make sure we have a sane target
     if protocol.downcase == "tcp"
@@ -61,9 +61,9 @@ class NetsvcFuzzRandom < BaseTask
         s.puts "#{(0...50).map{ ('a'..'z').to_a[rand(26)] }.join}\n"
       end
     rescue Errno::EPIPE
-      @task_result.logger.log "Broken Pipe"
+      _log "Broken Pipe"
     rescue Errno::ECONNRESET
-      @task_result.logger.log "Connection Reset"
+      _log "Connection Reset"
     end
 
     # Cleanup

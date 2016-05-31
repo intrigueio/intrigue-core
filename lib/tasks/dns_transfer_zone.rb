@@ -36,7 +36,7 @@ class DnsTransferZoneTask < BaseTask
     authoritative_nameservers.each do |nameserver|
       begin
 
-        @task_result.logger.log "Attempting Zone Transfer on #{domain_name} against nameserver #{nameserver}"
+        _log "Attempting Zone Transfer on #{domain_name} against nameserver #{nameserver}"
 
         # Do the actual zone transfer
         zt = Dnsruby::ZoneTransfer.new
@@ -67,19 +67,19 @@ class DnsTransferZoneTask < BaseTask
         end
 
       rescue Dnsruby::Refused => e
-        @task_result.logger.log "Zone Transfer against #{domain_name} refused: #{e}"
+        _log "Zone Transfer against #{domain_name} refused: #{e}"
       rescue Dnsruby::ResolvError => e
-        @task_result.logger.log "Unable to resolve #{domain_name} while querying #{nameserver}: #{e}"
+        _log "Unable to resolve #{domain_name} while querying #{nameserver}: #{e}"
       rescue Dnsruby::ResolvTimeout =>  e
-        @task_result.logger.log "Timed out while querying #{nameserver} for #{domain_name}: #{e}"
+        _log "Timed out while querying #{nameserver} for #{domain_name}: #{e}"
       rescue Errno::EHOSTUNREACH => e
-        @task_result.logger.log_error "Unable to connect: (#{e})"
+        _log_error "Unable to connect: (#{e})"
       rescue Errno::ECONNREFUSED => e
-        @task_result.logger.log_error "Unable to connect: (#{e})"
+        _log_error "Unable to connect: (#{e})"
       rescue Errno::ECONNRESET => e
-        @task_result.logger.log_error "Unable to connect: (#{e})"
+        _log_error "Unable to connect: (#{e})"
       rescue Errno::ETIMEDOUT => e
-        @task_result.logger.log_error "Unable to connect: (#{e})"
+        _log_error "Unable to connect: (#{e})"
       end # end begin
     end # end .each
   end # end run

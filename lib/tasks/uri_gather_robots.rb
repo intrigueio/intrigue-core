@@ -31,24 +31,24 @@ class UriGatherRobotsTask  < BaseTask
       # Grab a known-missing page so we can make sure it's not a
       # 404 disguised as a 200
       test_url = "#{base_uri}/there-is-no-way-this-exists-#{rand(1000000)}"
-      @task_result.logger.log "Checking for missing page: #{test_url}"
+      _log "Checking for missing page: #{test_url}"
       missing_page_content = http_get_body test_url
 
       unless missing_page_content # fail if we don't get a response
-        @task_result.logger.log "Unable to retrieve missing page content"
+        _log "Unable to retrieve missing page content"
       #  return
       end
 
       # Do the request
-      @task_result.logger.log "Connecting to #{uri}"
+      _log "Connecting to #{uri}"
       content = http_get_body uri
 
       unless content # fail if we don't get a response
-        @task_result.logger.log "Unable to retrieve #{uri}"
+        _log "Unable to retrieve #{uri}"
         return
       end
 
-      @task_result.logger.log "Got result for #{uri}:\n#{content}"
+      _log "Got result for #{uri}:\n#{content}"
 
       # Check to make sure this is a legit page, and create an entity if so
       # TODO - improve the checking for wildcard page returns and 404-200's
@@ -56,7 +56,7 @@ class UriGatherRobotsTask  < BaseTask
 
         # Content must contain a user-agent directive: http://www.robotstxt.org/orig.html
         unless content =~ /User-agent/i
-          @task_result.logger.log_error "This content does not include one or more User-agent directives. Skipping"
+          _log_error "This content does not include one or more User-agent directives. Skipping"
           return
         end
 

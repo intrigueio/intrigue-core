@@ -25,6 +25,16 @@ class ExampleTask < BaseTask
   def run
     super
 
+    if (_get_option("sleep") < 0)
+      _log_error "Invalid option: sleep"
+      return
+    end
+
+    if (_get_option("count") < 0)
+      _log_error "Invalid option: count"
+      return
+    end
+
     # Sleep if this option was supplied
     sleep(_get_option("sleep"))
 
@@ -35,7 +45,7 @@ class ExampleTask < BaseTask
       # Generate a fake IP address
       #
       ip_address = "#{rand(255)}.#{rand(255)}.#{rand(255)}.#{rand(255)}"
-      @task_result.logger.log "Randomly generated an IP address: #{ip_address}"
+      _log "Randomly generated an IP address: #{ip_address}"
 
       #
       # Create & return the entity

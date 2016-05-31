@@ -8,7 +8,8 @@ require_relative 'initialize/string'
 ####
 require_relative 'task_factory'
 
-### Web & Parse mixins
+### Mixins with common task functionality 
+require_relative 'tasks/helpers/generic'
 require_relative 'tasks/helpers/lists'
 require_relative 'tasks/helpers/parse'
 require_relative 'tasks/helpers/scanner'

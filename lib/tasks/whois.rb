@@ -43,15 +43,15 @@ class WhoisTask < BaseTask
       whois = Whois::Client.new(:timeout => 20)
       answer = whois.lookup(lookup_string)
     rescue Whois::Error => e
-      @task_result.logger.log "Unable to query whois: #{e}"
+      _log "Unable to query whois: #{e}"
     rescue Whois::ResponseIsThrottled => e
-      @task_result.logger.log "Got a response throttled message: #{e}"
+      _log "Got a response throttled message: #{e}"
       sleep 10
       return run # retry
     rescue StandardError => e
-      @task_result.logger.log "Unable to query whois: #{e}"
+      _log "Unable to query whois: #{e}"
     rescue Exception => e
-      @task_result.logger.log "UNKNOWN EXCEPTION! Unable to query whois: #{e}"
+      _log "UNKNOWN EXCEPTION! Unable to query whois: #{e}"
     end
 
     #
@@ -60,9 +60,9 @@ class WhoisTask < BaseTask
     if answer
 
       # Log the full text of the answer
-      @task_result.logger.log "== Full Text: =="
-      @task_result.logger.log answer.content
-      @task_result.logger.log "================"
+      _log "== Full Text: =="
+      _log answer.content
+      _log "================"
 
       #
       # if it was a domain, we've got a whole lot of shit we can scoop
@@ -91,7 +91,7 @@ class WhoisTask < BaseTask
                 _create_entity "IpAddress", "name" => ip_address
                 _create_entity "DnsServer", "name" => ip_address
               rescue SocketError => e
-                  @task_result.logger.log "Unable to look up host: #{e}"
+                  _log "Unable to look up host: #{e}"
               end
             end
           end
@@ -121,11 +121,11 @@ class WhoisTask < BaseTask
         #
         begin
           if answer.technical_contact
-            @task_result.logger.log "Creating user from technical contact"
+            _log "Creating user from technical contact"
             _create_entity("Person", {"name" => answer.technical_contact.name})
           end
         rescue Exception => e
-          @task_result.logger.log "Unable to grab technical contact"
+          _log "Unable to grab technical contact"
         end
 
         #
@@ -133,11 +133,11 @@ class WhoisTask < BaseTask
         #
         begin
           if answer.admin_contact
-            @task_result.logger.log "Creating user from admin contact"
+            _log "Creating user from admin contact"
             _create_entity("Person", {"name" => answer.admin_contact.name})
           end
         rescue Exception => e
-          @task_result.logger.log "Unable to grab admin contact"
+          _log "Unable to grab admin contact"
         end
 
         #
@@ -145,11 +145,11 @@ class WhoisTask < BaseTask
         #
         begin
           if answer.registrant_contact
-            @task_result.logger.log "Creating user from registrant contact"
+            _log "Creating user from registrant contact"
             _create_entity("Person", {:name => answer.registrant_contact.name})
           end
         rescue Exception => e
-          @task_result.logger.log "Unable to grab registrant contact"
+          _log "Unable to grab registrant contact"
         end
 
         # @entity.save!
@@ -234,7 +234,7 @@ class WhoisTask < BaseTask
       end # end Host Type
 
     else
-      @task_result.logger.log "Domain WHOIS failed, we don't know what nameserver to query."
+      _log "Domain WHOIS failed, we don't know what nameserver to query."
     end
 
   end

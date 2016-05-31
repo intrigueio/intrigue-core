@@ -29,7 +29,7 @@ class EmailValidateTask < BaseTask
     uri = "http://api.email-validator.net/api/verify?EmailAddress=#{email_address}&APIKey=#{api_key}"
 
     email_validation_results = JSON.parse http_get_body(uri)
-    @task_result.logger.log "Got result: #{email_validation_results["status"]}"
+    _log "Got result: #{email_validation_results["status"]}"
 
     if email_validation_results["info"] =~ /Valid Address/
       #_create_entity "Info", email_validation_results.merge({"name" => "Valid Address: #{email_address}"})
