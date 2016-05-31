@@ -121,6 +121,8 @@ class DNSSnooper
     nctime = time do
       begin
         answer = @dnsserver.query(domain)
+      rescue Errno::ENETUNREACH => e
+        @task_result.logger.log_error "Hit exception: #{e}. Are you sure you're connected?"
       rescue Exception => re
         puts "Error: #{re.message}"
       end
@@ -137,6 +139,8 @@ class DNSSnooper
     ctime = time do
       begin
         @dnsserver.query(domain)
+      rescue Errno::ENETUNREACH => e
+        @task_result.logger.log_error "Hit exception: #{e}. Are you sure you're connected?"
       rescue Exception => re
         puts "Error: #{re.message}"
       end
@@ -228,6 +232,8 @@ class DNSSnooper
     rescue Net::DNS::Resolver::NoResponseError => terror
       puts "Error: #{terror.message}"
       return nil
+    rescue Errno::ENETUNREACH => e
+      @task_result.logger.log_error "Hit exception: #{e}. Are you sure you're connected?"
     end
 
     return nil
@@ -313,6 +319,8 @@ class DNSSnooper
       answertime = time do
         begin
           dnsr = @dnsserver.query(domain)
+        rescue Errno::ENETUNREACH => e
+          @task_result.logger.log_error "Hit exception: #{e}. Are you sure you're connected?"
         rescue Exception => e
           $stderr.puts "Error: #{e.message}"
         end

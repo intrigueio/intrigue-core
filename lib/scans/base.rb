@@ -7,6 +7,7 @@ module Scanner
     include Intrigue::Task::Helper
 
     def perform(id)
+
       @scan_result = Intrigue::Model::ScanResult.get(id)
       return false unless @scan_result
 

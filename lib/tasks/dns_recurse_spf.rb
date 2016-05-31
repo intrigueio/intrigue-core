@@ -106,6 +106,9 @@ class DnsRecurseSpf < BaseTask
     rescue Dnsruby::ResolvTimeout
       @task_result.logger.log_error "Timed out while querying #{dns_name}."
 
+    rescue Errno::ENETUNREACH => e
+      @task_result.logger.log_error "Hit exception: #{e}. Are you sure you're connected?"
+
     rescue Exception => e
       @task_result.logger.log_error "Unknown exception: #{e}"
     end

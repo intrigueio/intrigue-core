@@ -81,6 +81,8 @@ class DnsBruteSubTask < BaseTask
         wildcard_domain = true
         @task_result.logger.log_warning "Wildcard domain detected, only saving validated domains/hosts."
       end
+    rescue Errno::ENETUNREACH => e
+      @task_result.logger.log_error "Hit exception: #{e}. Are you sure you're connected?"
     rescue Resolv::ResolvError
       @task_result.logger.log_good "Looks like no wildcard dns. Moving on."
     end
@@ -180,6 +182,8 @@ class DnsBruteSubTask < BaseTask
                   end
                 end
               end
+            rescue Errno::ENETUNREACH => e
+              @task_result.logger.log_error "Hit exception: #{e}. Are you sure you're connected?"
             rescue Resolv::ResolvError => e
               @task_result.logger.log "No resolution for: #{fqdn}"
             end

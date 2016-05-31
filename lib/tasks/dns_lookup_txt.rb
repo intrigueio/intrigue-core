@@ -86,6 +86,9 @@ class DnsLookupTxtTask < BaseTask
     rescue Dnsruby::ResolvTimeout
       @task_result.logger.log "Timed out while querying #{domain_name}."
 
+    rescue Errno::ENETUNREACH => e
+      @task_result.logger.log_error "Hit exception: #{e}. Are you sure you're connected?"
+      
     rescue Exception => e
       @task_result.logger.log "Unknown exception: #{e}"
     end

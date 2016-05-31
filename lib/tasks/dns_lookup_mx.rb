@@ -46,7 +46,8 @@ class DnsLookupMxTask < BaseTask
             "name" => address }
           )}
       end
-
+    rescue Errno::ENETUNREACH => e
+      @task_result.logger.log_error "Hit exception: #{e}. Are you sure you're connected?"
     rescue Exception => e
       @task_result.logger.log_error "Hit exception: #{e}"
     end
