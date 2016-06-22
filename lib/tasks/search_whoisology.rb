@@ -50,7 +50,7 @@ class SearchWhoisologyTask < BaseTask
       # do the actual search with the FLAT command
       result = whoisology.flat entity_type, entity_name
 
-      @task_logger.log_good "Creating entities for #{result["count"]} results."
+      _log_good "Creating entities for #{result["count"]} results."
       result["domains"].each {|d| _create_entity "DnsRecord", {"name" => d["domain_name"]} }
 
     rescue RuntimeError => e
