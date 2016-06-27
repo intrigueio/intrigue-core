@@ -2,12 +2,13 @@ FROM ubuntu:14.04
 MAINTAINER Jonathan Cran <jcran@intrigue.io>
 
 # Basic updates and dependencies
+RUN apt-get update
 RUN apt-get install -y software-properties-common
 #RUN apt-add-repository ppa:brightbox/ruby-ng
 RUN apt-get update -qq && apt-get -y upgrade && \
 	apt-get -y install libxml2-dev libxslt-dev zmap nmap sudo default-jre libsqlite3-dev \
 	git gcc g++ make libpcap-dev zlib1g-dev curl libcurl4-openssl-dev libpq-dev postgresql-server-dev-all \
-  wget libgdbm-dev libncurses5-dev automake libtool bison libffi-dev libgmp-dev
+    wget libgdbm-dev libncurses5-dev automake libtool bison libffi-dev libgmp-dev unzip
 
 # masscan build and installation
 WORKDIR /usr/share
@@ -31,16 +32,25 @@ RUN /bin/bash -l -c "gem install bundler --no-ri --no-rdoc"
 COPY Gemfile* /tmp/
 WORKDIR /tmp
 ENV BUNDLE_JOBS=12
-RUN /bin/bash -l -c "bundle install --system"
+RUN /bin/bash -l -c "bundle install --system" --path /core
 
 # get intrigue-core code
-COPY . /core
+#COPY . /core/
+RUN mkdir -p /root/core \
+    && cd /root/core \
+    && wget https://github.com/intrigueio/intrigue-core/archive/develop.zip \
+    && unzip develop.zip \
+    && mv /root/core/intrigue-core-develop/* .
+COPY config/config.json /root/core/config/config.json
+
+# Now modify puma.rb
+RUN cd /root/core/config/ && sed -i 's:127.0.0.1:0.0.0.0:g' puma.rb
 
 # Expose a port
 EXPOSE 7777
 
 # start the app
-WORKDIR /core
-RUN /bin/bash -l -c "rm .ruby-gemset"
+WORKDIR /root/core
+RUN /bin/bash -l -c "rm /root/core/intrigue-core-develop/.ruby-gemset"
 ENTRYPOINT ["/bin/bash", "-l"]
-CMD ["/core/script/control.sh","start"]
+CMD ["/root/core/script/control.sh","start"]
