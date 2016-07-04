@@ -1,13 +1,11 @@
 FROM ubuntu:14.04
 MAINTAINER Jonathan Cran <jcran@intrigue.io>
 
-# Basic updates and dependencies
-RUN apt-get install -y software-properties-common
 #RUN apt-add-repository ppa:brightbox/ruby-ng
 RUN apt-get update -qq && apt-get -y upgrade && \
 	apt-get -y install libxml2-dev libxslt-dev zmap nmap sudo default-jre libsqlite3-dev \
 	git gcc g++ make libpcap-dev zlib1g-dev curl libcurl4-openssl-dev libpq-dev postgresql-server-dev-all \
-  wget libgdbm-dev libncurses5-dev automake libtool bison libffi-dev libgmp-dev
+  wget libgdbm-dev libncurses5-dev automake libtool bison libffi-dev libgmp-dev software-properties-common
 
 # masscan build and installation
 WORKDIR /usr/share
