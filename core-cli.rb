@@ -154,13 +154,16 @@ class CoreCli < Thor
       # sense is there in making the user create the task result.
       # this should happen before, and automatically.
 
-      # Create a new entity
-      e = Intrigue::Model::Entity.create({
-        :type => "Intrigue::Entity::#{entity["type"]}",
-        :name => entity["details"]["name"],
-        :details => entity["details"],
-        :project => Intrigue::Model::Project.first(:name => project_name)
-      })
+      # Check if the entity already exists, and if not, create a new entity
+      e = Intrigue::Model::Entity.first(:name => entity["details"]["name"])
+      unless e
+        e = Intrigue::Model::Entity.create({
+          :type => "Intrigue::Entity::#{entity["type"]}",
+          :name => entity["details"]["name"],
+          :details => entity["details"],
+          :project => Intrigue::Model::Project.first(:name => project_name)
+        })
+      end
 
       # Create a new task result
       task_result = Intrigue::Model::TaskResult.create({
