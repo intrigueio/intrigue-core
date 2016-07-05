@@ -133,10 +133,11 @@ class CoreCli < Thor
 
     lines = File.open(filename,"r").readlines
 
+    project_name = "#{task_name} on #{filename} - #{Time.now.strftime("%Y%m%d%H%M")}"
+    p = Intrigue::Model::Project.create(:name => project_name)
+
     lines.each do |line|
       line.chomp!
-
-      project_name = "Default"
 
       entity = _parse_entity line
       options = _parse_options options_string
@@ -157,7 +158,7 @@ class CoreCli < Thor
           :type => "Intrigue::Entity::#{entity["type"]}",
           :name => entity["details"]["name"],
           :details => entity["details"],
-          :project => Intrigue::Model::Project.first(:name => project_name)
+          :project => p
         })
       end
 
@@ -167,8 +168,8 @@ class CoreCli < Thor
         :task_name => task_name,
         :base_entity => e,
         :options => options,
-        :logger => Intrigue::Model::Logger.create(:project => Intrigue::Model::Project.first(:name => project_name)),
-        :project => Intrigue::Model::Project.first(:name => project_name)
+        :logger => Intrigue::Model::Logger.create(:project => p),
+        :project => p
       })
 
       # XXX - Create the task

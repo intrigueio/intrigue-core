@@ -4,7 +4,7 @@ module Intrigue
       include DataMapper::Resource
 
       property :id,       Serial, :key => true
-      property :name,     String
+      property :name,     String, :length => 400, :index => true
 
       validates_uniqueness_of :name
 
