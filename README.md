@@ -25,8 +25,10 @@ Follow the appropriate setup guide:
 $ cp config/config.json.default config/config.json
 
 # Build the container and run it
-$ docker-compose build && docker-compose up # and we're up on :7778
+$ docker-compose build && docker-compose up # and we're up on :7777
 ```
+
+*PROTIP: Using Docker, we can add many sidekiq workers, allowing us to scale horizontally. To set up the Intrigue infrastructure, we've provided a minimal docker-compose.yml. This requires docker and docker-compose. Stop by the chat linked above if you're interested in more details.*
 
 Now that you have a working environment, browse to the web interface.
 
@@ -144,9 +146,3 @@ You can use the tried and true curl utility to request a task run. Specify the t
 ```
 $ curl -s -X POST -H "Content-Type: application/json" -d '{ "task": "example", "entity": { "type": "String", "attributes": { "name": "8.8.8.8" } }, "options": {} }' http://127.0.0.1:7777/v1/task_runs
 ```
-
-### Starting up an scaling horizontally with Docker
-Using Docker, we can add many sidekiq workers, allowing us to scale horizontally. To set up the Intrigue infrastructure, we've provided a minimal docker-compose.yml. This, of course, requires docker and docker-compose to be installed.
-
-
-

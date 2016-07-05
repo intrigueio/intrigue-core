@@ -32,8 +32,11 @@ ENV BUNDLE_JOBS=12
 RUN /bin/bash -l -c "bundle install --system"
 
 # get intrigue-core code
-RUN rm -rf /core && mkdir -p /core
+RUN /bin/bash -l -c "rm -rf /core && mkdir -p /core"
 ADD . /core/
+
+# Ensure we listen on all ipv4 interfaces
+RUN /bin/bash -l -c "echo bind \'tcp://0.0.0.0:7777\' >> /core/config/puma.rb"
 
 # Expose a port
 EXPOSE 7777
