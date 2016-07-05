@@ -150,10 +150,6 @@ class CoreCli < Thor
 
       task_result_id = SecureRandom.uuid
 
-      # XXX - Hack - this should go away eventually. what
-      # sense is there in making the user create the task result.
-      # this should happen before, and automatically.
-
       # Check if the entity already exists, and if not, create a new entity
       e = Intrigue::Model::Entity.first(:name => entity["details"]["name"])
       unless e

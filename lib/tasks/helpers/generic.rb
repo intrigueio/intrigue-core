@@ -57,7 +57,7 @@ module Generic
     hash = _encode_hash(hash)
 
     # First check to see if we have the entity
-    short_name = hash["name"][0,199]
+    short_name = _encode_string(hash["name"][0,199])
     entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:name => short_name)
 
     # Merge the details if it exists
