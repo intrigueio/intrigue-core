@@ -20,7 +20,7 @@ RUN make -j 3 && make install
 # set up RVM
 RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3
 RUN /bin/bash -l -c "curl -L get.rvm.io | bash -s stable"
-RUN /bin/bash -l -c "rvm install 2.3.0"
+RUN /bin/bash -l -c "rvm install 2.2.1"
 RUN /bin/bash -l -c "echo 'gem: --no-ri --no-rdoc' > ~/.gemrc"
 RUN /bin/bash -l -c "gem install bundler --no-ri --no-rdoc"
 
@@ -32,7 +32,8 @@ ENV BUNDLE_JOBS=12
 RUN /bin/bash -l -c "bundle install --system"
 
 # get intrigue-core code
-COPY . /core
+RUN rm -rf /core && mkdir -p /core
+ADD . /core/
 
 # Expose a port
 EXPOSE 7777
