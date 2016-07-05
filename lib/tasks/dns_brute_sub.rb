@@ -79,7 +79,7 @@ class DnsBruteSubTask < BaseTask
       if wildcard
         _create_entity "IpAddress", "name" => "#{wildcard}"
         wildcard_domain = true
-        _log_warning "Wildcard domain detected, only saving validated domains/hosts."
+        _log "Wildcard domain detected, only saving validated domains/hosts."
       end
     rescue Errno::ENETUNREACH => e
       _log_error "Hit exception: #{e}. Are you sure you're connected?"
@@ -89,7 +89,7 @@ class DnsBruteSubTask < BaseTask
 
     # Generate alphanumeric list of hostnames and add them to the end of the list
     if opt_brute_alphanumeric_size
-      _log_warning "Alphanumeric list generation is pretty huge - this will take a long time" if opt_brute_alphanumeric_size > 3
+      _log "Alphanumeric list generation is pretty huge - this will take a long time" if opt_brute_alphanumeric_size > 3
       subdomain_list.concat(("#{'a' * opt_brute_alphanumeric_size }".."#{'z' * opt_brute_alphanumeric_size}").map {|x| x })
     end
 
