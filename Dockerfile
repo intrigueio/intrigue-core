@@ -36,7 +36,7 @@ RUN /bin/bash -l -c "rm -rf /core && mkdir -p /core"
 ADD . /core/
 
 # Ensure we listen on all ipv4 interfaces
-RUN /bin/bash -l -c "echo bind \'tcp://0.0.0.0:7777\' >> /core/config/puma.rb"
+RUN /bin/bash -l -c "sed -i \"s/127.0.0.1/0.0.0.0/g\" /core/config/puma.rb" 
 
 # Expose a port
 EXPOSE 7777
