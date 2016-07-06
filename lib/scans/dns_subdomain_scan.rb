@@ -33,7 +33,8 @@ class DnsSubdomainScan < Intrigue::Scanner::Base
         ### DNS Subdomain Bruteforce
         _start_task_and_recurse "dns_brute_sub",entity,depth,[
           {"name" => "use_file", "value" => true },
-          {"name" => "threads", "value" => 5 }
+          {"name" => "threads", "value" => 5 },
+          {"name" => "brute_alphanumeric_size", "value" => 3}
         ]
       else
         @scan_result.logger.log "Unhandled entity type: #{entity.type}##{entity.details["name"]}"
