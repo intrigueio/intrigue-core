@@ -67,9 +67,10 @@ class CoreCli < Thor
     entity_hash = _parse_entity entity
     options_list = _parse_options option_string
     handler_list = _parse_handlers handler_string
+    project_name = "Default"
 
     ### Construct the request
-    task_id = @api.start_and_background(task_name,entity_hash,options_list,handler_list)
+    task_id = @api.start_and_background(project_name,task_name,entity_hash,options_list,handler_list)
 
     unless task_id # technically a nil is returned , but becomes an empty string
       puts "[-] Task not started. Unknown Error. Exiting"
@@ -91,10 +92,11 @@ class CoreCli < Thor
     entity_hash = _parse_entity entity_string
     options_list = _parse_options option_string
     handler_list = _parse_handlers handler_string
+    project_name = "Default"
 
     # Get the response from the API
     #puts "[+] Starting Task."
-    response = @api.start(task_name,entity_hash,options_list,handler_list)
+    response = @api.start(project_name,task_name,entity_hash,options_list,handler_list)
     #puts "[D] Got response: #{response}" if @debug
     return "Error retrieving response. Failing. Response was: #{response}" unless  response
     #puts "[+] Task complete!"
@@ -111,13 +113,14 @@ class CoreCli < Thor
     response["log"].each_line{|x| puts "  #{x}" }
   end
 
-  desc "scan [Scan Type] [Type#Entity] [Option1=Value1#...#...] [Handlers]", "Start a recursive scan. Returns the result"
+  desc "scan [Project Name] [Scan Type] [Type#Entity] [Option1=Value1#...#...] [Handlers]", "Start a recursive scan. Returns the result"
   def scan(scan_type,entity_string,option_string=nil,handler_string="")
     entity_hash  = _parse_entity entity_string
     options_list = _parse_options option_string
     handler_list = _parse_handlers handler_string
+    project_name = "Default"
 
-    @api.start_scan_and_background(scan_type,entity_hash,options_list,handler_list)
+    @api.start_scan_and_background(project_name,scan_type,entity_hash,options_list,handler_list)
   end
 
 

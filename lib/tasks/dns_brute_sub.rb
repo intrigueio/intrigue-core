@@ -31,7 +31,7 @@ class DnsBruteSubTask < BaseTask
         {:name => "brute_alphanumeric_size", :type => "Integer", :regex => "integer", :default => 0 },
         {:name => "threads", :type => "Integer", :regex => "integer", :default => 1 },
       ],
-      :created_types => ["DnsRecord","IpAddress"]
+      :created_types => ["DnsRecord"]
     }
   end
 
@@ -132,7 +132,7 @@ class DnsBruteSubTask < BaseTask
 
                 # Create new host and domain entities
                 _create_entity("DnsRecord", {"name" => "#{fqdn}", "ip_address" => "#{resolved_address}" })
-                _create_entity("IpAddress", {"name" => "#{resolved_address}", "dns_record" => "#{fqdn}" })
+                #_create_entity("IpAddress", {"name" => "#{resolved_address}", "dns_record" => "#{fqdn}" })
 
                 #
                 # This section will add permutations to our list, if the

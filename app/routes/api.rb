@@ -67,7 +67,7 @@ class IntrigueApp < Sinatra::Base
       # What we receive should look like this:
       #
       #payload = {
-      #  "project_id" => project_id,
+      #  "project_name" => project_name,
       #  "task" => task_name,
       #  "entity" => entity_hash,
       #  "options" => options_list,
@@ -84,17 +84,17 @@ class IntrigueApp < Sinatra::Base
       attributes = payload["entity"].merge("type" => "Intrigue::Entity::#{type}")
 
       # get the details from the payload
-      project_id = payload["project_id"] || "1"
+      project_name = payload["project_name"]
       task_name = payload["task"]
       options = payload["options"]
       handlers = payload["handlers"]
 
-      entity = Intrigue::Model::Entity.create(
-        attributes.merge(:project => Intrigue::Model::Project.get(project_id)))
+      project = Intrigue::Model::Project.get(:name => project_name)
+      entity = Intrigue::Model::Entity.create(attributes.merge(:project => project))
       entity.save
 
       # Start the task _run
-      task_id = start_task_run(project_id, nil, task_name, entity, options, handlers)
+      task_id = start_task_run(project.id, nil, task_name, entity, options, handlers)
       status 200 if task_id
 
     # must be a string otherwise it can be interpreted as a status code
@@ -233,10 +233,14 @@ class IntrigueApp < Sinatra::Base
 
       scan_result_info = JSON.parse(request.body.read) if request.content_type == "application/json"
 
+      project_name = scan_result_info["project_name"]
       scan_type = scan_result_info["scan_type"]
       entity = scan_result_info["entity"]
       options = scan_result_info["options"]
       handlers = scan_result_info["handlers"]
+
+      # Get the project
+      p = Intrigue::Model::Project.first(:name => project_name)
 
       # Construct an entity from the data we have
       entity = Intrigue::Model::Entity.create(
@@ -244,7 +248,7 @@ class IntrigueApp < Sinatra::Base
         :type => "Intrigue::Entity::#{entity['type']}",
         :name => entity['name'],
         :details => entity['details'],
-        :project => Intrigue::Model::Project.scope_by_project(@project_name)
+        :project => p
       })
 
       # Set up the ScanResult object
@@ -255,8 +259,8 @@ class IntrigueApp < Sinatra::Base
         :depth => 4,
         :filter_strings => "",
         :handlers => handlers,
-        :logger => Intrigue::Model::Logger.create(:project => Intrigue::Model::Project.scope_by_project(@project_name)),
-        :project => Intrigue::Model::Project.scope_by_project(@project_name)
+        :logger => Intrigue::Model::Logger.create(:project => p),
+        :project => p
       })
 
       #puts "CREATING SCAN RESULT: #{scan_result.inspect}"
