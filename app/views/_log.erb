@@ -1,22 +1,23 @@
 Log:
 <div id="log">
-<p>[Getting the log...]</p>
+<p>[Gathering the log...]</p>
 </div>
 
 <script>
 // super hacky ajax
-function getLog(id){
+function getLog(){
   //get the list of tasks and rewrite the task
-  $.getJSON(window.location.href + ".json", function(data) {
+  $.getJSON(window.location.href + "/log", function(data) {
+    hash = JSON.stringify(data);
     document.getElementById("log").empty
-    document.getElementById("log").innerHTML = "<span class='like-pre-dark'>" + data["log"] + "</span></br>";
+    document.getElementById("log").innerHTML = "<span class='like-pre-dark'>" + hash + "</span></br>";
   });
 }
 
 window.setInterval(function(){
-  getLog(<%=@result.id%>);  //calling every 5 seconds
+  getLog();  //calling every 5 seconds
 }, 5000);
 
 //call right away
-getLog(<%=@result.id%>);
+getLog();
 </script>

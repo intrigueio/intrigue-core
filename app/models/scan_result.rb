@@ -87,8 +87,7 @@ module Intrigue
           "entity_count" => @entity_count,
           "task_results" => self.task_results.map{|t| t.export_hash },
           "entities" => self.entities.map {|e| e.export_hash },
-          "options" => @options,
-          "log" => self.logger.full_log
+          "options" => @options
         }
       end
 

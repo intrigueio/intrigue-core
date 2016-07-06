@@ -66,8 +66,7 @@ module Intrigue
           "options" => @options,
           "complete" => @complete,
           "base_entity" => self.base_entity.export_hash,
-          "entities" => self.entities.map{ |x| x.export_hash },
-          "log" => self.logger.full_log
+          "entities" => self.entities.map{ |x| x.export_hash }
         }
       end
 

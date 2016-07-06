@@ -37,7 +37,6 @@ class TaskFactory
   def self.create_by_name(name)
     available_tasks.each do |t|
       task_object = t.new
-      puts task_object.metadata[:name]
       if (task_object.metadata[:name] == name)
         return task_object # Create a new object and send it back
       end
