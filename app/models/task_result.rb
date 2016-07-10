@@ -17,6 +17,7 @@ module Intrigue
       property :timestamp_end, DateTime
       property :options, Object, :default => [] #StringArray
       property :complete, Boolean, :default => false
+      property :entity_count, Integer, :default => 0
 
       def self.scope_by_project(name)
         all(:project => Intrigue::Model::Project.first(:name => name))
@@ -25,12 +26,16 @@ module Intrigue
       def add_entity(entity)
         return false if has_entity? entity
 
-        entity.task_results << self
-        entity.save
+        begin
+          attribute_set(:entity_count, @entity_count + 1)
+          entity.task_results << self
+          entity.save
+          self.entities << entity
+          save
+        rescue Exception => e
+          false
+        end
 
-        self.entities << entity
-
-        save
       true
       end
 

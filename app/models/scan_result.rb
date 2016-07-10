@@ -47,20 +47,31 @@ module Intrigue
       end
 
       def add_task_result(task_result)
-        self.task_results << task_result
-        save
+        # Handle exceptions here since this may not be thread safe
+        #  https://github.com/datamapper/dm-core/issues/286
+        begin
+          self.task_results << task_result
+          save
+        rescue Exception => e
+          false
+        end
       true
       end
 
       def add_entity(entity)
         return false if has_entity? entity
-        attribute_set(:entity_count, @entity_count + 1)
 
-        entity.scan_results << self
-        entity.save
-
-        self.entities << entity
-        save
+        # Handle exceptions here since this may not be thread safe
+        #  https://github.com/datamapper/dm-core/issues/286
+        begin
+          attribute_set(:entity_count, @entity_count + 1)
+          entity.scan_results << self
+          entity.save
+          self.entities << entity
+          save
+        rescue Exception => e
+          false
+        end
       true
       end
 
