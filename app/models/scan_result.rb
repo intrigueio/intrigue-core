@@ -28,6 +28,10 @@ module Intrigue
         all(:project => Intrigue::Model::Project.first(:name => name))
       end
 
+      def log
+        self.logger.full_log
+      end
+
       def start
         ###
         # Create the Scanner

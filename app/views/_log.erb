@@ -8,9 +8,9 @@ Log:
 function getLog(){
   //get the list of tasks and rewrite the task
   $.getJSON(window.location.href + "/log", function(data) {
-    hash = JSON.stringify(data);
+    log_data = data["data"];
     document.getElementById("log").empty
-    document.getElementById("log").innerHTML = "<span class='like-pre-dark'>" + hash + "</span></br>";
+    document.getElementById("log").innerHTML = "<span class='like-pre-dark'>" + log_data + "</span></br>";
   });
 }
 

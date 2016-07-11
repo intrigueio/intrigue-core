@@ -23,6 +23,10 @@ module Intrigue
         all(:project => Intrigue::Model::Project.first(:name => name))
       end
 
+      def log
+        self.logger.full_log
+      end
+
       def add_entity(entity)
         return false if has_entity? entity
 

@@ -154,7 +154,7 @@ class IntrigueApp < Sinatra::Base
     # Get the task log
     get '/task_results/:id/log/?' do
       @result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
-      {:data => @result.logger.full_log}.to_json
+      {:data => @result.log}.to_json
     end
 
     # Export All Tasks
@@ -271,7 +271,7 @@ class IntrigueApp < Sinatra::Base
     # Get the scan log
     get '/scan_results/:id/log' do
       @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
-      {:data => @result.logger.full_log}.to_json
+      {:data => @result.log}.to_json
     end
 
   end
