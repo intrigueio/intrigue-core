@@ -75,8 +75,8 @@ class DiscoveryScan < Intrigue::Scanner::Base
         _start_task_and_recurse "whois",entity,depth
 
       elsif entity.type_string == "NetBlock"
-        # Make sure it's small enough not to be disruptive, and if it is, scan it
 
+        # Make sure it's small enough not to be disruptive, and if it is, scan it
         cidr = entity.name.split("/").last.to_i
         if cidr >= 20
           _start_task_and_recurse "masscan_scan",entity,depth, ["port" => 80]
@@ -91,10 +91,10 @@ class DiscoveryScan < Intrigue::Scanner::Base
         _start_task_and_recurse "uri_gather_ssl_certificate",entity,depth if entity.name =~ /^https/
 
         # Check for exploitable URIs, but don't recurse on things we've already found
-        _start_task_and_recurse "uri_exploitable", entity, depth,[{"name"=> "threads", "value" => 5}] unless entity.created_by? "uri_exploitable"
+        #_start_task_and_recurse "uri_exploitable", entity, depth,[{"name"=> "threads", "value" => 5}] unless entity.created_by? "uri_exploitable"
 
         ## Spider, looking for metadata
-        _start_task_and_recurse "uri_spider",entity,depth,[{"name"=> "threads", "value" => 5}] unless entity.created_by? "uri_exploitable"
+        #_start_task_and_recurse "uri_spider",entity,depth,[{"name"=> "threads", "value" => 5}] unless entity.created_by? "uri_exploitable"
 
       else
         @scan_result.logger.log "No actions for entity: #{entity.type}##{entity.attributes["name"]}"
