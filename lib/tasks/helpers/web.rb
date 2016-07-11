@@ -237,6 +237,51 @@ module Task
      response
      end
 
+     # List of checks for body of the response
+     def http_body_checks
+       [
+         ###
+         ### Security Seals
+         ###
+         # http://baymard.com/blog/site-seal-trust
+         # https://vagosec.org/2014/11/clubbing-seals/
+         #
+         { :regex => /Norton Secured, Powered by Symantec/,
+           :finding_name => "Norton Security Seal"},
+         { :regex => /PathDefender/,
+           :finding_name => "McAfee Pathdefender Security Seal"},
+         ### Marketing / Tracking
+         {:regex => /urchin.js/, :finding_name => "Google Analytics"},
+         {:regex => /optimizely/, :finding_name => "Optimizely"},
+         {:regex => /trackalyze/, :finding_name => "Trackalyze"},
+         {:regex => /doubleclick.net|googleadservices/,
+           :finding_name => "Google Ads"},
+         {:regex => /munchkin.js/, :finding_name => "Marketo"},
+         {:regex => /Olark live chat software/, :finding_name => "Olark"},
+         ### External accounts
+         {:regex => /http:\/\/www.twitter.com.*?/,
+           :finding_name => "Twitter Account"},
+         {:regex => /http:\/\/www.facebook.com.*?/,
+           :finding_name => "Facebook Account"},
+         ### Technologies
+         #{:regex => /javascript/, :finding => "Javascript"},
+         {:regex => /jquery.js/, :finding_name => "JQuery"},
+         {:regex => /bootstrap.css/, :finding_name => "Twitter Bootstrap"},
+         ### Platform
+         {:regex => /[W|w]ordpress/, :finding_name => "Wordpress"},
+         {:regex => /[D|d]rupal/, :finding_name => "Drupal"},
+         ### Provider
+         {:regex => /Content Delivery Network via Amazon Web Services/,
+           :finding_name => "Amazon Cloudfront"},
+         ### Wordpress Plugins
+         { :regex => /wp-content\/plugins\/.*?\//, :finding_name => "Wordpress Plugin" },
+         { :regex => /xmlrpc.php/, :finding_name => "Wordpress API"},
+         #{:regex => /Yoast WordPress SEO plugin/, :finding_name => "Yoast Wordress SEO Plugin"},
+         #{:regex => /PowerPressPlayer/, :finding_name => "Powerpress Wordpress Plugin"},
+         ###
+       ]
+     end
+
 
   end
 end

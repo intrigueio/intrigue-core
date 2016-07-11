@@ -60,8 +60,8 @@ class DiscoveryScan < Intrigue::Scanner::Base
 
       elsif entity.type_string == "String"
 
-        # Search!
-        _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 3}]
+        # Search, only snag the top result
+        _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 1}]
 
       elsif entity.type_string == "IpAddress"
 
