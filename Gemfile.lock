@@ -40,6 +40,12 @@ GIT
     censys (0.1.0)
 
 GIT
+  remote: https://github.com/pentestify/opencorporates.git
+  revision: d4a1c950665c81c815f263fa3240018fada83d39
+  specs:
+    opencorporates (0.0.1)
+
+GIT
   remote: https://github.com/pentestify/ruby-nmap.git
   revision: ce5075972c2708901ab2a962a4cca5f6c9a99b54
   specs:
@@ -448,6 +454,7 @@ DEPENDENCIES
   net-dns
   net-ssh
   nokogiri
+  opencorporates!
   pry
   puma
   rack-protection
