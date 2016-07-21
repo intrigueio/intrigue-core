@@ -30,8 +30,8 @@ function getEntities(id){
       type = hash["type"].split(':')[4];
       name = hash["name"];
       entity_string += "<li><a href='/v1/entities/" + hash["id"] + "'> " + type + ": " + name + "</a> ";
-      if (type == "Uri") {
-        entity_string += ("<a target='_blank' href='" + hash["name"] + "'>[link]</a>");
+      if ("uri" in hash["details"]){
+        entity_string += ("<a target='_blank' href='" + hash["details"]["uri"] + "'>[link]</a>");
       };
       entity_string += "</li>";
     });
