@@ -1,7 +1,22 @@
-#!/bin/bash
+#! /bin/bash
+### BEGIN INIT INFO
+# Provides: intrigue
+# Required-Start: $remote_fs $syslog $postgres $redis
+# Required-Stop: $remote_fs $syslog $postgres $redis
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: Intrigue
+# Description: This file starts and stops Intrigue server
+#
+### END INIT INFO
 
 # Puma: intrigue-puma.pid
 # Sidekiq: intrigue-sidekiq.pid
+
+IDIR=.
+#[[ -s "/home/ubuntu/.rvm/scripts/rvm" ]] && source "/home/ubuntu/.rvm/scripts/rvm"
+#cd /home/ubuntu/core
+#rvm use 2.2.1@core
 
 function setup_server {
   bundle exec rake migrate
@@ -9,22 +24,22 @@ function setup_server {
 
 function start_server {
   echo "Starting scan processing..."
-  bundle exec sidekiq -C ./config/sidekiq-scan.yml -r ./core.rb -d -L ./log/scan.log
+  bundle exec sidekiq -C $IDIR/config/sidekiq-scan.yml -r $IDIR/core.rb -d -L $IDIR/log/scan.log
   echo "Starting task processing..."
-  bundle exec sidekiq -C ./config/sidekiq-task.yml -r ./core.rb -d -L ./log/task.log
+  bundle exec sidekiq -C $IDIR/config/sidekiq-task.yml -r $IDIR/core.rb -d -L $IDIR/log/task.log
   echo "Starting puma..."
-  bundle exec puma -C ./config/puma.rb # listen on a public port
+  bundle exec puma -C $IDIR/config/puma.rb # listen on a public port
 }
 
 function stop_server {
 
-  for x in `ls ./tmp/pids/*.pid`; do
+  for x in `ls $IDIR/tmp/pids/*.pid`; do
     echo "Killing $x: `cat $x`"
     kill -KILL `cat $x`
   done
 
   echo "Cleaning up... "
-  rm -rf tmp/pids/*.pid
+  rm -rf $IDIR/tmp/pids/*.pid
 }
 
 function kill_all {
@@ -34,21 +49,21 @@ function kill_all {
 
 function status_server {
   # Puma
-  if [ -f ./tmp/pids/intrigue-puma.pid ]; then
+  if [ -f $IDIR/tmp/pids/intrigue-puma.pid ]; then
     echo "Puma running"
   else
     echo "Puma not running"
   fi
 
   # Sidekiq -scan
-  if [ -f ./tmp/pids/intrigue-sidekiq-scan.pid ]; then
+  if [ -f $IDIR/tmp/pids/intrigue-sidekiq-scan.pid ]; then
     echo "Sidekiq scan process running"
   else
     echo "Sidekiq scan process not running"
   fi
 
   # Sidekiq -task
-  if [ -f ./tmp/pids/intrigue-sidekiq-task.pid ]; then
+  if [ -f $IDIR/tmp/pids/intrigue-sidekiq-task.pid ]; then
     echo "Sidekiq task process running"
   else
     echo "Sidekiq task process not running"
