@@ -51,6 +51,9 @@ class IntrigueApp < Sinatra::Base
         entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => entity_id)
       else
         entity_type = @params["entity_type"]
+        return unless entity_type
+
+        # TODO - validate that it's a valid entity type before we eval
 
         klass = eval("Intrigue::Entity::#{entity_type}")
         entity_name = "#{@params["attrib_name"]}"
