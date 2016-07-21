@@ -29,13 +29,16 @@ class SearchOpencorporates < BaseTask
     o = Opencorporates::Api.new.search entity_name
 
     o["results"]["companies"].each do |result|
+
+      next unless result["company"]
+
       _create_entity "Organization", {
-        :name => result["company"]["name"],
-        :uri => result["company"]["opencorporates_url"]
+        "name" => result["company"]["name"],
+        "uri" => result["company"]["opencorporates_url"],
+        "opencorporates_data" => result
       }
+
     end
-
-
   end
 
 end
