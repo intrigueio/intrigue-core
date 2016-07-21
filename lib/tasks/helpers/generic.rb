@@ -53,10 +53,13 @@ module Generic
   # This is a helper method, use this to create entities from within tasks
   #
   def _create_entity(type, hash)
+
     # Clean up in case there are encoding issues
     hash = _encode_hash(hash)
 
-    # First check to see if we have the entity
+    # Now check fo r santity
+    raise "INVALID ENTITY!" unless hash["name"]
+
     short_name = _encode_string(hash["name"][0,199])
     entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:name => short_name)
 
