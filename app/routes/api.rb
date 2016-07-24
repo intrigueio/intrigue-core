@@ -44,12 +44,17 @@ class IntrigueApp < Sinatra::Base
 
       # create the project unless it exists
       if project
-
         project.destroy!
 
         # recreate the default project if we've removed
         if project_name == "Default"
           Intrigue::Model::Project.create(:name => "Default")
+        end
+
+        # move us to the default project if we removed our current_project
+        if project_name == session["project_name"]
+          session["project_name"] = "Default"
+          response.set_cookie "project_name", :value => "Default"
         end
 
       end
