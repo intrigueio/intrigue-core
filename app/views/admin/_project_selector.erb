@@ -8,9 +8,15 @@ function set_project( name )
 
 function delete_project( name )
 {
-  alert("Are you sure?");
-  document.project_delete_form.project_name.value = name;
-  document.project_delete_form.submit() ;
+  var check = confirm('Are you sure?');
+  if (check == true) {
+      document.project_delete_form.project_name.value = name;
+      document.project_delete_form.submit();
+      return true;
+  }
+  else {
+      return false;
+  }
 }
 -->
 </script>
