@@ -37,6 +37,26 @@ class IntrigueApp < Sinatra::Base
       redirect '/v1/scan' # handy if we're in a browser
     end
 
+    # save the config
+    post '/project/delete' do
+      project_name = "#{params["project_name"]}"
+      project = Intrigue::Model::Project.first(:name => project_name)
+
+      # create the project unless it exists
+      if project
+
+        project.destroy!
+
+        # recreate the default project if we've removed
+        if project_name == "Default"
+          Intrigue::Model::Project.create(:name => "Default")
+        end
+
+      end
+
+      redirect '/v1/' # handy if we're in a browser
+    end
+
 
     ###          ###
     ### ENTITIES ###
@@ -84,7 +104,7 @@ class IntrigueApp < Sinatra::Base
       attributes = payload["entity"].merge("type" => "Intrigue::Entity::#{type}")
 
       # get the details from the payload
-      project_name = payload["project_name"]
+      project_name = payload["project_name"] || "Default"
       task_name = payload["task"]
       options = payload["options"]
       handlers = payload["handlers"]
@@ -274,7 +294,7 @@ class IntrigueApp < Sinatra::Base
     get '/scan_results/:id/log' do
       @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
       return unless @result
-      
+
       {:data => @result.log}.to_json
     end
 

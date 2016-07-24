@@ -1,9 +1,16 @@
 <script language="JavaScript" type="text/javascript">
 <!--
-function set_project ( name )
+function set_project( name )
 {
-  document.project_form.project_name.value = name;
-  document.project_form.submit() ;
+  document.project_select_form.project_name.value = name;
+  document.project_select_form.submit() ;
+}
+
+function delete_project( name )
+{
+  alert("Are you sure?");
+  document.project_delete_form.project_name.value = name;
+  document.project_delete_form.submit() ;
 }
 -->
 </script>
@@ -13,15 +20,17 @@ Select a project:
 <ul>
 <% Intrigue::Model::Project.all.each do |proj| %>
   <li>
-    <a href="javascript:set_project('<%= proj.name %>')"> <%= h proj.name %></a> (<%=proj.entity_count%> entities)
+    <a href="javascript:set_project('<%= proj.name %>')"> <%= h proj.name %></a> (<%=proj.entity_count%> entities) <a href="javascript:delete_project('<%= proj.name %>')">[x]</a>
   </li>
 <% end %>
 </ul>
 </p>
-<form name="project_form" action="/v1/project" method="post">
+<form name="project_select_form" action="/v1/project" method="post">
   <div class="form-group">
   <label for="project_name" class="control-label">New Project</label><br/>
     <input type="text" class="form-control input-sm" id="project_name" name="project_name" style="width: 150px;" value="<%= h Intrigue::Model::Project.all(:name => @project_name).first.name %>" />
     <input class="btn btn-primary" type="submit" value="Submit" />
   </div>
 </form>
+
+<form name="project_delete_form" action="/v1/project/delete" method="post"><input type="hidden" id="project_name" name="project_name"/></form>
