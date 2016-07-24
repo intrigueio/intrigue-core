@@ -1,49 +1,10 @@
 <h3>Scan</h3>
 <div class="row">
-<div class="col-sm-5">
-  <form class="form-horizontal" target="_self" method="post" action="/v1/interactive/scan">
-    <div class="form-group">
-      <label for="scan_type" class="col-xs-4 control-label">Scan Type</label>
-      <div class="col-xs-6">
-      <select class="form-control input-sm" name="scan_type" id="scan_type">
-        <option value="discovery" selected="selected"> Discovery Scan </option>
-        <option value="dns_subdomain" > DNS Subdomain Scan </option>
-        <option value="quick_dns_subdomain" > Quick DNS Subdomain Scan </option>
-      </select>
-      </div>
-    </div>
-    Configuration:
-    <div class="form-group">
-      <label for="entity_type" class="col-xs-4 control-label">Entity Type</label>
-      <div class="col-xs-6">
-        <select class="form-control input-sm" id="entity_type" name="entity_type">
-         <%["DnsRecord","IpAddress","NetBlock","String", "Uri"].each do |x|  value = x %> <option <%= "selected=selected" if value == "DnsRecord  "%>> <%=value%></option> <% end %>
-        </select>
-      </div>
-      <label for="attrib_name" class="col-xs-4 control-label">Entity Name</label>
-      <div class="col-xs-6">
-        <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name" value="intrigue.io">
-      </div>
-    </div>
-    Advanced:
-    <div class="form-group">
-      <label for="scan_depth" class="col-xs-4 control-label">Depth</label>
-      <div class="col-xs-6">
-        <input type="text" class="form-control input-sm" id="scan_depth" name="scan_depth" value="4">
-      </div>
-      <label for="scan_filter_strings" class="col-xs-4 control-label">Filter Strings</label>
-      <div class="col-xs-6">
-        <input type="text" class="form-control input-sm" id="scan_filter_strings" name="scan_filter_strings" value"">
-      </div>
-    </div>
-    <hr></hr>
-    <input class="btn btn-primary" type="submit" value="Scan">
-  </form>
-  </div>
+  <%= erb :'scans/_scan_runner' %>
   <div id="metadata" class="col-sm-7"></div>
 </div>
 <br/>
-<h4> Scans </h4>
+<h4> Scan Results </h4>
 <ul>
   <% @scan_results.each do |x| %> <li><a href="/v1/scan_results/<%=x.id%>"><%= x.scan_type %> on <%= x.base_entity %> (<%=x.entity_count%>)</a></li><% end %>
 </ul>

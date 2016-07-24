@@ -203,6 +203,15 @@ class IntrigueApp < Sinatra::Base
     ### SCANS ###
     ###       ###
 
+    # Export All Tasks
+    get '/scans.json/?' do
+      scans = []
+       Intrigue::ScanFactory.list.each do |s|
+          scans << s.send(:new).metadata
+      end
+    scans.to_json
+    end
+
     # Show the results in a JSON
     get '/scan_results/:id.json/?' do
       content_type 'application/json'

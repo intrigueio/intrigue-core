@@ -17,7 +17,7 @@ class IntrigueApp < Sinatra::Base
 
       # Always get us a list of tasks and names so we can display them
       @tasks = Intrigue::TaskFactory.list.map{|x| x.send(:new)}
-      @task_names = @tasks.map{|t| t.metadata[:pretty_name]}.sort
+      #task_names = @tasks.map{|t| t.metadata[:pretty_name]}.sort
 
       # get a list of task_results
       ### TODO - figure out how to filter this based on a nil association

@@ -8,7 +8,7 @@ require_relative 'initialize/string'
 ####
 require_relative 'task_factory'
 
-### Mixins with common task functionality 
+### Mixins with common task functionality
 require_relative 'tasks/helpers/generic'
 require_relative 'tasks/helpers/lists'
 require_relative 'tasks/helpers/parse'
@@ -43,6 +43,8 @@ Dir["#{entities_folder}/*.rb"].each {|f| require_relative f}
 ####
 # Scan Libraries
 ####
+require_relative 'scan_factory'
+
 require_relative 'scans/base'
 scanners_folder = File.expand_path('../scans', __FILE__) # get absolute directory
 Dir["#{scanners_folder}/*.rb"].each {|f| require_relative f}

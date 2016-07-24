@@ -6,6 +6,10 @@ module Scanner
 
     include Intrigue::Task::Helper
 
+    def self.inherited(base)
+      ScanFactory.register(base)
+    end
+
     def perform(id)
 
       @scan_result = Intrigue::Model::ScanResult.get(id)
