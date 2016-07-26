@@ -23,9 +23,6 @@
       <label for="entity_type" class="col-xs-4 control-label">Entity Type</label>
       <div class="col-xs-6">
         <select class="form-control input-sm" id="entity_type" name="entity_type">
-
-         <%["DnsRecord","IpAddress","NetBlock","String", "Uri"].each do |x|  value = x %> <option <%= "selected=selected" if value == "DnsRecord  "%>> <%=value%></option> <% end %>
-
         </select>
       </div>
       <label for="attrib_name" class="col-xs-4 control-label">Entity Name</label>
@@ -49,4 +46,4 @@
   </form>
   </div>
 
-  <!--<script src="/js/app.js"></script>-->
+  <script src="/js/scan.js"></script>

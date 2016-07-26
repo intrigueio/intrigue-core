@@ -9,7 +9,7 @@ class DiscoveryScan < Intrigue::Scanner::Base
       :authors => ["jcran"],
       :description => "Discovery Scan",
       :references => [],
-      :allowed_types => ["DnsRecord", "IpAddress", "NetBlock", "String", "Uri"],
+      :allowed_types => ["DnsRecord", "IpAddress", "NetBlock","String"],
       :example_entities => [
         {"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}
       ],
