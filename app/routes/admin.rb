@@ -33,6 +33,7 @@ class IntrigueApp < Sinatra::Base
 
       # get config
       get '/config/?' do
+        @global_config = Intrigue::Config::GlobalConfig.new
         erb :"admin/config"
       end
 

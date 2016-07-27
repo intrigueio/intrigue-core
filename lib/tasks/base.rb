@@ -4,7 +4,7 @@ module Intrigue
 class BaseTask
   include Intrigue::Task::Generic
   include Sidekiq::Worker
-  sidekiq_options :queue => "#{$intrigue_config.config["intrigue_queues"]["task_queue"]}", :backtrace => true
+  sidekiq_options :queue => "#{Intrigue::Config::GlobalConfig.new.config["intrigue_queues"]["task_queue"]}", :backtrace => true
 
   def self.inherited(base)
     TaskFactory.register(base)

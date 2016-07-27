@@ -109,10 +109,16 @@ module Generic
 
   def _get_global_config(key)
     begin
-      $intrigue_config.config["intrigue_global_module_config"][key]["value"]
+      value = Intrigue::Config::GlobalConfig.new.config["intrigue_global_module_config"][key]["value"]
+      if value && value != ""
+        _log "Using key ending in #{value[-3..-1]}"
+      else
+        _log "API Key (#{key}) is blank or missing. Check the admin tab!"
+      end
     rescue NoMethodError => e
       puts "Error, invalid config key requested (#{key}) #{e}"
     end
+  value
   end
 
   ###

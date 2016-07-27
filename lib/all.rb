@@ -21,8 +21,9 @@ tasks_folder = File.expand_path('../tasks', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
 # And check to see if there are any specified load paths
-if $intrigue_config.config["intrigue_task_load_paths"]
-  $intrigue_config.config["intrigue_task_load_paths"].each do |load_path|
+global_config = Intrigue::Config::GlobalConfig.new
+if global_config.config["intrigue_task_load_paths"]
+  global_config.config["intrigue_task_load_paths"].each do |load_path|
     load_path = "#{tasks_folder}/#{load_path}" unless load_path[0] == "/"
     Dir["#{load_path}/*.rb"].each do |file|
       puts "Adding file from load path (#{load_path}: #{file}"

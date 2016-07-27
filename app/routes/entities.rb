@@ -22,6 +22,7 @@ class IntrigueApp < Sinatra::Base
 
    get '/entities/:id' do
       @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
+      return "No such entity in this project" unless @entity
 
       @tasks = Intrigue::TaskFactory.list.map{|x| x.send(:new)}
       @task_names = @tasks.map{|t| t.metadata[:pretty_name]}.sort

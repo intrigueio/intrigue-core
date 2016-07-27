@@ -11,8 +11,13 @@ class IntrigueApp < Sinatra::Base
       # Update our config if one of the fields have been changed. Note that we use ***
       # as a way to mask out the full details in the view. If we have one that doesn't lead with ***
       # go ahead and update it
-      params.each {|k,v| $intrigue_config.config["intrigue_global_module_config"][k]["value"] = v unless v =~ /^\*\*\*/ }
-      $intrigue_config.save
+      global_config = Intrigue::Config::GlobalConfig.new
+      params.each do |k,v|
+        global_config.config["intrigue_global_module_config"][k]["value"] = v unless v =~ /^\*\*\*/
+      end
+      global_config.save
+
+
 
       redirect '/v1/admin/config'  # handy if we're in a browser
     end

@@ -24,7 +24,6 @@ require_relative 'lib/config/global_config'
 
 $intrigue_global_timeout = 9000
 $intrigue_basedir = File.dirname(__FILE__)
-$intrigue_config = Intrigue::Config::GlobalConfig.new
 
 #
 # Simple configuration check to ensure we have configs in place
@@ -104,7 +103,7 @@ class IntrigueApp < Sinatra::Base
   ### (Very) Simple Auth
   ###
   use Rack::Auth::Basic, "Restricted" do |username, password|
-      [username, password] == ['intrigue', $intrigue_config.config["password"] ]
+      [username, password] == ['intrigue', Intrigue::Config::GlobalConfig.new.config["password"] ]
   end
 
   before do
