@@ -8,12 +8,12 @@
       </div>
     </div>
     <ul class="nav navbar-nav">
-      <li><a href="/v1/">[<%=h Intrigue::Model::Project.all(:name => @project_name).first.name%>]</a></li>
-      <li><a href="/v1/task?page=1">Task</a></li>
-      <li><a href="/v1/scan?page=1">Scan</a></li>
-      <li><a href="/v1/entities?page=1">Entities</a></li>
-      <li><a href="/v1/admin">Admin</a></li>
-      <li><a href="/v1/news">News</a></li>
+      <li><a href="/v1/">[<%=@project_name || "Default"%>]</a></li>
+      <li><a href="/v1/<%=@project_name || "Default"%>/task?page=1">Task</a></li>
+      <li><a href="/v1/<%=@project_name || "Default"%>/scan?page=1">Scan</a></li>
+      <li><a href="/v1/<%=@project_name || "Default"%>/entities?page=1">Entities</a></li>
+      <li><a href="/v1/<%=@project_name || "Default"%>/admin">Admin</a></li>
+      <li><a href="/v1/<%=@project_name || "Default"%>/news">News</a></li>
     </ul>
   </div>
 </nav>

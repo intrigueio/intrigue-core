@@ -1,7 +1,7 @@
 <h3>Scan Result</h3>
-<p><a href="/v1/scan_results/<%=@result.id%>/profile">(Profile View)</a></p>
+<p><a href="/v1/<%=@project_name%>/scan_results/<%=@result.id%>/profile">(Profile View)</a></p>
 <p>Total Tasks: <%=@result.task_results.count%></p>
-<p>Entity: <a href=/v1/entities/<%=@result.base_entity.id%>><%= h "#{@result.base_entity.type_string} #{@result.base_entity.name}"%></a></p>
+<p>Entity: <a href="/v1/<%=@project_name%>/entities/<%=@result.base_entity.id%>"><%= h "#{@result.base_entity.type_string} #{@result.base_entity.name}"%></a></p>
 <p>Complete: <%= @result.complete %></p>
 Export:
 <ul>
@@ -14,7 +14,7 @@ Export:
   <ul>
     <% @result.entities.each do |e| %>
     <li>
-      <a href="/v1/entities/<%=h e.id%>">
+      <a href="/v1/<%=@project_name%>/entities/<%=h e.id%>">
         <%= h e.type_string %>: <%= h e.name %>
       </a>
       <%= "<a target=\'_blank\' href=\'#{h e.details["uri"]}\'>[link]</a>" if e.details["uri"] %>
@@ -25,7 +25,7 @@ Export:
 <p>Task Runs:</p>
   <ul>
   <% @result.task_results.each do |x| %>
-    <li> <a href="/v1/task_results/<%=x.id%>"> <%= h x.task_name %> <%= h "[#{x.base_entity}]" %></a></li>
+    <li> <a href="/v1/<%=@project_name%>/task_results/<%=x.id%>"> <%= h x.task_name %> <%= h "[#{x.base_entity}]" %></a></li>
   <% end %>
   </ul>
 

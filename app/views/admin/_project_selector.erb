@@ -2,7 +2,7 @@
 <!--
 function set_project( name )
 {
-  document.project_select_form.project_name.value = name;
+  document.project_select_form.project.value = name;
   document.project_select_form.submit() ;
 }
 
@@ -10,7 +10,7 @@ function delete_project( name )
 {
   var check = confirm('Are you sure?');
   if (check == true) {
-      document.project_delete_form.project_name.value = name;
+      document.project_delete_form.project.value = name;
       document.project_delete_form.submit();
       return true;
   }
@@ -33,10 +33,10 @@ Select a project:
 </p>
 <form name="project_select_form" action="/v1/project" method="post">
   <div class="form-group">
-  <label for="project_name" class="control-label">New Project</label><br/>
-    <input type="text" class="form-control input-sm" id="project_name" name="project_name" style="width: 150px;" value="<%= h Intrigue::Model::Project.all(:name => @project_name).first.name %>" />
+  <label for="project" class="control-label">New Project</label><br/>
+    <input type="text" class="form-control input-sm" id="project" name="project" style="width: 150px;" value="<%= h Intrigue::Model::Project.all(:name => @project_name || "Default").first.name %>" />
     <input class="btn btn-primary" type="submit" value="Submit" />
   </div>
 </form>
 
-<form name="project_delete_form" action="/v1/project/delete" method="post"><input type="hidden" id="project_name" name="project_name"/></form>
+<form name="project_delete_form" action="/v1/project/delete" method="post"><input type="hidden" id="project" name="project"/></form>

@@ -2,97 +2,137 @@ class IntrigueApp < Sinatra::Base
   namespace '/v1' do
 
     ###               ###
-    ### System MGMT   ###
+    ### System Mgmt   ###
     ###               ###
 
     # save the config
-    post '/system' do
+    post '/:project/system' do
+      @project_name = params[:project]
 
       # Update our config if one of the fields have been changed. Note that we use ***
       # as a way to mask out the full details in the view. If we have one that doesn't lead with ***
       # go ahead and update it
       global_config = Intrigue::Config::GlobalConfig.new
       params.each do |k,v|
+        # skip unless we already know about this config setting, helps us avoid
+        # other parameters sent to this page (splat, project, etc)
+        next unless global_config.config["intrigue_global_module_config"][k]
+        puts "k: #{k}"
+        puts "v: #{v}"
         global_config.config["intrigue_global_module_config"][k]["value"] = v unless v =~ /^\*\*\*/
       end
       global_config.save
 
-
-
-      redirect '/v1/admin/config'  # handy if we're in a browser
+      redirect "/v1/#{@project_name}/"  # handy if we're in a browser
     end
 
     ###                ###
-    ### Project MGMT   ###
+    ### Project Mgmt   ###
     ###                ###
 
     # save the config
     post '/project' do
-      project_name = "#{params["project_name"]}"
+      @project_name = params[:project]
 
       # create the project unless it exists
-      unless Intrigue::Model::Project.first(:name => project_name)
-        Intrigue::Model::Project.create(:name => project_name)
+      unless Intrigue::Model::Project.first(:name => @project_name)
+        Intrigue::Model::Project.create(:name => @project_name)
       end
 
       # set the current session variable
-      session["project_name"] = project_name
-      response.set_cookie "project_name", :value => project_name
+      #session["project_name"] = project_name
+      #response.set_cookie "project_name", :value => project_name
 
-      redirect '/v1/scan' # handy if we're in a browser
+      redirect "/v1/#{@project_name}/scan" # handy if we're in a browser
     end
 
     # save the config
     post '/project/delete' do
-      project_name = "#{params["project_name"]}"
-      project = Intrigue::Model::Project.first(:name => project_name)
+      @project_name = params[:project]
+      project = Intrigue::Model::Project.first(:name => @project_name)
 
       # create the project unless it exists
       if project
         project.destroy!
 
         # recreate the default project if we've removed
-        if project_name == "Default"
+        if @project_name == "Default"
           Intrigue::Model::Project.create(:name => "Default")
         end
 
         # move us to the default project if we removed our current_project
-        if project_name == session["project_name"]
-          session["project_name"] = "Default"
-          response.set_cookie "project_name", :value => "Default"
-        end
+        #if @project_name == session["project_name"]
+        #  session["project_name"] = "Default"
+        #  response.set_cookie "project_name", :value => "Default"
+        #end
 
       end
 
       redirect '/v1/' # handy if we're in a browser
     end
 
-
-    ###          ###
-    ### ENTITIES ###
-    ###          ###
+    ###                                  ###
+    ### System-Level Informational Calls ###
+    ###                                  ###
 
     # Return a JSON array of all entity type
     get '/entity_types.json' do
+      content_type 'application/json'
       Intrigue::Model::Entity.descendants.map {|x| x.new.type_string }.to_json
     end
 
-    get '/entities/:id.csv' do
+    # Export All Scan Type Info
+    get '/scans.json/?' do
+      content_type 'application/json'
+      scans = []
+       Intrigue::ScanFactory.list.each do |s|
+          scans << s.send(:new).metadata
+      end
+    scans.to_json
+    end
+
+    # Export All Tasks
+    get '/tasks.json/?' do
+      content_type 'application/json'
+      tasks = []
+       Intrigue::TaskFactory.list.each do |t|
+          tasks << t.send(:new).metadata
+      end
+    tasks.to_json
+    end
+
+    # Export a single task
+    get '/tasks/:id.json/?' do
+      content_type 'application/json'
+      task_name = params[:id]
+      Intrigue::TaskFactory.create_by_name(task_name).metadata.to_json
+    end
+
+    ###                      ###
+    ### Per-Project Entities ###
+    ###                      ###
+
+    get '/:project/entities/:id.csv' do
+      content_type 'text/plain'
+      @project_name = params[:project]
       @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
       @entity.export_csv
     end
 
-    get '/entities/:id.json' do
+    get '/:project/entities/:id.json' do
+      content_type 'application/json'
+      @project_name = params[:project]
       @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
       @entity.export_json
     end
 
-    ###       ###
-    ### TASKS ###
-    ###       ###
+    ###                          ###
+    ### Per-Project Task Results ###
+    ###                          ###
 
     # Create a task result from a json request
-    post '/task_results/?' do
+    post '/:project/task_results/?' do
+      @project_name = params[:project]
 
       # What we receive should look like this:
       #
@@ -114,12 +154,11 @@ class IntrigueApp < Sinatra::Base
       attributes = payload["entity"].merge("type" => "Intrigue::Entity::#{type}")
 
       # get the details from the payload
-      project_name = payload["project_name"] || "Default"
       task_name = payload["task"]
       options = payload["options"]
       handlers = payload["handlers"]
 
-      project = Intrigue::Model::Project.get(:name => project_name)
+      project = Intrigue::Model::Project.get(:name => @project_name)
       entity = Intrigue::Model::Entity.create(attributes.merge(:project => project))
       entity.save
 
@@ -132,7 +171,9 @@ class IntrigueApp < Sinatra::Base
     end
 
     # Accept the results of a task run
-    post '/task_results/:id/?' do
+    post '/:project/task_results/:id/?' do
+      raise "Broken?"
+      @project_name = params[:project]
       # Retrieve the request's body and parse it as JSON
       result = JSON.parse(request.body.read)
       # Do something with event_json
@@ -142,34 +183,40 @@ class IntrigueApp < Sinatra::Base
     end
 
     # Export All task results
-    get '/task_results.json/?' do
+    get '/:project/task_results.json/?' do
+      @project_name = params[:project]
       raise "Not implemented"
     end
 
     # Show the results in a CSV format
-    get '/task_results/:id.csv/?' do
+    get '/:project/task_results/:id.csv/?' do
       content_type 'text/plain'
+      @project_name = params[:project]
+
       @task_result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       @task_result.export_csv
     end
 
     # Show the results in a CSV format
-    get '/task_results/:id.tsv/?' do
+    get '/:project/task_results/:id.tsv/?' do
       content_type 'text/plain'
+      @project_name = params[:project]
       @task_result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       @task_result.export_tsv
     end
 
     # Show the results in a JSON format
-    get '/task_results/:id.json/?' do
+    get '/:project/task_results/:id.json/?' do
       content_type 'application/json'
+      @project_name = params[:project]
       @result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       @result.export_json if @result
     end
 
 
     # Determine if the task run is complete
-    get '/task_results/:id/complete/?' do
+    get '/:project/task_results/:id/complete/?' do
+      @project_name = params[:project]
       # Get the task result and return unless it's false
       x = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       return false unless x
@@ -182,65 +229,47 @@ class IntrigueApp < Sinatra::Base
     end
 
     # Get the task log
-    get '/task_results/:id/log/?' do
+    get '/:project/task_results/:id/log/?' do
+      content_type 'application/json'
+      @project_name = params[:project]
       @result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       return unless @result
 
       {:data => @result.log}.to_json
     end
 
-    # Export All Tasks
-    get '/tasks.json/?' do
-      tasks = []
-       Intrigue::TaskFactory.list.each do |t|
-          tasks << t.send(:new).metadata
-      end
-    tasks.to_json
-    end
-
-    # Export a single task
-    get '/tasks/:id.json/?' do
-      task_name = params[:id]
-      Intrigue::TaskFactory.create_by_name(task_name).metadata.to_json
-    end
-
-    ###       ###
-    ### SCANS ###
-    ###       ###
-
-    # Export All Tasks
-    get '/scans.json/?' do
-      scans = []
-       Intrigue::ScanFactory.list.each do |s|
-          scans << s.send(:new).metadata
-      end
-    scans.to_json
-    end
+    ###                          ###
+    ### Per-Project Scan Results ###
+    ###                          ###
 
     # Show the results in a JSON
-    get '/scan_results/:id.json/?' do
+    get '/:project/scan_results/:id.json/?' do
       content_type 'application/json'
+      @project_name = params[:project]
       @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
       @result.export_json if @result
     end
 
     # Show the results in a CSV
-    get '/scan_results/:id.csv/?' do
+    get '/:project/scan_results/:id.csv/?' do
       content_type 'text/plain'
+      @project_name = params[:project]
       @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
       @result.export_csv if @result
     end
 
     # Show the results in a graph format
-    get '/scan_results/:id/graph.csv/?' do
+    get '/:project/scan_results/:id/graph.csv/?' do
       content_type 'text/plain'
+      @project_name = params[:project]
       @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
       @result.export_graph_csv if @result
     end
 
     # Show the results in a graph format
-    get '/scan_results/:id/graph.gexf/?' do
+    get '/:project/scan_results/:id/graph.gexf/?' do
       content_type 'text/plain'
+      @project_name = params[:project]
       result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
       return unless result
 
@@ -256,7 +285,8 @@ class IntrigueApp < Sinatra::Base
     end
 
     # Determine if the scan run is complete
-    get '/scan_results/:id/complete' do
+    get '/:project/scan_results/:id/complete' do
+      @project_name = params[:project]
       result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
 
       # immediately return false unless we find the scan result
@@ -270,8 +300,8 @@ class IntrigueApp < Sinatra::Base
     end
 
     # Endpoint to start a task run programmatically
-    post '/scan_results/?' do
-
+    post '/:project/scan_results/?' do
+      @project_name = params[:project]
       scan_result_info = JSON.parse(request.body.read) if request.content_type == "application/json"
 
       project_name = scan_result_info["project_name"]
@@ -310,7 +340,9 @@ class IntrigueApp < Sinatra::Base
     end
 
     # Get the scan log
-    get '/scan_results/:id/log' do
+    get '/:project/scan_results/:id/log' do
+      content_type 'application/json'
+      @project_name = params[:project]
       @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
       return unless @result
 

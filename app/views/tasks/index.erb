@@ -6,15 +6,6 @@
 <br/>
 <h4>Tasks</h4>
 <ul>
-<% @task_results.each do |x| %> <li><a href="/v1/task_results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity %> </a></li><% end %>
+<% @task_results.each do |x| %> <li><a href="/v1/<%=@project_name%>/task_results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity %> </a></li><% end %>
 </ul>
-<%= @task_results.pager.to_html('/v1/task') %>
-
-<!--
-Available Task Details:
-<pre>
-  <% @tasks.each do |t| %>
-    <%= t.metadata.to_json %>
-  <% end %>
-</pre>
--->
+<%= @task_results.pager.to_html("/v1/#{@project_name}/task") %>

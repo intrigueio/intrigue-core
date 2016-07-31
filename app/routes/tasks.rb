@@ -3,7 +3,8 @@ class IntrigueApp < Sinatra::Base
   namespace '/v1' do
 
     # Kick off a task
-    get '/task/?' do
+    get '/:project/task/?' do
+      @project_name = params[:project]
       # if we receive an entity_id or a task_result_id, instanciate the object
       if params["entity_id"]
         @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params["entity_id"])
@@ -28,7 +29,8 @@ class IntrigueApp < Sinatra::Base
     end
 
     # Helper to construct the request to the API when the application is used interactively
-    post '/interactive/single/?' do
+    post '/:project/interactive/single/?' do
+      @project_name = params[:project]
 
       # get the task name
       task_name = "#{@params["task"]}"
@@ -87,12 +89,13 @@ class IntrigueApp < Sinatra::Base
       entity.task_results << task_result
       entity.save
 
-      redirect "/v1/task_results/#{task_result_id}"
+      redirect "/v1/#{@project_name}/task_results/#{task_result_id}"
     end
 
 
     # Show the results in a human readable format
-    get '/task_results/:id/?' do
+    get '/:project/task_results/:id/?' do
+      @project_name = params[:project]
 
       task_result_id = params[:id].to_i
 

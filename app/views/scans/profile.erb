@@ -1,39 +1,39 @@
 <h3>Profile</h3>
 <p>Total Tasks: <%=@result.task_results.count%></p>
-<p>Base Entity: <a href=/v1/entities/<%=@result.base_entity.id%>><%= h "#{@result.base_entity.type_string} #{@result.base_entity.name}"%></a></p>
+<p>Base Entity: <a href="/v1/<%=@project_name%>/entities/<%=@result.base_entity.id%>"><%= h "#{@result.base_entity.type_string} #{@result.base_entity.name}"%></a></p>
 <p>Complete: <%= @result.complete %></p>
 
 <p>People:</p>
 <ul>
   <% @persons.each do |e| %>
-  <li><a href="/v1/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
   <% end %>
 </ul>
 
 <p>Applications:</p>
 <ul>
   <% @applications.each do |e| %>
-  <li><a href="/v1/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
   <% end %>
 </ul>
 
 <p>Services:</p>
 <ul>
   <% @services.each do |e| %>
-  <li><a href="/v1/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
   <% end %>
 </ul>
 
 <p>Hosts:</p>
 <ul>
   <% @hosts.each do |e| %>
-  <li><a href="/v1/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
   <% end %>
 </ul>
 
 <p>Networks:</p>
 <ul>
   <% @networks.each do |e| %>
-  <li><a href="/v1/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
   <% end %>
 </ul>

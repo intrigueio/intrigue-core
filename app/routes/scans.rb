@@ -2,8 +2,8 @@ class IntrigueApp < Sinatra::Base
   namespace '/v1' do
 
     # Scan Webform
-    get '/scan/?' do
-      
+    get '/:project/scan/?' do
+      @project_name = params[:project]
       @scans =  Intrigue::ScanFactory.list.map{|x| x.send(:new)}
       @scan_results = Intrigue::Model::ScanResult.scope_by_project(@project_name).page(params[:page])
 
@@ -11,7 +11,8 @@ class IntrigueApp < Sinatra::Base
     end
 
     # Endpoint to start a task run from a webform
-    post '/interactive/scan' do
+    post '/:project/interactive/scan' do
+      @project_name = params[:project]
 
       # Collect the scan parameters
       scan_name = "#{@params["scan_type"]} on #{@params["attrib_name"]}"
@@ -67,14 +68,16 @@ class IntrigueApp < Sinatra::Base
     end
 
     # Show the results in a human readable format
-    get '/scan_results/:id/?' do
+    get '/:project/scan_results/:id/?' do
+      @project_name = params[:project]
       @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).get(params[:id])
       return "Unknown Scan Result" unless @result
       erb :'scans/scan_result'
     end
 
     # Show the results in a human readable format
-    get '/scan_results/:id/profile/?' do
+    get '/:project/scan_results/:id/profile/?' do
+      @project_name = params[:project]
       @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).get(params[:id])
 
       @persons  = []

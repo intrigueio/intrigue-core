@@ -108,7 +108,7 @@ class IntrigueApp < Sinatra::Base
 
   before do
     $intrigue_server_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
-    @project_name = session["project_name"] || "Default"
+    #@project_name = session["project_name"] || "Default"
     #puts "Project name: #{@project_name}"
   end
 
@@ -131,7 +131,8 @@ class IntrigueApp < Sinatra::Base
     end
 
     # NEWS!
-    get '/news/?' do
+    get '/:project/news/?' do
+      @project_name = params[:project]
       erb :news
     end
 

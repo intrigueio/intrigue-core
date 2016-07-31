@@ -3,7 +3,7 @@
 <p>Start: <%=@result.timestamp_start %> </p>
 <p>End: <%= @result.timestamp_end %> </p>
 <p>Elapsed (s): <%= @elapsed_time %> </p>
-<p>Entity: <a href=/v1/entities/<%=@result.base_entity.id if @result.base_entity %>><%= h "#{@result.base_entity}" %></a></p>
+<p>Entity: <a href="/v1/<%=@project_name%>/entities/<%=@result.base_entity.id if @result.base_entity %>"><%= h "#{@result.base_entity}" %></a></p>
 <p>Complete: <%= @result.complete %></p>
 Export:
 <ul>
@@ -13,14 +13,14 @@ Export:
 </ul>
 Entities:
 <div id="entities">
-  <p>[Getting the entities...]</p>
+  <p>[Gathering entities...]</p>
 </div>
 
 <script>
 // super hacky ajax
 function getEntities(id){
   //get the list of tasks and rewrite the task
-  $.getJSON(location.origin + "/v1/task_results/"+ id +".json", function(data) {
+  $.getJSON(location.origin + "/v1/<%=@project_name%>/task_results/"+ id +".json", function(data) {
     //console.log(data);
     $( "#entities" ).empty();
     // Set the values based on just this task's allowed type
@@ -29,7 +29,7 @@ function getEntities(id){
     $.each(data["entities"], function(id, hash) {
       type = hash["type"].split(':')[4];
       name = hash["name"];
-      entity_string += "<li><a href='/v1/entities/" + hash["id"] + "'> " + type + ": " + name + "</a> ";
+      entity_string += "<li><a href='/v1/<%=@project_name%>/entities/" + hash["id"] + "'> " + type + ": " + name + "</a> ";
       if ("uri" in hash["details"]){
         entity_string += ("<a target='_blank' href='" + hash["details"]["uri"] + "'>[link]</a>");
       };

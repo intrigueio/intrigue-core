@@ -3,15 +3,15 @@ module Intrigue
     module Helper
 
       def task_result_uri(id)
-        "/v1/task_results/#{id}"
+        "/v1/#{@project_name}/task_results/#{id}"
       end
 
       def scan_result_uri(id)
-        "/v1/scan_results/#{id}"
+        "/v1/#{@project_name}/scan_results/#{id}"
       end
 
       def entity_uri(id)
-        "/v1/entities/#{id}"
+        "/v1/#{@project_name}/entities/#{id}"
       end
 
       ###

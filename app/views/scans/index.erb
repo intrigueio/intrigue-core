@@ -6,6 +6,6 @@
 <br/>
 <h4> Scan Results </h4>
 <ul>
-  <% @scan_results.each do |x| %> <li><a href="/v1/scan_results/<%=x.id%>"><%= x.scan_type %> on <%= x.base_entity %> (<%=x.entity_count%>)</a></li><% end %>
+  <% @scan_results.each do |x| %> <li><a href="/v1/<%=@project_name%>/scan_results/<%=x.id%>"><%= x.scan_type %> on <%= x.base_entity %> (<%=x.entity_count%>)</a></li><% end %>
 </ul>
-<%= @scan_results.pager.to_html('/v1/scan') %>
+<%= @scan_results.pager.to_html("/v1/#{@project_name}/scan") %>

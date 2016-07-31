@@ -1,6 +1,6 @@
-<h3>Configuration</h3>
+<h3>Global (All Project) Configuration</h3>
 
-<form action="/v1/system" method="post">
+<form action="/v1/<%=@project_name%>/system" method="post">
 <table class="table table-striped table-bordered">
 <tbody>
 <% @global_config.config["intrigue_global_module_config"].each do |k,v| %>
