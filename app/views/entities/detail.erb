@@ -1,7 +1,7 @@
 <!-- name -->
 <h3>
-<% if @entity.type == Intrigue::Entity::Uri %>
- <p><a href="<%= h @entity.name %>"><%= h @entity.name %></a><br/></p>
+<% if @entity.details["uri"] %>
+ <p><a href="<%= h @entity.details["uri"] %>"><%= h @entity.name %></a><br/></p>
 <% else %>
    <%= h @entity.name %>
 <% end %>
