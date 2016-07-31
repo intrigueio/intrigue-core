@@ -24,8 +24,8 @@ class UriSpider < BaseTask
         {:name => "extract_uris", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "extract_dns_records", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "extract_patterns", :type => "String", :regex => "alpha_numeric_list", :default => "*" },
-        {:name => "extract_file_metadata", :type => "Boolean", :regex => "boolean", :default => true }
-        #{:name => "user_agent",  :type => "String",  :regex => "alpha_numeric", :default => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36"}
+        {:name => "extract_file_metadata", :type => "Boolean", :regex => "boolean", :default => true },
+        {:name => "user_agent",  :type => "String",  :regex => "alpha_numeric", :default => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36"}
       ],
       :created_types =>  ["DnsRecord", "EmailAddress", "File", "Info", "Person", "PhoneNumber", "SoftwarePackage"]
     }
@@ -40,7 +40,7 @@ class UriSpider < BaseTask
     # Scanner options
     @opt_threads = _get_option("threads").to_i
     @opt_max_pages = _get_option("max_pages").to_i
-    #@opt_user_agent = _get_option "user_agent"
+    @opt_user_agent = _get_option "user_agent"
     @opt_extract_uris = _get_option "extract_uris" # create an object for each page
     @opt_extract_dns_records = _get_option "extract_dns_records" # create an object for each dns_record
     @opt_extract_file_metadata = _get_option "extract_file_metadata" # create a Uri object for each page
@@ -55,9 +55,14 @@ class UriSpider < BaseTask
     _log "Crawling: #{uri}"
     dns_records = []
 
+    Typhoeus::Config.user_agent = @opt_user_agent
+
     Arachnid.new(uri).crawl({
         :threads => @opt_threads,
-        :max_urls => @opt_max_pages}) do |response|
+        :max_urls => @opt_max_pages,
+        :user_agent => @opt_user_agent
+      }) do |response|
+
 
       _log "Processing #{response.effective_url}"
 
@@ -82,7 +87,7 @@ class UriSpider < BaseTask
       # Create an entity for this host
       if @opt_extract_dns_records
 
-        _log "Extracting dns records from #{response.effective_url}"
+        _log "Extracting DNS records from #{response.effective_url}"
         URI.extract(page_body, ["https","http"]) do |link|
           begin
             # Collect the host
@@ -90,7 +95,6 @@ class UriSpider < BaseTask
 
             # if we have a valid host
             if host
-
               # check to see if host matches a pattern we'll allow
               pattern_allowed = false
               if @opt_extract_patterns.include? "*"

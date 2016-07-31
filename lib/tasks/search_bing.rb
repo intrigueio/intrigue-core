@@ -99,7 +99,7 @@ class SearchBingTask < BaseTask
           # Grab all matches
           matches = result[:Description].scan(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/i)
           matches.each do |match|
-            _create_entity("EmailAddress", { "name" => "#{match[0]}" })
+            _create_entity("EmailAddress", { "name" => "#{match}" })
           end
         end
 
