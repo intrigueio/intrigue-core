@@ -38,6 +38,8 @@ class SearchGithubCode < BaseTask
 
       response = _get_json_response(search_uri)
       items = response["items"]
+      return unless items
+      
       max_item_count = [items.count,_get_option("max_item_count")].min
 
       _log "Processing #{max_item_count} results"
