@@ -7,7 +7,7 @@ class SearchGithub < BaseTask
       :name => "search_github",
       :pretty_name => "Search Github",
       :authors => ["jcran"],
-      :description => "Uses the Github API to search for information",
+      :description => "Uses the Github API to search for the existence of a string in repository and user names",
       :references => [],
       :allowed_types => ["Organization","String"],
       :example_entities => [
@@ -15,7 +15,7 @@ class SearchGithub < BaseTask
       :allowed_options => [
         {:name => "max_item_count", :type => "Integer", :regex => "integer", :default => 20 },
       ],
-      :created_types => ["GithubRepository"]
+      :created_types => ["GithubRepository","GithubUser"]
     }
   end
 
