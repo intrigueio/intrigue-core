@@ -5,6 +5,7 @@ class IntrigueApp < Sinatra::Base
     # Kick off a task
     get '/:project/task/?' do
       @project_name = params[:project]
+      @page = params["page"]
       # if we receive an entity_id or a task_result_id, instanciate the object
       if params["entity_id"]
         @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params["entity_id"])
@@ -23,7 +24,7 @@ class IntrigueApp < Sinatra::Base
       # get a list of task_results
       ### TODO - figure out how to filter this based on a nil association
       # http://stackoverflow.com/questions/7615752/datamapper-filter-records-by-association-count
-      @task_results = Intrigue::Model::TaskResult.scope_by_project(@project_name).all(:scan_results => nil).page(params[:page])
+      @task_results = Intrigue::Model::TaskResult.scope_by_project(@project_name).all(:scan_results => nil)
 
       erb :'tasks/index'
     end

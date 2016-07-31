@@ -4,8 +4,9 @@ class IntrigueApp < Sinatra::Base
     # Scan Webform
     get '/:project/scan/?' do
       @project_name = params[:project]
+      @page = params[:page]
       @scans =  Intrigue::ScanFactory.list.map{|x| x.send(:new)}
-      @scan_results = Intrigue::Model::ScanResult.scope_by_project(@project_name).page(params[:page])
+      @scan_results = Intrigue::Model::ScanResult.scope_by_project(@project_name)
 
       erb :'scans/index'
     end

@@ -6,6 +6,6 @@
 <br/>
 <h4>Tasks</h4>
 <ul>
-<% @task_results.each do |x| %> <li><a href="/v1/<%=@project_name%>/task_results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity %> </a></li><% end %>
+<% @task_results.page(@page, :per_page => 10).each do |x| %> <li><a href="/v1/<%=@project_name%>/task_results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity %> </a></li><% end %>
 </ul>
-<%= @task_results.pager.to_html("/v1/#{@project_name}/task") %>
+<%= @task_results.page(@page, :per_page => 10).pager.to_html("/v1/#{@project_name}/task") %>

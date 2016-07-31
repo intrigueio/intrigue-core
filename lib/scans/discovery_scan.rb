@@ -181,6 +181,7 @@ class DiscoveryScan < Intrigue::Scanner::Base
         entity.name =~ /^.*hubspot.com$/                   ||
         entity.name =~ /^.*instagram.com$/                 ||
         entity.name =~ /^.*metric.gstatic.com$/            ||
+        entity.name =~ /^.*mandrillapp.com$/               ||
         entity.name =~ /^.*marketo.com$/                   ||
         entity.name =~ /^.*microsoft.com$/                 ||
         entity.name =~ /^.*oclc.org$/                      ||
