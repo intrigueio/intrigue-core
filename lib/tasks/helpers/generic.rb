@@ -41,10 +41,12 @@ module Generic
   ###
 
   def _encode_string(string)
+    return string unless string.kind_of? String
     string.encode("UTF-8", :undef => :replace, :invalid => :replace, :replace => "?")
   end
 
   def _encode_hash(hash)
+    return hash unless hash.kind_of? Hash
     hash.each {|k,v| hash[k] = _encode_string(v) if v.kind_of? String }
   hash
   end
