@@ -36,6 +36,8 @@ Now that you have a working environment, browse to the web interface.
 
 To use the web interface, browse to http://127.0.0.1:7777
 
+Please note that if you are using `docker-machine` to start the Intrigue API, the URL that you would need to access the Intrigue UI will be that `docker-machine`'s IP instead of `127.0.0.1`. So, just do a `docker-machine ls` and note the IP of your currently active and running docker machine. Then, after starting the Intrigue API/UI, navigate to that IP:7777.
+
 Getting started should be pretty straightforward, try running a "dns_brute_sub" task on your domain. Now, try with the "use_file" option set to true.
 
 
