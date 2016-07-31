@@ -8,7 +8,7 @@
     <select class="form-control input-sm" name="task" id="task_name">
 
       <!-- iterate through the tasks an create each one, checking to see if it matches our entity -->
-      <% @tasks.each do |task|
+      <% @tasks.sort_by { |obj| obj.class.to_s.downcase }.each do |task|
 
             # Skip to the next task unless the current type is allowed
             next unless ( @entity.allowed_tasks.include?(task.class) ||
