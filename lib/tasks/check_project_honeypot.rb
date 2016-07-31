@@ -41,7 +41,7 @@ class CheckProjectHoneypot  < BaseTask
       {
         :regex => /This IP addresses has been seen by at least one Honey Pot/i,
         :entity_type => "Info",
-        :entity_name => "Project Honeypot info for #{uri}",
+        :entity_name => "Project Honeypot result for #{uri}",
         :entity_content => "This IP address has been seen by at least one Honey Pot"
       }
     ]
@@ -50,12 +50,12 @@ class CheckProjectHoneypot  < BaseTask
     target_strings.each do |target|
       matches = contents.scan(target[:regex])
 
-      _log "matches: #{matches.inspect}"
+      _log "Matches: #{matches.inspect}"
 
       # Iterate through all matches
       matches.each do |match|
 
-        _log_good "got match: #{match}"
+        _log_good "Got a match: #{match}"
 
         _create_entity("Info",
           { "name" => "#{target[:entity_name]}",

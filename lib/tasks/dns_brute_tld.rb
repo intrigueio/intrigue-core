@@ -121,7 +121,7 @@ class DnsBruteTldTask < BaseTask
 {"type"=>"IpAddress", "attributes"=>{"name"=>"127.0.53.53"}}
 =end
 
-    _log_good "Using tld list: #{tld_list}"
+    _log_good "Using TLD list: #{tld_list}"
 
     resolved_addresses = []
 

@@ -64,7 +64,7 @@ class IntrigueApp < Sinatra::Base
       scan_result.start
 
       # Redirect to display the details
-      redirect "/v1/scan_results/#{scan_result.id}"
+      redirect "/v1/#{@project_name}/scan_results/#{scan_result.id}"
     end
 
     # Show the results in a human readable format

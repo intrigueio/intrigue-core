@@ -105,7 +105,7 @@ class IntrigueApp < Sinatra::Base
 
       # Assuming it's available, display it
       if @result
-        @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1/task/?task_result_id=#{@result.id}"
+        @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1/#{@project_name}task/?task_result_id=#{@result.id}"
         @elapsed_time = "#{(@result.timestamp_end - @result.timestamp_start).to_i}" if @result.timestamp_end
       end
 

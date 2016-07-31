@@ -63,9 +63,9 @@ class SearchCensysTask < BaseTask
               # Handle specific protocols
               case protocol
               when "https"
-                _create_entity "Uri", "name" => "https://#{ip_address}:#{port}"
+                _create_entity "Uri", "name" => "https://#{ip_address}:#{port}", "uri" => "https://#{ip_address}:#{port}"
               when "http"
-                _create_entity "Uri", "name" => "http://#{ip_address}:#{port}"
+                _create_entity "Uri", "name" => "http://#{ip_address}:#{port}", "uri" => "https://#{ip_address}:#{port}"
               when "ftp"
                 _create_entity "FtpServer", {
                   "name" => "ftp://#{ip_address}:#{port}",
