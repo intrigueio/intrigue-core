@@ -58,7 +58,7 @@ module Generic
     hash = _encode_hash(hash)
 
     # Now check fo r santity
-    raise "INVALID ENTITY!" unless hash["name"]
+    raise "INVALID ENTITY, no name!" unless hash["name"]
 
     short_name = _encode_string(hash["name"][0,199])
     entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:name => short_name)

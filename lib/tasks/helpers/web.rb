@@ -128,8 +128,13 @@ module Task
          http.read_timeout = 10
          http.open_timeout = 10
 
-         path = uri.path
+         path = "#{uri.path}"
          path = "/" if path==""
+
+         # add in the query parameters
+         if uri.query
+           path += "?#{uri.query}"
+         end
 
          #request = Net::HTTP::Get.new(path,{'User-Agent'=>user_agent})
          if uri.instance_of? URI::HTTPS
