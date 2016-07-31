@@ -42,7 +42,7 @@ module Intrigue
         attribute_set(:full_log, "#{@full_log}\n#{encoded_message}")
 
         # PRINT TO STANDARD OUT
-        #puts "#{encoded_message}"
+        puts "#{encoded_message}" if Intrigue::Config::GlobalConfig.new.config["debug"]
       end
 
       def _encode_string(string)
