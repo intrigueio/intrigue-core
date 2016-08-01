@@ -150,6 +150,12 @@
       "uri" : "https://whoisology.com",
       "editable" : "true",
       "comment" : ""
+    },
+    "phishtank_api_key": {
+      "value" : "",
+      "uri" : "https://www.phishtank.com",
+      "editable" : "true",
+      "comment" : ""
     }
   }
 }

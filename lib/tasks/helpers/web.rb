@@ -86,7 +86,7 @@ module Task
 
     # XXX - move this over to net-http (?)
     def http_post(uri, data)
-      RestClient.post uri, data
+      RestClient.post(uri, data)
     end
 
     #
