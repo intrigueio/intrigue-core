@@ -1,5 +1,8 @@
 {
-  "password" : "intrigue",
+  "credentials": {
+   "username" : "intrigue",
+   "password" : "intrigue"
+  },
   "debug" : true,
   "intrigue_task_load_paths": [],
   "intrigue_queues": {

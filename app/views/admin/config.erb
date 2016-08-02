@@ -1,6 +1,16 @@
-<h3>Global (All Project) Configuration</h3>
+<h3>Global Configuration</h3>
 
-<form action="/v1/<%=@project_name%>/system" method="post">
+<h4> System Configuration </h4>
+<form action="/v1/<%=@project_name%>/config/system" method="post">
+  Username: <input class="form-control" style="width:150px" type="text" name="username" value="<%=@global_config.config["credentials"]["username"]%>">
+  Password: <input class="form-control" style="width:150px" type="password" name="password" value="<%=@global_config.config["credentials"]["username"]%>">
+  <input class="btn btn-primary" type="submit">
+  <br/>
+</form>
+<p></p>
+<hr>
+<h4> Module Configuration </h4>
+<form action="/v1/<%=@project_name%>/config/module" method="post">
 <table class="table table-striped table-bordered">
 <tbody>
 <% @global_config.config["intrigue_global_module_config"].each do |k,v| %>

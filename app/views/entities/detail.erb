@@ -26,7 +26,7 @@ Tasks that created this entity:<br/>
 
 Tasks run on this entity:<br/>
 <ul>
-<%= out = ""; results = Intrigue::Model::TaskResult.scope_by_project(@project_name).all(:base_entity => @entity); results.each {|r| out << "<li><a href='/v1/#{@project_name}task_results/#{r.id}'>#{h r.task_name} (#{h r.base_entity})</a></li>"; }; out %>
+<%= out = ""; results = Intrigue::Model::TaskResult.scope_by_project(@project_name).all(:base_entity => @entity); results.each {|r| out << "<li><a href='/v1/#{@project_name}/task_results/#{r.id}'>#{h r.task_name} (#{h r.base_entity})</a></li>"; }; out %>
 </ul>
 <br/>
 <br/>

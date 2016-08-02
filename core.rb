@@ -103,7 +103,7 @@ class IntrigueApp < Sinatra::Base
   ### (Very) Simple Auth
   ###
   use Rack::Auth::Basic, "Restricted" do |username, password|
-      [username, password] == ['intrigue', Intrigue::Config::GlobalConfig.new.config["password"] ]
+      [username, password] == [Intrigue::Config::GlobalConfig.new.config["credentials"]["username"], Intrigue::Config::GlobalConfig.new.config["credentials"]["password"] ]
   end
 
   before do
@@ -127,6 +127,12 @@ class IntrigueApp < Sinatra::Base
 
     # Main Page
     get '/?' do
+      erb :index
+    end
+
+    # Main Page
+    get '/:project/?' do
+      @project_name = params[:project]
       erb :index
     end
 

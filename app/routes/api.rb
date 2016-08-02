@@ -5,8 +5,16 @@ class IntrigueApp < Sinatra::Base
     ### System Mgmt   ###
     ###               ###
 
+    post '/:project/config/system' do
+      @project_name = params[:project]
+      global_config = Intrigue::Config::GlobalConfig.new
+      global_config.config["credentials"]["username"] = "#{params["username"]}"
+      global_config.config["credentials"]["password"] = "#{params["password"]}"
+      global_config.save
+      redirect "/v1/#{@project_name}/"  # handy if we're in a browser
+    end
     # save the config
-    post '/:project/system' do
+    post '/:project/config/module' do
       @project_name = params[:project]
 
       # Update our config if one of the fields have been changed. Note that we use ***
@@ -17,8 +25,6 @@ class IntrigueApp < Sinatra::Base
         # skip unless we already know about this config setting, helps us avoid
         # other parameters sent to this page (splat, project, etc)
         next unless global_config.config["intrigue_global_module_config"][k]
-        puts "k: #{k}"
-        puts "v: #{v}"
         global_config.config["intrigue_global_module_config"][k]["value"] = v unless v =~ /^\*\*\*/
       end
       global_config.save
