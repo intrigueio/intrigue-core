@@ -1,21 +1,25 @@
 module Intrigue
-class UriExploitable < BaseTask
+class UriBrute < BaseTask
 
   include Intrigue::Task::Web
 
   def metadata
     {
-      :name => "uri_exploitable",
-      :pretty_name => "URI Exploitable Scanner",
+      :name => "uri_brute",
+      :pretty_name => "URI Directory Bruteforce",
       :authors => ["jcran", "@0xsauby"],
-      :description => "Bruteforce common paths on a web server looking for exploitable and interesting applications",
-      :references => [],
+      :description => "Bruteforce common paths on a web server looking for common paths",
+      :references => [
+        "https://www.owasp.org/index.php/Category:OWASP_DirBuster_Project",
+        "https://github.com/0xsauby/yasuo"
+      ],
       :allowed_types => ["Uri"],
       :example_entities => [
         {"type" => "Uri", "attributes" => {"name" => "http://intrigue.io"}}
       ],
       :allowed_options => [
-        {:name => "threads", :type => "Integer", :regex => "integer", :default => 1 }
+        {:name => "threads", :type => "Integer", :regex => "integer", :default => 2 },
+        {:name => "user_list", :type => "String", :regex => "alpha_numeric_list", :default => [] }
       ],
       :created_types => ["Uri"]
     }
@@ -24,12 +28,19 @@ class UriExploitable < BaseTask
   def run
     super
 
-    # Get the uri
+    # Get options
     uri = _get_entity_attribute("name")
     opt_threads = _get_option("threads")
+    user_list = _get_option("user_list").split(",")
 
-    # Pull our list from data/exploitable.json, which has a whole heap of checks
-    brute_list = JSON.parse File.read("#{$intrigue_basedir}/data/exploitable.json")
+    # Pull our list from a file if it's set
+    if user_list.length > 0
+      _log "Using custom list: #{user_list.to_s}"
+      brute_list = user_list.map {|x| {"check_paths" => [x], "source" => "user", "check_name" => "user" }}
+    else
+      _log "Using default list from data/exploitable.json"
+      brute_list = JSON.parse(File.read("#{$intrigue_basedir}/data/exploitable.json"))
+    end
 
     ###
     ### Get the default case (a page that doesn't exist)
