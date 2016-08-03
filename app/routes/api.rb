@@ -108,9 +108,9 @@ class IntrigueApp < Sinatra::Base
     end
 
     # Export a single task
-    get '/tasks/:id.json/?' do
+    get '/tasks/:task_name.json/?' do
       content_type 'application/json'
-      task_name = params[:id]
+      task_name = params[:task_name]
       Intrigue::TaskFactory.create_by_name(task_name).metadata.to_json
     end
 

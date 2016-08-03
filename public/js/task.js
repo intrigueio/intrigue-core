@@ -32,9 +32,9 @@
         parseAllowedEntityTypes(data);
       }
       else {
-            //Disabling form since we're on a pre-populated form
-            $('#attrib_name').attr('readonly', true);
-            $('#entity_type').attr('readonly', true);
+        //Disabling form since we're on a pre-populated form
+        $('#attrib_name').attr('readonly', true);
+        $('#entity_type').attr('readonly', true);
       }
     });
 
@@ -75,7 +75,6 @@
     function parseTasks(tasks_hash) {
       var task_count = tasks_hash.length;
       var metadata = $("#metadata");
-      //console.log(task_hash)
 
       $.each(tasks_hash, function(index, value) {
         var entity_type, entity_name, form = $("form")[0];

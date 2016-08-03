@@ -123,6 +123,9 @@ class IntrigueApp < Sinatra::Base
     redirect '/v1/'
   end
 
+  # Application libraries
+  require_relative "app/all"
+
   namespace '/v1/?' do
 
     # Main Page
@@ -144,10 +147,6 @@ class IntrigueApp < Sinatra::Base
 
   end
 end
-
-
-# Application libraries
-require_relative "app/all"
 
 # Core libraries
 require_relative "lib/all"
