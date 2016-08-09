@@ -21,7 +21,7 @@ module Task
     #
     def download_and_store(url)
       filename = "#{SecureRandom.uuid}"
-      file = Tempfile.new(filename, Dir.tmpdir, 'wb+')
+      file = Tempfile.new(filename, Dir.tmpdir) #, 'wb+')
 
       @task_result.logger.log_good "Attempting to download #{url} and store in #{file.path}" if @task_result
 
