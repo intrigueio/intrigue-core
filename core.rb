@@ -102,14 +102,20 @@ class IntrigueApp < Sinatra::Base
   ###
   ### (Very) Simple Auth
   ###
-  use Rack::Auth::Basic, "Restricted" do |username, password|
-      [username, password] == [Intrigue::Config::GlobalConfig.new.config["credentials"]["username"], Intrigue::Config::GlobalConfig.new.config["credentials"]["password"] ]
+  global_config = Intrigue::Config::GlobalConfig.new
+  if global_config
+    if global_config.config["http_security"]
+      use Rack::Auth::Basic, "Restricted" do |username, password|
+        [username, password] == [
+          global_config.config["credentials"]["username"],
+          global_config.config["credentials"]["password"]
+        ]
+      end
+    end
   end
 
   before do
     $intrigue_server_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
-    #@project_name = session["project_name"] || "Default"
-    #puts "Project name: #{@project_name}"
   end
 
   not_found do

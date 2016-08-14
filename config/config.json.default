@@ -1,4 +1,5 @@
 {
+  "http_security" : true,
   "credentials": {
    "username" : "intrigue",
    "password" : "intrigue"

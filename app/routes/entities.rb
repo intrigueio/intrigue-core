@@ -3,21 +3,20 @@ class IntrigueApp < Sinatra::Base
 
     post '/:project/entities' do
       @project_name = params[:project]
-
+      @entity_type = params[:entity_type]
+      @entity_name = params[:entity_name]
       ## We have some very rudimentary searching capabilities here
       ##
       ## TODO - these should be fleshed out so we can actually use the entities page
       ##
-      if params[:entity_type]
-        entity_type = eval "Intrigue::Entity::#{params[:entity_type]}"
-        @entities = Intrigue::Model::Entity.scope_by_project(@project_name).all(:type.like => entity_type).page(params[:page], :per_page => 100)
-
-      elsif params[:entity_name]
-        entity_name = params[:entity_name]
-        @entities = Intrigue::Model::Entity.scope_by_project(@project_name).all(:name.like => "%#{entity_name}%").page(params[:page], :per_page => 100)
-        
+      scoped_entities = Intrigue::Model::Entity.scope_by_project(@project_name)
+      if
+        entity_type_string = eval("Intrigue::Entity::#{@entity_type}")
+        @entities = scoped_entities.all(:type.like => entity_type_string).page(params[:page], :per_page => 50)
+      elsif @entity_name
+        @entities = scoped_entities.all(:name.like => "%#{@entity_name}%").page(params[:page], :per_page => 50)
       else
-        @entities = Intrigue::Model::Entity.scope_by_project(@project_name).page(params[:page], :per_page => 100)
+        @entities = scoped_entities.page(params[:page], :per_page => 50)
       end
 
       erb :'entities/index'
@@ -25,7 +24,7 @@ class IntrigueApp < Sinatra::Base
 
     get '/:project/entities' do
       @project_name = params[:project]
-      @entities = Intrigue::Model::Entity.scope_by_project(@project_name).page(params[:page], :per_page => 100)
+      @entities = Intrigue::Model::Entity.scope_by_project(@project_name).page(params[:page], :per_page => 50)
       erb :'entities/index'
     end
 
