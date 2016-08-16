@@ -136,7 +136,7 @@ class CoreCli < Thor
 
     lines = File.open(filename,"r").readlines
 
-    project_name = "#{task_name} on #{filename} - #{Time.now.strftime("%Y%m%d%H%M")}"
+    project_name = "#{task_name}-#{Time.now.strftime("%Y%m%d%H%M")}"
     p = Intrigue::Model::Project.create(:name => project_name)
 
     lines.each do |line|
