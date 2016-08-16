@@ -7,6 +7,10 @@ module Intrigue
       property :full_log, Text, :length => 50000000, :default =>""
       belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
 
+      def initialize
+        @debug = Intrigue::Config::GlobalConfig.new.config["debug"]
+      end
+
       def self.scope_by_project(id)
         all(:project => Intrigue::Model::Project.first(:name => name))
       end
@@ -42,7 +46,7 @@ module Intrigue
         attribute_set(:full_log, "#{@full_log}\n#{encoded_message}")
 
         # PRINT TO STANDARD OUT
-        puts "#{encoded_message}" if Intrigue::Config::GlobalConfig.new.config["debug"]
+        puts "#{encoded_message}" if @debug
       end
 
       def _encode_string(string)

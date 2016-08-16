@@ -144,10 +144,11 @@ class IntrigueApp < Sinatra::Base
       #
       #payload = {
       #  "project_name" => project_name,
+      #  "handlers" => []
       #  "task" => task_name,
       #  "entity" => entity_hash,
       #  "options" => options_list,
-      #}
+      #}.to_json
 
       # Parse the incoming request
       payload = JSON.parse(request.body.read) if request.content_type == "application/json"
