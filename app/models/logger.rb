@@ -7,7 +7,7 @@ module Intrigue
       property :full_log, Text, :length => 50000000, :default =>""
       belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
 
-      def initialize
+      def initialize(params)
         @debug = Intrigue::Config::GlobalConfig.new.config["debug"]
       end
 
