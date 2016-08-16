@@ -179,7 +179,7 @@ class CoreCli < Thor
       task = Intrigue::TaskFactory.create_by_name(task_name)
       jid = task.class.perform_async task_result.id, handlers
 
-      puts "Created task #{task_result.id} for entity #{e}"
+      puts "Created task #{task_result.inspect} for entity #{e}"
     end
   end
 

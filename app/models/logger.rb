@@ -14,7 +14,10 @@ module Intrigue
         save
       end
 
-      ## TODO - write a log retriever based on the location - if it's stored in a file, retrieve it from a file
+      def self.scope_by_project(name)
+        all(:project => Intrigue::Model::Project.first(:name => name))
+      end
+
       def retrieve
         if @location == "database"
           return @full_log
@@ -27,9 +30,6 @@ module Intrigue
         end
       end
 
-      def self.scope_by_project(name)
-        all(:project => Intrigue::Model::Project.first(:name => name))
-      end
 
       def log(message)
         _log "[#{id}][ ] " << message
