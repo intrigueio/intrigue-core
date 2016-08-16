@@ -4,14 +4,30 @@ module Intrigue
       include DataMapper::Resource
 
       property :id, Serial, :key => true
+      property :location, String
       property :full_log, Text, :length => 50000000, :default =>""
       belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
 
       def initialize(params)
-        @debug = Intrigue::Config::GlobalConfig.new.config["debug"]
+        global_config = Intrigue::Config::GlobalConfig.new
+        attribute_set(:location, global_config.config["intrigue_task_log_location"] || "database")
+        save
       end
 
-      def self.scope_by_project(id)
+      ## TODO - write a log retriever based on the location - if it's stored in a file, retrieve it from a file
+      def retrieve
+        if @location == "database"
+          return @full_log
+        elsif @location == "file"
+          File.open("#{$intrigue_basedir}/log/#{@id}.log","r").read
+        elsif @location == "none"
+          # not doing anything
+        else
+          raise "Unknown log location configuration: #{@location}. Please check the global config: intrigue_task_log_location"
+        end
+      end
+
+      def self.scope_by_project(name)
         all(:project => Intrigue::Model::Project.first(:name => name))
       end
 
@@ -39,14 +55,22 @@ module Intrigue
         _log "[#{id}][F] " << message
       end
 
+
     private
 
       def _log(message)
         encoded_message = _encode_string(message)
-        attribute_set(:full_log, "#{@full_log}\n#{encoded_message}")
 
-        # PRINT TO STANDARD OUT
-        puts "#{encoded_message}" if @debug
+        if @location == "database"
+          attribute_set(:full_log, "#{@full_log}\n#{encoded_message}")
+        elsif @location == "file"
+          File.open("#{$intrigue_basedir}/log/#{@id}.log","a+").write("#{encoded_message}\n")
+        elsif @location == "none"
+          # not doing anything
+        else
+          raise "Unknown log location configuration: #{@location}. Please check the global config: intrigue_task_log_location"
+        end
+
       end
 
       def _encode_string(string)

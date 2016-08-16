@@ -29,7 +29,7 @@ module Intrigue
       end
 
       def log
-        self.logger.full_log
+        self.logger.retrieve
       end
 
       def start

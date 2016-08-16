@@ -12,7 +12,7 @@ public/screenshots/
 results/
 tmp/.gitignore
 tmp/
-log/intrigue-sidekiq.log
+log/
 lib/tasks_disabled
 lib/tasks/survey
 db/intrigue.db
