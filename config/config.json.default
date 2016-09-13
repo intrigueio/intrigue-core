@@ -7,6 +7,7 @@
   "debug" : true,
   "intrigue_task_log_location" : "database",
   "intrigue_task_load_paths": [],
+  "intrigue_scan_load_paths": [],
   "intrigue_queues": {
    "task_queue": "task",
    "scan_queue": "scan"

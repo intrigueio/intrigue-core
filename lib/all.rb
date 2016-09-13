@@ -26,7 +26,7 @@ if global_config.config["intrigue_task_load_paths"]
   global_config.config["intrigue_task_load_paths"].each do |load_path|
     load_path = "#{tasks_folder}/#{load_path}" unless load_path[0] == "/"
     Dir["#{load_path}/*.rb"].each do |file|
-      puts "Adding file from load path (#{load_path}: #{file}"
+      puts "Adding task file from load path (#{load_path}: #{file}"
       require_relative file
     end
   end
@@ -47,8 +47,19 @@ Dir["#{entities_folder}/*.rb"].each {|f| require_relative f}
 require_relative 'scan_factory'
 
 require_relative 'scans/base'
-scanners_folder = File.expand_path('../scans', __FILE__) # get absolute directory
-Dir["#{scanners_folder}/*.rb"].each {|f| require_relative f}
+scans_folder = File.expand_path('../scans', __FILE__) # get absolute directory
+Dir["#{scans_folder}/*.rb"].each {|f| require_relative f}
+
+# And check to see if there are any specified load paths
+if global_config.config["intrigue_scan_load_paths"]
+  global_config.config["intrigue_scan_load_paths"].each do |load_path|
+    load_path = "#{scans_folder}/#{load_path}" unless load_path[0] == "/"
+    Dir["#{load_path}/*.rb"].each do |file|
+      puts "Adding scanner file from load path (#{load_path}: #{file}"
+      require_relative file
+    end
+  end
+end
 
 ####
 # Handler Libraries

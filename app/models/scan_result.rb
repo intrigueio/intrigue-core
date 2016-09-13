@@ -42,6 +42,8 @@ module Intrigue
           scan = Intrigue::Scanner::DnsSubdomainScan.new
         elsif @scan_type == "quick_dns_subdomain"
           scan = Intrigue::Scanner::QuickDnsSubdomainScan.new
+        elsif @scan_type == "survey_scan"
+          scan = Intrigue::Scanner::SurveyScan.new
         else
           raise "Unknown scan type: #{@scan_type}"
         end
