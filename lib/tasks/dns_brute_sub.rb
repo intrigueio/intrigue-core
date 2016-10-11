@@ -14,7 +14,7 @@ class DnsBruteSubTask < BaseTask
       :description => "DNS Subdomain Bruteforce",
       :references => [],
       :allowed_types => ["DnsRecord","String"],
-      :example_entities =>   [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
+      :example_entities =>  [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
         {:name => "brute_list", :type => "String", :regex => "alpha_numeric_list", :default =>

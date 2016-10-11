@@ -24,7 +24,7 @@ module Intrigue
       end
 
       def log
-        self.logger.retrieve
+        self.logger.full_log
       end
 
       def add_entity(entity)
@@ -75,7 +75,8 @@ module Intrigue
           "options" => @options,
           "complete" => @complete,
           "base_entity" => self.base_entity.export_hash,
-          "entities" => self.entities.map{ |x| x.export_hash }
+          "entities" => self.entities.map{ |x| x.export_hash },
+          "log" => log
         }
       end
 

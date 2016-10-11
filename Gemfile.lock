@@ -20,9 +20,9 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue_api_client.git
-  revision: edca6d689c73a66fd38e652cbc37cb45d989de35
+  revision: bac091dfb7d0cd43397635568f11826908687e02
   specs:
-    intrigue_api_client (1.0.0)
+    intrigue_api_client (1.0.5)
       json (~> 1.8)
       rest-client (~> 1.8)
 
@@ -159,7 +159,7 @@ GEM
       data_objects (= 0.10.17)
     do_sqlite3 (0.10.17)
       data_objects (= 0.10.17)
-    domain_name (0.5.20160615)
+    domain_name (0.5.20160826)
       unf (>= 0.0.5, < 1.0.0)
     domainatrix (0.0.11)
       addressable
@@ -315,7 +315,7 @@ GEM
       multi_json (~> 1.11)
       os (~> 0.9)
       signet (~> 0.7)
-    http-cookie (1.0.2)
+    http-cookie (1.0.3)
       domain_name (~> 0.5)
     i18n (0.7.0)
     iconv (1.0.4)

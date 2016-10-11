@@ -138,7 +138,12 @@ class IntrigueApp < Sinatra::Base
 
     # Create a task result from a json request
     post '/:project/task_results/?' do
+
+      puts "Params: #{params}"
+
       @project_name = params[:project]
+
+      puts "Project: #{@project_name}"
 
       # What we receive should look like this:
       #
@@ -165,7 +170,7 @@ class IntrigueApp < Sinatra::Base
       options = payload["options"]
       handlers = payload["handlers"]
 
-      project = Intrigue::Model::Project.get(:name => @project_name)
+      project = Intrigue::Model::Project.first(:name => @project_name)
       entity = Intrigue::Model::Entity.create(attributes.merge(:project => project))
       entity.save
 

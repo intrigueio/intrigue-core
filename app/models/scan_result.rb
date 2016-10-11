@@ -29,7 +29,7 @@ module Intrigue
       end
 
       def log
-        self.logger.retrieve
+        self.logger.full_log
       end
 
       def start
@@ -104,7 +104,8 @@ module Intrigue
           "entity_count" => @entity_count,
           "task_results" => self.task_results.map{|t| t.export_hash },
           "entities" => self.entities.map {|e| e.export_hash },
-          "options" => @options
+          "options" => @options,
+          "log" => log
         }
       end
 

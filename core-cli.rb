@@ -11,7 +11,7 @@ class CoreCli < Thor
     super
     $intrigue_basedir = File.dirname(__FILE__)
     $config = JSON.parse File.open("#{$intrigue_basedir}/config/config.json").read
-    @server_uri = ENV.fetch("INTRIGUE_API_URI", "http://intrigue:#{$config["password"]}@127.0.0.1:7777/v1")
+    @server_uri = ENV.fetch("INTRIGUE_API_URI", "http://#{$config["credentials"]["username"]}:#{$config["credentials"]["password"]}@127.0.0.1:7777/v1")
     @delim = "#"
     @debug = true
     # Connect to Intrigue API
@@ -46,10 +46,9 @@ class CoreCli < Thor
         puts " - #{opt["name"]} (#{opt["type"]})"
       end
 
-      puts "Example Entities:"
-
+      puts "Example Entities: "
       task_info["example_entities"].each do |x|
-        puts " - #{x["type"]}:#{x["details"]["name"]}"
+        puts " - #{x["type"]}##{x["attributes"]["name"]}"
       end
 
       puts "Creates: #{task_info["created_types"].join(", ")}"
@@ -61,13 +60,12 @@ class CoreCli < Thor
     end
   end
 
-  desc "background [Task] [Type#Entity] [Option1=Value1#...#...] [Handlers]", "Start and background a single task. Returns the ID"
-  def background(task_name,entity,option_string,handler_string)
+  desc "background [Project Name] [Task] [Type#Entity] [Option1=Value1#...#...] [Handlers]", "Start and background a task."
+  def background(project_name, task_name,entity,option_string,handler_string)
 
     entity_hash = _parse_entity entity
     options_list = _parse_options option_string
     handler_list = _parse_handlers handler_string
-    project_name = "Default"
 
     ### Construct the request
     task_id = @api.start_and_background(project_name,task_name,entity_hash,options_list,handler_list)
@@ -80,19 +78,18 @@ class CoreCli < Thor
   puts "[+] Started task: #{task_id}"
   end
 
-  desc "start [Task] [Type#Entity] [Option1=Value1#...#...] [Handlers]", "Start a single task. Returns the result"
-  def start(task_name,entity_string,option_string=nil, handler_string=nil)
-    single(task_name,entity_string,option_string,handler_string)
+  desc "start [Project Name] [Task] [Type#Entity] [Option1=Value1#...#...] [Handlers]", "Start a single task within a project."
+  def start(project_name,task_name,entity_string,option_string=nil, handler_string=nil)
+    single(project_name,task_name,entity_string,option_string,handler_string)
   end
 
-  desc "single [Task] [Type#Entity] [Option1=Value1#...#...] [Handlers]", "Start a single task. Returns the result"
-  def single(task_name,entity_string,option_string=nil, handler_string=nil)
+  desc "single [Project Name] [Task] [Type#Entity] [Option1=Value1#...#...] [Handlers]", "Start a single task within a project."
+  def single(project_name,task_name,entity_string,option_string=nil, handler_string=nil)
 
     # Do the setup
     entity_hash = _parse_entity entity_string
     options_list = _parse_options option_string
     handler_list = _parse_handlers handler_string
-    project_name = "Default"
 
     # Get the response from the API
     #puts "[+] Starting Task."
@@ -109,16 +106,15 @@ class CoreCli < Thor
     #puts "[+] End Results"
 
     # Print the task log
-    puts "[+] Task Log:\n"
-    response["log"].each_line{|x| puts "  #{x}" }
+    puts "[+] Task Log:"
+    response["log"].each_line{|x| puts "#{x}" } if response["log"]
   end
 
-  desc "scan [Project Name] [Scan Type] [Type#Entity] [Option1=Value1#...#...] [Handlers]", "Start a recursive scan. Returns the result"
-  def scan(scan_type,entity_string,option_string=nil,handler_string="")
+  desc "scan [Project Name] [Scan Type] [Type#Entity] [Option1=Value1#...#...] [Handlers]", "Start a scan within a project."
+  def scan(project_name,scan_type,entity_string,option_string=nil,handler_string="")
     entity_hash  = _parse_entity entity_string
     options_list = _parse_options option_string
     handler_list = _parse_handlers handler_string
-    project_name = "Default"
 
     @api.start_scan_and_background(project_name,scan_type,entity_hash,options_list,handler_list)
   end
@@ -127,7 +123,7 @@ class CoreCli < Thor
   ###
   ### XXX - rewrite this so it uses the API
   ###
-  desc "load [Task] [File] [Option1=Value1#...#...] [Handlers]", "Load entities from a file and run task on each of them"
+  desc "load [Task] [File] [Option1=Value1#...#...] [Handlers]", "Load entities from a file and runs a task on each in a new project."
   def load(task_name,filename,options_string=nil,handler_string="")
 
     # Load in the main core file for direct access to TaskFactory and the Tasks
