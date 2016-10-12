@@ -1,7 +1,6 @@
-:verbose: true
-#:logfile: ./log/scan.log
+:verbose: false
+:logfile: ./log/intrigue-sidekiq-scan.log
 :pidfile: ./tmp/pids/intrigue-sidekiq-scan.pid
-:concurrency: 3
+:concurrency: 6
 :queues:
   - scan
-:timeout: 36000

@@ -1,7 +1,6 @@
-:verbose: true
-#:logfile: ./log/task.log
+:verbose: false
+:logfile: ./log/intrigue-sidekiq-task.log
 :pidfile: ./tmp/pids/intrigue-sidekiq-task.pid
 :concurrency: 20
 :queues:
   - task
-:timeout: 3600

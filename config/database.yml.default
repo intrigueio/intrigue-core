@@ -11,5 +11,5 @@ docker:
   adapter: postgres
   host: postgres
   user: postgres
-  password:
+  password: CHANGEME
   database: postgres
