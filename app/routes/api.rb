@@ -316,9 +316,12 @@ class IntrigueApp < Sinatra::Base
       @project_name = params[:project]
       scan_result_info = JSON.parse(request.body.read) if request.content_type == "application/json"
 
+      puts "scan_result_info: #{scan_result_info}"
+
       project_name = scan_result_info["project_name"]
       scan_type = scan_result_info["scan_type"]
-      entity = scan_result_info["entity"]
+      entity_hash = scan_result_info["entity"]
+      depth = scan_result_info["depth"]
       options = scan_result_info["options"]
       handlers = scan_result_info["handlers"]
 
@@ -326,13 +329,12 @@ class IntrigueApp < Sinatra::Base
       p = Intrigue::Model::Project.first(:name => project_name)
 
       # Construct an entity from the data we have, unless it already exists
-      entity = Intrigue::Model::Entity.scope_by_project(project_name).first(:name => entity['name'])
+      entity = Intrigue::Model::Entity.scope_by_project(project_name).first(:name => entity_hash['name'])
       unless entity
-        entity = Intrigue::Model::Entity.create(
-        {
-          :type => "Intrigue::Entity::#{entity['type']}",
-          :name => entity['name'],
-          :details => entity['details'],
+        entity = Intrigue::Model::Entity.create({
+          :type => "Intrigue::Entity::#{entity_hash['type']}",
+          :name => entity_hash['name'],
+          :details => entity_hash['details'],
           :project => p
         })
       end
@@ -342,7 +344,7 @@ class IntrigueApp < Sinatra::Base
         :scan_type => scan_type,
         :name => "#{scan_type}",
         :base_entity => entity,
-        :depth => 4,
+        :depth => 6,
         :filter_strings => "",
         :handlers => handlers,
         :logger => Intrigue::Model::Logger.create(:project => p),

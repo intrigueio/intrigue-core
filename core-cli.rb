@@ -79,12 +79,12 @@ class CoreCli < Thor
   end
 
   desc "start [Project Name] [Task] [Type#Entity] [Option1=Value1#...#...] [Handlers]", "Start a single task within a project."
-  def start(project_name,task_name,entity_string,option_string=nil, handler_string=nil)
+  def start(project_name,task_name,entity_string,option_string, handler_string=nil)
     single(project_name,task_name,entity_string,option_string,handler_string)
   end
 
   desc "single [Project Name] [Task] [Type#Entity] [Option1=Value1#...#...] [Handlers]", "Start a single task within a project."
-  def single(project_name,task_name,entity_string,option_string=nil, handler_string=nil)
+  def single(project_name,task_name,entity_string,option_string, handler_string=nil)
 
     # Do the setup
     entity_hash = _parse_entity entity_string
@@ -110,13 +110,13 @@ class CoreCli < Thor
     response["log"].each_line{|x| puts "#{x}" } if response["log"]
   end
 
-  desc "scan [Project Name] [Scan Type] [Type#Entity] [Option1=Value1#...#...] [Handlers]", "Start a scan within a project."
-  def scan(project_name,scan_type,entity_string,option_string=nil,handler_string="")
+  desc "scan [Project Name] [Scan Type] [Depth] [Type#Entity] [Option1=Value1#...#...] [Handlers]", "Start a scan within a project."
+  def scan(project_name,scan_type,depth,entity_string,option_string,handler_string=nil)
     entity_hash  = _parse_entity entity_string
     options_list = _parse_options option_string
     handler_list = _parse_handlers handler_string
 
-    @api.start_scan_and_background(project_name,scan_type,entity_hash,options_list,handler_list)
+    @api.start_scan_and_background(project_name,scan_type,depth,entity_hash,options_list,handler_list)
   end
 
 
@@ -124,7 +124,7 @@ class CoreCli < Thor
   ### XXX - rewrite this so it uses the API
   ###
   desc "load [Task] [File] [Option1=Value1#...#...] [Handlers]", "Load entities from a file and runs a task on each in a new project."
-  def load(task_name,filename,options_string=nil,handler_string="")
+  def load(task_name,filename,options_string,handler_string=nil)
 
     # Load in the main core file for direct access to TaskFactory and the Tasks
     # This makes this super speedy.
