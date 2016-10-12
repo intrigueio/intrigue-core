@@ -165,11 +165,18 @@ class IntrigueApp < Sinatra::Base
       options = payload["options"]
       handlers = payload["handlers"]
 
+      # Try to find our project
       project = Intrigue::Model::Project.first(:name => project_name)
+      unless project # If the project didn't exist, create it
+        project = Intrigue::Model::Project.create(:name => project_name)
+      end
 
-      # Construct an entity from the data we have, unless it already exists
-      entity = Intrigue::Model::Entity.scope_by_project(project_name).first(:name => payload["entity"]["name"])
-      unless entity
+      # Try to find our entity
+      entity = Intrigue::Model::Entity.scope_by_project(project_name).first(
+        :name => payload["entity"]["name"],
+        :type => payload["entity"]["type"]
+      )
+      unless entity # If the entity didn't exist, create it
         entity = Intrigue::Model::Entity.create(attributes.merge(:project => project))
         entity.save
       end
@@ -316,26 +323,30 @@ class IntrigueApp < Sinatra::Base
       @project_name = params[:project]
       scan_result_info = JSON.parse(request.body.read) if request.content_type == "application/json"
 
-      puts "scan_result_info: #{scan_result_info}"
-
       project_name = scan_result_info["project_name"]
       scan_type = scan_result_info["scan_type"]
       entity_hash = scan_result_info["entity"]
-      depth = scan_result_info["depth"]
+      depth = scan_result_info["depth"].to_i
       options = scan_result_info["options"]
       handlers = scan_result_info["handlers"]
 
       # Get the project
-      p = Intrigue::Model::Project.first(:name => project_name)
+      project = Intrigue::Model::Project.first(:name => project_name)
+      unless project # If the project didn't exist, create it
+        project = Intrigue::Model::Project.create(:name => project_name)
+      end
 
-      # Construct an entity from the data we have, unless it already exists
-      entity = Intrigue::Model::Entity.scope_by_project(project_name).first(:name => entity_hash['name'])
+      # Try to find the entity
+      entity = Intrigue::Model::Entity.scope_by_project(project_name).first(
+        :name => entity_hash['name'],
+        :type => entity_hash['type']
+      ) # If it doesn't exist, create it
       unless entity
         entity = Intrigue::Model::Entity.create({
           :type => "Intrigue::Entity::#{entity_hash['type']}",
           :name => entity_hash['name'],
           :details => entity_hash['details'],
-          :project => p
+          :project => project
         })
       end
 
@@ -344,11 +355,11 @@ class IntrigueApp < Sinatra::Base
         :scan_type => scan_type,
         :name => "#{scan_type}",
         :base_entity => entity,
-        :depth => 6,
+        :depth => depth,
         :filter_strings => "",
         :handlers => handlers,
-        :logger => Intrigue::Model::Logger.create(:project => p),
-        :project => p
+        :logger => Intrigue::Model::Logger.create(:project => project),
+        :project => project
       })
 
       id = scan_result.start

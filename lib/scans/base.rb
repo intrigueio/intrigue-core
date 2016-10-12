@@ -59,8 +59,8 @@ module Scanner
       task_result = nil
       previous_task_result_id = nil
 
-      @scan_result.logger.log "Checking pre-existing tasks: " +
-      "#{Intrigue::Model::TaskResult.scope_by_project(@scan_result.project.name).all.count}"
+      #@scan_result.logger.log "Checking pre-existing tasks: " +
+      #"#{Intrigue::Model::TaskResult.scope_by_project(@scan_result.project.name).all.count}"
 
       # We should check outside of the scan results
       Intrigue::Model::TaskResult.scope_by_project(@scan_result.project.name).all(
@@ -81,7 +81,7 @@ module Scanner
       # Check to see if we found an already-run task_result.
       if task_already_completed
 
-        @scan_result.logger.log "We already have results. Grabbing existing task results: #{task_name} on #{entity.type_string} #{entity.name}."
+        @scan_result.logger.log "We already have results for #{task_name}. Grabbing existing task results: #{task_name} on #{entity.type_string} #{entity.name}."
         # task result has already been cloned above, move on
         task_result = Intrigue::Model::TaskResult.get previous_task_result_id
 
@@ -108,13 +108,13 @@ module Scanner
       end
 
       # Iterate on each discovered entity
-      task_result.entities.map do |entity|
+      task_result.entities.reverse.map do |entity|
         @scan_result.add_entity entity # Add these in right away
       end
 
       # Iterate on each discovered entity
-      task_result.entities.map do |entity|
-        @scan_result.logger.log "Iterating on discovered entity: #{entity.type_string}##{entity.name}"
+      task_result.entities.reverse.map do |entity|
+        @scan_result.logger.log "Iterating on discovered entity: #{entity.type_string}##{entity.name} at depth: #{depth}"
         _recurse(entity, depth-1)
       end
 

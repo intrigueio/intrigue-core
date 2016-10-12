@@ -167,14 +167,15 @@ module Parse
       ### Handle PDF
       if yomu.metadata["Content-Type"] == "application/pdf"
 
-        _create_entity "File", { "type" => "PDF",
-          "name" => uri,
-          "created" => yomu.metadata["Creation-Date"],
-          "last_modified" => yomu.metadata["Last-Modified"],
-          "created_with" => yomu.metadata["xmp:CreatorTool"],
-          "plugin" => yomu.metadata["producer"],
-          "uri" => uri
-        }
+        #_create_entity "File", { "type" => "PDF",
+        #  "name" => uri,
+        #  "created" => yomu.metadata["Creation-Date"],
+        #  "last_modified" => yomu.metadata["Last-Modified"],
+        #  "created_with" => yomu.metadata["xmp:CreatorTool"],
+        #  "plugin" => yomu.metadata["producer"],
+        #  "uri" => uri
+        #}
+        
         _create_entity "Person",
           { "name" => yomu.metadata["Author"], "uri" => uri } if yomu.metadata["Author"]
         _create_entity "SoftwarePackage",
