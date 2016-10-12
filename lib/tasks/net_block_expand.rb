@@ -31,7 +31,7 @@ class NetblockExpand < BaseTask
         _create_entity "IpAddress", "name" => r.to_s
       end
     rescue IPAddr::InvalidPrefixError => e
-      _log_error "Invalid NetBlock: #{netblock}"
+      _log_error "Invalid NetBlock!"
     end
 
   end

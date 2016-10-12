@@ -24,7 +24,7 @@ module Intrigue
       end
 
       def log_error(message)
-        _log "[#{@id}][D] " << message
+        _log "[#{@id}][E] " << message
       end
 
       def log_warning(message)
