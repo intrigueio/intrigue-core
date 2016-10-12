@@ -24,12 +24,14 @@ class NetblockExpand < BaseTask
   def run
     super
 
-    netblock = IPAddr.new(_get_entity_attribute("name"))
-    _log "Expanding Range: #{netblock}"
-    netblock.to_range.to_a[1..-1].each do |r|
-      # TODO - skip first and last
-
-      _create_entity "IpAddress", "name" => r.to_s
+    begin
+      netblock = IPAddr.new(_get_entity_attribute("name"))
+      _log "Expanding Range: #{netblock}"
+      netblock.to_range.to_a[1..-1].each do |r|
+        _create_entity "IpAddress", "name" => r.to_s
+      end
+    rescue IPAddr::InvalidPrefixError => e
+      _log_error "Invalid NetBlock: #{netblock}"
     end
 
   end

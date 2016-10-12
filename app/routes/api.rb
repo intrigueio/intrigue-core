@@ -137,23 +137,18 @@ class IntrigueApp < Sinatra::Base
     ###                          ###
 
     # Create a task result from a json request
+    # What we receive should look like this:
+    #
+    #payload = {
+    #  "project_name" => project_name,
+    #  "handlers" => []
+    #  "task" => task_name,
+    #  "entity" => entity_hash,
+    #  "options" => options_list,
+    #}.to_json
     post '/:project/task_results/?' do
 
-      puts "Params: #{params}"
-
-      @project_name = params[:project]
-
-      puts "Project: #{@project_name}"
-
-      # What we receive should look like this:
-      #
-      #payload = {
-      #  "project_name" => project_name,
-      #  "handlers" => []
-      #  "task" => task_name,
-      #  "entity" => entity_hash,
-      #  "options" => options_list,
-      #}.to_json
+      project_name = params[:project]
 
       # Parse the incoming request
       payload = JSON.parse(request.body.read) if request.content_type == "application/json"
@@ -170,10 +165,10 @@ class IntrigueApp < Sinatra::Base
       options = payload["options"]
       handlers = payload["handlers"]
 
-      project = Intrigue::Model::Project.first(:name => @project_name)
+      project = Intrigue::Model::Project.first(:name => project_name)
 
       # Construct an entity from the data we have, unless it already exists
-      entity = Intrigue::Model::Entity.scope_by_project(project_name).first(:name => entity['name'])
+      entity = Intrigue::Model::Entity.scope_by_project(project_name).first(:name => payload["entity"]["name"])
       unless entity
         entity = Intrigue::Model::Entity.create(attributes.merge(:project => project))
         entity.save
@@ -353,8 +348,6 @@ class IntrigueApp < Sinatra::Base
         :logger => Intrigue::Model::Logger.create(:project => p),
         :project => p
       })
-
-      #puts "CREATING SCAN RESULT: #{scan_result.inspect}"
 
       id = scan_result.start
     end
