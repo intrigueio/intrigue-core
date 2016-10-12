@@ -171,10 +171,15 @@ class IntrigueApp < Sinatra::Base
       handlers = payload["handlers"]
 
       project = Intrigue::Model::Project.first(:name => @project_name)
-      entity = Intrigue::Model::Entity.create(attributes.merge(:project => project))
-      entity.save
 
-      # Start the task _run
+      # Construct an entity from the data we have, unless it already exists
+      entity = Intrigue::Model::Entity.scope_by_project(project_name).first(:name => entity['name'])
+      unless entity
+        entity = Intrigue::Model::Entity.create(attributes.merge(:project => project))
+        entity.save
+      end
+
+      # Start the task_run
       task_id = start_task_run(project.id, nil, task_name, entity, options, handlers)
       status 200 if task_id
 
@@ -325,14 +330,17 @@ class IntrigueApp < Sinatra::Base
       # Get the project
       p = Intrigue::Model::Project.first(:name => project_name)
 
-      # Construct an entity from the data we have
-      entity = Intrigue::Model::Entity.create(
-      {
-        :type => "Intrigue::Entity::#{entity['type']}",
-        :name => entity['name'],
-        :details => entity['details'],
-        :project => p
-      })
+      # Construct an entity from the data we have, unless it already exists
+      entity = Intrigue::Model::Entity.scope_by_project(project_name).first(:name => entity['name'])
+      unless entity
+        entity = Intrigue::Model::Entity.create(
+        {
+          :type => "Intrigue::Entity::#{entity['type']}",
+          :name => entity['name'],
+          :details => entity['details'],
+          :project => p
+        })
+      end
 
       # Set up the ScanResult object
       scan_result = Intrigue::Model::ScanResult.create({

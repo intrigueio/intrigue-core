@@ -1,0 +1,38 @@
+require 'ipaddr'
+
+module Intrigue
+class NetblockExpand < BaseTask
+
+  def metadata
+    {
+      :name => "net_block_expand",
+      :pretty_name => "NetBlock Expand",
+      :authors => ["jcran"],
+      :description => "This task expands a NetBlock into a list of ip addresses.",
+      :references => [],
+      :allowed_types => ["NetBlock"],
+      :example_entities => [
+        {"type" => "NetBlock", "attributes" => {"name" => "10.0.0.0/24"}}
+      ],
+      :allowed_options => [
+      ],
+      :created_types => ["IpAddress"]
+    }
+  end
+
+  ## Default method, subclasses must override this
+  def run
+    super
+
+    netblock = IPAddr.new(_get_entity_attribute("name"))
+    _log "Expanding Range: #{netblock}"
+    netblock.to_range.to_a[1..-1].each do |r|
+      # TODO - skip first and last
+
+      _create_entity "IpAddress", "name" => r.to_s
+    end
+
+  end
+
+end
+end

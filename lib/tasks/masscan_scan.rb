@@ -12,7 +12,7 @@ class MasscanTask < BaseTask
       :authors => ["jcran"],
       :description => "This task runs a masscan scan on the target host or domain.",
       :references => [],
-      :allowed_types => ["IpAddress", "NetBlock"],
+      :allowed_types => ["NetBlock"],
       :example_entities => [{"type" => "NetBlock", "attributes" => {"name" => "10.0.0.0/24"}}],
       :allowed_options => [
         {:name => "port", :type => "Integer", :regex => "integer", :default => 80 },
