@@ -17,4 +17,4 @@
   <% end %>
 </ul>
 
-<%= @entities.pager.to_html("/v1/#{@project_name}/entities") %>
+<%= @entities.pager.to_html("/v1/#{@project_name}/entities?entity_name=#{@entity_name}") %>
