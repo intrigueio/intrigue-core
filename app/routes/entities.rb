@@ -26,7 +26,7 @@ class IntrigueApp < Sinatra::Base
     get '/:project/entities' do
       @project_name = params[:project]
       @page_id = params[:page]
-      @entities = Intrigue::Model::Entity.scope_by_project(@project_name).page((@page_id, :per_page => 50)
+      @entities = Intrigue::Model::Entity.scope_by_project(@project_name).page(@page_id, :per_page => 50)
       erb :'entities/index'
     end
 
