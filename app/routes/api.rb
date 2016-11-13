@@ -286,6 +286,14 @@ class IntrigueApp < Sinatra::Base
     end
 
     # Show the results in a graph format
+    get '/:project/scan_results/:id/graph.json/?' do
+      content_type 'application/json'
+      @project_name = params[:project]
+      @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
+      @result.export_graph_json if @result
+    end
+
+    # Show the results in a graph format
     get '/:project/scan_results/:id/graph.gexf/?' do
       content_type 'text/plain'
       @project_name = params[:project]

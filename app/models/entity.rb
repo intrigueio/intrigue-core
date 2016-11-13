@@ -24,9 +24,9 @@ module Intrigue
       end
 
       def children
-       children = []
-       Intrigue::Model::TaskResult.scope_by_project(@project_name).all(:base_entity => self).each { |r| children.concat(r.entities) }
-      children
+        results = []
+        task_results.each { |t| t.entities.each { |e| results << e } }
+      results
       end
 
       def created_by?(task_name)

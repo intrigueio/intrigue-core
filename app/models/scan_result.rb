@@ -129,6 +129,41 @@ module Intrigue
       output_string
       end
 
+      def export_graph_json
+
+        # generate the nodes
+        nodes = []
+        nodes = self.entities.map{|x| {:id => x.id, :label => "#{x.type}: #{x.name}"}  }
+        nodes.uniq! {|x| x[:id]}
+
+        # calculate edges from the base entity
+
+        #base_entity.children.each do |c|
+          #puts "working on #{base_entity.to_s} => #{c.to_s}"
+          #puts "DEBUG Child ID #{c.id} not found in " unless debug_node_ids.include? c.id
+        #  edges << {"id" => edge_count, "source" => base_entity.id, "target" => c.id }
+        #  edge_count += 1
+        #end
+
+        # calculate child edges
+        edges = []
+        edge_count = 1
+        self.task_results.each do |t|
+          t.entities.each do |e|
+            edges << {"id" => edge_count, "source" => t.base_entity.id, "target" => e.id}
+
+            # Hack, since it seems like our entities list doesn't contain everything.
+            nodes << {:id => e.id, :label => "#{e.type}: #{e.name}"}
+            nodes.uniq! {|x| x[:id]}
+
+            edge_count += 1
+          end
+        end
+
+        # dump the json
+        { "nodes" => nodes, "edges" => edges }.to_json
+      end
+
     end
   end
 end
