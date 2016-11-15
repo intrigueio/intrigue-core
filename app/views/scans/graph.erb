@@ -1,0 +1,46 @@
+<style type="text/css">
+  #container {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+  }
+</style>
+
+<div id="container"></div>
+
+<script src="/sigma/sigma.min.js"></script>
+<script src="/sigma/plugins/sigma.parsers.json.min.js"></script>
+<script src="/sigma/plugins/sigma.layout.forceAtlas2.min.js"></script>
+<script>
+  sigma.parsers.json("<%= @json_uri %>", {
+    container: 'container',
+    renderer: {
+        container: document.getElementById('container'),
+        type: 'canvas'
+    },
+    settings: {
+      minNodeSize: 1,
+      maxNodeSize: 3,
+      defaultNodeColor: 'D3D3D3',
+      defaultEdgeColor: '#FFFFFF',
+      edgeColor: 'default'
+    }
+  }, function(s) {
+
+    s.graph.nodes().forEach(function(node, i, a) {
+      node.x = Math.cos(Math.PI * 2 * i / a.length);
+      node.y = Math.sin(Math.PI * 2 * i / a.length);
+      node.size = 1;
+    });
+
+    s.startForceAtlas2({gravity:300,scalingRatio:500,slowDown:100});
+    setTimeout(function() { s.stopForceAtlas2(); }, 10000);
+
+    //s.bind('overNode outNode clickNode doubleClickNode rightClickNode', function(e) {
+    //    console.log(e.type, e.data.node.label, e.data.captor);
+    //});
+  }
+ );
+</script>

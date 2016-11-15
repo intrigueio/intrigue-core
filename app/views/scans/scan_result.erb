@@ -1,8 +1,12 @@
 <h3>Scan Result</h3>
-<p><a href="/v1/<%=@project_name%>/scan_results/<%=@result.id%>/profile">(Profile View)</a></p>
 <p>Total Tasks: <%=@result.task_results.count%></p>
 <p>Entity: <a href="/v1/<%=@project_name%>/entities/<%=@result.base_entity.id%>"><%= h "#{@result.base_entity.type_string} #{@result.base_entity.name}"%></a></p>
 <p>Complete: <%= @result.complete %></p>
+Views:
+<ul>
+  <li><a href="/v1/<%=@project_name%>/scan_results/<%=@result.id%>/profile">Dossier (by type)</a></li>
+  <li><a href=<%="#{request.url}/graph"%>> Graph </a></li>
+</ul>
 Export:
 <ul>
   <li><a href=<%="#{request.url}.csv"%>> CSV </a></li>
