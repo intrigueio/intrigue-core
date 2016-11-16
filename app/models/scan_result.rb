@@ -133,11 +133,16 @@ module Intrigue
 
         # generate the nodes
         nodes = []
-        nodes = self.entities.map{|x| {:id => x.id, :label => "#{x.type}: #{x.name}"}  }
-        nodes.uniq! {|x| x[:id]}
+        # Add the base entity
+        nodes << { :id => base_entity.id, :label => "#{base_entity.name}" }
+        # And all the child entities
+        nodes = self.entities.map{|x| {:id => x.id, :label => "#{x.name}"}  }
+        # But make sure we only have one
+        nodes.uniq! {|x| x[:id] }
 
+        #
         # calculate edges from the base entity
-
+        #
         #base_entity.children.each do |c|
           #puts "working on #{base_entity.to_s} => #{c.to_s}"
           #puts "DEBUG Child ID #{c.id} not found in " unless debug_node_ids.include? c.id

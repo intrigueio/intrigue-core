@@ -1,0 +1,45 @@
+{
+  "name": "sigma.js",
+  "authors": [
+    "Atelier Iceberg <alexis.jacomy@gmail.com>"
+  ],
+  "description": "A JavaScript library dedicated to graph drawing.",
+  "main": [
+    "sigma.min.js",
+    "plugins/sigma.layout.forceAtlas2.min.js",
+    "plugins/sigma.parsers.gexf.min.js",
+    "plugins/sigma.parsers.json.min.js",
+    "plugins/sigma.plugins.animate.min.js",
+    "plugins/sigma.plugins.dragNodes.min.js",
+    "plugins/sigma.plugins.filter.min.js",
+    "plugins/sigma.plugins.neighborhoods.min.js",
+    "plugins/sigma.renderers.customEdgeShapes.min.js",
+    "plugins/sigma.renderers.customShapes.min.js",
+    "plugins/sigma.renderers.edgeLabels.min.js",
+    "plugins/sigma.statistics.HITS.min.js"
+  ],
+  "keywords": [
+    "sigma",
+    "graph"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/jacomyal/sigma.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    ".components",
+    "test",
+    "tests"
+  ],
+  "_release": "de3fe03295",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "de3fe032950e2efef7ee2c8d00ab65f0856ba0c1"
+  },
+  "_source": "https://github.com/tuvistavie/sigma-bower.git",
+  "_target": "*",
+  "_originalSource": "sigma.js",
+  "_direct": true
+}
