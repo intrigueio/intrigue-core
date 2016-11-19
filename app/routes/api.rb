@@ -1,22 +1,20 @@
 class IntrigueApp < Sinatra::Base
   namespace '/v1' do
 
-    ###               ###
-    ### System Mgmt   ###
-    ###               ###
+    ###                  ###
+    ### System Config    ###
+    ###                  ###
 
     post '/:project/config/system' do
-      @project_name = params[:project]
       global_config = Intrigue::Config::GlobalConfig.new
       global_config.config["credentials"]["username"] = "#{params["username"]}"
       global_config.config["credentials"]["password"] = "#{params["password"]}"
       global_config.save
-      redirect "/v1/#{@project_name}/"  # handy if we're in a browser
+      redirect "/v1/#{@project_name}"  # handy if we're in a browser
     end
+
     # save the config
     post '/:project/config/module' do
-      @project_name = params[:project]
-
       # Update our config if one of the fields have been changed. Note that we use ***
       # as a way to mask out the full details in the view. If we have one that doesn't lead with ***
       # go ahead and update it
@@ -29,32 +27,30 @@ class IntrigueApp < Sinatra::Base
       end
       global_config.save
 
-      redirect "/v1/#{@project_name}/"  # handy if we're in a browser
+      redirect "/v1/#{@project_name}"  # handy if we're in a browser
     end
 
     ###                ###
     ### Project Mgmt   ###
     ###                ###
 
-    # save the config
+    # Create a project!
     post '/project' do
-      @project_name = params[:project]
+
+      # When we create the project, we want to make sure no HTML is
+      # stored, as we'll use this for display later on...
+      new_project_name = CGI::escapeHTML(params[:project])
 
       # create the project unless it exists
-      unless Intrigue::Model::Project.first(:name => @project_name)
-        Intrigue::Model::Project.create(:name => @project_name)
+      unless Intrigue::Model::Project.first(:name => new_project_name)
+        Intrigue::Model::Project.create(:name => new_project_name)
       end
 
-      # set the current session variable
-      #session["project_name"] = project_name
-      #response.set_cookie "project_name", :value => project_name
-
-      redirect "/v1/#{@project_name}/scan" # handy if we're in a browser
+      redirect "/v1/#{new_project_name}/scan" # handy if we're in a browser
     end
 
     # save the config
-    post '/project/delete' do
-      @project_name = params[:project]
+    post '/:project/delete' do
       project = Intrigue::Model::Project.first(:name => @project_name)
 
       # create the project unless it exists
@@ -120,14 +116,12 @@ class IntrigueApp < Sinatra::Base
 
     get '/:project/entities/:id.csv' do
       content_type 'text/plain'
-      @project_name = params[:project]
       @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
       @entity.export_csv
     end
 
     get '/:project/entities/:id.json' do
       content_type 'application/json'
-      @project_name = params[:project]
       @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
       @entity.export_json
     end
@@ -192,7 +186,6 @@ class IntrigueApp < Sinatra::Base
     # Accept the results of a task run
     post '/:project/task_results/:id/?' do
       raise "Broken?"
-      @project_name = params[:project]
       # Retrieve the request's body and parse it as JSON
       result = JSON.parse(request.body.read)
       # Do something with event_json
@@ -203,15 +196,12 @@ class IntrigueApp < Sinatra::Base
 
     # Export All task results
     get '/:project/task_results.json/?' do
-      @project_name = params[:project]
-      raise "Not implemented"
+       raise "Not implemented"
     end
 
     # Show the results in a CSV format
     get '/:project/task_results/:id.csv/?' do
       content_type 'text/plain'
-      @project_name = params[:project]
-
       @task_result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       @task_result.export_csv
     end
@@ -219,7 +209,6 @@ class IntrigueApp < Sinatra::Base
     # Show the results in a CSV format
     get '/:project/task_results/:id.tsv/?' do
       content_type 'text/plain'
-      @project_name = params[:project]
       @task_result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       @task_result.export_tsv
     end
@@ -227,7 +216,6 @@ class IntrigueApp < Sinatra::Base
     # Show the results in a JSON format
     get '/:project/task_results/:id.json/?' do
       content_type 'application/json'
-      @project_name = params[:project]
       @result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       @result.export_json if @result
     end
@@ -235,7 +223,6 @@ class IntrigueApp < Sinatra::Base
 
     # Determine if the task run is complete
     get '/:project/task_results/:id/complete/?' do
-      @project_name = params[:project]
       # Get the task result and return unless it's false
       x = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       return false unless x
@@ -250,7 +237,6 @@ class IntrigueApp < Sinatra::Base
     # Get the task log
     get '/:project/task_results/:id/log/?' do
       content_type 'application/json'
-      @project_name = params[:project]
       @result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       return unless @result
 
@@ -264,7 +250,6 @@ class IntrigueApp < Sinatra::Base
     # Show the results in a JSON
     get '/:project/scan_results/:id.json/?' do
       content_type 'application/json'
-      @project_name = params[:project]
       @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
       @result.export_json if @result
     end
@@ -272,7 +257,6 @@ class IntrigueApp < Sinatra::Base
     # Show the results in a CSV
     get '/:project/scan_results/:id.csv/?' do
       content_type 'text/plain'
-      @project_name = params[:project]
       @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
       @result.export_csv if @result
     end
@@ -280,7 +264,6 @@ class IntrigueApp < Sinatra::Base
     # Show the results in a graph format
     get '/:project/scan_results/:id/graph.csv/?' do
       content_type 'text/plain'
-      @project_name = params[:project]
       @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
       @result.export_graph_csv if @result
     end
@@ -288,7 +271,6 @@ class IntrigueApp < Sinatra::Base
     # Show the results in a graph format
     get '/:project/scan_results/:id/graph.json/?' do
       content_type 'application/json'
-      @project_name = params[:project]
       @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
       @result.export_graph_json if @result
     end
@@ -296,7 +278,6 @@ class IntrigueApp < Sinatra::Base
     # Show the results in a graph format
     get '/:project/scan_results/:id/graph.gexf/?' do
       content_type 'text/plain'
-      @project_name = params[:project]
       result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
       return unless result
 
@@ -313,7 +294,6 @@ class IntrigueApp < Sinatra::Base
 
     # Determine if the scan run is complete
     get '/:project/scan_results/:id/complete' do
-      @project_name = params[:project]
       result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
 
       # immediately return false unless we find the scan result
@@ -328,7 +308,6 @@ class IntrigueApp < Sinatra::Base
 
     # Endpoint to start a task run programmatically
     post '/:project/scan_results/?' do
-      @project_name = params[:project]
       scan_result_info = JSON.parse(request.body.read) if request.content_type == "application/json"
 
       project_name = scan_result_info["project_name"]
@@ -376,7 +355,6 @@ class IntrigueApp < Sinatra::Base
     # Get the scan log
     get '/:project/scan_results/:id/log' do
       content_type 'application/json'
-      @project_name = params[:project]
       @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
       return unless @result
 

@@ -2,7 +2,6 @@ class IntrigueApp < Sinatra::Base
   namespace '/v1' do
 
     post '/:project/entities' do
-      @project_name = params[:project]
       @entity_name = params[:entity_name]
       @page_id = params[:page]
 
@@ -18,7 +17,6 @@ class IntrigueApp < Sinatra::Base
     end
 
     get '/:project/entities' do
-      @project_name = params[:project]
       @entity_name = params[:entity_name]
       @page_id = params[:page]
 
@@ -35,7 +33,6 @@ class IntrigueApp < Sinatra::Base
 
 
    get '/:project/entities/:id' do
-     @project_name = params[:project]
       @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
       return "No such entity in this project" unless @entity
 

@@ -2,14 +2,12 @@ class IntrigueApp < Sinatra::Base
   namespace '/v1' do
 
     get '/:project/admin/?' do
-      @project_name = params[:project]
       erb :"admin/index"
     end
+
     # TODO - kill this
     # Get rid of all existing task runs
     get '/:project/admin/clear/?' do
-      @project_name = params[:project]
-
       # Clear the default queue
       Sidekiq::Queue.new.clear
 
@@ -33,10 +31,9 @@ class IntrigueApp < Sinatra::Base
 
     # get config
     get '/:project/admin/config/?' do
-      @project_name = params[:project]
       @global_config = Intrigue::Config::GlobalConfig.new
       erb :"admin/config"
     end
-    
+
   end
 end

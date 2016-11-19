@@ -4,7 +4,6 @@ class IntrigueApp < Sinatra::Base
 
     # Kick off a task
     get '/:project/task/?' do
-      @project_name = params[:project]
       @page = params["page"]
       # if we receive an entity_id or a task_result_id, instanciate the object
       if params["entity_id"]
@@ -31,8 +30,6 @@ class IntrigueApp < Sinatra::Base
 
     # Helper to construct the request to the API when the application is used interactively
     post '/:project/interactive/single/?' do
-      @project_name = params[:project]
-
       # get the task name
       task_name = "#{@params["task"]}"
       entity_id = @params["entity_id"]
@@ -96,8 +93,6 @@ class IntrigueApp < Sinatra::Base
 
     # Show the results in a human readable format
     get '/:project/task_results/:id/?' do
-      @project_name = params[:project]
-
       task_result_id = params[:id].to_i
 
       # Get the task result from the database, and fail cleanly if it doesn't exist

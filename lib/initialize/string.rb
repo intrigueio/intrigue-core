@@ -1,4 +1,3 @@
-require "resolv"
 ## Monkeypatch string to include a boolean option
 ## https://gist.github.com/ChuckJHardySnippets/2000623
 class String
