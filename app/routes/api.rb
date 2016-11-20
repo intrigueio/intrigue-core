@@ -51,6 +51,7 @@ class IntrigueApp < Sinatra::Base
 
     # save the config
     post '/project/delete' do
+
       # we have to collect the name bc we skip the before block
       @project_name = params[:project]
       project = Intrigue::Model::Project.first(:name => @project_name)
@@ -73,6 +74,19 @@ class IntrigueApp < Sinatra::Base
       end
 
       redirect '/v1/' # handy if we're in a browser
+    end
+
+    # Project Graph
+
+    get '/:project/graph.json/?' do
+      content_type 'application/json'
+      project = Intrigue::Model::Project.first(:name => @project_name)
+      project.export_graph_json
+    end
+
+    get '/:project/graph' do
+      @json_uri = "#{request.url}.json"
+      erb :'graph'
     end
 
     ###                                  ###

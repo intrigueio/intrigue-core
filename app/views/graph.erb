@@ -24,7 +24,7 @@
       minNodeSize: 1,
       maxNodeSize: 3,
       defaultNodeColor: '#FFFFFF',
-      defaultEdgeColor: '#FFFFFF',
+      defaultEdgeColor: '#00b8e6',
       edgeColor: 'default'
     }
   }, function(s) {
@@ -35,8 +35,8 @@
       node.size = 1;
     });
 
-    s.startForceAtlas2({gravity:30,scalingRatio:50,slowDown:1000});
-    setTimeout(function() { s.stopForceAtlas2(); }, 8000);
+    s.startForceAtlas2({gravity:300,scalingRatio:50,slowDown:500});
+    //setTimeout(function() { s.stopForceAtlas2(); }, 15000);
 
     //s.bind('overNode outNode clickNode doubleClickNode rightClickNode', function(e) {
     //    console.log(e.type, e.data.node.label, e.data.captor);

@@ -95,7 +95,7 @@ class IntrigueApp < Sinatra::Base
 
     get '/:project/scan_results/:id/graph/?' do
       @json_uri = "#{request.url}.json"
-      erb :'scans/graph'
+      erb :'graph'
     end
 
 

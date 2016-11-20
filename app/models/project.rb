@@ -24,6 +24,33 @@ module Intrigue
         Intrigue::Model::ScanResult.all(:project_id => @id)
       end
 
+
+      def export_graph_json
+
+        # generate the nodes
+        nodes = []
+        # Add the base entity
+        self.entities.each do |e|
+          nodes << { :id => e.id, :label => "#{e.name}" }
+        end
+
+        # calculate child edges
+        edges = []
+        edge_count = 1
+        self.task_results.each do |t|
+          t.entities.each do |e|
+            edges << {"id" => edge_count, "source" => t.base_entity.id, "target" => e.id}
+            # Hack, since it seems like our entities list doesn't contain everything.
+            #nodes << {:id => e.id, :label => "#{e.type}: #{e.name}"}
+            #nodes.uniq! {|x| x[:id]}
+            edge_count += 1
+          end
+        end
+
+        # dump the json
+        { "nodes" => nodes, "edges" => edges }.to_json
+      end
+
     end
   end
 end

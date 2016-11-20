@@ -8,4 +8,5 @@
 <ul>
   <% @scan_results.page(@page, :per_page => 10).each do |x| %> <li><a href="/v1/<%=@project_name%>/scan_results/<%=x.id%>"><%= x.scan_type %> on <%= x.base_entity %> (<%=x.entity_count%>)</a></li><% end %>
 </ul>
+
 <%= @scan_results.page(@page, :per_page => 10).pager.to_html("/v1/#{@project_name}/scan") %>
