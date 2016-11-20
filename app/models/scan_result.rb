@@ -134,9 +134,9 @@ module Intrigue
         # generate the nodes
         nodes = []
         # Add the base entity
-        nodes << { :id => base_entity.id, :label => "#{base_entity.name}" }
+        nodes << { :id => self.base_entity.id, :label => "#{self.base_entity.name}" }
         # And all the child entities
-        nodes = self.entities.map{|x| {:id => x.id, :label => "#{x.name}"}  }
+        nodes.concat self.entities.map{|x| {:id => x.id, :label => "#{x.name}"}  }
         # But make sure we only have one
         nodes.uniq! {|x| x[:id] }
 

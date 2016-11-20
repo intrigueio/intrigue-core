@@ -50,7 +50,9 @@ class IntrigueApp < Sinatra::Base
     end
 
     # save the config
-    post '/:project/delete' do
+    post '/project/delete' do
+      # we have to collect the name bc we skip the before block
+      @project_name = params[:project]
       project = Intrigue::Model::Project.first(:name => @project_name)
 
       # create the project unless it exists

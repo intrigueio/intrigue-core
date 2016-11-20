@@ -2,6 +2,7 @@ require 'sinatra'
 require 'sinatra/contrib'
 require 'json'
 require 'rest-client'
+require 'cgi'
 
 # Sidekiq
 require 'sidekiq'
@@ -115,7 +116,29 @@ class IntrigueApp < Sinatra::Base
   end
 
   before do
+
+    # TODO - use settings helper going forward
     $intrigue_server_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
+
+    # Parse out our project
+    project_string = request.path_info.split("/")[2] || "Default"
+
+    # allow certain requests without a project string
+    pass if [ "project", "tasks", "scans.json", "tasks.json",
+              "entity_types.json", nil].include? project_string
+
+    # Set the project
+    project = Intrigue::Model::Project.first(:name => project_string)
+
+    # If we haven't resolved a project, let's stop
+    halt unless project
+
+    # Set it so we can use it going forward
+    @project_name = project.name
+  end
+
+  after do
+
   end
 
   not_found do
@@ -141,13 +164,11 @@ class IntrigueApp < Sinatra::Base
 
     # Main Page
     get '/:project/?' do
-      @project_name = params[:project]
       erb :index
     end
 
     # NEWS!
     get '/:project/news/?' do
-      @project_name = params[:project]
       erb :news
     end
 

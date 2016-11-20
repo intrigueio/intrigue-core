@@ -18,7 +18,7 @@
         //console.log(obj);
 
         if(obj["name"] == $('#scan_type option:selected').val()){
-          console.log("Using allowed_types from " + obj["name"])
+          //console.log("Using allowed_types from " + obj["name"])
 
           // we have the correct scan_object, so populate the form
           $.each(obj["allowed_types"], function(key,allowed_type) {
@@ -31,6 +31,8 @@
       });
     });
 
+    // Set string as the default
+    $("#entity_type option[value='String']").attr('selected','selected');
   }
 
   // Update the form on load
