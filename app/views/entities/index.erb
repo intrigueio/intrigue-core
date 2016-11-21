@@ -1,20 +1,25 @@
+<p>
+Entities Count: <%= @entities.count %><br/>
+Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>
+</p>
 
-<div class="col-sm-5">
-<form class="form-horizontal" id="entity_search" target="_self" method="post" action="/v1/<%=@project_name%>/entities">
-  <div class="form-group">
-    <label for="entity_name" class="col-xs-4 control-label">Entity Name</label>
-    <div class="col-xs-6">
-      <input type="text" class="form-control input-sm" id="entity_name" name="entity_name">
-      <input class="btn btn-primary" type="submit" value="Search">
-      <hr></hr>
-    </div>
-  </div>
-</form>
+<div class="col-sm-6">
+  <form class="form-horizontal" id="entity_search" target="_self" method="post" action="/v1/<%=@project_name%>/entities">
+    <input type="text" class="form-control sm" id="entity_name" name="entity_name" size=10>
+    <input class="btn btn-primary" type="submit" value="Search">
+  </form>
+  <ul>
+    <% @entities.each do |entity| %>
+      <li><a href="/v1/<%=@project_name%>/entities/<%=entity.id%>"><%= h entity %></a></li>
+    <% end %>
+  </ul>
+  <%= @entities.pager.to_html("/v1/#{@project_name}/entities?entity_name=#{@entity_name}") %>
+</div>
 
+<div class="col-sm-6">
 <ul>
-  <% @entities.each do |entity| %>
-    <li><a href="/v1/<%=@project_name%>/entities/<%=entity.id%>"><%= h entity %></a></li>
+  <% Intrigue::Model::TaskResult.scope_by_project(@project_name).all.each do |t| %>
+    <li><a href="/v1/<%=@project_name%>/task_results/<%=t.id%>"><%= h "#{t.name} (#{t.base_entity})" %></a></li>
   <% end %>
 </ul>
-
-<%= @entities.pager.to_html("/v1/#{@project_name}/entities?entity_name=#{@entity_name}") %>
+</div>

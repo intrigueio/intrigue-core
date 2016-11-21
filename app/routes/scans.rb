@@ -73,7 +73,7 @@ class IntrigueApp < Sinatra::Base
     end
 
     # Show the results in a human readable format
-    get '/:project/scan_results/:id/profile/?' do
+    get '/:project/scan_results/:id/dossier/?' do
       @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).get(params[:id])
 
       @persons  = []
@@ -90,7 +90,7 @@ class IntrigueApp < Sinatra::Base
         @networks << item if item.kind_of? Intrigue::Entity::NetBlock
       end
 
-      erb :'scans/profile'
+      erb :'dossier'
     end
 
     get '/:project/scan_results/:id/graph/?' do

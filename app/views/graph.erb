@@ -1,14 +1,29 @@
 <style type="text/css">
+  #master {
+    position: static;
+    z-index: 0;
+  }
   #container {
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    position:absolute;
+    top:0;
+    bottom:0;
+    width:100%;
+    height:100%;
+    z-index: 10;
+  }
+  #overlay {
     position: absolute;
+    z-index: 100;
+    border: 1px solid black;
   }
 </style>
 
-<div id="container"></div>
+<div id="master">
+  <div id="container"></div>
+  <div id="overlay">[select a node]</div>
+</div>
+
+
 
 <script src="/bower_components/sigma.js/sigma.min.js"></script>
 <script src="/bower_components/sigma.js/plugins/sigma.parsers.json.min.js"></script>
@@ -21,10 +36,12 @@
         type: 'canvas'
     },
     settings: {
-      minNodeSize: 1,
-      maxNodeSize: 3,
+      minNodeSize: 2,
+      maxNodeSize: 6,
       defaultNodeColor: '#FFFFFF',
       defaultEdgeColor: '#00b8e6',
+      defaultLabelColor:'#FFFFFF',
+      defaultLabelSize: 18,
       edgeColor: 'default'
     }
   }, function(s) {
@@ -35,8 +52,13 @@
       node.size = 1;
     });
 
-    s.startForceAtlas2({gravity:300,scalingRatio:50,slowDown:500});
-    //setTimeout(function() { s.stopForceAtlas2(); }, 15000);
+    s.startForceAtlas2({gravity:100,scalingRatio:30,slowDown:5000});
+    //  setTimeout(function() { s.stopForceAtlas2(); }, 10000);
+
+    s.bind('clickNode', function(e) {
+      console.log(e.type, e.data.node.label, e.data.captor);
+    	$('#overlay').html('<a href=entities/' + e.data.node.id + '>'+ e.data.node.type + ": " + e.data.node.label + '</a>');
+    });
 
     //s.bind('overNode outNode clickNode doubleClickNode rightClickNode', function(e) {
     //    console.log(e.type, e.data.node.label, e.data.captor);

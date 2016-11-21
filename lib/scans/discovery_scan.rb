@@ -41,26 +41,28 @@ class DiscoveryScan < Intrigue::Scanner::Base
         if (entity.name.split(".").length < 3)
           _start_task_and_recurse "dns_brute_sub",entity,depth,[
             {"name" => "use_file", "value" => true },
-            {"name" => "brute_alphanumeric_size", "value" => 1},
+            {"name" => "brute_alphanumeric_size", "value" => 3},
             {"name" => "use_permutations", "value" => true },
-            {"name" => "use_mashed_domains", "value" => false }
+            {"name" => "use_mashed_domains", "value" => false },
+            {"name" => "threads", "value" => 20}
           ]
         else
           # otherwise do something a little faster
           _start_task_and_recurse "dns_brute_sub",entity,depth,[
             {"name" => "use_file", "value" => false },
             {"name" => "use_permutations", "value" => true },
-            {"name" => "use_mashed_domains", "value" => false }
+            {"name" => "use_mashed_domains", "value" => false },
+            {"name" => "threads", "value" => 20}
           ]
         end
 
         ### DNS Forward Lookup
-        _start_task_and_recurse "dns_lookup_forward",entity,depth, ["name" => "record_types", "value" => "A,AAAA"]
+        _start_task_and_recurse "dns_lookup_forward",entity,depth #, ["name" => "record_types", "value" => "A,AAAA"]
 
       elsif entity.type_string == "String"
 
         # Search, only snag the top result
-        _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 1}]
+        _start_task_and_recurse "search_bing",entity,depth,[{"name"=> "max_results", "value" => 10}]
 
       elsif entity.type_string == "IpAddress"
 
@@ -77,7 +79,7 @@ class DiscoveryScan < Intrigue::Scanner::Base
 
         # Make sure it's small enough not to be disruptive, and if it is, scan it
         cidr = entity.name.split("/").last.to_i
-        if cidr >=18
+        if cidr >= 24
           _start_task_and_recurse "masscan_scan",entity,depth, ["port" => 80]
           _start_task_and_recurse "masscan_scan",entity,depth, ["port" => 443]
         else
@@ -90,7 +92,7 @@ class DiscoveryScan < Intrigue::Scanner::Base
         _start_task_and_recurse "uri_gather_ssl_certificate",entity,depth if entity.name =~ /^https/
 
         # Check for exploitable URIs, but don't recurse on things we've already found
-        #_start_task_and_recurse "uri_exploitable", entity, depth,[{"name"=> "threads", "value" => 5}] unless entity.created_by? "uri_exploitable"
+        _start_task_and_recurse "uri_brute", entity, depth,[{"name"=> "threads", "value" => 5}] unless entity.created_by? "uri_brute"
 
         ## Spider, looking for metadata
         _start_task_and_recurse "uri_spider",entity,depth,[

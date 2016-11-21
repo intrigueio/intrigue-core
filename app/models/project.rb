@@ -24,14 +24,13 @@ module Intrigue
         Intrigue::Model::ScanResult.all(:project_id => @id)
       end
 
-
       def export_graph_json
 
         # generate the nodes
         nodes = []
         # Add the base entity
         self.entities.each do |e|
-          nodes << { :id => e.id, :label => "#{e.name}" }
+          nodes << { :id => e.id, :label => "#{e.name}", :type => e.type_string }
         end
 
         # calculate child edges

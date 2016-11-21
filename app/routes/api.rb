@@ -84,11 +84,6 @@ class IntrigueApp < Sinatra::Base
       project.export_graph_json
     end
 
-    get '/:project/graph' do
-      @json_uri = "#{request.url}.json"
-      erb :'graph'
-    end
-
     ###                                  ###
     ### System-Level Informational Calls ###
     ###                                  ###
