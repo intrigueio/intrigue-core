@@ -3,6 +3,7 @@ require 'sinatra/contrib'
 require 'json'
 require 'rest-client'
 require 'cgi'
+require 'uri'
 
 # Sidekiq
 require 'sidekiq'
@@ -16,8 +17,6 @@ require 'dm-pager'
 require 'dm-pg-types'
 require 'dm-serializer'
 require 'dm-validations'
-
-require 'uri'
 
 # Debug
 require 'pry'
@@ -123,23 +122,27 @@ class IntrigueApp < Sinatra::Base
     # Parse out our project
     project_string = request.path_info.split("/")[2] || "Default"
 
-    # allow certain requests without a project string
+    # Allow certain requests without a project string
     pass if [ "project", "tasks", "scans.json", "tasks.json",
               "entity_types.json", nil].include? project_string
 
-    # Set the project
+    # Set the project based on the project_string
     project = Intrigue::Model::Project.first(:name => project_string)
 
-    # If we haven't resolved a project, let's stop
-    halt unless project
+    # If we haven't resolved a project, let's handle it
+    unless project
+      # Creating a default project since it doesn't appear to exist (it should always exist)
+      if project_string == "Default"
+        project = Intrigue::Model::Project.create(:name => "Default")
+      else
+        halt
+      end
+    end
 
     # Set it so we can use it going forward
     @project_name = project.name
   end
 
-  after do
-
-  end
 
   not_found do
     "Unable to find this content."

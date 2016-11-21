@@ -64,13 +64,6 @@ class IntrigueApp < Sinatra::Base
         if @project_name == "Default"
           Intrigue::Model::Project.create(:name => "Default")
         end
-
-        # move us to the default project if we removed our current_project
-        #if @project_name == session["project_name"]
-        #  session["project_name"] = "Default"
-        #  response.set_cookie "project_name", :value => "Default"
-        #end
-
       end
 
       redirect '/v1/' # handy if we're in a browser
