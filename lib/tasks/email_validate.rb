@@ -3,7 +3,7 @@ class EmailValidateTask < BaseTask
   include Intrigue::Task::Web
 
 
-  def metadata
+  def self.metadata
     {
       :name => "email_validate",
       :pretty_name => "Email Validate",

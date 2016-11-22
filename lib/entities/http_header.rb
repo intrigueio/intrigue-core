@@ -2,8 +2,9 @@ module Intrigue
 module Entity
 class HttpHeader < Intrigue::Model::Entity
 
-  def metadata
+  def self.metadata
     {
+      :name => "HttpHeader",
       :description => "TODO"
     }
   end

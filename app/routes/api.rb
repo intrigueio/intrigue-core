@@ -92,7 +92,7 @@ class IntrigueApp < Sinatra::Base
       content_type 'application/json'
       scans = []
        Intrigue::ScanFactory.list.each do |s|
-          scans << s.send(:new).metadata
+          scans << s.metadata
       end
     scans.to_json
     end
@@ -102,7 +102,7 @@ class IntrigueApp < Sinatra::Base
       content_type 'application/json'
       tasks = []
        Intrigue::TaskFactory.list.each do |t|
-          tasks << t.send(:new).metadata
+          tasks << t.metadata
       end
     tasks.to_json
     end
@@ -111,7 +111,7 @@ class IntrigueApp < Sinatra::Base
     get '/tasks/:task_name.json/?' do
       content_type 'application/json'
       task_name = params[:task_name]
-      Intrigue::TaskFactory.create_by_name(task_name).metadata.to_json
+      Intrigue::TaskFactory.list.select{|t| t.metadata[:name] == task_name}.first.metadata.to_json
     end
 
     ###                      ###

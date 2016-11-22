@@ -3,7 +3,7 @@ class UriCheckSecurityHeaders  < BaseTask
 
   include Intrigue::Task::Web
 
-  def metadata
+  def self.metadata
     {
       :name => "uri_check_security_headers",
       :pretty_name => "URI Check Security Headers",

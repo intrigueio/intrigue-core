@@ -3,7 +3,7 @@ require 'opencorporates'
 module Intrigue
 class SearchOpencorporates < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "search_opencorporates",
       :pretty_name => "Search OpenCorporates",

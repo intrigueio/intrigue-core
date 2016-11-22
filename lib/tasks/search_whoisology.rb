@@ -3,7 +3,7 @@ require 'whoisology'
 module Intrigue
 class SearchWhoisologyTask < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "search_whoisology",
       :pretty_name => "Search Whoisology",

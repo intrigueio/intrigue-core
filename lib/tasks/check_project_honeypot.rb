@@ -3,7 +3,7 @@ class CheckProjectHoneypot  < BaseTask
 
   include Intrigue::Task::Web
 
-  def metadata
+  def self.metadata
     {
       :name => "check_project_honeypot",
       :pretty_name => "Check Project Honeypot",

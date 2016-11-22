@@ -2,7 +2,7 @@ module Intrigue
 class SearchPhishtank < BaseTask
   include Intrigue::Task::Web
 
-  def metadata
+  def self.metadata
     {
       :name => "search_phishtank",
       :pretty_name => "Search Phishtank",

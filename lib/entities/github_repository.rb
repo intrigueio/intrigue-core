@@ -2,8 +2,9 @@ module Intrigue
 module Entity
 class GithubRepository < Intrigue::Model::Entity
 
-  def metadata
+  def self.metadata
     {
+      :name => "GithubRepository",
       :description => "TODO"
     }
   end

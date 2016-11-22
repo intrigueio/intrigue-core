@@ -4,7 +4,7 @@ require 'nmap/xml'
 module Intrigue
 class NmapScanTask < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "nmap_scan",
       :pretty_name => "Nmap Scan",

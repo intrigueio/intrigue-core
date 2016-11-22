@@ -3,7 +3,7 @@ require 'ipaddr'
 module Intrigue
 class NetblockExpand < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "net_block_expand",
       :pretty_name => "NetBlock Expand",

@@ -3,7 +3,7 @@ class UriYoutubeMetadata < BaseTask
 
   include Intrigue::Task::Web
 
-  def metadata
+  def self.metadata
     {
       :name => "uri_youtube_metadata",
       :pretty_name => "URI Youtube Metadata",

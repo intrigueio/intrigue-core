@@ -2,8 +2,9 @@ module Intrigue
 module Entity
 class Screenshot < Intrigue::Model::Entity
 
-  def metadata
+  def self.metadata
     {
+      :name => "Screenshot",
       :description => "TODO"
     }
   end

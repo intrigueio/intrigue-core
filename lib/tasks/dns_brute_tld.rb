@@ -2,7 +2,7 @@ require 'resolv'
 module Intrigue
 class DnsBruteTldTask < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "dns_brute_tld",
       :pretty_name => "DNS TLD Bruteforce",

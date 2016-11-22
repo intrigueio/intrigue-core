@@ -2,8 +2,9 @@ module Intrigue
 module Entity
 class UriHeader < Intrigue::Model::Entity
 
-  def metadata
+  def self.metadata
     {
+      :name => "UriHeader",
       :description => "TODO"
     }
   end

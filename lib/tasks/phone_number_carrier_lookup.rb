@@ -3,7 +3,7 @@ class PhoneNumberCarrierLookup < BaseTask
 
   include Task::Web
 
-  def metadata
+  def self.metadata
     {
       :name => "phone_number_carrier_lookup",
       :pretty_name => "Phone Number Carrier Lookup",

@@ -6,7 +6,7 @@ class UriHttpAuthBrute < BaseTask
 
   include Intrigue::Task::Lists
 
-  def metadata
+  def self.metadata
     {
       :name => "uri_http_auth_brute",
       :pretty_name => "URI HTTP Auth Brute",

@@ -1,7 +1,7 @@
 module Intrigue
 class SearchCorpwatchTask < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "search_edgar",
       :pretty_name => "Search EDGAR",

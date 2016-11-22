@@ -6,7 +6,7 @@ require 'resolv-replace'
 module Intrigue
 class DnsBruteSubTask < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "dns_brute_sub",
       :pretty_name => "DNS Subdomain Bruteforce",

@@ -2,8 +2,9 @@ module Intrigue
 module Entity
 class PhysicalLocation < Intrigue::Model::Entity
 
-  def metadata
+  def self.metadata
     {
+      :name => "PhysicalLocation",
       :description => "TODO"
     }
   end

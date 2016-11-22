@@ -2,8 +2,9 @@ module Intrigue
 module Entity
 class WebAccount < Intrigue::Model::Entity
 
-  def metadata
+  def self.metadata
     {
+      :name => "WebAccount",
       :description => "TODO"
     }
   end

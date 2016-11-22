@@ -2,7 +2,7 @@ module Intrigue
 module Scanner
 class DiscoveryScan < Intrigue::Scanner::Base
 
-  def metadata
+  def self.metadata
     {
       :name => "discovery",
       :pretty_name => "Discovery Scan",

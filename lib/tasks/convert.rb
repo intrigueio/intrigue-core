@@ -1,7 +1,7 @@
 module Intrigue
 class Convert  < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "convert_entity",
       :pretty_name => "Convert Entity",

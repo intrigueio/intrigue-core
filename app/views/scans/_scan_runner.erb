@@ -9,7 +9,7 @@
           <% @scans.each do |scan| %>
 
             <!-- set up the scan in an option box, default to last one -->
-            <option value="<%= scan.metadata[:name] %>"><%= scan.metadata[:pretty_name] %></option>
+            <option value="<%= scan.class.metadata[:name] %>"><%= scan.class.metadata[:pretty_name] %></option>
 
         <% end %>
         </select>

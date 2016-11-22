@@ -3,7 +3,7 @@ require 'censys'
 module Intrigue
 class SearchCensysTask < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "search_censys",
       :pretty_name => "Search Censys.io",

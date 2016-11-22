@@ -2,7 +2,7 @@ require 'dnsruby'
 module Intrigue
 class DnsRecurseSpf < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "dns_recurse_spf",
       :pretty_name => "DNS SPF Recursive Lookup",

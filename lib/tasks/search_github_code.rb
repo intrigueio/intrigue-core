@@ -2,7 +2,7 @@ module Intrigue
 class SearchGithubCode < BaseTask
   include Intrigue::Task::Web
 
-  def metadata
+  def self.metadata
     {
       :name => "search_github_code",
       :pretty_name => "Search Github Code",

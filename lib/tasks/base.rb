@@ -37,18 +37,18 @@ class BaseTask
     ###################
     # Sanity Checking #
     ###################
-    allowed_types = self.metadata[:allowed_types]
+    allowed_types = self.class.metadata[:allowed_types]
 
     # Check to make sure this task can receive an entity of this type
     unless allowed_types.include?(@entity.type_string) || allowed_types.include?("*")
-      _log_error "Unable to call #{self.metadata[:name]} on entity: #{@entity}"
+      _log_error "Unable to call #{self.class.metadata[:name]} on entity: #{@entity}"
       broken_input_flag = true
     end
 
     ###########################
     #  Setup the task result  #
     ###########################
-    @task_result.task_name = metadata[:name]
+    @task_result.task_name = self.class.metadata[:name]
     @task_result.timestamp_start = Time.now.getutc
     @task_result.id = task_id
 
@@ -123,7 +123,7 @@ class BaseTask
     # user_options is formatted:
     #    [{"name" => "option name", "value" => "value"}, ...]
 
-    allowed_options = self.metadata[:allowed_options]
+    allowed_options = self.class.metadata[:allowed_options]
     @user_options = []
     if user_options
       #_log "Got user options list: #{user_options}"

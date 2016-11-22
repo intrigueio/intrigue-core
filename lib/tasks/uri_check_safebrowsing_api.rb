@@ -1,7 +1,7 @@
 module Intrigue
 class UriCheckSafebrowsingApi  < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "uri_check_safebrowsing_api",
       :pretty_name => "URI Check Safebrowsing Api",

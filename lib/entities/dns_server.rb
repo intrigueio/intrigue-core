@@ -2,8 +2,9 @@ module Intrigue
 module Entity
 class DnsServer < Intrigue::Model::Entity
 
-  def metadata
+  def self.metadata
     {
+      :name => "DnsServer",
       :description => "TODO"
     }
   end

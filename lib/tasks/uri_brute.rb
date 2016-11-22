@@ -3,7 +3,7 @@ class UriBrute < BaseTask
 
   include Intrigue::Task::Web
 
-  def metadata
+  def self.metadata
     {
       :name => "uri_brute",
       :pretty_name => "URI Directory Bruteforce",

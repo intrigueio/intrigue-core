@@ -2,8 +2,9 @@ module Intrigue
 module Entity
 class Uri < Intrigue::Model::Entity
 
-  def metadata
+  def self.metadata
     {
+      :name => "Uri",
       :description => "TODO"
     }
   end

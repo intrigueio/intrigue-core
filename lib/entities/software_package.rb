@@ -2,8 +2,9 @@ module Intrigue
 module Entity
 class SoftwarePackage < Intrigue::Model::Entity
 
-  def metadata
+  def self.metadata
     {
+      :name => "SoftwarePackage",
       :description => "TODO"
     }
   end

@@ -3,7 +3,7 @@ class WebAccountCheckTask < BaseTask
 
   include Intrigue::Task::Web
 
-  def metadata
+  def self.metadata
     {
       :name => "web_account_check",
       :pretty_name => "Web Account Check",

@@ -5,7 +5,7 @@ class UriGatherSitemapTask  < BaseTask
 
   include Intrigue::Task::Web
 
-  def metadata
+  def self.metadata
     {
       :name => "uri_gather_sitemap",
       :pretty_name => "URI Gather Sitemap (sitemap.xml)",

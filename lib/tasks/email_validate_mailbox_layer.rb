@@ -3,7 +3,7 @@ class EmailValidateMailboxLayerTask < BaseTask
   include Intrigue::Task::Web
 
 
-  def metadata
+  def self.metadata
     {
       :name => "email_validate_mailbox_layer",
       :pretty_name => "Email Validate via MailboxLayer",

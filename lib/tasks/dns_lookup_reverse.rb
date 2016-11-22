@@ -2,7 +2,7 @@ require 'resolv'
 module Intrigue
 class DnsLookupReverseTask < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :version => "1.0",
       :name => "dns_lookup_reverse",

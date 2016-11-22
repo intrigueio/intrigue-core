@@ -2,7 +2,7 @@ require 'geoip'
 module Intrigue
 class GeolocateHostTask < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "geolocate_host",
       :pretty_name => "Geolocate Host",

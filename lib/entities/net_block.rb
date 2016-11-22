@@ -2,8 +2,9 @@ module Intrigue
 module Entity
 class NetBlock < Intrigue::Model::Entity
 
-  def metadata
+  def self.metadata
     {
+      :name => "NetBlock",
       :description => "TODO"
     }
   end

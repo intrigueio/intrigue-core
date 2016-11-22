@@ -1,7 +1,7 @@
 module Intrigue
 class SearchShodanTask < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "search_shodan",
       :pretty_name => "Search Shodan",

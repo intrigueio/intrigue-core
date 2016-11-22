@@ -3,7 +3,7 @@ require 'dnsruby'
 module Intrigue
 class DnsLookupForwardTask < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "dns_lookup_forward",
       :pretty_name => "DNS Forward Lookup",

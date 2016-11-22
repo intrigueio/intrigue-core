@@ -6,7 +6,7 @@ require 'socket'
 module Intrigue
 class NetsvcFuzzRandom < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "netsvc_fuzz_random",
       :pretty_name => "Fuzz a NetSvc with random data",

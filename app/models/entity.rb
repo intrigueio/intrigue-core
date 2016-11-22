@@ -16,9 +16,6 @@ module Intrigue
       has n, :task_results, :through => Resource, :constraint => :destroy
       has n, :scan_results, :through => Resource, :constraint => :destroy
 
-      # TODO: do something about the kids
-      #has n, :children, self, :through => :task_results, :via => :base_entity
-
       def self.scope_by_project(name)
         all(:project => Intrigue::Model::Project.first(:name => name))
       end

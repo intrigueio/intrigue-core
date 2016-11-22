@@ -2,7 +2,7 @@ module Intrigue
 module Scanner
 class QuickDnsSubdomainScan < Intrigue::Scanner::Base
 
-  def metadata
+  def self.metadata
     {
       :name => "quick_dns_subdomain",
       :pretty_name => "Quick DNS Subdomain Scan",

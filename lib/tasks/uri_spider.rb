@@ -7,7 +7,7 @@ class UriSpider < BaseTask
   include Intrigue::Task::Web
   include Intrigue::Task::Parse
 
-  def metadata
+  def self.metadata
     {
       :name => "uri_spider",
       :pretty_name => "URI Spider",

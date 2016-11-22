@@ -3,7 +3,7 @@ class UriGatherRobotsTask  < BaseTask
 
   include Intrigue::Task::Web
 
-  def metadata
+  def self.metadata
     {
       :name => "uri_gather_robots",
       :pretty_name => "URI Gather Robots.txt",

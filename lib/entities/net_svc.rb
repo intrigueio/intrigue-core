@@ -2,8 +2,9 @@ module Intrigue
 module Entity
 class NetSvc < Intrigue::Model::Entity
 
-  def metadata
+  def self.metadata
     {
+      :name => "NetSvc",
       :description => "TODO"
     }
   end

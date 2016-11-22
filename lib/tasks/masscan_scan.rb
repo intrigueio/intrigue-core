@@ -5,7 +5,7 @@ require 'resolv'
 module Intrigue
 class MasscanTask < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "masscan_scan",
       :pretty_name => "Masscan Scan",

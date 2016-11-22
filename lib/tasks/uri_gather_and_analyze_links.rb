@@ -4,7 +4,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
 
   include Intrigue::Task::Web
 
-  def metadata
+  def self.metadata
     {
       :name => "uri_gather_and_analyze_links",
       :pretty_name => "URI Gather And Analyze Links",

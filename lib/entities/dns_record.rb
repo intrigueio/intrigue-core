@@ -2,8 +2,9 @@ module Intrigue
 module Entity
 class DnsRecord < Intrigue::Model::Entity
 
-  def metadata
+  def self.metadata
     {
+      :name => "DnsRecord",
       :description => "TODO"
     }
   end

@@ -3,6 +3,7 @@
 require_relative 'initialize/hash'
 require_relative 'initialize/string'
 
+
 ####
 # Task-specific libraries
 ####
@@ -36,8 +37,11 @@ end
 require_relative 'client'
 
 ####
-# Entity libraries
+# Entity-specific libraries
 ####
+require_relative 'entity_factory'
+
+# Load all .rb file in lib/entities by default
 entities_folder = File.expand_path('../entities', __FILE__) # get absolute directory
 Dir["#{entities_folder}/*.rb"].each {|f| require_relative f}
 
@@ -46,6 +50,7 @@ Dir["#{entities_folder}/*.rb"].each {|f| require_relative f}
 ####
 require_relative 'scan_factory'
 
+# Load all .rb file in lib/scans by default
 require_relative 'scans/base'
 scans_folder = File.expand_path('../scans', __FILE__) # get absolute directory
 Dir["#{scans_folder}/*.rb"].each {|f| require_relative f}

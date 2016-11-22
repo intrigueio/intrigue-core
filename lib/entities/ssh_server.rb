@@ -2,8 +2,9 @@ module Intrigue
 module Entity
 class SshServer < Intrigue::Model::Entity
 
-  def metadata
+  def self.metadata
     {
+      :name => "SshServer",
       :description => "TODO"
     }
   end

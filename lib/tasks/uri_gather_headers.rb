@@ -3,7 +3,7 @@ class UriGatherHeadersTask  < BaseTask
 
   include Intrigue::Task::Web
 
-  def metadata
+  def self.metadata
     {
       :name => "uri_gather_headers",
       :pretty_name => "URI Gather Headers",

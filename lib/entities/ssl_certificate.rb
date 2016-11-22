@@ -2,8 +2,9 @@ module Intrigue
 module Entity
 class SslCertificate < Intrigue::Model::Entity
 
-  def metadata
+  def self.metadata
     {
+      :name => "SslCertificate",
       :description => "TODO"
     }
   end

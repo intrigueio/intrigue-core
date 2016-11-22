@@ -7,7 +7,7 @@ class WhoisTask < BaseTask
 
   include Intrigue::Task::Web
 
-  def metadata
+  def self.metadata
     {
       :name => "whois",
       :pretty_name => "Whois",

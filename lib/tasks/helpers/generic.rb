@@ -65,18 +65,18 @@ module Generic
     short_name = _encode_string(hash["name"][0,199])
     entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:name => short_name)
 
-    # Merge the details if it exists
+    # Merge the details if it already exists
     if entity
       entity.details = entity.details.merge(hash)
       entity.save
     else
       # Create the entity, validating the attributes
       entity = Intrigue::Model::Entity.create({
-                 :type => eval("Intrigue::Entity::#{type}"),
-                 :name => short_name,
-                 :details => hash,
-                 :project => Intrigue::Model::Project.get(@project_id)
-               })
+         :type => eval("Intrigue::Entity::#{type}"),
+         :name => short_name,
+         :details => hash,
+         :project => Intrigue::Model::Project.get(@project_id)
+       })
     end
 
     # If we don't have an entity now, fail.
@@ -97,7 +97,7 @@ module Generic
   end
 
   def _canonical_name
-    "#{self.metadata[:name]}: #{self.metadata[:version]}"
+    "#{self.class.metadata[:name]}: #{self.class.metadata[:version]}"
   end
 
   # helper method, gets an attribute on the base entity
@@ -132,7 +132,7 @@ module Generic
     value = nil
 
     # First, get the default value by cycling through the allowed options
-    method = metadata[:allowed_options].each do |allowed_option|
+    method = self.class.metadata[:allowed_options].each do |allowed_option|
       value = allowed_option[:default] if allowed_option[:name] == name
     end
 

@@ -1,7 +1,7 @@
 module Intrigue
 class EmailHarvestTask < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "email_harvest",
       :pretty_name => "Email Harvester",

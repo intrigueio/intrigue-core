@@ -21,7 +21,7 @@ require 'net/dns'
 module Intrigue
 class DnsSnoopCacheTask < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "dns_snoop_cache",
       :pretty_name => "DNS Cache Snoop",

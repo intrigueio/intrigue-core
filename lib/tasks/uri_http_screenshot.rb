@@ -6,7 +6,7 @@ class UriHttpScreenshot < BaseTask
 
   include Intrigue::Task::Scanner
 
-  def metadata
+  def self.metadata
     {
       :name => "uri_http_screenshot",
       :pretty_name => "URI HTTP Screenshot",

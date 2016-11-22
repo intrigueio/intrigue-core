@@ -3,7 +3,7 @@ require 'towerdata_api'
 module Intrigue
 class SearchTowerdataTask < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "search_towerdata",
       :pretty_name => "Search Towerdata",

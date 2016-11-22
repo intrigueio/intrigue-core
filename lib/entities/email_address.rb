@@ -2,8 +2,9 @@ module Intrigue
 module Entity
 class EmailAddress < Intrigue::Model::Entity
 
-  def metadata
+  def self.metadata
     {
+      :name => "EmailAddress",
       :description => "TODO"
     }
   end

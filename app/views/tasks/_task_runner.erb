@@ -8,21 +8,21 @@
     <select class="form-control input-sm" name="task" id="task_name">
 
       <!-- iterate through the tasks an create each one, checking to see if it matches our entity -->
-      <% @tasks.sort_by { |obj| obj.class.to_s.downcase }.each do |task|
+      <% @task_classes.sort_by { |obj| obj.to_s.downcase }.each do |task_class|
 
             # Skip to the next task unless the current type is allowed
-            next unless ( @entity.allowed_tasks.include?(task.class) ||
-                          task.metadata[:allowed_types].include?("*") ) if @entity
+            next unless ( @entity.allowed_tasks.include?(task_class) ||
+                          task_class.metadata[:allowed_types].include?("*") ) if @entity
         %>
 
         <!-- set up the task in an option box, default to search_bing -->
-        <option value="<%= task.metadata[:name] %>"
+        <option value="<%= task_class.metadata[:name] %>"
           <% if @task_result %>
-            <%= "selected='selected'" if @task_result.task_name == task.metadata[:name] %>
+            <%= "selected='selected'" if @task_result.task_name == task_class.metadata[:name] %>
           <% else %>
-            <%= "selected='selected'" if task.metadata[:name] == "" %>
+            <%= "selected='selected'" if task_class.metadata[:name] == "" %>
           <% end %>
-          ><%= task.metadata[:pretty_name] %>
+          ><%= task_class.metadata[:pretty_name] %>
         </option>
 
     <% end %>

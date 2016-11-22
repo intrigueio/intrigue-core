@@ -3,7 +3,7 @@ require 'gmail'
 module Intrigue
 class EmailBouncebackTask < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "email_bounceback",
       :pretty_name => "Email Bounceback",

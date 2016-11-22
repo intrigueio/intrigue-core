@@ -2,7 +2,7 @@ module Intrigue
 class SearchBingTask < BaseTask
   include Intrigue::Task::Parse
 
-  def metadata
+  def self.metadata
     {
       :name => "search_bing",
       :pretty_name => "Search Bing",

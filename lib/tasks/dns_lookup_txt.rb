@@ -2,7 +2,7 @@ require 'dnsruby'
 module Intrigue
 class DnsLookupTxtTask < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "dns_lookup_txt",
       :pretty_name => "DNS TXT Lookup",

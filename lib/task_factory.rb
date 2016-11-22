@@ -14,7 +14,7 @@ class TaskFactory
   end
 
   def self.allowed_tasks_for_entity_type(entity_type)
-    available_tasks.select {|task_class| task = task_class.new; task_class if task.metadata[:allowed_types].include? entity_type}
+    available_tasks.select {|task_class| task_class if task_class.metadata[:allowed_types].include? entity_type}
   end
   #
   # XXX - can :name be set on the class vs the object
@@ -22,9 +22,8 @@ class TaskFactory
   #
   def self.include?(name)
     available_tasks.each do |t|
-      task_object = t.new
-      if (task_object.metadata[:name] == name)
-        return true # Create a new object and send it back
+      if (t.metadata[:name] == name)
+        return true
       end
     end
   false
@@ -36,9 +35,8 @@ class TaskFactory
   #
   def self.create_by_name(name)
     available_tasks.each do |t|
-      task_object = t.new
-      if (task_object.metadata[:name] == name)
-        return task_object # Create a new object and send it back
+      if (t.metadata[:name] == name)
+        return t.new # Create a new object and send it back
       end
     end
 
@@ -52,9 +50,8 @@ class TaskFactory
   #
   def self.create_by_pretty_name(pretty_name)
     available_tasks.each do |t|
-      task_object = t.new
-      if (task_object.metadata[:pretty_name] == pretty_name)
-        return task_object # Create a new object and send it back
+      if (t.metadata[:pretty_name] == pretty_name)
+        return t.new # Create a new object and send it back
       end
     end
 
@@ -65,7 +62,7 @@ class TaskFactory
   private
 
   def self.available_tasks
-    @tasks #@available_tasks = @tasks.select{|x| x if x.new.check_external_dependencies } unless @available_tasks
+    @tasks
   end
 
 end

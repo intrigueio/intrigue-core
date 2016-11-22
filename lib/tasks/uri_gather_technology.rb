@@ -3,7 +3,7 @@ class UriGatherTechnologyTask  < BaseTask
 
   include Intrigue::Task::Web
 
-  def metadata
+  def self.metadata
     {
       :name => "uri_gather_technology",
       :pretty_name => "URI Gather Technology",

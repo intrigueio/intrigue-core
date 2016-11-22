@@ -5,7 +5,7 @@ class UriGatherSslCertTask  < BaseTask
 
   include Intrigue::Task::Web
 
-  def metadata
+  def self.metadata
     {
       :name => "uri_gather_ssl_certificate",
       :pretty_name => "URI Gather SSL Certificate",

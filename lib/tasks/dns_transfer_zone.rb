@@ -3,7 +3,7 @@ require 'dnsruby'
 module Intrigue
 class DnsTransferZoneTask < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "dns_transfer_zone",
       :pretty_name => "DNS Zone Transfer",

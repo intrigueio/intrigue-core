@@ -2,7 +2,7 @@ require 'resolv'
 module Intrigue
 class DnsLookupMxTask < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "dns_lookup_mx",
       :pretty_name => "DNS MX Lookup",

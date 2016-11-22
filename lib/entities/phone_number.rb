@@ -2,8 +2,9 @@ module Intrigue
 module Entity
 class PhoneNumber < Intrigue::Model::Entity
 
-  def metadata
+  def self.metadata
     {
+      :name => "PhoneNumber",
       :description => "TODO"
     }
   end

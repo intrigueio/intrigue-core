@@ -7,7 +7,7 @@ class UriExtractMetadata < BaseTask
   include Intrigue::Task::Parse
   include Intrigue::Task::Web
 
-  def metadata
+  def self.metadata
     {
       :name => "uri_extract_metadata",
       :pretty_name => "URI Extract Metadata",

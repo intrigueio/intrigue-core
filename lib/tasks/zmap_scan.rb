@@ -4,7 +4,7 @@
 module Intrigue
 class ZmapScanTask < BaseTask
 
-  def metadata
+  def self.metadata
     {
       :name => "zmap_scan",
       :pretty_name => "Zmap Scan",
