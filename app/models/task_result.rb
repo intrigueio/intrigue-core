@@ -8,7 +8,6 @@ module Intrigue
       belongs_to :base_entity, 'Intrigue::Model::Entity'
 
       has n, :entities, :through => Resource, :constraint => :destroy
-      has n, :scan_results, :through => Resource, :constraint => :destroy
 
       property :id, Serial, :key => true
       property :name, String
@@ -16,8 +15,11 @@ module Intrigue
       property :timestamp_start, DateTime
       property :timestamp_end, DateTime
       property :options, Object, :default => [] #StringArray
+      property :handlers, Object, :default => [] #StringArray
       property :complete, Boolean, :default => false
       property :entity_count, Integer, :default => 0
+      property :strategy, String, :default => "default"
+      property :depth, Integer, :default => 1
 
       def self.scope_by_project(name)
         all(:project => Intrigue::Model::Project.first(:name => name))
@@ -41,6 +43,16 @@ module Intrigue
         end
 
       true
+      end
+
+      # Start a task
+      def start
+
+        # TODO, keep track of the sidekiq id so we can control the task later
+        
+        task = Intrigue::TaskFactory.create_by_name(task_name)
+        task.class.perform_async self.id, handlers
+
       end
 
       # Matches based on type and the attribute "name"

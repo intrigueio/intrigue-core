@@ -3,6 +3,8 @@ require 'timeout'
 module Intrigue
 class BaseTask
   include Intrigue::Task::Generic
+  include Intrigue::Task::Helper
+
   include Sidekiq::Worker
   sidekiq_options :queue => "#{Intrigue::Config::GlobalConfig.new.config["intrigue_queues"]["task_queue"]}", :backtrace => true
 
@@ -18,9 +20,13 @@ class BaseTask
     raise "Unable to find task result by id #{task_id}. Bailing." unless @task_result
 
     @entity = @task_result.base_entity
-    @project_id = @task_result.project.id
-    @project_name = @task_result.project.name
+    @project = @task_result.project
+
     options = @task_result.options
+
+    # we must have these things to continue
+    raise "Unable to find task_result. Bailing." unless @task_result
+    raise "Unable to find project. Bailing." unless @project
     raise "Unable to find entity. Bailing." unless @entity
 
     # We need a flag to skip the actual setup, run, cleanup of the task if
@@ -90,7 +96,6 @@ class BaseTask
     # Handlers!
     #
     # (see lib/report/handlers)
-    @task
     handlers.each do |handler_type|
       _log "Processing #{handler_type} handler."
       begin

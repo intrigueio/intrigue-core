@@ -1,21 +1,10 @@
 module Intrigue
-module Scanner
-class DiscoveryScan < Intrigue::Scanner::Base
+module Strategy
+class Discovery
 
-  def self.metadata
-    {
-      :name => "discovery",
-      :pretty_name => "Discovery Scan",
-      :authors => ["jcran"],
-      :description => "Discovery Scan",
-      :references => [],
-      :allowed_types => ["DnsRecord", "IpAddress", "NetBlock","String"],
-      :example_entities => [
-        {"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}
-      ],
-      :allowed_options => [ ]
-    }
-  end
+    def self.handle_entity(project,task,entity,depth=2)
+      return "Not implemented"
+    end
 
     private
 

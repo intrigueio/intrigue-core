@@ -3,6 +3,11 @@ module Task
 module Generic
 
   private
+
+  def _create_entity(type,hash)
+    EntityFactory.create_entity(@project,@task_result,type,hash)
+  end
+
   ###
   ### Logging helpers
   ###
@@ -49,51 +54,6 @@ module Generic
     return hash unless hash.kind_of? Hash
     hash.each {|k,v| hash[k] = _encode_string(v) if v.kind_of? String }
   hash
-  end
-
-  #
-  # This is a helper method, use this to create entities from within tasks
-  #
-  def _create_entity(type, hash)
-
-    # Clean up in case there are encoding issues
-    hash = _encode_hash(hash)
-
-    # Now check fo r santity
-    raise "INVALID ENTITY, no name!" unless hash["name"]
-
-    short_name = _encode_string(hash["name"][0,199])
-    entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:name => short_name)
-
-    # Merge the details if it already exists
-    if entity
-      entity.details = entity.details.merge(hash)
-      entity.save
-    else
-      # Create the entity, validating the attributes
-      entity = Intrigue::Model::Entity.create({
-         :type => eval("Intrigue::Entity::#{type}"),
-         :name => short_name,
-         :details => hash,
-         :project => Intrigue::Model::Project.get(@project_id)
-       })
-    end
-
-    # If we don't have an entity now, fail.
-    unless entity
-      _log_error "Unable to verify & save entity: #{type} #{hash.inspect}"
-      return false
-    end
-
-    # Make sure we link the parent task & save
-    entity.task_results << @task_result
-    entity.save
-
-    # Add to our result set for this task
-    @task_result.add_entity entity
-
-  # return the entity
-  entity
   end
 
   def _canonical_name

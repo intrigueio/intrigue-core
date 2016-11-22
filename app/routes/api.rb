@@ -46,7 +46,7 @@ class IntrigueApp < Sinatra::Base
         Intrigue::Model::Project.create(:name => new_project_name)
       end
 
-      redirect "/v1/#{new_project_name}/scan" # handy if we're in a browser
+      redirect "/v1/#{new_project_name}/task" # handy if we're in a browser
     end
 
     # save the config
@@ -85,16 +85,6 @@ class IntrigueApp < Sinatra::Base
     get '/entity_types.json' do
       content_type 'application/json'
       Intrigue::Model::Entity.descendants.map {|x| x.new.type_string }.to_json
-    end
-
-    # Export All Scan Type Info
-    get '/scans.json/?' do
-      content_type 'application/json'
-      scans = []
-       Intrigue::ScanFactory.list.each do |s|
-          scans << s.metadata
-      end
-    scans.to_json
     end
 
     # Export All Tasks
@@ -180,13 +170,14 @@ class IntrigueApp < Sinatra::Base
       end
 
       # Start the task_run
-      task_id = start_task_run(project.id, nil, task_name, entity, options, handlers)
-      status 200 if task_id
+      task_result = start_task(project, nil, task_name, entity, options, handlers)
+      status 200 if task_result
 
     # must be a string otherwise it can be interpreted as a status code
-    task_id.to_s
+    task_result.id.to_s
     end
 
+=begin
     # Accept the results of a task run
     post '/:project/task_results/:id/?' do
       raise "Broken?"
@@ -197,6 +188,7 @@ class IntrigueApp < Sinatra::Base
       # Return status
       status 200 if result
     end
+=end
 
     # Export All task results
     get '/:project/task_results.json/?' do
@@ -242,124 +234,6 @@ class IntrigueApp < Sinatra::Base
     get '/:project/task_results/:id/log/?' do
       content_type 'application/json'
       @result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
-      return unless @result
-
-      {:data => @result.log}.to_json
-    end
-
-    ###                          ###
-    ### Per-Project Scan Results ###
-    ###                          ###
-
-    # Show the results in a JSON
-    get '/:project/scan_results/:id.json/?' do
-      content_type 'application/json'
-      @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
-      @result.export_json if @result
-    end
-
-    # Show the results in a CSV
-    get '/:project/scan_results/:id.csv/?' do
-      content_type 'text/plain'
-      @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
-      @result.export_csv if @result
-    end
-
-    # Show the results in a graph format
-    get '/:project/scan_results/:id/graph.csv/?' do
-      content_type 'text/plain'
-      @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
-      @result.export_graph_csv if @result
-    end
-
-    # Show the results in a graph format
-    get '/:project/scan_results/:id/graph.json/?' do
-      content_type 'application/json'
-      @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
-      @result.export_graph_json if @result
-    end
-
-    # Show the results in a graph format
-    get '/:project/scan_results/:id/graph.gexf/?' do
-      content_type 'text/plain'
-      result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
-      return unless result
-
-      # Generate a list of entities and task runs to work through
-      @entity_pairs = []
-      result.task_results.each do |task_result|
-        task_result.entities.each do |entity|
-          @entity_pairs << {:task_result => task_result, :entity => entity}
-        end
-      end
-
-      erb :'scans/gexf', :layout => false
-    end
-
-    # Determine if the scan run is complete
-    get '/:project/scan_results/:id/complete' do
-      result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
-
-      # immediately return false unless we find the scan result
-      return false unless result
-
-      # check for completion
-      return "true" if result.complete
-
-    # default to false
-    false
-    end
-
-    # Endpoint to start a task run programmatically
-    post '/:project/scan_results/?' do
-      scan_result_info = JSON.parse(request.body.read) if request.content_type == "application/json"
-
-      project_name = scan_result_info["project_name"]
-      scan_type = scan_result_info["scan_type"]
-      entity_hash = scan_result_info["entity"]
-      depth = scan_result_info["depth"].to_i
-      options = scan_result_info["options"]
-      handlers = scan_result_info["handlers"]
-
-      # Get the project
-      project = Intrigue::Model::Project.first(:name => project_name)
-      unless project # If the project didn't exist, create it
-        project = Intrigue::Model::Project.create(:name => project_name)
-      end
-
-      # Try to find the entity
-      entity = Intrigue::Model::Entity.scope_by_project(project_name).first(
-        :name => entity_hash['name'],
-        :type => entity_hash['type']
-      ) # If it doesn't exist, create it
-      unless entity
-        entity = Intrigue::Model::Entity.create({
-          :type => "Intrigue::Entity::#{entity_hash['type']}",
-          :name => entity_hash['name'],
-          :details => entity_hash['details'],
-          :project => project
-        })
-      end
-
-      # Set up the ScanResult object
-      scan_result = Intrigue::Model::ScanResult.create({
-        :scan_type => scan_type,
-        :name => "#{scan_type}",
-        :base_entity => entity,
-        :depth => depth,
-        :filter_strings => "",
-        :handlers => handlers,
-        :logger => Intrigue::Model::Logger.create(:project => project),
-        :project => project
-      })
-
-      id = scan_result.start
-    end
-
-    # Get the scan log
-    get '/:project/scan_results/:id/log' do
-      content_type 'application/json'
-      @result = Intrigue::Model::ScanResult.scope_by_project(@project_name).first(:id => params[:id])
       return unless @result
 
       {:data => @result.log}.to_json

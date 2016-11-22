@@ -31,7 +31,13 @@ class UriBrute < BaseTask
     # Get options
     uri = _get_entity_attribute("name")
     opt_threads = _get_option("threads")
-    user_list = _get_option("user_list").split(",")
+    user_list = _get_option("user_list")
+
+    # TODO - what's going on here? shouldn't this always be a string?
+    # 21:43:09 WARN: NoMethodError: undefined method `split' for []:Array
+    # 21:43:09 WARN: /Users/jcran/work/intrigue/projects/intrigue-core/lib/tasks/uri_brute.rb:34:in `run'
+    user_list = user_list.split(",") unless user_list.kind_of? Array
+
 
     # Pull our list from a file if it's set
     if user_list.length > 0

@@ -7,6 +7,23 @@ class IntrigueApp < Sinatra::Base
       erb :'graph'
     end
 
+    # Show the results in a gexf format
+    get '/:project/graph.gexf/?' do
+      content_type 'text/plain'
+      result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
+      return unless result
+
+      # Generate a list of entities and task runs to work through
+      @entity_pairs = []
+      result.each do |task_result|
+        task_result.entities.each do |entity|
+          @entity_pairs << {:task_result => task_result, :entity => entity}
+        end
+      end
+
+      erb :'scans/gexf', :layout => false
+    end
+
     # dossier
     get '/:project/dossier' do
       current_project = Intrigue::Model::Project.first(:name => @project_name)

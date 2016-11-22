@@ -33,6 +33,14 @@ if global_config.config["intrigue_task_load_paths"]
   end
 end
 
+####
+# Strategy-specific libraries
+####
+require_relative 'strategy_factory'
+# Load all .rb file in lib/entities by default
+strategies_folder = File.expand_path('../strategies', __FILE__) # get absolute directory
+Dir["#{strategies_folder}/*.rb"].each {|f| require_relative f}
+
 # Client libraries
 require_relative 'client'
 
@@ -40,31 +48,9 @@ require_relative 'client'
 # Entity-specific libraries
 ####
 require_relative 'entity_factory'
-
 # Load all .rb file in lib/entities by default
 entities_folder = File.expand_path('../entities', __FILE__) # get absolute directory
 Dir["#{entities_folder}/*.rb"].each {|f| require_relative f}
-
-####
-# Scan Libraries
-####
-require_relative 'scan_factory'
-
-# Load all .rb file in lib/scans by default
-require_relative 'scans/base'
-scans_folder = File.expand_path('../scans', __FILE__) # get absolute directory
-Dir["#{scans_folder}/*.rb"].each {|f| require_relative f}
-
-# And check to see if there are any specified load paths
-if global_config.config["intrigue_scan_load_paths"]
-  global_config.config["intrigue_scan_load_paths"].each do |load_path|
-    load_path = "#{scans_folder}/#{load_path}" unless load_path[0] == "/"
-    Dir["#{load_path}/*.rb"].each do |file|
-      puts "Adding scan: #{file}"
-      require_relative file
-    end
-  end
-end
 
 ####
 # Handler Libraries

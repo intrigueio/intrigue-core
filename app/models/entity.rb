@@ -10,11 +10,9 @@ module Intrigue
       property :name,     String, :length => 200, :index => true
       property :details,  Object, :default => {}
 
+      # TODO - we must add a cooresponding mapping and a destroy contstraint here
       belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
-
-      # THESE ARE TO BE USED TO LINK PARENTS OF THIS ENTITY!!
       has n, :task_results, :through => Resource, :constraint => :destroy
-      has n, :scan_results, :through => Resource, :constraint => :destroy
 
       def self.scope_by_project(name)
         all(:project => Intrigue::Model::Project.first(:name => name))

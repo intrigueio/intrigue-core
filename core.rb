@@ -123,8 +123,7 @@ class IntrigueApp < Sinatra::Base
     project_string = request.path_info.split("/")[2] || "Default"
 
     # Allow certain requests without a project string
-    pass if [ "project", "tasks", "scans.json", "tasks.json",
-              "entity_types.json", nil].include? project_string
+    pass if [ "project", "tasks", "tasks.json", "entity_types.json", nil].include? project_string
 
     # Set the project based on the project_string
     project = Intrigue::Model::Project.first(:name => project_string)

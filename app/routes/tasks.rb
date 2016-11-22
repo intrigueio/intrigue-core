@@ -17,12 +17,12 @@ class IntrigueApp < Sinatra::Base
       end
 
       # Always get us a list of tasks and names so we can display them
-      @tasks = Intrigue::TaskFactory.list.map{|x| x.send(:new)}
+      @task_classes = Intrigue::TaskFactory.list.map{|x| x}
 
       # get a list of task_results
       ### TODO - figure out how to filter this based on a nil association
       # http://stackoverflow.com/questions/7615752/datamapper-filter-records-by-association-count
-      @task_results = Intrigue::Model::TaskResult.scope_by_project(@project_name).all(:scan_results => nil)
+      @task_results = Intrigue::Model::TaskResult.scope_by_project(@project_name).all
 
       erb :'tasks/index'
     end
@@ -80,13 +80,12 @@ class IntrigueApp < Sinatra::Base
       end
 
       # Start the task run!
-      task_result_id = start_task_run(current_project.id, nil, task_name, entity, options)
-      task_result = Intrigue::Model::TaskResult.get(task_result_id)
+      task_result = start_task(current_project, task_name, entity, options)
 
       entity.task_results << task_result
       entity.save
 
-      redirect "/v1/#{@project_name}/task_results/#{task_result_id}"
+      redirect "/v1/#{@project_name}/task_results/#{task_result.id}"
     end
 
 

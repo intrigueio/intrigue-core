@@ -1,21 +1,25 @@
 module Intrigue
-module Scanner
-class DnsSubdomainScan < Intrigue::Scanner::Base
+module Strategy
+class DnsSubdomain
 
-  def self.metadata
-    {
-      :name => "dns_subdomain",
-      :pretty_name => "DNS Subdomain Scan",
-      :authors => ["jcran"],
-      :description => "Recursively scan for hostnames using an extensive wordlist, alphanumeric generation to 3 characters and permutations",
-      :references => [],
-      :allowed_types => ["DnsRecord"],
-      :example_entities => [
-        {"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}
-      ],
-      :allowed_options => [ ]
-    }
-  end
+    def self.handle_entity(project,task,entity,depth=2)
+      return "not implemented"
+    end
+
+    def self.metadata
+      {
+        :name => "dns_subdomain",
+        :pretty_name => "DNS Subdomain Scan",
+        :authors => ["jcran"],
+        :description => "Recursively scan for hostnames using an extensive wordlist, alphanumeric generation to 3 characters and permutations",
+        :references => [],
+        :allowed_types => ["DnsRecord"],
+        :example_entities => [
+          {"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}
+        ],
+        :allowed_options => [ ]
+      }
+    end
 
     private
 
