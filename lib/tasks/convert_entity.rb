@@ -1,5 +1,5 @@
 module Intrigue
-class Convert  < BaseTask
+class ConvertEntity < BaseTask
 
   def self.metadata
     {

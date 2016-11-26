@@ -11,15 +11,14 @@ module Helper
     # strategy = default
     # depth = default
     task_result = Intrigue::Model::TaskResult.create({
-        :name => "#{task_name}",
+        :name => "#{task_name} on #{entity.name}",
         :task_name => task_name,
         :options => options,
         :base_entity => entity,
         :logger => Intrigue::Model::Logger.create(:project => project),
         :project => project,
         :handlers => handlers,
-        :strategy => "default",
-        :depth => 1
+        :strategy => "default"
     })
 
     task_result.start

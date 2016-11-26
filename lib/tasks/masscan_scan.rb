@@ -28,7 +28,11 @@ class MasscanTask < BaseTask
     # Get range, or host
     to_scan = _get_entity_attribute "name"
 
-    # Get port
+    if to_scan =~ /::/
+      _log_error "Ipv6 scanning not currently supported"
+      return
+    end
+
     opt_port = _get_option "port"
 
     # Create a tempfile to store result
@@ -57,10 +61,6 @@ class MasscanTask < BaseTask
         "proto" => "tcp"
       })
 
-      # Create a URI entity if we're on a commonly known port
-      _create_entity("Uri", {"name" => "https://#{host}", "uri" => "https://#{host}" }) if opt_port == 443
-      _create_entity("Uri", {"name" => "http://#{host}", "uri" => "http://#{host}" }) if opt_port == 80
-
       ### Resolve the IP
       begin
         resolved_name = Resolv.new.getname(host).to_s
@@ -72,9 +72,13 @@ class MasscanTask < BaseTask
         _log_good "Creating domain #{resolved_name}"
         # Create our new dns record entity with the resolved name
         _create_entity("DnsRecord", {"name" => resolved_name})
-        _create_entity("Uri", {"name" => "http://#{resolved_name}", "uri" => "http://#{resolved_name}" })
+        _create_entity("Uri", {"name" => "https://#{resolved_name}", "uri" => "https://#{resolved_name}" }) if opt_port == 443
+        _create_entity("Uri", {"name" => "http://#{resolved_name}", "uri" => "http://#{resolved_name}" }) if opt_port == 80
       else
         _log "Unable to find a name for #{host}"
+        # Create a URI entity if we're on a commonly known port
+        _create_entity("Uri", {"name" => "https://#{host}", "uri" => "https://#{host}" }) if opt_port == 443
+        _create_entity("Uri", {"name" => "http://#{host}", "uri" => "http://#{host}" }) if opt_port == 80
       end
       ### End Resolution
 

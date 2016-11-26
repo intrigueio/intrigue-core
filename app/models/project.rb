@@ -28,26 +28,21 @@ module Intrigue
 
         # generate the nodes
         nodes = []
-        # Add the base entity
-        self.entities.each do |e|
-          nodes << { :id => e.id, :label => "#{e.name}", :type => e.type_string }
-        end
-
-        # calculate child edges
         edges = []
         edge_count = 1
         self.task_results.each do |t|
+          # add the base entity first
+          nodes << { :id => t.base_entity.id, :label => "#{t.base_entity.name}", :type => t.base_entity.type_string }
+          # then for each of the entities, generate the node and edges
           t.entities.each do |e|
+            nodes << { :id => e.id, :label => "#{e.name}", :type => e.type_string }
             edges << {"id" => edge_count, "source" => t.base_entity.id, "target" => e.id}
-            # Hack, since it seems like our entities list doesn't contain everything.
-            #nodes << {:id => e.id, :label => "#{e.type}: #{e.name}"}
-            #nodes.uniq! {|x| x[:id]}
             edge_count += 1
           end
         end
 
         # dump the json
-        { "nodes" => nodes, "edges" => edges }.to_json
+        { "nodes" => nodes.uniq!, "edges" => edges }.to_json
       end
 
     end

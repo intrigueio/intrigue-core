@@ -5,7 +5,7 @@ module Generic
   private
 
   def _create_entity(type,hash)
-    EntityFactory.create_entity(@project,@task_result,type,hash)
+    EntityFactory.create_entity_recursive(@project,@task_result,type,hash)
   end
 
   ###

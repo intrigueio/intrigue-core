@@ -23,11 +23,9 @@
   <div id="overlay">[select a node]</div>
 </div>
 
-
-
-<script src="/bower_components/sigma.js/sigma.min.js"></script>
-<script src="/bower_components/sigma.js/plugins/sigma.parsers.json.min.js"></script>
-<script src="/bower_components/sigma.js/plugins/sigma.layout.forceAtlas2.min.js"></script>
+<script src="https://rawgit.com/Linkurious/linkurious.js/develop/dist/sigma.min.js"></script>
+<script src="https://rawgit.com/Linkurious/linkurious.js/develop/dist/plugins/sigma.parsers.json.min.js"></script>
+<script src="https://rawgit.com/Linkurious/linkurious.js/develop/dist/plugins/sigma.layouts.forceAtlas2.min.js"></script>
 <script>
   sigma.parsers.json("<%= @json_uri %>", {
     container: 'container',
@@ -41,7 +39,7 @@
       defaultNodeColor: '#FFFFFF',
       defaultEdgeColor: '#00b8e6',
       defaultLabelColor:'#FFFFFF',
-      defaultLabelSize: 18,
+      defaultLabelSize: 15,
       edgeColor: 'default'
     }
   }, function(s) {
@@ -52,8 +50,8 @@
       node.size = 1;
     });
 
-    s.startForceAtlas2({gravity:100,scalingRatio:30,slowDown:5000});
-    //  setTimeout(function() { s.stopForceAtlas2(); }, 10000);
+    s.startForceAtlas2({gravity:100,scalingRatio:30,slowDown:2000});
+    //setTimeout(function() { s.stopForceAtlas2(); }, 10000);
 
     s.bind('clickNode', function(e) {
       console.log(e.type, e.data.node.label, e.data.captor);

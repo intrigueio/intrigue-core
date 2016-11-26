@@ -10,8 +10,8 @@ module Intrigue
       has n, :entities, :through => Resource, :constraint => :destroy
 
       property :id, Serial, :key => true
-      property :name, String
-      property :task_name, String
+      property :name, String, :length => 200
+      property :task_name, String, :length => 50
       property :timestamp_start, DateTime
       property :timestamp_end, DateTime
       property :options, Object, :default => [] #StringArray
@@ -49,7 +49,7 @@ module Intrigue
       def start
 
         # TODO, keep track of the sidekiq id so we can control the task later
-        
+
         task = Intrigue::TaskFactory.create_by_name(task_name)
         task.class.perform_async self.id, handlers
 

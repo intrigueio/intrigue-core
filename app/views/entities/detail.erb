@@ -10,13 +10,6 @@
 Details:
 <pre><%= h JSON.pretty_generate @entity.export_hash %></pre>
 
-Scans that created this entity:
-<ul>
-<%= out = ""; @entity.scan_results.each {|x| out << "<li><a href='/v1/#{@project_name}/scan_results/#{x.id}'>#{h x.name} (#{h x.base_entity})</a></li>" }; out %>
-</ul>
-<br/>
-<br/>
-
 Tasks that created this entity:<br/>
 <ul>
 <%= out = ""; @entity.task_results.each {|x| out << "<li><a href='/v1/#{@project_name}/task_results/#{x.id}'>#{h x.task_name} (#{h x.base_entity})</a></li>" }; out %>

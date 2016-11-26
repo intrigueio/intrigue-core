@@ -5,7 +5,7 @@ class EntityFactory
   # datamapper objects, and that's handled for us
 
   # This method creates a new entity, and kicks off a strategy
-  def self.create_entity(project,task_result,type,hash)
+  def self.create_entity_recursive(project,task_result,type,hash)
 
       # Clean up in case there are encoding issues
       hash = _encode_hash(hash)
@@ -42,7 +42,7 @@ class EntityFactory
 
       # START PROESSING OF FOLLOW-ON TASKS BY STRATEGY
       if task_result.strategy == "default"
-        Intrigue::Strategy::Default.start(entity, task_result)
+        Intrigue::Strategy::Default.recurse(entity, task_result)
       elsif task_result.strategy == "interactive"
         return # no additional tasks needed
       end
