@@ -16,9 +16,13 @@ require_relative 'tasks/helpers/parse'
 require_relative 'tasks/helpers/scanner'
 require_relative 'tasks/helpers/web'
 
-# Load all .rb file in lib/tasks by default
+# Load all discovery tasks
 require_relative 'tasks/base'
 tasks_folder = File.expand_path('../tasks', __FILE__) # get absolute directory
+Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
+
+# Load enrichment tasks
+tasks_folder = File.expand_path('../tasks/enrich', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
 # And check to see if there are any specified load paths
@@ -27,7 +31,7 @@ if global_config.config["intrigue_task_load_paths"]
   global_config.config["intrigue_task_load_paths"].each do |load_path|
     load_path = "#{tasks_folder}/#{load_path}" unless load_path[0] == "/"
     Dir["#{load_path}/*.rb"].each do |file|
-      puts "Adding task: #{file}"
+      puts "Adding user task: #{file}"
       require_relative file
     end
   end

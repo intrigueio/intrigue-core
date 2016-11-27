@@ -13,7 +13,7 @@ class CreateEntity < BaseTask
         {"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}
       ],
       :allowed_options => [
-        {:name => "depth", :type => "Integer", :regex => "integer", :default => 1 },
+        #{:name => "depth", :type => "Integer", :regex => "integer", :default => 1 },
       ],
       :created_types => ["*"]
     }
@@ -24,14 +24,17 @@ class CreateEntity < BaseTask
     super
 
     name = _get_entity_attribute("name")
-    depth = _get_option("depth").to_i
     type = _get_entity_type
 
-    @task_result.depth = depth
-    @task_result.save
+    # Get and set depth
+    #depth = _get_option("depth").to_i
+    #@task_result.depth = depth
+    #@task_result.save
 
-    EntityFactory.create_entity_recursive(@project,@task_result,type,{"name" => name})
+    # Use internal API to kick off recursive task
+    #EntityFactory.create_entity_recursive(@project,@task_result,type,{"name" => name})
 
+    _create_entity "Host", {"name" => name }
   end
 
 end

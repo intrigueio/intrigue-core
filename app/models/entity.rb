@@ -5,10 +5,11 @@ module Intrigue
 
       validates_uniqueness_of :name, :scope => :project
 
-      property :type,     Discriminator
-      property :id,       Serial, :key => true
-      property :name,     String, :length => 200, :index => true
-      property :details,  Object, :default => {}
+      property :type,      Discriminator
+      property :id,        Serial, :key => true
+      property :name,      String, :length => 200, :index => true
+      property :names,     Object, :default => []
+      property :details,   Object, :default => {}
 
       # TODO - we must add a cooresponding mapping and a destroy contstraint here
       belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
@@ -22,6 +23,13 @@ module Intrigue
         results = []
         task_results.each { |t| t.entities.each { |e| results << e } }
       results
+      end
+
+      # TODO - expand this to be a little more robust. basically we found an
+      # entity we think is the same and want to add these details
+      def merge_details!(hash)
+        details.merge(hash)
+        save
       end
 
       def created_by?(task_name)

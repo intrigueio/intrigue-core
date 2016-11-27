@@ -1,22 +1,24 @@
 module Intrigue
 class EntityFactory
+  extend Intrigue::Task::Helper
 
   # NOTE: We don't auto-register entities like the other factories, because they're
-  # datamapper objects, and that's handled for us
+  # datamapper objects, and that's handled by datamapper's "type" property
+
+  # NOTE: The user's desired depth of recursion is stored on the task_result. This
+  # isn't necessarily intuitive.
 
   # This method creates a new entity, and kicks off a strategy
   def self.create_entity_recursive(project,task_result,type,hash)
 
       # Clean up in case there are encoding issues
       hash = _encode_hash(hash)
-
       short_name = _encode_string(hash["name"][0,199])
-      entity = Intrigue::Model::Entity.scope_by_project(project.name).first(:name => short_name)
 
       # Merge the details if it already exists
+      entity = Intrigue::Model::Entity.scope_by_project(project.name).first(:name => short_name)
       if entity
-        entity.details = entity.details.merge(hash)
-        entity.save
+        entity.merge_details!(hash)
       else
         # Create the entity, validating the attributes
         entity = Intrigue::Model::Entity.create({
@@ -40,23 +42,25 @@ class EntityFactory
       # Add to our result set for this task
       task_result.add_entity entity
 
-      # START PROESSING OF FOLLOW-ON TASKS BY STRATEGY
+      # START PROCESSING OF ENRICHMENT
+      if entity.type_string == "Host"
+        start_task(project, "enrich_host", entity, [],[])
+      end
+      # END PROCESSING OF ENRICHMENT
+
+      # START PROCESSING OF RECURSION BY STRATEGY TYPE
       if task_result.strategy == "default"
         Intrigue::Strategy::Default.recurse(entity, task_result)
-      elsif task_result.strategy == "interactive"
+      elsif task_result.strategy == "none"
         return # no additional tasks needed
       end
-      # /END PROCESSING OF FOLLOW-ON TASKS
+      # END PROCESSING OF RECURSION BY STRATEGY TYPE
 
     # return the entity
     entity
   end
 
   private
-
-  ###
-  ### Helpers for handling encoding
-  ###
 
   def self._encode_string(string)
     return string unless string.kind_of? String
