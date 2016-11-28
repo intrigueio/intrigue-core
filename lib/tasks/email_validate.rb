@@ -24,7 +24,7 @@ class EmailValidateTask < BaseTask
   def run
     super
 
-    email_address = _get_entity_attribute "name"
+    email_address = _get_entity_name
     api_key = _get_global_config "email_validator_apikey"
     uri = "http://api.email-validator.net/api/verify?EmailAddress=#{email_address}&APIKey=#{api_key}"
 

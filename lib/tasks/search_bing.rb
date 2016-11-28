@@ -30,7 +30,7 @@ class SearchBingTask < BaseTask
       return
     end
 
-    entity_name = _get_entity_attribute "name"
+    entity_name = _get_entity_name
     opt_max_results = _get_option("max_results").to_i
 
     if opt_max_results > 50

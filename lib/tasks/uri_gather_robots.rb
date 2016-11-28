@@ -20,7 +20,7 @@ class UriGatherRobotsTask  < BaseTask
   def run
     super
 
-    base_uri = _get_entity_attribute "name"
+    base_uri = _get_entity_name
 
     checks = [{ :path => "robots.txt" }]
 

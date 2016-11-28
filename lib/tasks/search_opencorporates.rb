@@ -24,7 +24,7 @@ class SearchOpencorporates < BaseTask
   def run
     super
 
-    entity_name = _get_entity_attribute "name"
+    entity_name = _get_entity_name
 
     o = Opencorporates::Api.new.search entity_name
 

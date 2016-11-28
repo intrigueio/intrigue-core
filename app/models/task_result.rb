@@ -6,8 +6,7 @@ module Intrigue
       belongs_to :logger, 'Intrigue::Model::Logger'
       belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
       belongs_to :base_entity, 'Intrigue::Model::Entity'
-
-      has n, :entities, :through => Resource, :constraint => :destroy
+      has n, :entities, :through => Resource #, :constraint => :destroy
 
       property :id, Serial, :key => true
       property :name, String, :length => 200
@@ -21,8 +20,8 @@ module Intrigue
       property :strategy, String, :default => "default"
       property :depth, Integer, :default => 1
 
-      def self.scope_by_project(name)
-        all(:project => Intrigue::Model::Project.first(:name => name))
+      def self.scope_by_project(project_name)
+        all(:project => Intrigue::Model::Project.first(:name => project_name))
       end
 
       def log
@@ -37,7 +36,7 @@ module Intrigue
           entity.task_results << self
           entity.save
           self.entities << entity
-          save
+          save # TODO - this may be unnecessary
         rescue Exception => e
           false
         end
@@ -47,12 +46,9 @@ module Intrigue
 
       # Start a task
       def start
-
         # TODO, keep track of the sidekiq id so we can control the task later
-
         task = Intrigue::TaskFactory.create_by_name(task_name)
         task.class.perform_async self.id, handlers
-
       end
 
       # Matches based on type and the attribute "name"
@@ -64,7 +60,6 @@ module Intrigue
       ###
       ### Export!
       ###
-
       def export_csv
         output_string = ""
         self.entities.each{ |x| output_string << x.export_csv << "\n" }

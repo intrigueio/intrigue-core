@@ -25,7 +25,7 @@ class SearchWhoisologyTask < BaseTask
 
       # Make sure the key is set
       api_key = _get_global_config "whoisology_api_key"
-      entity_name = _get_entity_attribute "name"
+      entity_name = _get_entity_name
 
       case _get_entity_type
         when "EmailAddress"

@@ -24,7 +24,7 @@ class SearchCorpwatchTask < BaseTask
 
     # Attach to the corpwatch service & search
     x = Client::Search::Corpwatch::ApiClient.new(api_key)
-    corps = x.search(_get_entity_attribute "name")
+    corps = x.search(_get_entity_name)
 
     corps.each do |corp|
 

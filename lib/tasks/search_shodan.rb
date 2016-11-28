@@ -23,7 +23,7 @@ class SearchShodanTask < BaseTask
 
     # Get the API Key
     api_key = _get_global_config "shodan_api_key"
-    search_term = _get_entity_attribute "name"
+    search_term = _get_entity_name
 
     unless api_key
       _log_error "No api_key?"

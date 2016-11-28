@@ -218,7 +218,7 @@ module Parse
     # Trustwave Seal
     #
     content.scan(/sealserver.trustwave.com\/seal.js/i).each do |item|
-      _create_entity("Info", {:name => "SecuritySeal: Trustwave #{_get_entity_attribute "name"}"})
+      _create_entity("Info", {:name => "SecuritySeal: Trustwave #{_get_entity_name}"})
     end
   end
 

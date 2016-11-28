@@ -40,7 +40,7 @@ class DnsSnoopCacheTask < BaseTask
   def run()
     super
 
-    dns_server = _get_entity_attribute "name"
+    dns_server = _get_entity_name
     method = _get_option "method"
 
     snoopresults = {}

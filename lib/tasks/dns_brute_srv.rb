@@ -42,7 +42,7 @@ class DnsBruteSrvTask < BaseTask
 
     # XXX = currently doesn't respect the 'resolver' option
 
-    domain_name = _get_entity_attribute "name"
+    domain_name = _get_entity_name
     opt_resolver =  _get_option "resolver"
 
     @resolver = Resolv::DNS.new(:nameserver => opt_resolver,:search => [])

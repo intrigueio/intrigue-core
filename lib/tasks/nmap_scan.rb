@@ -32,7 +32,7 @@ class NmapScanTask < BaseTask
     #ports = _get_option "ports"
 
     # Get range, or host
-    to_scan = _get_entity_attribute "name"
+    to_scan = _get_entity_name
 
     # Create a tempfile to store results
     temp_file = "#{Dir::tmpdir}/nmap_scan_#{rand(100000000)}.xml"

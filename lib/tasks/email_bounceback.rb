@@ -24,7 +24,7 @@ class EmailBouncebackTask < BaseTask
   def run
     super
 
-    domain = _get_entity_attribute "name"
+    domain = _get_entity_name
 
     username = _get_global_config("gmail_account_credentials").split(":").first
     password = _get_global_config("gmail_account_credentials").split(":").last

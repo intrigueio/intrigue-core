@@ -17,7 +17,6 @@ module Strategy
       end
 
       if entity.type_string == "DnsRecord"
-
         start_recursive_task(task_result, "dns_lookup_forward", entity)
 
         ### DNS Subdomain Bruteforce
@@ -61,8 +60,6 @@ module Strategy
         if cidr >= 24
           start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 80}])
           start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 443}])
-        else
-          start_recursive_task(task_result,"masscan_scan",entity)
         end
 
       elsif entity.type_string == "Uri"
@@ -94,7 +91,6 @@ module Strategy
            entity.name =~ /^2600:1400/       ||  # akamai
            entity.name =~ /^2600:1409/       ||  # akamai
            entity.name =~ /127.0.0.1/
-
           return true
         end
       end

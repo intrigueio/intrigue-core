@@ -25,7 +25,7 @@ class DnsLookupForwardTask < BaseTask
 
     opt_resolver = _get_option "resolver"
     record_types = _get_option "record_types"
-    name = _get_entity_attribute "name"
+    name = _get_entity_name
 
     begin
 

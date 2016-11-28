@@ -35,7 +35,7 @@ class UriSpider < BaseTask
   def run
     super
 
-    uri = _get_entity_attribute "name"
+    uri = _get_entity_name
 
     # Scanner options
     @opt_threads = _get_option("threads").to_i

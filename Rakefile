@@ -71,6 +71,7 @@ task :migrate => :setup do
     require 'dm-core'
     require 'dm-migrations'
     require 'dm-validations'
+    require 'dm-types'
 
     intrigue_basedir = File.dirname(__FILE__)
     config_file = "#{intrigue_basedir}/config/config.json"
@@ -104,6 +105,11 @@ task :migrate => :setup do
   rescue Exception => e
     puts "Error... Unable to migrate: #{e}"
   end
+end
+
+desc "Prep DB"
+task :prep_db do
+  DataMapper.repository(:default).adapter.execute("CREATE EXTENSION HSTORE")
 end
 
 desc "Run Specs"

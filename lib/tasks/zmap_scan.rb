@@ -26,7 +26,7 @@ class ZmapScanTask < BaseTask
     port_num = 80
 
     # Get range, or host
-    to_scan = _get_entity_attribute "name"
+    to_scan = _get_entity_name
 
     # Create a tempfile to store result
     temp_file = "#{Dir::tmpdir}/zmap_output_#{rand(100000000)}.tmp"

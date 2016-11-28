@@ -23,7 +23,7 @@ class SearchGithub < BaseTask
   def run
     super
 
-    entity_name = _get_entity_attribute "name"
+    entity_name = _get_entity_name
 
     # Search users
     search_uri = "https://api.github.com/search/users?q=#{entity_name}"

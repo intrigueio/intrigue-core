@@ -26,7 +26,7 @@ class UriHttpScreenshot < BaseTask
   def run
     super
 
-    name = _get_entity_attribute "name"
+    name = _get_entity_name
 
     if @entity.type_string == "Uri"
       screencap(name)

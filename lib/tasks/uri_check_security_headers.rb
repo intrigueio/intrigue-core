@@ -20,7 +20,7 @@ class UriCheckSecurityHeaders  < BaseTask
   def run
     super
 
-    uri = _get_entity_attribute "name"
+    uri = _get_entity_name
 
     response = http_get(uri)
 

@@ -26,7 +26,7 @@ class UriExtractMetadata < BaseTask
   ## Default method, subclasses must override this
   def run
     super
-    uri = _get_entity_attribute "name"
+    uri = _get_entity_name
 
     hostname = URI.parse(uri).host
     port = URI.parse(uri).port
@@ -41,7 +41,7 @@ class UriExtractMetadata < BaseTask
 
 
   def _gather_headers
-    uri = _get_entity_attribute "name"
+    uri = _get_entity_name
 
     response = http_get(uri)
 

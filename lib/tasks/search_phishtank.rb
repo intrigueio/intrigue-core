@@ -22,7 +22,7 @@ class SearchPhishtank < BaseTask
   def run
     super
 
-    entity_name = _get_entity_attribute "name"
+    entity_name = _get_entity_name
     api_key = _get_global_config("phishtank_api_key")
 
     # Search

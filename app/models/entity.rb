@@ -1,22 +1,37 @@
 module Intrigue
   module Model
+
+    class AliasMapping
+      include DataMapper::Resource
+      property :id, Serial
+      belongs_to :source, 'Intrigue::Model::Entity', :key => true
+      belongs_to :target, 'Intrigue::Model::Entity', :key => true
+    end
+
     class Entity
       include DataMapper::Resource
 
       validates_uniqueness_of :name, :scope => :project
-
-      property :type,      Discriminator
-      property :id,        Serial, :key => true
-      property :name,      String, :length => 200, :index => true
-      property :names,     Object, :default => []
-      property :details,   Object, :default => {}
-
-      # TODO - we must add a cooresponding mapping and a destroy contstraint here
       belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
-      has n, :task_results, :through => Resource, :constraint => :destroy
+
+      property :type,        Discriminator
+      property :id,          Serial, :key => true
+      property :name,        String, :length => 200, :index => true
+      property :details,     Yaml, :default => {}
+
+      # TODO - we must add a cooresponding mapping and a destroy constraint
+      has n, :task_results, :through => Resource #, :constraint => :destroy
+
+      # Set up the concept of aliases
+      has n, :alias_mappings, :child_key => [ :source_id ]
+      has n, :aliases, self, :through => :alias_mappings, :via => :target
 
       def self.scope_by_project(name)
         all(:project => Intrigue::Model::Project.first(:name => name))
+      end
+
+      def self.scope_by_project_and_type(project, type)
+        all(:project => Intrigue::Model::Project.first(:name => project), :type => type )
       end
 
       def children
@@ -25,14 +40,12 @@ module Intrigue
       results
       end
 
-      # TODO - expand this to be a little more robust. basically we found an
-      # entity we think is the same and want to add these details
-      def merge_details!(hash)
-        details.merge(hash)
+      def add_task_result(tr)
+        self.task_results << tr
         save
       end
 
-      def created_by?(task_name)
+        def created_by?(task_name)
         task_results.each {|x| return true if x.task_name == task_name }
       false
       end
@@ -88,7 +101,12 @@ module Intrigue
           :id => @id.to_s,
           :type => @type,
           :name =>  @name,
-          :details => @details
+          :details => @details,
+          :aliases => self.aliases.map{|x| {
+            "id" => x.id,
+            "type" => x.type,
+            "name" => x.name }
+          }
         }
       end
 
@@ -114,6 +132,14 @@ module Intrigue
         Rack::Utils.escape_html(text)
         text
       end
+
+      # have an easy way to sort and hash all the aliases (which should include
+      # all names)
+      def _unique_name
+        string = aliases.split(",").sort_by{|x| x.downcase}.join(", ")
+        Digest::SHA1.hexdigest string
+      end
+
     end
   end
 end

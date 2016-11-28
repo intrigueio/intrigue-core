@@ -22,7 +22,7 @@ class UriYoutubeMetadata < BaseTask
   ## Default method, subclasses must override this
   def run
     super
-    video_uri = _get_entity_attribute "name"
+    video_uri = _get_entity_name
 
     unless video_uri =~ /www\.youtube\.com\/watch/
       _log_error "This doesn't appear to be a valid youtube video uri."

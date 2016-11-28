@@ -8,7 +8,14 @@
 </h3>
 
 Details:
-<pre><%= h JSON.pretty_generate @entity.export_hash %></pre>
+<pre><%=h JSON.pretty_generate(@entity.export_hash) %></pre>
+
+Aliases: <br/>
+<ul>
+<%=out = ""; results = @entity.aliases; results.each {|x| out << "<li><a href='/v1/#{@project_name}/entities/#{x.id}'>#{x.type_string}: #{h x.name}</a></li>"; }; out %>
+</ul>
+<br/>
+<br/>
 
 Tasks that created this entity:<br/>
 <ul>

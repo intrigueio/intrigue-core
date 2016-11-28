@@ -26,7 +26,7 @@ class MasscanTask < BaseTask
     super
 
     # Get range, or host
-    to_scan = _get_entity_attribute "name"
+    to_scan = _get_entity_name
 
     if to_scan =~ /::/
       _log_error "Ipv6 scanning not currently supported"

@@ -84,7 +84,7 @@ class IntrigueApp < Sinatra::Base
     # Return a JSON array of all entity type
     get '/entity_types.json' do
       content_type 'application/json'
-      Intrigue::Model::Entity.descendants.map {|x| x.new.type_string }.to_json
+      Intrigue::Model::Entity.descendants.sort_by{|x| x.metadata[:name] }.map {|x| x.new.type_string }.to_json
     end
 
     # Export All Tasks
@@ -146,24 +146,28 @@ class IntrigueApp < Sinatra::Base
 
       # Construct an entity from the entity_hash provided
       type = payload["entity"]["type"]
-      attributes = payload["entity"].merge("type" => "Intrigue::Entity::#{type}")
+      name = payload["entity"]["name"]
+      type_class = eval("Intrigue::Entity::#{type}")
+
+      attributes = payload["entity"].merge(
+        "type" => type_class.to_s,
+        "name" => "#{name}"
+      )
 
       # get the details from the payload
       task_name = payload["task"]
       options = payload["options"]
       handlers = payload["handlers"]
 
-      # Try to find our project
+      # Try to find our project and create it if it doesn't exist
       project = Intrigue::Model::Project.first(:name => project_name)
-      unless project # If the project didn't exist, create it
+      unless project
         project = Intrigue::Model::Project.create(:name => project_name)
       end
 
       # Try to find our entity
-      entity = Intrigue::Model::Entity.scope_by_project(project_name).first(
-        :name => payload["entity"]["name"],
-        :type => payload["entity"]["type"]
-      )
+      # TODO: we should check all aliases here
+      entity = Intrigue::Model::Entity.scope_by_project_and_type(project_name, type_class).first(:name => name)
       unless entity # If the entity didn't exist, create it
         entity = Intrigue::Model::Entity.create(attributes.merge(:project => project))
         entity.save

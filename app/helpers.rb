@@ -18,7 +18,8 @@ module Helper
         :logger => Intrigue::Model::Logger.create(:project => project),
         :project => project,
         :handlers => handlers,
-        :strategy => "none"
+        :strategy => "default",
+        :depth => 4
     })
     task_result.start
 

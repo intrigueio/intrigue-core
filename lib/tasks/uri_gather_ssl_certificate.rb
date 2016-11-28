@@ -26,7 +26,7 @@ class UriGatherSslCertTask  < BaseTask
     super
 
     opt_allow_cloudflare = _get_option "skip_cloudflare"
-    uri = _get_entity_attribute "name"
+    uri = _get_entity_name
 
     begin
       hostname = URI.parse(uri).host

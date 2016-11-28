@@ -29,7 +29,7 @@ class UriBrute < BaseTask
     super
 
     # Get options
-    uri = _get_entity_attribute("name")
+    uri = _get_entity_name
     opt_threads = _get_option("threads")
     user_list = _get_option("user_list")
 

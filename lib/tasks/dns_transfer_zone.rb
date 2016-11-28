@@ -21,7 +21,7 @@ class DnsTransferZoneTask < BaseTask
   def run
     super
 
-    domain_name = _get_entity_attribute "name"
+    domain_name = _get_entity_name
 
     # Get the nameservers
     authoritative_nameservers = []

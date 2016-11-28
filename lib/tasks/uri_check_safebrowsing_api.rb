@@ -19,7 +19,7 @@ class UriCheckSafebrowsingApi  < BaseTask
     super
 
     # Get the target URI
-    target_uri = _get_entity_attribute("name")
+    target_uri = _get_entity_name
 
     begin
       # Get the API Key & create a client

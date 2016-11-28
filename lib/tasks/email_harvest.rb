@@ -21,7 +21,7 @@ class EmailHarvestTask < BaseTask
   def run
     super
 
-    domain = _get_entity_attribute "name"
+    domain = _get_entity_name
 
     # Bing
     _log "Scraping Bing for email addresses"

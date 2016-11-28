@@ -23,7 +23,7 @@ class CreateEntity < BaseTask
   def run
     super
 
-    name = _get_entity_attribute("name")
+    name = _get_entity_name
     type = _get_entity_type
 
     # Get and set depth
@@ -34,7 +34,7 @@ class CreateEntity < BaseTask
     # Use internal API to kick off recursive task
     #EntityFactory.create_entity_recursive(@project,@task_result,type,{"name" => name})
 
-    _create_entity "Host", {"name" => name }
+    _create_entity type, {"name" => name }
   end
 
 end

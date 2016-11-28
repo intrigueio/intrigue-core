@@ -14,7 +14,7 @@ require 'sidekiq/web'
 require 'dm-core'
 require 'dm-noisy-failures'
 require 'dm-pager'
-require 'dm-pg-types'
+require 'dm-types'
 require 'dm-serializer'
 require 'dm-validations'
 

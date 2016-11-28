@@ -23,7 +23,7 @@ class WebAccountCheckTask < BaseTask
   def run
     super
 
-    account_name = _get_entity_attribute "name"
+    account_name = _get_entity_name
     opt_specific_sites = _get_option "specific_sites"
 
     account_list_data = File.open("data/web_accounts_list.json").read

@@ -10,15 +10,16 @@ module Strategy
     ### Helper method for starting a task run
     ###
     def self.start_recursive_task(old_task_result, task_name, entity, options=[])
-      puts "Starting recursive task #{task_name}"
       project = old_task_result.project
 
       # check to see if it already exists
-      existing_task_result = Intrigue::Model::TaskResult.scope_by_project(:name => project.name).first(:name => "#{task_name} on #{entity.name}")
-
+      existing_task_result = Intrigue::Model::TaskResult.all(:project => project).first(:name => "#{task_name} on #{entity.name}")
+      
       if existing_task_result
-        puts "Task result (#{task_name} on #{entity.name}) already exists. Skipping."
-        return
+        puts "Skipping!!!! Task result (#{task_name} on #{entity.name}) already exists."
+        return existing_task_result
+      else
+        puts "Starting recursive task: #{task_name} on #{entity.name}"
       end
 
       # Create the task result, and associate our entity and options

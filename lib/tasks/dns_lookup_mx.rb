@@ -22,7 +22,7 @@ class DnsLookupMxTask < BaseTask
     super
 
     opt_resolver = _get_option "resolver"
-    name = _get_entity_attribute "name"
+    name = _get_entity_name
 
     begin
       # XXX - we should probably call this a couple times to deal

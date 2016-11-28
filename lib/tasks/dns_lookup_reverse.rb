@@ -23,7 +23,7 @@ class DnsLookupReverseTask < BaseTask
     super
 
     opt_resolver = _get_option "resolver"
-    address = _get_entity_attribute "name"
+    address = _get_entity_name
 
     begin
       resolved_name = Resolv.new([Resolv::DNS.new(:nameserver => opt_resolver,:search => [])]).getname(address).to_s

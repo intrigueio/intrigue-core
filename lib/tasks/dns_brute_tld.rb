@@ -30,7 +30,7 @@ class DnsBruteTldTask < BaseTask
     # TODO - @chrisjohnriley passed along this:
     # https://mxr.mozilla.org/mozilla-central/source/netwerk/dns/effective_tld_names.dat?raw=1
 
-    basename = _get_entity_attribute "name"
+    basename = _get_entity_name
 
     opt_resolver = _get_option "resolver"
     opt_use_file = _get_option "use_file"

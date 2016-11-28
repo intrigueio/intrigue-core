@@ -24,7 +24,7 @@ class EmailValidateMailboxLayerTask < BaseTask
   def run
     super
 
-    email_address = _get_entity_attribute "name"
+    email_address = _get_entity_name
     api_key = _get_global_config "mailbox_layer_apikey"
     uri = "https://apilayer.net/api/check?access_key=#{api_key}&email=#{email_address}&smtp=1&format=1"
 

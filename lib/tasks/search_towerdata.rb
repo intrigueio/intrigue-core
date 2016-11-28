@@ -20,7 +20,7 @@ class SearchTowerdataTask < BaseTask
   def run
     super
 
-    entity_name = _get_entity_attribute "name"
+    entity_name = _get_entity_name
     api_key = _get_global_config "towerdata_api_key"
 
     unless api_key

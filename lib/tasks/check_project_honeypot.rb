@@ -20,7 +20,7 @@ class CheckProjectHoneypot  < BaseTask
   def run
     super
 
-    ip_address = _get_entity_attribute "name"
+    ip_address = _get_entity_name
     uri = "http://www.projecthoneypot.org/ip_#{ip_address}"
 
     _log "Connecting to #{uri} for #{@entity}"

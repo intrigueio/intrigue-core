@@ -37,7 +37,7 @@ class WhoisTask < BaseTask
     ### XXX - doesn't currently respect the timeout
     ###
 
-    lookup_string = _get_entity_attribute "name"
+    lookup_string = _get_entity_name
 
     begin
       whois = Whois::Client.new(:timeout => 20)

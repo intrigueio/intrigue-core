@@ -25,7 +25,7 @@ class NetblockExpand < BaseTask
     super
 
     begin
-      netblock = IPAddr.new(_get_entity_attribute("name"))
+      netblock = IPAddr.new(_get_entity_name)
       _log "Expanding Range: #{netblock}"
       netblock.to_range.to_a[1..-1].each do |r|
         _create_entity "IpAddress", "name" => r.to_s

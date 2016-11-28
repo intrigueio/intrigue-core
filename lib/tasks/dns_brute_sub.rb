@@ -49,7 +49,7 @@ class DnsBruteSubTask < BaseTask
     opt_brute_alphanumeric_size = _get_option("brute_alphanumeric_size")
 
     # Set the suffix
-    suffix = _get_entity_attribute "name"
+    suffix = _get_entity_name
 
     # XXX - use the resolver option if we have it.
     # Note that we have to specify an empty search list, otherwise we end up

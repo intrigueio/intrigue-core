@@ -20,7 +20,7 @@ class GeolocateHostTask < BaseTask
   def run
     super
 
-    ip_address = _get_entity_attribute "name"
+    ip_address = _get_entity_name
 
     ###
     ### XXX - this will only work if our start path is correct

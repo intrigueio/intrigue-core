@@ -23,7 +23,7 @@ class DnsLookupTxtTask < BaseTask
   def run
     super
 
-    domain_name = _get_entity_attribute "name"
+    domain_name = _get_entity_name
     opt_resolver = _get_option "resolver"
 
     _log "Running TXT lookup on #{domain_name}"

@@ -22,7 +22,7 @@ class DnsRecurseSpf < BaseTask
     super
 
     opt_resolver = _get_option "resolver"
-    dns_name = _get_entity_attribute "name"
+    dns_name = _get_entity_name
     _log "Running SPF lookup on #{dns_name}"
 
     # Run a lookup on the entity

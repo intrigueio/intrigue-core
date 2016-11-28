@@ -45,6 +45,9 @@ class IntrigueApp < Sinatra::Base
         end
       end
 
+      # hack! remove the name, no longer needed
+      entity_details.delete("name")
+
       # Construct an entity from the data we have
       if entity_id
         entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => entity_id)
@@ -56,7 +59,9 @@ class IntrigueApp < Sinatra::Base
 
         klass = eval("Intrigue::Entity::#{entity_type}")
         entity_name = "#{@params["attrib_name"]}"
-        entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:name => entity_name)
+
+        # TODO - we'll need to check all aliases of all entities within the project here
+        entity = Intrigue::Model::Entity.scope_by_project_and_type(@project_name, klass).first(:name => entity_name)
 
         unless entity
           entity = Intrigue::Model::Entity.create(
@@ -99,7 +104,7 @@ class IntrigueApp < Sinatra::Base
 
       # Assuming it's available, display it
       if @result
-        @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1/#{@project_name}task/?task_result_id=#{@result.id}"
+        @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1/#{@project_name}/task/?task_result_id=#{@result.id}"
         @elapsed_time = "#{(@result.timestamp_end - @result.timestamp_start).to_i}" if @result.timestamp_end
       end
 

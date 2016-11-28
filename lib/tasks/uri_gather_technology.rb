@@ -20,7 +20,7 @@ class UriGatherTechnologyTask  < BaseTask
   def run
     super
 
-    uri = _get_entity_attribute "name"
+    uri = _get_entity_name
     _log "Connecting to #{uri} for #{@entity}"
 
     # Gather the page body

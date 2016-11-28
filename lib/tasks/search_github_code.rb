@@ -24,7 +24,7 @@ class SearchGithubCode < BaseTask
   def run
     super
 
-    entity_name = _get_entity_attribute "name"
+    entity_name = _get_entity_name
     entity_type = _get_entity_type
     keywords = _get_option "keywords"
 

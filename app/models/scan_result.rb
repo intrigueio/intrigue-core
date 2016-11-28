@@ -24,8 +24,8 @@ module Intrigue
       property :entity_count, Integer, :default => 0
       property :filter_strings, Text, :default => ""
 
-      def self.scope_by_project(name)
-        all(:project => Intrigue::Model::Project.first(:name => name))
+      def self.scope_by_project(project_name)
+        all(:project => Intrigue::Model::Project.first(:name => project_name)
       end
 
       def log
@@ -74,7 +74,7 @@ module Intrigue
           entity.scan_results << self
           entity.save
           self.entities << entity
-          save
+          save # TODO - this may be unnecessary
         rescue Exception => e
           false
         end

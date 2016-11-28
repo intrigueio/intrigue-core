@@ -25,7 +25,7 @@ class PhoneNumberCarrierLookup < BaseTask
     #
     # For future, consider:
     # http://stackoverflow.com/questions/20650681/ruby-gsub-multiple-characters-in-string
-    phone_number = _get_entity_attribute("name").gsub(".","").gsub(" ","").gsub("-","").gsub("(","").gsub(")","")
+    phone_number = _get_entity_name.gsub(".","").gsub(" ","").gsub("-","").gsub("(","").gsub(")","")
 
     # get the API key
     api_key = _get_global_config "carrierlookup_api_key"

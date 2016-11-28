@@ -27,7 +27,7 @@ class UriHttpAuthBrute < BaseTask
     super
 
     begin
-      uri = _get_entity_attribute "name"
+      uri = _get_entity_name
 
       # first things first, check to see if it's required at all
       response = http_get_auth_resource(uri,"not-a-real-username","not-a-real-password",10)

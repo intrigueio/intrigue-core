@@ -26,7 +26,7 @@ class SearchCensysTask < BaseTask
       # Make sure the key is set
       uid = _get_global_config "censys_uid"
       secret = _get_global_config "censys_secret"
-      entity_name = _get_entity_attribute "name"
+      entity_name = _get_entity_name
 
       unless uid && secret
         _log_error "No credentials?"
