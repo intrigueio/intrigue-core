@@ -39,7 +39,7 @@
       defaultNodeColor: '#FFFFFF',
       defaultEdgeColor: '#00b8e6',
       defaultLabelColor:'#FFFFFF',
-      defaultLabelSize: 15,
+      defaultLabelSize: 16,
       edgeColor: 'default'
     }
   }, function(s) {
@@ -50,7 +50,7 @@
       node.size = 1;
     });
 
-    s.startForceAtlas2({gravity:100,scalingRatio:30,slowDown:2000});
+    s.startForceAtlas2({gravity:100,scalingRatio:200,slowDown:1000});
     //setTimeout(function() { s.stopForceAtlas2(); }, 10000);
 
     s.bind('clickNode', function(e) {

@@ -10,7 +10,7 @@ class EntityFactory
 
   # This method creates a new entity, and kicks off a strategy
   def self.create_or_merge_entity_recursive(task_result,type_string,name,details)
-      project = task_result.project #convenience
+      project = task_result.project # convenience
 
       # Clean up in case there are encoding issues
       name = _encode_string(name)
@@ -20,20 +20,20 @@ class EntityFactory
 
       # We're going to have to look for each of the aliases as well.
       entity = nil
-      entity = Intrigue::Model::Entity.scope_by_project_and_type(project.name, type).first(:name => name)
+      entity = Intrigue::Model::Entity.all(:project => project.name, :type => type).first(:name => name)
 
       # Merge the details if it already exists
       if entity.kind_of? Intrigue::Model::Entity
-        puts "Got a previous entity: #{entity.inspect}, merging."
+        puts "Entity exists (we may have just created it): #{entity.inspect}, merging."
         entity.details = details.merge(entity.details)
         entity.save
       else
         # Create a new entity, validating the attributes
         entity = Intrigue::Model::Entity.create({
-           :type => type,
-           :name => "#{name}",
-           :details => details,
-           :project => project
+          :project => project,
+          :type => type,
+          :name => "#{name}",
+          :details => details
          })
       end
 
@@ -45,7 +45,7 @@ class EntityFactory
 
       # Link to the parent task
       puts "Entity: #{entity.inspect}"
-      puts "Entity Task Results: #{entity.task_results}"
+      #puts "Entity Task Results: #{entity.task_results.count}"
       entity.add_task_result(task_result)
 
       # Add to our result set for this task
@@ -53,17 +53,21 @@ class EntityFactory
 
       # START PROCESSING OF ENRICHMENT
       if (entity.type_string == "DnsRecord")
-        start_task(project, "enrich_dns_record", entity, [],[])
+        start_task(project, "enrich_dns_record", entity, 1, [],[])
+        # TODO. this sucks. this should keep us within the scan result, and it doesn't currently.
+        # so no task here will be counted as within the scan.
       end
       # END PROCESSING OF ENRICHMENT
 
       # START PROCESSING OF RECURSION BY STRATEGY TYPE
-      unless task_result.task_name =~ /enrich/
-        if task_result.strategy == "default"
+      if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
+        puts "Executing strategy against scan result: #{task_result.scan_result} at depth #{task_result.depth}"
+        unless task_result.task_name =~ /enrich/ # and this isn't a one-off enrichment task
           Intrigue::Strategy::Default.recurse(entity, task_result)
-        elsif task_result.strategy == "none"
-          return # no additional tasks needed
         end
+      else
+        puts "No scan result or our depth is too deep, no recursion"
+        puts "Task Result: #{task_result.inspect}"
       end
       # END PROCESSING OF RECURSION BY STRATEGY TYPE
 

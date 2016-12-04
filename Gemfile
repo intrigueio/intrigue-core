@@ -12,9 +12,9 @@ gem 'thor'                    # CLI
 gem 'data_mapper'             # Database
 #gem 'dm-core', :git => 'https://github.com/datamapper/dm-core.git'
 #gem 'dm-types', :git => 'https://github.com/datamapper/dm-types.git'                # Database
-gem 'dm-types',
-  :git => 'git://github.com/intrigueio/dm-types.git',
-  :branch => 'gem-v1.2.2-with-frozen-nilclass-fix'
+#gem 'dm-types',
+#  :git => 'https://github.com/intrigueio/dm-types.git',
+#  :branch => 'gem-v1.2.2-with-frozen-nilclass-fix'
 #gem 'dm-postgres-adapter', 'https://github.com/datamapper/dm-postgres-adapter.git'     # Database
 gem 'dm-postgres-adapter'
 #gem 'dm-serializer', :git => 'https://github.com/datamapper/dm-serializer.git'

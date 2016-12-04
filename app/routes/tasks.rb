@@ -32,6 +32,7 @@ class IntrigueApp < Sinatra::Base
       # get the task name
       task_name = "#{@params["task"]}"
       entity_id = @params["entity_id"]
+      depth = 3
       current_project = Intrigue::Model::Project.first(:name => @project_name)
 
       # Construct the attributes hash from the parameters. Loop through each of the
@@ -85,7 +86,7 @@ class IntrigueApp < Sinatra::Base
       end
 
       # Start the task run!
-      task_result = start_task(current_project, task_name, entity, options)
+      task_result = start_task(current_project, task_name, entity, depth, options)
 
       entity.task_results << task_result
       entity.save

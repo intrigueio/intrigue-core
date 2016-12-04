@@ -7,13 +7,13 @@ module Strategy
       puts "Task Result: #{task_result.inspect}"
 
       if task_result.depth == 0
-        puts "Recurse called for  for #{task_result.task_name} on #{entity} but at max depth. Returning!"
-        return
+        puts "Recurse called for #{task_result.task_name} on #{entity} but at max depth. Returning!"
+        return nil
       end
 
       if is_prohibited entity
         puts "Skipped prohibited entity: #{entity}"
-        return
+        return nil
       end
 
       if entity.type_string == "DnsRecord"
@@ -27,14 +27,14 @@ module Strategy
             {"name" => "brute_alphanumeric_size", "value" => 3},
             {"name" => "use_permutations", "value" => true },
             {"name" => "use_mashed_domains", "value" => false },
-            {"name" => "threads", "value" => 20}])
+            {"name" => "threads", "value" => 5}])
         else
           # otherwise do something a little faster
           start_recursive_task(task_result,"dns_brute_sub",entity,[
             {"name" => "use_file", "value" => false },
             {"name" => "use_permutations", "value" => true },
             {"name" => "use_mashed_domains", "value" => false },
-            {"name" => "threads", "value" => 20}])
+            {"name" => "threads", "value" => 2}])
         end
 
       elsif entity.type_string == "String"
@@ -87,10 +87,12 @@ module Strategy
 
       if entity.type_string == "IpAddress"
         # 23.x.x.x
-        if entity.name =~ /^23./             ||  # akamai
-           entity.name =~ /^2600:1400/       ||  # akamai
-           entity.name =~ /^2600:1409/       ||  # akamai
-           entity.name =~ /127.0.0.1/
+        if entity.name =~ /^23\./             ||  # akamai
+           entity.name =~ /^2600:1400/        ||  # akamai
+           entity.name =~ /^2600:1409/        ||  # akamai
+           entity.name =~ /^127\.\0\.0\.*$/   ||  # RFC1918
+           entity.name =~ /^10\.*$/           ||  # RFC1918
+           entity.name =~ /^0.0.0.0/
           return true
         end
       end
@@ -146,13 +148,14 @@ module Strategy
         entity.name =~ /^.*hubspot.com$/                   ||
         entity.name =~ /^.*instagram.com$/                 ||
         entity.name =~ /^.*localhost$/                     ||
-        entity.name =~ /^.*metric.gstatic.com$/            ||
         entity.name =~ /^.*mandrillapp.com$/               ||
         entity.name =~ /^.*marketo.com$/                   ||
+        entity.name =~ /^.*metric.gstatic.com$/            ||
         entity.name =~ /^.*microsoft.com$/                 ||
         entity.name =~ /^.*oclc.org$/                      ||
         entity.name =~ /^.*ogp.me$/                        ||
-        entity.name =~ /^.*plus.google.comv/               ||
+        entity.name =~ /^.*plus.google.com$/               ||
+        entity.name =~ /^.*root-servers.net$/              ||
         entity.name =~ /^.*purl.org$/                      ||
         entity.name =~ /^.*rdfs.org$/                      ||
         entity.name =~ /^.*schema.org$/                    ||
@@ -168,7 +171,24 @@ module Strategy
         entity.name =~ /^.*youtube.com$/                   ||
         entity.name =~ /^.*youtubeeducation.com$/          ||
         entity.name =~ /^.*ytimg.com$/                     ||
-        entity.name =~ /^.*zepheira.com$/
+        entity.name =~ /^.*zepheira.com$/                  ||
+        entity.name =~ /^.akamaiedge.net$/                 ||
+        entity.name =~ /^.amazonaws.com$/                  ||
+        entity.name =~ /^.azure-mobile.net$/               ||
+        entity.name =~ /^.azureedge-test.net$/             ||
+        entity.name =~ /^.azureedge.net$/                  ||
+        entity.name =~ /^.azurewebsites.net$/              ||
+        entity.name =~ /^.cloudapp.net$/                   ||
+        entity.name =~ /^.edgecastcdn.net$/                ||
+        entity.name =~ /^.edgekey.net$/                    ||
+        entity.name =~ /^.herokussl.com$/                  ||
+        entity.name =~ /^.msn.com$/                        ||
+        entity.name =~ /^.outook.com$/                     ||
+        entity.name =~ /^.secureserver.net$/               ||
+        entity.name =~ /^.v0cdn.net$/                      ||
+        entity.name =~ /^.windowsphone-int.net$/           ||
+        entity.name =~ /^.windows.net$/                    ||
+        entity.name =~ /^.windowsphone.com$/
        )
 
         puts "SKIP Prohibited entity: #{entity.type}##{entity.name}"

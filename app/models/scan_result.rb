@@ -8,55 +8,34 @@ module Intrigue
       belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
 
       has n, :task_results, :through => Resource, :constraint => :destroy
-      has n, :entities, :through => Resource, :constraint => :destroy
 
       property :id, Serial, :key => true
-      property :name, String
+      property :name, String, :length => 200
       property :depth, Integer
-      property :scan_type, String
-      property :options, Object, :default => []
       property :handlers, Object, :default => []
       property :complete, Boolean, :default => false
-
-      property :timestamp_start, DateTime
-      property :timestamp_end, DateTime
-
-      property :entity_count, Integer, :default => 0
+      property :strategy, String, :default => "default"
+      property :depth, Integer, :default => 2
       property :filter_strings, Text, :default => ""
 
       def self.scope_by_project(project_name)
-        all(:project => Intrigue::Model::Project.first(:name => project_name)
+        all(:project => Intrigue::Model::Project.first(:name => project_name))
       end
 
       def log
         self.logger.full_log
       end
 
+      # kick off the first task run, and this will kick off recursion based on depth & strategy
       def start
-        ###
-        # Create the Scanner
-        ###
-        if @scan_type == "discovery"
-          scan = Intrigue::Scanner::DiscoveryScan.new
-        elsif @scan_type == "dns_subdomain"
-          scan = Intrigue::Scanner::DnsSubdomainScan.new
-        elsif @scan_type == "quick_dns_subdomain"
-          scan = Intrigue::Scanner::QuickDnsSubdomainScan.new
-        elsif @scan_type == "survey_scan"
-          scan = Intrigue::Scanner::SurveyScan.new
-        else
-          raise "Unknown scan type: #{@scan_type}"
-        end
-
-        # Kick off the scan
-        scan.class.perform_async @id
+        task_results.first.start
       end
 
       def add_task_result(task_result)
         # Handle exceptions here since this may not be thread safe
         #  https://github.com/datamapper/dm-core/issues/286
         begin
-          self.task_results << task_result
+          task_results << task_result
           save
         rescue Exception => e
           false
@@ -70,11 +49,8 @@ module Intrigue
         # Handle exceptions here since this may not be thread safe
         #  https://github.com/datamapper/dm-core/issues/286
         begin
-          attribute_set(:entity_count, @entity_count + 1)
-          entity.scan_results << self
-          entity.save
-          self.entities << entity
-          save # TODO - this may be unnecessary
+          entities.push entity
+          save
         rescue Exception => e
           false
         end
@@ -83,7 +59,31 @@ module Intrigue
 
       # Matches based on type and the attribute "name"
       def has_entity? entity
-        return true if (self.entities.select {|e| e.match? entity}).length > 0
+        return true if (entities.select {|e| e.match? entity}).length > 0
+      end
+
+      def entities
+        entities=[]
+        task_results.each {|x| x.entities.each {|e| entities << e } }
+      entities
+      end
+
+
+      # just calculate it vs storing another property
+      def entity_count
+        entities.count
+      end
+
+      # just calculate it vs storing another property
+      def timestamp_start
+        return task_results.first.timestamp_start if task_results.first
+      nil
+      end
+
+      # just calculate it vs storing another property
+      def timestamp_end
+        return task_results.last.timestamp_end if complete
+      nil
       end
 
       ###
@@ -94,9 +94,9 @@ module Intrigue
         {
           "id" => @id,
           "name" =>  URI.escape(@name),
-          "scan_type" => @scan_type,
           "depth" => @depth,
           "complete" => @complete,
+          "strategy" => @strategy,
           "timestamp_start" => @timestamp_start,
           "timestamp_end" => @timestamp_end,
           "filter_strings" => @filter_strings,

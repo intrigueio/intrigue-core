@@ -6,6 +6,8 @@ module Intrigue
       belongs_to :logger, 'Intrigue::Model::Logger'
       belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
       belongs_to :base_entity, 'Intrigue::Model::Entity'
+      belongs_to :scan_result, 'Intrigue::Model::ScanResult', :required => false
+
       has n, :entities, :through => Resource #, :constraint => :destroy
 
       property :id, Serial, :key => true
@@ -13,11 +15,10 @@ module Intrigue
       property :task_name, String, :length => 50
       property :timestamp_start, DateTime
       property :timestamp_end, DateTime
-      property :options, Object, :default => [] #StringArray
-      property :handlers, Object, :default => [] #StringArray
+      property :options, Object, :default => []
+      property :handlers, Object, :default => []
       property :complete, Boolean, :default => false
       property :entity_count, Integer, :default => 0
-      property :strategy, String, :default => "default"
       property :depth, Integer, :default => 1
 
       def self.scope_by_project(project_name)
@@ -25,7 +26,12 @@ module Intrigue
       end
 
       def log
-        self.logger.full_log
+        logger.full_log
+      end
+
+      def strategy
+        return scan_result.strategy if scan_result
+      nil
       end
 
       def add_entity(entity)
@@ -35,7 +41,7 @@ module Intrigue
           attribute_set(:entity_count, @entity_count + 1)
           entity.task_results << self
           entity.save
-          self.entities << entity
+          entities << entity
           save # TODO - this may be unnecessary
         rescue Exception => e
           false
@@ -53,7 +59,7 @@ module Intrigue
 
       # Matches based on type and the attribute "name"
       def has_entity? entity
-        self.entities.each {|e| return true if e.match?(entity) }
+        entities.each {|e| return true if e.match?(entity) }
       false
       end
 
@@ -62,13 +68,13 @@ module Intrigue
       ###
       def export_csv
         output_string = ""
-        self.entities.each{ |x| output_string << x.export_csv << "\n" }
+        entities.each{ |x| output_string << x.export_csv << "\n" }
       output_string
       end
 
       def export_tsv
         export_string = ""
-        self.entities.map{ |x| export_string << x.export_tsv + "\n" }
+        entities.map{ |x| export_string << x.export_tsv + "\n" }
       export_string
       end
 

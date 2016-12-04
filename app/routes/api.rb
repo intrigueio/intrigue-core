@@ -147,6 +147,10 @@ class IntrigueApp < Sinatra::Base
       # Construct an entity from the entity_hash provided
       type = payload["entity"]["type"]
       name = payload["entity"]["name"]
+
+      # Collect the depth (which can kick off a recursive "scan", but default to a single)
+      depth = payload["depth"] || 1
+
       type_class = eval("Intrigue::Entity::#{type}")
 
       attributes = payload["entity"].merge(
@@ -174,7 +178,7 @@ class IntrigueApp < Sinatra::Base
       end
 
       # Start the task_run
-      task_result = start_task(project, nil, task_name, entity, options, handlers)
+      task_result = start_task(project, nil, task_name, entity, depth, options, handlers)
       status 200 if task_result
 
     # must be a string otherwise it can be interpreted as a status code

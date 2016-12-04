@@ -1,18 +1,4 @@
 GIT
-  remote: git://github.com/intrigueio/dm-types.git
-  revision: b34937ce9fe42d96cc7908ecfb1372ddf909ffe6
-  branch: gem-v1.2.2-with-frozen-nilclass-fix
-  specs:
-    dm-types (1.2.2)
-      bcrypt-ruby (~> 3.0)
-      dm-core (~> 1.2.0)
-      fastercsv (~> 1.5)
-      json (~> 1.6)
-      multi_json (~> 1.0)
-      stringex (~> 1.4)
-      uuidtools (~> 2.1)
-
-GIT
   remote: https://github.com/fog/fog-google.git
   revision: 29efb5ddd351b290f6a53af8a5d7c36ac6e6159d
   specs:
@@ -145,6 +131,14 @@ GEM
       dm-core (~> 1.2.0)
     dm-transactions (1.2.0)
       dm-core (~> 1.2.0)
+    dm-types (1.2.2)
+      bcrypt-ruby (~> 3.0)
+      dm-core (~> 1.2.0)
+      fastercsv (~> 1.5)
+      json (~> 1.6)
+      multi_json (~> 1.0)
+      stringex (~> 1.4)
+      uuidtools (~> 2.1)
     dm-validations (1.2.0)
       dm-core (~> 1.2.0)
     dnsruby (1.60.0)
@@ -430,7 +424,6 @@ DEPENDENCIES
   dm-noisy-failures
   dm-pager
   dm-postgres-adapter
-  dm-types!
   dnsruby
   elasticsearch
   em-resolv-replace

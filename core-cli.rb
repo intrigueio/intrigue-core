@@ -170,6 +170,7 @@ class CoreCli < Thor
         :task_name => task_name,
         :base_entity => e,
         :options => options,
+        :depth => 1,
         :logger => Intrigue::Model::Logger.create(:project => p),
         :project => p
       })
@@ -218,7 +219,6 @@ private
 
   # Parse out options from cli
   def _parse_handlers(handler_string)
-
       return [] unless handler_string
 
       handler_list = []

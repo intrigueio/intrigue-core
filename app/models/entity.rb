@@ -11,13 +11,13 @@ module Intrigue
     class Entity
       include DataMapper::Resource
 
-      validates_uniqueness_of :name, :scope => :project
+      #validates_uniqueness_of :name, :scope => :project
       belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
 
       property :type,        Discriminator
       property :id,          Serial, :key => true
       property :name,        String, :length => 200, :index => true
-      property :details,     Yaml, :default => {}
+      property :details,     Object, :default => {}
 
       # TODO - we must add a cooresponding mapping and a destroy constraint
       has n, :task_results, :through => Resource #, :constraint => :destroy
@@ -41,11 +41,11 @@ module Intrigue
       end
 
       def add_task_result(tr)
-        self.task_results << tr
+        task_results << tr
         save
       end
 
-        def created_by?(task_name)
+      def created_by?(task_name)
         task_results.each {|x| return true if x.task_name == task_name }
       false
       end
