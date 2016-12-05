@@ -14,19 +14,24 @@
   #overlay {
     position: absolute;
     z-index: 100;
-    border: 1px solid black;
+    width: 300px;
+    border: 1px solid grey;
+    color: white;
+    background-color: black;
   }
+  #overlay a { color: lightblue};
 </style>
 
 <div id="master">
   <div id="container"></div>
-  <div id="overlay">[select a node]</div>
+  <div id="overlay"><p><h2>Control:</h2></p><br/>Select a node...</div>
 </div>
 
 <script src="https://rawgit.com/Linkurious/linkurious.js/develop/dist/sigma.min.js"></script>
 <script src="https://rawgit.com/Linkurious/linkurious.js/develop/dist/plugins/sigma.parsers.json.min.js"></script>
 <script src="https://rawgit.com/Linkurious/linkurious.js/develop/dist/plugins/sigma.layouts.forceAtlas2.min.js"></script>
 <script>
+
   sigma.parsers.json("<%= @json_uri %>", {
     container: 'container',
     renderer: {
@@ -39,7 +44,7 @@
       defaultNodeColor: '#FFFFFF',
       defaultEdgeColor: '#00b8e6',
       defaultLabelColor:'#FFFFFF',
-      defaultLabelSize: 16,
+      defaultLabelSize: 15,
       edgeColor: 'default'
     }
   }, function(s) {
@@ -50,12 +55,30 @@
       node.size = 1;
     });
 
-    s.startForceAtlas2({gravity:100,scalingRatio:200,slowDown:1000});
+    s.startForceAtlas2({gravity:100,scalingRatio:200,slowDown:500});
     //setTimeout(function() { s.stopForceAtlas2(); }, 10000);
 
     s.bind('clickNode', function(e) {
-      console.log(e.type, e.data.node.label, e.data.captor);
-    	$('#overlay').html('<a href=entities/' + e.data.node.id + '>'+ e.data.node.type + ": " + e.data.node.label + '</a>');
+      //console.log(e.type, e.data.node.label, e.data.captor);
+      //get the list of tasks and rewrite the task
+      var entity_location = "entities/" + e.data.node.id + ".json";
+
+      $.getJSON(entity_location, function(data){
+        $('#overlay').html('<p><h2>Control:</h2></p>Node: <a target="_blank" href=entities/' + e.data.node.id + '>'+ e.data.node.type + ": " + e.data.node.label + '</a><br/>');
+
+        $('#overlay').append("<p>Aliases:<br/><ul>")
+
+        for (let x of data["aliases"])
+        {
+            // Do something
+            $('#overlay').append('<li><a target="_blank" href=entities/' + x.id + '>'+ x.name + '</a></li>');
+        }
+
+        $('#overlay').append("</ul></p>")
+      });
+
+
+
     });
 
     //s.bind('overNode outNode clickNode doubleClickNode rightClickNode', function(e) {

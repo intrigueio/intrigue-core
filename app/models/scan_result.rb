@@ -3,10 +3,14 @@ module Intrigue
     class ScanResult
       include DataMapper::Resource
 
-      belongs_to :base_entity, 'Intrigue::Model::Entity'
       belongs_to :logger, 'Intrigue::Model::Logger'
-      belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
 
+      belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
+      property :project_id, Integer, :index => true
+
+      belongs_to :base_entity, 'Intrigue::Model::Entity'
+      property :base_entity_id, Integer, :index => true
+      
       has n, :task_results, :through => Resource, :constraint => :destroy
 
       property :id, Serial, :key => true

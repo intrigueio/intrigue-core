@@ -20,7 +20,7 @@ class EntityFactory
 
       # We're going to have to look for each of the aliases as well.
       entity = nil
-      entity = Intrigue::Model::Entity.all(:project => project.name, :type => type).first(:name => name)
+      entity = Intrigue::Model::Entity.scope_by_project_and_type(project.name,type).first(:name => name)
 
       # Merge the details if it already exists
       if entity.kind_of? Intrigue::Model::Entity

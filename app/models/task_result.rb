@@ -4,8 +4,14 @@ module Intrigue
       include DataMapper::Resource
 
       belongs_to :logger, 'Intrigue::Model::Logger'
+
+      property :project_id, Integer, :index => true
       belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
+
+      property :base_entity_id, Integer, :index => true
       belongs_to :base_entity, 'Intrigue::Model::Entity'
+
+      property :scan_result_id, Integer, :index => true
       belongs_to :scan_result, 'Intrigue::Model::ScanResult', :required => false
 
       has n, :entities, :through => Resource #, :constraint => :destroy

@@ -5,18 +5,23 @@ module Intrigue
       include DataMapper::Resource
       property :id, Serial
       belongs_to :source, 'Intrigue::Model::Entity', :key => true
+      property :source_id, Integer, :index => true
       belongs_to :target, 'Intrigue::Model::Entity', :key => true
+      property :target_id, Integer, :index => true
     end
 
     class Entity
       include DataMapper::Resource
 
-      #validates_uniqueness_of :name, :scope => :project
-      belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
+      validates_uniqueness_of :name, :scope => :project
+      validates_length_of :name, :min => 2
 
-      property :type,        Discriminator
+      belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
+      property :project_id, Integer, :index => true
+
+      property :type,        Discriminator, :index => true
       property :id,          Serial, :key => true
-      property :name,        String, :length => 200, :index => true
+      property :name,        String, :length => 400
       property :details,     Object, :default => {}
 
       # TODO - we must add a cooresponding mapping and a destroy constraint
@@ -31,7 +36,7 @@ module Intrigue
       end
 
       def self.scope_by_project_and_type(project, type)
-        all(:project => Intrigue::Model::Project.first(:name => project), :type => type )
+        all(:project => Intrigue::Model::Project.first(:name => project), :type => type)
       end
 
       def children

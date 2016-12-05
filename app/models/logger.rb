@@ -5,7 +5,9 @@ module Intrigue
 
       property :id, Serial, :key => true
       property :full_log, Text, :length => 50000000, :default => ""
+
       belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
+      property :project_id, Integer, :index => true
 
       def self.scope_by_project(name)
         all(:project => Intrigue::Model::Project.first(:name => name))

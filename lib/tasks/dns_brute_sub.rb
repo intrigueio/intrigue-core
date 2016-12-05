@@ -105,13 +105,13 @@ class DnsBruteSubTask < BaseTask
       # Note that this is separate from the other subdomain generation since we
       # don't want to include a "." before the suffix
       ["www","ww","w"].each do |d|
-        work_q.push({:subdomain => "#{d}", :fqdn => "#{d}#{suffix}"})
+        work_q.push({:subdomain => "#{d}", :fqdn => "#{d}#{suffix}", :depth => 1})
       end
     end
 
     # Enqueue our generated subdomains
     subdomain_list.each do |d|
-      work_q.push({:subdomain => "#{d}", :fqdn => "#{d}.#{suffix}"})
+      work_q.push({:subdomain => "#{d}", :fqdn => "#{d}.#{suffix}", :depth => 1})
     end
 
     # Create a pool of worker threads to work on the queue
@@ -122,6 +122,10 @@ class DnsBruteSubTask < BaseTask
             begin
               fqdn = "#{work_item[:fqdn].chomp}"
               subdomain = "#{work_item[:subdomain].chomp}"
+              depth = work_item[:depth]
+
+              # Prevent us from going down a hole (some subdomains will resolve anything under them)
+              return if depth > 3
 
               # Try to resolve
               resolved_address = resolver.getaddress(fqdn)
@@ -129,6 +133,8 @@ class DnsBruteSubTask < BaseTask
 
               # If we resolved, create the right entities
               if (resolved_address && !(wildcard_domain))
+
+                if
 
                 # Create new host and domain entities
                 _create_entity("DnsRecord", {"name" => "#{fqdn}", "ip_address" => "#{resolved_address}" })
@@ -178,7 +184,7 @@ class DnsBruteSubTask < BaseTask
 
                   _log "Adding permutations: #{permutation_list.join(", ")}"
                   permutation_list.each do |p|
-                    work_q.push({:subdomain => "#{p}", :fqdn => "#{p}.#{suffix}"})
+                    work_q.push({:subdomain => "#{p}", :fqdn => "#{p}.#{suffix}" :depth => depth+1})
                   end
                 end
               end

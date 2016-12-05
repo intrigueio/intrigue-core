@@ -15,11 +15,3 @@ Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_na
   </ul>
   <%= @entities.pager.to_html("/v1/#{@project_name}/entities?entity_name=#{@entity_name}") %>
 </div>
-
-<div class="col-sm-6">
-<ul>
-  <% Intrigue::Model::TaskResult.scope_by_project(@project_name).all.each do |t| %>
-    <li><a href="/v1/<%=@project_name%>/task_results/<%=t.id%>"><%= h "#{t.name} (#{t.base_entity})" %></a></li>
-  <% end %>
-</ul>
-</div>

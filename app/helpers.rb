@@ -46,14 +46,11 @@ module Helper
 
       # Start the scan, which kicks off the first task
       scan_result.start
-
-      return scan_result
     else
       # Just kick off the first task!
       task_result.start
-      return task_result
     end
-
+  task_result
   end
 
 end
