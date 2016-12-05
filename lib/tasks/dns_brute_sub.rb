@@ -125,7 +125,7 @@ class DnsBruteSubTask < BaseTask
               depth = work_item[:depth]
 
               # Prevent us from going down a hole (some subdomains will resolve anything under them)
-              return if depth > 3
+              return if depth > 4
 
               # Try to resolve
               resolved_address = resolver.getaddress(fqdn)
@@ -133,8 +133,6 @@ class DnsBruteSubTask < BaseTask
 
               # If we resolved, create the right entities
               if (resolved_address && !(wildcard_domain))
-
-                if
 
                 # Create new host and domain entities
                 _create_entity("DnsRecord", {"name" => "#{fqdn}", "ip_address" => "#{resolved_address}" })
@@ -184,7 +182,7 @@ class DnsBruteSubTask < BaseTask
 
                   _log "Adding permutations: #{permutation_list.join(", ")}"
                   permutation_list.each do |p|
-                    work_q.push({:subdomain => "#{p}", :fqdn => "#{p}.#{suffix}" :depth => depth+1})
+                    work_q.push({:subdomain => "#{p}", :fqdn => "#{p}.#{suffix}", :depth => depth+1})
                   end
                 end
               end
@@ -200,7 +198,5 @@ class DnsBruteSubTask < BaseTask
     end; "ok"
     workers.map(&:join); "ok"
   end
-
-
 end
 end
