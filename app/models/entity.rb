@@ -110,8 +110,8 @@ module Intrigue
           :aliases => self.aliases.map{|x| {
             "id" => x.id,
             "type" => x.type,
-            "name" => x.name }
-          }
+            "name" => x.name }},
+          :task_results => task_results
         }
       end
 
