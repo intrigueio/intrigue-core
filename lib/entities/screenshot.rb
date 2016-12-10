@@ -9,8 +9,7 @@ class Screenshot < Intrigue::Model::Entity
     }
   end
 
-
-  def validate
+  def validate_content
     @name =~ /^.*$/ # XXX - too loose
     #@details[:file] =~ /^.*$/ # XXX - too loose
   end

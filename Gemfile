@@ -9,18 +9,15 @@ gem 'eventmachine'
 gem 'sidekiq'                 # Background Tasks
 gem 'sidekiq-failures'        # Background Tasks
 gem 'thor'                    # CLI
-gem 'data_mapper'             # Database
-#gem 'dm-core', :git => 'https://github.com/datamapper/dm-core.git'
-#gem 'dm-types', :git => 'https://github.com/datamapper/dm-types.git'                # Database
-#gem 'dm-types',
-#  :git => 'https://github.com/intrigueio/dm-types.git',
-#  :branch => 'gem-v1.2.2-with-frozen-nilclass-fix'
-#gem 'dm-postgres-adapter', 'https://github.com/datamapper/dm-postgres-adapter.git'     # Database
-gem 'dm-postgres-adapter'
-#gem 'dm-serializer', :git => 'https://github.com/datamapper/dm-serializer.git'
-#gem 'dm-sqlite-adapter'       # Database
-gem 'dm-noisy-failures'       # Database
-gem 'dm-pager'                # Database
+gem 'dm-core', :git => 'https://github.com/datamapper/dm-core.git'
+gem 'dm-validations', :git => 'https://github.com/datamapper/dm-validations.git'
+gem 'dm-serializer', :git => 'https://github.com/intrigueio/dm-serializer.git'
+gem 'dm-migrations', :git => 'https://github.com/datamapper/dm-migrations.git'
+gem 'dm-types', :git => 'https://github.com/intrigueio/dm-types.git'
+gem 'dm-aggregates', :git => 'https://github.com/datamapper/dm-aggregates.git'
+gem 'dm-do-adapter', :git => 'https://github.com/datamapper/dm-do-adapter.git'
+gem 'dm-postgres-adapter', :git => 'https://github.com/datamapper/dm-postgres-adapter.git'
+gem 'dm-pager', :git => 'https://github.com/intrigueio/dm-pagination.git', :branch => 'v1.3.0.beta'
 gem 'elasticsearch'           # Database
 gem 'iconv'                   # Encoding
 gem 'rest-client'             # Web hooks, some tasks
@@ -50,11 +47,7 @@ gem 'whoisology',     :git => 'https://github.com/pentestify/whoisology.git'
 gem 'opencorporates', :git => 'https://github.com/pentestify/opencorporates.git'
 
 # Handlers
-gem 'couchrest'
-gem 'net-ssh'
-gem 'fog'
-gem 'fog-google',   :git => 'https://github.com/fog/fog-google.git'
-gem 'google-api-client', '< 0.9', '>= 0.6.2'
+#gem 'couchrest'
 
-gem 'foreman', '<0.8.2'
+gem 'foreman'#, '<0.8.2'
 gem 'pry'                     # Debugging

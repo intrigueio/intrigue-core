@@ -9,7 +9,7 @@ class DnsServer < Intrigue::Model::Entity
     }
   end
 
-  def validate
+  def validate_content
     @name =~ /^[a-zA-Z0-9\.].*/
   end
 

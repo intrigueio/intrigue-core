@@ -10,7 +10,7 @@ class NetBlock < Intrigue::Model::Entity
   end
 
 
-  def validate
+  def validate_content
 
     # required:
     @name =~ /^.*$/

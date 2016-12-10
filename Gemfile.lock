@@ -1,11 +1,46 @@
 GIT
-  remote: https://github.com/fog/fog-google.git
-  revision: 29efb5ddd351b290f6a53af8a5d7c36ac6e6159d
+  remote: https://github.com/datamapper/dm-aggregates.git
+  revision: 68a6f29ab3c663a58eec2b5943e2ce538a9a4a2f
   specs:
-    fog-google (0.4.2)
-      fog-core
-      fog-json
-      fog-xml
+    dm-aggregates (1.3.0.beta)
+      dm-core (~> 1.3.0.beta)
+
+GIT
+  remote: https://github.com/datamapper/dm-core.git
+  revision: 226c5af8609a2e1da3bf3ee0b29a874401a49c0b
+  specs:
+    dm-core (1.3.0.beta)
+      addressable (~> 2.3, >= 2.3.5)
+
+GIT
+  remote: https://github.com/datamapper/dm-do-adapter.git
+  revision: 5b13be7b63b8ff2869fdb8bdbbc68470bead9993
+  specs:
+    dm-do-adapter (1.3.0.beta)
+      data_objects (~> 0.10.6)
+      dm-core (~> 1.3.0.beta)
+
+GIT
+  remote: https://github.com/datamapper/dm-migrations.git
+  revision: 047ff9b46510c76ba1c1c6c6ebd14e8afc0a5c0b
+  specs:
+    dm-migrations (1.3.0.beta)
+      dm-core (~> 1.3.0.beta)
+
+GIT
+  remote: https://github.com/datamapper/dm-postgres-adapter.git
+  revision: c76fb44804a352540f6e435c38e396650eca2ace
+  specs:
+    dm-postgres-adapter (1.3.0.beta)
+      dm-do-adapter (~> 1.3.0.beta)
+      do_postgres (~> 0.10.6)
+
+GIT
+  remote: https://github.com/datamapper/dm-validations.git
+  revision: 21c8ebde52f70c404c2fc8e10242f8cd92b761fc
+  specs:
+    dm-validations (1.3.0.beta)
+      dm-core (~> 1.3.0.beta)
 
 GIT
   remote: https://github.com/intrigueio/arachnid.git
@@ -17,6 +52,37 @@ GIT
       domainatrix
       nokogiri
       typhoeus
+
+GIT
+  remote: https://github.com/intrigueio/dm-pagination.git
+  revision: 18e0ac3b9cb392bf37b1205bed26932819f8d567
+  branch: v1.3.0.beta
+  specs:
+    dm-pager (1.1.1)
+      dm-aggregates (~> 1.3.0.beta)
+      dm-core (~> 1.3.0.beta)
+
+GIT
+  remote: https://github.com/intrigueio/dm-serializer.git
+  revision: 5e336b583950ca2396a328458bb3ba0965b871ad
+  specs:
+    dm-serializer (1.3.0.beta)
+      dm-core (~> 1.3.0.beta)
+      fastercsv (~> 1.5.4)
+      multi_json (~> 1.11.0)
+
+GIT
+  remote: https://github.com/intrigueio/dm-types.git
+  revision: a2bcc43baf914770b0301bacba1b51c60f26d9ea
+  specs:
+    dm-types (1.3.0.beta)
+      bcrypt (~> 3.0)
+      dm-core (~> 1.3.0.beta)
+      fastercsv (~> 1.5.4)
+      multi_json (>= 1.7.7)
+      safe_yaml (~> 0.6.1)
+      stringex (>= 2.0.8)
+      uuidtools (~> 2.1.2)
 
 GIT
   remote: https://github.com/intrigueio/intrigue_api_client.git
@@ -62,89 +128,22 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    CFPropertyList (2.3.4)
-    activesupport (4.2.7.1)
-      i18n (~> 0.7)
-      json (~> 1.7, >= 1.7.7)
-      minitest (~> 5.1)
-      thread_safe (~> 0.3, >= 0.3.4)
-      tzinfo (~> 1.1)
     addressable (2.5.0)
       public_suffix (~> 2.0, >= 2.0.2)
-    autoparse (0.3.3)
-      addressable (>= 2.3.1)
-      extlib (>= 0.9.15)
-      multi_json (>= 1.0.0)
     backports (3.6.8)
     bcrypt (3.1.11)
-    bcrypt-ruby (3.1.5)
-      bcrypt (>= 3.1.3)
     bloomfilter-rb (2.1.1)
       redis
-    builder (3.2.2)
     coderay (1.1.1)
     concurrent-ruby (1.0.2)
     connection_pool (2.2.1)
-    couchrest (2.0.0)
-      httpclient (~> 2.8)
-      mime-types (>= 1.15)
-      multi_json (~> 1.7)
-    data_mapper (1.2.0)
-      dm-aggregates (~> 1.2.0)
-      dm-constraints (~> 1.2.0)
-      dm-core (~> 1.2.0)
-      dm-migrations (~> 1.2.0)
-      dm-serializer (~> 1.2.0)
-      dm-timestamps (~> 1.2.0)
-      dm-transactions (~> 1.2.0)
-      dm-types (~> 1.2.0)
-      dm-validations (~> 1.2.0)
     data_objects (0.10.17)
       addressable (~> 2.1)
     diff-lcs (1.2.5)
-    dm-aggregates (1.2.0)
-      dm-core (~> 1.2.0)
-    dm-constraints (1.2.0)
-      dm-core (~> 1.2.0)
-    dm-core (1.2.1)
-      addressable (~> 2.3)
-    dm-do-adapter (1.2.0)
-      data_objects (~> 0.10.6)
-      dm-core (~> 1.2.0)
-    dm-migrations (1.2.0)
-      dm-core (~> 1.2.0)
-    dm-noisy-failures (0.2.3)
-      data_mapper
-    dm-pager (1.1.0)
-      dm-aggregates (>= 0.10.1)
-      dm-core (>= 0.10.1)
-    dm-postgres-adapter (1.2.0)
-      dm-do-adapter (~> 1.2.0)
-      do_postgres (~> 0.10.6)
-    dm-serializer (1.2.2)
-      dm-core (~> 1.2.0)
-      fastercsv (~> 1.5)
-      json (~> 1.6)
-      json_pure (~> 1.6)
-      multi_json (~> 1.0)
-    dm-timestamps (1.2.0)
-      dm-core (~> 1.2.0)
-    dm-transactions (1.2.0)
-      dm-core (~> 1.2.0)
-    dm-types (1.2.2)
-      bcrypt-ruby (~> 3.0)
-      dm-core (~> 1.2.0)
-      fastercsv (~> 1.5)
-      json (~> 1.6)
-      multi_json (~> 1.0)
-      stringex (~> 1.4)
-      uuidtools (~> 2.1)
-    dm-validations (1.2.0)
-      dm-core (~> 1.2.0)
     dnsruby (1.60.0)
     do_postgres (0.10.17)
       data_objects (= 0.10.17)
-    domain_name (0.5.20161021)
+    domain_name (0.5.20161129)
       unf (>= 0.0.5, < 1.0.0)
     domainatrix (0.0.11)
       addressable
@@ -157,181 +156,39 @@ GEM
       faraday
       multi_json
     em-resolv-replace (1.1.3)
-    ethon (0.9.1)
+    ethon (0.10.1)
       ffi (>= 1.3.0)
     eventmachine (1.2.1)
-    excon (0.54.0)
-    extlib (0.9.16)
     faraday (0.10.0)
       multipart-post (>= 1.2, < 3)
     fastercsv (1.5.5)
     ffi (1.9.14)
-    fission (0.5.0)
-      CFPropertyList (~> 2.2)
-    fog (1.35.0)
-      fog-aliyun
-      fog-atmos
-      fog-aws (>= 0.6.0)
-      fog-brightbox (~> 0.4)
-      fog-core (~> 1.32)
-      fog-dynect (~> 0.0.2)
-      fog-ecloud (~> 0.1)
-      fog-google (>= 0.1.1)
-      fog-json
-      fog-local
-      fog-powerdns (>= 0.1.1)
-      fog-profitbricks
-      fog-radosgw (>= 0.0.2)
-      fog-riakcs
-      fog-sakuracloud (>= 0.0.4)
-      fog-serverlove
-      fog-softlayer
-      fog-storm_on_demand
-      fog-terremark
-      fog-vmfusion
-      fog-voxel
-      fog-xenserver
-      fog-xml (~> 0.1.1)
-      ipaddress (~> 0.5)
-      nokogiri
-    fog-aliyun (0.1.0)
-      fog-core (~> 1.27)
-      fog-json (~> 1.0)
-      ipaddress (~> 0.8)
-      xml-simple (~> 1.1)
-    fog-atmos (0.1.0)
-      fog-core
-      fog-xml
-    fog-aws (0.12.0)
-      fog-core (~> 1.38)
-      fog-json (~> 1.0)
-      fog-xml (~> 0.1)
-      ipaddress (~> 0.8)
-    fog-brightbox (0.11.0)
-      fog-core (~> 1.22)
-      fog-json
-      inflecto (~> 0.0.2)
-    fog-core (1.43.0)
-      builder
-      excon (~> 0.49)
-      formatador (~> 0.2)
-    fog-dynect (0.0.3)
-      fog-core
-      fog-json
-      fog-xml
-    fog-ecloud (0.3.0)
-      fog-core
-      fog-xml
-    fog-json (1.0.2)
-      fog-core (~> 1.0)
-      multi_json (~> 1.10)
-    fog-local (0.3.1)
-      fog-core (~> 1.27)
-    fog-powerdns (0.1.1)
-      fog-core (~> 1.27)
-      fog-json (~> 1.0)
-      fog-xml (~> 0.1)
-    fog-profitbricks (3.0.0)
-      fog-core (~> 1.42)
-      fog-json (~> 1.0)
-    fog-radosgw (0.0.5)
-      fog-core (>= 1.21.0)
-      fog-json
-      fog-xml (>= 0.0.1)
-    fog-riakcs (0.1.0)
-      fog-core
-      fog-json
-      fog-xml
-    fog-sakuracloud (1.7.5)
-      fog-core
-      fog-json
-    fog-serverlove (0.1.2)
-      fog-core
-      fog-json
-    fog-softlayer (1.1.4)
-      fog-core
-      fog-json
-    fog-storm_on_demand (0.1.1)
-      fog-core
-      fog-json
-    fog-terremark (0.1.0)
-      fog-core
-      fog-xml
-    fog-vmfusion (0.1.0)
-      fission
-      fog-core
-    fog-voxel (0.1.0)
-      fog-core
-      fog-xml
-    fog-xenserver (0.2.3)
-      fog-core
-      fog-xml
-    fog-xml (0.1.2)
-      fog-core
-      nokogiri (~> 1.5, >= 1.5.11)
-    foreman (0.8.0)
-      term-ansicolor (~> 1.0.5)
-      thor (~> 0.13.6)
-    formatador (0.2.5)
+    foreman (0.82.0)
+      thor (~> 0.19.1)
     geoip (1.6.2)
     gmail (0.6.0)
       gmail_xoauth (>= 0.3.0)
       mail (>= 2.2.1)
     gmail_xoauth (0.4.2)
       oauth (>= 0.3.6)
-    google-api-client (0.8.7)
-      activesupport (>= 3.2, < 5.0)
-      addressable (~> 2.3)
-      autoparse (~> 0.3)
-      extlib (~> 0.9)
-      faraday (~> 0.9)
-      googleauth (~> 0.3)
-      launchy (~> 2.4)
-      multi_json (~> 1.10)
-      retriable (~> 1.4)
-      signet (~> 0.6)
     googleajax (1.0.1)
       json (>= 1.0.0)
-    googleauth (0.5.1)
-      faraday (~> 0.9)
-      jwt (~> 1.4)
-      logging (~> 2.0)
-      memoist (~> 0.12)
-      multi_json (~> 1.11)
-      os (~> 0.9)
-      signet (~> 0.7)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
-    httpclient (2.8.2.4)
-    i18n (0.7.0)
     iconv (1.0.4)
-    inflecto (0.0.2)
-    ipaddress (0.8.3)
     json (1.8.3)
-    json_pure (1.8.3)
-    jwt (1.5.6)
-    launchy (2.4.3)
-      addressable (~> 2.3)
-    little-plugger (1.1.4)
-    logging (2.1.0)
-      little-plugger (~> 1.1)
-      multi_json (~> 1.10)
     mail (2.6.4)
       mime-types (>= 1.16, < 4)
-    memoist (0.15.0)
     method_source (0.8.2)
     mime-types (1.25.1)
     mini_portile2 (2.1.0)
-    minitest (5.9.1)
-    multi_json (1.12.1)
+    multi_json (1.11.3)
     multipart-post (2.0.0)
     net-dns (0.8.0)
-    net-ssh (3.2.0)
     netrc (0.11.0)
     nokogiri (1.6.8.1)
       mini_portile2 (~> 2.1.0)
     oauth (0.5.1)
-    os (0.9.6)
     phantomjs (2.1.1.0)
     pry (0.10.4)
       coderay (~> 1.1.0)
@@ -344,7 +201,7 @@ GEM
       rack
     rack-test (0.6.3)
       rack (>= 1.0)
-    rake (0.9.6)
+    rake (12.0.0)
     redis (3.3.2)
     redis-namespace (1.5.2)
       redis (~> 3.0, >= 3.0.4)
@@ -352,7 +209,6 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
-    retriable (1.4.1)
     rprogram (0.3.2)
     rspec (3.5.0)
       rspec-core (~> 3.5.0)
@@ -367,20 +223,16 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.5.0)
     rspec-support (3.5.0)
+    safe_yaml (0.6.3)
     shodan (1.0.0)
       json (>= 1.4.6)
-    sidekiq (4.2.6)
+    sidekiq (4.2.7)
       concurrent-ruby (~> 1.0)
       connection_pool (~> 2.2, >= 2.2.0)
       rack-protection (>= 1.5.0)
       redis (~> 3.2, >= 3.2.1)
     sidekiq-failures (0.4.5)
       sidekiq (>= 2.16.0)
-    signet (0.7.3)
-      addressable (~> 2.3)
-      faraday (~> 0.9)
-      jwt (~> 1.5)
-      multi_json (~> 1.10)
     sinatra (1.4.7)
       rack (~> 1.5)
       rack-protection (~> 1.4)
@@ -393,22 +245,17 @@ GEM
       sinatra (~> 1.4.0)
       tilt (>= 1.3, < 3)
     slop (3.6.0)
-    stringex (1.5.1)
-    term-ansicolor (1.0.7)
-    thor (0.13.8)
-    thread_safe (0.3.5)
+    stringex (2.6.1)
+    thor (0.19.4)
     tilt (2.0.5)
     towerdata_api (1.3.1)
-    typhoeus (1.1.0)
+    typhoeus (1.1.2)
       ethon (>= 0.9.0)
-    tzinfo (1.2.2)
-      thread_safe (~> 0.1)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.2)
     uuidtools (2.1.5)
     whois (4.0.1)
-    xml-simple (1.1.5)
     yomu (0.2.4)
       json (~> 1.8)
       mime-types (~> 1.23)
@@ -419,26 +266,26 @@ PLATFORMS
 DEPENDENCIES
   arachnid!
   censys!
-  couchrest
-  data_mapper
-  dm-noisy-failures
-  dm-pager
-  dm-postgres-adapter
+  dm-aggregates!
+  dm-core!
+  dm-do-adapter!
+  dm-migrations!
+  dm-pager!
+  dm-postgres-adapter!
+  dm-serializer!
+  dm-types!
+  dm-validations!
   dnsruby
   elasticsearch
   em-resolv-replace
   eventmachine
-  fog
-  fog-google!
-  foreman (< 0.8.2)
+  foreman
   geoip
   gmail
-  google-api-client (>= 0.6.2, < 0.9)
   googleajax
   iconv
   intrigue_api_client!
   net-dns
-  net-ssh
   nokogiri
   opencorporates!
   pry

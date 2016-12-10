@@ -42,7 +42,7 @@ module Helper
       task_result.scan_result = scan_result
       task_result.save
 
-      puts "Task Results for #{scan_result.inspect}: #{scan_result.task_results.inspect}"
+      puts "Task Results for #{scan_result.name}: #{scan_result.task_results.count}"
 
       # Start the scan, which kicks off the first task
       scan_result.start

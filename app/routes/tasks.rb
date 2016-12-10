@@ -32,7 +32,7 @@ class IntrigueApp < Sinatra::Base
       # get the task name
       task_name = "#{@params["task"]}"
       entity_id = @params["entity_id"]
-      depth = 3
+      depth = @params["depth"].to_i
       current_project = Intrigue::Model::Project.first(:name => @project_name)
 
       # Construct the attributes hash from the parameters. Loop through each of the

@@ -9,8 +9,7 @@ class String < Intrigue::Model::Entity
     }
   end
 
-  def validate
-    puts "calling validate"
+  def validate_content
     @name =~ /^.*$/
   end
 

@@ -10,8 +10,8 @@ module Intrigue
 
       belongs_to :base_entity, 'Intrigue::Model::Entity'
       property :base_entity_id, Integer, :index => true
-      
-      has n, :task_results, :through => Resource, :constraint => :destroy
+
+      has n, :task_results, :through => Resource
 
       property :id, Serial, :key => true
       property :name, String, :length => 200

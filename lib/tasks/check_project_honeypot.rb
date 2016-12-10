@@ -1,6 +1,5 @@
 module Intrigue
-class CheckProjectHoneypot  < BaseTask
-
+class CheckProjectHoneypot < BaseTask
   include Intrigue::Task::Web
 
   def self.metadata

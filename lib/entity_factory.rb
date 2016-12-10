@@ -24,7 +24,7 @@ class EntityFactory
 
       # Merge the details if it already exists
       if entity.kind_of? Intrigue::Model::Entity
-        puts "Entity exists (we may have just created it): #{entity.inspect}, merging."
+        puts "Entity exists: #{entity.inspect}, merging."
         entity.details = details.merge(entity.details)
         entity.save
       else

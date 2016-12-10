@@ -34,13 +34,13 @@ module Strategy
             {"name" => "use_file", "value" => false },
             {"name" => "use_permutations", "value" => true },
             {"name" => "use_mashed_domains", "value" => false },
-            {"name" => "threads", "value" => 2}])
+            {"name" => "threads", "value" => 5}])
         end
 
       elsif entity.type_string == "String"
 
         # Search, only snag the top result
-        start_recursive_task(task_result,"search_bing",entity,[{"name"=> "max_results", "value" => 10}])
+        start_recursive_task(task_result,"search_bing",entity,[{"name"=> "max_results", "value" => 1}])
 
       elsif entity.type_string == "IpAddress"
 
@@ -68,11 +68,11 @@ module Strategy
         start_recursive_task(task_result,"uri_gather_ssl_certificate",entity) if entity.name =~ /^https/
 
         ## Spider, looking for metadata
-        #start_recursive_task(task_result,"uri_spider",entity,[
-        #    {"name" => "threads", "value" => 3},
-        #    {"name" => "max_pages", "value" => 250},
-        #    {"name" => "extract_dns_records", "value" => true},
-        #    {"name" => "extract_patterns", "value" => "defense.gov"}]) unless entity.created_by? "uri_brute"
+        start_recursive_task(task_result,"uri_spider",entity,[
+            {"name" => "threads", "value" => 3},
+            {"name" => "max_pages", "value" => 250},
+            {"name" => "extract_dns_records", "value" => true},
+            {"name" => "extract_patterns", "value" => "#{task_result.scan_result.base_entity.name}"}]) unless entity.created_by? "uri_brute"
 
         # Check for exploitable URIs, but don't recurse on things we've already found
         start_recursive_task(task_result,"uri_brute", entity, [{"name"=> "threads", "value" => 3}, {"name" => "user_list", "value" => "admin,test,server-status,robots.txt"}]) unless entity.created_by? "uri_brute"
@@ -102,8 +102,12 @@ module Strategy
         entity.name =~ /^.*1e100.com$/                     ||
         entity.name =~ /^.*1e100.net$/                     ||
         entity.name =~ /^.*akam.net$/                      ||
-        entity.name =~ /^.*akamai$/                        ||
-        entity.name =~ /^.*akamaitechnologies$/            ||
+        entity.name =~ /^.*akamai.com$/                    ||
+        entity.name =~ /^.*akamaihd.net$/                  ||
+        entity.name =~ /^.*akamaihd-staging.net$/          ||
+        entity.name =~ /^.*akamaitechnologies.net$/        ||
+        entity.name =~ /^.*akamaized.net$/                 ||
+        entity.name =~ /^.*akamaistream.net$/              ||
         entity.name =~ /^.*amazonaws.com$/                 ||
         entity.name =~ /^.*android$/                       ||
         entity.name =~ /^.*android.clients.google.com$/    ||

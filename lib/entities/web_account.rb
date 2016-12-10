@@ -9,7 +9,7 @@ class WebAccount < Intrigue::Model::Entity
     }
   end
 
-  def validate
+  def validate_content
     @name =~ /^.*$/ &&
     @details["domain"] =~ /^.*$/ &&
     @details["uri"] =~ /^http.*$/

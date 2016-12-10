@@ -10,7 +10,7 @@ class NetSvc < Intrigue::Model::Entity
   end
 
 
-  def validate
+  def validate_content
     @details["ip_address"].to_s =~ /^.*$/ &&
     @details["port_num"].to_s =~ /^\d{1,5}$/ &&
     @details["proto"].to_s =~ /^(tcp|udp)$/

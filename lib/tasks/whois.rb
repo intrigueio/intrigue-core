@@ -42,14 +42,10 @@ class WhoisTask < BaseTask
     begin
       whois = Whois::Client.new(:timeout => 20)
       answer = whois.lookup(lookup_string)
-    rescue Whois::Error => e
-      _log "Unable to query whois: #{e}"
-    rescue Whois::ResponseIsThrottled => e
-      _log "Got a response throttled message: #{e}"
-      sleep 10
-      return run # retry
-    rescue StandardError => e
-      _log "Unable to query whois: #{e}"
+    #rescue Whois::ResponseIsThrottled => e
+    #  _log "Got a response throttled message: #{e}"
+    #  sleep 10
+    #  return run # retry
     rescue Exception => e
       _log "UNKNOWN EXCEPTION! Unable to query whois: #{e}"
     end

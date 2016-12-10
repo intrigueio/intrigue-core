@@ -40,12 +40,16 @@
         type: 'canvas'
     },
     settings: {
-      minNodeSize: 2,
+      minNodeSize: 1,
       maxNodeSize: 6,
       defaultNodeColor: '#FFFFFF',
       defaultEdgeColor: '#00b8e6',
       defaultLabelColor:'#FFFFFF',
-      defaultLabelSize: 14,
+      defaultLabelSize: 11,
+      labelThreshold: 8,
+      edgeHoverSizeRatio: 3,
+      edgeHoverColor: '#ff0000',
+      defaultNodeHoverColor: '#ff0000',
       edgeColor: 'default'
     }
   }, function(s) {
@@ -56,7 +60,7 @@
       node.size = 1;
     });
 
-    s.startForceAtlas2({gravity:100,scalingRatio:200,slowDown:500});
+    s.startForceAtlas2({gravity:100,scalingRatio:200,slowDown:1000});
     //setTimeout(function() { s.stopForceAtlas2(); }, 10000);
 
     s.bind('clickNode', function(e) {

@@ -12,7 +12,6 @@ require 'sidekiq/web'
 
 # Datamapper
 require 'dm-core'
-require 'dm-noisy-failures'
 require 'dm-pager'
 require 'dm-types'
 require 'dm-serializer'
