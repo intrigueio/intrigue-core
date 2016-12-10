@@ -9,7 +9,7 @@ gem 'eventmachine'
 gem 'sidekiq'                 # Background Tasks
 gem 'sidekiq-failures'        # Background Tasks
 gem 'thor'                    # CLI
-gem 'dm-core', :git => 'https://github.com/datamapper/dm-core.git'
+gem 'dm-core', :git => 'https://github.com/intrigueio/dm-core.git'
 gem 'dm-validations', :git => 'https://github.com/datamapper/dm-validations.git'
 gem 'dm-serializer', :git => 'https://github.com/intrigueio/dm-serializer.git'
 gem 'dm-migrations', :git => 'https://github.com/datamapper/dm-migrations.git'
@@ -49,5 +49,5 @@ gem 'opencorporates', :git => 'https://github.com/pentestify/opencorporates.git'
 # Handlers
 #gem 'couchrest'
 
-gem 'foreman'#, '<0.8.2'
+gem 'foreman'
 gem 'pry'                     # Debugging

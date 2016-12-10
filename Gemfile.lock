@@ -6,13 +6,6 @@ GIT
       dm-core (~> 1.3.0.beta)
 
 GIT
-  remote: https://github.com/datamapper/dm-core.git
-  revision: 226c5af8609a2e1da3bf3ee0b29a874401a49c0b
-  specs:
-    dm-core (1.3.0.beta)
-      addressable (~> 2.3, >= 2.3.5)
-
-GIT
   remote: https://github.com/datamapper/dm-do-adapter.git
   revision: 5b13be7b63b8ff2869fdb8bdbbc68470bead9993
   specs:
@@ -52,6 +45,13 @@ GIT
       domainatrix
       nokogiri
       typhoeus
+
+GIT
+  remote: https://github.com/intrigueio/dm-core.git
+  revision: 2b7cd4c95a2e87cebea559a8583c4ff81e6a3b33
+  specs:
+    dm-core (1.3.0.beta)
+      addressable (~> 2.3, >= 2.3.5)
 
 GIT
   remote: https://github.com/intrigueio/dm-pagination.git
