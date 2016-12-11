@@ -40,7 +40,7 @@ class SearchWhoisologyTask < BaseTask
         return
       end
 
-      # Attach to the censys service & search
+      # Attach to the whoisology service & search
       whoisology = Whoisology::Api.new(api_key)
 
       # Run a PING to see if we have any results
@@ -56,7 +56,7 @@ class SearchWhoisologyTask < BaseTask
       result["domains"].each {|d| _create_entity "DnsRecord", {"name" => d["domain_name"]} }
 
     rescue RuntimeError => e
-      _log_error "Runtime error: #{e}"
+      _log_error "Runtime error: #{e.inspect}"
     end
 
   end # end run()
