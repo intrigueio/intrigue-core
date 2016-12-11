@@ -46,7 +46,7 @@ module Intrigue
       end
 
       def add_task_result(tr)
-        task_results << tr
+        task_results << tr unless task_results.include? tr
         save
       end
 

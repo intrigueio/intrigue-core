@@ -21,8 +21,14 @@ class WebServerGather < BaseTask
   def run
     super
     # Grab the full response 2x
-    response = http_get _get_entity_name
-    response2 = http_get _get_entity_name
+    uri = _get_entity_name
+    response = http_get uri
+    response2 = http_get uri
+
+    unless response && response2
+      _log_error "Unable to receive a response for #{uri}, bailing"
+      return
+    end
 
     web_server_name = resolve_header_name(response.header['server'])
 
