@@ -12,6 +12,8 @@ class UriGatherSslCertTask  < BaseTask
       :authors => ["jcran"],
       :description => "Grab the SSL certificate from an application server",
       :references => [],
+      :type => "discovery",
+      :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "attributes" => {"name" => "http://www.intrigue.io"}}],
       :allowed_options => [

@@ -11,6 +11,8 @@ class UriYoutubeMetadata < BaseTask
       :description => "This task downloads metadata, given a youtube video Uri.",
       :references => [],
       :allowed_types => ["Uri"],
+      :type => "discovery",
+      :passive => true,
       :example_entities => [
         {"type" => "Uri", "attributes" => { "name" => "https://www.youtube.com/watch?v=ZPr-_21-xGQ" }}
       ],
@@ -36,7 +38,7 @@ class UriYoutubeMetadata < BaseTask
 
       if attributes["author_name"]
         _create_entity "WebAccount", {
-          "name" => attributes["author_name"], 
+          "name" => attributes["author_name"],
           "domain" => "youtube.com",
           "uri" => video_uri
         }

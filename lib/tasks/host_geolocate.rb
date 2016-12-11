@@ -9,6 +9,8 @@ class GeolocateHostTask < BaseTask
       :authors => ["jcran"],
       :description => "Performs a geolocation based on an IP address.",
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["IpAddress"],
       :example_entities => [{"type" => "IpAddress", "attributes" => {"name" => "192.0.78.13"}}],
       :allowed_options => [],

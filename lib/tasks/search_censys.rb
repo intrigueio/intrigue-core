@@ -10,6 +10,8 @@ class SearchCensysTask < BaseTask
       :authors => ["jcran"],
       :description => "This task hits the Censys API and finds matches",
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["DnsRecord", "IpAddress", "String"],
       :example_entities => [{"type" => "String", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [],

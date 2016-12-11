@@ -28,6 +28,8 @@ class DnsSnoopCacheTask < BaseTask
       :authors => ["Felipe Molina (@felmoltor)", "jcran"],
       :description => "Query a DNS server for a list of domains and check if there is a recent visit of this domain in their cache..",
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["DnsServer"],
       :example_entities => [{"type" => "DnsServer", "attributes" => {"name" => "129.186.88.249"}}],
       :allowed_options => [
@@ -124,7 +126,7 @@ class DNSSnooper
       rescue Errno::ENETUNREACH => e
         _log_error "Hit exception: #{e}. Are you sure you're connected?"
       rescue Exception => re
-        puts "Error: #{re.message}"
+        _log_error "Error: #{re.message}"
       end
     end
     return nctime
@@ -142,7 +144,7 @@ class DNSSnooper
       rescue Errno::ENETUNREACH => e
         _log_error "Hit exception: #{e}. Are you sure you're connected?"
       rescue Exception => re
-        puts "Error: #{re.message}"
+        _log_error "Error: #{re.message}"
       end
     end
     return ctime
@@ -230,7 +232,7 @@ class DNSSnooper
         end
       }
     rescue Net::DNS::Resolver::NoResponseError => terror
-      puts "Error: #{terror.message}"
+      _log_error "Error: #{terror.message}"
       return nil
     rescue Errno::ENETUNREACH => e
       _log_error "Hit exception: #{e}. Are you sure you're connected?"
@@ -282,7 +284,7 @@ class DNSSnooper
       begin
         dnsr = @dnsserver.query(domain)
       rescue Exception => e
-        $stderr.puts "Error: #{e.message}"
+        _log_error "Error: #{e.message}"
       end
       # If the server has this entry cached, we will have an answer section
       # If the server does not have this entry cached, we will have an autoritative redirection
@@ -322,7 +324,7 @@ class DNSSnooper
         rescue Errno::ENETUNREACH => e
           _log_error "Hit exception: #{e}. Are you sure you're connected?"
         rescue Exception => e
-          $stderr.puts "Error: #{e.message}"
+          _log_error "Error: #{e.message}"
         end
       end
       if answertime <= @cthreshold+(@cthreshold*@@thresholdFactor)

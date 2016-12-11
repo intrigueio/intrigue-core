@@ -9,6 +9,8 @@ class DnsBruteTldTask < BaseTask
       :authors => ["jcran"],
       :description => "DNS TLD Bruteforce",
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["DnsRecord","String"],
       :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [

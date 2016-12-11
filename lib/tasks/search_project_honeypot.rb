@@ -1,13 +1,13 @@
 module Intrigue
-class CheckProjectHoneypot < BaseTask
+class SearchProjectHoneypot < BaseTask
   include Intrigue::Task::Web
 
   def self.metadata
     {
-      :name => "check_project_honeypot",
-      :pretty_name => "Check Project Honeypot",
+      :name => "search_project_honeypot",
+      :pretty_name => "Search Project Honeypot",
       :authors => ["jcran"],
-      :description => "This task checks the project honeypot site for information.",
+      :description => "This task checks the projecthoneypot site for information.",
       :references => [],
       :allowed_types => ["IpAddress"],
       :example_entities => [{"type" => "IpAddress", "attributes" => {"name" => "1.1.1.1"}}],

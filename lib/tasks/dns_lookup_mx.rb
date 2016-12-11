@@ -9,6 +9,8 @@ class DnsLookupMxTask < BaseTask
       :authors => ["jcran"],
       :description => "Look up the MX records of the given DNS record.",
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["DnsRecord"],
       :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [

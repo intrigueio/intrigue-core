@@ -8,6 +8,8 @@ class SearchCorpwatchTask < BaseTask
       :authors => ["jcran"],
       :description => "EDGAR Corporation Search",
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["String", "Organization"],
       :example_entities => [{"type" => "String", "attributes" => {"name" => "intrigue"}}],
       :allowed_options => [],

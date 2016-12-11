@@ -8,6 +8,8 @@ class SearchShodanTask < BaseTask
       :authors => ["jcran"],
       :description => "Uses the SHODAN API to search for information",
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["String", "IpAddress","NetSvc","DnsRecord", "DnsServer"],
       :example_entities => [
         {"type" => "String", "attributes" => {"name" => "intrigue.io"}}

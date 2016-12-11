@@ -9,6 +9,8 @@ class DnsBruteSrvTask < BaseTask
       :authors => ["jcran"],
       :description => "Simple DNS Service Record Bruteforce",
       :references => [],
+      :type => "discovery",
+      :passive => false,
       :allowed_types => ["DnsRecord"],
       :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [

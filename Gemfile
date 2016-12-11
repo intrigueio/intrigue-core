@@ -17,6 +17,7 @@ gem 'dm-types', :git => 'https://github.com/intrigueio/dm-types.git'
 gem 'dm-aggregates', :git => 'https://github.com/datamapper/dm-aggregates.git'
 gem 'dm-do-adapter', :git => 'https://github.com/datamapper/dm-do-adapter.git'
 gem 'dm-postgres-adapter', :git => 'https://github.com/datamapper/dm-postgres-adapter.git'
+gem 'dm-noisy-failures', :git => 'https://github.com/intrigueio/dm-noisy-failures.git'
 gem 'dm-pager', :git => 'https://github.com/intrigueio/dm-pagination.git', :branch => 'v1.3.0.beta'
 gem 'elasticsearch'           # Database
 gem 'iconv'                   # Encoding

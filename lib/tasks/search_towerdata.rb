@@ -10,6 +10,8 @@ class SearchTowerdataTask < BaseTask
       :authors => ["jcran"],
       :description => "This task hits the Towerdata API and finds info based on an email address.",
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["EmailAddress"],
       :example_entities => [{"type" => "EmailAddress", "attributes" => {"name" => "x@x.com"}}],
       :allowed_options => [],

@@ -11,6 +11,8 @@ class EmailValidateMailboxLayerTask < BaseTask
       :description => "This task validates an email via the MailboxLayer API.",
       :requires_config => [""],
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["EmailAddress"],
       :example_entities => [
         {"type" => "EmailAddress", "attributes" => {"name" => "test@intrigue.io"}}

@@ -121,7 +121,7 @@ module Task
         uri = URI.parse uri_string
 
         until( found || attempts >= max_attempts)
-         #@task_result.logger.log "Getting #{uri}, attempt #{attempts}" if @task_result
+         @task_result.logger.log "Getting #{uri}, attempt #{attempts}" if @task_result
          attempts+=1
 
          http = Net::HTTP.new(uri.host,uri.port)
@@ -143,7 +143,6 @@ module Task
          end
 
          response = http.get(path)
-
          if response.code=="200"
            break
          end

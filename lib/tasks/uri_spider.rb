@@ -15,6 +15,8 @@ class UriSpider < BaseTask
       :description => "This task spiders a given URI, creating entities from the page text, as well as from parsed files.",
       :references => [],
       :allowed_types => ["Uri"],
+      :type => "discovery",
+      :passive => true,
       :example_entities => [
         {"type" => "Uri", "attributes" => { "name" => "http://www.intrigue.io" }}
       ],

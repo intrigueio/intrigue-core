@@ -8,6 +8,8 @@ class UriCheckSafebrowsingApi  < BaseTask
       :authors => ["jcran"],
       :description => "Check a URI against the Google Safebrowsing (StopBadware) API",
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["Uri"],
       :example_entities => [ {"type" => "Uri", "attributes" => {"name" => "http://intrigue.io"}} ],
       :allowed_options => [],

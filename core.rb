@@ -16,6 +16,7 @@ require 'dm-pager'
 require 'dm-types'
 require 'dm-serializer'
 require 'dm-validations'
+require 'dm-noisy-failures'
 
 # Debug
 require 'pry'

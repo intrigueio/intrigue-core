@@ -14,6 +14,8 @@ class UriHttpAuthBrute < BaseTask
       :description => "This task bruteforces authentication, given a URI requiring HTTP auth.",
       :references => [],
       :allowed_types => ["Uri"],
+      :type => "discovery",
+      :passive => false,
       :example_entities => [
         {"type" => "Uri", "attributes" => {"name" => "http://www.intrigue.io"}}
       ],

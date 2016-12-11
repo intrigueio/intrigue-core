@@ -10,6 +10,8 @@ class PhoneNumberCarrierLookup < BaseTask
       :authors => ["jcran"],
       :description => "This task uses the CarrierLookup API to determine the provider of a phone number",
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["PhoneNumber"],
       :example_entities => [ {"type" => "PhoneNumber", "attributes" => {"name" => "202-456-1414"}} ],
       :allowed_options => [ ],

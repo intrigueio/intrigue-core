@@ -7,8 +7,10 @@ class SearchPhishtank < BaseTask
       :name => "search_phishtank",
       :pretty_name => "Search Phishtank",
       :authors => ["jcran"],
-      :description => "Uses the Phisthank API to search for a uri",
+      :description => "Uses the Phishtank API to search for a uri",
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["Uri"],
       :example_entities => [
         {"type" => "Uri", "attributes" => {"name" => "http://intrigue.io"}}],

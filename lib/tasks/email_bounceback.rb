@@ -11,6 +11,8 @@ class EmailBouncebackTask < BaseTask
       :description => "This task checks a domain for an email bounceback via gmail.",
       :requires_config => ["gmail_account_credentials"],
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["DnsRecord"],
       :example_entities => [
         {"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}

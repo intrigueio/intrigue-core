@@ -14,6 +14,8 @@ class UriExtractMetadata < BaseTask
       :authors => ["jcran"],
       :description => "This task downloads the contents of a single URI and extracts entities from the text and metadata.",
       :references => [],
+      :type => "discovery",
+      :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [
         {"type" => "Uri", "attributes" => { "name" => "http://www.intrigue.io" }}

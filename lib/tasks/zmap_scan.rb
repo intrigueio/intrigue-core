@@ -11,6 +11,8 @@ class ZmapScanTask < BaseTask
       :authors => ["jcran"],
       :description => "This task runs a zmap scan on the target host or domain.",
       :references => [],
+      :type => "discovery",
+      :passive => false,
       :allowed_types => ["NetBlock"],
       :example_entities => [{"type" => "NetBlock", "attributes" => {"name" => "10.0.0.0/24"}}],
       :allowed_options => [],

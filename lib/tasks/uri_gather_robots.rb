@@ -10,6 +10,8 @@ class UriGatherRobotsTask  < BaseTask
       :authors => ["jcran"],
       :description =>   "This task checks for robots.txt and adds any URIs it finds",
       :references => [],
+      :type => "discovery",
+      :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "attributes" => {"name" => "http://intrigue.io"}}],
       :allowed_options => [],

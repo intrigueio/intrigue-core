@@ -10,6 +10,8 @@ class NetblockExpand < BaseTask
       :authors => ["jcran"],
       :description => "This task expands a NetBlock into a list of ip addresses.",
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["NetBlock"],
       :example_entities => [
         {"type" => "NetBlock", "attributes" => {"name" => "10.0.0.0/24"}}

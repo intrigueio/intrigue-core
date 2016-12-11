@@ -12,6 +12,8 @@ class DnsLookupTxtTask < BaseTask
         "http://webmasters.stackexchange.com/questions/27910/txt-vs-spf-record-for-google-servers-spf-record-either-or-both"
       ],
       :allowed_types => ["DnsRecord"],
+      :type => "discovery",
+      :passive => true,
       :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
@@ -88,7 +90,7 @@ class DnsLookupTxtTask < BaseTask
 
     rescue Errno::ENETUNREACH => e
       _log_error "Hit exception: #{e}. Are you sure you're connected?"
-      
+
     rescue Exception => e
       _log "Unknown exception: #{e}"
     end

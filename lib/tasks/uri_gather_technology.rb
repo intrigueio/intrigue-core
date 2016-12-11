@@ -10,6 +10,8 @@ class UriGatherTechnologyTask  < BaseTask
       :authors => ["jcran"],
       :description => "This task determines platform and technologies of the target.",
       :references => [],
+      :type => "discovery",
+      :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "attributes" => {:name => "http://www.intrigue.io"}}],
       :allowed_options => [],

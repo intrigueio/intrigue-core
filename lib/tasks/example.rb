@@ -8,6 +8,8 @@ class ExampleTask < BaseTask
       :authors => ["jcran"],
       :description => "This is an example task. It returns a randomly-generated host.",
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["*"],
       :example_entities => [
         {"type" => "String", "attributes" => {"name" => "intrigue.io"}}

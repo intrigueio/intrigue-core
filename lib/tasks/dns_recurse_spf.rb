@@ -10,6 +10,8 @@ class DnsRecurseSpf < BaseTask
       :description => "DNS SPF Recursive Lookup",
       :references => [ "https://community.rapid7.com/community/infosec/blog/2015/02/23/osint-through-sender-policy-framework-spf-records"],
       :allowed_types => ["DnsRecord"],
+      :type => "discovery",
+      :passive => true,
       :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }

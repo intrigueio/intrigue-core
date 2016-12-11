@@ -13,6 +13,8 @@ class NetsvcFuzzRandom < BaseTask
       :authors => ["jcran"],
       :description => "This task connects to a service and sends lots of random data.",
       :references => [],
+      :type => "discovery",
+      :passive => false,
       :allowed_types => ["NetSvc"],
       :example_entities => [
         {"type" => "NetSvc", "attributes" => {

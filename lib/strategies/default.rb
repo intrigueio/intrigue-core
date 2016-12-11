@@ -64,6 +64,9 @@ module Strategy
 
       elsif entity.type_string == "Uri"
 
+        ## Grab the Web Server
+        start_recursive_task(task_result,"web_server_gather",entity)
+
         ## Grab the SSL Certificate
         start_recursive_task(task_result,"uri_gather_ssl_certificate",entity) if entity.name =~ /^https/
 

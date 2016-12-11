@@ -10,6 +10,8 @@ class DnsLookupReverseTask < BaseTask
       :authors => ["jcran"],
       :description => "Look up the name of the given ip address.",
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["IpAddress"],
       :example_entities => [{"type" => "IpAddress", "attributes" => {"name" => "192.0.78.13"}}],
       :allowed_options => [
@@ -37,7 +39,7 @@ class DnsLookupReverseTask < BaseTask
       else
         _log "Unable to find a name for #{address}"
       end
-      
+
     rescue Errno::ENETUNREACH => e
       _log_error "Hit exception: #{e}. Are you sure you're connected?"
     rescue Exception => e

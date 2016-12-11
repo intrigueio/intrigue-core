@@ -17,7 +17,7 @@ module Generic
     entity = EntityFactory.create_or_merge_entity_recursive(@task_result, type, name, hash)
   end
 
-  # Create the entity as normal, but associate an alias as well. 
+  # Create the entity as normal, but associate an alias as well.
   def _create_alias_entity(type, hash, original_entity)
     entity = _create_entity(type, hash)
 
@@ -33,14 +33,17 @@ module Generic
   ###
   def _log(message)
     @task_result.logger.log message
+    @task_result.logger.save
   end
 
   def _log_good(message)
     @task_result.logger.log_good message
+    @task_result.logger.save
   end
 
   def _log_error(message)
     @task_result.logger.log_error message
+    @task_result.logger.save
   end
 
   # Convenience Method to execute a system command semi-safely
@@ -103,7 +106,7 @@ module Generic
         _log "API Key (#{key}) is blank or missing. Check the admin tab!"
       end
     rescue NoMethodError => e
-      puts "Error, invalid config key requested (#{key}) #{e}"
+      _log "Error, invalid config key requested (#{key}) #{e}"
     end
   value
   end

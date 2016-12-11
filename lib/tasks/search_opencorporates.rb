@@ -10,6 +10,8 @@ class SearchOpencorporates < BaseTask
       :authors => ["jcran"],
       :description => "Uses the OpenCorporates API to search for information",
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["DnsRecord","Organization","String"],
       :example_entities => [
         {"type" => "String", "attributes" => {"name" => "intrigue"}}

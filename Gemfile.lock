@@ -54,6 +54,14 @@ GIT
       addressable (~> 2.3, >= 2.3.5)
 
 GIT
+  remote: https://github.com/intrigueio/dm-noisy-failures.git
+  revision: 54e8255a0004decd654f7eeb6a3295ae3fb902db
+  specs:
+    dm-noisy-failures (0.2.3)
+      dm-core
+      dm-validations
+
+GIT
   remote: https://github.com/intrigueio/dm-pagination.git
   revision: 18e0ac3b9cb392bf37b1205bed26932819f8d567
   branch: v1.3.0.beta
@@ -270,6 +278,7 @@ DEPENDENCIES
   dm-core!
   dm-do-adapter!
   dm-migrations!
+  dm-noisy-failures!
   dm-pager!
   dm-postgres-adapter!
   dm-serializer!

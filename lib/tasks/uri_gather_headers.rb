@@ -10,6 +10,8 @@ class UriGatherHeadersTask  < BaseTask
       :authors => ["jcran"],
       :description =>   "This task checks for HTTP headers on a web application",
       :references => [],
+      :type => "discovery",
+      :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "attributes" => {"name" => "http://www.intrigue.io"}}],
       :allowed_options => [], # TODO

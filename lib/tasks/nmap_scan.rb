@@ -11,6 +11,8 @@ class NmapScanTask < BaseTask
       :authors => ["jcran"],
       :description => "This task runs an nmap scan on the target host or domain.",
       :references => [],
+      :type => "discovery",
+      :passive => false,
       :allowed_types => ["DnsRecord", "IpAddress", "NetBlock"],
       :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [

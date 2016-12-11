@@ -10,6 +10,8 @@ class SearchWhoisologyTask < BaseTask
       :authors => ["jcran"],
       :description => "This task hits the Whoisology API and finds matches",
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["EmailAddress"],
       :example_entities => [{"type" => "String", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [],

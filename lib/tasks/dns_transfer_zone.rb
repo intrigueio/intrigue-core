@@ -10,6 +10,8 @@ class DnsTransferZoneTask < BaseTask
       :authors => ["jcran"],
       :description => "DNS Zone Transfer",
       :allowed_types => ["DnsRecord"],
+      :type => "discovery",
+      :passive => false,
       :example_entities => [
         {"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}
       ],

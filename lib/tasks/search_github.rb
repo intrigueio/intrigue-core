@@ -9,6 +9,8 @@ class SearchGithub < BaseTask
       :authors => ["jcran"],
       :description => "Uses the Github API to search for the existence of a string in repository and user names",
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["Organization","String"],
       :example_entities => [
         {"type" => "String", "attributes" => {"name" => "intrigue"}}],

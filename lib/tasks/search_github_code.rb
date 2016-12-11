@@ -9,6 +9,8 @@ class SearchGithubCode < BaseTask
       :authors => ["jcran"],
       :description => "Uses the Github API to search repositories for keywords",
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["GithubUser","GithubRepository"],
       :example_entities => [
         {"type" => "GithubUser", "attributes" => {"name" => "intrigueio"}}],
@@ -39,7 +41,7 @@ class SearchGithubCode < BaseTask
       response = _get_json_response(search_uri)
       items = response["items"]
       return unless items
-      
+
       max_item_count = [items.count,_get_option("max_item_count")].min
 
       _log "Processing #{max_item_count} results"

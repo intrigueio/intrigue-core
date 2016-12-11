@@ -46,7 +46,7 @@
       defaultEdgeColor: '#00b8e6',
       defaultLabelColor:'#FFFFFF',
       defaultLabelSize: 11,
-      labelThreshold: 5,
+      labelThreshold: 4,
       edgeHoverSizeRatio: 3,
       edgeHoverColor: '#ff0000',
       defaultNodeHoverColor: '#ff0000',
@@ -60,7 +60,7 @@
       node.size = 1;
     });
 
-    s.startForceAtlas2({gravity:100,scalingRatio:200,slowDown:1500});
+    s.startForceAtlas2({gravity:1000,scalingRatio:500,slowDown:1000});
     //setTimeout(function() { s.stopForceAtlas2(); }, 10000);
 
     s.bind('clickNode', function(e) {

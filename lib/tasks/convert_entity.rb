@@ -8,6 +8,8 @@ class ConvertEntity < BaseTask
       :authors => ["jcran"],
       :description => "Convert an entity to another type",
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["*"],
       :example_entities => [
         {"type" => "String", "attributes" => {"name" => "intrigue"}}

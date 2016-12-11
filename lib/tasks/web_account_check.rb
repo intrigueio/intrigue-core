@@ -10,6 +10,8 @@ class WebAccountCheckTask < BaseTask
       :authors => ["jcran"],
       :description => "This task hits major websites, checking for the existence of accounts. Discovered accounts are created.",
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["String","Person","Organization","Username","WebAccount"],
       :example_entities => [{"type" => "String", "attributes" => {"name" => "intrigueio"}}],
       :allowed_options => [

@@ -14,6 +14,8 @@ class WhoisTask < BaseTask
       :authors => ["jcran"],
       :description => "Perform a whois lookup for a given entity",
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["DnsRecord", "IpAddress","NetBlock"],
       :example_entities => [
         {"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}},

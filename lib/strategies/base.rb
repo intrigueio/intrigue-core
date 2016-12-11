@@ -16,10 +16,10 @@ module Strategy
       existing_task_result = Intrigue::Model::TaskResult.all(:project => project).first(:name => "#{task_name} on #{entity.name}")
 
       if existing_task_result
-        puts "Skipping!!!! Task result (#{task_name} on #{entity.name}) already exists."
+        #puts "Skipping!!!! Task result (#{task_name} on #{entity.name}) already exists."
         return existing_task_result
       else
-        puts "Starting recursive task: #{task_name} on #{entity.name}"
+        #puts "Starting recursive task: #{task_name} on #{entity.name}"
       end
 
       # Create the task result, and associate our entity and options

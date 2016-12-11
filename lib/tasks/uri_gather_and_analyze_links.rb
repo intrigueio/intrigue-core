@@ -11,6 +11,8 @@ class UriGatherAndAnalyzeLinks  < BaseTask
       :authors => ["dan_geer","jcran"],
       :description => "This task parses the main page and performs analysis on links.",
       :references => [],
+      :type => "discovery",
+      :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "attributes" => {"name" => "http://www.intrigue.io"}}],
       :allowed_options => [],

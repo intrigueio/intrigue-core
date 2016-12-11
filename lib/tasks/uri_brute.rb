@@ -13,6 +13,8 @@ class UriBrute < BaseTask
         "https://www.owasp.org/index.php/Category:OWASP_DirBuster_Project",
         "https://github.com/0xsauby/yasuo"
       ],
+      :type => "discovery",
+      :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [
         {"type" => "Uri", "attributes" => {"name" => "http://intrigue.io"}}
@@ -73,7 +75,6 @@ class UriBrute < BaseTask
     end
 
     # Log our method
-    _log "Missing Page Test: #{missing_page_test}"
 
     # Create our queue of work from the checks in brute_list
     work_q = Queue.new
@@ -151,7 +152,7 @@ class UriBrute < BaseTask
         _log "Flagging #{request_uri}!"
         _create_entity "Uri",
           "name" => request_uri,
-          "uri" => request_uri,
+          "uri" => reques_uri,
           "response_code" => response.code
       end
     end

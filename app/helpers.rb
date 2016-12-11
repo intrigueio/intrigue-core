@@ -22,7 +22,7 @@ module Helper
     })
 
     if depth > 1
-      puts "Depth: #{depth}, setting up a scan result"
+      #puts "Depth: #{depth}, setting up a scan result"
       strategy = "default"
 
       scan_result = Intrigue::Model::ScanResult.create({

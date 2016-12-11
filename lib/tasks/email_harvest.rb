@@ -8,6 +8,8 @@ class EmailHarvestTask < BaseTask
       :authors => ["jcran"],
       :description => "This task scrapes email addresses from search engine results.",
       :references => [],
+      :type => "discovery",
+      :passive => true,
       :allowed_types => ["DnsRecord"],
       :example_entities => [
         {"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}
