@@ -69,27 +69,29 @@ class WhoisTask < BaseTask
         #
         # We're going to have nameservers either way?
         #
-        if answer.nameservers
-          answer.nameservers.each do |nameserver|
-            #
-            # If it's an ip address, let's create a host record
-            #
-            if nameserver.to_s =~ /\d\.\d\.\d\.\d/
-              _create_entity "IpAddress", "name" => nameserver.to_s
-              _create_entity "DnsServer", "name" => nameserver.to_s
-            else
+        if answer
+          if answer.nameservers
+            answer.nameservers.each do |nameserver|
               #
-              # Otherwise it's another domain, and we can't do much but add it
+              # If it's an ip address, let's create a host record
               #
-              _create_entity "DnsRecord", "name" => nameserver.to_s
+              if nameserver.to_s =~ /\d\.\d\.\d\.\d/
+                _create_entity "IpAddress", "name" => nameserver.to_s
+                _create_entity "DnsServer", "name" => nameserver.to_s
+              else
+                #
+                # Otherwise it's another domain, and we can't do much but add it
+                #
+                _create_entity "DnsRecord", "name" => nameserver.to_s
 
-              # Resolve the name
-              begin
-                ip_address = IPSocket::getaddress(nameserver.to_s)
-                _create_entity "IpAddress", "name" => ip_address
-                _create_entity "DnsServer", "name" => ip_address
-              rescue SocketError => e
-                  _log "Unable to look up host: #{e}"
+                # Resolve the name
+                begin
+                  ip_address = IPSocket::getaddress(nameserver.to_s)
+                  _create_entity "IpAddress", "name" => ip_address
+                  _create_entity "DnsServer", "name" => ip_address
+                rescue SocketError => e
+                    _log "Unable to look up host: #{e}"
+                end
               end
             end
           end
