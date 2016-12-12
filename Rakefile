@@ -32,16 +32,6 @@ task :setup do
     FileUtils.cp "#{database_config_file}.default", database_config_file
   end
 
-  ## Copy sidekiq scan worker config into place
-  puts "Copying sidekiq scan worker config...."
-  sidekiq_config_file = "#{intrigue_basedir}/config/sidekiq-scan.yml"
-  if File.exist? sidekiq_config_file
-    puts "File exists: #{sidekiq_config_file}"
-  else
-    puts "Creating.... #{sidekiq_config_file}"
-    FileUtils.cp "#{sidekiq_config_file}.default", sidekiq_config_file
-  end
-
   ## Copy sidekiq task worker config into place
   puts "Copying sidekiq task worker config...."
   sidekiq_config_file = "#{intrigue_basedir}/config/sidekiq-task.yml"
@@ -52,13 +42,13 @@ task :setup do
     FileUtils.cp "#{sidekiq_config_file}.default", sidekiq_config_file
   end
 
-  puts "Obtaining geolocation database..."
+  puts "Obtaining data..."
   geolocation_database =  "#{intrigue_basedir}/data/geolitecity/latest.dat"
   if File.exist? geolocation_database
     puts "File exists: #{geolocation_database}"
   else
-    puts "Getting latest Geolitecity database (will fail if we don't have internet)"
-    Dir.chdir("#{intrigue_basedir}/data/geolitecity/"){  %x["./get_latest.sh"] }
+    puts "Getting latest data (will fail if we don't have internet)"
+    Dir.chdir("#{intrigue_basedir}/data/"){ puts %x["./get_latest.sh"] }
   end
 end
 
