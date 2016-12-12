@@ -24,7 +24,7 @@ class EntityFactory
 
       # Merge the details if it already exists
       if entity.kind_of? Intrigue::Model::Entity
-        puts "Entity exists: #{entity.inspect}, merging."
+        #puts "Entity exists: #{entity.inspect}, merging."
         entity.details = details.merge(entity.details)
         entity.save
       else
@@ -44,7 +44,7 @@ class EntityFactory
       end
 
       # Link to the parent task
-      puts "Entity: #{entity.inspect}"
+      #puts "Entity: #{entity.inspect}"
       #puts "Entity Task Results: #{entity.task_results.count}"
       entity.add_task_result(task_result)
 
@@ -66,8 +66,8 @@ class EntityFactory
           Intrigue::Strategy::Default.recurse(entity, task_result)
         end
       else
-        puts "No scan result or our depth is too deep, no recursion"
-        puts "Task Result: #{task_result.inspect}"
+        #puts "No scan result or our depth #{task_result.depth} is too deep, no recursion"
+        #puts "Task Result: #{task_result.inspect}"
       end
       # END PROCESSING OF RECURSION BY STRATEGY TYPE
 

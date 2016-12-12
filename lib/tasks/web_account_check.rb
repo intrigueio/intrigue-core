@@ -66,7 +66,7 @@ class WebAccountCheckTask < BaseTask
       # Check the verify string
       if body.include? site["account_existence_string"]
         _create_entity "WebAccount", {
-            "name" => "#{account_name}",
+            "name" => "#{account_name} on #{site["name"]}",
             "domain" => "#{site["name"]}",
             "username" => "#{account_name}",
             "uri" => "#{pretty_uri || account_uri}"
