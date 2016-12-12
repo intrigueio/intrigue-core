@@ -152,7 +152,7 @@ class UriBrute < BaseTask
         _log "Flagging #{request_uri}!"
         _create_entity "Uri",
           "name" => request_uri,
-          "uri" => reques_uri,
+          "uri" => request_uri,
           "response_code" => response.code
       end
     end
