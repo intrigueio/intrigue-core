@@ -5,7 +5,7 @@ config/database.yml
 config/sidekiq.yml
 data/alexa-latest.csv
 data/geolitecity/latest.dat
-disabled_tasks/
+data/web_accounts_list/web_accounts_list.json
 public/
 public/js/
 public/screenshots/
@@ -13,9 +13,9 @@ results/
 tmp/.gitignore
 tmp/
 log/
+log/intrigue-sidekiq.log
 lib/tasks_disabled
 lib/tasks/survey
 db/intrigue.db
 config/sidekiq-scan.yml
 config/sidekiq-task.yml
-data/geolitecity/GeoLiteCity.dat.gz

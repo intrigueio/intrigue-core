@@ -28,8 +28,16 @@ class WebAccountCheckTask < BaseTask
     account_name = _get_entity_name
     opt_specific_sites = _get_option "specific_sites"
 
-    account_list_data = File.open("data/web_accounts_list.json").read
+    check_file = "data/web_accounts_list/web_accounts_list.json"
+
+    unless File.exists? check_file
+      _log_error "#{check_file} does not exist. Did you run the script in data/ ?"
+      return
+    end
+
+    account_list_data = File.open(check_file).read
     account_list = JSON.parse(account_list_data)
+
 
     _log "Checking target against #{account_list["sites"].count} possible sites"
 

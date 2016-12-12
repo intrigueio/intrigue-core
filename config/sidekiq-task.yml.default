@@ -4,4 +4,4 @@
 :concurrency: 20
 :queues:
   - [task, 2]
-  - task_recursive
+  - task_autoscheduled
