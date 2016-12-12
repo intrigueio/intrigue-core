@@ -44,7 +44,7 @@ module Strategy
       #require 'sidekiq'
       Sidekiq::Client.push({
         "class" => Intrigue::TaskFactory.create_by_name(task_name).class.to_s,
-        "queue" => "task_recursive",
+        "queue" => "task_autoscheduled",
         "retry" => true,
         "args" => [new_task_result.id, new_task_result.handlers]
       })
