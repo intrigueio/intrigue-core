@@ -77,11 +77,11 @@ class DnsBruteSubTask < BaseTask
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)
     begin
-      wildcard = resolver.getaddress("noforkingway#{rand(10000000)}.#{suffix}")
-      if wildcard
-        _create_entity "IpAddress", "name" => "#{wildcard}"
+      wildcard_ip = resolver.getaddress("noforkingway#{rand(10000000)}.#{suffix}")
+      if wildcard_ip
+        _create_entity "IpAddress", "name" => "#{wildcard_ip}"
         wildcard_domain = true
-        _log "Wildcard domain detected, only saving validated domains/hosts."
+        _log "Wildcard domain detected, only saving those different than #{wildcard_ip}."
       end
     rescue Errno::ENETUNREACH => e
       _log_error "Hit exception: #{e}. Are you sure you're connected?"
@@ -134,57 +134,60 @@ class DnsBruteSubTask < BaseTask
               _log_good "Resolved Address #{resolved_address} for #{fqdn}" if resolved_address
 
               # If we resolved, create the right entities
-              if (resolved_address && !(wildcard_domain))
+              if resolved_address
 
-                # Create new host and domain entities
-                _create_entity("DnsRecord", {"name" => "#{fqdn}", "ip_address" => "#{resolved_address}" })
-                _create_entity("IpAddress", {"name" => "#{resolved_address}", "dns_record" => "#{fqdn}" })
+                unless resolved_address == wildcard_ip
 
-                #
-                # This section will add permutations to our list, if the
-                # opt_use_permutations option is set to true (it is, by default).
-                #
-                # This allows us to take items like 'www' and add a check for
-                # www1 and www2, etc
-                #
-                if opt_use_permutations
+                  # Create new host and domain entities
+                  _create_entity("DnsRecord", {"name" => "#{fqdn}", "ip_address" => "#{resolved_address}" })
+                  _create_entity("IpAddress", {"name" => "#{resolved_address}", "dns_record" => "#{fqdn}" })
 
-                  # Create a list of permutations based on this success
-                  permutation_list = [
-                    "#{subdomain}#{subdomain}",
-                    "#{subdomain}-#{subdomain}",
-                    "#{subdomain}001",
-                    "#{subdomain}01",
-                    "#{subdomain}1",
-                    "#{subdomain}-1",
-                    "#{subdomain}2",
-                    "#{subdomain}-3t",
-                    "#{subdomain}-city",
-                    "#{subdomain}-client",
-                    "#{subdomain}-customer",
-                    "#{subdomain}-edge",
-                    "#{subdomain}-guest",
-                    "#{subdomain}-host",
-                    "#{subdomain}-mgmt",
-                    "#{subdomain}-net",
-                    "#{subdomain}-prod",
-                    "#{subdomain}-production",
-                    "#{subdomain}-rtr",
-                    "#{subdomain}-stage",
-                    "#{subdomain}-staging",
-                    "#{subdomain}-static",
-                    "#{subdomain}-tc",
-                    "#{subdomain}-temp",
-                    "#{subdomain}-test",
-                    "#{subdomain}-vpn",
-                    "#{subdomain}-wifi",
-                    "#{subdomain}-wireless",
-                    "#{subdomain}-www"
-                  ]
+                  #
+                  # This section will add permutations to our list, if the
+                  # opt_use_permutations option is set to true (it is, by default).
+                  #
+                  # This allows us to take items like 'www' and add a check for
+                  # www1 and www2, etc
+                  #
+                  if opt_use_permutations
 
-                  _log "Adding permutations: #{permutation_list.join(", ")}"
-                  permutation_list.each do |p|
-                    work_q.push({:subdomain => "#{p}", :fqdn => "#{p}.#{suffix}", :depth => depth+1})
+                    # Create a list of permutations based on this success
+                    permutation_list = [
+                      "#{subdomain}#{subdomain}",
+                      "#{subdomain}-#{subdomain}",
+                      "#{subdomain}001",
+                      "#{subdomain}01",
+                      "#{subdomain}1",
+                      "#{subdomain}-1",
+                      "#{subdomain}2",
+                      "#{subdomain}-3t",
+                      "#{subdomain}-city",
+                      "#{subdomain}-client",
+                      "#{subdomain}-customer",
+                      "#{subdomain}-edge",
+                      "#{subdomain}-guest",
+                      "#{subdomain}-host",
+                      "#{subdomain}-mgmt",
+                      "#{subdomain}-net",
+                      "#{subdomain}-prod",
+                      "#{subdomain}-production",
+                      "#{subdomain}-rtr",
+                      "#{subdomain}-stage",
+                      "#{subdomain}-staging",
+                      "#{subdomain}-static",
+                      "#{subdomain}-tc",
+                      "#{subdomain}-temp",
+                      "#{subdomain}-test",
+                      "#{subdomain}-vpn",
+                      "#{subdomain}-wifi",
+                      "#{subdomain}-wireless",
+                      "#{subdomain}-www"
+                    ]
+
+                    _log "Adding permutations: #{permutation_list.join(", ")}"
+                    permutation_list.each do |p|
+                      work_q.push({:subdomain => "#{p}", :fqdn => "#{p}.#{suffix}", :depth => depth+1})
+                    end
                   end
                 end
               end
