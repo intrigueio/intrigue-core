@@ -3,4 +3,5 @@
 :pidfile: ./tmp/pids/intrigue-sidekiq-task.pid
 :concurrency: 20
 :queues:
-  - task
+  - [task, 2]
+  - task_recursive

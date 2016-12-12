@@ -1,6 +1,0 @@
-:verbose: false
-:logfile: ./log/intrigue-sidekiq-scan.log
-:pidfile: ./tmp/pids/intrigue-sidekiq-scan.pid
-:concurrency: 6
-:queues:
-  - scan
