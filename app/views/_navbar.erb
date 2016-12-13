@@ -1,20 +1,27 @@
-<nav class="navbar navbar-inverse navbar-static-top">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <div style="width: 40px;">
-        <a class="navbar-brand" href="/v1/">
-          <img src="/img/logo.png" width="100%" style="line-height: 30px;" alt="intrigue">
-        </a>
-      </div>
-    </div>
-    <ul class="nav navbar-nav">
-      <li><a href="/v1/">[<%= @project_name %>]</a></li>
-      <li><a href="/v1/<%= @project_name %>/task?page=1">Start</a></li>
-      <li><a href="/v1/<%= @project_name %>/entities">Entities</a></li>
-      <li><a href="/v1/<%= @project_name %>/graph">Graph</a></li>
-      <li><a href="/v1/<%= @project_name %>/dossier">Dossier</a></li>
-      <li><a href="/v1/<%= @project_name %>/admin/config">Configure</a></li>
-      <li><a href="/v1/<%= @project_name %>/news">News</a></li>
-    </ul>
-  </div>
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/v1"><img src="/img/logo.png" width="36px" height="36px" alt="intrigue"></a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+              <li><a href="/v1/">[<%= @project_name %>]</a></li>
+              <li><a href="/v1/<%= @project_name %>/task?page=1">Start</a></li>
+              <li><a href="/v1/<%= @project_name %>/entities">Entities</a></li>
+              <li><a href="/v1/<%= @project_name %>/graph">Graph</a></li>
+              <li><a href="/v1/<%= @project_name %>/dossier">Dossier</a></li>
+              <li><a href="/v1/<%= @project_name %>/admin/config">Configure</a></li>
+              <li><a href="/v1/<%= @project_name %>/news">News</a></li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
 </nav>

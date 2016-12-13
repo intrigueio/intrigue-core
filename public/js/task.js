@@ -15,10 +15,6 @@
     // get the specific task data and set the allowed entity types
     var form = $("form")[0]
     var task_name = form.task_name.value
-    //$.getJSON(location.origin + "/v1/tasks/" + task_name + ".json", function(data) {
-    //  if (!(window.location.href.indexOf("entity_id=") > -1) && !(window.location.href.indexOf("task_result_id=") > -1) && !(window.location.href.indexOf("entities") > -1)) {
-    //  }
-    //});
 
     // get the specific task data and set the allowed entity types
     var form = $("form")[0]
@@ -89,11 +85,11 @@
           //  form.attrib_name.value = value.example_entities[0].attributes.name;
           //}
 
-          metadata.html(
-            "<pre><code class='json'>" +
-            JSON.stringify(value, null, 2) +
-            "</code></pre>"
-          );
+          //metadata.html(
+          //  "<pre><code class='json'>" +
+          //  JSON.stringify(value, null, 2) +
+          //  "</code></pre>"
+          //);
 
           setOptions(value.allowed_options);
         }
