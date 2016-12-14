@@ -7,8 +7,9 @@ class DnsRecurseSpf < BaseTask
       :name => "dns_recurse_spf",
       :pretty_name => "DNS SPF Recursive Lookup",
       :authors => ["@markstanislav","jcran"],
-      :description => "DNS SPF Recursive Lookup",
-      :references => [ "https://community.rapid7.com/community/infosec/blog/2015/02/23/osint-through-sender-policy-framework-spf-records"],
+      :description => "Check the SPF records of a domain (recursively) and create entities",
+      :references => [
+        "http://www.openspf.org/", "https://community.rapid7.com/community/infosec/blog/2015/02/23/osint-through-sender-policy-framework-spf-records"],
       :allowed_types => ["DnsRecord"],
       :type => "discovery",
       :passive => true,
@@ -71,7 +72,7 @@ class DnsRecurseSpf < BaseTask
                   _create_entity "DnsRecord", {"name" => spf_data}
 
                   # RECURSE!
-                  lookup_txt_record spf_data
+                  lookup_txt_record opt_resolver, spf_data
 
                 elsif data =~ /^ip4:.*/
                   range = data.split(":").last

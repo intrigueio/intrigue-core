@@ -31,10 +31,6 @@ class WhoisTask < BaseTask
   def run
     super
 
-    #
-    # Set up & make the query
-    #
-
     ###
     ### XXX - doesn't currently respect the timeout
     ###
@@ -48,8 +44,9 @@ class WhoisTask < BaseTask
     #  _log "Got a response throttled message: #{e}"
     #  sleep 10
     #  return run # retry
-    rescue Exception => e
-      _log "UNKNOWN EXCEPTION! Unable to query whois: #{e}"
+    rescue StandardException => e
+      _log "Unable to query whois: #{e}"
+      return
     end
 
     #
@@ -63,36 +60,32 @@ class WhoisTask < BaseTask
       _log "================"
 
       #
-      # if it was a domain, we've got a whole lot of shit we can scoop
+      # if it was a domain, we've got a whole lot of things we can pull
       #
-      if @entity.type_string == "DnsRecord"
+      if answer.respond_to? "nameservers"
         #
         # We're going to have nameservers either way?
         #
-        if answer
-          if answer.nameservers
-            answer.nameservers.each do |nameserver|
-              #
-              # If it's an ip address, let's create a host record
-              #
-              if nameserver.to_s =~ /\d\.\d\.\d\.\d/
-                _create_entity "IpAddress", "name" => nameserver.to_s
-                _create_entity "DnsServer", "name" => nameserver.to_s
-              else
-                #
-                # Otherwise it's another domain, and we can't do much but add it
-                #
-                _create_entity "DnsRecord", "name" => nameserver.to_s
+        answer.nameservers.each do |nameserver|
+          #
+          # If it's an ip address, let's create a host record
+          #
+          if nameserver.to_s =~ /\d\.\d\.\d\.\d/
+            _create_entity "IpAddress", "name" => nameserver.to_s
+            _create_entity "DnsServer", "name" => nameserver.to_s
+          else
+            #
+            # Otherwise it's another domain, and we can't do much but add it
+            #
+            _create_entity "DnsRecord", "name" => nameserver.to_s
 
-                # Resolve the name
-                begin
-                  ip_address = IPSocket::getaddress(nameserver.to_s)
-                  _create_entity "IpAddress", "name" => ip_address
-                  _create_entity "DnsServer", "name" => ip_address
-                rescue SocketError => e
-                    _log "Unable to look up host: #{e}"
-                end
-              end
+            # Resolve the name
+            begin
+              ip_address = IPSocket::getaddress(nameserver.to_s)
+              _create_entity "IpAddress", "name" => ip_address
+              _create_entity "DnsServer", "name" => ip_address
+            rescue SocketError => e
+                _log "Unable to look up host: #{e}"
             end
           end
         end

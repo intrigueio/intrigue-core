@@ -31,7 +31,7 @@ class DnsBruteSubTask < BaseTask
         {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_sub.list" },
         {:name => "brute_alphanumeric_size", :type => "Integer", :regex => "integer", :default => 1 },
-        {:name => "threads", :type => "Integer", :regex => "integer", :default => 1 },
+        {:name => "threads", :type => "Integer", :regex => "integer", :default => 3 },
       ],
       :created_types => ["DnsRecord","IpAddress"]
     }

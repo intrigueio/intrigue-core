@@ -28,14 +28,6 @@ class CreateEntity < BaseTask
     name = _get_entity_name
     type = _get_entity_type
 
-    # Get and set depth
-    #depth = _get_option("depth").to_i
-    #@task_result.depth = depth
-    #@task_result.save
-
-    # Use internal API to kick off recursive task
-    #EntityFactory.create_entity_recursive(@project,@task_result,type,{"name" => name})
-
     _create_entity type, {"name" => name }
   end
 

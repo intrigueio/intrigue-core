@@ -42,8 +42,6 @@ class DnsBruteSrvTask < BaseTask
   def run
     super
 
-    # XXX = currently doesn't respect the 'resolver' option
-
     domain_name = _get_entity_name
     opt_resolver =  _get_option "resolver"
 

@@ -17,7 +17,7 @@ class DnsBruteTldTask < BaseTask
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
         {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_tld.list" },
-        {:name => "check_cctlds", :type => "Boolean", :regex => "boolean", :default => false }
+        {:name => "check_cctlds", :type => "Boolean", :regex => "boolean", :default => true }
       ],
       :created_types => ["DnsRecord","IpAddress"]
     }

@@ -64,10 +64,10 @@ class DnsLookupTxtTask < BaseTask
                 else
                   _create_entity "IpAddress", {"name" => s }
                 end
-              elsif record =~ /^google-site-verification.*/
-                _create_entity "Info", {"name" => "DNS Verification Code", "type" =>"Google", "content" => record.split(":").last}
-              elsif record =~ /^yandex-verification.*/
-                _create_entity "Info", {"name" => "DNS Verification Code", "type" =>"Yandex", "content" => record.split(":").last}
+              #elsif record =~ /^google-site-verification.*/
+              #  _create_entity "Info", {"name" => "DNS Verification Code", "type" =>"Google", "content" => #record.split(":").last}
+              #elsif record =~ /^yandex-verification.*/
+              #  _create_entity "Info", {"name" => "DNS Verification Code", "type" =>"Yandex", "content" => #record.split(":").last}
               end
             end
 

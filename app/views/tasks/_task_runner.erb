@@ -29,7 +29,6 @@
     </select>
     </div>
   </div>
-
   <!-- Get all attributes and use this to create an entity -->
   <% if @entity %>
       <%= @entity.form  %>
@@ -71,5 +70,12 @@
   <input class="btn btn-primary" type="submit" value="Run Task">
 </form>
 </div>
-
+<div class="col-sm-5">
+<p>
+<div id="description" name="description">[description]</div>
+</p>
+<p>
+<div id="links" name="links">[links]</div>
+</p>
+</div>
 <script src="/js/task.js"></script>

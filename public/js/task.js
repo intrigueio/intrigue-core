@@ -20,7 +20,6 @@
     var form = $("form")[0]
     var attrib_name = form.attrib_name.value
     $.getJSON(location.origin + "/v1/tasks/" + task_name + ".json", function(data) {
-
       if (!(window.location.href.indexOf("entity_id=") > -1) && !(window.location.href.indexOf("task_result_id=") > -1) && !(window.location.href.indexOf("entities") > -1)) {
         // This is a form that doesn't have an entity already filled out, let's provide an example
         $('#attrib_name').attr("value",data["example_entities"][0]["attributes"]["name"]);
@@ -32,6 +31,18 @@
         $('#attrib_name').attr('readonly', true);
         $('#entity_type').attr('readonly', true);
       }
+
+      // set the description
+      $('#description').html("Description: ")
+      $('#description').append(data["description"]);
+
+      // set the references
+      $('#links').html("References:<ul>");
+      $.each(data["references"], function(id,value) {
+        var link_string = "<li><a href=\"" + value + "\">" + value.substring(0,30) + "...</a></li>";
+        $('#links').append(link_string);
+      });
+      $('#links').append("</ul>");
     });
 
   }
