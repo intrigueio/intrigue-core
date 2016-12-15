@@ -180,50 +180,52 @@ class WhoisTask < BaseTask
         #  <updateDate>2009-09-21T17:15:11-04:00</updateDate>
         #  <version>4</version>
         # </net>
+        begin
+          doc = Nokogiri::XML(http_get_body("http://whois.arin.net/rest/ip/#{lookup_string}"))
+          org_ref = doc.xpath("//xmlns:orgRef").text
+          parent_ref = doc.xpath("//xmlns:parentNetRef").text
+          handle = doc.xpath("//xmlns:handle").text
 
-        doc = Nokogiri::XML(http_get_body("http://whois.arin.net/rest/ip/#{lookup_string}"))
-        org_ref = doc.xpath("//xmlns:orgRef").text
-        parent_ref = doc.xpath("//xmlns:parentNetRef").text
-        handle = doc.xpath("//xmlns:handle").text
+          # For each netblock, create an entity
+          doc.xpath("//xmlns:net/xmlns:netBlocks").children.each do |netblock|
+            # Grab the relevant info
 
-        # For each netblock, create an entity
-        doc.xpath("//xmlns:net/xmlns:netBlocks").children.each do |netblock|
-          # Grab the relevant info
+            cidr_length = ""
+            start_address = ""
+            end_address = ""
+            block_type = ""
+            description = ""
 
-          cidr_length = ""
-          start_address = ""
-          end_address = ""
-          block_type = ""
-          description = ""
+            netblock.children.each do |child|
 
-          netblock.children.each do |child|
+              cidr_length = child.text if child.name == "cidrLength"
+              start_address = child.text if child.name == "startAddress"
+              end_address = child.text if child.name == "endAddress"
+              block_type = child.text if child.name == "type"
+              description = child.text if child.name == "description"
 
-            cidr_length = child.text if child.name == "cidrLength"
-            start_address = child.text if child.name == "startAddress"
-            end_address = child.text if child.name == "endAddress"
-            block_type = child.text if child.name == "type"
-            description = child.text if child.name == "description"
+            end # End netblock children
 
-          end # End netblock children
+            #
+            # Create the netblock entity
+            #
+            entity = _create_entity "NetBlock", {
+              "name" => "#{start_address}/#{cidr_length}",
+              "start_address" => "#{start_address}",
+              "end_address" => "#{end_address}",
+              "cidr" => "#{cidr_length}",
+              "description" => "#{description}",
+              "block_type" => "#{block_type}",
+              "handle" => "#{handle}",
+              "organization_reference" => "#{org_ref}",
+              "parent_reference" => "#{parent_ref}",
+              "whois_full_text" => "#{answer.content}"
+            }
 
-          #
-          # Create the netblock entity
-          #
-          entity = _create_entity "NetBlock", {
-            "name" => "#{start_address}/#{cidr_length}",
-            "start_address" => "#{start_address}",
-            "end_address" => "#{end_address}",
-            "cidr" => "#{cidr_length}",
-            "description" => "#{description}",
-            "block_type" => "#{block_type}",
-            "handle" => "#{handle}",
-            "organization_reference" => "#{org_ref}",
-            "parent_reference" => "#{parent_ref}",
-            "whois_full_text" => "#{answer.content}"
-          }
-
-        end # End Netblocks
-
+          end # End Netblocks
+        rescue Nokogiri::XML::XPath::SyntaxError => e
+          _log_error "Got an error while parsing the XML: #{e}"
+        end
       end # end Host Type
 
     else
