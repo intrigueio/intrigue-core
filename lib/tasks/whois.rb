@@ -1,4 +1,5 @@
 require 'whois'
+require 'whois-parser'
 require 'nokogiri'
 require 'socket'
 
@@ -40,6 +41,7 @@ class WhoisTask < BaseTask
     begin
       whois = Whois::Client.new(:timeout => 20)
       answer = whois.lookup(lookup_string)
+      parser = answer.parser
     #rescue Whois::ResponseIsThrottled => e
     #  _log "Got a response throttled message: #{e}"
     #  sleep 10
@@ -62,124 +64,47 @@ class WhoisTask < BaseTask
       #
       # if it was a domain, we've got a whole lot of things we can pull
       #
-      if answer.respond_to? "nameservers"
+      if @entity.kind_of? Intrigue::Entity::DnsRecord
+
         #
         # We're going to have nameservers either way?
         #
-        answer.nameservers.each do |nameserver|
-          #
-          # If it's an ip address, let's create a host record
-          #
-          if nameserver.to_s =~ /\d\.\d\.\d\.\d/
-            _create_entity "IpAddress", "name" => nameserver.to_s
-            _create_entity "DnsServer", "name" => nameserver.to_s
-          else
-            #
-            # Otherwise it's another domain, and we can't do much but add it
-            #
-            _create_entity "DnsRecord", "name" => nameserver.to_s
+        if parser.nameservers
 
-            # Resolve the name
-            begin
-              ip_address = IPSocket::getaddress(nameserver.to_s)
-              _create_entity "IpAddress", "name" => ip_address
-              _create_entity "DnsServer", "name" => ip_address
-            rescue SocketError => e
-                _log "Unable to look up host: #{e}"
+          parser.nameservers.each do |nameserver|
+            _log "Parsed nameserver: #{nameserver}"
+            #
+            # If it's an ip address, let's create a host record
+            #
+            if nameserver.to_s =~ /\d\.\d\.\d\.\d/
+              _create_entity "IpAddress", "name" => nameserver.to_s
+            else
+              #
+              # Otherwise it's another domain, and we can't do much but add it
+              #
+              _create_entity "DnsRecord", "name" => nameserver.to_s
             end
           end
+        else
+          _log_error "No parsed nameservers!"
+          return
         end
-
-        #
-        # Set the record properties
-        #
-        #@entity.disclaimer = answer.disclaimer
-        #@entity.domain = answer.domain
-        #@entity.referral_whois = answer.referral_whois
-        #@entity.status = answer.status
-        #@entity.registered = answer.registered?
-        #@entity.available = answer.available?
-        #if answer.registrar
-        #  @entity.registrar_name = answer.registrar.name
-        #  @entity.registrar_org = answer.registrar.organization
-        #  @entity.registrar_url = answer.registrar.url
-        #end
-        #@entity.record_created_on = answer.created_on
-        #@entity.record_updated_on = answer.updated_on
-        #@entity.record_expires_on = answer.expires_on
-        #@entity.full_text = answer.parts.first.body
-
         #
         # Create a user from the technical contact
         #
-        begin
-          if answer.technical_contact
-            _log "Creating user from technical contact"
-            _create_entity("Person", {"name" => answer.technical_contact.name})
-          end
-        rescue Exception => e
-          _log "Unable to grab technical contact"
+        parser.contacts.each do |contact|
+          _log "Creating user from contact: #{contact.name}"
+          _create_entity("Person", {"name" => contact.name})
+          _create_entity("EmailAddress", {"name" => contact.email})
         end
-
-        #
-        # Create a user from the admin contact
-        #
-        begin
-          if answer.admin_contact
-            _log "Creating user from admin contact"
-            _create_entity("Person", {"name" => answer.admin_contact.name})
-          end
-        rescue Exception => e
-          _log "Unable to grab admin contact"
-        end
-
-        #
-        # Create a user from the registrant contact
-        #
-        begin
-          if answer.registrant_contact
-            _log "Creating user from registrant contact"
-            _create_entity("Person", {:name => answer.registrant_contact.name})
-          end
-        rescue Exception => e
-          _log "Unable to grab registrant contact"
-        end
-
-        # @entity.save!
-
 
       else
 
         #
-        # Otherwise our entity must've been a host
+        # Otherwise our entity must've been a host, so lets connect to
+        # ARIN's API and fetch the details
         #
 
-        #
-        # Parse out the netrange - WARNING SUPERJANKYNESS ABOUND
-        #
-        # Format:
-        #
-        # <?xml version='1.0'?>
-        # <?xml-stylesheet type='text/xsl' href='http://whois.arin.net/xsl/website.xsl' ?>
-        # <net xmlns="http://www.arin.net/whoisrws/core/v1" xmlns:ns2="http://www.arin.net/whoisrws/rdns/v1" xmlns:ns3="http://www.arin.net/whoisrws/netref/v2" termsOfUse="https://www.arin.net/whois_tou.html">
-        #  <registrationDate>2009-09-21T17:15:11-04:00</registrationDate>
-        #  <ref>http://whois.arin.net/rest/net/NET-8-8-8-0-1</ref>
-        #  <endAddress>8.8.8.255</endAddress>
-        #  <handle>NET-8-8-8-0-1</handle>
-        #  <name>LVLT-GOOGL-1-8-8-8</name>
-        #  <netBlocks><netBlock>
-        #  <cidrLength>24</cidrLength>
-        #  <endAddress>8.8.8.255</endAddress>
-        #  <description>Reassigned</description>
-        #  <type>S</type>
-        #  <startAddress>8.8.8.0</startAddress>
-        #  </netBlock></netBlocks>
-        #  <orgRef name="Google Incorporated" handle="GOOGL-1">http://whois.arin.net/rest/org/GOOGL-1</orgRef>
-        #  <parentNetRef name="LVLT-ORG-8-8" handle="NET-8-0-0-0-1">http://whois.arin.net/rest/net/NET-8-0-0-0-1</parentNetRef>
-        #  <startAddress>8.8.8.0</startAddress>
-        #  <updateDate>2009-09-21T17:15:11-04:00</updateDate>
-        #  <version>4</version>
-        # </net>
         begin
           doc = Nokogiri::XML(http_get_body("http://whois.arin.net/rest/ip/#{lookup_string}"))
           org_ref = doc.xpath("//xmlns:orgRef").text
@@ -187,7 +112,7 @@ class WhoisTask < BaseTask
           handle = doc.xpath("//xmlns:handle").text
 
           # For each netblock, create an entity
-          doc.xpath("//xmlns:net/xmlns:netBlocks").children.each do |netblock|
+          doc.xpath("//xmlns:netBlocks").children.each do |netblock|
             # Grab the relevant info
 
             cidr_length = ""
@@ -229,7 +154,8 @@ class WhoisTask < BaseTask
       end # end Host Type
 
     else
-      _log "Domain WHOIS failed, we don't know what nameserver to query."
+      _log_error "Domain WHOIS failed, we don't know what nameserver to query."
+
     end
 
   end
