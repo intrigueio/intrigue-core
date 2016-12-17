@@ -1,2 +1,3 @@
 web: bundle exec puma -C ./config/puma.rb
-task-worker: bundle exec sidekiq -C config/sidekiq-task.yml -r ./core.rb
+interactive-worker: bundle exec sidekiq -C config/sidekiq-task-interactive.yml -r ./core.rb
+autoscheduled-worker: bundle exec sidekiq -C config/sidekiq-task-autoscheduled.yml -r ./core.rb

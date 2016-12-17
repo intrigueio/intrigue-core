@@ -34,9 +34,11 @@ class EmailHarvestTask < BaseTask
       r.gsub!("<strong>","")
       r.gsub!("</strong>", "")
       r.scan(/[A-Z0-9]+@#{domain}/i) do |email_address|
-        _create_entity "EmailAddress", :name => email_address, :comment => "Scraped via Bing"
+        _log_good "Found: #{email_address}"
+        _create_entity "EmailAddress", {"name" => "#{email_address}", "comment" => "Scraped via Bing"}
       end
     end
+    
 =begin
     # Google
     _log "Scraping Google for email addresses"
@@ -47,9 +49,10 @@ class EmailHarvestTask < BaseTask
       r.gsub!("<b>","")
       r.gsub!("</b>", "")
       r.scan(/[A-Z0-9]+@#{domain}/i) do |email_address|
-        _create_entity "EmailAddress", :name => email_address, :comment => "Scraped via Google"
+        _create_entity "EmailAddress", "name" => email_address, "comment" => "Scraped via Google"
       end
     end
+
 =end
   end
 

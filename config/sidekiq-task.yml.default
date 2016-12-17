@@ -1,7 +1,0 @@
-:verbose: false
-:logfile: ./log/intrigue-sidekiq-task.log
-:pidfile: ./tmp/pids/intrigue-sidekiq-task.pid
-:concurrency: 20
-:queues:
-  - [task, 2]
-  - task_autoscheduled

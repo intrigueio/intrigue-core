@@ -33,21 +33,24 @@ task :setup do
   end
 
   ## Copy sidekiq task worker config into place
-  puts "Copying sidekiq task worker config...."
-  sidekiq_config_file = "#{intrigue_basedir}/config/sidekiq-task.yml"
-  if File.exist? sidekiq_config_file
-    puts "File exists: #{sidekiq_config_file}"
+  puts "Setting up task worker config...."
+  sidekiq_interactive_config_file = "#{intrigue_basedir}/config/sidekiq-task-interactive.yml"
+  sidekiq_autoscheduled_config_file = "#{intrigue_basedir}/config/sidekiq-task-autoscheduled.yml"
+  if File.exist? sidekiq_interactive_config_file && sidekiq_autoscheduled_config_file
+    puts "File exists: #{sidekiq_interactive_config_file}"
+    puts "File exists: #{sidekiq_autoscheduled_config_file}"
   else
-    puts "Creating.... #{sidekiq_config_file}"
-    FileUtils.cp "#{sidekiq_config_file}.default", sidekiq_config_file
+    puts "Copying: #{sidekiq_interactive_config_file}.default"
+    puts "Copying: #{sidekiq_autoscheduled_config_file}.default"
+    FileUtils.cp "#{sidekiq_interactive_config_file}.default", sidekiq_interactive_config_file
+    FileUtils.cp "#{sidekiq_autoscheduled_config_file}.default", sidekiq_autoscheduled_config_file
   end
-
-  puts "Obtaining data..."
+  
+  puts "Obtaining latest data..."
   geolocation_database =  "#{intrigue_basedir}/data/geolitecity/latest.dat"
-  if File.exist? geolocation_database
-    puts "File exists: #{geolocation_database}"
-  else
-    puts "Getting latest data (will fail if we don't have internet)"
+  web_accounts_list =  "#{intrigue_basedir}/data/web_accounts_list/web_accounts_list.json"
+  unless File.exist? geolocation_database && web_accounts_list
+    puts "Getting data files (will fail if we don't have internet)"
     Dir.chdir("#{intrigue_basedir}/data/"){ puts %x["./get_latest.sh"] }
   end
 end
