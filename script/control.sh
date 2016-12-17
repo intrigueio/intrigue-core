@@ -14,19 +14,21 @@
 # Sidekiq: intrigue-sidekiq.pid
 
 IDIR=.
-#[[ -s "/home/ubuntu/.rvm/scripts/rvm" ]] && source "/home/ubuntu/.rvm/scripts/rvm"
-#cd /home/ubuntu/core
-#rvm use 2.2.1@core
+[[ -s "/home/ubuntu/.rvm/scripts/rvm" ]] && source "/home/ubuntu/.rvm/scripts/rvm"
+cd /home/ubuntu/core
+rvm use 2.3.1@core
 
 function setup_server {
   bundle exec rake migrate
 }
 
 function start_server {
-  echo "Starting scan processing..."
+  echo "Starting interactive task processing..."
   bundle exec sidekiq -C $IDIR/config/sidekiq-task-interactive.yml -r $IDIR/core.rb -d -L $IDIR/log/task-interactive.log
-  echo "Starting task processing..."
+  echo "Starting autoschedule task processing..."
   bundle exec sidekiq -C $IDIR/config/sidekiq-task-autoscheduled.yml -r $IDIR/core.rb -d -L $IDIR/log/task-autoscheduled.log
+  echo "Starting background worker processing..."
+  bundle exec sidekiq -C $IDIR/config/sidekiq-app.yml -r $IDIR/core.rb -d -L $IDIR/log/app.log
   echo "Starting puma..."
   bundle exec puma -C $IDIR/config/puma.rb # listen on a public port
 }
@@ -52,20 +54,6 @@ function status_server {
     echo "Puma running"
   else
     echo "Puma not running"
-  fi
-
-  # Sidekiq -scan
-  if [ -f $IDIR/tmp/pids/intrigue-sidekiq-scan.pid ]; then
-    echo "Sidekiq scan process running"
-  else
-    echo "Sidekiq scan process not running"
-  fi
-
-  # Sidekiq -task
-  if [ -f $IDIR/tmp/pids/intrigue-sidekiq-task.pid ]; then
-    echo "Sidekiq task process running"
-  else
-    echo "Sidekiq task process not running"
   fi
 }
 
