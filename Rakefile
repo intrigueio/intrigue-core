@@ -65,16 +65,21 @@ task :setup do
 
   ## Copy sidekiq task worker config into place
   puts "Setting up task worker config...."
-  sidekiq_interactive_config_file = "#{intrigue_basedir}/config/sidekiq-task-interactive.yml"
-  sidekiq_autoscheduled_config_file = "#{intrigue_basedir}/config/sidekiq-task-autoscheduled.yml"
-  if File.exist? sidekiq_interactive_config_file && sidekiq_autoscheduled_config_file
-    puts "File already exists, skipping: #{sidekiq_interactive_config_file}"
-    puts "File already exists, skipping: #{sidekiq_autoscheduled_config_file}"
+  sidekiq_interactive_config = "#{intrigue_basedir}/config/sidekiq-task-interactive.yml"
+  sidekiq_autoscheduled_config = "#{intrigue_basedir}/config/sidekiq-task-autoscheduled.yml"
+  sidekiq_app_config = "#{intrigue_basedir}/config/sidekiq-app.yml"
+
+  if File.exist? sidekiq_interactive_config && sidekiq_autoscheduled_config && sidekiq_app_config
+    puts "File already exists, skipping: #{sidekiq_interactive_config}"
+    puts "File already exists, skipping: #{sidekiq_autoscheduled_config}"
+    puts "File already exists, skipping: #{sidekiq_app_config}"
   else
-    puts "Copying: #{sidekiq_interactive_config_file}.default"
-    puts "Copying: #{sidekiq_autoscheduled_config_file}.default"
-    FileUtils.cp "#{sidekiq_interactive_config_file}.default", sidekiq_interactive_config_file
-    FileUtils.cp "#{sidekiq_autoscheduled_config_file}.default", sidekiq_autoscheduled_config_file
+    puts "Copying: #{sidekiq_interactive_config}.default"
+    puts "Copying: #{sidekiq_autoscheduled_config}.default"
+    puts "Copying: #{sidekiq_app_config}.default"
+    FileUtils.cp "#{sidekiq_interactive_config}.default", sidekiq_interactive_config
+    FileUtils.cp "#{sidekiq_autoscheduled_config}.default", sidekiq_autoscheduled_config
+    FileUtils.cp "#{sidekiq_app_config}.default", sidekiq_app_config
   end
 
   puts "Obtaining latest data..."
@@ -138,6 +143,17 @@ end
 
 desc "Run Specs"
 task :spec do
+end
+
+desc "Reset Graphs"
+task :reset_graphs do
+  require './core'
+  Intrigue::Model::Project.all.each do |p|
+    puts "Clean graph state for #{p.name}"
+    p.graph_generation_in_progress=false
+    p.graph_json = ""
+    p.save
+  end
 end
 
 desc "Run Integration Specs (requires API running)"

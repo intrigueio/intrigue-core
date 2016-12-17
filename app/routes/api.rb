@@ -74,7 +74,13 @@ class IntrigueApp < Sinatra::Base
     get '/:project/graph.json/?' do
       content_type 'application/json'
       project = Intrigue::Model::Project.first(:name => @project_name)
-      project.export_graph_json
+
+      # Start a new generation
+      unless project.graph_generation_in_progress
+        Intrigue::Workers::GraphJsonWorker.perform_async(project.id)
+      end
+
+    project.graph_json
     end
 
     ###                                  ###

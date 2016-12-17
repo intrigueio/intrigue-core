@@ -5,6 +5,9 @@ module Intrigue
 
       property :id,       Serial, :key => true
       property :name,     String, :length => 400, :index => true
+      property :graph_json, Text, :length => 999999
+      property :graph_generated_at, DateTime
+      property :graph_generation_in_progress, Boolean, :default => false
 
       validates_uniqueness_of :name
 
@@ -25,7 +28,6 @@ module Intrigue
       end
 
       def export_graph_json
-
         # generate the nodes
         nodes = []
         edges = []

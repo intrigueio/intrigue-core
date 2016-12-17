@@ -1,24 +1,29 @@
 <style type="text/css">
+
   #master {
     position: static;
     z-index: 0;
   }
   #container {
     position:absolute;
-    top:0;
-    bottom:0;
+    top: 60px;
+    bottom: 60px;
+    left: 30px;
+    right: 30px;
     width:100%;
     height:100%;
-    z-index: 10;
+    z-index: 100;
   }
   #overlay {
     position: absolute;
     z-index: 100;
-    width: 300px;
-    border: 1px solid grey;
+    top:60px;
+    left: 30px;
+    width: 270px;
+    border: 2px solid grey;
     color: white;
     background-color: black;
-    opacity: 0.8;
+    opacity: 0.75;
   }
   #overlay a { color: lightblue};
 </style>
@@ -43,10 +48,10 @@
       minNodeSize: 1,
       maxNodeSize: 6,
       defaultNodeColor: '#FFFFFF',
-      defaultEdgeColor: '#00b8e6',
+      defaultEdgeColor: '#00B8E6',
       defaultLabelColor:'#FFFFFF',
       defaultLabelSize: 11,
-      labelThreshold: 6,
+      labelThreshold: 7,
       edgeHoverSizeRatio: 3,
       edgeHoverColor: '#ff0000',
       defaultNodeHoverColor: '#ff0000',
@@ -60,8 +65,8 @@
       node.size = 1;
     });
 
-    s.startForceAtlas2({gravity:1000,scalingRatio:500,slowDown:2000});
-    //setTimeout(function() { s.stopForceAtlas2(); }, 10000);
+    s.startForceAtlas2({gravity:500,scalingRatio:5000,slowDown:40});
+    setTimeout(function() { s.stopForceAtlas2(); }, 30000);
 
     s.bind('clickNode', function(e) {
       //console.log(e.type, e.data.node.label, e.data.captor);
