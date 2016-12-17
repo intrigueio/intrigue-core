@@ -2,7 +2,8 @@
 config/config.json
 config/puma.rb
 config/database.yml
-config/sidekiq.yml
+config/sidekiq-task-autoscheduled.yml
+config/sidekiq-task-interactive.yml
 data/alexa-latest.csv
 data/geolitecity/latest.dat
 data/web_accounts_list/web_accounts_list.json
@@ -17,5 +18,3 @@ log/intrigue-sidekiq.log
 lib/tasks_disabled
 lib/tasks/survey
 db/intrigue.db
-config/sidekiq-scan.yml
-config/sidekiq-task.yml

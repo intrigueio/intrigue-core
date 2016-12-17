@@ -31,7 +31,8 @@ def sanity_check_system
   configuration_files = [
     "#{$intrigue_basedir}/config/config.json",
     "#{$intrigue_basedir}/config/database.yml",
-    "#{$intrigue_basedir}/config/sidekiq-task.yml",
+    "#{$intrigue_basedir}/config/sidekiq-task-interactive.yml",
+    "#{$intrigue_basedir}/config/sidekiq-task-autoscheduled.yml",
     "#{$intrigue_basedir}/config/puma.rb"
   ]
   configuration_files.each do |file|

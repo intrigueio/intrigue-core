@@ -1,6 +1,6 @@
-:verbose: false
-:logfile: ./log/intrigue-sidekiq-task-autoscheduled.log
-:pidfile: ./tmp/pids/intrigue-sidekiq-task-autoscheduled.pid
+:verbose: true
+#:logfile: ./log/task-autoscheduled.log
+:pidfile: ./tmp/pids/task-autoscheduled.pid
 :concurrency: 10
 :queues:
   - task_autoscheduled

@@ -24,15 +24,14 @@ function setup_server {
 
 function start_server {
   echo "Starting scan processing..."
-  bundle exec sidekiq -C $IDIR/config/sidekiq-scan.yml -r $IDIR/core.rb -d -L $IDIR/log/scan.log
+  bundle exec sidekiq -C $IDIR/config/sidekiq-task-interactive.yml -r $IDIR/core.rb -d -L $IDIR/log/task-interactive.log
   echo "Starting task processing..."
-  bundle exec sidekiq -C $IDIR/config/sidekiq-task.yml -r $IDIR/core.rb -d -L $IDIR/log/task.log
+  bundle exec sidekiq -C $IDIR/config/sidekiq-task-autoscheduled.yml -r $IDIR/core.rb -d -L $IDIR/log/task-autoscheduled.log
   echo "Starting puma..."
   bundle exec puma -C $IDIR/config/puma.rb # listen on a public port
 }
 
 function stop_server {
-
   for x in `ls $IDIR/tmp/pids/*.pid`; do
     echo "Killing $x: `cat $x`"
     kill -KILL `cat $x`

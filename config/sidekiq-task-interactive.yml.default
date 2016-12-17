@@ -1,6 +1,6 @@
-:verbose: false
-:logfile: ./log/intrigue-task-interactive.log
-:pidfile: ./tmp/pids/intrigue-task-interactive.pid
+:verbose: true
+#:logfile: ./log/task-interactive.log
+:pidfile: ./tmp/pids/task-interactive.pid
 :concurrency: 10
 :queues:
   - task
