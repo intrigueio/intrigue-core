@@ -33,5 +33,15 @@ class IntrigueApp < Sinatra::Base
       @global_config = Intrigue::Config::GlobalConfig.new
       erb :"admin/config"
     end
+
+    # hacky way to run a production update
+    get '/update/?' do
+      if @global_config["environment"] == "production"
+        Dir.chdir($intrigue_basedir){
+          %x[#{git pull origin && sudo service intrigue restart}]
+        }
+      end
+    end
+
   end
 end

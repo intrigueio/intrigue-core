@@ -5,9 +5,11 @@ config/database.yml
 config/sidekiq-task-autoscheduled.yml
 config/sidekiq-task-interactive.yml
 config/sidekiq-app.yml
+config/*.backup
 data/alexa-latest.csv
 data/geolitecity/latest.dat
 data/web_accounts_list/web_accounts_list.json
+data/*/*.backup
 public/
 public/js/
 public/screenshots/
