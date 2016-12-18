@@ -118,6 +118,7 @@ class CoreCli < Thor
     # Load in the main core file for direct access to TaskFactory and the Tasks
     # This makes this super speedy.
     require_relative 'core'
+    include Intrigue::Task::Helper
 
     lines = File.open(filename,"r").readlines
 
@@ -152,20 +153,8 @@ class CoreCli < Thor
         })
       end
 
-      # Create a new task result
-      task_result = Intrigue::Model::TaskResult.create({
-        :name => task_name,
-        :task_name => task_name,
-        :base_entity => e,
-        :options => options,
-        :depth => depth,
-        :logger => Intrigue::Model::Logger.create(:project => p),
-        :project => p
-      })
+      start_task("task", p, nil, task_name, entity, depth=depth, options, handlers)
 
-      # XXX - Create the task
-      task = Intrigue::TaskFactory.create_by_name(task_name)
-      jid = task.class.perform_async task_result.id, handlers
       puts "Created task #{task_result.inspect} for entity #{e}"
     end
   end

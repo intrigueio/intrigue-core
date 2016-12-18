@@ -25,6 +25,7 @@ module Intrigue
       property :handlers, Object, :default => []
       property :complete, Boolean, :default => false
       property :entity_count, Integer, :default => 0
+      property :job_id, String
       property :depth, Integer, :default => 1
 
       def self.scope_by_project(project_name)
@@ -60,7 +61,8 @@ module Intrigue
       def start
         # TODO, keep track of the sidekiq id so we can control the task later
         task = Intrigue::TaskFactory.create_by_name(task_name)
-        task.class.perform_async self.id, handlers
+        x = task.class.perform_async self.id, handlers
+        attribute_set("job_id", x)
       end
 
       # Matches based on type and the attribute "name"

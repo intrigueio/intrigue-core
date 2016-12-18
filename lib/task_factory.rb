@@ -10,7 +10,7 @@ class TaskFactory
   end
 
   def self.list
-    available_tasks
+    available_tasks.select {|t| t if t.metadata[:type] == "discovery"}
   end
 
   def self.allowed_tasks_for_entity_type(entity_type)
@@ -55,7 +55,7 @@ class TaskFactory
       end
     end
 
-    ### XXX - exception handling? Should this return nil?
+    ### XXX - Exception handling? Should this return nil?
     raise "No task by that name!"
   end
 

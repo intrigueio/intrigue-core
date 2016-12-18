@@ -30,11 +30,6 @@ module Intrigue
         self.logger.full_log
       end
 
-      # kick off the first task run, and this will kick off recursion based on depth & strategy
-      def start
-        task_results.first.start
-      end
-
       def add_task_result(task_result)
         # Handle exceptions here since this may not be thread safe
         #  https://github.com/datamapper/dm-core/issues/286

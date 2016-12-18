@@ -184,7 +184,7 @@ class IntrigueApp < Sinatra::Base
       end
 
       # Start the task_run
-      task_result = start_task(project, task_name, entity, depth, options, handlers)
+      task_result = start_task("task", project, nil, task_name, entity, depth, options, handlers)
       status 200 if task_result
 
     # must be a string otherwise it can be interpreted as a status code

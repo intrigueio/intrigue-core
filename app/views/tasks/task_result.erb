@@ -42,8 +42,8 @@ function getEntities(id){
 }
 
 window.setInterval(function(){
-  getEntities(<%=@result.id%>);  //calling every 5 seconds
-}, 5000);
+  getEntities(<%=@result.id%>);  //calling every 2 seconds
+}, 2000);
 
 //call right away
 getEntities(<%=@result.id%>);

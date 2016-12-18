@@ -1,15 +1,15 @@
 require 'dnsruby'
 
 module Intrigue
-class EnrichDnsRecord < BaseTask
+class GetAlternateNames < BaseTask
 
   def self.metadata
     {
-      :name => "enrich_dns_record",
+      :name => "get_alternate_names",
       :type => "enrichment",
-      :pretty_name => "Enrich DnsRecord",
+      :pretty_name => "Get Alternate Names",
       :authors => ["jcran"],
-      :description => "Look up all names of a given host.",
+      :description => "Look up all names of a given entity.",
       :references => [],
       :allowed_types => ["DnsRecord"],
       :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],

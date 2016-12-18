@@ -2,6 +2,8 @@ module Intrigue
 module Strategy
   class Base
 
+    extend Intrigue::Task::Helper
+
     def self.inherited(base)
       StrategyFactory.register(base)
     end
@@ -22,34 +24,8 @@ module Strategy
         #puts "Starting recursive task: #{task_name} on #{entity.name}"
       end
 
-      # Create the task result, and associate our entity and options
-      new_task_result = Intrigue::Model::TaskResult.create({
-          :scan_result => old_task_result.scan_result,
-          :name => "#{task_name} on #{entity.name}",
-          :task_name => task_name,
-          :options => options,
-          :base_entity => entity,
-          :logger => Intrigue::Model::Logger.create(:project => project),
-          :project => project,
-          :handlers => old_task_result.handlers,
-          :depth => old_task_result.depth - 1
-      })
+      new_task_result = start_task("task_autoscheduled", project, old_task_result.scan_result, task_name, entity, old_task_result.depth - 1, options, old_task_result.handlers)
 
-      # start this in a lower priority queue
-      # yes this is ugly.
-      # http://coderascal.com/ruby/using-sidekiq-across-different-applications/
-      # http://tech.tulentsev.com/2012/12/queue-prioritization-in-sidekiq/
-      # http://stackoverflow.com/questions/20080047/how-to-push-job-in-specific-queue-and-limit-number-workers-with-sidekiq
-      #
-      #require 'sidekiq'
-      Sidekiq::Client.push({
-        "class" => Intrigue::TaskFactory.create_by_name(task_name).class.to_s,
-        "queue" => "task_autoscheduled",
-        "retry" => true,
-        "args" => [new_task_result.id, new_task_result.handlers]
-      })
-
-      #{ 'class' => SomeWorker, 'args' => ['bob', 1, :foo => 'bar'] }
     new_task_result
     end
 

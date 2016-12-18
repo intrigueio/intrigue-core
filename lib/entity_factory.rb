@@ -53,7 +53,7 @@ class EntityFactory
 
       # START PROCESSING OF ENRICHMENT
       if (entity.type_string == "DnsRecord")
-        start_task(project, "enrich_dns_record", entity, 1, [],[])
+        start_task("task_autoscheduled", project, task_result.scan_result, "get_alternate_names", entity, 1, [],[])
         # TODO. this sucks. this should keep us within the scan result, and it doesn't currently.
         # so no task here will be counted as within the scan.
       end

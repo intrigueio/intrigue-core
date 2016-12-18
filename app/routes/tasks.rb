@@ -17,7 +17,7 @@ class IntrigueApp < Sinatra::Base
       end
 
       # Always get us a list of tasks and names so we can display them
-      @task_classes = Intrigue::TaskFactory.list.map{|x| x}
+      @task_classes = Intrigue::TaskFactory.list
 
       # get a list of task_results
       ### TODO - figure out how to filter this based on a nil association
@@ -86,7 +86,7 @@ class IntrigueApp < Sinatra::Base
       end
 
       # Start the task run!
-      task_result = start_task(current_project, task_name, entity, depth, options)
+      task_result = start_task("task", current_project, nil, task_name, entity, depth, options)
 
       entity.task_results << task_result
       entity.save

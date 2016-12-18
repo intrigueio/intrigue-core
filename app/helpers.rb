@@ -5,11 +5,9 @@ module Helper
   ###
   ### Helper method for starting a task run
   ###
-  def start_task(project, task_name, entity, depth=1, options=[], handlers=[])
+  def start_task(queue, project, existing_scan_result, task_name, entity, depth=1, options=[], handlers=[])
 
     # Create the task result, and associate our entity and options
-    # strategy = default
-    # depth = default
     task_result = Intrigue::Model::TaskResult.create({
       :project => project,
       :logger => Intrigue::Model::Logger.create(:project => project),
@@ -21,10 +19,15 @@ module Helper
       :depth => depth
     })
 
-    if depth > 1
-      #puts "Depth: #{depth}, setting up a scan result"
-      strategy = "default"
+    # if we were passed a scan result, we know this new task belongs to it, and we should associate those
+    if existing_scan_result
+      task_result.scan_result_id == existing_scan_result.id
+      task_result.save
+    end
 
+    # If the depth is greater than 1, AND we don't have a prexisting scan id, start a new scan
+    if !existing_scan_result && depth > 1
+      strategy = "default"
       scan_result = Intrigue::Model::ScanResult.create({
         :name => "scan to depth #{depth} using strategy #{strategy} on #{entity.name}",
         :project => project,
@@ -34,6 +37,7 @@ module Helper
         :strategy => strategy,
         :handlers => handlers
       })
+
       # Add the task result
       scan_result.task_results << task_result
       scan_result.save
@@ -43,14 +47,29 @@ module Helper
       task_result.save
 
       puts "Task Results for #{scan_result.name}: #{scan_result.task_results.count}"
+      _schedule_task(queue, scan_result.task_results.first)
 
-      # Start the scan, which kicks off the first task
-      scan_result.start
     else
-      # Just kick off the first task!
+      # If it's not a new scan, just kick off the task result
+      _schedule_task(queue, task_result)
+    end
+
+  task_result
+  end
+
+  # handle running of tasks
+  private
+  def _schedule_task(queue, task_result)
+    if queue == "task_autoscheduled"
+      Sidekiq::Client.push({
+        "class" => Intrigue::TaskFactory.create_by_name(task_result.task_name).class.to_s,
+        "queue" => "task_autoscheduled",
+        "retry" => true,
+        "args" => [task_result.id, task_result.handlers]
+      })
+    else # task queue
       task_result.start
     end
-  task_result
   end
 
 end

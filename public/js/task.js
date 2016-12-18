@@ -1,49 +1,65 @@
 (function($) {
   "use strict";
 
-  function prepTaskRunner() {
+  function prepTaskRunner(data) {
     // http://stackoverflow.com/questions/1420881/how-to-extract-base-url-from-a-string-in-javascript
     if (typeof location.origin === 'undefined') {
       location.origin = location.protocol + '//' + location.host;
     }
 
-    //get the list of tasks and rewrite the task
     $.getJSON(location.origin + "/v1/tasks.json", function(data) {
       parseTasks(data);
-    });
 
-    // get the specific task data and set the allowed entity types
-    var form = $("form")[0]
-    var task_name = form.task_name.value
+      // get the specific task data and set the allowed entity types
+      var form = $("form")[0]
+      var task_name = form.task_name.value
 
-    // get the specific task data and set the allowed entity types
-    var form = $("form")[0]
-    var attrib_name = form.attrib_name.value
-    $.getJSON(location.origin + "/v1/tasks/" + task_name + ".json", function(data) {
-      if (!(window.location.href.indexOf("entity_id=") > -1) && !(window.location.href.indexOf("task_result_id=") > -1) && !(window.location.href.indexOf("entities") > -1)) {
-        // This is a form that doesn't have an entity already filled out, let's provide an example
-        $('#attrib_name').attr("value",data["example_entities"][0]["attributes"]["name"]);
-        $('#entity_type').attr("value",data["example_entities"][0]["type"]);
-        parseAllowedEntityTypes(data);
-      }
-      else {
-        //Disabling form since we're on a pre-populated form
-        $('#attrib_name').attr('readonly', true);
-        $('#entity_type').attr('readonly', true);
-      }
+      // get the specific task JSON and set the allowed / default fields
+      var form = $("form")[0]
+      var attrib_name = form.attrib_name.value
+      $.getJSON(location.origin + "/v1/tasks/" + task_name + ".json", function(data) {
+        if (!(window.location.href.indexOf("entity_id=") > -1) && !(window.location.href.indexOf("task_result_id=") > -1) && !(window.location.href.indexOf("entities") > -1)) {
+          // This is a form that doesn't have an entity already filled out, let's provide an example
+          parseAllowedEntityTypes(data);
+        }
+        else {
+          //Disabling form since we're on a pre-populated form
+          $('#attrib_name').attr('readonly', true);
+          $('#entity_type').attr('readonly', true);
+        }
 
-      // set the description
-      $('#description').html("Description: ")
-      $('#description').append(data["description"]);
+        // set the description
+        $('#description').html("Description: ")
+        $('#description').append(data["description"]);
 
-      // set the references
-      $('#links').html("References:<ul>");
-      $.each(data["references"], function(id,value) {
-        var link_string = "<li><a href=\"" + value + "\">" + value.substring(0,30) + "...</a></li>";
-        $('#links').append(link_string);
+        // set the references
+        $('#links').html("References:<ul>");
+        $.each(data["references"], function(id,value) {
+          var link_string = "<li><a href=\"" + value + "\">" + value.substring(0,30) + "...</a></li>";
+          $('#links').append(link_string);
+
+        });
+        $('#links').append("</ul>");
+
+        setDefaultEntity(data);
       });
-      $('#links').append("</ul>");
     });
+  }
+
+  function setDefaultEntity(data) {
+    //console.log(data);
+    var entity_type = data["example_entities"][0]["type"];
+    var entity_name = data["example_entities"][0]["attributes"]["name"]
+
+    console.log("DEBUG: Setting name to " + entity_name);
+    console.log("DEBUG: Setting type to " + entity_type);
+
+    // set the name
+    $("#attrib_name").attr("value", entity_name);
+
+    // set the type
+    $("#entity_type option[value=\""+entity_type+"\"]").prop('selected', true);
+    //$("#entity_type option[value=\""+"String"+"\"]").prop('selected', true);
 
   }
 
@@ -87,8 +103,8 @@
         var entity_type, entity_name, form = $("form")[0];
         if (value.name === form.task_name.value) {
           // get values, so we can check if they exist
-          entity_type = form.entity_type.value;
-          entity_name = form.attrib_name.value;
+          //entity_type = form.entity_type.value;
+          //entity_name = form.attrib_name.value;
 
           // if we don't have a set type
           //if (!window.location.href.indexOf("entity_id=")[1] && !window.location.href.indexOf("task_result_id=")[1] && !!window.location.href.indexOf("entities")[1]) {
@@ -106,7 +122,7 @@
         }
       });
 
-      highlightCode();
+      //highlightCode();
     }
 
   /* -------------------------------------------------------------------------- */
@@ -137,22 +153,10 @@
 
   /* -------------------------------------------------------------------------- */
 
-  // Initialize highlight.js syntax highlighting
-  function highlightCode() {
-    $(document).ready(function() {
-      $('pre code').each(function(i, block) {
-         hljs.highlightBlock(block);
-      });
-    });
-  }
-
   // Update the form on load
-  $("document").ready(
-  function() {
-    prepTaskRunner();
-  });
+  $("document").ready( function() {prepTaskRunner()});
 
   // Update the form on task change
   $("#task_name").on("change", prepTaskRunner);
 
-}(jQuery));
+  }(jQuery));

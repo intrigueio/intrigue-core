@@ -6,16 +6,18 @@ class BaseTask
   include Intrigue::Task::Helper
 
   include Sidekiq::Worker
-  sidekiq_options :queue => "#{Intrigue::Config::GlobalConfig.new.config["intrigue_queues"]["task_queue"]}", :backtrace => true
+  sidekiq_options :queue => "task", :backtrace => true
 
   def self.inherited(base)
     TaskFactory.register(base)
   end
 
   def perform(task_id, handlers)
+
     #######################
     # Get the Task Result #
     #######################
+
     @task_result = Intrigue::Model::TaskResult.get task_id
     raise "Unable to find task result by id #{task_id}. Bailing." unless @task_result
 
