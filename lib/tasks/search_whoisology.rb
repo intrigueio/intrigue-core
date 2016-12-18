@@ -53,8 +53,12 @@ class SearchWhoisologyTask < BaseTask
       result = whoisology.flat entity_type, entity_name
 
       _log_good "Creating entities for #{result["count"]} results."
-      result["domains"].each {|d| _create_entity "DnsRecord", {"name" => d["domain_name"]} }
-
+      if result["domains"]
+        result["domains"].each {|d| _create_entity "DnsRecord", {"name" => d["domain_name"]} }
+      else
+        _log_error "No domains, do we have API credits?"
+      end
+      
     rescue RuntimeError => e
       _log_error "Runtime error: #{e.inspect}"
     end
