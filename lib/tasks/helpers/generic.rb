@@ -4,23 +4,25 @@ module Generic
 
   private
 
-  def _create_entity(type, hash)
+  def _create_entity(type, hash, original_entity=nil)
 
-    ### Do some cleanup to move our tasks to v3
     # NOTE: this is a hack - the _create_entity call should be updated in each task
     # to create the entity in a form that's ready for create_or_merge_entity_recursive
+
     name = hash["name"] # Pull out the name from the hash
     hash.delete("name") # No need for a name in the hash now, remove it
-    ### End Cleanup
 
     # Create or merge the entity
-    entity = EntityFactory.create_or_merge_entity_recursive(@task_result, type, name, hash)
+    entity = EntityFactory.create_or_merge_entity_recursive(@task_result, type, name, hash, original_entity)
   end
 
   # Create the entity as normal, but associate an alias as well.
   def _create_alias_entity(type, hash, original_entity)
-    entity = _create_entity(type, hash)
 
+    # Create the entity, and send the original so we can mark it as secondary
+    entity = _create_entity(type, hash, original_entity)
+
+    # Attach the aliases on both sides
     entity.aliases << original_entity
     entity.save
 

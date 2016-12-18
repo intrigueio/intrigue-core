@@ -4,7 +4,15 @@ class IntrigueApp < Sinatra::Base
     # graph
     get '/:project/graph' do
       @json_uri = "#{request.url}.json"
+      @graph_generated_at = Intrigue::Model::Project.first(:name => @project_name).graph_generated_at
       erb :'graph'
+    end
+
+    get '/:project/graph/reset' do
+      p= Intrigue::Model::Project.first(:name => @project_name)
+      p.graph_generation_in_progress = false
+      p.save
+      redirect "/v1/#{@project_name}/graph"
     end
 
     # Show the results in a gexf format
@@ -32,14 +40,16 @@ class IntrigueApp < Sinatra::Base
       @persons  = []
       @applications = []
       @services = []
-      @hosts = []
+      @ip_addresses = []
+      @dns_records = []
       @networks = []
 
       @entities.each do |item|
         @persons << item if item.kind_of? Intrigue::Entity::Person
         @applications << item if item.kind_of? Intrigue::Entity::Uri
         @services << item if item.kind_of? Intrigue::Entity::NetSvc
-        @hosts << item if item.kind_of?(Intrigue::Entity::IpAddress) || item.kind_of?(Intrigue::Entity::DnsRecord)
+        @ip_addresses << item if item.kind_of?(Intrigue::Entity::IpAddress)
+        @dns_records << item if item.kind_of?(Intrigue::Entity::DnsRecord)
         @networks << item if item.kind_of? Intrigue::Entity::NetBlock
       end
 

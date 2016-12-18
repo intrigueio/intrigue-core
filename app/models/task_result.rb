@@ -62,7 +62,8 @@ module Intrigue
         # TODO, keep track of the sidekiq id so we can control the task later
         task = Intrigue::TaskFactory.create_by_name(task_name)
         x = task.class.perform_async self.id, handlers
-        attribute_set("job_id", x)
+        attribute_set(:job_id, x)
+        save
       end
 
       # Matches based on type and the attribute "name"
@@ -89,6 +90,7 @@ module Intrigue
       def export_hash
         {
           "id" => @id,
+          "job_id" => @job_id,
           "name" =>  URI.escape(@name),
           "task_name" => URI.escape(@task_name),
           "timestamp_start" => @timestamp_start,

@@ -14,16 +14,23 @@
   <% end %>
 </ul>
 
-<p>Services:</p>
+<p>Network Services:</p>
 <ul>
   <% @services.each do |e| %>
   <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
   <% end %>
 </ul>
 
-<p>Hosts:</p>
+<p>DNS Records:</p>
 <ul>
-  <% @hosts.each do |e| %>
+  <% @dns_records.each do |e| %>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <% end %>
+</ul>
+
+<p>IP Addresses:</p>
+<ul>
+  <% @ip_addresses.each do |e| %>
   <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
   <% end %>
 </ul>

@@ -23,6 +23,7 @@ module Intrigue
       property :id,          Serial, :key => true
       property :name,        String, :length => 400
       property :details,     Object, :default => {}
+      property :secondary,   Boolean, :default => false
 
       # TODO - we must add a cooresponding mapping and a destroy constraint
       has n, :task_results, :through => Resource #, :constraint => :destroy
@@ -106,6 +107,7 @@ module Intrigue
           :id => @id.to_s,
           :type => @type,
           :name =>  @name,
+          :secondary => @secondary,
           :details => @details,
           :aliases => self.aliases.map{|x| {
             "id" => x.id,

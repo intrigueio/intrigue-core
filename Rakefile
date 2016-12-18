@@ -153,13 +153,12 @@ desc "Run Specs"
 task :spec do
 end
 
-desc "Reset Graphs"
-task :reset_graphs do
+desc "Reset Workers"
+task :reset_workers do
   require './core'
   Intrigue::Model::Project.all.each do |p|
-    puts "Clean graph state for #{p.name}"
+    puts "Clean state for #{p.name}"
     p.graph_generation_in_progress=false
-    p.graph_json = ""
     p.save
   end
 end

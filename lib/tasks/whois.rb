@@ -46,7 +46,7 @@ class WhoisTask < BaseTask
     #  _log "Got a response throttled message: #{e}"
     #  sleep 10
     #  return run # retry
-    rescue StandardException => e
+  rescue Exception => e
       _log "Unable to query whois: #{e}"
       return
     end

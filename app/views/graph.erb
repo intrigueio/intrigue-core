@@ -30,7 +30,7 @@
 
 <div id="master">
   <div id="container"></div>
-  <div id="overlay"><p><b>HUD</b></p>Select a node...</div>
+  <div id="overlay">Current graph generated at: <%= @graph_generated_at.strftime("%I:%M%p") %>.<br/></div>
 </div>
 
 <script src="/js/linkurious-v1.5.1/sigma.min.js"></script>
@@ -74,7 +74,7 @@
       var entity_location = "entities/" + e.data.node.id + ".json";
 
       $.getJSON(entity_location, function(data){
-        $('#overlay').html('<p><b>HUD</b></p>Node: <a target="_blank" href=entities/' + e.data.node.id + '>'+ e.data.node.type + ": " + e.data.node.label + '</a><br/>');
+        $('#overlay').html('<p>Current graph generated at: <%= @graph_generated_at.strftime("%I:%M%p") %>.</p>Node: <a target="_blank" href=entities/' + e.data.node.id + '>'+ e.data.node.type + ": " + e.data.node.label + '</a><br/>');
         // Aliases
         $('#overlay').append("<p>Aliases:<ul>")
         for (let x of data["aliases"])
@@ -83,7 +83,7 @@
             $('#overlay').append('<li><a target="_blank" href=entities/' + x.id + '>'+ x.name + '</a></li>');
         }
         // Task Runs
-        $('#overlay').append("<p>Created By:<ul>")
+        $('#overlay').append("<p>Found By:<ul>")
         for (let x of data["task_results"])
         {
             // Do something
