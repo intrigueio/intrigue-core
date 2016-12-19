@@ -92,6 +92,7 @@ class NmapScanTask < BaseTask
               "name" => uri,
               "ip_address" => "#{host.ip}",
               "port" => 21,
+              "proto" => "tcp",
               "uri" => uri  })
 
           # Then SshServer
@@ -101,6 +102,7 @@ class NmapScanTask < BaseTask
               "name" => uri,
               "ip_address" => "#{host.ip}",
               "port" => 22,
+              "proto" => "tcp",
               "uri" => uri  })
 
           # then FingerServer
@@ -110,6 +112,7 @@ class NmapScanTask < BaseTask
               "name" => uri,
               "ip_address" => "#{host.ip}",
               "port" => 79,
+              "proto" => "tcp",
               "uri" => uri  })
 
           # Otherwise default to an unknown network service
@@ -118,7 +121,7 @@ class NmapScanTask < BaseTask
             _create_entity("NetworkService", {
               "name" => "#{host.ip}:#{port.number}/#{port.protocol}",
               "ip_address" => "#{host.ip}",
-              "port_num" => port.number,
+              "port" => port.number,
               "proto" => port.protocol,
               "fingerprint" => "#{port.service}"})
 

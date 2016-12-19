@@ -12,7 +12,7 @@ class NetworkService < Intrigue::Model::Entity
 
   def validate_content
     @details["ip_address"].to_s =~ /^.*$/ &&
-    @details["port_num"].to_s =~ /^\d{1,5}$/ &&
+    @details["port"].to_s =~ /^\d{1,5}$/ &&
     @details["proto"].to_s =~ /^(tcp|udp)$/
   end
 

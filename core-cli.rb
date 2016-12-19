@@ -105,8 +105,7 @@ class CoreCli < Thor
     #puts "[+] End Results"
 
     # Print the task log
-    #puts "[+] Task Log:"
-    #response["log"].each_line{|x| puts "#{x}" } if response["log"]
+    response["log"].each_line{|x| puts "[L] #{x}" } if response["log"]
   end
 
   ###
