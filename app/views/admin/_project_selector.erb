@@ -22,7 +22,7 @@ function delete_project( name )
 -->
 </script>
 
-Select a project (<%= @project_name %>):
+Select a project:
 <p>
 <ul>
 <% Intrigue::Model::Project.all.each do |proj| %>
@@ -34,7 +34,7 @@ Select a project (<%= @project_name %>):
 </p>
 <form name="project_select_form" action="/v1/project" method="post">
   <div class="form-group">
-  <label for="project" class="control-label">New Project</label><br/>
+  <label for="project" class="control-label">Create a new project:</label><br/>
     <input type="text" class="form-control input-sm" id="project" name="project" style="width: 150px;" value=""/>
     <input class="btn btn-primary" type="submit" value="Submit" />
   </div>
