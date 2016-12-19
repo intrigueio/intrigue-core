@@ -5,7 +5,6 @@ describe "Core API" do
 
   it "should redirect to the current API" do
     get "/"
-    puts last_response
     expect(last_response.status).to match 302
   end
 

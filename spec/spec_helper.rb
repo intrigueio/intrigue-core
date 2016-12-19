@@ -11,10 +11,8 @@ def app
   IntrigueApp
 end
 
-#Rack::URLMap.new('/' => Sinatra::Application, '/sidekiq' => Sidekiq::Web)
-
 RSpec.configure do |config|
   config.include Rack::Test::Methods
 end
 
-@project = Intrigue::Model::Project.create(:name => "TEST!")
+@project = Intrigue::Model::Project.create(:name => "TEST!") unless Intrigue::Model::Project.first(:name => "TEST!")

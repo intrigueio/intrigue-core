@@ -11,7 +11,7 @@ describe "Intrigue v1.0 Tasks" do
 
       entity = {
         "type" => "IpAddress",
-        "attributes" => {
+        "details" => {
           "name" => "8.8.8.8"
         }
       }
@@ -21,7 +21,7 @@ describe "Intrigue v1.0 Tasks" do
       result = @api.start("dns_lookup_reverse", entity)
 
       # Check the result
-      expect(result["entity_ids"].first["attributes"]["name"]).to match /google-public-dns-a.google.com/
+      expect(result["entity_ids"].first["details"]["name"]).to match /google-public-dns-a.google.com/
     end
 
   end

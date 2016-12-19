@@ -21,7 +21,7 @@ describe "Task API v1" do
       :task => "example",
       :entity => {
         :type => "DnsRecord",
-        :attributes => {
+        :details => {
           :name => "test.com"
         }
       }
@@ -29,9 +29,6 @@ describe "Task API v1" do
 
     # It should return a 200
     expect(last_response.status).to match 200
-
-    # It should return a UUID for the task
-    expect(last_response.body).to match /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
 
     ###
     ### Request the task results
@@ -41,11 +38,6 @@ describe "Task API v1" do
     # It should return a 200 with json as a response
     expect(last_response.status).to match 200
     expect(last_request.env["CONTENT_TYPE"]).to match "application/json"
-
-    ###
-    ### XXX - check the result
-    ###
-    #puts last_response.body
 
   end
 

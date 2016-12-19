@@ -17,7 +17,7 @@ describe "Intrigue v1.0 Tasks" do
         # Create an entity that can be saved
         entity = {
           "type" => "String",
-          "attributes" => {
+          "details" => {
             "name" => "#{site["known_accounts"].first}"
           }
         }
@@ -38,7 +38,7 @@ describe "Intrigue v1.0 Tasks" do
 
       entity = {
         "type" => "String",
-        "attributes" => {
+        "details" => {
           "name" => "does-not-exist-#{rand(1000000000000)}"
         }
       }

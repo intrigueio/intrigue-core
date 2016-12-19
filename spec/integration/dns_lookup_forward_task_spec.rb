@@ -11,7 +11,7 @@ describe "Intrigue v1.0 Tasks" do
 
       entity = {
         "type" => "DnsRecord",
-        "attributes" => {
+        "details" => {
           "name" => "intrigue.io"
         }
       }
@@ -24,7 +24,7 @@ describe "Intrigue v1.0 Tasks" do
       expect(result["task_name"]).to match "dns_lookup_forward"
       expect(result["entity_id"]["type"]).to match "DnsRecord"
       expect(result["entity_ids"].first["type"]).to match "IpAddress"
-      expect(result["entity_ids"].first["attributes"]["name"]).to match /192.0.78.*/
+      expect(result["entity_ids"].first["details"]["name"]).to match /192.0.78.*/
     end
 
   end
