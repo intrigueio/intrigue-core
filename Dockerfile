@@ -1,11 +1,13 @@
-FROM ubuntu:14.04
+FROM ubuntu:16.04
 MAINTAINER Jonathan Cran <jcran@intrigue.io>
 
 #RUN apt-add-repository ppa:brightbox/ruby-ng
 RUN apt-get update -qq && apt-get -y upgrade && \
-	apt-get -y install libxml2-dev libxslt-dev zmap nmap sudo default-jre libsqlite3-dev \
-	git gcc g++ make libpcap-dev zlib1g-dev curl libcurl4-openssl-dev libpq-dev postgresql-server-dev-all \
-  wget libgdbm-dev libncurses5-dev automake libtool bison libffi-dev libgmp-dev software-properties-common
+	apt-get -y install libxml2-dev libxslt-dev zmap nmap sudo default-jre \
+	libsqlite3-dev sqlite3 git gcc g++ make libpcap-dev zlib1g-dev curl \
+	libcurl4-openssl-dev libpq-dev postgresql-server-dev-all wget libgdbm-dev \
+	libncurses5-dev automake libtool bison libffi-dev libgmp-dev \
+	software-properties-common bzip2 gawk libreadline6-dev libyaml-dev pkg-config
 
 # masscan build and installation
 WORKDIR /usr/share
@@ -20,7 +22,7 @@ RUN make -j 3 && make install
 # set up RVM
 RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3
 RUN /bin/bash -l -c "curl -L get.rvm.io | bash -s stable"
-RUN /bin/bash -l -c "rvm install 2.2.1"
+RUN /bin/bash -l -c "rvm install 2.3.1"
 RUN /bin/bash -l -c "echo 'gem: --no-ri --no-rdoc' > ~/.gemrc"
 RUN /bin/bash -l -c "gem install bundler --no-ri --no-rdoc"
 
@@ -36,13 +38,15 @@ RUN /bin/bash -l -c "rm -rf /core && mkdir -p /core"
 ADD . /core/
 
 # Ensure we listen on all ipv4 interfaces
-RUN /bin/bash -l -c "sed -i \"s/127.0.0.1/0.0.0.0/g\" /core/config/puma.rb" 
+RUN /bin/bash -l -c "sed -i \"s/127.0.0.1/0.0.0.0/g\" /core/config/puma.rb"
 
 # Expose a port
 EXPOSE 7777
 
-# start the app
+# Set our working directory
 WORKDIR /core
+
+# start the app (also migrates DB)
 RUN /bin/bash -l -c "rm .ruby-gemset"
 ENTRYPOINT ["/bin/bash", "-l"]
 CMD ["/core/script/control.sh","start"]

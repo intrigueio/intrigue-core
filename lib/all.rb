@@ -41,7 +41,9 @@ end
 # Strategy-specific libraries
 ####
 require_relative 'strategy_factory'
-# Load all .rb file in lib/entities by default
+
+# Load all .rb file in lib/strategies by default, base first 
+require_relative 'strategies/base'
 strategies_folder = File.expand_path('../strategies', __FILE__) # get absolute directory
 Dir["#{strategies_folder}/*.rb"].each {|f| require_relative f}
 
