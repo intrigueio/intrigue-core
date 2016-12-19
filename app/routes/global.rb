@@ -1,5 +1,21 @@
 class IntrigueApp < Sinatra::Base
+
+  # NEWS!
+  get '/news/?' do
+    erb :news
+  end
+
   namespace '/v1' do
+
+    # Main Page
+    get '/?' do
+      erb :index
+    end
+
+    # Main Page
+    get '/:project/?' do
+      erb :index
+    end
 
     get '/:project/admin/?' do
       erb :"admin/index"

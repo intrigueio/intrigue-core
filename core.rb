@@ -157,24 +157,6 @@ class IntrigueApp < Sinatra::Base
   # Application libraries
   require_relative "app/all"
 
-  namespace '/v1/?' do
-
-    # Main Page
-    get '/?' do
-      erb :index
-    end
-
-    # Main Page
-    get '/:project/?' do
-      erb :index
-    end
-
-    # NEWS!
-    get '/:project/news/?' do
-      erb :news
-    end
-
-  end
 end
 
 # Core libraries

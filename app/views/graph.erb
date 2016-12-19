@@ -30,7 +30,7 @@
 
 <div id="master">
   <div id="container"></div>
-  <div id="overlay">Current graph generated at: <%= @graph_generated_at.strftime("%I:%M%p") %>.<br/></div>
+  <div id="overlay">Current graph generated at: <%= @graph_generated_at.strftime("%I:%M%p") if @graph_generated_at %>.<br/></div>
 </div>
 
 <script src="/js/linkurious-v1.5.1/sigma.min.js"></script>
@@ -74,7 +74,7 @@
       var entity_location = "entities/" + e.data.node.id + ".json";
 
       $.getJSON(entity_location, function(data){
-        $('#overlay').html('<p>Current graph generated at: <%= @graph_generated_at.strftime("%I:%M%p") %>.</p>Node: <a target="_blank" href=entities/' + e.data.node.id + '>'+ e.data.node.type + ": " + e.data.node.label + '</a><br/>');
+        $('#overlay').html('<p>Current graph generated at: <%= @graph_generated_at.strftime("%I:%M%p") if @graph_generated_at %>.</p>Node: <a target="_blank" href=entities/' + e.data.node.id + '>'+ e.data.node.type + ": " + e.data.node.label + '</a><br/>');
         // Aliases
         $('#overlay').append("<p>Aliases:<ul>")
         for (let x of data["aliases"])

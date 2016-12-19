@@ -14,9 +14,9 @@
 # Sidekiq: intrigue-sidekiq.pid
 
 IDIR=.
-[[ -s "/home/ubuntu/.rvm/scripts/rvm" ]] && source "/home/ubuntu/.rvm/scripts/rvm"
-cd /home/ubuntu/core
-rvm use 2.3.1@core
+#[[ -s "/home/ubuntu/.rvm/scripts/rvm" ]] && source "/home/ubuntu/.rvm/scripts/rvm"
+#cd /core
+#rvm use 2.3.1@core
 
 function setup_server {
   bundle exec rake migrate

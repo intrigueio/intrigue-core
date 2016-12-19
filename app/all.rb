@@ -1,8 +1,8 @@
 require_relative "helpers"
 
 require_relative "routes/api"
-require_relative "routes/admin"
 require_relative "routes/entities"
+require_relative "routes/global"
 require_relative "routes/project"
 require_relative "routes/tasks"
 
