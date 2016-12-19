@@ -21,6 +21,7 @@
         if (!(window.location.href.indexOf("entity_id=") > -1) && !(window.location.href.indexOf("task_result_id=") > -1) && !(window.location.href.indexOf("entities") > -1)) {
           // This is a form that doesn't have an entity already filled out, let's provide an example
           parseAllowedEntityTypes(data);
+          setDefaultEntity(data);
         }
         else {
           //Disabling form since we're on a pre-populated form
@@ -40,8 +41,6 @@
 
         });
         $('#links').append("</ul>");
-
-        setDefaultEntity(data);
       });
     });
   }
