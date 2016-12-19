@@ -12,8 +12,8 @@ class UriExtractMetadata < BaseTask
       :name => "uri_extract_metadata",
       :pretty_name => "URI Extract Metadata",
       :authors => ["jcran"],
-      :description => "This task downloads the contents of a single URI and extracts entities from the text and metadata.",
-      :references => [],
+      :description => "This task downloads the contents of a single URI and extracts entities from the text and various files. Supported formats:",
+      :references => ["http://tika.apache.org/0.9/formats.html"],
       :type => "discovery",
       :passive => false,
       :allowed_types => ["Uri"],
@@ -21,7 +21,7 @@ class UriExtractMetadata < BaseTask
         {"type" => "Uri", "attributes" => { "name" => "http://www.intrigue.io" }}
       ],
       :allowed_options => [],
-      :created_types =>  ["DnsRecord", "EmailAddress", "File", "Info", "Person", "PhoneNumber", "SoftwarePackage", "SslCertificat"]
+      :created_types =>  ["DnsRecord", "EmailAddress", "File", "Info", "Person", "PhoneNumber", "SoftwarePackage", "SslCertificate"]
     }
   end
 

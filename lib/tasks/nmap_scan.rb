@@ -59,61 +59,59 @@ class NmapScanTask < BaseTask
     # Create entities for each discovered service
     parser.each_host do |host|
       _log "Handling nmap data for #{host.ip}"
-
       # Handle the case of a netblock or domain - where we will need to create host entity(s)
       if @entity.type_string == "NetBlock" or @entity.type_string == "DnsRecord"
-        host_entity = _create_entity("IpAddress", { "name" => host.ip } )
-      else
-        host_entity = @entity # We already have a host
+        _create_entity("IpAddress", { "name" => host.ip } )
       end
 
       host.each_port do |port|
-
         if port.state == :open
 
-          # Create a NetSvc for each open port
-          entity = _create_entity("NetSvc", {
-            "name" => "#{host.ip}:#{port.number}/#{port.protocol}",
-            "ip_address" => "#{host.ip}",
-            "port_num" => port.number,
-            "proto" => port.protocol,
-            "fingerprint" => "#{port.service}"})
-
-          # Handle WebApps
-          if entity.details["proto"] == :tcp &&
-            [80,443,8080,8081,8443].include?(entity.details["port_num"])
+          # Handle WebApps first
+          if port.protocol == :tcp &&
+            [80,443,8080,8081,8443].include?(port.number)
 
             # determine if this is an SSL application
-            ssl = true if [443,8443].include?(entity.details["port_num"])
+            ssl = true if [443,8443].include?(port.number)
             protocol = ssl ? "https://" : "http://" # construct uri
 
             # Create URI
-            uri = "#{protocol}#{host.ip}:#{entity.details["port_num"]}"
+            uri = "#{protocol}#{host.ip}:#{port.number}"
             _create_entity("Uri", "name" => uri, "uri" => uri  ) # create an entity
 
-            # and create the entities if we have dns
+            # and create the entities if we have dns resolution
             host.hostnames.each do |hostname|
-              uri = "#{protocol}#{hostname}:#{entity.details["port_num"]}"
+              uri = "#{protocol}#{hostname}:#{port.number}"
               _create_entity("Uri", "name" => uri, "uri" => uri )
             end
 
-          # Handle FtpServer
-          elsif [21].include?(entity.details["port_num"])
-            uri = "ftp://#{entity.details["ip_address"]}:#{entity.details["port_num"]}"
+          # then FtpServer
+          elsif [21].include?(port.number)
+            uri = "ftp://#{host.ip}:#{port.number}"
             _create_entity("FtpServer", {
               "name" => uri,
-              "ip_address" => entity.details["ip_address"],
+              "ip_address" => "#{host.ip}",
               "port" => 21,
               "uri" => uri  })
 
-          # Handle SshServer
-          elsif [22].include?(entity.details["port_num"])
-            uri = "ssh://#{entity.details["ip_address"]}:#{entity.details["port_num"]}"
+          # Then SshServer
+          elsif [22].include?(port.number)
+            uri = "ssh://#{host.ip}:#{port.number}"
             _create_entity("SshServer", {
               "name" => uri,
-              "ip_address" => entity.details["ip_address"],
+              "ip_address" => "#{host.ip}",
               "port" => 22,
               "uri" => uri  })
+
+          # Otherwise default to an unknown network service
+          else
+
+            _create_entity("NetSvc", {
+              "name" => "#{host.ip}:#{port.number}/#{port.protocol}",
+              "ip_address" => "#{host.ip}",
+              "port_num" => port.number,
+              "proto" => port.protocol,
+              "fingerprint" => "#{port.service}"})
 
           end # end if
         end # end if port.state == :open

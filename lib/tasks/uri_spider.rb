@@ -13,7 +13,7 @@ class UriSpider < BaseTask
       :pretty_name => "URI Spider",
       :authors => ["jcran"],
       :description => "This task spiders a given URI, creating entities from the page text, as well as from parsed files.",
-      :references => [],
+      :references => ["http://tika.apache.org/0.9/formats.html"],
       :allowed_types => ["Uri"],
       :type => "discovery",
       :passive => true,

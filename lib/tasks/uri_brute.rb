@@ -11,7 +11,8 @@ class UriBrute < BaseTask
       :description => "Bruteforce common paths on a web server looking for common paths",
       :references => [
         "https://www.owasp.org/index.php/Category:OWASP_DirBuster_Project",
-        "https://github.com/0xsauby/yasuo"
+        "https://github.com/0xsauby/yasuo",
+        "https://github.com/intrigueio/intrigue-core/blob/develop/data/exploitable.json"
       ],
       :type => "discovery",
       :passive => false,

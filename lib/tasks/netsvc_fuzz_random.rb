@@ -11,7 +11,7 @@ class NetsvcFuzzRandom < BaseTask
       :name => "netsvc_fuzz_random",
       :pretty_name => "Fuzz a NetSvc with random data",
       :authors => ["jcran"],
-      :description => "This task connects to a service and sends lots of random data.",
+      :description => "This task connects to a service and sends random data.",
       :references => [],
       :type => "discovery",
       :passive => false,

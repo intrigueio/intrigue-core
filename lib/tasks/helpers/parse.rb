@@ -161,21 +161,9 @@ module Parse
       # Parse the file
       yomu = Yomu.new file
 
-      # Save the full metadata
-      _create_entity("Info", "name" => "Raw Metadata for #{uri}", "content" => yomu.metadata.to_json, "uri" => "#{uri}")
-
       ### Handle PDF
       if yomu.metadata["Content-Type"] == "application/pdf"
 
-        #_create_entity "File", { "type" => "PDF",
-        #  "name" => uri,
-        #  "created" => yomu.metadata["Creation-Date"],
-        #  "last_modified" => yomu.metadata["Last-Modified"],
-        #  "created_with" => yomu.metadata["xmp:CreatorTool"],
-        #  "plugin" => yomu.metadata["producer"],
-        #  "uri" => uri
-        #}
-        
         _create_entity "Person",
           { "name" => yomu.metadata["Author"], "uri" => uri } if yomu.metadata["Author"]
         _create_entity "SoftwarePackage",
@@ -186,6 +174,8 @@ module Parse
         _create_entity "Person", {"name" => yomu.metadata["meta:author"], "uri" => uri }
         _create_entity "Person", {"name" => yomu.metadata["creator"], "uri" => uri }
         _create_entity "Person", {"name" => yomu.metadata["xmpDM:artist"] }
+      else
+        _create_entity "Info", {"name" => "Metadata (#{uri})", "content" => yomu.metadata.to_json, "uri" => "#{uri}" }
       end
 
       # Look for entities in the text of the entity

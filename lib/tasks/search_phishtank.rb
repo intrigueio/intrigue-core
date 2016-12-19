@@ -40,15 +40,14 @@ class SearchPhishtank < BaseTask
   end
 
   def _get_json_response(uri,data)
-
     begin
       response = http_post(uri,data)
       parsed_response = JSON.parse(response)
     rescue JSON::ParserError => e
       _log "Error retrieving results: #{e}"
     end
-
   parsed_response
   end
+  
 end
 end

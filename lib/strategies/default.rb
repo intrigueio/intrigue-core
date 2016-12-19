@@ -17,7 +17,7 @@ module Strategy
       end
 
       if entity.type_string == "DnsRecord"
-        start_recursive_task(task_result, "dns_lookup_forward", entity)
+        #start_recursive_task(task_result, "dns_lookup_forward", entity)
 
         ### DNS Subdomain Bruteforce
         # do a big bruteforce if the size is small enough
@@ -45,7 +45,7 @@ module Strategy
       elsif entity.type_string == "IpAddress"
 
         ### DNS Reverse Lookup
-        start_recursive_task(task_result,"dns_lookup_reverse",entity)
+        #start_recursive_task(task_result,"dns_lookup_reverse",entity)
 
         ### Scan
         start_recursive_task(task_result,"nmap_scan",entity)

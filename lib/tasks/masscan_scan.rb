@@ -30,19 +30,17 @@ class MasscanTask < BaseTask
     # Get range, or host
     to_scan = _get_entity_name
 
-    if to_scan =~ /::/
-      _log_error "Ipv6 scanning not currently supported"
-      return
+    unless to_scan =~ /\d.\d.\d.\d/
+      _log_error "unsupported scan format"
     end
 
-    opt_port = _get_option "port"
+    opt_port = _get_option("port").to_i
 
     # Create a tempfile to store result
-    temp_file = "#{Dir::tmpdir}/masscan_output_#{rand(100000000)}.tmp"
+    temp_file = "#{Dir::tmpdir}/masscan_output_#{rand(10000000000)}.tmp"
 
     # shell out to masscan and run the scan
-    _log "Scanning #{to_scan} and storing in #{temp_file}"
-    masscan_string = "sudo masscan -p #{opt_port} -oL #{temp_file} #{to_scan}"
+    masscan_string = "masscan -p #{opt_port} -oL #{temp_file} #{to_scan}"
     _log "Running... #{masscan_string}"
     _unsafe_system(masscan_string)
 
@@ -51,36 +49,20 @@ class MasscanTask < BaseTask
       # Skip comments
       next if line =~ /^#.*/
 
-      # Get the discovered host (one per line)
+      # Get the discovered host (one per line) & create an ip address
       host = line.delete("\n").strip.split(" ")[3] unless line.nil?
+      _create_entity "IpAddress", { "name" => host }
 
-      # Create entity for each discovered host + service
-      _create_entity("IpAddress", {"name" => host })
-
-      _create_entity("NetSvc", {
-        "name" => "#{host}:#{opt_port}/tcp",
-        "port_num" => opt_port,
-        "proto" => "tcp"
-      })
-
-      ### Resolve the IP
-      begin
-        resolved_name = Resolv.new.getname(host).to_s
-      rescue Resolv::ResolvError => e
-        # silently lose these for now.
-      end
-
-      if resolved_name
-        _log_good "Creating domain #{resolved_name}"
-        # Create our new dns record entity with the resolved name
-        _create_entity("DnsRecord", {"name" => resolved_name})
-        _create_entity("Uri", {"name" => "https://#{resolved_name}", "uri" => "https://#{resolved_name}" }) if opt_port == 443
-        _create_entity("Uri", {"name" => "http://#{resolved_name}", "uri" => "http://#{resolved_name}" }) if opt_port == 80
+      if [80,443,8080,8081,8443].include?(opt_port)
+        ssl = true if [443,8443].include?(opt_port)
+        protocol = ssl ? "https://" : "http://" # construct uri
+        _create_entity("Uri", {"name" => "#{protocol}#{host}", "uri" => "#{protocol}#{host}" })
       else
-        _log "Unable to find a name for #{host}"
-        # Create a URI entity if we're on a commonly known port
-        _create_entity("Uri", {"name" => "https://#{host}", "uri" => "https://#{host}" }) if opt_port == 443
-        _create_entity("Uri", {"name" => "http://#{host}", "uri" => "http://#{host}" }) if opt_port == 80
+        _create_entity("NetSvc", {
+          "name" => "#{host}:#{opt_port}/tcp",
+          "port_num" => opt_port,
+          "proto" => "tcp"
+        })
       end
       ### End Resolution
 
@@ -96,7 +78,7 @@ class MasscanTask < BaseTask
 
   def check_external_dependencies
     # Check to see if masscan is in the path, and raise an error if not
-    return false unless _unsafe_system("sudo masscan") =~ /^usage/
+    return false unless _unsafe_system("masscan") =~ /^usage/
   true
   end
 

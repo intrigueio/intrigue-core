@@ -3,10 +3,10 @@ class SearchCorpwatchTask < BaseTask
 
   def self.metadata
     {
-      :name => "search_edgar",
-      :pretty_name => "Search EDGAR",
+      :name => "search_corpwatch",
+      :pretty_name => "Search Corpwatch (EDGAR) Database",
       :authors => ["jcran"],
-      :description => "EDGAR Corporation Search",
+      :description => "Corpwatch is an intereface to EDGAR. This task allows you to search for US organization data.",
       :references => [],
       :type => "discovery",
       :passive => true,

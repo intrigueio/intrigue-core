@@ -8,7 +8,7 @@ class UriGatherRobotsTask  < BaseTask
       :name => "uri_gather_robots",
       :pretty_name => "URI Gather Robots.txt",
       :authors => ["jcran"],
-      :description =>   "This task checks for robots.txt and adds any URIs it finds",
+      :description =>   "This task checks for a robots.txt and adds any URIs it finds",
       :references => [],
       :type => "discovery",
       :passive => false,

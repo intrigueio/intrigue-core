@@ -10,7 +10,8 @@ class HttpHeader < Intrigue::Model::Entity
   end
 
   def validate_content
-    @name =~ /^.*$/
+    @name =~ /^.*$/ &&
+    @details["content"] =~ /^.*$/
   end
 
 end

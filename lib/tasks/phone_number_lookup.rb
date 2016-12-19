@@ -1,12 +1,12 @@
 module Intrigue
-class PhoneNumberCarrierLookup < BaseTask
+class PhoneNumberLookup < BaseTask
 
   include Task::Web
 
   def self.metadata
     {
-      :name => "phone_number_carrier_lookup",
-      :pretty_name => "Phone Number Carrier Lookup",
+      :name => "phone_number_lookup",
+      :pretty_name => "Phone Number  Lookup",
       :authors => ["jcran"],
       :description => "This task uses the CarrierLookup API to determine the provider of a phone number",
       :references => [],
