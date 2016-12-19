@@ -13,7 +13,7 @@ services:
   web:
     build: .
     ports:
-      - "7778:7777"
+      - "7777:7777"
     links:
       - redis
       - postgres
