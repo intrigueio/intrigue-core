@@ -40,7 +40,7 @@ class TaskFactory
       end
     end
 
-    ### XXX - exception handling? Should this return nil?
+    ### XXX - exception handling? Should this return an exception?
     raise "No task by that name!"
   end
 
@@ -55,7 +55,7 @@ class TaskFactory
       end
     end
 
-    ### XXX - Exception handling? Should this return nil?
+    ### XXX - exception handling? Should this return an exception?
     raise "No task by that name!"
   end
 

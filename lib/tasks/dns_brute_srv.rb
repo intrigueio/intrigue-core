@@ -84,7 +84,7 @@ class DnsBruteSrvTask < BaseTask
             _create_entity("IpAddress", "name" => "#{host}")
 
             # Create a service, and also associate that with our host.
-            netsvc = _create_entity("NetSvc", {
+            network_service = _create_entity("NetworkService", {
               "name" => "#{host}:#{port}/tcp",
               "proto" => "tcp",
               "port_num" => port,

@@ -1,10 +1,10 @@
 module Intrigue
 module Entity
-class NetSvc < Intrigue::Model::Entity
+class NetworkService < Intrigue::Model::Entity
 
   def self.metadata
     {
-      :name => "NetSvc",
+      :name => "NetworkService",
       :description => "TODO"
     }
   end

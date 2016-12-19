@@ -19,7 +19,7 @@ class MasscanTask < BaseTask
       :allowed_options => [
         {:name => "port", :type => "Integer", :regex => "integer", :default => 80 },
       ],
-      :created_types => ["IpAddress", "NetSvc"]
+      :created_types => ["IpAddress", "NetworkService"]
     }
   end
 
@@ -58,7 +58,7 @@ class MasscanTask < BaseTask
         protocol = ssl ? "https://" : "http://" # construct uri
         _create_entity("Uri", {"name" => "#{protocol}#{host}", "uri" => "#{protocol}#{host}" })
       else
-        _create_entity("NetSvc", {
+        _create_entity("NetworkService", {
           "name" => "#{host}:#{opt_port}/tcp",
           "port_num" => opt_port,
           "proto" => "tcp"

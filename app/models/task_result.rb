@@ -72,6 +72,12 @@ module Intrigue
       false
       end
 
+      # We should be able to get a corresponding task of our type
+      # (TODO: should we store our actual task?)
+      def task
+        Intrigue::TaskFactory.create_by_name(task_name)
+      end
+
       ###
       ### Export!
       ###

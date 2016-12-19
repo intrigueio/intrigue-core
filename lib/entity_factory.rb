@@ -62,17 +62,20 @@ class EntityFactory
       # Add to our result set for this task
       task_result.add_entity entity
 
-      # START PROCESSING OF ENRICHMENT (to depth of 1 )
+      # START PROCESSING OF ENRICHMENT (to depth of 1)
       if task_result.depth > 0
         if (entity.type_string == "DnsRecord" || entity.type_string == "IpAddress")
           start_task("task_autoscheduled", project, task_result.scan_result, "get_alternate_names", entity, 0, [],[])
+        end
+        if (entity.type_string == "Uri")
+          start_task("task_autoscheduled", project, task_result.scan_result, "web_server_gather", entity, 0, [],[])
         end
       end# END PROCESSING OF ENRICHMENT
 
       # START PROCESSING OF RECURSION BY STRATEGY TYPE
       if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
         puts "Executing strategy against scan result: #{task_result.scan_result} at depth #{task_result.depth}"
-        unless task_result.task_name == "get_alternate_names" # and this isn't a one-off enrichment task
+        unless task_result.task.class.metadata[:type] == :enrichment # and this isn't a one-off enrichment task
           Intrigue::Strategy::Default.recurse(entity, task_result)
         end
       else

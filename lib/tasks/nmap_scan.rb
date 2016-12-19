@@ -18,7 +18,7 @@ class NmapScanTask < BaseTask
       :allowed_options => [
         #{:name => "ports", :type => "String", :regex => "AlphaNumeric", :default => "80" }
       ],
-      :created_types => ["IpAddress", "NetSvc", "DnsRecord", "Uri"]
+      :created_types => ["IpAddress", "NetworkService", "DnsRecord", "Uri"]
     }
   end
 
@@ -103,10 +103,19 @@ class NmapScanTask < BaseTask
               "port" => 22,
               "uri" => uri  })
 
+          # then FingerServer
+          elsif [79].include?(port.number)
+            uri = "finger://#{host.ip}:#{port.number}"
+            _create_entity("FingerServer", {
+              "name" => uri,
+              "ip_address" => "#{host.ip}",
+              "port" => 79,
+              "uri" => uri  })
+
           # Otherwise default to an unknown network service
           else
 
-            _create_entity("NetSvc", {
+            _create_entity("NetworkService", {
               "name" => "#{host.ip}:#{port.number}/#{port.protocol}",
               "ip_address" => "#{host.ip}",
               "port_num" => port.number,

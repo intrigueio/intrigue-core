@@ -4,20 +4,20 @@ require 'socket'
 ### XXX - This module has not been extensively tested!
 ###
 module Intrigue
-class NetsvcFuzzRandom < BaseTask
+class NetworkServicFuzz < BaseTask
 
   def self.metadata
     {
-      :name => "netsvc_fuzz_random",
-      :pretty_name => "Fuzz a NetSvc with random data",
+      :name => "network_service_fuzz",
+      :pretty_name => "Fuzz a NetworkService with random data",
       :authors => ["jcran"],
       :description => "This task connects to a service and sends random data.",
       :references => [],
       :type => "discovery",
       :passive => false,
-      :allowed_types => ["NetSvc"],
+      :allowed_types => ["NetworkService"],
       :example_entities => [
-        {"type" => "NetSvc", "attributes" => {
+        {"type" => "NetworkService", "attributes" => {
           "ip_address" => "1.1.1.1",
           "port" => 1111,
           "protocol" => "tcp"

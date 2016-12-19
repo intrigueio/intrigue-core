@@ -57,7 +57,7 @@ class SearchCensysTask < BaseTask
               protocol = p.split("/").last # format is like "80/http"
 
               # Always create a network service
-              _create_entity "NetSvc", {
+              _create_entity "NetworkService", {
                 "name" => "#{ip_address}:#{port}/tcp",
                 "port" => port,
                 "fingerprint" => protocol}

@@ -10,12 +10,12 @@ class SearchShodanTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["String", "IpAddress","NetSvc","DnsRecord", "DnsServer"],
+      :allowed_types => ["String", "IpAddress","NetworkService","DnsRecord", "DnsServer"],
       :example_entities => [
         {"type" => "String", "attributes" => {"name" => "intrigue.io"}}
       ],
       :allowed_options => [],
-      :created_types => ["IpAddress","NetSvc","Organization","PhysicalLocation"]
+      :created_types => ["IpAddress","NetworkService","Organization","PhysicalLocation"]
     }
   end
 
@@ -74,11 +74,11 @@ class SearchShodanTask < BaseTask
         end
 
         #
-        # Create a netsvc
+        # Create a network_service
         #
         _log "Port: #{r["port"]}"
 
-        port = _create_entity("NetSvc",{
+        port = _create_entity("NetworkService",{
           "name" => "#{host.attributes[:name]}:#{r["port"]}/tcp",
           "proto" => "tcp",
           "port_num" => r["port"],
