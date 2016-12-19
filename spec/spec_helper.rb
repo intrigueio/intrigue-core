@@ -1,5 +1,5 @@
 require_relative '../core.rb'
-require 'intrigue-api-client'
+require 'intrigue_api_client'
 require 'rack/test'
 
 set :environment, :test
@@ -16,3 +16,5 @@ end
 RSpec.configure do |config|
   config.include Rack::Test::Methods
 end
+
+@project = Intrigue::Model::Project.create(:name => "TEST!")
