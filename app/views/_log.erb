@@ -10,7 +10,7 @@ function getLog(){
   $.getJSON(window.location.href + "/log", function(data) {
     log_data = data["data"];
     document.getElementById("log").empty
-    document.getElementById("log").innerHTML = "<span class='like-pre-dark'>" + log_data + "</span></br>";
+    document.getElementById("log").innerHTML = "<span class='like-pre-dark'>" + htmlEncode(log_data) + "</span></br>";
   });
 }
 
@@ -20,4 +20,13 @@ window.setInterval(function(){
 
 //call right away
 getLog();
+
+
+function htmlEncode(s)
+{
+  var el = document.createElement("div");
+  el.innerText = el.textContent = s;
+  s = el.innerHTML;
+  return s;
+}
 </script>
