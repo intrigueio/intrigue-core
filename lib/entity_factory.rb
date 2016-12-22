@@ -68,7 +68,8 @@ class EntityFactory
           start_task("task_autoscheduled", project, task_result.scan_result, "get_alternate_names", entity, 0, [],[])
         end
         if (entity.type_string == "Uri")
-          start_task("task_autoscheduled", project, task_result.scan_result, "web_server_gather", entity, 0, [],[])
+          start_task("task_autoscheduled", project, task_result.scan_result, "web_server_fingerprint", entity, 0, [],[])
+          start_task("task_autoscheduled", project, task_result.scan_result, "web_application_fingerprint", entity, 0, [],[])
         end
       end# END PROCESSING OF ENRICHMENT
 

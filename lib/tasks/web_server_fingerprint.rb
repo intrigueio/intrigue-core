@@ -1,13 +1,13 @@
 module Intrigue
-class WebServerGather < BaseTask
+class WebServerFingerprint < BaseTask
   include Intrigue::Task::Web
 
   def self.metadata
     {
-      :name => "web_server_gather",
-      :pretty_name => "Web Server Gather",
+      :name => "web_server_fingerprint",
+      :pretty_name => "Web Server Fingerprint",
       :authors => ["jcran"],
-      :description => "Web Server Gather",
+      :description => "Web Server Fingerprint",
       :references => [],
       :type => "discovery",
       :passive => false,
