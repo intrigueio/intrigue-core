@@ -26,7 +26,7 @@ class GraphJsonWorker
 
       puts "Done with graph generation for #{project.name}!"
       puts "Length: #{project.graph_json.length}"
-    rescue StandardException => e
+    rescue StandardError => e
       puts "Hit an exception while generating graph for project #{project}"
       puts "Error: #{e}"
     ensure
