@@ -140,7 +140,7 @@ class DnsBruteSubTask < BaseTask
 
                   # Create new host and domain entities
                   _create_entity("DnsRecord", {"name" => "#{fqdn}", "ip_address" => "#{resolved_address}" })
-                  _create_entity("IpAddress", {"name" => "#{resolved_address}", "dns_record" => "#{fqdn}" })
+                  #_create_entity("IpAddress", {"name" => "#{resolved_address}", "dns_record" => "#{fqdn}" })
 
                   #
                   # This section will add permutations to our list, if the
