@@ -47,7 +47,9 @@ class DnsLookupForwardTask < BaseTask
       result.answer.map do |resource|
         # Check to see if the entity should be a DnsRecord or an IPAddress. Simply check
         # for the presence of alpha characters (see String initializer for this method)
-        "#{resource.rdata}".is_ip_address? ? entity_type="IpAddress" : entity_type="DnsRecord"
+        "#{resource.name}".is_ip_address? ? entity_type="IpAddress" : entity_type="DnsRecord"
+
+        #next if resource.type == Dnsruby::Types::RRSIG
 
         # Create the entity
         if resource.type == Dnsruby::Types::SOA
@@ -97,6 +99,7 @@ class DnsLookupForwardTask < BaseTask
               end
             end
           end
+
         else
           _create_entity("Info", { "name" => "#{resource.type} Record for #{name}", "type" => "#{resource.type}", "data" => "#{resource.rdata}" }) if  record_types.include?("ANY")
         end

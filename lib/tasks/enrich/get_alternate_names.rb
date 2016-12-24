@@ -28,13 +28,13 @@ class GetAlternateNames < BaseTask
 
     if @entity.type_string == "DnsRecord"
       begin
-      result = Dnsruby::Resolver.new(
+      resolver = Dnsruby::Resolver.new(
         :recurse => "true",
         :query_timeout => 5,
         :nameserver => opt_resolver,
         :search => [])
 
-      result = result.query(name)
+      result = resolver.query(name)
       _log "Processing: #{result}"
 
       # Let us know if we got an empty result
@@ -42,13 +42,18 @@ class GetAlternateNames < BaseTask
 
       # For each of the found addresses
       result.answer.map do |resource|
-        _log "Adding alias for #{resource.rdata}"
+        next if resource.type == Dnsruby::Types::RRSIG #TODO parsing this out is a pain, not sure if it's valuable?
+
+        _log "Adding alias for record: #{resource.rdata}"
+
         if (resource.type == Dnsruby::Types::A ||
             resource.type == Dnsruby::Types::AAAA)
+          e = _create_alias_entity("DnsRecord", {"name" => "#{resource.name}"}, @entity)
           e = _create_alias_entity("IpAddress", {"name" => "#{resource.rdata}"}, @entity)
         else
-          e = _create_alias_entity("DnsRecord", {"name" => "#{resource.rdata}"}, @entity)
+          e = _create_alias_entity("DnsRecord", {"name" => "#{resource.name}"}, @entity)
         end
+
       end
 
       rescue Errno::ENETUNREACH => e
