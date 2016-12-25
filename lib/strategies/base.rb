@@ -12,6 +12,7 @@ module Strategy
     ### Helper method for starting a task run
     ###
     def self.start_recursive_task(old_task_result, task_name, entity, options=[])
+      puts "Starting Recursive Task: #{task_name} on #{entity}"
       project = old_task_result.project
 
       # check to see if it already exists

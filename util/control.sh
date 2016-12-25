@@ -13,9 +13,9 @@
 # Puma: intrigue-puma.pid
 # Sidekiq: intrigue-sidekiq.pid
 
-IDIR=.
 #[[ -s "/home/ubuntu/.rvm/scripts/rvm" ]] && source "/home/ubuntu/.rvm/scripts/rvm"
-#cd /core
+#IDIR=/path/to/install/directory
+#cd $IDIR
 #rvm use 2.3.1@core
 
 function setup_server {

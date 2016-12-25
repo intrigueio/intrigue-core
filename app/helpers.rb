@@ -21,7 +21,7 @@ module Helper
 
     # if we were passed a scan result, we know this new task belongs to it, and we should associate those
     if existing_scan_result
-      task_result.scan_result_id == existing_scan_result.id
+      task_result.scan_result_id = existing_scan_result.id
       task_result.save
     end
 

@@ -17,7 +17,9 @@ module Strategy
       end
 
       if entity.type_string == "DnsRecord"
-        #start_recursive_task(task_result, "dns_lookup_forward", entity)
+
+        ### DNS Forward Lookup
+        start_recursive_task(task_result, "get_alternate_names", entity)
 
         ### DNS Subdomain Bruteforce
         # do a big bruteforce if the size is small enough
@@ -45,7 +47,7 @@ module Strategy
       elsif entity.type_string == "IpAddress"
 
         ### DNS Reverse Lookup
-        #start_recursive_task(task_result,"dns_lookup_reverse",entity)
+        start_recursive_task(task_result, "get_alternate_names", entity)
 
         ### Scan
         start_recursive_task(task_result,"nmap_scan",entity)
@@ -65,7 +67,9 @@ module Strategy
       elsif entity.type_string == "Uri"
 
         ## Grab the Web Server
-        start_recursive_task(task_result,"web_server_gather",entity)
+        start_recursive_task(task_result,"web_server_fingerprint",entity)
+
+        start_recursive_task(task_result,"web_application_fingerprint",entity)
 
         ## Grab the SSL Certificate
         start_recursive_task(task_result,"uri_gather_ssl_certificate",entity) if entity.name =~ /^https/

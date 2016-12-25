@@ -35,7 +35,7 @@ class IntrigueApp < Sinatra::Base
     # dossier
     get '/:project/dossier' do
       current_project = Intrigue::Model::Project.first(:name => @project_name)
-      @entities = current_project.entities
+      @entities = Intrigue::Model::Entity.all(:project_id => current_project.id, :order => [:name])
 
       @persons  = []
       @applications = []
@@ -47,6 +47,8 @@ class IntrigueApp < Sinatra::Base
       @entities.each do |item|
         @persons << item if item.kind_of? Intrigue::Entity::Person
         @applications << item if item.kind_of? Intrigue::Entity::Uri
+        @applications << item if item.kind_of?(Intrigue::Entity::WebServer)
+        @applications << item if item.kind_of?(Intrigue::Entity::WebApplication)
         @services << item if item.kind_of? Intrigue::Entity::NetworkService
         @ip_addresses << item if item.kind_of?(Intrigue::Entity::IpAddress)
         @dns_records << item if item.kind_of?(Intrigue::Entity::DnsRecord)

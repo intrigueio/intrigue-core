@@ -6,9 +6,9 @@ class UriBrute < BaseTask
   def self.metadata
     {
       :name => "uri_brute",
-      :pretty_name => "URI Directory Bruteforce",
+      :pretty_name => "URI Bruteforce",
       :authors => ["jcran", "@0xsauby"],
-      :description => "Bruteforce common paths on a web server looking for common paths",
+      :description => "Bruteforce common files and directories on a web server.",
       :references => [
         "https://www.owasp.org/index.php/Category:OWASP_DirBuster_Project",
         "https://github.com/0xsauby/yasuo",

@@ -6,7 +6,7 @@ class GetAlternateNames < BaseTask
   def self.metadata
     {
       :name => "get_alternate_names",
-      :type => "enrichment",
+      :type => "discovery",
       :pretty_name => "Get Alternate Names",
       :authors => ["jcran"],
       :description => "Look up all names of a given entity.",
