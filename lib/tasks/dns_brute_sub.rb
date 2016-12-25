@@ -76,20 +76,20 @@ class DnsBruteSubTask < BaseTask
 
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)
+    wildcard_ips = []
+    wildcard_domain = true
     begin
       wildcard_ip = resolver.getaddress("#{(0...12).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}")
       if wildcard_ip
         _log "Wildcard domain detected!"
-
-        wildcard_ips = []
-        wildcard_domain = true
-
+        
         # Now we test for crazy setups... things that return a bunch of addresses no matter what...
         500.times do |x|
           wildcard_ips << resolver.getaddress("#{(0...12).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}")
         end
 
-        _log "Saving... #{wildcard_ips.sort.uniq.inspect}"
+        _log "Saving... #{wildcard_ips.sort.uniq}"
+
         wildcard_ips.sort.uniq.each {|i| _create_entity "IpAddress", "name" => "#{i}" }
       end
     rescue Errno::ENETUNREACH => e
