@@ -77,11 +77,20 @@ class DnsBruteSubTask < BaseTask
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)
     begin
-      wildcard_ip = resolver.getaddress("noforkingway#{rand(10000000)}.#{suffix}")
+      wildcard_ip = resolver.getaddress("#{(0...12).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}")
       if wildcard_ip
-        _create_entity "IpAddress", "name" => "#{wildcard_ip}"
+        _log "Wildcard domain detected!"
+
+        wildcard_ips = []
         wildcard_domain = true
-        _log "Wildcard domain detected, only saving those different than #{wildcard_ip}."
+
+        # Now we test for crazy setups... things that return a bunch of addresses no matter what...
+        500.times do |x|
+          wildcard_ips << resolver.getaddress("#{(0...12).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}")
+        end
+
+        _log "Saving... #{wildcard_ips.sort.uniq.inspect}"
+        wildcard_ips.sort.uniq.each {|i| _create_entity "IpAddress", "name" => "#{i}" }
       end
     rescue Errno::ENETUNREACH => e
       _log_error "Hit exception: #{e}. Are you sure you're connected?"
@@ -136,7 +145,7 @@ class DnsBruteSubTask < BaseTask
               # If we resolved, create the right entities
               if resolved_address
 
-                unless resolved_address == wildcard_ip
+                unless wildcard_ips.include?(resolved_address)
 
                   # Create new host and domain entities
                   _create_entity("DnsRecord", {"name" => "#{fqdn}", "ip_address" => "#{resolved_address}" })
