@@ -32,7 +32,7 @@ class WebServerFingerprint < BaseTask
 
     web_server_name = resolve_header_name(response.header['server'])
 
-    if response.header['server']
+    if web_server_name
       # If we got the same 'server' header in both, create a WebServer entity
       # Checking for both gives us some assurance it's not totally bogus (e)
       # TODO: though this might miss something if it's a different resolution path?
@@ -63,7 +63,9 @@ class WebServerFingerprint < BaseTask
     web_server_name = header_content
 
     # Check all aliases, returning the probably name if it matches exactly
-    aliases.each { |a| web_server_name = a[:probably] if a[:given] == header_content }
+    aliases.each { |a| web_server_name = a[:probably] if a[:given] =~ /#{header_content}/ }
+
+    _log "Resolved: #{web_server_name}"
 
   web_server_name
   end
