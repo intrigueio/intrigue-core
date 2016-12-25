@@ -9,7 +9,10 @@ RUN apt-get update -qq && apt-get -y upgrade && \
 	libncurses5-dev automake libtool bison libffi-dev libgmp-dev \
 	software-properties-common bzip2 gawk libreadline6-dev libyaml-dev pkg-config
 
-# masscan build and installation
+# Set up nginx?
+# TODO
+
+# Masscan build and installation
 WORKDIR /usr/share
 RUN git clone https://github.com/robertdavidgraham/masscan
 WORKDIR /usr/share/masscan
@@ -37,6 +40,13 @@ RUN /bin/bash -l -c "bundle install --system"
 RUN /bin/bash -l -c "rm -rf /core && mkdir -p /core"
 ADD . /core/
 
+# Cleanup
+WORKDIR /core
+RUN /bin/bash -l -c "rm .ruby-gemset"
+
+# Migrate!
+RUN /bin/bash -l -c "bundle exec rake migrate"
+
 # Ensure we listen on all ipv4 interfaces
 # RUN /bin/bash -l -c "sed -i \"s/127.0.0.1/0.0.0.0/g\" /core/config/puma.rb"
 
@@ -47,6 +57,5 @@ EXPOSE 7777
 WORKDIR /core
 
 # start the app (also migrates DB)
-RUN /bin/bash -l -c "rm .ruby-gemset"
 ENTRYPOINT ["/bin/bash", "-l"]
-CMD ["/core/script/control.sh","start"]
+CMD ["/core/util/control.sh","start"]
