@@ -215,7 +215,8 @@ class DnsBruteSubTask < BaseTask
     wildcard_ips = []
     begin
       # First we look for a single address that won't exist
-      wildcard_ip = resolver.getaddress("#{(0...16).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}")
+      random_string = "#{(0...16).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}"
+      wildcard_ip = resolver.getaddress(random_string)
 
       # If that resolved, we know that we're in a wildcard situation.
       #
@@ -224,18 +225,21 @@ class DnsBruteSubTask < BaseTask
       # and collect those IPs. This number (250) is somewhat
       # arbitrarily chosen but seems to generally work in practice.
       if wildcard_ip
-        _log "Wildcard domain (#{suffix}) detected, digging in!"
+        _log "Wildcard domain (#{suffix}) detected after resolving #{random_string} to #{wildcard_ip}. Now we check for more than a single ip!"
 
         # Now we test for crazy setups... things that return a bunch of addresses no matter what...
         500.times do |x|
           wildcard_ips << resolver.getaddress("#{(0...6).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}")
         end
 
+        _log "Got wildcard ips: #{wildcard_ips.sort.uniq} out of #{wildcard_ips.count} entries."
+      else
+        _log "No wildcard detected! Returnding #{wildcard_ips}"
       end
     rescue Errno::ENETUNREACH => e
       _log_error "Hit exception: #{e}. Are you sure you're connected?"
-    rescue Resolv::ResolvError
-      _log_good "Looks like no wildcard dns. Moving on."
+    rescue Resolv::ResolvError => e
+      _log "Unable to resolve: #{e}. Moving on"
     end
 
   wildcard_ips # if it's not a wildcard, this will be an empty array.
