@@ -79,7 +79,6 @@ class DnsBruteSubTask < BaseTask
     wildcard_ips = _check_wildcard(resolver, suffix)
     unless wildcard_ips.empty?
       # Go ahead and log this, since we'll want to tell the user what's happening.
-      _log "Saving these 'wildcard' resolved addresses... #{wildcard_ips.sort.uniq}"
       wildcard_ips.sort.uniq.each {|i| _create_entity "IpAddress", "name" => "#{i}" }
     end
 
@@ -131,7 +130,7 @@ class DnsBruteSubTask < BaseTask
               if resolved_address # If we resolved, create the right entities
 
                 unless wildcard_ips.include?(resolved_address)
-                  _log_good "Resolved address #{resolved_address} for #{fqdn}" if resolved_address
+                  _log_good "Resolved address #{resolved_address} for #{fqdn} and it wasn't in our wildcard list."
 
                   # Create new host and domain entities
                   _create_entity("DnsRecord", {"name" => "#{fqdn}", "ip_address" => "#{resolved_address}" })
@@ -180,14 +179,16 @@ class DnsBruteSubTask < BaseTask
                     ]
 
                     # test to first make sure we don't have a subdomain specific wildcard
-                    wildcard_ips = _check_wildcard(resolver,fqdn)
+                    subdomain_wildcard_ips = _check_wildcard(resolver,fqdn)
 
-                    # Before we add this subdomain, let's make sure it's not a wildcard
-                    if wildcard_ips.empty?
+                    # Before we iterate on this subdomain, let's make sure it's not a wildcard
+                    if subdomain_wildcard_ips.empty?
                       _log "Adding permutations: #{permutation_list.join(", ")}"
                       permutation_list.each do |p|
                         work_q.push({:subdomain => "#{p}", :fqdn => "#{p}.#{suffix}", :depth => depth+1})
                       end
+                    else
+                      _log "Avoiding permutations on #{fqdn} because it appears to be a wildcard."
                     end
                   end # end opt_use_permutations
                 else
@@ -215,26 +216,28 @@ class DnsBruteSubTask < BaseTask
     wildcard_ips = []
     begin
       # First we look for a single address that won't exist
-      random_string = "#{(0...16).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}"
-      wildcard_ip = resolver.getaddress(random_string)
-
+      5.times do
+        random_string = "#{(0...16).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}"
+        wildcard_ips << resolver.getaddress(random_string)
+      end
       # If that resolved, we know that we're in a wildcard situation.
       #
       # Some domains have a pool of IPs that they'll resolve to, so
       # let's go ahead and test a bunch of different domains to try
       # and collect those IPs. This number (250) is somewhat
       # arbitrarily chosen but seems to generally work in practice.
-      if wildcard_ip
-        _log "Wildcard domain (#{suffix}) detected after resolving #{random_string} to #{wildcard_ip}. Now we check for more than a single ip!"
+      if wildcard_ips.uniq.count > 1
+        _log "Multiple wildcard ips for (#{suffix}) after resolving these: #{wildcard_ips}."
+        _log "Trying to create an exhaustive list."
 
         # Now we test for crazy setups... things that return a bunch of addresses no matter what...
         500.times do |x|
           wildcard_ips << resolver.getaddress("#{(0...6).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}")
         end
 
-        _log "Got wildcard ips: #{wildcard_ips.sort.uniq} out of #{wildcard_ips.count} entries."
+        _log "Got wildcard ips: #{wildcard_ips.sort.uniq} out of #{wildcard_ips.count} entries. "
       else
-        _log "No wildcard detected! Returnding #{wildcard_ips}"
+        _log "No wildcard detected! Returning #{wildcard_ips}"
       end
     rescue Errno::ENETUNREACH => e
       _log_error "Hit exception: #{e}. Are you sure you're connected?"
