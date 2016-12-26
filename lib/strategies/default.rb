@@ -165,6 +165,7 @@ module Strategy
         entity.name =~ /^.*microsoft.com$/                 ||
         entity.name =~ /^.*oclc.org$/                      ||
         entity.name =~ /^.*ogp.me$/                        ||
+        entity.name =~ /^.*outlook.com$/                   ||
         entity.name =~ /^.*plus.google.com$/               ||
         entity.name =~ /^.*root-servers.net$/              ||
         entity.name =~ /^.*purl.org$/                      ||
