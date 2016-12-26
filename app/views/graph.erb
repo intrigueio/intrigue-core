@@ -65,15 +65,22 @@
       node.size = 1;
     });
 
-    //console.log("Length: " + s.graph.nodes().length + "");
-
-    var slowdown = 100;
-    if (s.graph.nodes().length > 800) {
+    // adjust slowdown based on the size
+    var slowdown = 200;
+    if (s.graph.nodes().length > 1000) {
       slowdown = 10;
     }
 
+    // start the layout
     s.startForceAtlas2({gravity:500,scalingRatio:5000,slowDown: slowdown});
-    setTimeout(function() { s.stopForceAtlas2(); }, 30000);
+
+    // adjust our stop time based on size
+    if (s.graph.nodes().length > 1000) {
+      setTimeout(function() { s.stopForceAtlas2(); }, 60000);
+    }
+    else {
+      setTimeout(function() { s.stopForceAtlas2(); }, 15000);
+    }
 
     s.bind('clickNode', function(e) {
       //console.log(e.type, e.data.node.label, e.data.captor);
