@@ -65,7 +65,14 @@
       node.size = 1;
     });
 
-    s.startForceAtlas2({gravity:500,scalingRatio:5000,slowDown:40});
+    //console.log("Length: " + s.graph.nodes().length + "");
+
+    var slowdown = 100;
+    if (s.graph.nodes().length > 800) {
+      slowdown = 10;
+    }
+
+    s.startForceAtlas2({gravity:500,scalingRatio:5000,slowDown: slowdown});
     setTimeout(function() { s.stopForceAtlas2(); }, 30000);
 
     s.bind('clickNode', function(e) {
