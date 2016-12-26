@@ -227,7 +227,7 @@ class DnsBruteSubTask < BaseTask
         _log "Wildcard domain (#{suffix}) detected, digging in!"
 
         # Now we test for crazy setups... things that return a bunch of addresses no matter what...
-        250.times do |x|
+        500.times do |x|
           wildcard_ips << resolver.getaddress("#{(0...6).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}")
         end
 
