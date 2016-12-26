@@ -29,14 +29,14 @@ module Strategy
             {"name" => "brute_alphanumeric_size", "value" => 3},
             {"name" => "use_permutations", "value" => true },
             {"name" => "use_mashed_domains", "value" => false },
-            {"name" => "threads", "value" => 5}])
+            {"name" => "threads", "value" => 2}])
         else
           # otherwise do something a little faster
           start_recursive_task(task_result,"dns_brute_sub",entity,[
             {"name" => "use_file", "value" => false },
             {"name" => "use_permutations", "value" => true },
             {"name" => "use_mashed_domains", "value" => false },
-            {"name" => "threads", "value" => 5}])
+            {"name" => "threads", "value" => 2}])
         end
 
       elsif entity.type_string == "String"
@@ -76,7 +76,7 @@ module Strategy
 
         ## Spider, looking for metadata
         start_recursive_task(task_result,"uri_spider",entity,[
-            {"name" => "threads", "value" => 3},
+            {"name" => "threads", "value" => 2},
             {"name" => "max_pages", "value" => 250},
             {"name" => "extract_dns_records", "value" => true},
             {"name" => "extract_patterns", "value" => "#{task_result.scan_result.base_entity.name}"}]) unless entity.created_by? "uri_brute"
