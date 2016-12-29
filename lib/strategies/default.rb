@@ -171,6 +171,7 @@ module Strategy
         entity.name =~ /^.*purl.org$/                      ||
         entity.name =~ /^.*rdfs.org$/                      ||
         entity.name =~ /^.*schema.org$/                    ||
+        entity.name =~ /^.*secureserver.net$/              ||
         entity.name =~ /^.*twitter.com$/                   ||
         entity.name =~ /^.*urchin$/                        ||
         entity.name =~ /^.*urchin.com$/                    ||
