@@ -117,11 +117,11 @@ class CoreCli < Thor
     # Load in the main core file for direct access to TaskFactory and the Tasks
     # This makes this super speedy.
     require_relative 'core'
-    include Intrigue::Task::Helper
+    extend Intrigue::Task::Helper
 
     lines = File.open(filename,"r").readlines
 
-    project_name = "#{task_name}-#{Time.now.strftime("%Y%m%d%H%M")}"
+    project_name = "#{task_name}-#{Time.now.strftime("%Y%m%d%H%M%s")}"
     p = Intrigue::Model::Project.create(:name => project_name)
 
     lines.each do |line|
@@ -131,6 +131,8 @@ class CoreCli < Thor
       options = _parse_options options_string
       handlers = _parse_handlers handler_string
       depth = depth.to_i
+
+      puts "entity: #{entity}"
 
       payload = {
         "task" => task_name,
@@ -142,7 +144,8 @@ class CoreCli < Thor
 
       # Check if the entity already exists, and if not, create a new entity
       type_class = eval("Intrigue::Entity::#{entity["type"]}")
-      entity = Intrigue::Model::Entity.scope_by_project_and_type(project_name, type_class).first(:name => name)
+      e = Intrigue::Model::Entity.scope_by_project_and_type(project_name, type_class).first(:name => entity["details"]["name"])
+
       unless e
         e = Intrigue::Model::Entity.create({
           :type => type_class.to_s,
@@ -152,7 +155,7 @@ class CoreCli < Thor
         })
       end
 
-      start_task("task", p, nil, task_name, entity, depth=depth, options, handlers)
+      task_result = start_task("task", p, nil, task_name, e, depth, options, handlers)
 
       puts "Created task #{task_result.inspect} for entity #{e}"
     end
