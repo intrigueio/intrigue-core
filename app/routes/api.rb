@@ -141,14 +141,14 @@ class IntrigueApp < Sinatra::Base
     #  "options" => options_list,
     #}.to_json
     post '/:project/task_results/?' do
-
+      
       project_name = params[:project]
 
       # Parse the incoming request
       payload = JSON.parse(request.body.read) if request.content_type == "application/json"
 
       ### don't take any shit
-      return nil unless payload
+      raise "No payload!" unless payload
 
       # Construct an entity from the entity_hash provided
       type = payload["entity"]["type"]

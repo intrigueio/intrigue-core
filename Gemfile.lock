@@ -93,14 +93,6 @@ GIT
       uuidtools (~> 2.1.2)
 
 GIT
-  remote: https://github.com/intrigueio/intrigue_api_client.git
-  revision: fe69e9e61de46ddbd2ebfb6ddbec93d39fbf91cb
-  specs:
-    intrigue_api_client (1.1.0)
-      json (~> 1.8)
-      rest-client (~> 1.8)
-
-GIT
   remote: https://github.com/intrigueio/screencap.git
   revision: e3af2819f083b021babff97a9a61278ccf99cc22
   specs:
@@ -132,6 +124,13 @@ GIT
   revision: c46fd735d3e8e76ee6889c3bfbee07f1b4fa6fd3
   specs:
     whoisology (0.1.0)
+
+PATH
+  remote: /Users/jcran/work/intrigue/projects/intrigue_api_client
+  specs:
+    intrigue_api_client (1.1.0)
+      json (~> 1.8)
+      rest-client (~> 1.8)
 
 GEM
   remote: https://rubygems.org/
@@ -334,4 +333,4 @@ DEPENDENCIES
   yomu
 
 BUNDLED WITH
-   1.13.6
+   1.13.7

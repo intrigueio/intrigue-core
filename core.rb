@@ -74,7 +74,7 @@ class IntrigueApp < Sinatra::Base
   register Sinatra::Namespace
 
   set :sessions => true
-
+  set :logging, true
   set :root, "#{$intrigue_basedir}"
   set :views, "#{$intrigue_basedir}/app/views"
   set :public_folder, 'public'
@@ -124,6 +124,7 @@ class IntrigueApp < Sinatra::Base
 
     # Allow certain requests without a project string
     pass if [ "project", "tasks", "tasks.json", "entity_types.json", nil].include? project_string
+    pass if request.path_info =~ /task_results$/ # if we're submitting a new task result via api
 
     # Set the project based on the project_string
     project = Intrigue::Model::Project.first(:name => project_string)
@@ -134,6 +135,7 @@ class IntrigueApp < Sinatra::Base
       if project_string == "Default"
         project = Intrigue::Model::Project.create(:name => "Default")
       else
+        puts "Halting request, on project string: #{project_string}"
         halt
       end
     end
@@ -141,7 +143,6 @@ class IntrigueApp < Sinatra::Base
     # Set it so we can use it going forward
     @project_name = project.name
   end
-
 
   not_found do
     "Unable to find this content."
