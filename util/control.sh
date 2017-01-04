@@ -13,10 +13,8 @@
 # Puma: intrigue-puma.pid
 # Sidekiq: intrigue-sidekiq.pid
 
-#[[ -s "/home/ubuntu/.rvm/scripts/rvm" ]] && source "/home/ubuntu/.rvm/scripts/rvm"
 IDIR=. # /path/to/install/directory
 cd $IDIR
-rvm use 2.3.1
 
 function setup_server {
   bundle exec rake migrate
