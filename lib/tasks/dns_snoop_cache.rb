@@ -33,7 +33,7 @@ class DnsSnoopCacheTask < BaseTask
       :allowed_types => ["DnsServer"],
       :example_entities => [{"type" => "DnsServer", "attributes" => {"name" => "129.186.88.249"}}],
       :allowed_options => [
-        {:name => "method", :type => "String", :default => "R", :regex=> "[A-Z]" }
+        {:name => "method", :type => "String", :default => "R", :regex=> "alpha_numeric" }
       ],
       :created_types => []
     }
@@ -47,7 +47,7 @@ class DnsSnoopCacheTask < BaseTask
 
     snoopresults = {}
     dnsservers = []
-    domains = IO.readlines("data/domain_top10.list")
+    domains = ["google.com","yahoo.com","msn.com"]
 
     snooper = DNSSnooper.new(dns_server,method)
     #snoopresults[] = {}
@@ -59,7 +59,7 @@ class DnsSnoopCacheTask < BaseTask
     _log "- Min. response time for non cached entries: #{noncachedth.round(2)}ms"
 
     if (cachedth >= noncachedth and method == "RT")
-      _log_error "WARNING: These values are strange. They are inversed. Maybe the following results are not very reliable...".red
+      _log_error "WARNING: These values are strange. They are inversed. Maybe the following results are not very reliable..."
     end
 
     domains.each do |domain|
@@ -72,11 +72,11 @@ class DnsSnoopCacheTask < BaseTask
         if isCached
           # this is for saving the results - create an entity here
           #snoopresults[dns][domain] = true
-          _log_good "[VISITED] #{domain}  (Cached on #{dns_server} #{toHumanTime(whenWasCached)} ago, Time To Expire #{toHumanTime(timeToExpire)})"
+          _log_good "[VISITED] #{domain}  (Cached on #{dns_server} #{snooper.toHumanTime(whenWasCached)} ago, Time To Expire #{snooper.toHumanTime(timeToExpire)})"
         else
           # this is for saving the results - create an entity here
           #snoopresults[dns][domain] = false
-          _log_good "[NOT VISITED] #{domain} (Not cached on #{dns_server} in the last #{toHumanTime(timeToExpire)})"
+          _log_good "[NOT VISITED] #{domain} (Not cached on #{dns_server} in the last #{snooper.toHumanTime(timeToExpire)})"
         end
       end
     end
@@ -104,9 +104,127 @@ class DNSSnooper
     end
   end
 
-  private
+  def obtainDNSThresholds
+    # TODO: Change the testing domain if it is in the domain list the user provided
+    maxcached = 0.0
+    minnoncached = 9999.0
+    d = "www.google.com"
+
+    @@baselineIterations.times {
+      noncachedth = _baselineRequestNonCached
+      cachedth = _baselineRequestCached(d)
+      if maxcached < cachedth
+        maxcached = cachedth
+      end
+      if minnoncached > noncachedth
+        minnoncached = noncachedth
+      end
+    }
+    # Save the computed threshold times if there is not setted by the user
+    if @cthreshold.nil?
+      @cthreshold =  maxcached
+    end
+    return maxcached*1000,minnoncached*1000
+  end
 
   ##############
+
+  def isCached?(domain)
+    timeToExpire = nil
+    whenWasCached = nil
+    isCached = nil
+
+    # Obtain the authoritative TTL of the domain
+    authTTL = _getAuthoritativeTTL(domain)
+    timeToExpire = authTTL
+
+    case @method
+    when "R"
+      # Query with non-recurse bit
+      begin
+        dnsr = @dnsserver.query(domain)
+      rescue Exception => e
+        _log_error "Error: #{e.message}"
+      end
+      # If the server has this entry cached, we will have an answer section
+      # If the server does not have this entry cached, we will have an autoritative redirection
+      if dnsr
+        if dnsr.answer
+          if dnsr.answer.size > 0
+            timeToExpire = dnsr.answer[0].ttl
+            isCached = true
+          else
+            isCached = false
+          end
+        else
+          isCached = false
+        end
+      end
+    when "T"
+      # If the TTL of the DNS is very low compared with the autoritative DNS TTL for this domain
+      # It is very likely that this domain was cached some time ago.
+      # If the TTL y equal or almost equal to the autoritative DNS TTL, it is probable that the
+      # targeted DNS server just requested this information to the autoritative DNS
+      if !authTTL.nil?
+        dnsr = @dnsserver.query(domain)
+        if (dnsr.answer[0].ttl.to_f < (@@ttlFactor * authTTL.to_f))
+          timeToExpire = dnsr.answer[0].ttl
+          isCached = true
+        else
+          isCached = false
+        end
+      end
+    when "RT"
+      # If the target DNS sever has the domain cached, the response time of it
+      # should be faster than a query for a non cached domain and similar to
+      # a RTT of a ICMP packet
+      answertime = time do
+        begin
+          dnsr = @dnsserver.query(domain)
+        rescue Errno::ENETUNREACH => e
+          _log_error "Hit exception: #{e}. Are you sure you're connected?"
+        rescue Exception => e
+          _log_error "Error: #{e.message}"
+        end
+      end
+      if answertime <= @cthreshold+(@cthreshold*@@thresholdFactor)
+        timeToExpire = dnsr.answer[0].ttl
+        isCached = true
+      else
+        isCached = false
+      end
+    end
+
+    if !authTTL.nil? and !timeToExpire.nil?
+      whenWasCached = authTTL - timeToExpire
+    end
+
+    return isCached,timeToExpire,whenWasCached
+  end
+
+
+  def toHumanTime(seconds)
+  humantime = ""
+
+  if seconds.to_i > 0
+    mm, ss = seconds.divmod(60)
+    hh, mm = mm.divmod(60)
+    dd, hh = hh.divmod(24)
+
+    ss = "0#{ss}" if (ss < 10)
+    mm = "0#{mm}" if (mm < 10)
+    hh = "0#{hh}" if (hh < 10)
+
+    if dd.to_i > 0
+      humantime += "#{dd} days, "
+    end
+    if hh.to_i > 0
+      humantime += "#{hh}:"
+    end
+    humantime += "#{mm}:#{ss}"
+  end
+  return humantime
+  end
 
   def time
     start = Time.now
@@ -114,9 +232,9 @@ class DNSSnooper
     Time.now - start
   end
 
-  ##############
+  private
 
-  def baselineRequestNonCached
+  def _baselineRequestNonCached
     # Generate a random non existent domain and query it to the target DNS
     domain = (0...8).map { (65 + rand(26)).chr }.join.downcase
     domain += ".google.com"
@@ -124,17 +242,15 @@ class DNSSnooper
       begin
         answer = @dnsserver.query(domain)
       rescue Errno::ENETUNREACH => e
-        _log_error "Hit exception: #{e}. Are you sure you're connected?"
+        #_log_error "Hit exception: #{e}. Are you sure you're connected?"
       rescue Exception => re
-        _log_error "Error: #{re.message}"
+        #_log_error "Error: #{re.message}"
       end
     end
     return nctime
   end
 
-  ##############
-
-  def baselineRequestCached(domain)
+  def _baselineRequestCached(domain)
     # This function obtain the average time takes for a server to answer you with a cached entry.
     # It request twice the same existent domain to a server. The second time we request it, it answer
     # will be faster as it is already cached in the DNS.
@@ -142,17 +258,15 @@ class DNSSnooper
       begin
         @dnsserver.query(domain)
       rescue Errno::ENETUNREACH => e
-        _log_error "Hit exception: #{e}. Are you sure you're connected?"
+        #_log_error "Hit exception: #{e}. Are you sure you're connected?"
       rescue Exception => re
-        _log_error "Error: #{re.message}"
+        #_log_error "Error: #{re.message}"
       end
     end
     return ctime
   end
 
-  ##############
-
-  def getAuthoritativeTTL(domain)
+  def _getAuthoritativeTTL(domain)
     begin
       googledns = Net::DNS::Resolver.new(:nameservers => "8.8.8.8",:searchlist=>[],:domain=>[],:udp_timeout=>15)
       authDNSs = googledns.query(domain,Net::DNS::NS)
@@ -231,138 +345,14 @@ class DNSSnooper
           end
         end
       }
-    rescue Net::DNS::Resolver::NoResponseError => terror
-      _log_error "Error: #{terror.message}"
+    rescue Net::DNS::Resolver::NoResponseError => e
+      #_log_error "Error: #{e.message}"
       return nil
     rescue Errno::ENETUNREACH => e
-      _log_error "Hit exception: #{e}. Are you sure you're connected?"
+      #_log_error "Hit exception: #{e}. Are you sure you're connected?"
     end
 
     return nil
   end
-
-  ##############
-
-  public
-  def obtainDNSThresholds
-    # TODO: Change the testing domain if it is in the domain list the user provided
-    maxcached = 0.0
-    minnoncached = 9999.0
-    d = "www.google.com"
-
-    @@baselineIterations.times {
-      noncachedth = baselineRequestNonCached
-      cachedth = baselineRequestCached(d)
-      if maxcached < cachedth
-        maxcached = cachedth
-      end
-      if minnoncached > noncachedth
-        minnoncached = noncachedth
-      end
-    }
-    # Save the computed threshold times if there is not setted by the user
-    if @cthreshold.nil?
-      @cthreshold =  maxcached
-    end
-    return maxcached*1000,minnoncached*1000
-  end
-
-  ##############
-
-  def isCached?(domain)
-    timeToExpire = nil
-    whenWasCached = nil
-    isCached = nil
-
-    # Obtain the authoritative TTL of the domain
-    authTTL = getAuthoritativeTTL(domain)
-    timeToExpire = authTTL
-
-    case @method
-    when "R"
-      # Query with non-recurse bit
-      begin
-        dnsr = @dnsserver.query(domain)
-      rescue Exception => e
-        _log_error "Error: #{e.message}"
-      end
-      # If the server has this entry cached, we will have an answer section
-      # If the server does not have this entry cached, we will have an autoritative redirection
-      if dnsr
-        if dnsr.answer
-          if dnsr.answer.size > 0
-            timeToExpire = dnsr.answer[0].ttl
-            isCached = true
-          else
-            isCached = false
-          end
-        else
-          isCached = false
-        end
-      end
-    when "T"
-      # If the TTL of the DNS is very low compared with the autoritative DNS TTL for this domain
-      # It is very likely that this domain was cached some time ago.
-      # If the TTL y equal or almost equal to the autoritative DNS TTL, it is probable that the
-      # targeted DNS server just requested this information to the autoritative DNS
-      if !authTTL.nil?
-        dnsr = @dnsserver.query(domain)
-        if (dnsr.answer[0].ttl.to_f < (@@ttlFactor * authTTL.to_f))
-          timeToExpire = dnsr.answer[0].ttl
-          isCached = true
-        else
-          isCached = false
-        end
-      end
-    when "RT"
-      # If the target DNS sever has the domain cached, the response time of it
-      # should be faster than a query for a non cached domain and similar to
-      # a RTT of a ICMP packet
-      answertime = time do
-        begin
-          dnsr = @dnsserver.query(domain)
-        rescue Errno::ENETUNREACH => e
-          _log_error "Hit exception: #{e}. Are you sure you're connected?"
-        rescue Exception => e
-          _log_error "Error: #{e.message}"
-        end
-      end
-      if answertime <= @cthreshold+(@cthreshold*@@thresholdFactor)
-        timeToExpire = dnsr.answer[0].ttl
-        isCached = true
-      else
-        isCached = false
-      end
-    end
-
-    if !authTTL.nil? and !timeToExpire.nil?
-      whenWasCached = authTTL - timeToExpire
-    end
-
-    return isCached,timeToExpire,whenWasCached
-  end
-end
-
-def toHumanTime(seconds)
-  humantime = ""
-
-  if seconds.to_i > 0
-    mm, ss = seconds.divmod(60)
-    hh, mm = mm.divmod(60)
-    dd, hh = hh.divmod(24)
-
-    ss = "0#{ss}" if (ss < 10)
-    mm = "0#{mm}" if (mm < 10)
-    hh = "0#{hh}" if (hh < 10)
-
-    if dd.to_i > 0
-      humantime += "#{dd} days, "
-    end
-    if hh.to_i > 0
-      humantime += "#{hh}:"
-    end
-    humantime += "#{mm}:#{ss}"
-  end
-  return humantime
 end
 end
