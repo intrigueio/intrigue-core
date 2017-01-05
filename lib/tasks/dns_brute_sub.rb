@@ -119,12 +119,6 @@ class DnsBruteSubTask < BaseTask
               subdomain = "#{work_item[:subdomain].chomp}"
               depth = work_item[:depth]
 
-              # Prevent us from going down a hole (some subdomains will resolve anything under them)
-              if depth > 3
-                _log_error "Got too deep, returning!"
-                return
-              end
-
               # Try to resolve
               resolved_address = _resolve(fqdn)
               if resolved_address # If we resolved, create the right entities
