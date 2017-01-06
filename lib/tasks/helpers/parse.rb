@@ -105,7 +105,7 @@ module Parse
   ### Entity Parsing
   ###
 
-  def parse_entities_from_content(source_uri, content, optional_strings=nil)
+  def parse_email_addresses_from_content(source_uri, content)
 
     @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
 
@@ -121,10 +121,33 @@ module Parse
       x = _create_entity("EmailAddress", {"name" => addr, "uri" => source_uri}) unless addr =~ /.png$|.jpg$|.gif$|.bmp$|.jpeg$/
     end
 
+  end
+
+  def parse_dns_records_from_content(source_uri, content)
+
+    @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
+
+    # Make sure we have something to parse
+    unless content
+      @task_result.logger.log_error "No content to parse, returning" if @task_result
+      return nil
+    end
+
     # Scan for dns records
     dns_records = content.scan(/^[A-Za-z0-9]+\.[A-Za-z0-9]+\.[a-zA-Z]{2,6}$/)
     dns_records.each do |dns_record|
       x = _create_entity("DnsRecord", {"name" => dns_record, "uri" => source_uri})
+    end
+  end
+
+  def parse_phone_numbers_from_content(source_uri, content)
+
+    @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
+
+    # Make sure we have something to parse
+    unless content
+      @task_result.logger.log_error "No content to parse, returning" if @task_result
+      return nil
     end
 
     # Scan for phone numbers
@@ -132,20 +155,22 @@ module Parse
     phone_numbers.each do |phone_number|
       x = _create_entity("PhoneNumber", { "name" => "#{phone_number[0]}", "uri" => source_uri})
     end
+  end
 
-    # Scan for Links
-    #urls = content.scan(/https?:\/\/[\S]+/)
-    #urls.each do |url|
-    #  _create_entity("Uri", {"name" => url, "source" => source_uri })
-    #end
+  def parse_uris_from_content(source_uri, content)
 
-    if optional_strings
-      optional_strings.each do |string|
-        found = content.scan(/#{string}/)
-        found.each do |x|
-          x = _create_entity("String", { "name" => "#{x[0]}", "uri" => source_uri})
-        end
-      end
+    @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
+
+    # Make sure we have something to parse
+    unless content
+      @task_result.logger.log_error "No content to parse, returning" if @task_result
+      return nil
+    end
+
+    # Scan for uris
+    urls = content.scan(/https?:\/\/[\S]+/)
+    urls.each do |url|
+      _create_entity("Uri", {"name" => url, "source" => source_uri })
     end
   end
 

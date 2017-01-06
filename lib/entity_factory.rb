@@ -34,23 +34,27 @@ class EntityFactory
         entity.save
       else
         # Create a new entity, validating the attributes
-        entity = Intrigue::Model::Entity.create({
-          :project => project,
-          :type => type,
-          :name => "#{name}",
-          :details => details
-         })
+        begin
+          entity = Intrigue::Model::Entity.create({
+            :project => project,
+            :type => type,
+            :name => "#{name}",
+            :details => details
+           })
 
-        if original_entity
-          entity.secondary=true;
-          entity.save
+          if original_entity
+            entity.secondary=true;
+            entity.save
+          end
+        rescue DataMapper::SaveFailureError => e
+          return false
         end
 
       end
 
       # Error handling... fail if we didn't save an entity
       unless entity
-        _log_error "Unable to verify & save entity: #{type} #{name} #{details.inspect}"
+        #_log_error "Unable to verify & save entity: #{type} #{name} #{details.inspect}"
         return false
       end
 

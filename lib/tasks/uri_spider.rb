@@ -23,10 +23,12 @@ class UriSpider < BaseTask
       :allowed_options => [
         {:name => "threads", :type => "Integer", :regex => "integer", :default => 1 },
         {:name => "max_pages", :type => "Integer", :regex => "integer", :default => 1000 },
-        {:name => "extract_uris", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "extract_dns_records", :type => "Boolean", :regex => "boolean", :default => false },
-        {:name => "extract_patterns", :type => "String", :regex => "alpha_numeric_list", :default => "*" },
-        {:name => "extract_file_metadata", :type => "Boolean", :regex => "boolean", :default => true },
+        {:name => "extract_dns_record_pattern", :type => "String", :regex => "alpha_numeric_list", :default => "*" },
+        {:name => "extract_email_addresses", :type => "Boolean", :regex => "boolean", :default => false },
+        {:name => "extract_phone_numbers", :type => "Boolean", :regex => "boolean", :default => false },
+        {:name => "parse_file_metadata", :type => "Boolean", :regex => "boolean", :default => true },
+        {:name => "extract_uris", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "user_agent",  :type => "String",  :regex => "alpha_numeric", :default => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36"}
       ],
       :created_types =>  ["DnsRecord", "EmailAddress", "File", "Info", "Person", "PhoneNumber", "SoftwarePackage"]
@@ -43,10 +45,12 @@ class UriSpider < BaseTask
     @opt_threads = _get_option("threads").to_i
     @opt_max_pages = _get_option("max_pages").to_i
     @opt_user_agent = _get_option "user_agent"
-    @opt_extract_uris = _get_option "extract_uris" # create an object for each page
-    @opt_extract_dns_records = _get_option "extract_dns_records" # create an object for each dns_record
-    @opt_extract_file_metadata = _get_option "extract_file_metadata" # create a Uri object for each page
-    @opt_extract_patterns = _get_option("extract_patterns").split(",") # only extract entities withthe following patterns
+    @opt_extract_dns_records = _get_option "extract_dns_records"
+    @opt_extract_dns_record_pattern = _get_option("extract_dns_record_pattern").split(",") # only extract entities withthe following patterns
+    @opt_extract_email_addresses = _get_option "extract_email_addresses"
+    @opt_extract_phone_numbers = _get_option "extract_phone_numbers"
+    @opt_extract_uris = _get_option "extract_uris"
+    @opt_parse_file_metadata = _get_option "parse_file_metadata" # create a Uri object for each page
 
     crawl_and_extract(uri)
 
@@ -90,7 +94,7 @@ class UriSpider < BaseTask
       if @opt_extract_dns_records
 
         _log "Extracting DNS records from #{response.effective_url}"
-        URI.extract(page_body, ["https","http"]) do |link|
+        URI.extract(page_body, ["https", "http"]) do |link|
           begin
             # Collect the host
             host = URI(link).host
@@ -99,10 +103,10 @@ class UriSpider < BaseTask
             if host
               # check to see if host matches a pattern we'll allow
               pattern_allowed = false
-              if @opt_extract_patterns.include? "*"
+              if @opt_extract_dns_record_pattern.include? "*"
                 pattern_allowed = true
               else
-                pattern_allowed = @opt_extract_patterns.select{|x| host =~ /#{x}/ }.count > 0
+                pattern_allowed = @opt_extract_dns_record_pattern.select{ |x| host =~ /#{x}/ }.count > 0
               end
 
               # if we got a pass, check to make sure we don't already have it, and add it
@@ -120,7 +124,7 @@ class UriSpider < BaseTask
         end
       end
 
-      if @opt_extract_file_metadata
+      if @opt_parse_file_metadata
 
         # Get the filetype for this page
         filetype = "#{page_uri.split(".").last.gsub("/","")}".upcase
@@ -136,12 +140,14 @@ class UriSpider < BaseTask
         if interesting_types.include? filetype
           download_and_extract_metadata page_uri
         else
-          parse_entities_from_content(page_uri, page_body)
+          parse_phone_numbers_from_content(page_uri, page_body) if @opt_extract_phone_numbers
+          parse_email_addresses_from_content(page_uri, page_body) if @opt_extract_email_addresses
         end
 
       else
         _log "Parsing as a regular file"
-        parse_entities_from_content(page_uri, page_body)
+        parse_phone_numbers_from_content(page_uri, page_body) if @opt_extract_phone_numbers
+        parse_email_addresses_from_content(page_uri, page_body) if @opt_extract_email_addresses
       end
     end # end .crawl
 

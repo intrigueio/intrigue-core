@@ -29,14 +29,14 @@ module Strategy
             {"name" => "brute_alphanumeric_size", "value" => 3},
             {"name" => "use_permutations", "value" => true },
             {"name" => "use_mashed_domains", "value" => false },
-            {"name" => "threads", "value" => 2}])
+            {"name" => "threads", "value" => 1 }])
         else
           # otherwise do something a little faster
           start_recursive_task(task_result,"dns_brute_sub",entity,[
             {"name" => "use_file", "value" => false },
             {"name" => "use_permutations", "value" => true },
             {"name" => "use_mashed_domains", "value" => false },
-            {"name" => "threads", "value" => 2}])
+            {"name" => "threads", "value" => 1 }])
         end
 
       elsif entity.type_string == "String"
@@ -76,13 +76,13 @@ module Strategy
 
         ## Spider, looking for metadata
         start_recursive_task(task_result,"uri_spider",entity,[
-            {"name" => "threads", "value" => 2},
-            {"name" => "max_pages", "value" => 250},
+            {"name" => "threads", "value" => 1},
+            {"name" => "max_pages", "value" => 1000},
             {"name" => "extract_dns_records", "value" => true},
-            {"name" => "extract_patterns", "value" => "#{task_result.scan_result.base_entity.name}"}]) unless entity.created_by? "uri_brute"
+            {"name" => "extract_dns_record_pattern", "value" => "#{task_result.scan_result.base_entity.name}"}]) unless entity.created_by? "uri_brute"
 
         # Check for exploitable URIs, but don't recurse on things we've already found
-        start_recursive_task(task_result,"uri_brute", entity, [{"name"=> "threads", "value" => 3}, {"name" => "user_list", "value" => "admin,test,server-status,robots.txt"}]) unless entity.created_by? "uri_brute"
+        start_recursive_task(task_result,"uri_brute", entity, [{"name"=> "threads", "value" => 1}, {"name" => "user_list", "value" => "admin"}]) unless entity.created_by? "uri_brute"
 
       else
         puts "No actions for entity: #{entity.type}##{entity.attributes["name"]}"
