@@ -13,7 +13,7 @@
 # Puma: intrigue-puma.pid
 # Sidekiq: intrigue-sidekiq.pid
 
-IDIR=. # /path/to/install/directory
+IDIR=/path/to/install/directory
 cd $IDIR
 
 function setup_server {
