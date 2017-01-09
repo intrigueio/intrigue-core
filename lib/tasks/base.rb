@@ -12,14 +12,14 @@ class BaseTask
     TaskFactory.register(base)
   end
 
-  def perform(task_id, handlers)
+  def perform(task_result_id, handlers)
 
     #######################
     # Get the Task Result #
     #######################
+    @task_result = Intrigue::Model::TaskResult.first(:id => task_result_id)
 
-    @task_result = Intrigue::Model::TaskResult.get task_id
-    raise "Unable to find task result by id #{task_id}. Bailing." unless @task_result
+    raise "Unable to find task result by id #{task_result_id}. Bailing." unless @task_result
 
     @entity = @task_result.base_entity
     @project = @task_result.project
@@ -38,7 +38,7 @@ class BaseTask
     broken_input_flag = false
 
     # Do a little logging. Do it for the kids!
-    _log "Id: #{task_id}"
+    _log "Id: #{task_result_id}"
     _log "Entity: #{@entity.type_string}##{@entity.name}"
     #_log "Options: #{options}"
 
@@ -58,7 +58,7 @@ class BaseTask
     ###########################
     @task_result.task_name = self.class.metadata[:name]
     @task_result.timestamp_start = Time.now.getutc
-    @task_result.id = task_id
+    #@task_result.id = task_result_id
 
     ###################################
     # Perform the setup->run workflow #
@@ -68,7 +68,7 @@ class BaseTask
       # @user_options - a hash of task options
       # @task_result - the final result to be passed back to the caller
       _log "Calling setup()"
-      if setup(task_id, @entity, options)
+      if setup(task_result_id, @entity, options)
         #begin
           #Timeout.timeout($intrigue_global_timeout) do # 15 minutes should be enough time to hit a class b for a single port w/ masscan
             _log "Calling run()"

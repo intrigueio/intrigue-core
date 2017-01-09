@@ -1,35 +1,24 @@
 module Intrigue
   module Model
-    class TaskResult
-      include DataMapper::Resource
+    class TaskResult < Sequel::Model
+      plugin :validation_helpers
+      plugin :serialization, :json, :options, :handlers
 
-      belongs_to :logger, 'Intrigue::Model::Logger'
+      #set_allowed_columns :project_id, :logger_id, :base_entity_id, :name, :depth, :handlers, :strategy, :filter_strings
 
-      property :project_id, Integer, :index => true
-      belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
-
-      property :base_entity_id, Integer, :index => true
-      belongs_to :base_entity, 'Intrigue::Model::Entity'
-
-      property :scan_result_id, Integer, :index => true
-      belongs_to :scan_result, 'Intrigue::Model::ScanResult', :required => false
-
-      has n, :entities, :through => Resource #, :constraint => :destroy
-
-      property :id, Serial, :key => true
-      property :name, String, :length => 200
-      property :task_name, String, :length => 50
-      property :timestamp_start, DateTime
-      property :timestamp_end, DateTime
-      property :options, Object, :default => []
-      property :handlers, Object, :default => []
-      property :complete, Boolean, :default => false
-      property :entity_count, Integer, :default => 0
-      property :job_id, String
-      property :depth, Integer, :default => 1
+      many_to_many :entities
+      many_to_one :scan_result
+      many_to_one :logger
+      many_to_one :project
+      many_to_one :base_entity, :class => :'Intrigue::Model::Entity', :key => :base_entity_id
 
       def self.scope_by_project(project_name)
-        all(:project => Intrigue::Model::Project.first(:name => project_name))
+        named_project_id = Intrigue::Model::Project.first(:name => project_name).id
+        where(:project_id => named_project_id)
+      end
+
+      def validate
+        super
       end
 
       def log
@@ -41,18 +30,14 @@ module Intrigue
       nil
       end
 
-      def add_entity(entity)
-        return false if has_entity? entity
+      def associate_entity(e)
+        return false if has_entity? e
 
-        begin
-          attribute_set(:entity_count, @entity_count + 1)
-          entity.task_results << self
-          entity.save
-          entities << entity
-          save # TODO - this may be unnecessary
-        rescue Exception => e
-          false
-        end
+        e.add_task_result(self)
+        e.save
+
+        add_entity(e)
+        save
 
       true
       end
@@ -61,8 +46,7 @@ module Intrigue
       def start
         # TODO, keep track of the sidekiq id so we can control the task later
         task = Intrigue::TaskFactory.create_by_name(task_name)
-        x = task.class.perform_async self.id, handlers
-        attribute_set(:job_id, x)
+        job_id = task.class.perform_async self.id, handlers
         save
       end
 
@@ -78,9 +62,7 @@ module Intrigue
         Intrigue::TaskFactory.create_by_name(task_name)
       end
 
-      ###
       ### Export!
-      ###
       def export_csv
         output_string = ""
         entities.each{ |x| output_string << x.export_csv << "\n" }
@@ -95,16 +77,16 @@ module Intrigue
 
       def export_hash
         {
-          "id" => @id,
-          "job_id" => @job_id,
-          "name" =>  URI.escape(@name),
-          "task_name" => URI.escape(@task_name),
-          "timestamp_start" => @timestamp_start,
-          "timestamp_end" => @timestamp_end,
-          "options" => @options,
-          "complete" => @complete,
-          "base_entity" => self.base_entity.export_hash,
-          "entities" => self.entities.map{ |x| x.export_hash },
+          "id" => id,
+          "job_id" => job_id,
+          "name" =>  URI.escape(name),
+          "task_name" => URI.escape(task_name),
+          "timestamp_start" => timestamp_start,
+          "timestamp_end" => timestamp_end,
+          "options" => options,
+          "complete" => complete,
+          "base_entity" => base_entity.export_hash,
+          "entities" => entities.map{ |x| x.export_hash },
           "log" => log
         }
       end

@@ -1,4 +1,4 @@
-module Intrigue
+  module Intrigue
 module Task
 module Helper
 
@@ -6,7 +6,7 @@ module Helper
   ### Helper method for starting a task run
   ###
   def start_task(queue, project, existing_scan_result, task_name, entity, depth=1, options=[], handlers=[])
-
+    
     # Create the task result, and associate our entity and options
     task_result = Intrigue::Model::TaskResult.create({
       :project => project,
@@ -31,8 +31,8 @@ module Helper
       scan_result = Intrigue::Model::ScanResult.create({
         :name => "scan to depth #{depth} using strategy #{strategy} on #{entity.name}",
         :project => project,
-        :logger => Intrigue::Model::Logger.create(:project => project),
         :base_entity => entity,
+        :logger => Intrigue::Model::Logger.create(:project => project),
         :depth => depth,
         :strategy => strategy,
         :handlers => handlers

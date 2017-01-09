@@ -5,7 +5,6 @@ module Generic
   private
 
   def _create_entity(type, hash, original_entity=nil)
-
     # NOTE: this is a hack - the _create_entity call should be updated in each task
     # to create the entity in a form that's ready for create_or_merge_entity_recursive
 

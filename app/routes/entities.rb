@@ -8,9 +8,9 @@ class IntrigueApp < Sinatra::Base
       ## We have some very rudimentary searching capabilities here
       scoped_entities = Intrigue::Model::Entity.scope_by_project(@project_name)
       if @entity_name
-        @entities = scoped_entities.all(:name.like => "%#{@entity_name}%").page(@page_id, :per_page => 50)
+        @entities = scoped_entities.where(:name.like => "%#{@entity_name}%").page(@page_id, :per_page => 50)
       else
-        @entities = scoped_entities.page(@page_id, :per_page => 50)
+        @entities = scoped_entities #.page(@page_id, :per_page => 50)
       end
 
       erb :'entities/index'
@@ -23,9 +23,9 @@ class IntrigueApp < Sinatra::Base
       ## We have some very rudimentary searching capabilities here
       scoped_entities = Intrigue::Model::Entity.scope_by_project(@project_name)
       if @entity_name
-        @entities = scoped_entities.all(:name.like => "%#{@entity_name}%").page(@page_id, :per_page => 50)
+        @entities = scoped_entities.where(:name.like => "%#{@entity_name}%").page(@page_id, :per_page => 50)
       else
-        @entities = scoped_entities.page(@page_id, :per_page => 50)
+        @entities = scoped_entities #.page(@page_id, :per_page => 50)
       end
 
       erb :'entities/index'

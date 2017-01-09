@@ -10,17 +10,16 @@ require 'sidekiq'
 require 'sidekiq/api'
 require 'sidekiq/web'
 
-# Datamapper
-require 'dm-core'
-require 'dm-pager'
-require 'dm-types'
-require 'dm-serializer'
-require 'dm-validations'
-require 'dm-noisy-failures'
+# Database
+require 'sequel'
+
+# Config
+require_relative 'lib/config/global_config'
 
 # Debug
 require 'pry'
-require_relative 'lib/config/global_config'
+require 'pry-byebug'
+require 'logger'
 
 $intrigue_global_timeout = 9000
 $intrigue_basedir = File.dirname(__FILE__)
@@ -44,37 +43,20 @@ def sanity_check_system
   end
 end
 
-# all datamapper set up stuffs
-def setup_datamapper
-  ##  Set up Database Logging
-  #DataMapper::Logger.new($stdout, :warn)
-  DataMapper::Logger.new(STDOUT, :warn)
+# database set up
+def setup_database
+  Sequel.connect('postgres://intrigue:intrigue@localhost:5432/intrigue-sequel', :loggers => [Logger.new($stdout)])
 
-  # Pull intrigue config from the environment if it's available (see docker config)
-  system_env = ENV.fetch("INTRIGUE_ENV", "development")
-  puts "Intrigue-core system environment: #{system_env}"
-
-  # Pull out the database config
-  database_config = YAML.load_file("#{$intrigue_basedir}/config/database.yml")
-  unless database_config[system_env]
-    # Catch an environment misconfiguration
-    puts "FATAL! No database config by the name: #{system_env}"
-    exit
-  end
-
-  # Run our setup with the correct enviroment
-  DataMapper.setup(:default, database_config[system_env])
-  DataMapper::Property::String.length(255)
 end
 
 sanity_check_system
-setup_datamapper
+setup_database
 
 class IntrigueApp < Sinatra::Base
   register Sinatra::Namespace
 
   set :sessions => true
-  set :logging, true
+  #set :logging, true
   set :root, "#{$intrigue_basedir}"
   set :views, "#{$intrigue_basedir}/app/views"
   set :public_folder, 'public'
@@ -127,7 +109,8 @@ class IntrigueApp < Sinatra::Base
     pass if request.path_info =~ /task_results$/ # if we're submitting a new task result via api
     pass if request.path_info =~ /js$/ # if we're submitting a new task result via api
     pass if request.path_info =~ /css$/ # if we're submitting a new task result via api
-    
+    pass if request.path_info =~ /(.jpg|.png)$/ # if we're submitting a new task result via api
+
     # Set the project based on the project_string
     project = Intrigue::Model::Project.first(:name => project_string)
 
@@ -164,4 +147,3 @@ end
 
 # Core libraries
 require_relative "lib/all"
-DataMapper.finalize

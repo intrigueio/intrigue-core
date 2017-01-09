@@ -17,8 +17,8 @@ describe "Intrigue v1.0 Tasks" do
       }
 
       # Returns a ruby hash of the task_run
-      @api = IntrigueApi.new
-      result = @api.start("example", entity)
+      @api = IntrigueApi.new("http://127.0.0.1:7777")
+      result = @api.start("Default", "example", entity)
 
 =begin
 [1] pry(#<RSpec::ExampleGroups::IntrigueV10Tasks::ExampleTask>)> result

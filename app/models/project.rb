@@ -1,30 +1,31 @@
 module Intrigue
   module Model
-    class Project
-      include DataMapper::Resource
+    class Project < Sequel::Model
+      plugin :validation_helpers
 
-      property :id,       Serial, :key => true
-      property :name,     String, :length => 400, :index => true
-      property :graph_json, Text, :length => 999999
-      property :graph_generated_at, DateTime
-      property :graph_generation_in_progress, Boolean, :default => false
+      one_to_many :logger
+      one_to_many :task_results
+      one_to_many :scan_results
 
-      validates_uniqueness_of :name
+      def validate
+        super
+        #validates_uniqueness_of :name
+      end
 
       def entity_count
-        Intrigue::Model::Entity.all(:project_id => @id).count
+        Intrigue::Model::Entity.where(:project_id => id).count
       end
 
       def entities
-        Intrigue::Model::Entity.all(:project_id => @id)
+        Intrigue::Model::Entity.where(:project_id => id)
       end
 
       def task_results
-        Intrigue::Model::TaskResult.all(:project_id => @id)
+        Intrigue::Model::TaskResult.where(:project_id => id)
       end
 
       def scan_results
-        Intrigue::Model::ScanResult.all(:project_id => @id)
+        Intrigue::Model::ScanResult.where(:project_id => id)
       end
 
       def export_graph_json

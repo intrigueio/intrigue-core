@@ -11,8 +11,12 @@ def app
   IntrigueApp
 end
 
+
 RSpec.configure do |config|
   config.include Rack::Test::Methods
-end
+  DB = Sequel.sqlite
+  config.around(:each) do |example|
+    DB.transaction(:rollback=>:always, :auto_savepoint=>true){example.run}
+  end
 
-@project = Intrigue::Model::Project.create(:name => "TEST!") unless Intrigue::Model::Project.first(:name => "TEST!")
+end

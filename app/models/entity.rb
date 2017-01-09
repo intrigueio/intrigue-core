@@ -1,55 +1,54 @@
 module Intrigue
   module Model
 
-    class AliasMapping
-      include DataMapper::Resource
-      property :id, Serial
-      belongs_to :source, 'Intrigue::Model::Entity', :key => true
-      property :source_id, Integer, :index => true
-      belongs_to :target, 'Intrigue::Model::Entity', :key => true
-      property :target_id, Integer, :index => true
+    class AliasMapping < Sequel::Model
+      plugin :validation_helpers
+
+      #many_to_one :source, :class => Intrigue::Model::Entity
+      #many_to_one :target, :class => Intrigue::Model::Entity
+
+      many_to_one :source, :class => :'Intrigue::Model::Entity', :key => :source_id
+      many_to_one :target, :class => :'Intrigue::Model::Entity', :key => :target_id
+
+      def validate
+        super
+      end
+
     end
 
-    class Entity
-      include DataMapper::Resource
+    class Entity < Sequel::Model
+      plugin :validation_helpers
+      plugin :single_table_inheritance, :type
+      plugin :serialization, :json, :details
 
-      validates_uniqueness_of :name, :scope => :project
-      validates_length_of :name, :min => 2
+      #set_allowed_columns :type, :name, :details, :project_id
 
-      belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
-      property :project_id, Integer, :index => true
+      many_to_many :task_results
+      one_to_many :aliases, :class => :'Intrigue::Model::AliasMapping', :key => :source_id
+      many_to_one :project
+      #one_to_many :task_result, :key => :base_entity_id
 
-      property :type,        Discriminator, :index => true
-      property :id,          Serial, :key => true
-      property :name,        String, :length => 400
-      property :details,     Object, :default => {}
-      property :secondary,   Boolean, :default => false
-
-      # TODO - we must add a cooresponding mapping and a destroy constraint
-      has n, :task_results, :through => Resource #, :constraint => :destroy
-
-      # Set up the concept of aliases
-      has n, :alias_mappings, :child_key => [ :source_id ]
-      has n, :aliases, self, :through => :alias_mappings, :via => :target
+      def validate
+        super
+        #validates_uniqueness_of :name, :scope => :project
+        #validates_length_of :name, :min => 2
+      end
 
       def self.scope_by_project(name)
-        all(:project => Intrigue::Model::Project.first(:name => name))
+        named_project_id = Intrigue::Model::Project.first(:name => name).id
+        where(:project_id => named_project_id)
       end
 
       def self.scope_by_project_and_type(project, type)
-        all(:project => Intrigue::Model::Project.first(:name => project), :type => type)
+        named_project_id = Intrigue::Model::Project.first(:name => project).id
+        where(Sequel.&(:project_id => named_project_id, :type => type.to_s))
       end
 
       def children
         results = []
         task_results.each { |t| t.entities.each { |e| results << e } }
       results
-      end
-
-      def add_task_result(tr)
-        task_results << tr unless task_results.include? tr
-        save
-      end
+    end
 
       def created_by?(task_name)
         task_results.each {|x| return true if x.task_name == task_name }
@@ -62,17 +61,17 @@ module Intrigue
       end
 
       def to_s
-        "#{type_string}: #{@name}"
+        "#{type_string}: #{name}"
       end
 
       def type_string
-        attribute_get(:type).to_s.gsub(/^.*::/, '')
+        type.to_s.gsub(/^.*::/, '')
       end
 
       # Method returns true if entity has the same attributes
       # false otherwise
       def match?(entity)
-        if ( entity.name == @name && entity.type == @type )
+        if ( entity.name == name && entity.type == type )
             return true
         end
       false
@@ -104,11 +103,11 @@ module Intrigue
       ###
       def export_hash
         {
-          :id => @id.to_s,
-          :type => @type,
-          :name =>  @name,
-          :secondary => @secondary,
-          :details => @details,
+          :id => id.to_s,
+          :type => type,
+          :name =>  name,
+          :secondary => secondary,
+          :details => details,
           :aliases => self.aliases.map{|x| {
             "id" => x.id,
             "type" => x.type,
@@ -123,14 +122,14 @@ module Intrigue
 
       # export id, type, name, and details on a single line, removing spaces and commas
       def export_csv
-        export_string = "#{@id},#{type_string},#{@name.gsub(/[\,,\s]/,"")},"
-        @details.each{|k,v| export_string << "#{k}=#{v};".gsub(/[\,,\s]/,"") }
+        export_string = "#{id},#{type_string},#{name.gsub(/[\,,\s]/,"")},"
+        details.each{|k,v| export_string << "#{k}=#{v};".gsub(/[\,,\s]/,"") }
       export_string
       end
 
       def export_tsv
-        export_string = "#{@id}\t#{type_string}\t#{@name}\t"
-        @details.each{|k,v| export_string << "#{k}##{v};" }
+        export_string = "#{id}\t#{type_string}\t#{name}\t"
+        details.each{|k,v| export_string << "#{k}##{v};" }
       export_string
       end
 

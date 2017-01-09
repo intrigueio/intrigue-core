@@ -4,7 +4,6 @@ class IntrigueApp < Sinatra::Base
 
     # Kick off a task
     get '/:project/task/?' do
-      @page = params["page"]
       # if we receive an entity_id or a task_result_id, instanciate the object
       if params["entity_id"]
         @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params["entity_id"])
@@ -62,7 +61,7 @@ class IntrigueApp < Sinatra::Base
         entity_name = "#{@params["attrib_name"]}"
 
         # TODO - we'll need to check all aliases of all entities within the project here
-        entity = Intrigue::Model::Entity.scope_by_project_and_type(@project_name, klass).first(:name => entity_name)
+        entity = Intrigue::Model::Entity.scope_by_project_and_type(@project_name, klass.to_s).first(:name => entity_name)
 
         unless entity
           entity = Intrigue::Model::Entity.create(

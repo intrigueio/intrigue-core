@@ -1,33 +1,26 @@
 module Intrigue
   module Model
-    class ScanResult
-      include DataMapper::Resource
+    class ScanResult < Sequel::Model
+      plugin :validation_helpers
 
-      belongs_to :logger, 'Intrigue::Model::Logger'
+      #set_allowed_columns :project_id, :logger_id, :base_entity_id, :name, :depth, :handlers, :strategy, :filter_strings
 
-      belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
-      property :project_id, Integer, :index => true
-
-      belongs_to :base_entity, 'Intrigue::Model::Entity'
-      property :base_entity_id, Integer, :index => true
-
-      has n, :task_results, :through => Resource
-
-      property :id, Serial, :key => true
-      property :name, String, :length => 200
-      property :depth, Integer
-      property :handlers, Object, :default => []
-      property :complete, Boolean, :default => false
-      property :strategy, String, :default => "default"
-      property :depth, Integer, :default => 2
-      property :filter_strings, Text, :default => ""
+      many_to_one :logger
+      many_to_one :project
+      one_to_many :task_results
+      one_to_one :base_entity, :class => Intrigue::Model::Entity
 
       def self.scope_by_project(project_name)
-        all(:project => Intrigue::Model::Project.first(:name => project_name))
+        named_project_id = Intrigue::Model::Project.first(:name => project_name).id
+        where(:project_id => named_project_id)
+      end
+
+      def validate
+        super
       end
 
       def log
-        self.logger.full_log
+        logger.full_log
       end
 
       def add_task_result(task_result)
@@ -67,12 +60,6 @@ module Intrigue
       entities
       end
 
-
-      # just calculate it vs storing another property
-      def entity_count
-        entities.count
-      end
-
       # just calculate it vs storing another property
       def timestamp_start
         return task_results.first.timestamp_start if task_results.first
@@ -91,19 +78,18 @@ module Intrigue
 
       def export_hash
         {
-          "id" => @id,
-          "name" =>  URI.escape(@name),
-          "depth" => @depth,
-          "complete" => @complete,
-          "strategy" => @strategy,
-          "timestamp_start" => @timestamp_start,
-          "timestamp_end" => @timestamp_end,
-          "filter_strings" => @filter_strings,
+          "id" => id,
+          "name" =>  URI.escape(name),
+          "depth" => depth,
+          "complete" => complete,
+          "strategy" => strategy,
+          "timestamp_start" => timestamp_start,
+          "timestamp_end" => timestamp_end,
+          "filter_strings" => filter_strings,
           "base_entity" => self.base_entity.export_hash,
-          "entity_count" => @entity_count,
           "task_results" => self.task_results.map{|t| t.export_hash },
           "entities" => self.entities.map {|e| e.export_hash },
-          "options" => @options,
+          "options" => options,
           "log" => log
         }
       end

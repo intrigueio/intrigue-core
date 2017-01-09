@@ -16,7 +16,7 @@ module Strategy
       project = old_task_result.project
 
       # check to see if it already exists
-      existing_task_result = Intrigue::Model::TaskResult.all(:project => project).first(:name => "#{task_name} on #{entity.name}")
+      existing_task_result = Intrigue::Model::TaskResult.where(:project => project).first(:name => "#{task_name} on #{entity.name}")
 
       if existing_task_result
         #puts "Skipping!!!! Task result (#{task_name} on #{entity.name}) already exists."

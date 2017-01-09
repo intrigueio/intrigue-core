@@ -62,7 +62,7 @@ class NmapScanTask < BaseTask
 
       # Handle the case of a netblock or domain - where we will need to create host entity(s)
       if @entity.type_string == "NetBlock" or @entity.type_string == "DnsRecord"
-        # Only create if we've got ports to report. 
+        # Only create if we've got ports to report.
         _create_entity("IpAddress", { "name" => host.ip } ) if host.ports.count > 0
       end
 
@@ -93,8 +93,8 @@ class NmapScanTask < BaseTask
             _create_entity("FtpServer", {
               "name" => uri,
               "ip_address" => "#{host.ip}",
-              "port" => 21,
-              "proto" => "tcp",
+              "port" => port.number,
+              "proto" => port.protocol,
               "uri" => uri  })
 
           # Then SshServer
@@ -103,8 +103,18 @@ class NmapScanTask < BaseTask
             _create_entity("SshServer", {
               "name" => uri,
               "ip_address" => "#{host.ip}",
-              "port" => 22,
-              "proto" => "tcp",
+              "port" => port.number,
+              "proto" => port.protocol,
+              "uri" => uri  })
+
+          # then DnsServer
+        elsif [53].include?(port.number)
+            uri = "dns://#{host.ip}:#{port.number}"
+            _create_entity("DnsServer", {
+              "name" => uri,
+              "ip_address" => "#{host.ip}",
+              "port" => port.number,
+              "proto" => port.protocol,
               "uri" => uri  })
 
           # then FingerServer
@@ -113,13 +123,13 @@ class NmapScanTask < BaseTask
             _create_entity("FingerServer", {
               "name" => uri,
               "ip_address" => "#{host.ip}",
-              "port" => 79,
-              "proto" => "tcp",
+              "port" => port.number,
+              "proto" => port.protocol,
               "uri" => uri  })
 
           # Otherwise default to an unknown network service
           else
-
+            
             _create_entity("NetworkService", {
               "name" => "#{host.ip}:#{port.number}/#{port.protocol}",
               "ip_address" => "#{host.ip}",

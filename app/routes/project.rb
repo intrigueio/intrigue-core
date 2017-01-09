@@ -35,7 +35,7 @@ class IntrigueApp < Sinatra::Base
     # dossier
     get '/:project/dossier' do
       current_project = Intrigue::Model::Project.first(:name => @project_name)
-      @entities = Intrigue::Model::Entity.all(:project_id => current_project.id, :order => [:name])
+      @entities = Intrigue::Model::Entity.where(:project_id => current_project.id)
 
       @persons  = []
       @applications = []

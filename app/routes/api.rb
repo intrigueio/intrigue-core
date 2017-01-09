@@ -90,7 +90,7 @@ class IntrigueApp < Sinatra::Base
     # Return a JSON array of all entity type
     get '/entity_types.json' do
       content_type 'application/json'
-      Intrigue::Model::Entity.descendants.sort_by{|x| x.metadata[:name] }.map {|x| x.new.type_string }.to_json
+      Intrigue::Model::Entity.descendants.map{ |x| x.metadata[:name] }.sort.to_json
     end
 
     # Export All Tasks
@@ -141,7 +141,7 @@ class IntrigueApp < Sinatra::Base
     #  "options" => options_list,
     #}.to_json
     post '/:project/task_results/?' do
-      
+
       project_name = params[:project]
 
       # Parse the incoming request
@@ -212,22 +212,22 @@ class IntrigueApp < Sinatra::Base
     # Show the results in a CSV format
     get '/:project/task_results/:id.csv/?' do
       content_type 'text/plain'
-      @task_result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
-      @task_result.export_csv
+      task_result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
+      task_result.export_csv
     end
 
     # Show the results in a CSV format
     get '/:project/task_results/:id.tsv/?' do
       content_type 'text/plain'
-      @task_result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
-      @task_result.export_tsv
+      task_result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
+      task_result.export_tsv
     end
 
     # Show the results in a JSON format
     get '/:project/task_results/:id.json/?' do
       content_type 'application/json'
-      @result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
-      @result.export_json if @result
+      result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
+      result.export_json if result
     end
 
 
@@ -247,10 +247,10 @@ class IntrigueApp < Sinatra::Base
     # Get the task log
     get '/:project/task_results/:id/log/?' do
       content_type 'application/json'
-      @result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
-      return unless @result
+      result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
+      return unless result
 
-      {:data => @result.log}.to_json
+      {:data => result.log}.to_json
     end
 
   end

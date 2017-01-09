@@ -15,80 +15,83 @@ class EntityFactory
 
   # This method creates a new entity, and kicks off a strategy
   def self.create_or_merge_entity_recursive(task_result,type_string,name,details, original_entity)
-      project = task_result.project # convenience
 
-      # Clean up in case there are encoding issues
-      name = _encode_string(name)
-      details = _encode_hash(details)
-      details.delete("name")
-      type = eval("Intrigue::Entity::#{type_string}")
+  #binding.pry
 
-      # We're going to have to look for each of the aliases as well.
-      entity = nil
-      entity = Intrigue::Model::Entity.scope_by_project_and_type(project.name,type).first(:name => name)
+    project = task_result.project # convenience
 
-      # Merge the details if it already exists
-      if entity.kind_of? Intrigue::Model::Entity
-        #puts "Entity exists: #{entity.inspect}, merging."
-        entity.details = details.merge(entity.details)
-        entity.save
-      else
-        # Create a new entity, validating the attributes
-        begin
-          entity = Intrigue::Model::Entity.create({
-            :project => project,
-            :type => type,
-            :name => "#{name}",
-            :details => details
-           })
+    # Clean up in case there are encoding issues
+    name = _encode_string(name)
+    details = _encode_hash(details)
+    details.delete("name")
+    type = eval("Intrigue::Entity::#{type_string}")
 
-          if original_entity
-            entity.secondary=true;
-            entity.save
-          end
-        rescue DataMapper::SaveFailureError => e
-          return false
+    # We're going to have to look for each of the aliases as well.
+    entity = nil
+    entity = Intrigue::Model::Entity.scope_by_project_and_type(project.name,type).first(:name => name)
+
+    # Merge the details if it already exists
+    if entity.kind_of? Intrigue::Model::Entity
+      #puts "Entity exists: #{entity.inspect}, merging."
+      entity.details = details.merge(entity.details)
+      entity.save
+    else
+      # Create a new entity, validating the attributes
+      begin
+        entity = Intrigue::Model::Entity.create({
+          :project => project,
+          :type => type,
+          :name => "#{name}",
+          :details => details
+         })
+
+        if original_entity
+          entity.secondary=true;
+          entity.save
         end
-
-      end
-
-      # Error handling... fail if we didn't save an entity
-      unless entity
-        #_log_error "Unable to verify & save entity: #{type} #{name} #{details.inspect}"
+      rescue DataMapper::SaveFailureError => e
         return false
       end
 
-      # Link to the parent task
-      #puts "Entity: #{entity.inspect}"
-      #puts "Entity Task Results: #{entity.task_results.count}"
-      entity.add_task_result(task_result)
+    end
 
-      # Add to our result set for this task
-      task_result.add_entity entity
+    # Error handling... fail if we didn't save an entity
+    unless entity
+      #_log_error "Unable to verify & save entity: #{type} #{name} #{details.inspect}"
+      return false
+    end
 
-      # START PROCESSING OF ENRICHMENT (to depth of 1)
-      #if task_result.depth > 0
-      #  if (entity.type_string == "DnsRecord" || entity.type_string == "IpAddress")
-      #    start_task("task_autoscheduled", project, task_result.scan_result, "get_alternate_names", entity, task_result.depth, [],[])
-      #  end
-        #if (entity.type_string == "Uri")
-        #  start_task("task_autoscheduled", project, task_result.scan_result, "web_server_fingerprint", entity, task_result.depth, [],[])
-        #  start_task("task_autoscheduled", project, task_result.scan_result, "web_application_fingerprint", entity, task_result.depth, [],[])
-        #end
-      #end# END PROCESSING OF ENRICHMENT
+    # Link to the parent task
+    #puts "Entity: #{entity.inspect}"
+    #puts "Entity Task Results: #{entity.task_results.count}"
+    #entity.associate_task_result(task_result)
 
-      # START PROCESSING OF RECURSION BY STRATEGY TYPE
-      if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
-        puts "Executing default strategy against scan result: #{task_result.scan_result} at depth #{task_result.depth}"
-        Intrigue::Strategy::Default.recurse(entity, task_result)
-      else
-        #puts "No scan result or our depth #{task_result.depth} is too deep, no recursion"
-        #puts "Task Result: #{task_result.inspect}"
-      end
-      # END PROCESSING OF RECURSION BY STRATEGY TYPE
+    # Add to our result set for this task
+    task_result.associate_entity entity
 
-    # return the entity
-    entity
+    # START PROCESSING OF ENRICHMENT (to depth of 1)
+    #if task_result.depth > 0
+    #  if (entity.type_string == "DnsRecord" || entity.type_string == "IpAddress")
+    #    start_task("task_autoscheduled", project, task_result.scan_result, "get_alternate_names", entity, task_result.depth, [],[])
+    #  end
+      #if (entity.type_string == "Uri")
+      #  start_task("task_autoscheduled", project, task_result.scan_result, "web_server_fingerprint", entity, task_result.depth, [],[])
+      #  start_task("task_autoscheduled", project, task_result.scan_result, "web_application_fingerprint", entity, task_result.depth, [],[])
+      #end
+    #end# END PROCESSING OF ENRICHMENT
+
+    # START PROCESSING OF RECURSION BY STRATEGY TYPE
+    if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
+      puts "Executing default strategy against scan result: #{task_result.scan_result} at depth #{task_result.depth}"
+      Intrigue::Strategy::Default.recurse(entity, task_result)
+    else
+      #puts "No scan result or our depth #{task_result.depth} is too deep, no recursion"
+      #puts "Task Result: #{task_result.inspect}"
+    end
+    # END PROCESSING OF RECURSION BY STRATEGY TYPE
+
+  # return the entity
+  entity
   end
 
   private

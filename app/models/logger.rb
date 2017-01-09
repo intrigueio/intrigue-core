@@ -1,47 +1,55 @@
 module Intrigue
   module Model
-    class Logger
-      include DataMapper::Resource
+    class Logger < Sequel::Model
+      plugin :serialization, :json
+      plugin :validation_helpers
 
-      property :id, Serial, :key => true
-      property :full_log, Text, :length => 50000000, :default => ""
+      one_to_one :task_result
+      one_to_one :scan_result
+      many_to_one :project
 
-      belongs_to :project, :default => lambda { |r, p| Intrigue::Model::Project.first }
-      property :project_id, Integer, :index => true
+      #set_allowed_columns :full_log, :project_id
 
       def self.scope_by_project(name)
-        all(:project => Intrigue::Model::Project.first(:name => name))
+        named_project_id = Intrigue::Model::Project.first(:name => name).id
+        where(:project_id => named_project_id)
+      end
+
+      def validate
+        super
       end
 
       def log(message)
-        _log "[#{@id}][ ] " << message
+        _log "[#{id}][ ] " << message
       end
 
       def log_debug(message)
-        _log "[#{@id}][D] " << message
+        _log "[#{id}][D] " << message
       end
 
       def log_good(message)
-        _log "[#{@id}][+] " << message
+        _log "[#{id}][+] " << message
       end
 
       def log_error(message)
-        _log "[#{@id}][E] " << message
+        _log "[#{id}][E] " << message
       end
 
       def log_warning(message)
-        _log "[#{@id}][W] " << message
+        _log "[#{id}][W] " << message
       end
 
       def log_fatal(message)
-        _log "[#{@id}][F] " << message
+        _log "[#{id}][F] " << message
       end
 
     private
 
       def _log(message)
         encoded_message = _encode_string(message)
-        attribute_set(:full_log, "#{@full_log}\n#{encoded_message}")
+        full_log = "#{full_log}\n#{encoded_message}"
+        return true if save
+      false
       end
 
       def _encode_string(string)

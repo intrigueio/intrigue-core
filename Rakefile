@@ -125,53 +125,6 @@ task :setup do
 
 end
 
-desc "Run Database Migrations"
-task :migrate => :setup do
-
-  puts "[+] Running Database Migrations"
-
-  begin
-    require 'yaml'
-    require 'json'
-    require 'dm-core'
-    require 'dm-migrations'
-    require 'dm-validations'
-    require 'dm-types'
-
-    intrigue_basedir = File.dirname(__FILE__)
-    config_file = "#{intrigue_basedir}/config/config.json"
-
-    begin
-      system_config = JSON.parse File.read(config_file)
-    rescue JSON::ParserError => e
-      puts "Fatal! Unable to read #{config_file}"
-      return
-    end
-
-    database_config = YAML.load_file("#{intrigue_basedir}/config/database.yml")
-    database_environment = ENV.fetch('INTRIGUE_ENV', "development")
-
-    unless database_config[database_environment]
-      puts "FATAL! Unable to read database configuration"
-      return
-    end
-
-    Dir["#{intrigue_basedir}/app/models/*.rb"].each { |file| require_relative file }
-
-    # Run our setup with the correct enviroment
-    DataMapper::Logger.new($stdout, :debug)
-    DataMapper.setup(:default, database_config[database_environment])
-    DataMapper.auto_upgrade!
-    DataMapper.finalize
-
-    puts "Creating default project..."
-    Intrigue::Model::Project.create(:name => "Default") unless Intrigue::Model::Project.first
-
-  rescue Exception => e
-    puts "Error... Unable to migrate: #{e}"
-  end
-end
-
 desc "Reset Workers"
 task :reset_workers do
   puts "[+] Resetting workers"
@@ -183,11 +136,46 @@ task :reset_workers do
   end
 end
 
-desc "Run Specs"
-task :spec do
-end
+#desc "Run Specs"
+#task :spec do
+#end
 
-desc "Run Integration Specs (requires API running)"
-task :integration do
-  t.rspec_opts = "--pattern spec/integration/*_spec.rb"
+#desc "Run Integration Specs (requires API running)"
+#task :integration do
+#  t.rspec_opts = "--pattern spec/integration/*_spec.rb"
+#end
+
+
+namespace :db do
+  require "sequel"
+  Sequel.extension :migration
+  DB = Sequel.connect('postgres://intrigue:intrigue@localhost:5432/intrigue-sequel')
+
+  desc "Prints current schema version"
+  task :version do
+    version = if DB.tables.include?(:schema_info)
+      DB[:schema_info].first[:version]
+    end || 0
+    puts "Schema Version: #{version}"
+  end
+
+  desc "Perform migration up to latest migration available"
+  task :migrate do
+    Sequel::Migrator.run(DB, "db")
+    Rake::Task['db:version'].execute
+  end
+
+  desc "Perform rollback to specified target or full rollback as default"
+  task :rollback, :target do |t, args|
+    args.with_defaults(:target => 0)
+    Sequel::Migrator.run(DB, "db", :target => args[:target].to_i)
+    Rake::Task['db:version'].execute
+  end
+
+  desc "Perform migration reset (full rollback and migration)"
+  task :reset do
+    Sequel::Migrator.run(DB, "db", :target => 0)
+    Sequel::Migrator.run(DB, "db")
+    Rake::Task['db:version'].execute
+  end
 end
