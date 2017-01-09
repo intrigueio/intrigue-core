@@ -2,19 +2,27 @@ require 'spec_helper'
 
 describe "Intrigue" do
 describe "Models" do
-describe "TaskResult" do
+describe "Logger" do
 
-  it "creates a new task_result" do
+  it "creates a new logger" do
 
     project = Intrigue::Model::Project.create(:name => "TEST!")
-
     logger = Intrigue::Model::Logger.create( :project => project )
 
+    logger.log("test")
+
+    expect(logger).to exist
+    expect(logger.full_log).to match(/.*\[\ \]\ test/)
+  end
+
+  it "is accessible through task_result" do
+
+    project = Intrigue::Model::Project.create(:name => "TEST!")
+    logger = Intrigue::Model::Logger.create( :project => project )
     entity = Intrigue::Model::Entity.create({
         :project => project,
         :type => "Intrigue::Model::DnsRecord",
         :name => "test"})
-
     x = Intrigue::Model::TaskResult.create({
       :project => project,
       :logger => logger,
@@ -22,10 +30,8 @@ describe "TaskResult" do
       :task_name => "example"
     })
 
-    expect(x.id).to eq(1)
-    expect(x.logger).to exist
-    expect(x.project.name).to eq("TEST!")
-    expect(x.task.class.metadata[:name]).to match "example"
+    logger.log("test")
+    expect(x.log).to match(/.*\[\ \]\ test/)
   end
 
 end

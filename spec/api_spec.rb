@@ -1,23 +1,28 @@
 require 'spec_helper'
 
 describe "Intrigue" do
-describe "Task API v1" do
+describe "API" do
+
+  it "should redirect to the current version" do
+    get "/"
+    expect(last_response.status).to match 302
+  end
+
+  it "should have v1 as the current version" do
+    get "/v1/"
+    expect(last_response.status).to match 200
+  end
 
   it "should return a list of tasks" do
     get '/v1/tasks.json'
     expect(last_response.status).to match 200
   end
-
-  it "should return a list of task runs" do
-    get '/v1/task_runs.json'
-    expect(last_response.status).to match 200
-  end
-
+=begin
   it "should perform an example task" do
 
     header 'Content-Type', 'application/json'
 
-    post "/v1/task_runs", {
+    post "/v1/Default/task_results", {
       :task => "example",
       :entity => {
         :type => "DnsRecord",
@@ -40,6 +45,7 @@ describe "Task API v1" do
     expect(last_request.env["CONTENT_TYPE"]).to match "application/json"
 
   end
+=end
 
 end
 end

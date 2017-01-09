@@ -45,8 +45,11 @@ end
 
 # database set up
 def setup_database
-  Sequel.connect('postgres://intrigue:intrigue@localhost:5432/intrigue-sequel', :loggers => [Logger.new($stdout)])
-
+  if Intrigue::Config::GlobalConfig.new.config["debug"]
+    Sequel.connect('postgres://intrigue:intrigue@localhost:5432/intrigue-sequel', :loggers => [Logger.new($stdout)])
+  else
+    Sequel.connect('postgres://intrigue:intrigue@localhost:5432/intrigue-sequel')
+  end
 end
 
 sanity_check_system
@@ -56,10 +59,13 @@ class IntrigueApp < Sinatra::Base
   register Sinatra::Namespace
 
   set :sessions => true
-  #set :logging, true
   set :root, "#{$intrigue_basedir}"
   set :views, "#{$intrigue_basedir}/app/views"
   set :public_folder, 'public'
+
+  if Intrigue::Config::GlobalConfig.new.config["debug"]
+    set :logging, true
+  end
 
   # Pull sidekiq config from the environment if it's available (see docker config)
   Sidekiq.configure_server do |config|

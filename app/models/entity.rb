@@ -48,7 +48,7 @@ module Intrigue
         results = []
         task_results.each { |t| t.entities.each { |e| results << e } }
       results
-    end
+      end
 
       def created_by?(task_name)
         task_results.each {|x| return true if x.task_name == task_name }
