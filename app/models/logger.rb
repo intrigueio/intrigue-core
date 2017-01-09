@@ -20,34 +20,34 @@ module Intrigue
       end
 
       def log(message)
-        _log "[#{id}][ ] #{message}"
+        _log "[#{id}][ ] #{message}\n"
       end
 
       def log_debug(message)
-        _log "[#{id}][D] #{message}"
+        _log "[#{id}][D] #{message}\n"
       end
 
       def log_good(message)
-        _log "[#{id}][+] #{message}"
+        _log "[#{id}][+] #{message}\n"
       end
 
       def log_error(message)
-        _log "[#{id}][E] #{message}"
+        _log "[#{id}][E] #{message}\n"
       end
 
       def log_warning(message)
-        _log "[#{id}][W] #{message}"
+        _log "[#{id}][W] #{message}\n"
       end
 
       def log_fatal(message)
-        _log "[#{id}][F] #{message}"
+        _log "[#{id}][F] #{message}\n"
       end
 
     private
 
       def _log(message)
         encoded_message = _encode_string(message)
-        set(:full_log => "#{full_log}\n#{encoded_message}")
+        set(:full_log => "#{full_log}#{encoded_message}")
       save
       end
 

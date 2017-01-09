@@ -1,8 +1,3 @@
-Log:
-<div id="log">
-<p>[Gathering log...]</p>
-</div>
-
 <script>
 // super hacky ajax
 function getLog(){
@@ -21,7 +16,6 @@ window.setInterval(function(){
 //call right away
 getLog();
 
-
 function htmlEncode(s)
 {
   var el = document.createElement("div");
@@ -30,3 +24,8 @@ function htmlEncode(s)
   return s;
 }
 </script>
+
+Log:
+<div id="log" style="overflow-y: scroll; height:500px; width:100%;">
+<p>[Gathering log...]</p>
+</div>

@@ -1,21 +1,3 @@
-<h3>Task Result: <a href="<%=@rerun_uri || nil%>"><%=@result.task_name %></a> </h3>
-<p>ID: <%=@result.id %> </p>
-<p>Start: <%=@result.timestamp_start %> </p>
-<p>End: <%= @result.timestamp_end %> </p>
-<p>Elapsed (s): <%= @elapsed_time %> </p>
-<p>Entity: <a href="/v1/<%=@project_name%>/entities/<%=@result.base_entity.id if @result.base_entity %>"><%= h "#{@result.base_entity}" %></a></p>
-<p>Complete: <%= @result.complete %></p>
-Export:
-<ul>
-  <li><a href=<%="#{request.url}.csv"%>> CSV </a></li>
-  <li><a href=<%="#{request.url}.json"%>> JSON </a></li>
-  <li><a href=<%="#{request.url}.tsv"%>> TSV </a></li>
-</ul>
-Entities:
-<div id="entities">
-  <p>[Gathering entities...]</p>
-</div>
-
 <script>
 // super hacky ajax
 function getEntities(id){
@@ -47,7 +29,29 @@ window.setInterval(function(){
 
 //call right away
 getEntities(<%=@result.id%>);
-
 </script>
 
+<div class="row">
+<div class="col-sm-5">
+  <h3>Task Result: <a href="<%=@rerun_uri || nil%>"><%=@result.task_name %></a> </h3>
+  <p>ID: <%=@result.id %> </p>
+  <p>Start: <%=@result.timestamp_start %> </p>
+  <p>End: <%= @result.timestamp_end %> </p>
+  <p>Elapsed (s): <%= @elapsed_time %> </p>
+  <p>Entity: <a href="/v1/<%=@project_name%>/entities/<%=@result.base_entity.id if @result.base_entity %>"><%= h "#{@result.base_entity}" %></a></p>
+  <p>Complete: <%= @result.complete %></p>
+  Export:
+  <ul>
+    <li><a href=<%="#{request.url}.csv"%>> CSV </a></li>
+    <li><a href=<%="#{request.url}.json"%>> JSON </a></li>
+    <li><a href=<%="#{request.url}.tsv"%>> TSV </a></li>
+  </ul>
+  Entities:
+  <div id="entities">
+    <p>[Gathering entities...]</p>
+  </div>
+</div>
+<div class="col-sm-5">
 <%= erb :_log, :layout => false %>
+</div>
+</div>
