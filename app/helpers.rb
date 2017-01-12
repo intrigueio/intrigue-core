@@ -6,7 +6,7 @@ module Helper
   ### Helper method for starting a task run
   ###
   def start_task(queue, project, existing_scan_result, task_name, entity, depth=1, options=[], handlers=[])
-    
+
     # Create the task result, and associate our entity and options
     task_result = Intrigue::Model::TaskResult.create({
       :project => project,
@@ -27,11 +27,12 @@ module Helper
 
     # If the depth is greater than 1, AND we don't have a prexisting scan id, start a new scan
     if !existing_scan_result && depth > 1
+
       strategy = "default"
       scan_result = Intrigue::Model::ScanResult.create({
         :name => "scan to depth #{depth} using strategy #{strategy} on #{entity.name}",
         :project => project,
-        :base_entity => entity,
+        :base_entity_id => entity.id,
         :logger => Intrigue::Model::Logger.create(:project => project),
         :depth => depth,
         :strategy => strategy,
@@ -39,7 +40,7 @@ module Helper
       })
 
       # Add the task result
-      scan_result.task_results << task_result
+      scan_result.add_task_result task_result
       scan_result.save
 
       # Add the scan result
@@ -60,7 +61,11 @@ module Helper
   # handle running of tasks
   private
   def _schedule_task(queue, task_result)
+
     if queue == "task_autoscheduled"
+      task_result.autoscheduled = true
+      task_result.save
+
       Sidekiq::Client.push({
         "class" => Intrigue::TaskFactory.create_by_name(task_result.task_name).class.to_s,
         "queue" => "task_autoscheduled",

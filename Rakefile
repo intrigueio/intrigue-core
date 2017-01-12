@@ -112,7 +112,7 @@ task :setup do
 
     # Configure the IDIR directory
     script_text = File.read(control_script)
-    new_script_text = script.gsub("IDIR=/path/to/install/directory","IDIR=#{intrigue_basedir}")
+    new_script_text = control_script.gsub("IDIR=/path/to/install/directory","IDIR=#{intrigue_basedir}")
     File.open(control_script,"w").puts new_script_text
 
     # Make a link if
@@ -145,11 +145,11 @@ end
 #  t.rspec_opts = "--pattern spec/integration/*_spec.rb"
 #end
 
+require "sequel"
+Sequel.extension :migration
+DB = Sequel.connect('postgres://intrigue:intrigue@localhost:5432/intriguedb')
 
 namespace :db do
-  require "sequel"
-  Sequel.extension :migration
-  DB = Sequel.connect('postgres://intrigue:intrigue@localhost:5432/intrigue-sequel')
 
   desc "Prints current schema version"
   task :version do
@@ -160,7 +160,7 @@ namespace :db do
   end
 
   desc "Perform migration up to latest migration available"
-  task :migrate do
+  task :migrate => :setup do
     Sequel::Migrator.run(DB, "db")
     Rake::Task['db:version'].execute
   end

@@ -8,7 +8,7 @@ module Intrigue
       many_to_one :logger
       many_to_one :project
       one_to_many :task_results
-      one_to_one :base_entity, :class => Intrigue::Model::Entity
+      many_to_one :base_entity, :class => :'Intrigue::Model::Entity', :key => :base_entity_id
 
       def self.scope_by_project(project_name)
         named_project_id = Intrigue::Model::Project.first(:name => project_name).id
@@ -21,32 +21,6 @@ module Intrigue
 
       def log
         logger.full_log
-      end
-
-      def add_task_result(task_result)
-        # Handle exceptions here since this may not be thread safe
-        #  https://github.com/datamapper/dm-core/issues/286
-        begin
-          task_results << task_result
-          save
-        rescue Exception => e
-          false
-        end
-      true
-      end
-
-      def add_entity(entity)
-        return false if has_entity? entity
-
-        # Handle exceptions here since this may not be thread safe
-        #  https://github.com/datamapper/dm-core/issues/286
-        begin
-          entities.push entity
-          save
-        rescue Exception => e
-          false
-        end
-      true
       end
 
       # Matches based on type and the attribute "name"

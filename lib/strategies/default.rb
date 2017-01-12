@@ -85,7 +85,7 @@ module Strategy
         start_recursive_task(task_result,"uri_brute", entity, [{"name"=> "threads", "value" => 1}, {"name" => "user_list", "value" => "admin"}]) unless entity.created_by? "uri_brute"
 
       else
-        puts "No actions for entity: #{entity.type}##{entity.attributes["name"]}"
+        puts "No actions for entity: #{entity.type}##{entity.details["name"]}"
         return
       end
     end

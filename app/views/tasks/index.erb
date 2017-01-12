@@ -4,7 +4,7 @@
 <div id="metadata" class="col-sm-7"></div>
 </div>
 <br/>
-<h4>Tasks</h4>
+<h4>Results</h4>
 <ul>
-<% @task_results.each do |x| %> <li><a href="/v1/<%=@project_name%>/task_results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity %> </a></li><% end %>
+<% Intrigue::Model::TaskResult.where(:autoscheduled => false).each do |x| %> <li><a href="/v1/<%=@project_name%>/task_results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity %> </a></li><% end %>
 </ul>

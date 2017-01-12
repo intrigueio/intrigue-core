@@ -24,23 +24,23 @@ module Intrigue
       end
 
       def log_debug(message)
-        _log "[#{id}][D] #{message}\n"
+        _log "[D] #{message}\n"
       end
 
       def log_good(message)
-        _log "[#{id}][+] #{message}\n"
+        _log "[+] #{message}\n"
       end
 
       def log_error(message)
-        _log "[#{id}][E] #{message}\n"
+        _log "[E] #{message}\n"
       end
 
       def log_warning(message)
-        _log "[#{id}][W] #{message}\n"
+        _log "[W] #{message}\n"
       end
 
       def log_fatal(message)
-        _log "[#{id}][F] #{message}\n"
+        _log "[F] #{message}\n"
       end
 
     private

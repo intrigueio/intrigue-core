@@ -45,11 +45,12 @@ end
 
 # database set up
 def setup_database
+  options = {}
   if Intrigue::Config::GlobalConfig.new.config["debug"]
-    Sequel.connect('postgres://intrigue:intrigue@localhost:5432/intrigue-sequel', :loggers => [Logger.new($stdout)])
-  else
-    Sequel.connect('postgres://intrigue:intrigue@localhost:5432/intrigue-sequel')
+    options.merge({:loggers => [Logger.new($stdout)]})
   end
+
+  Sequel.connect('postgres://intrigue@localhost:5432/intriguedb', options)
 end
 
 sanity_check_system

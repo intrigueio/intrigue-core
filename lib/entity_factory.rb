@@ -67,7 +67,8 @@ class EntityFactory
     #entity.associate_task_result(task_result)
 
     # Add to our result set for this task
-    task_result.associate_entity entity
+    task_result.add_entity entity
+    task_result.save
 
     # START PROCESSING OF ENRICHMENT (to depth of 1)
     #if task_result.depth > 0
@@ -82,7 +83,7 @@ class EntityFactory
 
     # START PROCESSING OF RECURSION BY STRATEGY TYPE
     if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
-      puts "Executing default strategy against scan result: #{task_result.scan_result} at depth #{task_result.depth}"
+      puts "Executing default strategy against: #{task_result.scan_result} at depth #{task_result.depth}"
       Intrigue::Strategy::Default.recurse(entity, task_result)
     else
       #puts "No scan result or our depth #{task_result.depth} is too deep, no recursion"

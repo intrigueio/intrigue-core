@@ -30,18 +30,6 @@ module Intrigue
       nil
       end
 
-      def associate_entity(e)
-        return false if has_entity? e
-
-        e.add_task_result(self)
-        e.save
-
-        add_entity(e)
-        save
-
-      true
-      end
-
       # Start a task
       def start
         # TODO, keep track of the sidekiq id so we can control the task later
@@ -57,7 +45,7 @@ module Intrigue
       end
 
       # We should be able to get a corresponding task of our type
-      # (TODO: should we store our actual task?)
+      # (TODO: should we store our actual task / configuration)
       def task
         Intrigue::TaskFactory.create_by_name(task_name)
       end
