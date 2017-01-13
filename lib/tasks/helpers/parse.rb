@@ -100,10 +100,15 @@ module Parse
   end
 
 
-
   ###
   ### Entity Parsing
   ###
+  def parse_entities_from_content(source_uri, content)
+    parse_email_addresses_from_content(source_uri, content)
+    parse_dns_records_from_content(source_uri, content)
+    parse_phone_numbers_from_content(source_uri, content)
+    parse_uris_from_content(source_uri, content)
+  end
 
   def parse_email_addresses_from_content(source_uri, content)
 

@@ -38,6 +38,7 @@ module Intrigue
           nodes << { :id => t.base_entity.id, :label => "#{t.base_entity.name}", :type => t.base_entity.type_string }
           # then for each of the entities, generate the node and edges
           t.entities.each do |e|
+            #next unless e.type_string == "WebServer"
             nodes << { :id => e.id, :label => "#{e.name}", :type => e.type_string } #unless e.secondary
             edges << {"id" => edge_count, "source" => t.base_entity.id, "target" => e.id} #unless e.secondary
             edge_count += 1

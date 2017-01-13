@@ -112,7 +112,7 @@ module Intrigue
             "id" => x.id,
             "type" => x.type,
             "name" => x.name }},
-          :task_results => task_results
+          :task_results => task_results.map{ |t| {:id => t.id, :name => t.name } }
         }
       end
 
