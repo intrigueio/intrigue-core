@@ -6,7 +6,7 @@ class IntrigueApp < Sinatra::Base
       @page_id = params[:page]
 
       ## We have some very rudimentary searching capabilities here
-      scoped_entities = Intrigue::Model::Entity.scope_by_project(@project_name)
+      scoped_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:deleted => false)
       if @entity_name
         @entities = scoped_entities.where(Sequel.ilike(:name, "%#{@entity_name}%"))
       else
@@ -21,7 +21,7 @@ class IntrigueApp < Sinatra::Base
       @page_id = params[:page]
 
       ## We have some very rudimentary searching capabilities here
-      scoped_entities = Intrigue::Model::Entity.scope_by_project(@project_name)
+      scoped_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:deleted => false)
       if @entity_name
         @entities = scoped_entities.where(Sequel.ilike(:name, "%#{@entity_name}%"))
       else
@@ -33,12 +33,21 @@ class IntrigueApp < Sinatra::Base
 
 
    get '/:project/entities/:id' do
-      @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
-      return "No such entity in this project" unless @entity
+     @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
+     return "No such entity in this project" unless @entity
 
-      @task_classes = Intrigue::TaskFactory.list
+     @task_classes = Intrigue::TaskFactory.list
 
-      erb :'entities/detail'
+     erb :'entities/detail'
+    end
+
+    post '/:project/entities/:id/delete' do
+      entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
+      return "No such entity in this project" unless entity
+      entity.deleted = true
+      entity.save
+
+    redirect "/v1/#{@project_name}/entities"
     end
 
   end

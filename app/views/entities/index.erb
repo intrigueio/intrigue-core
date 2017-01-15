@@ -1,3 +1,19 @@
+<script language="JavaScript" type="text/javascript">
+function delete_entity(id)
+{
+  var check = confirm('Are you sure?');
+  if (check == true) {
+      document.entity_delete_form.entity.value = id;
+      document.entity_delete_form.action = "/v1/<%=@project_name%>/entities/" + id + "/delete"
+      document.entity_delete_form.submit();
+      return true;
+  }
+  else {
+      return false;
+  }
+}
+</script>
+
 <p>
 Entities Count: <%= @entities.count %><br/>
 Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>
@@ -10,7 +26,9 @@ Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_na
   </form>
   <ul>
     <% @entities.each do |entity| %>
-      <li><a href="/v1/<%=@project_name%>/entities/<%=entity.id%>"><%= h entity %></a></li>
+      <li><a href="/v1/<%=@project_name%>/entities/<%=entity.id%>"><%= h entity %></a> <a href="javascript:delete_entity('<%= entity.id %>')">[x]</a> </li>
     <% end %>
   </ul>
 </div>
+
+<form name="entity_delete_form" method="post"><input type="hidden" id="entity" name="entity"/></form>

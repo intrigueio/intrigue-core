@@ -33,16 +33,27 @@ module Intrigue
         nodes = []
         edges = []
         edge_count = 1
+
         self.task_results.each do |t|
-          # add the base entity first
-          nodes << { :id => t.base_entity.id, :label => "#{t.base_entity.name}", :type => t.base_entity.type_string }
-          # then for each of the entities, generate the node and edges
+
+          # add the base entity first (provided it hasn't been deleted)
+          x = { :id => t.base_entity.id, :label => "#{t.base_entity.name}", :type => t.base_entity.type_string}
+          x[:color] = "lightgrey" if t.base_entity.secondary
+          x[:color] = "red" if t.base_entity.deleted?
+          nodes << x
+
+          # then for each of the entities, generate the node and edges. skip if deleted.
           t.entities.each do |e|
             #next unless e.type_string == "WebServer"
-            nodes << { :id => e.id, :label => "#{e.name}", :type => e.type_string } #unless e.secondary
+            x = { :id => e.id, :label => "#{e.name}", :type => e.type_string } #unless e.secondary
+            x[:color] = "lightgrey" if e.secondary
+            x[:color] = "red" if e.deleted?
+            nodes << x
+
             edges << {"id" => edge_count, "source" => t.base_entity.id, "target" => e.id} #unless e.secondary
             edge_count += 1
           end
+
         end
 
         # dump the json

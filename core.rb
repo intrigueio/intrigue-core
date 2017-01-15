@@ -117,6 +117,7 @@ class IntrigueApp < Sinatra::Base
     pass if request.path_info =~ /js$/ # if we're submitting a new task result via api
     pass if request.path_info =~ /css$/ # if we're submitting a new task result via api
     pass if request.path_info =~ /(.jpg|.png)$/ # if we're submitting a new task result via api
+    pass if request.path_info =~ /linkurious/ # if we're submitting a new task result via api
 
     # Set the project based on the project_string
     project = Intrigue::Model::Project.first(:name => project_string)

@@ -35,6 +35,11 @@ module Intrigue
         #validates_length_of :name, :min => 2
       end
 
+      def deleted?
+        return true if deleted
+      false
+      end
+
       def self.scope_by_project(name)
         named_project_id = Intrigue::Model::Project.first(:name => name).id
         where(:project_id => named_project_id)
@@ -108,6 +113,7 @@ module Intrigue
           :type => type,
           :name =>  name,
           :secondary => secondary,
+          :deleted => deleted,
           :details => details,
           :aliases => self.aliases.map{|x| {
             "id" => x.id,
