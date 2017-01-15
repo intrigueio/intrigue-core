@@ -58,7 +58,7 @@ class IntrigueApp < Sinatra::Base
 
       # create the project unless it exists
       if project
-        project.destroy!
+        project.destroy
 
         # recreate the default project if we've removed
         if @project_name == "Default"
