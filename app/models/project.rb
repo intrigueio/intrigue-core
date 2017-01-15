@@ -9,7 +9,7 @@ module Intrigue
 
       def validate
         super
-        #validates_uniqueness_of :name
+        validates_unique(:name)
       end
 
       def entity_count

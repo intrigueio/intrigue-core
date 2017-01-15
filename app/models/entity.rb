@@ -12,6 +12,7 @@ module Intrigue
 
       def validate
         super
+        validates_unique([:name, :project_id])
       end
 
     end

@@ -19,14 +19,11 @@ module Strategy
       existing_task_result = Intrigue::Model::TaskResult.where(:project => project).first(:name => "#{task_name} on #{entity.name}")
 
       if existing_task_result
-        #puts "Skipping!!!! Task result (#{task_name} on #{entity.name}) already exists."
         return existing_task_result
       else
-        #puts "Starting recursive task: #{task_name} on #{entity.name}"
+        new_task_result = start_task("task_autoscheduled", project, old_task_result.scan_result, task_name, entity, old_task_result.depth - 1, options, old_task_result.handlers)
       end
-
-      new_task_result = start_task("task_autoscheduled", project, old_task_result.scan_result, task_name, entity, old_task_result.depth - 1, options, old_task_result.handlers)
-
+      
     new_task_result
     end
 

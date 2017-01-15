@@ -17,6 +17,7 @@ module Intrigue
 
       def validate
         super
+        #validates_unique([:name, :project_id, :depth])
       end
 
       def log
