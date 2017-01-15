@@ -8,7 +8,7 @@ class IntrigueApp < Sinatra::Base
       ## We have some very rudimentary searching capabilities here
       scoped_entities = Intrigue::Model::Entity.scope_by_project(@project_name)
       if @entity_name
-        @entities = scoped_entities.where(Sequel.like(:name, "%#{@entity_name}%"))
+        @entities = scoped_entities.where(Sequel.ilike(:name, "%#{@entity_name}%"))
       else
         @entities = scoped_entities #.page(@page_id, :per_page => 50)
       end
@@ -23,7 +23,7 @@ class IntrigueApp < Sinatra::Base
       ## We have some very rudimentary searching capabilities here
       scoped_entities = Intrigue::Model::Entity.scope_by_project(@project_name)
       if @entity_name
-        @entities = scoped_entities.where(Sequel.like(:name, "%#{@entity_name}%"))
+        @entities = scoped_entities.where(Sequel.ilike(:name, "%#{@entity_name}%"))
       else
         @entities = scoped_entities #.page(@page_id, :per_page => 50)
       end
