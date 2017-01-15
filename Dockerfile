@@ -45,7 +45,7 @@ WORKDIR /core
 RUN /bin/bash -l -c "rm .ruby-gemset"
 
 # Migrate!
-RUN /bin/bash -l -c "bundle exec rake migrate"
+RUN /bin/bash -l -c "rvmsudo bundle exec rake db:migrate"
 
 # Ensure we listen on all ipv4 interfaces
 # RUN /bin/bash -l -c "sed -i \"s/127.0.0.1/0.0.0.0/g\" /core/config/puma.rb"

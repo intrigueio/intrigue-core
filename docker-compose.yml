@@ -5,7 +5,7 @@ services:
     expose:
       - "5432"
     environment:
-      - POSTGRES_DB=intrigue_prod
+      - POSTGRES_DB=intriguedb
   redis:
     image: redis
     expose:
