@@ -14,7 +14,7 @@ class WebApplicationFingerprint < BaseTask
         "https://asafaweb.com/"
 
       ],
-      :type => "discovery",
+      :type => "enrichment",
       :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "attributes" => {"name" => "https://intrigue.io"}}],

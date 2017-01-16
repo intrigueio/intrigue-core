@@ -9,7 +9,7 @@ class WebServerFingerprint < BaseTask
       :authors => ["jcran"],
       :description => "Web Server Fingerprint",
       :references => [],
-      :type => "discovery",
+      :type => "enrichment",
       :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "attributes" => {"name" => "https://intrigue.io"}}],

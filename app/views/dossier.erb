@@ -7,6 +7,27 @@
   <% end %>
 </ul>
 
+<p>Email:</p>
+<ul>
+  <% @emails.each do |e| %>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <% end %>
+</ul>
+
+<p>Phone Numbers:</p>
+<ul>
+  <% @phone_numbers.each do |e| %>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <% end %>
+</ul>
+
+<p>Software:</p>
+<ul>
+  <% @software_packages.each do |e| %>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <% end %>
+</ul>
+
 <p>Uris:</p>
 <ul>
   <% @uris.each do |e| %>
@@ -32,6 +53,12 @@
   <% end %>
 </ul>
 
+<p>SSL Certificates:</p>
+<ul>
+  <% @phone_numbers.each do |e| %>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <% end %>
+</ul>
 
 <p>Network Services:</p>
 <ul>
@@ -57,6 +84,13 @@
 <p>Networks:</p>
 <ul>
   <% @networks.each do |e| %>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <% end %>
+</ul>
+
+<p>Other:</p>
+<ul>
+  <% @other.each do |e| %>
   <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
   <% end %>
 </ul>

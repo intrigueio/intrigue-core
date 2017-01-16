@@ -6,12 +6,13 @@ class GetAlternateNames < BaseTask
   def self.metadata
     {
       :name => "get_alternate_names",
-      :type => "discovery",
       :pretty_name => "Get Alternate Names",
       :authors => ["jcran"],
       :description => "Look up all names of a given entity.",
       :references => [],
       :allowed_types => ["DnsRecord", "IpAddress"],
+      :type => "enrichment",
+      :passive => true,
       :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }

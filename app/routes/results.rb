@@ -4,16 +4,6 @@ class IntrigueApp < Sinatra::Base
 
     # Kick off a task
     get '/:project/results/?' do
-      # if we receive an entity_id or a task_result_id, instanciate the object
-      if params["entity_id"]
-        @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params["entity_id"])
-      end
-
-      # If we've been given a task result...
-      if params["task_result_id"]
-        @task_result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params["task_result_id"])
-        @entity = @task_result.base_entity
-      end
 
       # get a list of task_results
       ### TODO - figure out how to filter this based on a nil association
@@ -101,7 +91,7 @@ class IntrigueApp < Sinatra::Base
 
       # Assuming it's available, display it
       if @result
-        @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1/#{@project_name}/task/?task_result_id=#{@result.id}"
+        @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1/#{@project_name}/start?result_id=#{@result.id}"
         @elapsed_time = "#{(@result.timestamp_end - @result.timestamp_start).to_i}" if @result.timestamp_end
       end
 
