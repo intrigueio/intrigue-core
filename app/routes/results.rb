@@ -3,7 +3,7 @@ class IntrigueApp < Sinatra::Base
   namespace '/v1' do
 
     # Kick off a task
-    get '/:project/task/?' do
+    get '/:project/results/?' do
       # if we receive an entity_id or a task_result_id, instanciate the object
       if params["entity_id"]
         @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params["entity_id"])
@@ -15,15 +15,12 @@ class IntrigueApp < Sinatra::Base
         @entity = @task_result.base_entity
       end
 
-      # Always get us a list of tasks and names so we can display them
-      @task_classes = Intrigue::TaskFactory.list
-
       # get a list of task_results
       ### TODO - figure out how to filter this based on a nil association
       # http://stackoverflow.com/questions/7615752/datamapper-filter-records-by-association-count
       @task_results = Intrigue::Model::TaskResult.scope_by_project(@project_name).all
 
-      erb :'tasks/index'
+      erb :'results/index'
     end
 
     # Helper to construct the request to the API when the application is used interactively
@@ -90,12 +87,12 @@ class IntrigueApp < Sinatra::Base
       entity.task_results << task_result
       entity.save
 
-      redirect "/v1/#{@project_name}/task_results/#{task_result.id}"
+      redirect "/v1/#{@project_name}/results/#{task_result.id}"
     end
 
 
     # Show the results in a human readable format
-    get '/:project/task_results/:id/?' do
+    get '/:project/results/:id/?' do
       task_result_id = params[:id].to_i
 
       # Get the task result from the database, and fail cleanly if it doesn't exist
@@ -108,7 +105,7 @@ class IntrigueApp < Sinatra::Base
         @elapsed_time = "#{(@result.timestamp_end - @result.timestamp_start).to_i}" if @result.timestamp_end
       end
 
-      erb :'tasks/task_result'
+      erb :'results/detail'
     end
   end
 end

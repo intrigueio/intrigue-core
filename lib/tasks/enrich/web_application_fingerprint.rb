@@ -49,6 +49,8 @@ class WebApplicationFingerprint < BaseTask
     ### Server Header
     @entity.details["web_application"] = []
 
+    response.each_header {|h,v| _log "#{h}: #{v}" }
+
     ### X-AspNet-Version-By Header
     if response.header['X-AspNet-Version']
       header = response.header['X-AspNet-Version']

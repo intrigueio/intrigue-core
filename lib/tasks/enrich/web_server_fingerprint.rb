@@ -32,6 +32,8 @@ class WebServerFingerprint < BaseTask
       return
     end
 
+    response.each_header {|h,v| _log "#{h}: #{v}" }
+
     web_server_name = resolve_header_name(response.header['server'])
 
     if web_server_name

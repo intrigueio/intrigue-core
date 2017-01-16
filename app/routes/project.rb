@@ -1,6 +1,11 @@
 class IntrigueApp < Sinatra::Base
   namespace '/v1' do
 
+    get '/:project/start' do
+      @task_classes = Intrigue::TaskFactory.list
+      erb :'start'
+    end
+
     # graph
     get '/:project/graph' do
       @json_uri = "#{request.url}.json"
@@ -52,7 +57,7 @@ class IntrigueApp < Sinatra::Base
         @ip_addresses << item if item.kind_of? Intrigue::Entity::IpAddress
         @dns_records << item if item.kind_of? Intrigue::Entity::DnsRecord
         @networks << item if item.kind_of? Intrigue::Entity::NetBlock
-        
+
       end
 
       erb :'dossier'

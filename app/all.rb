@@ -4,7 +4,7 @@ require_relative "routes/api"
 require_relative "routes/entities"
 require_relative "routes/global"
 require_relative "routes/project"
-require_relative "routes/tasks"
+require_relative "routes/results"
 
 require_relative "models/project"
 require_relative "models/logger"
