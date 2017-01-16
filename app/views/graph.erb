@@ -33,6 +33,26 @@
   <div id="overlay">Current graph generated at: <%= @graph_generated_at.strftime("%I:%M%p") if @graph_generated_at %>.<br/></div>
 </div>
 
+<script language="javascript" type="text/javascript">
+function delete_entity_children(id){
+  var XHR = new XMLHttpRequest();
+
+  // We define what will happen if the data are successfully sent
+  XHR.addEventListener('load', function(event) {
+    alert('Succesfully deleted, please reload the graph (it will regenerate).');
+  });
+
+  // We define what will happen in case of error
+  XHR.addEventListener('error', function(event) {
+    alert('Oups! Something goes wrong.');
+  });
+
+  // We setup our request & send it
+  XHR.open('GET', "/v1/<%=@project_name%>/entities/" + id + "/delete_children");
+  XHR.send();
+}
+</script>
+
 <script src="/js/linkurious-v1.5.1/sigma.min.js"></script>
 <script src="/js/linkurious-v1.5.1/plugins/sigma.parsers.json.min.js"></script>
 <script src="/js/linkurious-v1.5.1/plugins/sigma.layouts.forceAtlas2.min.js"></script>
@@ -105,12 +125,9 @@
         }
 
         $('#overlay').append("</ul></p>")
+        $('#overlay').append("<p><a href=javascript:delete_entity_children("+ e.data.node.id +")>(Delete children)</a></p>")
       });
-
-
-
     });
-
     //s.bind('overNode outNode clickNode doubleClickNode rightClickNode', function(e) {
     //    console.log(e.type, e.data.node.label, e.data.captor);
     //});

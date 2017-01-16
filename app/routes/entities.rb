@@ -58,8 +58,8 @@ class IntrigueApp < Sinatra::Base
     get '/:project/entities/:id/delete_children' do
       entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
       return "No such entity in this project" unless entity
-      entity.deleted = true
-      entity.save
+      #entity.deleted = true
+      #entity.save
 
       Intrigue::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => entity).each do |t|
         t.entities.each { |e| e.deleted = true; e.save }
