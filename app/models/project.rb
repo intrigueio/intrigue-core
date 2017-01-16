@@ -48,15 +48,11 @@ module Intrigue
             #x[:color] = "lightgrey" if e.secondary
             nodes << x unless e.deleted?
 
-            #unless t.task.class.metadata[:type] == "enrichment"
             unless t.base_entity.deleted? || e.deleted?
               edges << {"id" => edge_count, "source" => t.base_entity.id, "target" => e.id}
               edge_count += 1
             end
-            #end
-
           end
-
         end
 
         # dump the json
