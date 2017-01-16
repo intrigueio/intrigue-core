@@ -101,7 +101,7 @@ module Intrigue
       end
 
       def self.descendants
-        ObjectSpace.each_object(Class).select { |klass| klass < self }
+        x = ObjectSpace.each_object(Class).select{ |klass| klass < self }
       end
 
       ###

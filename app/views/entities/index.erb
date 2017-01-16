@@ -20,10 +20,25 @@ Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_na
 </p>
 
 <div class="col-sm-6">
+
   <form class="form-horizontal" id="entity_search" target="_self" method="post" action="/v1/<%=@project_name%>/entities">
-    <input type="text" class="form-control sm" id="entity_name" name="entity_name" size=10>
+
+    Name:
+    <input type="text" style='width:50%' class="form-control sm" id="entity_name" name="entity_name"><br/>
+
+    Types:<br/>
+    <select size=10 style='height:50%; color:#000000;' multiple name="entity_types[]">
+      <% Intrigue::Model::Entity.descendants.map{|x|x.to_s}.sort.each do |d| %>
+        <option value="<%=d%>" selected><%=d%></option>
+      <% end %>
+    </select><br/>
+
+
     <input class="btn btn-primary" type="submit" value="Search">
   </form>
+</div>
+<div class="col-sm-6">
+
   <ul>
     <% @entities.each do |entity| %>
       <li><a href="/v1/<%=@project_name%>/entities/<%=entity.id%>"><%= h entity %></a> <a href="javascript:delete_entity('<%= entity.id %>')">[x]</a> </li>
@@ -31,4 +46,4 @@ Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_na
   </ul>
 </div>
 
-<form name="entity_delete_form" method="post"><input type="hidden" id="entity" name="entity"/></form>
+<form name="entity_delete_form" method="get"><input type="hidden" id="entity" name="entity"/></form>
