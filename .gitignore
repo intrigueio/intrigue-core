@@ -13,7 +13,6 @@ data/*/*.backup
 public/
 public/js/
 public/screenshots/
-results/
 tmp/.gitignore
 tmp/
 log/
