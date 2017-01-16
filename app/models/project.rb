@@ -39,21 +39,21 @@ module Intrigue
           # add the base entity first (provided it hasn't been deleted)
           x = { :id => t.base_entity.id, :label => "#{t.base_entity.name}", :type => t.base_entity.type_string}
           #x[:color] = "lightgrey" if t.base_entity.secondary
-          x[:color] = "red" if t.base_entity.deleted?
-          nodes << x
+          nodes << x unless t.base_entity.deleted?
 
           # then for each of the entities, generate the node and edges. skip if deleted.
           t.entities.each do |e|
             #next unless e.type_string == "WebServer"
             x = { :id => e.id, :label => "#{e.name}", :type => e.type_string } #unless e.secondary
             #x[:color] = "lightgrey" if e.secondary
-            x[:color] = "red" if e.deleted?
-            nodes << x
+            nodes << x unless e.deleted?
 
-            unless t.task.class.metadata[:type] == "enrichment"
+            #unless t.task.class.metadata[:type] == "enrichment"
+            unless t.base_entity.deleted? || e.deleted?
               edges << {"id" => edge_count, "source" => t.base_entity.id, "target" => e.id}
               edge_count += 1
             end
+            #end
 
           end
 
