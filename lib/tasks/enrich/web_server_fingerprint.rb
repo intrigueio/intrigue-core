@@ -25,6 +25,8 @@ class WebServerFingerprint < BaseTask
     response = http_get uri
     response2 = http_get uri
 
+    @entity.details["web_server"] = []
+
     unless response && response2
       _log_error "Unable to receive a response for #{uri}, bailing"
       return
@@ -38,7 +40,7 @@ class WebServerFingerprint < BaseTask
       # TODO: though this might miss something if it's a different resolution path?
       if response.header['server'] == response2.header['server']
         _log_good "Creating header for #{web_server_name}"
-        _create_entity "WebServer", { "name" => web_server_name }
+        @entity.details["web_server"] << web_server_name
       else
         _log_error "Header did not match!"
         _log_error "1: #{response.header['server']}"
@@ -47,6 +49,8 @@ class WebServerFingerprint < BaseTask
     else
       _log_error "No 'server' header!"
     end
+
+    @entity.save
 
   end
 

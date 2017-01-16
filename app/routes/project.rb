@@ -38,21 +38,21 @@ class IntrigueApp < Sinatra::Base
       @entities = Intrigue::Model::Entity.where(:project_id => current_project.id)
 
       @persons  = []
-      @applications = []
+      @uris = []
       @services = []
       @ip_addresses = []
       @dns_records = []
       @networks = []
 
       @entities.each do |item|
+
         @persons << item if item.kind_of? Intrigue::Entity::Person
-        @applications << item if item.kind_of? Intrigue::Entity::Uri
-        @applications << item if item.kind_of?(Intrigue::Entity::WebServer)
-        @applications << item if item.kind_of?(Intrigue::Entity::WebApplication)
+        @uris << item if item.kind_of? Intrigue::Entity::Uri
         @services << item if item.kind_of? Intrigue::Entity::NetworkService
-        @ip_addresses << item if item.kind_of?(Intrigue::Entity::IpAddress)
-        @dns_records << item if item.kind_of?(Intrigue::Entity::DnsRecord)
+        @ip_addresses << item if item.kind_of? Intrigue::Entity::IpAddress
+        @dns_records << item if item.kind_of? Intrigue::Entity::DnsRecord
         @networks << item if item.kind_of? Intrigue::Entity::NetBlock
+        
       end
 
       erb :'dossier'

@@ -2,7 +2,7 @@ class IntrigueApp < Sinatra::Base
   namespace '/v1' do
 
     post '/:project/entities' do
-      @entity_name = params[:entity_name]
+      @search_string = params[:search_string]
       @entity_types = params[:entity_types]
       @page_id = params[:page]
 
@@ -10,17 +10,17 @@ class IntrigueApp < Sinatra::Base
       x = Intrigue::Model::Entity.scope_by_project(@project_name).where(:deleted => false)
       x = x.where(:type => @entity_types) if @entity_types
 
-      if @entity_name
-        @entities = x.where(Sequel.ilike(:name, "%#{@entity_name}%"))
+      if @search_string
+        @entities = x.where(Sequel.ilike(:details, "%#{@search_string}%"))
       else
         @entities = x
       end
-      
+
       erb :'entities/index'
     end
 
     get '/:project/entities' do
-      @entity_name = params[:entity_name]
+      @search_string = params[:search_string]
       @entity_types = params[:entity_types]
       @page_id = params[:page]
 
@@ -28,8 +28,8 @@ class IntrigueApp < Sinatra::Base
       x = Intrigue::Model::Entity.scope_by_project(@project_name).where(:deleted => false)
       x = x.where(:type => @entity_types) if @entity_types
 
-      if @entity_name
-        @entities = x.where(Sequel.ilike(:name, "%#{@entity_name}%"))
+      if @search_string
+        @entities = x.where(Sequel.ilike(:details, "%#{@search_string}%"))
       else
         @entities = x
       end

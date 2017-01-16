@@ -10,7 +10,9 @@ class Uri < Intrigue::Model::Entity
   end
 
   def validate_content
-    @name =~ /^.*$/
+    @name =~ /^.*$/ #&&
+    #@details["web_application"] &&
+    #@details["web_server"]
   end
 
 end

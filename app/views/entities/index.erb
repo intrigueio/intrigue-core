@@ -23,8 +23,8 @@ Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_na
 
   <form class="form-horizontal" id="entity_search" target="_self" method="post" action="/v1/<%=@project_name%>/entities">
 
-    Name:
-    <input type="text" style='width:50%' class="form-control sm" id="entity_name" name="entity_name"><br/>
+    Search:
+    <input type="text" style='width:50%' class="form-control sm" id="search_string" name="search_string"><br/>
 
     Types:<br/>
     <select size=10 style='height:50%; color:#000000;' multiple name="entity_types[]">

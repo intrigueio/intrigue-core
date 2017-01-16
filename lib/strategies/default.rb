@@ -18,6 +18,8 @@ module Strategy
 
       if entity.type_string == "DnsRecord"
 
+        start_recursive_task(task_result,"nmap_scan",entity)
+
         ### DNS Forward Lookup
         start_recursive_task(task_result, "get_alternate_names", entity)
 
@@ -67,9 +69,6 @@ module Strategy
       elsif entity.type_string == "Uri"
 
         ## Grab the Web Server
-        start_recursive_task(task_result,"web_server_fingerprint",entity)
-
-        start_recursive_task(task_result,"web_application_fingerprint",entity)
 
         ## Grab the SSL Certificate
         start_recursive_task(task_result,"uri_gather_ssl_certificate",entity) if entity.name =~ /^https/
