@@ -78,9 +78,9 @@ class WebApplicationFingerprint < BaseTask
     ### set-cookie
     header = response.header['set-cookie']
     if header
-      _log header
       applications << "Coldfusion" if header =~ /^.*CISESSIONID.*$/
       applications << "ASP.NET" if header =~ /^.*ASPSESSIONID.*$/
+      applications << "J2EE" if header =~ /^.*JSESSIONID.*$/
     end
 
     _log "Setting applications to #{applications.sort.uniq}"
