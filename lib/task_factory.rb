@@ -10,7 +10,7 @@ class TaskFactory
   end
 
   def self.list
-    available_tasks.select {|t| t if t.metadata[:type] == "discovery"}
+    available_tasks #.select {|t| t if t.metadata[:type] == "discovery"}
   end
 
   def self.allowed_tasks_for_entity_type(entity_type)
