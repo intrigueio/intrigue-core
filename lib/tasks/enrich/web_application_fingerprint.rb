@@ -47,28 +47,45 @@ class WebApplicationFingerprint < BaseTask
     end
 
     ### Server Header
-    @entity.details["web_application"] = []
+    applications = []
 
     response.each_header {|h,v| _log "#{h}: #{v}" }
 
     ### X-AspNet-Version-By Header
-    if response.header['X-AspNet-Version']
-      header = response.header['X-AspNet-Version']
-      @entity.details["web_application"] << "#{header}".gsub("X-AspNet-Version:","")
+    header = response.header['X-AspNet-Version']
+    if header
+      applications << "#{header}".gsub("X-AspNet-Version:","")
     end
 
     ### X-Powered-By Header
-    if response.header['X-Powered-By']
-      header = response.header['X-Powered-By']
-      @entity.details["web_application"] << "#{header}".gsub("X-Powered-By:","")
+    header = response.header['X-Powered-By']
+    if header
+      applications << "#{header}".gsub("X-Powered-By:","")
     end
 
     ### Generator
-    if response.header['x-generator']
-      header = response.header['x-generator']
-      @entity.details["web_application"] << "#{header}".gsub("x-generator:","")
+    header = response.header['x-generator']
+    if header
+      applications << "#{header}".gsub("x-generator:","")
     end
 
+    ### x-drupal-cache
+    header = response.header['x-drupal-cache']
+    if header
+      applications << "Drupal"
+    end
+
+    ### set-cookie
+    header = response.header['set-cookie']
+    if header
+      _log header
+      applications << "Coldfusion" if header =~ /^.*CISESSIONID.*$/
+      applications << "ASP.NET" if header =~ /^.*ASPSESSIONID.*$/
+    end
+
+    _log "Setting applications to #{applications.sort.uniq}"
+
+    @entity.details["web_application"] = applications.sort.uniq
     @entity.save
 
   end
