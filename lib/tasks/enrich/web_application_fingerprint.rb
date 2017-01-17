@@ -11,8 +11,8 @@ class WebApplicationFingerprint < BaseTask
       :references => [
         "http://www.net-square.com/httprint_paper.html",
         "https://www.troyhunt.com/shhh-dont-let-your-response-headers/",
-        "https://asafaweb.com/"
-
+        "https://asafaweb.com/",
+        "https://www.owasp.org/index.php/Category:OWASP_Cookies_Database"
       ],
       :type => "enrichment",
       :passive => false,
@@ -78,9 +78,25 @@ class WebApplicationFingerprint < BaseTask
     ### set-cookie
     header = response.header['set-cookie']
     if header
-      applications << "Coldfusion" if header =~ /^.*CISESSIONID.*$/
+
+      applications << "Apache JServ" if header =~ /^.*JServSessionIdroot.*$/
       applications << "ASP.NET" if header =~ /^.*ASPSESSIONID.*$/
+      applications << "ASP.NET" if header =~ /^.*ASP.NET_SessionId.*$/
+      applications << "BEA WebLogic" if header =~ /^.*WebLogicSession*$/
+      applications << "Coldfusion" if header =~ /^.*CFID.*$/
+      applications << "Coldfusion" if header =~ /^.*CFTOKEN.*$/
+      applications << "Coldfusion" if header =~ /^.*CFGLOBALS.*$/
+      applications << "Coldfusion" if header =~ /^.*CISESSIONID.*$/
+      applications << "ExpressJS" if header =~ /^.*connect.sid.*$/
+      applications << "IBM WebSphere" if header =~ /^.*sesessionid.*$/
+      applications << "IBM Tivoli" if header =~ /^.*PD-S-SESSION-ID.*$/
+      applications << "IBM Tivoli" if header =~ /^.*PD_STATEFUL.*$/
       applications << "J2EE" if header =~ /^.*JSESSIONID.*$/
+      applications << "Mint" if header =~ /^.*MintUnique.*$/
+      applications << "Omniture" if header =~ /^.*sc_id.*$/
+      applications << "PHP" if header =~ /^.*PHPSESSION.*$/
+      applications << "MediaWiki" if header =~ /^.*wiki??_session.*$/
+
     end
 
     _log "Setting applications to #{applications.sort.uniq}"
