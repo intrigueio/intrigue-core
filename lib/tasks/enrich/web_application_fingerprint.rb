@@ -63,6 +63,12 @@ class WebApplicationFingerprint < BaseTask
       @entity.details["web_application"] << "#{header}".gsub("X-Powered-By:","")
     end
 
+    ### Generator
+    if response.header['X-Powered-By']
+      header = response.header['x-generator']
+      @entity.details["web_application"] << "#{header}".gsub("x-generator:","")
+    end
+
     @entity.save
 
   end
