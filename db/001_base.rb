@@ -3,7 +3,7 @@ Sequel.migration do
     create_table :entities do
       primary_key :id
       foreign_key :project_id, :null => false
-      foreign_key :task_result_id, :null => true
+      #foreign_key :task_result_id, :null => true
 
       String :type
       String :name, :size => 400
@@ -73,7 +73,7 @@ Sequel.migration do
       String :options, :text => true
       String :handlers, :text => true
       FalseClass :complete, default: false
-      FalseClass :autoscheduled, default: false
+      FalseClass :autoscheduled, default: true
       String :job_id
       Integer :depth
     end

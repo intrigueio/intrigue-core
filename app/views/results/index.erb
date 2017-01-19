@@ -1,9 +1,23 @@
-<h3>Results</h3>
-<ul>
-<% Intrigue::Model::TaskResult.scope_by_project(@project_name).where(:autoscheduled => false).each do |x| %> <li><a href="/v1/<%=@project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity %> </a></li><% end %>
-</ul>
+<p>
+Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>
+</p>
 
-<h3>Autoscheduled</h3>
-<ul>
-<% Intrigue::Model::TaskResult.scope_by_project(@project_name).where(:autoscheduled => true).each do |x| %> <li><a href="/v1/<%=@project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity %> </a></li><% end %>
-</ul>
+<div class="col-sm-6">
+  <form class="form-horizontal" id="result_search" target="_self" method="get" action="/v1/<%=@project_name%>/results">
+
+    Search:
+    <input type="text" style='width:50%' class="form-control sm" id="search_string" name="search_string"><br/>
+    <input class="btn btn-primary" type="submit" value="Search">
+  </form>
+</div>
+<div class="col-sm-6">
+  <h3>Manual Results</h3>
+  <ul>
+  <% @manual_results.each do |x| %> <li><a href="/v1/<%=@project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity %> </a></li><% end %>
+  </ul>
+
+  <h3>Autoscheduled Results</h3>
+  <ul>
+  <% @autoscheduled_results.each do |x| %> <li><a href="/v1/<%=@project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity %> </a></li><% end %>
+  </ul>
+</div>

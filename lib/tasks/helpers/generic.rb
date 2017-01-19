@@ -15,20 +15,6 @@ module Generic
     entity = EntityFactory.create_or_merge_entity_recursive(@task_result, type, name, hash, original_entity)
   end
 
-  # Create the entity as normal, but associate an alias as well.
-  def _create_alias_entity(type, hash, original_entity)
-
-    # Create the entity, and send the original so we can mark it as secondary
-    entity = _create_entity(type, hash, original_entity)
-
-    # Attach the aliases on both sides
-    entity.aliases << original_entity
-    entity.save
-
-    original_entity.aliases << entity
-    original_entity.save
-  end
-
   ###
   ### Logging helpers
   ###

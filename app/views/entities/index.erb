@@ -21,7 +21,7 @@ Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_na
 
 <div class="col-sm-6">
 
-  <form class="form-horizontal" id="entity_search" target="_self" method="post" action="/v1/<%=@project_name%>/entities">
+  <form class="form-horizontal" id="entity_search" target="_self" method="get" action="/v1/<%=@project_name%>/entities">
 
     Search:
     <input type="text" style='width:50%' class="form-control sm" id="search_string" name="search_string"><br/>

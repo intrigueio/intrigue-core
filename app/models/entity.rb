@@ -3,16 +3,14 @@ module Intrigue
 
     class AliasMapping < Sequel::Model
       plugin :validation_helpers
-
-      #many_to_one :source, :class => Intrigue::Model::Entity
-      #many_to_one :target, :class => Intrigue::Model::Entity
+      self.raise_on_save_failure = false
 
       many_to_one :source, :class => :'Intrigue::Model::Entity', :key => :source_id
       many_to_one :target, :class => :'Intrigue::Model::Entity', :key => :target_id
 
       def validate
         super
-        validates_unique([:name, :project_id])
+        validates_unique([:source_id, :target_id]) # only allow a single alias
       end
 
     end
@@ -25,12 +23,13 @@ module Intrigue
       #set_allowed_columns :type, :name, :details, :project_id
 
       many_to_many :task_results
-      one_to_many :aliases, :class => :'Intrigue::Model::AliasMapping', :key => :source_id
       many_to_one :project
-      #one_to_many :task_result, :key => :base_entity_id
+      many_to_many :aliases, :left_key=>:source_id,:right_key=>:target_id, :join_table=>:alias_mappings, :class=>self
+      #one_to_many :aliases, :class => 'Intrigue::Model::Entity', :join_table => :alias_mappings, :primary_key => :id
 
       def validate
         super
+        validates_unique([:name, :project_id])
         #validates_uniqueness_of :name, :scope => :project
         #validates_length_of :name, :min => 2
       end

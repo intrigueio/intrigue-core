@@ -13,6 +13,7 @@ require_relative 'task_factory'
 require_relative 'tasks/helpers/generic'
 require_relative 'tasks/helpers/lists'
 require_relative 'tasks/helpers/parse'
+require_relative 'tasks/helpers/prohibited'
 require_relative 'tasks/helpers/scanner'
 require_relative 'tasks/helpers/web'
 
@@ -42,7 +43,7 @@ end
 ####
 require_relative 'strategy_factory'
 
-# Load all .rb file in lib/strategies by default, base first 
+# Load all .rb file in lib/strategies by default, base first
 require_relative 'strategies/base'
 strategies_folder = File.expand_path('../strategies', __FILE__) # get absolute directory
 Dir["#{strategies_folder}/*.rb"].each {|f| require_relative f}

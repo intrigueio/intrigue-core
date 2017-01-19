@@ -1,6 +1,7 @@
 module Intrigue
 class EntityFactory
   extend Intrigue::Task::Helper
+  extend Intrigue::Task::Prohibited
 
   # NOTE: We don't auto-register entities like the other factories, because they're
   # datamapper objects, and that's handled by datamapper's "type" property
@@ -34,28 +35,21 @@ class EntityFactory
       entity.details = details.merge(entity.details)
       entity.save
     else
-      # Create a new entity, validating the attributes
-      begin
-        entity = Intrigue::Model::Entity.create({
-          :project => project,
-          :type => type,
-          :name => "#{name}",
-          :details => details
-         })
-
-        if original_entity
-          entity.secondary=true;
-          entity.save
-        end
-      rescue DataMapper::SaveFailureError => e
-        return false
-      end
-
+    # Create a new entity, validating the attributes
+      entity = Intrigue::Model::Entity.create({
+        :project => project,
+        :type => type,
+        :name => "#{name}",
+        :details => details
+       })
     end
 
-    # Error handling... fail if we didn't save an entity
-    unless entity
-      return false
+    # Attach the aliases on both sides and mark the new entity as secondary if we already have a version of this.
+    if original_entity
+      #unless Intrigue::Model::AliasMapping.where(:source_id => original_entity.id, :target_id => entity.id).first
+      Intrigue::Model::AliasMapping.create(:source_id => original_entity.id, :target_id => entity.id)
+      Intrigue::Model::AliasMapping.create(:source_id => entity.id, :target_id => original_entity.id)
+      #end
     end
 
     # Add to our result set for this task
@@ -65,14 +59,18 @@ class EntityFactory
     # START PROCESSING OF ENRICHMENT (to depth of 1)
     if task_result.depth > 0
       if (entity.type_string == "Uri")
-        start_task("task_autoscheduled", project, task_result.scan_result, "web_server_fingerprint", entity, task_result.depth - 1, [],[])
-        start_task("task_autoscheduled", project, task_result.scan_result, "web_application_fingerprint", entity, task_result.depth - 1, [],[])
+        unless prohibited_entity? entity
+          start_task("task_autoscheduled", project, task_result.scan_result, "web_server_fingerprint", entity, task_result.depth - 1, [],[])
+          start_task("task_autoscheduled", project, task_result.scan_result, "web_application_fingerprint", entity, task_result.depth - 1, [],[])
+        end
       end
     end# END PROCESSING OF ENRICHMENT
 
     # START PROCESSING OF RECURSION BY STRATEGY TYPE
     if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
-      Intrigue::Strategy::Default.recurse(entity, task_result)
+      unless prohibited_entity? entity
+        Intrigue::Strategy::Default.recurse(entity, task_result)
+      end
     end
     # END PROCESSING OF RECURSION BY STRATEGY TYPE
 

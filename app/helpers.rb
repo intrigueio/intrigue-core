@@ -16,6 +16,7 @@ module Helper
       :options => options,
       :base_entity => entity,
       :handlers => handlers,
+      :autoscheduled => false,
       :depth => depth
     })
 

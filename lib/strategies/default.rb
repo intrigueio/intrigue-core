@@ -3,19 +3,19 @@ module Strategy
   class Default < Intrigue::Strategy::Base
 
     def self.recurse(entity, task_result)
-      puts "Recurse called for #{task_result.task_name} on #{entity}"
-      puts "Task Result: #{task_result.inspect}"
-
+      #puts "Recurse called for #{task_result.task_name} on #{entity}"
+      #puts "Task Result: #{task_result.inspect}"
+=begin
       if task_result.depth == 0
         puts "Recurse called for #{task_result.task_name} on #{entity} but at max depth. Returning!"
         return nil
       end
 
-      if is_prohibited entity
-        puts "Skipped prohibited entity: #{entity}"
+      if prohibited_entity?(entity)
+        puts "SKIPPING recursion on prohibited entity: #{entity}"
         return nil
       end
-
+=end
       if entity.type_string == "DnsRecord"
 
         start_recursive_task(task_result,"nmap_scan",entity)
@@ -88,127 +88,6 @@ module Strategy
         return
       end
     end
-
-    def self.is_prohibited entity
-
-      if entity.type_string == "IpAddress"
-        # 23.x.x.x
-        if entity.name =~ /^23\./             ||  # akamai
-           entity.name =~ /^2600:1400/        ||  # akamai
-           entity.name =~ /^2600:1409/        ||  # akamai
-           entity.name =~ /^127\.\0\.0\.*$/   ||  # RFC1918
-           entity.name =~ /^10\.*$/           ||  # RFC1918
-           entity.name =~ /^0.0.0.0/
-          return true
-        end
-      end
-
-      # Standard exclusions
-      if (
-        entity.name =~ /^.*1e100.com$/                     ||
-        entity.name =~ /^.*1e100.net$/                     ||
-        entity.name =~ /^.*akam.net$/                      ||
-        entity.name =~ /^.*akamai.com$/                    ||
-        entity.name =~ /^.*akamaihd.net$/                  ||
-        entity.name =~ /^.*akamaihd-staging.net$/          ||
-        entity.name =~ /^.*akamaitechnologies.net$/        ||
-        entity.name =~ /^.*akamaized.net$/                 ||
-        entity.name =~ /^.*akamaistream.net$/              ||
-        entity.name =~ /^.*amazonaws.com$/                 ||
-        entity.name =~ /^.*android$/                       ||
-        entity.name =~ /^.*android.clients.google.com$/    ||
-        entity.name =~ /^.*android.com$/                   ||
-        entity.name =~ /^.*cloudfront.net$/                ||
-        entity.name =~ /^.*drupal.org$/                    ||
-        entity.name =~ /^.*facebook.com$/                  ||
-        entity.name =~ /^.*feeds2.feedburner.com$/         ||
-        entity.name =~ /^.*g.co$/                          ||
-        entity.name =~ /^.*gandi.net$/                     ||
-        entity.name =~ /^.*goo.gl$/                        ||
-        entity.name =~ /^.*google-analytics.com$/          ||
-        entity.name =~ /^.*google.ca$/                     ||
-        entity.name =~ /^.*google.cl$/                     ||
-        entity.name =~ /^.*google.co.in$/                  ||
-        entity.name =~ /^.*google.co.jp$/                  ||
-        entity.name =~ /^.*google.co.uk$/                  ||
-        entity.name =~ /^.*google.com$/                    ||
-        entity.name =~ /^.*google.com.ar$/                 ||
-        entity.name =~ /^.*google.com.au$/                 ||
-        entity.name =~ /^.*google.com.br$/                 ||
-        entity.name =~ /^.*google.com.co$/                 ||
-        entity.name =~ /^.*google.com.mx$/                 ||
-        entity.name =~ /^.*google.com.tr$/                 ||
-        entity.name =~ /^.*google.com.vn$/                 ||
-        entity.name =~ /^.*google.de$/                     ||
-        entity.name =~ /^.*google.es$/                     ||
-        entity.name =~ /^.*google.fr$/                     ||
-        entity.name =~ /^.*google.hu$/                     ||
-        entity.name =~ /^.*google.it$/                     ||
-        entity.name =~ /^.*google.nl$/                     ||
-        entity.name =~ /^.*google.pl$/                     ||
-        entity.name =~ /^.*google.pt$/                     ||
-        entity.name =~ /^.*googleadapis.com$/              ||
-        entity.name =~ /^.*googleapis.cn$/                 ||
-        entity.name =~ /^.*googlecommerce.com$/            ||
-        entity.name =~ /^.*googlevideo.com$/               ||
-        entity.name =~ /^.*gstatic.cn$/                    ||
-        entity.name =~ /^.*gstatic.com$/                   ||
-        entity.name =~ /^.*gvt1.com$/                      ||
-        entity.name =~ /^.*gvt2.com$/                      ||
-        entity.name =~ /^.*hubspot.com$/                   ||
-        entity.name =~ /^.*instagram.com$/                 ||
-        entity.name =~ /^.*localhost$/                     ||
-        entity.name =~ /^.*mandrillapp.com$/               ||
-        entity.name =~ /^.*marketo.com$/                   ||
-        entity.name =~ /^.*metric.gstatic.com$/            ||
-        entity.name =~ /^.*microsoft.com$/                 ||
-        entity.name =~ /^.*oclc.org$/                      ||
-        entity.name =~ /^.*ogp.me$/                        ||
-        entity.name =~ /^.*outlook.com$/                   ||
-        entity.name =~ /^.*plus.google.com$/               ||
-        entity.name =~ /^.*root-servers.net$/              ||
-        entity.name =~ /^.*purl.org$/                      ||
-        entity.name =~ /^.*rdfs.org$/                      ||
-        entity.name =~ /^.*schema.org$/                    ||
-        entity.name =~ /^.*secureserver.net$/              ||
-        entity.name =~ /^.*twitter.com$/                   ||
-        entity.name =~ /^.*urchin$/                        ||
-        entity.name =~ /^.*urchin.com$/                    ||
-        entity.name =~ /^.*url.google.com$/                ||
-        entity.name =~ /^.*w3.org$/                        ||
-        entity.name =~ /^.*www.goo.gl$/                    ||
-        entity.name =~ /^.*xmlns.com$/                     ||
-        entity.name =~ /^.*youtu.be$/                      ||
-        entity.name =~ /^.*youtube-nocookie.com$/          ||
-        entity.name =~ /^.*youtube.com$/                   ||
-        entity.name =~ /^.*youtubeeducation.com$/          ||
-        entity.name =~ /^.*ytimg.com$/                     ||
-        entity.name =~ /^.*zepheira.com$/                  ||
-        entity.name =~ /^.akamaiedge.net$/                 ||
-        entity.name =~ /^.amazonaws.com$/                  ||
-        entity.name =~ /^.azure-mobile.net$/               ||
-        entity.name =~ /^.azureedge-test.net$/             ||
-        entity.name =~ /^.azureedge.net$/                  ||
-        entity.name =~ /^.azurewebsites.net$/              ||
-        entity.name =~ /^.cloudapp.net$/                   ||
-        entity.name =~ /^.edgecastcdn.net$/                ||
-        entity.name =~ /^.edgekey.net$/                    ||
-        entity.name =~ /^.herokussl.com$/                  ||
-        entity.name =~ /^.msn.com$/                        ||
-        entity.name =~ /^.outook.com$/                     ||
-        entity.name =~ /^.secureserver.net$/               ||
-        entity.name =~ /^.v0cdn.net$/                      ||
-        entity.name =~ /^.windowsphone-int.net$/           ||
-        entity.name =~ /^.windows.net$/                    ||
-        entity.name =~ /^.windowsphone.com$/
-       )
-
-        puts "SKIP Prohibited entity: #{entity.type}##{entity.name}"
-        return true
-      end
-
-    end
-
 
 end
 end

@@ -5,11 +5,14 @@ class IntrigueApp < Sinatra::Base
     # Kick off a task
     get '/:project/results/?' do
 
+      search_string = params["search_string"]
+
       # get a list of task_results
       ### TODO - figure out how to filter this based on a nil association
       # http://stackoverflow.com/questions/7615752/datamapper-filter-records-by-association-count
-      @task_results = Intrigue::Model::TaskResult.scope_by_project(@project_name).all
-
+      #@task_results = Intrigue::Model::TaskResult.scope_by_project(@project_name).all
+      @manual_results = Intrigue::Model::TaskResult.scope_by_project(@project_name).where(:autoscheduled => false).where(Sequel.ilike(:name, "%#{search_string}%"))
+      @autoscheduled_results = Intrigue::Model::TaskResult.scope_by_project(@project_name).where(:autoscheduled => true).where(Sequel.ilike(:name, "%#{search_string}%"))
       erb :'results/index'
     end
 
