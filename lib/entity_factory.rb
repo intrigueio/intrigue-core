@@ -65,8 +65,8 @@ class EntityFactory
     # START PROCESSING OF ENRICHMENT (to depth of 1)
     if task_result.depth > 0
       if (entity.type_string == "Uri")
-        start_task("task_autoscheduled", project, task_result.scan_result, "web_server_fingerprint", entity, task_result.depth, [],[])
-        start_task("task_autoscheduled", project, task_result.scan_result, "web_application_fingerprint", entity, task_result.depth, [],[])
+        start_task("task_autoscheduled", project, task_result.scan_result, "web_server_fingerprint", entity, task_result.depth - 1, [],[])
+        start_task("task_autoscheduled", project, task_result.scan_result, "web_application_fingerprint", entity, task_result.depth - 1, [],[])
       end
     end# END PROCESSING OF ENRICHMENT
 
