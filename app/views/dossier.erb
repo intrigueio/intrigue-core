@@ -28,34 +28,25 @@
   <% end %>
 </ul>
 
-<p>Uris:</p>
-<ul>
-  <% @uris.each do |e| %>
-  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
-  <% end %>
-</ul>
-
-<p>Applications:</p>
+<p>Web Stacks:</p>
 <ul>
   <% @uris.each do |e|
-    next unless e.details["web_application"]
-    next unless e.details["web_application"].count > 0  %>
-  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.details["web_application"]}"  %></a></li>
-  <% end %>
-</ul>
-
-<p>Web Servers:</p>
-<ul>
-  <% @uris.each do |e|
-    next unless e.details["web_server"]
-    next unless e.details["web_server"].count > 0 %>
-  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.details["web_server"]}"  %></a></li>
+    next unless e.details["stack"]
+    next unless e.details["stack"].count > 0  %>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.name}: ...  #{e.details["stack"]}"  %></a></li>
   <% end %>
 </ul>
 
 <p>SSL Certificates:</p>
 <ul>
   <% @phone_numbers.each do |e| %>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <% end %>
+</ul>
+
+<p>Uris:</p>
+<ul>
+  <% @uris.each do |e| %>
   <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
   <% end %>
 </ul>

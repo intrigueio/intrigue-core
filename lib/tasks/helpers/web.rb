@@ -55,6 +55,9 @@ module Task
       rescue Errno::ECONNRESET => e
         @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
         return nil
+      rescue Errno::ETIMEDOUT => e
+        @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
+        return nil
       rescue Net::HTTPBadResponse => e
         @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
         return nil
@@ -169,6 +172,8 @@ module Task
       #rescue TypeError
       #  # https://github.com/jaimeiniesta/metainspector/issues/125
       #  @task_result.logger.log_error "TypeError - unknown failure" if @task_result
+      rescue ArgumentError => e
+        @task_result.logger.log_error "Unable to open connection: #{e}" if @task_result
       rescue Net::OpenTimeout => e
         @task_result.logger.log_error "Timeout : #{e}" if @task_result
       rescue Net::ReadTimeout => e
