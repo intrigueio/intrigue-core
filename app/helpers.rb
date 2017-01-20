@@ -16,7 +16,7 @@ module Helper
       :options => options,
       :handlers => [],
       :base_entity => entity,
-      :autoscheduled => false,
+      :autoscheduled => (queue == "task_autoscheduled"),
       :depth => depth
     })
 
@@ -29,14 +29,14 @@ module Helper
     # If the depth is greater than 1, AND we don't have a prexisting scan id, start a new scan
     if !existing_scan_result && depth > 1
 
-      strategy = "default"
+      strategy_name = "discovery"
       scan_result = Intrigue::Model::ScanResult.create({
-        :name => "scan to depth #{depth} using strategy #{strategy} on #{entity.name}",
+        :name => "#{strategy_name} to depth #{depth} on #{entity.name}",
         :project => project,
         :base_entity_id => entity.id,
         :logger => Intrigue::Model::Logger.create(:project => project),
         :depth => depth,
-        :strategy => strategy,
+        :strategy => strategy_name,
         :handlers => handlers
       })
 

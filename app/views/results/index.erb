@@ -13,11 +13,11 @@ Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_na
 <div class="col-sm-6">
   <h3>Manual Results</h3>
   <ul>
-  <% @manual_results.each do |x| %> <li><a href="/v1/<%=@project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity %> </a></li><% end %>
+  <% @manual_results.each do |x| %> <li><a href="/v1/<%=@project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity %> </a> (<%=x.complete%>)</li><% end %>
   </ul>
 
   <h3>Autoscheduled Results</h3>
   <ul>
-  <% @autoscheduled_results.each do |x| %> <li><a href="/v1/<%=@project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity %> </a></li><% end %>
+  <% @autoscheduled_results.each do |x| %> <li><a href="/v1/<%=@project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity %> </a> (<%=x.complete%>)</li><% end %>
   </ul>
 </div>

@@ -67,9 +67,12 @@ class EntityFactory
     end# END PROCESSING OF ENRICHMENT
 
     # START PROCESSING OF RECURSION BY STRATEGY TYPE
-    if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
+    scan_result = task_result.scan_result
+    if scan_result  && task_result.depth > 0 # if this is a scan and we're within depth
       unless prohibited_entity? entity
-        Intrigue::Strategy::Default.recurse(entity, task_result)
+        if scan_result.strategy == "discovery"
+          Intrigue::Strategy::Discovery.recurse(entity, task_result)
+        end
       end
     end
     # END PROCESSING OF RECURSION BY STRATEGY TYPE

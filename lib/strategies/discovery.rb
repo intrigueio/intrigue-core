@@ -1,6 +1,6 @@
 module Intrigue
 module Strategy
-  class Default < Intrigue::Strategy::Base
+  class Discovery < Intrigue::Strategy::Base
 
     def self.recurse(entity, task_result)
 
