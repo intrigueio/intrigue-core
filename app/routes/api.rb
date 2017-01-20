@@ -77,7 +77,7 @@ class IntrigueApp < Sinatra::Base
 
       # Start a new generation
       unless project.graph_generation_in_progress
-        Intrigue::Workers::GraphJsonWorker.perform_async(project.id)
+        Intrigue::Workers::GenerateGraphWorker.perform_async(project.id)
       end
 
     project.graph_json

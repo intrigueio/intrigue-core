@@ -41,8 +41,6 @@ Sequel.migration do
       String :graph_json, :text => true
       DateTime :graph_generated_at
       FalseClass :graph_generation_in_progress, default: false
-      FalseClass :complete, default: false
-      String :handlers, :text => true
       String :options, :text => true
     end
 
@@ -58,6 +56,9 @@ Sequel.migration do
       String :handlers, :text => true
       String :options, :text => true
       FalseClass :complete, default: false
+      String :graph_json, :text => true
+      DateTime :graph_generated_at
+      FalseClass :graph_generation_in_progress, default: false
       String :strategy
       String :filter_strings
     end

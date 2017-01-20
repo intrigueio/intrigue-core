@@ -14,8 +14,8 @@ module Helper
       :name => "#{task_name} on #{entity.name}",
       :task_name => task_name,
       :options => options,
+      :handlers => [],
       :base_entity => entity,
-      :handlers => handlers,
       :autoscheduled => false,
       :depth => depth
     })
@@ -48,35 +48,18 @@ module Helper
       task_result.scan_result = scan_result
       task_result.save
 
-      puts "Task Results for #{scan_result.name}: #{scan_result.task_results.count}"
-      _schedule_task(queue, scan_result.task_results.first)
+      # Start it
+      scan_result.start(queue)
 
     else
       # If it's not a new scan, just kick off the task result
-      _schedule_task(queue, task_result)
+      task_result.handlers = handlers
+      task_result.save
+
+      task_result.start(queue)
     end
 
   task_result
-  end
-
-  # handle running of tasks
-  private
-  def _schedule_task(queue, task_result)
-
-    if queue == "task_autoscheduled"
-      task_result.autoscheduled = true
-      task_result.save
-
-      Sidekiq::Client.push({
-        "class" => Intrigue::TaskFactory.create_by_name(task_result.task_name).class.to_s,
-        "queue" => "task_autoscheduled",
-        "retry" => true,
-        "args" => [task_result.id]
-      })
-    else # task queue
-      task_result.start
-    end
-
   end
 
 end

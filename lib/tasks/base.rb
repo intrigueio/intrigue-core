@@ -58,7 +58,6 @@ class BaseTask
     ###########################
     @task_result.task_name = self.class.metadata[:name]
     @task_result.timestamp_start = Time.now.getutc
-    #@task_result.id = task_result_id
 
     ###################################
     # Perform the setup->run workflow #
@@ -69,18 +68,12 @@ class BaseTask
       # @task_result - the final result to be passed back to the caller
       _log "Calling setup()"
       if setup(task_result_id, @entity, options)
-        #begin
-          #Timeout.timeout($intrigue_global_timeout) do # 15 minutes should be enough time to hit a class b for a single port w/ masscan
-            _log "Calling run()"
-            # Save the task locally
-            @task_result.save
-            # Run the task, which will update @task_result and @task_result
-            run()
-            _log_good "Run complete. Ship it!"
-          #end
-        #rescue Timeout::Error
-        #  _log_error "Timed out"
-        #end
+          _log "Calling run()"
+          # Save the task locally
+          @task_result.save
+          # Run the task, which will update @task_result and @task_result
+          run()
+          _log_good "Run complete. Ship it!"
       else
         _log_error "Setup failed, bailing out!"
       end
@@ -93,21 +86,6 @@ class BaseTask
     @task_result.timestamp_end = Time.now.getutc
     @task_result.complete = true
     _log "Calling cleanup!"
-
-    #
-    # Handlers!
-    #
-    # (see lib/report/handlers)
-    @task_result.handlers.each do |handler_type|
-      _log "Processing #{handler_type} handler."
-      begin
-        handler = HandlerFactory.create_by_type(handler_type)
-        response = handler.process(@task_result)
-      rescue Exception => e
-        _log_error "Unable to process handler #{handler_type}: #{e}"
-        _log_error "Got response: #{response}"
-      end
-    end
 
     cleanup
     @task_result.save

@@ -16,7 +16,6 @@ module Handler
         "#{$intrigue_basedir}/results/#{_export_file_name(result)}"
       end
 
-
       def _get_handler_config(key)
         begin
           global_config = Intrigue::Config::GlobalConfig.new

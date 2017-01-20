@@ -12,6 +12,8 @@ module Intrigue
       many_to_one :project
       many_to_one :base_entity, :class => :'Intrigue::Model::Entity', :key => :base_entity_id
 
+      include Intrigue::Model::Capabilities::HandleResult
+
       def self.scope_by_project(project_name)
         named_project_id = Intrigue::Model::Project.first(:name => project_name).id
         where(:project_id => named_project_id)
@@ -21,6 +23,31 @@ module Intrigue
         super
       end
 
+      def start(queue)
+
+        if queue == "task_autoscheduled"
+          autoscheduled = true
+
+          job_id = Sidekiq::Client.push({
+            "class" => Intrigue::TaskFactory.create_by_name(task_name).class.to_s,
+            "queue" => "task_autoscheduled",
+            "retry" => true,
+            "args" => [id]
+          })
+
+          save
+
+        else # task queue
+          # TODO, keep track of the id so we can control the task later
+          task = Intrigue::TaskFactory.create_by_name(task_name)
+          job_id = task.class.perform_async self.id
+          save
+        end
+
+        handle_result_in_background if handlers.count > 0
+
+      end
+
       def log
         logger.full_log
       end
@@ -28,14 +55,6 @@ module Intrigue
       def strategy
         return scan_result.strategy if scan_result
       nil
-      end
-
-      # Start a task
-      def start
-        # TODO, keep track of the id so we can control the task later
-        task = Intrigue::TaskFactory.create_by_name(task_name)
-        job_id = task.class.perform_async self.id
-        save
       end
 
       # Matches based on type and the attribute "name"

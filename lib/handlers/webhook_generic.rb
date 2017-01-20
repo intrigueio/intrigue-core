@@ -9,8 +9,7 @@ module Handler
     def process(result)
       uri = _get_handler_config "uri"
       begin
-        recoded_string = result.export_json.encode('UTF-8', :invalid => :replace, :replace => '?')
-        RestClient.post uri, recoded_string, :content_type => "application/json"
+        RestClient.post uri, result.export_json, :content_type => "application/json"
       rescue Encoding::UndefinedConversionError
         return false
       rescue JSON::GeneratorError

@@ -23,7 +23,6 @@ describe "ScanResult" do
     })
 
     expect(x).to exist
-
   end
 
   it "exports graph json" do

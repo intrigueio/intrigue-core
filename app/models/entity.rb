@@ -3,7 +3,7 @@ module Intrigue
 
     class AliasMapping < Sequel::Model
       plugin :validation_helpers
-      self.raise_on_save_failure = false
+      #self.raise_on_save_failure = false
 
       many_to_one :source, :class => :'Intrigue::Model::Entity', :key => :source_id
       many_to_one :target, :class => :'Intrigue::Model::Entity', :key => :target_id
@@ -26,13 +26,10 @@ module Intrigue
       many_to_many :task_results
       many_to_one :project
       many_to_many :aliases, :left_key=>:source_id,:right_key=>:target_id, :join_table=>:alias_mappings, :class=>self
-      #one_to_many :aliases, :class => 'Intrigue::Model::Entity', :join_table => :alias_mappings, :primary_key => :id
 
       def validate
         super
         validates_unique([:name, :project_id])
-        #validates_uniqueness_of :name, :scope => :project
-        #validates_length_of :name, :min => 2
       end
 
       def deleted?

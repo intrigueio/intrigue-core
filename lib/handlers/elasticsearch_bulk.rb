@@ -7,6 +7,9 @@ module Handler
     end
 
     def process(result)
+
+      return "Unable to process" unless result.respond_to? export_json
+
       # Write it out
       shortname = "#{result.name}"
       File.open("#{_export_file_path(result)}.bulk", "a") do |file|

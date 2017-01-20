@@ -8,6 +8,8 @@ module Handler
 
     def process(result)
 
+      return "Unable to process" unless result.respond_to? export_json
+
       require 'elasticsearch'
       require 'typhoeus/adapters/faraday'
 

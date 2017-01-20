@@ -24,7 +24,7 @@ module Handler
       bucket = connection.directories.get(bucket_name)
       bucket.files.create (
         { :key => object_name,
-          :body => JSON.pretty_generate(result.export_hash)
+          :body => result.export_json
         }
       )
 

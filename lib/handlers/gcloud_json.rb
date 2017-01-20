@@ -10,6 +10,8 @@ module Handler
     def process(result)
       require "fog"
 
+      return "Unable to process" unless result.respond_to? export_json
+
       # Grab configuration
       bucket_name = _get_handler_config("bucket_name")
       developer_email = _get_handler_config("developer_email")
@@ -26,7 +28,7 @@ module Handler
       bucket = connection.directories.get(bucket_name)
       bucket.files.create (
         { :key => object_name,
-          :body => JSON.pretty_generate(result.export_hash)
+          :body => result.export_json
         }
       )
     end

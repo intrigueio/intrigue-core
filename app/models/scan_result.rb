@@ -2,6 +2,7 @@ module Intrigue
   module Model
     class ScanResult < Sequel::Model
       plugin :validation_helpers
+      plugin :serialization, :json, :options, :handlers
 
       #set_allowed_columns :project_id, :logger_id, :base_entity_id, :name, :depth, :handlers, :strategy, :filter_strings
 
@@ -9,6 +10,9 @@ module Intrigue
       many_to_one :project
       one_to_many :task_results
       many_to_one :base_entity, :class => :'Intrigue::Model::Entity', :key => :base_entity_id
+
+      include Intrigue::Model::Capabilities::ExportGraph
+      include Intrigue::Model::Capabilities::HandleResult
 
       def self.scope_by_project(project_name)
         named_project_id = Intrigue::Model::Project.first(:name => project_name).id
@@ -18,6 +22,11 @@ module Intrigue
       def validate
         super
         #validates_unique([:name, :project_id, :depth])
+      end
+
+      def start(queue)
+        task_results.first.start(queue)
+        handle_result_in_background
       end
 
       def log
@@ -87,46 +96,6 @@ module Intrigue
           output_string << x.name.gsub(/[\,,\s]/,"") << ", " << "#{x.children.map{ |y| y.name.gsub(/[\,,\s]/,"") }.join(", ")}\n"
         end
       output_string
-      end
-
-      def export_graph_json
-
-        # generate the nodes
-        nodes = []
-        # Add the base entity
-        nodes << { :id => self.base_entity.id, :label => "#{self.base_entity.name}" }
-        # And all the child entities
-        nodes.concat self.entities.map{|x| {:id => x.id, :label => "#{x.name}"}  }
-        # But make sure we only have one
-        nodes.uniq! {|x| x[:id] }
-
-        #
-        # calculate edges from the base entity
-        #
-        #base_entity.children.each do |c|
-          #puts "working on #{base_entity.to_s} => #{c.to_s}"
-          #puts "DEBUG Child ID #{c.id} not found in " unless debug_node_ids.include? c.id
-        #  edges << {"id" => edge_count, "source" => base_entity.id, "target" => c.id }
-        #  edge_count += 1
-        #end
-
-        # calculate child edges
-        edges = []
-        edge_count = 1
-        self.task_results.each do |t|
-          t.entities.each do |e|
-            edges << {"id" => edge_count, "source" => t.base_entity.id, "target" => e.id}
-
-            # Hack, since it seems like our entities list doesn't contain everything.
-            nodes << {:id => e.id, :label => "#{e.type}: #{e.name}"}
-            nodes.uniq! {|x| x[:id]}
-
-            edge_count += 1
-          end
-        end
-
-        # dump the json
-        { "nodes" => nodes, "edges" => edges }.to_json
       end
 
     end

@@ -70,7 +70,7 @@ class GetAlternateNames < BaseTask
           if resolved_name
             _log_good "Creating domain #{resolved_name}"
             # Create our new dns record entity with the resolved name
-            _create_entity("DnsRecord", {"name" => resolved_name}, @entity)  unless resource.name == @entity.name
+            _create_entity("DnsRecord", {"name" => resolved_name}, @entity)  unless resolved_name == @entity.name
           else
             _log "Unable to find a name for #{address}"
           end

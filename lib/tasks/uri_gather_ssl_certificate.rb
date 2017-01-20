@@ -80,7 +80,7 @@ class UriGatherSslCertTask  < BaseTask
       tcp_client.close
 
       # Create an SSL Certificate entity
-      _create_entity "SslCertificate", {  "name" => "#{cert.subject.split("CN=").last}",
+      _create_entity "SslCertificate", {  "name" => "#{cert.subject.to_s.split("CN=").last}",
                                           "fq_name" => "#{cert.subject}",
                                           "text" => "#{cert.to_text}" }
 
