@@ -44,7 +44,8 @@ gem 'whoisology',     :git => 'https://github.com/pentestify/whoisology.git'
 gem 'opencorporates', :git => 'https://github.com/pentestify/opencorporates.git'
 
 # Handlers
-#gem 'couchrest'
+gem 'couchrest'
+gem 'fog'
 
 gem 'foreman'
 gem 'pry'                     # Debugging
