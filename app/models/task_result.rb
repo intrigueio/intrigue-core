@@ -34,7 +34,7 @@ module Intrigue
             "retry" => true,
             "args" => [id]
           })
-          
+
           save
 
         else # start it in the task queues
@@ -43,7 +43,7 @@ module Intrigue
           save
         end
 
-        handle_result
+        handle_result if handlers.length > 0
 
       end
 

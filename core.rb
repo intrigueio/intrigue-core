@@ -112,7 +112,7 @@ class IntrigueApp < Sinatra::Base
     $intrigue_server_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
 
     # Parse out our project
-    project_string = request.path_info.split("/")[2] || "Default"
+    project_string = URI.unescape(request.path_info.split("/")[2] || "Default")
 
     # Allow certain requests without a project string
     pass if [ "project", "tasks", "tasks.json", "entity_types.json", nil].include? project_string
@@ -123,7 +123,7 @@ class IntrigueApp < Sinatra::Base
     pass if request.path_info =~ /linkurious/ # if we're submitting a new task result via api
 
     # Set the project based on the project_string
-    project = Intrigue::Model::Project.first(:name => URI.unescape(project_string))
+    project = Intrigue::Model::Project.first(:name => project_string)
 
     # If we haven't resolved a project, let's handle it
     unless project

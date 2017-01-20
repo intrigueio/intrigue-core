@@ -23,6 +23,14 @@ module Intrigue
         Intrigue::Model::Entity.where(:project_id => id)
       end
 
+      def export_hash
+        { :id => id,
+          :name => name,
+          :entities => entities.map {|e| e.export_json },
+          :task_results => task_results.map {|t| t.export_json }
+        }
+      end
+
     end
   end
 end
