@@ -3,11 +3,11 @@ Sequel.migration do
     create_table :entities do
       primary_key :id
       foreign_key :project_id, :null => false
-      #foreign_key :task_result_id, :null => true
 
       String :type
       String :name, :size => 400
       String :details, :text => true
+      FalseClass :deleted, :default => false
     end
 
     create_table :entities_task_results do
@@ -37,9 +37,13 @@ Sequel.migration do
       primary_key :id
 
       String :name, :size => 400
+
       String :graph_json, :text => true
       DateTime :graph_generated_at
       FalseClass :graph_generation_in_progress, default: false
+      FalseClass :complete, default: false
+      String :handlers, :text => true
+      String :options, :text => true
     end
 
     create_table :scan_results do
@@ -51,7 +55,8 @@ Sequel.migration do
 
       String :name, :size => 400
       Integer :depth
-      String :handlers
+      String :handlers, :text => true
+      String :options, :text => true
       FalseClass :complete, default: false
       String :strategy
       String :filter_strings

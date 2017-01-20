@@ -4,9 +4,9 @@ describe "Intrigue" do
 describe "Models" do
 describe "TaskResult" do
 
-  it "creates a new task_result" do
-
-    project = Intrigue::Model::Project.create(:name => "TEST!")
+  it "can be created" do
+    
+    project = Intrigue::Model::Project.create(:name => "x")
 
     logger = Intrigue::Model::Logger.create( :project => project )
 
@@ -22,9 +22,9 @@ describe "TaskResult" do
       :task_name => "example"
     })
 
-    #expect(x.id).to eq(1)
+    expect(x).to exist
     expect(x.logger).to exist
-    expect(x.project.name).to eq("TEST!")
+    expect(x.project.name).to eq("x")
     expect(x.task.class.metadata[:name]).to match "example"
   end
 

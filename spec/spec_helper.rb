@@ -11,12 +11,23 @@ def app
   IntrigueApp
 end
 
+DB = Sequel.connect("sqlite:///tmp/test")
+Sequel::Model.db = DB
 
-RSpec.configure do |config|
-  config.include Rack::Test::Methods
-  DB = Sequel.sqlite
-  config.around(:each) do |example|
-    DB.transaction(:rollback=>:always, :auto_savepoint=>true){example.run}
+#puts "DB: #{DB}"
+#puts "Sequel::Model.db: #{Sequel::Model.db}"
+
+RSpec.configure do |c|
+  c.include Rack::Test::Methods
+  c.around(:each) do |example|
+    #puts "Starting #{example.description}"
+    example.run
+    #puts "Cleaning up #{example.description}"
+    Intrigue::Model::Project.all.each {|x| x.destroy }
+    Intrigue::Model::Logger.all.each {|x| x.destroy }
+    Intrigue::Model::ScanResult.all.each {|x| x.destroy }
+    Intrigue::Model::TaskResult.all.each {|x| x.destroy }
+    Intrigue::Model::Entity.all.each {|x| x.destroy }
+    #puts "Ending #{example.description}"
   end
-
 end
