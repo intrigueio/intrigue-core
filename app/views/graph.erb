@@ -77,8 +77,8 @@ function delete_entity_children(id){
       defaultNodeHoverColor: '#ff0000',
       edgeColor: 'default'
     }
-  }, function(s) {
 
+  }, function(s) {
     s.graph.nodes().forEach(function(node, i, a) {
       node.x = Math.cos(Math.PI * 2 * i / a.length);
       node.y = Math.sin(Math.PI * 2 * i / a.length);

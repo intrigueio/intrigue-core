@@ -8,7 +8,6 @@ Sequel.migration do
       String :type
       String :name, :size => 400
       String :details, :text => true
-      FalseClass :secondary, default: false
     end
 
     create_table :entities_task_results do

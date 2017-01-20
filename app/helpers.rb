@@ -71,11 +71,12 @@ module Helper
         "class" => Intrigue::TaskFactory.create_by_name(task_result.task_name).class.to_s,
         "queue" => "task_autoscheduled",
         "retry" => true,
-        "args" => [task_result.id, task_result.handlers]
+        "args" => [task_result.id]
       })
     else # task queue
       task_result.start
     end
+
   end
 
 end

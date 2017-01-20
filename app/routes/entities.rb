@@ -1,24 +1,6 @@
 class IntrigueApp < Sinatra::Base
   namespace '/v1' do
-=begin
-    post '/:project/entities' do
-      @search_string = params[:search_string]
-      @entity_types = params[:entity_types]
-      @page_id = params[:page]
 
-      ## We have some very rudimentary searching capabilities here
-      x = Intrigue::Model::Entity.scope_by_project(@project_name).where(:deleted => false)
-      x = x.where(:type => @entity_types) if @entity_types
-
-      if @search_string
-        @entities = x.where(Sequel.ilike(:details, "%#{@search_string}%"))
-      else
-        @entities = x
-      end
-
-      erb :'entities/index'
-    end
-=end
     get '/:project/entities' do
       @search_string = params[:search_string]
       @entity_types = params[:entity_types]

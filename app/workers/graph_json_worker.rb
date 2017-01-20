@@ -12,8 +12,6 @@ class GraphJsonWorker
     begin
       puts "Starting graph generation for #{project.name}!"
 
-
-
       # Notify that it's in progress
       project.graph_generation_in_progress = true
       project.save

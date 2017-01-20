@@ -3,11 +3,10 @@ class EntityFactory
   extend Intrigue::Task::Helper
   extend Intrigue::Task::Prohibited
 
-  # NOTE: We don't auto-register entities like the other factories, because they're
-  # datamapper objects, and that's handled by datamapper's "type" property
+  # NOTE: We don't auto-register entities like the other factories (handled by
+  # single table inheritance)
 
-  # NOTE: The user's desired depth of recursion is stored on the task_result. This
-  # isn't necessarily intuitive.
+  # NOTE: The user's desired depth of recursion is stored on the task_result.
 
   def self.entity_exists?(type,name)
     return true if Intrigue::Model::Entity.first(:name=>name,:type=>type)
@@ -29,6 +28,7 @@ class EntityFactory
     # Merge the details if it already exists
     entity = nil
     entity = Intrigue::Model::Entity.scope_by_project_and_type(project.name,type).first(:name => name)
+
     # We're going to have to look for each of the aliases as well.
     if entity.kind_of? Intrigue::Model::Entity
       entity.details = details.merge(entity.details)
@@ -49,7 +49,7 @@ class EntityFactory
     task_result.add_entity entity
     task_result.save
 
-    # Attach the aliases on both sides and mark the new entity as secondary if we already have a version of this.
+    # Attach the aliases on both sides
     if original_entity
       #unless Intrigue::Model::AliasMapping.where(:source_id => original_entity.id, :target_id => entity.id).first
       Intrigue::Model::AliasMapping.create(:source_id => original_entity.id, :target_id => entity.id)

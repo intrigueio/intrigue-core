@@ -38,6 +38,7 @@ getEntities(<%=@result.id%>);
   <p>Start: <%=@result.timestamp_start %> </p>
   <p>End: <%= @result.timestamp_end %> </p>
   <p>Elapsed (s): <%= @elapsed_time %> </p>
+  <p>Job ID: <%= @result.job_id %> </p>
   <p>Entity: <a href="/v1/<%=@project_name%>/entities/<%=@result.base_entity.id if @result.base_entity %>"><%= h "#{@result.base_entity}" %></a></p>
   <p>Complete: <%= @result.complete %></p>
   Export:

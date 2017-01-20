@@ -12,7 +12,7 @@ class BaseTask
     TaskFactory.register(base)
   end
 
-  def perform(task_result_id, handlers)
+  def perform(task_result_id)
 
     #######################
     # Get the Task Result #
@@ -98,7 +98,7 @@ class BaseTask
     # Handlers!
     #
     # (see lib/report/handlers)
-    handlers.each do |handler_type|
+    @task_result.handlers.each do |handler_type|
       _log "Processing #{handler_type} handler."
       begin
         handler = HandlerFactory.create_by_type(handler_type)

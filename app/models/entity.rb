@@ -21,7 +21,6 @@ module Intrigue
       plugin :serialization, :json, :details
       self.raise_on_save_failure = false
 
-
       #set_allowed_columns :type, :name, :details, :project_id
 
       many_to_many :task_results
@@ -113,7 +112,6 @@ module Intrigue
           :id => id.to_s,
           :type => type,
           :name =>  name,
-          :secondary => secondary,
           :deleted => deleted,
           :details => details,
           :aliases => self.aliases.map{|x| {

@@ -8,9 +8,6 @@ class IntrigueApp < Sinatra::Base
       search_string = params["search_string"]
 
       # get a list of task_results
-      ### TODO - figure out how to filter this based on a nil association
-      # http://stackoverflow.com/questions/7615752/datamapper-filter-records-by-association-count
-      #@task_results = Intrigue::Model::TaskResult.scope_by_project(@project_name).all
       @manual_results = Intrigue::Model::TaskResult.scope_by_project(@project_name).where(:autoscheduled => false).where(Sequel.ilike(:name, "%#{search_string}%"))
       @autoscheduled_results = Intrigue::Model::TaskResult.scope_by_project(@project_name).where(:autoscheduled => true).where(Sequel.ilike(:name, "%#{search_string}%"))
       erb :'results/index'
@@ -18,7 +15,7 @@ class IntrigueApp < Sinatra::Base
 
     # Helper to construct the request to the API when the application is used interactively
     post '/:project/interactive/single/?' do
-      # get the task name
+
       task_name = "#{@params["task"]}"
       entity_id = @params["entity_id"]
       depth = @params["depth"].to_i
@@ -35,7 +32,7 @@ class IntrigueApp < Sinatra::Base
         end
       end
 
-      # hack! remove the name, no longer needed
+      # hack! remove the name, no longer needed in the details
       entity_details.delete("name")
 
       # Construct an entity from the data we have
@@ -45,7 +42,7 @@ class IntrigueApp < Sinatra::Base
         entity_type = @params["entity_type"]
         return unless entity_type
 
-        # TODO - validate that it's a valid entity type before we eval
+        # TODO - SECURITY - validate that it's a valid entity type before we eval
 
         klass = eval("Intrigue::Entity::#{entity_type}")
         entity_name = "#{@params["attrib_name"]}"

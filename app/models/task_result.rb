@@ -32,9 +32,9 @@ module Intrigue
 
       # Start a task
       def start
-        # TODO, keep track of the sidekiq id so we can control the task later
+        # TODO, keep track of the id so we can control the task later
         task = Intrigue::TaskFactory.create_by_name(task_name)
-        job_id = task.class.perform_async self.id, handlers
+        job_id = task.class.perform_async self.id
         save
       end
 
