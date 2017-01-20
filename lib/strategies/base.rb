@@ -19,9 +19,6 @@ module Strategy
 
       if existing_task_result
         puts "Already have this result: #{task_name} on #{entity} at depth #{old_task_result.depth}"
-        #new_task_result = existing_task_result.clone
-        #new_task_result.depth = old_task_result.depth
-        #new_task_result.save
       else
         puts "Starting Recursive Task: #{task_name} on #{entity} at depth #{old_task_result.depth}"
         new_task_result = start_task("task_autoscheduled", project, old_task_result.scan_result, task_name, entity, old_task_result.depth - 1, options, old_task_result.handlers)

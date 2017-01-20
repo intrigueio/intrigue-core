@@ -3,19 +3,7 @@ module Strategy
   class Default < Intrigue::Strategy::Base
 
     def self.recurse(entity, task_result)
-      #puts "Recurse called for #{task_result.task_name} on #{entity}"
-      #puts "Task Result: #{task_result.inspect}"
-=begin
-      if task_result.depth == 0
-        puts "Recurse called for #{task_result.task_name} on #{entity} but at max depth. Returning!"
-        return nil
-      end
 
-      if prohibited_entity?(entity)
-        puts "SKIPPING recursion on prohibited entity: #{entity}"
-        return nil
-      end
-=end
       if entity.type_string == "DnsRecord"
 
         start_recursive_task(task_result,"nmap_scan",entity)
@@ -24,7 +12,7 @@ module Strategy
         start_recursive_task(task_result, "get_alternate_names", entity)
 
         ### DNS Subdomain Bruteforce
-        # do a big bruteforce if the size is small enough
+        # Do a big bruteforce if the size is small enough
         if (entity.name.split(".").length < 3)
           start_recursive_task(task_result,"dns_brute_sub",entity,[
             {"name" => "use_file", "value" => true },
