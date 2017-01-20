@@ -123,7 +123,7 @@ class IntrigueApp < Sinatra::Base
     pass if request.path_info =~ /linkurious/ # if we're submitting a new task result via api
 
     # Set the project based on the project_string
-    project = Intrigue::Model::Project.first(:name => project_string)
+    project = Intrigue::Model::Project.first(:name => URI.unescape(project_string))
 
     # If we haven't resolved a project, let's handle it
     unless project
@@ -131,8 +131,8 @@ class IntrigueApp < Sinatra::Base
       if project_string == "Default"
         project = Intrigue::Model::Project.create(:name => "Default")
       else
-        puts "Halting request, on project string: #{project_string}"
-        halt
+        puts "redirecting..."
+        redirect "/"
       end
     end
 
