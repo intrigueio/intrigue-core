@@ -7,9 +7,12 @@ module HandleResult
   # as we're marked complete! (Yes, we have to be "complete", or it will wait -
   # forever if necessary)
 
-  def handle_result_in_background
+
+  def handle_result
+
     # Start a new generation
-     Intrigue::Workers::HandleResultWorker.perform_async(self.class,self.id) if handlers
+    Intrigue::Workers::HandleResultWorker.perform_async(self.class,self.id) if handlers
+
   end
 
 end

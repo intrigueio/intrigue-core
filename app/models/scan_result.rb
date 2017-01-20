@@ -26,7 +26,7 @@ module Intrigue
 
       def start(queue)
         task_results.first.start(queue)
-        handle_result_in_background
+        handle_result # kicks off a background task that waits until all tasks are completed
       end
 
       def log

@@ -34,17 +34,16 @@ module Intrigue
             "retry" => true,
             "args" => [id]
           })
-
+          
           save
 
-        else # task queue
-          # TODO, keep track of the id so we can control the task later
+        else # start it in the task queues
           task = Intrigue::TaskFactory.create_by_name(task_name)
           job_id = task.class.perform_async self.id
           save
         end
 
-        handle_result_in_background if handlers.count > 0
+        handle_result
 
       end
 
