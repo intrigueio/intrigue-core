@@ -11,7 +11,7 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue_api_client.git
-  revision: 7a6b56e9f403eb5aa19be7c69368a3d329815fdb
+  revision: e558ce42632872d2969b58ce4eefc96dc2c8d264
   specs:
     intrigue_api_client (1.1.0)
       json (~> 1.8)
