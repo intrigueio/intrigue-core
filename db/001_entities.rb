@@ -17,6 +17,32 @@ Sequel.migration do
       Integer :task_result_id
     end
 
+    create_table :task_results do
+      primary_key :id
+
+      foreign_key :project_id, :null => false
+      foreign_key :logger_id, :null => false
+      foreign_key :base_entity_id, :null => false
+      foreign_key :scan_result_id, :null => true
+
+      String :name, :size => 400
+      String :task_name, :size => 200
+      DateTime :timestamp_start
+      DateTime :timestamp_end
+      String :options, :text => true
+      String :handlers, :text => true
+      FalseClass :complete, default: false
+      FalseClass :autoscheduled, default: true
+      String :job_id
+      Integer :depth
+    end
+
+    create_table :task_results_scan_results do
+      primary_key :id
+      Integer :scan_result_id
+      Integer :task_result_id
+    end
+
     create_table :alias_mappings do
       primary_key :id
 
@@ -63,31 +89,6 @@ Sequel.migration do
       String :filter_strings
     end
 
-    create_table :task_results do
-      primary_key :id
-
-      foreign_key :project_id, :null => false
-      foreign_key :logger_id, :null => false
-      foreign_key :base_entity_id, :null => false
-      foreign_key :scan_result_id, :null => true
-
-      String :name, :size => 400
-      String :task_name, :size => 200
-      DateTime :timestamp_start
-      DateTime :timestamp_end
-      String :options, :text => true
-      String :handlers, :text => true
-      FalseClass :complete, default: false
-      FalseClass :autoscheduled, default: true
-      String :job_id
-      Integer :depth
-    end
-
-    create_table :task_results_scan_results do
-      primary_key :id
-      Integer :scan_result_id
-      Integer :task_result_id
-    end
 
   end
 end
