@@ -18,10 +18,16 @@ class CoreCli < Thor
     @api = IntrigueApi.new(@server_uri)
   end
 
+  desc "create_project [project_name]", "Create a project"
+  def create_project(project_name)
+    puts "Creating project: #{project_name}"
+    @api.create_project(project_name)
+  end
+
   desc "list", "List all available tasks"
   def list
     puts "Available tasks:"
-    tasks_hash = JSON.parse(RestClient.get("#{@server_uri}/tasks.json"))
+    tasks_hash = @api.list
     tasks_hash.each do |task|
       task_name = task["name"]
       task_description = task["description"]
@@ -29,11 +35,11 @@ class CoreCli < Thor
     end
   end
 
-  desc "info [Task]", "Show detailed about a task"
+  desc "info [Task Name]", "Show detailed about a task"
   def info(task_name)
 
     begin
-      task_info = JSON.parse(RestClient.get("#{@server_uri}/tasks/#{task_name}.json"))
+      task_info = @api.info(task_name)
 
       puts "Name: #{task_info["name"]} (#{task_info["pretty_name"]})"
       puts "Description: #{task_info["description"]}"

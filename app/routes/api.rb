@@ -37,6 +37,8 @@ class IntrigueApp < Sinatra::Base
     # Create a project!
     post '/project' do
 
+      puts "Params: #{params}"
+
       # When we create the project, we want to make sure no HTML is
       # stored, as we'll use this for display later on...
       new_project_name = CGI::escapeHTML(params[:project])
