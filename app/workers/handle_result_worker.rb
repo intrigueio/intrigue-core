@@ -12,8 +12,9 @@ class HandleResultWorker
 
     # Wait until its complete
     until result.complete
-      #puts "sleeping on #{result.export_json}"
-      sleep 3
+
+      result = nil
+      sleep 60
 
       result = resolve_class(klass,id)
       return unless result
@@ -28,8 +29,9 @@ class HandleResultWorker
           result.complete = true
           result.save
         end
+
       end
-      
+
     end
 
     # Then for each of the associated handler types

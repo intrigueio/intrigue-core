@@ -1,6 +1,6 @@
-:verbose: true
+:verbose: false
 #:logfile: ./log/task-autoscheduled.log
 :pidfile: ./tmp/pids/task-autoscheduled.pid
-:concurrency: 10
+:concurrency: 20
 :queues:
   - task_autoscheduled
