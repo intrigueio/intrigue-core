@@ -1,6 +1,6 @@
 :verbose: false
 #:logfile: ./log/app-worker.log
 :pidfile: ./tmp/pids/app-worker.pid
-:concurrency: 1000
+:concurrency: 100
 :queues:
   - app
