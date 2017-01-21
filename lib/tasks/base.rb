@@ -66,14 +66,15 @@ class BaseTask
         # Setup creates the following objects:
         # @user_options - a hash of task options
         # @task_result - the final result to be passed back to the caller
-        _log "Calling setup()"
+        _log "Setting up the task!"
         if setup(task_result_id, @entity, options)
-            _log "Calling run()"
-            # Save the task locally
-            @task_result.save
-            # Run the task, which will update @task_result
-            run()
-            _log_good "Run complete. Ship it!"
+
+            _log "Running the task!"
+            @task_result.save # Save the task
+
+            run() # Run the task, which will update @task_result
+
+            _log "Run complete. Ship it!"
         else
           _log_error "Setup failed, bailing out!"
         end

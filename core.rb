@@ -49,7 +49,7 @@ def setup_database
     :max_connections => 60,
     :pool_timeout => 60
   }
-  
+
   if Intrigue::Config::GlobalConfig.new.config["debug"]
     options.merge({:loggers => [Logger.new($stdout)]})
   end
@@ -133,7 +133,6 @@ class IntrigueApp < Sinatra::Base
       if project_string == "Default"
         project = Intrigue::Model::Project.create(:name => "Default")
       else
-        puts "redirecting..."
         redirect "/"
       end
     end
