@@ -46,8 +46,8 @@ end
 # database set up
 def setup_database
   options = {
-    :max_connections => 60,
-    :pool_timeout => 60
+    :max_connections => 50,
+    :pool_timeout => 50
   }
 
   if Intrigue::Config::GlobalConfig.new.config["debug"]
