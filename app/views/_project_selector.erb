@@ -25,7 +25,7 @@ function delete_project( name )
 Select a project:
 <p>
 <ul>
-<% Intrigue::Model::Project.all.each do |p| %>
+<% Intrigue::Model::Project.order(:name).each do |p| %>
   <li>
     <a href="javascript:set_project('<%= p.name %>')"> <%= h p.name %></a> (<%=p.entity_count%> entities) <a href="javascript:delete_project('<%= p.name %>')">[x]</a>
   </li>
