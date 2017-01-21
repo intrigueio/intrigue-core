@@ -14,78 +14,79 @@ class BaseTask
 
   def perform(task_result_id)
 
-    #######################
-    # Get the Task Result #
-    #######################
+    # Get the Task Result
     @task_result = Intrigue::Model::TaskResult.first(:id => task_result_id)
     raise "Unable to find task result: #{task_result_id}. Bailing." unless @task_result
 
-    @entity = @task_result.base_entity
-    @project = @task_result.project
-    options = @task_result.options
+    begin
+      @entity = @task_result.base_entity
+      @project = @task_result.project
+      options = @task_result.options
 
-    # we must have these things to continue (if they're missing, fail)
-    unless @task_result && @project && @entity
-      _log_error "Unable to find task_result. Bailing." unless @task_result
-      _log_error "Unable to find project. Bailing." unless @project
-      _log_error "Unable to find entity. Bailing." unless @entity
-      return nil
-    end
-
-    # We need a flag to skip the actual setup, run, cleanup of the task if
-    # the caller gave us something broken. We still want to get the final
-    #  task result back to the caller though (so no raise). Assume it's good,
-    # and check input along the way.
-    broken_input_flag = false
-
-    # Do a little logging. Do it for the kids!
-    _log "Id: #{task_result_id}"
-    _log "Entity: #{@entity.type_string}##{@entity.name}"
-
-    ###################
-    # Sanity Checking #
-    ###################
-    allowed_types = self.class.metadata[:allowed_types]
-
-    # Check to make sure this task can receive an entity of this type and if
-    unless allowed_types.include?(@entity.type_string) || allowed_types.include?("*")
-      _log_error "Unable to call #{self.class.metadata[:name]} on entity: #{@entity}"
-      broken_input_flag = true
-    end
-
-    ###########################
-    #  Setup the task result  #
-    ###########################
-    @task_result.task_name = self.class.metadata[:name]
-    @task_result.timestamp_start = Time.now.getutc
-
-    #####################################
-    # Perform the setup -> run workflow #
-    #####################################
-    unless broken_input_flag
-      # Setup creates the following objects:
-      # @user_options - a hash of task options
-      # @task_result - the final result to be passed back to the caller
-      _log "Calling setup()"
-      if setup(task_result_id, @entity, options)
-          _log "Calling run()"
-          # Save the task locally
-          @task_result.save
-          # Run the task, which will update @task_result
-          run()
-          _log_good "Run complete. Ship it!"
-      else
-        _log_error "Setup failed, bailing out!"
+      # we must have these things to continue (if they're missing, fail)
+      unless @task_result && @project && @entity
+        _log_error "Unable to find task_result. Bailing." unless @task_result
+        _log_error "Unable to find project. Bailing." unless @project
+        _log_error "Unable to find entity. Bailing." unless @entity
+        return nil
       end
+
+      # We need a flag to skip the actual setup, run, cleanup of the task if
+      # the caller gave us something broken. We still want to get the final
+      #  task result back to the caller though (so no raise). Assume it's good,
+      # and check input along the way.
+      broken_input_flag = false
+
+      # Do a little logging. Do it for the kids!
+      _log "Id: #{task_result_id}"
+      _log "Entity: #{@entity.type_string}##{@entity.name}"
+
+      ###################
+      # Sanity Checking #
+      ###################
+      allowed_types = self.class.metadata[:allowed_types]
+
+      # Check to make sure this task can receive an entity of this type and if
+      unless allowed_types.include?(@entity.type_string) || allowed_types.include?("*")
+        _log_error "Unable to call #{self.class.metadata[:name]} on entity: #{@entity}"
+        broken_input_flag = true
+      end
+
+      ###########################
+      #  Setup the task result  #
+      ###########################
+      @task_result.task_name = self.class.metadata[:name]
+      @task_result.timestamp_start = Time.now.getutc
+
+      #####################################
+      # Perform the setup -> run workflow #
+      #####################################
+
+      unless broken_input_flag
+        # Setup creates the following objects:
+        # @user_options - a hash of task options
+        # @task_result - the final result to be passed back to the caller
+        _log "Calling setup()"
+        if setup(task_result_id, @entity, options)
+            _log "Calling run()"
+            # Save the task locally
+            @task_result.save
+            # Run the task, which will update @task_result
+            run()
+            _log_good "Run complete. Ship it!"
+        else
+          _log_error "Setup failed, bailing out!"
+        end
+      end
+
+    ensure   # Mark it complete and save it
+      _log "Cleaning up!"
+      @task_result.timestamp_end = Time.now.getutc
+      @task_result.complete = true
+      @task_result.logger.save
+      @task_result.save
     end
 
-    # Mark it complete and save it
-    @task_result.timestamp_end = Time.now.getutc
-    @task_result.complete = true
-    _log "Calling cleanup!"
-
-    cleanup
-    @task_result.save
   end
 
   #########################################################
@@ -199,9 +200,6 @@ class BaseTask
   def run
   end
 
-  def cleanup
-    @task_result.logger.save
-  end
   #
   #########################################################
 
