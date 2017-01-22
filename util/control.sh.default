@@ -23,10 +23,12 @@ function setup_server {
 function start_server {
   echo "Starting interactive task processing..."
   bundle exec sidekiq -C $IDIR/config/sidekiq-task-interactive.yml -r $IDIR/core.rb -d -L $IDIR/log/task-interactive.log
-  echo "Starting autoschedule task processing..."
+  echo "Starting autoscheduled task processing..."
   bundle exec sidekiq -C $IDIR/config/sidekiq-task-autoscheduled.yml -r $IDIR/core.rb -d -L $IDIR/log/task-autoscheduled.log
   echo "Starting background worker processing..."
   bundle exec sidekiq -C $IDIR/config/sidekiq-app.yml -r $IDIR/core.rb -d -L $IDIR/log/app.log
+  echo "Starting handler processing..."
+  bundle exec ruby $IDIR/util/workers.rb 2>&1 > $IDIR/log/handlers.log
   echo "Starting puma..."
   bundle exec puma -C $IDIR/config/puma.rb # listen on a public port
 }

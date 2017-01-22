@@ -11,7 +11,7 @@ module Intrigue
       many_to_one :base_entity, :class => :'Intrigue::Model::Entity', :key => :base_entity_id
 
       #include Intrigue::Model::Capabilities::ExportGraph
-      include Intrigue::Model::Capabilities::HandleResult
+      #include Intrigue::Model::Capabilities::HandleResult
 
       def self.scope_by_project(project_name)
         named_project_id = Intrigue::Model::Project.first(:name => project_name).id
@@ -25,9 +25,6 @@ module Intrigue
 
       def start(queue)
         task_results.first.start(queue)
-
-        # kick off a background task that waits until all tasks are completed
-        handle_result if handlers.length > 0
       end
 
       def log
