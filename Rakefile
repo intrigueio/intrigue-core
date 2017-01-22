@@ -112,7 +112,7 @@ task :setup do
 
     # Configure the IDIR directory
     script_text = File.read(control_script)
-    new_script_text = control_script.gsub("IDIR=/path/to/install/directory","IDIR=#{intrigue_basedir}")
+    new_script_text = script_text.gsub("IDIR=/path/to/install/directory","IDIR=#{intrigue_basedir}")
     File.open(control_script,"w").puts new_script_text
 
     # Make a link if
