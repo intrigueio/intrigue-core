@@ -81,10 +81,10 @@ class BaseTask
       end
 
       # Then for each of the associated handler types
-      @task_result.handlers.each do |handler_type|
-        handler = HandlerFactory.create_by_type(handler_type)
-        handler.process(@task_result)
-      end
+      #@task_result.handlers.each do |handler_type|
+      #  handler = HandlerFactory.create_by_type(handler_type)
+      #  handler.process(@task_result)
+      #end
 
     ensure   # Mark it complete and save it
       _log "Cleaning up!"
