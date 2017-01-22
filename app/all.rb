@@ -7,7 +7,6 @@ require_relative "routes/project"
 require_relative "routes/results"
 
 require_relative "models/capabilities/export_graph"
-require_relative "models/capabilities/handle_result"
 
 require_relative "models/project"
 require_relative "models/logger"
