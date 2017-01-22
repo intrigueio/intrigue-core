@@ -11,7 +11,7 @@ module HandleResult
   def handle_result
 
     # Start a new worker
-    Intrigue::Workers::HandleResultWorker.perform_async(self.class,self.id) if handlers
+    #Intrigue::Workers::HandleResultWorker.perform_async(self.class,self.id) if handlers
 
   end
 
