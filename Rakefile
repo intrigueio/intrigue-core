@@ -44,18 +44,18 @@ task :setup do
   ## Copy puma config into place
   puts "[+] Copying puma config...."
   if File.exist? puma_config_file
-    puts "File already exists, skipping: #{puma_config_file}"
+    puts "[ ] File already exists, skipping: #{puma_config_file}"
   else
-    puts "Creating.... #{puma_config_file}"
+    puts "[+] Creating.... #{puma_config_file}"
     FileUtils.cp "#{puma_config_file}.default", puma_config_file
   end
 
   ## Copy system config into place
   puts "[+] Copying system config...."
   if File.exist? system_config_file
-    puts "File already exists, skipping: #{system_config_file}"
+    puts "[ ] File already exists, skipping: #{system_config_file}"
   else
-    puts "Creating.... #{system_config_file}"
+    puts "[+] Creating.... #{system_config_file}"
     FileUtils.cp "#{system_config_file}.default", system_config_file
 
     # Set up our password
@@ -67,7 +67,7 @@ task :setup do
   ## Copy database config into place
   puts "[+] Copying database config...."
   if File.exist? database_config_file
-    puts "File already exists, skipping: #{database_config_file}"
+    puts "[ ] File already exists, skipping: #{database_config_file}"
 
   else
     puts "[+] Creating.... #{database_config_file}"
@@ -84,13 +84,13 @@ task :setup do
   ## Copy sidekiq task worker config into place
   puts "[+] Setting up task worker config...."
   if File.exist? sidekiq_interactive_config_file && sidekiq_autoscheduled_config_file && sidekiq_app_config_file
-    puts "File already exists, skipping: #{sidekiq_interactive_config_file}"
-    puts "File already exists, skipping: #{sidekiq_autoscheduled_config_file}"
-    puts "File already exists, skipping: #{sidekiq_app_config_file}"
+    puts "[ ] File already exists, skipping: #{sidekiq_interactive_config_file}"
+    puts "[ ] File already exists, skipping: #{sidekiq_autoscheduled_config_file}"
+    puts "[ ] File already exists, skipping: #{sidekiq_app_config_file}"
   else
-    puts "Copying: #{sidekiq_interactive_config_file}.default"
-    puts "Copying: #{sidekiq_autoscheduled_config_file}.default"
-    puts "Copying: #{sidekiq_app_config_file}.default"
+    puts "[+] Copying: #{sidekiq_interactive_config_file}.default"
+    puts "[+] Copying: #{sidekiq_autoscheduled_config_file}.default"
+    puts "[+] Copying: #{sidekiq_app_config_file}.default"
     FileUtils.cp "#{sidekiq_interactive_config_file}.default", sidekiq_interactive_config_file
     FileUtils.cp "#{sidekiq_autoscheduled_config_file}.default", sidekiq_autoscheduled_config_file
     FileUtils.cp "#{sidekiq_app_config_file}.default", sidekiq_app_config_file
@@ -105,9 +105,9 @@ task :setup do
   ## Copy control script
   puts "[+] Copying control script..."
   if File.exist? control_script
-    puts "File already exists, skipping: #{control_script}"
+    puts "[ ] File already exists, skipping: #{control_script}"
   else
-    puts "Creating.... #{control_script}"
+    puts "[+] Creating.... #{control_script}"
     FileUtils.cp "#{control_script}.default", control_script
 
     # Configure the IDIR directory
@@ -117,7 +117,7 @@ task :setup do
 
     # Make a link if
     if Dir.exist?("/etc/init.d") && !File.exist?("#{intrigue_basedir}/util/control.sh")
-      puts 'Creating system-level startup script'
+      puts '[+] Creating system-level startup script'
       `ln -s #{intrigue_basedir}/util/control.sh /etc/init.d/intrigue`
     end
 
@@ -127,10 +127,10 @@ end
 
 desc "Reset Workers"
 task :reset_workers do
-  puts "[+] Resetting workers"
+  puts "[ ] Resetting workers"
   require './core'
   Intrigue::Model::Project.all.each do |p|
-    puts "Clean state for #{p.name}"
+    puts "[+] Clean state for #{p.name}"
     p.graph_generation_in_progress=false
     p.save
   end
@@ -156,7 +156,7 @@ namespace :db do
     version = if DB.tables.include?(:schema_info)
       DB[:schema_info].first[:version]
     end || 0
-    puts "Schema Version: #{version}"
+    puts "[+] Schema Version: #{version}"
   end
 
   desc "Perform migration up to latest migration available"
