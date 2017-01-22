@@ -28,7 +28,7 @@ function start_server {
   echo "Starting background worker processing..."
   bundle exec sidekiq -C $IDIR/config/sidekiq-app.yml -r $IDIR/core.rb -d -L $IDIR/log/app.log
   echo "Starting handler processing..."
-  bundle exec ruby $IDIR/util/handlers.rb 2>&1 > $IDIR/log/handlers.log
+  bundle exec ruby $IDIR/util/handlers.rb
   echo "Starting puma..."
   bundle exec puma -C $IDIR/config/puma.rb # listen on a public port
 }

@@ -8,8 +8,6 @@ gem 'redis-namespace'
 gem 'eventmachine'
 gem 'sidekiq'                 # Background Tasks
 gem 'sidekiq-failures'        # Background Tasks
-gem 'sidekiq-unique-jobs'     # Background Tasks
-
 gem 'thor'                    # CLI
 gem 'elasticsearch'           # Database
 gem 'iconv'                   # Encoding
@@ -18,7 +16,6 @@ gem 'rake'
 gem 'rspec'                   # Testing
 gem 'rack-test'               # Testing
 gem 'rack-protection'         # https://github.com/sinatra/rack-protection
-#gem 'intrigue_api_client', :path => "/Users/jcran/work/intrigue/projects/intrigue_api_client"
 gem 'intrigue_api_client', :git => 'https://github.com/intrigueio/intrigue_api_client.git'
 gem 'nokogiri'                # Client::Search::*Scraper
 

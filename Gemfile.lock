@@ -307,9 +307,6 @@ GEM
       redis (~> 3.2, >= 3.2.1)
     sidekiq-failures (0.4.5)
       sidekiq (>= 2.16.0)
-    sidekiq-unique-jobs (4.0.18)
-      sidekiq (>= 2.6)
-      thor
     sinatra (1.4.7)
       rack (~> 1.5)
       rack-protection (~> 1.4)
@@ -382,7 +379,6 @@ DEPENDENCIES
   shodan
   sidekiq
   sidekiq-failures
-  sidekiq-unique-jobs
   sinatra
   sinatra-contrib
   sqlite3

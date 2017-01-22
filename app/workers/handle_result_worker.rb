@@ -2,14 +2,14 @@
 # this is started independently of the core subsystem. See
 # util/background_workers.rb
 
-require 'sidekiq-unique-jobs'
+#require 'sidekiq-unique-jobs'
 
 module Intrigue
 module Workers
 class HandleResultWorker
   include Sidekiq::Worker
   sidekiq_options :queue => "app", :backtrace => true
-  sidekiq_options unique: :until_and_while_executing
+  #sidekiq_options unique: :until_and_while_executing
 
   def perform
     puts "Starting background worker task for handlers... "
