@@ -17,7 +17,7 @@ IDIR=/path/to/install/directory
 cd $IDIR
 
 function setup_server {
-  bundle exec rake migrate
+  bundle exec rake db:migrate
 }
 
 function start_server {
