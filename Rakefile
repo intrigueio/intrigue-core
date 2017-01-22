@@ -116,7 +116,7 @@ task :setup do
     File.open(control_script,"w").puts new_script_text
 
     # Make a link if
-    if Dir.exist? "/etc/init.d"
+    if Dir.exist? "/etc/init.d" && ! File.exist "#{intrigue_basedir}/util/control.sh"
       puts 'Creating system-level startup script'
       `ln -s #{intrigue_basedir}/util/control.sh /etc/init.d/intrigue`
     end
