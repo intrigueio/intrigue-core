@@ -10,8 +10,8 @@ module Intrigue
       one_to_many :task_results
       many_to_one :base_entity, :class => :'Intrigue::Model::Entity', :key => :base_entity_id
 
-      #include Intrigue::Model::Capabilities::ExportGraph
-      #include Intrigue::Model::Capabilities::HandleResult
+      include Intrigue::Model::Capabilities::ExportGraph
+      include Intrigue::Model::Capabilities::HandleResult
 
       def self.scope_by_project(project_name)
         named_project_id = Intrigue::Model::Project.first(:name => project_name).id
@@ -24,7 +24,12 @@ module Intrigue
       end
 
       def start(queue)
-        task_results.first.start(queue)
+        # Start our first task
+        job_id = task_results.first.start(queue)
+        # Launch a result handler
+        handle_result if handlers.count > 0
+
+      job_id
       end
 
       def log

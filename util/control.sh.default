@@ -10,9 +10,6 @@
 #
 ### END INIT INFO
 
-# Puma: intrigue-puma.pid
-# Sidekiq: intrigue-sidekiq.pid
-
 IDIR=/path/to/install/directory
 cd $IDIR
 
@@ -27,10 +24,8 @@ function start_server {
   bundle exec sidekiq -C $IDIR/config/sidekiq-task-autoscheduled.yml -r $IDIR/core.rb -d -L $IDIR/log/task-autoscheduled.log
   echo "Starting background worker processing..."
   bundle exec sidekiq -C $IDIR/config/sidekiq-app.yml -r $IDIR/core.rb -d -L $IDIR/log/app.log
-  echo "Starting handler processing..."
-  bundle exec ruby $IDIR/util/handlers.rb
   echo "Starting puma..."
-  bundle exec puma -C $IDIR/config/puma.rb # listen on a public port
+  bundle exec puma -C $IDIR/config/puma.rb
 }
 
 function stop_server {

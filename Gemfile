@@ -8,6 +8,7 @@ gem 'redis-namespace'
 gem 'eventmachine'
 gem 'sidekiq'                 # Background Tasks
 gem 'sidekiq-failures'        # Background Tasks
+gem 'sidekiq-unique-jobs'
 gem 'thor'                    # CLI
 gem 'elasticsearch'           # Database
 gem 'iconv'                   # Encoding

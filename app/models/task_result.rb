@@ -12,7 +12,7 @@ module Intrigue
       many_to_one :project
       many_to_one :base_entity, :class => :'Intrigue::Model::Entity', :key => :base_entity_id
 
-      #include Intrigue::Model::Capabilities::HandleResult
+      include Intrigue::Model::Capabilities::HandleResult
 
       def self.scope_by_project(project_name)
         named_project_id = Intrigue::Model::Project.first(:name => project_name).id
@@ -39,10 +39,14 @@ module Intrigue
 
         else # start it in the task queues
           task = Intrigue::TaskFactory.create_by_name(task_name)
-          job_id = task.class.perform_async self.id
+          job_id = task.class.perform_async id
           save
         end
 
+        # Launch a result handler
+        handle_result if handlers.count > 0
+
+      job_id
       end
 
       def log
