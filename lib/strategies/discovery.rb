@@ -64,7 +64,7 @@ module Strategy
         ## Spider, looking for metadata
         start_recursive_task(task_result,"uri_spider",entity,[
             {"name" => "threads", "value" => 1},
-            {"name" => "max_pages", "value" => 1000},
+            {"name" => "max_pages", "value" => 100 },
             {"name" => "extract_dns_records", "value" => true},
             {"name" => "extract_dns_record_pattern", "value" => "#{task_result.scan_result.base_entity.name}"}]) unless entity.created_by? "uri_brute"
 
