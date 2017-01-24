@@ -15,6 +15,12 @@ module Intrigue
         where(:project_id => named_project_id)
       end
 
+      def before_create
+        global_config = Intrigue::Config::GlobalConfig.new
+        self.location = global_config.config["intrigue_task_log_location"] || "database"
+        super
+      end
+
       def validate
         super
       end
@@ -46,9 +52,13 @@ module Intrigue
     private
 
       def _log(message)
+        # if method is set to none, don't log anything
+        return if location == "none"
+
+        # any other value, log to the database
         encoded_message = _encode_string(message)
         set(:full_log => "#{full_log}#{encoded_message}")
-      save
+        save
       end
 
       def _encode_string(string)
