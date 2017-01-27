@@ -36,8 +36,8 @@ module Helper
         :base_entity_id => entity.id,
         :logger => Intrigue::Model::Logger.create(:project => project),
         :depth => depth,
-        :strategy => strategy_name
-        #:handlers => handlers
+        :strategy => strategy_name,
+        :handlers => handlers
       })
 
       # Add the task result
