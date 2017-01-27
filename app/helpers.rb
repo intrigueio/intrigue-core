@@ -14,7 +14,7 @@ module Helper
       :name => "#{task_name} on #{entity.name}",
       :task_name => task_name,
       :options => options,
-      :handlers => [],
+      :handlers => handlers, #[],
       :base_entity => entity,
       :autoscheduled => (queue == "task_autoscheduled"),
       :depth => depth
@@ -36,17 +36,15 @@ module Helper
         :base_entity_id => entity.id,
         :logger => Intrigue::Model::Logger.create(:project => project),
         :depth => depth,
-        :strategy => strategy_name,
-        :handlers => handlers
+        :strategy => strategy_name
+        #:handlers => handlers
       })
 
       # Add the task result
-      scan_result.add_task_result task_result
-      scan_result.save
+      scan_result.add_task_result(task_result) && scan_result.save
 
       # Add the scan result
-      task_result.scan_result = scan_result
-      task_result.save
+      task_result.scan_result = scan_result && task_result.save
 
       # Start it
       scan_result.start(queue)
@@ -55,7 +53,7 @@ module Helper
       # If it's not a new scan, just kick off the task result
       task_result.handlers = handlers
       task_result.save
-
+      # Start it
       task_result.start(queue)
     end
 
