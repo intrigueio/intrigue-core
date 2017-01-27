@@ -23,7 +23,7 @@ class HandleResultWorker
 
       # Wait before doing it again
       wait_time = global_config.config["intrigue_handler_processing_wait_time"]
-      #puts "Waiting... #{wait_time}"
+      puts "HandleResultWorker: Waiting... #{wait_time}"
       sleep (wait_time || 60)
 
     end
@@ -33,7 +33,7 @@ class HandleResultWorker
   def handle_all_scan_results
     # Handle all ScanResults
     Intrigue::Model::ScanResult.all.each do |scan_result|
-      #puts "DEBUG Checking... #{scan_result.name}"
+      puts "HandleResultWorker:  Checking... #{scan_result.name}"
 
       # First check if the scan_result is already handled
       next if scan_result.handlers_complete
@@ -48,7 +48,7 @@ class HandleResultWorker
 
       # If so, mark the scan_result complete and handle the results
       if incomplete_tasks.count == 0
-        #puts "DEBUG Handling... #{scan_result.name}"
+        puts "HandleResultWorker: handling... #{scan_result.name}"
 
         # we can mark this scan complete now
         scan_result.complete = true
@@ -57,7 +57,7 @@ class HandleResultWorker
         # Run handlers here
         scan_result.handlers.each do |handler_type|
           handler = Intrigue::HandlerFactory.create_by_type(handler_type)
-          puts "Calling #{handler_type} handler on #{scan_result.name}"
+          puts "HandleResultWorker: Calling #{handler_type} handler on #{scan_result.name}"
           handler.process(scan_result)
         end
 
