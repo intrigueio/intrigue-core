@@ -14,7 +14,7 @@ module Helper
       :name => "#{task_name} on #{entity.name}",
       :task_name => task_name,
       :options => options,
-      :handlers => handlers, #[],
+      :handlers => [],
       :base_entity => entity,
       :autoscheduled => (queue == "task_autoscheduled"),
       :depth => depth
