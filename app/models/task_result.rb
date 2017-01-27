@@ -91,6 +91,7 @@ module Intrigue
           "task_name" => URI.escape(task_name),
           "timestamp_start" => timestamp_start,
           "timestamp_end" => timestamp_end,
+          "project" => project.name,
           "options" => options,
           "complete" => complete,
           "base_entity" => base_entity.export_hash,

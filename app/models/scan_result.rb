@@ -72,6 +72,7 @@ module Intrigue
           "timestamp_start" => timestamp_start,
           "timestamp_end" => timestamp_end,
           "filter_strings" => filter_strings,
+          "project" => project.name,
           "base_entity" => base_entity.export_hash,
           "task_results" => task_results.map{|t| t.export_hash },
           "entities" => entities.map {|e| e.export_hash },
