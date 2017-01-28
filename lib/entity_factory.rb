@@ -13,6 +13,16 @@ class EntityFactory
   false
   end
 
+  def self.resolve_type(type_string)
+
+    # TODO - SECURITY - don't eval unless it's one of our valid entity types
+
+    x = eval("Intrigue::Entity::#{type_string}")
+
+    false unless x.kind_of? Intrigue::Model::Entity
+  x
+  end
+
   # This method creates a new entity, and kicks off a strategy
   def self.create_or_merge_entity_recursive(task_result,type_string,name,details, original_entity)
 
@@ -23,7 +33,7 @@ class EntityFactory
     details = _encode_hash(details)
     #details.delete("name")
 
-    type = eval("Intrigue::Entity::#{type_string}")
+    type = resolve_type(type_string)
 
     # Merge the details if it already exists
     entity = nil

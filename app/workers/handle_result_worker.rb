@@ -12,7 +12,7 @@ class HandleResultWorker
   sidekiq_options :unique => :until_executed
 
   def perform
-    puts "Starting background worker task for handlers... "
+    puts "HandleResultWorker: Starting background worker task for handlers... "
 
     global_config = Intrigue::Config::GlobalConfig.new
 
@@ -33,7 +33,8 @@ class HandleResultWorker
   def handle_all_scan_results
     # Handle all ScanResults
     Intrigue::Model::ScanResult.all.each do |scan_result|
-      puts "HandleResultWorker:  Checking... #{scan_result.name}"
+
+      #puts "HandleResultWorker:  Checking... #{scan_result.name}"
 
       # First check if the scan_result is already handled
       next if scan_result.handlers_complete
@@ -97,5 +98,3 @@ class HandleResultWorker
 end
 end
 end
-
-#Intrigue::Workers::HandleResultWorker.new.perform
