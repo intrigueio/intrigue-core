@@ -81,9 +81,11 @@ class WebStackFingerprint < BaseTask
 
       checks.each do |check|
         response = http_get "#{check[:uri]}"
-        if check[:content_check]
-          if "#{response.body}" =~ /#{check[:content_check]}/
-            temp << check[:check_name]
+        if response
+          if check[:content_check]
+            if "#{response.body}" =~ /#{check[:content_check]}/
+              temp << check[:check_name]
+            end
           end
         end
       end

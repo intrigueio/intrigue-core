@@ -21,7 +21,6 @@ require 'pry'
 require 'pry-byebug'
 require 'logger'
 
-$intrigue_global_timeout = 9000
 $intrigue_basedir = File.dirname(__FILE__)
 
 #

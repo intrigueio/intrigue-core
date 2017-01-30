@@ -80,6 +80,19 @@ class BaseTask
         end
       end
 
+      ############
+      # Handlers #
+      ############
+
+      # Call each handler
+      @task_result.handlers.each do |handler_type|
+        handler = Intrigue::HandlerFactory.create_by_type(handler_type)
+        _log "Calling #{handler_type} handler"
+        handler.process(@task_result)
+      end
+      # and then mark them complete 
+      @task_result.handlers_complete = true
+
     ensure   # Mark it complete and save it
       _log "Cleaning up!"
       @task_result.timestamp_end = Time.now.getutc

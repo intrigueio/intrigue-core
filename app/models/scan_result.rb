@@ -24,10 +24,13 @@ module Intrigue
       end
 
       def start(queue)
+
         # Start our first task
         job_id = task_results.first.start(queue)
-        # Launch a result handler
-        handle_result if handlers.count > 0
+        save
+
+        # Launch a result handler worker
+        handle_result(id) if handlers.count > 0
 
       job_id
       end

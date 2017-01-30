@@ -5,14 +5,11 @@ module Intrigue
       plugin :serialization, :json, :options, :handlers
 
       #set_allowed_columns :project_id, :logger_id, :base_entity_id, :name, :depth, :handlers, :strategy, :filter_strings
-
       many_to_many :entities
       many_to_one :scan_result
       many_to_one :logger
       many_to_one :project
       many_to_one :base_entity, :class => :'Intrigue::Model::Entity', :key => :base_entity_id
-
-      include Intrigue::Model::Capabilities::HandleResult
 
       def self.scope_by_project(project_name)
         named_project_id = Intrigue::Model::Project.first(:name => project_name).id
@@ -42,9 +39,6 @@ module Intrigue
           job_id = task.class.perform_async id
           save
         end
-
-        # Launch a result handler
-        handle_result if handlers.count > 0
 
       job_id
       end
