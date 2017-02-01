@@ -74,6 +74,9 @@ class CoreCli < Thor
     handler_list = _parse_handlers handler_string
     depth = depth.to_i
 
+    ### Create a project
+    @api.create_project(project_name)
+
     ### Construct the request
     task_id = @api.start_and_background(project_name,task_name,entity_hash,depth,options_list,handler_list)
 
@@ -95,6 +98,9 @@ class CoreCli < Thor
     options_list = _parse_options option_string
     handler_list = _parse_handlers handler_string
     depth = depth.to_i
+
+    ### Create a project
+    @api.create_project(project_name)
 
     # Get the response from the API
     #puts "[+] Starting Task."
