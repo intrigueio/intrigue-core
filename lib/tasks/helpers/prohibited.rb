@@ -98,6 +98,7 @@ module Intrigue
                 entity.name =~ /^.*schema.org$/                    ||
                 entity.name =~ /^.*sendgrid.net$/                  ||
                 entity.name =~ /^.*secureserver.net$/              ||
+                entity.name =~ /^.*statuspage.io$/                 ||
                 entity.name =~ /^.*twitter.com$/                   ||
                 entity.name =~ /^.*urchin$/                        ||
                 entity.name =~ /^.*urchin.com$/                    ||
