@@ -85,6 +85,7 @@ module Intrigue
                 entity.name =~ /^.*mandrillapp.com$/               ||
                 entity.name =~ /^.*marketo.com$/                   ||
                 entity.name =~ /^.*metric.gstatic.com$/            ||
+                entity.name =~ /^.*mktoweb.com$/                   ||
                 entity.name =~ /^.*microsoft.com$/                 ||
                 entity.name =~ /^.*msn.com$/                       ||
                 entity.name =~ /^.*oclc.org$/                      ||
