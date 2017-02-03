@@ -13,6 +13,8 @@ class HandleResultWorker
   def perform(id)
     puts "HandleResultWorker: Starting background worker task for handlers... "
 
+    # Get the scan_result & the incomplete tasks
+    scan_result = Intrigue::Model::ScanResult.first(:id => id)
 
     # if there's not going to be any new information, let's just return
     if scan_result.handlers_complete
@@ -20,16 +22,13 @@ class HandleResultWorker
       return
     end
 
-    # Get the scan_result & the incomplete tasks
-    scan_result = Intrigue::Model::ScanResult.first(:id => id)
-
-    incomplete_task_count = scan_result.task_results.select{|tr| tr.complete == false }.count
-
     # Make sure we actually have handlers before starting
     unless scan_result.handlers.count > 0
       puts "HandleResultWorker: Nothing to handle, no handlers set up. Returning..."
       return
     end
+
+    incomplete_task_count = scan_result.task_results.select{|tr| tr.complete == false }.count
 
 =begin
     until incomplete_task_count == 0
@@ -56,7 +55,7 @@ class HandleResultWorker
     if incomplete_task_count == 0
       # ...and mark the handlers run
       scan_result.handlers_complete = true
-      scan_result.complete = true
+      #scan_result.complete = true
       scan_result.save
     end
 
