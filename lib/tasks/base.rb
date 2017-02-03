@@ -84,14 +84,18 @@ class BaseTask
       # Handlers #
       ############
 
-      # Call each handler
-      @task_result.handlers.each do |handler_type|
-        handler = Intrigue::HandlerFactory.create_by_type(handler_type)
-        _log "Calling #{handler_type} handler"
-        handler.process(@task_result)
+      # Call each handler if we have entities
+      if @task_result.entities.count > 0
+
+        @task_result.handlers.each do |handler_type|
+          handler = Intrigue::HandlerFactory.create_by_type(handler_type)
+          _log "Calling #{handler_type} handler"
+          handler.process(@task_result)
+        end
+        # and then mark them complete
+        @task_result.handlers_complete = true
+        
       end
-      # and then mark them complete 
-      @task_result.handlers_complete = true
 
     ensure   # Mark it complete and save it
       _log "Cleaning up!"
