@@ -30,7 +30,7 @@ module Intrigue
         save
 
         # Launch a result handler worker
-        handle_result(id) if handlers.count > 0
+        #handle_result(id) if handlers.count > 0
 
       job_id
       end

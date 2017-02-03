@@ -15,6 +15,7 @@ class HandleResultWorker
 
     # Get the scan_result & the incomplete tasks
     scan_result = Intrigue::Model::ScanResult.first(:id => id)
+=begin
     incomplete_task_count = scan_result.task_results.select{|tr| tr.complete == false }.count
 
     # Make sure we actually have handlers before starting
@@ -34,18 +35,19 @@ class HandleResultWorker
 
     # If we don't have any, mark the scan_result complete
     puts "HandleResultWorker: All complete, handling... #{scan_result.name}"
-
+=end
     # and then run the handlers
     scan_result.handlers.each do |handler_type|
       handler = Intrigue::HandlerFactory.create_by_type(handler_type)
       puts "HandleResultWorker: Calling #{handler_type} handler on #{scan_result.name}"
       handler.process(scan_result)
     end
-
+=begin
     # ...and mark the handlers run
     scan_result.handlers_complete = true
     scan_result.complete = true
     scan_result.save
+=end
   end
 
 end
