@@ -53,8 +53,6 @@ Sequel.migration do
     create_table :loggers do
       primary_key :id
       foreign_key :project_id, :null => false
-      foreign_key :task_result_id, :null => true
-      foreign_key :scan_result_id, :null => true
 
       String :full_log, :text => true
     end

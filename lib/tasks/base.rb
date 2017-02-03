@@ -94,7 +94,7 @@ class BaseTask
         end
         # and then mark them complete
         @task_result.handlers_complete = true
-        
+
       end
 
     ensure   # Mark it complete and save it
