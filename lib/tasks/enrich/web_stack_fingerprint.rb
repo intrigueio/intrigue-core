@@ -20,7 +20,7 @@ class WebStackFingerprint < BaseTask
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "attributes" => {"name" => "https://intrigue.io"}}],
       :allowed_options => [],
-      :created_types => ["WebServer"]
+      :created_types => []
     }
   end
 
@@ -29,12 +29,10 @@ class WebStackFingerprint < BaseTask
     # Grab the full response 2x
     uri = _get_entity_name
 
-    web_application_name = uri.split('/')[0,3].join('/')
-
     response = http_get uri
     response2 = http_get uri
 
-    ## Indicatiors
+    ## Indicators
     # Banner Grabbing / Headers (Server, X-Powered-By, X-AspNet-Version)
     # Specific Pages (trace.axd)
     # WebServer: Request/Response deviations
@@ -47,53 +45,105 @@ class WebStackFingerprint < BaseTask
       return
     end
 
-    _log "Response #1 :"
-    response.each_header {|h,v| _log "(#1) #{h}: #{v}" }
-    #_log "Response #2 :"
-    #response2.each_header {|h,v| _log "(#2) #{h}: #{v}" }
+    _log "Server response:"
+    response.each_header {|h,v| _log " - #{h}: #{v}" }
 
     ## empty stack to start
     stack = []
 
+    # Use various techniques to build out a "stack"
     stack << _check_server_header(response, response2)
     stack.concat _check_x_headers(response)
     stack.concat _check_cookies(response)
-    stack.concat _check_page_content(uri)
+    stack.concat _check_generator(response)
+    stack.concat _check_specific_pages(uri)
 
-    _log "Setting stack to #{stack.sort.uniq}"
 
-    @entity.details["stack"] = stack.sort.uniq
-    @entity.save
+    clean_stack = stack.reject { |x| x.empty? }.sort.uniq
+    _log "Setting stack to #{clean_stack}"
+
+    @entity.lock!
+    @entity.update(:details => @entity.details.merge("stack" => clean_stack))
+
   end
 
   private
 
-    def _check_page_content(uri)
+  def _check_generator(response)
+    _log "_check_generator called"
+    temp = []
+
+    # Example: <meta name="generator" content="MediaWiki 1.29.0-wmf.9"/>
+    doc = Nokogiri.HTML(response.body)
+    doc.xpath("//meta[@name='generator']/@content").each do |attr|
+      temp << attr.value
+    end
+
+    _log "Returning: #{temp}"
+
+  temp
+  end
+
+
+    def _check_specific_pages(uri)
+      _log "_check_specific_pages called"
       temp = []
 
-      checks = [{
-        :uri => "#{uri}/error",
-        :content_check => /{"timestamp":\d.*,"status":999,"error":"None","message":"No message available"}/,
-        :check_name => "Spring MVC",
-        :check_description => "Standard Spring MVC error page",
-        :test_site => "https://pcr.apple.com"
-      }]
+      all_checks = [
+        {
+          :uri => "#{uri}",
+          :checklist => [{
+            :type => "content",
+            :content => /<title>Apache Tomcat/,
+            :name => "Tomcat", # won't be used if we have
+            :description => "Tomcat Web Application Server",
+            :test_site => "https://cms.msu.montana.edu/",
+            :dynamic_name => lambda{|x| x.scan(/<title>.*<\/title>/)[0].gsub("<title>","").gsub("</title>","") }
+        }]},
+        {
+          :uri => "#{uri}/error",
+          :checklist => [{
+            :type => "content",
+            :content => /{"timestamp":\d.*,"status":999,"error":"None","message":"No message available"}/,
+            :name => "Spring MVC",
+            :description => "Standard Spring MVC error page",
+            :test_site => "https://pcr.apple.com"
+        }]}
+      ]
 
-      checks.each do |check|
+      all_checks.each do |check|
         response = http_get "#{check[:uri]}"
         if response
-          if check[:content_check]
-            if "#{response.body}" =~ /#{check[:content_check]}/
-              temp << check[:check_name]
+
+          #### iterate on checks for this URI
+          check[:checklist].each do |check|
+
+            # Content checks first
+            if check[:type] == "content"
+
+              # Do each content check, call the dynamic name if we have it
+              if "#{response.body}" =~ /#{check[:content]}/
+                temp << check[:name]
+                temp << check[:dynamic_name].call(response.body) if check[:dynamic_name]
+              end
+
+            else
+              # other types might include image check
+              raise "Not sure how to handle this check type"
             end
+
+
           end
         end
       end
 
+      _log "Returning: #{temp}"
     temp
     end
 
     def _check_cookies(response)
+      _log "_check_cookies called"
+
       temp = []
 
       header = response.header['set-cookie']
@@ -119,12 +169,14 @@ class WebStackFingerprint < BaseTask
 
       end
 
-      _log "Got: #{temp} due to cookies!"
+      _log "Returning: #{temp}"
 
       temp
     end
 
     def _check_x_headers(response)
+      _log "_check_x_headers called"
+
       temp = []
 
       ### X-AspNet-Version-By Header
@@ -151,10 +203,13 @@ class WebStackFingerprint < BaseTask
         temp << "Drupal"
       end
 
+      _log "Returning: #{temp}"
     temp
     end
 
     def _check_server_header(response, response2)
+      _log "_check_server_header called"
+
       ### Server Header
       server_header = _resolve_server_header(response.header['server'])
 
@@ -163,7 +218,7 @@ class WebStackFingerprint < BaseTask
         # Checking for both gives us some assurance it's not totally bogus (e)
         # TODO: though this might miss something if it's a different resolution path?
         if response.header['server'] == response2.header['server']
-          _log_good "Creating header for #{server_header}"
+          _log "Returning: #{server_header}"
           return server_header
         else
           _log_error "Header did not match!"
@@ -173,6 +228,7 @@ class WebStackFingerprint < BaseTask
       else
         _log_error "No 'server' header!"
       end
+
     return nil
     end
 

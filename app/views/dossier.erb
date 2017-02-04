@@ -28,18 +28,26 @@
   <% end %>
 </ul>
 
-<p>Web Stacks:</p>
+<p>API Endpoints:</p>
 <ul>
   <% @uris.each do |e|
+    next unless e.details["api"] %>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.name}"  %></a></li>
+  <% end %>
+</ul>
+
+<p>Web Stacks:</p>
+<ul>
+  <% @uris.sort{|x,y| "#{x.details["stack"]}" <=> "#{y.details["stack"]}"}.each do |e|
     next unless e.details["stack"]
     next unless e.details["stack"].count > 0  %>
-  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.name}: ...  #{e.details["stack"]}"  %></a></li>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.details["stack"]}: ...  #{e.name}"  %></a></li>
   <% end %>
 </ul>
 
 <p>SSL Certificates:</p>
 <ul>
-  <% @phone_numbers.each do |e| %>
+  <% @ssl_certificates.each do |e| %>
   <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
   <% end %>
 </ul>

@@ -53,7 +53,7 @@ class EntityFactory
        })
     end
 
-    return nil unless entity
+    raise "Unable to create entity: #{type}##{name}" unless entity
 
     # Add to our result set for this task
     task_result.add_entity entity
@@ -71,6 +71,7 @@ class EntityFactory
     if task_result.depth > 0
       if (entity.type_string == "Uri")
         unless prohibited_entity? entity
+          start_task("task_autoscheduled", project, task_result.scan_result, "check_api_endpoint", entity, task_result.depth, [],[])
           start_task("task_autoscheduled", project, task_result.scan_result, "web_stack_fingerprint", entity, task_result.depth, [],[])
         end
       end

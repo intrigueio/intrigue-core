@@ -60,6 +60,8 @@ class IntrigueApp < Sinatra::Base
         end
       end
 
+      raise "Unable to continue without entity: #{klass}##{entity_name}" unless entity
+
       # Construct the options hash from the parameters
       options = []
       @params.each do |name,value|

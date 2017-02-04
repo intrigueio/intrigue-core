@@ -24,7 +24,7 @@ module Intrigue
       #set_allowed_columns :type, :name, :details, :project_id
 
       many_to_many :task_results
-      many_to_one :project
+      many_to_one  :project
       many_to_many :aliases, :left_key=>:source_id,:right_key=>:target_id, :join_table=>:alias_mappings, :class=>self
 
       def validate
@@ -36,7 +36,17 @@ module Intrigue
         return true if deleted
       false
       end
+=begin
+      def set_detail(name, value)
 
+        # Create a copy of the details so we can update it
+        x = details
+        x[name] = value
+
+        self.lock!
+        self.update(:details => x)
+      end
+=end
       def self.scope_by_project(project_name)
         named_project_id = Intrigue::Model::Project.first(:name => project_name).id
         where(:project_id => named_project_id)
