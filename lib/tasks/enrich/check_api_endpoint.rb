@@ -33,10 +33,12 @@ class CheckApiEndpoint < BaseTask
     _log "Server response:"
     response.each_header {|h,v| _log " - #{h}: #{v}" }
 
+    @entity.lock!
     if response.header['Content-Type'] =~ /application/
       _log_good "API Endpoint found!"
-      @entity.lock!
       @entity.update(:details => @entity.details.merge("api" => true))
+    else
+      @entity.update(:details => @entity.details.merge("api" => false))
     end
 
   end
