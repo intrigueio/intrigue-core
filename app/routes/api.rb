@@ -6,12 +6,14 @@ class IntrigueApp < Sinatra::Base
     ###
     get '/system_update' do
       global_config = Intrigue::Config::GlobalConfig.new
+
       if global_config.config["environment"] == "production"
         Dir.chdir($intrigue_basedir) do
-          result = `git checkout master && git pull origin master && service intrigue restart`
+          result = `git checkout master && git pull origin master`
+          Thread.new { `sleep 10 && service intrigue restart` }
         end
       end
-    result
+    result 
     end
 
     ###                  ###
