@@ -1,6 +1,19 @@
 class IntrigueApp < Sinatra::Base
   namespace '/v1' do
 
+    ###
+    ### UPDATE
+    ###
+    get '/system_update' do
+      global_config = Intrigue::Config::GlobalConfig.new
+      if global_config.config["environment"] == "production"
+        Dir.chdir($intrigue_basedir) do
+          result = `git checkout master && git pull origin master && service intrigue restart`
+        end
+      end
+    result
+    end
+
     ###                  ###
     ### System Config    ###
     ###                  ###
