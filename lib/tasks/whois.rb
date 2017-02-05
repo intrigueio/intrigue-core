@@ -5,7 +5,6 @@ require 'socket'
 
 module Intrigue
 class WhoisTask < BaseTask
-
   include Intrigue::Task::Web
 
   def self.metadata

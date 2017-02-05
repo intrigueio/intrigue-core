@@ -58,8 +58,7 @@ class WebStackFingerprint < BaseTask
     stack.concat _check_generator(response)
     stack.concat _check_specific_pages(uri)
 
-
-    clean_stack = stack.reject { |x| x.empty? }.sort.uniq
+    clean_stack = stack.select{ |x| x != nil }.uniq
     _log "Setting stack to #{clean_stack}"
 
     @entity.lock!
@@ -92,21 +91,37 @@ class WebStackFingerprint < BaseTask
       all_checks = [
         {
           :uri => "#{uri}",
-          :checklist => [{
+          :checklist => [
+          {
+            :name => "LimeSurvey", # won't be used if we have
+            :description => "LimeSurvey",
             :type => "content",
-            :content => /<title>Apache Tomcat/,
+            :content => /Support this project: Donate to LimeSurvey'/,
+            :test_site => "http://129.186.73.249/index.php/admin"
+          },
+          {
             :name => "Tomcat", # won't be used if we have
             :description => "Tomcat Web Application Server",
+            :type => "content",
+            :content => /<title>Apache Tomcat/,
             :test_site => "https://cms.msu.montana.edu/",
             :dynamic_name => lambda{|x| x.scan(/<title>.*<\/title>/)[0].gsub("<title>","").gsub("</title>","") }
-        }]},
+          },
+          {
+            :name => "MediaWiki", # won't be used if we have
+            :description => "Powered by MediaWiki ",
+            :type => "content",
+            :content => /<a href="\/\/www.mediawiki.org\/">Powered by MediaWiki<\/a>/,
+            :test_site => "https://manual.limesurvey.org"
+          }
+        ]},
         {
           :uri => "#{uri}/error",
           :checklist => [{
-            :type => "content",
-            :content => /{"timestamp":\d.*,"status":999,"error":"None","message":"No message available"}/,
             :name => "Spring MVC",
             :description => "Standard Spring MVC error page",
+            :type => "content",
+            :content => /{"timestamp":\d.*,"status":999,"error":"None","message":"No message available"}/,
             :test_site => "https://pcr.apple.com"
         }]}
       ]
@@ -165,6 +180,8 @@ class WebStackFingerprint < BaseTask
         temp << "Mint" if header =~ /^.*MintUnique.*$/
         temp << "Omniture" if header =~ /^.*sc_id.*$/
         temp << "PHP" if header =~ /^.*PHPSESSION.*$/
+        # https://github.com/yiisoft/yii
+        temp << "Yii PHP Framework 1.1.x" if header =~ /^.*YII_CSRF_TOKEN.*$/
         temp << "MediaWiki" if header =~ /^.*wiki??_session.*$/
 
       end

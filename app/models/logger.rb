@@ -26,7 +26,7 @@ module Intrigue
       end
 
       def log(message)
-        _log "[#{id}][ ] #{message}\n"
+        _log "[_] #{message}\n"
       end
 
       def log_debug(message)

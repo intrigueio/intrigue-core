@@ -56,7 +56,17 @@ class MasscanTask < BaseTask
       if [80,443,8080,8081,8443].include?(opt_port)
         ssl = true if [443,8443].include?(opt_port)
         protocol = ssl ? "https://" : "http://" # construct uri
-        _create_entity("Uri", {"name" => "#{protocol}#{host}", "uri" => "#{protocol}#{host}" })
+        _create_entity("Uri", {"name" => "#{protocol}#{host}:#{opt_port}", "uri" => "#{protocol}#{host}:#{opt_port}" })
+
+      elsif opt_port == 21
+        uri = "ftp://#{host.ip}:#{opt_port}"
+        _create_entity("FtpServer", {
+          "name" => "#{host}:#{opt_port}",
+          "ip_address" => "#{host}",
+          "port" => opt_port,
+          "proto" => "tcp",
+          "uri" => uri  })
+
       else
         _create_entity("NetworkService", {
           "name" => "#{host}:#{opt_port}/tcp",

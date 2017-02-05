@@ -109,7 +109,7 @@ class NmapScanTask < BaseTask
 
           # then DnsServer
         elsif [53].include?(port.number)
-            uri = "#{host.ip}"
+            uri = "#{host.ip}:#{port.number}"
             _create_entity("DnsServer", {
               "name" => uri,
               "ip_address" => "#{host.ip}",

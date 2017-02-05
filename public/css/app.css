@@ -33,19 +33,11 @@ a:hover {
 
 .like-pre-dark {
   white-space: pre-wrap;
+  font-size: 10px;
   font-family: monospace;
   display: block;
   background-color: black;
-  background-image: url('/img/binding_dark.png');
-  color: #44FF33;
-}
-
-.like-pre-white {
-  white-space: pre-wrap;
-  font-family: monospace;
-  display: block;
-  background-image: none;
-  color: lightgrey;
+  color: #44FF43;
 }
 
 .center {
