@@ -201,6 +201,7 @@ class WebStackFingerprint < BaseTask
         temp << "Mint" if header =~ /^.*MintUnique.*$/
         temp << "Omniture" if header =~ /^.*sc_id.*$/
         temp << "PHP" if header =~ /^.*PHPSESSION.*$/
+        temp << "PHP" if header =~ /^.*PHPSESSID.*$/
         # https://github.com/yiisoft/yii
         temp << "Yii PHP Framework 1.1.x" if header =~ /^.*YII_CSRF_TOKEN.*$/
         temp << "MediaWiki" if header =~ /^.*wiki??_session.*$/
@@ -239,6 +240,13 @@ class WebStackFingerprint < BaseTask
       header = response.header['x-drupal-cache']
       if header
         temp << "Drupal"
+      end
+
+      header = response.header['x-pingback']
+      if header =~ /xmlrpc.php/
+        temp << "Wordpress API"
+      else
+        _log_error "Got x-pingback header: #{header}, but can't do anything with it"
       end
 
       _log "Returning: #{temp}"
