@@ -113,6 +113,14 @@ class WebStackFingerprint < BaseTask
             :type => "content",
             :content => /<a href="\/\/www.mediawiki.org\/">Powered by MediaWiki<\/a>/,
             :test_site => "https://manual.limesurvey.org"
+          },
+          {
+            :name => "Yoast Wordpress SEO Plugin", # won't be used if we have
+            :description => "Yoast Wordpress SEO Plugin",
+            :type => "content",
+            :content => /<!-- \/ Yoast WordPress SEO plugin. -->/,
+            :test_site => "https://ip-50-62-231-56.ip.secureserver.net",
+            :dynamic_name => lambda{|x| x.scan(/the Yoast WordPress SEO plugin v.* - h/)[0].gsub("the ","").gsub(" - h","") }
           }
         ]},
         {
@@ -123,6 +131,15 @@ class WebStackFingerprint < BaseTask
             :type => "content",
             :content => /{"timestamp":\d.*,"status":999,"error":"None","message":"No message available"}/,
             :test_site => "https://pcr.apple.com"
+        }]},
+        {
+          :uri => "#{uri}/xmlrpc.php",
+          :checklist => [{
+            :name => "Wordpress API",
+            :description => "Standard Wordpress API page",
+            :type => "content",
+            :content => /XML-RPC server accepts POST requests only./,
+            :test_site => "https://ip-50-62-231-56.ip.secureserver.net/xmlrpc.php"
         }]}
       ]
 
@@ -136,10 +153,14 @@ class WebStackFingerprint < BaseTask
             # Content checks first
             if check[:type] == "content"
 
-              # Do each content check, call the dynamic name if we have it
+              # Do each content check, call the dynamic name if we have it,
+              # otherwise, just give it a static name
               if "#{response.body}" =~ /#{check[:content]}/
-                temp << check[:name]
-                temp << check[:dynamic_name].call(response.body) if check[:dynamic_name]
+                if check[:dynamic_name]
+                  temp << check[:dynamic_name].call(response.body)
+                else
+                  temp << check[:name]
+                end
               end
 
             else
