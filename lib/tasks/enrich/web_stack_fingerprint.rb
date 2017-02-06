@@ -243,7 +243,7 @@ class WebStackFingerprint < BaseTask
       end
 
       header = response.header['x-pingback']
-      if header =~ /xmlrpc.php/
+      if "#{header}" =~ /xmlrpc.php/
         temp << "Wordpress API"
       else
         _log_error "Got x-pingback header: #{header}, but can't do anything with it"
