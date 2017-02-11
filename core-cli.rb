@@ -121,9 +121,51 @@ class CoreCli < Thor
   end
 
   ###
+  ### LOCAL ONLY
   ### XXX - rewrite this so it uses the API
   ###
-  desc "load [Task] [File] [Depth] [Option1=Value1#...#...] [Handlers]", "Load entities from a file and runs a task on each in a new project."
+
+  desc "local_handle_scan_results"
+  def handle_scan_results
+    require_relative 'core'
+    ### handle scan results
+    i = 0
+    Intrigue::Model::Project.each do |p|
+      p.scan_results.each do |s|
+        puts "handling... #{i+=1}: #{s.name}"
+        s.handle_result(s.id) if s.entities.count > 0
+      end
+    end
+  end
+
+  desc "local_handle_task_results"
+  def handle_task_results
+    require_relative 'core'
+    ### handle task results
+    i = 0
+    Intrigue::Model::Project.each do |p|
+      s = p.task_results.each do |t|
+        puts "[_] Handling... #{i+=1}: #{t.name}"
+        if t.complete
+          if t.entities.count > 0
+
+            t.handlers.each do |handler_type|
+              handler = Intrigue::HandlerFactory.create_by_type(handler_type)
+              puts "[x] Calling #{handler_type} handler"
+              handler.process(t)
+            end
+            # and then mark them complete
+            t.handlers_complete = true
+            t.save
+          else
+            puts "[_] Not complete: #{t.name}"
+          end
+        end
+      end
+    end
+  end
+
+  desc "local_load [Task] [File] [Depth] [Option1=Value1#...#...] [Handlers]", "Load entities from a file and runs a task on each in a new project."
   def load(task_name,filename,depth=1,options_string=nil,handler_string=nil)
 
     # Load in the main core file for direct access to TaskFactory and the Tasks
