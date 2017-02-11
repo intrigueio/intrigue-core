@@ -135,8 +135,8 @@ class WebStackFingerprint < BaseTask
         {
           :uri => "#{uri}/xmlrpc.php",
           :checklist => [{
-            :name => "Wordpress API",
-            :description => "Standard Wordpress API page",
+            :name => "XMLRPC API",
+            :description => "Standard Blog API page",
             :type => "content",
             :content => /XML-RPC server accepts POST requests only./,
             :test_site => "https://ip-50-62-231-56.ip.secureserver.net/xmlrpc.php"
@@ -220,33 +220,33 @@ class WebStackFingerprint < BaseTask
 
       ### X-AspNet-Version-By Header
       header = response.header['X-AspNet-Version']
-      if header
-        temp << "#{header}".gsub("X-AspNet-Version:","")
-      end
+      temp << "#{header}".gsub("X-AspNet-Version:","") if header
 
       ### X-Powered-By Header
       header = response.header['X-Powered-By']
-      if header
-        temp << "#{header}".gsub("X-Powered-By:","")
-      end
+      temp << "#{header}".gsub("X-Powered-By:","") if header
 
       ### Generator
       header = response.header['x-generator']
-      if header
-        temp << "#{header}".gsub("x-generator:","")
-      end
+      temp << "#{header}".gsub("x-generator:","") if header
 
       ### x-drupal-cache
       header = response.header['x-drupal-cache']
-      if header
-        temp << "Drupal"
-      end
+      temp << "Drupal Hosted" if header
+
+      header = response.header['x-batcache']
+      temp << "Wordpress Hosted" if header
+
+      header = response.header['fastly-restarts']
+      temp << "Fastly CDN" if header
 
       header = response.header['x-pingback']
-      if "#{header}" =~ /xmlrpc.php/
-        temp << "Wordpress API"
-      else
-        _log_error "Got x-pingback header: #{header}, but can't do anything with it"
+      if header
+        if "#{header}" =~ /xmlrpc.php/
+          temp << "Wordpress API"
+        else
+          _log_error "Got x-pingback header: #{header}, but can't do anything with it"
+        end
       end
 
       _log "Returning: #{temp}"
