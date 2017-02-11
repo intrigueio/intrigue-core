@@ -18,7 +18,7 @@ class HandleResultWorker
 
     # if there's not going to be any new information, let's just return
     if scan_result.handlers_complete
-      puts "returning, handlers have already been marked complete"
+      puts "Returning, handlers have already been marked complete"
       return
     end
 
@@ -55,7 +55,7 @@ class HandleResultWorker
     if incomplete_task_count == 0
       # ...and mark the handlers run
       scan_result.handlers_complete = true
-      #scan_result.complete = true
+      scan_result.complete = true
       scan_result.save
     end
 

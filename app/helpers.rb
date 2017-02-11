@@ -14,7 +14,7 @@ module Helper
       :name => "#{task_name} on #{entity.name}",
       :task_name => task_name,
       :options => options,
-      :handlers => [],
+      :handlers => handlers,
       :base_entity => entity,
       :autoscheduled => (queue == "task_autoscheduled"),
       :depth => depth
@@ -50,9 +50,6 @@ module Helper
       scan_result.start(queue)
 
     else
-      # If it's not a new scan, just kick off the task result
-      task_result.handlers = handlers
-      task_result.save
       # Start it
       task_result.start(queue)
     end
