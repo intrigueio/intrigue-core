@@ -66,6 +66,7 @@ class CoreCli < Thor
     end
   end
 
+=begin
   desc "background [Project Name] [Task] [Type#Entity] [Depth] [Option1=Value1#...#...] [Handlers]", "Start and background a task."
   def background(project_name, task_name,entity,depth=1,option_string=nil,handler_string=nil)
 
@@ -87,7 +88,7 @@ class CoreCli < Thor
 
   puts "[+] Started task: #{task_id}"
   end
-
+=end
 
 
   desc "start [Project Name] [Task] [Type#Entity] [Depth] [Option1=Value1#...#...] [Handlers]", "Start a single task within a project."
@@ -125,12 +126,13 @@ class CoreCli < Thor
   ### XXX - rewrite this so it uses the API
   ###
 
-  desc "local_handle_scan_results"
-  def handle_scan_results
+  desc "local_handle_scan_results [Project]", "Manually run all handlers on all scan results"
+  def local_handle_scan_results(project)
     require_relative 'core'
     ### handle scan results
     i = 0
     Intrigue::Model::Project.each do |p|
+      next unless p.name == project || project == "-"
       p.scan_results.each do |s|
         puts "handling... #{i+=1}: #{s.name}"
         s.handle_result(s.id) if s.entities.count > 0
@@ -138,12 +140,13 @@ class CoreCli < Thor
     end
   end
 
-  desc "local_handle_task_results"
-  def handle_task_results
+  desc "local_handle_task_results [Project]", "Manually run all handlers on all task results"
+  def handle_task_results(project)
     require_relative 'core'
     ### handle task results
     i = 0
     Intrigue::Model::Project.each do |p|
+      next unless p.name == project || project == "-"
       s = p.task_results.each do |t|
         puts "[_] Handling... #{i+=1}: #{t.name}"
         if t.complete
@@ -155,8 +158,8 @@ class CoreCli < Thor
               handler.process(t)
             end
             # and then mark them complete
-            t.handlers_complete = true
-            t.save
+            #t.handlers_complete = true
+            #t.save
           else
             puts "[_] Not complete: #{t.name}"
           end
