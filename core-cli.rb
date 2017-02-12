@@ -66,31 +66,6 @@ class CoreCli < Thor
     end
   end
 
-=begin
-  desc "background [Project Name] [Task] [Type#Entity] [Depth] [Option1=Value1#...#...] [Handlers]", "Start and background a task."
-  def background(project_name, task_name,entity,depth=1,option_string=nil,handler_string=nil)
-
-    entity_hash = _parse_entity entity
-    options_list = _parse_options option_string
-    handler_list = _parse_handlers handler_string
-    depth = depth.to_i
-
-    ### Create a project
-    @api.create_project(project_name)
-
-    ### Construct the request
-    task_id = @api.start_and_background(project_name,task_name,entity_hash,depth,options_list,handler_list)
-
-    unless task_id # technically a nil is returned , but becomes an empty string
-      puts "[-] Task not started. Unknown Error. Exiting"
-      return
-    end
-
-  puts "[+] Started task: #{task_id}"
-  end
-=end
-
-
   desc "start [Project Name] [Task] [Type#Entity] [Depth] [Option1=Value1#...#...] [Handlers]", "Start a single task within a project."
   def start(project_name,task_name,entity_string,depth=1,option_string=nil,handler_string=nil)
 
@@ -105,20 +80,25 @@ class CoreCli < Thor
 
     # Get the response from the API
     #puts "[+] Starting Task."
-    response = @api.start(project_name,task_name,entity_hash,depth,options_list,handler_list)
+
+    response = @api.start_and_background(project_name,task_name,entity_hash,depth,options_list,handler_list)
     #puts "[D] Got response: #{response}" if @debug
-    return "Error retrieving response. Failing. Response was: #{response}" unless  response
+    #unless response
+    #  puts "Error retrieving response. Failing."
+    #  return
+    #end
     #puts "[+] Task complete!"
 
     # Parse the response
     #puts "[+] Start Results"
-    response["entities"].each do |entity|
-      puts "[x] #{entity["type"]}#{@delim}#{entity["name"]}"
-    end
+    #response["entities"].each do |entity|
+    #  puts "[x] #{entity["type"]}#{@delim}#{entity["name"]}"
+    #end
     #puts "[+] End Results"
 
     # Print the task log
-    response["log"].each_line{|x| puts "[L] #{x}" } if response["log"]
+    #response["log"].each_line{|x| puts "[L] #{x}" } if response["log"]
+    #puts "response #{response}"
   end
 
   ###
@@ -126,46 +106,49 @@ class CoreCli < Thor
   ### XXX - rewrite this so it uses the API
   ###
 
-  desc "local_handle_scan_results [Project]", "Manually run all handlers on all scan results"
-  def local_handle_scan_results(project)
+  desc "local_handle_scan_results [Project] [Handler]", "Manually run a handler on a project's scan results"
+  def local_handle_scan_results(project, handler_type)
     require_relative 'core'
+
     ### handle scan results
-    i = 0
     Intrigue::Model::Project.each do |p|
       next unless p.name == project || project == "-"
       p.scan_results.each do |s|
-        puts "handling... #{i+=1}: #{s.name}"
-        s.handle_result(s.id) if s.entities.count > 0
+
+        # Save our automatic handlers
+        # XXX - HACK
+        old_handlers = s.handlers
+        s.handlers = [ handler_type ]
+        s.save
+
+        puts "[_] Handling: #{s.name}"
+        s.handle_result(s.id,true) # Force the handling with the second argumnent
+
+        # Re-assign the old handlers
+        # XXX - HACK
+        s.handlers = old_handlers
+        s.save
       end
     end
+
   end
 
-  desc "local_handle_task_results [Project]", "Manually run all handlers on all task results"
-  def handle_task_results(project)
+  desc "local_handle_task_results [Project] [Handler]", "Manually run a handler on a project's task results"
+  def local_handle_task_results(project,handler_type)
     require_relative 'core'
+
     ### handle task results
-    i = 0
     Intrigue::Model::Project.each do |p|
       next unless p.name == project || project == "-"
       s = p.task_results.each do |t|
-        puts "[_] Handling... #{i+=1}: #{t.name}"
-        if t.complete
-          if t.entities.count > 0
 
-            t.handlers.each do |handler_type|
-              handler = Intrigue::HandlerFactory.create_by_type(handler_type)
-              puts "[x] Calling #{handler_type} handler"
-              handler.process(t)
-            end
-            # and then mark them complete
-            #t.handlers_complete = true
-            #t.save
-          else
-            puts "[_] Not complete: #{t.name}"
-          end
-        end
+        puts "[x] Handling... #{t.name}"
+        handler = Intrigue::HandlerFactory.create_by_type(handler_type)
+        handler.process(t)
+
       end
     end
+
   end
 
   desc "local_load [Task] [File] [Depth] [Option1=Value1#...#...] [Handlers]", "Load entities from a file and runs a task on each in a new project."

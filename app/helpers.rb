@@ -5,7 +5,7 @@ module Helper
   ###
   ### Helper method for starting a task run
   ###
-  def start_task(queue, project, existing_scan_result, task_name, entity, depth=1, options=[], handlers=[])
+  def start_task(queue, project, existing_scan_result, task_name, entity, depth, options=[], handlers=[])
 
     # Create the task result, and associate our entity and options
     task_result = Intrigue::Model::TaskResult.create({
