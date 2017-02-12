@@ -93,19 +93,19 @@ class WebStackFingerprint < BaseTask
           :uri => "#{uri}",
           :checklist => [
           {
+            :name => "ASP.Net", # won't be used if we have
+            :description => "ASP.Net Error Message",
+            :type => "content",
+            :content => /ASP.NET is configured/,
+            :test_site => "http://54.225.111.54",
+            :dynamic_name => lambda{|x| x.scan(/ASP.NET Version:.*$/)[0].gsub("ASP.NET Version:","").chomp }
+          },
+          {
             :name => "LimeSurvey", # won't be used if we have
             :description => "LimeSurvey",
             :type => "content",
-            :content => /Support this project: Donate to LimeSurvey'/,
+            :content => /Donate to LimeSurvey/,
             :test_site => "http://129.186.73.249/index.php/admin"
-          },
-          {
-            :name => "Tomcat", # won't be used if we have
-            :description => "Tomcat Web Application Server",
-            :type => "content",
-            :content => /<title>Apache Tomcat/,
-            :test_site => "https://cms.msu.montana.edu/",
-            :dynamic_name => lambda{|x| x.scan(/<title>.*<\/title>/)[0].gsub("<title>","").gsub("</title>","") }
           },
           {
             :name => "MediaWiki", # won't be used if we have
@@ -113,6 +113,14 @@ class WebStackFingerprint < BaseTask
             :type => "content",
             :content => /<a href="\/\/www.mediawiki.org\/">Powered by MediaWiki<\/a>/,
             :test_site => "https://manual.limesurvey.org"
+          },
+          {
+            :name => "Tomcat", # won't be used if we have
+            :description => "Tomcat Web Application Server",
+            :type => "content",
+            :content => /<title>Apache Tomcat/,
+            :test_site => "https://cms.msu.montana.edu/",
+            :dynamic_name => lambda{|x| x.scan(/<title>.*<\/title>/)[0].gsub("<title>","").gsub("</title>","").chomp }
           },
           {
             :name => "Yoast Wordpress SEO Plugin", # won't be used if we have
