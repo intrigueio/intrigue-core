@@ -17,6 +17,7 @@ class UriGatherSslCertTask  < BaseTask
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "attributes" => {"name" => "http://www.intrigue.io"}}],
       :allowed_options => [
+        {:name => "skip_incapsula", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "skip_cloudflare", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "skip_distil", :type => "Boolean", :regex => "boolean", :default => true }
       ],
@@ -27,7 +28,10 @@ class UriGatherSslCertTask  < BaseTask
   def run
     super
 
-    opt_allow_cloudflare = _get_option "skip_cloudflare"
+    opt_skip_cloudflare = _get_option "skip_cloudflare"
+    opt_skip_distill = _get_option "skip_distill"
+    opt_skip_incapsula = _get_option "skip_incapsula"
+
     uri = _get_entity_name
 
     begin
@@ -54,15 +58,22 @@ class UriGatherSslCertTask  < BaseTask
 
           alt_names.each do |alt_name|
 
-            if alt_name =~ /cloudflare.com$/
+            if alt_name =~ /cloudflare.com$/ && opt_skip_cloudflare
               _log "This is a cloudflare certificate, skipping further entity creation"
               return
             end
 
-            if alt_name =~ /distilnetworks.com$/
+            if alt_name =~ /distilnetworks.com$/ && opt_skip_distill
               _log "This is a distil networks certificate, skipping further entity creation"
               return
             end
+
+            if alt_name =~ /incapsula.com$/ && opt_skip_incapsula
+              _log "This is an incapsula certificate, skipping further entity creation"
+              return
+            end
+
+
 
             # Remove any leading wildcards so we get a sensible domain name
             if alt_name[0..1] == "*."
