@@ -80,6 +80,7 @@ module Intrigue
                 entity.name =~ /^.*gvt2.com$/                      ||
                 entity.name =~ /^.*herokussl.com$/                 ||
                 entity.name =~ /^.*hubspot.com$/                   ||
+                entity.name =~ /^.*incapdns.net$/                  ||
                 entity.name =~ /^.*instagram.com$/                 ||
                 entity.name =~ /^.*localhost$/                     ||
                 entity.name =~ /^.*mandrillapp.com$/               ||
