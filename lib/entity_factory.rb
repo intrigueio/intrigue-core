@@ -53,7 +53,10 @@ class EntityFactory
        })
     end
 
-    raise "Unable to create entity: #{type}##{name}" unless entity
+    unless entity
+      puts "ERROR! Unable to create entity: #{type}##{name}"
+      return nil
+    end
 
     # Add to our result set for this task
     task_result.add_entity entity
