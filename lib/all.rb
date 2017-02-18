@@ -46,6 +46,19 @@ require_relative 'strategies/base'
 strategies_folder = File.expand_path('../strategies', __FILE__) # get absolute directory
 Dir["#{strategies_folder}/*.rb"].each {|f| require_relative f}
 
+# And check to see if there are any specified load paths
+global_config = Intrigue::Config::GlobalConfig.new
+if global_config.config["intrigue_strategy_load_paths"]
+  global_config.config["intrigue_strategy_load_paths"].each do |load_path|
+    load_path = "#{strategies_folder}/#{load_path}" unless load_path[0] == "/"
+    Dir["#{load_path}/*.rb"].each do |file|
+      puts "Adding user strategy: #{file}"
+      require_relative file
+    end
+  end
+end
+
+
 # Client libraries
 require_relative 'client'
 
