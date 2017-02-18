@@ -195,17 +195,20 @@ module Parse
       if yomu.metadata["Content-Type"] == "application/pdf"
 
         _create_entity "Person",
-          { "name" => yomu.metadata["Author"], "uri" => uri } if yomu.metadata["Author"]
+          { "name" => yomu.metadata["Author"], "source_uri" => uri } if yomu.metadata["Author"]
         _create_entity "SoftwarePackage",
-        { "name" => "#{yomu.metadata["xmp:CreatorTool"]}", "plugin" => "#{yomu.metadata["producer"]}", "uri" => uri } if yomu.metadata["producer"]
+        { "name" => "#{yomu.metadata["xmp:CreatorTool"]} / #{yomu.metadata["producer"] }",
+          "creator" => "#{yomu.metadata["xmp:CreatorTool"]}",
+          "producer" => "#{yomu.metadata["producer"]}",
+          "source_uri" => uri } if (yomu.metadata["producer"] || yomu.metadata["xmp:CreatorTool"])
 
       # Handle MP3/4
       elsif yomu.metadata["Content-Type"] == "audio/mpeg"
-        _create_entity "Person", {"name" => yomu.metadata["meta:author"], "uri" => uri }
-        _create_entity "Person", {"name" => yomu.metadata["creator"], "uri" => uri }
-        _create_entity "Person", {"name" => yomu.metadata["xmpDM:artist"] }
+        _create_entity "Person", {"name" => yomu.metadata["meta:author"], "source_uri" => uri }
+        _create_entity "Person", {"name" => yomu.metadata["creator"], "source_uri" => uri }
+        _create_entity "Person", {"name" => yomu.metadata["xmpDM:artist"], "source_uri" => uri }
       else
-        _create_entity "Info", {"name" => "Metadata (#{uri})", "content" => yomu.metadata.to_json, "uri" => "#{uri}" }
+        _create_entity "Info", {"name" => "Metadata (#{uri})", "content" => yomu.metadata.to_json, "uri" => "#{uri}", "source_uri" => uri }
       end
 
       # Look for entities in the text of the entity
@@ -217,7 +220,7 @@ module Parse
     rescue JSON::ParserError => e
       @task_result.logger.log "ERROR parsing JSON: #{e}"
     rescue Errno::EPIPE => e
-      @task_result.logger.log "ERROR Unable to contact Tika server: #{e}"
+      @task_result.logger.log "ERROR Unable to contact Tika: #{e}"
     rescue OpenURI::HTTPError => e     # don't die if we can't find the file
       @task_result.logger.log "ERROR Unable to download file: #{e}"
     rescue URI::InvalidURIError => e     # handle invalid uris

@@ -19,7 +19,8 @@ class UriGatherSslCertTask  < BaseTask
       :allowed_options => [
         {:name => "skip_incapsula", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "skip_cloudflare", :type => "Boolean", :regex => "boolean", :default => true },
-        {:name => "skip_distil", :type => "Boolean", :regex => "boolean", :default => true }
+        {:name => "skip_distil", :type => "Boolean", :regex => "boolean", :default => true },
+        {:name => "skip_fastly", :type => "Boolean", :regex => "boolean", :default => true }
       ],
       :created_types => ["DnsRecord","SslCertificate"]
     }
@@ -31,6 +32,7 @@ class UriGatherSslCertTask  < BaseTask
     opt_skip_cloudflare = _get_option "skip_cloudflare"
     opt_skip_distill = _get_option "skip_distill"
     opt_skip_incapsula = _get_option "skip_incapsula"
+    opt_skip_fastly = _get_option "skip_fastly"
 
     uri = _get_entity_name
 
@@ -73,6 +75,10 @@ class UriGatherSslCertTask  < BaseTask
               return
             end
 
+            if alt_name =~ /fastly.net$/ && opt_skip_fastly
+              _log "This is a fastly certificate, skipping further entity creation"
+              return
+            end
 
 
             # Remove any leading wildcards so we get a sensible domain name
