@@ -39,7 +39,7 @@ class HandleResultWorker
     # and then check to make sure we're not done, or timed out, or forced
     until (incomplete_task_count == 0 || force_handling==true)
       puts "HandleResultWorker #{id}: Waiting for #{scan_result.name} to finish... #{incomplete_task_count}/#{scan_result.task_results.count} tasks."
-      puts "HandleResultWorker #{id}: Countdown... #{i*sleep_length} seconds"
+      puts "HandleResultWorker #{id}: Duration... #{i*sleep_length} seconds"
       sleep sleep_length
 
       # Grab the record again, so we can make sure to have the latest info

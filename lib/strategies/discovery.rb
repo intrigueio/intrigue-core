@@ -15,18 +15,10 @@ module Strategy
         # Do a big bruteforce if the size is small enough
         if (entity.name.split(".").length < 3)
           start_recursive_task(task_result,"dns_brute_sub",entity,[
-            {"name" => "use_file", "value" => true },
-            {"name" => "brute_alphanumeric_size", "value" => 1},
-            {"name" => "use_permutations", "value" => true },
-            {"name" => "use_mashed_domains", "value" => false },
-            {"name" => "threads", "value" => 1 }])
+            {"name" => "use_file", "value" => true }])
         else
           # otherwise do something a little faster
-          start_recursive_task(task_result,"dns_brute_sub",entity,[
-            {"name" => "use_file", "value" => false },
-            {"name" => "use_permutations", "value" => true },
-            {"name" => "use_mashed_domains", "value" => false },
-            {"name" => "threads", "value" => 1 }])
+          start_recursive_task(task_result,"dns_brute_sub",entity,[])
         end
 
       elsif entity.type_string == "String"
