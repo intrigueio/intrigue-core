@@ -13,7 +13,7 @@ class IntrigueApp < Sinatra::Base
           Thread.new { `sleep 10 && service intrigue restart` }
         end
       end
-    result 
+    result
     end
 
     ###                  ###
@@ -183,6 +183,7 @@ class IntrigueApp < Sinatra::Base
       task_name = payload["task"]
       options = payload["options"]
       handlers = payload["handlers"]
+      strategy_name = payload["strategy_name"]
 
       # Try to find our project and create it if it doesn't exist
       project = Intrigue::Model::Project.first(:name => project_name)
@@ -199,7 +200,7 @@ class IntrigueApp < Sinatra::Base
       end
 
       # Start the task_run
-      task_result = start_task("task", project, nil, task_name, entity, depth, options, handlers)
+      task_result = start_task("task", project, nil, task_name, entity, depth, options, handlers, strategy_name)
       status 200 if task_result
 
     # must be a string otherwise it can be interpreted as a status code

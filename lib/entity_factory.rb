@@ -83,6 +83,8 @@ class EntityFactory
       unless prohibited_entity? entity
         if scan_result.strategy == "discovery"
           Intrigue::Strategy::Discovery.recurse(entity, task_result)
+        elsif scan_result.strategy == "web_discovery"
+          Intrigue::Strategy::WebDiscovery.recurse(entity, task_result)
         end
       end
     end

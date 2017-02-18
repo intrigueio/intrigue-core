@@ -5,7 +5,7 @@ module Helper
   ###
   ### Helper method for starting a task run
   ###
-  def start_task(queue, project, existing_scan_result, task_name, entity, depth, options=[], handlers=[])
+  def start_task(queue, project, existing_scan_result, task_name, entity, depth, options=[], handlers=[], strategy_name="discovery")
 
     # Create the task result, and associate our entity and options
     task_result = Intrigue::Model::TaskResult.create({
@@ -29,7 +29,6 @@ module Helper
     # If the depth is greater than 1, AND we don't have a prexisting scan id, start a new scan
     if !existing_scan_result && depth > 1
 
-      strategy_name = "discovery"
       scan_result = Intrigue::Model::ScanResult.create({
         :name => "#{strategy_name} to depth #{depth} on #{entity.name}",
         :project => project,

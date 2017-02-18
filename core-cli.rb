@@ -66,8 +66,8 @@ class CoreCli < Thor
     end
   end
 
-  desc "start [Project Name] [Task] [Type#Entity] [Depth] [Option1=Value1#...#...] [Handlers]", "Start a single task within a project."
-  def start(project_name,task_name,entity_string,depth=1,option_string=nil,handler_string=nil)
+  desc "start [Project Name] [Task] [Type#Entity] [Depth] [Option1=Value1#...#...] [Handlers] [Strategy Name]", "Start a single task within a project."
+  def start(project_name,task_name,entity_string,depth=1,option_string=nil,handler_string=nil, strategy_name="discovery")
 
     # Do the setup
     entity_hash = _parse_entity entity_string
@@ -81,7 +81,7 @@ class CoreCli < Thor
     # Get the response from the API
     #puts "[+] Starting Task."
 
-    response = @api.start_and_background(project_name,task_name,entity_hash,depth,options_list,handler_list)
+    response = @api.start(project_name,task_name,entity_hash,depth,options_list,handler_list, strategy_name)
     #puts "[D] Got response: #{response}" if @debug
     #unless response
     #  puts "Error retrieving response. Failing."
@@ -151,8 +151,8 @@ class CoreCli < Thor
 
   end
 
-  desc "local_load [Task] [File] [Depth] [Option1=Value1#...#...] [Handlers]", "Load entities from a file and runs a task on each in a new project."
-  def load(task_name,filename,depth=1,options_string=nil,handler_string=nil)
+  desc "local_load [Task] [File] [Depth] [Option1=Value1#...#...] [Handlers] [Strategy]", "Load entities from a file and runs a task on each in a new project."
+  def load(task_name,filename,depth=1,options_string=nil,handler_string=nil, strategy_name="discovery")
 
     # Load in the main core file for direct access to TaskFactory and the Tasks
     # This makes this super speedy.
@@ -195,7 +195,7 @@ class CoreCli < Thor
         })
       end
 
-      task_result = start_task("task", p, nil, task_name, e, depth, options, handlers)
+      task_result = start_task("task", p, nil, task_name, e, depth, options, handlers, strategy_name)
 
       puts "Created task #{task_result.inspect} for entity #{e}"
     end
