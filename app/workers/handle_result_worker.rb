@@ -24,13 +24,12 @@ class HandleResultWorker
       return
     end
 
-
     ### So... here we wait for the result's tasks to complete... unless we complete
     ### our tasks, or the user has specifically requested that we don't (This
     ### is handy in cases of requesting to handle the results via CLI)
 
     # default sleep length
-    sleep_length = 60
+    sleep_length = 60 + rand(30)
     i = 0
 
     # Get our current number of incomplete tasks
