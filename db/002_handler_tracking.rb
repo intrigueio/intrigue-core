@@ -8,6 +8,6 @@ Sequel.migration do
     alter_table :scan_results do
       add_column :handlers_complete, FalseClass, :default=>false
     end
-    
+
   end
 end

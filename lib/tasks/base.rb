@@ -84,16 +84,37 @@ class BaseTask
       # Handlers #
       ############
 
-      # Call each handler if we have entities
-      if @task_result.entities.count > 0
+      @task_result.handlers.each do |handler_type|
+        handler = Intrigue::HandlerFactory.create_by_type(handler_type)
+        _log "Calling #{handler_type} handler"
+        handler.process(@task_result)
+      end
+      @task_result.handlers_complete = true
 
-        @task_result.handlers.each do |handler_type|
-          handler = Intrigue::HandlerFactory.create_by_type(handler_type)
-          _log "Calling #{handler_type} handler"
-          handler.process(@task_result)
+
+      ########################
+      # Scan Result Handlers #
+      ########################
+      if @task_result.scan_result && @task_result.scan_result.handlers.count > 0
+        scan_result = @task_result.scan_result
+        incomplete_task_count = scan_result.task_results.select{|tr| tr.complete == false }.count
+        _log "We are part of a scan result... checking our incomplete count: #{incomplete_task_count}"
+
+        if incomplete_task_count == 1 # We are the last one!!
+          _log "Last task standing, let's handle it!"
+          scan_result.handlers.each do |handler_type|
+            handler = Intrigue::HandlerFactory.create_by_type(handler_type)
+            _log "Calling #{handler_type} handler on #{scan_result.name}"
+            handler.process(scan_result)
+          end
+
+          # let's mark it complete if there's nothing else to do here.
+          scan_result.handlers_complete = true
+          scan_result.complete = true
+          scan_result.save
+        else
+          _log "More tasks for this scan to complete: #{incomplete_task_count}!"
         end
-        # and then mark them complete
-        @task_result.handlers_complete = true
 
       end
 

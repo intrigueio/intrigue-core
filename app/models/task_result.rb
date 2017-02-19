@@ -25,7 +25,7 @@ module Intrigue
         if queue == "task_autoscheduled"
           autoscheduled = true
 
-          job_id = Sidekiq::Client.push({
+          self.job_id = Sidekiq::Client.push({
             "class" => Intrigue::TaskFactory.create_by_name(task_name).class.to_s,
             "queue" => "task_autoscheduled",
             "retry" => true,
@@ -36,7 +36,7 @@ module Intrigue
 
         else # start it in the task queues
           task = Intrigue::TaskFactory.create_by_name(task_name)
-          job_id = task.class.perform_async id
+          self.job_id = task.class.perform_async id
           save
         end
 
