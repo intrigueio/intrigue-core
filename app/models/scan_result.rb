@@ -11,7 +11,6 @@ module Intrigue
       many_to_one :base_entity, :class => :'Intrigue::Model::Entity', :key => :base_entity_id
 
       include Intrigue::Model::Capabilities::ExportGraph
-      include Intrigue::Model::Capabilities::HandleResult
 
       def self.scope_by_project(project_name)
         named_project_id = Intrigue::Model::Project.first(:name => project_name).id
