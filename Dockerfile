@@ -1,13 +1,19 @@
 FROM ubuntu:16.04
 MAINTAINER Jonathan Cran <jcran@intrigue.io>
 
-#RUN apt-add-repository ppa:brightbox/ruby-ng
 RUN apt-get update -qq && apt-get -y upgrade && \
 	apt-get -y install libxml2-dev libxslt-dev zmap nmap sudo default-jre \
 	libsqlite3-dev sqlite3 git gcc g++ make libpcap-dev zlib1g-dev curl \
-	libcurl4-openssl-dev libpq-dev postgresql-server-dev-all wget libgdbm-dev \
+	libcurl4-openssl-dev libpq-dev wget libgdbm-dev \
 	libncurses5-dev automake libtool bison libffi-dev libgmp-dev \
-	software-properties-common bzip2 gawk libreadline6-dev libyaml-dev pkg-config
+	software-properties-common bzip2 gawk libreadline6-dev libyaml-dev pkg-config \
+	redis-server net-tools
+
+# set up postgres
+RUN sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
+RUN wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
+RUN sudo apt-get update
+RUN sudo apt-get -y install postgresql postgresql-contrib
 
 # Set up nginx?
 # TODO
@@ -22,40 +28,61 @@ RUN make -j 3 && make install
 #RUN useradd -ms /bin/bash app
 #USER app
 
-# set up RVM
-RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3
-RUN /bin/bash -l -c "curl -L get.rvm.io | bash -s stable"
-RUN /bin/bash -l -c "rvm install 2.3.1"
-RUN /bin/bash -l -c "echo 'gem: --no-ri --no-rdoc' > ~/.gemrc"
-RUN /bin/bash -l -c "gem install bundler --no-ri --no-rdoc"
+# Install rbenv and ruby-build
+WORKDIR /root
+RUN git clone https://github.com/sstephenson/rbenv.git /root/.rbenv
+RUN git clone https://github.com/sstephenson/ruby-build.git /root/.rbenv/plugins/ruby-build
+RUN git clone https://github.com/rbenv/rbenv-default-gems.git /root/.rbenv/plugins/rbenv-default-gems
+RUN /root/.rbenv/plugins/ruby-build/install.sh
+ENV PATH /root/.rbenv/bin:$PATH
+#RUN echo 'eval "$(rbenv init -)"' >> /etc/profile.d/rbenv.sh
+RUN echo 'eval "$(rbenv init -)"' >> .bashrc
+
+# Install multiple versions of ruby
+ENV CONFIGURE_OPTS --disable-install-doc
+RUN rbenv install 2.3.1
+RUN rbenv global 2.3.1
+
+# Fix an rbenv path issue
+RUN echo export PATH=/root/.rbenv/shims:$PATH >> /etc/profile.d/rbenv.sh
+RUN echo export PATH=/root/.rbenv/shims:$PATH >> .bashrc
 
 # Install the deps
 # https://medium.com/@fbzga/how-to-cache-bundle-install-with-docker-7bed453a5800#.f2hrjsvnz
 COPY Gemfile* /tmp/
 WORKDIR /tmp
 ENV BUNDLE_JOBS=12
+RUN /bin/bash -l -c "gem install bundler"
+RUN /bin/bash -l -c "bundle config --global silence_root_warning 1"
 RUN /bin/bash -l -c "bundle install --system"
 
 # get intrigue-core code
 RUN /bin/bash -l -c "rm -rf /core && mkdir -p /core"
 ADD . /core/
 
-# Cleanup
-WORKDIR /core
-RUN /bin/bash -l -c "rm .ruby-gemset"
+# check networks
+#RUN /bin/bash -l -c "apt-get install net-tools && ifconfig && netstat -lnt"
 
 # Migrate!
-RUN /bin/bash -l -c "rvmsudo bundle exec rake db:migrate"
+WORKDIR /core
 
-# Ensure we listen on all ipv4 interfaces
-# RUN /bin/bash -l -c "sed -i \"s/127.0.0.1/0.0.0.0/g\" /core/config/puma.rb"
+# Ensure we listen on all ipv4 interfaces, and background the file
+RUN cp /core/config/puma.rb.default /core/config/puma.rb
+RUN sed -i "s/tcp:\/\/127.0.0.1:7777/tcp:\/\/0.0.0.0:7777/g" /core/config/puma.rb
+RUN sed -i "s/daemonize false/daemonize true/g" /core/config/puma.rb
 
 # Expose a port
 EXPOSE 7777
 
-# Set our working directory
-WORKDIR /core
+# Set up the service file
+RUN cp /core/util/control.sh.default /core/util/control.sh
+RUN sed -i "s/\/path\/to\/install\/directory/\/core/g" /core/util/control.sh
+RUN ln -s /core/util/control.sh /etc/init.d/intrigue
+
+# Configure postgres
+RUN /bin/bash -l -c "sed -i 's/md5/trust/g' /etc/postgresql/9.6/main/pg_hba.conf"
 
 # start the app (also migrates DB)
-ENTRYPOINT ["/bin/bash", "-l"]
-CMD ["/core/util/control.sh","start"]
+CMD /bin/bash -l -c "PATH=/root/.rbenv/shims:$PATH && service postgresql start && service redis-server start && su - postgres -c 'createuser -d -w intrigue && createdb intriguedb' && service intrigue start"
+
+#ENTRYPOINT "/bin/bash"
