@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'intrigue_api_client'
-  s.version     = '1.2.0'
-  s.date        = '2016-12-12'
+  s.version     = '1.2.1'
+  s.date        = '2017-02-19'
   s.summary     = "API client for intrigue-core"
   s.description = "API client for intrigue-core"
   s.authors     = ["jcran"]
