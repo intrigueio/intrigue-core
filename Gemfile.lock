@@ -42,13 +42,6 @@ GIT
   specs:
     whoisology (0.1.0)
 
-PATH
-  remote: api_client
-  specs:
-    intrigue_api_client (1.2.0)
-      json (~> 1.8)
-      rest-client (~> 1.8)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -238,6 +231,9 @@ GEM
     i18n (0.7.0)
     iconv (1.0.4)
     inflecto (0.0.2)
+    intrigue_api_client (1.2.1)
+      json (~> 1.8)
+      rest-client (~> 1.8)
     ipaddress (0.8.3)
     json (1.8.6)
     mail (2.6.4)
@@ -360,7 +356,7 @@ DEPENDENCIES
   gmail
   googleajax
   iconv
-  intrigue_api_client!
+  intrigue_api_client
   net-dns
   nokogiri
   opencorporates!

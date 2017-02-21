@@ -1,5 +1,4 @@
 source 'https://rubygems.org'
-
 gem 'sinatra'                 # API
 gem 'sinatra-contrib'         # API
 gem 'puma'                    # Application Server

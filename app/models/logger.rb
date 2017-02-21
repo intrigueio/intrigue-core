@@ -8,8 +8,6 @@ module Intrigue
       one_to_one :scan_result
       many_to_one :project
 
-      #set_allowed_columns :full_log, :project_id
-
       def self.scope_by_project(name)
         named_project_id = Intrigue::Model::Project.first(:name => name).id
         where(:project_id => named_project_id)
@@ -56,13 +54,11 @@ module Intrigue
         return if location == "none"
 
         # any other value, log to the database
-        encoded_message = _encode_string(message)
-        set(:full_log => "#{full_log}#{encoded_message}")
+        set(:full_log => "#{full_log}#{message.encode("UTF-8", {
+                                                  :undef => :replace,
+                                                  :invalid => :replace,
+                                                  :replace => "?" })}")
         save
-      end
-
-      def _encode_string(string)
-        string.encode("UTF-8", :undef => :replace, :invalid => :replace, :replace => "?")
       end
 
     end
