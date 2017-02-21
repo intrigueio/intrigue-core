@@ -1,5 +1,6 @@
 require 'socket'
 require 'openssl'
+
 module Intrigue
 class UriGatherSslCertTask  < BaseTask
 
@@ -105,7 +106,6 @@ class UriGatherSslCertTask  < BaseTask
                                           "issuer" => "#{cert.issuer}",
                                           "algorithm" => "#{cert.signature_algorithm}",
                                           "text" => "#{cert.to_text}" }
-
 
     rescue SocketError => e
       _log_error "Caught an error: #{e}"

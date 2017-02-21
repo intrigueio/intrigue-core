@@ -95,8 +95,8 @@ class BaseTask
       ########################
       # Scan Result Handlers #
       ########################
-      if @task_result.scan_result && @task_result.scan_result.handlers.count > 0
-        scan_result = @task_result.scan_result
+      scan_result = @task_result.scan_result
+      if scan_result && scan_result.handlers.count > 0
         incomplete_task_count = scan_result.task_results.select{|tr| tr.complete == false }.count
         _log "We are part of a scan result... checking our incomplete count: #{incomplete_task_count}"
 
@@ -117,6 +117,7 @@ class BaseTask
         end
 
       end
+      scan_result = nil
 
     ensure   # Mark it complete and save it
       _log "Cleaning up!"
