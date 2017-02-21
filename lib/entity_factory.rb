@@ -16,9 +16,7 @@ class EntityFactory
   def self.resolve_type(type_string)
 
     # TODO - SECURITY - don't eval unless it's one of our valid entity types
-
     x = eval("Intrigue::Entity::#{type_string}")
-
     false unless x.kind_of? Intrigue::Model::Entity
   x
   end
