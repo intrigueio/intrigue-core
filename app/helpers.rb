@@ -20,13 +20,18 @@ module Helper
       :depth => depth
     })
 
-    # if we were passed a scan result, we know this new task belongs to it, and we should associate those
+    # if we were passed a scan result, we know this new task
+    # belongs to it, and we should associate those
     if existing_scan_result
       task_result.scan_result_id = existing_scan_result.id
+      # lets also add one to the incomplete task count, so we can determine later
+      # if we're actually done
+      task_result.scan_result.incomplete_task_count += 1
       task_result.save
     end
 
-    # If the depth is greater than 1, AND we don't have a prexisting scan id, start a new scan
+    # If the depth is greater than 1, AND we don't have a
+    # prexisting scan id, start a new scan
     if !existing_scan_result && depth > 1
 
       scan_result = Intrigue::Model::ScanResult.create({
@@ -36,7 +41,8 @@ module Helper
         :logger => Intrigue::Model::Logger.create(:project => project),
         :depth => depth,
         :strategy => strategy_name,
-        :handlers => handlers
+        :handlers => handlers,
+        :incomplete_task_count => 1
       })
 
       # Add the task result
@@ -49,7 +55,7 @@ module Helper
       scan_result.start(queue)
 
     else
-      # Start it
+      # otherwise, we're a task, and we're ready to go
       task_result.start(queue)
     end
 
