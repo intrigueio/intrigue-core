@@ -4,17 +4,17 @@ class IntrigueApp < Sinatra::Base
     ###
     ### UPDATE
     ###
-    get '/system_update' do
-      global_config = Intrigue::Config::GlobalConfig.new
-
-      if global_config.config["environment"] == "production"
-        Dir.chdir($intrigue_basedir) do
-          result = `git checkout master && git pull origin master`
-          Thread.new { `sleep 10 && service intrigue restart` }
-        end
-      end
-    result
-    end
+    #get '/system_update' do
+    #  global_config = Intrigue::Config::GlobalConfig.new
+    #
+    #  if global_config.config["environment"] == "production"
+    #    Dir.chdir($intrigue_basedir) do
+    #      result = `git checkout master && git pull origin master`
+    #      Thread.new { `sleep 10 && service intrigue restart` }
+    #    end
+    #  end
+    #result
+    #end
 
     ###                  ###
     ### System Config    ###
@@ -157,6 +157,8 @@ class IntrigueApp < Sinatra::Base
     #}.to_json
     post '/:project/results/?' do
 
+      puts "Got request!"
+
       project_name = params[:project]
 
       # Parse the incoming request
@@ -198,6 +200,8 @@ class IntrigueApp < Sinatra::Base
         entity = Intrigue::Model::Entity.create(attributes.merge(:project => project))
         entity.save
       end
+
+      puts "Starting task!!"
 
       # Start the task_run
       task_result = start_task("task", project, nil, task_name, entity, depth, options, handlers, strategy_name)
