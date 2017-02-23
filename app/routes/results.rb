@@ -99,5 +99,35 @@ class IntrigueApp < Sinatra::Base
 
       erb :'results/detail'
     end
+
+    # Run a specific handler
+    get '/:project/results/:id/handle/:handler' do
+      handler_name = params[:handler]
+      result_id = params[:id].to_i
+
+      # Get the result from the database, and fail cleanly if it doesn't exist
+      @result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => result_id)
+      return "Unknown Task Result" unless @result
+
+      ## Setup handlers on the result
+      unless (handler_name == "all")
+        temp_handlers = @result.handlers
+        @result.handlers = [handler_name]
+        @result.save
+      end
+
+      # run the handler(s) we set up
+      @result.handlers.each do |handler_type|
+        handler = Intrigue::HandlerFactory.create_by_type(handler_type)
+        handler.process(@result)
+      end
+
+      # Set handlers back to the way they were
+      @result.handlers = temp_handlers
+      @result.save
+
+      redirect "/#{@project_name}/results/#{result_id}"
+    end
+
   end
 end
