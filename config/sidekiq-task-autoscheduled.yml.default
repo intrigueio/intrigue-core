@@ -1,6 +1,6 @@
 :verbose: false
-#:logfile: ./log/task-autoscheduled.log
-:pidfile: ./tmp/pids/task-autoscheduled.pid
+#:logfile: ./log/task-autoscheduled.log  # this is commented bc we supply it on the cli
+#:pidfile: ./tmp/pids/task-autoscheduled.pid # this is commented bc we supply it on the cli
 :concurrency: 20
 :queues:
   - task_autoscheduled
