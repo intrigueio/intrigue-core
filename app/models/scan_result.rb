@@ -28,9 +28,6 @@ module Intrigue
         self.job_id = task_results.first.start(queue)
         save
 
-        # Launch a result handler worker
-        #handle_result(id) #if handlers.count > 0
-
       job_id
       end
 
@@ -101,6 +98,13 @@ module Intrigue
           output_string << x.name.gsub(/[\,,\s]/,"") << ", " << "#{x.children.map{ |y| y.name.gsub(/[\,,\s]/,"") }.join(", ")}\n"
         end
       output_string
+      end
+
+      def handle_result
+        self.handlers.each do |handler_type|
+          handler = Intrigue::HandlerFactory.create_by_type(handler_type)
+          handler.process(self)
+        end
       end
 
     end

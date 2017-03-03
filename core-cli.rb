@@ -122,7 +122,7 @@ class CoreCli < Thor
         s.save
 
         puts "[_] Handling: #{s.name}"
-        s.handle_result(s.id,true) # Force the handling with the second argumnent
+        s.handle_result # Force the handling with the second argumnent
 
         # Re-assign the old handlers
         # XXX - HACK
