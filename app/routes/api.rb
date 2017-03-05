@@ -157,10 +157,6 @@ class IntrigueApp < Sinatra::Base
     #}.to_json
     post '/:project/results/?' do
 
-      puts "Got request!"
-
-      project_name = params[:project]
-
       # Parse the incoming request
       payload = JSON.parse(request.body.read) if request.content_type == "application/json"
 
@@ -188,9 +184,9 @@ class IntrigueApp < Sinatra::Base
       strategy_name = payload["strategy_name"]
 
       # Try to find our project and create it if it doesn't exist
-      project = Intrigue::Model::Project.first(:name => project_name)
+      project = Intrigue::Model::Project.first(:name => @project_name)
       unless project
-        project = Intrigue::Model::Project.create(:name => project_name)
+        project = Intrigue::Model::Project.create(:name => @project_name)
       end
 
       # Try to find our entity
@@ -272,6 +268,63 @@ class IntrigueApp < Sinatra::Base
 
       {:data => result.log}.to_json
     end
+
+    ### Handling
+
+    # Run a specific handler on all scan results
+    get '/:project/handle/:handler' do
+      handler_name = params[:handler]
+
+      project = Intrigue::Model::Project.first(:name => @project_name)
+      project.scan_results.each do |s|
+
+        # Save our automatic handlers
+        # XXX - HACK
+        old_handlers = s.handlers
+        s.handlers = [ handler_name ]
+        s.save
+
+        #puts "[_] Handling: #{s.name}"
+        s.handle_result
+
+        # XXX - HACK
+        s.handlers = old_handlers
+        s.save
+      end
+
+    redirect "/v1/#{@project_name}"
+    end
+
+    # Run a specific handler on a specific task result
+    get '/:project/results/:id/handle/:handler' do
+      handler_name = params[:handler]
+      result_id = params[:id].to_i
+
+      # Get the result from the database, and fail cleanly if it doesn't exist
+      @result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => result_id)
+      return "Unknown Task Result" unless @result
+
+      ## Setup handlers on the result
+      unless (handler_name == "all")
+        temp_handlers = @result.handlers
+        @result.handlers = [handler_name]
+        @result.save
+      end
+
+      # run the handler(s) we set up
+      @result.handlers.each do |handler_type|
+        handler = Intrigue::HandlerFactory.create_by_type(handler_type)
+        handler.process(@result)
+      end
+
+      # Set handlers back to the way they were
+      @result.handlers = temp_handlers
+      @result.save
+
+      redirect "/#{@project_name}/results/#{result_id}"
+    end
+
+
 
   end
 end
