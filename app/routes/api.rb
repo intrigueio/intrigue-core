@@ -278,16 +278,15 @@ class IntrigueApp < Sinatra::Base
       project = Intrigue::Model::Project.first(:name => @project_name)
       project.scan_results.each do |s|
 
-        # Save our automatic handlers
-        # XXX - HACK
+        # Save our existing handlers, and apply only this one
         old_handlers = s.handlers
         s.handlers = [ handler_name ]
         s.save
 
-        #puts "[_] Handling: #{s.name}"
+        # Run the handler
         s.handle_result
 
-        # XXX - HACK
+        # Reset to the originals
         s.handlers = old_handlers
         s.save
       end

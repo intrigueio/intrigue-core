@@ -58,8 +58,8 @@ case "$1" in
     status_server
     ;;
   start)
-    echo "Starting intrigue-core processes (waiting 10 seconds...)"
-    sleep 10
+    echo "Starting intrigue-core processes"
+    sleep 3
     setup_server
     start_server
     ;;
