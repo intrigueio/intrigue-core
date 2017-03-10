@@ -1,10 +1,8 @@
 # Welcome, intrepid user!
 
-WARNING: THAR BE DRAGONS! Intrigue is currently in ALPHA and requires some effort to get set up. We will be providing installation packages at some point in the future. If you're interested in helping test, please join the chat below:
+WARNING: THAR BE DRAGONS! Intrigue is currently in ALPHA. If you're interested in helping test, please join us:[![Join the chat at https://gitter.im/intrigueio/intrigue-core](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/intrigueio/intrigue-core?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-[![Join the chat at https://gitter.im/intrigueio/intrigue-core](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/intrigueio/intrigue-core?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-Intrigue-core is an API-first framework for attack surface discovery. It is primarily used for for Internet (security) reconnaissance and research.
+Intrigue-core is a framework for large-scale attack surface discovery. It is primarily useful for for Internet (security) reconnaissance and research.
 
 <img src="https://raw.githubusercontent.com/intrigueio/intrigue-core/develop/doc/home.png" width="700">
 
@@ -14,22 +12,10 @@ To get started, follow the instructions below!
 
 Follow the appropriate setup guide:
 
- * Docker -
+ * Docker (preferred) - https://intrigue.io/2017/03/07/using-intrigue-core-with-docker/
  * Ubuntu Linux - https://github.com/intrigueio/intrigue-core/wiki/Setting-up-a-Test-Environment-on-Ubuntu-Linux
  * Kali Linux - https://github.com/intrigueio/intrigue-core/wiki/Setting-up-a-Test-Environment-on-Kali-Linux
  * OSX - https://github.com/intrigueio/intrigue-core/wiki/Setting-up-a-Test-Environment-on-OSX
-
-
-### Setting up a development environment using docker:
-```
-# Clone the repository to your current directory
-$ git clone https://github.com/intrigueio/intrigue-core
-$ cd intrigue-core
-
-# Build the container and run it
-$ docker build .
-$ docker run -i -t -p 7777:7777
-```
 
 Now that you have a working environment, browse to the web interface.
 
@@ -37,10 +23,11 @@ Now that you have a working environment, browse to the web interface.
 
 To use the web interface, browse to http://127.0.0.1:7777
 
-Please note that if you are using `docker-machine` to start the Intrigue API, the URL that you would need to access the Intrigue UI will be that `docker-machine`'s IP instead of `127.0.0.1`. So, just do a `docker-machine ls` and note the IP of your currently active and running docker machine. Then, after starting the Intrigue API/UI, navigate to that IP:7777.
+Getting started is pretty straightforward, follow this guide: https://intrigue.io/2017/03/07/using-intrigue-core-with-docker/
 
-Getting started should be pretty straightforward, try running a "dns_brute_sub" task on your domain. Now, try with the "use_file" option set to true.
+### Configuring modules
 
+Many modules require API keys. To set them up, browse to the "Configure" tab and click on the name of the module. You will be taken to the relevant signup page where you can provision an API key. 
 
 ### API usage via core-cli:
 
