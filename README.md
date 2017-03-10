@@ -1,4 +1,4 @@
-# Welcome, intrepid user!
+# Welcome!!
 
 WARNING: THAR BE DRAGONS! Intrigue is currently in ALPHA. If you're interested in helping test, please join us:[![Join the chat at https://gitter.im/intrigueio/intrigue-core](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/intrigueio/intrigue-core?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
