@@ -27,7 +27,7 @@ Getting started is pretty straightforward, follow this guide: https://intrigue.i
 
 ### Configuring modules
 
-Many modules require API keys. To set them up, browse to the "Configure" tab and click on the name of the module. You will be taken to the relevant signup page where you can provision an API key. 
+Many modules require API keys. To set them up, browse to the "Configure" tab and click on the name of the module. You will be taken to the relevant signup page where you can provision an API key.
 
 ### API usage via core-cli:
 
@@ -58,5 +58,5 @@ You can use the tried and true curl utility to request a task run. Specify the t
 $ curl -s -X POST -H "Content-Type: application/json" -d '{ "task": "example", "entity": { "type": "String", "attributes": { "name": "8.8.8.8" } }, "options": {} }' http://127.0.0.1:7777/v1/task_runs
 ```
 
-### API usage via rubygem
-[![Gem Version](https://badge.fury.io/rb/intrigue.svg)](http://badge.fury.io/rb/intrigue)
+### Ruby gem for the API:
+[![Gem Version](https://badge.fury.io/rb/intrigue_api_client.svg)](http://badge.fury.io/rb/intrigue_api_client)
