@@ -23,7 +23,7 @@ class UriGatherSslCertTask  < BaseTask
         {:name => "skip_distil", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "skip_fastly", :type => "Boolean", :regex => "boolean", :default => true }
       ],
-      :created_types => ["DnsRecord","SslCertificate"]
+      :created_types => ["DnsRecord","Host","SslCertificate"]
     }
   end
 

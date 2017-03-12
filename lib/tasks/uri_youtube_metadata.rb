@@ -17,7 +17,7 @@ class UriYoutubeMetadata < BaseTask
         {"type" => "Uri", "attributes" => { "name" => "https://www.youtube.com/watch?v=ZPr-_21-xGQ" }}
       ],
       :allowed_options => [],
-      :created_types =>  ["Info"]
+      :created_types =>  ["Info","WebAccount"]
     }
   end
 

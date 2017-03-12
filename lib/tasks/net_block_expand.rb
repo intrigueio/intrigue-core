@@ -18,7 +18,7 @@ class NetblockExpand < BaseTask
       ],
       :allowed_options => [
       ],
-      :created_types => ["IpAddress"]
+      :created_types => ["Host","IpAddress"]
     }
   end
 

@@ -10,14 +10,14 @@ class DnsRecurseSpf < BaseTask
       :description => "Check the SPF records of a domain (recursively) and create entities",
       :references => [
         "http://www.openspf.org/", "https://community.rapid7.com/community/infosec/blog/2015/02/23/osint-through-sender-policy-framework-spf-records"],
-      :allowed_types => ["DnsRecord"],
+      :allowed_types => ["DnsRecord","Host"],
       :type => "discovery",
       :passive => true,
-      :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
+      :example_entities => [{"type" => "Host", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
       ],
-      :created_types => ["DnsRecord", "IpAddress", "Info", "NetBlock" ]
+      :created_types => ["DnsRecord","Host","IpAddress","Info","NetBlock"]
     }
   end
 

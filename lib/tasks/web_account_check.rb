@@ -12,7 +12,7 @@ class WebAccountCheckTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["String","Person","Organization","Username","WebAccount"],
+      :allowed_types => ["Organization","String","Person","Username","WebAccount"],
       :example_entities => [{"type" => "String", "attributes" => {"name" => "intrigueio"}}],
       :allowed_options => [
         {:name => "specific_sites", :type => "String", :regex => "alpha_numeric_list", :default => "" }

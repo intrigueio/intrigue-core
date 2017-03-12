@@ -12,13 +12,13 @@ class DnsLookupForwardTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["DnsRecord","String"],
-      :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
+      :allowed_types => ["DnsRecord","Host","String"],
+      :example_entities => [{"type" => "Host", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
         {:name => "record_types", :type => "String", :regex => "alpha_numeric_list", :default => "ANY" }
       ],
-      :created_types => ["IpAddress"]
+      :created_types => ["Host","IpAddress"]
     }
   end
 

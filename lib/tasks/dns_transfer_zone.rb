@@ -13,10 +13,10 @@ class DnsTransferZoneTask < BaseTask
       :type => "discovery",
       :passive => false,
       :example_entities => [
-        {"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}
+        {"type" => "Host", "attributes" => {"name" => "intrigue.io"}}
       ],
       :allowed_options => [ ],
-      :created_types => ["DnsRecord","Info","IpAddress"]
+      :created_types => ["DnsRecord","Host","Info","IpAddress"]
     }
   end
 

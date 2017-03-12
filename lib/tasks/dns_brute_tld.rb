@@ -11,15 +11,15 @@ class DnsBruteTldTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["DnsRecord","String"],
-      :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
+      :allowed_types => ["DnsRecord","Host","String"],
+      :example_entities => [{"type" => "Host", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
         {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_tld.list" },
         {:name => "check_cctlds", :type => "Boolean", :regex => "boolean", :default => true }
       ],
-      :created_types => ["DnsRecord","IpAddress"]
+      :created_types => ["DnsRecord","Host","IpAddress"]
     }
   end
 

@@ -1,12 +1,12 @@
 module Intrigue
-class UriBrute < BaseTask
+class UriDirbuster < BaseTask
 
   include Intrigue::Task::Web
 
   def self.metadata
     {
-      :name => "uri_brute",
-      :pretty_name => "URI Bruteforce",
+      :name => "uri_dirbuster",
+      :pretty_name => "URI Dirbuster",
       :authors => ["jcran", "@0xsauby"],
       :description => "Bruteforce common files and directories on a web server.",
       :references => [

@@ -45,7 +45,12 @@ class UriHttpAuthBrute < BaseTask
         case response
           when Net::HTTPOK
             _log_good "#{cred} on #{uri} authorized!"
-            _create_entity "Info", "name" => "#{cred} on #{uri}"
+            _create_entity "Credential", {
+              "name" => "#{cred["username"]} on #{uri}",
+              "username" => cred["username"],
+              "password" => cred["password"],
+              "uri" => uri
+            }
           when Net::HTTPUnauthorized
             _log "#{cred} on #{uri} unauthorized."
           else

@@ -16,7 +16,7 @@ class SearchBingTask < BaseTask
       :allowed_options => [
         {:name => "max_results", :type => "Integer", :regex => "integer", :default => 50 },
       ],
-      :created_types => ["DnsRecord","EmailAddress","PhoneNumber","WebAccount", "Uri"]
+      :created_types => ["DnsRecord","EmailAddress","Host","PhoneNumber","WebAccount", "Uri"]
     }
   end
 

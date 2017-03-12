@@ -13,12 +13,11 @@ class NmapScanTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => false,
-      :allowed_types => ["DnsRecord", "IpAddress", "NetBlock"],
-      :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
-      :allowed_options => [
-        #{:name => "ports", :type => "String", :regex => "AlphaNumeric", :default => "80" }
-      ],
-      :created_types => ["IpAddress", "NetworkService", "DnsRecord", "Uri"]
+      :allowed_types => ["DnsRecord","Host","IpAddress","NetBlock"],
+      :example_entities => [{"type" => "Host", "attributes" => {"name" => "intrigue.io"}}],
+      :allowed_options => [],
+      :created_types => ["DnsRecord","DnsServer","Host","FingerServer",
+        "FtpServer","IpAddress","NetworkService","SshServer","Uri"]
     }
   end
 

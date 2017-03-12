@@ -11,8 +11,8 @@ class GeolocateHostTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["IpAddress"],
-      :example_entities => [{"type" => "IpAddress", "attributes" => {"name" => "192.0.78.13"}}],
+      :allowed_types => ["Host"],
+      :example_entities => [{"type" => "Host", "attributes" => {"name" => "192.0.78.13"}}],
       :allowed_options => [],
       :created_types => ["PhysicalLocation"]
     }

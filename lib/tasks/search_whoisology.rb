@@ -15,7 +15,7 @@ class SearchWhoisologyTask < BaseTask
       :allowed_types => ["EmailAddress"],
       :example_entities => [{"type" => "String", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
-      :created_types => ["Info"]
+      :created_types => ["Host","DnsRecord","Info"]
     }
   end
 
@@ -58,7 +58,7 @@ class SearchWhoisologyTask < BaseTask
       else
         _log_error "No domains, do we have API credits?"
       end
-      
+
     rescue RuntimeError => e
       _log_error "Runtime error: #{e.inspect}"
     end

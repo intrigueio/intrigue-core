@@ -16,14 +16,14 @@ class WhoisTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["DnsRecord", "IpAddress","NetBlock"],
+      :allowed_types => ["DnsRecord", "Host", "IpAddress","NetBlock"],
       :example_entities => [
-        {"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}},
-        {"type" => "IpAddress", "attributes" => {"name" => "192.0.78.13"}},
+        {"type" => "Host", "attributes" => {"name" => "intrigue.io"}},
+        {"type" => "Host", "attributes" => {"name" => "192.0.78.13"}},
       ],
       :allowed_options => [
         {:name => "timeout", :type => "Integer", :regex=> "integer", :default => 20 }],
-      :created_types => ["DnsRecord","DnsServer","IpAddress"]
+      :created_types => ["DnsRecord","DnsServer","Host","IpAddress"]
     }
   end
 
