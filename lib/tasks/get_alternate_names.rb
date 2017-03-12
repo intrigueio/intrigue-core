@@ -10,10 +10,10 @@ class GetAlternateNames < BaseTask
       :authors => ["jcran"],
       :description => "Look up all names of a given entity.",
       :references => [],
-      :allowed_types => ["DnsRecord","Host","IpAddress"],
+      :allowed_types => ["DnsRecord", "IpAddress"],
       :type => "enrichment",
       :passive => true,
-      :example_entities => [{"type" => "Host", "attributes" => {"name" => "intrigue.io"}}],
+      :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
       ],

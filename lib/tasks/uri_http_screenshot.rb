@@ -15,7 +15,7 @@ class UriHttpScreenshot < BaseTask
       :references => [],
       :type => "discovery",
       :passive => false,
-      :allowed_types => ["Host","IpAddress","NetBlock","Uri"],
+      :allowed_types => ["IpAddress","NetBlock","Uri"],
       :example_entities => [
         {"type" => "Uri", "attributes" => {"name" => "http://www.intrigue.io"}}
       ],

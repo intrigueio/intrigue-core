@@ -10,9 +10,9 @@ class EmailHarvestTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["DnsRecord","Host"],
+      :allowed_types => ["DnsRecord"],
       :example_entities => [
-        {"type" => "Host", "attributes" => {"name" => "intrigue.io"}}
+        {"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}
       ],
       :allowed_options => [],
       :created_types => ["EmailAddress"]
@@ -38,7 +38,7 @@ class EmailHarvestTask < BaseTask
         _create_entity "EmailAddress", {"name" => "#{email_address}", "comment" => "Scraped via Bing"}
       end
     end
-
+    
 =begin
     # Google
     _log "Scraping Google for email addresses"

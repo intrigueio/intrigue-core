@@ -16,7 +16,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "attributes" => {"name" => "http://www.intrigue.io"}}],
       :allowed_options => [],
-      :created_types => ["DnsRecord","Host","IpAddress","Uri"]
+      :created_types => ["DnsRecord","IpAddress","Uri"]
     }
   end
 

@@ -58,23 +58,6 @@ class WebStackFingerprint < BaseTask
     stack.concat _check_generator(response)
     stack.concat _check_specific_pages(uri)
 
-=begin
-    TODO - integrate this work from Intrigue::Task::Web
-    # Iterate through the target strings, which can be found in the web mixin
-    http_body_checks.each do |check|
-      matches = contents.scan(check[:regex])
-
-      # Iterate through all matches
-      matches.each do |match|
-       _create_entity("SoftwarePackage",
-        { "name" => "#{check[:finding_name]}",
-          "uri" => "#{uri}",
-          "content" => "Found #{match} on #{uri}" })
-      end if matches
-    end
-    # End interation through the target strings
-=end
-
     clean_stack = stack.select{ |x| x != nil }.uniq
     _log "Setting stack to #{clean_stack}"
 

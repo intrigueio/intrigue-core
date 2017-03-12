@@ -9,8 +9,8 @@ class SearchProjectHoneypot < BaseTask
       :authors => ["jcran"],
       :description => "This task checks the projecthoneypot site for information.",
       :references => [],
-      :allowed_types => ["Host","IpAddress"],
-      :example_entities => [{"type" => "Host", "attributes" => {"name" => "1.1.1.1"}}],
+      :allowed_types => ["IpAddress"],
+      :example_entities => [{"type" => "IpAddress", "attributes" => {"name" => "1.1.1.1"}}],
       :allowed_options => [],
       :created_types => ["Info"]
     }
