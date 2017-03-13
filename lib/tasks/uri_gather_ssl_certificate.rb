@@ -18,10 +18,11 @@ class UriGatherSslCertTask  < BaseTask
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "attributes" => {"name" => "http://www.intrigue.io"}}],
       :allowed_options => [
-        {:name => "skip_incapsula", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "skip_cloudflare", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "skip_distil", :type => "Boolean", :regex => "boolean", :default => true },
-        {:name => "skip_fastly", :type => "Boolean", :regex => "boolean", :default => true }
+        {:name => "skip_fastly", :type => "Boolean", :regex => "boolean", :default => true },
+        {:name => "skip_incapsula", :type => "Boolean", :regex => "boolean", :default => true },
+        {:name => "skip_jive", :type => "Boolean", :regex => "boolean", :default => true }
       ],
       :created_types => ["DnsRecord","Host","SslCertificate"]
     }
@@ -34,6 +35,7 @@ class UriGatherSslCertTask  < BaseTask
     opt_skip_distill = _get_option "skip_distill"
     opt_skip_incapsula = _get_option "skip_incapsula"
     opt_skip_fastly = _get_option "skip_fastly"
+    opt_skip_jive = _get_option "skip_jive"
 
     uri = _get_entity_name
 
@@ -80,6 +82,12 @@ class UriGatherSslCertTask  < BaseTask
               _log "This is a fastly certificate, skipping further entity creation"
               return
             end
+
+            if alt_name =~ /jiveon.com$/ && opt_skip_jive
+              _log "This is a jive certificate, skipping further entity creation"
+              return
+            end
+
 
 
             # Remove any leading wildcards so we get a sensible domain name

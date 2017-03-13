@@ -51,7 +51,7 @@ class MasscanTask < BaseTask
 
       # Get the discovered host (one per line) & create an ip address
       host = line.delete("\n").strip.split(" ")[3] unless line.nil?
-      _create_entity("IpAddress", { "name" => host })
+      _create_entity("Host", { "name" => host })
 
       if [80,443,8080,8081,8443].include?(opt_port)
         ssl = true if [443,8443].include?(opt_port)

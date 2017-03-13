@@ -30,7 +30,7 @@ module Strategy
 
         # Make sure it's small enough not to be disruptive, and if it is, scan it
         cidr = entity.name.split("/").last.to_i
-        if cidr >= 22
+        if cidr >= 16
           start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 21}])
           start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 80}])
           start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 443}])
