@@ -29,8 +29,6 @@ class EntityManager
     # Clean up in case there are encoding issues
     name = _encode_string(name)
     details = _encode_hash(details.merge(:aliases => "#{name}"))
-    #details.delete("name")
-
     type = resolve_type(type_string)
 
     # Merge the details if it already exists
@@ -45,6 +43,7 @@ class EntityManager
     else
     # Create a new entity, validating the attributes
       entity = Intrigue::Model::Entity.create({
+        :name =>  name,
         :project => project,
         :type => type,
         :details => details

@@ -45,12 +45,16 @@ class SearchCensysTask < BaseTask
           _log "Got result: #{r}"
 
           # Go ahead and create the entity
+
+          #require 'pry'
+          #binding.pry
+
           ip_address = r["_source"]["ip"]
-          _create_entity "Host", "name" => "#{ip_address}", "additional" => r
+          _create_entity "Host", "name" => "#{ip_address}", "censys" => r
 
           # Where we can, let's create additional entities from the scan results
-          if r["protocols"]
-            r["protocols"].each do |p|
+          if r["_source"]["protocols"]
+            r["_source"]["protocols"].each do |p|
 
               # Pull out the protocol
               port = p.split("/").first # format is like "80/http"
@@ -85,14 +89,16 @@ class SearchCensysTask < BaseTask
         response = censys.search(entity_name,search_type)
         response["results"].each do |r|
           _log "Got result: #{r}"
-          _create_entity "SslCertificate", "name" => r["parsed.subject_dn"], "additional" => r
-
-          # Pull out the CN and create a name
           if r["parsed.subject_dn"]
+
+            _create_entity "SslCertificate", "name" => r["parsed.subject_dn"], "additional" => r
+
+            # Pull out the CN and create a name
             r["parsed.subject_dn"].each do |x|
               host = x.split("CN=").last.split(",").first
               _create_entity "DnsRecord", "name" => host if host
             end
+
           end
 
         end
