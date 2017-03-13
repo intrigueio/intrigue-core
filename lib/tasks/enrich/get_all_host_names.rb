@@ -44,18 +44,18 @@ class GetAllHostNames < BaseTask
       names = []
       result.answer.map do |resource|
         next if resource.type == Dnsruby::Types::RRSIG #TODO parsing this out is a pain, not sure if it's valuable
-        unless resource.name == @entity.name
-          #if (resource.type == Dnsruby::Types::A || resource.type == Dnsruby::Types::AAAA)
-          _log "Adding name from: #{resource}"
-          names << resource.address.to_s
-          names << resource.name.to_s
-          #end
-        end #end unless
+        _log "Adding name from: #{resource}"
+        names << resource.address.to_s if resource.respond_to? :address
+        names << resource.name.to_s
       end #end result.answer
 
       @entity.update(:details => @entity.details.merge("aliases" => names.sort.uniq))
       @entity.save
 
+    rescue Dnsruby::NXDomain => e
+      _log_error "Unable to resolve: #{e}"
+    rescue Dnsruby::ResolvTimeout => e
+      _log_error "Unable to resolve, timed out: #{e}"
     rescue Errno::ENETUNREACH => e
       _log_error "Hit exception: #{e}. Are you sure you're connected?"
     #rescue Exception => e

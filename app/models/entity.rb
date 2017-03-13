@@ -25,7 +25,7 @@ module Intrigue
 
       many_to_many :task_results
       many_to_one  :project
-      many_to_many :aliases, :left_key=>:source_id,:right_key=>:target_id, :join_table=>:alias_mappings, :class=>self
+      #many_to_many :aliases, :left_key=>:source_id,:right_key=>:target_id, :join_table=>:alias_mappings, :class=>self
 
       def validate
         super
@@ -56,6 +56,9 @@ module Intrigue
       def created_by?(task_name)
         task_results.each {|x| return true if x.task_name == task_name }
       false
+      end
+
+      def names
       end
 
       def allowed_tasks
@@ -111,10 +114,10 @@ module Intrigue
           :name =>  name,
           :deleted => deleted,
           :details => details,
-          :aliases => self.aliases.map{|x| {
-            "id" => x.id,
-            "type" => x.type,
-            "name" => x.name }},
+          #:aliases => self.aliases.map{|x| {
+          #  "id" => x.id,
+          #  "type" => x.type,
+          #  "name" => x.name }},
           :task_results => task_results.map{ |t| {:id => t.id, :name => t.name } }
         }
       end

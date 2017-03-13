@@ -28,7 +28,7 @@ class EntityManager
 
     # Clean up in case there are encoding issues
     name = _encode_string(name)
-    details = _encode_hash(details.merge(:aliases => "#{name}"))
+    details = _encode_hash(details.merge(:aliases => ["#{name}"]))
     type = resolve_type(type_string)
 
     # Merge the details if it already exists

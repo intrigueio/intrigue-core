@@ -4,12 +4,9 @@ module Strategy
 
     def self.recurse(entity, task_result)
 
-      if entity.type_string == "DnsRecord"
+      if entity.type_string == "Host"
 
         start_recursive_task(task_result,"nmap_scan",entity)
-
-        ### DNS Forward Lookup
-        start_recursive_task(task_result, "get_alternate_names", entity)
 
         ### DNS Subdomain Bruteforce
         # Do a big bruteforce if the size is small enough
@@ -21,21 +18,13 @@ module Strategy
           start_recursive_task(task_result,"dns_brute_sub",entity,[])
         end
 
+        ### Whois
+        #start_recursive_task(task_result,"whois",entity)
+
       elsif entity.type_string == "String"
 
         # Search, only snag the top result
         start_recursive_task(task_result,"search_bing",entity,[{"name"=> "max_results", "value" => 1}])
-
-      elsif entity.type_string == "IpAddress"
-
-        ### DNS Reverse Lookup
-        start_recursive_task(task_result, "get_alternate_names", entity)
-
-        ### Scan
-        start_recursive_task(task_result,"nmap_scan",entity)
-
-        ### Whois
-        start_recursive_task(task_result,"whois",entity)
 
       elsif entity.type_string == "NetBlock"
 
@@ -65,7 +54,7 @@ module Strategy
             {"name" => "extract_dns_record_pattern", "value" => "#{task_result.scan_result.base_entity.name}"}]) unless entity.created_by? "uri_brute"
 
         # Check for exploitable URIs, but don't recurse on things we've already found
-        start_recursive_task(task_result,"uri_brute", entity, [{"name"=> "threads", "value" => 1}, {"name" => "user_list", "value" => "admin"}]) unless entity.created_by? "uri_brute"
+        start_recursive_task(task_result,"uri_dirbuster", entity, [{"name"=> "threads", "value" => 1}, {"name" => "user_list", "value" => "admin"}]) unless entity.created_by? "uri_brute"
 
       else
         puts "No actions for entity: #{entity.type}##{entity.details["name"]}"
