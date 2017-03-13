@@ -54,7 +54,7 @@ class SearchWhoisologyTask < BaseTask
 
       _log_good "Creating entities for #{result["count"]} results."
       if result["domains"]
-        result["domains"].each {|d| _create_entity "DnsRecord", {"name" => d["domain_name"]} }
+        result["domains"].each {|d| _create_entity "Host", {"name" => d["domain_name"]} }
       else
         _log_error "No domains, do we have API credits?"
       end

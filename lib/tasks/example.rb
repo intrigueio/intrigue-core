@@ -19,7 +19,7 @@ class ExampleTask < BaseTask
         {:name => "count", :type => "Integer", :regex=> "integer", :default => 10 },
         {:name => "sleep", :type => "Integer", :regex=> "integer", :default => 0 }
       ],
-      :created_types => ["IpAddress"]
+      :created_types => ["Host"]
     }
   end
 
@@ -52,7 +52,7 @@ class ExampleTask < BaseTask
       #
       # Create & return the entity
       #
-      _create_entity("IpAddress", {"name" => ip_address })
+      _create_entity("Host", {"name" => ip_address })
     end
 
   end

@@ -80,7 +80,7 @@ class UriExtractMetadata < BaseTask
           end
 
           alt_names.each do |alt_name|
-            _create_entity "DnsRecord", { "name" => alt_name }
+            _create_entity "Host", { "name" => alt_name }
           end
 
         end

@@ -1,6 +1,6 @@
 module Intrigue
   module Model
-
+=begin
     class AliasMapping < Sequel::Model
       plugin :validation_helpers
       #self.raise_on_save_failure = false
@@ -12,8 +12,8 @@ module Intrigue
         super
         validates_unique([:source_id, :target_id]) # only allow a single alias
       end
-
     end
+=end
 
     class Entity < Sequel::Model
       plugin :validation_helpers
@@ -32,21 +32,6 @@ module Intrigue
         validates_unique([:name, :project_id])
       end
 
-      def deleted?
-        return true if deleted
-      false
-      end
-=begin
-      def set_detail(name, value)
-
-        # Create a copy of the details so we can update it
-        x = details
-        x[name] = value
-
-        self.lock!
-        self.update(:details => x)
-      end
-=end
       def self.scope_by_project(project_name)
         named_project_id = Intrigue::Model::Project.first(:name => project_name).id
         where(:project_id => named_project_id)
@@ -55,6 +40,11 @@ module Intrigue
       def self.scope_by_project_and_type(project, type)
         named_project_id = Intrigue::Model::Project.first(:name => project).id
         where(Sequel.&(:project_id => named_project_id, :type => type.to_s))
+      end
+
+      def deleted?
+        return true if deleted
+      false
       end
 
       def children

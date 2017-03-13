@@ -1,5 +1,5 @@
 module Intrigue
-class EntityFactory
+class EntityManager
   extend Intrigue::Task::Helper
   extend Intrigue::Task::Prohibited
 
@@ -22,13 +22,13 @@ class EntityFactory
   end
 
   # This method creates a new entity, and kicks off a strategy
-  def self.create_or_merge_entity_recursive(task_result,type_string,name,details, original_entity)
+  def self.create_or_merge_entity_recursive(task_result,type_string,name,details)
 
     project = task_result.project # convenience
 
     # Clean up in case there are encoding issues
     name = _encode_string(name)
-    details = _encode_hash(details)
+    details = _encode_hash(details.merge(:aliases => "#{name}"))
     #details.delete("name")
 
     type = resolve_type(type_string)
@@ -37,8 +37,9 @@ class EntityFactory
     entity = nil
     entity = Intrigue::Model::Entity.scope_by_project_and_type(project.name,type).first(:name => name)
 
-    # We're going to have to look for each of the aliases as well.
     if entity.kind_of? Intrigue::Model::Entity
+      # We're going to have to look for each of the aliases as well.
+      # deep_merge_aliases(?)
       entity.details = details.merge(entity.details)
       entity.save
     else
@@ -46,7 +47,6 @@ class EntityFactory
       entity = Intrigue::Model::Entity.create({
         :project => project,
         :type => type,
-        :name => "#{name}",
         :details => details
        })
     end
@@ -61,17 +61,19 @@ class EntityFactory
     task_result.save
 
     # Attach the aliases on both sides
-    if original_entity
+    #if original_entity
       #unless Intrigue::Model::AliasMapping.where(:source_id => original_entity.id, :target_id => entity.id).first
-      Intrigue::Model::AliasMapping.create(:source_id => original_entity.id, :target_id => entity.id)
-      Intrigue::Model::AliasMapping.create(:source_id => entity.id, :target_id => original_entity.id)
+    #  Intrigue::Model::AliasMapping.create(:source_id => original_entity.id, :target_id => entity.id)
+    #  Intrigue::Model::AliasMapping.create(:source_id => entity.id, :target_id => original_entity.id)
       #end
-    end
+    #end
 
     # START PROCESSING OF ENRICHMENT (to depth of 1)
     if task_result.depth > 0
-      if (entity.type_string == "Uri")
-        unless prohibited_entity? entity
+      unless prohibited_entity? entity
+        if entity.type_string == "Host"
+          start_task("task_autoscheduled", project, task_result.scan_result, "get_all_host_names", entity, 1, [],[])
+        elsif entity.type_string == "Uri"
           start_task("task_autoscheduled", project, task_result.scan_result, "check_api_endpoint", entity, 1, [],[])
           start_task("task_autoscheduled", project, task_result.scan_result, "web_stack_fingerprint", entity, 1, [],[])
         end

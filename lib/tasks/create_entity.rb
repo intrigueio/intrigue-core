@@ -14,9 +14,7 @@ class CreateEntity < BaseTask
       :example_entities => [
         {"type" => "Host", "attributes" => {"name" => "intrigue.io"}}
       ],
-      :allowed_options => [
-        #{:name => "depth", :type => "Integer", :regex => "integer", :default => 1 },
-      ],
+      :allowed_options => [],
       :created_types => ["*"]
     }
   end

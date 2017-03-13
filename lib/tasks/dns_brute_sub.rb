@@ -79,7 +79,7 @@ class DnsBruteSubTask < BaseTask
     wildcard_ips = _check_wildcard(suffix)
     #unless wildcard_ips.empty?
       # Go ahead and log this, since we'll want to tell the user what's happening.
-    #  wildcard_ips.sort.uniq.each {|i| _create_entity "IpAddress", "name" => "#{i}" }
+    #  wildcard_ips.sort.uniq.each {|i| _create_entity "Host", "name" => "#{i}" }
     #end
 
     # Generate alphanumeric list of hostnames and add them to the end of the list
@@ -126,9 +126,8 @@ class DnsBruteSubTask < BaseTask
                 unless wildcard_ips.include?(resolved_address)
                   _log_good "Resolved address #{resolved_address} for #{fqdn} and it wasn't in our wildcard list."
 
-                  # Create new host and domain entities
-                  _create_entity("DnsRecord", {"name" => "#{fqdn}", "ip_address" => "#{resolved_address}" })
-                  #_create_entity("IpAddress", {"name" => "#{resolved_address}", "dns_record" => "#{fqdn}" })
+                  # Create new host entity
+                  _create_entity("Host", {"name" => "#{fqdn}"})
 
                   #
                   # This section will add permutations to our list, if the

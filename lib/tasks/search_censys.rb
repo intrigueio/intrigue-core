@@ -45,8 +45,8 @@ class SearchCensysTask < BaseTask
           _log "Got result: #{r}"
 
           # Go ahead and create the entity
-          ip_address = r["ip"]
-          _create_entity "IpAddress", "name" => "#{ip_address}", "additional" => r
+          ip_address = r["_source"]["ip"]
+          _create_entity "Host", "name" => "#{ip_address}", "additional" => r
 
           # Where we can, let's create additional entities from the scan results
           if r["protocols"]
@@ -88,9 +88,11 @@ class SearchCensysTask < BaseTask
           _create_entity "SslCertificate", "name" => r["parsed.subject_dn"], "additional" => r
 
           # Pull out the CN and create a name
-          r["parsed.subject_dn"].each do |x|
-            host = x.split("CN=").last.split(",").first
-            _create_entity "DnsRecord", "name" => host if host
+          if r["parsed.subject_dn"]
+            r["parsed.subject_dn"].each do |x|
+              host = x.split("CN=").last.split(",").first
+              _create_entity "DnsRecord", "name" => host if host
+            end
           end
 
         end

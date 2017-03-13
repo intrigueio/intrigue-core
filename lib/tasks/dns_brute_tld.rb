@@ -139,8 +139,7 @@ class DnsBruteTldTask < BaseTask
 
         # If we resolved, create the right entities
         if resolved_address
-          _create_entity("DnsRecord", {"name" => domain})
-          _create_entity("IpAddress", {"name" => resolved_address})
+          _create_entity("Host", {"name" => domain})
         end
 
       rescue Errno::ENETUNREACH => e

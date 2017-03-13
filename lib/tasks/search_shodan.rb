@@ -59,18 +59,11 @@ class SearchShodanTask < BaseTask
           # TODO - assumes ipv4, which isn't always true. Make sure to check for ipv6.
           ip_address = IPAddr.new(r['ip'],Socket::AF_INET)
           _log "IP: #{r["ip"]}"
-          host = _create_entity("IpAddress",{
+          host = _create_entity("Host",{
+            "aliases" => r["hostnames"],
             "name" => "#{ip_address}",
-            "age" => "#{updated_at}"
+            "age" => "#{updated_at}",
           })
-        end
-
-        #
-        # Create a DNS record for all hostnames
-        #
-        r["hostnames"].each do |h|
-          _log "Hostname: #{h}"
-          _create_entity("DnsRecord",{ "name" => "#{h}", "age" => "#{updated_at}" })
         end
 
         #

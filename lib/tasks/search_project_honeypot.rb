@@ -9,7 +9,7 @@ class SearchProjectHoneypot < BaseTask
       :authors => ["jcran"],
       :description => "This task checks the projecthoneypot site for information.",
       :references => [],
-      :allowed_types => ["Host","IpAddress"],
+      :allowed_types => ["Host"],
       :example_entities => [{"type" => "Host", "attributes" => {"name" => "1.1.1.1"}}],
       :allowed_options => [],
       :created_types => ["Info"]
@@ -19,8 +19,8 @@ class SearchProjectHoneypot < BaseTask
   def run
     super
 
-    ip_address = _get_entity_name
-    uri = "http://www.projecthoneypot.org/ip_#{ip_address}"
+    name = _get_entity_name
+    uri = "http://www.projecthoneypot.org/ip_#{name}"
 
     _log "Connecting to #{uri} for #{@entity}"
 

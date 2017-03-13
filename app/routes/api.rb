@@ -170,7 +170,7 @@ class IntrigueApp < Sinatra::Base
       # Collect the depth (which can kick off a recursive "scan", but default to a single)
       depth = payload["depth"] || 1
 
-      resolved_type = Intrigue::EntityFactory.resolve_type type
+      resolved_type = Intrigue::EntityManager.resolve_type type
 
       attributes = payload["entity"].merge(
         "type" => resolved_type.to_s,

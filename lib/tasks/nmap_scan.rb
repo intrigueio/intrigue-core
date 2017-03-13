@@ -62,7 +62,7 @@ class NmapScanTask < BaseTask
       # Handle the case of a netblock or domain - where we will need to create host entity(s)
       if @entity.type_string == "NetBlock" or @entity.type_string == "DnsRecord"
         # Only create if we've got ports to report.
-        _create_entity("IpAddress", { "name" => host.ip } ) if host.ports.count > 0
+        _create_entity("Host", { "name" => host.ip } ) if host.ports.count > 0
       end
 
       host.each_port do |port|

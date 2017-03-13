@@ -34,7 +34,7 @@ class DnsLookupReverseTask < BaseTask
         _log_good "Creating domain #{resolved_name}"
 
         # Create our new dns record entity with the resolved name
-        _create_entity("DnsRecord", {"name" => resolved_name})
+        _create_entity("Host", {"name" => resolved_name})
 
       else
         _log "Unable to find a name for #{address}"

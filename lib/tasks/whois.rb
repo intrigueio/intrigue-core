@@ -72,17 +72,9 @@ class WhoisTask < BaseTask
 
           parser.nameservers.each do |nameserver|
             _log "Parsed nameserver: #{nameserver}"
-            #
-            # If it's an ip address, let's create a host record
-            #
-            if nameserver.to_s =~ /\d\.\d\.\d\.\d/
-              _create_entity "IpAddress", "name" => nameserver.to_s
-            else
-              #
-              # Otherwise it's another domain, and we can't do much but add it
-              #
-              _create_entity "DnsRecord", "name" => nameserver.to_s
-            end
+
+            _create_entity "Host", "name" => nameserver.to_s
+
           end
         else
           _log_error "No parsed nameservers!"

@@ -44,7 +44,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
         host = URI(link).host
 
         _create_entity "Uri", "name" => link, "uri" => link
-        _create_entity "DnsRecord", "name" => host
+        _create_entity "Host", "name" => host
 
         # Add to both arrays, so we can keep track of the original set, and a resolved set
         original_dns_records << host
@@ -179,7 +179,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
     ###
     _log "Displaying IP address counts"
     grouped_ip_records.sort_by{|x| x.last }.reverse.each do |record,count|
-      _create_entity "IpAddress", "name" => record[:host], "description" => record[:dns_record]
+      _create_entity "Host", "name" => record[:host], "description" => record[:dns_record]
       _log "#{count} #{record}"
     end
 

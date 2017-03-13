@@ -69,7 +69,7 @@ class DnsRecurseSpf < BaseTask
 
                 elsif data =~ /^include:.*/
                   spf_data = data.split(":").last
-                  _create_entity "DnsRecord", {"name" => spf_data}
+                  _create_entity "Host", {"name" => spf_data}
 
                   # RECURSE!
                   lookup_txt_record opt_resolver, spf_data
@@ -80,7 +80,7 @@ class DnsRecurseSpf < BaseTask
                   if data.include? "/"
                     _create_entity "NetBlock", {"name" => range }
                   else
-                    _create_entity "IpAddress", {"name" => range }
+                    _create_entity "Host", {"name" => range }
                   end
                 end
               end

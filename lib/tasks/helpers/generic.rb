@@ -4,7 +4,7 @@ module Generic
 
   private
 
-  def _create_entity(type, hash, original_entity=nil)
+  def _create_entity(type, hash)
     # NOTE: this is a hack - the _create_entity call should be updated in each task
     # to create the entity in a form that's ready for create_or_merge_entity_recursive
 
@@ -12,7 +12,7 @@ module Generic
     hash.delete("name") # No need for a name in the hash now, remove it
 
     # Create or merge the entity
-    entity = EntityFactory.create_or_merge_entity_recursive(@task_result, type, name, hash, original_entity)
+    entity = EntityManager.create_or_merge_entity_recursive(@task_result, type, name, hash)
   end
 
   ###

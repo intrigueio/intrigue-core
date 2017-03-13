@@ -56,13 +56,13 @@ class DnsLookupTxtTask < BaseTask
             answer.rdata.first.split(" ").each do |record|
 
               if record =~ /^include:.*/
-                _create_entity "DnsRecord", {"name" => record.split(":").last}
+                _create_entity "Host", {"name" => record.split(":").last}
               elsif record =~ /^ip4:.*/
                 s = record.split(":").last
                 if s.include? "/"
                   _create_entity "NetBlock", {"name" => s }
                 else
-                  _create_entity "IpAddress", {"name" => s }
+                  _create_entity "Host", {"name" => s }
                 end
               #elsif record =~ /^google-site-verification.*/
               #  _create_entity "Info", {"name" => "DNS Verification Code", "type" =>"Google", "content" => #record.split(":").last}
