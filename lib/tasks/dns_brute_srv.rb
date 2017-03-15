@@ -11,7 +11,7 @@ class DnsBruteSrvTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => false,
-      :allowed_types => ["DnsRecord","Host"],
+      :allowed_types => ["Host"],
       :example_entities => [{"type" => "Host", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
@@ -35,7 +35,7 @@ class DnsBruteSrvTask < BaseTask
           ]
         }
       ],
-      :created_types => ["DnsRecord","Host","NetSvc"]
+      :created_types => ["Host","NetSvc"]
     }
   end
 

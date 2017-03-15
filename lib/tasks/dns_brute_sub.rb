@@ -15,7 +15,7 @@ class DnsBruteSubTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => false,
-      :allowed_types => ["DnsRecord","Host","String"],
+      :allowed_types => ["Host"],
       :example_entities =>  [{"type" => "Host", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
@@ -33,7 +33,7 @@ class DnsBruteSubTask < BaseTask
         {:name => "brute_alphanumeric_size", :type => "Integer", :regex => "integer", :default => 0 },
         {:name => "threads", :type => "Integer", :regex => "integer", :default => 1 },
       ],
-      :created_types => ["DnsRecord","IpAddress"]
+      :created_types => ["Host"]
     }
   end
 

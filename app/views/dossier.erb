@@ -66,16 +66,9 @@
   <% end %>
 </ul>
 
-<p>DNS Records:</p>
+<p>Hosts:</p>
 <ul>
-  <% @dns_records.each do |e| %>
-  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
-  <% end %>
-</ul>
-
-<p>IP Addresses:</p>
-<ul>
-  <% @ip_addresses.each do |e| %>
+  <% @hosts.each do |e| %>
   <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
   <% end %>
 </ul>

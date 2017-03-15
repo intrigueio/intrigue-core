@@ -10,7 +10,7 @@ describe "Intrigue v1.0 Tasks" do
     it "runs a default dns_lookup_forward task and returns the correct result" do
 
       entity = {
-        "type" => "DnsRecord",
+        "type" => "Host",
         "details" => {
           "name" => "intrigue.io"
         }
@@ -22,8 +22,8 @@ describe "Intrigue v1.0 Tasks" do
 
       # Check the result
       expect(result["task_name"]).to match "dns_lookup_forward"
-      expect(result["entity_id"]["type"]).to match "DnsRecord"
-      expect(result["entity_ids"].first["type"]).to match "IpAddress"
+      expect(result["entity_id"]["type"]).to match "Host"
+      expect(result["entity_ids"].first["type"]).to match "Host"
       expect(result["entity_ids"].first["details"]["name"]).to match /192.0.78.*/
     end
 

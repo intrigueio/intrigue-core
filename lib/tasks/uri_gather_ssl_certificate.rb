@@ -22,9 +22,10 @@ class UriGatherSslCertTask  < BaseTask
         {:name => "skip_distil", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "skip_fastly", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "skip_incapsula", :type => "Boolean", :regex => "boolean", :default => true },
-        {:name => "skip_jive", :type => "Boolean", :regex => "boolean", :default => true }
+        {:name => "skip_jive", :type => "Boolean", :regex => "boolean", :default => true },
+        {:name => "skip_wpengine", :type => "Boolean", :regex => "boolean", :default => true }
       ],
-      :created_types => ["DnsRecord","Host","SslCertificate"]
+      :created_types => ["Host","SslCertificate"]
     }
   end
 
@@ -36,6 +37,7 @@ class UriGatherSslCertTask  < BaseTask
     opt_skip_incapsula = _get_option "skip_incapsula"
     opt_skip_fastly = _get_option "skip_fastly"
     opt_skip_jive = _get_option "skip_jive"
+    opt_skip_wpengine = _get_option "skip_wpengine"
 
     uri = _get_entity_name
 
@@ -88,14 +90,17 @@ class UriGatherSslCertTask  < BaseTask
               return
             end
 
-
+            if alt_name =~ /wpengine.com$/ && opt_skip_wpengine
+              _log "This is a wpengine certificate, skipping further entity creation"
+              return
+            end
 
             # Remove any leading wildcards so we get a sensible domain name
             if alt_name[0..1] == "*."
               alt_name = alt_name[2..-1]
             end
 
-            _create_entity "DnsRecord", { "name" => alt_name }
+            _create_entity "Host", { "name" => alt_name }
           end
 
         end

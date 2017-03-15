@@ -10,12 +10,12 @@ class SearchShodanTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["DnsRecord", "DnsServer","Host", "IpAddress","NetworkService","String"],
+      :allowed_types => ["DnsServer","Host","NetworkService","String"],
       :example_entities => [
         {"type" => "Host", "attributes" => {"name" => "intrigue.io"}}
       ],
       :allowed_options => [],
-      :created_types => ["Host","IpAddress","NetworkService","Organization","PhysicalLocation"]
+      :created_types => ["Host","NetworkService","Organization","PhysicalLocation"]
     }
   end
 

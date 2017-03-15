@@ -12,10 +12,10 @@ class SearchCensysTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["DnsRecord","Host","IpAddress","String"],
+      :allowed_types => ["Host","String"],
       :example_entities => [{"type" => "String", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
-      :created_types => ["DnsRecord","FtpServer","Host","IpAddress","SslCertificate"]
+      :created_types => ["FtpServer","Host","SslCertificate"]
     }
   end
 
@@ -96,7 +96,7 @@ class SearchCensysTask < BaseTask
             # Pull out the CN and create a name
             r["parsed.subject_dn"].each do |x|
               host = x.split("CN=").last.split(",").first
-              _create_entity "DnsRecord", "name" => host if host
+              _create_entity "Host", "name" => host if host
             end
 
           end

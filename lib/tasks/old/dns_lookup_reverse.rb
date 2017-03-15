@@ -12,12 +12,12 @@ class DnsLookupReverseTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["Host","IpAddress"],
+      :allowed_types => ["Host","Host"],
       :example_entities => [{"type" => "Host", "attributes" => {"name" => "192.0.78.13"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
       ],
-      :created_types => ["DnsRecord","Host"]
+      :created_types => ["Host","Host"]
     }
   end
 

@@ -15,7 +15,7 @@ class SearchWhoisologyTask < BaseTask
       :allowed_types => ["EmailAddress"],
       :example_entities => [{"type" => "String", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
-      :created_types => ["Host","DnsRecord","Info"]
+      :created_types => ["Host","Info"]
     }
   end
 

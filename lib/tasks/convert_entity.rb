@@ -15,7 +15,7 @@ class ConvertEntity < BaseTask
         {"type" => "String", "attributes" => {"name" => "intrigue"}}
       ],
       :allowed_options => [
-        {:name => "convert_to_type", :type => "String", :regex => "alpha_numeric", :default => "DnsRecord" },
+        {:name => "convert_to_type", :type => "String", :regex => "alpha_numeric", :default => "Host" },
       ],
       :created_types => ["*"]
     }

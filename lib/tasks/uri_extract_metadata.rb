@@ -21,7 +21,7 @@ class UriExtractMetadata < BaseTask
         {"type" => "Uri", "attributes" => { "name" => "http://www.intrigue.io" }}
       ],
       :allowed_options => [],
-      :created_types =>  ["DnsRecord", "EmailAddress", "File", "Host", "Info", "Person", "PhoneNumber", "SoftwarePackage", "SslCertificate"]
+      :created_types =>  ["EmailAddress", "File", "Host", "Info", "Person", "PhoneNumber", "SoftwarePackage", "SslCertificate"]
     }
   end
 

@@ -9,14 +9,14 @@ class DnsTransferZoneTask < BaseTask
       :pretty_name => "DNS Zone Transfer",
       :authors => ["jcran"],
       :description => "DNS Zone Transfer",
-      :allowed_types => ["DnsRecord"],
+      :allowed_types => ["Host"],
       :type => "discovery",
       :passive => false,
       :example_entities => [
         {"type" => "Host", "attributes" => {"name" => "intrigue.io"}}
       ],
       :allowed_options => [ ],
-      :created_types => ["DnsRecord","Host","Info","IpAddress"]
+      :created_types => ["Host","Info"]
     }
   end
 
@@ -62,7 +62,7 @@ class DnsTransferZoneTask < BaseTask
             z.rdata.respond_to?("last") ? record = "#{z.rdata.last.to_s}" : record = "#{z.rdata.to_s}"
 
             # Check to see if it's an ip address or a dns record
-            #record.is_ip_address? ? entity_type = "IpAddress" : entity_type = "DnsRecord"
+            #record.is_ip_address? ? entity_type = "Host" : entity_type = "Host"
             _create_entity "Host", { "name" => "#{record}", "type" => "#{z.type.to_s}", "content" => "#{record}" }
           end
         end

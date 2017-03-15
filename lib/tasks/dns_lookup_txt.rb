@@ -11,14 +11,14 @@ class DnsLookupTxtTask < BaseTask
       :references => [
         "http://webmasters.stackexchange.com/questions/27910/txt-vs-spf-record-for-google-servers-spf-record-either-or-both"
       ],
-      :allowed_types => ["DnsRecord","Host"],
+      :allowed_types => ["Host"],
       :type => "discovery",
       :passive => true,
       :example_entities => [{"type" => "Host", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
       ],
-      :created_types => ["DnsRecord", "Host", "IpAddress", "Info", "NetBlock" ]
+      :created_types => ["Host", "Info", "NetBlock" ]
     }
   end
 

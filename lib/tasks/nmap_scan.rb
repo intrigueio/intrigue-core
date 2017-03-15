@@ -13,11 +13,11 @@ class NmapScanTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => false,
-      :allowed_types => ["DnsRecord","Host","IpAddress","NetBlock"],
+      :allowed_types => ["Host","NetBlock"],
       :example_entities => [{"type" => "Host", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
-      :created_types => ["DnsRecord","DnsServer","Host","FingerServer",
-        "FtpServer","IpAddress","NetworkService","SshServer","Uri"]
+      :created_types => ["Host","DnsServer","FingerServer", "FtpServer",
+        "NetworkService","SshServer","Uri"]
     }
   end
 
@@ -60,7 +60,7 @@ class NmapScanTask < BaseTask
       _log "Handling nmap data for #{host.ip}"
 
       # Handle the case of a netblock or domain - where we will need to create host entity(s)
-      if @entity.type_string == "NetBlock" or @entity.type_string == "DnsRecord"
+      if @entity.type_string == "NetBlock" or @entity.type_string == "Host"
         # Only create if we've got ports to report.
         _create_entity("Host", { "name" => host.ip } ) if host.ports.count > 0
       end

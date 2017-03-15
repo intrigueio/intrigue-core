@@ -11,7 +11,7 @@ class DnsBruteTldTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["DnsRecord","Host","String"],
+      :allowed_types => ["Host","Host","String"],
       :example_entities => [{"type" => "Host", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
@@ -19,7 +19,7 @@ class DnsBruteTldTask < BaseTask
         {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_tld.list" },
         {:name => "check_cctlds", :type => "Boolean", :regex => "boolean", :default => true }
       ],
-      :created_types => ["DnsRecord","Host","IpAddress"]
+      :created_types => ["Host","Host","Host"]
     }
   end
 
@@ -85,42 +85,42 @@ class DnsBruteTldTask < BaseTask
 ### The usual suspects need to be dealt with here. These are largely
 ### useless for our purposes.
 =begin
-{"type"=>"DnsRecord", "attributes"=>{"name"=>"Airforce.com.com"}}
-{"type"=>"IpAddress", "attributes"=>{"name"=>"54.201.82.69"}}
-{"type"=>"DnsRecord", "attributes"=>{"name"=>"Airforce.com.net"}}
-{"type"=>"IpAddress", "attributes"=>{"name"=>"74.221.212.214"}}
-{"type"=>"DnsRecord", "attributes"=>{"name"=>"Airforce.com.org"}}
-{"type"=>"IpAddress", "attributes"=>{"name"=>"23.21.224.150"}}
-{"type"=>"DnsRecord", "attributes"=>{"name"=>"Airforce.com.jobs"}}
-{"type"=>"IpAddress", "attributes"=>{"name"=>"50.19.241.165"}}
-{"type"=>"DnsRecord", "attributes"=>{"name"=>"Airforce.com.ninja"}}
-{"type"=>"IpAddress", "attributes"=>{"name"=>"127.0.53.53"}}
+{"type"=>"Host", "attributes"=>{"name"=>"Airforce.com.com"}}
+{"type"=>"Host", "attributes"=>{"name"=>"54.201.82.69"}}
+{"type"=>"Host", "attributes"=>{"name"=>"Airforce.com.net"}}
+{"type"=>"Host", "attributes"=>{"name"=>"74.221.212.214"}}
+{"type"=>"Host", "attributes"=>{"name"=>"Airforce.com.org"}}
+{"type"=>"Host", "attributes"=>{"name"=>"23.21.224.150"}}
+{"type"=>"Host", "attributes"=>{"name"=>"Airforce.com.jobs"}}
+{"type"=>"Host", "attributes"=>{"name"=>"50.19.241.165"}}
+{"type"=>"Host", "attributes"=>{"name"=>"Airforce.com.ninja"}}
+{"type"=>"Host", "attributes"=>{"name"=>"127.0.53.53"}}
 
-{"type"=>"DnsRecord", "attributes"=>{"name"=>"Air.com.co"}}
-{"type"=>"IpAddress", "attributes"=>{"name"=>"72.52.4.91"}}
-{"type"=>"DnsRecord", "attributes"=>{"name"=>"Air.com.com"}}
-{"type"=>"IpAddress", "attributes"=>{"name"=>"54.201.82.69"}}
-{"type"=>"DnsRecord", "attributes"=>{"name"=>"Air.com.net"}}
-{"type"=>"IpAddress", "attributes"=>{"name"=>"106.186.123.143"}}
-{"type"=>"DnsRecord", "attributes"=>{"name"=>"Air.com.org"}}
-{"type"=>"IpAddress", "attributes"=>{"name"=>"23.21.224.150"}}
-{"type"=>"DnsRecord", "attributes"=>{"name"=>"Air.com.jobs"}}
-{"type"=>"IpAddress", "attributes"=>{"name"=>"50.19.241.165"}}
-{"type"=>"DnsRecord", "attributes"=>{"name"=>"Air.com.ninja"}}
-{"type"=>"IpAddress", "attributes"=>{"name"=>"127.0.53.53"}}
+{"type"=>"Host", "attributes"=>{"name"=>"Air.com.co"}}
+{"type"=>"Host", "attributes"=>{"name"=>"72.52.4.91"}}
+{"type"=>"Host", "attributes"=>{"name"=>"Air.com.com"}}
+{"type"=>"Host", "attributes"=>{"name"=>"54.201.82.69"}}
+{"type"=>"Host", "attributes"=>{"name"=>"Air.com.net"}}
+{"type"=>"Host", "attributes"=>{"name"=>"106.186.123.143"}}
+{"type"=>"Host", "attributes"=>{"name"=>"Air.com.org"}}
+{"type"=>"Host", "attributes"=>{"name"=>"23.21.224.150"}}
+{"type"=>"Host", "attributes"=>{"name"=>"Air.com.jobs"}}
+{"type"=>"Host", "attributes"=>{"name"=>"50.19.241.165"}}
+{"type"=>"Host", "attributes"=>{"name"=>"Air.com.ninja"}}
+{"type"=>"Host", "attributes"=>{"name"=>"127.0.53.53"}}
 
-{"type"=>"DnsRecord", "attributes"=>{"name"=>"Bathtub.com.com"}}
-{"type"=>"IpAddress", "attributes"=>{"name"=>"54.201.82.69"}}
-{"type"=>"DnsRecord", "attributes"=>{"name"=>"Bathtub.com.net"}}
-{"type"=>"IpAddress", "attributes"=>{"name"=>"74.221.212.214"}}
-{"type"=>"DnsRecord", "attributes"=>{"name"=>"Bathtub.com.org"}}
-{"type"=>"IpAddress", "attributes"=>{"name"=>"23.21.224.150"}}
-{"type"=>"DnsRecord", "attributes"=>{"name"=>"Bathtub.com.jobs"}}
-{"type"=>"IpAddress", "attributes"=>{"name"=>"50.19.241.165"}}
-{"type"=>"DnsRecord", "attributes"=>{"name"=>"Bathtub.com.cn"}}
-{"type"=>"IpAddress", "attributes"=>{"name"=>"222.73.20.195"}}
-{"type"=>"DnsRecord", "attributes"=>{"name"=>"Bathtub.com.ninja"}}
-{"type"=>"IpAddress", "attributes"=>{"name"=>"127.0.53.53"}}
+{"type"=>"Host", "attributes"=>{"name"=>"Bathtub.com.com"}}
+{"type"=>"Host", "attributes"=>{"name"=>"54.201.82.69"}}
+{"type"=>"Host", "attributes"=>{"name"=>"Bathtub.com.net"}}
+{"type"=>"Host", "attributes"=>{"name"=>"74.221.212.214"}}
+{"type"=>"Host", "attributes"=>{"name"=>"Bathtub.com.org"}}
+{"type"=>"Host", "attributes"=>{"name"=>"23.21.224.150"}}
+{"type"=>"Host", "attributes"=>{"name"=>"Bathtub.com.jobs"}}
+{"type"=>"Host", "attributes"=>{"name"=>"50.19.241.165"}}
+{"type"=>"Host", "attributes"=>{"name"=>"Bathtub.com.cn"}}
+{"type"=>"Host", "attributes"=>{"name"=>"222.73.20.195"}}
+{"type"=>"Host", "attributes"=>{"name"=>"Bathtub.com.ninja"}}
+{"type"=>"Host", "attributes"=>{"name"=>"127.0.53.53"}}
 =end
 
     _log_good "Using TLD list: #{tld_list}"

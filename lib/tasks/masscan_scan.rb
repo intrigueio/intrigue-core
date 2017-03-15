@@ -19,7 +19,7 @@ class MasscanTask < BaseTask
       :allowed_options => [
         {:name => "port", :type => "Integer", :regex => "integer", :default => 80 },
       ],
-      :created_types => ["Host","IpAddress", "NetworkService"]
+      :created_types => ["Host","NetworkService"]
     }
   end
 

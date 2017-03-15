@@ -26,7 +26,7 @@ describe "API" do
     post "/v1/Default/task_results", {
       :task => "example",
       :entity => {
-        :type => "DnsRecord",
+        :type => "Host",
         :details => {
           :name => "test.com"
         }

@@ -16,14 +16,14 @@ class WhoisTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["DnsRecord", "Host", "IpAddress","NetBlock"],
+      :allowed_types => ["Host","NetBlock"],
       :example_entities => [
         {"type" => "Host", "attributes" => {"name" => "intrigue.io"}},
         {"type" => "Host", "attributes" => {"name" => "192.0.78.13"}},
       ],
       :allowed_options => [
         {:name => "timeout", :type => "Integer", :regex=> "integer", :default => 20 }],
-      :created_types => ["DnsRecord","DnsServer","Host","IpAddress"]
+      :created_types => ["DnsServer","Host"]
     }
   end
 
@@ -63,33 +63,7 @@ class WhoisTask < BaseTask
       #
       # if it was a domain, we've got a whole lot of things we can pull
       #
-      if @entity.kind_of? Intrigue::Entity::DnsRecord
-
-        #
-        # We're going to have nameservers either way?
-        #
-        if parser.nameservers
-
-          parser.nameservers.each do |nameserver|
-            _log "Parsed nameserver: #{nameserver}"
-
-            _create_entity "Host", "name" => nameserver.to_s
-
-          end
-        else
-          _log_error "No parsed nameservers!"
-          return
-        end
-        #
-        # Create a user from the technical contact
-        #
-        parser.contacts.each do |contact|
-          _log "Creating user from contact: #{contact.name}"
-          _create_entity("Person", {"name" => contact.name})
-          _create_entity("EmailAddress", {"name" => contact.email})
-        end
-
-      else
+      if lookup_string.is_ip_address?
 
         #
         # Otherwise our entity must've been a host, so lets connect to
@@ -142,6 +116,33 @@ class WhoisTask < BaseTask
         rescue Nokogiri::XML::XPath::SyntaxError => e
           _log_error "Got an error while parsing the XML: #{e}"
         end
+
+      else
+        
+        #
+        # We're going to have nameservers either way?
+        #
+        if parser.nameservers
+
+          parser.nameservers.each do |nameserver|
+            _log "Parsed nameserver: #{nameserver}"
+
+            _create_entity "Host", "name" => nameserver.to_s
+
+          end
+        else
+          _log_error "No parsed nameservers!"
+          return
+        end
+        #
+        # Create a user from the technical contact
+        #
+        parser.contacts.each do |contact|
+          _log "Creating user from contact: #{contact.name}"
+          _create_entity("Person", {"name" => contact.name})
+          _create_entity("EmailAddress", {"name" => contact.email})
+        end
+
       end # end Host Type
 
     else

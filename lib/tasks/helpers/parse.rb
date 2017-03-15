@@ -141,7 +141,7 @@ module Parse
     # Scan for dns records
     dns_records = content.scan(/^[A-Za-z0-9]+\.[A-Za-z0-9]+\.[a-zA-Z]{2,6}$/)
     dns_records.each do |dns_record|
-      x = _create_entity("DnsRecord", {"name" => dns_record, "uri" => source_uri})
+      x = _create_entity("Host", {"name" => dns_record, "uri" => source_uri})
     end
   end
 
