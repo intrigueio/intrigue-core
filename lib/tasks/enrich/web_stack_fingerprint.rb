@@ -56,8 +56,8 @@ class WebStackFingerprint < BaseTask
     stack.concat _check_x_headers(response)
     stack.concat _check_cookies(response)
     stack.concat _check_generator(response)
-    stack.concat _check_specific_pages(uri)
     stack.concat _check_uri(uri)
+    stack.concat _check_specific_pages(uri)
 
 =begin
     TODO - integrate this work from Intrigue::Task::Web
@@ -86,7 +86,7 @@ class WebStackFingerprint < BaseTask
 
   private
 
-  def _check_uri()
+  def _check_uri(uri)
     _log "_check_uri called"
     temp = []
     temp << "ASP Classic" if uri =~ /.*\.asp$/i
