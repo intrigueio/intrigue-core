@@ -258,7 +258,7 @@ class WebStackFingerprint < BaseTask
 
       ### x-drupal-cache
       header = response.header['x-drupal-cache']
-      temp << "Drupal Hosted" if header
+      temp << "Drupal" if header
 
       header = response.header['x-batcache']
       temp << "Wordpress Hosted" if header
