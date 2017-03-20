@@ -57,6 +57,7 @@ class WebStackFingerprint < BaseTask
     stack.concat _check_cookies(response)
     stack.concat _check_generator(response)
     stack.concat _check_specific_pages(uri)
+    stack.concat _check_uri(uri)
 
 =begin
     TODO - integrate this work from Intrigue::Task::Web
@@ -84,6 +85,19 @@ class WebStackFingerprint < BaseTask
   end
 
   private
+
+  def _check_uri()
+    _log "_check_uri called"
+    temp = []
+    temp << "ASP Classic" if uri =~ /.*\.asp$/i
+    temp << "ASP.NET" if uri =~ /.*\.aspx$/i
+    temp << "CGI" if uri =~ /.*\.cgi$/i
+    temp << "Java (jsessionid)" if uri =~ /jsessionid=/i
+    temp << "JSP" if uri =~ /.*\.jsp$/i
+    temp << "PHP" if uri =~ /.*\.php$/i
+    temp << "Struts" if uri =~ /.*\.do$/i
+  temp
+  end
 
   def _check_generator(response)
     _log "_check_generator called"
