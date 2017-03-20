@@ -178,6 +178,8 @@ module Task
         @task_result.logger.log_error "Timeout : #{e}" if @task_result
       rescue Net::ReadTimeout => e
         @task_result.logger.log_error "Timeout : #{e}" if @task_result
+      rescue Errno::ETIMEDOUT => e
+        @task_result.logger.log_error "Timeout : #{e}" if @task_result
       rescue Errno::ENETUNREACH => e
         @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
       rescue URI::InvalidURIError => e

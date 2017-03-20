@@ -23,8 +23,6 @@ module Intrigue
       def start(queue)
 
         if queue == "task_autoscheduled"
-          autoscheduled = true
-
           self.job_id = Sidekiq::Client.push({
             "class" => Intrigue::TaskFactory.create_by_name(task_name).class.to_s,
             "queue" => "task_autoscheduled",
@@ -32,15 +30,23 @@ module Intrigue
             "args" => [id]
           })
 
-          save
+        elsif queue == "task_enrichment"
+          self.job_id = Sidekiq::Client.push({
+            "class" => Intrigue::TaskFactory.create_by_name(task_name).class.to_s,
+            "queue" => "task_enrichment",
+            "retry" => true,
+            "args" => [id]
+          })
 
         else # start it in the task queues
           task = Intrigue::TaskFactory.create_by_name(task_name)
           self.job_id = task.class.perform_async id
-          save
+
         end
 
-      job_id
+        save
+
+      self.job_id
       end
 
       def log
@@ -62,19 +68,6 @@ module Intrigue
       # (TODO: should we store our actual task / configuration)
       def task
         Intrigue::TaskFactory.create_by_name(task_name)
-      end
-
-      ### Export!
-      def export_csv
-        output_string = ""
-        entities.each{ |x| output_string << x.export_csv << "\n" }
-      output_string
-      end
-
-      def export_tsv
-        export_string = ""
-        entities.map{ |x| export_string << x.export_tsv + "\n" }
-      export_string
       end
 
       def export_hash

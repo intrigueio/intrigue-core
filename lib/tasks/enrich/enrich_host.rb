@@ -1,12 +1,12 @@
 require 'dnsruby'
 
 module Intrigue
-class GetAllHostNames < BaseTask
+class EnrichHost < BaseTask
 
   def self.metadata
     {
-      :name => "get_all_host_names",
-      :pretty_name => "Get All Host Names",
+      :name => "enrich_host",
+      :pretty_name => "Enrich Host",
       :authors => ["jcran"],
       :description => "Look up all names of a given entity.",
       :references => [],
@@ -27,6 +27,14 @@ class GetAllHostNames < BaseTask
     opt_resolver = _get_option "resolver"
     lookup_name = _get_entity_name
 
+    ip_addresses = []
+    dns_names = []
+    if lookup_name.is_ip_address?
+      ip_addresses << lookup_name
+    else
+      dns_names << lookup_name
+    end
+
     begin
       resolver = Dnsruby::Resolver.new(
         :recurse => "true",
@@ -41,25 +49,34 @@ class GetAllHostNames < BaseTask
       _log_error "Nothing?" if result.answer.empty?
 
       # For each of the found addresses
-      names = []
       result.answer.map do |resource|
         next if resource.type == Dnsruby::Types::RRSIG #TODO parsing this out is a pain, not sure if it's valuable
         _log "Adding name from: #{resource}"
-        names << resource.address.to_s if resource.respond_to? :address
-        names << resource.name.to_s
+        ip_addresses << resource.address.to_s if resource.respond_to? :address
+        dns_names << resource.name.to_s.downcase
       end #end result.answer
 
-      @entity.update(:details => @entity.details.merge("aliases" => names.sort.uniq))
-      @entity.save
-
+    rescue Dnsruby::ServFail => e
+      _log_error "Unable to resolve: #{@entity}, error: #{e}"
     rescue Dnsruby::NXDomain => e
-      _log_error "Unable to resolve: #{e}"
+      _log_error "Unable to resolve: #{@entity}, error: #{e}"
     rescue Dnsruby::ResolvTimeout => e
       _log_error "Unable to resolve, timed out: #{e}"
     rescue Errno::ENETUNREACH => e
       _log_error "Hit exception: #{e}. Are you sure you're connected?"
+
     #rescue Exception => e
     #  _log_error "Hit exception: #{e}"
+    ensure
+
+      temp_details = @entity.details
+      temp_details["ip_addresses"] = ip_addresses.sort.uniq
+      temp_details["dns_names"] = dns_names.sort.uniq
+      temp_details["enriched"] = true
+
+      @entity.update(:details => temp_details)
+      @entity.save
+
     end
 
     _log "Ran enrichment task!"

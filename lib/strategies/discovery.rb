@@ -6,9 +6,22 @@ module Strategy
 
       if entity.type_string == "Host"
 
+        # Wait until enrichment has happened before going further
+        entity_id = entity.id
+        countdown = 10 # HACK
+        while !entity.get_detail("enriched") && countdown > 0  do
+          puts "waiting for #{entity} enrichment: #{entity.get_detail("enriched")} (#{countdown})"
+          #puts "#{entity.id}"
+          #puts "#{entity.details.inspect}"
+          sleep 3
+          countdown -= 1
+          entity = Intrigue::Model::Entity.find(:id => entity_id)
+        end
+
         start_recursive_task(task_result,"nmap_scan",entity)
 
         ### DNS Subdomain Bruteforce
+        # Do a big bruteforce if the size is small enough
         # Do a big bruteforce if the size is small enough
         if (entity.name.split(".").length < 3)
           start_recursive_task(task_result,"dns_brute_sub",entity,[
@@ -29,22 +42,22 @@ module Strategy
       elsif entity.type_string == "NetBlock"
 
         # Make sure it's small enough not to be disruptive, and if it is, scan it
-        cidr = entity.name.split("/").last.to_i
-        if cidr >= 16
+        #cidr = entity.name.split("/").last.to_i
+        #if cidr >= 16
           start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 21}])
           start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 80}])
           start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 443}])
           start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 8080}])
           start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 8081}])
           start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 8443}])
-        end
+        #end
 
       elsif entity.type_string == "Uri"
 
         ## Grab the Web Server
 
         ## Grab the SSL Certificate
-        start_recursive_task(task_result,"uri_gather_ssl_certificate",entity) if entity.name =~ /^https/
+        start_recursive_task(task_result,"uri_gather_ssl_certificate",entity) #if entity.name =~ /^https/
 
         ## Spider, looking for metadata
         start_recursive_task(task_result,"uri_spider",entity,[

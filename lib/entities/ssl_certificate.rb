@@ -9,8 +9,8 @@ class SslCertificate < Intrigue::Model::Entity
     }
   end
 
-  def validate_content
-    @name =~ /^.*$/
+  def validate_entity
+    name =~ /^.*$/
   end
 
 end

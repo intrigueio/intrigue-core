@@ -1,0 +1,6 @@
+:verbose: false
+#:logfile: ./log/task-enrichment.log # this is commented bc we supply it on the cli
+#:pidfile: ./tmp/pids/task-enrichment.pid # this is commented bc we supply it on the cli
+:concurrency: 10
+:queues:
+  - task_enrichment

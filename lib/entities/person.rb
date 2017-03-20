@@ -10,8 +10,8 @@ class Person < Intrigue::Model::Entity
   end
 
 
-  def validate_content
-    @name =~ /^.*$/
+  def validate_entity
+    name =~ /^\w.*$/
   end
 
 end

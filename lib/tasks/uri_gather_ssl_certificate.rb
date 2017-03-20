@@ -63,8 +63,10 @@ class UriGatherSslCertTask  < BaseTask
             x.gsub(/DNS:/,"").strip
           end
 
-          alt_names.each do |alt_name|
+          _log "Got alt_names: #{alt_names.inspect}"
 
+          # Iterate through, looking for trouble
+          alt_names.each do |alt_name|
             if alt_name =~ /cloudflare.com$/ && opt_skip_cloudflare
               _log "This is a cloudflare certificate, skipping further entity creation"
               return
@@ -94,6 +96,10 @@ class UriGatherSslCertTask  < BaseTask
               _log "This is a wpengine certificate, skipping further entity creation"
               return
             end
+          end
+
+          #assuming we made it this far, let's proceed
+          alt_names.each do |alt_name|
 
             # Remove any leading wildcards so we get a sensible domain name
             if alt_name[0..1] == "*."

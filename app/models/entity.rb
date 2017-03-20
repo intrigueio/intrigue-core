@@ -1,35 +1,20 @@
 module Intrigue
   module Model
-=begin
-    class AliasMapping < Sequel::Model
-      plugin :validation_helpers
-      #self.raise_on_save_failure = false
-
-      many_to_one :source, :class => :'Intrigue::Model::Entity', :key => :source_id
-      many_to_one :target, :class => :'Intrigue::Model::Entity', :key => :target_id
-
-      def validate
-        super
-        validates_unique([:source_id, :target_id]) # only allow a single alias
-      end
-    end
-=end
 
     class Entity < Sequel::Model
       plugin :validation_helpers
       plugin :single_table_inheritance, :type
-      plugin :serialization, :json, :details
+      plugin :serialization, :json, :details #, :name
       self.raise_on_save_failure = false
 
       #set_allowed_columns :type, :name, :details, :project_id
 
       many_to_many :task_results
       many_to_one  :project
-      #many_to_many :aliases, :left_key=>:source_id,:right_key=>:target_id, :join_table=>:alias_mappings, :class=>self
 
       def validate
         super
-        validates_unique([:name, :project_id])
+        validates_unique([:project_id, :name])
       end
 
       def self.scope_by_project(project_name)
@@ -40,6 +25,11 @@ module Intrigue
       def self.scope_by_project_and_type(project, type)
         named_project_id = Intrigue::Model::Project.first(:name => project).id
         where(Sequel.&(:project_id => named_project_id, :type => type.to_s))
+      end
+
+      # easy way to refer to all names (overridden in some entities)
+      def unique_names
+        [name]
       end
 
       def deleted?
@@ -56,9 +46,6 @@ module Intrigue
       def created_by?(task_name)
         task_results.each {|x| return true if x.task_name == task_name }
       false
-      end
-
-      def names
       end
 
       def allowed_tasks
@@ -100,6 +87,10 @@ module Intrigue
         </div>}
       end
 
+      def get_detail(key)
+        details[key]
+      end
+
       def self.descendants
         x = ObjectSpace.each_object(Class).select{ |klass| klass < self }
       end
@@ -114,10 +105,6 @@ module Intrigue
           :name =>  name,
           :deleted => deleted,
           :details => details,
-          #:aliases => self.aliases.map{|x| {
-          #  "id" => x.id,
-          #  "type" => x.type,
-          #  "name" => x.name }},
           :task_results => task_results.map{ |t| {:id => t.id, :name => t.name } }
         }
       end
@@ -126,30 +113,26 @@ module Intrigue
         export_hash.to_json
       end
 
-      # export id, type, name, and details on a single line, removing spaces and commas
-      def export_csv
-        export_string = "#{id},#{type_string},#{name.gsub(/[\,,\s]/,"")},"
-        details.each{|k,v| export_string << "#{k}=#{v};".gsub(/[\,,\s]/,"") }
-      export_string
-      end
-
-      def export_tsv
-        export_string = "#{id}\t#{type_string}\t#{name}\t"
-        details.each{|k,v| export_string << "#{k}##{v};" }
-      export_string
-      end
-
       private
       def _escape_html(text)
         Rack::Utils.escape_html(text)
         text
       end
 
-      # have an easy way to sort and hash all the aliases (which should include
-      # all names)
-      def _unique_name
-        string = aliases.split(",").sort_by{|x| x.downcase}.join(", ")
-        Digest::SHA1.hexdigest string
+
+      ### VALIDATIONS!
+
+      # https://tools.ietf.org/html/rfc1123
+      def _v4_regex
+        /(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/
+      end
+
+      def _v6_regex
+        /^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/
+      end
+
+      def _dns_regex
+        /^(\w|-|\.).*\.(\w|-|\.).*$/
       end
 
     end

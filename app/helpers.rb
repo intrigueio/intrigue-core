@@ -2,6 +2,18 @@
 module Task
 module Helper
 
+  def entity_exists?(project, entity_type, entity_name)
+    puts "Checking for existence of an entity with type: #{entity_type} and name: #{entity_name} in project: #{project.name}"
+    Intrigue::Model::Entity.scope_by_project_and_type(project.name,entity_type).each do |e|
+      if e.unique_names.include? entity_name
+        puts "Found! #{entity_name}"
+        return e
+      end
+    end
+  puts "Not Found! #{entity_name}"
+  false
+  end
+
   ###
   ### Helper method for starting a task run
   ###
@@ -16,7 +28,7 @@ module Helper
       :options => options,
       :handlers => [],
       :base_entity => entity,
-      :autoscheduled => (queue == "task_autoscheduled"),
+      :autoscheduled => (queue == "task_autoscheduled" || queue == "task_enrichment"),
       :depth => depth
     })
 

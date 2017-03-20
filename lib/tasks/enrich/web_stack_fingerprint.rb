@@ -214,6 +214,7 @@ class WebStackFingerprint < BaseTask
         temp << "ASP.NET" if header =~ /^.*ASPSESSIONID.*$/
         temp << "ASP.NET" if header =~ /^.*ASP.NET_SessionId.*$/
         temp << "BEA WebLogic" if header =~ /^.*WebLogicSession*$/
+        temp << "BigIP" if header =~ /^.*BIGipServer*$/
         temp << "Coldfusion" if header =~ /^.*CFID.*$/
         temp << "Coldfusion" if header =~ /^.*CFTOKEN.*$/
         temp << "Coldfusion" if header =~ /^.*CFGLOBALS.*$/

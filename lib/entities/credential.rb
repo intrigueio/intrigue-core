@@ -9,11 +9,11 @@ class Credential < Intrigue::Model::Entity
     }
   end
 
-  def validate_content
-    @name =~ /^.*/ &&
-    @details["username"].to_s =~ /^.*$/ &&
-    @details["password"].to_s =~ /^.*$/ &&
-    @details["uri"].to_s =~ /^.*$/
+  def validate_entity
+    name =~ /^\w.*/ &&
+    details["username"].to_s =~ /^\w.*$/ &&
+    details["password"].to_s =~ /^\w.*$/ &&
+    details["uri"].to_s =~ /^\w.*$/
   end
 
 end

@@ -3,28 +3,28 @@
 <p>People:</p>
 <ul>
   <% @persons.each do |e| %>
-  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.unique_names}"  %></a></li>
   <% end %>
 </ul>
 
 <p>Email:</p>
 <ul>
   <% @emails.each do |e| %>
-  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.unique_names}"  %></a></li>
   <% end %>
 </ul>
 
 <p>Phone Numbers:</p>
 <ul>
   <% @phone_numbers.each do |e| %>
-  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.unique_names}"  %></a></li>
   <% end %>
 </ul>
 
 <p>Software:</p>
 <ul>
   <% @software_packages.each do |e| %>
-  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.unique_names}"  %></a></li>
   <% end %>
 </ul>
 
@@ -32,7 +32,7 @@
 <ul>
   <% @uris.each do |e|
     next unless e.details["api"] %>
-  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.name}"  %></a></li>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.unique_names}"  %></a></li>
   <% end %>
 </ul>
 
@@ -41,48 +41,48 @@
   <% @uris.sort{|x,y| "#{x.details["stack"]}" <=> "#{y.details["stack"]}"}.each do |e|
     next unless e.details["stack"]
     next unless e.details["stack"].count > 0  %>
-  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.details["stack"]}: ...  #{e.name}"  %></a></li>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.details["stack"]}: ...  #{e.unique_names}"  %></a></li>
   <% end %>
 </ul>
 
 <p>SSL Certificates:</p>
 <ul>
   <% @ssl_certificates.each do |e| %>
-  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.unique_names}"  %></a></li>
   <% end %>
 </ul>
 
 <p>Uris:</p>
 <ul>
   <% @uris.each do |e| %>
-  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.unique_names}"  %></a></li>
   <% end %>
 </ul>
 
 <p>Network Services:</p>
 <ul>
   <% @services.each do |e| %>
-  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.unique_names}"  %></a></li>
   <% end %>
 </ul>
 
 <p>Hosts:</p>
 <ul>
   <% @hosts.each do |e| %>
-  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.unique_names}"  %></a></li>
   <% end %>
 </ul>
 
 <p>Networks:</p>
 <ul>
   <% @networks.each do |e| %>
-  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.unique_names}"  %></a></li>
   <% end %>
 </ul>
 
 <p>Other:</p>
 <ul>
   <% @other.each do |e| %>
-  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.name}"  %></a></li>
+  <li><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.type_string} : #{e.unique_names}"  %></a></li>
   <% end %>
 </ul>

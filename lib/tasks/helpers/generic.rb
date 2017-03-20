@@ -4,15 +4,16 @@ module Generic
 
   private
 
+  ###
+  ### Helper method to reach out to the entity manager
+  ###
   def _create_entity(type, hash)
-    # NOTE: this is a hack - the _create_entity call should be updated in each task
-    # to create the entity in a form that's ready for create_or_merge_entity_recursive
 
-    name = hash["name"] # Pull out the name from the hash
-    hash.delete("name") # No need for a name in the hash now, remove it
+    # No need for a name in the hash now, remove it & pull out the name from the hash
+    name = hash.delete("name")
 
     # Create or merge the entity
-    entity = EntityManager.create_or_merge_entity_recursive(@task_result, type, name, hash)
+    EntityManager.create_or_merge_entity(@task_result, type, name, hash)
   end
 
   ###
