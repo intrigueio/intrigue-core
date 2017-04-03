@@ -29,8 +29,8 @@ class WebStackFingerprint < BaseTask
     # Grab the full response 2x
     uri = _get_entity_name
 
-    response = http_get uri
-    response2 = http_get uri
+    response = http_request :get,uri
+    response2 = http_request :get,uri
 
     ## Indicators
     # Banner Grabbing / Headers (Server, X-Powered-By, X-AspNet-Version)
@@ -183,7 +183,7 @@ class WebStackFingerprint < BaseTask
       ]
 
       all_checks.each do |check|
-        response = http_get "#{check[:uri]}"
+        response = http_request :get,"#{check[:uri]}"
         if response
 
           #### iterate on checks for this URI

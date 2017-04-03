@@ -1,4 +1,6 @@
 require 'dnsruby'
+require 'nmap/program'
+require 'nmap/xml'
 
 module Intrigue
 class EnrichHost < BaseTask
@@ -37,12 +39,10 @@ class EnrichHost < BaseTask
 
     begin
       resolver = Dnsruby::Resolver.new(
-        :recurse => "true",
-        :query_timeout => 5,
         :nameserver => opt_resolver,
         :search => [])
 
-      result = resolver.query(lookup_name)
+        result = resolver.query(lookup_name, Dnsruby::Types::ANY)
       _log "Processing: #{result}"
 
       # Let us know if we got an empty result
@@ -53,6 +53,7 @@ class EnrichHost < BaseTask
         next if resource.type == Dnsruby::Types::RRSIG #TODO parsing this out is a pain, not sure if it's valuable
         _log "Adding name from: #{resource}"
         ip_addresses << resource.address.to_s if resource.respond_to? :address
+        dns_names << resource.domainname.to_s if resource.respond_to? :domainname
         dns_names << resource.name.to_s.downcase
       end #end result.answer
 
@@ -74,9 +75,36 @@ class EnrichHost < BaseTask
       temp_details["dns_names"] = dns_names.sort.uniq
       temp_details["enriched"] = true
 
+      @entity.lock!
       @entity.update(:details => temp_details)
       @entity.save
 
+    end
+
+    ## FINGERPRINT
+    to_scan = _get_entity_name
+
+    # Create a tempfile to store results
+    temp_file = "#{Dir::tmpdir}/nmap_scan_#{rand(100000000)}.xml"
+
+    # Check for IPv6
+    nmap_options = ""
+    nmap_options << "-6" if to_scan =~ /:/
+
+    # shell out to nmap and run the scan
+    _log "Scanning #{to_scan} and storing in #{temp_file}"
+    nmap_string = "nmap #{to_scan} #{nmap_options} -O -p21,22,80,443,8080,8081,8443,10000 --max-os-tries 1 -oX #{temp_file}"
+    _unsafe_system(nmap_string)
+
+    # PARSE FILE
+    Nmap::XML.new(temp_file) do |xml|
+      xml.each_host do |host|
+
+        @entity.lock!
+        @entity.update(:details => @entity.details.merge({"os" => host.os.matches}))
+        @entity.save
+
+      end
     end
 
     _log "Ran enrichment task!"

@@ -14,6 +14,7 @@ require_relative 'tasks/helpers/generic'
 require_relative 'tasks/helpers/lists'
 require_relative 'tasks/helpers/parse'
 require_relative 'tasks/helpers/prohibited'
+require_relative 'tasks/helpers/regex'
 require_relative 'tasks/helpers/scanner'
 require_relative 'tasks/helpers/web'
 

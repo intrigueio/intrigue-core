@@ -1,4 +1,3 @@
-#require 'nmap/program'
 require 'nmap/xml'
 
 module Intrigue
@@ -41,17 +40,22 @@ class NmapScanTask < BaseTask
     end
 
     ip_addresses.each do |to_scan|
+
+      ### SECURITY!
+      raise "INVALID INPUT: #{to_scan}" unless match_regex :ip_address, to_scan
+
       # Create a tempfile to store results
       temp_file = "#{Dir::tmpdir}/nmap_scan_#{rand(100000000)}.xml"
 
       # Check for IPv6
       nmap_options = ""
-      nmap_options << "-6 " if to_scan =~ /:/
+      nmap_options << "-6" if to_scan =~ /:/
 
       # shell out to nmap and run the scan
       _log "Scanning #{to_scan} and storing in #{temp_file}"
       _log "NMap options: #{nmap_options}"
-      nmap_string = "nmap #{to_scan} #{nmap_options} -P0 --top-ports 100 --min-parallelism 10 -oX #{temp_file}"
+
+      nmap_string = "nmap #{to_scan} #{nmap_options} -O -P0 --top-ports 100 --min-parallelism 10 -oX #{temp_file}"
       _log "Running... #{nmap_string}"
       _unsafe_system(nmap_string)
 

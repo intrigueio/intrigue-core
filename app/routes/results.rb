@@ -43,18 +43,22 @@ class IntrigueApp < Sinatra::Base
         entity_type = @params["entity_type"]
         return unless entity_type
 
-        # TODO - SECURITY - validate that it's a valid entity type before we eval
-        klass = eval("Intrigue::Entity::#{entity_type}")
-
         entity = entity_exists?(current_project,entity_type,entity_name)
 
         unless entity
+
+          # TODO - SECURITY - validate that it's a valid entity type before we eval
+          klass = Intrigue::EntityManager.resolve_type entity_type
+
           entity = Intrigue::Model::Entity.create(
             { :name => entity_name,
               :type => klass,
               :details => entity_details,
               :project => current_project
             })
+
+          Intrigue::EntityManager.enrich_entity entity
+
         end
       end
 

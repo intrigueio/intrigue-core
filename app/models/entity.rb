@@ -14,7 +14,7 @@ module Intrigue
 
       def validate
         super
-        validates_unique([:project_id, :name])
+        validates_unique([:project_id, :type, :name])
       end
 
       def self.scope_by_project(project_name)
@@ -22,9 +22,10 @@ module Intrigue
         where(:project_id => named_project_id)
       end
 
-      def self.scope_by_project_and_type(project, type)
-        named_project_id = Intrigue::Model::Project.first(:name => project).id
-        where(Sequel.&(:project_id => named_project_id, :type => type.to_s))
+      def self.scope_by_project_and_type(project_name, entity_type)
+        resolved_entity_type = Intrigue::EntityManager.resolve_type(entity_type)
+        named_project_id = Intrigue::Model::Project.first(:name => project_name).id
+        where(Sequel.&(:project_id => named_project_id, :type => resolved_entity_type.to_s))
       end
 
       # easy way to refer to all names (overridden in some entities)

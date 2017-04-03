@@ -15,10 +15,9 @@ class Host < Intrigue::Model::Entity
 
   def unique_names
     x = [name]
-    x.concat(details["dns_names"]) if details["dns_names"]
-    x.concat(details["ip_addresses"]) if details["ip_addresses"]
-
-    x.sort.uniq
+    x.concat details["dns_names"] if details["dns_names"]
+    x.concat details["ip_addresses"] if details["ip_addresses"]
+  x.sort.uniq
   end
 
 

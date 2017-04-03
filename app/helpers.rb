@@ -4,12 +4,15 @@ module Helper
 
   def entity_exists?(project, entity_type, entity_name)
     puts "Checking for existence of an entity with type: #{entity_type} and name: #{entity_name} in project: #{project.name}"
-    Intrigue::Model::Entity.scope_by_project_and_type(project.name,entity_type).each do |e|
+
+    Intrigue::Model::Entity.scope_by_project_and_type(project.name, entity_type).each do |e|
+      #puts "Entity #{e}"
       if e.unique_names.include? entity_name
-        puts "Found! #{entity_name}"
+        puts "Found! #{entity_name} in #{e.unique_names}"
         return e
       end
     end
+
   puts "Not Found! #{entity_name}"
   false
   end

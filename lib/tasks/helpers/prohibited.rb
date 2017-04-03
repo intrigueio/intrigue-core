@@ -34,6 +34,7 @@ module Intrigue
                 entity.name =~ /^.*amazonaws.com$/                 ||
                 entity.name =~ /^.*android.clients.google.com$/    ||
                 entity.name =~ /^.*android.com$/                   ||
+                entity.name =~ /^.*apache.org$/                    ||
                 entity.name =~ /^.*azure-mobile.net$/              ||
                 entity.name =~ /^.*azureedge-test.net$/            ||
                 entity.name =~ /^.*azureedge.net$/                 ||

@@ -1,14 +1,14 @@
 require 'ipaddr'
 
 module Intrigue
-class NetblockExpand < BaseTask
+class NetBlockExpand < BaseTask
 
   def self.metadata
     {
       :name => "net_block_expand",
       :pretty_name => "NetBlock Expand",
       :authors => ["jcran"],
-      :description => "This task expands a NetBlock into a list of ip addresses.",
+      :description => "This task expands a NetBlock into a list of IP Addresses.",
       :references => [],
       :type => "discovery",
       :passive => true,
@@ -30,7 +30,9 @@ class NetblockExpand < BaseTask
       netblock = IPAddr.new(_get_entity_name)
       _log "Expanding Range: #{netblock}"
       netblock.to_range.to_a[1..-1].each do |r|
-        _create_entity "Host", "name" => r.to_s
+        #Thread.new(r) { |ip|
+          _create_entity "Host", "name" => r.to_s
+        #}
       end
     rescue IPAddr::InvalidPrefixError => e
       _log_error "Invalid NetBlock!"

@@ -183,16 +183,17 @@ class CoreCli < Thor
       task_result_id = SecureRandom.uuid
 
       # Check if the entity already exists, and if not, create a new entity
-      type_class = eval("Intrigue::Entity::#{entity["type"]}")
-      e = Intrigue::Model::Entity.scope_by_project_and_type(project_name, type_class).first(:name => entity["details"]["name"])
+      e = Intrigue::Model::Entity.scope_by_project_and_type(project_name, entity["type"]).first(:name => entity["details"]["name"])
 
       unless e
+        type_class = Intrigue::EntityManager.resolve_type entity["type"]
         e = Intrigue::Model::Entity.create({
           :type => type_class.to_s,
           :name => entity["details"]["name"],
           :details => entity["details"],
           :project => p
         })
+        Intrigue::EntityManager.enrich_entity entity
       end
 
       task_result = start_task("task", p, nil, task_name, e, depth, options, handlers, strategy_name)

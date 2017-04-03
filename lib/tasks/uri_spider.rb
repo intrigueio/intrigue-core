@@ -16,7 +16,7 @@ class UriSpider < BaseTask
       :references => ["http://tika.apache.org/0.9/formats.html"],
       :allowed_types => ["Uri"],
       :type => "discovery",
-      :passive => true,
+      :passive => false,
       :example_entities => [
         {"type" => "Uri", "attributes" => { "name" => "http://www.intrigue.io" }}
       ],

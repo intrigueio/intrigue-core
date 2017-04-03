@@ -5,12 +5,21 @@ class EntityManager
 
   # NOTE: We don't auto-register entities like the other factories (handled by
   # single table inheritance)
+  def self.entity_types
+    Intrigue::Model::Entity.descendants
+  end
 
   def self.resolve_type(type_string)
-    # TODO - SECURITY - don't eval unless it's one of our valid entity types
-    x = eval("Intrigue::Entity::#{type_string}")
-    false unless x.kind_of? Intrigue::Model::Entity
-  x
+    raise "INVALID TYPE TO RESOLVE: #{type_string}. DID YOU SEND A STRING?" unless type_string.kind_of? String
+
+    # Don't eval unless it's one of our valid entity type
+    if type_string =~ /:/
+      return eval("#{type_string}") if entity_types.map{|x|x.to_s}.include? "#{type_string}"
+    else
+      return eval("Intrigue::Entity::#{type_string}") if entity_types.map{|x|x.to_s}.include? "Intrigue::Entity::#{type_string}"
+    end
+
+  false
   end
 
   # This method creates a new entity, and kicks off a strategy
@@ -22,16 +31,17 @@ class EntityManager
     # Clean up in case there are encoding issues
     #name = _encode_string(name)
     #details = _encode_hash(details.merge(:aliases => "#{name}"]))
-    type = resolve_type(type_string)
 
     # Merge the details if it already exists
-    entity = entity_exists?(project,type,downcased_name)
+    entity = entity_exists?(project,type_string,downcased_name)
+    
     if entity
       # TODO - DEEP MERGE
       entity.details = details.deep_merge(entity.details)
       entity.save
     else
     # Create a new entity, validating the attributes
+      type = resolve_type(type_string)
       entity = Intrigue::Model::Entity.create({
         :name =>  downcased_name,
         :project => project,
@@ -66,18 +76,11 @@ class EntityManager
     # START PROCESSING OF ENRICHMENT (to depth of 1)
     if task_result.depth > 0
       #unless prohibited_entity? entity
-        if entity.type_string == "Host"
-          start_task("task_enrichment", project, task_result.scan_result, "enrich_host", entity, 1, [],[])
-        elsif entity.type_string == "Uri"
-          start_task("task_autoscheduled", project, task_result.scan_result, "check_api_endpoint", entity, 1, [],[])
-          start_task("task_autoscheduled", project, task_result.scan_result, "web_stack_fingerprint", entity, 1, [],[])
-        end
+        enrich_entity entity, task_result
       #end
     end# END PROCESSING OF ENRICHMENT
 
-    #sleep 3 # give time for the enrichment to complete in case we don't have a backlog
-
-    # START PROCESSING OF RECURSION BY STRATEGY TYPE
+    # START RECURSION BY STRATEGY TYPE
     scan_result = task_result.scan_result
     if scan_result  && task_result.depth > 0 # if this is a scan and we're within depth
       unless prohibited_entity? entity
@@ -92,6 +95,19 @@ class EntityManager
 
   # return the entity
   entity
+  end
+
+  def self.enrich_entity(entity, task_result=nil)
+    return unless entity
+
+    scan_result = task_result.scan_result if task_result
+
+    if entity.type_string == "Host"
+      start_task("task_enrichment", entity.project, scan_result, "enrich_host", entity, 1, [],[])
+    elsif entity.type_string == "Uri"
+      start_task("task_autoscheduled", entity.project, scan_result, "enrich_uri", entity, 1, [],[])
+      start_task("task_autoscheduled", entity.project, scan_result, "web_stack_fingerprint", entity, 1, [],[])
+    end
   end
 
   private

@@ -14,7 +14,7 @@ class MasscanTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => false,
-      :allowed_types => ["NetBlock"],
+      :allowed_types => ["Host","NetBlock"],
       :example_entities => [{"type" => "NetBlock", "attributes" => {"name" => "10.0.0.0/24"}}],
       :allowed_options => [
         {:name => "port", :type => "Integer", :regex => "integer", :default => 80 },
@@ -28,13 +28,17 @@ class MasscanTask < BaseTask
     super
 
     # Get range, or host
+    ### SECURITY!
     to_scan = _get_entity_name
+    raise "INVALID INPUT: #{to_scan}" unless match_regex :ip_address, to_scan
 
     unless to_scan =~ /\d.\d.\d.\d/
       _log_error "unsupported scan format"
     end
 
+    ### SECURITY!
     opt_port = _get_option("port").to_i
+    raise "INVALID INPUT: #{opt_port}" unless match_regex :integer, opt_port
 
     # Create a tempfile to store result
     temp_file = "#{Dir::tmpdir}/masscan_output_#{rand(10000000000)}.tmp"
