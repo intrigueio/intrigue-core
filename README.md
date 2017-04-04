@@ -1,8 +1,8 @@
-# Welcome, intrepid user!
+# Welcome!!
 
-WARNING: THAR BE DRAGONS! Intrigue is currently in ALPHA. If you're interested in helping test, please join us:[![Join the chat at https://gitter.im/intrigueio/intrigue-core](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/intrigueio/intrigue-core?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+WARNING: Intrigue is currently in ALPHA. If you need assistance, please join us in #intrigue on irc.freenode.net.
 
-Intrigue-core is a framework for large-scale attack surface discovery. It is primarily useful for for Internet (security) reconnaissance and research.
+Intrigue-core is a framework for attack surface discovery. 
 
 <img src="https://raw.githubusercontent.com/intrigueio/intrigue-core/develop/doc/home.png" width="700">
 
@@ -27,7 +27,7 @@ Getting started is pretty straightforward, follow this guide: https://intrigue.i
 
 ### Configuring modules
 
-Many modules require API keys. To set them up, browse to the "Configure" tab and click on the name of the module. You will be taken to the relevant signup page where you can provision an API key. 
+Many modules require API keys. To set them up, browse to the "Configure" tab and click on the name of the module. You will be taken to the relevant signup page where you can provision an API key.
 
 ### API usage via core-cli:
 
@@ -58,5 +58,5 @@ You can use the tried and true curl utility to request a task run. Specify the t
 $ curl -s -X POST -H "Content-Type: application/json" -d '{ "task": "example", "entity": { "type": "String", "attributes": { "name": "8.8.8.8" } }, "options": {} }' http://127.0.0.1:7777/v1/task_runs
 ```
 
-### API usage via rubygem
-[![Gem Version](https://badge.fury.io/rb/intrigue.svg)](http://badge.fury.io/rb/intrigue)
+### Ruby gem for the API:
+[![Gem Version](https://badge.fury.io/rb/intrigue_api_client.svg)](http://badge.fury.io/rb/intrigue_api_client)
