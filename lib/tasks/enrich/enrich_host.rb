@@ -50,11 +50,15 @@ class EnrichHost < BaseTask
 
       # For each of the found addresses
       result.answer.map do |resource|
-        next if resource.type == Dnsruby::Types::RRSIG #TODO parsing this out is a pain, not sure if it's valuable
+        next if resource.type == Dnsruby::Types::RRSIG # TODO parsing this out is a pain, not sure if it's valuable
+        next if resource.type == Dnsruby::Types::NS
+        next if resource.type == Dnsruby::Types::TXT # TODO - let's parse this out?
+
         _log "Adding name from: #{resource}"
         ip_addresses << resource.address.to_s if resource.respond_to? :address
         dns_names << resource.domainname.to_s if resource.respond_to? :domainname
         dns_names << resource.name.to_s.downcase
+
       end #end result.answer
 
     rescue Dnsruby::ServFail => e
@@ -76,35 +80,9 @@ class EnrichHost < BaseTask
       temp_details["enriched"] = true
 
       @entity.lock!
-      @entity.update(:details => temp_details)
-      @entity.save
+      @entity.details = temp_details
+      @entity.save_changes
 
-    end
-
-    ## FINGERPRINT
-    to_scan = _get_entity_name
-
-    # Create a tempfile to store results
-    temp_file = "#{Dir::tmpdir}/nmap_scan_#{rand(100000000)}.xml"
-
-    # Check for IPv6
-    nmap_options = ""
-    nmap_options << "-6" if to_scan =~ /:/
-
-    # shell out to nmap and run the scan
-    _log "Scanning #{to_scan} and storing in #{temp_file}"
-    nmap_string = "nmap #{to_scan} #{nmap_options} -O -p21,22,80,443,8080,8081,8443,10000 --max-os-tries 1 -oX #{temp_file}"
-    _unsafe_system(nmap_string)
-
-    # PARSE FILE
-    Nmap::XML.new(temp_file) do |xml|
-      xml.each_host do |host|
-
-        @entity.lock!
-        @entity.update(:details => @entity.details.merge({"os" => host.os.matches}))
-        @entity.save
-
-      end
     end
 
     _log "Ran enrichment task!"

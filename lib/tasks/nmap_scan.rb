@@ -55,7 +55,7 @@ class NmapScanTask < BaseTask
       _log "Scanning #{to_scan} and storing in #{temp_file}"
       _log "NMap options: #{nmap_options}"
 
-      nmap_string = "nmap #{to_scan} #{nmap_options} -O -P0 --top-ports 100 --min-parallelism 10 -oX #{temp_file}"
+      nmap_string = "nmap #{to_scan} #{nmap_options} -O -P0 --top-ports 100 --min-parallelism 10 -O --max-os-tries 1 -oX #{temp_file}"
       _log "Running... #{nmap_string}"
       _unsafe_system(nmap_string)
 
@@ -74,6 +74,10 @@ class NmapScanTask < BaseTask
           # Only create if we've got ports to report.
           _create_entity("Host", { "name" => host.ip } ) if host.ports.count > 0
         end
+
+        @entity.lock!
+        @entity.update(:details => @entity.details.merge({"os" => host.os.matches}))
+        @entity.save
 
         host.each_port do |port|
           if port.state == :open

@@ -5,7 +5,7 @@ module Intrigue
       plugin :validation_helpers
       plugin :single_table_inheritance, :type
       plugin :serialization, :json, :details #, :name
-      self.raise_on_save_failure = false
+      #self.raise_on_save_failure = false
 
       #set_allowed_columns :type, :name, :details, :project_id
 

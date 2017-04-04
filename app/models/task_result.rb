@@ -38,10 +38,10 @@ module Intrigue
             "args" => [id]
           })
 
-        else # start it in the task queues
+        else
+          # start it in the task queues
           task = Intrigue::TaskFactory.create_by_name(task_name)
           self.job_id = task.class.perform_async id
-
         end
 
         save
