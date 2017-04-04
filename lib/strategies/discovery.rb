@@ -4,7 +4,11 @@ module Strategy
 
     def self.recurse(entity, task_result)
 
-      if entity.type_string == "Host"
+      if entity.type_string == "FtpServer"
+
+        start_recursive_task(task_result,"ftp_banner_grab",entity,[])
+
+      elsif entity.type_string == "Host"
 
         # Wait until enrichment has happened before going further
         entity_id = entity.id

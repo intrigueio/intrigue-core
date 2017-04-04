@@ -57,7 +57,8 @@ class FtpBannerGrab < BaseTask
       banner = s.gets(10000)
 
       _log "Got banner for #{ip_address}:#{port}/#{protocol}: #{banner}"
-      _log "updating entity with banner info"
+      _log "updating entity with banner info!"
+
       @entity.lock!
       @entity.update(:details => @entity.details.merge({"banner" => banner}))
       @entity.save
