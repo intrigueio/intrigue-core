@@ -34,7 +34,7 @@ class EntityManager
 
     # Merge the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name)
-    
+
     if entity
       # TODO - DEEP MERGE
       entity.details = details.deep_merge(entity.details)
@@ -42,12 +42,14 @@ class EntityManager
     else
     # Create a new entity, validating the attributes
       type = resolve_type(type_string)
-      entity = Intrigue::Model::Entity.create({
-        :name =>  downcased_name,
-        :project => project,
-        :type => type,
-        :details => details
-       })
+      $db.transaction do
+        entity = Intrigue::Model::Entity.create({
+          :name =>  downcased_name,
+          :project => project,
+          :type => type,
+          :details => details
+         })
+      end
     end
 
     unless entity
