@@ -24,7 +24,7 @@ class CreateEntity < BaseTask
     super
 
     name = _get_entity_name
-    type = _get_entity_type
+    type = _get_entity_type_string
 
     _create_entity type, {"name" => name }
   end
