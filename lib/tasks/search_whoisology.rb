@@ -12,8 +12,8 @@ class SearchWhoisologyTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["EmailAddress"],
-      :example_entities => [{"type" => "String", "attributes" => {"name" => "intrigue.io"}}],
+      :allowed_types => ["EmailAddress", "Host"],
+      :example_entities => [{"type" => "Host", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
       :created_types => ["Info"]
     }
@@ -29,10 +29,39 @@ class SearchWhoisologyTask < BaseTask
       api_key = _get_global_config "whoisology_api_key"
       entity_name = _get_entity_name
 
-      case _get_entity_type
+      case _get_entity_type_string
+
         when "EmailAddress"
           entity_type = "email"
-          _log "Got entity type #{entity_type}"
+
+        when "Host"
+
+          ## When we have a host, we need to do a lookup on the current record,
+          ## grab the email address, and then do the search based on that email
+
+          _log "Looking up contacts for domain"
+          begin
+            # We're going to pull the domain's email address....
+            whois = Whois::Client.new(:timeout => 20)
+            answer = whois.lookup(entity_name)
+            # Run through the contacts and pick the first one
+            contact_emails = answer.parser.contacts.map{ |contact| contact.email }
+            _log "Got contact_emails: #{contact_emails}"
+          rescue Timeout::Error => e
+            _log_error "Unable to lookup #{entity_name}... try a manual lookup"
+            return nil
+          end
+          
+          entity_name = contact_emails.first
+          entity_type = "email"
+      end
+
+      _log "Got entity: #{entity_type} #{entity_name}"
+
+      unless entity_name
+        # Something went wrong with the lookup?
+        _log "Unable to get a current email address"
+        return
       end
 
       unless api_key

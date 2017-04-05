@@ -27,7 +27,7 @@ class SearchGithubCode < BaseTask
     super
 
     entity_name = _get_entity_name
-    entity_type = _get_entity_type
+    entity_type = _get_entity_type_string
     keywords = _get_option "keywords"
 
     keywords.split(",").each do |keyword|

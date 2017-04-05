@@ -78,7 +78,7 @@ module Generic
     "#{@task_result.base_entity.name}"
   end
 
-  def _get_entity_type
+  def _get_entity_type_string
     "#{@task_result.base_entity.type}".split(":").last
   end
 
