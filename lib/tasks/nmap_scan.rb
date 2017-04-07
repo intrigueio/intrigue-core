@@ -33,29 +33,29 @@ class NmapScanTask < BaseTask
 
     # Get range, or host
     if @entity.type_string == "NetBlock"
-      ip_addresses = [_get_entity_name]
+      to_scan = [_get_entity_name]
     else
-      ip_addresses = @entity.details["ip_addresses"].concat @entity.details["dns_records"]
-      return unless ip_addresses
+      to_scan = @entity.details["ip_addresses"].concat @entity.details["dns_records"]
+      return unless to_scan
     end
 
-    ip_addresses.each do |to_scan|
+    to_scan.each do |scan_id|
 
       ### SECURITY!
-      raise "INVALID INPUT: #{to_scan}" unless match_regex :ip_address, to_scan
+      raise "INVALID INPUT: #{to_scan}" unless match_regex :ip_address, scan_id
 
       # Create a tempfile to store results
       temp_file = "#{Dir::tmpdir}/nmap_scan_#{rand(100000000)}.xml"
 
       # Check for IPv6
       nmap_options = ""
-      nmap_options << "-6" if to_scan =~ /:/
+      nmap_options << "-6" if scan_id =~ /:/
 
       # shell out to nmap and run the scan
-      _log "Scanning #{to_scan} and storing in #{temp_file}"
+      _log "Scanning #{scan_id} and storing in #{temp_file}"
       _log "NMap options: #{nmap_options}"
 
-      nmap_string = "nmap #{to_scan} #{nmap_options} -O -P0 --top-ports 100 --min-parallelism 10 -O --max-os-tries 1 -oX #{temp_file}"
+      nmap_string = "nmap #{scan_id} #{nmap_options} -O -P0 --top-ports 100 --min-parallelism 10 -O --max-os-tries 1 -oX #{temp_file}"
       _log "Running... #{nmap_string}"
       _unsafe_system(nmap_string)
 
