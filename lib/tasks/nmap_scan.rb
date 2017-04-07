@@ -36,13 +36,14 @@ class NmapScanTask < BaseTask
       to_scan = [_get_entity_name]
     else
       to_scan = @entity.details["ip_addresses"].concat @entity.details["dns_records"]
-      return unless to_scan
     end
+
+    _log "Scan list is: #{to_scan}"
 
     to_scan.each do |scan_id|
 
       ### SECURITY!
-      raise "INVALID INPUT: #{to_scan}" unless match_regex :ip_address, scan_id
+      raise "INVALID INPUT: #{scan_id}" unless match_regex :ip_address, scan_id
 
       # Create a tempfile to store results
       temp_file = "#{Dir::tmpdir}/nmap_scan_#{rand(100000000)}.xml"
