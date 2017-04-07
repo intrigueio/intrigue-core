@@ -36,8 +36,8 @@ class NmapScanTask < BaseTask
       to_scan = [_get_entity_name]
     else
       to_scan = []
-      to_scan.concat @entity.details["ip_addresses"]
-      to_scan.concat @entity.details["dns_records"]
+      to_scan.concat @entity.details["ip_addresses"] if @entity.details["ip_addresses"]
+      to_scan.concat @entity.details["dns_records"] if @entity.details["dns_records"]
     end
 
     _log "Scan list is: #{to_scan}"
