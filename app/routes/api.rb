@@ -170,7 +170,7 @@ class IntrigueApp < Sinatra::Base
       # Collect the depth (which can kick off a recursive "scan", but default to a single)
       depth = payload["depth"] || 1
 
-      resolved_type = Intrigue::EntityFactory.resolve_type type
+      resolved_type = Intrigue::EntityManager.resolve_type type
 
       attributes = payload["entity"].merge(
         "type" => resolved_type.to_s,
@@ -191,10 +191,12 @@ class IntrigueApp < Sinatra::Base
 
       # Try to find our entity
       # TODO: we should check all aliases here
-      entity = Intrigue::Model::Entity.scope_by_project_and_type(project_name, resolved_type).first(:name => name)
+      entity = Intrigue::Model::Entity.scope_by_project_and_type(project_name, type).first(:name => name)
       unless entity # If the entity didn't exist, create it
         entity = Intrigue::Model::Entity.create(attributes.merge(:project => project))
         entity.save
+
+        Intrigue::EntityManager.enrich_entity entity
       end
 
       puts "Starting task!!"

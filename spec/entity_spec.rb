@@ -8,7 +8,7 @@ describe "Entity" do
     project = Intrigue::Model::Project.create(:name => "x")
     entity = Intrigue::Model::Entity.create({
         :project => project,
-        :type => "Intrigue::Model::DnsRecord",
+        :type => "Intrigue::Model::Host",
         :name => "test"})
 
     expect(entity.name).to eq("test")

@@ -9,8 +9,8 @@ class DnsServer < Intrigue::Model::Entity
     }
   end
 
-  def validate_content
-    @name =~ /^[a-zA-Z0-9\.].*/
+  def validate_entity
+      (name =~ _v4_regex || name =~ _v6_regex || name == _dns_regex) && details["port"].to_s =~ /^\d{1,5}$/
   end
 
 end

@@ -10,13 +10,13 @@ class NetBlock < Intrigue::Model::Entity
   end
 
 
-  def validate_content
+  def validate_entity
 
     # required:
-    @name =~ /^.*$/
+    name =~ /^\w.*$/
 
     # suggested:
-    # @details["organization_reference"]
+    # details["organization_reference"]
 
   end
 

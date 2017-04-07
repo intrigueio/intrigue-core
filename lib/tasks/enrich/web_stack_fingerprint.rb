@@ -29,8 +29,8 @@ class WebStackFingerprint < BaseTask
     # Grab the full response 2x
     uri = _get_entity_name
 
-    response = http_get uri
-    response2 = http_get uri
+    response = http_request :get,uri
+    response2 = http_request :get,uri
 
     ## Indicators
     # Banner Grabbing / Headers (Server, X-Powered-By, X-AspNet-Version)
@@ -56,6 +56,7 @@ class WebStackFingerprint < BaseTask
     stack.concat _check_x_headers(response)
     stack.concat _check_cookies(response)
     stack.concat _check_generator(response)
+    stack.concat _check_uri(uri)
     stack.concat _check_specific_pages(uri)
 
     clean_stack = stack.select{ |x| x != nil }.uniq
@@ -67,6 +68,19 @@ class WebStackFingerprint < BaseTask
   end
 
   private
+
+  def _check_uri(uri)
+    _log "_check_uri called"
+    temp = []
+    temp << "ASP Classic" if uri =~ /.*\.asp$/i
+    temp << "ASP.NET" if uri =~ /.*\.aspx$/i
+    temp << "CGI" if uri =~ /.*\.cgi$/i
+    temp << "Java (jsessionid)" if uri =~ /jsessionid=/i
+    temp << "JSP" if uri =~ /.*\.jsp$/i
+    temp << "PHP" if uri =~ /.*\.php$/i
+    temp << "Struts" if uri =~ /.*\.do$/i
+  temp
+  end
 
   def _check_generator(response)
     _log "_check_generator called"
@@ -152,7 +166,7 @@ class WebStackFingerprint < BaseTask
       ]
 
       all_checks.each do |check|
-        response = http_get "#{check[:uri]}"
+        response = http_request :get,"#{check[:uri]}"
         if response
 
           #### iterate on checks for this URI
@@ -197,6 +211,7 @@ class WebStackFingerprint < BaseTask
         temp << "ASP.NET" if header =~ /^.*ASPSESSIONID.*$/
         temp << "ASP.NET" if header =~ /^.*ASP.NET_SessionId.*$/
         temp << "BEA WebLogic" if header =~ /^.*WebLogicSession*$/
+        temp << "BigIP" if header =~ /^.*BIGipServer*$/
         temp << "Coldfusion" if header =~ /^.*CFID.*$/
         temp << "Coldfusion" if header =~ /^.*CFTOKEN.*$/
         temp << "Coldfusion" if header =~ /^.*CFGLOBALS.*$/
@@ -240,7 +255,7 @@ class WebStackFingerprint < BaseTask
 
       ### x-drupal-cache
       header = response.header['x-drupal-cache']
-      temp << "Drupal Hosted" if header
+      temp << "Drupal" if header
 
       header = response.header['x-batcache']
       temp << "Wordpress Hosted" if header

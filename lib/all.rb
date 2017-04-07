@@ -14,6 +14,7 @@ require_relative 'tasks/helpers/generic'
 require_relative 'tasks/helpers/lists'
 require_relative 'tasks/helpers/parse'
 require_relative 'tasks/helpers/prohibited'
+require_relative 'tasks/helpers/regex'
 require_relative 'tasks/helpers/scanner'
 require_relative 'tasks/helpers/web'
 
@@ -65,7 +66,7 @@ require_relative 'client'
 ####
 # Entity-specific libraries
 ####
-require_relative 'entity_factory'
+require_relative 'entity_manager'
 # Load all .rb file in lib/entities by default
 entities_folder = File.expand_path('../entities', __FILE__) # get absolute directory
 Dir["#{entities_folder}/*.rb"].each {|f| require_relative f}

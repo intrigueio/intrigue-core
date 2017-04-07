@@ -9,14 +9,14 @@ class DnsTransferZoneTask < BaseTask
       :pretty_name => "DNS Zone Transfer",
       :authors => ["jcran"],
       :description => "DNS Zone Transfer",
-      :allowed_types => ["DnsRecord"],
+      :allowed_types => ["Host"],
       :type => "discovery",
       :passive => false,
       :example_entities => [
-        {"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}
+        {"type" => "Host", "attributes" => {"name" => "intrigue.io"}}
       ],
       :allowed_options => [ ],
-      :created_types => ["DnsRecord","Info","IpAddress"]
+      :created_types => ["Host","Info"]
     }
   end
 
@@ -55,16 +55,15 @@ class DnsTransferZoneTask < BaseTask
         # Create host records for each item in the zone
         zone.each do |z|
           if z.type == "SOA" || z.type == "TXT"
-            _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
+            _create_entity "Host", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
           else
-            _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
             # Check to see what type this record's content is.
             # MX records are of form: [10, #<Dnsruby::Name: vv-cephei.ac-grenoble.fr.>
             z.rdata.respond_to?("last") ? record = "#{z.rdata.last.to_s}" : record = "#{z.rdata.to_s}"
 
             # Check to see if it's an ip address or a dns record
-            record.is_ip_address? ? entity_type = "IpAddress" : entity_type = "DnsRecord"
-            _create_entity entity_type, { "name" => "#{record}", "type" => "#{z.type.to_s}", "content" => "#{record}" }
+            #record.is_ip_address? ? entity_type = "Host" : entity_type = "Host"
+            _create_entity "Host", { "name" => "#{record}", "type" => "#{z.type.to_s}", "content" => "#{record}" }
           end
         end
 

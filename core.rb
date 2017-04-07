@@ -54,7 +54,7 @@ def setup_database
     options.merge({:loggers => [Logger.new($stdout)]})
   end
 
-  Sequel.connect('postgres://intrigue@localhost:5432/intriguedb', options)
+  $db = Sequel.connect('postgres://intrigue@localhost:5432/intriguedb', options)
 end
 
 sanity_check_system

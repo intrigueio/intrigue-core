@@ -15,7 +15,7 @@ class UriHttpScreenshot < BaseTask
       :references => [],
       :type => "discovery",
       :passive => false,
-      :allowed_types => ["IpAddress","NetBlock","Uri"],
+      :allowed_types => ["Host","NetBlock","Uri"],
       :example_entities => [
         {"type" => "Uri", "attributes" => {"name" => "http://www.intrigue.io"}}
       ],
@@ -32,7 +32,7 @@ class UriHttpScreenshot < BaseTask
 
     if @entity.type_string == "Uri"
       screencap(name)
-    elsif @entity.type_string == "IpAddess" || @entity.type_string == "NetBlock"
+    elsif @entity.type_string == "Host"
       scan_for_uris(name).each do |uri|
         screencap(uri)
       end

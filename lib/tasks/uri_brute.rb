@@ -54,7 +54,7 @@ class UriBrute < BaseTask
     ###
     ### Get the default case (a page that doesn't exist)
     ###
-    response = http_get "#{uri}/#{rand(100000000)}"
+    response = http_request :get,"#{uri}/#{rand(100000000)}"
 
     unless response
       _log_error "Unable to connect to site"
@@ -106,7 +106,7 @@ class UriBrute < BaseTask
   def check_uri(request_uri)
 
     _log "Attempting #{request_uri}"
-    response = http_get request_uri
+    response = http_request :get,request_uri
     return false unless response
 
     ## If we are able to guess based on the code, we're super lucky!

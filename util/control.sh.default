@@ -22,6 +22,8 @@ function start_server {
   bundle exec sidekiq -C $IDIR/config/sidekiq-task-interactive.yml -r $IDIR/core.rb -d -L $IDIR/log/task-interactive.log
   echo "Starting autoscheduled task processing..."
   bundle exec sidekiq -C $IDIR/config/sidekiq-task-autoscheduled.yml -r $IDIR/core.rb -d -L $IDIR/log/task-autoscheduled.log -P $IDIR/tmp/pids/sidekiq-task-autoscheduled.pid
+  echo "Starting enrichment task processing..."
+  bundle exec sidekiq -C $IDIR/config/sidekiq-task-enrichment.yml -r $IDIR/core.rb -d -L $IDIR/log/task-enrichment.log -P $IDIR/tmp/pids/sidekiq-task-enrichment.pid
   echo "Starting background worker processing..."
   bundle exec sidekiq -C $IDIR/config/sidekiq-app.yml -r $IDIR/core.rb -d -L $IDIR/log/app.log
   echo "Starting puma..."

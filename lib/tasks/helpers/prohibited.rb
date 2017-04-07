@@ -3,7 +3,7 @@ module Intrigue
     module Prohibited
 
           def prohibited_entity?(entity)
-            if entity.type_string == "IpAddress"
+            if entity.type_string == "Host"
               # 23.x.x.x
               if ( entity.name =~ /^23\..*$/             ||  # akamai
                    entity.name =~ /^2600:1400.*$/        ||  # akamai
@@ -34,6 +34,7 @@ module Intrigue
                 entity.name =~ /^.*amazonaws.com$/                 ||
                 entity.name =~ /^.*android.clients.google.com$/    ||
                 entity.name =~ /^.*android.com$/                   ||
+                entity.name =~ /^.*apache.org$/                    ||
                 entity.name =~ /^.*azure-mobile.net$/              ||
                 entity.name =~ /^.*azureedge-test.net$/            ||
                 entity.name =~ /^.*azureedge.net$/                 ||

@@ -13,6 +13,7 @@ system_config_file = "#{intrigue_basedir}/config/config.json"
 database_config_file = "#{intrigue_basedir}/config/database.yml"
 sidekiq_interactive_config_file = "#{intrigue_basedir}/config/sidekiq-task-interactive.yml"
 sidekiq_autoscheduled_config_file = "#{intrigue_basedir}/config/sidekiq-task-autoscheduled.yml"
+sidekiq_enrichment_config_file = "#{intrigue_basedir}/config/sidekiq-task-enrichment.yml"
 sidekiq_app_config_file = "#{intrigue_basedir}/config/sidekiq-app.yml"
 control_script = "#{intrigue_basedir}/util/control.sh"
 
@@ -28,6 +29,7 @@ task :clean do
   FileUtils.mv  database_config_file, "#{database_config_file}.backup"
   FileUtils.mv  sidekiq_interactive_config_file, "#{sidekiq_interactive_config_file}.backup"
   FileUtils.mv  sidekiq_autoscheduled_config_file, "#{sidekiq_autoscheduled_config_file}.backup"
+  FileUtils.mv  sidekiq_enrichment_config_file, "#{sidekiq_enrichment_config_file}.backup"
   FileUtils.mv  sidekiq_app_config_file, "#{sidekiq_app_config_file}.backup"
   FileUtils.mv  geolocation_database, "#{geolocation_database}.backup"
   FileUtils.mv  web_accounts_list, "#{web_accounts_list}.backup"
@@ -83,16 +85,22 @@ task :setup do
 
   ## Copy sidekiq task worker config into place
   puts "[+] Setting up task worker config...."
-  if File.exist? sidekiq_interactive_config_file && sidekiq_autoscheduled_config_file && sidekiq_app_config_file
+  if File.exist?(sidekiq_interactive_config_file &&
+      sidekiq_autoscheduled_config_file &&
+      sidekiq_enrichment_config_file &&
+      sidekiq_app_config_file)
     puts "[ ] File already exists, skipping: #{sidekiq_interactive_config_file}"
     puts "[ ] File already exists, skipping: #{sidekiq_autoscheduled_config_file}"
+    puts "[ ] File already exists, skipping: #{sidekiq_enrichment_config_file}"
     puts "[ ] File already exists, skipping: #{sidekiq_app_config_file}"
   else
     puts "[+] Copying: #{sidekiq_interactive_config_file}.default"
     puts "[+] Copying: #{sidekiq_autoscheduled_config_file}.default"
+    puts "[+] Copying: #{sidekiq_enrichment_config_file}.default"
     puts "[+] Copying: #{sidekiq_app_config_file}.default"
     FileUtils.cp "#{sidekiq_interactive_config_file}.default", sidekiq_interactive_config_file
     FileUtils.cp "#{sidekiq_autoscheduled_config_file}.default", sidekiq_autoscheduled_config_file
+    FileUtils.cp "#{sidekiq_enrichment_config_file}.default", sidekiq_enrichment_config_file
     FileUtils.cp "#{sidekiq_app_config_file}.default", sidekiq_app_config_file
   end
 

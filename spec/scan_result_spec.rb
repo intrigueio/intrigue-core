@@ -12,7 +12,7 @@ describe "ScanResult" do
 
     entity = Intrigue::Model::Entity.create({
         :project => project,
-        :type => "Intrigue::Model::DnsRecord",
+        :type => "Intrigue::Model::Host",
         :name => "test",
         :details => {} })
 
@@ -33,7 +33,7 @@ describe "ScanResult" do
 
     entity = Intrigue::Model::Entity.create({
         :project => project,
-        :type => "Intrigue::Model::DnsRecord",
+        :type => "Intrigue::Model::Host",
         :name => "test",
         :details => {} })
 
