@@ -35,7 +35,9 @@ class NmapScanTask < BaseTask
     if @entity.type_string == "NetBlock"
       to_scan = [_get_entity_name]
     else
-      to_scan = @entity.details["ip_addresses"].concat @entity.details["dns_records"]
+      to_scan = []
+      to_scan.concat @entity.details["ip_addresses"]
+      to_scan.concat @entity.details["dns_records"]
     end
 
     _log "Scan list is: #{to_scan}"
