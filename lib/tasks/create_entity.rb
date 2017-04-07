@@ -12,11 +12,9 @@ class CreateEntity < BaseTask
       :passive => true,
       :allowed_types => ["*"],
       :example_entities => [
-        {"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}
+        {"type" => "Host", "attributes" => {"name" => "intrigue.io"}}
       ],
-      :allowed_options => [
-        #{:name => "depth", :type => "Integer", :regex => "integer", :default => 1 },
-      ],
+      :allowed_options => [],
       :created_types => ["*"]
     }
   end

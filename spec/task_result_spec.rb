@@ -5,14 +5,14 @@ describe "Models" do
 describe "TaskResult" do
 
   it "can be created" do
-    
+
     project = Intrigue::Model::Project.create(:name => "x")
 
     logger = Intrigue::Model::Logger.create( :project => project )
 
     entity = Intrigue::Model::Entity.create({
         :project => project,
-        :type => "Intrigue::Model::DnsRecord",
+        :type => "Intrigue::Model::Host",
         :name => "test"})
 
     x = Intrigue::Model::TaskResult.create({

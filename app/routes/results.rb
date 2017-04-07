@@ -20,6 +20,7 @@ class IntrigueApp < Sinatra::Base
       entity_id = @params["entity_id"]
       depth = @params["depth"].to_i
       current_project = Intrigue::Model::Project.first(:name => @project_name)
+      entity_name = "#{@params["attrib_name"]}"
 
       # Construct the attributes hash from the parameters. Loop through each of the
       # parameters looking for things that look like attributes, and add them to our
@@ -32,7 +33,7 @@ class IntrigueApp < Sinatra::Base
         end
       end
 
-      # hack! remove the name, no longer needed in the details
+      # HACK! add the name to aliases, name detail no longer needed
       entity_details.delete("name")
 
       # Construct an entity from the data we have
@@ -42,21 +43,22 @@ class IntrigueApp < Sinatra::Base
         entity_type = @params["entity_type"]
         return unless entity_type
 
-        # TODO - SECURITY - validate that it's a valid entity type before we eval
-
-        klass = eval("Intrigue::Entity::#{entity_type}")
-        entity_name = "#{@params["attrib_name"]}"
-
-        # TODO - we'll need to check all aliases of all entities within the project here
-        entity = Intrigue::Model::Entity.scope_by_project_and_type(@project_name, klass.to_s).first(:name => entity_name)
+        entity = entity_exists?(current_project,entity_type,entity_name)
 
         unless entity
+
+          # TODO - SECURITY - validate that it's a valid entity type before we eval
+          klass = Intrigue::EntityManager.resolve_type entity_type
+
           entity = Intrigue::Model::Entity.create(
-            { :type => klass,
-              :name => entity_name,
+            { :name => entity_name,
+              :type => klass,
               :details => entity_details,
               :project => current_project
             })
+
+          Intrigue::EntityManager.enrich_entity entity
+
         end
       end
 

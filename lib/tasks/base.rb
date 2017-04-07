@@ -2,8 +2,10 @@ require 'timeout'
 
 module Intrigue
 class BaseTask
+
   include Intrigue::Task::Generic
   include Intrigue::Task::Helper
+  include Intrigue::Task::Regex
 
   include Sidekiq::Worker
   sidekiq_options :queue => "task", :backtrace => true
@@ -165,22 +167,22 @@ class BaseTask
             ### Match the user option against its specified regex
             if allowed_option[:regex] == "integer"
               #_log "Regex should match an integer"
-              regex = /^-?\d+$/
+              regex = _get_regex(:integer)
             elsif allowed_option[:regex] == "boolean"
               #_log "Regex should match a boolean"
-              regex = /(true|false)/
+              regex = _get_regex(:boolean)
             elsif allowed_option[:regex] == "alpha_numeric"
               #_log "Regex should match an alpha-numeric string"
-              regex = /^[a-zA-Z0-9\_\;\(\)\,\?\.\-\_\/\~\=\ \,\?\*]*$/
+              regex = _get_regex(:alpha_numeric)
             elsif allowed_option[:regex] == "alpha_numeric_list"
               #_log "Regex should match an alpha-numeric list"
-              regex = /^[a-zA-Z0-9\_\;\(\)\,\?\.\-\_\/\~\=\ \,\?\*]*$/
+              regex = _get_regex(:alpha_numeric_list)
             elsif allowed_option[:regex] == "filename"
               #_log "Regex should match a filename"
-              regex = /(?:\..*(?!\/))+/
+              regex = _get_regex(:filename)
             elsif allowed_option[:regex] == "ip_address"
               #_log "Regex should match an IP Address"
-              regex = /^(\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*)|((\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3}))$/
+              regex = _get_regex(:ip_address)
             else
               _log_error "Unspecified regex for this option #{allowed_option[:name]}"
               _log_error "Unable to continue, failing!"

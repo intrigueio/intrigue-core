@@ -16,7 +16,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "attributes" => {"name" => "http://www.intrigue.io"}}],
       :allowed_options => [],
-      :created_types => ["DnsRecord","IpAddress","Uri"]
+      :created_types => ["Host","Uri"]
     }
   end
 
@@ -44,7 +44,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
         host = URI(link).host
 
         _create_entity "Uri", "name" => link, "uri" => link
-        _create_entity "DnsRecord", "name" => host
+        _create_entity "Host", "name" => host
 
         # Add to both arrays, so we can keep track of the original set, and a resolved set
         original_dns_records << host
@@ -70,7 +70,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
     _log "Displaying DNS name counts"
     grouped_original_dns_records.sort_by{|x| x.last }.reverse.each do |dns_record,count|
       # Create an entity for each record
-      #_create_entity "DnsRecord", "name" => dns_record
+      #_create_entity "Host", "name" => dns_record
       # Display the analysis in the logs
       _log "#{count} #{dns_record}"
     end
@@ -127,7 +127,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
     _log "Displaying resolved DNS Names"
     grouped_resolved_dns_records.sort_by{|x| x.last }.reverse.each do |dns_record,count|
       # Create an entity for each record
-      #_create_entity "DnsRecord", "name" => dns_record
+      #_create_entity "Host", "name" => dns_record
       # Display the analysis in the logs
       _log "#{count} #{dns_record}"
     end
@@ -179,7 +179,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
     ###
     _log "Displaying IP address counts"
     grouped_ip_records.sort_by{|x| x.last }.reverse.each do |record,count|
-      _create_entity "IpAddress", "name" => record[:host], "description" => record[:dns_record]
+      _create_entity "Host", "name" => record[:host], "description" => record[:dns_record]
       _log "#{count} #{record}"
     end
 

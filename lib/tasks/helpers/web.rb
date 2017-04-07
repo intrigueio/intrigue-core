@@ -96,7 +96,7 @@ module Task
     # Helper method to easily get an HTTP Response BODY
     #
     def http_get_body(uri)
-      response = http_get(uri)
+      response = http_request(:get,uri)
 
       ### filter body
       if response
@@ -106,13 +106,14 @@ module Task
     nil
     end
 
+
     ###
     ### XXX - significant updates made to zlib, determine whether to
     ### move this over to RestClient: https://github.com/ruby/ruby/commit/3cf7d1b57e3622430065f6a6ce8cbd5548d3d894
     ###
-    def http_get(uri_string, headers={}, limit = 10, open_timeout=15, read_timeout=15)
+    def http_request(method, uri_string, headers={}, limit = 10, open_timeout=15, read_timeout=15)
 
-      #@task_result.logger.log "http_get Connecting to #{uri}" if @task_result
+      #@task_result.logger.log "http_request :get,Connecting to #{uri}" if @task_result
       response = nil
       begin
 
@@ -145,7 +146,24 @@ module Task
            http.verify_mode = OpenSSL::SSL::VERIFY_NONE
          end
 
-         response = http.get(path)
+         ### ALLOW DIFFERENT VERBS HERE
+
+         if method == :get
+           response = http.get(path)
+         elsif method == :propfind
+           request = Net::HTTP::Propfind.new(uri.request_uri)
+           # Set your body (data)
+           request.body = "Here's the body."
+           # Set your headers: one header per line.
+           request["Depth"] = "1"
+           response = http.request(request)
+         elsif method == :options
+           request = Net::HTTP::Options.new(uri.request_uri)
+           response = http.request(request)
+         end
+
+         ### END VERBS
+
          if response.code=="200"
            break
          end
@@ -177,6 +195,8 @@ module Task
       rescue Net::OpenTimeout => e
         @task_result.logger.log_error "Timeout : #{e}" if @task_result
       rescue Net::ReadTimeout => e
+        @task_result.logger.log_error "Timeout : #{e}" if @task_result
+      rescue Errno::ETIMEDOUT => e
         @task_result.logger.log_error "Timeout : #{e}" if @task_result
       rescue Errno::ENETUNREACH => e
         @task_result.logger.log_error "Unable to connect: #{e}" if @task_result

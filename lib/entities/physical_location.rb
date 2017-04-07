@@ -9,10 +9,10 @@ class PhysicalLocation < Intrigue::Model::Entity
     }
   end
 
-  def validate_content
-    @name =~ /^.*$/ #&&
-    #@details["latitude"] =~ /^([-+]?\d{1,2}[.]\d+)$/ &&
-    #@details["longitude"] =~ /^([-+]?\d{1,3}[.]\d+)$/
+  def validate_entity
+    name =~ /^\w.*$/ #&&
+    #details["latitude"] =~ /^([-+]?\d{1,2}[.]\d+)$/ &&
+    #details["longitude"] =~ /^([-+]?\d{1,3}[.]\d+)$/
   end
 
 end

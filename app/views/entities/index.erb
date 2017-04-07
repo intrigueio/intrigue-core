@@ -14,20 +14,19 @@ function delete_entity(id)
 }
 </script>
 
-<p>
-Entities Count: <%= @entities.count %><br/>
-Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>
-</p>
-
-<div class="col-sm-6">
+<div class="col-sm-2">
+  <p>
+  Entities Count: <%= @entities.count %><br/>
+  Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>
+  </p>
 
   <form class="form-horizontal" id="entity_search" target="_self" method="get" action="/v1/<%=@project_name%>/entities">
 
     Search:
-    <input type="text" style='width:50%' class="form-control sm" id="search_string" name="search_string"><br/>
+    <input type="text" style='width:100%' class="form-control sm" id="search_string" name="search_string"><br/>
 
     Types:<br/>
-    <select size=10 style='height:50%; color:#000000;' multiple name="entity_types[]">
+    <select size=10 style='height:100%; color:#000000;' multiple name="entity_types[]">
       <% Intrigue::Model::Entity.descendants.map{|x|x.to_s}.sort.each do |d| %>
         <option value="<%=d%>" selected><%=d%></option>
       <% end %>
@@ -37,13 +36,44 @@ Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_na
     <input class="btn btn-primary" type="submit" value="Search">
   </form>
 </div>
-<div class="col-sm-6">
+<div class="col-sm-10">
 
-  <ul>
-    <% @entities.each do |entity| %>
-      <li><a href="/v1/<%=@project_name%>/entities/<%=entity.id%>"><%= h entity %></a> <a href="javascript:delete_entity('<%= entity.id %>')">[x]</a> </li>
+  <script src="/js/sorttable.js"></script>
+  <style>
+  /* Sortable tables */
+  table.sortable {
+    font-size: 11px;
+    width: 100%;
+    border: 0;
+    table-layout:fixed;
+    word-wrap:break-word;
+    border-collapse:collapse;
+  }
+
+  table.sortable thead {
+      background-color:#eee;
+      color:#666666;
+      font-weight: bold;
+      cursor: default;
+  }
+  </style>
+
+  <table class="sortable" border="1" width=100%>
+    <tr><th>type</th><th>names</th><th>details</th></tr>
+    <% @entities.sort_by{|e| e.type_string}.each do |e| %>
+      <tr>
+        <td><a href="javascript:delete_entity('<%= e.id %>')">[x]</a> <%=e.type_string%></td>
+        <td><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.unique_names.join(" | ")}" %></a></td>
+        <td>
+        <%= e.type_string =~ /FtpServer/ ? "Banner: #{ e.details["banner"]}" : nil %>
+        <%= e.type_string =~ /Host/ ? "OS: #{ e.details["os"].to_a.first}" : nil  %>
+        <%= e.type_string =~ /NetworkService/ ? "Service: #{ e.details["fingerprint"]}" : nil %>
+        <%= e.type_string =~ /SslCertificate/ ? "Issuer: #{ e.details["issuer"]}" : nil %>
+        <%= e.type_string =~ /Uri/ ? "Web: #{ e.details["stack"].to_a.join(" | ")}" : nil %>
+        </td>
+      </tr>
     <% end %>
-  </ul>
-</div>
+  </table>
 
 <form name="entity_delete_form" method="get"><input type="hidden" id="entity" name="entity"/></form>
+</div>

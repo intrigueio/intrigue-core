@@ -1,9 +1,9 @@
 Sequel.migration do
   change do
+
     create_table :entities do
       primary_key :id
       foreign_key :project_id, :null => false
-
       String :type
       String :name, :size => 400
       String :details, :text => true
@@ -12,14 +12,12 @@ Sequel.migration do
 
     create_table :entities_task_results do
       primary_key :id
-
       Integer :entity_id
       Integer :task_result_id
     end
 
     create_table :task_results do
       primary_key :id
-
       foreign_key :project_id, :null => false
       foreign_key :logger_id, :null => false
       foreign_key :base_entity_id, :null => false
@@ -45,7 +43,6 @@ Sequel.migration do
 
     create_table :alias_mappings do
       primary_key :id
-
       Integer :source_id
       Integer :target_id
     end
@@ -53,15 +50,12 @@ Sequel.migration do
     create_table :loggers do
       primary_key :id
       foreign_key :project_id, :null => false
-
       String :full_log, :text => true
     end
 
     create_table :projects do
       primary_key :id
-
       String :name, :size => 400
-
       String :graph_json, :text => true
       DateTime :graph_generated_at
       FalseClass :graph_generation_in_progress, default: false
@@ -70,11 +64,9 @@ Sequel.migration do
 
     create_table :scan_results do
       primary_key :id
-
       foreign_key :project_id, :null => false
       foreign_key :logger_id, :null => false
       foreign_key :base_entity_id, :null => false
-
       String :name, :size => 400
       Integer :depth
       String :handlers, :text => true

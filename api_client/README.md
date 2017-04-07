@@ -15,7 +15,7 @@ jcran intrigue-gem ruby-2.2.0@intrigue-gem:master [20150711]$ irb
  => {"version"=>"1.0", "name"=>"check_confluence", "pretty_name"=>"Check Confluence", "authors"=>["jcran"], "description"=>"This task checks Atlassian Cloud for the presence of a wiki.", "references"=>[], "allowed_types"=>["String"], "example_entities"=>[{"type"=>"String", "attributes"=>{"name"=>"intrigue"}}], "allowed_options"=>[], "created_types"=>["Uri"]}
 
 2.2.0 :004 > y = x.info "search_bing"
- => {"version"=>"1.0", "name"=>"search_bing", "pretty_name"=>"Search Bing", "authors"=>["jcran"], "description"=>"This task hits the Bing API and finds related content. Discovered domains are created", "references"=>[], "allowed_types"=>["*"], "example_entities"=>[{"type"=>"String", "attributes"=>{"name"=>"intrigue.io"}}], "allowed_options"=>[], "created_types"=>["DnsRecord", "EmailAddress", "PhoneNumber", "WebAccount", "Uri"]}
+ => {"version"=>"1.0", "name"=>"search_bing", "pretty_name"=>"Search Bing", "authors"=>["jcran"], "description"=>"This task hits the Bing API and finds related content. Discovered domains are created", "references"=>[], "allowed_types"=>["*"], "example_entities"=>[{"type"=>"String", "attributes"=>{"name"=>"intrigue.io"}}], "allowed_options"=>[], "created_types"=>["Host", "EmailAddress", "PhoneNumber", "WebAccount", "Uri"]}
 
 # Create an entity hash, must have a :type key
 # and (in the case of most tasks)  a :attributes key
@@ -36,7 +36,7 @@ jcran intrigue-gem ruby-2.2.0@intrigue-gem:master [20150711]$ irb
  => {"task_name"=>"example", "entity"=>{"type"=>"String", "attributes"=>{"name"=>"intrigue.io"}}, "timestamp_start"=>"2015-07-12 07:59:19 UTC", <snip>
  
 2.2.0 :023 > result['entities'].first
- => {"type"=>"IpAddress", "attributes"=>{"name"=>"10.24.129.183"}}
+ => {"type"=>"Host", "attributes"=>{"name"=>"10.24.129.183"}}
 
 2.2.0 :025 > result = x.start "search_bing", entity, 1, options_list
  => {"task_name"=>"search_bing", "entity"=>{"type"=>"String", "attributes"=>{"name"=>"intrigue.io"}}, "timestamp_start"=>"2015-07-12 07:59:50 UTC", <snip>

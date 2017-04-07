@@ -15,7 +15,7 @@ class SearchWhoisologyTask < BaseTask
       :allowed_types => ["EmailAddress", "Host"],
       :example_entities => [{"type" => "Host", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
-      :created_types => ["Info"]
+      :created_types => ["Host","Info"]
     }
   end
 
@@ -51,7 +51,7 @@ class SearchWhoisologyTask < BaseTask
             _log_error "Unable to lookup #{entity_name}... try a manual lookup"
             return nil
           end
-          
+
           entity_name = contact_emails.first
           entity_type = "email"
       end
@@ -83,11 +83,11 @@ class SearchWhoisologyTask < BaseTask
 
       _log_good "Creating entities for #{result["count"]} results."
       if result["domains"]
-        result["domains"].each {|d| _create_entity "DnsRecord", {"name" => d["domain_name"]} }
+        result["domains"].each {|d| _create_entity "Host", {"name" => d["domain_name"]} }
       else
         _log_error "No domains, do we have API credits?"
       end
-      
+
     rescue RuntimeError => e
       _log_error "Runtime error: #{e.inspect}"
     end

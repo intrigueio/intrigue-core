@@ -59,8 +59,7 @@ class IntrigueApp < Sinatra::Base
       @phone_numbers = []
       @software_packages = []
       @services = []
-      @ip_addresses = []
-      @dns_records = []
+      @hosts = []
       @networks = []
       @uris = []
       @ssl_certificates = []
@@ -77,10 +76,8 @@ class IntrigueApp < Sinatra::Base
           @software_packages << item
         elsif item.kind_of? Intrigue::Entity::NetworkService
           @services << item
-        elsif item.kind_of? Intrigue::Entity::IpAddress
-          @ip_addresses << item
-        elsif item.kind_of? Intrigue::Entity::DnsRecord
-          @dns_records << item
+        elsif item.kind_of? Intrigue::Entity::Host
+          @hosts << item
         elsif item.kind_of? Intrigue::Entity::NetBlock
           @networks << item
         elsif item.kind_of? Intrigue::Entity::SslCertificate

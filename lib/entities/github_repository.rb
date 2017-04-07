@@ -9,9 +9,8 @@ class GithubRepository < Intrigue::Model::Entity
     }
   end
 
-  def validate_content
-    @name =~ /^.*/ &&
-    @uri =~ /^.*/
+  def validate_entity
+    name =~ /^\w.*/ && details["uri"] =~ /^\w.*/
   end
 
 end

@@ -10,8 +10,8 @@ class EmailAddress < Intrigue::Model::Entity
   end
 
 
-  def validate_content
-    @name =~ /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,8}/
+  def validate_entity
+    name =~ /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,8}/
   end
 
 end

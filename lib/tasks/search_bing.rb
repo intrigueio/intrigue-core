@@ -16,7 +16,7 @@ class SearchBingTask < BaseTask
       :allowed_options => [
         {:name => "max_results", :type => "Integer", :regex => "integer", :default => 50 },
       ],
-      :created_types => ["DnsRecord","EmailAddress","PhoneNumber","WebAccount", "Uri"]
+      :created_types => ["EmailAddress","Host","PhoneNumber","WebAccount", "Uri"]
     }
   end
 
@@ -79,7 +79,7 @@ class SearchBingTask < BaseTask
           #_log "dns_name: #{dns_name}"
           #_log "entity_name: #{entity_name}"
           if /#{entity_name}/ =~ dns_name || /#{main_uri}/ =~ dns_name
-            _create_entity("DnsRecord", { "name" => dns_name })
+            _create_entity("Host", { "name" => dns_name })
           end
 
         end

@@ -1,6 +1,6 @@
 :verbose: false
 #:logfile: ./log/task-interactive.log
 :pidfile: ./tmp/pids/task-interactive.pid
-:concurrency: 10
+:concurrency: 5
 :queues:
   - task

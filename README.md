@@ -1,8 +1,8 @@
 # Welcome!!
 
-WARNING: THAR BE DRAGONS! Intrigue is currently in ALPHA. If you're interested in helping test, please join us:[![Join the chat at https://gitter.im/intrigueio/intrigue-core](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/intrigueio/intrigue-core?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+WARNING: Intrigue is currently in ALPHA. If you need assistance, please join us in #intrigue on irc.freenode.net.
 
-Intrigue-core is a framework for large-scale attack surface discovery. It is primarily useful for for Internet (security) reconnaissance and research.
+Intrigue-core is a framework for attack surface discovery. 
 
 <img src="https://raw.githubusercontent.com/intrigueio/intrigue-core/develop/doc/home.png" width="700">
 

@@ -11,8 +11,8 @@ class DnsBruteSrvTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => false,
-      :allowed_types => ["DnsRecord"],
-      :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
+      :allowed_types => ["Host"],
+      :example_entities => [{"type" => "Host", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
         {:name => "brute_list", :type => "String", :regex => "alpha_numeric_list", :default =>
@@ -35,7 +35,7 @@ class DnsBruteSrvTask < BaseTask
           ]
         }
       ],
-      :created_types => ["DnsRecord","IpAddress","Netsvc"]
+      :created_types => ["Host","NetSvc"]
     }
   end
 
@@ -73,15 +73,8 @@ class DnsBruteSrvTask < BaseTask
           if name
             _log_good "Resolved #{name} for #{brute_name}"
 
-            # Create a dns record
-            brute_domain = _create_entity("DnsRecord", "name" => brute_name )
-
             # Create a dnsrecord to store the name
-            _create_entity("DnsRecord", "name" => "#{name}")
-
-            # ip address
-            host = @resolver.getaddress name.to_s
-            _create_entity("IpAddress", "name" => "#{host}")
+            _create_entity("Host", "name" => "#{name}")
 
             # Create a service, and also associate that with our host.
             network_service = _create_entity("NetworkService", {

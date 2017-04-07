@@ -21,3 +21,4 @@ lib/tasks_disabled
 lib/tasks/survey
 db/intrigue.db
 util/control.sh
+config/sidekiq-task-enrichment.yml

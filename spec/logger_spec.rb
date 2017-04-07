@@ -21,7 +21,7 @@ describe "Logger" do
     logger = Intrigue::Model::Logger.create( :project => project )
     entity = Intrigue::Model::Entity.create({
         :project => project,
-        :type => "Intrigue::Model::DnsRecord",
+        :type => "Intrigue::Model::Host",
         :name => "test"})
 
     x = Intrigue::Model::TaskResult.create({
