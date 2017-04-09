@@ -28,10 +28,6 @@ class EntityManager
     project = task_result.project # convenience
     downcased_name = name.downcase
 
-    # Clean up in case there are encoding issues
-    #name = _encode_string(name)
-    #details = _encode_hash(details.merge(:aliases => "#{name}"]))
-
     # Merge the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name)
 
@@ -83,12 +79,11 @@ class EntityManager
     end# END PROCESSING OF ENRICHMENT
 
     # START RECURSION BY STRATEGY TYPE
-    scan_result = task_result.scan_result
-    if scan_result  && task_result.depth > 0 # if this is a scan and we're within depth
+    if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
       unless prohibited_entity? entity
-        if scan_result.strategy == "discovery"
+        if task_result.scan_result.strategy == "discovery"
           Intrigue::Strategy::Discovery.recurse(entity, task_result)
-        elsif scan_result.strategy == "web_discovery"
+        elsif task_result.scan_result.strategy == "web_discovery"
           Intrigue::Strategy::WebDiscovery.recurse(entity, task_result)
         end
       end

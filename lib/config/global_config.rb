@@ -16,10 +16,14 @@ module Intrigue
         @config_file = "#{$intrigue_basedir}/config/config.json"
 
         # load up the config file (if it exists)
-        config = JSON.parse(File.open(@config_file,"r").read)
+        f = File.open(@config_file,"r")
+        config = JSON.parse(f.read)
+        f.close
 
         # load up the default config file
-        default_config = JSON.parse(File.open("#{@config_file}.default","r").read)
+        f = File.open("#{@config_file}.default","r")
+        default_config = JSON.parse(f.read)
+        f.close
 
         # merge them
         @config = default_config.deep_merge config
