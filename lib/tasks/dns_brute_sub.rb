@@ -67,9 +67,7 @@ class DnsBruteSubTask < BaseTask
     # Create the brute list (from a file, or a provided list)
     if opt_use_file
       _log "Using file: #{opt_filename}"
-      f = File.open("#{$intrigue_basedir}/data/#{opt_filename}","r")
-      subdomain_list = f.read.split("\n")
-      f.close
+      subdomain_list = File.read("#{$intrigue_basedir}/data/#{opt_filename}","r").split("\n")
     else
       _log "Using provided brute list"
       subdomain_list = opt_brute_list
