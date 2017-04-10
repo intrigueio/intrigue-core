@@ -97,8 +97,15 @@ class EntityManager
   def self.enrich_entity(entity, task_result=nil)
     return unless entity
 
+    # Check if we've alrady run first
+    if entity.details["enriched"]
+      puts "SKIPPING Enrichment already happened for #{entity}!"
+      return
+    end
+
     scan_result = task_result.scan_result if task_result
 
+    # Enrich by type
     if entity.type_string == "Host"
       start_task("task_enrichment", entity.project, scan_result, "enrich_host", entity, 1, [],[])
     elsif entity.type_string == "Uri"
