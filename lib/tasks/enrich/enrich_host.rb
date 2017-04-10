@@ -42,7 +42,7 @@ class EnrichHost < BaseTask
         :nameserver => opt_resolver,
         :search => [])
 
-        result = resolver.query(lookup_name, Dnsruby::Types::ANY)
+      result = resolver.query(lookup_name, Dnsruby::Types::A)
       _log "Processing: #{result}"
 
       # Let us know if we got an empty result
