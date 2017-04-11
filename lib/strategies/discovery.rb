@@ -24,6 +24,7 @@ module Strategy
       elsif entity.type_string == "IpAddress"
 
         start_recursive_task(task_result,"nmap_scan",entity)
+        start_recursive_task(task_result,"whois",entity)
 
       elsif entity.type_string == "String"
 
@@ -34,14 +35,13 @@ module Strategy
 
         # Make sure it's small enough not to be disruptive, and if it is, scan it
         cidr = entity.name.split("/").last.to_i
-        if cidr >= 16
+        if cidr >= 20
           start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 21}])
           start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 443}])
           start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 80}])
           start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 8080}])
           start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 8081}])
           start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 8443}])
-
           start_recursive_task(task_result,"net_block_expand",entity, [])
         end
 
@@ -56,12 +56,12 @@ module Strategy
         ## Spider, looking for metadata
         start_recursive_task(task_result,"uri_spider",entity,[
             {"name" => "threads", "value" => 1},
-            {"name" => "max_pages", "value" => 100 },
+            {"name" => "max_pages", "value" => 1000 },
             {"name" => "extract_dns_records", "value" => true},
             {"name" => "extract_dns_record_pattern", "value" => "#{task_result.scan_result.base_entity.name}"}]) unless entity.created_by? "uri_brute"
 
         # Check for exploitable URIs, but don't recurse on things we've already found
-        start_recursive_task(task_result,"uri_brute", entity, [{"name"=> "threads", "value" => 1}, {"name" => "user_list", "value" => "admin"}]) unless entity.created_by? "uri_brute"
+        start_recursive_task(task_result,"uri_brute", entity, [{"name"=> "threads", "value" => 1}, {"name" => "user_list", "value" => "admin, test"}]) unless entity.created_by? "uri_brute"
 
       else
         puts "No actions for entity: #{entity.type}##{entity.details["name"]}"

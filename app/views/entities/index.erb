@@ -73,6 +73,7 @@ function delete_entity(id)
           <td>
           <%= e.type_string =~ /FtpServer/ ? "Banner: #{ e.details["banner"]}" : nil %>
           <%= e.type_string =~ /IpAddress/ ? "OS: #{ e.details["os"].to_a.first}" : nil  %>
+          <%= e.type_string =~ /DnsRecord/ ? "OS: #{ e.details["os"].to_a.first}" : nil  %>
           <%= e.type_string =~ /NetworkService/ ? "Service: #{ e.details["fingerprint"]}" : nil %>
           <%= e.type_string =~ /SslCertificate/ ? "Issuer: #{ e.details["issuer"]}" : nil %>
           <%= e.type_string =~ /Uri/ ? "Web: #{ e.details["stack"].to_a.join(" | ")}" : nil %>
