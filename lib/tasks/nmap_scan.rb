@@ -28,37 +28,29 @@ class NmapScanTask < BaseTask
     ### SECURITY - sanity check to_scan
     ###
 
-    # Allow the user to set the port ranges
-    #ports = _get_option "ports"
 
     # Get range, or host
-    if @entity.type_string == "NetBlock"
-      to_scan = [_get_entity_name]
-    else
-      to_scan = []
-      to_scan.concat @entity.details["ip_addresses"] if @entity.details["ip_addresses"]
-      to_scan.concat @entity.details["dns_names"] if @entity.details["dns_names"]
-    end
+    to_scan = [_get_entity_name]
 
     _log "Scan list is: #{to_scan}"
 
-    to_scan.each do |scan_id|
+    to_scan.each do |scan_item|
 
       ### SECURITY!
-      #raise "INVALID INPUT: #{scan_id}" unless match_regex :ip_address, scan_id
+      #raise "INVALID INPUT: #{scan_item}" unless match_regex :ip_address, scan_item
 
       # Create a tempfile to store results
       temp_file = "#{Dir::tmpdir}/nmap_scan_#{rand(100000000)}.xml"
 
       # Check for IPv6
       nmap_options = ""
-      nmap_options << "-6" if scan_id =~ /:/
+      nmap_options << "-6" if scan_item =~ /:/
 
       # shell out to nmap and run the scan
-      _log "Scanning #{scan_id} and storing in #{temp_file}"
+      _log "Scanning #{scan_item} and storing in #{temp_file}"
       _log "NMap options: #{nmap_options}"
 
-      nmap_string = "nmap #{scan_id} #{nmap_options} -O -P0 --top-ports 100 --min-parallelism 10 -O --max-os-tries 1 -oX #{temp_file}"
+      nmap_string = "nmap #{scan_item} #{nmap_options} -O -P0 --top-ports 100 --min-parallelism 10 -O --max-os-tries 1 -oX #{temp_file}"
       _log "Running... #{nmap_string}"
       _unsafe_system(nmap_string)
 
@@ -98,10 +90,10 @@ class NmapScanTask < BaseTask
               _create_entity("Uri", "name" => uri, "uri" => uri  ) # create an entity
 
               # and create the entities if we have dns resolution
-              @entity.details["dns_names"].each do |hostname|
-                uri = "#{protocol}#{hostname}:#{port.number}"
-                _create_entity("Uri", "name" => uri, "uri" => uri )
-              end
+              #@entity.details["dns_names"].each do |hostname|
+              #  uri = "#{protocol}#{hostname}:#{port.number}"
+              #  _create_entity("Uri", "name" => uri, "uri" => uri )
+              #end
 
             # then FtpServer
             elsif [21].include?(port.number)
