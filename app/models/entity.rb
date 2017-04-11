@@ -136,7 +136,7 @@ module Intrigue
           :name =>  name,
           :deleted => deleted,
           :details => details,
-          :aliases => aliases.map{ |x| {:id => x.id :name => x.name } },
+          :aliases => aliases.map{ |x| {:id => x.id, :name => x.name } },
           :task_results => task_results.map{ |t| {:id => t.id, :name => t.name } }
         }
       end
