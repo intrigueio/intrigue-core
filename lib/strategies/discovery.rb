@@ -15,7 +15,9 @@ module Strategy
         if (entity.name.split(".").length < 3)
           start_recursive_task(task_result,"dns_brute_sub",entity,[
             {"name" => "use_file", "value" => true }])
-          start_recursive_task(task_result,"whois",entity)
+
+          #start_recursive_task(task_result,"whois",entity)
+
         else
           # otherwise do something a little faster
           start_recursive_task(task_result,"dns_brute_sub",entity,[])
