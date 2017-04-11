@@ -10,12 +10,12 @@ class SearchShodanTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["DnsServer","Host","NetworkService","String"],
+      :allowed_types => ["DnsRecord","DnsServer","IpAddress","NetworkService","String"],
       :example_entities => [
         {"type" => "String", "attributes" => {"name" => "intrigue.io"}}
       ],
       :allowed_options => [],
-      :created_types => ["Host","NetworkService","Organization","PhysicalLocation"]
+      :created_types => ["DnsRecord","IpAddress","NetworkService","Organization","PhysicalLocation"]
     }
   end
 
@@ -59,8 +59,7 @@ class SearchShodanTask < BaseTask
           # TODO - assumes ipv4, which isn't always true. Make sure to check for ipv6.
           ip_address = IPAddr.new(r['ip'],Socket::AF_INET)
           _log "IP: #{r["ip"]}"
-          host = _create_entity("Host",{
-            "aliases" => r["hostnames"],
+          host = _create_entity("IpAddress",{
             "name" => "#{ip_address}",
             "age" => "#{updated_at}",
           })

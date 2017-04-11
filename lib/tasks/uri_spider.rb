@@ -31,7 +31,7 @@ class UriSpider < BaseTask
         {:name => "extract_uris", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "user_agent",  :type => "String",  :regex => "alpha_numeric", :default => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36"}
       ],
-      :created_types =>  ["EmailAddress", "File", "Host", "Info", "Person", "PhoneNumber", "SoftwarePackage"]
+      :created_types =>  ["DnsRecord", "EmailAddress", "File", "Info", "Person", "PhoneNumber", "SoftwarePackage"]
     }
   end
 
@@ -112,7 +112,7 @@ class UriSpider < BaseTask
               # if we got a pass, check to make sure we don't already have it, and add it
               if pattern_allowed
                 unless dns_records.include?(host)
-                  _create_entity("Host", "name" => host, "source_uri" => page_uri)
+                  _create_entity("DnsRecord", "name" => host, "source_uri" => page_uri)
                   dns_records << host
                 end
               end

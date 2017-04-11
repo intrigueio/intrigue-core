@@ -1,14 +1,26 @@
 module Intrigue
   module Model
 
+    class AliasMapping < Sequel::Model
+      plugin :validation_helpers
+      #self.raise_on_save_failure = false
+      many_to_one :source, :class => :'Intrigue::Model::Entity', :key => :source_id
+      many_to_one :target, :class => :'Intrigue::Model::Entity', :key => :target_id
+
+      def validate
+        super
+        validates_unique([:source_id, :target_id]) # only allow a single alias
+      end
+
+    end
+
     class Entity < Sequel::Model
       plugin :validation_helpers
       plugin :single_table_inheritance, :type
       plugin :serialization, :json, :details #, :name
       self.raise_on_save_failure = false
 
-      #set_allowed_columns :type, :name, :details, :project_id
-
+      many_to_many :aliases, :left_key=>:source_id,:right_key=>:target_id, :join_table=>:alias_mappings, :class=>self
       many_to_many :task_results
       many_to_one  :project
 
@@ -28,9 +40,23 @@ module Intrigue
         where(Sequel.&(:project_id => named_project_id, :type => resolved_entity_type.to_s))
       end
 
+      # Override this if you are creating a secondary entity
+      # (meaning... it'll be tracked through another entity)
+      def primary
+        true
+      end
+
       # easy way to refer to all names (overridden in some entities)
-      def unique_names
-        [name]
+      def unique_name
+        [name].concat(aliases.map{|x| x.name }).sort.uniq
+      end
+
+      def soft_delete!
+        # clean up aliases at the same time
+        aliases.each {|x| x.soft_delete!}
+
+        deleted = true
+        save
       end
 
       def deleted?
@@ -92,6 +118,10 @@ module Intrigue
         details[key]
       end
 
+      def set_detail(key,value)
+        details[key] = value
+        save
+      end
       def self.descendants
         x = ObjectSpace.each_object(Class).select{ |klass| klass < self }
       end

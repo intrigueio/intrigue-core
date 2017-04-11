@@ -22,8 +22,15 @@ class EntityManager
   false
   end
 
+  def self.alias_entity(s,t)
+    unless Intrigue::Model::AliasMapping.first(:source_id => s.id, :target_id => t.id)
+      Intrigue::Model::AliasMapping.create(:source_id => s.id, :target_id => t.id)
+      Intrigue::Model::AliasMapping.create(:source_id => t.id, :target_id => s.id)
+    end
+  end
+
   # This method creates a new entity, and kicks off a strategy
-  def self.create_or_merge_entity(task_result,type_string,name,details)
+  def self.create_or_merge_entity(task_result,type_string,name,details, primary_entity=nil)
 
     project = task_result.project # convenience
     downcased_name = name.downcase
@@ -31,12 +38,12 @@ class EntityManager
     # Merge the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name)
 
+    # check if there's an existing entity, if so, merge and move forward
     if entity
-      # TODO - DEEP MERGE
       entity.details = details.deep_merge(entity.details)
       entity.save
     else
-    # Create a new entity, validating the attributes
+      # Create a new entity, validating the attributes
       type = resolve_type(type_string)
       $db.transaction do
         entity = Intrigue::Model::Entity.create({
@@ -58,25 +65,18 @@ class EntityManager
       return nil
     end
 
-
     # Add to our result set for this task
     task_result.add_entity entity
     task_result.save
 
     # Attach the aliases on both sides
-    #if original_entity
-      #unless Intrigue::Model::AliasMapping.where(:source_id => original_entity.id, :target_id => entity.id).first
-    #  Intrigue::Model::AliasMapping.create(:source_id => original_entity.id, :target_id => entity.id)
-    #  Intrigue::Model::AliasMapping.create(:source_id => entity.id, :target_id => original_entity.id)
-      #end
-    #end
+    if primary_entity
+      self.alias_entity primary_entity, entity
+      self.alias_entity entity, primary_entity
+    end
 
     # START PROCESSING OF ENRICHMENT (to depth of 1)
-    if task_result.depth > 0
-      #unless prohibited_entity? entity
-        enrich_entity entity, task_result
-      #end
-    end# END PROCESSING OF ENRICHMENT
+    enrich_entity entity, task_result
 
     # START RECURSION BY STRATEGY TYPE
     if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
@@ -95,6 +95,7 @@ class EntityManager
   end
 
   def self.enrich_entity(entity, task_result=nil)
+    puts  "STARTING enrichment on #{entity}"
     return unless entity
 
     # Check if we've alrady run first
@@ -106,8 +107,10 @@ class EntityManager
     scan_result = task_result.scan_result if task_result
 
     # Enrich by type
-    if entity.type_string == "Host"
-      start_task("task_enrichment", entity.project, scan_result, "enrich_host", entity, 1, [],[])
+    if entity.type_string == "DnsRecord"
+      start_task("task_enrichment", entity.project, scan_result, "enrich_dns_record", entity, 1, [],[])
+    elsif entity.type_string == "IpAddress"
+      start_task("task_enrichment", entity.project, scan_result, "enrich_ip_address", entity, 1, [],[])
     elsif entity.type_string == "Uri"
       start_task("task_autoscheduled", entity.project, scan_result, "enrich_uri", entity, 1, [],[])
       start_task("task_autoscheduled", entity.project, scan_result, "web_stack_fingerprint", entity, 1, [],[])

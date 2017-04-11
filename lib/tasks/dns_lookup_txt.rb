@@ -11,14 +11,14 @@ class DnsLookupTxtTask < BaseTask
       :references => [
         "http://webmasters.stackexchange.com/questions/27910/txt-vs-spf-record-for-google-servers-spf-record-either-or-both"
       ],
-      :allowed_types => ["Host"],
+      :allowed_types => ["DnsRecord"],
       :type => "discovery",
       :passive => true,
-      :example_entities => [{"type" => "Host", "attributes" => {"name" => "intrigue.io"}}],
+      :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
       ],
-      :created_types => ["Host", "Info", "NetBlock" ]
+      :created_types => ["IpAddress", "Info", "NetBlock" ]
     }
   end
 
@@ -56,13 +56,13 @@ class DnsLookupTxtTask < BaseTask
             answer.rdata.first.split(" ").each do |record|
 
               if record =~ /^include:.*/
-                _create_entity "Host", {"name" => record.split(":").last}
+                _create_entity "IpAddress", {"name" => record.split(":").last}
               elsif record =~ /^ip4:.*/
                 s = record.split(":").last
                 if s.include? "/"
                   _create_entity "NetBlock", {"name" => s }
                 else
-                  _create_entity "Host", {"name" => s }
+                  _create_entity "IpAddress", {"name" => s }
                 end
               #elsif record =~ /^google-site-verification.*/
               #  _create_entity "Info", {"name" => "DNS Verification Code", "type" =>"Google", "content" => #record.split(":").last}

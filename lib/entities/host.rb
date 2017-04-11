@@ -10,15 +10,14 @@ class Host < Intrigue::Model::Entity
   end
 
   def validate_entity
-    return (name =~ _v4_regex || name =~ _v6_regex || name =~ _dns_regex)
+    return true
   end
 
-  def unique_names
-    x = [name]
-    x.concat details["dns_names"] if details["dns_names"]
-    x.concat details["ip_addresses"] if details["ip_addresses"]
-  x.sort.uniq
-  end
+  #def unique_name
+    #x.concat details["dns_names"] if details["dns_names"]
+    #x.concat details["ip_addresses"] if details["ip_addresses"]
+  #x.sort.uniq
+  #end
 
 
 end

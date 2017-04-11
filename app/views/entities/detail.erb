@@ -18,7 +18,7 @@ Export this entity: <br/>
 
 Aliases: <br/>
 <ul>
-<%=out = ""; results = @entity.details["aliases"]; results.each {|x| out << "<li>#{h x}</li>"; } if results; out %>
+<%=out = ""; results = @entity.aliases; results.each {|x| out << "<li>#{h x}</li>"; } if results; out %>
 </ul>
 <br/>
 

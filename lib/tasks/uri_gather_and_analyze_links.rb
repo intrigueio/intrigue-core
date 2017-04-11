@@ -16,7 +16,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "attributes" => {"name" => "http://www.intrigue.io"}}],
       :allowed_options => [],
-      :created_types => ["Host","Uri"]
+      :created_types => ["DnsRecord","Uri"]
     }
   end
 
@@ -44,7 +44,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
         host = URI(link).host
 
         _create_entity "Uri", "name" => link, "uri" => link
-        _create_entity "Host", "name" => host
+        _create_entity "DnsRecord", "name" => host
 
         # Add to both arrays, so we can keep track of the original set, and a resolved set
         original_dns_records << host

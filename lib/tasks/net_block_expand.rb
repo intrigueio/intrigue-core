@@ -18,7 +18,7 @@ class NetBlockExpand < BaseTask
       ],
       :allowed_options => [
       ],
-      :created_types => ["Host"]
+      :created_types => ["IpAddress"]
     }
   end
 
@@ -31,7 +31,7 @@ class NetBlockExpand < BaseTask
       _log "Expanding Range: #{netblock}"
       netblock.to_range.to_a[1..-1].each do |r|
         #Thread.new(r) { |ip|
-          _create_entity "Host", "name" => r.to_s
+          _create_entity "IpAddress", "name" => r.to_s
         #}
       end
     rescue IPAddr::InvalidPrefixError => e

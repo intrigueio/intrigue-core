@@ -12,10 +12,10 @@ class SearchCensysTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["Host","String"],
+      :allowed_types => ["DnsRecord","String"],
       :example_entities => [{"type" => "String", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
-      :created_types => ["FtpServer","Host","SslCertificate"]
+      :created_types => ["DnsRecord","FtpServer","SslCertificate"]
     }
   end
 
@@ -50,7 +50,7 @@ class SearchCensysTask < BaseTask
           #binding.pry
 
           ip_address = r["_source"]["ip"]
-          _create_entity "Host", "name" => "#{ip_address}", "censys" => r
+          _create_entity "DnsRecord", "name" => "#{ip_address}", "censys" => r
 
           # Where we can, let's create additional entities from the scan results
           if r["_source"]["protocols"]

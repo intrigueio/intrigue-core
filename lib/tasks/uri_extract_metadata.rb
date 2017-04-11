@@ -21,7 +21,7 @@ class UriExtractMetadata < BaseTask
         {"type" => "Uri", "attributes" => { "name" => "http://www.intrigue.io" }}
       ],
       :allowed_options => [],
-      :created_types =>  ["EmailAddress", "File", "Host", "Info", "Person", "PhoneNumber", "SoftwarePackage", "SslCertificate"]
+      :created_types =>  ["DnsRecord","EmailAddress", "File", "Info", "Person", "PhoneNumber", "SoftwarePackage", "SslCertificate"]
     }
   end
 
@@ -80,7 +80,7 @@ class UriExtractMetadata < BaseTask
           end
 
           alt_names.each do |alt_name|
-            _create_entity "Host", { "name" => alt_name }
+            _create_entity "DnsRecord", { "name" => alt_name }
           end
 
         end

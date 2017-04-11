@@ -12,10 +12,10 @@ class SearchWhoisologyTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["EmailAddress", "Host"],
+      :allowed_types => ["EmailAddress", "DnsRecord"],
       :example_entities => [{"type" => "Host", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
-      :created_types => ["Host","Info"]
+      :created_types => ["DnsRecord","Info"]
     }
   end
 
@@ -34,7 +34,7 @@ class SearchWhoisologyTask < BaseTask
         when "EmailAddress"
           entity_type = "email"
 
-        when "Host"
+        when "DnsRecord"
 
           ## When we have a host, we need to do a lookup on the current record,
           ## grab the email address, and then do the search based on that email
@@ -83,7 +83,7 @@ class SearchWhoisologyTask < BaseTask
 
       _log_good "Creating entities for #{result["count"]} results."
       if result["domains"]
-        result["domains"].each {|d| _create_entity "Host", {"name" => d["domain_name"]} }
+        result["domains"].each {|d| _create_entity "DnsRecord", {"name" => d["domain_name"]} }
       else
         _log_error "No domains, do we have API credits?"
       end

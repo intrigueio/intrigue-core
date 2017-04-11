@@ -12,14 +12,14 @@ class DnsRecurseSpf < BaseTask
         "http://www.openspf.org/",
         "https://community.rapid7.com/community/infosec/blog/2015/02/23/osint-through-sender-policy-framework-spf-records"
       ],
-      :allowed_types => ["Host"],
+      :allowed_types => ["DnsRecord"],
       :type => "discovery",
       :passive => true,
-      :example_entities => [{"type" => "Host", "attributes" => {"name" => "intrigue.io"}}],
+      :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
       ],
-      :created_types => ["Host","Info","NetBlock"]
+      :created_types => ["IpAddress","Info","NetBlock"]
     }
   end
 
@@ -71,7 +71,7 @@ class DnsRecurseSpf < BaseTask
 
                 elsif data =~ /^include:.*/
                   spf_data = data.split(":").last
-                  _create_entity "Host", {"name" => spf_data}
+                  _create_entity "IpAddress", {"name" => spf_data}
 
                   # RECURSE!
                   lookup_txt_record opt_resolver, spf_data
@@ -82,7 +82,7 @@ class DnsRecurseSpf < BaseTask
                   if data.include? "/"
                     _create_entity "NetBlock", {"name" => range }
                   else
-                    _create_entity "Host", {"name" => range }
+                    _create_entity "IpAddress", {"name" => range }
                   end
                 end
               end

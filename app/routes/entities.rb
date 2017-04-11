@@ -11,10 +11,12 @@ class IntrigueApp < Sinatra::Base
       x = x.where(:type => @entity_types) if @entity_types
 
       if @search_string
-        @entities = x.where(Sequel.ilike(:details, "%#{@search_string}%") | Sequel.ilike(:name, "%#{@search_string}%"))
+        selected_entities = x.where(Sequel.ilike(:details, "%#{@search_string}%") | Sequel.ilike(:name, "%#{@search_string}%"))
       else
-        @entities = x
+        selected_entities = x
       end
+
+      @entities = selected_entities #.to_a.select{ |x| x if x.primary }
 
       erb :'entities/index'
     end

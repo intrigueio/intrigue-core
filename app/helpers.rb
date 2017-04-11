@@ -6,9 +6,8 @@ module Helper
     puts "Checking for existence of an entity with type: #{entity_type} and name: #{entity_name} in project: #{project.name}"
 
     Intrigue::Model::Entity.scope_by_project_and_type(project.name, entity_type).each do |e|
-      #puts "Entity #{e}"
-      if e.unique_names.include? entity_name
-        puts "Found! #{entity_name} in #{e.unique_names}"
+      if e.unique_name.include? entity_name
+        puts "Found! #{entity_name} in #{e.unique_name}"
         return e
       end
     end

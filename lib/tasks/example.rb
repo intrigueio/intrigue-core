@@ -12,14 +12,14 @@ class ExampleTask < BaseTask
       :passive => true,
       :allowed_types => ["*"],
       :example_entities => [
-        {"type" => "String", "attributes" => {"name" => "intrigue.io"}}
+        {"type" => "String", "attributes" => {"name" => "intrigue"}}
       ],
       :allowed_options => [
         {:name => "unused_option", :type => "Integer", :regex=> "integer", :default => 100 },
         {:name => "count", :type => "Integer", :regex=> "integer", :default => 10 },
         {:name => "sleep", :type => "Integer", :regex=> "integer", :default => 0 }
       ],
-      :created_types => ["Host"]
+      :created_types => ["DnsRecord"]
     }
   end
 
@@ -52,7 +52,7 @@ class ExampleTask < BaseTask
       #
       # Create & return the entity
       #
-      _create_entity("Host", {"name" => ip_address })
+      _create_entity("DnsRecord", {"name" => ip_address })
     end
 
   end

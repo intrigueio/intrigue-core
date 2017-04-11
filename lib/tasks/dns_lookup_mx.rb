@@ -11,12 +11,12 @@ class DnsLookupMxTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["Host"],
-      :example_entities => [{"type" => "Host", "attributes" => {"name" => "intrigue.io"}}],
+      :allowed_types => ["DnsRecord"],
+      :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
       ],
-      :created_types => ["Host"]
+      :created_types => ["IpAddress"]
     }
   end
 
@@ -37,7 +37,7 @@ class DnsLookupMxTask < BaseTask
       resources.each do |r|
 
         # Create a DNS record
-        _create_entity("Host", {
+        _create_entity("IpAddress", {
           "name" => r.exchange.to_s,
           "description" => "Mail server for #{name}",
           "preference" => r.preference })

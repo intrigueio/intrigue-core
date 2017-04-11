@@ -33,7 +33,7 @@ class DnsBruteSubTask < BaseTask
         {:name => "brute_alphanumeric_size", :type => "Integer", :regex => "integer", :default => 0 },
         {:name => "threads", :type => "Integer", :regex => "integer", :default => 1 },
       ],
-      :created_types => ["Host"]
+      :created_types => ["DnsRecord"]
     }
   end
 
@@ -79,7 +79,7 @@ class DnsBruteSubTask < BaseTask
     wildcard_ips = _check_wildcard(suffix)
     #unless wildcard_ips.empty?
       # Go ahead and log this, since we'll want to tell the user what's happening.
-    #  wildcard_ips.sort.uniq.each {|i| _create_entity "Host", "name" => "#{i}" }
+    #  wildcard_ips.sort.uniq.each {|i| _create_entity "DnsRecord", "name" => "#{i}" }
     #end
 
     # Generate alphanumeric list of hostnames and add them to the end of the list
@@ -127,7 +127,7 @@ class DnsBruteSubTask < BaseTask
                   _log_good "Resolved address #{resolved_address} for #{fqdn} and it wasn't in our wildcard list."
 
                   # Create new host entity
-                  _create_entity("Host", {"name" => "#{fqdn}"})
+                  _create_entity("DnsRecord", {"name" => "#{fqdn}"})
 
                   #
                   # This section will add permutations to our list, if the

@@ -25,7 +25,7 @@ class UriGatherSslCertTask  < BaseTask
         {:name => "skip_jive", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "skip_wpengine", :type => "Boolean", :regex => "boolean", :default => true }
       ],
-      :created_types => ["Host","SslCertificate"]
+      :created_types => ["DnsRecord","SslCertificate"]
     }
   end
 
@@ -106,7 +106,7 @@ class UriGatherSslCertTask  < BaseTask
               alt_name = alt_name[2..-1]
             end
 
-            _create_entity "Host", { "name" => alt_name }
+            _create_entity "DnsRecord", { "name" => alt_name }
           end
 
         end

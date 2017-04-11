@@ -16,14 +16,14 @@ class WhoisTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["Host","NetBlock"],
+      :allowed_types => ["DnsRecord","IpAddress","NetBlock"],
       :example_entities => [
-        {"type" => "Host", "attributes" => {"name" => "intrigue.io"}},
-        {"type" => "Host", "attributes" => {"name" => "192.0.78.13"}},
+        {"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}},
+        {"type" => "IpAddress", "attributes" => {"name" => "192.0.78.13"}},
       ],
       :allowed_options => [
         {:name => "timeout", :type => "Integer", :regex=> "integer", :default => 20 }],
-      :created_types => ["DnsServer","Host"]
+      :created_types => ["DnsRecord", "DnsServer"]
     }
   end
 
@@ -127,7 +127,7 @@ class WhoisTask < BaseTask
           parser.nameservers.each do |nameserver|
             _log "Parsed nameserver: #{nameserver}"
 
-            _create_entity "Host", "name" => nameserver.to_s
+            _create_entity "DnsRecord", "name" => nameserver.to_s
 
           end
         else

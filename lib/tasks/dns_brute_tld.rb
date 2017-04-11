@@ -11,7 +11,7 @@ class DnsBruteTldTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["Host","String"],
+      :allowed_types => ["DnsRecord","String"],
       :example_entities => [{"type" => "Host", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
@@ -19,7 +19,7 @@ class DnsBruteTldTask < BaseTask
         {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_tld.list" },
         {:name => "check_cctlds", :type => "Boolean", :regex => "boolean", :default => true }
       ],
-      :created_types => ["Host"]
+      :created_types => ["DnsRecord"]
     }
   end
 
@@ -139,7 +139,7 @@ class DnsBruteTldTask < BaseTask
 
         # If we resolved, create the right entities
         if resolved_address
-          _create_entity("Host", {"name" => domain})
+          _create_entity("DnsRecord", {"name" => domain})
         end
 
       rescue Errno::ENETUNREACH => e
