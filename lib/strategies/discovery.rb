@@ -8,33 +8,22 @@ module Strategy
 
         start_recursive_task(task_result,"ftp_banner_grab",entity,[])
 
-      elsif entity.type_string == "Host"
-
-        # Wait until enrichment has happened before going further
-        entity_id = entity.id
-        countdown = 10 # HACK
-        while !entity.get_detail("enriched") && countdown > 0  do
-          puts "Waiting for #{entity} enrichment: #{entity.get_detail("enriched")} (#{countdown})"
-          sleep 3
-          countdown -= 1
-          entity = Intrigue::Model::Entity.find(:id => entity_id)
-        end
-
-        start_recursive_task(task_result,"nmap_scan",entity)
+      elsif entity.type_string == "DnsRecord"
 
         ### DNS Subdomain Bruteforce
-
         # Do a big bruteforce if the size is small enough
         if (entity.name.split(".").length < 3)
           start_recursive_task(task_result,"dns_brute_sub",entity,[
             {"name" => "use_file", "value" => true }])
+          start_recursive_task(task_result,"whois",entity)
         else
           # otherwise do something a little faster
           start_recursive_task(task_result,"dns_brute_sub",entity,[])
         end
 
-        ### Whois
-        #start_recursive_task(task_result,"whois",entity)
+      elsif entity.type_string == "IpAddress"
+
+        start_recursive_task(task_result,"nmap_scan",entity)
 
       elsif entity.type_string == "String"
 
