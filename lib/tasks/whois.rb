@@ -122,25 +122,29 @@ class WhoisTask < BaseTask
         #
         # We're going to have nameservers either way?
         #
-        if parser.nameservers
+        begin
+          if parser.nameservers
 
-          parser.nameservers.each do |nameserver|
-            _log "Parsed nameserver: #{nameserver}"
+            parser.nameservers.each do |nameserver|
+              _log "Parsed nameserver: #{nameserver}"
 
-            _create_entity "DnsRecord", "name" => nameserver.to_s
+              _create_entity "DnsRecord", "name" => nameserver.to_s
 
+            end
+          else
+            _log_error "No parsed nameservers!"
+            return
           end
-        else
-          _log_error "No parsed nameservers!"
-          return
-        end
-        #
-        # Create a user from the technical contact
-        #
-        parser.contacts.each do |contact|
-          _log "Creating user from contact: #{contact.name}"
-          _create_entity("Person", {"name" => contact.name})
-          _create_entity("EmailAddress", {"name" => contact.email})
+          #
+          # Create a user from the technical contact
+          #
+          parser.contacts.each do |contact|
+            _log "Creating user from contact: #{contact.name}"
+            _create_entity("Person", {"name" => contact.name})
+            _create_entity("EmailAddress", {"name" => contact.email})
+          end
+        rescue Whois::AttributeNotImplemented => e
+          _log_error "Unable to parse that attribute: #{e}"
         end
 
       end # end Host Type

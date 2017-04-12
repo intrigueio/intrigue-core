@@ -20,7 +20,7 @@
       $.getJSON(location.origin + "/v1/tasks/" + task_name + ".json", function(data) {
         if ((window.location.href.indexOf("entities/")) +
             (window.location.href.indexOf("entity_id=")) +
-            (window.location.href.indexOf("task_result_id=")) < 0 )  {
+            (window.location.href.indexOf("result_id=")) < 0 )  {
               // This is a form that doesn't have an entity already filled out, let's provide an example
               parseAllowedEntityTypes(data);
               setDefaultEntity(data);

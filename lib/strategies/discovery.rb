@@ -26,6 +26,7 @@ module Strategy
       elsif entity.type_string == "IpAddress"
 
         start_recursive_task(task_result,"nmap_scan",entity)
+        
         start_recursive_task(task_result,"whois",entity)
 
       elsif entity.type_string == "String"

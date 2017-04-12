@@ -86,14 +86,14 @@ class NmapScanTask < BaseTask
               protocol = ssl ? "https://" : "http://" # construct uri
 
               # Create URI
-              uri = "#{protocol}#{host.ip}:#{port.number}"
-              _create_entity("Uri", "name" => uri, "uri" => uri  ) # create an entity
-
               # and create the entities if we have dns resolution
-              #@entity.details["dns_names"].each do |hostname|
-              #  uri = "#{protocol}#{hostname}:#{port.number}"
-              #  _create_entity("Uri", "name" => uri, "uri" => uri )
-              #end
+              #uri = "#{protocol}#{host.ip}:#{port.number}"
+              #_create_entity("Uri", "name" => uri, "uri" => uri  )
+
+              @entity.get_aliases("DnsRecord").each do |dns_record_entity|
+                uri = "#{protocol}#{dns_record_entity.name}:#{port.number}"
+                _create_entity("Uri", "name" => uri, "uri" => uri )
+              end
 
             # then FtpServer
             elsif [21].include?(port.number)

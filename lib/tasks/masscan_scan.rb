@@ -55,6 +55,8 @@ class MasscanTask < BaseTask
 
       # Get the discovered host (one per line) & create an ip address
       host = line.delete("\n").strip.split(" ")[3] unless line.nil?
+
+      # Should we try to resolve first, and fall back on IP?
       _create_entity("IpAddress", { "name" => host })
 
       if [80,443,8080,8081,8443].include?(opt_port)

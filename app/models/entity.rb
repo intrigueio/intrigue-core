@@ -114,6 +114,10 @@ module Intrigue
         </div>}
       end
 
+      def get_aliases(filter_type_string)
+        aliases.map {|x| x if x.type_string == filter_type_string }
+      end
+
       def get_detail(key)
         details[key]
       end
