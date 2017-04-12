@@ -18,12 +18,12 @@
       var form = $("form")[0]
       var attrib_name = form.attrib_name.value
       $.getJSON(location.origin + "/v1/tasks/" + task_name + ".json", function(data) {
-        if (!(window.location.href.indexOf("entity_id=") > -1) ||
-            !(window.location.href.indexOf("task_result_id=") > -1) ||
-            !(window.location.href.indexOf("entities") > -1)) {
-          // This is a form that doesn't have an entity already filled out, let's provide an example
-          parseAllowedEntityTypes(data);
-          setDefaultEntity(data);
+        if ((window.location.href.indexOf("entities/")) +
+            (window.location.href.indexOf("entity_id=")) +
+            (window.location.href.indexOf("task_result_id=")) < 0 )  {
+              // This is a form that doesn't have an entity already filled out, let's provide an example
+              parseAllowedEntityTypes(data);
+              setDefaultEntity(data);
         }
         else {
           //Disabling form since we're on a pre-populated form
