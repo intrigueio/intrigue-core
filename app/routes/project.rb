@@ -54,41 +54,6 @@ class IntrigueApp < Sinatra::Base
       current_project = Intrigue::Model::Project.first(:name => @project_name)
       @entities = Intrigue::Model::Entity.where(:project_id => current_project.id).sort_by{|x| x.name }
 
-      @persons = []
-      @emails = []
-      @phone_numbers = []
-      @software_packages = []
-      @services = []
-      @hosts = []
-      @networks = []
-      @uris = []
-      @ssl_certificates = []
-      @other = []
-
-      @entities.each do |item|
-        if item.kind_of? Intrigue::Entity::Person
-          @persons << item
-        elsif item.kind_of? Intrigue::Entity::PhoneNumber
-          @phone_numbers << item
-        elsif item.kind_of? Intrigue::Entity::EmailAddress
-          @emails << item
-        elsif item.kind_of? Intrigue::Entity::SoftwarePackage
-          @software_packages << item
-        elsif item.kind_of? Intrigue::Entity::NetworkService
-          @services << item
-        elsif item.kind_of? Intrigue::Entity::Host
-          @hosts << item
-        elsif item.kind_of? Intrigue::Entity::NetBlock
-          @networks << item
-        elsif item.kind_of? Intrigue::Entity::SslCertificate
-          @ssl_certificates << item
-        elsif item.kind_of? Intrigue::Entity::Uri
-          @uris << item
-        else
-          @other << item
-        end
-      end
-
       erb :'dossier'
     end
 
