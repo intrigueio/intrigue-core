@@ -41,7 +41,7 @@
     "bing_api_key" : {
       "value" : "XXX",
       "editable" : "true",
-      "uri" : "https://datamarket.azure.com/dataset/bing/search",
+      "uri" : "https://www.microsoft.com/cognitive-services/en-us/bing-web-search-api",
       "comment" : ""
     },
     "corpwatch_api_key" : {

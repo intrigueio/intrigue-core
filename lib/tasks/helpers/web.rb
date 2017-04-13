@@ -149,20 +149,26 @@ module Task
          ### ALLOW DIFFERENT VERBS HERE
 
          if method == :get
-           response = http.get(path)
+           request = Net::HTTP::Get.new(uri)
          elsif method == :propfind
            request = Net::HTTP::Propfind.new(uri.request_uri)
            # Set your body (data)
            request.body = "Here's the body."
            # Set your headers: one header per line.
            request["Depth"] = "1"
-           response = http.request(request)
          elsif method == :options
            request = Net::HTTP::Options.new(uri.request_uri)
-           response = http.request(request)
+         end
+         ### END VERBS
+
+         # set the headers
+         headers.each do |k,v|
+           request[k] = v
          end
 
-         ### END VERBS
+         # get tehe response
+         response = http.request(request)
+
 
          if response.code=="200"
            break

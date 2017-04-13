@@ -28,7 +28,6 @@ class NmapScanTask < BaseTask
     ### SECURITY - sanity check to_scan
     ###
 
-
     # Get range, or host
     to_scan = [_get_entity_name]
 
@@ -87,10 +86,11 @@ class NmapScanTask < BaseTask
 
               # Create URI
               # and create the entities if we have dns resolution
-              #uri = "#{protocol}#{host.ip}:#{port.number}"
-              #_create_entity("Uri", "name" => uri, "uri" => uri  )
+              uri = "#{protocol}#{host.ip}:#{port.number}"
+              _create_entity("Uri", "name" => uri, "uri" => uri  )
 
               @entity.get_aliases("DnsRecord").each do |dns_record_entity|
+                next unless dns_record_entity
                 uri = "#{protocol}#{dns_record_entity.name}:#{port.number}"
                 _create_entity("Uri", "name" => uri, "uri" => uri )
               end
