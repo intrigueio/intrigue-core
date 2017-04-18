@@ -17,6 +17,10 @@ class IpAddress < Intrigue::Model::Entity
     false
   end
 
+  def detail_string
+    "OS: #{details["os"].to_a.first}"
+  end
+
 end
 end
 end

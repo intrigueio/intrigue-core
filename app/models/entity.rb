@@ -51,6 +51,11 @@ module Intrigue
         [name].concat(aliases.map{|x| x.name }).sort.uniq
       end
 
+      # short string with select details. override this.
+      def detail_string
+        ""
+      end
+
       def soft_delete!
         # clean up aliases at the same time
         aliases.each {|x| x.soft_delete!}

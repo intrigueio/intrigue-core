@@ -18,6 +18,7 @@ function delete_entity(id)
   <p>
   Entities Count: <%= @entities.count %><br/>
   Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>
+  <a href=<%="#{request.url}.csv"%>>Export CSV</a><br/>
   </p>
 
   <form class="form-horizontal" id="entity_search" target="_self" method="get" action="/v1/<%=@project_name%>/entities">

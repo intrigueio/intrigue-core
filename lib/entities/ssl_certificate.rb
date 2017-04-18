@@ -13,6 +13,9 @@ class SslCertificate < Intrigue::Model::Entity
     name =~ /^.*$/
   end
 
+  def detail_string
+    "Issuer: #{details["issuer"]}"
+  end
 end
 end
 end

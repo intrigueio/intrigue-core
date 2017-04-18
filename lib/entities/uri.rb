@@ -13,6 +13,10 @@ class Uri < Intrigue::Model::Entity
     name =~ /^\w.*$/
   end
 
+  def detail_string
+    "Web Stack: #{details["stack"].to_a.join(" | ")}"
+  end
+
 end
 end
 end

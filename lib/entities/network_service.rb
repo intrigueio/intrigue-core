@@ -24,6 +24,11 @@ class NetworkService < Intrigue::Model::Entity
   output
   end
 
+  def detail_string
+    "Service: #{details["fingerprint"]}"
+  end
+
+
 end
 end
 end
