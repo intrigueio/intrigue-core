@@ -8,10 +8,10 @@ require_relative "routes/results"
 
 require_relative "models/capabilities/export_graph"
 
-
-require_relative "models/project"
-require_relative "models/logger"
 require_relative "models/entity"
+require_relative "models/export"
+require_relative "models/logger"
+require_relative "models/project"
 require_relative "models/task_result"
 require_relative "models/scan_result"
 

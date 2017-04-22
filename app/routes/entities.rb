@@ -22,17 +22,15 @@ class IntrigueApp < Sinatra::Base
     end
 
   get '/:project/entities.csv' do
-
     content_type 'text/csv'
-    x = Intrigue::Model::Entity.scope_by_project(@project_name).where(:deleted => false)
 
-    out = ""
-    x.each do |entity|
-      alias_string = entity.aliases.each{|a| "#{a.type_string}##{a.name}" }.join(" | ")
-      out << "#{entity.type_string},#{entity.name},#{alias_string},#{entity.detail_string}\n"
-    end
 
-  out
+    project = Intrigue::Model::Project.first(:name => @project_name)
+    export = Intrigue::Model::ExportCsv.create(:project_id => project.id)
+
+    export.generate
+
+  export.contents
   end
 
    get '/:project/entities/:id' do

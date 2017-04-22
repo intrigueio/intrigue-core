@@ -169,7 +169,6 @@ module Task
          # get tehe response
          response = http.request(request)
 
-
          if response.code=="200"
            break
          end

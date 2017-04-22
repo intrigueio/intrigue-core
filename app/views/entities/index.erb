@@ -71,14 +71,7 @@ function delete_entity(id)
           <td><a href="javascript:delete_entity('<%= e.id %>')">[x]</a> <%=e.type_string%></td>
           <td><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.name}" %></a></td>
           <td><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.unique_name.join(" | ")}" %></a></td>
-          <td>
-          <%= e.type_string =~ /FtpServer/ ? "Banner: #{ e.details["banner"]}" : nil %>
-          <%= e.type_string =~ /IpAddress/ ? "OS: #{ e.details["os"].to_a.first}" : nil  %>
-          <%= e.type_string =~ /DnsRecord/ ? "OS: #{ e.details["os"].to_a.first}" : nil  %>
-          <%= e.type_string =~ /NetworkService/ ? "Service: #{ e.details["fingerprint"]}" : nil %>
-          <%= e.type_string =~ /SslCertificate/ ? "Issuer: #{ e.details["issuer"]}" : nil %>
-          <%= e.type_string =~ /Uri/ ? "Web: #{ e.details["stack"].to_a.join(" | ")}" : nil %>
-          </td>
+          <td> <%= e.detail_string %> </td>
         </tr>
       <% end %>
     </tbody>

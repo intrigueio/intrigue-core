@@ -11,7 +11,7 @@ module Intrigue
 
         self.task_results.each do |t|
 
-          next unless t.base_entity.type_string == "IpAddress"
+          #next unless t.base_entity.type_string == "IpAddress"
 
           # add the base entity first (provided it hasn't been deleted)
           x = { :id => t.base_entity.id, :label => "#{t.base_entity.name}", :type => t.base_entity.type_string}
@@ -20,7 +20,7 @@ module Intrigue
           # then for each of the entities, generate the node and edges. skip if deleted.
           t.entities.each do |e|
 
-            next unless e.type_string == "IpAddress"
+            #next unless e.type_string == "IpAddress"
 
             x = { :id => e.id, :label => "#{e.name}", :type => e.type_string } #unless e.secondary
             #x[:color] = "lightgrey" if e.type_string == "Uri"
