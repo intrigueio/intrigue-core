@@ -10,9 +10,9 @@ module Intrigue
         aliases_and_name.each do |a|
           #puts "checking for #{a} in #{aliases_and_name}"
 
-          if a.name =~ /omtrdc.net/
+          if a.name =~ /\.omtrdc.net/
             providers << "Adobe Marketing Cloud"
-          elsif a.name =~ /\.akamai.net/ || a.name =~ /\.akamaitechnologies.com/ || a.name =~ /\.edgesuite.net/ || a.name =~ /\.edgekey.net/
+          elsif a.name =~ /\.akam.net/ || a.name =~ /\.akamai.net/ || a.name =~ /\.akamaitechnologies.com/ || a.name =~ /\.edgesuite.net/ || a.name =~ /\.edgekey.net/
             providers << "Akamai"
           elsif a.name =~ /\.amazonaws.com/ || a.name =~ /\.cloudfront.net/
             providers << "Amazon AWS"
