@@ -7,6 +7,8 @@ require_relative "routes/project"
 require_relative "routes/results"
 
 require_relative "models/capabilities/export_graph"
+require_relative "models/capabilities/calculate_provider"
+
 
 require_relative "models/entity"
 require_relative "models/export"

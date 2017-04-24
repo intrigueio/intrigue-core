@@ -40,7 +40,7 @@ class EnrichDnsRecord < BaseTask
       result = resolver.query(lookup_name, Dnsruby::Types::A)
 
       # Let us know if we got an empty result
-      _log_error "Nothing?" if result.answer.empty?
+      _log "No A records!" if result.answer.empty?
 
       ip_addresses = []
       dns_names = []
@@ -65,6 +65,14 @@ class EnrichDnsRecord < BaseTask
           sub_entity = _create_entity("IpAddress", {"name" => name}, @entity)
         end
 
+        _log "Attaching entity: #{sub_entity} to #{@entity}"
+        @entity.add_alias sub_entity
+        @entity.save
+
+        _log "Attaching entity: #{@entity} to #{sub_entity}"
+        sub_entity.add_alias @entity
+        sub_entity.save
+
       end
 
       ##########################
@@ -73,7 +81,7 @@ class EnrichDnsRecord < BaseTask
       result = resolver.query(lookup_name, Dnsruby::Types::CNAME)
 
       # Let us know if we got an empty result
-      _log_error "Nothing?" if result.answer.empty?
+      _log "No CNAME records!" if result.answer.empty?
 
       dns_names = []
 
@@ -94,6 +102,15 @@ class EnrichDnsRecord < BaseTask
           _log "Creating entity for DnsRecord: #{name}"
           sub_entity = _create_entity("DnsRecord", {"name" => name}, @entity)
         end
+
+        _log "Attaching entity: #{sub_entity} to #{@entity}"
+        @entity.add_alias sub_entity
+        @entity.save
+
+        _log "Attaching entity: #{@entity} to #{sub_entity}"
+        sub_entity.add_alias @entity
+        sub_entity.save
+
       end
 
     rescue Dnsruby::ServFail => e

@@ -62,16 +62,18 @@ function delete_entity(id)
       <col style="width:10%">
       <col style="width:20%">
       <col style="width:30%">
-      <col style="width:40%">
+      <col style="width:30%">
+      <col style="width:10%">
     </colgroup>
     <tbody>
-      <tr><th>type</th><th>name</th><th>aliases</th><th>details</th></tr>
+      <tr><th>type</th><th>name</th><th>aliases</th><th>details</th><th>provider</th></tr>
       <% @entities.sort_by{|e| e.type_string}.each do |e| %>
         <tr>
           <td><a href="javascript:delete_entity('<%= e.id %>')">[x]</a> <%=e.type_string%></td>
           <td><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.name}" %></a></td>
           <td><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.unique_name.join(" | ")}" %></a></td>
           <td> <%= e.detail_string %> </td>
+          <td> <%= e.provider %> </td>
         </tr>
       <% end %>
     </tbody>

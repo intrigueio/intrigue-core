@@ -24,6 +24,8 @@ module Intrigue
       many_to_many :task_results
       many_to_one  :project
 
+      include Intrigue::Model::Capabilities::CalculateProvider
+
       def validate
         super
         validates_unique([:project_id, :type, :name])

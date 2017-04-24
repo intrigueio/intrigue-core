@@ -107,7 +107,7 @@ class WebStackFingerprint < BaseTask
           :uri => "#{uri}",
           :checklist => [
           {
-            :name => "ASP.Net", # won't be used if we have
+            :name => "ASP.Net",
             :description => "ASP.Net Error Message",
             :type => "content",
             :content => /ASP.NET is configured/,
@@ -115,21 +115,28 @@ class WebStackFingerprint < BaseTask
             :dynamic_name => lambda{|x| x.scan(/ASP.NET Version:.*$/)[0].gsub("ASP.NET Version:","").chomp }
           },
           {
-            :name => "LimeSurvey", # won't be used if we have
+            :name => "LimeSurvey",
             :description => "LimeSurvey",
             :type => "content",
             :content => /Donate to LimeSurvey/,
             :test_site => "http://129.186.73.249/index.php/admin"
           },
           {
-            :name => "MediaWiki", # won't be used if we have
+            :name => "Magento",
+            :description => "Magento",
+            :type => "content",
+            :content => /Mage.Cookies.path/,
+            :test_site => "https://admin.chwine.com"
+          },
+          {
+            :name => "MediaWiki",
             :description => "Powered by MediaWiki ",
             :type => "content",
             :content => /<a href="\/\/www.mediawiki.org\/">Powered by MediaWiki<\/a>/,
             :test_site => "https://manual.limesurvey.org"
           },
           {
-            :name => "Tomcat", # won't be used if we have
+            :name => "Tomcat",
             :description => "Tomcat Web Application Server",
             :type => "content",
             :content => /<title>Apache Tomcat/,
@@ -262,6 +269,10 @@ class WebStackFingerprint < BaseTask
 
       header = response.header['fastly-restarts']
       temp << "Fastly CDN" if header
+
+      # TODO - magento
+      ###[_]  - x-magento-lifetime: 86400
+      ###[_]  - x-magento-action: cms_index_index
 
       header = response.header['x-pingback']
       if header

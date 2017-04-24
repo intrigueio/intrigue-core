@@ -29,7 +29,6 @@ class EnrichIpAddress < BaseTask
     lookup_name = _get_entity_name
 
     begin
-
       resolver = Dnsruby::Resolver.new(
         :nameserver => opt_resolver,
         :search => [])
@@ -38,7 +37,7 @@ class EnrichIpAddress < BaseTask
       _log "Processing: #{result}"
 
       # Let us know if we got an empty result
-      _log_error "Nothing?" if result.answer.empty?
+      _log "No PTR records!" if result.answer.empty?
 
       ip_addresses = []
       dns_names = []
@@ -54,18 +53,7 @@ class EnrichIpAddress < BaseTask
         dns_names << resource.domainname.to_s if resource.respond_to? :domainname
         dns_names << resource.name.to_s.downcase
       end #end result.answer
-=begin
-      # check and merge if the ip is associated with another entity!
-      ip_addresses.sort.uniq.each do |name|
-        sub_entity = entity_exists?(@entity.project,"IpAddress",name)
-        if sub_entity
-          @entity.add_alias sub_entity
-        else
-          _log "Creating entity for IpAddress: #{name}"
-          sub_entity = _create_entity("IpAddress", {"name" => name}, @entity)
-        end
-      end
-=end
+
       dns_names.sort.uniq.each do |name|
         sub_entity = entity_exists?(@entity.project,"DnsRecord",name)
         unless sub_entity
@@ -80,9 +68,10 @@ class EnrichIpAddress < BaseTask
         _log "Attaching entity: #{@entity} to #{sub_entity}"
         sub_entity.add_alias @entity
         sub_entity.save
-
       end
 
+    rescue Dnsruby::SocketEofResolvError => e
+      _log_error "Unable to resolve: #{@entity}, error: #{e}"
     rescue Dnsruby::ServFail => e
       _log_error "Unable to resolve: #{@entity}, error: #{e}"
     rescue Dnsruby::NXDomain => e
