@@ -14,10 +14,12 @@ class NetBlock < Intrigue::Model::Entity
 
     # required:
     name =~ /^\w.*$/
-
     # suggested:
     # details["organization_reference"]
+  end
 
+  def detail_string
+    "Ref: #{details["organization_reference"]}"
   end
 
 end

@@ -2,21 +2,23 @@ class IntrigueApp < Sinatra::Base
   namespace '/v1' do
 
     get '/:project/entities' do
-      @search_string = params[:search_string]
-      @entity_types = params[:entity_types]
-      @page_id = params[:page]
+      @result_count = 50
+
+      params[:search_string] == "" ? @search_string = nil : @search_string = params[:search_string]
+      params[:entity_types] == "" ? @entity_types = nil : @entity_types = params[:entity_types]
+      (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
+
+      selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:deleted => false).order(:name)
+
+      ## Filter if we have a type
+      selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
 
       ## We have some very rudimentary searching capabilities here
-      x = Intrigue::Model::Entity.scope_by_project(@project_name).where(:deleted => false)
-      x = x.where(:type => @entity_types) if @entity_types
+      selected_entities = selected_entities.where(Sequel.ilike(:details, "%#{@search_string}%") | Sequel.ilike(:name, "%#{@search_string}%")) if @search_string
 
-      if @search_string
-        selected_entities = x.where(Sequel.ilike(:details, "%#{@search_string}%") | Sequel.ilike(:name, "%#{@search_string}%"))
-      else
-        selected_entities = x
-      end
-
-      @entities = selected_entities #.to_a.select{ |x| x if x.primary }
+      # PAGINATE
+      @entities_count = selected_entities.count
+      @entities = selected_entities.extension(:pagination).paginate(@page,@result_count)
 
       erb :'entities/index'
     end

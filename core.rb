@@ -17,6 +17,10 @@ require 'sequel'
 # Config
 require_relative 'lib/config/global_config'
 
+# UI
+#require 'will_paginate'
+#require 'will_paginate/sequel'
+
 # Debug
 require 'pry'
 require 'pry-byebug'
@@ -55,6 +59,9 @@ def setup_database
   end
 
   $db = Sequel.connect('postgres://intrigue@localhost:5432/intriguedb', options)
+
+  # Allow datasets to be paginated
+  Sequel::Database.extension :pagination
 end
 
 sanity_check_system

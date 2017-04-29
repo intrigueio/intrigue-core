@@ -16,7 +16,7 @@ function delete_entity(id)
 
 <div class="col-sm-2">
   <p>
-  Entities Count: <%= @entities.count %><br/>
+  Entities Count: <%= @entities_count %><br/>
   Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>
   <a href=<%="#{request.url}.csv"%>>Export CSV</a><br/>
   </p>
@@ -29,7 +29,7 @@ function delete_entity(id)
     Types:<br/>
     <select size=10 style='height:100%; color:#000000;' multiple name="entity_types[]">
       <% Intrigue::Model::Entity.descendants.map{|x|x.to_s}.sort.each do |d| %>
-        <option value="<%=d%>" selected><%=d%></option>
+        <option value="<%=d%>"><%=d%></option>
       <% end %>
     </select><br/>
 
@@ -37,6 +37,10 @@ function delete_entity(id)
   </form>
 </div>
 <div class="col-sm-10">
+    <%= "Page: #{@page}" %>
+    <%= "Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %>
+    <a href="<%=request.path%>?page=<%=@page-1%>&search_string=<%=@search_string%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">previous</a>
+    <a href="<%=request.path%>?page=<%=@page+1%>&search_string=<%=@search_string%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">next</a>
 
   <script src="/js/sorttable.js"></script>
   <style>
@@ -78,6 +82,6 @@ function delete_entity(id)
       <% end %>
     </tbody>
   </table>
-
+  <br>
 <form name="entity_delete_form" method="get"><input type="hidden" id="entity" name="entity"/></form>
 </div>

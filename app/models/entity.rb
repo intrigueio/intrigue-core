@@ -18,6 +18,7 @@ module Intrigue
       plugin :validation_helpers
       plugin :single_table_inheritance, :type
       plugin :serialization, :json, :details #, :name
+
       self.raise_on_save_failure = false
 
       many_to_many :aliases, :left_key=>:source_id,:right_key=>:target_id, :join_table=>:alias_mappings, :class=>self

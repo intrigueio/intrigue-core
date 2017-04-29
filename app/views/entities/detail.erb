@@ -8,7 +8,7 @@
 </h3>
 
 Details:
-<pre><%=h JSON.pretty_generate @entity.details %></pre><br/>
+<pre><%=h JSON.pretty_generate(@entity.details) %></pre>
 
 Export this entity: <br/>
 <ul>
@@ -18,7 +18,7 @@ Export this entity: <br/>
 
 Aliases: <br/>
 <ul>
-<%=out = ""; results = @entity.aliases; results.each {|x| out << "<li>#{h x}</li>"; } if results; out %>
+<%=out = ""; results = @entity.aliases; results.each {|x| out << "<li><a href='/v1/#{@project_name}/entities/#{x.id}'>#{h x.name}</a></li>"; } if results; out %>
 </ul>
 <br/>
 

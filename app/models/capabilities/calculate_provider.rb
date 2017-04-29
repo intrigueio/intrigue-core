@@ -26,7 +26,7 @@ module Intrigue
             providers << "Hosting.com"
           elsif a.name =~ /\.hubspot.com/ || a.name =~ /\.hubspot.net/
             providers << "Hubspot"
-          elsif a.name =~ /\.mktoweb.net/ || /\.mktoweb.com/
+          elsif a.name =~ /\.mktoweb.net/ || a.name =~ /\.mktoweb.com/
             providers << "Marketo"
           elsif a.name =~ /\.outlook.com/
             providers << "Microsoft"
