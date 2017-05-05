@@ -35,7 +35,8 @@ gem 'geoip'                   # geolocate_host
 gem 'shodan'                  # search_shodan
 gem 'towerdata_api'           # search_towerdata
 gem 'yomu'                    # uri_spider
-gem 'gmail'                   # email_bounceback
+#gem 'gmail'                   # email_bounceback
+gem 'tf-idf-similarity'
 gem 'screencap',      :git => 'https://github.com/intrigueio/screencap.git'
 gem 'arachnid',       :git => 'https://github.com/intrigueio/arachnid.git'
 gem 'ruby-nmap',      :git => 'https://github.com/pentestify/ruby-nmap.git'

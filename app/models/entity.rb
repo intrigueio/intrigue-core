@@ -19,7 +19,7 @@ module Intrigue
       plugin :single_table_inheritance, :type
       plugin :serialization, :json, :details #, :name
 
-      self.raise_on_save_failure = false
+      #self.raise_on_save_failure = false
 
       many_to_many :aliases, :left_key=>:source_id,:right_key=>:target_id, :join_table=>:alias_mappings, :class=>self
       many_to_many :task_results
@@ -43,6 +43,12 @@ module Intrigue
         where(Sequel.&(:project_id => named_project_id, :type => resolved_entity_type.to_s))
       end
 
+      def self.scope_by_project_and_type_and_detail_value(project_name, entity_type, detail_name, detail_value)
+        json_details = Sequel.pg_jsonb_op(:details)
+        candidate_entities = scope_by_project_and_type(project_name,entity_type)
+        candidate_entities.where(json_details.get_text(detail_name) => detail_value)
+      end
+
       # Override this if you are creating a secondary entity
       # (meaning... it'll be tracked through another entity)
       def primary
@@ -52,6 +58,11 @@ module Intrigue
       # easy way to refer to all names (overridden in some entities)
       def unique_name
         [name].concat(aliases.map{|x| x.name }).sort.uniq
+      end
+
+      # easy way to refer to all names (overridden in some entities)
+      def unique_aliases
+        aliases.map{|x| x.name }.sort.uniq
       end
 
       # short string with select details. override this.
@@ -134,6 +145,7 @@ module Intrigue
         details[key] = value
         save
       end
+      
       def self.descendants
         x = ObjectSpace.each_object(Class).select{ |klass| klass < self }
       end

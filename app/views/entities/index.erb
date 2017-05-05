@@ -75,7 +75,7 @@ function delete_entity(id)
         <tr>
           <td><a href="javascript:delete_entity('<%= e.id %>')">[x]</a> <%=e.type_string%></td>
           <td><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.name}" %></a></td>
-          <td><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.unique_name.join(" | ")}" %></a></td>
+          <td><%= h "#{e.unique_aliases.join(" | ")}" %></td>
           <td> <%= e.detail_string %> </td>
           <td> <%= e.provider %> </td>
         </tr>

@@ -59,6 +59,7 @@ class EnrichDnsRecord < BaseTask
 
       # check and merge if the ip is associated with another entity!
       ip_addresses.sort.uniq.each do |name|
+
         sub_entity = entity_exists?(@entity.project,"IpAddress",name)
         unless sub_entity
           _log "Creating entity for IpAddress: #{name}"

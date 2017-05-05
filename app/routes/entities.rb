@@ -14,7 +14,7 @@ class IntrigueApp < Sinatra::Base
       selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
 
       ## We have some very rudimentary searching capabilities here
-      selected_entities = selected_entities.where(Sequel.ilike(:details, "%#{@search_string}%") | Sequel.ilike(:name, "%#{@search_string}%")) if @search_string
+      selected_entities = selected_entities.where(Sequel.ilike(:name, "%#{@search_string}%")) if @search_string
 
       # PAGINATE
       @entities_count = selected_entities.count

@@ -62,6 +62,9 @@ def setup_database
 
   # Allow datasets to be paginated
   Sequel::Database.extension :pagination
+
+  Sequel::Database.extension :pg_json
+  Sequel.extension :pg_json_ops
 end
 
 sanity_check_system

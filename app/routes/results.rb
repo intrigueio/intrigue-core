@@ -62,7 +62,10 @@ class IntrigueApp < Sinatra::Base
         end
       end
 
-      raise "Unable to continue without entity: #{klass}##{entity_name}" unless entity
+      unless entity
+        raise "Unable to continue without entity: #{klass}##{entity_name}"
+        #redirect "/"
+      end
 
       # Construct the options hash from the parameters
       options = []

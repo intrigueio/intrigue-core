@@ -40,18 +40,19 @@ class EntityManager
 
     # check if there's an existing entity, if so, merge and move forward
     if entity
-      entity.details = details.deep_merge(entity.details)
+      already_exists = true
+      entity.details = details.to_h.deep_merge(entity.details.to_h)
       entity.save
     else
       # Create a new entity, validating the attributes
       type = resolve_type(type_string)
       $db.transaction do
-        entity = Intrigue::Model::Entity.create({
-          :name =>  downcased_name,
-          :project => project,
-          :type => type,
-          :details => details
-         })
+          entity = Intrigue::Model::Entity.create({
+            :name =>  downcased_name,
+            :project => project,
+            :type => type,
+            :details => details
+           })
       end
     end
 
@@ -75,8 +76,8 @@ class EntityManager
       self.alias_entity entity, primary_entity
     end
 
-    # START PROCESSING OF ENRICHMENT (to depth of 1)
-    enrich_entity entity, task_result
+    # START PROCESSING OF ENRICHMENT (to depth of 1) unless this entity already exists
+    enrich_entity(entity, task_result) unless already_exists
 
     # START RECURSION BY STRATEGY TYPE
     if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
@@ -112,8 +113,8 @@ class EntityManager
     elsif entity.type_string == "IpAddress"
       start_task("task_enrichment", entity.project, scan_result, "enrich_ip_address", entity, 1, [],[])
     elsif entity.type_string == "Uri"
-      start_task("task_autoscheduled", entity.project, scan_result, "enrich_uri", entity, 1, [],[])
-      start_task("task_autoscheduled", entity.project, scan_result, "web_stack_fingerprint", entity, 1, [],[])
+      start_task("task_enrichment", entity.project, scan_result, "enrich_uri", entity, 1, [],[])
+      start_task("task_enrichment", entity.project, scan_result, "web_stack_fingerprint", entity, 1, [],[])
     end
   end
 
