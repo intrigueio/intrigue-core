@@ -1,0 +1,75 @@
+<script language="javascript" type="text/javascript">
+function delete_entity(id)
+{
+  var check = confirm('Are you sure?');
+  if (check == true) {
+      document.entity_delete_form.entity.value = id;
+      document.entity_delete_form.action = "/v1/<%=@project_name%>/meta_entities/" + id + "/delete"
+      document.entity_delete_form.submit();
+      return true;
+  }
+  else {
+      return false;
+  }
+}
+</script>
+
+<div class="col-sm-2">
+  <p>
+  Entities Count: <%= @entities.count %><br/>
+  </p>
+
+  <form class="form-horizontal" id="entity_search" target="_self" method="get" action="/v1/<%=@project_name%>/meta_entities">
+
+    Search:
+    <input type="text" style='width:100%' class="form-control sm" id="search_string" name="search_string"><br/>
+
+    Types:<br/>
+    <select size=10 style='height:100%; color:#000000;' multiple name="entity_types[]">
+      <% Intrigue::Model::Entity.descendants.map{|x|x.to_s}.sort.each do |d| %>
+        <option value="<%=d%>"><%=d%></option>
+      <% end %>
+    </select><br/>
+
+    <input class="btn btn-primary" type="submit" value="Search">
+  </form>
+</div>
+<div class="col-sm-10">
+
+  <script src="/js/sorttable.js"></script>
+  <style>
+  /* Sortable tables */
+  table.sortable {
+    width: 100%;
+    border: 0;
+    table-layout:fixed;
+    word-wrap:break-word;
+    border-collapse:collapse;
+  }
+
+  table.sortable thead {
+      background-color:#eee;
+      color:#666666;
+      font-weight: bold;
+      cursor: default;
+  }
+  </style>
+  <p></p>
+  <table class="sortable" border="1" width=100%>
+    <colgroup>
+      <col style="width:40%">
+      <col style="width:60%">
+    </colgroup>
+    <tbody>
+      <tr><th>name</th></tr>
+      <% @entities.each do |e| %>
+        <tr>
+          <td><%=e%></td>
+          <td><%= out =[];e.each{|x| out << x.details.tap{|y| y.delete("response_data"); y.delete("whois_full_text"); y.delete("text") }}; out; %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <br>
+<form name="entity_delete_form" method="get"><input type="hidden" id="entity" name="entity"/></form>
+</div>

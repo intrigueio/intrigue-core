@@ -55,9 +55,6 @@ class EnrichUri < BaseTask
         e.save
       end
     end
-
-
-
   end
 
   def check_options_endpoint(uri)

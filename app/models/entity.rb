@@ -103,6 +103,11 @@ module Intrigue
         "#{type_string}: #{name}"
       end
 
+      def inspect
+        "#{type_string}: #{name}"
+      end
+
+
       def type_string
         type.to_s.gsub(/^.*::/, '')
       end
@@ -145,7 +150,7 @@ module Intrigue
         details[key] = value
         save
       end
-      
+
       def self.descendants
         x = ObjectSpace.each_object(Class).select{ |klass| klass < self }
       end
