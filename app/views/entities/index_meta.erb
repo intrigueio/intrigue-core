@@ -19,7 +19,7 @@ function delete_entity(id)
   Entities Count: <%= @entities.count %><br/>
   </p>
 
-  <form class="form-horizontal" id="entity_search" target="_self" method="get" action="/v1/<%=@project_name%>/meta_entities">
+  <form class="form-horizontal" id="entity_search" target="_self" method="get" action="/v1/<%=@project_name%>/entities/meta">
 
     Search:
     <input type="text" style='width:100%' class="form-control sm" id="search_string" name="search_string"><br/>
@@ -61,11 +61,11 @@ function delete_entity(id)
       <col style="width:60%">
     </colgroup>
     <tbody>
-      <tr><th>name</th></tr>
-      <% @entities.each do |e| %>
+      <tr><th>name</th><th>details</th></tr>
+      <% @entities.each do |eg| %>
         <tr>
-          <td><%=e%></td>
-          <td><%= out =[];e.each{|x| out << x.details.tap{|y| y.delete("response_data"); y.delete("whois_full_text"); y.delete("text") }}; out; %></td>
+          <td><% eg.each do |e| %><a href="/v1/<%=@project_name%>/entities/<%=e.id%>"> <%= e.name %> </a> | <% end %></td>
+          <td><%= out =[];eg.each{|x| out << x.details.tap{|y| y.delete("response_data"); y.delete("whois_full_text"); y.delete("text") }}; out; %></td>
         </tr>
       <% end %>
     </tbody>
