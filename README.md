@@ -15,7 +15,7 @@ Follow the appropriate setup guide:
  * Docker (preferred) - https://intrigue.io/2017/03/07/using-intrigue-core-with-docker/
  * Ubuntu Linux - https://github.com/intrigueio/intrigue-core/wiki/Setting-up-a-Test-Environment-on-Ubuntu-Linux
  * Kali Linux - https://github.com/intrigueio/intrigue-core/wiki/Setting-up-a-Test-Environment-on-Kali-Linux
- * OSX - https://github.com/intrigueio/intrigue-core/wiki/Setting-up-a-Test-Environment-on-OSX
+ * OS X - https://github.com/intrigueio/intrigue-core/wiki/Setting-up-a-Test-Environment-on-OSX-10.10
 
 Now that you have a working environment, browse to the web interface.
 
