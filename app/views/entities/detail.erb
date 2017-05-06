@@ -18,7 +18,7 @@ Export this entity: <br/>
 
 Aliases: <br/>
 <ul>
-<%=out = ""; results = @entity.aliases; results.each {|x| out << "<li><a href='/v1/#{@project_name}/entities/#{x.id}'>#{h x.name}</a></li>"; } if results; out %>
+<%=out = ""; results = @entity.aliases.uniq.sort_by{|x|x.name}; results.each {|x| out << "<li><a href='/v1/#{@project_name}/entities/#{x.id}'>#{h x.name}</a></li>"; } if results; out %>
 </ul>
 <br/>
 
