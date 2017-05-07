@@ -3,7 +3,7 @@ module Intrigue
     module Prohibited
 
           def prohibited_entity?(entity)
-            if entity.type_string == "Host"
+            if entity.type_string == "IpAddress"
               # 23.x.x.x
               if ( entity.name =~ /^23\..*$/             ||  # akamai
                    entity.name =~ /^2600:1400.*$/        ||  # akamai

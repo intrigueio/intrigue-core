@@ -2,6 +2,7 @@ class IntrigueApp < Sinatra::Base
   namespace '/v1' do
 
     get '/:project/start' do
+      @project = Intrigue::Model::Project.first(:name => @project_name)
 
       # if we receive an entity_id or a task_result_id, instanciate the object
       if params["entity_id"]
