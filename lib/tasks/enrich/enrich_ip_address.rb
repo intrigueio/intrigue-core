@@ -55,6 +55,12 @@ class EnrichIpAddress < BaseTask
       end #end result.answer
 
       dns_names.sort.uniq.each do |name|
+
+        next if name =~ /.*\.arpa$/
+        next if name =~ /.*\.edgekey.net$/
+        next if name =~ /.*\.akamaiedge.net$/
+        next if name =~ /.*\.akamaitechnologies.com$/
+
         sub_entity = entity_exists?(@entity.project,"DnsRecord",name)
         unless sub_entity
           _log "Creating entity for DnsRecord: #{name}"
