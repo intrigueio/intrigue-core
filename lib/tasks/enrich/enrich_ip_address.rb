@@ -3,6 +3,7 @@ require 'dnsruby'
 module Intrigue
 class EnrichIpAddress < BaseTask
   include Intrigue::Task::Helper
+  include Intrigue::Task::Data
 
   def self.metadata
     {
@@ -16,7 +17,8 @@ class EnrichIpAddress < BaseTask
       :passive => true,
       :example_entities => [{"type" => "IpAddress", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
-        {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
+        {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
+        {:name => "skip_prohibited", :type => "Boolean", :regex => "boolean", :default => true }
       ],
       :created_types => []
     }
@@ -26,6 +28,8 @@ class EnrichIpAddress < BaseTask
     super
 
     opt_resolver = _get_option "resolver"
+    opt_skip_prohibited = _get_option "skip_prohibited"
+
     lookup_name = _get_entity_name
 
     begin
@@ -56,15 +60,18 @@ class EnrichIpAddress < BaseTask
 
       dns_names.sort.uniq.each do |name|
 
-        next if name =~ /.*\.arpa$/
-        next if name =~ /.*\.edgekey.net$/
-        next if name =~ /.*\.akamaiedge.net$/
-        next if name =~ /.*\.akamaitechnologies.com$/
+        # handle prohibited entitie
+        if opt_skip_prohibited
+          if prohibited_entity?(name)
+            _log "Skipping prohibited entity: #{name}"
+            next
+          end
+        end
 
         sub_entity = entity_exists?(@entity.project,"DnsRecord",name)
         unless sub_entity
           _log "Creating entity for DnsRecord: #{name}"
-          sub_entity = _create_entity("DnsRecord", {"name" => name}, @entity)
+          sub_entity = _create_entity("DnsRecord", {"name" => name , "record_type" => resource.type.to_s }, @entity)
         end
 
         _log "Attaching entity: #{sub_entity} to #{@entity}"

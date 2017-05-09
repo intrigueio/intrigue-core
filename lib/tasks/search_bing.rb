@@ -56,15 +56,5 @@ class SearchBingTask < BaseTask
 
   end # end run()
 
-  private
-
-  def _prohibited_entity(result)
-    return true if (result["displayUrl"] =~ /wikipedia/ ||
-                    result["displayUrl"] =~ /linkedin/  ||
-                    result["displayUrl"] =~ /facebook/  ||
-                    result["displayUrl"] =~ /twitter/)
-  false
-  end
-
 end # end Class
 end

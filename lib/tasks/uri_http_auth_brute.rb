@@ -4,7 +4,7 @@ require 'net/http'
 module Intrigue
 class UriHttpAuthBrute < BaseTask
 
-  include Intrigue::Task::Lists
+  include Intrigue::Task::Data
 
   def self.metadata
     {

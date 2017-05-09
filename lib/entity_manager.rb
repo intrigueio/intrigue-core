@@ -1,7 +1,7 @@
 module Intrigue
 class EntityManager
   extend Intrigue::Task::Helper
-  extend Intrigue::Task::Prohibited
+  extend Intrigue::Task::Data
 
   # NOTE: We don't auto-register entities like the other factories (handled by
   # single table inheritance)
@@ -81,7 +81,7 @@ class EntityManager
 
     # START RECURSION BY STRATEGY TYPE
     if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
-      unless prohibited_entity? entity
+      unless prohibited_entity?(entity.name, entity.type_string)
         if task_result.scan_result.strategy == "discovery"
           Intrigue::Strategy::Discovery.recurse(entity, task_result)
         elsif task_result.scan_result.strategy == "web_discovery"

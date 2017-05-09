@@ -3,6 +3,7 @@ require 'dnsruby'
 module Intrigue
 class EnrichDnsRecord < BaseTask
   include Intrigue::Task::Helper
+  include Intrigue::Task::Data
 
   def self.metadata
     {
@@ -16,7 +17,8 @@ class EnrichDnsRecord < BaseTask
       :passive => true,
       :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
-        {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
+        {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
+        {:name => "skip_prohibited", :type => "Boolean", :regex => "boolean", :default => true }
       ],
       :created_types => []
     }
@@ -26,6 +28,7 @@ class EnrichDnsRecord < BaseTask
     super
 
     opt_resolver = _get_option "resolver"
+    opt_skip_prohibited = _get_option "skip_prohibited"
     lookup_name = _get_entity_name
 
     begin
@@ -37,10 +40,10 @@ class EnrichDnsRecord < BaseTask
       ######################
       ## Handle A Records ##
       ######################
-      result = resolver.query(lookup_name, Dnsruby::Types::A)
+      result = resolver.query(lookup_name, Dnsruby::Types::ANY)
 
       # Let us know if we got an empty result
-      _log "No A records!" if result.answer.empty?
+      _log "No ANY records!" if result.answer.empty?
 
       ip_addresses = []
       dns_names = []
@@ -50,7 +53,22 @@ class EnrichDnsRecord < BaseTask
         next if resource.type == Dnsruby::Types::RRSIG # TODO parsing this out is a pain, not sure if it's valuable
         next if resource.type == Dnsruby::Types::NS
         next if resource.type == Dnsruby::Types::TXT # TODO - let's parse this out?
+        _log "Adding name from: #{resource}"
+        ip_addresses << resource.address.to_s if resource.respond_to? :address
+        dns_names << resource.domainname.to_s if resource.respond_to? :domainname
+        dns_names << resource.name.to_s.downcase
+      end #end result.answer
 
+      ##########################
+      ## Handle CNAME Records ##
+      ##########################
+      result = resolver.query(lookup_name, [Dnsruby::Types::A, Dnsruby::Types::CNAME])
+
+      # Let us know if we got an empty result
+      _log "No A or CNAME records!" if result.answer.empty?
+
+      # For each of the found addresses
+      result.answer.map do |resource|
         _log "Adding name from: #{resource}"
         ip_addresses << resource.address.to_s if resource.respond_to? :address
         dns_names << resource.domainname.to_s if resource.respond_to? :domainname
@@ -76,38 +94,21 @@ class EnrichDnsRecord < BaseTask
 
       end
 
-      ##########################
-      ## Handle CNAME Records ##
-      ##########################
-      result = resolver.query(lookup_name, Dnsruby::Types::CNAME)
-
-      # Let us know if we got an empty result
-      _log "No CNAME records!" if result.answer.empty?
-
-      dns_names = []
-
-      # For each of the found addresses
-      result.answer.map do |resource|
-        next if resource.type == Dnsruby::Types::RRSIG # TODO parsing this out is a pain, not sure if it's valuable
-        next if resource.type == Dnsruby::Types::NS
-        next if resource.type == Dnsruby::Types::TXT # TODO - let's parse this out?
-
-        dns_names << resource.domainname.to_s if resource.respond_to? :domainname
-        dns_names << resource.name.to_s.downcase
-        end #end result.answer
-
       # check and merge if the ip is associated with another entity!
       dns_names.sort.uniq.each do |name|
 
-        next if name =~ /.*\.arpa$/
-        next if name =~ /.*\.edgekey.net$/
-        next if name =~ /.*\.akamaiedge.net$/
-        next if name =~ /.*\.akamaitechnologies.com$/
+        # handle prohibited entitie
+        if opt_skip_prohibited
+          if prohibited_entity?(name)
+            _log "Skipping prohibited entity: #{name}"
+            next
+          end
+        end
 
         sub_entity = entity_exists?(@entity.project,"DnsRecord",name)
         unless sub_entity
           _log "Creating entity for DnsRecord: #{name}"
-          sub_entity = _create_entity("DnsRecord", {"name" => name}, @entity)
+          sub_entity = _create_entity("DnsRecord", {"name" => name, "record_type" => resource.type.to_s }, @entity)
         end
 
         _log "Attaching entity: #{sub_entity} to #{@entity}"
