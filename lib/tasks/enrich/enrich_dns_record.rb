@@ -37,22 +37,41 @@ class EnrichDnsRecord < BaseTask
         :nameserver => opt_resolver,
         :search => [])
 
-      ######################
-      ## Handle A Records ##
-      ######################
+      ip_addresses = []
+      dns_names = []
+
+      ########################
+      ## Handle ANY Records ##
+      ########################
       result = resolver.query(lookup_name, Dnsruby::Types::ANY)
 
       # Let us know if we got an empty result
       _log "No ANY records!" if result.answer.empty?
 
-      ip_addresses = []
-      dns_names = []
-
       # For each of the found addresses
       result.answer.map do |resource|
+        next if resource.type == Dnsruby::Types::SOA
         next if resource.type == Dnsruby::Types::RRSIG # TODO parsing this out is a pain, not sure if it's valuable
         next if resource.type == Dnsruby::Types::NS
         next if resource.type == Dnsruby::Types::TXT # TODO - let's parse this out?
+        next if resource.type == Dnsruby::Types::HINFO # TODO - let's parse this out?
+
+        _log "Adding name from: #{resource}"
+        ip_addresses << resource.address.to_s if resource.respond_to? :address
+        dns_names << resource.domainname.to_s if resource.respond_to? :domainname
+        dns_names << resource.name.to_s.downcase
+      end #end result.answer
+
+      ##########################
+      ##   Handle A Records   ##
+      ##########################
+      result = resolver.query(lookup_name, Dnsruby::Types::A)
+
+      # Let us know if we got an empty result
+      _log "No A records!" if result.answer.empty?
+
+      # For each of the found addresses
+      result.answer.map do |resource|
         _log "Adding name from: #{resource}"
         ip_addresses << resource.address.to_s if resource.respond_to? :address
         dns_names << resource.domainname.to_s if resource.respond_to? :domainname
@@ -62,10 +81,10 @@ class EnrichDnsRecord < BaseTask
       ##########################
       ## Handle CNAME Records ##
       ##########################
-      result = resolver.query(lookup_name, [Dnsruby::Types::A, Dnsruby::Types::CNAME])
+      result = resolver.query(lookup_name, Dnsruby::Types::CNAME)
 
       # Let us know if we got an empty result
-      _log "No A or CNAME records!" if result.answer.empty?
+      _log "No CNAME records!" if result.answer.empty?
 
       # For each of the found addresses
       result.answer.map do |resource|
@@ -75,14 +94,31 @@ class EnrichDnsRecord < BaseTask
         dns_names << resource.name.to_s.downcase
       end #end result.answer
 
+
+      ####
+      ### Create entities
+      ####
+
       # check and merge if the ip is associated with another entity!
       ip_addresses.sort.uniq.each do |name|
+
+        # handle prohibited entitie
+        if opt_skip_prohibited
+          if prohibited_entity?(name, "IpAddress")
+            _log "Skipping prohibited entity: #{name}"
+            next
+          end
+        end
 
         sub_entity = entity_exists?(@entity.project,"IpAddress",name)
         unless sub_entity
           _log "Creating entity for IpAddress: #{name}"
-          sub_entity = _create_entity("IpAddress", {"name" => name}, @entity)
+          sub_entity = _create_entity("IpAddress", { "name" => name }, @entity)
         end
+
+        # skip if we have the same name or the same entity
+        next if sub_entity.name == @entity.name
+        next if @entity.aliases.include? sub_entity
 
         _log "Attaching entity: #{sub_entity} to #{@entity}"
         @entity.add_alias sub_entity
@@ -91,7 +127,6 @@ class EnrichDnsRecord < BaseTask
         _log "Attaching entity: #{@entity} to #{sub_entity}"
         sub_entity.add_alias @entity
         sub_entity.save
-
       end
 
       # check and merge if the ip is associated with another entity!
@@ -108,8 +143,12 @@ class EnrichDnsRecord < BaseTask
         sub_entity = entity_exists?(@entity.project,"DnsRecord",name)
         unless sub_entity
           _log "Creating entity for DnsRecord: #{name}"
-          sub_entity = _create_entity("DnsRecord", {"name" => name, "record_type" => resource.type.to_s }, @entity)
+          sub_entity = _create_entity("DnsRecord", { "name" => name }, @entity)
         end
+
+        # skip if we have the same name or the same entity
+        next if sub_entity.name == @entity.name
+        next if @entity.aliases.include? sub_entity
 
         _log "Attaching entity: #{sub_entity} to #{@entity}"
         @entity.add_alias sub_entity

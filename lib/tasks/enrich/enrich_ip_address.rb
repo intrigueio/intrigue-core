@@ -71,8 +71,12 @@ class EnrichIpAddress < BaseTask
         sub_entity = entity_exists?(@entity.project,"DnsRecord",name)
         unless sub_entity
           _log "Creating entity for DnsRecord: #{name}"
-          sub_entity = _create_entity("DnsRecord", {"name" => name , "record_type" => resource.type.to_s }, @entity)
+          sub_entity = _create_entity("DnsRecord", {"name" => name }, @entity)
         end
+
+        # skip if we have the same name or the same entity
+        next if sub_entity.name == @entity.name
+        next if @entity.aliases.include? sub_entity
 
         _log "Attaching entity: #{sub_entity} to #{@entity}"
         @entity.add_alias sub_entity
