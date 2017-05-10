@@ -70,6 +70,10 @@ class NmapScanTask < BaseTask
         end
 
         @entity.set_detail("os", host.os.matches)
+        @entity.set_detail("ports", host.each_port.map{|p| {
+                                      :number => p.number,
+                                      :protocol => p.protocol,
+                                      :fingerprint => p.service } if p.state == :open })
 
         host.each_port do |port|
           if port.state == :open

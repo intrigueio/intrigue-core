@@ -47,14 +47,14 @@ class EntityManager
       # Create a new entity, validating the attributes
       type = resolve_type(type_string)
       $db.transaction do
-          entity = Intrigue::Model::Entity.create({
-            :name =>  downcased_name,
-            :project => project,
-            :type => type,
-            :details => details,
-            :details_raw => {},
-            :prohibited => prohibited
-           })
+        entity = Intrigue::Model::Entity.create({
+          :name =>  downcased_name,
+          :project => project,
+          :type => type,
+          :details => details,
+          :details_raw => {},
+          :prohibited => prohibited
+         })
       end
     end
 
@@ -108,7 +108,7 @@ class EntityManager
     end
 
     scan_result = task_result.scan_result if task_result
-    task_result ? (depth = task_result.depth-1) : (depth = 1) # set depth based on task_result
+    task_result ? (depth = task_result.depth) : (depth = 1) # set depth based on task_result
 
     # Enrich by type
     if entity.type_string == "DnsRecord"
@@ -119,6 +119,7 @@ class EntityManager
       start_task("task_enrichment", entity.project, scan_result, "enrich_uri", entity, depth, [],[])
       start_task("task_enrichment", entity.project, scan_result, "web_stack_fingerprint", entity, depth, [],[])
     end
+
   end
 
   private

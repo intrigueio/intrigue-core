@@ -114,7 +114,7 @@ module Generic
 
     # Then, cycle through the user-provided options
     @user_options.each do |user_option|
-      value = user_option[name] if user_option[name]
+      value = user_option[name] if user_option.key?(name)
     end
 
     puts "Returning value #{value} for option #{name}"

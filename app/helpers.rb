@@ -1,4 +1,4 @@
-  module Intrigue
+module Intrigue
 module Task
 module Helper
 
