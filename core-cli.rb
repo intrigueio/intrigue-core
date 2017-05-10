@@ -191,6 +191,7 @@ class CoreCli < Thor
           :type => type_class.to_s,
           :name => entity["details"]["name"],
           :details => entity["details"],
+          :details_raw => entity["details"],
           :project => p
         })
         Intrigue::EntityManager.enrich_entity entity

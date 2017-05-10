@@ -39,7 +39,7 @@ class UriSpider < BaseTask
   def run
     super
 
-    uri = _get_entity_name
+    uri_string = _get_entity_name
 
     # Scanner options
     @opt_threads = _get_option("threads").to_i
@@ -52,7 +52,14 @@ class UriSpider < BaseTask
     @opt_extract_uris = _get_option "extract_uris"
     @opt_parse_file_metadata = _get_option "parse_file_metadata" # create a Uri object for each page
 
-    crawl_and_extract(uri)
+    #make sure we have a valid uri
+    uri = URI.parse uri_string
+    unless uri
+      _log error "Unable to parse URI from: #{uri_string}"
+      return
+    end
+
+    crawl_and_extract(uri_string)
 
   end # end .run
 

@@ -37,12 +37,12 @@ class EntityManager
 
     # Merge the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name)
+    prohibited = prohibited_entity?(name, type_string)
 
     # check if there's an existing entity, if so, merge and move forward
     if entity
       already_exists = true
-      entity.details = details.to_h.deep_merge(entity.details.to_h)
-      entity.save
+      entity.set_details(details.to_h.deep_merge(entity.details.to_h))
     else
       # Create a new entity, validating the attributes
       type = resolve_type(type_string)
@@ -51,7 +51,9 @@ class EntityManager
             :name =>  downcased_name,
             :project => project,
             :type => type,
-            :details => details
+            :details => details,
+            :details_raw => {},
+            :prohibited => prohibited
            })
       end
     end
@@ -81,7 +83,7 @@ class EntityManager
 
     # START RECURSION BY STRATEGY TYPE
     if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
-      unless prohibited_entity?(entity.name, entity.type_string)
+      unless entity.prohibited
         if task_result.scan_result.strategy == "discovery"
           Intrigue::Strategy::Discovery.recurse(entity, task_result)
         elsif task_result.scan_result.strategy == "web_discovery"
@@ -100,21 +102,22 @@ class EntityManager
     return unless entity
 
     # Check if we've alrady run first
-    if entity.details["enriched"]
+    if entity.enriched
       puts "SKIPPING Enrichment already happened for #{entity}!"
       return
     end
 
     scan_result = task_result.scan_result if task_result
+    task_result ? (depth = task_result.depth-1) : (depth = 1) # set depth based on task_result
 
     # Enrich by type
     if entity.type_string == "DnsRecord"
-      start_task("task_enrichment", entity.project, scan_result, "enrich_dns_record", entity, 1, [],[])
+      start_task("task_enrichment", entity.project, scan_result, "enrich_dns_record", entity, depth, [],[])
     elsif entity.type_string == "IpAddress"
-      start_task("task_enrichment", entity.project, scan_result, "enrich_ip_address", entity, 1, [],[])
+      start_task("task_enrichment", entity.project, scan_result, "enrich_ip_address", entity, depth, [],[])
     elsif entity.type_string == "Uri"
-      start_task("task_enrichment", entity.project, scan_result, "enrich_uri", entity, 1, [],[])
-      start_task("task_enrichment", entity.project, scan_result, "web_stack_fingerprint", entity, 1, [],[])
+      start_task("task_enrichment", entity.project, scan_result, "enrich_uri", entity, depth, [],[])
+      start_task("task_enrichment", entity.project, scan_result, "web_stack_fingerprint", entity, depth, [],[])
     end
   end
 

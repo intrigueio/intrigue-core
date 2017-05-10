@@ -46,7 +46,13 @@ class WebStackFingerprint < BaseTask
     end
 
     _log "Server response:"
-    response.each_header {|h,v| _log " - #{h}: #{v}" }
+    # Save the full headers
+    headers = []
+    response.each_header {|h,v| _log " - #{h}: #{v}"; headers << "#{h}: #{v}" }
+
+    ###
+    ### Calculate the stack
+    ###
 
     ## empty stack to start
     stack = []
@@ -62,8 +68,8 @@ class WebStackFingerprint < BaseTask
     clean_stack = stack.select{ |x| x != nil }.uniq
     _log "Setting stack to #{clean_stack}"
 
-    @entity.lock!
-    @entity.update(:details => @entity.details.merge("stack" => clean_stack))
+    @entity.set_detail("stack", clean_stack)
+    @entity.set_detail("headers", headers )
 
   end
 

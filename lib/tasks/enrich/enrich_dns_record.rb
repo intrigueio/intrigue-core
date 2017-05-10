@@ -56,10 +56,23 @@ class EnrichDnsRecord < BaseTask
         next if resource.type == Dnsruby::Types::TXT # TODO - let's parse this out?
         next if resource.type == Dnsruby::Types::HINFO # TODO - let's parse this out?
 
-        _log "Adding name from: #{resource}"
-        ip_addresses << resource.address.to_s if resource.respond_to? :address
-        dns_names << resource.domainname.to_s if resource.respond_to? :domainname
-        dns_names << resource.name.to_s.downcase
+        _log "Got resource: #{resource}"
+
+        if resource.respond_to? :address
+          _log "Adding name: #{resource.address}"
+          ip_addresses << "#{resource.address}"
+        end
+
+        if resource.respond_to? :domainname
+          _log "Adding name: #{resource.domainname}"
+          dns_names << "#{resource.domainname}"
+        end
+
+        if resource.respond_to? :name
+          _log "Adding name: #{resource.name}"
+          dns_names << "#{resource.name}"
+        end
+
       end #end result.answer
 
       ##########################
@@ -102,12 +115,10 @@ class EnrichDnsRecord < BaseTask
       # check and merge if the ip is associated with another entity!
       ip_addresses.sort.uniq.each do |name|
 
-        # handle prohibited entitie
-        if opt_skip_prohibited
-          if prohibited_entity?(name, "IpAddress")
-            _log "Skipping prohibited entity: #{name}"
-            next
-          end
+        # Skipping entities labeled as prohibited
+        if prohibited_entity?(name) && opt_skip_prohibited
+          _log "Skipping prohibited entity: #{name}"
+          next
         end
 
         sub_entity = entity_exists?(@entity.project,"IpAddress",name)
@@ -132,12 +143,10 @@ class EnrichDnsRecord < BaseTask
       # check and merge if the ip is associated with another entity!
       dns_names.sort.uniq.each do |name|
 
-        # handle prohibited entitie
-        if opt_skip_prohibited
-          if prohibited_entity?(name)
-            _log "Skipping prohibited entity: #{name}"
-            next
-          end
+        # Skipping entities labeled as prohibited
+        if prohibited_entity?(name) && opt_skip_prohibited
+          _log "Skipping prohibited entity: #{name}"
+          next
         end
 
         sub_entity = entity_exists?(@entity.project,"DnsRecord",name)
@@ -169,7 +178,7 @@ class EnrichDnsRecord < BaseTask
     rescue Errno::ENETUNREACH => e
       _log_error "Hit exception: #{e}. Are you sure you're connected?"
     ensure
-      @entity.set_detail("enriched", true)
+      @entity.enriched = true
       @entity.save
     end
 

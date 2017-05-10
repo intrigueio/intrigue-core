@@ -14,7 +14,9 @@ class IntrigueApp < Sinatra::Base
       selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
 
       ## We have some very rudimentary searching capabilities here
-      selected_entities = selected_entities.where(Sequel.ilike(:name, "%#{@search_string}%")) if @search_string
+      selected_entities = selected_entities.where(Sequel.|(
+        Sequel.ilike(:name, "%#{@search_string}%"),
+        Sequel.ilike(:details_raw, "%#{@search_string}%"))) if @search_string
 
       # Do the meta-analysis
       @entities = []
@@ -30,10 +32,9 @@ class IntrigueApp < Sinatra::Base
             end
           end
         end
-
+        
         @entities << alias_map unless merged
       end
-
 
       erb :'entities/index_meta'
     end
@@ -51,10 +52,9 @@ class IntrigueApp < Sinatra::Base
       selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
 
       ## We have some very rudimentary searching capabilities here
-      #details = Sequel.pg_jsonb_op(:details)
-      #test = Sequel.pg_jsonb_op("test")
-      selected_entities = selected_entities.where(Sequel.ilike(:name, "%#{@search_string}%")) if @search_string
-      #selected_entities = selected_entities.where(details.contain_any(["OS","BSD"])) if @search_string
+      selected_entities = selected_entities.where(Sequel.|(
+        Sequel.ilike(:name, "%#{@search_string}%"),
+        Sequel.ilike(:details_raw, "%#{@search_string}%"))) if @search_string
 
       # PAGINATE
       @entities_count = selected_entities.count

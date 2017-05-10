@@ -33,8 +33,8 @@ class IntrigueApp < Sinatra::Base
         end
       end
 
-      # HACK! add the name to aliases, name detail no longer needed
-      entity_details.delete("name")
+      # HACK! remove the name detail, it'll be set on the entity itself
+      #entity_details.delete("name")
 
       # Construct an entity from the data we have
       if entity_id
@@ -47,13 +47,15 @@ class IntrigueApp < Sinatra::Base
 
         unless entity
 
-          # TODO - SECURITY - validate that it's a valid entity type before we eval
+          # Resolve out the proper class, make sure to verify for security
           klass = Intrigue::EntityManager.resolve_type entity_type
 
+          # Create our new entity!
           entity = Intrigue::Model::Entity.create(
             { :name => entity_name,
               :type => klass,
               :details => entity_details,
+              :details_raw => entity_details,
               :project => current_project
             })
 

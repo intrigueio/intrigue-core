@@ -32,13 +32,14 @@ class EnrichUri < BaseTask
     #webdav_enabled = check_webdav_endpoint(uri)
     verbs_enabled = check_options_endpoint(uri)
 
-    @entity.lock!
-    @entity.update(:details => @entity.details.merge({
+    new_details = @entity.details.merge({
       "api" => api_enabled,
       "verbs" => verbs_enabled,
       "response_data_hash" => response_data_hash,
       "response_data" => response_data
-    }))
+    })
+
+    @entity.set_details(new_details)
 
     # Check for other entities with this same response hash
     if response_data_hash
@@ -55,6 +56,9 @@ class EnrichUri < BaseTask
         e.save
       end
     end
+
+    @entity.enriched = true
+
   end
 
   def check_options_endpoint(uri)

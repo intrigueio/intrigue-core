@@ -17,7 +17,7 @@ module Intrigue
     class Entity < Sequel::Model
       plugin :validation_helpers
       plugin :single_table_inheritance, :type
-      plugin :serialization, :json, :details #, :name
+      plugin :serialization, :json, :details, :details_raw #, :name
 
       self.raise_on_save_failure = false
 
@@ -34,13 +34,13 @@ module Intrigue
 
       def self.scope_by_project(project_name)
         named_project_id = Intrigue::Model::Project.first(:name => project_name).id
-        where(:project_id => named_project_id)
+        where(Sequel.&(:project_id => named_project_id, :deleted => false))
       end
 
       def self.scope_by_project_and_type(project_name, entity_type)
         resolved_entity_type = Intrigue::EntityManager.resolve_type(entity_type)
         named_project_id = Intrigue::Model::Project.first(:name => project_name).id
-        where(Sequel.&(:project_id => named_project_id, :type => resolved_entity_type.to_s))
+        where(Sequel.&(:project_id => named_project_id, :type => resolved_entity_type.to_s, :deleted => false))
       end
 
       def self.scope_by_project_and_type_and_detail_value(project_name, entity_type, detail_name, detail_value)
@@ -73,7 +73,6 @@ module Intrigue
       def soft_delete!
         # clean up aliases at the same time
         aliases.each {|x| x.soft_delete!}
-
         deleted = true
         save
       end
@@ -106,7 +105,6 @@ module Intrigue
       def inspect
         "#{type_string}: #{name}"
       end
-
 
       def type_string
         type.to_s.gsub(/^.*::/, '')
@@ -146,8 +144,18 @@ module Intrigue
         details[key]
       end
 
-      def set_detail(key,value)
-        details[key] = value
+      def set_detail(key, value)
+        self.lock!
+        temp_details = details.merge({key => value})
+        self.set(:details => temp_details)
+        self.set(:details_raw => temp_details)
+        save
+      end
+
+      def set_details(hash)
+        self.lock!
+        self.set(:details => hash)
+        self.set(:details_raw => hash)
         save
       end
 

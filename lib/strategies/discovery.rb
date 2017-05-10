@@ -4,6 +4,8 @@ module Strategy
 
     def self.recurse(entity, task_result)
 
+      puts "RECURSING! #{entity}"
+
       if entity.type_string == "FtpServer"
 
         start_recursive_task(task_result,"ftp_banner_grab",entity,[])
@@ -26,7 +28,7 @@ module Strategy
       elsif entity.type_string == "IpAddress"
 
         start_recursive_task(task_result,"nmap_scan",entity)
-        
+
         start_recursive_task(task_result,"whois",entity)
 
       elsif entity.type_string == "String"
@@ -59,7 +61,7 @@ module Strategy
         ## Spider, looking for metadata
         start_recursive_task(task_result,"uri_spider",entity,[
             {"name" => "threads", "value" => 1},
-            {"name" => "max_pages", "value" => 1000 },
+            {"name" => "max_pages", "value" => 100 },
             {"name" => "extract_dns_records", "value" => true},
             {"name" => "extract_dns_record_pattern", "value" => "#{task_result.scan_result.base_entity.name}"}]) unless entity.created_by? "uri_brute"
 
@@ -67,7 +69,7 @@ module Strategy
         start_recursive_task(task_result,"uri_brute", entity, [{"name"=> "threads", "value" => 1}, {"name" => "user_list", "value" => "admin, test"}]) unless entity.created_by? "uri_brute"
 
       else
-        puts "No actions for entity: #{entity.type}##{entity.details["name"]}"
+        puts "No actions for entity: #{entity.type}##{entity.name}"
         return
       end
     end

@@ -15,7 +15,7 @@ class EnrichIpAddress < BaseTask
       :allowed_types => ["IpAddress"],
       :type => "enrichment",
       :passive => true,
-      :example_entities => [{"type" => "IpAddress", "attributes" => {"name" => "intrigue.io"}}],
+      :example_entities => [{"type" => "IpAddress", "attributes" => {"name" => "8.8.8.8"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
         {:name => "skip_prohibited", :type => "Boolean", :regex => "boolean", :default => true }
@@ -60,12 +60,9 @@ class EnrichIpAddress < BaseTask
 
       dns_names.sort.uniq.each do |name|
 
-        # handle prohibited entitie
-        if opt_skip_prohibited
-          if prohibited_entity?(name)
-            _log "Skipping prohibited entity: #{name}"
-            next
-          end
+        if prohibited_entity?(name) && opt_skip_prohibited
+          _log "Skipping prohibited entity: #{name} #{opt_skip_prohibited}"
+          next
         end
 
         sub_entity = entity_exists?(@entity.project,"DnsRecord",name)
@@ -98,7 +95,7 @@ class EnrichIpAddress < BaseTask
     rescue Errno::ENETUNREACH => e
       _log_error "Hit exception: #{e}. Are you sure you're connected?"
     ensure
-      @entity.set_detail("enriched", true)
+      @entity.enriched = true
       @entity.save
     end
 

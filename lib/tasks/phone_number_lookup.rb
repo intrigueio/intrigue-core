@@ -44,17 +44,12 @@ class PhoneNumberLookup < BaseTask
       end
 
       _log "You have #{attributes["Response"]["creditBalance"]} credits remaining."
+      _log "Carrier Type: #{attributes["Response"]["carrier_type"]}"
+      _log "Carrier: #{attributes["Response"]["carrier"]}"
 
       # Edit the phone number entity
-      @entity.details["carrier_type"] = attributes["Response"]["carrier_type"]
-      @entity.details["carrier"] = attributes["Response"]["carrier"]
-      @entity.save
-
-      _log "Carrier Type: #{@entity.details["carrier_type"]}"
-      _log "Carrier: #{@entity.details["carrier"]}"
-
-      # Add an info entity_ids
-      #{}_create_entity "Info", attributes.merge({"name" => "Carrier Lookup for #{phone_number}: #{attributes}"})
+      @entity.set_detail("carrier_type", attributes["Response"]["carrier_type"])
+      @entity.set_detail("carrier",attributes["Response"]["carrier"])
 
     rescue JSON::ParserError
       _log_error "Unable to retrieve provider info"

@@ -10,35 +10,32 @@
 Details:
 <pre><%=h JSON.pretty_generate(@entity.details) %></pre>
 
+Prohibited:  <%= @entity.prohibited %><br/>
+
 Export this entity: <br/>
 <ul>
 <li><a href=<%="#{request.url}.json"%>> JSON </a></li>
 </ul>
-<br/>
 
 Aliases: <br/>
 <ul>
 <%=out = ""; results = @entity.aliases.uniq.sort_by{|x|x.name}; results.each {|x| out << "<li><a href='/v1/#{@project_name}/entities/#{x.id}'>#{h x.name}</a></li>"; } if results; out %>
 </ul>
-<br/>
 
 Tasks that created this entity:<br/>
 <ul>
 <%= out = ""; @entity.task_results.each {|x| out << "<li><a href='/v1/#{@project_name}/results/#{x.id}'>#{h x.task_name} (#{h x.base_entity})</a></li>" }; out %>
 </ul>
-<br/>
 
 Tasks run on this entity:<br/>
 <ul>
 <%= out = ""; results = Intrigue::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => @entity); results.each {|r| out << "<li><a href='/v1/#{@project_name}/results/#{r.id}'>#{h r.task_name} (#{h r.base_entity})</a></li>"; }; out %>
 </ul>
-<br/>
 
 Entities discovered from this entity: <br/>
 <ul>
 <%=out = ""; results = Intrigue::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => @entity); results.each {|r| r.entities.each {|x| out << "<li><a href='/v1/#{@project_name}/entities/#{x.id}'>#{x.type_string}: #{h x.name}</a></li>"; }}; out %>
 </ul>
-<br/>
 
 Run a task on this entity: <br/><br/>
 <%= erb :'_task_runner' %>

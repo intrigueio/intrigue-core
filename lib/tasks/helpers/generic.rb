@@ -71,7 +71,7 @@ module Generic
     if attrib_name == "name"
       "#{@task_result.base_entity.name}"
     else
-      "#{@task_result.base_entity.details[attrib_name]}"
+      "#{@task_result.base_entity.get_detail[attrib_name]}"
     end
   end
 
@@ -116,6 +116,8 @@ module Generic
     @user_options.each do |user_option|
       value = user_option[name] if user_option[name]
     end
+
+    puts "Returning value #{value} for option #{name}"
 
   value
   end

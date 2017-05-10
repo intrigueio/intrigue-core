@@ -59,9 +59,7 @@ class FtpBannerGrab < BaseTask
       _log "Got banner for #{ip_address}:#{port}/#{protocol}: #{banner}"
       _log "updating entity with banner info!"
 
-      @entity.lock!
-      @entity.update(:details => @entity.details.merge({"banner" => banner}))
-      @entity.save
+      @entity.set_detail "banner", banner
 
     rescue Errno::EPIPE
       _log "Broken Pipe"

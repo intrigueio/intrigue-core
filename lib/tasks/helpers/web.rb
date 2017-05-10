@@ -124,6 +124,12 @@ module Task
 
         uri = URI.parse uri_string
 
+        unless uri
+          _log error "Unable to parse URI from: #{uri_string}"
+          return
+        end
+
+
         until( found || attempts >= max_attempts)
          @task_result.logger.log "Getting #{uri}, attempt #{attempts}" if @task_result
          attempts+=1
@@ -147,7 +153,6 @@ module Task
          end
 
          ### ALLOW DIFFERENT VERBS HERE
-
          if method == :get
            request = Net::HTTP::Get.new(uri)
          elsif method == :propfind

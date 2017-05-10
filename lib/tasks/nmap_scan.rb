@@ -15,8 +15,8 @@ class NmapScanTask < BaseTask
       :allowed_types => ["DnsRecord","IpAddress","NetBlock"],
       :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
-      :created_types => ["DnsRecord","DnsServer","FingerServer", "FtpServer","IpAddress",
-        "NetworkService","SshServer","Uri"]
+      :created_types => ["DnsRecord","DnsServer","FingerServer", "FtpServer",
+        "IpAddress", "NetworkService","SshServer","Uri"]
     }
   end
 
@@ -69,9 +69,7 @@ class NmapScanTask < BaseTask
           _create_entity("IpAddress", { "name" => host.ip } ) if host.ports.count > 0
         end
 
-        @entity.lock!
-        @entity.update(:details => @entity.details.merge({"os" => host.os.matches}))
-        @entity.save
+        @entity.set_detail("os", host.os.matches)
 
         host.each_port do |port|
           if port.state == :open
