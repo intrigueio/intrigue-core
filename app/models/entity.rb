@@ -62,7 +62,30 @@ module Intrigue
 
       # easy way to refer to all names (overridden in some entities)
       def unique_aliases
-        aliases.map{|x| x.name }.sort.uniq
+        aliases.select{|x| x.name if !x.prohibited }.sort_by{|x| x.name }.uniq
+      end
+
+      def get_aliases(filter_type_string=nil)
+        aliases.select { |x| !x.prohibited && ((x.type_string == filter_type_string) if filter_type_string) }
+      end
+
+      def get_detail(key)
+        details[key]
+      end
+
+      def set_detail(key, value)
+        self.lock!
+        temp_details = details.merge({key => value})
+        self.set(:details => temp_details)
+        self.set(:details_raw => temp_details)
+        save
+      end
+
+      def set_details(hash)
+        self.lock!
+        self.set(:details => hash)
+        self.set(:details_raw => hash)
+        save
       end
 
       # short string with select details. override this.
@@ -99,11 +122,11 @@ module Intrigue
       end
 
       def to_s
-        "#{type_string}: #{name}"
+        "#{type_string}: #{name} #{'(p)' if prohibited}"
       end
 
       def inspect
-        "#{type_string}: #{name}"
+        "#{type_string}: #{name} #{'(p)' if prohibited}"
       end
 
       def type_string
@@ -134,29 +157,6 @@ module Intrigue
             <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name" value="#{self.name}">
           </div>
         </div>}
-      end
-
-      def get_aliases(filter_type_string)
-        aliases.map {|x| x if x.type_string == filter_type_string }
-      end
-
-      def get_detail(key)
-        details[key]
-      end
-
-      def set_detail(key, value)
-        self.lock!
-        temp_details = details.merge({key => value})
-        self.set(:details => temp_details)
-        self.set(:details_raw => temp_details)
-        save
-      end
-
-      def set_details(hash)
-        self.lock!
-        self.set(:details => hash)
-        self.set(:details_raw => hash)
-        save
       end
 
       def self.descendants

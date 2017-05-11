@@ -18,7 +18,7 @@ class EnrichIpAddress < BaseTask
       :example_entities => [{"type" => "IpAddress", "attributes" => {"name" => "8.8.8.8"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
-        {:name => "skip_prohibited", :type => "Boolean", :regex => "boolean", :default => true }
+        {:name => "skip_prohibited", :type => "Boolean", :regex => "boolean", :default => false }
       ],
       :created_types => []
     }

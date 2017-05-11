@@ -8,7 +8,7 @@ class IntrigueApp < Sinatra::Base
       params[:entity_types] == "" ? @entity_types = nil : @entity_types = params[:entity_types]
       (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
 
-      selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:deleted => false).order(:name)
+      selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
 
       ## Filter if we have a type
       selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
@@ -32,7 +32,7 @@ class IntrigueApp < Sinatra::Base
             end
           end
         end
-        
+
         @entities << alias_map unless merged
       end
 
@@ -46,7 +46,7 @@ class IntrigueApp < Sinatra::Base
       params[:entity_types] == "" ? @entity_types = nil : @entity_types = params[:entity_types]
       (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
 
-      selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:deleted => false).order(:name)
+      selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
 
       ## Filter if we have a type
       selected_entities = selected_entities.where(:type => @entity_types) if @entity_types

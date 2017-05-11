@@ -20,18 +20,16 @@ module Data
   def prohibited_entity?(entity_name, type_string=nil)
     if type_string == "IpAddress"
       # 23.x.x.x
-      if ( entity_name =~ /^23\..*$/              ||  # akamai
-           entity_name =~ /^2600:1400.*$/         ||  # akamai
-           entity_name =~ /^2600:1409.*$/         ||  # akamai
-           entity_name =~ /^127\.\0\.0\..*$/      ||  # RFC1918
-           entity_name =~ /^10\..*$/              ||  # RFC1918
-           entity_name =~ /^0.0.0.0/ )
-        return true
-      end
+      return true if (  entity_name =~ /^23\..*$/              ||  # akamai
+                        entity_name =~ /^2600:1400.*$/         ||  # akamai
+                        entity_name =~ /^2600:1409.*$/         ||  # akamai
+                        entity_name =~ /^127\.\0\.0\..*$/      ||  # RFC1918
+                        entity_name =~ /^10\..*$/              ||  # RFC1918
+                        entity_name =~ /^0.0.0.0/ )
     end
 
     # Standard exclusions
-    if (
+    return true if (
         entity_name =~ /^.*1e100.net$/                     ||
         entity_name =~ /^.*2o7.net$/                       ||
         entity_name =~ /^.*akadns.net$/                    ||
@@ -134,10 +132,7 @@ module Data
         entity_name =~ /^.*youtubeeducation.com$/          ||
         entity_name =~ /^.*ytimg.com$/                     ||
         entity_name =~ /^.*zepheira.com$/                  ||
-        entity_name =~ /^.*1e100.com$/
-        )
-      return true
-    end
+        entity_name =~ /^.*1e100.com$/)
   end
 
 

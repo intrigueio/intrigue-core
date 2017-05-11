@@ -52,8 +52,8 @@ class EntityManager
           :project => project,
           :type => type,
           :details => details,
-          :details_raw => {},
-          :prohibited => prohibited
+          :details_raw => details,
+          :prohibited => (prohibited ? "true" : nil )
          })
       end
     end
@@ -79,11 +79,11 @@ class EntityManager
     end
 
     # START PROCESSING OF ENRICHMENT (to depth of 1) unless this entity already exists
-    enrich_entity(entity, task_result) unless already_exists
+    enrich_entity(entity, task_result) unless already_exists || prohibited
 
     # START RECURSION BY STRATEGY TYPE
     if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
-      unless entity.prohibited
+      unless prohibited
         if task_result.scan_result.strategy == "discovery"
           Intrigue::Strategy::Discovery.recurse(entity, task_result)
         elsif task_result.scan_result.strategy == "web_discovery"
