@@ -34,6 +34,9 @@ module Helper
       :depth => depth
     })
 
+    # only assign handlers if this isn't a scan (in that case, we want to send the whole scan)
+    task_result.handlers = handlers unless (!existing_scan_result && depth > 1)
+
     # if we were passed a scan result, we know this new task
     # belongs to it, and we should associate those
     if existing_scan_result

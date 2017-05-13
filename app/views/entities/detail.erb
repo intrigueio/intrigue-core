@@ -10,7 +10,9 @@
 Details:
 <pre><%=h JSON.pretty_generate(@entity.details) %></pre>
 
-Prohibited:  <%= "true" if @entity.prohibited %><br/>
+Prohibited:  <%= "true" if @entity.prohibited %><br/><br/>
+
+Providers:  <%= @entity.provider %><br/><br/>
 
 Export this entity: <br/>
 <ul>

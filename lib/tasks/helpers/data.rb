@@ -17,7 +17,7 @@ module Data
     ]
   end
 
-  def prohibited_entity?(entity_name, type_string=nil)
+  def hidden_entity?(entity_name, type_string=nil)
     if type_string == "IpAddress"
       # 23.x.x.x
       return true if (  entity_name =~ /^23\..*$/              ||  # akamai

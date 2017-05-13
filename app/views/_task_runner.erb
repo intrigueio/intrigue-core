@@ -52,7 +52,7 @@
 
   <div id="scan">
     <div class="form-group">
-      <label for="attrib_name" class="col-xs-4 control-label">Recursive Depth</label>
+      <label for="attrib_name" class="col-xs-4 control-label">Recursive Iterations</label>
       <div class="col-xs-6">
         <select class="form-control input-sm" name="depth" id="depth">
           <option value=1 selected="true">Interactive</option>
@@ -63,6 +63,18 @@
           <option value=6>5 Iterations</option>
           <option value=7>6 Iterations</option>
           <option value=8>7 Iterations</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div id="handler">
+    <div class="form-group">
+      <label for="handler" class="col-xs-4 control-label">Handlers</label>
+      <div class="col-xs-6">
+        <select class="form-control input-sm" name="handler" id="handler">
+          <option value="none" selected="true">None</option>
+          <option value="s3_json">S3 JSON</option>
         </select>
       </div>
     </div>

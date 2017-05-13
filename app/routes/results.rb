@@ -21,6 +21,8 @@ class IntrigueApp < Sinatra::Base
       depth = @params["depth"].to_i
       current_project = Intrigue::Model::Project.first(:name => @project_name)
       entity_name = "#{@params["attrib_name"]}"
+      handlers = ["#{@params["handler"]}"]
+
 
       # Construct the attributes hash from the parameters. Loop through each of the
       # parameters looking for things that look like attributes, and add them to our
@@ -81,7 +83,7 @@ class IntrigueApp < Sinatra::Base
       end
 
       # Start the task run!
-      task_result = start_task("task", current_project, nil, task_name, entity, depth, options)
+      task_result = start_task("task", current_project, nil, task_name, entity, depth, options, handlers)
 
       entity.task_results << task_result
       entity.save

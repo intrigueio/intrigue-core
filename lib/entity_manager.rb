@@ -37,7 +37,7 @@ class EntityManager
 
     # Merge the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name)
-    prohibited = prohibited_entity?(name, type_string)
+    hidden = hidden_entity?(name, type_string)
 
     # check if there's an existing entity, if so, merge and move forward
     if entity
@@ -53,7 +53,7 @@ class EntityManager
           :type => type,
           :details => details,
           :details_raw => details,
-          :prohibited => (prohibited ? "true" : nil )
+          :hidden => (hidden ? "true" : nil )
          })
       end
     end
@@ -79,11 +79,11 @@ class EntityManager
     end
 
     # START PROCESSING OF ENRICHMENT (to depth of 1) unless this entity already exists
-    enrich_entity(entity, task_result) unless already_exists || prohibited
+    enrich_entity(entity, task_result) unless already_exists || hidden
 
     # START RECURSION BY STRATEGY TYPE
     if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
-      unless prohibited
+      unless hidden
         if task_result.scan_result.strategy == "discovery"
           Intrigue::Strategy::Discovery.recurse(entity, task_result)
         elsif task_result.scan_result.strategy == "web_discovery"

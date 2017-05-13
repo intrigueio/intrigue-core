@@ -9,6 +9,6 @@ Sequel.migration do
       String :contents, :text => true
       FalseClass :deleted, :default => false
     end
-    
+
   end
 end

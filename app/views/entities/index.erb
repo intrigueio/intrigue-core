@@ -63,20 +63,16 @@ function delete_entity(id)
   <p></p>
   <table class="sortable" border="1" width=100%>
     <colgroup>
-      <col style="width:5%">
-      <col style="width:1%">
-      <col style="width:14%">
-      <col style="width:30%">
-      <col style="width:30%">
-      <col style="width:20%">
+      <col style="width:25%">
+      <col style="width:25%">
+      <col style="width:25%">
+      <col style="width:25%">
     </colgroup>
     <tbody>
-      <tr><th>type</th><th>#</th><th>name</th><th>aliases</th><th>details</th><th>task results</th></tr>
+      <tr><th>name</th><th>aliases</th><th>details</th><th>task results</th></tr>
       <% @entities.sort_by{|e| e.type_string}.each do |e| %>
         <tr>
-          <td><a href="javascript:delete_entity('<%= e.id %>')">[x]</a> <%=e.type_string%></td>
-          <td><%=e.task_results.count %></td>
-          <td><a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e.name}" %></a></td>
+          <td><a href="javascript:delete_entity('<%= e.id %>')">[x]</a> <a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e}" %></a></td>
           <td><%= h "#{e.unique_aliases.join(" | ")}" %></td>
           <td> <%= e.detail_string %> </td>
           <td><%=e.task_results.map {|t| t.name} %></td>

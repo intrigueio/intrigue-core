@@ -62,11 +62,11 @@ module Intrigue
 
       # easy way to refer to all names (overridden in some entities)
       def unique_aliases
-        aliases.select{|x| x.name if !x.prohibited }.sort_by{|x| x.name }.uniq
+        aliases.select{|x| x.name if !x.hidden }.sort_by{|x| x.name }.uniq
       end
 
       def get_aliases(filter_type_string=nil)
-        aliases.select { |x| !x.prohibited && ((x.type_string == filter_type_string) if filter_type_string) }
+        aliases.select { |x| !x.hidden && ((x.type_string == filter_type_string) if filter_type_string) }
       end
 
       def get_detail(key)
@@ -122,11 +122,11 @@ module Intrigue
       end
 
       def to_s
-        "#{type_string}: #{name} #{'(p)' if prohibited}"
+        "#{type_string}: #{name} #{'<H>' if hidden}"
       end
 
       def inspect
-        "#{type_string}: #{name} #{'(p)' if prohibited}"
+        "#{type_string}: #{name} #{'<H>' if hidden}"
       end
 
       def type_string

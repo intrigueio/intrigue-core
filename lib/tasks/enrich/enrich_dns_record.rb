@@ -18,7 +18,7 @@ class EnrichDnsRecord < BaseTask
       :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
-        {:name => "skip_prohibited", :type => "Boolean", :regex => "boolean", :default => false }
+        {:name => "skip_hidden", :type => "Boolean", :regex => "boolean", :default => false }
       ],
       :created_types => []
     }
@@ -28,7 +28,7 @@ class EnrichDnsRecord < BaseTask
     super
 
     opt_resolver = _get_option "resolver"
-    opt_skip_prohibited = _get_option "skip_prohibited"
+    opt_skip_hidden = _get_option "skip_hidden"
     lookup_name = _get_entity_name
 
     begin
@@ -115,9 +115,9 @@ class EnrichDnsRecord < BaseTask
       # check and merge if the ip is associated with another entity!
       ip_addresses.sort.uniq.each do |name|
 
-        # Skipping entities labeled as prohibited
-        if prohibited_entity?(name) && opt_skip_prohibited
-          _log "Skipping prohibited entity: #{name}"
+        # Skipping entities labeled as hidden
+        if hidden_entity?(name) && opt_skip_hidden
+          _log "Skipping hidden entity: #{name}"
           next
         end
 
@@ -143,9 +143,9 @@ class EnrichDnsRecord < BaseTask
       # check and merge if the ip is associated with another entity!
       dns_names.sort.uniq.each do |name|
 
-        # Skipping entities labeled as prohibited
-        if prohibited_entity?(name) && opt_skip_prohibited
-          _log "Skipping prohibited entity: #{name}"
+        # Skipping entities labeled as hidden
+        if hidden_entity?(name) && opt_skip_hidden
+          _log "Skipping hidden entity: #{name}"
           next
         end
 

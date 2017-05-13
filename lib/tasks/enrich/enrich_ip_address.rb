@@ -18,7 +18,7 @@ class EnrichIpAddress < BaseTask
       :example_entities => [{"type" => "IpAddress", "attributes" => {"name" => "8.8.8.8"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
-        {:name => "skip_prohibited", :type => "Boolean", :regex => "boolean", :default => false }
+        {:name => "skip_hidden", :type => "Boolean", :regex => "boolean", :default => false }
       ],
       :created_types => []
     }
@@ -28,7 +28,7 @@ class EnrichIpAddress < BaseTask
     super
 
     opt_resolver = _get_option "resolver"
-    opt_skip_prohibited = _get_option "skip_prohibited"
+    opt_skip_hidden = _get_option "skip_hidden"
 
     lookup_name = _get_entity_name
 
@@ -60,8 +60,8 @@ class EnrichIpAddress < BaseTask
 
       dns_names.sort.uniq.each do |name|
 
-        if prohibited_entity?(name) && opt_skip_prohibited
-          _log "Skipping prohibited entity: #{name} #{opt_skip_prohibited}"
+        if hidden_entity?(name) && opt_skip_hidden
+          _log "Skipping hidden entity: #{name} #{opt_skip_hidden}"
           next
         end
 

@@ -39,10 +39,13 @@ getEntities(<%=@result.id%>);
   <p>End: <%= @result.timestamp_end %> </p>
   <p>Elapsed (s): <%= @elapsed_time %> </p>
   <p>Job ID: <%= @result.job_id %> </p>
+  <p>Handlers: <%= @result.handlers %></p>
   <p>Depth: <%=@result.depth %> </p>
   <p>Entity: <a href="/v1/<%=@project_name%>/entities/<%=@result.base_entity.id if @result.base_entity %>"><%= h "#{@result.base_entity}" %></a></p>
   <p>Complete: <%= @result.complete %></p>
   <p>Count: <%= @result.entities.count %></p>
+
+
   Export:
   <ul>
     <li><a href=<%="#{request.url}.json"%>> JSON </a></li>

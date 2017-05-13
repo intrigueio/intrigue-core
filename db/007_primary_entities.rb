@@ -7,9 +7,5 @@ Sequel.migration do
       Integer :target_id
     end
 
-    #alter_table :entities do
-    #  add_column :primary, FalseClass, default: true
-    #end
-
   end
 end
