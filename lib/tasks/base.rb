@@ -88,7 +88,10 @@ class BaseTask
 
       @task_result.handlers.each do |handler_type|
         handler = Intrigue::HandlerFactory.create_by_type(handler_type)
-        _log "Calling #{handler_type} handler"
+        unless handler
+          _log "Error. Unable to resolve handler."
+        end
+        _log "Calling #{handler_type} handler on task: #{@task_result}"
         handler.process(@task_result)
       end
       @task_result.handlers_complete = true
@@ -119,7 +122,7 @@ class BaseTask
             scan_result.complete = true
             scan_result.save
           else
-            _log "More tasks for this scan to complete: #{incomplete_task_count}!"
+            _log "More tasks for this scan to complete: #{scan_result.incomplete_task_count}!"
           end
 
         end

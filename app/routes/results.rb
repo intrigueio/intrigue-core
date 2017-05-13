@@ -21,7 +21,12 @@ class IntrigueApp < Sinatra::Base
       depth = @params["depth"].to_i
       current_project = Intrigue::Model::Project.first(:name => @project_name)
       entity_name = "#{@params["attrib_name"]}"
-      handlers = ["#{@params["handler"]}"]
+
+      if Intrigue::HandlerFactory.include? "#{@params["handler"]}"
+        handlers = ["#{@params["handler"]}"]
+      else
+        raise "Unable to resolve handler #{@params["handler"]}"
+      end
 
 
       # Construct the attributes hash from the parameters. Loop through each of the

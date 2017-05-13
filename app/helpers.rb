@@ -43,7 +43,9 @@ module Helper
       task_result.scan_result_id = existing_scan_result.id
       # lets also add one to the incomplete task count, so we can determine later
       # if we're actually done
-      task_result.scan_result.incomplete_task_count += 1
+
+      task_result.scan_result.set(:incomplete_task_count => task_result.scan_result.incomplete_task_count += 1)
+      task_result.scan_result.save
       task_result.save
     end
 
