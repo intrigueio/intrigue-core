@@ -87,7 +87,7 @@ function delete_entity_children(id){
     });
 
     // adjust slowdown based on the size
-    var slowdown = 200;
+    var slowdown = 50;
     if (s.graph.nodes().length > 1000) {
       slowdown = 10;
     }

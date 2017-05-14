@@ -82,23 +82,6 @@ class CoreCli < Thor
     #puts "[+] Starting Task."
 
     response = @api.start(project_name,task_name,entity_hash,depth,options_list,handler_list, strategy_name)
-    #puts "[D] Got response: #{response}" if @debug
-    #unless response
-    #  puts "Error retrieving response. Failing."
-    #  return
-    #end
-    #puts "[+] Task complete!"
-
-    # Parse the response
-    #puts "[+] Start Results"
-    #response["entities"].each do |entity|
-    #  puts "[x] #{entity["type"]}#{@delim}#{entity["name"]}"
-    #end
-    #puts "[+] End Results"
-
-    # Print the task log
-    #response["log"].each_line{|x| puts "[L] #{x}" } if response["log"]
-    #puts "response #{response}"
   end
 
   ###

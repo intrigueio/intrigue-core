@@ -27,7 +27,7 @@ Select a project:
 <ul>
 <% Intrigue::Model::Project.order(:name).each do |p| %>
   <li>
-    <a href="javascript:set_project('<%= p.name %>')"> <%= h p.name %></a> (<%= p.entity_count %> entities) <a href="javascript:delete_project('<%= p.name %>')">[x]</a>
+    <a href="javascript:set_project('<%= p.name %>')"> <%= h p.name %></a> (<%= p.entities.count %> entities) <a href="javascript:delete_project('<%= p.name %>')">[x]</a>
   </li>
 <% end %>
 </ul>

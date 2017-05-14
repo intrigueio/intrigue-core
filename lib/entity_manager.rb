@@ -53,7 +53,7 @@ class EntityManager
           :type => type,
           :details => details,
           :details_raw => details,
-          :hidden => (hidden ? "true" : nil )
+          :hidden => (hidden ? true : false )
          })
       end
     end

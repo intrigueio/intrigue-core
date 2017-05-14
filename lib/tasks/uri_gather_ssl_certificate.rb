@@ -134,6 +134,8 @@ class UriGatherSslCertTask  < BaseTask
       _log_error "Caught an error: #{e}"
     rescue Errno::ECONNREFUSED => e
       _log_error "Caught an error: #{e}"
+    rescue Errno::ENETUNREACH => e
+      _log_error "Caught an error: #{e}"
     rescue Errno::ETIMEDOUT => e
       _log_error "Caught an error: #{e}"
     rescue URI::InvalidURIError => e

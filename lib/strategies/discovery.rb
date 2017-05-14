@@ -29,7 +29,12 @@ module Strategy
 
         start_recursive_task(task_result,"nmap_scan",entity)
 
-        start_recursive_task(task_result,"whois",entity)
+        # Prevent us from hammering on whois services
+        unless ( entity.created_by?("net_block_expand")||
+                 entity.created_by?("masscan_scan") ||
+                 entity.created_by?("nmap_scan") )
+          start_recursive_task(task_result,"whois",entity)
+        end
 
       elsif entity.type_string == "String"
 
@@ -39,15 +44,16 @@ module Strategy
       elsif entity.type_string == "NetBlock"
 
         # Make sure it's small enough not to be disruptive, and if it is, scan it
-        cidr = entity.name.split("/").last.to_i
-        if cidr >= 20
-          start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 21}])
-          start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 443}])
-          start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 80}])
-          start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 8080}])
-          start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 8081}])
-          start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 8443}])
+        if entity.details["whois_full_text"] =~ /#{task_result.scan_result.base_entity.name}/
+          #start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 21}])
+          #start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 443}])
+          #start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 80}])
+          #start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 8080}])
+          #start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 8081}])
+          #start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 8443}])
           start_recursive_task(task_result,"net_block_expand",entity, [])
+        else
+          puts "Cowardly refusing to expand this netblock."
         end
 
 

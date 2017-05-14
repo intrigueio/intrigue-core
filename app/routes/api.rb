@@ -98,6 +98,18 @@ class IntrigueApp < Sinatra::Base
     project.graph_json
     end
 
+    get '/:project/graph/meta.json/?' do
+      content_type 'application/json'
+      project = Intrigue::Model::Project.first(:name => @project_name)
+
+      # Start a new generation
+      unless project.graph_generation_in_progress
+        Intrigue::Workers::GenerateMetaGraphWorker.perform_async(project.id)
+      end
+
+    project.graph_json
+    end
+
     ###                                  ###
     ### System-Level Informational Calls ###
     ###                                  ###

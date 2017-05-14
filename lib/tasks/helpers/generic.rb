@@ -71,7 +71,7 @@ module Generic
     if attrib_name == "name"
       "#{@task_result.base_entity.name}"
     else
-      "#{@task_result.base_entity.get_detail[attrib_name]}"
+      "#{@task_result.base_entity.get_detail(attrib_name)}"
     end
   end
 

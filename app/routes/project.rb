@@ -26,6 +26,13 @@ class IntrigueApp < Sinatra::Base
       erb :'graph'
     end
 
+    # graph
+    get '/:project/graph/meta' do
+      @json_uri = "#{request.url}.json"
+      @graph_generated_at = Intrigue::Model::Project.first(:name => @project_name).graph_generated_at
+      erb :'graph'
+    end
+
     get '/:project/graph/reset' do
       p= Intrigue::Model::Project.first(:name => @project_name)
       p.graph_generation_in_progress = false
@@ -48,14 +55,6 @@ class IntrigueApp < Sinatra::Base
       end
 
       erb :'gexf', :layout => false
-    end
-
-    # dossier
-    get '/:project/dossier' do
-      current_project = Intrigue::Model::Project.first(:name => @project_name)
-      @entities = Intrigue::Model::Entity.where(:project_id => current_project.id).sort_by{|x| x.name }
-
-      erb :'dossier'
     end
 
   end

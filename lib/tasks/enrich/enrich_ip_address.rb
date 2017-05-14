@@ -72,6 +72,7 @@ class EnrichIpAddress < BaseTask
         end
 
         # skip if we have the same name or the same entity
+        next unless sub_entity
         next if sub_entity.name == @entity.name
         next if @entity.aliases.include? sub_entity
 

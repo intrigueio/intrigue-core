@@ -7,32 +7,67 @@ class GenerateGraphWorker
   def perform(id)
 
     # Get the right object
-    result = Intrigue::Model::Project.where(:id => id).first
+    project = Intrigue::Model::Project.where(:id => id).first
 
     begin
-      puts "Starting graph generation for #{result.name}!"
+      puts "Starting graph generation for #{project.name}!"
 
       # Notify that it's in progress
-      result.graph_generation_in_progress = true
-      result.save
+      project.graph_generation_in_progress = true
+      project.save
 
       # Generate the graph
-      result.graph_json = result.export_graph_json
-      result.graph_generated_at = DateTime.now
-      result.graph_generation_in_progress = false
-      result.save
+      project.graph_json = generate_graph_json(project)
+      project.graph_generated_at = DateTime.now
+      project.graph_generation_in_progress = false
+      project.save
 
-      puts "Done with graph generation for #{result.name}!"
-      puts "Length: #{result.graph_json.length}"
-    rescue StandardError => e
-      puts "Hit an exception while generating graph for #{result}"
-      puts "Error: #{e}"
+      puts "Done with graph generation for #{project.name}!"
+      puts "Length: #{project.graph_json.length}"
     ensure
-      result.graph_generation_in_progress = false
-      result.save
+      project.graph_generation_in_progress = false
+      project.save
     end
 
   end
+
+
+  def generate_graph_json(project)
+    # generate the nodes
+    nodes = []
+    edges = []
+    edge_count = 0
+
+    project.task_results.each do |t|
+
+      #next unless t.base_entity.type_string == "IpAddress"
+
+      # add the base entity first (provided it hasn't been deleted)
+      x = { :id => t.base_entity.id, :label => "#{t.base_entity.name}", :type => t.base_entity.type_string}
+      nodes << x unless t.base_entity.deleted?
+
+      # then for each of the entities, generate the node and edges. skip if deleted.
+      t.entities.each do |e|
+
+        #next unless e.type_string == "IpAddress"
+
+        x = { :id => e.id, :label => "#{e.name}", :type => e.type_string } #unless e.secondary
+        #x[:color] = "lightgrey" if e.type_string == "Uri"
+
+        nodes << x unless e.deleted?
+
+        unless t.base_entity.deleted? || e.deleted?
+          edges << {"id" => edge_count += 1, "source" => t.base_entity.id, "target" => e.id}
+        end
+
+      end
+    end
+
+    # dump the json
+    { "nodes" => nodes.uniq!, "edges" => edges }.to_json
+  end
+
+
 
 end
 end

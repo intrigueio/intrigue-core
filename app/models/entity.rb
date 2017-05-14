@@ -33,14 +33,14 @@ module Intrigue
       end
 
       def self.scope_by_project(project_name)
-        named_project_id = Intrigue::Model::Project.first(:name => project_name).id
-        where(Sequel.&(:project_id => named_project_id, :deleted => false))
+        named_project = Intrigue::Model::Project.first(:name => project_name)
+        where(Sequel.&(:project_id => named_project.id, :deleted => false))
       end
 
       def self.scope_by_project_and_type(project_name, entity_type)
         resolved_entity_type = Intrigue::EntityManager.resolve_type(entity_type)
-        named_project_id = Intrigue::Model::Project.first(:name => project_name).id
-        where(Sequel.&(:project_id => named_project_id, :type => resolved_entity_type.to_s, :deleted => false))
+        named_project = Intrigue::Model::Project.first(:name => project_name)
+        where(Sequel.&(:project_id => named_project.id, :type => resolved_entity_type.to_s, :deleted => false))
       end
 
       def self.scope_by_project_and_type_and_detail_value(project_name, entity_type, detail_name, detail_value)
@@ -168,10 +168,11 @@ module Intrigue
       ###
       def export_hash
         {
-          :id => id.to_s,
+          :id => id,
           :type => type,
           :name =>  name,
           :deleted => deleted,
+          :hidden => hidden,
           :details => details,
           :aliases => aliases.map{ |x| {:id => x.id, :name => x.name } },
           :task_results => task_results.map{ |t| {:id => t.id, :name => t.name } }

@@ -10,8 +10,6 @@ module Intrigue
       one_to_many :task_results
       many_to_one :base_entity, :class => :'Intrigue::Model::Entity', :key => :base_entity_id
 
-      include Intrigue::Model::Capabilities::ExportGraph
-
       def self.scope_by_project(project_name)
         named_project_id = Intrigue::Model::Project.first(:name => project_name).id
         where(:project_id => named_project_id)
@@ -87,16 +85,6 @@ module Intrigue
       def export_csv
         output_string = ""
         self.entities.each{ |x| output_string << x.export_csv << "\n" }
-      output_string
-      end
-
-      def export_graph_csv
-        output_string = ""
-        # dump the entity name, all chilren entity names, and
-        # remove both spaces and commas
-        self.entities.each do |x|
-          output_string << x.name.gsub(/[\,,\s]/,"") << ", " << "#{x.children.map{ |y| y.name.gsub(/[\,,\s]/,"") }.join(", ")}\n"
-        end
       output_string
       end
 
