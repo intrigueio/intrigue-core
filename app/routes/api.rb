@@ -208,6 +208,7 @@ class IntrigueApp < Sinatra::Base
         entity = Intrigue::Model::Entity.create(attributes.merge(:project => project))
         entity.save
 
+        # Kick off enrichment
         Intrigue::EntityManager.enrich_entity entity
       end
 

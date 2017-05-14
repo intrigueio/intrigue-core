@@ -4,7 +4,7 @@ Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_na
 
 
 
-<div class="col-sm-6">
+<div class="col-sm-4">
   <form class="form-horizontal" id="result_search" target="_self" method="get" action="/v1/<%=@project_name%>/results">
 
     Search:
@@ -14,14 +14,14 @@ Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_na
 
 </div>
 
-<div class="col-sm-6">
+<div class="col-sm-8">
   <h3>Manually Run Results</h3>
   <ul>
-  <% @manual_results.each do |x| %> <li><a href="/v1/<%=@project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity %> </a> <%="(incomplete)" unless x.complete%></li><% end %>
+  <% @manual_results.each do |x| %> <li><a href="/v1/<%=@project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity %></a> - <%= h x.entities.count %> - <%="(incomplete)" unless x.complete%></li><% end %>
   </ul>
 
   <h3>Autoscheduled Results</h3>
   <ul>
-  <% @autoscheduled_results.each do |x| %> <li><a href="/v1/<%=@project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity %> </a> <%="(incomplete)" unless x.complete%></li><% end %>
+  <% @autoscheduled_results.each do |x| %> <li><a href="/v1/<%=@project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity %></a> - <%= h x.entities.count %> - <%="(incomplete)" unless x.complete%> </li> <% end %>
   </ul>
 </div>

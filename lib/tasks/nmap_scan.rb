@@ -49,12 +49,13 @@ class NmapScanTask < BaseTask
       _log "Scanning #{scan_item} and storing in #{temp_file}"
       _log "NMap options: #{nmap_options}"
 
-      nmap_string = "nmap #{scan_item} #{nmap_options} -O -P0 --top-ports 100 --min-parallelism 10 -O --max-os-tries 1 -oX #{temp_file}"
+      nmap_string = "nmap #{scan_item} #{nmap_options} -sSUV --top-ports 100 --traceroute -O --max-os-tries 2 -oX #{temp_file}"
       _log "Running... #{nmap_string}"
-      _unsafe_system(nmap_string)
+
+      output = _unsafe_system(nmap_string)
+      _log "Nmap Output:\n#{output}"
 
       # Gather the XML and parse
-      #_log "Raw Result:\n #{File.open(temp_file).read}"
       _log "Parsing #{temp_file}"
 
       parser = Nmap::XML.new(temp_file)
@@ -64,16 +65,31 @@ class NmapScanTask < BaseTask
         _log "Handling nmap data for #{host.ip}"
 
         # Handle the case of a netblock or domain - where we will need to create host entity(s)
-        if @entity.type_string == "NetBlock" #or @entity.type_string == "Host"
+        if @entity.type_string == "NetBlock"
           # Only create if we've got ports to report.
-          _create_entity("IpAddress", { "name" => host.ip } ) if host.ports.count > 0
+          ip_entity = _create_entity("IpAddress", { "name" => host.ip } ) if host.ports.count > 0
+        else
+          ip_entity = @entity
         end
 
-        @entity.set_detail("os", host.os.matches)
-        @entity.set_detail("ports", host.each_port.map{|p| {
+        ip_entity.set_detail("os", host.os.matches)
+        ip_entity.set_detail("ports", host.each_port.select{|p| p.state == :open}.map{ |p|
+                                    { :state => p.state,
                                       :number => p.number,
                                       :protocol => p.protocol,
-                                      :fingerprint => p.service } if p.state == :open })
+                                      :service => {
+                                        :protocol => p.service.protocol,
+                                        :ssl => p.service.ssl?,
+                                        :product => p.service.product,
+                                        :version => p.service.version,
+                                        :extra_info => p.service.extra_info,
+                                        :hostname => p.service.hostname,
+                                        :os_type => p.service.os_type,
+                                        :device_type => p.service.device_type,
+                                        :fingerprint_method => p.service.fingerprint_method,
+                                        :fingerprint => p.service.fingerprint,
+                                        :confidence => p.service.confidence
+                                      }}})
 
         host.each_port do |port|
           if port.state == :open
@@ -91,7 +107,7 @@ class NmapScanTask < BaseTask
               uri = "#{protocol}#{host.ip}:#{port.number}"
               _create_entity("Uri", "name" => uri, "uri" => uri  )
 
-              @entity.get_aliases("DnsRecord").each do |dns_record_entity|
+              ip_entity.get_aliases("DnsRecord").each do |dns_record_entity|
                 next unless dns_record_entity
                 uri = "#{protocol}#{dns_record_entity.name}:#{port.number}"
                 _create_entity("Uri", "name" => uri, "uri" => uri )

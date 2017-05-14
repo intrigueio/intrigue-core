@@ -40,13 +40,15 @@ module Helper
     # if we were passed a scan result, we know this new task
     # belongs to it, and we should associate those
     if existing_scan_result
-      task_result.scan_result_id = existing_scan_result.id
-      # lets also add one to the incomplete task count, so we can determine later
-      # if we're actually done
 
-      task_result.scan_result.set(:incomplete_task_count => task_result.scan_result.incomplete_task_count += 1)
-      task_result.scan_result.save
+      # we are in the middle of recursion, let's preserve the chain
+      task_result.scan_result_id = existing_scan_result.id
       task_result.save
+
+      # lets also add one to the incomplete task count, so we can determine if we're actually done
+      existing_scan_result.set(:incomplete_task_count => existing_scan_result.incomplete_task_count += 1)
+      existing_scan_result.save
+
     end
 
     # If the depth is greater than 1, AND we don't have a

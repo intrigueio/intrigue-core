@@ -68,9 +68,6 @@ class IntrigueApp < Sinatra::Base
               :details_raw => entity_details,
               :project => current_project
             })
-
-          Intrigue::EntityManager.enrich_entity entity
-
         end
       end
 
@@ -92,9 +89,11 @@ class IntrigueApp < Sinatra::Base
 
       # Start the task run!
       task_result = start_task("task", current_project, nil, task_name, entity, depth, options, handlers)
-
       entity.task_results << task_result
       entity.save
+
+      # kick off enrichment now that we have a task result (and its depth)
+      Intrigue::EntityManager.enrich_entity entity # note that this won't recurse... 
 
       redirect "/v1/#{@project_name}/results/#{task_result.id}"
     end

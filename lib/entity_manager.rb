@@ -78,7 +78,7 @@ class EntityManager
       self.alias_entity entity, primary_entity
     end
 
-    # START PROCESSING OF ENRICHMENT (to depth of 1) unless this entity already exists
+    # START PROCESSING OF ENRICHMENT unless this entity already exists
     enrich_entity(entity, task_result) unless already_exists || hidden
 
     # START RECURSION BY STRATEGY TYPE
@@ -107,8 +107,13 @@ class EntityManager
       return
     end
 
-    scan_result = task_result.scan_result if task_result
-    task_result ? (depth = task_result.depth) : (depth = 1) # set depth based on task_result
+    # set depth / scan result based on the task we're passed
+    if task_result
+      scan_result = task_result.scan_result
+      depth =  task_result.depth
+    else
+      depth = 1
+    end
 
     # Enrich by type
     if entity.type_string == "DnsRecord"
