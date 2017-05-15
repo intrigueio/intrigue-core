@@ -72,7 +72,9 @@ module Strategy
             {"name" => "extract_dns_record_pattern", "value" => "#{task_result.scan_result.base_entity.name}"}]) unless entity.created_by? "uri_brute"
 
         # Check for exploitable URIs, but don't recurse on things we've already found
-        start_recursive_task(task_result,"uri_brute", entity, [{"name"=> "threads", "value" => 1}, {"name" => "user_list", "value" => "admin, test"}]) unless entity.created_by? "uri_brute"
+        start_recursive_task(task_result,"uri_brute", entity, [
+          {"name"=> "threads", "value" => 1},
+          {"name" => "user_list", "value" => "admin, test, server-status, .svn, .git, wp-config.php, config.php, configuration.php, LocalSettings.php, mediawiki/LocalSettings.php, mt-config.cgi, mt-static/mt-config.cgi, settings.php, .htaccess, config.bak, config.php.bak, config.php~, #config.php#, config.php.save, .config.php.swp, config.php.swp, config.php.old"}]) unless entity.created_by? "uri_brute"
 
       else
         puts "No actions for entity: #{entity.type}##{entity.name}"

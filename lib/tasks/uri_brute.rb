@@ -12,7 +12,9 @@ class UriBrute < BaseTask
       :references => [
         "https://www.owasp.org/index.php/Category:OWASP_DirBuster_Project",
         "https://github.com/0xsauby/yasuo",
-        "https://github.com/intrigueio/intrigue-core/blob/develop/data/exploitable.json"
+        "https://github.com/intrigueio/intrigue-core/blob/develop/data/exploitable.json",
+        "https://security.stackexchange.com/questions/79256/scan-all-possible-files-on-server-brute-force-filenames",
+        "https://nmap.org/nsedoc/scripts/http-config-backup.html"
       ],
       :type => "discovery",
       :passive => false,
@@ -30,6 +32,10 @@ class UriBrute < BaseTask
 
   def run
     super
+
+    # TODO - integrate a simple default list:
+    ## "admin, test, server-status, .svn, .git, wp-config.php, config.php, configuration.php, LocalSettings.php, mediawiki/LocalSettings.php, mt-config.cgi, mt-static/mt-config.cgi, settings.php, .htaccess, config.bak, config.php.bak, config.php~, #config.php#, config.php.save, .config.php.swp, config.php.swp, config.php.old"
+
 
     # Get options
     uri = _get_entity_name
