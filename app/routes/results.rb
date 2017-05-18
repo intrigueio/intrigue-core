@@ -8,8 +8,7 @@ class IntrigueApp < Sinatra::Base
       search_string = params["search_string"]
 
       # get a list of task_results
-      @manual_results = Intrigue::Model::TaskResult.scope_by_project(@project_name).where(:autoscheduled => false).where(Sequel.ilike(:name, "%#{search_string}%"))
-      @autoscheduled_results = Intrigue::Model::TaskResult.scope_by_project(@project_name).where(:autoscheduled => true).where(Sequel.ilike(:name, "%#{search_string}%"))
+      @results = Intrigue::Model::TaskResult.scope_by_project(@project_name).where(Sequel.ilike(:name, "%#{search_string}%"))
       erb :'results/index'
     end
 
@@ -93,7 +92,7 @@ class IntrigueApp < Sinatra::Base
       entity.save
 
       # kick off enrichment now that we have a task result (and its depth)
-      Intrigue::EntityManager.enrich_entity entity # note that this won't recurse... 
+      Intrigue::EntityManager.enrich_entity entity # note that this won't recurse...
 
       redirect "/v1/#{@project_name}/results/#{task_result.id}"
     end
