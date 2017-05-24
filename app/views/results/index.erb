@@ -37,17 +37,19 @@ Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_na
   <p></p>
   <table class="sortable" border="1" width=100%>
     <colgroup>
-      <col style="width:80%">
+      <col style="width:70%">
+      <col style="width:10%">
       <col style="width:10%">
       <col style="width:10%">
     </colgroup>
     <tbody>
-      <tr><th>result</th><th>entity count</th><th>autoscheduled</th>
+      <tr><th>result</th><th>entity count</th><th>autoscheduled</th><th>complete</th>
         <% @results.each do |x| %>
         <tr>
           <td><a href="/v1/<%=@project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity.to_s %></a> </td>
-          <td><%= h x.entities.count %> <%="(incomplete)" unless x.complete%></td>
+          <td><%= h x.entities.count %> </td>
           <td><%= h x.autoscheduled %> </td>
+          <td><%= x.complete ? "complete" : "incomplete" %></td>
         </tr>
         <% end %>
     </tbody>
