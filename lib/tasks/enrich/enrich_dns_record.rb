@@ -88,7 +88,7 @@ class EnrichDnsRecord < BaseTask
         _log "Adding name from: #{resource}"
         ip_addresses << resource.address.to_s if resource.respond_to? :address
         dns_names << resource.domainname.to_s if resource.respond_to? :domainname
-        dns_names << resource.name.to_s.downcase  if resource.name
+        dns_names << resource.name.to_s.downcase  if resource.respond_to? :name
       end #end result.answer
 
       ##########################
@@ -104,7 +104,7 @@ class EnrichDnsRecord < BaseTask
         _log "Adding name from: #{resource}"
         ip_addresses << resource.address.to_s if resource.respond_to? :address
         dns_names << resource.domainname.to_s if resource.respond_to? :domainname
-        dns_names << resource.name.to_s.downcase if resource.name
+        dns_names << resource.name.to_s.downcase if resource.respond_to? :name
       end #end result.answer
 
 
