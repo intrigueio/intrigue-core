@@ -96,6 +96,14 @@ class NmapScanTask < BaseTask
         host.each_port do |port|
           if port.state == :open
 
+            # Always create a networkservice:
+            _create_entity("NetworkService", {
+              "name" => "#{host.ip}:#{port.number}/#{port.protocol}",
+              "ip_address" => "#{host.ip}",
+              "port" => port.number,
+              "proto" => port.protocol,
+              "fingerprint" => "#{port.service}"})
+
             # Handle WebApps first
             if port.protocol == :tcp &&
               [80,443,8080,8081,8443].include?(port.number)
@@ -154,16 +162,6 @@ class NmapScanTask < BaseTask
                 "port" => port.number,
                 "proto" => port.protocol,
                 "uri" => uri  })
-
-            # Otherwise default to an unknown network service
-            else
-
-              _create_entity("NetworkService", {
-                "name" => "#{host.ip}:#{port.number}/#{port.protocol}",
-                "ip_address" => "#{host.ip}",
-                "port" => port.number,
-                "proto" => port.protocol,
-                "fingerprint" => "#{port.service}"})
 
             end # end if
           end # end if port.state == :open

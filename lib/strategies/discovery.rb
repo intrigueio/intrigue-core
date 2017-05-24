@@ -18,8 +18,6 @@ module Strategy
           start_recursive_task(task_result,"dns_brute_sub",entity,[
             {"name" => "use_file", "value" => true }])
 
-          #start_recursive_task(task_result,"whois",entity)
-
         else
           # otherwise do something a little faster
           start_recursive_task(task_result,"dns_brute_sub",entity,[])
@@ -45,12 +43,6 @@ module Strategy
 
         # Make sure it's small enough not to be disruptive, and if it is, scan it
         if entity.details["whois_full_text"] =~ /#{task_result.scan_result.base_entity.name}/
-          #start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 21}])
-          #start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 443}])
-          #start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 80}])
-          #start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 8080}])
-          #start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 8081}])
-          #start_recursive_task(task_result,"masscan_scan",entity, [{"port" => 8443}])
           start_recursive_task(task_result,"net_block_expand",entity, [])
         else
           puts "Cowardly refusing to expand this netblock."
@@ -59,15 +51,14 @@ module Strategy
 
       elsif entity.type_string == "Uri"
 
-        ## Grab the Web Server
-
         ## Grab the SSL Certificate
-        start_recursive_task(task_result,"uri_gather_ssl_certificate",entity) #if entity.name =~ /^https/
+        start_recursive_task(task_result,"uri_gather_ssl_certificate",entity) if entity.name =~ /^https/
 
         ## Spider, looking for metadata
         start_recursive_task(task_result,"uri_spider",entity,[
             {"name" => "threads", "value" => 1},
             {"name" => "max_pages", "value" => 100 },
+            {"name" => "parse_file_metadata", "value" => false},
             {"name" => "extract_dns_records", "value" => true},
             {"name" => "extract_dns_record_pattern", "value" => "#{task_result.scan_result.base_entity.name}"}]) unless entity.created_by? "uri_brute"
 
