@@ -4,8 +4,6 @@ module Strategy
 
     def self.recurse(entity, task_result)
 
-      puts "RECURSING! #{entity}"
-
       if entity.type_string == "FtpServer"
 
         start_recursive_task(task_result,"ftp_banner_grab",entity,[])
@@ -25,7 +23,9 @@ module Strategy
 
       elsif entity.type_string == "IpAddress"
 
-        start_recursive_task(task_result,"nmap_scan",entity)
+        start_recursive_task(task_result,"search_censys",entity)
+
+        #start_recursive_task(task_result,"nmap_scan",entity)
 
         # Prevent us from hammering on whois services
         unless ( entity.created_by?("net_block_expand")||

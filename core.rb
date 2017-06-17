@@ -2,6 +2,7 @@
 require 'sinatra'
 require 'sinatra/contrib'
 require 'json'
+require 'yaml'
 require 'rest-client'
 require 'cgi'
 require 'uri'
@@ -16,10 +17,6 @@ require 'sequel'
 
 # Config
 require_relative 'lib/config/global_config'
-
-# UI
-#require 'will_paginate'
-#require 'will_paginate/sequel'
 
 # Debug
 require 'pry'
@@ -58,11 +55,17 @@ def setup_database
     options.merge({:loggers => [Logger.new($stdout)]})
   end
 
-  $db = Sequel.connect('postgres://intrigue@localhost:5432/intriguedb', options)
+  environment = "development"
+  database_config = YAML.load_file("#{$intrigue_basedir}/config/database.yml")
+  database_host = database_config[environment]["host"]
+  database_user = database_config[environment]["user"]
+  database_pass = database_config[environment]["pass"]
+  database_name = database_config[environment]["database"]
+
+  $db = Sequel.connect("postgres://#{database_user}@#{database_host}:5432/#{database_name}", options)
 
   # Allow datasets to be paginated
   Sequel::Database.extension :pagination
-
   Sequel::Database.extension :pg_json
   Sequel.extension :pg_json_ops
 end
@@ -128,7 +131,6 @@ class IntrigueApp < Sinatra::Base
     # Allow certain requests without a project string
     pass if [ "project", "tasks", "tasks.json", "entity_types.json", nil].include? project_string
     pass if request.path_info =~ /tasks\/.*json$/ #requesting info on a task
-    #pass if request.path_info =~ /results$/ # if we're submitting a new task result via api
     pass if request.path_info =~ /js$/ # if we're submitting a new task result via api
     pass if request.path_info =~ /css$/ # if we're submitting a new task result via api
     pass if request.path_info =~ /(.jpg|.png)$/ # if we're submitting a new task result via api
