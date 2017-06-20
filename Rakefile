@@ -155,7 +155,8 @@ end
 
 require "sequel"
 Sequel.extension :migration
-DB = Sequel.connect('postgres://intrigue:intrigue@localhost:5432/intriguedb')
+#TODO - fix this
+DB = Sequel.connect('postgres://intrigue:intrigue@localhost:5432/intrigue_dev')
 
 namespace :db do
 
