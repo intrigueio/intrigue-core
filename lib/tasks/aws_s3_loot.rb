@@ -30,6 +30,7 @@ class AwsS3Loot < BaseTask
     require 'nokogiri'
 
     bucket_uri = _get_entity_name
+    bucket_uri.chomp!("/")
 
     unless bucket_uri =~ /s3.amazonaws.com/
       _log_error "Not an Amazon S3 link?"
