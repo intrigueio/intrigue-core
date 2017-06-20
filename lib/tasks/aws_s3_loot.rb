@@ -31,7 +31,7 @@ class AwsS3Loot < BaseTask
 
     bucket_uri = _get_entity_name
 
-    unless bucket_uri =~ /https:\/\/s3.amazonaws.com/
+    unless bucket_uri =~ /s3.amazonaws.com/
       _log_error "Not an Amazon S3 link?"
       return
     end
