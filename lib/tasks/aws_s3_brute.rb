@@ -14,9 +14,9 @@ class AwsS3Brute < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["String"],
+      :allowed_types => ["Uri"],
       :example_entities => [
-        {"type" => "String", "attributes" => {"name" => ""}}
+        {"type" => "Uri", "attributes" => {"name" => "test,test2,test3"}}
       ],
       :allowed_options => [
         {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
@@ -33,9 +33,6 @@ class AwsS3Brute < BaseTask
     opt_use_file = _get_option("use_file")
     opt_filename = _get_option("brute_file")
 
-    bucket_uri = "https://s3.amazonaws.com"
-    bucket_uri.chomp!("/")
-
     if opt_use_file
       _log "Using file: #{opt_filename}"
       potential_buckets = File.read("#{$intrigue_basedir}/data/#{opt_filename}").split("\n")
@@ -44,21 +41,31 @@ class AwsS3Brute < BaseTask
       potential_buckets = _get_entity_name.split(",")
     end
 
+    potential_buckets.each do |pb|
 
+      pb.chomp!
+
+      # Check prefix
+      potential_bucket_uri = "https://#{pb}.s3.amazonaws.com?max-keys=1"
+      doc = Nokogiri::HTML(http_get_body("#{potential_bucket_uri}"))
+      next if ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
+                doc.xpath("//code").text =~ /InvalidBucketName/ ||
+                doc.xpath("//code").text =~ /AllAccessDisabled/ ||
+                doc.xpath("//code").text =~ /AccessDenied/ ||
+                doc.xpath("//code").text =~ /PermanentRedirect/)
+      _create_entity("Uri", {"name" => "#{potential_bucket_uri}", "uri" => "#{potential_bucket_uri}" })
+    end
 
     potential_buckets.each do |pb|
-      potential_bucket_uri = "#{bucket_uri}/#{pb}?max-keys=1"
+      # Check postfix
+      potential_bucket_uri = "https://s3.amazonaws.com/#{pb}?max-keys=1"
       doc = Nokogiri::HTML(http_get_body("#{potential_bucket_uri}"))
-
-      next if doc.xpath("//code").text =~ /NoSuchBucket/
-      next if doc.xpath("//code").text =~ /AllAccessDisabled/
-      next if doc.xpath("//code").text =~ /AccessDenied/
-
+      next if ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
+                doc.xpath("//code").text =~ /InvalidBucketName/ ||
+                doc.xpath("//code").text =~ /AllAccessDisabled/ ||
+                doc.xpath("//code").text =~ /AccessDenied/ ||
+                doc.xpath("//code").text =~ /PermanentRedirect/)
       _create_entity("Uri", {"name" => "#{potential_bucket_uri}", "uri" => "#{potential_bucket_uri}" })
-
-      doc.xpath("//contents").each do |item|
-        puts "FOUND: #{item.xpath("key").text}"
-      end
     end
 
   end
