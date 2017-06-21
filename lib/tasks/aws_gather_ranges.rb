@@ -14,7 +14,7 @@ class AwsGatherRanges < BaseTask
       :passive => true,
       :allowed_types => ["String"],
       :example_entities => [
-        {"type" => "String", "attributes" => {"name" => ""}}
+        {"type" => "String", "attributes" => {"name" => "us-east-1"}}
       ],
       :allowed_options => [
         {:name => "service", :type => "String", :regex => "alpha_numeric", :default => "EC2" },
