@@ -1,4 +1,4 @@
-
+require 'nokogiri'
 
 module Intrigue
 class AwsS3Loot < BaseTask
@@ -26,9 +26,6 @@ class AwsS3Loot < BaseTask
   ## Default method, subclasses must override this
   def run
     super
-
-    require 'nokogiri'
-
     bucket_uri = _get_entity_name
     bucket_uri.chomp!("/")
 
