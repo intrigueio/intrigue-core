@@ -1,7 +1,21 @@
 <h3>Start</h3>
-<p>
-  Entity Count: <%= @project.entities.count %>
-</p>
 <div class="row">
   <%= erb :'_task_runner' %>
+</div><br/>
+<h3>Entity Stats</h3>
+<div class="col-sm-5">
+<div class="row">
+<p>
+  Entity Count: <%= @project.entities.count %><br/>
+  <ul>
+    <% Intrigue::Model::Entity.descendants.each do |d| %>
+    <li>
+      <a href="/v1/<%=@project.name%>/entities?entity_types[]=<%=d.to_s%>">
+      <%= x = d.to_s.gsub(/^.*::/, '') %></a>:
+      <%= Intrigue::Model::Entity.scope_by_project_and_type(@project.name,d.to_s).count %>
+    </li>
+    <% end %>
+  </ul>
+</p>
+</div>
 </div>
