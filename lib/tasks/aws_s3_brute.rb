@@ -53,7 +53,7 @@ class AwsS3Brute < BaseTask
                 doc.xpath("//code").text =~ /AllAccessDisabled/ ||
                 doc.xpath("//code").text =~ /AccessDenied/ ||
                 doc.xpath("//code").text =~ /PermanentRedirect/)
-      _create_entity("Uri", {"name" => "#{potential_bucket_uri}", "uri" => "#{potential_bucket_uri}" })
+      _create_entity("AwsS3Bucket", {"name" => "#{potential_bucket_uri}", "uri" => "#{potential_bucket_uri}" })
     end
 
     potential_buckets.each do |pb|
@@ -65,7 +65,7 @@ class AwsS3Brute < BaseTask
                 doc.xpath("//code").text =~ /AllAccessDisabled/ ||
                 doc.xpath("//code").text =~ /AccessDenied/ ||
                 doc.xpath("//code").text =~ /PermanentRedirect/)
-      _create_entity("Uri", {"name" => "#{potential_bucket_uri}", "uri" => "#{potential_bucket_uri}" })
+      _create_entity("AwsS3Bucket", {"name" => "#{potential_bucket_uri}", "uri" => "#{potential_bucket_uri}" })
     end
 
   end
