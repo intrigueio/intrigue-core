@@ -2,20 +2,22 @@
 <div class="row">
   <%= erb :'_task_runner' %>
 </div><br/>
-<h3>Entity Stats</h3>
+<h3>Statistics</h3>
 <div class="col-sm-5">
 <div class="row">
 <p>
-  Entity Count: <%= @project.entities.count %><br/>
   <ul>
     <% Intrigue::Model::Entity.descendants.each do |d| %>
+    <% count = Intrigue::Model::Entity.scope_by_project_and_type(@project.name,d.to_s).count %>
+    <% next unless count > 0 %>
     <li>
       <a href="/v1/<%=@project.name%>/entities?entity_types[]=<%=d.to_s%>">
-      <%= x = d.to_s.gsub(/^.*::/, '') %></a>:
-      <%= Intrigue::Model::Entity.scope_by_project_and_type(@project.name,d.to_s).count %>
+      <%= d.to_s.gsub(/^.*::/, '') %></a>:
+      <%= count %>
     </li>
     <% end %>
   </ul>
+  Total Entities: <%= @project.entities.count %><br/>
 </p>
 </div>
 </div>
