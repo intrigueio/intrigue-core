@@ -1,6 +1,7 @@
 require 'whois'
 require 'whois-parser'
 require 'nokogiri'
+require 'json'
 require 'socket'
 
 module Intrigue
@@ -45,7 +46,7 @@ class WhoisTask < BaseTask
     #  _log "Got a response throttled message: #{e}"
     #  sleep 10
     #  return run # retry
-  rescue Exception => e
+    rescue Exception => e
       _log "Unable to query whois: #{e}"
       return
     end
@@ -60,16 +61,16 @@ class WhoisTask < BaseTask
       _log answer.content
       _log "================"
 
+      ripe = true if answer.content =~ /RIPE/
+
       #
       # if it was a domain, we've got a whole lot of things we can pull
       #
-      if lookup_string.is_ip_address?
+      if lookup_string.is_ip_address? && !ripe
 
         #
         # Otherwise our entity must've been a host, so lets connect to
         # ARIN's API and fetch the details
-        #
-
         begin
           doc = Nokogiri::XML(http_get_body("http://whois.arin.net/rest/ip/#{lookup_string}"))
           org_ref = doc.xpath("//xmlns:orgRef").text
@@ -109,13 +110,41 @@ class WhoisTask < BaseTask
               "handle" => "#{handle}",
               "organization_reference" => "#{org_ref}",
               "parent_reference" => "#{parent_ref}",
-              "whois_full_text" => "#{answer.content}"
+              "whois_full_text" => "#{answer.content}",
+              "rir" => "ARIN"
             }
 
           end # End Netblocks
         rescue Nokogiri::XML::XPath::SyntaxError => e
           _log_error "Got an error while parsing the XML: #{e}"
         end
+
+      # If we detected that this is a RIPE-allocated range, let's connect to their
+      # API and pull the details
+      elsif lookup_string.is_ip_address? && ripe
+
+        # TODO - this can be converted to JSON
+        #curl -H 'Accept: application/json' 'http://rest.db.ripe.net/search?query-string=#{lookup_string}'
+
+        # https://stat.ripe.net/data/address-space-hierarchy/data.json?resource=198.11.1.1/32
+        # https://stat.ripe.net/data/address-space-hierarchy/data.json?resource=194.60.191.97/32
+
+        ripe_uri = "https://stat.ripe.net/data/address-space-hierarchy/data.json?resource=#{lookup_string}/32"
+        json = JSON.parse(http_get_body(ripe_uri))
+
+        # set entity details
+        _log "Got JSON from #{ripe_uri}:"
+        _log "#{json}"
+
+        range = json["data"]["last_updated"].first["ip_space"]
+
+        entity = _create_entity "NetBlock", {
+          "name" => "#{range}",
+          "cidr" => "#{range.split('/').last}",
+          "description" => json["data"]["netname"],
+          "rir" => "RIPE",
+          "organization_reference" => json["data"]["org"]
+        }
 
       else
 
@@ -127,7 +156,6 @@ class WhoisTask < BaseTask
 
             parser.nameservers.each do |nameserver|
               _log "Parsed nameserver: #{nameserver}"
-
               _create_entity "DnsRecord", "name" => nameserver.to_s
 
             end
