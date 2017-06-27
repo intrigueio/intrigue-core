@@ -119,15 +119,9 @@ class WhoisTask < BaseTask
           _log_error "Got an error while parsing the XML: #{e}"
         end
 
-      # If we detected that this is a RIPE-allocated range, let's connect to their
-      # API and pull the details
+      # If we detected that this is a RIPE-allocated range, let's connect to
+      # their stat.ripe.net API and pull the details
       elsif lookup_string.is_ip_address? && ripe
-
-        # TODO - this can be converted to JSON
-        #curl -H 'Accept: application/json' 'http://rest.db.ripe.net/search?query-string=#{lookup_string}'
-
-        # https://stat.ripe.net/data/address-space-hierarchy/data.json?resource=198.11.1.1/32
-        # https://stat.ripe.net/data/address-space-hierarchy/data.json?resource=194.60.191.97/32
 
         ripe_uri = "https://stat.ripe.net/data/address-space-hierarchy/data.json?resource=#{lookup_string}/32"
         json = JSON.parse(http_get_body(ripe_uri))
