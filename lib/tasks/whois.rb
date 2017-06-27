@@ -137,7 +137,8 @@ class WhoisTask < BaseTask
           "cidr" => "#{range.split('/').last}",
           "description" => json["data"]["netname"],
           "rir" => "RIPE",
-          "organization_reference" => json["data"]["org"]
+          "organization_reference" => json["data"]["org"],
+          "whois_full_text" => "#{answer.content}"
         }
 
       else
