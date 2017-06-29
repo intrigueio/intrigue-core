@@ -291,6 +291,7 @@ class IntrigueApp < Sinatra::Base
       handler_name = params[:handler]
 
       project = Intrigue::Model::Project.first(:name => @project_name)
+      handler_results = []
       project.scan_results.each do |s|
 
         # Save our existing handlers, and apply only this one
@@ -299,20 +300,23 @@ class IntrigueApp < Sinatra::Base
         s.save
 
         # Run the handler
-        s.handle_result
+        handler_results << s.handle_result
 
         # Reset to the originals
         s.handlers = old_handlers
         s.save
       end
 
-    redirect "/v1/#{@project_name}"
+      "Got Result: #{handler_results}"
+
+    #redirect "/v1/#{@project_name}"
     end
 
     # Run a specific handler on a specific task result
     get '/:project/results/:id/handle/:handler' do
       handler_name = params[:handler]
       result_id = params[:id].to_i
+      handler_results = []
 
       # Get the result from the database, and fail cleanly if it doesn't exist
       @result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => result_id)
@@ -328,14 +332,15 @@ class IntrigueApp < Sinatra::Base
       # run the handler(s) we set up
       @result.handlers.each do |handler_type|
         handler = Intrigue::HandlerFactory.create_by_type(handler_type)
-        handler.process(@result)
+        handler_results << handler.process(@result)
       end
 
       # Set handlers back to the way they were
       @result.handlers = temp_handlers
       @result.save
 
-      redirect "/#{@project_name}/results/#{result_id}"
+      #redirect "/#{@project_name}/results/#{result_id}"
+      "Got Result: #{handler_results}"
     end
 
 
