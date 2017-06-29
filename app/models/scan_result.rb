@@ -89,10 +89,12 @@ module Intrigue
       end
 
       def handle_result
+        handled = []
         self.handlers.each do |handler_type|
           handler = Intrigue::HandlerFactory.create_by_type(handler_type)
-          handler.process(self)
+          handled << handler.process(self)
         end
+      handled
       end
 
     end
