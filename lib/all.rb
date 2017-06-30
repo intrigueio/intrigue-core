@@ -78,3 +78,8 @@ require_relative 'handler_factory'
 require_relative 'handlers/base'
 handlers_folder = File.expand_path('../handlers', __FILE__) # get absolute directory
 Dir["#{handlers_folder}/*.rb"].each {|f| require_relative f}
+
+####
+# Signal Libraries
+####
+require_relative 'signals/example'

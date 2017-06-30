@@ -1,9 +1,9 @@
 <p>
-Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>
+Findings Count: <%= @findings.count %><br/>
 </p>
 
 <div class="col-sm-2">
-  <form class="form-horizontal" id="result_search" target="_self" method="get" action="/v1/<%=@project_name%>/results">
+  <form class="form-horizontal" id="result_search" target="_self" method="get" action="/v1/<%=@project_name%>/findings">
 
     Search:
     <input type="text" style='width:100%' class="form-control sm" id="search_string" name="search_string"><br/>
@@ -35,19 +35,17 @@ Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_na
   <p></p>
   <table class="sortable" border="1" width=100%>
     <colgroup>
-      <col style="width:70%">
-      <col style="width:10%">
-      <col style="width:10%">
-      <col style="width:10%">
+      <col style="width:33%">
+      <col style="width:33%">
+      <col style="width:33%">
     </colgroup>
     <tbody>
-      <tr><th>result</th><th>entity count</th><th>autoscheduled</th><th>complete</th>
-        <% @results.each do |x| %>
+      <tr><th>name</th><th>entity</th><th>details</th>
+        <% @findings.each do |x| %>
         <tr>
-          <td><a href="/v1/<%=@project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity.to_s %></a> </td>
-          <td><%= h x.entities.count %> </td>
-          <td><%= h x.autoscheduled %> </td>
-          <td><%= x.complete ? "complete" : "incomplete" %></td>
+          <td><%= h x.name %>  </td>
+          <td><a href="/v1/<%=@project_name%>/entities/<%=x.entity_id%>"><%= h x.entity %> </a></td>
+          <td><%= h x.details %> </td>
         </tr>
         <% end %>
     </tbody>

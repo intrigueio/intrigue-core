@@ -42,43 +42,42 @@ class SearchCensysTask < BaseTask
       ["ipv4"].each do |search_type|
         response = censys.search(entity_name,search_type)
         response["results"].each do |r|
+          next unless r
           _log "Got result: #{r}"
 
-          # Go ahead and create the entity
+          if r["_source"]
+            # Go ahead and create the entity
+            ip = r["_source"]["ip"]
+            _create_entity "IpAddress", "name" => "#{ip}", "censys" => r
 
-          #require 'pry'
-          #binding.pry
+            # Where we can, let's create additional entities from the scan results
+            if r["_source"]["protocols"]
+              r["_source"]["protocols"].each do |p|
 
-          ip_address = r["_source"]["ip"]
-          _create_entity "DnsRecord", "name" => "#{ip_address}", "censys" => r
+                # Pull out the protocol
+                port = p.split("/").first # format is like "80/http"
+                protocol = p.split("/").last # format is like "80/http"
 
-          # Where we can, let's create additional entities from the scan results
-          if r["_source"]["protocols"]
-            r["_source"]["protocols"].each do |p|
+                # Always create a network service
+                _create_entity "NetworkService", {
+                  "name" => "#{ip_address}:#{port}/tcp",
+                  "port" => port,
+                  "fingerprint" => protocol}
 
-              # Pull out the protocol
-              port = p.split("/").first # format is like "80/http"
-              protocol = p.split("/").last # format is like "80/http"
-
-              # Always create a network service
-              _create_entity "NetworkService", {
-                "name" => "#{ip_address}:#{port}/tcp",
-                "port" => port,
-                "fingerprint" => protocol}
-
-              # Handle specific protocols
-              case protocol
-              when "https"
-                _create_entity "Uri", "name" => "https://#{ip_address}:#{port}", "uri" => "https://#{ip_address}:#{port}"
-              when "http"
-                _create_entity "Uri", "name" => "http://#{ip_address}:#{port}", "uri" => "http://#{ip_address}:#{port}"
-              when "ftp"
-                _create_entity "FtpServer", {
-                  "name" => "ftp://#{ip_address}:#{port}",
-                  "port" => "#{port}"
-                }
+                # Handle specific protocols
+                case protocol
+                when "https"
+                  _create_entity "Uri", "name" => "https://#{ip_address}:#{port}", "uri" => "https://#{ip_address}:#{port}"
+                when "http"
+                  _create_entity "Uri", "name" => "http://#{ip_address}:#{port}", "uri" => "http://#{ip_address}:#{port}"
+                when "ftp"
+                  _create_entity "FtpServer", {
+                    "name" => "ftp://#{ip_address}:#{port}",
+                    "port" => "#{port}"
+                  }
+                end
               end
-            end
+            end # if r["_source"]
           end
         end
       end
@@ -94,9 +93,13 @@ class SearchCensysTask < BaseTask
             _create_entity "SslCertificate", "name" => r["parsed.subject_dn"], "additional" => r
 
             # Pull out the CN and create a name
-            r["parsed.subject_dn"].each do |x|
-              host = x.split("CN=").last.split(",").first
-              _create_entity "Host", "name" => host if host
+            if r["parsed.subject_dn"].kind_of? Array
+              r["parsed.subject_dn"].each do |x|
+                host = x.split("CN=").last.split(",").first
+                _create_entity "IpAddress", "name" => host if host
+              end
+            else
+              _create_entity "IpAddress", "name" => r["parsed.subject_dn"]
             end
 
           end

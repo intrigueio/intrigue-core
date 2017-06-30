@@ -2,13 +2,27 @@ class IntrigueApp < Sinatra::Base
   include Intrigue::Task::Helper
   namespace '/v1' do
 
+    get '/:project/results' do
+      @result_count = 100
+
+      params[:search_string] == "" ? @search_string = nil : @search_string = params[:search_string]
+      (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
+
+      selected_results = Intrigue::Model::TaskResult.scope_by_project(@project_name) #.where(Sequel.ilike(:name, "%#{search_string}%"))
+
+      # PAGINATE
+      @results = selected_results.extension(:pagination).paginate(@page,@result_count)
+
+      erb :'results/index'
+    end
+
     # Kick off a task
     get '/:project/results/?' do
 
       search_string = params["search_string"]
 
       # get a list of task_results
-      @results = Intrigue::Model::TaskResult.scope_by_project(@project_name).where(Sequel.ilike(:name, "%#{search_string}%"))
+
       erb :'results/index'
     end
 

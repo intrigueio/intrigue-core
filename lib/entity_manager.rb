@@ -78,8 +78,11 @@ class EntityManager
       self.alias_entity entity, primary_entity
     end
 
-    # START PROCESSING OF ENRICHMENT unless this entity already exists
+    # START ENRICHMENT unless this entity already exists
     enrich_entity(entity, task_result) unless already_exists || hidden
+
+    # START ANALYSIS
+    analyze_signals(entity,task_result)
 
     # START RECURSION BY STRATEGY TYPE
     if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
@@ -95,6 +98,11 @@ class EntityManager
 
   # return the entity
   entity
+  end
+
+  def self.analyze_signals(entity,task_result)
+    puts "STARTING analysis on #{entity}"
+    Intrigue::Signals.all.each{|s| s.match(entity,task_result) }
   end
 
   def self.enrich_entity(entity, task_result=nil)
