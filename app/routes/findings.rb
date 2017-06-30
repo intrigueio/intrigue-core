@@ -4,8 +4,8 @@ class IntrigueApp < Sinatra::Base
 
     get '/:project/findings' do
 
-      @findings = Intrigue::Model::Finding.all
-      
+      @findings = Intrigue::Model::Finding.scope_by_project(@project_name)
+
     erb :'findings/index'
     end
 
