@@ -33,30 +33,11 @@ class UriExtractMetadata < BaseTask
     hostname = URI.parse(uri).host
     port = URI.parse(uri).port
 
-    _gather_ssl_cert(hostname,port)
-
-    _gather_headers
+    #_gather_ssl_cert(hostname,port) if uri.parse =~/^https/
 
     download_and_extract_metadata uri
 
   end
-
-
-  def _gather_headers
-    uri = _get_entity_name
-
-    response = http_get(uri)
-
-    if response
-      response.each_header do |name,value|
-        _create_entity("HttpHeader", {
-          "name" => "#{name}",
-          "uri" => "#{uri}",
-          "content" => "#{value}" })
-      end
-    end
-  end
-
 
 
   def _gather_ssl_cert(hostname,port)
