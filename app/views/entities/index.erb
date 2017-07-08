@@ -17,7 +17,7 @@ function delete_entity(id)
 <div class="col-sm-2">
   <p>
   Entities Count: <%= @entities_count %><br/>
-  Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>
+  Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>
   <a href=<%="#{request.url}.csv"%>>Export CSV</a><br/>
   </p>
 

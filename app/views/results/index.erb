@@ -13,6 +13,10 @@ Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_na
 </div>
 
 <div class="col-sm-10">
+    <%= "Page: #{@page}" %>
+    <%= "Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %>
+    <a href="<%=request.path%>?page=<%=@page-1%>&search_string=<%=@search_string%>">previous</a>
+    <a href="<%=request.path%>?page=<%=@page+1%>&search_string=<%=@search_string%>">next</a>
 
   <script src="/js/sorttable.js"></script>
   <style>
