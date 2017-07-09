@@ -8,7 +8,7 @@ class IntrigueApp < Sinatra::Base
       params[:search_string] == "" ? @search_string = nil : @search_string = params[:search_string]
       (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
 
-      selected_results = Intrigue::Model::TaskResult.scope_by_project(@project_name)
+      selected_results = Intrigue::Model::TaskResult.scope_by_project(@project_name).reverse(:timestamp_start)
       selected_results = selected_results.where(Sequel.ilike(:name, "%#{@search_string}%")) if @search_string
 
       # PAGINATE

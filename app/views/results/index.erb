@@ -14,10 +14,6 @@ Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_na
 
 <div class="col-sm-10">
 
-  <p>
-  <a href="<%=request.path%>/all/cancel">Cancel All</a>
-  </p>
-
   <%= "Page: #{@page}" %>
   <%= "Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %>
   <a href="<%=request.path%>?page=<%=@page-1%>&search_string=<%=@search_string%>">previous</a>
@@ -44,16 +40,18 @@ Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_na
   <p></p>
   <table class="sortable" border="1" width=100%>
     <colgroup>
-      <col style="width:60%">
+      <col style="width:20%">
+      <col style="width:40%">
       <col style="width:10%">
       <col style="width:10%">
       <col style="width:10%">
       <col style="width:10%">
     </colgroup>
     <tbody>
-      <tr><th>result</th><th>entity count</th><th>canceled</th><th>autoscheduled</th><th>complete</th>
+      <tr><th>timestamp</th><th>result</th><th>entity count</th><th>canceled</th><th>autoscheduled</th><th>complete</th>
         <% @results.each do |x| %>
         <tr>
+          <td><%= h x.timestamp_start %> </td>
           <td><a href="/v1/<%=@project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity.to_s %></a> </td>
           <td><%= h x.entities.count %> </td>
           <td><%= h x.canceled %> </td>
@@ -63,3 +61,9 @@ Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_na
         <% end %>
     </tbody>
   </table>
+  <div class="row">
+    <div class="col-xs-11">&nbsp;</div>
+    <div class="col-xs-1">
+      <p><a href="<%=request.path%>/all/cancel">Cancel All</a></p>
+    </div>
+  </div>

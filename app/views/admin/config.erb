@@ -5,19 +5,23 @@
   Username: <input class="form-control" style="width:150px" type="text" name="username" value="<%=@global_config.config["credentials"]["username"]%>">
   Password: <input class="form-control" style="width:150px" type="password" name="password" value="<%=@global_config.config["credentials"]["username"]%>">
   <input class="btn btn-primary" type="submit">
-  <br/>
 </form>
-<p></p>
 <hr>
 <h4> Module Configuration </h4>
 <form action="/v1/<%=@project_name%>/config/module" method="post">
-<table class="table table-striped table-bordered">
+<table class="table">
+  <colgroup>
+    <col style="width:20%">
+    <col style="width:30%">
+    <col style="width:50%">
+  </colgroup>
+<tr><th>Setting</th><th>Password</th><th>Details</th></tr>
 <tbody>
 <% @global_config.config["intrigue_global_module_config"].each do |k,v| %>
   <% next unless v["editable"] %>
   <tr>
     <td><a target="_blank" href=<%=v["uri"]%>><%= k %></a>:</td>
-    <td><input class="form-control" style="width:400px" type="text" name="<%=k%>" value="<%="**********#{v["value"][-3..-1]}"%>"></td>
+    <td><input class="form-control" style="width:100%" type="text" name="<%=k%>" value="<%="**********#{v["value"][-3..-1]}"%>"></td>
     <td><%= v["comment"] %></td>
   </tr>
   <% end %>

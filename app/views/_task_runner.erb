@@ -1,10 +1,10 @@
 
-<div class="col-sm-5">
+<div class="col-sm-7">
 <form class="form-horizontal" id="task_runner" target="_self" method="post" action="/v1/<%=@project_name%>/interactive/single">
   <div class="form-group">
     <!-- <select name="task" id="task_name"> -->
     <label for="task_name" class="col-xs-4 control-label">Task</label>
-    <div class="col-xs-6">
+    <div class="col-xs-8">
     <select class="form-control input-sm" name="task" id="task_name">
 
       <!-- iterate through the tasks an create each one, checking to see if it matches our entity -->
@@ -36,13 +36,13 @@
   <% else %>
     <div class="form-group">
       <label for="entity_type" class="col-xs-4 control-label">Entity Type</label>
-      <div class="col-xs-6">
+      <div class="col-xs-8">
         <select class="form-control input-sm" id="entity_type" name="entity_type"></select>
       </div>
     </div>
     <div class="form-group">
       <label for="attrib_name" class="col-xs-4 control-label">Entity Name</label>
-      <div class="col-xs-6">
+      <div class="col-xs-8">
         <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name">
       </div>
     </div>
@@ -53,7 +53,7 @@
   <div id="strategy">
     <div class="form-group">
       <label for="attrib_name" class="col-xs-4 control-label">Strategy</label>
-      <div class="col-xs-6">
+      <div class="col-xs-8">
         <select class="form-control input-sm" name="strategy" id="strategy">
           <!-- iterate through stategies -->
           <% Intrigue::StrategyFactory.list.each do |strategy_class| %>
@@ -70,7 +70,7 @@
   <div id="scan">
     <div class="form-group">
       <label for="attrib_name" class="col-xs-4 control-label">Recursive Iterations</label>
-      <div class="col-xs-6">
+      <div class="col-xs-8">
         <select class="form-control input-sm" name="depth" id="depth">
           <option value=1 selected="true">Interactive</option>
           <option value=2>2 Iterations</option>

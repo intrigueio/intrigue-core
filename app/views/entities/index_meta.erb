@@ -22,7 +22,7 @@ function delete_entity(id)
   <form class="form-horizontal" id="entity_search" target="_self" method="get" action="/v1/<%=@project_name%>/entities/meta">
 
     Search:
-    <input type="text" style='width:100%' class="form-control sm" id="search_string" name="search_string"><br/>
+    <input type="text" style='width:80%' class="form-control sm" id="search_string" name="search_string">
 
     Types:<br/>
     <select size=10 style='height:100%; color:#000000;' multiple name="entity_types[]">
@@ -57,15 +57,14 @@ function delete_entity(id)
   <p></p>
   <table class="sortable" border="1" width=100%>
     <colgroup>
-      <col style="width:40%">
-      <col style="width:60%">
+      <col style="width:100%">
     </colgroup>
     <tbody>
-      <tr><th>name</th><th>details</th></tr>
+      <tr><th>name</th></tr>
       <% @entities.each do |eg| %>
         <tr>
-          <td><% eg.each do |e| %>[<a href="/v1/<%=@project_name%>/entities/<%=e.id%>"> <%= e %> </a>] <% end %></td>
-          <td><%= out =[];eg.each{|x| out << x.details.tap{|y| y.delete("response_data"); y.delete("whois_full_text"); y.delete("text") }}; out; %></td>
+          <td><% eg.each do |e| %>[<a href="/v1/<%=@project_name%>/entities/<%=e.id%>"> <%= h e %> </a>] <% end %></td>
+          <!--<td><%= out =[];eg.each{|x| out << x.details.tap{|y| y.delete("response_data"); y.delete("whois_full_text"); y.delete("text") }}; out; %></td>-->
         </tr>
       <% end %>
     </tbody>

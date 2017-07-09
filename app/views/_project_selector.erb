@@ -21,6 +21,17 @@ function delete_project( name )
 }
 -->
 </script>
+<div class="row">
+<div class="col-sm-8">
+
+<form class="form-inline" name="project_select_form" action="/v1/project" method="post">
+  <div class="form-group row">
+    <label for="project" class="control-label">Create a new project:</label>
+    <input type="text" class="form-control input-sm" id="project" name="project" value=""/>
+    <input class="btn btn-primary btn-sm" type="submit" value="Submit" />
+  </div>
+</form>
+<form name="project_delete_form" action="/v1/project/delete" method="post"><input type="hidden" id="project" name="project"/></form>
 
 Select a project:
 <p>
@@ -31,13 +42,5 @@ Select a project:
   </li>
 <% end %>
 </ul>
-</p>
-<form name="project_select_form" action="/v1/project" method="post">
-  <div class="form-group">
-  <label for="project" class="control-label">Create a new project:</label><br/>
-    <input type="text" class="form-control input-sm" id="project" name="project" style="width: 150px;" value=""/>
-    <input class="btn btn-primary" type="submit" value="Submit" />
-  </div>
-</form>
-
-<form name="project_delete_form" action="/v1/project/delete" method="post"><input type="hidden" id="project" name="project"/></form>
+</div>
+</div>
