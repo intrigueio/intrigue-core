@@ -1,7 +1,6 @@
 body {
   background-image:url('/img/billie_holiday.png');
-  background-color:black;
-  color:white;
+  color:black;
   /* padding-top: 60px; /* When using the navbar-top-fixed */
 }
 
@@ -17,11 +16,11 @@ pre {
 }
 
 a:link {
-  color: #33AAFF;
+  color: #225FA1;
 }
 
 a:visited {
-  color: #33AAFF;
+  color: #225FA1;
 }
 
 a:hover {
@@ -39,6 +38,8 @@ a:hover {
   display: block;
   background-color: black;
   color: #44FF43;
+  border-style: dashed;
+  border-color: grey;
 }
 
 .center {
@@ -61,4 +62,9 @@ a:hover {
 
 .navbar-brand {
   padding: 10px;
+}
+
+.btn {
+  margin-top: 5px;
+  margin-left: 1px;
 }
