@@ -10,13 +10,19 @@ class StrategyFactory
   end
 
   def self.list
-    available_strategies
+    @strategies
   end
 
-  private
+  def self.create_by_name(name)
+    @strategies.each { |s| return s if "#{s.metadata[:name]}" == "#{name}" }
+  end
 
-  def self.available_strategies
-    @strategies
+  #
+  # Check to see if this strategy exists (check by type)
+  #
+  def self.has_strategy?(name)
+    @strategies.each { |s| return true if "#{s.metadata[:name]}" == "#{name}" }
+  false
   end
 
 end

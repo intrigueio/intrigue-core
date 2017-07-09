@@ -2,6 +2,15 @@ module Intrigue
 module Strategy
   class Discovery < Intrigue::Strategy::Base
 
+    def self.metadata
+      {
+        :name => "discovery",
+        :pretty_name => "Discovery",
+        :authors => ["jcran"],
+        :description => "This strategy performs a light recursive discovery."
+      }
+    end
+
     def self.recurse(entity, task_result)
 
       if entity.type_string == "FtpServer"

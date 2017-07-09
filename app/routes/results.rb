@@ -19,12 +19,20 @@ class IntrigueApp < Sinatra::Base
 
     # Kick off a task
     get '/:project/results/?' do
-
       search_string = params["search_string"]
-
       # get a list of task_results
-
       erb :'results/index'
+    end
+
+    # Allow cancellation
+    get '/:project/results/:id/cancel' do
+      id = params[:id]
+      if id == "all"
+        Intrigue::Model::TaskResult.scope_by_project(@project_name).each {|x| x.cancel! }
+      else
+        Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id]).cancel!
+      end
+      redirect "/v1/#{@project_name}/results"
     end
 
     # Helper to construct the request to the API when the application is used interactively
@@ -37,14 +45,18 @@ class IntrigueApp < Sinatra::Base
       entity_name = "#{@params["attrib_name"]}"
 
       ### Handler definition, make sure we have a valid handler type
-      if "#{@params["handler"]}" == "none"
-        handlers = []
-      elsif Intrigue::HandlerFactory.include? "#{@params["handler"]}"
+      if Intrigue::HandlerFactory.include? "#{@params["handler"]}"
         handlers = ["#{@params["handler"]}"]
       else
-        raise "Unable to resolve handler #{@params["handler"]}"
+        handlers = []
       end
 
+      ### Strategy definition, make sure we have a valid type
+      if Intrigue::StrategyFactory.has_strategy? "#{@params["strategy"]}"
+        strategy_name = "#{@params["strategy"]}"
+      else
+        strategy_name = "discovery"
+      end
 
       # Construct the attributes hash from the parameters. Loop through each of the
       # parameters looking for things that look like attributes, and add them to our
@@ -87,7 +99,6 @@ class IntrigueApp < Sinatra::Base
 
       unless entity
         raise "Unable to continue without entity: #{klass}##{entity_name}"
-        #redirect "/"
       end
 
       # Construct the options hash from the parameters
@@ -102,7 +113,7 @@ class IntrigueApp < Sinatra::Base
       end
 
       # Start the task run!
-      task_result = start_task("task", current_project, nil, task_name, entity, depth, options, handlers)
+      task_result = start_task("task", current_project, nil, task_name, entity, depth, options, handlers, strategy_name)
       entity.task_results << task_result
       entity.save
 

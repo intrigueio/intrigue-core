@@ -15,17 +15,17 @@
                           task_class.metadata[:allowed_types].include?("*") ) if @entity
         %>
 
-        <!-- set up the task in an option box, default to search_bing -->
+        <!-- set up the task in an option box, default to create_entity -->
         <option value="<%= task_class.metadata[:name] %>"
           <% if @task_result %>
             <%= "selected='selected'" if @task_result.task_name == task_class.metadata[:name] %>
           <% else %>
-            <%= "selected='selected'" if task_class.metadata[:name] == "" %>
+            <%= "selected='selected'" if task_class.metadata[:name] == "create_entity" %>
           <% end %>
           ><%= task_class.metadata[:pretty_name] %>
         </option>
 
-    <% end %>
+      <% end %>
     </select>
     </div>
   </div>
@@ -50,6 +50,23 @@
 
   <div id="options"></div>
 
+  <div id="strategy">
+    <div class="form-group">
+      <label for="attrib_name" class="col-xs-4 control-label">Strategy</label>
+      <div class="col-xs-6">
+        <select class="form-control input-sm" name="strategy" id="strategy">
+          <!-- iterate through stategies -->
+          <% Intrigue::StrategyFactory.list.each do |strategy_class| %>
+            <option value="<%= strategy_class.metadata[:name] %>"
+              <%= "selected='selected'" if strategy_class.metadata[:name] == "discovery" %> >
+              <%= strategy_class.metadata[:pretty_name] %>
+            </option>
+          <% end %>
+        </select>
+      </div>
+    </div>
+  </div>
+
   <div id="scan">
     <div class="form-group">
       <label for="attrib_name" class="col-xs-4 control-label">Recursive Iterations</label>
@@ -67,7 +84,7 @@
       </div>
     </div>
   </div>
-
+<!--
   <div id="handler">
     <div class="form-group">
       <label for="handler" class="col-xs-4 control-label">Handlers</label>
@@ -79,8 +96,8 @@
       </div>
     </div>
   </div>
+-->
   <hr></hr>
-
   <input class="btn btn-primary" type="submit" value="Run Task">
 </form>
 </div>

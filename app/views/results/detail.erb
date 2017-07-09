@@ -42,8 +42,10 @@ getEntities(<%=@result.id%>);
   <p>Handlers: <%= @result.handlers %></p>
   <p>Depth: <%=@result.depth %> </p>
   <p>Entity: <a href="/v1/<%=@project_name%>/entities/<%=@result.base_entity.id if @result.base_entity %>"><%= h "#{@result.base_entity}" %></a></p>
+  <p>Canceled: <%= @result.canceled %></p>
   <p>Complete: <%= @result.complete %></p>
   <p>Count: <%= @result.entities.count %></p>
+  <p>Strategy: <%= @result.scan_result.name if @result.scan_result %></p>
 
 
   Export:

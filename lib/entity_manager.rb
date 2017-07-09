@@ -32,14 +32,23 @@ class EntityManager
   # This method creates a new entity, and kicks off a strategy
   def self.create_or_merge_entity(task_result,type_string,name,details, primary_entity=nil)
 
-    project = task_result.project # convenience
+    # HANDLE CANCELED TASKS!
+    # Do a lookup to make sure we have the latest...
+    tr = Intrigue::Model::TaskResult.first(:id => task_result.id)
+    if tr.canceled
+      # We should try logging here!!! 
+      return
+    end
+
+    # Convenience
+    project = task_result.project
     downcased_name = name.downcase
 
     # Merge the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name)
     hidden = hidden_entity?(name, type_string)
 
-    # check if there's an existing entity, if so, merge and move forward
+    # Check if there's an existing entity, if so, merge and move forward
     if entity
       already_exists = true
       entity.set_details(details.to_h.deep_merge(entity.details.to_h))
@@ -87,11 +96,9 @@ class EntityManager
     # START RECURSION BY STRATEGY TYPE
     if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
       unless hidden
-        if task_result.scan_result.strategy == "discovery"
-          Intrigue::Strategy::Discovery.recurse(entity, task_result)
-        elsif task_result.scan_result.strategy == "web_discovery"
-          Intrigue::Strategy::WebDiscovery.recurse(entity, task_result)
-        end
+        s = Intrigue::StrategyFactory.create_by_name(task_result.scan_result.strategy)
+        raise "Unknown strategy!?!?!" unless s
+        s.recurse(entity, task_result)
       end
     end
     # END PROCESSING OF RECURSION BY STRATEGY TYPE

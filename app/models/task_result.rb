@@ -49,6 +49,13 @@ module Intrigue
       self.job_id
       end
 
+      def cancel!
+        unless complete
+          self.canceled = true
+          save
+        end
+      end
+
       def log
         logger.full_log
       end

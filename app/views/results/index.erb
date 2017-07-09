@@ -13,10 +13,15 @@ Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_na
 </div>
 
 <div class="col-sm-10">
-    <%= "Page: #{@page}" %>
-    <%= "Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %>
-    <a href="<%=request.path%>?page=<%=@page-1%>&search_string=<%=@search_string%>">previous</a>
-    <a href="<%=request.path%>?page=<%=@page+1%>&search_string=<%=@search_string%>">next</a>
+
+  <p>
+  <a href="<%=request.path%>/all/cancel">Cancel All</a>
+  </p>
+
+  <%= "Page: #{@page}" %>
+  <%= "Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %>
+  <a href="<%=request.path%>?page=<%=@page-1%>&search_string=<%=@search_string%>">previous</a>
+  <a href="<%=request.path%>?page=<%=@page+1%>&search_string=<%=@search_string%>">next</a>
 
   <script src="/js/sorttable.js"></script>
   <style>
@@ -39,17 +44,19 @@ Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_na
   <p></p>
   <table class="sortable" border="1" width=100%>
     <colgroup>
-      <col style="width:70%">
+      <col style="width:60%">
+      <col style="width:10%">
       <col style="width:10%">
       <col style="width:10%">
       <col style="width:10%">
     </colgroup>
     <tbody>
-      <tr><th>result</th><th>entity count</th><th>autoscheduled</th><th>complete</th>
+      <tr><th>result</th><th>entity count</th><th>canceled</th><th>autoscheduled</th><th>complete</th>
         <% @results.each do |x| %>
         <tr>
           <td><a href="/v1/<%=@project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity.to_s %></a> </td>
           <td><%= h x.entities.count %> </td>
+          <td><%= h x.canceled %> </td>
           <td><%= h x.autoscheduled %> </td>
           <td><%= x.complete ? "complete" : "incomplete" %></td>
         </tr>

@@ -96,6 +96,8 @@ module Data
         entity_name =~ /^.*googleadapis.com$/              ||
         entity_name =~ /^.*googleapis.cn$/                 ||
         entity_name =~ /^.*googlecommerce.com$/            ||
+        entity_name =~ /^.*googlehosted.com$/              ||
+        entity_name =~ /^.*googlemail.com$/                ||
         entity_name =~ /^.*gstatic.cn$/                    ||
         entity_name =~ /^.*gstatic.com$/                   ||
         entity_name =~ /^.*gvt1.com$/                      ||
@@ -112,9 +114,9 @@ module Data
         entity_name =~ /^.*microsoft.com$/                 ||
         entity_name =~ /^.*msn.com$/                       ||
         entity_name =~ /^.*oclc.org$/                      ||
+        entity_name =~ /^.*office365.com$/                 ||
         entity_name =~ /^.*ogp.me$/                        ||
         entity_name =~ /^.*outlook.com$/                   ||
-        entity_name =~ /^.*outook.com$/                    ||
         entity_name =~ /^.*plus.google.com$/               ||
         entity_name =~ /^.*purl.org$/                      ||
         entity_name =~ /^.*rdfs.org$/                      ||
