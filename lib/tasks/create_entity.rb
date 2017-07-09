@@ -6,7 +6,7 @@ class CreateEntity < BaseTask
       :name => "create_entity",
       :pretty_name => "Create Entity",
       :authors => ["jcran"],
-      :description => "This just creates an entity.",
+      :description => "This task simply creates an entity.",
       :references => [],
       :type => "discovery",
       :passive => true,
