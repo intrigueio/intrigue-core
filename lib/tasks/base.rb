@@ -20,12 +20,6 @@ class BaseTask
     @task_result = Intrigue::Model::TaskResult.first(:id => task_result_id)
     raise "Unable to find task result: #{task_result_id}. Bailing." unless @task_result
 
-    # Handle pauses
-    while @task_result.paused
-      _log "I has been paused, waiting..."
-      sleep 10
-    end
-
     # Handle cancellation
     if @task_result.canceled
       _log_error "I was canceled, returning!"
