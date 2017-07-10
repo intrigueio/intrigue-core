@@ -1,6 +1,6 @@
 body {
-  background-image:url('/img/billie_holiday.png');
-  color:black;
+  background-image:url('/img/classy_fabric.png');
+  color:white;
   /* padding-top: 60px; /* When using the navbar-top-fixed */
 }
 
@@ -16,11 +16,11 @@ pre {
 }
 
 a:link {
-  color: #225FA1;
+  color: #1ab6ff;
 }
 
 a:visited {
-  color: #225FA1;
+  color: #1ab6ff;
 }
 
 a:hover {

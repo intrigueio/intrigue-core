@@ -23,7 +23,7 @@
 
 Aliases: <br/>
 <ul>
-<%=out = ""; results = @entity.get_aliases.uniq.sort_by{|x|x.name}; results.each {|x| out << "<li><a href='/v1/#{@project_name}/entities/#{x.id}'>#{h x.name}</a></li>"; } if results; out %>
+<%=out = ""; results = @entity.aliases.uniq.sort_by{|x|x.name}; results.each {|x| out << "<li><a href='/v1/#{@project_name}/entities/#{x.id}'>#{h x.name}</a></li>"; } if results; out %>
 </ul>
 
 Tasks that created this entity:<br/>

@@ -19,22 +19,28 @@ class IntrigueApp < Sinatra::Base
         Sequel.ilike(:details_raw, "%#{@search_string}%"))) if @search_string
 
       # Do the meta-analysis
-      @entities = []
-      selected_entities.each do |se|
-        alias_map = [se] | se.aliases.map{|a| a}
 
-        merged = false
-        @entities.each do |e|
-          e.each do |x|
-            if alias_map.include? x
-              e = e | alias_map
-              merged = true
-            end
+      meta_entities = selected_entities.map {|x| [x] | x.aliases }
+
+      @entities = []
+      meta_entities.each do |me|
+        temp = []
+        meta_entities.each do |me2|
+          # if they have elements in common, and they're not
+          # eactly the same... add the intersection to our temp array
+          #puts "DEBUG me:            #{me}"
+          #puts "DEBUG me2:           #{me2}"
+          #puts "DEBUG (me&me2).any?: #{(me&me2).any?}"
+          if (me&me2).any?
+            #puts "DEBUG ADDING (me|me2):      #{(me|me2)}"
+            temp << (me|me2).flatten
           end
         end
 
-        @entities << alias_map unless merged
+        @entities << temp.flatten.sort_by{|x| x.name }.uniq
       end
+
+      @entities.uniq!
 
       erb :'entities/index_meta'
     end
