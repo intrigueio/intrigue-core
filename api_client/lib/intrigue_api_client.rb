@@ -4,6 +4,10 @@ require 'rest_client'
 
 class IntrigueApi
 
+    def self.version
+      1.2.1
+    end
+
     def initialize(uri="http://127.0.0.1:7777/v1",key="")
       @intrigue_basedir = File.dirname(__FILE__)
       @server_uri = uri

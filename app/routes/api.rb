@@ -2,19 +2,11 @@ class IntrigueApp < Sinatra::Base
   namespace '/v1' do
 
     ###
-    ### UPDATE
+    ### version
     ###
-    #get '/system_update' do
-    #  global_config = Intrigue::Config::GlobalConfig.new
-    #
-    #  if global_config.config["environment"] == "production"
-    #    Dir.chdir($intrigue_basedir) do
-    #      result = `git checkout master && git pull origin master`
-    #      Thread.new { `sleep 10 && service intrigue restart` }
-    #    end
-    #  end
-    #result
-    #end
+    get "/version.json" do
+      { :version => IntrigueApp.version }.to_json
+    end
 
     ###                  ###
     ### System Config    ###

@@ -1,3 +1,5 @@
+require_relative 'version'
+
 require_relative "helpers"
 
 require_relative "routes/api"
