@@ -26,13 +26,7 @@ class IntrigueApp < Sinatra::Base
       meta_entities.each do |me|
         temp = []
         meta_entities.each do |me2|
-          # if they have elements in common, and they're not
-          # eactly the same... add the intersection to our temp array
-          #puts "DEBUG me:            #{me}"
-          #puts "DEBUG me2:           #{me2}"
-          #puts "DEBUG (me&me2).any?: #{(me&me2).any?}"
-          if (me&me2).any?
-            #puts "DEBUG ADDING (me|me2):      #{(me|me2)}"
+          if (me&me2).any? && !(me-me2).empty?
             temp << (me|me2).flatten
           end
         end

@@ -281,7 +281,7 @@ class IntrigueApp < Sinatra::Base
       result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       return unless result
 
-      {:data => result.log}.to_json
+      {:data => result.get_log}.to_json
     end
 
     ### Handling

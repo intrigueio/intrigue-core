@@ -56,7 +56,11 @@ module Intrigue
         end
       end
 
-      def log
+      def log(message)
+        logger.log(message)
+      end
+      
+      def get_log
         logger.full_log
       end
 

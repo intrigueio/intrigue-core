@@ -32,10 +32,6 @@ module Strategy
 
       elsif entity.type_string == "IpAddress"
 
-        #start_recursive_task(task_result,"search_censys",entity)
-
-        start_recursive_task(task_result,"nmap_scan",entity)
-
         # Prevent us from hammering on whois services
         unless ( entity.created_by?("net_block_expand")||
                  entity.created_by?("masscan_scan") ||
@@ -52,9 +48,10 @@ module Strategy
 
         # Make sure it's small enough not to be disruptive, and if it is, scan it
         if entity.details["whois_full_text"] =~ /#{task_result.scan_result.base_entity.name}/
-          start_recursive_task(task_result,"net_block_expand",entity, [])
+          #start_recursive_task(task_result,"net_block_expand",entity, [])
+          start_recursive_task(task_result,"nmap_scan",entity)
         else
-          puts "Cowardly refusing to expand this netblock."
+          task_result.log "Cowardly refusing to expand this netblock."
         end
 
 
@@ -77,7 +74,7 @@ module Strategy
           {"name" => "user_list", "value" => "admin, test, server-status, .svn, .git, wp-config.php, config.php, configuration.php, LocalSettings.php, mediawiki/LocalSettings.php, mt-config.cgi, mt-static/mt-config.cgi, settings.php, .htaccess, config.bak, config.php.bak, config.php~, #config.php#, config.php.save, .config.php.swp, config.php.swp, config.php.old"}]) unless entity.created_by? "uri_brute"
 
       else
-        puts "No actions for entity: #{entity.type}##{entity.name}"
+        task_result.log "No actions for entity: #{entity.type}##{entity.name}"
         return
       end
     end
