@@ -59,7 +59,7 @@ module Intrigue
       def log(message)
         logger.log(message)
       end
-      
+
       def get_log
         logger.full_log
       end
@@ -94,7 +94,7 @@ module Intrigue
           "complete" => complete,
           "base_entity" => base_entity.export_hash,
           "entities" => entities.map{ |e| {:id => e.id, :type => e.type, :name => e.name, :details => e.details } },
-          "log" => log
+          "log" => get_log
         }
       end
 
