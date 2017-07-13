@@ -123,7 +123,7 @@ module Parse
     # Scan for email addresses
     addrs = content.scan(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,8}/)
     addrs.each do |addr|
-      x = _create_entity("EmailAddress", {"name" => addr, "uri" => source_uri}) unless addr =~ /.png$|.jpg$|.gif$|.bmp$|.jpeg$/
+      x = _create_entity("EmailAddress", {"name" => addr, "extracted_from" => source_uri}) unless addr =~ /.png$|.jpg$|.gif$|.bmp$|.jpeg$/
     end
 
   end
@@ -191,24 +191,20 @@ module Parse
       # Parse the file
       yomu = Yomu.new file
 
-      ### Handle PDF
+      # Handle PDF
       if yomu.metadata["Content-Type"] == "application/pdf"
-
         _create_entity "Person",
-          { "name" => yomu.metadata["Author"], "source_uri" => uri } if yomu.metadata["Author"]
-        _create_entity "SoftwarePackage",
-        { "name" => "#{yomu.metadata["xmp:CreatorTool"]} / #{yomu.metadata["producer"] }",
+          { "name" => yomu.metadata["Author"], "extracted_from" => uri } if yomu.metadata["Author"]
+        _create_entity "SoftwarePackage", { "name" => "#{yomu.metadata["xmp:CreatorTool"]} / #{yomu.metadata["producer"] }",
           "creator" => "#{yomu.metadata["xmp:CreatorTool"]}",
           "producer" => "#{yomu.metadata["producer"]}",
-          "source_uri" => uri } if (yomu.metadata["producer"] || yomu.metadata["xmp:CreatorTool"])
-
-      # Handle MP3/4
-      elsif yomu.metadata["Content-Type"] == "audio/mpeg"
-        _create_entity "Person", {"name" => yomu.metadata["meta:author"], "source_uri" => uri }
-        _create_entity "Person", {"name" => yomu.metadata["creator"], "source_uri" => uri }
-        _create_entity "Person", {"name" => yomu.metadata["xmpDM:artist"], "source_uri" => uri }
-      else
-        _create_entity "Info", {"name" => "Metadata (#{uri})", "content" => yomu.metadata.to_json, "uri" => "#{uri}", "source_uri" => uri }
+          "extracted_from" => uri } if (yomu.metadata["producer"] || yomu.metadata["xmp:CreatorTool"])
+      elsif yomu.metadata["Content-Type"] == "audio/mpeg" # Handle MP3/4
+        _create_entity "Person", {"name" => yomu.metadata["meta:author"], "extracted_from" => uri }
+        _create_entity "Person", {"name" => yomu.metadata["creator"], "extracted_from" => uri }
+        _create_entity "Person", {"name" => yomu.metadata["xmpDM:artist"], "extracted_from" => uri }
+      else # Everything else!
+        _create_entity "File", {"name" => "#{uri}", "uri" => "#{uri}", "raw_metadata" => yomu.metadata.to_json, "extracted_from" => uri }.merge(yomu.metadata)
       end
 
       # Look for entities in the text of the entity

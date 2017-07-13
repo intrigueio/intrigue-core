@@ -12,10 +12,12 @@ class NetBlock < Intrigue::Model::Entity
 
   def validate_entity
 
-    # required:
+    # fail if they don't exist 
     name =~ /^\w.*$/
-    # suggested:
+
+    # warn if they don't exist:
     # details["organization_reference"]
+    # details["whois_full_text"]
   end
 
   def detail_string

@@ -2,7 +2,7 @@
 while true; do cat heap*.json | ruby -rjson -ne ' obj = JSON.parse($_).values_at("file","line","type"); puts obj.join(":") if obj.first ' | uniq -c   | sort -n   | tail -20; done
 =end
 
-if ENV["PROFILE"]
+if ENV["SIDEKIQ_PROFILE"]
   require "objspace"
   ObjectSpace.trace_object_allocations_start
   Sidekiq.logger.info "allocations tracing enabled"

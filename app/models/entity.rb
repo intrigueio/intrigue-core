@@ -83,8 +83,8 @@ module Intrigue
 
       def set_details(hash)
         self.lock!
-        self.set(:details => hash)
-        self.set(:details_raw => hash)
+        self.set(:details => hash.sanitize_unicode)
+        self.set(:details_raw => hash.sanitize_unicode)
         save
       end
 

@@ -57,13 +57,15 @@ function delete_entity(id)
   <p></p>
   <table class="sortable" border="1" width=100%>
     <colgroup>
-      <col style="width:100%">
+      <col style="width:30%">
+      <col style="width:70%">
     </colgroup>
     <tbody>
-      <tr><th>name</th></tr>
+      <tr><th>name</th><th>details</th></tr>
       <% @entities.each do |eg| %>
         <tr>
           <td><% eg.each do |e| %>[<a href="/v1/<%=@project_name%>/entities/<%=e.id%>"> <%= h e %> </a>] <% end %></td>
+          <td><% eg.each do |e| %>[<a href="/v1/<%=@project_name%>/entities/<%=e.id%>"> <%= h e.detail_string %> </a>] <% end %></td>
           <!--<td><%= out =[];eg.each{|x| out << x.details.tap{|y| y.delete("response_data"); y.delete("whois_full_text"); y.delete("text") }}; out; %></td>-->
         </tr>
       <% end %>
