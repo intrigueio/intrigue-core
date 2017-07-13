@@ -1,6 +1,3 @@
-require 'socket'
-require 'openssl'
-
 module Intrigue
 class UriExtractMetadata < BaseTask
 
@@ -33,59 +30,8 @@ class UriExtractMetadata < BaseTask
     hostname = URI.parse(uri).host
     port = URI.parse(uri).port
 
-    #_gather_ssl_cert(hostname,port) if uri.parse =~/^https/
-
     download_and_extract_metadata uri
 
-  end
-
-
-  def _gather_ssl_cert(hostname,port)
-    begin
-      # Create a socket and connect
-      tcp_client = TCPSocket.new(hostname, port)
-      ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
-
-      # Grab the cert
-      ssl_client.connect
-
-      # Parse the cert
-      cert = OpenSSL::X509::Certificate.new(ssl_client.peer_cert)
-
-      # Check the subjectAltName property, and if we have names, here, parse them.
-      cert.extensions.each do |ext|
-        if ext.oid =~ /subjectAltName/
-
-          alt_names = ext.value.split(",").collect do |x|
-            x.gsub(/DNS:/,"").strip
-          end
-
-          alt_names.each do |alt_name|
-            _create_entity "DnsRecord", { "name" => alt_name }
-          end
-
-        end
-      end
-
-      # Close the sockets
-      ssl_client.sysclose
-      tcp_client.close
-
-      # Create an SSL Certificate entity
-      _create_entity "SslCertificate", {
-        "name" => cert.subject.to_s,
-        "text" => cert.to_text.to_s
-      }
-
-    rescue SocketError => e
-      _log_error "Caught an error: #{e}"
-    rescue OpenSSL::SSL::SSLError => e
-      _log_error "Caught an error: #{e}"
-    rescue Errno::ECONNRESET => e
-      _log_error "Caught an error: #{e}"
-    rescue Errno::ECONNREFUSED => e
-      _log_error "Caught an error: #{e}"
-    end
   end
 
 
