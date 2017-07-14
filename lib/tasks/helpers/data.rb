@@ -107,6 +107,7 @@ module Data
         entity_name =~ /^.*incapdns.net$/                  ||
         entity_name =~ /^.*instagram.com$/                 ||
         entity_name =~ /^.*localhost$/                     ||
+        entity_name =~ /^.*lync.com$/                      ||
         entity_name =~ /^.*mandrillapp.com$/               ||
         entity_name =~ /^.*marketo.com$/                   ||
         entity_name =~ /^.*metric.gstatic.com$/            ||
@@ -140,6 +141,7 @@ module Data
         entity_name =~ /^.*youtube.com$/                   ||
         entity_name =~ /^.*youtubeeducation.com$/          ||
         entity_name =~ /^.*ytimg.com$/                     ||
+        entity_name =~ /^.*zendesk.com$/                   ||
         entity_name =~ /^.*zepheira.com$/                  ||
         entity_name =~ /^.*1e100.com$/)
   end
