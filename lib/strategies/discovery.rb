@@ -47,7 +47,8 @@ module Strategy
       elsif entity.type_string == "NetBlock"
 
         # Make sure it's small enough not to be disruptive, and if it is, scan it
-        if entity.details["whois_full_text"] =~ /#{task_result.scan_result.base_entity.name}/
+        # also skip ipv6 
+        if entity.details["whois_full_text"] =~ /#{task_result.scan_result.base_entity.name}/ && !(entity.name =~ /:/)
           #start_recursive_task(task_result,"net_block_expand",entity, [])
           start_recursive_task(task_result,"nmap_scan",entity)
         else

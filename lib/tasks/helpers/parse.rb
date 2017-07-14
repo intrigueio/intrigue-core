@@ -141,7 +141,7 @@ module Parse
     # Scan for dns records
     dns_records = content.scan(/^[A-Za-z0-9]+\.[A-Za-z0-9]+\.[a-zA-Z]{2,6}$/)
     dns_records.each do |dns_record|
-      x = _create_entity("Host", {"name" => dns_record, "uri" => source_uri})
+      x = _create_entity("DnsRecord", {"name" => dns_record, "extracted_from" => source_uri})
     end
   end
 
@@ -158,7 +158,7 @@ module Parse
     # Scan for phone numbers
     phone_numbers = content.scan(/((\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4})/)
     phone_numbers.each do |phone_number|
-      x = _create_entity("PhoneNumber", { "name" => "#{phone_number[0]}", "uri" => source_uri})
+      x = _create_entity("PhoneNumber", { "name" => "#{phone_number[0]}", "extracted_from" => source_uri})
     end
   end
 
@@ -175,7 +175,7 @@ module Parse
     # Scan for uris
     urls = content.scan(/https?:\/\/[\S]+/)
     urls.each do |url|
-      _create_entity("Uri", {"name" => url, "source" => source_uri })
+      _create_entity("Uri", {"name" => url, "extracted_from" => source_uri })
     end
   end
 

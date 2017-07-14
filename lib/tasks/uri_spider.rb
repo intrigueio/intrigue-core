@@ -70,7 +70,7 @@ class UriSpider < BaseTask
 
     Typhoeus::Config.user_agent = @opt_user_agent
 
-    Arachnid.new(uri).crawl({
+    Arachnid.new(uri, {:exclude_urls_with_extensions => false}).crawl({
         :threads => @opt_threads,
         :max_urls => @opt_max_pages,
         :user_agent => @opt_user_agent
@@ -119,7 +119,7 @@ class UriSpider < BaseTask
               # if we got a pass, check to make sure we don't already have it, and add it
               if pattern_allowed
                 unless dns_records.include?(host)
-                  _create_entity("DnsRecord", "name" => host, "source_uri" => page_uri)
+                  _create_entity("DnsRecord", "name" => host, "extracted_from" => page_uri)
                   dns_records << host
                 end
               end
@@ -138,11 +138,9 @@ class UriSpider < BaseTask
 
         # A list of all filetypes we're capable of doing something with
         interesting_types = [
-          "BIN","DOC","DOCX","EPUB","EXE","ICA","INDD",
-          "MP3","MP4","ODG","ODP","ODS","ODT",
-          "PDF","PPS","PPSX","PPT","PPTX","PUB",
-          "RDP","SVG","SVGZ","SXC","SXI","SXW","TIF",
-          "TXT","WPD","XLS","XLSX"]
+          "BIN","DOC","DOCX","EPUB","EXE","JPG","JPEG","ICA","INDD",
+          "MP3","MP4","ODG","ODP","ODS","ODT","PDF","PPS","PPSX","PPT","PPTX","PUB",
+          "RDP","SVG","SVGZ","SXC","SXI","SXW","TIF","TIFF", "TXT","WPD","XLS","XLSX"]
 
         if interesting_types.include? filetype
           download_and_extract_metadata page_uri

@@ -189,9 +189,7 @@ module Intrigue
         text
       end
 
-
       ### VALIDATIONS!
-
       # https://tools.ietf.org/html/rfc1123
       def _v4_regex
         /(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/
