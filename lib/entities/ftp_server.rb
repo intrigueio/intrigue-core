@@ -14,7 +14,7 @@ class FtpServer < Intrigue::Model::Entity
   end
 
   def detail_string
-    "Banner: #{details["banner"]}"
+    "#{details["banner"]}"
   end
 
 end

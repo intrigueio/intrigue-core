@@ -25,7 +25,7 @@ class NetworkService < Intrigue::Model::Entity
   end
 
   def detail_string
-    "Service: #{details["fingerprint"]}"
+    "#{details["fingerprint"]}"
   end
 
 

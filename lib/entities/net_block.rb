@@ -12,7 +12,7 @@ class NetBlock < Intrigue::Model::Entity
 
   def validate_entity
 
-    # fail if they don't exist 
+    # fail if they don't exist
     name =~ /^\w.*$/
 
     # warn if they don't exist:
@@ -21,7 +21,7 @@ class NetBlock < Intrigue::Model::Entity
   end
 
   def detail_string
-    "Ref: #{details["organization_reference"]}"
+    "#{details["organization_reference"]}"
   end
 
 end

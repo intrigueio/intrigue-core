@@ -122,11 +122,11 @@ module Intrigue
       end
 
       def to_s
-        "#{type_string}: #{name} #{'<H>' if hidden}"
+        "#{type_string}: #{name}#{' <H>' if hidden}"
       end
 
       def inspect
-        "#{type_string}: #{name} #{'<H>' if hidden}"
+        "#{type_string}: #{name}#{' <H>' if hidden}"
       end
 
       def type_string

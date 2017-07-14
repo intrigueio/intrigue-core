@@ -14,7 +14,7 @@ class SslCertificate < Intrigue::Model::Entity
   end
 
   def detail_string
-    "Issuer: #{details["issuer"]}"
+    "#{details["issuer"]}"
   end
 end
 end

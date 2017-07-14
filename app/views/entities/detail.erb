@@ -38,7 +38,7 @@ Tasks run on this entity:<br/>
 
 Entities discovered from this entity: <br/>
 <ul>
-<%=out = ""; results = Intrigue::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => @entity); results.each {|r| r.entities.each {|x| out << "<li><a href='/v1/#{@project_name}/entities/#{x.id}'> #{h x}</a></li>"; }}; out %>
+<%=out = ""; results = Intrigue::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => @entity); results.each {|r| r.entities.each {|x| out << "<li><a href='/v1/#{@project_name}/entities/#{x.id}'>#{h x}</a></li>"; }}; out %>
 </ul>
 
 </div>

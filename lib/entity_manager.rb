@@ -36,7 +36,7 @@ class EntityManager
     # Do a lookup to make sure we have the latest...
     tr = Intrigue::Model::TaskResult.first(:id => task_result.id)
     if tr.canceled
-      # We should try logging here!!! 
+      # We should try logging here!!!
       return
     end
 
@@ -56,24 +56,28 @@ class EntityManager
       # Create a new entity, validating the attributes
       type = resolve_type(type_string)
       $db.transaction do
-        entity = Intrigue::Model::Entity.create({
-          :name =>  downcased_name,
-          :project => project,
-          :type => type,
-          :details => details,
-          :details_raw => details,
-          :hidden => (hidden ? true : false )
-         })
+        begin
+          entity = Intrigue::Model::Entity.create({
+            :name =>  downcased_name,
+            :project => project,
+            :type => type,
+            :details => details,
+            :details_raw => details,
+            :hidden => (hidden ? true : false )
+           })
+        rescue Encoding::UndefinedConversionError => e
+          task_result.log "ERROR! Unable to create entity: #{e}"
+        end
       end
     end
 
     unless entity
-      puts "ERROR! Unable to create or find entity: #{type}##{downcased_name}"
+      task_result.log "ERROR! Unable to create or find entity: #{type}##{downcased_name}"
       return nil
     end
 
     unless Intrigue::Model::Entity.find(:id => entity.id).validate_entity
-      puts "ERROR! validation of entity failed: #{entity}"
+      task_result.log "ERROR! validation of entity failed: #{entity}"
       return nil
     end
 
@@ -108,12 +112,12 @@ class EntityManager
   end
 
   def self.enrich_entity(entity, task_result=nil)
-    puts  "STARTING enrichment on #{entity}"
+    task_result.log  "STARTING enrichment on #{entity}" if task_result
     return unless entity
 
     # Check if we've alrady run first
     if entity.enriched
-      puts "SKIPPING Enrichment already happened for #{entity}!"
+      task_result.log "SKIPPING Enrichment already happened for #{entity}!" if task_result
       return
     end
 

@@ -43,7 +43,7 @@ class EnrichIpAddress < BaseTask
         :nameserver => opt_resolver,
         :search => [])
 
-      result = resolver.query(lookup_name, Dnsruby::Types::PTR)
+      result = resolver.query(lookup_name, Dnsruby::Types::ANY)
       _log "Processing: #{result}"
 
       # Let us know if we got an empty result

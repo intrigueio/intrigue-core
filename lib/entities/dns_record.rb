@@ -18,7 +18,7 @@ class DnsRecord < Intrigue::Model::Entity
   end
 
   def detail_string
-    "OS: #{details["os"].to_a.first}"
+    ""
   end
 
 end

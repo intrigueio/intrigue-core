@@ -5,6 +5,8 @@ require 'resolv'
 module Intrigue
 class MasscanTask < BaseTask
 
+  include Intrigue::Task::Dns
+
   def self.metadata
     {
       :name => "masscan_scan",
@@ -32,10 +34,6 @@ class MasscanTask < BaseTask
     to_scan = _get_entity_name
     raise "INVALID INPUT: #{to_scan}" unless match_regex :ip_address, to_scan
 
-    unless to_scan =~ /\d.\d.\d.\d/
-      _log_error "unsupported scan format"
-    end
-
     ### SECURITY!
     opt_port = _get_option("port").to_i
     raise "INVALID INPUT: #{opt_port}" unless match_regex :integer, opt_port
@@ -54,31 +52,39 @@ class MasscanTask < BaseTask
       next if line =~ /^#.*/
 
       # Get the discovered host (one per line) & create an ip address
-      host = line.delete("\n").strip.split(" ")[3] unless line.nil?
+      line = line.delete("\n").strip.split(" ")[3] unless line.nil?
+      _create_entity("IpAddress", { "name" => line })
 
-      # Should we try to resolve first, and fall back on IP?
-      _create_entity("IpAddress", { "name" => host })
+      # Resolve, and iterate on each line
+      hostnames = resolve_ip(line)
+      hostnames.each do |host|
 
-      if [80,443,8080,8081,8443].include?(opt_port)
-        ssl = true if [443,8443].include?(opt_port)
-        protocol = ssl ? "https://" : "http://" # construct uri
-        _create_entity("Uri", {"name" => "#{protocol}#{host}:#{opt_port}", "uri" => "#{protocol}#{host}:#{opt_port}" })
+        next if host =~ /\.arpa$/
 
-      elsif opt_port == 21
-        uri = "ftp://#{host.ip}:#{opt_port}"
-        _create_entity("FtpServer", {
-          "name" => "#{host}:#{opt_port}",
-          "ip_address" => "#{host}",
-          "port" => opt_port,
-          "proto" => "tcp",
-          "uri" => uri  })
+        # Should we try to resolve first, and fall back on IP?
+        _create_entity("DnsRecord", { "name" => host })
 
-      else
-        _create_entity("NetworkService", {
-          "name" => "#{host}:#{opt_port}/tcp",
-          "port_num" => opt_port,
-          "proto" => "tcp"
-        })
+        if [80,443,8080,8081,8443].include?(opt_port)
+          ssl = true if [443,8443].include?(opt_port)
+          protocol = ssl ? "https://" : "http://" # construct uri
+          _create_entity("Uri", {"name" => "#{protocol}#{host}:#{opt_port}", "uri" => "#{protocol}#{host}:#{opt_port}" })
+
+        elsif opt_port == 21
+          uri = "ftp://#{host.ip}:#{opt_port}"
+          _create_entity("FtpServer", {
+            "name" => "#{host}:#{opt_port}",
+            "ip_address" => "#{host}",
+            "port" => opt_port,
+            "proto" => "tcp",
+            "uri" => uri  })
+
+        else
+          _create_entity("NetworkService", {
+            "name" => "#{host}:#{opt_port}/tcp",
+            "port_num" => opt_port,
+            "proto" => "tcp"
+          })
+        end
       end
       ### End Resolution
 

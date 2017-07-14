@@ -12,6 +12,7 @@ require_relative 'task_factory'
 
 ### Mixins with common task functionality
 require_relative 'tasks/helpers/data'
+require_relative 'tasks/helpers/dns'
 require_relative 'tasks/helpers/generic'
 require_relative 'tasks/helpers/parse'
 require_relative 'tasks/helpers/regex'
