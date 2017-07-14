@@ -29,8 +29,14 @@ class EnrichIpAddress < BaseTask
 
     opt_resolver = _get_option "resolver"
     opt_skip_hidden = _get_option "skip_hidden"
-
     lookup_name = _get_entity_name
+
+    # Set IP version
+    if @entity.name =~ /:/
+      @entity.set_detail("version",6)
+    else
+      @entity.set_detail("version",4)
+    end
 
     begin
       resolver = Dnsruby::Resolver.new(
@@ -56,7 +62,7 @@ class EnrichIpAddress < BaseTask
         ip_addresses << resource.address.to_s if resource.respond_to? :address
         dns_names << resource.domainname.to_s if resource.respond_to? :domainname
         dns_names << resource.name.to_s.downcase
-      end #end result.answer
+      end # end result.answer
 
       dns_names.sort.uniq.each do |name|
 

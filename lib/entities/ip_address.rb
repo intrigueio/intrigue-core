@@ -11,6 +11,9 @@ class IpAddress < Intrigue::Model::Entity
 
   def validate_entity
     return (name =~ _v4_regex || name =~ _v6_regex)
+
+    # warn if they don't exist:
+    # details["version"]
   end
 
   def primary
