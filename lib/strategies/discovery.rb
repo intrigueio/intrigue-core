@@ -39,6 +39,8 @@ module Strategy
           start_recursive_task(task_result,"whois",entity)
         end
 
+        start_recursive_task(task_result,"nmap_scan",entity)
+
       elsif entity.type_string == "String"
 
         # Search, only snag the top result
@@ -47,10 +49,10 @@ module Strategy
       elsif entity.type_string == "NetBlock"
 
         # Make sure it's small enough not to be disruptive, and if it is, scan it
-        # also skip ipv6 
+        # also skip ipv6
         if entity.details["whois_full_text"] =~ /#{task_result.scan_result.base_entity.name}/ && !(entity.name =~ /:/)
           #start_recursive_task(task_result,"net_block_expand",entity, [])
-          start_recursive_task(task_result,"nmap_scan",entity)
+          start_recursive_task(task_result,"masscan_scan",entity)
         else
           task_result.log "Cowardly refusing to expand this netblock."
         end
