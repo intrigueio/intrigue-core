@@ -25,6 +25,7 @@ function delete_entity(id)
 
     Search:
     <input type="text" style='width:100%' class="form-control sm" id="search_string" name="search_string" value="<%= h params["search_string"]%>"><br/>
+    <input id="inverse" name="inverse" type="checkbox"> Inverse <br/>
 
     Types:<br/>
     <select size=10 style='height:200%; color:#000000;' multiple name="entity_types[]">

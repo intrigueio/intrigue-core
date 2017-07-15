@@ -5,6 +5,7 @@ class IntrigueApp < Sinatra::Base
       @result_count = 100
 
       params[:search_string] == "" ? @search_string = nil : @search_string = params[:search_string]
+      params[:inverse] == "on" ? @inverse = true : @inverse = false
       params[:entity_types] == "" ? @entity_types = nil : @entity_types = params[:entity_types]
       (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
 
@@ -14,12 +15,19 @@ class IntrigueApp < Sinatra::Base
       selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
 
       ## We have some very rudimentary searching capabilities here
-      selected_entities = selected_entities.where(Sequel.|(
-        Sequel.ilike(:name, "%#{@search_string}%"),
-        Sequel.ilike(:details_raw, "%#{@search_string}%"))) if @search_string
+      if @search_string
+        if @inverse
+          selected_entities = selected_entities.where(Sequel.|(
+            ~Sequel.ilike(:name, "%#{@search_string}%"),
+            ~Sequel.ilike(:details_raw, "%#{@search_string}%")))
+        else
+          selected_entities = selected_entities.where(Sequel.|(
+            Sequel.ilike(:name, "%#{@search_string}%"),
+            Sequel.ilike(:details_raw, "%#{@search_string}%")))
+        end
+      end
 
       # Do the meta-analysis
-
       meta_entities = selected_entities.map {|x| [x] | x.aliases }
 
       @entities = []
@@ -44,6 +52,7 @@ class IntrigueApp < Sinatra::Base
 
       params[:search_string] == "" ? @search_string = nil : @search_string = params[:search_string]
       params[:entity_types] == "" ? @entity_types = nil : @entity_types = params[:entity_types]
+      params[:inverse] == "on" ? @inverse = true : @inverse = false
       (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
 
       selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden=>false).order(:name)
@@ -51,10 +60,19 @@ class IntrigueApp < Sinatra::Base
       ## Filter if we have a type
       selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
 
-      ## We have some very rudimentary searching capabilities here
-      selected_entities = selected_entities.where(Sequel.|(
-        Sequel.ilike(:name, "%#{@search_string}%"),
-        Sequel.ilike(:details_raw, "%#{@search_string}%"))) if @search_string
+      if @search_string
+        if @inverse
+          selected_entities = selected_entities.exclude(Sequel.|(
+            Sequel.ilike(:name, "%#{@search_string}%"),
+            Sequel.ilike(:details_raw, "%#{@search_string}%")))
+        else
+          selected_entities = selected_entities.where(Sequel.|(
+            Sequel.ilike(:name, "%#{@search_string}%"),
+            Sequel.ilike(:details_raw, "%#{@search_string}%")))
+        end
+      end
+
+      #puts "DEBUG SQL: #{selected_entities.sql}"
 
       # PAGINATE
       @entities_count = selected_entities.count
