@@ -9,10 +9,10 @@ Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_na
     <input type="text" style='width:100%' class="form-control sm" id="search_string" name="search_string">
     <input id="inverse" name="inverse" type="checkbox"> Inverse <br/>
     <br/><br/>
-    <input id="show_cancelled" name="show_cancelled" type="checkbox"> Show Cancelled <br/>
-    <input id="show_cancelled" name="show_enrichment" type="checkbox"> Show Enrichment <br/>
-    <input id="show_autoscheduled" name="show_autoscheduled" type="checkbox" checked> Show Autoscheduled <br/>
-    <input id="show_complete" name="show_complete" type="checkbox" checked> Show Complete <br/>
+    <input id="hide_cancelled" name="hide_cancelled" type="checkbox"> Hide Cancelled <br/>
+    <input id="hide_enrichment" name="hide_enrichment" type="checkbox"> Hide Enrichment <br/>
+    <input id="hide_autoscheduled" name="hide_autoscheduled" type="checkbox"> Hide Autoscheduled <br/>
+    <input id="hide_complete" name="hide_complete" type="checkbox"> Hide Complete <br/>
     <input class="btn btn-primary" type="submit" value="Search">
   </form>
 

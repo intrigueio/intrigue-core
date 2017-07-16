@@ -8,22 +8,27 @@ class IntrigueApp < Sinatra::Base
 
       params[:search_string] == "" ? @search_string = nil : @search_string = "#{params[:search_string]}"
       params[:inverse] == "on" ? @inverse = true : @inverse = false
-      params[:show_enrichment] == "on" ? @show_enrichment = true : @show_enrichment = false
-      params[:show_autoscheduled] == "on" ? @show_autoscheduled = true : @show_autoscheduled = false
-      params[:show_cancelled] == "on" ? @show_cancelled = true : @show_cancelled = false
-      params[:show_complete] == "on" ? @show_complete = true : @show_complete = false
+      params[:hide_enrichment] == "on" ? @hide_enrichment = true : @hide_enrichment = false
+      params[:hide_autoscheduled] == "on" ? @hide_autoscheduled = true : @hide_autoscheduled = false
+      params[:hide_cancelled] == "on" ? @hide_cancelled = true : @hide_cancelled = false
+      params[:hide_complete] == "on" ? @hide_complete = true : @hide_complete = false
 
       (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
 
       selected_results = Intrigue::Model::TaskResult.scope_by_project(@project_name).reverse(:timestamp_start)
-      selected_results = selected_results.where(Sequel.ilike(:name, "%#{@search_string}%")) if @search_string
-      selected_results = selected_results.exclude(Sequel.ilike(:name, "%enrich%")) unless @show_enrichment
-      selected_results = selected_results.exclude(:canceled) unless @show_cancelled
-      selected_results = selected_results.exclude(:autoscheduled) unless @show_autoscheduled
-      selected_results = selected_results.exclude(:complete) unless @show_complete
 
+      if @search_string
+        if @inverse
+          selected_results = selected_results.exclude(Sequel.ilike(:name, "%#{@search_string}%"))
+        else
+          selected_results = selected_results.where(Sequel.ilike(:name, "%#{@search_string}%"))
+        end
+      end
 
-      #puts selected_results.sql
+      selected_results = selected_results.exclude(Sequel.ilike(:name, "%enrich%")) if @hide_enrichment
+      selected_results = selected_results.exclude(:canceled) if @hide_cancelled
+      selected_results = selected_results.exclude(:autoscheduled) if @hide_autoscheduled
+      selected_results = selected_results.exclude(:complete) if @hide_complete
 
       # PAGINATE
       @results = selected_results.extension(:pagination).paginate(@page,@result_count)

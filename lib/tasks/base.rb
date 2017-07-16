@@ -22,7 +22,7 @@ class BaseTask
 
     # Handle cancellation
     if @task_result.canceled
-      _log_error "I was canceled, returning!"
+      _log_error "I was cancelled, returning!"
     end
 
     begin

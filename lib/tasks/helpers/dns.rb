@@ -38,11 +38,13 @@ module Intrigue
           _log_error "Unable to resolve: #{lookup_name}, timed out: #{e}"
         rescue Errno::ENETUNREACH => e
           _log_error "Hit exception: #{e}. Are you sure you're connected?"
+        ensure
+          return false unless ip_addresses && dns_names
         end
 
         _log_good "Got... #{ip_addresses.concat(dns_names)}"
-
         ip_addresses.concat(dns_names)
+
       end
 
     end
