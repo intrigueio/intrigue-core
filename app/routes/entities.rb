@@ -52,11 +52,13 @@ class IntrigueApp < Sinatra::Base
         end
 
         @entities.uniq!
+        @entity_count = @entities.count
         erb :'entities/index_meta'
 
       else # normal flow, uncorrelated
 
         ## paginate
+        @entity_count = selected_entities.count
         @entities = selected_entities.extension(:pagination).paginate(@page,@result_count)
         erb :'entities/index'
       end
