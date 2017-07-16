@@ -6,14 +6,19 @@ Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_na
   <form class="form-horizontal" id="result_search" target="_self" method="get" action="/v1/<%=@project_name%>/results">
 
     Search:
-    <input type="text" style='width:100%' class="form-control sm" id="search_string" name="search_string"><br/>
+    <input type="text" style='width:100%' class="form-control sm" id="search_string" name="search_string">
+    <input id="inverse" name="inverse" type="checkbox"> Inverse <br/>
+    <br/><br/>
+    <input id="show_cancelled" name="show_cancelled" type="checkbox"> Show Cancelled <br/>
+    <input id="show_cancelled" name="show_enrichment" type="checkbox"> Show Enrichment <br/>
+    <input id="show_autoscheduled" name="show_autoscheduled" type="checkbox" checked> Show Autoscheduled <br/>
+    <input id="show_complete" name="show_complete" type="checkbox" checked> Show Complete <br/>
     <input class="btn btn-primary" type="submit" value="Search">
   </form>
 
 </div>
 
 <div class="col-sm-10">
-
   <%= "Page: #{@page}" %>
   <%= "Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %>
   <a href="<%=request.path%>?page=<%=@page-1%>&search_string=<%=@search_string%>">previous</a>
@@ -44,18 +49,14 @@ Task Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_na
       <col style="width:40%">
       <col style="width:10%">
       <col style="width:10%">
-      <col style="width:10%">
-      <col style="width:10%">
     </colgroup>
     <tbody>
-      <tr><th>timestamp</th><th>result</th><th>entity count</th><th>canceled</th><th>autoscheduled</th><th>complete</th>
+      <tr><th>timestamp</th><th>result</th><th>entity count</th><th>complete</th>
         <% @results.each do |x| %>
         <tr>
           <td><%= h x.timestamp_start %> </td>
           <td><a href="/v1/<%=@project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity.to_s %></a> </td>
           <td><%= h x.entities.count %> </td>
-          <td><%= h x.canceled %> </td>
-          <td><%= h x.autoscheduled %> </td>
           <td><%= x.complete ? "complete" : "incomplete" %></td>
         </tr>
         <% end %>

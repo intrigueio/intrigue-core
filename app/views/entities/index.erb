@@ -16,23 +16,24 @@ function delete_entity(id)
 
 <div class="col-sm-2">
   <p>
-  Entities Count: <%= @entities_count %><br/>
+  Entities Count: <%= @entities.count %><br/>
   Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>
-  <a href=<%="#{request.url}.csv"%>>Export CSV</a><br/>
+  <a href="/v1/<%=@project_name%>/entities.csv">Export CSV</a><br/>
   </p>
 
   <form class="form-horizontal" id="entity_search" target="_self" method="get" action="/v1/<%=@project_name%>/entities">
 
     Search:
-    <input type="text" style='width:100%' class="form-control sm" id="search_string" name="search_string" value="<%= h params["search_string"]%>"><br/>
-    <input id="inverse" name="inverse" type="checkbox"> Inverse <br/>
-
+    <input type="text" style='width:100%' class="form-control sm" id="search_string" name="search_string" value="<%= h params["search_string"]%>">
+    <input id="inverse" name="inverse" type="checkbox"> Inverse <br/><br/>
     Types:<br/>
     <select size=10 style='height:200%; color:#000000;' multiple name="entity_types[]">
       <% Intrigue::Model::Entity.descendants.map{|x|x.to_s}.sort.each do |d| %>
         <option value="<%=d%>"><%=d%></option>
       <% end %>
     </select><br/>
+    <input id="correlate" name="correlate" type="checkbox"> Correlate Entities <br/><br/>
+
 
     <input class="btn btn-primary" type="submit" value="Search">
   </form>

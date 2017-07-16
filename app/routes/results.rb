@@ -4,12 +4,26 @@ class IntrigueApp < Sinatra::Base
 
     get '/:project/results' do
       @result_count = 100
+      @exclude_enrichment = true
 
-      params[:search_string] == "" ? @search_string = nil : @search_string = params[:search_string]
+      params[:search_string] == "" ? @search_string = nil : @search_string = "#{params[:search_string]}"
+      params[:inverse] == "on" ? @inverse = true : @inverse = false
+      params[:show_enrichment] == "on" ? @show_enrichment = true : @show_enrichment = false
+      params[:show_autoscheduled] == "on" ? @show_autoscheduled = true : @show_autoscheduled = false
+      params[:show_cancelled] == "on" ? @show_cancelled = true : @show_cancelled = false
+      params[:show_complete] == "on" ? @show_complete = true : @show_complete = false
+
       (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
 
       selected_results = Intrigue::Model::TaskResult.scope_by_project(@project_name).reverse(:timestamp_start)
       selected_results = selected_results.where(Sequel.ilike(:name, "%#{@search_string}%")) if @search_string
+      selected_results = selected_results.exclude(Sequel.ilike(:name, "%enrich%")) unless @show_enrichment
+      selected_results = selected_results.exclude(:canceled) unless @show_cancelled
+      selected_results = selected_results.exclude(:autoscheduled) unless @show_autoscheduled
+      selected_results = selected_results.exclude(:complete) unless @show_complete
+
+
+      #puts selected_results.sql
 
       # PAGINATE
       @results = selected_results.extension(:pagination).paginate(@page,@result_count)
@@ -17,12 +31,14 @@ class IntrigueApp < Sinatra::Base
       erb :'results/index'
     end
 
+=begin
     # Kick off a task
     get '/:project/results/?' do
       search_string = params["search_string"]
       # get a list of task_results
       erb :'results/index'
     end
+=end
 
     # Allow cancellation
     get '/:project/results/:id/cancel' do
