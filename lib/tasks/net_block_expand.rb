@@ -1,5 +1,3 @@
-require 'ipaddr'
-
 module Intrigue
 class NetBlockExpand < BaseTask
 

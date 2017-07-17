@@ -1,6 +1,3 @@
-require 'open-uri'
-require 'yomu'
-
 module Intrigue
 module Task
 module Parse

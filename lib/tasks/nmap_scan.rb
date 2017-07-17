@@ -1,5 +1,3 @@
-require 'nmap/xml'
-
 module Intrigue
 class NmapScanTask < BaseTask
 

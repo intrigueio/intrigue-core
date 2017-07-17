@@ -1,5 +1,3 @@
-require 'towerdata_api'
-
 module Intrigue
 class SearchTowerdataTask < BaseTask
 

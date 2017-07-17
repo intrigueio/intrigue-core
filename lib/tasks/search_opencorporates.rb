@@ -1,5 +1,3 @@
-require 'opencorporates'
-
 module Intrigue
 class SearchOpencorporates < BaseTask
 

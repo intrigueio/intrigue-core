@@ -1,6 +1,3 @@
-require 'ipaddr'
-require 'screencap'
-
 module Intrigue
 class UriHttpScreenshot < BaseTask
 

@@ -1,7 +1,3 @@
-require 'nokogiri'
-require 'whois'
-require 'whois-parser'
-
 module Intrigue
 class WhoisOrgSearch < BaseTask
   include Intrigue::Task::Web

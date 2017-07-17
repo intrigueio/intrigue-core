@@ -1,5 +1,3 @@
-require 'digest'
-
 module Intrigue
 class EnrichUri < BaseTask
   include Intrigue::Task::Web

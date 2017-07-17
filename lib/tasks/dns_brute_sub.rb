@@ -1,8 +1,3 @@
-require 'resolv'
-require 'thread'
-require 'eventmachine'
-require 'resolv-replace'
-
 module Intrigue
 class DnsBruteSubTask < BaseTask
 

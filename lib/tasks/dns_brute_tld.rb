@@ -1,4 +1,3 @@
-require 'resolv'
 module Intrigue
 class DnsBruteTldTask < BaseTask
 

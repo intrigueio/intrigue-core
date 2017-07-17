@@ -1,4 +1,3 @@
-require 'uri'
 module Intrigue
 class UriGatherAndAnalyzeLinks  < BaseTask
 

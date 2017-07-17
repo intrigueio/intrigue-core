@@ -1,5 +1,3 @@
-require 'dnsruby'
-
 module Intrigue
 class DnsTransferZoneTask < BaseTask
 

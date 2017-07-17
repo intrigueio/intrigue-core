@@ -1,5 +1,3 @@
-require 'censys'
-
 module Intrigue
 class SearchCensysTask < BaseTask
 

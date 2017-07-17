@@ -1,4 +1,3 @@
-require 'net/dns'
 #
 # This task is an adaptation of DNSSnoopDogg by @felmoltor
 #  * https://github.com/felmoltor/DNSSnoopDogg/blob/master/dnssnoopdogg.rb

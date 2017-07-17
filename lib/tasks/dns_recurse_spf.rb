@@ -1,4 +1,3 @@
-require 'dnsruby'
 module Intrigue
 class DnsRecurseSpf < BaseTask
 

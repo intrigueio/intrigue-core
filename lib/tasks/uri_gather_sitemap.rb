@@ -1,5 +1,3 @@
-require "rexml/document"
-
 module Intrigue
 class UriGatherSitemapTask  < BaseTask
 

@@ -1,5 +1,3 @@
-require 'socket'
-
 ###
 ### XXX - This module has not been extensively tested!
 ###

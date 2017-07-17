@@ -1,6 +1,3 @@
-require 'socket'
-require 'openssl'
-
 module Intrigue
 class UriGatherSslCertTask  < BaseTask
 

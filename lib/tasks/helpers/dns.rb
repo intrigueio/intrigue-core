@@ -1,5 +1,3 @@
-require 'dnsruby'
-
 module Intrigue
   module Task
     module Dns

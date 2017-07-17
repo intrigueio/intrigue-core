@@ -1,5 +1,3 @@
-require 'nokogiri'
-
 module Intrigue
 class AwsS3Brute < BaseTask
 

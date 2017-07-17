@@ -1,7 +1,3 @@
-require 'net/http'
-require 'tempfile'
-require 'uri'
-
 ###
 ### Please note - these methods may be used inside task modules, or inside libraries within
 ### Intrigue. An attempt has been made to make them abstract enough to use anywhere inside the

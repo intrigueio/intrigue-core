@@ -1,5 +1,3 @@
-require 'uri'
-require 'net/http'
 
 module Intrigue
 class UriHttpAuthBrute < BaseTask

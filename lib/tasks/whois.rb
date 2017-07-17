@@ -1,9 +1,3 @@
-require 'whois'
-require 'whois-parser'
-require 'nokogiri'
-require 'json'
-require 'socket'
-
 module Intrigue
 class WhoisTask < BaseTask
   include Intrigue::Task::Web

@@ -1,4 +1,3 @@
-require 'resolv'
 ###
 ### Task is in good shape, just needs some option parsing, and needs to deal with paths
 ###

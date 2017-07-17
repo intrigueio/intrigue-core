@@ -1,6 +1,3 @@
-require 'arachnid'
-require 'uri'
-
 module Intrigue
 class UriSpider < BaseTask
 

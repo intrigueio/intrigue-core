@@ -1,4 +1,3 @@
-require 'geoip'
 module Intrigue
 class GeolocateHostTask < BaseTask
 

@@ -1,5 +1,3 @@
-require 'whoisology'
-
 module Intrigue
 class SearchWhoisologyTask < BaseTask
 
