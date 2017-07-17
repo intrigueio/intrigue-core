@@ -29,7 +29,7 @@ class IntrigueApi
     end
 
     # Start a task and wait for the result
-    def start(project_name,task_name,entity_hash,depth=1,options_list=nil,handler_list=nil, strategy_name="disovery")
+    def start(project_name,task_name,entity_hash,depth=1,options_list=nil,handler_list=nil, strategy_name=nil)
 
       # Construct the request
       task_id = _start_and_background(project_name,task_name,entity_hash,depth,options_list,handler_list, strategy_name)

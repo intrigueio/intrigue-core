@@ -187,24 +187,12 @@ class IntrigueApp < Sinatra::Base
       handlers = payload["handlers"]
       strategy_name = payload["strategy_name"]
 
-      # Try to find our project and create it if it doesn't exist
+      # create the first entity
+      entity = Intrigue::EntityManager.create_first_entity(@project_name,type,name,{})
+
+      # create the project if it doesn't exist
       project = Intrigue::Model::Project.first(:name => @project_name)
-      unless project
-        project = Intrigue::Model::Project.create(:name => @project_name)
-      end
-
-      # Try to find our entity
-      # TODO: we should check all aliases here
-      entity = Intrigue::Model::Entity.scope_by_project_and_type(project.name, type).first(:name => name)
-      unless entity # If the entity didn't exist, create it
-        entity = Intrigue::Model::Entity.create(attributes.merge(:project => project))
-        entity.save
-
-        # Kick off enrichment
-        Intrigue::EntityManager.enrich_entity entity
-      end
-
-      puts "Starting task!!"
+      project = Intrigue::Model::Project.create(:name => @project_name) unless project
 
       # Start the task_run
       task_result = start_task("task", project, nil, task_name, entity, depth, options, handlers, strategy_name)

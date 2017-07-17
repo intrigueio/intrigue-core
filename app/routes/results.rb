@@ -90,9 +90,6 @@ class IntrigueApp < Sinatra::Base
         end
       end
 
-      # HACK! remove the name detail, it'll be set on the entity itself
-      #entity_details.delete("name")
-
       # Construct an entity from the data we have
       if entity_id
         entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => entity_id)
@@ -100,22 +97,8 @@ class IntrigueApp < Sinatra::Base
         entity_type = @params["entity_type"]
         return unless entity_type
 
-        entity = entity_exists?(current_project,entity_type,entity_name)
-
-        unless entity
-
-          # Resolve out the proper class, make sure to verify for security
-          klass = Intrigue::EntityManager.resolve_type entity_type
-
-          # Create our new entity!
-          entity = Intrigue::Model::Entity.create(
-            { :name => entity_name,
-              :type => klass,
-              :details => entity_details,
-              :details_raw => entity_details,
-              :project => current_project
-            })
-        end
+        # create the first entity
+        entity = Intrigue::EntityManager.create_first_entity(@project_name,entity_type,entity_name,entity_details)
       end
 
       unless entity
@@ -137,9 +120,6 @@ class IntrigueApp < Sinatra::Base
       task_result = start_task("task", current_project, nil, task_name, entity, depth, options, handlers, strategy_name)
       entity.task_results << task_result
       entity.save
-
-      # kick off enrichment now that we have a task result (and its depth)
-      Intrigue::EntityManager.enrich_entity entity # note that this won't recurse...
 
       redirect "/v1/#{@project_name}/results/#{task_result.id}"
     end

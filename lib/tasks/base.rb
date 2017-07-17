@@ -90,7 +90,6 @@ class BaseTask
       ############
       # Handlers #
       ############
-
       @task_result.handlers.each do |handler_type|
         handler = Intrigue::HandlerFactory.create_by_type(handler_type)
         unless handler
@@ -118,6 +117,8 @@ class BaseTask
 
             scan_result.handlers.each do |handler_type|
               handler = Intrigue::HandlerFactory.create_by_type(handler_type)
+              next unless handler
+
               _log "Calling #{handler_type} handler on #{scan_result.name}"
               handler.process(scan_result)
             end

@@ -67,7 +67,7 @@ class CoreCli < Thor
   end
 
   desc "start [Project Name] [Task] [Type#Entity] [Depth] [Option1=Value1#...#...] [Handlers] [Strategy Name]", "Start a single task within a project."
-  def start(project_name,task_name,entity_string,depth=1,option_string=nil,handler_string=nil, strategy_name="discovery")
+  def start(project_name,task_name,entity_string,depth=1,option_string=nil,handler_string=nil, strategy_name=nil)
 
     # Do the setup
     entity_hash = _parse_entity entity_string
@@ -80,8 +80,7 @@ class CoreCli < Thor
 
     # Get the response from the API
     #puts "[+] Starting Task."
-
-    response = @api.start(project_name,task_name,entity_hash,depth,options_list,handler_list, strategy_name)
+    response = @api.start(project_name,task_name,entity_hash,depth,options_list,handler_list,strategy_name)
   end
 
   ###
@@ -135,7 +134,7 @@ class CoreCli < Thor
   end
 
   desc "local_load [Task] [File] [Depth] [Option1=Value1#...#...] [Handlers] [Strategy]", "Load entities from a file and runs a task on each in a new project."
-  def load(task_name,filename,depth=1,options_string=nil,handler_string=nil, strategy_name="discovery")
+  def load(task_name,filename,depth=1,options_string=nil,handler_string=nil, strategy_name="network_reconnaissance")
 
     # Load in the main core file for direct access to TaskFactory and the Tasks
     # This makes this super speedy.
@@ -155,7 +154,8 @@ class CoreCli < Thor
       handlers = _parse_handlers handler_string
       depth = depth.to_i
 
-      puts "entity: #{entity}"
+      puts "Entity: #{entity}"
+      puts "Strategy: #{strategy_name}"
 
       payload = {
         "task" => task_name,

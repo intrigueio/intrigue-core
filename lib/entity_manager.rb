@@ -29,6 +29,47 @@ class EntityManager
     end
   end
 
+  def self.create_first_entity(project_name,type_string,name,details)
+    downcased_name = name.downcase
+
+    # Try to find our project and create it if it doesn't exist
+    project = Intrigue::Model::Project.first(:name => project_name)
+    project = Intrigue::Model::Project.create(:name => project_name) unless project
+
+    # Merge the details if it already exists
+    entity = entity_exists?(project,type_string,downcased_name)
+    hidden = hidden_entity?(name, type_string)
+
+    if entity
+      already_exists = true
+      entity.set_details(details.to_h.deep_merge(entity.details.to_h))
+    else
+      # Create a new entity, validating the attributes
+      type = resolve_type(type_string)
+      $db.transaction do
+        begin
+          entity = Intrigue::Model::Entity.create({
+            :name =>  downcased_name,
+            :project => project,
+            :type => type,
+            :details => details,
+            :details_raw => details,
+            :hidden => (hidden ? true : false )
+           })
+        rescue Encoding::UndefinedConversionError => e
+        end
+      end
+    end
+
+    return nil unless entity
+    return nil unless Intrigue::Model::Entity.find(:id => entity.id).validate_entity
+
+    # START ENRICHMENT unless this entity already exists
+    #enrich_entity(entity, nil) unless already_exists || hidden
+
+  entity
+  end
+
   # This method creates a new entity, and kicks off a strategy
   def self.create_or_merge_entity(task_result,type_string,name,details, primary_entity=nil)
 
@@ -124,7 +165,7 @@ class EntityManager
     # set depth / scan result based on the task we're passed
     if task_result
       scan_result = task_result.scan_result
-      depth =  task_result.depth
+      depth = task_result.depth
     else
       depth = 1
     end
