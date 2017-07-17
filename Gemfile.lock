@@ -112,7 +112,7 @@ GEM
     httpclient (2.8.3)
     i18n (0.8.6)
     iconv (1.0.4)
-    intrigue_api_client (1.2.1)
+    intrigue_api_client (1.2.4)
       json (~> 1.8)
       rest-client (~> 1.8)
     ipaddress (0.8.3)
