@@ -47,7 +47,7 @@ class NmapScanTask < BaseTask
       _log "Scanning #{scan_item} and storing in #{temp_file}"
       _log "NMap options: #{nmap_options}"
 
-      nmap_string = "nmap #{scan_item} #{nmap_options} -sSUV -P0 --top-ports 25 --traceroute -O --max-os-tries 2 -oX #{temp_file}"
+      nmap_string = "nmap #{scan_item} #{nmap_options} -sSUV -P0 --top-ports 25 -O --max-os-tries 2 -oX #{temp_file}"
       _log "Running... #{nmap_string}"
 
       output = _unsafe_system(nmap_string)
@@ -172,6 +172,7 @@ class NmapScanTask < BaseTask
       rescue Errno::EPERM
         _log_error "Unable to delete file"
       end
+
     end
   end
 
