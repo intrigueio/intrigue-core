@@ -1,5 +1,3 @@
-require 'timeout'
-
 module Intrigue
 class BaseTask
 

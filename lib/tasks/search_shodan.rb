@@ -55,7 +55,6 @@ class SearchShodanTask < BaseTask
         # Create a host record
         #
         if r["ip"]
-          require 'ipaddr'
           # TODO - assumes ipv4, which isn't always true. Make sure to check for ipv6.
           ip_address = IPAddr.new(r['ip'],Socket::AF_INET)
           _log "IP: #{r["ip"]}"
