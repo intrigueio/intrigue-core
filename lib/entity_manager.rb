@@ -41,7 +41,6 @@ class EntityManager
     hidden = hidden_entity?(name, type_string)
 
     if entity
-      already_exists = true
       entity.set_details(details.to_h.deep_merge(entity.details.to_h))
     else
       # Create a new entity, validating the attributes
@@ -64,9 +63,6 @@ class EntityManager
     return nil unless entity
     return nil unless Intrigue::Model::Entity.find(:id => entity.id).validate_entity
 
-    # START ENRICHMENT unless this entity already exists
-    #enrich_entity(entity, nil) unless already_exists || hidden
-
   entity
   end
 
@@ -76,7 +72,7 @@ class EntityManager
     # HANDLE CANCELED TASKS!
     # Do a lookup to make sure we have the latest...
     tr = Intrigue::Model::TaskResult.first(:id => task_result.id)
-    if tr.canceled
+    if tr.cancelled
       # We should try logging here!!!
       return
     end
@@ -91,7 +87,6 @@ class EntityManager
 
     # Check if there's an existing entity, if so, merge and move forward
     if entity
-      already_exists = true
       entity.set_details(details.to_h.deep_merge(entity.details.to_h))
     else
       # Create a new entity, validating the attributes
@@ -132,11 +127,15 @@ class EntityManager
       self.alias_entity entity, primary_entity
     end
 
-    # START ENRICHMENT unless this entity already exists
-    enrich_entity(entity, task_result) unless already_exists || hidden
+    # START ENRICHMENT if we're allowed and unless this entity is prohibited (hidden)
+    task_result.log "Entity Enrichment: #{task_result.auto_enrich}"
+    task_result.log "Entity Hidden: #{hidden}"
+    if task_result.auto_enrich
+      enrich_entity(entity, task_result) unless hidden
+    end
 
     # START SIGNAL ANALYSIS
-    Intrigue::Signals.all.each{|s| x = s.new(entity,task_result); x.generate if x.match }
+    #Intrigue::Signals.all.each{|s| x = s.new(entity,task_result); x.generate if x.match }
 
     # START RECURSION BY STRATEGY TYPE
     if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
@@ -153,6 +152,7 @@ class EntityManager
   end
 
   def self.enrich_entity(entity, task_result=nil)
+
     task_result.log  "STARTING enrichment on #{entity}" if task_result
     return unless entity
 

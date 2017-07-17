@@ -26,7 +26,7 @@ class IntrigueApp < Sinatra::Base
       end
 
       selected_results = selected_results.exclude(Sequel.ilike(:name, "%enrich%")) if @hide_enrichment
-      selected_results = selected_results.exclude(:canceled) if @hide_cancelled
+      selected_results = selected_results.exclude(:cancelled) if @hide_cancelled
       selected_results = selected_results.exclude(:autoscheduled) if @hide_autoscheduled
       selected_results = selected_results.exclude(:complete) if @hide_complete
 
@@ -79,6 +79,8 @@ class IntrigueApp < Sinatra::Base
         strategy_name = "discovery"
       end
 
+      auto_enrich = @params["auto_enrich"] == "on" ? true : false
+
       # Construct the attributes hash from the parameters. Loop through each of the
       # parameters looking for things that look like attributes, and add them to our
       # details hash
@@ -98,7 +100,8 @@ class IntrigueApp < Sinatra::Base
         return unless entity_type
 
         # create the first entity
-        entity = Intrigue::EntityManager.create_first_entity(@project_name,entity_type,entity_name,entity_details)
+        entity = Intrigue::EntityManager.create_first_entity(@project_name,
+                                          entity_type,entity_name,entity_details)
       end
 
       unless entity
@@ -117,7 +120,9 @@ class IntrigueApp < Sinatra::Base
       end
 
       # Start the task run!
-      task_result = start_task("task", current_project, nil, task_name, entity, depth, options, handlers, strategy_name)
+      task_result = start_task("task", current_project, nil, task_name, entity,
+                                depth, options, handlers, strategy_name, auto_enrich)
+
       entity.task_results << task_result
       entity.save
 

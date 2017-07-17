@@ -51,7 +51,7 @@ module Intrigue
 
       def cancel!
         unless complete
-          self.canceled = true
+          self.cancelled = true
           save
         end
       end

@@ -21,7 +21,7 @@ class BaseTask
     raise "Unable to find task result: #{task_result_id}. Bailing." unless @task_result
 
     # Handle cancellation
-    if @task_result.canceled
+    if @task_result.cancelled
       _log_error "I was cancelled, returning!"
     end
 

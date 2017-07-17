@@ -19,7 +19,8 @@ module Helper
   ###
   ### Helper method for starting a task run
   ###
-  def start_task(queue, project, existing_scan_result, task_name, entity, depth, options=[], handlers=[], strategy_name="network_reconnaissance")
+  def start_task(queue, project, existing_scan_result, task_name, entity, depth,
+                  options=[], handlers=[], strategy_name="network_reconnaissance", auto_enrich=true)
 
     # Create the task result, and associate our entity and options
     task_result = Intrigue::Model::TaskResult.create({
@@ -31,6 +32,7 @@ module Helper
       :handlers => [],
       :base_entity => entity,
       :autoscheduled => (queue == "task_autoscheduled" || queue == "task_enrichment"),
+      :auto_enrich => auto_enrich,
       :depth => depth
     })
 

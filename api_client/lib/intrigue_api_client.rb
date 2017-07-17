@@ -29,10 +29,10 @@ class IntrigueApi
     end
 
     # Start a task and wait for the result
-    def start(project_name,task_name,entity_hash,depth=1,options_list=nil,handler_list=nil, strategy_name=nil)
+    def start(project_name,task_name,entity_hash,depth=1,options_list=nil,handler_list=nil, strategy_name=nil, auto_enrich=true)
 
       # Construct the request
-      task_id = _start_and_background(project_name,task_name,entity_hash,depth,options_list,handler_list, strategy_name)
+      task_id = _start_and_background(project_name,task_name,entity_hash,depth,options_list,handler_list, strategy_name, auto_enrich)
 
       if task_id == "" # technically a nil is returned , but becomes an empty string
         #puts "[-] Task not started. Unknown Error. Exiting"
@@ -77,7 +77,7 @@ class IntrigueApi
     # options_list - list of options:  [
     #   {:name => "resolver", :value => "8.8.8.8" }
     # ]
-    def _start_and_background(project_name,task_name,entity_hash,depth,options_list,handler_list, strategy_name)
+    def _start_and_background(project_name,task_name,entity_hash,depth,options_list,handler_list, strategy_name, auto_enrich)
 
       payload = {
         "project_name" => project_name,
@@ -86,7 +86,8 @@ class IntrigueApi
         "handlers" => handler_list,
         "entity" => entity_hash,
         "depth" => depth,
-        "strategy_name" => strategy_name
+        "strategy_name" => strategy_name,
+        "auto_enrich" => auto_enrich
       }
 
       ### Send to the server

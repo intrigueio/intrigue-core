@@ -52,7 +52,7 @@
 
   <div id="strategy">
     <div class="form-group">
-      <label for="attrib_name" class="col-xs-4 control-label">Strategy</label>
+      <label for="attrib_name" class="col-xs-4 control-label">Iteration Strategy</label>
       <div class="col-xs-8">
         <select class="form-control input-sm" name="strategy" id="strategy">
           <!-- iterate through stategies -->
@@ -69,7 +69,7 @@
 
   <div id="scan">
     <div class="form-group">
-      <label for="attrib_name" class="col-xs-4 control-label">Recursive Iterations</label>
+      <label for="attrib_name" class="col-xs-4 control-label">Iterations</label>
       <div class="col-xs-8">
         <select class="form-control input-sm" name="depth" id="depth">
           <option value=1 selected="true">Interactive</option>
@@ -97,6 +97,14 @@
     </div>
   </div>
 -->
+  <div id="options">
+    <div class="form-group">
+      <label for="options" class="col-xs-4 control-label">&nbsp;</label>
+      <div class="col-xs-6">
+        <input id="auto_enrich" name="auto_enrich" type="checkbox" checked> Auto Enrich <br/>
+      </div>
+    </div>
+  </div>
   <hr></hr>
   <input class="btn btn-primary" type="submit" value="Run Task">
 </form>
