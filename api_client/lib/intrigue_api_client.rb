@@ -5,7 +5,7 @@ require 'rest_client'
 class IntrigueApi
 
     def self.version
-      1.2.1
+      "1.2.4"
     end
 
     def initialize(uri="http://127.0.0.1:7777/v1",key="")
@@ -28,6 +28,12 @@ class IntrigueApi
       RestClient.post "#{@server_uri}/project", { "project" => project_name }
     end
 
+    def background(project_name,task_name,entity_hash,depth=1,options_list=nil,handler_list=nil, strategy_name=nil, auto_enrich=true)
+      # Construct the request
+      task_id = _start_and_background(project_name,task_name,entity_hash,depth,options_list,handler_list, strategy_name, auto_enrich)
+    end
+
+
     # Start a task and wait for the result
     def start(project_name,task_name,entity_hash,depth=1,options_list=nil,handler_list=nil, strategy_name=nil, auto_enrich=true)
 
@@ -36,8 +42,10 @@ class IntrigueApi
 
       if task_id == "" # technically a nil is returned , but becomes an empty string
         #puts "[-] Task not started. Unknown Error. Exiting"
-        #raise "Problem getting result"
+        raise "Problem getting result"
         return nil
+      else
+        #puts "[+] Got Task ID: #{task_id}"
       end
 
       ### XXX - wait to collect the response
@@ -45,21 +53,21 @@ class IntrigueApi
       until complete
         sleep 1
         begin
+
           check_uri = "#{@server_uri}/#{project_name}/results/#{task_id}/complete"
+          #puts "[+] Checking: #{check_uri}"
           response = RestClient.get check_uri
           complete = true if response == "true"
-
-          return nil if response == ""
+          #return nil if response == ""
 
         rescue URI::InvalidURIError => e
-          puts "[-] Invalid URI: #{check_uri}"
+          #puts "[-] Invalid URI: #{check_uri}"
           return nil
         end
       end
 
       ### Get the response
       response = _get_json_result "#{project_name}/results/#{task_id}.json"
-      #puts response
 
     response
     end
@@ -120,9 +128,9 @@ class IntrigueApi
       begin
         result = JSON.parse(RestClient.get "#{@server_uri}/#{path}")
       rescue JSON::ParserError => e
-        puts "Error: #{e}"
+        #puts "Error: #{e}"
       rescue RestClient::InternalServerError => e
-        puts "Error: #{e}"
+        #puts "Error: #{e}"
       end
     result
     end
@@ -157,7 +165,7 @@ x =  Intrigue.new
 
 x.start "example", entity_hash, options_list
 id  = x.start "search_bing", entity_hash, options_list
-puts x._get_log id
-puts x._get_result id
+#puts x._get_log id
+#puts x._get_result id
 
 =end

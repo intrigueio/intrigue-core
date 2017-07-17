@@ -23,6 +23,11 @@ require 'pry'
 require 'pry-byebug'
 require 'logger'
 
+# System-level Initializers
+require_relative 'lib/initialize/hash'
+require_relative 'lib/initialize/sidekiq_profiler'
+require_relative 'lib/initialize/string'
+
 $intrigue_basedir = File.dirname(__FILE__)
 
 #

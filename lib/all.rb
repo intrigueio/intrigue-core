@@ -30,12 +30,6 @@ require 'whoisology'
 require 'yomu'
 
 
-# System-level Initializers
-require_relative 'initialize/hash'
-require_relative 'initialize/sidekiq_profiler'
-require_relative 'initialize/string'
-
-
 ####
 # Task-specific libraries
 ####

@@ -1,3 +1,4 @@
+#require "fog-google"
 
 module Intrigue
 module Handler
@@ -8,8 +9,6 @@ module Handler
     end
 
     def process(result)
-      require "fog"
-
       return "Unable to process" unless result.respond_to? export_json
 
       # Grab configuration

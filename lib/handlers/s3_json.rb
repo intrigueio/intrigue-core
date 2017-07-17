@@ -1,3 +1,5 @@
+require 'fog-aws'
+
 module Intrigue
 module Handler
   class S3Json < Intrigue::Handler::Base
@@ -7,9 +9,6 @@ module Handler
     end
 
     def process(result)
-
-      require 'fog'
-
       access_key = _get_handler_config("access_key")
       secret_key = _get_handler_config("secret_key")
       bucket_name = _get_handler_config("bucket")

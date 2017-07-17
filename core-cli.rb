@@ -3,6 +3,7 @@ require 'thor'
 require 'json'
 require 'rest-client'
 require 'intrigue_api_client'
+require 'pp'
 require 'pry' #DEBUG
 
 class CoreCli < Thor
@@ -66,8 +67,23 @@ class CoreCli < Thor
     end
   end
 
-  desc "start [Project Name] [Task] [Type#Entity] [Depth] [Option1=Value1#...#...] [Handlers] [Strategy Name]", "Start a single task within a project."
-  def start(project_name,task_name,entity_string,depth=1,option_string=nil,handler_string=nil, strategy_name=nil)
+  desc "background [Project Name] [Task] [Type#Entity] [Depth] [Option1=Value1#...#...] [Handlers] [Strategy Name] [Auto Enrich]", "Start a single task within a project."
+  def background(project_name,task_name,entity_string,depth=1,option_string=nil,handler_string=nil, strategy_name=nil, auto_enrich=true)
+    # Do the setup
+    entity_hash = _parse_entity entity_string
+    options_list = _parse_options option_string
+    handler_list = _parse_handlers handler_string
+    depth = depth.to_i
+
+    @api.create_project(project_name)
+
+    task_result_id = @api.background(project_name,task_name,entity_hash,depth,options_list,handler_list,strategy_name, auto_enrich)
+    puts "Task Result: #{task_result_id}"
+  end
+
+
+  desc "start [Project Name] [Task] [Type#Entity] [Depth] [Option1=Value1#...#...] [Handlers] [Strategy Name] [Auto Enrich]", "Start a single task within a project."
+  def start(project_name,task_name,entity_string,depth=1,option_string=nil,handler_string=nil, strategy_name=nil, auto_enrich=true)
 
     # Do the setup
     entity_hash = _parse_entity entity_string
@@ -79,15 +95,17 @@ class CoreCli < Thor
     @api.create_project(project_name)
 
     # Get the response from the API
-    #puts "[+] Starting Task."
-    response = @api.start(project_name,task_name,entity_hash,depth,options_list,handler_list,strategy_name)
+    puts "[+] Starting Task."
+    json = @api.start(project_name,task_name,entity_hash,depth,options_list,handler_list,strategy_name, auto_enrich)
+    pp json
+    puts "[+] Task Complete."
   end
 
   ###
   ### LOCAL ONLY
   ### XXX - rewrite this so it uses the API
   ###
-
+=begin
   desc "local_handle_scan_results [Project] [Handler]", "Manually run a handler on a project's scan results"
   def local_handle_scan_results(project, handler_type)
     require_relative 'core'
@@ -130,8 +148,8 @@ class CoreCli < Thor
 
       end
     end
-
   end
+=end
 
   desc "local_load [Task] [File] [Depth] [Option1=Value1#...#...] [Handlers] [Strategy]", "Load entities from a file and runs a task on each in a new project."
   def load(task_name,filename,depth=1,options_string=nil,handler_string=nil, strategy_name="network_reconnaissance")

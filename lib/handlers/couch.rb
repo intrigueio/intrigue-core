@@ -1,3 +1,4 @@
+require 'couchrest'
 
 module Intrigue
 module Handler
@@ -8,8 +9,7 @@ module Handler
     end
 
     def process(result)
-      require 'couchrest'
-
+      
       return "Unable to process" unless result.respond_to? export_hash
 
       server = CouchRest.new  # assumes localhost by default!
