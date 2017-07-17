@@ -1,11 +1,11 @@
 module Intrigue
 module Strategy
-  class WhoisIntel < Intrigue::Strategy::Base
+  class DomainIntel < Intrigue::Strategy::Base
 
     def self.metadata
       {
-        :name => "whois_intel",
-        :pretty_name => "Whois Intel",
+        :name => "domain_intel",
+        :pretty_name => "Domain Intel",
         :authors => ["jcran"],
         :description => "This strategy looks up entities in whois."
       }

@@ -152,7 +152,7 @@ class CoreCli < Thor
 =end
 
   desc "local_load [Task] [File] [Depth] [Option1=Value1#...#...] [Handlers] [Strategy]", "Load entities from a file and runs a task on each in a new project."
-  def load(task_name,filename,depth=1,options_string=nil,handler_string=nil, strategy_name="network_reconnaissance")
+  def load(task_name,filename,depth=1,options_string=nil,handler_string=nil, strategy_name="network_enumeration")
 
     # Load in the main core file for direct access to TaskFactory and the Tasks
     # This makes this super speedy.

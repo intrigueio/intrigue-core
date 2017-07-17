@@ -27,6 +27,12 @@ class IntrigueApp < Sinatra::Base
     end
 
     # graph
+    get '/:project/graph/generated_at' do
+      "#{Intrigue::Model::Project.first(:name => @project_name).graph_generated_at}"
+    end
+
+
+    # graph
     get '/:project/graph/meta' do
       @json_uri = "#{request.url}.json"
       @graph_generated_at = Intrigue::Model::Project.first(:name => @project_name).graph_generated_at

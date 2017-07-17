@@ -1,13 +1,13 @@
 module Intrigue
 module Strategy
-  class NetworkReconnaissance < Intrigue::Strategy::Base
+  class NetworkEnumeration < Intrigue::Strategy::Base
 
     def self.metadata
       {
-        :name => "network_reconnaissance",
-        :pretty_name => "Network Reconnaissance",
+        :name => "network_enumeration",
+        :pretty_name => "Network Enumeration",
         :authors => ["jcran"],
-        :description => "This strategy performs network recon and light enumeration. Suggest starting with a DnsRecord or NetBlock."
+        :description => "This strategy performs a light network recon and enumeration. Suggest starting with a DnsRecord or NetBlock."
       }
     end
 
