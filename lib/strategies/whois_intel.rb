@@ -12,10 +12,8 @@ module Strategy
     end
 
     def self.recurse(entity, task_result)
-      if entity.type_string == "IpAddress"
-        start_recursive_task(task_result,"whois",entity)
-      elsif entity.type_string == "DnsRecord"
-        start_recursive_task(task_result,"enrich_dns_record",entity)
+      if entity.type_string == "DnsRecord"
+        start_recursive_task(task_result,"whois",entity) unless entity.created_by?("whois")
       else
         task_result.log "No actions for entity: #{entity.type}##{entity.name}"
         return

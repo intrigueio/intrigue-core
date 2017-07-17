@@ -166,7 +166,7 @@ class IntrigueApp < Sinatra::Base
 
       ### don't take any shit
       raise "No payload!" unless payload
-
+      
       # Construct an entity from the entity_hash provided
       type = payload["entity"]["type"]
       name = payload["entity"]["name"]
@@ -186,7 +186,7 @@ class IntrigueApp < Sinatra::Base
       options = payload["options"]
       handlers = payload["handlers"]
       strategy_name = payload["strategy_name"]
-      auto_enrich = payload["auto_enrich"]
+      auto_enrich = payload["auto_enrich"].to_bool
 
       # create the first entity
       entity = Intrigue::EntityManager.create_first_entity(@project_name,type,name,{})

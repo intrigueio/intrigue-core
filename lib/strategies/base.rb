@@ -21,7 +21,15 @@ module Strategy
         puts "Already have this result: #{task_name} on #{entity} at depth #{old_task_result.depth}"
       else
         puts "Starting Recursive Task: #{task_name} on #{entity} at depth #{old_task_result.depth}"
-        new_task_result = start_task("task_autoscheduled", project, old_task_result.scan_result, task_name, entity, old_task_result.depth - 1, options, old_task_result.handlers)
+        new_task_result = start_task("task_autoscheduled", project,
+                            old_task_result.scan_result,
+                            task_name,
+                            entity,
+                            old_task_result.depth - 1,
+                            options,
+                            old_task_result.handlers,
+                            old_task_result.scan_result.strategy,
+                            old_task_result.auto_enrich)
       end
 
     new_task_result
