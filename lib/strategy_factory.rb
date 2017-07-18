@@ -15,6 +15,7 @@ class StrategyFactory
 
   def self.create_by_name(name)
     @strategies.each { |s| return s if "#{s.metadata[:name]}" == "#{name}" }
+  false
   end
 
   #

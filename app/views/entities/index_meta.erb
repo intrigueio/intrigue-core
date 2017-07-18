@@ -61,15 +61,15 @@ function delete_entity(id)
   <p></p>
   <table class="sortable" border="1" width=100%>
     <colgroup>
-      <col style="width:30%">
-      <col style="width:70%">
+      <col style="width:60%">
+      <col style="width:40%">
     </colgroup>
     <tbody>
       <tr><th>name</th><th>details</th></tr>
       <% @entities.each do |eg| %>
         <tr>
-          <td><% eg.each do |e| %>[<a href="/v1/<%=@project_name%>/entities/<%=e.id%>"> <%= h e %> </a>] <% end %></td>
-          <td><% eg.each do |e| %>[<a href="/v1/<%=@project_name%>/entities/<%=e.id%>"> <%= h e.detail_string %> </a>] <% end %></td>
+          <td><% eg.each do |e| next if e.hidden; %>[<a href="/v1/<%=@project_name%>/entities/<%=e.id%>"> <%= h e %> </a>] <% end %></td>
+          <td><% eg.each do |e| next if e.hidden; %>[<a href="/v1/<%=@project_name%>/entities/<%=e.id%>"> <%= h e.detail_string %> </a>] <% end %></td>
         </tr>
       <% end %>
     </tbody>

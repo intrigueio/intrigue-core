@@ -15,17 +15,8 @@ class IntrigueApp < Sinatra::Base
       ## Filter if we have a type
       selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
 
-      if @search_string
-        if @inverse
-          selected_entities = selected_entities.exclude(Sequel.|(
-            Sequel.ilike(:name, "%#{@search_string}%"),
-            Sequel.ilike(:details_raw, "%#{@search_string}%")))
-        else
-          selected_entities = selected_entities.where(Sequel.|(
-            Sequel.ilike(:name, "%#{@search_string}%"),
-            Sequel.ilike(:details_raw, "%#{@search_string}%")))
-        end
-      end
+      # Perform a simple tokenized search
+      selected_entities = _tokenized_search(@search_string, selected_entities)
 
       # Handle entity coorelation
       if @correlate
@@ -105,6 +96,46 @@ class IntrigueApp < Sinatra::Base
       end
 
     true
+    end
+
+
+    private
+    def _tokenized_search(search_string, selected_entities)
+      # Simple tokenized search......
+      if search_string
+        tokens = search_string.split(" ")
+        tokens.each do |t|
+          if t =~ /^!/ # exclude whatever comes next
+            ss = t[1..-1]
+            # check for a
+            if ss =~ /^name:/
+              ss.gsub!(/^name:/,"")
+              selected_entities = selected_entities.exclude(Sequel.ilike(:name, "%#{ss}%"))
+            elsif ss =~ /^details:/
+              ss.gsub!(/^details:/,"")
+              selected_entities = selected_entities.exclude(Sequel.ilike(:details_raw, "%#{ss}%"))
+            else
+              selected_entities = selected_entities.exclude(Sequel.|(
+                Sequel.ilike(:name, "%#{ss}%"),
+                Sequel.ilike(:details_raw, "%#{ss}%")))
+            end
+          else # just a normal search string
+            ss = t
+            if ss =~ /^name:/
+              ss.gsub!(/^name:/,"")
+              selected_entities = selected_entities.where(Sequel.ilike(:name, "%#{ss}%"))
+            elsif ss =~ /^details:/
+              ss.gsub!(/^details:/,"")
+              selected_entities = selected_entities.where(Sequel.ilike(:details_raw, "%#{ss}%"))
+            else
+              selected_entities = selected_entities.where(Sequel.|(
+                Sequel.ilike(:name, "%#{t}%"),
+                Sequel.ilike(:details_raw, "%#{t}%")))
+            end
+          end
+        end
+      end
+    selected_entities
     end
 
 
