@@ -3,7 +3,7 @@ class IntrigueApp < Sinatra::Base
   namespace '/v1' do
 
     get '/:project/results' do
-      @result_count = 100
+      paginate_count = 100
       @exclude_enrichment = true
 
       params[:search_string] == "" ? @search_string = nil : @search_string = "#{params[:search_string]}"
@@ -30,8 +30,10 @@ class IntrigueApp < Sinatra::Base
       selected_results = selected_results.exclude(:autoscheduled) if @hide_autoscheduled
       selected_results = selected_results.exclude(:complete) if @hide_complete
 
+
       # PAGINATE
-      @results = selected_results.extension(:pagination).paginate(@page,@result_count)
+      @result_count = selected_results.count
+      @results = selected_results.extension(:pagination).paginate(@page,paginate_count)
 
       erb :'results/index'
     end
