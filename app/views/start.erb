@@ -3,23 +3,8 @@
 <div class="col-sm-9">
 <h3>Start</h3>
   <%= erb :'_task_runner' %>
-
 </div>
 <div class="col-sm-3">
-<h3>Statistics</h3>
-Total: <%= @project.entities.count %> entities
-<p>
-  <ul>
-    <% Intrigue::Model::Entity.descendants.each do |d| %>
-    <% count = Intrigue::Model::Entity.scope_by_project_and_type(@project.name,d.to_s).count %>
-    <% next unless count > 0 %>
-    <li>
-      <a href="/v1/<%=@project.name%>/entities?entity_types[]=<%=d.to_s%>">
-      <%= d.to_s.gsub(/^.*::/, '') %></a>:
-      <%= count %>
-    </li>
-    <% end %>
-  </ul>
-</p>
+<%= erb :'_statistics' %>
 </div>
 </div>

@@ -16,8 +16,8 @@ function delete_entity(id)
 
 <div class="col-sm-2">
   <p>
-  Entities Count: <%= @entity_count %><br/>
-  Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>
+  Selected Entities Count: <%= @entity_count %><br/>
+  <!--Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>-->
   <a href="/v1/<%=@project_name%>/entities.csv">Export CSV</a><br/>
   </p>
 
@@ -37,6 +37,8 @@ function delete_entity(id)
 
     <input class="btn btn-primary" type="submit" value="Search">
   </form>
+  <br/>
+  <%= erb :'_statistics' %>
 </div>
 <div class="col-sm-10">
     <%= "Page: #{@page}" %>
