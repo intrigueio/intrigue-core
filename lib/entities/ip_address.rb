@@ -21,7 +21,7 @@ class IpAddress < Intrigue::Model::Entity
   end
 
   def detail_string
-    "#{details["os"].to_a.first}"
+    "#{details["os"].to_a.first}#{" (" + details["ports"].count.to_s + ")" if details["ports"]}"
   end
 
 end
