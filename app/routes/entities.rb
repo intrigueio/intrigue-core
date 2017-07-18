@@ -6,7 +6,6 @@ class IntrigueApp < Sinatra::Base
 
       params[:search_string] == "" ? @search_string = nil : @search_string = params[:search_string]
       params[:entity_types] == "" ? @entity_types = nil : @entity_types = params[:entity_types]
-      params[:inverse] == "on" ? @inverse = true : @inverse = false
       params[:correlate] == "on" ? @correlate = true : @correlate = false
       (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
 
