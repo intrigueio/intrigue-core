@@ -64,7 +64,7 @@ class UriGatherSslCertTask  < BaseTask
 
           # Iterate through, looking for trouble
           alt_names.each do |alt_name|
-            if alt_name =~ /cloudflare.com$/ && opt_skip_cloudflare
+            if (alt_name =~ /cloudflare.com$/ || alt_name =~ /cloudflaressl.com$/ ) && opt_skip_cloudflare
               _log "This is a cloudflare certificate, skipping further entity creation"
               return
             end
