@@ -8,7 +8,6 @@ module Generic
   ### Helper method to reach out to the entity manager
   ###
   def _create_entity(type, hash, primary_entity=nil)
-
     # No need for a name in the hash now, remove it & pull out the name from the hash
     name = hash.delete("name")
 

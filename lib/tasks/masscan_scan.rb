@@ -61,7 +61,7 @@ class MasscanTask < BaseTask
         next if host =~ /\.arpa$/
 
         # Should we try to resolve first, and fall back on IP?
-        _create_entity("DnsRecord", { "name" => host })
+        #_create_entity("DnsRecord", { "name" => host }) < this should be handled by enrichment...
 
         if [80,443,8080,8081,8443].include?(opt_port)
           ssl = true if [443,8443].include?(opt_port)

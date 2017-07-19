@@ -107,7 +107,7 @@ class IntrigueApp < Sinatra::Base
       end
 
       unless entity
-        raise "Unable to continue without entity: #{klass}##{entity_name}"
+        raise "Unable to create entity, check your parameters: #{entity_name} #{entity_type}!"
       end
 
       # Construct the options hash from the parameters

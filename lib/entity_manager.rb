@@ -30,6 +30,9 @@ class EntityManager
   end
 
   def self.create_first_entity(project_name,type_string,name,details)
+
+    # Save the original and downcase our name
+    details["hidden_original"] = name
     downcased_name = name.downcase
 
     # Try to find our project and create it if it doesn't exist
@@ -55,15 +58,21 @@ class EntityManager
             :details_raw => details,
             :hidden => (hidden ? true : false )
            })
-        rescue Encoding::UndefinedConversionError => e
-        end
+         rescue Encoding::UndefinedConversionError => e
+           task_result.log "ERROR! Unable to create entity: #{e}"
+         end
       end
     end
 
-    return nil unless entity
-    return nil unless Intrigue::Model::Entity.find(:id => entity.id).validate_entity
+    # necessary because of our single table inheritance?
+    created_entity = Intrigue::Model::Entity.find(:id => entity.id)
 
-  entity
+    ### Ensure we have an entity
+    return nil unless created_entity
+    return nil unless created_entity.transform!
+    return nil unless created_entity.validate_entity
+
+  created_entity
   end
 
   # This method creates a new entity, and kicks off a strategy
@@ -83,7 +92,11 @@ class EntityManager
 
     # Convenience
     project = task_result.project
+
+    # Save the original and downcase our name
+    details["hidden_original"] = name
     downcased_name = name.downcase
+
 
     # Merge the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name)
@@ -111,31 +124,43 @@ class EntityManager
       end
     end
 
-    unless entity
+    # necessary because of our single table inheritance?
+    created_entity = Intrigue::Model::Entity.find(:id => entity.id)
+
+    ### Ensure we have an entity
+    unless created_entity
       task_result.log "ERROR! Unable to create or find entity: #{type}##{downcased_name}"
-      return nil
+      #return nil
     end
 
-    unless Intrigue::Model::Entity.find(:id => entity.id).validate_entity
-      task_result.log "ERROR! validation of entity failed: #{entity}"
-      return nil
+    ### Run Transformation
+    unless created_entity.transform!
+      task_result.log "ERROR! Transformation of entity failed: #{entity}"
+      #return nil
     end
+
+    ### Run Validation
+    unless created_entity.validate_entity
+      task_result.log "ERROR! Validation of entity failed: #{entity}"
+      #return nil
+    end
+
 
     # Add to our result set for this task
-    task_result.add_entity entity
+    task_result.add_entity created_entity
     task_result.save
 
     # Attach the aliases on both sides
     if primary_entity
-      self.alias_entity primary_entity, entity
-      self.alias_entity entity, primary_entity
+      self.alias_entity primary_entity, created_entity
+      self.alias_entity created_entity, primary_entity
     end
 
     # START ENRICHMENT if we're allowed and unless this entity is prohibited (hidden)
     task_result.log "Entity Enrichment: #{task_result.auto_enrich}"
     task_result.log "Entity Hidden: #{hidden}"
     if task_result.auto_enrich
-      enrich_entity(entity, task_result) unless hidden
+      enrich_entity(created_entity, task_result) unless hidden
     end
 
     # START SIGNAL ANALYSIS
@@ -146,23 +171,23 @@ class EntityManager
       unless hidden
         s = Intrigue::StrategyFactory.create_by_name(task_result.scan_result.strategy)
         raise "Unknown strategy!?!?!" unless s
-        s.recurse(entity, task_result)
+        s.recurse(created_entity, task_result)
       end
     end
     # END PROCESSING OF RECURSION BY STRATEGY TYPE
 
   # return the entity
-  entity
+  created_entity
   end
 
   def self.enrich_entity(entity, task_result=nil)
 
-    task_result.log  "STARTING enrichment on #{entity}" if task_result
+    task_result.log  "Running enrichment on #{entity}" if task_result
     return unless entity
 
     # Check if we've alrady run first
     if entity.enriched
-      task_result.log "SKIPPING Enrichment already happened for #{entity}!" if task_result
+      task_result.log "Skipping enrichment... already happened for #{entity}!" if task_result
       return
     end
 

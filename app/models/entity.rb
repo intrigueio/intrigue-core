@@ -32,6 +32,10 @@ module Intrigue
         validates_unique([:project_id, :type, :name])
       end
 
+      def transform!
+        true
+      end
+
       def self.scope_by_project(project_name)
         named_project = Intrigue::Model::Project.first(:name => project_name)
         where(Sequel.&(:project_id => named_project.id, :deleted => false))
