@@ -20,9 +20,9 @@ module Intrigue
 
       def self.scope_by_project(project_name)
         named_project = Intrigue::Model::Project.first(:name => project_name)
-        where(Sequel.&(:project_id => named_project.id, :deleted => false))
+        where(Sequel.&(:project_id => named_project.id))
       end
-      
+
     end
 
     class Entity < Sequel::Model

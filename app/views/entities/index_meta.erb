@@ -17,7 +17,9 @@ function delete_entity(id)
 <div class="col-sm-2">
   <p>
   Selected Entities Count: <%= @alias_group_count %><br/>
-  <!--Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>-->
+  <a href="<%=request.path%>?page=<%=@page-1%>&search_string=<%=@search_string%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">previous</a>
+  <a href="<%=request.path%>?page=<%=@page+1%>&search_string=<%=@search_string%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">next</a>
+
   <a href="/v1/<%=@project_name%>/entities.csv">Export CSV</a><br/>
   </p>
 
@@ -70,13 +72,18 @@ function delete_entity(id)
     <tbody>
       <tr><th>name</th><th>details</th></tr>
       <% @alias_groups.each do |group| %>
+        <% next unless group.entities.count > 0 %>
         <tr>
+          <td>
           <% group.entities.each do |e| %>
-
-          <td><% next if e.hidden; %>[<a href="/v1/<%=@project_name%>/entities/<%=e.id%>"> <%= h e %> </a>]</td>
-          <td><% next if e.hidden; %>[<a href="/v1/<%=@project_name%>/entities/<%=e.id%>"> <%= h e.detail_string %> </a>]</td>
-
-      <% end %>
+              <% next if e.hidden; %>[<a href="/v1/<%=@project_name%>/entities/<%=e.id%>"> <%= h e %> </a>]
+          <% end %>
+          </td>
+          <td>
+          <% group.entities.each do |e| %>
+              <% next if e.hidden; %><a href="/v1/<%=@project_name%>/entities/<%=e.id%>"> <%= h e.detail_string %> </a>
+          <% end %>
+        </td>
       </tr>
       <% end %>
 
