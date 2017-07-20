@@ -13,6 +13,10 @@ class PhoneNumber < Intrigue::Model::Entity
     name =~ /^\w.*$/
   end
 
+  def detail_string
+    "#{details["extracted_from"]}"
+  end
+
 end
 end
 end
