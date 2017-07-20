@@ -52,8 +52,7 @@ class IntrigueApp < Sinatra::Base
         @entities = selected_entities.extension(:pagination).paginate(@page,@result_count)
         erb :'entities/index'
       end
-
-
+      
     end
 
   get '/:project/entities.csv' do
