@@ -59,12 +59,27 @@ class IntrigueApp < Sinatra::Base
   get '/:project/entities.csv' do
     content_type 'text/csv'
 
-    project = Intrigue::Model::Project.first(:name => @project_name)
-    export = Intrigue::Model::ExportCsv.create(:project_id => project.id)
+    params[:search_string] == "" ? @search_string = nil : @search_string = params[:search_string]
+    params[:entity_types] == "" ? @entity_types = nil : @entity_types = params[:entity_types]
+    params[:correlate] == "on" ? @correlate = true : @correlate = false
+    (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
 
-    export.generate
+    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden=>false).order(:name)
 
-  export.contents
+    ## Filter if we have a type
+    selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
+
+    # Perform a simple tokenized search
+    selected_entities = _tokenized_search(@search_string, selected_entities)
+
+    out = ""
+    out << "Type,Name,Aliases,Details\n"
+    selected_entities.each do |entity|
+      alias_string = entity.aliases.each{|a| "#{a.type_string}##{a.name}" }.join(" | ")
+      out << "#{entity.type_string},#{entity.name},#{alias_string},#{entity.detail_string}\n"
+    end
+
+  out
   end
 
    get '/:project/entities/:id' do
