@@ -46,11 +46,11 @@ class EnrichUri < BaseTask
         next if @entity.id == e.id
 
         _log "Attaching entity: #{e} to #{@entity}"
-        @entity.add_alias e
+        @entity.alias e
         @entity.save
 
         _log "Attaching entity: #{@entity} to #{e}"
-        e.add_alias @entity
+        e.alias @entity
         e.save
       end
     end

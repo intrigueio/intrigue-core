@@ -81,11 +81,11 @@ class EnrichIpAddress < BaseTask
         next if @entity.aliases.include? sub_entity
 
         _log "Attaching entity: #{sub_entity} to #{@entity}"
-        @entity.add_alias sub_entity
+        @entity.alias sub_entity
         @entity.save
 
         _log "Attaching entity: #{@entity} to #{sub_entity}"
-        sub_entity.add_alias @entity
+        sub_entity.alias @entity
         sub_entity.save
       end
 

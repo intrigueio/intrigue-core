@@ -9,50 +9,30 @@ class IntrigueApp < Sinatra::Base
       params[:correlate] == "on" ? @correlate = true : @correlate = false
       (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
 
-      selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden=>false).order(:name)
+      if @correlate        # Handle entity coorelation
 
-      ## Filter if we have a type
-      selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
+       alias_groups = Intrigue::Model::AliasGroup.scope_by_project(@project_name)
+       @alias_group_count = alias_groups.count
+       @alias_groups = alias_groups.extension(:pagination).paginate(@page,@result_count)
 
-      # Perform a simple tokenized search
-      selected_entities = _tokenized_search(@search_string, selected_entities)
-
-      # Handle entity coorelation
-      if @correlate
-
-        # Do the meta-analysis
-        meta_entities = selected_entities.map {|x| [x] | x.aliases }
-
-        @entities = []
-        meta_entities.each do |me|
-          temp = []
-          merged = false
-
-          meta_entities.each do |me2|
-            if (me&me2).any? #&& !(me-me2).empty?
-              temp << (me|me2).flatten
-              merged = true
-            end
-          end
-
-          #handle entities that didn't have any aliases
-          temp << me.flatten unless merged
-
-          @entities << temp.flatten.sort_by{|x| x.name }.uniq
-        end
-
-        @entities.uniq!
-        @entity_count = @entities.count
-        erb :'entities/index_meta'
+       erb :'entities/index_meta'
 
       else # normal flow, uncorrelated
+
+        selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden=>false).order(:name)
+
+        ## Filter if we have a type
+        selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
+
+        # Perform a simple tokenized search
+        selected_entities = _tokenized_search(@search_string, selected_entities)
 
         ## paginate
         @entity_count = selected_entities.count
         @entities = selected_entities.extension(:pagination).paginate(@page,@result_count)
         erb :'entities/index'
       end
-      
+
     end
 
   get '/:project/entities.csv' do

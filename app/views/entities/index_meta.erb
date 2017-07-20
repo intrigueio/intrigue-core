@@ -16,7 +16,7 @@ function delete_entity(id)
 
 <div class="col-sm-2">
   <p>
-  Selected Entities Count: <%= @entity_count %><br/>
+  Selected Entities Count: <%= @alias_group_count %><br/>
   <!--Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>-->
   <a href="/v1/<%=@project_name%>/entities.csv">Export CSV</a><br/>
   </p>
@@ -69,12 +69,17 @@ function delete_entity(id)
     </colgroup>
     <tbody>
       <tr><th>name</th><th>details</th></tr>
-      <% @entities.each do |eg| %>
+      <% @alias_groups.each do |group| %>
         <tr>
-          <td><% eg.each do |e| next if e.hidden; %>[<a href="/v1/<%=@project_name%>/entities/<%=e.id%>"> <%= h e %> </a>] <% end %></td>
-          <td><% eg.each do |e| next if e.hidden; %>[<a href="/v1/<%=@project_name%>/entities/<%=e.id%>"> <%= h e.detail_string %> </a>] <% end %></td>
-        </tr>
+          <% group.entities.each do |e| %>
+
+          <td><% next if e.hidden; %>[<a href="/v1/<%=@project_name%>/entities/<%=e.id%>"> <%= h e %> </a>]</td>
+          <td><% next if e.hidden; %>[<a href="/v1/<%=@project_name%>/entities/<%=e.id%>"> <%= h e.detail_string %> </a>]</td>
+
       <% end %>
+      </tr>
+      <% end %>
+
     </tbody>
   </table>
   <br>
