@@ -169,8 +169,8 @@ class EntityManager
     end
 
     # START ENRICHMENT if we're allowed and unless this entity is prohibited (hidden)
-    task_result.log "Entity Enrichment: #{task_result.auto_enrich}"
-    task_result.log "Entity Hidden: #{hidden}"
+    #task_result.log "Entity Enrichment: #{task_result.auto_enrich}"
+    #task_result.log "Entity Hidden: #{hidden}"
     if task_result.auto_enrich
       enrich_entity(created_entity, task_result) unless hidden
     end

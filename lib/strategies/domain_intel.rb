@@ -15,7 +15,7 @@ module Strategy
       if entity.type_string == "DnsRecord"
         unless entity.created_by?("whois")
           start_recursive_task(task_result,"whois",entity, [
-              {"name" => "opt_create_contacts", "value" => false }])
+              {"name" => "create_contacts", "value" => false }])
         end
       else
         task_result.log "No actions for entity: #{entity.type}##{entity.name}"
