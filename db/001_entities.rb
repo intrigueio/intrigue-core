@@ -3,7 +3,7 @@ Sequel.migration do
 
     create_table :entities do
       primary_key :id
-      foreign_key :project_id, :null => false
+      foreign_key :project_id, :null => false, :on_delete => :cascade
       String :type
       String :name, :size => 400
       String :details, :text => true
@@ -18,10 +18,10 @@ Sequel.migration do
 
     create_table :task_results do
       primary_key :id
-      foreign_key :project_id, :null => false
-      foreign_key :logger_id, :null => false
-      foreign_key :base_entity_id, :null => false
-      foreign_key :scan_result_id, :null => true
+      foreign_key :project_id, :null => false, :on_delete => :cascade
+      foreign_key :logger_id, :null => false, :on_delete => :cascade
+      foreign_key :base_entity_id, :null => false, :on_delete => :cascade
+      foreign_key :scan_result_id, :null => true, :on_delete => :cascade
 
       String :name, :size => 400
       String :task_name, :size => 200
@@ -49,7 +49,7 @@ Sequel.migration do
 
     create_table :loggers do
       primary_key :id
-      foreign_key :project_id, :null => false
+      foreign_key :project_id, :null => false, :on_delete => :cascade
       String :full_log, :text => true
     end
 
@@ -64,9 +64,9 @@ Sequel.migration do
 
     create_table :scan_results do
       primary_key :id
-      foreign_key :project_id, :null => false
-      foreign_key :logger_id, :null => false
-      foreign_key :base_entity_id, :null => false
+      foreign_key :project_id, :null => false, :on_delete => :cascade
+      foreign_key :logger_id, :null => false, :on_delete => :cascade
+      foreign_key :base_entity_id, :null => false, :on_delete => :cascade
       String :name, :size => 400
       Integer :depth
       String :handlers, :text => true

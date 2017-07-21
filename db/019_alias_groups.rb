@@ -8,11 +8,11 @@ Sequel.migration do
     end
 
     alter_table(:entities) do
-      add_foreign_key :alias_group_id, :alias_groups
+      add_foreign_key :alias_group_id, :alias_groups, :on_delete => :cascade
     end
 
     alter_table(:alias_mappings) do
-      add_foreign_key :project_id, :projects
+      add_foreign_key :project_id, :projects, :on_delete => :cascade
     end
 
   end
