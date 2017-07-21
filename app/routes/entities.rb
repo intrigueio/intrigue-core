@@ -11,7 +11,12 @@ class IntrigueApp < Sinatra::Base
 
       if @correlate        # Handle entity coorelation
 
-       alias_groups = Intrigue::Model::AliasGroup.scope_by_project(@project_name)
+       selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden=>false).order(:name)
+       selected_entities = _tokenized_search(@search_string, selected_entities)
+
+       alias_group_ids = selected_entities.map{|x| x.alias_group_id }.uniq
+       alias_groups = Intrigue::Model::AliasGroup.where({:id => alias_group_ids })
+       
        @alias_group_count = alias_groups.count
        @alias_groups = alias_groups.extension(:pagination).paginate(@page,@result_count)
 
