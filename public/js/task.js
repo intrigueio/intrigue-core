@@ -50,7 +50,7 @@
   function setDefaultEntity(data) {
     //console.log(data);
     var entity_type = data["example_entities"][0]["type"];
-    var entity_name = data["example_entities"][0]["attributes"]["name"]
+    var entity_name = data["example_entities"][0]["details"]["name"]
 
     console.log("DEBUG: Setting name to " + entity_name);
     console.log("DEBUG: Setting type to " + entity_type);
@@ -110,7 +110,7 @@
           // if we don't have a set type
           //if (!window.location.href.indexOf("entity_id=")[1] && !window.location.href.indexOf("task_result_id=")[1] && !!window.location.href.indexOf("entities")[1]) {
           //  form.entity_type.value = value.example_entities[0].type;
-          //  form.attrib_name.value = value.example_entities[0].attributes.name;
+          //  form.attrib_name.value = value.example_entities[0].details.name;
           //}
 
           //metadata.html(
