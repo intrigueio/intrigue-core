@@ -43,8 +43,8 @@ function delete_entity(id)
 <div class="col-sm-10">
     <%= "Page: #{@page}" %>
     <%= "Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %>
-    <a href="<%=request.path%>?page=<%=@page-1%>&search_string=<%=@search_string%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">previous</a>
-    <a href="<%=request.path%>?page=<%=@page+1%>&search_string=<%=@search_string%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">next</a>
+    <a href="/v1/<%=@project_string%>/entities?search_string=<%=@search_string%>&page=<%=@page-1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">previous</a>
+    <a href="/v1/<%=@project_string%>/entities?search_string=<%=@search_string%>&page=<%=@page+1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">next</a>
 
   <script src="/js/sorttable.js"></script>
   <style>
