@@ -30,7 +30,7 @@ class DnsSnoopCacheTask < BaseTask
       :type => "discovery",
       :passive => true,
       :allowed_types => ["DnsServer"],
-      :example_entities => [{"type" => "DnsServer", "attributes" => {"name" => "129.186.88.249"}}],
+      :example_entities => [{"type" => "DnsServer", "details" => {"name" => "129.186.88.249"}}],
       :allowed_options => [
         {:name => "method", :type => "String", :default => "R", :regex=> "alpha_numeric" }
       ],

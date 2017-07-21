@@ -13,7 +13,7 @@ class UriCheckSecurityHeaders  < BaseTask
       :type => "discovery",
       :passive => false,
       :allowed_types => ["Uri"],
-      :example_entities => [{"type" => "Uri", "attributes" => {"name" => "http://www.intrigue.io"}}],
+      :example_entities => [{"type" => "Uri", "details" => {"name" => "http://www.intrigue.io"}}],
       :allowed_options => [],
       :created_types => ["Info"]
     }

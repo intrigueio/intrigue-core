@@ -13,8 +13,8 @@ class WhoisTask < BaseTask
       :passive => true,
       :allowed_types => ["DnsRecord","IpAddress","NetBlock"],
       :example_entities => [
-        {"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}},
-        {"type" => "IpAddress", "attributes" => {"name" => "192.0.78.13"}},
+        {"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}},
+        {"type" => "IpAddress", "details" => {"name" => "192.0.78.13"}},
       ],
       :allowed_options => [
         {:name => "timeout", :type => "Integer", :regex=> "integer", :default => 20 },

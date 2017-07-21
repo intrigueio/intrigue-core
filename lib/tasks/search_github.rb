@@ -13,7 +13,7 @@ class SearchGithub < BaseTask
       :passive => true,
       :allowed_types => ["Organization","String"],
       :example_entities => [
-        {"type" => "String", "attributes" => {"name" => "intrigue"}}],
+        {"type" => "String", "details" => {"name" => "intrigue"}}],
       :allowed_options => [
         {:name => "max_item_count", :type => "Integer", :regex => "integer", :default => 20 },
       ],

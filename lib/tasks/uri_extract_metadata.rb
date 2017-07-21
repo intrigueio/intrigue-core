@@ -15,7 +15,7 @@ class UriExtractMetadata < BaseTask
       :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [
-        {"type" => "Uri", "attributes" => { "name" => "http://www.intrigue.io" }}
+        {"type" => "Uri", "details" => { "name" => "http://www.intrigue.io" }}
       ],
       :allowed_options => [],
       :created_types =>  ["DnsRecord","EmailAddress", "File", "Info", "Person", "PhoneNumber", "SoftwarePackage", "SslCertificate"]

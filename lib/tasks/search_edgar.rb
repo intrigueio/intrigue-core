@@ -11,7 +11,7 @@ class SearchCorpwatchTask < BaseTask
       :type => "discovery",
       :passive => true,
       :allowed_types => ["String", "Organization"],
-      :example_entities => [{"type" => "String", "attributes" => {"name" => "intrigue"}}],
+      :example_entities => [{"type" => "String", "details" => {"name" => "intrigue"}}],
       :allowed_options => [],
       :created_types => ["*"]
     }

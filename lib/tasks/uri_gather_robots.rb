@@ -13,7 +13,7 @@ class UriGatherRobotsTask  < BaseTask
       :type => "discovery",
       :passive => false,
       :allowed_types => ["Uri"],
-      :example_entities => [{"type" => "Uri", "attributes" => {"name" => "http://intrigue.io"}}],
+      :example_entities => [{"type" => "Uri", "details" => {"name" => "http://intrigue.io"}}],
       :allowed_options => [],
       :created_types => ["Uri"]
     }

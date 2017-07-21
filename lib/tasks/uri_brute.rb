@@ -20,7 +20,7 @@ class UriBrute < BaseTask
       :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [
-        {"type" => "Uri", "attributes" => {"name" => "http://intrigue.io"}}
+        {"type" => "Uri", "details" => {"name" => "http://intrigue.io"}}
       ],
       :allowed_options => [
         {:name => "threads", :type => "Integer", :regex => "integer", :default => 1 },

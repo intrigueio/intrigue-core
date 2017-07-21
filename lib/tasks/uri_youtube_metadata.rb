@@ -14,7 +14,7 @@ class UriYoutubeMetadata < BaseTask
       :type => "discovery",
       :passive => true,
       :example_entities => [
-        {"type" => "Uri", "attributes" => { "name" => "https://www.youtube.com/watch?v=ZPr-_21-xGQ" }}
+        {"type" => "Uri", "details" => { "name" => "https://www.youtube.com/watch?v=ZPr-_21-xGQ" }}
       ],
       :allowed_options => [],
       :created_types =>  ["Info", "WebAccount"]
@@ -33,12 +33,12 @@ class UriYoutubeMetadata < BaseTask
 
     begin
       video_json = http_get_body "http://www.youtube.com/oembed?url=#{video_uri}&format=json"
-      attributes = JSON.parse video_json
-      _create_entity "Info", attributes.merge({"name" => "YouTube Video: #{attributes["title"]}"})
+      d = JSON.parse video_json
+      _create_entity "Info", d.merge({"name" => "YouTube Video: #{details["title"]}"})
 
-      if attributes["author_name"]
+      if d["author_name"]
         _create_entity "WebAccount", {
-          "name" => attributes["author_name"],
+          "name" => d["author_name"],
           "domain" => "youtube.com",
           "uri" => video_uri
         }

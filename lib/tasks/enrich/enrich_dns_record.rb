@@ -13,7 +13,7 @@ class EnrichDnsRecord < BaseTask
       :allowed_types => ["DnsRecord"],
       :type => "enrichment",
       :passive => true,
-      :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
+      :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
         {:name => "skip_hidden", :type => "Boolean", :regex => "boolean", :default => false }

@@ -11,7 +11,7 @@ class SearchTowerdataTask < BaseTask
       :type => "discovery",
       :passive => true,
       :allowed_types => ["EmailAddress"],
-      :example_entities => [{"type" => "EmailAddress", "attributes" => {"name" => "x@x.com"}}],
+      :example_entities => [{"type" => "EmailAddress", "details" => {"name" => "x@x.com"}}],
       :allowed_options => [],
       :created_types => ["Info"]
     }

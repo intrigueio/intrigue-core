@@ -15,7 +15,7 @@ class NetworkServiceFuzz < BaseTask
       :passive => false,
       :allowed_types => ["NetworkService","SshServer","FtpServer","FingerServer"],
       :example_entities => [
-        {"type" => "NetworkService", "attributes" => {
+        {"type" => "NetworkService", "details" => {
           "ip_address" => "1.1.1.1",
           "port" => 1111,
           "protocol" => "tcp"

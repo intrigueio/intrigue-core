@@ -11,7 +11,7 @@ class AwsEc2GatherInstances < BaseTask
       :type => "discovery",
       :passive => true,
       :allowed_types => ["AwsCredential"],
-      :example_entities => [{"type" => "String", "attributes" => {"name" => "intrigue"}}],
+      :example_entities => [{"type" => "String", "details" => {"name" => "intrigue"}}],
       :allowed_options => [
         {:name => "region", :type => "String", :regex => "alpha_numeric", :default => "us-east-1" }
       ],

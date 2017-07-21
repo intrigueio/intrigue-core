@@ -13,7 +13,7 @@ class SearchGithubCode < BaseTask
       :passive => true,
       :allowed_types => ["GithubUser","GithubRepository"],
       :example_entities => [
-        {"type" => "GithubUser", "attributes" => {"name" => "intrigueio"}}],
+        {"type" => "GithubUser", "details" => {"name" => "intrigueio"}}],
       :allowed_options => [
         {:name => "keywords", :type => "String", :regex => "alpha_numeric", :default => "password" },
         {:name => "max_item_count", :type => "Integer", :regex => "integer", :default => 5 },

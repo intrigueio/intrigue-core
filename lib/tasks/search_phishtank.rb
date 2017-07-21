@@ -13,7 +13,7 @@ class SearchPhishtank < BaseTask
       :passive => true,
       :allowed_types => ["Uri"],
       :example_entities => [
-        {"type" => "Uri", "attributes" => {"name" => "http://intrigue.io"}}],
+        {"type" => "Uri", "details" => {"name" => "http://intrigue.io"}}],
       :allowed_options => [
       ],
       :created_types => ["Info"]

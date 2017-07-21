@@ -11,7 +11,7 @@ class SearchCensysTask < BaseTask
       :type => "discovery",
       :passive => true,
       :allowed_types => ["DnsRecord","IpAddress","String"],
-      :example_entities => [{"type" => "String", "attributes" => {"name" => "intrigue.io"}}],
+      :example_entities => [{"type" => "String", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
       :created_types => ["DnsRecord","FtpServer","SslCertificate"]
     }

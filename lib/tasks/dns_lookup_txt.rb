@@ -13,7 +13,7 @@ class DnsLookupTxtTask < BaseTask
       :allowed_types => ["DnsRecord"],
       :type => "discovery",
       :passive => true,
-      :example_entities => [{"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}],
+      :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
       ],

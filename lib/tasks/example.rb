@@ -12,7 +12,7 @@ class ExampleTask < BaseTask
       :passive => true,
       :allowed_types => ["*"],
       :example_entities => [
-        {"type" => "String", "attributes" => {"name" => "intrigue"}}
+        {"type" => "String", "details" => {"name" => "intrigue"}}
       ],
       :allowed_options => [
         {:name => "unused_option", :type => "Integer", :regex=> "integer", :default => 100 },

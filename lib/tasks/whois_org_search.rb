@@ -13,7 +13,7 @@ class WhoisOrgSearch < BaseTask
       :passive => true,
       :allowed_types => ["Organization", "String"],
       :example_entities => [
-        {"type" => "String", "attributes" => {"name" => "Intrigue"}}
+        {"type" => "String", "details" => {"name" => "Intrigue"}}
       ],
       :allowed_options => [
         {:name => "timeout", :type => "Integer", :regex=> "integer", :default => 20 }],

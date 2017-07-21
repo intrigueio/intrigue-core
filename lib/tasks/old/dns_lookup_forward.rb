@@ -11,7 +11,7 @@ class DnsLookupForwardTask < BaseTask
       :type => "discovery",
       :passive => true,
       :allowed_types => ["Host","String"],
-      :example_entities => [{"type" => "Host", "attributes" => {"name" => "intrigue.io"}}],
+      :example_entities => [{"type" => "Host", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
       ],

@@ -12,7 +12,7 @@ class ConvertEntity < BaseTask
       :passive => true,
       :allowed_types => ["*"],
       :example_entities => [
-        {"type" => "String", "attributes" => {"name" => "intrigue"}}
+        {"type" => "String", "details" => {"name" => "intrigue"}}
       ],
       :allowed_options => [
         {:name => "convert_to_type", :type => "String", :regex => "alpha_numeric", :default => "String" },

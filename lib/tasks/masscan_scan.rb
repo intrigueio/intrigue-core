@@ -16,7 +16,7 @@ class MasscanTask < BaseTask
       :type => "discovery",
       :passive => false,
       :allowed_types => ["IpAddress","NetBlock"],
-      :example_entities => [{"type" => "NetBlock", "attributes" => {"name" => "10.0.0.0/24"}}],
+      :example_entities => [{"type" => "NetBlock", "details" => {"name" => "10.0.0.0/24"}}],
       :allowed_options => [
         {:name => "port", :type => "Integer", :regex => "integer", :default => 80 },
       ],

@@ -12,7 +12,7 @@ class SearchOpencorporates < BaseTask
       :passive => true,
       :allowed_types => ["Host","Organization","String"],
       :example_entities => [
-        {"type" => "String", "attributes" => {"name" => "intrigue"}}
+        {"type" => "String", "details" => {"name" => "intrigue"}}
       ],
       :allowed_options => [
       ],

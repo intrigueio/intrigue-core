@@ -12,7 +12,7 @@ class EnrichUri < BaseTask
       :type => "enrichment",
       :passive => false,
       :allowed_types => ["Uri"],
-      :example_entities => [{"type" => "Uri", "attributes" => {"name" => "https://intrigue.io"}}],
+      :example_entities => [{"type" => "Uri", "details" => {"name" => "https://intrigue.io"}}],
       :allowed_options => [],
       :created_types => []
     }

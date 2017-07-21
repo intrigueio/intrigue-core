@@ -14,7 +14,7 @@ class AwsS3Brute < BaseTask
       :passive => true,
       :allowed_types => ["Uri"],
       :example_entities => [
-        {"type" => "Uri", "attributes" => {"name" => "test,test2,test3"}}
+        {"type" => "Uri", "details" => {"name" => "test,test2,test3"}}
       ],
       :allowed_options => [
         {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },

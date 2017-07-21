@@ -15,7 +15,7 @@ class EmailValidateMailboxLayerTask < BaseTask
       :passive => true,
       :allowed_types => ["EmailAddress"],
       :example_entities => [
-        {"type" => "EmailAddress", "attributes" => {"name" => "test@intrigue.io"}}
+        {"type" => "EmailAddress", "details" => {"name" => "test@intrigue.io"}}
       ],
       :allowed_options => [],
       :created_types => ["Info"]

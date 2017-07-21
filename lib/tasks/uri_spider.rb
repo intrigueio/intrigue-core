@@ -15,7 +15,7 @@ class UriSpider < BaseTask
       :type => "discovery",
       :passive => false,
       :example_entities => [
-        {"type" => "Uri", "attributes" => { "name" => "http://www.intrigue.io" }}
+        {"type" => "Uri", "details" => { "name" => "http://www.intrigue.io" }}
       ],
       :allowed_options => [
         {:name => "threads", :type => "Integer", :regex => "integer", :default => 1 },

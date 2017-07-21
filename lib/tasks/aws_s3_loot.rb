@@ -14,7 +14,7 @@ class AwsS3Loot < BaseTask
       :passive => true,
       :allowed_types => ["AwsS3Bucket"],
       :example_entities => [
-        {"type" => "AwsS3Bucket", "attributes" => {"name" => "https://s3.amazonaws.com/bucket"}}
+        {"type" => "AwsS3Bucket", "details" => {"name" => "https://s3.amazonaws.com/bucket"}}
       ],
       :allowed_options => [ ],
       :created_types => ["DnsRecord"]

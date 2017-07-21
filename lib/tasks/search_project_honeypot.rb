@@ -10,7 +10,7 @@ class SearchProjectHoneypot < BaseTask
       :description => "This task checks the projecthoneypot site for information.",
       :references => [],
       :allowed_types => ["IpAddress"],
-      :example_entities => [{"type" => "IpAddress", "attributes" => {"name" => "1.1.1.1"}}],
+      :example_entities => [{"type" => "IpAddress", "details" => {"name" => "1.1.1.1"}}],
       :allowed_options => [],
       :created_types => ["Info"]
     }

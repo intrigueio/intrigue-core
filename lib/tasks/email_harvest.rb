@@ -12,7 +12,7 @@ class EmailHarvestTask < BaseTask
       :passive => true,
       :allowed_types => ["DnsRecord"],
       :example_entities => [
-        {"type" => "DnsRecord", "attributes" => {"name" => "intrigue.io"}}
+        {"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}
       ],
       :allowed_options => [],
       :created_types => ["EmailAddress"]

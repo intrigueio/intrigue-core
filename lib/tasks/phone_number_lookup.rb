@@ -13,7 +13,7 @@ class PhoneNumberLookup < BaseTask
       :type => "discovery",
       :passive => true,
       :allowed_types => ["PhoneNumber"],
-      :example_entities => [ {"type" => "PhoneNumber", "attributes" => {"name" => "202-456-1414"}} ],
+      :example_entities => [ {"type" => "PhoneNumber", "details" => {"name" => "202-456-1414"}} ],
       :allowed_options => [ ],
       :created_types => [] # only edits the phone number
     }
@@ -36,20 +36,20 @@ class PhoneNumberLookup < BaseTask
 
     begin
       response = http_get_body lookup_uri
-      attributes = JSON.parse response if response
+      details = JSON.parse response if response
 
-      if attributes["Response"]["error"]
-        _log_error "Error querying API #{attributes["Response"]["error"]}"
+      if details["Response"]["error"]
+        _log_error "Error querying API #{details["Response"]["error"]}"
         return
       end
 
-      _log "You have #{attributes["Response"]["creditBalance"]} credits remaining."
-      _log "Carrier Type: #{attributes["Response"]["carrier_type"]}"
-      _log "Carrier: #{attributes["Response"]["carrier"]}"
+      _log "You have #{details["Response"]["creditBalance"]} credits remaining."
+      _log "Carrier Type: #{details["Response"]["carrier_type"]}"
+      _log "Carrier: #{details["Response"]["carrier"]}"
 
       # Edit the phone number entity
-      @entity.set_detail("carrier_type", attributes["Response"]["carrier_type"])
-      @entity.set_detail("carrier",attributes["Response"]["carrier"])
+      @entity.set_detail("carrier_type", details["Response"]["carrier_type"])
+      @entity.set_detail("carrier",details["Response"]["carrier"])
 
     rescue JSON::ParserError
       _log_error "Unable to retrieve provider info"

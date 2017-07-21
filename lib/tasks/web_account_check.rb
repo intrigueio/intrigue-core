@@ -13,7 +13,7 @@ class WebAccountCheckTask < BaseTask
       :type => "discovery",
       :passive => true,
       :allowed_types => ["String","Person","Organization","Username","WebAccount"],
-      :example_entities => [{"type" => "String", "attributes" => {"name" => "intrigueio"}}],
+      :example_entities => [{"type" => "String", "details" => {"name" => "intrigueio"}}],
       :allowed_options => [
         {:name => "specific_sites", :type => "String", :regex => "alpha_numeric_list", :default => "" }
       ],

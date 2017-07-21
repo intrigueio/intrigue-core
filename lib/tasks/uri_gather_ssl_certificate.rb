@@ -13,7 +13,7 @@ class UriGatherSslCertTask  < BaseTask
       :type => "discovery",
       :passive => false,
       :allowed_types => ["Uri"],
-      :example_entities => [{"type" => "Uri", "attributes" => {"name" => "http://www.intrigue.io"}}],
+      :example_entities => [{"type" => "Uri", "details" => {"name" => "http://www.intrigue.io"}}],
       :allowed_options => [
         {:name => "skip_cloudflare", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "skip_distil", :type => "Boolean", :regex => "boolean", :default => true },

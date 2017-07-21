@@ -12,7 +12,7 @@ class SearchBingTask < BaseTask
       :type => "discovery",
       :passive => true,
       :allowed_types => ["Organization", "Person", "String"],
-      :example_entities => [{"type" => "String", "attributes" => {"name" => "intrigue.io"}}],
+      :example_entities => [{"type" => "String", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
       :created_types => ["Uri"]
     }

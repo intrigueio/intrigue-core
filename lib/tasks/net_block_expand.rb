@@ -12,7 +12,7 @@ class NetBlockExpand < BaseTask
       :passive => true,
       :allowed_types => ["NetBlock"],
       :example_entities => [
-        {"type" => "NetBlock", "attributes" => {"name" => "10.0.0.0/24"}}
+        {"type" => "NetBlock", "details" => {"name" => "10.0.0.0/24"}}
       ],
       :allowed_options => [
       ],

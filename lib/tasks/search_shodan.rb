@@ -12,7 +12,7 @@ class SearchShodanTask < BaseTask
       :passive => true,
       :allowed_types => ["DnsRecord","DnsServer","IpAddress","NetworkService","String"],
       :example_entities => [
-        {"type" => "String", "attributes" => {"name" => "intrigue.io"}}
+        {"type" => "String", "details" => {"name" => "intrigue.io"}}
       ],
       :allowed_options => [],
       :created_types => ["DnsRecord","IpAddress","NetworkService","Organization","PhysicalLocation"]
@@ -70,7 +70,7 @@ class SearchShodanTask < BaseTask
         _log "Port: #{r["port"]}"
 
         port = _create_entity("NetworkService",{
-          "name" => "#{host.attributes[:name]}:#{r["port"]}/tcp",
+          "name" => "#{host.details[:name]}:#{r["port"]}/tcp",
           "proto" => "tcp",
           "port_num" => r["port"],
           "fingerprint" => r["data"],
