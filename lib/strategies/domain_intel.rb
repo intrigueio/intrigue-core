@@ -7,13 +7,16 @@ module Strategy
         :name => "domain_intel",
         :pretty_name => "Domain Intel",
         :authors => ["jcran"],
-        :description => "This strategy looks up entities in whois."
+        :description => "This strategy grabs the source ."
       }
     end
 
     def self.recurse(entity, task_result)
       if entity.type_string == "DnsRecord"
-        start_recursive_task(task_result,"whois",entity) unless entity.created_by?("whois")
+        unless entity.created_by?("whois")
+          start_recursive_task(task_result,"whois",entity, [
+              {"name" => "opt_create_contacts", "value" => false }])
+        end
       else
         task_result.log "No actions for entity: #{entity.type}##{entity.name}"
         return

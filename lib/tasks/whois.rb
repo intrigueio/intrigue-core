@@ -17,8 +17,11 @@ class WhoisTask < BaseTask
         {"type" => "IpAddress", "attributes" => {"name" => "192.0.78.13"}},
       ],
       :allowed_options => [
-        {:name => "timeout", :type => "Integer", :regex=> "integer", :default => 20 }],
-      :created_types => ["DnsRecord", "DnsServer"]
+        {:name => "timeout", :type => "Integer", :regex=> "integer", :default => 20 },
+        {:name => "create_contacts", :type => "Boolean", :regex => "boolean", :default => true },
+        {:name => "create_nameservers", :type => "Boolean", :regex => "boolean", :default => true }
+      ],
+      :created_types => ["EmailAddress", "NetBlock", "Person"]
     }
   end
 
@@ -31,6 +34,8 @@ class WhoisTask < BaseTask
     ###
 
     lookup_string = _get_entity_name
+    opt_create_nameservers = _get_option "create_nameservers"
+    opt_create_contacts = _get_option "create_contacts"
 
     begin
       whois = Whois::Client.new(:timeout => 20)
@@ -139,23 +144,30 @@ class WhoisTask < BaseTask
         #
         begin
           if parser.nameservers
-
-            parser.nameservers.each do |nameserver|
-              _log "Parsed nameserver: #{nameserver}"
-              _create_entity "DnsRecord", "name" => nameserver.to_s
-
+            if opt_create_nameservers
+              parser.nameservers.each do |nameserver|
+                _log "Parsed nameserver: #{nameserver}"
+                _create_entity "DnsRecord", "name" => nameserver.to_s
+              end
+            else
+              _log "Skipping nameservers"
             end
           else
             _log_error "No parsed nameservers!"
             return
           end
+
           #
           # Create a user from the technical contact
           #
-          parser.contacts.each do |contact|
-            _log "Creating user from contact: #{contact.name}"
-            _create_entity("Person", {"name" => contact.name})
-            _create_entity("EmailAddress", {"name" => contact.email})
+          if opt_create_contacts
+            parser.contacts.each do |contact|
+              _log "Creating user from contact: #{contact.name}"
+              _create_entity("Person", {"name" => contact.name})
+              _create_entity("EmailAddress", {"name" => contact.email})
+            end
+          else
+            _log "Skipping contacts"
           end
         rescue Whois::AttributeNotImplemented => e
           _log_error "Unable to parse that attribute: #{e}"
