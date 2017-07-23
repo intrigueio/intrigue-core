@@ -81,7 +81,8 @@ class IntrigueApp < Sinatra::Base
       return "No such entity in this project" unless entity
       entity.deleted = true
       entity.save
-    true
+
+      redirect request.referrer
     end
 
     get '/:project/entities/:id/delete_children' do
@@ -94,7 +95,7 @@ class IntrigueApp < Sinatra::Base
         t.entities.each { |e| e.deleted = true; e.save }
       end
 
-    true
+      redirect request.referrer
     end
 
 
