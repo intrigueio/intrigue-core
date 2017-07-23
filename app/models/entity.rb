@@ -203,7 +203,7 @@ module Intrigue
           :name =>  name,
           :deleted => deleted,
           :hidden => hidden,
-          :details => details.select { |key, value| !key.to_s.match(/^hidden_.*$/) },
+          :details => safe_details },
           :aliases => aliases.map{ |x| {:id => x.id, :name => x.name } },
           :task_results => task_results.map{ |t| {:id => t.id, :name => t.name } }
         }

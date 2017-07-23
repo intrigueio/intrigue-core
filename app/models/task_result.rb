@@ -93,7 +93,7 @@ module Intrigue
           "options" => options,
           "complete" => complete,
           "base_entity" => base_entity.export_hash,
-          "entities" => entities.map{ |e| {:id => e.id, :type => e.type, :name => e.name, :details => e.details } },
+          "entities" => entities.map{ |e| {:id => e.id, :type => e.type, :name => e.name, :details => e.safe_details } },
           "log" => get_log
         }
       end
