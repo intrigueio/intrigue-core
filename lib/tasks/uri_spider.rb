@@ -80,7 +80,7 @@ class UriSpider < BaseTask
       page_uri = "#{response.effective_url}"
 
       # Create an entity for this uri
-      _create_entity("Uri", { "name" => page_uri, "uri" => page_uri }) if @opt_extract_uris
+      _create_entity("Uri", { "name" => page_uri, "uri" => page_uri, "spidered" => true }) if @opt_extract_uris
 
       # If we don't have a body, we can't do anything here.
       next unless response.body

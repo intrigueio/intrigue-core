@@ -13,32 +13,8 @@ function delete_entity(id)
   }
 }
 </script>
-
 <div class="col-sm-2">
-  <p>
-  Selected Entities Count: <%= @entity_count %><br/>
-  <!--Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>-->
-  <a href="/v1/<%=@project_name%>/entities.csv?search_string=<%=@search_string%>&entity_types=<%=@entity_types%>">Export CSV</a><br/>
-  </p>
-
-  <form class="form-horizontal" id="entity_search" target="_self" method="get" action="/v1/<%=@project_name%>/entities">
-
-    Search:
-    <input type="text" style='width:100%' class="form-control sm" id="search_string" name="search_string" value="<%= h params["search_string"]%>">
-    <br/>
-    Types:<br/>
-    <select size=10 style='height:200%; color:#000000;' multiple name="entity_types[]">
-      <% Intrigue::Model::Entity.descendants.map{|x|x.to_s}.sort.each do |d| %>
-        <option value="<%=d%>"><%=d%></option>
-      <% end %>
-    </select><br/>
-    <input id="correlate" name="correlate" type="checkbox"> Correlate Entities <br/><br/>
-
-
-    <input class="btn btn-primary" type="submit" value="Search">
-  </form>
-  <br/>
-  <%= erb :'_statistics' %>
+  <%= erb :'entities/_search', :layout => false %>
 </div>
 <div class="col-sm-10">
     <%= "Page: #{@page}" %>

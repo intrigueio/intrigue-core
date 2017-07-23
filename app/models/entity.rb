@@ -44,6 +44,10 @@ module Intrigue
         validates_unique([:project_id, :type, :name])
       end
 
+      def safe_details
+        details.select { |k, v| !k.to_s.match(/^hidden_.*$/) }
+      end
+
       def transform!
         true
       end
@@ -95,6 +99,7 @@ module Intrigue
       end
 
       def get_detail(key)
+        return nil if key =~ /^hidden_$/
         details[key]
       end
 
@@ -198,7 +203,7 @@ module Intrigue
           :name =>  name,
           :deleted => deleted,
           :hidden => hidden,
-          :details => details,
+          :details => details.select { |key, value| !key.to_s.match(/^hidden_.*$/) },
           :aliases => aliases.map{ |x| {:id => x.id, :name => x.name } },
           :task_results => task_results.map{ |t| {:id => t.id, :name => t.name } }
         }

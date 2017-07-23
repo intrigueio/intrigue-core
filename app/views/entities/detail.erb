@@ -16,7 +16,7 @@
       </h4>
     </div>
     <div id="collapse1" class="panel-collapse collapse in">
-      <div class="panel-body"><pre><%=h JSON.pretty_generate(@entity.details) %></pre></div>
+      <div class="panel-body"><pre><%=h JSON.pretty_generate(@entity.safe_details) %></pre></div>
     </div>
   </div>
 </div>

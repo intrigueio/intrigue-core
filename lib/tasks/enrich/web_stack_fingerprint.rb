@@ -78,13 +78,16 @@ class WebStackFingerprint < BaseTask
   def _check_uri(uri)
     _log "_check_uri called"
     temp = []
-    temp << "ASP Classic" if uri =~ /.*\.asp$/i
-    temp << "ASP.NET" if uri =~ /.*\.aspx$/i
-    temp << "CGI" if uri =~ /.*\.cgi$/i
+    temp << "ASP Classic" if uri =~ /.*\.asp(\?.*)?$/i
+    temp << "ASP.NET" if uri =~ /.*\.aspx(\?.*)?$/i
+    temp << "CGI" if uri =~ /.*\.cgi(\?.*)?$/i
     temp << "Java (jsessionid)" if uri =~ /jsessionid=/i
-    temp << "JSP" if uri =~ /.*\.jsp$/i
-    temp << "PHP" if uri =~ /.*\.php$/i
-    temp << "Struts" if uri =~ /.*\.do$/i
+    temp << "JSP" if uri =~ /.*\.jsp(\?.*)?$/i
+    temp << "PHP" if uri =~ /.*\.php(\?.*)?$/i
+    temp << "Struts" if uri =~ /.*\.do(\?.*)?$/i
+    temp << "Struts" if uri =~ /.*\.go(\?.*)?$/i
+    temp << "Struts" if uri =~ /.*\.action(\?.*)?$/i
+
   temp
   end
 

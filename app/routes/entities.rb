@@ -9,14 +9,15 @@ class IntrigueApp < Sinatra::Base
       params[:correlate] == "on" ? @correlate = true : @correlate = false
       (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
 
-      if @correlate        # Handle entity coorelation
+      if @correlate # Handle entity coorelation
 
        selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden=>false).order(:name)
+       selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
        selected_entities = _tokenized_search(@search_string, selected_entities)
 
        alias_group_ids = selected_entities.map{|x| x.alias_group_id }.uniq
        alias_groups = Intrigue::Model::AliasGroup.where({:id => alias_group_ids })
-       
+
        @alias_group_count = alias_groups.count
        @alias_groups = alias_groups.extension(:pagination).paginate(@page,@result_count)
 
@@ -98,6 +99,7 @@ class IntrigueApp < Sinatra::Base
 
 
     private
+
     def _tokenized_search(search_string, selected_entities)
       # Simple tokenized search......
       if search_string
