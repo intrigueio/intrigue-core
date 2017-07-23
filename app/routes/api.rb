@@ -158,15 +158,16 @@ class IntrigueApp < Sinatra::Base
     #  "task" => task_name,
     #  "entity" => entity_hash,
     #  "options" => options_list,
+    #  "auto_enrich" => false
     #}.to_json
     post '/:project/results/?' do
 
       # Parse the incoming request
-      payload = JSON.parse(request.body.read) if request.content_type == "application/json"
+      payload = JSON.parse(request.body.read) if (request.content_type == "application/json" && request.body)
 
       ### don't take any shit
-      raise "No payload!" unless payload
-      
+      return "No payload!" unless payload
+
       # Construct an entity from the entity_hash provided
       type = payload["entity"]["type"]
       name = payload["entity"]["name"]
@@ -186,7 +187,13 @@ class IntrigueApp < Sinatra::Base
       options = payload["options"]
       handlers = payload["handlers"]
       strategy_name = payload["strategy_name"]
-      auto_enrich = payload["auto_enrich"].to_bool
+
+      # default to false for enrichment
+      if payload["auto_enrich"]
+        auto_enrich = payload["auto_enrich"].to_bool
+      else
+        auto_enrich = false
+      end
 
       # create the first entity
       entity = Intrigue::EntityManager.create_first_entity(@project_name,type,name,{})
@@ -201,7 +208,7 @@ class IntrigueApp < Sinatra::Base
       status 200 if task_result
 
     # must be a string otherwise it can be interpreted as a status code
-    task_result.id.to_s
+    {"result_id" => task_result.id}.to_json
     end
 
 =begin
