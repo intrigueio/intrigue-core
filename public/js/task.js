@@ -52,15 +52,14 @@
     var entity_type = data["example_entities"][0]["type"];
     var entity_name = data["example_entities"][0]["details"]["name"]
 
-    console.log("DEBUG: Setting name to " + entity_name);
-    console.log("DEBUG: Setting type to " + entity_type);
+    //console.log("DEBUG: Setting name to " + entity_name);
+    //console.log("DEBUG: Setting type to " + entity_type);
 
     // set the name
     $("#attrib_name").attr("value", entity_name);
 
     // set the type
     $("#entity_type option[value=\""+entity_type+"\"]").prop('selected', true);
-    //$("#entity_type option[value=\""+"String"+"\"]").prop('selected', true);
 
   }
 
