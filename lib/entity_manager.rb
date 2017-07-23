@@ -52,14 +52,19 @@ class EntityManager
       type = resolve_type(type_string)
       $db.transaction do
         begin
+
+          g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
+
           entity = Intrigue::Model::Entity.create({
             :name =>  downcased_name,
             :project => project,
             :type => type,
             :details => details,
             :details_raw => details,
-            :hidden => (hidden ? true : false )
+            :hidden => (hidden ? true : false ),
+            :alias_group_id => g.id
            })
+
          rescue Encoding::UndefinedConversionError => e
            task_result.log "ERROR! Unable to create entity: #{e}"
          end
