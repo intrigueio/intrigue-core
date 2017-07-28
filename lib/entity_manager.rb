@@ -165,7 +165,7 @@ class EntityManager
       self.alias_entity project, created_entity, primary_entity
 
       # They'd share the same group...
-      created_entity.alias_group = primary_entity.alias_group
+      created_entity.alias_group_id = primary_entity.alias_group.id
       created_entity.save
     else # otherwise, there's nothing to alias, so lets create a new group
       g = Intrigue::Model::AliasGroup.create(:project_id => project.id)

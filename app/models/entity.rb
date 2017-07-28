@@ -55,10 +55,12 @@ module Intrigue
       def alias(entity)
 
         add_alias(entity)
+        save
 
         # They'd share the same group...
         entity.alias_group_id = self.alias_group.id
         entity.save
+
       end
 
       def self.scope_by_project(project_name)

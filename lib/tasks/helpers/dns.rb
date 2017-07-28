@@ -37,7 +37,7 @@ module Intrigue
         rescue Errno::ENETUNREACH => e
           _log_error "Hit exception: #{e}. Are you sure you're connected?"
         ensure
-          return false unless ip_addresses && dns_names
+          return [] 
         end
 
         _log_good "Got... #{ip_addresses.concat(dns_names)}"

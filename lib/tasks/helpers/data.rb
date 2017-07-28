@@ -4,15 +4,15 @@ module Data
 
   def simple_web_creds
    [
-      {"username" => "admin", "password" => "admin"},
+      {"username" => "admin",     "password" => "admin"},
       {"username" => "anonymous", "password" => "anonymous"},
-      {"username" => "cisco", "password" => "cisco"},
-      {"username" => "demo", "password" => "demo"},
-      {"username" => "demo1", "password" => "demo1"},
-      {"username" => "guest", "password" => "guest"},
-      {"username" => "test", "password" => "test"},
-      {"username" => "test1", "password" => "test1"},
-      {"username" => "test123", "password" => "test123"},
+      {"username" => "cisco",     "password" => "cisco"},
+      {"username" => "demo",      "password" => "demo"},
+      {"username" => "demo1",     "password" => "demo1"},
+      {"username" => "guest",     "password" => "guest"},
+      {"username" => "test",      "password" => "test"},
+      {"username" => "test1",     "password" => "test1"},
+      {"username" => "test123",   "password" => "test123"},
       {"username" => "test123!!", "password" => "test123!!"}
     ]
   end
@@ -21,18 +21,18 @@ module Data
     if type_string == "IpAddress"
       # 23.x.x.x
       return true if (  # Skip Akamai
-                        entity_name =~ /^23\..*$/              ||
-                        entity_name =~ /^2600:1400.*$/         ||
-                        entity_name =~ /^2600:1409.*$/         ||
-                        # Skip Incapsula... lots of annoying scan results here
-                        entity_name =~ /107\.154\.*/           ||
-                        # RFC1918
-                        entity_name =~ /^172\.16\..*$/         ||
-                        entity_name =~ /^192\.168\..*$/        ||
-                        entity_name =~ /^10\..*$/              ||
-                        # localhost
-                        entity_name =~ /^127\..*$/             ||
-                        entity_name =~ /^0.0.0.0/ )
+          entity_name =~ /^23\..*$/              ||
+          entity_name =~ /^2600:1400.*$/         ||
+          entity_name =~ /^2600:1409.*$/         ||
+          # Skip Incapsula... lots of annoying scan results here
+          entity_name =~ /107\.154\.*/           ||
+          # RFC1918
+          entity_name =~ /^172\.16\..*$/         ||
+          entity_name =~ /^192\.168\..*$/        ||
+          entity_name =~ /^10\..*$/              ||
+          # localhost
+          entity_name =~ /^127\..*$/             ||
+          entity_name =~ /^0.0.0.0/ )
     end
 
     # Standard exclusions

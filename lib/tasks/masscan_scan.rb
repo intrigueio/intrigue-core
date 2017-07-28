@@ -77,15 +77,17 @@ class MasscanTask < BaseTask
             "proto" => "tcp",
             "uri" => uri  })
 
-        else
-          _create_entity("NetworkService", {
-            "name" => "#{host}:#{opt_port}/tcp",
-            "port_num" => opt_port,
-            "proto" => "tcp"
-          })
         end
       end
       ### End Resolution
+
+      # Always create the network service
+      _create_entity("NetworkService", {
+        "name" => "#{line}:#{opt_port}/tcp",
+        "ip_address" => "#{line}",
+        "port" => opt_port,
+        "proto" => "tcp"
+      })
 
     end
 
