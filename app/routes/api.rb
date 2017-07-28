@@ -190,7 +190,7 @@ class IntrigueApp < Sinatra::Base
 
       # default to false for enrichment
       if payload["auto_enrich"]
-        auto_enrich = payload["auto_enrich"].to_bool
+        auto_enrich = "#{payload["auto_enrich"]}".to_bool
       else
         auto_enrich = false
       end
