@@ -1,12 +1,14 @@
-# Welcome!!
+# Welcome!
 
-WARNING: Intrigue is currently in ALPHA. If you need assistance, please join us in #intrigue on irc.freenode.net.
+Intrigue-core is a framework for automated attack surface discovery, written in Ruby. 
 
-Intrigue-core is a framework for attack surface discovery. 
+If you'd like assistance getting started or have development-related questions, see the [Getting Started](https://intrigue.io/getting-started/) documentation and/or join us in the [chat](https://gitter.im/intrigueio/intrigue-core).
 
 <img src="https://raw.githubusercontent.com/intrigueio/intrigue-core/develop/doc/home.png" width="700">
 
-To get started, follow the instructions below!
+## Developer Setup
+
+To get started setting up a development environment, follow the instructions below!
 
 ### Setting up a development environment
 
@@ -21,11 +23,9 @@ Now that you have a working environment, browse to the web interface.
 
 ### Using the web interface
 
-To use the web interface, browse to http://127.0.0.1:7777
+To use the web interface, browse to http://127.0.0.1:7777. Once you're able to connect, you can follow the instructions here: https://intrigue.io/2017/03/07/using-intrigue-core-with-docker/
 
-Getting started is pretty straightforward, follow this guide: https://intrigue.io/2017/03/07/using-intrigue-core-with-docker/
-
-### Configuring modules
+### Configuring the system
 
 Many modules require API keys. To set them up, browse to the "Configure" tab and click on the name of the module. You will be taken to the relevant signup page where you can provision an API key.
 
@@ -40,22 +40,17 @@ $ bundle exec ./core-cli.rb list
 
 Start a task:
 ```
-$ bundle exec ./core-cli.rb start dns_lookup_forward DnsRecord#intrigue.io
-```
-
-Start a task with options:
-```
-$ bundle exec ./core-cli.rb start dns_brute_sub DnsRecord#intrigue.io resolver=8.8.8.8#brute_list=1,2,3,4,www#use_permutations=true
-[+] Starting task
-... <snip>
+$ bundle exec ./core-cli.rb background Default dns_brute_sub DnsRecord#intrigue.io 1 
+Got entity: {"type"=>"DnsRecord", "name"=>"intrigue.io", "details"=>{"name"=>"intrigue.io"}}
+Task Result: {"result_id":66103}
 ```
 
 ### API usage via curl:
 
-You can use the tried and true curl utility to request a task run. Specify the task type, specify an entity, and the appropriate options:
+You can use curl to drive the framework. See the example below:
 
 ```
-$ curl -s -X POST -H "Content-Type: application/json" -d '{ "task": "example", "entity": { "type": "String", "attributes": { "name": "8.8.8.8" } }, "options": {} }' http://127.0.0.1:7777/v1/task_runs
+$ curl -s -X POST -H "Content-Type: application/json" -d '{ "task": "example", "entity": { "type": "String", "attributes": { "name": "8.8.8.8" } }, "options": {} }' http://127.0.0.1:7777/v1/results
 ```
 
 ### Ruby gem for the API:
