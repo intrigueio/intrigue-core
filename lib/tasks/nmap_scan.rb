@@ -161,6 +161,17 @@ class NmapScanTask < BaseTask
                 "proto" => port.protocol,
                 "uri" => uri  })
 
+
+              # Then Snmp
+            elsif [161].include?(port.number)
+                uri = "snmp://#{host.ip}:#{port.number}"
+                _create_entity("SnmpServer", {
+                  "name" => uri,
+                  "ip_address" => "#{host.ip}",
+                  "port" => port.number,
+                  "proto" => port.protocol,
+                  "uri" => uri  })
+
             end # end if
           end # end if port.state == :open
         end # end host.each_port
