@@ -83,6 +83,6 @@ RUN ln -s /core/util/control.sh /etc/init.d/intrigue
 RUN /bin/bash -l -c "sed -i 's/md5/trust/g' /etc/postgresql/9.6/main/pg_hba.conf"
 
 # start the app (also migrates DB)
-CMD /bin/bash -l -c "PATH=/root/.rbenv/shims:$PATH && service postgresql start && service redis-server start && su - postgres -c 'createuser -d -w intrigue && createdb intriguedb' && service intrigue start"
+CMD /bin/bash -l -c "PATH=/root/.rbenv/shims:$PATH && service postgresql start && service redis-server start && su - postgres -c 'createuser -d -w intrigue && createdb intrigue_dev' && service intrigue start"
 
 #ENTRYPOINT "/bin/bash"
