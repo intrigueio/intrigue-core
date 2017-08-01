@@ -9,7 +9,7 @@ class SnmpExtraction < BaseTask
       :pretty_name => "SNMP Extraction",
       :authors => ["jcran"],
       :description => "This task connects to a snmp service and pulls out system details.",
-      :references => [],
+      :references => ["https://community.rapid7.com/community/services/blog/2016/05/05/snmp-data-harvesting-during-penetration-testing"],
       :type => "discovery",
       :passive => false,
       :allowed_types => ["SnmpServer"],
