@@ -10,6 +10,12 @@ GIT
       typhoeus
 
 GIT
+  remote: https://github.com/intrigueio/ruby-snmp.git
+  revision: e41bb0e04b1fe9be4e02d261012ef52c3db217b6
+  specs:
+    snmp (1.2.0)
+
+GIT
   remote: https://github.com/intrigueio/screencap.git
   revision: e3af2819f083b021babff97a9a61278ccf99cc22
   specs:
@@ -252,6 +258,7 @@ DEPENDENCIES
   sidekiq-unique-jobs
   sinatra
   sinatra-contrib
+  snmp!
   sqlite3
   thor
   towerdata_api
@@ -261,4 +268,4 @@ DEPENDENCIES
   yomu
 
 BUNDLED WITH
-   1.15.1
+   1.15.3

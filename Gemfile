@@ -29,18 +29,19 @@ gem 'net-dns'                 # dns_cache_snoop
 gem 'dnsruby'                 # dns_zone_transfer
 gem 'em-resolv-replace'       # dns_brute_sub
 gem 'whois'                   # dns_zone_transfer, whois
-gem 'whois-parser'
+gem 'whois-parser'            # whois
 gem 'googleajax'              # search_google
 gem 'geoip'                   # geolocate_host
 gem 'shodan'                  # search_shodan
 gem 'towerdata_api'           # search_towerdata
 gem 'yomu'                    # uri_spider
-gem 'screencap',      :git => 'https://github.com/intrigueio/screencap.git'
-gem 'arachnid',       :git => 'https://github.com/intrigueio/arachnid.git'
 gem 'ruby-nmap',      :git => 'https://github.com/pentestify/ruby-nmap.git'
 gem 'censys',         :git => 'https://github.com/pentestify/censys.git'
 gem 'whoisology',     :git => 'https://github.com/pentestify/whoisology.git'
 gem 'opencorporates', :git => 'https://github.com/pentestify/opencorporates.git'
+gem 'screencap',      :git => 'https://github.com/intrigueio/screencap.git'
+gem 'arachnid',       :git => 'https://github.com/intrigueio/arachnid.git'
+gem 'snmp',      :git => 'https://github.com/intrigueio/ruby-snmp.git'
 
 # handlers
 gem 'couchrest'

@@ -7,7 +7,7 @@ class FingerExtraction < BaseTask
   def self.metadata
     {
       :name => "finger_extraction",
-      :pretty_name => "Pull information out of finger",
+      :pretty_name => "Finger Extraction",
       :authors => ["jcran"],
       :description => "This task connects to a finger service and pulls out People.",
       :references => [],
