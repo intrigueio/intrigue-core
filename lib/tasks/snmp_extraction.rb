@@ -48,7 +48,7 @@ class SnmpExtraction < BaseTask
       begin
         output = ""
         SNMP::Manager.open(:host => ip_address) do |manager|
-          ifTable = SNMP::ObjectId.new("1.3.6.1.4.1")
+          ifTable = SNMP::ObjectId.new("1.")
           next_oid = ifTable
           while next_oid.subtree_of?(ifTable)
               response = manager.get_next(next_oid)
