@@ -5,7 +5,7 @@ require 'rest_client'
 class IntrigueApi
 
     def self.version
-      "1.2.4"
+      "1.4-dev"
     end
 
     def initialize(uri="http://127.0.0.1:7777/v1",key="")
