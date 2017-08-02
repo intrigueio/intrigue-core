@@ -9,9 +9,12 @@ class EmailAddress < Intrigue::Model::Entity
     }
   end
 
-
   def validate_entity
     name =~ /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,8}/
+  end
+
+  def detail_string
+    "#{details["extracted_from"]}"
   end
 
 end

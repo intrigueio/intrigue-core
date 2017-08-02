@@ -18,7 +18,7 @@ class DnsRecord < Intrigue::Model::Entity
   end
 
   def detail_string
-    ""
+    "#{details["record_type"]}"
   end
 
 end
