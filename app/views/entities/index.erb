@@ -56,6 +56,9 @@ function delete_entity(id)
     <% end %>
     </tbody>
   </table>
-  <br>
-<form name="entity_delete_form" method="get"><input type="hidden" id="entity" name="entity"/></form>
+  <%= "Page: #{@page}" %>
+  <%= "Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %>
+  <a href="/v1/<%=@project_name%>/entities?search_string=<%=@search_string%>&page=<%=@page-1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">previous</a>
+  <a href="/v1/<%=@project_name%>/entities?search_string=<%=@search_string%>&page=<%=@page+1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">next</a>
+  <form name="entity_delete_form" method="get"><input type="hidden" id="entity" name="entity"/></form>
 </div>
