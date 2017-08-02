@@ -1,19 +1,6 @@
 module Intrigue
   module Model
 
-    class AliasMapping < Sequel::Model
-      plugin :validation_helpers
-      #self.raise_on_save_failure = false
-      many_to_one :source, :class => :'Intrigue::Model::Entity', :key => :source_id
-      many_to_one :target, :class => :'Intrigue::Model::Entity', :key => :target_id
-      many_to_one :project
-
-      def validate
-        super
-        validates_unique([:source_id, :target_id]) # only allow a single alias
-      end
-    end
-
     class AliasGroup < Sequel::Model
       one_to_many :entities
       many_to_one :project
@@ -32,7 +19,7 @@ module Intrigue
 
       self.raise_on_save_failure = false
 
-      many_to_many :aliases, :left_key=>:source_id,:right_key=>:target_id, :join_table=>:alias_mappings, :class=>self
+      #many_to_many :aliases, :left_key=>:source_id,:right_key=>:target_id, :join_table=>:alias_mappings, :class=>self
       many_to_one  :alias_group
       many_to_many :task_results
       many_to_one  :project
@@ -53,9 +40,6 @@ module Intrigue
       end
 
       def alias(entity)
-
-        add_alias(entity)
-        save
 
         # They'd share the same group...
         entity.alias_group_id = self.alias_group.id
@@ -86,18 +70,21 @@ module Intrigue
         true
       end
 
+      # grab all entities in this group
+      def aliases
+        return [] unless alias_group
+
+        alias_group.entities.sort_by{|x| x.name }
+      end
+
       # easy way to refer to all names (overridden in some entities)
       def unique_name
         [name].concat(aliases.map{|x| x.name }).sort.uniq
       end
 
       # easy way to refer to all names (overridden in some entities)
-      def unique_aliases
-        aliases.select{|x| x.name if !x.hidden }.sort_by{|x| x.name }.uniq
-      end
-
-      def get_aliases(filter_type_string=nil)
-        aliases.select { |x| !x.hidden && ((x.type_string == filter_type_string) if filter_type_string) }
+      def unique_alias_names
+        aliases.select{|x| x.name unless x.hidden }.sort_by{|x| x.name }.uniq
       end
 
       def get_detail(key)
@@ -127,7 +114,7 @@ module Intrigue
 
       def soft_delete!
         # clean up aliases at the same time
-        aliases.each {|x| x.soft_delete!}
+        alias_group.each {|x| x.soft_delete!}
         deleted = true
         save
       end

@@ -48,10 +48,6 @@ class EnrichUri < BaseTask
         _log "Attaching entity: #{e} to #{@entity}"
         @entity.alias e
         @entity.save
-
-        _log "Attaching entity: #{@entity} to #{e}"
-        e.alias @entity
-        e.save
       end
     end
 

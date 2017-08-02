@@ -22,15 +22,6 @@ class EntityManager
   false
   end
 
-  def self.alias_entity(p,s,t)
-
-    unless Intrigue::Model::AliasMapping.first(:project_id => p.id, :source_id => s.id, :target_id => t.id)
-      Intrigue::Model::AliasMapping.create(:project_id => p.id, :source_id => s.id, :target_id => t.id)
-      Intrigue::Model::AliasMapping.create(:project_id => p.id, :source_id => t.id, :target_id => s.id)
-    end
-
-  end
-
   def self.create_first_entity(project_name,type_string,name,details)
 
     # Save the original and downcase our name
@@ -159,14 +150,9 @@ class EntityManager
     task_result.add_entity created_entity
     task_result.save
 
-    # Attach the aliases on both sides
+    # Attach the alias
     if primary_entity
-      self.alias_entity project, primary_entity, created_entity
-      self.alias_entity project, created_entity, primary_entity
-
-      # They'd share the same group...
-      created_entity.alias_group_id = primary_entity.alias_group.id
-      created_entity.save
+      primary_entity.alias(created_entity)
     else # otherwise, there's nothing to alias, so lets create a new group
       g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
       created_entity.alias_group_id = g.id

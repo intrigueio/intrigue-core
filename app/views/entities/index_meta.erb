@@ -59,7 +59,7 @@ function delete_entity(id)
           </td>
           <td>
           <% group.entities.each do |e| %>
-              <% next if e.hidden; %><a href="/v1/<%=@project_name%>/entities/<%=e.id%>"> <%= h e.detail_string %> | </a>
+              <% next if e.hidden; %><a href="/v1/<%=@project_name%>/entities/<%=e.id%>"> <%= h e.detail_string %> </a> | 
           <% end %>
         </td>
       </tr>

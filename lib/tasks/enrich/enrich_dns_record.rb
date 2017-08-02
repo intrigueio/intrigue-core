@@ -122,20 +122,16 @@ class EnrichDnsRecord < BaseTask
         sub_entity = entity_exists?(@entity.project,"IpAddress",name)
         unless sub_entity
           _log "Creating entity for IpAddress: #{name}"
-          sub_entity = _create_entity("IpAddress", { "name" => name }, @entity)
+          sub_entity = _create_entity("IpAddress", { "name" => name }, @entity) ## < HERE
         end
 
-        # skip if we have the same name or the same entity
-        next if sub_entity.name == @entity.name
-        next if @entity.aliases.include? sub_entity
+        # alias this entity
+        #unless @entity.aliases.include? sub_entity
+        #  _log "Attaching entity: #{sub_entity} to #{@entity}"
+        #  @entity.alias sub_entity
+        #  @entity.save
+        #end
 
-        _log "Attaching entity: #{sub_entity} to #{@entity}"
-        @entity.alias sub_entity
-        @entity.save
-
-        _log "Attaching entity: #{@entity} to #{sub_entity}"
-        sub_entity.alias @entity
-        sub_entity.save
       end
 
       # check and merge if the ip is associated with another entity!

@@ -69,24 +69,22 @@ class EnrichIpAddress < BaseTask
           next
         end
 
+        # Check to see if we already have it..
         sub_entity = entity_exists?(@entity.project,"DnsRecord",name)
+
+        # and if we don't... create it.
         unless sub_entity
           _log "Creating entity for DnsRecord: #{name}"
           sub_entity = _create_entity("DnsRecord", {"name" => name }, @entity)
         end
 
-        # skip if we have the same name or the same entity
-        next unless sub_entity
-        next if sub_entity.name == @entity.name
-        next if @entity.aliases.include? sub_entity
+        # by now, we have an entity, or it failed to create.
+        #next unless sub_entity
+        #next if @entity.aliases.include? sub_entity
+        #_log "Attaching entity: #{sub_entity} to #{@entity}"
+        #@entity.alias sub_entity
+        #@entity.save
 
-        _log "Attaching entity: #{sub_entity} to #{@entity}"
-        @entity.alias sub_entity
-        @entity.save
-
-        _log "Attaching entity: #{@entity} to #{sub_entity}"
-        sub_entity.alias @entity
-        sub_entity.save
       end
 
     rescue Dnsruby::SocketEofResolvError => e

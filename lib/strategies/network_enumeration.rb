@@ -50,7 +50,6 @@ module Strategy
           task_result.log "Cowardly refusing to expand this netblock."
         end
 
-
       elsif entity.type_string == "Uri"
 
         unless (entity.created_by?("uri_brute") || entity.created_by?("uri_spider") )
