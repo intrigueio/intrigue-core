@@ -59,9 +59,11 @@ module Strategy
           ## Spider, looking for metadata
           start_recursive_task(task_result,"uri_spider",entity,[
               {"name" => "threads", "value" => 1 },
-              {"name" => "max_pages", "value" => 10 },
+              {"name" => "max_pages", "value" => 20 },
               {"name" => "parse_file_metadata", "value" => true },
               {"name" => "extract_dns_records", "value" => true },
+              {"name" => "extract_email_addresses", "value" => true },
+              {"name" => "extract_phone_numbers", "value" => true },
               {"name" => "extract_uris", "value" => false },
               {"name" => "extract_dns_record_pattern", "value" => "#{task_result.scan_result.base_entity.name}"}])
 
