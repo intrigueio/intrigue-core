@@ -43,8 +43,11 @@ class WhoisTask < BaseTask
       parser = answer.parser
       whois_full_text = answer.content if answer
     rescue Whois::ResponseIsThrottled => e
-      _log "Unable to query whois: #{e}"
+      _log_error "Unable to query whois: #{e}"
       return
+    rescue Timeout::Error => e
+      _log_error "Unable to query whois: #{e}"
+      return 
     end
 
     #

@@ -41,6 +41,10 @@ module Intrigue
 
       def alias(entity)
 
+        # while this shouldn't happen... it seems to be happening... maybe
+        # race condition with newly-created entities?
+        return nil unless self.alias_group
+
         # They'd share the same group...
         entity.alias_group_id = self.alias_group.id
         entity.save
