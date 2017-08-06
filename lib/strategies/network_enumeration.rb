@@ -22,7 +22,7 @@ module Strategy
         if (entity.name.split(".").length < 3)
           start_recursive_task(task_result,"dns_brute_sub",entity,[
             {"name" => "use_file", "value" => true },
-            {"name" => "threads", "value" => 2 }])
+            {"name" => "threads", "value" => 1 }])
         else
           # otherwise do something a little faster
           start_recursive_task(task_result,"dns_brute_sub",entity,[])
@@ -59,8 +59,8 @@ module Strategy
 
           ## Spider, looking for metadata
           start_recursive_task(task_result,"uri_spider",entity,[
-              {"name" => "threads", "value" => 2 },
-              {"name" => "max_pages", "value" => 100 },
+              {"name" => "threads", "value" => 1 },
+              {"name" => "max_pages", "value" => 20 },
               {"name" => "parse_file_metadata", "value" => true },
               {"name" => "extract_dns_records", "value" => true },
               {"name" => "extract_email_addresses", "value" => true },
@@ -70,7 +70,7 @@ module Strategy
 
           # Check for exploitable URIs, but don't recurse on things we've already found
           start_recursive_task(task_result,"uri_brute", entity, [
-            {"name"=> "threads", "value" => 2},
+            {"name"=> "threads", "value" => 1},
             {"name" => "user_list", "value" => "admin,test,server-status,.svn,.git,wp-config.php,config.php,configuration.php,LocalSettings.php,mediawiki/LocalSettings.php,mt-config.cgi,mt-static/mt-config.cgi,settings.php,.htaccess,config.bak,config.php.bak,config.php,#config.php#,config.php.save,.config.php.swp,config.php.swp,config.php.old"}])
         end
       else
