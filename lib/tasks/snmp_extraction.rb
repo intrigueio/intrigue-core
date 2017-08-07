@@ -58,9 +58,9 @@ class SnmpExtraction < BaseTask
               output << varbind.to_s
           end
         end
-
         @entity.set_detail("snmp_output", _encode_string(output))
-
+      rescue SNMP::RequestTimeout => e
+        _log_error "SNMP Timeout"
       end
 
     else
