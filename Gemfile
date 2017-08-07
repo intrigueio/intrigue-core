@@ -40,7 +40,7 @@ gem 'censys',         :git => 'https://github.com/pentestify/censys.git'
 gem 'whoisology',     :git => 'https://github.com/pentestify/whoisology.git'
 gem 'opencorporates', :git => 'https://github.com/pentestify/opencorporates.git'
 gem 'screencap',      :git => 'https://github.com/intrigueio/screencap.git'
-gem 'arachnid',       :git => 'https://github.com/intrigueio/arachnid.git'
+gem 'spidr',       :git => 'https://github.com/intrigueio/spidr.git'
 gem 'snmp',      :git => 'https://github.com/intrigueio/ruby-snmp.git'
 
 # handlers

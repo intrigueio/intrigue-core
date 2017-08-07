@@ -1,6 +1,6 @@
 
 # Task-related Gems
-require 'arachnid'
+
 require 'censys'
 require 'digest'
 require 'dnsruby'
@@ -20,6 +20,7 @@ require 'resolv-replace'
 require 'rexml/document'
 require 'screencap'
 require 'socket'
+require 'spidr'
 require 'tempfile'
 require 'thread'
 require 'towerdata_api'
