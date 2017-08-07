@@ -11,7 +11,7 @@ class SearchBingTask < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["Organization", "Person", "String"],
+      :allowed_types => ["*"],
       :example_entities => [{"type" => "String", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
       :created_types => ["Uri"]
@@ -42,8 +42,8 @@ class SearchBingTask < BaseTask
       results["webPages"]["value"].each do |result|
 
         # Create the specific page
-        _create_entity("Uri",     {   "name" => result["displayUrl"],
-                                      "uri" => result["url"],
+        _create_entity("Uri",     {   "name" => "#{result["displayUrl"]}",
+                                      "uri" => "#{result["url"]}",
                                       "description" => result["name"],
                                       "source" => "Bing"
                                   })
