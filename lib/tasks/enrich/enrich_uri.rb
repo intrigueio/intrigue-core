@@ -20,9 +20,10 @@ class EnrichUri < BaseTask
 
   def run
     super
-    # Grab the full response 2x
+
     uri = _get_entity_name
 
+    # Grab the full response
     response_data = http_get_body uri
     response_data_hash = Digest::SHA256.base64digest(response_data) if response_data
 

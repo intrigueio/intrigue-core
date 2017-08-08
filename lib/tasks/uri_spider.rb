@@ -146,7 +146,7 @@ class UriSpider < BaseTask
           parse_email_addresses_from_content("#{page.url}", encoded_page_body) if @opt_extract_email_addresses
         end
 
-        #encoded_page_body = nil
+        encoded_page_body = nil
 
       end
     end
