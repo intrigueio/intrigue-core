@@ -116,6 +116,8 @@ class NmapScanTask < BaseTask
 
               # Create the entities if we already have dns resolution
               ip_entity.aliases.each do |dns_record_entity|
+                next if host =~ /\.arpa$/
+
                 next unless dns_record_entity && dns_record_entity.kind_of?(Intrigue::Entity::DnsRecord)
                 uri = "#{protocol}#{dns_record_entity.name}:#{port.number}"
                 _create_entity("Uri", "name" => uri, "uri" => uri )
