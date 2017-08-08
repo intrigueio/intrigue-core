@@ -60,10 +60,10 @@ module Strategy
       elsif entity.type_string == "Uri"
 
         ### AWS_S3_brute the domain name and the base name
-        base_name = entity.name..gsub(/https?:\/\//,"").gsub(/:.*/,"")
-        start_recursive_task(task_result,"aws_s3_brute",entity,[
-          {"name" => "additional_buckets", "value" => "#{base_name}"}
-        ])
+        #base_name = URI.parse(entity.name).host
+        #start_recursive_task(task_result,"aws_s3_brute",entity,[
+        #  {"name" => "additional_buckets", "value" => "#{base_name}"}
+        #])
 
         unless (entity.created_by?("uri_brute") || entity.created_by?("uri_spider") )
           ## Grab the SSL Certificate

@@ -20,6 +20,7 @@ class UriGatherSslCertTask  < BaseTask
         {:name => "skip_fastly", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "skip_incapsula", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "skip_jive", :type => "Boolean", :regex => "boolean", :default => true },
+        {:name => "skip_lithium", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "skip_wpengine", :type => "Boolean", :regex => "boolean", :default => true }
       ],
       :created_types => ["DnsRecord","SslCertificate"]
@@ -31,9 +32,11 @@ class UriGatherSslCertTask  < BaseTask
 
     opt_skip_cloudflare = _get_option "skip_cloudflare"
     opt_skip_distill = _get_option "skip_distill"
-    opt_skip_incapsula = _get_option "skip_incapsula"
+
     opt_skip_fastly = _get_option "skip_fastly"
     opt_skip_jive = _get_option "skip_jive"
+    opt_skip_incapsula = _get_option "skip_incapsula"
+    opt_skip_lithium = _get_option "skip_lithium"
     opt_skip_wpengine = _get_option "skip_wpengine"
 
     uri = _get_entity_name
@@ -74,11 +77,6 @@ class UriGatherSslCertTask  < BaseTask
               return
             end
 
-            if alt_name =~ /incapsula.com$/ && opt_skip_incapsula
-              _log "This is an incapsula certificate, skipping further entity creation"
-              return
-            end
-
             if alt_name =~ /fastly.net$/ && opt_skip_fastly
               _log "This is a fastly certificate, skipping further entity creation"
               return
@@ -86,6 +84,16 @@ class UriGatherSslCertTask  < BaseTask
 
             if alt_name =~ /jiveon.com$/ && opt_skip_jive
               _log "This is a jive certificate, skipping further entity creation"
+              return
+            end
+
+            if alt_name =~ /incapsula.com$/ && opt_skip_incapsula
+              _log "This is an incapsula certificate, skipping further entity creation"
+              return
+            end
+
+            if alt_name =~ /lithium.com$/ && opt_skip_lithium
+              _log "This is an lithium certificate, skipping further entity creation"
               return
             end
 

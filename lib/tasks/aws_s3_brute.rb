@@ -17,6 +17,7 @@ class AwsS3Brute < BaseTask
         {"type" => "String", "details" => {"name" => "test"}}
       ],
       :allowed_options => [
+        #{:name => "use_creds", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "brute_file", :type => "String", :regex => "filename", :default => "s3_buckets.list" },
         {:name => "additional_buckets", :type => "String", :regex => "alpha_numeric_list", :default => "" }
@@ -30,9 +31,14 @@ class AwsS3Brute < BaseTask
   def run
     super
     bucket_name = _get_entity_name
+
+    # http://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html
+    opt_use_creds = _get_option("use_creds")
+
     opt_use_file = _get_option("use_file")
-    opt_additional_buckets = _get_option("additional_buckets")
     opt_filename = _get_option("brute_file")
+
+    opt_additional_buckets = _get_option("additional_buckets")
 
     if opt_use_file
       _log "Using file: #{opt_filename}"

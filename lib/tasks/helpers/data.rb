@@ -104,6 +104,7 @@ module Data
         entity_name =~ /^.*gvt2.com$/                      ||
         entity_name =~ /^.*herokussl.com$/                 ||
         entity_name =~ /^.*hubspot.com$/                   ||
+        entity_name =~ /^.*hubspot.net$/                   ||
         entity_name =~ /^.*incapdns.net$/                  ||
         entity_name =~ /^.*instagram.com$/                 ||
         entity_name =~ /^.*localhost$/                     ||
@@ -119,6 +120,7 @@ module Data
         entity_name =~ /^.*ogp.me$/                        ||
         entity_name =~ /^.*outlook.com$/                   ||
         entity_name =~ /^.*plus.google.com$/               ||
+        entity_name =~ /^.*posterous.com$/                 ||
         entity_name =~ /^.*purl.org$/                      ||
         entity_name =~ /^.*rdfs.org$/                      ||
         entity_name =~ /^.*root-servers.net$/              ||
