@@ -52,11 +52,9 @@ class AwsS3Brute < BaseTask
     all_potential_buckets.each do |pb|
       pb.chomp!
 
-
       # Authenticated method
       if opt_use_creds
-
-
+        _log "Using authenticated method"
 
         access_key_id = _get_global_config "aws_access_key_id"
         secret_access_key = _get_global_config "aws_secret_access_key"
@@ -67,8 +65,7 @@ class AwsS3Brute < BaseTask
         end
 
         s3_errors = [Aws::S3::Errors::AccessDenied, Aws::S3::Errors::AllAccessDisabled,
-          Aws::S3::Errors::InvalidBucketName, Aws::S3::Errors::NoSuchBucket,
-          Aws::S3::Errors::PermanentRedirect ]
+          Aws::S3::Errors::InvalidBucketName, Aws::S3::Errors::NoSuchBucket]
 
         Aws.config[:credentials] = Aws::Credentials.new(access_key_id, secret_access_key)
         s3 = Aws::S3::Client.new
@@ -88,6 +85,7 @@ class AwsS3Brute < BaseTask
 
       # Unauthenticated method
       else
+        _log "Using unauthenticated method"
 
         # Check prefix
         potential_bucket_uri = "https://#{pb}.s3.amazonaws.com"
@@ -100,10 +98,8 @@ class AwsS3Brute < BaseTask
           next if ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
                     doc.xpath("//code").text =~ /InvalidBucketName/ ||
                     doc.xpath("//code").text =~ /AllAccessDisabled/ ||
-                    doc.xpath("//code").text =~ /AccessDenied/ ||
-                    doc.xpath("//code").text =~ /PermanentRedirect/)
+                    doc.xpath("//code").text =~ /AccessDenied/)
           _create_entity("AwsS3Bucket", {"name" => "#{potential_bucket_uri}", "uri" => "#{potential_bucket_uri}" })
-        rescue
         end
 
         # Check postfix
@@ -116,10 +112,8 @@ class AwsS3Brute < BaseTask
           next if ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
                     doc.xpath("//code").text =~ /InvalidBucketName/ ||
                     doc.xpath("//code").text =~ /AllAccessDisabled/ ||
-                    doc.xpath("//code").text =~ /AccessDenied/ ||
-                    doc.xpath("//code").text =~ /PermanentRedirect/)
+                    doc.xpath("//code").text =~ /AccessDenied/)
           _create_entity("AwsS3Bucket", {"name" => "#{potential_bucket_uri}", "uri" => "#{potential_bucket_uri}" })
-        rescue
         end
 
       end # end if
