@@ -68,7 +68,12 @@ class AwsS3Brute < BaseTask
         begin
           resp = s3.list_objects(bucket: "#{pb}", max_keys: 2)
           resp.contents.each do |object|
-            _log  "Got object... #{object.key} => #{object.etag}"
+
+            # S3 URI
+            s3_uri = "https://#{pb}.s3.amazonaws.com"
+            _log  "Got object... #{s3_uri}#{object.key}"
+
+            _create_entity("AwsS3Bucket", {"name" => "#{s3_uri}", "uri" => "#{s3_uri}" })
           end
         rescue *s3_errors => e
           _log_error "S3 error: #{e}"
@@ -78,10 +83,10 @@ class AwsS3Brute < BaseTask
       else
 
         # Check prefix
-        potential_bucket_uri = "https://#{pb}.s3.amazonaws.com?max-keys=1"
+        potential_bucket_uri = "https://#{pb}.s3.amazonaws.com"
 
         begin
-          result = http_get_body("#{potential_bucket_uri}")
+          result = http_get_body("#{potential_bucket_uri}?max-keys=1")
           next unless result
 
           doc = Nokogiri::HTML(result)
@@ -95,9 +100,9 @@ class AwsS3Brute < BaseTask
         end
 
         # Check postfix
-        potential_bucket_uri = "https://s3.amazonaws.com/#{pb}?max-keys=1"
+        potential_bucket_uri = "https://s3.amazonaws.com/#{pb}"
         begin
-          result = http_get_body("#{potential_bucket_uri}")
+          result = http_get_body("#{potential_bucket_uri}?max-keys=1")
           next unless result
 
           doc = Nokogiri::HTML(result)
