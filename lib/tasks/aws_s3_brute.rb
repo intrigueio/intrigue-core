@@ -56,8 +56,15 @@ class AwsS3Brute < BaseTask
       # Authenticated method
       if opt_use_creds
 
+
+
         access_key_id = _get_global_config "aws_access_key_id"
         secret_access_key = _get_global_config "aws_secret_access_key"
+
+        unless access_key_id && secret_access_key
+          _log_error "You must specify a aws_access_key_id aws_secret_access_key in the config!"
+          return
+        end
 
         s3_errors = [Aws::S3::Errors::AccessDenied, Aws::S3::Errors::AllAccessDisabled,
           Aws::S3::Errors::InvalidBucketName, Aws::S3::Errors::NoSuchBucket,
