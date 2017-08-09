@@ -38,6 +38,18 @@
     }
   },
   "intrigue_global_module_config": {
+    "aws_access_key_id" : {
+      "value" : "XXX",
+      "editable" : "true",
+      "uri" : "https://aws.amazon.com/",
+      "comment" : ""
+    },
+    "aws_secret_access_key" : {
+      "value" : "XXX",
+      "editable" : "true",
+      "uri" : "https://aws.amazon.com/",
+      "comment" : ""
+    },
     "bing_api_key" : {
       "value" : "XXX",
       "editable" : "true",

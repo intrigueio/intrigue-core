@@ -1,6 +1,7 @@
 
 # Task-related Gems
 
+require 'aws-sdk'
 require 'censys'
 require 'digest'
 require 'dnsruby'

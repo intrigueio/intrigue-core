@@ -17,7 +17,7 @@ class AwsS3Brute < BaseTask
         {"type" => "String", "details" => {"name" => "test"}}
       ],
       :allowed_options => [
-        #{:name => "use_creds", :type => "Boolean", :regex => "boolean", :default => true },
+        {:name => "use_creds", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "brute_file", :type => "String", :regex => "filename", :default => "s3_buckets.list" },
         {:name => "additional_buckets", :type => "String", :regex => "alpha_numeric_list", :default => "" }
@@ -30,15 +30,12 @@ class AwsS3Brute < BaseTask
   ## Default method, subclasses must override this
   def run
     super
+
     bucket_name = _get_entity_name
-
-    # http://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html
-    opt_use_creds = _get_option("use_creds")
-
     opt_use_file = _get_option("use_file")
     opt_filename = _get_option("brute_file")
-
     opt_additional_buckets = _get_option("additional_buckets")
+    opt_use_creds = _get_option("use_creds")
 
     if opt_use_file
       _log "Using file: #{opt_filename}"
@@ -51,43 +48,71 @@ class AwsS3Brute < BaseTask
     # add in any additional buckets to the list of potentials
     all_potential_buckets = potential_buckets.concat(opt_additional_buckets.split(","))
 
+    # Iterate through all potential buckets
     all_potential_buckets.each do |pb|
       pb.chomp!
-      # Check prefix
-      potential_bucket_uri = "https://#{pb}.s3.amazonaws.com?max-keys=1"
-      begin
-        result = http_get_body("#{potential_bucket_uri}")
-        next unless result
 
-        doc = Nokogiri::HTML(result)
-        next if ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
-                  doc.xpath("//code").text =~ /InvalidBucketName/ ||
-                  doc.xpath("//code").text =~ /AllAccessDisabled/ ||
-                  doc.xpath("//code").text =~ /AccessDenied/ ||
-                  doc.xpath("//code").text =~ /PermanentRedirect/)
-        _create_entity("AwsS3Bucket", {"name" => "#{potential_bucket_uri}", "uri" => "#{potential_bucket_uri}" })
-      rescue
-      end
-    end
 
-    all_potential_buckets.each do |pb|
-      pb.chomp!
-      # Check postfix
-      potential_bucket_uri = "https://s3.amazonaws.com/#{pb}?max-keys=1"
-      begin
-        result = http_get_body("#{potential_bucket_uri}")
-        next unless result
+      # Authenticated method
+      if opt_use_creds
 
-        doc = Nokogiri::HTML(result)
-        next if ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
-                  doc.xpath("//code").text =~ /InvalidBucketName/ ||
-                  doc.xpath("//code").text =~ /AllAccessDisabled/ ||
-                  doc.xpath("//code").text =~ /AccessDenied/ ||
-                  doc.xpath("//code").text =~ /PermanentRedirect/)
-        _create_entity("AwsS3Bucket", {"name" => "#{potential_bucket_uri}", "uri" => "#{potential_bucket_uri}" })
-      rescue
-      end
-    end
+        access_key_id = _get_global_config "aws_access_key_id"
+        secret_access_key = _get_global_config "aws_secret_access_key"
+
+        s3_errors = [Aws::S3::Errors::AccessDenied, Aws::S3::Errors::AllAccessDisabled,
+          Aws::S3::Errors::InvalidBucketName, Aws::S3::Errors::NoSuchBucket,
+          Aws::S3::Errors::PermanentRedirect ]
+
+        Aws.config[:credentials] = Aws::Credentials.new(access_key_id, secret_access_key)
+        s3 = Aws::S3::Client.new
+        begin
+          resp = s3.list_objects(bucket: "#{pb}", max_keys: 2)
+          resp.contents.each do |object|
+            _log  "Got object... #{object.key} => #{object.etag}"
+          end
+        rescue *s3_errors => e
+          _log_error "S3 error: #{e}"
+        end
+
+      # Unauthenticated method
+      else
+
+        # Check prefix
+        potential_bucket_uri = "https://#{pb}.s3.amazonaws.com?max-keys=1"
+
+        begin
+          result = http_get_body("#{potential_bucket_uri}")
+          next unless result
+
+          doc = Nokogiri::HTML(result)
+          next if ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
+                    doc.xpath("//code").text =~ /InvalidBucketName/ ||
+                    doc.xpath("//code").text =~ /AllAccessDisabled/ ||
+                    doc.xpath("//code").text =~ /AccessDenied/ ||
+                    doc.xpath("//code").text =~ /PermanentRedirect/)
+          _create_entity("AwsS3Bucket", {"name" => "#{potential_bucket_uri}", "uri" => "#{potential_bucket_uri}" })
+        rescue
+        end
+
+        # Check postfix
+        potential_bucket_uri = "https://s3.amazonaws.com/#{pb}?max-keys=1"
+        begin
+          result = http_get_body("#{potential_bucket_uri}")
+          next unless result
+
+          doc = Nokogiri::HTML(result)
+          next if ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
+                    doc.xpath("//code").text =~ /InvalidBucketName/ ||
+                    doc.xpath("//code").text =~ /AllAccessDisabled/ ||
+                    doc.xpath("//code").text =~ /AccessDenied/ ||
+                    doc.xpath("//code").text =~ /PermanentRedirect/)
+          _create_entity("AwsS3Bucket", {"name" => "#{potential_bucket_uri}", "uri" => "#{potential_bucket_uri}" })
+        rescue
+        end
+
+      end # end if
+
+    end # end iteration
 
   end
 
