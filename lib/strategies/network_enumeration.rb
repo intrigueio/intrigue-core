@@ -43,10 +43,11 @@ module Strategy
         start_recursive_task(task_result,"search_bing",entity,[{"name"=> "max_results", "value" => 1}])
 
       elsif entity.type_string == "NetBlock"
+
         # Make sure it's small enough not to be disruptive, and if it is, scan it
         # also skip ipv6
         if entity.details["whois_full_text"] =~ /#{task_result.scan_result.base_entity.name}/ && !(entity.name =~ /::/)
-          start_recursive_task(task_result,"masscan_scan",entity)
+          start_recursive_task(task_result,"net_block_expand",entity)
         else
           task_result.log "Cowardly refusing to expand this netblock."
         end
