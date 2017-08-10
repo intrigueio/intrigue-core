@@ -15,6 +15,13 @@ pre {
   border: 0;
 }
 
+textarea{
+ background-color: white;
+ color:black;
+ font-family: inherit;
+ font-size: inherit;
+}
+
 a:link {
   color: #1ab6ff;
 }
