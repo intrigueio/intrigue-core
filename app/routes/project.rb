@@ -1,5 +1,4 @@
 class IntrigueApp < Sinatra::Base
-  namespace '/v1' do
 
     # Create a project!
     post '/project' do
@@ -13,7 +12,7 @@ class IntrigueApp < Sinatra::Base
         Intrigue::Model::Project.create(:name => new_project_name)
       end
 
-      redirect "/v1/#{new_project_name}/start" # handy if we're in a browser
+      redirect "/#{new_project_name}/start" # handy if we're in a browser
     end
 
     # save the config
@@ -33,11 +32,40 @@ class IntrigueApp < Sinatra::Base
         end
       end
 
-      redirect '/v1/' # handy if we're in a browser
+      redirect '/' # handy if we're in a browser
     end
 
-    # Project Graph
+    get '/:project/start' do
+      @project = Intrigue::Model::Project.first(:name => @project_name)
 
+      # if we receive an entity_id or a task_result_id, instanciate the object
+      if params["entity_id"]
+        @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params["entity_id"])
+      end
+
+      # If we've been given a task result...
+      if params["result_id"]
+        @task_result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params["result_id"])
+        @entity = @task_result.base_entity
+      end
+
+      @task_classes = Intrigue::TaskFactory.list
+      erb :'start'
+    end
+
+    # Run a specific handler on all scan results
+    get '/:project/handle/:handler' do
+      handler_name = params[:handler]
+
+      project = Intrigue::Model::Project.first(:name => @project_name)
+      project.handle(handler_name)
+
+    redirect "/#{@project_name}"
+    end
+
+    #### GRAPH ####
+    
+    # Project Graph
     get '/:project/graph.json/?' do
       content_type 'application/json'
       project = Intrigue::Model::Project.first(:name => @project_name)
@@ -63,24 +91,6 @@ class IntrigueApp < Sinatra::Base
     end
 
 
-    get '/:project/start' do
-      @project = Intrigue::Model::Project.first(:name => @project_name)
-
-      # if we receive an entity_id or a task_result_id, instanciate the object
-      if params["entity_id"]
-        @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params["entity_id"])
-      end
-
-      # If we've been given a task result...
-      if params["result_id"]
-        @task_result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params["result_id"])
-        @entity = @task_result.base_entity
-      end
-
-      @task_classes = Intrigue::TaskFactory.list
-      erb :'start'
-    end
-
     # graph
     get '/:project/graph' do
       @json_uri = "#{request.url}.json"
@@ -93,7 +103,6 @@ class IntrigueApp < Sinatra::Base
       "#{Intrigue::Model::Project.first(:name => @project_name).graph_generated_at}"
     end
 
-
     # graph
     get '/:project/graph/meta' do
       @json_uri = "#{request.url}.json"
@@ -105,7 +114,7 @@ class IntrigueApp < Sinatra::Base
       p= Intrigue::Model::Project.first(:name => @project_name)
       p.graph_generation_in_progress = false
       p.save
-      redirect "/v1/#{@project_name}/graph"
+      redirect "/#{@project_name}/graph"
     end
 
     # Show the results in a gexf format
@@ -125,15 +134,5 @@ class IntrigueApp < Sinatra::Base
       erb :'gexf', :layout => false
     end
 
-    # Run a specific handler on all scan results
-    get '/:project/handle/:handler' do
-      handler_name = params[:handler]
 
-      project = Intrigue::Model::Project.first(:name => @project_name)
-      project.handle(handler_name)
-
-    redirect "/v1/#{@project_name}"
-    end
-
-  end
 end

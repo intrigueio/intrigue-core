@@ -9,7 +9,7 @@ jcran intrigue-gem ruby-2.2.0@intrigue-gem:master [20150711]$ irb
  => true
 
 2.2.0 :002 > x = IntrigueApi.new
- => #<Intrigue:0x007fb3cc01f0b8 @intrigue_basedir="/Users/jcran/.rvm/gems/ruby-2.2.0@intrigue-gem/gems/intrigue-0.0.3/lib", @server_uri="http://localhost:7777/v1", @server_key="">
+ => #<Intrigue:0x007fb3cc01f0b8 @intrigue_basedir="/Users/jcran/.rvm/gems/ruby-2.2.0@intrigue-gem/gems/intrigue-0.0.3/lib", @server_uri="http://localhost:7777", @server_key="">
 
 2.2.0 :003 > y = x.list.first
  => {"version"=>"1.0", "name"=>"check_confluence", "pretty_name"=>"Check Confluence", "authors"=>["jcran"], "description"=>"This task checks Atlassian Cloud for the presence of a wiki.", "references"=>[], "allowed_types"=>["String"], "example_entities"=>[{"type"=>"String", "attributes"=>{"name"=>"intrigue"}}], "allowed_options"=>[], "created_types"=>["Uri"]}

@@ -17,7 +17,7 @@ describe "Intrigue v1.0 Tasks" do
       }
 
       # Returns a ruby hash of the task_run
-      @api = IntrigueApi.new("http://127.0.0.1:7777/v1")
+      @api = IntrigueApi.new("http://127.0.0.1:7777")
       result = @api.start("Default", "dns_lookup_reverse", entity)
 
       # Check the result

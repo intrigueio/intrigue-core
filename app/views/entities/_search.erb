@@ -1,10 +1,10 @@
   <p>
   Selected Entities Count: <%= @entity_count %><br/>
   <!--Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>-->
-  <a href="/v1/<%=@project_name%>/entities.csv?search_string=<%=@search_string%>&entity_types=<%=@entity_types%>">Export CSV</a><br/>
+  <a href="/<%=@project_name%>/entities.csv?search_string=<%=@search_string%>&entity_types=<%=@entity_types%>">Export CSV</a><br/>
   </p>
 
-  <form class="form-horizontal" id="entity_search" target="_self" method="get" action="/v1/<%=@project_name%>/entities">
+  <form class="form-horizontal" id="entity_search" target="_self" method="get" action="/<%=@project_name%>/entities">
 
     Search:
     <input type="text" style='width:100%' class="form-control sm" id="search_string" name="search_string" value="<%= h params["search_string"]%>">

@@ -8,7 +8,7 @@ class IntrigueApi
       "1.4-dev"
     end
 
-    def initialize(uri="http://127.0.0.1:7777/v1",key="")
+    def initialize(uri="http://127.0.0.1:7777",key="")
       @intrigue_basedir = File.dirname(__FILE__)
       @server_uri = uri
     end

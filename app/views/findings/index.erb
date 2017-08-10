@@ -3,7 +3,7 @@ Findings Count: <%= @findings.count %><br/>
 </p>
 
 <div class="col-sm-2">
-  <form class="form-horizontal" id="result_search" target="_self" method="get" action="/v1/<%=@project_name%>/findings">
+  <form class="form-horizontal" id="result_search" target="_self" method="get" action="/<%=@project_name%>/findings">
 
     Search:
     <input type="text" style='width:100%' class="form-control sm" id="search_string" name="search_string"><br/>
@@ -44,7 +44,7 @@ Findings Count: <%= @findings.count %><br/>
         <% @findings.each do |x| %>
         <tr>
           <td><%= h x.name %>  </td>
-          <td><a href="/v1/<%=@project_name%>/entities/<%=x.entity_id%>"><%= h x.entity %> </a></td>
+          <td><a href="/<%=@project_name%>/entities/<%=x.entity_id%>"><%= h x.entity %> </a></td>
           <td><%= h x.details %> </td>
         </tr>
         <% end %>

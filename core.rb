@@ -131,7 +131,8 @@ class IntrigueApp < Sinatra::Base
     $intrigue_server_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
 
     # Parse out our project
-    project_string = URI.unescape(request.path_info.split("/")[2] || "Default")
+    project_string = URI.unescape(request.path_info.split("/")[1] || "Default")
+    #puts "Got Project string: #{project_string}"
 
     # Allow certain requests without a project string... these are systemwide,
     # and do not depend on a specific project
@@ -162,11 +163,27 @@ class IntrigueApp < Sinatra::Base
     "Unable to find this content."
   end
 
-  ###
-  ### Main Application
-  ###
-  get '/' do
-    redirect '/v1/'
+  ###                                  ###
+  ### System-Level Informational Calls ###
+  ###                                  ###
+
+  # Return a JSON array of all entity type
+  get '/entity_types.json' do
+    content_type 'application/json'
+    Intrigue::Model::Entity.descendants.map{ |x| x.metadata[:name] }.sort.to_json
+  end
+
+  # Export All Tasks
+  get '/tasks.json/?' do
+    content_type 'application/json'
+    Intrigue::TaskFactory.list.map { |t| t.metadata }.to_json
+  end
+
+  # Export a single task
+  get '/tasks/:task_name.json/?' do
+    content_type 'application/json'
+    task_name = params[:task_name]
+    Intrigue::TaskFactory.list.select{|t| t.metadata[:name] == task_name}.first.metadata.to_json
   end
 
   # Application libraries

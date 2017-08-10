@@ -1,7 +1,5 @@
 class IntrigueApp < Sinatra::Base
 
-  namespace '/v1' do
-
     ###
     ### version
     ###
@@ -23,33 +21,6 @@ class IntrigueApp < Sinatra::Base
       erb :"admin/index"
     end
 
-    ###                                  ###
-    ### System-Level Informational Calls ###
-    ###                                  ###
-
-    # Return a JSON array of all entity type
-    get '/entity_types.json' do
-      content_type 'application/json'
-      Intrigue::Model::Entity.descendants.map{ |x| x.metadata[:name] }.sort.to_json
-    end
-
-    # Export All Tasks
-    get '/tasks.json/?' do
-      content_type 'application/json'
-      tasks = []
-       Intrigue::TaskFactory.list.each do |t|
-          tasks << t.metadata
-      end
-    tasks.to_json
-    end
-
-    # Export a single task
-    get '/tasks/:task_name.json/?' do
-      content_type 'application/json'
-      task_name = params[:task_name]
-      Intrigue::TaskFactory.list.select{|t| t.metadata[:name] == task_name}.first.metadata.to_json
-    end
-
 
     ###                  ###
     ### System Config    ###
@@ -60,7 +31,7 @@ class IntrigueApp < Sinatra::Base
       global_config.config["credentials"]["username"] = "#{params["username"]}"
       global_config.config["credentials"]["password"] = "#{params["password"]}"
       global_config.save
-      redirect "/v1/#{@project_name}"  # handy if we're in a browser
+      redirect "/#{@project_name}"  # handy if we're in a browser
     end
 
     # save the config
@@ -77,7 +48,7 @@ class IntrigueApp < Sinatra::Base
       end
       global_config.save
 
-      redirect "/v1/#{@project_name}"  # handy if we're in a browser
+      redirect "/#{@project_name}"  # handy if we're in a browser
     end
 
     # save the config
@@ -94,7 +65,7 @@ class IntrigueApp < Sinatra::Base
         return "Error! #{e}"
       end
 
-      redirect "/v1/#{@project_name}"  # handy if we're in a browser
+      redirect "/#{@project_name}"  # handy if we're in a browser
     end
 
 
@@ -104,5 +75,4 @@ class IntrigueApp < Sinatra::Base
       erb :"admin/config"
     end
 
-  end
 end

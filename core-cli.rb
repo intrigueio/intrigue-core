@@ -12,7 +12,7 @@ class CoreCli < Thor
     super
     $intrigue_basedir = File.dirname(__FILE__)
     $config = JSON.parse File.open("#{$intrigue_basedir}/config/config.json").read
-    @server_uri = ENV.fetch("INTRIGUE_API_URI", "http://#{$config["credentials"]["username"]}:#{$config["credentials"]["password"]}@127.0.0.1:7777/v1")
+    @server_uri = ENV.fetch("INTRIGUE_API_URI", "http://#{$config["credentials"]["username"]}:#{$config["credentials"]["password"]}@127.0.0.1:7777")
     @delim = "#"
     @debug = true
     # Connect to Intrigue API

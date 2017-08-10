@@ -7,7 +7,7 @@
       location.origin = location.protocol + '//' + location.host;
     }
 
-    $.getJSON(location.origin + "/v1/tasks.json", function(data) {
+    $.getJSON(location.origin + "/tasks.json", function(data) {
       parseTasks(data);
 
       // get the specific task data and set the allowed entity types
@@ -17,7 +17,7 @@
       // get the specific task JSON and set the allowed / default fields
       var form = $("form")[0]
       var attrib_name = form.attrib_name.value
-      $.getJSON(location.origin + "/v1/tasks/" + task_name + ".json", function(data) {
+      $.getJSON(location.origin + "/tasks/" + task_name + ".json", function(data) {
         if ((window.location.href.indexOf("entities/")) +
             (window.location.href.indexOf("entity_id=")) +
             (window.location.href.indexOf("result_id=")) < 0 )  {
@@ -72,7 +72,7 @@
       // Check to see if we have a *
       if (task_hash["allowed_types"].indexOf("*") != -1) {
         // get the full entity_types.json
-        $.getJSON(location.origin + "/v1/entity_types.json", function(data) {
+        $.getJSON(location.origin + "/entity_types.json", function(data) {
           $.each(data, function(key, value) {
             $('#entity_type')
                .append($("<option></option>")

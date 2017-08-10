@@ -1,5 +1,4 @@
 class IntrigueApp < Sinatra::Base
-  namespace '/v1' do
 
     get '/:project/entities' do
       @result_count = 100
@@ -155,6 +154,4 @@ class IntrigueApp < Sinatra::Base
       @entity.export_json
     end
 
-
-  end
 end

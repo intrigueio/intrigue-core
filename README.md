@@ -50,7 +50,7 @@ Task Result: {"result_id":66103}
 You can use curl to drive the framework. See the example below:
 
 ```
-$ curl -s -X POST -H "Content-Type: application/json" -d '{ "task": "example", "entity": { "type": "String", "attributes": { "name": "8.8.8.8" } }, "options": {} }' http://127.0.0.1:7777/v1/results
+$ curl -s -X POST -H "Content-Type: application/json" -d '{ "task": "example", "entity": { "type": "String", "attributes": { "name": "8.8.8.8" } }, "options": {} }' http://127.0.0.1:7777/results
 ```
 
 ### Ruby gem for the API:

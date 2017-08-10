@@ -1,6 +1,5 @@
 class IntrigueApp < Sinatra::Base
   include Intrigue::Task::Helper
-  namespace '/v1' do
 
     get '/:project/results' do
       paginate_count = 100
@@ -281,5 +280,4 @@ class IntrigueApp < Sinatra::Base
     redirect "/v1/#{@project_name}/results/#{result_id}"
     end
 
-  end
 end

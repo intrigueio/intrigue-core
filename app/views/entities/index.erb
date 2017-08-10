@@ -4,7 +4,7 @@ function delete_entity(id)
   var check = confirm('Are you sure?');
   if (check == true) {
       document.entity_delete_form.entity.value = id;
-      document.entity_delete_form.action = "/v1/<%=@project_name%>/entities/" + id + "/delete"
+      document.entity_delete_form.action = "/<%=@project_name%>/entities/" + id + "/delete"
       document.entity_delete_form.submit();
       return true;
   }
@@ -19,8 +19,8 @@ function delete_entity(id)
 <div class="col-sm-10">
     <%= "Page: #{@page}" %>
     <%= "Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %>
-    <a href="/v1/<%=@project_name%>/entities?search_string=<%=@search_string%>&page=<%=@page-1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">previous</a>
-    <a href="/v1/<%=@project_name%>/entities?search_string=<%=@search_string%>&page=<%=@page+1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">next</a>
+    <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&page=<%=@page-1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">previous</a>
+    <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&page=<%=@page+1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">next</a>
 
   <script type="text/javascript" src="/js/sorttable.js"></script>
   <style>
@@ -50,15 +50,15 @@ function delete_entity(id)
       <tr><th>name</th><th>details</th></tr>
     <% @entities.sort_by{|e| e.type_string}.each do |e| next if e.hidden; %>
       <tr>
-        <td><a href="javascript:delete_entity('<%= e.id %>')">[x]</a> <a href="/v1/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e}" %></a></td>
-        <td><a href="/v1/<%=@project_name%>/entities?search_string=<%=h e.detail_string%>"><%= h "#{e.detail_string}" %></a></td>
+        <td><a href="javascript:delete_entity('<%= e.id %>')">[x]</a> <a href="/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e}" %></a></td>
+        <td><a href="/<%=@project_name%>/entities?search_string=<%=h e.detail_string%>"><%= h "#{e.detail_string}" %></a></td>
       </tr>
     <% end %>
     </tbody>
   </table>
   <%= "Page: #{@page}" %>
   <%= "Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %>
-  <a href="/v1/<%=@project_name%>/entities?search_string=<%=@search_string%>&page=<%=@page-1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">previous</a>
-  <a href="/v1/<%=@project_name%>/entities?search_string=<%=@search_string%>&page=<%=@page+1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">next</a>
+  <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&page=<%=@page-1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">previous</a>
+  <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&page=<%=@page+1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">next</a>
   <form name="entity_delete_form" method="get"><input type="hidden" id="entity" name="entity"/></form>
 </div>

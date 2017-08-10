@@ -2,7 +2,7 @@
 // super hacky ajax
 function getEntities(id){
   //get the list of tasks and rewrite the task
-  $.getJSON(location.origin + "/v1/<%=@project_name%>/results/"+ id +".json", function(data) {
+  $.getJSON(location.origin + "/<%=@project_name%>/results/"+ id +".json", function(data) {
     //console.log(data);
     $( "#entities" ).empty();
     // Set the values based on just this task's allowed type
@@ -11,7 +11,7 @@ function getEntities(id){
     $.each(data["entities"], function(id, hash) {
       type = hash["type"].split(':')[4];
       name = hash["name"];
-      entity_string += "<li><a href='/v1/<%=@project_name%>/entities/" + hash["id"] + "'> " + type + ": " + name + "</a> ";
+      entity_string += "<li><a href='/<%=@project_name%>/entities/" + hash["id"] + "'> " + type + ": " + name + "</a> ";
       if ("uri" in hash["details"]){
         entity_string += ("<a target='_blank' href='" + hash["details"]["uri"] + "'>[link]</a>");
       };
@@ -40,7 +40,7 @@ getEntities(<%=@result.id%>);
   <p>Job ID: <%= @result.job_id %> </p>
   <p>Handlers: <%= @result.handlers %></p>
   <p>Depth: <%=@result.depth %> </p>
-  <p>Entity: <a href="/v1/<%=@project_name%>/entities/<%=@result.base_entity.id if @result.base_entity %>"><%= h "#{@result.base_entity}" %></a></p>
+  <p>Entity: <a href="/<%=@project_name%>/entities/<%=@result.base_entity.id if @result.base_entity %>"><%= h "#{@result.base_entity}" %></a></p>
   <p>Cancelled: <%= @result.cancelled %></p>
   <p>Complete: <%= @result.complete %></p>
   <p>Count: <%= @result.entities.count %></p>

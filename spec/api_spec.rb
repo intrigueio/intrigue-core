@@ -9,12 +9,12 @@ describe "API" do
   end
 
   it "should have v1 as the current version" do
-    get "/v1/"
+    get "/"
     expect(last_response.status).to match 200
   end
 
   it "should return a list of tasks" do
-    get '/v1/tasks.json'
+    get '/tasks.json'
     expect(last_response.status).to match 200
   end
   
@@ -23,7 +23,7 @@ describe "API" do
 
     header 'Content-Type', 'application/json'
 
-    post "/v1/Default/task_results", {
+    post "/Default/task_results", {
       :task => "example",
       :entity => {
         :type => "Host",
@@ -39,7 +39,7 @@ describe "API" do
     ###
     ### Request the task results
     ###
-    get "/v1/tasks/#{last_response.body}.json"
+    get "/tasks/#{last_response.body}.json"
 
     # It should return a 200 with json as a response
     expect(last_response.status).to match 200

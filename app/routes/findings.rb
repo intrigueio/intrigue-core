@@ -1,6 +1,5 @@
 class IntrigueApp < Sinatra::Base
   #include Intrigue::Task::Helper
-  namespace '/v1' do
 
     get '/:project/findings' do
 
@@ -10,5 +9,4 @@ class IntrigueApp < Sinatra::Base
     end
 
 
-  end
 end

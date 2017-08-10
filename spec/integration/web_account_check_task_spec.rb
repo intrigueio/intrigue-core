@@ -6,7 +6,7 @@ describe "Intrigue v1.0 Tasks" do
 
     it "checks each site in data/web_accounts_list.json for false negatives" do
 
-      @api = IntrigueApi.new("http://127.0.0.1:7777/v1")
+      @api = IntrigueApi.new("http://127.0.0.1:7777")
 
       account_list_data = File.open("data/web_accounts_list.json").read
       account_list = JSON.parse(account_list_data)
@@ -43,7 +43,7 @@ describe "Intrigue v1.0 Tasks" do
         }
       }
 
-      @api = IntrigueApi.new("http://127.0.0.1:7777/v1")
+      @api = IntrigueApi.new("http://127.0.0.1:7777")
       puts "Checking all sites for false positives"
       result = @api.start("Default", "web_account_check", entity)
 

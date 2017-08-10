@@ -12,7 +12,7 @@ describe "Intrigue v1.0 Tasks" do
       entity = {"type" => "Host", "details" => {"name" => "rapid7.com"}}
 
       # Returns a ruby hash of the task_run
-      @api = IntrigueApi.new("http://127.0.0.1:7777/v1")
+      @api = IntrigueApi.new("http://127.0.0.1:7777")
       result = @api.start("Default","dns_brute_srv", entity)
 
       # Check the result
