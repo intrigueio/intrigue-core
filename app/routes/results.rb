@@ -1,6 +1,33 @@
 class IntrigueApp < Sinatra::Base
   include Intrigue::Task::Helper
 
+    # Export All task results
+    get '/:project/results.json/?' do
+       raise "Not implemented"
+    end
+
+    # Show the results in a CSV format
+    get '/:project/results/:id.csv/?' do
+      content_type 'text/plain'
+      task_result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
+      task_result.export_csv
+    end
+
+    # Show the results in a CSV format
+    get '/:project/results/:id.tsv/?' do
+      content_type 'text/plain'
+      task_result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
+      task_result.export_tsv
+    end
+
+    # Show the results in a JSON format
+    get '/:project/results/:id.json/?' do
+      content_type 'application/json'
+      result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
+      result.export_json if result
+    end
+
+
     get '/:project/results' do
       paginate_count = 100
       @exclude_enrichment = true
@@ -213,32 +240,6 @@ class IntrigueApp < Sinatra::Base
 
     # must be a string otherwise it can be interpreted as a status code
     {"result_id" => task_result.id}.to_json
-    end
-
-    # Export All task results
-    get '/:project/results.json/?' do
-       raise "Not implemented"
-    end
-
-    # Show the results in a CSV format
-    get '/:project/results/:id.csv/?' do
-      content_type 'text/plain'
-      task_result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
-      task_result.export_csv
-    end
-
-    # Show the results in a CSV format
-    get '/:project/results/:id.tsv/?' do
-      content_type 'text/plain'
-      task_result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
-      task_result.export_tsv
-    end
-
-    # Show the results in a JSON format
-    get '/:project/results/:id.json/?' do
-      content_type 'application/json'
-      result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
-      result.export_json if result
     end
 
 
