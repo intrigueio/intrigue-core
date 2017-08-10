@@ -62,7 +62,7 @@ module Intrigue
       def export_hash
         {
           "id" => id,
-          "name" =>  URI.escape(name),
+          "name" => URI.escape(name),
           "depth" => depth,
           "complete" => complete,
           "strategy" => strategy,
@@ -88,13 +88,18 @@ module Intrigue
       output_string
       end
 
-      def handle_result
+      def handle
         handled = []
         self.handlers.each do |handler_type|
           handler = Intrigue::HandlerFactory.create_by_type(handler_type)
           handled << handler.process(self)
         end
       handled
+      end
+
+      def handle(handler_type)
+        handler = Intrigue::HandlerFactory.create_by_type(handler_type)
+        handler.process(self)
       end
 
     end

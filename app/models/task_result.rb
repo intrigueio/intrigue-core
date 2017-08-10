@@ -102,6 +102,20 @@ module Intrigue
         export_hash.to_json
       end
 
+      def handle
+        handled = []
+        self.handlers.each do |handler_type|
+          handler = Intrigue::HandlerFactory.create_by_type(handler_type)
+          handled << handler.process(self)
+        end
+      handled
+      end
+
+      def handle(handler_type)
+        handler = Intrigue::HandlerFactory.create_by_type(handler_type)
+        handler.process(self)
+      end
+
     end
   end
 end

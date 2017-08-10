@@ -1,6 +1,68 @@
 class IntrigueApp < Sinatra::Base
   namespace '/v1' do
 
+    # Create a project!
+    post '/project' do
+
+      # When we create the project, we want to make sure no HTML is
+      # stored, as we'll use this for display later on...
+      new_project_name = CGI::escapeHTML(params[:project])
+
+      # create the project unless it exists
+      unless Intrigue::Model::Project.first(:name => new_project_name)
+        Intrigue::Model::Project.create(:name => new_project_name)
+      end
+
+      redirect "/v1/#{new_project_name}/start" # handy if we're in a browser
+    end
+
+    # save the config
+    post '/project/delete' do
+
+      # we have to collect the name bc we skip the before block
+      @project_name = params[:project]
+      project = Intrigue::Model::Project.first(:name => @project_name)
+
+      # create the project unless it exists
+      if project
+        project.destroy
+
+        # recreate the default project if we've removed
+        if @project_name == "Default"
+          Intrigue::Model::Project.create(:name => "Default")
+        end
+      end
+
+      redirect '/v1/' # handy if we're in a browser
+    end
+
+    # Project Graph
+
+    get '/:project/graph.json/?' do
+      content_type 'application/json'
+      project = Intrigue::Model::Project.first(:name => @project_name)
+
+      # Start a new generation
+      unless project.graph_generation_in_progress
+        Intrigue::Workers::GenerateGraphWorker.perform_async(project.id)
+      end
+
+    project.graph_json
+    end
+
+    get '/:project/graph/meta.json/?' do
+      content_type 'application/json'
+      project = Intrigue::Model::Project.first(:name => @project_name)
+
+      # Start a new generation
+      unless project.graph_generation_in_progress
+        Intrigue::Workers::GenerateMetaGraphWorker.perform_async(project.id)
+      end
+
+    project.graph_json
+    end
+
+
     get '/:project/start' do
       @project = Intrigue::Model::Project.first(:name => @project_name)
 
@@ -61,6 +123,16 @@ class IntrigueApp < Sinatra::Base
       end
 
       erb :'gexf', :layout => false
+    end
+
+    # Run a specific handler on all scan results
+    get '/:project/handle/:handler' do
+      handler_name = params[:handler]
+
+      project = Intrigue::Model::Project.first(:name => @project_name)
+      project.handle(handler_name)
+
+    redirect "/v1/#{@project_name}"
     end
 
   end

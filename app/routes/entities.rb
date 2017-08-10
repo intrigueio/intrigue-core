@@ -139,6 +139,22 @@ class IntrigueApp < Sinatra::Base
     selected_entities
     end
 
+    ###                      ###
+    ### Per-Project Entities ###
+    ###                      ###
+
+    get '/:project/entities/:id.csv' do
+      content_type 'text/plain'
+      @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
+      @entity.export_csv
+    end
+
+    get '/:project/entities/:id.json' do
+      content_type 'application/json'
+      @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
+      @entity.export_json
+    end
+
 
   end
 end

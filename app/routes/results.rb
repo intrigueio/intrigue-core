@@ -149,5 +149,137 @@ class IntrigueApp < Sinatra::Base
       erb :'results/detail'
     end
 
+
+    ###                          ###
+    ### Per-Project Task Results ###
+    ###                          ###
+
+    # Create a task result from a json request
+    # What we receive should look like this:
+    #
+    #payload = {
+    #  "project_name" => project_name,
+    #  "handlers" => []
+    #  "task" => task_name,
+    #  "entity" => entity_hash,
+    #  "options" => options_list,
+    #  "auto_enrich" => false
+    #}.to_json
+    post '/:project/results/?' do
+
+      # Parse the incoming request
+      payload = JSON.parse(request.body.read) if (request.content_type == "application/json" && request.body)
+
+      ### don't take any shit
+      return "No payload!" unless payload
+
+      # Construct an entity from the entity_hash provided
+      type = payload["entity"]["type"]
+      name = payload["entity"]["name"]
+
+      # Collect the depth (which can kick off a recursive "scan", but default to a single)
+      depth = payload["depth"] || 1
+
+      resolved_type = Intrigue::EntityManager.resolve_type type
+
+      attributes = payload["entity"].merge(
+        "type" => resolved_type.to_s,
+        "name" => "#{name}"
+      )
+
+      # get the details from the payload
+      task_name = payload["task"]
+      options = payload["options"]
+      handlers = payload["handlers"]
+      strategy_name = payload["strategy_name"]
+
+      # default to false for enrichment
+      if payload["auto_enrich"]
+        auto_enrich = "#{payload["auto_enrich"]}".to_bool
+      else
+        auto_enrich = false
+      end
+
+      # create the first entity
+      entity = Intrigue::EntityManager.create_first_entity(@project_name,type,name,{})
+
+      # create the project if it doesn't exist
+      project = Intrigue::Model::Project.first(:name => @project_name)
+      project = Intrigue::Model::Project.create(:name => @project_name) unless project
+
+      # Start the task_run
+      task_result = start_task("task", project, nil, task_name, entity, depth,
+                                  options, handlers, strategy_name, auto_enrich)
+      status 200 if task_result
+
+    # must be a string otherwise it can be interpreted as a status code
+    {"result_id" => task_result.id}.to_json
+    end
+
+    # Export All task results
+    get '/:project/results.json/?' do
+       raise "Not implemented"
+    end
+
+    # Show the results in a CSV format
+    get '/:project/results/:id.csv/?' do
+      content_type 'text/plain'
+      task_result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
+      task_result.export_csv
+    end
+
+    # Show the results in a CSV format
+    get '/:project/results/:id.tsv/?' do
+      content_type 'text/plain'
+      task_result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
+      task_result.export_tsv
+    end
+
+    # Show the results in a JSON format
+    get '/:project/results/:id.json/?' do
+      content_type 'application/json'
+      result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
+      result.export_json if result
+    end
+
+
+    # Determine if the task run is complete
+    get '/:project/results/:id/complete/?' do
+      # Get the task result and return unless it's false
+      x = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
+      return false unless x
+
+      # if we got it, and it's complete, return true
+      return "true" if x.complete
+
+    # Otherwise, not ready yet, return false
+    false
+    end
+
+    # Get the task log
+    get '/:project/results/:id/log/?' do
+      content_type 'application/json'
+      result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
+      return unless result
+
+      {:data => result.get_log}.to_json
+    end
+
+    ### Handling
+
+    # Run a specific handler on a specific task result
+    get '/:project/results/:id/handle/:handler' do
+      handler_name = params[:handler]
+      result_id = params[:id].to_i
+
+      # Get the result from the database, and fail cleanly if it doesn't exist
+      result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => result_id)
+
+      # run the handler(s) we set up
+      result.handle(handler_name)
+
+    redirect "/v1/#{@project_name}/results/#{result_id}"
+    end
+
   end
 end

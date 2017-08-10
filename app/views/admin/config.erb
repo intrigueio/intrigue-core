@@ -7,8 +7,8 @@
   <input class="btn btn-primary" type="submit">
 </form>
 <hr>
-<h4> Module Configuration </h4>
-<form action="/v1/<%=@project_name%>/config/module" method="post">
+<h4> Task Configuration </h4>
+<form action="/v1/<%=@project_name%>/config/task" method="post">
 <table class="table">
   <colgroup>
     <col style="width:20%">
@@ -28,4 +28,18 @@
 <tr><td><input class="btn btn-primary" type="submit"></td><td></td><td></td></tr>
 <tbody>
 </table>
+</form>
+
+<style>
+textarea: {
+    color: black;
+}
+</style>
+
+<h4> Handler Configuration </h4>
+<form action="/v1/<%=@project_name%>/config/handler" method="post">
+  <textarea name="handler_json" rows="8" cols="80">
+    <%= @global_config.config["intrigue_handlers"].to_json %>
+  </textarea><br/>
+  <input class="btn btn-primary" type="submit">
 </form>

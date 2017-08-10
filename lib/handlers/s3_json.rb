@@ -13,7 +13,6 @@ module Handler
       secret_key = _get_handler_config("secret_key")
       bucket_name = _get_handler_config("bucket")
       region = _get_handler_config("region")
-      object_name = "#{_export_file_name(result)}.json"
 
       connection = Fog::Storage::AWS.new({
         :aws_access_key_id => access_key,
@@ -22,7 +21,7 @@ module Handler
 
       bucket = connection.directories.get(bucket_name)
       bucket.files.create (
-        { :key => object_name,
+        { :key => "#{result.name}.json",
           :body => result.export_json
         }
       )
