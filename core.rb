@@ -136,7 +136,7 @@ class IntrigueApp < Sinatra::Base
 
     # Allow certain requests without a project string... these are systemwide,
     # and do not depend on a specific project
-    pass if ["project", "tasks", "tasks.json", "entity_types.json", "version.json", nil].include? project_string
+    pass if ["favicon.ico", "project", "tasks", "tasks.json", "entity_types.json", "version.json", nil].include? project_string
     pass if request.path_info =~ /js$/ # if we're submitting a new task result via api
     pass if request.path_info =~ /css$/ # if we're submitting a new task result via api
     pass if request.path_info =~ /(.jpg|.png)$/ # if we're submitting a new task result via api
