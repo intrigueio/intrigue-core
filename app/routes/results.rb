@@ -54,7 +54,7 @@ class IntrigueApp < Sinatra::Base
       else
         Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id]).cancel!
       end
-      redirect "/v1/#{@project_name}/results"
+      redirect "/#{@project_name}/results"
     end
 
     # Helper to construct the request to the API when the application is used interactively
@@ -127,7 +127,7 @@ class IntrigueApp < Sinatra::Base
       entity.task_results << task_result
       entity.save
 
-      redirect "/v1/#{@project_name}/results/#{task_result.id}"
+      redirect "/#{@project_name}/results/#{task_result.id}"
     end
 
 
@@ -141,7 +141,7 @@ class IntrigueApp < Sinatra::Base
 
       # Assuming it's available, display it
       if @result
-        @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/v1/#{@project_name}/start?result_id=#{@result.id}"
+        @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/#{@project_name}/start?result_id=#{@result.id}"
         @elapsed_time = "#{(@result.timestamp_end - @result.timestamp_start).to_i}" if @result.timestamp_end
       end
 
@@ -277,7 +277,7 @@ class IntrigueApp < Sinatra::Base
       # run the handler(s) we set up
       result.handle(handler_name)
 
-    redirect "/v1/#{@project_name}/results/#{result_id}"
+    redirect "/#{@project_name}/results/#{result_id}"
     end
 
 end
