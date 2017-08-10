@@ -22,7 +22,7 @@ function delete_entity(id)
     <a href="/v1/<%=@project_name%>/entities?search_string=<%=@search_string%>&page=<%=@page-1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">previous</a>
     <a href="/v1/<%=@project_name%>/entities?search_string=<%=@search_string%>&page=<%=@page+1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">next</a>
 
-  <script src="/js/sorttable.js"></script>
+  <script type="text/javascript" src="/js/sorttable.js"></script>
   <style>
   /* Sortable tables */
   table.sortable {
