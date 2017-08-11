@@ -126,11 +126,11 @@ class EnrichDnsRecord < BaseTask
         end
 
         # alias this entity
-        #unless @entity.aliases.include? sub_entity
-        #  _log "Attaching entity: #{sub_entity} to #{@entity}"
-        #  @entity.alias sub_entity
-        #  @entity.save
-        #end
+        unless @entity.aliases.include? sub_entity
+          _log "Attaching entity: #{sub_entity} to #{@entity}"
+          @entity.alias sub_entity
+          @entity.save
+        end
 
       end
 
