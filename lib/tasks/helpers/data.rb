@@ -19,17 +19,21 @@ module Data
 
   def hidden_entity?(entity_name, type_string=nil)
     if type_string == "IpAddress"
-      # 23.x.x.x
-      return true if (  # Skip Akamai
+
+      return true if (
+          # Skip Akamai
           entity_name =~ /^23\..*$/              ||
           entity_name =~ /^2600:1400.*$/         ||
           entity_name =~ /^2600:1409.*$/         ||
+
           # Skip Incapsula... lots of annoying scan results here
           entity_name =~ /107\.154\.*/           ||
+
           # RFC1918
           entity_name =~ /^172\.16\..*$/         ||
           entity_name =~ /^192\.168\..*$/        ||
           entity_name =~ /^10\..*$/              ||
+
           # localhost
           entity_name =~ /^127\..*$/             ||
           entity_name =~ /^0.0.0.0/ )
@@ -127,6 +131,7 @@ module Data
         entity_name =~ /^.*schema.org$/                    ||
         entity_name =~ /^.*sendgrid.net$/                  ||
         entity_name =~ /^.*secureserver.net$/              ||
+        entity_name =~ /^.*squarespace.com$/               ||
         entity_name =~ /^.*statuspage.io$/                 ||
         entity_name =~ /^.*twitter.com$/                   ||
         entity_name =~ /^.*urchin.com$/                    ||
@@ -145,7 +150,7 @@ module Data
         entity_name =~ /^.*ytimg.com$/                     ||
         entity_name =~ /^.*zendesk.com$/                   ||
         entity_name =~ /^.*zepheira.com$/                  ||
-        entity_name =~ /^.*1e100.com$/)
+        entity_name =~ /^.*1e100.com$/ )
   end
 
 
