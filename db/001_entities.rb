@@ -5,7 +5,7 @@ Sequel.migration do
       primary_key :id
       foreign_key :project_id, :null => false, :on_delete => :cascade
       String :type
-      String :name, :size => 400
+      String :name
       String :details, :text => true
       FalseClass :deleted, :default => false
     end
@@ -23,7 +23,7 @@ Sequel.migration do
       foreign_key :base_entity_id, :null => false, :on_delete => :cascade
       foreign_key :scan_result_id, :null => true, :on_delete => :cascade
 
-      String :name, :size => 400
+      String :name
       String :task_name, :size => 200
       DateTime :timestamp_start
       DateTime :timestamp_end
@@ -67,7 +67,7 @@ Sequel.migration do
       foreign_key :project_id, :null => false, :on_delete => :cascade
       foreign_key :logger_id, :null => false, :on_delete => :cascade
       foreign_key :base_entity_id, :null => false, :on_delete => :cascade
-      String :name, :size => 400
+      String :name
       Integer :depth
       String :handlers, :text => true
       String :options, :text => true

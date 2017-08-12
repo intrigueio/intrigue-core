@@ -18,6 +18,8 @@ class UriSpider < BaseTask
         {"type" => "Uri", "details" => { "name" => "http://www.intrigue.io" }}
       ],
       :allowed_options => [
+        {:name => "limit", :type => "Integer", :regex => "integer", :default => 100 },
+        {:name => "max_depth", :type => "Integer", :regex => "integer", :default => 10 },
         {:name => "extract_dns_records", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "extract_dns_record_pattern", :type => "String", :regex => "alpha_numeric_list", :default => "*" },
         {:name => "extract_email_addresses", :type => "Boolean", :regex => "boolean", :default => false },
@@ -38,6 +40,8 @@ class UriSpider < BaseTask
 
     # Scanner options
     @opt_user_agent = _get_option "user_agent"
+    @opt_max_depth = _get_option "max_depth"
+    @opt_limit = _get_option "page_limit"
     @opt_extract_dns_records = _get_option "extract_dns_records"
     @opt_extract_dns_record_pattern = _get_option("extract_dns_record_pattern").split(",") # only extract entities withthe following patterns
     @opt_extract_email_addresses = _get_option "extract_email_addresses"
@@ -52,15 +56,20 @@ class UriSpider < BaseTask
       return
     end
 
-    crawl_and_extract(uri)
+    options = {
+      :limit => @opt_limit || 100,
+      :max_depth => @opt_max_depth || 10
+    }
+
+    crawl_and_extract(uri, options)
   end # end .run
 
 
-  def crawl_and_extract(uri)
+  def crawl_and_extract(uri, options)
     _log "Crawling: #{uri}"
     dns_records = []
 
-    Spidr.site(uri) do |spider|
+    Spidr.site(uri, options) do |spider|
 
       # Handle redirects
       spider.every_redirect_page do |page|
@@ -69,7 +78,7 @@ class UriSpider < BaseTask
       end
 
       spider.every_page do |page|
-        _log ">>> #{page.url}"
+        #_log ">>> #{page.url}"
 
         if @opt_extract_uris
           _create_entity("Uri", { "name" => "#{page.url}", "uri" => "#{page.url}", "spidered" => true })
