@@ -73,12 +73,14 @@ class UriSpider < BaseTask
 
       # Handle redirects
       spider.every_redirect_page do |page|
+        next unless page.location
+        
         spider.visit_hosts << page.to_absolute(page.location).host
         spider.enqueue page.to_absolute(page.location)
       end
 
       spider.every_page do |page|
-        #_log ">>> #{page.url}"
+        _log "Got... #{page.url}"
 
         if @opt_extract_uris
           _create_entity("Uri", { "name" => "#{page.url}", "uri" => "#{page.url}", "spidered" => true })

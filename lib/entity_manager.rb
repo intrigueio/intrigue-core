@@ -173,7 +173,8 @@ class EntityManager
     if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
       unless hidden
         s = Intrigue::StrategyFactory.create_by_name(task_result.scan_result.strategy)
-        raise "Unknown strategy!?!?!" unless s
+        raise "Unknown Strategy!" unless s
+
         s.recurse(created_entity, task_result)
       end
     end
