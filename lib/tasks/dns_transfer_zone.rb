@@ -8,7 +8,7 @@ class DnsTransferZoneTask < BaseTask
       :authors => ["jcran"],
       :description => "DNS Zone Transfer",
       :references => [],
-      :allowed_types => ["Host"],
+      :allowed_types => ["DnsRecord"],
       :type => "discovery",
       :passive => false,
       :example_entities => [
