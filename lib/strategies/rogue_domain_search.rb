@@ -1,13 +1,13 @@
 module Intrigue
 module Strategy
-  class DomainIntel < Intrigue::Strategy::Base
+  class RogueDomainSearch < Intrigue::Strategy::Base
 
     def self.metadata
       {
-        :name => "domain_intel",
-        :pretty_name => "Domain Intel",
+        :name => "rogue_domain_search",
+        :pretty_name => "Rogue Domain Search",
         :authors => ["jcran"],
-        :description => "This strategy grabs the source ."
+        :description => "This strategy runs whois on every domain and allows you to identify rogues."
       }
     end
 
