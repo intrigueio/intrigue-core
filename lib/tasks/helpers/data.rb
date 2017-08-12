@@ -55,7 +55,7 @@ module Data
         entity_name =~ /^.*akamaitechnologies.com$/        ||
         entity_name =~ /^.*akamaized-staging.net$/         ||
         entity_name =~ /^.*akamaized.net$/                 ||
-        #entity_name =~ /^.*amazonaws.com$/                 ||
+        entity_name =~ /^.*amazonaws.com$/                 ||
         entity_name =~ /^.*android.clients.google.com$/    ||
         entity_name =~ /^.*android.com$/                   ||
         entity_name =~ /^.*apache.org$/                    ||
