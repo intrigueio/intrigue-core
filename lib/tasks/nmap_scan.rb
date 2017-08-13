@@ -97,9 +97,8 @@ class NmapScanTask < BaseTask
         ports = host.ports
 
         # create a list of ips / hostnames
-        hostnames = []
-        hostnames << host.ip
-        hostnames = hostnames + host.hostnames + resolve_ip(ip_entity.name)
+        hostnames = [host.ip]
+        hostnames += host.hostnames.map{|h| h.to_s} + resolve_ip(ip_entity.name)
 
         # Grab all the aliases
         if ip_entity.aliases.count > 0
