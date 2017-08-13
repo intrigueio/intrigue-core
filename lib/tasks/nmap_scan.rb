@@ -47,7 +47,11 @@ class NmapScanTask < BaseTask
       _log "Scanning #{scan_item} and storing in #{temp_file}"
       _log "NMap options: #{nmap_options}"
 
-      nmap_string = "nmap #{scan_item} #{nmap_options} -sSUV -P0 --top-ports 25 -O --max-os-tries 2 -oX #{temp_file}"
+      if Process.uid == 0
+        nmap_string = "nmap #{scan_item} #{nmap_options} -sSUV -P0 --top-ports 25 -O --max-os-tries 2 -oX #{temp_file}"
+      else 
+	nmap_string = "sudo nmap #{scan_item} #{nmap_options} -sSUV -P0 --top-ports 25 -O --max-os-tries 2 -oX #{temp_file}"
+      end
       _log "Running... #{nmap_string}"
 
       output = _unsafe_system(nmap_string)
