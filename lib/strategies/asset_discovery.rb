@@ -21,7 +21,13 @@ module Strategy
         # Do a big bruteforce if the size is small enough
         if (entity.name.split(".").length < 3)
 
-          start_recursive_task(task_result,"dns_scraper", entity)
+          # Sublister API
+          start_recursive_task(task_result,"search_sublister", entity)
+
+          # Threatcrowd API... skip resolutions, as we probably don't want old
+          # data for this use case
+          start_recursive_task(task_result,"search_threatcrowd", entity, [
+            {"name" => "gather_resolutions", "value" => false }])
 
           start_recursive_task(task_result,"dns_brute_sub",entity,[
             {"name" => "use_file", "value" => true },

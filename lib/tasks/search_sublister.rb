@@ -1,17 +1,17 @@
 module Intrigue
-class DnsScraper < BaseTask
+class SearchSublister < BaseTask
   include Intrigue::Task::Web
 
   def self.metadata
     {
-      :name => "dns_scraper",
-      :pretty_name => "DNS Scraper",
+      :name => "search_sublister",
+      :pretty_name => "Search Sublist3r",
       :authors => ["jcran"],
-      :description => "This task scrapes known APIs for subdomains and creates new DnsRecord entities.",
+      :description => "This task hit Sublis3r's API for subdomains and creates new DnsRecord entities.",
       :references => ["https://github.com/aboul3la/Sublist3r/"],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["*"],
+      :allowed_types => ["DnsRecord"],
       :example_entities => [ {"type" => "DnsRecord", "details" => {"name" => "intrigue"}} ],
       :allowed_options => [],
       :created_types => ["DnsRecord"]
@@ -32,22 +32,6 @@ class DnsScraper < BaseTask
       _log_error "Unable to get parsable response from #{search_uri}: #{e}"
     rescue StandardError => e
       _log_error "Error grabbing sublister domains: #{e}"
-    end
-
-
-    # Virustotal API (this'll be blocked after a couple queries... better to use the api)
-    # API Docs: https://www.virustotal.com/en/documentation/public-api/#getting-domain-reports
-    virustotal_uri = "https://www.virustotal.com/en/domain/#{search_domain}/information/"
-    begin
-      raw_html = http_get_body virustotal_uri
-      html = Nokogiri::HTML(raw_html)
-      vt_domains = html.xpath("//*[@id='observed-subdomains']/div/a/text()").map do |x|
-        x.to_s.gsub("\n","").strip
-      end
-      _log_good "Got virustotal domains: #{vt_domains}"
-      vt_domains.each{|d| _create_entity "DnsRecord", {"name" => "#{d}"} }
-    rescue StandardError => e
-      _log_error "Error grabbing virustotal domains: #{e}"
     end
 
   end

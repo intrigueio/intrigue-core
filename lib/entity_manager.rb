@@ -129,20 +129,20 @@ class EntityManager
 
     ### Ensure we have an entity
     unless created_entity
-      task_result.log "ERROR! Unable to create or find entity: #{type}##{downcased_name}"
-      #return nil
+      task_result.log "ERROR! Unable to create or find entity: #{type}##{downcased_name}, failing!!"
+      return nil
     end
 
     ### Run Transformation
     unless created_entity.transform!
-      task_result.log "ERROR! Transformation of entity failed: #{entity}"
-      #return nil
+      task_result.log "ERROR! Transformation of entity failed: #{entity}, failing!!"
+      return nil
     end
 
     ### Run Validation
     unless created_entity.validate_entity
-      task_result.log "ERROR! Validation of entity failed: #{entity}"
-      #return nil
+      task_result.log "ERROR! Validation of entity failed: #{entity}, failing!!"
+      return nil
     end
 
 
