@@ -13,7 +13,7 @@ class Credential < Intrigue::Model::Entity
     name =~ /^\w.*/ &&
     details["username"].to_s =~ /^\w.*$/ &&
     details["password"].to_s =~ /^\w.*$/ &&
-    details["uri"].to_s =~ /^\w.*$/
+    details["uri"].to_s =~ /^http:.*$/
   end
 
 end
