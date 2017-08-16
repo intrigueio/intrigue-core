@@ -5,7 +5,7 @@ class SnmpServer < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "SnmpServer",
-      :description => "TODO"
+      :description => "An SNMP Server"
     }
   end
 

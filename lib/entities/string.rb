@@ -5,7 +5,7 @@ class String < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "String",
-      :description => "TODO"
+      :description => "A Generic Search String"
     }
   end
 

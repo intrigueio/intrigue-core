@@ -5,7 +5,7 @@ class Person < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "Person",
-      :description => "TODO"
+      :description => "A Person"
     }
   end
 

@@ -5,7 +5,7 @@ class Uri < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "Uri",
-      :description => "A Uniform Resource Identifier (URI) is a string of characters used to identify a resource."
+      :description => "A Website or Webpage."
     }
   end
 

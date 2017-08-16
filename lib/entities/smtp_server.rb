@@ -5,7 +5,7 @@ class SmtpServer < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "SmtpServer",
-      :description => "TODO"
+      :description => "An SMTP Server"
     }
   end
 

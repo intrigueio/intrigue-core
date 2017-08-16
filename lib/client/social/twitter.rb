@@ -13,21 +13,6 @@ module Twitter
 
   end
 
-  class ApiClient
-
-    def query(username)
-
-      ###
-      ### XXX = Api v1 no longer active.
-      ###
-
-      # Uses API v1
-      #get_request "https://api.twitter.com/1/users/show/#{username}.json"
-
-    end
-
-  end
-
 end
 end
 end

@@ -5,7 +5,7 @@ class PhoneNumber < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "PhoneNumber",
-      :description => "TODO"
+      :description => "A Phone Number"
     }
   end
 

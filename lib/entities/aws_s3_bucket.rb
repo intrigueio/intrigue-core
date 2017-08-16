@@ -5,7 +5,7 @@ class AwsS3Bucket < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "AwsS3Bucket",
-      :description => "TODO"
+      :description => "An S3 Bucket"
     }
   end
 

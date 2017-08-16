@@ -5,7 +5,7 @@ class IpAddress < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "IpAddress",
-      :description => "TODO"
+      :description => "An IP Address"
     }
   end
 

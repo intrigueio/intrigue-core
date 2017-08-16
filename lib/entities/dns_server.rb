@@ -5,7 +5,7 @@ class DnsServer < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "DnsServer",
-      :description => "TODO"
+      :description => "A Dns Server"
     }
   end
 

@@ -5,7 +5,7 @@ class WebAccount < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "WebAccount",
-      :description => "TODO"
+      :description => "A login username identified for a specific website"
     }
   end
 

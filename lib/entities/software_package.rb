@@ -5,7 +5,7 @@ class SoftwarePackage < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "SoftwarePackage",
-      :description => "TODO"
+      :description => "A Software Package, identified through metadata"
     }
   end
 

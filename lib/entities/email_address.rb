@@ -5,7 +5,7 @@ class EmailAddress < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "EmailAddress",
-      :description => "TODO"
+      :description => "An Email Address"
     }
   end
 

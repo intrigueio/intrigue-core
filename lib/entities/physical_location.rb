@@ -5,7 +5,7 @@ class PhysicalLocation < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "PhysicalLocation",
-      :description => "TODO"
+      :description => "A Physical Location"
     }
   end
 

@@ -5,7 +5,7 @@ class Credential < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "Credential",
-      :description => "Login credential"
+      :description => "Login Credential"
     }
   end
 

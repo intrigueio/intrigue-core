@@ -5,7 +5,7 @@ class Screenshot < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "Screenshot",
-      :description => "TODO"
+      :description => "A Screenshot of a Webpage"
     }
   end
 

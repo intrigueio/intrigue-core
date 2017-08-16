@@ -5,10 +5,9 @@ class Organization < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "Organization",
-      :description => "TODO"
+      :description => "An organization"
     }
   end
-
 
   def validate_entity
     name =~ /^\w.*$/

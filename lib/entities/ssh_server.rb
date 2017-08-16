@@ -5,7 +5,7 @@ class SshServer < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "SshServer",
-      :description => "TODO"
+      :description => "A SSH Server"
     }
   end
 

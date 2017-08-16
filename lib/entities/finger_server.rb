@@ -5,7 +5,7 @@ class FingerServer < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "FingerServer",
-      :description => "Finger Server"
+      :description => "A Finger Server"
     }
   end
 

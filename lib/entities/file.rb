@@ -5,7 +5,7 @@ class File < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "File",
-      :description => "TODO"
+      :description => "A File"
     }
   end
 

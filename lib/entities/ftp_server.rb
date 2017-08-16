@@ -5,7 +5,7 @@ class FtpServer < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "FtpServer",
-      :description => "Ftp Server"
+      :description => "An FTP Server"
     }
   end
 

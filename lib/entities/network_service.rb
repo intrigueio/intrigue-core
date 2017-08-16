@@ -5,7 +5,7 @@ class NetworkService < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "NetworkService",
-      :description => "TODO"
+      :description => "A Generic Network Service"
     }
   end
 
