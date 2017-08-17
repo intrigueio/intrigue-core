@@ -65,4 +65,4 @@ $ curl -s -X POST -H "Content-Type: application/json" -d '{ "task": "example", "
 ```
 
 ### API Client (Ruby Gem)
-A Ruby gem is provided for your convenience: ![Gem Version](https://badge.fury.io/rb/intrigue_api_client.svg)](http://badge.fury.io/rb/intrigue_api_client)
+A Ruby gem is provided for your convenience: [![Gem Version](https://badge.fury.io/rb/intrigue_api_client.svg)](http://badge.fury.io/rb/intrigue_api_client)
