@@ -214,7 +214,7 @@ class DnsBruteSubTask < BaseTask
 
     wildcard_ips = []
       # First we look for a single address that won't exist
-      5.times do
+      10.times do
         random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}"
         resolved_address = _resolve(random_string)
         wildcard_ips << resolved_address unless resolved_address.nil?
