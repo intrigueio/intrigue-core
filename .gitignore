@@ -1,4 +1,5 @@
 .DS_Store
+.yardoc
 config/config.json
 config/puma.rb
 config/database.yml

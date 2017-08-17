@@ -1,4 +1,6 @@
 source 'https://rubygems.org'
+
+# core
 gem 'sinatra'                 # API
 gem 'sinatra-contrib'         # API
 gem 'puma'                    # Application Server
@@ -48,6 +50,8 @@ gem 'aws-sdk', '~> 2'
 gem 'couchrest'
 gem 'fog-aws'
 
+# development
 gem 'foreman'
 gem 'pry'                     # Debugging
 gem 'pry-byebug'              # Debugging
+gem 'yard'
