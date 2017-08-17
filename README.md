@@ -36,6 +36,10 @@ To use the web interface, browse to http://127.0.0.1:7777. Once you're able to c
 
 Many modules require API keys. To set them up, browse to the "Configure" tab and click on the name of the module. You will be taken to the relevant signup page where you can provision an API key.
 
+## The API
+
+Intrigue-core is built API-first, allowing all functions in the UI to be easily automated. The following methods for automation are provided.
+
 ### API usage via core-cli
 
 A command line utility has been added for convenience, core-cli.
@@ -61,4 +65,4 @@ $ curl -s -X POST -H "Content-Type: application/json" -d '{ "task": "example", "
 ```
 
 ### API Client (Ruby Gem)
-[![Gem Version](https://badge.fury.io/rb/intrigue_api_client.svg)](http://badge.fury.io/rb/intrigue_api_client)
+A Ruby gem is provided for your convenience: ![Gem Version](https://badge.fury.io/rb/intrigue_api_client.svg)](http://badge.fury.io/rb/intrigue_api_client)
