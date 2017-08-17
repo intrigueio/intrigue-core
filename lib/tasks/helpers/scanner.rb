@@ -13,11 +13,8 @@ module Scanner
 
   # Scans for webservers on common ports
   #
-  # @param [String] ip/hostname/netblock passed to nmap
-  # @yield  [uri| invokes a block with a uri for each result
-  #
+  # @param to_scan [String] ip/hostname/netblock passed to nmap
   # @return [Array] list of strings (uris)
-  #
   def scan_webservers(to_scan)
 
     # Create a tempfile to store results

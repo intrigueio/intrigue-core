@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class SearchRobtex < BaseTask
   include Intrigue::Task::Web
 
@@ -102,5 +103,6 @@ class SearchRobtex < BaseTask
 
   end
 
+end
 end
 end

@@ -1,5 +1,6 @@
 module Intrigue
-class DnsBruteSubTask < BaseTask
+module Task
+class DnsBruteSub < BaseTask
 
   def self.metadata
     {
@@ -273,5 +274,6 @@ class DnsBruteSubTask < BaseTask
   end
 
 
+end
 end
 end

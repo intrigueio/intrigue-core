@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class AwsS3Loot < BaseTask
 
   include Intrigue::Task::Web
@@ -43,5 +44,6 @@ class AwsS3Loot < BaseTask
     end
   end
 
+end
 end
 end

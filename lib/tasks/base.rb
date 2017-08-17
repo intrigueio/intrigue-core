@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class BaseTask
 
   include Intrigue::Task::Generic
@@ -262,5 +263,6 @@ class BaseTask
     true
   end
 
+end
 end
 end

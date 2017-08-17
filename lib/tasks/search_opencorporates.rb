@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class SearchOpencorporates < BaseTask
 
   def self.metadata
@@ -37,5 +38,6 @@ class SearchOpencorporates < BaseTask
     end
   end
 
+end
 end
 end

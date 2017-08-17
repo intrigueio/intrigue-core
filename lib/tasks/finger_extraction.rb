@@ -2,6 +2,7 @@
 ### XXX - This module has not been extensively tested!
 ###
 module Intrigue
+module Task
 class FingerExtraction < BaseTask
 
   def self.metadata
@@ -9,7 +10,7 @@ class FingerExtraction < BaseTask
       :name => "finger_extraction",
       :pretty_name => "Finger Extraction",
       :authors => ["jcran"],
-      :description => "This task connects to a finger service and pulls out People.",
+      :description => "This task extracts People entities from a FingerServer.",
       :references => [],
       :type => "discovery",
       :passive => false,
@@ -64,5 +65,6 @@ class FingerExtraction < BaseTask
     s.close
   end
 
+end
 end
 end

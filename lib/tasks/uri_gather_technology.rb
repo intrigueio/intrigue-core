@@ -1,5 +1,6 @@
 module Intrigue
-class UriGatherTechnologyTask  < BaseTask
+module Task
+class UriGatherTechnology  < BaseTask
 
   include Intrigue::Task::Web
 
@@ -50,5 +51,6 @@ class UriGatherTechnologyTask  < BaseTask
 
   end
 
+end
 end
 end

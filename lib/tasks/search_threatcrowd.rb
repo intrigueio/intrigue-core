@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class SearchThreatcrowd < BaseTask
   include Intrigue::Task::Web
 
@@ -81,4 +82,5 @@ class SearchThreatcrowd < BaseTask
   end # end run()
 
 end # end Class
+end
 end

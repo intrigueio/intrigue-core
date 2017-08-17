@@ -1,5 +1,6 @@
 module Intrigue
-class UriGatherSslCertTask  < BaseTask
+module Task
+class UriGatherSslCert  < BaseTask
 
   include Intrigue::Task::Web
 
@@ -154,5 +155,6 @@ class UriGatherSslCertTask  < BaseTask
     end
   end
 
+end
 end
 end

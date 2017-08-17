@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class EnrichUri < BaseTask
   include Intrigue::Task::Web
 
@@ -79,5 +80,6 @@ class EnrichUri < BaseTask
   false
   end
 
+end
 end
 end

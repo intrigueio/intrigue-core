@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class DnsRecurseSpf < BaseTask
 
   def self.metadata
@@ -119,5 +120,6 @@ class DnsRecurseSpf < BaseTask
   end
 
 
+end
 end
 end

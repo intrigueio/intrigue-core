@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class UriHttpScreenshot < BaseTask
 
   include Intrigue::Task::Scanner
@@ -110,5 +111,6 @@ class UriHttpScreenshot < BaseTask
   return uris
   end
 
+end
 end
 end

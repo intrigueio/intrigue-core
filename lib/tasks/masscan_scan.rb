@@ -2,7 +2,8 @@
 ### Task is in good shape, just needs some option parsing, and needs to deal with paths
 ###
 module Intrigue
-class MasscanTask < BaseTask
+module Task
+class Masscan < BaseTask
 
   include Intrigue::Task::Dns
 
@@ -105,5 +106,6 @@ class MasscanTask < BaseTask
   true
   end
 
+end
 end
 end

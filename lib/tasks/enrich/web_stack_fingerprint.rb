@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class WebStackFingerprint < BaseTask
   include Intrigue::Task::Web
 
@@ -64,6 +65,7 @@ class WebStackFingerprint < BaseTask
     stack.concat _check_generator(response)
     stack.concat _check_uri(uri)
     stack.concat _check_specific_pages(uri)
+
 
     clean_stack = stack.select{ |x| x != nil }.uniq
     _log "Setting stack to #{clean_stack}"
@@ -341,5 +343,6 @@ class WebStackFingerprint < BaseTask
     web_server_name
     end
 
+end
 end
 end

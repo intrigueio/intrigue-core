@@ -1,5 +1,6 @@
 module Intrigue
-class SearchBingTask < BaseTask
+module Task
+class SearchBing < BaseTask
   include Intrigue::Task::Parse
 
   def self.metadata
@@ -57,4 +58,5 @@ class SearchBingTask < BaseTask
   end # end run()
 
 end # end Class
+end
 end

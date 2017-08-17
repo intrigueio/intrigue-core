@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class CreateEntity < BaseTask
 
   def self.metadata
@@ -29,5 +30,6 @@ class CreateEntity < BaseTask
     _create_entity type, {"name" => name }
   end
 
+end
 end
 end

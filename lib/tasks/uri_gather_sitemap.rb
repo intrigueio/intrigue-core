@@ -1,5 +1,6 @@
 module Intrigue
-class UriGatherSitemapTask  < BaseTask
+module Task
+class UriGatherSitemap  < BaseTask
 
   include Intrigue::Task::Web
 
@@ -55,5 +56,6 @@ class UriGatherSitemapTask  < BaseTask
     end
   end
 
+end
 end
 end

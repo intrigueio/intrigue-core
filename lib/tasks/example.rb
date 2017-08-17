@@ -1,5 +1,6 @@
 module Intrigue
-class ExampleTask < BaseTask
+module Task
+class Example < BaseTask
 
   def self.metadata
     {
@@ -57,5 +58,6 @@ class ExampleTask < BaseTask
 
   end
 
+end
 end
 end

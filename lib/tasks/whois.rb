@@ -1,5 +1,6 @@
 module Intrigue
-class WhoisTask < BaseTask
+module Task
+class Whois < BaseTask
   include Intrigue::Task::Web
 
   def self.metadata
@@ -47,7 +48,7 @@ class WhoisTask < BaseTask
       return
     rescue Timeout::Error => e
       _log_error "Unable to query whois: #{e}"
-      return 
+      return
     end
 
     #
@@ -185,5 +186,6 @@ class WhoisTask < BaseTask
 
   end
 
+end
 end
 end

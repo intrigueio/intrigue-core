@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class NetBlockExpand < BaseTask
 
   def self.metadata
@@ -38,5 +39,6 @@ class NetBlockExpand < BaseTask
 
   end
 
+end
 end
 end

@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class SearchPhishtank < BaseTask
   include Intrigue::Task::Web
 
@@ -48,6 +49,7 @@ class SearchPhishtank < BaseTask
     end
   parsed_response
   end
-  
+
+end
 end
 end

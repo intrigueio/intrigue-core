@@ -1,5 +1,6 @@
 module Intrigue
-class DnsBruteSrvTask < BaseTask
+module Task
+class DnsBruteSrv < BaseTask
 
   def self.metadata
     {
@@ -93,5 +94,6 @@ class DnsBruteSrvTask < BaseTask
     end
   end
 
+end
 end
 end

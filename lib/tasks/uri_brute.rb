@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class UriBrute < BaseTask
 
   include Intrigue::Task::Web
@@ -165,5 +166,6 @@ class UriBrute < BaseTask
     end
   end
 
+end
 end
 end

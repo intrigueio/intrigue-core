@@ -1,5 +1,6 @@
 module Intrigue
-class GeolocateHostTask < BaseTask
+module Task
+class GeolocateHost < BaseTask
 
   def self.metadata
     {
@@ -60,5 +61,6 @@ class GeolocateHostTask < BaseTask
 
   end
 
+end
 end
 end

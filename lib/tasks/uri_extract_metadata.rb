@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class UriExtractMetadata < BaseTask
 
   include Intrigue::Task::Parse
@@ -35,5 +36,6 @@ class UriExtractMetadata < BaseTask
   end
 
 
+end
 end
 end

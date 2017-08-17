@@ -1,5 +1,6 @@
 module Intrigue
-class EmailValidateMailboxLayerTask < BaseTask
+module Task
+class EmailValidateMailboxLayer < BaseTask
   include Intrigue::Task::Web
 
 
@@ -60,5 +61,6 @@ class EmailValidateMailboxLayerTask < BaseTask
 
 
   end
+end
 end
 end

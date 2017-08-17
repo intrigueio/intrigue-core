@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class AwsEc2GatherInstances < BaseTask
 
   def self.metadata
@@ -55,5 +56,6 @@ class AwsEc2GatherInstances < BaseTask
 
   end
 
+end
 end
 end

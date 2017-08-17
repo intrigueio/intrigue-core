@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class EnrichDnsRecord < BaseTask
   include Intrigue::Task::Helper
   include Intrigue::Task::Data
@@ -179,5 +180,6 @@ class EnrichDnsRecord < BaseTask
     _log "Ran enrichment task!"
   end
 
+end
 end
 end
