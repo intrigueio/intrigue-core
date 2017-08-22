@@ -5,7 +5,7 @@ class AsNumber < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "AsNumber",
-      :description => "TODO"
+      :description => "An Autonomous System Number"
     }
   end
 

@@ -64,6 +64,7 @@ module Data
         entity_name =~ /^.*azureedge-test.net$/            ||
         entity_name =~ /^.*azureedge.net$/                 ||
         entity_name =~ /^.*azurewebsites.net$/             ||
+        entity_name =~ /^.*bronto.com$/                    ||
         entity_name =~ /^.*cloudapp.net$/                  ||
         entity_name =~ /^.*cloudfront.net$/                ||
         entity_name =~ /^.*drupal.org$/                    ||
@@ -131,6 +132,7 @@ module Data
         entity_name =~ /^.*schema.org$/                    ||
         entity_name =~ /^.*sendgrid.net$/                  ||
         entity_name =~ /^.*secureserver.net$/              ||
+        entity_name =~ /^.*siftscience.com$/               ||
         entity_name =~ /^.*squarespace.com$/               ||
         entity_name =~ /^.*statuspage.io$/                 ||
         entity_name =~ /^.*twitter.com$/                   ||
