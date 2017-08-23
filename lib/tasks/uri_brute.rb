@@ -113,34 +113,49 @@ class UriBrute < BaseTask
   def check_uri(request_uri)
 
     _log "Attempting #{request_uri}"
-    response = http_request :get,request_uri
+    response = http_request :get, request_uri
     return false unless response
+
+    # try again if we got a blank page (some WAFs seem to do this?)
+    if response.body = ""
+      10.times do
+        _log "Re-attemping #{request_uri}... verifying we should really have a blank page"
+        response = http_request :get, request_uri
+        break if response.body != ""
+      end
+    end
+
+    # always check content...
+    if (response.body =~ /404/)
+      _log "Skipping #{request_uri}, contains a missing page string: 404"
+      return false
+    end
+
+    # always check code
+    if (response.code == "404" || response.code == "500" )
+      _log "Skipping #{request_uri} based on code: #{response.code}"
+      return false
+    end
 
     ## If we are able to guess based on the code, we're super lucky!
     if @missing_page_test == :code
       case response.code
-        when "404"
-          _log "404 on #{request_uri}"
         when "200"
-          _log_good "200! Creating a page for #{request_uri}"
+          _log_good "Clean 200! Creating a page for #{request_uri}"
           _create_entity "Uri",
             "name" => request_uri,
             "uri" => request_uri,
-            "response_code" => response.code
-        when "500"
-          _log_good "500 error! Skipping #{request_uri}"
-          #_create_entity "Uri",
-          #  "name" => request_uri,
-          #  "uri" => request_uri,
-          #  "response_code" => response.code
+            "response_code" => response.code,
+            "brute_response_body" => response.body
         when @missing_page_code
           _log "Got code: #{response.code}. Same as missing page code. Skipping"
         else
-          _log_error "Don't know this response code? #{response.code} (#{request_uri})"
-          #_create_entity "Uri",
-          #  "name" => request_uri,
-          #  "uri" => request_uri,
-          #  "response_code" => response.code
+          _log "Flagging #{request_uri} because of response code #{response.code}!"
+          _create_entity "Uri",
+            "name" => request_uri,
+            "uri" => request_uri,
+            "response_code" => response.code,
+            "brute_response_body" => response.body
       end
 
     ## Otherwise, let's guess based on the content. Does this page look
@@ -148,26 +163,17 @@ class UriBrute < BaseTask
     elsif @missing_page_test == :content
       if response.body[0..100] == @missing_page_content[0..100]
         _log "Skipping #{request_uri} based on page content"
-      elsif response.body.include? "404"
-        _log "Skipping #{request_uri}, contains the string: 404"
-      elsif response.body.include? "not found"
-        _log "Skipping #{request_uri}, contains the string: not found"
-      elsif response.body.include? "unavailable"
-        _log "Skipping #{request_uri}, contains the string: unavailable"
-      elsif (response.code == "302" ||
-            response.code == "301" ||
-            response.code == "401" ||
-            response.code == "404" ||
-            response.code == "500" )
-        _log "Skipping #{request_uri} based on code: #{response.code}"
       else
-        _log "Flagging #{request_uri}!"
+        _log "Flagging #{request_uri} because of content!"
         _create_entity "Uri",
           "name" => request_uri,
           "uri" => request_uri,
-          "response_code" => response.code
+          "response_code" => response.code,
+          "brute_response_body" => response.body
       end
     end
+
+  true
   end
 
 end
