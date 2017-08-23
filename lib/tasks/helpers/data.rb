@@ -108,12 +108,15 @@ module Data
         entity_name =~ /^.*gvt1.com$/                      ||
         entity_name =~ /^.*gvt2.com$/                      ||
         entity_name =~ /^.*herokussl.com$/                 ||
+        entity_name =~ /^.*hostgator.com$/                 ||
         entity_name =~ /^.*hubspot.com$/                   ||
         entity_name =~ /^.*hubspot.net$/                   ||
         entity_name =~ /^.*incapdns.net$/                  ||
         entity_name =~ /^.*instagram.com$/                 ||
+        entity_name =~ /^.*jobing.com$/                    ||
         entity_name =~ /^.*localhost$/                     ||
         entity_name =~ /^.*lync.com$/                      ||
+        entity_name =~ /^.*mailgun.org$/                   ||
         entity_name =~ /^.*mandrillapp.com$/               ||
         entity_name =~ /^.*marketo.com$/                   ||
         entity_name =~ /^.*metric.gstatic.com$/            ||
@@ -143,6 +146,7 @@ module Data
         entity_name =~ /^.*windows.net$/                   ||
         entity_name =~ /^.*windowsphone-int.net$/          ||
         entity_name =~ /^.*windowsphone.com$/              ||
+        entity_name =~ /^.*wordpress.com$/                 ||
         entity_name =~ /^.*www.goo.gl$/                    ||
         entity_name =~ /^.*xmlns.com$/                     ||
         entity_name =~ /^.*youtu.be$/                      ||
