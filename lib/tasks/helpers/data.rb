@@ -65,6 +65,8 @@ module Data
         entity_name =~ /^.*azureedge.net$/                 ||
         entity_name =~ /^.*azurewebsites.net$/             ||
         entity_name =~ /^.*bronto.com$/                    ||
+        entity_name =~ /^.*chtah.com$/                     ||
+        entity_name =~ /^.*cheetahmail.com$/               ||
         entity_name =~ /^.*cloudapp.net$/                  ||
         entity_name =~ /^.*cloudfront.net$/                ||
         entity_name =~ /^.*drupal.org$/                    ||
