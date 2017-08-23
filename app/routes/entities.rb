@@ -10,7 +10,7 @@ class IntrigueApp < Sinatra::Base
 
       if @correlate # Handle entity coorelation
 
-       selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden=>false).order(:name)
+       selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
        selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
        selected_entities = _tokenized_search(@search_string, selected_entities)
 
@@ -24,7 +24,7 @@ class IntrigueApp < Sinatra::Base
 
       else # normal flow, uncorrelated
 
-        selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden=>false).order(:name)
+        selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
 
         ## Filter if we have a type
         selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
