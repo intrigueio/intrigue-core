@@ -128,7 +128,7 @@ class UriBrute < BaseTask
             "uri" => request_uri,
             "response_code" => response.code
         when "500"
-          _log_good "500 error! Creating a page for #{request_uri}"
+          _log_good "500 error! Skipping #{request_uri}"
           #_create_entity "Uri",
           #  "name" => request_uri,
           #  "uri" => request_uri,
@@ -150,11 +150,15 @@ class UriBrute < BaseTask
         _log "Skipping #{request_uri} based on page content"
       elsif response.body.include? "404"
         _log "Skipping #{request_uri}, contains the string: 404"
-      elsif (response.code == 302 ||
-            response.code == 301 ||
-            response.code == 401 ||
-            response.code == 404 ||
-            response.code == 500)
+      elsif response.body.include? "not found"
+        _log "Skipping #{request_uri}, contains the string: not found"
+      elsif response.body.include? "unavailable"
+        _log "Skipping #{request_uri}, contains the string: unavailable"
+      elsif (response.code == "302" ||
+            response.code == "301" ||
+            response.code == "401" ||
+            response.code == "404" ||
+            response.code == "500" )
         _log "Skipping #{request_uri} based on code: #{response.code}"
       else
         _log "Flagging #{request_uri}!"
