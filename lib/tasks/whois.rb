@@ -39,11 +39,11 @@ class Whois < BaseTask
     opt_create_contacts = _get_option "create_contacts"
 
     begin
-      whois = Whois::Client.new(:timeout => 20)
+      whois = ::Whois::Client.new(:timeout => 20)
       answer = whois.lookup(lookup_string)
       parser = answer.parser
       whois_full_text = answer.content if answer
-    rescue Whois::ResponseIsThrottled => e
+    rescue ::Whois::ResponseIsThrottled => e
       _log_error "Unable to query whois: #{e}"
       return
     rescue Timeout::Error => e
@@ -173,7 +173,7 @@ class Whois < BaseTask
           else
             _log "Skipping contacts"
           end
-        rescue Whois::AttributeNotImplemented => e
+        rescue ::Whois::AttributeNotImplemented => e
           _log_error "Unable to parse that attribute: #{e}"
         end
 
