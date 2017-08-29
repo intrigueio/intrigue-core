@@ -59,7 +59,7 @@ class IntrigueApp < Sinatra::Base
     out = ""
     out << "Type,Name,Alias Group,Details\n"
     selected_entities.each do |entity|
-      alias_string = entity.alias_group.id
+      alias_string = entity.alias_group.id if entity.alias_group
       out << "#{entity.type_string},#{entity.name},#{alias_string},#{entity.detail_string}\n"
     end
 
