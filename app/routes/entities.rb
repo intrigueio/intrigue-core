@@ -48,7 +48,7 @@ class IntrigueApp < Sinatra::Base
     params[:correlate] == "on" ? @correlate = true : @correlate = false
     (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
 
-    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
+    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false).order(:name)
 
     ## Filter if we have a type
     selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
