@@ -54,13 +54,12 @@ class IntrigueApp < Sinatra::Base
     selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
 
     # Perform a simple tokenized search
-
     selected_entities = _tokenized_search(@search_string, selected_entities) if @search_string
 
     out = ""
-    out << "Type,Name,Aliases,Details\n"
+    out << "Type,Name,Alias Group,Details\n"
     selected_entities.each do |entity|
-      alias_string = entity.aliases.each{|a| "#{a.type_string}##{a.name}" }.join(" | ")
+      alias_string = entity.alias_group.id
       out << "#{entity.type_string},#{entity.name},#{alias_string},#{entity.detail_string}\n"
     end
 
