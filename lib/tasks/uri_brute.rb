@@ -121,6 +121,7 @@ class UriBrute < BaseTask
       10.times do
         _log "Re-attemping #{request_uri}... verifying we should really have a blank page"
         response = http_request :get, request_uri
+        next unless response 
         break if response.body != ""
       end
     end

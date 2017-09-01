@@ -26,7 +26,7 @@ class EnrichUri < BaseTask
 
     # Grab the full response
     response = http_request :get, uri
-    unless response
+    unless response || response.body
       _log_error "Unable to receive a response for #{uri}, bailing"
       return
     end
