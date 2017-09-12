@@ -302,7 +302,7 @@ class WebStackFingerprint < BaseTask
       _log "_check_server_header called"
 
       ### Server Header
-      server_header = _resolve_server_header(response.header['server'])
+      #server_header = _resolve_server_header(response.header['server'])
 
       if server_header
         # If we got the same 'server' header in both, create a WebServer entity
@@ -327,8 +327,6 @@ class WebStackFingerprint < BaseTask
     # names. Otherwise it just matches what was sent.
     def _resolve_server_header(header_content)
 
-      header_content = "\*" if header_content = "*"
-
       # Sometimes we're given a generic name, so keep track of the probable server for that name
       aliases = [
         {:given => "Server", :probably => "Apache (Server)"}
@@ -338,7 +336,9 @@ class WebStackFingerprint < BaseTask
       web_server_name = header_content
 
       # Check all aliases, returning the probable name if it matches exactly
-      aliases.each { |a| web_server_name = a[:probably] if a[:given] =~ /#{header_content}/ }
+      aliases.each do |a|
+        web_server_name = a[:probably] if a[:given] =~ /#{header_content}/
+      end
 
       _log "Resolved: #{web_server_name}"
 
