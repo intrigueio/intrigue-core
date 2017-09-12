@@ -102,10 +102,10 @@ class IntrigueApp < Sinatra::Base
 
     def _tokenized_search(search_string, selected_entities)
       # Simple tokenized search......
-      if search_string
+      if search_string && search_string.length > 0
         tokens = search_string.split(" ")
         tokens.each do |t|
-          if t =~ /^!/ # exclude whatever comes next
+          if t =~ /^!/ || t =~ /^~/ # exclude whatever comes next
             ss = t[1..-1]
             # check for a
             if ss =~ /^name:/
@@ -135,6 +135,7 @@ class IntrigueApp < Sinatra::Base
           end
         end
       end
+
     selected_entities
     end
 
