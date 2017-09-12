@@ -150,8 +150,8 @@ class EnrichDnsRecord < BaseTask
           sub_entity = _create_entity("DnsRecord", { "name" => name }, @entity)
         end
 
-        # bail out if we don't have an entity for any reason. 
-        next unless @entity
+        # bail out if we don't have entities for any reason.
+        next unless @entity && sub_entity
 
         # skip if we have the same name or the same entity
         next if sub_entity.name == @entity.name
