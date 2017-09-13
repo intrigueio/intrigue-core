@@ -175,6 +175,8 @@ class EnrichDnsRecord < BaseTask
       _log_error "Unable to resolve, timed out: #{e}"
     rescue Errno::ENETUNREACH => e
       _log_error "Hit exception: #{e}. Are you sure you're connected?"
+    rescue StandardError => e
+      _log_error "UNKNOWN ERROR: #{e}"
     ensure
       @entity.enriched = true
       @entity.save
