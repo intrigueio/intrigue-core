@@ -326,6 +326,7 @@ class WebStackFingerprint < BaseTask
     # This method resolves a header to a probable name in the case of generic
     # names. Otherwise it just matches what was sent.
     def _resolve_server_header(header_content)
+      return nil unless header_content
 
       # Sometimes we're given a generic name, so keep track of the probable server for that name
       aliases = [
