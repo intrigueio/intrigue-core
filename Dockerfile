@@ -7,7 +7,7 @@ RUN apt-get update -qq && apt-get -y upgrade && \
 	libcurl4-openssl-dev libpq-dev wget libgdbm-dev \
 	libncurses5-dev automake libtool bison libffi-dev libgmp-dev \
 	software-properties-common bzip2 gawk libreadline6-dev libyaml-dev pkg-config \
-	redis-server net-tools
+	redis-server net-tools clang
 
 # set up postgres
 RUN sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
