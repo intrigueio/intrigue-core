@@ -95,9 +95,8 @@ class EntityManager
     details["hidden_original"] = name
     downcased_name = name.downcase
 
-
     # Merge the details if it already exists
-    entity = entity_exists?(project,type_string,downcased_name)
+    entity = entity_exists?(project,type_string,downcased_name) ## TODO - INDEX THIS!!!!!
     hidden = hidden_entity?(name, type_string)
 
     # Check if there's an existing entity, if so, merge and move forward
@@ -152,7 +151,7 @@ class EntityManager
 
     # Attach the alias
     if primary_entity
-      primary_entity.alias(created_entity)
+      created_entity.alias(primary_entity)
     else # otherwise, there's nothing to alias, so lets create a new group
       g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
       created_entity.alias_group_id = g.id
