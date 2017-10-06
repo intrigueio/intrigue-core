@@ -2,6 +2,8 @@ module Intrigue
 module Task
 class DnsRecurseSpf < BaseTask
 
+  include Intrigue::Task::Dns
+
   def self.metadata
     {
       :name => "dns_recurse_spf",
@@ -16,9 +18,7 @@ class DnsRecurseSpf < BaseTask
       :type => "discovery",
       :passive => true,
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
-      :allowed_options => [
-        {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
-      ],
+      :allowed_options => [],
       :created_types => ["IpAddress","Info","NetBlock"]
     }
   end
@@ -26,17 +26,16 @@ class DnsRecurseSpf < BaseTask
   def run
     super
 
-    opt_resolver = _get_option "resolver"
     dns_name = _get_entity_name
     _log "Running SPF lookup on #{dns_name}"
 
     # Run a lookup on the entity
-    lookup_txt_record(opt_resolver, dns_name)
+    lookup_txt_record(dns_name)
     _log "done!"
 
   end
 
-  def lookup_txt_record(opt_resolver, dns_name)
+  def lookup_txt_record(dns_name)
 
     begin
 

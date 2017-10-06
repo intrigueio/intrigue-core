@@ -1,3 +1,5 @@
+require 'logger'
+
 
 require 'sinatra'
 require 'sinatra/contrib'
@@ -53,7 +55,8 @@ end
 def setup_database
   options = {
     :max_connections => 16,
-    :pool_timeout => 240
+    :pool_timeout => 240,
+    :loggers => [Logger.new($stdout)]
   }
 
   if Intrigue::Config::GlobalConfig.new.config["debug"]

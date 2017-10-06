@@ -2,6 +2,8 @@ module Intrigue
 module Task
 class DnsLookupMx < BaseTask
 
+  include Intrigue::Task::Dns
+
   def self.metadata
     {
       :name => "dns_lookup_mx",
@@ -13,9 +15,7 @@ class DnsLookupMx < BaseTask
       :passive => true,
       :allowed_types => ["DnsRecord"],
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
-      :allowed_options => [
-        {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
-      ],
+      :allowed_options => [ ],
       :created_types => ["IpAddress"]
     }
   end
@@ -23,14 +23,13 @@ class DnsLookupMx < BaseTask
   def run
     super
 
-    opt_resolver = _get_option "resolver"
     name = _get_entity_name
 
     begin
       # XXX - we should probably call this a couple times to deal
       # with round-robin DNS & load balancers. We'd need to merge results
       # across the queries
-      resources = Resolv::DNS.open(:nameserver => opt_resolver,:search => []) do |dns|
+      resources = Resolv::DNS.open(:search => []) do |dns|
         dns.getresources(name, Resolv::DNS::Resource::IN::MX)
       end
 

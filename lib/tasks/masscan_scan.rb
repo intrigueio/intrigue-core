@@ -56,7 +56,7 @@ class Masscan < BaseTask
       _create_entity("IpAddress", { "name" => line })
 
       # Resolve, and iterate on each line
-      hostnames = resolve_ip(line)
+      hostnames = resolve_names(line)
       hostnames.each do |host|
 
         next if host =~ /\.arpa$/

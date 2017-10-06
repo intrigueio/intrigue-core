@@ -64,7 +64,7 @@ class IntrigueApp < Sinatra::Base
     end
 
     #### GRAPH ####
-    
+
     # Project Graph
     get '/:project/graph.json/?' do
       content_type 'application/json'

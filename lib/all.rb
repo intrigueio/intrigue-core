@@ -112,4 +112,5 @@ Dir["#{handlers_folder}/*.rb"].each {|f| require_relative f}
 ####
 # Signal Libraries
 ####
-require_relative 'signals/example'
+signals_folder = File.expand_path('../signals', __FILE__) # get absolute directory
+Dir["#{signals_folder}/*.rb"].each { |file| require_relative file }
