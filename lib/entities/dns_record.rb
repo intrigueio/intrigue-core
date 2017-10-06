@@ -18,7 +18,7 @@ class DnsRecord < Intrigue::Model::Entity
   end
 
   def detail_string
-    "#{details["lookup_data"]["record_type"]}"
+    "#{details["lookup_data"]["record_type"]}" if details["lookup_data"]
   end
 
 end
