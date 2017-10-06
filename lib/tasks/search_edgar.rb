@@ -1,5 +1,6 @@
 module Intrigue
-class SearchCorpwatchTask < BaseTask
+module Task
+class SearchCorpwatch < BaseTask
 
   def self.metadata
     {
@@ -45,5 +46,6 @@ class SearchCorpwatchTask < BaseTask
 
     end
   end
+end
 end
 end

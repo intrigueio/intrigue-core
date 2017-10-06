@@ -5,6 +5,7 @@ require 'rest-client'
 require 'intrigue_api_client'
 require 'pp'
 require 'pry' #DEBUG
+require_relative 'core'
 
 class CoreCli < Thor
 
@@ -105,29 +106,16 @@ class CoreCli < Thor
   ### LOCAL ONLY
   ### XXX - rewrite this so it uses the API
   ###
-=begin
+
   desc "local_handle_scan_results [Project] [Handler]", "Manually run a handler on a project's scan results"
   def local_handle_scan_results(project, handler_type)
-    require_relative 'core'
 
     ### handle scan results
     Intrigue::Model::Project.each do |p|
       next unless p.name == project || project == "-"
       p.scan_results.each do |s|
-
-        # Save our automatic handlers
-        # XXX - HACK
-        old_handlers = s.handlers
-        s.handlers = [ handler_type ]
-        s.save
-
-        puts "[_] Handling: #{s.name}"
-        s.handle_result # Force the handling with the second argumnent
-
-        # Re-assign the old handlers
-        # XXX - HACK
-        s.handlers = old_handlers
-        s.save
+        puts "[x] Handling... #{s.name}"
+        s.handle(handler_type)
       end
     end
 
@@ -135,28 +123,22 @@ class CoreCli < Thor
 
   desc "local_handle_task_results [Project] [Handler]", "Manually run a handler on a project's task results"
   def local_handle_task_results(project,handler_type)
-    require_relative 'core'
 
     ### handle task results
     Intrigue::Model::Project.each do |p|
       next unless p.name == project || project == "-"
       s = p.task_results.each do |t|
-
         puts "[x] Handling... #{t.name}"
-        handler = Intrigue::HandlerFactory.create_by_type(handler_type)
-        handler.process(t)
-
+        t.handle(handler_type)
       end
     end
   end
-=end
 
   desc "local_load [Task] [File] [Depth] [Option1=Value1#...#...] [Handlers] [Strategy]", "Load entities from a file and runs a task on each in a new project."
-  def load(task_name,filename,depth=1,options_string=nil,handler_string=nil, strategy_name="network_enumeration")
+  def local_load(task_name,filename,depth=1,options_string=nil,handler_string=nil, strategy_name="network_enumeration")
 
     # Load in the main core file for direct access to TaskFactory and the Tasks
     # This makes this super speedy.
-    require_relative 'core'
     extend Intrigue::Task::Helper
 
     lines = File.open(filename,"r").readlines

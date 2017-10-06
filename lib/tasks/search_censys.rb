@@ -1,5 +1,6 @@
 module Intrigue
-class SearchCensysTask < BaseTask
+module Task
+class SearchCensys < BaseTask
 
   def self.metadata
     {
@@ -113,4 +114,5 @@ class SearchCensysTask < BaseTask
   end # end run()
 
 end # end Class
+end
 end

@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class SearchSublister < BaseTask
   include Intrigue::Task::Web
 
@@ -36,5 +37,6 @@ class SearchSublister < BaseTask
 
   end
 
+end
 end
 end

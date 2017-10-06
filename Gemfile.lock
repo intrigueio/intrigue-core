@@ -207,6 +207,7 @@ GEM
     whois-parser (1.0.0)
       activesupport (>= 4)
       whois (>= 4.0.0)
+    yard (0.9.9)
     yomu (0.2.4)
       json (~> 1.8)
       mime-types (~> 1.23)
@@ -259,6 +260,7 @@ DEPENDENCIES
   whois
   whois-parser
   whoisology!
+  yard
   yomu
 
 BUNDLED WITH

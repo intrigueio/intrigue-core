@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class UriSpider < BaseTask
 
   include Intrigue::Task::Web
@@ -74,7 +75,7 @@ class UriSpider < BaseTask
       # Handle redirects
       spider.every_redirect_page do |page|
         next unless page.location
-        
+
         spider.visit_hosts << page.to_absolute(page.location).host
         spider.enqueue page.to_absolute(page.location)
       end
@@ -164,5 +165,6 @@ class UriSpider < BaseTask
 
   end
 
+end
 end
 end

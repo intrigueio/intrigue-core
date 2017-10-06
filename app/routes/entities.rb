@@ -10,7 +10,7 @@ class IntrigueApp < Sinatra::Base
 
       if @correlate # Handle entity coorelation
 
-       selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden=>false).order(:name)
+       selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
        selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
        selected_entities = _tokenized_search(@search_string, selected_entities)
 
@@ -24,13 +24,13 @@ class IntrigueApp < Sinatra::Base
 
       else # normal flow, uncorrelated
 
-        selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden=>false).order(:name)
+        selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
 
         ## Filter if we have a type
         selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
 
         # Perform a simple tokenized search
-        selected_entities = _tokenized_search(@search_string, selected_entities)
+        selected_entities = _tokenized_search(@search_string, selected_entities) if @search_string
 
         ## paginate
         @entity_count = selected_entities.count
@@ -44,22 +44,22 @@ class IntrigueApp < Sinatra::Base
     content_type 'text/csv'
 
     params[:search_string] == "" ? @search_string = nil : @search_string = params[:search_string]
-    params[:entity_types] == "" ? @entity_types = nil : @entity_types = params[:entity_types]
+    params[:entity_types] == [""] ? @entity_types = nil : @entity_types = params[:entity_types]
     params[:correlate] == "on" ? @correlate = true : @correlate = false
     (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
 
-    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden=>false).order(:name)
+    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false).order(:name)
 
     ## Filter if we have a type
     selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
 
     # Perform a simple tokenized search
-    selected_entities = _tokenized_search(@search_string, selected_entities)
+    selected_entities = _tokenized_search(@search_string, selected_entities) if @search_string
 
     out = ""
-    out << "Type,Name,Aliases,Details\n"
+    out << "Type,Name,Alias Group,Details\n"
     selected_entities.each do |entity|
-      alias_string = entity.aliases.each{|a| "#{a.type_string}##{a.name}" }.join(" | ")
+      alias_string = entity.alias_group.id if entity.alias_group
       out << "#{entity.type_string},#{entity.name},#{alias_string},#{entity.detail_string}\n"
     end
 
@@ -102,10 +102,10 @@ class IntrigueApp < Sinatra::Base
 
     def _tokenized_search(search_string, selected_entities)
       # Simple tokenized search......
-      if search_string
+      if search_string && search_string.length > 0
         tokens = search_string.split(" ")
         tokens.each do |t|
-          if t =~ /^!/ # exclude whatever comes next
+          if t =~ /^!/ || t =~ /^~/ # exclude whatever comes next
             ss = t[1..-1]
             # check for a
             if ss =~ /^name:/
@@ -135,6 +135,7 @@ class IntrigueApp < Sinatra::Base
           end
         end
       end
+
     selected_entities
     end
 

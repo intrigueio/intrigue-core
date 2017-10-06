@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class SearchVirustotal < BaseTask
   include Intrigue::Task::Web
 
@@ -20,7 +21,7 @@ class SearchVirustotal < BaseTask
 
   def run
     super
-    
+
     search_domain = _get_entity_name
 
     # Virustotal API (this'll be blocked after a couple queries... need to move this to the api)
@@ -40,5 +41,6 @@ class SearchVirustotal < BaseTask
 
   end
 
+end
 end
 end

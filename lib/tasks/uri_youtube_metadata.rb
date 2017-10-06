@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class UriYoutubeMetadata < BaseTask
 
   include Intrigue::Task::Web
@@ -50,5 +51,6 @@ class UriYoutubeMetadata < BaseTask
 
   end
 
+end
 end
 end

@@ -18,7 +18,8 @@
 #           * Checking the RTT of a packet to the server and compare with the time of the DNS query.
 #######
 module Intrigue
-class DnsSnoopCacheTask < BaseTask
+module Task
+class DnsSnoopCache < BaseTask
 
   def self.metadata
     {
@@ -353,5 +354,6 @@ class DNSSnooper
 
     return nil
   end
+end
 end
 end

@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class EnrichDnsRecord < BaseTask
   include Intrigue::Task::Helper
   include Intrigue::Task::Data
@@ -149,6 +150,9 @@ class EnrichDnsRecord < BaseTask
           sub_entity = _create_entity("DnsRecord", { "name" => name }, @entity)
         end
 
+        # bail out if we don't have entities for any reason.
+        next unless @entity && sub_entity
+
         # skip if we have the same name or the same entity
         next if sub_entity.name == @entity.name
         next if @entity.aliases.include? sub_entity
@@ -171,6 +175,8 @@ class EnrichDnsRecord < BaseTask
       _log_error "Unable to resolve, timed out: #{e}"
     rescue Errno::ENETUNREACH => e
       _log_error "Hit exception: #{e}. Are you sure you're connected?"
+    rescue StandardError => e
+      _log_error "UNKNOWN ERROR: #{e}"
     ensure
       @entity.enriched = true
       @entity.save
@@ -179,5 +185,6 @@ class EnrichDnsRecord < BaseTask
     _log "Ran enrichment task!"
   end
 
+end
 end
 end

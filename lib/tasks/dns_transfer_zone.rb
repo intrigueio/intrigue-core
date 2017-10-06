@@ -1,5 +1,6 @@
 module Intrigue
-class DnsTransferZoneTask < BaseTask
+module Task
+class DnsTransferZone < BaseTask
 
   def self.metadata
     {
@@ -86,5 +87,6 @@ class DnsTransferZoneTask < BaseTask
 
 
 
+end
 end
 end

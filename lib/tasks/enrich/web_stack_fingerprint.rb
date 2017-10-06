@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class WebStackFingerprint < BaseTask
   include Intrigue::Task::Web
 
@@ -64,6 +65,7 @@ class WebStackFingerprint < BaseTask
     stack.concat _check_generator(response)
     stack.concat _check_uri(uri)
     stack.concat _check_specific_pages(uri)
+
 
     clean_stack = stack.select{ |x| x != nil }.uniq
     _log "Setting stack to #{clean_stack}"
@@ -324,22 +326,26 @@ class WebStackFingerprint < BaseTask
     # This method resolves a header to a probable name in the case of generic
     # names. Otherwise it just matches what was sent.
     def _resolve_server_header(header_content)
+      return nil unless header_content
 
       # Sometimes we're given a generic name, so keep track of the probable server for that name
       aliases = [
-        {:given => "Server", :probably => "Apache"}
+        {:given => "Server", :probably => "Apache (Server)"}
       ]
 
       # Set the default
       web_server_name = header_content
 
-      # Check all aliases, returning the probably name if it matches exactly
-      aliases.each { |a| web_server_name = a[:probably] if a[:given] =~ /#{header_content}/ }
+      # Check all aliases, returning the probable name if it matches exactly
+      aliases.each do |a|
+        web_server_name = a[:probably] if a[:given] =~ /#{Regexp.escape(header_content)}/
+      end
 
       _log "Resolved: #{web_server_name}"
 
     web_server_name
     end
 
+end
 end
 end

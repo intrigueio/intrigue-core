@@ -1,5 +1,6 @@
 module Intrigue
-class WebAccountCheckTask < BaseTask
+module Task
+class WebAccountCheck < BaseTask
 
   include Intrigue::Task::Web
 
@@ -78,4 +79,5 @@ class WebAccountCheckTask < BaseTask
   end # run()
 
 end # ProfileSearch
+end
 end

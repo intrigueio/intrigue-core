@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class ConvertEntity < BaseTask
 
   def self.metadata
@@ -27,5 +28,6 @@ class ConvertEntity < BaseTask
     _create_entity( _get_option("convert_to_type"), "name" => name )
   end
 
+end
 end
 end

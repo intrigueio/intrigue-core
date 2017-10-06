@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class EnrichUri < BaseTask
   include Intrigue::Task::Web
 
@@ -24,16 +25,32 @@ class EnrichUri < BaseTask
     uri = _get_entity_name
 
     # Grab the full response
-    response_data = http_get_body uri
+    response = http_request :get, uri
+
+    unless response && response.body
+      _log_error "Unable to receive a response for #{uri}, bailing"
+      return
+    end
+
+    response_data = response.body.encode('UTF-8', {:invalid => :replace, :undef => :replace, :replace => '?'})
     response_data_hash = Digest::SHA256.base64digest(response_data) if response_data
 
-    api_enabled = check_api_endpoint(uri)
-    #webdav_enabled = check_webdav_endpoint(uri)
+    # we can check the existing response, so send that
+    api_enabled = check_api_endpoint(response)
+
+    # we can check the existing response, so send that
+    contains_forms = check_forms(response_data)
+
+    # we'll need to make another request
     verbs_enabled = check_options_endpoint(uri)
+
+    # we'll need to make another request
+    #webdav_enabled = check_webdav_endpoint(uri)
 
     new_details = @entity.details.merge({
       "api" => api_enabled,
       "verbs" => verbs_enabled,
+      "forms" => contains_forms,
       "response_data_hash" => response_data_hash,
       "response_data" => response_data
     })
@@ -65,19 +82,16 @@ class EnrichUri < BaseTask
     http_request :propfind, uri
   end
 
-
-  def check_api_endpoint(uri)
-    response = http_request :get, uri
-
-    unless response
-      _log_error "Unable to receive a response for #{uri}, bailing"
-      return
-    end
-
+  def check_api_endpoint(response)
     return true if response.header['Content-Type'] =~ /application/
-
   false
   end
 
+  def check_forms(response_body)
+    return true if response_body =~ /<form/i
+  false
+  end
+
+end
 end
 end

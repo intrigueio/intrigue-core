@@ -1,5 +1,6 @@
 module Intrigue
-class SearchWhoisologyTask < BaseTask
+module Task
+class SearchWhoisology < BaseTask
 
   def self.metadata
     {
@@ -40,7 +41,7 @@ class SearchWhoisologyTask < BaseTask
           _log "Looking up contacts for domain"
           begin
             # We're going to pull the domain's email address....
-            whois = Whois::Client.new(:timeout => 20)
+            whois = ::Whois::Client.new(:timeout => 20)
             answer = whois.lookup(entity_name)
             # Run through the contacts and pick the first one
             contact_emails = answer.parser.contacts.map{ |contact| contact.email }
@@ -93,4 +94,5 @@ class SearchWhoisologyTask < BaseTask
   end # end run()
 
 end # end Class
+end
 end

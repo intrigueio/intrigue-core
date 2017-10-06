@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class SearchGithubCode < BaseTask
   include Intrigue::Task::Web
 
@@ -74,5 +75,6 @@ class SearchGithubCode < BaseTask
   response
   end
 
+end
 end
 end

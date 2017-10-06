@@ -1,5 +1,6 @@
 module Intrigue
-class NmapScanTask < BaseTask
+module Task
+class NmapScan < BaseTask
 
   include Intrigue::Task::Dns
 
@@ -51,7 +52,7 @@ class NmapScanTask < BaseTask
 
       if Process.uid == 0
         nmap_string = "nmap #{scan_item} #{nmap_options} -sSUV -P0 --top-ports 25 -O --max-os-tries 2 -oX #{temp_file}"
-      else 
+      else
 	nmap_string = "sudo nmap #{scan_item} #{nmap_options} -sSUV -P0 --top-ports 25 -O --max-os-tries 2 -oX #{temp_file}"
       end
       _log "Running... #{nmap_string}"
@@ -234,5 +235,6 @@ class NmapScanTask < BaseTask
   true
   end
 
+end
 end
 end

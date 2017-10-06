@@ -1,5 +1,6 @@
 module Intrigue
-class DnsLookupTxtTask < BaseTask
+module Task
+class DnsLookupTxt < BaseTask
 
   def self.metadata
     {
@@ -98,5 +99,6 @@ class DnsLookupTxtTask < BaseTask
   end
 
 
+end
 end
 end

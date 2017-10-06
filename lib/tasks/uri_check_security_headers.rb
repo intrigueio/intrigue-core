@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class UriCheckSecurityHeaders  < BaseTask
 
   include Intrigue::Task::Web
@@ -54,5 +55,6 @@ class UriCheckSecurityHeaders  < BaseTask
     end # response
   end #end run
 
+end
 end
 end

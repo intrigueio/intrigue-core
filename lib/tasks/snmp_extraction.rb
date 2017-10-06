@@ -1,6 +1,7 @@
-require 'snmp'
+
 
 module Intrigue
+module Task
 class SnmpExtraction < BaseTask
 
   def self.metadata
@@ -69,5 +70,6 @@ class SnmpExtraction < BaseTask
 
   end
 
+end
 end
 end

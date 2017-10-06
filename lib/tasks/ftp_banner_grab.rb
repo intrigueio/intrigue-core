@@ -2,6 +2,7 @@
 ### XXX - This module has not been extensively tested!
 ###
 module Intrigue
+module Task
 class FtpBannerGrab < BaseTask
 
   def self.metadata
@@ -9,7 +10,7 @@ class FtpBannerGrab < BaseTask
       :name => "ftp_banner_grab",
       :pretty_name => "Grab a banner from an FTP Server",
       :authors => ["jcran"],
-      :description => "This task connects to a service and collect the banner.",
+      :description => "This task connects to an FTP service and collects the banner.",
       :references => [],
       :type => "discovery",
       :passive => false,
@@ -69,5 +70,6 @@ class FtpBannerGrab < BaseTask
     s.close
   end
 
+end
 end
 end

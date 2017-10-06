@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class WhoisOrgSearch < BaseTask
   include Intrigue::Task::Web
 
@@ -93,5 +94,6 @@ class WhoisOrgSearch < BaseTask
 
   end # end run
 
+end
 end
 end

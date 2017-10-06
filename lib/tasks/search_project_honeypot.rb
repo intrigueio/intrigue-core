@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class SearchProjectHoneypot < BaseTask
   include Intrigue::Task::Web
 
@@ -67,5 +68,6 @@ class SearchProjectHoneypot < BaseTask
 
   end
 
+end
 end
 end

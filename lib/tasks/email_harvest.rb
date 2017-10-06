@@ -1,5 +1,6 @@
 module Intrigue
-class EmailHarvestTask < BaseTask
+module Task
+class EmailHarvest < BaseTask
 
   def self.metadata
     {
@@ -56,5 +57,6 @@ class EmailHarvestTask < BaseTask
 =end
   end
 
+end
 end
 end

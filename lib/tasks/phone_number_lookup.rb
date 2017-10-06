@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class PhoneNumberLookup < BaseTask
 
   include Task::Web
@@ -57,5 +58,6 @@ class PhoneNumberLookup < BaseTask
 
   end
 
+end
 end
 end

@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class AwsS3Brute < BaseTask
 
   include Intrigue::Task::Web
@@ -122,5 +123,6 @@ class AwsS3Brute < BaseTask
 
   end
 
+end
 end
 end

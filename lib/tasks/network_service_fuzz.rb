@@ -2,6 +2,7 @@
 ### XXX - This module has not been extensively tested!
 ###
 module Intrigue
+module Task
 class NetworkServiceFuzz < BaseTask
 
   def self.metadata
@@ -72,5 +73,6 @@ class NetworkServiceFuzz < BaseTask
     s.close
   end
 
+end
 end
 end

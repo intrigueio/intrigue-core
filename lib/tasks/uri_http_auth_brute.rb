@@ -1,5 +1,5 @@
-
 module Intrigue
+module Task
 class UriHttpAuthBrute < BaseTask
 
   include Intrigue::Task::Data
@@ -81,5 +81,6 @@ class UriHttpAuthBrute < BaseTask
  end
 
 
+end
 end
 end

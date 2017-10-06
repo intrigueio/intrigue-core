@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class SearchCrt < BaseTask
   include Intrigue::Task::Web
 
@@ -58,5 +59,6 @@ class SearchCrt < BaseTask
 
   end
 
+end
 end
 end

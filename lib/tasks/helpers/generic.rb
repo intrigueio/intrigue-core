@@ -20,17 +20,14 @@ module Generic
   ###
   def _log(message)
     @task_result.logger.log message
-    #@task_result.logger.save
   end
 
   def _log_good(message)
     @task_result.logger.log_good message
-    #@task_result.logger.save
   end
 
   def _log_error(message)
     @task_result.logger.log_error message
-    #@task_result.logger.save
   end
 
   # Convenience Method to execute a system command semi-safely

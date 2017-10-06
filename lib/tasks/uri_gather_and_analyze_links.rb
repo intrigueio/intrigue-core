@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class UriGatherAndAnalyzeLinks  < BaseTask
 
   include Intrigue::Task::Web
@@ -188,5 +189,6 @@ class UriGatherAndAnalyzeLinks  < BaseTask
 
   end
 
+end
 end
 end

@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class AwsGatherRanges < BaseTask
 
   include Intrigue::Task::Web
@@ -45,5 +46,6 @@ class AwsGatherRanges < BaseTask
 
   end
 
+end
 end
 end

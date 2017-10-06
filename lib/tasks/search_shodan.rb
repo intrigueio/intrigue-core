@@ -1,5 +1,6 @@
 module Intrigue
-class SearchShodanTask < BaseTask
+module Task
+class SearchShodan < BaseTask
 
   def self.metadata
     {
@@ -115,5 +116,6 @@ class SearchShodanTask < BaseTask
     end
   end
 
+end
 end
 end

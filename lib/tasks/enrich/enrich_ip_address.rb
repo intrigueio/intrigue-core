@@ -1,4 +1,5 @@
 module Intrigue
+module Task
 class EnrichIpAddress < BaseTask
   include Intrigue::Task::Helper
   include Intrigue::Task::Data
@@ -105,5 +106,6 @@ class EnrichIpAddress < BaseTask
     _log "Ran enrichment task!"
   end
 
+end
 end
 end

@@ -1,5 +1,6 @@
 module Intrigue
-class DnsLookupMxTask < BaseTask
+module Task
+class DnsLookupMx < BaseTask
 
   def self.metadata
     {
@@ -49,5 +50,6 @@ class DnsLookupMxTask < BaseTask
     end
   end
 
+end
 end
 end

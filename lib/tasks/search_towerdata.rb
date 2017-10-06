@@ -1,5 +1,6 @@
 module Intrigue
-class SearchTowerdataTask < BaseTask
+module Task
+class SearchTowerdata < BaseTask
 
   def self.metadata
     {
@@ -40,5 +41,6 @@ class SearchTowerdataTask < BaseTask
 
   end # end run()
 
+end
 end
 end
