@@ -107,7 +107,7 @@ class CoreCli < Thor
   ### XXX - rewrite this so it uses the API
   ###
 
-  desc "handle_scan_results [Project] [Handler]", "Manually run a handler on a project's scan results"
+  desc "local_handle_scan_results [Project] [Handler]", "Manually run a handler on a project's scan results"
   def local_handle_scan_results(project, handler_type)
 
     ### handle scan results
