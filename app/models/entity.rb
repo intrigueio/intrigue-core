@@ -199,8 +199,8 @@ module Intrigue
           :deleted => deleted,
           :hidden => hidden,
           :details => safe_details,
-          :aliases => aliases.map{ |x| {:id => x.id, :name => x.name } },
-          :task_results => task_results.map{ |t| {:id => t.id, :name => t.name } }
+          #:task_results => task_results.map{ |t| {:id => t.id, :name => t.name } },
+          :aliases => aliases.map{ |x| {:id => x.id, :name => x.name } }
         }
       end
 
