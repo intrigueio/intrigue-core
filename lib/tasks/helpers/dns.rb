@@ -64,7 +64,7 @@ module Intrigue
 
           end # end result.answer
 
-        _log_good "Got... #{resources}"
+        #_log_good "Got... #{resources}"
 
         rescue Dnsruby::SocketEofResolvError => e
           _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
