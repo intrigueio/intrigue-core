@@ -1,0 +1,52 @@
+<p>
+Signals Count: <%= @signals.count %><br/>
+</p>
+
+<div class="col-sm-2">
+  <form class="form-horizontal" id="result_search" target="_self" method="get" action="/<%=@project_name%>/signals">
+
+    Search:
+    <input type="text" style='width:100%' class="form-control sm" id="search_string" name="search_string"><br/>
+    <input class="btn btn-primary" type="submit" value="Search">
+  </form>
+
+</div>
+
+<div class="col-sm-10">
+
+  <script src="/js/sorttable.js"></script>
+  <style>
+  /* Sortable tables */
+  table.sortable {
+    width: 100%;
+    border: 0;
+    table-layout:fixed;
+    word-wrap:break-word;
+    border-collapse:collapse;
+  }
+
+  table.sortable thead {
+      background-color:#eee;
+      color:#666666;
+      font-weight: bold;
+      cursor: default;
+  }
+  </style>
+  <p></p>
+  <table class="sortable" border="1" width=100%>
+    <colgroup>
+      <col style="width:33%">
+      <col style="width:33%">
+      <col style="width:33%">
+    </colgroup>
+    <tbody>
+      <tr><th>name</th><th>entity</th><th>details</th>
+        <% @signals.each do |x| %>
+        <tr>
+          <td><%= h x.name %>  </td>
+          <td><a href="/<%=@project_name%>/entities/<%=x.entity_id%>"><%= h x.entity %> </a></td>
+          <td><%= h x.details %> </td>
+        </tr>
+        <% end %>
+    </tbody>
+  </table>
