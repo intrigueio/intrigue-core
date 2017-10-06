@@ -124,9 +124,11 @@ class DnsBruteSub < BaseTask
 
                   # Create new host entity
                   resolve(resolved_address).each do |rr|
-                    puts "Creating... #{rr}"
+                    #_log "Creating... #{rr}"
                     if rr["name"].is_ip_address?
-                      _create_entity("IpAddress", rr.except!("record_type"), main_entity )
+                      _log "Skipping IP... #{rr}"
+                      # skip this, we'll get it
+                      #_create_entity("IpAddress", rr.except!("record_type"), main_entity )
                     else
                       _create_entity("DnsRecord", rr, main_entity )
                     end

@@ -18,7 +18,19 @@ class DnsRecord < Intrigue::Model::Entity
   end
 
   def detail_string
-    "#{details["lookup_data"]}"
+=begin
+    if details["lookup_data"]
+      if details["lookup_data"].first["lookup_details"]
+        d = details["lookup_data"].map do |x|
+          x["lookup_details"]["name"] if x["lookup_details"]
+        end
+        return d.sort.uniq.join(", ")
+      end
+    else
+      ""
+    end
+=end
+  ""
   end
 
 end
