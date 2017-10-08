@@ -51,10 +51,10 @@ class EnrichUri < BaseTask
     #webdav_enabled = check_webdav_endpoint(uri)
 
     new_details = @entity.details.merge({
-      "api" => api_enabled,
-      "trace" => trace_enabled,
-      "verbs" => verbs_enabled,
-      "forms" => contains_forms,
+      "check_api_endpoint" => api_enabled,
+      "check_trace" => trace_enabled,
+      "check_verbs" => verbs_enabled,
+      "check_forms" => contains_forms,
       "response_data_hash" => response_data_hash,
       "response_data" => response_data
     })
