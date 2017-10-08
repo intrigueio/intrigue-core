@@ -43,28 +43,32 @@ module Intrigue
             resources << {
               "name" => resource.address.to_s,
               "lookup_details" => [{
-                "record_type" => resource.type.to_s,
-                "data" => resource.rdata,
-                "nameservers_used" => resolver.config.nameserver }]} if resource.respond_to? :address
+                "request_record" => lookup_name,
+                "request_type" => lookup_type.to_s,
+                "response_record_type" => resource.type.to_s,
+                "response_record_data" => resource.rdata,
+                "nameservers" => resolver.config.nameserver }]} if resource.respond_to? :address
 
             resources << {
               "name" => resource.domainname.to_s.downcase,
               "lookup_details" => [{
-                "record_type" => resource.type.to_s,
-                "record_data" => resource.rdata,
-                "nameservers_used" => resolver.config.nameserver }]} if resource.respond_to? :domainname
+                "request_record" => lookup_name,
+                "request_type" => lookup_type.to_s,
+                "response_record_type" => resource.type.to_s,
+                "response_record_data" => resource.rdata,
+                "nameservers" => resolver.config.nameserver }]} if resource.respond_to? :domainname
 
             resources << {
               "name" => resource.name.to_s.downcase,
               "lookup_details" => [{
-                "record_type" => resource.type.to_s,
-                "record_data" => resource.rdata,
-                "nameservers_used" => resolver.config.nameserver }]}
+                "request_record" => lookup_name,
+                "request_type" => lookup_type.to_s,
+                "response_record_type" => resource.type.to_s,
+                "response_record_data" => resource.rdata,
+                "nameservers" => resolver.config.nameserver }]}
 
 
           end # end result.answer
-
-        #_log_good "Got... #{resources}"
 
         rescue Dnsruby::SocketEofResolvError => e
           _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
