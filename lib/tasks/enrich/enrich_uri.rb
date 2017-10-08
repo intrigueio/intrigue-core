@@ -84,7 +84,7 @@ class EnrichUri < BaseTask
 
   def check_trace_endpoint(uri)
     response = http_request :trace, uri # todo... make the payload configurable
-    return true if response == "intrigueftw"
+    return true if response.body == "intrigueftw"
   false
   end
 
