@@ -45,10 +45,14 @@ class EnrichUri < BaseTask
     verbs_enabled = check_options_endpoint(uri)
 
     # we'll need to make another request
+    trace_enabled = check_trace_endpoint(uri)
+
+    # we'll need to make another request
     #webdav_enabled = check_webdav_endpoint(uri)
 
     new_details = @entity.details.merge({
       "api" => api_enabled,
+      "trace" => trace_enabled,
       "verbs" => verbs_enabled,
       "forms" => contains_forms,
       "response_data_hash" => response_data_hash,
@@ -76,6 +80,12 @@ class EnrichUri < BaseTask
   def check_options_endpoint(uri)
     response = http_request(:options, uri)
     (response["allow"] || response["Allow"]) if response
+  end
+
+  def check_trace_endpoint(uri)
+    response = http_request :trace, uri # todo... make the payload configurable
+    return true if response == "intrigueftw"
+  false
   end
 
   def check_webdav_endpoint(uri)

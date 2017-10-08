@@ -159,6 +159,9 @@ module Task
            request["Depth"] = "1"
          elsif method == :options
            request = Net::HTTP::Options.new(uri.request_uri)
+         elsif method == :trace
+           request = Net::HTTP::Trace.new(uri.request_uri)
+           request.body = "intrigueftw"
          end
          ### END VERBS
 

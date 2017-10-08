@@ -117,6 +117,9 @@ class NmapScan < BaseTask
         _log "All known hostnames for this entity: #{hostnames}"
 
         hostnames.uniq.each do |hostname|
+
+          next if hostname =~/\.arpa$/
+
           ports.each do |port|
             if port.state == :open
 
