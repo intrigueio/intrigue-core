@@ -39,8 +39,12 @@ module Intrigue
         true
       end
 
+      def enrichment_scheduled?(task_name)
+        true if Intrigue::Model::TaskResult.first(:task_name => task_name, :base_entity_id => self.id, :cancelled => false)
+      end
+
       def alias(entity)
-        
+
         # They'd share the same group...
         self.alias_group_id = entity.alias_group_id
         save
@@ -201,6 +205,8 @@ module Intrigue
       def export_json
         export_hash.to_json
       end
+
+
 
       private
       def _escape_html(text)
