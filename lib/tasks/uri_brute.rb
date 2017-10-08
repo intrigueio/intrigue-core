@@ -129,17 +129,16 @@ class UriBrute < BaseTask
     # make sure we have a valid response
     return false unless response
 
-    # always check content...
-    if (response.body =~ /404/ )
-      _log "Skipping #{request_uri}, contains a missing page string: 404"
-      return false
-    elsif (response.body =~ /forbidden/i )
-      _log "Skipping #{request_uri}, contains a missing page string: forbidden"
-      return false
+    # always check for content...
+    ["404", "forbidden"].each do |s|
+      if (response.body =~ /#{s}/ )
+        _log "Skipping #{request_uri}, contains a missing page string: #{s}"
+        return false
+      end
     end
 
     # always check code
-    if (response.code == "404" || response.code == "500" )
+    if (response.code == "400" || response.code == "401" || response.code == "403" || response.code == "404" || response.code == "500")
       _log "Skipping #{request_uri} based on code: #{response.code}"
       return false
     end
