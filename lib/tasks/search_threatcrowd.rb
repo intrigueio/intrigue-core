@@ -15,6 +15,7 @@ class SearchThreatcrowd < BaseTask
       :allowed_types => ["DnsRecord"],
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
+        {:name => "extract_pattern", :type => "String", :regex => "alpha_numeric", :default => false },
         {:name => "gather_resolutions", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "gather_subdomains", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "gather_email_addresses", :type => "Boolean", :regex => "boolean", :default => true }
@@ -27,9 +28,10 @@ class SearchThreatcrowd < BaseTask
   def run
     super
 
+    opt_gather_email_addresses = _get_option "gather_email_addresses"
+    opt_extract_pattern = _get_option("extract_pattern") == "false"
     opt_gather_resolutions = _get_option "gather_resolutions"
     opt_gather_subdomains = _get_option "gather_subdomains"
-    opt_gather_email_addresses = _get_option "gather_email_addresses"
 
     # Check Sublist3r API & create domains from returned JSON
     search_domain = _get_entity_name
@@ -41,6 +43,7 @@ class SearchThreatcrowd < BaseTask
 
         # handle IP resolution
         if opt_gather_resolutions
+          _log "Gathering Resolutions"
           tc_json["resolutions"].each do |ip|
             _create_entity "IpAddress", {
               "name" => ip["ip_address"],
@@ -52,7 +55,15 @@ class SearchThreatcrowd < BaseTask
 
         # Handle Subdomains
         if opt_gather_subdomains
+          _log "Gathering Subdomains"
           tc_json["subdomains"].each do |d|
+
+            # If we have an extract pattern set, respect it
+            if opt_extract_pattern
+              _log "Checking pattern: #{opt_extract_pattern} vs #{d}"
+              next unless d =~ /#{opt_extract_pattern}/
+            end
+
             # seems like this needs some cleanup?
             d.gsub!(":","")
             d.gsub!(" ","")
@@ -62,7 +73,15 @@ class SearchThreatcrowd < BaseTask
 
         # Handle Emails
         if opt_gather_email_addresses
+          _log "Gathering Email Addresses"
           tc_json["emails"].each do |e|
+
+            # If we have an extract pattern set, respect it
+            if opt_extract_pattern
+              _log "Checking pattern: #{opt_extract_pattern} vs #{e}"
+              next unless e =~ /#{opt_extract_pattern}/
+            end
+
             _create_entity "EmailAddress", { "name" => e }
           end
         end

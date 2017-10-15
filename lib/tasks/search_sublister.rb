@@ -13,8 +13,10 @@ class SearchSublister < BaseTask
       :type => "discovery",
       :passive => true,
       :allowed_types => ["DnsRecord"],
-      :example_entities => [ {"type" => "DnsRecord", "details" => {"name" => "intrigue"}} ],
-      :allowed_options => [],
+      :example_entities => [ {"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}} ],
+      :allowed_options => [
+        {:name => "extract_pattern", :type => "String", :regex => "alpha_numeric", :default => false }
+      ],
       :created_types => ["DnsRecord"]
     }
   end
@@ -22,13 +24,32 @@ class SearchSublister < BaseTask
   def run
     super
 
+    opt_extract_pattern = _get_option("extract_pattern") == "false"
+
     # Check Sublist3r API & create domains from returned JSON
     search_domain = _get_entity_name
     search_uri = "https://api.sublist3r.com/search.php?domain=#{search_domain}"
     begin
-      sublister_domains = JSON.parse(http_get_body(search_uri))
+
+      response = http_get_body(search_uri)
+
+      unless response
+        _log_error "No response"
+        return
+      end
+
+      sublister_domains = JSON.parse(response)
       _log_good "Got sublister domains: #{sublister_domains}"
-      sublister_domains.each{|d| _create_entity("DnsRecord", {"name" => "#{d}"})}
+      sublister_domains.each do |d|
+
+        # If we have an extract pattern set, respect it
+        if opt_extract_pattern
+          next unless d =~ /#{opt_extract_pattern}/
+        end
+
+        _create_entity("DnsRecord", {"name" => "#{d}"})
+
+      end
     rescue JSON::ParserError => e
       _log_error "Unable to get parsable response from #{search_uri}: #{e}"
     rescue StandardError => e
