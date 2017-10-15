@@ -57,9 +57,10 @@ class EnrichUri < BaseTask
       "verbs" => verbs_enabled,
       "forms" => contains_forms,
       "response_data_hash" => response_data_hash,
-      "response_data" => response_data
+      "hidden_response_data" => response_data
     })
 
+    # Set the details, and make sure raw response data is a hidden (not searchable) detail
     @entity.set_details(new_details)
 
     # Check for other entities with this same response hash
