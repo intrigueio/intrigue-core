@@ -206,6 +206,9 @@ module Intrigue
         export_hash.to_json
       end
 
+      def export_csv
+        "#{type}, #{name}, #{detail_string.gsub(",",";")}"
+      end
 
 
       private

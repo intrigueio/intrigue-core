@@ -34,6 +34,12 @@ module Intrigue
         export_hash.to_json
       end
 
+      def export_csv
+        output_string = ""
+        self.entities.sort_by{|e| e.to_s }.each{ |x| output_string << x.export_csv << "\n" }
+      output_string
+      end
+
       def handle
         handled = []
         self.handlers.each do |handler_type|
