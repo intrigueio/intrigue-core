@@ -44,6 +44,9 @@ class EnrichUri < BaseTask
     # we'll need to make another request
     verbs_enabled = check_options_endpoint(uri)
 
+    # grab all script_references
+    script_references = response_data.scan(/<script.*?src=["|'](.*?)["|']/).map{|x| x.first }
+
     # we'll need to make another request
     #trace_enabled = check_trace_endpoint(uri)
 
@@ -55,6 +58,7 @@ class EnrichUri < BaseTask
       #"trace" => trace_enabled,
       #"webdav" => webdav_enabled,
       "verbs" => verbs_enabled,
+      "scripts" => script_references,
       "forms" => contains_forms,
       "response_data_hash" => response_data_hash,
       "hidden_response_data" => response_data
