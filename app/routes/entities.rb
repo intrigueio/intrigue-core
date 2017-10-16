@@ -155,4 +155,13 @@ class IntrigueApp < Sinatra::Base
       @entity.export_json
     end
 
+    ###                      ###
+    ### Analysis Views       ###
+    ###                      ###
+
+    get '/:project/analysis/screenshots' do
+      @uris = Intrigue::Entity::Uri.scope_by_project(@project_name).all
+      erb :'analysis/screenshots'
+    end
+
 end

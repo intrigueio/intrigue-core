@@ -43,6 +43,14 @@ Entities discovered from this entity: <br/>
 <%=out = ""; results = Intrigue::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => @entity); results.each {|r| r.entities.each {|x| out << "<li><a href='/#{@project_name}/entities/#{x.id}'>#{h x}</a></li>"; }}; out %>
 </ul>
 
+Image: <br/>
+<div id="screenie">
+<% if @entity.type_string == "Uri" && @entity.has_detail('hidden_screenshot_contents') %>
+<img src="data:image/png;base64, <%= @entity.get_detail('hidden_screenshot_contents') %>" alt="Screenshot" />
+<% end %>
+</div>
+<script>document.getElementById("screenie").style.backgroundColor = "white";</script>
+
 </div>
 
 <div class="col-sm-4">

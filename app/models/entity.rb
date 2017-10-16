@@ -91,8 +91,11 @@ module Intrigue
         aliases.select{|x| x.name unless x.hidden }.sort_by{|x| x.name }.uniq
       end
 
+      def has_detail(key)
+        details[key] != nil
+      end
+
       def get_detail(key)
-        return nil if key =~ /^hidden_$/
         details[key]
       end
 
@@ -101,6 +104,7 @@ module Intrigue
         temp_details = details.merge({key => value})
         self.set(:details => temp_details)
         self.set(:details_raw => temp_details)
+
         save
       end
 
