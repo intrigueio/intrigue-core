@@ -102,6 +102,11 @@ class EntityManager
     # Check if there's an existing entity, if so, merge and move forward
     if entity
       entity.set_details(details.to_h.deep_merge(entity.details.to_h))
+
+      # if it already exists, it'll have an alias group ID and we'll
+      # want to use that to preserve pre-existing relatiohships
+      entity_already_existed = true
+
     else
       # Create a new entity, validating the attributes
       type = resolve_type(type_string)
@@ -149,10 +154,19 @@ class EntityManager
     task_result.add_entity created_entity
     task_result.save
 
-    # Attach the alias
-    if primary_entity
+    # Attach the alias.. this can be confusing....
+    #
+    # if we already had the entity, it'll already have a group it's associated with.
+    # think about the case of a whoisology lookup where many resolve to a single
+    # ip address
+    if primary_entity && entity_already_existed
+      primary_entity.alias(entity)
+    # alternatively, if this is the first one in this lineage, we'll want to
+    # alias it to the primary in order to preserve that relationship
+    elsif primary_entity
       created_entity.alias(primary_entity)
-    else # otherwise, there's nothing to alias, so lets create a new group
+    # if there was nothing passed to alias, just create a new group
+    else
       g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
       created_entity.alias_group_id = g.id
       created_entity.save
@@ -161,7 +175,7 @@ class EntityManager
     # START ENRICHMENT if we're allowed and unless this entity is prohibited (hidden)
     #task_result.log "Entity Enrichment: #{task_result.auto_enrich}"
     #task_result.log "Entity Hidden: #{hidden}"
-    if task_result.auto_enrich
+    if task_result.auto_enrich && !entity_already_existed
       enrich_entity(created_entity, task_result) unless hidden
     end
 
