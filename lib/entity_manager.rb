@@ -204,25 +204,37 @@ class EntityManager
 
     # Enrich by type
     if entity.type_string == "DnsRecord"
+
       task_name = "enrich_dns_record"
       # first check to make sure we're not already scheduled (but not complete)
       unless entity.enrichment_scheduled?(task_name)
         start_task("task_enrichment", entity.project, scan_result, task_name, entity, depth, [],[])
       end
+
     elsif entity.type_string == "IpAddress"
+
       task_name = "enrich_ip_address"
       unless entity.enrichment_scheduled?(task_name)
         start_task("task_enrichment", entity.project, scan_result, task_name, entity, depth, [],[])
       end
+
     elsif entity.type_string == "Uri"
+
       task_name = "enrich_uri"
       unless entity.enrichment_scheduled?(task_name)
         start_task("task_enrichment", entity.project, scan_result, task_name, entity, depth, [],[])
       end
+
       task_name = "web_stack_fingerprint"
       unless entity.enrichment_scheduled?(task_name)
         start_task("task_enrichment", entity.project, scan_result, task_name, entity, depth, [],[])
       end
+
+      task_name = "uri_screenshot"
+      unless entity.enrichment_scheduled?(task_name)
+        start_task("task_enrichment", entity.project, scan_result, task_name, entity, depth, [],[])
+      end
+
     end
 
   end

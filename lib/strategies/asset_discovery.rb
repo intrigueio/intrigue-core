@@ -72,7 +72,7 @@ module Strategy
 
       elsif entity.type_string == "Uri"
 
-        start_recursive_task(task_result,"uri_screenshot",entity)
+        #start_recursive_task(task_result,"uri_screenshot",entity)
 
         # Check for exploitable URIs, but don't recurse on things we've already found
         start_recursive_task(task_result,"uri_brute", entity, [
