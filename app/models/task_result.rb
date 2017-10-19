@@ -38,6 +38,14 @@ module Intrigue
             "args" => [id]
           })
 
+        elsif queue == "screenshot"
+          self.job_id = Sidekiq::Client.push({
+            "class" => Intrigue::TaskFactory.create_by_name(task_name).class.to_s,
+            "queue" => "screenshot",
+            "retry" => true,
+            "args" => [id]
+          })
+
         else
           # start it in the task queues
           task = Intrigue::TaskFactory.create_by_name(task_name)

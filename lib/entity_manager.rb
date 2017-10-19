@@ -246,7 +246,7 @@ class EntityManager
 
       task_name = "uri_screenshot"
       unless entity.enrichment_scheduled?(task_name)
-        start_task("task_enrichment", entity.project, scan_result, task_name, entity, depth, [],[])
+        start_task("screenshot", entity.project, scan_result, task_name, entity, depth, [],[])
       end
 
     end

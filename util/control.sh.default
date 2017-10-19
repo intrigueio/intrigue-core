@@ -25,7 +25,9 @@ function start_server {
   echo "Starting enrichment task processing..."
   bundle exec sidekiq -C $IDIR/config/sidekiq-task-enrichment.yml -r $IDIR/core.rb -d -L $IDIR/log/task-enrichment.log -P $IDIR/tmp/pids/sidekiq-task-enrichment.pid
   echo "Starting background worker processing..."
-  bundle exec sidekiq -C $IDIR/config/sidekiq-app.yml -r $IDIR/core.rb -d -L $IDIR/log/app.log
+  bundle exec sidekiq -C $IDIR/config/sidekiq-app.yml -r $IDIR/core.rb -d -L $IDIR/log/sidekiq-app.log
+  echo "Starting screenshot processing..."
+  bundle exec sidekiq -C $IDIR/config/sidekiq-screenshot.yml -r $IDIR/core.rb -d -L $IDIR/log/sidekiq-screenshot.log -P $IDIR/tmp/pids/sidekiq-screenshot.pid
   echo "Starting puma..."
   bundle exec puma -C $IDIR/config/puma.rb
 }

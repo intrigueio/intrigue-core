@@ -1,6 +1,6 @@
 :verbose: false
-#:logfile: ./log/app-worker.log
-:pidfile: ./tmp/pids/app-worker.pid
+#:logfile: ./log/sidekiq-app.log # this is commented bc we supply it on the cli
+#:pidfile: ./tmp/pids/app-worker.pid # this is commented bc we supply it on the cli
 :concurrency: 10
 :queues:
   - app
