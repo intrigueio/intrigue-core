@@ -46,7 +46,6 @@ gem 'screencap',      :git => 'https://github.com/intrigueio/screencap.git'
 gem 'spidr',          :git => 'https://github.com/intrigueio/spidr.git'
 gem 'snmp',           :git => 'https://github.com/intrigueio/ruby-snmp.git'
 gem 'aws-sdk', '~> 2'
-gem 'arachni',        :path => '/Users/jcran/work/intrigue/projects/arachni'
 
 # handlers
 gem 'couchrest'
