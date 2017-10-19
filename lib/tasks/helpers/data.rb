@@ -65,10 +65,12 @@ module Data
         entity_name =~ /^.*azureedge.net(:[0-9]*)?$/                 ||
         entity_name =~ /^.*azurewebsites.net(:[0-9]*)?$/             ||
         entity_name =~ /^.*bronto.com(:[0-9]*)?$/                    ||
+        entity_name =~ /^.*bydiscourse.com(:[0-9]*)?$/               ||
         entity_name =~ /^.*chtah.com(:[0-9]*)?$/                     ||
         entity_name =~ /^.*cheetahmail.com(:[0-9]*)?$/               ||
         entity_name =~ /^.*cloudapp.net(:[0-9]*)?$/                  ||
         entity_name =~ /^.*cloudfront.net(:[0-9]*)?$/                ||
+        entity_name =~ /^.*discourse.org(:[0-9]*)?$/                 ||
         entity_name =~ /^.*drupal.org(:[0-9]*)?$/                    ||
         entity_name =~ /^.*edgecastcdn.net(:[0-9]*)?$/               ||
         entity_name =~ /^.*edgekey.net(:[0-9]*)?$/                   ||
@@ -160,7 +162,7 @@ module Data
         entity_name =~ /^.*zepheira.com(:[0-9]*)?$/                  ||
         entity_name =~ /^.*1e100.com(:[0-9]*)?$/ )
   end
-  
+
 end
 end
 end

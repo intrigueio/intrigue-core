@@ -2,7 +2,7 @@
 <div class="col-sm-8">
 <h3>
 <% if @entity.details["uri"] %>
- <p><a href="<%= h @entity.details["uri"] %>"><%= h @entity.name %></a><br/></p>
+ <p><a href="<%= h @entity.details["uri"] %>"><%= h @entity %></a><br/></p>
 <% else %>
    <%= h @entity %>
 <% end %>
