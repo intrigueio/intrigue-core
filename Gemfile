@@ -35,6 +35,7 @@ gem 'whois-parser'            # whois
 gem 'googleajax'              # search_google
 gem 'geoip'                   # geolocate_host
 gem 'shodan'                  # search_shodan
+gem 'poltergeist'             # uri_screenshot
 gem 'towerdata_api'           # search_towerdata
 gem 'yomu'                    # uri_spider
 gem 'ruby-nmap',      :git => 'https://github.com/pentestify/ruby-nmap.git'

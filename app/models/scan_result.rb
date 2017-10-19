@@ -71,7 +71,7 @@ module Intrigue
           "filter_strings" => filter_strings,
           "project" => project.name,
           "base_entity" => base_entity.export_hash,
-          "task_results" => task_results.map{|t| t.export_hash },
+          #"task_results" => task_results.map{|t| t.export_hash },
           "entities" => entities.map {|e| e.export_hash },
           "options" => options,
           "log" => log
@@ -84,7 +84,7 @@ module Intrigue
 
       def export_csv
         output_string = ""
-        self.entities.each{ |x| output_string << x.export_csv << "\n" }
+        self.entities.sort_by{|e| e.to_s }.each{ |x| output_string << x.export_csv << "\n" }
       output_string
       end
 

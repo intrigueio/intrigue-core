@@ -10,8 +10,12 @@ class IntrigueApp < Sinatra::Base
 
       if @correlate # Handle entity coorelation
 
-       selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
-       selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
+        if @entity_types
+          selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name).where(:type => @entity_types)
+        else
+          selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
+        end
+        
        selected_entities = _tokenized_search(@search_string, selected_entities)
 
        alias_group_ids = selected_entities.map{|x| x.alias_group_id }.uniq
@@ -24,10 +28,11 @@ class IntrigueApp < Sinatra::Base
 
       else # normal flow, uncorrelated
 
-        selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
-
-        ## Filter if we have a type
-        selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
+        if @entity_types
+          selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name).where(:type => @entity_types)
+        else
+          selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
+        end
 
         # Perform a simple tokenized search
         selected_entities = _tokenized_search(@search_string, selected_entities) if @search_string
@@ -153,6 +158,15 @@ class IntrigueApp < Sinatra::Base
       content_type 'application/json'
       @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
       @entity.export_json
+    end
+
+    ###                      ###
+    ### Analysis Views       ###
+    ###                      ###
+
+    get '/:project/analysis/screenshots' do
+      @uris = Intrigue::Entity::Uri.scope_by_project(@project_name).all
+      erb :'analysis/screenshots'
     end
 
 end

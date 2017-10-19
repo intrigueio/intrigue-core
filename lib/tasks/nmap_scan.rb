@@ -53,7 +53,7 @@ class NmapScan < BaseTask
       if Process.uid == 0
         nmap_string = "nmap #{scan_item} #{nmap_options} -sSUV -P0 --top-ports 25 -O --max-os-tries 2 -oX #{temp_file}"
       else
-	nmap_string = "sudo nmap #{scan_item} #{nmap_options} -sSUV -P0 --top-ports 25 -O --max-os-tries 2 -oX #{temp_file}"
+	      nmap_string = "sudo nmap #{scan_item} #{nmap_options} -sSUV -P0 --top-ports 25 -O --max-os-tries 2 -oX #{temp_file}"
       end
       _log "Running... #{nmap_string}"
 
@@ -103,7 +103,7 @@ class NmapScan < BaseTask
 
         # create a list of ips / hostnames
         hostnames = [host.ip]
-        hostnames += host.hostnames.map{|h| h.to_s} + resolve_ip(ip_entity.name)
+        hostnames += host.hostnames.map{|h| h.to_s} + resolve_names(ip_entity.name)
 
         # Grab all the aliases
         if ip_entity.aliases.count > 0
@@ -117,6 +117,9 @@ class NmapScan < BaseTask
         _log "All known hostnames for this entity: #{hostnames}"
 
         hostnames.uniq.each do |hostname|
+
+          next if hostname =~/\.arpa$/
+
           ports.each do |port|
             if port.state == :open
 
@@ -220,6 +223,8 @@ class NmapScan < BaseTask
       end # end parser
 
       # Clean up!
+      parser = nil
+
       begin
         File.delete(temp_file)
       rescue Errno::EPERM

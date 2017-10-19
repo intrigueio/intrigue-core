@@ -7,6 +7,7 @@ config/sidekiq-task-autoscheduled.yml
 config/sidekiq-task-enrichment.yml
 config/sidekiq-task-interactive.yml
 config/sidekiq-app.yml
+config/sidekiq-screenshot.yml
 config/*.backup
 data/.local
 data/alexa-latest.csv

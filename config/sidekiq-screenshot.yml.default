@@ -1,0 +1,6 @@
+:verbose: false
+#:logfile: ./log/sidekiq-screenshot.log # this is commented bc we supply it on the cli
+#:pidfile: ./tmp/pids/screenshot-worker.pid # this is commented bc we supply it on the cli
+:concurrency: 1
+:queues:
+  - screenshot

@@ -107,6 +107,11 @@ class CoreCli < Thor
   ### XXX - rewrite this so it uses the API
   ###
 
+  desc "local_handle_project [Project] [Handler]", "Manually run a handler on a project's scan results"
+  def local_handle_project(project, handler_type)
+    Intrigue::Model::Project.first(:name => project).handle(handler_type)
+  end
+
   desc "local_handle_scan_results [Project] [Handler]", "Manually run a handler on a project's scan results"
   def local_handle_scan_results(project, handler_type)
 

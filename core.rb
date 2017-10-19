@@ -1,3 +1,5 @@
+require 'logger'
+
 
 require 'sinatra'
 require 'sinatra/contrib'

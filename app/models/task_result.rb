@@ -38,6 +38,14 @@ module Intrigue
             "args" => [id]
           })
 
+        elsif queue == "screenshot"
+          self.job_id = Sidekiq::Client.push({
+            "class" => Intrigue::TaskFactory.create_by_name(task_name).class.to_s,
+            "queue" => "screenshot",
+            "retry" => true,
+            "args" => [id]
+          })
+
         else
           # start it in the task queues
           task = Intrigue::TaskFactory.create_by_name(task_name)
@@ -96,6 +104,12 @@ module Intrigue
           "entities" => entities.map{ |e| {:id => e.id, :type => e.type, :name => e.name, :details => e.safe_details } },
           "log" => get_log
         }
+      end
+
+      def export_csv
+        output_string = ""
+        self.entities.sort_by{|e| e.to_s }.each{ |x| output_string << x.export_csv << "\n" }
+      output_string
       end
 
       def export_json

@@ -14,7 +14,6 @@ class DnsBruteSrv < BaseTask
       :allowed_types => ["DnsRecord"],
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
-        {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
         {:name => "brute_list", :type => "String", :regex => "alpha_numeric_list", :default =>
           [
             '_gc._tcp', '_kerberos._tcp', '_kerberos._udp', '_ldap._tcp',
@@ -43,9 +42,8 @@ class DnsBruteSrv < BaseTask
     super
 
     domain_name = _get_entity_name
-    opt_resolver =  _get_option "resolver"
 
-    @resolver = Resolv::DNS.new(:nameserver => opt_resolver,:search => [])
+    resolver = Resolv::DNS.new(:search => [])
 
     brute_list = _get_option "brute_list"
     brute_list = brute_list.split(",") if brute_list.kind_of? String
@@ -60,8 +58,12 @@ class DnsBruteSrv < BaseTask
 
         _log "Checking #{brute_name}"
 
+        x = resolve(brute_name, DnsRuby::Types::SRV)
+        _create_entity("DnsRecord", x, entity)
+
+
         # Try to resolve
-        @resolver.getresources(brute_name, Resolv::DNS::Resource::IN::SRV).collect do |rec|
+        resolver.getresources(brute_name, SRV).collect do |rec|
 
           # split up the record
           name = rec.target
@@ -74,14 +76,13 @@ class DnsBruteSrv < BaseTask
             _log_good "Resolved #{name} for #{brute_name}"
 
             # Create a dnsrecord to store the name
-            _create_entity("DnsRecord", "name" => "#{name}")
 
             # Create a service, and also associate that with our host.
             network_service = _create_entity("NetworkService", {
-              "name" => "#{host}:#{port}/tcp",
+              "name" => "#{name}:#{port}/tcp",
               "proto" => "tcp",
               "port_num" => port,
-              "ip_address" => "#{host}"
+              "ip_address" => "#{name}"
             })
           end
 

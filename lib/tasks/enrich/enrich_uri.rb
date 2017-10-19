@@ -44,17 +44,27 @@ class EnrichUri < BaseTask
     # we'll need to make another request
     verbs_enabled = check_options_endpoint(uri)
 
+    # grab all script_references
+    script_references = response_data.scan(/<script.*?src=["|'](.*?)["|']/).map{|x| x.first }
+
+    # we'll need to make another request
+    #trace_enabled = check_trace_endpoint(uri)
+
     # we'll need to make another request
     #webdav_enabled = check_webdav_endpoint(uri)
 
     new_details = @entity.details.merge({
-      "api" => api_enabled,
+      "api_endpoint" => api_enabled,
+      #"trace" => trace_enabled,
+      #"webdav" => webdav_enabled,
       "verbs" => verbs_enabled,
+      "scripts" => script_references,
       "forms" => contains_forms,
       "response_data_hash" => response_data_hash,
-      "response_data" => response_data
+      "hidden_response_data" => response_data
     })
 
+    # Set the details, and make sure raw response data is a hidden (not searchable) detail
     @entity.set_details(new_details)
 
     # Check for other entities with this same response hash
@@ -76,6 +86,11 @@ class EnrichUri < BaseTask
   def check_options_endpoint(uri)
     response = http_request(:options, uri)
     (response["allow"] || response["Allow"]) if response
+  end
+
+  def check_trace_endpoint(uri)
+    response = http_request :trace, uri # todo... make the payload configurable
+    response.body
   end
 
   def check_webdav_endpoint(uri)

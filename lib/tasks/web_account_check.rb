@@ -8,8 +8,8 @@ class WebAccountCheck < BaseTask
     {
       :name => "web_account_check",
       :pretty_name => "Web Account Check",
-      :authors => ["jcran"],
-      :description => "This task hits major websites, checking for the existence of accounts. Discovered accounts are created.",
+      :authors => ["jcran", "webbreacher"],
+      :description => "This task hits major websites, checking for the existence of accounts.",
       :references => [],
       :type => "discovery",
       :passive => true,
@@ -54,9 +54,11 @@ class WebAccountCheck < BaseTask
       pretty_uri = site["pretty_uri"].gsub("{account}",account_name) if site["pretty_uri"]
 
       # Skip if the site tags don't match our type
-      unless site["allowed_types"].include? @entity.type_string
-        _log "Skipping #{account_uri}, doesn't match our type"
-        next
+      if site["allowed_types"]
+        unless site["allowed_types"].include? @entity.type_string
+          _log "Skipping #{account_uri}, doesn't match our type"
+          next
+        end
       end
 
       # Otherwise, go get it

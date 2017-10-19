@@ -17,7 +17,13 @@
               <li><a href="/<%= @project_name %>/start">[<%= @project_name %>]</a></li>
               <li><a href="/<%= @project_name %>/entities">Entities</a></li>
               <li><a href="/<%= @project_name %>/results">Results</a></li>
-              <li><a href="/<%= @project_name %>/graph">Graph</a></li>
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Analysis<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="/<%= @project_name %>/graph">Graph</a></li>
+                  <li><a href="/<%= @project_name %>/analysis/screenshots">Screenshots</a></li>
+                </ul>
+              </li>
               <!--<li><a href="/<%= @project_name %>/findings">Findings</a></li>-->
               <li><a href="/<%= @project_name %>/admin/config">Configure</a></li>
             </ul>

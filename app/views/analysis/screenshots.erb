@@ -1,0 +1,12 @@
+<!-- Statistics! -->
+<div class="row">
+<div id="screenies" class="col-sm-12">
+<% @uris.each do |x| %>
+  <% next unless x.has_detail("hidden_screenshot_contents") %>
+  <a href="<%="/#{@project_name}/entities/#{x.id}"%>">
+    <img style="border:3px solid blue" height=220 width=330 src="data:image/png;base64, <%= x.get_detail('hidden_screenshot_contents') %>" alt="screenshot" />
+  </a>
+<% end %>
+</div>
+</div>
+<script>document.getElementById("screenies").style.backgroundColor = "lightgrey";</script>

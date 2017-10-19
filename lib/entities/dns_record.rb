@@ -18,7 +18,11 @@ class DnsRecord < Intrigue::Model::Entity
   end
 
   def detail_string
-    "#{details["record_type"]}"
+    if details["lookup_data"]
+      details["lookup_data"].map{|x| x["name"] }.sort.uniq.join(", ")
+    else
+      ""
+    end
   end
 
 end

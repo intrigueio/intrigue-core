@@ -95,14 +95,18 @@ class EntityManager
     details["hidden_original"] = name
     downcased_name = name.downcase
 
-
     # Merge the details if it already exists
-    entity = entity_exists?(project,type_string,downcased_name)
+    entity = entity_exists?(project,type_string,downcased_name) ## TODO - INDEX THIS!!!!!
     hidden = hidden_entity?(name, type_string)
 
     # Check if there's an existing entity, if so, merge and move forward
     if entity
       entity.set_details(details.to_h.deep_merge(entity.details.to_h))
+
+      # if it already exists, it'll have an alias group ID and we'll
+      # want to use that to preserve pre-existing relatiohships
+      entity_already_existed = true
+
     else
       # Create a new entity, validating the attributes
       type = resolve_type(type_string)
@@ -150,10 +154,19 @@ class EntityManager
     task_result.add_entity created_entity
     task_result.save
 
-    # Attach the alias
-    if primary_entity
-      primary_entity.alias(created_entity)
-    else # otherwise, there's nothing to alias, so lets create a new group
+    # Attach the alias.. this can be confusing....
+    #
+    # if we already had the entity, it'll already have a group it's associated with.
+    # think about the case of a whoisology lookup where many resolve to a single
+    # ip address
+    if primary_entity && entity_already_existed
+      primary_entity.alias(entity)
+    # alternatively, if this is the first one in this lineage, we'll want to
+    # alias it to the primary in order to preserve that relationship
+    elsif primary_entity
+      created_entity.alias(primary_entity)
+    # if there was nothing passed to alias, just create a new group
+    else
       g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
       created_entity.alias_group_id = g.id
       created_entity.save
@@ -162,7 +175,7 @@ class EntityManager
     # START ENRICHMENT if we're allowed and unless this entity is prohibited (hidden)
     #task_result.log "Entity Enrichment: #{task_result.auto_enrich}"
     #task_result.log "Entity Hidden: #{hidden}"
-    if task_result.auto_enrich
+    if task_result.auto_enrich && !entity_already_existed
       enrich_entity(created_entity, task_result) unless hidden
     end
 
@@ -205,12 +218,37 @@ class EntityManager
 
     # Enrich by type
     if entity.type_string == "DnsRecord"
-      start_task("task_enrichment", entity.project, scan_result, "enrich_dns_record", entity, depth, [],[])
+
+      task_name = "enrich_dns_record"
+      # first check to make sure we're not already scheduled (but not complete)
+      unless entity.enrichment_scheduled?(task_name)
+        start_task("task_enrichment", entity.project, scan_result, task_name, entity, depth, [],[])
+      end
+
     elsif entity.type_string == "IpAddress"
-      start_task("task_enrichment", entity.project, scan_result, "enrich_ip_address", entity, depth, [],[])
+
+      task_name = "enrich_ip_address"
+      unless entity.enrichment_scheduled?(task_name)
+        start_task("task_enrichment", entity.project, scan_result, task_name, entity, depth, [],[])
+      end
+
     elsif entity.type_string == "Uri"
-      start_task("task_enrichment", entity.project, scan_result, "enrich_uri", entity, depth, [],[])
-      start_task("task_enrichment", entity.project, scan_result, "web_stack_fingerprint", entity, depth, [],[])
+
+      task_name = "enrich_uri"
+      unless entity.enrichment_scheduled?(task_name)
+        start_task("task_enrichment", entity.project, scan_result, task_name, entity, depth, [],[])
+      end
+
+      task_name = "web_stack_fingerprint"
+      unless entity.enrichment_scheduled?(task_name)
+        start_task("task_enrichment", entity.project, scan_result, task_name, entity, depth, [],[])
+      end
+
+      task_name = "uri_screenshot"
+      unless entity.enrichment_scheduled?(task_name)
+        start_task("screenshot", entity.project, scan_result, task_name, entity, depth, [],[])
+      end
+
     end
 
   end

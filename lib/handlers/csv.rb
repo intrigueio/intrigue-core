@@ -8,7 +8,10 @@ module Handler
 
     def process(result)
 
-      return "Unable to process" unless result.respond_to? export_csv
+      unless result.respond_to? "export_csv"
+        puts "Unable to process"
+        return nil
+      end
 
       File.open("#{result.name}.csv", "a") do |file|
         _lock(file) do

@@ -39,17 +39,15 @@ module Intrigue
         true
       end
 
+      def enrichment_scheduled?(task_name)
+        true if Intrigue::Model::TaskResult.first(:task_name => task_name, :base_entity_id => self.id, :cancelled => false)
+      end
+
       def alias(entity)
 
-        # While this shouldn't happen... it seems to be happening... maybe
-        # race condition with newly-created entities?
-        return nil unless self.alias_group
-
-        entity.aliases.each {|e| e.alias_group_id = self.alias_group.id; e.save }
-
         # They'd share the same group...
-        entity.alias_group_id = self.alias_group.id
-        entity.save
+        self.alias_group_id = entity.alias_group_id
+        save
 
       end
 
@@ -93,8 +91,11 @@ module Intrigue
         aliases.select{|x| x.name unless x.hidden }.sort_by{|x| x.name }.uniq
       end
 
+      def has_detail(key)
+        details[key] != nil
+      end
+
       def get_detail(key)
-        return nil if key =~ /^hidden_$/
         details[key]
       end
 
@@ -103,6 +104,7 @@ module Intrigue
         temp_details = details.merge({key => value})
         self.set(:details => temp_details)
         self.set(:details_raw => temp_details)
+
         save
       end
 
@@ -199,14 +201,19 @@ module Intrigue
           :deleted => deleted,
           :hidden => hidden,
           :details => safe_details,
-          :aliases => aliases.map{ |x| {:id => x.id, :name => x.name } },
-          :task_results => task_results.map{ |t| {:id => t.id, :name => t.name } }
+          #:task_results => task_results.map{ |t| {:id => t.id, :name => t.name } },
+          :aliases => aliases.map{ |x| {:id => x.id, :name => x.name } }
         }
       end
 
       def export_json
         export_hash.to_json
       end
+
+      def export_csv
+        "#{type}, #{name}, #{detail_string.gsub(",",";")}"
+      end
+
 
       private
       def _escape_html(text)

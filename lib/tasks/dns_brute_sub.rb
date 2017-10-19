@@ -2,6 +2,8 @@ module Intrigue
 module Task
 class DnsBruteSub < BaseTask
 
+  include Intrigue::Task::Dns
+
   def self.metadata
     {
       :name => "dns_brute_sub",
@@ -14,7 +16,6 @@ class DnsBruteSub < BaseTask
       :allowed_types => ["DnsRecord"],
       :example_entities =>  [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
-        {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
         {:name => "brute_list", :type => "String", :regex => "alpha_numeric_list", :default =>
           ["mx", "mx1", "mx2", "www", "ww2", "ns1", "ns2", "ns3", "test",
             "mail", "owa", "vpn", "admin", "intranet", "gateway", "secure",
@@ -37,7 +38,6 @@ class DnsBruteSub < BaseTask
     super
 
     # get options
-    opt_resolver = _get_option("resolver")
     opt_threads = _get_option("threads")
     opt_use_file = _get_option("use_file")
     opt_filename = _get_option("brute_file")
@@ -52,7 +52,7 @@ class DnsBruteSub < BaseTask
     # XXX - use the resolver option if we have it.
     # Note that we have to specify an empty search list, otherwise we end up
     # searching .local by default on osx.
-    @resolver = Resolv.new([Resolv::DNS.new(:nameserver => opt_resolver,:search => [])])
+    @resolver = Resolv.new([Resolv::DNS.new(:search => [])])
 
     # Handle cases of *.test.com (pretty common when grabbing
     # DNSRecords from SSLCertificates)
@@ -91,7 +91,7 @@ class DnsBruteSub < BaseTask
       # TODO - more research needed here, are there other common versions of this?
       # Note that this is separate from the other subdomain generation since we
       # don't want to include a "." before the suffix
-      ["www","ww","w"].each do |d|
+      ["wwww","www2","www","ww","w"].each do |d|
         work_q.push({:subdomain => "#{d}", :fqdn => "#{d}#{suffix}", :depth => 1})
       end
     end
@@ -104,6 +104,7 @@ class DnsBruteSub < BaseTask
     # Create a pool of worker threads to work on the queue
     workers = (0...opt_threads).map do
       Thread.new do
+        _log "Starting thread"
         begin
           while work_item = work_q.pop(true)
             begin
@@ -113,13 +114,25 @@ class DnsBruteSub < BaseTask
 
               # Try to resolve
               resolved_address = _resolve(fqdn)
+
               if resolved_address # If we resolved, create the right entities
 
                 unless wildcard_ips.include?(resolved_address)
                   _log_good "Resolved address #{resolved_address} for #{fqdn} and it wasn't in our wildcard list."
 
+                  main_entity = _create_entity("DnsRecord", {"name" => fqdn })
+
                   # Create new host entity
-                  _create_entity("DnsRecord", {"name" => "#{fqdn}"})
+                  resolve(resolved_address).each do |rr|
+                    #_log "Creating... #{rr}"
+                    if rr["name"].is_ip_address?
+                      _log "Skipping IP... #{rr}"
+                      # skip this, we'll get it
+                      #_create_entity("IpAddress", rr.except!("record_type"), main_entity )
+                    else
+                      _create_entity("DnsRecord", rr, main_entity )
+                    end
+                  end
 
                   #
                   # This section will add permutations to our list, if the
@@ -181,10 +194,6 @@ class DnsBruteSub < BaseTask
                 end
 
               end
-            rescue Errno::ENETUNREACH => e
-              _log_error "Hit exception: #{e}. Are you sure you're connected?"
-            rescue Resolv::ResolvError => e
-              _log "No resolution for: #{fqdn}"
             end
           end # end while
         rescue ThreadError
@@ -195,14 +204,8 @@ class DnsBruteSub < BaseTask
   end
 
   def _resolve(hostname)
-    begin
-      x = @resolver.getaddress(hostname)
-    rescue Errno::ENETUNREACH => e
-      _log_error "Hit exception: #{e}. Are you sure you're connected?"
-    rescue Resolv::ResolvError => e
-      _log "Unable to resolve: #{e}."
-    end
-  x
+    #_log "Trying to resolve #{hostname}"
+    resolve_name(hostname, Dnsruby::Types::A)
   end
 
   # Check for wildcard DNS

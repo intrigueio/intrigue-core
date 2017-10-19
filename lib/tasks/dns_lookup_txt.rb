@@ -2,6 +2,8 @@ module Intrigue
 module Task
 class DnsLookupTxt < BaseTask
 
+  include Intrigue::Task::Dns
+
   def self.metadata
     {
       :name => "dns_lookup_txt",
@@ -15,9 +17,7 @@ class DnsLookupTxt < BaseTask
       :type => "discovery",
       :passive => true,
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
-      :allowed_options => [
-        {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" }
-      ],
+      :allowed_options => [],
       :created_types => ["IpAddress", "Info", "NetBlock" ]
     }
   end
@@ -26,16 +26,14 @@ class DnsLookupTxt < BaseTask
     super
 
     domain_name = _get_entity_name
-    opt_resolver = _get_option "resolver"
 
     _log "Running TXT lookup on #{domain_name}"
 
     begin
       res = Dnsruby::Resolver.new(
-      :nameserver => opt_resolver,
-      :search => [],
-      :recurse => true,
-      :query_timeout => 5)
+            :search => [],
+            :recurse => true,
+            :query_timeout => 5)
 
       res_answer = res.query(domain_name, Dnsruby::Types.TXT)
 

@@ -3,6 +3,7 @@ module Task
 class EnrichIpAddress < BaseTask
   include Intrigue::Task::Helper
   include Intrigue::Task::Data
+  include Intrigue::Task::Dns
 
   def self.metadata
     {
@@ -37,71 +38,29 @@ class EnrichIpAddress < BaseTask
       @entity.set_detail("version",4)
     end
 
-    begin
-      resolver = Dnsruby::Resolver.new(
-        :nameserver => opt_resolver,
-        :search => [])
+    ########################
+    ## Handle ANY Records ##
+    ########################
+    results = resolve(lookup_name, Dnsruby::Types::ANY)
+    results.concat(resolve(lookup_name, Dnsruby::Types::A))
+    results.concat(resolve(lookup_name, Dnsruby::Types::CNAME))
+    _log "Got results: #{results}"
 
-      result = resolver.query(lookup_name, Dnsruby::Types::ANY)
-      _log "Processing: #{result}"
-
-      # Let us know if we got an empty result
-      _log "No PTR records!" if result.answer.empty?
-
-      ip_addresses = []
-      dns_names = []
-
-      # For each of the found addresses
-      result.answer.map do |resource|
-        next if resource.type == Dnsruby::Types::RRSIG # TODO parsing this out is a pain, not sure if it's valuable
-        next if resource.type == Dnsruby::Types::NS
-        next if resource.type == Dnsruby::Types::TXT # TODO - let's parse this out?
-
-        _log "Adding name from: #{resource}"
-        ip_addresses << resource.address.to_s if resource.respond_to? :address
-        dns_names << resource.domainname.to_s if resource.respond_to? :domainname
-        dns_names << resource.name.to_s.downcase
-      end # end result.answer
-
-      dns_names.sort.uniq.each do |name|
-
-        if hidden_entity?(name) && opt_skip_hidden
-          _log "Skipping hidden entity: #{name} #{opt_skip_hidden}"
-          next
-        end
-
-        # Check to see if we already have it..
-        sub_entity = entity_exists?(@entity.project,"DnsRecord",name)
-
-        # and if we don't... create it.
-        unless sub_entity
-          _log "Creating entity for DnsRecord: #{name}"
-          sub_entity = _create_entity("DnsRecord", {"name" => name }, @entity)
-        end
-
-        # by now, we have an entity, or it failed to create.
-        #next unless sub_entity
-        #next if @entity.aliases.include? sub_entity
-        #_log "Attaching entity: #{sub_entity} to #{@entity}"
-        #@entity.alias sub_entity
-        #@entity.save
-
+    ####
+    ### Create entities
+    ####
+    results.each do |result|
+      _log "Creating entity for... #{result["name"]}"
+      if "#{result["name"]}".is_ip_address?
+        _create_entity("IpAddress", { "name" => result["name"] }, @entity)
+      else
+        _create_entity("DnsRecord", { "name" => result["name"] }, @entity)
       end
 
-    rescue Dnsruby::SocketEofResolvError => e
-      _log_error "Unable to resolve: #{@entity}, error: #{e}"
-    rescue Dnsruby::ServFail => e
-      _log_error "Unable to resolve: #{@entity}, error: #{e}"
-    rescue Dnsruby::NXDomain => e
-      _log_error "Unable to resolve: #{@entity}, error: #{e}"
-    rescue Dnsruby::ResolvTimeout => e
-      _log_error "Unable to resolve, timed out: #{e}"
-    rescue Errno::ENETUNREACH => e
-      _log_error "Hit exception: #{e}. Are you sure you're connected?"
-    ensure
-      @entity.enriched = true
-      @entity.save
     end
+
+    @entity.set_detail("lookup_data", results)
+    @entity.save
 
     _log "Ran enrichment task!"
   end

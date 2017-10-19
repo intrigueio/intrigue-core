@@ -2,6 +2,8 @@ module Intrigue
 module Task
 class DnsBruteTld < BaseTask
 
+  include Intrigue::Task::Dns
+
   def self.metadata
     {
       :name => "dns_brute_tld",
@@ -14,7 +16,6 @@ class DnsBruteTld < BaseTask
       :allowed_types => ["DnsRecord","String"],
       :example_entities => [{"type" => "Host", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
-        {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
         {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_tld.list" },
         {:name => "check_cctlds", :type => "Boolean", :regex => "boolean", :default => true }
@@ -34,12 +35,11 @@ class DnsBruteTld < BaseTask
 
     basename = _get_entity_name
 
-    opt_resolver = _get_option "resolver"
     opt_use_file = _get_option "use_file"
     opt_filename = _get_option "brute_file"
     opt_cctld    = _get_option "check_cctlds"
 
-    @resolver = Resolv.new([Resolv::DNS.new(:nameserver => opt_resolver,:search => [])])
+    @resolver = Resolv.new([Resolv::DNS.new(:search => [])])
 
     # Create the brute list (from a file, or a provided list)
     if opt_use_file

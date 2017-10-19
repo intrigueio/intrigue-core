@@ -1,21 +1,21 @@
 module Intrigue
 module SignalGenerator
-class Example
+class HugeDomainsSite
 
   def self.metadata
     {
-      :name => "Example Signal",
-      :description => "Just an example signal that we can look for and match on."
+      :name => "HugeDomains Dropped Domain",
+      :description => "A dropped domain that was picked up by HugeDomains."
     }
   end
 
   def match
-    true if ( @entity.type_string == "String" &&
-              @entity.name == "ohsnapitsanexamplesignal" )
+    true if ( @entity.type_string == "Uri" &&
+              @entity.details["response_data"].match(/HugeDomains.com/).length > 0 )
   end
 
   def generate
-    s = Intrigue::Model::Signal.create({  :name => "Example Signal",
+    s = Intrigue::Model::Signal.create({  :name => "HugeDomains Dropped Domain",
                                           :details => {},
                                           :project_id => @entity.project.id,
                                           :severity => 5,

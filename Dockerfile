@@ -6,17 +6,24 @@ RUN apt-get update -qq && apt-get -y upgrade && \
 	libsqlite3-dev sqlite3 git gcc g++ make libpcap-dev zlib1g-dev curl \
 	libcurl4-openssl-dev libpq-dev wget libgdbm-dev \
 	libncurses5-dev automake libtool bison libffi-dev libgmp-dev \
-	software-properties-common bzip2 gawk libreadline6-dev libyaml-dev pkg-config \
-	redis-server net-tools clang
+	software-properties-common bzip2 gawk libreadline6-dev libyaml-dev \
+	pkg-config redis-server net-tools clang
+
+# Set up nginx?
+# TODO
 
 # set up postgres
 RUN sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
 RUN wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
 RUN sudo apt-get update
-RUN sudo apt-get -y install postgresql postgresql-contrib
+RUN sudo apt-get -y install postgresql-9.6 postgresql-contrib-9.6
 
-# Set up nginx?
-# TODO
+# Install phantomjs
+RUN apt-get -y install build-essential chrpath libssl-dev libxft-dev libfreetype6-dev \
+  libfreetype6 libfontconfig1-dev libfontconfig1
+RUN sudo sh -c 'wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2'
+RUN sudo sh -c 'tar xvjf phantomjs-2.1.1-linux-x86_64.tar.bz2 -C /usr/local/share/'
+RUN sudo sh -c 'ln -s /usr/local/share/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/'
 
 # Masscan build and installation
 WORKDIR /usr/share
