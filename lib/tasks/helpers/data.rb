@@ -143,6 +143,7 @@ module Data
         entity_name =~ /^.*squarespace.com(:[0-9]*)?$/               ||
         entity_name =~ /^.*statuspage.io(:[0-9]*)?$/                 ||
         entity_name =~ /^.*twitter.com(:[0-9]*)?$/                   ||
+        entity_name =~ /^.*uberflip.com(:[0-9]*)?$/                  ||
         entity_name =~ /^.*urchin.com(:[0-9]*)?$/                    ||
         entity_name =~ /^.*url.google.com(:[0-9]*)?$/                ||
         entity_name =~ /^.*v0cdn.net(:[0-9]*)?$/                     ||
