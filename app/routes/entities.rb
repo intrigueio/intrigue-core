@@ -162,12 +162,12 @@ class IntrigueApp < Sinatra::Base
     ### Analysis Views       ###
     ###                      ###
 
-    get '/:project/analysis/screenshots' do
+    get '/:project/analysis/websites' do
       @uris = Intrigue::Entity::Uri.scope_by_project(@project_name).all
-      erb :'analysis/screenshots'
+      erb :'analysis/websites'
     end
 
-    get '/:project/analysis/stacks' do
+    get '/:project/analysis/systems' do
       @entities = Intrigue::Model::Entity.scope_by_project(@project_name).sort_by{|x| x.name }
       erb :'analysis/stacks'
     end

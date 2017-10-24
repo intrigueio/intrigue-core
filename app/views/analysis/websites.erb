@@ -1,0 +1,43 @@
+<!-- Statistics! -->
+<div class="row">
+  <div id="aflkj" class="col-sm-12">
+    <table border=1>
+      <tr><th>Uri</th><th>Aliases</th><th>Stack</th><th>Scripts</th><th>Screenshot</th></tr>
+      <% @uris.each do |x| %>
+        <tr>
+
+          <!-- screenshots -->
+          <% if x.has_detail("hidden_screenshot_contents") %>
+            <td><a href="<%="/#{@project_name}/entities/#{x.id}"%>">
+              <img style="border:3px solid blue" height=220 width=330 src="data:image/png;base64, <%= x.get_detail('hidden_screenshot_contents') %>" alt="screenshot" />
+            </a>
+            </td>
+          <% else %>
+           <td>No screenshot yet.</td>
+          <% end %>
+          <!-- name -->
+          <td><a href="<%="/#{@project_name}/entities/#{x.id}"%>"><%= x.name %></a></td>
+          <!-- aliases -->
+          <td><%= (x.aliases - [x.name]).map{|x| x.name }.join("<br/>") %></td>
+          <!-- stack -->
+          <td>
+            <%= "#{x.details["stack"].join("<br/>") if x.details["stack"]}" %>
+          </td>
+          <!-- scripts -->
+          <td><%= "#{x.details["scripts"].join("<br/>") if x.details["scripts"]}" %></td>
+      <% end %>
+    </table>
+  </div>
+</div>
+
+
+
+<!-- Statistics! -->
+<div class="row">
+<div id="screenies" class="col-sm-12">
+<% @uris.each do |x| %>
+
+<% end %>
+</div>
+</div>
+<script>document.getElementById("screenies").style.backgroundColor = "lightgrey";</script>
