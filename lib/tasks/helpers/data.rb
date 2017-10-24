@@ -108,6 +108,7 @@ module Data
         entity_name =~ /^.*googlecommerce.com(:[0-9]*)?$/            ||
         entity_name =~ /^.*googlehosted.com(:[0-9]*)?$/              ||
         entity_name =~ /^.*googlemail.com(:[0-9]*)?$/                ||
+        entity_name =~ /^.*gridserver.com(:[0-9]*)?$/                ||
         entity_name =~ /^.*gstatic.cn(:[0-9]*)?$/                    ||
         entity_name =~ /^.*gstatic.com(:[0-9]*)?$/                   ||
         entity_name =~ /^.*gvt1.com(:[0-9]*)?$/                      ||
