@@ -76,6 +76,7 @@ module Data
         entity_name =~ /^.*edgecastcdn.net(:[0-9]*)?$/               ||
         entity_name =~ /^.*edgekey.net(:[0-9]*)?$/                   ||
         entity_name =~ /^.*edgesuite.net(:[0-9]*)?$/                 ||
+        entity_name =~ /^.*exacttarget.com(:[0-9]*)?$/               ||
         entity_name =~ /^.*facebook.com(:[0-9]*)?$/                  ||
         entity_name =~ /^.*feeds2.feedburner.com(:[0-9]*)?$/         ||
         entity_name =~ /^.*g.co(:[0-9]*)?$/                          ||
