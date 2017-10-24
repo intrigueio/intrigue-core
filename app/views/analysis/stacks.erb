@@ -7,7 +7,7 @@
         <tr>
           <% next unless x.type_string == "IpAddress" %>
           <td><a href="<%="/#{@project_name}/entities/#{x.id}"%>"><%= x.name %></a></td>
-          <td><%= (x.aliases - [x.name]).map{|x| x.name }.join(", ") %></td>
+          <td><%= (x.aliases - [x.name]).map{|x| x.name }.join("<br/>") %></td>
           <td><%= x.details["stack"] %> </td>
           <td>
             <%= "#{x.details["ports"].map{ |x| x["number"] } if x.details["ports"]}" %>
