@@ -1,0 +1,19 @@
+<!-- Statistics! -->
+<div class="row">
+  <div id="aflkj" class="col-sm-12">
+    <table>
+      <tr><th>Ip Address</th><th>Aliases</th><th>Stack</th><th>Ports</th></tr>
+      <% @entities.each do |x| %>
+        <tr>
+          <% next unless x.type_string == "IpAddress" %>
+          <td><a href="<%="/#{@project_name}/entities/#{x.id}"%>"><%= x.name %></a></td>
+          <td><%= (x.aliases - [x.name]).map{|x| x.name }.join(", ") %></td>
+          <td><%= x.details["stack"] %> </td>
+          <td>
+            <%= "#{x.details["ports"].map{ |x| x["number"] } if x.details["ports"]}" %>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+  </div>
+</div>

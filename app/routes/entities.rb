@@ -10,12 +10,11 @@ class IntrigueApp < Sinatra::Base
 
       if @correlate # Handle entity coorelation
 
-        if @entity_types
-          selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name).where(:type => @entity_types)
-        else
-          selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
-        end
-        
+       selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false).order(:name)
+
+       ## Filter if we have a type
+       selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
+
        selected_entities = _tokenized_search(@search_string, selected_entities)
 
        alias_group_ids = selected_entities.map{|x| x.alias_group_id }.uniq
@@ -28,11 +27,10 @@ class IntrigueApp < Sinatra::Base
 
       else # normal flow, uncorrelated
 
-        if @entity_types
-          selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name).where(:type => @entity_types)
-        else
-          selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
-        end
+        selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false).order(:name)
+
+        ## Filter if we have a type
+        selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
 
         # Perform a simple tokenized search
         selected_entities = _tokenized_search(@search_string, selected_entities) if @search_string
@@ -168,5 +166,11 @@ class IntrigueApp < Sinatra::Base
       @uris = Intrigue::Entity::Uri.scope_by_project(@project_name).all
       erb :'analysis/screenshots'
     end
+
+    get '/:project/analysis/stacks' do
+      @entities = Intrigue::Model::Entity.scope_by_project(@project_name).sort_by{|x| x.name }
+      erb :'analysis/stacks'
+    end
+
 
 end
