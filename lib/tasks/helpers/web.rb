@@ -109,13 +109,14 @@ module Task
     ###
     def http_request(method, uri_string, headers={}, limit = 10, open_timeout=15, read_timeout=15)
 
-      #@task_result.logger.log "http_request :get,Connecting to #{uri}" if @task_result
       response = nil
       begin
 
+        # set user agent
+        headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.73 Safari/537.36"
+
         attempts=0
         max_attempts=10
-        user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.73 Safari/537.36"
         found = false
 
         uri = URI.parse uri_string
@@ -125,69 +126,78 @@ module Task
           return
         end
 
-
         until( found || attempts >= max_attempts)
          @task_result.logger.log "Getting #{uri}, attempt #{attempts}" if @task_result
          attempts+=1
 
-         http = Net::HTTP.new(uri.host,uri.port)
-         http.read_timeout = 10
-         http.open_timeout = 10
-
-         path = "#{uri.path}"
-         path = "/" if path==""
-
-         # add in the query parameters
-         if uri.query
-           path += "?#{uri.query}"
+         global_config = Intrigue::Config::GlobalConfig.new
+         if global_config.config["http_proxy"]
+           proxy_addr = global_config.config["http_proxy"]["host"]
+           proxy_port = global_config.config["http_proxy"]["port"]
+           proxy_user = global_config.config["http_proxy"]["user"]
+           proxy_pass = global_config.config["http_proxy"]["pass"]
          end
 
-         #request = Net::HTTP::Get.new(path,{'User-Agent'=>user_agent})
+         # set options
+         opts = {}
          if uri.instance_of? URI::HTTPS
-           http.use_ssl=true
-           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+           opts[:use_ssl] = true
+           opts[:verify_mode] = OpenSSL::SSL::VERIFY_NONE
          end
 
-         ### ALLOW DIFFERENT VERBS HERE
-         if method == :get
-           request = Net::HTTP::Get.new(uri)
-         elsif method == :propfind
-           request = Net::HTTP::Propfind.new(uri.request_uri)
-           # Set your body (data)
-           request.body = "Here's the body."
-           # Set your headers: one header per line.
-           request["Depth"] = "1"
-         elsif method == :options
-           request = Net::HTTP::Options.new(uri.request_uri)
-         elsif method == :trace
-           request = Net::HTTP::Trace.new(uri.request_uri)
-           request.body = "intrigueftw"
-         end
-         ### END VERBS
+         Net::HTTP.start(uri.host, uri.port, proxy_addr, proxy_port, opts) do |http|
+           http.read_timeout = 10
+           http.open_timeout = 10
 
-         # set the headers
-         headers.each do |k,v|
-           request[k] = v
-         end
+           path = "#{uri.path}"
+           path = "/" if path==""
 
-         # get tehe response
-         response = http.request(request)
-
-         if response.code=="200"
-           break
-         end
-
-         if (response.header['location']!=nil)
-           newuri=URI.parse(response.header['location'])
-           if(newuri.relative?)
-               #@task_result.logger.log "url was relative" if @task_result
-               newuri=uri+response.header['location']
+           # add in the query parameters
+           if uri.query
+             path += "?#{uri.query}"
            end
-           uri=newuri
 
-         else
-           found=true #resp was 404, etc
-         end #end if location
+           ### ALLOW DIFFERENT VERBS HERE
+           if method == :get
+             request = Net::HTTP::Get.new(uri)
+           elsif method == :propfind
+             request = Net::HTTP::Propfind.new(uri.request_uri)
+             # Set your body (data)
+             request.body = "Here's the body."
+             # Set your headers: one header per line.
+             request["Depth"] = "1"
+           elsif method == :options
+             request = Net::HTTP::Options.new(uri.request_uri)
+           elsif method == :trace
+             request = Net::HTTP::Trace.new(uri.request_uri)
+             request.body = "intrigueftw"
+           end
+           ### END VERBS
+
+           # set the headers
+           headers.each do |k,v|
+             request[k] = v
+           end
+
+           # get tehe response
+           response = http.request(request)
+
+           if response.code=="200"
+             break
+           end
+
+           if (response.header['location']!=nil)
+             newuri=URI.parse(response.header['location'])
+             if(newuri.relative?)
+                 #@task_result.logger.log "url was relative" if @task_result
+                 newuri=uri+response.header['location']
+             end
+             uri=newuri
+
+           else
+             found=true #resp was 404, etc
+           end #end if location
+         end # http
        end #until
 
       ### TODO - this code may be be called outside the context of a task,
