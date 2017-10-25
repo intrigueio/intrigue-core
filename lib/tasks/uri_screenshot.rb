@@ -77,7 +77,7 @@ class UriScreenshot < BaseTask
 
         # resize the image using minimagick
         image = MiniMagick::Image.open(return_path)
-        image.resize "680x420"
+        image.resize "640x480"
         image.format "png"
         image.write tempfile.path
 
