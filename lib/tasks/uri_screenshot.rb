@@ -1,3 +1,5 @@
+require 'mini_magick'
+
 module Intrigue
 module Task
 class UriScreenshot < BaseTask
@@ -72,6 +74,12 @@ class UriScreenshot < BaseTask
         #file_path = "/tmp/intrigue-phantomjs-file-#{rand(1000000000000000)}.png"
         return_path = session.save_screenshot(tempfile.path)
         _log "Saved Screenshot to #{return_path}"
+
+        # resize the image using minimagick
+        image = MiniMagick::Image.open(return_path)
+        image.resize "330x220"
+        image.format "png"
+        image.write tempfile.path
 
         # open and read the file's contents, and base64 encode them
         base64_image_contents = Base64.encode64(File.read(tempfile.path))
