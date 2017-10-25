@@ -169,7 +169,7 @@ class IntrigueApp < Sinatra::Base
 
     get '/:project/analysis/systems' do
       @entities = Intrigue::Model::Entity.scope_by_project(@project_name).sort_by{|x| x.name }
-      erb :'analysis/stacks'
+      erb :'analysis/systems'
     end
 
 
