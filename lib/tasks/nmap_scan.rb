@@ -71,7 +71,7 @@ class NmapScan < BaseTask
         _log "Total ports: #{host.ports.count}"
         _log "Total open ports: #{host.each_port.select{|p| p.state == :open}.count}"
 
-        # Handle the case of a netblock or domain - where we will need to create host entity(s)
+        # Handle the case of a netblock or domain - where we will need to create ip entity(s)
         if @entity.type_string == "NetBlock"
           # Only create if we've got ports to report.
           ip_entity = _create_entity("IpAddress", { "name" => host.ip } ) if host.ports.count > 0
@@ -133,7 +133,7 @@ class NmapScan < BaseTask
 
                 # Create URI
                 uri = "#{protocol}#{hostname}:#{port.number}"
-                _create_entity("Uri", "name" => uri, "uri" => uri )
+                _create_entity("Uri", {"name" => uri, "uri" => uri}, ip_entity)
 
               # then FtpServer
               elsif [21].include?(port.number)

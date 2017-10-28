@@ -74,6 +74,7 @@ class Whois < BaseTask
         begin
           doc = Nokogiri::XML(http_get_body("http://whois.arin.net/rest/ip/#{lookup_string}"))
           org_ref = doc.xpath("//xmlns:orgRef").text
+          org_name = doc.xpath("//xmlns:orgRef/@name").text
           parent_ref = doc.xpath("//xmlns:parentNetRef").text
           handle = doc.xpath("//xmlns:handle").text
 
@@ -108,13 +109,14 @@ class Whois < BaseTask
               "description" => "#{description}",
               "block_type" => "#{block_type}",
               "handle" => "#{handle}",
+              "organization_name" => "#{org_name}",
               "organization_reference" => "#{org_ref}",
               "parent_reference" => "#{parent_ref}",
               "whois_full_text" => "#{answer.content}",
               "rir" => "ARIN"
             }
 
-            @entity.set_detail("provider", org_ref)
+            @entity.set_detail("provider", org_name)
 
           end # End Netblocks
         rescue Nokogiri::XML::XPath::SyntaxError => e
@@ -137,13 +139,13 @@ class Whois < BaseTask
         entity = _create_entity "NetBlock", {
           "name" => "#{range}",
           "cidr" => "#{range.split('/').last}",
-          "description" => json["data"]["netname"],
-          "rir" => "RIPE",
-          "organization_reference" => json["data"]["org"],
+          "description" => json["data"]["less_specific"]["descr"],
+          "rir" => json["data"]["rir"],
+          "organization_reference" => json["data"]["netname"],
           "whois_full_text" => "#{answer.content}"
         }
 
-        @entity.set_detail("provider", json["data"]["org"])
+        @entity.set_detail("provider", json["data"]["less_specific"]["descr"])
 
       else
 
