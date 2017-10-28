@@ -114,6 +114,8 @@ class Whois < BaseTask
               "rir" => "ARIN"
             }
 
+            @entity.set_detail("provider", org_ref)
+
           end # End Netblocks
         rescue Nokogiri::XML::XPath::SyntaxError => e
           _log_error "Got an error while parsing the XML: #{e}"
@@ -140,6 +142,8 @@ class Whois < BaseTask
           "organization_reference" => json["data"]["org"],
           "whois_full_text" => "#{answer.content}"
         }
+
+        @entity.set_detail("provider", json["data"]["org"])
 
       else
 
