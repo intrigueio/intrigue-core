@@ -100,8 +100,13 @@ module Intrigue
       end
 
       def set_detail(key, value)
+
+        safe_value = value.to_s.encode("UTF-8", { :undef => :replace,
+                                             :invalid => :replace,
+                                             :replace => "?" })
+
         self.lock!
-        temp_details = details.merge({key => value})
+        temp_details = details.merge({key => safe_value})
         self.set(:details => temp_details)
         self.set(:details_raw => temp_details)
 
