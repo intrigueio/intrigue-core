@@ -130,7 +130,7 @@ class DnsBruteSub < BaseTask
                       # skip this, we'll get it
                       #_create_entity("IpAddress", rr.except!("record_type"), main_entity )
                     else
-                      _create_entity("DnsRecord", rr, main_entity )
+                      _create_entity("DnsRecord", {"name" => rr["name"]}, main_entity )
                     end
                   end
 
