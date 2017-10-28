@@ -32,31 +32,34 @@
       <tbody>
       <tr><th>Screenshots</th><th>Names</th><th>Stacks</th><th>JQuery</th><th>Verbs</th><th>API</th></tr>
       <% @alias_groups.each do |g| %>
+        <% entities = Intrigue::Model::Entity.where(:alias_group_id => g.id, :type => "Intrigue::Entity::Uri", :hidden => false) %>
         <tr>
           <td>
-            <% Intrigue::Model::Entity.where(:alias_group_id => g.id, :type => "Intrigue::Entity::Uri", :hidden => false).map do |x| %>
+            <% entities.map do |x| %>
               <% if x.type_string == "Uri" && x.has_detail('hidden_screenshot_contents') %>
-                <%= "<a href='/#{@project_name}/entities/#{x.id}'>"%><img height=100 width=120 src="data:image/png;base64, <%= x.get_detail('hidden_screenshot_contents') %>" alt="Screenshot" /></a>
+                <%= "<a href='/#{@project_name}/entities/#{x.id}'>"%>
+                  <img height=200 width=240 src="data:image/png;base64, <%= x.get_detail('hidden_screenshot_contents') %>" alt="Screenshot" />
+                </a>
               <% end %>
             <% end %>
           </td>
           <td>
-            <% Intrigue::Model::Entity.where(:alias_group_id => g.id, :type => "Intrigue::Entity::Uri", :hidden => false).map do |x| %>
+            <% entities.map do |x| %>
               <%= x.type_string == "Uri" ? "<a href='/#{@project_name}/entities/#{x.id}'>#{x.name}<br/>" : nil %>
             <% end %>
           </td>
           <td>
-            <% Intrigue::Model::Entity.where(:alias_group_id => g.id, :type => "Intrigue::Entity::Uri", :hidden => false).map do |x| %>
+            <% entities.map do |x| %>
               <%= x.type_string == "Uri" ? "#{x.get_detail("stack")}<br/>" : nil %>
             <% end %>
           </td>
           <td>
-            <% Intrigue::Model::Entity.where(:alias_group_id => g.id, :type => "Intrigue::Entity::Uri", :hidden => false).map do |x| %>
+            <% entities.map do |x| %>
               <%= x.type_string == "Uri" ? "#{x.get_detail("verbs")}<br/>" : nil %>
             <% end %>
           </td>
           <td>
-            <% Intrigue::Model::Entity.where(:alias_group_id => g.id, :type => "Intrigue::Entity::Uri", :hidden => false).map do |x| %>
+            <% entities.map do |x| %>
               <%= x.type_string == "Uri" ? "#{x.get_detail("jquery")}<br/>" : nil %>
             <% end %>
           </td>

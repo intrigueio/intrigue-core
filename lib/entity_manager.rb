@@ -70,6 +70,9 @@ class EntityManager
     return nil unless created_entity.transform!
     return nil unless created_entity.validate_entity
 
+    # START ENRICHMENT if we're allowed and unless this entity is prohibited (hidden)
+    enrich_entity(created_entity) unless hidden
+
   created_entity
   end
 
@@ -77,7 +80,7 @@ class EntityManager
   def self.create_or_merge_entity(task_result,type_string,name,details, primary_entity=nil)
 
     unless task_result && type_string && name && details
-      task_result.log "ERROR! Attempting to create broken entity: : #{task_result}, #{type_string}##{name}, #{details}"
+      task_result.log "ERROR! Attempting to create broken entity: #{task_result}, #{type_string}##{name}, #{details}"
     end
 
     # HANDLE CANCELED TASKS!
@@ -187,7 +190,6 @@ class EntityManager
       unless hidden
         s = Intrigue::StrategyFactory.create_by_name(task_result.scan_result.strategy)
         raise "Unknown Strategy!" unless s
-
         s.recurse(created_entity, task_result)
       end
     end

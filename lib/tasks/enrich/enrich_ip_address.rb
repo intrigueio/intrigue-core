@@ -44,6 +44,7 @@ class EnrichIpAddress < BaseTask
     results = resolve(lookup_name, Dnsruby::Types::ANY)
     results.concat(resolve(lookup_name, Dnsruby::Types::A))
     results.concat(resolve(lookup_name, Dnsruby::Types::CNAME))
+    
     _log "Got results: #{results}"
 
     ####
