@@ -163,7 +163,13 @@ class IntrigueApp < Sinatra::Base
     ###                      ###
 
     get '/:project/analysis/websites' do
-      @uris = Intrigue::Entity::Uri.scope_by_project(@project_name).all
+
+      selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false).order(:name)
+
+      ## Filter by type
+      alias_group_ids = selected_entities.map{|x| x.alias_group_id }.uniq
+      @alias_groups = Intrigue::Model::AliasGroup.where(:id => alias_group_ids)
+
       erb :'analysis/websites'
     end
 

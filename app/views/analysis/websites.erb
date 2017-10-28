@@ -20,55 +20,54 @@
     }
     </style>
     <p></p>
-    <table class="sortable" border="1" width=100%>
+    <table id="webapps" class="sortable" border="1" width=100%>
       <colgroup>
-        <col style="width:22%">
+        <col style="width:40%">
         <col style="width:20%">
         <col style="width:20%">
         <col style="width:10%">
-        <col style="width:10%">
-        <col style="width:10%">
-        <col style="width:10%">
+        <col style="width:5%">
+        <col style="width:5%">
       </colgroup>
       <tbody>
-      <tr><th>Screenshot</th><th>Name</th><th>Aliases</th><th>Stack</th><th>JQuery</th><th>Verbs</th><th>API</th></tr>
-      <% @uris.each do |x| %>
+      <tr><th>Screenshots</th><th>Names</th><th>Stacks</th><th>JQuery</th><th>Verbs</th><th>API</th></tr>
+      <% @alias_groups.each do |g| %>
         <tr>
-          <!-- screenshots -->
-          <% if x.has_detail("hidden_screenshot_contents") %>
-            <td><a href="<%="/#{@project_name}/entities/#{x.id}"%>">
-              <img style="border:3px solid blue" height=200 width=300 src="data:image/png;base64, <%= x.get_detail('hidden_screenshot_contents') %>" alt="screenshot" />
-            </a>
-            </td>
-          <% else %>
-           <td>No screenshot yet.</td>
-          <% end %>
-          <!-- name -->
-          <td><a href="<%="/#{@project_name}/entities/#{x.id}"%>"><%= x.name %></a></td>
-          <!-- aliases -->
-          <td><%= (x.aliases - [x.name]).map{|x| x.name }.join("<br/>") %></td>
-          <!-- stack -->
           <td>
-            <%= "#{x.details["stack"].join("<br/>") if x.details["stack"]}" %>
+            <% Intrigue::Model::Entity.where(:alias_group_id => g.id, :type => "Intrigue::Entity::Uri", :hidden => false).map do |x| %>
+              <% if x.type_string == "Uri" && x.has_detail('hidden_screenshot_contents') %>
+                <%= "<a href='/#{@project_name}/entities/#{x.id}'>"%><img height=100 width=120 src="data:image/png;base64, <%= x.get_detail('hidden_screenshot_contents') %>" alt="Screenshot" /></a>
+              <% end %>
+            <% end %>
           </td>
-          <!-- scripts -->
-          <td><%= "#{x.details["jquery"] if x.details["jquery"]}" %></td>
-          <td><%= "#{x.details["verbs"] if x.details["verbs"]}" %></td>
-          <td><%= "#{x.details["api_endpoint"] if x.details["api_endpoint"]}" %></td>
+          <td>
+            <% Intrigue::Model::Entity.where(:alias_group_id => g.id, :type => "Intrigue::Entity::Uri", :hidden => false).map do |x| %>
+              <%= x.type_string == "Uri" ? "<a href='/#{@project_name}/entities/#{x.id}'>#{x.name}<br/>" : nil %>
+            <% end %>
+          </td>
+          <td>
+            <% Intrigue::Model::Entity.where(:alias_group_id => g.id, :type => "Intrigue::Entity::Uri", :hidden => false).map do |x| %>
+              <%= x.type_string == "Uri" ? "#{x.get_detail("stack")}<br/>" : nil %>
+            <% end %>
+          </td>
+          <td>
+            <% Intrigue::Model::Entity.where(:alias_group_id => g.id, :type => "Intrigue::Entity::Uri", :hidden => false).map do |x| %>
+              <%= x.type_string == "Uri" ? "#{x.get_detail("verbs")}<br/>" : nil %>
+            <% end %>
+          </td>
+          <td>
+            <% Intrigue::Model::Entity.where(:alias_group_id => g.id, :type => "Intrigue::Entity::Uri", :hidden => false).map do |x| %>
+              <%= x.type_string == "Uri" ? "#{x.get_detail("jquery")}<br/>" : nil %>
+            <% end %>
+          </td>
+          <td>
+            <% Intrigue::Model::Entity.where(:alias_group_id => g.id, :type => "Intrigue::Entity::Uri", :hidden => false).map do |x| %>
+              <%= x.type_string == "Uri" ? "#{x.get_detail("api_endpoint")}<br/>" : nil %>
+            <% end %>
+          </td>
+        </tr>
       <% end %>
       </tbody>
     </table>
-  </div>
-</div>
-
-
-
-<!-- Statistics! -->
-<div class="row">
-<div id="screenies" class="col-sm-12">
-<% @uris.each do |x| %>
-
-<% end %>
 </div>
 </div>
-<script>document.getElementById("screenies").style.backgroundColor = "lightgrey";</script>
