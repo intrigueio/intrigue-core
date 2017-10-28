@@ -37,7 +37,7 @@
           <td><%= (x.aliases - [x.name]).map{|x| x.name }.join("<br/>") %></td>
           <td><%= x.details["os"].first if x.details["os"] %> </td>
           <td><%= "#{x.details["ports"].map{ |x| x["number"] }.join(", ") if x.details["ports"]}" %></td>
-          <td><%= "#{x.details["provder"]}"%></td>
+          <td><%= "#{x.details["provider"]}"%></td>
         </tr>
       <% end %>
       </tbody>

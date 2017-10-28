@@ -103,11 +103,11 @@ module Intrigue
 
         # sanitize_unicode is defined by monkeypatch on the
         # relevant types. see lib/initialize
-        if value && ( value.kind_of?(String) || value.kind_of?(Array) || value.kind_of?(Hash) )
-          safe_value = value.sanitize_unicode
-        else
+        #if value && ( value.kind_of?(String) || value.kind_of?(Array) || value.kind_of?(Hash) )
+        #  safe_value = value.sanitize_unicode
+        #else
           safe_value = value
-        end
+        #end
 
         self.lock!
         temp_details = details.merge({key => safe_value})
