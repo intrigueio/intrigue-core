@@ -61,7 +61,7 @@ class SearchCensys < BaseTask
             end # iterate through ports
           end # if r["_source"]["protocols"]
         end # if r["_source"]
-      end # iterate through results
+      end # if r
 
 =begin
       ["certificates"].each do |search_type|
@@ -81,9 +81,7 @@ class SearchCensys < BaseTask
             else
               _create_entity "IpAddress", "name" => r["parsed.subject_dn"]
             end
-
           end
-
         end
       end
 =end
