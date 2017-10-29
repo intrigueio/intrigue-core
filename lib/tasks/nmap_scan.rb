@@ -98,128 +98,30 @@ class NmapScan < BaseTask
                                         :confidence => p.service.confidence
                                       }}})
 
-        # grab ports
-        ports = host.ports
+        # iterate through all ports
+        host.ports.each do |port|
+          if port.state == :open
 
-        # create a list of ips / hostnames
-        hostnames = [host.ip]
-        hostnames += host.hostnames.map{|h| h.to_s} + resolve_names(ip_entity.name)
+            _create_network_service_entity(ip_entity,
+                port.number,
+                port.protocol.to_s,
+                { :nmap => {
+                  :protocol => port.service.protocol,
+                  :ssl => port.service.ssl?,
+                  :product => port.service.product,
+                  :version => port.service.version,
+                  :extra_info => port.service.extra_info,
+                  :hostname => port.service.hostname,
+                  :os_type => port.service.os_type,
+                  :device_type => port.service.device_type,
+                  :fingerprint_method => port.service.fingerprint_method,
+                  :fingerprint => port.service.fingerprint,
+                  :confidence => port.service.confidence
+                }}
+             )
 
-        # Grab all the aliases
-        if ip_entity.aliases.count > 0
-          ip_entity.aliases.each do |dns_record_entity|
-            next if dns_record_entity.name =~ /\.arpa$/
-            next unless dns_record_entity && dns_record_entity.kind_of?(Intrigue::Entity::DnsRecord)
-            hostnames << dns_record_entity.name
-          end
-        end
-
-        _log "All known hostnames for this entity: #{hostnames}"
-
-        hostnames.uniq.each do |hostname|
-
-          next if hostname =~/\.arpa$/
-
-          ports.each do |port|
-            if port.state == :open
-
-              # Handle Web Apps first
-              if port.protocol == :tcp &&
-                [80,443,8080,8081,8443].include?(port.number)
-
-                # Determine if this is SSL
-                ssl = true if [443,8443].include?(port.number)
-                protocol = ssl ? "https://" : "http://" # construct uri
-
-                # Create URI
-                uri = "#{protocol}#{hostname}:#{port.number}"
-                _create_entity("Uri", {"name" => uri, "uri" => uri}, ip_entity)
-
-              # then FtpServer
-              elsif [21].include?(port.number)
-                uri = "ftp://#{hostname}:#{port.number}"
-                _create_entity("FtpServer", {
-                  "name" => uri,
-                  "ip_address" => "#{hostname}",
-                  "port" => port.number,
-                  "proto" => port.protocol,
-                  "uri" => uri  })
-
-              # Then SshServer
-              elsif [22].include?(port.number)
-                # Hostnames are unnecessary dupes here?
-                next unless match_regex(:ip_address, hostname)
-
-                uri = "ssh://#{hostname}:#{port.number}"
-                _create_entity("SshServer", {
-                  "name" => uri,
-                  "ip_address" => "#{hostname}",
-                  "port" => port.number,
-                  "proto" => port.protocol,
-                  "uri" => uri  })
-
-              # then SMTPServer
-            elsif [25].include?(port.number)
-                # Hostnames are unnecessary dupes here?
-                next unless match_regex(:ip_address, hostname)
-                uri = "smtp://#{hostname}:#{port.number}"
-                _create_entity("SmtpServer", {
-                  "name" => uri,
-                  "ip_address" => "#{hostname}",
-                  "port" => port.number,
-                  "proto" => port.protocol,
-                  "uri" => uri  })
-
-              # then DnsServer
-              elsif [53].include?(port.number)
-                # Hostnames are unnecessary dupes here?
-                next unless match_regex(:ip_address, hostname)
-                uri = "dns://#{hostname}:#{port.number}"
-                _create_entity("DnsServer", {
-                  "name" => uri,
-                  "ip_address" => "#{hostname}",
-                  "port" => port.number,
-                  "proto" => port.protocol,
-                  "uri" => uri  })
-
-              # then FingerServer
-              elsif [79].include?(port.number)
-                # Hostnames are unnecessary dupes here?
-                next unless match_regex(:ip_address, hostname)
-                uri = "finger://#{hostname}:#{port.number}"
-                _create_entity("FingerServer", {
-                  "name" => uri,
-                  "ip_address" => "#{hostname}",
-                  "port" => port.number,
-                  "proto" => port.protocol,
-                  "uri" => uri  })
-
-              # Then Snmp
-              elsif [161].include?(port.number)
-                # Hostnames are unnecessary dupes here?
-                next unless match_regex(:ip_address, hostname)
-                uri = "snmp://#{hostname}:#{port.number}"
-                _create_entity("SnmpServer", {
-                  "name" => uri,
-                  "ip_address" => "#{hostname}",
-                  "port" => port.number,
-                  "proto" => port.protocol,
-                  "uri" => uri  })
-
-              else # Create a network service
-                # Hostnames are unnecessary dupes here?
-                next unless match_regex(:ip_address, hostname)
-                _create_entity("NetworkService", {
-                  "name" => "#{hostname}:#{port.number}/#{port.protocol}",
-                  "ip_address" => "#{hostname}",
-                  "port" => port.number,
-                  "proto" => port.protocol,
-                  "fingerprint" => "#{port.service}"})
-
-              end # end if
-            end # end if port.state == :open
-          end # end ports
-        end # end hosts
+          end # end if port.state == :open
+        end # end ports
       end # end parser
 
       # Clean up!

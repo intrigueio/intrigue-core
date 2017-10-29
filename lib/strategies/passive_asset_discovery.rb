@@ -4,7 +4,7 @@ module Strategy
 
     def self.metadata
       {
-        :name => "Passive Asset Discovery",
+        :name => "passive_asset_discovery",
         :pretty_name => "Passive Asset Discovery",
         :passive => true,
         :authors => ["jcran"],
@@ -54,7 +54,7 @@ module Strategy
         end
 
         # Rather than scanning, let's use a service to look it up
-        start_recursive_task(task_result,"search_censys",entity)
+        start_recursive_task(task_result,"search_shodan",entity)
 
       elsif entity.type_string == "String"
         # Search, only snag the top result

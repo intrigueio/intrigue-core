@@ -15,6 +15,116 @@ module Generic
     EntityManager.create_or_merge_entity(@task_result, type, name, hash, primary_entity)
   end
 
+  def _create_network_service_entity(ip_entity,port_num,protocol="tcp",extra_details={})
+
+    # Grab all the aliases
+    hostnames = ["#{ip_entity.name}"]
+    if ip_entity.aliases.count > 0
+      ip_entity.aliases.each do |a|
+        next unless a.type_string == "DnsRecord" #  only dns records
+        next if a.hidden # skip hidden
+        hostnames << a.name # add to the list
+      end
+    end
+
+    _log "Creating services on all known hostnames for this entity: #{hostnames}"
+
+    hostnames.uniq.each do |hostname|
+
+      # Handle Web Apps first
+      if (protocol == "tcp" && [80,443,8080,8081,8443].include?(port_num))
+
+        # Determine if this is SSL
+        ssl = true if [443,8443].include?(port_num)
+        prefix = ssl ? "https://" : "http://" # construct uri
+
+        # Create URI
+        uri = "#{prefix}#{hostname}:#{port_num}"
+        _create_entity("Uri", {
+          "name" => uri,
+          "uri" => uri }.merge(extra_details))
+
+      # then FtpServer
+      elsif [21].include?(port_num)
+
+        uri = "ftp://#{hostname}:#{port_num}"
+        _create_entity("FtpServer", {
+          "name" => uri,
+          "uri" => uri,
+          "ip_address" => "#{hostname}",
+          "port" => port_num,
+          "proto" => protocol}.merge(extra_details))
+
+      # Then SshServer
+      elsif [22].include?(port_num)
+
+        uri = "ssh://#{hostname}:#{port_num}"
+        _create_entity("SshServer", {
+          "name" => uri,
+          "uri" => uri,
+          "ip_address" => "#{hostname}",
+          "port" => port_num,
+          "proto" => protocol}.merge(extra_details))
+
+      # then SMTPServer
+      elsif [25].include?(port_num)
+
+        uri = "smtp://#{hostname}:#{port_num}"
+        _create_entity("SmtpServer", {
+          "name" => uri,
+          "uri" => uri,
+          "ip_address" => "#{hostname}",
+          "port" => port_num,
+          "proto" => protocol}.merge(extra_details))
+
+      # then DnsServer
+      elsif [53].include?(port_num)
+
+        uri = "dns://#{hostname}:#{port_num}"
+        _create_entity("DnsServer", {
+          "name" => uri,
+          "uri" => uri,
+          "ip_address" => "#{hostname}",
+          "port" => port_num,
+          "proto" => protocol}.merge(extra_details))
+
+      # then FingerServer
+      elsif [79].include?(port_num)
+
+        uri = "finger://#{hostname}:#{port_num}"
+        _create_entity("FingerServer", {
+          "name" => uri,
+          "uri" => uri,
+          "ip_address" => "#{hostname}",
+          "port" => port_num,
+          "proto" => protocol}.merge(extra_details))
+
+      # Then Snmp
+      elsif [161].include?(port_num)
+
+        uri = "snmp://#{hostname}:#{port_num}"
+        _create_entity("SnmpServer", {
+          "name" => uri,
+          "uri" => uri,
+          "ip_address" => "#{hostname}",
+          "port" => port_num,
+          "proto" => protocol }.merge(extra_details))
+
+      else # Create a generic network service
+
+        uri = "#{hostname}:#{port_num}/#{protocol}"
+        _create_entity("NetworkService", {
+          "name" => uri,
+          "uri" => uri,
+          "ip_address" => "#{hostname}",
+          "port" => port_num,
+          "proto" => protocol }.merge(extra_details))
+
+      end
+
+    end # hostnames
+  end
+
   ###
   ### Logging helpers
   ###

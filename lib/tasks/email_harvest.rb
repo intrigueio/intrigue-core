@@ -53,8 +53,8 @@ class EmailHarvest < BaseTask
         _create_entity "EmailAddress", "name" => email_address, "comment" => "Scraped via Google"
       end
     end
-
 =end
+
   end
 
 end

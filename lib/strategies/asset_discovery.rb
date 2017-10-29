@@ -4,8 +4,8 @@ module Strategy
 
     def self.metadata
       {
-        :name => "asset_discovery",
-        :pretty_name => "Asset Discovery",
+        :name => "active_asset_discovery",
+        :pretty_name => "Active Asset Discovery",
         :passive => false,
         :authors => ["jcran"],
         :description => "This strategy performs a network recon and enumeration. Suggest starting with a DnsRecord or NetBlock."
