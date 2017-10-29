@@ -39,17 +39,17 @@ class SearchShodan < BaseTask
     # check to make sure we got a response.
     _log_error "ERROR: No response" unless response
 
-    # DEBUG
-    #_log_good "Got response:\n #{response}"
-
     # Go through the results
     if response["data"]
       response["data"].each do |s|
         _log_good "Creating service on #{s["ip_str"]}: #{s["port"]}"
-        _create_network_service_entity(@entity,s["port"],s["transport"] || "tcp",{"shodan" => s})
+        _create_network_service_entity(@entity,s["port"],s["transport"] || "tcp", {
+          :source => "shodan",
+          :shodan_details => s
+        })
       end
     end
-    
+
   end
 
 end

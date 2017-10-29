@@ -105,7 +105,8 @@ class NmapScan < BaseTask
             _create_network_service_entity(ip_entity,
                 port.number,
                 port.protocol.to_s,
-                { :nmap => {
+                { :source => "nmap",
+                  :nmap_details => {
                   :protocol => port.service.protocol,
                   :ssl => port.service.ssl?,
                   :product => port.service.product,

@@ -55,42 +55,17 @@ class Masscan < BaseTask
 
         # Get the discovered host (one per line) & create an ip address
         line = line.delete("\n").strip.split(" ")[3] unless line.nil?
-        _create_entity("IpAddress", { "name" => line })
+        e = _create_entity("IpAddress", { "name" => line })
 
-        # Resolve, and iterate on each line
-        hostnames = resolve_names(line)
-        hostnames.each do |host|
-
-          next if host =~ /\.arpa$/
-
-          # Should we try to resolve first, and fall back on IP?
-          #_create_entity("DnsRecord", { "name" => host }) < this should be handled by enrichment...
-
-          if [80,443,8080,8081,8443].include?(opt_port)
-            ssl = true if [443,8443].include?(opt_port)
-            protocol = ssl ? "https://" : "http://" # construct uri
-            _create_entity("Uri", {"name" => "#{protocol}#{host}:#{opt_port}", "uri" => "#{protocol}#{host}:#{opt_port}" })
-
-          elsif opt_port == 21
-            uri = "ftp://#{host.ip}:#{opt_port}"
-            _create_entity("FtpServer", {
-              "name" => "#{host}:#{opt_port}",
-              "ip_address" => "#{host}",
-              "port" => opt_port,
-              "proto" => "tcp",
-              "uri" => uri  })
-
-          end
-        end
-        ### End Resolution
-
-        # Always create the network service
-        _create_entity("NetworkService", {
-          "name" => "#{line}:#{opt_port}/tcp",
-          "ip_address" => "#{line}",
-          "port" => opt_port,
-          "proto" => "tcp"
-        })
+        _create_network_service_entity(e,
+            opt_port,
+            "tcp",
+            { :source => "masscan",
+              :masscan_details => {
+                :masscan_string => masscan_string
+              }
+            }
+         )
 
       end
 
