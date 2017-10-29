@@ -1,11 +1,11 @@
 module Intrigue
 module Strategy
-  class AssetDiscovery < Intrigue::Strategy::Base
+  class AssetDiscoveryActive < Intrigue::Strategy::Base
 
     def self.metadata
       {
-        :name => "active_asset_discovery",
-        :pretty_name => "Active Asset Discovery",
+        :name => "asset_discovery_active",
+        :pretty_name => "Asset Discovery (Active)",
         :passive => false,
         :authors => ["jcran"],
         :description => "This strategy performs a network recon and enumeration. Suggest starting with a DnsRecord or NetBlock."
@@ -14,10 +14,7 @@ module Strategy
 
     def self.recurse(entity, task_result)
 
-      if entity.type_string == "FtpServer"
-        start_recursive_task(task_result,"ftp_banner_grab",entity)
-
-      elsif entity.type_string == "DnsRecord"
+      if entity.type_string == "DnsRecord"
         ### DNS Subdomain Bruteforce
         # Do a big bruteforce if the size is small enough
         if (entity.name.split(".").length < 3)
@@ -46,6 +43,13 @@ module Strategy
           start_recursive_task(task_result,"dns_brute_sub",entity,[])
         end
 
+      elsif entity.type_string == "EmailAddress"
+        # Search, only snag the top result
+        start_recursive_task(task_result,"search_bing",entity,[{"name"=> "max_results", "value" => 1}])
+
+      elsif entity.type_string == "FtpServer"
+        start_recursive_task(task_result,"ftp_banner_grab",entity)
+
       elsif entity.type_string == "IpAddress"
 
         # Prevent us from hammering on whois services
@@ -55,20 +59,30 @@ module Strategy
 
         start_recursive_task(task_result,"nmap_scan",entity)
 
-      elsif entity.type_string == "String"
-        # Search, only snag the top result
-        start_recursive_task(task_result,"search_bing",entity,[{"name"=> "max_results", "value" => 1}])
-
       elsif entity.type_string == "NetBlock"
 
         # Make sure it's small enough not to be disruptive, and if it is, scan it. also skip ipv6/
-        if ! entity.name =~ /::/
+        if entity.details["whois_full_text"] =~ /#{task_result.scan_result.base_entity.name}/i && !(entity.name =~ /::/)
           start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 80}])
           start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 443}])
           start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 8443}])
         else
-          task_result.log "Cowardly refusing to scan this netblock."
+          task_result.log "Cowardly refusing to Scan this netblock.. it doesn't look like ours."
         end
+
+        # Make sure it's small enough not to be disruptive, and if it is, expand it
+        if entity.details["whois_full_text"] =~ /#{task_result.scan_result.base_entity.name}/i && !(entity.name =~ /::/)
+          start_recursive_task(task_result,"net_block_expand",entity)
+        else
+          task_result.log "Cowardly refusing to expand this netblock.. it doesn't look like ours."
+        end
+      elsif entity.type_string == "Person"
+        # Search, only snag the top result
+        start_recursive_task(task_result,"search_bing",entity,[{"name"=> "max_results", "value" => 1}])
+
+      elsif entity.type_string == "String"
+        # Search, only snag the top result
+        start_recursive_task(task_result,"search_bing",entity,[{"name"=> "max_results", "value" => 1}])
 
       elsif entity.type_string == "Uri"
 
