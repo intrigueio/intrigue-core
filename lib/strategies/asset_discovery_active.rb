@@ -20,19 +20,16 @@ module Strategy
         if (entity.name.split(".").length < 3)
 
           # Sublister API
-          start_recursive_task(task_result,"search_sublister", entity, [
-            {"name" => "extract_pattern", "value" => "#{task_result.scan_result.base_entity.name}"}])
+          start_recursive_task(task_result,"search_sublister", entity)
 
           # CRT Scraper
-          start_recursive_task(task_result,"search_crt", entity, [
-            {"name" => "extract_pattern", "value" => "#{task_result.scan_result.base_entity.name}"}])
+          start_recursive_task(task_result,"search_crt", entity )
 
           # Threatcrowd API... skip resolutions, as we probably don't want old
           # data for this use case
           start_recursive_task(task_result,"search_threatcrowd", entity, [
             {"name" => "gather_resolutions", "value" => true },
-            {"name" => "gather_subdomains", "value" => true },
-            {"name" => "extract_pattern", "value" => "#{task_result.scan_result.base_entity.name}"}])
+            {"name" => "gather_subdomains", "value" => true }])
 
           start_recursive_task(task_result,"dns_brute_sub",entity,[
             {"name" => "use_file", "value" => true },
