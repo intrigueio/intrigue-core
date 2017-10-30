@@ -30,13 +30,8 @@ class Masscan < BaseTask
     super
 
     # Get range, or host
-    ### SECURITY!
     to_scan = _get_entity_name
-    raise "INVALID INPUT: #{to_scan}" unless match_regex :ip_address, to_scan
-
-    ### SECURITY!
-    opt_port = _get_option("port").to_i
-    raise "INVALID INPUT: #{opt_port}" unless match_regex :integer, opt_port
+    opt_port = _get_option("port")
 
     begin
 
@@ -55,9 +50,9 @@ class Masscan < BaseTask
 
         # Get the discovered host (one per line) & create an ip address
         line = line.delete("\n").strip.split(" ")[3] unless line.nil?
-        e = _create_entity("IpAddress", { "name" => line })
+        created_entity = _create_entity("IpAddress", { "name" => line })
 
-        _create_network_service_entity(e,
+        _create_network_service_entity(created_entity,
             opt_port,
             "tcp",{
               :masscan_details => {

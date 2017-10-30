@@ -104,19 +104,19 @@ class NmapScan < BaseTask
 
             _create_network_service_entity(ip_entity,
                 port.number,
-                port.protocol.to_s,
+                "#{port.protocol}",
                 { :nmap_details => {
-                  :protocol => port.service.protocol,
-                  :ssl => port.service.ssl?,
-                  :product => port.service.product,
-                  :version => port.service.version,
-                  :extra_info => port.service.extra_info,
-                  :hostname => port.service.hostname,
-                  :os_type => port.service.os_type,
-                  :device_type => port.service.device_type,
-                  :fingerprint_method => port.service.fingerprint_method,
-                  :fingerprint => port.service.fingerprint,
-                  :confidence => port.service.confidence
+                    :protocol => port.service.protocol,
+                    :ssl => port.service.ssl?,
+                    :product => port.service.product,
+                    :version => port.service.version,
+                    :extra_info => port.service.extra_info,
+                    :hostname => port.service.hostname,
+                    :os_type => port.service.os_type,
+                    :device_type => port.service.device_type,
+                    :fingerprint_method => port.service.fingerprint_method,
+                    :fingerprint => port.service.fingerprint,
+                    :confidence => port.service.confidence
                 }}
              )
 
