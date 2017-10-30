@@ -48,6 +48,7 @@ module Data
         entity_name =~ /^.*akamai.net(:[0-9]*)?$/                    ||
         entity_name =~ /^.*akamai.com(:[0-9]*)?$/                    ||
         entity_name =~ /^.*akamaiedge.net(:[0-9]*)?$/                ||
+        entity_name =~ /^.*akamaiedge-staging.net(:[0-9]*)?$/        ||
         entity_name =~ /^.*akamaihd-staging.net(:[0-9]*)?$/          ||
         entity_name =~ /^.*akamaihd.net(:[0-9]*)?$/                  ||
         entity_name =~ /^.*akamaistream.net(:[0-9]*)?$/              ||
@@ -75,6 +76,7 @@ module Data
         entity_name =~ /^.*drupal.org(:[0-9]*)?$/                    ||
         entity_name =~ /^.*edgecastcdn.net(:[0-9]*)?$/               ||
         entity_name =~ /^.*edgekey.net(:[0-9]*)?$/                   ||
+        entity_name =~ /^.*edgekey-staging.net(:[0-9]*)?$/           ||
         entity_name =~ /^.*edgesuite.net(:[0-9]*)?$/                 ||
         entity_name =~ /^.*exacttarget.com(:[0-9]*)?$/               ||
         entity_name =~ /^.*facebook.com(:[0-9]*)?$/                  ||
