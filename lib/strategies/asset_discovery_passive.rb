@@ -45,9 +45,9 @@ module Strategy
           start_recursive_task(task_result,"dns_brute_sub",entity,[])
         end
 
-      elsif entity.type_string == "EmailAddress"
-        # Search, only snag the top result
-        start_recursive_task(task_result,"search_bing",entity,[{"name"=> "max_results", "value" => 1}])
+      #elsif entity.type_string == "EmailAddress"
+      #  # Search, only snag the top result
+      #  start_recursive_task(task_result,"search_bing",entity,[{"name"=> "max_results", "value" => 1}])
 
       #elsif entity.type_string == "FtpServer"
       #  start_recursive_task(task_result,"ftp_banner_grab",entity)
@@ -74,13 +74,13 @@ module Strategy
           task_result.log "Cowardly refusing to expand this netblock.. it doesn't look like ours."
         end
 
-      elsif entity.type_string == "Person"
-        # Search, only snag the top result
-        start_recursive_task(task_result,"search_bing",entity,[{"name"=> "max_results", "value" => 1}])
+      #elsif entity.type_string == "Person"
+      #  # Search, only snag the top result
+      #  start_recursive_task(task_result,"search_bing",entity,[{"name"=> "max_results", "value" => 1}])
 
-      elsif entity.type_string == "String"
-        # Search, only snag the top result
-        start_recursive_task(task_result,"search_bing",entity,[{"name"=> "max_results", "value" => 1}])
+      #elsif entity.type_string == "String"
+      #  # Search, only snag the top result
+      #  start_recursive_task(task_result,"search_bing",entity,[{"name"=> "max_results", "value" => 1}])
 
       elsif entity.type_string == "Uri"
 
