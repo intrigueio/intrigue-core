@@ -40,8 +40,14 @@ class SearchBuiltwith < BaseTask
         json["Results"].each do |result|
           result["Result"]["Paths"].each do |path|
             path["Technologies"].each do |tech|
-              _log_good "#{path["Url"]}: #{tech["Name"]}: #{tech["Description"]} (#{tech["Link"]})"
+              _log_good "http://#{path["Domain"]}/#{path["Url"]}: #{tech["Name"]}: #{tech["Description"]} (#{tech["Link"]})"
             end
+
+            # Create the URI entities and store the infomration in details
+            _create_entity "Uri", {
+              "name" => "http://#{path["Domain"]}/#{path["Url"]}",
+              "builtwith_details" => path }
+
           end
         end
       rescue JSON::ParserError => e
