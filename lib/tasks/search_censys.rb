@@ -55,8 +55,8 @@ class SearchCensys < BaseTask
               # Pull out the protocol
               port = p.split("/").first.to_i # format is like "80/http"
               _create_network_service_entity(@entity, port, "tcp", {
-                :source => "censys",
-                :censys_details => r })
+                :censys_details => r
+              })
 
             end # iterate through ports
           end # if r["_source"]["protocols"]

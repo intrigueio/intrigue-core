@@ -59,10 +59,9 @@ class Masscan < BaseTask
 
         _create_network_service_entity(e,
             opt_port,
-            "tcp",
-            { :source => "masscan",
+            "tcp",{
               :masscan_details => {
-                :masscan_string => masscan_string
+                :masscan_config => masscan_string
               }
             }
          )

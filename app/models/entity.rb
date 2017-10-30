@@ -101,16 +101,8 @@ module Intrigue
 
       def set_detail(key, value)
 
-        # sanitize_unicode is defined by monkeypatch on the
-        # relevant types. see lib/initialize
-        #if value && ( value.kind_of?(String) || value.kind_of?(Array) || value.kind_of?(Hash) )
-        #  safe_value = value.sanitize_unicode
-        #else
-          safe_value = value
-        #end
-
         self.lock!
-        temp_details = details.merge({key => safe_value})
+        temp_details = details.merge({key => value})
         self.set(:details => temp_details)
         self.set(:details_raw => temp_details)
 
