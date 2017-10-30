@@ -68,16 +68,16 @@ class EnrichUri < BaseTask
     @entity.set_details(new_details)
 
     # Check for other entities with this same response hash
-    if response_data_hash
-      Intrigue::Model::Entity.scope_by_project_and_type_and_detail_value(@entity.project.name,"Uri","response_data_hash", response_data_hash).each do |e|
-        _log "Checking for Uri with detail: 'response_data_hash' == #{response_data_hash}"
-        next if @entity.id == e.id
-
-        _log "Attaching entity: #{e} to #{@entity}"
-        @entity.alias e
-        @entity.save
-      end
-    end
+    #if response_data_hash
+    #  Intrigue::Model::Entity.scope_by_project_and_type_and_detail_value(@entity.project.name,"Uri","response_data_hash", response_data_hash).each do |e|
+    #    _log "Checking for Uri with detail: 'response_data_hash' == #{response_data_hash}"
+    #    next if @entity.id == e.id
+    #
+    #    _log "Attaching entity: #{e} to #{@entity}"
+    #    @entity.alias e
+    #    @entity.save
+    #  end
+    #end
 
     @entity.enriched = true
 
