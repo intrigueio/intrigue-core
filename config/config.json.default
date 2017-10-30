@@ -169,6 +169,12 @@
       "uri" : "https://www.phishtank.com",
       "editable" : "true",
       "comment" : ""
+    },
+    "builtwith_api_key": {
+      "value" : "",
+      "uri" : "https://www.builtwith.com",
+      "editable" : "true",
+      "comment" : ""
     }
   }
 }
