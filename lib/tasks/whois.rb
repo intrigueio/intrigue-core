@@ -146,15 +146,14 @@ class Whois < BaseTask
         entity = _create_entity "NetBlock", {
           "name" => "#{range}",
           "cidr" => "#{range.split('/').last}",
-          "description" => json["data"]["less_specific"]["descr"],
-          "rir" => json["data"]["rir"],
-          "organization_reference" => json["data"]["less_specific"]["netname"],
-          "organization_name" => json["data"]["less_specific"]["descr"],
+          "description" => "#{json["data"]["less_specific"]["descr"]}",
+          "rir" => "#{json["data"]["rir"]}",
+          "organization_reference" => "#{json["data"]["less_specific"]["netname"]}",
+          "organization_name" => "#{json["data"]["less_specific"]["descr"]}",
           "whois_full_text" => "#{answer.content}"
         }
 
-        @entity.set_detail("provider", json["data"]["less_specific"]["descr"])
-
+        @entity.set_detail("provider", "#{json["data"]["less_specific"]["descr"]}")
       end
       #
       # We're going to have nameservers either way?

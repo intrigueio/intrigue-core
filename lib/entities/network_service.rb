@@ -11,8 +11,7 @@ class NetworkService < Intrigue::Model::Entity
 
 
   def validate_entity
-    (details["ip_address"].to_s =~ _v4_regex || details["ip_address"].to_s =~ _v6_regex) &&
-    details["port"].to_s =~ /^\d{1,5}$/ &&
+    name =~ /(\w.*):\d{1,5}\/(udp|tcp)/ && details["port"].to_s =~ /^\d{1,5}$/ &&
     details["protocol"].to_s =~ /^(tcp|udp)$/
   end
 

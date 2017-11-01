@@ -55,6 +55,11 @@ class SearchCrt < BaseTask
                 next unless dname =~ /#{opt_extract_pattern}/
               end
 
+              # Remove any leading wildcards so we get a sensible domain name
+              if dname[0..1] == "*."
+                dname = dname[2..-1]
+              end
+
               _create_entity("DnsRecord", "name"=> dname )
             end
           end

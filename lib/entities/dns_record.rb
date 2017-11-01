@@ -5,12 +5,12 @@ class DnsRecord < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "DnsRecord",
-      :description => "A DnsRecord"
+      :description => "A Dns Record"
     }
   end
 
   def validate_entity
-    return (name =~ _dns_regex)
+    name =~ /\w.*/ #_dns_regex
   end
 
   def primary
