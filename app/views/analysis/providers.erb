@@ -1,0 +1,10 @@
+<!-- Statistics! -->
+<div class="row">
+  <div id="aflkj" class="col-sm-12">
+    <p>
+      <% @providers.map {|k,v| "#{k || "none"}:  #{v.count}" }.each do |p| %>
+        <%= p %><br/>
+      <% end %>
+    </p>
+  </div>
+</div>

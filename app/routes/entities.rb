@@ -164,7 +164,7 @@ class IntrigueApp < Sinatra::Base
 
     get '/:project/analysis/websites' do
 
-      selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false).order(:name)
+      selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false, :type => "Intrigue::Entity::IpAddress").order(:name)
 
       ## Filter by type
       alias_group_ids = selected_entities.map{|x| x.alias_group_id }.uniq
@@ -173,8 +173,27 @@ class IntrigueApp < Sinatra::Base
       erb :'analysis/websites'
     end
 
+    get '/:project/analysis/providers' do
+      @entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false, :type => "Intrigue::Entity::IpAddress").sort_by{|x| x.name }
+
+      # analyse
+      @providers = {}
+      @entities.each do |e|
+        pname = e.get_detail("provider")
+
+        if @providers[pname]
+          @providers[pname] << e
+        else
+          @providers[pname] = [e]
+        end
+      end
+
+      erb :'analysis/providers'
+    end
+
     get '/:project/analysis/systems' do
-      @entities = Intrigue::Model::Entity.scope_by_project(@project_name).sort_by{|x| x.name }
+      @entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false, :type => "Intrigue::Entity::IpAddress").sort_by{|x| x.name }
+
       erb :'analysis/systems'
     end
 
