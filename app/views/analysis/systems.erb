@@ -3,16 +3,16 @@
   <div id="aflkj" class="col-sm-6">
     <p>Providers:</p>
     <p>
-      <% @providers.sort_by{|k,v| v.count }.reverse.map {|k,v| "#{k}:  #{v.count}" }.each do |p| %>
-        <%= p %><br/>
+      <% @providers.sort_by{|k,v| v.count }.reverse.each do |k,v| %>
+        <a href="/<%=@project_name%>/entities?search_string=<%=k%>"><%= k %></a>: <%= v.count %><br>
       <% end %>
     </p>
   </div>
   <div id="aflkj" class="col-sm-6">
     <p>OS:</p>
     <p>
-      <% @os.sort_by{|k,v| v.count }.reverse.map {|k,v| { k => "#{v.count}" } }.each do |k,v| %>
-        <a href="/entities?search_string=<%=k%>"><%= "#{k}, #{v}" %></a><br/>
+      <% @os.sort_by{|k,v| v.count }.reverse.each do |k,v| %>
+        <a href="/<%=@project_name%>/entities?search_string=<%=k%>"><%= k %></a>: <%= v.count %><br>
       <% end %>
     </p>
   </div>
