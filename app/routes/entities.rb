@@ -176,7 +176,15 @@ class IntrigueApp < Sinatra::Base
     get '/:project/analysis/providers' do
       @entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false, :type => "Intrigue::Entity::IpAddress").sort_by{|x| x.name }
 
-      # analyse
+
+
+      erb :'analysis/providers'
+    end
+
+    get '/:project/analysis/systems' do
+      @entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false, :type => "Intrigue::Entity::IpAddress").sort_by{|x| x.name }
+
+      # Grab providers & analyse
       @providers = {}
       @entities.each do |e|
         pname = e.get_detail("provider")
@@ -188,11 +196,23 @@ class IntrigueApp < Sinatra::Base
         end
       end
 
-      erb :'analysis/providers'
-    end
+      # Grab providers & analyse
+      @os = {}
+      @entities.each do |e|
+        # Get the key for the hash
+        if e.get_detail("os").to_a.first
+          os_string = e.get_detail("os").to_a.first.match(/(.*)(\ \(.*\))/)[1]
+        else
+          os_string = "none"
+        end
 
-    get '/:project/analysis/systems' do
-      @entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false, :type => "Intrigue::Entity::IpAddress").sort_by{|x| x.name }
+        # Set the value
+        if @os[os_string]
+          @os[os_string] << e
+        else
+          @os[os_string] = [e]
+        end
+      end
 
       erb :'analysis/systems'
     end
