@@ -4,7 +4,7 @@
     <p>Providers:</p>
     <p>
       <% @providers.sort_by{|k,v| v.count }.reverse.each do |k,v| %>
-        <a href="/<%=@project_name%>/entities?search_string=<%=k%>"><%= k %></a>: <%= v.count %><br>
+        <%= v.count %>: <a href="/<%=@project_name%>/entities?search_string=<%=k%>"><%= k %></a><br>
       <% end %>
     </p>
   </div>
@@ -12,7 +12,7 @@
     <p>OS:</p>
     <p>
       <% @os.sort_by{|k,v| v.count }.reverse.each do |k,v| %>
-        <a href="/<%=@project_name%>/entities?search_string=<%=k%>"><%= k %></a>: <%= v.count %><br>
+         <%= v.count %>: <a href="/<%=@project_name%>/entities?search_string=<%=k%>"><%= k %></a><br>
       <% end %>
     </p>
   </div>
