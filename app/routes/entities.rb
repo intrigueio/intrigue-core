@@ -187,7 +187,9 @@ class IntrigueApp < Sinatra::Base
       # Grab providers & analyse
       @providers = {}
       @entities.each do |e|
-        pname = e.get_detail("provider")
+        pname = e.get_detail("provider") || "None"
+
+        pname = "None" if pname.length == 0
 
         if @providers[pname]
           @providers[pname] << e
@@ -203,7 +205,7 @@ class IntrigueApp < Sinatra::Base
         if e.get_detail("os").to_a.first
           os_string = e.get_detail("os").to_a.first.match(/(.*)(\ \(.*\))/)[1]
         else
-          os_string = "none"
+          os_string = "None"
         end
 
         # Set the value
