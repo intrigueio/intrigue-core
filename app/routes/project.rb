@@ -75,7 +75,7 @@ class IntrigueApp < Sinatra::Base
         Intrigue::Workers::GenerateGraphWorker.perform_async(project.id)
       end
 
-    project.graph_json
+    project.graph_json || "Currently generating..."
     end
 
     get '/:project/graph/meta.json/?' do
@@ -87,7 +87,7 @@ class IntrigueApp < Sinatra::Base
         Intrigue::Workers::GenerateMetaGraphWorker.perform_async(project.id)
       end
 
-    project.graph_json
+    project.graph_json || "Currently generating..."
     end
 
 
@@ -117,15 +117,28 @@ class IntrigueApp < Sinatra::Base
       redirect "/#{@project_name}/graph"
     end
 
+
+    ### EXPORT
+    get '/:project/export/json' do
+      content_type 'application/json'
+      @project = Intrigue::Model::Project.first(:name => @project_name)
+      @project.export_json
+    end
+
+    get '/:project/export/csv' do
+      content_type 'application/csv'
+      @project = Intrigue::Model::Project.first(:name => @project_name)
+      @project.export_csv
+    end
+
     # Show the results in a gexf format
-    get '/:project/graph.gexf/?' do
+    get '/:project/export/gexf/?' do
       content_type 'text/plain'
-      result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
-      return unless result
+      @project = Intrigue::Model::Project.first(:name => @project_name)
 
       # Generate a list of entities and task runs to work through
       @entity_pairs = []
-      result.each do |task_result|
+      @project.task_results.each do |task_result|
         task_result.entities.each do |entity|
           @entity_pairs << {:task_result => task_result, :entity => entity}
         end
@@ -134,5 +147,8 @@ class IntrigueApp < Sinatra::Base
       erb :'gexf', :layout => false
     end
 
+    get '/:project/export/graph_json' do
+      redirect "#{@project_name}/graph.json"
+    end
 
 end

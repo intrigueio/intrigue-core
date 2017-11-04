@@ -212,7 +212,7 @@ module Intrigue
       end
 
       def export_csv
-        "#{type}, #{name}, #{detail_string.gsub(",",";")}"
+        "#{type}, #{name}, #{detail_string.gsub(",",";") if detail_string}"
       end
 
 
