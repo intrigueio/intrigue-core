@@ -164,21 +164,13 @@ class IntrigueApp < Sinatra::Base
 
     get '/:project/analysis/websites' do
 
-      selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false, :type => "Intrigue::Entity::IpAddress").order(:name)
+      selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false, :type => "Intrigue::Entity::Uri").order(:name)
 
       ## Filter by type
       alias_group_ids = selected_entities.map{|x| x.alias_group_id }.uniq
       @alias_groups = Intrigue::Model::AliasGroup.where(:id => alias_group_ids)
 
       erb :'analysis/websites'
-    end
-
-    get '/:project/analysis/providers' do
-      @entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false, :type => "Intrigue::Entity::IpAddress").sort_by{|x| x.name }
-
-
-
-      erb :'analysis/providers'
     end
 
     get '/:project/analysis/systems' do
