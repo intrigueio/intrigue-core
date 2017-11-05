@@ -1,47 +1,51 @@
 class IntrigueApp < Sinatra::Base
 
-    get '/:project/entities' do
-      @result_count = 100
+  get '/:project/entities' do
+    @result_count = 100
 
-      params[:search_string] == "" ? @search_string = nil : @search_string = params[:search_string]
-      params[:entity_types] == "" ? @entity_types = nil : @entity_types = params[:entity_types]
-      params[:correlate] == "on" ? @correlate = true : @correlate = false
-      (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
+    params[:search_string] == "" ? @search_string = nil : @search_string = params[:search_string]
+    params[:entity_types] == "" ? @entity_types = nil : @entity_types = params[:entity_types]
+    params[:correlate] == "on" ? @correlate = true : @correlate = false
+    (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
 
-      if @correlate # Handle entity coorelation
+    #if @correlate # Handle entity coorelation
 
-       selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false).order(:name)
+     selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false).order(:name)
 
-       ## Filter if we have a type
-       selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
+     ## Filter if we have a type
+     selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
 
-       selected_entities = _tokenized_search(@search_string, selected_entities)
+     selected_entities = _tokenized_search(@search_string, selected_entities)
 
-       alias_group_ids = selected_entities.map{|x| x.alias_group_id }.uniq
-       alias_groups = Intrigue::Model::AliasGroup.where({:id => alias_group_ids })
+     alias_group_ids = selected_entities.map{|x| x.alias_group_id }.uniq
+     alias_groups = Intrigue::Model::AliasGroup.where({:id => alias_group_ids })
 
-       @alias_group_count = alias_groups.count
-       @alias_groups = alias_groups.extension(:pagination).paginate(@page,@result_count)
+     @alias_groups = alias_groups.extension(:pagination).paginate(@page,@result_count)
 
-       erb :'entities/index_meta'
+     @group_count = alias_groups.count
+     @entity_count = selected_entities.count
 
-      else # normal flow, uncorrelated
+     erb :'entities/index'
+   end
 
-        selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false).order(:name)
+=begin
+    else # normal flow, uncorrelated
 
-        ## Filter if we have a type
-        selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
+      selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false).order(:name)
 
-        # Perform a simple tokenized search
-        selected_entities = _tokenized_search(@search_string, selected_entities) if @search_string
+      ## Filter if we have a type
+      selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
 
-        ## paginate
-        @entity_count = selected_entities.count
-        @entities = selected_entities.extension(:pagination).paginate(@page,@result_count)
-        erb :'entities/index'
-      end
+      # Perform a simple tokenized search
+      selected_entities = _tokenized_search(@search_string, selected_entities) if @search_string
 
+      ## paginate
+      @entity_count = selected_entities.count
+      @entities = selected_entities.extension(:pagination).paginate(@page,@result_count)
+      erb :'entities/index'
     end
+=end
+
 
   get '/:project/entities.csv' do
     content_type 'text/csv'

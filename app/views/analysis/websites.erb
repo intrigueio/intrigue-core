@@ -22,7 +22,8 @@
     <p></p>
     <table id="webapps" class="sortable" border="1" width=100%>
       <colgroup>
-        <col style="width:40%">
+        <col style="width:20%">
+        <col style="width:20%">
         <col style="width:20%">
         <col style="width:20%">
         <col style="width:10%">
@@ -30,14 +31,14 @@
         <col style="width:5%">
       </colgroup>
       <tbody>
-      <tr><th>Screenshots</th><th>Names</th><th>Stacks</th><th>JQuery</th><th>Verbs</th><th>API</th></tr>
+      <tr><th>Screenshots</th><th>Names</th><th>Host</th><th>Stacks</th><th>JQuery</th><th>Verbs</th><th>API</th></tr>
       <% @alias_groups.each do |g| %>
         <% entities = Intrigue::Model::Entity.where(:alias_group_id => g.id, :type => "Intrigue::Entity::Uri", :hidden => false) %>
         <% next unless entities.count > 0 %>
         <tr>
           <td>
             <% entities.map do |x| %>
-              <% if x.type_string == "Uri" && x.has_detail('hidden_screenshot_contents') %>
+              <% if x.has_detail('hidden_screenshot_contents') %>
                 <%= "<a href='/#{@project_name}/entities/#{x.id}'>"%>
                   <img height=200 width=240 src="data:image/png;base64, <%= x.get_detail('hidden_screenshot_contents') %>" alt="Screenshot" />
                 </a>
@@ -46,22 +47,28 @@
           </td>
           <td>
             <% entities.map do |x| %>
-              <%= x.type_string == "Uri" ? "<a href='/#{@project_name}/entities/#{x.id}'>#{x.name}<br/>" : nil %>
+              <%= "<a href='/#{@project_name}/entities/#{x.id}'>#{x.name}<br/>" %>
             <% end %>
           </td>
           <td>
             <% entities.map do |x| %>
-              <%= x.type_string == "Uri" ? "#{x.get_detail("stack")}<br/>" : nil %>
+              <% z = Intrigue::Model::Entity.first(:id => x.get_detail("host_id")) %>
+              <%= "<a href='/#{@project_name}/entities/#{z.id}'>#{z}<br/>" if z %>
             <% end %>
           </td>
           <td>
             <% entities.map do |x| %>
-              <%= x.type_string == "Uri" ? "#{x.get_detail("verbs")}<br/>" : nil %>
+              <%= "#{x.get_detail("stack")}<br/>" %>
             <% end %>
           </td>
           <td>
             <% entities.map do |x| %>
-              <%= x.type_string == "Uri" ? "#{x.get_detail("jquery")}<br/>" : nil %>
+              <%= "#{x.get_detail("verbs")}<br/>" %>
+            <% end %>
+          </td>
+          <td>
+            <% entities.map do |x| %>
+              <%= "#{x.get_detail("jquery")}<br/>" %>
             <% end %>
           </td>
           <td>
