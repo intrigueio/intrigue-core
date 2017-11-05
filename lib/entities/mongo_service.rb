@@ -11,7 +11,7 @@ class MongoService < Intrigue::Model::Entity
 
 
   def validate_entity
-    name =~ /(\w.*):\d{1,5}\/(udp|tcp)/ && details["port"].to_s =~ /^\d{1,5}$/
+    name =~ /(\w.*):\d{1,5}/ && details["port"].to_s =~ /^\d{1,5}$/
   end
 
   def form

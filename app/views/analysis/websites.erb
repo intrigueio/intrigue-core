@@ -53,7 +53,7 @@
           <td>
             <% entities.map do |x| %>
               <% z = Intrigue::Model::Entity.first(:id => x.get_detail("host_id")) %>
-              <%= "<a href='/#{@project_name}/entities/#{z.id}'>#{z}<br/>" if z %>
+              <%= "<a href='/#{@project_name}/entities/#{z.id}'>#{z}<br/>" if z.type == "Intrigue::Entity::IpAddress" %>
             <% end %>
           </td>
           <td>
