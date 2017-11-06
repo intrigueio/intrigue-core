@@ -44,6 +44,20 @@ class SearchCrt < BaseTask
           crt_cert_uri = "https://crt.sh/"
           raw_html = http_get_body("#{crt_cert_uri}#{cert_id}&opt=nometadata")
 
+          # run and hide
+          if ( raw_html =~ /acquia/i         ||
+               raw_html =~ /cloudflare/i     ||
+               raw_html =~ /distil/i         ||
+               raw_html =~ /fastly/i         ||
+               raw_html =~ /incapsula.com/i  ||
+               raw_html =~ /imperva/i        ||
+               raw_html =~ /jive/i           ||
+               raw_html =~ /lithium/i        ||
+               raw_html =~ /wpengine/i )
+            _log_error "Invalid keyword in response, failing."
+            return
+          end
+
           raw_html.scan(/DNS:(.*?)<BR>/).each do |domains|
             domains.each do |dname|
               _log "Found domain: #{dname}"
