@@ -121,6 +121,7 @@ module Data
         entity_name =~ /^.*hubspot.com(:[0-9]*)?$/                   ||
         entity_name =~ /^.*hubspot.net(:[0-9]*)?$/                   ||
         entity_name =~ /^.*incapdns.net(:[0-9]*)?$/                  ||
+        entity_name =~ /^.*incapsula.com(:[0-9]*)?$/                 ||
         entity_name =~ /^.*instagram.com(:[0-9]*)?$/                 ||
         entity_name =~ /^.*jobing.com(:[0-9]*)?$/                    ||
         entity_name =~ /^.*localhost(:[0-9]*)?$/                     ||
