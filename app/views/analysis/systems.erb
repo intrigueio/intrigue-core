@@ -1,7 +1,7 @@
 <!-- Statistics! -->
 <div class="row">
   <div id="aflkj" class="col-sm-6">
-    <p>Providers:</p>
+    <p>Provider Information:</p>
     <p>
       <% @providers.sort_by{|k,v| v.count }.reverse.each do |k,v| %>
         <%= v.count %>: <a href="/<%=@project_name%>/entities?search_string=<%=k%>"><%= k %></a><br>
@@ -9,7 +9,7 @@
     </p>
   </div>
   <div id="aflkj" class="col-sm-6">
-    <p>OS:</p>
+    <p>OS Information:</p>
     <p>
       <% @os.sort_by{|k,v| v.count }.reverse.each do |k,v| %>
          <%= v.count %>: <a href="/<%=@project_name%>/entities?search_string=<%=k%>"><%= k %></a><br>
