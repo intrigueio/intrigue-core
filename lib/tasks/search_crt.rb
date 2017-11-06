@@ -44,22 +44,14 @@ class SearchCrt < BaseTask
           crt_cert_uri = "https://crt.sh/"
           raw_html = http_get_body("#{crt_cert_uri}#{cert_id}&opt=nometadata")
 
-          # run and hide
-          if ( raw_html =~ /acquia/i      ||
-               raw_html =~ /cloudflare/i  ||
-               raw_html =~ /distil/i      ||
-               raw_html =~ /fastly/i      ||
-               raw_html =~ /incapsula/i   ||
-               raw_html =~ /imperva/i     ||
-               raw_html =~ /jive/i        ||
-               raw_html =~ /lithium/i     ||
-               raw_html =~ /wpengine/i )
-              
-          end
-
           raw_html.scan(/DNS:(.*?)<BR>/).each do |domains|
             domains.each do |dname|
               _log "Found domain: #{dname}"
+
+              if (dname =~ /cloudflare.net/i || /incapsula.com/i)
+                _log_error "Invalid certificate found: #{dname}"
+                return nil
+              end
 
               # If we have an extract pattern set, respect it
               if opt_extract_pattern
