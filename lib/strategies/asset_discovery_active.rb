@@ -15,21 +15,35 @@ module Strategy
     def self.recurse(entity, task_result)
 
       if entity.type_string == "DnsRecord"
+
+        # get the domain length so we can see if this is a tld or internal name
+        domain_length = (entity.name.split(".").length)
+
+        # get the domain's base name (minus the TLD)
+        base_name = entity.name.split(".")[0...-1].join(".")
+
+        ### AWS_S3_brute the domain name and the base name
+        start_recursive_task(task_result,"aws_s3_brute",entity,[
+          {"name" => "additional_buckets", "value" => "#{base_name}"}
+        ])
+
+        # Sublister API
+        start_recursive_task(task_result,"search_sublister", entity)
+
+        # CRT Scraper
+        unless domain_length == 1 # don't search tld's or we'll get odd results
+          start_recursive_task(task_result,"search_crt", entity )
+        end
+
+        # Threatcrowd API... skip resolutions, as we probably don't want old
+        # data for this use case
+        start_recursive_task(task_result,"search_threatcrowd", entity, [
+          {"name" => "gather_resolutions", "value" => true },
+          {"name" => "gather_subdomains", "value" => true }])
+
         ### DNS Subdomain Bruteforce
         # Do a big bruteforce if the size is small enough
-        if (entity.name.split(".").length < 3)
-
-          # Sublister API
-          start_recursive_task(task_result,"search_sublister", entity)
-
-          # CRT Scraper
-          start_recursive_task(task_result,"search_crt", entity )
-
-          # Threatcrowd API... skip resolutions, as we probably don't want old
-          # data for this use case
-          start_recursive_task(task_result,"search_threatcrowd", entity, [
-            {"name" => "gather_resolutions", "value" => true },
-            {"name" => "gather_subdomains", "value" => true }])
+        if domain_length < 3
 
           start_recursive_task(task_result,"dns_brute_sub",entity,[
             {"name" => "use_file", "value" => true },
