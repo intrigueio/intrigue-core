@@ -145,7 +145,12 @@ class UriBrute < BaseTask
     end
 
     # always check code
-    if (response.code == "400" || response.code == "401" || response.code == "403" || response.code == "404" || response.code == "500")
+    if (  response.code == "400" ||
+          response.code == "401" ||
+          response.code == "403" ||
+          response.code == "404" ||
+          response.code == "500" ||
+          response.code == "503")
       _log "Skipping #{request_uri} based on code: #{response.code}"
       return false
     end
@@ -164,11 +169,11 @@ class UriBrute < BaseTask
           _log "Got code: #{response.code}. Same as missing page code. Skipping"
         else
           _log "Flagging #{request_uri} because of response code #{response.code}!"
-          _create_entity "Uri",
-            "name" => request_uri,
-            "uri" => request_uri,
-            "response_code" => response.code,
-            "brute_response_body" => response.body
+          #_create_entity "Uri",
+          #  "name" => request_uri,
+          #  "uri" => request_uri,
+          #  "response_code" => response.code,
+          #  "brute_response_body" => response.body
       end
 
     ## Otherwise, let's guess based on the content. Does this page look
