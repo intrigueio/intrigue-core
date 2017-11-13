@@ -18,10 +18,9 @@ function delete_entity(id)
   <%= erb :'/entities/_search', :layout => false %>
 </div>
 <div class="col-sm-10">
-    <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&correlate=on&page=<%=@page-1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">previous</a>
-    <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&correlate=on&page=<%=@page+1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">next</a>
-    <%= "Page: #{@page}" %>
-    <%= "Viewing Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %>
+    <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&correlate=on&page=<%=@page-1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join('&') if @entity_types %>">previous</a>
+    <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&correlate=on&page=<%=@page+1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join('&') if @entity_types %>">next</a>
+    <%= "Page: #{@page}" %> / <%= "Viewing Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %>
 
   <script type="text/javascript" src="/js/sorttable.js"></script>
   <style>
