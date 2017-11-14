@@ -172,7 +172,7 @@ module Parse
     # Scan for uris
     urls = content.scan(/https?:\/\/[\S]+/)
     urls.each do |url|
-      _create_entity("Uri", {"name" => url, "extracted_from" => source_uri })
+      _create_entity("Uri", {"name" => url, "uri" => url, "extracted_from" => source_uri })
     end
   end
 
