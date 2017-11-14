@@ -45,15 +45,18 @@ class SearchCrt < BaseTask
           raw_html = http_get_body("#{crt_cert_uri}#{cert_id}&opt=nometadata")
 
           # run and hide
-          if ( raw_html =~ /acquia/i         ||
-               raw_html =~ /cloudflare/i     ||
-               raw_html =~ /distil/i         ||
-               raw_html =~ /fastly/i         ||
-               raw_html =~ /incapsula.com/i  ||
-               raw_html =~ /imperva/i        ||
-               raw_html =~ /jive/i           ||
-               raw_html =~ /lithium/i        ||
-               raw_html =~ /wpengine/i )
+          if (
+               raw_html =~ /acquia/i              ||
+               raw_html =~ /cloudflare/i          ||
+               raw_html =~ /distil/i              ||
+               raw_html =~ /fastly/i              ||
+               raw_html =~ /incapsula.com/i       ||
+               raw_html =~ /imperva/i             ||
+               raw_html =~ /jive/i                ||
+               raw_html =~ /lithium/i             ||
+               raw_html =~ /wpengine/i            ||
+               raw_html =~ /cdnetworks.com/i      ||
+             )
             _log_error "Invalid keyword in response, failing."
             return
           end
