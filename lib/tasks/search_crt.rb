@@ -55,8 +55,7 @@ class SearchCrt < BaseTask
                raw_html =~ /jive/i                ||
                raw_html =~ /lithium/i             ||
                raw_html =~ /wpengine/i            ||
-               raw_html =~ /cdnetworks.com/i      ||
-             )
+               raw_html =~ /cdnetworks.com/i)
             _log_error "Invalid keyword in response, failing."
             return
           end
