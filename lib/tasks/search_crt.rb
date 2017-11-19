@@ -63,12 +63,7 @@ class SearchCrt < BaseTask
           raw_html.scan(/DNS:(.*?)<BR>/).each do |domains|
             domains.each do |dname|
               _log "Found domain: #{dname}"
-
-              if (dname =~ /cloudflare.net/i || /incapsula.com/i)
-                _log_error "Invalid certificate found: #{dname}"
-                return nil
-              end
-
+              
               # If we have an extract pattern set, respect it
               if opt_extract_pattern
                 next unless dname =~ /#{opt_extract_pattern}/
