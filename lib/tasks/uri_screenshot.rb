@@ -86,7 +86,7 @@ class UriScreenshot < BaseTask
         base64_image_contents = Base64.encode64(File.read(tempfile.path))
 
         # cleanup
-        session.driver.restart
+        session.reset!
         session.driver.quit
         tempfile.close
         tempfile.unlink
