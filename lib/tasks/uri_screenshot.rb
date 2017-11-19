@@ -51,6 +51,7 @@ class UriScreenshot < BaseTask
         Capybara.javascript_driver = :poltergeist
         Capybara.run_server = false
         Capybara.default_selector = :xpath
+        Capybara.threadsafe = true
 
         # Start a new session
         session = Capybara::Session.new(:poltergeist)
