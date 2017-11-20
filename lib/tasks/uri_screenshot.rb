@@ -30,28 +30,8 @@ class UriScreenshot < BaseTask
 
     if @entity.type_string == "Uri"
       uri = _get_entity_name
-      xxx = URI(uri)
 
       begin
-
-        # SETUP
-        require 'capybara'
-        require 'capybara/poltergeist'
-
-        Capybara.register_driver :poltergeist do |app|
-          Capybara::Poltergeist::Driver.new(app, {
-            :js_errors => false,
-            :phantomjs_options => [
-              '--debug=false',
-              '--ignore-ssl-errors=true',
-              '--ssl-protocol=any' ]
-          })
-        end
-
-        Capybara.javascript_driver = :poltergeist
-        Capybara.run_server = false
-        Capybara.default_selector = :xpath
-        Capybara.threadsafe = true
 
         # Start a new session
         session = Capybara::Session.new(:poltergeist)
@@ -86,7 +66,6 @@ class UriScreenshot < BaseTask
         base64_image_contents = Base64.encode64(File.read(tempfile.path))
 
         # cleanup
-        session.reset!
         session.driver.quit
         tempfile.close
         tempfile.unlink
