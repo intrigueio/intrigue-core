@@ -35,7 +35,7 @@ module Strategy
         end
 
         # CRT Scraper... # don't search tld's or we'll get odd
-        unless (domain_length == 1) && (entity.name =~ /#{filter_strings}/i)
+        unless (domain_length == 1 && entity.name =~ /#{filter_strings}/i)
           start_recursive_task(task_result,"search_crt", entity )
         end
 
