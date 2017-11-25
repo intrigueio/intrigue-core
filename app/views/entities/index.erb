@@ -52,14 +52,18 @@ function delete_entity(id)
         <% next unless group.entities.count > 0 %>
         <tr>
           <td>
+            <ul>
           <% group.entities.each do |e| %>
-              <% next if e.hidden; %>[<a href="/<%=@project_name%>/entities/<%=e.id%>"> <%= h e %> </a>]
+              <% next if e.hidden; %><li>[<a href="/<%=@project_name%>/entities/<%=e.id%>"> <%= h e %> </a>]</li>
           <% end %>
+            </ul>
           </td>
           <td>
+            <ul>
           <% group.entities.each do |e| %>
-              <% next if e.hidden; %><a href="/<%=@project_name%>/entities/<%=e.id%>"> <%= h e.detail_string %> </a> |
+              <% next if e.hidden; %><li><a href="/<%=@project_name%>/entities/<%=e.id%>"> <%= h e.detail_string %> </a></li>
           <% end %>
+          </ul>
         </td>
       </tr>
       <% end %>
