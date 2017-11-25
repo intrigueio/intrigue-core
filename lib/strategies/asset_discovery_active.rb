@@ -30,18 +30,18 @@ module Strategy
         ])
 
         # Sublister API
-        if entity.name =~ /"#{filter_strings}"/i
+        if entity.name =~ /#{filter_strings}/i
           start_recursive_task(task_result,"search_sublister", entity)
         end
 
         # CRT Scraper... # don't search tld's or we'll get odd
-        unless (domain_length == 1) && (entity.name =~ /"#{filter_strings}"/i)
+        unless (domain_length == 1) && (entity.name =~ /#{filter_strings}/i)
           start_recursive_task(task_result,"search_crt", entity )
         end
 
         # Threatcrowd API... skip resolutions, as we probably don't want old
         # data for this use case
-        if entity.name =~ /"#{filter_strings}"/i
+        if entity.name =~ /#{filter_strings}/i
           start_recursive_task(task_result,"search_threatcrowd", entity, [
             {"name" => "gather_resolutions", "value" => true },
             {"name" => "gather_subdomains", "value" => true }])

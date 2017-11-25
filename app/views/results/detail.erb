@@ -45,10 +45,9 @@ getEntities(<%=@result.id%>);
   <p>Complete: <%= @result.complete %></p>
   <p>Count: <%= @result.entities.count %></p>
   <hr>
-  <p>Strategy: <%= @result.scan_result.name if @result.scan_result %></p>
+  <p>Strategy: <%= @result.scan_result.strategy if @result.scan_result %></p>
+  <p>Max Depth: <%=@result.scan_result.depth %> </p>
   <p>Filter Strings: <%= @result.scan_result.filter_strings if @result.scan_result %></p>
-  <p>Scan Result: <%=@result.scan_result.inspect %> </p>
-
 
   Export:
   <ul>
