@@ -71,7 +71,7 @@ class EntityManager
     return nil unless created_entity.validate_entity
 
     # START ENRICHMENT if we're allowed and unless this entity is prohibited (hidden)
-    enrich_entity(created_entity) unless hidden
+    enrich_entity(created_entity) unless created_entity.hidden
 
   created_entity
   end
@@ -196,9 +196,10 @@ class EntityManager
 
     # START RECURSION BY STRATEGY TYPE
     if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
-      unless hidden
+      unless created_entity.hidden
         s = Intrigue::StrategyFactory.create_by_name(task_result.scan_result.strategy)
         raise "Unknown Strategy!" unless s
+
         s.recurse(created_entity, task_result)
       end
     end

@@ -4,7 +4,6 @@ module Intrigue
       plugin :validation_helpers
       plugin :serialization, :json, :options, :handlers
 
-      #set_allowed_columns :project_id, :logger_id, :base_entity_id, :name, :depth, :handlers, :strategy, :filter_strings
       many_to_many :entities
       many_to_one :scan_result
       many_to_one :logger

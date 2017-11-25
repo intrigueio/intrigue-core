@@ -14,6 +14,8 @@ module Strategy
 
     def self.recurse(entity, task_result)
 
+      filter_strings = "#{task_result.scan_result.filter_strings.gsub(",","|")}"
+
       if entity.type_string == "DnsRecord"
 
         # get the domain length so we can see if this is a tld or internal name
@@ -28,18 +30,22 @@ module Strategy
         ])
 
         # Sublister API
-        start_recursive_task(task_result,"search_sublister", entity)
+        if entity.name =~ /"#{filter_strings}"/i
+          start_recursive_task(task_result,"search_sublister", entity)
+        end
 
-        # CRT Scraper
-        unless domain_length == 1 # don't search tld's or we'll get odd results
+        # CRT Scraper... # don't search tld's or we'll get odd
+        unless (domain_length == 1) && (entity.name =~ /"#{filter_strings}"/i)
           start_recursive_task(task_result,"search_crt", entity )
         end
 
         # Threatcrowd API... skip resolutions, as we probably don't want old
         # data for this use case
-        start_recursive_task(task_result,"search_threatcrowd", entity, [
-          {"name" => "gather_resolutions", "value" => true },
-          {"name" => "gather_subdomains", "value" => true }])
+        if entity.name =~ /"#{filter_strings}"/i
+          start_recursive_task(task_result,"search_threatcrowd", entity, [
+            {"name" => "gather_resolutions", "value" => true },
+            {"name" => "gather_subdomains", "value" => true }])
+        end
 
         ### DNS Subdomain Bruteforce
         # Do a big bruteforce if the size is small enough
@@ -73,7 +79,7 @@ module Strategy
       elsif entity.type_string == "NetBlock"
 
         # Make sure it's small enough not to be disruptive, and if it is, scan it. also skip ipv6/
-        if entity.details["whois_full_text"] =~ /#{task_result.scan_result.base_entity.name}/i && !(entity.name =~ /::/)
+        if entity.details["whois_full_text"] =~ /#{filter_strings}/i && !(entity.name =~ /::/)
           start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 80}])
           start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 443}])
           start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 8443}])
@@ -82,7 +88,7 @@ module Strategy
         end
 
         # Make sure it's small enough not to be disruptive, and if it is, expand it
-        if entity.details["whois_full_text"] =~ /#{task_result.scan_result.base_entity.name}/i && !(entity.name =~ /::/)
+        if entity.details["whois_full_text"] =~ /#{filter_strings}/i && !(entity.name =~ /::/)
           start_recursive_task(task_result,"net_block_expand",entity)
         else
           task_result.log "Cowardly refusing to expand this netblock.. it doesn't look like ours."
@@ -114,8 +120,7 @@ module Strategy
           start_recursive_task(task_result,"uri_spider",entity,[
               {"name" => "max_pages", "value" => 50 },
               {"name" => "extract_dns_records", "value" => true },
-              {"name" => "extract_dns_record_pattern", "value" => "#{task_result.scan_result.base_entity.name}"}])
-
+              {"name" => "extract_dns_record_pattern", "value" => "#{filter_strings}"}])
         end
       else
         task_result.log "No actions for entity: #{entity.type}##{entity.name}"

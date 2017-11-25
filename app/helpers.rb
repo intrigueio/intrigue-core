@@ -64,6 +64,7 @@ module Helper
         :logger => Intrigue::Model::Logger.create(:project => project),
         :depth => depth,
         :strategy => strategy_name,
+        :filter_strings => "#{entity.name}", # this is a comma-delimited list of strings (see: strategies)
         :handlers => handlers,
         :incomplete_task_count => 1
       })

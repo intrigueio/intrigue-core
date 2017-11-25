@@ -4,7 +4,6 @@ module Intrigue
       plugin :validation_helpers
       plugin :serialization, :json, :options, :handlers
 
-      #set_allowed_columns :project_id, :logger_id, :base_entity_id, :name, :depth, :handlers, :strategy, :filter_strings
       many_to_one :logger
       many_to_one :project
       one_to_many :task_results
@@ -68,7 +67,7 @@ module Intrigue
           "strategy" => strategy,
           "timestamp_start" => timestamp_start,
           "timestamp_end" => timestamp_end,
-          "filter_strings" => filter_strings,
+          "filter_strings" => filter_strings.join(","),
           "project" => project.name,
           "base_entity" => base_entity.export_hash,
           #"task_results" => task_results.map{|t| t.export_hash },
