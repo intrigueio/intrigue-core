@@ -39,13 +39,15 @@ getEntities(<%=@result.id%>);
   <p>Elapsed (s): <%= @elapsed_time %> </p>
   <p>Job ID: <%= @result.job_id %> </p>
   <p>Handlers: <%= @result.handlers %></p>
-  <p>Filter Strings: <%= @result.filter_strings if @result.respond_to? "filter_strings" %></p>
   <p>Depth: <%=@result.depth %> </p>
   <p>Entity: <a href="/<%=@project_name%>/entities/<%=@result.base_entity.id if @result.base_entity %>"><%= h "#{@result.base_entity}" %></a></p>
   <p>Cancelled: <%= @result.cancelled %></p>
   <p>Complete: <%= @result.complete %></p>
   <p>Count: <%= @result.entities.count %></p>
+  <hr>
   <p>Strategy: <%= @result.scan_result.name if @result.scan_result %></p>
+  <p>Filter Strings: <%= @result.scan_result.filter_strings if @result.scan_result %></p>
+  <p>Scan Result: <%=@result.scan_result.inspect %> </p>
 
 
   Export:
