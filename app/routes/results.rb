@@ -78,10 +78,11 @@ class IntrigueApp < Sinatra::Base
       id = params[:id]
       if id == "all"
         Intrigue::Model::TaskResult.scope_by_project(@project_name).each {|x| x.cancel! }
+        redirect "/#{@project_name}/results"
       else
         Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id]).cancel!
+        redirect "/#{@project_name}/results/#{params[:id]}"
       end
-      redirect "/#{@project_name}/results"
     end
 
     # Helper to construct the request to the API when the application is used interactively
