@@ -73,14 +73,31 @@ class IntrigueApp < Sinatra::Base
   out
   end
 
-   get '/:project/entities/:id' do
-     @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
-     return "No such entity in this project" unless @entity
+  ###                      ###
+  ### Per-Project Entities ###
+  ###                      ###
 
-     @task_classes = Intrigue::TaskFactory.list
+  get "/:project/entities/:id.csv" do
+    content_type 'text/plain'
+    @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id].to_i)
+    @entity.export_csv
+  end
 
-     erb :'entities/detail'
-    end
+  get "/:project/entities/:id.json" do
+    content_type 'application/json'
+    @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id].to_i)
+    @entity.export_json
+  end
+
+
+ get '/:project/entities/:id' do
+   @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
+   return "No such entity in this project" unless @entity
+
+   @task_classes = Intrigue::TaskFactory.list
+
+   erb :'entities/detail'
+  end
 
     get '/:project/entities/:id/delete' do
       entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
@@ -147,34 +164,19 @@ class IntrigueApp < Sinatra::Base
     end
 
     ###                      ###
-    ### Per-Project Entities ###
-    ###                      ###
-
-    get '/:project/entities/:id.csv' do
-      content_type 'text/plain'
-      @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
-      @entity.export_csv
-    end
-
-    get '/:project/entities/:id.json' do
-      content_type 'application/json'
-      @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
-      @entity.export_json
-    end
-
-    ###                      ###
     ### Analysis Views       ###
     ###                      ###
 
-    get '/:project/analysis/websites' do
+    get '/:project/analysis/domains' do
+      @domains = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false, :type => "Intrigue::Entity::DnsRecord").sort_by{|x| x.name }
+      @tlds = @domains.map { |d| d.name.split(".").last(2).join(".") }.group_by{|e| e}.map{|k, v| [k, v.length]}.sort_by{|k,v| v}.reverse.to_h
 
-      selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false, :type => "Intrigue::Entity::Uri").order(:name)
+      erb :'analysis/domains'
+    end
 
-      ## Filter by type
-      alias_group_ids = selected_entities.map{|x| x.alias_group_id }.uniq
-      @alias_groups = Intrigue::Model::AliasGroup.where(:id => alias_group_ids)
-
-      erb :'analysis/websites'
+    get '/:project/analysis/services' do
+      @services = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false, :type => "Intrigue::Entity::NetworkService").sort_by{|x| x.name }
+      erb :'analysis/services'
     end
 
     get '/:project/analysis/systems' do
@@ -215,5 +217,15 @@ class IntrigueApp < Sinatra::Base
       erb :'analysis/systems'
     end
 
+
+    get '/:project/analysis/websites' do
+      selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false, :type => "Intrigue::Entity::Uri").order(:name)
+
+      ## Filter by type
+      alias_group_ids = selected_entities.map{|x| x.alias_group_id }.uniq
+      @alias_groups = Intrigue::Model::AliasGroup.where(:id => alias_group_ids)
+
+      erb :'analysis/websites'
+    end
 
 end
