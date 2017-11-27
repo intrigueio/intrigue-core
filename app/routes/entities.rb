@@ -10,7 +10,7 @@ class IntrigueApp < Sinatra::Base
 
     #if @correlate # Handle entity coorelation
 
-     selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false).order(:name)
+     selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
 
      ## Filter if we have a type
      selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
@@ -28,24 +28,6 @@ class IntrigueApp < Sinatra::Base
      erb :'entities/index'
    end
 
-=begin
-    else # normal flow, uncorrelated
-
-      selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false).order(:name)
-
-      ## Filter if we have a type
-      selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
-
-      # Perform a simple tokenized search
-      selected_entities = _tokenized_search(@search_string, selected_entities) if @search_string
-
-      ## paginate
-      @entity_count = selected_entities.count
-      @entities = selected_entities.extension(:pagination).paginate(@page,@result_count)
-      erb :'entities/index'
-    end
-=end
-
 
   get '/:project/entities.csv' do
     content_type 'text/csv'
@@ -55,7 +37,7 @@ class IntrigueApp < Sinatra::Base
     params[:correlate] == "on" ? @correlate = true : @correlate = false
     (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
 
-    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false).order(:name)
+    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
 
     ## Filter if we have a type
     selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
@@ -169,19 +151,19 @@ class IntrigueApp < Sinatra::Base
 
     get '/:project/analysis/domains' do
       length = params["length"].to_i
-      @domains = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false, :type => "Intrigue::Entity::DnsRecord").sort_by{|x| x.name }
+      @domains = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::DnsRecord").sort_by{|x| x.name }
       @tlds = @domains.map { |d| d.name.split(".").last(length).join(".") }.group_by{|e| e}.map{|k, v| [k, v.length]}.sort_by{|k,v| v}.reverse.to_h
 
       erb :'analysis/domains'
     end
 
     get '/:project/analysis/services' do
-      @services = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false, :type => "Intrigue::Entity::NetworkService").sort_by{|x| x.name }
+      @services = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::NetworkService").sort_by{|x| x.name }
       erb :'analysis/services'
     end
 
     get '/:project/analysis/systems' do
-      @entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false, :type => "Intrigue::Entity::IpAddress").sort_by{|x| x.name }
+      @entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::IpAddress").sort_by{|x| x.name }
 
       # Grab providers & analyse
       @providers = {}
@@ -220,7 +202,7 @@ class IntrigueApp < Sinatra::Base
 
 
     get '/:project/analysis/websites' do
-      selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false, :type => "Intrigue::Entity::Uri").order(:name)
+      selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::Uri").order(:name)
 
       ## Filter by type
       alias_group_ids = selected_entities.map{|x| x.alias_group_id }.uniq

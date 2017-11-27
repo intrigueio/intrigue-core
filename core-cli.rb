@@ -97,9 +97,7 @@ class CoreCli < Thor
 
     # Get the response from the API
     puts "[+] Starting Task."
-    json = @api.start(project_name,task_name,entity_hash,depth,options_list,handler_list,strategy_name, auto_enrich)
-    pp json
-    puts "[+] Task Complete."
+    @api.start(project_name,task_name,entity_hash,depth,options_list,handler_list,strategy_name, auto_enrich)
   end
 
   ###

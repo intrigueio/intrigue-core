@@ -51,7 +51,7 @@ class AwsS3Brute < BaseTask
 
     # Iterate through all potential buckets
     all_potential_buckets.each do |pb|
-      pb.chomp!
+      bucket_name = pb.strip
 
       # Authenticated method
       if opt_use_creds
@@ -71,11 +71,11 @@ class AwsS3Brute < BaseTask
         Aws.config[:credentials] = Aws::Credentials.new(access_key_id, secret_access_key)
         s3 = Aws::S3::Client.new
         begin
-          resp = s3.list_objects(bucket: "#{pb.chomp!}", max_keys: 2)
+          resp = s3.list_objects(bucket: "#{bucket_name}", max_keys: 2)
           resp.contents.each do |object|
 
             # S3 URI
-            s3_uri = "https://#{pb}.s3.amazonaws.com"
+            s3_uri = "https://#{bucket_name}.s3.amazonaws.com"
             _log  "Got object... #{s3_uri}#{object.key}"
 
             _create_entity("AwsS3Bucket", {"name" => "#{s3_uri}", "uri" => "#{s3_uri}" })
@@ -89,7 +89,7 @@ class AwsS3Brute < BaseTask
         _log "Using unauthenticated method"
 
         # Check prefix
-        potential_bucket_uri = "https://#{pb.chomp!}.s3.amazonaws.com"
+        potential_bucket_uri = "https://#{bucket_name}.s3.amazonaws.com"
 
         begin
           result = http_get_body("#{potential_bucket_uri}?max-keys=1")
@@ -99,7 +99,8 @@ class AwsS3Brute < BaseTask
           if  ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
                 doc.xpath("//code").text =~ /InvalidBucketName/ ||
                 doc.xpath("//code").text =~ /AllAccessDisabled/ ||
-                doc.xpath("//code").text =~ /AccessDenied/ )
+                doc.xpath("//code").text =~ /AccessDenied/
+                )
             _log_error "Received: #{doc.xpath("//code").text}"
           else
             _log_good "Received: #{doc.xpath("//code").text}"
@@ -108,8 +109,6 @@ class AwsS3Brute < BaseTask
 
         end
 
-        # Check postfix
-        potential_bucket_uri = "https://s3.amazonaws.com/#{pb}"
         begin
           result = http_get_body("#{potential_bucket_uri}?max-keys=1")
           next unless result
@@ -120,7 +119,7 @@ class AwsS3Brute < BaseTask
                 doc.xpath("//code").text =~ /AccessDenied/ )
             _log_error "Received: #{doc.xpath("//code").text}"
           else
-            _log_good "Received: #{doc.xpath("//code").text}"
+            _log_good "Success on #{potential_bucket_uri}!"
             _create_entity("AwsS3Bucket", {"name" => "#{potential_bucket_uri}", "uri" => "#{potential_bucket_uri}" })
           end
 
