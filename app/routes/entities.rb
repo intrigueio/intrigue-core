@@ -168,8 +168,9 @@ class IntrigueApp < Sinatra::Base
     ###                      ###
 
     get '/:project/analysis/domains' do
+      length = params["length"].to_i
       @domains = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false, :type => "Intrigue::Entity::DnsRecord").sort_by{|x| x.name }
-      @tlds = @domains.map { |d| d.name.split(".").last(2).join(".") }.group_by{|e| e}.map{|k, v| [k, v.length]}.sort_by{|k,v| v}.reverse.to_h
+      @tlds = @domains.map { |d| d.name.split(".").last(length).join(".") }.group_by{|e| e}.map{|k, v| [k, v.length]}.sort_by{|k,v| v}.reverse.to_h
 
       erb :'analysis/domains'
     end
