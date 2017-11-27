@@ -19,8 +19,7 @@ RUN sudo apt-get update
 RUN sudo apt-get -y install postgresql-9.6 postgresql-contrib-9.6
 
 # Install phantomjs & imagemagick
-RUN apt-get -y install build-essential chrpath libssl-dev libxft-dev libfreetype6-dev \
-  libfreetype6 libfontconfig1-dev libfontconfig1 imagemagick
+RUN apt-get -y install build-essential chrpath libssl-dev libxft-dev libfreetype6-dev libfreetype6 libfontconfig1-dev libfontconfig1 imagemagick
 RUN sudo sh -c 'wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2'
 RUN sudo sh -c 'tar xvjf phantomjs-2.1.1-linux-x86_64.tar.bz2 -C /usr/local/share/'
 RUN sudo sh -c 'ln -s /usr/local/share/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/'

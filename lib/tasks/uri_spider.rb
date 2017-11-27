@@ -107,13 +107,13 @@ class UriSpider < BaseTask
                     content_type == "application/x-javascript" or
                     content_type == "image/jpeg" or
                     content_type == "image/png" or
-                    content_type == "image/x-icon" or
                     content_type == "image/vnd.microsoft.icon" or
+                    content_type == "image/x-icon" or
                     content_type == "text/css" or
                     content_type == "text/html" or
                     content_type == "text/javascript" or
                     content_type == "text/xml"  )
-                    
+
             _log_good "Parsing file of type #{content_type} @ #{dest}"
             download_and_extract_metadata "#{dest}"
           end
