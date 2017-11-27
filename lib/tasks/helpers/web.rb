@@ -160,17 +160,17 @@ module Task
          ### ALLOW DIFFERENT VERBS HERE
          if method == :get
            request = Net::HTTP::Get.new(uri)
+         elsif method == :head
+           request = Net::HTTP::Head.new(uri)
          elsif method == :propfind
            request = Net::HTTP::Propfind.new(uri.request_uri)
-           # Set your body (data)
-           request.body = "Here's the body."
-           # Set your headers: one header per line.
-           request["Depth"] = "1"
+           request.body = "Here's the body." # Set your body (data)
+           request["Depth"] = "1" # Set your headers: one header per line.
          elsif method == :options
            request = Net::HTTP::Options.new(uri.request_uri)
          elsif method == :trace
            request = Net::HTTP::Trace.new(uri.request_uri)
-           request.body = "intrigueftw"
+           request.body = "intrigue"
          end
          ### END VERBS
 

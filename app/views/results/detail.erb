@@ -39,12 +39,11 @@ getEntities(<%=@result.id%>);
   <p>Elapsed (s): <%= @elapsed_time %> </p>
   <p>Job ID: <%= @result.job_id %> </p>
   <p>Handlers: <%= @result.handlers %></p>
-  <p>Options: <%= @result.options %> </p>
   <p>Depth: <%=@result.depth %> </p>
   <p>Entity: <a href="/<%=@project_name%>/entities/<%=@result.base_entity.id if @result.base_entity %>"><%= h "#{@result.base_entity}" %></a></p>
   <p>Cancelled: <%= @result.cancelled %> (<a href="<%=request.path%>/cancel">Cancel</a>)</p>
   <p>Complete: <%= @result.complete %></p>
-  <p>Count: <%= @result.entities.count %></p>
+  <p>Entity Count: <%= @result.entities.count %></p>
   <p>Strategy: <%= @result.scan_result.strategy if @result.scan_result %></p>
   <p>Max Depth: <%=@result.scan_result.depth if @result.scan_result %> </p>
   <p>Filter Strings: <%= @result.scan_result.filter_strings if @result.scan_result %></p>

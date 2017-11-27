@@ -104,7 +104,7 @@ module Parse
     parse_email_addresses_from_content(source_uri, content)
     parse_dns_records_from_content(source_uri, content)
     parse_phone_numbers_from_content(source_uri, content)
-    parse_uris_from_content(source_uri, content)
+    #parse_uris_from_content(source_uri, content)
   end
 
   def parse_email_addresses_from_content(source_uri, content)
@@ -120,7 +120,7 @@ module Parse
     # Scan for email addresses
     addrs = content.scan(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,8}/)
     addrs.each do |addr|
-      x = _create_entity("EmailAddress", {"name" => addr, "extracted_from" => source_uri}) unless addr =~ /.png$|.jpg$|.gif$|.bmp$|.jpeg$/
+      x = _create_entity("EmailAddress", {"name" => addr, "origin" => source_uri}) unless addr =~ /.png$|.jpg$|.gif$|.bmp$|.jpeg$/
     end
 
   end
@@ -138,7 +138,7 @@ module Parse
     # Scan for dns records
     dns_records = content.scan(/^[A-Za-z0-9]+\.[A-Za-z0-9]+\.[a-zA-Z]{2,6}$/)
     dns_records.each do |dns_record|
-      x = _create_entity("DnsRecord", {"name" => dns_record, "extracted_from" => source_uri})
+      x = _create_entity("DnsRecord", {"name" => dns_record, "origin" => source_uri})
     end
   end
 
@@ -155,7 +155,7 @@ module Parse
     # Scan for phone numbers
     phone_numbers = content.scan(/((\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4})/)
     phone_numbers.each do |phone_number|
-      x = _create_entity("PhoneNumber", { "name" => "#{phone_number[0]}", "extracted_from" => source_uri})
+      x = _create_entity("PhoneNumber", { "name" => "#{phone_number[0]}", "origin" => source_uri})
     end
   end
 
@@ -172,7 +172,7 @@ module Parse
     # Scan for uris
     urls = content.scan(/https?:\/\/[\S]+/)
     urls.each do |url|
-      _create_entity("Uri", {"name" => url, "uri" => url, "extracted_from" => source_uri })
+      _create_entity("Uri", {"name" => url, "uri" => url, "origin" => source_uri })
     end
   end
 
@@ -188,26 +188,26 @@ module Parse
       # Parse the file
       yomu = Yomu.new file
 
-      # Handle PDF
-      if yomu.metadata["Content-Type"] == "application/pdf"
-        _create_entity "Person",
-          { "name" => yomu.metadata["Author"], "extracted_from" => uri } if yomu.metadata["Author"]
-        _create_entity "SoftwarePackage", { "name" => "#{yomu.metadata["xmp:CreatorTool"]} / #{yomu.metadata["producer"] }",
-          "creator" => "#{yomu.metadata["xmp:CreatorTool"]}",
-          "producer" => "#{yomu.metadata["producer"]}",
-          "extracted_from" => uri } if (yomu.metadata["producer"] || yomu.metadata["xmp:CreatorTool"])
-      elsif yomu.metadata["Content-Type"] == "audio/mpeg" # Handle MP3/4
-        _create_entity "Person", {"name" => yomu.metadata["meta:author"], "extracted_from" => uri }
-        _create_entity "Person", {"name" => yomu.metadata["creator"], "extracted_from" => uri }
-        _create_entity "Person", {"name" => yomu.metadata["xmpDM:artist"], "extracted_from" => uri }
-      else # Everything else!
-        _create_entity "File", {"name" => "#{uri}", "uri" => "#{uri}", "raw_metadata" => yomu.metadata.to_json, "extracted_from" => uri }.merge(yomu.metadata)
+      # Handle audio files
+      if yomu.metadata["Content-Type"] == "audio/mpeg" # Handle MP3/4
+        _create_entity "Person", {"name" => yomu.metadata["meta:author"], "origin" => uri }
+        _create_entity "Person", {"name" => yomu.metadata["creator"], "origin" => uri }
+        _create_entity "Person", {"name" => yomu.metadata["xmpDM:artist"], "origin" => uri }
       end
+
+      # create a uri for everything
+      _create_entity "Uri", {
+          "content_type" => file.content_type,
+          "name" => "#{uri}",
+          "uri" => "#{uri}",
+          "metadata" => "#{yomu.metadata.to_json}" }
 
       # Look for entities in the text of the entity
       parse_entities_from_content(uri,yomu.text) if extract_content
 
     # Don't die if we lose our connection to the tika server
+  rescue RuntimeError => e
+      @task_result.logger.log "ERROR Unable to download file: #{e}"
     rescue EOFError => e
       @task_result.logger.log "ERROR Unable to download file: #{e}"
     rescue JSON::ParserError => e

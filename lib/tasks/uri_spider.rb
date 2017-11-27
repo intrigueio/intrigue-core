@@ -21,10 +21,11 @@ class UriSpider < BaseTask
       :allowed_options => [
         {:name => "limit", :type => "Integer", :regex => "integer", :default => 100 },
         {:name => "max_depth", :type => "Integer", :regex => "integer", :default => 10 },
-        {:name => "extract_dns_records", :type => "Boolean", :regex => "boolean", :default => false },
-        {:name => "extract_dns_record_pattern", :type => "String", :regex => "alpha_numeric_list", :default => "*" },
-        {:name => "extract_email_addresses", :type => "Boolean", :regex => "boolean", :default => false },
-        {:name => "extract_phone_numbers", :type => "Boolean", :regex => "boolean", :default => false },
+        {:name => "spider_whitelist", :type => "String", :regex => "alpha_numeric_list", :default => "(current domain)" },
+        {:name => "extract_dns_records", :type => "Boolean", :regex => "boolean", :default => true },
+        {:name => "extract_dns_record_pattern", :type => "String", :regex => "alpha_numeric_list", :default => "(current domain)" },
+        {:name => "extract_email_addresses", :type => "Boolean", :regex => "boolean", :default => true },
+        {:name => "extract_phone_numbers", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "parse_file_metadata", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "extract_uris", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "user_agent",  :type => "String",  :regex => "alpha_numeric", :default => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36"}
@@ -40,11 +41,14 @@ class UriSpider < BaseTask
     uri_string = _get_entity_name
 
     # Scanner options
+    opt_limit = _get_option "limit"
+    opt_max_depth = _get_option "max_depth"
+    opt_spider_whitelist = _get_option "spider_whitelist"
     @opt_user_agent = _get_option "user_agent"
-    @opt_max_depth = _get_option "max_depth"
-    @opt_limit = _get_option "page_limit"
+
+    # Parsing options
     @opt_extract_dns_records = _get_option "extract_dns_records"
-    @opt_extract_dns_record_pattern = _get_option("extract_dns_record_pattern").split(",") # only extract entities withthe following patterns
+    @opt_extract_dns_record_pattern = _get_option("extract_dns_record_pattern").split(",") # only extract entities withthe following pattern
     @opt_extract_email_addresses = _get_option "extract_email_addresses"
     @opt_extract_phone_numbers = _get_option "extract_phone_numbers"
     @opt_extract_uris = _get_option "extract_uris"
@@ -57,9 +61,17 @@ class UriSpider < BaseTask
       return
     end
 
+    # create a default extraction pattern, default to current host
+    @opt_extract_dns_record_pattern = ["#{uri.host}"] if @opt_extract_dns_record_pattern == ["(current domain)"]
+
+    # Create a list of whitelist spider regexes from the opt_spider_whitelist options
+    whitelist_regexes = opt_spider_whitelist.gsub("(current domain)","#{uri.host}").split(",").map{|x| Regexp.new("#{x}") }
+
+    # Set the spider options. Allow the user to configure a set of regexes we can use to spider
     options = {
       :limit => @opt_limit || 100,
-      :max_depth => @opt_max_depth || 10
+      :max_depth => @opt_max_depth || 10,
+      :hosts => [/#{uri.host}/, /#{uri.host.split(".").last(2).join(".")}/].concat(whitelist_regexes)
     }
 
     crawl_and_extract(uri, options)
@@ -68,36 +80,62 @@ class UriSpider < BaseTask
 
   def crawl_and_extract(uri, options)
     _log "Crawling: #{uri}"
+    _log "Options: #{options}"
+
     dns_records = []
 
-    Spidr.site(uri, options) do |spider|
+    Spidr.start_at(uri, options) do |spider|
 
       # Handle redirects
       spider.every_redirect_page do |page|
         next unless page.location
-
         spider.visit_hosts << page.to_absolute(page.location).host
         spider.enqueue page.to_absolute(page.location)
       end
 
+      # Request every link & check content_type. Parse if interesting
+      spider.every_link do |origin,dest|
+        if @opt_parse_file_metadata
+          response = http_request(:head, "#{dest}")
+          next unless response
+
+          content_type = response.content_type
+          #_log "Processing link of type: #{content_type} @ #{dest}"
+
+          unless (  content_type == "application/javascript" or
+                    content_type == "application/rss+xml" or
+                    content_type == "application/x-javascript" or
+                    content_type == "image/jpeg" or
+                    content_type == "image/png" or
+                    content_type == "image/x-icon" or
+                    content_type == "image/vnd.microsoft.icon" or
+                    content_type == "text/css" or
+                    content_type == "text/html" or
+                    content_type == "text/javascript" or
+                    content_type == "text/xml"  )
+                    
+            _log_good "Parsing file of type #{content_type} @ #{dest}"
+            download_and_extract_metadata "#{dest}"
+          end
+        end
+      end
+
+      # Parse every page
       spider.every_page do |page|
         _log "Got... #{page.url}"
 
         if @opt_extract_uris
-          _create_entity("Uri", { "name" => "#{page.url}", "uri" => "#{page.url}", "spidered" => true })
+          _create_entity("Uri", { "name" => "#{page.url}", "uri" => "#{page.url}" })
         end
 
         # If we don't have a body, we can't do anything here.
         next unless page.body
 
         # Extract the body
-        encoded_page_body = Nokogiri::HTML.parse(page.body.to_s.encode('UTF-8', {
+        encoded_page_body = page.body.to_s.encode('UTF-8', {
           :invalid => :replace,
           :undef => :replace,
-          :replace => '?'})).to_s.encode('UTF-8', {
-            :invalid => :replace,
-            :undef => :replace,
-            :replace => '?'})
+          :replace => '?'})
 
         # Create an entity for this host
         if @opt_extract_dns_records
@@ -121,7 +159,7 @@ class UriSpider < BaseTask
                 # if we got a pass, check to make sure we don't already have it, and add it
                 if pattern_allowed
                   unless dns_records.include?(host)
-                    _create_entity("DnsRecord", "name" => host, "extracted_from" => page.url)
+                    _create_entity("DnsRecord", "name" => host, "origin" => page.url)
                     dns_records << host
                   end
                 end
@@ -133,30 +171,9 @@ class UriSpider < BaseTask
           end
         end
 
-        if @opt_parse_file_metadata
-
-          # Get the filetype for this page
-          filetype = "#{page.url.to_s.split(".").last.gsub("/","")}".upcase
-
-          # A list of all filetypes we're capable of doing something with
-          interesting_types = [
-            "BIN","DOC","DOCX","EPUB","EXE","JPG","JPEG","ICA","INDD",
-            "MP3","MP4","ODG","ODP","ODS","ODT","PDF","PPS","PPSX","PPT","PPTX","PUB",
-            "RDP","SVG","SVGZ","SXC","SXI","SXW","TIF","TIFF", "TXT","WPD","XLS","XLSX"]
-
-          if interesting_types.include? filetype
-            _log_good "interesting file: #{page.url}"
-            download_and_extract_metadata "#{page.url}"
-          else
-            parse_phone_numbers_from_content("#{page.url}", encoded_page_body) if @opt_extract_phone_numbers
-            parse_email_addresses_from_content("#{page.url}", encoded_page_body) if @opt_extract_email_addresses
-          end
-
-        else
-          _log "Parsing as a regular file"
-          parse_phone_numbers_from_content("#{page.url}", encoded_page_body) if @opt_extract_phone_numbers
-          parse_email_addresses_from_content("#{page.url}", encoded_page_body) if @opt_extract_email_addresses
-        end
+        _log "Parsing as a regular file!"
+        parse_phone_numbers_from_content("#{page.url}", encoded_page_body) if @opt_extract_phone_numbers
+        parse_email_addresses_from_content("#{page.url}", encoded_page_body) if @opt_extract_email_addresses
 
         encoded_page_body = nil
 
