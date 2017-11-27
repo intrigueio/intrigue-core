@@ -22,6 +22,7 @@ module Strategy
         #old_task_result.logger.log "Existing run of #{task_name} on #{entity} with options #{options} already scheduled at depth #{existing_task_result.depth}. See: #{existing_task_result.id}."
         return nil
       else
+
         new_task_result = start_task("task_autoscheduled", project,
                             old_task_result.scan_result,
                             task_name,

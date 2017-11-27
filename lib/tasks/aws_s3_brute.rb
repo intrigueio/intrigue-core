@@ -96,11 +96,16 @@ class AwsS3Brute < BaseTask
           next unless result
 
           doc = Nokogiri::HTML(result)
-          next if ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
-                    doc.xpath("//code").text =~ /InvalidBucketName/ ||
-                    doc.xpath("//code").text =~ /AllAccessDisabled/ ||
-                    doc.xpath("//code").text =~ /AccessDenied/)
-          _create_entity("AwsS3Bucket", {"name" => "#{potential_bucket_uri}", "uri" => "#{potential_bucket_uri}" })
+          if  ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
+                doc.xpath("//code").text =~ /InvalidBucketName/ ||
+                doc.xpath("//code").text =~ /AllAccessDisabled/ ||
+                doc.xpath("//code").text =~ /AccessDenied/ )
+            _log_error "Received: #{doc.xpath("//code").text}"
+          else
+            _log_good "Received: #{doc.xpath("//code").text}"
+            _create_entity("AwsS3Bucket", {"name" => "#{potential_bucket_uri}", "uri" => "#{potential_bucket_uri}" })
+          end
+
         end
 
         # Check postfix
@@ -109,12 +114,16 @@ class AwsS3Brute < BaseTask
           result = http_get_body("#{potential_bucket_uri}?max-keys=1")
           next unless result
 
-          doc = Nokogiri::HTML(result)
-          next if ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
-                    doc.xpath("//code").text =~ /InvalidBucketName/ ||
-                    doc.xpath("//code").text =~ /AllAccessDisabled/ ||
-                    doc.xpath("//code").text =~ /AccessDenied/)
-          _create_entity("AwsS3Bucket", {"name" => "#{potential_bucket_uri}", "uri" => "#{potential_bucket_uri}" })
+          if  ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
+                doc.xpath("//code").text =~ /InvalidBucketName/ ||
+                doc.xpath("//code").text =~ /AllAccessDisabled/ ||
+                doc.xpath("//code").text =~ /AccessDenied/ )
+            _log_error "Received: #{doc.xpath("//code").text}"
+          else
+            _log_good "Received: #{doc.xpath("//code").text}"
+            _create_entity("AwsS3Bucket", {"name" => "#{potential_bucket_uri}", "uri" => "#{potential_bucket_uri}" })
+          end
+          
         end
 
       end # end if

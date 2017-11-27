@@ -26,7 +26,7 @@ module Strategy
 
         ### AWS_S3_brute the domain name and the base name
         start_recursive_task(task_result,"aws_s3_brute",entity,[
-          {"name" => "additional_buckets", "value" => "#{base_name}"}
+          {"name" => "additional_buckets", "value" => "#{base_name}, #{entity.name}"}
         ])
 
         # Sublister API
@@ -94,13 +94,19 @@ module Strategy
           task_result.log "Cowardly refusing to expand this netblock.. it doesn't look like ours."
         end
 
-      #elsif entity.type_string == "Person"
+      elsif entity.type_string == "Person"
       #  # Search, only snag the top result
       #  start_recursive_task(task_result,"search_bing",entity,[{"name"=> "max_results", "value" => 1}])
 
-      #elsif entity.type_string == "String"
-      #  # Search, only snag the top result
-      #  start_recursive_task(task_result,"search_bing",entity,[{"name"=> "max_results", "value" => 1}])
+      ### AWS_S3_brute the name
+      start_recursive_task(task_result,"aws_s3_brute",entity)
+
+      elsif entity.type_string == "String"
+        # Search, only snag the top result
+        #start_recursive_task(task_result,"search_bing",entity,[{"name"=> "max_results", "value" => 1}])
+
+        ### AWS_S3_brute the name
+        start_recursive_task(task_result,"aws_s3_brute",entity)
 
       elsif entity.type_string == "Uri"
 
