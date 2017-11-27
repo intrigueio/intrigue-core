@@ -22,7 +22,7 @@ class EntityManager
   false
   end
 
-  def self.create_first_entity(project_name,type_string,name,details)
+  def self.create_first_entity(project_name,type_string,name,details,enrich=true)
 
     # Save the original and downcase our name
     details["hidden_original"] = name
@@ -71,7 +71,9 @@ class EntityManager
     return nil unless created_entity.validate_entity
 
     # START ENRICHMENT if we're allowed and unless this entity is prohibited (hidden)
-    enrich_entity(created_entity) unless created_entity.hidden
+    if enrich
+      enrich_entity(created_entity) unless created_entity.hidden
+    end
 
   created_entity
   end
