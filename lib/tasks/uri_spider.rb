@@ -103,10 +103,14 @@ class UriSpider < BaseTask
           #_log "Processing link of type: #{content_type} @ #{dest}"
 
           unless (  content_type == "application/javascript" or
+                    content_type == "application/json" or
+                    content_type == "application/atom+xml" or
                     content_type == "application/rss+xml" or
                     content_type == "application/x-javascript" or
+                    content_type == "application/xml" or
                     content_type == "image/jpeg" or
                     content_type == "image/png" or
+                    content_type == "image/svg+xml" or
                     content_type == "image/vnd.microsoft.icon" or
                     content_type == "image/x-icon" or
                     content_type == "text/css" or
