@@ -21,13 +21,15 @@
     <p></p>
     <table class="sortable" border="1" width=100%>
       <colgroup>
-        <col style="width:20%">
+        <col style="width:60%">
+        <col style="width:40%">
       </colgroup>
       <tbody>
-      <tr><th>Name</th></tr>
+      <tr><th>Name</th><th>Count</th></tr>
       <% @tlds.each do |x,y| %>
         <tr>
-          <td><a href="<%="/#{@project_name}/entities?entity_types[]=Intrigue::Entity::DnsRecord&search_string=#{x}"%>"><%= x%>: <%= y %></a></td>
+          <td><a href="<%="/#{@project_name}/entities?entity_types[]=Intrigue::Entity::DnsRecord&search_string=#{x}"%>"><%= x%></a></td>
+          <td><%= y %></td>
         </tr>
       <% end %>
       </tbody>
