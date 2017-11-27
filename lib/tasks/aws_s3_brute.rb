@@ -71,7 +71,7 @@ class AwsS3Brute < BaseTask
         Aws.config[:credentials] = Aws::Credentials.new(access_key_id, secret_access_key)
         s3 = Aws::S3::Client.new
         begin
-          resp = s3.list_objects(bucket: "#{pb}", max_keys: 2)
+          resp = s3.list_objects(bucket: "#{pb.chomp!}", max_keys: 2)
           resp.contents.each do |object|
 
             # S3 URI
@@ -89,7 +89,7 @@ class AwsS3Brute < BaseTask
         _log "Using unauthenticated method"
 
         # Check prefix
-        potential_bucket_uri = "https://#{pb}.s3.amazonaws.com"
+        potential_bucket_uri = "https://#{pb.chomp!}.s3.amazonaws.com"
 
         begin
           result = http_get_body("#{potential_bucket_uri}?max-keys=1")
@@ -123,7 +123,7 @@ class AwsS3Brute < BaseTask
             _log_good "Received: #{doc.xpath("//code").text}"
             _create_entity("AwsS3Bucket", {"name" => "#{potential_bucket_uri}", "uri" => "#{potential_bucket_uri}" })
           end
-          
+
         end
 
       end # end if

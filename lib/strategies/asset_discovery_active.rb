@@ -26,7 +26,7 @@ module Strategy
 
         ### AWS_S3_brute the domain name and the base name
         start_recursive_task(task_result,"aws_s3_brute",entity,[
-          {"name" => "additional_buckets", "value" => "#{base_name}, #{entity.name}"}
+          {"name" => "additional_buckets", "value" => "#{base_name},#{entity.name}"}
         ])
 
         # Sublister API
