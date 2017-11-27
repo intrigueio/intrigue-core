@@ -1,0 +1,38 @@
+<div class="row">
+  <div id="aflkj" class="col-sm-6">
+    <script type="text/javascript" src="/js/sorttable.js"></script>
+    <style>
+    /* Sortable tables */
+    table.sortable {
+      width: 100%;
+      border: 0;
+      table-layout:fixed;
+      word-wrap:break-word;
+      border-collapse:collapse;
+    }
+
+    table.sortable thead {
+        background-color:#eee;
+        color:#666666;
+        font-weight: bold;
+        cursor: default;
+    }
+    </style>
+    <p></p>
+    <table class="sortable" border="1" width=100%>
+      <colgroup>
+        <col style="width:60%">
+        <col style="width:40%">
+      </colgroup>
+      <tbody>
+      <tr><th>Name</th><th>Count</th></tr>
+      <% @tlds.each do |x,y| %>
+        <tr>
+          <td><a href="<%="/#{@project_name}/entities?entity_types[]=Intrigue::Entity::DnsRecord&search_string=#{x}"%>"><%= x%></a></td>
+          <td><%= y %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

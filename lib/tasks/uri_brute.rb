@@ -61,10 +61,17 @@ class UriBrute < BaseTask
     ###
     ### Get the default case (a page that doesn't exist)
     ###
-    response = http_request :get,"#{uri}/#{rand(100000000)}"
+    response = http_request :get,"#{uri}/doesntexist-#{rand(100000000)}"
+    response2 = http_request :get,"#{uri}/defdoesntexist-#{rand(100000000)}"
 
-    unless response
-      _log_error "Unable to connect to site"
+    unless response && response2
+      _log_error "Unable to connect to site!"
+      return false
+    end
+
+    # check to make sure we don't just go down the rabbit hole
+    unless response.body == response2.body
+      _log_error "Cowardly refusing to test - different responses on our missing page checks"
       return false
     end
 
@@ -138,7 +145,12 @@ class UriBrute < BaseTask
     end
 
     # always check code
-    if (response.code == "400" || response.code == "401" || response.code == "403" || response.code == "404" || response.code == "500")
+    if (  response.code == "400" ||
+          response.code == "401" ||
+          response.code == "403" ||
+          response.code == "404" ||
+          response.code == "500" ||
+          response.code == "503")
       _log "Skipping #{request_uri} based on code: #{response.code}"
       return false
     end
@@ -157,11 +169,11 @@ class UriBrute < BaseTask
           _log "Got code: #{response.code}. Same as missing page code. Skipping"
         else
           _log "Flagging #{request_uri} because of response code #{response.code}!"
-          _create_entity "Uri",
-            "name" => request_uri,
-            "uri" => request_uri,
-            "response_code" => response.code,
-            "brute_response_body" => response.body
+          #_create_entity "Uri",
+          #  "name" => request_uri,
+          #  "uri" => request_uri,
+          #  "response_code" => response.code,
+          #  "brute_response_body" => response.body
       end
 
     ## Otherwise, let's guess based on the content. Does this page look

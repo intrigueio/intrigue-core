@@ -97,9 +97,7 @@ class CoreCli < Thor
 
     # Get the response from the API
     puts "[+] Starting Task."
-    json = @api.start(project_name,task_name,entity_hash,depth,options_list,handler_list,strategy_name, auto_enrich)
-    pp json
-    puts "[+] Task Complete."
+    @api.start(project_name,task_name,entity_hash,depth,options_list,handler_list,strategy_name, auto_enrich)
   end
 
   ###
@@ -140,7 +138,7 @@ class CoreCli < Thor
   end
 
   desc "local_load [Task] [File] [Depth] [Option1=Value1#...#...] [Handlers] [Strategy]", "Load entities from a file and runs a task on each in a new project."
-  def local_load(task_name,filename,depth=1,options_string=nil,handler_string=nil, strategy_name="network_enumeration")
+  def local_load(task_name,filename,depth=1,options_string=nil,handler_string=nil, strategy_name="asset_discovery_active")
 
     # Load in the main core file for direct access to TaskFactory and the Tasks
     # This makes this super speedy.
@@ -168,27 +166,14 @@ class CoreCli < Thor
         "options" => options,
       }
 
-      # Check if the entity already exists, and if not, create a new entity
-      e = Intrigue::Model::Entity.scope_by_project_and_type(project_name, entity["type"]).first(:name => entity["details"]["name"])
+      type_class = Intrigue::EntityManager.resolve_type entity["type"]
+      return unless type_class
 
-      unless e
-        # Check to make sure we have a valid entity
-        type_class = Intrigue::EntityManager.resolve_type entity["type"]
-        return unless type_class
+      entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"], false)
 
-        Intrigue::EntityManager.create_first_entity({
-          :type => type_class.to_s,
-          :name => entity["details"]["name"],
-          :details => entity["details"],
-          :details_raw => entity["details"],
-          :project => p
-        })
-        Intrigue::EntityManager.enrich_entity entity
-      end
+      task_result = start_task("task", p, nil, task_name, entity, depth, options, handlers, strategy_name)
 
-      task_result = start_task("task", p, nil, task_name, e, depth, options, handlers, strategy_name)
-
-      puts "Created task #{task_result.inspect} for entity #{e}"
+      puts "Created task #{task_result.inspect} for entity #{entity}"
     end
   end
 

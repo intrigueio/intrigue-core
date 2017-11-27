@@ -1,49 +1,33 @@
 class IntrigueApp < Sinatra::Base
 
-    get '/:project/entities' do
-      @result_count = 100
+  get '/:project/entities' do
+    @result_count = 100
 
-      params[:search_string] == "" ? @search_string = nil : @search_string = params[:search_string]
-      params[:entity_types] == "" ? @entity_types = nil : @entity_types = params[:entity_types]
-      params[:correlate] == "on" ? @correlate = true : @correlate = false
-      (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
+    params[:search_string] == "" ? @search_string = nil : @search_string = params[:search_string]
+    params[:entity_types] == "" ? @entity_types = nil : @entity_types = params[:entity_types]
+    params[:correlate] == "on" ? @correlate = true : @correlate = false
+    (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
 
-      if @correlate # Handle entity coorelation
+    #if @correlate # Handle entity coorelation
 
-        if @entity_types
-          selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name).where(:type => @entity_types)
-        else
-          selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
-        end
-        
-       selected_entities = _tokenized_search(@search_string, selected_entities)
+     selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
 
-       alias_group_ids = selected_entities.map{|x| x.alias_group_id }.uniq
-       alias_groups = Intrigue::Model::AliasGroup.where({:id => alias_group_ids })
+     ## Filter if we have a type
+     selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
 
-       @alias_group_count = alias_groups.count
-       @alias_groups = alias_groups.extension(:pagination).paginate(@page,@result_count)
+     selected_entities = _tokenized_search(@search_string, selected_entities)
 
-       erb :'entities/index_meta'
+     alias_group_ids = selected_entities.map{|x| x.alias_group_id }.uniq
+     alias_groups = Intrigue::Model::AliasGroup.where({:id => alias_group_ids })
 
-      else # normal flow, uncorrelated
+     @alias_groups = alias_groups.extension(:pagination).paginate(@page,@result_count)
 
-        if @entity_types
-          selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name).where(:type => @entity_types)
-        else
-          selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
-        end
+     @group_count = alias_groups.count
+     @entity_count = selected_entities.count
 
-        # Perform a simple tokenized search
-        selected_entities = _tokenized_search(@search_string, selected_entities) if @search_string
+     erb :'entities/index'
+   end
 
-        ## paginate
-        @entity_count = selected_entities.count
-        @entities = selected_entities.extension(:pagination).paginate(@page,@result_count)
-        erb :'entities/index'
-      end
-
-    end
 
   get '/:project/entities.csv' do
     content_type 'text/csv'
@@ -53,7 +37,7 @@ class IntrigueApp < Sinatra::Base
     params[:correlate] == "on" ? @correlate = true : @correlate = false
     (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
 
-    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false).order(:name)
+    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
 
     ## Filter if we have a type
     selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
@@ -71,14 +55,31 @@ class IntrigueApp < Sinatra::Base
   out
   end
 
-   get '/:project/entities/:id' do
-     @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
-     return "No such entity in this project" unless @entity
+  ###                      ###
+  ### Per-Project Entities ###
+  ###                      ###
 
-     @task_classes = Intrigue::TaskFactory.list
+  get "/:project/entities/:id.csv" do
+    content_type 'text/plain'
+    @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id].to_i)
+    @entity.export_csv
+  end
 
-     erb :'entities/detail'
-    end
+  get "/:project/entities/:id.json" do
+    content_type 'application/json'
+    @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id].to_i)
+    @entity.export_json
+  end
+
+
+ get '/:project/entities/:id' do
+   @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
+   return "No such entity in this project" unless @entity
+
+   @task_classes = Intrigue::TaskFactory.list
+
+   erb :'entities/detail'
+  end
 
     get '/:project/entities/:id/delete' do
       entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
@@ -145,28 +146,69 @@ class IntrigueApp < Sinatra::Base
     end
 
     ###                      ###
-    ### Per-Project Entities ###
-    ###                      ###
-
-    get '/:project/entities/:id.csv' do
-      content_type 'text/plain'
-      @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
-      @entity.export_csv
-    end
-
-    get '/:project/entities/:id.json' do
-      content_type 'application/json'
-      @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
-      @entity.export_json
-    end
-
-    ###                      ###
     ### Analysis Views       ###
     ###                      ###
 
-    get '/:project/analysis/screenshots' do
-      @uris = Intrigue::Entity::Uri.scope_by_project(@project_name).all
-      erb :'analysis/screenshots'
+    get '/:project/analysis/domains' do
+      length = params["length"].to_i
+      @domains = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::DnsRecord").sort_by{|x| x.name }
+      @tlds = @domains.map { |d| d.name.split(".").last(length).join(".") }.group_by{|e| e}.map{|k, v| [k, v.length]}.sort_by{|k,v| v}.reverse.to_h
+
+      erb :'analysis/domains'
+    end
+
+    get '/:project/analysis/services' do
+      @services = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::NetworkService").sort_by{|x| x.name }
+      erb :'analysis/services'
+    end
+
+    get '/:project/analysis/systems' do
+      @entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::IpAddress").sort_by{|x| x.name }
+
+      # Grab providers & analyse
+      @providers = {}
+      @entities.each do |e|
+        pname = e.get_detail("provider") || "None"
+
+        pname = "None" if pname.length == 0
+
+        if @providers[pname]
+          @providers[pname] << e
+        else
+          @providers[pname] = [e]
+        end
+      end
+
+      # Grab providers & analyse
+      @os = {}
+      @entities.each do |e|
+        # Get the key for the hash
+        if e.get_detail("os").to_a.first
+          os_string = e.get_detail("os").to_a.first.match(/(.*)(\ \(.*\))/)[1]
+        else
+          os_string = "None"
+        end
+
+        # Set the value
+        if @os[os_string]
+          @os[os_string] << e
+        else
+          @os[os_string] = [e]
+        end
+      end
+
+      erb :'analysis/systems'
+    end
+
+
+    get '/:project/analysis/websites' do
+      selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::Uri").order(:name)
+
+      ## Filter by type
+      alias_group_ids = selected_entities.map{|x| x.alias_group_id }.uniq
+      @alias_groups = Intrigue::Model::AliasGroup.where(:id => alias_group_ids)
+
+      erb :'analysis/websites'
     end
 
 end

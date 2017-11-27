@@ -44,15 +44,34 @@ class SearchCrt < BaseTask
           crt_cert_uri = "https://crt.sh/"
           raw_html = http_get_body("#{crt_cert_uri}#{cert_id}&opt=nometadata")
 
-          next if raw_html =~ /cloudflare/i # run and hide
+          # run and hide
+          if (
+               raw_html =~ /acquia/i              ||
+               raw_html =~ /cloudflare/i          ||
+               raw_html =~ /distil/i              ||
+               raw_html =~ /fastly/i              ||
+               raw_html =~ /incapsula.com/i       ||
+               raw_html =~ /imperva/i             ||
+               raw_html =~ /jive/i                ||
+               raw_html =~ /lithium/i             ||
+               raw_html =~ /wpengine/i            ||
+               raw_html =~ /cdnetworks.com/i)
+            _log_error "Invalid keyword in response, failing."
+            return
+          end
 
           raw_html.scan(/DNS:(.*?)<BR>/).each do |domains|
             domains.each do |dname|
               _log "Found domain: #{dname}"
-
+              
               # If we have an extract pattern set, respect it
               if opt_extract_pattern
                 next unless dname =~ /#{opt_extract_pattern}/
+              end
+
+              # Remove any leading wildcards so we get a sensible domain name
+              if dname[0..1] == "*."
+                dname = dname[2..-1]
               end
 
               _create_entity("DnsRecord", "name"=> dname )

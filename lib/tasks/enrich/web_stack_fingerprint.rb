@@ -164,9 +164,19 @@ class WebStackFingerprint < BaseTask
           }
         ]},
         {
-          :uri => "#{uri}/error",
+          :uri => "#{uri}/thispagedoesnotexist-#{rand(10000000)}",
           :checklist => [{
-            :name => "Spring MVC",
+            :name => "Spring",
+            :description => "Standard Spring Error Message",
+            :type => "content",
+            :content =>  /{"timestamp":\d.*,"status":999,"error":"None","message":"No message available"}/,
+            :test_site => "https://pcr.apple.com",
+            :references => ["https://github.com/spring-projects/spring-boot"]
+        }]},
+        {
+          :uri => "#{uri}/error.json",
+          :checklist => [{
+            :name => "Spring",
             :description => "Standard Spring MVC error page",
             :type => "content",
             :content => /{"timestamp":\d.*,"status":999,"error":"None","message":"No message available"}/,

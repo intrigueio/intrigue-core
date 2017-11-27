@@ -4,7 +4,7 @@ function delete_entity(id)
   var check = confirm('Are you sure?');
   if (check == true) {
       document.entity_delete_form.entity.value = id;
-      document.entity_delete_form.action = "/<%=@project_name%>/entities/" + id + "/delete"
+      document.entity_delete_form.action = "/<%=@project_name%>/meta_entities/" + id + "/delete"
       document.entity_delete_form.submit();
       return true;
   }
@@ -13,14 +13,14 @@ function delete_entity(id)
   }
 }
 </script>
+
 <div class="col-sm-2">
-  <%= erb :'entities/_search', :layout => false %>
+  <%= erb :'/entities/_search', :layout => false %>
 </div>
 <div class="col-sm-10">
-    <%= "Page: #{@page}" %>
-    <%= "Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %>
-    <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&page=<%=@page-1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">previous</a>
-    <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&page=<%=@page+1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">next</a>
+    <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&correlate=on&page=<%=@page-1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join('&') if @entity_types %>">previous</a>
+    <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&correlate=on&page=<%=@page+1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join('&') if @entity_types %>">next</a>
+    <%= "Page: #{@page}" %> / <%= "Viewing Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %>
 
   <script type="text/javascript" src="/js/sorttable.js"></script>
   <style>
@@ -41,24 +41,36 @@ function delete_entity(id)
   }
   </style>
   <p></p>
-  <table class="sortable table-striped" border="1" width=100%>
+  <table class="sortable" border="1" width=100%>
     <colgroup>
+      <col style="width:60%">
       <col style="width:40%">
-      <col style="width:70%">
     </colgroup>
     <tbody>
       <tr><th>name</th><th>details</th></tr>
-    <% @entities.sort_by{|e| e.type_string}.each do |e| next if e.hidden; %>
-      <tr>
-        <td><a href="javascript:delete_entity('<%= e.id %>')">[x]</a> <a href="/<%=@project_name%>/entities/<%=h e.id%>"><%= h "#{e}" %></a></td>
-        <td><a href="/<%=@project_name%>/entities?search_string=<%=h e.detail_string%>"><%= h "#{e.detail_string}" %></a></td>
+      <% @alias_groups.each do |group| %>
+        <% next unless group.entities.count > 0 %>
+        <tr>
+          <td>
+            <ul>
+          <% group.entities.each do |e| %>
+              <li>[<a href="/<%=@project_name%>/entities/<%=e.id%>"> <%= h e %> </a>]</li>
+          <% end %>
+            </ul>
+          </td>
+          <td>
+            <ul>
+          <% group.entities.each do |e| %>
+              <li><a href="/<%=@project_name%>/entities/<%=e.id%>"> <%= h e.detail_string %> </a></li>
+          <% end %>
+          </ul>
+        </td>
       </tr>
-    <% end %>
+      <% end %>
+
     </tbody>
   </table>
-  <%= "Page: #{@page}" %>
-  <%= "Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %>
-  <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&page=<%=@page-1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">previous</a>
-  <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&page=<%=@page+1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">next</a>
-  <form name="entity_delete_form" method="get"><input type="hidden" id="entity" name="entity"/></form>
+  <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&correlate=on&page=<%=@page-1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">previous</a>
+  <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&correlate=on&page=<%=@page+1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">next</a>
+<form name="entity_delete_form" method="get"><input type="hidden" id="entity" name="entity"/></form>
 </div>

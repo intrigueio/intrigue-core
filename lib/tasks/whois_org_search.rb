@@ -59,11 +59,11 @@ class WhoisOrgSearch < BaseTask
               # if the block actually belongs to the expected party (via whois_full_text)
               # see discovery strategy for more info
               begin
-                whois = Whois::Client.new(:timeout => 20)
+                whois = ::Whois::Client.new(:timeout => 20)
                 answer = whois.lookup(start_address)
                 parser = answer.parser
                 whois_full_text = answer.content if answer
-              rescue Whois::ResponseIsThrottled => e
+              rescue ::Whois::ResponseIsThrottled => e
                 _log "Unable to query whois: #{e}"
               end
               #===================================

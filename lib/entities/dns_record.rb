@@ -5,12 +5,12 @@ class DnsRecord < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "DnsRecord",
-      :description => "A DnsRecord"
+      :description => "A Dns Record"
     }
   end
 
   def validate_entity
-    return (name =~ _dns_regex)
+    name =~ /\w.*/ #_dns_regex
   end
 
   def primary
@@ -18,11 +18,6 @@ class DnsRecord < Intrigue::Model::Entity
   end
 
   def detail_string
-    if details["lookup_data"]
-      details["lookup_data"].map{|x| x["name"] }.sort.uniq.join(", ")
-    else
-      ""
-    end
   end
 
 end

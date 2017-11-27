@@ -51,6 +51,11 @@ class FtpBannerGrab < BaseTask
       end
     end
 
+    unless s
+      _log_error "Unable to open socket, quitting!"
+      return
+    end
+
     # Probe the port
     begin
       banner = s.gets(10000)

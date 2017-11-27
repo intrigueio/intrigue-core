@@ -11,7 +11,7 @@ class SearchCensys < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["DnsRecord","IpAddress","String"],
+      :allowed_types => ["IpAddress"],
       :example_entities => [{"type" => "String", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
       :created_types => ["DnsRecord","FtpServer","SslCertificate"]
@@ -38,51 +38,32 @@ class SearchCensys < BaseTask
       censys = Censys::Api.new(uid,secret)
 
       ## Grab IPv4 Results
-      ["ipv4"].each do |search_type|
-        response = censys.search(entity_name,search_type)
-        response["results"].each do |r|
-          next unless r
-          _log "Got result: #{r}"
+      response = censys.search("ip:#{entity_name}","ipv4")
+      response["results"].each do |r|
+        next unless r
+        _log "Got result: #{r}"
 
-          if r["_source"]
-            # Go ahead and create the entity
-            ip = r["_source"]["ip"]
-            _create_entity "IpAddress", "name" => "#{ip}", "censys" => r
+        if r
+          # Go ahead and create the entity
+          #ip = r["_source"]["ip"]
+          #ip_entity = _create_entity "IpAddress", { "name" => "#{ip}", "source" => "censys", "censys_details" => r }
 
-            # Where we can, let's create additional entities from the scan results
-            if r["_source"]["protocols"]
-              r["_source"]["protocols"].each do |p|
+          # Where we can, let's create additional entities from the scan results
+          if r["protocols"]
+            r["protocols"].each do |p|
 
-                # Pull out the protocol
-                port = p.split("/").first # format is like "80/http"
-                protocol = p.split("/").last # format is like "80/http"
+              # Pull out the protocol
+              port = p.split("/").first.to_i # format is like "80/http"
+              _create_network_service_entity(@entity, port, "tcp", {
+                :censys_details => r
+              })
 
-                # Always create a network service
-                _create_entity "NetworkService", {
-                  "name" => "#{ip_address}:#{port}/tcp",
-                  "port" => port,
-                  "fingerprint" => protocol}
+            end # iterate through ports
+          end # if r["_source"]["protocols"]
+        end # if r["_source"]
+      end # if r
 
-                # Handle specific protocols
-                case protocol
-                when "https"
-                  _create_entity "Uri", "name" => "https://#{ip_address}:#{port}", "uri" => "https://#{ip_address}:#{port}"
-                when "http"
-                  _create_entity "Uri", "name" => "http://#{ip_address}:#{port}", "uri" => "http://#{ip_address}:#{port}"
-                when "ftp"
-                  _create_entity "FtpServer", {
-                    "name" => "ftp://#{ip_address}:#{port}",
-                    "port" => "#{port}"
-                  }
-                end
-              end
-            end # if r["_source"]
-          end
-        end
-      end
-
-      # TODO -Should we expect any details when searching type "websites"
-
+=begin
       ["certificates"].each do |search_type|
         response = censys.search(entity_name,search_type)
         response["results"].each do |r|
@@ -100,12 +81,12 @@ class SearchCensys < BaseTask
             else
               _create_entity "IpAddress", "name" => r["parsed.subject_dn"]
             end
-
           end
-
         end
       end
+=end
 
+    # TODO -Should we expect any details when searching type "websites" ?
 
     rescue RuntimeError => e
       _log_error "Runtime error: #{e}"

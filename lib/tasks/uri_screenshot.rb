@@ -1,3 +1,5 @@
+require 'mini_magick'
+
 module Intrigue
 module Task
 class UriScreenshot < BaseTask
@@ -28,27 +30,8 @@ class UriScreenshot < BaseTask
 
     if @entity.type_string == "Uri"
       uri = _get_entity_name
-      xxx = URI(uri)
 
       begin
-
-        # SETUP
-        require 'capybara'
-        require 'capybara/poltergeist'
-
-        Capybara.register_driver :poltergeist do |app|
-          Capybara::Poltergeist::Driver.new(app, {
-            :js_errors => false,
-            :phantomjs_options => [
-              '--debug=false',
-              '--ignore-ssl-errors=true',
-              '--ssl-protocol=any' ]
-          })
-        end
-
-        Capybara.javascript_driver = :poltergeist
-        Capybara.run_server = false
-        Capybara.default_selector = :xpath
 
         # Start a new session
         session = Capybara::Session.new(:poltergeist)
@@ -72,6 +55,12 @@ class UriScreenshot < BaseTask
         #file_path = "/tmp/intrigue-phantomjs-file-#{rand(1000000000000000)}.png"
         return_path = session.save_screenshot(tempfile.path)
         _log "Saved Screenshot to #{return_path}"
+
+        # resize the image using minimagick
+        image = MiniMagick::Image.open(return_path)
+        image.resize "640x480"
+        image.format "png"
+        image.write tempfile.path
 
         # open and read the file's contents, and base64 encode them
         base64_image_contents = Base64.encode64(File.read(tempfile.path))

@@ -37,6 +37,11 @@ class SearchBing < BaseTask
       bing = Client::Search::Bing::SearchService.new(api_key)
       results = bing.search(entity_name)
 
+      unless results
+        _log_error "Unable to query... are you sure your api key is correct?"
+        return
+      end
+
       _log "Search returned #{results["webPages"]["value"].count} results"
       return unless results["webPages"]["value"].count > 0
 

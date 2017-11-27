@@ -5,13 +5,6 @@ GIT
     snmp (1.2.0)
 
 GIT
-  remote: https://github.com/intrigueio/screencap.git
-  revision: e3af2819f083b021babff97a9a61278ccf99cc22
-  specs:
-    screencap (0.1.4)
-      phantomjs
-
-GIT
   remote: https://github.com/intrigueio/spidr.git
   revision: 44fa099e80e4cb3a8604c5dffe7612a4c2999fcb
   specs:
@@ -131,6 +124,7 @@ GEM
     json (1.8.6)
     method_source (0.9.0)
     mime-types (1.25.1)
+    mini_magick (4.8.0)
     mini_mime (0.1.4)
     mini_portile2 (2.3.0)
     minitest (5.10.3)
@@ -142,7 +136,6 @@ GEM
     nokogiri (1.8.1)
       mini_portile2 (~> 2.3.0)
     pg (0.21.0)
-    phantomjs (2.1.1.0)
     poltergeist (1.16.0)
       capybara (~> 2.1)
       cliver (~> 0.3.1)
@@ -248,6 +241,7 @@ DEPENDENCIES
   googleajax
   iconv
   intrigue_api_client
+  mini_magick
   net-dns
   nokogiri
   opencorporates!
@@ -264,7 +258,6 @@ DEPENDENCIES
   rest-client
   rspec
   ruby-nmap!
-  screencap!
   sequel
   shodan
   sidekiq

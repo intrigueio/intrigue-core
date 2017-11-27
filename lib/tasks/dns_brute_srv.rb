@@ -59,7 +59,7 @@ class DnsBruteSrv < BaseTask
         _log "Checking #{brute_name}"
 
         x = resolve(brute_name, DnsRuby::Types::SRV)
-        _create_entity("DnsRecord", x, entity)
+        _create_entity("DnsRecord",{"name" => x["name"]}, entity)
 
 
         # Try to resolve

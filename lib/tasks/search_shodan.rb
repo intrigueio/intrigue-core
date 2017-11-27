@@ -11,7 +11,7 @@ class SearchShodan < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["DnsRecord","DnsServer","IpAddress","NetworkService","String"],
+      :allowed_types => ["IpAddress"],
       :example_entities => [
         {"type" => "String", "details" => {"name" => "intrigue.io"}}
       ],
@@ -34,86 +34,24 @@ class SearchShodan < BaseTask
     end
 
     @client = Client::Search::Shodan::ApiClient.new(api_key)
-    response = @client.search(search_term)
+    response = @client.search_ip(search_term)
 
     # check to make sure we got a response.
-    raise "ERROR: No response" unless response
+    unless response
+      _log_error "ERROR: No response. Do you have API Access / Credits?" 
+      return false
+    end
 
-    # Check to make sure we got results
-    if response["matches"]
-
-      _log "Found #{response["matches"].count} matches"
-
-      # Go through the results
-      response["matches"].each do |r|
-
-        _log "* SHODAN Record *"
-
-        #updated_at = DateTime.new(r["updated"])
-        updated_at = DateTime.now
-
-        #
-        # Create a host record
-        #
-        if r["ip"]
-          # TODO - assumes ipv4, which isn't always true. Make sure to check for ipv6.
-          ip_address = IPAddr.new(r['ip'],Socket::AF_INET)
-          _log "IP: #{r["ip"]}"
-          host = _create_entity("IpAddress",{
-            "name" => "#{ip_address}",
-            "age" => "#{updated_at}",
-          })
-        end
-
-        #
-        # Create a network_service
-        #
-        _log "Port: #{r["port"]}"
-
-        port = _create_entity("NetworkService",{
-          "name" => "#{host.details[:name]}:#{r["port"]}/tcp",
-          "proto" => "tcp",
-          "port_num" => r["port"],
-          "fingerprint" => r["data"],
-          "age" => "#{updated_at}"
-        }) if r["port"] && host
-
-        #
-        # Create an organization
-        #
-        _log "Org: #{r["org"]}"
-        org = _create_entity("Organization",{
-          "name" => "#{r["org"]}",
-          "age" => "#{updated_at}"
-        }) if r["org"]
-
-        #
-        # Create a PhysicalLocation
-        #
-        _log "Location: #{r["postal_code"]}"
-        location = _create_entity("PhysicalLocation",{
-          "name" => "#{r["latitude"]} / #{r["longitude"]}",
-          "zip" => "#{r["postal_code"]}",
-          "state" => "#{r["region_name"]}",
-          "country" => "#{r["country_name"]}",
-          "latitude" => "#{r["latitude"]}",
-          "longitude" => "#{r["longitude"]}",
-          "age" => "#{updated_at}"
-        }) if r["country_name"]
-
-
-        _log "Port: #{r["port"]}"
-        _log "Port Data: #{r["data"]}"
-        _log "Country: #{r["country_name"]}"
-        _log "Country Code: #{r["country_code"]}"
-        _log "Region Name: #{r["region_name"]}"
-        _log "Area Code: #{r["area_code"]}"
-        _log "DMA Code: #{r["dma_code"]}"
-        _log "Postal Code: #{r["postal_code"]}"
-        _log "Org: #{r["org"]}"
-
+    # Go through the results
+    if response["data"]
+      response["data"].each do |s|
+        _log_good "Creating service on #{s["ip_str"]}: #{s["port"]}"
+        _create_network_service_entity(@entity,s["port"],s["transport"] || "tcp", {
+          :shodan_details => s
+        })
       end
     end
+
   end
 
 end

@@ -4,7 +4,6 @@ module Intrigue
       plugin :validation_helpers
       plugin :serialization, :json, :options, :handlers
 
-      #set_allowed_columns :project_id, :logger_id, :base_entity_id, :name, :depth, :handlers, :strategy, :filter_strings
       many_to_many :entities
       many_to_one :scan_result
       many_to_one :logger
@@ -101,7 +100,7 @@ module Intrigue
           "options" => options,
           "complete" => complete,
           "base_entity" => base_entity.export_hash,
-          "entities" => entities.map{ |e| {:id => e.id, :type => e.type, :name => e.name, :details => e.safe_details } },
+          "entities" => entities.uniq.map{ |e| {:id => e.id, :type => e.type, :name => e.name, :details => e.safe_details } },
           "log" => get_log
         }
       end

@@ -11,10 +11,10 @@ class SearchCorpwatch < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["String", "Organization"],
+      :allowed_types => ["String","Organization"],
       :example_entities => [{"type" => "String", "details" => {"name" => "intrigue"}}],
       :allowed_options => [],
-      :created_types => ["*"]
+      :created_types => ["Organization"]
     }
   end
 
@@ -34,11 +34,7 @@ class SearchCorpwatch < BaseTask
       # Create a new organization entity & attach a record
       _create_entity "Organization", {
         "name" => corp.name,
-        "data" => corp.to_s
-      }
-
-      _create_entity "PhysicalLocation", {
-        "name" => corp.address,
+        "data" => corp.to_s,
         "address" => corp.address,
         "state" => corp.state,
         "country" => corp.country

@@ -44,12 +44,12 @@ class SearchThreatcrowd < BaseTask
         # handle IP resolution
         if opt_gather_resolutions
           _log "Gathering Resolutions"
-          tc_json["resolutions"].each do |ip|
+          tc_json["resolutions"].each do |res|
             _create_entity "IpAddress", {
-              "name" => ip["ip_address"],
+              "name" => res["ipaddress"],
               "resolver" => "threatcrowd",
-              "last_resolved" => ip["last_resolved"]
-            }
+              "last_resolved" => res["last_resolved"]
+              } unless res["ip_address"] == "-"
           end
         end
 
@@ -82,7 +82,7 @@ class SearchThreatcrowd < BaseTask
               next unless e =~ /#{opt_extract_pattern}/
             end
 
-            _create_entity "EmailAddress", { "name" => e }
+            _create_entity "EmailAddress", { "name" => e } unless e == ""
           end
         end
 

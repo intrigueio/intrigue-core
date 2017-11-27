@@ -44,22 +44,31 @@ class EnrichIpAddress < BaseTask
     results = resolve(lookup_name, Dnsruby::Types::ANY)
     results.concat(resolve(lookup_name, Dnsruby::Types::A))
     results.concat(resolve(lookup_name, Dnsruby::Types::CNAME))
+
     _log "Got results: #{results}"
 
     ####
-    ### Create entities
+    ### Create aliased entities
     ####
     results.each do |result|
+
       _log "Creating entity for... #{result["name"]}"
       if "#{result["name"]}".is_ip_address?
         _create_entity("IpAddress", { "name" => result["name"] }, @entity)
       else
         _create_entity("DnsRecord", { "name" => result["name"] }, @entity)
       end
-
     end
 
-    @entity.set_detail("lookup_data", results)
+    ####
+    ### Set details for this entity
+    ####
+    dns_entries = results.map { |result|
+      { "response_data" => result["lookup_details"].first["response_record_data"],
+        "response_type" => result["lookup_details"].first["response_record_type"] }
+    }.uniq{ |r| "#{r["response_data"]}-#{r["response_type"]}" }
+
+    @entity.set_detail("dns_entries", dns_entries)
     @entity.save
 
     _log "Ran enrichment task!"

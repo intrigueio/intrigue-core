@@ -18,7 +18,6 @@ class Whois < BaseTask
         {"type" => "IpAddress", "details" => {"name" => "192.0.78.13"}},
       ],
       :allowed_options => [
-        {:name => "timeout", :type => "Integer", :regex=> "integer", :default => 20 },
         {:name => "create_contacts", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "create_nameservers", :type => "Boolean", :regex => "boolean", :default => true }
       ],
@@ -30,13 +29,18 @@ class Whois < BaseTask
   def run
     super
 
-    ###
-    ### XXX - doesn't currently respect the timeout
-    ###
-
-    lookup_string = _get_entity_name
     opt_create_nameservers = _get_option "create_nameservers"
     opt_create_contacts = _get_option "create_contacts"
+
+    ###
+    ### Whois::Client can't handle the netblock format, so
+    ### select the first ip if we're given a netblock
+    ###
+    if @entity.kind_of? Intrigue::Entity::NetBlock
+      lookup_string = _get_entity_name.split("/").first
+    else # otherwise, use what we're given
+      lookup_string = _get_entity_name
+    end
 
     begin
       whois = ::Whois::Client.new(:timeout => 20)
@@ -44,6 +48,9 @@ class Whois < BaseTask
       parser = answer.parser
       whois_full_text = answer.content if answer
     rescue ::Whois::ResponseIsThrottled => e
+      _log_error "Unable to query whois: #{e}"
+      return
+    rescue ::Whois::ServerNotFound => e
       _log_error "Unable to query whois: #{e}"
       return
     rescue Timeout::Error => e
@@ -74,6 +81,7 @@ class Whois < BaseTask
         begin
           doc = Nokogiri::XML(http_get_body("http://whois.arin.net/rest/ip/#{lookup_string}"))
           org_ref = doc.xpath("//xmlns:orgRef").text
+          org_name = doc.xpath("//xmlns:orgRef/@name").text
           parent_ref = doc.xpath("//xmlns:parentNetRef").text
           handle = doc.xpath("//xmlns:handle").text
 
@@ -108,11 +116,14 @@ class Whois < BaseTask
               "description" => "#{description}",
               "block_type" => "#{block_type}",
               "handle" => "#{handle}",
+              "organization_name" => "#{org_name}",
               "organization_reference" => "#{org_ref}",
               "parent_reference" => "#{parent_ref}",
               "whois_full_text" => "#{answer.content}",
               "rir" => "ARIN"
             }
+
+            @entity.set_detail("provider", org_name)
 
           end # End Netblocks
         rescue Nokogiri::XML::XPath::SyntaxError => e
@@ -135,53 +146,51 @@ class Whois < BaseTask
         entity = _create_entity "NetBlock", {
           "name" => "#{range}",
           "cidr" => "#{range.split('/').last}",
-          "description" => json["data"]["netname"],
-          "rir" => "RIPE",
-          "organization_reference" => json["data"]["org"],
+          "description" => "#{json["data"]["less_specific"]["descr"]}",
+          "rir" => "#{json["data"]["rir"]}",
+          "organization_reference" => "#{json["data"]["less_specific"]["netname"]}",
+          "organization_name" => "#{json["data"]["less_specific"]["descr"]}",
           "whois_full_text" => "#{answer.content}"
         }
 
-      else
-
-        #
-        # We're going to have nameservers either way?
-        #
-        begin
-          if parser.nameservers
-            if opt_create_nameservers
-              parser.nameservers.each do |nameserver|
-                _log "Parsed nameserver: #{nameserver}"
-                _create_entity "DnsRecord", "name" => nameserver.to_s
-              end
-            else
-              _log "Skipping nameservers"
+        @entity.set_detail("provider", "#{json["data"]["less_specific"]["descr"]}")
+      end
+      #
+      # We're going to have nameservers either way?
+      #
+      begin
+        if parser.nameservers
+          if opt_create_nameservers
+            parser.nameservers.each do |nameserver|
+              _log "Parsed nameserver: #{nameserver}"
+              _create_entity "DnsRecord", "name" => nameserver.to_s
             end
           else
-            _log_error "No parsed nameservers!"
-            return
+            _log "Skipping nameservers"
           end
-
-          #
-          # Create a user from the technical contact
-          #
-          if opt_create_contacts
-            parser.contacts.each do |contact|
-              _log "Creating user from contact: #{contact.name}"
-              _create_entity("Person", {"name" => contact.name})
-              _create_entity("EmailAddress", {"name" => contact.email})
-            end
-          else
-            _log "Skipping contacts"
-          end
-        rescue ::Whois::AttributeNotImplemented => e
-          _log_error "Unable to parse that attribute: #{e}"
+        else
+          _log_error "No parsed nameservers!"
+          return
         end
 
-      end # end Host Type
+        #
+        # Create a user from the technical contact
+        #
+        if opt_create_contacts
+          parser.contacts.each do |contact|
+            _log "Creating user from contact: #{contact.name}"
+            _create_entity("Person", {"name" => contact.name})
+            _create_entity("EmailAddress", {"name" => contact.email})
+          end
+        else
+          _log "Skipping contacts"
+        end
+      rescue ::Whois::AttributeNotImplemented => e
+        _log_error "Unable to parse that attribute: #{e}"
+      end
 
     else
-      _log_error "Domain WHOIS failed, we don't know what nameserver to query."
-
+      _log_error "Domain WHOIS failed, no answer returned."
     end
 
   end

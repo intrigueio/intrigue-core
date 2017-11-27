@@ -100,8 +100,9 @@ module Intrigue
       end
 
       def set_detail(key, value)
+
         self.lock!
-        temp_details = details.merge({key => value})
+        temp_details = details.merge({key => value}.sanitize_unicode)
         self.set(:details => temp_details)
         self.set(:details_raw => temp_details)
 
@@ -211,7 +212,7 @@ module Intrigue
       end
 
       def export_csv
-        "#{type}, #{name}, #{detail_string.gsub(",",";")}"
+        "#{type}, #{name}, #{detail_string.gsub(",",";") if detail_string}"
       end
 
 

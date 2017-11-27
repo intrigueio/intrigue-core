@@ -16,7 +16,7 @@ module Bing
 
     def search(search_string)
 
-      uri = "https://api.cognitive.microsoft.com/bing/v5.0/search?q=#{search_string}"
+      uri = "https://api.cognitive.microsoft.com/bing/v7.0/search?q=#{URI.escape(search_string)}"
       json_response = http_request(:get, uri, {"Ocp-Apim-Subscription-Key" => "#{@api_key}" })
 
       parsed_response = JSON.parse(json_response.body)

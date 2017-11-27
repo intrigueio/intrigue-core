@@ -1,5 +1,5 @@
 <!-- name -->
-<div class="col-sm-8">
+<div class="col-sm-7">
 <h3>
 <% if @entity.details["uri"] %>
  <p><a href="<%= h @entity.details["uri"] %>"><%= h @entity %></a><br/></p>
@@ -49,11 +49,10 @@ Image: <br/>
 <img src="data:image/png;base64, <%= @entity.get_detail('hidden_screenshot_contents') %>" alt="Screenshot" />
 <% end %>
 </div>
-<script>document.getElementById("screenie").style.backgroundColor = "white";</script>
 
 </div>
 
-<div class="col-sm-4">
+<div class="col-sm-5">
   <p>Run a task on this entity:</p>
 <%= erb :'_task_runner' %>
 </div>

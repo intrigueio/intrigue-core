@@ -109,13 +109,14 @@ module Task
     ###
     def http_request(method, uri_string, headers={}, limit = 10, open_timeout=15, read_timeout=15)
 
-      #@task_result.logger.log "http_request :get,Connecting to #{uri}" if @task_result
       response = nil
       begin
 
+        # set user agent
+        headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.73 Safari/537.36"
+
         attempts=0
         max_attempts=10
-        user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.73 Safari/537.36"
         found = false
 
         uri = URI.parse uri_string
@@ -125,14 +126,28 @@ module Task
           return
         end
 
-
         until( found || attempts >= max_attempts)
          @task_result.logger.log "Getting #{uri}, attempt #{attempts}" if @task_result
          attempts+=1
 
-         http = Net::HTTP.new(uri.host,uri.port)
-         http.read_timeout = 10
-         http.open_timeout = 10
+         global_config = Intrigue::Config::GlobalConfig.new
+         if global_config.config["http_proxy"]
+           proxy_addr = global_config.config["http_proxy"]["host"]
+           proxy_port = global_config.config["http_proxy"]["port"]
+           proxy_user = global_config.config["http_proxy"]["user"]
+           proxy_pass = global_config.config["http_proxy"]["pass"]
+         end
+
+         # set options
+         opts = {}
+         if uri.instance_of? URI::HTTPS
+           opts[:use_ssl] = true
+           opts[:verify_mode] = OpenSSL::SSL::VERIFY_NONE
+         end
+
+         http = Net::HTTP.start(uri.host, uri.port, proxy_addr, proxy_port, opts)
+         http.read_timeout = 20
+         http.open_timeout = 20
 
          path = "#{uri.path}"
          path = "/" if path==""
@@ -142,26 +157,20 @@ module Task
            path += "?#{uri.query}"
          end
 
-         #request = Net::HTTP::Get.new(path,{'User-Agent'=>user_agent})
-         if uri.instance_of? URI::HTTPS
-           http.use_ssl=true
-           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-         end
-
          ### ALLOW DIFFERENT VERBS HERE
          if method == :get
            request = Net::HTTP::Get.new(uri)
+         elsif method == :head
+           request = Net::HTTP::Head.new(uri)
          elsif method == :propfind
            request = Net::HTTP::Propfind.new(uri.request_uri)
-           # Set your body (data)
-           request.body = "Here's the body."
-           # Set your headers: one header per line.
-           request["Depth"] = "1"
+           request.body = "Here's the body." # Set your body (data)
+           request["Depth"] = "1" # Set your headers: one header per line.
          elsif method == :options
            request = Net::HTTP::Options.new(uri.request_uri)
          elsif method == :trace
            request = Net::HTTP::Trace.new(uri.request_uri)
-           request.body = "intrigueftw"
+           request.body = "intrigue"
          end
          ### END VERBS
 

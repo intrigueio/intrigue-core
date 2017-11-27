@@ -22,7 +22,7 @@ class EntityManager
   false
   end
 
-  def self.create_first_entity(project_name,type_string,name,details)
+  def self.create_first_entity(project_name,type_string,name,details,enrich=true)
 
     # Save the original and downcase our name
     details["hidden_original"] = name
@@ -70,6 +70,11 @@ class EntityManager
     return nil unless created_entity.transform!
     return nil unless created_entity.validate_entity
 
+    # START ENRICHMENT if we're allowed and unless this entity is prohibited (hidden)
+    if enrich
+      enrich_entity(created_entity) unless created_entity.hidden
+    end
+
   created_entity
   end
 
@@ -77,7 +82,7 @@ class EntityManager
   def self.create_or_merge_entity(task_result,type_string,name,details, primary_entity=nil)
 
     unless task_result && type_string && name && details
-      task_result.log "ERROR! Attempting to create broken entity: : #{task_result}, #{type_string}##{name}, #{details}"
+      task_result.log "ERROR! Attempting to create broken entity: #{task_result}, #{type_string}##{name}, #{details}"
     end
 
     # HANDLE CANCELED TASKS!
@@ -107,6 +112,8 @@ class EntityManager
       # want to use that to preserve pre-existing relatiohships
       entity_already_existed = true
 
+      task_result.log "Entity already existed & was updated (merged) with the new details!"
+
     else
       # Create a new entity, validating the attributes
       type = resolve_type(type_string)
@@ -120,6 +127,11 @@ class EntityManager
             :details_raw => details,
             :hidden => (hidden ? true : false )
            })
+
+           g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
+           entity.alias_group_id = g.id
+           entity.save
+
         rescue Encoding::UndefinedConversionError => e
           task_result.log "ERROR! Unable to create entity: #{e}"
         end
@@ -159,17 +171,19 @@ class EntityManager
     # if we already had the entity, it'll already have a group it's associated with.
     # think about the case of a whoisology lookup where many resolve to a single
     # ip address
-    if primary_entity && entity_already_existed
-      primary_entity.alias(entity)
-    # alternatively, if this is the first one in this lineage, we'll want to
-    # alias it to the primary in order to preserve that relationship
-    elsif primary_entity
-      created_entity.alias(primary_entity)
-    # if there was nothing passed to alias, just create a new group
-    else
-      g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
-      created_entity.alias_group_id = g.id
-      created_entity.save
+    if primary_entity
+      task_result.log "Aliasing #{created_entity.name} to existing group: #{primary_entity.alias_group_id}"
+
+      #take the smaller group id, and use that to alias together
+      cid = created_entity.alias_group_id
+      pid = primary_entity.alias_group_id
+
+      if cid > pid
+        created_entity.alias(primary_entity)
+      else
+        primary_entity.alias(created_entity)
+      end
+
     end
 
     # START ENRICHMENT if we're allowed and unless this entity is prohibited (hidden)
@@ -184,7 +198,7 @@ class EntityManager
 
     # START RECURSION BY STRATEGY TYPE
     if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
-      unless hidden
+      unless created_entity.hidden
         s = Intrigue::StrategyFactory.create_by_name(task_result.scan_result.strategy)
         raise "Unknown Strategy!" unless s
 

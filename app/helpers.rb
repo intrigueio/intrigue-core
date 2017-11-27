@@ -3,16 +3,16 @@ module Task
 module Helper
 
   def entity_exists?(project, entity_type, entity_name)
-    puts "Checking for existence of an entity with type: #{entity_type} and name: #{entity_name} in project: #{project.name}"
+    #puts "Checking for existence of an entity with type: #{entity_type} and name: #{entity_name} in project: #{project.name}"
 
     Intrigue::Model::Entity.scope_by_project_and_type(project.name, entity_type).each do |e|
       if e.unique_name.include? entity_name
-        puts "Found! #{entity_name} in #{e.unique_name}"
+        #puts "Found! #{entity_name} in #{e.unique_name}"
         return e
       end
     end
 
-  puts "Not Found! #{entity_name}"
+  #puts "Not Found! #{entity_name}"
   false
   end
 
@@ -64,6 +64,7 @@ module Helper
         :logger => Intrigue::Model::Logger.create(:project => project),
         :depth => depth,
         :strategy => strategy_name,
+        :filter_strings => "#{entity.name}", # this is a comma-delimited list of strings (see: strategies)
         :handlers => handlers,
         :incomplete_task_count => 1
       })

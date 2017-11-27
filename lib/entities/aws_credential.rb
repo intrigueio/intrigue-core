@@ -13,7 +13,7 @@ class AwsCredential < Intrigue::Model::Entity
   def transform!
 
     # We'll want to obfuscate our name
-    new_name = "#{name[0..3]}***"
+    new_name = "#{name[0..3]}****"
 
     # .. and we'll need to split into an access_id and a secret_key
     set_details({ "name" => new_name,

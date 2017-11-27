@@ -15,6 +15,127 @@ module Generic
     EntityManager.create_or_merge_entity(@task_result, type, name, hash, primary_entity)
   end
 
+  def _create_network_service_entity(ip_entity,port_num,protocol="tcp",extra_details={})
+
+    # Grab all the aliases
+    hosts = [ip_entity]
+    if ip_entity.aliases.count > 0
+      ip_entity.aliases.each do |a|
+        next unless a.type_string == "DnsRecord" #  only dns records
+        next if a.hidden # skip hidden
+        hosts << a # add to the list
+      end
+    end
+
+    _log "Creating services on each of: #{hosts.map{|h| h.name } }"
+
+    sister_entity = nil
+    hosts.uniq.each do |h|
+
+      # Handle Web Apps first
+      if (protocol == "tcp" && [80,443,8080,8081,8443].include?(port_num))
+
+        # Determine if this is SSL
+        ssl = true if [443,8443].include?(port_num)
+        prefix = ssl ? "https://" : "http://" # construct uri
+
+        # Create URI
+        uri = "#{prefix}#{h.name}:#{port_num}"
+        sister_entity = _create_entity("Uri", {
+          "name" => uri,
+          "host_id" => h.id,
+          "port" => port_num,
+          "protocol" => protocol,
+          "uri" => uri }.merge(extra_details), sister_entity)
+
+      # then FtpServer
+      elsif protocol == "tcp" && [21].include?(port_num) && h.name.is_ip_address?
+
+        name = "#{h.name}:#{port_num}"
+        uri = "ftp://#{name}"
+        sister_entity = _create_entity("FtpServer", {
+          "name" => name,
+          "host_id" => h.id,
+          "uri" => uri,
+          "port" => port_num,
+          "protocol" => protocol}.merge(extra_details), sister_entity)
+
+      # Then SshServer
+      elsif protocol == "tcp" && [22].include?(port_num) && h.name.is_ip_address?
+
+        name = "#{h.name}:#{port_num}"
+        uri = "ssh://#{name}"
+        sister_entity = _create_entity("SshServer", {
+          "name" => name,
+          "host_id" => h.id,
+          "uri" => uri,
+          "port" => port_num,
+          "protocol" => protocol}.merge(extra_details), sister_entity)
+
+      # then SMTPServer
+      elsif protocol == "tcp" && [25].include?(port_num) && h.name.is_ip_address?
+
+        name = "#{h.name}:#{port_num}"
+        uri = "smtp://#{name}"
+        sister_entity = _create_entity("SmtpServer", {
+          "name" => name,
+          "host_id" => h.id,
+          "uri" => uri,
+          "port" => port_num,
+          "protocol" => protocol}.merge(extra_details), sister_entity)
+
+      # then DnsServer
+      elsif [53].include?(port_num) && h.name.is_ip_address? # could be either tcp or udp
+
+        name = "#{h.name}:#{port_num}"
+        uri = "dns://#{name}"
+        sister_entity = _create_entity("DnsServer", {
+          "name" => name,
+          "host_id" => h.id,
+          "uri" => uri,
+          "port" => port_num,
+          "protocol" => protocol}.merge(extra_details), sister_entity)
+
+      # then FingerServer
+      elsif protocol == "tcp" && [79].include?(port_num) && h.name.is_ip_address?
+
+        name = "#{h.name}:#{port_num}"
+        uri = "finger://#{name}"
+        sister_entity = _create_entity("FingerServer", {
+          "name" => name,
+          "host_id" => h.id,
+          "uri" => uri,
+          "port" => port_num,
+          "protocol" => protocol}.merge(extra_details), sister_entity)
+
+      # Then Snmp
+      elsif protocol == "udp" && [161].include?(port_num) && h.name.is_ip_address?
+
+        name = "#{h.name}:#{port_num}"
+        uri = "snmp://#{name}"
+        sister_entity = _create_entity("SnmpServer", {
+          "name" => name,
+          "host_id" => h.id,
+          "uri" => uri,
+          "port" => port_num,
+          "protocol" => protocol }.merge(extra_details), sister_entity)
+
+      else # Create a generic network service
+        next unless h.name.is_ip_address?
+
+        name = "#{h.name}:#{port_num}"
+        uri = "netsvc://#{name}"
+        sister_entity = _create_entity("NetworkService", {
+          "name" => name,
+          "host_id" => h.id,
+          "uri" => uri,
+          "port" => port_num,
+          "protocol" => protocol }.merge(extra_details), sister_entity)
+      end
+
+    end # hostnames
+  end
+
   ###
   ### Logging helpers
   ###

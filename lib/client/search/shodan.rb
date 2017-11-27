@@ -1,4 +1,3 @@
-require 'shodan'
 
 module Client
   module Search
@@ -10,12 +9,12 @@ module Client
 
         def initialize(key)
           @service_name = "shodan"
-          @api =::Shodan::Shodan.new(key)
+          @api_key = key
         end
 
-        def search(search_string)
+        def search_ip(string)
           begin
-            response = @api.search(search_string)
+            response = JSON.parse(http_get_body("https://api.shodan.io/shodan/host/#{string}?key=#{@api_key}"))
           rescue Timeout::Error => e
             response = nil
           rescue JSON::ParserError => e
