@@ -53,7 +53,7 @@ module Strategy
 
           start_recursive_task(task_result,"dns_brute_sub",entity,[
             {"name" => "use_file", "value" => true },
-            {"name" => "threads", "value" => 1 }])
+            {"name" => "threads", "value" => 2 }])
 
         else
           # otherwise do something a little faster
@@ -89,7 +89,7 @@ module Strategy
 
         # Make sure it's small enough not to be disruptive, and if it is, expand it
         if entity.details["whois_full_text"] =~ /#{filter_strings}/i && !(entity.name =~ /::/)
-          start_recursive_task(task_result,"net_block_expand",entity)
+          start_recursive_task(task_result,"net_block_expand",entity, [{"name" => "threads", "value" => 5 }])
         else
           task_result.log "Cowardly refusing to expand this netblock.. it doesn't look like ours."
         end
