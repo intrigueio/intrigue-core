@@ -14,9 +14,9 @@ class FingerExtraction < BaseTask
       :references => [],
       :type => "discovery",
       :passive => false,
-      :allowed_types => ["FingerServer"],
+      :allowed_types => ["FingerService"],
       :example_entities => [
-        {"type" => "FingerServer", "details" => {
+        {"type" => "FingerService", "details" => {
           "ip_address" => "1.1.1.1",
           "port" => 79,
           "protocol" => "tcp"

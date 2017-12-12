@@ -5,7 +5,8 @@ class Info < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "Info",
-      :description => "Generic Information"
+      :description => "Generic Information",
+      :user_creatable => false
     }
   end
 

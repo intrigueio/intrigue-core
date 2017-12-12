@@ -1,11 +1,12 @@
 module Intrigue
 module Entity
-class FtpServer < Intrigue::Model::Entity
+class FtpService < Intrigue::Entity::NetworkService
 
   def self.metadata
     {
-      :name => "FtpServer",
-      :description => "An FTP Server"
+      :name => "FtpService",
+      :description => "An FTP Server",
+      :user_creatable => false
     }
   end
 

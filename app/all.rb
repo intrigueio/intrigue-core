@@ -2,6 +2,7 @@ require_relative "version"
 
 require_relative "helpers"
 
+require_relative "routes/analysis"
 require_relative "routes/entities"
 require_relative "routes/signals"
 require_relative "routes/global"

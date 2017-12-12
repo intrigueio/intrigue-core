@@ -1,11 +1,12 @@
 module Intrigue
 module Entity
-class SnmpServer < Intrigue::Model::Entity
+class SnmpService < Intrigue::Entity::NetworkService
 
   def self.metadata
     {
-      :name => "SnmpServer",
-      :description => "An SNMP Server"
+      :name => "SnmpService",
+      :description => "An SNMP Server",
+      :user_creatable => false
     }
   end
 

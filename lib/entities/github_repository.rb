@@ -5,7 +5,8 @@ class GithubRepository < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "GithubRepository",
-      :description => "A Github Repository"
+      :description => "A Github Repository",
+      :user_creatable => false
     }
   end
 

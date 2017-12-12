@@ -96,8 +96,10 @@ require_relative 'client'
 # Entity-specific libraries
 ####
 require_relative 'entity_manager'
+
 # Load all .rb file in lib/entities by default
 entities_folder = File.expand_path('../entities', __FILE__) # get absolute directory
+require_relative "#{entities_folder}/network_service" # have to do this first, since others dep on it
 Dir["#{entities_folder}/*.rb"].each {|f| require_relative f}
 
 ####

@@ -210,14 +210,14 @@ module Parse
       @task_result.logger.log "ERROR Unable to download file: #{e}"
     rescue EOFError => e
       @task_result.logger.log "ERROR Unable to download file: #{e}"
-    rescue JSON::ParserError => e
-      @task_result.logger.log "ERROR parsing JSON: #{e}"
-    rescue Errno::EPIPE => e
-      @task_result.logger.log "ERROR Unable to contact Tika: #{e}"
     rescue OpenURI::HTTPError => e     # don't die if we can't find the file
       @task_result.logger.log "ERROR Unable to download file: #{e}"
     rescue URI::InvalidURIError => e     # handle invalid uris
       @task_result.logger.log "ERROR Unable to download file: #{e}"
+    rescue Errno::EPIPE => e
+      @task_result.logger.log "ERROR Unable to contact Tika: #{e}"
+    rescue JSON::ParserError => e
+      @task_result.logger.log "ERROR parsing JSON: #{e}"
     end
 
     # Clean up

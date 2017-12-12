@@ -5,7 +5,8 @@ class NetworkService < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "NetworkService",
-      :description => "A Generic Network Service"
+      :description => "A Generic Network Service",
+      :user_creatable => false
     }
   end
 

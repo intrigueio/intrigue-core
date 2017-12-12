@@ -1,11 +1,12 @@
 module Intrigue
 module Entity
-class SmtpServer < Intrigue::Model::Entity
+class DnsService < Intrigue::Entity::NetworkService
 
   def self.metadata
     {
-      :name => "SmtpServer",
-      :description => "An SMTP Server"
+      :name => "DnsService",
+      :description => "A Dns Server",
+      :user_creatable => false
     }
   end
 

@@ -5,7 +5,8 @@ class AwsCredential < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "AwsCredential",
-      :description => "AWS Credential in the format... AccessID:SecretKey"
+      :description => "AWS Credential in the format... AccessID:SecretKey",
+      :user_creatable => false
     }
   end
 

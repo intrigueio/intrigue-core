@@ -13,9 +13,9 @@ class SnmpExtraction < BaseTask
       :references => ["https://community.rapid7.com/community/services/blog/2016/05/05/snmp-data-harvesting-during-penetration-testing"],
       :type => "discovery",
       :passive => false,
-      :allowed_types => ["SnmpServer"],
+      :allowed_types => ["SnmpService"],
       :example_entities => [
-        {"type" => "SnmpServer", "details" => {
+        {"type" => "SnmpService", "details" => {
           "ip_address" => "1.1.1.1",
           "port" => 161,
           "protocol" => "udp"

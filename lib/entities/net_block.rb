@@ -5,7 +5,8 @@ class NetBlock < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "NetBlock",
-      :description => "A Block of IPs"
+      :description => "A Block of IPs",
+      :user_creatable => true
     }
   end
 

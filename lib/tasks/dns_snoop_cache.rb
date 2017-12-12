@@ -30,8 +30,8 @@ class DnsSnoopCache < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["DnsServer"],
-      :example_entities => [{"type" => "DnsServer", "details" => {"name" => "129.186.88.249"}}],
+      :allowed_types => ["DnsService"],
+      :example_entities => [{"type" => "DnsService", "details" => {"name" => "129.186.88.249"}}],
       :allowed_options => [
         {:name => "method", :type => "String", :default => "R", :regex=> "alpha_numeric" }
       ],
@@ -42,7 +42,7 @@ class DnsSnoopCache < BaseTask
   def run()
     super
 
-    dns_server = _get_option "ip_address"
+    dns_server = _get_entity_name.split(":").first
     method = _get_option "method"
 
     snoopresults = {}

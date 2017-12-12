@@ -14,7 +14,7 @@ class NetworkServiceFuzz < BaseTask
       :references => [],
       :type => "discovery",
       :passive => false,
-      :allowed_types => ["NetworkService","SshServer","FtpServer","FingerServer"],
+      :allowed_types => ["NetworkService"],
       :example_entities => [
         {"type" => "NetworkService", "details" => {
           "ip_address" => "1.1.1.1",

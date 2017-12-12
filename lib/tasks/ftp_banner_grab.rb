@@ -14,9 +14,9 @@ class FtpBannerGrab < BaseTask
       :references => [],
       :type => "discovery",
       :passive => false,
-      :allowed_types => ["FtpServer"],
+      :allowed_types => ["FtpService"],
       :example_entities => [
-        {"type" => "FtpServer", "details" => {
+        {"type" => "FtpService", "details" => {
           "ip_address" => "1.1.1.1",
           "port" => 1111,
           "protocol" => "tcp"

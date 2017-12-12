@@ -1,11 +1,11 @@
 module Intrigue
 module Task
-class GeolocateHost < BaseTask
+class IpGeolocate < BaseTask
 
   def self.metadata
     {
-      :name => "geolocate_host",
-      :pretty_name => "Geolocate Host",
+      :name => "ip_geolocate",
+      :pretty_name => "Geolocate IP Address",
       :authors => ["jcran"],
       :description => "Performs a geolocation based on an IP address.",
       :references => [],

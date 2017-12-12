@@ -174,7 +174,7 @@ class IntrigueApp < Sinatra::Base
   # Return a JSON array of all entity type
   get '/entity_types.json' do
     content_type 'application/json'
-    Intrigue::Model::Entity.descendants.map{ |x| x.metadata[:name] }.sort.to_json
+    Intrigue::Model::Entity.descendants.map{ |x| x.metadata }.to_json
   end
 
   # Export All Tasks

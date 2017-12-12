@@ -66,7 +66,7 @@ module Strategy
       #  # Search, only snag the top result
       #  start_recursive_task(task_result,"search_bing",entity,[{"name"=> "max_results", "value" => 1}])
 
-      #elsif entity.type_string == "FtpServer"
+      #elsif entity.type_string == "FtpService"
       #  start_recursive_task(task_result,"ftp_banner_grab",entity)
 
       elsif entity.type_string == "IpAddress"

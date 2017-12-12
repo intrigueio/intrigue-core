@@ -5,7 +5,8 @@ class Uri < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "Uri",
-      :description => "A Website or Webpage."
+      :description => "A Website or Webpage",
+      :user_creatable => true
     }
   end
 
