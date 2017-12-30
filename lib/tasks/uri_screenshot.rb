@@ -12,7 +12,10 @@ class UriScreenshot < BaseTask
       :pretty_name => "URI Screenshot",
       :authors => ["jcran"],
       :description => "This task screenshots a Uri.",
-      :references => [],
+      :references => [
+        "https://github.com/johnmichel/Library-Detector-for-Chrome",
+        "https://snyk.io/blog/77-percent-of-sites-use-vulnerable-js-libraries"
+      ],
       :type => "discovery",
       :passive => false,
       :allowed_types => ["Uri"],
@@ -43,11 +46,10 @@ class UriScreenshot < BaseTask
         page_title = session.document.title
         _log_good "Title: #{page_title}"
 
-        # Capture JQuery version
-        version = session.evaluate_script('jQuery.fn.jquery')
-        _log_good "Using jQuery #{version}"
-        @entity.set_detail("jquery", version)
+        # Capture versions of common javascript libs
+        _gather_javascript_libraries(session)
 
+        #
         # Capture a screenshot, cleaning
         #
         tempfile = Tempfile.new(['phantomjs', '.png'])
@@ -79,6 +81,56 @@ class UriScreenshot < BaseTask
         _log_error "JS Error: #{e}"
       end
     end
+
+  end
+
+  def _gather_javascript_libraries(session)
+
+    # get software hash
+    software = @entity.get_detail("software") || {}
+
+    version = session.evaluate_script('dojo.version')
+    _log_good "Using Dojo #{version}" if version
+    software["dojo"] = "#{version}" if version
+
+    # Capture JQuery version
+    version = session.evaluate_script('jQuery.fn.jquery')
+    _log_good "Using jQuery #{version}" if version
+    software["jquery"] = "#{version}" if version
+
+    version = session.evaluate_script('jQuery.tools.version')
+    _log_good "Using jQuery Tools #{version}" if version
+    software["jquery_tools"] = "#{version}" if version
+
+    version = session.evaluate_script('jQuery.ui.version')
+    _log_good "Using jQuery UI #{version}" if version
+    software["jquery_ui"] = "#{version}" if version
+
+    version = session.evaluate_script('angular.version.full')
+    _log_good "Using Angular #{version}" if version
+    software["angular"] = "#{version}" if version
+
+    version = session.evaluate_script('paper.version')
+    _log_good "Using Paper.JS #{version}" if version
+    software["paperjs"] = "#{version}" if version
+
+    version = session.evaluate_script('Prototype.version')
+    _log_good "Using Prototype #{version}" if version
+    software["prototype"] = "#{version}" if version
+
+    version = session.evaluate_script('React.version')
+    _log_good "Using React #{version}" if version
+    software["react"] = "#{version}" if version
+
+    version = session.evaluate_script('requirejs.version')
+    _log_good "Using RequireJS #{version}" if version
+    software["requirejs"] = "#{version}" if version
+
+    version = session.evaluate_script('YAHOO.VERSION')
+    _log_good "Using YUI #{version}" if version
+    software["yui"] = "#{version}" if version
+
+    @entity.set_detail("software", software )
 
   end
 

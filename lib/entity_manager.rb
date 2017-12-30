@@ -119,6 +119,7 @@ class EntityManager
       type = resolve_type(type_string)
       $db.transaction do
         begin
+
           entity = Intrigue::Model::Entity.create({
             :name =>  downcased_name,
             :project => project,
@@ -127,6 +128,11 @@ class EntityManager
             :details_raw => details,
             :hidden => (hidden ? true : false )
            })
+
+          unless entity
+            task_result.log "ERROR! Unable to create entity: #{entity}"
+            return nil
+          end
 
            g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
            entity.alias_group_id = g.id
@@ -137,8 +143,6 @@ class EntityManager
         end
       end
     end
-
-    return nil unless entity
 
     # necessary because of our single table inheritance?
     created_entity = Intrigue::Model::Entity.find(:id => entity.id)

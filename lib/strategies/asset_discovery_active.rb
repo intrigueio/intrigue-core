@@ -25,7 +25,9 @@ module Strategy
         base_name = entity.name.split(".")[0...-1].join(".")
 
         ### Permute the dns record to find similar entities
-        start_recursive_task(task_result,"dns_permute", entity)
+        if domain_length > 2
+          start_recursive_task(task_result,"dns_permute", entity)
+        end
 
         ### AWS_S3_brute the domain name and the base name
         start_recursive_task(task_result,"aws_s3_brute",entity,[
