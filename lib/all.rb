@@ -9,6 +9,7 @@ require 'eventmachine'
 require 'geoip'
 require 'ipaddr'
 require 'json'
+require 'mini_magick'
 require 'net/dns'
 require 'net/http'
 require 'nmap/xml'
@@ -31,14 +32,13 @@ require 'whois-parser'
 require 'whoisology'
 require 'yomu'
 
-
-
 ####
 # Task-specific libraries
 ####
 require_relative 'task_factory'
 
 ### Mixins with common task functionality
+require_relative 'tasks/helpers/browser'
 require_relative 'tasks/helpers/data'
 require_relative 'tasks/helpers/dns'
 require_relative 'tasks/helpers/generic'
@@ -96,8 +96,10 @@ require_relative 'client'
 # Entity-specific libraries
 ####
 require_relative 'entity_manager'
+
 # Load all .rb file in lib/entities by default
 entities_folder = File.expand_path('../entities', __FILE__) # get absolute directory
+require_relative "#{entities_folder}/network_service" # have to do this first, since others dep on it
 Dir["#{entities_folder}/*.rb"].each {|f| require_relative f}
 
 ####

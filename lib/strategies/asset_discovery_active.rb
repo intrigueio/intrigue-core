@@ -24,6 +24,11 @@ module Strategy
         # get the domain's base name (minus the TLD)
         base_name = entity.name.split(".")[0...-1].join(".")
 
+        ### Permute the dns record to find similar entities
+        if domain_length > 2
+          start_recursive_task(task_result,"dns_permute", entity)
+        end
+
         ### AWS_S3_brute the domain name and the base name
         start_recursive_task(task_result,"aws_s3_brute",entity,[
           {"name" => "additional_buckets", "value" => "#{base_name},#{entity.name}"}
@@ -64,7 +69,7 @@ module Strategy
       #  # Search, only snag the top result
       #  start_recursive_task(task_result,"search_bing",entity,[{"name"=> "max_results", "value" => 1}])
 
-      elsif entity.type_string == "FtpServer"
+      elsif entity.type_string == "FtpService"
         start_recursive_task(task_result,"ftp_banner_grab",entity)
 
       elsif entity.type_string == "IpAddress"

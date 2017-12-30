@@ -5,7 +5,8 @@ class MongoService < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "MongoService",
-      :description => "A MongoDB Server"
+      :description => "A MongoDB Server",
+      :user_creatable => false
     }
   end
 

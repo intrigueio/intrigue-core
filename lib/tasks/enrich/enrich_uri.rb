@@ -2,6 +2,7 @@ module Intrigue
 module Task
 class EnrichUri < BaseTask
   include Intrigue::Task::Web
+  include Intrigue::Task::Browser
 
   def self.metadata
     {
@@ -79,9 +80,29 @@ class EnrichUri < BaseTask
     #  end
     #end
 
-    @entity.enriched = true
+    ## Library fingerprinting and Screenshotting
 
+    # create a capybara session and browse to our uri
+    session = create_browser_session(uri)
+
+    # Capture versions of common javascript libs
+    #
+    # get existing software details (in case this is a second run)
+    software = @entity.get_detail("software") || {}
+    # run the version checking scripts in our session
+    software = gather_javascript_libraries(session, software)
+    # set the new details
+    @entity.set_detail("software", software )
+
+    # capture a screenshot and save it as a detail
+    base64_screenshot_data = capture_screenshot(session)
+    @entity.set_detail("hidden_screenshot_contents",base64_screenshot_data)
+
+    @entity.enriched = true
   end
+
+
+
 
   def check_options_endpoint(uri)
     response = http_request(:options, uri)

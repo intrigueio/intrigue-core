@@ -12,6 +12,8 @@ class Hash
         new_hash.merge!({
           k.encode('UTF-8', invalid: :replace, undef: :replace, replace: '?') => v.encode('UTF-8', invalid: :replace, undef: :replace, replace: '?')
         })
+      else
+        new_hash.merge!({k.encode('UTF-8', invalid: :replace, undef: :replace, replace: '?') => v})
       end
     end
 

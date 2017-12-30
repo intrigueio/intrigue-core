@@ -5,7 +5,8 @@ class Organization < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "Organization",
-      :description => "An organization"
+      :description => "An organization",
+      :user_creatable => true
     }
   end
 

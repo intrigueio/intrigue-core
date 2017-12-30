@@ -5,7 +5,8 @@ class DnsRecord < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "DnsRecord",
-      :description => "A Dns Record"
+      :description => "A Dns Record",
+      :user_creatable => true
     }
   end
 

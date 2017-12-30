@@ -74,11 +74,14 @@
         // get the full entity_types.json
         $.getJSON(location.origin + "/entity_types.json", function(data) {
           $.each(data, function(key, value) {
-            $('#entity_type')
-               .append($("<option></option>")
-               .attr("value",value)
-               .text(value));
-            });
+            if (value["user_creatable"]) {
+              console.log("value: " + value);
+              $('#entity_type')
+                 .append($("<option></option>")
+                 .attr("value",value["name"])
+                 .text(value["name"]));
+            };
+          });
         });
 
       }
@@ -87,9 +90,9 @@
         $.each(task_hash["allowed_types"], function(key, value) {
           $('#entity_type')
              .append($("<option></option>")
-             .attr("value",value)
+             .attr("value",value["name"])
              .text(value));
-          });
+        });
       }
     }
 

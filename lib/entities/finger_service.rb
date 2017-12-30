@@ -1,11 +1,12 @@
 module Intrigue
 module Entity
-class SshServer < Intrigue::Model::Entity
+class FingerService < Intrigue::Entity::NetworkService
 
   def self.metadata
     {
-      :name => "SshServer",
-      :description => "A SSH Server"
+      :name => "FingerService",
+      :description => "A Finger Server",
+      :user_creatable => false
     }
   end
 

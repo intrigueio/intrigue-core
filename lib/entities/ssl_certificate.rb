@@ -5,7 +5,8 @@ class SslCertificate < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "SslCertificate",
-      :description => "An SSL Certificate"
+      :description => "An SSL Certificate",
+      :user_creatable => false
     }
   end
 
