@@ -1,10 +1,9 @@
-require 'mini_magick'
-
 module Intrigue
 module Task
 class UriScreenshot < BaseTask
 
-  include Intrigue::Task::Scanner
+  #include Intrigue::Task::Scanner
+  include Intrigue::Task::Browser
 
   def self.metadata
     {
@@ -14,7 +13,8 @@ class UriScreenshot < BaseTask
       :description => "This task screenshots a Uri.",
       :references => [
         "https://github.com/johnmichel/Library-Detector-for-Chrome",
-        "https://snyk.io/blog/77-percent-of-sites-use-vulnerable-js-libraries"
+        "https://snyk.io/blog/77-percent-of-sites-use-vulnerable-js-libraries",
+        "https://github.com/mathquill/mathquill/commit/a34fc8b5243471c7ab7044c2ba70831406caed2c"
       ],
       :type => "discovery",
       :passive => false,
@@ -31,106 +31,14 @@ class UriScreenshot < BaseTask
   def run
     super
 
-    if @entity.type_string == "Uri"
-      uri = _get_entity_name
+    uri = _get_entity_name
 
-      begin
+    # create a capybara session and browse to our uri
+    session = create_browser_session(uri)
 
-        # Start a new session
-        session = Capybara::Session.new(:poltergeist)
-
-        # browse to our target
-        session.visit(uri)
-
-        # Capture Title
-        page_title = session.document.title
-        _log_good "Title: #{page_title}"
-
-        # Capture versions of common javascript libs
-        _gather_javascript_libraries(session)
-
-        #
-        # Capture a screenshot, cleaning
-        #
-        tempfile = Tempfile.new(['phantomjs', '.png'])
-
-        #file_path = "/tmp/intrigue-phantomjs-file-#{rand(1000000000000000)}.png"
-        return_path = session.save_screenshot(tempfile.path)
-        _log "Saved Screenshot to #{return_path}"
-
-        # resize the image using minimagick
-        image = MiniMagick::Image.open(return_path)
-        image.resize "640x480"
-        image.format "png"
-        image.write tempfile.path
-
-        # open and read the file's contents, and base64 encode them
-        base64_image_contents = Base64.encode64(File.read(tempfile.path))
-
-        # cleanup
-        session.driver.quit
-        tempfile.close
-        tempfile.unlink
-
-        # set the details
-        @entity.set_detail("hidden_screenshot_contents",base64_image_contents)
-
-      rescue Capybara::Poltergeist::StatusFailError => e
-        _log_error "Fail Error: #{e}"
-      rescue Capybara::Poltergeist::JavascriptError => e
-        _log_error "JS Error: #{e}"
-      end
-    end
-
-  end
-
-  def _gather_javascript_libraries(session)
-
-    # get software hash
-    software = @entity.get_detail("software") || {}
-
-    version = session.evaluate_script('dojo.version')
-    _log_good "Using Dojo #{version}" if version
-    software["dojo"] = "#{version}" if version
-
-    # Capture JQuery version
-    version = session.evaluate_script('jQuery.fn.jquery')
-    _log_good "Using jQuery #{version}" if version
-    software["jquery"] = "#{version}" if version
-
-    version = session.evaluate_script('jQuery.tools.version')
-    _log_good "Using jQuery Tools #{version}" if version
-    software["jquery_tools"] = "#{version}" if version
-
-    version = session.evaluate_script('jQuery.ui.version')
-    _log_good "Using jQuery UI #{version}" if version
-    software["jquery_ui"] = "#{version}" if version
-
-    version = session.evaluate_script('angular.version.full')
-    _log_good "Using Angular #{version}" if version
-    software["angular"] = "#{version}" if version
-
-    version = session.evaluate_script('paper.version')
-    _log_good "Using Paper.JS #{version}" if version
-    software["paperjs"] = "#{version}" if version
-
-    version = session.evaluate_script('Prototype.version')
-    _log_good "Using Prototype #{version}" if version
-    software["prototype"] = "#{version}" if version
-
-    version = session.evaluate_script('React.version')
-    _log_good "Using React #{version}" if version
-    software["react"] = "#{version}" if version
-
-    version = session.evaluate_script('requirejs.version')
-    _log_good "Using RequireJS #{version}" if version
-    software["requirejs"] = "#{version}" if version
-
-    version = session.evaluate_script('YAHOO.VERSION')
-    _log_good "Using YUI #{version}" if version
-    software["yui"] = "#{version}" if version
-
-    @entity.set_detail("software", software )
+    # capture a screenshot and save it as a detail
+    base64_screenshot_data = capture_screenshot(session)
+    @entity.set_detail("hidden_screenshot_contents",base64_screenshot_data)
 
   end
 

@@ -9,6 +9,7 @@ require 'eventmachine'
 require 'geoip'
 require 'ipaddr'
 require 'json'
+require 'mini_magick'
 require 'net/dns'
 require 'net/http'
 require 'nmap/xml'
@@ -31,14 +32,13 @@ require 'whois-parser'
 require 'whoisology'
 require 'yomu'
 
-
-
 ####
 # Task-specific libraries
 ####
 require_relative 'task_factory'
 
 ### Mixins with common task functionality
+require_relative 'tasks/helpers/browser'
 require_relative 'tasks/helpers/data'
 require_relative 'tasks/helpers/dns'
 require_relative 'tasks/helpers/generic'
