@@ -67,61 +67,152 @@ module Task
       # Examples: https://builtwith.angularjs.org/
       # Examples: https://www.madewithangular.com/
       version = session.evaluate_script('angular.version.full')
-      _log_good "Using Angular #{version}" if version
-      hash["angular"] = "#{version}" if version
+      if version
+        _log_good "Detected Angular #{version}"
+        hash["angular"] = {
+          "detected" => true,
+          "version" => "#{version}"
+        }
+      else
+        hash["angular"] = {
+          "detected" => false
+        }
+      end
+
 
       # Test site: https://app.casefriend.com/
       # Examples: https://github.com/jashkenas/backbone/wiki/projects-and-companies-using-backbone
       version = session.evaluate_script('Backbone.VERSION')
-      _log_good "Using Backbone #{version}" if version
-      hash["backbone"] = "#{version}" if version
+      if version
+        _log_good "Detected Backbone #{version}"
+        hash["backbone"] = {
+          "detected" => true,
+          "version" => "#{version}"
+        }
+      else
+        hash["backbone"] = {
+          "detected" => false
+        }
+      end
 
       # Test site: https://d3js.org/
       # Examples: https://kartoweb.itc.nl/kobben/D3tests/index.html
       version = session.evaluate_script('d3.version')
-      _log_good "Using D3 #{version}" if version
-      hash["d3"] = "#{version}" if version
+      if version
+        _log_good "Detected D3 #{version}"
+        hash["d3"] = {
+          "detected" => true,
+          "version" => "#{version}"
+        }
+      else
+        hash["d3"] = {
+          "detected" => false
+        }
+      end
 
       # Test site: http://demos.dojotoolkit.org/demos/mobileCharting/demo.html
       # Examples: http://demos.dojotoolkit.org/demos/
       version = session.evaluate_script('dojo.version')
-      _log_good "Using Dojo #{version}" if version
-      hash["dojo"] = "#{version}" if version
+      if version
+        _log_good "Detected Dojo #{version}"
+        hash["dojo"] = {
+          "detected" => true,
+          "version" => "#{version}"
+        }
+      else
+        hash["dojo"] = {
+          "detected" => false
+        }
+      end
 
       # Test site: https://secure.ally.com/
       # Examples: http://builtwithember.io/
       version = session.evaluate_script('Ember.VERSION')
-      _log_good "Using Ember #{version}" if version
-      hash["ember"] = "#{version}" if version
+      if version
+        _log_good "Detected Ember #{version}"
+        hash["ember"] = {
+          "detected" => true,
+          "version" => "#{version}"
+        }
+      else
+        hash["ember"] = {
+          "detected" => false
+        }
+      end
 
       # Test site: http://www.eddiebauer.com/
       # Test site: https://www.underarmour.com
       version = session.evaluate_script('jQuery.fn.jquery')
-      _log_good "Using jQuery #{version}" if version
-      hash["jquery"] = "#{version}" if version
+      if version
+        _log_good "Detected jQuery #{version}"
+        hash["jquery"] = {
+          "detected" => true,
+          "version" => "#{version}"
+        }
+      else
+        hash["jquery"] = {
+          "detected" => false
+        }
+      end
 
       # Test site: http://www.eddiebauer.com/
       version = session.evaluate_script('jQuery.tools.version')
-      _log_good "Using jQuery Tools #{version}" if version
-      hash["jquery_tools"] = "#{version}" if version
+      if version
+        _log_good "Detected jQuery Tools #{version}"
+        hash["jquery_tools"] = {
+          "detected" => true,
+          "version" => "#{version}"
+        }
+      else
+        hash["jquery_tools"] = {
+          "detected" => false
+        }
+      end
 
       # Test site: http://www.eddiebauer.com/
       # Test site: https://www.underarmour.com
       version = session.evaluate_script('jQuery.ui.version')
-      _log_good "Using jQuery UI #{version}" if version
-      hash["jquery_ui"] = "#{version}" if version
+      if version
+        _log_good "Detected jQuery UI #{version}"
+        hash["jquery_ui"] = {
+          "detected" => true,
+          "version" => "#{version}"
+        }
+      else
+        hash["jquery_ui"] = {
+          "detected" => false
+        }
+      end
 
       # Test site:
       # Examples: http://knockoutjs.com/examples/
       #version = session.evaluate_script('knockout.version')
-      #_log_good "Using Knockout #{version}" if version
-      #hash["knockout"] = "#{version}" if version
+      #if version
+      #  _log_good "Detected Knockout #{version}"
+      #  hash["knockout"] = {
+      #    "detected" => true,
+      #    "version" => "#{version}"
+      #  }
+      #else
+      #  hash["knockout"] = {
+      #    "detected" => false
+      #  }
+      #end
 
       # Test site: http://paperjs.org/examples/boolean-operations
       # Examples: http://paperjs.org/examples
       version = session.evaluate_script('paper.version')
-      _log_good "Using Paper.JS #{version}" if version
-      hash["paperjs"] = "#{version}" if version
+      if version
+        _log_good "Detected Paper.js #{version}"
+        hash["paperjs"] = {
+          "detected" => true,
+          "version" => "#{version}"
+        }
+      else
+        hash["paperjs"] = {
+          "detected" => false
+        }
+      end
 
       # Test site:
       # Examples:
@@ -132,25 +223,61 @@ module Task
       # Test site: https://weather.com/
       # Examples: https://react.rocks/
       version = session.evaluate_script('React.version')
-      _log_good "Using React #{version}" if version
-      hash["react"] = "#{version}" if version
+      if version
+        _log_good "Detected React #{version}"
+        hash["react"] = {
+          "detected" => true,
+          "version" => "#{version}"
+        }
+      else
+        hash["react"] = {
+          "detected" => false
+        }
+      end
 
       # Test site: https://www.homedepot.com
       version = session.evaluate_script('requirejs.version')
-      _log_good "Using RequireJS #{version}" if version
-      hash["requirejs"] = "#{version}" if version
+      if version
+        _log_good "Detected RequireJS #{version}"
+        hash["requirejs"] = {
+          "detected" => true,
+          "version" => "#{version}"
+        }
+      else
+        hash["requirejs"] = {
+          "detected" => false
+        }
+      end
 
       # Test site: https://app.casefriend.com/#sessions/login
       # Test site: https://store.dji.com/
       version = session.evaluate_script('_.VERSION')
-      _log_good "Using Lodash / Underscore #{version}" if version
-      hash["underscore"] = "#{version}" if version
+      if version
+        _log_good "Detected underscore #{version}"
+        hash["underscore"] = {
+          "detected" => true,
+          "version" => "#{version}"
+        }
+      else
+        hash["underscore"] = {
+          "detected" => false
+        }
+      end
 
       # Test site: https://yuilibrary.com/yui/docs/event/basic-example.html
       # Examples: https://yuilibrary.com/yui/docs/examples/
       version = session.evaluate_script('YUI().version')
-      _log_good "Using YUI #{version}" if version
-      hash["yui"] = "#{version}" if version
+      if version
+        _log_good "Detected YUI #{version}"
+        hash["yui"] = {
+          "detected" => true,
+          "version" => "#{version}"
+        }
+      else
+        hash["yui"] = {
+          "detected" => false
+        }
+      end
 
     hash
     end
