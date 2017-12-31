@@ -1,6 +1,6 @@
   <p>
   Alias Group Count: <%= @group_count %><br/>
-  Total Entities Count: <%= @entity_count %><br/>
+  Unique Entities Count: <%= @entity_count %><br/>
   <!--Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>-->
   <a href="/<%=@project_name%>/entities.csv?search_string=<%=h @search_string%>&entity_types[]=<%=@entity_types.join(",") if @entity_types%>">Export CSV</a><br/>
   </p>
@@ -16,7 +16,6 @@
         <option value="<%=d%>" <%="selected" if (@entity_types && @entity_types.include?(d.to_s))%>> <%=d%></option>
       <% end %>
     </select><br/>
-    <!--<input id="correlate" name="correlate" type="checkbox"> Correlate Entities <br/><br/>-->
 
     <input class="btn btn-primary" type="submit" value="Search">
   </form>
