@@ -30,7 +30,7 @@ Aliases: <br/>
 
 Tasks that created this entity:<br/>
 <ul>
-<%= out = ""; @entity.task_results.each {|x| out << "<li><a href='/#{@project_name}/results/#{x.id}'>#{h x.task_name} (#{h x.base_entity})</a></li>" }; out %>
+<%= out = ""; @entity.task_results.uniq.each {|x| out << "<li><a href='/#{@project_name}/results/#{x.id}'>#{h x.task_name} (#{h x.base_entity})</a></li>" }; out %>
 </ul>
 
 Tasks run on this entity:<br/>
