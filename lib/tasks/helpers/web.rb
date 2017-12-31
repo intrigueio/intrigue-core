@@ -336,9 +336,6 @@ module Task
          @task_result.logger.log "ERROR parsing JSON: #{e}"
        end
 
-       # Clean up
-       #
-       file.unlink if file
      end
 
      ###

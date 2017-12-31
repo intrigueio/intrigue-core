@@ -163,8 +163,7 @@ class UriBrute < BaseTask
           _create_entity "Uri",
             "name" => request_uri,
             "uri" => request_uri,
-            "response_code" => response.code,
-            "brute_response_body" => response.body
+            "response_code" => response.code
         when @missing_page_code
           _log "Got code: #{response.code}. Same as missing page code. Skipping"
         else
