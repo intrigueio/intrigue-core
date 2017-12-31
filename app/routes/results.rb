@@ -37,7 +37,7 @@ class IntrigueApp < Sinatra::Base
       params[:hide_enrichment] == "on" ? @hide_enrichment = true : @hide_enrichment = false
       params[:hide_autoscheduled] == "on" ? @hide_autoscheduled = true : @hide_autoscheduled = false
       params[:hide_cancelled] == "on" ? @hide_cancelled = true : @hide_cancelled = false
-      params[:hide_complete] == "on" ? @hide_complete = true : @hide_complete = false
+      params[:only_complete] == "on" ? @only_complete = true : @only_complete = false
 
       (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
 
@@ -54,7 +54,7 @@ class IntrigueApp < Sinatra::Base
       selected_results = selected_results.exclude(Sequel.ilike(:name, "%enrich%")) if @hide_enrichment
       selected_results = selected_results.exclude(:cancelled) if @hide_cancelled
       selected_results = selected_results.exclude(:autoscheduled) if @hide_autoscheduled
-      selected_results = selected_results.exclude(:complete) if @hide_complete
+      selected_results = selected_results.exclude(:complete => false) if @only_complete
 
 
       # PAGINATE

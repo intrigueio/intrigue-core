@@ -113,17 +113,17 @@ class Whois < BaseTask
               "start_address" => "#{start_address}",
               "end_address" => "#{end_address}",
               "cidr" => "#{cidr_length}",
-              "description" => "#{description}",
-              "block_type" => "#{block_type}",
-              "handle" => "#{handle}",
-              "organization_name" => "#{org_name}",
-              "organization_reference" => "#{org_ref}",
-              "parent_reference" => "#{parent_ref}",
-              "whois_full_text" => "#{answer.content}",
+              "description" => "#{description}".sanitize_unicode,
+              "block_type" => "#{block_type}".sanitize_unicode,
+              "handle" => "#{handle}".sanitize_unicode,
+              "organization_name" => "#{org_name}".sanitize_unicode,
+              "organization_reference" => "#{org_ref}".sanitize_unicode,
+              "parent_reference" => "#{parent_ref}".sanitize_unicode,
+              "whois_full_text" => "#{answer.content}".sanitize_unicode,
               "rir" => "ARIN"
             }
 
-            @entity.set_detail("provider", org_name)
+            @entity.set_detail("provider", org_name.sanitize_unicode)
 
           end # End Netblocks
         rescue Nokogiri::XML::XPath::SyntaxError => e
@@ -150,13 +150,13 @@ class Whois < BaseTask
         entity = _create_entity "NetBlock", {
           "name" => "#{range}",
           "cidr" => "#{range.split('/').last}",
-          "description" => "#{description}",
+          "description" => "#{description}".sanitize_unicode,
           "rir" => "#{json["data"]["rir"]}",
-          "organization_reference" => "#{netname}",
-          "organization_name" => "#{description}",
-          "whois_full_text" => "#{answer.content}"
+          "organization_reference" => "#{netname}".sanitize_unicode,
+          "organization_name" => "#{description}".sanitize_unicode,
+          "whois_full_text" => "#{answer.content}".sanitize_unicode
         }
-        @entity.set_detail("provider", "#{description}")
+        @entity.set_detail("provider", "#{description}".sanitize_unicode)
       end
       #
       # We're going to have nameservers either way?
@@ -175,10 +175,14 @@ class Whois < BaseTask
           _log_error "No parsed nameservers!"
           return
         end
+      rescue ::Whois::AttributeNotImplemented => e
+        _log_error "Unable to parse that attribute: #{e}"
+      end
 
-        #
-        # Create a user from the technical contact
-        #
+      #
+      # Create a user from the technical contact
+      #
+      begin
         if opt_create_contacts
           parser.contacts.each do |contact|
             _log "Creating user from contact: #{contact.name}"
