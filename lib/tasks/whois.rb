@@ -113,13 +113,13 @@ class Whois < BaseTask
               "start_address" => "#{start_address}",
               "end_address" => "#{end_address}",
               "cidr" => "#{cidr_length}",
-              "description" => "#{description}".sanitize_unicode,
+              "description" => "#{description}".force_encoding('ISO-8859-1').sanitize_unicode,
               "block_type" => "#{block_type}".sanitize_unicode,
               "handle" => "#{handle}".sanitize_unicode,
               "organization_name" => "#{org_name}".sanitize_unicode,
               "organization_reference" => "#{org_ref}".sanitize_unicode,
               "parent_reference" => "#{parent_ref}".sanitize_unicode,
-              "whois_full_text" => "#{answer.content}".sanitize_unicode,
+              "whois_full_text" => "#{answer.content}".force_encoding('ISO-8859-1').sanitize_unicode,
               "rir" => "ARIN"
             }
 
@@ -150,13 +150,13 @@ class Whois < BaseTask
         entity = _create_entity "NetBlock", {
           "name" => "#{range}",
           "cidr" => "#{range.split('/').last}",
-          "description" => "#{description}".sanitize_unicode,
+          "description" => "#{description}".force_encoding('ISO-8859-1').sanitize_unicode,
           "rir" => "#{json["data"]["rir"]}",
           "organization_reference" => "#{netname}".sanitize_unicode,
           "organization_name" => "#{description}".sanitize_unicode,
-          "whois_full_text" => "#{answer.content}".sanitize_unicode
+          "whois_full_text" => "#{answer.content}".force_encoding('ISO-8859-1').sanitize_unicode
         }
-        @entity.set_detail("provider", "#{description}".sanitize_unicode)
+        @entity.set_detail("provider", "#{description}".force_encoding('ISO-8859-1').sanitize_unicode)
       end
       #
       # We're going to have nameservers either way?
