@@ -232,7 +232,14 @@ class WebStackFingerprint < BaseTask
           :content =>  /{"timestamp":\d.*,"status":999,"error":"None","message":"No message available"}/,
           :test_site => "https://pcr.apple.com",
           :references => ["https://github.com/spring-projects/spring-boot"]
-      }]},
+        },
+        {
+          :name => "Apache",
+          :description => "Apache Missing Page",
+          :type => "content",
+          :content => /<address>.*<\/address>/,
+          :dynamic_name => lambda{|x| x.scan(/<address>.*<\/address>/)[0].gsub(/<\/?address>/,"") }
+        }]},
       {
         :uri => "#{uri}/error.json",
         :checklist => [{
@@ -265,7 +272,8 @@ class WebStackFingerprint < BaseTask
 
             # Do each content check, call the dynamic name if we have it,
             # otherwise, just give it a static name
-            if "#{response.body}" =~ /#{check[:content]}/
+            if "#{response.body}" =~ check[:content]
+              _log "MATCH: #{check[:content]}"
               if check[:dynamic_name]
                 temp << check[:dynamic_name].call(response.body)
               else
@@ -277,7 +285,6 @@ class WebStackFingerprint < BaseTask
             # other types might include image check
             raise "Not sure how to handle this check type"
           end
-
 
         end
       end
