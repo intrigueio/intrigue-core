@@ -33,7 +33,7 @@ class EnrichUri < BaseTask
       return
     end
 
-    response_data = response.body.encode('UTF-8', {:invalid => :replace, :undef => :replace, :replace => '?'})
+    response_data = response.body.sanitize_unicode
     response_data_hash = Digest::SHA256.base64digest(response_data) if response_data
 
     # we can check the existing response, so send that
@@ -100,9 +100,6 @@ class EnrichUri < BaseTask
 
     @entity.enriched = true
   end
-
-
-
 
   def check_options_endpoint(uri)
     response = http_request(:options, uri)

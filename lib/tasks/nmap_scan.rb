@@ -81,21 +81,21 @@ class NmapScan < BaseTask
 
         ip_entity.set_detail("os", host.os.matches)
         ip_entity.set_detail("ports", host.each_port.select{|p| p.state == :open}.map{ |p|
-                                    { :state => p.state,
+                                    { :state => "#{p.state}",
                                       :number => p.number,
-                                      :protocol => p.protocol,
+                                      :protocol => "#{p.protocol}",
                                       :service => {
-                                        :protocol => p.service.protocol,
-                                        :ssl => p.service.ssl?,
-                                        :product => p.service.product,
-                                        :version => p.service.version,
-                                        :extra_info => p.service.extra_info,
-                                        :hostname => p.service.hostname,
-                                        :os_type => p.service.os_type,
-                                        :device_type => p.service.device_type,
-                                        :fingerprint_method => p.service.fingerprint_method,
-                                        :fingerprint => p.service.fingerprint,
-                                        :confidence => p.service.confidence
+                                        :protocol => "#{p.service.protocol}",
+                                        :ssl => "#{p.service.ssl?}",
+                                        :product => "#{p.service.product}",
+                                        :version => "#{p.service.version}",
+                                        :extra_info => "#{p.service.extra_info}",
+                                        :hostname => "#{p.service.hostname}",
+                                        :os_type => "#{p.service.os_type}",
+                                        :device_type => "#{p.service.device_type}",
+                                        :fingerprint_method => "#{p.service.fingerprint_method}",
+                                        :fingerprint => "#{p.service.fingerprint}",
+                                        :confidence => "#{p.service.confidence}"
                                       }}})
 
         # iterate through all ports
@@ -106,17 +106,17 @@ class NmapScan < BaseTask
                 port.number,
                 "#{port.protocol}",
                 { :nmap_details => {
-                    :protocol => port.service.protocol,
-                    :ssl => port.service.ssl?,
-                    :product => port.service.product,
-                    :version => port.service.version,
-                    :extra_info => port.service.extra_info,
-                    :hostname => port.service.hostname,
-                    :os_type => port.service.os_type,
-                    :device_type => port.service.device_type,
-                    :fingerprint_method => port.service.fingerprint_method,
-                    :fingerprint => port.service.fingerprint,
-                    :confidence => port.service.confidence
+                    :protocol => "#{port.service.protocol}",
+                    :ssl => "#{port.service.ssl?}",
+                    :product => "#{port.service.product}",
+                    :version => "#{port.service.version}",
+                    :extra_info => "#{port.service.extra_info}",
+                    :hostname => "#{port.service.hostname}",
+                    :os_type => "#{port.service.os_type}",
+                    :device_type => "#{port.service.device_type}",
+                    :fingerprint_method => "#{port.service.fingerprint_method}",
+                    :fingerprint => "#{port.service.fingerprint}",
+                    :confidence => "#{port.service.confidence}"
                 }}
              )
 

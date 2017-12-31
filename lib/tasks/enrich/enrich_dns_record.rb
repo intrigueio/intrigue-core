@@ -51,8 +51,8 @@ class EnrichDnsRecord < BaseTask
     ### Set details for this entity
     ####
     dns_entries = results.map { |result|
-      { "response_data" => result["lookup_details"].first["response_record_data"],
-        "response_type" => result["lookup_details"].first["response_record_type"] }
+      { "response_data" => result["lookup_details"].first["response_record_data"].to_s.sanitize_unicode,
+        "response_type" => result["lookup_details"].first["response_record_type"].to_s.sanitize_unicode }
     }.uniq{ |r| "#{r["response_data"]}-#{r["response_type"]}" }
 
     @entity.set_detail("dns_entries", dns_entries)
