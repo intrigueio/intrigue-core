@@ -1,8 +1,6 @@
 module Intrigue
 module Task
 class UriExtractMetadata < BaseTask
-
-  include Intrigue::Task::Parse
   include Intrigue::Task::Web
 
   def self.metadata
@@ -10,7 +8,7 @@ class UriExtractMetadata < BaseTask
       :name => "uri_extract_metadata",
       :pretty_name => "URI Extract Metadata",
       :authors => ["jcran"],
-      :description => "This task downloads the contents of a single URI and extracts entities from the text and various files. Supported formats:",
+      :description => "This task downloads the contents of a single URI and extracts entities from the text and metadata of files.",
       :references => ["http://tika.apache.org/0.9/formats.html"],
       :type => "discovery",
       :passive => false,
@@ -26,11 +24,11 @@ class UriExtractMetadata < BaseTask
   ## Default method, subclasses must override this
   def run
     super
-    uri = _get_entity_name
 
-    hostname = URI.parse(uri).host
-    port = URI.parse(uri).port
+    # first, follow any redirects
+    uri = http_request(:get,"#{_get_entity_name}").uri
 
+    # then download the file
     download_and_extract_metadata uri
 
   end

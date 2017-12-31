@@ -286,49 +286,138 @@ module Task
      response
      end
 
-     # List of checks for body of the response
-     def http_body_checks
-       [
-         ###
-         ### Security Seals
-         ###
-         # http://baymard.com/blog/site-seal-trust
-         # https://vagosec.org/2014/11/clubbing-seals/
-         #
-         { :regex => /Norton Secured, Powered by Symantec/,
-           :finding_name => "Norton Security Seal"},
-         { :regex => /PathDefender/,
-           :finding_name => "McAfee Pathdefender Security Seal"},
-         ### Marketing / Tracking
-         {:regex => /urchin.js/, :finding_name => "Google Analytics"},
-         {:regex => /optimizely/, :finding_name => "Optimizely"},
-         {:regex => /trackalyze/, :finding_name => "Trackalyze"},
-         {:regex => /doubleclick.net|googleadservices/,
-           :finding_name => "Google Ads"},
-         {:regex => /munchkin.js/, :finding_name => "Marketo"},
-         {:regex => /Olark live chat software/, :finding_name => "Olark"},
-         ### External accounts
-         {:regex => /http:\/\/www.twitter.com.*?/,
-           :finding_name => "Twitter Account"},
-         {:regex => /http:\/\/www.facebook.com.*?/,
-           :finding_name => "Facebook Account"},
-         ### Technologies
-         #{:regex => /javascript/, :finding => "Javascript"},
-         {:regex => /jquery.js/, :finding_name => "JQuery"},
-         {:regex => /bootstrap.css/, :finding_name => "Twitter Bootstrap"},
-         ### Platform
-         {:regex => /[W|w]ordpress/, :finding_name => "Wordpress"},
-         {:regex => /[D|d]rupal/, :finding_name => "Drupal"},
-         ### Provider
-         {:regex => /Content Delivery Network via Amazon Web Services/,
-           :finding_name => "Amazon Cloudfront"},
-         ### Wordpress Plugins
-         { :regex => /wp-content\/plugins\/.*?\//, :finding_name => "Wordpress Plugin" },
-         { :regex => /xmlrpc.php/, :finding_name => "Wordpress API"},
-         #{:regex => /Yoast WordPress SEO plugin/, :finding_name => "Yoast Wordress SEO Plugin"},
-         #{:regex => /PowerPressPlayer/, :finding_name => "Powerpress Wordpress Plugin"},
-         ###
-       ]
+
+     def download_and_extract_metadata(uri,extract_content=true)
+
+       begin
+         # Download file and store locally before parsing. This helps prevent mime-type confusion
+         # Note that we don't care who it is, we'll download indescriminently.
+         file = open(uri, {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE})
+
+         # Parse the file
+         yomu = Yomu.new file
+
+         # create a uri for everything
+         _create_entity "Uri", {
+             "content_type" => file.content_type,
+             "name" => "#{uri}",
+             "uri" => "#{uri}",
+             "metadata" => "#{yomu.metadata.to_json}" }
+
+         # Handle audio files
+         if yomu.metadata["Content-Type"] == "audio/mpeg" # Handle MP3/4
+           _create_entity "Person", {"name" => yomu.metadata["meta:author"], "origin" => uri }
+           _create_entity "Person", {"name" => yomu.metadata["creator"], "origin" => uri }
+           _create_entity "Person", {"name" => yomu.metadata["xmpDM:artist"], "origin" => uri }
+         elsif yomu.metadata["Content-Type"] == "application/pdf" # Handle PDF
+           _create_entity "Person", {"name" => yomu.metadata["Author"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["Author"]
+           _create_entity "Person", {"name" => yomu.metadata["meta:author"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["meta:author"]
+           _create_entity "Person", {"name" => yomu.metadata["dc:creator"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["dc:creator"]
+           _create_entity "Organization", {"name" => yomu.metadata["Company"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["Company"]
+           _create_entity "SoftwarePackage", {"name" => yomu.metadata["producer"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["producer"]
+           _create_entity "SoftwarePackage", {"name" => yomu.metadata["xmp:CreatorTool"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["Company"]
+         end
+
+         # Look for entities in the text of the entity
+         parse_entities_from_content(uri,yomu.text) if extract_content
+
+       # Don't die if we lose our connection to the tika server
+       rescue RuntimeError => e
+         @task_result.logger.log "ERROR Unable to download file: #{e}"
+       rescue EOFError => e
+         @task_result.logger.log "ERROR Unable to download file: #{e}"
+       rescue OpenURI::HTTPError => e     # don't die if we can't find the file
+         @task_result.logger.log "ERROR Unable to download file: #{e}"
+       rescue URI::InvalidURIError => e     # handle invalid uris
+         @task_result.logger.log "ERROR Unable to download file: #{e}"
+       rescue Errno::EPIPE => e
+         @task_result.logger.log "ERROR Unable to contact Tika: #{e}"
+       rescue JSON::ParserError => e
+         @task_result.logger.log "ERROR parsing JSON: #{e}"
+       end
+
+       # Clean up
+       #
+       file.unlink if file
+     end
+
+     ###
+     ### Entity Parsing
+     ###
+     def parse_entities_from_content(source_uri, content)
+       parse_email_addresses_from_content(source_uri, content)
+       parse_dns_records_from_content(source_uri, content)
+       parse_phone_numbers_from_content(source_uri, content)
+       #parse_uris_from_content(source_uri, content)
+     end
+
+     def parse_email_addresses_from_content(source_uri, content)
+
+       @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
+
+       # Make sure we have something to parse
+       unless content
+         @task_result.logger.log_error "No content to parse, returning" if @task_result
+         return nil
+       end
+
+       # Scan for email addresses
+       addrs = content.scan(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,8}/)
+       addrs.each do |addr|
+         x = _create_entity("EmailAddress", {"name" => addr, "origin" => source_uri}) unless addr =~ /.png$|.jpg$|.gif$|.bmp$|.jpeg$/
+       end
+
+     end
+
+     def parse_dns_records_from_content(source_uri, content)
+
+       @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
+
+       # Make sure we have something to parse
+       unless content
+         @task_result.logger.log_error "No content to parse, returning" if @task_result
+         return nil
+       end
+
+       # Scan for dns records
+       dns_records = content.scan(/^[A-Za-z0-9]+\.[A-Za-z0-9]+\.[a-zA-Z]{2,6}$/)
+       dns_records.each do |dns_record|
+         x = _create_entity("DnsRecord", {"name" => dns_record, "origin" => source_uri})
+       end
+     end
+
+     def parse_phone_numbers_from_content(source_uri, content)
+
+       @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
+
+       # Make sure we have something to parse
+       unless content
+         @task_result.logger.log_error "No content to parse, returning" if @task_result
+         return nil
+       end
+
+       # Scan for phone numbers
+       phone_numbers = content.scan(/((\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4})/)
+       phone_numbers.each do |phone_number|
+         x = _create_entity("PhoneNumber", { "name" => "#{phone_number[0]}", "origin" => source_uri})
+       end
+     end
+
+     def parse_uris_from_content(source_uri, content)
+
+       @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
+
+       # Make sure we have something to parse
+       unless content
+         @task_result.logger.log_error "No content to parse, returning" if @task_result
+         return nil
+       end
+
+       # Scan for uris
+       urls = content.scan(/https?:\/\/[\S]+/)
+       urls.each do |url|
+         _create_entity("Uri", {"name" => url, "uri" => url, "origin" => source_uri })
+       end
      end
 
 

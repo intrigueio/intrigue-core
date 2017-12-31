@@ -101,18 +101,35 @@ class DnsPermute < BaseTask
     end
 
     # if we have a number, we should try to increment / decrement it
-    if "#{baselist[0]}".is_integer?
+    if basename =~ /\d/
+      # get the place of the first number
+      place = basename =~ /\d/
+      current_number = basename[place]
+
       # increment
+      basename[place] = "#{current_number.to_i + 1}"
+      #basename[place] = "#{current_number.to_i + 2}"
+      #basename[place] = "#{current_number.to_i + 3}"
+      #basename[place] = "#{current_number.to_i + 10}"
+      #basename[place] = "#{current_number.to_i + 100}"
+      #basename[place] = "#{current_number.to_i + 1000}"
       increment = {
         :permutation_details => p,
-        :generated_permutation => "#{baselist[0].to_i + 1}.#{baselist[1..-1].join(".")}",
+        :generated_permutation => "#{basename}",
         :depth => 1
       }
       work_q.push(increment)
 
+      # decrement
+      basename[place] = "#{current_number.to_i - 1}"
+      #basename[place] = "#{current_number.to_i - 2}"
+      #basename[place] = "#{current_number.to_i - 3}"
+      #basename[place] = "#{current_number.to_i - 10}"
+      #basename[place] = "#{current_number.to_i - 100}"
+      #basename[place] = "#{current_number.to_i - 1000}"
       decrement = {
         :permutation_details => p,
-        :generated_permutation => "#{baselist[0].to_i - 1}.#{baselist[1..-1].join(".")}",
+        :generated_permutation => "#{basename}",
         :depth => 1
       }
       work_q.push(decrement)

@@ -86,23 +86,19 @@ class WebStackFingerprint < BaseTask
     # https://vagosec.org/2014/11/clubbing-seals/
     #
     http_body_checks = [
-      { :regex => /Norton Secured, Powered by Symantec/,
-        :finding_name => "Norton Security Seal"},
-      { :regex => /PathDefender/,
-        :finding_name => "McAfee Pathdefender Security Seal"},
+      { :regex => /sealserver.trustwave.com\/seal.js/, :finding_name => "Trustwave Security Seal"},
+      { :regex => /Norton Secured, Powered by Symantec/, :finding_name => "Norton Security Seal"},
+      { :regex => /PathDefender/, :finding_name => "McAfee Pathdefender Security Seal"},
       ### Marketing / Tracking
       {:regex => /urchin.js/, :finding_name => "Google Analytics"},
       {:regex => /optimizely/, :finding_name => "Optimizely"},
       {:regex => /trackalyze/, :finding_name => "Trackalyze"},
-      {:regex => /doubleclick.net|googleadservices/,
-        :finding_name => "Google Ads"},
+      {:regex => /doubleclick.net|googleadservices/, :finding_name => "Google Ads"},
       {:regex => /munchkin.js/, :finding_name => "Marketo"},
       {:regex => /Olark live chat software/, :finding_name => "Olark"},
       ### External accounts
-      {:regex => /http:\/\/www.twitter.com.*?/,
-        :finding_name => "Twitter Account"},
-      {:regex => /http:\/\/www.facebook.com.*?/,
-        :finding_name => "Facebook Account"},
+      {:regex => /http:\/\/www.twitter.com.*?/, :finding_name => "Twitter Account"},
+      {:regex => /http:\/\/www.facebook.com.*?/, :finding_name => "Facebook Account"},
       ### Technologies
       #{:regex => /javascript/, :finding => "Javascript"},
       {:regex => /jquery.js/, :finding_name => "JQuery"},
@@ -111,12 +107,11 @@ class WebStackFingerprint < BaseTask
       {:regex => /[W|w]ordpress/, :finding_name => "Wordpress"},
       {:regex => /[D|d]rupal/, :finding_name => "Drupal"},
       ### Provider
-      {:regex => /Content Delivery Network via Amazon Web Services/,
-        :finding_name => "Amazon Cloudfront"},
+      {:regex => /Content Delivery Network via Amazon Web Services/, :finding_name => "Amazon Cloudfront"},
       ### Wordpress Plugins
       { :regex => /wp-content\/plugins\/.*?\//, :finding_name => "Wordpress Plugin" },
       { :regex => /xmlrpc.php/, :finding_name => "Wordpress API"},
-      #{:regex => /Yoast WordPress SEO plugin/, :finding_name => "Yoast Wordress SEO Plugin"},
+      { :regex => /Yoast WordPress/, :finding_name => "Yoast Wordress SEO Plugin"},
       #{:regex => /PowerPressPlayer/, :finding_name => "Powerpress Wordpress Plugin"}
       ]
     ###
@@ -273,7 +268,7 @@ class WebStackFingerprint < BaseTask
             # Do each content check, call the dynamic name if we have it,
             # otherwise, just give it a static name
             if "#{response.body}" =~ check[:content]
-              _log "MATCH: #{check[:content]}"
+              _log "CONTENT MATCH: #{check[:content]}"
               if check[:dynamic_name]
                 temp << check[:dynamic_name].call(response.body)
               else
@@ -289,8 +284,6 @@ class WebStackFingerprint < BaseTask
         end
       end
     end
-
-    _log "Returning: #{temp}"
   temp
   end
 

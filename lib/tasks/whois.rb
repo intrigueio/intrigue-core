@@ -141,19 +141,22 @@ class Whois < BaseTask
         _log "Got JSON from #{ripe_uri}:"
         _log "#{json}"
 
-        range = json["data"]["last_updated"].first["ip_space"]
+        data = json["data"]
+        range = data["last_updated"].first["ip_space"]
+        less_specific_hash = data["less_specific"]
+        description = less_specific_hash["descr"] if less_specific_hash
+        netname = less_specific_hash["netname"] if less_specific_hash
 
         entity = _create_entity "NetBlock", {
           "name" => "#{range}",
           "cidr" => "#{range.split('/').last}",
-          "description" => "#{json["data"]["less_specific"]["descr"]}",
+          "description" => "#{description}",
           "rir" => "#{json["data"]["rir"]}",
-          "organization_reference" => "#{json["data"]["less_specific"]["netname"]}",
-          "organization_name" => "#{json["data"]["less_specific"]["descr"]}",
+          "organization_reference" => "#{netname}",
+          "organization_name" => "#{description}",
           "whois_full_text" => "#{answer.content}"
         }
-
-        @entity.set_detail("provider", "#{json["data"]["less_specific"]["descr"]}")
+        @entity.set_detail("provider", "#{description}")
       end
       #
       # We're going to have nameservers either way?
