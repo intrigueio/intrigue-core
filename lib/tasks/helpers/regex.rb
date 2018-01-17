@@ -14,9 +14,9 @@ module Regex
       elsif regex_type == :boolean
         regex = /(true|false)/
       elsif regex_type == :alpha_numeric
-        regex = /^[a-zA-Z0-9\_\;\(\)\,\?\.\-\_\/\~\=\ \,\#\?\*]*$/
+        regex = /^[a-zA-Z0-9\_\:\;\(\)\,\?\.\-\_\/\~\=\ \,\#\?\*]*$/
       elsif regex_type == :alpha_numeric_list
-        regex = /^[a-zA-Z0-9\_\;\(\)\,\?\.\-\_\/\~\=\ \,\#\?\*]*$/
+        regex = /^[a-zA-Z0-9\_\:\;\(\)\,\?\.\-\_\/\~\=\ \,\#\?\*]*$/
       elsif regex_type == :filename
         regex = /(?:\..*(?!\/))+/
       elsif regex_type == :ip_address

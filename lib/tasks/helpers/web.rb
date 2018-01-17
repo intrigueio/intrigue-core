@@ -107,7 +107,7 @@ module Task
     ### XXX - significant updates made to zlib, determine whether to
     ### move this over to RestClient: https://github.com/ruby/ruby/commit/3cf7d1b57e3622430065f6a6ce8cbd5548d3d894
     ###
-    def http_request(method, uri_string, headers={}, limit = 10, open_timeout=15, read_timeout=15)
+    def http_request(method, uri_string, credentials, headers={}, limit = 10, open_timeout=15, read_timeout=15)
 
       response = nil
       begin
@@ -177,6 +177,11 @@ module Task
          # set the headers
          headers.each do |k,v|
            request[k] = v
+         end
+
+         # handle credentials
+         if credentials
+           request.basic_auth(credentials[:username],credentials[:password])
          end
 
          # get tehe response
@@ -254,38 +259,6 @@ module Task
     response
     end
 
-     #
-     # http_get_auth_resource - request a resource behind http auth
-     #
-     # This method is useful for bruteforcing authentication. Abstracted from
-     # uri_http_auth_brute
-     #
-     def http_get_auth_resource(location, username,password, depth)
-
-       unless depth > 0
-         @task_result.logger.log_error "Too many redirects"
-         exit
-       end
-
-       uri = URI.parse(location)
-       http = Net::HTTP.new(uri.host, uri.port)
-       request = Net::HTTP::Get.new(uri.request_uri,{"User-Agent" => "Intrigue!"})
-       request.basic_auth(username,password)
-       response = http.request(request)
-
-       if response == Net::HTTPRedirection
-         @task_result.logger.log "Redirecting to #{response['location']}"
-         http_get_auth_resource(response['location'],username,password, depth-1)
-       elsif response == Net::HTTPMovedPermanently
-         @task_result.logger.log "Redirecting to #{response['location']}"
-         http_get_auth_resource(response['location'],username,password, depth-1)
-       else
-         @task_result.logger.log "Got response: #{response}"
-       end
-
-     response
-     end
-
 
      def download_and_extract_metadata(uri,extract_content=true)
 
@@ -309,6 +282,7 @@ module Task
            _create_entity "Person", {"name" => yomu.metadata["meta:author"], "origin" => uri }
            _create_entity "Person", {"name" => yomu.metadata["creator"], "origin" => uri }
            _create_entity "Person", {"name" => yomu.metadata["xmpDM:artist"], "origin" => uri }
+
          elsif yomu.metadata["Content-Type"] == "application/pdf" # Handle PDF
            _create_entity "Person", {"name" => yomu.metadata["Author"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["Author"]
            _create_entity "Person", {"name" => yomu.metadata["meta:author"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["meta:author"]
