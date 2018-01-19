@@ -82,6 +82,7 @@ module Data
           entity_name =~ /^.*exacttarget.com(:[0-9]*)?$/               ||
           entity_name =~ /^.*facebook.com(:[0-9]*)?$/                  ||
           entity_name =~ /^.*feeds2.feedburner.com(:[0-9]*)?$/         ||
+          entity_name =~ /^.*force.com(:[0-9]*)?$/                     ||
           entity_name =~ /^.*g.co(:[0-9]*)?$/                          ||
           entity_name =~ /^.*gandi.net(:[0-9]*)?$/                     ||
           entity_name =~ /^.*goo.gl(:[0-9]*)?$/                        ||
@@ -146,6 +147,7 @@ module Data
           entity_name =~ /^.*rdfs.org(:[0-9]*)?$/                      ||
           entity_name =~ /^.*root-servers.net(:[0-9]*)?$/              ||
           entity_name =~ /^.*schema.org(:[0-9]*)?$/                    ||
+          entity_name =~ /^.*salesforce.com(:[0-9]*)?$/                ||
           entity_name =~ /^.*sendgrid.net(:[0-9]*)?$/                  ||
           entity_name =~ /^.*secureserver.net(:[0-9]*)?$/              ||
           entity_name =~ /^.*siftscience.com(:[0-9]*)?$/               ||

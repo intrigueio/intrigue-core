@@ -34,7 +34,6 @@ class EntityManager
 
     # Merge the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name)
-    hidden = hidden_entity?(name, type_string)
 
     if entity
       entity.set_details(details.to_h.deep_merge(entity.details.to_h))
@@ -52,7 +51,7 @@ class EntityManager
             :type => type,
             :details => details,
             :details_raw => details,
-            :hidden => (hidden ? true : false ),
+            :hidden => false, # first entity should never be hidden - it was intentional
             :alias_group_id => g.id
            })
 
@@ -89,8 +88,7 @@ class EntityManager
     # Do a lookup to make sure we have the latest...
     tr = Intrigue::Model::TaskResult.first(:id => task_result.id)
     if tr.cancelled
-      # We should try logging here!!!
-      return
+      return # TODO - We should be logging here!!!
     end
 
     # Convenience
@@ -102,7 +100,19 @@ class EntityManager
 
     # Merge the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name) ## TODO - INDEX THIS!!!!!
-    hidden = hidden_entity?(name, type_string)
+
+    # check if this is actually a hidden (blacklisted) entity
+    # but allow anything that we've explictly set as the root (example.. facebook.com)
+    if task_result.scan_result
+      # always allow anything that matches our scan result's name
+      if name =~  /#{task_result.scan_result.base_entity.name}/
+        hidden = false
+      else # but if it doesn't match, just check the blacklist
+        hidden = hidden_entity?(name, type_string)
+      end
+    else # just check blacklist if we're not part of a scan
+      hidden = hidden_entity?(name, type_string)
+    end
 
     # Check if there's an existing entity, if so, merge and move forward
     if entity
