@@ -79,6 +79,7 @@ module Data
           entity_name =~ /^.*edgekey.net(:[0-9]*)?$/                   ||
           entity_name =~ /^.*edgekey-staging.net(:[0-9]*)?$/           ||
           entity_name =~ /^.*edgesuite.net(:[0-9]*)?$/                 ||
+          entity_name =~ /^.*eloqua.com(:[0-9]*)?$/                    ||
           entity_name =~ /^.*exacttarget.com(:[0-9]*)?$/               ||
           entity_name =~ /^.*facebook.com(:[0-9]*)?$/                  ||
           entity_name =~ /^.*feeds2.feedburner.com(:[0-9]*)?$/         ||
@@ -127,6 +128,7 @@ module Data
           entity_name =~ /^.*instagram.com(:[0-9]*)?$/                 ||
           entity_name =~ /^.*jobing.com(:[0-9]*)?$/                    ||
           entity_name =~ /^.*localhost(:[0-9]*)?$/                     ||
+          entity_name =~ /^.*linkedin.com(:[0-9]*)?$/                  ||
           entity_name =~ /^.*lync.com(:[0-9]*)?$/                      ||
           entity_name =~ /^.*mailgun.org(:[0-9]*)?$/                   ||
           entity_name =~ /^.*mandrillapp.com(:[0-9]*)?$/               ||
