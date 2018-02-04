@@ -54,6 +54,9 @@ function delete_entity(id)
           <td>
             <ul>
           <% group.entities.each do |e| %>
+              <% unless @include_hidden
+                  next if e.hidden
+                 end %>
               <li>[<a href="/<%=@project_name%>/entities/<%=e.id%>"> <%= h e %> </a>]</li>
           <% end %>
             </ul>
@@ -61,6 +64,9 @@ function delete_entity(id)
           <td>
             <ul>
           <% group.entities.each do |e| %>
+          <% unless @include_hidden
+              next if e.hidden
+             end %>
               <li><a href="/<%=@project_name%>/entities/<%=e.id%>"> <%= h e.detail_string %> </a></li>
           <% end %>
           </ul>
