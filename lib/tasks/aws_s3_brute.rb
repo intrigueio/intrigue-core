@@ -73,7 +73,8 @@ class AwsS3Brute < BaseTask
 
         Aws.config[:credentials] = Aws::Credentials.new(access_key_id, secret_access_key)
         s3 = Aws::S3::Client.new
-        begin
+
+        begin # check prefix
           resp = s3.list_objects(bucket: "#{bucket_name}", max_keys: 2)
           resp.contents.each do |object|
 
@@ -91,10 +92,8 @@ class AwsS3Brute < BaseTask
       else
         _log "Using unauthenticated method"
 
-        # Check prefix
-        potential_bucket_uri = "https://#{bucket_name}.s3.amazonaws.com"
-
-        begin
+        begin # Check prefix
+          potential_bucket_uri = "https://#{bucket_name}.s3.amazonaws.com"
           result = http_get_body("#{potential_bucket_uri}?max-keys=1")
           next unless result
 
@@ -112,7 +111,8 @@ class AwsS3Brute < BaseTask
 
         end
 
-        begin
+        begin # check suffix
+          potential_bucket_uri = "https://s3.amazonaws.com/#{bucket_name}"
           result = http_get_body("#{potential_bucket_uri}?max-keys=1")
           next unless result
 
