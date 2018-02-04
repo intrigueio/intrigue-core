@@ -51,7 +51,8 @@ class AwsS3Loot < BaseTask
     if  ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
           doc.xpath("//code").text =~ /InvalidBucketName/ ||
           doc.xpath("//code").text =~ /AllAccessDisabled/ ||
-          doc.xpath("//code").text =~ /AccessDenied/)
+          doc.xpath("//code").text =~ /AccessDenied/
+          doc.xpath("//code").text =~ /PermanentRedirect/ )
       _log_error "Got response: #{doc.xpath("//code").text} (#{s3_uri})"
     else
       contents = []
@@ -61,7 +62,6 @@ class AwsS3Loot < BaseTask
         size = item.xpath("size").text.to_i
         item_uri = "#{s3_uri}/#{key}"
         _log "Got: #{item_uri} (#{size*1.0/1000000}MB)"
-
         _log_good "Large S3 file: #{key}" if size * 1.0 / 1000000 > 50.0
 
         contents << "#{item_uri}"
