@@ -101,8 +101,7 @@ class AwsS3Brute < BaseTask
           if  ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
                 doc.xpath("//code").text =~ /InvalidBucketName/ ||
                 doc.xpath("//code").text =~ /AllAccessDisabled/ ||
-                doc.xpath("//code").text =~ /AccessDenied/
-                )
+                doc.xpath("//code").text =~ /AccessDenied/ )
             _log_error "Received: #{doc.xpath("//code").text}"
           else
             _log_good "Received: #{doc.xpath("//code").text}"
@@ -116,6 +115,7 @@ class AwsS3Brute < BaseTask
           result = http_get_body("#{potential_bucket_uri}?max-keys=1")
           next unless result
 
+          doc = Nokogiri::HTML(result)
           if  ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
                 doc.xpath("//code").text =~ /InvalidBucketName/ ||
                 doc.xpath("//code").text =~ /AllAccessDisabled/ ||
