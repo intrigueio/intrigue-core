@@ -67,7 +67,9 @@ module Strategy
 
         else
           # otherwise do something a little faster
-          start_recursive_task(task_result,"dns_brute_sub",entity,[])
+          if domain_length > 1 # don't bruteforce a tld
+            start_recursive_task(task_result,"dns_brute_sub",entity,[])
+          end
         end
 
 
