@@ -11,7 +11,7 @@ class AwsS3Loot < BaseTask
       :authors => ["jcran"],
       :description => "This task takes an S3 bucket and gathers all URIs.",
       :references => [],
-      :type => "discovery",
+      :type => "enrichment",
       :passive => true,
       :allowed_types => ["AwsS3Bucket"],
       :example_entities => [
@@ -33,15 +33,42 @@ class AwsS3Loot < BaseTask
       return
     end
 
+    contents = []
     [*('a'..'z'),*('A'..'Z'),*('0'..'9')].each do |letter|
-      doc = Nokogiri::HTML(http_get_body("#{bucket_uri}?prefix=#{letter}"))
+      contents.concat get_contents_unauthenticated(bucket_uri,letter)
+    end
+
+    @entity.set_detail("contents", contents.sort.uniq)
+  end
+
+  def get_contents_unauthenticated(s3_uri, prefix)
+    full_uri = "#{s3_uri}?prefix=#{prefix}&max-keys=1000"
+
+    result = http_get_body("#{full_uri}")
+    return unless result
+
+    doc = Nokogiri::HTML(result)
+    if  ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
+          doc.xpath("//code").text =~ /InvalidBucketName/ ||
+          doc.xpath("//code").text =~ /AllAccessDisabled/ ||
+          doc.xpath("//code").text =~ /AccessDenied/)
+      _log_error "Got response: #{doc.xpath("//code").text} (#{s3_uri})"
+    else
+      contents = []
       doc.xpath("//contents").each do |item|
+
         key = item.xpath("key").text
         size = item.xpath("size").text.to_i
-        _log "#{size/1000}: #{bucket_uri}/#{key}"
-        _create_entity("Uri", {"name" => "#{bucket_uri}/#{key}", "uri" => "#{bucket_uri}/#{key}" })
+        item_uri = "#{s3_uri}/#{key}"
+        _log "Got: #{item_uri} (#{size*1.0/1000000}MB)"
+
+        _log_good "Large S3 file: #{key}" if size * 1.0 / 1000000 > 50.0
+
+        contents << "#{item_uri}"
       end
     end
+
+  contents # will be nil if we got nothing
   end
 
 end

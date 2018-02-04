@@ -206,7 +206,7 @@ module Generic
     begin
       value = Intrigue::Config::GlobalConfig.new.config["intrigue_global_module_config"][key]["value"]
       if value && value != ""
-        _log "Using config #{key} ending in #{value[-3..-1]}"
+        #_log "Using config #{key} ending in #{value[-3..-1]}"
       else
         _log "API Key (#{key}) is blank or missing. Check the admin tab!"
       end

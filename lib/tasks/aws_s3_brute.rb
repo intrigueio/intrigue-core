@@ -9,7 +9,7 @@ class AwsS3Brute < BaseTask
       :name => "aws_s3_brute",
       :pretty_name => "AWS S3 Brute",
       :authors => ["jcran"],
-      :description => "This task takes a list of names and determines if they're valid s3 buckets.",
+      :description => "This task takes anything and determines if it's a valid s3 bucket name.",
       :references => [],
       :type => "discovery",
       :passive => true,
@@ -58,81 +58,125 @@ class AwsS3Brute < BaseTask
 
       # Authenticated method
       if opt_use_creds
-        _log "Using authenticated method"
 
         access_key_id = _get_global_config "aws_access_key_id"
         secret_access_key = _get_global_config "aws_secret_access_key"
 
         unless access_key_id && secret_access_key
-          _log_error "You must specify a aws_access_key_id aws_secret_access_key in the config!"
+          _log_error "FATAL! To scan with authentication, you must specify a aws_access_key_id aws_secret_access_key in the config!"
           return
         end
 
-        s3_errors = [Aws::S3::Errors::AccessDenied, Aws::S3::Errors::AllAccessDisabled,
-          Aws::S3::Errors::InvalidBucketName, Aws::S3::Errors::NoSuchBucket]
-
         Aws.config[:credentials] = Aws::Credentials.new(access_key_id, secret_access_key)
-        s3 = Aws::S3::Client.new
 
-        begin # check prefix
-          resp = s3.list_objects(bucket: "#{bucket_name}", max_keys: 2)
-          resp.contents.each do |object|
+        # Check for it, and get the contents
+        contents = get_contents_authenticated(bucket_name)
 
-            # S3 URI
-            s3_uri = "https://#{bucket_name}.s3.amazonaws.com"
-            _log  "Got object... #{s3_uri}#{object.key}"
-
-            _create_entity("AwsS3Bucket", {"name" => "#{s3_uri}", "uri" => "#{s3_uri}" })
-          end
-        rescue *s3_errors => e
-          _log_error "S3 error: #{e}"
+        # create our entity and store the username with it
+        if contents
+          _create_entity("AwsS3Bucket", {
+            "name" => "#{s3_uri}",
+            "uri" => "#{s3_uri}",
+            "authenticated" => true,
+            "username" => access_key_id,
+            "contents" => contents
+          })
         end
 
-      # Unauthenticated method
+      #########################
+      # Unauthenticated check #
+      #########################
       else
-        _log "Using unauthenticated method"
 
-        begin # Check prefix
-          potential_bucket_uri = "https://#{bucket_name}.s3.amazonaws.com"
-          result = http_get_body("#{potential_bucket_uri}?max-keys=1")
-          next unless result
+        s3_uri = "https://#{bucket_name}.s3.amazonaws.com"
 
-          doc = Nokogiri::HTML(result)
-          if  ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
-                doc.xpath("//code").text =~ /InvalidBucketName/ ||
-                doc.xpath("//code").text =~ /AllAccessDisabled/ ||
-                doc.xpath("//code").text =~ /AccessDenied/ )
-            _log_error "Received: #{doc.xpath("//code").text}"
-          else
-            _log_good "Received: #{doc.xpath("//code").text}"
-            _create_entity("AwsS3Bucket", {"name" => "#{potential_bucket_uri}", "uri" => "#{potential_bucket_uri}" })
-          end
+        # list the contents so we can save them
+        contents = get_contents_unauthenticated(s3_uri)
 
+        if contents
+          _create_entity("AwsS3Bucket", {
+            "name" => "#{s3_uri}",
+            "uri" => "#{s3_uri}",
+            "authenticated" => false,
+            "contents" => contents
+          })
+
+          bucket_exists = true
         end
 
-        begin # check suffix
-          potential_bucket_uri = "https://s3.amazonaws.com/#{bucket_name}"
-          result = http_get_body("#{potential_bucket_uri}?max-keys=1")
-          next unless result
+        next if bucket_exists ## Only proceed if we got an error above (bucket exists!) !!!
 
-          doc = Nokogiri::HTML(result)
-          if  ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
-                doc.xpath("//code").text =~ /InvalidBucketName/ ||
-                doc.xpath("//code").text =~ /AllAccessDisabled/ ||
-                doc.xpath("//code").text =~ /AccessDenied/ )
-            _log_error "Received: #{doc.xpath("//code").text}"
-          else
-            _log_good "Success on #{potential_bucket_uri}!"
-            _create_entity("AwsS3Bucket", {"name" => "#{potential_bucket_uri}", "uri" => "#{potential_bucket_uri}" })
-          end
+        s3_uri = "https://s3.amazonaws.com/#{bucket_name}"
 
+        # list the contents so we can save them
+        contents = get_contents_unauthenticated(s3_uri)
+
+        if contents
+          _create_entity("AwsS3Bucket", {
+            "name" => "#{s3_uri}",
+            "uri" => "#{s3_uri}",
+            "authenticated" => false,
+            "contents" => contents
+          })
         end
 
-      end # end if
-
+      end # end if opt_use_creds
     end # end iteration
-
   end
+
+
+
+  def get_contents_unauthenticated(s3_uri)
+    result = http_get_body("#{s3_uri}?max-keys=1")
+    return unless result
+
+    doc = Nokogiri::HTML(result)
+    if  ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
+          doc.xpath("//code").text =~ /InvalidBucketName/ ||
+          doc.xpath("//code").text =~ /AllAccessDisabled/ ||
+          doc.xpath("//code").text =~ /AccessDenied/ ||
+          doc.xpath("//code").text =~ /PermanentRedirect/
+        )
+      _log_error "Got response: #{doc.xpath("//code").text} (#{s3_uri})"
+    else
+      contents = []
+      doc.xpath("//key").each {|key| contents << "#{s3_uri}/#{key.text}" }
+    end
+
+  contents # will be nil if we got nothing
+  end
+
+
+
+  def get_contents_authenticated(bucket_name)
+
+    s3_errors = [
+      Aws::S3::Errors::AccessDenied,
+      Aws::S3::Errors::AllAccessDisabled,
+      Aws::S3::Errors::InvalidBucketName,
+      Aws::S3::Errors::NoSuchBucket,
+      Aws::Errors::MissingCredentialsError
+    ]
+
+    s3_uri = "https://#{bucket_name}.s3.amazonaws.com/"
+
+    begin # check prefix
+      s3 = Aws::S3::Client.new({region: 'us-east-1'})
+
+      resp = s3.list_objects(bucket: "#{bucket_name}", max_keys: 1000)
+
+      contents =[]
+      resp.contents.each do |object|
+        contents << "#{s3_uri}#{object.key}"
+      end
+
+    rescue *s3_errors => e
+      _log_error "S3 error: #{e} (#{bucket_name})"
+    end
+
+  contents # will be nil if we got nothing
+  end
+
 
 end
 end
