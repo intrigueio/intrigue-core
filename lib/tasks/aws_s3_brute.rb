@@ -13,7 +13,7 @@ class AwsS3Brute < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["*"],
+      :allowed_types => ["DnsRecord","EmailAddress","IpAddress","Person","Organization","String"],
       :example_entities => [
         {"type" => "String", "details" => {"name" => "test"}}
       ],
@@ -67,21 +67,17 @@ class AwsS3Brute < BaseTask
           return
         end
 
-        Aws.config[:credentials] = Aws::Credentials.new(access_key_id, secret_access_key)
-
         # Check for it, and get the contents
-        contents = get_contents_authenticated(bucket_name)
+        Aws.config[:credentials] = Aws::Credentials.new(access_key_id, secret_access_key)
+        exists = check_existence_authenticated(bucket_name)
 
         # create our entity and store the username with it
-        if contents
-          _create_entity("AwsS3Bucket", {
-            "name" => "#{s3_uri}",
-            "uri" => "#{s3_uri}",
-            "authenticated" => true,
-            "username" => access_key_id,
-            "contents" => contents
-          })
-        end
+        _create_entity("AwsS3Bucket", {
+          "name" => "#{s3_uri}",
+          "uri" => "#{s3_uri}",
+          "authenticated" => true,
+          "username" => access_key_id
+        }) if exists
 
       #########################
       # Unauthenticated check #
@@ -89,44 +85,29 @@ class AwsS3Brute < BaseTask
       else
 
         s3_uri = "https://#{bucket_name}.s3.amazonaws.com"
+        exists = check_existence_unauthenticated(s3_uri)
+        _create_entity("AwsS3Bucket", {
+          "name" => "#{s3_uri}",
+          "uri" => "#{s3_uri}",
+          "authenticated" => false
+        }) if exists
 
-        # list the contents so we can save them
-        contents = get_contents_unauthenticated(s3_uri)
-
-        if contents
-          _create_entity("AwsS3Bucket", {
-            "name" => "#{s3_uri}",
-            "uri" => "#{s3_uri}",
-            "authenticated" => false,
-            "contents" => contents
-          })
-
-          bucket_exists = true
-        end
-
-        next if bucket_exists ## Only proceed if we got an error above (bucket exists!) !!!
+        next if exists ## Only proceed if we got an error above (bucket exists!) !!!
 
         s3_uri = "https://s3.amazonaws.com/#{bucket_name}"
-
-        # list the contents so we can save them
-        contents = get_contents_unauthenticated(s3_uri)
-
-        if contents
-          _create_entity("AwsS3Bucket", {
-            "name" => "#{s3_uri}",
-            "uri" => "#{s3_uri}",
-            "authenticated" => false,
-            "contents" => contents
-          })
-        end
+        exists = check_existence_unauthenticated(s3_uri)
+        _create_entity("AwsS3Bucket", {
+          "name" => "#{s3_uri}",
+          "uri" => "#{s3_uri}",
+          "authenticated" => false,
+        }) if exists
 
       end # end if opt_use_creds
     end # end iteration
   end
 
 
-
-  def get_contents_unauthenticated(s3_uri)
+  def check_existence_unauthenticated(s3_uri)
     result = http_get_body("#{s3_uri}?max-keys=1")
     return unless result
 
@@ -139,16 +120,13 @@ class AwsS3Brute < BaseTask
         )
       _log_error "Got response: #{doc.xpath("//code").text} (#{s3_uri})"
     else
-      contents = []
-      doc.xpath("//key").each {|key| contents << "#{s3_uri}/#{key.text}" }
-    end
+      exists = true
+      end
 
-  contents # will be nil if we got nothing
+  exists # will be nil if we got nothing
   end
 
-
-
-  def get_contents_authenticated(bucket_name)
+  def check_existence_authenticated(bucket_name)
 
     s3_errors = [
       Aws::S3::Errors::AccessDenied,
@@ -162,19 +140,14 @@ class AwsS3Brute < BaseTask
 
     begin # check prefix
       s3 = Aws::S3::Client.new({region: 'us-east-1'})
-
       resp = s3.list_objects(bucket: "#{bucket_name}", max_keys: 1000)
-
-      contents =[]
-      resp.contents.each do |object|
-        contents << "#{s3_uri}#{object.key}"
-      end
+      exists = true
 
     rescue *s3_errors => e
       _log_error "S3 error: #{e} (#{bucket_name})"
     end
 
-  contents # will be nil if we got nothing
+  exists # will be nil if we got nothing
   end
 
 

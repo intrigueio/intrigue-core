@@ -35,7 +35,8 @@ class AwsS3Loot < BaseTask
 
     contents = []
     [*('a'..'z'),*('A'..'Z'),*('0'..'9')].each do |letter|
-      contents.concat get_contents_unauthenticated(bucket_uri,letter)
+      result = get_contents_unauthenticated(bucket_uri,letter)
+      contents.concat(result) if result
     end
 
     @entity.set_detail("contents", contents.sort.uniq)
