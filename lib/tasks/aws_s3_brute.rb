@@ -53,6 +53,9 @@ class AwsS3Brute < BaseTask
     all_potential_buckets.each do |pb|
       bucket_name = pb.strip
 
+      # skip anything that isn't a real name
+      next unless bucket_name && bucket_name.length > 0
+
       # Authenticated method
       if opt_use_creds
         _log "Using authenticated method"
