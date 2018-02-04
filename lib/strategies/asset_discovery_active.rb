@@ -40,13 +40,16 @@ module Strategy
         #end
 
         # CRT Scraper... this can get a little crazy, so only search if we match a filter string
-        unless entity.name =~ /#{filter_strings}/i
+        # and we should at least be of the form domain.something
+        # (don't search for top level or unqual'd domains)
+        unless entity.name =~ /#{filter_strings}/i && domain_length > 1
           start_recursive_task(task_result,"search_crt", entity )
         end
 
         # Threatcrowd API... skip resolutions, as we probably don't want old
-        # data for this use case
-        if entity.name =~ /#{filter_strings}/i
+        # and we should at least be of the form domain.something
+        # (don't search for top level or unqual'd domains)
+        unless entity.name =~ /#{filter_strings}/i && domain_length > 1
           start_recursive_task(task_result,"search_threatcrowd", entity, [
             {"name" => "gather_resolutions", "value" => true },
             {"name" => "gather_subdomains", "value" => true }])
