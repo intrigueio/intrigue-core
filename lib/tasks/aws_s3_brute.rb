@@ -18,6 +18,7 @@ class AwsS3Brute < BaseTask
         {"type" => "String", "details" => {"name" => "test"}}
       ],
       :allowed_options => [
+        {:name => "threads", :type => "Integer", :regex => "integer", :default => 1 },
         {:name => "use_creds", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "brute_file", :type => "String", :regex => "filename", :default => "s3_buckets.list" },
@@ -37,6 +38,7 @@ class AwsS3Brute < BaseTask
     opt_filename = _get_option("brute_file")
     opt_additional_buckets = _get_option("additional_buckets")
     opt_use_creds = _get_option("use_creds")
+    opt_threads = _get_option("threads")
 
     if opt_use_file
       _log "Using file: #{opt_filename}"
@@ -49,61 +51,77 @@ class AwsS3Brute < BaseTask
     # add in any additional buckets to the list of potentials
     all_potential_buckets = potential_buckets.concat(opt_additional_buckets.split(","))
 
-    # Iterate through all potential buckets
+    # Create our queue of work from the checks in brute_list
+    work_q = Queue.new
     all_potential_buckets.each do |pb|
-      bucket_name = pb.strip
+      work_q << pb.strip
+    end
 
-      # skip anything that isn't a real name
-      next unless bucket_name && bucket_name.length > 0
+    # Create a pool of worker threads to work on the queue
+    workers = (0...opt_threads).map do
+      Thread.new do
+        begin
+          while bucket_name = work_q.pop(true)
 
-      # Authenticated method
-      if opt_use_creds
+            #skip anything that isn't a real name
+            next unless bucket_name && bucket_name.length > 0
 
-        access_key_id = _get_global_config "aws_access_key_id"
-        secret_access_key = _get_global_config "aws_secret_access_key"
+            # Authenticated method
+            if opt_use_creds
 
-        unless access_key_id && secret_access_key
-          _log_error "FATAL! To scan with authentication, you must specify a aws_access_key_id aws_secret_access_key in the config!"
-          return
+              access_key_id = _get_global_config "aws_access_key_id"
+              secret_access_key = _get_global_config "aws_secret_access_key"
+
+              unless access_key_id && secret_access_key
+                _log_error "FATAL! To scan with authentication, you must specify a aws_access_key_id aws_secret_access_key in the config!"
+                return
+              end
+
+              # Check for it, and get the contents
+              Aws.config[:credentials] = Aws::Credentials.new(access_key_id, secret_access_key)
+              exists = check_existence_authenticated(bucket_name)
+
+              # create our entity and store the username with it
+              _create_entity("AwsS3Bucket", {
+                "name" => "#{s3_uri}",
+                "uri" => "#{s3_uri}",
+                "authenticated" => true,
+                "username" => access_key_id
+              }) if exists
+
+            #########################
+            # Unauthenticated check #
+            #########################
+            else
+
+              s3_uri = "https://#{bucket_name}.s3.amazonaws.com"
+              exists = check_existence_unauthenticated(s3_uri)
+              _create_entity("AwsS3Bucket", {
+                "name" => "#{s3_uri}",
+                "uri" => "#{s3_uri}",
+                "authenticated" => false
+              }) if exists
+
+              next if exists ## Only proceed if we got an error above (bucket exists!) !!!
+
+              s3_uri = "https://s3.amazonaws.com/#{bucket_name}"
+              exists = check_existence_unauthenticated(s3_uri)
+              _create_entity("AwsS3Bucket", {
+                "name" => "#{s3_uri}",
+                "uri" => "#{s3_uri}",
+                "authenticated" => false,
+              }) if exists
+
+            end # end if opt_use_creds
+
+
+          end # end while
+        rescue ThreadError
         end
+      end
+    end; "ok"
+    workers.map(&:join); "ok"
 
-        # Check for it, and get the contents
-        Aws.config[:credentials] = Aws::Credentials.new(access_key_id, secret_access_key)
-        exists = check_existence_authenticated(bucket_name)
-
-        # create our entity and store the username with it
-        _create_entity("AwsS3Bucket", {
-          "name" => "#{s3_uri}",
-          "uri" => "#{s3_uri}",
-          "authenticated" => true,
-          "username" => access_key_id
-        }) if exists
-
-      #########################
-      # Unauthenticated check #
-      #########################
-      else
-
-        s3_uri = "https://#{bucket_name}.s3.amazonaws.com"
-        exists = check_existence_unauthenticated(s3_uri)
-        _create_entity("AwsS3Bucket", {
-          "name" => "#{s3_uri}",
-          "uri" => "#{s3_uri}",
-          "authenticated" => false
-        }) if exists
-
-        next if exists ## Only proceed if we got an error above (bucket exists!) !!!
-
-        s3_uri = "https://s3.amazonaws.com/#{bucket_name}"
-        exists = check_existence_unauthenticated(s3_uri)
-        _create_entity("AwsS3Bucket", {
-          "name" => "#{s3_uri}",
-          "uri" => "#{s3_uri}",
-          "authenticated" => false,
-        }) if exists
-
-      end # end if opt_use_creds
-    end # end iteration
   end
 
 

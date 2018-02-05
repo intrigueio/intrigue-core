@@ -10,6 +10,5 @@ Sequel.migration do
       add_index :project_id
     end
 
-
   end
 end

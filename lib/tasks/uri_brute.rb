@@ -89,8 +89,6 @@ class UriBrute < BaseTask
         @missing_page_code = response.code
     end
 
-    # Log our method
-
     # Create our queue of work from the checks in brute_list
     work_q = Queue.new
     brute_list.each do |item|
@@ -115,7 +113,8 @@ class UriBrute < BaseTask
       end
     end; "ok"
     workers.map(&:join); "ok"
-  end # end run
+  end # end run method
+
 
   def check_uri(request_uri)
 
