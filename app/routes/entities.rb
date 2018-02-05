@@ -14,15 +14,15 @@ class IntrigueApp < Sinatra::Base
      selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
 
      ## Filter if we have a type
-     selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
+     selected_entities = selected_entities.where(:type => @entity_types,:hidden => false) if @entity_types
 
      # search
      selected_entities = _tokenized_search(@search_string, selected_entities)
 
      # filter out hidden if requested
-     selected_entities = selected_entities.where(:hidden => false) unless @include_hidden
+     selected_entities = selected_entities.where(:hidden => true) if @include_hidden
 
-     alias_group_ids = selected_entities.map{|x| x.alias_group_id }.uniq
+     alias_group_ids = selected_entities.select_map(:alias_group_id).uniq
      alias_groups = Intrigue::Model::AliasGroup.where({:id => alias_group_ids })
 
      @alias_groups = alias_groups.extension(:pagination).paginate(@page,@result_count)
@@ -45,13 +45,13 @@ class IntrigueApp < Sinatra::Base
     selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
 
     ## Filter if we have a type
-    selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
+    selected_entities = selected_entities.where(:type => @entity_types, :hidden => false) if @entity_types
 
     # Perform a simple tokenized search
     selected_entities = _tokenized_search(@search_string, selected_entities) if @search_string
 
     # filter out hidden if requested
-    selected_entities = selected_entities.where(:hidden => false) unless @include_hidden
+    selected_entities = selected_entities.where(:hidden => true) if @include_hidden
 
 
     out = ""
