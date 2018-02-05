@@ -15,8 +15,9 @@ class SnmpExtraction < BaseTask
       :passive => false,
       :allowed_types => ["SnmpService"],
       :example_entities => [
-        {"type" => "SnmpService", "1.1.11:161",
+        { "type" => "SnmpService",
           "details" => {
+            "name" => "1.1.1.1:161",
             "ip_address" => "1.1.1.1",
             "port" => 161,
             "protocol" => "udp"
