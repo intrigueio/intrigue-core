@@ -15,10 +15,11 @@ class SnmpExtraction < BaseTask
       :passive => false,
       :allowed_types => ["SnmpService"],
       :example_entities => [
-        {"type" => "SnmpService", "details" => {
-          "ip_address" => "1.1.1.1",
-          "port" => 161,
-          "protocol" => "udp"
+        {"type" => "SnmpService", "1.1.11:161",
+          "details" => {
+            "ip_address" => "1.1.1.1",
+            "port" => 161,
+            "protocol" => "udp"
           }
         }
       ],
@@ -33,10 +34,9 @@ class SnmpExtraction < BaseTask
 
     # XXX - how to deal with accepting a complex object like this through
     # the UI? We'd need to know the entity structure, or set these up as options?
-
-    port = _get_entity_attribute("port").to_i || 161
-    protocol = _get_entity_attribute "proto"
-    ip_address = _get_entity_attribute "ip_address"
+    ip_address = _get_entity_name.split(":").first
+    port = _get_entity_name.split(":").last || 161
+    protocol = "udp"
 
     _log "Port: #{port}"
     _log "Protocol: #{protocol}"
