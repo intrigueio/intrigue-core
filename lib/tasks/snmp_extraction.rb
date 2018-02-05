@@ -49,14 +49,14 @@ class SnmpExtraction < BaseTask
       # SNMPwalk
       begin
         output = ""
-        SNMP::Manager.open(:host => ip_address) do |manager|
+        SNMP::Manager.open(:host => ip_address, :port => port) do |manager|
           ifTable = SNMP::ObjectId.new("1.")
           next_oid = ifTable
           while next_oid.subtree_of?(ifTable)
               response = manager.get_next(next_oid)
               varbind = response.varbind_list.first
               next_oid = varbind.name
-              _log varbind.to_s
+              _log "#{varbind}"
               output << varbind.to_s
           end
         end

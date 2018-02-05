@@ -17,7 +17,10 @@ class AwsS3Loot < BaseTask
       :example_entities => [
         {"type" => "AwsS3Bucket", "details" => {"name" => "https://s3.amazonaws.com/bucket"}}
       ],
-      :allowed_options => [ ],
+      :allowed_options => [
+        {:name => "flag_large_files", :type => "Boolean", :regex => "boolean", :default => true },
+        {:name => "large_file_size", :type => "Integer", :regex => "integer", :default => 25}
+      ],
       :created_types => ["DnsRecord"]
     }
   end
@@ -25,7 +28,10 @@ class AwsS3Loot < BaseTask
   ## Default method, subclasses must override this
   def run
     super
-    bucket_uri = _get_entity_name
+
+    # TODO - HMM... capitalization matters. grab the uri for now, but
+    # we should think about how to handle this...
+    bucket_uri = _get_entity_attribute "uri" || _get_entity_name
     bucket_uri.chomp!("/")
 
     unless bucket_uri =~ /s3.amazonaws.com/
@@ -33,6 +39,11 @@ class AwsS3Loot < BaseTask
       return
     end
 
+    # DO THE BRUTEFORCE
+    # TODO - this is very naive right now, and will miss
+    # large swaths of files that have similar names. make a point
+    # of making this much smarter without doing too much bruting...
+    # we'll need to be smart about how we expand the brute set
     contents = []
     [*('a'..'z'),*('A'..'Z'),*('0'..'9')].each do |letter|
       result = get_contents_unauthenticated(bucket_uri,letter)
@@ -63,7 +74,20 @@ class AwsS3Loot < BaseTask
         size = item.xpath("size").text.to_i
         item_uri = "#{s3_uri}/#{key}"
         _log "Got: #{item_uri} (#{size*1.0/1000000}MB)"
-        _log_good "Large S3 file: #{key}" if size * 1.0 / 1000000 > 50.0
+
+        if _get_option "flag_large_files"
+          flag_file_size = _get_option("large_file_size")
+          if size * 1.0 / 1000000 > flag_file_size
+            _log_good "Flagging large file of size #{size}: #{key}"
+            # create an entity
+            _create_entity "Uri", {
+              "name" => "#{item_uri}",
+              "uri" => "#{item_uri}",
+              "file_size"=> size,
+              "comment" => "Created by aws_s3_loot, size greater than #{flag_file_size}"
+            }
+          end
+        end
 
         contents << "#{item_uri}"
       end

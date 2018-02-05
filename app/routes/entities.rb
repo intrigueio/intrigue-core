@@ -11,10 +11,10 @@ class IntrigueApp < Sinatra::Base
 
     #if @correlate # Handle entity coorelation
 
-     selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
+     selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false).order(:name)
 
-     ## Filter if we have a type
-     selected_entities = selected_entities.where(:type => @entity_types,:hidden => false) if @entity_types
+     ## filter if we have a type
+     selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
 
      # search
      selected_entities = _tokenized_search(@search_string, selected_entities)
@@ -22,6 +22,7 @@ class IntrigueApp < Sinatra::Base
      # filter out hidden if requested
      selected_entities = selected_entities.where(:hidden => true) if @include_hidden
 
+     # Get the corresponding alias groups
      alias_group_ids = selected_entities.select_map(:alias_group_id).uniq
      alias_groups = Intrigue::Model::AliasGroup.where({:id => alias_group_ids })
 
@@ -42,17 +43,16 @@ class IntrigueApp < Sinatra::Base
     params[:include_hidden] == "on" ? @include_hidden = true : @include_hidden = false
     (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
 
-    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
+    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false).order(:name)
 
     ## Filter if we have a type
-    selected_entities = selected_entities.where(:type => @entity_types, :hidden => false) if @entity_types
+    selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
 
     # Perform a simple tokenized search
     selected_entities = _tokenized_search(@search_string, selected_entities) if @search_string
 
     # filter out hidden if requested
     selected_entities = selected_entities.where(:hidden => true) if @include_hidden
-
 
     out = ""
     out << "Type,Name,Alias Group,Details\n"
