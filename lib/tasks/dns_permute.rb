@@ -32,16 +32,18 @@ class DnsPermute < BaseTask
     # searching .local by default on osx.
     @resolver = Resolv.new([Resolv::DNS.new(:search => [])])
 
-    # Check for wildcard DNS, modify behavior appropriately. (Only create entities
-    # when we know there's a new host associated)
-    wildcard_ips = _check_wildcard(basename)
-
     # figure out all of our permutation points here.
     # "google.com" < 1 permutation point?
     # "1.yahoo.com"  < 2 permutation points?
     # "1.test.2.yahoo.com" < 3 permutation points?
     # "1.2.3.4.yahoo.com" < 5 permutation points?
     baselist = basename.split(".")
+    brute_domain = baselist[1..-1].join(".")
+
+    # Check for wildcard DNS, modify behavior appropriately. (Only create entities
+    # when we know there's a new host associated)
+
+    wildcard_ips = _check_wildcard(brute_domain)
 
     # Create a queue to hold our list of attempts
     work_q = Queue.new
@@ -79,19 +81,19 @@ class DnsPermute < BaseTask
 
       # Generate the permutation
       if p[:type] == "prefix"
-        x[:generated_permutation] = "#{p[:permutation]}#{baselist[0]}.#{baselist[1..-1].join(".")}"
+        x[:generated_permutation] = "#{p[:permutation]}#{baselist[0]}.#{brute_domain}"
 
       elsif p[:type] == "suffix"
-        x[:generated_permutation] = "#{baselist[0]}#{p[:permutation]}.#{baselist[1..-1].join(".")}"
+        x[:generated_permutation] = "#{baselist[0]}#{p[:permutation]}.#{brute_domain}"
 
       elsif p[:type] == "both"
         # Prefix
-        x[:generated_permutation] = "#{p[:permutation]}#{baselist[0]}.#{baselist[1..-1].join(".")}"
+        x[:generated_permutation] = "#{p[:permutation]}#{baselist[0]}.#{brute_domain}"
 
         # Suffix
         y = {
           :permutation_details => p,
-          :generated_permutation => "#{baselist[0]}#{p[:permutation]}.#{baselist[1..-1].join(".")}",
+          :generated_permutation => "#{baselist[0]}#{p[:permutation]}.#{brute_domain}",
           :depth => 1
         }
         work_q.push(y)
@@ -178,65 +180,68 @@ class DnsPermute < BaseTask
     _log "Checking for wildcards on #{basename}."
 
     all_discovered_wildcards = []
-      # First we look for a single address that won't exist
-      10.times do
-        random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{basename}"
-        resolved_address = _resolve(random_string)
 
-        # keep track of it unless we already have it
-        unless resolved_address.nil? || all_discovered_wildcards.include?(resolved_address)
-          all_discovered_wildcards << resolved_address
-        end
+    # First we look for a single address that won't exist
+    10.times do
+      random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{basename}"
+      resolved_address = _resolve(random_string)
+
+      # keep track of it unless we already have it
+      unless resolved_address.nil? || all_discovered_wildcards.include?(resolved_address)
+        all_discovered_wildcards << resolved_address
       end
+    end
 
-      # If that resolved, we know that we're in a wildcard situation.
-      #
-      # Some domains have a pool of IPs that they'll resolve to, so
-      # let's go ahead and test a bunch of different domains to try
-      # and collect those IPs
-      if all_discovered_wildcards.uniq.count > 1
-        _log "Multiple wildcard ips for #{basename} after resolving these: #{all_discovered_wildcards}."
-        _log "Trying to create an exhaustive list."
+    # also - sometimes there appears to be a regex pattern that only matches our original
 
-        # Now we have to test for things that return a block of addresses as a wildcard.
-        # we to be adaptive (to a point), so let's keep looking in chuncks until we find
-        # no new ones...
-        no_new_wildcards = false
+    # If that resolved, we know that we're in a wildcard situation.
+    #
+    # Some domains have a pool of IPs that they'll resolve to, so
+    # let's go ahead and test a bunch of different domains to try
+    # and collect those IPs
+    if all_discovered_wildcards.uniq.count > 1
+      _log "Multiple wildcard ips for #{basename} after resolving these: #{all_discovered_wildcards}."
+      _log "Trying to create an exhaustive list."
 
-        until no_new_wildcards
-          _log "Testing #{all_discovered_wildcards.count * 20} new entries..."
-          newly_discovered_wildcards = []
+      # Now we have to test for things that return a block of addresses as a wildcard.
+      # we to be adaptive (to a point), so let's keep looking in chuncks until we find
+      # no new ones...
+      no_new_wildcards = false
 
-          (all_discovered_wildcards.count * 20).times do |x|
-            random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{basename}"
-            resolved_address = _resolve(random_string)
+      until no_new_wildcards
+        _log "Testing #{all_discovered_wildcards.count * 20} new entries..."
+        newly_discovered_wildcards = []
 
-            # keep track of it unless we already have it
-            unless resolved_address.nil? || newly_discovered_wildcards.include?(resolved_address)
-              newly_discovered_wildcards << resolved_address
-            end
+        (all_discovered_wildcards.count * 20).times do |x|
+          random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{basename}"
+          resolved_address = _resolve(random_string)
+
+          # keep track of it unless we already have it
+          unless resolved_address.nil? || newly_discovered_wildcards.include?(resolved_address)
+            newly_discovered_wildcards << resolved_address
           end
-
-          # check if our newly discovered is a subset of all
-          if (newly_discovered_wildcards - all_discovered_wildcards).empty?
-            _log "Hurray! No new wildcards in #{newly_discovered_wildcards}. Finishing up!"
-            no_new_wildcards = true
-          else
-            _log "Continuing to search, found: #{(newly_discovered_wildcards - all_discovered_wildcards).count} new results."
-            all_discovered_wildcards += newly_discovered_wildcards.uniq
-          end
-
-          _log "Known wildcard count: #{all_discovered_wildcards.uniq.count}"
-          _log "Known wildcards: #{all_discovered_wildcards.uniq}"
-
         end
 
+        # check if our newly discovered is a subset of all
+        if (newly_discovered_wildcards - all_discovered_wildcards).empty?
+          _log "Hurray! No new wildcards in #{newly_discovered_wildcards}. Finishing up!"
+          no_new_wildcards = true
+        else
+          _log "Continuing to search, found: #{(newly_discovered_wildcards - all_discovered_wildcards).count} new results."
+          all_discovered_wildcards += newly_discovered_wildcards.uniq
+        end
 
-      elsif all_discovered_wildcards.uniq.count == 1
-        _log "Only a single wildcard ip: #{all_discovered_wildcards.sort.uniq}"
-      else
-        _log "No wildcard detected! Moving on!"
+        _log "Known wildcard count: #{all_discovered_wildcards.uniq.count}"
+        _log "Known wildcards: #{all_discovered_wildcards.uniq}"
+
       end
+
+
+    elsif all_discovered_wildcards.uniq.count == 1
+      _log "Only a single wildcard ip: #{all_discovered_wildcards.sort.uniq}"
+    else
+      _log "No wildcard detected! Moving on!"
+    end
 
   all_discovered_wildcards.uniq # if it's not a wildcard, this will be an empty array.
   end
