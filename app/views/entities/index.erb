@@ -54,24 +54,48 @@ function delete_entity(id)
           <td>
             <ul>
           <% group.entities.each do |e| %>
-              <% unless @include_hidden
-                  next if e.hidden
-                 end %>
-              <li>[<a href="/<%=@project_name%>/entities/<%=e.id%>"> <%= h e %> </a>]</li>
+            <%
+               # skip hidden unless we allow it
+               unless @include_hidden
+                next if e.hidden
+               end
+
+               # skip entities that dont match if we searched
+               if @search_string && @search_string =~ /^name:/
+                 next unless e.name =~ /#{@search_string.gsub("name:","")}/
+               end
+
+               if @entity_types
+                 next unless e.type =~ /#{@entity_types}/
+               end
+            %>
+                <li>[<a href="/<%=@project_name%>/entities/<%=e.id%>"> <%= h e %> </a>]</li>
           <% end %>
+              </ul>
+            </td>
+            <td>
+              <ul>
+          <% group.entities.each do |e| %>
+            <%
+              # skip hidden unless we allow it
+              unless @include_hidden
+               next if e.hidden
+              end
+
+              # skip entities that dont match if we searched
+              if @search_string && @search_string =~ /^name:/
+                next unless e.name =~ /#{@search_string.gsub("name:","")}/
+              end
+
+              if @entity_types
+                next unless e.type =~ /#{@entity_types}/
+              end
+            %>
+              <li><a href="/<%=@project_name%>/entities/<%=e.id%>"> <%= h e.detail_string %> </a></li>
+        <% end %>
             </ul>
           </td>
-          <td>
-            <ul>
-          <% group.entities.each do |e| %>
-          <% unless @include_hidden
-              next if e.hidden
-             end %>
-              <li><a href="/<%=@project_name%>/entities/<%=e.id%>"> <%= h e.detail_string %> </a></li>
-          <% end %>
-          </ul>
-        </td>
-      </tr>
+        </tr>
       <% end %>
 
     </tbody>
