@@ -37,7 +37,7 @@
           <td><%=i%></td>
           <td><%= t.metadata[:type] %></td>
           <td><%= t.metadata[:passive] %></td>
-          <td><%= "<a href='https://github.com/intrigueio/intrigue-core/blob/master/lib/tasks/#{t.metadata[:name]}.rb'>#{t.metadata[:pretty_name]}</a>" %></a></td>
+          <td><%= "#{t.metadata[:pretty_name]} <a href='https://github.com/intrigueio/intrigue-core/blob/master/lib/tasks/#{t.metadata[:name]}.rb'>[code]</a>" %></a></td>
           <td><%= t.metadata[:description] %></td>
           <td><%= t.metadata[:references].map{|x| "<a href='#{x}'>#{x}</a>"}.join("<br/>") %></td>
         </tr>
