@@ -9,7 +9,9 @@ class SearchProjectHoneypot < BaseTask
       :pretty_name => "Search Project Honeypot",
       :authors => ["jcran"],
       :description => "This task checks the projecthoneypot site for information.",
-      :references => [],
+      :type => "discovery",
+      :passive => true,
+      :references => ["https://www.projecthoneypot.org/search_ip.php"],
       :allowed_types => ["IpAddress"],
       :example_entities => [{"type" => "IpAddress", "details" => {"name" => "1.1.1.1"}}],
       :allowed_options => [],
@@ -31,7 +33,7 @@ class SearchProjectHoneypot < BaseTask
     # If it doesn't exist, we'll get a default page, which
     # should never happen, but worth checking.
     unless contents
-      _log_error "Error getting site."
+      _log_error "Error getting results."
       return nil
     end
 

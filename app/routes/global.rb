@@ -17,10 +17,6 @@ class IntrigueApp < Sinatra::Base
       erb :index
     end
 
-    get '/:project/admin/?' do
-      erb :"admin/index"
-    end
-
 
     ###                  ###
     ### System Config    ###
@@ -70,9 +66,15 @@ class IntrigueApp < Sinatra::Base
 
 
     # get config
-    get '/:project/admin/config/?' do
+    get '/:project/system/config/?' do
       @global_config = Intrigue::Config::GlobalConfig.new
-      erb :"admin/config"
+      erb :"system/config"
     end
+
+    get "/:project/system/tasks" do
+      @tasks = Intrigue::TaskFactory.list
+      erb :"system/tasks"
+    end
+
 
 end

@@ -233,7 +233,6 @@ class DnsPermute < BaseTask
 
         _log "Known wildcard count: #{all_discovered_wildcards.uniq.count}"
         _log "Known wildcards: #{all_discovered_wildcards.uniq}"
-
       end
 
 
