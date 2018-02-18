@@ -17,6 +17,6 @@ tmp/.gitignore
 public/
 tmp/
 log/
-lib/tasks_disabled
+lib/tasks/disabled
 lib/tasks/survey
 util/control.sh
