@@ -21,12 +21,16 @@
   </div>
 </div>
 
-Alias Group: <%= @entity.alias_group.id %> <br/>
 
+
+Alias Group: <%= @entity.alias_group.id %> <br/>
 Aliases: <br/>
 <ul>
-<%=out = ""; results = @entity.aliases.uniq.sort_by{|x|x.name}; results.each {|x| out << "<li><a href='/#{@project_name}/entities/#{x.id}'>#{h x.name}</a></li>"; } if results; out %>
+<%=out = ""; results = @entity.aliases.uniq.sort_by{|x|x.name}; results.each {|x| out << "<li><a href='/#{@project_name}/entities/#{x.id}'>#{h x}</a></li>"; } if results; out %>
 </ul>
+
+Ancestors: <ul><% @entity.ancestors.each do |a|%> <%="<li><a href='/#{@project_name}/entities/#{a.id}'>#{h a}</a></li>"%> <% end %> </ul><br/>
+
 
 Tasks that created this entity:<br/>
 <ul>

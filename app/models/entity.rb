@@ -19,12 +19,20 @@ module Intrigue
 
       self.raise_on_save_failure = false
 
-      #many_to_many :aliases, :left_key=>:source_id,:right_key=>:target_id, :join_table=>:alias_mappings, :class=>self
       many_to_one  :alias_group
       many_to_many :task_results
       many_to_one  :project
 
       include Intrigue::Model::Capabilities::CalculateProvider
+
+      def ancestors
+        ancestors = []
+        task_results.each do |tr|
+          ancestors << tr.scan_result.base_entity if tr.scan_result
+        end
+
+      ancestors
+      end
 
       def validate
         super
@@ -100,7 +108,6 @@ module Intrigue
       end
 
       def set_detail(key, value)
-
         self.lock!
         temp_details = details.merge({key => value}.sanitize_unicode)
         self.set(:details => temp_details)
@@ -116,11 +123,16 @@ module Intrigue
         save
       end
 
-      # short string with select details. override this.
+      # Short string with select details. overriden by specific types.
+      #
+      # @return [String] light details about this entity
       def detail_string
         ""
       end
 
+      # Marks the entity and aliases as deleted (but doesnt actually delete)
+      #
+      # @return [TrueClass] true if successful
       def soft_delete!
         # clean up aliases at the same time
         alias_group.each {|x| x.soft_delete!}
@@ -128,6 +140,9 @@ module Intrigue
         save
       end
 
+      # Check whether the entity is deleted
+      #
+      # @return [TrueClass] true if it deleted
       def deleted?
         return true if deleted
       false
