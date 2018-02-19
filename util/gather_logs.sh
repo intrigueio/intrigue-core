@@ -2,8 +2,17 @@
 CURRENT_DATE=`date +%Y%m%d`
 FILENAME="intrigue-logs-$CURRENT_DATE"
 
-# Zip it up and drop it in the current directory
-tar -zcvf log/* $FILENAME
-echo "[+] Stored in $FILENAME"
+echo "[+] Stopping services"
+rbenv sudo service intrigue stop
 
-cp $FILENAME.zip ./public
+# Zip it up and drop it in the current directory
+tar -zcvf $FILENAME.tar.gz log/
+echo "[+] Stored in $FILENAME.tar.gz"
+
+cp $FILENAME.tar.gz ./public/
+
+echo "[+] Restarting services"
+rbenv sudo service intrigue start
+
+echo "[+] Access this file at"
+echo "[+] http://[servername]:7777/$FILENAME.tar.gz"
