@@ -40,7 +40,7 @@ module Intrigue
       end
 
       def safe_details
-        details.select { |k, v| !k.to_s.match(/^hidden_.*$/) }
+        details.select { |k,v| !k.to_s.match(/^hidden_.*$/) }
       end
 
       def transform!

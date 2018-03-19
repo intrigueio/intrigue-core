@@ -1,3 +1,5 @@
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
 <!-- name -->
 <div class="col-sm-7">
 <h3>
@@ -16,11 +18,10 @@
       </h4>
     </div>
     <div id="collapse1" class="panel-collapse collapse in">
-      <div class="panel-body"><pre><%=h JSON.pretty_generate(@entity.safe_details) %></pre></div>
+      <div class="panel-body"><pre class="prettyprint"><%= JSON.pretty_generate @entity.safe_details %></pre></div>
     </div>
   </div>
 </div>
-
 
 
 Alias Group: <%= @entity.alias_group.id %> <br/>
@@ -30,7 +31,6 @@ Aliases: <br/>
 </ul>
 
 Ancestors: <ul><% @entity.ancestors.each do |a|%> <%="<li><a href='/#{@project_name}/entities/#{a.id}'>#{h a}</a></li>"%> <% end %> </ul><br/>
-
 
 Tasks that created this entity:<br/>
 <ul>
