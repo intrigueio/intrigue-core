@@ -169,7 +169,7 @@ class CoreCli < Thor
       type_class = Intrigue::EntityManager.resolve_type entity["type"]
       return unless type_class
 
-      entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"], false)
+      entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"], true)
 
       task_result = start_task("task", p, nil, task_name, entity, depth, options, handlers, strategy_name)
 
