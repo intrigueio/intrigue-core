@@ -7,7 +7,7 @@ class EtcdHarvester < BaseTask
   def self.metadata
     {
       :name => "etcd_harvester",
-      :pretty_name => "Etcd Harvest",
+      :pretty_name => "Etcd Harvester",
       :authors => ["jcran"],
       :description => "Grab keys from etcd daemon.",
       :references => [
@@ -40,7 +40,7 @@ class EtcdHarvester < BaseTask
 
     begin
       # get the response
-      _log_good "Harvesting Etcd for #{uri}"
+      _log "Harvesting Etcd for #{uri}"
       response = http_get_body(uri)
 
       # Make sure we got something sane back
@@ -50,8 +50,8 @@ class EtcdHarvester < BaseTask
       end
 
       # Parse and print it
+      _log "Parsing response from #{uri}"
       hash = JSON.parse response
-      _log_good "Got: #{JSON.pretty_generate hash}"
 
       # Save it on the entity
       @entity.set_detail("etcd_keys_response",hash)

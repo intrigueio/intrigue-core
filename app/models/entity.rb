@@ -43,6 +43,7 @@ module Intrigue
         details.select { |k,v| !k.to_s.match(/^hidden_.*$/) }
       end
 
+      # override me... see: lib/entities/aws_credential.rb
       def transform!
         true
       end
@@ -85,7 +86,6 @@ module Intrigue
       # grab all entities in this group
       def aliases
         return [] unless alias_group
-
         alias_group.entities.sort_by{|x| x.name }
       end
 

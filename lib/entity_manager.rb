@@ -12,7 +12,7 @@ class EntityManager
   def self.resolve_type(type_string)
     raise "INVALID TYPE TO RESOLVE: #{type_string}. DID YOU SEND A STRING?" unless type_string.kind_of? String
 
-    # Don't eval unless it's one of our valid entity type
+    # Don't eval unless it's one of our valid entity types
     if type_string =~ /:/
       return eval("#{type_string}") if entity_types.map{|x|x.to_s}.include? "#{type_string}"
     else
@@ -62,19 +62,19 @@ class EntityManager
     end
 
     # necessary because of our single table inheritance?
-    created_entity = Intrigue::Model::Entity.find(:id => entity.id)
+    our_entity = Intrigue::Model::Entity.find(:id => entity.id)
 
     ### Ensure we have an entity
-    return nil unless created_entity
-    return nil unless created_entity.transform!
-    return nil unless created_entity.validate_entity
+    return nil unless our_entity
+    return nil unless our_entity.transform!
+    return nil unless our_entity.validate_entity
 
     # START ENRICHMENT if we're allowed and unless this entity is prohibited (hidden)
     if enrich
-      enrich_entity(created_entity) unless created_entity.hidden
+      enrich_entity(our_entity) unless our_entity.hidden
     end
 
-  created_entity
+  our_entity
   end
 
   # This method creates a new entity, and kicks off a strategy

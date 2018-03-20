@@ -157,8 +157,8 @@ class CoreCli < Thor
       handlers = _parse_handlers handler_string
       depth = depth.to_i
 
-      puts "Entity: #{entity}"
-      puts "Strategy: #{strategy_name}"
+      #puts "Entity: #{entity}"
+      #puts "Strategy: #{strategy_name}"
 
       payload = {
         "task" => task_name,
@@ -166,13 +166,11 @@ class CoreCli < Thor
         "options" => options,
       }
 
-      type_class = Intrigue::EntityManager.resolve_type entity["type"]
-      return unless type_class
-
+      # Create the entity
       entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"], true)
 
+      # kick off the task
       task_result = start_task("task", p, nil, task_name, entity, depth, options, handlers, strategy_name)
-
       puts "Created task #{task_result.inspect} for entity #{entity}"
     end
   end
