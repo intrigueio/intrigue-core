@@ -30,17 +30,36 @@ class EtcdHarvester < BaseTask
   def run
     super
 
-    entity = _get_entity_name
-
-    _log_good "Harvesting Etcd for #{entity}"
-    if @entity.kind_of? Intrigue::Entity::IpAddress
-      json = JSON.parse http_get_body("http://#{entity}:2379/v2/keys/?recursive=true")
-    elsif @entity.kind_of? Intrigue::Entity::Uri
-      json = http_get_body JSON.parse(entity)
+    # Construct the URI
+    if @entity.kind_of? Intrigue::Entity::Uri
+      uri = _get_entity_name
+    else
+      uri = "http://#{_get_entity_name}:2379/v2/keys/?recursive=true"
     end
 
-    _log_good "Got: #{JSON.pretty_generate json}"
-    @entity.set_detail("etcd_keys",JSON.generate(json))
+
+    begin
+      # get the response
+      _log_good "Harvesting Etcd for #{uri}"
+      response = http_get_body(uri)
+
+      # Make sure we got something sane back
+      unless response
+        _log_error "Unable to get a response"
+        return
+      end
+
+      # Parse and print it
+      json = JSON.parse response
+      _log_good "Got: #{JSON.pretty_generate json}"
+
+      # Save it on the entity
+      @entity.set_detail("etcd_keys_response",JSON.generate(json))
+
+    rescue JSON::ParserError => e
+      _log_error "unable to parse: #{e}"
+    end
+
   end
 
 end
