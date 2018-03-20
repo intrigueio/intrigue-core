@@ -50,11 +50,11 @@ class EtcdHarvester < BaseTask
       end
 
       # Parse and print it
-      json = JSON.parse response
-      _log_good "Got: #{JSON.pretty_generate json}"
+      hash = JSON.parse response
+      _log_good "Got: #{JSON.pretty_generate hash}"
 
       # Save it on the entity
-      @entity.set_detail("etcd_keys_response",JSON.generate(json))
+      @entity.set_detail("etcd_keys_response",hash)
 
     rescue JSON::ParserError => e
       _log_error "unable to parse: #{e}"
