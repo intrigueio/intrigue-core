@@ -88,11 +88,11 @@ class EnrichUri < BaseTask
     # Capture versions of common javascript libs
     #
     # get existing software details (in case this is a second run)
-    software = @entity.get_detail("software") || {}
-    # run the version checking scripts in our session
-    software = gather_javascript_libraries(session, software)
+    libraries = @entity.get_detail("libraries") || []
+    # run the version checking scripts in our session (See lib/helpers/browser)
+    libraries = gather_javascript_libraries(session, libraries)
     # set the new details
-    @entity.set_detail("software", software )
+    @entity.set_detail("libraries", libraries)
 
     # capture a screenshot and save it as a detail
     base64_screenshot_data = capture_screenshot(session)

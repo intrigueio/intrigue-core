@@ -14,7 +14,8 @@ class WebStackFingerprint < BaseTask
         "https://www.troyhunt.com/shhh-dont-let-your-response-headers/",
         "https://asafaweb.com/",
         "https://www.owasp.org/index.php/Category:OWASP_Cookies_Database",
-        "http://stackoverflow.com/questions/31134333/this-application-has-no-explicit-mapping-for-error"
+        "http://stackoverflow.com/questions/31134333/this-application-has-no-explicit-mapping-for-error",
+        "https://snyk.io/blog/77-percent-of-sites-still-vulnerable/"
       ],
       :type => "enrichment",
       :passive => false,
