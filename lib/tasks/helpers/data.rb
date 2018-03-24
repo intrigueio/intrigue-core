@@ -72,6 +72,7 @@ module Data
           entity_name =~ /^.*cheetahmail.com(:[0-9]*)?$/               ||
           entity_name =~ /^.*cloudapp.net(:[0-9]*)?$/                  ||
           entity_name =~ /^.*cloudfront.net(:[0-9]*)?$/                ||
+          entity_name =~ /^.*corporate-ir.net(:[0-9]*)?$/              ||
           entity_name =~ /^.*decipherinc.com(:[0-9]*)?$/               ||
           entity_name =~ /^.*discourse.org(:[0-9]*)?$/                 ||
           entity_name =~ /^.*drupal.org(:[0-9]*)?$/                    ||
@@ -139,7 +140,9 @@ module Data
           entity_name =~ /^.*mtsvc.net(:[0-9]*)?$/                     ||
           entity_name =~ /^.*msn.com(:[0-9]*)?$/                       ||
           entity_name =~ /^.*oclc.org(:[0-9]*)?$/                      ||
+          entity_name =~ /^.*office.com(:[0-9]*)?$/                    ||
           entity_name =~ /^.*office365.com(:[0-9]*)?$/                 ||
+          entity_name =~ /^.*outlook.com(:[0-9]*)?$/                   ||
           entity_name =~ /^.*ogp.me(:[0-9]*)?$/                        ||
           entity_name =~ /^.*outlook.com(:[0-9]*)?$/                   ||
           entity_name =~ /^.*photorank.me(:[0-9]*)?$/                  ||

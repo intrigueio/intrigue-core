@@ -64,6 +64,33 @@ class IntrigueApp < Sinatra::Base
   out
   end
 
+  get '/:project/entities.json' do
+    content_type 'text/json'
+
+    params[:search_string] == "" ? @search_string = nil : @search_string = params[:search_string]
+    params[:entity_types] == [""] ? @entity_types = nil : @entity_types = params[:entity_types]
+    params[:include_hidden] == "on" ? @include_hidden = true : @include_hidden = false
+    (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
+
+    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false).order(:name)
+
+    ## Filter if we have a type
+    selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
+
+    # Perform a simple tokenized search
+    selected_entities = _tokenized_search(@search_string, selected_entities) if @search_string
+
+    # filter out hidden if requested
+    selected_entities = selected_entities.where(:hidden => true) if @include_hidden
+
+    out = []
+    selected_entities.each do |entity|
+      out << entity.to_hash
+    end
+
+  JSON.pretty_generate out
+  end
+
   ###                      ###
   ### Per-Project Entities ###
   ###                      ###

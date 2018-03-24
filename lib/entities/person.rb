@@ -16,7 +16,7 @@ class Person < Intrigue::Model::Entity
   end
 
   def detail_string
-    "#{details["extracted_from"]}"
+    "#{details["origin"]}"
   end
 
 end
