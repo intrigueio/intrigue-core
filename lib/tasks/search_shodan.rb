@@ -38,18 +38,22 @@ class SearchShodan < BaseTask
 
     # check to make sure we got a response.
     unless response
-      _log_error "ERROR: No response. Do you have API Access / Credits?" 
+      _log_error "ERROR: No response. Do you have API Access / Credits?"
       return false
     end
 
     # Go through the results
     if response["data"]
+
+      # save raw data on the IP
+      @entity.set_detail("raw_shodan",response["data"])
+
+      # create an entity for each service (this handles known aliases)
       response["data"].each do |s|
         _log_good "Creating service on #{s["ip_str"]}: #{s["port"]}"
-        _create_network_service_entity(@entity,s["port"],s["transport"] || "tcp", {
-          :shodan_details => s
-        })
+        _create_network_service_entity(@entity, s["port"], s["transport"] || "tcp")
       end
+
     end
 
   end
