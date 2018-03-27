@@ -53,14 +53,7 @@ class Masscan < BaseTask
         created_entity = _create_entity("IpAddress", { "name" => line })
 
         _create_network_service_entity(created_entity,
-            opt_port,
-            "tcp",{
-              :masscan_details => {
-                :masscan_config => masscan_string
-              }
-            }
-         )
-
+            opt_port, "tcp", { "masscan_details" => masscan_string })
       end
 
     ensure
