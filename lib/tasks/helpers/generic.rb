@@ -57,6 +57,7 @@ module Generic
           "name" => name,
           "host_id" => h.id,
           "uri" => uri,
+          "ip_address" => h.name,
           "port" => port_num,
           "protocol" => protocol}.merge(extra_details), sister_entity)
 
@@ -69,6 +70,7 @@ module Generic
           "name" => name,
           "host_id" => h.id,
           "uri" => uri,
+          "ip_address" => h.name,
           "port" => port_num,
           "protocol" => protocol}.merge(extra_details), sister_entity)
 
@@ -81,6 +83,7 @@ module Generic
           "name" => name,
           "host_id" => h.id,
           "uri" => uri,
+          "ip_address" => h.name,
           "port" => port_num,
           "protocol" => protocol}.merge(extra_details), sister_entity)
 
@@ -93,6 +96,7 @@ module Generic
           "name" => name,
           "host_id" => h.id,
           "uri" => uri,
+          "ip_address" => h.name,
           "port" => port_num,
           "protocol" => protocol}.merge(extra_details), sister_entity)
 
@@ -105,6 +109,7 @@ module Generic
           "name" => name,
           "host_id" => h.id,
           "uri" => uri,
+          "ip_address" => h.name,
           "port" => port_num,
           "protocol" => protocol}.merge(extra_details), sister_entity)
 
@@ -117,6 +122,7 @@ module Generic
           "name" => name,
           "host_id" => h.id,
           "uri" => uri,
+          "ip_address" => h.name,
           "port" => port_num,
           "protocol" => protocol }.merge(extra_details), sister_entity)
 
@@ -129,6 +135,7 @@ module Generic
           "name" => name,
           "host_id" => h.id,
           "uri" => uri,
+          "ip_address" => h.name,
           "port" => port_num,
           "protocol" => protocol }.merge(extra_details), sister_entity)
       end
