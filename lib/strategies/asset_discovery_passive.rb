@@ -88,10 +88,10 @@ module Strategy
         end
 
         # Rather than scanning, let's use a service to look it up
-        start_recursive_task(task_result,"search_censys",entity)
+        #start_recursive_task(task_result,"search_censys",entity)
 
         # Rather than scanning, let's use a service to look it up
-        #start_recursive_task(task_result,"search_shodan",entity)
+        start_recursive_task(task_result,"search_shodan",entity)
 
       elsif entity.type_string == "NetBlock"
 
