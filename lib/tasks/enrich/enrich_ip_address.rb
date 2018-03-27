@@ -63,12 +63,25 @@ class EnrichIpAddress < BaseTask
     ####
     ### Set details for this entity
     ####
-    dns_entries = results.map { |result|
-      { "response_data" => result["lookup_details"].first["response_record_data"].to_s.sanitize_unicode,
-        "response_type" => result["lookup_details"].first["response_record_type"].to_s.sanitize_unicode }
-    }.uniq{ |r| "#{r["response_data"]}-#{r["response_type"]}" }
+    dns_entries = []
+    results.each do |result|
 
-    @entity.set_detail("dns_entries", dns_entries)
+      # Clean up the dns data
+      xtype = result["lookup_details"].first["response_record_type"].sanitize_unicode
+
+      lookup_details = result["lookup_details"].first["response_record_data"]
+      if lookup_details.kind_of?(Dnsruby::IPv4) || lookup_details.kind_of?(Dnsruby::IPv6) || lookup_details.kind_of?(Dnsruby::Name)
+        _log "Sanitizing Dnsruby Object"
+        xdata = result["lookup_details"].first["response_record_data"].to_s.sanitize_unicode
+      else
+        _log "Sanitizing String or array"
+        xdata = result["lookup_details"].first["response_record_data"].sanitize_unicode
+      end
+
+      dns_entries << { "response_data" => xdata, "response_type" => xtype }
+    end
+
+    @entity.set_detail("dns_entries", dns_entries.uniq.map{ |r| { r["response_type"] => r["response_data"] } })
     @entity.save
 
     _log "Ran enrichment task!"

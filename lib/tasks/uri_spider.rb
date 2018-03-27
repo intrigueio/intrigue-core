@@ -117,7 +117,7 @@ class UriSpider < BaseTask
                     content_type == "text/html" or
                     content_type == "text/javascript" or
                     content_type == "text/xml"  )
-            _log_good "Parsing file of type #{content_type} @ #{dest}"
+            _log_good "Parsing document of type #{content_type} @ #{dest}"
             download_and_extract_metadata "#{dest}"
           end
         end

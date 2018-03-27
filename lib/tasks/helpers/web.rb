@@ -271,11 +271,11 @@ module Task
          yomu = Yomu.new file
 
          # create a uri for everything
-         _create_entity "Uri", {
+         _create_entity "Document", {
              "content_type" => file.content_type,
              "name" => "#{uri}",
              "uri" => "#{uri}",
-             "metadata" => "#{yomu.metadata.to_json}" }
+             "metadata" => yomu.metadata }
 
          # Handle audio files
          if yomu.metadata["Content-Type"] == "audio/mpeg" # Handle MP3/4

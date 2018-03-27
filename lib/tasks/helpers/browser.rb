@@ -68,30 +68,30 @@ module Task
       # Examples: https://www.madewithangular.com/
 
       checks = [
-        { product: "Angular", script: 'angular.version.full' },
+        { library: "Angular", script: 'angular.version.full' },
         # Backbone
         # Test site: https://app.casefriend.com/
         # Examples: https://github.com/jashkenas/backbone/wiki/projects-and-companies-using-backbone
-        { product: "Backbone", script: 'Backbone.VERSION' },
+        { library: "Backbone", script: 'Backbone.VERSION' },
         # D3
         # Test site: https://d3js.org/
         # Examples: https://kartoweb.itc.nl/kobben/D3tests/index.html
-        { product: "D3", script: 'd3.version' },
+        { library: "D3", script: 'd3.version' },
         # Dojo
         # Test site: http://demos.dojotoolkit.org/demos/mobileCharting/demo.html
         # Examples: http://demos.dojotoolkit.org/demos/
-        { product: "Dojo", script: 'dojo.version' },
+        { library: "Dojo", script: 'dojo.version' },
         # Ember
         # Test site: https://secure.ally.com/
         # Examples: http://builtwithember.io/
-        { product: "Ember", script: 'Ember.VERSION' },
+        { library: "Ember", script: 'Ember.VERSION' },
         # Jquery
         # Test site: http://www.eddiebauer.com/
         # Test site: https://www.underarmour.com
-        { product: "jQuery", script: 'jQuery.fn.jquery' },
+        { library: "jQuery", script: 'jQuery.fn.jquery' },
         # Jquery tools
         # Test site: http://www.eddiebauer.com/
-        { product: "jQuery Tools", script: 'jQuery.tools.version' },
+        { library: "jQuery Tools", script: 'jQuery.tools.version' },
         # Jquery UI
         # Test site: http://www.eddiebauer.com/
         # Test site: https://www.underarmour.com
@@ -101,7 +101,7 @@ module Task
         #version = session.evaluate_script('knockout.version')
         # { :product => "Knockout", check: 'knockout.version' }
 
-        { product: "jQuery UI", script: 'jQuery.ui.version' },
+        { library: "jQuery UI", script: 'jQuery.ui.version' },
         # Paper.js
         # Test site: http://paperjs.org/examples/boolean-operations
         # Examples: http://paperjs.org/examples
@@ -112,26 +112,26 @@ module Task
         # version = session.evaluate_script('Prototype.version')
         # { product: "Prototype", check: 'Prototype.version' },
 
-        { product: "Paper", script: 'paper.version' },
+        { library: "Paper", script: 'paper.version' },
 
         # React
         # Test site: https://weather.com/
         # Examples: https://react.rocks/
-        { product: "React", script: 'React.version' },
+        { library: "React", script: 'React.version' },
 
         # RequireJS
         # Test site: https://www.homedepot.com
-        { product: "RequireJS", script: 'requirejs.version' },
+        { library: "RequireJS", script: 'requirejs.version' },
 
         # Underscore
         # Test site: https://app.casefriend.com/#sessions/login
         # Test site: https://store.dji.com/
-        { product: "Underscore", script: '_.VERSION' },
+        { library: "Underscore", script: '_.VERSION' },
 
         # YUI
         # Test site: https://yuilibrary.com/yui/docs/event/basic-example.html
         # Examples: https://yuilibrary.com/yui/docs/examples/
-        { product: "YUI", script: 'YUI().version' }
+        { library: "YUI", script: 'YUI().version' }
       ]
 
       checks.each do |check|
@@ -139,10 +139,10 @@ module Task
         # run our script in a browser
         version = session.evaluate_script(check[:script])
         if version
-          _log_good "Detected #{check[:product]} #{version}"
-          products << {"product" => "#{check[:product]}", "detected" => true, "version" => "#{version}" }
+          _log_good "Detected #{check[:library]} #{version}"
+          products << {"product" => "#{check[:library]}", "detected" => true, "version" => "#{version}" }
         else
-          products << {"product" => "#{check[:product]}", "detected" => false }
+          products << {"product" => "#{check[:library]}", "detected" => false }
         end
 
       end
