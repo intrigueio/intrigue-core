@@ -84,14 +84,20 @@ module Strategy
           start_recursive_task(task_result,"whois",entity)
         end
 
-        start_recursive_task(task_result,"nmap_scan",entity)
+        #start_recursive_task(task_result,"nmap_scan",entity)
 
       elsif entity.type_string == "NetBlock"
 
         # Make sure it's small enough not to be disruptive, and if it is, scan it. also skip ipv6/
         if entity.details["whois_full_text"] =~ /#{filter_strings}/i && !(entity.name =~ /::/)
+          start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 21}])
+          start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 22}])
+          start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 23}])
           start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 80}])
-          start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 443}])
+          start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 139}])
+          start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 445}])
+          start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 3389}])
+          start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 8080}])
           start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 8443}])
         else
           task_result.log "Cowardly refusing to Scan this netblock.. it doesn't look like ours."
