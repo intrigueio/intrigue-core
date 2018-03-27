@@ -85,6 +85,7 @@ module Strategy
         end
 
         #start_recursive_task(task_result,"nmap_scan",entity)
+        start_recursive_task(task_result,"search_shodan",entity)
 
       elsif entity.type_string == "NetBlock"
 
