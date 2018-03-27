@@ -125,7 +125,7 @@ class UriBrute < BaseTask
     # try again if we got a blank page (some WAFs seem to do this?)
     if response.body = ""
       10.times do
-        _log "Re-attemping #{request_uri}... verifying we should really have a blank page"
+        _log "Re-attempting #{request_uri}... verifying we should really have a blank page"
         response = http_request :get, request_uri
         next unless response
         break if response.body != ""
@@ -136,8 +136,8 @@ class UriBrute < BaseTask
     return false unless response
 
     # always check for content...
-    ["404", "forbidden"].each do |s|
-      if (response.body =~ /#{s}/ )
+    ["404", "forbidden", "Request Rejected"].each do |s|
+      if (response.body =~ /#{s}/i )
         _log "Skipping #{request_uri}, contains a missing page string: #{s}"
         return false
       end
