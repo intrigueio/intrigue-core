@@ -38,27 +38,32 @@ class FtpBannerGrab < BaseTask
     protocol = _get_entity_attribute "protocol"
     ip_address = _get_entity_attribute "ip_address"
 
+
     # Check to make sure we have a sane target
     if protocol.downcase == "tcp" && ip_address && port
 
       banner = ""
+      begin
+        sockets = Array.new #select() requires an array
+        #fill the first index with a socket
+        sockets[0] = TCPSocket.open(ip_address, port)
+        while true #loop till it breaks
 
-      sockets = Array.new #select() requires an array
-      #fill the first index with a socket
-      sockets[0] = TCPSocket.open(ip_address, port)
-      while true #loop till it breaks
-
-      #listen for a read, timeout 3
-      res = select(sockets, nil, nil,3)
-        if res != nil  # a nil is a timeout and will break
-              #THIS PRINTS NIL FOREVER on a server crash
-          banner << sockets[0].gets()
-        else
-          sockets[0].close
-          break
+        #listen for a read, timeout 3
+        res = select(sockets, nil, nil,3)
+          if res != nil  # a nil is a timeout and will break
+                #THIS PRINTS NIL FOREVER on a server crash
+            banner << sockets[0].gets()
+          else
+            sockets[0].close
+            break
+          end
         end
+      rescue Errno::ECONNRESET => e
+        _log_error "Unable to connect: #{e}"
+      rescue SocketError => e
+        _log_error "Unable to connect: #{e}"
       end
-
 
       if banner.length > 0
         _log "Got banner for #{ip_address}:#{port}/#{protocol}: #{banner}"
