@@ -143,20 +143,21 @@ class Whois < BaseTask
 
         data = json["data"]
         range = data["last_updated"].first["ip_space"]
-        less_specific_hash = data["less_specific"]
 
         # parse out description
-        if less_specific_hash && less_specific_hash["descr"]
-          description = less_specific_hash["descr"]
-        else
-          _log_error "Unable to get description from #{less_specific_hash}"
-        end
+        begin
+          less_specific_hash = data["less_specific"]
+          if less_specific_hash && less_specific_hash.first["descr"]
+            _log "less_specific_hash: #{less_specific_hash}"
+            description = less_specific_hash.first["descr"]
+          end
 
-        # parse out netname
-        if less_specific_hash && less_specific_hash["netname"]
-          netname = less_specific_hash["netname"]
-        else
-          _log_error "Unable to get netname from #{less_specific_hashs}"
+          # parse out netname
+          if less_specific_hash && less_specific_hash.first["netname"]
+            netname = less_specific_hash.first["netname"]
+          end
+        rescue TypeError => e
+          _log_error "PARSING ERROR! Unable to get details from #{less_specific_hash} #{e}"
         end
 
         entity = _create_entity "NetBlock", {
