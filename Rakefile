@@ -87,8 +87,13 @@ task :setup do
 
   ## Place sidekiq task worker configs into place
   puts "[+] Setting up worker configs...."
-  worker_configs = ["sidekiq_interactive_config_file","sidekiq_autoscheduled_config_file",
-  "sidekiq_enrichment_config_file", "sidekiq_app_config_file", "sidekiq_screenshot_config_file"]
+  worker_configs = [
+    sidekiq_interactive_config_file,
+    sidekiq_autoscheduled_config_file,
+    sidekiq_enrichment_config_file,
+    sidekiq_app_config_file,
+    sidekiq_screenshot_config_file
+  ]
 
   worker_configs.each do |wc|
     unless File.exist?(wc)
