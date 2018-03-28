@@ -51,9 +51,9 @@ class NmapScan < BaseTask
       _log "NMap options: #{nmap_options}"
 
       if Process.uid == 0
-        nmap_string = "nmap #{scan_item} #{nmap_options} -sSUV -P0 --top-ports 25 -O --max-os-tries 2 -oX #{temp_file}"
+        nmap_string = "nmap #{scan_item} #{nmap_options} -sSUV -P0 --top-ports 100 -O --max-os-tries 2 -oX #{temp_file}"
       else
-	      nmap_string = "sudo nmap #{scan_item} #{nmap_options} -sSUV -P0 --top-ports 25 -O --max-os-tries 2 -oX #{temp_file}"
+	      nmap_string = "sudo nmap #{scan_item} #{nmap_options} -sSUV -P0 --top-ports 100 -O --max-os-tries 2 -oX #{temp_file}"
       end
       _log "Running... #{nmap_string}"
 

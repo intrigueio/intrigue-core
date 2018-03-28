@@ -84,8 +84,8 @@ module Strategy
           start_recursive_task(task_result,"whois",entity)
         end
 
-        #start_recursive_task(task_result,"nmap_scan",entity)
-        start_recursive_task(task_result,"search_shodan",entity)
+        start_recursive_task(task_result,"nmap_scan",entity)
+        #start_recursive_task(task_result,"search_shodan",entity)
 
       elsif entity.type_string == "NetBlock"
 
@@ -95,10 +95,17 @@ module Strategy
           start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 22}])
           start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 23}])
           start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 80}])
+          start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 110}])
+          start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 111}])
           start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 139}])
+          start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 143}])
           start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 445}])
+          start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 1433}])
+          start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 3306}])
           start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 3389}])
+          start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 5900}]
           start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 8080}])
+          start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 8081}])
           start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 8443}])
         else
           task_result.log "Cowardly refusing to Scan this netblock.. it doesn't look like ours."
