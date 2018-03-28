@@ -103,7 +103,7 @@ module Strategy
           start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 1433}])
           start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 3306}])
           start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 3389}])
-          start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 5900}]
+          start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 5900}])
           start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 8080}])
           start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 8081}])
           start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 8443}])
