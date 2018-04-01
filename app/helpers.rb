@@ -47,7 +47,7 @@ module Helper
     if !existing_scan_result && depth > 1
 
       scan_result = Intrigue::Model::ScanResult.create({
-        :name => "#{strategy_name}_depth_#{depth}_on_#{entity.name}",
+        :name => "#{strategy_name}_on_#{entity.name}",
         :project => project,
         :base_entity_id => entity.id,
         :logger => Intrigue::Model::Logger.create(:project => project),

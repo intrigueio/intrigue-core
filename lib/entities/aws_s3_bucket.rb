@@ -15,7 +15,7 @@ class AwsS3Bucket < Intrigue::Model::Entity
   end
 
   def detail_string
-    "File count: #{contents.count}" if contents
+    "File count: #{details["contents"].count}" if details["contents"]
   end
 
 end

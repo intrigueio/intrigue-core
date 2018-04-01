@@ -108,19 +108,26 @@ module Intrigue
       end
 
       def set_detail(key, value)
-        self.lock!
-        temp_details = details.merge({key => value}.sanitize_unicode)
-        self.set(:details => temp_details)
-        self.set(:details_raw => temp_details)
-
-        save
+        begin
+          self.lock!
+          temp_details = details.merge({key => value}.sanitize_unicode)
+          self.set(:details => temp_details)
+          self.set(:details_raw => temp_details)
+          save
+        rescue Sequel::DatabaseError => e
+          puts "ERROR SAVING DETAILS FOR #{self}: #{e}"
+        end
       end
 
       def set_details(hash)
-        self.lock!
-        self.set(:details => hash.sanitize_unicode)
-        self.set(:details_raw => hash.sanitize_unicode)
-        save
+        begin
+          self.lock!
+          self.set(:details => hash.sanitize_unicode)
+          self.set(:details_raw => hash.sanitize_unicode)
+          save
+        rescue Sequel::DatabaseError => e
+          puts "ERROR SAVING DETAILS FOR #{self}: #{e}"
+        end
       end
 
       # Short string with select details. overriden by specific types.
