@@ -196,6 +196,7 @@ class IntrigueApp < Sinatra::Base
 
       # Parse the incoming request
       payload = JSON.parse(request.body.read) if (request.content_type == "application/json" && request.body)
+      puts "Got Payload #{payload}"
 
       ### don't take any shit
       return "No payload!" unless payload

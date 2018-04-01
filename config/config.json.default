@@ -29,6 +29,13 @@
       "region" : "",
       "bucket" : "",
       "uri" : ""
+    },
+    "s3_csv" : {
+      "access_key" : "",
+      "secret_key" : "",
+      "region" : "",
+      "bucket" : "",
+      "uri" : ""
     }
   },
   "intrigue_global_module_config": {

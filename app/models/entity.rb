@@ -127,7 +127,7 @@ module Intrigue
       #
       # @return [String] light details about this entity
       def detail_string
-        ""
+        nil
       end
 
       # Marks the entity and aliases as deleted (but doesnt actually delete)
@@ -216,6 +216,7 @@ module Intrigue
           :name =>  name,
           :deleted => deleted,
           :hidden => hidden,
+          :detail_string => detail_string,
           :details => safe_details,
           #:task_results => task_results.map{ |t| {:id => t.id, :name => t.name } },
           :aliases => aliases.map{ |x| {:id => x.id, :name => x.name } }

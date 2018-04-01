@@ -19,6 +19,9 @@ class DnsRecord < Intrigue::Model::Entity
   end
 
   def detail_string
+    records = details["dns_entries"]
+    return nil unless records
+    records.each.group_by{|k| k["response_type"] }.map{|k,v| "#{k}: #{v.length}"}.join(", ")
   end
 
 end

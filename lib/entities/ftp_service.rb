@@ -15,7 +15,7 @@ class FtpService < Intrigue::Entity::NetworkService
   end
 
   def detail_string
-    "#{details["banner"]}"
+    details["banner"] if details && details["banner"]
   end
 
 end

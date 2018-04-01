@@ -81,7 +81,7 @@ class EnrichIpAddress < BaseTask
       dns_entries << { "response_data" => xdata, "response_type" => xtype }
     end
 
-    @entity.set_detail("dns_entries", dns_entries.uniq.map{ |r| { r["response_type"] => r["response_data"] } })
+    @entity.set_detail("dns_entries", dns_entries.uniq )
     @entity.save
 
     _log "Ran enrichment task!"

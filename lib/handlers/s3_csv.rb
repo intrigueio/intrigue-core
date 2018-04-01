@@ -2,14 +2,14 @@ require 'fog-aws'
 
 module Intrigue
 module Handler
-  class S3Json < Intrigue::Handler::Base
+  class S3Csv < Intrigue::Handler::Base
 
     def self.type
-      "s3_json"
+      "s3_csv"
     end
 
     def process(result)
-      puts "S3 JSON Handler called"
+      puts "S3 CSV Handler called"
       access_key = _get_handler_config("access_key")
       secret_key = _get_handler_config("secret_key")
       bucket_name = _get_handler_config("bucket")
@@ -22,8 +22,8 @@ module Handler
 
       bucket = connection.directories.get(bucket_name)
       bucket.files.create (
-        { :key => "#{result.name}.json",
-          :body => result.export_json
+        { :key => "#{result.name}.csv",
+          :body => result.export_csv
         }
       )
 

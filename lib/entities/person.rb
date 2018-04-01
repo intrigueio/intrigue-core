@@ -16,7 +16,7 @@ class Person < Intrigue::Model::Entity
   end
 
   def detail_string
-    "#{details["origin"]}"
+    details["origin"] if details && details["origin"]
   end
 
 end

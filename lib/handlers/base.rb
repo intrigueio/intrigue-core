@@ -13,7 +13,7 @@ module Handler
           global_config = Intrigue::Config::GlobalConfig.new
           global_config.config["intrigue_handlers"][self.class.type][key]
         rescue NoMethodError => e
-          puts "Error, invalid config key requested (#{key}) for #{type}: #{e}"
+          puts "Error, invalid config key requested (#{key}) for #{self.class.type}: #{e}"
         end
       end
 

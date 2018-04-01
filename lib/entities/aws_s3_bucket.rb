@@ -14,6 +14,10 @@ class AwsS3Bucket < Intrigue::Model::Entity
     name =~ /s3.amazonaws.com/
   end
 
+  def detail_string
+    "File count: #{contents.count}" if contents
+  end
+
 end
 end
 end

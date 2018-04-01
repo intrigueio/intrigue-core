@@ -43,6 +43,20 @@ module Intrigue
       entities
       end
 
+      def increment_task_count
+        $db.transaction do
+          self.incomplete_task_count += 1
+          self.save
+        end
+      end
+
+      def decrement_task_count
+        $db.transaction do
+          self.incomplete_task_count -= 1
+          self.save
+        end
+      end
+
       # just calculate it vs storing another property
       def timestamp_start
         return task_results.first.timestamp_start if task_results.first

@@ -15,7 +15,7 @@ class Document < Intrigue::Model::Entity
   end
 
   def detail_string
-    "#{details["content_type"]}"
+    details["content_type"] if details && details["content_type"]
   end
 
 end

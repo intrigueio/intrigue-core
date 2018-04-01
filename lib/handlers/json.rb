@@ -8,7 +8,7 @@ module Handler
 
     def process(result)
       # Write it out
-      File.open("./tmp/#{result.name}.json", "w") do |file|
+      File.open("#{$intrigue_basedir}/tmp/#{result.name}.json", "w") do |file|
         file.write(result.export_json)
       end
     end

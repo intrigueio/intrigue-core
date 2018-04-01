@@ -59,14 +59,14 @@ class WebStackFingerprint < BaseTask
     ## empty stack to start
     stack = []
 
-    # Use various techniques to build out a "stack"
+    # Use various techniques to build out the "stack"
     stack << _check_server_header(response, response2)
     stack.concat _check_x_headers(response)
     stack.concat _check_cookies(response)
     stack.concat _check_generator(response)
-    stack.concat _check_page_contents(response)
     stack.concat _check_uri(uri)
     stack.concat _check_specific_pages(uri)
+    stack.concat _check_page_contents_legacy(response)
 
     clean_stack = stack.select{ |x| x != nil }.uniq
     _log "Setting stack to #{clean_stack}"
@@ -78,7 +78,7 @@ class WebStackFingerprint < BaseTask
 
   private
 
-  def _check_page_contents(response)
+  def _check_page_contents_legacy(response)
 
     ###
     ### Security Seals
@@ -90,29 +90,42 @@ class WebStackFingerprint < BaseTask
       { :regex => /sealserver.trustwave.com\/seal.js/, :finding_name => "Trustwave Security Seal"},
       { :regex => /Norton Secured, Powered by Symantec/, :finding_name => "Norton Security Seal"},
       { :regex => /PathDefender/, :finding_name => "McAfee Pathdefender Security Seal"},
+
       ### Marketing / Tracking
       {:regex => /urchin.js/, :finding_name => "Google Analytics"},
+      {:regex => /GoogleAnalyticsObject/, :finding_name => "Google Analytics"},
+      {:regex => /MonsterInsights/, :finding_name => "MonsterInsights plugin"},
       {:regex => /optimizely/, :finding_name => "Optimizely"},
       {:regex => /trackalyze/, :finding_name => "Trackalyze"},
       {:regex => /doubleclick.net|googleadservices/, :finding_name => "Google Ads"},
       {:regex => /munchkin.js/, :finding_name => "Marketo"},
+      {:regex => /w._hsq/, :finding_name => "Hubspot"},
+      {:regex => /Async HubSpot Analytics/, :finding_name => "Async HubSpot Analytics Code for WordPress"},
       {:regex => /Olark live chat software/, :finding_name => "Olark"},
+      {:regex => /intercomSettings/, :finding_name => "Intercom"},
+
       ### External accounts
-      {:regex => /http:\/\/www.twitter.com.*?/, :finding_name => "Twitter Account"},
-      {:regex => /http:\/\/www.facebook.com.*?/, :finding_name => "Facebook Account"},
+      {:regex => /http:\/\/www.twitter.com.*?/, :finding_name => "Twitter"},
+      {:regex => /http:\/\/www.facebook.com.*?/, :finding_name => "Facebook"},
+
       ### Technologies
       #{:regex => /javascript/, :finding => "Javascript"},
-      {:regex => /jquery.js/, :finding_name => "JQuery"},
-      {:regex => /bootstrap.css/, :finding_name => "Twitter Bootstrap"},
+      #{:regex => /jquery.js/, :finding_name => "JQuery"},
+      #{:regex => /bootstrap.css/, :finding_name => "Bootstrap"},
+
       ### Platform
-      {:regex => /[W|w]ordpress/, :finding_name => "Wordpress"},
-      {:regex => /[D|d]rupal/, :finding_name => "Drupal"},
+      #{:regex => /[W|w]ordpress/, :finding_name => "Wordpress"},
+      #{:regex => /[D|d]rupal/, :finding_name => "Drupal"},
+
       ### Provider
-      {:regex => /Content Delivery Network via Amazon Web Services/, :finding_name => "Amazon Cloudfront"},
+      {:regex => /Content Delivery Network via Amazon Web Services/, :finding_name => "Amazon CDN"},
+
       ### Wordpress Plugins
-      { :regex => /wp-content\/plugins\/.*?\//, :finding_name => "Wordpress Plugin" },
-      { :regex => /xmlrpc.php/, :finding_name => "Wordpress API"},
-      { :regex => /Yoast WordPress/, :finding_name => "Yoast Wordress SEO Plugin"},
+      #{ :regex => /wp-content\/plugins\/.*?\//, :finding_name => "Wordpress Plugin" },
+      #{ :regex => /xmlrpc.php/, :finding_name => "Wordpress API"},
+      { :regex => /Yoast SEO Plugin/, :finding_name => "Wordpress: Yoast SEO Plugin"},
+      { :regex => /All in One SEO Pack/, :finding_name => "Wordpress: All in One SEO Pack"},
+
       #{:regex => /PowerPressPlayer/, :finding_name => "Powerpress Wordpress Plugin"}
       ]
     ###
@@ -244,15 +257,6 @@ class WebStackFingerprint < BaseTask
           :type => "content",
           :content => /{"timestamp":\d.*,"status":999,"error":"None","message":"No message available"}/,
           :test_site => "https://pcr.apple.com"
-      }]},
-      {
-        :uri => "#{uri}/xmlrpc.php",
-        :checklist => [{
-          :name => "XMLRPC API",
-          :description => "Standard Blog API page",
-          :type => "content",
-          :content => /XML-RPC server accepts POST requests only./,
-          :test_site => "https://ip-50-62-231-56.ip.secureserver.net/xmlrpc.php"
       }]}
     ]
 

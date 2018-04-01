@@ -15,7 +15,7 @@ class Uri < Intrigue::Model::Entity
   end
 
   def detail_string
-    "#{details["stack"].to_a.join(" | ")}"
+    "#{details["stack"].to_a.join("; ")}"
   end
 
 end

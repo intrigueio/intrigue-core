@@ -1,11 +1,11 @@
 module Intrigue
 module Strategy
-  class AssetDiscoveryActive < Intrigue::Strategy::Base
+  class AssetDiscoveryActiveLight < Intrigue::Strategy::Base
 
     def self.metadata
       {
-        :name => "asset_discovery_active",
-        :pretty_name => "Asset Discovery (Active)",
+        :name => "asset_discovery_active_light",
+        :pretty_name => "Asset Discovery (Active, Light)",
         :passive => false,
         :authors => ["jcran"],
         :description => "This strategy performs a network recon and enumeration. Suggest starting with a DnsRecord or NetBlock."
@@ -27,14 +27,14 @@ module Strategy
         end
 
         ### AWS_S3_brute the domain name and the base name
-        start_recursive_task(task_result,"aws_s3_brute",entity,[
-          {"name" => "additional_buckets", "value" => "#{base_name},#{entity.name}"}
-        ])
+        #start_recursive_task(task_result,"aws_s3_brute",entity,[
+        #  {"name" => "additional_buckets", "value" => "#{base_name},#{entity.name}"}
+        #])
 
-        start_recursive_task(task_result,"dns_brute_sub",entity,[
-          {"name" => "threads", "value" => 2 }])
+        start_recursive_task(task_result,"dns_brute_sub",entity,[{"name" => "threads", "value" => 2 }])
 
       elsif entity.type_string == "FtpService"
+        start_recursive_task(task_result,"ftp_banner_grab",entity)
         start_recursive_task(task_result,"ftp_enumerate",entity)
 
       elsif entity.type_string == "IpAddress"
@@ -44,7 +44,9 @@ module Strategy
           start_recursive_task(task_result,"whois",entity)
         end
 
-        start_recursive_task(task_result,"nmap_scan",entity)
+        unless (entity.created_by?("masscan_scan"))
+          start_recursive_task(task_result,"search_shodan",entity)
+        end
 
       elsif entity.type_string == "NetBlock"
 
@@ -64,22 +66,12 @@ module Strategy
           task_result.log "Cowardly refusing to expand this netblock.. it doesn't look like ours."
         end
 
-      elsif entity.type_string == "Person"
-
-      ### AWS_S3_brute the name
-      start_recursive_task(task_result,"aws_s3_brute",entity)
-
-      elsif entity.type_string == "String"
-
-        ### AWS_S3_brute the name
-        start_recursive_task(task_result,"aws_s3_brute",entity)
-
       elsif entity.type_string == "Uri"
 
         # Check for exploitable URIs, but don't recurse on things we've already found
         start_recursive_task(task_result,"uri_brute", entity, [
           {"name"=> "threads", "value" => 1},
-          {"name" => "user_list", "value" => "admin,test,server-status,.svn,.git"}])
+          {"name" => "user_list", "value" => "admin,test,server-status,.svn,.git,index.html.bak,index.htm.bak"}])
 
         unless (entity.created_by?("uri_brute") || entity.created_by?("uri_spider") )
 
@@ -88,7 +80,7 @@ module Strategy
 
           ## Super-lite spider, looking for metadata
           start_recursive_task(task_result,"uri_spider",entity,[
-              {"name" => "max_pages", "value" => 50 },
+              {"name" => "max_pages", "value" => 10 },
               {"name" => "extract_dns_records", "value" => true },
               {"name" => "extract_dns_record_pattern", "value" => "#{filter_strings}"}])
         end
