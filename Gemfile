@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
 # core
-gem 'sinatra'                 # API
-gem 'sinatra-contrib'         # API
+gem 'sinatra', '~> 2.0.1'
+gem 'sinatra-contrib', '~> 2.0.1'
 gem 'puma'                    # Application Server
 gem 'redis'                   # Redis
 gem 'redis-namespace'
