@@ -20,7 +20,7 @@ class Masscan < BaseTask
       :example_entities => [{"type" => "NetBlock", "details" => {"name" => "10.0.0.0/24"}}],
       :allowed_options => [
         {:name => "port", :type => "Integer", :regex => "integer", :default => 80 },
-        {:name => "rate", :type => "Integer", :regex => "integer", :default => 10000 },
+        {:name => "max_rate", :type => "Integer", :regex => "integer", :default => 10000 },
       ],
       :created_types => ["IpAddress","NetworkService"]
     }
@@ -33,6 +33,7 @@ class Masscan < BaseTask
     # Get range, or host
     to_scan = _get_entity_name
     opt_port = _get_option("port")
+    opt_max_rate = _get_option("max_rate")
 
     begin
 
@@ -40,7 +41,7 @@ class Masscan < BaseTask
       temp_file = Tempfile.new("masscan")
 
       # shell out to masscan and run the scan
-      masscan_string = "masscan -p #{opt_port} --max-rate #{opt_rate} -oL #{temp_file.path} #{to_scan}"
+      masscan_string = "masscan -p #{opt_port} --max-rate #{opt_max_rate} -oL #{temp_file.path} #{to_scan}"
       _log "Running... #{masscan_string}"
       _unsafe_system(masscan_string)
 
