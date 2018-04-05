@@ -16,7 +16,7 @@ class NmapScan < BaseTask
       :allowed_types => ["DnsRecord","IpAddress","NetBlock"],
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
-        {:name => "top_ports", :type => "Integer", :regex => "integer", :default => 20 },
+        {:name => "top_ports", :regex => "integer", :default => 25 },
       ],
       :created_types => [ "DnsRecord","DnsService","FingerService", "FtpService",
                           "IpAddress", "NetworkService","SshService","Uri" ]
@@ -54,7 +54,7 @@ class NmapScan < BaseTask
       _log "NMap options: #{nmap_options}"
 
       if Process.uid == 0
-        nmap_string = "nmap #{scan_item} #{nmap_options} -sSUV -P0 --top-ports #{opt_top_ports} -O --max-os-tries 2 -oX #{temp_file}"
+        nmap_string = "nmap #{scan_item} #{nmap_options} -sSUV -P0 -T5 --top-ports #{opt_top_ports} -O --max-os-tries 2 -oX #{temp_file}"
       else
 	      nmap_string = "sudo nmap #{scan_item} #{nmap_options} -sSUV -P0 --top-ports #{opt_top_ports} -O --max-os-tries 2 -oX #{temp_file}"
       end
