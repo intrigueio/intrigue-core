@@ -18,8 +18,8 @@ class Whois < BaseTask
         {"type" => "IpAddress", "details" => {"name" => "192.0.78.13"}},
       ],
       :allowed_options => [
-        {:name => "create_contacts", :type => "Boolean", :regex => "boolean", :default => true },
-        {:name => "create_nameservers", :type => "Boolean", :regex => "boolean", :default => true }
+        {:name => "create_contacts", :regex => "boolean", :default => true },
+        {:name => "create_nameservers", :regex => "boolean", :default => true }
       ],
       :created_types => ["EmailAddress", "NetBlock", "Person"]
     }

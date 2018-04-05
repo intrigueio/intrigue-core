@@ -15,10 +15,10 @@ class SearchThreatcrowd < BaseTask
       :allowed_types => ["DnsRecord"],
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
-        {:name => "extract_pattern", :type => "String", :regex => "alpha_numeric", :default => false },
-        {:name => "gather_resolutions", :type => "Boolean", :regex => "boolean", :default => true },
-        {:name => "gather_subdomains", :type => "Boolean", :regex => "boolean", :default => true },
-        {:name => "gather_email_addresses", :type => "Boolean", :regex => "boolean", :default => true }
+        {:name => "extract_pattern", :regex => "alpha_numeric", :default => false },
+        {:name => "gather_resolutions", :regex => "boolean", :default => true },
+        {:name => "gather_subdomains", :regex => "boolean", :default => true },
+        {:name => "gather_email_addresses", :regex => "boolean", :default => true }
       ],
       :created_types => ["DnsRecord", "EmailAddress", "IpAddress"]
     }

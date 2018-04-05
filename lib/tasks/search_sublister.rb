@@ -15,7 +15,7 @@ class SearchSublister < BaseTask
       :allowed_types => ["DnsRecord"],
       :example_entities => [ {"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}} ],
       :allowed_options => [
-        {:name => "extract_pattern", :type => "String", :regex => "alpha_numeric", :default => false }
+        {:name => "extract_pattern", :regex => "alpha_numeric", :default => false }
       ],
       :created_types => ["DnsRecord"]
     }

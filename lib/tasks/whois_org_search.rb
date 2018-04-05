@@ -17,7 +17,7 @@ class WhoisOrgSearch < BaseTask
         {"type" => "String", "details" => {"name" => "Intrigue"}}
       ],
       :allowed_options => [
-        {:name => "timeout", :type => "Integer", :regex=> "integer", :default => 20 }],
+        {:name => "timeout", :regex=> "integer", :default => 20 }],
       :created_types => ["NetBlock"]
     }
   end

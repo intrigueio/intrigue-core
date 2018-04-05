@@ -126,6 +126,34 @@ module Generic
           "port" => port_num,
           "protocol" => protocol }.merge(extra_details), sister_entity)
 
+      # then WeblogicService
+      elsif protocol == "tcp" && [7001].include?(port_num) && h.name.is_ip_address?
+
+        name = "#{h.name}:#{port_num}"
+        uri = "http://#{name}"
+        sister_entity = _create_entity("WeblogicService", {
+          "name" => name,
+          "host_id" => h.id,
+          "uri" => uri,
+          "ip_address" => h.name,
+          "port" => port_num,
+          "protocol" => protocol}.merge(extra_details), sister_entity)
+
+      # then MongoService
+      elsif protocol == "tcp" && [27017].include?(port_num) && h.name.is_ip_address?
+
+        name = "#{h.name}:#{port_num}"
+        uri = "mongo://#{name}"
+        sister_entity = _create_entity("MongoService", {
+          "name" => name,
+          "host_id" => h.id,
+          "uri" => uri,
+          "ip_address" => h.name,
+          "port" => port_num,
+          "protocol" => protocol}.merge(extra_details), sister_entity)
+
+
+
       else # Create a generic network service
         next unless h.name.is_ip_address?
 

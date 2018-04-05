@@ -18,8 +18,8 @@ class AwsS3Loot < BaseTask
         {"type" => "AwsS3Bucket", "details" => {"name" => "https://s3.amazonaws.com/bucket"}}
       ],
       :allowed_options => [
-        {:name => "flag_large_files", :type => "Boolean", :regex => "boolean", :default => true },
-        {:name => "large_file_size", :type => "Integer", :regex => "integer", :default => 25}
+        {:name => "flag_large_files",  :regex => "boolean", :default => true },
+        {:name => "large_file_size", :regex => "integer", :default => 25}
       ],
       :created_types => ["DnsRecord"]
     }

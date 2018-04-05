@@ -19,8 +19,8 @@ class Masscan < BaseTask
       :allowed_types => ["IpAddress","NetBlock"],
       :example_entities => [{"type" => "NetBlock", "details" => {"name" => "10.0.0.0/24"}}],
       :allowed_options => [
-        {:name => "port", :type => "Integer", :regex => "integer", :default => 80 },
-        {:name => "max_rate", :type => "Integer", :regex => "integer", :default => 10000 },
+        {:name => "ports", :regex => "numeric_list", :default => "21,80,443" },
+        {:name => "max_rate", :regex => "integer", :default => 10000 },
       ],
       :created_types => ["IpAddress","NetworkService"]
     }
@@ -32,7 +32,7 @@ class Masscan < BaseTask
 
     # Get range, or host
     to_scan = _get_entity_name
-    opt_port = _get_option("port")
+    opt_ports = _get_option("ports")
     opt_max_rate = _get_option("max_rate")
 
     begin
@@ -41,7 +41,7 @@ class Masscan < BaseTask
       temp_file = Tempfile.new("masscan")
 
       # shell out to masscan and run the scan
-      masscan_string = "masscan -p #{opt_port} --max-rate #{opt_max_rate} -oL #{temp_file.path} #{to_scan}"
+      masscan_string = "masscan -p #{opt_ports} --max-rate #{opt_max_rate} -oL #{temp_file.path} #{to_scan}"
       _log "Running... #{masscan_string}"
       _unsafe_system(masscan_string)
 
@@ -49,13 +49,17 @@ class Masscan < BaseTask
 
         # Skip comments
         next if line =~ /^#.*/
+        next if line.nil?
+
+        ip_address = line.delete("\n").strip.split(" ")[3]
+        port = line.delete("\n").strip.split(" ")[2].to_i
 
         # Get the discovered host (one per line) & create an ip address
-        line = line.delete("\n").strip.split(" ")[3] unless line.nil?
-        created_entity = _create_entity("IpAddress", { "name" => line })
+        created_entity = _create_entity("IpAddress", { "name" => ip_address })
 
         _create_network_service_entity(created_entity,
-            opt_port, "tcp", { "masscan_details" => masscan_string })
+            port, "tcp", { "masscan_string" => masscan_string })
+
       end
 
     ensure

@@ -16,9 +16,9 @@ class Example < BaseTask
         {"type" => "String", "details" => {"name" => "intrigue"}}
       ],
       :allowed_options => [
-        {:name => "unused_option", :type => "Integer", :regex=> "integer", :default => 100 },
-        {:name => "count", :type => "Integer", :regex=> "integer", :default => 10 },
-        {:name => "sleep", :type => "Integer", :regex=> "integer", :default => 0 }
+        {:name => "unused_option", :regex=> "integer", :default => 100 },
+        {:name => "count", :regex=> "integer", :default => 10 },
+        {:name => "sleep", :regex=> "integer", :default => 0 }
       ],
       :created_types => ["IpAddress"]
     }

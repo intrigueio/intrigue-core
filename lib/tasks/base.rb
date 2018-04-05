@@ -194,6 +194,9 @@ class BaseTask
             elsif allowed_option[:regex] == "alpha_numeric_list"
               #_log "Regex should match an alpha-numeric list"
               regex = _get_regex(:alpha_numeric_list)
+            elsif allowed_option[:regex] == "numeric_list"
+              #_log "Regex should match an alpha-numeric list"
+              regex = _get_regex(:numeric_list)
             elsif allowed_option[:regex] == "filename"
               #_log "Regex should match a filename"
               regex = _get_regex(:filename)
@@ -228,22 +231,14 @@ class BaseTask
             # i'm equally sure don't know what it is. We'll fail the task if
             # there's something we can't handle
 
-            if allowed_option[:type] == "Integer"
+            if allowed_option[:regex] == "integer"
               # convert to integer
               #_log "Converting #{user_option["name"]} to an integer"
               user_option["value"] = user_option["value"].to_i
-            elsif allowed_option[:type] == "String"
-              # do nothing, we can just pass strings through
-              #_log "No need to convert #{user_option["name"]} to a string"
-              user_option["value"] = user_option["value"]
-            elsif allowed_option[:type] == "Boolean"
+            elsif allowed_option[:regex] == "boolean"
               # use our monkeypatched .to_bool method (see initializers)
               #_log "Converting #{user_option["name"]} to a bool"
               user_option["value"] = user_option["value"].to_bool if user_option["value"].kind_of? String
-            else
-              # throw an error, we likely have a string we don't know how to cast
-              _log_error "Don't know how to handle this option when it's given to us as a string, failing!"
-              return nil
             end
 
             # Hurray, we can accept this value

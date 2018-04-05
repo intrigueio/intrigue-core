@@ -18,11 +18,11 @@ class AwsS3Brute < BaseTask
         {"type" => "String", "details" => {"name" => "test"}}
       ],
       :allowed_options => [
-        {:name => "threads", :type => "Integer", :regex => "integer", :default => 1 },
-        {:name => "use_creds", :type => "Boolean", :regex => "boolean", :default => false },
-        {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
-        {:name => "brute_file", :type => "String", :regex => "filename", :default => "s3_buckets.list" },
-        {:name => "additional_buckets", :type => "String", :regex => "alpha_numeric_list", :default => "" }
+        {:name => "threads", :regex => "integer", :default => 1 },
+        {:name => "use_creds",:regex => "boolean", :default => false },
+        {:name => "use_file", :regex => "boolean", :default => false },
+        {:name => "brute_file",:regex => "filename", :default => "s3_buckets.list" },
+        {:name => "additional_buckets", :regex => "alpha_numeric_list", :default => "" }
 
       ],
       :created_types => ["DnsRecord"]

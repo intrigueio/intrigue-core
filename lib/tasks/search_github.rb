@@ -16,7 +16,7 @@ class SearchGithub < BaseTask
       :example_entities => [
         {"type" => "String", "details" => {"name" => "intrigue"}}],
       :allowed_options => [
-        {:name => "max_item_count", :type => "Integer", :regex => "integer", :default => 20 },
+        {:name => "max_item_count", :regex => "integer", :default => 20 },
       ],
       :created_types => ["GithubRepository","GithubUser"]
     }

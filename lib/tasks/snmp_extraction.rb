@@ -17,14 +17,13 @@ class SnmpExtraction < BaseTask
       :example_entities => [
         { "type" => "SnmpService",
           "details" => {
-            "name" => "1.1.1.1:161",
             "ip_address" => "1.1.1.1",
             "port" => 161,
             "protocol" => "udp"
           }
         }
       ],
-      :allowed_options => [ ],
+      :allowed_options => [],
       :created_types => []
     }
   end

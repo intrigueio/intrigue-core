@@ -14,7 +14,7 @@ class AwsEc2GatherInstances < BaseTask
       :allowed_types => ["AwsCredential"],
       :example_entities => [{"type" => "String", "details" => {"name" => "intrigue"}}],
       :allowed_options => [
-        {:name => "region", :type => "String", :regex => "alpha_numeric", :default => "us-east-1" }
+        {:name => "region", :regex => "alpha_numeric", :default => "us-east-1" }
       ],
       :created_types => ["IpAddress"]
     }

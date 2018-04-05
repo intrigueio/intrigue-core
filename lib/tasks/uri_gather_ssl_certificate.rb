@@ -16,14 +16,14 @@ class UriGatherSslCert  < BaseTask
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "details" => {"name" => "http://www.intrigue.io"}}],
       :allowed_options => [
-        {:name => "skip_acquia", :type => "Boolean", :regex => "boolean", :default => true },
-        {:name => "skip_cloudflare", :type => "Boolean", :regex => "boolean", :default => true },
-        {:name => "skip_distil", :type => "Boolean", :regex => "boolean", :default => true },
-        {:name => "skip_fastly", :type => "Boolean", :regex => "boolean", :default => true },
-        {:name => "skip_incapsula", :type => "Boolean", :regex => "boolean", :default => true },
-        {:name => "skip_jive", :type => "Boolean", :regex => "boolean", :default => true },
-        {:name => "skip_lithium", :type => "Boolean", :regex => "boolean", :default => true },
-        {:name => "skip_wpengine", :type => "Boolean", :regex => "boolean", :default => true }
+        {:name => "skip_acquia", :regex => "boolean", :default => true },
+        {:name => "skip_cloudflare", :regex => "boolean", :default => true },
+        {:name => "skip_distil", :regex => "boolean", :default => true },
+        {:name => "skip_fastly", :regex => "boolean", :default => true },
+        {:name => "skip_incapsula", :regex => "boolean", :default => true },
+        {:name => "skip_jive", :regex => "boolean", :default => true },
+        {:name => "skip_lithium",  :regex => "boolean", :default => true },
+        {:name => "skip_wpengine", :regex => "boolean", :default => true }
       ],
       :created_types => ["DnsRecord","SslCertificate"]
     }

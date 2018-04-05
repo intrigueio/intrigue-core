@@ -14,7 +14,7 @@ class DnsBruteSrv < BaseTask
       :allowed_types => ["DnsRecord"],
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
-        {:name => "brute_list", :type => "String", :regex => "alpha_numeric_list", :default =>
+        {:name => "brute_list", :regex => "alpha_numeric_list", :default =>
           [
             '_gc._tcp', '_kerberos._tcp', '_kerberos._udp', '_ldap._tcp',
             '_test._tcp', '_sips._tcp', '_sip._udp', '_sip._tcp', '_aix._tcp',

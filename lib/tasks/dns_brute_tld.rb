@@ -16,9 +16,9 @@ class DnsBruteTld < BaseTask
       :allowed_types => ["DnsRecord","String"],
       :example_entities => [{"type" => "Host", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
-        {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
-        {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_tld.list" },
-        {:name => "check_cctlds", :type => "Boolean", :regex => "boolean", :default => true }
+        {:name => "use_file", :regex => "boolean", :default => false },
+        {:name => "brute_file", :regex => "filename", :default => "dns_tld.list" },
+        {:name => "check_cctlds", :regex => "boolean", :default => true }
       ],
       :created_types => ["DnsRecord"]
     }

@@ -16,8 +16,8 @@ class SearchGithubCode < BaseTask
       :example_entities => [
         {"type" => "GithubUser", "details" => {"name" => "intrigueio"}}],
       :allowed_options => [
-        {:name => "keywords", :type => "String", :regex => "alpha_numeric", :default => "password" },
-        {:name => "max_item_count", :type => "Integer", :regex => "integer", :default => 5 },
+        {:name => "keywords", :regex => "alpha_numeric", :default => "password" },
+        {:name => "max_item_count", :regex => "integer", :default => 5 },
       ],
       :created_types => ["Info"]
     }

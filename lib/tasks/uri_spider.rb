@@ -19,16 +19,16 @@ class UriSpider < BaseTask
         {"type" => "Uri", "details" => { "name" => "http://www.intrigue.io" }}
       ],
       :allowed_options => [
-        {:name => "limit", :type => "Integer", :regex => "integer", :default => 100 },
-        {:name => "max_depth", :type => "Integer", :regex => "integer", :default => 10 },
-        {:name => "spider_whitelist", :type => "String", :regex => "alpha_numeric_list", :default => "(current domain)" },
-        {:name => "extract_dns_records", :type => "Boolean", :regex => "boolean", :default => true },
-        {:name => "extract_dns_record_pattern", :type => "String", :regex => "alpha_numeric_list", :default => "(current domain)" },
-        {:name => "extract_email_addresses", :type => "Boolean", :regex => "boolean", :default => true },
-        {:name => "extract_phone_numbers", :type => "Boolean", :regex => "boolean", :default => true },
-        {:name => "parse_file_metadata", :type => "Boolean", :regex => "boolean", :default => true },
-        {:name => "extract_uris", :type => "Boolean", :regex => "boolean", :default => false },
-        {:name => "user_agent",  :type => "String",  :regex => "alpha_numeric", :default => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36"}
+        {:name => "limit", :regex => "integer", :default => 100 },
+        {:name => "max_depth", :regex => "integer", :default => 10 },
+        {:name => "spider_whitelist", :regex => "alpha_numeric_list", :default => "(current domain)" },
+        {:name => "extract_dns_records", :regex => "boolean", :default => true },
+        {:name => "extract_dns_record_pattern", :regex => "alpha_numeric_list", :default => "(current domain)" },
+        {:name => "extract_email_addresses", :regex => "boolean", :default => true },
+        {:name => "extract_phone_numbers", :regex => "boolean", :default => true },
+        {:name => "parse_file_metadata", :regex => "boolean", :default => true },
+        {:name => "extract_uris", :regex => "boolean", :default => false },
+        {:name => "user_agent", :regex => "alpha_numeric", :default => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36"}
       ],
       :created_types =>  ["DnsRecord", "EmailAddress", "File", "Info", "Person", "PhoneNumber", "SoftwarePackage"]
     }

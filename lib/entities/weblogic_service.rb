@@ -1,11 +1,11 @@
 module Intrigue
 module Entity
-class MongoService < Intrigue::Model::Entity
+class WeblogicService < Intrigue::Model::Entity
 
   def self.metadata
     {
-      :name => "MongoService",
-      :description => "A MongoDB Server",
+      :name => "WeblogicService",
+      :description => "A Weblogic Service",
       :user_creatable => false
     }
   end
@@ -14,7 +14,7 @@ class MongoService < Intrigue::Model::Entity
   def validate_entity
     name =~ /(\w.*):\d{1,5}/ && details["port"].to_s =~ /^\d{1,5}$/
   end
-  
+
 end
 end
 end

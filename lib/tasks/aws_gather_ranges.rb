@@ -18,7 +18,7 @@ class AwsGatherRanges < BaseTask
         {"type" => "String", "details" => {"name" => "us-east-1"}}
       ],
       :allowed_options => [
-        {:name => "service", :type => "String", :regex => "alpha_numeric", :default => "EC2" },
+        {:name => "service", :regex => "alpha_numeric", :default => "EC2" },
       ],
       :created_types => ["NetBlock"]
     }

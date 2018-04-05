@@ -1,14 +1,14 @@
 module Intrigue
 module Strategy
-  class AssetDiscoveryActive < Intrigue::Strategy::Base
+  class OrgAssetDiscoveryActive < Intrigue::Strategy::Base
 
     def self.metadata
       {
-        :name => "asset_discovery_active",
-        :pretty_name => "Asset Discovery (Active)",
+        :name => "org_asset_discovery_active",
+        :pretty_name => "Org Asset Discovery (Active)",
         :passive => false,
         :authors => ["jcran"],
-        :description => "This strategy performs a network recon and enumeration. Suggest starting with a DnsRecord or NetBlock."
+        :description => "This strategy performs a network recon and enumeration for an organization. Suggest starting with a DnsRecord or NetBlock."
       }
     end
 
@@ -39,20 +39,13 @@ module Strategy
 
       elsif entity.type_string == "IpAddress"
 
-        # Prevent us from hammering on whois services
-        unless ( entity.created_by?("net_block_expand"))
-          start_recursive_task(task_result,"whois",entity)
-        end
-
-        start_recursive_task(task_result,"nmap_scan",entity)
+        start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "ports", "value" => "21,80,443"}])
 
       elsif entity.type_string == "NetBlock"
 
-        # Make sure it's small enough not to be disruptive, and if it is, scan it. also skip ipv6/
+        # Make sure it's owned by the org, and if it is, scan it. also skip ipv6/
         if entity.details["whois_full_text"] =~ /#{filter_strings}/i && !(entity.name =~ /::/)
-          start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 21}])
-          start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 80}])
-          start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "port", "value" => 443}])
+          start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "ports", "value" => "21,80,443"}])
         else
           task_result.log "Cowardly refusing to scan this netblock.. it doesn't look like ours."
         end

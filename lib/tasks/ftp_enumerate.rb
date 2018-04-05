@@ -26,7 +26,7 @@ class FtpEnumerate < BaseTask
         }
       ],
       :allowed_options => [
-        #{:name => "port_num", :type => "Integer", :regex => "integer", :default => 111 }
+        #{:name => "port_num", :regex => "integer", :default => 111 }
       ],
       :created_types => []
     }

@@ -1,14 +1,14 @@
 module Intrigue
 module Strategy
-  class AssetDiscoveryPassive < Intrigue::Strategy::Base
+  class OrgAssetDiscoveryPassive < Intrigue::Strategy::Base
 
     def self.metadata
       {
-        :name => "asset_discovery_passive",
-        :pretty_name => "Asset Discovery (Passive)",
+        :name => "org_asset_discovery_passive",
+        :pretty_name => "Org Asset Discovery (Passive)",
         :passive => true,
         :authors => ["jcran"],
-        :description => "This strategy tries to enumerate assets without touching the attack surface."
+        :description => "This strategy tries to enumerate assets with minimal interaction."
       }
     end
 
@@ -86,9 +86,6 @@ module Strategy
         unless ( entity.created_by?("net_block_expand"))
           start_recursive_task(task_result,"whois",entity)
         end
-
-        # Rather than scanning, let's use a service to look it up
-        #start_recursive_task(task_result,"search_censys",entity)
 
         # Rather than scanning, let's use a service to look it up
         start_recursive_task(task_result,"search_shodan",entity)

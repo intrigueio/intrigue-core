@@ -14,7 +14,7 @@ class NetBlockExpand < BaseTask
       :allowed_types => ["NetBlock"],
       :example_entities => [ {"type" => "NetBlock", "details" => {"name" => "10.0.0.0/24"}} ],
       :allowed_options => [
-        {:name => "threads", :type => "Integer", :regex => "integer", :default => 1 }
+        {:name => "threads", :regex => "integer", :default => 1 }
       ],
       :created_types => ["IpAddress"]
     }
