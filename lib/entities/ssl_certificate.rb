@@ -15,7 +15,7 @@ class SslCertificate < Intrigue::Model::Entity
   end
 
   def detail_string
-    details["issuer"] if details && detail["issuer"]
+    details["issuer"] if details && details["issuer"]
   end
 end
 end
