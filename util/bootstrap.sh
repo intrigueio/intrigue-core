@@ -94,12 +94,12 @@ if [ ! -e ~/.rbenv/shims/bundle ]; then
   rbenv rehash
 fi
 
-cd $INTRIGUE_DIRECTORY
-bundle install
 
 #####
 ##### INTRIGUE SETUP / CONFIGURATION
 #####
+cd $INTRIGUE_DIRECTORY
+bundle install
 
 echo "[+] Migrating database"
 bundle exec rake db:migrate
@@ -109,6 +109,3 @@ if [ ! -f /etc/init.d/intrigue ]; then
   sudo cp $INTRIGUE_DIRECTORY/util/intrigue.service /lib/systemd/system
   sudo chmod +x $INTRIGUE_DIRECTORY/util/control.sh
 fi
-
-#echo "[+] Starting intrigue services..."
-#rbenv sudo service intrigue start
