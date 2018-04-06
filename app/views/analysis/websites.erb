@@ -1,5 +1,19 @@
 <!-- Statistics! -->
 <div class="row">
+  <div id="aflkj" class="col-sm-6">
+    <p>&nbsp;
+    </p>
+  </div>
+  <div id="aflkj" class="col-sm-6">
+    <p>Technologies:</p>
+    <p>
+      <% @stacks.each do |k,v| %>
+         <a href="/<%=@project_name%>/entities?search_string=<%=k%>"><%= k %></a>: <%= v %><br>
+      <% end %>
+    </p>
+  </div>
+</div>
+<div class="row">
   <div id="aflkj" class="col-sm-12">
     <script type="text/javascript" src="/js/sorttable.js"></script>
     <style>

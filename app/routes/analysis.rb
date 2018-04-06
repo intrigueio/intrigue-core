@@ -59,6 +59,10 @@ class IntrigueApp < Sinatra::Base
     get '/:project/analysis/websites' do
       selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::Uri").order(:name)
 
+      all_entries = []
+      selected_entities.map{|x|  x.details["stack"].each{|y| all_entries << y } if x.details["stack"] }
+      @stacks = Hash.new(0).tap { |h| all_entries.each { |x| h[x] += 1 }  }
+
       ## Filter by type
       alias_group_ids = selected_entities.map{|x| x.alias_group_id }.uniq
       @alias_groups = Intrigue::Model::AliasGroup.where(:id => alias_group_ids)
