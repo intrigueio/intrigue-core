@@ -8,7 +8,7 @@
     <p>Technologies:</p>
     <p>
       <% @stacks.each do |k,v| %>
-         <a href="/<%=@project_name%>/entities?search_string=<%=k%>"><%= k %></a>: <%= v %><br>
+         <a href="/<%=@project_name%>/entities?search_string=<%=h k%>"><%= h k %></a>: <%= v %><br>
       <% end %>
     </p>
   </div>
