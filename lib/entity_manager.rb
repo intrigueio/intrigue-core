@@ -122,8 +122,6 @@ class EntityManager
       # want to use that to preserve pre-existing relatiohships
       entity_already_existed = true
 
-      task_result.log "Entity already existed & was updated (merged) with the new details!"
-
     else
       # Create a new entity, validating the attributes
       type = resolve_type(type_string)

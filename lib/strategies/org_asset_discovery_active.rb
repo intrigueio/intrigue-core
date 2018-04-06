@@ -39,7 +39,12 @@ module Strategy
 
       elsif entity.type_string == "IpAddress"
 
-        start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "ports", "value" => "21,80,443"}])
+        # Prevent us from hammering on whois services
+        unless ( entity.created_by?("net_block_expand"))
+          start_recursive_task(task_result,"whois",entity)
+        end
+
+        start_recursive_task(task_result,"nmap_scan",entity)
 
       elsif entity.type_string == "NetBlock"
 
