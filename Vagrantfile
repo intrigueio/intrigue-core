@@ -8,8 +8,11 @@ Vagrant.configure("2") do |config|
     x.vm.network :private_network, ip: "10.0.0.10"
     x.vm.network "forwarded_port", guest: 7777, host: 7777
 
+
     x.vm.provider :virtualbox do |vb|
       vb.name = "intrigue-core"
+      vb.memory = 2048
+      vb.cpus = 2
     end
   end
 
