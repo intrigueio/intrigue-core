@@ -1,4 +1,5 @@
 .DS_Store
+.vagrant
 .yardoc
 config/config.json
 config/puma.rb
