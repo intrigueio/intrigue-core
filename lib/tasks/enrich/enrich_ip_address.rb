@@ -57,6 +57,10 @@ class EnrichIpAddress < BaseTask
         _create_entity("IpAddress", { "name" => result["name"] }, @entity)
       else
         _create_entity("DnsRecord", { "name" => result["name"] }, @entity)
+
+        # TODO - if we have an associated ip address, create the network service entities
+
+
       end
     end
 
@@ -67,7 +71,7 @@ class EnrichIpAddress < BaseTask
     results.each do |result|
 
       # Clean up the dns data
-      xtype = result["lookup_details"].first["response_record_type"].sanitize_unicode
+      xtype = result["lookup_details"].first["response_record_type"].to_s.sanitize_unicode
 
       lookup_details = result["lookup_details"].first["response_record_data"]
       if lookup_details.kind_of?(Dnsruby::IPv4) || lookup_details.kind_of?(Dnsruby::IPv6) || lookup_details.kind_of?(Dnsruby::Name)
@@ -75,7 +79,7 @@ class EnrichIpAddress < BaseTask
         xdata = result["lookup_details"].first["response_record_data"].to_s.sanitize_unicode
       else
         _log "Sanitizing String or array"
-        xdata = result["lookup_details"].first["response_record_data"].sanitize_unicode
+        xdata = result["lookup_details"].first["response_record_data"].to_s.sanitize_unicode
       end
 
       dns_entries << { "response_data" => xdata, "response_type" => xtype }

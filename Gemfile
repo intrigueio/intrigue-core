@@ -38,15 +38,16 @@ gem 'shodan'                  # search_shodan
 gem 'poltergeist'             # uri_screenshot
 gem 'towerdata_api'           # search_towerdata
 gem 'yomu'                    # uri_spider
-gem 'ruby-nmap',      :git => 'https://github.com/pentestify/ruby-nmap.git'
-gem 'censys',         :git => 'https://github.com/pentestify/censys.git'
-gem 'whoisology',     :git => 'https://github.com/pentestify/whoisology.git'
-gem 'opencorporates', :git => 'https://github.com/pentestify/opencorporates.git'
-#gem 'screencap',      :git => 'https://github.com/intrigueio/screencap.git'
-gem 'spidr',          :git => 'https://github.com/intrigueio/spidr.git'
-gem 'snmp',           :git => 'https://github.com/intrigueio/ruby-snmp.git'
+gem 'ruby-nmap',              :git => 'https://github.com/pentestify/ruby-nmap.git'
+gem 'censys',                 :git => 'https://github.com/pentestify/censys.git'
+gem 'whoisology',             :git => 'https://github.com/pentestify/whoisology.git'
+gem 'opencorporates',         :git => 'https://github.com/pentestify/opencorporates.git'
+gem 'spidr',                  :git => 'https://github.com/intrigueio/spidr.git'
+gem 'snmp',                   :git => 'https://github.com/intrigueio/ruby-snmp.git'
+gem 'recog-intrigue',         :git => 'https://github.com/intrigueio/recog.git'
 gem 'aws-sdk', '~> 2'
 gem 'mini_magick'
+
 
 # handlers
 gem 'couchrest'

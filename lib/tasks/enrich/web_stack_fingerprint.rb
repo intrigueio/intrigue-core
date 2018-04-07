@@ -2,13 +2,14 @@ module Intrigue
 module Task
 class WebStackFingerprint < BaseTask
   include Intrigue::Task::Web
+  include Intrigue::Task::Product
 
   def self.metadata
     {
       :name => "web_stack_fingerprint",
       :pretty_name => "Web Stack Fingerprint",
       :authors => ["jcran"],
-      :description => "Sets the \"stack\" detail, letting us know about the web stack of the target.",
+      :description => "Fingerprints the coponents of of a Uri, giving insight into the products.",
       :references => [
         "http://www.net-square.com/httprint_paper.html",
         "https://www.troyhunt.com/shhh-dont-let-your-response-headers/",
@@ -47,32 +48,52 @@ class WebStackFingerprint < BaseTask
       return
     end
 
-    _log "Server response:"
+    _log "Got server response:"
     # Save the full headers
     headers = []
     response.each_header {|h,v| _log " - #{h}: #{v}"; headers << "#{h}: #{v}" }
-
-    ###
-    ### Calculate the stack
-    ###
-
-    ## empty stack to start
-    stack = []
-
-    # Use various techniques to build out the "stack"
-    stack << _check_server_header(response, response2)
-    stack.concat _check_x_headers(response)
-    stack.concat _check_cookies(response)
-    stack.concat _check_generator(response)
-    stack.concat _check_uri(uri)
-    stack.concat _check_specific_pages(uri)
-    stack.concat _check_page_contents_legacy(response)
-
-    clean_stack = stack.select{ |x| x != nil }.uniq
-    _log "Setting stack to #{clean_stack}"
-
-    @entity.set_detail("stack", clean_stack)
     @entity.set_detail("headers", headers )
+
+    ###
+    ### Fingerprint the server
+    ###
+    server_stack = []  # Use various techniques to build out the "stack"
+    server_stack << _check_server_header(response, response2)
+    uniq_server_stack = server_stack.select{ |x| x != nil }.uniq
+    @entity.set_detail("server_fingerprint", uniq_server_stack)
+    _log "Setting server stack to #{uniq_server_stack}"
+
+    ###
+    ### Fingerprint the app server
+    ###
+    app_stack = []
+    app_stack.concat _check_uri(uri)
+    app_stack.concat _check_cookies(response)
+    app_stack.concat _check_generator(response)
+    app_stack.concat _check_x_headers(response)
+    app_stack.concat _check_specific_pages(uri)
+    uniq_app_stack =  app_stack.select{ |x| x != nil }.uniq
+    @entity.set_detail("app_fingerprint", uniq_app_stack)
+    _log "Setting app stack to #{uniq_app_stack}"
+
+    ###
+    ### Fingerprint the js libraries
+    ###
+    include_stack = []
+    include_stack.concat _check_page_contents_legacy(response)
+    uniq_include_stack = include_stack.select{ |x| x != nil }.uniq
+    @entity.set_detail("include_fingerprint", uniq_include_stack)
+    _log "Setting include stack to #{uniq_include_stack}"
+
+    ###
+    ### Product matching
+    ###
+    # match products based on gathered server software
+    products = uniq_server_stack.map{|x| product_match_http_server_banner(x).first}
+    # match products based on cookies
+    products.concat product_match_http_cookies(_gather_cookies(response))
+
+    @entity.set_detail("products", products)
 
   end
 
@@ -103,29 +124,32 @@ class WebStackFingerprint < BaseTask
       {:regex => /Async HubSpot Analytics/, :finding_name => "Async HubSpot Analytics Code for WordPress"},
       {:regex => /Olark live chat software/, :finding_name => "Olark"},
       {:regex => /intercomSettings/, :finding_name => "Intercom"},
+      {:regex => /vidyard/, :finding_name => "Vidyard"},
 
       ### External accounts
       {:regex => /http:\/\/www.twitter.com.*?/, :finding_name => "Twitter"},
       {:regex => /http:\/\/www.facebook.com.*?/, :finding_name => "Facebook"},
+      {:regex => /googleadservices/, :finding_name => "Google Ads"},
 
-      ### Technologies
-      #{:regex => /javascript/, :finding => "Javascript"},
-      #{:regex => /jquery.js/, :finding_name => "JQuery"},
-      #{:regex => /bootstrap.css/, :finding_name => "Bootstrap"},
+      ### Libraries / Base Technologies
+      {:regex => /jquery.js/, :finding_name => "JQuery"},
+      {:regex => /bootstrap.css/, :finding_name => "Bootstrap"},
 
-      ### Platform
-      #{:regex => /[W|w]ordpress/, :finding_name => "Wordpress"},
-      #{:regex => /[D|d]rupal/, :finding_name => "Drupal"},
+
+      ### Platforms
+      {:regex => /[W|w]ordpress/, :finding_name => "Wordpress"},
+      {:regex => /[D|d]rupal/, :finding_name => "Drupal"},
+      {:regex => /[C|c]loudflare/, :finding_name => "Cloudflare"},
+
 
       ### Provider
-      {:regex => /Content Delivery Network via Amazon Web Services/, :finding_name => "Amazon CDN"},
+      #{:regex => /Content Delivery Network via Amazon Web Services/, :finding_name => "Amazon CDN"},
 
       ### Wordpress Plugins
       #{ :regex => /wp-content\/plugins\/.*?\//, :finding_name => "Wordpress Plugin" },
       #{ :regex => /xmlrpc.php/, :finding_name => "Wordpress API"},
-      { :regex => /Yoast SEO Plugin/, :finding_name => "Wordpress: Yoast SEO Plugin"},
-      { :regex => /All in One SEO Pack/, :finding_name => "Wordpress: All in One SEO Pack"},
-
+      #{ :regex => /Yoast SEO Plugin/, :finding_name => "Wordpress: Yoast SEO Plugin"},
+      #{ :regex => /All in One SEO Pack/, :finding_name => "Wordpress: All in One SEO Pack"},
       #{:regex => /PowerPressPlayer/, :finding_name => "Powerpress Wordpress Plugin"}
       ]
     ###
@@ -241,13 +265,16 @@ class WebStackFingerprint < BaseTask
           :content =>  /{"timestamp":\d.*,"status":999,"error":"None","message":"No message available"}/,
           :test_site => "https://pcr.apple.com",
           :references => ["https://github.com/spring-projects/spring-boot"]
-        },
-        {
-          :name => "Apache",
-          :description => "Apache Missing Page",
-          :type => "content",
-          :content => /<address>.*<\/address>/,
-          :dynamic_name => lambda{|x| x.scan(/<address>.*<\/address>/)[0].gsub(/<\/?address>/,"") }
+        #},
+        #
+        # TODO ... dropping this since it's a server thing, but note that we do get a hostname here and we shouldn't completely drop it
+        #
+        #{
+        #  :name => "Apache",
+        #  :description => "Apache Missing Page",
+        #  :type => "content",
+        #  :content => /<address>.*<\/address>/,
+        #  :dynamic_name => lambda{|x| x.scan(/<address>.*<\/address>/)[0].gsub(/<\/?address>/,"") }
         }]},
       {
         :uri => "#{uri}/error.json",
@@ -292,6 +319,10 @@ class WebStackFingerprint < BaseTask
   temp
   end
 
+  def _gather_cookies(response)
+    header = response.header['set-cookie']
+  end
+
   def _check_cookies(response)
     _log "_check_cookies called"
 
@@ -318,13 +349,12 @@ class WebStackFingerprint < BaseTask
       temp << "Omniture" if header =~ /^.*sc_id.*$/
       temp << "PHP" if header =~ /^.*PHPSESSION.*$/
       temp << "PHP" if header =~ /^.*PHPSESSID.*$/
-      # https://github.com/yiisoft/yii
-      temp << "Yii PHP Framework 1.1.x" if header =~ /^.*YII_CSRF_TOKEN.*$/
+      temp << "Yii PHP Framework 1.1.x" if header =~ /^.*YII_CSRF_TOKEN.*$/       # https://github.com/yiisoft/yii
       temp << "MediaWiki" if header =~ /^.*wiki??_session.*$/
 
     end
 
-    _log "Returning: #{temp}"
+    _log "Cookies: #{temp}"
 
     temp
   end
@@ -388,6 +418,7 @@ class WebStackFingerprint < BaseTask
       # TODO: though this might miss something if it's a different resolution path?
       if response.header['server'] == response2.header['server']
         _log "Returning: #{server_header}"
+
         return server_header
       else
         _log_error "Header did not match!"

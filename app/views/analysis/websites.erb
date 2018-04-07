@@ -1,13 +1,17 @@
 <!-- Statistics! -->
 <div class="row">
   <div id="aflkj" class="col-sm-6">
-    <p>&nbsp;
+    <p>Servers:</p>
+    <p>
+      <% @server_fingerprints.each do |k,v| %>
+         <a href="/<%=@project_name%>/entities?search_string=<%=h k%>"><%= h k %></a>: <%= v %><br>
+      <% end %>
     </p>
   </div>
   <div id="aflkj" class="col-sm-6">
-    <p>Technologies:</p>
+    <p>Applications:</p>
     <p>
-      <% @stacks.each do |k,v| %>
+      <% @app_fingerprints.each do |k,v| %>
          <a href="/<%=@project_name%>/entities?search_string=<%=h k%>"><%= h k %></a>: <%= v %><br>
       <% end %>
     </p>
@@ -45,7 +49,7 @@
         <col style="width:5%">
       </colgroup>
       <tbody>
-      <tr><th>Screenshots</th><th>Names</th><th>Host</th><th>Stacks</th><th>JQuery</th><th>Verbs</th><th>API</th></tr>
+      <tr><th>Screenshots</th><th>Names</th><th>Host</th><th>Products</th><th>JQuery</th><th>Verbs</th><th>API</th></tr>
       <% @alias_groups.each do |g| %>
         <% entities = Intrigue::Model::Entity.where(:alias_group_id => g.id, :type => "Intrigue::Entity::Uri", :hidden => false) %>
         <% next unless entities.count > 0 %>
@@ -72,7 +76,7 @@
           </td>
           <td>
             <% entities.map do |x| %>
-              <%= "#{x.get_detail("stack")}<br/>" %>
+              <%= "#{x.get_detail("products")}<br/>" %>
             <% end %>
           </td>
           <td>

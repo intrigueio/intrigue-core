@@ -60,8 +60,12 @@ class IntrigueApp < Sinatra::Base
       selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::Uri").order(:name)
 
       all_entries = []
-      selected_entities.map{|x|  x.details["stack"].each{|y| all_entries << y } if x.details["stack"] }
-      @stacks = Hash.new(0).tap { |h| all_entries.each { |x| h[x] += 1 }  }.sort
+      selected_entities.map{|x|  x.details["server_fingerprint"].each{|y| all_entries << "#{y}" } if x.details["server_fingerprint"] }
+      @server_fingerprints = Hash.new(0).tap { |h| all_entries.each { |x| h[x] += 1 }  }.sort
+
+      all_entries = []
+      selected_entities.map{|x|  x.details["app_fingerprint"].each{|y| all_entries << "#{y}" } if x.details["app_fingerprint"] }
+      @app_fingerprints = Hash.new(0).tap { |h| all_entries.each { |x| h[x] += 1 }  }.sort
 
       ## Filter by type
       alias_group_ids = selected_entities.map{|x| x.alias_group_id }.uniq
