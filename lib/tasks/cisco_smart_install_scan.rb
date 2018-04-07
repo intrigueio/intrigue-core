@@ -1,6 +1,6 @@
 module Intrigue
 module Task
-class CiscoSmartInstallScanner < BaseTask
+class CiscoSmartInstallScan < BaseTask
 
   include Intrigue::Task::Scanner
 
@@ -19,7 +19,9 @@ class CiscoSmartInstallScanner < BaseTask
       :example_entities => [
         {"type" => "NetBlock", "details" => {"name" => "10.0.0.0/8"}}
       ],
-      :allowed_options => [],
+      :allowed_options => [
+        {:name => "max_rate", :regex => "integer", :default => 10000 }
+      ],
       :created_types => []
     }
   end
@@ -28,7 +30,9 @@ class CiscoSmartInstallScanner < BaseTask
   def run
     super
 
-    results = _masscan_netblock(@entity,[4786],[])
+    opt_max_rate = _get_option("max_rate")
+
+    results = _masscan_netblock(@entity,[4786],[],opt_max_rate)
     _log_error "Invalid params" unless results
 
     results.each do |r|
