@@ -35,6 +35,7 @@ module Strategy
           {"name" => "threads", "value" => 2 }])
 
       elsif entity.type_string == "FtpService"
+
         start_recursive_task(task_result,"ftp_enumerate",entity)
 
       elsif entity.type_string == "IpAddress"
@@ -44,23 +45,28 @@ module Strategy
           start_recursive_task(task_result,"whois",entity)
         end
 
-        start_recursive_task(task_result,"nmap_scan",entity)
+        # Prevent us from hammering on whois services
+        unless ( entity.created_by?("masscan_scan"))
+          start_recursive_task(task_result,"nmap_scan",entity)
+        end
 
       elsif entity.type_string == "NetBlock"
 
         # Make sure it's owned by the org, and if it is, scan it. also skip ipv6/
         if entity.details["whois_full_text"] =~ /#{filter_strings}/i && !(entity.name =~ /::/)
-          start_recursive_task(task_result,"masscan_scan",entity,[{"name"=> "ports", "value" => "21,80,443"}])
+          start_recursive_task(task_result,"masscan_scan",entity,[
+            {"name"=> "tcp_ports", "value" => "21,22,23,80,443,8080"},
+            {"name"=> "udp_ports", "value" => "161"}])
         else
           task_result.log "Cowardly refusing to scan this netblock.. it doesn't look like ours."
         end
 
         # Make sure it's small enough not to be disruptive, and if it is, expand it
-        if entity.details["whois_full_text"] =~ /#{filter_strings}/i && !(entity.name =~ /::/)
-          start_recursive_task(task_result,"net_block_expand",entity, [{"name" => "threads", "value" => 5 }])
-        else
-          task_result.log "Cowardly refusing to expand this netblock.. it doesn't look like ours."
-        end
+        #if entity.details["whois_full_text"] =~ /#{filter_strings}/i && !(entity.name =~ /::/)
+        #  start_recursive_task(task_result,"net_block_expand",entity, [{"name" => "threads", "value" => 5 }])
+        #else
+        #  task_result.log "Cowardly refusing to expand this netblock.. it doesn't look like ours."
+        #end
 
       elsif entity.type_string == "Person"
 
@@ -74,6 +80,9 @@ module Strategy
 
       elsif entity.type_string == "Uri"
 
+        ## Grab the SSL Certificate
+        start_recursive_task(task_result,"uri_gather_ssl_certificate",entity) if entity.name =~ /^https/
+
         # Check for exploitable URIs, but don't recurse on things we've already found
         start_recursive_task(task_result,"uri_brute", entity, [
           {"name"=> "threads", "value" => 1},
@@ -81,15 +90,13 @@ module Strategy
 
         unless (entity.created_by?("uri_brute") || entity.created_by?("uri_spider") )
 
-          ## Grab the SSL Certificate
-          start_recursive_task(task_result,"uri_gather_ssl_certificate",entity) if entity.name =~ /^https/
-
           ## Super-lite spider, looking for metadata
           start_recursive_task(task_result,"uri_spider",entity,[
               {"name" => "max_pages", "value" => 50 },
               {"name" => "extract_dns_records", "value" => true },
               {"name" => "extract_dns_record_pattern", "value" => "#{filter_strings}"}])
         end
+
       else
         task_result.log "No actions for entity: #{entity.type}##{entity.name}"
         return

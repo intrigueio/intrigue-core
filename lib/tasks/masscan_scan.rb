@@ -19,10 +19,13 @@ class Masscan < BaseTask
       :allowed_types => ["IpAddress","NetBlock"],
       :example_entities => [{"type" => "NetBlock", "details" => {"name" => "10.0.0.0/24"}}],
       :allowed_options => [
-        {:name => "ports", :regex => "numeric_list", :default => "21,80,443" },
+        {:name => "tcp_ports", :regex => "numeric_list", :default => "21,80,443" },
+        {:name => "udp_ports", :regex => "numeric_list", :default => "161" },
         {:name => "max_rate", :regex => "integer", :default => 10000 },
       ],
-      :created_types => ["IpAddress","NetworkService"]
+      :created_types => [ "DnsRecord","DnsService","FingerService", "FtpService",
+                          "IpAddress", "NetworkService","SshService","SnmpService",
+                          "MongoService","Uri" ]
     }
   end
 
@@ -32,7 +35,8 @@ class Masscan < BaseTask
 
     # Get range, or host
     to_scan = _get_entity_name
-    opt_ports = _get_option("ports")
+    opt_tcp_ports = _get_option("tcp_ports")
+    opt_udp_ports = _get_option("udp_ports")
     opt_max_rate = _get_option("max_rate")
 
     begin
@@ -40,8 +44,12 @@ class Masscan < BaseTask
       # Create a tempfile to store result
       temp_file = Tempfile.new("masscan")
 
+      port_string = "-p"
+      port_string << "#{opt_tcp_ports}," if opt_tcp_ports.length > 0
+      port_string << "#{opt_udp_ports.split(",").map{|x| "U:#{x}" }.join(",")}"
+
       # shell out to masscan and run the scan
-      masscan_string = "masscan -p #{opt_ports} --max-rate #{opt_max_rate} -oL #{temp_file.path} #{to_scan}"
+      masscan_string = "masscan #{port_string} --max-rate #{opt_max_rate} -oL #{temp_file.path} --range #{to_scan}"
       _log "Running... #{masscan_string}"
       _unsafe_system(masscan_string)
 
@@ -51,14 +59,17 @@ class Masscan < BaseTask
         next if line =~ /^#.*/
         next if line.nil?
 
-        ip_address = line.delete("\n").strip.split(" ")[3]
+        # PARSE
+        state = line.delete("\n").strip.split(" ")[0]
+        protocol = line.delete("\n").strip.split(" ")[1]
         port = line.delete("\n").strip.split(" ")[2].to_i
+        ip_address = line.delete("\n").strip.split(" ")[3]
 
         # Get the discovered host (one per line) & create an ip address
         created_entity = _create_entity("IpAddress", { "name" => ip_address })
 
         _create_network_service_entity(created_entity,
-            port, "tcp", { "masscan_string" => masscan_string })
+            port, protocol, { "masscan_string" => masscan_string })
 
       end
 

@@ -16,10 +16,11 @@ class NmapScan < BaseTask
       :allowed_types => ["DnsRecord","IpAddress","NetBlock"],
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
-        {:name => "top_ports", :regex => "integer", :default => 25 },
+        {:name => "top_ports", :regex => "integer", :default => 10 },
       ],
       :created_types => [ "DnsRecord","DnsService","FingerService", "FtpService",
-                          "IpAddress", "NetworkService","SshService","Uri" ]
+                          "IpAddress", "NetworkService","SshService","SnmpService",
+                          "MongoService","Uri" ]
     }
   end
 
@@ -83,23 +84,23 @@ class NmapScan < BaseTask
         end
 
         ip_entity.set_detail("os", host.os.matches)
-        ip_entity.set_detail("ports", host.each_port.select{|p| p.state == :open}.map{ |p|
-                                    { "state" => "#{p.state}",
-                                      "number" => p.number,
-                                      "protocol" => "#{p.protocol}",
-                                      "service" => {
-                                        "protocol" => "#{p.service.protocol}",
-                                        "ssl" => "#{p.service.ssl?}",
-                                        "product" => "#{p.service.product}",
-                                        "version" => "#{p.service.version}",
-                                        "extra_info" => "#{p.service.extra_info}",
-                                        "hostname" => "#{p.service.hostname}",
-                                        "os_type" => "#{p.service.os_type}",
-                                        "device_type" => "#{p.service.device_type}",
-                                        "fingerprint_method" => "#{p.service.fingerprint_method}",
-                                        "fingerprint" => "#{p.service.fingerprint}",
-                                        "confidence" => "#{p.service.confidence}"
-                                      }}})
+        #ip_entity.set_detail("ports", host.each_port.select{|p| p.state == :open}.map{ |p|
+        #                            { "state" => "#{p.state}",
+        #                              "number" => p.number,
+        #                              "protocol" => "#{p.protocol}",
+        #                              "service" => {
+        #                                "protocol" => "#{p.service.protocol}",
+        #                                "ssl" => "#{p.service.ssl?}",
+        #                                "product" => "#{p.service.product}",
+        #                                "version" => "#{p.service.version}",
+        #                                "extra_info" => "#{p.service.extra_info}",
+        #                                "hostname" => "#{p.service.hostname}",
+        #                                "os_type" => "#{p.service.os_type}",
+        #                                "device_type" => "#{p.service.device_type}",
+        #                                "fingerprint_method" => "#{p.service.fingerprint_method}",
+        #                                "fingerprint" => "#{p.service.fingerprint}",
+        #                                "confidence" => "#{p.service.confidence}"
+        #                              }}})
 
         # iterate through all ports
         host.ports.each do |port|

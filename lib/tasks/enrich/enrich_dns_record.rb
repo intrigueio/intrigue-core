@@ -67,9 +67,28 @@ class EnrichDnsRecord < BaseTask
 
       dns_entries << { "response_data" => xdata, "response_type" => xtype }
     end
-
     @entity.set_detail("dns_entries", dns_entries.uniq )
     @entity.save
+
+
+    ###
+    ### MAGIC
+    ###
+    ### For each associated IpAddress, make sure we create any additional
+    ### uris if we already have scan results
+    ###
+    @entity.aliases.each do |a|
+      next unless a.type_string == "IpAddress" #  only ips
+      #next if a.hidden # skip hidden
+      existing_ports = a.get_detail("ports")
+      if existing_ports
+        existing_ports.each do |p|
+        #  next unless p["number"] == 80 || unless p["number"] == 443
+          _create_network_service_entity(a,p["number"],p["protocol"],{})
+        end
+      end
+    end
+
     _log "Ran enrichment task!"
   end
 

@@ -2,16 +2,16 @@
 
 module Intrigue
 module Task
-class SnmpExtraction < BaseTask
+class EnrichSnmp < BaseTask
 
   def self.metadata
     {
-      :name => "snmp_extraction",
-      :pretty_name => "SNMP Extraction",
+      :name => "enrich_snmp_service",
+      :pretty_name => "Enrich SNMP Service",
       :authors => ["jcran"],
       :description => "This task connects to a snmp service and pulls out system details.",
       :references => ["https://community.rapid7.com/community/services/blog/2016/05/05/snmp-data-harvesting-during-penetration-testing"],
-      :type => "discovery",
+      :type => "enrichment",
       :passive => false,
       :allowed_types => ["SnmpService"],
       :example_entities => [
@@ -32,11 +32,9 @@ class SnmpExtraction < BaseTask
   def run
     super
 
-    # XXX - how to deal with accepting a complex object like this through
-    # the UI? We'd need to know the entity structure, or set these up as options?
-    ip_address = _get_entity_name.split(":").first
-    port = _get_entity_name.split(":").last || 161
-    protocol = "udp"
+    port = _get_entity_attribute("port").to_i || 161
+    protocol = _get_entity_attribute "protocol" || "udp"
+    ip_address = _get_entity_attribute "ip_address"
 
     _log "Port: #{port}"
     _log "Protocol: #{protocol}"

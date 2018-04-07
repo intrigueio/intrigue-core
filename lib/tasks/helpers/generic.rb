@@ -17,6 +17,11 @@ module Generic
 
   def _create_network_service_entity(ip_entity,port_num,protocol="tcp",extra_details={})
 
+    # first, save the port details on the ip_entity
+    ports = ip_entity.get_detail("ports") || []
+    updated_ports = ports.append({"number" => port_num, "protocol" => protocol}).uniq
+    ip_entity.set_detail("ports", updated_ports)
+
     # Grab all the aliases
     hosts = [ip_entity]
     if ip_entity.aliases.count > 0

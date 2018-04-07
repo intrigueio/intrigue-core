@@ -57,10 +57,6 @@ class EnrichIpAddress < BaseTask
         _create_entity("IpAddress", { "name" => result["name"] }, @entity)
       else
         _create_entity("DnsRecord", { "name" => result["name"] }, @entity)
-
-        # TODO - if we have an associated ip address, create the network service entities
-
-
       end
     end
 

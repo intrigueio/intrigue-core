@@ -259,9 +259,25 @@ class EntityManager
         start_task("task_enrichment", entity.project, scan_result, task_name, entity, depth, [],[])
       end
 
+    elsif entity.type_string == "FtpService"
+
+      task_name = "enrich_ftp_service"
+      # first check to make sure we're not already scheduled (but not complete)
+      unless entity.enrichment_scheduled?(task_name)
+        start_task("task_enrichment", entity.project, scan_result, task_name, entity, depth, [],[])
+      end
+
     elsif entity.type_string == "IpAddress"
 
       task_name = "enrich_ip_address"
+      unless entity.enrichment_scheduled?(task_name)
+        start_task("task_enrichment", entity.project, scan_result, task_name, entity, depth, [],[])
+      end
+
+    elsif entity.type_string == "SnmpService"
+
+      task_name = "enrich_snmp_service"
+      # first check to make sure we're not already scheduled (but not complete)
       unless entity.enrichment_scheduled?(task_name)
         start_task("task_enrichment", entity.project, scan_result, task_name, entity, depth, [],[])
       end

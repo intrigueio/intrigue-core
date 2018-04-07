@@ -3,16 +3,16 @@
 ###
 module Intrigue
 module Task
-class FtpBannerGrab < BaseTask
+class EnrichFtpService < BaseTask
 
   def self.metadata
     {
-      :name => "ftp_banner_grab",
-      :pretty_name => "Grab a banner from an FTP Server",
+      :name => "enrich_ftp_service",
+      :pretty_name => "Grabs the banner from an FTP Server",
       :authors => ["jcran"],
       :description => "This task connects to an FTP service and collects the banner.",
       :references => [],
-      :type => "discovery",
+      :type => "enrichment",
       :passive => false,
       :allowed_types => ["FtpService"],
       :example_entities => [
@@ -23,9 +23,7 @@ class FtpBannerGrab < BaseTask
           }
         }
       ],
-      :allowed_options => [
-        #{:name => "port_num", :type => "Integer", :regex => "integer", :default => 111 }
-      ],
+      :allowed_options => [],
       :created_types => []
     }
   end
@@ -37,7 +35,6 @@ class FtpBannerGrab < BaseTask
     port = _get_entity_attribute("port").to_i
     protocol = _get_entity_attribute "protocol"
     ip_address = _get_entity_attribute "ip_address"
-
 
     # Check to make sure we have a sane target
     if protocol.downcase == "tcp" && ip_address && port
@@ -59,6 +56,8 @@ class FtpBannerGrab < BaseTask
             break
           end
         end
+      rescue Errno::ETIMEDOUT => e
+        _log_error "Unable to connect: #{e}"
       rescue Errno::ECONNRESET => e
         _log_error "Unable to connect: #{e}"
       rescue SocketError => e
