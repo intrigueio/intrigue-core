@@ -46,7 +46,7 @@ module Strategy
         end
 
         # Prevent us from hammering on whois services
-        unless ( entity.created_by?("masscan_scan"))
+        unless ( entity.created_by?("masscan_scan") || entity.created_by?("net_block_expand") )
           start_recursive_task(task_result,"nmap_scan",entity)
         end
 
@@ -55,18 +55,18 @@ module Strategy
         # Make sure it's owned by the org, and if it is, scan it. also skip ipv6/
         if entity.details["whois_full_text"] =~ /#{filter_strings}/i && !(entity.name =~ /::/)
           start_recursive_task(task_result,"masscan_scan",entity,[
-            {"name"=> "tcp_ports", "value" => "21,22,23,80,443,8080"},
-            {"name"=> "udp_ports", "value" => "161"}])
+            {"name"=> "tcp_ports", "value" => "21,22,80,443,8080"},
+            {"name"=> "udp_ports", "value" => "53,161"}])
         else
           task_result.log "Cowardly refusing to scan this netblock.. it doesn't look like ours."
         end
 
         # Make sure it's small enough not to be disruptive, and if it is, expand it
-        #if entity.details["whois_full_text"] =~ /#{filter_strings}/i && !(entity.name =~ /::/)
-        #  start_recursive_task(task_result,"net_block_expand",entity, [{"name" => "threads", "value" => 5 }])
-        #else
-        #  task_result.log "Cowardly refusing to expand this netblock.. it doesn't look like ours."
-        #end
+        if entity.details["whois_full_text"] =~ /#{filter_strings}/i && !(entity.name =~ /::/)
+          start_recursive_task(task_result,"net_block_expand",entity, [{"name" => "threads", "value" => 5 }])
+        else
+          task_result.log "Cowardly refusing to expand this netblock.. it doesn't look like ours."
+        end
 
       elsif entity.type_string == "Person"
 
