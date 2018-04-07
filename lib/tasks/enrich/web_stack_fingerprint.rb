@@ -93,7 +93,7 @@ class WebStackFingerprint < BaseTask
     # match products based on cookies
     products.concat product_match_http_cookies(_gather_cookies(response))
 
-    @entity.set_detail("products", products)
+    @entity.set_detail("products", products.compact)
 
   end
 
