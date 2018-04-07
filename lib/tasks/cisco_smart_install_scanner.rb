@@ -29,12 +29,12 @@ class CiscoSmartInstallScanner < BaseTask
     super
 
     results = _masscan_netblock(@entity,[4786],[])
-
     _log_error "Invalid params" unless results
 
     results.each do |r|
       _log "Result: #{r}"
-      _create_entity "IpAddress", {"name" => r["ip_address"]}
+      ip_entity = _create_entity "IpAddress", {"name" => r["ip_address"]}
+      _create_network_service_entity(ip_entity,r["port"],r["protocol"],{})
     end
 
   end

@@ -12,7 +12,7 @@ module Task
 module Scanner
 
   ## Default method, subclasses must override this
-  def _masscan_netblock(range,tcp_ports,udp_ports,max_rate=10000)
+  def _masscan_netblock(range,tcp_ports,udp_ports,max_rate=1000)
 
     ### Santity checking so this function is safe
     unless range.kind_of? Intrigue::Entity::NetBlock

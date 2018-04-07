@@ -45,8 +45,8 @@ class Masscan < BaseTask
       temp_file = Tempfile.new("masscan")
 
       port_string = "-p"
-      port_string << "#{opt_tcp_ports}," if opt_tcp_ports.length > 0
-      port_string << "#{opt_udp_ports.split(",").map{|x| "U:#{x}" }.join(",")}"
+      port_string << "#{opt_tcp_ports}" if opt_tcp_ports.length > 0
+      port_string << ",#{opt_udp_ports.split(",").map{|x| "U:#{x}" }.join(",")}" if opt_udp_ports.length > 0
 
       # shell out to masscan and run the scan
       masscan_string = "masscan #{port_string} --max-rate #{opt_max_rate} -oL #{temp_file.path} --range #{to_scan}"
@@ -68,6 +68,7 @@ class Masscan < BaseTask
         # Get the discovered host (one per line) & create an ip address
         created_entity = _create_entity("IpAddress", { "name" => ip_address })
 
+        # this will also add teh the port to the ip address
         _create_network_service_entity(created_entity,
             port, protocol, { "masscan_string" => masscan_string })
 

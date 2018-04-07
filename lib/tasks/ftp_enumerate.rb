@@ -16,7 +16,7 @@ class FtpEnumerate < BaseTask
       :references => [],
       :type => "discovery",
       :passive => false,
-      :allowed_types => ["FtpService"],
+      :allowed_types => ["FtpService","NetworkService"],
       :example_entities => [
         {"type" => "FtpService", "details" => {
           "ip_address" => "1.1.1.1",
@@ -45,45 +45,47 @@ class FtpEnumerate < BaseTask
 
       begin
 
-        ftp = Net::FTP.open("#{ip_address}") do |ftp|
+        ftp = Net::FTP.new
+        ftp.connect(ip_address, port)
+        ftp.passive = true
 
-          ftp.passive = true
-
-          out = {}
-          begin
-            out["anonymous"] = ftp.login
-          rescue Net::FTPPermError => e
-            _log_error "unable to log in, proceeding"
-          end
-
-          begin
-              out["help"] = "#{ftp.help}"
-          rescue Net::FTPPermError => e
-            _log_error "unable to run HELP, proceeding"
-          end
-
-          begin
-            ftp.chdir('/')
-            out["dir"] = [
-              "root" => {
-                "listing" => ftp.list,
-                "facts" => ftp.mlst.facts
-              }
-            ]
-          rescue Net::FTPPermError => e
-            _log_error "unable to collect directory info, not logged in"
-          end
-
-          begin
-            out["system"] = "#{ftp.system}"
-          rescue Net::FTPPermError => e
-            _log_error "unable to collect system info - not logged in"
-          end
-
-          @entity.set_detail("ftp_enumerate", out)
-          _log out
-
+        out = {}
+        begin
+          _log "attempting anonymous login"
+          out["anonymous"] = ftp.login
+        rescue Net::FTPPermError => e
+          _log_error "unable to log in, proceeding"
         end
+
+        begin
+          _log "checking HELP command"
+          out["help"] = "#{ftp.help}"
+        rescue Net::FTPPermError => e
+          _log_error "unable to run HELP, proceeding"
+        end
+
+        begin
+          _log "checking permissions"
+          ftp.chdir('/')
+          out["dir"] = [
+            "root" => {
+              "listing" => ftp.list,
+              "facts" => ftp.mlst.facts
+            }
+          ]
+        rescue Net::FTPPermError => e
+          _log_error "unable to collect directory info, not logged in"
+        end
+
+        begin
+          _log "checking SYSTEM command"
+          out["system"] = "#{ftp.system}"
+        rescue Net::FTPPermError => e
+          _log_error "unable to collect system info - not logged in"
+        end
+
+        @entity.set_detail("ftp_enumerate", out)
+        _log out
 
       rescue SocketError => e
         _log_error "Unable to connect: #{e}"
