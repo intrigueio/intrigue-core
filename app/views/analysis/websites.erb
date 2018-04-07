@@ -76,7 +76,7 @@
           </td>
           <td>
             <% entities.map do |x| %>
-              <%= "#{x.get_detail("products").map{|x| x["matched"] }}<br/>" %>
+              <%= "#{x.get_detail("products").map{|x| x["matched"] } if x.get_detail("products")}<br/>" %>
             <% end %>
           </td>
           <td>
