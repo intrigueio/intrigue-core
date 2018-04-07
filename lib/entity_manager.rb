@@ -224,7 +224,6 @@ class EntityManager
   end
 
   def self.enrich_entity(entity, task_result=nil)
-
     task_result.log  "Running enrichment on #{entity}" if task_result
     return unless entity
 
@@ -244,7 +243,6 @@ class EntityManager
 
     # Enrich by type
     if entity.type_string == "AwsS3Bucket"
-
       task_name = "aws_s3_loot"
       # first check to make sure we're not already scheduled (but not complete)
       unless entity.enrichment_scheduled?(task_name)

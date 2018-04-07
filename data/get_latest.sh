@@ -30,6 +30,16 @@ if [ -d "web_accounts_list" ]; then
   cd ..
 fi
 
+# IANA address space
+#  https://www.iana.org/assignments/ipv4-address-space/ipv4-address-space.xhtml
+if [ -d "iana" ]; then
+  cd iana
+  echo "Getting latest ipv4-address-space.csv"
+  wget -N -q https://www.iana.org/assignments/ipv4-address-space/ipv4-address-space.csv
+  cd ..
+fi
+
+
 
 #if [ -d "alexa" ]; then
 #  echo "Getting latest Alexa database"

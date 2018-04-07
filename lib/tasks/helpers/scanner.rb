@@ -11,76 +11,72 @@ module Intrigue
 module Task
 module Scanner
 
-  # Scans for webservers on common ports
-  #
-  # @param to_scan [String] ip/hostname/netblock passed to nmap
-  # @return [Array] list of strings (uris)
-  def scan_webservers(to_scan)
+  ## Default method, subclasses must override this
+  def _masscan_netblock(range,tcp_ports,udp_ports,max_rate=10000)
 
-    # Create a tempfile to store results
-    temp_file = "#{Dir::tmpdir}/nmap_scan_#{rand(100000000)}.xml"
-
-    # Check for IPv6
-    nmap_options = ""
-    nmap_options << "-6 " if to_scan =~ /:/
-
-    ports = "80,443,8080,8081,8443"
-
-    # shell out to nmap and run the scan
-    @task_result.logger.log "Scanning #{to_scan} and storing in #{temp_file}" if @task_result
-    @task_result.logger.log "nmap options: #{nmap_options}" if @task_result
-    nmap_string = "nmap #{to_scan} #{nmap_options} -P0 -p #{ports} --min-parallelism 10 -oX #{temp_file}"
-    @task_result.logger.log "Running... #{nmap_string}" if @task_result
-    _unsafe_system(nmap_string)
-
-    # Gather the XML and parse
-    @task_result.logger.log "Parsing #{temp_file}" if @task_result
-
-    parser = ::Nmap::Parser.parsefile(temp_file)
-
-    uris = []
-
-    # Create entities for each discovered service
-    parser.hosts("up") do |host|
-
-      @task_result.logger.log "Handling nmap data for #{host.addr}" if @task_result
-
-      [:tcp].each do |proto_type|
-
-        host.getports(proto_type, "open") do |port|
-
-          if proto_type == :tcp && ports.split(",").include?("#{port.num}")
-
-            # determine if this is an SSL application
-            ssl = true if [443,8443].include?(port.num)
-            protocol = ssl ? "https://" : "http://" # construct uri
-
-            # Create URI
-            uris << "#{protocol}#{host.addr}:#{port.num}"
-
-            # and create the entities if we have dns
-            host.hostnames.each do |hostname|
-              uris<< "#{protocol}#{hostname}:#{port.num}"
-            end
-
-          end
-
-        end # end host.getports
-      end # end tcp/udp
-    end # end parser
-
-    # Here's where we can process the options
-    uris.each do |uri|
-      yield uri if block_given?
+    ### Santity checking so this function is safe
+    unless range.kind_of? Intrigue::Entity::NetBlock
+      raise "Invalid range: #{range}"
     end
+    unless tcp_ports.all?{|p| p.kind_of? Integer}
+      raise "Invalid tcp ports: #{tcp_ports}"
+    end
+    unless udp_ports.all?{|p| p.kind_of? Integer}
+      raise "Invalid udp ports: #{udp_ports}"
+    end
+    unless max_rate.kind_of? Integer
+      raise "Invalid max rate: #{max_rate}"
+    end
+    ### end santity checking
 
-    # Clean up!
     begin
-      File.delete(temp_file)
-    rescue Errno::EPERM
-      @task_result.logger.log_error "Unable to delete file"
+
+      # Create a tempfile to store result
+      temp_file = Tempfile.new("masscan")
+
+      port_string = "-p"
+      port_string << "#{tcp_ports.join(",")}," if tcp_ports.length > 0
+      port_string << "#{udp_ports.map{|x| "U:#{x}" }.join(",")}"
+
+      # shell out to masscan and run the scan
+      masscan_string = "masscan #{port_string} --max-rate #{max_rate} -oL #{temp_file.path} --range #{range.name}"
+      _log "Running... #{masscan_string}"
+      _unsafe_system(masscan_string)
+
+      results = []
+      f = File.open(temp_file.path).each_line do |line|
+
+        # Skip comments
+        next if line =~ /^#.*/
+        next if line.nil?
+
+        # PARSE
+        state = line.delete("\n").strip.split(" ")[0]
+        protocol = line.delete("\n").strip.split(" ")[1]
+        port = line.delete("\n").strip.split(" ")[2].to_i
+        ip_address = line.delete("\n").strip.split(" ")[3]
+
+        results << {
+          "state" => state,
+          "protocol" => protocol,
+          "port" => port,
+          "ip_address" => ip_address
+        }
+
+      end
+
+    ensure
+      temp_file.close
+      temp_file.unlink
     end
-  uris
+
+  results
+  end
+
+  def check_external_dependencies
+    # Check to see if masscan is in the path, and raise an error if not
+    return false unless _unsafe_system("masscan") =~ /^usage/
+  true
   end
 
 
