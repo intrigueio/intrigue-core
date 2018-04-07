@@ -1,4 +1,11 @@
 GIT
+  remote: https://github.com/intrigueio/recog.git
+  revision: 26664d2e6becb788751557378d6d08e825c2480d
+  specs:
+    recog-intrigue (2.1.17)
+      nokogiri
+
+GIT
   remote: https://github.com/intrigueio/ruby-snmp.git
   revision: e41bb0e04b1fe9be4e02d261012ef52c3db217b6
   specs:
@@ -134,7 +141,7 @@ GEM
     mustermann (1.0.2)
     net-dns (0.8.0)
     netrc (0.11.0)
-    nokogiri (1.8.1)
+    nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
     pg (0.21.0)
     poltergeist (1.17.0)
@@ -254,6 +261,7 @@ DEPENDENCIES
   rack-protection
   rack-test
   rake
+  recog-intrigue!
   redis
   redis-namespace
   rest-client

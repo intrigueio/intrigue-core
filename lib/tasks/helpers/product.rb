@@ -1,5 +1,4 @@
-require "#{$intrigue_basedir}/../recog/lib/recog"
-require "#{$intrigue_basedir}/../recog/lib/recog/matcher_factory"
+require 'recog'
 require 'ostruct'
 
 
