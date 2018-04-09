@@ -6,7 +6,7 @@ module Strategy
       {
         :name => "scan_criticals",
         :pretty_name => "scan_criticals",
-        :passive => true,
+        :passive => false,
         :authors => ["jcran"],
         :description => "This strategy runs a series of scans against every netblock, looking for critical issues."
       }

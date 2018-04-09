@@ -92,9 +92,10 @@ module Strategy
 
           ## Super-lite spider, looking for metadata
           start_recursive_task(task_result,"uri_spider",entity,[
-              {"name" => "max_pages", "value" => 50 },
+              {"name" => "max_pages", "value" => 10 },
               {"name" => "extract_dns_records", "value" => true },
               {"name" => "extract_dns_record_pattern", "value" => "#{filter_strings}"}])
+
         end
 
       else
