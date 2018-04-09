@@ -88,15 +88,13 @@ module Strategy
           {"name"=> "threads", "value" => 1},
           {"name" => "user_list", "value" => "admin,test,server-status,.svn,.git"}])
 
-        unless (entity.created_by?("uri_brute") || entity.created_by?("uri_spider") )
-
+        #unless (entity.created_by?("uri_brute") || entity.created_by?("uri_spider") )
           ## Super-lite spider, looking for metadata
-          start_recursive_task(task_result,"uri_spider",entity,[
-              {"name" => "max_pages", "value" => 10 },
-              {"name" => "extract_dns_records", "value" => true },
-              {"name" => "extract_dns_record_pattern", "value" => "#{filter_strings}"}])
-
-        end
+          #start_recursive_task(task_result,"uri_spider",entity,[
+          #    {"name" => "max_pages", "value" => 10 },
+          #    {"name" => "extract_dns_records", "value" => true },
+          #    {"name" => "extract_dns_record_pattern", "value" => "#{filter_strings}"}])
+        #end
 
       else
         task_result.log "No actions for entity: #{entity.type}##{entity.name}"
