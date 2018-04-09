@@ -116,7 +116,15 @@
 2
 20
 200
+2009
 201
+2010
+2011
+2012
+2013
+2014
+2015
+2016
 202
 203
 204
@@ -285,6 +293,7 @@ abhsia
 about
 ac
 academico
+acc
 acceso
 access
 account
@@ -305,6 +314,7 @@ adkit
 adm
 admin
 admin.test
+admin1
 administracion
 administrador
 administrator
@@ -331,6 +341,7 @@ ai
 aix
 ajax
 ak
+akali
 akamai
 al
 alabama
@@ -347,6 +358,7 @@ alumni
 am
 amarillo
 amedd
+america
 americas
 an
 anaheim
@@ -363,8 +375,10 @@ ap
 apache
 apg
 api
+api-docs
 api-test
 api.news
+api1
 apol
 apollo
 app
@@ -379,6 +393,7 @@ applwi
 apply
 apps
 appserver
+april
 aq
 ar
 araba
@@ -495,6 +510,7 @@ bn
 bna
 bnc
 bo
+boards
 bob
 bocaiwang
 bof
@@ -514,6 +530,8 @@ box
 boy
 bpb
 br
+brand
+brasil
 brasiltelecom
 bravo
 brazil
@@ -533,6 +551,8 @@ bsd1
 bsd2
 bt
 btas
+bucket
+bucky
 buddy.webchat
 buffalo
 bug
@@ -643,6 +663,7 @@ client
 clientes
 clients
 cloud
+cloudfront
 clsp
 clt
 clta
@@ -653,6 +674,7 @@ clusters
 cm
 cmail
 cms
+cms1
 cn
 co
 cocoa
@@ -688,6 +710,7 @@ consultants
 consulting
 consumer
 contact
+container
 content
 contracts
 contribute
@@ -943,6 +966,7 @@ developer
 developers
 development
 device
+devops
 devserver
 devsql
 dhcp
@@ -990,6 +1014,7 @@ dns4
 dns5
 do
 doc
+docker
 docs
 documentacion
 documentos
@@ -1006,6 +1031,7 @@ downloads
 downtown
 dragon
 drm
+drop
 drupal
 ds
 dsasa
@@ -1046,6 +1072,8 @@ eg
 eh
 ejemplo
 ekonomi
+elasticbeanstalk
+elb
 elearning
 elections
 elpaso
@@ -1062,6 +1090,7 @@ enews
 eng
 eng01
 eng1
+engima
 engine
 engineer
 engineering
@@ -1087,6 +1116,10 @@ etb
 eu
 eur
 europe
+europewest
+euw
+euwe
+evelynn
 event
 events
 ex
@@ -1117,6 +1150,7 @@ fc
 fe
 fe1
 fe2
+feb
 feed
 feedback
 feeds
@@ -1180,6 +1214,7 @@ fresno
 frokca
 front
 frontdesk
+frontpage
 fs
 fsp
 ftas
@@ -1225,10 +1260,12 @@ germany
 gf
 gg
 gh
+ghcpi
 gi
 giga
 gis
 git
+github
 gitlab
 gl
 glendale
@@ -1296,6 +1333,7 @@ highway
 history
 hk
 hkcable
+hkg
 hl
 hlrn
 hm
@@ -1353,6 +1391,8 @@ https
 hu
 hub
 humanresources
+hw
+hwcdn
 hwmaint
 i
 i0.comet.webchat
@@ -1490,6 +1530,7 @@ jax
 je
 jedi
 jenkins
+jinx
 jira
 jl
 jm
@@ -1507,6 +1548,8 @@ jsp
 juegos
 juliet
 juliette
+july
+june
 juniper
 jupiter
 jx
@@ -1536,6 +1579,7 @@ kn
 knowledgebase
 knoxville
 koe
+kor
 korea
 kp
 kr
@@ -1553,9 +1597,14 @@ labs
 lambda
 lan
 laptop
+las
 laserjet
 lasvegas
+latin
+latinamerica
 launch
+lax
+lax1
 lb
 lc
 ldap
@@ -1658,6 +1707,7 @@ mac3
 mac4
 mac5
 mach
+machine
 macintosh
 madrid
 magazine
@@ -1706,6 +1756,7 @@ manufacturing
 map
 mapas
 maps
+march
 market
 marketing
 marketplace
@@ -1738,6 +1789,7 @@ member
 members
 memphis
 men
+merch
 mercury
 merlin
 mesh
@@ -1858,6 +1910,7 @@ nameserver
 nas
 nashville
 nat
+nautilus
 navi
 nb
 nc
@@ -1871,6 +1924,7 @@ net
 netapp
 netdata
 netgear
+netherlands
 netmeeting
 netscaler
 netscreen
@@ -1894,6 +1948,7 @@ newyork
 newzealand
 nf
 ng
+nginx
 nh
 ni
 nigeria
@@ -1912,6 +1967,7 @@ nokia
 nombres
 nora
 north
+northamerica
 northcarolina
 northdakota
 northeast
@@ -1919,6 +1975,7 @@ northwest
 not-set-yet
 nothing
 noticias
+nov
 novell
 november
 now
@@ -1960,8 +2017,10 @@ oakland
 oas
 oc
 ocean
+oceania
 ocn
 ocs
+oct
 odin
 odn
 office
@@ -2002,6 +2061,7 @@ orange
 order
 orders
 oregon
+org
 origin
 origin-images
 origin-video
@@ -2035,11 +2095,13 @@ pages
 paginas
 palett
 panel
+pantheon
 papa
 paris
 parners
 partner
 partners
+pass
 patch
 patches
 paul
@@ -2163,6 +2225,7 @@ poczta
 podcast
 point
 pol
+poland
 policy
 polls
 pool
@@ -2202,6 +2265,7 @@ ppp9
 pppoe
 pptp
 pr
+preferences
 prensa
 preprod
 present
@@ -2220,12 +2284,14 @@ prod
 prod-empresarial
 prod-infinitum
 prodigy
+production
 products
 profile
 profiles
 project
 projects
 promo
+promotion
 proxy
 prueba
 pruebas
@@ -2349,10 +2415,12 @@ recruiting
 red
 redhat
 redirect
+redirector
 redmine
 ref
 reference
 reg
+region
 register
 registro
 registry
@@ -2362,20 +2430,26 @@ relay
 rem
 remote
 remstats
+repo
 reports
+repository
 rerew
 res
 research
 reseller
 reservations
 reserved
+reset
 resnet
 resources
+restrict
+restricted
 results
 resumenes
 retail
 rev
 reverse
+reviews
 rho
 rhodeisland
 ri
@@ -2654,6 +2728,7 @@ segment-124-7
 seminar
 sendmail
 sentry
+sept
 seri
 serv
 serv2
@@ -2693,6 +2768,7 @@ signin
 signup
 silver
 sim
+singed
 sip
 sirius
 site
@@ -2700,6 +2776,7 @@ sites
 siw
 sj
 sk
+skins
 sklep
 skywalker
 sl
@@ -2767,6 +2844,7 @@ spor
 sport
 sports
 spotlight
+spring
 springfield
 sprint
 sq1
@@ -2796,6 +2874,7 @@ st
 sta
 staff
 stage
+stage1
 staging
 start
 stat
@@ -2842,6 +2921,7 @@ sw
 sw0
 sw01
 sw1
+swagger
 sweden
 switch
 switzerland
@@ -2896,6 +2976,7 @@ test2
 test2k
 testbed
 testing
+testing1
 testlab
 testlinux
 testserver
@@ -2929,6 +3010,7 @@ to
 tokyo
 toledo
 tom
+tomcat
 tool
 toolbar
 tools
@@ -2937,6 +3019,7 @@ tor
 toronto
 tour
 tp
+tpe
 tpgi
 tr
 track
@@ -2951,6 +3034,7 @@ translate
 travel
 travel2
 traveler
+trial
 trinidad
 trinity
 ts
@@ -2965,10 +3049,14 @@ tukw
 tulsa
 tunnel
 tunnelunix
+tur
+turk
+turkey
 tv
 tvadmin
 tw
 twcny
+twitch
 tx
 txr
 tz
@@ -3136,6 +3224,7 @@ web4
 webaccess
 webadmin
 webalizer
+webapp
 webapps
 webboard
 webcache
@@ -3171,6 +3260,7 @@ websvr
 webtrends
 welcome
 west
+westeurope
 westnet
 westvirginia
 wf
