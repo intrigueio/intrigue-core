@@ -32,7 +32,6 @@ class UriGatherSslCert  < BaseTask
   def run
     super
 
-
     opt_skip_acquia = _get_option "skip_acquia"
     opt_skip_cloudflare = _get_option "skip_cloudflare"
     opt_skip_distill = _get_option "skip_distill"
@@ -60,12 +59,10 @@ class UriGatherSslCert  < BaseTask
 
       # Check the subjectAltName property, and if we have names, here, parse them.
       cert.extensions.each do |ext|
-        if ext.oid =~ /subjectAltName/
-
+        if "#{ext.oid}" =~ /subjectAltName/
           alt_names = ext.value.split(",").collect do |x|
-            x.gsub(/DNS:/,"").strip
+            "#{x}".gsub(/DNS:/,"").strip
           end
-
           _log "Got alt_names: #{alt_names.inspect}"
 
           # Iterate through, looking for trouble
