@@ -46,6 +46,25 @@ module Intrigue
       out
       end
 
+      def export_host_csv
+        out = ""
+
+        out << "Host,Type,Name,Details\n"
+        self.entities.sort_by{|e| e.to_s }.each do |x|
+          next unless x.kind_of? Intrigue::Entity::IpAddress
+            #out << "#{x.type_string},#{x.name},#{x.detail_string}\n"
+
+            x.children.each do |a|
+              next unless a.kind_of? Intrigue::Entity::Uri
+              out << "#{x.name},#{x.type_string},#{a.name},#{a.detail_string}\n"
+            end
+
+        end
+
+      out
+      end
+
+
       def handle
         handled = []
         self.handlers.each do |handler_type|

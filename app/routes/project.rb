@@ -131,6 +131,13 @@ class IntrigueApp < Sinatra::Base
       @project.export_csv
     end
 
+    get '/:project/export/host_csv' do
+      content_type 'application/csv'
+      @project = Intrigue::Model::Project.first(:name => @project_name)
+      @project.export_host_csv
+    end
+
+
     # Show the results in a gexf format
     get '/:project/export/gexf/?' do
       content_type 'text/plain'
