@@ -26,6 +26,9 @@ module Generic
     updated_ports = ports.append({"number" => port_num, "protocol" => protocol}).uniq
     ip_entity.set_detail("ports", updated_ports)
 
+    # Ensure we always save our host
+    extra_details.merge!("host_id" => ip_entity.id)
+
     # Grab all the aliases
     hosts = [ip_entity]
     if ip_entity.aliases.count > 0
@@ -53,6 +56,7 @@ module Generic
 
         # FIRST CHECK TO SEE IF WE GET A RESPONSE FOR THIS HOSTNAME
         begin
+
           http_response = RestClient.get uri
 
           ## TODO ... follow location headers?
@@ -65,30 +69,42 @@ module Generic
           _log_error "Error requesting resource, skipping: #{uri}"
         rescue RestClient::RequestTimeout => e
           _log_error "Timeout requesting resource, skipping: #{uri}"
+        rescue RestClient::BadRequest => e
+          _log_error "Error requesting resource, skipping: #{uri}"
         rescue RestClient::ResourceNotFound => e
           _log_error "Error (404) requesting resource, creating anyway: #{uri}"
           http_response = true
         rescue RestClient::Unauthorized => e
           _log_error "Error (401) requesting resource, creating anyway: #{uri}"
           http_response = true
-          extra_details.merge("http_authentication" => true)
+          extra_details.merge!("http_server_error" => "#{e}" )
         rescue RestClient::Forbidden => e
           _log_error "Error (403) requesting resource, creating anyway: #{uri}"
           http_response = true
-          extra_details.merge("http_authentication" => true)
+          extra_details.merge!("http_server_error" => "#{e}" )
         rescue RestClient::InternalServerError => e
           _log_error "Error (500) requesting resource, creating anyway: #{uri}"
           http_response = true
-          extra_details.merge("http_server_error" => true )
+          extra_details.merge!("http_server_error" => "#{e}" )
+        rescue RestClient::BadGateway => e
+          http_response = true
+          extra_details.merge!("http_server_error" => "#{e}" )
+        rescue RestClient::ServiceUnavailable => e
+          _log_error "Error (503) requesting resource, creating anyway: #{uri}"
+          http_response = true
+          extra_details.merge!("http_server_error" => "#{e}" )
+        rescue RestClient::ServerBrokeConnection => e
+          _log_error "Error requesting resource, creating anyway: #{uri}"
+          http_response = true
+          extra_details.merge!("http_server_error" => "#{e}" )
         rescue RestClient::SSLCertificateNotVerified => e
           _log_error "Error (SSL Certificate Invalid) requesting resource, creating anyway: #{uri}"
           http_response = true
-          extra_details.merge("http_certificate_error" => "#{e}")
-          #extra_details.merge("certificate_error_detail" => "#{e}")
+          extra_details.merge!("http_server_error" => "#{e}" )
         rescue OpenSSL::SSL::SSLError => e
           _log_error "Error (SSL Certificate Invalid) requesting resource, creating anyway: #{uri}"
           http_response = true
-          extra_details.merge("http_certificate_error" => "#{e}")
+          extra_details.merge!("http_server_error" => "#{e}" )
         end
 
         unless http_response
@@ -96,130 +112,150 @@ module Generic
           next
         end
 
-        # Create entity
-        sister_entity = _create_entity("Uri", {
+        entity_details = {
           "name" => uri,
-          "host_id" => h.id,
+          "uri" => uri,
           "port" => port_num,
-          "protocol" => protocol,
-          "uri" => uri }.merge(extra_details), sister_entity)
+          "ip_address" => h.name,
+          "protocol" => protocol}.merge!(extra_details)
+
+        # Create entity
+        sister_entity = _create_entity("Uri", entity_details, sister_entity)
 
       # then FtpService
       elsif protocol == "tcp" && [21].include?(port_num) && h.name.is_ip_address?
 
         name = "#{h.name}:#{port_num}"
         uri = "ftp://#{name}"
-        sister_entity = _create_entity("FtpService", {
+        entity_details = {
           "name" => name,
-          "host_id" => h.id,
           "uri" => uri,
-          "ip_address" => h.name,
           "port" => port_num,
-          "protocol" => protocol}.merge(extra_details), sister_entity)
+          "ip_address" => h.name,
+          "protocol" => protocol}.merge!(extra_details)
+
+
+        sister_entity = _create_entity("FtpService", entity_details, sister_entity)
 
       # Then SshService
       elsif protocol == "tcp" && [22].include?(port_num) && h.name.is_ip_address?
 
         name = "#{h.name}:#{port_num}"
         uri = "ssh://#{name}"
-        sister_entity = _create_entity("SshService", {
-          "name" => name,
-          "host_id" => h.id,
+
+        entity_details = {
+          "name" => uri,
           "uri" => uri,
-          "ip_address" => h.name,
           "port" => port_num,
-          "protocol" => protocol}.merge(extra_details), sister_entity)
+          "ip_address" => h.name,
+          "protocol" => protocol}.merge!(extra_details)
+
+        sister_entity = _create_entity("SshService", entity_details, sister_entity)
 
       # then SMTPService
       elsif protocol == "tcp" && [25].include?(port_num) && h.name.is_ip_address?
 
         name = "#{h.name}:#{port_num}"
         uri = "smtp://#{name}"
-        sister_entity = _create_entity("SmtpService", {
-          "name" => name,
-          "host_id" => h.id,
+
+        entity_details = {
+          "name" => uri,
           "uri" => uri,
-          "ip_address" => h.name,
           "port" => port_num,
-          "protocol" => protocol}.merge(extra_details), sister_entity)
+          "ip_address" => h.name,
+          "protocol" => protocol}.merge!(extra_details)
+
+        sister_entity = _create_entity("SmtpService", entity_details, sister_entity)
 
       # then DnsService
       elsif [53].include?(port_num) && h.name.is_ip_address? # could be either tcp or udp
 
         name = "#{h.name}:#{port_num}"
         uri = "dns://#{name}"
-        sister_entity = _create_entity("DnsService", {
-          "name" => name,
-          "host_id" => h.id,
+
+        entity_details = {
+          "name" => uri,
           "uri" => uri,
-          "ip_address" => h.name,
           "port" => port_num,
-          "protocol" => protocol}.merge(extra_details), sister_entity)
+          "ip_address" => h.name,
+          "protocol" => protocol}.merge!(extra_details)
+
+        sister_entity = _create_entity("DnsService", entity_details, sister_entity)
 
       # then FingerService
       elsif protocol == "tcp" && [79].include?(port_num) && h.name.is_ip_address?
 
         name = "#{h.name}:#{port_num}"
         uri = "finger://#{name}"
-        sister_entity = _create_entity("FingerService", {
-          "name" => name,
-          "host_id" => h.id,
+
+        entity_details = {
+          "name" => uri,
           "uri" => uri,
-          "ip_address" => h.name,
           "port" => port_num,
-          "protocol" => protocol}.merge(extra_details), sister_entity)
+          "ip_address" => h.name,
+          "protocol" => protocol}.merge!(extra_details)
+
+        sister_entity = _create_entity("FingerService", entity_details, sister_entity)
 
       # Then SnmpService
       elsif protocol == "udp" && [161].include?(port_num) && h.name.is_ip_address?
 
         name = "#{h.name}:#{port_num}"
         uri = "snmp://#{name}"
-        sister_entity = _create_entity("SnmpService", {
-          "name" => name,
-          "host_id" => h.id,
+
+        entity_details = {
+          "name" => uri,
           "uri" => uri,
-          "ip_address" => h.name,
           "port" => port_num,
-          "protocol" => protocol }.merge(extra_details), sister_entity)
+          "ip_address" => h.name,
+          "protocol" => protocol}.merge!(extra_details)
+
+        sister_entity = _create_entity("SnmpService", entity_details, sister_entity)
 
       # then WeblogicService
       elsif protocol == "tcp" && [7001].include?(port_num) && h.name.is_ip_address?
 
         name = "#{h.name}:#{port_num}"
         uri = "http://#{name}"
-        sister_entity = _create_entity("WeblogicService", {
-          "name" => name,
-          "host_id" => h.id,
+
+        entity_details = {
+          "name" => uri,
           "uri" => uri,
-          "ip_address" => h.name,
           "port" => port_num,
-          "protocol" => protocol}.merge(extra_details), sister_entity)
+          "ip_address" => h.name,
+          "protocol" => protocol}.merge!(extra_details)
+
+        sister_entity = _create_entity("WeblogicService", entity_details, sister_entity)
 
       # then MongoService
       elsif protocol == "tcp" && [27017].include?(port_num) && h.name.is_ip_address?
 
         name = "#{h.name}:#{port_num}"
         uri = "mongo://#{name}"
-        sister_entity = _create_entity("MongoService", {
-          "name" => name,
-          "host_id" => h.id,
+
+        entity_details = {
+          "name" => uri,
           "uri" => uri,
-          "ip_address" => h.name,
           "port" => port_num,
-          "protocol" => protocol}.merge(extra_details), sister_entity)
+          "ip_address" => h.name,
+          "protocol" => protocol}.merge!(extra_details)
+
+        sister_entity = _create_entity("MongoService", entity_details, sister_entity)
 
       else # Create a generic network service
         next unless h.name.is_ip_address?
 
         name = "#{h.name}:#{port_num}"
         uri = "netsvc://#{name}"
-        sister_entity = _create_entity("NetworkService", {
-          "name" => name,
-          "host_id" => h.id,
+
+        entity_details = {
+          "name" => uri,
           "uri" => uri,
-          "ip_address" => h.name,
           "port" => port_num,
-          "protocol" => protocol }.merge(extra_details), sister_entity)
+          "ip_address" => h.name,
+          "protocol" => protocol}.merge!(extra_details)
+
+        sister_entity = _create_entity("NetworkService", entity_details, sister_entity)
       end
 
     end # hostnames

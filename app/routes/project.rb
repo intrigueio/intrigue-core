@@ -131,10 +131,10 @@ class IntrigueApp < Sinatra::Base
       @project.export_csv
     end
 
-    get '/:project/export/host_csv' do
+    get '/:project/export/applications/csv' do
       content_type 'application/csv'
       @project = Intrigue::Model::Project.first(:name => @project_name)
-      @project.export_host_csv
+      @project.export_applications_csv
     end
 
 

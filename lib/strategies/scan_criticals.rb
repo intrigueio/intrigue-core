@@ -15,7 +15,7 @@ module Strategy
     def self.recurse(entity, task_result)
       if entity.type_string == "NetBlock"
         start_recursive_task(task_result,"cisco_smart_install_scan",entity,[
-            {"name" => "max_rate", "value" => 100000 }])
+            {"name" => "max_rate", "value" => 10000 }])
       end
     end
 
