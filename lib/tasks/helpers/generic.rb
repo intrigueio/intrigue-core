@@ -52,9 +52,13 @@ module Generic
         uri = "#{prefix}#{h.name}:#{port_num}"
 
         # FIRST CHECK TO SEE IF WE GET A RESPONSE FOR THIS HOSTNAME
-        response http_get_body uri
-        unless response
-          _log_error "Didn't get a response when we reqested"
+        begin
+          http_response = RestClient.get uri
+        rescue SocketError =>e
+        end
+
+        unless http_response
+          _log_error "Didn't get a response when we reqested one"
           next
         end
 

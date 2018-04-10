@@ -40,7 +40,6 @@ class CiscoSmartInstallScan < BaseTask
       _log "Result: #{r}"
 
       # check to see if it's a smart install enabled device 
-
       ip_entity = _create_entity "IpAddress", {"name" => r["ip_address"]}
       _create_network_service_entity(ip_entity,r["port"],r["protocol"],{})
     end
