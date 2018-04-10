@@ -69,6 +69,10 @@ module Generic
         rescue RestClient::InternalServerError => e
           _log_error "Error (500) requesting resource, creating anyway: #{uri}"
           http_response = true
+        rescue RestClient::SSLCertificateNotVerified => e
+          _log_error "Error (SSL Certificate Invalid) requesting resource, creating anyway: #{uri}"
+          http_response = true
+          extra_details.merge("certificate_error" => true)
         end
 
         unless http_response
