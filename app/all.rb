@@ -4,7 +4,6 @@ require_relative "helpers"
 
 require_relative "routes/analysis"
 require_relative "routes/entities"
-require_relative "routes/signals"
 require_relative "routes/global"
 require_relative "routes/project"
 require_relative "routes/results"
