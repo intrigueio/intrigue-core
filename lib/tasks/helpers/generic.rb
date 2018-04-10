@@ -72,7 +72,12 @@ module Generic
         rescue RestClient::SSLCertificateNotVerified => e
           _log_error "Error (SSL Certificate Invalid) requesting resource, creating anyway: #{uri}"
           http_response = true
-          extra_details.merge("certificate_error" => true)
+          extra_details.merge("certificate_error" => "#{e}")
+          #extra_details.merge("certificate_error_detail" => "#{e}")
+        rescue OpenSSL::SSL::SSLError => e
+          _log_error "Error (SSL Certificate Invalid) requesting resource, creating anyway: #{uri}"
+          http_response = true
+          extra_details.merge("certificate_error" => "#{e}")
         end
 
         unless http_response
