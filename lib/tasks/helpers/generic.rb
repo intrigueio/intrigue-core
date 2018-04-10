@@ -109,6 +109,7 @@ module Generic
           extra_details.merge!("http_server_error" => "#{e}" )
         rescue Exception => e
           _log_error "Unknown error requesting resource, skipping: #{uri}"
+          _log_error "INVESTIGATE: #{e}"
         end
 
         unless http_response
