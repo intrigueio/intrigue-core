@@ -54,7 +54,10 @@ module Generic
         # FIRST CHECK TO SEE IF WE GET A RESPONSE FOR THIS HOSTNAME
         begin
           http_response = RestClient.get uri
-        rescue SocketError =>e
+        rescue SocketError => e
+          _log_error "Error requesting resource, skipping: #{uri}"
+        rescue RestClient::ResourceNotFound => e
+          _log_error "Error (404) requesting resource, skipping: #{uri}"
         end
 
         unless http_response
