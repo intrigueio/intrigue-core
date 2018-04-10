@@ -56,6 +56,8 @@ module Generic
           http_response = RestClient.get uri
         rescue SocketError => e
           _log_error "Error requesting resource, skipping: #{uri}"
+        rescue Errno::ECONNRESET => e
+          _log_error "Error requesting resource, skipping: #{uri}"
         rescue RestClient::RequestTimeout => e
           _log_error "Timeout requesting resource, skipping: #{uri}"
         rescue RestClient::ResourceNotFound => e
