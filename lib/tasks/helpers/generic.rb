@@ -2,6 +2,10 @@ module Intrigue
 module Task
 module Generic
 
+  def self.included(base)
+     include Intrigue::Task::Web
+   end
+
   private
 
   ###
@@ -44,8 +48,17 @@ module Generic
         ssl = true if [443,8443].include?(port_num)
         prefix = ssl ? "https://" : "http://" # construct uri
 
-        # Create URI
+        # construct the uri
         uri = "#{prefix}#{h.name}:#{port_num}"
+
+        # FIRST CHECK TO SEE IF WE GET A RESPONSE FOR THIS HOSTNAME
+        response http_get_body uri
+        unless response
+          _log_error "Didn't get a response when we reqested"
+          next
+        end
+
+        # Create entity
         sister_entity = _create_entity("Uri", {
           "name" => uri,
           "host_id" => h.id,
@@ -156,8 +169,6 @@ module Generic
           "ip_address" => h.name,
           "port" => port_num,
           "protocol" => protocol}.merge(extra_details), sister_entity)
-
-
 
       else # Create a generic network service
         next unless h.name.is_ip_address?
