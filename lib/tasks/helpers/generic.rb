@@ -54,6 +54,9 @@ module Generic
         # FIRST CHECK TO SEE IF WE GET A RESPONSE FOR THIS HOSTNAME
         begin
           http_response = RestClient.get uri
+
+          ## TODO ... follow location headers?
+
         rescue SocketError => e
           _log_error "Error requesting resource, skipping: #{uri}"
         rescue Errno::ECONNRESET => e
@@ -63,21 +66,27 @@ module Generic
         rescue RestClient::ResourceNotFound => e
           _log_error "Error (404) requesting resource, creating anyway: #{uri}"
           http_response = true
+        rescue RestClient::Unauthorized => e
+          _log_error "Error (401) requesting resource, creating anyway: #{uri}"
+          http_response = true
+          extra_details.merge("http_authentication" => true)
         rescue RestClient::Forbidden => e
           _log_error "Error (403) requesting resource, creating anyway: #{uri}"
           http_response = true
+          extra_details.merge("http_authentication" => true)
         rescue RestClient::InternalServerError => e
           _log_error "Error (500) requesting resource, creating anyway: #{uri}"
           http_response = true
+          extra_details.merge("http_server_error" => true )
         rescue RestClient::SSLCertificateNotVerified => e
           _log_error "Error (SSL Certificate Invalid) requesting resource, creating anyway: #{uri}"
           http_response = true
-          extra_details.merge("certificate_error" => "#{e}")
+          extra_details.merge("http_certificate_error" => "#{e}")
           #extra_details.merge("certificate_error_detail" => "#{e}")
         rescue OpenSSL::SSL::SSLError => e
           _log_error "Error (SSL Certificate Invalid) requesting resource, creating anyway: #{uri}"
           http_response = true
-          extra_details.merge("certificate_error" => "#{e}")
+          extra_details.merge("http_certificate_error" => "#{e}")
         end
 
         unless http_response
