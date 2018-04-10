@@ -58,6 +58,8 @@ module Generic
           _log_error "Error requesting resource, skipping: #{uri}"
         rescue RestClient::ResourceNotFound => e
           _log_error "Error (404) requesting resource, skipping: #{uri}"
+        rescue RestClient::Forbidden => e
+          _log_error "Error (403) requesting resource, skipping: #{uri}"
         end
 
         unless http_response
