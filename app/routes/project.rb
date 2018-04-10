@@ -121,18 +121,24 @@ class IntrigueApp < Sinatra::Base
     ### EXPORT
     get '/:project/export/json' do
       content_type 'application/json'
+      headers["Content-Disposition"] = "attachment;filename=#{@project_name}.entities.json"
+
       @project = Intrigue::Model::Project.first(:name => @project_name)
       @project.export_json
     end
 
     get '/:project/export/csv' do
       content_type 'application/csv'
+      headers["Content-Disposition"] = "attachment;filename=#{@project_name}.entities.csv"
+
       @project = Intrigue::Model::Project.first(:name => @project_name)
       @project.export_csv
     end
 
     get '/:project/export/applications/csv' do
       content_type 'application/csv'
+      headers["Content-Disposition"] = "attachment;filename=#{@project_name}.applications.csv"
+
       @project = Intrigue::Model::Project.first(:name => @project_name)
       @project.export_applications_csv
     end
@@ -141,6 +147,8 @@ class IntrigueApp < Sinatra::Base
     # Show the results in a gexf format
     get '/:project/export/gexf/?' do
       content_type 'text/plain'
+      headers["Content-Disposition"] = "attachment;filename=#{@project_name}.gephi.gexf"
+
       @project = Intrigue::Model::Project.first(:name => @project_name)
 
       # Generate a list of entities and task runs to work through
@@ -155,7 +163,16 @@ class IntrigueApp < Sinatra::Base
     end
 
     get '/:project/export/graph_json' do
-      redirect "#{@project_name}/graph.json"
+      content_type 'application/json'
+      headers["Content-Disposition"] = "attachment;filename=#{@project_name}.graph.json"
+      project = Intrigue::Model::Project.first(:name => @project_name)
+
+      # Start a new generation
+      unless project.graph_generation_in_progress
+        Intrigue::Workers::GenerateGraphWorker.perform_async(project.id)
+      end
+
+      project.graph_json || "Currently generating..."
     end
 
 end

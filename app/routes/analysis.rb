@@ -17,6 +17,26 @@ class IntrigueApp < Sinatra::Base
       erb :'analysis/services'
     end
 
+    get '/:project/analysis/certificates' do
+      @certificates = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::SslCertificate").sort_by{|x| x.name }
+      erb :'analysis/certificates'
+    end
+
+    get '/:project/analysis/javascripts' do
+      @javascripts = []
+      Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::Uri").each do |u|
+        js_libraries = u.get_detail("libraries")
+        next unless js_libraries
+
+        # capture name, version, sites here ... only select detected stuff
+        libs = js_libraries.select{|x| x["detected"] == true }
+        @javascripts.concat libs.map{|x| x.merge({"site" => u.name, "id" => u.id})}
+
+      end
+
+      erb :'analysis/javascripts'
+    end
+
     get '/:project/analysis/systems' do
       @entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::IpAddress").sort_by{|x| x.name }
 

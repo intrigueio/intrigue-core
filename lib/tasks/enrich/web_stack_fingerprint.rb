@@ -120,6 +120,7 @@ class WebStackFingerprint < BaseTask
       {:regex => /trackalyze/, :finding_name => "Trackalyze"},
       {:regex => /doubleclick.net|googleadservices/, :finding_name => "Google Ads"},
       {:regex => /munchkin.js/, :finding_name => "Marketo"},
+      {:regex => /omniture/, :finding_name => "Omniture"},
       {:regex => /w._hsq/, :finding_name => "Hubspot"},
       {:regex => /Async HubSpot Analytics/, :finding_name => "Async HubSpot Analytics Code for WordPress"},
       {:regex => /Olark live chat software/, :finding_name => "Olark"},

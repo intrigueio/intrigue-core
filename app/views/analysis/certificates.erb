@@ -1,0 +1,42 @@
+<div class="row">
+  <div id="aflkj" class="col-sm-12">
+    <script type="text/javascript" src="/js/sorttable.js"></script>
+    <style>
+    /* Sortable tables */
+    table.sortable {
+      width: 100%;
+      border: 0;
+      table-layout:fixed;
+      word-wrap:break-word;
+      border-collapse:collapse;
+    }
+
+    table.sortable thead {
+        background-color:#eee;
+        color:#666666;
+        font-weight: bold;
+        cursor: default;
+    }
+    </style>
+    <p></p>
+    <table class="sortable" border="1" width=100%>
+      <colgroup>
+        <col style="width:25%">
+        <col style="width:25%">
+        <col style="width:25%">
+        <col style="width:25%">
+      </colgroup>
+      <tbody>
+      <tr><th>Name</th><th>Algorithm</th><th>Issuer</th><th>Expiration Date</th></tr>
+      <% @certificates.each do |x| %>
+        <tr>
+          <td><a href="<%="/#{@project_name}/entities/#{x.id}"%>"><%= x.name %></a></td>
+          <td><%= x.get_detail("algorithm") %></td>
+          <td><%= x.get_detail("issuer") %></td>
+          <td><%= x.get_detail("not_after") %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
