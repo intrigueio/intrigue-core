@@ -67,6 +67,8 @@ module Generic
           _log_error "Error requesting resource, skipping: #{uri}"
         rescue Errno::ECONNREFUSED => e
           _log_error "Error requesting resource, skipping: #{uri}"
+        rescue Errno::EHOSTUNREACH => e
+          _log_error "Error requesting resource, skipping: #{uri}"
         rescue RestClient::RequestTimeout => e
           _log_error "Timeout requesting resource, skipping: #{uri}"
         rescue RestClient::BadRequest => e
@@ -105,6 +107,8 @@ module Generic
           _log_error "Error (SSL Certificate Invalid) requesting resource, creating anyway: #{uri}"
           http_response = true
           extra_details.merge!("http_server_error" => "#{e}" )
+        rescue Exception => e
+          _log_error "Unknown error requesting resource, skipping: #{uri}"
         end
 
         unless http_response
