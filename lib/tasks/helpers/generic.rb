@@ -57,9 +57,14 @@ module Generic
         rescue SocketError => e
           _log_error "Error requesting resource, skipping: #{uri}"
         rescue RestClient::ResourceNotFound => e
-          _log_error "Error (404) requesting resource, skipping: #{uri}"
+          _log_error "Error (404) requesting resource, creating anyway: #{uri}"
+          http_response = true
         rescue RestClient::Forbidden => e
-          _log_error "Error (403) requesting resource, skipping: #{uri}"
+          _log_error "Error (403) requesting resource, creating anyway: #{uri}"
+          http_response = true
+        rescue RestClient::InternalServerError => e
+          _log_error "Error (500) requesting resource, creating anyway: #{uri}"
+          http_response = true
         end
 
         unless http_response
