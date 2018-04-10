@@ -42,7 +42,7 @@ module Generic
     hosts.uniq.each do |h|
 
       # Handle Web Apps first
-      if (protocol == "tcp" && [80,443,8080,8081,8443].include?(port_num))
+      if (protocol == "tcp" && [80,443,8080,8000,8081,8443].include?(port_num))
 
         # Determine if this is SSL
         ssl = true if [443,8443].include?(port_num)
