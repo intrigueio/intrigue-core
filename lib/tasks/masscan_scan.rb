@@ -20,7 +20,7 @@ class Masscan < BaseTask
       :example_entities => [{"type" => "NetBlock", "details" => {"name" => "10.0.0.0/24"}}],
       :allowed_options => [
         {:name => "tcp_ports", :regex => "numeric_list", :default => "21,80,443" },
-        {:name => "udp_ports", :regex => "numeric_list", :default => "161" },
+        {:name => "udp_ports", :regex => "numeric_list", :default => "161,500" },
         {:name => "max_rate", :regex => "integer", :default => 10000 },
       ],
       :created_types => [ "DnsRecord","DnsService","FingerService", "FtpService",
