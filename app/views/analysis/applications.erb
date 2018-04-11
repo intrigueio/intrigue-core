@@ -1,4 +1,3 @@
-<!-- Statistics! -->
 <div class="row">
   <div id="aflkj" class="col-sm-12">
     <script type="text/javascript" src="/js/sorttable.js"></script>
@@ -39,7 +38,7 @@
           <td>
             <% entities.map do |x| %>
               <% if x.has_detail('hidden_screenshot_contents') %>
-                <%= h "<a href='/#{@project_name}/entities/#{x.id}'>"%>
+                <%= "<a href='/#{h @project_name}/entities/#{x.id}'>"%>
                   <img height=200 width=240 src="data:image/png;base64, <%= h x.get_detail('hidden_screenshot_contents') %>" alt="Screenshot" />
                 </a>
               <% end %>
@@ -47,34 +46,34 @@
           </td>
           <td>
             <% entities.map do |x| %>
-              <%= h "<a href='/#{@project_name}/entities/#{x.id}'>#{x.name}<br/>" %>
+              <%= "<a href='/#{h @project_name}/entities/#{h x.id}'>#{x.name}<br/>" %>
             <% end %>
           </td>
           <td>
             <% entities.map do |x| %>
               <% z = Intrigue::Model::Entity.first(:id => x.get_detail("host_id")) %>
-              <%= h "<a href='/#{@project_name}/entities/#{z.id}'>#{z}<br/>" if z && z.type == "Intrigue::Entity::IpAddress" %>
+              <%= "<a href='/#{h @project_name}/entities/#{h z.id}'>#{h z}<br/>" if z && z.type == "Intrigue::Entity::IpAddress" %>
             <% end %>
           </td>
           <td>
             <% entities.map do |x| %>
               <% products = x.get_detail("products") %>
-              <%= h "#{products.map{|x| x["matched"] if x } if products && products.count > 0 }<br/>" %>
+              <%= "#{h products.map{|x| x["matched"] if x } if products && products.count > 0 }<br/>" %>
             <% end %>
           </td>
           <td>
             <% entities.map do |x| %>
-              <%= "#{x.get_detail("verbs")}<br/>" %>
+              <%= "#{h x.get_detail("verbs")}<br/>" %>
             <% end %>
           </td>
           <td>
             <% entities.map do |x| %>
-              <%= "#{x.get_detail("jquery")}<br/>" %>
+              <%= "#{h x.get_detail("jquery")}<br/>" %>
             <% end %>
           </td>
           <td>
             <% entities.map do |x| %>
-              <%= x.type_string == "Uri" ? "#{x.get_detail("api_endpoint")}<br/>" : nil %>
+              <%= x.type_string == "Uri" ? "#{h x.get_detail("api_endpoint")}<br/>" : nil %>
             <% end %>
           </td>
         </tr>

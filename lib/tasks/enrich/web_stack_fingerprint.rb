@@ -347,6 +347,7 @@ class WebStackFingerprint < BaseTask
       temp << "IBM Tivoli" if header =~ /^.*PD_STATEFUL.*$/
       temp << "J2EE" if header =~ /^.*JSESSIONID.*$/
       temp << "Mint" if header =~ /^.*MintUnique.*$/
+      temp << "Moodle" if header =~ /^.*MoodleSession.*$/
       temp << "Omniture" if header =~ /^.*sc_id.*$/
       temp << "PHP" if header =~ /^.*PHPSESSION.*$/
       temp << "PHP" if header =~ /^.*PHPSESSID.*$/

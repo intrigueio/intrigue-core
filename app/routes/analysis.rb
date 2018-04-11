@@ -76,7 +76,18 @@ class IntrigueApp < Sinatra::Base
     end
 
 
-    get '/:project/analysis/websites' do
+    get '/:project/analysis/applications' do
+      selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::Uri").order(:name)
+
+      ## Filter by type
+      alias_group_ids = selected_entities.map{|x| x.alias_group_id }.uniq
+      @alias_groups = Intrigue::Model::AliasGroup.where(:id => alias_group_ids)
+
+      erb :'analysis/applications'
+    end
+
+
+    get '/:project/analysis/stats/applications' do
       selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::Uri").order(:name)
 
       all_entries = []
@@ -87,10 +98,12 @@ class IntrigueApp < Sinatra::Base
       selected_entities.map{|x|  x.details["app_fingerprint"].each{|y| all_entries << "#{y}" } if x.details["app_fingerprint"] }
       @app_fingerprints = Hash.new(0).tap { |h| all_entries.each { |x| h[x] += 1 }  }.sort
 
-      ## Filter by type
-      alias_group_ids = selected_entities.map{|x| x.alias_group_id }.uniq
-      @alias_groups = Intrigue::Model::AliasGroup.where(:id => alias_group_ids)
+      all_entries = []
+      selected_entities.map{|x|  x.details["include_fingerprint"].each{|y| all_entries << "#{y}" } if x.details["include_fingerprint"] }
+      @include_fingerprints = Hash.new(0).tap { |h| all_entries.each { |x| h[x] += 1 }  }.sort
 
-      erb :'analysis/websites'
+
+      erb :'analysis/stats/applications'
     end
+
 end
