@@ -7,14 +7,15 @@ class CiscoSmartInstallScan < BaseTask
   def self.metadata
     {
       :name => "cisco_smart_install_scan",
-      :pretty_name => "Cisco Smart Install Scanner",
+      :pretty_name => "Vulnerability Check - Cisco Smart Install Scanner",
       :authors => ["jcran"],
-      :description => "Check for Smart Install",
+      :identifiers => [],
+      :description => "Check for Cisoc Smart Install Misconfiguration",
       :references => [
         "http://blog.talosintelligence.com/2018/04/critical-infrastructure-at-risk.html",
         "https://github.com/Cisco-Talos/smi_check"
       ],
-      :type => "discovery",
+      :type => "vulnerability_scanner",
       :passive => false,
       :allowed_types => ["NetBlock"],
       :example_entities => [
@@ -39,7 +40,7 @@ class CiscoSmartInstallScan < BaseTask
     results.each do |r|
       _log "Result: #{r}"
 
-      # check to see if it's a smart install enabled device 
+      # check to see if it's a smart install enabled device
       ip_entity = _create_entity "IpAddress", {"name" => r["ip_address"]}
       _create_network_service_entity(ip_entity,r["port"],r["protocol"],{})
     end

@@ -345,12 +345,12 @@ class WebStackFingerprint < BaseTask
       temp << "IBM WebSphere" if header =~ /^.*sesessionid.*$/
       temp << "IBM Tivoli" if header =~ /^.*PD-S-SESSION-ID.*$/
       temp << "IBM Tivoli" if header =~ /^.*PD_STATEFUL.*$/
-      temp << "J2EE" if header =~ /^.*JSESSIONID.*$/
       temp << "Mint" if header =~ /^.*MintUnique.*$/
       temp << "Moodle" if header =~ /^.*MoodleSession.*$/
       temp << "Omniture" if header =~ /^.*sc_id.*$/
       temp << "PHP" if header =~ /^.*PHPSESSION.*$/
       temp << "PHP" if header =~ /^.*PHPSESSID.*$/
+      temp << "Spring" if header =~ /^.*JSESSIONID.*$/
       temp << "Yii PHP Framework 1.1.x" if header =~ /^.*YII_CSRF_TOKEN.*$/       # https://github.com/yiisoft/yii
       temp << "MediaWiki" if header =~ /^.*wiki??_session.*$/
 
