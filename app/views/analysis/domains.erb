@@ -27,8 +27,9 @@
       <tbody>
       <tr><th>Name</th><th>Count</th></tr>
       <% @tlds.each do |x,y| %>
+      <% next if x =~ /arpa$/ %>
         <tr>
-          <td><a href="<%="/#{@project_name}/entities?entity_types[]=Intrigue::Entity::DnsRecord&search_string=#{x}"%>"><%= x%></a></td>
+          <td><a href="<%="/#{h @project_name}/entities?entity_types[]=Intrigue::Entity::DnsRecord&search_string=#{h x}"%>"><%=h x%></a></td>
           <td><%= y %></td>
         </tr>
       <% end %>

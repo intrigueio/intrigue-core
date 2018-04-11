@@ -29,9 +29,9 @@
       <tr><th>Name</th><th>Host</th><th>Services</th></tr>
       <% @services.each do |x| %>
         <tr>
-          <td><a href="<%="/#{@project_name}/entities/#{x.id}"%>"><%= x %></a></td>
-          <td><a href="<%="/#{@project_name}/entities/#{x.get_detail("host_id")}"%>"> <%= Intrigue::Model::Entity.first(:id => x.get_detail("host_id"))  %></a></td>
-          <td><%=x.details%></td>
+          <td><a href="<%="/#{h @project_name}/entities/#{h x.id}"%>"><%= h x %></a></td>
+          <td><a href="<%="/#{h @project_name}/entities/#{h x.get_detail("host_id")}"%>"> <%= h Intrigue::Model::Entity.first(:id => x.get_detail("host_id"))  %></a></td>
+          <td><pre><%=h x.details%></pre></td>
         </tr>
       <% end %>
       </tbody>

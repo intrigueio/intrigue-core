@@ -30,10 +30,10 @@
       <tr><th>Name</th><th>Algorithm</th><th>Issuer</th><th>Expiration Date</th></tr>
       <% @certificates.each do |x| %>
         <tr>
-          <td><a href="<%="/#{@project_name}/entities/#{x.id}"%>"><%= x.name %></a></td>
-          <td><%= x.get_detail("algorithm") %></td>
-          <td><%= x.get_detail("issuer") %></td>
-          <td><%= x.get_detail("not_after") %></td>
+          <td><a href="<%="/#{ h @project_name}/entities/#{h x.id}"%>"><%= h x.name %></a></td>
+          <td><%= h x.get_detail("algorithm") %></td>
+          <td><%= h x.get_detail("issuer") %></td>
+          <td><%= h x.get_detail("not_after") %></td>
         </tr>
       <% end %>
       </tbody>

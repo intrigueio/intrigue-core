@@ -28,8 +28,8 @@
       <tr><th>Name</th><th>Site</th></tr>
       <% @javascripts.each do |x| %>
         <tr>
-          <td><%= x["name"] %></td>
-          <td><a href="<%="/#{@project_name}/entities/#{x["id"]}"%>"><%= x["site"] %></a></td>
+          <td><%=h x["name"] %></td>
+          <td><a href="<%=h "/#{@project_name}/entities/#{x["id"]}"%>"><%= h x["site"] %></a></td>
         </tr>
       <% end %>
       </tbody>
