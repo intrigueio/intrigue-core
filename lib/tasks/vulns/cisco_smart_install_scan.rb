@@ -9,7 +9,7 @@ class CiscoSmartInstallScan < BaseTask
       :name => "cisco_smart_install_scan",
       :pretty_name => "Vulnerability Check - Cisco Smart Install Scanner",
       :authors => ["jcran"],
-      :identifiers => [],
+      :identifiers => [{ "cve" =>  false }],
       :description => "Check for Cisoc Smart Install Misconfiguration",
       :references => [
         "http://blog.talosintelligence.com/2018/04/critical-infrastructure-at-risk.html",

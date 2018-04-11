@@ -43,6 +43,8 @@ class ApacheStrutsJakartaParser < BaseTask
 
     if response.header['X-Intrigue-Struts'] =~ /788544/
 
+      @entity.set_detail("vuln_apache_struts_jakarta_parser",true)
+
       # TODO - create finding ?!?
 
       _log_good "XXXXX-Struts-XXXXX"
