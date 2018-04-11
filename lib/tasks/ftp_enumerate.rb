@@ -93,6 +93,8 @@ class FtpEnumerate < BaseTask
         _log_error "Invalid creds: #{e}"
       rescue Errno::ECONNREFUSED => e
         _log_error "Unable to connect: #{e}"
+      rescue Errno::ECONNRESET => e
+        _log_error "Unable to connect: #{e}"
       rescue Net::ReadTimeout => e
         _log_error "Timeout: #{e}"
       end
