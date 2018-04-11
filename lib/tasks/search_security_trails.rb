@@ -7,7 +7,7 @@ class SearchSecurityTrails < BaseTask
       :name => "search_security_trails",
       :pretty_name => "Search Security Trails",
       :authors => ["jcran"],
-      :description => "This task hits the SecurityTrails API and finds matches.",
+      :description => "This task hits the Security Trails API and finds matches.",
       :references => [],
       :type => "discovery",
       :passive => true,
@@ -22,16 +22,14 @@ class SearchSecurityTrails < BaseTask
   def run
     super
 
-    begin
+    # Make sure the key is set
+    api_key = _get_global_config "security_trails_api_key"
+    entity_name = _get_entity_name
 
-      # Make sure the key is set
-      api_key = _get_global_config "security_trails_api_key"
-      entity_name = _get_entity_name
-
-      raise "Not yet implemented"
+    raise "Not yet implemented"
 
   end # end run()
 
-end # end Class
+end
 end
 end
