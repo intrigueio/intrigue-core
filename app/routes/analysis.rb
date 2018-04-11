@@ -30,7 +30,7 @@ class IntrigueApp < Sinatra::Base
 
         # capture name, version, sites here ... only select detected stuff
         libs = js_libraries.select{|x| x["detected"] == true }
-        @javascripts.concat libs.map{|x| x.merge({"site" => u.name, "id" => u.id})}
+        @javascripts.concat libs.map{|x| x.merge({"name" =>"#{x["product"]} #{x["version"]}", "site" => u.name, "id" => u.id})}
 
       end
 
