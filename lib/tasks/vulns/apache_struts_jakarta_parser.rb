@@ -33,6 +33,11 @@ class ApacheStrutsJakartaParser < BaseTask
     headers["Content-Type"] = "%{#context[‘com.opensymphony.xwork2.dispatcher.HttpServletResponse’].addHeader(‘X-Intrigue-Struts’,888*888)}.multipart/form-data"
     response = http_request(:get, uri, nil, headers) # no auth
 
+    unless response
+      _log_error "No response received"
+      return
+    end
+
     # show the response
     response.each {|x| _log "#{x}: #{response.header[x]}"}
 
