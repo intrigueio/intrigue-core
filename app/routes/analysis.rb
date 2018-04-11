@@ -13,7 +13,7 @@ class IntrigueApp < Sinatra::Base
     end
 
     get '/:project/analysis/services' do
-      @services = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::NetworkService").sort_by{|x| x.name }
+      @services = Intrigue::Model::Entity.scope_by_project(@project_name).all.select{|x| x.type.to_s =~ /Service$/}
       erb :'analysis/services'
     end
 

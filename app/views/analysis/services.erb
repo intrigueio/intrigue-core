@@ -1,5 +1,5 @@
 <div class="row">
-  <div id="aflkj" class="col-sm-6">
+  <div id="aflkj" class="col-sm-12">
     <script type="text/javascript" src="/js/sorttable.js"></script>
     <style>
     /* Sortable tables */
@@ -22,12 +22,16 @@
     <table class="sortable" border="1" width=100%>
       <colgroup>
         <col style="width:20%">
+        <col style="width:20%">
+        <col style="width:60%">
       </colgroup>
       <tbody>
-      <tr><th>Name</th></tr>
+      <tr><th>Name</th><th>Host</th><th>Services</th></tr>
       <% @services.each do |x| %>
         <tr>
-          <td><a href="<%="/#{@project_name}/entities/#{x.id}"%>"><%= x.name %></a></td>
+          <td><a href="<%="/#{@project_name}/entities/#{x.id}"%>"><%= x %></a></td>
+          <td><a href="<%="/#{@project_name}/entities/#{x.get_detail("host_id")}"%>"> <%= Intrigue::Model::Entity.first(:id => x.get_detail("host_id"))  %></a></td>
+          <td><%=x.details%></td>
         </tr>
       <% end %>
       </tbody>

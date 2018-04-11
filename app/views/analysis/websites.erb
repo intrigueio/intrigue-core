@@ -1,23 +1,5 @@
 <!-- Statistics! -->
 <div class="row">
-  <div id="aflkj" class="col-sm-6">
-    <p>Servers:</p>
-    <p>
-      <% @server_fingerprints.each do |k,v| %>
-         <a href="/<%=@project_name%>/entities?search_string=<%=h k%>"><%= h k %></a>: <%= v %><br>
-      <% end %>
-    </p>
-  </div>
-  <div id="aflkj" class="col-sm-6">
-    <p>Applications:</p>
-    <p>
-      <% @app_fingerprints.each do |k,v| %>
-         <a href="/<%=@project_name%>/entities?search_string=<%=h k%>"><%= h k %></a>: <%= v %><br>
-      <% end %>
-    </p>
-  </div>
-</div>
-<div class="row">
   <div id="aflkj" class="col-sm-12">
     <script type="text/javascript" src="/js/sorttable.js"></script>
     <style>

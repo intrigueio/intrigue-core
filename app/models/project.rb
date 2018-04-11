@@ -79,7 +79,7 @@ module Intrigue
           include_fingerprint = x.get_detail("include_fingerprint")
           include_fingerprint_string = include_fingerprint.join("; ") if include_fingerprint
           out << "#{include_fingerprint_string}\n"
-          
+
         end
 
       out
