@@ -76,6 +76,9 @@ module Generic
         rescue RestClient::ResourceNotFound => e
           _log_error "Error (404) requesting resource, creating anyway: #{uri}"
           http_response = true
+        rescue RestClient::MaxRedirectsReached => e
+          _log_error "Error (too many redirects) requesting resource, creating anyway: #{uri}"
+          http_response = true
         rescue RestClient::Unauthorized => e
           _log_error "Error (401) requesting resource, creating anyway: #{uri}"
           http_response = true
