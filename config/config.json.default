@@ -182,6 +182,12 @@
       "uri" : "https://www.builtwith.com",
       "editable" : "true",
       "comment" : ""
+    },
+    "security_trails_api_key": {
+      "value" : "",
+      "uri" : "https://securitytrails.com/corp/apidocs",
+      "editable" : "true",
+      "comment" : ""
     }
   }
 }
