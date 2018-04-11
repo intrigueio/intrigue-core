@@ -7,7 +7,7 @@ class EtcdHarvester < BaseTask
   def self.metadata
     {
       :name => "etcd_harvester",
-      :pretty_name => "Etcd Harvester",
+      :pretty_name => "Vulnerability Check - Etcd Harvester",
       :authors => ["jcran"],
       :identifiers => [{ "cve" =>  false }],
       :description => "Grab keys from etcd daemon.",
@@ -38,7 +38,6 @@ class EtcdHarvester < BaseTask
       uri = "#{_get_entity_name}/v2/keys/?recursive=true"
     end
 
-
     begin
       # get the response
       _log "Harvesting Etcd for #{uri}"
@@ -51,7 +50,7 @@ class EtcdHarvester < BaseTask
       end
 
       # Parse and print it
-      _log "Parsing response from #{uri}"
+      _log_good "SUCCESS! Parsing response from etcd daemon on #{uri}"
       hash = JSON.parse response
 
       # Save it on the entity
