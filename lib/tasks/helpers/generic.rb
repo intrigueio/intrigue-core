@@ -110,6 +110,10 @@ module Generic
           _log_error "Error (SSL Certificate Invalid) requesting resource, creating anyway: #{uri}"
           http_response = true
           extra_details.merge!("http_server_error" => "#{e}" )
+        rescue Net::HTTPBadResponse => e
+          _log_error "Error (Bad HTTP Response) requesting resource, creating anyway: #{uri}"
+          http_response = true
+          extra_details.merge!("http_server_error" => "#{e}" )
         rescue RestClient::ExceptionWithResponse => err
           _log_error "Unknown error requesting resource, skipping: #{uri}"
           _log_error "INVESTIGATE: #{e}"
