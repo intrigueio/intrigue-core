@@ -235,7 +235,7 @@ module Intrigue
       end
 
       def export_csv
-        "'#{type}', '#{name}', '#{detail_string.gsub(",",";") if detail_string}', '#{hidden}', '#{deleted}', '#{alias_group_id}'"
+        "#{type}, #{name}, #{detail_string.gsub(",",";") if detail_string}, #{hidden}, #{deleted}, #{alias_group_id}"
       end
 
 
