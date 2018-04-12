@@ -9,7 +9,8 @@ module Handler
     end
 
     def process(result)
-      puts "S3 CSV Handler called"
+      puts "S3 CSV Handler called on #{result.type} #{result.name}"
+
       access_key = _get_handler_config("access_key")
       secret_key = _get_handler_config("secret_key")
       bucket_name = _get_handler_config("bucket")

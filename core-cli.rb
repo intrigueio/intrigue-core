@@ -113,6 +113,14 @@ class CoreCli < Thor
     end
   end
 
+  desc "local_handle_all_projects_scan_results [Handler]", "Manually run a handler on a project's scan results"
+  def local_handle_all_projects(handler_type)
+    Intrigue::Model::Project.each do |p|
+      puts "Working on #{p.name}..."
+      p.scan_results.each {|s| s.handle(handler_type) }
+    end
+  end
+
   desc "local_handle_project [Project] [Handler]", "Manually run a handler on a project's scan results"
   def local_handle_project(project, handler_type)
     Intrigue::Model::Project.first(:name => project).handle(handler_type)
