@@ -14,10 +14,7 @@ module Intrigue
       end
 
       def entities
-        Intrigue::Model::Entity.where(
-          :project_id => id,
-          :hidden => false,
-          :deleted => false)
+        Intrigue::Model::Entity.scope_by_project(id)
       end
 
       def export_hash

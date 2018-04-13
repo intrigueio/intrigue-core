@@ -38,9 +38,7 @@ module Intrigue
       end
 
       def entities
-        entities=[]
-        task_results.each {|x| x.entities.each {|e| entities << e } }
-      entities
+        task_results.map{ |x| x.entities }
       end
 
       def increment_task_count
