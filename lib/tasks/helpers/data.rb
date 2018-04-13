@@ -157,6 +157,7 @@ module Data
           entity_name =~ /^.*outlook.com(:[0-9]*)?$/                   ||
           entity_name =~ /^.*ogp.me(:[0-9]*)?$/                        ||
           entity_name =~ /^.*outlook.com(:[0-9]*)?$/                   ||
+          entity_name =~ /^.*pardot.com(:[0-9]*)?$/                    ||
           entity_name =~ /^.*photorank.me(:[0-9]*)?$/                  ||
           entity_name =~ /^.*plus.google.com(:[0-9]*)?$/               ||
           entity_name =~ /^.*posterous.com(:[0-9]*)?$/                 ||
