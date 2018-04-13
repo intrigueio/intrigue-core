@@ -38,7 +38,7 @@ module Intrigue
       end
 
       def entities
-        task_results.map{ |x| x.entities }.flatten
+        task_results.select{ |x| x.entities if x.entities.count > 0  }.flatten
       end
 
       def increment_task_count
