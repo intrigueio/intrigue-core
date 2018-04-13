@@ -97,7 +97,7 @@ module Intrigue
 
       def export_csv
         output_string = ""
-        self.entities.sort_by{|e| e.to_s }.each{ |x| output_string << x.export_csv << "\n" }
+        self.entities.each{ |x| output_string << x.export_csv << "\n" }
       output_string
       end
 

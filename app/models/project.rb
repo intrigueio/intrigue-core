@@ -35,15 +35,9 @@ module Intrigue
       end
 
       def export_csv
-        out = ""
-
-        out << "Type,Name,Alias Group,Details\n"
-        self.entities.sort_by{|e| e.to_s }.each do |x|
-          alias_string = x.alias_group.id if x.alias_group
-          out << "#{x.type_string},#{x.name},#{alias_string},#{x.detail_string}\n"
-        end
-
-      out
+        output_string = ""
+        self.entities.each{ |x| output_string << x.export_csv << "\n" }
+      output_string
       end
 
       def export_applications_csv
