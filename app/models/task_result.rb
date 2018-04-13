@@ -106,9 +106,7 @@ module Intrigue
       end
 
       def export_csv
-        output_string = ""
-        self.entities.sort_by{|e| e.to_s }.each{ |x| output_string << x.export_csv << "\n" }
-      output_string
+        self.entities.map{ |x| "#{x.export_csv}\n" }.join("")
       end
 
       def export_json

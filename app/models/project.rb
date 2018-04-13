@@ -14,7 +14,7 @@ module Intrigue
       end
 
       def entities
-        Intrigue::Model::Entity.scope_by_project(id)
+        Intrigue::Model::Entity.scope_by_project(self.name)
       end
 
       def export_hash
