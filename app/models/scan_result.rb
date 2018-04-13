@@ -38,10 +38,18 @@ module Intrigue
       end
 
       def entities
-        Intrigue::Model::Entity.join_table(:inner,
-          :entities_task_results, 'entity_id': :'id').join_table(:inner,
-            :task_results, 'id': :'task_result_id').join_table(:inner,
-              :scan_results, 'id': :'scan_result_id').where(:'scan_result_id' => self.id)
+        #Intrigue::Model::Entity.join_table(:inner,
+        #  :entities_task_results, 'entity_id': :'id').join_table(:inner,
+        #    :task_results, 'id': :'task_result_id').join_table(:inner,
+        #      :scan_results, 'id': :'scan_result_id').where(:'scan_result_id' => self.id).select_map{|x| x.id}
+
+        # HACK!!!
+        if self.project.scan_results.count > 1
+          raise "unable to export"
+        else
+          return self.project.entities
+        end
+        
       end
 
       def increment_task_count
