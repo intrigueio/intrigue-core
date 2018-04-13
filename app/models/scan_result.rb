@@ -38,7 +38,7 @@ module Intrigue
       end
 
       def entities
-        task_results.map{ |x| x.entities }
+        task_results.map{ |x| x.entities }.flatten
       end
 
       def increment_task_count
