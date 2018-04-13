@@ -77,18 +77,18 @@ module Intrigue
       end
 
 
-      def handle
+      def handle(prefix=nil)
         handled = []
         self.handlers.each do |handler_type|
           handler = Intrigue::HandlerFactory.create_by_type(handler_type)
-          handled << handler.process(self)
+          handled << handler.process(self, prefix)
         end
       handled
       end
 
-      def handle(handler_type)
+      def handle(handler_type, prefix=nil)
         handler = Intrigue::HandlerFactory.create_by_type(handler_type)
-        handler.process(self)
+        handler.process(self,prefix)
       end
 
     end

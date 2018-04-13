@@ -8,7 +8,7 @@ module Handler
       "s3_json"
     end
 
-    def process(result)
+    def process(result,prefix=nil)
       puts "S3 JSON Handler called on #{result}: #{result.name}"
       access_key = _get_handler_config("access_key")
       secret_key = _get_handler_config("secret_key")
@@ -22,7 +22,7 @@ module Handler
 
       bucket = connection.directories.get(bucket_name)
       bucket.files.create (
-        { :key => "#{result.name}.json",
+        { :key => "#{prefix}#{result.name}.json",
           :body => result.export_json
         }
       )
