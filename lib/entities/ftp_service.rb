@@ -15,7 +15,7 @@ class FtpService < Intrigue::Entity::NetworkService
   end
 
   def detail_string
-    details["banner"].tr("\n","").tr("\r","") if details && details["banner"]
+    details["banner"][0..79].tr("\n","").tr("\r","") if details && details["banner"]
   end
 
 end
