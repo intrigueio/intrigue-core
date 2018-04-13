@@ -38,7 +38,10 @@ module Intrigue
       end
 
       def entities
-        task_results.select{ |x| x.entities if x.entities.count > 0  }.flatten
+        Intrigue::Model::Entity.join_table(:inner,
+          :entities_task_results, 'entity_id': :'id').join_table(:inner,
+            :task_results, 'id': :'task_result_id').join_table(:inner,
+              :scan_results, 'id': :'scan_result_id').where(:'scan_result_id' => self.id)
       end
 
       def increment_task_count
