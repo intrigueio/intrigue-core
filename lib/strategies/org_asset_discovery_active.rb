@@ -55,8 +55,7 @@ module Strategy
         # Make sure it's owned by the org, and if it is, scan it. also skip ipv6/
         if entity.details["whois_full_text"] =~ /#{filter_strings}/i && !(entity.name =~ /::/)
           start_recursive_task(task_result,"masscan_scan",entity,[
-            {"name"=> "tcp_ports", "value" => "21,22,80,443,8000,8080"},
-            {"name"=> "udp_ports", "value" => "53,161,500"}])
+            {"name"=> "tcp_ports", "value" => "80,443"}])
         else
           task_result.log "Cowardly refusing to scan this netblock.. it doesn't look like ours."
         end
