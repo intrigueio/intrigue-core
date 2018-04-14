@@ -41,7 +41,7 @@ module Strategy
       elsif entity.type_string == "IpAddress"
 
         # Prevent us from hammering on whois services
-        unless ( entity.created_by?("net_block_expand"))
+        unless ( entity.created_by?("net_block_expand") )
           start_recursive_task(task_result,"whois",entity)
         end
 
@@ -83,9 +83,9 @@ module Strategy
         start_recursive_task(task_result,"uri_gather_ssl_certificate",entity) if entity.name =~ /^https/
 
         # Check for exploitable URIs, but don't recurse on things we've already found
-        start_recursive_task(task_result,"uri_brute", entity, [
-          {"name"=> "threads", "value" => 1},
-          {"name" => "user_list", "value" => "admin,test,server-status,.svn,.git"}])
+        #start_recursive_task(task_result,"uri_brute", entity, [
+        #  {"name"=> "threads", "value" => 1},
+        #  {"name" => "user_list", "value" => "admin,test,server-status,.svn,.git"}])
 
         #unless (entity.created_by?("uri_brute") || entity.created_by?("uri_spider") )
           ## Super-lite spider, looking for metadata
