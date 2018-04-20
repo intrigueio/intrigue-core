@@ -177,6 +177,7 @@ module Data
           entity_name =~ /^.*urchin.com(:[0-9]*)?$/                    ||
           entity_name =~ /^.*url.google.com(:[0-9]*)?$/                ||
           entity_name =~ /^.*v0cdn.net(:[0-9]*)?$/                     ||
+          entity_name =~ /^.*volusion.com(:[0-9]*)?$/                  ||
           entity_name =~ /^.*w3.org(:[0-9]*)?$/                        ||
           entity_name =~ /^.*windows.net(:[0-9]*)?$/                   ||
           entity_name =~ /^.*windowsphone-int.net(:[0-9]*)?$/          ||
