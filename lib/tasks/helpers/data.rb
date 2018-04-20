@@ -162,6 +162,7 @@ module Data
           entity_name =~ /^.*plus.google.com(:[0-9]*)?$/               ||
           entity_name =~ /^.*posterous.com(:[0-9]*)?$/                 ||
           entity_name =~ /^.*purl.org(:[0-9]*)?$/                      ||
+          entity_name =~ /^.*q4web.com(:[0-9]*)?$/                     ||
           entity_name =~ /^.*rdfs.org(:[0-9]*)?$/                      ||
           entity_name =~ /^.*root-servers.net(:[0-9]*)?$/              ||
           entity_name =~ /^.*schema.org(:[0-9]*)?$/                    ||
