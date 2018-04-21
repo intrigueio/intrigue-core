@@ -1,3 +1,5 @@
+require 'digest'
+
 ###
 ### Please note - these methods may be used inside task modules, or inside libraries within
 ### Intrigue. An attempt has been made to make them abstract enough to use anywhere inside the
@@ -18,6 +20,7 @@ module Task
       # first collect all products
       @fingerprints = [
         Intrigue::Fingerprint::AspNet,
+        Intrigue::Fingerprint::Drupal,
         Intrigue::Fingerprint::Example,
         Intrigue::Fingerprint::Joomla,
         Intrigue::Fingerprint::LimeSurvey,
@@ -25,6 +28,7 @@ module Task
         Intrigue::Fingerprint::MediaWiki,
         Intrigue::Fingerprint::Spring,
         Intrigue::Fingerprint::Tomcat,
+        Intrigue::Fingerprint::Wordpress,
       ]
 
       # gather all fingeprints for each product
@@ -61,6 +65,7 @@ module Task
 
                 # Do each content check, call the dynamic name if we have it,
                 # otherwise, just give it a static name
+                # note that content should be a regex!!!!
                 if "#{response.body}" =~ check[:content]
 
                   _log "CONTENT MATCH: #{check[:content]}"
@@ -70,10 +75,25 @@ module Task
                   else
                     results << "#{check[:name]} #{check[:version]}"
                   end
+
                 end
 
-              else
-                raise "Unknown check type"
+              elsif check[:type] == "checksum"
+
+                if Digest::MD5.hexdigest("#{response.body}") == check[:checksum]
+
+                  _log "CHECKSUM MATCH: #{check[:checksum]}"
+
+                  if check[:dynamic_name]
+                    results << check[:dynamic_name].call(response.body) || "#{check[:name]} #{check[:version]}"
+                  else
+                    results << "#{check[:name]} #{check[:version]}"
+                  end
+
+                end
+
+              # else skip, we don't know what type of check this is
+
               end
 
             end

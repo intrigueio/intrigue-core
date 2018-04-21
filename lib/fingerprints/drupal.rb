@@ -1,6 +1,6 @@
 module Intrigue
   module Fingerprint
-    class Example
+    class Drupal
 
       def generate_fingerprints(uri)
         {
