@@ -11,6 +11,82 @@ module Intrigue
 module Task
   module Web
 
+    def fingerprint_uri(uri)
+
+      results = []
+
+      # first collect all products
+      @fingerprints = [
+        Intrigue::Fingerprint::AspNet,
+        Intrigue::Fingerprint::Example,
+        Intrigue::Fingerprint::Joomla,
+        Intrigue::Fingerprint::LimeSurvey,
+        Intrigue::Fingerprint::Magento,
+        Intrigue::Fingerprint::MediaWiki,
+        Intrigue::Fingerprint::Spring,
+        Intrigue::Fingerprint::Tomcat,
+      ]
+
+      # gather all fingeprints for each product
+      # this will look like an array of fingerprints, each with a uri and a SET of checks
+
+      generated_fingerprints = @fingerprints.map{|x| x.new.generate_fingerprints(uri) }.flatten
+      #puts "generated_fingerprints: #{generated_fingerprints}"
+
+      # group by the uris, with the associated checks
+      grouped_generated_fingerprints = generated_fingerprints.group_by{|x| x[:uri]}
+      #puts "grouped_generated_fingerprints: #{grouped_generated_fingerprints}"
+
+      # call the check on each uri
+      grouped_generated_fingerprints.each do |ggf|
+        #puts "ggf uri: #{ggf.first}"
+        #puts "ggf checks: #{ggf.last}"
+
+        # get the response
+        response = http_request :get, "#{ggf.first}"
+
+        if response
+
+          # call each check, collecting the product if it's a match
+          ggf.last.map{|x| x[:checklist] }.each do |checklist|
+
+            #puts "ggf -> checklist: #{checklist}"
+
+            checklist.each do |check|
+
+              #puts "ggf -> checklist -> check: #{check}"
+
+              # if type "content", do the content check
+              if check[:type] == "content"
+
+                # Do each content check, call the dynamic name if we have it,
+                # otherwise, just give it a static name
+                if "#{response.body}" =~ check[:content]
+
+                  _log "CONTENT MATCH: #{check[:content]}"
+
+                  if check[:dynamic_name]
+                    results << check[:dynamic_name].call(response.body) || check[:name]
+                  else
+                    results << check[:name]
+                  end
+
+                end
+
+
+              else
+                raise "Unknown check type"
+              end
+
+            end
+          end
+
+        end # if response
+      end
+    results
+    end
+
+
     #
     # Download a file locally. Useful for situations where we need to parse the file
     # and also useful in situations were we need to verify content-type

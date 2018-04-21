@@ -71,7 +71,10 @@ class WebStackFingerprint < BaseTask
     app_stack.concat _check_cookies(response)
     app_stack.concat _check_generator(response)
     app_stack.concat _check_x_headers(response)
-    app_stack.concat _check_specific_pages(uri)
+    
+    # this has now been moved into Intrigue::Task::Web
+    # for details on the fingerprints, see the lib/fingerprints directory
+    app_stack.concat fingerprint_uri(uri)
     uniq_app_stack =  app_stack.select{ |x| x != nil }.uniq
     @entity.set_detail("app_fingerprint", uniq_app_stack)
     _log "Setting app stack to #{uniq_app_stack}"
@@ -199,124 +202,6 @@ class WebStackFingerprint < BaseTask
 
     _log "Returning: #{temp}"
 
-  temp
-  end
-
-
-  def _check_specific_pages(uri)
-    _log "_check_specific_pages called"
-    temp = []
-
-    all_checks = [
-      {
-        :uri => "#{uri}",
-        :checklist => [
-        {
-          :name => "ASP.Net",
-          :description => "ASP.Net Error Message",
-          :type => "content",
-          :content => /ASP.NET is configured/,
-          :test_site => "http://54.225.111.54",
-          :dynamic_name => lambda{|x| x.scan(/ASP.NET Version:.*$/)[0].gsub("ASP.NET Version:","").chomp }
-        },
-        {
-          :name => "LimeSurvey",
-          :description => "LimeSurvey",
-          :type => "content",
-          :content => /Donate to LimeSurvey/,
-          :test_site => "http://129.186.73.249/index.php/admin"
-        },
-        {
-          :name => "Magento",
-          :description => "Magento",
-          :type => "content",
-          :content => /Mage.Cookies.path/,
-          :test_site => "https://admin.chwine.com"
-        },
-        {
-          :name => "MediaWiki",
-          :description => "Powered by MediaWiki ",
-          :type => "content",
-          :content => /<a href="\/\/www.mediawiki.org\/">Powered by MediaWiki<\/a>/,
-          :test_site => "https://manual.limesurvey.org"
-        },
-        {
-          :name => "Tomcat",
-          :description => "Tomcat Web Application Server",
-          :type => "content",
-          :content => /<title>Apache Tomcat/,
-          :test_site => "https://cms.msu.montana.edu/",
-          :dynamic_name => lambda{|x| x.scan(/<title>.*<\/title>/)[0].gsub("<title>","").gsub("</title>","").chomp }
-        },
-        {
-          :name => "Yoast Wordpress SEO Plugin", # won't be used if we have
-          :description => "Yoast Wordpress SEO Plugin",
-          :type => "content",
-          :content => /<!-- \/ Yoast WordPress SEO plugin. -->/,
-          :test_site => "https://ip-50-62-231-56.ip.secureserver.net",
-          :dynamic_name => lambda{|x| x.scan(/the Yoast WordPress SEO plugin v.* - h/)[0].gsub("the ","").gsub(" - h","") }
-        }
-      ]},
-      {
-        :uri => "#{uri}/thispagedoesnotexist-#{rand(10000000)}",
-        :checklist => [{
-          :name => "Spring",
-          :description => "Standard Spring Error Message",
-          :type => "content",
-          :content =>  /{"timestamp":\d.*,"status":999,"error":"None","message":"No message available"}/,
-          :test_site => "https://pcr.apple.com",
-          :references => ["https://github.com/spring-projects/spring-boot"]
-        #},
-        #
-        # TODO ... dropping this since it's a server thing, but note that we do get a hostname here and we shouldn't completely drop it
-        #
-        #{
-        #  :name => "Apache",
-        #  :description => "Apache Missing Page",
-        #  :type => "content",
-        #  :content => /<address>.*<\/address>/,
-        #  :dynamic_name => lambda{|x| x.scan(/<address>.*<\/address>/)[0].gsub(/<\/?address>/,"") }
-        }]},
-      {
-        :uri => "#{uri}/error.json",
-        :checklist => [{
-          :name => "Spring",
-          :description => "Standard Spring MVC error page",
-          :type => "content",
-          :content => /{"timestamp":\d.*,"status":999,"error":"None","message":"No message available"}/,
-          :test_site => "https://pcr.apple.com"
-      }]}
-    ]
-
-    all_checks.each do |check|
-      response = http_request :get,"#{check[:uri]}"
-      if response
-
-        #### iterate on checks for this URI
-        check[:checklist].each do |check|
-
-          # Content checks first
-          if check[:type] == "content"
-
-            # Do each content check, call the dynamic name if we have it,
-            # otherwise, just give it a static name
-            if "#{response.body}" =~ check[:content]
-              _log "CONTENT MATCH: #{check[:content]}"
-              if check[:dynamic_name]
-                temp << check[:dynamic_name].call(response.body)
-              else
-                temp << check[:name]
-              end
-            end
-
-          else
-            # other types might include image check
-            raise "Not sure how to handle this check type"
-          end
-
-        end
-      end
-    end
   temp
   end
 
