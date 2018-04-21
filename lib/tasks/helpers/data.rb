@@ -78,6 +78,7 @@ module Data
           entity_name =~ /^.*azureedge-test.net(:[0-9]*)?$/            ||
           entity_name =~ /^.*azureedge.net(:[0-9]*)?$/                 ||
           entity_name =~ /^.*azurewebsites.net(:[0-9]*)?$/             ||
+          entity_name =~ /^.*bigcommerce.com(:[0-9]*)?$/               ||
           entity_name =~ /^.*bronto.com(:[0-9]*)?$/                    ||
           entity_name =~ /^.*bydiscourse.com(:[0-9]*)?$/               ||
           entity_name =~ /^.*chtah.com(:[0-9]*)?$/                     ||
