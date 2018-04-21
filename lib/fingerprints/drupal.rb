@@ -4,14 +4,15 @@ module Intrigue
 
       def generate_fingerprints(uri)
         {
-          :uri => "#{uri}",
+          :uri => "#{uri}/CHANGELOG.txt",
           :checklist => [
             {
-              :name => "Example App",
-              :description => "Just an example",
+              :name => "Drupal",
+              :description => "Drupal CMS",
               :version => "(Unknown Version)",
               :type => "content",
-              :content => /this is an example/
+              :content => /Drupal/,
+              :dynamic_name => lambda{|x| x.scan(/Drupal.*,/)[0].gsub(",","").chomp }
             }
           ]
         }

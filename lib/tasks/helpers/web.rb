@@ -66,13 +66,11 @@ module Task
                   _log "CONTENT MATCH: #{check[:content]}"
 
                   if check[:dynamic_name]
-                    results << check[:dynamic_name].call(response.body) || check[:name]
+                    results << check[:dynamic_name].call(response.body) || "#{check[:name]} #{check[:version]}"
                   else
-                    results << check[:name]
+                    results << "#{check[:name]} #{check[:version]}"
                   end
-
                 end
-
 
               else
                 raise "Unknown check type"

@@ -9,6 +9,7 @@ module Intrigue
             {
               :name => "ASP.NET",
               :description => "ASP.Net Error Message",
+              :version => "(Unknown Version)",
               :type => "content",
               :content => /ASP.NET is configured/,
               :dynamic_name => lambda{|x| x.scan(/ASP.NET Version:.*$/)[0].gsub("ASP.NET Version:","").chomp }
