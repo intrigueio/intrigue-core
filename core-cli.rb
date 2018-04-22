@@ -153,6 +153,70 @@ class CoreCli < Thor
     end
   end
 
+  desc "local_bootstrap_client [filename]", "Bootstrap from a client file."
+  def local_bootstrap_client(filename)
+
+    extend Intrigue::Task::Helper
+
+    # JSON will look like this:
+    #{
+    #  "name": "example",
+    #  "projects": [
+    #    {
+    #      "name": "example",
+    #      "seeds": [
+    #        {
+    #          "entity": "DnsRecord#example.com",
+    #          "task" : "create_entity",
+    #          "depth" : 5,
+    #          "strategy" : "org_asset_discovery_active"
+    #        }
+    #      ],
+    #      "exclude_standard": true,
+    #      "exclude_additional_matches": ["/notanexample/"]
+    #    }
+    #  ]
+    #}
+
+    client_data = JSON.parse(File.read(filename))
+
+    unless client_data
+      puts "FATAL: unable to parse"
+      return
+    end
+
+    # XXX - Assumes we start at a clean system!!!!
+    client_data["projects"].each do |p|
+      project_name = p["name"]
+      project = Intrigue::Model::Project.create(:name => "#{project_name}")
+
+      puts "Working on project: #{project_name}"
+      p["seeds"].each do |s|
+        puts " - Seed: #{s}"
+
+        entity = _parse_entity s["entity"]
+        task_name = s["task"] || "create_entity"
+        strategy = s["strategy"] || "org_asset_discovery_active"
+        depth = s["depth"] || 5
+        optiosn = s["options"] || []
+        handlers = s["handlers"] || []
+
+        # Create the entity
+        created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"], true)
+
+        # kick off the task
+        task_result = start_task("task", project, nil, task_name, created_entity, depth, options, handlers, strategy)
+
+      end
+
+      # TODO ... add the exclusion stuff here
+
+    end
+
+
+  end
+
+
   desc "local_load [Task] [File] [Depth] [Option1=Value1#...#...] [Handlers] [Strategy]", "Load entities from a file and runs a task on each in a new project."
   def local_load(task_name,filename,depth=1,options_string=nil,handler_string=nil, strategy_name="asset_discovery_active")
 
@@ -173,21 +237,12 @@ class CoreCli < Thor
       handlers = _parse_handlers handler_string
       depth = depth.to_i
 
-      #puts "Entity: #{entity}"
-      #puts "Strategy: #{strategy_name}"
-
-      payload = {
-        "task" => task_name,
-        "entity" => entity,
-        "options" => options,
-      }
-
       # Create the entity
-      entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"], true)
+      created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"], true)
 
       # kick off the task
-      task_result = start_task("task", p, nil, task_name, entity, depth, options, handlers, strategy_name)
-      puts "Created task #{task_result.inspect} for entity #{entity}"
+      task_result = start_task("task", p, nil, task_name, created_entity, depth, options, handlers, strategy_name)
+      puts "Created task #{task_result.inspect} for entity #{created_entity}"
     end
   end
 

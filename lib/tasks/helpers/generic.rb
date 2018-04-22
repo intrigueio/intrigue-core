@@ -57,8 +57,12 @@ module Generic
         # FIRST CHECK TO SEE IF WE GET A RESPONSE FOR THIS HOSTNAME
         begin
 
-          http_response = RestClient::Request.execute(:method => :get, :url => uri, :timeout => 6, :open_timeout => 6)
-
+          http_response = RestClient::Request.execute({
+            :method => :get,
+            :url => uri,
+            :timeout => 5,
+            :open_timeout => 5
+          })
 
           ## TODO ... follow location headers?
 
