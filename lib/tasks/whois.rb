@@ -53,6 +53,9 @@ class Whois < BaseTask
     rescue ::Whois::ServerNotFound => e
       _log_error "Unable to query whois: #{e}"
       return
+    rescue Errno::ECONNREFUSED => e
+      _log_error "Unable to query whois: #{e}"
+      return
     rescue Timeout::Error => e
       _log_error "Unable to query whois: #{e}"
       return
