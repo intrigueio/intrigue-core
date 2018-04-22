@@ -123,6 +123,7 @@ class CoreCli < Thor
 
   desc "local_handle_project [Project] [Handler] [Prefix (optional)]", "Manually run a handler on a project's scan results"
   def local_handle_project(project, handler_type, prefix)
+    puts "Working on project #{project.name}..."
     Intrigue::Model::Project.first(:name => project).handle(handler_type, prefix)
   end
 
@@ -153,7 +154,7 @@ class CoreCli < Thor
     end
   end
 
-  desc "local_bootstrap_client [filename]", "Bootstrap from a client file."
+  desc ",strap_client [filename]", "Bootstrap from a client file."
   def local_bootstrap_client(filename)
 
     extend Intrigue::Task::Helper
@@ -199,7 +200,7 @@ class CoreCli < Thor
         strategy = s["strategy"] || "org_asset_discovery_active"
         depth = s["depth"] || 6
         optiosn = s["options"] || []
-        handlers = s["handlers"] || ["s3_csv", "s3_json"]
+        handlers = s["handlers"] || []
 
         # Create the entity
         created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"], true)
