@@ -6,11 +6,17 @@ class TomcatPutJsp < BaseTask
     {
       :name => "tomcat_put_jsp",
       :pretty_name => "Vulnerability Check - Tomcat PUT method",
-      :identifiers => [{ "cve" =>  "CVE-2017-12615" }],
+      :identifiers => [
+        { "cve" =>  "CVE-2017-12615" },
+        { "metasploit" => "exploits/multi/http/tomcat_jsp_upload_bypass"}
+      ],
       :authors => ["jcran"],
-      :description => "Trigger Tomcat PUT - CVE-2017-12615",
+      :description => "When running on Windows with HTTP PUTs enabled (e.g. via setting the readonly initialisation parameter of the Default to false) it was possible to upload a JSP file to the server via a specially crafted request. This JSP could then be requested and any code it contained would be executed by the server.",
       :references => [
-        "https://github.com/breaktoprotect/CVE-2017-12615"
+        "https://github.com/breaktoprotect/CVE-2017-12615",
+        "https://www.ixiacom.com/company/blog/deconstructing-apache-tomcat-jsp-upload-remote-code-execution-cve-2017-12615",
+        "https://www.peew.pw/blog/2017/10/9/new-vulnerability-same-old-tomcat-cve-2017-12615",
+        "https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/multi/http/tomcat_jsp_upload_bypass.rb"
       ],
       :type => "vulnerability_check",
       :passive => false,
@@ -27,10 +33,9 @@ class TomcatPutJsp < BaseTask
 
     uri = _get_entity_name
 
-    payload = '<% out.write("<html><body><h3>[+] JSP file successfully uploaded via curl and JSP out.write executed.</h3></body></html>"); %>'
+    payload = '<% out.write("<html><body><h3>hello world!</h3></body></html>"); %>'
 
     #docs/manager-howto.jsp
-
     begin
       response = RestClient::Request.execute(
         :url => "#{uri}/test.jsp/",
