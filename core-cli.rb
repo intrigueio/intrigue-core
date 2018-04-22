@@ -197,9 +197,9 @@ class CoreCli < Thor
         entity = _parse_entity s["entity"]
         task_name = s["task"] || "create_entity"
         strategy = s["strategy"] || "org_asset_discovery_active"
-        depth = s["depth"] || 5
+        depth = s["depth"] || 6
         optiosn = s["options"] || []
-        handlers = s["handlers"] || []
+        handlers = s["handlers"] || ["s3_csv", "s3_json"]
 
         # Create the entity
         created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"], true)
