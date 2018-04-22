@@ -57,6 +57,7 @@ module Generic
         # FIRST CHECK TO SEE IF WE GET A RESPONSE FOR THIS HOSTNAME
         begin
 
+          _log "connecting to #{uri}"
           http_response = RestClient::Request.execute({
             :method => :get,
             :url => uri,
