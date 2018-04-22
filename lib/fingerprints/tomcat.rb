@@ -13,7 +13,7 @@ module Intrigue
               :version => "(Unknown Version)",
               :content => /<title>Apache Tomcat/,
               :test_site => "https://cms.msu.montana.edu/",
-              :dynamic_name => lambda{|x| x.scan(/<title>.*<\/title>/)[0].gsub("<title>","").gsub("</title>","").chomp }
+              :dynamic_name => lambda{|x| x.scan(/<title>.*<\/title>/)[0].gsub("<title>","").gsub(" - Error report</title>","").chomp }
             }
           ]
         }
