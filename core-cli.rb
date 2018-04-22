@@ -116,6 +116,7 @@ class CoreCli < Thor
   desc "local_handle_all_scan_results [Handler]", "Manually run a handler on a project's scan results"
   def local_handle_all_scan_results(handler_type)
     Intrigue::Model::Project.each do |p|
+      next unless p.entities.count > 0
       puts "Working in project: #{p.name}..."
       p.scan_results.each {|s| s.handle(handler_type) }
     end
