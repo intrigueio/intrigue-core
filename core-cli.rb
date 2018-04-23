@@ -155,7 +155,7 @@ class CoreCli < Thor
     end
   end
 
-  desc ",strap_client [filename]", "Bootstrap from a client file."
+  desc "local_bootstrap_client [filename]", "Bootstrap from a client file."
   def local_bootstrap_client(filename)
 
     extend Intrigue::Task::Helper
