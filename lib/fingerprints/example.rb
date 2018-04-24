@@ -10,7 +10,7 @@ module Intrigue
               :name => "Example App",
               :description => "Just an example",
               :version => "(Unknown Version)",
-              :type => "content",
+              :type => :content_body,
               :content => /this is an example/
             }
           ]

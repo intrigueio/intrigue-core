@@ -8,7 +8,7 @@ module Intrigue
           :checklist => [{
             :name => "Spring",
             :description => "Standard Spring Error Message",
-            :type => "content",
+            :type => :content_body,
             :version => "(Unknown Version)",
             :content =>  /{"timestamp":\d.*,"status":999,"error":"None","message":"No message available"}/,
             :test_site => "https://pcr.apple.com",
@@ -18,9 +18,9 @@ module Intrigue
           :uri => "#{uri}/error.json",
           :checklist => [{
             :name => "Spring",
-            :version => "(Unknown Version)",
             :description => "Standard Spring MVC error page",
-            :type => "content",
+            :type => :content_body,
+            :version => "(Unknown Version)",
             :content => /{"timestamp":\d.*,"status":999,"error":"None","message":"No message available"}/,
             :test_site => "https://pcr.apple.com"
           }]}

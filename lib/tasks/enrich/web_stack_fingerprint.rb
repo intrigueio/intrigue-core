@@ -71,10 +71,10 @@ class WebStackFingerprint < BaseTask
     app_stack.concat _check_cookies(response)
     app_stack.concat _check_generator(response)
     app_stack.concat _check_x_headers(response)
-    
+
     # this has now been moved into Intrigue::Task::Web
     # for details on the fingerprints, see the lib/fingerprints directory
-    app_stack.concat fingerprint_uri(uri)
+    app_stack.concat fingerprint_uri(uri).map{|x| "#{x[:name]} #{x[:version]}"}
     uniq_app_stack =  app_stack.select{ |x| x != nil }.uniq
     @entity.set_detail("app_fingerprint", uniq_app_stack)
     _log "Setting app stack to #{uniq_app_stack}"

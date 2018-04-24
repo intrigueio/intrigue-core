@@ -9,7 +9,7 @@ module Intrigue
             {
               :name => "Joomla!",
               :description => "Known Joomla Admin Page",
-              :type => "content",
+              :type => :content_body,
               :version => "(Unknown Version)",
               :content => /files_joomla/,
               :test_site => "http://studio-caractere.fr",

@@ -9,7 +9,7 @@ module Intrigue
             {
               :name => "Apache Tomcat",
               :description => "Tomcat Application Server",
-              :type => "content",
+              :type => :content_body,
               :version => "(Unknown Version)",
               :content => /<title>Apache Tomcat/,
               :test_site => "https://cms.msu.montana.edu/",

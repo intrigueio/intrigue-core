@@ -9,7 +9,7 @@ module Intrigue
             {
               :name => "Magento",
               :description => "Magento",
-              :type => "content",
+              :type => :content_body,
               :version => "(Unknown Version)",
               :content => /Mage.Cookies.path/,
               :test_site => "https://admin.chwine.com"

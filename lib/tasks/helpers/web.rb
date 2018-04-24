@@ -28,23 +28,19 @@ module Task
         Intrigue::Fingerprint::MediaWiki,
         Intrigue::Fingerprint::Spring,
         Intrigue::Fingerprint::Tomcat,
-        Intrigue::Fingerprint::Wordpress,
+        Intrigue::Fingerprint::Wordpress
       ]
 
       # gather all fingeprints for each product
       # this will look like an array of fingerprints, each with a uri and a SET of checks
 
       generated_fingerprints = @fingerprints.map{|x| x.new.generate_fingerprints(uri) }.flatten
-      #puts "generated_fingerprints: #{generated_fingerprints}"
 
       # group by the uris, with the associated checks
       grouped_generated_fingerprints = generated_fingerprints.group_by{|x| x[:uri]}
-      #puts "grouped_generated_fingerprints: #{grouped_generated_fingerprints}"
 
       # call the check on each uri
       grouped_generated_fingerprints.each do |ggf|
-        #puts "ggf uri: #{ggf.first}"
-        #puts "ggf checks: #{ggf.last}"
 
         # get the response
         response = http_request :get, "#{ggf.first}"
@@ -54,45 +50,54 @@ module Task
           # call each check, collecting the product if it's a match
           ggf.last.map{|x| x[:checklist] }.each do |checklist|
 
-            #puts "ggf -> checklist: #{checklist}"
-
             checklist.each do |check|
 
-              #puts "ggf -> checklist -> check: #{check}"
-
               # if type "content", do the content check
-              if check[:type] == "content"
-
+              if check[:type] == :content_body
                 # Do each content check, call the dynamic name if we have it,
                 # otherwise, just give it a static name
                 # note that content should be a regex!!!!
                 if "#{response.body}" =~ check[:content]
-
-                  _log "CONTENT MATCH: #{check[:content]}"
-
                   if check[:dynamic_name]
-                    results << check[:dynamic_name].call(response.body) || "#{check[:name]} #{check[:version]}"
+                    results << { :name => check[:dynamic_name].call(response.body), :version => check[:version], :match => check[:type] } ||
+                      { :name => check[:name], :version => check[:version], :match => check[:type] }
                   else
-                    results << "#{check[:name]} #{check[:version]}"
+                    results << { :name => check[:name], :version => check[:version], :match => check[:type] }
                   end
-
                 end
 
-              elsif check[:type] == "checksum"
+              elsif check[:type] == :content_headers
+                # Check each header
+                response.each do |h|
+                  next unless check[:content] =~ h
+                  if check[:dynamic_name]
+                    results << { :name => check[:dynamic_name].call(response.body), :version => check[:version], :match => check[:type] } ||
+                      { :name => check[:name], :version => check[:version], :match => check[:type] }
+                  else
+                    results << { :name => check[:name], :version => check[:version], :match => check[:type] }
+                  end
+                end
 
+              elsif check[:type] == :content_cookies
+                # Check only the set-cookie header
+                if response.header['set-cookie'] =~ check[:content]
+                  if check[:dynamic_name]
+                    results << { :name => check[:dynamic_name].call(response.body), :version => check[:version], :match => check[:type] } ||
+                      { :name => check[:name], :version => check[:version], :match => check[:type] }
+                  else
+                    results << { :name => check[:name], :version => check[:version], :match => check[:type] }
+                  end
+                end
+
+              elsif check[:type] == :checksum_body
                 if Digest::MD5.hexdigest("#{response.body}") == check[:checksum]
-
-                  _log "CHECKSUM MATCH: #{check[:checksum]}"
-
                   if check[:dynamic_name]
-                    results << check[:dynamic_name].call(response.body) || "#{check[:name]} #{check[:version]}"
+                    results << { :name => check[:dynamic_name].call(response.body), :version => check[:version], :match => check[:type] } ||
+                      { :name => check[:name], :version => check[:version], :match => check[:type] }
                   else
-                    results << "#{check[:name]} #{check[:version]}"
+                    results << { :name => check[:name], :version => check[:version], :match => check[:type] }
                   end
-
                 end
-
-              # else skip, we don't know what type of check this is
 
               end
 
