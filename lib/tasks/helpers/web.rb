@@ -58,8 +58,8 @@ module Task
                 # otherwise, just give it a static name
                 # note that content should be a regex!!!!
                 if "#{response.body}" =~ check[:content]
-                  if check[:dynamic_name]
-                    results << { :name => check[:dynamic_name].call(response.body), :version => check[:version], :match => check[:type] } ||
+                  if check[:dynamic_version]
+                    results << { :version => check[:dynamic_version].call(response.body), :name => check[:name], :match => check[:type] } ||
                       { :name => check[:name], :version => check[:version], :match => check[:type] }
                   else
                     results << { :name => check[:name], :version => check[:version], :match => check[:type] }
@@ -70,8 +70,8 @@ module Task
                 # Check each header
                 response.each do |h|
                   next unless check[:content] =~ h
-                  if check[:dynamic_name]
-                    results << { :name => check[:dynamic_name].call(response.body), :version => check[:version], :match => check[:type] } ||
+                  if check[:dynamic_version]
+                    results << { :version => check[:dynamic_version].call(response.body), :name => check[:name], :match => check[:type] } ||
                       { :name => check[:name], :version => check[:version], :match => check[:type] }
                   else
                     results << { :name => check[:name], :version => check[:version], :match => check[:type] }
@@ -81,8 +81,8 @@ module Task
               elsif check[:type] == :content_cookies
                 # Check only the set-cookie header
                 if response.header['set-cookie'] =~ check[:content]
-                  if check[:dynamic_name]
-                    results << { :name => check[:dynamic_name].call(response.body), :version => check[:version], :match => check[:type] } ||
+                  if check[:dynamic_version]
+                    results << { :version => check[:dynamic_version].call(response.body), :name => check[:name], :match => check[:type] } ||
                       { :name => check[:name], :version => check[:version], :match => check[:type] }
                   else
                     results << { :name => check[:name], :version => check[:version], :match => check[:type] }
@@ -91,8 +91,8 @@ module Task
 
               elsif check[:type] == :checksum_body
                 if Digest::MD5.hexdigest("#{response.body}") == check[:checksum]
-                  if check[:dynamic_name]
-                    results << { :name => check[:dynamic_name].call(response.body), :version => check[:version], :match => check[:type] } ||
+                  if check[:dynamic_version]
+                    results << { :version => check[:dynamic_version].call(response.body), :name => check[:name], :match => check[:type] } ||
                       { :name => check[:name], :version => check[:version], :match => check[:type] }
                   else
                     results << { :name => check[:name], :version => check[:version], :match => check[:type] }

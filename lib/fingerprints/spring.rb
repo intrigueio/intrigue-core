@@ -9,9 +9,8 @@ module Intrigue
             :name => "Spring",
             :description => "Standard Spring Error Message",
             :type => :content_body,
-            :version => "(Unknown Version)",
+            :version => "Unknown",
             :content =>  /{"timestamp":\d.*,"status":999,"error":"None","message":"No message available"}/,
-            :test_site => "https://pcr.apple.com",
             :references => ["https://github.com/spring-projects/spring-boot"]
           }]},
         {
@@ -20,9 +19,8 @@ module Intrigue
             :name => "Spring",
             :description => "Standard Spring MVC error page",
             :type => :content_body,
-            :version => "(Unknown Version)",
-            :content => /{"timestamp":\d.*,"status":999,"error":"None","message":"No message available"}/,
-            :test_site => "https://pcr.apple.com"
+            :version => "Unknown",
+            :content => /{"timestamp":\d.*,"status":999,"error":"None","message":"No message available"}/
           }]}
         ]
       end

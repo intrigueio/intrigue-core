@@ -10,9 +10,8 @@ module Intrigue
               :name => "MediaWiki",
               :description => "MediaWiki",
               :type => :content_body,
-              :version => "(Unknown Version)",
-              :content => /<a href="\/\/www.mediawiki.org\/">Powered by MediaWiki<\/a>/,
-              :test_site => "https://manual.limesurvey.org"
+              :version => "Unknown",
+              :content => /<a href="\/\/www.mediawiki.org\/">Powered by MediaWiki<\/a>/
             }
           ]
         }

@@ -10,9 +10,8 @@ module Intrigue
               :name => "LimeSurvey",
               :description => "LimeSurvey",
               :type => :content_body,
-              :version => "(Unknown Version)",
-              :content => /Donate to LimeSurvey/,
-              :test_site => "http://129.186.73.249/index.php/admin"
+              :version => "Unknown",
+              :content => /Donate to LimeSurvey/
             }
           ]
         }

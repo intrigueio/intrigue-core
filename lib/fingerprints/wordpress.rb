@@ -10,7 +10,7 @@ module Intrigue
               {
                 :name => "Wordpress",
                 :description => "Wordpress WP-JSON endpoint",
-                :version => "(Unknown Version)",
+                :version => "Unknown",
                 :type => :content_body,
                 :content => /gmt_offset/
               }

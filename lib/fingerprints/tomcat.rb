@@ -10,15 +10,14 @@ module Intrigue
               :name => "Apache Tomcat",
               :description => "Tomcat Application Server",
               :type => :content_body,
-              :version => "(Unknown Version)",
+              :version => "Unknown",
               :content => /<title>Apache Tomcat/,
               :test_site => "https://cms.msu.montana.edu/",
-              :dynamic_name => lambda{|x| x.scan(/<title>.*<\/title>/)[0].gsub("<title>","").gsub(" - Error report</title>","").chomp }
+              :dynamic_version => lambda{|x| x.scan(/<title>.*<\/title>/)[0].gsub("<title>","").gsub("Tomcat","").gsub(" - Error report</title>","").chomp }
             }
           ]
         }
       end
-
     end
   end
 end

@@ -10,9 +10,8 @@ module Intrigue
               :name => "Magento",
               :description => "Magento",
               :type => :content_body,
-              :version => "(Unknown Version)",
-              :content => /Mage.Cookies.path/,
-              :test_site => "https://admin.chwine.com"
+              :version => "Unknown",
+              :content => /Mage.Cookies.path/
             }
           ]
         }
