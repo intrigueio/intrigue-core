@@ -10,6 +10,15 @@
 #
 ### END INIT INFO
 
+## If rbenv is used, uncomment this:
+#
+# export RBENV_ROOT=/home/ubuntu/.rbenv
+# export PATH="$RBENV_ROOT/bin:$PATH"
+# export RBENV_VERSION=2.1.3
+# eval "$(rbenv init -)"
+#
+
+
 IDIR=/path/to/install/directory
 cd $IDIR
 
