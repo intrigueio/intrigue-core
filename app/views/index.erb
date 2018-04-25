@@ -14,3 +14,14 @@
   <li>2016-12-24: v0.10 Initial release.</li>
 <ul>
 </div>
+<div class="col-sm-6">
+</div>
+<div class="col-sm-6">
+<h3>Statistics</h3>
+<ul>
+  <li>Total Entities: <%= Intrigue::Model::Entity.where(:deleted => false, :hidden => false).count %></li>
+  <li>Applications: <%= Intrigue::Model::Entity.where(:deleted => false, :hidden => false, :type => "Intrigue::Entity::Uri").count %></li>
+  <li>Ip Addresses: <%= Intrigue::Model::Entity.where(:deleted => false, :hidden => false, :type => "Intrigue::Entity::IpAddress").count %></li>
+  <li>Dns Records: <%= Intrigue::Model::Entity.where(:deleted => false, :hidden => false, :type => "Intrigue::Entity::DnsRecord").count %></li>
+<ul>
+</div>
