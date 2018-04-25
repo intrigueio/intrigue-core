@@ -30,6 +30,8 @@ module Task
         Intrigue::Fingerprint::LimeSurvey,
         Intrigue::Fingerprint::Magento,
         Intrigue::Fingerprint::MediaWiki,
+        Intrigue::Fingerprint::Nagios,
+        Intrigue::Fingerprint::PhpMyAdmin,
         Intrigue::Fingerprint::RabbitMQ,
         Intrigue::Fingerprint::Spring,
         Intrigue::Fingerprint::Tomcat,
