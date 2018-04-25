@@ -13,7 +13,7 @@ module Intrigue
                 :version => "Unknown",
                 :type => :content_body,
                 :content => /Drupal/,
-                :dynamic_version => lambda{|x| x.scan(/^(Drupal.*)[ ,<\.].*$/)[0].gsub("Drupal ","").gsub(",","").chomp }
+                :dynamic_version => lambda{|x| x.body.scan(/^(Drupal.*)[ ,<\.].*$/)[0].gsub("Drupal ","").gsub(",","").chomp }
               }
             ]
           }

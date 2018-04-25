@@ -12,7 +12,7 @@ module Intrigue
               :version => "Unknown",
               :type => :content_body,
               :content => /^.*ASP.NET is configured.*$/,
-              :dynamic_version => lambda{|x| x.scan(/ASP.NET Version:.*$/)[0].gsub("ASP.NET Version:","").chomp }
+              :dynamic_version => lambda{|x| x.body.scan(/ASP.NET Version:.*$/)[0].gsub("ASP.NET Version:","").chomp }
             },
             {
               :name => "ASP.NET",
@@ -20,7 +20,7 @@ module Intrigue
               :version => "Unknown",
               :type => :content_headers,
               :content => /^X-AspNet-Version:.*$/,
-              :dynamic_version => lambda{|x| x.scan(/ASP.NET Version:.*$/)[0].gsub("ASP.NET Version:","").chomp }
+              :dynamic_version => lambda{|x| x.body.scan(/ASP.NET Version:.*$/)[0].gsub("ASP.NET Version:","").chomp }
             },
             {
               :name => "ASP.NET",

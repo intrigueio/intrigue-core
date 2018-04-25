@@ -20,6 +20,7 @@ module Task
       # first collect all products
       @fingerprints = [
         Intrigue::Fingerprint::AspNet,
+        Intrigue::Fingerprint::Atlassian,
         Intrigue::Fingerprint::Drupal,
         Intrigue::Fingerprint::Example,
         Intrigue::Fingerprint::Joomla,
@@ -59,7 +60,7 @@ module Task
                 # note that content should be a regex!!!!
                 if "#{response.body}" =~ check[:content]
                   if check[:dynamic_version]
-                    results << { :version => check[:dynamic_version].call(response.body), :name => check[:name], :match => check[:type] } ||
+                    results << { :version => check[:dynamic_version].call(response), :name => check[:name], :match => check[:type] } ||
                       { :name => check[:name], :version => check[:version], :match => check[:type] }
                   else
                     results << { :name => check[:name], :version => check[:version], :match => check[:type] }
@@ -71,7 +72,7 @@ module Task
                 response.each do |h|
                   next unless check[:content] =~ h
                   if check[:dynamic_version]
-                    results << { :version => check[:dynamic_version].call(response.body), :name => check[:name], :match => check[:type] } ||
+                    results << { :version => check[:dynamic_version].call(response), :name => check[:name], :match => check[:type] } ||
                       { :name => check[:name], :version => check[:version], :match => check[:type] }
                   else
                     results << { :name => check[:name], :version => check[:version], :match => check[:type] }
@@ -82,7 +83,7 @@ module Task
                 # Check only the set-cookie header
                 if response.header['set-cookie'] =~ check[:content]
                   if check[:dynamic_version]
-                    results << { :version => check[:dynamic_version].call(response.body), :name => check[:name], :match => check[:type] } ||
+                    results << { :version => check[:dynamic_version].call(response), :name => check[:name], :match => check[:type] } ||
                       { :name => check[:name], :version => check[:version], :match => check[:type] }
                   else
                     results << { :name => check[:name], :version => check[:version], :match => check[:type] }
@@ -92,7 +93,7 @@ module Task
               elsif check[:type] == :checksum_body
                 if Digest::MD5.hexdigest("#{response.body}") == check[:checksum]
                   if check[:dynamic_version]
-                    results << { :version => check[:dynamic_version].call(response.body), :name => check[:name], :match => check[:type] } ||
+                    results << { :version => check[:dynamic_version].call(response), :name => check[:name], :match => check[:type] } ||
                       { :name => check[:name], :version => check[:version], :match => check[:type] }
                   else
                     results << { :name => check[:name], :version => check[:version], :match => check[:type] }
