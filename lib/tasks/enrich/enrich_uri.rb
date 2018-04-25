@@ -48,6 +48,8 @@ class EnrichUri < BaseTask
     # grab all script_references
     script_references = response_data.scan(/<script.*?src=["|'](.*?)["|']/).map{|x| x.first }
 
+    page_title = response_data.scan(/<title>(.*)<\/title>/)[0].first
+
     # we'll need to make another request
     #trace_enabled = check_trace_endpoint(uri)
 
@@ -58,6 +60,7 @@ class EnrichUri < BaseTask
       "api_endpoint" => api_enabled,
       #"trace" => trace_enabled,
       #"webdav" => webdav_enabled,
+      "title" => page_title,
       "verbs" => verbs_enabled,
       "scripts" => script_references,
       "forms" => contains_forms,
