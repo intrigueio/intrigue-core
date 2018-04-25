@@ -4,7 +4,7 @@ module Intrigue
 
       def generate_fingerprints(uri)
         [{
-          :uri => "#{uri}/thispagedoesnotexist-#{rand(10000000)}",
+          :uri => "#{uri}/donotbealarmedthisisjusttestingagenericerrorpage",
           :checklist => [{
             :name => "Spring",
             :description => "Standard Spring Error Message",

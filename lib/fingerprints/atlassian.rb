@@ -7,7 +7,21 @@ module Intrigue
           :uri => "#{uri}",
           :checklist => [
             {
-              :name => "Jira",
+              :name => "Atlassian BitBucket",
+              :description => "Atlassian BitBucket",
+              :version => "Unknown",
+              :type => :content_body,
+              :content => /com.atlassian.bitbucket.server/
+            },
+            {
+              :name => "Atlassian Confluence",
+              :description => "Confluence",
+              :version => "Unknown",
+              :type => :content_headers,
+              :content => /X-Confluence-Request-Time/
+            },
+            {
+              :name => "Atlassian Jira",
               :description => "Jira",
               :version => "Unknown",
               :type => :content_cookies,
