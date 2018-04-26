@@ -21,6 +21,7 @@ module Task
       @fingerprints = [
         Intrigue::Fingerprint::AspNet,
         Intrigue::Fingerprint::Atlassian,
+        Intrigue::Fingerprint::Chef,
         Intrigue::Fingerprint::Drupal,
         Intrigue::Fingerprint::Example,
         Intrigue::Fingerprint::Gitlab,
