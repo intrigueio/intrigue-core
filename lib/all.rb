@@ -61,6 +61,10 @@ Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 tasks_folder = File.expand_path('../tasks/vulns', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
+# Load import tasks
+tasks_folder = File.expand_path('../tasks/import', __FILE__) # get absolute directory
+Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
+
 
 # And check to see if there are any specified load paths
 global_config = Intrigue::Config::GlobalConfig.new

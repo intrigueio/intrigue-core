@@ -129,15 +129,26 @@ module Task
       @task_result.logger.log_good "Attempting to download #{url} and store in #{file.path}" if @task_result
 
       begin
-        uri = URI.parse(URI.encode("#{url}"))
-        Net::HTTP.start(uri.host, uri.port) do |http|
-          http.read_timeout = 10
-          resp = http.get(uri.path)
-          response_body = resp.body.encode('UTF-8', {:invalid => :replace, :undef => :replace, :replace => '?'})
 
-          file.write(response_body)
-          file.flush
+        uri = URI.parse(URI.encode("#{url}"))
+
+        opts = {}
+        if uri.instance_of? URI::HTTPS
+          opts[:use_ssl] = true
+          opts[:verify_mode] = OpenSSL::SSL::VERIFY_NONE
         end
+
+        # TODO enable proxy
+        http = Net::HTTP.start(uri.host, uri.port, nil, nil, opts) do |http|
+          http.read_timeout = 20
+          http.open_timeout = 20
+          http.request_get(uri.path) do |resp|
+            resp.read_body do |segment|
+              file.write(segment)
+            end
+          end
+        end
+
       rescue URI::InvalidURIError => e
         @task_result.logger.log_error "Invalid URI? #{e}" if @task_result
         return nil
@@ -185,6 +196,9 @@ module Task
       rescue EOFError => e
         @task_result.logger.log_error "Unexpected end of file, consider looking at this file manually: #{url}" if @task_result
         return nil
+      ensure
+        file.flush
+        file.close
       end
 
     file.path

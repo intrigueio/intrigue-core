@@ -1,12 +1,12 @@
 module Intrigue
 module Task
-class AwsS3Loot < BaseTask
+class EnrichAwsS3Bucket < BaseTask
 
   include Intrigue::Task::Web
 
   def self.metadata
     {
-      :name => "aws_s3_loot",
+      :name => "enrich/aws_s3_bucket",
       :pretty_name => "AWS S3 Loot",
       :authors => ["jcran"],
       :description => "This task takes an S3 bucket and gathers all URIs.",

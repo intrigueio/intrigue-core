@@ -4,7 +4,7 @@ class TomcatPutJsp < BaseTask
 
   def self.metadata
     {
-      :name => "tomcat_put_jsp",
+      :name => "vuln/tomcat_put_jsp",
       :pretty_name => "Vulnerability Check - Tomcat PUT method",
       :identifiers => [
         { "cve" =>  "CVE-2017-12615" },

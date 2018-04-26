@@ -24,8 +24,8 @@ class UriBrute < BaseTask
         {"type" => "Uri", "details" => {"name" => "http://intrigue.io"}}
       ],
       :allowed_options => [
-        {:name => "threads", :type => "Integer", :regex => "integer", :default => 1 },
-        {:name => "user_list", :type => "String", :regex => "alpha_numeric_list", :default => [] }
+        {:name => "threads", :regex => "integer", :default => 1 },
+        {:name => "user_list", :regex => "alpha_numeric_list", :default => [] }
       ],
       :created_types => ["Uri"]
     }

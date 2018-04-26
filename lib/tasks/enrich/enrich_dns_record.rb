@@ -7,7 +7,7 @@ class EnrichDnsRecord < BaseTask
 
   def self.metadata
     {
-      :name => "enrich_dns_record",
+      :name => "enrich/dns_record",
       :pretty_name => "Enrich DnsRecord",
       :authors => ["jcran"],
       :description => "Look up all names of a given entity.",

@@ -8,6 +8,35 @@ module Generic
 
   private
 
+
+  def _threaded_iteration(thread_count, items, funct)
+
+    # Create our queue of work from the checks in brute_list
+    input_queue = Queue.new
+    output_queue = Queue.new
+
+    items.each do |item|
+        input_queue << item
+    end
+
+    # Create a pool of worker threads to work on the queue
+    workers = (0...thread_count).map do
+      Thread.new do
+        begin
+          while item = input_queue.pop(true)
+            # kick it off an save our ouput to the out queue
+            funct.call(item)
+          end # end while
+        rescue ThreadError
+        end
+      end
+    end; "ok"
+    workers.map(&:join); "ok"
+
+  output_queue
+  end # end run method
+
+
   ###
   ### Helper method to reach out to the entity manager
   ###

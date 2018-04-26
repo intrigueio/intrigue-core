@@ -6,7 +6,7 @@ class WebStackFingerprint < BaseTask
 
   def self.metadata
     {
-      :name => "web_stack_fingerprint",
+      :name => "enrich/web_stack_fingerprint",
       :pretty_name => "Web Stack Fingerprint",
       :authors => ["jcran"],
       :description => "Fingerprints the coponents of of a Uri, giving insight into the products.",

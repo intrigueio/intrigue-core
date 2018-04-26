@@ -6,7 +6,7 @@ class EnrichSnmp < BaseTask
 
   def self.metadata
     {
-      :name => "enrich_snmp_service",
+      :name => "enrich/snmp_service",
       :pretty_name => "Enrich SNMP Service",
       :authors => ["jcran"],
       :description => "This task connects to a snmp service and pulls out system details.",

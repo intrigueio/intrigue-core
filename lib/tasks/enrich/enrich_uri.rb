@@ -6,7 +6,7 @@ class EnrichUri < BaseTask
 
   def self.metadata
     {
-      :name => "enrich_uri",
+      :name => "enrich/uri",
       :pretty_name => "Enrich URI",
       :authors => ["jcran"],
       :description => "Sets the \"api\" detail, letting us know if this is an api endpoint.",
@@ -46,9 +46,7 @@ class EnrichUri < BaseTask
     verbs_enabled = check_options_endpoint(uri)
 
     # grab all script_references
-    script_references = response_data.scan(/<script.*?src=["|'](.*?)["|']/).map{|x| x.first }
-
-    page_title = response_data.scan(/<title>(.*)<\/title>/)[0].first
+    script_references = response_data.scan(/<script.*?src=["|'](.*?)["|']/).map{|x| x.first if x }
 
     # we'll need to make another request
     #trace_enabled = check_trace_endpoint(uri)
@@ -60,16 +58,12 @@ class EnrichUri < BaseTask
       "api_endpoint" => api_enabled,
       #"trace" => trace_enabled,
       #"webdav" => webdav_enabled,
-      "title" => page_title,
       "verbs" => verbs_enabled,
       "scripts" => script_references,
       "forms" => contains_forms,
-      "response_data_hash" => response_data_hash
-      #"hidden_response_data" => response_data 
+      "response_data_hash" => response_data_hash,
+      "hidden_response_data" => response_data
     })
-
-
-
 
     # Set the details, and make sure raw response data is a hidden (not searchable) detail
     @entity.set_details(new_details)

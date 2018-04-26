@@ -1,19 +1,19 @@
 module Intrigue
 module Task
-class AwsGatherRanges < BaseTask
+class ImportAwsIpv4Ranges < BaseTask
 
   include Intrigue::Task::Web
 
   def self.metadata
     {
-      :name => "aws_gather_ranges",
-      :pretty_name => "AWS Gather Ranges",
+      :name => "import/aws_ipv4_ranges",
+      :pretty_name => "Import AWS IPv4 Ranges",
       :authors => ["jcran"],
       :description => "This gathers the ranges from AWS.",
       :references => [],
-      :type => "discovery",
+      :type => "import",
       :passive => true,
-      :allowed_types => ["String"],
+      :allowed_types => ["*"],
       :example_entities => [
         {"type" => "String", "details" => {"name" => "us-east-1"}}
       ],

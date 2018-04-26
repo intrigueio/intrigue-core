@@ -7,7 +7,7 @@ class EnrichIpAddress < BaseTask
 
   def self.metadata
     {
-      :name => "enrich_ip_address",
+      :name => "enrich/ip_address",
       :pretty_name => "Enrich IP Address",
       :authors => ["jcran"],
       :description => "Look up all names of a given entity.",
