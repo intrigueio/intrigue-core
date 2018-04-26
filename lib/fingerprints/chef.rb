@@ -13,6 +13,13 @@ module Intrigue
               :type => :content_body,
               :content => /<title>Chef Server<\/title>/,
               :dynamic_version => lambda{|x| x.body.scan(/Version\ (.*)\ &mdash;/)[0].first }
+            },
+            {
+              :name => "Chef Server",
+              :description => "Chef Server",
+              :version => "Unknown",
+              :type => :content_cookies,
+              :content => /chef-manage/
             }
           ]
         }
