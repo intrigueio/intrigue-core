@@ -16,6 +16,7 @@ class UriGatherSslCert  < BaseTask
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "details" => {"name" => "http://www.intrigue.io"}}],
       :allowed_options => [
+        {:name => "parse_entities", :regex => "boolean", :default => true },
         {:name => "skip_acquia", :regex => "boolean", :default => true },
         {:name => "skip_cloudflare", :regex => "boolean", :default => true },
         {:name => "skip_distil", :regex => "boolean", :default => true },
@@ -32,6 +33,7 @@ class UriGatherSslCert  < BaseTask
   def run
     super
 
+    opt_parse = _get_option "parse_entities"
     opt_skip_acquia = _get_option "skip_acquia"
     opt_skip_cloudflare = _get_option "skip_cloudflare"
     opt_skip_distill = _get_option "skip_distill"
@@ -109,15 +111,19 @@ class UriGatherSslCert  < BaseTask
             end
           end
 
-          #assuming we made it this far, let's proceed
-          alt_names.each do |alt_name|
+          if opt_parse
 
-            # Remove any leading wildcards so we get a sensible domain name
-            if alt_name[0..1] == "*."
-              alt_name = alt_name[2..-1]
+            #assuming we made it this far, let's proceed
+            alt_names.each do |alt_name|
+
+              # Remove any leading wildcards so we get a sensible domain name
+              if alt_name[0..1] == "*."
+                alt_name = alt_name[2..-1]
+              end
+
+              _create_entity "DnsRecord", { "name" => alt_name }
             end
 
-            _create_entity "DnsRecord", { "name" => alt_name }
           end
 
         end

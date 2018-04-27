@@ -34,7 +34,7 @@ class ImportUmbrellaTopSites < BaseTask
 
     lammylam = lambda { |d|
       _log "Creating sites for domain: #{d}"
-      _create_entity "Uri", { "name" => "http://#{d}", "uri"=>"https://#{d}" }
+      #_create_entity "Uri", { "name" => "http://#{d}", "uri"=>"https://#{d}" }
       _create_entity "Uri", { "name" => "https://#{d}", "uri"=>"https://#{d}" }
     true
     }
