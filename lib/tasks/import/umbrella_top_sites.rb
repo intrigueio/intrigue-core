@@ -32,7 +32,6 @@ class ImportUmbrellaTopSites < BaseTask
     lines = File.open(f,"r").read.split("\n")
     domains = lines.map{|l| l.split(",").last.chomp }
 
-
     lammylam = lambda { |d|
       _log "Creating sites for domain: #{d}"
       _create_entity "Uri", { "name" => "http://#{d}", "uri"=>"https://#{d}" }
