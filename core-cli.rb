@@ -126,7 +126,7 @@ class CoreCli < Thor
 
   desc "local_handle_project [Project] [Handler] [Prefix (optional)]", "Manually run a handler on a project's scan results"
   def local_handle_project(project, handler_type, prefix)
-    puts "Working on project #{project.name}..."
+    puts "Working on project #{project}..."
     Intrigue::Model::Project.first(:name => project).handle(handler_type, prefix)
   end
 

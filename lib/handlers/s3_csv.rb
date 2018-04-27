@@ -21,12 +21,19 @@ module Handler
         :aws_secret_access_key => secret_key
       })
 
+      # write to a tempfile first
+      tempfile = Tempfile.new("export-#{rand(10000000)}.csv")
+      tempfile.write(result.export_csv)
+
       bucket = connection.directories.get(bucket_name)
       bucket.files.create (
         { :key => "#{prefix}#{result.name}.csv",
-          :body => result.export_csv
+          :body => tempfile.read
         }
       )
+
+      tempfile.close
+      tempfile.unlink
 
     end
 
