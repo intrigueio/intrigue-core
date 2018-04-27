@@ -12,8 +12,7 @@ module Intrigue
               :type => :content_body,
               :version => "Unknown",
               :content => /<title>Apache Tomcat/,
-              :test_site => "https://cms.msu.montana.edu/",
-              :dynamic_version => lambda{|x| x.body.scan(/<title>.*<\/title>/)[0].gsub("<title>","").gsub("Tomcat","").gsub(" - Error report</title>","").chomp }
+              :dynamic_version => lambda{|x| x.body.scan(/<title>(.*)<\/title>/)[0].first.gsub("Apache Tomcat/","").gsub(" - Error report","").chomp }
             }
           ]
         }
