@@ -23,7 +23,11 @@ module Handler
 
       # write to a tempfile first
       tempfile = Tempfile.new("export-#{rand(10000000)}.csv")
-      tempfile.write(result.export_csv)
+      result.entities.each do |e|
+        tempfile.write("#{e.export_csv}\n")
+      end
+      # rewind to beginning
+      tempfile.rewind
 
       bucket = connection.directories.get(bucket_name)
       bucket.files.create (
