@@ -39,9 +39,10 @@ module Intrigue
 
       def export_applications_csv
         out = ""
-        out << "IpAddress,Uri,ServerFingerprint,AppFingerprint,IncludeFingerprint\n"
+        out << "IpAddress,Uri,ServerFingerprint,AppFingerprint,IncludeFingerprint,Title\n"
 
         self.entities.sort_by{|e| e.to_s }.each do |x|
+
           next unless x.kind_of? Intrigue::Entity::Uri
 
           # Resolve the host
@@ -53,23 +54,27 @@ module Intrigue
             out << "[Unknown host],"
           end
 
-          out << "#{x.name},"
+          out << "#{x.name.gsub(",",";")},"
 
           #products = x.get_detail("products")
           #product_string = products.map{|p| p["matched"] }.compact.join("; ") if products
           #out << "#{product_string}" if product_string
 
           server_fingerprint = x.get_detail("server_fingerprint")
-          server_fingerprint_string = server_fingerprint.join("; ") if server_fingerprint
+          server_fingerprint_string = server_fingerprint.gsub(",","").join("; ") if server_fingerprint
           out << "#{server_fingerprint_string},"
 
           app_fingerprint = x.get_detail("app_fingerprint")
-          app_fingerprint_string = app_fingerprint.join("; ") if app_fingerprint
+          app_fingerprint_string = app_fingerprint.gsub(",","").join("; ") if app_fingerprint
           out << "#{app_fingerprint_string},"
 
           include_fingerprint = x.get_detail("include_fingerprint")
-          include_fingerprint_string = include_fingerprint.join("; ") if include_fingerprint
-          out << "#{include_fingerprint_string}\n"
+          include_fingerprint_string = include_fingerprint.gsub(",","").join("; ") if include_fingerprint
+          out << "#{include_fingerprint_string},"
+
+          page_title = x.get_detail("title")
+          page_title_string = page_title.gsub(",","") if page_title
+          out << "#{page_title_string}\n"
 
         end
 
