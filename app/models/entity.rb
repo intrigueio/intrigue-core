@@ -225,7 +225,7 @@ module Intrigue
           :hidden => hidden,
           :detail_string => detail_string,
           :details => safe_details,
-          :task_results => task_results.map{ |t| {:id => t.id, :name => t.name } },
+          #:task_results => task_results.map{ |t| {:id => t.id, :name => t.name } },
           :aliases => aliases.map{ |x| {:id => x.id, :name => x.name } }
         }
       end
@@ -237,7 +237,6 @@ module Intrigue
       def export_csv
         "#{type}, #{name}, #{detail_string.gsub(",",";") if detail_string}, #{hidden}, #{deleted}, #{alias_group_id}"
       end
-
 
       private
       def _escape_html(text)
