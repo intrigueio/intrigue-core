@@ -156,7 +156,7 @@ class CoreCli < Thor
     end
   end
 
-  desc "local_bootstrap_client [filename]", "Bootstrap from a client file."
+  desc "tstrap_client [filename]", "Bootstrap from a client file."
   def local_bootstrap_client(filename)
 
     extend Intrigue::Task::Helper
@@ -213,7 +213,7 @@ class CoreCli < Thor
 
       client_data["custom_commands"].each do |c|
         Dir.chdir($intrigue_basedir) do
-          `#{c}`
+          `#{c["command"]}`
         end
       end
 
