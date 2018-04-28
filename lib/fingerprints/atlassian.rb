@@ -15,14 +15,22 @@ module Intrigue
             },
             {
               :name => "Atlassian Confluence",
-              :description => "Confluence",
+              :description => "Atlassian Confluence",
               :version => "Unknown",
               :type => :content_headers,
               :content => /X-Confluence-Request-Time/
             },
             {
+              :name => "Atlassian Crucible",
+              :description => "Atlassian Crucible",
+              :version => "Unknown",
+              :type => :content_body,
+              :content => /Log in to FishEye and Crucible/
+              :dynamic_version => lambda{|x| x.body.scan(/Log in to FishEye and Crucible(.*)\"/)[0].first }
+            }
+            {
               :name => "Atlassian Jira",
-              :description => "Jira",
+              :description => "Atlassian Jira",
               :version => "Unknown",
               :type => :content_cookies,
               :content => /atlassian.xsrf.token/,
