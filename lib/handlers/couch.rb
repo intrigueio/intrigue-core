@@ -8,7 +8,7 @@ module Handler
       "couch"
     end
 
-    def process(result, name=nil)
+    def process(result, prefix_name=nil)
 
       return "Unable to process" unless result.respond_to? export_hash
 
@@ -16,7 +16,7 @@ module Handler
       db = server.database!("test")  # create db if it doesn't already exist
       response = db.save_doc(
         "_id" => "#{result.id}",
-        "unique_name" => "#{name || result.name}",
+        "unique_name" => "#{prefix_name}#{result.name}",
         "version" => 1,
         "result" => result.export_hash
       )

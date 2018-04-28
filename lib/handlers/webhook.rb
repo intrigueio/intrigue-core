@@ -6,7 +6,7 @@ module Handler
       "webhook"
     end
 
-    def process(result,name=nil)
+    def process(result,prefix_name=nil)
       # NOTE - name is not used
       begin
         uri = _get_handler_config "uri"

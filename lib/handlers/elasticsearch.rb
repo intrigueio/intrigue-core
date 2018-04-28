@@ -6,7 +6,7 @@ module Handler
       "elasticsearch"
     end
 
-    def process(result, name=nil)
+    def process(result, prefix_name=nil)
 
       return "Unable to process" unless result.respond_to? export_json
 
@@ -18,7 +18,7 @@ module Handler
       hostname = _get_handler_config("hostname")
 
       url = "https://#{username}:#{password}@#{hostname}:443"
-      index = name || "#{result.name}"
+      index = "#{prefix_name}#{result.name}"
       type = "task_result"
 
       client = ::Elasticsearch::Client.new(url: url)

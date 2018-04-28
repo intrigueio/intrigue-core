@@ -6,9 +6,9 @@ module Handler
       "csv"
     end
 
-    def process(result, name=nil)
+    def process(result, prefix_name=nil)
 
-      File.open("#{$intrigue_basedir}/tmp/#{name || result.name}.csv", "a") do |file|
+      File.open("#{$intrigue_basedir}/tmp/#{prefix_name}#{result.name}.csv", "a") do |file|
         _lock(file) do
           file.puts(result.export_csv)  # write it out
         end
