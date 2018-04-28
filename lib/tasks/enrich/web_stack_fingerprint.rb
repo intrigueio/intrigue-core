@@ -93,6 +93,7 @@ class WebStackFingerprint < BaseTask
     ###
     # match products based on gathered server software
     products = uniq_server_stack.map{|x| product_match_http_server_banner(x).first}
+
     # match products based on cookies
     products.concat product_match_http_cookies(_gather_cookies(response))
 

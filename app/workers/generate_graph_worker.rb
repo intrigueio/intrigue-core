@@ -19,8 +19,6 @@ class GenerateGraphWorker
       # Generate the graph
       project.graph_json = generate_graph_json(project)
       project.graph_generated_at = DateTime.now
-      project.graph_generation_in_progress = false
-      project.save
 
       puts "Done with graph generation for #{project.name}!"
       puts "Length: #{project.graph_json.length}"

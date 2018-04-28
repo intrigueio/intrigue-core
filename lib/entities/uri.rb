@@ -16,8 +16,8 @@ class Uri < Intrigue::Model::Entity
 
   def detail_string
     "Server: #{details["server_fingerprint"].to_a.join("; ")} | " +
-    "App: #{details["app_fingerprint"].to_a.join("; ")} | " + 
-    "Includes: #{details["include_fingerprint"].to_a.join("; ")}"
+    "App: #{details["app_fingerprint"].to_a.join("; ")} | " +
+    "Title: #{details["title"]}"
   end
 
 end

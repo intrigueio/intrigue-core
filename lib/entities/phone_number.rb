@@ -15,7 +15,7 @@ class PhoneNumber < Intrigue::Model::Entity
   end
 
   def detail_string
-    details["origin"] if details && details["origin"]
+    "#{details["origin"]}"
   end
 
 end

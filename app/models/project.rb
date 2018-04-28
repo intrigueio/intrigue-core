@@ -37,6 +37,10 @@ module Intrigue
       output_string
       end
 
+      def export_csv_by_type(type_string)
+        Intrigue::Model::Entity.scope_by_project_and_type(self.name, type_string).map { |e| e.export_csv }.join("\n")
+      end
+
       def export_applications_csv
         out = ""
         out << "IpAddress,Uri,ServerFingerprint,AppFingerprint,IncludeFingerprint,Title\n"
@@ -82,18 +86,18 @@ module Intrigue
       end
 
 
-      def handle(prefix=nil)
+      def handle(name=nil)
         handled = []
         self.handlers.each do |handler_type|
           handler = Intrigue::HandlerFactory.create_by_type(handler_type)
-          handled << handler.process(self, prefix)
+          handled << handler.process(self, name)
         end
       handled
       end
 
-      def handle(handler_type, prefix=nil)
+      def handle(handler_type, name=nil)
         handler = Intrigue::HandlerFactory.create_by_type(handler_type)
-        handler.process(self,prefix)
+        handler.process(self,name)
       end
 
     end

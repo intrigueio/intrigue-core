@@ -105,54 +105,54 @@ class CoreCli < Thor
   ### XXX - rewrite this so it uses the API
   ###
 
-  desc "local_handle_all_projects [Handler] [Prefix (optional)]", "Manually run a handler on a project's scan results"
-  def local_handle_all_projects(handler_type, prefix=nil)
+  desc "local_handle_all_projects [Handler] [Name (optional)]", "Manually run a handler on a project's scan results"
+  def local_handle_all_projects(handler_type, name=nil)
     Intrigue::Model::Project.each do |p|
       next unless p.entities.count > 0
 
       puts "Running #{handler_type} on #{p.name}"
-      p.handle(handler_type,prefix)
+      p.handle(handler_type,name)
     end
   end
 
   desc "local_handle_all_scan_results [Handler]", "Manually run a handler on a project's scan results"
-  def local_handle_all_scan_results(handler_type)
+  def local_handle_all_scan_results(handler_type, name=nil)
     Intrigue::Model::Project.each do |p|
       next unless p.entities.count > 0
       puts "Working in project: #{p.name}..."
-      p.scan_results.each {|s| s.handle(handler_type) }
+      p.scan_results.each {|s| s.handle(handler_type, name) }
     end
   end
 
-  desc "local_handle_project [Project] [Handler] [Prefix (optional)]", "Manually run a handler on a project's scan results"
-  def local_handle_project(project, handler_type, prefix)
+  desc "local_handle_project [Project] [Handler] [Name (optional)]", "Manually run a handler on a project's scan results"
+  def local_handle_project(project, handler_type, name=nil)
     puts "Working on project #{project}..."
-    Intrigue::Model::Project.first(:name => project).handle(handler_type, prefix)
+    Intrigue::Model::Project.first(:name => project).handle(handler_type, name)
   end
 
-  desc "local_handle_scan_results [Project] [Handler]", "Manually run a handler on a project's scan results"
-  def local_handle_scan_results(project, handler_type)
+  desc "local_handle_scan_results [Project] [Handler] [Name (optional)]", "Manually run a handler on a project's scan results"
+  def local_handle_scan_results(project, handler_type, name=nil)
 
     ### handle scan results
     Intrigue::Model::Project.each do |p|
       next unless p.name == project || project == "-"
       p.scan_results.each do |s|
         puts "[x] Handling... #{s.name}"
-        s.handle(handler_type)
+        s.handle(handler_type, name)
       end
     end
 
   end
 
-  desc "local_handle_task_results [Project] [Handler]", "Manually run a handler on a project's task results"
-  def local_handle_task_results(project,handler_type)
+  desc "local_handle_task_results [Project] [Handler][Name (optional)]", "Manually run a handler on a project's task results"
+  def local_handle_task_results(project,handler_type, name=nil)
 
     ### handle task results
     Intrigue::Model::Project.each do |p|
       next unless p.name == project || project == "-"
       s = p.task_results.each do |t|
         puts "[x] Handling... #{t.name}"
-        t.handle(handler_type)
+        t.handle(handler_type,name)
       end
     end
   end

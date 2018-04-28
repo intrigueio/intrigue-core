@@ -120,11 +120,7 @@ handlers_folder = File.expand_path('../handlers', __FILE__) # get absolute direc
 Dir["#{handlers_folder}/*.rb"].each {|f| require_relative f}
 
 ####
-# Signal Libraries
+# Fingerprints
 ####
-signals_folder = File.expand_path('../signals', __FILE__) # get absolute directory
-Dir["#{signals_folder}/*.rb"].each { |file| require_relative file }
-
-# Load all app fingerprints
 fingerprints_folder = File.expand_path('../fingerprints', __FILE__) # get absolute directory
 Dir["#{fingerprints_folder}/*.rb"].each { |file| require_relative file }

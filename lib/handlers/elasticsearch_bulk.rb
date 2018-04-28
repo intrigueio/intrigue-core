@@ -6,12 +6,12 @@ module Handler
       "elasticsearch_bulk"
     end
 
-    def process(result)
+    def process(result,name=nil)
 
       return "Unable to process" unless result.respond_to? export_json
 
       # Write it out
-      File.open("#{result.name}.bulk", "a") do |file|
+      File.open("#{name || result.name}.bulk", "a") do |file|
         _lock(file) do
           file.write("{ \"index\" : { \"_index\" : \"results\", \"_type\" : \"#{result.task_name}\", \"_id\" : \"#{result.id}\" } }\n")
           file.write(result.export_json)

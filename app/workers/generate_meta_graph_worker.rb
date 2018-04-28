@@ -19,8 +19,6 @@ class GenerateMetaGraphWorker
       # Generate the graph
       project.graph_json = generate_meta_graph(project)
       project.graph_generated_at = DateTime.now
-      project.graph_generation_in_progress = false
-      project.save
 
       puts "Done with META graph generation for #{project.name}!"
       puts "Length: #{project.graph_json.length}"

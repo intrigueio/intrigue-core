@@ -20,8 +20,13 @@
   },
   "intrigue_handler_processing_wait_time" : 60,
   "intrigue_handlers" : {
-    "webhook_generic": {
-      "uri": "http://intrigue.io/webhook"
+    "data.intrigue.io": {
+      "uri": "https://data.intrigue.io/process",
+      "api_key": "",
+      "access_key" : "",
+      "secret_key" : "",
+      "region" : "",
+      "bucket" : ""
     },
     "s3_json" : {
       "access_key" : "",
@@ -36,6 +41,9 @@
       "region" : "",
       "bucket" : "",
       "uri" : ""
+    },
+    "webhook": {
+      "uri": "http://127.0.0.1:9999/"
     }
   },
   "intrigue_global_module_config": {

@@ -8,7 +8,7 @@ module Handler
       "s3_csv"
     end
 
-    def process(result, prefix=nil)
+    def process(result, name=nil)
       puts "S3 CSV Handler called on #{result}: #{result.name}"
 
       access_key = _get_handler_config("access_key")
@@ -31,7 +31,7 @@ module Handler
 
       bucket = connection.directories.get(bucket_name)
       bucket.files.create (
-        { :key => "#{prefix}#{result.name}.csv",
+        { :key => "#{name || result.name}.csv",
           :body => tempfile.read
         }
       )

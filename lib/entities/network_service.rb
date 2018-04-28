@@ -16,7 +16,7 @@ class NetworkService < Intrigue::Model::Entity
   end
 
   def detail_string
-    details["fingerprint"] if details && details["fingerprint"]
+    "#{details["fingerprint"]}"
   end
 
 
