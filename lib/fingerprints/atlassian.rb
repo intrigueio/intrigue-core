@@ -25,9 +25,9 @@ module Intrigue
               :description => "Atlassian Crucible",
               :version => "Unknown",
               :type => :content_body,
-              :content => /Log in to FishEye and Crucible/
-              :dynamic_version => lambda{|x| x.body.scan(/Log in to FishEye and Crucible(.*)\"/)[0].first }
-            }
+              :content => /FishEye and Crucible/,
+              :dynamic_version => lambda{|x| x.body.scan(/Log in to FishEye and Crucible (.*)\</)[0].first }
+            },
             {
               :name => "Atlassian Jira",
               :description => "Atlassian Jira",
