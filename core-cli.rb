@@ -4,7 +4,6 @@ require 'json'
 require 'rest-client'
 require 'intrigue_api_client'
 require 'pp'
-require 'pry' #DEBUG
 require_relative 'core'
 
 class CoreCli < Thor
