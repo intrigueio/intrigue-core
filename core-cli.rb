@@ -210,11 +210,16 @@ class CoreCli < Thor
 
         # kick off the task
         task_result = start_task("task", project, nil, task_name, created_entity, depth, options, handlers, strategy)
-
       end
 
-      # TODO ... add the exclusion stuff here
+      client_data["custom_commands"].each do |c|
+        Dir.chdir($intrigue_basedir) do
+          `#{c}`
+        end
+      end
 
+
+      # TODO ... add the exclusion stuff here
     end
 
 
