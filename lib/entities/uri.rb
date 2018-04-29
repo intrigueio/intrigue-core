@@ -88,6 +88,8 @@ class EnrichUri < BaseTask
       "api_endpoint" => api_enabled,
       #"trace" => trace_enabled,
       #"webdav" => webdav_enabled,
+      "code" => response.code,
+      "title" => response.body.scan(/<title>(.*)<\/title>/)[0].first,
       "verbs" => verbs_enabled,
       "scripts" => script_references,
       "forms" => contains_forms,
@@ -110,7 +112,9 @@ class EnrichUri < BaseTask
     #  end
     #end
 
-    ## Library fingerprinting and Screenshotting
+    ###############################################
+    ## Library fingerprinting and Screenshotting ##
+    ###############################################
 
     # create a capybara session and browse to our uri
     session = create_browser_session(uri)
@@ -263,10 +267,8 @@ class WebStackFingerprint < BaseTask
     ###
     # match products based on gathered server software
     products = uniq_server_stack.map{|x| product_match_http_server_banner(x).first}
-
     # match products based on cookies
     products.concat product_match_http_cookies(_gather_cookies(response))
-
     @entity.set_detail("products", products.compact)
 
     ########################
