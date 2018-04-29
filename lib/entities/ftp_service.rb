@@ -107,8 +107,10 @@ class EnrichFtpService < BaseTask
     ########################
     ### MARK AS ENRICHED ###
     ########################
-    c = (@entity.get_detail("enrichment_complete") || []) << "#{self.class.metadata[:name]}"
-    @entity.set_detail("enrichment_complete", c)
+    $db.transaction do
+      c = (@entity.get_detail("enrichment_complete") || []) << "#{self.class.metadata[:name]}"
+      @entity.set_detail("enrichment_complete", c)
+    end
     _log "Completed enrichment task!"
     ########################
     ### MARK AS ENRICHED ###
