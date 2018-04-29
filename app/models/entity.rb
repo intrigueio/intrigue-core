@@ -23,14 +23,31 @@ module Intrigue
       many_to_many :task_results
       many_to_one  :project
 
+      include Intrigue::Task::Helper
       include Intrigue::Model::Capabilities::CalculateProvider
+
+      def self.scope_by_project(project_name)
+        named_project = Intrigue::Model::Project.first(:name => project_name)
+        where(Sequel.&(:project_id => named_project.id, :deleted => false))
+      end
+
+      def self.scope_by_project_and_type(project_name, entity_type)
+        resolved_entity_type = Intrigue::EntityManager.resolve_type(entity_type)
+        named_project = Intrigue::Model::Project.first(:name => project_name)
+        where(Sequel.&(:project_id => named_project.id, :type => resolved_entity_type.to_s, :deleted => false))
+      end
+
+      def self.scope_by_project_and_type_and_detail_value(project_name, entity_type, detail_name, detail_value)
+        json_details = Sequel.pg_jsonb_op(:details)
+        candidate_entities = scope_by_project_and_type(project_name,entity_type)
+        candidate_entities.where(json_details.get_text(detail_name) => detail_value)
+      end
 
       def ancestors
         ancestors = []
         task_results.each do |tr|
           ancestors << tr.scan_result.base_entity if tr.scan_result
         end
-
       ancestors
       end
 
@@ -48,33 +65,51 @@ module Intrigue
         true
       end
 
-      def enrichment_scheduled?(task_name)
-        true if Intrigue::Model::TaskResult.first(:task_name => task_name, :base_entity_id => self.id, :cancelled => false)
+      # since we return a boolean from the database, just
+      # create a method with a '?'
+      #def enriched?
+      #  enriched
+      #end
+
+      # List of enrichment tasks, should be overridden. see the individual enrichment
+      # files
+      def enrichment_tasks
+        []
       end
 
-      def alias(entity)
+      def enrichment_complete?
+        true if details["enrichment_complete"] == enrichment_tasks
+      end
 
+      def schedule_enrichment(depth=1, scan_result=nil)
+        enrichment_tasks.each do |task_name|
+
+          unless enrichment_scheduled?(task_name)
+
+            # Mark AS scheduled
+            scheduled_tasks = get_detail(["enrichment_scheduled"]) || []
+            scheduled_tasks << task_name
+            set_detail "enrichment_scheduled", scheduled_tasks
+
+            # actually schedule it
+            proj = Intrigue::Model::Project.first(id: self.project_id)
+            start_task("task_enrichment", proj, scan_result, task_name, self, depth)
+          end
+
+        end
+      end
+
+      def enrichment_scheduled?(task_name)
+        s = details["enrichment_scheduled"]
+        true if s && s.include?(task_name)
+      end
+
+
+
+      def alias(entity)
         # They'd share the same group...
         self.alias_group_id = entity.alias_group_id
         save
-
-      end
-
-      def self.scope_by_project(project_name)
-        named_project = Intrigue::Model::Project.first(:name => project_name)
-        where(Sequel.&(:project_id => named_project.id, :deleted => false))
-      end
-
-      def self.scope_by_project_and_type(project_name, entity_type)
-        resolved_entity_type = Intrigue::EntityManager.resolve_type(entity_type)
-        named_project = Intrigue::Model::Project.first(:name => project_name)
-        where(Sequel.&(:project_id => named_project.id, :type => resolved_entity_type.to_s, :deleted => false))
-      end
-
-      def self.scope_by_project_and_type_and_detail_value(project_name, entity_type, detail_name, detail_value)
-        json_details = Sequel.pg_jsonb_op(:details)
-        candidate_entities = scope_by_project_and_type(project_name,entity_type)
-        candidate_entities.where(json_details.get_text(detail_name) => detail_value)
       end
 
       # Override this if you are creating a secondary entity
@@ -167,15 +202,10 @@ module Intrigue
       end
 
       def allowed_tasks
-        ### XXX - this needs to be limited to tasks that accept this type
         TaskFactory.allowed_tasks_for_entity_type(type_string)
       end
 
       def to_s
-        "#{type_string}: #{name}#{' <H>' if hidden}"
-      end
-
-      def inspect
         "#{type_string}: #{name}#{' <H>' if hidden}"
       end
 
@@ -238,7 +268,6 @@ module Intrigue
         "#{type}, #{name}, #{detail_string.gsub(",",";") if detail_string}, #{hidden}, #{deleted}, #{alias_group_id}"
       end
 
-      private
       def _escape_html(text)
         Rack::Utils.escape_html(text)
         text

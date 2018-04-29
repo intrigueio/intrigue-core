@@ -228,8 +228,11 @@ class EntityManager
     return unless entity
 
     # Check if we've alrady run first
-    if entity.enriched
-      task_result.log "Skipping enrichment... already happened for #{entity}!" if task_result
+    if entity.enrichment_complete?
+      # XXX
+      # TODO should we continue if we have a deeper depth!?
+      # XXX
+      task_result.log "Skipping enrichment... already completed for #{entity}!" if task_result
       return
     end
 
@@ -241,58 +244,8 @@ class EntityManager
       depth = 1
     end
 
-    # Enrich by type
-    if entity.type_string == "AwsS3Bucket"
-      task_name = "enrich/aws_s3_bucket"
-      # first check to make sure we're not already scheduled (but not complete)
-      unless entity.enrichment_scheduled?(task_name)
-        start_task("task_enrichment", entity.project, scan_result, task_name, entity, depth, [],[])
-      end
-
-    elsif entity.type_string == "DnsRecord"
-
-      task_name = "enrich/dns_record"
-      # first check to make sure we're not already scheduled (but not complete)
-      unless entity.enrichment_scheduled?(task_name)
-        start_task("task_enrichment", entity.project, scan_result, task_name, entity, depth, [],[])
-      end
-
-    elsif entity.type_string == "FtpService"
-
-      task_name = "enrich/ftp_service"
-      # first check to make sure we're not already scheduled (but not complete)
-      unless entity.enrichment_scheduled?(task_name)
-        start_task("task_enrichment", entity.project, scan_result, task_name, entity, depth, [],[])
-      end
-
-    elsif entity.type_string == "IpAddress"
-
-      task_name = "enrich/ip_address"
-      unless entity.enrichment_scheduled?(task_name)
-        start_task("task_enrichment", entity.project, scan_result, task_name, entity, depth, [],[])
-      end
-
-    elsif entity.type_string == "SnmpService"
-
-      task_name = "enrich/snmp_service"
-      # first check to make sure we're not already scheduled (but not complete)
-      unless entity.enrichment_scheduled?(task_name)
-        start_task("task_enrichment", entity.project, scan_result, task_name, entity, depth, [],[])
-      end
-
-    elsif entity.type_string == "Uri"
-
-      task_name = "enrich/uri"
-      unless entity.enrichment_scheduled?(task_name)
-        start_task("task_enrichment", entity.project, scan_result, task_name, entity, depth, [],[])
-      end
-
-      task_name = "enrich/web_stack_fingerprint"
-      unless entity.enrichment_scheduled?(task_name)
-        start_task("task_enrichment", entity.project, scan_result, task_name, entity, depth, [],[])
-      end
-
-    end
+    task_result.log "Scheduling enrichment (entity.enrichment_tasks) on #{entity}!" if task_result
+    entity.schedule_enrichment(depth, scan_result)
 
   end
 

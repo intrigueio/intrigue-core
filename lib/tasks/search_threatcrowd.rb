@@ -67,6 +67,7 @@ class SearchThreatcrowd < BaseTask
             # seems like this needs some cleanup?
             d.gsub!(":","")
             d.gsub!(" ","")
+            d.gsub!("*.","")
            if d.length > 0
              _create_entity "DnsRecord", { "name" => d }
            else
