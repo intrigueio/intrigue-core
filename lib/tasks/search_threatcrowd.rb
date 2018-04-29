@@ -46,10 +46,10 @@ class SearchThreatcrowd < BaseTask
           _log "Gathering Resolutions"
           tc_json["resolutions"].each do |res|
             _create_entity "IpAddress", {
-              "name" => res["ipaddress"],
+              "name" => res["ip_address"],
               "resolver" => "threatcrowd",
               "last_resolved" => res["last_resolved"]
-              } unless res["ip_address"] == "-"
+              } unless res["ip_address"] == "-" || res["ip_address"].length < 8
           end
         end
 
@@ -59,7 +59,7 @@ class SearchThreatcrowd < BaseTask
           tc_json["subdomains"].each do |d|
 
             # If we have an extract pattern set, respect it
-            if opt_extract_pattern
+            if opt_extract_pattern.kind_of? String
               _log "Checking pattern: #{opt_extract_pattern} vs #{d}"
               next unless d =~ /#{opt_extract_pattern}/
             end
@@ -67,7 +67,11 @@ class SearchThreatcrowd < BaseTask
             # seems like this needs some cleanup?
             d.gsub!(":","")
             d.gsub!(" ","")
-            _create_entity "DnsRecord", { "name" => d }
+           if d.length > 0
+             _create_entity "DnsRecord", { "name" => d }
+           else
+             _log "Skipping empty entry"
+           end
           end
         end
 
@@ -93,7 +97,7 @@ class SearchThreatcrowd < BaseTask
     rescue JSON::ParserError => e
       _log_error "Unable to get parsable response from #{search_uri}: #{e}"
     rescue StandardError => e
-      _log_error "Error grabbing sublister domains: #{e}"
+      _log_error "Error grabbing threatcrowd domains: #{e}"
     end
 
 
