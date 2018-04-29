@@ -61,8 +61,16 @@ module Strategy
 
         # Make sure it's owned by the org, and if it is, scan it. also skip ipv6/
         if entity.details["whois_full_text"] =~ /#{filter_strings}/i && !(entity.name =~ /::/)
+
+          # Muhstik seems like a pretty good baseline for this stuff
+          # 80/443: Weblogic, Wordpress, Drupal, WebDav, ClipBucket
+          # 2004: Webuzo
+          # 7001: Weblogic
+          # 8080: Wordpress, WebDav, DasanNetwork Solution
           start_recursive_task(task_result,"masscan_scan",entity,[
-            {"name"=> "tcp_ports", "value" => "80,443,8080,8081,8443"}])
+            {"name"=> "tcp_ports", "value" => "80,443,2004,7001,8000,8080,8081,8443"}
+          ])
+
         else
           task_result.log "Cowardly refusing to scan this netblock.. it doesn't look like ours."
         end

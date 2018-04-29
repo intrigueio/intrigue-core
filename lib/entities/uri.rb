@@ -121,6 +121,7 @@ class EnrichUri < BaseTask
     libraries = @entity.get_detail("libraries") || []
     # run the version checking scripts in our session (See lib/helpers/browser)
     libraries = gather_javascript_libraries(session, libraries)
+
     # set the new details
     @entity.set_detail("libraries", libraries)
 
