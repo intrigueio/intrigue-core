@@ -34,6 +34,17 @@ module Task
     session
     end
 
+    def capture_document(session,uri)
+      # browse to our target
+      session.visit(uri)
+
+      # Capture Title
+      page_title = session.document.title
+      _log_good "Title: #{page_title}"
+
+    session.document
+    end
+
 
     def capture_screenshot(session)
 
