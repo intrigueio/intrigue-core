@@ -55,6 +55,8 @@ class FtpEnumerate < BaseTask
           out["anonymous"] = ftp.login
         rescue Net::FTPPermError => e
           _log_error "unable to log in, proceeding"
+        rescue Errno::EOFError => e
+          _log_error "eof reached"
         end
 
         begin
@@ -62,6 +64,8 @@ class FtpEnumerate < BaseTask
           out["help"] = "#{ftp.help}"
         rescue Net::FTPPermError => e
           _log_error "unable to run HELP, proceeding"
+        rescue Errno::EOFError => e
+          _log_error "eof reached"
         end
 
         begin
@@ -75,6 +79,8 @@ class FtpEnumerate < BaseTask
           ]
         rescue Net::FTPPermError => e
           _log_error "unable to collect directory info, not logged in"
+        rescue Errno::EOFError => e
+          _log_error "eof reached"
         end
 
         begin
@@ -82,6 +88,8 @@ class FtpEnumerate < BaseTask
           out["system"] = "#{ftp.system}"
         rescue Net::FTPPermError => e
           _log_error "unable to collect system info - not logged in"
+        rescue Errno::EOFError => e
+          _log_error "eof reached"
         end
 
         @entity.set_detail("ftp_enumerate", out)
