@@ -20,6 +20,7 @@ class AwsS3Brute < BaseTask
       :allowed_options => [
         {:name => "threads", :regex => "integer", :default => 1 },
         {:name => "use_creds",:regex => "boolean", :default => false },
+        {:name => "create_permutations",:regex => "boolean", :default => true },
         {:name => "use_file", :regex => "boolean", :default => false },
         {:name => "brute_file",:regex => "filename", :default => "s3_buckets.list" },
         {:name => "additional_buckets", :regex => "alpha_numeric_list", :default => "" }
@@ -39,6 +40,7 @@ class AwsS3Brute < BaseTask
     opt_additional_buckets = _get_option("additional_buckets")
     opt_use_creds = _get_option("use_creds")
     opt_threads = _get_option("threads")
+    opt_permute = _get_option("create_permutations")
 
     if opt_use_file
       _log "Using file: #{opt_filename}"
@@ -55,6 +57,21 @@ class AwsS3Brute < BaseTask
     work_q = Queue.new
     all_potential_buckets.each do |pb|
       work_q << pb.strip
+
+      # Add permutations
+      if opt_permute
+        work_q << "#{pb.strip}-dev"
+        work_q << "#{pb.strip}-qa"
+        work_q << "#{pb.strip}-prod"
+        work_q << "#{pb.strip}-stage"
+        work_q << "#{pb.strip}-staging"
+        work_q << "dev-#{pb.strip}"
+        work_q << "qa-#{pb.strip}"
+        work_q << "prod-#{pb.strip}"
+        work_q << "stage-#{pb.strip}"
+        work_q << "staging-#{pb.strip}"
+      end
+
     end
 
     # Create a pool of worker threads to work on the queue

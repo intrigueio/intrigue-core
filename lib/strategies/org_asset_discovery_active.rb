@@ -33,12 +33,12 @@ module Strategy
 
         if domain_length == 2 # large bruteforce on tlds
           start_recursive_task(task_result,"dns_brute_sub",entity,[
-            {"name" => "threads", "value" => 2 },
+            {"name" => "threads", "value" => 1 },
             {"name" => "use_file", "value" => true },
-            {"name" => "brute_alphanumeric_size", "value" => 2 }])
+            {"name" => "brute_alphanumeric_size", "value" => 1 }])
         else # do something smaller
           start_recursive_task(task_result,"dns_brute_sub",entity,[
-            {"name" => "threads", "value" => 2 }])
+            {"name" => "threads", "value" => 1 }])
         end
 
       elsif entity.type_string == "FtpService"
@@ -62,7 +62,7 @@ module Strategy
         # Make sure it's owned by the org, and if it is, scan it. also skip ipv6/
         if entity.details["whois_full_text"] =~ /#{filter_strings}/i && !(entity.name =~ /::/)
           start_recursive_task(task_result,"masscan_scan",entity,[
-            {"name"=> "tcp_ports", "value" => "80,443"}])
+            {"name"=> "tcp_ports", "value" => "80,443,8080,8081,8443"}])
         else
           task_result.log "Cowardly refusing to scan this netblock.. it doesn't look like ours."
         end
@@ -73,6 +73,14 @@ module Strategy
         else
           task_result.log "Cowardly refusing to expand this netblock.. it doesn't look like ours."
         end
+
+      elsif entity.type_string == "Organization"
+
+      ### search for netblocks
+      start_recursive_task(task_result,"whois_org_search",entity)
+
+      ### AWS_S3_brute the name
+      start_recursive_task(task_result,"aws_s3_brute",entity)
 
       elsif entity.type_string == "Person"
 
