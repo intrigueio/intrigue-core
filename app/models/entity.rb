@@ -257,7 +257,7 @@ module Intrigue
           :hidden => hidden,
           :detail_string => detail_string,
           :details => details,
-          :task_results => task_results.map{ |t| {:id => t.id, :name => t.name } },
+          :task_results => task_results.map{ |t| {:id => t.id, :name => t.name, :base_entity_name => t.base_entity.name, :base_entity_type => t.base_entity.type  } },
           :aliases => aliases.map{ |x| {:id => x.id, :name => x.name } }
         }
       end
