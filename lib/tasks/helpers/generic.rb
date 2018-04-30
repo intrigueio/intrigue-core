@@ -90,8 +90,8 @@ module Generic
           http_response = RestClient::Request.execute({
             :method => :get,
             :url => uri,
-            :timeout => 5,
-            :open_timeout => 5
+            :timeout => 30,
+            :open_timeout => 30
           })
 
           ## TODO ... follow location headers?
