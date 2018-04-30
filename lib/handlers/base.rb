@@ -9,6 +9,10 @@ module Handler
       HandlerFactory.register(base)
     end
 
+    def perform(klass, id, prefix=nil)
+      raise "This method must be overridden"
+    end
+
     private
 
       def _get_handler_config(key)
@@ -21,17 +25,13 @@ module Handler
       end
 
       def _lock(file)
-   	      begin
-            file.flock(File::LOCK_EX)
-   	        yield
-   	      ensure
-   	        file.flock(File::LOCK_UN)
-     	    end
+ 	      begin
+          file.flock(File::LOCK_EX)
+ 	        yield
+ 	      ensure
+ 	        file.flock(File::LOCK_UN)
+   	    end
      	end
-
-      def perform
-        # override me
-      end
 
   end
 end

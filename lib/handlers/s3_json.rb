@@ -9,7 +9,7 @@ module Handler
     end
 
     def perform(result_type, result_id, prefix_name=nil)
-      result = result_type.first(id: result_id)
+      result = eval(result_type).first(id: result_id)
       return "Unable to process" unless result.respond_to? export_json
 
       puts "S3 JSON Handler called on #{result}: #{result.name}"
