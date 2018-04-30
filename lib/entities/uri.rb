@@ -89,7 +89,7 @@ class EnrichUri < BaseTask
       #"trace" => trace_enabled,
       #"webdav" => webdav_enabled,
       "code" => response.code,
-      "title" => response.body.scan(/<title>(.*)<\/title>/)[0].first,
+      "title" => response.body[/<title>(.*)<\/title>/,1],
       "verbs" => verbs_enabled,
       "scripts" => script_references,
       "forms" => contains_forms,
@@ -366,7 +366,7 @@ class WebStackFingerprint < BaseTask
     temp << "ASP Classic" if uri =~ /.*\.asp(\?.*)?$/i
     temp << "ASP.NET" if uri =~ /.*\.aspx(\?.*)?$/i
     temp << "CGI" if uri =~ /.*\.cgi(\?.*)?$/i
-    temp << "Java (jsessionid)" if uri =~ /jsessionid=/i
+    temp << "Java (JSESSIONID)" if uri =~ /jsessionid=/i
     temp << "JSP" if uri =~ /.*\.jsp(\?.*)?$/i
     temp << "PHP" if uri =~ /.*\.php(\?.*)?$/i
     temp << "Struts" if uri =~ /.*\.do(\?.*)?$/i
