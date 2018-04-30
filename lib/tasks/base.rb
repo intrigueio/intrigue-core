@@ -21,7 +21,8 @@ class BaseTask
 
     # Handle cancellation
     if @task_result.cancelled
-      _log_error "I was cancelled, returning!"
+      _log_error "FATAL!!! I was cancelled, returning without running!"
+      return
     end
 
     begin
@@ -86,62 +87,43 @@ class BaseTask
         end
       end
 
-
-      ########################
-      # Scan Result Handlers #
-      ########################
+=begin
       scan_result = @task_result.scan_result
       if scan_result
-
         scan_result.decrement_task_count
         puts "#{scan_result.incomplete_task_count} tasks left in this scan"
-
-        if scan_result.handlers.count > 0
-          #_log "We are part of a scan result... checking our incomplete count: #{scan_result.incomplete_task_count}"
-
-          # Check our incomplete task count on the scan to see if this is the last one
-          if scan_result.incomplete_task_count <= 0
-            # make sure we don't hit a race condition at the beginning
-
-            _log "Last task standing, let's handle it!"
-
-            scan_result.handlers.each do |handler_type|
-              handler = Intrigue::HandlerFactory.create_by_type(handler_type)
-              next unless handler
-
-              _log "Calling #{handler_type} handler on #{scan_result.name}"
-              puts "Calling #{handler_type} handler on #{scan_result.name}"
-              handler.process(scan_result)
-            end
-
-            # let's mark it complete if there's nothing else to do here.
-            scan_result.handlers_complete = true
-            scan_result.complete = true
-            scan_result.save
-          else
-            puts "More tasks for this scan to complete: #{scan_result.incomplete_task_count}!"
-            _log "More tasks for this scan to complete: #{scan_result.incomplete_task_count}!"
-          end
-        end
-
-      else # just a task result
-
-        ############
-        # Handlers #
-        ############
-        @task_result.handlers.each do |handler_type|
-          handler = Intrigue::HandlerFactory.create_by_type(handler_type)
-          unless handler
-            _log "Error. Unable to resolve handler."
-            puts "Error. Unable to resolve handler."
-          end
-          puts "Calling #{handler_type} handler on task: #{@task_result}"
-          _log "Calling #{handler_type} handler on task: #{@task_result}"
-          handler.process(@task_result)
-        end
-        @task_result.handlers_complete = true
-
       end
+
+      #################
+      # Call Handlers #
+      #################
+
+      #### Scan Result Handlers
+      if scan_result.handlers.count > 0
+
+        # Check our incomplete task count on the scan to see if this is the last one
+        if scan_result.incomplete_task_count <= 0
+          # Make sure we don't hit a race condition at the beginning
+
+          _log "Last task standing, let's handle it!"
+          scan_result.handle
+
+          # let's mark it complete if there's nothing else to do here.
+          scan_result.handlers_complete = true
+          scan_result.complete = true
+          scan_result.save
+        else
+          puts "More tasks for this scan to complete: #{scan_result.incomplete_task_count}!"
+          _log "More tasks for this scan to complete: #{scan_result.incomplete_task_count}!"
+        end
+      end
+
+      #### Task Result Handlers
+      if @task_result.handlers.count > 0
+        @task_result.handle
+        @task_result.handlers_complete = true
+      end
+=end
 
     ensure   # Mark it complete and save it
       _log "Cleaning up!"

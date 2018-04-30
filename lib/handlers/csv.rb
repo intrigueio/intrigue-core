@@ -6,7 +6,9 @@ module Handler
       "csv"
     end
 
-    def process(result, prefix_name=nil)
+    def perform(result_type, result_id, prefix_name=nil)
+      result = result_type.first(id: result_id)
+      return "Unable to process" unless result.respond_to? export_csv
 
       File.open("#{$intrigue_basedir}/tmp/#{prefix_name}#{result.name}.csv", "a") do |file|
         _lock(file) do

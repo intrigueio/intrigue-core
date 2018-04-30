@@ -8,12 +8,13 @@ module Handler
       "couch"
     end
 
-    def process(result, prefix_name=nil)
-
+    def perform(result_type, result_id, prefix_name=nil)
+      result = result_type.first(id: result_id)
       return "Unable to process" unless result.respond_to? export_hash
 
       server = CouchRest.new  # assumes localhost by default!
-      db = server.database!("test")  # create db if it doesn't already exist
+      database = _get_handler_config("database")
+      db = server.database!(database || "test" )  # create db if it doesn't already exist
       response = db.save_doc(
         "_id" => "#{result.id}",
         "unique_name" => "#{prefix_name}#{result.name}",

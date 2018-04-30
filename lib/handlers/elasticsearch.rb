@@ -6,8 +6,8 @@ module Handler
       "elasticsearch"
     end
 
-    def process(result, prefix_name=nil)
-
+    def perform(result_type, result_id, prefix_name=nil)
+      result = result_type.first(id: result_id)
       return "Unable to process" unless result.respond_to? export_json
 
       require 'elasticsearch'

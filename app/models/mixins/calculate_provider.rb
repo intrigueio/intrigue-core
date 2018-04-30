@@ -1,6 +1,6 @@
 module Intrigue
   module Model
-    module Capabilities
+    module Mixins
     module CalculateProvider
 
       def provider
@@ -52,6 +52,6 @@ module Intrigue
       end
 
     end
-    end
   end
+end
 end

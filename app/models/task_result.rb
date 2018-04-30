@@ -10,6 +10,8 @@ module Intrigue
       many_to_one :project
       many_to_one :base_entity, :class => :'Intrigue::Model::Entity', :key => :base_entity_id
 
+      include Intrigue::Model::Mixins::Handleable
+
       def self.scope_by_project(project_name)
         named_project_id = Intrigue::Model::Project.first(:name => project_name).id
         where(:project_id => named_project_id)
@@ -113,19 +115,6 @@ module Intrigue
         export_hash.to_json
       end
 
-      def handle
-        handled = []
-        self.handlers.each do |handler_type|
-          handler = Intrigue::HandlerFactory.create_by_type(handler_type)
-          handled << handler.process(self)
-        end
-      handled
-      end
-
-      def handle(handler_type)
-        handler = Intrigue::HandlerFactory.create_by_type(handler_type)
-        handler.process(self)
-      end
 
     end
   end

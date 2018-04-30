@@ -8,6 +8,8 @@ module Intrigue
       one_to_many :task_results
       one_to_many :scan_results
 
+      include Intrigue::Model::Mixins::Handleable
+
       def validate
         super
         validates_unique(:name)
@@ -83,21 +85,6 @@ module Intrigue
         end
 
       out
-      end
-
-
-      def handle(name=nil)
-        handled = []
-        self.handlers.each do |handler_type|
-          handler = Intrigue::HandlerFactory.create_by_type(handler_type)
-          handled << handler.process(self, name)
-        end
-      handled
-      end
-
-      def handle(handler_type, name=nil)
-        handler = Intrigue::HandlerFactory.create_by_type(handler_type)
-        handler.process(self,name)
       end
 
     end

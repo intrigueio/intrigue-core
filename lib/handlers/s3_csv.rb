@@ -8,7 +8,9 @@ module Handler
       "s3_csv"
     end
 
-    def process(result, prefix_name=nil)
+    def perform(result_type, result_id, prefix_name=nil)
+      result = result_type.first(id: result_id)
+      puts "REsult: #{result.inspect}"
       puts "S3 CSV Handler called on #{result}: #{result.name}"
 
       access_key = _get_handler_config("access_key")

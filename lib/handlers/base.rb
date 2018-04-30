@@ -2,6 +2,9 @@ module Intrigue
 module Handler
   class Base
 
+    include Sidekiq::Worker
+    sidekiq_options :queue => "app", :backtrace => true
+
     def self.inherited(base)
       HandlerFactory.register(base)
     end
@@ -25,6 +28,10 @@ module Handler
    	        file.flock(File::LOCK_UN)
      	    end
      	end
+
+      def perform
+        # override me
+      end
 
   end
 end

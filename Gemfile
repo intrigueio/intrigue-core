@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # core
-gem 'sinatra', '~> 2.0.1'
+gem 'sinatra',         '~> 2.0.1'
 gem 'sinatra-contrib', '~> 2.0.1'
 gem 'puma'                    # Application Server
 gem 'redis'                   # Redis
@@ -45,15 +45,15 @@ gem 'opencorporates',         :git => 'https://github.com/pentestify/opencorpora
 gem 'spidr',                  :git => 'https://github.com/intrigueio/spidr.git'
 gem 'snmp',                   :git => 'https://github.com/intrigueio/ruby-snmp.git'
 gem 'recog-intrigue',         :git => 'https://github.com/intrigueio/recog.git'
-gem 'aws-sdk', '~> 2'
+gem 'aws-sdk',        '~> 2'
 gem 'mini_magick'
 
 
-# handlers
+# Handlers
 gem 'couchrest'
 gem 'fog-aws'
 
-# development
+# Development
 gem 'foreman'
 gem 'pry'                     # Debugging
 gem 'pry-byebug'              # Debugging
