@@ -16,7 +16,10 @@ class ImportUmbrellaTopSites < BaseTask
       :passive => true,
       :allowed_types => ["*"],
       :example_entities => [{"type" => "String", "details" => {"name" => "NA"}}],
-      :allowed_options => [ {:name => "threads", :regex => "integer", :default => 1 }],
+      :allowed_options => [
+        {:name => "threads", :regex => "integer", :default => 1 },
+        {:name => "max_sleep", :regex => "integer", :default => 10 }
+      ],
       :created_types => ["NetBlock"]
     }
   end
@@ -33,7 +36,9 @@ class ImportUmbrellaTopSites < BaseTask
     domains = lines.map{|l| l.split(",").last.chomp }
 
     lammylam = lambda { |d|
-      _log "Creating sites for domain: #{d}"
+      sleep(rand(_get_option("max_sleep")))
+
+      #_log "Creating sites for domain: #{d}"
       #_create_entity "Uri", { "name" => "http://#{d}", "uri"=>"https://#{d}" }
       _create_entity "Uri", { "name" => "https://#{d}", "uri"=>"https://#{d}" }
     true

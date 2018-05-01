@@ -153,6 +153,7 @@ class EntityManager
     end
 
     # necessary because of our single table inheritance?
+    # TODO - NOT NECESSARY
     created_entity = Intrigue::Model::Entity.find(:id => entity.id)
 
     ### Ensure we have an entity
@@ -244,7 +245,7 @@ class EntityManager
       depth = 1
     end
 
-    task_result.log "Scheduling enrichment (entity.enrichment_tasks) on #{entity}!" if task_result
+    task_result.log "Scheduling enrichment (#{entity.enrichment_tasks}) on #{entity}!" if task_result
     entity.schedule_enrichment(depth, scan_result)
 
   end
