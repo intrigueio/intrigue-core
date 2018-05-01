@@ -192,6 +192,8 @@ class CoreCli < Thor
       project_name = p["name"]
       project = Intrigue::Model::Project.create(:name => "#{project_name}")
 
+      # TODO ... add the per-project exclusion stuff here
+
       puts "Working on project: #{project_name}"
       p["seeds"].each do |s|
         puts " - Seed: #{s}"
@@ -203,6 +205,7 @@ class CoreCli < Thor
         optiosn = s["options"] || []
         handlers = s["handlers"] || []
 
+
         # Create the entity
         created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"], true)
 
@@ -210,13 +213,15 @@ class CoreCli < Thor
         task_result = start_task("task", project, nil, task_name, created_entity, depth, options, handlers, strategy)
       end
 
-      # TODO ... add the per-project exclusion stuff here
-    end
-
-    client_data["custom_commands"].each do |c|
-      Dir.chdir($intrigue_basedir) do
-        `#{c["command"]}`
+      # sometimes we need to run a custom command in the context of a project
+      if p["custom_commands"]
+        p["custom_commands"].each do |c|
+          Dir.chdir($intrigue_basedir) do
+            `#{c["command"]}`
+          end
+        end
       end
+
     end
 
   end
