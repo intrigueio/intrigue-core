@@ -192,7 +192,9 @@ class CoreCli < Thor
       project_name = p["name"]
       project = Intrigue::Model::Project.create(:name => "#{project_name}")
 
+      # XXX
       # TODO ... add the per-project exclusion stuff here
+      # XXX
 
       puts "Working on project: #{project_name}"
       p["seeds"].each do |s|
@@ -204,7 +206,6 @@ class CoreCli < Thor
         depth = s["depth"] || 6
         optiosn = s["options"] || []
         handlers = s["handlers"] || []
-
 
         # Create the entity
         created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"], true)
@@ -284,7 +285,7 @@ class CoreCli < Thor
        })
 
        # enrich if we're asked
-       e.schedule_enrichment
+       e.schedule_enrichment if enrich
 
        # Print & increment
        puts "#{i}: #{e.type}##{e.name} created!"
