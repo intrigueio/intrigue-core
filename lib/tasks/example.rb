@@ -28,15 +28,21 @@ class Example < BaseTask
   def run
     super
 
+    name = _get_entity_name
+
+    # Show some test messages
+    _log_good "Got entity: #{name}"
+    _log_error "Just printing a test error message"
+    _log "Let's keep going!"
+
+    # Show how to get an option and act on it
     if (_get_option("sleep") < 0)
       _log_error "Invalid option: sleep"
       return
     end
 
-    if (_get_option("count") < 0)
-      _log_error "Invalid option: count"
-      return
-    end
+    # just return if we have bad data
+    return unless _get_option("count") > 0
 
     # Sleep if this option was supplied
     sleep(_get_option("sleep"))
