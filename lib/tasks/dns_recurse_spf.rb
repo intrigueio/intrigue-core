@@ -40,10 +40,9 @@ class DnsRecurseSpf < BaseTask
     begin
 
       res = Dnsruby::Resolver.new(
-      :nameserver => opt_resolver,
-      :search => [],
-      :recurse => "true",
-      :query_timeout => 5)
+        :search => [],
+        :query_timeout => 5
+      )
 
       result = res.query(dns_name, Dnsruby::Types.TXT)
 
@@ -73,7 +72,7 @@ class DnsRecurseSpf < BaseTask
                   _create_entity "IpAddress", {"name" => spf_data}
 
                   # RECURSE!
-                  lookup_txt_record opt_resolver, spf_data
+                  lookup_txt_record spf_data
 
                 elsif data =~ /^ip4:.*/
                   range = data.split(":").last
