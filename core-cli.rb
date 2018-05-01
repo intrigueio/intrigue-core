@@ -256,6 +256,43 @@ class CoreCli < Thor
     end
   end
 
+  desc "local_load_bulk [Project] [File] [Enrich (optional)]", "Bulk load entities from a file."
+  def local_load_bulk(projectname, filename, enrich=false)
+
+    p = Intrigue::Model::Project.create(:name => projectname)
+
+    i=0
+    lines = File.open(filename,"r").readlines
+    lines.each do |line|
+      line.chomp!
+
+      # prep the entity
+      parsed_entity = _parse_entity line
+      parsed_entity["details"].merge!({
+        "hidden_original": parsed_entity["name"],
+      })
+
+      # create the entity
+      e = eval("Intrigue::Entity::#{parsed_entity["type"]}").create({
+        :name =>  parsed_entity["name"].downcase,
+        :project_id => p.id,
+        :type => "Intrigue::Entity::#{parsed_entity["type"]}",
+        :details => parsed_entity["details"],
+        :details_raw => parsed_entity["details"],
+        :hidden => false,
+        :alias_group_id => nil
+       })
+
+       # enrich if we're asked
+       e.schedule_enrichment
+
+       # Print & increment
+       puts "#{i}: #{e.type}##{e.name} created!"
+       i+=1
+    end
+
+  end
+
 private
 
 
@@ -270,7 +307,7 @@ private
       "details" => { "name" => entity_name }
     }
 
-    puts "Got entity: #{entity_hash}" if @debug
+    #puts "Got entity: #{entity_hash}" if @debug
 
   entity_hash
   end
