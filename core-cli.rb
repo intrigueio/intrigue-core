@@ -228,7 +228,7 @@ class CoreCli < Thor
   end
 
 
-  desc "local_load [Task] [File] [Depth] [Option1=Value1#...#...] [Handlers] [Strategy]", "Load entities from a file and runs a task on each in a new project."
+  desc "local_load [Task] [File] [Depth] [Opt1=Val1#Opt2=Val2#...] [Handlers] [Strategy]", "Load entities from a file and runs a task on each in a new project."
   def local_load(task_name,filename,depth=1,options_string=nil,handler_string=nil, strategy_name="asset_discovery_active")
 
     # Load in the main core file for direct access to TaskFactory and the Tasks
