@@ -7,11 +7,19 @@ module Intrigue
           :uri => "#{uri}",
           :checklist => [
             {
-              :name => "Cloudfront - Missing Page",
+              :name => "Cloudfront - Error",
               :description => "Cloudfront - no configured hostname",
               :version => "",
               :type => :content_body,
               :content => /ERROR: The request could not be satisfied/,
+              :hide => true
+            },
+            {
+              :name => "Cloudfront - Error",
+              :description => "Cloudfront - no configured hostname",
+              :version => "",
+              :type => :content_headers,
+              :content => /Error from cloudfront/,
               :hide => true
             }
           ]
