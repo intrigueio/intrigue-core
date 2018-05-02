@@ -30,7 +30,7 @@ module Intrigue
       end
 
       def export_json
-        export_hash.to_json
+        export_hash.merge("generated_at" => "#{DateTime.now}").to_json
       end
 
       def export_csv

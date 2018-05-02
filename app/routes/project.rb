@@ -60,7 +60,7 @@ class IntrigueApp < Sinatra::Base
       project = Intrigue::Model::Project.first(:name => @project_name)
       project.handle(handler_name)
 
-    redirect "/#{@project_name}"
+    redirect "/#{@project_name}/start"
     end
 
     #### GRAPH ####
