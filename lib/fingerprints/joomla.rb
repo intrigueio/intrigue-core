@@ -1,6 +1,6 @@
 module Intrigue
   module Fingerprint
-    class Joomla
+    class Joomla < Intrigue::Fingerprint::Base
 
       def generate_fingerprints(uri)
         {

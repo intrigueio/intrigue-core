@@ -1,6 +1,6 @@
 module Intrigue
   module Fingerprint
-    class PhpMyAdmin
+    class PhpMyAdmin < Intrigue::Fingerprint::Base
 
       def generate_fingerprints(uri)
         {

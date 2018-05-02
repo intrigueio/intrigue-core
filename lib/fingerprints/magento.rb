@@ -1,6 +1,6 @@
 module Intrigue
   module Fingerprint
-    class Magento
+    class Magento < Intrigue::Fingerprint::Base
 
       def generate_fingerprints(uri)
         {

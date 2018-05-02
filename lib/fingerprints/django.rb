@@ -1,6 +1,6 @@
 module Intrigue
   module Fingerprint
-    class Django
+    class Django < Intrigue::Fingerprint::Base
 
       def generate_fingerprints(uri)
         {

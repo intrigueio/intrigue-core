@@ -1,6 +1,6 @@
 module Intrigue
   module Fingerprint
-    class Spring
+    class Spring < Intrigue::Fingerprint::Base
 
       def generate_fingerprints(uri)
         [{

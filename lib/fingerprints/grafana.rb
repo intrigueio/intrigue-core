@@ -1,6 +1,6 @@
 module Intrigue
   module Fingerprint
-    class Grafana
+    class Grafana < Intrigue::Fingerprint::Base
 
       def generate_fingerprints(uri)
         {

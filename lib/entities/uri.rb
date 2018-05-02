@@ -250,7 +250,20 @@ class WebStackFingerprint < BaseTask
 
     # this has now been moved into Intrigue::Task::Web
     # for details on the fingerprints, see the lib/fingerprints directory
-    app_stack.concat fingerprint_uri(uri).map{|x| "#{x[:name]} #{x[:version]}"}
+    fingerprint_matches =  fingerprint_uri(uri)
+
+    # XXX this is powerful... if we ever match something we know the user won't
+    # need to see (aka the fingerprint's :hide parameter is true), go ahead
+    # and hide the entity... meaning no recursion and it shouldn't show up in the UI / queries
+    # if any of the matches told us to hide the entity, do that.
+    # EXAMPLE TEST CASE: http://103.24.203.121:80 (cpanel missing page)
+    if fingerprint_matches.detect{|x| x[:hide] == true }
+      @entity.hidden = true
+      @entity.save
+    end
+
+    # and then just stick the name and the version in our fingerprint
+    app_stack.concat(fingerprint_matches.map{|x| "#{x[:name]} #{x[:version]}"})
     uniq_app_stack =  app_stack.select{ |x| x != nil }.uniq
     @entity.set_detail("app_fingerprint", uniq_app_stack)
     _log "Setting app stack to #{uniq_app_stack}"

@@ -1,6 +1,6 @@
 module Intrigue
   module Fingerprint
-    class Wordpress
+    class Wordpress < Intrigue::Fingerprint::Base
 
       def generate_fingerprints(uri)
         [

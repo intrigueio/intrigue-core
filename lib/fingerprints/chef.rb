@@ -1,6 +1,6 @@
 module Intrigue
   module Fingerprint
-    class Chef
+    class Chef < Intrigue::Fingerprint::Base
 
       def generate_fingerprints(uri)
         {

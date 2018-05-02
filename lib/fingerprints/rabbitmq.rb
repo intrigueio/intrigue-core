@@ -1,6 +1,6 @@
 module Intrigue
   module Fingerprint
-    class RabbitMQ
+    class Rabbitmq < Intrigue::Fingerprint::Base
 
       def generate_fingerprints(uri)
         [{

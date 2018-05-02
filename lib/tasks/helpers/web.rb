@@ -13,36 +13,14 @@ module Intrigue
 module Task
   module Web
 
+
     def fingerprint_uri(uri)
 
       results = []
 
-      # first collect all products
-      @fingerprints = [
-        Intrigue::Fingerprint::AspNet,
-        Intrigue::Fingerprint::Atlassian,
-        Intrigue::Fingerprint::Chef,
-        Intrigue::Fingerprint::Drupal,
-        Intrigue::Fingerprint::Example,
-        Intrigue::Fingerprint::Gitlab,
-        Intrigue::Fingerprint::Grafana,
-        Intrigue::Fingerprint::Jenkins,
-        Intrigue::Fingerprint::Joomla,
-        Intrigue::Fingerprint::LimeSurvey,
-        Intrigue::Fingerprint::Magento,
-        Intrigue::Fingerprint::MediaWiki,
-        Intrigue::Fingerprint::Nagios,
-        Intrigue::Fingerprint::PhpMyAdmin,
-        Intrigue::Fingerprint::RabbitMQ,
-        Intrigue::Fingerprint::Spring,
-        Intrigue::Fingerprint::Tomcat,
-        Intrigue::Fingerprint::Wordpress
-      ]
-
       # gather all fingeprints for each product
       # this will look like an array of fingerprints, each with a uri and a SET of checks
-
-      generated_fingerprints = @fingerprints.map{|x| x.new.generate_fingerprints(uri) }.flatten
+      generated_fingerprints = FingerprintFactory.fingerprints.map{|x| x.new.generate_fingerprints(uri) }.flatten
 
       # group by the uris, with the associated checks
       grouped_generated_fingerprints = generated_fingerprints.group_by{|x| x[:uri]}
@@ -67,10 +45,9 @@ module Task
                 # note that content should be a regex!!!!
                 if "#{response.body}" =~ check[:content]
                   if check[:dynamic_version]
-                    results << { :version => check[:dynamic_version].call(response), :name => check[:name], :match => check[:type] } ||
-                      { :name => check[:name], :version => check[:version], :match => check[:type] }
+                    results << { :version => check[:dynamic_version].call(response), :name => check[:name], :match => check[:type], :hide => check[:hide] }
                   else
-                    results << { :name => check[:name], :version => check[:version], :match => check[:type] }
+                    results << { :name => check[:name], :version => check[:version], :match => check[:type], :hide => check[:hide] }
                   end
                 end
 
@@ -79,10 +56,9 @@ module Task
                 response.each do |h|
                   next unless check[:content] =~ h
                   if check[:dynamic_version]
-                    results << { :version => check[:dynamic_version].call(response), :name => check[:name], :match => check[:type] } ||
-                      { :name => check[:name], :version => check[:version], :match => check[:type] }
+                    results << { :version => check[:dynamic_version].call(response), :name => check[:name], :match => check[:type], :hide => check[:hide] }
                   else
-                    results << { :name => check[:name], :version => check[:version], :match => check[:type] }
+                    results << { :name => check[:name], :version => check[:version], :match => check[:type], :hide => check[:hide] }
                   end
                 end
 
@@ -90,20 +66,18 @@ module Task
                 # Check only the set-cookie header
                 if response.header['set-cookie'] =~ check[:content]
                   if check[:dynamic_version]
-                    results << { :version => check[:dynamic_version].call(response), :name => check[:name], :match => check[:type] } ||
-                      { :name => check[:name], :version => check[:version], :match => check[:type] }
+                    results << { :version => check[:dynamic_version].call(response), :name => check[:name], :match => check[:type], :hide => check[:hide] }
                   else
-                    results << { :name => check[:name], :version => check[:version], :match => check[:type] }
+                    results << { :name => check[:name], :version => check[:version], :match => check[:type], :hide => check[:hide] }
                   end
                 end
 
               elsif check[:type] == :checksum_body
                 if Digest::MD5.hexdigest("#{response.body}") == check[:checksum]
                   if check[:dynamic_version]
-                    results << { :version => check[:dynamic_version].call(response), :name => check[:name], :match => check[:type] } ||
-                      { :name => check[:name], :version => check[:version], :match => check[:type] }
+                    results << { :version => check[:dynamic_version].call(response), :name => check[:name], :match => check[:type], :hide => check[:hide] }
                   else
-                    results << { :name => check[:name], :version => check[:version], :match => check[:type] }
+                    results << { :name => check[:name], :version => check[:version], :match => check[:type], :hide => check[:hide] }
                   end
                 end
 
@@ -116,6 +90,7 @@ module Task
       end
     results
     end
+
 
 
     #

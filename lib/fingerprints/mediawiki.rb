@@ -1,6 +1,6 @@
 module Intrigue
   module Fingerprint
-    class MediaWiki
+    class MediaWiki < Intrigue::Fingerprint::Base
 
       def generate_fingerprints(uri)
         {

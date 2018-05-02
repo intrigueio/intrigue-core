@@ -1,6 +1,6 @@
 module Intrigue
   module Fingerprint
-    class Pfsense
+    class Pfsense < Intrigue::Fingerprint::Base
 
       def generate_fingerprints(uri)
         {

@@ -1,6 +1,6 @@
 module Intrigue
   module Fingerprint
-    class LimeSurvey
+    class LimeSurvey < Intrigue::Fingerprint::Base
 
       def generate_fingerprints(uri)
         {

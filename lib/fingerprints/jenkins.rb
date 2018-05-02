@@ -1,6 +1,6 @@
 module Intrigue
   module Fingerprint
-    class Jenkins
+    class Jenkins < Intrigue::Fingerprint::Base
 
       def generate_fingerprints(uri)
         {

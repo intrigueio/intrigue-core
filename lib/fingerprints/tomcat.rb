@@ -1,6 +1,6 @@
 module Intrigue
   module Fingerprint
-    class Tomcat
+    class Tomcat < Intrigue::Fingerprint::Base
 
       def generate_fingerprints(uri)
         {

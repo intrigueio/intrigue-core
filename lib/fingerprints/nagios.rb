@@ -1,6 +1,6 @@
 module Intrigue
   module Fingerprint
-    class Nagios
+    class Nagios < Intrigue::Fingerprint::Base
 
       def generate_fingerprints(uri)
         {

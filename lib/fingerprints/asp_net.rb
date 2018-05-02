@@ -1,6 +1,6 @@
 module Intrigue
   module Fingerprint
-    class AspNet
+    class AspNet < Intrigue::Fingerprint::Base
 
       def generate_fingerprints(uri)
         {

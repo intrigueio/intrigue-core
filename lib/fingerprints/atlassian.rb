@@ -1,6 +1,6 @@
 module Intrigue
   module Fingerprint
-    class Atlassian
+    class Atlassian < Intrigue::Fingerprint::Base
 
       def generate_fingerprints(uri)
         {
