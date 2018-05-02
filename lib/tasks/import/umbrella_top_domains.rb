@@ -19,7 +19,7 @@ class ImportUmbrellaTopDomains < BaseTask
         {:name => "threads", :regex => "integer", :default => 1 },
         {:name => "max_sleep", :regex => "integer", :default => 10 }
       ],
-      :created_types => ["NetBlock"]
+      :created_types => ["DnsRecord"]
     }
   end
 

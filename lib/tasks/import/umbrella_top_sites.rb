@@ -20,7 +20,7 @@ class ImportUmbrellaTopSites < BaseTask
         {:name => "threads", :regex => "integer", :default => 1 },
         {:name => "max_sleep", :regex => "integer", :default => 10 }
       ],
-      :created_types => ["NetBlock"]
+      :created_types => ["Uri"]
     }
   end
 
@@ -37,7 +37,6 @@ class ImportUmbrellaTopSites < BaseTask
 
     lammylam = lambda { |d|
       sleep(rand(_get_option("max_sleep")))
-
       #_log "Creating sites for domain: #{d}"
       #_create_entity "Uri", { "name" => "http://#{d}", "uri"=>"https://#{d}" }
       _create_entity "Uri", { "name" => "https://#{d}", "uri"=>"https://#{d}" }
