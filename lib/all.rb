@@ -143,5 +143,6 @@ end
 # Fingerprints
 ####
 require_relative 'fingerprint_factory'
+require_relative 'fingerprints/base'
 fingerprints_folder = File.expand_path('../fingerprints', __FILE__) # get absolute directory
 Dir["#{fingerprints_folder}/*.rb"].each { |file| require_relative file }
