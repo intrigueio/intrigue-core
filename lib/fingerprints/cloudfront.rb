@@ -7,7 +7,7 @@ module Intrigue
           :uri => "#{uri}",
           :checklist => [
             {
-              :name => "Cloudfront - Error",
+              :name => "Cloudfront - Error (Body)",
               :description => "Cloudfront - no configured hostname",
               :version => "",
               :type => :content_body,
@@ -15,11 +15,19 @@ module Intrigue
               :hide => true
             },
             {
-              :name => "Cloudfront - Error",
+              :name => "Cloudfront - Error (Headers)",
               :description => "Cloudfront - no configured hostname",
               :version => "",
               :type => :content_headers,
               :content => /Error from cloudfront/,
+              :hide => true
+            },
+            {
+              :name => "Cloudfront - 403 (Body)",
+              :description => "Cloudfront - 403",
+              :version => "",
+              :type => :content_body,
+              :content => /<h1>403 Forbidden<\/h1><\/center>\n<hr><center>cloudflare/,
               :hide => true
             }
           ]

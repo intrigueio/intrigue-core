@@ -40,6 +40,9 @@ module Task
 
               # if type "content", do the content check
               if check[:type] == :content_body
+
+                _log "Attempting to match #{check[:content]} to #{response.body}"
+
                 # Do each content check, call the dynamic name if we have it,
                 # otherwise, just give it a static name
                 # note that content should be a regex!!!!
@@ -54,6 +57,9 @@ module Task
               elsif check[:type] == :content_headers
                 # Check each header
                 response.each do |h|
+
+                  _log "DEBUG: Attempting to match #{check[:content]} to #{h}"
+
                   next unless check[:content] =~ h
                   if check[:dynamic_version]
                     results << { :version => check[:dynamic_version].call(response), :name => check[:name], :match => check[:type], :hide => check[:hide] }
@@ -63,6 +69,9 @@ module Task
                 end
 
               elsif check[:type] == :content_cookies
+
+                _log "DEBUG: Attempting to match #{check[:content]} to #{response.header['set-cookie']}"
+
                 # Check only the set-cookie header
                 if response.header['set-cookie'] =~ check[:content]
                   if check[:dynamic_version]
