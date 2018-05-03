@@ -10,7 +10,7 @@ class EntityManager
   end
 
   def self.resolve_type(type_string)
-    raise "INVALID TYPE TO RESOLVE: #{type_string}. DID YOU SEND A STRING?" unless type_string.kind_of? String
+    raise "INVALID TYPE TO RESOLVE: #{type_string}. DID YOU SEND A STRING? FAILING!" unless type_string.kind_of? String
 
     # Don't eval unless it's one of our valid entity types
     if type_string =~ /:/

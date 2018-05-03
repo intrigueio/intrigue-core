@@ -31,8 +31,13 @@ module Task
         # get the response
         response = http_request :get, "#{ggf.first}"
 
-        if response
+        # construct the headers into a big string block
+        header_string = ""
+        response.each_header do |h,v|
+          header_string << "#{h}: #{v}\n"
+        end
 
+        if response
           # call each check, collecting the product if it's a match
           ggf.last.map{|x| x[:checklist] }.each do |checklist|
 
@@ -41,7 +46,7 @@ module Task
               # if type "content", do the content check
               if check[:type] == :content_body
 
-                _log "Attempting to match #{check[:content]} to #{response.body}"
+                #_log "DEBUG: Attempting to match #{check[:content]} to #{response.body}"
 
                 # Do each content check, call the dynamic name if we have it,
                 # otherwise, just give it a static name
@@ -56,11 +61,9 @@ module Task
 
               elsif check[:type] == :content_headers
                 # Check each header
-                response.each do |h|
 
-                  _log "DEBUG: Attempting to match #{check[:content]} to #{h}"
-
-                  next unless check[:content] =~ h
+                #_log "DEBUG: Attempting to match #{check[:content]} to #{h}"
+                if header_string =~ check[:content]
                   if check[:dynamic_version]
                     results << { :version => check[:dynamic_version].call(response), :name => check[:name], :match => check[:type], :hide => check[:hide] }
                   else
@@ -70,7 +73,7 @@ module Task
 
               elsif check[:type] == :content_cookies
 
-                _log "DEBUG: Attempting to match #{check[:content]} to #{response.header['set-cookie']}"
+                #_log "DEBUG: Attempting to match #{check[:content]} to #{response.header['set-cookie']}"
 
                 # Check only the set-cookie header
                 if response.header['set-cookie'] =~ check[:content]
