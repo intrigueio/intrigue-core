@@ -4,6 +4,7 @@ class BaseTask
 
   # TODO - verify and re-enable these.. just need to make sure
   # there are no namespace collisions
+  include Intrigue::Task::Browser
   include Intrigue::Task::Data
   include Intrigue::Task::Dns
   include Intrigue::Task::Enrich
