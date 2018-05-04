@@ -20,7 +20,7 @@ module Intrigue
               :version => "Unknown",
               :type => :content_headers,
               :content => /^X-AspNet-Version:.*$/i,
-              :dynamic_version => lambda{|x| x.body.scan(/ASP.NET Version:(.*)$/i)[0].first.chomp }
+              :dynamic_version => lambda{|x| x.body.scan(/ASP.NET Version:(.*)$/i)[0].first.chomp if x.body.scan(/ASP.NET Version:(.*)$/i)[0] }
             },
             {
               :name => "ASP.NET",

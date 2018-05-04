@@ -31,6 +31,11 @@ module Task
         # get the response
         response = http_request :get, "#{ggf.first}"
 
+        unless response
+          puts "Unable to get a response at: #{ggf.first}"
+          return nil
+        end
+
         # construct the headers into a big string block
         header_string = ""
         response.each_header do |h,v|
@@ -45,59 +50,42 @@ module Task
 
               # if type "content", do the content check
               if check[:type] == :content_body
-
-                #_log "DEBUG: Attempting to match #{check[:content]} to #{response.body}"
-
-                # Do each content check, call the dynamic name if we have it,
-                # otherwise, just give it a static name
-                # note that content should be a regex!!!!
-                if "#{response.body}" =~ check[:content]
-                  if check[:dynamic_version]
-                    results << { :version => check[:dynamic_version].call(response), :name => check[:name], :match => check[:type], :hide => check[:hide] }
-                  else
-                    results << { :name => check[:name], :version => check[:version], :match => check[:type], :hide => check[:hide] }
-                  end
-                end
+                results << {
+                  :version => check[:dynamic_version].call(response) || check[:version],
+                  :name => check[:name],
+                  :match => check[:type],
+                  :hide => check[:hide]
+                } if "#{response.body}" =~ check[:content]
 
               elsif check[:type] == :content_headers
-                # Check each header
-
-                #_log "DEBUG: Attempting to match #{check[:content]} to #{h}"
-                if header_string =~ check[:content]
-                  if check[:dynamic_version]
-                    results << { :version => check[:dynamic_version].call(response), :name => check[:name], :match => check[:type], :hide => check[:hide] }
-                  else
-                    results << { :name => check[:name], :version => check[:version], :match => check[:type], :hide => check[:hide] }
-                  end
-                end
+                results << {
+                  :version => check[:dynamic_version].call(response) || check[:version],
+                  :name => check[:name],
+                  :match => check[:type],
+                  :hide => check[:hide]
+                } if header_string =~ check[:content]
 
               elsif check[:type] == :content_cookies
-
-                #_log "DEBUG: Attempting to match #{check[:content]} to #{response.header['set-cookie']}"
-
                 # Check only the set-cookie header
-                if response.header['set-cookie'] =~ check[:content]
-                  if check[:dynamic_version]
-                    results << { :version => check[:dynamic_version].call(response), :name => check[:name], :match => check[:type], :hide => check[:hide] }
-                  else
-                    results << { :name => check[:name], :version => check[:version], :match => check[:type], :hide => check[:hide] }
-                  end
-                end
+                  results << {
+                    :version => check[:dynamic_version].call(response) || check[:version],
+                    :name => check[:name],
+                    :match => check[:type],
+                    :hide => check[:hide]
+                  } if response.header['set-cookie'] =~ check[:content]
 
               elsif check[:type] == :checksum_body
-                if Digest::MD5.hexdigest("#{response.body}") == check[:checksum]
-                  if check[:dynamic_version]
-                    results << { :version => check[:dynamic_version].call(response), :name => check[:name], :match => check[:type], :hide => check[:hide] }
-                  else
-                    results << { :name => check[:name], :version => check[:version], :match => check[:type], :hide => check[:hide] }
-                  end
-                end
+                  results << {
+                    :version => check[:dynamic_version].call(response) || check[:version],
+                    :name => check[:name],
+                    :match => check[:type],
+                    :hide => check[:hide]
+                  } if Digest::MD5.hexdigest("#{response.body}") == check[:checksum]
 
               end
 
             end
           end
-
         end # if response
       end
     results
