@@ -38,7 +38,7 @@ class ScrapePublicwww < BaseTask
     max_page_count.times do |page_count|
 
       # Get a page
-      uri = "https://publicwww.com/websites/%22.#{domain}%22/#{page_count + 1}"
+      uri = "https://publicwww.com/websites/%22.#{domain_name}%22/#{page_count + 1}"
       body_text = capture_document(browser, uri).text
       _log "Got text: #{body_text}"
 
