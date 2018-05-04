@@ -28,7 +28,7 @@ module Intrigue
               :version => nil,
               :type => :content_cookies,
               :content => /ASPSESSIONID.*$/,
-              :dynamic_version => lambda{|x| x.each_header{|k,v| return v if k =~ /x-aspnet-version/ } }
+              #:dynamic_version => lambda{|x| x.each_header{|k,v| return v if k =~ /x-aspnet-version/ } }
             },
             {
               :name => "ASP.NET",
@@ -36,7 +36,7 @@ module Intrigue
               :version => nil,
               :type => :content_cookies,
               :content => /ASP.NET_SessionId.*$/,
-              :dynamic_version => lambda{|x| x.each_header{|k,v| return v if k =~ /x-aspnet-version/ } }
+              #:dynamic_version => lambda{|x| x.each_header{|k,v| return v if k =~ /x-aspnet-version/ } }
             },
             {
               :name => "ASP.NET MVC",
@@ -44,7 +44,7 @@ module Intrigue
               :version => nil,
               :type => :content_headers,
               :content => /x-aspnetmvc-version/,
-              :dynamic_version => lambda{|x| x.each_header{|k,v| return v if k =~ /x-aspnetmvc-version/ } }
+              #:dynamic_version => lambda{|x| x.each_header{|k,v| return v if k =~ /x-aspnetmvc-version/ } }
             },
             {
               :name => "ASP.NET",
@@ -52,7 +52,7 @@ module Intrigue
               :version => nil,
               :type => :content_body,
               :content => /WebResource.axd?d=/,
-              :dynamic_version => lambda{|x| x.each_header{|k,v| return v if k =~ /WebResource.axd?d=/ } }
+              #:dynamic_version => lambda{|x| x.each_header{|k,v| return v if k =~ /WebResource.axd?d=/ } }
             }
           ]
         }
