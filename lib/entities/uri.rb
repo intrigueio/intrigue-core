@@ -262,14 +262,17 @@ class WebStackFingerprint < BaseTask
       @entity.save
     end
 
+    # store the fingerprint matches:
+    @entity.set_detail("fingerprint", fingerprint_matches.uniq )
+
     # and then just stick the name and the version in our fingerprint
     app_stack.concat(fingerprint_matches.map do |x|
       version_string = "#{x[:name]}"
-      version_string += " #{x[:version]}" if x[:version].length > 0 
+      version_string += " #{x[:version]}" if x[:version].length > 0
     end)
-    uniq_app_stack =  app_stack.select{ |x| x != nil }.uniq
-    @entity.set_detail("app_fingerprint", uniq_app_stack)
-    _log "Setting app stack to #{uniq_app_stack}"
+    uniq_app_strings = app_stack.select{ |x| x != nil }.uniq
+    @entity.set_detail("app_fingerprint", uniq_app_strings)
+    _log "Setting app stack to #{uniq_app_strings}"
 
     ###
     ### Fingerprint the js libraries
