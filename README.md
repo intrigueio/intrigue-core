@@ -11,7 +11,7 @@ If you'd like assistance getting started or have development-related questions, 
 
 # Users
 
-If you just want to get started, have a look at the [Getting Started Guide](https://intrigue.io/getting-started/)
+If you just want to get started and play around with an instance, have a look at the [Getting Started Guide](https://intrigue.io/getting-started/)
 
 # Developers
 
@@ -21,7 +21,8 @@ To get started setting up a development environment, follow the instructions bel
 
 Follow the appropriate setup guide:
 
- * Docker (preferred) - https://intrigue.io/2017/03/07/using-intrigue-core-with-docker/
+ * Vagrant (preferred) - http://intrigue.io/getting-started-with-intrigue-core-on-vagrant-virtualbox/
+ * Docker - https://intrigue.io/2017/03/07/using-intrigue-core-with-docker/
  * Ubuntu Linux - https://github.com/intrigueio/intrigue-core/wiki/Setting-up-a-Test-Environment-on-Ubuntu-Linux
  * Kali Linux - https://github.com/intrigueio/intrigue-core/wiki/Setting-up-a-Test-Environment-on-Kali-Linux
  * OS X - https://github.com/intrigueio/intrigue-core/wiki/Setting-up-a-Test-Environment-on-OSX-10.10
