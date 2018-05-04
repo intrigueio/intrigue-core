@@ -9,7 +9,7 @@ module Intrigue
             {
               :name => "Akamai",
               :description => "Akamai Missing Uri",
-              :version => "",
+              :version => nil,
               :type => :content_body,
               :content => /The requested URL "&#91;no&#32;URL&#93;", is invalid.<p>/,
               :hide => true

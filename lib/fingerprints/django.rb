@@ -9,7 +9,7 @@ module Intrigue
             {
               :name => "Django",
               :description => "Django Admin Page",
-              :version => "Unknown",
+              :version => nil,
               :type => :content_body,
               :content => /<title>Log in \| Django site admin<\/title>/
             }

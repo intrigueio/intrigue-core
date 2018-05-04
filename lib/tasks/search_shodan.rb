@@ -46,7 +46,7 @@ class SearchShodan < BaseTask
     if response["data"]
 
       # save raw data on the IP
-      @entity.set_detail("raw_shodan",response["data"])
+      _set_entity_detail("raw_shodan",response["data"])
 
       # create an entity for each service (this handles known aliases)
       response["data"].each do |s|

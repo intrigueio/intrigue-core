@@ -37,9 +37,6 @@ end
 module Intrigue
 module Task
 class EnrichIpAddress < BaseTask
-  include Intrigue::Task::Helper
-  include Intrigue::Task::Data
-  include Intrigue::Task::Dns
 
   def self.metadata
     {
@@ -69,9 +66,9 @@ class EnrichIpAddress < BaseTask
 
     # Set IP version
     if @entity.name =~ /:/
-      @entity.set_detail("version",6)
+      _set_entity_detail("version",6)
     else
-      @entity.set_detail("version",4)
+      _set_entity_detail("version",4)
     end
 
     ########################
@@ -117,19 +114,9 @@ class EnrichIpAddress < BaseTask
       dns_entries << { "response_data" => xdata, "response_type" => xtype }
     end
 
-    @entity.set_detail("dns_entries", dns_entries.uniq )
+    _set_entity_detail("dns_entries", dns_entries.uniq )
 
-    ########################
-    ### MARK AS ENRICHED ###
-    ########################
-    $db.transaction do
-      c = (@entity.get_detail("enrichment_complete") || []) << "#{self.class.metadata[:name]}"
-      @entity.set_detail("enrichment_complete", c)
-    end
-    _log "Completed enrichment task!"
-    ########################
-    ### MARK AS ENRICHED ###
-    ########################
+    _finalize_enrichment
   end
 
 end

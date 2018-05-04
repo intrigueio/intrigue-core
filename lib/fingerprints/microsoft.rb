@@ -9,7 +9,7 @@ module Intrigue
             {
               :name => "Microsoft Forefront TMG",
               :description => "Microsoft Forefront Threat Management Gateway",
-              :version => "Unknown",
+              :version => nil,
               :type => :content_cookies,
               :content => /<title>Microsoft Forefront TMG/
             }

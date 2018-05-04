@@ -9,7 +9,7 @@ module Intrigue
             {
               :name => "ASP.NET",
               :description => "ASP.Net Error Message",
-              :version => "Unknown",
+              :version => nil,
               :type => :content_body,
               :content => /^.*ASP.NET is configured.*$/,
               :dynamic_version => lambda{|x| x.body.scan(/ASP.NET Version:(.*)$/)[0].first.chomp }
@@ -17,7 +17,7 @@ module Intrigue
             {
               :name => "ASP.NET",
               :description => "X-AspNet Header",
-              :version => "Unknown",
+              :version => nil,
               :type => :content_headers,
               :content => /^X-AspNet-Version:.*$/i,
               :dynamic_version => lambda{|x| x.body.scan(/ASP.NET Version:(.*)$/i)[0].first.chomp if x.body.scan(/ASP.NET Version:(.*)$/i)[0] }
@@ -25,14 +25,14 @@ module Intrigue
             {
               :name => "ASP.NET",
               :description => "Asp.Net Default Cookie",
-              :version => "Unknown",
+              :version => nil,
               :type => :content_cookies,
               :content => /^.*ASPSESSIONID.*$/
             },
             {
               :name => "ASP.NET",
               :description => "Asp.Net Default Cookie",
-              :version => "Unknown",
+              :version => nil,
               :type => :content_cookies,
               :content => /^.*ASP.NET_SessionId.*$/
             }

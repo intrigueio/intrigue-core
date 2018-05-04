@@ -9,7 +9,7 @@ module Intrigue
             {
               :name => "Nagios",
               :description => "Nagios",
-              :version => "Unknown",
+              :version => nil,
               :type => :content_headers,
               :content => /nagios/
             }

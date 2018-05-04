@@ -31,8 +31,6 @@ module Intrigue
 module Task
 class EnrichAwsS3Bucket < BaseTask
 
-  include Intrigue::Task::Web
-
   def self.metadata
     {
       :name => "enrich/aws_s3_bucket",
@@ -60,7 +58,7 @@ class EnrichAwsS3Bucket < BaseTask
 
     # TODO - HMM... capitalization matters. grab the uri for now, but
     # we should think about how to handle this...
-    bucket_uri = _get_entity_attribute "uri" || _get_entity_name
+    bucket_uri = _get_entity_detail("uri") || _get_entity_name
     bucket_uri.chomp!("/")
 
     unless bucket_uri =~ /s3.amazonaws.com/
@@ -79,7 +77,7 @@ class EnrichAwsS3Bucket < BaseTask
       contents.concat(result) if result
     end
 
-    @entity.set_detail("contents", contents.sort.uniq)
+    _set_entity_detail("contents", contents.sort.uniq)
   end
 
   def get_contents_unauthenticated(s3_uri, prefix)
@@ -122,18 +120,7 @@ class EnrichAwsS3Bucket < BaseTask
       end
     end
 
-
-    ########################
-    ### MARK AS ENRICHED ###
-    ########################
-    $db.transaction do
-      c = (@entity.get_detail("enrichment_complete") || []) << "#{self.class.metadata[:name]}"
-      @entity.set_detail("enrichment_complete", c)
-    end
-    _log "Completed enrichment task!"
-    ########################
-    ### MARK AS ENRICHED ###
-    ########################
+    _finalize_enrichment
   end
 
 end

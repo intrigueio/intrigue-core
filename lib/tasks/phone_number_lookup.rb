@@ -49,8 +49,8 @@ class PhoneNumberLookup < BaseTask
       _log "Carrier: #{details["Response"]["carrier"]}"
 
       # Edit the phone number entity
-      @entity.set_detail("carrier_type", details["Response"]["carrier_type"])
-      @entity.set_detail("carrier",details["Response"]["carrier"])
+      _set_entity_detail("carrier_type", details["Response"]["carrier_type"])
+      _set_entity_detail("carrier",details["Response"]["carrier"])
 
     rescue JSON::ParserError
       _log_error "Unable to retrieve provider info"

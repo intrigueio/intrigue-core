@@ -38,7 +38,7 @@ class UriScreenshot < BaseTask
 
     # capture a screenshot and save it as a detail
     base64_screenshot_data = capture_screenshot(session)
-    @entity.set_detail("hidden_screenshot_contents",base64_screenshot_data)
+    _set_entity_detail("hidden_screenshot_contents",base64_screenshot_data)
 
   end
 

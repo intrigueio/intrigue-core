@@ -9,7 +9,7 @@ module Intrigue
             {
               :name => "Gitlab",
               :description => "Gitlab",
-              :version => "Unknown",
+              :version => nil,
               :type => :content_cookies,
               :content => /_gitlab_session/
             }

@@ -12,7 +12,7 @@ module Intrigue
                 "computer software distribution based on FreeBSD. It is " +
                 "installed on a physical computer or a virtual machine to" +
                 "make a dedicated firewall/router for a network",
-              :version => "Unknown",
+              :version => nil,
               :type => :content_body,
               :content => /Login to pfSense/
             }

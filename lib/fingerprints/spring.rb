@@ -9,7 +9,7 @@ module Intrigue
             :name => "Spring",
             :description => "Standard Spring Error Message",
             :type => :content_body,
-            :version => "Unknown",
+            :version => nil,
             :content =>  /{"timestamp":\d.*,"status":999,"error":"None","message":"No message available"}/,
             :references => ["https://github.com/spring-projects/spring-boot"]
           }]},
@@ -19,7 +19,7 @@ module Intrigue
             :name => "Spring",
             :description => "Standard Spring MVC error page",
             :type => :content_body,
-            :version => "Unknown",
+            :version => nil,
             :content => /{"timestamp":\d.*,"status":999,"error":"None","message":"No message available"}/
           }]}
         ]

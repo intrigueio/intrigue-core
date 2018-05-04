@@ -54,9 +54,9 @@ class EnrichSnmp < BaseTask
   def run
     super
 
-    port = _get_entity_attribute("port").to_i || 161
-    protocol = _get_entity_attribute "protocol" || "udp"
-    ip_address = _get_entity_attribute "ip_address"
+    port = _get_entity_detail("port").to_i || 161
+    protocol = _get_entity_detail "protocol" || "udp"
+    ip_address = _get_entity_detail "ip_address"
 
     _log "Port: #{port}"
     _log "Protocol: #{protocol}"
@@ -79,7 +79,7 @@ class EnrichSnmp < BaseTask
               output << varbind.to_s
           end
         end
-        @entity.set_detail("snmp_output", _encode_string(output))
+        _set_entity_detail("snmp_output", _encode_string(output))
       rescue SNMP::RequestTimeout => e
         _log_error "SNMP Timeout"
       end
@@ -88,17 +88,7 @@ class EnrichSnmp < BaseTask
       raise ArgumentError, "Missing IP Address and Port. Unable to open a socket."
     end
 
-    ########################
-    ### MARK AS ENRICHED ###
-    ########################
-    $db.transaction do
-      c = (@entity.get_detail("enrichment_complete") || []) << "#{self.class.metadata[:name]}"
-      @entity.set_detail("enrichment_complete", c)
-    end
-    _log "Completed enrichment task!"
-    ########################
-    ### MARK AS ENRICHED ###
-    ########################
+    _finalize_enrichment
   end
 
 end

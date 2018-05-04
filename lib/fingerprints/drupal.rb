@@ -10,7 +10,7 @@ module Intrigue
               {
                 :name => "Drupal",
                 :description => "Drupal CMS",
-                :version => "Unknown",
+                :version => nil,
                 :type => :content_body,
                 :content => /Drupal/,
                 :dynamic_version => lambda{|x| x.body.scan(/^(Drupal.*)[ ,<\.].*$/)[0].first.gsub("Drupal ","").gsub(",","").chomp }

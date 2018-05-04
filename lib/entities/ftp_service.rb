@@ -62,9 +62,9 @@ class EnrichFtpService < BaseTask
   def run
     super
 
-    port = _get_entity_attribute("port").to_i
-    protocol = _get_entity_attribute "protocol"
-    ip_address = _get_entity_attribute "ip_address"
+    port = _get_entity_detail("port").to_i
+    protocol = _get_entity_detail("protocol")
+    ip_address = _get_entity_detail("ip_address")
 
     # Check to make sure we have a sane target
     if protocol.downcase == "tcp" && ip_address && port
@@ -97,24 +97,14 @@ class EnrichFtpService < BaseTask
       if banner.length > 0
         _log "Got banner for #{ip_address}:#{port}/#{protocol}: #{banner}"
         _log "updating entity with banner info!"
-        @entity.set_detail "banner", banner
+        _set_entity_detail "banner", banner
       else
         _log "No banner available"
       end
 
     end
 
-    ########################
-    ### MARK AS ENRICHED ###
-    ########################
-    $db.transaction do
-      c = (@entity.get_detail("enrichment_complete") || []) << "#{self.class.metadata[:name]}"
-      @entity.set_detail("enrichment_complete", c)
-    end
-    _log "Completed enrichment task!"
-    ########################
-    ### MARK AS ENRICHED ###
-    ########################
+    _finalize_enrichment
   end
 
 end

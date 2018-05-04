@@ -9,7 +9,7 @@ module Intrigue
             {
               :name => "Chef Server",
               :description => "Chef Server",
-              :version => "Unknown",
+              :version => nil,
               :type => :content_body,
               :content => /<title>Chef Server<\/title>/,
               :dynamic_version => lambda{|x| x.body.scan(/Version\ (.*)\ &mdash;/)[0].first }
@@ -17,7 +17,7 @@ module Intrigue
             {
               :name => "Chef Server",
               :description => "Chef Server",
-              :version => "Unknown",
+              :version => nil,
               :type => :content_cookies,
               :content => /chef-manage/
             }

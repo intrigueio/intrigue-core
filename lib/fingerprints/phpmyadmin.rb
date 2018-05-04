@@ -9,7 +9,7 @@ module Intrigue
             {
               :name => "PhpMyAdmin",
               :description => "PhpMyAdmin",
-              :version => "Unknown",
+              :version => nil,
               :type => :content_cookies,
               :content => /phpMyAdmin=/
             }

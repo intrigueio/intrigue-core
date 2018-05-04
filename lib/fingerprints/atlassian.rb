@@ -9,21 +9,21 @@ module Intrigue
             {
               :name => "Atlassian BitBucket",
               :description => "Atlassian BitBucket",
-              :version => "Unknown",
+              :version => nil,
               :type => :content_body,
               :content => /com.atlassian.bitbucket.server/
             },
             {
               :name => "Atlassian Confluence",
               :description => "Atlassian Confluence",
-              :version => "Unknown",
+              :version => nil,
               :type => :content_headers,
               :content => /X-Confluence-Request-Time/
             },
             {
               :name => "Atlassian Crucible",
               :description => "Atlassian Crucible",
-              :version => "Unknown",
+              :version => nil,
               :type => :content_body,
               :content => /FishEye and Crucible/,
               :dynamic_version => lambda{|x| x.body.scan(/Log in to FishEye and Crucible (.*)\</)[0].first }
@@ -31,7 +31,7 @@ module Intrigue
             {
               :name => "Atlassian Jira",
               :description => "Atlassian Jira",
-              :version => "Unknown",
+              :version => nil,
               :type => :content_cookies,
               :content => /atlassian.xsrf.token/,
               :dynamic_version => lambda{|x| x.body.scan(/<span id="footer-build-information">(.*)-<span/)[0].first.gsub("(","") }

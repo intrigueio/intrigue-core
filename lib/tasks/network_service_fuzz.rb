@@ -37,9 +37,9 @@ class NetworkServiceFuzz < BaseTask
     # XXX - how to deal with accepting a complex object like this through
     # the UI? We'd need to know the entity structure, or set these up as options?
 
-    port = _get_entity_attribute("port").to_i
-    protocol = _get_entity_attribute "proto"
-    ip_address = _get_entity_attribute "ip_address"
+    port = _get_entity_detail("port").to_i
+    protocol = _get_entity_detail "proto"
+    ip_address = _get_entity_detail "ip_address"
 
     _log "Port: #{port}"
     _log "Protocol: #{protocol}"

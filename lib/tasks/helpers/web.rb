@@ -13,7 +13,6 @@ module Intrigue
 module Task
   module Web
 
-
     def fingerprint_uri(uri)
 
       results = []
@@ -51,7 +50,7 @@ module Task
               # if type "content", do the content check
               if check[:type] == :content_body
                 results << {
-                  :version => check[:dynamic_version].call(response) || check[:version],
+                  :version => (check[:dynamic_version].call(response) if check[:dynamic_version]) || check[:version],
                   :name => check[:name],
                   :match => check[:type],
                   :hide => check[:hide]
@@ -59,7 +58,7 @@ module Task
 
               elsif check[:type] == :content_headers
                 results << {
-                  :version => check[:dynamic_version].call(response) || check[:version],
+                  :version => (check[:dynamic_version].call(response) if check[:dynamic_version]) || check[:version],
                   :name => check[:name],
                   :match => check[:type],
                   :hide => check[:hide]
@@ -68,7 +67,7 @@ module Task
               elsif check[:type] == :content_cookies
                 # Check only the set-cookie header
                   results << {
-                    :version => check[:dynamic_version].call(response) || check[:version],
+                    :version => (check[:dynamic_version].call(response) if check[:dynamic_version]) || check[:version],
                     :name => check[:name],
                     :match => check[:type],
                     :hide => check[:hide]
@@ -76,7 +75,7 @@ module Task
 
               elsif check[:type] == :checksum_body
                   results << {
-                    :version => check[:dynamic_version].call(response) || check[:version],
+                    :version => (check[:dynamic_version].call(response) if check[:dynamic_version]) || check[:version],
                     :name => check[:name],
                     :match => check[:type],
                     :hide => check[:hide]

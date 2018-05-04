@@ -2,9 +2,18 @@ module Intrigue
 module Task
 class BaseTask
 
+  # TODO - verify and re-enable these.. just need to make sure
+  # there are no namespace collisions
+  include Intrigue::Task::Data
+  include Intrigue::Task::Dns
+  include Intrigue::Task::Enrich
   include Intrigue::Task::Generic
   include Intrigue::Task::Helper
+  include Intrigue::Task::Parse
+  include Intrigue::Task::Product
   include Intrigue::Task::Regex
+  include Intrigue::Task::Scanner
+  include Intrigue::Task::Web
 
   include Sidekiq::Worker
   sidekiq_options :queue => "task", :backtrace => true

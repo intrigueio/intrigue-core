@@ -35,8 +35,6 @@ end
 module Intrigue
 module Task
 class EnrichDnsRecord < BaseTask
-  include Intrigue::Task::Data
-  include Intrigue::Task::Dns
 
   def self.metadata
     {
@@ -100,7 +98,7 @@ class EnrichDnsRecord < BaseTask
 
       dns_entries << { "response_data" => xdata, "response_type" => xtype }
     end
-    @entity.set_detail("dns_entries", dns_entries.uniq )
+    _set_entity_detail("dns_entries", dns_entries.uniq )
     @entity.save
 
     ###
@@ -121,17 +119,7 @@ class EnrichDnsRecord < BaseTask
       end
     end
 
-    ########################
-    ### MARK AS ENRICHED ###
-    ########################
-    $db.transaction do
-      c = (@entity.get_detail("enrichment_complete") || []) << "#{self.class.metadata[:name]}"
-      @entity.set_detail("enrichment_complete", c)
-    end
-    _log "Completed enrichment task!"
-    ########################
-    ### MARK AS ENRICHED ###
-    ########################
+    _finalize_enrichment
   end
 
 end

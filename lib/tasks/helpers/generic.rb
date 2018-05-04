@@ -356,20 +356,20 @@ module Generic
   end
 
   ## Helper methods for getting common entity data
-  def _get_entity_attribute(attrib_name)
-    if attrib_name == "name"
-      "#{@task_result.base_entity.name}"
-    else
-      "#{@task_result.base_entity.get_detail(attrib_name)}"
-    end
+  def _get_entity_detail(detail_name)
+    @entity.get_detail(detail_name)
+  end
+
+  def _set_entity_detail(detail_name, detail_value)
+    @entity.set_detail(detail_name, detail_value)
   end
 
   def _get_entity_name
-    "#{@task_result.base_entity.name}"
+    "#{@entity.name}"
   end
 
   def _get_entity_type_string
-    "#{@task_result.base_entity.type}".split(":").last
+    "#{@entity.type_string}"
   end
 
   ### GLOBAL CONFIG INTERFACE

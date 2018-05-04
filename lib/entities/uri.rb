@@ -31,8 +31,6 @@ end
 module Intrigue
 module Task
 class EnrichUri < BaseTask
-  include Intrigue::Task::Web
-  include Intrigue::Task::Browser
 
   def self.metadata
     {
@@ -98,7 +96,7 @@ class EnrichUri < BaseTask
     })
 
     # Set the details, and make sure raw response data is a hidden (not searchable) detail
-    @entity.set_details(new_details)
+    @entity.set_details new_details
 
     # Check for other entities with this same response hash
     #if response_data_hash
@@ -127,23 +125,13 @@ class EnrichUri < BaseTask
     libraries = gather_javascript_libraries(session, libraries)
 
     # set the new details
-    @entity.set_detail("libraries", libraries)
+    _set_entity_detail("libraries", libraries)
 
     # capture a screenshot and save it as a detail
     base64_screenshot_data = capture_screenshot(session)
-    @entity.set_detail("hidden_screenshot_contents",base64_screenshot_data)
+    _set_entity_detail("hidden_screenshot_contents",base64_screenshot_data)
 
-    ########################
-    ### MARK AS ENRICHED ###
-    ########################
-    $db.transaction do
-      c = (@entity.get_detail("enrichment_complete") || []) << "#{self.class.metadata[:name]}"
-      @entity.set_detail("enrichment_complete", c)
-    end
-    _log "Completed enrichment task!"
-    ########################
-    ### MARK AS ENRICHED ###
-    ########################
+    _finalize_enrichment
   end
 
   def check_options_endpoint(uri)
@@ -177,8 +165,6 @@ end
 module Intrigue
 module Task
 class WebStackFingerprint < BaseTask
-  include Intrigue::Task::Web
-  include Intrigue::Task::Product
 
   def self.metadata
     {
@@ -228,7 +214,7 @@ class WebStackFingerprint < BaseTask
     # Save the full headers
     headers = []
     response.each_header {|h,v| _log " - #{h}: #{v}"; headers << "#{h}: #{v}" }
-    @entity.set_detail("headers", headers )
+    _set_entity_detail("headers", headers )
 
     ###
     ### Fingerprint the server
@@ -236,7 +222,7 @@ class WebStackFingerprint < BaseTask
     server_stack = []  # Use various techniques to build out the "stack"
     server_stack << _check_server_header(response, response2)
     uniq_server_stack = server_stack.select{ |x| x != nil }.uniq
-    @entity.set_detail("server_fingerprint", uniq_server_stack)
+    _set_entity_detail("server_fingerprint", uniq_server_stack)
     _log "Setting server stack to #{uniq_server_stack}"
 
     ###
@@ -263,16 +249,16 @@ class WebStackFingerprint < BaseTask
     end
 
     # store the fingerprint matches:
-    @entity.set_detail("fingerprint", fingerprint_matches.uniq )
+    _set_entity_detail("fingerprint", fingerprint_matches.uniq )
 
     # and then just stick the name and the version in our fingerprint
     app_stack.concat(fingerprint_matches.map do |x|
       version_string = "#{x[:name]}"
-      version_string += " #{x[:version]}" if x[:version].length > 0
+      version_string += " #{x[:version]}" if x[:version]
+    version_string
     end)
-    uniq_app_strings = app_stack.select{ |x| x != nil }.uniq
-    @entity.set_detail("app_fingerprint", uniq_app_strings)
-    _log "Setting app stack to #{uniq_app_strings}"
+    _log "Setting app stack to #{app_stack.uniq}"
+    _set_entity_detail("app_fingerprint", app_stack.uniq)
 
     ###
     ### Fingerprint the js libraries
@@ -280,7 +266,7 @@ class WebStackFingerprint < BaseTask
     include_stack = []
     include_stack.concat _check_page_contents_legacy(response)
     uniq_include_stack = include_stack.select{ |x| x != nil }.uniq
-    @entity.set_detail("include_fingerprint", uniq_include_stack)
+    _set_entity_detail("include_fingerprint", uniq_include_stack)
     _log "Setting include stack to #{uniq_include_stack}"
 
     ###
@@ -290,19 +276,9 @@ class WebStackFingerprint < BaseTask
     products = uniq_server_stack.map{|x| product_match_http_server_banner(x).first}
     # match products based on cookies
     products.concat product_match_http_cookies(_gather_cookies(response))
-    @entity.set_detail("products", products.compact)
+    _set_entity_detail("products", products.compact)
 
-    ########################
-    ### MARK AS ENRICHED ###
-    ########################
-    $db.transaction do
-      c = (@entity.get_detail("enrichment_complete") || []) << "#{self.class.metadata[:name]}"
-      @entity.set_detail("enrichment_complete", c)
-    end
-    _log "Completed enrichment task!"
-    ########################
-    ### MARK AS ENRICHED ###
-    ########################
+    _finalize_enrichment
   end
 
   private

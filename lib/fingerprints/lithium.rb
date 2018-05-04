@@ -10,14 +10,14 @@ module Intrigue
               :name => "Lithum ",
               :description => "Lithium Community Management",
               :type => :content_cookies,
-              :version => "Unknown",
+              :version => nil,
               :content => /LithiumVisitor/
             },
             {
               :name => "Lithum",
               :description => "Lithium Community Management",
               :type => :content_cookies,
-              :version => "Unknown",
+              :version => nil,
               :content => /LiSESSIONID/
             }
           ]

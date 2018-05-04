@@ -10,7 +10,7 @@ module Intrigue
               :name => "Apache Tomcat",
               :description => "Tomcat Application Server",
               :type => :content_body,
-              :version => "Unknown",
+              :version => nil,
               :content => /<title>Apache Tomcat/,
               :dynamic_version => lambda{|x| x.body.scan(/<title>(.*)<\/title>/)[0].first.gsub("Apache Tomcat/","").gsub(" - Error report","").chomp }
             }

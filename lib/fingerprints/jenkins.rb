@@ -9,7 +9,7 @@ module Intrigue
             {
               :name => "Jenkins",
               :description => "Jenkins",
-              :version => "Unknown",
+              :version => nil,
               :type => :content_headers,
               :content => /X-Jenkins-Session/
             }

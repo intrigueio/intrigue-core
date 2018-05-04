@@ -9,7 +9,7 @@ module Intrigue
             {
               :name => "Pardot",
               :description => "Pardot",
-              :version => "Unknown",
+              :version => nil,
               :type => :content_cookies,
               :content => /pardot/
             }

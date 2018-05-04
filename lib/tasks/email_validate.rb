@@ -54,7 +54,7 @@ class EmailValidateMailboxLayer < BaseTask
 
     if email_validation_results["smtp_check"]
       _log_good "Got a valid address"
-      @entity.set_detail("email_validation", email_validation_results)
+      _set_entity_detail("email_validation", email_validation_results)
     else
       _log_error "Got an invalid address"
     end

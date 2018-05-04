@@ -36,9 +36,9 @@ class FtpEnumerate < BaseTask
   def run
     super
 
-    port = _get_entity_attribute("port").to_i
-    protocol = _get_entity_attribute "protocol"
-    ip_address = _get_entity_attribute "ip_address"
+    port = _get_entity_detail("port").to_i
+    protocol = _get_entity_detail "protocol"
+    ip_address = _get_entity_detail "ip_address"
 
     # Check to make sure we have a sane target
     if protocol.downcase == "tcp" && ip_address && port
@@ -92,7 +92,7 @@ class FtpEnumerate < BaseTask
           _log_error "eof reached"
         end
 
-        @entity.set_detail("ftp_enumerate", out)
+        _set_entity_detail("ftp_enumerate", out)
         _log out
 
       rescue SocketError => e

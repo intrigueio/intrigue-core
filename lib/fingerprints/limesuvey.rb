@@ -10,7 +10,7 @@ module Intrigue
               :name => "LimeSurvey",
               :description => "LimeSurvey",
               :type => :content_body,
-              :version => "Unknown",
+              :version => nil,
               :content => /Donate to LimeSurvey/
             }
           ]

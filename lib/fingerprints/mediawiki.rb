@@ -10,7 +10,7 @@ module Intrigue
               :name => "MediaWiki",
               :description => "MediaWiki",
               :type => :content_body,
-              :version => "Unknown",
+              :version => nil,
               :content => /<a href="\/\/www.mediawiki.org\/">Powered by MediaWiki<\/a>/
             }
           ]

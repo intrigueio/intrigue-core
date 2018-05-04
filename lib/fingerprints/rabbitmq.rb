@@ -10,7 +10,7 @@ module Intrigue
                :name => "RabbitMQ",
                :description => "RabbitMQ",
                :type => :content_body,
-               :version => "Unknown",
+               :version => nil,
                :content => /RabbitMQ Management/
              }
            ]
@@ -22,7 +22,7 @@ module Intrigue
               :name => "RabbitMQ API",
               :description => "RabbitMQ API",
               :type => :content_body,
-              :version => "Unknown",
+              :version => nil,
               :content => /RabbitMQ Management HTTP API/
             }
           ]

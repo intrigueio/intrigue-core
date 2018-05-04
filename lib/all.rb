@@ -38,22 +38,15 @@ require 'yomu'
 require_relative 'task_factory'
 
 ### Mixins with common task functionality
-require_relative 'tasks/helpers/browser'
-require_relative 'tasks/helpers/data'
-require_relative 'tasks/helpers/dns'
-require_relative 'tasks/helpers/generic'
-require_relative 'tasks/helpers/parse'
-require_relative 'tasks/helpers/product'
-require_relative 'tasks/helpers/regex'
-require_relative 'tasks/helpers/scanner'
-require_relative 'tasks/helpers/web'
+tasks_folder = File.expand_path('../tasks/helpers', __FILE__) # get absolute directory
+Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
 # Load all discovery tasks
 require_relative 'tasks/base'
 tasks_folder = File.expand_path('../tasks', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
-# Load vulns tasks
+# Load vuln tasks
 tasks_folder = File.expand_path('../tasks/vulns', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 

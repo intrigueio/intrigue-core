@@ -9,7 +9,7 @@ module Intrigue
             {
               :name => "Grafana",
               :description => "Grafana",
-              :version => "Unknown",
+              :version => nil,
               :type => :content_cookies,
               :content => /grafana_sess/
             }

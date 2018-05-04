@@ -126,7 +126,7 @@ class Whois < BaseTask
               "rir" => "ARIN"
             }
 
-            @entity.set_detail("provider", org_name.sanitize_unicode)
+            _set_entity_detail("provider", org_name.sanitize_unicode)
 
           end # End Netblocks
         rescue Nokogiri::XML::XPath::SyntaxError => e
@@ -172,7 +172,7 @@ class Whois < BaseTask
           "organization_name" => "#{description}".sanitize_unicode,
           "whois_full_text" => "#{answer.content}".force_encoding('ISO-8859-1').sanitize_unicode
         }
-        @entity.set_detail("provider", "#{description}".force_encoding('ISO-8859-1').sanitize_unicode)
+        _set_entity_detail("provider", "#{description}".force_encoding('ISO-8859-1').sanitize_unicode)
       end
       #
       # We're going to have nameservers either way?
