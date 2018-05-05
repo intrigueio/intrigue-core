@@ -96,9 +96,9 @@ module Task
     # Download a file locally. Useful for situations where we need to parse the file
     # and also useful in situations were we need to verify content-type
     #
-    def download_and_store(url)
-      filename = "#{SecureRandom.uuid}"
-      file = Tempfile.new(filename, Dir.tmpdir) #, 'wb+')
+    def download_and_store(url, filename="#{SecureRandom.uuid}")
+      file = Tempfile.new(filename) # use an array to enforce a format
+      # https://ruby-doc.org/stdlib-1.9.3/libdoc/tempfile/rdoc/Tempfile.html
 
       @task_result.logger.log_good "Attempting to download #{url} and store in #{file.path}" if @task_result
 

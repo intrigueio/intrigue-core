@@ -22,13 +22,13 @@ module Task
 
         # Capture Title
         page_title = session.document.title
-        _log_good "Title: #{page_title}"
+        _log_good "Title: #{page_title}" if @task_result
 
 
       rescue Capybara::Poltergeist::StatusFailError => e
-        _log_error "Fail Error: #{e}"
+        _log_error "Fail Error: #{e}" if @task_result
       rescue Capybara::Poltergeist::JavascriptError => e
-        _log_error "JS Error: #{e}"
+        _log_error "JS Error: #{e}" if @task_result
       end
 
     session
@@ -40,7 +40,7 @@ module Task
 
       # Capture Title
       page_title = session.document.title
-      _log_good "Title: #{page_title}"
+      _log_good "Title: #{page_title}" if @task_result
 
     session.document
     end
@@ -150,7 +150,7 @@ module Task
         # run our script in a browser
         version = session.evaluate_script(check[:script])
         if version
-          _log_good "Detected #{check[:library]} #{version}"
+          _log_good "Detected #{check[:library]} #{version}" if @task_result
           products << {"product" => "#{check[:library]}", "detected" => true, "version" => "#{version}" }
         else
           products << {"product" => "#{check[:library]}", "detected" => false }

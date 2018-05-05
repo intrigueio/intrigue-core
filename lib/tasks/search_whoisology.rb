@@ -12,7 +12,7 @@ class SearchWhoisology < BaseTask
       :type => "discovery",
       :passive => true,
       :allowed_types => ["EmailAddress", "DnsRecord"],
-      :example_entities => [{"type" => "Host", "details" => {"name" => "intrigue.io"}}],
+      :example_entities => [{"type" => "Host", "details" => {"name" => "jcran@intrigue.io"}}],
       :allowed_options => [],
       :created_types => ["DnsRecord","Info"]
     }
