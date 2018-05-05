@@ -30,8 +30,8 @@ module Intrigue
         where(Sequel.&(:project_id => named_project.id, :deleted => false))
       end
 
-      def self.scope_by_project_and_type(project_name, entity_type)
-        resolved_entity_type = Intrigue::EntityManager.resolve_type(entity_type)
+      def self.scope_by_project_and_type(project_name, entity_type_string)
+        resolved_entity_type = Intrigue::EntityManager.resolve_type_from_string(entity_type_string)
         named_project = Intrigue::Model::Project.first(:name => project_name)
         where(Sequel.&(:project_id => named_project.id, :type => resolved_entity_type.to_s, :deleted => false))
       end
@@ -53,6 +53,10 @@ module Intrigue
       def validate
         super
         validates_unique([:project_id, :type, :name])
+      end
+
+      def validate_entity
+        raise "Should be called on subclass..."
       end
 
       def safe_details

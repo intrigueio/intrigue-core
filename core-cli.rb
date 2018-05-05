@@ -274,7 +274,7 @@ class CoreCli < Thor
       })
 
       # create the entity
-      e = Intrigue::EntityManager.resolve_type("#{parsed_entity["type"]}").create({
+      e = Intrigue::EntityManager.resolve_type_from_string("#{parsed_entity["type"]}").create({
         :name => parsed_entity["name"].downcase,
         :project_id => p.id,
         :type => "Intrigue::Entity::#{parsed_entity["type"]}",

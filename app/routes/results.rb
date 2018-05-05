@@ -202,13 +202,13 @@ class IntrigueApp < Sinatra::Base
       return "No payload!" unless payload
 
       # Construct an entity from the entity_hash provided
-      type = payload["entity"]["type"]
+      type_string = payload["entity"]["type"]
       name = payload["entity"]["name"]
 
       # Collect the depth (which can kick off a recursive "scan", but default to a single)
       depth = payload["depth"] || 1
 
-      resolved_type = Intrigue::EntityManager.resolve_type type
+      resolved_type = Intrigue::EntityManager.resolve_type_from_string type_string
 
       attributes = payload["entity"].merge(
         "type" => resolved_type.to_s,
@@ -229,7 +229,7 @@ class IntrigueApp < Sinatra::Base
       end
 
       # create the first entity
-      entity = Intrigue::EntityManager.create_first_entity(@project_name,type,name,{})
+      entity = Intrigue::EntityManager.create_first_entity(@project_name,type_string,name,{})
 
       # create the project if it doesn't exist
       project = Intrigue::Model::Project.first(:name => @project_name)

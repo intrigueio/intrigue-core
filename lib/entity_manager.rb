@@ -9,17 +9,22 @@ class EntityManager
     Intrigue::Model::Entity.descendants
   end
 
-  def self.resolve_type(type_string)
+  def self.resolve_type_from_string(type_string)
     raise "INVALID TYPE TO RESOLVE: #{type_string}. DID YOU SEND A STRING? FAILING!" unless type_string.kind_of? String
 
-    # Don't eval unless it's one of our valid entity types
-    if type_string =~ /:/
-      return eval("#{type_string}") if entity_types.map{|x|x.to_s}.include? "#{type_string}"
-    else
-      return eval("Intrigue::Entity::#{type_string}") if entity_types.map{|x|x.to_s}.include? "Intrigue::Entity::#{type_string}"
+    # Check full namespace first
+    matches = entity_types.select{|x|x.to_s == type_string }
+
+    # Then check all namespaces underneath
+    matches.concat(entity_types.select{|x|x.to_s.split(":").last.to_s == type_string })
+
+    #note this will be nil if we didn't match
+    unless matches.first
+      raise "Unable to match to a known entity. Failing."
     end
 
-  false
+  #only return the first (and best) match
+  matches.first
   end
 
   def self.create_first_entity(project_name,type_string,name,details,enrich=true)
@@ -39,7 +44,7 @@ class EntityManager
       entity.set_details(details.to_h.deep_merge(entity.details.to_h))
     else
       # Create a new entity, validating the attributes
-      type = resolve_type(type_string)
+      type = resolve_type_from_string(type_string)
       $db.transaction do
         begin
 
@@ -124,7 +129,7 @@ class EntityManager
 
     else
       # Create a new entity, validating the attributes
-      type = resolve_type(type_string)
+      type = resolve_type_from_string(type_string)
       $db.transaction do
         begin
 
