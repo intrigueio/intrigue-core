@@ -221,7 +221,7 @@ class CoreCli < Thor
         task_result = start_task("task", project, nil, task_name, created_entity, depth, options, handlers, strategy)
 
         # enrich the entity - TODO... make this optional
-        Intrigue::EntityManager.enrich_entity(our_entity, task_result)
+        Intrigue::EntityManager.enrich_entity(created_entity, task_result)
 
       end
 
