@@ -4,7 +4,7 @@ module Helper
 
   def entity_exists?(project, entity_type, entity_name)
     Intrigue::Model::Entity.scope_by_project_and_type(project.name, entity_type).first(:name => entity_name)
-  end
+  end  
 
   ###
   ### Helper method for starting a task run

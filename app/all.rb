@@ -10,6 +10,7 @@ require_relative "routes/results"
 
 require_relative "models/mixins/calculate_provider"
 require_relative "models/mixins/handleable"
+require_relative "models/mixins/match_exceptions"
 
 require_relative "models/entity"
 require_relative "models/logger"

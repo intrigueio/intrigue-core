@@ -22,12 +22,15 @@ module Intrigue
       end
 
       def start(queue)
-
         # Start our first task
         self.job_id = task_results.first.start(queue)
         save
-
       job_id
+      end
+
+      def add_filter_string(string)
+        filter_strings << "#{string}"
+        save
       end
 
       def log

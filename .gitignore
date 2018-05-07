@@ -22,3 +22,4 @@ log/
 lib/tasks/disabled
 lib/tasks/survey
 util/control.sh
+paused.conf

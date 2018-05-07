@@ -74,10 +74,8 @@ class EntityManager
     return nil unless our_entity.transform!
     return nil unless our_entity.validate_entity
 
-    # START ENRICHMENT if we're allowed and unless this entity is prohibited (hidden)
-    if enrich
-      enrich_entity(our_entity) unless our_entity.hidden
-    end
+    # START ENRICHMENT if we're allowed
+    enrich_entity(our_entity) if enrich
 
   our_entity
   end
@@ -106,17 +104,17 @@ class EntityManager
     # Merge the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name) ## TODO - INDEX THIS!!!!!
 
-    # check if this is actually a hidden (blacklisted) entity
+    # check if this is actually an exception (blacklisted) entity
     # but allow anything that we've explictly set as the root (example.. facebook.com)
     if task_result.scan_result
       # always allow anything that matches our scan result's name
       if name =~  /#{task_result.scan_result.base_entity.name}/
-        hidden = false
+        exception = false
       else # but if it doesn't match, just check the blacklist
-        hidden = hidden_entity?(name, type_string)
+        exception = project.exception_entity?(name, type_string)
       end
-    else # just check blacklist if we're not part of a scan
-      hidden = hidden_entity?(name, type_string)
+    else # check blacklist if we're not part of a scan
+      exception = project.exception_entity?(name, type_string)
     end
 
     # Check if there's an existing entity, if so, merge and move forward
@@ -139,7 +137,7 @@ class EntityManager
             :type => type,
             :details => details,
             :details_raw => details,
-            :hidden => (hidden ? true : false )
+            :hidden => (exception ? true : false )
            })
 
           unless entity
@@ -204,11 +202,9 @@ class EntityManager
 
     end
 
-    # START ENRICHMENT if we're allowed and unless this entity is prohibited (hidden)
-    #task_result.log "Entity Enrichment: #{task_result.auto_enrich}"
-    #task_result.log "Entity Hidden: #{hidden}"
+    # START ENRICHMENT if we're allowed and unless this entity is an exception (marked as hidden on the entity)
     if task_result.auto_enrich && !entity_already_existed
-      enrich_entity(created_entity, task_result) unless hidden
+      enrich_entity(created_entity, task_result) unless exception
     end
 
     # START SIGNAL ANALYSIS
@@ -216,10 +212,9 @@ class EntityManager
 
     # START RECURSION BY STRATEGY TYPE
     if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
-      unless created_entity.hidden
+      unless exception
         s = Intrigue::StrategyFactory.create_by_name(task_result.scan_result.strategy)
         raise "Unknown Strategy!" unless s
-
         s.recurse(created_entity, task_result)
       end
     end
