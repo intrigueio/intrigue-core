@@ -215,7 +215,7 @@ class CoreCli < Thor
         handlers = s["handlers"] || []
 
         # Create the entity
-        created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"], true)
+        created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"], true, depth)
 
         # kick off the task
         task_result = start_task("task", project, nil, task_name, created_entity, depth, options, handlers, strategy)
@@ -257,7 +257,7 @@ class CoreCli < Thor
       depth = depth.to_i
 
       # Create the entity
-      created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"], true)
+      created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"], true, depth)
 
       # kick off the task
       task_result = start_task("task", p, nil, task_name, created_entity, depth, options, handlers, strategy_name)

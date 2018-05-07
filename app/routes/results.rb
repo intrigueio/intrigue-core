@@ -130,7 +130,7 @@ class IntrigueApp < Sinatra::Base
 
         # create the first entity
         entity = Intrigue::EntityManager.create_first_entity(@project_name,
-                                          entity_type,entity_name,entity_details)
+                                          entity_type,entity_name,entity_details, auto_enrich, depth)
       end
 
       unless entity
@@ -229,7 +229,7 @@ class IntrigueApp < Sinatra::Base
       end
 
       # create the first entity
-      entity = Intrigue::EntityManager.create_first_entity(@project_name,type_string,name,{})
+      entity = Intrigue::EntityManager.create_first_entity(@project_name,type_string,name,{}, auto_enrich, depth)
 
       # create the project if it doesn't exist
       project = Intrigue::Model::Project.first(:name => @project_name)
