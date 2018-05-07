@@ -150,6 +150,7 @@ module Data
           entity_name =~ /^.*metric.gstatic.com(:[0-9]*)?$/            ||
           entity_name =~ /^.*mktoweb.com(:[0-9]*)?$/                   ||
           entity_name =~ /^.*microsoft.com(:[0-9]*)?$/                 ||
+          entity_name =~ /^.*b-msedge.net(:[0-9]*)?$/                  ||
           entity_name =~ /^.*mtsvc.net(:[0-9]*)?$/                     ||
           entity_name =~ /^.*msn.com(:[0-9]*)?$/                       ||
           entity_name =~ /^.*oclc.org(:[0-9]*)?$/                      ||
@@ -170,6 +171,8 @@ module Data
           entity_name =~ /^.*salesforce.com(:[0-9]*)?$/                ||
           entity_name =~ /^.*sendgrid.net(:[0-9]*)?$/                  ||
           entity_name =~ /^.*secureserver.net(:[0-9]*)?$/              ||
+          entity_name =~ /^.*sharepoint.com(:[0-9]*)?$/                ||
+          entity_name =~ /^.*sharepointonline.com(:[0-9]*)?$/          ||
           entity_name =~ /^.*siftscience.com(:[0-9]*)?$/               ||
           entity_name =~ /^.*squarespace.com(:[0-9]*)?$/               ||
           entity_name =~ /^.*statuspage.io(:[0-9]*)?$/                 ||
