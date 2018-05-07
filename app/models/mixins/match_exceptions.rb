@@ -11,12 +11,19 @@ module MatchExceptions
 
       # Check standard exceptions first
       if self.use_standard_exceptions
-        return true if standard_exceptions(entity_name,type_string)
+        if standard_exceptions(entity_name,type_string)
+          return true
+        end
       end
 
       # check additional exception strings
+      #puts "DEBUG: Additional exceptions: #{self.additional_exception_list}"
       if self.additional_exception_list
-        self.additional_exception_list.split(",").each {|x| return true if x =~ /#{x}/ }
+        self.additional_exception_list.split(",").each do |x|
+          if entity_name =~ /#{x}/
+            return true
+          end
+        end
       end
 
     false

@@ -192,6 +192,13 @@ class CoreCli < Thor
       project_name = p["name"]
       project = Intrigue::Model::Project.create(:name => "#{project_name}")
 
+      # Set exclusion setting
+      project.use_standard_exceptions = p["use_standard_exceptions"]
+      project.additional_exception_list = p["additional_exception_list"]
+      project.save
+
+      # Add additional exceptions
+
       # XXX
       # TODO ... add the per-project exclusion stuff here
       # XXX
@@ -222,6 +229,7 @@ class CoreCli < Thor
           end
         end
       end
+
 
     end
 
