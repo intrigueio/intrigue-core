@@ -30,7 +30,7 @@ module Intrigue
             },
             {
               :name => "Cloudflare",
-              :description => "Cloudfront Error",
+              :description => "Cloudflare Error",
               :version => "",
               :type => :content_body,
               :content => /cferror_details/,

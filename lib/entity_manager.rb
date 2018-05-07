@@ -27,7 +27,7 @@ class EntityManager
   matches.first
   end
 
-  def self.create_first_entity(project_name,type_string,name,details,enrich=true)
+  def self.create_first_entity(project_name,type_string,name,details,enrich=true, depth)
 
     # Save the original and downcase our name
     details["hidden_original"] = name
@@ -60,8 +60,6 @@ class EntityManager
             :alias_group_id => g.id
            })
 
-         rescue Encoding::UndefinedConversionError => e
-           task_result.log "ERROR! Unable to create entity: #{e}"
          end
       end
     end
@@ -75,7 +73,7 @@ class EntityManager
     return nil unless our_entity.validate_entity
 
     # START ENRICHMENT if we're allowed
-    enrich_entity(our_entity) if enrich
+    enrich_entity(our_entity, nil, depth) if enrich
 
   our_entity
   end
@@ -224,7 +222,7 @@ class EntityManager
   created_entity
   end
 
-  def self.enrich_entity(entity, task_result=nil)
+  def self.enrich_entity(entity, task_result=nil, provided_depth=nil)
     task_result.log  "Running enrichment on #{entity}" if task_result
     return unless entity
 
@@ -242,7 +240,7 @@ class EntityManager
       scan_result = task_result.scan_result
       depth = task_result.depth
     else
-      depth = 1
+      depth = provided_depth || 1
     end
 
     task_result.log "Scheduling enrichment (#{entity.enrichment_tasks}) on #{entity}!" if task_result
