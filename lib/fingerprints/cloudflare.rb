@@ -15,14 +15,14 @@ module Intrigue
             },
             {
               :name => "Cloudflare",
-              :description => "Cloudfront ",
+              :description => "Cloudflare Server",
               :version => "",
               :type => :content_headers,
               :content => /cloudflare-nginx/
             },
             {
               :name => "Cloudflare",
-              :description => "Cloudfront - Direct IP Access",
+              :description => "Cloudflare - Direct IP Access",
               :version => "",
               :type => :content_body,
               :content => /<title>Direct IP access not allowed \| Cloudflare/,
@@ -34,6 +34,14 @@ module Intrigue
               :version => "",
               :type => :content_body,
               :content => /cferror_details/,
+              :hide => true
+            },
+            {
+              :name => "Cloudflare",
+              :description => "Cloudfront Error - Direct IP Access",
+              :version => "",
+              :type => :content_body,
+              :content => /403\ Forbidden<\/h1><\/center>\n<hr><center>cloudflare<\/center>/,
               :hide => true
             }
           ]
