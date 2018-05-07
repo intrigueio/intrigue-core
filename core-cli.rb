@@ -211,14 +211,18 @@ class CoreCli < Thor
         task_name = s["task"] || "create_entity"
         strategy = s["strategy"] || "org_asset_discovery_active"
         depth = s["depth"] || 6
-        optiosn = s["options"] || []
+        options = s["options"] || []
         handlers = s["handlers"] || []
 
         # Create the entity
-        created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"], true, depth)
+        created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"])
 
         # kick off the task
         task_result = start_task("task", project, nil, task_name, created_entity, depth, options, handlers, strategy)
+
+        # enrich the entity - TODO... make this optional
+        Intrigue::EntityManager.enrich_entity(our_entity, task_result)
+
       end
 
       # sometimes we need to run a custom command in the context of a project
@@ -257,10 +261,14 @@ class CoreCli < Thor
       depth = depth.to_i
 
       # Create the entity
-      created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"], true, depth)
+      created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"])
 
       # kick off the task
       task_result = start_task("task", p, nil, task_name, created_entity, depth, options, handlers, strategy_name)
+
+      # manually start enrichment on first entity
+      Intrigue::EntityManager.enrich_entity(our_entity, task_result)
+
       puts "Created task #{task_result.inspect} for entity #{created_entity}"
     end
   end

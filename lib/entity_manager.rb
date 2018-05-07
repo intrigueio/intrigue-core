@@ -27,7 +27,7 @@ class EntityManager
   matches.first
   end
 
-  def self.create_first_entity(project_name,type_string,name,details,enrich=true, depth)
+  def self.create_first_entity(project_name,type_string,name,details)
 
     # Save the original and downcase our name
     details["hidden_original"] = name
@@ -72,8 +72,8 @@ class EntityManager
     return nil unless our_entity.transform!
     return nil unless our_entity.validate_entity
 
-    # START ENRICHMENT if we're allowed
-    enrich_entity(our_entity, nil, depth) if enrich
+    # START ENRICHMENT
+    # ENRICHMENT MUST BE STARTED MANUALLY!!!!!
 
   our_entity
   end
@@ -205,9 +205,6 @@ class EntityManager
       enrich_entity(created_entity, task_result) unless exception
     end
 
-    # START SIGNAL ANALYSIS
-    #Intrigue::Signals.all.each{|s| x = s.new(entity,task_result); x.generate if x.match }
-
     # START RECURSION BY STRATEGY TYPE
     if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
       unless exception
@@ -222,7 +219,7 @@ class EntityManager
   created_entity
   end
 
-  def self.enrich_entity(entity, task_result=nil, provided_depth=nil)
+  def self.enrich_entity(entity, task_result=nil)
     task_result.log  "Running enrichment on #{entity}" if task_result
     return unless entity
 

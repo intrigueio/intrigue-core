@@ -129,8 +129,7 @@ class IntrigueApp < Sinatra::Base
         return unless entity_type
 
         # create the first entity
-        entity = Intrigue::EntityManager.create_first_entity(@project_name,
-                                          entity_type,entity_name,entity_details, auto_enrich, depth)
+        entity = Intrigue::EntityManager.create_first_entity(@project_name,entity_type,entity_name,entity_details)
       end
 
       unless entity
@@ -154,6 +153,9 @@ class IntrigueApp < Sinatra::Base
 
       entity.task_results << task_result
       entity.save
+
+      # manually start enrichment for the first entity
+      Intrigue::EntityManager.enrich_entity(entity, task_result) if auto_enrich
 
       redirect "/#{@project_name}/results/#{task_result.id}"
     end
@@ -221,15 +223,8 @@ class IntrigueApp < Sinatra::Base
       handlers = payload["handlers"]
       strategy_name = payload["strategy_name"]
 
-      # default to false for enrichment
-      if payload["auto_enrich"]
-        auto_enrich = "#{payload["auto_enrich"]}".to_bool
-      else
-        auto_enrich = false
-      end
-
       # create the first entity
-      entity = Intrigue::EntityManager.create_first_entity(@project_name,type_string,name,{}, auto_enrich, depth)
+      entity = Intrigue::EntityManager.create_first_entity(@project_name,type_string,name,{})
 
       # create the project if it doesn't exist
       project = Intrigue::Model::Project.first(:name => @project_name)
@@ -238,6 +233,15 @@ class IntrigueApp < Sinatra::Base
       # Start the task_run
       task_result = start_task("task", project, nil, task_name, entity, depth,
                                   options, handlers, strategy_name, auto_enrich)
+
+      # manually kick off enrichment for first task
+      if payload["auto_enrich"]
+        auto_enrich = "#{payload["auto_enrich"]}".to_bool
+      else
+        auto_enrich = false
+      end
+      Intrigue::EntityManager.enrich_entity(entity, task_result) if auto_enrich
+
       status 200 if task_result
 
     # must be a string otherwise it can be interpreted as a status code
