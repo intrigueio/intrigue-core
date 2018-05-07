@@ -24,8 +24,8 @@ module Intrigue
         {
           :id => id,
           :name => "#{name}",
-          :entities => entities.map {|e| e.export_hash },
-          :task_results => task_results.map {|t| t.export_hash }
+          :entities => entities.map {|e| e.export_hash }
+          #:task_results => task_results.map {|t| t.export_hash }
           #:scan_results => scan_results.map {|s| s.export_hash }
         }
       end
