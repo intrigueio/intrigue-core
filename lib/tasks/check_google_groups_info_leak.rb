@@ -2,14 +2,13 @@ module Intrigue
 module Task
 class CheckGoogleGroupsInfoLeak < BaseTask
 
-  include Intrigue::Task::Web
 
   def self.metadata
     {
-      :name => "check_google_groups_info_leak",
-      :pretty_name => "Check Google Groups Info Leak",
+      :name => "check_google_group_info_leak",
+      :pretty_name => "Check Google Group Info Leak",
       :authors => ["jcran","jgamblin"],
-      :description => "Looks to see if there's a google ",
+      :description => "Looks to see if there's a google group listing for a given domain",
       :references => [
         "https://blog.redlock.io/google-groups-misconfiguration"
       ],
@@ -19,9 +18,8 @@ class CheckGoogleGroupsInfoLeak < BaseTask
       :example_entities => [
         {"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}
       ],
-      :allowed_options => [
-      ],
-      :created_types => ["GoogleGroups"]
+      :allowed_options => [],
+      :created_types => ["GoogleGroup"]
     }
   end
 
@@ -30,14 +28,56 @@ class CheckGoogleGroupsInfoLeak < BaseTask
     super
 
     domain = _get_entity_name
-    uri = "https://groups.google.com/a/#{domain}/forum/#!forumsearch/"
+
+    uri = "https://groups.google.com/a/#{domain}/forum/#!search/a"
     text = http_get_body uri
 
-    if text =~/gpf_stats.js/
-      _log_good "Success!"
-      _create_entity "GoogleGroup", {"name" => "#{domain}", "uri" => uri }
+    if text =~ /gpf_stats.js/
+
+      # got it - grab the groups
+
+      # capture a screenshot and save it as a detail
+      page = "https://groups.google.com/a/#{domain}/forum/#!search/a"
+      session = create_browser_session(page)
+      base64_screenshot_data_search = capture_screenshot(session)
+
+      page = "https://groups.google.com/a/#{domain}/forum/#!forumsearch/"
+      session = create_browser_session(page)
+      base64_screenshot_data_listing = capture_screenshot(session)
+
+      page = "https://groups.google.com/a/#{domain}/forum/#!search/password"
+      session = create_browser_session(page)
+      base64_screenshot_data_search_password = capture_screenshot(session)
+
+      page = "https://groups.google.com/a/#{domain}/forum/#!search/breach"
+      session = create_browser_session(page)
+      base64_screenshot_data_search_breach = capture_screenshot(session)
+
+      page = "https://groups.google.com/a/#{domain}/forum/#!search/payment"
+      session = create_browser_session(page)
+      base64_screenshot_data_search_payment = capture_screenshot(session)
+
+      page = "https://groups.google.com/a/#{domain}/forum/#!search/invoice"
+      session = create_browser_session(page)
+      base64_screenshot_data_search_invoice = capture_screenshot(session)
+
+      _create_entity "GoogleGroup", {
+        "name" => domain,
+        "uri" => uri,
+        "hidden_screenshot_listing" => base64_screenshot_data_listing,
+        "hidden_screenshot_search" => base64_screenshot_data_search,
+        "hidden_screenshot_search_password" => base64_screenshot_data_search_password,
+        "hidden_screenshot_search_breach" => base64_screenshot_data_search_breach,
+        "hidden_screenshot_search_payment" => base64_screenshot_data_search_payment,
+        "hidden_screenshot_search_invoice" => base64_screenshot_data_search_invoice
+      }
+
+    elsif text =~ /This group is on a private domain/
+      # good
+      # CHECK //div[@class='gwt-Label'][contains(text(),'No results found')]
+      _log_good "This domain does not appear to be vulnerable."
     else
-      _log_error "Sorry, doesn't seem to be avialable"
+      _log_error "Unknown..."
     end
 
   end
