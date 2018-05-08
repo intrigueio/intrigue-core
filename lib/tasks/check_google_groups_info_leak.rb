@@ -8,7 +8,7 @@ class CheckGoogleGroupsInfoLeak < BaseTask
     {
       :name => "check_google_groups_info_leak",
       :pretty_name => "Check Google Groups Info Leak",
-      :authors => ["jcran"],
+      :authors => ["jcran","jgamblin"],
       :description => "Looks to see if there's a google ",
       :references => [
         "https://blog.redlock.io/google-groups-misconfiguration"
