@@ -219,28 +219,22 @@ class EntityManager
   created_entity
   end
 
-  def self.enrich_entity(entity, task_result=nil)
-    task_result.log  "Running enrichment on #{entity}" if task_result
+  def self.enrich_entity(entity, task_result)
+    task_result.log  "Running enrichment on #{entity}"
     return unless entity
 
     # Check if we've alrady run first
     if entity.enrichment_complete?
-      # XXX
       # TODO should we continue if we have a deeper depth!?
-      # XXX
-      task_result.log "Skipping enrichment... already completed for #{entity}!" if task_result
+      task_result.log "Skipping enrichment... already completed for #{entity}!"
       return
     end
 
     # set depth / scan result based on the task we're passed
-    if task_result
-      scan_result = task_result.scan_result
-      depth = task_result.depth
-    else
-      depth = provided_depth || 1
-    end
+    scan_result = task_result.scan_result
+    depth = task_result.depth
 
-    task_result.log "Scheduling enrichment (#{entity.enrichment_tasks}) on #{entity}!" if task_result
+    task_result.log "Scheduling enrichment (#{entity.enrichment_tasks}) on #{entity}!"
     entity.schedule_enrichment(depth, scan_result)
 
   end

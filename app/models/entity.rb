@@ -99,6 +99,9 @@ module Intrigue
 
             # actually schedule it
             proj = Intrigue::Model::Project.first(id: self.project_id)
+
+            raise "INVALID ENTITY... PROJECT CANNOT BE NULL. ENTITY: #{self}" unless proj
+
             start_task("task_enrichment", proj, scan_result, task_name, self, depth)
           end
 

@@ -174,8 +174,6 @@ class CoreCli < Thor
     #          "strategy" : "org_asset_discovery_active"
     #        }
     #      ],
-    #      "exclude_standard": true,
-    #      "exclude_additional_matches": ["/notanexample/"]
     #    }
     #  ]
     #}
@@ -197,12 +195,6 @@ class CoreCli < Thor
       project.additional_exception_list = p["additional_exception_list"]
       project.save
 
-      # Add additional exceptions
-
-      # XXX
-      # TODO ... add the per-project exclusion stuff here
-      # XXX
-
       puts "Working on project: #{project_name}"
       p["seeds"].each do |s|
         puts " - Seed: #{s}"
@@ -217,10 +209,10 @@ class CoreCli < Thor
         # Create the entity
         created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"])
 
-        # kick off the task
+        # Kick off the task
         task_result = start_task("task", project, nil, task_name, created_entity, depth, options, handlers, strategy)
 
-        # enrich the entity - TODO... make this optional
+        # Enrich the entity - TODO... make this optional
         Intrigue::EntityManager.enrich_entity(created_entity, task_result)
 
       end

@@ -1,6 +1,4 @@
 require 'logger'
-
-
 require 'sinatra'
 require 'sinatra/contrib'
 require 'json'
