@@ -259,7 +259,7 @@ class CoreCli < Thor
       task_result = start_task("task", p, nil, task_name, created_entity, depth, options, handlers, strategy_name)
 
       # manually start enrichment on first entity
-      Intrigue::EntityManager.enrich_entity(our_entity, task_result)
+      Intrigue::EntityManager.enrich_entity(created_entity, task_result)
 
       puts "Created task #{task_result.inspect} for entity #{created_entity}"
     end
