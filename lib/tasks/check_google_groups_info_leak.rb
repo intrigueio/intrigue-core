@@ -5,7 +5,7 @@ class CheckGoogleGroupsInfoLeak < BaseTask
 
   def self.metadata
     {
-      :name => "check_google_group_info_leak",
+      :name => "check_google_groups_info_leak",
       :pretty_name => "Check Google Group Info Leak",
       :authors => ["jcran","jgamblin"],
       :description => "Looks to see if there's a google group listing for a given domain",
