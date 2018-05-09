@@ -11,7 +11,7 @@ class IntrigueApp < Sinatra::Base
 
     #if @correlate # Handle entity coorelation
 
-     selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false).order(:name)
+     selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
 
      ## filter if we have a type
      selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
@@ -20,7 +20,7 @@ class IntrigueApp < Sinatra::Base
      selected_entities = _tokenized_search(@search_string, selected_entities)
 
      # filter out hidden if requested
-     selected_entities = selected_entities.where(:hidden => true) if @include_hidden
+     selected_entities = selected_entities.where(:hidden => false) unless @include_hidden
 
      # Get the corresponding alias groups
      alias_group_ids = selected_entities.select_map(:alias_group_id).uniq
@@ -43,7 +43,7 @@ class IntrigueApp < Sinatra::Base
     params[:include_hidden] == "on" ? @include_hidden = true : @include_hidden = false
     (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
 
-    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false).order(:name)
+    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
 
     ## Filter if we have a type
     selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
@@ -52,7 +52,7 @@ class IntrigueApp < Sinatra::Base
     selected_entities = _tokenized_search(@search_string, selected_entities) if @search_string
 
     # filter out hidden if requested
-    selected_entities = selected_entities.where(:hidden => true) if @include_hidden
+    selected_entities = selected_entities.where(:hidden => false) unless @include_hidden
 
     out = ""
     out << "Type,Name,Alias Group,Details\n"
@@ -72,7 +72,7 @@ class IntrigueApp < Sinatra::Base
     params[:include_hidden] == "on" ? @include_hidden = true : @include_hidden = false
     (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
 
-    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:hidden => false).order(:name)
+    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
 
     ## Filter if we have a type
     selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
@@ -81,7 +81,7 @@ class IntrigueApp < Sinatra::Base
     selected_entities = _tokenized_search(@search_string, selected_entities) if @search_string
 
     # filter out hidden if requested
-    selected_entities = selected_entities.where(:hidden => true) if @include_hidden
+    selected_entities = selected_entities.where(:hidden => false) unless @include_hidden
 
     out = []
     selected_entities.each do |entity|
