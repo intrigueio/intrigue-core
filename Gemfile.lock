@@ -227,6 +227,7 @@ GEM
       whois (>= 4.0.0)
     xpath (2.1.0)
       nokogiri (~> 1.3)
+    yajl-ruby (1.4.0)
     yard (0.9.12)
     yomu (0.2.4)
       json (~> 1.8)
@@ -282,6 +283,7 @@ DEPENDENCIES
   whois
   whois-parser
   whoisology!
+  yajl-ruby
   yard
   yomu
 

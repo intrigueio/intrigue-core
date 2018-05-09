@@ -27,13 +27,13 @@ module Intrigue
 
       def self.scope_by_project(project_name)
         named_project = Intrigue::Model::Project.first(:name => project_name)
-        where(Sequel.&(:project_id => named_project.id, :deleted => false))
+        where(Sequel.&(:project_id => named_project.id))
       end
 
       def self.scope_by_project_and_type(project_name, entity_type_string)
         resolved_entity_type = Intrigue::EntityManager.resolve_type_from_string(entity_type_string)
         named_project = Intrigue::Model::Project.first(:name => project_name)
-        where(Sequel.&(:project_id => named_project.id, :type => resolved_entity_type.to_s, :deleted => false))
+        where(Sequel.&(:project_id => named_project.id, :type => resolved_entity_type.to_s))
       end
 
       def self.scope_by_project_and_type_and_detail_value(project_name, entity_type, detail_name, detail_value)
@@ -265,7 +265,7 @@ module Intrigue
           :detail_string => detail_string,
           :details => details,
           :task_results => task_results.map{ |t| {:id => t.id, :name => t.name, :base_entity_name => t.base_entity.name, :base_entity_type => t.base_entity.type  } },
-          :aliases => aliases.map{ |x| {:id => x.id, :name => x.name } }
+          #:aliases => aliases.map{ |x| {:id => x.id, :name => x.name } }
         }
       end
 

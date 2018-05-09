@@ -1,7 +1,9 @@
 require 'logger'
 require 'sinatra'
 require 'sinatra/contrib'
-require 'json'
+#require 'json'
+#require 'yajl'
+require 'yajl/json_gem'
 require 'yaml'
 require 'rest-client'
 require 'cgi'
@@ -70,6 +72,7 @@ def setup_database
   database_name = database_config[environment]["database"]
 
   $db = Sequel.connect("postgres://#{database_user}@#{database_host}:5432/#{database_name}", options)
+  $db.loggers << Logger.new($stdout)
 
   # Allow datasets to be paginated
   Sequel::Database.extension :pagination

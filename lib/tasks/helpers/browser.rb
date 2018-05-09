@@ -48,10 +48,14 @@ module Task
 
     def capture_screenshot(session)
 
+
+      sleep 5
+      
       #
       # Capture a screenshot
       #
       tempfile = Tempfile.new(['phantomjs', '.png'])
+
       return_path = session.save_screenshot(tempfile.path)
       _log "Saved Screenshot to #{return_path}"
 
