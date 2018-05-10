@@ -188,7 +188,8 @@ class CoreCli < Thor
     # XXX - Assumes we start at a clean system!!!!
     client_data["projects"].each do |p|
       project_name = p["name"]
-      project = Intrigue::Model::Project.create(:name => "#{project_name}")
+
+      project = Intrigue::Model::Project.find_or_create(:name => "#{project_name}")
 
       # Set exclusion setting
       project.use_standard_exceptions = p["use_standard_exceptions"]
