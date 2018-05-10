@@ -72,7 +72,7 @@ def setup_database
   database_name = database_config[environment]["database"]
 
   $db = Sequel.connect("postgres://#{database_user}@#{database_host}:5432/#{database_name}", options)
-  $db.loggers << Logger.new($stdout)
+  #$db.loggers << Logger.new($stdout)
 
   # Allow datasets to be paginated
   $db.extension :pagination
