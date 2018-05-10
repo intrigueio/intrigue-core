@@ -198,6 +198,18 @@
       "uri" : "https://securitytrails.com/corp/apidocs",
       "editable" : "true",
       "comment" : ""
+    },
+    "wwws_io_username": {
+      "value" : "",
+      "uri" : "https://domainlists.io/domains-api/",
+      "editable" : "true",
+      "comment" : ""
+    },
+    "wwws_io_password": {
+      "value" : "",
+      "uri" : "https://domainlists.io/domains-api/",
+      "editable" : "true",
+      "comment" : ""
     }
   }
 }
