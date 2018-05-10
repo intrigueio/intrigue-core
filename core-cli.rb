@@ -289,6 +289,9 @@ class CoreCli < Thor
         entity_type_string = "Intrigue::Entity::#{parsed_entity["type"]}"
       end
 
+      # create a group
+      g = Intrigue::Model::AliasGroup.create(:project_id => p.id)
+
       # create the entity
       klass = Intrigue::EntityManager.resolve_type_from_string(entity_type_string)
       e = klass.create({
@@ -298,7 +301,7 @@ class CoreCli < Thor
         :details => parsed_entity["details"],
         :details_raw => parsed_entity["details"],
         :hidden => false,
-        :alias_group_id => nil
+        :alias_group_id => g.id
        })
 
        # enrich if we're asked
