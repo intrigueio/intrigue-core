@@ -15,7 +15,7 @@ class ImportDomainlists < BaseTask
       :type => "import",
       :passive => true,
       :allowed_types => ["String"],
-      :example_entities => [{"type" => "String", "details" => {"name" => "com"}}],
+      :example_entities => [{"type" => "String", "details" => {"name" => "534"}}],
       :allowed_options => [
         {:name => "threads", :regex => "integer", :default => 1 }
       ],
@@ -34,8 +34,9 @@ class ImportDomainlists < BaseTask
       return
     end
 
-    domain_code = _get_entity_name || 503
-    downlink="https://domainlists.io/api/full/#{domain_code}/#{user}/#{pass}/"
+    # See: https://domainlists.io/domains-api/
+    domain_code = _get_entity_name || 534
+    downlink = "https://domainlists.io/api/full/#{domain_code}/#{user}/#{pass}/"
     f = download_and_store downlink
 
     # Read and split the file up into a list of domains
