@@ -282,12 +282,19 @@ class CoreCli < Thor
         "hidden_original": parsed_entity["name"],
       })
 
+      # assume it's a built-in type unless we suspect otherwise
+      if parsed_entity["type"] =~ /::/
+        entity_type_string = "#{parsed_entity["type"}"
+      else
+        entity_type_string = "Intrigue::Entity::#{parsed_entity["type"]}"
+      end
+
       # create the entity
-      klass = Intrigue::EntityManager.resolve_type_from_string("#{parsed_entity["type"]}")
+      klass = Intrigue::EntityManager.resolve_type_from_string(entity_type_string)
       e = klass.create({
         :name => parsed_entity["name"].downcase,
         :project_id => p.id,
-        :type => "Intrigue::Entity::#{parsed_entity["type"]}",
+        :type => entity_type,
         :details => parsed_entity["details"],
         :details_raw => parsed_entity["details"],
         :hidden => false,
