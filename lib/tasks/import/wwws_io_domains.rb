@@ -37,9 +37,6 @@ class ImportWwwsIoDomains < BaseTask
     domain_code = _get_entity_name || 503
 
     downlink="https://domainlists.io/api/full/#{domain_code}/#{user}/#{pass}/"
-
-    _log "Sending #{downlink}"
-
     f = download_and_store downlink
 
 
