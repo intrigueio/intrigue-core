@@ -38,7 +38,7 @@ module Intrigue
 
         output_string = ""
         self.entities.paged_each do |e|
-          output_string << x.export_csv << "\n"
+          output_string << e.export_csv << "\n"
         end
 
       output_string
