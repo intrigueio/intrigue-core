@@ -283,7 +283,8 @@ class CoreCli < Thor
       })
 
       # create the entity
-      e = Intrigue::EntityManager.resolve_type_from_string("#{parsed_entity["type"]}").create({
+      klass = Intrigue::EntityManager.resolve_type_from_string("#{parsed_entity["type"]}")
+      klass.create({
         :name => parsed_entity["name"].downcase,
         :project_id => p.id,
         :type => "Intrigue::Entity::#{parsed_entity["type"]}",
@@ -291,7 +292,7 @@ class CoreCli < Thor
         :details_raw => parsed_entity["details"],
         :hidden => false,
         :alias_group_id => nil
-       }) if
+       })
 
        # enrich if we're asked
        e.schedule_enrichment if enrich
