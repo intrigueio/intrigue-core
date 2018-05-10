@@ -284,7 +284,7 @@ class CoreCli < Thor
 
       # assume it's a built-in type unless we suspect otherwise
       if parsed_entity["type"] =~ /::/
-        entity_type_string = "#{parsed_entity["type"}"
+        entity_type_string = "#{parsed_entity["type"]}"
       else
         entity_type_string = "Intrigue::Entity::#{parsed_entity["type"]}"
       end
