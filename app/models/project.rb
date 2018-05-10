@@ -35,8 +35,12 @@ module Intrigue
       end
 
       def export_csv
+
         output_string = ""
-        self.entities.each{ |x| output_string << x.export_csv << "\n" }
+        self.entities.paged_each do |e|
+          output_string << x.export_csv << "\n"
+        end
+
       output_string
       end
 

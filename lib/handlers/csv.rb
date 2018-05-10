@@ -10,11 +10,14 @@ module Handler
       result = eval(result_type).first(id: result_id)
       return "Unable to process" unless result.respond_to? "export_csv"
 
-      File.open("#{$intrigue_basedir}/tmp/#{prefix_name}#{result.name}.csv", "a") do |file|
-        _lock(file) do
-          file.puts(result.export_csv)  # write it out
-        end
+      # write to a file bit by bit
+      file = File.open("#{$intrigue_basedir}/tmp/#{result.name}.csv", "a")
+      result.entities.paged_each do |e|
+        file.puts("#{e.export_csv}\n")
+        file.flush
       end
+
+      file.close
 
     end
 

@@ -24,7 +24,7 @@ module Handler
 
       # write to a tempfile first
       tempfile = Tempfile.new("export-#{rand(10000000)}.csv")
-      result.entities.each do |e|
+      result.entities.paged_each do |e|
         tempfile.write("#{e.export_csv}\n")
       end
       # rewind to beginning

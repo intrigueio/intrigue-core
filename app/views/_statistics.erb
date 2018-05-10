@@ -7,8 +7,7 @@ Total: <%= Intrigue::Model::Project.first(:name => @project_name).entities.count
     <% next unless count > 0 %>
     <li>
       <a href="/<%=@project_name%>/entities?entity_types[]=<%=d.to_s%>">
-      <%= d.to_s.gsub(/^.*::/, '') %></a>:
-      <%= count %>
+      <%= d.to_s.gsub(/^.*::/, '') %></a>
     </li>
     <% end %>
   </ul>
