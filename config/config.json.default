@@ -199,13 +199,13 @@
       "editable" : "true",
       "comment" : ""
     },
-    "wwws_io_username": {
+    "domainlists_username": {
       "value" : "",
       "uri" : "https://domainlists.io/domains-api/",
       "editable" : "true",
       "comment" : ""
     },
-    "wwws_io_password": {
+    "domainlists_password": {
       "value" : "",
       "uri" : "https://domainlists.io/domains-api/",
       "editable" : "true",

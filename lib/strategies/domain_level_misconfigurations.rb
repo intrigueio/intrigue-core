@@ -1,0 +1,23 @@
+module Intrigue
+module Strategy
+  class DomainMisconfigurations < Intrigue::Strategy::Base
+
+    def self.metadata
+      {
+        :name => "domain_misconfigurations",
+        :pretty_name => "Check Domain Misconfigurations",
+        :passive => true,
+        :authors => ["jcran"],
+        :description => "This strategy checks for common misconfigurations in a TLD."
+      }
+    end
+
+    def self.recurse(entity, task_result)
+      if entity.type_string == "DnsRecord"
+        start_recursive_task(task_result,"check_google_groups_info_leak",entity)
+      end
+    end
+
+end
+end
+end

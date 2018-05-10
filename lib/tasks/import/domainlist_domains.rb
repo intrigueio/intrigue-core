@@ -1,16 +1,16 @@
 module Intrigue
 module Task
-class ImportWwwsIoDomains < BaseTask
+class ImportDomainlists < BaseTask
 
   include Intrigue::Task::Generic
   include Intrigue::Task::Web
 
   def self.metadata
     {
-      :name => "import/wwws_io_domains",
-      :pretty_name => "Import Domains from Wwws.io",
+      :name => "import/domainslists",
+      :pretty_name => "Import Domains from Domainlists",
       :authors => ["jcran", ],
-      :description => "This gathers domains from the wwws.io API.",
+      :description => "This gathers domains from the Domainlists API.",
       :references => [],
       :type => "import",
       :passive => true,
@@ -27,18 +27,16 @@ class ImportWwwsIoDomains < BaseTask
   def run
     super
 
-    user = _get_global_config("wwws_io_username")
-    pass = _get_global_config("wwws_io_password")
+    user = _get_global_config("domainlists_username")
+    pass = _get_global_config("domainlists_password")
     unless user && pass
       _log_error "No creds?"
       return
     end
 
     domain_code = _get_entity_name || 503
-
     downlink="https://domainlists.io/api/full/#{domain_code}/#{user}/#{pass}/"
     f = download_and_store downlink
-
 
     # Read and split the file up into a list of domains
     lines = File.open(f,"r").read.split("\n")
