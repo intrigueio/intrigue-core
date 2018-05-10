@@ -34,8 +34,7 @@ class EntityManager
     downcased_name = name.downcase
 
     # Try to find our project and create it if it doesn't exist
-    project = Intrigue::Model::Project.first(:name => project_name)
-    project = Intrigue::Model::Project.create(:name => project_name) unless project
+    project = Intrigue::Model::Project.find_or_create(:name => project_name)
 
     # Merge the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name)

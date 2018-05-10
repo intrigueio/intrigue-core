@@ -243,7 +243,7 @@ class CoreCli < Thor
     lines = File.open(filename,"r").readlines
 
     project_name = "#{task_name}-#{Time.now.strftime("%Y%m%d%H%M%s")}"
-    p = Intrigue::Model::Project.create(:name => project_name)
+    p = Intrigue::Model::Project.find_or_create(:name => project_name)
 
     lines.each do |line|
       line.chomp!
@@ -269,7 +269,7 @@ class CoreCli < Thor
   desc "local_load_bulk [Project] [File] [Enrich (optional)]", "Bulk load entities from a file."
   def local_load_bulk(projectname, filename, enrich=false)
 
-    p = Intrigue::Model::Project.create(:name => projectname)
+    p = Intrigue::Model::Project.find_or_create(:name => projectname)
 
     i=0
     lines = File.open(filename,"r").readlines
