@@ -7,7 +7,7 @@ class ImportDomainlists < BaseTask
 
   def self.metadata
     {
-      :name => "import/domainslists",
+      :name => "import/domainlists",
       :pretty_name => "Import Domains from Domainlists",
       :authors => ["jcran", ],
       :description => "This gathers domains from the Domainlists API.",
