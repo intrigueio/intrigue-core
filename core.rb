@@ -75,8 +75,8 @@ def setup_database
   $db.loggers << Logger.new($stdout)
 
   # Allow datasets to be paginated
-  Sequel::Database.extension :pagination
-  Sequel::Database.extension :pg_json
+  $db.extension :pagination
+  #$db.extension :pg_json
   Sequel.extension :pg_json_ops
 end
 

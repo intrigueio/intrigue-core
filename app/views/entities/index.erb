@@ -20,7 +20,7 @@ function delete_entity(id)
 <div class="col-sm-10">
     <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&correlate=on&page=<%=@page-1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join('&') if @entity_types %>">previous</a>
     <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&correlate=on&page=<%=@page+1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join('&') if @entity_types %>">next</a>
-    <%= "Page: #{@page}" %> / <%= "Viewing Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %>
+    <%= "Page: #{@page}" %> / <%= "Viewing Results: #{@count * (@page-1)} .. #{@count * @page-1}" %>
 
   <script type="text/javascript" src="/js/sorttable.js"></script>
   <style>
@@ -61,13 +61,13 @@ function delete_entity(id)
                end
 
                # skip entities that dont match if we searched
-               if @search_string && @search_string =~ /^name:/
-                 next unless e.name =~ /#{@search_string.gsub("name:","")}/
-               end
+               #if @search_string && @search_string =~ /^name:/
+                # next unless e.name =~ /#{@search_string.gsub("name:","")}/
+               #end
 
-               if @entity_types
-                 next unless e.type =~ /#{@entity_types}/
-               end
+               #if @entity_types
+               #  next unless e.type =~ /#{@entity_types}/
+               #end
             %>
                 <li>[<a href="/<%=@project_name%>/entities/<%=e.id%>"> <%= h e %> </a>]</li>
           <% end %>
@@ -83,13 +83,13 @@ function delete_entity(id)
               end
 
               # skip entities that dont match if we searched
-              if @search_string && @search_string =~ /^name:/
-                next unless e.name =~ /#{@search_string.gsub("name:","")}/
-              end
+              #if @search_string && @search_string =~ /^name:/
+              #  next unless e.name =~ /#{@search_string.gsub("name:","")}/
+              #end
 
-              if @entity_types
-                next unless e.type =~ /#{@entity_types}/
-              end
+              #if @entity_types
+              #  next unless e.type =~ /#{@entity_types}/
+              #end
             %>
               <li><a href="/<%=@project_name%>/entities/<%=e.id%>"> <%= h e.detail_string %> </a></li>
         <% end %>
