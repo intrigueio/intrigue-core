@@ -35,6 +35,9 @@ class ImportDomainlists < BaseTask
     end
 
     # See: https://domainlists.io/domains-api/
+    # 534 - com
+    # 928 - gov
+    # 675 - edu
     domain_code = _get_entity_name || 534
     downlink = "https://domainlists.io/api/full/#{domain_code}/#{user}/#{pass}/"
     f = download_and_store downlink
