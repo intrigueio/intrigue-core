@@ -89,13 +89,13 @@ module Intrigue
 
           unless enrichment_scheduled?(task_name)
 
-            $db.transaction do
+            #$db.transaction do
               # Mark AS scheduled
               scheduled_tasks = get_detail(["enrichment_scheduled"]) || []
               scheduled_tasks << task_name
               ### TODO - RACE CONDITION HERE? MUTEX?
               set_detail "enrichment_scheduled", scheduled_tasks
-            end
+            #end
 
             # actually schedule it
             proj = Intrigue::Model::Project.first(id: self.project_id)
