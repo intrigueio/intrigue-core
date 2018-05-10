@@ -294,7 +294,7 @@ class CoreCli < Thor
       e = klass.create({
         :name => parsed_entity["name"].downcase,
         :project_id => p.id,
-        :type => entity_type,
+        :type => entity_type_string,
         :details => parsed_entity["details"],
         :details_raw => parsed_entity["details"],
         :hidden => false,
