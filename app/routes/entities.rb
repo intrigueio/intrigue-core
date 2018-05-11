@@ -21,9 +21,6 @@ class IntrigueApp < Sinatra::Base
      alias_group_ids = selected_entities.select_map(:alias_group_id).uniq
      @alias_groups = Intrigue::Model::AliasGroup.where({:id => alias_group_ids })
 
-     #@group_count = @alias_groups.count
-     #@entity_count = selected_entities.count
-
      erb :'entities/index'
    end
 
@@ -158,7 +155,7 @@ class IntrigueApp < Sinatra::Base
               ss.gsub!(/^details:/,"")
               selected_entities = selected_entities.where(Sequel.ilike(:details_raw, "%#{ss}%"))
             else
-              selected_entities = selected_entities.exclude(Sequel.ilike(:name, "%#{ss}%"))
+              selected_entities = selected_entities.where(Sequel.ilike(:name, "%#{ss}%"))
             end
           end
         end
