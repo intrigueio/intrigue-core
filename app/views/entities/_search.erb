@@ -1,7 +1,4 @@
   <p>
-    Alias Group Count: <%= @group_count %><br/>
-    Unique Entities Count: <%= @entity_count %><br/>
-    <!--Results Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>-->
     <a href="/<%=@project_name%>/entities.csv?search_string=<%=h @search_string%>&entity_types[]=<%=@entity_types.join(",") if @entity_types%>">Export CSV</a><br/>
     <a href="/<%=@project_name%>/entities.json?search_string=<%=h @search_string%>&entity_types[]=<%=@entity_types.join(",") if @entity_types%>">Export JSON</a><br/>
   </p>

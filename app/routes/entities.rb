@@ -9,9 +9,7 @@ class IntrigueApp < Sinatra::Base
     (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
     (params[:count] != "" && params[:count].to_i > 0) ? @count = params[:count].to_i : @count = 100
 
-    #if @correlate # Handle entity coorelation
-
-     selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name).paginate(@page, @count)
+     selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).paginate(@page, @count).order(:name)
 
      ## filter if we have a type
      selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
@@ -24,7 +22,7 @@ class IntrigueApp < Sinatra::Base
      @alias_groups = Intrigue::Model::AliasGroup.where({:id => alias_group_ids })
 
      #@group_count = @alias_groups.count
-     @entity_count = selected_entities.count
+     #@entity_count = selected_entities.count
 
      erb :'entities/index'
    end
@@ -166,7 +164,6 @@ class IntrigueApp < Sinatra::Base
         end
       end
 
-    puts " Tokenized search returning: #{selected_entities.count} entities"
     selected_entities
     end
 

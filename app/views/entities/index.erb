@@ -49,7 +49,7 @@ function delete_entity(id)
     <tbody>
       <tr><th>name</th><th>details</th></tr>
       <% @alias_groups.each do |group| %>
-        <% next unless group.entities.count > 0 %>
+        <% next if group.entities.empty? %>
         <tr>
           <td>
             <ul>
@@ -59,15 +59,6 @@ function delete_entity(id)
                unless @include_hidden
                 next if e.hidden
                end
-
-               # skip entities that dont match if we searched
-               #if @search_string && @search_string =~ /^name:/
-                # next unless e.name =~ /#{@search_string.gsub("name:","")}/
-               #end
-
-               #if @entity_types
-               #  next unless e.type =~ /#{@entity_types}/
-               #end
             %>
                 <li>[<a href="/<%=@project_name%>/entities/<%=e.id%>"> <%= h e %> </a>]</li>
           <% end %>
@@ -81,15 +72,6 @@ function delete_entity(id)
               unless @include_hidden
                next if e.hidden
               end
-
-              # skip entities that dont match if we searched
-              #if @search_string && @search_string =~ /^name:/
-              #  next unless e.name =~ /#{@search_string.gsub("name:","")}/
-              #end
-
-              #if @entity_types
-              #  next unless e.type =~ /#{@entity_types}/
-              #end
             %>
               <li><a href="/<%=@project_name%>/entities/<%=e.id%>"> <%= h e.detail_string %> </a></li>
         <% end %>
