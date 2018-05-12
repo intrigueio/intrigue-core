@@ -192,6 +192,7 @@ class CoreCli < Thor
       project = Intrigue::Model::Project.find_or_create(:name => "#{project_name}")
 
       # Set exclusion setting
+      auto_enrich = p["auto_enrich"] || false
       project.use_standard_exceptions = p["use_standard_exceptions"]
       project.additional_exception_list = p["additional_exception_list"]
       project.save
@@ -214,7 +215,7 @@ class CoreCli < Thor
         task_result = start_task("task", project, nil, task_name, created_entity, depth, options, handlers, strategy)
 
         # Enrich the entity - TODO... make this optional
-        Intrigue::EntityManager.enrich_entity(created_entity, task_result)
+        Intrigue::EntityManager.enrich_entity(created_entity, task_result) if auto_enrich
 
       end
 
@@ -233,8 +234,8 @@ class CoreCli < Thor
   end
 
 
-  desc "local_load [Task] [File] [Depth] [Opt1=Val1#Opt2=Val2#...] [Handlers] [Strategy]", "Load entities from a file and runs a task on each in a new project."
-  def local_load(task_name,filename,depth=1,options_string=nil,handler_string=nil, strategy_name="asset_discovery_active")
+  desc "local_load [Project] [Task] [File] [Depth] [Opt1=Val1#Opt2=Val2#...] [Enrich (optional)] [Handlers (optional)] [Strategy (optional)]", "Load entities from a file and runs a task on each in a new project."
+  def local_load(project_name, task_name,filename,depth=1,options_string=nil,enrich=false,handler_string=nil, strategy_name="asset_discovery_active")
 
     # Load in the main core file for direct access to TaskFactory and the Tasks
     # This makes this super speedy.
@@ -242,7 +243,6 @@ class CoreCli < Thor
 
     lines = File.open(filename,"r").readlines
 
-    project_name = "#{task_name}-#{Time.now.strftime("%Y%m%d%H%M%s")}"
     p = Intrigue::Model::Project.find_or_create(:name => project_name)
 
     lines.each do |line|
@@ -260,7 +260,7 @@ class CoreCli < Thor
       task_result = start_task("task", p, nil, task_name, created_entity, depth, options, handlers, strategy_name)
 
       # manually start enrichment on first entity
-      Intrigue::EntityManager.enrich_entity(created_entity, task_result)
+      Intrigue::EntityManager.enrich_entity(created_entity, task_result) if enrich
 
       puts "Created task #{task_result.inspect} for entity #{created_entity}"
     end

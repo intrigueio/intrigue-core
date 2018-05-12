@@ -47,8 +47,38 @@ module Intrigue
         task_results.each do |tr|
           ancestors << tr.scan_result.base_entity if tr.scan_result
         end
-      ancestors
+      ancestors.uniq
       end
+
+      # Intrigue::Model::Entity.where(:name => "aim.com").first.ancestor_path;nil
+      # while true; sleep 1; Intrigue::Model::Entity.last.ancestor_path; end
+      def ancestor_path(entity=nil, known_nodes = [], depth_string="")
+        entity = entity || self
+
+        if entity.task_results.empty?
+          puts "ROOOOOOOOOOOOOOOOOOT!"
+          puts "ROOOOOOOOOOOOOOOOOOT!"
+          puts "ROOOOOOOOOOOOOOOOOOT!"
+          puts "ROOOOOOOOOOOOOOOOOOT!"
+          puts "ROOOOOOOOOOOOOOOOOOT!"
+          puts "ROOOOOOOOOOOOOOOOOOT!"
+          puts "ROOOOOOOOOOOOOOOOOOT!"
+          puts "ROOOOOOOOOOOOOOOOOOT!"
+          return
+        end
+
+        entity.task_results.uniq.each do |tr|
+          #puts "#{depth_string << " "} #{out = []; visited.each{|x| out << x.name}; out }"
+          puts "#{depth_string.length}  #{tr.name} (#{tr.depth})"
+          unless known_nodes.include? tr.base_entity
+            ancestor_path(tr.base_entity, known_nodes << tr.base_entity, depth_string << " ")
+          end
+        end
+
+      end
+
+      # p = Intrigue::Model::Project.find(:name => "yahoo.com").entities.first.ancestor_path
+
 
       def validate
         super

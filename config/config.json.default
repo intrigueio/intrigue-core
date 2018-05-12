@@ -46,6 +46,12 @@
     },
     "webhook": {
       "uri": "http://127.0.0.1:9999/"
+    },
+    "slackbot": {
+      "access_key": "",
+      "bot_name": "",
+      "channel_name": "",
+      "system_base_uri":"http://localhost:7777"
     }
   },
   "intrigue_global_module_config": {

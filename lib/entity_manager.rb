@@ -84,7 +84,7 @@ class EntityManager
       task_result.log "ERROR! Attempting to create broken entity: #{task_result}, #{type_string}##{name}, #{details}"
     end
 
-    # HANDLE CANCELED TASKS!
+    # deal with canceled tasks!
     # Do a lookup to make sure we have the latest...
     tr = Intrigue::Model::TaskResult.first(:id => task_result.id)
     if tr.cancelled

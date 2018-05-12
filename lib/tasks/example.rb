@@ -60,6 +60,7 @@ class Example < BaseTask
       # Create & return the entity
       #
       _create_entity("IpAddress", {"name" => ip_address })
+
     end
 
   end

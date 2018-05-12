@@ -53,6 +53,7 @@ gem 'mini_magick'
 # Handlers
 gem 'couchrest'
 gem 'fog-aws'
+gem 'slack-ruby-client'
 
 # Development
 gem 'foreman'

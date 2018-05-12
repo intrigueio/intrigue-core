@@ -97,7 +97,6 @@ class BaseTask
         end
       end
 
-=begin
       scan_result = @task_result.scan_result
       if scan_result
         scan_result.decrement_task_count
@@ -107,7 +106,7 @@ class BaseTask
       #################
       # Call Handlers #
       #################
-
+=begin
       #### Scan Result Handlers
       if scan_result.handlers.count > 0
 
@@ -116,7 +115,7 @@ class BaseTask
           # Make sure we don't hit a race condition at the beginning
 
           _log "Last task standing, let's handle it!"
-          scan_result.handle
+          scan_result.handle_attached
 
           # let's mark it complete if there's nothing else to do here.
           scan_result.handlers_complete = true
@@ -130,11 +129,10 @@ class BaseTask
 
       #### Task Result Handlers
       if @task_result.handlers.count > 0
-        @task_result.handle
+        @task_result.handle_attached
         @task_result.handlers_complete = true
       end
 =end
-
     ensure   # Mark it complete and save it
       _log "Cleaning up!"
       @task_result.timestamp_end = Time.now.getutc

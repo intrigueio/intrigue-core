@@ -18,7 +18,9 @@ class CheckGoogleGroupsInfoLeak < BaseTask
       :example_entities => [
         {"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}
       ],
-      :allowed_options => [],
+      :allowed_options => [
+        {:name => "notify_slackbot", :type => "Boolean", :regex => "boolean", :default => false }
+      ],
       :created_types => ["GoogleGroup"]
     }
   end
@@ -34,7 +36,8 @@ class CheckGoogleGroupsInfoLeak < BaseTask
 
     if text =~ /gpf_stats.js/
 
-      # got it - grab the groups
+      # this should be a "Finding" or some sort of success event ?
+      _call_handler("slackbot") if _get_option("notify_slackbot")
 
       # capture a screenshot and save it as a detail
       page = "https://groups.google.com/a/#{domain}/forum/#!search/a"

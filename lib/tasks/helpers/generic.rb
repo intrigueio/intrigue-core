@@ -355,6 +355,10 @@ module Generic
   hash
   end
 
+  def _call_handler(handler_name)
+    @task_result.handle(handler_name)
+  end
+
   ## Helper methods for getting common entity data
   def _get_entity_detail(detail_name)
     @entity.get_detail(detail_name)
