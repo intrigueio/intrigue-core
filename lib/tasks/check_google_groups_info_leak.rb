@@ -36,9 +36,6 @@ class CheckGoogleGroupsInfoLeak < BaseTask
 
     if text =~ /gpf_stats.js/
 
-      # this should be a "Finding" or some sort of success event ?
-      _call_handler("slackbot") if _get_option("notify_slackbot")
-
       # capture a screenshot and save it as a detail
       page = "https://groups.google.com/a/#{domain}/forum/#!search/a"
       session = create_browser_session(page)
@@ -74,6 +71,9 @@ class CheckGoogleGroupsInfoLeak < BaseTask
         "hidden_screenshot_search_payment" => base64_screenshot_data_search_payment,
         "hidden_screenshot_search_invoice" => base64_screenshot_data_search_invoice
       }
+
+      # this should be a "Finding" or some sort of success event ?
+      _call_handler("slackbot") if _get_option("notify_slackbot")
 
     elsif text =~ /This group is on a private domain/
       # good
