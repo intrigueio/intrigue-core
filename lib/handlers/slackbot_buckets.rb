@@ -2,16 +2,13 @@ require 'slack-ruby-client'
 
 module Intrigue
 module Handler
-  class Slackbot < Intrigue::Handler::Base
+  class SlackbotBuckets < Intrigue::Handler::Base
 
     def self.type
-      "slackbot"
+      "slackbot_buckets"
     end
 
     def perform(result_type, result_id, prefix_name=nil)
-
-      #puts "Called on: #{result_type}##{result_id}"
-
       result = eval(result_type).first(id: result_id)
       return "Unable to process" unless result.respond_to? "export_hash"
 
@@ -23,19 +20,23 @@ module Handler
       bot_name = _get_handler_config("bot_name")
       channel_name = _get_handler_config("channel_name")
       result_url = "#{system_base_uri}/#{result.project.name}/results/#{result_id}"
-      entities_uri = "#{system_base_uri}/#{result.project.name}/entities"
 
       client = Slack::Web::Client.new
-      result.entities.each do |e|
-        client.chat_postMessage(
-          text: "#{entities_uri}/#{e.id} [#{e.name}]",
-          as_user: false,
-          username: bot_name,
-          channel: channel_name
-        )
-      end
+
+      # Note that this is currently called by an enrichment task, which makes it
+      # a little more funky than your typical notification. we have to go get
+      # the base entity of the task result...
+      message = "#{result.base_entity.get_detail("large_files")}"
+
+      client.chat_postMessage(
+        text: "#{message}\nMore details at: #{result_url}",
+        as_user: false,
+        username: bot_name,
+        channel: channel_name
+      )
 
     end
   end
+
 end
 end

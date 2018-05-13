@@ -52,6 +52,12 @@
       "bot_name": "",
       "channel_name": "",
       "system_base_uri":"http://localhost:7777"
+    },
+    "slackbot_buckets": {
+      "access_key": "",
+      "bot_name": "",
+      "channel_name": "",
+      "system_base_uri":"http://localhost:7777"
     }
   },
   "intrigue_global_module_config": {

@@ -24,7 +24,6 @@ class AwsS3Brute < BaseTask
         {:name => "use_file", :regex => "boolean", :default => false },
         {:name => "brute_file",:regex => "filename", :default => "s3_buckets.list" },
         {:name => "additional_buckets", :regex => "alpha_numeric_list", :default => "" }
-
       ],
       :created_types => ["DnsRecord"]
     }
@@ -60,6 +59,15 @@ class AwsS3Brute < BaseTask
 
       # Add permutations
       if opt_permute
+
+        # AWS is case sensitive.
+        # https://forums.aws.amazon.com/thread.jspa?threadID=19928
+        first_letter_cap = "#{pb.strip}".slice(0,1).upcase + "#{pb.strip}".slice(1..-1)
+        work_q << "#{first_letter_cap}" unless "#{first_letter_cap}" == "#{pb.strip}"
+        work_q << "#{pb.strip.upcase}" unless "#{pb.strip.upcase}" == "#{pb.strip}"
+        work_q << "#{pb.strip.downcase}" unless "#{pb.strip.downcase}" == "#{pb.strip}"
+
+        # General development permutations
         work_q << "#{pb.strip}-dev"
         work_q << "#{pb.strip}-qa"
         work_q << "#{pb.strip}-prod"
