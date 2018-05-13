@@ -27,7 +27,7 @@ module Handler
 
       client = Slack::Web::Client.new
       result.entities.each do |e|
-        client.chat_postMessage( text: "#{entities_uri}/#{e.id} [#{entity.name}]",
+        client.chat_postMessage( text: "#{entities_uri}/#{e.id} [#{e.name}]",
           as_user: false,
           username: bot_name,
           channel: channel_name
