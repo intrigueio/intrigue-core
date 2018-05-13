@@ -34,7 +34,7 @@ class EnrichAwsS3Bucket < BaseTask
   def self.metadata
     {
       :name => "enrich/aws_s3_bucket",
-      :pretty_name => "AWS S3 Loot",
+      :pretty_name => "Enrich AWS S3 Bucket",
       :authors => ["jcran"],
       :description => "This task takes an S3 bucket and gathers all objects within it.",
       :references => [],
@@ -45,7 +45,7 @@ class EnrichAwsS3Bucket < BaseTask
         {"type" => "AwsS3Bucket", "details" => {"name" => "https://s3.amazonaws.com/bucket"}}
       ],
       :allowed_options => [
-        {:name => "slack_notify_on_large_files",  :regex => "boolean", :default => true },
+        {:name => "notify_slack",  :regex => "boolean", :default => true },
         {:name => "large_file_size", :regex => "integer", :default => 15},
       ],
       :created_types => ["DnsRecord"]
@@ -68,22 +68,30 @@ class EnrichAwsS3Bucket < BaseTask
     # TODO - this is very naive right now, and will miss
     # large swaths of files that have similar names. make a point
     # of making this much smarter without doing too much bruting...
-    contents = []
-    large_files = []
+
+    all_files = []
+    downloadable_files = []
+    interesting_files = []
 
     # for each letter of the alphabet...
     [*('a'..'z'),*('A'..'Z'),*('0'..'9')].each do |letter|
       result = get_contents_unauthenticated(bucket_uri,letter)
-      contents.concat(result[:contents])
-      large_files.concat(result[:large_files])
+      all_files.concat(result[:all_files])
+      interesting_files.concat(result[:interesting_files])
+      downloadable_files.concat(result[:downloadable_files])
     end
 
-    _set_entity_detail("contents", contents.sort.uniq)
-    _set_entity_detail("large_files", large_files.sort.uniq)
+    _set_entity_detail("all_files", all_files)
+    _set_entity_detail("downloadable_files", downloadable_files)
+    _set_entity_detail("interesting_files", interesting_files)
+
+    _log "interesting files: #{interesting_files}"
+    _log "downloadable files: #{downloadable_files}"
 
     # this should be a "Finding" or some sort of success event ?
-    if large_files.sort.uniq.count > 0
-      _call_handler("slackbot_buckets") if _get_option("slack_notify_on_large_files")
+    if interesting_files.sort.uniq.count > 0
+      _log_good "Notifying slack on... #{interesting_files}"
+      _call_handler("slackbot_buckets") if _get_option("notify_slack")
     end
 
     _finalize_enrichment
@@ -95,8 +103,9 @@ class EnrichAwsS3Bucket < BaseTask
     result = http_get_body("#{full_uri}")
     return unless result
 
-    contents = []
-    large_files = []
+    all_files = []
+    downloadable_files = []
+    interesting_files = []
 
     doc = Nokogiri::HTML(result)
     if  ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
@@ -105,6 +114,7 @@ class EnrichAwsS3Bucket < BaseTask
           doc.xpath("//code").text =~ /AccessDenied/
           doc.xpath("//code").text =~ /PermanentRedirect/ )
       _log_error "Got response: #{doc.xpath("//code").text} (#{s3_uri})"
+
     else # check each file size
       doc.xpath("//contents").each do |item|
 
@@ -113,26 +123,32 @@ class EnrichAwsS3Bucket < BaseTask
         size = item.xpath("size").text.to_i
         item_uri = "#{s3_uri}/#{key}"
 
-        # add to our contents arrray
-        contents << "#{item_uri}"
-
-        # handle our large (interesting) files
-        large_file_size = _get_option("large_file_size")
-        if (size * 1.0 / 1000000) > large_file_size
-          _log "Large File: #{item_uri} (#{size*1.0/1000000}MB)"
-
-          if _get_option "slack_notify_on_large_files"
-            _log_good "Notifying slack after finding large file of size #{size}: #{key}"
-
-            large_files << "#{item_uri}"
-          end
+        # request it
+        resp = http_request(:head, item_uri)
+        if resp.code.to_i == 200
+          downloadable_files << { :uri => "#{item_uri}", :code => "#{resp.code}" }
         end
-      end # end parsing of the bucket
 
+        # add to our array
+        all_files << { :uri => "#{item_uri}", :code => "#{resp.code}" }
+
+        # handle our interesting files
+        large_file_size = _get_option("large_file_size")
+        file_size = (size * 1.0) / 1000000
+        if ((file_size > large_file_size) && resp.code.to_i == 200)
+          _log "Interesting File: #{item_uri} (#{size*1.0/1000000}MB)"
+          interesting_files << "#{item_uri}"
+        end
+
+      end # end parsing of the bucket
     end
 
   #return hash
-  {contents: contents, large_files: large_files}
+  {
+    all_files: all_files, # { :uri => "#{item_uri}", :code => "#{resp.code}" }
+    downloadable_files: downloadable_files, # http://blahblah.s3.amazonaws.com
+    interesting_files: interesting_files  # http://blahblah.s3.amazonaws.com
+  }
   end
 
 end

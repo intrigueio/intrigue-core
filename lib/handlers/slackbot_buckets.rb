@@ -26,7 +26,7 @@ module Handler
       # Note that this is currently called by an enrichment task, which makes it
       # a little more funky than your typical notification. we have to go get
       # the base entity of the task result...
-      message = "#{result.base_entity.get_detail("large_files")}"
+      message = "#{result.base_entity.get_detail("interesting_files")}"
 
       client.chat_postMessage(
         text: "#{message}\nMore details at: #{result_url}",
