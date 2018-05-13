@@ -99,7 +99,7 @@ class EntityManager
     downcased_name = name.downcase
 
     # Merge the details if it already exists
-    entity = entity_exists?(project,type_string,downcased_name) ## TODO - INDEX THIS!!!!!
+    entity = entity_exists?(project,type_string,downcased_name)
 
     # check if this is actually an exception (blacklisted) entity
     # but allow anything that we've explictly set as the root (example.. facebook.com)

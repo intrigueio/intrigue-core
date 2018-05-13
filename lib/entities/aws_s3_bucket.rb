@@ -76,9 +76,17 @@ class EnrichAwsS3Bucket < BaseTask
     # for each letter of the alphabet...
     [*('a'..'z'),*('A'..'Z'),*('0'..'9')].each do |letter|
       result = get_contents_unauthenticated(bucket_uri,letter)
+
+      if result == {}
+        _log_error "Got empty response for #{letter} on #{bucket_uri}"
+        next
+      end
+
+      # otherwise, save the results
       all_files.concat(result[:all_files])
       interesting_files.concat(result[:interesting_files])
       downloadable_files.concat(result[:downloadable_files])
+      
     end
 
     _set_entity_detail("all_files", all_files)
@@ -100,14 +108,14 @@ class EnrichAwsS3Bucket < BaseTask
   def get_contents_unauthenticated(s3_uri, prefix)
     full_uri = "#{s3_uri}?prefix=#{prefix}&max-keys=1000"
 
-    result = http_get_body("#{full_uri}")
-    return unless result
+    resp = http_get_body("#{full_uri}")
+    return {} unless resp
 
     all_files = []
     downloadable_files = []
     interesting_files = []
 
-    doc = Nokogiri::HTML(result)
+    doc = Nokogiri::HTML(resp)
     if  ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
           doc.xpath("//code").text =~ /InvalidBucketName/ ||
           doc.xpath("//code").text =~ /AllAccessDisabled/ ||
@@ -124,31 +132,30 @@ class EnrichAwsS3Bucket < BaseTask
         item_uri = "#{s3_uri}/#{key}"
 
         # request it
-        resp = http_request(:head, item_uri)
-        if resp.code.to_i == 200
-          downloadable_files << { :uri => "#{item_uri}", :code => "#{resp.code}" }
+        bucket_resp = http_request(:head, item_uri)
+        if bucket_resp.code.to_i == 200
+          downloadable_files << { :uri => "#{item_uri}", :code => "#{bucket_resp.code}" }
         end
 
         # add to our array
-        all_files << { :uri => "#{item_uri}", :code => "#{resp.code}" }
+        all_files << { :uri => "#{item_uri}", :code => "#{bucket_resp.code}" }
 
         # handle our interesting files
         large_file_size = _get_option("large_file_size")
         file_size = (size * 1.0) / 1000000
-        if ((file_size > large_file_size) && resp.code.to_i == 200)
+        if ((file_size > large_file_size) && bucket_resp.code.to_i == 200)
           _log "Interesting File: #{item_uri} (#{size*1.0/1000000}MB)"
           interesting_files << "#{item_uri}"
         end
-
       end # end parsing of the bucket
-    end
+    end # end if
 
-  #return hash
-  {
-    all_files: all_files, # { :uri => "#{item_uri}", :code => "#{resp.code}" }
-    downloadable_files: downloadable_files, # http://blahblah.s3.amazonaws.com
-    interesting_files: interesting_files  # http://blahblah.s3.amazonaws.com
-  }
+    #return hash
+    {
+      all_files: all_files, # { :uri => "#{item_uri}", :code => "#{resp.code}" }
+      downloadable_files: downloadable_files, # http://blahblah.s3.amazonaws.com
+      interesting_files: interesting_files  # http://blahblah.s3.amazonaws.com
+    }
   end
 
 end
