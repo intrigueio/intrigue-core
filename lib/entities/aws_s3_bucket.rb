@@ -77,7 +77,7 @@ class EnrichAwsS3Bucket < BaseTask
     [*('a'..'z'),*('A'..'Z'),*('0'..'9')].each do |letter|
       result = get_contents_unauthenticated(bucket_uri,letter)
 
-      if result == {}
+      if !result
         _log_error "Got empty response for #{letter} on #{bucket_uri}"
         next
       end
@@ -86,7 +86,7 @@ class EnrichAwsS3Bucket < BaseTask
       all_files.concat(result[:all_files])
       interesting_files.concat(result[:interesting_files])
       downloadable_files.concat(result[:downloadable_files])
-      
+
     end
 
     _set_entity_detail("all_files", all_files)
@@ -109,7 +109,7 @@ class EnrichAwsS3Bucket < BaseTask
     full_uri = "#{s3_uri}?prefix=#{prefix}&max-keys=1000"
 
     resp = http_get_body("#{full_uri}")
-    return {} unless resp
+    return false unless resp
 
     all_files = []
     downloadable_files = []
@@ -133,12 +133,17 @@ class EnrichAwsS3Bucket < BaseTask
 
         # request it
         bucket_resp = http_request(:head, item_uri)
+
+        # handle failure
+        if !bucket_resp
+          # add to our array
+          all_files << { :uri => "#{item_uri}", :code => "FAIL" }
+          next
+        end
+
         if bucket_resp.code.to_i == 200
           downloadable_files << { :uri => "#{item_uri}", :code => "#{bucket_resp.code}" }
         end
-
-        # add to our array
-        all_files << { :uri => "#{item_uri}", :code => "#{bucket_resp.code}" }
 
         # handle our interesting files
         large_file_size = _get_option("large_file_size")
