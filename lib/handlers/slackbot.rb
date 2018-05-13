@@ -23,14 +23,16 @@ module Handler
       bot_name = _get_handler_config("bot_name")
       channel_name = _get_handler_config("channel_name")
       result_url = "#{system_base_uri}/#{result.project.name}/results/#{result_id}"
+      entities_uri = "#{system_base_uri}/#{result.project.name}/entities"
 
       client = Slack::Web::Client.new
-      client.chat_postMessage(channel: '#google_groups',
-        text: "#{bot_name} #{result.name} #{result_url}",
-        as_user: false,
-        username: bot_name,
-        channel: channel_name
-      )
+      result.entities.each do |e|
+        client.chat_postMessage( text: "#{entities_uri}/#{e.id}",
+          as_user: false,
+          username: bot_name,
+          channel: channel_name
+        )
+      end
 
     end
   end
