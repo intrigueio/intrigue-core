@@ -159,12 +159,11 @@ class AwsS3Brute < BaseTask
           doc.xpath("//code").text =~ /InvalidBucketName/ ||
           doc.xpath("//code").text =~ /AllAccessDisabled/ ||
           doc.xpath("//code").text =~ /AccessDenied/ ||
-          doc.xpath("//code").text =~ /PermanentRedirect/
-        )
+          doc.xpath("//code").text =~ /PermanentRedirect/)
       _log_error "Got response: #{doc.xpath("//code").text} (#{s3_uri})"
     else
       exists = true
-      end
+    end
 
   exists # will be nil if we got nothing
   end
