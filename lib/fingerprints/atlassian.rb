@@ -27,9 +27,10 @@ module Intrigue
               :type => :content_body,
               :content => /FishEye and Crucible/,
               :dynamic_version => lambda{|x|
-                if x.body.scan(/Log in to FishEye and Crucible (.*)\</)[0] }
+                if x.body.scan(/Log in to FishEye and Crucible (.*)\</)[0]
                   x.body.scan(/Log in to FishEye and Crucible (.*)\</)[0].first
                 end
+              }
             },
             {
               :name => "Atlassian Jira",
@@ -39,8 +40,9 @@ module Intrigue
               :content => /atlassian.xsrf.token/,
               :dynamic_version => lambda{ |x|
                 if x.body.scan(/<span id="footer-build-information">(.*)-<span/)[0]
-                  x.body.scan(/<span id="footer-build-information">(.*)-<span/)[0].first.gsub("(","")  }
+                  x.body.scan(/<span id="footer-build-information">(.*)-<span/)[0].first.gsub("(","")
                 end
+              }
             }
           ]
         }
