@@ -150,7 +150,9 @@ class EnrichAwsS3Bucket < BaseTask
         file_size = (size * 1.0) / 1000000
         if ((file_size > large_file_size) && bucket_resp.code.to_i == 200)
           _log "Interesting File: #{item_uri} (#{size*1.0/1000000}MB)"
-          interesting_files << "#{item_uri}"
+          unless matches_ignore_list(item_uri)
+            interesting_files << "#{item_uri}"
+          end
         end
       end # end parsing of the bucket
     end # end if
@@ -161,6 +163,27 @@ class EnrichAwsS3Bucket < BaseTask
       downloadable_files: downloadable_files, # http://blahblah.s3.amazonaws.com
       interesting_files: interesting_files  # http://blahblah.s3.amazonaws.com
     }
+  end
+
+  def matches_ignore_list(uri)
+    [
+      /^.*\.avi$/i,
+      /^.*\.bmp$/i,
+      /^.*\.flv$/i,
+      /^.*\.jpg$/i,
+      /^.*\.m4a$/i,
+      /^.*\.m4v$/i,
+      /^.*\.mov$/i,
+      /^.*\.mp3$/i,
+      /^.*\.ogg$/i,
+      /^.*\.png$/i,
+      /^.*\.tif$/i,
+      /^.*\.wmv$/i
+    ].each do |regex|
+      return true if uri =~ regex
+    end
+
+  false
   end
 
 end
