@@ -212,10 +212,7 @@ class CoreCli < Thor
         created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"])
 
         # Kick off the task
-        task_result = start_task("task", project, nil, task_name, created_entity, depth, options, handlers, strategy)
-
-        # Enrich the entity - TODO... make this optional
-        Intrigue::EntityManager.enrich_entity(created_entity, task_result) if auto_enrich
+        task_result = start_task("task", project, nil, task_name, created_entity, depth, options, handlers, strategy, auto_enrich)
 
       end
 
@@ -234,8 +231,8 @@ class CoreCli < Thor
   end
 
 
-  desc "local_load [Project] [Task] [File] [Depth] [Opt1=Val1#Opt2=Val2#...] [Enrich (optional)] [Handlers (optional)] [Strategy (optional)]", "Load entities from a file and runs a task on each in a new project."
-  def local_load(project_name, task_name,filename,depth=1,options_string=nil,enrich=false,handler_string=nil, strategy_name="asset_discovery_active")
+  desc "local_load [Project] [Task] [File] [Depth] [Opt1=Val1#Opt2=Val2#...] [Enrich] [Handlers] [Strategy]", "Load entities from a file and runs a task on each in a new project."
+  def local_load(project_name, task_name,filename,depth=1,options_string=nil,enrich=false,handler_string=nil, strategy_name=nil)
 
     # Load in the main core file for direct access to TaskFactory and the Tasks
     # This makes this super speedy.
@@ -257,12 +254,12 @@ class CoreCli < Thor
       created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"])
 
       # kick off the task
-      task_result = start_task("task", p, nil, task_name, created_entity, depth, options, handlers, strategy_name)
+      task_result = start_task("task", p, nil, task_name, created_entity, depth, options, handlers, strategy_name, enrich)
 
       # manually start enrichment on first entity
-      Intrigue::EntityManager.enrich_entity(created_entity, task_result) if enrich
+      #Intrigue::EntityManager.enrich_entity(created_entity, task_result) if enrich
 
-      puts "Created task #{task_result.inspect} for entity #{created_entity}"
+      #puts "Created task #{task_result.inspect} for entity #{created_entity}"
     end
   end
 
@@ -308,7 +305,7 @@ class CoreCli < Thor
        e.schedule_enrichment if enrich
 
        # Print & increment
-       puts "#{i}: #{e.type}##{e.name} created!"
+       #puts "#{i}: #{e.type}##{e.name} created!"
        i+=1
     end
 
