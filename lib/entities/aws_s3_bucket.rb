@@ -175,6 +175,7 @@ class EnrichAwsS3Bucket < BaseTask
       /^.*\.m4v$/i,
       /^.*\.mov$/i,
       /^.*\.mp3$/i,
+      /^.*\.mp4$/i,
       /^.*\.ogg$/i,
       /^.*\.ogv$/i,
       /^.*\.png$/i,
