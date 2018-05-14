@@ -149,8 +149,8 @@ class EnrichAwsS3Bucket < BaseTask
         large_file_size = _get_option("large_file_size")
         file_size = (size * 1.0) / 1000000
         if ((file_size > large_file_size) && bucket_resp.code.to_i == 200)
-          _log "Interesting File: #{item_uri} (#{size*1.0/1000000}MB)"
           unless matches_ignore_list(item_uri)
+            _log "Interesting File: #{item_uri} (#{size*1.0/1000000}MB)"
             interesting_files << "#{item_uri}"
           end
         end
