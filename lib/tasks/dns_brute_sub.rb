@@ -49,11 +49,6 @@ class DnsBruteSub < BaseTask
     # Set the suffix
     suffix = _get_entity_name
 
-    # XXX - use the resolver option if we have it.
-    # Note that we have to specify an empty search list, otherwise we end up
-    # searching .local by default on osx.
-    @resolver = Resolv.new([Resolv::DNS.new(:search => [])])
-
     # Handle cases of *.test.com (pretty common when grabbing
     # DNSRecords from SSLCertificates)
     if suffix[0..1] == "*."

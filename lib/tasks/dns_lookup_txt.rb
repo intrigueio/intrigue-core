@@ -30,24 +30,14 @@ class DnsLookupTxt < BaseTask
     _log "Running TXT lookup on #{domain_name}"
 
     begin
-      res = Dnsruby::Resolver.new(
-            :search => [],
-            :recurse => true,
-            :query_timeout => 5)
 
-      res_answer = res.query(domain_name, Dnsruby::Types.TXT)
+    res_answer = resolve_name(fqdn, Dnsruby::Types::TXT)
 
       # If we got a success to the query.
       if res_answer
         _log_good "TXT lookup succeeded on #{domain_name}:"
         _log_good "Answer:\n=======\n#{res_answer.to_s}======"
-
-
-        # TODO - Parse for netbocks and hostnames
-
-        #     res_answer.downcase.split("ipv4").
-        #     create_entity NetBlock, :range
-
+ 
         # Create a finding for each
         unless res_answer.answer.count == 0
           res_answer.answer.each do |answer|

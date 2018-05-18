@@ -23,7 +23,7 @@ class SearchSecurityTrails < BaseTask
     super
 
     # Make sure the key is set
-    api_key = _get_global_config "security_trails_api_key"
+    api_key = _get_task_config "security_trails_api_key"
     entity_name = _get_entity_name
 
     raise "Not yet implemented"

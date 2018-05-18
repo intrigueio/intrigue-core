@@ -29,19 +29,14 @@ class DnsLookupMx < BaseTask
       # XXX - we should probably call this a couple times to deal
       # with round-robin DNS & load balancers. We'd need to merge results
       # across the queries
-      resources = Resolv::DNS.open(:search => []) do |dns|
-        dns.getresources(name, Resolv::DNS::Resource::IN::MX)
-      end
+      # use the global resolver
+      resources = resolve_names(name, Dnsruby::Types::MX)
 
       resources.each do |r|
-
         # Create a DNS record
-        _create_entity("IpAddress", {
-          "name" => r.exchange.to_s,
-          "description" => "Mail server for #{name}",
-          "preference" => r.preference })
-
+        _create_entity("IpAddress", { "name" => r})
       end
+       
     rescue Errno::ENETUNREACH => e
       _log_error "Hit exception: #{e}. Are you sure you're connected?"
     rescue Exception => e

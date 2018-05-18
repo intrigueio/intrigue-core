@@ -31,7 +31,7 @@ class PhoneNumberLookup < BaseTask
     phone_number = _get_entity_name.gsub(".","").gsub(" ","").gsub("-","").gsub("(","").gsub(")","")
 
     # get the API key
-    api_key = _get_global_config "carrierlookup_api_key"
+    api_key = _get_task_config "carrierlookup_api_key"
 
     lookup_uri = "http://www.carrierlookup.com/index.php/api/lookup?key=#{api_key}&number=#{phone_number}"
 

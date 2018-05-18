@@ -27,8 +27,8 @@ class ImportDomainlists < BaseTask
   def run
     super
 
-    user = _get_global_config("domainlists_username")
-    pass = _get_global_config("domainlists_password")
+    user = _get_task_config("domainlists_username")
+    pass = _get_task_config("domainlists_password")
     unless user && pass
       _log_error "No creds?"
       return

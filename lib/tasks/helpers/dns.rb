@@ -19,9 +19,12 @@ module Intrigue
 
       def resolve(lookup_name, lookup_type=Dnsruby::Types::ANY)
 
+        resolver_name = _get_system_config "resolver"
+
         begin
           resolver = Dnsruby::Resolver.new(
             :search => [],
+            :nameserver => [resolver_name],
             :query_timeout => 5
           )
 

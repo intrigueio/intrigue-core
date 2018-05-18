@@ -25,7 +25,7 @@ class SearchWhoisology < BaseTask
     begin
 
       # Make sure the key is set
-      api_key = _get_global_config "whoisology_api_key"
+      api_key = _get_task_config "whoisology_api_key"
       entity_name = _get_entity_name
 
       case _get_entity_type_string

@@ -2,6 +2,8 @@ module Intrigue
 module Task
 class DnsBruteSrv < BaseTask
 
+  include Intrigue::Task::Dns
+
   def self.metadata
     {
       :name => "dns_brute_srv",
@@ -42,9 +44,6 @@ class DnsBruteSrv < BaseTask
     super
 
     domain_name = _get_entity_name
-
-    resolver = Resolv::DNS.new(:search => [])
-
     brute_list = _get_option "brute_list"
     brute_list = brute_list.split(",") if brute_list.kind_of? String
 
@@ -58,12 +57,12 @@ class DnsBruteSrv < BaseTask
 
         _log "Checking #{brute_name}"
 
-        x = resolve(brute_name, DnsRuby::Types::SRV)
-        _create_entity("DnsRecord",{"name" => x["name"]}, entity)
+        x = resolve_name(brute_name, Dnsruby::Types::SRV)
+        _create_entity("DnsRecord",{"name" => x}, @entity) if x
 
-
+=begin
         # Try to resolve
-        resolver.getresources(brute_name, SRV).collect do |rec|
+        @resolver.getresources(brute_name, SRV).collect do |rec|
 
           # split up the record
           name = rec.target
@@ -85,8 +84,8 @@ class DnsBruteSrv < BaseTask
               "ip_address" => "#{name}"
             })
           end
-
         end
+=end
       rescue Errno::ENETUNREACH => e
         _log_error "Hit exception: #{e}. Are you sure you're connected?"
       rescue Exception => e

@@ -25,7 +25,7 @@ class SearchBuiltwith < BaseTask
     super
 
       # Make sure the key is set
-      api_key = _get_global_config "builtwith_api_key"
+      api_key = _get_task_config "builtwith_api_key"
       entity_name = _get_entity_name
 
       unless api_key

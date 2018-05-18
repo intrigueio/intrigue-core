@@ -39,8 +39,6 @@ class DnsBruteTld < BaseTask
     opt_filename = _get_option "brute_file"
     opt_cctld    = _get_option "check_cctlds"
 
-    @resolver = Resolv.new([Resolv::DNS.new(:search => [])])
-
     # Create the brute list (from a file, or a provided list)
     if opt_use_file
       _log "Using file #{opt_filename}"
@@ -95,7 +93,6 @@ class DnsBruteTld < BaseTask
 {"type"=>"Host", "details"=>{"name"=>"50.19.241.165"}}
 {"type"=>"Host", "details"=>{"name"=>"Airforce.com.ninja"}}
 {"type"=>"Host", "details"=>{"name"=>"127.0.53.53"}}
-
 {"type"=>"Host", "details"=>{"name"=>"Air.com.co"}}
 {"type"=>"Host", "details"=>{"name"=>"72.52.4.91"}}
 {"type"=>"Host", "details"=>{"name"=>"Air.com.com"}}
@@ -108,7 +105,6 @@ class DnsBruteTld < BaseTask
 {"type"=>"Host", "details"=>{"name"=>"50.19.241.165"}}
 {"type"=>"Host", "details"=>{"name"=>"Air.com.ninja"}}
 {"type"=>"Host", "details"=>{"name"=>"127.0.53.53"}}
-
 {"type"=>"Host", "details"=>{"name"=>"Bathtub.com.com"}}
 {"type"=>"Host", "details"=>{"name"=>"54.201.82.69"}}
 {"type"=>"Host", "details"=>{"name"=>"Bathtub.com.net"}}
@@ -134,11 +130,11 @@ class DnsBruteTld < BaseTask
         domain = "#{basename}.#{tld}"
 
         # Try to resolve
-        resolved_address = @resolver.getaddress(domain)
-        _log_good "Resolved Address #{resolved_address} for #{domain}" if resolved_address
+        resolved_address = resolve_name(domain)
 
         # If we resolved, create the right entities
         if resolved_address
+        _log_good "Resolved Address #{resolved_address} for #{domain}"
           _create_entity("DnsRecord", {"name" => domain})
         end
 

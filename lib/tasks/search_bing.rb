@@ -24,7 +24,7 @@ class SearchBing < BaseTask
     super
 
     # Make sure the key is set
-    api_key = _get_global_config("bing_api_key")
+    api_key = _get_task_config("bing_api_key")
     unless api_key
       _log_error "No api_key?"
       return

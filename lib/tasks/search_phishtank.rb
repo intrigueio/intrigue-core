@@ -26,7 +26,7 @@ class SearchPhishtank < BaseTask
     super
 
     entity_name = _get_entity_name
-    api_key = _get_global_config("phishtank_api_key")
+    api_key = _get_task_config("phishtank_api_key")
 
     # Search
     search_uri = "http://checkurl.phishtank.com/checkurl/"

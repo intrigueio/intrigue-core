@@ -25,8 +25,8 @@ class SearchCensys < BaseTask
     begin
 
       # Make sure the key is set
-      uid = _get_global_config "censys_uid"
-      secret = _get_global_config "censys_secret"
+      uid = _get_task_config "censys_uid"
+      secret = _get_task_config "censys_secret"
       entity_name = _get_entity_name
 
       unless uid && secret

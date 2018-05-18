@@ -22,7 +22,7 @@ class SearchTowerdata < BaseTask
     super
 
     entity_name = _get_entity_name
-    api_key = _get_global_config "towerdata_api_key"
+    api_key = _get_task_config "towerdata_api_key"
 
     unless api_key
       _log_error "No api_key?"

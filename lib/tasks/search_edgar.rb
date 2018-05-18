@@ -23,7 +23,7 @@ class SearchCorpwatch < BaseTask
     super
 
     # Get the API Key
-    api_key = _get_global_config "corpwatch_api_key"
+    api_key = _get_task_config "corpwatch_api_key"
 
     # Attach to the corpwatch service & search
     x = Client::Search::Corpwatch::ApiClient.new(api_key)

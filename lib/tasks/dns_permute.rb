@@ -148,18 +148,16 @@ class DnsPermute < BaseTask
               permutation = "#{work_item[:permutation]}"
               depth = work_item[:depth]
 
-              _log "Testing... #{fqdn}"
-
               # Try to resolve
-              resolved_address = _resolve(fqdn)
+              resolved_address = resolve_name(fqdn, Dnsruby::Types::A)
 
               if resolved_address # If we resolved, create the right entities
 
                 unless wildcard_ips.include?(resolved_address)
                   _log_good "Resolved address #{resolved_address} for #{fqdn} and it wasn't in our wildcard list."
                   main_entity = _create_entity("DnsRecord", {"name" => fqdn })
-
                 end
+
               end
             end
           end # end while
@@ -170,10 +168,6 @@ class DnsPermute < BaseTask
     workers.map(&:join); "ok"
   end
 
-  def _resolve(hostname)
-    #_log "Trying to resolve #{hostname}"
-    resolve_name(hostname, Dnsruby::Types::A)
-  end
 
   # Check for wildcard DNS
   def _check_wildcard(basename)
@@ -184,7 +178,7 @@ class DnsPermute < BaseTask
     # First we look for a single address that won't exist
     10.times do
       random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{basename}"
-      resolved_address = _resolve(random_string)
+      resolved_address = resolve_name(random_string)
 
       # keep track of it unless we already have it
       unless resolved_address.nil? || all_discovered_wildcards.include?(resolved_address)
@@ -214,7 +208,7 @@ class DnsPermute < BaseTask
 
         (all_discovered_wildcards.count * 20).times do |x|
           random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{basename}"
-          resolved_address = _resolve(random_string)
+          resolved_address = resolve(random_string)
 
           # keep track of it unless we already have it
           unless resolved_address.nil? || newly_discovered_wildcards.include?(resolved_address)

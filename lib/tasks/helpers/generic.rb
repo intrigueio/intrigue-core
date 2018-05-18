@@ -382,13 +382,16 @@ module Generic
 
   ### GLOBAL CONFIG INTERFACE
 
-  def _get_global_config(key)
+  def _get_system_config(key)
+    value = Intrigue::Config::GlobalConfig.new.config[key]
+  end
+
+  def _get_task_config(key)
     begin
       value = Intrigue::Config::GlobalConfig.new.config["intrigue_global_module_config"][key]["value"]
-      if value && value != ""
-        #_log "Using config #{key} ending in #{value[-3..-1]}"
-      else
-        _log "API Key (#{key}) is blank or missing. Check the admin tab!"
+      unless value && value != ""
+        _log "Module config (#{key}) is blank or missing. Check the admin tab!"
+        raise "Invalid value for #{key}!"
       end
     rescue NoMethodError => e
       _log "Error, invalid config key requested (#{key}) #{e}"
