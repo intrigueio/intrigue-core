@@ -2,8 +2,11 @@ module Intrigue
 module Handler
   class Json < Intrigue::Handler::Base
 
-    def self.type
-      "json"
+    def self.metadata
+      {
+        :name => "json",
+        :type => "export"
+      }
     end
 
     def perform(result_type, result_id, prefix_name=nil)

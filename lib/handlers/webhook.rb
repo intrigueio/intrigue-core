@@ -2,8 +2,11 @@ module Intrigue
 module Handler
   class Webhook < Intrigue::Handler::Base
 
-    def self.type
-      "webhook"
+    def self.metadata
+      {
+        :name => "webhook",
+        :type => "export"
+      }
     end
 
     def perform(result_type, result_id, prefix_name=nil)

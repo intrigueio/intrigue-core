@@ -4,6 +4,13 @@ module Intrigue
 module Handler
   class SlackbotBuckets < Intrigue::Handler::Base
 
+    def self.metadata
+      {
+        :name => "aws_s3_brute",
+
+      }
+    end
+
     def self.type
       "slackbot_buckets"
     end

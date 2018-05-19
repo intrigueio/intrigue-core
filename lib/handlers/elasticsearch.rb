@@ -2,8 +2,11 @@ module Intrigue
 module Handler
   class Elasticsearch < Intrigue::Handler::Base
 
-    def self.type
-      "elasticsearch"
+    def self.metadata
+      {
+        :name => "elasticsearch",
+        :type => "export"
+      }
     end
 
     def perform(result_type, result_id, prefix_name=nil)

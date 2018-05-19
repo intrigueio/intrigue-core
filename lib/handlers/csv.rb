@@ -2,9 +2,13 @@ module Intrigue
 module Handler
   class Csv < Intrigue::Handler::Base
 
-    def self.type
-      "csv"
+    def self.metadata
+      {
+        :name => "csv",
+        :type => "export"
+      }
     end
+
 
     def perform(result_type, result_id, prefix_name=nil)
       result = eval(result_type).first(id: result_id)

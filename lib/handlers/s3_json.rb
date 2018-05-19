@@ -4,8 +4,11 @@ module Intrigue
 module Handler
   class S3Json < Intrigue::Handler::Base
 
-    def self.type
-      "s3_json"
+    def self.metadata
+      {
+        :name => "s3_json",
+        :type => "export"
+      }
     end
 
     def perform(result_type, result_id, prefix_name=nil)

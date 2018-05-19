@@ -39,8 +39,7 @@ class TaskFactory
         return t.new # Create a new object and send it back
       end
     end
-
-    ### XXX - exception handling? Should this return an exception?
+    ### XXX - exception handling? This should return a specific exception.
     raise "No task by that name!"
   end
 

@@ -4,8 +4,11 @@ module Intrigue
 module Handler
   class Slackbot < Intrigue::Handler::Base
 
-    def self.type
-      "slackbot"
+    def self.metadata
+      {
+        :name => "slackbot",
+        :type => "notify"
+      }
     end
 
     def perform(result_type, result_id, prefix_name=nil)

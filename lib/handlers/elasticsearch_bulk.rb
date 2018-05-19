@@ -2,9 +2,13 @@ module Intrigue
 module Handler
   class ElasticsearchBulk < Intrigue::Handler::Base
 
-    def self.type
-      "elasticsearch_bulk"
+    def self.metadata
+      {
+        :name => "elasticsearch_bulk",
+        :type => "export"
+      }
     end
+
 
     def perform(result_type, result_id, prefix_name=nil)
       result = eval(result_type).first(id: result_id)

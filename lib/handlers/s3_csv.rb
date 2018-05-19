@@ -4,8 +4,11 @@ module Intrigue
 module Handler
   class S3Csv < Intrigue::Handler::Base
 
-    def self.type
-      "s3_csv"
+    def self.metadata
+      {
+        :name => "s3_csv",
+        :type => "export"
+      }
     end
 
     def perform(result_type, result_id, prefix_name=nil)

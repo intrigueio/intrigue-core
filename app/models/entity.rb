@@ -52,17 +52,10 @@ module Intrigue
 
       # Intrigue::Model::Entity.where(:name => "aim.com").first.ancestor_path;nil
       # while true; sleep 1; Intrigue::Model::Entity.last.ancestor_path; end
-      def ancestor_path(entity=nil, known_nodes = [], depth_string="")
+      def generate_ancestor_graph(entity=nil, known_nodes = [], depth_string="")
         entity = entity || self
 
         if entity.task_results.empty?
-          puts "ROOOOOOOOOOOOOOOOOOT!"
-          puts "ROOOOOOOOOOOOOOOOOOT!"
-          puts "ROOOOOOOOOOOOOOOOOOT!"
-          puts "ROOOOOOOOOOOOOOOOOOT!"
-          puts "ROOOOOOOOOOOOOOOOOOT!"
-          puts "ROOOOOOOOOOOOOOOOOOT!"
-          puts "ROOOOOOOOOOOOOOOOOOT!"
           puts "ROOOOOOOOOOOOOOOOOOT!"
           return
         end

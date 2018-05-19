@@ -101,29 +101,25 @@ class BaseTask
       if scan_result
         scan_result.decrement_task_count
         puts "#{scan_result.incomplete_task_count} tasks left in this scan"
-      end
 
-      #################
-      # Call Handlers #
-      #################
-=begin
-      #### Scan Result Handlers
-      if scan_result.handlers.count > 0
+        #################
+        # Call Handlers #
+        #################
 
-        # Check our incomplete task count on the scan to see if this is the last one
-        if scan_result.incomplete_task_count <= 0
-          # Make sure we don't hit a race condition at the beginning
+        if scan_result.handlers.count > 0
 
-          _log "Last task standing, let's handle it!"
-          scan_result.handle_attached
+          # Check our incomplete task count on the scan to see if this is the last one
+          if scan_result.incomplete_task_count <= 0
 
-          # let's mark it complete if there's nothing else to do here.
-          scan_result.handlers_complete = true
-          scan_result.complete = true
-          scan_result.save
-        else
-          puts "More tasks for this scan to complete: #{scan_result.incomplete_task_count}!"
-          _log "More tasks for this scan to complete: #{scan_result.incomplete_task_count}!"
+            _log "Last task standing, let's handle it!"
+            scan_result.handle_attached
+
+            # let's mark it complete if there's nothing else to do here.
+            scan_result.handlers_complete = true
+            scan_result.complete = true
+            scan_result.save
+            
+          end
         end
       end
 
@@ -132,7 +128,7 @@ class BaseTask
         @task_result.handle_attached
         @task_result.handlers_complete = true
       end
-=end
+
     ensure   # Mark it complete and save it
       _log "Cleaning up!"
       @task_result.timestamp_end = Time.now.getutc

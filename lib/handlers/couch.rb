@@ -4,8 +4,11 @@ module Intrigue
 module Handler
   class Couch < Intrigue::Handler::Base
 
-    def self.type
-      "couch"
+    def self.metadata
+      {
+        :name => "couch",
+        :type => "export"
+      }
     end
 
     def perform(result_type, result_id, prefix_name=nil)
