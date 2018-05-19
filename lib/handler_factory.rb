@@ -20,7 +20,7 @@ class HandlerFactory
   # Check to see if this handler exists (check by type)
   #
   def self.include?(type)
-    @handlers.each { |h| return true if "#{h.metadata[:type]}" == "#{type}" }
+    @handlers.each { |h| return true if "#{h.metadata[:name]}" == "#{type}" }
   false
   end
 
@@ -34,7 +34,7 @@ class HandlerFactory
   #   - A handler, which you can call generate on
   #
   def self.create_by_type(type)
-    @handlers.each { |h| return h.new if "#{type}" == "#{h.metadata[:type]}" }
+    @handlers.each { |h| return h.new if "#{h.metadata[:name]}" == "#{type}" }
   false
   end
 
