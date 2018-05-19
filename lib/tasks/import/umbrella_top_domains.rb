@@ -14,7 +14,7 @@ class ImportUmbrellaTopDomains < BaseTask
       :type => "import",
       :passive => true,
       :allowed_types => ["*"],
-      :example_entities => [{"type" => "String", "details" => {"name" => "NA"}}],
+      :example_entities => [{"type" => "String", "details" => {"name" => "unused"}}],
       :allowed_options => [
         {:name => "threads", :regex => "integer", :default => 1 },
         {:name => "max_sleep", :regex => "integer", :default => 10 }

@@ -15,7 +15,7 @@ class ImportDomainlists < BaseTask
       :type => "import",
       :passive => true,
       :allowed_types => ["String"],
-      :example_entities => [{"type" => "String", "details" => {"name" => "534"}}],
+      :example_entities => [{"type" => "String", "details" => {"name" => "unused"}}],
       :allowed_options => [
         {:name => "threads", :regex => "integer", :default => 1 }
       ],
