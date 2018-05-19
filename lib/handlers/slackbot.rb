@@ -29,6 +29,8 @@ module Handler
       entities_uri = "#{system_base_uri}/#{result.project.name}/entities"
 
       client = Slack::Web::Client.new
+
+      # post each entity
       result.entities.each do |e|
         client.chat_postMessage(
           text: "#{entities_uri}/#{e.id} [#{e.name}]",
@@ -37,6 +39,14 @@ module Handler
           channel: channel_name
         )
       end
+
+      # post the result too
+      client.chat_postMessage(
+        text: "#{result_url} [#{result.name}]",
+        as_user: false,
+        username: bot_name,
+        channel: channel_name
+      )
 
     end
   end
