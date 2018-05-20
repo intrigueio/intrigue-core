@@ -1,5 +1,3 @@
-require 'webrick'
-
 module Intrigue
 module Task
 class SsrfBruteParameters < BaseTask
