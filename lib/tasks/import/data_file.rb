@@ -29,10 +29,14 @@ class ImportDataFile < BaseTask
   def run
     super
 
-    data_type = _get_option("entity_type")
+    data_type_string = _get_option("entity_type")
     filename = _get_option("filename")
 
     # check data_type
+    data_type = Intrigue::EntityManager.resolve_type_from_string data_type_String
+    unless data_type
+      _log_error "Unknown data type: #{data_type_string}, failing"
+    end
 
     # Read and split the file up into a list of domains
     lines = File.open("#{$intrigue_basedir}/data/#{filename}","r").read.split("\n")
