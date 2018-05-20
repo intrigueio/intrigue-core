@@ -118,7 +118,7 @@ class BaseTask
             scan_result.handlers_complete = true
             scan_result.complete = true
             scan_result.save
-            
+
           end
         end
       end

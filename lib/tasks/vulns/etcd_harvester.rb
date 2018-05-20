@@ -2,8 +2,6 @@ module Intrigue
 module Task
 class EtcdHarvester < BaseTask
 
-  include Intrigue::Task::Web
-
   def self.metadata
     {
       :name => "vuln/etcd_harvester",

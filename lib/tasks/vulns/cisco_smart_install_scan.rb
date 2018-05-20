@@ -2,8 +2,6 @@ module Intrigue
 module Task
 class CiscoSmartInstallScan < BaseTask
 
-  include Intrigue::Task::Scanner
-
   def self.metadata
     {
       :name => "vuln/cisco_smart_install_scan",

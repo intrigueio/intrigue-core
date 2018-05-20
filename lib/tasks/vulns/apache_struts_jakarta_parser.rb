@@ -2,8 +2,6 @@ module Intrigue
 module Task
 class ApacheStrutsJakartaParser < BaseTask
 
-  include Intrigue::Task::Web
-
   def self.metadata
     {
       :name => "vuln/apache_struts_jakarta_parser",
