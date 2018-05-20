@@ -19,6 +19,7 @@ class SsrfBruteParameters < BaseTask
         {"type" => "Uri", "details" => {"name" => "https://intrigue.io"}}
       ],
       :allowed_options => [
+        {:name => "ssrf_target_uri", :regex => "alpha_numeric_list", :default => "http://localhost:55555" },
         {:name => "parameter_list", :regex => "alpha_numeric_list", :default => "url,uri,location,host" }
       ],
       :created_types => []
@@ -30,23 +31,23 @@ class SsrfBruteParameters < BaseTask
     super
 
     uri = _get_entity_name
+    ssrf_target_uri = _get_option("ssrf_target_uri")
     parameter_list = _get_option("parameter_list").split(",")
 
     _log "Starting SSRF Responder server"
     Intrigue::Task::Server::SsrfResponder.start_and_background
 
-    #"http://169.254.169.254/latest/meta-data/",   # AWS Metadata
-
     parameter_list.each do |parameter|
-
       # make the request and collect the response
       # https://stackoverflow.com/questions/7012810/url-encoding-ampersand-problem
-      payload = "http://localhost:55555?int_id=#{@task_result.id}%26int_param=#{parameter}" 
+      payload = "#{ssrf_target_uri}?int_id=#{@task_result.id}%26int_param=#{parameter}"
       generated_test_uri = "#{uri}?#{parameter}=#{payload}"
       response  = http_request :get, generated_test_uri
       _log "Sent: (#{generated_test_uri}), Got: #{response.code}"
-
     end
+
+    # Future work... actually exfil data (enrichment?)
+    #"http://169.254.169.254/latest/meta-data/",   # AWS Metadata
 
   end
 
