@@ -18,6 +18,9 @@ module Intrigue
 
       self.raise_on_save_failure = false
 
+      # Keep track of subclasses
+      @@descendants = []
+
       many_to_one  :alias_group
       many_to_many :task_results
       many_to_one  :project
@@ -40,6 +43,15 @@ module Intrigue
         json_details = Sequel.pg_jsonb_op(:details)
         candidate_entities = scope_by_project_and_type(project_name,entity_type)
         candidate_entities.where(json_details.get_text(detail_name) => detail_value)
+      end
+
+      def self.descendants
+        @@descendants
+      end
+
+      def self.inherited(subclass)
+        @@descendants << subclass
+        super
       end
 
       def ancestors
@@ -135,8 +147,6 @@ module Intrigue
         s = details["enrichment_scheduled"]
         true if s && s.include?(task_name)
       end
-
-
 
       def alias(entity)
         # They'd share the same group...
@@ -269,10 +279,6 @@ module Intrigue
             <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name" value="#{self.name}">
           </div>
         </div>}
-      end
-
-      def self.descendants
-        x = ObjectSpace.each_object(Class).select{ |klass| klass < self }
       end
 
       ###
