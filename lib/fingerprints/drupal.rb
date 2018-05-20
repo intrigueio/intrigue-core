@@ -15,7 +15,7 @@ module Intrigue
                 :content => /Drupal/,
                 :dynamic_version => lambda { |x|
                   version = x.body.scan(/^(Drupal.*)[ ,<\.].*$/)[0]
-                  return version.first.gsub("Drupal ","").gsub(",","").chomp } if version
+                  return version.first.gsub("Drupal ","").gsub(",","").chomp if version
                 }
               }
             ]
