@@ -34,7 +34,12 @@ class SsrfResponderServerBehavior < ::WEBrick::HTTPServlet::AbstractServlet
     #
     task_result_id = request.query["int_id"]
     parameter = request.query["int_param"]
-    e = Intrigue::Model::TaskResult.first(:id => task_result_id ).base_entity
+    t = Intrigue::Model::TaskResult.first(:id => task_result_id )
+    t.log_good "VULNERABLE! #{parameter}"
+    #t.log_good "REQUEST: #{request.inspect}"
+
+    # save it on the entity
+    e = t.base_entity
     ssrf_params = e.get_detail("ssrf_params") || []
     ssrf_params << parameter
     e.set_detail "ssrf_params", ssrf_params
@@ -51,10 +56,16 @@ class SsrfResponderServerBehavior < ::WEBrick::HTTPServlet::AbstractServlet
     #
     task_result_id = request.query["int_id"]
     parameter = request.query["int_param"]
-    e = Intrigue::Model::TaskResult.first(:id => task_result_id ).base_entity
+    t = Intrigue::Model::TaskResult.first(:id => task_result_id )
+    t.log_good "VULNERABLE! #{parameter}"
+    #t.log_good "REQUEST: #{request.inpect}"
+
+    # save it on the entity
+    e = t.base_entity
     ssrf_params = e.get_detail("ssrf_params") || []
     ssrf_params << parameter
     e.set_detail "ssrf_params", ssrf_params
+
 
     response.status = 200
   request.body

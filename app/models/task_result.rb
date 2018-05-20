@@ -65,13 +65,23 @@ module Intrigue
         end
       end
 
+      # EXPOSE LOGGING METHODS
       def log(message)
         logger.log(message)
+      end
+
+      def log_good(message)
+        logger.log_good(message)
+      end
+
+      def log_error(message)
+        logger.log_error(message)
       end
 
       def get_log
         logger.full_log
       end
+      # END EXPOSE LOGGING METHODS
 
       def strategy
         return scan_result.strategy if scan_result

@@ -53,12 +53,18 @@ module Intrigue
         # if method is set to none, don't log anything
         return if location == "none"
 
-        # any other value, log to the database
-        set(:full_log => "#{full_log}#{message.encode("UTF-8", {
-                                                  :undef => :replace,
-                                                  :invalid => :replace,
-                                                  :replace => "?" })}")
-        save
+        begin
+          self.lock!
+          # any other value, log to the database
+          set(:full_log => "#{full_log}#{message.encode("UTF-8", {
+                                              :undef => :replace,
+                                              :invalid => :replace,
+                                              :replace => "?" })}")
+          save
+        rescue Sequel::DatabaseError => e
+          puts "ERROR WRITING LOG FOR #{self}: #{e}"
+        end
+
       end
 
     end
