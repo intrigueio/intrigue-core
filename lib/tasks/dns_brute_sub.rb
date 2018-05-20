@@ -200,7 +200,7 @@ class DnsBruteSub < BaseTask
 
   def _resolve(hostname)
     #_log "Trying to resolve #{hostname}"
-    resolve_name(hostname, Dnsruby::Types::A)
+    resolve_name(hostname)
   end
 
   # Check for wildcard DNS

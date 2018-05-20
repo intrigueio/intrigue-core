@@ -25,7 +25,7 @@ class DnsPermute < BaseTask
 
     # Set the basename
     basename = _get_entity_name
-    
+
     # XXX - use the resolver option if we have it.
     # Note that we have to specify an empty search list, otherwise we end up
     # searching .local by default on osx.
@@ -148,7 +148,7 @@ class DnsPermute < BaseTask
               depth = work_item[:depth]
 
               # Try to resolve
-              resolved_address = resolve_name(fqdn, Dnsruby::Types::A)
+              resolved_address = resolve_name(fqdn)
 
               if resolved_address # If we resolved, create the right entities
 

@@ -38,15 +38,8 @@ class DnsRecurseSpf < BaseTask
   def lookup_txt_record(dns_name)
 
     begin
-      resolver_name = _get_system_config "resolver"
 
-      res = Dnsruby::Resolver.new(
-        :search => [],
-        :nameserver => [resolver_name],
-        :query_timeout => 5
-      )
-
-      result = res.query(dns_name, Dnsruby::Types.TXT)
+      result = resolve(dns_name, [Dnsruby::Types.TXT])
 
       # If we got a success to the query.
       if result

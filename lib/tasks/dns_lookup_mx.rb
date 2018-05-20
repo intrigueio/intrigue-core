@@ -30,13 +30,13 @@ class DnsLookupMx < BaseTask
       # with round-robin DNS & load balancers. We'd need to merge results
       # across the queries
       # use the global resolver
-      resources = resolve_names(name, Dnsruby::Types::MX)
+      resources = resolve_names(name, [Dnsruby::Types::MX])
 
       resources.each do |r|
         # Create a DNS record
         _create_entity("IpAddress", { "name" => r})
       end
-       
+
     rescue Errno::ENETUNREACH => e
       _log_error "Hit exception: #{e}. Are you sure you're connected?"
     rescue Exception => e

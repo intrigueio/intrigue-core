@@ -14,7 +14,6 @@ class EnrichIpAddress < BaseTask
       :passive => true,
       :example_entities => [{"type" => "IpAddress", "details" => {"name" => "8.8.8.8"}}],
       :allowed_options => [
-        {:name => "resolver", :type => "String", :regex => "ip_address", :default => "8.8.8.8" },
         {:name => "skip_hidden", :type => "Boolean", :regex => "boolean", :default => false }
       ],
       :created_types => []
@@ -24,7 +23,6 @@ class EnrichIpAddress < BaseTask
   def run
     super
 
-    opt_resolver = _get_option "resolver"
     opt_skip_hidden = _get_option "skip_hidden"
     lookup_name = _get_entity_name
 
@@ -38,9 +36,7 @@ class EnrichIpAddress < BaseTask
     ########################
     ## Handle ANY Records ##
     ########################
-    results = resolve(lookup_name, Dnsruby::Types::ANY)
-    results.concat(resolve(lookup_name, Dnsruby::Types::A))
-    results.concat(resolve(lookup_name, Dnsruby::Types::CNAME))
+    results = resolve(lookup_name)
 
     _log "Got results: #{results}"
 

@@ -26,10 +26,7 @@ class EnrichDnsRecord < BaseTask
     ########################
     ## Handle ANY Records ##
     ########################
-    results = resolve(lookup_name, Dnsruby::Types::ANY)
-    results.concat(resolve(lookup_name, Dnsruby::Types::A))
-    results.concat(resolve(lookup_name, Dnsruby::Types::CNAME))
-    _log "Got results: #{results}"
+    results = resolve(lookup_name)
 
     ####
     ### Create aliased entities
