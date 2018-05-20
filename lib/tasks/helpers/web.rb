@@ -31,7 +31,7 @@ module Task
         response = http_request :get, "#{ggf.first}"
 
         unless response
-          puts "Unable to get a response at: #{ggf.first}"
+          #puts "Unable to get a response at: #{ggf.first}"
           return nil
         end
 
