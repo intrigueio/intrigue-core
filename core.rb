@@ -60,19 +60,17 @@ def setup_database
     :pool_timeout => 240
   }
 
-  if Intrigue::Config::GlobalConfig.new.config["debug"]
-    options.merge({:loggers => [Logger.new($stdout)]})
-  end
-
   environment = "development"
   database_config = YAML.load_file("#{$intrigue_basedir}/config/database.yml")
   database_host = database_config[environment]["host"]
+  database_port = database_config[environment]["port"] || 5432
   database_user = database_config[environment]["user"]
   database_pass = database_config[environment]["pass"]
   database_name = database_config[environment]["database"]
+  database_debug = database_config[environment]["debug"]
 
-  $db = Sequel.connect("postgres://#{database_user}@#{database_host}:5432/#{database_name}", options)
-  #$db.loggers << Logger.new($stdout)
+  $db = Sequel.connect("postgres://#{database_user}@#{database_host}:#{database_port}/#{database_name}", options)
+  $db.loggers << Logger.new($stdout) if database_debug
 
   # Allow datasets to be paginated
   $db.extension :pagination
