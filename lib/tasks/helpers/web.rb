@@ -241,6 +241,7 @@ module Task
          end
 
          http = Net::HTTP.start(uri.host, uri.port, proxy_addr, proxy_port, opts)
+         #http.set_debug_output($stdout) if _get_system_config "debug"
          http.read_timeout = 20
          http.open_timeout = 20
 
@@ -283,7 +284,11 @@ module Task
            request.basic_auth(credentials[:username],credentials[:password])
          end
 
-         # get tehe response
+         # USE THIS TO PRINT HTTP REQUEST
+         #request.each_header{|h| _log_debug "#{h}: #{request[h]}" }
+         # END USE THIS TO PRINT HTTP REQUEST
+
+         # get the response
          response = http.request(request)
 
          if response.code=="200"

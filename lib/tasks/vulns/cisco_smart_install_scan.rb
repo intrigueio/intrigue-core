@@ -13,7 +13,7 @@ class CiscoSmartInstallScan < BaseTask
         "http://blog.talosintelligence.com/2018/04/critical-infrastructure-at-risk.html",
         "https://github.com/Cisco-Talos/smi_check"
       ],
-      :type => "vulnerability_scanner",
+      :type => "vuln_scan",
       :passive => false,
       :allowed_types => ["NetBlock"],
       :example_entities => [

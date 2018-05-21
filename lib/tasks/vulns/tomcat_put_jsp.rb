@@ -18,7 +18,7 @@ class TomcatPutJsp < BaseTask
         "https://www.peew.pw/blog/2017/10/9/new-vulnerability-same-old-tomcat-cve-2017-12615",
         "https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/multi/http/tomcat_jsp_upload_bypass.rb"
       ],
-      :type => "vulnerability_check",
+      :type => "vuln_check",
       :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [ {"type" => "Uri", "details" => {"name" => "https://intrigue.io"}} ],

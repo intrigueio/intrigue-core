@@ -14,7 +14,7 @@ class EtcdHarvester < BaseTask
         "https://elweb.co/the-security-footgun-in-etcd/",
         "https://twitter.com/bad_packets/status/975502158652035072"
       ],
-      :type => "vulnerability_check",
+      :type => "vuln_check",
       :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [

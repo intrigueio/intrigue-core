@@ -12,7 +12,7 @@ class ApacheStrutsJakartaParser < BaseTask
       :references => [
         "https://blog.qualys.com/securitylabs/2017/03/14/apache-struts-cve-2017-5638-vulnerability-and-the-qualys-solution"
       ],
-      :type => "vulnerability_check",
+      :type => "vuln_check",
       :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [ {"type" => "Uri", "details" => {"name" => "https://intrigue.io"}} ],

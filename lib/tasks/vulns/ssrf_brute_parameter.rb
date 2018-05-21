@@ -7,10 +7,13 @@ class SsrfBruteParameters < BaseTask
       :name => "vuln/ssrf_brute_parameters",
       :pretty_name => "Vulnerability Check - Brute Parameters for SSRF",
       :authors => ["jcran"],
-      :identifiers => [{ "cve" =>  false }],
+      :identifiers => [
+        { "cve" =>  false },
+        { "cwe" =>  "CWE-918" }
+      ],
       :description => "Generic SSRF Payload Tester",
       :references => [],
-      :type => "vulnerability_check",
+      :type => "vuln_check",
       :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [
