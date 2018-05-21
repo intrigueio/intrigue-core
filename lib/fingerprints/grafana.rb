@@ -11,7 +11,7 @@ module Intrigue
               :description => "Grafana",
               :version => nil,
               :type => :content_cookies,
-              :content => /grafana_sess/
+              :content => /grafana_sess/i
             }
           ]
         }

@@ -11,7 +11,7 @@ module Intrigue
               :description => "Magento",
               :type => :content_body,
               :version => nil,
-              :content => /Mage.Cookies.path/
+              :content => /Mage.Cookies.path/i
             }
           ]
         }

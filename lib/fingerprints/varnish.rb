@@ -11,7 +11,7 @@ module Intrigue
               :description => "Varnish Proxy",
               :version => nil,
               :type => :content_headers,
-              :content => /via: [0-9]\.[0-9] varnish/,
+              :content => /via: [0-9]\.[0-9] varnish/i,
               :dynamic_version => lambda{ |x|
                 m = nil
                 x.each_header{|h,v| m = v if (h == "via" && v =~ /varnish/) }

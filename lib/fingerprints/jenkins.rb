@@ -11,8 +11,16 @@ module Intrigue
               :description => "Jenkins",
               :version => nil,
               :type => :content_headers,
-              :content => /X-Jenkins-Session/
+              :content => /X-Jenkins-Session/i
+            },
+            {
+              :name => "Jenkins",
+              :description => "Jenkins",
+              :version => nil,
+              :type => :content_headers,
+              :content => /x-jenkins/i
             }
+
           ]
         }
       end

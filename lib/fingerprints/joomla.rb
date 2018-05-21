@@ -11,7 +11,7 @@ module Intrigue
               :description => "Known Joomla Admin Page",
               :type => :content_body,
               :version => nil,
-              :content => /files_joomla/,
+              :content => /files_joomla/i,
               :references => ["https://twitter.com/GreyNoiseIO/status/987547246538391552"]
             }
           ]

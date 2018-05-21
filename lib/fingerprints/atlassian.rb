@@ -11,14 +11,14 @@ module Intrigue
               :description => "Atlassian BitBucket",
               :version => nil,
               :type => :content_body,
-              :content => /com.atlassian.bitbucket.server/
+              :content => /com.atlassian.bitbucket.server/i
             },
             {
               :name => "Atlassian Confluence",
               :description => "Atlassian Confluence",
               :version => nil,
               :type => :content_headers,
-              :content => /X-Confluence-Request-Time/
+              :content => /X-Confluence-Request-Time/i
             },
             {
               :name => "Atlassian Crucible",
@@ -37,7 +37,7 @@ module Intrigue
               :description => "Atlassian Jira",
               :version => nil,
               :type => :content_cookies,
-              :content => /atlassian.xsrf.token/,
+              :content => /atlassian.xsrf.token/i,
               :dynamic_version => lambda{ |x|
                 if x.body.scan(/<span id="footer-build-information">(.*)-<span/)[0]
                   x.body.scan(/<span id="footer-build-information">(.*)-<span/)[0].first.gsub("(","")

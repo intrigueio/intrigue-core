@@ -11,7 +11,7 @@ module Intrigue
               :description => "Gitlab",
               :version => nil,
               :type => :content_cookies,
-              :content => /_gitlab_session/
+              :content => /_gitlab_session/i
             }
           ]
         }

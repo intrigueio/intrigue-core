@@ -11,7 +11,7 @@ module Intrigue
               :description => "ASP.Net Error Message",
               :version => nil,
               :type => :content_body,
-              :content => /^.*ASP.NET is configured.*$/,
+              :content => /^.*ASP.NET is configured.*$/i,
               :dynamic_version => lambda{|x| x.body.scan(/ASP.NET Version:(.*)$/)[0].first.chomp }
             },
             {
@@ -27,7 +27,7 @@ module Intrigue
               :description => "Asp.Net Default Cookie",
               :version => nil,
               :type => :content_cookies,
-              :content => /ASPSESSIONID.*$/,
+              :content => /ASPSESSIONID.*$/i,
               #:dynamic_version => lambda{|x| x.each_header{|k,v| return v if k =~ /x-aspnet-version/ } }
             },
             {
@@ -35,7 +35,7 @@ module Intrigue
               :description => "Asp.Net Default Cookie",
               :version => nil,
               :type => :content_cookies,
-              :content => /ASP.NET_SessionId.*$/,
+              :content => /ASP.NET_SessionId.*$/i,
               #:dynamic_version => lambda{|x| x.each_header{|k,v| return v if k =~ /x-aspnet-version/ } }
             },
             {
@@ -43,7 +43,7 @@ module Intrigue
               :description => "Asp.Net MVC Header",
               :version => nil,
               :type => :content_headers,
-              :content => /x-aspnetmvc-version/,
+              :content => /x-aspnetmvc-version/i,
               #:dynamic_version => lambda{|x| x.each_header{|k,v| return v if k =~ /x-aspnetmvc-version/ } }
             },
             {
@@ -51,7 +51,7 @@ module Intrigue
               :description => "WebResource.axd link in the page",
               :version => nil,
               :type => :content_body,
-              :content => /WebResource.axd?d=/,
+              :content => /WebResource.axd?d=/i,
               #:dynamic_version => lambda{|x| x.each_header{|k,v| return v if k =~ /WebResource.axd?d=/ } }
             }
           ]

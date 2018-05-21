@@ -11,7 +11,7 @@ module Intrigue
               :description => "Nagios",
               :version => nil,
               :type => :content_headers,
-              :content => /nagios/
+              :content => /nagios/i
             }
           ]
         }

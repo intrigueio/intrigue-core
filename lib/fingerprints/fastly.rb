@@ -11,7 +11,7 @@ module Intrigue
               :description => "",
               :version => "",
               :type => :content_headers,
-              :content => /x-fastly-backend-reqs/
+              :content => /x-fastly-backend-reqs/i
             }
           ]
         }

@@ -19,7 +19,7 @@ module Intrigue
               :description => "Chef Server",
               :version => nil,
               :type => :content_cookies,
-              :content => /chef-manage/
+              :content => /chef-manage/i
             }
           ]
         }

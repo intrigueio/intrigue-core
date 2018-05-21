@@ -11,7 +11,7 @@ module Intrigue
               :description => "PhpMyAdmin",
               :version => nil,
               :type => :content_cookies,
-              :content => /phpMyAdmin=/
+              :content => /phpMyAdmin=/i
             }
           ]
         }

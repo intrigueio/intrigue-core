@@ -11,7 +11,7 @@ module Intrigue
               :description => "Pardot",
               :version => nil,
               :type => :content_cookies,
-              :content => /pardot/
+              :content => /pardot/i
             }
           ]
         }

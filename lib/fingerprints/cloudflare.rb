@@ -11,14 +11,14 @@ module Intrigue
               :description => "Cloudflare Accelerated Page",
               :version => "",
               :type => :content_cookies,
-              :content => /__cfduid/
+              :content => /__cfduid/i
             },
             {
               :name => "Cloudflare",
               :description => "Cloudflare Server",
               :version => "",
               :type => :content_headers,
-              :content => /cloudflare-nginx/
+              :content => /cloudflare-nginx/i
             },
             {
               :name => "Cloudflare",
