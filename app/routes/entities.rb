@@ -132,10 +132,11 @@ class IntrigueApp < Sinatra::Base
 
       # Simple tokenized search......
       if search_string && search_string.length > 0
+        #tokens = search_string.split("'")
         tokens = search_string.split(" ")
         tokens.each do |t|
           if t =~ /^!/ || t =~ /^~/ || t =~ /^-/ # exclude whatever comes next
-            ss = t[1..-1].gsub("'","") # pull the token and remove any single quotes
+            ss = t[1..-1] # pull the token and remove any single quotes
             # check for a
             if ss =~ /^name:/
               ss.gsub!(/^name:/,"")
