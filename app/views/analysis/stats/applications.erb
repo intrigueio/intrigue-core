@@ -4,7 +4,7 @@
     <p>Servers:</p>
     <p>
       <% @server_fingerprints.each do |k,v| %>
-         <a href="/<%= h @project_name%>/entities?search_string=<%=h k%>"><%= h k %></a>: <%=h v %><br>
+         <a href="/<%= h @project_name%>/entities?search_string=details:'<%=h k%>'"><%= h k %></a>: <%=h v %><br>
       <% end %>
     </p>
   </div>
@@ -12,15 +12,15 @@
     <p>Applications:</p>
     <p>
       <% @app_fingerprints.each do |k,v| %>
-         <a href="/<%=h @project_name%>/entities?search_string=<%=h k%>"><%= h k %></a>: <%=h v %><br>
+         <a href="/<%=h @project_name%>/entities?search_string=details:'<%=h k%>'"><%= h k %></a>: <%=h v %><br>
       <% end %>
     </p>
   </div>
   <div id="includes" class="col-sm-3">
-    <p>Applications:</p>
+    <p>Includes:</p>
     <p>
       <% @include_fingerprints.each do |k,v| %>
-         <a href="/<%=h @project_name%>/entities?search_string=<%=h k%>"><%= h k %></a>: <%=h v %><br>
+         <a href="/<%=h @project_name%>/entities?search_string=details:'<%=h k%>'"><%= h k %></a>: <%=h v %><br>
       <% end %>
     </p>
   </div>

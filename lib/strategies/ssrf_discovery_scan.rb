@@ -13,11 +13,13 @@ module Strategy
     end
 
     def self.recurse(entity, task_result)
+      
       if entity.type_string == "Netblock"
         start_recursive_task(task_result,"masscan_scan",entity,[
           {"name"=> "tcp_ports", "value" => "80,443" },
           {"name"=> "max_rate", "value" => "1000" }
         ])
+
       elsif entity.type_string == "Uri"
         start_recursive_task(task_result,"vuln/ssrf_proxy_host_header",entity, [
           {"name" => "target_environment", "value" => "aws,local" }

@@ -135,7 +135,7 @@ class IntrigueApp < Sinatra::Base
         tokens = search_string.split(" ")
         tokens.each do |t|
           if t =~ /^!/ || t =~ /^~/ || t =~ /^-/ # exclude whatever comes next
-            ss = t[1..-1]
+            ss = t[1..-1].gsub("'","") # pull the token and remove any single quotes
             # check for a
             if ss =~ /^name:/
               ss.gsub!(/^name:/,"")
