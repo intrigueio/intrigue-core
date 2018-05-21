@@ -54,6 +54,10 @@ module Intrigue
         super
       end
 
+      def user_created?
+        true if task_results.empty?
+      end
+
       def ancestors
         ancestors = []
         task_results.each do |tr|
@@ -83,7 +87,6 @@ module Intrigue
       end
 
       # p = Intrigue::Model::Project.find(:name => "yahoo.com").entities.first.ancestor_path
-
 
       def validate
         super
