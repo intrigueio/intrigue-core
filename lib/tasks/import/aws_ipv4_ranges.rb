@@ -19,6 +19,7 @@ class ImportAwsIpv4Ranges < BaseTask
       ],
       :allowed_options => [
         {:name => "service", :regex => "alpha_numeric", :default => "EC2" },
+        {:name => "limit", :regex => "alpha_numeric", :default => 10 },
       ],
       :created_types => ["NetBlock"]
     }
@@ -30,11 +31,17 @@ class ImportAwsIpv4Ranges < BaseTask
 
     region = _get_entity_name
     service = _get_option("service")
+    limit = _get_option("limit")
 
     range_data = JSON.parse(http_get_body("https://ip-ranges.amazonaws.com/ip-ranges.json"))
     range_data["prefixes"].each do |range|
       _log "Parsing... #{range}"
 
+      limit-=1
+      if limit == 0
+        _log "Hit limit, exiting!"
+        return
+      end
       next unless (region == "#{range["region"]}" || region == "*")
       next unless (service == "#{range["service"]}" || service == "*")
 
