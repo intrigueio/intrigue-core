@@ -48,19 +48,19 @@ module Strategy
       elsif entity.type_string == "IpAddress"
 
         # Prevent us from hammering on whois services
-        unless ( entity.created_by?("net_block_expand") )
+        unless entity.created_by?("net_block_expand")
           start_recursive_task(task_result,"whois",entity)
         end
 
         # Prevent us from hammering on whois services
-        unless ( entity.created_by?("masscan_scan") || entity.created_by?("net_block_expand") )
+        unless ( entity.created_by?("masscan_scan") || entity.created_by?("net_block_expand")  )
           start_recursive_task(task_result,"nmap_scan",entity)
         end
 
       elsif entity.type_string == "NetBlock"
 
         # Make sure it's owned by the org, and if it is, scan it. also skip ipv6/
-        if entity.details["whois_full_text"] =~ /#{filter_strings}/i && !(entity.name =~ /::/)
+        if (entity.details["whois_full_text"] =~ /#{filter_strings}/i && !(entity.name =~ /::/)) || entity.user_created?
 
           # Muhstik seems like a pretty good baseline for this stuff
           # 80/443: Weblogic, Wordpress, Drupal, WebDav, ClipBucket
