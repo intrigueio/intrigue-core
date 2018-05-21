@@ -6,6 +6,14 @@ module Intrigue
         {
           :uri => "#{uri}",
           :checklist => [
+            { # might need to be its own, but haven't seen it yet outside jenkins
+              :name => "Hudson",
+              :description => "Hudson",
+              :version => nil,
+              :type => :content_headers,
+              :content => /x-hudson/i,
+              :dynamic_version => lambda { |x| x["x-hudson"] }
+            },
             {
               :name => "Jenkins",
               :description => "Jenkins",
@@ -18,9 +26,9 @@ module Intrigue
               :description => "Jenkins",
               :version => nil,
               :type => :content_headers,
-              :content => /x-jenkins/i
+              :content => /x-jenkins/i,
+              :dynamic_version => lambda { |x| x["x-jenkins"] }
             }
-
           ]
         }
       end
