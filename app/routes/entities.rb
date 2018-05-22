@@ -9,7 +9,7 @@ class IntrigueApp < Sinatra::Base
     (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
     (params[:count] != "" && params[:count].to_i > 0) ? @count = params[:count].to_i : @count = 100
 
-    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).paginate(@page, @count).order(:name)
+    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name)
     selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
     selected_entities = _tokenized_search(@search_string, selected_entities) if @search_string
 
@@ -31,6 +31,7 @@ class IntrigueApp < Sinatra::Base
 
     else # normal page
 
+     selected_entities = selected_entities.paginate(@page, @count).order(:name)
      alias_group_ids = selected_entities.select_map(:alias_group_id).uniq
      @alias_groups = Intrigue::Model::AliasGroup.where({:id => alias_group_ids })
      erb :'entities/index'
