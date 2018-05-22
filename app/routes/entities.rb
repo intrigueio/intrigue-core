@@ -9,73 +9,36 @@ class IntrigueApp < Sinatra::Base
     (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
     (params[:count] != "" && params[:count].to_i > 0) ? @count = params[:count].to_i : @count = 100
 
-     selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).paginate(@page, @count).order(:name)
+    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).paginate(@page, @count).order(:name)
+    selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
+    selected_entities = _tokenized_search(@search_string, selected_entities) if @search_string
 
-     ## filter if we have a type
-     selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
+    if params[:export] == "csv"
 
-     # search
-     selected_entities = _tokenized_search(@search_string, selected_entities) if @search_string
+      content_type 'application/csv'
+      attachment "#{@project_name}.csv"
+      result = ""
+      selected_entities.each  { |e| result << "#{e.export_csv}\n" }
+      return result
 
-     # Get the corresponding alias groups
+    elsif params[:export] == "json"
+
+      content_type 'application/json'
+      attachment "#{@project_name}.json"
+      result = ""
+      selected_entities.each  { |e| result << "#{e.export_json}\n" }
+      return result
+
+    else # normal page
+
      alias_group_ids = selected_entities.select_map(:alias_group_id).uniq
      @alias_groups = Intrigue::Model::AliasGroup.where({:id => alias_group_ids })
-
      erb :'entities/index'
+
+    end
+
    end
 
-
-  get '/:project/entities.csv' do
-    content_type 'text/csv'
-
-    params[:search_string] == "" ? @search_string = nil : @search_string = params[:search_string]
-    params[:entity_types] == [""] ? @entity_types = nil : @entity_types = params[:entity_types]
-
-    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
-
-    ## Filter if we have a type
-    selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
-
-    # Perform a simple tokenized search
-    selected_entities = _tokenized_search(@search_string, selected_entities) if @search_string
-
-    # filter out hidden if requested
-    #selected_entities = selected_entities.where(:hidden => false) unless @include_hidden
-
-    out = ""
-    out << "Type,Name,Alias Group,Details\n"
-    selected_entities.each do |entity|
-      alias_string = entity.alias_group.id if entity.alias_group
-      out << "#{entity.type_string},#{entity.name},#{alias_string},#{entity.detail_string}\n"
-    end
-
-  out
-  end
-
-  get '/:project/entities.json' do
-    content_type 'text/json'
-
-    params[:search_string] == "" ? @search_string = nil : @search_string = params[:search_string]
-    params[:entity_types] == [""] ? @entity_types = nil : @entity_types = params[:entity_types]
-
-    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).order(:name)
-
-    ## Filter if we have a type
-    selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
-
-    # Perform a simple tokenized search
-    selected_entities = _tokenized_search(@search_string, selected_entities) if @search_string
-
-    # filter out hidden if requested
-    selected_entities = selected_entities.where(:hidden => false) unless @include_hidden
-
-    out = []
-    selected_entities.each do |entity|
-      out << entity.to_hash
-    end
-
-  JSON.pretty_generate out
-  end
 
   ###                      ###
   ### Per-Project Entities ###

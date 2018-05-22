@@ -1,6 +1,6 @@
   <p>
-    <a href="/<%=@project_name%>/entities.csv?search_string=<%=h @search_string%>&entity_types[]=<%=@entity_types.join(",") if @entity_types%>">Export CSV</a><br/>
-    <a href="/<%=@project_name%>/entities.json?search_string=<%=h @search_string%>&entity_types[]=<%=@entity_types.join(",") if @entity_types%>">Export JSON</a><br/>
+    <a href="/<%=@project_name%>/entities?export=csv&search_string=<%=h @search_string%>&entity_types[]=<%=@entity_types.join(",") if @entity_types%>">Export CSV</a><br/>
+    <a href="/<%=@project_name%>/entities?export=json&search_string=<%=h @search_string%>&entity_types[]=<%=@entity_types.join(",") if @entity_types%>">Export JSON</a><br/>
   </p>
   <form class="form-horizontal" id="entity_search" target="_self" method="get" action="/<%=@project_name%>/entities">
 
