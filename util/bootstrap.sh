@@ -16,6 +16,9 @@ sudo apt-get -y upgrade
 ##### Install all the base dependencies
 sudo apt-get -y install libpq-dev postgresql-9.6 postgresql-server-dev-9.6 redis-server
 
+## MOTD
+sudo apt-get install boxes
+
 ##### Scanning
 sudo apt-get -y install nmap zmap
 
@@ -60,9 +63,8 @@ if [ ! -d ~/.rbenv ]; then
   echo "[+] Configuring rbenv"
   git clone https://github.com/rbenv/rbenv.git ~/.rbenv
   cd ~/.rbenv && src/configure && make -C src
-  echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bash_profile
-  echo 'eval "$(rbenv init -)"' >> ~/.bash_profile
-  source ~/.bash_profile
+  echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
+  echo 'eval "$(rbenv init -)"' >> ~/.bashrc
 
   # ruby-build
   mkdir -p ~/.rbenv/plugins
@@ -75,6 +77,7 @@ if [ ! -d ~/.rbenv ]; then
   git clone git://github.com/dcarley/rbenv-sudo.git ~/.rbenv/plugins/rbenv-sudo
 
 else
+
   # upgrade rbenv
   cd ~/.rbenv && git pull
   # upgrade rbenv-root
@@ -83,7 +86,12 @@ else
   cd ~/.rbenv/plugins/rbenv-gemset && git pull
   # upgrade rbenv-sudo
   cd ~/.rbenv/plugins/rbenv-sudo && git pull
+
 fi
+
+# make sure rbenv is in our path
+export PATH="$HOME/.rbenv/bin:$PATH"
+source ~/.bash_profile
 
 RUBY_VERSION=`cat $INTRIGUE_DIRECTORY/.ruby-version`
 if [ ! -e ~/.rbenv/versions/$RUBY_VERSION ]; then
@@ -96,7 +104,6 @@ if [ ! -e ~/.rbenv/shims/bundle ]; then
   gem install bundler
   rbenv rehash
 fi
-
 
 #####
 ##### INTRIGUE SETUP / CONFIGURATION
@@ -112,3 +119,9 @@ if [ ! -f /etc/init.d/intrigue ]; then
   sudo cp $INTRIGUE_DIRECTORY/util/intrigue.service /lib/systemd/system
   sudo chmod +x $INTRIGUE_DIRECTORY/util/control.sh
 fi
+
+echo "Intrigue Core is Beta Software. File bugs at https://github.com/intrigueio/intrigue-core/issues.\n\n To start the server\n rbenv sudo /core/util/control.sh start" > .instructions
+echo "boxes -a c -d unicornthink .instructions" > .bash_profile
+
+# run the service
+rbenv sudo $INTRIGUE_DIRECTORY/util/control.sh start

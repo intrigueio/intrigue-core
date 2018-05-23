@@ -19,7 +19,7 @@
 #
 
 
-IDIR=/path/to/install/directory
+IDIR=/core
 cd $IDIR
 
 function setup_server {
