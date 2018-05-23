@@ -82,7 +82,6 @@ EXPOSE 7777
 
 # Set up the service file
 RUN cp /core/util/control.sh.default /core/util/control.sh
-RUN sed -i "s/\/path\/to\/install\/directory/\/core/g" /core/util/control.sh
 RUN ln -s /core/util/control.sh /etc/init.d/intrigue
 
 # Configure postgres
