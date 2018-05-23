@@ -39,7 +39,15 @@ if [ -d "iana" ]; then
   cd ..
 fi
 
-
+# ASN Info
+# https://www.quaxio.com/bgp/
+if [ -d "asn_info" ]; then
+  cd asn_info
+  echo "Getting latest ASN data from APNIC"
+  wget -N -q http://thyme.apnic.net/current/data-raw-table
+  wget -N -q http://thyme.apnic.net/current/data-used-autnums
+  cd ..
+fi
 
 #if [ -d "alexa" ]; then
 #  echo "Getting latest Alexa database"
