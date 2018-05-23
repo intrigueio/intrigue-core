@@ -58,26 +58,22 @@ sudo sed -i 's/md5/trust/g' /etc/postgresql/9.6/main/pg_hba.conf
 sudo service postgresql restart
 
 ##### Install rbenv
-
 if [ ! -d ~/.rbenv ]; then
   echo "[+] Configuring rbenv"
   git clone https://github.com/rbenv/rbenv.git ~/.rbenv
   cd ~/.rbenv && src/configure && make -C src
-  echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
-  echo 'eval "$(rbenv init -)"' >> ~/.bashrc
-
+  echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bash_profile
+  echo 'eval "$(rbenv init -)"' >> ~/.bash_profile
+  # make sure rbenv is in our path
+  source ~/.bash_profile
   # ruby-build
   mkdir -p ~/.rbenv/plugins
   git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
-
   # rbenv gemset
   git clone git://github.com/jf/rbenv-gemset.git ~/.rbenv/plugins/rbenv-gemset
-
   # rbenv sudo
   git clone git://github.com/dcarley/rbenv-sudo.git ~/.rbenv/plugins/rbenv-sudo
-
 else
-
   # upgrade rbenv
   cd ~/.rbenv && git pull
   # upgrade rbenv-root
@@ -86,24 +82,22 @@ else
   cd ~/.rbenv/plugins/rbenv-gemset && git pull
   # upgrade rbenv-sudo
   cd ~/.rbenv/plugins/rbenv-sudo && git pull
-
 fi
 
-# make sure rbenv is in our path
-export PATH="$HOME/.rbenv/bin:$PATH"
-source ~/.bashrc
+
 
 RUBY_VERSION=`cat $INTRIGUE_DIRECTORY/.ruby-version`
 if [ ! -e ~/.rbenv/versions/$RUBY_VERSION ]; then
   echo "[+] Installing Ruby $RUBY_VERSION"
   rbenv install $RUBY_VERSION
-  rbenv global $RUBY_VERSION
 fi
 
-if [ ! -e ~/.rbenv/shims/bundle ]; then
-  gem install bundler
-  rbenv rehash
-fi
+rbenv global $RUBY_VERSION
+echo "Ruby: `ruby -v`"
+
+# Install bundler
+gem install bundler
+rbenv rehash
 
 #####
 ##### INTRIGUE SETUP / CONFIGURATION
@@ -111,8 +105,8 @@ fi
 cd $INTRIGUE_DIRECTORY
 bundle install
 
-echo "[+] Migrating database"
-bundle exec rake db:migrate
+#echo "[+] Migrating database"
+#bundle exec rake db:migrate
 
 if [ ! -f /etc/init.d/intrigue ]; then
   echo "[+] Creating intrigue service"
@@ -120,7 +114,10 @@ if [ ! -f /etc/init.d/intrigue ]; then
   sudo chmod +x $INTRIGUE_DIRECTORY/util/control.sh
 fi
 
-echo "source ~/.bashrc && boxes -a c -d unicornthink /core/util/instructions" > .bash_profile
+if ! $(grep -q instructions ~/.bash_profile); then
+  echo "[+] Adding line with instructions"
+  echo "boxes -a c -d unicornthink /core/util/instructions" >> ~/.bash_profile
+fi
 
 # run the service
 rbenv sudo $INTRIGUE_DIRECTORY/util/control.sh start

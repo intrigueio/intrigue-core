@@ -1,6 +1,6 @@
 # see: https://github.com/autogrow/RedisAlerting/wiki/systemd-service-using-rbenv
 [Unit]
-Description=Intrigue Dev Server
+Description=Intrigue Core Service
 
 [Service]
 Type=simple
