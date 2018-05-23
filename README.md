@@ -23,6 +23,8 @@ Follow the appropriate setup guide:
 
  * Vagrant (preferred) - http://intrigue.io/getting-started-with-intrigue-core-on-vagrant-virtualbox/
  * Docker - https://intrigue.io/2017/03/07/using-intrigue-core-with-docker/
+
+ Manual setup guides (may be out of date!)
  * Ubuntu Linux - https://github.com/intrigueio/intrigue-core/wiki/Setting-up-a-Test-Environment-on-Ubuntu-Linux
  * Kali Linux - https://github.com/intrigueio/intrigue-core/wiki/Setting-up-a-Test-Environment-on-Kali-Linux
  * OS X - https://github.com/intrigueio/intrigue-core/wiki/Setting-up-a-Test-Environment-on-OSX-10.10
