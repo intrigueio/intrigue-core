@@ -2,7 +2,7 @@
 
 Intrigue-core is a framework for automated attack surface discovery. There are a number of use cases:
 
-  * Application and Infrastructure (Asset) Discovery
+  * Application and Infrastructure Asset Discovery
   * Security Research and Vulnerability Discovery
   * Malware Campaign Research & Indicator Enrichment
   * Exploratory OSINT Research
@@ -31,15 +31,15 @@ Now that you have a working environment, browse to the web interface.
 
 ### Using the web interface
 
-To use the web interface, browse to http://127.0.0.1:7777. Once you're able to connect, you can follow the instructions here: https://intrigue.io/2017/03/07/using-intrigue-core-with-docker/
+To use the web interface, browse to http://127.0.0.1:7777. Once you're able to connect, you can follow the getting started instructions: http://intrigue.io/up-and-running/
 
 ### Configuring the system
 
-Many modules require API keys. To set them up, browse to the "Configure" tab and click on the name of the module. You will be taken to the relevant signup page where you can provision an API key.
+Many tasks connect to external services and thus require API keys. To configure these tasks, browse to the "Configure" tab in the UI and click on the name of the task. You will be taken to the relevant signup page where you can provision an API key. These keys are ultimately stored in config/config.json.
 
 ## The API
 
-Intrigue-core is built API-first, allowing all functions in the UI to be easily automated. The following methods for automation are provided.
+Intrigue-core is built API-first, allowing all functions in the UI to be automated. The following methods for automation are provided.
 
 ### API usage via core-cli
 
@@ -52,7 +52,8 @@ $ bundle exec ./core-cli.rb list
 
 Start a task:
 ```
-$ bundle exec ./core-cli.rb background Default dns_brute_sub DnsRecord#intrigue.io 1
+
+$ bundle exec ./core-cli.rb start [pre dns_brute_sub DnsRecord#intrigue.io 1
 Got entity: {"type"=>"DnsRecord", "name"=>"intrigue.io", "details"=>{"name"=>"intrigue.io"}}
 Task Result: {"result_id":66103}
 ```
