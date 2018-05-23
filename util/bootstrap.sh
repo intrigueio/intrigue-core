@@ -65,7 +65,7 @@ if [ ! -d ~/.rbenv ]; then
   source ~/.bash_profile
 
   # ruby-build
-  mkdir -p "$(rbenv root)"/plugins
+  mkdir -p ~/.rbenv/plugins
   git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
 
   # rbenv gemset
@@ -73,11 +73,14 @@ if [ ! -d ~/.rbenv ]; then
 
   # rbenv sudo
   git clone git://github.com/dcarley/rbenv-sudo.git ~/.rbenv/plugins/rbenv-sudo
+
 else
   # upgrade rbenv
   cd ~/.rbenv && git pull
   # upgrade rbenv-root
   cd ~/.rbenv/plugins/ruby-build && git pull
+  # upgrade rbenv-root
+  cd ~/.rbenv/plugins/rbenv-gemset && git pull
   # upgrade rbenv-sudo
   cd ~/.rbenv/plugins/rbenv-sudo && git pull
 fi
