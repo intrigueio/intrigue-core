@@ -91,7 +91,7 @@ fi
 
 # make sure rbenv is in our path
 export PATH="$HOME/.rbenv/bin:$PATH"
-source ~/.bash_profile
+source ~/.bashrc
 
 RUBY_VERSION=`cat $INTRIGUE_DIRECTORY/.ruby-version`
 if [ ! -e ~/.rbenv/versions/$RUBY_VERSION ]; then
@@ -120,8 +120,7 @@ if [ ! -f /etc/init.d/intrigue ]; then
   sudo chmod +x $INTRIGUE_DIRECTORY/util/control.sh
 fi
 
-echo "Intrigue Core is Beta Software. File bugs at https://github.com/intrigueio/intrigue-core/issues.\n\n To start the server\n rbenv sudo /core/util/control.sh start" > .instructions
-echo "boxes -a c -d unicornthink .instructions" > .bash_profile
+echo "source ~/.bashrc && boxes -a c -d unicornthink /core/util/instructions" > .bash_profile
 
 # run the service
 rbenv sudo $INTRIGUE_DIRECTORY/util/control.sh start

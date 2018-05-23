@@ -1,0 +1,5 @@
+                       Intrigue Core
+
+File bugs: https://github.com/intrigueio/intrigue-core/issues.
+
+To start the server, run: rbenv sudo /core/util/control.sh start
