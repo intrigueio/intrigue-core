@@ -4,7 +4,7 @@ export INTRIGUE_DIRECTORY="/core"
 ##### SYSTEM SETUP / CONFIG
 #####
 
-echo "[+] Preparing the system"
+echo "[+] Preparing the System"
 ##### Add external repositories
 sudo add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -sc)-pgdg main"
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
@@ -14,10 +14,7 @@ sudo apt-get -y update
 sudo apt-get -y upgrade
 
 ##### Install all the base dependencies
-sudo apt-get -y install libpq-dev postgresql-9.6 postgresql-server-dev-9.6 redis-server
-
-## MOTD
-sudo apt-get install boxes
+sudo apt-get -y install libpq-dev postgresql-9.6 postgresql-server-dev-9.6 redis-server boxes
 
 ##### Scanning
 sudo apt-get -y install nmap zmap
@@ -116,7 +113,7 @@ if [ ! -f /etc/init.d/intrigue ]; then
 fi
 
 if ! $(grep -q instructions ~/.bash_profile); then
-  echo "[+] Adding line with instructions"
+  echo "[+] Configurating..."
   echo "boxes -a c -d unicornthink /core/util/instructions" >> ~/.bash_profile
 fi
 
