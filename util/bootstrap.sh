@@ -102,11 +102,12 @@ rbenv rehash
 #####
 ##### INTRIGUE SETUP / CONFIGURATION
 #####
+echo "[+] Installing Dependencies"
 cd $INTRIGUE_DIRECTORY
 bundle install
 
-#echo "[+] Migrating database"
-#bundle exec rake db:migrate
+echo "[+] Migrating database"
+bundle exec rake db:migrate
 
 if [ ! -f /etc/init.d/intrigue ]; then
   echo "[+] Creating intrigue service"
@@ -120,4 +121,5 @@ if ! $(grep -q instructions ~/.bash_profile); then
 fi
 
 # run the service
+cd /$INTRIGUE_DIRECTORY
 rbenv sudo $INTRIGUE_DIRECTORY/util/control.sh start
