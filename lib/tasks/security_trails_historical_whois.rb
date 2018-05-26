@@ -44,7 +44,7 @@ class SecurityTrailsHistoricalWhois < BaseTask
         _log "Got #{json["records"].count} records!"
 
         json["records"].each do |x|
-          _create_entity "DnsRecord", "name" => "#{x["hostname"]}"
+          _create_entity "DnsRecord", "name" => "#{x["hostname"]}", "security_trails_data" => x
         end
       else
         _log_error "Got invalid response: #{resp.code}\n#{resp.body}"
