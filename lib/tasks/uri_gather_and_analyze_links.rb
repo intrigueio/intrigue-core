@@ -70,7 +70,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
     _log "Displaying DNS name counts"
     grouped_original_dns_records.sort_by{|x| x.last }.reverse.each do |dns_record,count|
       # Create an entity for each record
-      #_create_entity "Host", "name" => dns_record
+      #_create_entity "DnsRecord", "name" => dns_record
       # Display the analysis in the logs
       _log "#{count} #{dns_record}"
     end
@@ -127,7 +127,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
     _log "Displaying resolved DNS Names"
     grouped_resolved_dns_records.sort_by{|x| x.last }.reverse.each do |dns_record,count|
       # Create an entity for each record
-      #_create_entity "Host", "name" => dns_record
+      #_create_entity "DnsRecord", "name" => dns_record
       # Display the analysis in the logs
       _log "#{count} #{dns_record}"
     end
@@ -179,7 +179,7 @@ class UriGatherAndAnalyzeLinks  < BaseTask
     ###
     _log "Displaying IP address counts"
     grouped_ip_records.sort_by{|x| x.last }.reverse.each do |record,count|
-      _create_entity "Host", "name" => record[:host], "description" => record[:dns_record]
+      _create_entity "IpAddress", "name" => record[:host], "description" => record[:dns_record]
       _log "#{count} #{record}"
     end
 

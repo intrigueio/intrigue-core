@@ -62,7 +62,7 @@ class DnsTransferZone < BaseTask
             z.rdata.respond_to?("last") ? record = "#{z.rdata.last.to_s}" : record = "#{z.rdata.to_s}"
 
             # Check to see if it's an ip address or a dns record
-            #record.is_ip_address? ? entity_type = "Host" : entity_type = "Host"
+            #record.is_ip_address? ? entity_type = "IpAddress" : entity_type = "DnsRecord"
             _create_entity "DnsRecord", { "name" => "#{record}", "type" => "#{z.type.to_s}", "content" => "#{record}" }
           end
         end
