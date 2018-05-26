@@ -103,21 +103,24 @@ echo "[+] Installing Dependencies"
 cd $INTRIGUE_DIRECTORY
 bundle install
 
-echo "[+] Migrating database"
+echo "[+] Migrating Database"
 bundle exec rake db:migrate
 
-echo "[+] Configuring to listen on 0.0.0.0"
-sed -i "s/tcp:\/\/127.0.0.1:7777/tcp:\/\/0.0.0.0:7777/g" /core/config/puma.rb
+echo "[+] Configuring puma to listen on 0.0.0.0"
+sed -i "s/tcp:\/\/127.0.0.1:7777/tcp:\/\/0.0.0.0:7777/g" $INTRIGUE_DIRECTORY/config/puma.rb
+
+echo "[+] Configuring puma to daemonize"
+RUN sed -i "s/daemonize false/daemonize true/g" $INTRIGUE_DIRECTORY/config/puma.rb
 
 if [ ! -f /etc/init.d/intrigue ]; then
-  echo "[+] Creating intrigue service"
+  echo "[+] Creating Intrigue system service"
   sudo cp $INTRIGUE_DIRECTORY/util/intrigue.service /lib/systemd/system
   sudo chmod +x $INTRIGUE_DIRECTORY/util/control.sh
 fi
 
 if ! $(grep -q instructions ~/.bash_profile); then
   echo "[+] Configurating..."
-  echo "boxes -a c -d unicornthink /core/util/instructions" >> ~/.bash_profile
+  echo "boxes -a c -d unicornthink $INTRIGUE_DIRECTORY/util/instructions" >> ~/.bash_profile
 fi
 
 # run the service

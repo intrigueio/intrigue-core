@@ -75,7 +75,6 @@ WORKDIR /core
 # Ensure we listen on all ipv4 interfaces, and background the file
 RUN cp /core/config/puma.rb.default /core/config/puma.rb
 RUN sed -i "s/tcp:\/\/127.0.0.1:7777/tcp:\/\/0.0.0.0:7777/g" /core/config/puma.rb
-RUN sed -i "s/daemonize true/daemonize false/g" /core/config/puma.rb
 
 # Expose a port
 EXPOSE 7777

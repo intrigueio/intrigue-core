@@ -10,7 +10,7 @@ Vagrant.configure("2") do |config|
     x.vm.network "forwarded_port", guest: 7777, host: 7777
 
     x.vm.provider :virtualbox do |vb|
-      vb.name = "core-dev-x"
+      vb.name = "core-dev"
       vb.memory = 4096
       vb.cpus = 2
     end
