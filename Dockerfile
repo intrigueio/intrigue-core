@@ -46,8 +46,8 @@ RUN echo 'eval "$(rbenv init -)"' >> .bashrc
 
 # Install multiple versions of ruby
 ENV CONFIGURE_OPTS --disable-install-doc
-RUN rbenv install 2.4.0
-RUN rbenv global 2.4.0
+RUN rbenv install 2.5.1
+RUN rbenv global 2.5.1
 
 # Fix an rbenv path issue
 RUN echo export PATH=/root/.rbenv/shims:$PATH >> /etc/profile.d/rbenv.sh

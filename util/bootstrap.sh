@@ -106,6 +106,9 @@ bundle install
 echo "[+] Migrating database"
 bundle exec rake db:migrate
 
+echo "[+] Configuring to listen on 0.0.0.0"
+sed -i "s/tcp:\/\/127.0.0.1:7777/tcp:\/\/0.0.0.0:7777/g" /core/config/puma.rb
+
 if [ ! -f /etc/init.d/intrigue ]; then
   echo "[+] Creating intrigue service"
   sudo cp $INTRIGUE_DIRECTORY/util/intrigue.service /lib/systemd/system
