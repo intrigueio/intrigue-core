@@ -7,6 +7,7 @@ module Strategy
         :name => "org_asset_discovery_passive",
         :pretty_name => "Org Asset Discovery (Passive)",
         :passive => true,
+        :user_selectable => false,
         :authors => ["jcran"],
         :description => "This strategy tries to enumerate assets with minimal interaction."
       }

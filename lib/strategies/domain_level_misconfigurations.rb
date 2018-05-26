@@ -7,6 +7,7 @@ module Strategy
         :name => "domain_misconfigurations",
         :pretty_name => "Check Domain Misconfigurations",
         :passive => true,
+        :user_selectable => false,
         :authors => ["jcran"],
         :description => "This strategy checks for common misconfigurations in a TLD."
       }

@@ -7,13 +7,14 @@ module Strategy
         :name => "ssrf_discovery_scan",
         :pretty_name => "SSRF Discovery Scan",
         :passive => true,
+        :user_selectable => false,
         :authors => ["jcran"],
         :description => "This strategy takes a netblock and tests all scanned hosts for SSRF."
       }
     end
 
     def self.recurse(entity, task_result)
-      
+
       if entity.type_string == "Netblock"
         start_recursive_task(task_result,"masscan_scan",entity,[
           {"name"=> "tcp_ports", "value" => "80,443" },

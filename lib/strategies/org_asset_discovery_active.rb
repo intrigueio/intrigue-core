@@ -7,6 +7,7 @@ module Strategy
         :name => "org_asset_discovery_active",
         :pretty_name => "Org Asset Discovery (Active)",
         :passive => false,
+        :user_selectable => true,
         :authors => ["jcran"],
         :description => "This strategy performs a network recon and enumeration for an organization. Suggest starting with a DnsRecord or NetBlock."
       }

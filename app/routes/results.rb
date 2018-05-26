@@ -105,7 +105,7 @@ class IntrigueApp < Sinatra::Base
       if Intrigue::StrategyFactory.has_strategy? "#{@params["strategy"]}"
         strategy_name = "#{@params["strategy"]}"
       else
-        strategy_name = "discovery"
+        strategy_name = "org_asset_discovery_active"
       end
 
       auto_enrich = @params["auto_enrich"] == "on" ? true : false

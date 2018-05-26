@@ -7,6 +7,7 @@ module Strategy
         :name => "rogue_domain_search",
         :pretty_name => "Rogue Domain Search",
         :passive => true,
+        :user_selectable => false,
         :authors => ["jcran"],
         :description => "This strategy runs whois on every domain and allows you to identify rogues."
       }

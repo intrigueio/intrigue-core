@@ -7,6 +7,7 @@ module Strategy
         :name => "enumerate_certificates",
         :pretty_name => "Grab SSL Certificate for every URI",
         :passive => true,
+        :user_selectable => false,
         :authors => ["jcran"],
         :description => "This strategy grabs the certificate for every URI."
       }
