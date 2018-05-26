@@ -26,13 +26,21 @@ class SecurityTrailsSubdomains < BaseTask
     entity_name = _get_entity_name
     uri = "https://api.securitytrails.com/v1/domain/#{entity_name}/subdomains"
 
-    # get the data. seriously could this be any easier?
-    resp = http_get_body uri, nil, {"APIKEY" => api_key}
-    json = JSON.parse(resp)
+    begin
+      # get the data. seriously could this be any easier?
+      resp = http_get_body uri, nil, {"APIKEY" => api_key}
+      json = JSON.parse(resp)
 
-    json["subdomains"].each do |x|
-      _create_entity "DnsRecord", "name" => "#{x}.#{entity_name}"
+      _log "Got #{json["subdomains"].count} subdomains!"
+
+      json["subdomains"].each do |x|
+        _create_entity "DnsRecord", "name" => "#{x}.#{entity_name}"
+      end
+
+    rescue JSON::ParserError => e
+      _log_error "Unable to get a properly formatted response"
     end
+
 
   end # end run()
 
