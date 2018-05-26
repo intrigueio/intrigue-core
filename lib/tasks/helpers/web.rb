@@ -186,8 +186,8 @@ module Task
     #
     # Helper method to easily get an HTTP Response BODY
     #
-    def http_get_body(uri)
-      response = http_request(:get,uri)
+    def http_get_body(uri, credentials=nil, headers={})
+      response = http_request(:get,uri, credentials, headers)
 
       ### filter body
       if response
