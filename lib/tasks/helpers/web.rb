@@ -259,7 +259,7 @@ module Task
          elsif method == :post
            # see: https://coderwall.com/p/c-mu-a/http-posts-in-ruby
            request = Net::HTTP::Post.new(uri)
-           request.body(data)
+           request.body = data
          elsif method == :head
            request = Net::HTTP::Head.new(uri)
          elsif method == :propfind

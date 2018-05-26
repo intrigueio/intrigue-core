@@ -10,7 +10,7 @@ describe "Intrigue v1.0 Tasks" do
     it "runs a default dns_lookup_reverse and returns the correct result" do
 
       entity = {
-        "type" => "Host",
+        "type" => "IpAddress",
         "details" => {
           "name" => "8.8.8.8"
         }

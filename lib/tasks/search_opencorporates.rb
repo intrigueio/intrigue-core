@@ -11,7 +11,7 @@ class SearchOpencorporates < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["Host","Organization","String"],
+      :allowed_types => ["Organization", "String"],
       :example_entities => [
         {"type" => "String", "details" => {"name" => "intrigue"}}
       ],
