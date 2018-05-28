@@ -12,10 +12,7 @@ class WebStackFingerprint < BaseTask
       :references => [
         "http://www.net-square.com/httprint_paper.html",
         "https://www.troyhunt.com/shhh-dont-let-your-response-headers/",
-        "https://asafaweb.com/",
-        "https://www.owasp.org/index.php/Category:OWASP_Cookies_Database",
-        "http://stackoverflow.com/questions/31134333/this-application-has-no-explicit-mapping-for-error",
-        "https://snyk.io/blog/77-percent-of-sites-still-vulnerable/"
+        "https://asafaweb.com/"
       ],
       :type => "enrichment",
       :passive => false,
@@ -115,7 +112,6 @@ class WebStackFingerprint < BaseTask
     products.concat product_match_http_cookies(_gather_cookies(response))
     _set_entity_detail("products", products.compact)
 
-    _finalize_enrichment
   end
 
   private

@@ -81,28 +81,6 @@ class EnrichUri < BaseTask
     #  end
     #end
 
-    ###############################################
-    ## Library fingerprinting and Screenshotting ##
-    ###############################################
-
-    # create a capybara session and browse to our uri
-    session = create_browser_session(uri)
-
-    # Capture versions of common javascript libs
-    #
-    # get existing software details (in case this is a second run)
-    libraries = @entity.get_detail("libraries") || []
-    # run the version checking scripts in our session (See lib/helpers/browser)
-    libraries = gather_javascript_libraries(session, libraries)
-
-    # set the new details
-    _set_entity_detail("libraries", libraries)
-
-    # capture a screenshot and save it as a detail
-    base64_screenshot_data = capture_screenshot(session)
-    _set_entity_detail("hidden_screenshot_contents",base64_screenshot_data)
-
-    _finalize_enrichment
   end
 
   def check_options_endpoint(uri)

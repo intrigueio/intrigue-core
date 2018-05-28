@@ -74,7 +74,6 @@ class EnrichAwsS3Bucket < BaseTask
       _call_handler("slackbot_buckets") if _get_option("notify_slack")
     end
 
-    _finalize_enrichment
   end
 
   def get_contents_unauthenticated(s3_uri, prefix)

@@ -1,7 +1,6 @@
 module Intrigue
 module Task
 class SearchOpencorporates < BaseTask
-
   def self.metadata
     {
       :name => "search_opencorporates",

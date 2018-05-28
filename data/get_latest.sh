@@ -2,7 +2,7 @@
 
 # GeoLiteCity download function
 function get_maxmind() {
-  echo "Getting latest MaxMind GeoLiteCity database"
+  echo "[+] Getting latest MaxMind GeoLiteCity database"
   wget -N -q  http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
   gunzip GeoLiteCity.dat.gz
   mv GeoLiteCity.dat latest.dat
@@ -14,7 +14,7 @@ if [ -d "geolitecity" ]; then
   if [ ! -f geolitecity/latest.dat ]; then
     get_maxmind
   else
-    echo "Moving old MaxMind GeoLiteCity database"
+    echo "[+] Moving old MaxMind GeoLiteCity database"
     mv latest.dat latest.dat.old
     get_maxmind
   fi
@@ -25,7 +25,7 @@ fi
 #  https://raw.githubusercontent.com/WebBreacher/WhatsMyName
 if [ -d "web_accounts_list" ]; then
   cd web_accounts_list
-  echo "Getting latest web_accounts_list.json"
+  echo "[+] Getting latest web_accounts_list.json"
   wget -N -q https://raw.githubusercontent.com/WebBreacher/WhatsMyName/master/web_accounts_list.json
   cd ..
 fi
@@ -34,7 +34,7 @@ fi
 #  https://www.iana.org/assignments/ipv4-address-space/ipv4-address-space.xhtml
 if [ -d "iana" ]; then
   cd iana
-  echo "Getting latest ipv4-address-space.csv"
+  echo "[+] Getting latest ipv4-address-space.csv"
   wget -N -q https://www.iana.org/assignments/ipv4-address-space/ipv4-address-space.csv
   cd ..
 fi
@@ -43,7 +43,7 @@ fi
 # https://www.quaxio.com/bgp/
 if [ -d "asn_info" ]; then
   cd asn_info
-  echo "Getting latest ASN data from APNIC"
+  echo "[+] Getting latest ASN data from APNIC"
   wget -N -q http://thyme.apnic.net/current/data-raw-table
   wget -N -q http://thyme.apnic.net/current/data-used-autnums
   cd ..

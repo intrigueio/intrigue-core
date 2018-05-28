@@ -64,8 +64,7 @@ class EnrichSnmp < BaseTask
     else
       raise ArgumentError, "Missing IP Address and Port. Unable to open a socket."
     end
-
-    _finalize_enrichment
+    
   end
 
 end

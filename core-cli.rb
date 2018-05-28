@@ -212,7 +212,7 @@ class CoreCli < Thor
         created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"])
 
         # Kick off the task
-        task_result = start_task("task", project, nil, task_name, created_entity, depth, options, handlers, strategy, auto_enrich)
+        task_result = start_task(nil, project, nil, task_name, created_entity, depth, options, handlers, strategy, auto_enrich)
 
       end
 
@@ -254,7 +254,7 @@ class CoreCli < Thor
       created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"])
 
       # kick off the task
-      task_result = start_task("task", p, nil, task_name, created_entity, depth, options, handlers, strategy_name, enrich)
+      task_result = start_task(nil, p, nil, task_name, created_entity, depth, options, handlers, strategy_name, enrich)
 
       # manually start enrichment on first entity
       #Intrigue::EntityManager.enrich_entity(created_entity, task_result) if enrich

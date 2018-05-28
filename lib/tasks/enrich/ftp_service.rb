@@ -71,7 +71,6 @@ class EnrichFtpService < BaseTask
 
     end
 
-    _finalize_enrichment
   end
 
 end

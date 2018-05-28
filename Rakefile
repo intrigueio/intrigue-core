@@ -11,30 +11,24 @@ intrigue_basedir = File.dirname(__FILE__)
 puma_config_file = "#{intrigue_basedir}/config/puma.rb"
 system_config_file = "#{intrigue_basedir}/config/config.json"
 database_config_file = "#{intrigue_basedir}/config/database.yml"
-sidekiq_interactive_config_file = "#{intrigue_basedir}/config/sidekiq-task-interactive.yml"
-sidekiq_autoscheduled_config_file = "#{intrigue_basedir}/config/sidekiq-task-autoscheduled.yml"
-sidekiq_enrichment_config_file = "#{intrigue_basedir}/config/sidekiq-task-enrichment.yml"
-sidekiq_app_config_file = "#{intrigue_basedir}/config/sidekiq-app.yml"
-sidekiq_screenshot_config_file = "#{intrigue_basedir}/config/sidekiq-screenshot.yml"
+sidekiq_config_file = "#{intrigue_basedir}/config/sidekiq.yml"
+redis_config_file = "#{intrigue_basedir}/config/redis.yml"
 control_script = "#{intrigue_basedir}/util/control.sh"
 
-# Data files
-geolocation_database = "#{intrigue_basedir}/data/geolitecity/latest.dat"
-web_accounts_list =  "#{intrigue_basedir}/data/web_accounts_list/web_accounts_list.json"
+all_config_files = [
+  puma_config_file,
+  system_config_file,
+  database_config_file,
+  sidekiq_config_file,
+  redis_config_file
+]
 
 desc "Clean"
 task :clean do
   puts "[+] Cleaning up!"
-  FileUtils.mv  puma_config_file, "#{puma_config_file}.backup"
-  FileUtils.mv  system_config_file, "#{system_config_file}.backup"
-  FileUtils.mv  database_config_file, "#{database_config_file}.backup"
-  FileUtils.mv  sidekiq_interactive_config_file, "#{sidekiq_interactive_config_file}.backup"
-  FileUtils.mv  sidekiq_autoscheduled_config_file, "#{sidekiq_autoscheduled_config_file}.backup"
-  FileUtils.mv  sidekiq_enrichment_config_file, "#{sidekiq_enrichment_config_file}.backup"
-  FileUtils.mv  sidekiq_app_config_file, "#{sidekiq_app_config_file}.backup"
-  FileUtils.mv  sidekiq_screenshot_config_file, "#{sidekiq_screenshot_config_file}.backup"
-  FileUtils.mv  geolocation_database, "#{geolocation_database}.backup"
-  FileUtils.mv  web_accounts_list, "#{web_accounts_list}.backup"
+  all_config_files.each do |c|
+    FileUtils.mv c, "#{c}.backup"
+  end
 end
 
 desc "System Setup"
@@ -80,15 +74,14 @@ task :setup do
   end
 
   # Print it
-  puts "[+] !!!"
+  puts "[+]"
   puts "[+] SYSTEM PASSWORD: #{system_password}"
-  puts "[+] ---"
+  puts "[+]"
 
   ## Copy database config into place
   puts "[+] Copying database config...."
   if File.exist? database_config_file
     puts "[ ] File already exists, skipping: #{database_config_file}"
-
   else
     puts "[+] Creating.... #{database_config_file}"
     FileUtils.cp "#{database_config_file}.default", database_config_file
@@ -101,14 +94,19 @@ task :setup do
     File.open(database_config_file,"w").puts YAML.dump config
   end
 
+  ## Copy redis config into place
+  puts "[+] Copying redis config...."
+  if File.exist? redis_config_file
+    puts "[ ] File already exists, skipping: #{redis_config_file}"
+  else
+    puts "[+] Creating.... #{redis_config_file}"
+    FileUtils.cp "#{redis_config_file}.default", redis_config_file
+  end
+
   ## Place sidekiq task worker configs into place
-  puts "[+] Setting up worker configs...."
+  puts "[+] Setting up sidekiq config...."
   worker_configs = [
-    sidekiq_interactive_config_file,
-    sidekiq_autoscheduled_config_file,
-    sidekiq_enrichment_config_file,
-    sidekiq_app_config_file,
-    sidekiq_screenshot_config_file
+    sidekiq_config_file
   ]
 
   worker_configs.each do |wc|
@@ -121,11 +119,8 @@ task :setup do
   end
   # end worker config placement
 
-  puts "[+] Obtaining latest data..."
-  unless File.exist? geolocation_database && web_accounts_list
-    puts "Getting data files (will fail if we don't have internet)"
-    Dir.chdir("#{intrigue_basedir}/data/"){ puts %x["./get_latest.sh"] }
-  end
+  puts "[+] Downloading latest data files..."
+  Dir.chdir("#{intrigue_basedir}/data/"){ puts %x["./get_latest.sh"] }
 
   ## Copy control script
   puts "[+] Copying control script..."
@@ -137,16 +132,19 @@ task :setup do
 
     # Configure the IDIR directory
     script_text = File.read(control_script)
-    new_script_text = script_text.gsub("IDIR=/path/to/install/directory","IDIR=#{intrigue_basedir}")
+    new_script_text = script_text.gsub("IDIR=/core","IDIR=#{intrigue_basedir}")
     File.open(control_script,"w").puts new_script_text
 
-    # Make a link if
+    # Make a link
+    # TODO - this should be deprecated.
     if Dir.exist?("/etc/init.d") && !File.exist?("#{intrigue_basedir}/util/control.sh")
       puts '[+] Creating system-level startup script'
       `ln -s #{intrigue_basedir}/util/control.sh /etc/init.d/intrigue`
     end
 
   end
+
+  puts "[+] Complete!"
 
 end
 
@@ -169,39 +167,3 @@ end
 #task :integration do
 #  t.rspec_opts = "--pattern spec/integration/*_spec.rb"
 #end
-
-require "sequel"
-Sequel.extension :migration
-#TODO - fix this
-DB = Sequel.connect('postgres://intrigue:intrigue@localhost:5432/intrigue_dev')
-
-namespace :db do
-
-  desc "Prints current schema version"
-  task :version do
-    version = if DB.tables.include?(:schema_info)
-      DB[:schema_info].first[:version]
-    end || 0
-    puts "[+] Schema Version: #{version}"
-  end
-
-  desc "Perform migration up to latest migration available"
-  task :migrate => :setup do
-    Sequel::Migrator.run(DB, "db")
-    Rake::Task['db:version'].execute
-  end
-
-  desc "Perform rollback to specified target or full rollback as default"
-  task :rollback, :target do |t, args|
-    args.with_defaults(:target => 0)
-    Sequel::Migrator.run(DB, "db", :target => args[:target].to_i)
-    Rake::Task['db:version'].execute
-  end
-
-  desc "Perform migration reset (full rollback and migration)"
-  task :reset do
-    Sequel::Migrator.run(DB, "db", :target => 0)
-    Sequel::Migrator.run(DB, "db")
-    Rake::Task['db:version'].execute
-  end
-end

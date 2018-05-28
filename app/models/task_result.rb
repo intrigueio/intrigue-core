@@ -21,38 +21,17 @@ module Intrigue
         super
       end
 
-      def start(queue)
+      def start(requested_queue=nil)
 
-        if queue == "task_autoscheduled"
-          self.job_id = Sidekiq::Client.push({
-            "class" => Intrigue::TaskFactory.create_by_name(task_name).class.to_s,
-            "queue" => "task_autoscheduled",
-            "retry" => true,
-            "args" => [id]
-          })
+        task_class = Intrigue::TaskFactory.create_by_name(task_name).class
+        forced_queue = task_class.metadata[:queue]
 
-        elsif queue == "task_enrichment"
-          self.job_id = Sidekiq::Client.push({
-            "class" => Intrigue::TaskFactory.create_by_name(task_name).class.to_s,
-            "queue" => "task_enrichment",
-            "retry" => true,
-            "args" => [id]
-          })
-
-        elsif queue == "screenshot"
-          self.job_id = Sidekiq::Client.push({
-            "class" => Intrigue::TaskFactory.create_by_name(task_name).class.to_s,
-            "queue" => "screenshot",
-            "retry" => true,
-            "args" => [id]
-          })
-
-        else
-          # start it in the task queues
-          task = Intrigue::TaskFactory.create_by_name(task_name)
-          self.job_id = task.class.perform_async id
-        end
-
+        self.job_id = Sidekiq::Client.push({
+          "class" => task_class.to_s,
+          "queue" => forced_queue || requested_queue || "task",
+          "retry" => true,
+          "args" => [id]
+        })
         save
 
       self.job_id

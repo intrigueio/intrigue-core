@@ -1,0 +1,10 @@
+:verbose: true
+:dynamic: true
+:concurrency: 50
+:limits:
+  app: 2
+  task: 4
+  task_autoscheduled: 20
+  task_browser: 3
+  task_enrichment: 20
+  task_scan: 1

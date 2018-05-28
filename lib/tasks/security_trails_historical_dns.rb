@@ -52,7 +52,7 @@ class SecurityTrailsHistoricalDns < BaseTask
         }
       end
     end
-    
+
   end
 
   def _get_st_response(record,page)

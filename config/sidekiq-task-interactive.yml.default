@@ -1,6 +1,0 @@
-:verbose: false
-#:logfile: ./log/task-interactive.log # this is commented bc we supply it on the cli
-#:pidfile: ./tmp/pids/task-interactive.pid # this is commented bc we supply it on the cli
-:concurrency: 5
-:queues:
-  - task

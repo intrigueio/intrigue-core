@@ -29,7 +29,7 @@ class NmapScan < BaseTask
     super
 
     ###
-    ### SECURITY - sanity check to_scan
+    ### TODO SECURITY - more sanity checking on to_scan
     ###
 
     # Get range, or host

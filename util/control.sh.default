@@ -28,19 +28,23 @@ function setup_server {
 
 function start_server {
   echo "Starting interactive task processing..."
-  bundle exec sidekiq -C $IDIR/config/sidekiq-task-interactive.yml -r $IDIR/core.rb -d -L $IDIR/log/task-interactive.log -P $IDIR/tmp/pids/sidekiq-interactive.pid
+  bundle exec sidekiq -C $IDIR/config/sidekiq-task.yml -r $IDIR/core.rb -d -L $IDIR/log/task.log -P $IDIR/tmp/pids/sidekiq-task.pid
 
+  echo "Starting scalable background processing"
   for x in 1; do
     echo "Starting autoscheduled task processing... $x"
     bundle exec sidekiq -C $IDIR/config/sidekiq-task-autoscheduled.yml -r $IDIR/core.rb -d -L $IDIR/log/task-autoscheduled.log -P $IDIR/tmp/pids/sidekiq-task-autoscheduled.pid
     echo "Starting enrichment task processing... $x"
     bundle exec sidekiq -C $IDIR/config/sidekiq-task-enrichment.yml -r $IDIR/core.rb -d -L $IDIR/log/task-enrichment.log -P $IDIR/tmp/pids/sidekiq-task-enrichment.pid
-    echo "Starting screenshot processing... $x"
-    bundle exec sidekiq -C $IDIR/config/sidekiq-screenshot.yml -r $IDIR/core.rb -d -L $IDIR/log/sidekiq-screenshot.log -P $IDIR/tmp/pids/sidekiq-screenshot.pid
+    echo "Starting browser processing... $x"
+    bundle exec sidekiq -C $IDIR/config/sidekiq-task-browser.yml -r $IDIR/core.rb -d -L $IDIR/log/sidekiq-browser.log -P $IDIR/tmp/pids/sidekiq-task-browser.pid
+    echo "Starting scan processing... $x"
+    bundle exec sidekiq -C $IDIR/config/sidekiq-task-scan.yml -r $IDIR/core.rb -d -L $IDIR/log/sidekiq-scan.log -P $IDIR/tmp/pids/sidekiq-task-scan.pid
   done
 
-  echo "Starting background worker processing..."
-  bundle exec sidekiq -C $IDIR/config/sidekiq-app.yml -r $IDIR/core.rb -d -L $IDIR/log/sidekiq-app.log -P $IDIR/tmp/pids/sidekiq-task-app.pid
+  echo "Starting app processing..."
+  bundle exec sidekiq -C $IDIR/config/sidekiq-app.yml -r $IDIR/core.rb -d -L $IDIR/log/sidekiq-app.log -P $IDIR/tmp/pids/sidekiq-app.pid
+
   echo "Starting puma..."
   bundle exec puma -C $IDIR/config/puma.rb --pidfile $IDIR/tmp/pids/puma.pid
 }

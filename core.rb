@@ -13,6 +13,7 @@ require 'uri'
 require 'sidekiq'
 require 'sidekiq/api'
 require 'sidekiq/web'
+require 'sidekiq-limit_fetch'
 
 # Database
 require 'sequel'
@@ -33,6 +34,7 @@ require_relative 'lib/initialize/sidekiq_profiler'
 require_relative 'lib/initialize/string'
 
 $intrigue_basedir = File.dirname(__FILE__)
+$intrigue_environment = ENV.fetch("INTRIGUE_ENV","development")
 
 #
 # Simple configuration check to ensure we have configs in place
@@ -40,8 +42,8 @@ def sanity_check_system
   configuration_files = [
     "#{$intrigue_basedir}/config/config.json",
     "#{$intrigue_basedir}/config/database.yml",
-    "#{$intrigue_basedir}/config/sidekiq-task-interactive.yml",
-    "#{$intrigue_basedir}/config/sidekiq-task-autoscheduled.yml",
+    "#{$intrigue_basedir}/config/sidekiq.yml",
+    "#{$intrigue_basedir}/config/redis.yml",
     "#{$intrigue_basedir}/config/puma.rb"
   ]
   configuration_files.each do |file|
@@ -53,6 +55,19 @@ def sanity_check_system
   end
 end
 
+def setup_redis
+  redis_config = YAML.load_file("#{$intrigue_basedir}/config/redis.yml")
+  redis_host = redis_config[$intrigue_environment]["host"] || "localhost"
+  redis_port = redis_config[$intrigue_environment]["port"] || 6379
+
+  # Pull sidekiq config from the environment if it's available (see docker config)
+  Sidekiq.configure_server do |config|
+    redis_uri = ENV.fetch("REDIS_URI","redis://#{redis_host}:#{redis_port}/")
+    config.redis = { url: "#{redis_uri}", namespace: 'intrigue' }
+  end
+
+end
+
 # database set up
 def setup_database
   options = {
@@ -60,14 +75,13 @@ def setup_database
     :pool_timeout => 240
   }
 
-  environment = "development"
   database_config = YAML.load_file("#{$intrigue_basedir}/config/database.yml")
-  database_host = database_config[environment]["host"]
-  database_port = database_config[environment]["port"] || 5432
-  database_user = database_config[environment]["user"]
-  database_pass = database_config[environment]["pass"]
-  database_name = database_config[environment]["database"]
-  database_debug = database_config[environment]["debug"]
+  database_host = database_config[$intrigue_environment]["host"] || "localhost"
+  database_port = database_config[$intrigue_environment]["port"] || 5432
+  database_user = database_config[$intrigue_environment]["user"]
+  database_pass = database_config[$intrigue_environment]["pass"]
+  database_name = database_config[$intrigue_environment]["database"]
+  database_debug = database_config[$intrigue_environment]["debug"]
 
   $db = Sequel.connect("postgres://#{database_user}@#{database_host}:#{database_port}/#{database_name}", options)
   $db.loggers << Logger.new($stdout) if database_debug
@@ -79,6 +93,7 @@ def setup_database
 end
 
 sanity_check_system
+setup_redis
 setup_database
 
 class IntrigueApp < Sinatra::Base
@@ -93,16 +108,6 @@ class IntrigueApp < Sinatra::Base
     set :logging, true
   end
 
-  # Pull sidekiq config from the environment if it's available (see docker config)
-  Sidekiq.configure_server do |config|
-    redis_uri = ENV.fetch("REDIS_URI","redis://localhost:6379/")
-    config.redis = { url: "#{redis_uri}", namespace: 'intrigue' }
-  end
-
-  Sidekiq.configure_client do |config|
-    redis_uri = ENV.fetch("REDIS_URI","redis://localhost:6379/")
-    config.redis = { url: "#{redis_uri}", namespace: 'intrigue' }
-  end
 
   ###
   ### Helpers

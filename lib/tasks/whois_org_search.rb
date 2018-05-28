@@ -1,6 +1,7 @@
 module Intrigue
 module Task
 class WhoisOrgSearch < BaseTask
+  sidekiq_options unique: :until_and_while_executing
   include Intrigue::Task::Web
 
   def self.metadata

@@ -130,6 +130,12 @@ class BaseTask
       end
 
     ensure   # Mark it complete and save it
+
+      # if it's of type enrichment, finalize enrich
+      if self.class.metadata[:type] == "enrichment"
+        _finalize_enrichment
+      end
+
       _log "Cleaning up!"
       @task_result.timestamp_end = Time.now.getutc
       @task_result.complete = true

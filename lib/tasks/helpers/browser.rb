@@ -24,7 +24,8 @@ module Task
         page_title = session.document.title
         _log_good "Title: #{page_title}" if @task_result
 
-
+      rescue Capybara::Poltergeist::TimeoutError => e
+        _log_error "Fail Error: #{e}" if @task_result
       rescue Capybara::Poltergeist::StatusFailError => e
         _log_error "Fail Error: #{e}" if @task_result
       rescue Capybara::Poltergeist::JavascriptError => e
@@ -48,16 +49,24 @@ module Task
 
     def capture_screenshot(session)
 
+      # wait for the page to render
+      sleep 3
 
-      sleep 5
-      
       #
       # Capture a screenshot
       #
       tempfile = Tempfile.new(['phantomjs', '.png'])
 
-      return_path = session.save_screenshot(tempfile.path)
-      _log "Saved Screenshot to #{return_path}"
+      begin
+        return_path = session.save_screenshot(tempfile.path)
+        _log "Saved Screenshot to #{return_path}"
+      rescue Capybara::Poltergeist::TimeoutError => e
+        _log_error "Fail Error: #{e}" if @task_result
+      rescue Capybara::Poltergeist::StatusFailError => e
+        _log_error "Fail Error: #{e}" if @task_result
+      rescue Capybara::Poltergeist::JavascriptError => e
+        _log_error "JS Error: #{e}" if @task_result
+      end
 
       # resize the image using minimagick
       image = MiniMagick::Image.open(return_path)

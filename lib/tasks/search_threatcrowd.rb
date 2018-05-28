@@ -1,6 +1,7 @@
 module Intrigue
 module Task
 class SearchThreatcrowd < BaseTask
+  
   include Intrigue::Task::Web
 
   def self.metadata

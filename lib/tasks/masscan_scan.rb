@@ -25,7 +25,8 @@ class Masscan < BaseTask
       ],
       :created_types => [ "DnsRecord","DnsService","FingerService", "FtpService",
                           "IpAddress", "NetworkService","SshService","SnmpService",
-                          "MongoService","Uri" ]
+                          "MongoService","Uri" ],
+      :queue => "task_scan"
     }
   end
 

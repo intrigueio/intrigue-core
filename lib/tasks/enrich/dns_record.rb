@@ -82,7 +82,6 @@ class EnrichDnsRecord < BaseTask
       end
     end
 
-    _finalize_enrichment
   end
 
 end

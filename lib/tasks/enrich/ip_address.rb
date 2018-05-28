@@ -75,8 +75,6 @@ class EnrichIpAddress < BaseTask
     end
 
     _set_entity_detail("dns_entries", dns_entries.uniq )
-
-    _finalize_enrichment
   end
 
 end

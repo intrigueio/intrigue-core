@@ -123,27 +123,24 @@ module Intrigue
       end
 
       def schedule_enrichment(depth=1, scan_result=nil)
+
+        previously_scheduled = get_detail("enrichment_scheduled") || []
+        newly_scheduled = []
+        proj = Intrigue::Model::Project.first(id: self.project_id)
+
         enrichment_tasks.each do |task_name|
-
           unless enrichment_scheduled?(task_name)
-
-            #$db.transaction do
-              # Mark AS scheduled
-              scheduled_tasks = get_detail(["enrichment_scheduled"]) || []
-              scheduled_tasks << task_name
-              ### TODO - RACE CONDITION HERE? MUTEX?
-              set_detail "enrichment_scheduled", scheduled_tasks
-            #end
-
-            # actually schedule it
-            proj = Intrigue::Model::Project.first(id: self.project_id)
-
-            raise "INVALID ENTITY... PROJECT CANNOT BE NULL. ENTITY: #{self}" unless proj
-
+            # now schedule it
+            newly_scheduled << task_name
             start_task("task_enrichment", proj, scan_result, task_name, self, depth)
           end
-
         end
+
+        # update our list
+        $db.transaction do
+          self.set_detail "enrichment_scheduled", previously_scheduled.concat(newly_scheduled)
+        end
+
       end
 
       def enrichment_scheduled?(task_name)
