@@ -63,7 +63,7 @@ def setup_redis
   # Pull sidekiq config from the environment if it's available (see docker config)
   Sidekiq.configure_server do |config|
     redis_uri = ENV.fetch("REDIS_URI","redis://#{redis_host}:#{redis_port}/")
-    config.redis = { url: "#{redis_uri}", namespace: 'intrigue' }
+    config.redis = { url: "#{redis_uri}" }
   end
 
 end
