@@ -5,15 +5,16 @@ require 'yaml'
 require 'fileutils'
 
 # Config files
-intrigue_basedir = File.dirname(__FILE__)
+$intrigue_basedir = File.dirname(__FILE__)
+$intrigue_environment = "development"
 
 # Configuration and scripts
-puma_config_file = "#{intrigue_basedir}/config/puma.rb"
-system_config_file = "#{intrigue_basedir}/config/config.json"
-database_config_file = "#{intrigue_basedir}/config/database.yml"
-sidekiq_config_file = "#{intrigue_basedir}/config/sidekiq.yml"
-redis_config_file = "#{intrigue_basedir}/config/redis.yml"
-control_script = "#{intrigue_basedir}/util/control.sh"
+puma_config_file = "#{$intrigue_basedir}/config/puma.rb"
+system_config_file = "#{$intrigue_basedir}/config/config.json"
+database_config_file = "#{$intrigue_basedir}/config/database.yml"
+sidekiq_config_file = "#{$intrigue_basedir}/config/sidekiq.yml"
+redis_config_file = "#{$intrigue_basedir}/config/redis.yml"
+control_script = "#{$intrigue_basedir}/util/control.sh"
 
 all_config_files = [
   puma_config_file,
@@ -120,7 +121,7 @@ task :setup do
   # end worker config placement
 
   puts "[+] Downloading latest data files..."
-  Dir.chdir("#{intrigue_basedir}/data/"){ puts %x["./get_latest.sh"] }
+  Dir.chdir("#{$intrigue_basedir}/data/"){ puts %x["./get_latest.sh"] }
 
   ## Copy control script
   puts "[+] Copying control script..."
@@ -132,14 +133,14 @@ task :setup do
 
     # Configure the IDIR directory
     script_text = File.read(control_script)
-    new_script_text = script_text.gsub("IDIR=/core","IDIR=#{intrigue_basedir}")
+    new_script_text = script_text.gsub("IDIR=/core","IDIR=#{$intrigue_basedir}")
     File.open(control_script,"w").puts new_script_text
 
     # Make a link
     # TODO - this should be deprecated.
-    if Dir.exist?("/etc/init.d") && !File.exist?("#{intrigue_basedir}/util/control.sh")
+    if Dir.exist?("/etc/init.d") && !File.exist?("#{$intrigue_basedir}/util/control.sh")
       puts '[+] Creating system-level startup script'
-      `ln -s #{intrigue_basedir}/util/control.sh /etc/init.d/intrigue`
+      `ln -s #{$intrigue_basedir}/util/control.sh /etc/init.d/intrigue`
     end
 
   end
@@ -167,3 +168,67 @@ end
 #task :integration do
 #  t.rspec_opts = "--pattern spec/integration/*_spec.rb"
 #end
+
+
+# database set up
+def setup_database
+  require "sequel"
+
+  options = {
+    :max_connections => 16,
+    :pool_timeout => 240
+  }
+
+  database_config = YAML.load_file("#{$intrigue_basedir}/config/database.yml")
+  database_host = database_config[$intrigue_environment]["host"] || "localhost"
+  database_port = database_config[$intrigue_environment]["port"] || 5432
+  database_user = database_config[$intrigue_environment]["user"]
+  database_pass = database_config[$intrigue_environment]["pass"]
+  database_name = database_config[$intrigue_environment]["database"]
+  database_debug = database_config[$intrigue_environment]["debug"]
+
+  $db = Sequel.connect("postgres://#{database_user}@#{database_host}:#{database_port}/#{database_name}", options)
+  $db.loggers << Logger.new($stdout) if database_debug
+
+  # Allow datasets to be paginated
+  $db.extension :pagination
+  #$db.extension :pg_json
+  Sequel.extension :pg_json_ops
+  Sequel.extension :migration
+end
+
+
+namespace :db do
+
+  desc "Prints current schema version"
+  task :version do
+    setup_database
+    version = if $db.tables.include?(:schema_info)
+      $db[:schema_info].first[:version]
+    end || 0
+    puts "[+] Schema Version: #{version}"
+  end
+
+  desc "Perform migration up to latest migration available"
+  task :migrate do
+    setup_database
+    Sequel::Migrator.run($db, "db")
+    Rake::Task['db:version'].execute
+  end
+
+  desc "Perform rollback to specified target or full rollback as default"
+  task :rollback, :target do |t, args|
+    setup_database
+    args.with_defaults(:target => 0)
+    Sequel::Migrator.run($db, "db", :target => args[:target].to_i)
+    Rake::Task['db:version'].execute
+  end
+
+  desc "Perform migration reset (full rollback and migration)"
+  task :reset do
+    setup_database
+    Sequel::Migrator.run($db, "db", :target => 0)
+    Sequel::Migrator.run($db, "db")
+    Rake::Task['db:version'].execute
+  end
+end
