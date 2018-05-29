@@ -60,9 +60,10 @@ module Strategy
 
       elsif entity.type_string == "NetBlock"
 
-        # Make sure it's owned by the org, and if it is, scan it. also skip ipv6/
-        if (entity.details["whois_full_text"] =~ /#{filter_strings}/i && !(entity.name =~ /::/)) || entity.user_created?
+        scannable = (entity.details["whois_full_text"] =~ /#{filter_strings}/i && !(entity.name =~ /::/)) ||  entity.user_created? || entity.created_by?("search_bgp")
 
+        # Make sure it's owned by the org, and if it is, scan it. also skip ipv6/
+        if scannable
           # Muhstik seems like a pretty good baseline for this stuff
           # 80/443: Weblogic, Wordpress, Drupal, WebDav, ClipBucket
           # 2004: Webuzo
