@@ -81,8 +81,6 @@ else
   cd ~/.rbenv/plugins/rbenv-sudo && git pull
 fi
 
-
-
 RUBY_VERSION=`cat $INTRIGUE_DIRECTORY/.ruby-version`
 if [ ! -e ~/.rbenv/versions/$RUBY_VERSION ]; then
   echo "[+] Installing Ruby $RUBY_VERSION"

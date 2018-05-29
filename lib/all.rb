@@ -61,7 +61,7 @@ Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
 
 # And check to see if there are any specified load paths
-global_config = Intrigue::Config::GlobalConfig.new
+global_config = $global_config
 if global_config.config["intrigue_task_load_paths"]
   global_config.config["intrigue_task_load_paths"].each do |load_path|
     load_path = "#{tasks_folder}/#{load_path}" unless load_path[0] == "/"
@@ -81,7 +81,7 @@ strategies_folder = File.expand_path('../strategies', __FILE__) # get absolute d
 Dir["#{strategies_folder}/*.rb"].each {|f| require_relative f}
 
 # And check to see if there are any specified load paths
-global_config = Intrigue::Config::GlobalConfig.new
+global_config = $global_config
 if global_config.config["intrigue_strategy_load_paths"]
   global_config.config["intrigue_strategy_load_paths"].each do |load_path|
     load_path = "#{strategies_folder}/#{load_path}" unless load_path[0] == "/"
@@ -107,7 +107,7 @@ require_relative "#{entities_folder}/network_service" # have to do this first, s
 Dir["#{entities_folder}/*.rb"].each {|f| require_relative f}
 
 # And check to see if there are any specified load paths
-global_config = Intrigue::Config::GlobalConfig.new
+global_config = $global_config
 if global_config.config["intrigue_entity_load_paths"]
   global_config.config["intrigue_entity_load_paths"].each do |load_path|
     load_path = "#{entities_folder}/#{load_path}" unless load_path[0] == "/"
@@ -127,7 +127,7 @@ handlers_folder = File.expand_path('../handlers', __FILE__) # get absolute direc
 Dir["#{handlers_folder}/*.rb"].each {|f| require_relative f}
 
 # And check to see if there are any specified load paths
-global_config = Intrigue::Config::GlobalConfig.new
+global_config = $global_config
 if global_config.config["intrigue_handler_load_paths"]
   global_config.config["intrigue_handler_load_paths"].each do |load_path|
     load_path = "#{handlers_folder}/#{load_path}" unless load_path[0] == "/"

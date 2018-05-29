@@ -35,6 +35,7 @@ require_relative 'lib/initialize/string'
 
 $intrigue_basedir = File.dirname(__FILE__)
 $intrigue_environment = ENV.fetch("INTRIGUE_ENV","development")
+$global_config = Intrigue::Config::GlobalConfig.new
 
 #
 # Simple configuration check to ensure we have configs in place
@@ -104,7 +105,7 @@ class IntrigueApp < Sinatra::Base
   set :views, "#{$intrigue_basedir}/app/views"
   set :public_folder, 'public'
 
-  if Intrigue::Config::GlobalConfig.new.config["debug"]
+  if $global_config.config["debug"]
     set :logging, true
   end
 
@@ -121,13 +122,12 @@ class IntrigueApp < Sinatra::Base
   ###
   ### (Very) Simple Auth
   ###
-  global_config = Intrigue::Config::GlobalConfig.new
-  if global_config
-    if global_config.config["http_security"]
+  if $global_config
+    if $global_config.config["http_security"]
       use Rack::Auth::Basic, "Restricted" do |username, password|
         [username, password] == [
-          global_config.config["credentials"]["username"],
-          global_config.config["credentials"]["password"]
+          $global_config.config["credentials"]["username"],
+          $global_config.config["credentials"]["password"]
         ]
       end
     end

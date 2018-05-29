@@ -17,7 +17,7 @@ module Handler
 
       def _get_handler_config(key)
         begin
-          global_config = Intrigue::Config::GlobalConfig.new
+          global_config = $global_config
           global_config.config["intrigue_handlers"][self.class.metadata[:name]][key]
         rescue NoMethodError => e
           puts "Error, invalid config key requested (#{key}) for #{self.class.metadata[:name]}: #{e}"
