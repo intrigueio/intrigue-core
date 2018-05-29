@@ -11,7 +11,7 @@ class SearchBgp < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["AutonomousSystem", "Organization", "String"],
+      :allowed_types => ["Organization", "String"],
       :example_entities => [
         {"type" => "String", "details" => {"name" => "intrigue"}}
       ],
@@ -30,6 +30,7 @@ class SearchBgp < BaseTask
     begin
       json_resp = JSON.parse http_get_body "https://resource.intrigue.io/org/search/#{entity_name}"
       _log "Got response: #{json_resp}"
+
       json_resp.each do |r|
         _create_entity "Organization", {"name" => "#{r["org"]}"}
         _create_entity "AutonomousSystem", {"name" => "AS#{r["asnumber"]}"}
