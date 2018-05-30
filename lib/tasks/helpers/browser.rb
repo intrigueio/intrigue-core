@@ -11,18 +11,11 @@ module Intrigue
 module Task
   module Browser
 
-    def create_browser_session(uri="http://google.com")
+    def _create_browser_session
       begin
 
         # Start a new session
         session = Capybara::Session.new(:poltergeist)
-
-        # browse to our target
-        session.visit(uri)
-
-        # Capture Title
-        page_title = session.document.title
-        _log_good "Title: #{page_title}" if @task_result
 
       rescue Capybara::Poltergeist::TimeoutError => e
         _log_error "Fail Error: #{e}" if @task_result
@@ -35,7 +28,10 @@ module Task
     session
     end
 
-    def capture_document(session,uri)
+    def capture_document(uri)
+
+      session = _create_browser_session
+
       # browse to our target
       session.visit(uri)
 
@@ -43,11 +39,18 @@ module Task
       page_title = session.document.title
       _log_good "Title: #{page_title}" if @task_result
 
+      session.driver.quit
+
     session.document
     end
+    
 
+    def capture_screenshot(uri)
 
-    def capture_screenshot(session)
+      session = _create_browser_session
+
+      # browse to our target
+      session.visit(uri)
 
       # wait for the page to render
       sleep 3
@@ -77,19 +80,28 @@ module Task
       # open and read the file's contents, and base64 encode them
       base64_image_contents = Base64.encode64(File.read(tempfile.path))
 
-      # cleanup
+      # cleanup. note that this method is overridden, see initialize
       session.driver.quit
+
+      # cleanup
       tempfile.close
       tempfile.unlink
 
     base64_image_contents
     end
 
-    def gather_javascript_libraries(session, products=[])
+    def gather_javascript_libraries(uri, libraries=[])
+
 
       # Test site: https://www.jetblue.com/plan-a-trip/#/
       # Examples: https://builtwith.angularjs.org/
       # Examples: https://www.madewithangular.com/
+
+      session = _create_browser_session
+
+      # browse to our target
+      session.visit(uri)
+
 
       checks = [
         { library: "Angular", script: 'angular.version.full' },
@@ -164,14 +176,12 @@ module Task
         version = session.evaluate_script(check[:script])
         if version
           _log_good "Detected #{check[:library]} #{version}" if @task_result
-          products << {"product" => "#{check[:library]}", "detected" => true, "version" => "#{version}" }
-        else
-          products << {"product" => "#{check[:library]}", "detected" => false }
+          libraries << {"library" => "#{check[:library]}", "detected" => true, "version" => "#{version}" }
         end
 
       end
 
-    products
+    libraries
     end
 
 

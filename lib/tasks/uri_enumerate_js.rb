@@ -30,22 +30,14 @@ class UriEnumerateJs  < BaseTask
 
     uri = _get_entity_name
 
-    ###############################################
-    ## Library fingerprinting and Screenshotting ##
-    ###############################################
+    #  Get existing software details (in case this is a second run)
+    existing_libraries = _get_entity_detail("javascript") || []
 
-    # create a capybara session and browse to our uri
-    session = create_browser_session(uri)
-
-    # Capture versions of common javascript libs
-    #
-    # get existing software details (in case this is a second run)
-    libraries = @entity.get_detail("libraries") || []
-    # run the version checking scripts in our session (See lib/helpers/browser)
-    libraries = gather_javascript_libraries(session, libraries)
+    # Run the version checking scripts in our session (See lib/helpers/browser)
+    new_libraries = gather_javascript_libraries(uri, existing_libraries)
 
     # set the new details
-    _set_entity_detail("libraries", libraries)
+    _set_entity_detail("javascript", new_libraries)
 
   end
 

@@ -31,12 +31,9 @@ class UriScreenshot < BaseTask
 
     uri = _get_entity_name
 
-    # create a capybara session and browse to our uri
-    session = create_browser_session(uri)
-
     # capture a screenshot and save it as a detail
-    base64_screenshot_data = capture_screenshot(session)
-    _set_entity_detail("hidden_screenshot_contents",base64_screenshot_data)
+    _set_entity_detail("hidden_screenshot_contents",capture_screenshot(uri))
+
   end
 
 end

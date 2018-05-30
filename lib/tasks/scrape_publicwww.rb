@@ -33,13 +33,11 @@ class ScrapePublicwww < BaseTask
     max_page_count = _get_option "pages"
     domain_name = _get_entity_name
 
-    browser = create_browser_session
-
     max_page_count.times do |page_count|
 
       # Get a page
       uri = "https://publicwww.com/websites/%22.#{domain_name}%22/#{page_count + 1}"
-      body_text = capture_document(browser, uri).text
+      body_text = capture_document(uri).text
       _log "Got text: #{body_text}"
 
       body_text.gsub("<\/?b>","").scan(/[a-z0-9\.\-_]+\.#{domain_name}/).each do |d|
