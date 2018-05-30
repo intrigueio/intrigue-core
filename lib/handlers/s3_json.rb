@@ -7,6 +7,7 @@ module Handler
     def self.metadata
       {
         :name => "s3_json",
+        :pretty_name => "Export to JSON and upload to s3",
         :type => "export"
       }
     end

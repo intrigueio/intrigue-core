@@ -5,6 +5,7 @@ module Handler
     def self.metadata
       {
         :name => "webhook",
+        :pretty_name => "Export to JSON and call a webhook",
         :type => "export"
       }
     end

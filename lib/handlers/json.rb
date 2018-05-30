@@ -5,6 +5,7 @@ module Handler
     def self.metadata
       {
         :name => "json",
+        :pretty_name => "Export to CSV in /tmp",
         :type => "export"
       }
     end

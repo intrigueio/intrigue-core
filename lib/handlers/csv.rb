@@ -5,6 +5,7 @@ module Handler
     def self.metadata
       {
         :name => "csv",
+        :pretty_name => "Export to CSV file (/tmp)",
         :type => "export"
       }
     end

@@ -6,8 +6,8 @@ module Handler
 
     def self.metadata
       {
-        :name => "aws_s3_brute",
-
+        :name => "slackbot_buckets",
+        :type => "notify"
       }
     end
 
