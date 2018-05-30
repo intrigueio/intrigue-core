@@ -12,11 +12,15 @@ module Task
   module Browser
 
     def _create_browser_session
+      # Start a new session
+      Capybara::Session.new(:poltergeist)
+    end
+
+    def capture_document(uri)
+      # browse to our target
       begin
-
-        # Start a new session
-        session = Capybara::Session.new(:poltergeist)
-
+        session = _create_browser_session
+        session.visit(uri)
       rescue Capybara::Poltergeist::TimeoutError => e
         _log_error "Fail Error: #{e}" if @task_result
       rescue Capybara::Poltergeist::StatusFailError => e
@@ -24,16 +28,6 @@ module Task
       rescue Capybara::Poltergeist::JavascriptError => e
         _log_error "JS Error: #{e}" if @task_result
       end
-
-    session
-    end
-
-    def capture_document(uri)
-
-      session = _create_browser_session
-
-      # browse to our target
-      session.visit(uri)
 
       # Capture Title
       page_title = session.document.title
@@ -43,14 +37,20 @@ module Task
 
     session.document
     end
-    
+
 
     def capture_screenshot(uri)
-
-      session = _create_browser_session
-
       # browse to our target
-      session.visit(uri)
+      begin
+        session = _create_browser_session
+        session.visit(uri)
+      rescue Capybara::Poltergeist::TimeoutError => e
+        _log_error "Fail Error: #{e}" if @task_result
+      rescue Capybara::Poltergeist::StatusFailError => e
+        _log_error "Fail Error: #{e}" if @task_result
+      rescue Capybara::Poltergeist::JavascriptError => e
+        _log_error "JS Error: #{e}" if @task_result
+      end
 
       # wait for the page to render
       sleep 3
@@ -97,11 +97,16 @@ module Task
       # Examples: https://builtwith.angularjs.org/
       # Examples: https://www.madewithangular.com/
 
-      session = _create_browser_session
-
-      # browse to our target
-      session.visit(uri)
-
+      begin
+        session = _create_browser_session
+        session.visit(uri)
+      rescue Capybara::Poltergeist::TimeoutError => e
+        _log_error "Fail Error: #{e}" if @task_result
+      rescue Capybara::Poltergeist::StatusFailError => e
+        _log_error "Fail Error: #{e}" if @task_result
+      rescue Capybara::Poltergeist::JavascriptError => e
+        _log_error "JS Error: #{e}" if @task_result
+      end
 
       checks = [
         { library: "Angular", script: 'angular.version.full' },
