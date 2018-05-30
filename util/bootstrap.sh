@@ -48,10 +48,10 @@ fi
 
 # update sudoers
 echo "[+] Configuring sudo for nmap, masscan"
-if grep -q NMAP /etc/sudoers; then
-  Cmnd_Alias NMAP = /usr/local/bin/nmap >> /etc/sudoers
-  echo Cmnd_Alias MASSCAN = /usr/local/bin/masscan >> /etc/sudoers
-  echo >> %admin ALL=(root) NOPASSWD: NMAP, MASSCAN >> /etc/sudoers
+if ! grep -q NMAP /etc/sudoers; then
+  sudo echo "Cmnd_Alias NMAP = /usr/local/bin/nmap" >> /etc/sudoers
+  sudo echo "Cmnd_Alias MASSCAN = /usr/local/bin/masscan" >> /etc/sudoers
+  sudo echo "%admin ALL=(root) NOPASSWD: NMAP, MASSCAN" >> /etc/sudoers
 fi
 
 echo "[+] Creating Database"
