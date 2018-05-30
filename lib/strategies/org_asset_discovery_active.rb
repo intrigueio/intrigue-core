@@ -89,6 +89,9 @@ module Strategy
       ### search for netblocks
       start_recursive_task(task_result,"whois_org_search",entity)
 
+      # search BGP
+      start_recursive_task(task_result,"search_bgp",entity)
+
       ### AWS_S3_brute the name
       start_recursive_task(task_result,"aws_s3_brute",entity)
 
