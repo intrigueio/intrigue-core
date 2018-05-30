@@ -46,6 +46,14 @@ if [ ! -f /usr/local/bin/phantomjs ]; then
   sudo ln -s /usr/local/share/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/
 fi
 
+# update sudoers
+echo "[+] Configuring sudo for nmap, masscan"
+if grep -q NMAP /etc/sudoers; then
+  Cmnd_Alias NMAP = /usr/local/bin/nmap >> /etc/sudoers
+  echo Cmnd_Alias MASSCAN = /usr/local/bin/masscan >> /etc/sudoers
+  echo >> %admin ALL=(root) NOPASSWD: NMAP, MASSCAN >> /etc/sudoers
+fi
+
 echo "[+] Creating Database"
 sudo -u postgres createuser intrigue
 sudo -u postgres createdb intrigue_dev --owner intrigue
@@ -81,6 +89,7 @@ else
   cd ~/.rbenv/plugins/rbenv-sudo && git pull
 fi
 
+# setup ruby
 RUBY_VERSION=`cat $INTRIGUE_DIRECTORY/.ruby-version`
 if [ ! -e ~/.rbenv/versions/$RUBY_VERSION ]; then
   echo "[+] Installing Ruby $RUBY_VERSION"
@@ -102,6 +111,7 @@ cd $INTRIGUE_DIRECTORY
 bundle install
 
 echo "[+] Migrating Database"
+bundle exec rake setup
 bundle exec rake db:migrate
 
 echo "[+] Configuring puma to listen on 0.0.0.0"
@@ -123,4 +133,4 @@ fi
 
 # run the service
 cd /$INTRIGUE_DIRECTORY
-rbenv sudo $INTRIGUE_DIRECTORY/util/control.sh start
+$INTRIGUE_DIRECTORY/util/control.sh start

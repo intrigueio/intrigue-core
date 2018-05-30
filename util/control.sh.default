@@ -28,8 +28,10 @@ function setup_server {
 }
 
 function start_server {
-  echo "Starting interactive task processing..."
-  bundle exec sidekiq -C $IDIR/config/sidekiq.yml -r $IDIR/core.rb -d -L $IDIR/log/sidekiq.log -P $IDIR/tmp/pids/sidekiq.pid
+  for x in 1; do
+    echo "Starting task processing... $x"
+    bundle exec sidekiq -C $IDIR/config/sidekiq.yml -r $IDIR/core.rb -d -L $IDIR/log/sidekiq.log -P $IDIR/tmp/pids/sidekiq.pid
+  done
 
   echo "Starting puma..."
   bundle exec puma -C $IDIR/config/puma.rb --pidfile $IDIR/tmp/pids/puma.pid 2>&1 > $IDIR/log/puma.log
