@@ -2,6 +2,9 @@
 require 'capybara'
 require 'capybara/poltergeist'
 
+
+
+
 Capybara.register_driver :poltergeist do |app|
   Capybara::Poltergeist::Driver.new(app, {
     :js_errors => false,
@@ -12,16 +15,24 @@ Capybara.register_driver :poltergeist do |app|
   })
 end
 
-
-module Capybara::Webkit
-  class Driver
-    def quit
-      `kill #{@browser.instance_variable_get("@connection").instance_variable_get("@pid")}`
+module Capybara::Poltergeist
+  class Client
+    def self.process_killer(pid)
+      proc do
+        begin
+          Process.kill('KILL', pid)
+        rescue Errno::ESRCH, Errno::ECHILD
+          # Zed's dead, baby
+        rescue => ex
+          puts "Error killing phantomjs, #{ex.message}"
+          raise
+        end
+      end
     end
   end
 end
 
+Capybara.threadsafe = true
 Capybara.javascript_driver = :poltergeist
 Capybara.run_server = false
 Capybara.default_selector = :xpath
-Capybara.threadsafe = true

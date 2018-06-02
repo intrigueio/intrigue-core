@@ -1,11 +1,11 @@
 module Intrigue
 module Entity
-class GoogleGroup < Intrigue::Model::Entity
+class GoogleGroups < Intrigue::Model::Entity
 
   def self.metadata
     {
-      :name => "GoogleGroup",
-      :description => "A Google Group",
+      :name => "GoogleGroups",
+      :description => "Google Groups",
       :user_creatable => false
     }
   end
