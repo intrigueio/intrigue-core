@@ -28,6 +28,7 @@ module Strategy
         if domain_length > 2
           start_recursive_task(task_result,"dns_permute", entity)
           start_recursive_task(task_result,"public_google_groups_check", entity)
+          start_recursive_task(task_result,"public_trello_check",entity)
         end
 
         ### AWS_S3_brute the domain name and the base name
@@ -94,6 +95,8 @@ module Strategy
 
       # search bgp data for netblocks
       start_recursive_task(task_result,"search_bgp",entity)
+
+      start_recursive_task(task_result,"public_trello_check",entity)
 
       ### AWS_S3_brute the name
       start_recursive_task(task_result,"aws_s3_brute",entity)

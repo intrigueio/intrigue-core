@@ -17,6 +17,7 @@ module Strategy
       if entity.type_string == "DnsRecord"
         start_recursive_task(task_result,"public_google_groups_check",entity)
         start_recursive_task(task_result,"aws_s3_brute",entity)
+        start_recursive_task(task_result,"public_trello_check",entity)
       end
     end
 

@@ -12,7 +12,7 @@ class PublicTrelloCheck < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["String","Organization"],
+      :allowed_types => ["DnsRecord","Organization", "String"],
       :example_entities => [
         {"type" => "String", "details" => {"name" => "intrigue"}}
       ],
@@ -26,28 +26,39 @@ class PublicTrelloCheck < BaseTask
     super
 
     entity_name = _get_entity_name
+    check_and_create entity_name
 
-    uri = "https://trello.com/#{entity_name}"
+    # trello strips out periods, so handle dns records differently
+    if _get_entity_type_string == "DnsRecord"
+      check_and_create entity_name.split(".").first
+      check_and_create entity_name.gsub(".","")
+    end
+
+  end
+
+
+  def check_and_create(name)
+    uri = "https://trello.com/#{name}"
     session = create_browser_session
     document = capture_document session, uri
     title = document[:title]
     body = document[:contents]
 
     if body =~ /BoardsMembers/
-      _log "The organization exists!"
+      _log "The #{name} org exists!"
       _create_entity "TrelloOrganization", {
-        "name" => entity_name,
+        "name" => name,
         "uri" => uri
       }
     elsif body =~ /ProfileCardsTeamsActivity/
+      _log "The #{name} member account exists!"
       _create_entity "TrelloAccount", {
-        "name" => entity_name,
+        "name" => name,
         "uri" => uri
       }
     else
-      _log "Nothing found..."
+      _log "Nothing found for #{name}"
     end
-
   end
 
 end
