@@ -13,7 +13,7 @@ class UriScreenshot < BaseTask
       :authors => ["jcran"],
       :description => "This task screenshots a Uri.",
       :references => [],
-      :type => "enrichment",
+      :type => "discovery",
       :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [
@@ -31,8 +31,10 @@ class UriScreenshot < BaseTask
 
     uri = _get_entity_name
 
+    session = create_browser_session
+
     # capture a screenshot and save it as a detail
-    _set_entity_detail("hidden_screenshot_contents",capture_screenshot(uri))
+    _set_entity_detail("hidden_screenshot_contents",capture_screenshot(session, uri))
 
   end
 

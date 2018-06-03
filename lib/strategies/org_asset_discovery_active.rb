@@ -19,12 +19,15 @@ module Strategy
 
       if entity.type_string == "DnsRecord"
 
-        domain_length = (entity.name.split(".").length)       # get the domain length so we can see if this is a tld or internal name
-        base_name = entity.name.split(".")[0...-1].join(".")  # get the domain's base name (minus the TLD)
+        # get the domain length so we can see if this is a tld or internal name
+        domain_length = (entity.name.split(".").length)
+        # get the domain's base name (minus the TLD)
+        base_name = entity.name.split(".")[0...-1].join(".")
 
-        ### Permute the dns record to find similar entities
+        ### Handle top level domain stuff here
         if domain_length > 2
           start_recursive_task(task_result,"dns_permute", entity)
+          start_recursive_task(task_result,"public_google_groups_check", entity)
         end
 
         ### AWS_S3_brute the domain name and the base name
@@ -89,7 +92,7 @@ module Strategy
       ### search for netblocks
       start_recursive_task(task_result,"whois_org_search",entity)
 
-      # search BGP
+      # search bgp data for netblocks
       start_recursive_task(task_result,"search_bgp",entity)
 
       ### AWS_S3_brute the name

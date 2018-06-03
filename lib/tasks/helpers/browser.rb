@@ -11,15 +11,14 @@ module Intrigue
 module Task
   module Browser
 
-    def _create_browser_session
+    def create_browser_session
       # Start a new session
       Capybara::Session.new(:poltergeist)
     end
 
-    def capture_document(uri)
+    def capture_document(session, uri)
       # browse to our target
       begin
-        session = _create_browser_session
         session.visit(uri)
       rescue Capybara::Poltergeist::TimeoutError => e
         _log_error "Fail Error: #{e}" if @task_result
@@ -39,10 +38,9 @@ module Task
     end
 
 
-    def capture_screenshot(uri)
+    def capture_screenshot(session, uri)
       # browse to our target
       begin
-        session = _create_browser_session
         session.visit(uri)
       rescue Capybara::Poltergeist::TimeoutError => e
         _log_error "Fail Error: #{e}" if @task_result
@@ -90,15 +88,13 @@ module Task
     base64_image_contents
     end
 
-    def gather_javascript_libraries(uri, libraries=[])
-
+    def gather_javascript_libraries(session, uri, libraries=[])
 
       # Test site: https://www.jetblue.com/plan-a-trip/#/
       # Examples: https://builtwith.angularjs.org/
       # Examples: https://www.madewithangular.com/
 
       begin
-        session = _create_browser_session
         session.visit(uri)
       rescue Capybara::Poltergeist::TimeoutError => e
         _log_error "Fail Error: #{e}" if @task_result
@@ -181,7 +177,7 @@ module Task
         version = session.evaluate_script(check[:script])
         if version
           _log_good "Detected #{check[:library]} #{version}" if @task_result
-          libraries << {"library" => "#{check[:library]}", "detected" => true, "version" => "#{version}" }
+          libraries << {"library" => "#{check[:library]}", "version" => "#{version}" }
         end
 
       end

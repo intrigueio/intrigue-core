@@ -53,21 +53,36 @@ class EnrichUri < BaseTask
     # we'll need to make another request
     #webdav_enabled = check_webdav_endpoint(uri)
 
-    new_details = @entity.details.merge({
-      "api_endpoint" => api_enabled,
-      #"trace" => trace_enabled,
-      #"webdav" => webdav_enabled,
-      "code" => response.code,
-      "title" => response.body[/<title>(.*)<\/title>/,1],
-      "verbs" => verbs_enabled,
-      "scripts" => script_references,
-      "forms" => contains_forms,
-      "response_data_hash" => response_data_hash,
-      "hidden_response_data" => response_data
-    })
+    session = create_browser_session
 
-    # Set the details, and make sure raw response data is a hidden (not searchable) detail
-    @entity.set_details new_details
+    #  Get existing software details (in case this is a second run)
+    existing_libraries = _get_entity_detail("javascript") || []
+
+    # Run the version checking scripts
+    new_libraries = gather_javascript_libraries(session, uri, existing_libraries)
+
+    # screenshot
+    encoded_screenshot = capture_screenshot(session, uri)
+
+    $db.transaction do
+      new_details = @entity.details.merge({
+        "api_endpoint" => api_enabled,
+        #"trace" => trace_enabled,
+        #"webdav" => webdav_enabled,
+        "code" => response.code,
+        "title" => response.body[/<title>(.*)<\/title>/,1],
+        "verbs" => verbs_enabled,
+        "scripts" => script_references,
+        "forms" => contains_forms,
+        "response_data_hash" => response_data_hash,
+        "hidden_response_data" => response_data,
+        "hidden_screenshot_contents" => encoded_screenshot,
+        "javascript" => new_libraries
+      })
+
+      # Set the details, and make sure raw response data is a hidden (not searchable) detail
+      @entity.set_details new_details
+    end
 
     # Check for other entities with this same response hash
     #if response_data_hash
