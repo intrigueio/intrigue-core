@@ -29,12 +29,12 @@ module Task
       end
 
       # Capture Title
+      page_contents = session.document.text(:all)
       page_title = session.document.title
-      _log_good "Title: #{page_title}" if @task_result
 
       session.driver.quit
 
-    session.document
+    { :title => page_title, :contents => page_contents }
     end
 
 

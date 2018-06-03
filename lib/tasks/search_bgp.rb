@@ -32,13 +32,23 @@ class SearchBgp < BaseTask
       _log "Got response: #{json_resp}"
 
       json_resp.each do |r|
-        _create_entity "Organization", {"name" => "#{r["org"].split(",").first}"}
-        _create_entity "AutonomousSystem", {"name" => "AS#{r["asnumber"]}"}
+
+        org_string = r["org"].split(",").first
+        org_name = org_string.split("-").last.strip
+
+        if org_name
+          _create_entity "Organization", {"name" => "#{org_name}", "full" => org_string }
+        else
+          _create_entity "Organization", {"name" => "#{org_string}", "full" => org_string}
+        end
+
+        as_number_string = "AS#{r["asnumber"]}"
+        _create_entity "AutonomousSystem", {"name" => as_number_string, "netblocks" => r["netblocks"] }
 
         # this key doesn't always exist
         if r["netblocks"]
           r["netblocks"].each do |nb|
-            _create_entity "NetBlock", {"name" => "#{nb}"}
+            _create_entity "NetBlock", {"name" => "#{nb}", "organization" => org_string, "as_number" => as_number_string}
           end
         end
 

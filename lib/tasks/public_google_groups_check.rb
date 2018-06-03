@@ -6,7 +6,7 @@ class PublicGoogleGroupsCheck < BaseTask
   def self.metadata
     {
       :name => "public_google_groups_check",
-      :pretty_name => "Public Google Group Check",
+      :pretty_name => "Public Google Groups Check",
       :authors => ["jcran","jgamblin"],
       :description => "Checks to see if public Google Groups exist for a given domain",
       :references => [
@@ -36,6 +36,8 @@ class PublicGoogleGroupsCheck < BaseTask
 
     if text =~ /gpf_stats.js/
 
+      _log_good "Success! Domain is configured and public."
+
       _create_entity "GoogleGroups", {
         "name" => domain,
         "uri" => uri
@@ -43,9 +45,9 @@ class PublicGoogleGroupsCheck < BaseTask
 
     elsif text =~ /This group is on a private domain/
       # good
-      _log_good "This domain is configured in G Suite, but is not public."
+      _log "This domain is configured in G Suite, but is not public."
     else
-      _log_error "Unknown..."
+      _log "Unknown..."
     end
 
   end
