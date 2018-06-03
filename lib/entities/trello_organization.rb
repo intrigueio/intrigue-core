@@ -6,7 +6,7 @@ class TrelloOrganization < Intrigue::Model::Entity
     {
       :name => "Trello Organization",
       :description => "An organization configured in Trello.com",
-      :user_creatable => true
+      :user_creatable => false
     }
   end
 
