@@ -94,7 +94,7 @@ module Strategy
       start_recursive_task(task_result,"whois_org_search",entity)
 
       # search bgp data for netblocks
-      start_recursive_task(task_result,"search_bgp",entity)
+      start_recursive_task(task_result,"search_bgp",entity) unless entity.created_by?("search_bgp")
 
       start_recursive_task(task_result,"public_trello_check",entity)
 
