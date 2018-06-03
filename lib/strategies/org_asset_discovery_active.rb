@@ -74,19 +74,18 @@ module Strategy
           # 7001: Weblogic
           # 8080: Wordpress, WebDav, DasanNetwork Solution
           start_recursive_task(task_result,"masscan_scan",entity,[
-            {"name"=> "tcp_ports", "value" => "80,443,2004,7001,8000,8080,8081,8443"}
+            {"name"=> "tcp_ports", "value" => "80,443,2004,3389,7001,8000,8080,8081,8443"}
           ])
-
         else
           task_result.log "Cowardly refusing to scan this netblock.. it doesn't look like ours."
         end
 
         # Make sure it's small enough not to be disruptive, and if it is, expand it
-        if entity.details["whois_full_text"] =~ /#{filter_strings}/i && !(entity.name =~ /::/)
-          start_recursive_task(task_result,"net_block_expand",entity, [{"name" => "threads", "value" => 5 }])
-        else
-          task_result.log "Cowardly refusing to expand this netblock.. it doesn't look like ours."
-        end
+        #if entity.details["whois_full_text"] =~ /#{filter_strings}/i && !(entity.name =~ /::/)
+        #  start_recursive_task(task_result,"net_block_expand",entity, [{"name" => "threads", "value" => 5 }])
+        #else
+        #  task_result.log "Cowardly refusing to expand this netblock.. it doesn't look like ours."
+        #end
 
       elsif entity.type_string == "Organization"
 
