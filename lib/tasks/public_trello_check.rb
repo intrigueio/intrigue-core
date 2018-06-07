@@ -7,7 +7,7 @@ class PublicTrelloCheck < BaseTask
     {
       :name => "public_trello_check",
       :pretty_name => "Public Trello Check",
-      :authors => ["jcran","jgamblin"],
+      :authors => ["jcran"],
       :description => "Checks to see if public Google Groups exist for a given domain",
       :references => [],
       :type => "discovery",

@@ -29,7 +29,7 @@ module Strategy
           {"name" => "additional_buckets", "value" => "#{base_name},#{entity.name}"}
         ])
 
-        # handle subdomains stuff here 
+        # handle subdomains stuff here
         if domain_length > 2
           start_recursive_task(task_result,"dns_permute", entity)
         end
