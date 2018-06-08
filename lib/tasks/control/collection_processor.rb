@@ -47,9 +47,6 @@ class CollectionProcessor < BaseTask
 
     # connect to the configured amazon queue & Grab one
     _set_status "starting"
-    _log "Connecting to the #{@control_queue_uri} queue!"
-    instruction_data = _get_queued_instruction
-
     iteration = 0
     while true
 
@@ -57,6 +54,7 @@ class CollectionProcessor < BaseTask
       while !instruction_data
         _log "Nothing to do, waiting!"
         sleep sleep_interval
+        _log "Attempting to get an instruction from the queue!"
         instruction_data = _get_queued_instruction # try again
 
         # kick it off if we got one, and break out of this loop
@@ -71,7 +69,7 @@ class CollectionProcessor < BaseTask
 
       # check sidekiq busy queue (also have a fallback if it's "stuck"...)
       # default is 1000 x 30 .. 3000 / 60 = 50mins
-      done = (Sidekiq::Stats.new.enqueued == 0 || iteration > 200)
+      done = (iteration > 10 && Sidekiq::Stats.new.enqueued == 0) || iteration > 200
       _log "Locally queued tasks: #{Sidekiq::Stats.new.enqueued}"
 
       if done
@@ -99,7 +97,6 @@ class CollectionProcessor < BaseTask
     begin
       # pull from the queue
       response = @sqs.receive_message(queue_url: @control_queue_uri, max_number_of_messages: 1)
-
 
       control_message = {}
       response.messages.each do |m|
