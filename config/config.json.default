@@ -227,7 +227,7 @@
         "aws_secret_access_key" : "",
         "control_queue_uri" : "",
         "status_queue_uri" : "",
-        "sleep_interval" : 60,
+        "sleep_interval" : 30,
         "handler" : ""
       },
       "uri" : "",

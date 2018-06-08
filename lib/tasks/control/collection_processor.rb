@@ -42,59 +42,49 @@ class CollectionProcessor < BaseTask
 
     @control_queue_uri = config["control_queue_uri"]
     @status_queue_uri = config["status_queue_uri"]
-    sleep_interval = 10 #config["sleep"]
+    sleep_interval = config["sleep"] || 30
     handler = config["handler"]
 
-    # connect to the configured amazon queue
-    _log "[+] Marking us as starting in the #{@status_queue_uri} queue!"
-    _set_status "starting"
-
     # connect to the configured amazon queue & Grab one
-    _log "[+] Connecting to the #{@control_queue_uri} queue!"
+    _set_status "starting"
+    _log "Connecting to the #{@control_queue_uri} queue!"
     instruction_data = _get_queued_instruction
-
-    if !instruction_data
-      _log "nothing to do!"
-      return
-    end
-
-    # process
-    _log "[+] Marking us as processing in the #{@status_queue_uri} queue!"
-    _log "[+] Processing!"
-    _set_status "processing #{instruction_data["id"]}"
-    _execute_instruction instruction_data
 
     iteration = 0
     while true
 
-      # hold right
-      _log "[+] Holding tight for #{sleep_interval} seconds! (#{iteration})"
+      # loop until we have something
+      while !instruction_data
+        _log "Nothing to do, waiting!"
+        sleep sleep_interval
+        instruction_data = _get_queued_instruction # try again
+
+        # kick it off if we got one, and break out of this loop
+        if instruction_data
+          _log "[+] Executing #{instruction_data["id"]} for #{sleep_interval} seconds! (expire in: ~#{(200 - iteration) * sleep_interval / 60 }m)"
+          _execute_instruction(instruction_data)
+        end
+      end
+
+      # hold tight
       sleep sleep_interval
 
-      # TODO - check sidekiq busy queue (also have a fallback if it's "stuck")
-      done = (Sidekiq::Stats.new.enqueued == 0 || iteration > 100
-      )
+      # check sidekiq busy queue (also have a fallback if it's "stuck"...)
+      # default is 1000 x 30 .. 3000 / 60 = 50mins
+      done = (Sidekiq::Stats.new.enqueued == 0 || iteration > 200)
       _log "Locally queued tasks: #{Sidekiq::Stats.new.enqueued}"
 
       if done
+        _log_good "Done with #{instruction_data["id"]}"
+        _set_status "completed #{instruction_data["id"]}"
 
-        _set_status "finished #{instruction_data["id"]}"
-        # connect to the configured amazon queue & Grab one
-        #_log "[+] Connecting to the #{control_queue_uri} queue!"
-        #instruction = _get_queued_instruction
-
-        # go into shutdown if that's a configured option
-        #_set_status "shutdown"
-        #_shutdown
-        return true
-
-      end
-
-      # run the configured handlers on a regular basis
-      if iteration % 10 == 0
-        _log "[+] Running handler #{handler}: #{iteration % 10}."
-        _set_status "Handling #{instruction_data["id"]}"
+        _log_good "#{instruction_data["id"]}"
         _run_handlers instruction_data
+        _set_status "handled #{instruction_data["id"]}"
+
+        instruction_data = nil
+        iteration = 0
+
       end
 
       iteration +=1
@@ -105,7 +95,6 @@ class CollectionProcessor < BaseTask
 
   # method pulls a queue
   def _get_queued_instruction
-    _log "[+] Kicking off collection!"
 
     begin
       # pull from the queue
@@ -114,21 +103,23 @@ class CollectionProcessor < BaseTask
 
       control_message = {}
       response.messages.each do |m|
-      _log "Got message: #{m}"
 
         if (m && m.body)
 
-          _log "Removing: #{m}"
           @sqs.delete_message({
             queue_url: @control_queue_uri,
             receipt_handle: m.receipt_handle
           })
 
           # return the first one
-          return JSON.parse(m.body)
+          message = JSON.parse(m.body)
+          _log "Got instruction for #{message["id"]}"
+          _log "#{message}"
+
+          return message
 
         else
-          _log_error "NO INSTRUCTIONS!!!"
+          _log_error "No instructions received!!!"
           return nil
         end
       end
@@ -160,26 +151,27 @@ class CollectionProcessor < BaseTask
 
   def _execute_instruction data
     Dir.chdir $intrigue_basedir do
-      _log "[.] DEBUG: Executing... #{data}"
       bootstrap_system data
     end
   end
 
   def _run_handlers instruction_data
-    _log "[.] DEBUG: _run_handlers called on #{instruction_data["id"]}"
     # run core-cli here?
     Dir.chdir $intrigue_basedir do
 
-      # TODO parse json and get client id
       id = instruction_data["id"]
-      handlers = instruction_data["handlers"]
+      # TODO - this currently only works for the first project.
+      handlers = instruction_data["projects"].first["handlers"]
 
+      project = Intrigue::Model::Project.first(:name => id)
       handlers.each do |h|
-        Intrigue::Model::Project.first(:name => id).handle(h, id)
+        if project
+          project.handle(h, "#{id}/")
+        else
+          _log_error "unable to call #{h} on project #{id}"
+        end
       end
 
-      #_log "[.] DEBUG: rbenv sudo bundle exec /home/ubuntu/core/core-cli.rb local_handle_all_projects data.intrigue.io #{id}"
-      #`rbenv sudo bundle exec /home/ubuntu/core/core-cli.rb local_handle_all_projects data.intrigue.io #{id}`
     end
   end
 
