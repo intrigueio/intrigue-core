@@ -118,7 +118,7 @@ echo "[+] Configuring puma to listen on 0.0.0.0"
 sed -i "s/tcp:\/\/127.0.0.1:7777/tcp:\/\/0.0.0.0:7777/g" $INTRIGUE_DIRECTORY/config/puma.rb
 
 echo "[+] Configuring puma to daemonize"
-RUN sed -i "s/daemonize false/daemonize true/g" $INTRIGUE_DIRECTORY/config/puma.rb
+sed -i "s/daemonize false/daemonize true/g" $INTRIGUE_DIRECTORY/config/puma.rb
 
 if [ ! -f /etc/init.d/intrigue ]; then
   echo "[+] Creating Intrigue system service"

@@ -32,6 +32,9 @@ require 'whois-parser'
 require 'whoisology'
 require 'yomu'
 
+# Intrigue System Management
+require_relative 'system'
+
 ####
 # Task-specific libraries
 ####
@@ -44,6 +47,10 @@ Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 # Load all discovery tasks
 require_relative 'tasks/base'
 tasks_folder = File.expand_path('../tasks', __FILE__) # get absolute directory
+Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
+
+# Load control tasks
+tasks_folder = File.expand_path('../tasks/control', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
 # Load enrich tasks

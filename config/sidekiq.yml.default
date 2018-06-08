@@ -1,8 +1,9 @@
 :verbose: true
 :dynamic: true
-:concurrency: 42
+:concurrency: 60
 :process_limits:
   app: 2
+  control: 1
   task: 3
   task_autoscheduled: 15
   task_browser: 5
