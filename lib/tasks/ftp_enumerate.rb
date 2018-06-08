@@ -55,7 +55,7 @@ class FtpEnumerate < BaseTask
           out["anonymous"] = ftp.login
         rescue Net::FTPPermError => e
           _log_error "unable to log in, proceeding"
-        rescue Errno::EOFError => e
+        rescue EOFError => e
           _log_error "eof reached"
         end
 

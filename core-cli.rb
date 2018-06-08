@@ -8,6 +8,8 @@ require_relative 'core'
 
 class CoreCli < Thor
 
+  include Intrigue::System
+
   def initialize(*args)
     super
     $intrigue_basedir = File.dirname(__FILE__)
@@ -157,77 +159,8 @@ class CoreCli < Thor
 
   desc "local_bootstrap_system [filename]", "Bootstrap from a client file."
   def local_bootstrap_system(filename)
-
-    extend Intrigue::Task::Helper
-
-    # JSON will look like this:
-    #{
-    #  "name": "example",
-    #  "projects": [
-    #    {
-    #      "name": "example",
-    #      "seeds": [
-    #        {
-    #          "entity": "DnsRecord#example.com",
-    #          "task" : "create_entity",
-    #          "depth" : 5,
-    #          "strategy" : "org_asset_discovery_active"
-    #        }
-    #      ],
-    #    }
-    #  ]
-    #}
-
-    client_data = JSON.parse(File.read(filename))
-
-    unless client_data
-      puts "FATAL: unable to parse"
-      return
-    end
-
-    # XXX - Assumes we start at a clean system!!!!
-    client_data["projects"].each do |p|
-      project_name = p["name"]
-
-      project = Intrigue::Model::Project.find_or_create(:name => "#{project_name}")
-
-      # Set exclusion setting
-      auto_enrich = p["auto_enrich"] || false
-      project.use_standard_exceptions = p["use_standard_exceptions"]
-      project.additional_exception_list = p["additional_exception_list"]
-      project.save
-
-      puts "Working on project: #{project_name}"
-      p["seeds"].each do |s|
-        puts " - Seed: #{s}"
-
-        entity = _parse_entity s["entity"]
-        task_name = s["task"] || "create_entity"
-        strategy = s["strategy"] || "org_asset_discovery_active"
-        depth = s["depth"] || 6
-        options = s["options"] || []
-        handlers = s["handlers"] || []
-
-        # Create the entity
-        created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"])
-
-        # Kick off the task
-        task_result = start_task(nil, project, nil, task_name, created_entity, depth, options, handlers, strategy, auto_enrich)
-
-      end
-
-      # sometimes we need to run a custom command in the context of a project
-      if p["custom_commands"]
-        p["custom_commands"].each do |c|
-          Dir.chdir($intrigue_basedir) do
-            `#{c["command"]}`
-          end
-        end
-      end
-
-
-    end
-
+    message = JSON.parse(File.read(filename))
+    bootstrap_system(message)
   end
 
 

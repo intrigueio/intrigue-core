@@ -13,14 +13,14 @@ class EntityManager
     raise "INVALID TYPE TO RESOLVE: #{type_string}. DID YOU SEND A STRING? FAILING!" unless type_string.kind_of? String
 
     # Check full namespace first
-    matches = entity_types.select{|x|x.to_s == type_string }
+    matches = entity_types.select{|x| x.to_s == type_string }
 
     # Then check all namespaces underneath
     matches.concat(entity_types.select{|x|x.to_s.split(":").last.to_s == type_string })
 
     #note this will be nil if we didn't match
     unless matches.first
-      raise "Unable to match to a known entity. Failing."
+      raise "Unable to match to a known entity. Failing on #{type_string}."
     end
 
   #only return the first (and best) match

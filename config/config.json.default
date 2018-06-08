@@ -219,6 +219,20 @@
       "uri" : "https://domainlists.io/domains-api/",
       "editable" : "true",
       "comment" : ""
+    },
+    "control/collection_processor": {
+      "value" : {
+        "aws_region" : "us-east-1",
+        "aws_access_key" : "",
+        "aws_secret_access_key" : "",
+        "control_queue_uri" : "",
+        "status_queue_uri" : "",
+        "sleep_interval" : 60,
+        "handler" : ""
+      },
+      "uri" : "",
+      "editable" : "false",
+      "comment" : ""
     }
   }
 }
