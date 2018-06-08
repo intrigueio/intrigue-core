@@ -47,13 +47,13 @@ class CollectionProcessor < BaseTask
 
     # connect to the configured amazon queue & Grab one
     _set_status "starting"
+    instruction_data = nil
     iteration = 0
     while true
 
       # loop until we have something
       while !instruction_data
-        _log "Nothing to do, waiting!"
-        sleep sleep_interval
+
         _log "Attempting to get an instruction from the queue!"
         instruction_data = _get_queued_instruction # try again
 
@@ -61,7 +61,11 @@ class CollectionProcessor < BaseTask
         if instruction_data
           _log "[+] Executing #{instruction_data["id"]} for #{sleep_interval} seconds! (expire in: ~#{(200 - iteration) * sleep_interval / 60 }m)"
           _execute_instruction(instruction_data)
+        else
+          _log "Nothing to do, waiting!"
+          sleep sleep_interval
         end
+
       end
 
       # hold tight
