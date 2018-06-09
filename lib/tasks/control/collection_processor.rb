@@ -31,11 +31,11 @@ class CollectionProcessor < BaseTask
     super
 
     config = _get_task_config "control/collection_processor"
-    
+
+    credentials = Aws::Credentials.new(config["aws_access_key"], config["secret_access_key"])
     @sqs = Aws::SQS::Client.new({
       region: 'us-east-1',
-      access_key_id: config["aws_access_key"],
-      secret_access_key: config["secret_access_key"]
+      credentials: credentials
     })
 
     @control_queue_uri = config["control_queue_uri"]
