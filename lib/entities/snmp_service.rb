@@ -15,7 +15,7 @@ class SnmpService < Intrigue::Entity::NetworkService
   end
 
   def enrichment_tasks
-    ["enrich/snmp_service"]
+    []
   end
 
 end
