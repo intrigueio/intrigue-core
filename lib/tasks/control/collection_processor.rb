@@ -1,4 +1,4 @@
-#require 'aws-sdk-sqs'
+require 'aws-sdk-sqs'
 
 module Intrigue
 module Task
@@ -32,10 +32,10 @@ class CollectionProcessor < BaseTask
 
     config = _get_task_config "control/collection_processor"
 
-    credentials = Aws::Credentials.new(config["aws_access_key"], config["secret_access_key"])
     @sqs = Aws::SQS::Client.new({
       region: 'us-east-1',
-      credentials: credentials
+      access_key_id: config["aws_access_key"],
+      secret_access_key: config["secret_access_key"]
     })
 
     @control_queue_uri = config["control_queue_uri"]

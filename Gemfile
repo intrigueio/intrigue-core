@@ -50,7 +50,8 @@ gem 'opencorporates',         :git => 'https://github.com/pentestify/opencorpora
 gem 'spidr',                  :git => 'https://github.com/intrigueio/spidr.git'
 gem 'snmp',                   :git => 'https://github.com/intrigueio/ruby-snmp.git'
 gem 'recog-intrigue',         :git => 'https://github.com/intrigueio/recog.git'
-gem 'aws-sdk',        '~> 2'
+gem 'aws-sdk-sqs' #,        '~> 3'
+gem 'aws-sdk-s3' #,        '~> 3'
 gem 'mini_magick'
 
 # Handlers
