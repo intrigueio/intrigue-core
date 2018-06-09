@@ -24,21 +24,15 @@ module Strategy
         # get the domain's base name (minus the TLD)
         base_name = entity.name.split(".")[0...-1].join(".")
 
-        ### AWS_S3_brute the domain name and the base name
-        start_recursive_task(task_result,"aws_s3_brute",entity,[
-          {"name" => "additional_buckets", "value" => "#{base_name},#{entity.name}"}
-        ])
-
-        # handle subdomains stuff here
-        if domain_length > 2
-          start_recursive_task(task_result,"dns_permute", entity)
-        end
-
         ### Handle top level domain stuff here
         if domain_length == 2 # large bruteforce on tlds
 
           start_recursive_task(task_result,"public_google_groups_check", entity)
           start_recursive_task(task_result,"public_trello_check",entity)
+
+          start_recursive_task(task_result,"aws_s3_brute",entity,[
+            {"name" => "additional_buckets", "value" => "#{base_name},#{entity.name}"}
+          ])
 
           start_recursive_task(task_result,"dns_brute_sub",entity,[
             {"name" => "threads", "value" => 2 },
@@ -47,7 +41,7 @@ module Strategy
 
         else # do something smaller
           start_recursive_task(task_result,"dns_brute_sub",entity,[
-            {"name" => "threads", "value" => 1 }])
+            {"name" => "threads", "value" => 2 }])
         end
 
       elsif entity.type_string == "FtpService"

@@ -42,7 +42,9 @@ class CollectionProcessor < BaseTask
 
     @control_queue_uri = config["control_queue_uri"]
     @status_queue_uri = config["status_queue_uri"]
-    sleep_interval = config["sleep"] || 30
+    sleep_interval = config["sleep"] || 10
+    max_seconds = config["max_seconds"] || 3600
+
     handler = config["handler"]
 
     # connect to the configured amazon queue & Grab one
@@ -59,7 +61,7 @@ class CollectionProcessor < BaseTask
 
         # kick it off if we got one, and break out of this loop
         if instruction_data
-          _log "[+] Executing #{instruction_data["id"]} for #{sleep_interval} seconds! (expire in: ~#{(200 - iteration) * sleep_interval / 60 }m)"
+          _log "[+] Executing #{instruction_data["id"]} for #{sleep_interval} seconds! (expire in: ~#{max_seconds - (iteration * sleep_interval) }s)"
           _execute_instruction(instruction_data)
         else
           _log "Nothing to do, waiting!"
@@ -73,11 +75,16 @@ class CollectionProcessor < BaseTask
 
       # check sidekiq busy queue (also have a fallback if it's "stuck"...)
       # default is 1000 x 30 .. 3000 / 60 = 50mins
-      done = (iteration > 10 && Sidekiq::Stats.new.enqueued == 0) || iteration > 200
-      _log "Locally queued tasks: #{Sidekiq::Stats.new.enqueued}"
+      task_count_left = _tasks_left
+      seconds_elapsed = iteration * sleep_interval
+
+      done = (iteration > 10 && task_count_left == 0 ) || seconds_elapsed  > max_seconds
+
+      _log "Seconds elapsed: #{seconds_elapsed}" if iteration % 10 == 0
+      _log "Tasks left: #{task_count_left}" if iteration % 10 == 0
 
       if done
-        _log_good "Done with #{instruction_data["id"]}"
+        _log_good "Done with #{instruction_data["id"]} after #{seconds_elapsed}s"
         _set_status "completed #{instruction_data["id"]}"
 
         _log_good "#{instruction_data["id"]}"
@@ -85,7 +92,7 @@ class CollectionProcessor < BaseTask
         _set_status "handled #{instruction_data["id"]}"
 
         instruction_data = nil
-        iteration = 0
+        iteration = -1
 
       end
 
@@ -176,9 +183,21 @@ class CollectionProcessor < BaseTask
     end
   end
 
+  def _tasks_left
+    ps = Sidekiq::ProcessSet.new
+    count = -1 # remove our control thread right off the bat
+    ps.each do |process|
+      count += process['busy']     # => 3
+    end
+    count +- Sidekiq::Stats.new.enqueued
+  end
+
+
   def _shutdown
     `sudo -b shutdown -H 0`
   end
+
+
 
 
 end
