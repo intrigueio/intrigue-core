@@ -228,6 +228,7 @@
         "control_queue_uri" : "",
         "status_queue_uri" : "",
         "sleep_interval" : 30,
+        "max_seconds", 3600,
         "handler" : ""
       },
       "uri" : "",
