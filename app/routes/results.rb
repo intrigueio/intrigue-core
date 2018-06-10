@@ -222,6 +222,7 @@ class IntrigueApp < Sinatra::Base
       options = payload["options"]
       handlers = payload["handlers"]
       strategy_name = payload["strategy_name"]
+      auto_enrich = "#{payload["auto_enrich"]}".to_bool
 
       # create the first entity
       entity = Intrigue::EntityManager.create_first_entity(@project_name,type_string,name,{})
@@ -233,14 +234,6 @@ class IntrigueApp < Sinatra::Base
       # Start the task_run
       task_result = start_task("task", project, nil, task_name, entity, depth,
                                   options, handlers, strategy_name, auto_enrich)
-
-      # manually kick off enrichment for first task
-      if payload["auto_enrich"]
-        auto_enrich = "#{payload["auto_enrich"]}".to_bool
-      else
-        auto_enrich = false
-      end
-      Intrigue::EntityManager.enrich_entity(entity, task_result) if auto_enrich
 
       status 200 if task_result
 
