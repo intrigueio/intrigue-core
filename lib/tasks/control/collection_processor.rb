@@ -45,7 +45,7 @@ class CollectionProcessor < BaseTask
     handler = config["handler"]
 
     # connect to the configured amazon queue & Grab one
-    _set_status "starting"
+    _set_status :available, nil
     instruction_data = nil
     iteration = 0
     while true
@@ -59,6 +59,7 @@ class CollectionProcessor < BaseTask
         # kick it off if we got one, and break out of this loop
         if instruction_data
           _log "[+] Executing #{instruction_data["id"]} for #{sleep_interval} seconds! (expire in: ~#{max_seconds - (iteration * sleep_interval) }s)"
+          _set_status :start, "#{instruction_data["id"]}"
           _execute_instruction(instruction_data)
         else
           _log "Nothing to do, waiting!"
@@ -72,7 +73,7 @@ class CollectionProcessor < BaseTask
 
       # determine how we're doing
       task_count_left = _tasks_left
-      seconds_elapsed = iteration * sleep_interval\
+      seconds_elapsed = iteration * sleep_interval
       done = (iteration > 10 && task_count_left == 0 ) || (seconds_elapsed  > max_seconds)
 
       _log "Seconds elapsed: #{seconds_elapsed}" if iteration % 10 == 0
@@ -80,11 +81,15 @@ class CollectionProcessor < BaseTask
 
       if done
         _log_good "Done with #{instruction_data["id"]} after #{seconds_elapsed}s"
-        _set_status "completed #{instruction_data["id"]}"
+        _set_status :end, {
+          "id" => "#{instruction_data["id"]}",
+          "elapsed" => "#{seconds_elapsed}",
+          "entities" => "#{Intrigue::Model::Project.first(:name => instruction_data["id"]).entities.count}"
+        }
 
         _log_good "#{instruction_data["id"]}"
         _run_handlers instruction_data
-        _set_status "handled #{instruction_data["id"]}"
+        _set_status :sent, "#{instruction_data["id"]}"
 
         instruction_data = nil
         iteration = -1
@@ -135,16 +140,20 @@ class CollectionProcessor < BaseTask
   false
   end
 
-  def _set_status(s)
-    status = "#{HOSTNAME}: #{s}"
-
+  def _set_status(s, details=nil)
+    status = {
+      :hostname => HOSTNAME,
+      :timestamp => DateTime.now,
+      :status => s,
+      :details => details
+    }
     _log "Setting status to: #{status}"
 
     begin
       # Create a message with three custom attributes: Title, Author, and WeeksOn.
       send_message_result = @sqs.send_message({
         queue_url: @status_queue_uri,
-        message_body: "#{status}"
+        message_body: "#{status.to_json}"
       })
     rescue Aws::SQS::Errors::NonExistentQueue
       _log "A queue named '#{queue_name}' does not exist."
@@ -184,7 +193,7 @@ class CollectionProcessor < BaseTask
     ps.each do |process|
       count += process['busy']     # => 3
     end
-    count +- Sidekiq::Stats.new.enqueued
+    count += Sidekiq::Stats.new.enqueued
   end
 
 end
