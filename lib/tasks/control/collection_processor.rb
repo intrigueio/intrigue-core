@@ -34,7 +34,7 @@ class CollectionProcessor < BaseTask
     @sqs = Aws::SQS::Client.new({
       region: 'us-east-1',
       access_key_id: config["aws_access_key"],
-      secret_access_key: config["secret_access_key"]
+      secret_access_key: config["aws_secret_access_key"]
     })
 
     @control_queue_uri = config["control_queue_uri"]
