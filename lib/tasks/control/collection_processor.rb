@@ -1,4 +1,3 @@
-require 'aws-sdk-sqs'
 
 module Intrigue
 module Task
@@ -71,12 +70,10 @@ class CollectionProcessor < BaseTask
       # hold tight
       sleep sleep_interval
 
-      # check sidekiq busy queue (also have a fallback if it's "stuck"...)
-      # default is 1000 x 30 .. 3000 / 60 = 50mins
+      # determine how we're doing
       task_count_left = _tasks_left
-      seconds_elapsed = iteration * sleep_interval
-
-      done = (iteration > 10 && task_count_left == 0 ) || seconds_elapsed  > max_seconds
+      seconds_elapsed = iteration * sleep_interval\
+      done = (iteration > 10 && task_count_left == 0 ) || (seconds_elapsed  > max_seconds)
 
       _log "Seconds elapsed: #{seconds_elapsed}" if iteration % 10 == 0
       _log "Tasks left: #{task_count_left}" if iteration % 10 == 0
@@ -189,14 +186,6 @@ class CollectionProcessor < BaseTask
     end
     count +- Sidekiq::Stats.new.enqueued
   end
-
-
-  def _shutdown
-    `sudo -b shutdown -H 0`
-  end
-
-
-
 
 end
 end
