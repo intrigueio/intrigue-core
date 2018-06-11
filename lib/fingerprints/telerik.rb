@@ -13,7 +13,8 @@ module Intrigue
               :version => "",
               :type => :content_body,
               :content => /Telerik.Sitefinity.Resources/,
-              :dynamic_version => lambda { |x| x.body.match(/Version=([\d\.]+),/).captures[0] }
+              :dynamic_version => lambda { |x| x.body.match(/Version=([\d\.]+),/).captures[0] },
+              :verify_sites => []
             }
           ]
         }

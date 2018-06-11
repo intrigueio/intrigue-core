@@ -15,7 +15,7 @@ module Intrigue
               :content => /awselb\/\d.\d/,
               :hide => true,
               :dynamic_version => lambda { |x| x["server"].match(/awselb\/(\d.\d)/).captures[0] },
-              :test => "http://52.4.103.22:80"
+              :verify_sites => ["http://52.4.103.22:80"]
             }
           ]
         }
