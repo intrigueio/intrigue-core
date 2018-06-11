@@ -40,7 +40,7 @@ class CollectionProcessor < BaseTask
     @control_queue_uri = config["control_queue_uri"]
     @status_queue_uri = config["status_queue_uri"]
     sleep_interval = config["sleep"] || 10
-    max_seconds = config["max_seconds"] || 3600
+    max_seconds = config["max_seconds"] || 36000
 
     handler = config["handler"]
 
