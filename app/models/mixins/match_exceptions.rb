@@ -90,6 +90,7 @@ module MatchExceptions
             entity_name =~ /^.*decipherinc.com(:[0-9]*)?$/               ||
             entity_name =~ /^.*discourse.org(:[0-9]*)?$/                 ||
             entity_name =~ /^.*drupal.org(:[0-9]*)?$/                    ||
+            entity_name =~ /^.*ed[0-9]+.com(:[0-9]*)?$/                  ||
             entity_name =~ /^.*edgecastcdn.net(:[0-9]*)?$/               ||
             entity_name =~ /^.*edgekey.net(:[0-9]*)?$/                   ||
             entity_name =~ /^.*edgekey-staging.net(:[0-9]*)?$/           ||
