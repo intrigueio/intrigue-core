@@ -17,14 +17,7 @@ class UriGatherSslCert  < BaseTask
       :example_entities => [{"type" => "Uri", "details" => {"name" => "http://www.intrigue.io"}}],
       :allowed_options => [
         {:name => "parse_entities", :regex => "boolean", :default => true },
-        {:name => "skip_acquia", :regex => "boolean", :default => true },
-        {:name => "skip_cloudflare", :regex => "boolean", :default => true },
-        {:name => "skip_distil", :regex => "boolean", :default => true },
-        {:name => "skip_fastly", :regex => "boolean", :default => true },
-        {:name => "skip_incapsula", :regex => "boolean", :default => true },
-        {:name => "skip_jive", :regex => "boolean", :default => true },
-        {:name => "skip_lithium",  :regex => "boolean", :default => true },
-        {:name => "skip_wpengine", :regex => "boolean", :default => true }
+        {:name => "opt_skip_hosted_services", :regex => "boolean", :default => true },
       ],
       :created_types => ["DnsRecord","SslCertificate"]
     }
@@ -34,15 +27,7 @@ class UriGatherSslCert  < BaseTask
     super
 
     opt_parse = _get_option "parse_entities"
-    opt_skip_acquia = _get_option "skip_acquia"
-    opt_skip_cloudflare = _get_option "skip_cloudflare"
-    opt_skip_distill = _get_option "skip_distill"
-    opt_skip_fastly = _get_option "skip_fastly"
-    opt_skip_jive = _get_option "skip_jive"
-    opt_skip_incapsula = _get_option "skip_incapsula"
-    opt_skip_lithium = _get_option "skip_lithium"
-    opt_skip_wpengine = _get_option "skip_wpengine"
-
+    opt_skip_hosted_services = _get_option "skip_hosted_services"
     uri = _get_entity_name
 
     begin
@@ -67,46 +52,74 @@ class UriGatherSslCert  < BaseTask
           end
           _log "Got alt_names: #{alt_names.inspect}"
 
+          tlds = []
+
           # Iterate through, looking for trouble
           alt_names.each do |alt_name|
 
-            if (alt_name =~ /acquia-sites.com$/ ) && opt_skip_acquia
+            # collect all top-level domains
+            tlds << alt_name.split(".").last(2).join(".")
+
+            if (alt_name =~ /acquia-sites.com$/ ) && opt_skip_hosted_services
               _log "This is a cloudflare certificate, skipping further entity creation"
               return
             end
 
-            if (alt_name =~ /cloudflare.com$/ || alt_name =~ /cloudflaressl.com$/ ) && opt_skip_cloudflare
+            if (alt_name =~ /cloudflare.com$/ || alt_name =~ /cloudflaressl.com$/ ) && opt_skip_hosted_services
               _log "This is a cloudflare certificate, skipping further entity creation"
               return
             end
 
-            if alt_name =~ /distilnetworks.com$/ && opt_skip_distill
+            if alt_name =~ /distilnetworks.com$/ && opt_skip_hosted_services
               _log "This is a distil networks certificate, skipping further entity creation"
               return
             end
 
-            if alt_name =~ /fastly.net$/ && opt_skip_fastly
+            if alt_name =~ /fastly.net$/ && opt_skip_hosted_services
               _log "This is a fastly certificate, skipping further entity creation"
               return
             end
 
-            if alt_name =~ /jiveon.com$/ && opt_skip_jive
+            if alt_name =~ /freshdesk.com$/ && opt_skip_hosted_services
+              _log "This is a freshdesk certificate, skipping further entity creation"
+              return
+            end
+
+
+            if alt_name =~ /jiveon.com$/ && opt_skip_hosted_services
               _log "This is a jive certificate, skipping further entity creation"
               return
             end
 
-            if alt_name =~ /incapsula.com$/ && opt_skip_incapsula
+            if alt_name =~ /incapsula.com$/ && opt_skip_hosted_services
               _log "This is an incapsula certificate, skipping further entity creation"
               return
             end
 
-            if alt_name =~ /lithium.com$/ && opt_skip_lithium
+            if alt_name =~ /lithium.com$/ && opt_skip_hosted_services
               _log "This is an lithium certificate, skipping further entity creation"
               return
             end
 
-            if alt_name =~ /wpengine.com$/ && opt_skip_wpengine
+            if alt_name =~ /wpengine.com$/ && opt_skip_hosted_services
               _log "This is a wpengine certificate, skipping further entity creation"
+              return
+            end
+          end
+
+          if opt_skip_hosted_services
+            # Generically try to find certs that aren't useful to us
+            suspicious_count = 80
+            # Check to see if we have over suspicious_count top level domains in this cert
+            if tlds.uniq.count >= suspicious_count
+              # and then check to make sure none of the domains are greate than a quarter
+              _log "This looks suspiciously like a third party cert... over #{suspicious_count} unique TLDs: #{tlds.uniq.count}"
+              _log "Total Unique Domains: #{alt_names.uniq.count}"
+
+              # count up the tlds & display
+              domain_counts = tlds.each_with_object(Hash.new(0)) { |domain,counts| domain[word] += 1 }
+              _log "#{domain_counts.inspect}"
+
               return
             end
           end
