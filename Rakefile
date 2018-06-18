@@ -192,14 +192,12 @@ def setup_database
 
   # Allow datasets to be paginated
   $db.extension :pagination
-  #$db.extension :pg_json
   Sequel.extension :pg_json_ops
   Sequel.extension :migration
 end
 
 
 namespace :db do
-
   desc "Prints current schema version"
   task :version do
     setup_database
