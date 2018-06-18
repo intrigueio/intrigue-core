@@ -190,6 +190,7 @@ module MatchExceptions
             entity_name =~ /^.*windowsphone-int.net(:[0-9]*)?$/          ||
             entity_name =~ /^.*windowsphone.com(:[0-9]*)?$/              ||
             entity_name =~ /^.*wordpress.com(:[0-9]*)?$/                 ||
+            entity_name =~ /^.*wpengine.com(:[0-9]*)?$/                  ||
             entity_name =~ /^.*www.goo.gl(:[0-9]*)?$/                    ||
             entity_name =~ /^.*xmlns.com(:[0-9]*)?$/                     ||
             entity_name =~ /^.*youtu.be(:[0-9]*)?$/                      ||
