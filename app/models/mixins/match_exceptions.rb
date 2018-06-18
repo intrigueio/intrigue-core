@@ -86,6 +86,7 @@ module MatchExceptions
             entity_name =~ /^.*cheetahmail.com(:[0-9]*)?$/               ||
             entity_name =~ /^.*cloudapp.net(:[0-9]*)?$/                  ||
             entity_name =~ /^.*cloudfront.net(:[0-9]*)?$/                ||
+            entity_name =~ /^.*cloudflare-dns.com(:[0-9]*)?$/            ||
             entity_name =~ /^.*corporate-ir.net(:[0-9]*)?$/              ||
             entity_name =~ /^.*decipherinc.com(:[0-9]*)?$/               ||
             entity_name =~ /^.*discourse.org(:[0-9]*)?$/                 ||
