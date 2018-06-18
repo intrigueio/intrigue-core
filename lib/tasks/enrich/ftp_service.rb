@@ -29,8 +29,8 @@ class EnrichFtpService < BaseTask
   def run
     super
 
-    port = _get_entity_detail("port").to_i
-    protocol = _get_entity_detail("protocol")
+    port = _get_entity_detail("port").to_i || 21
+    protocol = _get_entity_detail("protocol") ||  "tcp"
     ip_address = _get_entity_detail("ip_address")
 
     # Check to make sure we have a sane target
