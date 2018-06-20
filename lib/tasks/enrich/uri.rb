@@ -47,6 +47,10 @@ class EnrichUri < BaseTask
     # grab all script_references
     script_references = response_data.scan(/<script.*?src=["|'](.*?)["|']/).map{|x| x.first if x }
 
+    # save the Headers
+    headers = []
+    response.each_header{|x| headers << { x => response[x] }}
+
     # we'll need to make another request
     #trace_enabled = check_trace_endpoint(uri)
 
@@ -73,6 +77,7 @@ class EnrichUri < BaseTask
         "title" => response.body[/<title>(.*)<\/title>/,1],
         "verbs" => verbs_enabled,
         "scripts" => script_references,
+        "headers" => headers,
         "forms" => contains_forms,
         "response_data_hash" => response_data_hash,
         "hidden_response_data" => response_data,
