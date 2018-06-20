@@ -5,8 +5,8 @@ module System
     extend Intrigue::Task::Helper
 
     if message["type"] == "ipv4_scanner"
-      project = Intrigue::Model::Project.find_or_create(:name => "ipv4_scanner")
-      netblocks = message["netblocks"]
+
+      raise "Not implemented"
 
     else  # default discovery
 
