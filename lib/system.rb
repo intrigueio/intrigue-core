@@ -4,42 +4,49 @@ module System
   def bootstrap_system(message)
     extend Intrigue::Task::Helper
 
-    # XXX - Assumes we start at a clean system!!!!
-    message["projects"].each do |p|
-      project_name = p["name"]
+    if message["type"] == "ipv4_scanner"
+      project = Intrigue::Model::Project.find_or_create(:name => "ipv4_scanner")
+      netblocks = message["netblocks"]
 
-      project = Intrigue::Model::Project.find_or_create(:name => "#{project_name}")
+    else  # default discovery
 
-      # Set exclusion setting
-      auto_enrich = p["auto_enrich"] || false
-      project.use_standard_exceptions = p["use_standard_exceptions"]
-      project.additional_exception_list = p["additional_exception_list"]
-      project.save
+      # XXX - Assumes we start at a clean system!!!!
+      message["projects"].each do |p|
+        project_name = p["name"]
 
-      @task_result.log "Working on project: #{project_name}" if @task_result
-      p["seeds"].each do |s|
-        @task_result.log " - Seed: #{s}" if @task_result
+        project = Intrigue::Model::Project.find_or_create(:name => "#{project_name}")
 
-        entity = _parse_entity s["entity"]
-        task_name = s["task"] || "create_entity"
-        strategy = s["strategy"] || "org_asset_discovery_active"
-        depth = s["depth"] || 6
-        options = s["options"] || []
-        handlers = s["handlers"] || []
+        # Set exclusion setting
+        auto_enrich = p["auto_enrich"] || false
+        project.use_standard_exceptions = p["use_standard_exceptions"]
+        project.additional_exception_list = p["additional_exception_list"]
+        project.save
 
-        # Create the entity
-        created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"])
+        @task_result.log "Working on project: #{project_name}" if @task_result
+        p["seeds"].each do |s|
+          @task_result.log " - Seed: #{s}" if @task_result
 
-        # Kick off the task
-        task_result = start_task(nil, project, nil, task_name, created_entity, depth, options, handlers, strategy, auto_enrich)
+          entity = _parse_entity s["entity"]
+          task_name = s["task"] || "create_entity"
+          strategy = s["strategy"] || "org_asset_discovery_active"
+          depth = s["depth"] || 4
+          options = s["options"] || []
+          handlers = s["handlers"] || []
 
-      end
+          # Create the entity
+          created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"])
 
-      # sometimes we need to run a custom command in the context of a project
-      if p["custom_commands"]
-        p["custom_commands"].each do |c|
-          Dir.chdir($intrigue_basedir) do
-            `#{c["command"]}`
+          # Kick off the task
+          task_result = start_task(nil, project, nil, task_name, created_entity, depth, options, handlers, strategy, auto_enrich)
+
+        end
+
+        # sometimes we need to run a custom command in the context of a project
+        if p["custom_commands"]
+          p["custom_commands"].each do |c|
+            Dir.chdir($intrigue_basedir) do
+              `#{c["command"]}`
+            end
           end
         end
       end

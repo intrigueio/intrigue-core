@@ -29,9 +29,11 @@ class EnrichFtpService < BaseTask
   def run
     super
 
-    port = _get_entity_detail("port").to_i || 21
+    # TODO this won't work once we fix the name regex
+    port = _get_entity_detail("port").to_i
+    port = 21 if port == 0 # handle empty port
     protocol = _get_entity_detail("protocol") ||  "tcp"
-    ip_address = _get_entity_detail("ip_address")
+    ip_address = _get_entity_detail("ip_address") || _get_entity_name
 
     # Check to make sure we have a sane target
     if protocol.downcase == "tcp" && ip_address && port
@@ -43,10 +45,10 @@ class EnrichFtpService < BaseTask
         sockets[0] = TCPSocket.open(ip_address, port)
         while true #loop till it breaks
 
-        #listen for a read, timeout 3
-        res = select(sockets, nil, nil,3)
+        # listen for a read, timeout 5
+        res = select(sockets, nil, nil, 5)
           if res != nil  # a nil is a timeout and will break
-                #THIS PRINTS NIL FOREVER on a server crash
+                         # WARNING! THIS PRINTS NIL FOREVER on a server crash
             banner << sockets[0].gets()
           else
             sockets[0].close

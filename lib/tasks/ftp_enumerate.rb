@@ -36,9 +36,11 @@ class FtpEnumerate < BaseTask
   def run
     super
 
+    # TODO this won't work once we fix the name regex
     port = _get_entity_detail("port").to_i
-    protocol = _get_entity_detail "protocol"
-    ip_address = _get_entity_detail "ip_address"
+    port = 21 if port == 0 # handle empty port
+    protocol = _get_entity_detail("protocol") ||  "tcp"
+    ip_address = _get_entity_detail("ip_address") || _get_entity_name
 
     # Check to make sure we have a sane target
     if protocol.downcase == "tcp" && ip_address && port

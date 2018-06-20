@@ -11,6 +11,7 @@ class FtpService < Intrigue::Entity::NetworkService
   end
 
   def validate_entity
+    # TODO - this doesnt really work
     name =~ /(\w.*):\d{1,5}/ && details["port"].to_s =~ /^\d{1,5}$/
   end
 
@@ -19,7 +20,7 @@ class FtpService < Intrigue::Entity::NetworkService
   end
 
   def enrichment_tasks
-    ["enrich/ftp_service"]
+    ["enrich/ftp_service", "ftp_enumerate"]
   end
 
 
