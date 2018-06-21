@@ -30,8 +30,8 @@ class ImportAwsIpv4Ranges < BaseTask
     super
 
     region = _get_entity_name || "all"
-    service = _get_option("service")
-    limit = _get_option("limit")
+    service = _get_option("service") || "EC2"
+    limit = _get_option("limit").to_i || 10000
 
     range_data = JSON.parse(http_get_body("https://ip-ranges.amazonaws.com/ip-ranges.json"))
     range_data["prefixes"].each do |range|
