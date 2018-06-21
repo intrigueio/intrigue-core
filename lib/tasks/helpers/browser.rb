@@ -32,8 +32,6 @@ module Task
       page_contents = session.document.text(:all)
       page_title = session.document.title
 
-      session.driver.quit
-
     { :title => page_title, :contents => page_contents }
     end
 
@@ -77,9 +75,6 @@ module Task
 
       # open and read the file's contents, and base64 encode them
       base64_image_contents = Base64.encode64(File.read(tempfile.path))
-
-      # cleanup. note that this method is overridden, see initialize
-      session.driver.quit
 
       # cleanup
       tempfile.close

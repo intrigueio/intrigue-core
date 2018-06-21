@@ -36,6 +36,9 @@ class UriScreenshot < BaseTask
     # capture a screenshot and save it as a detail
     _set_entity_detail("hidden_screenshot_contents",capture_screenshot(session, uri))
 
+    # cleanup
+    session.driver.quit
+
   end
 
 end

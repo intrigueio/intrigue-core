@@ -21,7 +21,7 @@ class Uri < Intrigue::Model::Entity
   end
 
   def enrichment_tasks
-    ["enrich/uri", "web_stack_fingerprint"]
+    ["enrich/uri"]
   end
 
 end
