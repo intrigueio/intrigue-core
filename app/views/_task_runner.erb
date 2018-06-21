@@ -59,7 +59,7 @@
           <% Intrigue::StrategyFactory.list.each do |strategy_class| %>
            <% next unless strategy_class.metadata[:user_selectable] %>
             <option value="<%= strategy_class.metadata[:name] %>"
-              <%= "selected='selected'" if strategy_class.metadata[:name] == "discovery" %> >
+              <%= "selected='selected'" if strategy_class.metadata[:name] == "org_asset_discovery_active" %> >
               <%= strategy_class.metadata[:pretty_name] %>
             </option>
           <% end %>
