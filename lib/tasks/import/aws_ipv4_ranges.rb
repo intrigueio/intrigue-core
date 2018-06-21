@@ -15,11 +15,11 @@ class ImportAwsIpv4Ranges < BaseTask
       :passive => true,
       :allowed_types => ["*"],
       :example_entities => [
-        {"type" => "String", "details" => {"name" => "us-east-1"}}
+        {"type" => "String", "details" => {"name" => "all"}}
       ],
       :allowed_options => [
         {:name => "service", :regex => "alpha_numeric", :default => "EC2" },
-        {:name => "limit", :regex => "alpha_numeric", :default => 10 },
+        {:name => "limit", :regex => "alpha_numeric", :default => 10000 },
       ],
       :created_types => ["NetBlock"]
     }
@@ -29,7 +29,7 @@ class ImportAwsIpv4Ranges < BaseTask
   def run
     super
 
-    region = _get_entity_name
+    region = _get_entity_name || "all"
     service = _get_option("service")
     limit = _get_option("limit")
 
@@ -42,8 +42,8 @@ class ImportAwsIpv4Ranges < BaseTask
         _log "Hit limit, exiting!"
         return
       end
-      next unless (region == "#{range["region"]}" || region == "*")
-      next unless (service == "#{range["service"]}" || service == "*")
+      next unless (region == "#{range["region"]}" || region == "all")
+      next unless (service == "#{range["service"]}" || service == "all")
 
       prefix = "#{range["ipv6_prefix"]}#{range["ip_prefix"]}"
       _log " -> Creating #{prefix}"
