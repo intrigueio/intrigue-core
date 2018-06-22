@@ -106,8 +106,14 @@ class CollectionProcessor < BaseTask
   def _get_queued_instruction
 
     begin
-      # pull from the queue
-      response = @sqs.receive_message(queue_url: @control_queue_uri, max_number_of_messages: 1)
+
+      # pull from the priority queue first
+      response = @sqs.receive_message(queue_url: "#{@control_queue_uri}_priority_100", max_number_of_messages: 1)
+
+      # otherwise go to the normal queue
+      unless response.messages.count > 0
+        response = @sqs.receive_message(queue_url: @control_queue_uri, max_number_of_messages: 1)
+      end
 
       control_message = {}
       response.messages.each do |m|
