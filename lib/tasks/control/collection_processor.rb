@@ -108,11 +108,14 @@ class CollectionProcessor < BaseTask
     begin
 
       # pull from the priority queue first
-      response = @sqs.receive_message(queue_url: "#{@control_queue_uri}_priority_100", max_number_of_messages: 1)
+      queue_uri = "#{@control_queue_uri}_priority_100"
+      response = @sqs.receive_message(queue_url: queue_uri, max_number_of_messages: 1)
+
 
       # otherwise go to the normal queue
       unless response.messages.count > 0
-        response = @sqs.receive_message(queue_url: @control_queue_uri, max_number_of_messages: 1)
+        queue_uri = @control_queue_uri
+        response = @sqs.receive_message(queue_url: queue_uri, max_number_of_messages: 1)
       end
 
       control_message = {}
@@ -121,7 +124,7 @@ class CollectionProcessor < BaseTask
         if (m && m.body)
 
           @sqs.delete_message({
-            queue_url: @control_queue_uri,
+            queue_url: queue_uri,
             receipt_handle: m.receipt_handle
           })
 
