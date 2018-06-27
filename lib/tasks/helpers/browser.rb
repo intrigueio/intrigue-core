@@ -16,21 +16,35 @@ module Task
       Capybara::Session.new(:selenium_chrome_headless)
     end
 
+    def safe_browser_action(sess)
+      begin
+        results = yield
+      rescue Net::ReadTimeout => e
+        _log_error "Timed out, moving on" if @task_result
+      rescue Selenium::WebDriver::Error::NoSuchWindowError => e
+        _log_error "FATAL: Lost our window #{e}" if @task_result
+        sess.driver.quit
+      rescue Selenium::WebDriver::Error::UnknownError => e
+        _log_error "FATAL: unknown... #{e}" if @task_result
+        sess.driver.quit
+      rescue Selenium::WebDriver::Error::NoSuchElementError
+        _log_error "No such element #{e}, moving on" if @task_result
+      rescue Selenium::WebDriver::Error::StaleElementReferenceError
+        _log_error "No such element ref #{e}, moving on" if @task_result
+      end
+    results
+    end
+
     def capture_document(session, uri)
       # browse to our target
-      begin
+      safe_browser_action(session) {}
         session.visit(uri)
-      rescue Net::ReadTimeout => e
-        _log_error "Timed out" if @task_result
-      rescue Selenium::WebDriver::Error::NoSuchWindowError => e
-        _log_error "Lost our window #{e}" if @task_result
-      rescue Selenium::WebDriver::Error::UnknownError => e
-          _log_error "ERROR: #{e}" if @task_result
       end
 
       # Capture Title
       page_contents = session.document.text(:all)
       page_title = session.document.title
+      # TODO ... DOM
 
     { :title => page_title, :contents => page_contents }
     end
@@ -38,14 +52,8 @@ module Task
 
     def capture_screenshot(session, uri)
       # browse to our target
-      begin
+      safe_browser_action(session) do
         session.visit(uri)
-      rescue Net::ReadTimeout => e
-        _log_error "Timed out" if @task_result
-      rescue Selenium::WebDriver::Error::NoSuchWindowError => e
-        _log_error "Lost our window #{e}" if @task_result
-      rescue Selenium::WebDriver::Error::UnknownError => e
-          _log_error "ERROR: #{e}" if @task_result
       end
 
       # wait for the page to render
@@ -56,15 +64,9 @@ module Task
       #
       tempfile = Tempfile.new(['screenshot', '.png'])
 
-      begin
+      safe_browser_action(session) do
         session.save_screenshot(tempfile.path)
         _log "Saved Screenshot to #{tempfile.path}"
-      rescue Net::ReadTimeout => e
-        _log_error "Timed out" if @task_result
-      rescue Selenium::WebDriver::Error::NoSuchWindowError => e
-        _log_error "Lost our window #{e}" if @task_result
-      rescue Selenium::WebDriver::Error::UnknownError => e
-          _log_error "ERROR: #{e}" if @task_result
       end
 
       # open and read the file's contents, and base64 encode them
@@ -83,14 +85,8 @@ module Task
       # Examples: https://builtwith.angularjs.org/
       # Examples: https://www.madewithangular.com/
 
-      begin
+      safe_browser_action(session) do
         session.visit(uri)
-      rescue Net::ReadTimeout => e
-        _log_error "Timed out" if @task_result
-      rescue Selenium::WebDriver::Error::NoSuchWindowError => e
-        _log_error "Lost our window #{e}" if @task_result
-      rescue Selenium::WebDriver::Error::UnknownError => e
-          _log_error "ERROR: #{e}" if @task_result
       end
 
       checks = [
@@ -163,14 +159,8 @@ module Task
       checks.each do |check|
 
         # run our script in a browser
-        begin
-          version = session.evaluate_script(check[:script])
-        rescue Net::ReadTimeout => e
-          _log_error "Timed out" if @task_result
-        rescue Selenium::WebDriver::Error::NoSuchWindowError => e
-          _log_error "Lost our window #{e}" if @task_result
-        rescue Selenium::WebDriver::Error::UnknownError => e
-            _log_error "ERROR: #{e}" if @task_result
+        version = safe_browser_action(session) do
+          session.evaluate_script(check[:script])
         end
 
         if version
