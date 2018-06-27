@@ -37,7 +37,7 @@ class UriScreenshot < BaseTask
     _set_entity_detail("hidden_screenshot_contents",capture_screenshot(session, uri))
 
     # cleanup
-    session.driver.quit
+    destroy_browser_session(session)
 
   end
 

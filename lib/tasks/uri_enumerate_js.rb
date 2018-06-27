@@ -42,7 +42,7 @@ class UriEnumerateJs  < BaseTask
     _set_entity_detail("javascript", new_libraries)
 
     # cleanup
-    session.driver.quit
+    destroy_browser_session(session)
 
   end
 

@@ -16,17 +16,21 @@ module Task
       Capybara::Session.new(:headless_chrome)
     end
 
-    def safe_browser_action(sess)
+    def destroy_browser_session(session)
+      session.driver.quit
+    end
+
+    def safe_browser_action
       begin
         results = yield
+      rescue Capybara::ElementNotFound => e
+        _log_error "element not found" if @task_
       rescue Net::ReadTimeout => e
         _log_error "Timed out, moving on" if @task_result
       rescue Selenium::WebDriver::Error::NoSuchWindowError => e
-        _log_error "FATAL: Lost our window #{e}" if @task_result
-        sess.driver.quit
+        _log_error "Lost our window #{e}" if @task_result
       rescue Selenium::WebDriver::Error::UnknownError => e
-        _log_error "FATAL: unknown... #{e}" if @task_result
-        sess.driver.quit
+        _log_error "#{e}" if @task_result
       rescue Selenium::WebDriver::Error::UnhandledAlertError => e
         _log_error "Unhandled alert #{e}" if @task_result
       rescue Selenium::WebDriver::Error::NoSuchElementError
@@ -39,8 +43,9 @@ module Task
 
     def capture_document(session, uri)
       # browse to our target
-      safe_browser_action(session) do
+      safe_browser_action do
         session.visit(uri)
+        session.find(:css, '#doesnotexist')
       end
 
       # Capture Title
@@ -54,8 +59,9 @@ module Task
 
     def capture_screenshot(session, uri)
       # browse to our target
-      safe_browser_action(session) do
+      safe_browser_action do
         session.visit(uri)
+        session.find(:css, '#doesnotexist')
       end
 
       # wait for the page to render
@@ -66,7 +72,7 @@ module Task
       #
       tempfile = Tempfile.new(['screenshot', '.png'])
 
-      safe_browser_action(session) do
+      safe_browser_action do
         session.save_screenshot(tempfile.path)
         _log "Saved Screenshot to #{tempfile.path}"
       end
@@ -87,8 +93,9 @@ module Task
       # Examples: https://builtwith.angularjs.org/
       # Examples: https://www.madewithangular.com/
 
-      safe_browser_action(session) do
+      safe_browser_action do
         session.visit(uri)
+        session.find(:css, '#doesnotexist')
       end
 
       checks = [
@@ -160,9 +167,11 @@ module Task
 
       checks.each do |check|
 
+        hacky_javascript = "#{check[:script]}"
+
         # run our script in a browser
-        version = safe_browser_action(session) do
-          session.evaluate_script(check[:script])
+        version = safe_browser_action do
+          session.execute_script(hacky_javascript)
         end
 
         if version

@@ -71,8 +71,7 @@ class EnrichUri < BaseTask
     encoded_screenshot = capture_screenshot(session, uri)
 
     # kill the session / cleanup
-    session.driver.quit
-    session = nil
+    destroy_browser_session(session)
 
     ###
     ### Fingerprint the server

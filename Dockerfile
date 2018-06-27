@@ -3,7 +3,10 @@ MAINTAINER Jonathan Cran <jcran@intrigue.io>
 
 USER root
 
-# get intrigue-core code
+# Expose the port
+EXPOSE 7777
+
+# Get intrigue-core code
 RUN apt-get -y update && apt-get -y install sudo
 RUN /bin/bash -l -c "rm -rf /core && mkdir -p /core"
 ADD . /core/
@@ -15,11 +18,6 @@ ENV BUNDLE_JOBS=12
 ENV PATH /root/.rbenv/bin:$PATH
 RUN chmod +x /core/util/bootstrap.sh
 RUN /core/util/bootstrap.sh
+RUN chmod +x /core/util/docker_entry.sh
 
-# Expose a port
-EXPOSE 7777
-
-RUN service postgres restart
-RUN /core/util/control.sh start
-
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/core/util/docker_entry.sh"]
