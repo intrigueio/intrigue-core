@@ -1,38 +1,17 @@
-# SETUP
 require 'capybara'
-require 'capybara/poltergeist'
+require "selenium/webdriver"
 
-
-
-
-Capybara.register_driver :poltergeist do |app|
-  Capybara::Poltergeist::Driver.new(app, {
-    :js_errors => false,
-    :phantomjs_options => [
-      '--debug=false',
-      '--ignore-ssl-errors=true',
-      '--ssl-protocol=any' ]
-  })
+Capybara.register_driver :headless_chrome do |app|
+  capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
+     chromeOptions: {
+       args: %w[ headless disable-gpu window-size=640,480 proxy-server='direct://' proxy-bypass-list=* timeout=20000 ]
+     }
+   )
+ Capybara::Selenium::Driver.new(app, browser: :chrome, desired_capabilities: capabilities)
 end
 
-module Capybara::Poltergeist
-  class Client
-    def self.process_killer(pid)
-      proc do
-        begin
-          Process.kill('KILL', pid)
-        rescue Errno::ESRCH, Errno::ECHILD
-          # Zed's dead, baby
-        rescue => ex
-          puts "Error killing phantomjs, #{ex.message}"
-          raise
-        end
-      end
-    end
-  end
-end
-
-Capybara.threadsafe = true
-Capybara.javascript_driver = :poltergeist
-Capybara.run_server = false
+Capybara.default_max_wait_time = 20
 Capybara.default_selector = :xpath
+Capybara.javascript_driver = :selenium_chrome_headless
+Capybara.run_server = false
+Capybara.threadsafe = true

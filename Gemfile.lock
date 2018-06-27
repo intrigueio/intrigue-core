@@ -54,6 +54,8 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
+    archive-zip (0.11.0)
+      io-like (~> 0.3.0)
     aws-eventstream (1.0.0)
     aws-partitions (1.91.0)
     aws-sdk-core (3.21.2)
@@ -82,7 +84,11 @@ GEM
       rack (>= 1.6.0)
       rack-test (>= 0.6.3)
       xpath (~> 3.1)
-    cliver (0.3.2)
+    childprocess (0.9.0)
+      ffi (~> 1.0, >= 1.0.11)
+    chromedriver-helper (1.2.0)
+      archive-zip (~> 0.10)
+      nokogiri (~> 1.8)
     coderay (1.1.2)
     concurrent-ruby (1.0.5)
     connection_pool (2.2.2)
@@ -109,6 +115,7 @@ GEM
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.12.2)
       faraday (>= 0.7.4, < 1.0)
+    ffi (1.9.25)
     fog-aws (3.0.0)
       fog-core (~> 2.1)
       fog-json (~> 1.1)
@@ -142,12 +149,12 @@ GEM
     intrigue_api_client (1.2.4)
       json (~> 1.8)
       rest-client (~> 1.8)
+    io-like (0.3.0)
     ipaddress (0.8.3)
     jmespath (1.4.0)
     json (1.8.6)
     method_source (0.9.0)
     mime-types (1.25.1)
-    mini_magick (4.8.0)
     mini_mime (1.0.0)
     mini_portile2 (2.3.0)
     minitest (5.11.3)
@@ -159,10 +166,6 @@ GEM
     nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
     pg (1.0.0)
-    poltergeist (1.18.1)
-      capybara (>= 2.1, < 4)
-      cliver (~> 0.3.1)
-      websocket-driver (>= 0.2.0)
     pry (0.11.3)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
@@ -198,6 +201,10 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.7.0)
     rspec-support (3.7.1)
+    rubyzip (1.2.1)
+    selenium-webdriver (3.13.0)
+      childprocess (~> 0.5)
+      rubyzip (~> 1.2)
     sequel (5.9.0)
     shodan (1.0.0)
       json (>= 1.4.6)
@@ -261,7 +268,9 @@ PLATFORMS
 DEPENDENCIES
   aws-sdk-s3
   aws-sdk-sqs
+  capybara
   censys!
+  chromedriver-helper
   couchrest
   dnsruby
   elasticsearch
@@ -273,12 +282,10 @@ DEPENDENCIES
   googleajax
   iconv
   intrigue_api_client
-  mini_magick
   net-dns
   nokogiri
   opencorporates!
   pg
-  poltergeist
   pry
   pry-byebug
   puma
@@ -291,6 +298,7 @@ DEPENDENCIES
   rest-client
   rspec
   ruby-nmap!
+  selenium-webdriver
   sequel
   shodan
   sidekiq
@@ -311,5 +319,8 @@ DEPENDENCIES
   yard
   yomu
 
+RUBY VERSION
+   ruby 2.5.1p57
+
 BUNDLED WITH
-   1.16.1
+   1.16.2

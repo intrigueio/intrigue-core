@@ -1,7 +1,5 @@
 
 # Task-related Gems
-
-#require 'aws-sdk'
 require 'aws-sdk-sqs'
 require 'aws-sdk-s3'
 require 'censys'
@@ -11,7 +9,6 @@ require 'eventmachine'
 require 'geoip'
 require 'ipaddr'
 require 'json'
-require 'mini_magick'
 require 'net/dns'
 require 'net/http'
 require 'nmap/xml'

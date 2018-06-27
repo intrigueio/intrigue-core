@@ -13,19 +13,19 @@ module Task
 
     def create_browser_session
       # Start a new session
-      Capybara::Session.new(:poltergeist)
+      Capybara::Session.new(:selenium_chrome_headless)
     end
 
     def capture_document(session, uri)
       # browse to our target
       begin
         session.visit(uri)
-      rescue Capybara::Poltergeist::TimeoutError => e
-        _log_error "Fail Error: #{e}" if @task_result
-      rescue Capybara::Poltergeist::StatusFailError => e
-        _log_error "Fail Error: #{e}" if @task_result
-      rescue Capybara::Poltergeist::JavascriptError => e
-        _log_error "JS Error: #{e}" if @task_result
+      rescue Net::ReadTimeout => e
+        _log_error "Timed out" if @task_result
+      rescue Selenium::WebDriver::Error::NoSuchWindowError => e
+        _log_error "Lost our window #{e}" if @task_result
+      rescue Selenium::WebDriver::Error::UnknownError => e
+          _log_error "ERROR: #{e}" if @task_result
       end
 
       # Capture Title
@@ -40,38 +40,32 @@ module Task
       # browse to our target
       begin
         session.visit(uri)
-      rescue Capybara::Poltergeist::TimeoutError => e
-        _log_error "Fail Error: #{e}" if @task_result
-      rescue Capybara::Poltergeist::StatusFailError => e
-        _log_error "Fail Error: #{e}" if @task_result
-      rescue Capybara::Poltergeist::JavascriptError => e
-        _log_error "JS Error: #{e}" if @task_result
+      rescue Net::ReadTimeout => e
+        _log_error "Timed out" if @task_result
+      rescue Selenium::WebDriver::Error::NoSuchWindowError => e
+        _log_error "Lost our window #{e}" if @task_result
+      rescue Selenium::WebDriver::Error::UnknownError => e
+          _log_error "ERROR: #{e}" if @task_result
       end
 
       # wait for the page to render
-      sleep 3
+      #sleep 5
 
       #
       # Capture a screenshot
       #
-      tempfile = Tempfile.new(['phantomjs', '.png'])
+      tempfile = Tempfile.new(['screenshot', '.png'])
 
       begin
-        return_path = session.save_screenshot(tempfile.path)
-        _log "Saved Screenshot to #{return_path}"
-      rescue Capybara::Poltergeist::TimeoutError => e
-        _log_error "Fail Error: #{e}" if @task_result
-      rescue Capybara::Poltergeist::StatusFailError => e
-        _log_error "Fail Error: #{e}" if @task_result
-      rescue Capybara::Poltergeist::JavascriptError => e
-        _log_error "JS Error: #{e}" if @task_result
+        session.save_screenshot(tempfile.path)
+        _log "Saved Screenshot to #{tempfile.path}"
+      rescue Net::ReadTimeout => e
+        _log_error "Timed out" if @task_result
+      rescue Selenium::WebDriver::Error::NoSuchWindowError => e
+        _log_error "Lost our window #{e}" if @task_result
+      rescue Selenium::WebDriver::Error::UnknownError => e
+          _log_error "ERROR: #{e}" if @task_result
       end
-
-      # resize the image using minimagick
-      image = MiniMagick::Image.open(return_path)
-      image.resize "640x480"
-      image.format "png"
-      image.write tempfile.path
 
       # open and read the file's contents, and base64 encode them
       base64_image_contents = Base64.encode64(File.read(tempfile.path))
@@ -91,12 +85,12 @@ module Task
 
       begin
         session.visit(uri)
-      rescue Capybara::Poltergeist::TimeoutError => e
-        _log_error "Fail Error: #{e}" if @task_result
-      rescue Capybara::Poltergeist::StatusFailError => e
-        _log_error "Fail Error: #{e}" if @task_result
-      rescue Capybara::Poltergeist::JavascriptError => e
-        _log_error "JS Error: #{e}" if @task_result
+      rescue Net::ReadTimeout => e
+        _log_error "Timed out" if @task_result
+      rescue Selenium::WebDriver::Error::NoSuchWindowError => e
+        _log_error "Lost our window #{e}" if @task_result
+      rescue Selenium::WebDriver::Error::UnknownError => e
+          _log_error "ERROR: #{e}" if @task_result
       end
 
       checks = [
@@ -169,7 +163,16 @@ module Task
       checks.each do |check|
 
         # run our script in a browser
-        version = session.evaluate_script(check[:script])
+        begin
+          version = session.evaluate_script(check[:script])
+        rescue Net::ReadTimeout => e
+          _log_error "Timed out" if @task_result
+        rescue Selenium::WebDriver::Error::NoSuchWindowError => e
+          _log_error "Lost our window #{e}" if @task_result
+        rescue Selenium::WebDriver::Error::UnknownError => e
+            _log_error "ERROR: #{e}" if @task_result
+        end
+
         if version
           _log_good "Detected #{check[:library]} #{version}" if @task_result
           libraries << {"library" => "#{check[:library]}", "version" => "#{version}" }

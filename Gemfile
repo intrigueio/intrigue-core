@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+ruby '2.5.1'
 
 # core
 gem 'sinatra',         '~> 2.0.1'
@@ -40,7 +41,6 @@ gem 'whois-parser'            # whois
 gem 'googleajax'              # search_google
 gem 'geoip'                   # geolocate_host
 gem 'shodan'                  # search_shodan
-gem 'poltergeist'             # uri_screenshot
 gem 'towerdata_api'           # search_towerdata
 gem 'yomu'                    # uri_spider
 gem 'ruby-nmap',              :git => 'https://github.com/pentestify/ruby-nmap.git'
@@ -50,9 +50,11 @@ gem 'opencorporates',         :git => 'https://github.com/pentestify/opencorpora
 gem 'spidr',                  :git => 'https://github.com/intrigueio/spidr.git'
 gem 'snmp',                   :git => 'https://github.com/intrigueio/ruby-snmp.git'
 gem 'recog-intrigue',         :git => 'https://github.com/intrigueio/recog.git'
-gem 'aws-sdk-sqs' #,        '~> 3'
-gem 'aws-sdk-s3' #,        '~> 3'
-gem 'mini_magick'
+gem 'aws-sdk-sqs'             #,        '~> 3'
+gem 'aws-sdk-s3'              #,         '~> 3'
+gem 'capybara'                # uri_screenshot, etc
+gem 'chromedriver-helper'     # uri_screenshot, etc
+gem 'selenium-webdriver'      # uri_screenshot, etc
 
 # Handlers
 gem 'couchrest'
