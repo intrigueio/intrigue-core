@@ -24,13 +24,16 @@ module Task
       begin
         results = yield
       rescue Capybara::ElementNotFound => e
-        _log_error "element not found" if @task_
+        _log_error "Element not found: #{e}" if @task_result
       rescue Net::ReadTimeout => e
         _log_error "Timed out, moving on" if @task_result
       rescue Selenium::WebDriver::Error::NoSuchWindowError => e
         _log_error "Lost our window #{e}" if @task_result
       rescue Selenium::WebDriver::Error::UnknownError => e
-        _log_error "#{e}" if @task_result
+        # skip simple errors where we're testing JS libs
+        unless ("#{e}" =~ /is not defined/ || "#{e}" =~ /Cannot read property/)
+          _log_error "#{e}" if @task_result
+        end
       rescue Selenium::WebDriver::Error::UnhandledAlertError => e
         _log_error "Unhandled alert #{e}" if @task_result
       rescue Selenium::WebDriver::Error::NoSuchElementError
@@ -45,7 +48,6 @@ module Task
       # browse to our target
       safe_browser_action do
         session.visit(uri)
-        session.find(:css, '#doesnotexist')
       end
 
       # Capture Title
@@ -61,7 +63,6 @@ module Task
       # browse to our target
       safe_browser_action do
         session.visit(uri)
-        session.find(:css, '#doesnotexist')
       end
 
       # wait for the page to render
@@ -87,7 +88,7 @@ module Task
     base64_image_contents
     end
 
-    def gather_javascript_libraries(session, uri, libraries=[])
+    def gather_javascript_libraries(session, uri)
 
       # Test site: https://www.jetblue.com/plan-a-trip/#/
       # Examples: https://builtwith.angularjs.org/
@@ -95,8 +96,9 @@ module Task
 
       safe_browser_action do
         session.visit(uri)
-        session.find(:css, '#doesnotexist')
       end
+
+      libraries = []
 
       checks = [
         { library: "Angular", script: 'angular.version.full' },
@@ -167,11 +169,12 @@ module Task
 
       checks.each do |check|
 
-        hacky_javascript = "#{check[:script]}"
+        hacky_javascript = "#{check[:script]};"
 
         # run our script in a browser
         version = safe_browser_action do
-          session.execute_script(hacky_javascript)
+          @task_result.log "Checking #{check[:library]}" if @task_result
+          session.evaluate_script(hacky_javascript)
         end
 
         if version

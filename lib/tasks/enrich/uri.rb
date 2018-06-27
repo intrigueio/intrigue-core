@@ -62,10 +62,10 @@ class EnrichUri < BaseTask
     session = create_browser_session
 
     #  Get existing software details (in case this is a second run)
-    existing_libraries = _get_entity_detail("javascript") || []
+    #existing_libraries = _get_entity_detail("javascript") || []
 
     # Run the version checking scripts
-    new_libraries = gather_javascript_libraries(session, uri, existing_libraries)
+    new_libraries = gather_javascript_libraries(session, uri)
 
     # screenshot
     encoded_screenshot = capture_screenshot(session, uri)
