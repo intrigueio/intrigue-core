@@ -21,55 +21,6 @@ module Google
     end
   end
 
-=begin
-      ############################
-      # DEPENDENCIES:
-      #
-      # Install the capybara gem:
-      # $ gem install capybara
-      #
-      # Then, follow instructions from https://github.com/thoughtbot/capybara-webkit#readme
-      # and install the capybara-webkit gem and drivers:
-      # $ sudo apt-get install libqt4-dev
-      # $ gem install capybara-webkit
-      ############################
-
-      class SearchScraper
-      include Capybara::DSL
-
-      def initialize
-      Capybara.run_server = false
-      Capybara.default_selector = :xpath
-      Capybara.current_driver = :webkit
-      Capybara.default_wait_time = 20
-
-      # Uncomment to capybara-webkit scraping
-      # Capybara.current_driver = :selenium ->
-      # Capybara.current_driver = :webkit
-
-      Capybara.app_host = "http://www.google.com"
-      end
-
-      def search(term)
-
-      uris = []
-
-      #begin
-      visit('/')
-      fill_in "q", :with => term
-      click_button "gbqfb"
-      results = all("//li/div/h3/a")
-      results.each { |r| uris << r[:href]}
-      #rescue Capybara::DriverNotFoundError
-      # TODO - should we raise an error here?
-      #  uris << "ERROR: Unable to Scrape"
-      #end
-
-      uris
-      end
-      end
-=end
-
   # This class represents the google AJAX API
   #
   # Reference:

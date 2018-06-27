@@ -13,7 +13,7 @@ module Task
 
     def create_browser_session
       # Start a new session
-      Capybara::Session.new(:selenium_chrome_headless)
+      Capybara::Session.new(:headless_chrome)
     end
 
     def safe_browser_action(sess)
@@ -27,6 +27,8 @@ module Task
       rescue Selenium::WebDriver::Error::UnknownError => e
         _log_error "FATAL: unknown... #{e}" if @task_result
         sess.driver.quit
+      rescue Selenium::WebDriver::Error::UnhandledAlertError => e
+        _log_error "Unhandled alert #{e}" if @task_result
       rescue Selenium::WebDriver::Error::NoSuchElementError
         _log_error "No such element #{e}, moving on" if @task_result
       rescue Selenium::WebDriver::Error::StaleElementReferenceError
@@ -37,7 +39,7 @@ module Task
 
     def capture_document(session, uri)
       # browse to our target
-      safe_browser_action(session) {}
+      safe_browser_action(session) do
         session.visit(uri)
       end
 

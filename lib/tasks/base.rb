@@ -100,7 +100,6 @@ class BaseTask
       scan_result = @task_result.scan_result
       if scan_result
         scan_result.decrement_task_count
-        puts "#{scan_result.incomplete_task_count} tasks left in this scan"
 
         #################
         # Call Handlers #
