@@ -17,7 +17,7 @@ class UriGatherSslCert  < BaseTask
       :example_entities => [{"type" => "Uri", "details" => {"name" => "http://www.intrigue.io"}}],
       :allowed_options => [
         {:name => "parse_entities", :regex => "boolean", :default => true },
-        {:name => "opt_skip_hosted_services", :regex => "boolean", :default => true },
+        {:name => "skip_hosted_services", :regex => "boolean", :default => true },
       ],
       :created_types => ["DnsRecord","SslCertificate"]
     }
