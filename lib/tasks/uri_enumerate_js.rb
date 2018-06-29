@@ -36,7 +36,7 @@ class UriEnumerateJs  < BaseTask
     session = create_browser_session
 
     # Run the version checking scripts in our session (See lib/helpers/browser)
-    new_libraries = gather_javascript_libraries(session, uri, existing_libraries)
+    new_libraries = gather_javascript_libraries(session, uri)
 
     # set the new details
     _set_entity_detail("javascript", new_libraries)

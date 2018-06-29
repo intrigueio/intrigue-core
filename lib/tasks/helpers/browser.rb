@@ -27,6 +27,8 @@ module Task
         _log_error "Element not found: #{e}" if @task_result
       rescue Net::ReadTimeout => e
         _log_error "Timed out, moving on" if @task_result
+      rescue Selenium::WebDriver::Error::WebDriverError => e
+        _log_error "Unable to connect to chrome #{e}" if @task_result
       rescue Selenium::WebDriver::Error::NoSuchWindowError => e
         _log_error "Lost our window #{e}" if @task_result
       rescue Selenium::WebDriver::Error::UnknownError => e
