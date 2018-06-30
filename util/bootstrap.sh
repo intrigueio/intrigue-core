@@ -1,17 +1,14 @@
-export INTRIGUE_DIRECTORY="/core"
-export RUBY_VERSION=2.5.1
+#!/bin/bash
+
+# if these are already set by our parent, use that.. otherwise sensible defaults
+export "${INTRIGUE_DIRECTORY:=/core}"
+export "${RUBY_VERSION:=2.5.1}"
 
 #####
 ##### SYSTEM SETUP / CONFIG
 #####
 
 echo "[+] Preparing the System"
-
-##### Install postgres, redis
-sudo apt-get -y update
-sudo apt-get -y upgrade
-
-sudo apt-get -y install apt-utils software-properties-common lsb-release sudo wget git-core bzip2 autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libsqlite3-dev net-tools
 
 ##### Add external repositories
 # chrome repo
@@ -21,8 +18,11 @@ echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sud
 sudo add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -sc)-pgdg main"
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 
-##### Update the repos & system
+##### Install postgres, redis
 sudo apt-get -y update
+sudo apt-get -y upgrade
+
+sudo apt-get -y install apt-utils software-properties-common lsb-release sudo wget git-core bzip2 autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libsqlite3-dev net-tools
 
 ##### Install postgres, redis
 sudo apt-get -y install libpq-dev postgresql-9.6 postgresql-server-dev-9.6 redis-server boxes
@@ -61,7 +61,7 @@ fi
 
 # Set the database to trust
 sudo sed -i 's/md5/trust/g' /etc/postgresql/9.6/main/pg_hba.conf
-sudo service postgresql start
+sudo service postgresql restart
 
 echo "[+] Creating Database"
 sudo -u postgres createuser intrigue
