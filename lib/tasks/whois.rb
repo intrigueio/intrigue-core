@@ -50,6 +50,9 @@ class Whois < BaseTask
     rescue ::Whois::ResponseIsThrottled => e
       _log_error "Unable to query whois: #{e}"
       return
+    rescue ::Whois::ConnectionError => e
+      _log_error "Unable to query whois: #{e}"
+      return
     rescue ::Whois::ServerNotFound => e
       _log_error "Unable to query whois: #{e}"
       return
