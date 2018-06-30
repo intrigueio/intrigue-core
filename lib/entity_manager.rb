@@ -102,17 +102,6 @@ class EntityManager
     entity = entity_exists?(project,type_string,downcased_name)
 
     # check if this is actually an exception (blacklisted) entity
-    # but allow anything that we've explictly set as the root (example.. facebook.com)
-    #if task_result.scan_result
-    #  # always allow anything that matches our base entity name
-    #  if name =~  /#{task_result.scan_result.base_entity.name}$/
-    #    exception = false
-    #  else # but if it doesn't match, just check the blacklist
-    #    exception = project.exception_entity?(name, type_string)
-    #  end
-    #else # check blacklist if we're not part of a scan
-    #  exception = project.exception_entity?(name, type_string)
-    #end
     exception = project.exception_entity?(name, type_string)
 
     # Check if there's an existing entity, if so, merge and move forward
