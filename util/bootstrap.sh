@@ -83,8 +83,6 @@ if [ ! -d ~/.rbenv ]; then
   git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
   # rbenv gemset
   git clone git://github.com/jf/rbenv-gemset.git ~/.rbenv/plugins/rbenv-gemset
-  # rbenv sudo
-  git clone git://github.com/dcarley/rbenv-sudo.git ~/.rbenv/plugins/rbenv-sudo
 else
   echo "[+] Upgrading rbenv"
   # upgrade rbenv
@@ -93,8 +91,6 @@ else
   cd ~/.rbenv/plugins/ruby-build && git pull
   # upgrade rbenv-root
   cd ~/.rbenv/plugins/rbenv-gemset && git pull
-  # upgrade rbenv-sudo
-  cd ~/.rbenv/plugins/rbenv-sudo && git pull
 fi
 
 # setup ruby
@@ -126,6 +122,7 @@ bundle exec rake setup
 
 echo "[+] Running DB Migrations"
 bundle exec rake db:migrate
+bundle exec rake setup
 
 echo "[+] Configuring puma to listen on 0.0.0.0"
 sed -i "s/tcp:\/\/127.0.0.1:7777/tcp:\/\/0.0.0.0:7777/g" $INTRIGUE_DIRECTORY/config/puma.rb
