@@ -28,7 +28,9 @@ module Task
       rescue Net::ReadTimeout => e
         _log_error "Timed out, moving on" if @task_result
       rescue Selenium::WebDriver::Error::WebDriverError => e
-        _log_error "Unable to connect to chrome #{e}" if @task_result
+        unless ("#{e}" =~ /is not defined/ || "#{e}" =~ /Cannot read property/)
+          _log_error "Webdriver issue #{e}" if @task_result
+        end
       rescue Selenium::WebDriver::Error::NoSuchWindowError => e
         _log_error "Lost our window #{e}" if @task_result
       rescue Selenium::WebDriver::Error::UnknownError => e

@@ -9,29 +9,29 @@ module MatchExceptions
     # and "use_standard_exceptions" fields on the object
     def exception_entity?(entity_name, type_string=nil)
 
+      is_an_exception = false
+
       # Check standard exceptions first
       if self.use_standard_exceptions
-        if standard_exceptions(entity_name,type_string)
-          return true
-        end
+        is_an_exception = true if standard_exceptions(entity_name,type_string)
       end
 
       # check additional exception strings
       #puts "DEBUG: Additional exceptions: #{self.additional_exception_list}"
       if self.additional_exception_list
         self.additional_exception_list.split(",").each do |x|
-          if entity_name =~ /#{x}/
-            return true
-          end
+          is_an_exception = true if entity_name =~ /#{x}/
         end
       end
 
-    false
+      #puts "checking if #{type_string}##{entity_name} is an exception: #{is_an_exception}"
+
+    is_an_exception
     end
 
     def standard_exceptions(entity_name, type_string="DnsRecord")
-      if type_string == "IpAddress"
 
+      if type_string == "IpAddress"
         return true if (
             # Skip Akamai
             entity_name =~ /^23\..*$/              ||
@@ -49,7 +49,6 @@ module MatchExceptions
             # localhost
             entity_name =~ /^127\..*$/             ||
             entity_name =~ /^0.0.0.0/ )
-
       end
 
       if type_string == "DnsRecord" || type_string == "Uri"
