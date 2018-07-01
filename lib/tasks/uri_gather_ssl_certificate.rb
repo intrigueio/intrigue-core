@@ -115,11 +115,11 @@ class UriGatherSslCert  < BaseTask
               # and then check to make sure none of the domains are greate than a quarter
               _log "This looks suspiciously like a third party cert... over #{suspicious_count} unique TLDs: #{tlds.uniq.count}"
               _log "Total Unique Domains: #{alt_names.uniq.count}"
+              _log "Bailing!"
 
               # count up the tlds & display
-              domain_counts = tlds.each_with_object(Hash.new(0)) { |domain,counts| domain[word] += 1 }
-              _log "#{domain_counts.inspect}"
-
+              #domain_counts = tlds.each_with_object(Hash.new(0)) { |domain,counts| domain[word] += 1 }
+              #_log "#{domain_counts.inspect}"
               return
             end
           end

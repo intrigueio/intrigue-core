@@ -58,20 +58,21 @@ class EnrichUri < BaseTask
 
     # we'll need to make another request
     #webdav_enabled = check_webdav_endpoint(uri)
+    begin
+      session = create_browser_session
 
-    session = create_browser_session
+      #  Get existing software details (in case this is a second run)
+      #existing_libraries = _get_entity_detail("javascript") || []
 
-    #  Get existing software details (in case this is a second run)
-    #existing_libraries = _get_entity_detail("javascript") || []
+      # Run the version checking scripts
+      new_libraries = gather_javascript_libraries(session, uri)
 
-    # Run the version checking scripts
-    new_libraries = gather_javascript_libraries(session, uri)
-
-    # screenshot
-    encoded_screenshot = capture_screenshot(session, uri)
-
-    # kill the session / cleanup
-    destroy_browser_session(session)
+      # screenshot
+      encoded_screenshot = capture_screenshot(session, uri)
+    ensure
+      # kill the session / cleanup
+      destroy_browser_session(session)
+    end
 
     ###
     ### Fingerprint the server
@@ -90,18 +91,23 @@ class EnrichUri < BaseTask
     app_stack.concat _check_generator(response)
     app_stack.concat _check_x_headers(response)
 
-    # this has now been moved into Intrigue::Task::Web
-    # for details on the fingerprints, see the lib/fingerprints directory
-    fingerprint_matches =  fingerprint_uri(uri)
+    begin
+      # this has now been moved into Intrigue::Task::Web
+      # for details on the fingerprints, see the lib/fingerprints directory
+      fingerprint_matches =  fingerprint_uri(uri)
 
-    # XXX this is powerful... if we ever match something we know the user won't
-    # need to see (aka the fingerprint's :hide parameter is true), go ahead
-    # and hide the entity... meaning no recursion and it shouldn't show up in the UI / queries
-    # if any of the matches told us to hide the entity, do that.
-    # EXAMPLE TEST CASE: http://103.24.203.121:80 (cpanel missing page)
-    if fingerprint_matches.detect{|x| x[:hide] == true }
-      @entity.hidden = true
-      @entity.save
+      # XXX this is powerful... if we ever match something we know the user won't
+      # need to see (aka the fingerprint's :hide parameter is true), go ahead
+      # and hide the entity... meaning no recursion and it shouldn't show up in the UI / queries
+      # if any of the matches told us to hide the entity, do that.
+      # EXAMPLE TEST CASE: http://103.24.203.121:80 (cpanel missing page)
+      if fingerprint_matches.detect{|x| x[:hide] == true }
+        @entity.hidden = true
+        @entity.save
+      end
+    # TODO, clean up fingerprint / regexes
+    rescue NoMethodError => e
+      _log_error "Fingerprint effort failed: #{e}"
     end
 
     # and then just stick the name and the version in our fingerprint

@@ -66,7 +66,7 @@ class FtpEnumerate < BaseTask
           out["help"] = "#{ftp.help}"
         rescue Net::FTPPermError => e
           _log_error "unable to run HELP, proceeding"
-        rescue Errno::EOFError => e
+        rescue EOFError => e
           _log_error "eof reached"
         end
 
