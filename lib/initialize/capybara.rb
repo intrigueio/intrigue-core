@@ -9,10 +9,12 @@ Capybara.register_driver :headless_chrome do |app|
   capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
     acceptInsecureCerts: true,
     chromeOptions: {
-      'args' => ['--headless', '--disable-web-security', '--incognito',
-                 '--no-sandbox', '--disable-gpu', '--window-size=640,480']
+      'args' => [
+        '--headless', '--disable-web-security', '--incognito',
+        '--disable-dev-shm-usage', '--no-sandbox', '--disable-gpu',
+        '--window-size=640,480' ]
     })
-    
+
   Capybara::Selenium::Driver.new(
     app,
     browser: :chrome,

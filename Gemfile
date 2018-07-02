@@ -53,7 +53,9 @@ gem 'recog-intrigue',         :git => 'https://github.com/intrigueio/recog.git'
 gem 'aws-sdk-sqs'             #,        '~> 3'
 gem 'aws-sdk-s3'              #,         '~> 3'
 gem 'capybara'                # uri_screenshot, etc
-gem 'selenium-webdriver'      # uri_screenshot, etc
+gem 'selenium-webdriver'     , '~> 3.12.0'
+gem 'chromedriver-helper'
+
 
 # Handlers
 gem 'couchrest'

@@ -202,7 +202,7 @@ GEM
       rspec-support (~> 3.7.0)
     rspec-support (3.7.1)
     rubyzip (1.2.1)
-    selenium-webdriver (3.13.0)
+    selenium-webdriver (3.12.0)
       childprocess (~> 0.5)
       rubyzip (~> 1.2)
     sequel (5.9.0)
@@ -298,7 +298,7 @@ DEPENDENCIES
   rest-client
   rspec
   ruby-nmap!
-  selenium-webdriver
+  selenium-webdriver (~> 3.12.0)
   sequel
   shodan
   sidekiq

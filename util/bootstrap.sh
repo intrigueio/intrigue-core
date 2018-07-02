@@ -31,6 +31,7 @@ sudo apt-get -y upgrade
 echo "[+] Installing Dependencies from Apt ..."
 sudo apt-get -y install git-core bzip2 autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libsqlite3-dev net-tools libpq-dev postgresql-9.6 postgresql-server-dev-9.6 redis-server boxes nmap zmap default-jre thc-ipv6 libnss3 google-chrome-stable unzip curl git gcc make libpcap-dev
 
+
 ##### Install masscan
 echo "[+] Installing Masscan"
 if [ ! -f /usr/bin/masscan ]; then
@@ -146,9 +147,9 @@ if [ ! -f /etc/init.d/intrigue ]; then
   sudo chmod +x $INTRIGUE_DIRECTORY/util/control.sh
 fi
 
-if ! $(grep -q instructions ~/.bash_profile); then
-  echo "[+] Configurating..."
-  echo "boxes -a c -d unicornthink $INTRIGUE_DIRECTORY/util/instructions" >> ~/.bash_profile
+if ! $(grep -q README ~/.bash_profile); then
+  echo "[+] Configuring startup message"
+  echo "boxes -a c -d unicornthink $INTRIGUE_DIRECTORY/util/README" >> ~/.bash_profile
 fi
 
 # Docker Specifics!
