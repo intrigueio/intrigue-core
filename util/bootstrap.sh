@@ -9,9 +9,14 @@ export RUBY_VERSION="${RUBY_VERSION:=2.5.1}"
 #####
 
 echo "[+] Preparing the System"
+sudo apt-get -y update
+
+echo "[+] Installing Pre-Deps"
+sudo apt-get -y install apt-utils software-properties-common lsb-release sudo wget
 
 ##### Add external repositories
 # chrome repo
+echo "[+] Adding Third Party Repositories"
 wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
 echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
 # postgres repo
@@ -19,18 +24,15 @@ sudo add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_rele
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 
 ##### Install postgres, redis
+echo "[+] Updating from Third Party Reposoitories ..."
 sudo apt-get -y update
 sudo apt-get -y upgrade
 
-sudo apt-get -y install apt-utils software-properties-common lsb-release sudo wget git-core bzip2 autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libsqlite3-dev net-tools
-
-##### Install postgres, redis
-sudo apt-get -y install libpq-dev postgresql-9.6 postgresql-server-dev-9.6 redis-server boxes
-
-##### Scanning
-sudo apt-get -y install nmap zmap
+echo "[+] Installing Dependencies from Apt ..."
+sudo apt-get -y install git-core bzip2 autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libsqlite3-dev net-tools libpq-dev postgresql-9.6 postgresql-server-dev-9.6 redis-server boxes nmap zmap default-jre thc-ipv6 libnss3 google-chrome-stable
 
 ##### Install masscan
+echo "[+] Installing Masscan"
 if [ ! -f /usr/bin/masscan ]; then
   sudo apt-get -y install git gcc make libpcap-dev
   git clone https://github.com/robertdavidgraham/masscan
@@ -39,17 +41,8 @@ if [ ! -f /usr/bin/masscan ]; then
   sudo make install
 fi
 
-##### Java
-sudo apt-get -y install default-jre
-
-##### Install Thc-ipv6
-sudo apt-get -y install thc-ipv6
-
-##### Install headless chrome
-sudo apt-get -y install libnss3
-sudo apt-get -y install google-chrome-stable
-
 # update sudoers
+echo "[+] Updating Sudo configuration"
 if ! sudo grep -q NMAP /etc/sudoers; then
   echo "[+] Configuring sudo for nmap, masscan"
   echo "Cmnd_Alias NMAP = /usr/local/bin/nmap" | sudo tee --append /etc/sudoers
@@ -60,10 +53,11 @@ else
 fi
 
 # Set the database to trust
+echo "[+] Updating postgres configuration"
 sudo sed -i 's/md5/trust/g' /etc/postgresql/9.6/main/pg_hba.conf
 sudo service postgresql restart
 
-echo "[+] Creating Database"
+echo "[+] Creating database"
 sudo -u postgres createuser intrigue
 sudo -u postgres createdb intrigue_dev --owner intrigue
 
@@ -149,4 +143,5 @@ if [ $(id -u) = 0 ]; then
 fi
 
 # run the service
-$INTRIGUE_DIRECTORY/util/control.sh restart
+echo "[+] Starting services..."
+$INTRIGUE_DIRECTORY/util/control.sh start
