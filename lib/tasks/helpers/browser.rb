@@ -178,7 +178,6 @@ module Task
 
         # run our script in a browser
         version = safe_browser_action do
-          @task_result.log "Checking #{check[:library]}" if @task_result
           session.evaluate_script(hacky_javascript)
         end
 
