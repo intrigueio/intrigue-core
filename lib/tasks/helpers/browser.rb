@@ -17,7 +17,6 @@ module Task
     end
 
     def destroy_browser_session(session)
-      sleep 10
       session.driver.quit
     end
 
