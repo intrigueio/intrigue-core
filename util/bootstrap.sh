@@ -29,16 +29,32 @@ sudo apt-get -y update
 sudo apt-get -y upgrade
 
 echo "[+] Installing Dependencies from Apt ..."
-sudo apt-get -y install git-core bzip2 autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libsqlite3-dev net-tools libpq-dev postgresql-9.6 postgresql-server-dev-9.6 redis-server boxes nmap zmap default-jre thc-ipv6 libnss3 google-chrome-stable
+sudo apt-get -y install git-core bzip2 autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libsqlite3-dev net-tools libpq-dev postgresql-9.6 postgresql-server-dev-9.6 redis-server boxes nmap zmap default-jre thc-ipv6 libnss3 google-chrome-stable unzip curl git gcc make libpcap-dev
 
 ##### Install masscan
 echo "[+] Installing Masscan"
 if [ ! -f /usr/bin/masscan ]; then
-  sudo apt-get -y install git gcc make libpcap-dev
   git clone https://github.com/robertdavidgraham/masscan
   cd masscan
   make
   sudo make install
+  cd ..
+  rm -rf masscan
+fi
+
+# Get chromedriver
+echo "[+] Installing Chromedriver"
+if [ ! -f /usr/bin/chromedriver ]; then
+  mkdir chromedriver
+  cd chromedriver
+  wget "http://chromedriver.storage.googleapis.com/LATEST_RELEASE"
+  CHROMEDRIVER_VERSION=`cat LATEST_RELEASE`
+  wget "http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
+  unzip chromedriver_linux64.zip
+  sudo cp chromedriver /usr/bin/chromedriver
+  sudo chmod +x /usr/bin/chromedriver
+  cd ..
+  rm -rf chromedriver
 fi
 
 # update sudoers
