@@ -1,5 +1,6 @@
 FROM ubuntu:16.04
 MAINTAINER Jonathan Cran <jcran@intrigue.io>
+ENV DEBIAN_FRONTEND noninteractive
 
 USER root
 
