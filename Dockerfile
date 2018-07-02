@@ -17,8 +17,13 @@ WORKDIR /core
 
 ENV BUNDLE_JOBS=12
 ENV PATH /root/.rbenv/bin:$PATH
+
+# Set up the system
 RUN chmod +x /core/util/bootstrap.sh
 RUN /core/util/bootstrap.sh
-RUN chmod +x /core/util/docker_entry.sh
 
+# Remove the config file so one generates on startup
+RUN rm /core/config/config.json
+
+RUN chmod +x /core/util/docker_entry.sh
 ENTRYPOINT ["/core/util/docker_entry.sh"]
