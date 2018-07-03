@@ -201,3 +201,7 @@ end
 
 # Core libraries
 require_relative "lib/all"
+
+
+Selenium::WebDriver.logger.level = :warn
+Selenium::WebDriver.logger.output = "#{$intrigue_basedir}/log/selenium.log"

@@ -12,7 +12,7 @@ echo "[+] Preparing the System"
 sudo apt-get -y update
 
 echo "[+] Installing Pre-Deps"
-sudo apt-get -y install apt-utils software-properties-common lsb-release sudo wget
+sudo apt-get -y install apt-utils software-properties-common lsb-release sudo wget make
 
 ##### Add external repositories
 # chrome repo
@@ -29,7 +29,7 @@ sudo apt-get -y update
 sudo apt-get -y upgrade
 
 echo "[+] Installing Dependencies from Apt ..."
-sudo apt-get -y install git-core bzip2 autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libsqlite3-dev net-tools libpq-dev postgresql-9.6 postgresql-server-dev-9.6 redis-server boxes nmap zmap default-jre thc-ipv6 libnss3 google-chrome-stable unzip curl git gcc make libpcap-dev
+sudo apt-get -y install git-core bzip2 autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libsqlite3-dev net-tools libpq-dev postgresql-9.6 postgresql-server-dev-9.6 redis-server boxes nmap zmap default-jre thc-ipv6 libnss3 google-chrome-stable unzip curl git gcc make libpcap-dev libappindicator1 fonts-liberation
 
 
 ##### Install masscan
@@ -48,9 +48,8 @@ echo "[+] Installing Chromedriver"
 if [ ! -f /usr/bin/chromedriver ]; then
   mkdir chromedriver
   cd chromedriver
-  wget "http://chromedriver.storage.googleapis.com/LATEST_RELEASE"
-  CHROMEDRIVER_VERSION=`cat LATEST_RELEASE`
-  wget "http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
+  CHROMEDRIVER_VERSION=`wget -q -O - "http://chromedriver.storage.googleapis.com/LATEST_RELEASE"`
+  wget -q "http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
   unzip chromedriver_linux64.zip
   sudo cp chromedriver /usr/bin/chromedriver
   sudo chmod +x /usr/bin/chromedriver
@@ -66,7 +65,7 @@ if ! sudo grep -q NMAP /etc/sudoers; then
   echo "Cmnd_Alias MASSCAN = /usr/local/bin/masscan" | sudo tee --append /etc/sudoers
   echo "%admin ALL=(root) NOPASSWD: NMAP, MASSCAN" | sudo tee --append /etc/sudoers
 else
-  echo "[+] nmap, masscan configured to run as sudo"
+  echo "[+] nmap, masscan already configured to run as sudo"
 fi
 
 # Set the database to trust
@@ -133,7 +132,6 @@ bundle exec rake setup
 
 echo "[+] Running DB Migrations"
 bundle exec rake db:migrate
-bundle exec rake setup
 
 echo "[+] Configuring puma to listen on 0.0.0.0"
 sed -i "s/tcp:\/\/127.0.0.1:7777/tcp:\/\/0.0.0.0:7777/g" $INTRIGUE_DIRECTORY/config/puma.rb
@@ -152,13 +150,12 @@ if ! $(grep -q README ~/.bash_profile); then
   echo "boxes -a c -d unicornthink $INTRIGUE_DIRECTORY/util/README" >> ~/.bash_profile
 fi
 
-# Docker Specifics!
-# if we're running as root, we're probably in docker, so
+# if we're configuring as root, we're probably going to run as root, so
 #   manually force the .bash_profile to be run every login
 if [ $(id -u) = 0 ]; then
    echo "source ~/.bash_profile" >> ~/.bashrc
 fi
 
 # run the service
-echo "[+] Starting services..."
-$INTRIGUE_DIRECTORY/util/control.sh start
+#echo "[+] Starting services..." # restart skips running setup (since we already ran)
+#$INTRIGUE_DIRECTORY/util/control.sh restart
