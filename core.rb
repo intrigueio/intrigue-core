@@ -37,6 +37,10 @@ $intrigue_basedir = File.dirname(__FILE__)
 $intrigue_environment = ENV.fetch("INTRIGUE_ENV","development")
 $global_config = Intrigue::Config::GlobalConfig.new
 
+# Webdriver
+Selenium::WebDriver.logger.level = :warn
+Selenium::WebDriver.logger.output = "#{$intrigue_basedir}/log/selenium.log"
+
 #
 # Simple configuration check to ensure we have configs in place
 def sanity_check_system
@@ -201,7 +205,3 @@ end
 
 # Core libraries
 require_relative "lib/all"
-
-
-Selenium::WebDriver.logger.level = :warn
-Selenium::WebDriver.logger.output = "#{$intrigue_basedir}/log/selenium.log"

@@ -17,6 +17,7 @@ module Task
     end
 
     def destroy_browser_session(session)
+      session.visit('about:blank')
       session.driver.quit
     end
 
