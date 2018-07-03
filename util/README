@@ -1,7 +1,7 @@
                        Intrigue Core
 
-File bugs: https://github.com/intrigueio/intrigue-core/issues.
+To start/restart the Core server, run: /core/util/control.sh restart
 
-To restart the server, run: /core/util/control.sh restart
+Please file bugs & requests: https://github.com/intrigueio/intrigue-core/issues
 
-Comments? Questions? Email hello@intrigue.io.
+Other comments? Questions? Email hello@intrigue.io.

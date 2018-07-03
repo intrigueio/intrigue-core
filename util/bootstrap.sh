@@ -11,12 +11,12 @@ export RUBY_VERSION="${RUBY_VERSION:=2.5.1}"
 echo "[+] Preparing the System"
 sudo apt-get -y update
 
-echo "[+] Installing Pre-Deps"
-sudo apt-get -y install apt-utils software-properties-common lsb-release sudo wget make
+echo "[+] Installing System Essentials"
+sudo apt-get -y install git git-core bzip2 autoconf bison build-essential apt-utils software-properties-common lsb-release sudo wget make
 
 ##### Add external repositories
 # chrome repo
-echo "[+] Adding Third Party Repositories"
+echo "[+] Adding 3rd Party Repos"
 wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
 echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
 # postgres repo
@@ -28,8 +28,64 @@ echo "[+] Updating from Third Party Reposoitories ..."
 sudo apt-get -y update
 sudo apt-get -y upgrade
 
-echo "[+] Installing Dependencies from Apt ..."
-sudo apt-get -y install git-core bzip2 autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libsqlite3-dev net-tools libpq-dev postgresql-9.6 postgresql-server-dev-9.6 redis-server boxes nmap zmap default-jre thc-ipv6 libnss3 google-chrome-stable unzip curl git gcc make libpcap-dev libappindicator1 fonts-liberation
+echo "[+] Installing Intrigue Dependencies..."
+sudo apt-get -y install libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libsqlite3-dev net-tools libpq-dev postgresql-9.6 postgresql-server-dev-9.6 redis-server boxes nmap zmap default-jre thc-ipv6 unzip curl git gcc make libpcap-dev
+
+echo "[+] Installing Google Chrome Headless dependencies"
+sudo apt-get -y update && sudo apt-get install -y \
+  fontconfig \
+  locales \
+  gconf-service \
+  libasound2 \
+  libatk1.0-0 \
+  libc6 \
+  libcairo2 \
+  libcups2 \
+  libdbus-1-3 \
+  libexpat1 \
+  libfontconfig1 \
+  libgcc1 \
+  libgconf-2-4 \
+  libgdk-pixbuf2.0-0 \
+  libglib2.0-0 \
+  libgtk-3-0 \
+  libnspr4 \
+  libpango-1.0-0 \
+  libpangocairo-1.0-0 \
+  libstdc++6 \
+  libx11-6 \
+  libx11-xcb1 \
+  libxcb1 \
+  libxcomposite1 \
+  libxcursor1 \
+  libxdamage1 \
+  libxext6 \
+  libxfixes3 \
+  libxi6 \
+  libxrandr2 \
+  libxrender1 \
+  libxss1 \
+  libxtst6 \
+  ca-certificates \
+  fonts-liberation \
+  fonts-thai-tlwg \
+  libappindicator1 \
+  libnss3 \
+  lsb-release \
+  xdg-utils \
+  google-chrome-stable
+
+# Get dumb-init
+#echo "[+] Installing dumb-init"
+#if [ ! -f /usr/bin/dumb-init ]; then
+#  mkdir dumb-init
+#  cd dumb-init
+#  wget -q "https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64"
+#  sudo cp dumb-init_1.2.0_amd64 /usr/bin/dumb-init
+#  sudo chmod +x /usr/bin/dumb-init
+#  cd ..
+#  rm -rf dumb-init
+#fi
 
 
 ##### Install masscan
@@ -156,6 +212,11 @@ if [ $(id -u) = 0 ]; then
    echo "source ~/.bash_profile" >> ~/.bashrc
 fi
 
-# run the service
-#echo "[+] Starting services..." # restart skips running setup (since we already ran)
-#$INTRIGUE_DIRECTORY/util/control.sh restart
+# Handy for future, given this may differ across platforms
+if ! $(grep -q INTRIGUE_DIRECTORY ~/.bash_profile); then
+  echo "export INTRIGUE_DIRECTORY=$INTRIGUE_DIRECTORY" >> ~/.bash_profile
+fi
+
+# Cleaning up
+echo "[+] Cleaning up!"
+sudo apt-get -y clean
