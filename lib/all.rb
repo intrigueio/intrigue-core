@@ -35,6 +35,11 @@ require 'yomu'
 require_relative 'system'
 
 ####
+# ident
+####
+require_relative 'ident/ident'
+
+####
 # Task-specific libraries
 ####
 require_relative 'task_factory'
@@ -143,9 +148,3 @@ if global_config.config["intrigue_handler_load_paths"]
     end
   end
 end
-
-
-####
-# ident
-####
-require_relative 'ident/ident'
