@@ -19,17 +19,18 @@ module Task
     def destroy_browser_session(session)
       session.visit('about:blank')
 
-      # HACK HACK HACK
-      # get the chromedriver process before we quit
+      # HACK HACK HACK- get the chromedriver process before we quit
       driver_pid = session.driver.browser.instance_variable_get(:@service).instance_variable_get(:@process).pid
 
       # attempt to quit gracefully...
       session.driver.quit
 
-      # but get the group id (driver + browser) & kill it with fire
+      # get the full group id (driver + browser)
       begin
         pgid = Process.getpgid(driver_pid)
-        Process.kill('TERM', -pgid)
+        # these violent delights have violent ends
+        Process.kill('TERM', -pgid )
+        Process.kill('TERM', driver_pid )
       rescue Errno::ESRCH
         # already dead
       end
@@ -47,15 +48,15 @@ module Task
         unless ("#{e}" =~ /is not defined/ || "#{e}" =~ /Cannot read property/)
           _log_error "Webdriver issue #{e}" if @task_result
         end
-      rescue Selenium::WebDriver::Error::NoSuchWindowError => e
-        _log_error "Lost our window #{e}" if @task_result
+      #rescue Selenium::WebDriver::Error::NoSuchWindowError => e
+      #  _log_error "Lost our window #{e}" if @task_result
       rescue Selenium::WebDriver::Error::UnknownError => e
         # skip simple errors where we're testing JS libs
         unless ("#{e}" =~ /is not defined/ || "#{e}" =~ /Cannot read property/)
           _log_error "#{e}" if @task_result
         end
-      rescue Selenium::WebDriver::Error::UnhandledAlertError => e
-        _log_error "Unhandled alert #{e}" if @task_result
+      #rescue Selenium::WebDriver::Error::UnhandledAlertError => e
+      #  _log_error "Unhandled alert #{e}" if @task_result
       rescue Selenium::WebDriver::Error::NoSuchElementError
         _log_error "No such element #{e}, moving on" if @task_result
       rescue Selenium::WebDriver::Error::StaleElementReferenceError
