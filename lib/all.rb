@@ -144,10 +144,8 @@ if global_config.config["intrigue_handler_load_paths"]
   end
 end
 
+
 ####
-# Fingerprints
+# ident
 ####
-require_relative 'fingerprint_factory'
-require_relative 'fingerprints/base'
-fingerprints_folder = File.expand_path('../fingerprints', __FILE__) # get absolute directory
-Dir["#{fingerprints_folder}/*.rb"].each { |file| require_relative file }
+require_relative 'ident/ident'

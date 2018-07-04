@@ -3,6 +3,8 @@ module Intrigue
 module Task
 class EnrichUri < BaseTask
 
+  include Intrigue::Ident
+
   def self.metadata
     {
       :name => "enrich/uri",
@@ -92,14 +94,13 @@ class EnrichUri < BaseTask
     app_stack.concat _check_x_headers(response)
 
     begin
-      # this has now been moved into Intrigue::Task::Web
-      # for details on the fingerprints, see the lib/fingerprints directory
-      fingerprint_matches =  fingerprint_uri(uri)
+      # Use intrigue-ident code to request all of the pages we need to properly fingerprint
+      fingerprint_matches = generate_requests_and_check(uri)
 
-      # XXX this is powerful... if we ever match something we know the user won't
+      # if we ever match something we know the user won't
       # need to see (aka the fingerprint's :hide parameter is true), go ahead
-      # and hide the entity... meaning no recursion and it shouldn't show up in the UI / queries
-      # if any of the matches told us to hide the entity, do that.
+      # and hide the entity... meaning no recursion and it shouldn't show up in
+      # the UI / queries if any of the matches told us to hide the entity, do it.
       # EXAMPLE TEST CASE: http://103.24.203.121:80 (cpanel missing page)
       if fingerprint_matches.detect{|x| x[:hide] == true }
         @entity.hidden = true
