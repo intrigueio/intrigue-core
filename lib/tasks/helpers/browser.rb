@@ -18,7 +18,22 @@ module Task
 
     def destroy_browser_session(session)
       session.visit('about:blank')
+
+      # HACK HACK HACK
+      # get the chromedriver process before we quit
+      driver_pid = session.driver.browser.instance_variable_get(:@service).instance_variable_get(:@process).pid
+
+      # attempt to quit gracefully...
       session.driver.quit
+
+      # but get the group id (driver + browser) & kill it with fire
+      begin
+        pgid = Process.getpgid(driver_pid)
+        Process.kill('TERM', -pgid)
+      rescue Errno::ESRCH
+        # already dead
+      end
+
     end
 
     def safe_browser_action
