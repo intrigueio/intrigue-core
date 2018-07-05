@@ -95,7 +95,7 @@ class EnrichUri < BaseTask
 
     begin
       # Use intrigue-ident code to request all of the pages we need to properly fingerprint
-      fingerprint_matches = generate_requests_and_check(uri)
+      fingerprint_matches = generate_requests_and_check(uri) || []
 
       # if we ever match something we know the user won't
       # need to see (aka the fingerprint's :hide parameter is true), go ahead
