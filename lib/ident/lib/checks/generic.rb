@@ -6,6 +6,15 @@ module Check
       def generate_checks(uri)
         [
           {
+            :name => "Unauthorized (401)",
+            :description => "Generic Unauthorized",
+            :tags => ["error_page"],
+            :version => nil,
+            :type => :content_body,
+            :content => /<STRONG>401 Unauthorized/,
+            :paths => ["#{uri}"]
+          },
+          {
             :name => "Content Missing (404)",
             :description => "Content Missing (404) - Could be an API, or just serving something at another location. TODO ... is this ECS-specific? (check header)",
             :tags => ["error_page"],
