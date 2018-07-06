@@ -19,7 +19,7 @@ describe "Ident" do
     # group by the uris, with the associated checks
     # TODO - this only currently supports the first path of the group!!!!
     ggcs = generated_checks.group_by{|x| x[:paths].first }
-    expect(ggcs.count).to be(9)
+    expect(ggcs.count).to be(8)
   end
 
   it "should exercise all examples and pass each" do
