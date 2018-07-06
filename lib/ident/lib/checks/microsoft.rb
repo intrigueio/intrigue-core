@@ -21,6 +21,15 @@ module Check
             :content => /<img src=\"iis-85.png\"/,
             :examples => ["http://103.1.221.151:80"],
             :paths => ["#{uri}"]
+          },
+          {
+            :name => "Microsoft Outlook Web Access",
+            :description => "Microsoft Outlook Web Access",
+            :version => nil,
+            :type => :content_headers,
+            :content => /x-owa-version/,
+            :dynamic_version => lambda { |x| x["x-owa-version"] },
+            :paths => ["#{uri}"]
           }
         ]
       end
