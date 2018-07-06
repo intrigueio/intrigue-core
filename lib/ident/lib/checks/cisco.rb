@@ -14,6 +14,15 @@ module Check
             :content => /webvpn/,
             :hide => false,
             :paths => ["#{uri}"]
+          },
+          {
+            :name => "Cisco Router",
+            :description => "Cisco Router",
+            :version => nil,
+            :type => :content_headers,
+            :content => /server: cisco-IOS/,
+            :hide => false,
+            :paths => ["#{uri}"]
           }
         ]
       end
