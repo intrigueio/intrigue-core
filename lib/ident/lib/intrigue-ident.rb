@@ -11,7 +11,7 @@ Dir["#{check_folder}/*.rb"].each { |file| require_relative file }
 module Intrigue
   module Ident
 
-    VERSION=0.41
+    VERSION=0.42
 
     def generate_requests_and_check(url)
 

@@ -1,5 +1,4 @@
-require_relative "../ident"
-require 'pry'
+require_relative "../lib/intrigue-ident"
 
 describe "Intrigue" do
 describe "Ident" do

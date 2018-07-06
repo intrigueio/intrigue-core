@@ -37,7 +37,7 @@ require_relative 'system'
 ####
 # ident
 ####
-require_relative 'ident/lib/ident'
+require_relative 'ident/lib/intrigue-ident'
 
 ####
 # Task-specific libraries
