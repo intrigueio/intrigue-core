@@ -106,9 +106,12 @@ class EnrichUri < BaseTask
         @entity.hidden = true
         @entity.save
       end
+
     # TODO, clean up fingerprint / regexes
     rescue NoMethodError => e
       _log_error "Fingerprint effort failed: #{e}"
+      # assume no matches in this case
+      fingerprint_matches = []
     end
 
     # and then just stick the name and the version in our fingerprint
