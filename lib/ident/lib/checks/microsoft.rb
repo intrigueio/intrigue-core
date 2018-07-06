@@ -30,7 +30,7 @@ module Check
             :content => /x-owa-version/,
             :dynamic_version => lambda { |x| x["x-owa-version"] },
             :paths => ["#{uri}"]
-          }
+          },
           {
             :name => "Microsoft Generic Error - 503",
             :description => "Microsoft Generic Error - 503",
@@ -41,8 +41,6 @@ module Check
             :content => /HTTP Error 503. The service is unavailable./,
             :paths => ["#{uri}"]
           }
-
-
         ]
       end
 
