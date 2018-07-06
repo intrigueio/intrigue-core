@@ -16,7 +16,9 @@ class EnrichUri < BaseTask
       :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "details" => {"name" => "https://intrigue.io"}}],
-      :allowed_options => [],
+      :allowed_options => [
+        {:name => "enable_browser", :regex => "boolean", :default => false },
+      ],
       :created_types => [],
       :queue => "task_browser"
     }
@@ -26,6 +28,7 @@ class EnrichUri < BaseTask
     super
 
     uri = _get_entity_name
+    opt_enable_browser = _get_option "enable_browser"
 
     # Grab the full response
     response = http_request :get, uri
@@ -60,20 +63,22 @@ class EnrichUri < BaseTask
 
     # we'll need to make another request
     #webdav_enabled = check_webdav_endpoint(uri)
-    begin
-      session = create_browser_session
+    if opt_enable_browser
+      begin
+        session = create_browser_session
 
-      #  Get existing software details (in case this is a second run)
-      #existing_libraries = _get_entity_detail("javascript") || []
+        #  Get existing software details (in case this is a second run)
+        #existing_libraries = _get_entity_detail("javascript") || []
 
-      # Run the version checking scripts
-      new_libraries = gather_javascript_libraries(session, uri)
+        # Run the version checking scripts
+        new_libraries = gather_javascript_libraries(session, uri)
 
-      # screenshot
-      encoded_screenshot = capture_screenshot(session, uri)
-    ensure
-      # kill the session / cleanup
-      destroy_browser_session(session)
+        # screenshot
+        encoded_screenshot = capture_screenshot(session, uri)
+      ensure
+        # kill the session / cleanup
+        destroy_browser_session(session)
+      end
     end
 
     ###
