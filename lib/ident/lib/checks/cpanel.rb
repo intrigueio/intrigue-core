@@ -8,7 +8,7 @@ module Check
           {
             :name => "cPanel Hosted - Missing Page",
             :description => "cPanel Hosted, but either misconfigured, or accessed via ip vs hostname?",
-            :version => "",
+            :version => nil,
             :type => :content_body,
             :content => /URL=\/cgi-sys\/defaultwebpage.cgi/,
             :hide => true,
