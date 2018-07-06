@@ -8,7 +8,7 @@ module Check
           {
             :name => "WPEngine",
             :description => "WPEngine - Access site by IP",
-            :version => "",
+            :version => nil,
             :type => :content_body,
             :content => /This domain is successfully pointed at WP Engine, but is not configured for an account on our platform./,
             :paths => ["#{uri}"]

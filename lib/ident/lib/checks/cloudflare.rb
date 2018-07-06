@@ -24,6 +24,7 @@ module Check
           {
             :name => "Cloudflare",
             :description => "Cloudflare - Direct IP Access",
+            :tags => ["error_page"],
             :version => "",
             :type => :content_body,
             :content => /<title>Direct IP access not allowed \| Cloudflare/,
@@ -33,6 +34,7 @@ module Check
           {
             :name => "Cloudflare",
             :description => "Cloudflare Error",
+            :tags => ["error_page"],
             :version => "",
             :type => :content_body,
             :content => /cferror_details/,

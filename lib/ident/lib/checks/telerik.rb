@@ -9,7 +9,7 @@ module Check
             :name => "Telerik Sitefinity",
             :description => "Telerik Sitefinity is an ASP.NET 2.0-based Content Management System (CMS)",
             :url => "https://www.sitefinity.com/",
-            :version => "",
+            :version => nil,
             :type => :content_body,
             :content => /Telerik.Sitefinity.Resources/,
             :dynamic_version => lambda { |x| x.body.match(/Version=([\d\.]+),/).captures[0] },
