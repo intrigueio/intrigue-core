@@ -37,7 +37,7 @@ require_relative 'system'
 ####
 # ident
 ####
-require_relative 'ident/ident'
+require_relative 'ident/lib/ident'
 
 ####
 # Task-specific libraries

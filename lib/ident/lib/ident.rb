@@ -3,15 +3,15 @@ require 'net/http'
 require 'openssl'
 require 'zlib'
 
-require_relative 'lib/check_factory'
-require_relative 'lib/checks/base'
-check_folder = File.expand_path('lib/checks', File.dirname(__FILE__)) # get absolute directory
+require_relative 'check_factory'
+require_relative 'checks/base'
+check_folder = File.expand_path('checks', File.dirname(__FILE__)) # get absolute directory
 Dir["#{check_folder}/*.rb"].each { |file| require_relative file }
 
 module Intrigue
   module Ident
 
-    VERSION=0.1
+    VERSION=0.41
 
     def generate_requests_and_check(url)
 
@@ -42,8 +42,35 @@ module Intrigue
         if response
           # call each check, collecting the product if it's a match
           ggc.last.each do |check|
-            results << _check_response(check, response)
+            results << _match_http_response(check, response)
           end
+        end
+      end
+
+    # Return all matches, minus the nils (non-matches)
+    results.compact
+    end
+
+    def check_intrigue_uri(intrigue_uri_data)
+
+      results = []
+
+      # gather all fingeprints for each product
+      # this will look like an array of checks, each with a uri and a SET of checks
+      generated_checks = Intrigue::Ident::CheckFactory.all.map{|x| x.new.generate_checks(url) }.flatten
+
+      # group by the uris, with the associated checks
+      # TODO - this only currently supports the first path of the group!!!!
+      grouped_generated_checks = generated_checks.group_by{|x| x[:paths].first }
+
+      # call the check on each uri
+      grouped_generated_checks.each do |ggc|
+
+        target_url = ggc.first
+
+        # call each check, collecting the product if it's a match
+        ggc.last.each do |check|
+          results << _match_uri(check, intrigue_uri_data)
         end
       end
 
@@ -53,52 +80,105 @@ module Intrigue
 
     private
 
-    # this method takes a check and returns a ~match object if it matches, otherwise
-    # returns nil.
-    def _check_response(check, response)
+    def _construct_match_response(check, data)
+      {
+        :version => (check[:dynamic_version].call(data) if check[:dynamic_version]) || check[:version],
+        :name => check[:name],
+        :tags => check[:tags],
+        :match => check[:type],
+        :hide => check[:hide]
+      }
+    end
 
+    def _match_uri(check,data)
+
+      # data[:body] => page body
+      # data[:headers] => block of text with headers, one per line
+      # data[:cookies] => set_cookie header
+      # data[:body_md5] => md5 hash of the body
       # if type "content", do the content check
+
+
       if check[:type] == :content_body
-        match = {
-          :version => (check[:dynamic_version].call(response) if check[:dynamic_version]) || check[:version],
-          :name => check[:name],
-          :match => check[:type],
-          :hide => check[:hide]
-        } if "#{response.body}" =~ check[:content]
-
+        match = _construct_match_response(check,data) if data["details"]["hidden_response_data"] =~ check[:content]
       elsif check[:type] == :content_headers
-
-        # construct the headers into a big string block
-        header_string = ""
-        response.each_header do |h,v|
-          header_string << "#{h}: #{v}\n"
-        end
-
-        match = {
-          :version => (check[:dynamic_version].call(response) if check[:dynamic_version]) || check[:version],
-          :name => check[:name],
-          :match => check[:type],
-          :hide => check[:hide]
-        } if header_string =~ check[:content]
-
+        match = _construct_match_response(check,data) if data["details"]["headers"].join("\n") =~ check[:content]
       elsif check[:type] == :content_cookies
         # Check only the set-cookie header
-        match = {
-          :version => (check[:dynamic_version].call(response) if check[:dynamic_version]) || check[:version],
-          :name => check[:name],
-          :match => check[:type],
-          :hide => check[:hide]
-        } if response.header['set-cookie'] =~ check[:content]
-
+        match = _construct_match_response(check,data) if data["details"]["cookies"] =~ check[:content]
       elsif check[:type] == :checksum_body
-        match = {
-          :version => (check[:dynamic_version].call(response) if check[:dynamic_version]) || check[:version],
-          :name => check[:name],
-          :match => check[:type],
-          :hide => check[:hide]
-        } if Digest::MD5.hexdigest("#{response.body}") == check[:checksum]
+        match = _construct_match_response(check,data) if Digest::MD5.hexdigest(data["details"]["response_data_hash"]) == check[:checksum]
       end
+
     match
+    end
+
+    # this method takes a check and a net/http response object and
+    # constructs it into a format that's matchable. it then attempts
+    # to match, and returns a match object if it matches, otherwise
+    # returns nil.
+    def _match_http_response(check, response)
+
+      # Construct an Intrigue Entity of type Uri so we can match it
+      data  = []
+=begin
+      json = '{
+      	"id": 1572,
+      	"type": "Intrigue::Entity::Uri",
+      	"name": "http://69.162.37.69:80",
+      	"deleted": false,
+      	"hidden": false,
+      	"detail_string": "Server:  | App:  | Title: Index page",
+      	"details": {
+      		"uri": "http://69.162.37.69:80",
+      		"code": "200",
+      		"port": 80,
+      		"forms": false,
+      		"title": "Index page",
+      		"verbs": null,
+      		"headers": ["content-length: 701", "last-modified: Tue, 03 Jul 2018 16:55:36 GMT", "cache-control: no-cache", "content-type: text/html"],
+      		"host_id": 1571,
+      		"scripts": [],
+      		"products": [],
+      		"protocol": "tcp",
+      		"ip_address": "69.162.37.69",
+      		"javascript": [],
+      		"fingerprint": [],
+      		"api_endpoint": false,
+      		"masscan_string": "sudo masscan -p80,443,2004,3389,7001,8000,8080,8081,8443,U:161,U:500 --max-rate 10000 -oL /tmp/masscan20180703-9816-18n0ri --range 69.162.0.0/18",
+      		"app_fingerprint": [],
+      		"hidden_original": "http://69.162.37.69:80",
+      		"response_data_hash": "7o0r6ie5DOrJJnz1sS7RGO4XWsNn3hWykbwGkGnySWU=",
+      		"server_fingerprint": [],
+      		"enrichment_complete": ["enrich/uri"],
+      		"include_fingerprint": [],
+      		"enrichment_scheduled": ["enrich/uri"],
+      		"hidden_response_data": "",
+      		"hidden_screenshot_contents": """
+      	},
+      	"task_results": [{
+      		"id": 32,
+      		"name": "masscan_scan_on_69.162.0.0/18",
+      		"base_entity_name": "69.162.0.0/18",
+      		"base_entity_type": "Intrigue::Entity::NetBlock"
+      	}],
+      	"generated_at": "2018-07-04T03:43:11+00:00"
+      }'
+=end
+      data = {}
+      data["details"] = {}
+      data["details"]["hidden_response_data"] = "#{response.body}"
+      # construct the headers into a big string block
+      headers = []
+      response.each_header do |h,v|
+        headers << "#{h}: #{v}"
+      end
+      data["details"]["headers"] = headers
+      data["details"]["cookies"] = response.header['set-cookie']
+      data["details"]["response_data_hash"] = Digest::SHA256.base64digest("#{response.body}")
+
+      # call the actual matcher & return
+      _match_uri check, data
     end
 
     def _http_request(method, uri_string, credentials=nil, headers={}, data=nil, limit = 10, open_timeout=15, read_timeout=15)
@@ -121,7 +201,6 @@ module Intrigue
         end
 
         until( found || attempts >= max_attempts)
-         #puts "Getting #{uri}, attempt #{attempts}"
          attempts+=1
 
          # proxy configuration, disabled for now
@@ -133,8 +212,6 @@ module Intrigue
          #end
          proxy_addr = nil
          proxy_port = nil
-
-
 
          # set options
          opts = {}

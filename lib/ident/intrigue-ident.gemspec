@@ -1,5 +1,5 @@
 # coding: utf-8
-require './ident'
+require_relative 'lib/ident'
 
 Gem::Specification.new do |spec|
   spec.name          = "intrigue-ident"

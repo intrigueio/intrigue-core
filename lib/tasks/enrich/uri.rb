@@ -145,6 +145,7 @@ class EnrichUri < BaseTask
         "verbs" => verbs_enabled,
         "scripts" => script_references,
         "headers" => headers,
+        "cookies" => response.header['set-cookie'],
         "forms" => contains_forms,
         "response_data_hash" => response_data_hash,
         "hidden_response_data" => response_data,

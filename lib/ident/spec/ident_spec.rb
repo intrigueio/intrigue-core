@@ -1,4 +1,5 @@
 require_relative "../ident"
+require 'pry'
 
 describe "Intrigue" do
 describe "Ident" do
@@ -50,12 +51,12 @@ describe "Ident" do
         fail "defunct example? no response." unless response
 
         # okay! get the generated response
-        match = _check_response(gc, response)
+        match = _match_http_response(gc, response)
 
         # check to make sure we got a match
+        puts "MATCH: #{match}"
+        puts "CHECK: #{gc}"
         expect(match[:name]).to eq(gc[:name])
-        #puts "MATCH: #{match}"
-        #puts "CHECK: #{gc}"
 
       end
     end

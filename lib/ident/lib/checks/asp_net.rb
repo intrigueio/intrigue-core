@@ -6,6 +6,7 @@ class AspNet < Intrigue::Ident::Check::Base
   def generate_checks(uri)
     [
       {
+        :accept => "Intrigue::Entity::Uri",
         :name => "ASP.NET",
         :description => "ASP.Net Error Message",
         :version => nil,
@@ -16,6 +17,7 @@ class AspNet < Intrigue::Ident::Check::Base
         :paths => ["#{uri}"]
       },
       {
+        :accept => "Intrigue::Entity::Uri",
         :name => "ASP.NET",
         :description => "X-AspNet Header",
         :version => nil,
