@@ -138,7 +138,7 @@ module Intrigue
       	"hidden": false,
       	"detail_string": "Server:  | App:  | Title: Index page",
       	"details": {
-      		"uri": "http://69.162.37.69:80",
+      		"uri": "http://69.112.37.69:80",
       		"code": "200",
       		"port": 80,
       		"forms": false,
@@ -149,7 +149,7 @@ module Intrigue
       		"scripts": [],
       		"products": [],
       		"protocol": "tcp",
-      		"ip_address": "69.162.37.69",
+      		"ip_address": "69.112.37.69",
       		"javascript": [],
       		"fingerprint": [],
       		"api_endpoint": false,
@@ -164,12 +164,6 @@ module Intrigue
       		"hidden_response_data": "",
       		"hidden_screenshot_contents": """
       	},
-      	"task_results": [{
-      		"id": 32,
-      		"name": "masscan_scan_on_69.162.0.0/18",
-      		"base_entity_name": "69.162.0.0/18",
-      		"base_entity_type": "Intrigue::Entity::NetBlock"
-      	}],
       	"generated_at": "2018-07-04T03:43:11+00:00"
       }'
 =end

@@ -11,7 +11,7 @@ module Check
             :type => :content_body,
             :version => nil,
             :content => /<title>Apache Tomcat/,
-            :dynamic_version => lambda{|x| x.body.scan(/<title>(.*)<\/title>/)[0].first.gsub("Apache Tomcat/","").gsub(" - Error report","").chomp },
+            :dynamic_version => lambda{|x|  x["details"]["hidden_response_data"].scan(/<title>(.*)<\/title>/)[0].first.gsub("Apache Tomcat/","").gsub(" - Error report","").chomp },
             :paths => ["#{uri}"]
           }
         ]

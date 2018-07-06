@@ -12,7 +12,7 @@ module Check
             :type => :content_body,
             :content => /Drupal/,
             :dynamic_version => lambda { |x|
-              version = x.body.scan(/^(Drupal.*)[ ,<\.].*$/)[0]
+              version = x["details"]["hidden_response_data"].scan(/^(Drupal.*)[ ,<\.].*$/)[0]
               return version.first.gsub("Drupal ","").gsub(",","").chomp if version
             },
             :paths => ["#{uri}/CHANGELOG.txt"]

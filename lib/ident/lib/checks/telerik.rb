@@ -12,7 +12,7 @@ module Check
             :version => nil,
             :type => :content_body,
             :content => /Telerik.Sitefinity.Resources/,
-            :dynamic_version => lambda { |x| x.body.match(/Version=([\d\.]+),/).captures[0] },
+            :dynamic_version => lambda { |x|  x["details"]["hidden_response_data"].match(/Version=([\d\.]+),/).captures[0] },
             :verify_sites => [],
             :paths => ["#{uri}"]
           }

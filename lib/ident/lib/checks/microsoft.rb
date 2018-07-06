@@ -37,7 +37,7 @@ module Check
             :version => nil,
             :type => :content_headers,
             :content => /x-owa-version/,
-            :dynamic_version => lambda { |x| x["x-owa-version"] },
+            :dynamic_version => lambda { |x|  x["details"]["headers"].select{|y| y =~ /x-owa-version/}.split(":").last },
             :paths => ["#{uri}"]
           },
           {

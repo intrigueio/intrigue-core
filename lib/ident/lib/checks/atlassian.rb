@@ -28,8 +28,8 @@ class Atlassian < Intrigue::Ident::Check::Base
         :type => :content_body,
         :content => /FishEye and Crucible/,
         :dynamic_version => lambda{|x|
-          if x.body.scan(/Log in to FishEye and Crucible (.*)\</)[0]
-            x.body.scan(/Log in to FishEye and Crucible (.*)\</)[0].first
+          if x["details"]["hidden_response_data"].scan(/Log in to FishEye and Crucible (.*)\</)[0]
+            x["details"]["hidden_response_data"].scan(/Log in to FishEye and Crucible (.*)\</)[0].first
           end
         },
         :paths => ["#{uri}"]
@@ -41,8 +41,8 @@ class Atlassian < Intrigue::Ident::Check::Base
         :type => :content_cookies,
         :content => /atlassian.xsrf.token/i,
         :dynamic_version => lambda{ |x|
-          if x.body.scan(/<span id="footer-build-information">(.*)-<span/)[0]
-            x.body.scan(/<span id="footer-build-information">(.*)-<span/)[0].first.gsub("(","")
+          if x["details"]["hidden_response_data"].scan(/<span id="footer-build-information">(.*)-<span/)[0]
+            x["details"]["hidden_response_data"].scan(/<span id="footer-build-information">(.*)-<span/)[0].first.gsub("(","")
           end
         },
         :paths => ["#{uri}"]

@@ -11,11 +11,6 @@ module Check
             :version => nil,
             :type => :content_headers,
             :content => /via: [0-9]\.[0-9] varnish/i,
-            :dynamic_version => lambda{ |x|
-              m = nil
-              x.each_header{|h,v| m = v if (h == "via" && v =~ /varnish/) }
-              m.gsub("varnish ","") if m
-            },
             :paths => ["#{uri}"]
           }
         ]

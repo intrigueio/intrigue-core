@@ -11,7 +11,7 @@ module Check
             :version => nil,
             :type => :content_body,
             :content => /<title>Chef Server<\/title>/,
-            :dynamic_version => lambda{|x| x.body.scan(/Version\ (.*)\ &mdash;/)[0].first },
+            :dynamic_version => lambda{|x| x["details"]["hidden_response_data"].scan(/Version\ (.*)\ &mdash;/)[0].first },
             :paths => ["#{uri}"]
           },
           {

@@ -11,7 +11,7 @@ module Check
             :version => nil,
             :type => :content_headers,
             :content => /x-hudson/i,
-            :dynamic_version => lambda { |x| x["x-hudson"] },
+            :dynamic_version => lambda { |x| x["details"]["headers"].select{|y| y =~ /x-hudson/}.split(":").last },
             :paths => ["#{uri}"]
           },
           {
@@ -28,7 +28,7 @@ module Check
             :version => nil,
             :type => :content_headers,
             :content => /x-jenkins/i,
-            :dynamic_version => lambda { |x| x["x-jenkins"] },
+            :dynamic_version => lambda { |x|  x["details"]["headers"].select{|y| y =~ /x-jenkins/}.split(":").last },
             :paths => ["#{uri}"]
           }
         ]
