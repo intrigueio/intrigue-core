@@ -10,6 +10,7 @@ class Amazon < Intrigue::Ident::Check::Base
         :description => "Amazon Elastic Load Balancer",
         :url => "https://aws.amazon.com/elasticloadbalancing/",
         :version => nil,
+        :tags => ["error_page"],
         :type => :content_headers,
         :content => /awselb\/\d.\d/,
         :hide => true,

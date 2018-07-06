@@ -9,6 +9,7 @@ class AspNet < Intrigue::Ident::Check::Base
         :name => "ASP.NET",
         :description => "ASP.Net Error Message",
         :version => nil,
+        :tags => ["error_page"],
         :type => :content_body,
         :content => /^.*ASP.NET is configured.*$/i,
         :dynamic_version => lambda{|x| x.body.scan(/ASP.NET Version:(.*)$/)[0].first.chomp },
