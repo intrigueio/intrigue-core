@@ -11,7 +11,7 @@ Dir["#{check_folder}/*.rb"].each { |file| require_relative file }
 module Intrigue
   module Ident
 
-    VERSION=0.42
+    VERSION=0.43
 
     def generate_requests_and_check(url)
 
@@ -100,14 +100,22 @@ module Intrigue
 
 
       if check[:type] == :content_body
-        match = _construct_match_response(check,data) if data["details"]["hidden_response_data"] =~ check[:content]
+        if data["details"]["hidden_response_data"]
+          match = _construct_match_response(check,data) if data["details"]["hidden_response_data"] =~ check[:content]
+        end
       elsif check[:type] == :content_headers
-        match = _construct_match_response(check,data) if data["details"]["headers"].join("\n") =~ check[:content]
+        if data["details"]["headers"]
+          match = _construct_match_response(check,data) if data["details"]["headers"].join("\n") =~ check[:content]
+        end
       elsif check[:type] == :content_cookies
         # Check only the set-cookie header
-        match = _construct_match_response(check,data) if data["details"]["cookies"] =~ check[:content]
+        if data["details"]["cookies"]
+          match = _construct_match_response(check,data) if data["details"]["cookies"] =~ check[:content]
+        end
       elsif check[:type] == :checksum_body
-        match = _construct_match_response(check,data) if Digest::MD5.hexdigest(data["details"]["response_data_hash"]) == check[:checksum]
+        if data["details"]["response_data_hash"]
+          match = _construct_match_response(check,data) if Digest::MD5.hexdigest(data["details"]["response_data_hash"]) == check[:checksum]
+        end
       end
 
     match
