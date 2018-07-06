@@ -45,18 +45,19 @@ module Task
       rescue Net::ReadTimeout => e
         _log_error "Timed out, moving on" if @task_result
       rescue Selenium::WebDriver::Error::WebDriverError => e
+        # skip simple errors where we're testing JS libs
         unless ("#{e}" =~ /is not defined/ || "#{e}" =~ /Cannot read property/)
           _log_error "Webdriver issue #{e}" if @task_result
         end
-      #rescue Selenium::WebDriver::Error::NoSuchWindowError => e
-      #  _log_error "Lost our window #{e}" if @task_result
+      rescue Selenium::WebDriver::Error::NoSuchWindowError => e
+        _log_error "Lost our window #{e}" if @task_result
       rescue Selenium::WebDriver::Error::UnknownError => e
         # skip simple errors where we're testing JS libs
         unless ("#{e}" =~ /is not defined/ || "#{e}" =~ /Cannot read property/)
           _log_error "#{e}" if @task_result
         end
-      #rescue Selenium::WebDriver::Error::UnhandledAlertError => e
-      #  _log_error "Unhandled alert #{e}" if @task_result
+      rescue Selenium::WebDriver::Error::UnhandledAlertError => e
+        _log_error "Unhandled alert open: #{e}" if @task_result
       rescue Selenium::WebDriver::Error::NoSuchElementError
         _log_error "No such element #{e}, moving on" if @task_result
       rescue Selenium::WebDriver::Error::StaleElementReferenceError
