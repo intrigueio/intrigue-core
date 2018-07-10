@@ -17,7 +17,7 @@ class EnrichUri < BaseTask
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "details" => {"name" => "https://intrigue.io"}}],
       :allowed_options => [
-        {:name => "enable_browser", :regex => "boolean", :default => false },
+        {:name => "enable_browser", :regex => "boolean", :default => true },
       ],
       :created_types => [],
       :queue => "task_browser"
@@ -34,10 +34,11 @@ class EnrichUri < BaseTask
     response = http_request :get, uri
     response2 = http_request :get,uri
 
-    unless response && response2
+    unless response && response2 && response.body
       _log_error "Unable to receive a response for #{uri}, bailing"
       return
     end
+
 
     response_data = response.body.sanitize_unicode
     response_data_hash = Digest::SHA256.base64digest(response_data) if response_data
@@ -143,13 +144,19 @@ class EnrichUri < BaseTask
     # match products based on cookies
     products.concat product_match_http_cookies(_gather_cookies(response))
 
+    ###
+    ### grab the page title
+    ###
+    match = response.body.match(/<title>(.*)<\/title>/mi)
+    title = match.captures.first if match
+
     $db.transaction do
       new_details = @entity.details.merge({
         "api_endpoint" => api_enabled,
         #"trace" => trace_enabled,
         #"webdav" => webdav_enabled,
         "code" => response.code,
-        "title" => response.body[/<title>(.*)<\/title>/,1],
+        "title" => title,
         "verbs" => verbs_enabled,
         "scripts" => script_references,
         "headers" => headers,

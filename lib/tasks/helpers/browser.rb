@@ -17,7 +17,7 @@ module Task
     end
 
     def destroy_browser_session(session)
-      session.visit('about:blank')
+      #session.visit('about:blank')
 
       # HACK HACK HACK- get the chromedriver process before we quit
       driver_pid = session.driver.browser.instance_variable_get(:@service).instance_variable_get(:@process).pid
@@ -27,10 +27,10 @@ module Task
 
       # get the full group id (driver + browser)
       begin
-        pgid = Process.getpgid(driver_pid)
+        #pgid = Process.getpgid(driver_pid)
         # these violent delights have violent ends
-        Process.kill('TERM', -pgid )
         Process.kill('TERM', driver_pid )
+        #Process.kill('TERM', -pgid )
       rescue Errno::ESRCH
         # already dead
       end

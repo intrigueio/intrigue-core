@@ -144,6 +144,7 @@ module MatchExceptions
             entity_name =~ /^.*instagram.com(:[0-9]*)?$/                 ||
             entity_name =~ /^.*jobing.com(:[0-9]*)?$/                    ||
             entity_name =~ /^.*localhost(:[0-9]*)?$/                     ||
+            entity_name =~ /^.*lookbookhq.com(:[0-9]*)?$/                ||
             entity_name =~ /^.*linkedin.com(:[0-9]*)?$/                  ||
             entity_name =~ /^.*lync.com(:[0-9]*)?$/                      ||
             entity_name =~ /^.*mailgun.org(:[0-9]*)?$/                   ||
