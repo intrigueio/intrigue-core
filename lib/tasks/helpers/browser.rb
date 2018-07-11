@@ -27,10 +27,10 @@ module Task
 
       # get the full group id (driver + browser)
       begin
-        #pgid = Process.getpgid(driver_pid)
-        # these violent delights have violent ends
-        Process.kill('TERM', driver_pid )
-        #Process.kill('TERM', -pgid )
+        pgid = Process.getpgid(driver_pid)
+        # violent delights have violent ends
+        Process.kill('KILL', -pgid )
+        Process.kill('KILL', driver_pid )
       rescue Errno::ESRCH
         # already dead
       end
