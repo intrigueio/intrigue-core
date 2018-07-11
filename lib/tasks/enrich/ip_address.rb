@@ -53,6 +53,9 @@ class EnrichIpAddress < BaseTask
       end
     end
 
+    # geolocate
+    location_hash = geolocate_ip(lookup_name)
+
     ####
     ### Set details for this entity
     ####
@@ -75,6 +78,7 @@ class EnrichIpAddress < BaseTask
     end
 
     _set_entity_detail("dns_entries", dns_entries.uniq )
+    _set_entity_detail("geolocation", location_hash)
   end
 
 end

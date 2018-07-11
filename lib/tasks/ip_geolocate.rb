@@ -23,44 +23,26 @@ class IpGeolocate < BaseTask
     super
 
     ip_address = _get_entity_name
-
-    ###
-    ### XXX - this will only work if our start path is correct
-    ###  and the file exists (see get_latest.sh in /data/)
-    ###
-
-    @db = GeoIP.new(File.join('data', 'geolitecity', 'latest.dat'))
+    location_hash = geolocate_ip ip_address
 
     begin
-      _log "looking up location for #{ip_address}"
-
-      #
-      # This call attempts to do a lookup
-      #
-      loc = @db.city(ip_address)
-
-      if loc
-        _log "adding location for #{ip_address}"
-        _create_entity("PhysicalLocation", {
-          "name" => "#{loc.latitude} #{loc.longitude}",
-          "zip" => loc.postal_code,
-          "city" => loc.city_name,
-          "state" => loc.region_name,
-          "country" => loc.country_name,
-          "longitude" => loc.longitude,
-          "latitude" => loc.latitude})
-        end
-      rescue ArgumentError => e
-        _log "Argument Error #{e}"
-      rescue Encoding::InvalidByteSequenceError => e
-        _log "Encoding error: #{e}"
-      rescue Encoding::UndefinedConversionError => e
-        _log "Encoding error: #{e}"
-
+      if location_hash
+      _log "creating location for #{ip_address}: #{location_hash["city_name"]} #{location_hash["country_name"]}"
+      _create_entity("PhysicalLocation",
+          location_hash.merge({
+            "name" => "#{location_hash["city_name"]} #{location_hash["country_name"]}"
+          }))
       end
+    rescue ArgumentError => e
+      _log "Argument Error #{e}"
+    rescue Encoding::InvalidByteSequenceError => e
+      _log "Encoding error: #{e}"
+    rescue Encoding::UndefinedConversionError => e
+      _log "Encoding error: #{e}"
+
+    end
 
   end
-
 end
 end
 end

@@ -19,7 +19,11 @@ class IpAddress < Intrigue::Model::Entity
   end
 
   def detail_string
-    details["ports"].count.to_s if details["ports"]
+    out = ""
+    out << "#{details["ports"].count.to_s if details["ports"]}"
+    out << "#{details["geolocation"]["city_name"] if details["geolocation"]}"
+    out << " #{details["geolocation"]["country_name"] if details["geolocation"]}"
+  out
   end
 
   def enrichment_tasks

@@ -29,6 +29,27 @@ module Data
     ]
   end
 
+  def geolocate_ip(ip)
+    db = GeoIP.new(File.join('data', 'geolitecity', 'latest.dat'))
+
+    begin
+      _log "looking up location for #{ip}"
+
+      #
+      # This call attempts to do a lookup
+      #
+      loc = db.city(ip)
+
+    rescue ArgumentError => e
+      _log "Argument Error #{e}"
+    rescue Encoding::InvalidByteSequenceError => e
+      _log "Encoding error: #{e}"
+    rescue Encoding::UndefinedConversionError => e
+      _log "Encoding error: #{e}"
+    end
+  loc
+  end
+
 
 end
 end
