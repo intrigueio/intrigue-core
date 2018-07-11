@@ -147,7 +147,7 @@ class EnrichUri < BaseTask
     ###
     ### grab the page title
     ###
-    match = response.body.match(/<title>(.*)<\/title>/mi)
+    match = response.body.match(/<title>(.*)<\/title>/i)
     title = match.captures.first if match
 
     $db.transaction do
