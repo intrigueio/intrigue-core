@@ -186,9 +186,12 @@ class CoreCli < Thor
       # Create the entity
       created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"])
 
-      # kick off the task
-      task_result = start_task(nil, p, nil, task_name, created_entity, depth, options, handlers, strategy_name, enrich)
-
+      if created_entity
+        # kick off the task
+        task_result = start_task(nil, p, nil, task_name, created_entity, depth, options, handlers, strategy_name, enrich)
+      else
+        puts "Unable to create entity: #{entity["type"]} #{entity["details"]["name"]}, skipping."
+      end
       # manually start enrichment on first entity
       #Intrigue::EntityManager.enrich_entity(created_entity, task_result) if enrich
 
@@ -258,7 +261,7 @@ private
       "details" => { "name" => entity_name }
     }
 
-    #puts "Got entity: #{entity_hash}" if @debug
+    puts "Got entity: #{entity_hash}" if @debug
 
   entity_hash
   end
