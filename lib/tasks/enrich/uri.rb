@@ -53,7 +53,7 @@ class EnrichUri < BaseTask
     verbs_enabled = check_options_endpoint(uri)
 
     # grab all script_references
-    script_references = response_data.scan(/<script.*?src=["|'](.*?)["|']/).map{|x| x.first if x }
+    script_links = response_data.scan(/<script.*?src=["|'](.*?)["|']/).map{|x| x.first if x }
 
     # save the Headers
     headers = []
@@ -72,7 +72,7 @@ class EnrichUri < BaseTask
         #existing_libraries = _get_entity_detail("javascript") || []
 
         # Run the version checking scripts
-        new_libraries = gather_javascript_libraries(session, uri)
+        js_libraries = gather_javascript_libraries(session, uri)
 
         # screenshot
         encoded_screenshot = capture_screenshot(session, uri)
@@ -158,14 +158,14 @@ class EnrichUri < BaseTask
         "code" => response.code,
         "title" => title,
         "verbs" => verbs_enabled,
-        "scripts" => script_references,
+        "scripts" => script_links,
         "headers" => headers,
         "cookies" => response.header['set-cookie'],
         "forms" => contains_forms,
         "response_data_hash" => response_data_hash,
         "hidden_response_data" => response_data,
         "hidden_screenshot_contents" => encoded_screenshot,
-        "javascript" => new_libraries,
+        "javascript" => js_libraries,
         "products" => products.compact,
         "include_fingerprint" => uniq_include_stack,
         "app_fingerprint" =>  app_stack.uniq,

@@ -36,13 +36,17 @@ class PublicTrelloCheck < BaseTask
 
   end
 
-
   def check_and_create(name)
     uri = "https://trello.com/#{name}"
-    session = create_browser_session
-    document = capture_document session, uri
-    title = document[:title]
-    body = document[:contents]
+
+    begin
+      session = create_browser_session
+      document = capture_document session, uri
+      title = document[:title]
+      body = document[:contents]
+    ensure
+      destroy_browser_session(session)
+    end
 
     if body =~ /BoardsMembers/
       _log "The #{name} org exists!"
