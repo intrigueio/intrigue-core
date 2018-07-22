@@ -122,7 +122,7 @@ class EnrichUri < BaseTask
 
     # and then just stick the name and the version in our fingerprint
     app_stack.concat(fingerprint_matches.map do |x|
-      version_string = "#{x[:name]}"
+      version_string = "#{x[:vendor]} #{x[:product]}"
       version_string += " #{x[:version]}" if x[:version]
     version_string
     end)
