@@ -17,7 +17,7 @@ class GenerateGraphWorker
       project.save
 
       # Generate the graph
-      project.graph_json = generate_graph_json(project)
+      project.graph_json = generate_graph(project).to_json
       project.graph_generated_at = DateTime.now
 
       puts "Done with graph generation for #{project.name}!"
@@ -30,7 +30,7 @@ class GenerateGraphWorker
   end
 
 
-  def generate_graph_json(project)
+  def generate_graph(project)
     # generate the nodes
     nodes = []
     edges = []
@@ -62,7 +62,7 @@ class GenerateGraphWorker
     end
 
     # dump the json
-    { "nodes" => nodes.uniq!, "edges" => edges }.to_json
+    { "nodes" => nodes.uniq!, "edges" => edges }
   end
 
 
