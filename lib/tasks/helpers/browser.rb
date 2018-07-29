@@ -140,6 +140,14 @@ module Task
         # Test site: https://secure.ally.com/
         # Examples: http://builtwithember.io/
         { library: "Ember", script: 'Ember.VERSION' },
+
+        # Honeybadger
+        { library: "Honeybadger", script: 'Honeybadger.getVersion()' },
+
+        # Intercom
+        # Examples: https://bugcrowd.com
+        { library: "Intercom", script: 'Intercom("version")' },
+
         # Jquery
         # Test site: http://www.eddiebauer.com/
         # Test site: https://www.underarmour.com
