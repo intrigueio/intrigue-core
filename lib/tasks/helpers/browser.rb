@@ -203,7 +203,7 @@ module Task
 
         # run our script in a browser
         version = safe_browser_action do
-          session.evaluate_script(hacky_javascript)
+          session.evaluate_script(hacky_javascript, check[:arguments] || [])
         end
 
         if version
