@@ -53,7 +53,8 @@ module Task
                   :version => (check[:dynamic_version].call(response) if check[:dynamic_version]) || check[:version],
                   :name => check[:name],
                   :match => check[:type],
-                  :hide => check[:hide]
+                  :hide => check[:hide],
+                  :uri => uri
                 } if "#{response.body}" =~ check[:content]
 
               elsif check[:type] == :content_headers
@@ -61,7 +62,8 @@ module Task
                   :version => (check[:dynamic_version].call(response) if check[:dynamic_version]) || check[:version],
                   :name => check[:name],
                   :match => check[:type],
-                  :hide => check[:hide]
+                  :hide => check[:hide],
+                  :uri => uri
                 } if header_string =~ check[:content]
 
               elsif check[:type] == :content_cookies
@@ -70,7 +72,8 @@ module Task
                     :version => (check[:dynamic_version].call(response) if check[:dynamic_version]) || check[:version],
                     :name => check[:name],
                     :match => check[:type],
-                    :hide => check[:hide]
+                    :hide => check[:hide],
+                    :uri => uri
                   } if response.header['set-cookie'] =~ check[:content]
 
               elsif check[:type] == :checksum_body
@@ -78,7 +81,8 @@ module Task
                     :version => (check[:dynamic_version].call(response) if check[:dynamic_version]) || check[:version],
                     :name => check[:name],
                     :match => check[:type],
-                    :hide => check[:hide]
+                    :hide => check[:hide],
+                    :uri => uri
                   } if Digest::MD5.hexdigest("#{response.body}") == check[:checksum]
 
               end
