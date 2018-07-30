@@ -51,10 +51,7 @@ class SearchCrt < BaseTask
       # Parse it
       subdomains = raw_html.scan(/<summary type="html">(.*?)\.#{search_domain}[&<\ ]/)
 
-      if x.count == 0
-        _log "No matching domains found"
-        return
-      end
+      _log "No matching domains found" if subdomains.count == 0
 
       subdomains.each do |d|
         domain = d.first
