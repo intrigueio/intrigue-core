@@ -49,23 +49,23 @@ class SearchCrt < BaseTask
       end
 
       # Parse it
-      x = raw_html.match(/<summary type="html">(.*?)\.#{search_domain}[&<\ ]/)
-      if x
-        dcaps = x.captures
-      else
+      subdomains = raw_html.scan(/<summary type="html">(.*?)\.#{search_domain}[&<\ ]/)
+
+      if x.count == 0
         _log "No matching domains found"
-        dcaps = []
+        return
       end
 
-      dcaps.each do |d|
-        _log "got domain: #{d}.#{search_domain}"
+      subdomains.each do |d|
+        domain = d.first
+        _log "got domain: #{domain}.#{search_domain}"
 
         # Remove any leading wildcards
-        if d[0..1] == "*."
-          d = d[2..-1]
+        if domain[0..1] == "*."
+          domain = domain[2..-1]
         end
 
-        _create_entity("DnsRecord", "name"=> "#{d}.#{search_domain}" )
+        _create_entity("DnsRecord", "name"=> "#{domain}.#{search_domain}" )
       end
 
     rescue StandardError => e
