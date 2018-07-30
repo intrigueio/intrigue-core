@@ -43,7 +43,10 @@ class SearchCrt < BaseTask
       # if we don't get it, loop until we do
       until raw_html || not_to_exceed == 10
         _log_error "Error getting #{crt_query_uri}, trying again"
-        sleep rand(60)
+        backoff = rand(20) * not_to_exceed # slowly backoff
+        _log "Waiting #{backoff} seconds"
+        sleep backoff
+        # try again
         raw_html = http_get_large_body(crt_query_uri)
         not_to_exceed +=1
       end
