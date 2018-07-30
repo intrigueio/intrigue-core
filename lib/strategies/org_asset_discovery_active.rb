@@ -27,17 +27,19 @@ module Strategy
         ### Handle top level domain stuff here
         if domain_length == 2 # large bruteforce on tlds
 
+          start_recursive_task(task_result,"search_crt", entity)
+
+          start_recursive_task(task_result,"dns_brute_sub",entity,[
+            {"name" => "threads", "value" => 2 },
+            {"name" => "use_file", "value" => true },
+            {"name" => "brute_alphanumeric_size", "value" => 1 }])
+
           start_recursive_task(task_result,"public_google_groups_check", entity)
           start_recursive_task(task_result,"public_trello_check",entity)
 
           start_recursive_task(task_result,"aws_s3_brute",entity,[
             {"name" => "additional_buckets", "value" => "#{base_name},#{entity.name}"}
           ])
-
-          start_recursive_task(task_result,"dns_brute_sub",entity,[
-            {"name" => "threads", "value" => 2 },
-            {"name" => "use_file", "value" => true },
-            {"name" => "brute_alphanumeric_size", "value" => 1 }])
 
         else # do something smaller
           start_recursive_task(task_result,"dns_brute_sub",entity,[

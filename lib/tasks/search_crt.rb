@@ -16,7 +16,6 @@ class SearchCrt < BaseTask
       :example_entities => [ {"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}} ],
       :allowed_options => [
         {:name => "extract_pattern", :regex => "alpha_numeric", :default => false },
-        {:name => "gather_subdomains", :regex => "boolean", :default => true }
       ],
       :created_types => ["DnsRecord"]
     }
@@ -26,64 +25,60 @@ class SearchCrt < BaseTask
     super
 
     search_domain = _get_entity_name
-    opt_gather_subdomains = _get_option "gather_subdomains"
-    opt_extract_pattern = _get_option("extract_pattern") == "false"
 
-    if opt_gather_subdomains
-      crt_query_uri = "https://crt.sh/?q=#{search_domain}"
-      begin
-
-        # gather all related certs
-        html = Nokogiri::HTML(http_get_body(crt_query_uri))
-        cert_ids = html.xpath("//td/a/@href").map do |x|
-          x.to_s.gsub("\n","").strip
-        end
-
-        # individually query certs
-        cert_ids.each do |cert_id|
-          crt_cert_uri = "https://crt.sh/"
-          raw_html = http_get_body("#{crt_cert_uri}#{cert_id}&opt=nometadata")
-
-          # run and hide
-          if (
-               raw_html =~ /acquia/i              ||
-               raw_html =~ /cloudflare/i          ||
-               raw_html =~ /distil/i              ||
-               raw_html =~ /fastly/i              ||
-               raw_html =~ /incapsula.com/i       ||
-               raw_html =~ /imperva/i             ||
-               raw_html =~ /jive/i                ||
-               raw_html =~ /lithium/i             ||
-               raw_html =~ /segment/i             ||
-               raw_html =~ /wpengine/i            ||
-               raw_html =~ /cdnetworks.com/i)
-            _log_error "Invalid keyword in response, failing."
-            return
-          end
-
-          raw_html.scan(/DNS:(.*?)<BR>/).each do |domains|
-            domains.each do |dname|
-              _log "Found domain: #{dname}"
-
-              # If we have an extract pattern set, respect it
-              if opt_extract_pattern
-                next unless dname =~ /#{opt_extract_pattern}/
-              end
-
-              # Remove any leading wildcards so we get a sensible domain name
-              if dname[0..1] == "*."
-                dname = dname[2..-1]
-              end
-
-              _create_entity("DnsRecord", "name"=> dname )
-            end
-          end
-
-        end
-      rescue StandardError => e
-        _log_error "Error grabbing crt domains: #{e}"
-      end
+    # default to our name for the extract pattern
+    if _get_option("extract_pattern") != "false"
+      opt_extract_pattern = _get_option("extract_pattern")
+    else
+      opt_extract_pattern = search_domain
     end
+
+    begin
+
+      # gather all related certs
+      crt_query_uri = "https://crt.sh/?q=%25.#{search_domain}"
+      html = Nokogiri::HTML(http_get_body(crt_query_uri))
+      cert_ids = html.xpath("//td/a/@href").map do |x|
+        x.to_s.gsub("\n","").strip
+      end
+
+      # individually query certs
+      cert_ids.each do |cert_id|
+        
+        scrape_uri = "https://crt.sh/#{cert_id}&opt=nometadata"
+        raw_html = http_get_body(scrape_uri)
+
+        # if we didn't get anything, wait a bit
+        unless raw_html
+          _log_error "Error getting #{scrape_uri}"
+          sleep rand(10)
+          next
+        end
+
+        # scrape
+        raw_html.scan(/DNS:(.*?)<BR>/).each do |domains|
+          domains.each do |dname|
+
+            # respect our extract pattern
+            unless dname =~ /#{opt_extract_pattern}/
+              _log "Skipping #{dname} - doesnt match our extract pattern"
+              next
+            end
+
+            # Remove any leading wildcards
+            if dname[0..1] == "*."
+              dname = dname[2..-1]
+            end
+
+            _create_entity("DnsRecord", "name"=> dname )
+          end
+        end
+
+      end
+    rescue StandardError => e
+      _log_error "Error grabbing crt domains: #{e}"
+    end
+
 
   end
 
