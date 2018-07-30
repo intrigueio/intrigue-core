@@ -15,7 +15,7 @@ class SearchCrt < BaseTask
       :allowed_types => ["DnsRecord"],
       :example_entities => [ {"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}} ],
       :allowed_options => [
-        {:name => "extract_pattern", :regex => "alpha_numeric", :default => false },
+        {:name => "extract_pattern", :regex => "alpha_numeric", :default => "default" },
       ],
       :created_types => ["DnsRecord"]
     }
@@ -27,7 +27,7 @@ class SearchCrt < BaseTask
     search_domain = _get_entity_name
 
     # default to our name for the extract pattern
-    if _get_option("extract_pattern") != "false"
+    if _get_option("extract_pattern") != "default"
       opt_extract_pattern = _get_option("extract_pattern")
     else
       opt_extract_pattern = search_domain
@@ -35,51 +35,48 @@ class SearchCrt < BaseTask
 
     begin
 
-      # gather all related certs
-      crt_query_uri = "https://crt.sh/?q=%25.#{search_domain}"
-      html = Nokogiri::HTML(http_get_body(crt_query_uri))
-      cert_ids = html.xpath("//td/a/@href").map do |x|
-        x.to_s.gsub("\n","").strip
+      # Grab the ATOM feed
+      not_to_exceed = 0
+      crt_query_uri = "https://crt.sh/atom?q=%25.#{search_domain}"
+      raw_html = http_get_large_body(crt_query_uri)
+
+      # if we don't get it, loop until we do
+      until raw_html || not_to_exceed == 10
+        _log_error "Error getting #{crt_query_uri}, trying again"
+        sleep rand(60)
+        raw_html = http_get_large_body(crt_query_uri)
+        not_to_exceed +=1
       end
 
-      # individually query certs
-      cert_ids.each do |cert_id|
-        
-        scrape_uri = "https://crt.sh/#{cert_id}&opt=nometadata"
-        raw_html = http_get_body(scrape_uri)
-
-        # if we didn't get anything, wait a bit
-        unless raw_html
-          _log_error "Error getting #{scrape_uri}"
-          sleep rand(10)
-          next
-        end
-
-        # scrape
-        raw_html.scan(/DNS:(.*?)<BR>/).each do |domains|
-          domains.each do |dname|
-
-            # respect our extract pattern
-            unless dname =~ /#{opt_extract_pattern}/
-              _log "Skipping #{dname} - doesnt match our extract pattern"
-              next
-            end
-
-            # Remove any leading wildcards
-            if dname[0..1] == "*."
-              dname = dname[2..-1]
-            end
-
-            _create_entity("DnsRecord", "name"=> dname )
-          end
-        end
-
+      # Parse it
+      x = raw_html.match(/<summary type="html">(.*?)\.#{search_domain}[&<\ ]/)
+      if x
+        dcaps = x.captures
+      else
+        _log "No matching domains found"
+        dcaps = []
       end
+
+      dcaps.each do |d|
+        _log "got domain: #{d}.#{search_domain}"
+
+        # Remove any leading wildcards
+        if d[0..1] == "*."
+          d = d[2..-1]
+        end
+
+        _create_entity("DnsRecord", "name"=> "#{d}.#{search_domain}" )
+      end
+
     rescue StandardError => e
       _log_error "Error grabbing crt domains: #{e}"
     end
 
+  end
 
+  def http_get_large_body(uri)
+    r = http_request(:get, uri, nil, {}, nil,240,240,240)
+  r.body if r
   end
 
 end
