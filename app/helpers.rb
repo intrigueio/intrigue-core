@@ -52,7 +52,8 @@ module Helper
         :logger => Intrigue::Model::Logger.create(:project => project),
         :depth => depth,
         :strategy => strategy_name,
-        :filter_strings => "#{entity.name}", # this is a comma-delimited list of strings (see: strategies)
+        :whitelist_strings => ["#{entity.name}"], # this is a list of strings that we know are good
+        :blacklist_strings => [],
         :handlers => handlers,
         :incomplete_task_count => 0
       })

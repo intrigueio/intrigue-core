@@ -15,7 +15,7 @@ module Strategy
 
     def self.recurse(entity, task_result)
 
-      filter_strings = "#{task_result.scan_result.filter_strings.gsub(",","|")}"
+      filter_strings = task_result.scan_result.whitelist_strings
 
       if entity.type_string == "DnsRecord"
 
@@ -27,7 +27,9 @@ module Strategy
         ### Handle top level domain stuff here
         if domain_length == 2 # large bruteforce on tlds
 
-          start_recursive_task(task_result,"search_crt", entity)
+          start_recursive_task(task_result,"search_crt", entity,[
+            {"name" => "extract_pattern", "value" => filter_strings.first }
+          ])
 
           start_recursive_task(task_result,"dns_brute_sub",entity,[
             {"name" => "threads", "value" => 2 },
@@ -64,7 +66,7 @@ module Strategy
 
       elsif entity.type_string == "NetBlock"
 
-        scannable = (entity.details["whois_full_text"] =~ /#{filter_strings}/i && !(entity.name =~ /::/)) ||  entity.user_created? || entity.created_by?("search_bgp")
+        scannable = (entity.details["whois_full_text"] =~ /#{filter_strings.join("|")}/i && !(entity.name =~ /::/)) ||  entity.user_created? || entity.created_by?("search_bgp")
 
         # Make sure it's owned by the org, and if it is, scan it. also skip ipv6/
         if scannable
@@ -74,14 +76,14 @@ module Strategy
           # 7001: Weblogic
           # 8080: Wordpress, WebDav, DasanNetwork Solution
           start_recursive_task(task_result,"masscan_scan",entity,[
-            {"name"=> "tcp_ports", "value" => "80,443,2004,3389,7001,8000,8080,8081,8443"}
+            {"name"=> "tcp_ports", "value" => "80,443,2004,3389,8000,8080,8081,8443"}
           ])
         else
           task_result.log "Cowardly refusing to scan this netblock.. it doesn't look like ours."
         end
 
         # Make sure it's small enough not to be disruptive, and if it is, expand it
-        #if entity.details["whois_full_text"] =~ /#{filter_strings}/i && !(entity.name =~ /::/)
+        #if entity.details["whois_full_text"] =~ /#{filter_strings.join("|")}/i && !(entity.name =~ /::/)
         #  start_recursive_task(task_result,"net_block_expand",entity, [{"name" => "threads", "value" => 5 }])
         #else
         #  task_result.log "Cowardly refusing to expand this netblock.. it doesn't look like ours."
@@ -125,7 +127,7 @@ module Strategy
           #start_recursive_task(task_result,"uri_spider",entity,[
           #    {"name" => "max_pages", "value" => 10 },
           #    {"name" => "extract_dns_records", "value" => true },
-          #    {"name" => "extract_dns_record_pattern", "value" => "#{filter_strings}"}])
+          #    {"name" => "extract_dns_record_pattern", "value" => "#{filter_strings.first}"}])
         #end
 
       else

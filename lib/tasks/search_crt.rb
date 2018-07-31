@@ -53,18 +53,24 @@ class SearchCrt < BaseTask
 
       # Parse it
       subdomains = raw_html.scan(/<summary type="html">(.*?)\.#{search_domain}[&<\ ]/)
-
       _log "No matching domains found" if subdomains.count == 0
 
       subdomains.each do |d|
         domain = d.first
-        _log "got domain: #{domain}.#{search_domain}"
+        _log "Got domain: #{domain}.#{search_domain}"
 
         # Remove any leading wildcards
         if domain[0..1] == "*."
           domain = domain[2..-1]
         end
 
+        # check for sanity
+        unless "#{domain}.#{search_domain}" =~ /#{opt_extract_pattern}/
+          _log "Unable to create #{domain}.#{search_domain}, doesnt match #{opt_extract_pattern}"
+          next
+        end
+
+        # woot
         _create_entity("DnsRecord", "name"=> "#{domain}.#{search_domain}" )
       end
 

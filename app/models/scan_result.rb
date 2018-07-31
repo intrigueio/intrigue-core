@@ -2,7 +2,7 @@ module Intrigue
   module Model
     class ScanResult < Sequel::Model
       plugin :validation_helpers
-      plugin :serialization, :json, :options, :handlers
+      plugin :serialization, :json, :options, :handlers, :whitelist_strings, :blacklist_strings
 
       many_to_one :logger
       many_to_one :project
@@ -29,7 +29,7 @@ module Intrigue
       end
 
       def add_filter_string(string)
-        filter_strings << "#{string}"
+        whitelist_strings << "#{string}"
         save
       end
 
@@ -95,7 +95,8 @@ module Intrigue
           "strategy" => strategy,
           "timestamp_start" => timestamp_start,
           "timestamp_end" => timestamp_end,
-          "filter_strings" => filter_strings,
+          "whitelist_strings" => whitelist_strings,
+          "blacklist_strings" => blacklist_strings,
           "project" => project.name,
           "base_entity" => base_entity.export_hash,
           #"task_results" => task_results.map{|t| t.export_hash },

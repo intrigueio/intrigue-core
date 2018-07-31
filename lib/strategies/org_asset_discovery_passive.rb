@@ -15,7 +15,7 @@ module Strategy
 
     def self.recurse(entity, task_result)
 
-      filter_strings = "#{task_result.scan_result.filter_strings.gsub(",","|")}"
+      filter_strings = task_result.scan_result.whitelist_strings
 
       if entity.type_string == "DnsRecord"
 
@@ -36,31 +36,27 @@ module Strategy
         ])
 
         # Sublister API
-        #if entity.name =~ /"#{filter_strings}"/i
+        #if entity.name =~ /"#{filter_strings.join("|")}"/i
         #  start_recursive_task(task_result,"search_sublister", entity)
         #end
-
-        # CRT Scraper... this can get a little crazy, so only search if we match a filter string
-        # and we should at least be of the form domain.something
-        # (don't search for top level or unqual'd domains)
-        unless entity.name =~ /#{filter_strings}/i && domain_length > 1
-          start_recursive_task(task_result,"search_crt", entity )
-        end
-
 
         # Threatcrowd API... skip resolutions, as we probably don't want old
         # data for this use case
         # and we should at least be of the form domain.something
         # (don't search for top level or unqual'd domains)
-        unless entity.name =~ /#{filter_strings}/i && domain_length > 1
-          start_recursive_task(task_result,"search_threatcrowd", entity, [
-            {"name" => "gather_resolutions", "value" => true },
-            {"name" => "gather_subdomains", "value" => true }])
-        end
+        #unless entity.name =~ /#{filter_strings.join("|")}/i && domain_length > 1
+        #  start_recursive_task(task_result,"search_threatcrowd", entity, [
+        #    {"name" => "gather_resolutions", "value" => true },
+        #    {"name" => "gather_subdomains", "value" => true }])
+        #send
 
         ### DNS Subdomain Bruteforce
         # Do a big bruteforce if the size is small enough
         if domain_length < 3
+
+          start_recursive_task(task_result,"search_crt", entity,[
+            {"name" => "extract_pattern", "value" => filter_strings.first }
+          ])
 
           start_recursive_task(task_result,"dns_brute_sub",entity,[
             {"name" => "use_file", "value" => true },
@@ -94,7 +90,7 @@ module Strategy
       elsif entity.type_string == "NetBlock"
 
         # Make sure it's small enough not to be disruptive, and if it is, expand it
-        if entity.details["whois_full_text"] =~ /#{filter_strings}/i && !(entity.name =~ /::/)
+        if entity.details["whois_full_text"] =~ /#{filter_strings.join("|")}/i && !(entity.name =~ /::/)
           start_recursive_task(task_result,"net_block_expand",entity, [{"name" => "threads", "value" => 5 }])
         else
           task_result.log "Cowardly refusing to expand this netblock.. it doesn't look like ours."
