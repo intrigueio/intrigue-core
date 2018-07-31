@@ -6,8 +6,9 @@
 
     Search:
     <input type="text" style='width:100%' class="form-control sm" id="search_string" name="search_string" value="<%= h params["search_string"] %>">
-    <br/>
-    Types:<br/>
+    <div class="hint">Hint: Use "name:" and "details:" to search specfic fields. Separate search tokens with a "|" character.</div>
+    <br>
+    Types:<br>
     <select size=16 style='height:100%; width:100%; color:#000000;' multiple name="entity_types[]">
       <% Intrigue::Model::Entity.descendants.map{|x|x.to_s}.sort.each do |d| %>
         <option value="<%=d%>" <%="selected" if (@entity_types && @entity_types.include?(d.to_s))%>> <%=d%></option>

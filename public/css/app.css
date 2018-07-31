@@ -75,3 +75,8 @@ a:hover {
   margin-top: 5px;
   margin-left: 1px;
 }
+
+.hint {
+ color: light-grey;
+ font-size: 10px;
+}
