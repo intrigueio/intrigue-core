@@ -155,7 +155,7 @@ class UriGatherSslCert  < BaseTask
         "subject" => "#{cert.subject}",
         "issuer" => "#{cert.issuer}",
         "algorithm" => "#{cert.signature_algorithm}",
-        "text" => "#{cert.to_text}" }
+        "hidden_text" => "#{cert.to_text}" }
 
     rescue SocketError => e
       _log_error "Caught an error: #{e}"
