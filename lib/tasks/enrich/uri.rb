@@ -108,7 +108,7 @@ class EnrichUri < BaseTask
       # and hide the entity... meaning no recursion and it shouldn't show up in
       # the UI / queries if any of the matches told us to hide the entity, do it.
       # EXAMPLE TEST CASE: http://103.24.203.121:80 (cpanel missing page)
-      if fingerprint_matches.detect{|x| x[:hide] == true }
+      if fingerprint_matches.detect{|x| x["hide"] == true }
         @entity.hidden = true
         @entity.save
       end
@@ -122,8 +122,8 @@ class EnrichUri < BaseTask
 
     # and then just stick the name and the version in our fingerprint
     app_stack.concat(fingerprint_matches.map do |x|
-      version_string = "#{x[:vendor]} #{x[:product]}"
-      version_string += " #{x[:version]}" if x[:version]
+      version_string = "#{x["vendor"]} #{x["product"]}"
+      version_string += " #{x["version"]}" if x["version"]
     version_string
     end)
     _log "Setting app stack to #{app_stack.uniq}"
