@@ -71,7 +71,6 @@ class EntityManager
     return nil unless our_entity.transform!
     return nil unless our_entity.validate_entity
 
-    # START ENRICHMENT
     # ENRICHMENT MUST BE STARTED MANUALLY!!!!!
 
   our_entity
@@ -164,7 +163,6 @@ class EntityManager
       return nil
     end
 
-
     # Add to our result set for this task
     task_result.add_entity created_entity
     task_result.save
@@ -212,9 +210,8 @@ class EntityManager
     task_result.log  "Running enrichment on #{entity}"
     return unless entity
 
-    # Check if we've alrady run first
+    # Check if we've alrady run first and return gracefully if so
     if entity.enrichment_complete?
-      # TODO should we continue if we have a deeper depth!?
       task_result.log "Skipping enrichment... already completed for #{entity}!"
       return
     end
