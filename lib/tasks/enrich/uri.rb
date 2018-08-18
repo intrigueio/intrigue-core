@@ -113,12 +113,22 @@ class EnrichUri < BaseTask
         @entity.save
       end
 
+      # in some cases, we should go further
+      extended_fingerprints = []
+      if fingerprint_matches.detect{|x| x["product"] == "Wordpress" }
+        wordpress_fingerprint = {"wordpress" => `nmap -sV --script http-wordpress-enum #{uri}`}
+      end
+      extended_fingerprints << wordpress_fingerprint
+
     # TODO, clean up fingerprint / regexes
     rescue NoMethodError => e
       _log_error "Fingerprint effort failed: #{e}"
       # assume no matches in this case
       fingerprint_matches = []
     end
+
+
+
 
     # and then just stick the name and the version in our fingerprint
     app_stack.concat(fingerprint_matches.map do |x|
@@ -129,7 +139,7 @@ class EnrichUri < BaseTask
     _log "Setting app stack to #{app_stack.uniq}"
 
     ###
-    ### Fingerprint the js libraries
+    ### Legacy Fingerprinting (raw regex'ing)
     ###
     include_stack = []
     include_stack.concat _check_page_contents_legacy(response)
@@ -145,10 +155,12 @@ class EnrichUri < BaseTask
     products.concat product_match_http_cookies(_gather_cookies(response))
 
     ###
-    ### grab the page title
-    ###
+    ### grab the page attributes
     match = response.body.match(/<title>(.*?)<\/title>/i)
     title = match.captures.first if match
+
+    match = response.body.match(/<meta name="generator" content=(.*?)>/i)
+    generator = match.captures.first.gsub("\"","") if match
 
     $db.transaction do
       new_details = @entity.details.merge({
@@ -157,6 +169,7 @@ class EnrichUri < BaseTask
         #"webdav" => webdav_enabled,
         "code" => response.code,
         "title" => title,
+        "generator" => generator,
         "verbs" => verbs_enabled,
         "scripts" => script_links,
         "headers" => headers,
@@ -170,7 +183,8 @@ class EnrichUri < BaseTask
         "include_fingerprint" => uniq_include_stack,
         "app_fingerprint" =>  app_stack.uniq,
         "server_fingerprint" => uniq_server_stack,
-        "fingerprint" => fingerprint_matches.uniq
+        "fingerprint" => fingerprint_matches.uniq,
+        "extended_fingerprints" => extended_fingerprints
       })
 
       # Set the details, and make sure raw response data is a hidden (not searchable) detail
