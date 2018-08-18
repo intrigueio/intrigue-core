@@ -66,7 +66,15 @@ module Strategy
 
       elsif entity.type_string == "NetBlock"
 
-        scannable = (entity.details["whois_full_text"] =~ /#{filter_strings.join("|")}/i && !(entity.name =~ /::/)) ||  entity.user_created? || entity.created_by?("search_bgp")
+        whois_text = entity.details["whois_full_text"]
+        whois_text_has_filter_string = (whois_text =~ /#{filter_strings.join("|")}/i)
+        whois_text_indicates_transferred = (whois_text =~ /Early Registrations, Transferred to/)
+
+        scannable = entity.user_created? ||
+                    entity.created_by?("search_bgp") ||
+                    ( whois_text_has_filter_string &&
+                      !(entity.name =~ /::/) &&
+                      !(whois_text_indicates_transferred))
 
         # Make sure it's owned by the org, and if it is, scan it. also skip ipv6/
         if scannable
