@@ -59,11 +59,7 @@ class EnrichUri < BaseTask
     headers = []
     response.each_header{|x| headers << "#{x}: #{response[x]}" }
 
-    # we'll need to make another request
-    #trace_enabled = check_trace_endpoint(uri)
 
-    # we'll need to make another request
-    #webdav_enabled = check_webdav_endpoint(uri)
     if opt_enable_browser
       begin
         session = create_browser_session
@@ -165,8 +161,6 @@ class EnrichUri < BaseTask
     $db.transaction do
       new_details = @entity.details.merge({
         "api_endpoint" => api_enabled,
-        #"trace" => trace_enabled,
-        #"webdav" => webdav_enabled,
         "code" => response.code,
         "title" => title,
         "generator" => generator,
@@ -448,15 +442,6 @@ class EnrichUri < BaseTask
   def check_options_endpoint(uri)
     response = http_request(:options, uri)
     (response["allow"] || response["Allow"]) if response
-  end
-
-  def check_trace_endpoint(uri)
-    response = http_request :trace, uri # todo... make the payload configurable
-    response.body
-  end
-
-  def check_webdav_endpoint(uri)
-    http_request :propfind, uri
   end
 
   def check_api_endpoint(response)
