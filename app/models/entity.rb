@@ -68,22 +68,24 @@ module Intrigue
 
       # Intrigue::Model::Entity.where(:name => "aim.com").first.ancestor_path;nil
       # while true; sleep 1; Intrigue::Model::Entity.last.ancestor_path; end
-      def generate_ancestor_graph(entity=nil, known_nodes = [], depth_string="")
+      def generate_ancestor_path(entity=nil, traversed = [])
         entity = entity || self
 
         if entity.task_results.empty?
-          puts "ROOOOOOOOOOOOOOOOOOT!"
+          #puts "no more"
           return
         end
 
         entity.task_results.uniq.each do |tr|
-          #puts "#{depth_string << " "} #{out = []; visited.each{|x| out << x.name}; out }"
-          puts "#{depth_string.length}  #{tr.name} (#{tr.depth})"
-          unless known_nodes.include? tr.base_entity
-            ancestor_path(tr.base_entity, known_nodes << tr.base_entity, depth_string << " ")
+          if traversed.include? tr
+            #puts "#{tr.name} already traversed"
+            return
           end
+          puts "#{" " * tr.depth * 4} #{tr.name} (#{tr.entities.map{|e| e.name}})"
+          generate_ancestor_path(tr.base_entity, traversed << tr)
         end
 
+      nil
       end
 
       # p = Intrigue::Model::Project.find(:name => "yahoo.com").entities.first.ancestor_path

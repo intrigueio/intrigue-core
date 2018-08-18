@@ -141,9 +141,9 @@ class IntrigueApp < Sinatra::Base
       @params.each do |name,value|
         if name =~ /^option/
           options << {
-                      "name" => "#{name.gsub("option_","")}",
-                      "value" => "#{value}"
-                      }
+            "name" => "#{name.gsub("option_","")}",
+            "value" => "#{value}"
+            }
         end
       end
 

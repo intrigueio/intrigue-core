@@ -104,7 +104,6 @@ module Intrigue
         export_hash.merge("generated_at" => "#{DateTime.now}").to_json
       end
 
-
     end
   end
 end
