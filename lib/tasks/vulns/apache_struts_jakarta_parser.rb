@@ -41,7 +41,10 @@ class ApacheStrutsJakartaParser < BaseTask
 
     if response.header['X-Intrigue-Struts'] =~ /788544/
 
-      _set_entity_detail("vuln_apache_struts_jakarta_parser",true)
+      # set a vulns hash
+      vulns = _get_entity_detail("vulns") || {}
+      vulns["CVE-2017-5638"] = {"vulnerable" => true}
+      _set_entity_detail("vulns",vulns)
 
       # TODO - create finding ?!?
 

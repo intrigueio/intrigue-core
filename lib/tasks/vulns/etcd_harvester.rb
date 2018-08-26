@@ -52,8 +52,11 @@ class EtcdHarvester < BaseTask
       hash = JSON.parse response
 
       # Save it on the entity
-      _set_entity_detail("vuln_etcd",true)
-      _set_entity_detail("vuln_etcd_output",hash)
+
+      # set a vulns hash
+      vulns = _get_entity_detail("vulns") || {}
+      vulns["etcd_misconfiguration"] = {"vulnerable" => true, output => hash}
+      _set_entity_detail("vulns",vulns)
 
     rescue JSON::ParserError => e
       _log_error "unable to parse: #{e}"

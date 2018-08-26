@@ -52,6 +52,11 @@ class TomcatPutJsp < BaseTask
       if response.code == 201
         _log_good "SUCCESS!"
         _log_good "Access the page at:  #{uri}/test.jsp"
+
+        vulns = _get_entity_detail("vulns") || {}
+        vulns["CVE-2017-12615"] = {"vulnerable" => true}
+        _set_entity_detail("vulns",vulns)
+
       end
 
     rescue RestClient::MethodNotAllowed => e
