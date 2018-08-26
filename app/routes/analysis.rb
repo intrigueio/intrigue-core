@@ -59,7 +59,7 @@ class IntrigueApp < Sinatra::Base
       @entities.each do |e|
         # Get the key for the hash
         if e.get_detail("os").to_a.first
-          os_string = e.get_detail("os").to_a.first.match(/(.*)(\ \(.*\))/)[1]
+          os_string = e.get_detail("os").to_a.first["name"]
         else
           os_string = "None"
         end
