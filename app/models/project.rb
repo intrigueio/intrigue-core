@@ -72,15 +72,15 @@ module Intrigue
           #out << "#{product_string}" if product_string
 
           server_fingerprint = x.get_detail("server_fingerprint")
-          server_fingerprint_string = server_fingerprint.gsub(",","").join("; ") if server_fingerprint
+          server_fingerprint_string = server_fingerprint.join("; ") if server_fingerprint
           out << "#{server_fingerprint_string},"
 
           app_fingerprint = x.get_detail("app_fingerprint")
-          app_fingerprint_string = app_fingerprint.gsub(",","").join("; ") if app_fingerprint
+          app_fingerprint_string = app_fingerprint.join("; ") if app_fingerprint
           out << "#{app_fingerprint_string},"
 
           include_fingerprint = x.get_detail("include_fingerprint")
-          include_fingerprint_string = include_fingerprint.gsub(",","").join("; ") if include_fingerprint
+          include_fingerprint_string = include_fingerprint.join("; ") if include_fingerprint
           out << "#{include_fingerprint_string},"
 
           page_title = x.get_detail("title")
