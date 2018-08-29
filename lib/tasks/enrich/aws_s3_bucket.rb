@@ -121,6 +121,7 @@ class EnrichAwsS3Bucket < BaseTask
           unless matches_ignore_list(item_uri)
             _log "Interesting File: #{item_uri} (#{size*1.0/1000000}MB)"
             interesting_files << "#{item_uri}"
+            #_notify_specific "slack_buckets", "Interesting files: #{interesting_files}"
           end
         end
       end # end parsing of the bucket

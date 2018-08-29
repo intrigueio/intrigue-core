@@ -19,11 +19,13 @@
   "intrigue_entity_load_paths": [],
   "intrigue_handler_processing_wait_time" : 60,
   "intrigue_notifiers": {
-    "slack": {
+    "just_another_bot": {
+      "type": "slack",
       "access_key": "",
       "bot_name": "",
       "channel_name": "",
-      "system_base_uri":"http://localhost:7777",
+      "system_base_uri": "http://localhost:7777",
+      "default" : true,
       "enabled" : false
     }
   },

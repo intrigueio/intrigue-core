@@ -101,10 +101,23 @@ module Generic
   end
 
   def _notify(message)
-    Intrigue::NotifierFactory.enabled.each do |x|
-      _log "Notifying via #{x.class.metadata[:name]}"
+    _log "Notifying via default channels"
+    Intrigue::NotifierFactory.default.each do |x|
       x.notify(message, @task_result)
     end
+  end
+
+  def _notify_type(notifier_type, message)
+    _log "Notifying via all #{notifier_type} channels"
+    Intrigue::NotifierFactory.create_all_by_type(notifier_type).each do |n|
+      n.notify(message, @task_result)
+    end
+  end
+
+  def _notify_specific(notifier_name, message)
+    _log "Notifying via #{notifier_name} channel"
+    x = Intrigue::NotifierFactory.create_by_name(notifier_name)
+    x.notify(message, @task_result)
   end
 
   ## Helper methods for getting common entity data

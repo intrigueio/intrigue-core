@@ -5,7 +5,7 @@ module Notifier
   class Slack < Intrigue::Notifier::Base
 
     def self.metadata
-      { :name => "slack" }
+      { :type => "slack" }
     end
 
     def initialize(config_hash)
