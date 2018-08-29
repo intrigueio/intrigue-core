@@ -59,7 +59,6 @@ class EnrichUri < BaseTask
     headers = []
     response.each_header{|x| headers << "#{x}: #{response[x]}" }
 
-
     if opt_enable_browser
       begin
         session = create_browser_session

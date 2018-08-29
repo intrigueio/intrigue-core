@@ -18,6 +18,15 @@
   "intrigue_handler_load_paths": [],
   "intrigue_entity_load_paths": [],
   "intrigue_handler_processing_wait_time" : 60,
+  "intrigue_notifiers": {
+    "slack": {
+      "access_key": "",
+      "bot_name": "",
+      "channel_name": "",
+      "system_base_uri":"http://localhost:7777",
+      "enabled" : false
+    }
+  },
   "intrigue_handlers" : {
     "data.intrigue.io": {
       "uri": "https://data.intrigue.io/process",
@@ -43,18 +52,6 @@
     },
     "webhook": {
       "uri": "http://127.0.0.1:9999/"
-    },
-    "slackbot": {
-      "access_key": "",
-      "bot_name": "",
-      "channel_name": "",
-      "system_base_uri":"http://localhost:7777"
-    },
-    "slackbot_buckets": {
-      "access_key": "",
-      "bot_name": "",
-      "channel_name": "",
-      "system_base_uri":"http://localhost:7777"
     }
   },
   "intrigue_global_module_config": {

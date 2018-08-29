@@ -70,7 +70,6 @@ tasks_folder = File.expand_path('../tasks/vulns', __FILE__) # get absolute direc
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
 
-
 # And check to see if there are any specified load paths
 global_config = $global_config
 if global_config.config["intrigue_task_load_paths"]
@@ -144,6 +143,26 @@ if global_config.config["intrigue_handler_load_paths"]
     load_path = "#{handlers_folder}/#{load_path}" unless load_path[0] == "/"
     Dir["#{load_path}/*.rb"].each do |file|
       puts "Adding user handler: #{file}"
+      require_relative file
+    end
+  end
+end
+
+####
+# Notifier Libraries
+####
+require_relative 'notifier_factory'
+require_relative 'notifiers/base'
+notifiers_folder = File.expand_path('../notifiers', __FILE__) # get absolute directory
+Dir["#{notifiers_folder}/*.rb"].each {|f| require_relative f}
+
+# And check to see if there are any specified load paths
+global_config = $global_config
+if global_config.config["intrigue_notifier_load_paths"]
+  global_config.config["intrigue_notifier_load_paths"].each do |load_path|
+    load_path = "#{notifiers_folder}/#{load_path}" unless load_path[0] == "/"
+    Dir["#{load_path}/*.rb"].each do |file|
+      puts "Adding user notifier: #{file}"
       require_relative file
     end
   end

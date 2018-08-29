@@ -100,6 +100,13 @@ module Generic
     @task_result.handle(handler_name)
   end
 
+  def _notify(message)
+    Intrigue::NotifierFactory.enabled.each do |x|
+      _log "Notifying via #{x.class.metadata[:name]}"
+      x.notify(message, @task_result)
+    end
+  end
+
   ## Helper methods for getting common entity data
   def _get_entity_detail(detail_name)
     @entity.get_detail(detail_name)

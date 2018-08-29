@@ -17,7 +17,6 @@ class EnrichAwsS3Bucket < BaseTask
         {"type" => "AwsS3Bucket", "details" => {"name" => "https://s3.amazonaws.com/bucket"}}
       ],
       :allowed_options => [
-        {:name => "notify_slack",  :regex => "boolean", :default => true },
         {:name => "large_file_size", :regex => "integer", :default => 25 }
       ],
       :created_types => ["DnsRecord"]
@@ -70,8 +69,7 @@ class EnrichAwsS3Bucket < BaseTask
 
     # this should be a "Finding" or some sort of success event ?
     if interesting_files.sort.uniq.count > 0
-      _log_good "Notifying slack on... #{interesting_files}"
-      _call_handler("slackbot_buckets") if _get_option("notify_slack")
+      _notify("Interesting Files: #{interesting_files}")
     end
 
   end

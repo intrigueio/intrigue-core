@@ -17,7 +17,7 @@ class Example < BaseTask
       ],
       :allowed_options => [
         {:name => "unused_option", :regex=> "integer", :default => 100 },
-        {:name => "count", :regex=> "integer", :default => 10 },
+        {:name => "count", :regex=> "integer", :default => 3 },
         {:name => "sleep", :regex=> "integer", :default => 0 }
       ],
       :created_types => ["IpAddress"]
@@ -50,15 +50,16 @@ class Example < BaseTask
     # Generate a number of hosts based on the user option
     _get_option("count").times do
 
-      #
       # Generate a fake IP address
-      #
       ip_address = "#{rand(255)}.#{rand(255)}.#{rand(255)}.#{rand(255)}"
+
+      # display a log message
       _log "Randomly generated an IP address: #{ip_address}"
 
-      #
+      # alert if there're any configured notifiers
+      _notify "Randomly generated an IP address: #{ip_address}"
+
       # Create & return the entity
-      #
       _create_entity("IpAddress", {"name" => ip_address })
 
     end
