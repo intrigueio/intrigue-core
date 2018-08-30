@@ -109,11 +109,11 @@ class EnrichUri < BaseTask
       end
 
       # in some cases, we should go further
-      extended_fingerprints = []
-      if fingerprint_matches.detect{|x| x["product"] == "Wordpress" }
-        wordpress_fingerprint = {"wordpress" => `nmap -sV --script http-wordpress-enum #{uri}`}
-      end
-      extended_fingerprints << wordpress_fingerprint
+      #extended_fingerprints = []
+      #if fingerprint_matches.detect{|x| x["product"] == "Wordpress" }
+      #  wordpress_fingerprint = {"wordpress" => `nmap -sV --script http-wordpress-enum #{uri}`}
+      #end
+      #extended_fingerprints << wordpress_fingerprint
 
     # TODO, clean up fingerprint / regexes
     rescue NoMethodError => e
@@ -121,8 +121,6 @@ class EnrichUri < BaseTask
       # assume no matches in this case
       fingerprint_matches = []
     end
-
-
 
 
     # and then just stick the name and the version in our fingerprint
