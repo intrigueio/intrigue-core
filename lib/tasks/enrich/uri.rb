@@ -174,8 +174,8 @@ class EnrichUri < BaseTask
         "include_fingerprint" => uniq_include_stack,
         "app_fingerprint" =>  app_stack.uniq,
         "server_fingerprint" => uniq_server_stack,
-        "fingerprint" => fingerprint_matches.uniq,
-        "extended_fingerprints" => extended_fingerprints
+        "fingerprint" => fingerprint_matches.uniq #,
+        #"extended_fingerprints" => extended_fingerprints
       })
 
       # Set the details, and make sure raw response data is a hidden (not searchable) detail
