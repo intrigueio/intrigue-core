@@ -14,7 +14,7 @@ class UriGatherSslCert  < BaseTask
       :type => "discovery",
       :passive => false,
       :allowed_types => ["Uri"],
-      :example_entities => [{"type" => "Uri", "details" => {"name" => "http://www.intrigue.io"}}],
+      :example_entities => [{"type" => "Uri", "details" => {"name" => "https://www.intrigue.io"}}],
       :allowed_options => [
         {:name => "parse_entities", :regex => "boolean", :default => true },
         {:name => "skip_hosted_services", :regex => "boolean", :default => true },
@@ -33,16 +33,46 @@ class UriGatherSslCert  < BaseTask
     begin
       hostname = URI.parse(uri).host
       port = 443
+      timeout = 60
 
       # Create a socket and connect
-      tcp_client = TCPSocket.new hostname, port
-      ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client
+      # https://apidock.com/ruby/Net/HTTP/connect
+      #addr = Socket.getaddrinfo(hostname, nil)
+      #sockaddr = Socket.pack_sockaddr_in(port, addr[0][3])
+      #socket = Socket.new(Socket.const_get(addr[0][0]), Socket::SOCK_STREAM, 0)
+      #socket.setsockopt(Socket::IPPROTO_TCP, Socket::TCP_NODELAY, 1)
+      socket = TCPSocket.new hostname, port
+      context= OpenSSL::SSL::SSLContext.new
+      ssl_socket = OpenSSL::SSL::SSLSocket.new socket, context
+      ssl_socket.sync = true
 
-      # Grab the cert
-      ssl_client.connect
+      begin
+        _log "Attempting to connect to #{hostname}:#{port}"
+        ssl_socket.connect_nonblock
+      rescue IO::WaitReadable
+        if IO.select([ssl_socket], nil, nil, timeout)
+          _log "retrying..."
+          retry
+        else
+          # timeout
+        end
+      rescue IO::WaitWritable
+        if IO.select(nil, [ssl_socket], nil, timeout)
+          _log "retrying..."
+          retry
+        else
+          # timeout
+        end
+      end
+
+      # fail if we can't connect
+      unless ssl_socket
+        _log_error "Unable to connect!!"
+        return nil
+      end
 
       # Parse the cert
-      cert = OpenSSL::X509::Certificate.new(ssl_client.peer_cert)
+      cert = OpenSSL::X509::Certificate.new(ssl_socket.peer_cert)
 
       # Check the subjectAltName property, and if we have names, here, parse them.
       cert.extensions.each do |ext|
@@ -143,8 +173,8 @@ class UriGatherSslCert  < BaseTask
       end
 
       # Close the sockets
-      ssl_client.sysclose
-      tcp_client.close
+      ssl_socket.sysclose
+      socket.close
 
       # Create an SSL Certificate entity
       _create_entity "SslCertificate", {
@@ -178,6 +208,22 @@ class UriGatherSslCert  < BaseTask
     rescue RuntimeError => e
       _log_error "Caught an error: #{e}"
     end
+  end
+
+
+  def create_socket_with_timeout(host, port, timeout=nil)
+    addr = Socket.getaddrinfo(host, nil)
+    sock = Socket.new(Socket.const_get(addr[0][0]), Socket::SOCK_STREAM, 0)
+
+    if timeout
+      secs = Integer(timeout)
+      usecs = Integer((timeout - secs) * 1_000_000)
+      optval = [secs, usecs].pack("l_2")
+      sock.setsockopt Socket::SOL_SOCKET, Socket::SO_RCVTIMEO, optval
+      sock.setsockopt Socket::SOL_SOCKET, Socket::SO_SNDTIMEO, optval
+    end
+    #sock.connect(Socket.pack_sockaddr_in(port, addr[0][3]))
+  sock
   end
 
 end
