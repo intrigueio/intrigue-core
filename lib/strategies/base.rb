@@ -9,7 +9,7 @@ module Strategy
     end
 
     ###
-    ### Helper method for starting a task run
+    # Helper method for starting a task run
     ###
     def self.start_recursive_task(old_task_result, task_name, entity, options=[])
       project = old_task_result.project

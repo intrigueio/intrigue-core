@@ -160,6 +160,72 @@ class IntrigueApp < Sinatra::Base
       redirect "/#{@project_name}/results/#{task_result.id}"
     end
 
+    post '/:project/interactive/file_upload' do
+      task_name = "#{@params["task"]}"
+      entity_id = @params["entity_id"]
+      depth = @params["depth"].to_i
+      current_project = Intrigue::Model::Project.first(:name => @project_name)
+      entity_name = "#{@params["attrib_name"]}"
+
+      # handle file if we got it
+      if @params["entity_file"]
+        # barf if we got a bad file
+        raise "Bad file type" unless @params["entity_file"]["type"] == "text/plain"
+
+        # get the file
+        entity_file = @params["entity_file"]["tempfile"]
+
+        #f = File.open entity_file,"r"
+        entities = []
+        entity_file.each_line do |l|
+          raise "Bad file content: #{l}" unless l =~ /[a-z]+\#[a-z]+/
+          et = l.split("#").first
+          en = l.split("#").last
+          entities << {entity_type: "#{et}", entity_name: "#{en}", }
+        end
+      end
+
+      ### Handler definition, make sure we have a valid handler type
+      if Intrigue::HandlerFactory.include? "#{@params["handler"]}"
+        handlers = ["#{@params["handler"]}"]
+      else
+        handlers = []
+      end
+
+      ### Strategy definition, make sure we have a valid type
+      if Intrigue::StrategyFactory.has_strategy? "#{@params["strategy"]}"
+        strategy_name = "#{@params["strategy"]}"
+      else
+        strategy_name = "org_asset_discovery_active"
+      end
+
+      auto_enrich = @params["auto_enrich"] == "on" ? true : false
+
+      # for each entity in thefile
+      entities.each do |e|
+        entity_type = e[:entity_type]
+        entity_name = e[:entity_name]
+
+        # create the first entity with empty details
+        entity = Intrigue::EntityManager.create_first_entity(@project_name,entity_type,entity_name,{})
+
+        # silently skip anything we can't parse (no bueno, raises larger questions)
+        next unless entity
+
+        # Start the task run!
+        task_result = start_task("task", current_project, nil, task_name, entity,
+                                  depth, options, handlers, strategy_name, auto_enrich)
+
+        entity.task_results << task_result
+        entity.save
+
+        # manually start enrichment for the first entity
+        Intrigue::EntityManager.enrich_entity(entity, task_result) if auto_enrich
+
+      end
+
+      redirect "/#{@project_name}/results"
+    end
 
     # Show the results in a human readable format
     get '/:project/results/:id/?' do
@@ -198,7 +264,7 @@ class IntrigueApp < Sinatra::Base
 
       # Parse the incoming request
       payload = JSON.parse(request.body.read) if (request.content_type == "application/json" && request.body)
-      puts "Got Payload #{payload}"
+      #puts "Got Payload #{payload}"
 
       ### don't take any shit
       return "No payload!" unless payload

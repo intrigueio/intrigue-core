@@ -53,6 +53,12 @@ class IntrigueApp < Sinatra::Base
       erb :'start'
     end
 
+    get '/:project/start/multiple' do
+      @project = Intrigue::Model::Project.first(:name => @project_name)
+      @task_classes = Intrigue::TaskFactory.list
+      erb :'start'
+    end
+
     # Run a specific handler on all scan results
     get '/:project/handle/:handler' do
       handler_name = params[:handler]
