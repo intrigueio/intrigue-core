@@ -6,7 +6,7 @@ class EmailAddress < Intrigue::Model::Entity
     {
       :name => "EmailAddress",
       :description => "An Email Address",
-      :user_creatable => false
+      :user_creatable => true
     }
   end
 
