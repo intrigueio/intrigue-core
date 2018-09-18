@@ -1,6 +1,7 @@
 
 <div class="col-sm-7">
-<form class="form-horizontal" id="task_runner" enctype="multipart/form-data" target="_self" method="post" action="/<%=@project_name%>/interactive/file_upload">
+<form class="form-horizontal" id="task_runner" enctype="multipart/form-data" target="_self" method="post" action="/<%=@project_name%>/interactive/upload">
+
   <div class="form-group">
     <!-- <select name="task" id="task_name"> -->
     <label for="task_name" class="col-xs-4 control-label">Task</label>
@@ -85,14 +86,15 @@
   </div>
 -->
 
-  <div id="options">
+  <div id="enrich">
     <div class="form-group">
       <label for="options" class="col-xs-4 control-label">&nbsp;</label>
       <div class="col-xs-6">
-        <input id="auto_enrich" name="auto_enrich" type="checkbox" checked> Auto Enrich <br/>
+        <input id="auto_enrich" name="auto_enrich" type="checkbox" checked>Auto Enrich<br/>
       </div>
     </div>
   </div>
+
   <hr></hr>
   <input class="btn btn-primary" type="submit" value="Run Task">
 </form>
@@ -105,4 +107,4 @@
 <div id="links" name="links">[links]</div>
 </p>
 </div>
-<script type="text/javascript" src="/js/task.js"></script>
+<!--<script type="text/javascript" src="/js/task.js"></script>-->

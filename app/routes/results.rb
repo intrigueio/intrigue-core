@@ -160,7 +160,7 @@ class IntrigueApp < Sinatra::Base
       redirect "/#{@project_name}/results/#{task_result.id}"
     end
 
-    post '/:project/interactive/file_upload' do
+    post '/:project/interactive/upload' do
       task_name = "#{@params["task"]}"
       entity_id = @params["entity_id"]
       depth = @params["depth"].to_i
@@ -178,7 +178,7 @@ class IntrigueApp < Sinatra::Base
         #f = File.open entity_file,"r"
         entities = []
         entity_file.each_line do |l|
-          raise "Bad file content: #{l}" unless l =~ /[a-z]+\#[a-z]+/
+          raise "Bad file content: #{l}" unless l =~ /[a-z]+\#.*/
           et = l.split("#").first
           en = l.split("#").last
           entities << {entity_type: "#{et}", entity_name: "#{en}", }

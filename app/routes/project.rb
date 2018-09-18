@@ -53,7 +53,7 @@ class IntrigueApp < Sinatra::Base
       erb :'start'
     end
 
-    get '/:project/start/multiple' do
+    get '/:project/start/upload' do
       @project = Intrigue::Model::Project.first(:name => @project_name)
       @task_classes = Intrigue::TaskFactory.list
       erb :'start'
