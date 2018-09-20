@@ -30,6 +30,7 @@ class EnrichUri < BaseTask
     uri = _get_entity_name
     opt_enable_browser = _get_option "enable_browser"
 
+    _log "Making requests"
     # Grab the full response
     response = http_request :get, uri
     response2 = http_request :get,uri
@@ -38,7 +39,6 @@ class EnrichUri < BaseTask
       _log_error "Unable to receive a response for #{uri}, bailing"
       return
     end
-
 
     response_data = response.body.sanitize_unicode
     response_data_hash = Digest::SHA256.base64digest(response_data) if response_data
@@ -61,18 +61,22 @@ class EnrichUri < BaseTask
 
     if opt_enable_browser
       begin
+        _log "Creating browser session"
         session = create_browser_session
 
         #  Get existing software details (in case this is a second run)
         #existing_libraries = _get_entity_detail("javascript") || []
 
         # Run the version checking scripts
+        _log "Grabbing Javascript libraries"
         js_libraries = gather_javascript_libraries(session, uri)
 
         # screenshot
+        _log "Capturing screenshot"
         encoded_screenshot = capture_screenshot(session, uri)
       ensure
         # kill the session / cleanup
+        _log "Destroying browser session"
         destroy_browser_session(session)
       end
     end
