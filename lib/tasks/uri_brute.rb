@@ -61,16 +61,21 @@ class UriBrute < BaseTask
     ###
     ### Get the default case (a page that doesn't exist)
     ###
-    response = http_request :get,"#{uri}/doesntexist-#{rand(100000000)}"
-    response2 = http_request :get,"#{uri}/defdoesntexist-#{rand(100000000)}"
+    random_value = "#{rand(100000000)}"
+    request_page_one = "doesntexist-#{random_value}"
+    request_page_two = "def-#{random_value}-doesntexist"
+    response = http_request :get,"#{uri}/#{request_page_one}"
+    response2 = http_request :get,"#{uri}/#{request_page_two}"
 
+    # check for sanity
     unless response && response2
       _log_error "Unable to connect to site!"
       return false
     end
 
     # check to make sure we don't just go down the rabbit hole
-    unless response.body == response2.body
+    # some pages print back our uri, so first remove that if it exists
+    unless response.body.gsub(request_page_one,"") && response2.body.gsub(request_page_two,"")
       _log_error "Cowardly refusing to test - different responses on our missing page checks"
       return false
     end
