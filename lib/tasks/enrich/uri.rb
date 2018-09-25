@@ -8,9 +8,9 @@ class EnrichUri < BaseTask
   def self.metadata
     {
       :name => "enrich/uri",
-      :pretty_name => "Enrich URI",
+      :pretty_name => "Enrich Uri",
       :authors => ["jcran"],
-      :description => "Sets the \"api\" detail, letting us know if this is an api endpoint.",
+      :description => "Fills in details for a URI",
       :references => [],
       :type => "enrichment",
       :passive => false,

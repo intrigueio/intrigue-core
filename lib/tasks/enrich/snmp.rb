@@ -6,9 +6,9 @@ class EnrichSnmp < BaseTask
   def self.metadata
     {
       :name => "enrich/snmp_service",
-      :pretty_name => "Enrich SNMP Service",
+      :pretty_name => "Enrich SnmpService",
       :authors => ["jcran"],
-      :description => "This task connects to a snmp service and pulls out system details.",
+      :description => "Fills in details for an SNMP service",
       :references => ["https://community.rapid7.com/community/services/blog/2016/05/05/snmp-data-harvesting-during-penetration-testing"],
       :type => "enrichment",
       :passive => false,
@@ -64,7 +64,7 @@ class EnrichSnmp < BaseTask
     else
       raise ArgumentError, "Missing IP Address and Port. Unable to open a socket."
     end
-    
+
   end
 
 end

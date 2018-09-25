@@ -5,9 +5,9 @@ class EnrichFtpService < BaseTask
   def self.metadata
     {
       :name => "enrich/ftp_service",
-      :pretty_name => "Grabs the banner from an FTP Server",
+      :pretty_name => "Enrich FtpService",
       :authors => ["jcran"],
-      :description => "This task connects to an FTP service and collects the banner.",
+      :description => "Fills in details for a FtpService",
       :references => [],
       :type => "enrichment",
       :passive => false,

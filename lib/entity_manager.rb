@@ -80,14 +80,16 @@ class EntityManager
   def self.create_or_merge_entity(task_result,type_string,name,details, primary_entity=nil)
 
     unless task_result && type_string && name && details
-      task_result.log "ERROR! Attempting to create broken entity: #{task_result}, #{type_string}##{name}, #{details}"
+      task_result.log_error "Broken entity attempted: #{task_result}, #{type_string}##{name}, #{details}"
+      return
     end
 
     # deal with canceled tasks!
     # Do a lookup to make sure we have the latest...
     tr = Intrigue::Model::TaskResult.first(:id => task_result.id)
     if tr.cancelled
-      return # TODO - We should be logging here!!!
+      task_result.log "returning, task was cancelled"
+      return 
     end
 
     # Convenience

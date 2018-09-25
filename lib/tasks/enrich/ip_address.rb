@@ -7,23 +7,20 @@ class EnrichIpAddress < BaseTask
       :name => "enrich/ip_address",
       :pretty_name => "Enrich IP Address",
       :authors => ["jcran"],
-      :description => "Look up all names of a given entity.",
+      :description => "Fills in details for an IpAddress",
       :references => [],
       :allowed_types => ["IpAddress"],
       :type => "enrichment",
       :passive => true,
       :example_entities => [{"type" => "IpAddress", "details" => {"name" => "8.8.8.8"}}],
-      :allowed_options => [
-        {:name => "skip_hidden", :type => "Boolean", :regex => "boolean", :default => false }
-      ],
-      :created_types => []
+      :allowed_options => [],
+      :created_types => ["DnsRecord","IpAddress"]
     }
   end
 
   def run
     super
 
-    opt_skip_hidden = _get_option "skip_hidden"
     lookup_name = _get_entity_name
 
     # Set IP version

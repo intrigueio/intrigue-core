@@ -7,14 +7,14 @@ class EnrichDnsRecord < BaseTask
       :name => "enrich/dns_record",
       :pretty_name => "Enrich DnsRecord",
       :authors => ["jcran"],
-      :description => "Look up all names of a given entity.",
+      :description => "Fills in details for a DnsRecord",
       :references => [],
       :allowed_types => ["DnsRecord"],
       :type => "enrichment",
       :passive => true,
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
-      :created_types => []
+      :created_types => ["DnsRecord","IpAddress"]
     }
   end
 
@@ -62,7 +62,7 @@ class EnrichDnsRecord < BaseTask
       dns_entries << { "response_data" => xdata, "response_type" => xtype }
     end
     _set_entity_detail("dns_entries", dns_entries.uniq )
-    @entity.save
+    #@entity.save
 
     ###
     ### MAGIC

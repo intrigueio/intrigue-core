@@ -6,9 +6,9 @@ class EnrichAwsS3Bucket < BaseTask
   def self.metadata
     {
       :name => "enrich/aws_s3_bucket",
-      :pretty_name => "Enrich AWS S3 Bucket",
+      :pretty_name => "Enrich AwsS3Bucket",
       :authors => ["jcran"],
-      :description => "This task takes an S3 bucket and gathers all objects within it.",
+      :description => "Fills in details for an AwsS3Bucket (including open files)",
       :references => [],
       :type => "enrichment",
       :passive => true,
@@ -19,7 +19,7 @@ class EnrichAwsS3Bucket < BaseTask
       :allowed_options => [
         {:name => "large_file_size", :regex => "integer", :default => 25 }
       ],
-      :created_types => ["DnsRecord"]
+      :created_types => []
     }
   end
 
