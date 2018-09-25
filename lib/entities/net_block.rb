@@ -25,6 +25,11 @@ class NetBlock < Intrigue::Model::Entity
     "#{details["organization_reference"]}"
   end
 
+  def enrichment_tasks
+    ["enrich/net_block"]
+  end
+
+
 end
 end
 end
