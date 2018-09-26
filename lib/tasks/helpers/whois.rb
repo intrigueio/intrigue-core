@@ -56,11 +56,17 @@ module Whois
       # EX: http://whois.arin.net/rest/ip/72.30.35.9.json
       json = JSON.parse http_get_body("http://whois.arin.net/rest/ip/#{lookup_string}.json")
       doc = json["net"]
-      org_ref = doc["orgRef"]["$"]
-      org_name = doc["orgRef"]["@name"]
-      parent_ref = doc["parentNetRef"]
-      org_handle = doc["orgRef"]["@handle"]
 
+      _log "Got document: #{doc}"
+      return unless doc
+
+      if doc["orgRef"]
+        org_ref = doc["orgRef"]["$"]
+        org_name = doc["orgRef"]["@name"]
+        org_handle = doc["orgRef"]["@handle"]
+      end
+
+      parent_ref = doc["parentNetRef"]
       handle = doc["handle"]["$"]
 
       # should be most specific at the top ... TODO verify
@@ -89,7 +95,7 @@ module Whois
         "organization_handle" => "#{org_handle}".sanitize_unicode,
         "parent_reference" => "#{parent_ref}".sanitize_unicode,
         "rir" => "ARIN",
-        "provider" => "#{org_name.sanitize_unicode}"
+        "provider" => "#{org_name}".sanitize_unicode
       })
 
     rescue JSON::ParserError => e
