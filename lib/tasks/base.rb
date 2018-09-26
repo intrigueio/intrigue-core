@@ -2,13 +2,11 @@ module Intrigue
 module Task
 class BaseTask
 
-  # TODO - verify and re-enable these.. just need to make sure
-  # there are no namespace collisions
+  include Intrigue::Task::Generic
   include Intrigue::Task::Browser
   include Intrigue::Task::Data
   include Intrigue::Task::Dns
   include Intrigue::Task::Enrich
-  include Intrigue::Task::Generic
   include Intrigue::Task::Helper
   include Intrigue::Task::Parse
   include Intrigue::Task::Product
