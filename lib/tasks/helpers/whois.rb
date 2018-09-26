@@ -12,7 +12,12 @@ module Whois
       whois = ::Whois::Client.new(:timeout => 30)
       answer = whois.lookup(lookup_string)
     rescue ::Whois::ResponseIsThrottled => e
-      _log_error "Unable to query whois: #{e}"
+      _log_error "Unable to query whois, response throttled, trying again in 60s."
+      sleep 60 
+      whois = ::Whois::Client.new(:timeout => 30)
+      answer = whois.lookup(lookup_string)
+    rescue ::Whois::AllocationUnknown => e
+      _log_error "Strange. This block is unknown: #{e}"
     rescue ::Whois::ConnectionError => e
       _log_error "Unable to query whois: #{e}"
     rescue ::Whois::ServerNotFound => e
@@ -24,7 +29,7 @@ module Whois
     end
 
     unless answer
-      _log_error "No answer"
+      _log_error "No answer, failing"
       return nil
     end
 
@@ -70,15 +75,15 @@ module Whois
       handle = doc["handle"]["$"]
 
       # should be most specific at the top ... TODO verify
-      netblock_hash = doc["netBlocks"]
-      netblock_data = netblock_hash["netBlock"] # get the subhash
-
-      cidr_length = netblock_data["cidrLength"]["$"]
-      start_address = netblock_data["startAddress"]["$"]
-      end_address = netblock_data["endAddress"]["$"]
-      block_type = netblock_data["type"]["$"]
-      description = netblock_data["description"]["$"]
-
+      netblocks = doc["netBlocks"]
+      netblocks.each do |k,v|
+        next unless k == "netBlock" # get the subhash, skip unless we know it
+        cidr_length = v["cidrLength"]["$"]
+        start_address = v["startAddress"]["$"]
+        end_address = v["endAddress"]["$"]
+        block_type = v["type"]["$"]
+        description = v["description"]["$"]
+      end
       #
       # Create the hash to return
       #
@@ -230,6 +235,8 @@ module Whois
       end
     rescue ::Whois::AttributeNotImplemented => e
       _log_error "Unable to parse attribute: #{e}"
+    rescue ::Whois::ParserError => e
+      _log_error "Unable to parse attribute: #{e}"
     end
   hash
   end
@@ -244,6 +251,8 @@ module Whois
         hash["nameservers"] << "#{nameserver}"
       end
     rescue ::Whois::AttributeNotImplemented => e
+      _log_error "Unable to parse attribute: #{e}"
+    rescue ::Whois::ParserError => e
       _log_error "Unable to parse attribute: #{e}"
     end
   hash
