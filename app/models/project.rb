@@ -16,6 +16,13 @@ module Intrigue
         validates_unique(:name)
       end
 
+      def delete!
+        self.scan_results.each{|x| x.delete }
+        self.task_results.each{|x| x.delete }
+        self.entities.each{|x| x.delete }
+        self.delete
+      end
+
       def entities
         Intrigue::Model::Entity.scope_by_project(self.name)
       end
