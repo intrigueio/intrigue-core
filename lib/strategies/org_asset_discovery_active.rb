@@ -56,7 +56,7 @@ module Strategy
 
         # Prevent us from hammering on whois services
         unless entity.created_by?("net_block_expand")
-          start_recursive_task(task_result,"whois",entity)
+          start_recursive_task(task_result,"whois_lookup",entity)
         end
 
         # Prevent us from hammering on whois services
@@ -100,7 +100,7 @@ module Strategy
       elsif entity.type_string == "Organization"
 
       ### search for netblocks
-      start_recursive_task(task_result,"whois_org_search",entity)
+      start_recursive_task(task_result,"whois_lookup",entity)
 
       # search bgp data for netblocks
       start_recursive_task(task_result,"search_bgp",entity) unless entity.created_by?("search_bgp")
