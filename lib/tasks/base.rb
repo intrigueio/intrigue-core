@@ -15,6 +15,7 @@ class BaseTask
   include Intrigue::Task::Regex
   include Intrigue::Task::Scanner
   include Intrigue::Task::Web
+  include Intrigue::Task::Whois
 
   include Sidekiq::Worker
   sidekiq_options :queue => "task", :backtrace => true

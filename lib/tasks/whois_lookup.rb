@@ -13,7 +13,7 @@ class WhoisLookup < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["DnsRecord","IpAddress","NetBlock"],
+      :allowed_types => ["DnsRecord","IpAddress","NetBlock","Organization"],
       :example_entities => [
         {"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}},
         {"type" => "IpAddress", "details" => {"name" => "192.0.78.13"}},
@@ -33,21 +33,22 @@ class WhoisLookup < BaseTask
     opt_create_nameservers = _get_option "create_nameservers"
     opt_create_contacts = _get_option "create_contacts"
 
-    ###
-    ### Whois::Client can't handle the netblock format, so
-    ### select the first ip if we're given a netblock
-    ###
-    if @entity.kind_of? Intrigue::Entity::NetBlock
+    # take the first ip if we have a netblock
+    if _get_entity_type_string == "NetBlock"
       lookup_string = _get_entity_name.split("/").first
-    else # otherwise, use what we're given
+    else
       lookup_string = _get_entity_name
     end
 
-    # do the lookup via normal whois
-    out = whois lookup_string
+    # do the lookup via normal whois - works for all entities except org
+    unless _get_entity_type_string == "Organization"
+      out = whois lookup_string
+    else # in org's case, just start empty
+      out = {}
+    end
 
     unless out
-      _log_error "Unable to query domain, returning..."
+      _log_error "Unable to query, failing..."
       return nil
     end
 
@@ -55,37 +56,49 @@ class WhoisLookup < BaseTask
     if lookup_string.is_ip_address?
 
       if out["whois_full_text"] =~ /RIPE/
-        whois_rir_ip "RIPE", lookup_string, out
-      elsif out["whois_full_text"] =~ /ARIN/
-        whois_rir_ip "ARIN", lookup_string, out
+        out = whois_rir_ip "RIPE", lookup_string, out
       else
-        _log_error "Unknown RIR, failing"
+        out = whois_rir_ip "ARIN", lookup_string, out
       end
 
       # we'll get a standardized hash back that includes a name etc
-      _create_entity "NetBlock", response_hash
+      _create_entity "NetBlock", out
 
     else # Normal Domain, add to the domain's data
 
-      if opt_create_nameservers
-        out["nameservers"].each do |n|
-          _create_entity("DnsRecord",{"name" => "#{n}"})
+      if _get_entity_type_string == "Organization"
+
+        resp = whois_query_arin_org lookup_string
+
+        resp.each do |nb|
+          _create_entity "NetBlock", nb
         end
+
+      elsif _get_entity_type_string == "DnsRecord"
+
+        if opt_create_nameservers
+          out["nameservers"].each do |n|
+            _create_entity("DnsRecord",{"name" => "#{n}"})
+          end
+        end
+
+        if opt_create_contacts
+          out["contacts"].each do |c|
+            _log "Creating person/email from contact: #{c}"
+            _create_entity("Person", {"name" => c["name"]})
+            _create_entity("EmailAddress", {"name" => c["email"]})
+          end
+        end
+
+        _set_entity_detail("whois_full_text", out["whois_full_text"])
+        _set_entity_detail("nameservers", out["nameservers"])
+        _set_entity_detail("contacts", out["contacts"])
+
+      else
+        _log_error "unknown entity type, failing"
       end
 
-      if opt_create_contacts
-        out["contacts"].each do |c|
-          _log "Creating person/email from contact: #{c}"
-          _create_entity("Person", {"name" => c["name"]})
-          _create_entity("EmailAddress", {"name" => c["email"]})
-        end
-      end
-
-      _set_entity_detail("whois_full_text", out["whois_full_text"])
-      _set_entity_detail("nameservers", out["nameservers"])
-      _set_entity_detail("contacts", out["contacts"])
     end
-
   end
 
 

@@ -1,6 +1,10 @@
+
+
 module Intrigue
   module Task
     module Dns
+
+      include Intrigue::Task::Generic
 
       # convenience method to just send back name
       def resolve_name(lookup_name, lookup_types=[Dnsruby::Types::A, Dnsruby::Types::CNAME, Dnsruby::Types::PTR])
