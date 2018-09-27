@@ -75,7 +75,7 @@ module Whois
         org_handle = doc["orgRef"]["@handle"]
       end
 
-      parent_ref = doc["parentNetRef"].to_json
+      parent_ref = doc["parentNetRef"]["$"]
       handle = doc["handle"]["$"]
 
       # netblock details
@@ -83,7 +83,11 @@ module Whois
       netblocks.each do |k,v|
         next unless k == "netBlock" # get the subhash, skip unless we know it
 
-        block_info = v.first #shouldn't be more than one?
+        if v.kind_of? Array
+          block_info = v.first
+        else # just one
+          block_info = v
+        end
 
         cidr_length = block_info["cidrLength"]["$"]
         start_address = block_info["startAddress"]["$"]
