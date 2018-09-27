@@ -12,10 +12,10 @@ module Whois
       whois = ::Whois::Client.new(:timeout => 30)
       answer = whois.lookup(lookup_string)
     rescue ::Whois::ResponseIsThrottled => e
-      _log_error "Unable to query whois, response throttled, trying again in 60s."
-      sleep 60 
-      whois = ::Whois::Client.new(:timeout => 30)
-      answer = whois.lookup(lookup_string)
+      sleep_seconds = rand(60)
+      _log_error "Unable to query whois, response throttled, trying again in #{sleep_seconds} secs."
+      sleep sleep_seconds
+      return whois(lookup_string)
     rescue ::Whois::AllocationUnknown => e
       _log_error "Strange. This block is unknown: #{e}"
     rescue ::Whois::ConnectionError => e
@@ -39,8 +39,10 @@ module Whois
     out = {}
     out["whois_full_text"] = "#{answer.content}".force_encoding('ISO-8859-1').sanitize_unicode
 
-    _parse_nameservers(parser,out)
-    _parse_contacts(parser,out)
+    unless lookup_string.is_ip_address?
+      _parse_nameservers(parser,out)
+      _parse_contacts(parser,out)
+    end
 
   out
   end
@@ -60,21 +62,23 @@ module Whois
     begin
       # EX: http://whois.arin.net/rest/ip/72.30.35.9.json
       json = JSON.parse http_get_body("http://whois.arin.net/rest/ip/#{lookup_string}.json")
-      doc = json["net"]
+      _log "Got ARIN Response: #{json}"
 
-      _log "Got document: #{doc}"
+      # verify we have something usable
+      doc = json["net"]
       return unless doc
 
+      # organization details
       if doc["orgRef"]
         org_ref = doc["orgRef"]["$"]
         org_name = doc["orgRef"]["@name"]
         org_handle = doc["orgRef"]["@handle"]
       end
 
-      parent_ref = doc["parentNetRef"]
+      parent_ref = doc["parentNetRef"].to_json
       handle = doc["handle"]["$"]
 
-      # should be most specific at the top ... TODO verify
+      # netblock details
       netblocks = doc["netBlocks"]
       netblocks.each do |k,v|
         next unless k == "netBlock" # get the subhash, skip unless we know it
@@ -83,31 +87,28 @@ module Whois
         end_address = v["endAddress"]["$"]
         block_type = v["type"]["$"]
         description = v["description"]["$"]
+
+        # Create the hash to return
+        out = out.merge({
+          "name" => "#{start_address}/#{cidr_length}",
+          "start_address" => "#{start_address}",
+          "end_address" => "#{end_address}",
+          "cidr" => "#{cidr_length}",
+          "description" => "#{description}".force_encoding('ISO-8859-1').sanitize_unicode,
+          "block_type" => "#{block_type}".sanitize_unicode,
+          "handle" => "#{handle}".sanitize_unicode,
+          "organization_name" => "#{org_name}".sanitize_unicode,
+          "organization_reference" => "#{org_ref}".sanitize_unicode,
+          "organization_handle" => "#{org_handle}".sanitize_unicode,
+          "parent_reference" => "#{parent_ref}".sanitize_unicode,
+          "rir" => "ARIN",
+          "provider" => "#{org_name}".sanitize_unicode
+        })
       end
-      #
-      # Create the hash to return
-      #
-      out = out.merge({
-        "name" => "#{start_address}/#{cidr_length}",
-        "start_address" => "#{start_address}",
-        "end_address" => "#{end_address}",
-        "cidr" => "#{cidr_length}",
-        "description" => "#{description}".force_encoding('ISO-8859-1').sanitize_unicode,
-        "block_type" => "#{block_type}".sanitize_unicode,
-        "handle" => "#{handle}".sanitize_unicode,
-        "organization_name" => "#{org_name}".sanitize_unicode,
-        "organization_reference" => "#{org_ref}".sanitize_unicode,
-        "organization_handle" => "#{org_handle}".sanitize_unicode,
-        "parent_reference" => "#{parent_ref}".sanitize_unicode,
-        "rir" => "ARIN",
-        "provider" => "#{org_name}".sanitize_unicode
-      })
 
     rescue JSON::ParserError => e
       _log_error "Got an error while parsing: #{e}"
     end
-
-    _log "Got ARIN Hash: #{out}"
 
   out
   end
@@ -118,6 +119,7 @@ module Whois
       out = []
       search_doc = Nokogiri::XML(http_get_body("http://whois.arin.net/rest/orgs;name=#{URI.escape(lookup_string)}*"));nil
       orgs = search_doc.xpath("//xmlns:orgRef")
+      _log "Got ARIN Response: #{search_doc}"
 
       # Goal: for each netblock, create an entity
       orgs.children.each do |org|
@@ -181,9 +183,7 @@ module Whois
     ripe_uri = "https://stat.ripe.net/data/address-space-hierarchy/data.json?resource=#{lookup_string}/32"
     json = JSON.parse(http_get_body(ripe_uri))
 
-    # set entity details
-    _log "Got JSON from #{ripe_uri}:"
-    _log "#{json}"
+    _log "Got RIPE Response: #{json}"
 
     data = json["data"]
     range = data["last_updated"].first["ip_space"]
