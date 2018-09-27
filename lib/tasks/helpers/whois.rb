@@ -82,11 +82,16 @@ module Whois
       netblocks = doc["netBlocks"]
       netblocks.each do |k,v|
         next unless k == "netBlock" # get the subhash, skip unless we know it
-        cidr_length = v["cidrLength"]["$"]
-        start_address = v["startAddress"]["$"]
-        end_address = v["endAddress"]["$"]
-        block_type = v["type"]["$"]
-        description = v["description"]["$"]
+
+        block_info = v.first #shouldn't be more than one?
+
+        cidr_length = block_info["cidrLength"]["$"]
+        start_address = block_info["startAddress"]["$"]
+        end_address = block_info["endAddress"]["$"]
+        block_type = block_info["type"]["$"]
+        description = block_info["description"]["$"]
+
+        rir = "TRANSFERRED" if description == "Early Registrations, Transferred to APNIC"
 
         # Create the hash to return
         out = out.merge({
@@ -101,7 +106,7 @@ module Whois
           "organization_reference" => "#{org_ref}".sanitize_unicode,
           "organization_handle" => "#{org_handle}".sanitize_unicode,
           "parent_reference" => "#{parent_ref}".sanitize_unicode,
-          "rir" => "ARIN",
+          "rir" => rir || "ARIN",
           "provider" => "#{org_name}".sanitize_unicode
         })
       end
