@@ -31,9 +31,9 @@ class EnrichNetBlock < BaseTask
     out = whois lookup_string
 
     if out["whois_full_text"] =~ /RIPE/
-      out = whois_rir_ip "RIPE", lookup_string, out
+      out = whois_regional "RIPE", lookup_string, out
     elsif out["whois_full_text"] =~ /ARIN/
-      out = whois_rir_ip "ARIN", lookup_string, out
+      out = whois_regional "ARIN", lookup_string, out
     else
       _log_error "Unknown RIR, failing"
     end

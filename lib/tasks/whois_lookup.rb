@@ -56,9 +56,9 @@ class WhoisLookup < BaseTask
     if lookup_string.is_ip_address?
 
       if out["whois_full_text"] =~ /RIPE/
-        out = whois_rir_ip "RIPE", lookup_string, out
+        out = whois_regional "RIPE", lookup_string, out
       else
-        out = whois_rir_ip "ARIN", lookup_string, out
+        out = whois_regional "ARIN", lookup_string, out
       end
 
       # we'll get a standardized hash back that includes a name etc
@@ -95,7 +95,7 @@ class WhoisLookup < BaseTask
         _set_entity_detail("contacts", out["contacts"])
 
       else
-        _log_error "unknown entity type, failing"
+        _log_error "Unknown entity type, failing"
       end
 
     end

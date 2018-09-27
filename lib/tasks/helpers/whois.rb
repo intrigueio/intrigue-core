@@ -47,7 +47,7 @@ module Whois
   out
   end
 
-  def whois_rir_ip(rir, lookup_string, out={})
+  def whois_regional(rir, lookup_string, out={})
     if rir == "RIPE"
       response_hash = whois_query_ripe_ip(lookup_string, out)
     elsif rir == "ARIN"
@@ -75,7 +75,7 @@ module Whois
         org_handle = doc["orgRef"]["@handle"]
       end
 
-      parent_ref = doc["parentNetRef"]["$"]
+      parent_ref = doc["parentNetRef"]["$"] if doc["parentNetRef"]
       handle = doc["handle"]["$"]
 
       # netblock details
