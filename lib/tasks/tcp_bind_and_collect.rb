@@ -12,12 +12,13 @@ class TcpBindAndCollect < BaseTask
       :authors => ["jcran"],
       :description => "Given a set of ports (or all), bind and collect all connections",
       :references => [],
-      :type => "honeypot",
-      :passive => true,
+      :type => "discovery",
+      :passive => false,
       :allowed_types => ["String"],
       :example_entities =>  [{"type" => "String", "details" => {"name" => "default"}}],
       :allowed_options => [
         {:name => "ports", :regex=> "alpha_numeric", :default => "5000,8000,8080,8081,8443" }
+        {:name => "notify", :regex=> "boolean", :default => false }
       ],
       :created_types => ["String"]
     }
@@ -30,12 +31,12 @@ class TcpBindAndCollect < BaseTask
 
   def track_connection(c)
     _log "#{c}"
-    _notify "#{c}"
+    _notify "#{c}" if _get_option "notify"
   end
 
   def bind_and_listen(ports=[])
 
-    metasploit_ports = [] if ports.empty?
+    ports = (0..1000).to_a.concat([7001,8000,8008,8081,8080,10000]) if ports.empty?
 
     # Create threads to listen to each port
     threads = ports.map do |port|
