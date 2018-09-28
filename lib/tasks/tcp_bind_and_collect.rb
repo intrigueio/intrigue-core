@@ -17,7 +17,7 @@ class TcpBindAndCollect < BaseTask
       :allowed_types => ["String"],
       :example_entities =>  [{"type" => "String", "details" => {"name" => "default"}}],
       :allowed_options => [
-        {:name => "ports", :regex=> "alpha_numeric", :default => "5000,8000,8080,8081,8443" }
+        {:name => "ports", :regex=> "alpha_numeric", :default => "5000,7001,8000,8080,8081,8443"},
         {:name => "notify", :regex=> "boolean", :default => false }
       ],
       :created_types => ["String"]
@@ -36,7 +36,10 @@ class TcpBindAndCollect < BaseTask
 
   def bind_and_listen(ports=[])
 
-    ports = (0..1000).to_a.concat([7001,8000,8008,8081,8080,10000]) if ports.empty?
+    if ports.empty?
+      additional_ports = [5000,7001,8000,8008,8081,8080,8443,10000]
+      ports = (0..1000).to_a.concat(additional_ports)
+    end
 
     # Create threads to listen to each port
     threads = ports.map do |port|
