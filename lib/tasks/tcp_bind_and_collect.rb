@@ -12,8 +12,8 @@ class TcpBindAndCollect < BaseTask
       :authors => ["jcran"],
       :description => "Given a set of ports (or all), bind and collect all connections",
       :references => [],
-      :type => "discovery",
-      :passive => false,
+      :type => "honeypot",
+      :passive => true,
       :allowed_types => ["String"],
       :example_entities =>  [{"type" => "String", "details" => {"name" => "default"}}],
       :allowed_options => [
@@ -30,11 +30,12 @@ class TcpBindAndCollect < BaseTask
 
   def track_connection(c)
     _log "#{c}"
+    _notify "#{c}"
   end
 
   def bind_and_listen(ports=[])
 
-    ports = (0..65535) if ports.empty?
+    metasploit_ports = [] if ports.empty?
 
     # Create threads to listen to each port
     threads = ports.map do |port|
