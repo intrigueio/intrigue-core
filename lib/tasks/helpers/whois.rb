@@ -9,23 +9,23 @@ module Whois
   def whois(lookup_string)
 
     begin
-      whois = ::Whois::Client.new(:timeout => 30)
+      whois = ::Whois::Client.new #(:timeout => 60)
       answer = whois.lookup(lookup_string)
     rescue ::Whois::ResponseIsThrottled => e
-      sleep_seconds = rand(60)
       _log_error "Unable to query whois, response throttled, trying again in #{sleep_seconds} secs."
+      sleep_seconds = rand(60)
       sleep sleep_seconds
       return whois(lookup_string)
     rescue ::Whois::AllocationUnknown => e
       _log_error "Strange. This block is unknown: #{e}"
     rescue ::Whois::ConnectionError => e
-      _log_error "Unable to query whois: #{e}"
+      _log_error "Unable to query whois, connection error: #{e}"
     rescue ::Whois::ServerNotFound => e
-      _log_error "Unable to query whois: #{e}"
+      _log_error "Unable to query whois, server not found: #{e}"
     rescue Errno::ECONNREFUSED => e
-      _log_error "Unable to query whois: #{e}"
+      _log_error "Unable to query whois, connection refused: #{e}"
     rescue Timeout::Error => e
-      _log_error "Unable to query whois: #{e}"
+      _log_error "Unable to query whois, timed out: #{e}"
     end
 
     unless answer
@@ -39,7 +39,20 @@ module Whois
     out = {}
     out["whois_full_text"] = "#{answer.content}".force_encoding('ISO-8859-1').sanitize_unicode
 
-    unless lookup_string.is_ip_address?
+    if lookup_string.is_ip_address?
+      # Handle this at the regional internet registry level
+      if out["whois_full_text"] =~ /RIPE/
+        out = _whois_query_ripe_ip(lookup_string, out)
+      elsif out["whois_full_text"] =~ /APNIC/
+        _log_error "APNIC specific lookups not yet enabled"
+      elsif out["whois_full_text"] =~ /LACNIC/
+        _log_error "LACNIC specific lookups not yet enabled"
+      elsif out["whois_full_text"] =~ /AFRINIC/
+        _log_error "AFRINIC specific lookups not yet enabled"
+      else # Default to ARIN
+        out = _whois_query_arin_ip(lookup_string, out)
+      end
+    else
       _parse_nameservers(parser,out)
       _parse_contacts(parser,out)
     end
@@ -47,22 +60,120 @@ module Whois
   out
   end
 
-  def whois_regional(rir, lookup_string, out={})
-    if rir == "RIPE"
-      response_hash = whois_query_ripe_ip(lookup_string, out)
-    elsif rir == "ARIN"
-      response_hash = whois_query_arin_ip(lookup_string, out)
-    else
-      _log_error "Unknown RIR... failing"
+  # Returns an array of netblocks related to this org
+  def whois_query_arin_org(lookup_string,out={})
+    begin
+      out = []
+      search_doc = Nokogiri::XML(http_get_body("http://whois.arin.net/rest/orgs;name=#{URI.escape(lookup_string)}*"));nil
+      orgs = search_doc.xpath("//xmlns:orgRef")
+      _log "Got ARIN Response: #{search_doc}"
+
+      # Goal: for each netblock, create an entity
+      orgs.children.each do |org|
+
+        _log_good "Working on #{org.text}"
+        net_list_doc = Nokogiri::XML(http_get_body("#{org.text}/nets"))
+
+        begin
+          nets = net_list_doc.xpath("//xmlns:netRef")
+          nets.children.each do |net_uri|
+            _log_good "Net: #{net_uri}" if net_uri
+
+            #page = "https://whois.arin.net/rest/net/NET-64-41-230-0-1.xml"
+            page = "#{net_uri}.xml"
+
+            net_doc = Nokogiri::XML(http_get_body(page))
+            net_blocks = net_doc.xpath("//xmlns:netBlocks")
+
+            net_blocks.children.each do |n|
+
+              start_address = n.css("startAddress").text
+              end_address = n.css("endAddress").text
+              description = n.css("description").text
+              cidr_length = n.css("cidrLength").text
+              type = n.css("type").text
+
+              # Do a regular lookup - important that we get this so we can verify
+              # if the block actually belongs to the expected party (via whois_full_text)
+              #whois_hash = whois start_address || {"whois_full_text" => nil}
+
+              whois_hash = {
+                "name" => "#{start_address}/#{cidr_length}",
+                "start_address" => "#{start_address}",
+                "end_address" => "#{end_address}",
+                "cidr" => "#{cidr_length}",
+                "description" => "#{description}",
+                "block_type" => "#{type}"
+              }
+
+              _log_good "Storing netblock: #{whois_hash}"
+              out << whois_hash
+
+            end # end netblocks.children
+          end # end nets.children
+
+        rescue Nokogiri::XML::XPath::SyntaxError => e
+          _log_error " [x] No nets for #{org.text}"
+          _log_error "#{e}"
+        end
+
+      end # end orgs.children
+
+    rescue Nokogiri::XML::XPath::SyntaxError => e
+      _log_error " [x] No orgs!"
     end
+  out
   end
 
+
+
+  private  # helper methods for parsing
+
   # returns a hash that can create a netblock
-  def whois_query_arin_ip(lookup_string,out={})
+  def _whois_query_ripe_ip(lookup_string,out={})
+    ripe_uri = "https://stat.ripe.net/data/address-space-hierarchy/data.json?resource=#{lookup_string}/32"
+    json = JSON.parse(http_get_body(ripe_uri))
+
+    _log "Got RIPE Response: #{json}"
+
+    data = json["data"]
+    range = data["last_updated"].first["ip_space"]
+
+    # parse out description
+    begin
+      less_specific_hash = data["less_specific"]
+      if less_specific_hash && less_specific_hash.first["descr"]
+        _log "less_specific_hash: #{less_specific_hash}"
+        description = less_specific_hash.first["descr"]
+      end
+
+      # parse out netname
+      if less_specific_hash && less_specific_hash.first["netname"]
+        netname = less_specific_hash.first["netname"]
+      end
+
+      out = out.merge({
+        "name" => "#{range}",
+        "cidr" => "#{range.split('/').last}",
+        "description" => "#{description}".force_encoding('ISO-8859-1').sanitize_unicode,
+        "rir" => "RIPE",
+        "rir_parsed" => "#{json["data"]["rir"]}",
+        "organization_reference" => "#{netname}".sanitize_unicode,
+        "organization_name" => "#{description}".sanitize_unicode,
+        "provider" =>  "#{description}".force_encoding('ISO-8859-1').sanitize_unicode })
+
+    rescue TypeError => e
+      _log_error "PARSING ERROR! Unable to get details from #{less_specific_hash} #{e}"
+    end
+  out
+  end
+
+
+  # returns a hash that can create a netblock
+  def _whois_query_arin_ip(lookup_string,out={})
     begin
       # EX: http://whois.arin.net/rest/ip/72.30.35.9.json
       json = JSON.parse http_get_body("http://whois.arin.net/rest/ip/#{lookup_string}.json")
-      _log "Got ARIN Response: #{json}"
 
       # verify we have something usable
       doc = json["net"]
@@ -122,114 +233,6 @@ module Whois
   out
   end
 
-  # Returns an array of netblocks related to this org
-  def whois_query_arin_org(lookup_string,out={})
-    begin
-      out = []
-      search_doc = Nokogiri::XML(http_get_body("http://whois.arin.net/rest/orgs;name=#{URI.escape(lookup_string)}*"));nil
-      orgs = search_doc.xpath("//xmlns:orgRef")
-      _log "Got ARIN Response: #{search_doc}"
-
-      # Goal: for each netblock, create an entity
-      orgs.children.each do |org|
-
-        _log_good "Working on #{org.text}"
-        net_list_doc = Nokogiri::XML(http_get_body("#{org.text}/nets"))
-
-        begin
-          nets = net_list_doc.xpath("//xmlns:netRef")
-          nets.children.each do |net_uri|
-            _log_good "Net: #{net_uri}" if net_uri
-
-            #page = "https://whois.arin.net/rest/net/NET-64-41-230-0-1.xml"
-            page = "#{net_uri}.xml"
-
-            net_doc = Nokogiri::XML(http_get_body(page))
-            net_blocks = net_doc.xpath("//xmlns:netBlocks")
-
-            net_blocks.children.each do |n|
-
-              start_address = n.css("startAddress").text
-              end_address = n.css("endAddress").text
-              description = n.css("description").text
-              cidr_length = n.css("cidrLength").text
-              type = n.css("type").text
-
-              # Do a regular lookup - important that we get this so we can verify
-              # if the block actually belongs to the expected party (via whois_full_text)
-              whois_hash = whois start_address
-
-              whois_hash = whois_hash.merge({
-                "name" => "#{start_address}/#{cidr_length}",
-                "start_address" => "#{start_address}",
-                "end_address" => "#{end_address}",
-                "cidr" => "#{cidr_length}",
-                "description" => "#{description}",
-                "block_type" => "#{type}"
-              })
-
-              _log_good "Storing netblock: #{whois_hash}"
-              out << whois_hash
-
-            end # end netblocks.children
-          end # end nets.children
-
-        rescue Nokogiri::XML::XPath::SyntaxError => e
-          _log_error " [x] No nets for #{org.text}"
-          _log_error "#{e}"
-        end
-
-      end # end orgs.children
-
-    rescue Nokogiri::XML::XPath::SyntaxError => e
-      _log_error " [x] No orgs!"
-    end
-  out
-  end
-
-  # returns a hash that can create a netblock
-  def whois_query_ripe_ip(lookup_string,out={})
-    ripe_uri = "https://stat.ripe.net/data/address-space-hierarchy/data.json?resource=#{lookup_string}/32"
-    json = JSON.parse(http_get_body(ripe_uri))
-
-    _log "Got RIPE Response: #{json}"
-
-    data = json["data"]
-    range = data["last_updated"].first["ip_space"]
-
-    # parse out description
-    begin
-      less_specific_hash = data["less_specific"]
-      if less_specific_hash && less_specific_hash.first["descr"]
-        _log "less_specific_hash: #{less_specific_hash}"
-        description = less_specific_hash.first["descr"]
-      end
-
-      # parse out netname
-      if less_specific_hash && less_specific_hash.first["netname"]
-        netname = less_specific_hash.first["netname"]
-      end
-
-      out = out.merge({
-        "name" => "#{range}",
-        "cidr" => "#{range.split('/').last}",
-        "description" => "#{description}".force_encoding('ISO-8859-1').sanitize_unicode,
-        "rir" => "RIPE",
-        "rir_parsed" => "#{json["data"]["rir"]}",
-        "organization_reference" => "#{netname}".sanitize_unicode,
-        "organization_name" => "#{description}".sanitize_unicode,
-        "provider" =>  "#{description}".force_encoding('ISO-8859-1').sanitize_unicode })
-
-    rescue TypeError => e
-      _log_error "PARSING ERROR! Unable to get details from #{less_specific_hash} #{e}"
-    end
-
-    _log "Got RIPE Hash: #{out}"
-
-  out
-  end
-
-  private  # helper methods for parsing
 
   def _parse_contacts(parser,hash={})
     # handle domain contacts

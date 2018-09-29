@@ -46,9 +46,16 @@ class EnrichDnsRecord < BaseTask
     # handy in general, do this for all SOA records
     if _get_entity_detail("soa_record")
       out = _collect_whois_data(lookup_name)
-      _set_entity_detail("whois_full_text", out["whois_full_text"])
-      _set_entity_detail("nameservers", out["nameservers"])
-      _set_entity_detail("contacts", out["contacts"])
+      if out
+        _set_entity_detail("whois_full_text", out["whois_full_text"])
+        _set_entity_detail("nameservers", out["nameservers"])
+        _set_entity_detail("contacts", out["contacts"])
+      else
+        _log_error "Unable to gather whois information, writing nils"
+        _set_entity_detail("whois_full_text", nil)
+        _set_entity_detail("nameservers", nil)
+        _set_entity_detail("contacts", nil)
+      end
     end
 
   end

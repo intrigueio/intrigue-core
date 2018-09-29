@@ -28,15 +28,9 @@ class EnrichNetBlock < BaseTask
 
     netblock_string = _get_entity_name
     lookup_string = _get_entity_name.split("/").first
-    out = whois lookup_string
 
-    if out["whois_full_text"] =~ /RIPE/
-      out = whois_regional "RIPE", lookup_string, out
-    elsif out["whois_full_text"] =~ /ARIN/
-      out = whois_regional "ARIN", lookup_string, out
-    else
-      _log_error "Unknown RIR, failing"
-    end
+    # Look up the first ip address in the block (which will also hit the RIR)
+    out = whois lookup_string, out
 
     # make sure not to overwrite the name in the details
     out = out.merge({"name" => netblock_string, "_hidden_name" => netblock_string})

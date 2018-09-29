@@ -74,7 +74,7 @@ class EnrichIpAddress < BaseTask
       dns_entries << { "response_data" => xdata, "response_type" => xtype }
     end
 
-    _set_entity_detail("dns_entries", dns_entries.uniq )
+    _set_entity_detail("resolutions", dns_entries.uniq )
     _set_entity_detail("geolocation", location_hash)
   end
 

@@ -35,72 +35,71 @@ class WhoisLookup < BaseTask
 
     # take the first ip if we have a netblock
     if _get_entity_type_string == "NetBlock"
+
+      # look up the first address
       lookup_string = _get_entity_name.split("/").first
-    else
-      lookup_string = _get_entity_name
-    end
+      out = whois_safe lookup_string
+      return nil unless out
 
-    # do the lookup via normal whois - works for all entities except org
-    unless _get_entity_type_string == "Organization"
-      out = whois lookup_string
-    else # in org's case, just start empty
-      out = {}
-    end
+      # and edit this netblock
+      _log_good "Setting entity details"
+      _set_entity_details out
 
-    unless out
-      _log_error "Unable to query, failing..."
-      return nil
-    end
+    elsif _get_entity_type_string == "IpAddress"
 
-    # RIR handling
-    if lookup_string.is_ip_address?
-
-      if out["whois_full_text"] =~ /RIPE/
-        out = whois_regional "RIPE", lookup_string, out
-      else
-        out = whois_regional "ARIN", lookup_string, out
-      end
-
-      # we'll get a standardized hash back that includes a name etc
+      # look it up and create a netblock
+      out = whois_safe _get_entity_name
+      return nil unless out
       _create_entity "NetBlock", out
 
-    else # Normal Domain, add to the domain's data
+    elsif _get_entity_type_string == "Organization"
 
-      if _get_entity_type_string == "Organization"
-
-        resp = whois_query_arin_org lookup_string
-
-        resp.each do |nb|
+      # look it up and create all known netblocks
+      out = whois_query_arin_org _get_entity_name
+      unless out.empty?
+        out.each do |nb|
           _create_entity "NetBlock", nb
         end
-
-      elsif _get_entity_type_string == "DnsRecord"
-
-        if opt_create_nameservers
-          out["nameservers"].each do |n|
-            _create_entity("DnsRecord",{"name" => "#{n}"})
-          end
-        end
-
-        if opt_create_contacts
-          out["contacts"].each do |c|
-            _log "Creating person/email from contact: #{c}"
-            _create_entity("Person", {"name" => c["name"]})
-            _create_entity("EmailAddress", {"name" => c["email"]})
-          end
-        end
-
-        _set_entity_detail("whois_full_text", out["whois_full_text"])
-        _set_entity_detail("nameservers", out["nameservers"])
-        _set_entity_detail("contacts", out["contacts"])
-
-      else
-        _log_error "Unknown entity type, failing"
       end
 
+    elsif _get_entity_type_string == "DnsRecord"
+
+      out = whois_safe _get_entity_name
+      return nil unless out
+
+      if opt_create_nameservers
+        out["nameservers"].each do |n|
+          _create_entity("DnsRecord",{"name" => "#{n}"})
+        end
+      end
+
+      if opt_create_contacts
+        out["contacts"].each do |c|
+          _log "Creating person/email from contact: #{c}"
+          _create_entity("Person", {"name" => c["name"]})
+          _create_entity("EmailAddress", {"name" => c["email"]})
+        end
+      end
+
+      _set_entity_detail("whois_full_text", out["whois_full_text"])
+      _set_entity_detail("nameservers", out["nameservers"])
+      _set_entity_detail("contacts", out["contacts"])
+
+    else
+      _log_error "Unknown entity type, failing"
     end
+
   end
 
+  def whois_safe(string)
+    out = whois string
+
+    unless out
+      _log_error "unable to query, failing"
+    end
+
+  out
+  end
 
 end
 end
