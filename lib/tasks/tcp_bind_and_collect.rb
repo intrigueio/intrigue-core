@@ -33,7 +33,7 @@ class TcpBindAndCollect < BaseTask
   def track_connection(c)
     _log "#{c}"
     e = _create_entity("IpAddress",{"name" => c["source_address"]}) if _get_option "create_entity"
-    _notify "#{c["source_address"]}: ```#{c["message"]}```" if _get_option "notify"
+    _notify "#{c["source_address"]}:#{c["source_port"]} -> #{c["listening_port"]} ```#{c["message"]}```" if _get_option "notify"
   end
 
   def bind_and_listen(ports=[])
@@ -52,7 +52,9 @@ class TcpBindAndCollect < BaseTask
             connection = {}
             connection["timestamp"] = DateTime.now
             connection["listening_address"] = "#{c.addr.last}"
+            connection["listening_port"] = "#{c.addr[1]}"
             connection["source_address"] = "#{c.peeraddr.last}"
+            connection["source_port"] = "#{c.peeraddr[1]}"
             connection["message"] = ""
             c.each_line do |line|
               connection["message"] << line
