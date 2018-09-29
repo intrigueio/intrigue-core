@@ -18,7 +18,8 @@ class TcpBindAndCollect < BaseTask
       :example_entities =>  [{"type" => "String", "details" => {"name" => "default"}}],
       :allowed_options => [
         {:name => "ports", :regex=> "alpha_numeric", :default => "23,80,110,443,5000,7001,8000,8008,8081,8080,8443,10000"},
-        {:name => "notify", :regex=> "boolean", :default => false }
+        {:name => "notify", :regex=> "boolean", :default => false },
+        {:name => "create_entity", :regex=> "boolean", :default => true }
       ],
       :created_types => ["String"]
     }
@@ -31,7 +32,8 @@ class TcpBindAndCollect < BaseTask
 
   def track_connection(c)
     _log "#{c}"
-    _notify "#{c}" if _get_option "notify"
+    e = _create_entity("IpAddress",{"name" => c["source_address"]}) if _get_option "create_entity"
+    _notify "#{c["source_address"]}: ```#{c["message"]}```" if _get_option "notify"
   end
 
   def bind_and_listen(ports=[])
@@ -49,8 +51,8 @@ class TcpBindAndCollect < BaseTask
             c = server.accept    # Wait for a client to connect
             connection = {}
             connection["timestamp"] = DateTime.now
-            connection["listening_address"] = "#{c.addr}"
-            connection["source_address"] = "#{c.peeraddr}"
+            connection["listening_address"] = "#{c.addr.last}"
+            connection["source_address"] = "#{c.peeraddr.last}"
             connection["message"] = ""
             c.each_line do |line|
               connection["message"] << line
@@ -58,6 +60,8 @@ class TcpBindAndCollect < BaseTask
             c.close
             track_connection connection
           end
+        rescue SocketError => e
+          _log_error "Unable to bind: #{e}"
         rescue Errno::EADDRINUSE => e
           _log_error "Unable to bind, #{port} in use: #{e}"
         rescue Errno::EMFILE => e
