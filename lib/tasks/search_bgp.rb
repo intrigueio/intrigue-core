@@ -56,13 +56,7 @@ class SearchBgp < BaseTask
       json_resp.each do |r|
 
         org_string = r["org"].split(",").first
-        short_org_name = org_string.split("-").last.strip
-
-        if short_org_name
-          _create_entity "Organization", {"name" => "#{short_org_name}", "full" => org_string }
-        else
-          _create_entity "Organization", {"name" => "#{org_string}", "full" => org_string}
-        end
+        _create_entity "Organization", {"name" => "#{org_string}", "full" => org_string}
 
         as_number_string = "AS#{r["asnumber"]}"
         _create_entity "AutonomousSystem", {"name" => as_number_string, "netblocks" => r["netblocks"] }
@@ -80,13 +74,7 @@ class SearchBgp < BaseTask
       json_resp.each do |r|
 
         org_string = r["org"].split(",").first
-        short_org_name = org_string.split("-").last.strip
-
-        if short_org_name
-          _create_entity "Organization", {"name" => "#{short_org_name}", "full" => org_string }
-        else
-          _create_entity "Organization", {"name" => "#{org_string}", "full" => org_string}
-        end
+        _create_entity "Organization", {"name" => "#{org_string}", "full" => org_string}
 
         as_number_string = "AS#{r["asnumber"]}"
         _create_entity "AutonomousSystem", {"name" => as_number_string, "netblocks" => r["netblocks"] }
