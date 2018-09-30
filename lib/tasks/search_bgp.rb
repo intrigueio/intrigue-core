@@ -51,7 +51,7 @@ class SearchBgp < BaseTask
 
     begin
       lookup_name = entity_name.split("/").first
-      json_resp = JSON.parse http_get_body "https://resource.intrigue.io/netblock/search/#{entity_name}"
+      json_resp = JSON.parse http_get_body "https://resource.intrigue.io/netblock/search/#{lookup_name}"
 
       json_resp.each do |r|
 
