@@ -30,7 +30,7 @@ class EnrichNetBlock < BaseTask
     lookup_string = _get_entity_name.split("/").first
 
     # Look up the first ip address in the block (which will also hit the RIR)
-    out = whois lookup_string, out
+    out = whois lookup_string
 
     # make sure not to overwrite the name in the details
     out = out.merge({"name" => netblock_string, "_hidden_name" => netblock_string})

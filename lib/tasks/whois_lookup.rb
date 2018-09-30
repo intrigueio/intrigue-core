@@ -42,7 +42,7 @@ class WhoisLookup < BaseTask
       return nil unless out
 
       # and edit this netblock
-      _log_good "Setting entity details"
+      _log_good "Setting entity details!"
       _set_entity_details out
 
     elsif _get_entity_type_string == "IpAddress"

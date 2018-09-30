@@ -66,7 +66,7 @@ module Strategy
 
       elsif entity.type_string == "NetBlock"
 
-        whois_text = entity.details["whois_full_text"]
+        whois_text = entity.details["whois_full_text"] || ""
         whois_text_has_filter_string = (whois_text.downcase =~ /#{filter_strings.map{|x| x.downcase }.join("|")}/i)
         whois_text_indicates_transferred = (whois_text =~ /Early Registrations, Transferred to/)
 
