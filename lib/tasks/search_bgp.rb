@@ -11,12 +11,12 @@ class SearchBgp < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["Organization", "String"],
+      :allowed_types => ["IpAddress","NetBlock","Organization", "String"],
       :example_entities => [
         {"type" => "String", "details" => {"name" => "intrigue"}}
       ],
       :allowed_options => [],
-      :created_types => ["NetBlock","AutonomousSystem"]
+      :created_types => ["AutonomousSystem","NetBlock","Organization"]
     }
   end
 
@@ -25,19 +25,65 @@ class SearchBgp < BaseTask
     entity_name = _get_entity_name
     entity_type = _get_entity_type_string
 
-    puts "#{entity_type}: #{entity_name}"
+    if entity_type == "Organization" || entity_type == "String"
+      search_by_org_name entity_name
+    elsif entity_type == "IpAddress"
+      # lookup the netblock
+      out = whois entity_name
+      if out["start_address"]
+        netblock_name = out["start_address"]
+        # lookup the BGP data by netblock
+        _log_good "Searching Netblocks for: #{netblock_name}"
+        search_netblocks netblock_name
+      else
+        _log_error "Didn't get a start address, printing full text"
+        _log out["whois_full_text"]
+      end
+    elsif entity_type == "NetBlock"
+      search_netblocks entity_name
+    else
+      _log_error "Unsupported entity type"
+    end
+
+  end
+
+  def search_netblocks(entity_name)
 
     begin
-      json_resp = JSON.parse http_get_body "https://resource.intrigue.io/org/search/#{URI.escape(entity_name)}"
-      _log "Got response: #{json_resp}"
+      lookup_name = entity_name.split("/").first
+      json_resp = JSON.parse http_get_body "https://resource.intrigue.io/netblock/search/#{entity_name}"
 
       json_resp.each do |r|
 
         org_string = r["org"].split(",").first
-        org_name = org_string.split("-").last.strip
+        short_org_name = org_string.split("-").last.strip
 
-        if org_name
-          _create_entity "Organization", {"name" => "#{org_name}", "full" => org_string }
+        if short_org_name
+          _create_entity "Organization", {"name" => "#{short_org_name}", "full" => org_string }
+        else
+          _create_entity "Organization", {"name" => "#{org_string}", "full" => org_string}
+        end
+
+        as_number_string = "AS#{r["asnumber"]}"
+        _create_entity "AutonomousSystem", {"name" => as_number_string, "netblocks" => r["netblocks"] }
+
+      end
+    rescue JSON::ParserError => e
+      _log_error "Error parsing: #{e}"
+    end
+  end
+
+  def search_by_org_name(entity_name)
+    begin
+      json_resp = JSON.parse http_get_body "https://resource.intrigue.io/org/search/#{URI.escape(entity_name)}"
+
+      json_resp.each do |r|
+
+        org_string = r["org"].split(",").first
+        short_org_name = org_string.split("-").last.strip
+
+        if short_org_name
+          _create_entity "Organization", {"name" => "#{short_org_name}", "full" => org_string }
         else
           _create_entity "Organization", {"name" => "#{org_string}", "full" => org_string}
         end

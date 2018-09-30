@@ -154,6 +154,7 @@ module Whois
 
       out = out.merge({
         "name" => "#{range}",
+        "start_address" => "#{range.split("/").first}",
         "cidr" => "#{range.split('/').last}",
         "description" => "#{description}".force_encoding('ISO-8859-1').sanitize_unicode,
         "rir" => "RIPE",
