@@ -41,13 +41,13 @@ module Listeners
       sslServer = OpenSSL::SSL::SSLServer.new(server, sslContext)
 
       loop do
-        c = sslServer.accept
-        Thread.new do
-          begin
-            yield c
-          rescue OpenSSL::SSL::SSLError => e
-            _log_error "Invalid handshake: #{e}"
+        begin
+          c = sslServer.accept
+          Thread.new do
+              yield c
           end
+        rescue OpenSSL::SSL::SSLError => e
+          _log_error "Invalid handshake: #{e}"
         end
       end
     rescue SocketError => e
