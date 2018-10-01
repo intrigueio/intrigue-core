@@ -17,7 +17,7 @@ class TcpBindAndCollect < BaseTask
       :allowed_types => ["String"],
       :example_entities =>  [{"type" => "String", "details" => {"name" => "default"}}],
       :allowed_options => [
-        {:name => "ports", :regex=> "alpha_numeric", :default => "22,23,80,81,110,443,5000,7001,8000,8001,8008,8081,8080,8443,10000"},
+        {:name => "ports", :regex=> "alpha_numeric", :default => "23,25,53,80,81,110,111,443,5000,7001,8000,8001,8008,8081,8080,8443,10000,10001"},
         {:name => "notify", :regex=> "boolean", :default => true },
         {:name => "create_entity", :regex=> "boolean", :default => true }
       ],
@@ -39,7 +39,7 @@ class TcpBindAndCollect < BaseTask
   def bind_and_listen(ports=[])
 
     if ports.empty?
-      ports = [22,23,80,81,110,443,5000,7001,8000,8001,8008,8081,8080,8443,10000]
+      ports = [23,25,53,80,81,110,111,443,5000,7001,8000,8001,8008,8081,8080,8443,10000,10001]
     end
 
     # Create threads to listen to each port
@@ -59,8 +59,7 @@ class TcpBindAndCollect < BaseTask
             connection_details["source_port"] = "#{c.peeraddr[1]}"
             connection_details["message"] = ""
             while (lineIn = c.gets)
-              lineIn = lineIn.chomp
-              connection_details["message"] << lineIn
+              connection_details["message"] << "#{lineIn.chomp}\n"
             end
             c.each_line do |line|
 
@@ -80,8 +79,7 @@ class TcpBindAndCollect < BaseTask
             connection_details["source_port"] = "#{c.peeraddr[1]}"
             connection_details["message"] = ""
             while (lineIn = c.gets)
-              lineIn = lineIn.chomp
-              connection_details["message"] << lineIn
+              connection_details["message"] << "#{lineIn.chomp}\n"
             end
             track_connection connection_details
             c.close
