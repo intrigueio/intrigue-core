@@ -1,9 +1,9 @@
 require 'thread'
-require 'socket'
-
 module Intrigue
 module Task
 class TcpBindAndCollect < BaseTask
+
+  include  Intrigue::Task::Server::Listeners
 
   def self.metadata
     {
@@ -17,8 +17,8 @@ class TcpBindAndCollect < BaseTask
       :allowed_types => ["String"],
       :example_entities =>  [{"type" => "String", "details" => {"name" => "default"}}],
       :allowed_options => [
-        {:name => "ports", :regex=> "alpha_numeric", :default => "23,80,110,443,5000,7001,8000,8008,8081,8080,8443,10000"},
-        {:name => "notify", :regex=> "boolean", :default => false },
+        {:name => "ports", :regex=> "alpha_numeric", :default => "22,23,80,81,110,443,5000,7001,8000,8001,8008,8081,8080,8443,10000"},
+        {:name => "notify", :regex=> "boolean", :default => true },
         {:name => "create_entity", :regex=> "boolean", :default => true }
       ],
       :created_types => ["String"]
@@ -32,44 +32,60 @@ class TcpBindAndCollect < BaseTask
 
   def track_connection(c)
     _log "#{c}"
-    e = _create_entity("IpAddress",{"name" => c["source_address"]}) if _get_option "create_entity"
+    e = _create_entity("IpAddress",{"name" => c["source_address"], "certificate" => "#{c["source_certificate"]}"}) if _get_option "create_entity"
     _notify "#{c["source_address"]}:#{c["source_port"]} -> #{c["listening_port"]} ```#{c["message"]}```" if _get_option "notify"
   end
 
   def bind_and_listen(ports=[])
 
     if ports.empty?
-      ports = [23,80,110,443,5000,7001,8000,8008,8081,8080,8443,10000]
+      ports = [22,23,80,81,110,443,5000,7001,8000,8001,8008,8081,8080,8443,10000]
     end
 
     # Create threads to listen to each port
     threads = ports.map do |port|
       Thread.new do
-        begin
-          server = TCPServer.new port
-          while true do
-            c = server.accept    # Wait for a client to connect
-            connection = {}
-            connection["timestamp"] = DateTime.now
-            connection["listening_address"] = "#{c.addr.last}"
-            connection["listening_port"] = "#{c.addr[1]}"
-            connection["source_address"] = "#{c.peeraddr.last}"
-            connection["source_port"] = "#{c.peeraddr[1]}"
-            connection["message"] = ""
-            c.each_line do |line|
-              connection["message"] << line
+
+        # if ssl server
+        if port =~ /443$/ || port == "22"
+          _log_good "Creating SSL Listener for port #{port}"
+          start_ssl_listener(port) do |c|
+            connection_details = {}
+            connection_details["timestamp"] = DateTime.now
+            connection_details["listening_address"] = "#{c.addr.last}"
+            connection_details["listening_port"] = "#{c.addr[1]}"
+            connection_details["source_certificate"] = OpenSSL::X509::Certificate.new(c.peer_cert) if c.peer_cert
+            connection_details["source_address"] = "#{c.peeraddr.last}"
+            connection_details["source_port"] = "#{c.peeraddr[1]}"
+            connection_details["message"] = ""
+            while (lineIn = c.gets)
+              lineIn = lineIn.chomp
+              connection_details["message"] << lineIn
             end
+            c.each_line do |line|
+
+            end
+            track_connection connection_details
             c.close
-            track_connection connection
           end
-        rescue SocketError => e
-          _log_error "Unable to bind: #{e}"
-        rescue Errno::EADDRINUSE => e
-          _log_error "Unable to bind, #{port} in use: #{e}"
-        rescue Errno::EMFILE => e
-          _log_error "Too many files, or bind failed: #{e}"
-        rescue Errno::EACCES => e
-          _log_error "Unable to bind: #{e}"
+        else
+          # if normal
+          _log_good "Creating TCP Listener for port #{port}"
+          start_tcp_listener(port) do |c|
+            connection_details = {}
+            connection_details["timestamp"] = DateTime.now
+            connection_details["listening_address"] = "#{c.addr.last}"
+            connection_details["listening_port"] = "#{c.addr[1]}"
+            connection_details["source_address"] = "#{c.peeraddr.last}"
+            connection_details["source_port"] = "#{c.peeraddr[1]}"
+            connection_details["message"] = ""
+            while (lineIn = c.gets)
+              lineIn = lineIn.chomp
+              connection_details["message"] << lineIn
+            end
+            track_connection connection_details
+            c.close
+          end
         end
       end
     end
