@@ -17,36 +17,34 @@ module Strategy
 
       filter_strings = task_result.scan_result.whitelist_strings
 
-      if entity.type_string == "DnsRecord"
+      if entity.type_string == "Domain"
 
-        # get the domain length so we can see if this is a tld or internal name
-        domain_length = (entity.name.split(".").length)
-        # get the domain's base name (minus the TLD)
+        start_recursive_task(task_result,"search_crt", entity,[
+          {"name" => "extract_pattern", "value" => filter_strings.first }
+        ])
+
+        start_recursive_task(task_result,"dns_brute_sub",entity,[
+          {"name" => "threads", "value" => 6 },
+          {"name" => "use_file", "value" => true },
+          {"name" => "brute_alphanumeric_size", "value" => 3 }])
+
+        start_recursive_task(task_result,"public_google_groups_check", entity)
+        start_recursive_task(task_result,"public_trello_check",entity)
+
         base_name = entity.name.split(".")[0...-1].join(".")
+        start_recursive_task(task_result,"aws_s3_brute",entity,[
+          {"name" => "additional_buckets", "value" => "#{base_name},#{entity.name}"}
+        ])
 
-        ### Handle top level domain stuff here
-        if domain_length == 2 # large bruteforce on tlds
+      elsif entity.type_string == "DnsRecord"
 
-          start_recursive_task(task_result,"search_crt", entity,[
-            {"name" => "extract_pattern", "value" => filter_strings.first }
-          ])
+        start_recursive_task(task_result,"dns_brute_sub",entity,[
+          {"name" => "threads", "value" => 3 }])
 
-          start_recursive_task(task_result,"dns_brute_sub",entity,[
-            {"name" => "threads", "value" => 2 },
-            {"name" => "use_file", "value" => true },
-            {"name" => "brute_alphanumeric_size", "value" => 1 }])
-
-          start_recursive_task(task_result,"public_google_groups_check", entity)
-          start_recursive_task(task_result,"public_trello_check",entity)
-
+          base_name = entity.name.split(".")[0...-1].join(".")
           start_recursive_task(task_result,"aws_s3_brute",entity,[
             {"name" => "additional_buckets", "value" => "#{base_name},#{entity.name}"}
           ])
-
-        else # do something smaller
-          start_recursive_task(task_result,"dns_brute_sub",entity,[
-            {"name" => "threads", "value" => 2 }])
-        end
 
       elsif entity.type_string == "FtpService"
 
