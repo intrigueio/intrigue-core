@@ -59,41 +59,44 @@ class AwsS3Brute < BaseTask
 
       # Add permutations
       if opt_permute
+        begin
+          # AWS is case sensitive.
+          # https://forums.aws.amazon.com/thread.jspa?threadID=19928
+          first_letter_cap = "#{pb.strip}".slice(0,1).upcase + "#{pb.strip}".slice(1..-1)
+          work_q << "#{first_letter_cap}" unless "#{first_letter_cap}" == "#{pb.strip}"
+          work_q << "#{pb.strip.upcase}" unless "#{pb.strip.upcase}" == "#{pb.strip}"
+          work_q << "#{pb.strip.downcase}" unless "#{pb.strip.downcase}" == "#{pb.strip}"
 
-        # AWS is case sensitive.
-        # https://forums.aws.amazon.com/thread.jspa?threadID=19928
-        first_letter_cap = "#{pb.strip}".slice(0,1).upcase + "#{pb.strip}".slice(1..-1)
-        work_q << "#{first_letter_cap}" unless "#{first_letter_cap}" == "#{pb.strip}"
-        work_q << "#{pb.strip.upcase}" unless "#{pb.strip.upcase}" == "#{pb.strip}"
-        work_q << "#{pb.strip.downcase}" unless "#{pb.strip.downcase}" == "#{pb.strip}"
-
-        # General development permutations
-        work_q << "#{pb.strip}-backup"
-        work_q << "#{pb.strip}-beta"
-        work_q << "#{pb.strip}-dev"
-        work_q << "#{pb.strip}-development"
-        work_q << "#{pb.strip}-eng"
-        work_q << "#{pb.strip}-engineering"
-        work_q << "#{pb.strip}-old"
-        work_q << "#{pb.strip}-prod"
-        work_q << "#{pb.strip}-qa"
-        work_q << "#{pb.strip}-stage"
-        work_q << "#{pb.strip}-staging"
-        work_q << "#{pb.strip}-test"
-        work_q << "#{pb.strip}-web"
-        work_q << "backup-#{pb.strip}"
-        work_q << "beta-#{pb.strip}"
-        work_q << "dev-#{pb.strip}"
-        work_q << "development-#{pb.strip}"
-        work_q << "eng-#{pb.strip}"
-        work_q << "engineering-#{pb.strip}"
-        work_q << "old-#{pb.strip}"
-        work_q << "prod-#{pb.strip}"
-        work_q << "qa-#{pb.strip}"
-        work_q << "stage-#{pb.strip}"
-        work_q << "staging-#{pb.strip}"
-        work_q << "test-#{pb.strip}"
-        work_q << "web-#{pb.strip}"
+          # General development permutations
+          work_q << "#{pb.strip}-backup"
+          work_q << "#{pb.strip}-beta"
+          work_q << "#{pb.strip}-dev"
+          work_q << "#{pb.strip}-development"
+          work_q << "#{pb.strip}-eng"
+          work_q << "#{pb.strip}-engineering"
+          work_q << "#{pb.strip}-old"
+          work_q << "#{pb.strip}-prod"
+          work_q << "#{pb.strip}-qa"
+          work_q << "#{pb.strip}-stage"
+          work_q << "#{pb.strip}-staging"
+          work_q << "#{pb.strip}-test"
+          work_q << "#{pb.strip}-web"
+          work_q << "backup-#{pb.strip}"
+          work_q << "beta-#{pb.strip}"
+          work_q << "dev-#{pb.strip}"
+          work_q << "development-#{pb.strip}"
+          work_q << "eng-#{pb.strip}"
+          work_q << "engineering-#{pb.strip}"
+          work_q << "old-#{pb.strip}"
+          work_q << "prod-#{pb.strip}"
+          work_q << "qa-#{pb.strip}"
+          work_q << "stage-#{pb.strip}"
+          work_q << "staging-#{pb.strip}"
+          work_q << "test-#{pb.strip}"
+          work_q << "web-#{pb.strip}"
+        rescue TypeError => e
+          puts "Unable to permute: #{pb}, failing"
+        end
       end
 
     end
