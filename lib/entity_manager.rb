@@ -46,7 +46,6 @@ class EntityManager
       type = resolve_type_from_string(type_string)
       $db.transaction do
         begin
-
           g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
 
           entity = Intrigue::Model::Entity.create({
@@ -84,12 +83,12 @@ class EntityManager
       return
     end
 
-    # deal with canceled tasks!
+    # Deal with canceled tasks!
     # Do a lookup to make sure we have the latest...
     tr = Intrigue::Model::TaskResult.first(:id => task_result.id)
     if tr.cancelled
       task_result.log "returning, task was cancelled"
-      return 
+      return
     end
 
     # Convenience
@@ -209,7 +208,6 @@ class EntityManager
   end
 
   def self.enrich_entity(entity, task_result)
-    task_result.log  "Running enrichment on #{entity}"
     return unless entity
 
     # Check if we've alrady run first and return gracefully if so
@@ -224,7 +222,6 @@ class EntityManager
 
     task_result.log "Scheduling enrichment (#{entity.enrichment_tasks}) on #{entity}!"
     entity.schedule_enrichment(depth, scan_result)
-
   end
 
   private
