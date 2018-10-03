@@ -1,12 +1,12 @@
 module Intrigue
 module Entity
-class DnsRecord < Intrigue::Model::Entity
+class Domain < Intrigue::Model::Entity
   include Intrigue::Task::Helper
 
   def self.metadata
     {
-      :name => "DnsRecord",
-      :description => "A Dns Record",
+      :name => "Domain",
+      :description => "A Top-Level Domain",
       :user_creatable => true
     }
   end
@@ -25,7 +25,7 @@ class DnsRecord < Intrigue::Model::Entity
   end
 
   def enrichment_tasks
-    ["enrich/dns_record"]
+    ["enrich/domain"]
   end
 
 end
