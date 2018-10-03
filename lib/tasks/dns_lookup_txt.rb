@@ -13,7 +13,7 @@ class DnsLookupTxt < BaseTask
       :references => [
         "http://webmasters.stackexchange.com/questions/27910/txt-vs-spf-record-for-google-servers-spf-record-either-or-both"
       ],
-      :allowed_types => ["DnsRecord"],
+      :allowed_types => ["Domain","DnsRecord"],
       :type => "discovery",
       :passive => true,
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],

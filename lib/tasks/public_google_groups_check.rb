@@ -16,7 +16,7 @@ class PublicGoogleGroupsCheck < BaseTask
       ],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["DnsRecord"],
+      :allowed_types => ["Domain","DnsRecord"],
       :example_entities => [
         {"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}
       ],

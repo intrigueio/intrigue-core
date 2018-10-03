@@ -11,7 +11,7 @@ class SecurityTrailsHistoricalDns < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["DnsRecord"],
+      :allowed_types => ["Domain","DnsRecord"],
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
       :created_types => ["IpAddress"]

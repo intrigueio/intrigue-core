@@ -13,7 +13,7 @@ class WhoisLookup < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["DnsRecord","IpAddress","NetBlock","Organization"],
+      :allowed_types => ["Domain","DnsRecord","IpAddress","NetBlock","Organization"],
       :example_entities => [
         {"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}},
         {"type" => "IpAddress", "details" => {"name" => "192.0.78.13"}},

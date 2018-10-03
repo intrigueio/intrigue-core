@@ -1,7 +1,7 @@
 module Intrigue
 module Task
 class SearchThreatcrowd < BaseTask
-  
+
   include Intrigue::Task::Web
 
   def self.metadata
@@ -13,7 +13,7 @@ class SearchThreatcrowd < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["DnsRecord"],
+      :allowed_types => ["Domain","DnsRecord"],
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "extract_pattern", :regex => "alpha_numeric", :default => false },

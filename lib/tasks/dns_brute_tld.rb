@@ -13,7 +13,7 @@ class DnsBruteTld < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["DnsRecord","String"],
+      :allowed_types => ["Domain","DnsRecord","String"],
       :example_entities => [{"type" => "IpAddress", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "use_file", :regex => "boolean", :default => false },

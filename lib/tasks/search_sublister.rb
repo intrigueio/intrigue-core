@@ -12,7 +12,7 @@ class SearchSublister < BaseTask
       :references => ["https://github.com/aboul3la/Sublist3r/"],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["DnsRecord"],
+      :allowed_types => ["Domain","DnsRecord"],
       :example_entities => [ {"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}} ],
       :allowed_options => [
         {:name => "extract_pattern", :regex => "alpha_numeric", :default => false }

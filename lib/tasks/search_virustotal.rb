@@ -12,7 +12,7 @@ class SearchVirustotal < BaseTask
       :references => ["https://www.virustotal.com/en/documentation/"],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["DnsRecord"],
+      :allowed_types => ["Domain","DnsRecord"],
       :example_entities => [ {"type" => "DnsRecord", "details" => {"name" => "intrigue"}} ],
       :allowed_options => [],
       :created_types => ["DnsRecord"]

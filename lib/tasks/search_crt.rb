@@ -12,7 +12,7 @@ class SearchCrt < BaseTask
       :references => ["https://www.virustotal.com/en/documentation/"],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["DnsRecord"],
+      :allowed_types => ["Domain","DnsRecord"],
       :example_entities => [ {"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}} ],
       :allowed_options => [
         {:name => "extract_pattern", :regex => "alpha_numeric", :default => "default" },

@@ -14,7 +14,7 @@ class DnsRecurseSpf < BaseTask
         "http://www.openspf.org/",
         "https://community.rapid7.com/community/infosec/blog/2015/02/23/osint-through-sender-policy-framework-spf-records"
       ],
-      :allowed_types => ["DnsRecord"],
+      :allowed_types => ["Domain","DnsRecord"],
       :type => "discovery",
       :passive => true,
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],

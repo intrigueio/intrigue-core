@@ -12,7 +12,7 @@ class PublicTrelloCheck < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["DnsRecord","Organization", "String"],
+      :allowed_types => ["Domain","DnsRecord","Organization", "String"],
       :example_entities => [
         {"type" => "String", "details" => {"name" => "intrigue"}}
       ],
