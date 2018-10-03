@@ -58,3 +58,19 @@ fi
 #  rm top-1m.csv.zip
 #  cd ..
 #fi
+
+# TLD Info
+if [ ! -f tlds-alpha-by-domain.txt ]; then
+  echo "[+] Getting latest TLDs"
+  wget -N -q http://data.iana.org/TLD/tlds-alpha-by-domain.txt
+fi
+
+# public suffix info
+if [ ! -f public_suffix_list.dat ]; then
+  echo "[+] Getting latest Public Suffix list"
+  wget -N -q https://publicsuffix.org/list/public_suffix_list.dat
+  cat public_suffix_list.dat | grep -i -e '^/' -v | awk 'NF' | sed 's/\*\.//g' > public_suffix_list.clean.txt
+  rm public_suffix_list.dat
+fi
+
+
