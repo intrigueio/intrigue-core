@@ -50,17 +50,17 @@ class EnrichDnsRecord < BaseTask
     if _get_entity_detail("soa_record")
       _log_good "Creating domain: #{_get_entity_name}"
       _create_entity "Domain", "name" => _get_entity_name
-    elsif # check if tld
+    else # check if tld
       # one at a time, remove all known TLDs and see what we have left. if we
       # have a single string, this is domain in our eyes
       File.open("#{$intrigue_basedir}/data/public_suffix_list.clean.txt").read.each_line do |l|
-        if _get_entity_name.slice!(".#{l}") == _get_entity_name.split(".").first
+        x = _get_entity_name
+        x.slice!(".#{l.downcase}")
+        if x == _get_entity_name.split(".").first
           _log_good "Creating domain: #{_get_entity_name}"
-          _create_entity "Domain", "#{_get_entity_name}"
+          e = _create_entity "Domain", "#{_get_entity_name}"
         end
       end
-    else
-      _log "Not considered domain-worthy"
     end
 
   end
