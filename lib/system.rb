@@ -33,6 +33,9 @@ module System
         # Kick off the task
         task_result = start_task(nil, project, nil, task_name, created_entity, depth, options, handlers, strategy, auto_enrich)
 
+        # always enrich
+        Intrigue::EntityManager.enrich_entity(created_entity, task_result)
+
       end
 
       # sometimes we need to run a custom command in the context of a project
