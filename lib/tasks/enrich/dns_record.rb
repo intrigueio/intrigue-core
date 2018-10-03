@@ -58,7 +58,7 @@ class EnrichDnsRecord < BaseTask
         x.slice!(".#{l.downcase}")
         if x == _get_entity_name.split(".").first
           _log_good "Creating domain: #{_get_entity_name}"
-          e = _create_entity "Domain", "#{_get_entity_name}"
+          e = _create_entity "Domain", "name" => "#{_get_entity_name}"
         end
       end
     end
