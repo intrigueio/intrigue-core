@@ -51,16 +51,24 @@ class EnrichDnsRecord < BaseTask
       _log_good "Creating domain: #{_get_entity_name}"
       _create_entity "Domain", "name" => _get_entity_name
     else # check if tld
-      # one at a time, remove all known TLDs and see what we have left. if we
-      # have a single string, this is domain in our eyes
+      # one at a time, check all known TLDs and see what we have left. if we
+      # have a single string, this is TLD and we should create it as a domain
       File.open("#{$intrigue_basedir}/data/public_suffix_list.clean.txt").read.each_line do |l|
-        x = _get_entity_name
-        x.slice!(".#{l.downcase}")
-        if x == _get_entity_name.split(".").first
-          _log_good "Creating domain: #{_get_entity_name}"
-          e = _create_entity "Domain", "name" => "#{_get_entity_name}"
+        entity_name = "#{_get_entity_name}".downcase
+        suffix = "#{l.chomp}".downcase
+        # determine if there's a match with this suffix
+        if entity_name =~ /#{suffix}$/
+          # if so, remove it
+          remove_length = ".#{suffix}".length
+          x = entity_name[0..-remove_length]
+          if x.split(".").length == 1
+            _log "Yahtzee, TLD: #{entity_name}!"
+            e = _create_entity "Domain", "name" => "#{entity_name}"
+          else
+            _log "Not a TLD: #{x}"
+          end
         end
-      end
+      end;nil
     end
 
   end
