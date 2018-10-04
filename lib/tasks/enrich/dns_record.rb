@@ -53,7 +53,9 @@ class EnrichDnsRecord < BaseTask
     else # check if tld
       # one at a time, check all known TLDs and see what we have left. if we
       # have a single string, this is TLD and we should create it as a domain
-      File.open("#{$intrigue_basedir}/data/public_suffix_list.clean.txt").read.each_line do |l|
+      suffix_list = File.open("#{$intrigue_basedir}/data/public_suffix_list.clean.txt").read.split("\n")
+      clean_suffix_list = suffix_list.map{|l| "#{l.downcase}".chomp }
+      clean_suffix_list.each do |l|
         entity_name = "#{_get_entity_name}".downcase
         suffix = "#{l.chomp}".downcase
         # determine if there's a match with this suffix
@@ -67,6 +69,10 @@ class EnrichDnsRecord < BaseTask
           elsif x.last == "." # clean
             inferred_tld = "#{x.split(".").last}.#{suffix}"
             _log "Inferred TLD: #{inferred_tld}"
+
+            # make sure we don't accidentially create another TLD (co.uk)
+            next if clean_suffix_list.include? inferred_tld
+
             e = _create_entity "Domain", "name" => "#{inferred_tld}"
           else
             _log "Incorrect match: #{suffix}"
