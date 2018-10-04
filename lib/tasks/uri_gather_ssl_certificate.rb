@@ -105,6 +105,11 @@ class UriGatherSslCert  < BaseTask
               return
             end
 
+            if alt_name =~ /edgecastcdn.net$/ && opt_skip_hosted_services
+              _log "This is a edgecast cdn certificate, skipping further entity creation"
+              return
+            end
+
             if alt_name =~ /fastly.net$/ && opt_skip_hosted_services
               _log "This is a fastly certificate, skipping further entity creation"
               return
