@@ -62,10 +62,14 @@ class EnrichDnsRecord < BaseTask
           remove_length = ".#{suffix}".length
           x = entity_name[0..-remove_length]
           if x.split(".").length == 1
-            _log "Yahtzee, TLD: #{entity_name}!"
+            _log "Yahtzee, we are a TLD: #{entity_name}!"
             e = _create_entity "Domain", "name" => "#{entity_name}"
+          elsif x.last == "." # clean
+            inferred_tld = "#{x.split(".").last}.#{suffix}"
+            _log "Inferred TLD: #{inferred_tld}"
+            e = _create_entity "Domain", "name" => "#{inferred_tld}"
           else
-            _log "Not a TLD: #{x}"
+            _log "Incorrect match: #{suffix}"
           end
         end
       end;nil
