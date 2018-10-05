@@ -9,20 +9,14 @@ module MatchExceptions
     # and "use_standard_exceptions" fields on the object
     def exception_entity?(entity_name, type_string=nil)
 
-      is_an_exception = false
-
       # Check standard exceptions first
       # (which now live in Intrigue::Ident::TraverseExceptions)
-      if self.use_standard_exceptions
-        is_an_exception = true if non_traversable?(entity_name,type_string)
-      end
+      return true if non_traversable?(entity_name,type_string)
 
       # check additional exception strings
-      #puts "DEBUG: Additional exceptions: #{self.additional_exception_list}"
-      if self.additional_exception_list
-        self.additional_exception_list.split(",").each do |x|
-          is_an_exception = true if entity_name =~ /#{x}/
-        end
+      is_an_exception = false
+      self.additional_exception_list.each do |x|
+        is_an_exception = true if entity_name =~ /#{x}/
       end
 
     is_an_exception

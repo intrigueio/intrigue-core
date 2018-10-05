@@ -101,7 +101,7 @@ class EntityManager
     # Merge the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name)
 
-    # check if this is actually an exception (blacklisted) entity
+    # check if this is actually an exception (no-traverse for this proj) entity
     exception = project.exception_entity?(name, type_string)
 
     # Check if there's an existing entity, if so, merge and move forward
