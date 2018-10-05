@@ -61,7 +61,7 @@ module System
     entity_hash = {
       "type" => entity_type,
       "name" => entity_name,
-      "details" => { "name" => entity_name }
+      "details" => { "name" => entity_name, "whitelist" => true }
     }
 
     #puts "Got entity: #{entity_hash}" if @debug

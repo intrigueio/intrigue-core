@@ -55,6 +55,7 @@ class EntityManager
             :details => details,
             :details_raw => details,
             :hidden => false, # first entity should never be hidden - it was intentional
+            :scoped => true, # first entity should always be in scope - it was intentional
             :alias_group_id => g.id
            })
 

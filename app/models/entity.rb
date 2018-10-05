@@ -293,6 +293,7 @@ module Intrigue
           :name =>  name,
           :deleted => deleted,
           :hidden => hidden,
+          :scoped => scoped,
           :alias_group => alias_group_id,
           :detail_string => detail_string,
           :details => details,

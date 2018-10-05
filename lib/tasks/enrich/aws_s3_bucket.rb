@@ -72,6 +72,8 @@ class EnrichAwsS3Bucket < BaseTask
       _notify("Interesting Files: #{interesting_files}")
     end
 
+    ### TODO - determine if scoped 
+
   end
 
   def get_contents_unauthenticated(s3_uri, prefix)
