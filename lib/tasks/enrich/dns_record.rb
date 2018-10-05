@@ -47,10 +47,10 @@ class EnrichDnsRecord < BaseTask
     _set_entity_detail("spf_record", collect_spf_details(lookup_name))
 
     # handy in general, do this for all SOA records
-    if _get_entity_detail("soa_record")
-      _log_good "Creating domain: #{_get_entity_name}"
-      _create_entity "Domain", "name" => _get_entity_name
-    else # check if tld
+    #if _get_entity_detail("soa_record")
+    #  _log_good "Creating domain: #{_get_entity_name}"
+    #  _create_entity "Domain", "name" => _get_entity_name
+    if # check if tld
       # one at a time, check all known TLDs and see what we have left. if we
       # have a single string, this is TLD and we should create it as a domain
       suffix_list = File.open("#{$intrigue_basedir}/data/public_suffix_list.clean.txt").read.split("\n")
