@@ -13,6 +13,9 @@ module MatchExceptions
       # (which now live in Intrigue::Ident::TraverseExceptions)
       return true if non_traversable?(entity_name,type_string)
 
+      # if we don't have a list, safe to return false now
+      return false unless self.additional_exception_list
+
       # check additional exception strings
       is_an_exception = false
       self.additional_exception_list.each do |x|
