@@ -53,26 +53,24 @@ module Strategy
       elsif entity.type_string == "IpAddress"
 
         # Prevent us from hammering on whois services
-        unless entity.created_by?("net_block_expand")
+        unless entity.get_detail("whois_full_text")
           start_recursive_task(task_result,"whois_lookup",entity)
         end
 
-        # Prevent us from hammering on whois services
-        unless ( entity.created_by?("masscan_scan") || entity.created_by?("net_block_expand")  )
+        # Prevent us from re-scanning services
+        unless entity.created_by?("masscan_scan")
           start_recursive_task(task_result,"nmap_scan",entity)
         end
 
       elsif entity.type_string == "NetBlock"
 
-        whois_text = entity.details["whois_full_text"] || ""
-        whois_text_has_filter_string = (whois_text.downcase =~ /#{filter_strings.map{|x| x.downcase }.join("|")}/i)
-        whois_text_indicates_transferred = (whois_text =~ /Early Registrations, Transferred to/)
+        # TODO may no longer be necessary
+        whitelisted = (whois_text.downcase =~ /#{filter_strings.map{|x| x.downcase }.join("|")}/i)
 
-        scannable = entity.user_created? ||
-                    entity.created_by?("search_bgp") ||
-                    ( whois_text_has_filter_string &&
-                      !(entity.name =~ /::/) &&
-                      !(whois_text_indicates_transferred))
+        # TODO - search_bgp? required?
+
+        scannable = ( entity.scoped || whitelisted || entity.created_by?("search_bgp") ) &&
+                      !(entity.get_detail("ipv6") && entity.get_detail("transferred") )
 
         # Make sure it's owned by the org, and if it is, scan it. also skip ipv6/
         if scannable

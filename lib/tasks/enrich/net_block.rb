@@ -38,6 +38,17 @@ class EnrichNetBlock < BaseTask
       _set_entity_details out
     end
 
+    # check transferred
+    if out["whois_full_text"] =~ /Early Registrations, Transferred to/
+      _set_entity_detail "transferred", true
+    end
+
+    # check ipv6
+    if _get_entity_name =~ /::/
+      _set_entity_detail "ipv6"
+    end
+
+
     ### TODO - determine if scoped
     @entity.project.entities.where(:scoped => true).each do |e|
       _log "Checking if scoped based on #{e.name}"
