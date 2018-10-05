@@ -65,11 +65,11 @@ module Strategy
       elsif entity.type_string == "NetBlock"
 
         # TODO may no longer be necessary
-        whitelisted = (whois_text.downcase =~ /#{filter_strings.map{|x| x.downcase }.join("|")}/i)
+        whitelisted = entity.get_detail("whois_full_text").downcase =~ /#{filter_strings.map{|x| x.downcase }.join("|")}/i
 
         # TODO - search_bgp? required?
 
-        scannable = ( entity.scoped || whitelisted || entity.created_by?("search_bgp") ) &&
+        scannable = ( entity.scoped || whitelisted ) &&
                       !(entity.get_detail("ipv6") && entity.get_detail("transferred") )
 
         # Make sure it's owned by the org, and if it is, scan it. also skip ipv6/

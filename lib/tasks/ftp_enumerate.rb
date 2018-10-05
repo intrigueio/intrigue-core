@@ -81,7 +81,7 @@ class FtpEnumerate < BaseTask
           ]
         rescue Net::FTPPermError => e
           _log_error "unable to collect directory info, not logged in"
-        rescue Errno::EOFError => e
+        rescue EOFError => e
           _log_error "eof reached"
         end
 
@@ -90,7 +90,7 @@ class FtpEnumerate < BaseTask
           out["system"] = "#{ftp.system}"
         rescue Net::FTPPermError => e
           _log_error "unable to collect system info - not logged in"
-        rescue Errno::EOFError => e
+        rescue EOFError => e
           _log_error "eof reached"
         end
 

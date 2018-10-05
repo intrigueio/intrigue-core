@@ -14,15 +14,15 @@ module MatchExceptions
       return true if non_traversable?(entity_name,type_string)
 
       # if we don't have a list, safe to return false now
-      return false unless self.additional_exception_list
+      return false unless additional_exception_list
 
       # check additional exception strings
       is_an_exception = false
-      self.additional_exception_list.each do |x|
-        is_an_exception = true if entity_name =~ /#{x}/
+      additional_exception_list.each do |x|
+        return true if entity_name.downcase =~ /#{x.downcase}/
       end
 
-    is_an_exception
+    false
     end
 
 end
