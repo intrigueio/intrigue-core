@@ -65,7 +65,7 @@ module Strategy
       elsif entity.type_string == "NetBlock"
 
         # TODO may no longer be necessary
-        whitelisted = entity.get_detail("whois_full_text").downcase =~ /#{filter_strings.map{|x| x.downcase }.join("|")}/i
+        whitelisted = "#{entity.get_detail("whois_full_text")}".downcase =~ /#{filter_strings.map{|x| Regexp.escape(x.downcase) }.join("|")}/i
 
         # TODO - search_bgp? required?
 
