@@ -104,6 +104,7 @@ class EntityManager
 
     # check if this is actually an exception (no-traverse for this proj) entity
     exception = project.exception_entity?(name, type_string)
+    task_result.log "Checking if #{type_string}##{name} is an exception entity: #{exception}"
 
     # Check if there's an existing entity, if so, merge and move forward
     if entity

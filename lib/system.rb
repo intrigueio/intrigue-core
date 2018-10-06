@@ -13,7 +13,7 @@ module System
       # Set exclusion setting
       auto_enrich = p["auto_enrich"] || false
       project.use_standard_exceptions = p["use_standard_exceptions"]
-      project.additional_exception_list = p["additional_exception_list"]
+      project.additional_exception_list = config["additional_exception_list"]
       project.save
 
       @task_result.log "Working on project: #{project_name}" if @task_result

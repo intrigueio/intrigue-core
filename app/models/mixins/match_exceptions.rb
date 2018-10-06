@@ -16,6 +16,9 @@ module MatchExceptions
       # if we don't have a list, safe to return false now
       return false unless additional_exception_list
 
+      puts "EXCEPTION DEBUG: #{type_string}##{entity_name}"
+      puts "EXCEPTION DEBUG: #{additional_exception_list.count} exceptions"
+
       # check additional exception strings
       is_an_exception = false
       additional_exception_list.each do |x|
