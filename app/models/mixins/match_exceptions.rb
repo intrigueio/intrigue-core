@@ -22,7 +22,7 @@ module MatchExceptions
       # check additional exception strings
       is_an_exception = false
       additional_exception_list.each do |x|
-        return true if entity_name.downcase =~ /#{x.downcase}/
+        return true if entity_name.downcase =~ /#{Regexp.escape(x.downcase)}/
       end
 
     false
