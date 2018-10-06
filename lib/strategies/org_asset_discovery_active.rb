@@ -15,6 +15,9 @@ module Strategy
 
     def self.recurse(entity, task_result)
 
+      # loop until we're fully enriched
+      entity.wait_until_enriched
+
       filter_strings = task_result.scan_result.whitelist_strings
 
       if entity.type_string == "Domain"
@@ -70,7 +73,7 @@ module Strategy
         transferred = entity.get_detail("transferred")
         scannable = ( entity.scoped || whitelisted ) && !transferred
 
-        task_result.log "Scoped: #{entity.scoped}"
+        task_result.log "Scoped: #{entity.check_scoped}"
         task_result.log "Whitelisted: #{whitelisted}"
         task_result.log "Transferred: #{transferred}"
 

@@ -62,6 +62,8 @@ module Intrigue
       ancestors.uniq
       end
 
+
+
       # Intrigue::Model::Entity.where(:name => "aim.com").first.ancestor_path;nil
       # while true; sleep 1; Intrigue::Model::Entity.last.ancestor_path; end
 =begin
@@ -105,16 +107,12 @@ module Intrigue
         true
       end
 
-      # since we return a boolean from the database, just
-      # create a method with a '?'
-      #def enriched?
-      #  enriched
-      #end
-
-      # List of enrichment tasks, should be overridden. see the individual enrichment
-      # files
-      def enrichment_tasks
-        []
+      def wait_until_enriched
+        loop do
+          break if enrichment_complete?
+          puts "#{self.type} #{self.name} ... sleeping 3 seconds until complete"
+          sleep 3
+        end
       end
 
       def enrichment_complete?
