@@ -38,7 +38,7 @@ module Strategy
           break
         end
 
-        sleep 1
+        sleep 3
         #puts "Waiting on enrichment... #{entity.type} #{entity.name}: #{entity.enriched}"
       end
 

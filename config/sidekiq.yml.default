@@ -5,7 +5,7 @@
   app: 2
   control: 1
   task: 3
-  scan: 100
+  scan: 50
   task_autoscheduled: 15
   task_browser: 5
-  task_enrichment: 15
+  task_enrichment: 100
