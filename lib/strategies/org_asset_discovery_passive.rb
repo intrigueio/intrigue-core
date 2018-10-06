@@ -13,7 +13,8 @@ module Strategy
       }
     end
 
-    def self.recurse(entity, task_result)
+    def recurse(entity, task_result)
+      puts "Recurse called for #{task_result.name} #{entity.name}... recursing"
 
       filter_strings = task_result.scan_result.whitelist_strings
 

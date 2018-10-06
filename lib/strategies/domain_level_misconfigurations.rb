@@ -13,7 +13,8 @@ module Strategy
       }
     end
 
-    def self.recurse(entity, task_result)
+    def recurse(entity, task_result)
+      puts "Recurse called for #{task_result.name} #{entity.name}... recursing"
       if entity.type_string == "DnsRecord"
         start_recursive_task(task_result,"public_google_groups_check",entity)
         start_recursive_task(task_result,"aws_s3_brute",entity)

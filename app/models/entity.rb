@@ -107,31 +107,9 @@ module Intrigue
         true
       end
 
-      def wait_until_enriched
-        loop do
-          sleep 1
-          break if enrichment_complete?
-          puts "#{self.type} #{self.name} ... sleeping 1 sec until complete"
-          puts " - Planned: #{enrichment_tasks}"
-          puts " - Scheduled: #{details["enrichment_scheduled"]}"
-          puts " - Complete: #{details["enrichment_complete"]}"
-        end
-      end
-
       # overridden in the individual entities
       def enrichment_tasks
         []
-      end
-
-      def enrichment_complete?
-        # note that enrichment_tasks method is overridden in the entity defs
-
-        return true if details["enrichment_scheduled"] == [] # nothing to wait for
-
-        # or we're complete
-        return true if details["enrichment_complete"] == enrichment_tasks
-
-      false
       end
 
       def schedule_enrichment(depth=1, scan_result=nil)

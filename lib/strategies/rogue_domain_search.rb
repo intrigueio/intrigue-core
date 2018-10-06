@@ -13,7 +13,9 @@ module Strategy
       }
     end
 
-    def self.recurse(entity, task_result)
+    def recurse(entity, task_result)
+      puts "Recurse called for #{task_result.name} #{entity.name}... recursing"
+      
       if entity.type_string == "DnsRecord"
         unless entity.created_by?("whois")
           start_recursive_task(task_result,"whois",entity, [

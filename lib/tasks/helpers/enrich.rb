@@ -7,15 +7,20 @@ module Enrich
   end
 
   def _finalize_enrichment
+    task_name = self.class.metadata[:name]
+
     _log "Marking as enriched!"
-
     $db.transaction do
-      c = (@entity.get_detail("enrichment_complete") || []) << "#{self.class.metadata[:name]}"
-      _set_entity_detail("enrichment_complete", c)
-    end
 
+      c = (_get_entity_detail("enrichment_complete") || []) << "#{task_name}"
+      _set_entity_detail("enrichment_complete", c)
+
+      @entity.enriched = true
+      @entity.save
+
+    end
+    
     _log "Completed enrichment task!"
-  true
   end
 
 end

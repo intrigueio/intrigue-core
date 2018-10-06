@@ -78,7 +78,7 @@ class EnrichIpAddress < BaseTask
     _set_entity_detail("geolocation", location_hash)
 
     # scoping ... HACKY
-    if @entity.created_by? "masscan_scan"
+    if @entity.created_by? "masscan_scan" 
       @entity.scoped = true
       @entity.save
     end

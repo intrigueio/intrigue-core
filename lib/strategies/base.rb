@@ -2,17 +2,45 @@ module Intrigue
 module Strategy
   class Base
 
-    extend Intrigue::Task::Helper
+    include Sidekiq::Worker
+    sidekiq_options :queue => "task_scan", :backtrace => true
+
+    include Intrigue::Task::Helper
 
     def self.inherited(base)
       StrategyFactory.register(base)
     end
 
+    def perform(entity_id, task_result_id)
+      task_result = Intrigue::Model::TaskResult.first(:id => task_result_id)
+      entity = Intrigue::Model::Entity.first(:id => entity_id)
+      puts "Perform called for #{task_result.name} #{entity.name}... recursing"
+      recurse(entity, task_result)
+    end
+
     ###
     # Helper method for starting a task run
     ###
-    def self.start_recursive_task(old_task_result, task_name, entity, options=[])
+    def start_recursive_task(old_task_result, task_name, entity, options=[])
       project = old_task_result.project
+
+      # hold on recursion until we're enriched
+      max_wait_iterations = 60
+      until (entity.enriched || entity.enrichment_tasks.empty?)
+        # make sure we re-lookup so we don't get stuck in loop
+        entity = Intrigue::Model::Entity.first :id => entity.id
+
+        # ... enrichment should be fast
+        # don't get stuck in a loop forever (3 mins max)
+        max_wait_iterations-=1
+        if max_wait_iterations < 0
+          #puts "Max enrichment wait exceeded for: #{entity.type} #{entity.name}"
+          break
+        end
+
+        sleep 1
+        #puts "Waiting on enrichment... #{entity.type} #{entity.name}: #{entity.enriched}"
+      end
 
       # check to see if it already exists, return nil if it does
       existing_task_result = Intrigue::Model::TaskResult.where(:project => project).first(:task_name => "#{task_name}", :base_entity_id => entity.id)

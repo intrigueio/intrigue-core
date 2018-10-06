@@ -103,8 +103,8 @@ class EntityManager
     entity = entity_exists?(project,type_string,downcased_name)
 
     # check if this is actually an exception (no-traverse for this proj) entity
-    exception = project.exception_entity?(name, type_string)
-    task_result.log "Checking if #{type_string}##{name} is an exception entity: #{exception}"
+    no_traverse_entity = project.exception_entity?(name, type_string)
+    task_result.log "Checking if #{type_string}##{name} is a no-traverse: #{no_traverse_entity}"
 
     # Check if there's an existing entity, if so, merge and move forward
     if entity
@@ -115,6 +115,8 @@ class EntityManager
       entity_already_existed = true
 
     else
+      task_result.log_good "NEW ENTITY! #{type_string} #{name}"
+      new_entity = true
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
       $db.transaction do
@@ -126,7 +128,7 @@ class EntityManager
             :type => type,
             :details => details,
             :details_raw => details,
-            :hidden => (exception ? true : false )
+            :hidden => (no_traverse_entity ? true : false )
            })
 
           unless entity
@@ -187,24 +189,26 @@ class EntityManager
       else
         primary_entity.alias(created_entity)
       end
-
     end
 
     # START ENRICHMENT if we're allowed and unless this entity is an exception (marked as hidden on the entity)
     if task_result.auto_enrich && !entity_already_existed
-      enrich_entity(created_entity, task_result) unless exception
+      task_result.log "Enriching #{created_entity.name}"
+      enrich_entity(created_entity, task_result) unless no_traverse_entity
     end
 
     # START RECURSION BY STRATEGY TYPE
     if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
-      unless exception
+      unless no_traverse_entity
         s = Intrigue::StrategyFactory.create_by_name(task_result.scan_result.strategy)
         raise "Unknown Strategy!" unless s
-        s.recurse(created_entity, task_result)
+        task_result.log "Launching strategy #{task_result.scan_result.strategy} on #{created_entity.name}"
+        s.perform_async(created_entity.id, task_result.id)
       end
     end
     # END PROCESSING OF RECURSION BY STRATEGY TYPE
 
+    task_result.log "Returning!"
   # return the entity
   created_entity
   end
@@ -213,7 +217,7 @@ class EntityManager
     return unless entity
 
     # Check if we've alrady run first and return gracefully if so
-    if entity.enrichment_complete?
+    if entity.enriched
       task_result.log "Skipping enrichment... already completed for #{entity}!"
       return
     end

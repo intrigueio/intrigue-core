@@ -100,9 +100,9 @@ class BaseTask
       if scan_result
         scan_result.decrement_task_count
 
-        #################
-        # Call Handlers #
-        #################
+        #####################
+        #   Call Handlers   #
+        #####################
 
         if scan_result.handlers.count > 0
 
