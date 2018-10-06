@@ -64,13 +64,15 @@ module Strategy
 
       elsif entity.type_string == "NetBlock"
 
-        # TODO may no longer be necessary
+        # whitelisted still checks project name, so leave it for now
         whitelisted = "#{entity.get_detail("whois_full_text")}".downcase =~ /#{filter_strings.map{|x| Regexp.escape(x.downcase) }.join("|")}/i
 
-        # TODO - search_bgp? required?
+        transferred = entity.get_detail("transferred")
+        scannable = ( entity.scoped || whitelisted ) && !transferred
 
-        scannable = ( entity.scoped || whitelisted ) &&
-                      !(entity.get_detail("ipv6") && entity.get_detail("transferred") )
+        task_result.log "Scoped: #{entity.scoped}"
+        task_result.log "Whitelisted: #{whitelisted}"
+        task_result.log "Transferred: #{transferred}"
 
         # Make sure it's owned by the org, and if it is, scan it. also skip ipv6/
         if scannable
@@ -80,7 +82,7 @@ module Strategy
           # 7001: Weblogic
           # 8080: Wordpress, WebDav, DasanNetwork Solution
           start_recursive_task(task_result,"masscan_scan",entity,[
-            {"name"=> "tcp_ports", "value" => "80,443,2004,3389,8000,8080,8081,8443"}
+            {"name"=> "tcp_ports", "value" => "22,23,25,80,81,110,111,139,443,445,2004,3389,8000,8080,8081,8443,10000"}
           ])
         else
           task_result.log "Cowardly refusing to scan this netblock.. it doesn't look like ours."
