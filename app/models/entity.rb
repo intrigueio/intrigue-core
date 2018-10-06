@@ -112,6 +112,9 @@ module Intrigue
           sleep 1
           break if enrichment_complete?
           puts "#{self.type} #{self.name} ... sleeping 1 sec until complete"
+          puts " - Planned: #{enrichment_tasks}"
+          puts " - Scheduled: #{details["enrichment_scheduled"]}"
+          puts " - Complete: #{details["enrichment_complete"]}"
         end
       end
 
