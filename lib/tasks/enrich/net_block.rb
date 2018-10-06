@@ -30,7 +30,7 @@ class EnrichNetBlock < BaseTask
       _log "Skipping lookup, we already have the details"
       out = @entity.details
     else # do the lookup
-      out = whois lookup_string
+      out = whois(lookup_string) || {}
       # make sure not to overwrite the name in the details
       out = out.merge({"name" => netblock_string, "_hidden_name" => netblock_string})
       # lazy but easier than setting invidually
@@ -45,7 +45,7 @@ class EnrichNetBlock < BaseTask
 
     # check ipv6
     if _get_entity_name =~ /::/
-      _set_entity_detail "ipv6"
+      _set_entity_detail "ipv6", true
     end
 
     ### Determine if scoped
