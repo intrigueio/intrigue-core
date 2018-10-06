@@ -142,7 +142,7 @@ GEM
     i18n (1.1.0)
       concurrent-ruby (~> 1.0)
     iconv (1.0.5)
-    intrigue-ident (0.68)
+    intrigue-ident (0.69)
     intrigue_api_client (1.2.4)
       json (~> 1.8)
       rest-client (~> 1.8)
