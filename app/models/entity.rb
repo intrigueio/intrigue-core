@@ -115,7 +115,13 @@ module Intrigue
         end
       end
 
+      # overridden in the individual entities
+      def enrichment_tasks
+        []
+      end
+
       def enrichment_complete?
+        # note that enrichment_tasks method is overridden in the entity defs
         true if details["enrichment_complete"] == enrichment_tasks
       end
 

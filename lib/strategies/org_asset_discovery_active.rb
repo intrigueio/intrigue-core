@@ -73,7 +73,7 @@ module Strategy
         transferred = entity.get_detail("transferred")
         scannable = ( entity.scoped || whitelisted ) && !transferred
 
-        task_result.log "Scoped: #{entity.check_scoped}"
+        task_result.log "Scoped: #{entity.scoped}"
         task_result.log "Whitelisted: #{whitelisted}"
         task_result.log "Transferred: #{transferred}"
 
