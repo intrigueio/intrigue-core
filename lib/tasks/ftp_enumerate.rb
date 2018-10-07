@@ -58,7 +58,11 @@ class FtpEnumerate < BaseTask
         rescue Net::FTPPermError => e
           _log_error "unable to log in, proceeding"
         rescue EOFError => e
-          _log_error "eof reached"
+          _log_error "eof reached when connecting, failing"
+          return
+        rescue Errno::ECONNREFUSED => e
+          _log_error "connection refused when connecting, failing"
+          return
         end
 
         begin
