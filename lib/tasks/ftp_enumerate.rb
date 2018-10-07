@@ -97,6 +97,8 @@ class FtpEnumerate < BaseTask
         _set_entity_detail("ftp_enumerate", out)
         _log out
 
+      rescue EOFError => e
+        _log_error "Unable to connect: #{e}"
       rescue SocketError => e
         _log_error "Unable to connect: #{e}"
       rescue Net::FTPPermError=> e
