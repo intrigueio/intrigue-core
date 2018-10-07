@@ -28,29 +28,36 @@ class EnrichDnsRecord < BaseTask
 
     # Do a lookup and keep track of all aliases
     results = resolve_names(lookup_name)
+    _log "Creating aliases"
     _create_aliases(results)
 
     # Create new entities if we found vhosts / aliases
+    _log "Creating vhost services"
     _create_vhost_entities(lookup_name)
 
+    _log "Grabbing resolutions"
     _set_entity_detail("resolutions", collect_resolutions(results) )
 
+    _log "Grabbing SOA"
     _set_entity_detail("soa_record", collect_soa_details(lookup_name))
 
     # grab any / all MX records (useful to see who accepts mail)
+    _log "Grabbing MX"
     _set_entity_detail("mx_records", collect_mx_records(lookup_name))
 
     # collect TXT records (useful for random things)
+    _log "Grabbing TXT"
     _set_entity_detail("txt_records", collect_txt_records(lookup_name))
 
     # grab any / all SPF records (useful to see who accepts mail)
+    _log "Grabbing SPF"
     _set_entity_detail("spf_record", collect_spf_details(lookup_name))
 
     # handy in general, do this for all SOA records
     #if _get_entity_detail("soa_record")
     #  _log_good "Creating domain: #{_get_entity_name}"
     #  _create_entity "Domain", "name" => _get_entity_name
-    if # check if tld
+    if _get_entity_detail("soa_record")# check if tld
       # one at a time, check all known TLDs and see what we have left. if we
       # have a single string, this is TLD and we should create it as a domain
       suffix_list = File.open("#{$intrigue_basedir}/data/public_suffix_list.clean.txt").read.split("\n")
@@ -100,7 +107,7 @@ class EnrichDnsRecord < BaseTask
       ### Create aliased entities
       ####
       results.each do |result|
-        _log "Creating entity for... #{result["name"]}"
+        _log "Creating entity for... #{result}"
         if "#{result["name"]}".is_ip_address?
           _create_entity("IpAddress", { "name" => result["name"] }, @entity)
         else

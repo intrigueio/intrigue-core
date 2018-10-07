@@ -41,7 +41,6 @@ class EnrichIpAddress < BaseTask
     ### Create aliased entities
     ####
     results.each do |result|
-
       _log "Creating entity for... #{result["name"]}"
       if "#{result["name"]}".is_ip_address?
         _create_entity("IpAddress", { "name" => result["name"] }, @entity)

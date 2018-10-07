@@ -66,7 +66,7 @@ module Intrigue
                 "lookup_details" => [{
                   "request_record" => lookup_name,
                   "response_record_type" => resource.type.to_s,
-                  "response_record_data" => resource.rdata,
+                  "response_record_data" => resource.rdata.to_s,
                   "nameservers" => resolver.config.nameserver }]} if resource.respond_to? :address
 
               resources << {
