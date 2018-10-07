@@ -13,11 +13,19 @@ module Strategy
       }
     end
 
+
+    # Recurse should receive a fully enriched object from the creator task
     def recurse(entity, task_result)
 
       filter_strings = task_result.scan_result.whitelist_strings
 
+      # only applicable to dns_record, domain, and netblock for now
+      # whitelisted still checks project name, so leave it for now
+      whitelisted = "#{entity.get_detail("whois_full_text")}".downcase =~ /#{filter_strings.map{|x| Regexp.escape(x.downcase) }.join("|")}/i
+
       if entity.type_string == "Domain"
+
+        return unless (entity.scoped || whitelisted)
 
         start_recursive_task(task_result,"search_crt", entity,[
           {"name" => "extract_pattern", "value" => filter_strings.first }
@@ -63,9 +71,6 @@ module Strategy
         end
 
       elsif entity.type_string == "NetBlock"
-
-        # whitelisted still checks project name, so leave it for now
-        whitelisted = "#{entity.get_detail("whois_full_text")}".downcase =~ /#{filter_strings.map{|x| Regexp.escape(x.downcase) }.join("|")}/i
 
         transferred = entity.get_detail("transferred")
         scannable = ( entity.scoped || whitelisted ) && !transferred

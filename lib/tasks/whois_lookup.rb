@@ -92,7 +92,7 @@ class WhoisLookup < BaseTask
   end
 
   def whois_safe(string)
-    out = whois string
+    out = whois(string)#.merge({"name" => string})
 
     unless out
       _log_error "unable to query, failing"
