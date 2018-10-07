@@ -14,7 +14,6 @@ module Strategy
     end
 
     def recurse(entity, task_result)
-      puts "Recurse called for #{task_result.name} #{entity.name}... recursing"
 
       if entity.type_string == "Netblock"
         start_recursive_task(task_result,"masscan_scan",entity,[

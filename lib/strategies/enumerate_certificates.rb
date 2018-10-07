@@ -14,7 +14,6 @@ module Strategy
     end
 
     def recurse(entity, task_result)
-      puts "Recurse called for #{task_result.name} #{entity.name}... recursing"
       if entity.type_string == "Uri"
         start_recursive_task(task_result,"uri_gather_ssl_certificate",entity, [
           {"name" => "parse_entities", "value" => false }

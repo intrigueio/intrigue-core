@@ -14,7 +14,6 @@ module Strategy
     def perform(entity_id, task_result_id)
       task_result = Intrigue::Model::TaskResult.first(:id => task_result_id)
       entity = Intrigue::Model::Entity.first(:id => entity_id)
-      puts "Perform called for #{task_result.name} #{entity.name}... recursing"
       recurse(entity, task_result)
     end
 
