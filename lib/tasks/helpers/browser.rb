@@ -33,6 +33,8 @@ module Task
         Process.kill('KILL', driver_pid )
       rescue Errno::ESRCH
         # already dead
+      rescue Net::ReadTimeout => e
+        _log "hey it happens.. #{e}"
       end
 
     end
