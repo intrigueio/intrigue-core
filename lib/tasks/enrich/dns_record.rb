@@ -39,64 +39,46 @@ class EnrichDnsRecord < BaseTask
     _set_entity_detail("resolutions", collect_resolutions(results) )
 
     _log "Grabbing SOA"
-    _set_entity_detail("soa_record", collect_soa_details(lookup_name))
+    soa_details = collect_soa_details(lookup_name)
+    _set_entity_detail("soa_record", soa_details)
+    check_and_create_domain(soa_details["primary_name_server"]) if soa_details
+
+    # possible we're a tld, so do a whois query
+    if soa_details
+
+      # grab whois info
+      out = whois(lookup_name)
+      if out
+        _set_entity_detail("whois_full_text", out["whois_full_text"])
+        _set_entity_detail("nameservers", out["nameservers"])
+        _set_entity_detail("contacts", out["contacts"])
+      end
+
+      # create domains from each of the nameservers
+      out["nameservers"].each do |n|
+        check_and_create_domain(n)
+      end
+
+    end
 
     # grab any / all MX records (useful to see who accepts mail)
     _log "Grabbing MX"
-    _set_entity_detail("mx_records", collect_mx_records(lookup_name))
+    mx_records = collect_mx_records(lookup_name)
+    _set_entity_detail("mx_records", mx_records)
+    mx_records.each{|mx| check_and_create_domain(mx["host"]) }
 
     # collect TXT records (useful for random things)
     _log "Grabbing TXT"
-    _set_entity_detail("txt_records", collect_txt_records(lookup_name))
+    txt_records = collect_txt_records(lookup_name)
+    _set_entity_detail("txt_records", txt_records)
 
     # grab any / all SPF records (useful to see who accepts mail)
     _log "Grabbing SPF"
-    _set_entity_detail("spf_record", collect_spf_details(lookup_name))
+    spf_details = collect_spf_details(lookup_name)
+    _set_entity_detail("spf_record", spf_details)
 
-    # handy in general, do this for all SOA records
-    #if _get_entity_detail("soa_record")
-    #  _log_good "Creating domain: #{_get_entity_name}"
-    #  _create_entity "Domain", "name" => _get_entity_name
-    if _get_entity_detail("soa_record")# check if tld
-      # one at a time, check all known TLDs and see what we have left. if we
-      # have a single string, this is TLD and we should create it as a domain
-      suffix_list = File.open("#{$intrigue_basedir}/data/public_suffix_list.clean.txt").read.split("\n")
-      clean_suffix_list = suffix_list.map{|l| "#{l.downcase}".chomp }
-      clean_suffix_list.each do |l|
-        entity_name = "#{_get_entity_name}".downcase
-        suffix = "#{l.chomp}".downcase
-        # determine if there's a match with this suffix
-        if entity_name =~ /#{suffix}$/
-          # if so, remove it
-          remove_length = ".#{suffix}".length
-          x = entity_name[0..-remove_length]
-          if x.split(".").length == 1
-
-            _log "Yahtzee, we are a TLD: #{entity_name}!"
-
-            # since we are creating an identical domain, send up the details
-            e = _create_entity "Domain", {
-              "name" => "#{entity_name}",
-              "resolutions" => _get_entity_detail("resolutions"),
-              "soa_record" => _get_entity_detail("soa_record"),
-              "mx_records" => _get_entity_detail("mx_records"),
-              "txt_records" => _get_entity_detail("txt_records"),
-              "spf_record" => _get_entity_detail("spf_record")}
-
-          elsif x.last == "." # clean
-            inferred_tld = "#{x.split(".").last}.#{suffix}"
-            _log "Inferred TLD: #{inferred_tld}"
-
-            # make sure we don't accidentially create another TLD (co.uk)
-            next if clean_suffix_list.include? inferred_tld
-
-            e = _create_entity "Domain", "name" => "#{inferred_tld}"
-          else
-            _log "Incorrect match: #{suffix}"
-          end
-        end
-      end;nil
-    end
+    # create a domain for this entity
+    check_and_create_domain(lookup_name)
 
   end
 

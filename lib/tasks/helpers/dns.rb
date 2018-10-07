@@ -106,6 +106,7 @@ module Intrigue
                            !response.empty? &&
                            response.first["lookup_details"].first["response_record_type"] == "SOA"
 
+        soa = nil
         unless skip
           data = response.first["lookup_details"].first["response_record_data"]
 
@@ -127,9 +128,6 @@ module Intrigue
             "nonauthoritative_after" => data[5],
             "retry_fail_after" => data[6]
           }
-
-        else
-          soa = false
         end
       soa
       end
@@ -220,6 +218,53 @@ module Intrigue
         end
 
       dns_entries.uniq
+      end
+
+      def check_and_create_domain(lookup_name)
+        # handy in general, do this for all TLDs
+        #if _get_entity_detail("soa_record")
+        #  _log_good "Creating domain: #{_get_entity_name}"
+        #  _create_entity "Domain", "name" => _get_entity_name
+        # one at a time, check all known TLDs and see what we have left. if we
+        # have a single string, this is TLD and we should create it as a domain
+        suffix_list = File.open("#{$intrigue_basedir}/data/public_suffix_list.clean.txt").read.split("\n")
+        clean_suffix_list = suffix_list.map{|l| "#{l.downcase}".chomp }
+
+        # for each TLD suffix
+        clean_suffix_list.each do |l|
+          entity_name = "#{lookup_name}".downcase # TODO - downcase necessary?
+          suffix = "#{l.chomp}".downcase
+          # determine if there's a match with this suffix
+          if entity_name =~ /\.#{suffix}$/
+            # if so, remove it
+            remove_length = ".#{suffix}".length
+            x = entity_name[0..-remove_length]
+            if x.split(".").length == 1
+
+              _log "Yahtzee, we are a TLD: #{entity_name}!"
+
+              # since we are creating an identical domain, send up the details
+              e = _create_entity "Domain", {
+                "name" => "#{lookup_name}",
+                "resolutions" => _get_entity_detail("resolutions"),
+                "soa_record" => _get_entity_detail("soa_record"),
+                "mx_records" => _get_entity_detail("mx_records"),
+                "txt_records" => _get_entity_detail("txt_records"),
+                "spf_record" => _get_entity_detail("spf_record")}
+
+            elsif x.last == "." # clean
+              inferred_tld = "#{x.split(".").last}.#{suffix}"
+              _log "Inferred TLD: #{inferred_tld}"
+
+              # make sure we don't accidentially create another TLD (co.uk)
+              next if clean_suffix_list.include? inferred_tld
+
+              e = _create_entity "Domain", "name" => "#{inferred_tld}"
+            else
+              _log "Subtracting suffix (#{suffix}) doesnt make this a tld, moving on."
+            end
+          end
+        end
       end
 
     end
