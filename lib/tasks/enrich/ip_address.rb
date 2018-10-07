@@ -33,7 +33,7 @@ class EnrichIpAddress < BaseTask
     ########################
     ## Handle ANY Records ##
     ########################
-    results = resolve(lookup_name)
+    results = resolve_ips(lookup_name)
 
     _log "Got results: #{results}"
 
@@ -78,7 +78,7 @@ class EnrichIpAddress < BaseTask
     _set_entity_detail("geolocation", location_hash)
 
     # scoping ... HACKY
-    if @entity.created_by? "masscan_scan" 
+    if @entity.created_by? "masscan_scan"
       @entity.scoped = true
       @entity.save
     end

@@ -27,7 +27,7 @@ class EnrichDnsRecord < BaseTask
     lookup_name = _get_entity_name
 
     # Do a lookup and keep track of all aliases
-    results = resolve(lookup_name)
+    results = resolve_names(lookup_name)
     _create_aliases(results)
 
     # Create new entities if we found vhosts / aliases
@@ -64,8 +64,18 @@ class EnrichDnsRecord < BaseTask
           remove_length = ".#{suffix}".length
           x = entity_name[0..-remove_length]
           if x.split(".").length == 1
+
             _log "Yahtzee, we are a TLD: #{entity_name}!"
-            e = _create_entity "Domain", "name" => "#{entity_name}"
+
+            # since we are creating an identical domain, send up the details
+            e = _create_entity "Domain", {
+              "name" => "#{entity_name}",
+              "resolutions" => _get_entity_detail("resolutions"),
+              "soa_record" => _get_entity_detail("soa_record"),
+              "mx_records" => _get_entity_detail("mx_records"),
+              "txt_records" => _get_entity_detail("txt_records"),
+              "spf_record" => _get_entity_detail("spf_record")}
+
           elsif x.last == "." # clean
             inferred_tld = "#{x.split(".").last}.#{suffix}"
             _log "Inferred TLD: #{inferred_tld}"

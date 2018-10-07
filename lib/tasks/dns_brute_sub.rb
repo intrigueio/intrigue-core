@@ -28,7 +28,7 @@ class DnsBruteSub < BaseTask
         {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_sub.list" },
         {:name => "brute_alphanumeric_size", :type => "Integer", :regex => "integer", :default => 0 },
-        {:name => "threads", :type => "Integer", :regex => "integer", :default => 1 },
+        {:name => "threads", :type => "Integer", :regex => "integer", :default => 10 },
       ],
       :created_types => ["DnsRecord"]
     }
@@ -122,8 +122,6 @@ class DnsBruteSub < BaseTask
                     #_log "Creating... #{rr}"
                     if rr["name"].is_ip_address?
                       _log "Skipping IP... #{rr}"
-                      # skip this, we'll get it
-                      #_create_entity("IpAddress", rr.except!("record_type"), main_entity )
                     else
                       _create_entity("DnsRecord", {"name" => rr["name"]}, main_entity )
                     end
@@ -199,7 +197,6 @@ class DnsBruteSub < BaseTask
   end
 
   def _resolve(hostname)
-    #_log "Trying to resolve #{hostname}"
     resolve_name(hostname)
   end
 
@@ -258,9 +255,7 @@ class DnsBruteSub < BaseTask
 
           _log "Known wildcard count: #{all_discovered_wildcards.uniq.count}"
           _log "Known wildcards: #{all_discovered_wildcards.uniq}"
-
         end
-
 
       elsif all_discovered_wildcards.uniq.count == 1
         _log "Only a single wildcard ip: #{all_discovered_wildcards.sort.uniq}"

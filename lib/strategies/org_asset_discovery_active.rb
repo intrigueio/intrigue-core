@@ -25,7 +25,7 @@ module Strategy
         ])
 
         start_recursive_task(task_result,"dns_brute_sub",entity,[
-          {"name" => "threads", "value" => 6 },
+          {"name" => "threads", "value" => 10 },
           {"name" => "use_file", "value" => true },
           {"name" => "brute_alphanumeric_size", "value" => 3 }])
 
@@ -40,7 +40,7 @@ module Strategy
       elsif entity.type_string == "DnsRecord"
 
         start_recursive_task(task_result,"dns_brute_sub",entity,[
-          {"name" => "threads", "value" => 3 }])
+          {"name" => "threads", "value" => 5 }])
 
           base_name = entity.name.split(".")[0...-1].join(".")
           start_recursive_task(task_result,"aws_s3_brute",entity,[

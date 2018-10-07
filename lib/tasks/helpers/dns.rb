@@ -1,18 +1,20 @@
-
-
 module Intrigue
   module Task
     module Dns
 
       include Intrigue::Task::Generic
 
+      def resolve_ips(lookup_name, lookup_types=[Dnsruby::Types::PTR])
+        resolve_names(lookup_name,lookup_types)
+      end
+
       # convenience method to just send back name
-      def resolve_name(lookup_name, lookup_types=[Dnsruby::Types::A, Dnsruby::Types::CNAME, Dnsruby::Types::PTR])
+      def resolve_name(lookup_name, lookup_types=[Dnsruby::Types::A, Dnsruby::Types::CNAME])
         resolve_names(lookup_name,lookup_types).first
       end
 
       # convenience method to just send back names
-      def resolve_names(lookup_name, lookup_types=[Dnsruby::Types::A, Dnsruby::Types::CNAME, Dnsruby::Types::PTR])
+      def resolve_names(lookup_name, lookup_types=[Dnsruby::Types::A, Dnsruby::Types::CNAME])
 
         names = []
         x = resolve(lookup_name, lookup_types)
@@ -21,7 +23,7 @@ module Intrigue
       names.uniq
       end
 
-      def resolve(lookup_name, lookup_types=[Dnsruby::Types::A, Dnsruby::Types::CNAME, Dnsruby::Types::PTR])
+      def resolve(lookup_name, lookup_types=[Dnsruby::Types::A, Dnsruby::Types::CNAME])
 
         resolver_name = _get_system_config "resolver"
 
@@ -29,7 +31,7 @@ module Intrigue
           resolver = Dnsruby::Resolver.new(
             :search => [],
             :nameserver => [resolver_name],
-            :query_timeout => 5
+            :query_timeout => 3
           )
 
           results = []
@@ -37,10 +39,13 @@ module Intrigue
             begin
               #_log "Attempting lookup on #{lookup_name} with type #{t}"
               results << resolver.query(lookup_name, t)
+              puts results
             rescue Dnsruby::NXDomain => e
+              _log_error "Unable to resolve: #{lookup_name}, no such domain: #{e}"
+            rescue Dnsruby::ResolvTimeout => e
+              _log_error "Unable to resolve: #{lookup_name}, timed out: #{e}, query_type: #{t}"
             end
           end
-
 
           # For each of the found addresses
           resources = []
