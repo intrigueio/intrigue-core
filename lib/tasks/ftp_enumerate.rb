@@ -81,6 +81,8 @@ class FtpEnumerate < BaseTask
           ]
         rescue Net::FTPPermError => e
           _log_error "unable to collect directory info, not logged in"
+        rescue Errno::EPIPE => e
+          _log_error "Unable to connect: #{e}"
         rescue EOFError => e
           _log_error "eof reached"
         end
@@ -98,6 +100,8 @@ class FtpEnumerate < BaseTask
         _log out
 
       rescue EOFError => e
+        _log_error "Unable to connect: #{e}"
+      rescue Errno::EPIPE => e
         _log_error "Unable to connect: #{e}"
       rescue SocketError => e
         _log_error "Unable to connect: #{e}"
