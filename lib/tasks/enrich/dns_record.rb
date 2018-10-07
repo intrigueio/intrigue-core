@@ -55,8 +55,10 @@ class EnrichDnsRecord < BaseTask
       end
 
       # create domains from each of the nameservers
-      out["nameservers"].each do |n|
-        check_and_create_domain(n)
+      if out["nameservers"]
+        out["nameservers"].each do |n|
+          check_and_create_domain(n)
+        end
       end
 
     end
