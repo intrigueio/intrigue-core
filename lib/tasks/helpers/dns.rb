@@ -39,11 +39,14 @@ module Intrigue
             begin
               #_log "Attempting lookup on #{lookup_name} with type #{t}"
               results << resolver.query(lookup_name, t)
-              puts results
             rescue Dnsruby::NXDomain => e
               _log_error "Unable to resolve: #{lookup_name}, no such domain: #{e}"
+            rescue Dnsruby::SocketEofResolvError => e
+              _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
+            rescue Dnsruby::ServFail => e
+              _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
             rescue Dnsruby::ResolvTimeout => e
-              _log_error "Unable to resolve: #{lookup_name}, timed out: #{e}, query_type: #{t}"
+              _log_error "Unable to resolve: #{lookup_name}, timed out: #{e}"
             end
           end
 
@@ -203,7 +206,11 @@ module Intrigue
         ####
         dns_entries = []
         results.each do |result|
-          # Clean up the dns data
+
+          # skip anything without a lookup
+          next unless result["lookup_details"]
+
+          # Clean up the response and make it serializable
           xtype = result["lookup_details"].first["response_record_type"].to_s.sanitize_unicode
           lookup_details = result["lookup_details"].first["response_record_data"]
           if lookup_details.kind_of?(Dnsruby::IPv4) || lookup_details.kind_of?(Dnsruby::IPv6) || lookup_details.kind_of?(Dnsruby::Name)
@@ -215,6 +222,7 @@ module Intrigue
           end
           dns_entries << { "response_data" => xdata, "response_type" => xtype }
         end
+
       dns_entries.uniq
       end
 
