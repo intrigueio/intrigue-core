@@ -16,6 +16,8 @@ module Whois
       sleep_seconds = rand(60)
       sleep sleep_seconds
       return whois(lookup_string)
+    rescue ::Whois::WebInterfaceError => e
+      _log_error "TLD has no WHOIS Server, go to the web interface: #{e}"
     rescue ::Whois::AllocationUnknown => e
       _log_error "Strange. This block is unknown: #{e}"
     rescue ::Whois::ConnectionError => e
