@@ -27,7 +27,7 @@ class EnrichDnsRecord < BaseTask
     lookup_name = _get_entity_name
 
     # Do a lookup and keep track of all aliases
-    results = resolve_names(lookup_name)
+    results = resolve(lookup_name)
     _log "Creating aliases"
     _create_aliases(results)
 

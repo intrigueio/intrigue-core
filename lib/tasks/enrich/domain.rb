@@ -28,7 +28,9 @@ class EnrichDomain < BaseTask
 
     # Do a lookup, skip if we already have it (TLD case)
     unless _get_entity_detail("resolutions")
+
       results = resolve(lookup_name)
+
       _set_entity_detail("resolutions", collect_resolutions(results) )
 
           # grab any / all SOA record

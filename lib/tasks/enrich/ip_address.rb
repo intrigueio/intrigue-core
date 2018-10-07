@@ -33,7 +33,7 @@ class EnrichIpAddress < BaseTask
     ########################
     ## Handle ANY Records ##
     ########################
-    results = resolve_ips(lookup_name)
+    results = resolve(lookup_name)
 
     _log "Got results: #{results}"
 

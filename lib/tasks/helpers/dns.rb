@@ -4,10 +4,6 @@ module Intrigue
 
       include Intrigue::Task::Generic
 
-      def resolve_ips(lookup_name, lookup_types=[Dnsruby::Types::PTR])
-        resolve_names(lookup_name,lookup_types)
-      end
-
       # convenience method to just send back name
       def resolve_name(lookup_name, lookup_types=[Dnsruby::Types::A, Dnsruby::Types::CNAME])
         resolve_names(lookup_name,lookup_types).first
