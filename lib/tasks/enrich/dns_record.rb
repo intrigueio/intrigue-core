@@ -52,13 +52,14 @@ class EnrichDnsRecord < BaseTask
         _set_entity_detail("whois_full_text", out["whois_full_text"])
         _set_entity_detail("nameservers", out["nameservers"])
         _set_entity_detail("contacts", out["contacts"])
-      end
 
-      # create domains from each of the nameservers
-      if out["nameservers"]
-        out["nameservers"].each do |n|
-          check_and_create_domain(n)
+        # create domains from each of the nameservers
+        if out["nameservers"]
+          out["nameservers"].each do |n|
+            check_and_create_domain(n)
+          end
         end
+
       end
 
     end

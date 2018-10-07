@@ -64,6 +64,7 @@ class EnrichDomain < BaseTask
           check_and_create_domain n
         end
       end
+      
     end
 
   end
