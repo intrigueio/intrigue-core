@@ -12,24 +12,26 @@ module Whois
       whois = ::Whois::Client.new #(:timeout => 60)
       answer = whois.lookup(lookup_string)
     rescue ::Whois::ResponseIsThrottled => e
-      _log_error "Unable to query whois, response throttled, trying again in #{sleep_seconds} secs."
+      _log_error "Unable to query #{lookup_string}, response throttled, trying again in #{sleep_seconds} secs."
       sleep_seconds = rand(60)
       sleep sleep_seconds
       return whois(lookup_string)
+    rescue ::Whois::ServerNotSupported => e
+      _log_error "Server not supported for #{lookup_string} #{e}"
     rescue ::Whois::NoInterfaceError => e
-      _log_error "No interface: #{e}"
+      _log_error "No interface: #{lookup_string} #{e}"
     rescue ::Whois::WebInterfaceError => e
-      _log_error "TLD has no WHOIS Server, go to the web interface: #{e}"
+      _log_error "TLD has no WHOIS Server, go to the web interface: #{lookup_string} #{e}"
     rescue ::Whois::AllocationUnknown => e
-      _log_error "Strange. This block is unknown: #{e}"
+      _log_error "Strange. This object is unknown: #{lookup_string} #{e}"
     rescue ::Whois::ConnectionError => e
-      _log_error "Unable to query whois, connection error: #{e}"
+      _log_error "Unable to query whois, connection error: #{lookup_string} #{e}"
     rescue ::Whois::ServerNotFound => e
-      _log_error "Unable to query whois, server not found: #{e}"
+      _log_error "Unable to query whois, server not found: #{lookup_string} #{e}"
     rescue Errno::ECONNREFUSED => e
-      _log_error "Unable to query whois, connection refused: #{e}"
+      _log_error "Unable to query whois, connection refused: #{lookup_string} #{e}"
     rescue Timeout::Error => e
-      _log_error "Unable to query whois, timed out: #{e}"
+      _log_error "Unable to query whois, timed out: #{lookup_string} #{e}"
     end
 
     unless answer

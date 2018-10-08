@@ -63,6 +63,8 @@ module Scanner
           _log_error "Error requesting resource, skipping: #{uri}"
         rescue SocketError => e
           _log_error "Error requesting resource, skipping: #{uri}"
+        rescue Errno::EPIPE => e
+          _log_error "Error requesting resource, skipping: #{uri}"
         rescue Errno::ECONNRESET => e
           _log_error "Error requesting resource, skipping: #{uri}"
         rescue Errno::ECONNREFUSED => e
