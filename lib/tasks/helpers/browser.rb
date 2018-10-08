@@ -19,22 +19,26 @@ module Task
     def destroy_browser_session(session)
       #session.visit('about:blank')
 
-      # HACK HACK HACK- get the chromedriver process before we quit
-      driver_pid = session.driver.browser.instance_variable_get(:@service).instance_variable_get(:@process).pid
-
-      # attempt to quit gracefully...
-      session.driver.quit
-
       # get the full group id (driver + browser)
       begin
+
+        # HACK HACK HACK- get the chromedriver process before we quit
+        driver_pid = session.driver.browser.instance_variable_get(:@service).instance_variable_get(:@process).pid
+
+        # attempt to quit gracefully...
+        session.driver.quit
+
         pgid = Process.getpgid(driver_pid)
+
         # violent delights have violent ends
         Process.kill('KILL', -pgid )
         Process.kill('KILL', driver_pid )
-      rescue Errno::ESRCH
+
+      rescue Errno::ESRCH => e
         # already dead
+        _log_error "Error trying to kill our browser session #{e}"
       rescue Net::ReadTimeout => e
-        _log "hey it happens.. #{e}"
+        _log_error "Timed out trying to close our session.. #{e}"
       end
 
     end
