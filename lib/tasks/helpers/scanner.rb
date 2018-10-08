@@ -60,21 +60,23 @@ module Scanner
           ## TODO ... follow location headers?
 
         rescue ArgumentError => e
-          _log_error "Error requesting resource, skipping: #{uri}"
+          _log_error "Error requesting resource, skipping: #{uri} #{e}"
         rescue SocketError => e
-          _log_error "Error requesting resource, skipping: #{uri}"
+          _log_error "Error requesting resource, skipping: #{uri} #{e}"
         rescue Errno::EPIPE => e
-          _log_error "Error requesting resource, skipping: #{uri}"
+          _log_error "Error requesting resource, skipping: #{uri} #{e}"
         rescue Errno::ECONNRESET => e
-          _log_error "Error requesting resource, skipping: #{uri}"
+          _log_error "Error requesting resource, skipping: #{uri} #{e}"
         rescue Errno::ECONNREFUSED => e
-          _log_error "Error requesting resource, skipping: #{uri}"
+          _log_error "Error requesting resource, skipping: #{uri} #{e}"
         rescue Errno::EHOSTUNREACH => e
-          _log_error "Error requesting resource, skipping: #{uri}"
+          _log_error "Error requesting resource, skipping: #{uri} #{e}"
+        rescue URI::InvalidURIError => e
+          _log_error "Error requesting resource, skipping: #{uri} #{e}"
         rescue RestClient::RequestTimeout => e
-          _log_error "Timeout requesting resource, skipping: #{uri}"
+          _log_error "Timeout requesting resource, skipping: #{uri} #{e}"
         rescue RestClient::BadRequest => e
-          _log_error "Error requesting resource, skipping: #{uri}"
+          _log_error "Error requesting resource, skipping: #{uri} #{e}"
         rescue RestClient::ResourceNotFound => e
           _log_error "Error (404) requesting resource, creating anyway: #{uri}"
           http_response = true
