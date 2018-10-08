@@ -94,31 +94,34 @@ module Scanner
           http_response = true
           extra_details.merge!("http_server_error" => "#{e}" )
         rescue RestClient::BadGateway => e
+          _log_error "Error (Bad Gateway) requesting resource #{uri}, creating anyway."
           http_response = true
           extra_details.merge!("http_server_error" => "#{e}" )
         rescue RestClient::ServiceUnavailable => e
-          _log_error "Error (503) requesting resource, creating anyway: #{uri}"
+          _log_error "Error (Service Unavailable) requesting resource #{uri}, creating anyway."
           http_response = true
           extra_details.merge!("http_server_error" => "#{e}" )
         rescue RestClient::ServerBrokeConnection => e
-          _log_error "Error requesting resource, creating anyway: #{uri}"
+          _log_error "Error (Server broke connection) requesting resource #{uri}, creating anyway."
           http_response = true
           extra_details.merge!("http_server_error" => "#{e}" )
         rescue RestClient::SSLCertificateNotVerified => e
-          _log_error "Error (SSL Certificate Invalid) requesting resource, creating anyway: #{uri}"
+          _log_error "Error (SSL Certificate Invalid) requesting resource #{uri}, creating anyway."
           http_response = true
           extra_details.merge!("http_server_error" => "#{e}" )
         rescue OpenSSL::SSL::SSLError => e
-          _log_error "Error (SSL Certificate Invalid) requesting resource, creating anyway: #{uri}"
+          _log_error "Error (SSL Certificate Invalid) requesting resource #{uri}, creating anyway."
           http_response = true
           extra_details.merge!("http_server_error" => "#{e}" )
         rescue Net::HTTPBadResponse => e
-          _log_error "Error (Bad HTTP Response) requesting resource, creating anyway: #{uri}"
+          _log_error "Error (Bad HTTP Response) requesting resource #{uri}, creating anyway."
           http_response = true
           extra_details.merge!("http_server_error" => "#{e}" )
-        rescue RestClient::ExceptionWithResponse => err
-          _log_error "Unknown error requesting resource, skipping: #{uri}"
-          _log_error "INVESTIGATE: #{e}"
+        rescue RestClient::ExceptionWithResponse => e
+          _log_error "Unknown error requesting resource #{uri}, skipping"
+          _log_error "#{e}"
+        rescue Zlib::GzipFile::Error => e
+          _log_error "compression error on #{uri}" => e
         end
 
         unless http_response
