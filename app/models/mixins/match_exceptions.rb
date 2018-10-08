@@ -11,7 +11,10 @@ module MatchExceptions
 
       # Check standard exceptions first
       # (which now live in Intrigue::Ident::TraverseExceptions)
-      return true if non_traversable?(entity_name,type_string)
+      if non_traversable?(entity_name,type_string)
+        #puts "MATCHED STATIC BADLIST"
+        return true
+      end
 
       # if we don't have a list, safe to return false now
       return false unless additional_exception_list
@@ -19,7 +22,11 @@ module MatchExceptions
       # check additional exception strings
       is_an_exception = false
       additional_exception_list.each do |x|
-        return true if entity_name.downcase =~ /#{Regexp.escape(x.downcase)}/
+        if entity_name.downcase =~ /#{Regexp.escape(x.downcase)}$/
+          #puts "EXCEPTION ENTITY!!! Entity Name: #{entity_name.downcase}"
+          #puts "EXCEPTION ENTITY!!! Regex: #{Regexp.escape(x.downcase)}"
+          return true
+        end
       end
 
     false

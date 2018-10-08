@@ -77,7 +77,6 @@ class BaseTask
       #####################################
       # Perform the setup -> run workflow #
       #####################################
-
       unless broken_input_flag
         # Setup creates the following objects:
         # @user_options - a hash of task options
