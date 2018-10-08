@@ -14,6 +14,10 @@ module Strategy
     def perform(entity_id, task_result_id)
       task_result = Intrigue::Model::TaskResult.first(:id => task_result_id)
       entity = Intrigue::Model::Entity.first(:id => entity_id)
+
+      # sanity check before sending us off
+      return unless entity && task_result
+
       recurse(entity, task_result)
     end
 
