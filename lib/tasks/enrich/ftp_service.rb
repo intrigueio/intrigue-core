@@ -44,12 +44,11 @@ class EnrichFtpService < BaseTask
         #fill the first index with a socket
         sockets[0] = TCPSocket.open(ip_address, port)
         while true #loop till it breaks
-
         # listen for a read, timeout 5
         res = select(sockets, nil, nil, 5)
           if res != nil  # a nil is a timeout and will break
-                         # WARNING! THIS PRINTS NIL FOREVER on a server crash
-            banner << sockets[0].gets()
+            break unless sockets[0]
+            banner << sockets[0].gets() # WARNING! THIS PRINTS NIL FOREVER on a server crash
           else
             sockets[0].close
             break
