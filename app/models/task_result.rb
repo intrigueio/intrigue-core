@@ -1,4 +1,4 @@
-module Intrigue
+odule Intrigue
   module Model
     class TaskResult < Sequel::Model
       plugin :validation_helpers
@@ -55,6 +55,10 @@ module Intrigue
 
       def log_error(message)
         logger.log_error(message)
+      end
+
+      def log_fatal(message)
+        logger.log_fatal(message)
       end
 
       def get_log
