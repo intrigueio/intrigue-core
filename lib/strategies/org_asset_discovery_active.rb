@@ -36,7 +36,6 @@ module Strategy
           {"name" => "use_file", "value" => true },
           {"name" => "brute_alphanumeric_size", "value" => 3 }])
 
-        start_recursive_task(task_result,"public_google_groups_check", entity)
         start_recursive_task(task_result,"public_trello_check",entity)
 
         base_name = entity.name.split(".")[0...-1].join(".")
@@ -53,6 +52,8 @@ module Strategy
           start_recursive_task(task_result,"aws_s3_brute",entity,[
             {"name" => "additional_buckets", "value" => "#{base_name},#{entity.name}"}
           ])
+
+          start_recursive_task(task_result,"public_google_groups_check", entity)
 
       elsif entity.type_string == "FtpService"
 
@@ -73,11 +74,17 @@ module Strategy
       elsif entity.type_string == "NetBlock"
 
         transferred = entity.get_detail("transferred")
-        scannable = ( entity.scoped || whitelisted ) && !transferred
 
-        task_result.log "Scoped: #{entity.scoped}"
-        task_result.log "Whitelisted: #{whitelisted}"
-        task_result.log "Transferred: #{transferred}"
+        # re-lookup the entity to see if we're now scopeed
+
+        entity_scoped = Intrigue::Model::Entity.first(:id => entity.id).scoped
+
+        scannable = ( entity_scoped || whitelisted ) && !transferred
+
+        task_result.log "#{entity.name} Scoped: #{entity_scoped}"
+        task_result.log "#{entity.name} Whitelisted: #{whitelisted}"
+        task_result.log "#{entity.name} Transferred: #{transferred}"
+        task_result.log "#{entity.name} Scannable: #{scannable}"
 
         # Make sure it's owned by the org, and if it is, scan it. also skip ipv6/
         if scannable
@@ -90,7 +97,7 @@ module Strategy
             {"name"=> "tcp_ports", "value" => "22,23,25,80,81,110,111,139,443,445,2004,3389,8000,8080,8081,8443,10000"}
           ])
         else
-          task_result.log "Cowardly refusing to scan this netblock.. it doesn't look like ours."
+          task_result.log "Cowardly refusing to scan this netblock: #{entity}.. it doesn't look like ours."
         end
 
         # Make sure it's small enough not to be disruptive, and if it is, expand it
