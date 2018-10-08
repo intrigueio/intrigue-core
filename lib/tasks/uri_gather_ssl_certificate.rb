@@ -71,6 +71,13 @@ class UriGatherSslCert  < BaseTask
         return nil
       end
 
+      # fail if no ceritificate
+      unless ssl_socket.peer_cert
+        _log_error "No certificate!!"
+        return nil
+      end
+
+
       # Parse the cert
       cert = OpenSSL::X509::Certificate.new(ssl_socket.peer_cert)
 
