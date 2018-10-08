@@ -1,4 +1,4 @@
-odule Intrigue
+module Intrigue
   module Model
     class TaskResult < Sequel::Model
       plugin :validation_helpers
