@@ -45,6 +45,8 @@ module Intrigue
 
       def log_fatal(message)
         _log "[F] #{message}\n"
+        # call notifiers
+        Intrigue::NotifierFactory.default.each { |x| x.notify(message, task_result) }
       end
 
     private

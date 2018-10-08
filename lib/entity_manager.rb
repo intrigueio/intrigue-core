@@ -132,7 +132,7 @@ class EntityManager
            })
 
           unless entity
-            task_result.log "ERROR! Unable to create entity: #{entity}"
+            task_result.log_fatal "Unable to create entity: #{entity}"
             return nil
           end
 
@@ -141,7 +141,11 @@ class EntityManager
            entity.save
 
         rescue Encoding::UndefinedConversionError => e
-          task_result.log "ERROR! Unable to create entity: #{e}"
+          task_result.log_fatal "Unable to create entity:#{entity}\n #{e}"
+          return nil
+        rescue Sequel::DatabaseError => e
+          task_result.log_fatal "Unable to create entity:#{entity}\n #{e}"
+          return nil
         end
       end
     end
@@ -201,7 +205,10 @@ class EntityManager
     if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
       unless no_traverse_entity
         s = Intrigue::StrategyFactory.create_by_name(task_result.scan_result.strategy)
-        raise "Unknown Strategy!" unless s
+        unless s
+          task_log.log_error "Unknown Strategy!"
+          return created_entity
+        end
         task_result.log "Launching strategy #{task_result.scan_result.strategy} on #{created_entity.name}"
         s.perform_async(created_entity.id, task_result.id)
       end

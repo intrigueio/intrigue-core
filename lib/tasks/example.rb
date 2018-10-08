@@ -66,6 +66,8 @@ class Example < BaseTask
       # notifies via all channels of type "slack" and "enabled" set to true
       #_notify_type "slack", "[slack] Randomly generated an IP address: #{ip_address}"
 
+      _log_fatal "Oh no, it's a fatal error!"
+
       # notifies via a specifically named channel
       #_notify_specific "specific_slack", "[specific_slack] Randomly generated an IP address: #{ip_address}"
 

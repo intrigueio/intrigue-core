@@ -64,6 +64,10 @@ module Generic
     @task_result.logger.log_error message
   end
 
+  def _log_fatal(message)
+    @task_result.logger.log_fatal message
+  end
+
   # Convenience Method to execute a system command semi-safely
   #  !!!! Don't send anything to this without first whitelisting user input!!!
   def _unsafe_system(command)
@@ -102,9 +106,7 @@ module Generic
 
   def _notify(message)
     _log "Notifying via default channels"
-    Intrigue::NotifierFactory.default.each do |x|
-      x.notify(message, @task_result)
-    end
+    Intrigue::NotifierFactory.default.each { |x| x.notify(message, @task_result) }
   end
 
   def _notify_type(notifier_type, message)
