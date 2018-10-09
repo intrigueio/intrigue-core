@@ -4,13 +4,23 @@ module Intrigue
 module Notifier
   class Slack < Intrigue::Notifier::Base
 
+    include Intrigue::Task::WeblogicService
+
     def self.metadata
       { :type => "slack" }
     end
 
     def initialize(config_hash)
       puts "Creating new slack notifier with config: #{config_hash}"
-      @system_base_uri = config_hash["system_base_uri"]
+
+      # Assumes amazon... TODO?
+      if config_hash["system_base_uri"] == "AMAZON"
+        system_ip = http_get_body("http://169.254.169.254/latest/meta-data/public-ipv4")
+        @system_base_uri = config_hash["system_base_uri"]
+      else # use as is
+        @system_base_uri = "http://#{system_ip}:7777"
+      end
+
       @access_key = config_hash["access_key"]
       @bot_name = config_hash["bot_name"]
       @channel_name = config_hash["channel_name"]
