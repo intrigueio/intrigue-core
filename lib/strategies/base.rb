@@ -15,6 +15,9 @@ module Strategy
       task_result = Intrigue::Model::TaskResult.first(:id => task_result_id)
       entity = Intrigue::Model::Entity.first(:id => entity_id)
 
+      # sanity check before sending us off
+      return unless entity && task_result
+
       # hold on recursion until we're enriched
       max_wait_iterations = 100
       until (entity.enriched || entity.enrichment_tasks.empty?)
@@ -32,9 +35,6 @@ module Strategy
         sleep 1
         #puts "Waiting on enrichment... #{entity.type} #{entity.name}: #{entity.enriched}"
       end
-
-      # sanity check before sending us off
-      return unless entity && task_result
 
       recurse(entity, task_result)
     end
