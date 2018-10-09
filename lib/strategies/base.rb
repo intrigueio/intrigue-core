@@ -3,7 +3,7 @@ module Strategy
   class Base
 
     include Sidekiq::Worker
-    sidekiq_options :queue => "scan", :backtrace => true
+    sidekiq_options :queue => "strategy", :backtrace => true
 
     include Intrigue::Task::Helper
 
