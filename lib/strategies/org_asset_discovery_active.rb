@@ -13,7 +13,6 @@ module Strategy
       }
     end
 
-
     # Recurse should receive a fully enriched object from the creator task
     def recurse(entity, task_result)
 
