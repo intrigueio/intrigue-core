@@ -73,15 +73,23 @@ module Strategy
 
       elsif entity.type_string == "NetBlock"
 
+        #task_result.log "#{entity.name} ALREADY Scoped!"
+
         transferred = entity.get_detail("transferred")
 
         # re-lookup the entity to see if we're now scopeed
+        #entity_scoped = false
+        #10.times do
+        #  entity_scoped = Intrigue::Model::Entity.first(:id => entity.id).scoped
+        #  task_result.log "#{entity.name} Scoped!"
+        #  break if entity_scoped
+        #  sleep 1
+        #end
 
-        entity_scoped = Intrigue::Model::Entity.first(:id => entity.id).scoped
+        scannable = ( entity.scoped || whitelisted ) && !transferred
 
-        scannable = ( entity_scoped || whitelisted ) && !transferred
-
-        task_result.log "#{entity.name} Scoped: #{entity_scoped}"
+        task_result.log "#{entity.name} Enriched: #{entity.enriched}"
+        task_result.log "#{entity.name} Scoped: #{entity.scoped}"
         task_result.log "#{entity.name} Whitelisted: #{whitelisted}"
         task_result.log "#{entity.name} Transferred: #{transferred}"
         task_result.log "#{entity.name} Scannable: #{scannable}"
