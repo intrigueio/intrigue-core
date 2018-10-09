@@ -18,8 +18,8 @@ module Strategy
       # sanity check before sending us off
       return unless entity && task_result
 
-      # hold on recursion until we're enriched
-      max_wait_iterations = 600
+      # Hold on recursion until we're enriched
+      max_wait_iterations = 900
       until (entity.enriched || entity.enrichment_tasks.empty?)
         # make sure we re-lookup so we don't get stuck in loop
         entity = Intrigue::Model::Entity.first :id => entity.id
