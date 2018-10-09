@@ -4,7 +4,7 @@ module Intrigue
 module Notifier
   class Slack < Intrigue::Notifier::Base
 
-    include Intrigue::Task::WeblogicService
+    include Intrigue::Task::Web
 
     def self.metadata
       { :type => "slack" }
