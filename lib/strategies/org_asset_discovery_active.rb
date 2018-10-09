@@ -34,7 +34,7 @@ module Strategy
         start_recursive_task(task_result,"dns_brute_sub",entity,[
           {"name" => "threads", "value" => 10 },
           {"name" => "use_file", "value" => true },
-          {"name" => "brute_alphanumeric_size", "value" => 3 }])
+          {"name" => "brute_alphanumeric_size", "value" => 2 }])
 
         start_recursive_task(task_result,"public_trello_check",entity)
 
