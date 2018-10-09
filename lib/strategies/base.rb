@@ -28,12 +28,21 @@ module Strategy
       project = old_task_result.project
 
       # hold on recursion until we're enriched
+      max_wait_iterations = 300
       until (entity.enriched || entity.enrichment_tasks.empty?)
         # make sure we re-lookup so we don't get stuck in loop
         entity = Intrigue::Model::Entity.first :id => entity.id
 
-        sleep 5
-        old_task_result.log "Waiting on enrichment... #{entity.type} #{entity.name}: #{entity.enriched}"
+        # ... enrichment should be fast
+        # don't get stuck in a loop forever (3 mins max)
+        max_wait_iterations-=1
+        if max_wait_iterations < 0
+          old_task_result.log_fatal "Max enrichment wait exceeded for: #{entity.type} #{entity.name}"
+          break
+        end
+
+        sleep 3
+        #puts "Waiting on enrichment... #{entity.type} #{entity.name}: #{entity.enriched}"
       end
 
       # check to see if it already exists, return nil if it does
