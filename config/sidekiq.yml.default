@@ -9,3 +9,4 @@
   task_autoscheduled: 15
   task_browser: 5
   task_enrichment: 100
+  task_scan:50
