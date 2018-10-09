@@ -13,12 +13,12 @@ module Notifier
     def initialize(config_hash)
       puts "Creating new slack notifier with config: #{config_hash}"
 
-      # Assumes amazon... TODO?
+      # Assumes amazon...
       if config_hash["system_base_uri"] == "AMAZON"
         system_ip = http_get_body("http://169.254.169.254/latest/meta-data/public-ipv4")
-        @system_base_uri = config_hash["system_base_uri"]
-      else # use as is
         @system_base_uri = "http://#{system_ip}:7777"
+      else # use as is
+        @system_base_uri = config_hash["system_base_uri"]
       end
 
       @access_key = config_hash["access_key"]
