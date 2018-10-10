@@ -154,9 +154,6 @@ class IntrigueApp < Sinatra::Base
       entity.task_results << task_result
       entity.save
 
-      # manually start enrichment for the first entity
-      entity.enrich(task_result)
-
       redirect "/#{@project_name}/results/#{task_result.id}"
     end
 
@@ -220,7 +217,7 @@ class IntrigueApp < Sinatra::Base
         entity.save
 
         # manually start enrichment for the first entity
-        entity.enrich(task_result) if auto_enrich
+        #entity.enrich(task_result) if auto_enrich
 
       end
 

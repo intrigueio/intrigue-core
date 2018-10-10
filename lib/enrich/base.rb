@@ -6,7 +6,6 @@ class BaseTask
   extend Intrigue::Task::Browser
   extend Intrigue::Task::Data
   extend Intrigue::Task::Dns
-  extend Intrigue::Task::Enrich
   extend Intrigue::Task::Helper
   extend Intrigue::Task::Parse
   extend Intrigue::Task::Product

@@ -6,7 +6,6 @@ class BaseTask
   include Intrigue::Task::Browser
   include Intrigue::Task::Data
   include Intrigue::Task::Dns
-  include Intrigue::Task::Enrich
   include Intrigue::Task::Helper
   include Intrigue::Task::Parse
   include Intrigue::Task::Product
@@ -36,6 +35,26 @@ class BaseTask
 
     begin
       @entity = @task_result.base_entity
+
+      # always enrich before running except when complete or disallowed
+      if @entity.enriched
+        _log "Skipping enrichment, already complete|"
+      else
+        if @task_result.auto_enrich
+          _log "Enriching entity automatically"
+          @entity.enrich(@task_result)
+
+          $db.transaction do
+            _log "Marked enriched: #{@entity.enriched}"
+            @entity.enriched = true
+            @entity.save
+          end
+
+        else
+          _log "Skipping auto-enrichment"
+        end
+      end
+
       @project = @task_result.project
       options = @task_result.options
 
@@ -129,9 +148,9 @@ class BaseTask
     ensure   # Mark it complete and save it
 
       # if it's of type enrichment, finalize enrich
-      if self.class.metadata[:type] == "enrichment"
-        _finalize_enrichment
-      end
+      #if self.class.metadata[:type] == "enrichment"
+      #  _finalize_enrichment
+      #end
 
       _log "Cleaning up!"
       @task_result.timestamp_end = Time.now.getutc

@@ -27,7 +27,7 @@ module Intrigue
           resolver = Dnsruby::Resolver.new(
             :search => [],
             :nameserver => [resolver_name],
-            :query_timeout => 3
+            :query_timeout => 6
           )
 
           results = []

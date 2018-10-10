@@ -6,7 +6,7 @@ class AutonomousSystem < Intrigue::Model::Entity
     {
       :name => "AutonomousSystem",
       :description => "Network Routes",
-      :user_creatable => true
+      :user_creatable => false
     }
   end
 

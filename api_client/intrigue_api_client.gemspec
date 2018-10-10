@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'intrigue_api_client'
-  s.version     = '1.4.1-dev'
+  s.version     = '1.5.0'
   s.date        = '2017-07-17'
   s.summary     = "API client for intrigue-core"
   s.description = "API client for intrigue-core"
