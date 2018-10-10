@@ -16,9 +16,7 @@ class Uri < BaseTask
       :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "details" => {"name" => "https://intrigue.io"}}],
-      :allowed_options => [
-        {:name => "enable_browser", :regex => "boolean", :default => true },
-      ],
+      :allowed_options => [],
       :created_types => [],
       :queue => "task_browser"
     }
@@ -29,7 +27,6 @@ class Uri < BaseTask
     @task_result = task_result
 
     uri = _get_entity_name
-    opt_enable_browser = _get_option "enable_browser"
 
     _log "Making requests"
     # Grab the full response
@@ -60,26 +57,21 @@ class Uri < BaseTask
     headers = []
     response.each_header{|x| headers << "#{x}: #{response[x]}" }
 
-    if opt_enable_browser
-      begin
-        _log "Creating browser session"
-        session = create_browser_session
+    begin
+      _log "Creating browser session"
+      session = create_browser_session
+      
+      # Run the version checking scripts
+      _log "Grabbing Javascript libraries"
+      js_libraries = gather_javascript_libraries(session, uri)
 
-        #  Get existing software details (in case this is a second run)
-        #existing_libraries = _get_entity_detail("javascript") || []
-
-        # Run the version checking scripts
-        _log "Grabbing Javascript libraries"
-        js_libraries = gather_javascript_libraries(session, uri)
-
-        # screenshot
-        _log "Capturing screenshot"
-        encoded_screenshot = capture_screenshot(session, uri)
-      ensure
-        # kill the session / cleanup
-        _log "Destroying browser session"
-        destroy_browser_session(session)
-      end
+      # screenshot
+      _log "Capturing screenshot"
+      encoded_screenshot = capture_screenshot(session, uri)
+    ensure
+      # kill the session / cleanup
+      _log "Destroying browser session"
+      destroy_browser_session(session)
     end
 
     ###

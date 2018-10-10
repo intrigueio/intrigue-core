@@ -11,7 +11,7 @@ module System
       project = Intrigue::Model::Project.find_or_create(:name => "#{project_name}")
 
       # Set exclusion setting
-      auto_enrich = p["auto_enrich"] || false
+      auto_enrich = p["auto_enrich"] || true
       project.use_standard_exceptions = p["use_standard_exceptions"]
       project.additional_exception_list = config["additional_exception_list"]
       project.save
@@ -32,9 +32,6 @@ module System
 
         # Kick off the task
         task_result = start_task(nil, project, nil, task_name, created_entity, depth, options, handlers, machine, auto_enrich)
-
-        # Always enrich
-        Intrigue::EntityManager.enrich_entity(created_entity, task_result)
 
       end
 
