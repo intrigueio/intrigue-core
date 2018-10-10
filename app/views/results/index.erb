@@ -57,7 +57,7 @@ Selected Count: <%= @result_count %><br/>
         <tr>
           <td><%= h x.timestamp_start %> </td>
           <td><a href="/<%=@project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity.to_s %></a> </td>
-          <td><%= h x.entities.count %> </td>
+          <td><%= h x.entities.uniq.count %> </td>
           <td><%= x.complete ? "complete" : "incomplete" %></td>
         </tr>
         <% end %>

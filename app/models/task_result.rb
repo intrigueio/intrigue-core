@@ -46,19 +46,19 @@ module Intrigue
 
       # EXPOSE LOGGING METHODS
       def log(message)
-        logger.log(message)
+        logger.log(" [#{id}] #{message}")
       end
 
       def log_good(message)
-        logger.log_good(message)
+        logger.log_good(" [#{id}] #{message}")
       end
 
       def log_error(message)
-        logger.log_error(message)
+        logger.log_error(" [#{id}] #{message}")
       end
 
       def log_fatal(message)
-        logger.log_fatal(message)
+        logger.log_fatal(" [#{id}] #{message}")
       end
 
       def get_log

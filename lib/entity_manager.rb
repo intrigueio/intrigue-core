@@ -200,34 +200,40 @@ class EntityManager
       unless no_traverse_entity
         # Check if we've alrady run first and return gracefully if so
         if entity.enriched
-          task_result.log "Skipping enrichment... already completed for #{entity}!"
+          task_result.log "SKIPPING ENRICHMENT... already completed for #{created_entity.name}!"
         else
-          entity.enrich(task_result)
+          task_result.log "STARTING ENRICHMENT ON #{created_entity.name}...."
+          created_entity.enrich(task_result)
         end
       end
     end
 
     # should we hold on recursion until we enrich the task here?
 
-    # START MACHINE
+    # START MACHINE IF WE ARE AT A HIGHER DEPTH THAN HAS EVER BEEN STARTED
+
+
     if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
+
+      machine_name = task_result.scan_result.machine
+      #previous_machines = Intrigue::Model::TaskResult.where(:machine => machine_name)
+
       unless no_traverse_entity
 
-        task_result.log "Launching (#{task_result.scan_result.machine}) on #{created_entity.name}"
-
-        m = Intrigue::MachineFactory.create_by_name(task_result.scan_result.machine)
-        unless m
-          task_log.log_error "Unknown Machine!"
+        machine = Intrigue::MachineFactory.create_by_name(machine_name)
+        unless machine
+          task_result.log_error "Unknown Machine!"
           return created_entity
         end
 
         ### XXX TEST - CURRENTLY TRYING THIS IN THE CONTEXT OF THE ORIGINAL TASK (VS ANOTHER BG TASK)
-        m.start(created_entity.id, task_result.id)
+        task_result.log "STARTING MACHINE (#{machine_name}) ON #{created_entity.name}.... #{task_result}"
+        machine.start(created_entity.id, task_result.id)
       end
     end
     # END MACHINE PROCESSING
 
-    task_result.log "Done!"
+    task_result.log "DONE, RETURNING!"
   # return the entity
   created_entity
   end
