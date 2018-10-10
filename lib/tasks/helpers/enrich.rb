@@ -19,7 +19,7 @@ module Enrich
       @entity.save
 
     end
-    
+
     _log "Completed enrichment task!"
   end
 
