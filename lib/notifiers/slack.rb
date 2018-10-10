@@ -44,7 +44,7 @@ module Notifier
         )
       rescue Errno::EADDRNOTAVAIL => e
         # fail silently? :(
-      rescue Slack::Web::Api::Errors::TooManyRequestsError => e
+      rescue ::Slack::Web::Api::Errors::TooManyRequestsError => e
         # fail silently? :(
       rescue Faraday::ConnectionFailed => e
         # fail silently? :(
