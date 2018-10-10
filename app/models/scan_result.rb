@@ -92,7 +92,7 @@ module Intrigue
           "name" => URI.escape(name),
           "depth" => depth,
           "complete" => complete,
-          "strategy" => strategy,
+          "machine" => machine,
           "timestamp_start" => timestamp_start,
           "timestamp_end" => timestamp_end,
           "whitelist_strings" => whitelist_strings,

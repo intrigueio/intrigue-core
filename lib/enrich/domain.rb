@@ -1,6 +1,6 @@
 module Intrigue
-module Task
-class EnrichDomain < BaseTask
+module Enrich
+class Domain < BaseTask
 
   include Intrigue::Task::Dns
 
@@ -21,8 +21,9 @@ class EnrichDomain < BaseTask
     }
   end
 
-  def run
-    super
+  def self.run(entity, task_result)
+    @entity = entity
+    @task_result = task_result
 
     lookup_name = _get_entity_name
 
@@ -64,7 +65,7 @@ class EnrichDomain < BaseTask
           check_and_create_domain n
         end
       end
-      
+
     end
 
   end

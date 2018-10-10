@@ -1,6 +1,5 @@
-
 module Intrigue
-module Task
+module Enrich
 class SslCertificate < BaseTask
 
   def self.metadata
@@ -14,7 +13,7 @@ class SslCertificate < BaseTask
       :passive => false,
       :allowed_types => ["SSLCertificate"],
       :example_entities => [
-        { "type" => "SSLCertificate",
+        { "type" => "SslCertificate",
           "details" => {
             "name" => "example.com (1234567890)",
             "serial" => "12345678900",
@@ -33,8 +32,10 @@ class SslCertificate < BaseTask
   end
 
   ## Default method, subclasses must override this
-  def run
-    super
+  def self.run(entity, task_result)
+    @entity = entity
+    @task_result = task_result
+
     _log "Enriching... nework_service #{_get_entity_name}"
   end
 

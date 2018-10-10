@@ -1,6 +1,6 @@
 module Intrigue
-module Strategy
-  class OrgAssetDiscoveryActive < Intrigue::Strategy::Base
+module Machine
+  class OrgAssetDiscoveryActive < Intrigue::Machine::Base
 
     def self.metadata
       {
@@ -9,12 +9,12 @@ module Strategy
         :passive => false,
         :user_selectable => true,
         :authors => ["jcran"],
-        :description => "This strategy performs a network recon and enumeration for an organization. Suggest starting with a DnsRecord or NetBlock."
+        :description => "This machine performs a network recon and enumeration for an organization. Suggest starting with a DnsRecord or NetBlock."
       }
     end
 
     # Recurse should receive a fully enriched object from the creator task
-    def recurse(entity, task_result)
+    def self.recurse(entity, task_result)
 
       filter_strings = task_result.scan_result.whitelist_strings
 

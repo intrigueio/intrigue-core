@@ -8,7 +8,6 @@ module Generic
 
   private
 
-
   def _threaded_iteration(thread_count, items, funct)
 
     # Create our queue of work from the checks in brute_list

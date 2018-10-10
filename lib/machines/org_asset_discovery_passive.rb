@@ -1,6 +1,6 @@
 module Intrigue
-module Strategy
-  class OrgAssetDiscoveryPassive < Intrigue::Strategy::Base
+module Machine
+  class OrgAssetDiscoveryPassive < Intrigue::Machine::Base
 
     def self.metadata
       {
@@ -9,11 +9,11 @@ module Strategy
         :passive => true,
         :user_selectable => false,
         :authors => ["jcran"],
-        :description => "This strategy tries to enumerate assets with minimal interaction."
+        :description => "This machine tries to enumerate assets with minimal interaction."
       }
     end
 
-    def recurse(entity, task_result)
+    def self.recurse(entity, task_result)
 
       filter_strings = task_result.scan_result.whitelist_strings
 

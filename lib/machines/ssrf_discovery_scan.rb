@@ -1,6 +1,6 @@
 module Intrigue
-module Strategy
-  class SsrfDiscoveryScan < Intrigue::Strategy::Base
+module Machine
+  class SsrfDiscoveryScan < Intrigue::Machine::Base
 
     def self.metadata
       {
@@ -9,11 +9,11 @@ module Strategy
         :passive => true,
         :user_selectable => false,
         :authors => ["jcran"],
-        :description => "This strategy takes a netblock and tests all scanned hosts for SSRF."
+        :description => "This machine takes a netblock and tests all scanned hosts for SSRF."
       }
     end
 
-    def recurse(entity, task_result)
+    def self.recurse(entity, task_result)
 
       if entity.type_string == "Netblock"
         start_recursive_task(task_result,"masscan_scan",entity,[

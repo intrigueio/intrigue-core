@@ -112,30 +112,28 @@ module Intrigue
         []
       end
 
-      def schedule_enrichment(depth=1, scan_result=nil)
-
-        previously_scheduled = get_detail("enrichment_scheduled") || []
-        newly_scheduled = []
-        proj = Intrigue::Model::Project.first(id: self.project_id)
-
-        enrichment_tasks.each do |task_name|
-          unless enrichment_scheduled?(task_name)
-            # now schedule it
-            newly_scheduled << task_name
-            start_task("task_enrichment", proj, scan_result, task_name, self, depth)
-          end
+      def enrich(task_result)
+        if type_string == "AwsS3Bucket"
+          Intrigue::Enrich::AwsS3Bucket.run(self, task_result)
+        elsif type_string == "DnsRecord"
+          Intrigue::Enrich::DnsRecord.run(self, task_result)
+        elsif type_string == "Domain"
+          Intrigue::Enrich::Domain.run(self, task_result)
+        elsif type_string == "FtpService"
+          Intrigue::Enrich::FtpService.run(self, task_result)
+        elsif type_string == "IpAddress"
+          Intrigue::Enrich::IpAddress.run(self, task_result)
+        elsif type_string == "NetBlock"
+          Intrigue::Enrich::NetBlock.run(self, task_result)
+        elsif type_string == "Organization"
+          Intrigue::Enrich::Organization.run(self, task_result)
+        elsif type_string == "SnmpService"
+          Intrigue::Enrich::SnmpService.run(self, task_result)
+        elsif type_string == "SslCertificate"
+          Intrigue::Enrich::SslCertificate.run(self, task_result)
+        elsif type_string == "Uri"
+          Intrigue::Enrich::Uri.run(self, task_result)
         end
-
-        # update our list
-        $db.transaction do
-          self.set_detail "enrichment_scheduled", previously_scheduled.concat(newly_scheduled)
-        end
-
-      end
-
-      def enrichment_scheduled?(task_name)
-        s = details["enrichment_scheduled"]
-        true if s && s.include?(task_name)
       end
 
       def alias(entity)

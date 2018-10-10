@@ -1,6 +1,6 @@
 module Intrigue
-module Task
-class EnrichNetBlock < BaseTask
+module Enrich
+class NetBlock < BaseTask
 
   include Intrigue::Task::Whois
 
@@ -20,8 +20,9 @@ class EnrichNetBlock < BaseTask
     }
   end
 
-  def run
-    super
+  def self.run(entity, task_result)
+    @entity = entity
+    @task_result = task_result
 
     netblock_string = _get_entity_name
     lookup_string = _get_entity_name.split("/").first

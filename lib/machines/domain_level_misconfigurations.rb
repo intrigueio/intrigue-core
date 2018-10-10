@@ -1,6 +1,6 @@
 module Intrigue
-module Strategy
-  class DomainMisconfigurations < Intrigue::Strategy::Base
+module Machine
+  class DomainMisconfigurations < Intrigue::Machine::Base
 
     def self.metadata
       {
@@ -9,11 +9,11 @@ module Strategy
         :passive => true,
         :user_selectable => false,
         :authors => ["jcran"],
-        :description => "This strategy checks for common misconfigurations in a TLD."
+        :description => "This machine checks for common misconfigurations in a TLD."
       }
     end
 
-    def recurse(entity, task_result)
+    def self.recurse(entity, task_result)
       if entity.type_string == "DnsRecord"
         start_recursive_task(task_result,"public_google_groups_check",entity)
         start_recursive_task(task_result,"aws_s3_brute",entity)

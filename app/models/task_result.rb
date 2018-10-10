@@ -66,8 +66,8 @@ module Intrigue
       end
       # END EXPOSE LOGGING METHODS
 
-      def strategy
-        return scan_result.strategy if scan_result
+      def machine
+        return scan_result.machine if scan_result
       nil
       end
 

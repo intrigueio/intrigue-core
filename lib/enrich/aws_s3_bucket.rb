@@ -1,7 +1,6 @@
-
 module Intrigue
-module Task
-class EnrichAwsS3Bucket < BaseTask
+module Enrich
+class AwsS3Bucket < BaseTask
 
   def self.metadata
     {
@@ -24,8 +23,9 @@ class EnrichAwsS3Bucket < BaseTask
   end
 
   ## Default method, subclasses must override this
-  def run
-    super
+  def self.run(entity, task_result)
+    @entity = entity
+    @task_result = task_result
 
     bucket_uri = _get_entity_detail("uri") || _get_entity_name
     bucket_uri.chomp!("/")
@@ -72,7 +72,7 @@ class EnrichAwsS3Bucket < BaseTask
       _notify("Interesting Files: #{interesting_files}")
     end
 
-    ### TODO - determine if scoped 
+    ### TODO - determine if scoped
 
   end
 

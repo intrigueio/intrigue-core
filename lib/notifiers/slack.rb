@@ -11,7 +11,7 @@ module Notifier
     end
 
     def initialize(config_hash)
-      puts "Creating new slack notifier with config: #{config_hash}"
+      #puts "Creating new slack notifier with config: #{config_hash}"
 
       # Assumes amazon...
       if config_hash["system_base_uri"] == "AMAZON"
@@ -34,13 +34,21 @@ module Notifier
         config.token = @access_key
       end
 
-      client = ::Slack::Web::Client.new
-      client.chat_postMessage(
-        text: "#{message}\nMore details at: #{result_url}",
-        as_user: false,
-        username: @bot_name,
-        channel: @channel_name
-      )
+      begin
+        client = ::Slack::Web::Client.new
+        client.chat_postMessage(
+          text: "#{message}\nMore details at: #{result_url}",
+          as_user: false,
+          username: @bot_name,
+          channel: @channel_name
+        )
+      rescue Errno::EADDRNOTAVAIL => e
+        # fail silently? :(
+      rescue Slack::Web::Api::Errors::TooManyRequestsError => e
+        # fail silently? :(
+      rescue Faraday::ConnectionFailed => e
+        # fail silently? :(
+      end
 
     end
   end

@@ -1,40 +1,19 @@
 module Intrigue
-module Strategy
+module Machine
   class Base
 
-    include Sidekiq::Worker
-    sidekiq_options :queue => "strategy", :backtrace => true
-
-    include Intrigue::Task::Helper
+    extend Intrigue::Task::Helper
 
     def self.inherited(base)
-      StrategyFactory.register(base)
+      MachineFactory.register(base)
     end
 
-    def perform(entity_id, task_result_id)
+    def self.start(entity_id, task_result_id)
       task_result = Intrigue::Model::TaskResult.first(:id => task_result_id)
       entity = Intrigue::Model::Entity.first(:id => entity_id)
 
       # sanity check before sending us off
       return unless entity && task_result
-
-      # Hold on recursion until we're enriched
-      max_wait_iterations = 30
-      until (entity.enriched || entity.enrichment_tasks.empty?)
-        # make sure we re-lookup so we don't get stuck in loop
-        entity = Intrigue::Model::Entity.first :id => entity.id
-
-        # ... enrichment should be fast
-        # don't get stuck in a loop forever (3 mins max)
-        max_wait_iterations-=1
-        if max_wait_iterations < 0
-          task_result.log_fatal "Max enrichment wait exceeded for: #{entity.type} #{entity.name}"
-          break
-        end
-
-        sleep 1
-        #puts "Waiting on enrichment... #{entity.type} #{entity.name}: #{entity.enriched}"
-      end
 
       recurse(entity, task_result)
     end
@@ -42,7 +21,7 @@ module Strategy
     ###
     # Helper method for starting a task run
     ###
-    def start_recursive_task(old_task_result, task_name, entity, options=[])
+    def self.start_recursive_task(old_task_result, task_name, entity, options=[])
       project = old_task_result.project
 
       # check to see if it already exists, return nil if it does
@@ -63,7 +42,7 @@ module Strategy
                             old_task_result.depth - 1,
                             options,
                             old_task_result.handlers,
-                            old_task_result.scan_result.strategy,
+                            old_task_result.scan_result.machine,
                             old_task_result.auto_enrich)
 
       end

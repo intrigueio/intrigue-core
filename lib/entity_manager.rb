@@ -70,13 +70,12 @@ class EntityManager
     return nil unless our_entity
     return nil unless our_entity.transform!
     return nil unless our_entity.validate_entity
-
     # ENRICHMENT MUST BE STARTED MANUALLY!!!!!
 
   our_entity
   end
 
-  # This method creates a new entity, and kicks off a strategy
+  # This method creates a new entity, and kicks off a machine
   def self.create_or_merge_entity(task_result,type_string,name,details, primary_entity=nil)
 
     unless task_result && type_string && name && details
@@ -150,8 +149,7 @@ class EntityManager
       end
     end
 
-    # necessary because of our single table inheritance?
-    # TODO - NOT NECESSARY
+    # necessary to relookup?
     created_entity = Intrigue::Model::Entity.find(:id => entity.id)
 
     ### Ensure we have an entity
@@ -160,7 +158,7 @@ class EntityManager
       return nil
     end
 
-    ### Run Transformation
+    ### Run Data Transformation (to hide attributes... HACK)
     unless created_entity.transform!
       task_result.log "ERROR! Transformation of entity failed: #{entity}, failing!!"
       return nil
@@ -177,14 +175,14 @@ class EntityManager
     task_result.save
 
     # Attach the alias.. this can be confusing....
-    #
+    # ----
     # if we already had the entity, it'll already have a group it's associated with.
-    # think about the case of a whoisology lookup where many resolve to a single
+    # think about the case of a domain lookup where many resolve to a single
     # ip address
     if primary_entity
       task_result.log "Aliasing #{created_entity.name} to existing group: #{primary_entity.alias_group_id}"
 
-      #take the smaller group id, and use that to alias together
+      # take the smaller group id, and use that to alias together
       cid = created_entity.alias_group_id
       pid = primary_entity.alias_group_id
 
@@ -197,44 +195,41 @@ class EntityManager
 
     # START ENRICHMENT if we're allowed and unless this entity is an exception (marked as hidden on the entity)
     if task_result.auto_enrich && !entity_already_existed
-      task_result.log "Enriching #{created_entity.name}"
-      enrich_entity(created_entity, task_result) unless no_traverse_entity
-    end
-
-    # START RECURSION BY STRATEGY TYPE
-    if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
+      task_result.log "Launching follow-on enrichment #{created_entity.name}"
+      ### XXX TEST- CURRENTLY TRYING THIS IN THE CONTEXT OF THE ORIGINAL TASK (VS ANOTHER BG TASK)
       unless no_traverse_entity
-        s = Intrigue::StrategyFactory.create_by_name(task_result.scan_result.strategy)
-        unless s
-          task_log.log_error "Unknown Strategy!"
-          return created_entity
+        # Check if we've alrady run first and return gracefully if so
+        if entity.enriched
+          task_result.log "Skipping enrichment... already completed for #{entity}!"
+        else
+          entity.enrich(task_result)
         end
-        task_result.log "Launching strategy #{task_result.scan_result.strategy} on #{created_entity.name}"
-        s.perform_async(created_entity.id, task_result.id)
       end
     end
-    # END PROCESSING OF RECURSION BY STRATEGY TYPE
 
-    task_result.log "Returning!"
+    # should we hold on recursion until we enrich the task here?
+
+    # START MACHINE
+    if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
+      unless no_traverse_entity
+
+        task_result.log "Launching (#{task_result.scan_result.machine}) on #{created_entity.name}"
+
+        m = Intrigue::MachineFactory.create_by_name(task_result.scan_result.machine)
+        unless m
+          task_log.log_error "Unknown Machine!"
+          return created_entity
+        end
+
+        ### XXX TEST - CURRENTLY TRYING THIS IN THE CONTEXT OF THE ORIGINAL TASK (VS ANOTHER BG TASK)
+        m.start(created_entity.id, task_result.id)
+      end
+    end
+    # END MACHINE PROCESSING
+
+    task_result.log "Done!"
   # return the entity
   created_entity
-  end
-
-  def self.enrich_entity(entity, task_result)
-    return unless entity
-
-    # Check if we've alrady run first and return gracefully if so
-    if entity.enriched
-      task_result.log "Skipping enrichment... already completed for #{entity}!"
-      return
-    end
-
-    # set depth / scan result based on the task we're passed
-    scan_result = task_result.scan_result
-    depth = task_result.depth
-
-    task_result.log "Scheduling enrichment (#{entity.enrichment_tasks}) on #{entity}!"
-    entity.schedule_enrichment(depth, scan_result)
   end
 
   private

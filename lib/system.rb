@@ -22,7 +22,7 @@ module System
 
         entity = _parse_entity s["entity"]
         task_name = s["task"] || "create_entity"
-        strategy = s["strategy"] || "org_asset_discovery_active"
+        machine = s["machine"] || "org_asset_discovery_active"
         depth = s["depth"] || 5
         options = s["options"] || []
         handlers = s["handlers"] || []
@@ -31,7 +31,7 @@ module System
         created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"])
 
         # Kick off the task
-        task_result = start_task(nil, project, nil, task_name, created_entity, depth, options, handlers, strategy, auto_enrich)
+        task_result = start_task(nil, project, nil, task_name, created_entity, depth, options, handlers, machine, auto_enrich)
 
         # Always enrich
         Intrigue::EntityManager.enrich_entity(created_entity, task_result)

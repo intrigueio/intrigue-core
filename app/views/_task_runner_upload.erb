@@ -34,21 +34,21 @@
     </div>
   </div>
 
-  <div id="strategy">
+  <div id="machine">
     <div class="form-group">
-      <label for="attrib_name" class="col-xs-4 control-label">Iteration Strategy</label>
+      <label for="attrib_name" class="col-xs-4 control-label">Machine</label>
       <div class="col-xs-8">
-        <select class="form-control input-sm" name="strategy" id="strategy">
+        <select class="form-control input-sm" name="machine" id="machine">
           <!-- iterate through stategies -->
-          <% Intrigue::StrategyFactory.list.each do |strategy_class| %>
-           <% next unless strategy_class.metadata[:user_selectable] %>
-            <option value="<%= strategy_class.metadata[:name] %>"
-              <%= "selected='selected'" if strategy_class.metadata[:name] == "org_asset_discovery_active" %> >
-              <%= strategy_class.metadata[:pretty_name] %>
+          <% Intrigue::MachineFactory.list.each do |machine_class| %>
+           <% next unless machine_class.metadata[:user_selectable] %>
+            <option value="<%= machine_class.metadata[:name] %>"
+              <%= "selected='selected'" if machine_class.metadata[:name] == "org_asset_discovery_active" %> >
+              <%= machine_class.metadata[:pretty_name] %>
             </option>
           <% end %>
         </select>
-        <div class="hint">'Strategy' specifies the strategy that will be used to iterate.</div>
+        <div class="hint">'Machine' specifies the post-processor for each new entity.</div>
       </div>
     </div>
   </div>
@@ -58,7 +58,7 @@
       <label for="attrib_name" class="col-xs-4 control-label">Iterations</label>
       <div class="col-xs-8">
         <select class="form-control input-sm" name="depth" id="depth">
-          <option value=1 selected="true">Interactive</option>
+          <option value=1 selected="true">None</option>
           <option value=2>2 Iterations</option>
           <option value=3>3 Iterations</option>
           <option value=4>4 Iterations</option>
@@ -67,7 +67,7 @@
           <option value=7>7 Iterations</option>
           <option value=8>8 Iterations</option>
         </select>
-        <div class="hint">'Iterations' specifies the depth to which the chosen strategy is run.</div>
+        <div class="hint">'Iterations' specifies the depth to which the machine is run.</div>
       </div>
     </div>
   </div>

@@ -1,7 +1,7 @@
 
 module Intrigue
-module Task
-class EnrichUri < BaseTask
+module Enrich
+class Uri < BaseTask
 
   include Intrigue::Ident
 
@@ -24,8 +24,9 @@ class EnrichUri < BaseTask
     }
   end
 
-  def run
-    super
+  def self.run(entity, task_result)
+    @entity = entity
+    @task_result = task_result
 
     uri = _get_entity_name
     opt_enable_browser = _get_option "enable_browser"
@@ -201,7 +202,7 @@ class EnrichUri < BaseTask
   end
 
 
-  def _check_page_contents_legacy(response)
+  def self._check_page_contents_legacy(response)
 
     ###
     ### Security Seals
@@ -273,7 +274,7 @@ class EnrichUri < BaseTask
   stack
   end
 
-  def _check_uri(uri)
+  def self._check_uri(uri)
     _log "_check_uri called"
     temp = []
     temp << "ASP Classic" if uri =~ /.*\.asp(\?.*)?$/i
@@ -288,7 +289,7 @@ class EnrichUri < BaseTask
   temp
   end
 
-  def _check_generator(response)
+  def self._check_generator(response)
     _log "_check_generator called"
     temp = []
 
@@ -303,11 +304,11 @@ class EnrichUri < BaseTask
   temp
   end
 
-  def _gather_cookies(response)
+  def self._gather_cookies(response)
     header = response.header['set-cookie']
   end
 
-  def _check_cookies(response)
+  def self._check_cookies(response)
     _log "_check_cookies called"
 
     temp = []
@@ -347,7 +348,7 @@ class EnrichUri < BaseTask
 
 
 
-  def _check_x_headers(response)
+  def self._check_x_headers(response)
     _log "_check_x_headers called"
 
     temp = []
@@ -391,7 +392,7 @@ class EnrichUri < BaseTask
   temp
   end
 
-  def _check_server_header(response, response2)
+  def self._check_server_header(response, response2)
     _log "_check_server_header called"
 
     ### Server Header
@@ -419,7 +420,7 @@ class EnrichUri < BaseTask
 
   # This method resolves a header to a probable name in the case of generic
   # names. Otherwise it just matches what was sent.
-  def _resolve_server_header(header_content)
+  def self._resolve_server_header(header_content)
     return nil unless header_content
 
     # Sometimes we're given a generic name, so keep track of the probable server for that name
@@ -440,17 +441,17 @@ class EnrichUri < BaseTask
   web_server_name
   end
 
-  def check_options_endpoint(uri)
+  def self.check_options_endpoint(uri)
     response = http_request(:options, uri)
     (response["allow"] || response["Allow"]) if response
   end
 
-  def check_api_endpoint(response)
+  def self.check_api_endpoint(response)
     return true if response.header['Content-Type'] =~ /application/
   false
   end
 
-  def check_forms(response_body)
+  def self.check_forms(response_body)
     return true if response_body =~ /<form/i
   false
   end

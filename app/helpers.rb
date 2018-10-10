@@ -10,7 +10,7 @@ module Helper
   ### Helper method for starting a task run
   ###
   def start_task(queue, project, existing_scan_result, task_name, entity, depth,
-                  options=[], handlers=[], strategy_name="asset_discovery_active", auto_enrich=true)
+                  options=[], handlers=[], machine_name="asset_discovery_active", auto_enrich=true)
 
     # Create the task result, and associate our entity and options
     task_result = Intrigue::Model::TaskResult.create({
@@ -46,12 +46,12 @@ module Helper
     if !existing_scan_result && depth > 1
 
       scan_result = Intrigue::Model::ScanResult.create({
-        :name => "#{strategy_name}_on_#{entity.name}",
+        :name => "#{machine_name}_on_#{entity.name}",
         :project => project,
         :base_entity_id => entity.id,
         :logger => Intrigue::Model::Logger.create(:project => project),
         :depth => depth,
-        :strategy => strategy_name,
+        :machine => machine_name,
         :whitelist_strings => ["#{entity.name}"], # this is a list of strings that we know are good
         :blacklist_strings => [],
         :handlers => handlers,

@@ -1,6 +1,6 @@
 module Intrigue
-module Task
-class EnrichFtpService < BaseTask
+module Enrich
+class FtpService < BaseTask
 
   def self.metadata
     {
@@ -26,8 +26,9 @@ class EnrichFtpService < BaseTask
   end
 
   ## Default method, subclasses must override this
-  def run
-    super
+  def self.run(entity, task_result)
+    @entity = entity
+    @task_result = task_result
 
     # TODO this won't work once we fix the name regex
     port = _get_entity_detail("port").to_i

@@ -69,8 +69,8 @@ class CoreCli < Thor
     end
   end
 
-  desc "background [Project Name] [Task] [Type#Entity] [Depth] [Option1=Value1#...#...] [Handlers] [Strategy Name] [Auto Enrich]", "Start a single task within a project."
-  def background(project_name,task_name,entity_string,depth=1,option_string=nil,handler_string=nil, strategy_name=nil, auto_enrich=true)
+  desc "background [Project Name] [Task] [Type#Entity] [Depth] [Option1=Value1#...#...] [Handlers] [Machine] [Auto Enrich]", "Start a single task within a project."
+  def background(project_name,task_name,entity_string,depth=1,option_string=nil,handler_string=nil, machine_name=nil, auto_enrich=true)
     # Do the setup
     entity_hash = _parse_entity entity_string
     options_list = _parse_options option_string
@@ -79,13 +79,13 @@ class CoreCli < Thor
 
     @api.create_project(project_name)
 
-    task_result_id = @api.background(project_name,task_name,entity_hash,depth,options_list,handler_list,strategy_name, auto_enrich)
+    task_result_id = @api.background(project_name,task_name,entity_hash,depth,options_list,handler_list,machine_name, auto_enrich)
     puts "Task Result: #{task_result_id}"
   end
 
 
-  desc "start [Project Name] [Task] [Type#Entity] [Depth] [Option1=Value1#...#...] [Handlers] [Strategy Name] [Auto Enrich]", "Start a single task within a project."
-  def start(project_name,task_name,entity_string,depth=1,option_string=nil,handler_string=nil, strategy_name=nil, auto_enrich=true)
+  desc "start [Project Name] [Task] [Type#Entity] [Depth] [Option1=Value1#...#...] [Handlers] [Machine] [Auto Enrich]", "Start a single task within a project."
+  def start(project_name,task_name,entity_string,depth=1,option_string=nil,handler_string=nil, machine_name=nil, auto_enrich=true)
 
     # Do the setup
     entity_hash = _parse_entity entity_string
@@ -98,7 +98,7 @@ class CoreCli < Thor
 
     # Get the response from the API
     puts "[+] Starting Task."
-    @api.start(project_name,task_name,entity_hash,depth,options_list,handler_list,strategy_name, auto_enrich)
+    @api.start(project_name,task_name,entity_hash,depth,options_list,handler_list,machine_name, auto_enrich)
   end
 
   ###
@@ -164,8 +164,8 @@ class CoreCli < Thor
   end
 
 
-  desc "local_load [Project] [Task] [File] [Depth] [Opt1=Val1#Opt2=Val2#...] [Enrich] [Handlers] [Strategy]", "Load entities from a file and runs a task on each in a new project."
-  def local_load(project_name, task_name,filename,depth=1,options_string=nil,enrich=false,handler_string=nil, strategy_name=nil)
+  desc "local_load [Project] [Task] [File] [Depth] [Opt1=Val1#Opt2=Val2#...] [Enrich] [Handlers] [Machine]", "Load entities from a file and runs a task on each in a new project."
+  def local_load(project_name, task_name,filename,depth=1,options_string=nil,enrich=false,handler_string=nil, machine_name=nil)
 
     # Load in the main core file for direct access to TaskFactory and the Tasks
     # This makes this super speedy.
@@ -188,7 +188,7 @@ class CoreCli < Thor
 
       if created_entity
         # kick off the task
-        task_result = start_task(nil, p, nil, task_name, created_entity, depth, options, handlers, strategy_name, enrich)
+        task_result = start_task(nil, p, nil, task_name, created_entity, depth, options, handlers, machine_name, enrich)
       else
         puts "Unable to create entity: #{entity["type"]} #{entity["details"]["name"]}, skipping."
       end

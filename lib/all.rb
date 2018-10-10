@@ -58,10 +58,6 @@ Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 tasks_folder = File.expand_path('../tasks/control', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
-# Load enrich tasks
-tasks_folder = File.expand_path('../tasks/enrich', __FILE__) # get absolute directory
-Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
-
 # Load import tasks
 tasks_folder = File.expand_path('../tasks/import', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
@@ -70,6 +66,10 @@ Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 tasks_folder = File.expand_path('../tasks/vulns', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
+# Load enrichment functions
+require_relative 'enrich/base'
+tasks_folder = File.expand_path('../enrich', __FILE__) # get absolute directory
+Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
 # And check to see if there are any specified load paths
 global_config = $global_config
@@ -84,20 +84,20 @@ if global_config.config["intrigue_task_load_paths"]
 end
 
 ####
-## Strategy-specific libraries
+## Machines
 ####
-require_relative 'strategy_factory'
-require_relative 'strategies/base'
-strategies_folder = File.expand_path('../strategies', __FILE__) # get absolute directory
-Dir["#{strategies_folder}/*.rb"].each {|f| require_relative f}
+require_relative 'machine_factory'
+require_relative 'machines/base'
+machines_folder = File.expand_path('../machines', __FILE__) # get absolute directory
+Dir["#{machines_folder}/*.rb"].each {|f| require_relative f}
 
 # And check to see if there are any specified load paths
 global_config = $global_config
-if global_config.config["intrigue_strategy_load_paths"]
-  global_config.config["intrigue_strategy_load_paths"].each do |load_path|
-    load_path = "#{strategies_folder}/#{load_path}" unless load_path[0] == "/"
+if global_config.config["intrigue_machine_load_paths"]
+  global_config.config["intrigue_machine_load_paths"].each do |load_path|
+    load_path = "#{machines_folder}/#{load_path}" unless load_path[0] == "/"
     Dir["#{load_path}/*.rb"].each do |file|
-      puts "Adding user strategy: #{file}"
+      puts "Adding user machine: #{file}"
       require_relative file
     end
   end

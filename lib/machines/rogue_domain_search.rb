@@ -1,6 +1,6 @@
 module Intrigue
-module Strategy
-  class RogueDomainSearch < Intrigue::Strategy::Base
+module Machine
+  class RogueDomainSearch < Intrigue::Machine::Base
 
     def self.metadata
       {
@@ -9,12 +9,12 @@ module Strategy
         :passive => true,
         :user_selectable => false,
         :authors => ["jcran"],
-        :description => "This strategy runs whois on every domain and allows you to identify rogues."
+        :description => "This machine runs whois on every domain and allows you to identify rogues."
       }
     end
 
-    def recurse(entity, task_result)
-      
+    def self.recurse(entity, task_result)
+
       if entity.type_string == "DnsRecord"
         unless entity.created_by?("whois")
           start_recursive_task(task_result,"whois",entity, [

@@ -1,7 +1,6 @@
-
 module Intrigue
-module Task
-class EnrichSnmp < BaseTask
+module Enrich
+class SnmpService < BaseTask
 
   def self.metadata
     {
@@ -28,8 +27,9 @@ class EnrichSnmp < BaseTask
   end
 
   ## Default method, subclasses must override this
-  def run
-    super
+  def self.run(entity, task_result)
+      @entity = entity
+      @task_result = task_result
 
     port = _get_entity_detail("port").to_i || 161
     protocol = _get_entity_detail "protocol" || "udp"
