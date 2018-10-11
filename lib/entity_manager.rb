@@ -72,6 +72,8 @@ class EntityManager
     return nil unless our_entity.validate_entity
     # ENRICHMENT MUST BE STARTED MANUALLY!!!!!
 
+
+
   our_entity
   end
 
@@ -87,7 +89,7 @@ class EntityManager
     # Do a lookup to make sure we have the latest...
     tr = Intrigue::Model::TaskResult.first(:id => task_result.id)
     if tr.cancelled
-      task_result.log "returning, task was cancelled"
+      task_result.log "Returning, task was cancelled"
       return
     end
 
@@ -107,10 +109,12 @@ class EntityManager
 
     # Check if there's an existing entity, if so, merge and move forward
     if entity
+
       entity.set_details(details.to_h.deep_merge(entity.details.to_h))
 
       # if it already exists, it'll have an alias group ID and we'll
       # want to use that to preserve pre-existing relatiohships
+      # also... prevents an enrichment loop
       entity_already_existed = true
 
     else
@@ -158,7 +162,7 @@ class EntityManager
       return nil
     end
 
-    ### Run Data Transformation (to hide attributes... HACK)
+    ### Run Data transformation (to hide attributes... HACK)
     unless created_entity.transform!
       task_result.log "ERROR! Transformation of entity failed: #{entity}, failing!!"
       return nil
@@ -182,7 +186,7 @@ class EntityManager
     if primary_entity
       task_result.log "Aliasing #{created_entity.name} to existing group: #{primary_entity.alias_group_id}"
 
-      # take the smaller group id, and use that to alias together
+      # Take the smaller group id, and use that to alias together
       cid = created_entity.alias_group_id
       pid = primary_entity.alias_group_id
 
@@ -193,47 +197,28 @@ class EntityManager
       end
     end
 
-    # START ENRICHMENT if we're allowed and unless this entity is an exception (marked as hidden on the entity)
+    # ENRICHMENT LAUNCH
     if task_result.auto_enrich && !entity_already_existed
-      task_result.log "Launching follow-on enrichment #{created_entity.name}"
       ### XXX TEST- CURRENTLY TRYING THIS IN THE CONTEXT OF THE ORIGINAL TASK (VS ANOTHER BG TASK)
-      unless no_traverse_entity
+      if !no_traverse_entity
         # Check if we've alrady run first and return gracefully if so
-        if entity.enriched
-          task_result.log "SKIPPING ENRICHMENT... already completed for #{created_entity.name}!"
+        if created_entity.enriched
+          task_result.log "Skipping enrichment... already completed!"
         else
-          task_result.log "STARTING ENRICHMENT ON #{created_entity.name}...."
+          task_result.log "Starting enrichment!"
+          # starts a new background task... so anything that needs to happen from
+          # this point should happen in that new background task
           created_entity.enrich(task_result)
         end
+      else
+        task_result.log "Skipping enrichment... this is a no-traverse!"
       end
+    else
+      task_result.log "Skipping enrichment... enrich not enabled!" unless task_result.auto_enrich
+      task_result.log "Skipping enrichment... entity exists!" if entity_already_existed
     end
 
-    # should we hold on recursion until we enrich the task here?
-
-    # START MACHINE IF WE ARE AT A HIGHER DEPTH THAN HAS EVER BEEN STARTED
-
-
-    if task_result.scan_result && task_result.depth > 0 # if this is a scan and we're within depth
-
-      machine_name = task_result.scan_result.machine
-      #previous_machines = Intrigue::Model::TaskResult.where(:machine => machine_name)
-
-      unless no_traverse_entity
-
-        machine = Intrigue::MachineFactory.create_by_name(machine_name)
-        unless machine
-          task_result.log_error "Unknown Machine!"
-          return created_entity
-        end
-
-        ### XXX TEST - CURRENTLY TRYING THIS IN THE CONTEXT OF THE ORIGINAL TASK (VS ANOTHER BG TASK)
-        task_result.log "STARTING MACHINE (#{machine_name}) ON #{created_entity.name}.... #{task_result}"
-        machine.start(created_entity.id, task_result.id)
-      end
-    end
-    # END MACHINE PROCESSING
-
-    task_result.log "DONE, RETURNING!"
+    task_result.log "Created entity: #{created_entity.name}"
   # return the entity
   created_entity
   end

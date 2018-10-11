@@ -1,6 +1,7 @@
 module Intrigue
+module Task
 module Enrich
-class FtpService < BaseTask
+class FtpService < Intrigue::Task::BaseTask
 
   def self.metadata
     {
@@ -26,9 +27,7 @@ class FtpService < BaseTask
   end
 
   ## Default method, subclasses must override this
-  def self.run(entity, task_result)
-    @entity = entity
-    @task_result = task_result
+  def run
 
     # TODO this won't work once we fix the name regex
     port = _get_entity_detail("port").to_i
@@ -75,6 +74,7 @@ class FtpService < BaseTask
 
   end
 
+end
 end
 end
 end

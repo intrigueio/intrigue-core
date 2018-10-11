@@ -1,6 +1,7 @@
 module Intrigue
+module Task
 module Enrich
-class Organization < BaseTask
+class Organization < Intrigue::Task::BaseTask
 
   def self.metadata
     {
@@ -25,13 +26,12 @@ class Organization < BaseTask
   end
 
   ## Default method, subclasses must override this
-  def self.run(entity, task_result)
-    @entity = entity
-    @task_result = task_result
+  def run
 
     _log "Enriching... organization #{_get_entity_name}"
   end
 
+end
 end
 end
 end

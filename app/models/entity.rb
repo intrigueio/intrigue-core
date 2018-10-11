@@ -113,26 +113,11 @@ module Intrigue
       end
 
       def enrich(task_result)
-        if type_string == "AwsS3Bucket"
-          Intrigue::Enrich::AwsS3Bucket.run(self, task_result)
-        elsif type_string == "DnsRecord"
-          Intrigue::Enrich::DnsRecord.run(self, task_result)
-        elsif type_string == "Domain"
-          Intrigue::Enrich::Domain.run(self, task_result)
-        elsif type_string == "FtpService"
-          Intrigue::Enrich::FtpService.run(self, task_result)
-        elsif type_string == "IpAddress"
-          Intrigue::Enrich::IpAddress.run(self, task_result)
-        elsif type_string == "NetBlock"
-          Intrigue::Enrich::NetBlock.run(self, task_result)
-        elsif type_string == "Organization"
-          Intrigue::Enrich::Organization.run(self, task_result)
-        elsif type_string == "SnmpService"
-          Intrigue::Enrich::SnmpService.run(self, task_result)
-        elsif type_string == "SslCertificate"
-          Intrigue::Enrich::SslCertificate.run(self, task_result)
-        elsif type_string == "Uri"
-          Intrigue::Enrich::Uri.run(self, task_result)
+        # Run background task here
+        task_result.log "Starting enrichment on #{self.name}."
+        enrichment_tasks.each do |task_name|
+          machine_name = task_result.scan_result ? task_result.scan_result.machine : nil
+          start_task("task_enrichment", self.project, task_result.scan_result, task_name, self, task_result.depth, [], [], machine_name, true)
         end
       end
 

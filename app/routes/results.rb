@@ -30,7 +30,6 @@ class IntrigueApp < Sinatra::Base
 
     get '/:project/results' do
       paginate_count = 100
-      @exclude_enrichment = true
 
       params[:search_string] == "" ? @search_string = nil : @search_string = "#{params[:search_string]}"
       params[:inverse] == "on" ? @inverse = true : @inverse = false
@@ -130,6 +129,7 @@ class IntrigueApp < Sinatra::Base
 
         # create the first entity
         entity = Intrigue::EntityManager.create_first_entity(@project_name,entity_type,entity_name,entity_details)
+
       end
 
       unless entity
@@ -153,6 +153,12 @@ class IntrigueApp < Sinatra::Base
 
       entity.task_results << task_result
       entity.save
+
+      # Manually starting enrichment here
+      if auto_enrich
+        task_result.log "User-created entity, manually creating and enriching!"
+        entity.enrich(task_result)
+      end
 
       redirect "/#{@project_name}/results/#{task_result.id}"
     end
@@ -217,7 +223,7 @@ class IntrigueApp < Sinatra::Base
         entity.save
 
         # manually start enrichment for the first entity
-        #entity.enrich(task_result) if auto_enrich
+        entity.enrich(task_result) if auto_enrich
 
       end
 

@@ -1,6 +1,7 @@
 module Intrigue
+module Task
 module Enrich
-class DnsRecord < BaseTask
+class DnsRecord < Intrigue::Task::BaseTask
 
   def self.metadata
     {
@@ -19,9 +20,7 @@ class DnsRecord < BaseTask
     }
   end
 
-  def self.run(entity, task_result)
-    @entity = entity
-    @task_result = task_result
+  def run
 
     lookup_name = _get_entity_name
 
@@ -86,7 +85,7 @@ class DnsRecord < BaseTask
 
   private
 
-    def self._create_aliases(results)
+    def _create_aliases(results)
       ####
       ### Create aliased entities
       ####
@@ -100,7 +99,7 @@ class DnsRecord < BaseTask
       end
     end
 
-    def self._create_vhost_entities(lookup_name)
+    def _create_vhost_entities(lookup_name)
       ### For each associated IpAddress, make sure we create any additional
       ### uris if we already have scan results
       ###
@@ -117,6 +116,7 @@ class DnsRecord < BaseTask
     end
 
 
+end
 end
 end
 end

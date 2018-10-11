@@ -1,6 +1,7 @@
 module Intrigue
+module Task
 module Enrich
-class AwsS3Bucket < BaseTask
+class AwsS3Bucket < Intrigue::Task::BaseTask
 
   def self.metadata
     {
@@ -23,9 +24,7 @@ class AwsS3Bucket < BaseTask
   end
 
   ## Default method, subclasses must override this
-  def self.run(entity, task_result)
-    @entity = entity
-    @task_result = task_result
+  def run
 
     bucket_uri = _get_entity_detail("uri") || _get_entity_name
     bucket_uri.chomp!("/")
@@ -160,6 +159,7 @@ class AwsS3Bucket < BaseTask
   false
   end
 
+end
 end
 end
 end

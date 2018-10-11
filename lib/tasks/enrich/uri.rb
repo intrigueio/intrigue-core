@@ -1,7 +1,7 @@
-
 module Intrigue
+module Task
 module Enrich
-class Uri < BaseTask
+class Uri < Intrigue::Task::BaseTask
 
   include Intrigue::Ident
 
@@ -22,9 +22,7 @@ class Uri < BaseTask
     }
   end
 
-  def self.run(entity, task_result)
-    @entity = entity
-    @task_result = task_result
+  def run
 
     uri = _get_entity_name
 
@@ -60,7 +58,7 @@ class Uri < BaseTask
     begin
       _log "Creating browser session"
       session = create_browser_session
-      
+
       # Run the version checking scripts
       _log "Grabbing Javascript libraries"
       js_libraries = gather_javascript_libraries(session, uri)
@@ -194,7 +192,7 @@ class Uri < BaseTask
   end
 
 
-  def self._check_page_contents_legacy(response)
+  def _check_page_contents_legacy(response)
 
     ###
     ### Security Seals
@@ -266,7 +264,7 @@ class Uri < BaseTask
   stack
   end
 
-  def self._check_uri(uri)
+  def _check_uri(uri)
     _log "_check_uri called"
     temp = []
     temp << "ASP Classic" if uri =~ /.*\.asp(\?.*)?$/i
@@ -281,7 +279,7 @@ class Uri < BaseTask
   temp
   end
 
-  def self._check_generator(response)
+  def _check_generator(response)
     _log "_check_generator called"
     temp = []
 
@@ -296,11 +294,11 @@ class Uri < BaseTask
   temp
   end
 
-  def self._gather_cookies(response)
+  def _gather_cookies(response)
     header = response.header['set-cookie']
   end
 
-  def self._check_cookies(response)
+  def _check_cookies(response)
     _log "_check_cookies called"
 
     temp = []
@@ -340,7 +338,7 @@ class Uri < BaseTask
 
 
 
-  def self._check_x_headers(response)
+  def _check_x_headers(response)
     _log "_check_x_headers called"
 
     temp = []
@@ -384,7 +382,7 @@ class Uri < BaseTask
   temp
   end
 
-  def self._check_server_header(response, response2)
+  def _check_server_header(response, response2)
     _log "_check_server_header called"
 
     ### Server Header
@@ -412,7 +410,7 @@ class Uri < BaseTask
 
   # This method resolves a header to a probable name in the case of generic
   # names. Otherwise it just matches what was sent.
-  def self._resolve_server_header(header_content)
+  def _resolve_server_header(header_content)
     return nil unless header_content
 
     # Sometimes we're given a generic name, so keep track of the probable server for that name
@@ -433,21 +431,22 @@ class Uri < BaseTask
   web_server_name
   end
 
-  def self.check_options_endpoint(uri)
+  def check_options_endpoint(uri)
     response = http_request(:options, uri)
     (response["allow"] || response["Allow"]) if response
   end
 
-  def self.check_api_endpoint(response)
+  def check_api_endpoint(response)
     return true if response.header['Content-Type'] =~ /application/
   false
   end
 
-  def self.check_forms(response_body)
+  def check_forms(response_body)
     return true if response_body =~ /<form/i
   false
   end
 
+end
 end
 end
 end

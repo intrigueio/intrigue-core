@@ -1,6 +1,7 @@
 module Intrigue
+module Task
 module Enrich
-class NetworkService < BaseTask
+class NetworkService < Intrigue::Task::BaseTask
 
   def self.metadata
     {
@@ -27,13 +28,12 @@ class NetworkService < BaseTask
   end
 
   ## Default method, subclasses must override this
-  def self.run(entity, task_result)
-    @entity = entity
-    @task_result = task_result
+  def run
 
     _log "Enriching... nework_service #{_get_entity_name}"
   end
 
+end
 end
 end
 end

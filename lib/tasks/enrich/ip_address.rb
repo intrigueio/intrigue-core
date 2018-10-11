@@ -1,6 +1,7 @@
 module Intrigue
+module Task
 module Enrich
-class IpAddress < BaseTask
+class IpAddress < Intrigue::Task::BaseTask
 
   def self.metadata
     {
@@ -18,9 +19,7 @@ class IpAddress < BaseTask
     }
   end
 
-  def self.run(entity, task_result)
-    @entity = entity
-    @task_result = task_result
+  def run
 
     lookup_name = _get_entity_name
 
@@ -85,6 +84,7 @@ class IpAddress < BaseTask
 
   end
 
+end
 end
 end
 end

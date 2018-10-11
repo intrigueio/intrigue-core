@@ -22,77 +22,60 @@ class BaseTask
   end
 
   def perform(task_result_id)
+    ### This method is used by a couple different TYPES...
+    # normal tasks... which are simple, just run and exit
+    # enrichment tasks.. which must notify when done, and will launch a machine!!!
 
-    # Get the Task Result
+    # Get the task result and fail if we can't
     @task_result = Intrigue::Model::TaskResult.first(:id => task_result_id)
-    raise "Unable to find task result: #{task_result_id}. Bailing." unless @task_result
+    raise "Unable continue without task result #{task_result_id}. Bailing." unless @task_result
 
     # Handle cancellation
     if @task_result.cancelled
-      _log_error "FATAL!!! I was cancelled, returning without running!"
+      _log "Cancelled, returning without running!"
       return
     end
 
+    @entity = @task_result.base_entity
+    @project = @task_result.project
+    options = @task_result.options
+
+    # we must have these things to continue (if they're missing, fail)
+    unless @task_result && @project && @entity
+      _log_error "Unable to find task_result. Bailing." unless @task_result
+      _log_error "Unable to find project. Bailing." unless @project
+      _log_error "Unable to find entity. Bailing." unless @entity
+      return nil
+    end
+
+    # We need a flag to skip the actual setup, run, cleanup of the task if
+    # the caller gave us something broken. We still want to get the final
+    #  task result back to the caller though (so no raise). Assume it's good,
+    # and check input along the way.
+    broken_input_flag = false
+
+    # Do a little logging. Do it for the kids!
+    #_log "Entity: #{@entity.type_string}##{@entity.name}"
+
+    ###################
+    # Sanity Checking #
+    ###################
+    allowed_types = self.class.metadata[:allowed_types]
+
+    # Check to make sure this task can receive an entity of this type and if
+    unless allowed_types.include?(@entity.type_string) || allowed_types.include?("*")
+      _log_error "Unable to call #{self.class.metadata[:name]} on entity: #{@entity}"
+      broken_input_flag = true
+    end
+
+    ###########################
+    #  Setup the task result  #
+    ###########################
+    @task_result.task_name = self.class.metadata[:name]
+    start_time = Time.now.getutc
+    @task_result.timestamp_start = start_time
+
     begin
-      @entity = @task_result.base_entity
-
-      # always enrich before running except when complete or disallowed
-      if @entity.enriched
-        _log "Skipping enrichment, already complete|"
-      else
-        if @task_result.auto_enrich
-          _log "Enriching entity automatically"
-          @entity.enrich(@task_result)
-
-          $db.transaction do
-            _log "Marked enriched: #{@entity.enriched}"
-            @entity.enriched = true
-            @entity.save
-          end
-
-        else
-          _log "Skipping auto-enrichment"
-        end
-      end
-
-      @project = @task_result.project
-      options = @task_result.options
-
-      # we must have these things to continue (if they're missing, fail)
-      unless @task_result && @project && @entity
-        _log_error "Unable to find task_result. Bailing." unless @task_result
-        _log_error "Unable to find project. Bailing." unless @project
-        _log_error "Unable to find entity. Bailing." unless @entity
-        return nil
-      end
-
-      # We need a flag to skip the actual setup, run, cleanup of the task if
-      # the caller gave us something broken. We still want to get the final
-      #  task result back to the caller though (so no raise). Assume it's good,
-      # and check input along the way.
-      broken_input_flag = false
-
-      # Do a little logging. Do it for the kids!
-      _log "Id: #{task_result_id}"
-      _log "Entity: #{@entity.type_string}##{@entity.name}"
-
-      ###################
-      # Sanity Checking #
-      ###################
-      allowed_types = self.class.metadata[:allowed_types]
-
-      # Check to make sure this task can receive an entity of this type and if
-      unless allowed_types.include?(@entity.type_string) || allowed_types.include?("*")
-        _log_error "Unable to call #{self.class.metadata[:name]} on entity: #{@entity}"
-        broken_input_flag = true
-      end
-
-      ###########################
-      #  Setup the task result  #
-      ###########################
-      @task_result.task_name = self.class.metadata[:name]
-      @task_result.timestamp_start = Time.now.getutc
-
       #####################################
       # Perform the setup -> run workflow #
       #####################################
@@ -100,18 +83,37 @@ class BaseTask
         # Setup creates the following objects:
         # @user_options - a hash of task options
         # @task_result - the final result to be passed back to the caller
-        _log "Setting up the task!"
         if setup(task_result_id, @entity, options)
-
-            _log "Running the task!"
+            _log "Starting task run at #{start_time}!"
             @task_result.save # Save the task
-
             run # Run the task, which will update @task_result
-
-            _log "Run complete. Ship it!"
+            end_time = Time.now.getutc
+            _log "Task run finished at #{end_time}!"
         else
-          _log_error "Setup failed, bailing out!"
+          _log_error "Task setup failed, bailing out!"
         end
+      end
+
+      ### ENRICHMENT TASK SPECIFICS
+      # Now, if this is an enrichment task, we want to do some things
+      if @task_result.task_type == "enrichment"
+        # mark entity as enriched
+        _log "Marking entity as enriched!"
+        @entity.enriched = true
+        @entity.save
+
+        # MACHINE LAUNCH
+        # if this is part of a scan and we're in depth
+        if @task_result.scan_result && @task_result.depth > 0
+          machine_name = @task_result.scan_result.machine
+          @task_result.log "Launching machine #{machine_name} on #{@entity.name}"
+          machine = Intrigue::MachineFactory.create_by_name(machine_name)
+          machine.start(@entity, @task_result)
+        else
+          @task_result.log "No machine configured for #{@entity.name}!"
+        end
+      else
+        _log "Not an enrichment task, skipping machine generation"
       end
 
       scan_result = @task_result.scan_result
@@ -122,42 +124,39 @@ class BaseTask
         #   Call Handlers   #
         #####################
 
-        if scan_result.handlers.count > 0
+        ### Task Result Handlers
+        if @task_result.handlers.count > 0
+          _log "Launching Task Handlers!"
+          @task_result.handle_attached
+          @task_result.handlers_complete = true
+        else
+          _log "No task result handlers configured."
+        end
 
+        ### Scan Result Handlers
+        if scan_result.handlers.count > 0
           # Check our incomplete task count on the scan to see if this is the last one
           if scan_result.incomplete_task_count <= 0
-
-            _log "Last task standing, let's handle it!"
+            _log "Last task standing, let's handle the scan!"
             scan_result.handle_attached
-
             # let's mark it complete if there's nothing else to do here.
             scan_result.handlers_complete = true
             scan_result.complete = true
             scan_result.save
-
           end
+        else
+          _log "No scan result handlers configured."
         end
       end
 
-      #### Task Result Handlers
-      if @task_result.handlers.count > 0
-        @task_result.handle_attached
-        @task_result.handlers_complete = true
-      end
-
-    ensure   # Mark it complete and save it
-
-      # if it's of type enrichment, finalize enrich
-      #if self.class.metadata[:type] == "enrichment"
-      #  _finalize_enrichment
-      #end
-
-      _log "Cleaning up!"
-      @task_result.timestamp_end = Time.now.getutc
+    ensure
       @task_result.complete = true
+      @task_result.timestamp_end = end_time
       @task_result.logger.save
       @task_result.save
+      _log "Task complete. Ship it!"
     end
+
 
   end
 

@@ -8,10 +8,8 @@ module Machine
       MachineFactory.register(base)
     end
 
-    def self.start(entity_id, task_result_id)
-      task_result = Intrigue::Model::TaskResult.first(:id => task_result_id)
-      entity = Intrigue::Model::Entity.first(:id => entity_id)
-
+    def self.start(entity, task_result)
+      
       # sanity check before sending us off
       return unless entity && task_result
 
