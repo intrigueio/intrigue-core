@@ -19,12 +19,12 @@ module MatchExceptions
       end
 
       # if we don't have a list, safe to return false now
-      return false unless additional_exception_list
+      return false unless additional_exception_list && !additional_exception_list.empty?
 
       # check additional exception stringsZSW3
       is_an_exception = false
       additional_exception_list.each do |x|
-        if entity_name.downcase =~ /#{Regexp.escape(x.downcase)}$/
+        if entity_name.downcase =~ /^.*\.#{Regexp.escape(x.downcase)}(:[0-9]*)?$/
           #puts "EXCEPTION ENTITY!!! Entity Name: #{entity_name.downcase}"
           #puts "EXCEPTION ENTITY!!! Regex: #{Regexp.escape(x.downcase)}"
           return true
