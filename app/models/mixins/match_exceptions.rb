@@ -24,7 +24,13 @@ module MatchExceptions
       # check additional exception stringsZSW3
       is_an_exception = false
       additional_exception_list.each do |x|
-        if entity_name.downcase =~ /^.*\.#{Regexp.escape(x.downcase)}(:[0-9]*)?$/
+        # this needs two cases:
+        # 1) case where we're an EXACT match (ey.com)
+        # 2) case where we're a subdomain of an exception domain (x.ey.com)
+        # neither of these cases should match the case: jcpenney.com
+        if entity_name.downcase =~ /^#{Regexp.escape(x.downcase)}(:[0-9]*)?$/ ||
+          entity_name.downcase =~ /^.*\.#{Regexp.escape(x.downcase)}(:[0-9]*)?$/
+
           #puts "EXCEPTION ENTITY!!! Entity Name: #{entity_name.downcase}"
           #puts "EXCEPTION ENTITY!!! Regex: #{Regexp.escape(x.downcase)}"
           return true
