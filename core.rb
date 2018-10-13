@@ -113,7 +113,6 @@ class IntrigueApp < Sinatra::Base
     set :logging, true
   end
 
-
   ###
   ### Helpers
   ###

@@ -86,7 +86,7 @@ class UriGatherSslCert  < BaseTask
           alt_names = ext.value.split(",").collect do |x|
             "#{x}".gsub(/DNS:/,"").strip
           end
-          _log "Got alt_names: #{alt_names.inspect}"
+          _log "Got alt names: #{alt_names.inspect}"
 
           tlds = []
 
@@ -96,56 +96,28 @@ class UriGatherSslCert  < BaseTask
             # collect all top-level domains
             tlds << alt_name.split(".").last(2).join(".")
 
-            if (alt_name =~ /acquia-sites.com$/ ) && opt_skip_hosted_services
-              _log "This is a cloudflare certificate, skipping further entity creation"
-              return
+            universal_cert_domains = [
+              "acquia-sites.com",
+              "chinanetcenter.com",
+              "cloudflare.com",
+              "cloudflaressl.com",
+              "distilnetworks.com",
+              "edgecastcdn.net",
+              "fastly.net",
+              "freshdesk.com",
+              "jiveon.com",
+              "incapsula.com",
+              "lithium.com",
+              "wpengine.com"
+            ]
+
+            universal_cert_domains.each do |cert_domain|
+              if (alt_name =~ /#{cert_domain}$/ ) && opt_skip_hosted_services
+                _log "This is a #{cert_domain} certificate, skipping further entity creation"
+                return
+              end
             end
 
-            if (alt_name =~ /cloudflare.com$/ || alt_name =~ /cloudflaressl.com$/ ) && opt_skip_hosted_services
-              _log "This is a cloudflare certificate, skipping further entity creation"
-              return
-            end
-
-            if alt_name =~ /distilnetworks.com$/ && opt_skip_hosted_services
-              _log "This is a distil networks certificate, skipping further entity creation"
-              return
-            end
-
-            if alt_name =~ /edgecastcdn.net$/ && opt_skip_hosted_services
-              _log "This is a edgecast cdn certificate, skipping further entity creation"
-              return
-            end
-
-            if alt_name =~ /fastly.net$/ && opt_skip_hosted_services
-              _log "This is a fastly certificate, skipping further entity creation"
-              return
-            end
-
-            if alt_name =~ /freshdesk.com$/ && opt_skip_hosted_services
-              _log "This is a freshdesk certificate, skipping further entity creation"
-              return
-            end
-
-
-            if alt_name =~ /jiveon.com$/ && opt_skip_hosted_services
-              _log "This is a jive certificate, skipping further entity creation"
-              return
-            end
-
-            if alt_name =~ /incapsula.com$/ && opt_skip_hosted_services
-              _log "This is an incapsula certificate, skipping further entity creation"
-              return
-            end
-
-            if alt_name =~ /lithium.com$/ && opt_skip_hosted_services
-              _log "This is an lithium certificate, skipping further entity creation"
-              return
-            end
-
-            if alt_name =~ /wpengine.com$/ && opt_skip_hosted_services
-              _log "This is a wpengine certificate, skipping further entity creation"
-              return
-            end
           end
 
           if opt_skip_hosted_services
