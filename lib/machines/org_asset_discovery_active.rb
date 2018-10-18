@@ -31,9 +31,9 @@ module Machine
         ])
 
         start_recursive_task(task_result,"dns_brute_sub",entity,[
-          {"name" => "threads", "value" => 10 },
+          {"name" => "threads", "value" => 5 },
           {"name" => "use_file", "value" => true },
-          {"name" => "brute_alphanumeric_size", "value" => 2 }])
+          {"name" => "brute_alphanumeric_size", "value" => 1 }])
 
         start_recursive_task(task_result,"public_trello_check",entity)
 
@@ -42,17 +42,12 @@ module Machine
           {"name" => "additional_buckets", "value" => "#{base_name},#{entity.name}"}
         ])
 
+        start_recursive_task(task_result,"public_google_groups_check", entity)
+
       elsif entity.type_string == "DnsRecord"
 
         start_recursive_task(task_result,"dns_brute_sub",entity,[
-          {"name" => "threads", "value" => 5 }])
-
-          base_name = entity.name.split(".")[0...-1].join(".")
-          start_recursive_task(task_result,"aws_s3_brute",entity,[
-            {"name" => "additional_buckets", "value" => "#{base_name},#{entity.name}"}
-          ])
-
-          start_recursive_task(task_result,"public_google_groups_check", entity)
+          {"name" => "threads", "value" => 3 }])
 
       elsif entity.type_string == "FtpService"
 
@@ -72,18 +67,7 @@ module Machine
 
       elsif entity.type_string == "NetBlock"
 
-        #task_result.log "#{entity.name} ALREADY Scoped!"
-
         transferred = entity.get_detail("transferred")
-
-        # re-lookup the entity to see if we're now scopeed
-        #entity_scoped = false
-        #10.times do
-        #  entity_scoped = Intrigue::Model::Entity.first(:id => entity.id).scoped
-        #  task_result.log "#{entity.name} Scoped!"
-        #  break if entity_scoped
-        #  sleep 1
-        #end
 
         scannable = ( entity.scoped || whitelisted ) && !transferred
 
@@ -101,18 +85,28 @@ module Machine
           # 7001: Weblogic
           # 8080: Wordpress, WebDav, DasanNetwork Solution
           start_recursive_task(task_result,"masscan_scan",entity,[
-            {"name"=> "tcp_ports", "value" => "22,23,25,80,81,110,111,139,443,445,2004,3389,8000,8080,8081,8443,10000"}
-          ])
+            {"name"=> "tcp_ports", "value" => "22"}])
+          start_recursive_task(task_result,"masscan_scan",entity,[
+            {"name"=> "tcp_ports", "value" => "23"}])
+          start_recursive_task(task_result,"masscan_scan",entity,[
+            {"name"=> "tcp_ports", "value" => "25"}])
+          start_recursive_task(task_result,"masscan_scan",entity,[
+            {"name"=> "tcp_ports", "value" => "80"}])
+          start_recursive_task(task_result,"masscan_scan",entity,[
+            {"name"=> "tcp_ports", "value" => "81"}])
+          start_recursive_task(task_result,"masscan_scan",entity,[
+            {"name"=> "tcp_ports", "value" => "3389"}])
+          start_recursive_task(task_result,"masscan_scan",entity,[
+            {"name"=> "tcp_ports", "value" => "8080"}])
+          start_recursive_task(task_result,"masscan_scan",entity,[
+            {"name"=> "tcp_ports", "value" => "8081"}])
+          start_recursive_task(task_result,"masscan_scan",entity,[
+            {"name"=> "tcp_ports", "value" => "8443"}])
+          start_recursive_task(task_result,"masscan_scan",entity,[
+            {"name"=> "tcp_ports", "value" => "10000"}])
         else
           task_result.log "Cowardly refusing to scan this netblock: #{entity}.. it doesn't look like ours."
         end
-
-        # Make sure it's small enough not to be disruptive, and if it is, expand it
-        #if entity.details["whois_full_text"] =~ /#{filter_strings.join("|")}/i && !(entity.name =~ /::/)
-        #  start_recursive_task(task_result,"net_block_expand",entity, [{"name" => "threads", "value" => 5 }])
-        #else
-        #  task_result.log "Cowardly refusing to expand this netblock.. it doesn't look like ours."
-        #end
 
       elsif entity.type_string == "Organization"
 
@@ -120,8 +114,9 @@ module Machine
       start_recursive_task(task_result,"whois_lookup",entity)
 
       # search bgp data for netblocks
-      start_recursive_task(task_result,"search_bgp",entity) unless entity.created_by?("search_bgp")
+      start_recursive_task(task_result,"search_bgp",entity)
 
+      #
       start_recursive_task(task_result,"public_trello_check",entity)
 
       ### AWS_S3_brute the name
@@ -145,7 +140,7 @@ module Machine
         # Check for exploitable URIs, but don't recurse on things we've already found
         #start_recursive_task(task_result,"uri_brute", entity, [
         #  {"name"=> "threads", "value" => 1},
-        #  {"name" => "user_list", "value" => "admin,test,server-status,.svn,.git"}])
+        #  {"name" => "user_list", "value" => "portal,admin,test,server-status,.svn,.git"}])
 
         #unless (entity.created_by?("uri_brute") || entity.created_by?("uri_spider") )
           ## Super-lite spider, looking for metadata
