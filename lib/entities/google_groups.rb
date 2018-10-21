@@ -18,6 +18,10 @@ class GoogleGroups < Intrigue::Model::Entity
     "#{details["uri"]}"
   end
 
+  def enrichment_tasks
+    ["enrich/google_groups"]
+  end
+
 end
 end
 end

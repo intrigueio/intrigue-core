@@ -19,6 +19,10 @@ class NetworkService < Intrigue::Model::Entity
     "#{details["fingerprint"]}"
   end
 
+  def enrichment_tasks
+    ["enrich/network_service"]
+  end
+
 
 end
 end

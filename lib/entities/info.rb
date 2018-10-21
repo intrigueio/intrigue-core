@@ -14,6 +14,10 @@ class Info < Intrigue::Model::Entity
     name =~ /^\w.*$/
   end
 
+  def enrichment_tasks
+    ["enrich/info"]
+  end
+
 end
 end
 end

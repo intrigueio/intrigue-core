@@ -26,7 +26,11 @@ class SslCertificate < Intrigue::Model::Entity
   def detail_string
     "#{details["not_after"]} | #{details["subject"]} | #{details["issuer"]}"
   end
-  
+
+  def enrichment_tasks
+    ["enrich/ssl_certificate"]
+  end
+
 end
 end
 end

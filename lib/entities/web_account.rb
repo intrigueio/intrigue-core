@@ -16,6 +16,11 @@ class WebAccount < Intrigue::Model::Entity
     details["uri"] =~ /^http.*$/
   end
 
+  def enrichment_tasks
+    ["enrich/web_account"]
+  end
+
+
 end
 end
 end

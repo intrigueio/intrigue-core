@@ -14,6 +14,10 @@ class GithubRepository < Intrigue::Model::Entity
     name =~ /^\w.*/ && details["uri"] =~ /^\w.*/
   end
 
+  def enrichment_tasks
+    ["enrich/github_repository"]
+  end
+
 end
 end
 end

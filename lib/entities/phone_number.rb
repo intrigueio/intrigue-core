@@ -18,6 +18,10 @@ class PhoneNumber < Intrigue::Model::Entity
     "#{details["origin"]}"
   end
 
+  def enrichment_tasks
+    ["enrich/phone_number"]
+  end
+
 end
 end
 end

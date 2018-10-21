@@ -20,7 +20,7 @@ class FtpService < Intrigue::Entity::NetworkService
   end
 
   def enrichment_tasks
-    ["enrich/ftp_service", "ftp_enumerate"]
+    ["enrich/ftp_service"]
   end
 
 

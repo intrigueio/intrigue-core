@@ -19,6 +19,10 @@ class Person < Intrigue::Model::Entity
     "#{details["origin"]}"
   end
 
+  def enrichment_tasks
+    ["enrich/person"]
+  end
+
 end
 end
 end

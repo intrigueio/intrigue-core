@@ -14,6 +14,11 @@ class TrelloOrganization < Intrigue::Model::Entity
     name =~ /^\w.*$/
   end
 
+  def enrichment_tasks
+    ["enrich/trello_organization"]
+  end
+
+
 end
 end
 end

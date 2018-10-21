@@ -14,6 +14,10 @@ class Organization < Intrigue::Model::Entity
     name =~ /^\w.*$/
   end
 
+  def enrichment_tasks
+    ["enrich/organization"]
+  end
+
 end
 end
 end

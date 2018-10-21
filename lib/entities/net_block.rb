@@ -10,7 +10,6 @@ class NetBlock < Intrigue::Model::Entity
     }
   end
 
-
   def validate_entity
 
     # fail if they don't exist

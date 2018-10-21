@@ -14,6 +14,10 @@ class AutonomousSystem < Intrigue::Model::Entity
     name =~ /^(as|AS).?[0-9].*$/
   end
 
+  def enrichment_tasks
+    ["enrich/autonomous_system"]
+  end
+
 end
 end
 end

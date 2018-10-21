@@ -14,6 +14,10 @@ class GithubUser < Intrigue::Model::Entity
     name =~ /^\w.*/ && details["uri"] =~ /^.*/
   end
 
+  def enrichment_tasks
+    ["enrich/github_user"]
+  end
+
 end
 end
 end

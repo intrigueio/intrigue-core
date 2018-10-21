@@ -18,6 +18,10 @@ class EmailAddress < Intrigue::Model::Entity
     details["origin"] if details && details["origin"]
   end
 
+  def enrichment_tasks
+    ["enrich/email_address"]
+  end
+
 end
 end
 end

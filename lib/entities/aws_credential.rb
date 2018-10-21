@@ -34,6 +34,10 @@ class AwsCredential < Intrigue::Model::Entity
     details["hidden_secret_key"]
   end
 
+  def enrichment_tasks
+    ["enrich/aws_credential"]
+  end
+
 
 end
 end

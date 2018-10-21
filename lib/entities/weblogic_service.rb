@@ -14,6 +14,11 @@ class WeblogicService < Intrigue::Model::Entity
     name =~ /(\w.*):\d{1,5}/ && details["port"].to_s =~ /^\d{1,5}$/
   end
 
+  def enrichment_tasks
+    ["enrich/weblogic_service"]
+  end
+
+
 end
 end
 end

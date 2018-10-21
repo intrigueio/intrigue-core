@@ -14,6 +14,11 @@ class String < Intrigue::Model::Entity
     name =~ /^\w.*$/
   end
 
+  def enrichment_tasks
+    ["enrich/string"]
+  end
+
+
 end
 end
 end

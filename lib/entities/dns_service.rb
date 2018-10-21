@@ -14,6 +14,10 @@ class DnsService < Intrigue::Entity::NetworkService
     name =~ /(\w.*):\d{1,5}/ && details["port"].to_s =~ /^\d{1,5}$/
   end
 
+  def enrichment_tasks
+    ["enrich/dns_service"]
+  end
+
 end
 end
 end
