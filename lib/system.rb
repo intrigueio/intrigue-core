@@ -4,7 +4,7 @@ module System
   def bootstrap_system(config)
     extend Intrigue::Task::Helper
 
-    next unless config["projects"]
+    return nil unless config["projects"]
 
     # XXX - Assumes we start at a clean system!!!!
     config["projects"].each do |p|
