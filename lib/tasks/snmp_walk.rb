@@ -1,6 +1,6 @@
 module Intrigue
 module Task
-class SnmpService < BaseTask
+class SnmpWalk < BaseTask
 
   def self.metadata
     {
@@ -57,7 +57,7 @@ class SnmpService < BaseTask
               output << varbind.to_s
           end
         end
-        _set_entity_detail("snmp_output", _encode_string(output))
+        _set_entity_detail("snmp_walk", _encode_string(output))
       rescue SNMP::RequestTimeout => e
         _log_error "SNMP Timeout"
       end

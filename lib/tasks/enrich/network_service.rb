@@ -29,8 +29,7 @@ class NetworkService < Intrigue::Task::BaseTask
 
   ## Default method, subclasses must override this
   def run
-
-    _log "Enriching... nework_service #{_get_entity_name}"
+    _log "Enriching... Network Service: #{_get_entity_name}"
   end
 
 end

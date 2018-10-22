@@ -81,7 +81,7 @@ module Generic
       return
     end
 
-    `#{command} 2>&1 > /dev/null`
+    `#{command} 2>&1`
   end
 
   ###

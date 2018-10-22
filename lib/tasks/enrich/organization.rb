@@ -27,7 +27,7 @@ class Organization < Intrigue::Task::BaseTask
 
   ## Default method, subclasses must override this
   def run
-    _log "Enriching... organization #{_get_entity_name}"
+    _log "Enriching... Organization: #{_get_entity_name}"
   end
 
 end

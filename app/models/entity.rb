@@ -16,7 +16,7 @@ module Intrigue
       plugin :single_table_inheritance, :type
       plugin :serialization, :json, :details, :details_raw #, :name
 
-      self.raise_on_save_failure = false
+      self.raise_on_save_failure = true
 
       # Keep track of subclasses
       @@descendants = []
@@ -116,7 +116,7 @@ module Intrigue
         # Run background task here
         task_result.log "Starting enrichment on #{self.name}."
         enrichment_tasks.each do |task_name|
-          
+
           # skip unless we actually have a task (since enrichment is
           # standardized but task doesnt necessarily exist)
           next unless Intrigue::TaskFactory.include? task_name
@@ -168,7 +168,7 @@ module Intrigue
           temp_details = details.merge({key => value}.sanitize_unicode)
           self.set(:details => temp_details)
           self.set(:details_raw => temp_details)
-          save
+          self.save
         rescue Sequel::DatabaseError => e
           puts "ERROR SAVING DETAILS FOR #{self}: #{e}"
         end
@@ -179,7 +179,7 @@ module Intrigue
           self.lock!
           self.set(:details => hash.sanitize_unicode)
           self.set(:details_raw => hash.sanitize_unicode)
-          save
+          self.save
         rescue Sequel::DatabaseError => e
           puts "ERROR SAVING DETAILS FOR #{self}: #{e}"
         end

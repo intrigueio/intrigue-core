@@ -54,7 +54,7 @@ class NmapScan < BaseTask
       _log "Scanning #{scan_item} and storing in #{temp_file}"
       _log "NMap options: #{nmap_options}"
 
-      # shell out to masscan and run the scan
+      # shell out to nmap and run the scan
       # TODO - move this to scanner mixin
       nmap_string = "nmap #{scan_item} #{nmap_options} -sSUV -P0 -T5 --top-ports #{opt_top_ports} -O --max-os-tries 2 -oX #{temp_file}"
       nmap_string = "sudo #{nmap_string}" unless Process.uid == 0
