@@ -21,7 +21,7 @@ class Masscan < BaseTask
       :allowed_options => [
         {:name => "tcp_ports", :regex => "numeric_list", :default => "21,80,443" },
         {:name => "udp_ports", :regex => "numeric_list", :default => "161,500" },
-        {:name => "max_rate", :regex => "integer", :default => 10000 },
+        {:name => "max_rate", :regex => "integer", :default => 3000 },
       ],
       :created_types => [ "DnsRecord","DnsService","FingerService", "FtpService",
                           "IpAddress", "NetworkService","SshService","SnmpService",
