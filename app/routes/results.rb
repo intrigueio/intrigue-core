@@ -173,7 +173,7 @@ class IntrigueApp < Sinatra::Base
       # handle file if we got it
       if @params["entity_file"]
         # barf if we got a bad file
-        raise "Bad file type" unless @params["entity_file"]["type"] == "text/plain"
+        raise "Bad file type" unless @params["entity_file"]["type"] == "text/plain" || @params["entity_file"]["type"] == "text/csv"
 
         # get the file
         entity_file = @params["entity_file"]["tempfile"]
@@ -182,8 +182,8 @@ class IntrigueApp < Sinatra::Base
         entities = []
         entity_file.each_line do |l|
           raise "Bad file content: #{l}" unless l =~ /[a-z]+\#.*/
-          et = l.split("#").first
-          en = l.split("#").last
+          et = l.split("#").first.chomp
+          en = l.split("#").last.chomp
           entities << {entity_type: "#{et}", entity_name: "#{en}", }
         end
       end
