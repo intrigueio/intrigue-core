@@ -85,25 +85,38 @@ module Machine
           # 7001: Weblogic
           # 8080: Wordpress, WebDav, DasanNetwork Solution
           start_recursive_task(task_result,"masscan_scan",entity,[
-            {"name"=> "tcp_ports", "value" => "22"}])
+            {"name"=> "tcp_ports", "value" => ""},
+            {"name"=>"udp_ports", "value" => "161"}])
           start_recursive_task(task_result,"masscan_scan",entity,[
-            {"name"=> "tcp_ports", "value" => "23"}])
+            {"name"=> "tcp_ports", "value" => "22"},
+            {"name"=>"udp_ports", "value" => ""}])
           start_recursive_task(task_result,"masscan_scan",entity,[
-            {"name"=> "tcp_ports", "value" => "25"}])
+            {"name"=> "tcp_ports", "value" => "23"},
+            {"name"=>"udp_ports", "value" => ""}])
           start_recursive_task(task_result,"masscan_scan",entity,[
-            {"name"=> "tcp_ports", "value" => "80"}])
+            {"name"=> "tcp_ports", "value" => "25"},
+            {"name"=>"udp_ports", "value" => ""}])
           start_recursive_task(task_result,"masscan_scan",entity,[
-            {"name"=> "tcp_ports", "value" => "81"}])
+            {"name"=> "tcp_ports", "value" => "80"},
+            {"name"=>"udp_ports", "value" => ""}])
+          #start_recursive_task(task_result,"masscan_scan",entity,[
+          #  {"name"=> "tcp_ports", "value" => "81"},
+          #  {"name"=>"udp_ports", "value" => ""}])
           start_recursive_task(task_result,"masscan_scan",entity,[
-            {"name"=> "tcp_ports", "value" => "3389"}])
+            {"name"=> "tcp_ports", "value" => "3389"},
+            {"name"=>"udp_ports", "value" => ""}])
           start_recursive_task(task_result,"masscan_scan",entity,[
-            {"name"=> "tcp_ports", "value" => "8080"}])
+            {"name"=> "tcp_ports", "value" => "8080"},
+            {"name"=>"udp_ports", "value" => ""}])
           start_recursive_task(task_result,"masscan_scan",entity,[
-            {"name"=> "tcp_ports", "value" => "8081"}])
+            {"name"=> "tcp_ports", "value" => "8081"},
+            {"name"=>"udp_ports", "value" => ""}])
           start_recursive_task(task_result,"masscan_scan",entity,[
-            {"name"=> "tcp_ports", "value" => "8443"}])
-          start_recursive_task(task_result,"masscan_scan",entity,[
-            {"name"=> "tcp_ports", "value" => "10000"}])
+            {"name"=> "tcp_ports", "value" => "8443"},
+            {"name"=>"udp_ports", "value" => ""}])
+          #start_recursive_task(task_result,"masscan_scan",entity,[
+          #  {"name"=> "tcp_ports", "value" => "10000"},
+          #  {"name"=>"udp_ports", "value" => ""}])
         else
           task_result.log "Cowardly refusing to scan this netblock: #{entity}.. it doesn't look like ours."
         end

@@ -21,7 +21,7 @@ class Masscan < BaseTask
       :allowed_options => [
         {:name => "tcp_ports", :regex => "numeric_list", :default => "21,80,443" },
         {:name => "udp_ports", :regex => "numeric_list", :default => "161,500" },
-        {:name => "max_rate", :regex => "integer", :default => 3000 },
+        {:name => "max_rate", :regex => "integer", :default => 5000 },
       ],
       :created_types => [ "DnsRecord","DnsService","FingerService", "FtpService",
                           "IpAddress", "NetworkService","SshService","SnmpService",
@@ -43,11 +43,12 @@ class Masscan < BaseTask
     begin
 
       # Create a tempfile to store result
-      temp_file = Tempfile.new("masscan")
+      temp_file = Tempfile.new("masscan-#{rand(10000000)}")
 
       port_string = "-p"
       port_string << "#{opt_tcp_ports}" if opt_tcp_ports.length > 0
-      port_string << ",#{opt_udp_ports.split(",").map{|x| "U:#{x}" }.join(",")}" if opt_udp_ports.length > 0
+      port_string << "," if (opt_tcp_ports.length > 0 && opt_udp_ports.length > 0)
+      port_string << "#{opt_udp_ports.split(",").map{|x| "U:#{x}" }.join(",")}" if opt_udp_ports.length > 0
 
       # shell out to masscan and run the scan
       # TODO - move this to scanner mixin
