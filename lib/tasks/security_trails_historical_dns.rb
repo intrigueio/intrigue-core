@@ -42,7 +42,6 @@ class SecurityTrailsHistoricalDns < BaseTask
   end # end run()
 
   def _parse_st_response(resp)
-
     resp["records"].each do |r|
       r["values"].each do |v|
         _create_entity "IpAddress", {

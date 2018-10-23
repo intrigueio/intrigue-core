@@ -16,7 +16,7 @@ module Intrigue
       plugin :single_table_inheritance, :type
       plugin :serialization, :json, :details, :details_raw #, :name
 
-      self.raise_on_save_failure = true
+      self.raise_on_save_failure = false
 
       # Keep track of subclasses
       @@descendants = []
