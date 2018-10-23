@@ -1,3 +1,4 @@
+module Intrigue
 module Client
 module Social
 module Yfrog
@@ -12,6 +13,7 @@ module Yfrog
     end
 
   end
+end
 end
 end
 end

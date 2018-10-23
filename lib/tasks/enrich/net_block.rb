@@ -13,9 +13,9 @@ class NetBlock < Intrigue::Task::BaseTask
       :description => "Fills in details for a NetBlock",
       :references => [],
       :type => "enrichment",
-      :passive => false,
+      :passive => true,
       :allowed_types => ["NetBlock"],
-      :example_entities => [{"type" => "Uri", "details" => {"name" => "https://intrigue.io"}}],
+      :example_entities => [{"type" => "NetBlock", "details" => {"name" => "10.0.0.0/24"}}],
       :allowed_options => [],
       :created_types => []
     }

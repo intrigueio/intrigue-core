@@ -1,3 +1,4 @@
+module Intrigue
 module Client
 module Social
 module Foursquare
@@ -14,6 +15,7 @@ module Foursquare
 
   end
 
+end
 end
 end
 end

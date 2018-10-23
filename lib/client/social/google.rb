@@ -1,7 +1,7 @@
 #require "capybara"
 #require "capybara/dsl"
 require "googleajax"
-
+module Intrigue
 module Client
 module Social
 module Google
@@ -19,6 +19,7 @@ module Google
   end
 
 
+end
 end
 end
 end

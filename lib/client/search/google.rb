@@ -1,5 +1,6 @@
 require 'googleajax'
 
+module Intrigue
 module Client
 module Search
 module Google
@@ -80,6 +81,7 @@ module Google
 
   end
 
+end
 end
 end
 end

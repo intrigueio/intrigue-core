@@ -1,19 +1,19 @@
 module Intrigue
 module Task
-class SecurityTrailsNameserverSearch < BaseTask
-
+module Enrich
+class Nameserver < Intrigue::Task::BaseTask
   include Intrigue::Client::SecurityTrails
 
   def self.metadata
     {
-      :name => "security_trails_nameserver_search",
-      :pretty_name => "Security Trails Nameserver Search",
+      :name => "enrich/nameserver",
+      :pretty_name => "Enrich Nameserver",
       :authors => ["jcran"],
-      :description => "This task hits the Security Trails API and finds all domains for a given nameserver.",
+      :description => "Enrich a nameserver entity",
       :references => [],
-      :type => "discovery",
-      :passive => true,
       :allowed_types => ["Nameserver"],
+      :type => "enrichment",
+      :passive => true,
       :example_entities => [{"type" => "Nameserver", "details" => {"name" => "ns1.intrigue.io"}}],
       :allowed_options => [],
       :created_types => ["Domain"]
@@ -26,11 +26,13 @@ class SecurityTrailsNameserverSearch < BaseTask
     begin
       total_records = []
 
+      entity_name = _get_entity_name
+
       # get intial response
-      resp = st_nameserver_search(_get_entity_name,1)
+      resp = st_nameserver_search(entity_name,1)
 
       unless resp
-        _log_error "unable to get a response"
+        _log_error "Unable to get a response"
         return
       end
 
@@ -40,7 +42,7 @@ class SecurityTrailsNameserverSearch < BaseTask
         total_records = resp["records"]
         (2..max_pages).each do |p|
 
-          resp = st_nameserver_search(_get_entity_name,p)
+          resp = st_nameserver_search(entity_name,p)
           break unless resp
 
           total_records.concat(resp["records"])
@@ -58,9 +60,9 @@ class SecurityTrailsNameserverSearch < BaseTask
     rescue JSON::ParserError => e
       _log_error "Unable to get a properly formatted response"
     end
-
   end # end run()
 
+end
 end
 end
 end

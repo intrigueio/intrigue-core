@@ -1,6 +1,7 @@
 require 'cgi'
 require 'nokogiri'
 
+module Intrigue
 module Client
 module Search
 module Corpwatch
@@ -101,6 +102,7 @@ module Corpwatch
     end
 
   end
+end
 end
 end
 end

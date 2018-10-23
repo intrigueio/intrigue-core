@@ -5,7 +5,7 @@ require 'ipaddr'
 ### Code based on the 'cymruwhois' gem by @junv:
 ###    https://github.com/junv/cymruwhois
 ###
-
+module Intrigue
 module Client
 module Search
 module Cymru
@@ -86,6 +86,7 @@ module Cymru
 
   end
 
+end
 end
 end
 end

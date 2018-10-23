@@ -15,10 +15,6 @@ class DnsRecord < Intrigue::Model::Entity
     name =~ /\w.*/ #_dns_regex
   end
 
-  def primary
-    false
-  end
-
   def detail_string
     return "" unless details["resolutions"]
     details["resolutions"].each.group_by{|k| k["response_type"] }.map{|k,v| "#{k}: #{v.length}"}.join("| ")

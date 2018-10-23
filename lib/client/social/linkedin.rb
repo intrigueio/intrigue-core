@@ -1,6 +1,6 @@
 #require 'linkedin'
 #require 'cgi'
-
+module Intrigue
 module Client
 module Social
 module Linkedin
@@ -35,6 +35,7 @@ module Linkedin
     end
   end
 
+end
 end
 end
 end

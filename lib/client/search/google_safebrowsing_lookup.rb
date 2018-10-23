@@ -9,7 +9,7 @@
 
 require 'uri'
 require 'net/https'
-
+module Intrigue
 module Client
 module Search
 module Google
@@ -175,6 +175,7 @@ class SafebrowsingLookup
 
 end
 
+end
 end
 end
 end

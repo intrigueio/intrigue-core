@@ -1,3 +1,4 @@
+module Intrigue
 module Client
 module Social
 module Facebook
@@ -14,6 +15,7 @@ module Facebook
     end
   end
 
+end
 end
 end
 end

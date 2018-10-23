@@ -1,3 +1,4 @@
+module Intrigue
 module Client
 module Social
 module Twitter
@@ -13,6 +14,7 @@ module Twitter
 
   end
 
+end
 end
 end
 end

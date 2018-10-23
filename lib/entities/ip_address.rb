@@ -14,10 +14,6 @@ class IpAddress < Intrigue::Model::Entity
     return (name =~ _v4_regex || name =~ _v6_regex)
   end
 
-  def primary
-    false
-  end
-
   def detail_string
     out = ""
     out << "#{details["ports"].count.to_s if details["ports"]}"

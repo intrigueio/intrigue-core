@@ -1,3 +1,4 @@
+module Intrigue
 module Client
 module Social
 module Soundcloud
@@ -12,6 +13,7 @@ module Soundcloud
     end
 
   end
+end
 end
 end
 end

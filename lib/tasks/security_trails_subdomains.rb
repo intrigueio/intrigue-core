@@ -1,7 +1,7 @@
 module Intrigue
 module Task
 class SecurityTrailsSubdomains < BaseTask
-
+  
   def self.metadata
     {
       :name => "security_trails_subdomains",

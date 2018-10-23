@@ -5,7 +5,4 @@
 require_relative 'client/social'
 require_relative 'client/search'
 
-###
-### Task Mixins
-###
-require_relative 'tasks/helpers/parse'
+require_relative 'client/security_trails'

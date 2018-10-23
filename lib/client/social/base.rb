@@ -8,7 +8,7 @@ require 'open-uri'
 ###
 ### All "social" classes will inherit methods from this base class.
 ###
-
+module Intrigue
 module Client
 module Social
 module Base
@@ -75,6 +75,7 @@ module Base
     end
   end
 
+end
 end
 end
 end

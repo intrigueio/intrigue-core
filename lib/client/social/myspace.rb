@@ -1,3 +1,5 @@
+
+module Intrigue
 module Client
 module Social
 module Myspace
@@ -12,6 +14,7 @@ module Myspace
     end
 
   end
+end
 end
 end
 end

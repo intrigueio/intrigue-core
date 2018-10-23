@@ -1,6 +1,7 @@
 require 'open-uri'
 require 'nokogiri'
 
+module Intrigue
 module Client
 module Social
 module Twitpic
@@ -20,6 +21,7 @@ module Twitpic
     end
   end
 
+end
 end
 end
 end

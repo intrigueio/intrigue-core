@@ -2,6 +2,7 @@ require 'json'
 require 'open-uri'
 require 'net/http'
 
+module Intrigue
 module Client
 module Search
 module Bing
@@ -27,6 +28,7 @@ module Bing
   end
 
 
+end
 end
 end
 end

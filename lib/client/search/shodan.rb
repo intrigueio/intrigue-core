@@ -1,4 +1,4 @@
-
+module Intrigue
 module Client
   module Search
     module Shodan
@@ -26,4 +26,5 @@ module Client
       end
     end
     end
+end
 end

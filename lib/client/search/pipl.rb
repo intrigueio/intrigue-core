@@ -1,6 +1,7 @@
 require 'open-uri'
 require 'cgi'
 
+module Intrigue
 module Client
 module Search
 module Pipl
@@ -47,6 +48,7 @@ module Pipl
 
   end
 
+end
 end
 end
 end
