@@ -63,7 +63,7 @@ class Domain < Intrigue::Task::BaseTask
         out["nameservers"].each do |n|
 
           # Create a nameserver object
-          _crate_entity "Nameserver", "name" => n
+          _create_entity "Nameserver", "name" => n
 
           # create a domain for the tld
           check_and_create_domain n
