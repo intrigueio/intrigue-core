@@ -38,7 +38,6 @@ require_relative 'system'
 ####
 require 'intrigue-ident'
 
-
 ####
 # Task-specific libraries
 ####
@@ -48,9 +47,6 @@ require_relative 'task_factory'
 require_relative 'tasks/helpers/generic'
 tasks_folder = File.expand_path('../tasks/helpers', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
-
-# Client libraries (which in some cases will use a task helper. TODO - untangle this)
-require_relative 'client'
 
 # Load all discovery tasks
 require_relative 'tasks/base'
@@ -104,6 +100,10 @@ if global_config.config["intrigue_machine_load_paths"]
     end
   end
 end
+
+
+# Client libraries
+require_relative 'client'
 
 ####
 # Entity-specific libraries

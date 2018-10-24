@@ -1,7 +1,6 @@
 module Intrigue
 module Entity
 class Nameserver < Intrigue::Model::Entity
-  include Intrigue::Task::Helper
 
   def self.metadata
     {
@@ -14,7 +13,7 @@ class Nameserver < Intrigue::Model::Entity
   def validate_entity
     name =~ /\w.*/ #_dns_regex
   end
-  
+
   def enrichment_tasks
     ["enrich/nameserver"]
   end

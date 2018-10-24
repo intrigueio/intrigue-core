@@ -2,7 +2,7 @@ module Intrigue
 module Task
 class SecurityTrailsNameserverSearch < BaseTask
 
-  include Intrigue::Client::SecurityTrails
+  include Intrigue::Task::SecurityTrails
 
   def self.metadata
     {
@@ -26,8 +26,9 @@ class SecurityTrailsNameserverSearch < BaseTask
     begin
       total_records = []
 
-      # get intial response
-      resp = st_nameserver_search(_get_entity_name,1)
+      # get intial repsonse
+      entity_name = _get_entity_name
+      resp = st_nameserver_search entity_name
 
       unless resp
         _log_error "unable to get a response"
@@ -40,7 +41,7 @@ class SecurityTrailsNameserverSearch < BaseTask
         total_records = resp["records"]
         (2..max_pages).each do |p|
 
-          resp = st_nameserver_search(_get_entity_name,p)
+          resp = st_nameserver_search entity_name(entity_name,p)
           break unless resp
 
           total_records.concat(resp["records"])

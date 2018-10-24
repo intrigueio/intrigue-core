@@ -1,5 +1,5 @@
 module Intrigue
-module Client
+module Task
 module SecurityTrails
 
   def st_nameserver_search(entity_name,page=1)

@@ -2,7 +2,8 @@ module Intrigue
 module Task
 module Enrich
 class Nameserver < Intrigue::Task::BaseTask
-  include Intrigue::Client::SecurityTrails
+
+  include Intrigue::Task::SecurityTrails
 
   def self.metadata
     {

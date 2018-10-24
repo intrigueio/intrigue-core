@@ -1,7 +1,6 @@
 module Intrigue
 module Entity
 class Domain < Intrigue::Model::Entity
-  include Intrigue::Task::Helper
 
   def self.metadata
     {
