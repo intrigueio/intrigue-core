@@ -18,11 +18,11 @@ module Machine
 
       filter_strings = task_result.scan_result.whitelist_strings
 
-      # only applicable to dns_record, domain, and netblock for now
-      # whitelisted still checks project name, so leave it for now
-      inferred_whitelist = "#{entity.get_detail("whois_full_text")}".downcase =~ /#{filter_strings.map{|x| Regexp.escape(x.downcase) }.join("|")}/i
-
       if entity.type_string == "Domain"
+
+        # only applicable to dns_record, domain, and netblock for now
+        # whitelisted still checks project name, so leave it for now
+        inferred_whitelist = "#{entity.get_detail("whois_full_text")}".downcase =~ /#{filter_strings.map{|x| Regexp.escape(x.downcase) }.join("|")}/i
 
         return unless (entity.scoped || inferred_whitelist )
 
@@ -67,13 +67,17 @@ module Machine
 
       elsif entity.type_string == "Nameserver"
 
-        if entity.scoped
-          start_recursive_task(task_result,"security_trails_nameserver_search",entity)
-        else
-          task_result.log "Refusing to use this nameserver as a seed, not scoped!"
-        end
+        inferred_whitelist = ("#{entity.name}" =~ /#{filter_strings.map{|x| Regexp.escape(x.downcase) }.join("|")}/i)
+
+        return unless (entity.scoped || inferred_whitelist )
+
+        start_recursive_task(task_result,"security_trails_nameserver_search",entity)
 
       elsif entity.type_string == "NetBlock"
+
+        # only applicable to dns_record, domain, and netblock for now
+        # whitelisted still checks project name, so leave it for now
+        inferred_whitelist = "#{entity.get_detail("whois_full_text")}".downcase =~ /#{filter_strings.map{|x| Regexp.escape(x.downcase) }.join("|")}/i
 
         transferred = entity.get_detail("transferred")
 
