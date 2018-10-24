@@ -65,6 +65,10 @@ module Machine
           start_recursive_task(task_result,"nmap_scan",entity)
         end
 
+      elsif entity.type_string == "Nameserver"
+
+        start_recursive_task(task_result,"security_trails_nameserver_search",entity)
+
       elsif entity.type_string == "NetBlock"
 
         transferred = entity.get_detail("transferred")

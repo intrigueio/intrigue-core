@@ -23,44 +23,7 @@ class Nameserver < Intrigue::Task::BaseTask
 
   def run
     super
-
-    begin
-      total_records = []
-
-      entity_name = _get_entity_name
-
-      # get intial response
-      resp = st_nameserver_search(entity_name,1)
-
-      unless resp
-        _log_error "Unable to get a response"
-        return
-      end
-
-      # check if we need to page
-      max_pages = resp["meta"]["total_pages"]
-      if max_pages > 1
-        total_records = resp["records"]
-        (2..max_pages).each do |p|
-
-          resp = st_nameserver_search(entity_name,p)
-          break unless resp
-
-          total_records.concat(resp["records"])
-        end
-      # if not....
-      else
-        total_records = resp["records"]
-      end
-
-      # create entities
-      total_records.each do |x|
-        _create_entity "Domain", "name" => "#{x["hostname"]}"
-      end
-
-    rescue JSON::ParserError => e
-      _log_error "Unable to get a properly formatted response"
-    end
+    _log "Enriching... Nameserver: #{_get_entity_name}"
   end # end run()
 
 end
