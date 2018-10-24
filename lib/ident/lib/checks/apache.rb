@@ -20,7 +20,7 @@ class Apache < Intrigue::Ident::Check::Base
       {
         :type => "application",
         :vendor => "Apache",
-        :product =>"Apache",
+        :product =>"HTTP Server",
         :match_details =>"Apache web server - server header - with versions",
         :version => nil,
         :match_type => :content_headers,
@@ -36,7 +36,7 @@ class Apache < Intrigue::Ident::Check::Base
       {
         :type => "application",
         :vendor => "Apache",
-        :product =>"Apache",
+        :product =>"HTTP Server",
         :match_details =>"Apache web server - server header - no version",
         :version => nil,
         :match_type => :content_headers,
