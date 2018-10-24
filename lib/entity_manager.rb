@@ -42,10 +42,10 @@ class EntityManager
     if entity
       entity.set_details(details.to_h.deep_merge(entity.details.to_h))
 
-      # scope it since we want it
+      # scope it since we manually created
       entity.scoped = true
       entity.save
-      
+
     else
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
