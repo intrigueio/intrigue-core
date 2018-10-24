@@ -25,12 +25,15 @@ class Nameserver < Intrigue::Task::BaseTask
     super
     _log "Enriching... Nameserver: #{_get_entity_name}"
 
-    if @entity.scoped
-      _log_good "Starting a security trails lookup because we're scoped"
-      start_task("task_enrichment", @entity.project, @task_result.scan_result, "security_trails_nameserver_search", @entity, 1, [], [], nil, true)
-    end
+    # this is cheating, but handy for now
+    # start a separate task to check security trails if we're
+    # part of a scan and we're definitely scoped
+    #if @entity.scoped && @task_result.scan_result
+    #  _log_good "Starting a security trails lookup because we're scoped"
+    #  start_task("task_enrichment", @entity.project, @task_result.scan_result, "security_trails_nameserver_search", @entity,  @task_result.depth, [], [],  @task_result.scan_result.machine, true)
+    #end
 
-  end # end run()
+  end # end run
 
 end
 end

@@ -26,9 +26,9 @@ class SecurityTrailsNameserverSearch < BaseTask
     begin
       total_records = []
 
-      # get intial repsonse
-      entity_name = _get_entity_name
-      resp = st_nameserver_search entity_name
+      # get initial repsonse
+      name = _get_entity_name
+      resp = st_nameserver_search name
 
       unless resp
         _log_error "unable to get a response"
@@ -41,7 +41,7 @@ class SecurityTrailsNameserverSearch < BaseTask
         total_records = resp["records"]
         (2..max_pages).each do |p|
 
-          resp = st_nameserver_search entity_name(entity_name,p)
+          resp = st_nameserver_search(name,p)
           break unless resp
 
           total_records.concat(resp["records"])
