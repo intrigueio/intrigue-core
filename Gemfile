@@ -18,7 +18,7 @@ gem 'elasticsearch'           # Database
 gem 'iconv'                   # Encoding
 gem 'rest-client'             # Web hooks, some tasks
 gem 'rack-protection'         # https://github.com/sinatra/rack-protection
-gem 'intrigue_api_client', :path => "api_client"
+gem 'intrigue_api_client',    :path => "api_client"
 gem 'nokogiri'                # Client::Search::*Scraper
 gem 'yajl-ruby'
 
@@ -56,7 +56,7 @@ gem 'selenium-webdriver'     , '~> 3.12.0'
 
 # fingerprinting
 gem 'recog-intrigue',         :git => 'https://github.com/intrigueio/recog.git'
-gem 'intrigue-ident'
+gem 'intrigue-ident',         :path => "lib/ident"
 
 # Handlers
 gem 'couchrest'

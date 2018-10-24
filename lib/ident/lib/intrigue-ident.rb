@@ -16,7 +16,7 @@ include Intrigue::Ident::TraverseExceptions
 module Intrigue
   module Ident
 
-    VERSION=0.72
+    VERSION=0.73
 
     # allow for different locations depending on where we're included
     if $intrigue_basedir

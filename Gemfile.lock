@@ -51,6 +51,11 @@ PATH
       json (~> 1.8)
       rest-client (~> 1.8)
 
+PATH
+  remote: lib/ident
+  specs:
+    intrigue-ident (0.73)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -149,7 +154,6 @@ GEM
     i18n (1.1.0)
       concurrent-ruby (~> 1.0)
     iconv (1.0.5)
-    intrigue-ident (0.69)
     ipaddress (0.8.3)
     jmespath (1.4.0)
     json (1.8.6)
@@ -279,7 +283,7 @@ DEPENDENCIES
   geoip
   googleajax
   iconv
-  intrigue-ident
+  intrigue-ident!
   intrigue_api_client!
   net-dns
   nokogiri
@@ -322,4 +326,4 @@ RUBY VERSION
    ruby 2.5.1p57
 
 BUNDLED WITH
-   1.16.1
+   1.16.6
