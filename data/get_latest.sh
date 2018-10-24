@@ -73,4 +73,25 @@ if [ ! -f public_suffix_list.dat ]; then
   rm public_suffix_list.dat
 fi
 
+# NVD feeds
+YEARS="2018 2017 2016"
+
+# nvd download function
+function get_nvd_json() {
+  echo "[+] Getting latest NVD JSON Feed: $YEAR"
+  wget -N -q https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-$YEAR.json.gz
+  gunzip nvdcve-1.0-$YEAR.json.gz
+}
+
+# check and download
+for YEAR in $YEARS; do
+  if [ -d "web_accounts_list" ]; then
+    mkdir -p nvd
+  fi
+  cd nvd
+    get_nvd_json $YEAR
+  end
+done
+
+
 
