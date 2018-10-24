@@ -2,7 +2,6 @@
 require 'net/http'
 require 'openssl'
 require 'zlib'
-require 'json'
 
 require_relative 'check_factory'
 require_relative 'checks/base'
@@ -17,16 +16,6 @@ module Intrigue
   module Ident
 
     VERSION=0.73
-
-    # allow for different locations depending on where we're included
-    if $intrigue_basedir
-      $nvd_data_directory = "#{$intrigue_basedir}/data/nvd"
-    else
-      # TODO ... download data here..
-      basedir="#{File.expand_path File.dirname(__FILE__)}"
-      $nvd_data_directory = "#{basedir}/../data/nvd"
-    end
-
 
     def generate_requests_and_check(url, options)
 

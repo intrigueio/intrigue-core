@@ -90,6 +90,7 @@ class Uri < Intrigue::Task::BaseTask
     app_stack.concat _check_x_headers(response)
 
     begin
+      _log "Attempting to fingerprint!"
       # Use intrigue-ident code to request all of the pages we need to properly fingerprint
       # from the ident library
       fingerprint_matches = generate_requests_and_check(uri,{:match_vulns => true}) || []
@@ -120,6 +121,7 @@ class Uri < Intrigue::Task::BaseTask
 
 
     # and then just stick the name and the version in our fingerprint
+    _log "Inferring app stack from Fingerprints!"
     app_stack.concat(fingerprint_matches.map do |x|
       version_string = "#{x["vendor"]} #{x["product"]}"
       version_string += " #{x["version"]}" if x["version"]
