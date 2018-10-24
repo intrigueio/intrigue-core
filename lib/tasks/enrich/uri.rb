@@ -91,7 +91,8 @@ class Uri < Intrigue::Task::BaseTask
 
     begin
       # Use intrigue-ident code to request all of the pages we need to properly fingerprint
-      fingerprint_matches = generate_requests_and_check(uri) || []
+      # from the ident library
+      fingerprint_matches = generate_requests_and_check(uri,{:match_vulns => true}) || []
 
       # if we ever match something we know the user won't
       # need to see (aka the fingerprint's :hide parameter is true), go ahead

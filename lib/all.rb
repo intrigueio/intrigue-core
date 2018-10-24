@@ -34,7 +34,7 @@ require 'yomu'
 require_relative 'system'
 
 ####
-# ident
+# ident (currently local, in /lib/ident)
 ####
 require 'intrigue-ident'
 
