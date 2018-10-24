@@ -41,6 +41,11 @@ class EntityManager
 
     if entity
       entity.set_details(details.to_h.deep_merge(entity.details.to_h))
+
+      # scope it since we want it
+      entity.scoped = true
+      entity.save
+      
     else
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
@@ -55,7 +60,7 @@ class EntityManager
             :details => details,
             :details_raw => details,
             :hidden => false, # first entity should never be hidden - it was intentional
-            :scoped => true, # first entity should always be in scope - it was intentional
+            :scoped => true,  # first entity should always be in scope - it was intentional
             :alias_group_id => g.id
            })
 
@@ -71,8 +76,6 @@ class EntityManager
     return nil unless our_entity.transform!
     return nil unless our_entity.validate_entity
     # ENRICHMENT MUST BE STARTED MANUALLY!!!!!
-
-
 
   our_entity
   end
