@@ -20,11 +20,11 @@ module Machine
 
       # only applicable to dns_record, domain, and netblock for now
       # whitelisted still checks project name, so leave it for now
-      whitelisted = "#{entity.get_detail("whois_full_text")}".downcase =~ /#{filter_strings.map{|x| Regexp.escape(x.downcase) }.join("|")}/i
+      inferred_whitelist = "#{entity.get_detail("whois_full_text")}".downcase =~ /#{filter_strings.map{|x| Regexp.escape(x.downcase) }.join("|")}/i
 
       if entity.type_string == "Domain"
 
-        return unless (entity.scoped || whitelisted)
+        return unless (entity.scoped || inferred_whitelist )
 
         start_recursive_task(task_result,"search_crt", entity,[
           {"name" => "extract_pattern", "value" => filter_strings.first }
@@ -67,17 +67,21 @@ module Machine
 
       elsif entity.type_string == "Nameserver"
 
-        start_recursive_task(task_result,"security_trails_nameserver_search",entity)
+        if entity.scoped
+          start_recursive_task(task_result,"security_trails_nameserver_search",entity)
+        else
+          task_result.log "Refusing to use this nameserver as a seed, not scoped!"
+        end
 
       elsif entity.type_string == "NetBlock"
 
         transferred = entity.get_detail("transferred")
 
-        scannable = ( entity.scoped || whitelisted ) && !transferred
+        scannable = ( entity.scoped || inferred_whitelist ) && !transferred
 
         task_result.log "#{entity.name} Enriched: #{entity.enriched}"
         task_result.log "#{entity.name} Scoped: #{entity.scoped}"
-        task_result.log "#{entity.name} Whitelisted: #{whitelisted}"
+        task_result.log "#{entity.name} Whitelisted: #{inferred_whitelist}"
         task_result.log "#{entity.name} Transferred: #{transferred}"
         task_result.log "#{entity.name} Scannable: #{scannable}"
 

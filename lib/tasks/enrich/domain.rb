@@ -18,7 +18,7 @@ class Domain < Intrigue::Task::BaseTask
       :example_entities => [
         {"type" => "Domain", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
-      :created_types => []
+      :created_types => ["Domain", "Nameserver"]
     }
   end
 
@@ -61,6 +61,11 @@ class Domain < Intrigue::Task::BaseTask
 
       if out["nameservers"]
         out["nameservers"].each do |n|
+
+          # Create a nameserver object
+          _crate_entity "Nameserver", "name" => n
+
+          # create a domain for the tld
           check_and_create_domain n
         end
       end
