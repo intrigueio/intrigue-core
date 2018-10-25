@@ -279,7 +279,7 @@ module Check
           {
             :type => "application",
             :vendor => "Microsoft",
-            :product =>"Sharepoint",
+            :product =>"Sharepoint Server",
             :match_details =>"Sharepoint cookie",
             :version => nil,
             :match_type => :content_headers,
