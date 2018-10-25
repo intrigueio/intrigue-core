@@ -7,7 +7,7 @@ module Check
       [
         {
           :type => "application",
-          :vendor =>"Automattic",
+          :vendor =>"Wordpress",
           :tags => ["CMS"],
           :product =>"Wordpress",
           :match_details =>"wordpress generator tag in content",
@@ -24,7 +24,7 @@ module Check
         },
         {
           :type => "application",
-          :vendor =>"Automattic",
+          :vendor =>"Wordpress",
           :tags => ["CMS"],
           :product =>"Wordpress",
           :match_details =>"common link",
@@ -36,7 +36,7 @@ module Check
         },
         {
           :type => "application",
-          :vendor =>"Automattic",
+          :vendor =>"Wordpress",
           :tags => ["CMS"],
           :product =>"Wordpress (Hosted)",
           :match_details =>"unique header",
@@ -48,7 +48,7 @@ module Check
         },
         {
           :type => "application",
-          :vendor => "Automattic",
+          :vendor => "Wordpress",
           :tags => ["CMS"],
           :product =>"Wordpress",
           :match_details =>"Wordpress WP-JSON endpoint",
@@ -59,7 +59,7 @@ module Check
         },
         {
           :type => "application",
-          :vendor => "Automattic",
+          :vendor => "Wordpress",
           :tags => ["CMS"],
           :product =>"Wordpress",
           :match_details =>"Wordpress TinyMCE Editor",
@@ -71,7 +71,7 @@ module Check
         },
         {
           :type => "application",
-          :vendor => "Automattic",
+          :vendor => "Wordpress",
           :tags => ["CMS"],
           :product =>"Wordpress",
           :match_details =>"Wordpress TinyMCE Editor",
@@ -83,7 +83,7 @@ module Check
         },
         {
           :type => "application",
-          :vendor => "Automattic",
+          :vendor => "Wordpress",
           :tags => ["CMS"],
           :product =>"Wordpress",
           :match_details =>"Wordpress TinyMCE Editor",
@@ -95,7 +95,7 @@ module Check
         },
         {
           :type => "application",
-          :vendor => "Automattic",
+          :vendor => "Wordpress",
           :tags => ["CMS"],
           :product =>"Wordpress",
           :match_details =>"Wordpress TinyMCE Editor",
@@ -107,7 +107,7 @@ module Check
         },
         {
           :type => "application",
-          :vendor => "Automattic",
+          :vendor => "Wordpress",
           :tags => ["CMS"],
           :product =>"Wordpress",
           :match_details =>"Wordpress TinyMCE Editor",
@@ -119,7 +119,7 @@ module Check
         },
         {
           :type => "application",
-          :vendor => "Automattic",
+          :vendor => "Wordpress",
           :tags => ["CMS"],
           :product =>"Wordpress",
           :match_details =>"Wordpress TinyMCE Editor",
@@ -131,7 +131,7 @@ module Check
         },
         {
           :type => "application",
-          :vendor => "Automattic",
+          :vendor => "Wordpress",
           :tags => ["CMS"],
           :product =>"Wordpress",
           :match_details =>"Wordpress TinyMCE Editor",
@@ -143,7 +143,7 @@ module Check
         },
         {
           :type => "application",
-          :vendor => "Automattic",
+          :vendor => "Wordpress",
           :tags => ["CMS"],
           :product =>"Wordpress",
           :match_details =>"Wordpress TinyMCE Editor",
@@ -155,7 +155,7 @@ module Check
         },
         {
           :type => "application",
-          :vendor => "Automattic",
+          :vendor => "Wordpress",
           :tags => ["CMS"],
           :product =>"Wordpress",
           :match_details =>"Wordpress TinyMCE Editor",

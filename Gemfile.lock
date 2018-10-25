@@ -54,7 +54,7 @@ PATH
 PATH
   remote: lib/ident
   specs:
-    intrigue-ident (0.73)
+    intrigue-ident (0.7.4)
 
 GEM
   remote: https://rubygems.org/

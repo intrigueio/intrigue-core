@@ -45,12 +45,8 @@ class Cpe
       next unless File.exist? f
 
       # open and read the file
-      f = File.open(f,"r")
-      vuln_data = f.read
-      # close the file
-      f.close
+      json = Yajl::Parser.new.parse(File.open(f,"r"))
 
-      json = ::JSON.parse(vuln_data)
       json["CVE_Items"].each do |v|
 
         # Note that the JSON has CVE stuff under a hash, so
