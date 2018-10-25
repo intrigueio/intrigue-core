@@ -8,7 +8,7 @@ module Check
         {
           :type => "application",
           :vendor => "Checkpoint",
-          :tags => ["tech:vpn"],
+          :tags => ["vpn"],
           :product =>"GO",
           :match_details =>"page title",
           :references => ["https://en.wikipedia.org/wiki/Check_Point_GO"],
@@ -22,7 +22,7 @@ module Check
         {
           :type => "application",
           :vendor => "Checkpoint",
-          :tags => ["tech:vpn"],
+          :tags => ["vpn"],
           :product =>"GO",
           :match_details =>"server header",
           :references => ["https://en.wikipedia.org/wiki/Check_Point_GO"],
@@ -36,7 +36,7 @@ module Check
         {
           :type => "application",
           :vendor => "Checkpoint",
-          :tags => ["tech:vpn"],
+          :tags => ["vpn"],
           :product =>"SSL Network Extender",
           :match_details =>"server header",
           :references => [],

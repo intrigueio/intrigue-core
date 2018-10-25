@@ -8,9 +8,9 @@ module Check
           {
             :type => "application",
             :vendor => "F5",
-            :product =>"BIG-IP APM",
-            :match_details =>"F5 BIG-IP APM default cookie",
-            :tags => ["tech:load_balancer"],
+            :product =>"BIG-IP Access Policy Manager",
+            :match_details =>"F5 BIG-IP Access Policy Manager default cookie",
+            :tags => ["load_balancer"],
             :version => nil,
             :match_type => :content_cookies,
             :match_content => /MRHSession/,
@@ -20,9 +20,9 @@ module Check
           {
             :type => "application",
             :vendor => "F5",
-            :product =>"BIG-IP APM",
+            :product =>"BIG-IP Access Policy Manager",
             :match_details =>"F5 BIG-IP APM default logo",
-            :tags => ["tech:load_balancer"],
+            :tags => ["load_balancer"],
             :version => nil,
             :references => ["https://support.f5.com/kb/en-us/products/big-ip_apm/manuals/product/apm-customization-11-6-0/3.html"],
             :match_type => :content_body,
@@ -33,7 +33,7 @@ module Check
           {
             :type => "hardware",
             :vendor => "F5",
-            :product =>"BIG-IP",
+            :product =>"BIG-IP Local Traffic Manager",
             :match_details =>"F5 BIG-IP Load balancer cookie",
             :tags => ["tech:load_balancer"],
             :version => nil,

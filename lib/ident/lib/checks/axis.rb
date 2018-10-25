@@ -6,10 +6,10 @@ class Axis < Intrigue::Ident::Check::Base
   def generate_checks(url)
     [
       {
-        :type => "application",
+        :type => "operating_system",
+        :tags => ["webcam"],
         :vendor => "Axis",
-        :tags => ["tech:webcam"],
-        :product => "Webcam",
+        :product => "Network Camera Firmware",
         :match_details =>"default redirect uri",
         :version => nil,
         :match_type => :content_body,

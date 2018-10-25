@@ -7,10 +7,10 @@ module Check
         [
           {
             :type => "application",
-            :vendor => "Palo Alto Networks",
-            :product =>"GlobalProtect Portal",
-            :tags => ["tech:vpn"],
-            :match_details =>"Pardot",
+            :vendor => "PaloAltoNetworks",
+            :product =>"GlobalProtect",
+            :tags => ["vpn"],
+            :match_details =>"GlobalProtect Portal",
             :version => nil,
             :match_type => :content_body,
             :match_content =>  /global-protect\/login.esp/i,

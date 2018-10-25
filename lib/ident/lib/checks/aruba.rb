@@ -6,9 +6,9 @@ class Aruba < Intrigue::Ident::Check::Base
   def generate_checks(url)
     [
       {
-        :type => "application",
-        :vendor => "Aruba",
-        :product => "Wireless Controller",
+        :type => "operating_system",
+        :vendor => "Aruba Networks",
+        :product => "Aruba OS",
         :version => nil,
         :match_type => :content_body,
         :match_content =>  /arubalp=/,

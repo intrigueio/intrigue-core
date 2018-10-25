@@ -7,7 +7,7 @@ module Check
         [
           {
             :type => "application",
-            :vendor =>"Varnish",
+            :vendor =>"Varnish-Cache",
             :product =>"Varnish",
             :match_details =>"Varnish Proxy",
             :version => nil,

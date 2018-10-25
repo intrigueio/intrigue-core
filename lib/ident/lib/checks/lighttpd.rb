@@ -7,8 +7,8 @@ module Check
       [
         {
           :type => "application",
-          :vendor => "Lighttpd",
           :tags => [],
+          :vendor => "Lighttpd",
           :product =>"Lighttpd",
           :match_details =>"server header",
           :version => nil,

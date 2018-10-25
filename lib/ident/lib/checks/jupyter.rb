@@ -7,8 +7,8 @@ module Check
       [
         {
           :type => "application",
-          :vendor => "Jupyter",
           :tags => [],
+          :vendor => "Jupyter",
           :product =>"Notebook",
           :match_details =>"matched jupyterhub header",
           :match_type => :content_headers,

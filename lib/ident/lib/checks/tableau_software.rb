@@ -7,9 +7,9 @@ module Check
         [
           {
             :type => "application",
-            :vendor => "Tableau",
-            :product => "Tableau",
-            :match_details => "Tableau Server",
+            :vendor => "TableauSoftware",
+            :product => "Tableau Server",
+            :match_details => "Tableau Server - unique string",
             :version => nil,
             :references => ["https://community.tableau.com/thread/165653"],
             :match_type => :content_body,

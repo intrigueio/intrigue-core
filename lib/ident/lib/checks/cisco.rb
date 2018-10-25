@@ -48,9 +48,9 @@ module Check
           {
             :type => "application",
             :vendor => "Cisco",
-            :product =>"SSL VPN",
+            :product =>"Adaptive Security Appliance Software",
             :match_details =>"Cisco SSL VPN",
-            :tags => ["tech:vpn"],
+            :tags => ["vpn"],
             :version => nil,
             :match_type => :content_cookies,
             :match_content =>  /webvpn/,
@@ -60,9 +60,9 @@ module Check
           {
             :type => "application",
             :vendor => "Cisco",
-            :product =>"SSL VPN",
+            :product =>"Adaptive Security Appliance Software",
             :match_details =>"Cisco SSL VPN",
-            :tags => ["tech:vpn"],
+            :tags => ["vpn"],
             :version => nil,
             :match_type => :content_body,
             :match_content => /document.location.replace\(\"\/\+CSCOE\+\/logon.html\"\)/,
@@ -75,7 +75,7 @@ module Check
           {
             :type => "application",
             :vendor => "Cisco",
-            :product => "Router",
+            :product => "IOS",
             :match_details => "Cisco Router",
             :version => nil,
             :match_type => :content_headers,

@@ -1,14 +1,14 @@
 module Intrigue
 module Ident
 module Check
-  class PulseSecure < Intrigue::Ident::Check::Base
+  class Juniper < Intrigue::Ident::Check::Base
 
     def generate_checks(url)
       [
         {
           :type => "application",
-          :vendor =>"Pulse Secure",
-          :product =>"Junos VPN",
+          :vendor =>"Juniper",
+          :product =>"Junos Pulse Secure Access Service",
           :match_details => "page title",
           :match_type => :content_body,
           :references => [],
@@ -17,7 +17,7 @@ module Check
           :examples => ["https://193.240.34.79:443"],
           :verify => ["aWJtI0ludHJpZ3VlOjpFbnRpdHk6OlVyaSNodHRwczovLzE5My4yNDAuMzQuNzk6NDQz"],
           :paths => ["#{url}"]
-        },
+        }
       ]
     end
 

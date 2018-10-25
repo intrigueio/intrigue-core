@@ -7,8 +7,8 @@ module Check
         [
           {
             :type => "application",
-            :vendor => "Typo3",
-            :product => "CMS",
+            :vendor => "TYPO3",
+            :product => "TYPO3",
             :match_details => "generator tag",
             :version => nil,
             :match_type => :content_body,

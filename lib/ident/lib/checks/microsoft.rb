@@ -125,7 +125,7 @@ module Check
           {
             :type => "application",
             :vendor => "Microsoft",
-            :product => "IIS",
+            :product => "Internet Information Services",
             :match_details =>"server header",
             :version => nil,
             :dynamic_version => lambda { |x|
@@ -140,7 +140,7 @@ module Check
             :type => "application",
             :vendor => "Microsoft",
             :product =>"IIS",
-            :match_details =>"Microsoft IIS 8.0",
+            :match_details =>"Internet Information Services",
             :version => "8.0",
             :match_type => :content_body,
             :match_content =>  /<img src=\"iis-8.png\"/,
@@ -150,7 +150,7 @@ module Check
           {
             :type => "application",
             :vendor => "Microsoft",
-            :product =>"IIS",
+            :product =>"Internet Information Services",
             :match_details =>"Microsoft IIS 8.5",
             :version => "8.5",
             :match_type => :content_body,
@@ -199,7 +199,7 @@ module Check
           {
             :type => "application",
             :vendor => "Microsoft",
-            :product =>"IIS",
+            :product =>"Internet Information Services",
             :match_details =>"Microsoft IIS Generic Error - 403",
             :tags => ["error_page"],
             :version => nil,
@@ -211,7 +211,7 @@ module Check
           {
             :type => "application",
             :vendor => "Microsoft",
-            :product =>"IIS",
+            :product =>"Internet Information Services",
             :match_details =>"Microsoft Generic Error - 503",
             :tags => ["error_page"],
             :version => nil,

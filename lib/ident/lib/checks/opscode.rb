@@ -1,14 +1,14 @@
 module Intrigue
 module Ident
 module Check
-    class Chef < Intrigue::Ident::Check::Base
+    class Opscode < Intrigue::Ident::Check::Base
 
       def generate_checks(url)
         [
           {
             :type => "application",
-            :vendor => "Chef",
-            :product =>"Server",
+            :vendor => "Opscode",
+            :product =>"Chef",
             :match_details =>"Chef Server",
             :version => nil,
             :match_type => :content_body,
@@ -18,8 +18,8 @@ module Check
           },
           {
             :type => "application",
-            :vendor => "Chef",
-            :product =>"Server",
+            :vendor => "Opscode",
+            :product =>"Chef",
             :match_details =>"Chef Server",
             :version => nil,
             :match_type => :content_cookies,

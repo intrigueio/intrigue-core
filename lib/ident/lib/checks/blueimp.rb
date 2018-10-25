@@ -8,7 +8,7 @@ module Check
           {
             :type => "application",
             :vendor => "blueimp",
-            :product =>"JQuery File Upload",
+            :product =>"jQuery-File-Upload",
             :match_details =>"match string in the page",
             :match_type => :content_body,
             :version => nil,

@@ -7,8 +7,8 @@ module Check
         [
           {
             :type => "application",
-            :vendor => "Joomla!",
             :tags => ["CMS"],
+            :vendor => "Joomla",
             :product =>"Joomla!",
             :match_details =>"Known Joomla Admin Page",
             :match_type => :content_body,

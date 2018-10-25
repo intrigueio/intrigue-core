@@ -8,20 +8,6 @@ module Check
         {
           :type => "application",
           :vendor => "IBM",
-          :product =>"Axway SecureTranspor",
-          :references => ["https://www-356.ibm.com/partnerworld/gsd/solutiondetails.do?&solution=47052"],
-          :version => nil,
-          :dynamic_version => lambda {|x| _first_header_capture(x,/SecureTransport (.*) (build:.*)/)},
-          :match_type => :content_headers,
-          :match_content =>  /server: SecureTransport/i,
-          :match_details =>"server header - build is avail too",
-          :examples => ["https://dhebpcb01.boulder.ibm.com:443"],
-          :verify => ["xaWJtI0ludHJpZ3VlOjpFbnRpdHk6OlVyaSNodHRwczovL2RoZWJwY2IwMS5ib3VsZGVyLmlibS5jb206NDQz"],
-          :paths => ["#{url}"]
-        },
-        {
-          :type => "application",
-          :vendor => "IBM",
           :product =>"Datapower",
           :references => ["https://www.ibm.com/developerworks/community/blogs/HermannSW/entry/datapower_x_backside_transport_transfer_encoding_and_connection_header_fields9?lang=en"],
           :version => nil,

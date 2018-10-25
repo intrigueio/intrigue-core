@@ -6,11 +6,11 @@ module Check
       def generate_checks(url)
         [
           {
-            :type => "application",
+            :type => "operating_system",
             :vendor => "Citrix",
-            :product => "Netscaler Gateway",
+            :product => "Netscaler Gateway Firmware",
             :match_details => "Citrix Netscaler Gateway",
-            :tags => ["tech:vpn"],
+            :tags => ["vpn"],
             :version => nil,
             :match_type => :content_body,
             :match_content =>  /<title>Netscaler Gateway/,
@@ -18,11 +18,11 @@ module Check
             :paths => ["#{url}"]
           },
           {
-            :type => "application",
+            :type => "operating_system",
             :vendor => "Citrix",
-            :product => "Netscaler Gateway",
+            :product => "Netscaler Gateway Firmware",
             :match_details => "(often) customized logon page - netscaler gateway",
-            :tags => ["tech:vpn"],
+            :tags => ["vpn"],
             :version => nil,
             :match_type => :content_body,
             :match_content => /CTXMSAM_LogonFont/,
@@ -30,11 +30,11 @@ module Check
             :paths => ["#{url}"]
           },
           {
-            :type => "application",
+            :type => "operating_system",
             :vendor => "Citrix",
-            :product => "Netscaler Gateway",
+            :product => "Netscaler Gateway Firmware",
             :match_details => "misspelled content-length header",
-            :tags => ["tech:vpn"],
+            :tags => ["vpn"],
             :references => ["https://support.citrix.com/article/CTX211605"],
             :version => nil,
             :match_type => :content_headers,
@@ -44,11 +44,11 @@ module Check
             :examples => ["http://204.29.196.116:80"]
           },
           {
-            :type => "application",
+            :type => "operating_system",
             :vendor => "Citrix",
-            :product => "Netscaler Gateway",
+            :product => "Netscaler Gateway Firmware",
             :match_details => "cookie",
-            :tags => ["tech:vpn"],
+            :tags => ["vpn"],
             :references => ["https://support.citrix.com/article/CTX131488"],
             :version => nil,
             :match_type => :content_cookies,
@@ -63,7 +63,7 @@ module Check
             :vendor => "Citrix",
             :product => "XenServer",
             :match_details => "page title",
-            :tags => ["tech:hypervisor"],
+            :tags => ["hypervisor"],
             :references => [""],
             :version => nil,
             :dynamic_version => lambda { |x| _first_body_capture(x,/<title>XenServer (.*?)<\/title>/) },
@@ -79,7 +79,7 @@ module Check
             :vendor => "Citrix",
             :product => "XenServer",
             :match_details => "page title",
-            :tags => ["tech:hypervisor"],
+            :tags => ["hypervisor"],
             :references => [""],
             :version => nil,
             :dynamic_version => lambda { |x| _first_body_capture(x,/<title>Welcome to Citrix XenServer (.*?)<\/title>/) },

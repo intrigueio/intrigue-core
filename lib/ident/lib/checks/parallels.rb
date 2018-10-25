@@ -1,14 +1,14 @@
 module Intrigue
 module Ident
 module Check
-  class Plesk < Intrigue::Ident::Check::Base
+  class Parallels < Intrigue::Ident::Check::Base
 
     def generate_checks(url)
       [
         {
           :type => "application",
-          :vendor =>"Plesk",
-          :product =>"Plesk",
+          :vendor =>"Parallels",
+          :product =>"Parallels Plesk Panel",
           :match_details => "page title",
           :match_type => :content_body,
           :references => ["https://en.wikipedia.org/wiki/Plesk"],
@@ -21,8 +21,8 @@ module Check
         },
         {
           :type => "application",
-          :vendor =>"Plesk",
-          :product =>"Plesk",
+          :vendor =>"Parallels",
+          :product =>"Parallels Plesk Panel",
           :match_details => "server header",
           :match_type => :content_headers,
           :references => ["https://en.wikipedia.org/wiki/Plesk"],

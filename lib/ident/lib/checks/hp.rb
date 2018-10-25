@@ -8,8 +8,8 @@ module Check
           {
             :type => "application",
             :vendor => "HP",
-            :product =>"Printer",
-            :version => nil,
+            :product =>"ChaiSOE",
+            :version => "1.0",
             :match_type => :content_headers,
             :match_content =>  /server: HP-ChaiSOE\/1.0/i,
             :match_details =>"Generic HP Printer match",

@@ -17,9 +17,9 @@ class Brocade < Intrigue::Ident::Check::Base
         :paths => ["#{url}"]
       },
       {
-        :type => "hardware",
+        :type => "operating_system",
         :vendor => "Brocade",
-        :product => "Brocade",
+        :product => "Fabric OS",
         :version => nil,
         :examples => [ "http://120.127.142.126" ],
         :match_type => :content_body,

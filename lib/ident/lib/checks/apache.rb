@@ -20,6 +20,16 @@ class Apache < Intrigue::Ident::Check::Base
       {
         :type => "application",
         :vendor => "Apache",
+        :product =>"Groovy",
+        :match_details =>"Groovy error page",
+        :match_type => :content_body,
+        :version => nil,
+        :match_content =>  /Error processing GroovyPageView:/i,
+        :paths => ["#{url}"]
+      },
+      {
+        :type => "application",
+        :vendor => "Apache",
         :product =>"HTTP Server",
         :match_details =>"Apache web server - server header - with versions",
         :version => nil,

@@ -7,7 +7,7 @@ class Allegro < Intrigue::Ident::Check::Base
     [
       {
         :type => "application",
-        :vendor => "Allegro",
+        :vendor => "Allegrosoft",
         :product => "RomPager",
         :version => nil,
         :dynamic_version => lambda { |x|

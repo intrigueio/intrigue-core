@@ -1,14 +1,14 @@
 module Intrigue
 module Ident
 module Check
-    class Zimbra < Intrigue::Ident::Check::Base
+    class Synacor < Intrigue::Ident::Check::Base
 
       def generate_checks(url)
         [
           {
-            :type => "service",
-            :vendor =>"Zimbra",
-            :product =>"Server",
+            :type => "application",
+            :vendor =>"Synacor",
+            :product =>"Zimbra Collaboration Suite",
             :match_details =>"login page for zimbra",
             :match_type => :content_body,
             :match_content =>  /<title>Zimbra Web Client Sign In/i,

@@ -69,7 +69,25 @@ module Check
           {
             :type => "application",
             :vendor => "Oracle",
-            :product =>"Glassfish",
+            :product =>"Fusion Middleware",
+            :match_details =>"Web Cache Server - server header",
+            :references => [],
+            :version => nil,
+            :match_type => :content_headers,
+            :match_content =>  /Oracle-Web-Cache/,
+            :hide => false,
+            :dynamic_version => lambda { |x|
+                _first_header_capture(x,/Oracle-Web-Cache-[0-9]+[a-z]?\/(.*?)\ /) },
+            :examples => [
+              "https://qas.huntsmanservice.com:443"
+            ],
+            :verify => ["aHVudHNtYW4jSW50cmlndWU6OkVudGl0eTo6VXJpI2h0dHBzOi8vcWFzLmh1bnRzbWFuc2VydmljZS5jb206NDQz"],
+            :paths => ["#{url}"]
+          },
+          {
+            :type => "application",
+            :vendor => "Oracle",
+            :product =>"Glassfish Server",
             :match_details =>"Oracle / Sun GlassFish Enterprise Server",
             :references => [],
             :version => nil,
@@ -83,7 +101,7 @@ module Check
           {
             :type => "application",
             :vendor => "Oracle",
-            :product =>"Glassfish",
+            :product =>"Glassfish Server",
             :match_details =>"Oracle / Sun GlassFish Enterprise Server",
             :references => [],
             :version => nil,
@@ -129,7 +147,7 @@ module Check
           { # TODO - this will tell us J2EE versions, see references!!!
             :type => "application",
             :vendor => "Oracle",
-            :product =>"Java Application Server",
+            :product =>"Java Servlet Container",
             :match_details =>"x-header",
             :references => ["http://www.ntu.edu.sg/home/ehchua/programming/java/javaservlets.html"],
             :version => nil,
@@ -143,7 +161,7 @@ module Check
           { # TODO - this will tell us J2EE versions, see references!!!
             :type => "application",
             :vendor => "Oracle",
-            :product =>"Java Server Pages",
+            :product =>"Java Server Container",
             :match_details =>"x-header",
             :references => ["http://www.ntu.edu.sg/home/ehchua/programming/java/javaservlets.html"],
             :version => nil,
@@ -157,8 +175,8 @@ module Check
           {
             :type => "application",
             :vendor => "Oracle",
-            :product =>"JavaServer Faces",
-            :match_details =>"viewstate inclusion of javaserver faces",
+            :product =>"Mojarra",
+            :match_details =>"Viewstate inclusion of javaserver faces",
             :references => [
               "http://www.oracle.com/technetwork/java/javaee/javaserverfaces-139869.html",
               "http://www.oracle.com/technetwork/topics/index-090910.html",
@@ -170,24 +188,6 @@ module Check
             :match_content =>  /javax.faces.ViewState/,
             :hide => false,
             :examples => ["https://reset.oxy.com:443"],
-            :paths => ["#{url}"]
-          },
-          {
-            :type => "application",
-            :vendor => "Oracle",
-            :product =>"Web Cache Server",
-            :match_details =>"server header",
-            :references => [],
-            :version => nil,
-            :match_type => :content_headers,
-            :match_content =>  /Oracle-Web-Cache/,
-            :hide => false,
-            :dynamic_version => lambda { |x|
-                _first_header_capture(x,/Oracle-Web-Cache-[0-9]+[a-z]?\/(.*?)\ /) },
-            :examples => [
-              "https://qas.huntsmanservice.com:443"
-            ],
-            :verify => ["aHVudHNtYW4jSW50cmlndWU6OkVudGl0eTo6VXJpI2h0dHBzOi8vcWFzLmh1bnRzbWFuc2VydmljZS5jb206NDQz"],
             :paths => ["#{url}"]
           },
           {

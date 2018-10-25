@@ -8,7 +8,7 @@ module Check
           {
             :type => "application",
             :vendor => "VMWare",
-            :tags => ["tech:hypervisor"],
+            :tags => ["hypervisor"],
             :product =>"ESXi",
             :match_details =>"unique page string",
             :version => nil,
@@ -21,8 +21,8 @@ module Check
           {
             :type => "application",
             :vendor => "VMWare",
-            :tags => ["tech:hypervisor"],
-            :product =>"Horizon",
+            :tags => ["hypervisor"],
+            :product =>"Horizon View",
             :match_details =>"page title",
             :version => nil,
             :match_type => :content_body,

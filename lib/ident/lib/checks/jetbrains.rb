@@ -1,13 +1,13 @@
 module Intrigue
 module Ident
 module Check
-    class TeamCity < Intrigue::Ident::Check::Base
+    class Jetbrains < Intrigue::Ident::Check::Base
 
       def generate_checks(url)
         [
           {
             :type => "application",
-            :vendor => "TeamCity",
+            :vendor => "JetBrains",
             :product => "TeamCity",
             :match_details => "TeamCity Continuous Integration",
             :version => nil,
