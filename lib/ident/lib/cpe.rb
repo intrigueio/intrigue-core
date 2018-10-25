@@ -33,10 +33,10 @@ class Cpe
         "#{nvd_data_directory}/nvdcve-1.0-2018.json",
         "#{nvd_data_directory}/nvdcve-1.0-2017.json",
         "#{nvd_data_directory}/nvdcve-1.0-2016.json",
-        "#{nvd_data_directory}/nvdcve-1.0-2015.json",
-        "#{nvd_data_directory}/nvdcve-1.0-2014.json",
-        "#{nvd_data_directory}/nvdcve-1.0-2013.json",
-        "#{nvd_data_directory}/nvdcve-1.0-2012.json",
+        #"#{nvd_data_directory}/nvdcve-1.0-2015.json",
+        #"#{nvd_data_directory}/nvdcve-1.0-2014.json",
+        #"#{nvd_data_directory}/nvdcve-1.0-2013.json",
+        #"#{nvd_data_directory}/nvdcve-1.0-2012.json",
         #"#{nvd_data_directory}/nvdcve-1.0-2011.json"
       ]
 
