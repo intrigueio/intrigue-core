@@ -81,6 +81,10 @@ class Cpe
               next unless p["product_name"].downcase == @product.downcase
               #puts "DEBUG Matching: #{vd["version_value"]} with #{@version}"
 
+              # first make sure we share the same major version
+              next unless  vd["version_value"].split(".").first == @version.split(".").first
+
+              # if so, check that this affects versions equal to or newer than uors
               if vd["version_value"] >= @version
                 #puts "MATCHED!"
 
