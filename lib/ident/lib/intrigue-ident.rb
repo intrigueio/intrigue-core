@@ -3,12 +3,16 @@ require 'net/http'
 require 'openssl'
 require 'zlib'
 
+# Load in checks
 require_relative 'check_factory'
 require_relative 'checks/base'
 check_folder = File.expand_path('checks', File.dirname(__FILE__)) # get absolute directory
 Dir["#{check_folder}/*.rb"].each { |file| require_relative file }
+
+# load in CPE handling
 require_relative 'cpe'
 
+# Load in traverse exceptions
 require_relative 'traverse_exceptions'
 include Intrigue::Ident::TraverseExceptions
 
