@@ -37,14 +37,20 @@ class Cpe
         "#{nvd_data_directory}/nvdcve-1.0-2014.json",
         "#{nvd_data_directory}/nvdcve-1.0-2013.json",
         "#{nvd_data_directory}/nvdcve-1.0-2012.json",
-        "#{nvd_data_directory}/nvdcve-1.0-2011.json"
+        #"#{nvd_data_directory}/nvdcve-1.0-2011.json"
       ]
 
     files.each do |f|
       #puts "DEBUG Checking file: #{f}"
       next unless File.exist? f
 
-      json = ::JSON.parse(File.open(f,"r").read)
+      # open and read the file
+      f = File.open(f,"r")
+      vuln_data = f.read
+      # close the file
+      f.close
+
+      json = ::JSON.parse(vuln_data)
       json["CVE_Items"].each do |v|
 
         # Note that the JSON has CVE stuff under a hash, so
@@ -126,8 +132,8 @@ class Cpe
             end
           end
         end
-
       end
+
     end
     #puts "DEBUG Sending #{vulns.uniq.count} vulns"
   vulns.uniq
