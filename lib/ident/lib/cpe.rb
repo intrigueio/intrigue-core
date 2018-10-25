@@ -121,7 +121,6 @@ class Cpe
                 }
 
                 #puts "DEBUG Vuln: #{vuln}"
-
                 vulns << vuln
               end
 
@@ -131,7 +130,9 @@ class Cpe
       end
 
     end
+
     #puts "DEBUG Sending #{vulns.uniq.count} vulns"
+    
   vulns.uniq
   end
 

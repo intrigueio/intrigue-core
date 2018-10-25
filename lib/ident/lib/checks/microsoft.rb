@@ -94,6 +94,34 @@ module Check
           {
             :type => "application",
             :vendor => "Microsoft",
+            :product =>"Exchange Server",
+            :references => ["https://bit.ly/2k4Yoot"],
+            :match_details =>"OWA version -> Exchange server inference (body)",
+            :version => nil,
+            :match_type => :content_body,
+            :match_content =>  /OwaPage\ =\ ASP.auth_logon_aspx/,
+            :dynamic_version => lambda { |x|
+              owa_to_exchange_version _first_body_capture x, /href=\"\/owa\/auth\/(.*)\/themes\/resources\/favicon.ico/ 
+            },
+            :paths => ["#{url}"]
+          },
+          {
+            :type => "application",
+            :vendor => "Microsoft",
+            :product =>"Exchange Server",
+            :references => ["https://bit.ly/2k4Yoot"],
+            :match_details =>"OWA version -> Exchange server inference (headers)",
+            :version => nil,
+            :match_type => :content_headers,
+            :match_content =>  /x-owa-version/,
+            :dynamic_version => lambda { |x|
+              owa_to_exchange_version _first_header_capture(x, /x-owa-version:(.*)/)
+            },
+            :paths => ["#{url}"]
+          },
+          {
+            :type => "application",
+            :vendor => "Microsoft",
             :product =>"Forefront TMG",
             :match_details =>"Microsoft Forefront Threat Management Gateway",
             :version => nil,
@@ -139,7 +167,7 @@ module Check
           {
             :type => "application",
             :vendor => "Microsoft",
-            :product =>"IIS",
+            :product =>"Internet Information Services",
             :match_details =>"Internet Information Services",
             :version => "8.0",
             :match_type => :content_body,
@@ -161,8 +189,8 @@ module Check
           {
             :type => "application",
             :vendor => "Microsoft",
-            :product =>"IIS (Not Configured)",
-            :match_details =>"Microsoft-HTTPAPI/2.0",
+            :product =>"Internet Information Services",
+            :match_details =>"Microsoft-HTTPAPI/2.0 (IIS not configured)",
             :version => nil,
             :match_type => :content_headers,
             :match_content =>  /server: Microsoft-HTTPAPI\/2.0/i,
@@ -173,7 +201,7 @@ module Check
           {
             :type => "application",
             :vendor => "Microsoft",
-            :product =>"IIS",
+            :product =>"Internet Information Services",
             :match_details =>"Microsoft IIS Unauthorized (403)",
             :tags => ["error_page"],
             :version => nil,
@@ -186,7 +214,7 @@ module Check
           {
             :type => "application",
             :vendor => "Microsoft",
-            :product =>"IIS",
+            :product =>"Internet Information Services",
             :match_details =>"Microsoft IIS Missing Resource (404)",
             :tags => ["error_page"],
             :version => nil,
@@ -258,7 +286,7 @@ module Check
             :type => "application",
             :vendor => "Microsoft",
             :product =>"Outlook Web Access",
-            :match_details =>"Microsoft Outlook Web Access",
+            :match_details =>"Microsoft Outlook Web Access (header)",
             :version => nil,
             :match_type => :content_headers,
             :match_content =>  /x-owa-version/,
@@ -269,7 +297,7 @@ module Check
             :type => "application",
             :vendor => "Microsoft",
             :product =>"Outlook Web Access",
-            :match_details =>"Microsoft Outlook Web Access",
+            :match_details =>"Microsoft Outlook Web Access (body)",
             :version => nil,
             :match_type => :content_body,
             :match_content =>  /OwaPage\ =\ ASP.auth_logon_aspx/,
@@ -289,6 +317,115 @@ module Check
             :paths => ["#{url}"]
           },
         ]
+      end
+
+      def owa_to_exchange_version(owa_version)
+        if owa_version == "15.0.516" #.32"
+          return version = "2013"
+          #update = "RTM"
+        elsif owa_version == "15.0.620" #.29"
+          return version = "2013"
+          # update = "Cumulative Update 1"
+        elsif owa_version == "15.0.712" #.24"
+          return version = "2013"
+          # update = "Cumulative Update 2"
+        elsif owa_version == "15.0.775" #.38"
+          return version = "2013"
+          # update = "Cumulative Update 3"
+        elsif owa_version == "15.0.847" #.32"
+          return version = "2013"
+          # update = "Service Pack 1" # cumulative update 4
+        elsif owa_version == "15.0.913" #.22"
+          return version = "2013"
+          # update = "Cumulative Update 5"
+        elsif owa_version == "15.0.995" #.29"
+          return version = "2013"
+          # update = "Cumulative Update 6"
+        elsif owa_version == "15.0.1044" #.25"
+          return version = "2013"
+          # update = "Cumulative Update 7"
+        elsif owa_version == "15.0.1076" #.9"
+          return version = "2013"
+          # update = "Cumulative Update 8"
+        elsif owa_version == "15.0.1104" #.5"
+          return version = "2013"
+          # update = "Cumulative Update 9"
+        elsif owa_version == "15.0.1130" #.7"
+          return version = "2013"
+          # update = "Cumulative Update 10"
+        elsif owa_version == "15.0.1156" #.6"
+          return version = "2013"
+          # update = "Cumulative Update 11"
+        elsif owa_version == "15.0.1178" #.4"
+          return version = "2013"
+          # update = "Cumulative Update 12"
+        elsif owa_version == "15.0.1210" #.3"
+          return version = "2013"
+          # update = "Cumulative Update 13"
+        elsif owa_version == "15.0.1236" #.3"
+          return version = "2013"
+          # update = "Cumulative Update 14"
+        elsif owa_version == "15.0.1263" #.5"
+          return version = "2013"
+          # update = "Cumulative Update 15"
+        elsif owa_version == "15.0.1293" #.2"
+          return version = "2013"
+          # update = "Cumulative Update 16"
+        elsif owa_version == "15.0.1320" #.4"
+          return version = "2013"
+          # update = "Cumulative Update 17"
+        elsif owa_version == "15.0.1347" #.2"
+          return version = "2013"
+          # update = "Cumulative Update 18"
+        elsif owa_version == "15.0.1365" #.1"
+          return version = "2013"
+          # update = "Cumulative Update 19"
+        elsif owa_version == "15.0.1367" #.3"
+          return version = "2013"
+          # update = "Cumulative Update 20"
+        elsif owa_version == "115.0.1395" #.4"
+          return version = "2013"
+          # update = "Cumulative Update 21"
+        elsif owa_version == "15.1.225" #.16"
+          return version = "2016"
+          # update = "Preview"
+        elsif owa_version == "15.1.225" #.42"
+          return version = "2016"
+          # update = "RTM"
+        elsif owa_version == "15.1.396" #.30"
+          return version = "2016"
+          # update = "Cumulative Update 1"
+        elsif owa_version == "15.1.466" #.34"
+          return version = "2016"
+          # update = "Cumulative Update 2"
+        elsif owa_version == "15.1.466" #.34"
+          return version = "2016"
+          # update = "Cumulative Update 3"
+        elsif owa_version == "15.1.669" #.32"
+          return version = "2016"
+          # update = "Cumulative Update 4"
+        elsif owa_version == "15.1.845" #.34"
+          return version = "2016"
+          # update = "Cumulative Update 5"
+        elsif owa_version == "15.1.1034" #.26"
+          return version = "2016"
+          # update = "Cumulative Update 6"
+        elsif owa_version == "15.1.1261" #.35"
+          return version = "2016"
+          # update = "Cumulative Update 7"
+        elsif owa_version == "15.1.1415" #.2"
+          return version = "2016"
+          # update = "Cumulative Update 8"
+        elsif owa_version == "15.1.1466" #.3"
+          return version = "2016"
+          # update = "Cumulative Update 9"
+        elsif owa_version == "15.1.1531" #.3"
+          return version = "2016"
+          # update = "Cumulative Update 10"
+        elsif owa_version == "15.1.1591" #.01"
+          return version = "2016"
+          # update = "Cumulative Update 11"
+        end
       end
 
     end
