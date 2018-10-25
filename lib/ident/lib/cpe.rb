@@ -1,5 +1,3 @@
-require 'versionomy'
-
 module Intrigue
 module Ident
 class Cpe
@@ -85,7 +83,7 @@ class Cpe
               # if so, check that this affects versions equal to or newer than uors
               vuln_version = Versionomy.parse(vd["version_value"])
               our_version = Versionomy.parse(@version)
-              
+
               if vuln_version >= our_version
                 #puts "DEBUG - VULN MATCHED (#{cve['CVE_data_meta']['ID']}): #{Versionomy.parse(vd['version_value'])} >= #{Versionomy.parse(@version)}}!"
                 matched << cve["CVE_data_meta"]["ID"]

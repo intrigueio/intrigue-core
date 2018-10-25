@@ -10,6 +10,7 @@ check_folder = File.expand_path('checks', File.dirname(__FILE__)) # get absolute
 Dir["#{check_folder}/*.rb"].each { |file| require_relative file }
 
 # load in CPE handling
+require 'versionomy'
 require_relative 'cpe'
 
 # Load in traverse exceptions
@@ -18,9 +19,7 @@ include Intrigue::Ident::TraverseExceptions
 
 module Intrigue
   module Ident
-
-    VERSION=0.73
-
+    
     def generate_requests_and_check(url, options)
 
       results = []

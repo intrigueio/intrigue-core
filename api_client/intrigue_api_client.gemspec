@@ -1,3 +1,4 @@
+# coding: utf-8
 Gem::Specification.new do |s|
   s.name        = 'intrigue_api_client'
   s.version     = '1.5.0'
