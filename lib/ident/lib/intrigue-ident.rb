@@ -108,7 +108,10 @@ module Intrigue
       calculated_type = "o" if check[:type] == "operating_system"
       calculated_type = "s" if check[:type] == "service" # literally made up
 
-      cpe_string = "cpe:2.3:#{calculated_type}:#{check[:vendor]}:#{check[:product]}".downcase
+      vendor_string = check[:vendor].gsub(" ","_")
+      product_string = check[:product].gsub(" ","_")
+
+      cpe_string = "cpe:2.3:#{calculated_type}:#{vendor_string}:#{product_string}".downcase
       cpe_string << ":#{calculated_version}".downcase if calculated_version
 
       to_return = {
