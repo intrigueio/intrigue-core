@@ -57,6 +57,7 @@ gem 'selenium-webdriver'     , '~> 3.12.0'
 # fingerprinting
 gem 'recog-intrigue',         :git => 'https://github.com/intrigueio/recog.git'
 gem 'intrigue-ident',         :path => "lib/ident"
+gem 'versionomy'
 
 # Handlers
 gem 'couchrest'

@@ -1,3 +1,5 @@
+require 'versionomy'
+
 module Intrigue
 module Ident
 class Cpe
@@ -14,14 +16,6 @@ class Cpe
     @variant = x[:variant] # TODO... currenty not used
   end
 
-  def <(another)
-    Gem::Version(@version) < Gem::Version(_parse_cpe(another[:version]))
-  end
-
-  def >(another)
-    Gem::Version(@version) > Gem::Version(_parse_cpe(another[:version]))
-  end
-
   # hacktastic! matches vulns by CPE
   def vulns
 
@@ -36,6 +30,7 @@ class Cpe
     return [] unless @version
 
     vulns = []
+    matched = []
     files = [
         "#{nvd_data_directory}/nvdcve-1.0-2018.json",
         "#{nvd_data_directory}/nvdcve-1.0-2017.json",
@@ -48,7 +43,7 @@ class Cpe
       ]
 
     files.each do |f|
-      puts "DEBUG Checking file: #{f}"
+      #puts "DEBUG Checking file: #{f}"
       next unless File.exist? f
 
       json = ::JSON.parse(File.open(f,"r").read)
@@ -74,10 +69,13 @@ class Cpe
 
         # iterate through the heirarchy to get to product and version we can match on
         cve["affects"]["vendor"]["vendor_data"].each do |vd|
+          next if matched.include? cve["CVE_data_meta"]["ID"] # skip if we got it already
           #puts "DEBUG Checking Vendor Data #{vd}"
           vd["product"]["product_data"].each do |p|
+            next if matched.include? cve["CVE_data_meta"]["ID"] # skip if we got it already
             #puts "DEBUG Checking product #{p}"
             p["version"]["version_data"].each do |vd|
+              next if matched.include? cve["CVE_data_meta"]["ID"] # skip if we got it already
               next unless p["product_name"].downcase == @product.downcase
               #puts "DEBUG Matching: #{vd["version_value"]} with #{@version}"
 
@@ -85,9 +83,12 @@ class Cpe
               next unless  vd["version_value"].split(".").first == @version.split(".").first
 
               # if so, check that this affects versions equal to or newer than uors
-              if vd["version_value"] >= @version
-                #puts "MATCHED!"
-
+              vuln_version = Versionomy.parse(vd["version_value"])
+              our_version = Versionomy.parse(@version)
+              
+              if vuln_version >= our_version
+                #puts "DEBUG - VULN MATCHED (#{cve['CVE_data_meta']['ID']}): #{Versionomy.parse(vd['version_value'])} >= #{Versionomy.parse(@version)}}!"
+                matched << cve["CVE_data_meta"]["ID"]
                 cve_id = cve["CVE_data_meta"]["ID"]
                 #puts "CVE: #{cve_id}"
 
