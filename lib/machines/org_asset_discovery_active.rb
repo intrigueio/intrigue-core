@@ -9,7 +9,7 @@ module Machine
         :passive => false,
         :user_selectable => true,
         :authors => ["jcran"],
-        :description => "This machine performs a network recon and enumeration for an organization. Suggest starting with a DnsRecord or NetBlock."
+        :description => "This machine performs a network recon and enumeration for an organization. Start with a Domain or NetBlock."
       }
     end
 
@@ -31,7 +31,7 @@ module Machine
         ])
 
         start_recursive_task(task_result,"dns_brute_sub",entity,[
-          {"name" => "threads", "value" => 5 },
+          {"name" => "threads", "value" => 10 },
           {"name" => "use_file", "value" => true },
           {"name" => "brute_alphanumeric_size", "value" => 1 }])
 
@@ -47,7 +47,7 @@ module Machine
       elsif entity.type_string == "DnsRecord"
 
         start_recursive_task(task_result,"dns_brute_sub",entity,[
-          {"name" => "threads", "value" => 3 }])
+          {"name" => "threads", "value" => 5 }])
 
       elsif entity.type_string == "FtpService"
 
