@@ -13,10 +13,7 @@
   },
   "debug" : false,
   "intrigue_task_log_location" : "database",
-  "intrigue_task_load_paths": [],
-  "intrigue_strategy_load_paths": [],
-  "intrigue_handler_load_paths": [],
-  "intrigue_entity_load_paths": [],
+  "intrigue_load_paths": [],
   "intrigue_handler_processing_wait_time" : 60,
   "intrigue_notifiers": {
     "just_another_bot": {

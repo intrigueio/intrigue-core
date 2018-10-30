@@ -69,18 +69,6 @@ Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 tasks_folder = File.expand_path('../tasks/enrich', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
-# And check to see if there are any specified load paths
-global_config = $global_config
-if global_config.config["intrigue_task_load_paths"]
-  global_config.config["intrigue_task_load_paths"].each do |load_path|
-    load_path = "#{tasks_folder}/#{load_path}" unless load_path[0] == "/"
-    Dir["#{load_path}/*.rb"].each do |file|
-      puts "Adding user task: #{file}"
-      require_relative file
-    end
-  end
-end
-
 ####
 ## Machines
 ####
@@ -89,17 +77,6 @@ require_relative 'machines/base'
 machines_folder = File.expand_path('../machines', __FILE__) # get absolute directory
 Dir["#{machines_folder}/*.rb"].each {|f| require_relative f}
 
-# And check to see if there are any specified load paths
-global_config = $global_config
-if global_config.config["intrigue_machine_load_paths"]
-  global_config.config["intrigue_machine_load_paths"].each do |load_path|
-    load_path = "#{machines_folder}/#{load_path}" unless load_path[0] == "/"
-    Dir["#{load_path}/*.rb"].each do |file|
-      puts "Adding user machine: #{file}"
-      require_relative file
-    end
-  end
-end
 
 
 # Client libraries
@@ -115,18 +92,6 @@ entities_folder = File.expand_path('../entities', __FILE__) # get absolute direc
 require_relative "#{entities_folder}/network_service" # have to do this first, since others dep on it
 Dir["#{entities_folder}/*.rb"].each {|f| require_relative f}
 
-# And check to see if there are any specified load paths
-global_config = $global_config
-if global_config.config["intrigue_entity_load_paths"]
-  global_config.config["intrigue_entity_load_paths"].each do |load_path|
-    load_path = "#{entities_folder}/#{load_path}" unless load_path[0] == "/"
-    Dir["#{load_path}/*.rb"].each do |file|
-      puts "Adding user entity: #{file}"
-      require_relative file
-    end
-  end
-end
-
 ####
 # Handler Libraries
 ####
@@ -134,18 +99,6 @@ require_relative 'handler_factory'
 require_relative 'handlers/base'
 handlers_folder = File.expand_path('../handlers', __FILE__) # get absolute directory
 Dir["#{handlers_folder}/*.rb"].each {|f| require_relative f}
-
-# And check to see if there are any specified load paths
-global_config = $global_config
-if global_config.config["intrigue_handler_load_paths"]
-  global_config.config["intrigue_handler_load_paths"].each do |load_path|
-    load_path = "#{handlers_folder}/#{load_path}" unless load_path[0] == "/"
-    Dir["#{load_path}/*.rb"].each do |file|
-      puts "Adding user handler: #{file}"
-      require_relative file
-    end
-  end
-end
 
 ####
 # Notifier Libraries
@@ -155,14 +108,35 @@ require_relative 'notifiers/base'
 notifiers_folder = File.expand_path('../notifiers', __FILE__) # get absolute directory
 Dir["#{notifiers_folder}/*.rb"].each {|f| require_relative f}
 
+
+###
+### User-specified directories
+###
 # And check to see if there are any specified load paths
 global_config = $global_config
-if global_config.config["intrigue_notifier_load_paths"]
-  global_config.config["intrigue_notifier_load_paths"].each do |load_path|
-    load_path = "#{notifiers_folder}/#{load_path}" unless load_path[0] == "/"
-    Dir["#{load_path}/*.rb"].each do |file|
-      puts "Adding user notifier: #{file}"
+if global_config.config["intrigue_load_paths"]
+  global_config.config["intrigue_load_paths"].each do |load_path|
+    load_path = "#{load_path}" unless load_path[0] == "/"
+
+    Dir["#{load_path}/entities/*.rb"].each do |file|
+      puts "Adding user entity from: #{file}"
       require_relative file
     end
+
+    Dir["#{load_path}/handlers/*.rb"].each do |file|
+      puts "Adding user handler from: #{file}"
+      require_relative file
+    end
+
+    Dir["#{load_path}/machines/*.rb"].each do |file|
+      puts "Adding user machine from: #{file}"
+      require_relative file
+    end
+
+    Dir["#{load_path}/tasks/*.rb"].each do |file|
+      puts "Adding user task from: #{file}"
+      require_relative file
+    end
+
   end
 end
