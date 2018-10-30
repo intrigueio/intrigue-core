@@ -1,11 +1,11 @@
 module Intrigue
 module Task
-class SecurityTrailsSubdomains < BaseTask
-  
+class SecurityTrailsSubdomainSearch < BaseTask
+
   def self.metadata
     {
-      :name => "security_trails_subdomains",
-      :pretty_name => "Security Trails Subdomains",
+      :name => "security_trails_subdomain_search",
+      :pretty_name => "Security Trails Subdomain Search",
       :authors => ["jcran"],
       :description => "This task hits the Security Trails API and finds subdomains.",
       :references => [],

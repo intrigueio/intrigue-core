@@ -9,7 +9,7 @@ module Machine
         :passive => false,
         :user_selectable => true,
         :authors => ["jcran"],
-        :description => "This machine performs a network recon and enumeration for an organization. Start with a Domain or NetBlock."
+        :description => "This machine performs a network recon and enumeration for an organization. Start with a Domain or NetBlock. No credentials required."
       }
     end
 
@@ -26,6 +26,9 @@ module Machine
 
         return unless (entity.scoped || inferred_whitelist )
 
+        # requires better key management before we can enable by default
+        #start_recursive_task(task_result,"security_trails_subdomain_search",entity, [], true)
+
         # get the nameservers, so we can go further
         start_recursive_task(task_result,"enumerate_nameservers", entity)
 
@@ -38,13 +41,14 @@ module Machine
           {"name" => "brute_alphanumeric_size", "value" => 1 }], true)
 
         start_recursive_task(task_result,"public_trello_check",entity)
+        start_recursive_task(task_result,"public_google_groups_check", entity)
+
+        # GITHUB!
 
         base_name = entity.name.split(".")[0...-1].join(".")
         start_recursive_task(task_result,"aws_s3_brute",entity,[
           {"name" => "additional_buckets", "value" => "#{base_name},#{entity.name}"}
         ])
-
-        start_recursive_task(task_result,"public_google_groups_check", entity)
 
       elsif entity.type_string == "DnsRecord"
 
@@ -73,7 +77,8 @@ module Machine
 
         return unless (entity.scoped || inferred_whitelist )
 
-        start_recursive_task(task_result,"security_trails_nameserver_search",entity, [], true)
+        # requires better key management before we can enable by default
+        #start_recursive_task(task_result,"security_trails_nameserver_search",entity, [], true)
 
       elsif entity.type_string == "NetBlock"
 

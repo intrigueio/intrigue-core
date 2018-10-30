@@ -76,7 +76,7 @@ end
 # database set up
 def setup_database
   options = {
-    :max_connections => 25,
+    :max_connections => 50,
     :pool_timeout => 240
   }
 

@@ -92,6 +92,7 @@ class IntrigueApp < Sinatra::Base
       depth = @params["depth"].to_i
       current_project = Intrigue::Model::Project.first(:name => @project_name)
       entity_name = "#{@params["attrib_name"]}"
+      auto_scope = true # manually created 
 
       ### Handler definition, make sure we have a valid handler type
       if Intrigue::HandlerFactory.include? "#{@params["handler"]}"
@@ -149,7 +150,7 @@ class IntrigueApp < Sinatra::Base
 
       # Start the task run!
       task_result = start_task("task", current_project, nil, task_name, entity,
-                                depth, options, handlers, machine_name, auto_enrich)
+                                depth, options, handlers, machine_name, auto_enrich, auto_scope)
 
       entity.task_results << task_result
       entity.save
@@ -203,6 +204,7 @@ class IntrigueApp < Sinatra::Base
       end
 
       auto_enrich = @params["auto_enrich"] == "on" ? true : false
+      auto_scope = true  # manually created
 
       # for each entity in thefile
       entities.each do |e|
@@ -217,7 +219,7 @@ class IntrigueApp < Sinatra::Base
 
         # Start the task run!
         task_result = start_task("task", current_project, nil, task_name, entity,
-                                  depth, options, handlers, machine_name, auto_enrich)
+                                  depth, options, handlers, machine_name, auto_enrich, auto_scope)
 
         entity.task_results << task_result
         entity.save
@@ -292,6 +294,7 @@ class IntrigueApp < Sinatra::Base
       handlers = payload["handlers"]
       machine_name = payload["machine_name"]
       auto_enrich = "#{payload["auto_enrich"]}".to_bool
+      auto_scope = true # manually created
 
       # create the first entity
       entity = Intrigue::EntityManager.create_first_entity(@project_name,type_string,name,{})
@@ -302,7 +305,7 @@ class IntrigueApp < Sinatra::Base
 
       # Start the task_run
       task_result = start_task("task", project, nil, task_name, entity, depth,
-                                  options, handlers, machine_name, auto_enrich)
+                                  options, handlers, machine_name, auto_enrich, auto_scope)
 
       status 200 if task_result
 

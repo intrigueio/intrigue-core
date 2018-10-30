@@ -121,13 +121,17 @@ class EntityManager
       entity_already_existed = true
 
     else
-      task_result.log_good "NEW ENTITY! #{type_string} #{name}. Scoped: #{tr.auto_scope}. No-Traverse: #{no_traverse_entity}"
+      task_result.log_good "New Entity: #{type_string} #{name}. Scoped: #{tr.auto_scope}. No-Traverse: #{no_traverse_entity}"
       new_entity = true
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
       $db.transaction do
         begin
 
+          # Create a new alias group
+          g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
+
+          # Create a new entity in that group
           entity = Intrigue::Model::Entity.create({
             :name =>  downcased_name,
             :project => project,
@@ -135,17 +139,14 @@ class EntityManager
             :details => details,
             :details_raw => details,
             :scoped => tr.auto_scope, # set in scope if task result auto_scope is true
-            :hidden => (no_traverse_entity ? true : false )
+            :hidden => (no_traverse_entity ? true : false ),
+            :alias_group_id => g.id
            })
 
           unless entity
             task_result.log_fatal "Unable to create entity: #{entity}"
             return nil
           end
-
-           g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
-           entity.alias_group_id = g.id
-           entity.save
 
         rescue Encoding::UndefinedConversionError => e
           task_result.log_fatal "Unable to create entity:#{entity}\n #{e}"
@@ -203,7 +204,6 @@ class EntityManager
 
     # ENRICHMENT LAUNCH
     if task_result.auto_enrich && !entity_already_existed
-      ### XXX TEST- CURRENTLY TRYING THIS IN THE CONTEXT OF THE ORIGINAL TASK (VS ANOTHER BG TASK)
       if !no_traverse_entity
         # Check if we've alrady run first and return gracefully if so
         if created_entity.enriched
@@ -222,7 +222,7 @@ class EntityManager
       task_result.log "Skipping enrichment... entity exists!" if entity_already_existed
     end
 
-    task_result.log "Created entity: #{created_entity.name}"
+    #task_result.log "Created entity: #{created_entity.name}"
   # return the entity
   created_entity
   end

@@ -24,7 +24,7 @@ module System
 
         entity = _parse_entity s["entity"]
         task_name = s["task"] || "create_entity"
-        machine = s["machine"] || "org_asset_discovery_active"
+        machine = p["machine"] || "org_asset_discovery_active"
         depth = s["depth"] || 5
         options = s["options"] || []
         handlers = s["handlers"] || []
