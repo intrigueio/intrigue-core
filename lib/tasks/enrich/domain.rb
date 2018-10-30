@@ -18,7 +18,7 @@ class Domain < Intrigue::Task::BaseTask
       :example_entities => [
         {"type" => "Domain", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
-      :created_types => ["Domain", "Nameserver"]
+      :created_types => []
     }
   end
 
@@ -37,20 +37,20 @@ class Domain < Intrigue::Task::BaseTask
       _log "Grabbing SOA"
       soa_details = collect_soa_details(lookup_name)
       _set_entity_detail("soa_record", soa_details)
-      check_and_create_domain(soa_details["primary_name_server"]) if soa_details
+      #check_and_create_domain(soa_details["primary_name_server"]) if soa_details
 
       # grab any / all MX records (useful to see who accepts mail)
       _log "Grabbing MX"
       mx_records = collect_mx_records(lookup_name)
       _set_entity_detail("mx_records", mx_records)
-      mx_records.each{|mx| check_and_create_domain(mx["host"]) }
+      #mx_records.each{|mx| check_and_create_domain(mx["host"]) }
 
       # collect TXT records (useful for random things)
       _set_entity_detail("txt_records", collect_txt_records(lookup_name))
 
       # grab any / all SPF records (useful to see who accepts mail)
       _set_entity_detail("spf_record", collect_spf_details(lookup_name))
-      
+
     end
 
   end

@@ -121,7 +121,7 @@ class EntityManager
       entity_already_existed = true
 
     else
-      task_result.log_good "NEW ENTITY! #{type_string} #{name}"
+      task_result.log_good "NEW ENTITY! #{type_string} #{name}. Scoped: #{tr.auto_scope}. No-Traverse: #{no_traverse_entity}"
       new_entity = true
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)

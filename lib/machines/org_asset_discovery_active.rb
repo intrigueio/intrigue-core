@@ -149,10 +149,10 @@ module Machine
       elsif entity.type_string == "Organization"
 
       ### search for netblocks
-      start_recursive_task(task_result,"whois_lookup",entity, [],  true)
+      start_recursive_task(task_result,"whois_lookup",entity, [], true)
 
       # search bgp data for netblocks
-      start_recursive_task(task_result,"search_bgp",entity, [],  true)
+      start_recursive_task(task_result,"search_bgp",entity, [], true)
 
       #
       start_recursive_task(task_result,"public_trello_check",entity)

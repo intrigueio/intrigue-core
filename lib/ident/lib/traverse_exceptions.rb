@@ -153,6 +153,7 @@ module TraverseExceptions
             entity_name =~ /^.*\.mandrillapp.com(:[0-9]*)?$/               ||
             entity_name =~ /^.*\.marketo.com(:[0-9]*)?$/                   ||
             entity_name =~ /^.*\.metric.gstatic.com(:[0-9]*)?$/            ||
+            entity_name =~ /^.*\.mktossl.com(:[0-9]*)?$/                   ||
             entity_name =~ /^.*\.mktoweb.com(:[0-9]*)?$/                   ||
             entity_name =~ /^.*\.mkto-[a-z]+[0-9]+.com(:[0-9]*)?$/         || # marketo branding domain
             entity_name =~ /^.*\.microsoft.com(:[0-9]*)?$/                 ||
@@ -167,7 +168,6 @@ module TraverseExceptions
             entity_name =~ /^.*\.outlook.com(:[0-9]*)?$/                   ||
             entity_name =~ /^.*\.ogp.me(:[0-9]*)?$/                        ||
             entity_name =~ /^.*\.outlook.com(:[0-9]*)?$/                   ||
-            entity_name =~ /^.*\.pantheon.io(:[0-9]*)?$/                   ||
             entity_name =~ /^.*\.pardot.com(:[0-9]*)?$/                    ||
             entity_name =~ /^.*\.parklogic.com(:[0-9]*)?$/                 ||
             entity_name =~ /^.*\.photorank.me(:[0-9]*)?$/                  ||

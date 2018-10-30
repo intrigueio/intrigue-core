@@ -50,7 +50,7 @@ class NetBlock < Intrigue::Task::BaseTask
 
     ### Determine if scoped
     @entity.project.entities.where(:scoped => true).each do |e|
-      if out["whois_full_text"] =~ /#{e.name}/
+      if out["whois_full_text"] =~ /#{Regexp.escape(e.name)}/
         _log "In scope based on #{e.name} whitelisted entity"
         @entity.scoped = true
         @entity.save
