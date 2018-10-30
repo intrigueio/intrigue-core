@@ -50,26 +50,7 @@ class Domain < Intrigue::Task::BaseTask
 
       # grab any / all SPF records (useful to see who accepts mail)
       _set_entity_detail("spf_record", collect_spf_details(lookup_name))
-    end
-
-    # grab whois info
-    out = whois(lookup_name)
-    if out
-      _set_entity_detail("whois_full_text", out["whois_full_text"])
-      _set_entity_detail("nameservers", out["nameservers"])
-      _set_entity_detail("contacts", out["contacts"])
-
-      if out["nameservers"]
-        out["nameservers"].each do |n|
-
-          # Create a nameserver object
-          _create_entity "Nameserver", "name" => n
-
-          # create a domain for the tld
-          check_and_create_domain n
-        end
-      end
-
+      
     end
 
   end

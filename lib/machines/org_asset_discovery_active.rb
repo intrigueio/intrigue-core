@@ -26,14 +26,16 @@ module Machine
 
         return unless (entity.scoped || inferred_whitelist )
 
+        # get the nameservers, so we can go further
+        start_recursive_task(task_result,"enumerate_nameservers", entity)
+
         start_recursive_task(task_result,"search_crt", entity,[
-          {"name" => "extract_pattern", "value" => filter_strings.first }
-        ])
+          {"name" => "extract_pattern", "value" => filter_strings.first}, true ])
 
         start_recursive_task(task_result,"dns_brute_sub",entity,[
           {"name" => "threads", "value" => 10 },
           {"name" => "use_file", "value" => true },
-          {"name" => "brute_alphanumeric_size", "value" => 1 }])
+          {"name" => "brute_alphanumeric_size", "value" => 1 }], true)
 
         start_recursive_task(task_result,"public_trello_check",entity)
 
@@ -51,7 +53,7 @@ module Machine
 
       elsif entity.type_string == "FtpService"
 
-        start_recursive_task(task_result,"ftp_enumerate",entity)
+        start_recursive_task(task_result,"ftp_enumerate",entity, [], true)
 
       elsif entity.type_string == "IpAddress"
 
@@ -62,7 +64,7 @@ module Machine
 
         # Prevent us from re-scanning services
         unless entity.created_by?("masscan_scan")
-          start_recursive_task(task_result,"nmap_scan",entity)
+          start_recursive_task(task_result,"nmap_scan",entity, true)
         end
 
       elsif entity.type_string == "Nameserver"
@@ -71,7 +73,7 @@ module Machine
 
         return unless (entity.scoped || inferred_whitelist )
 
-        start_recursive_task(task_result,"security_trails_nameserver_search",entity)
+        start_recursive_task(task_result,"security_trails_nameserver_search",entity, true)
 
       elsif entity.type_string == "NetBlock"
 
@@ -98,37 +100,48 @@ module Machine
           # 8080: Wordpress, WebDav, DasanNetwork Solution
           start_recursive_task(task_result,"masscan_scan",entity,[
             {"name"=> "tcp_ports", "value" => ""},
-            {"name"=>"udp_ports", "value" => "161"}])
+            {"name"=>"udp_ports", "value" => "161"}], true)
+
           start_recursive_task(task_result,"masscan_scan",entity,[
             {"name"=> "tcp_ports", "value" => "22"},
-            {"name"=>"udp_ports", "value" => ""}])
+            {"name"=>"udp_ports", "value" => ""}], true)
+
           start_recursive_task(task_result,"masscan_scan",entity,[
             {"name"=> "tcp_ports", "value" => "23"},
-            {"name"=>"udp_ports", "value" => ""}])
+            {"name"=>"udp_ports", "value" => ""}], true)
+
           start_recursive_task(task_result,"masscan_scan",entity,[
             {"name"=> "tcp_ports", "value" => "25"},
             {"name"=>"udp_ports", "value" => ""}])
+
           start_recursive_task(task_result,"masscan_scan",entity,[
             {"name"=> "tcp_ports", "value" => "80"},
-            {"name"=>"udp_ports", "value" => ""}])
+            {"name"=>"udp_ports", "value" => ""}], true)
+
           #start_recursive_task(task_result,"masscan_scan",entity,[
           #  {"name"=> "tcp_ports", "value" => "81"},
-          #  {"name"=>"udp_ports", "value" => ""}])
+          #  {"name"=>"udp_ports", "value" => ""}], true)
+
           start_recursive_task(task_result,"masscan_scan",entity,[
             {"name"=> "tcp_ports", "value" => "3389"},
-            {"name"=>"udp_ports", "value" => ""}])
+            {"name"=>"udp_ports", "value" => ""}], true)
+
           start_recursive_task(task_result,"masscan_scan",entity,[
             {"name"=> "tcp_ports", "value" => "8080"},
-            {"name"=>"udp_ports", "value" => ""}])
+            {"name"=>"udp_ports", "value" => ""}], true)
+
           start_recursive_task(task_result,"masscan_scan",entity,[
             {"name"=> "tcp_ports", "value" => "8081"},
-            {"name"=>"udp_ports", "value" => ""}])
+            {"name"=>"udp_ports", "value" => ""}], true)
+
           start_recursive_task(task_result,"masscan_scan",entity,[
             {"name"=> "tcp_ports", "value" => "8443"},
-            {"name"=>"udp_ports", "value" => ""}])
+            {"name"=>"udp_ports", "value" => ""}], true)
+
           #start_recursive_task(task_result,"masscan_scan",entity,[
           #  {"name"=> "tcp_ports", "value" => "10000"},
-          #  {"name"=>"udp_ports", "value" => ""}])
+          #  {"name"=>"udp_ports", "value" => ""}], true)
+
         else
           task_result.log "Cowardly refusing to scan this netblock: #{entity}.. it doesn't look like ours."
         end
@@ -136,10 +149,10 @@ module Machine
       elsif entity.type_string == "Organization"
 
       ### search for netblocks
-      start_recursive_task(task_result,"whois_lookup",entity)
+      start_recursive_task(task_result,"whois_lookup",entity, true)
 
       # search bgp data for netblocks
-      start_recursive_task(task_result,"search_bgp",entity)
+      start_recursive_task(task_result,"search_bgp",entity, true)
 
       #
       start_recursive_task(task_result,"public_trello_check",entity)
@@ -160,7 +173,7 @@ module Machine
       elsif entity.type_string == "Uri"
 
         ## Grab the SSL Certificate
-        start_recursive_task(task_result,"uri_gather_ssl_certificate",entity) if entity.name =~ /^https/
+        start_recursive_task(task_result,"uri_gather_ssl_certificate",entity, true) if entity.name =~ /^https/
 
         # Check for exploitable URIs, but don't recurse on things we've already found
         #start_recursive_task(task_result,"uri_brute", entity, [

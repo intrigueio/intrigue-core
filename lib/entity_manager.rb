@@ -134,6 +134,7 @@ class EntityManager
             :type => type,
             :details => details,
             :details_raw => details,
+            :scoped => tr.auto_scope, # set in scope if task result auto_scope is true
             :hidden => (no_traverse_entity ? true : false )
            })
 

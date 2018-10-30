@@ -9,7 +9,7 @@ module Machine
     end
 
     def self.start(entity, task_result)
-      
+
       # sanity check before sending us off
       return unless entity && task_result
 
@@ -19,7 +19,7 @@ module Machine
     ###
     # Helper method for starting a task run
     ###
-    def self.start_recursive_task(old_task_result, task_name, entity, options=[])
+    def self.start_recursive_task(old_task_result, task_name, entity, options=[], auto_scope=false)
       project = old_task_result.project
 
       # check to see if it already exists, return nil if it does
@@ -41,7 +41,8 @@ module Machine
                             options,
                             old_task_result.handlers,
                             old_task_result.scan_result.machine,
-                            old_task_result.auto_enrich)
+                            old_task_result.auto_enrich,
+                            auto_scope)
 
       end
 

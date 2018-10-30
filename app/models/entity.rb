@@ -122,7 +122,7 @@ module Intrigue
           next unless Intrigue::TaskFactory.include? task_name
 
           machine_name = task_result.scan_result ? task_result.scan_result.machine : nil
-          start_task("task_enrichment", self.project, task_result.scan_result, task_name, self, task_result.depth, [], [], machine_name, true)
+          start_task("task_enrichment", self.project, task_result.scan_result, task_name, self, task_result.depth, [], [], machine_name, true, true)
         end
       end
 

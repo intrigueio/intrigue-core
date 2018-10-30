@@ -28,12 +28,13 @@ module System
         depth = s["depth"] || 5
         options = s["options"] || []
         handlers = s["handlers"] || []
+        auto_scope = true
 
         # Create & scope the entity
         created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"])
 
         # Kick off the task
-        task_result = start_task(nil, project, nil, task_name, created_entity, depth, options, handlers, machine, auto_enrich)
+        task_result = start_task(nil, project, nil, task_name, created_entity, depth, options, handlers, machine, auto_enrich, auto_scope)
 
         # Manually start enrichment for the first entity
         created_entity.enrich(task_result) if auto_enrich

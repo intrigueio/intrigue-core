@@ -35,7 +35,6 @@ module Generic
   output_queue
   end # end run method
 
-
   ###
   ### Helper method to reach out to the entity manager
   ###

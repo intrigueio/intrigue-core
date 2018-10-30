@@ -227,7 +227,13 @@ module Intrigue
         #  _create_entity "Domain", "name" => _get_entity_name
         # one at a time, check all known TLDs and see what we have left. if we
         # have a single string, this is TLD and we should create it as a domain
-        suffix_list = File.open("#{$intrigue_basedir}/data/public_suffix_list.clean.txt").read.split("\n")
+        begin
+          suffix_list = File.open("#{$intrigue_basedir}/data/public_suffix_list.clean.txt").read.split("\n")
+        rescue Errno::ENOENT => e
+          _log_error "Unable to locate public suffix list, failing to check / create domain for #{lookup_name}"
+          return nil
+        end
+
         clean_suffix_list = suffix_list.map{|l| "#{l.downcase}".chomp }
 
         # for each TLD suffix
