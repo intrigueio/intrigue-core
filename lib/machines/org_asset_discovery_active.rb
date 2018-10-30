@@ -30,7 +30,7 @@ module Machine
         start_recursive_task(task_result,"enumerate_nameservers", entity)
 
         start_recursive_task(task_result,"search_crt", entity,[
-          {"name" => "extract_pattern", "value" => filter_strings.first}, true ])
+          {"name" => "extract_pattern", "value" => filter_strings.first}], true)
 
         start_recursive_task(task_result,"dns_brute_sub",entity,[
           {"name" => "threads", "value" => 10 },
@@ -64,7 +64,7 @@ module Machine
 
         # Prevent us from re-scanning services
         unless entity.created_by?("masscan_scan")
-          start_recursive_task(task_result,"nmap_scan",entity, true)
+          start_recursive_task(task_result,"nmap_scan",entity, [], true)
         end
 
       elsif entity.type_string == "Nameserver"
@@ -73,7 +73,7 @@ module Machine
 
         return unless (entity.scoped || inferred_whitelist )
 
-        start_recursive_task(task_result,"security_trails_nameserver_search",entity, true)
+        start_recursive_task(task_result,"security_trails_nameserver_search",entity, [], true)
 
       elsif entity.type_string == "NetBlock"
 
@@ -149,10 +149,10 @@ module Machine
       elsif entity.type_string == "Organization"
 
       ### search for netblocks
-      start_recursive_task(task_result,"whois_lookup",entity, true)
+      start_recursive_task(task_result,"whois_lookup",entity, [],  true)
 
       # search bgp data for netblocks
-      start_recursive_task(task_result,"search_bgp",entity, true)
+      start_recursive_task(task_result,"search_bgp",entity, [],  true)
 
       #
       start_recursive_task(task_result,"public_trello_check",entity)
@@ -173,7 +173,7 @@ module Machine
       elsif entity.type_string == "Uri"
 
         ## Grab the SSL Certificate
-        start_recursive_task(task_result,"uri_gather_ssl_certificate",entity, true) if entity.name =~ /^https/
+        start_recursive_task(task_result,"uri_gather_ssl_certificate",entity, [],  true) if entity.name =~ /^https/
 
         # Check for exploitable URIs, but don't recurse on things we've already found
         #start_recursive_task(task_result,"uri_brute", entity, [
