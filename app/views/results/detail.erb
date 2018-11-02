@@ -41,6 +41,7 @@ getEntities(<%=@result.id%>);
   <p>Handlers: <%= @result.handlers %></p>
   <p>Depth: <%=@result.depth %> </p>
   <p>Entity: <a href="/<%=@project_name%>/entities/<%=@result.base_entity.id if @result.base_entity %>"><%= h "#{@result.base_entity}" %></a></p>
+  <p>Options: <%=@result.options %> </p>
   <p>Cancelled: <%= @result.cancelled %> (<a href="<%=request.path%>/cancel">Cancel</a>)</p>
   <p>Complete: <%= @result.complete %></p>
   <p>Entity Count: <%= @result.entities.count %></p>
