@@ -247,7 +247,7 @@ module Scanner
         sister_entity = _create_entity("WeblogicService", entity_details, sister_entity)
 
       # then MongoService
-      elsif protocol == "tcp" && [27017].include?(port_num) && h.name.is_ip_address?
+    elsif protocol == "tcp" && [27017,27018,27019].include?(port_num) && h.name.is_ip_address?
 
         name = "#{h.name}:#{port_num}"
         uri = "mongo://#{name}"
