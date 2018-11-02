@@ -132,7 +132,7 @@ class EntityManager
 
         entity_details = {
           :name =>  downcased_name,
-          :project => project,
+          :project_id => project.id,
           :type => type,
           :details => details,
           :details_raw => details,
