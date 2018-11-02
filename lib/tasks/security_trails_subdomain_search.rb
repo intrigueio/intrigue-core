@@ -31,6 +31,8 @@ class SecurityTrailsSubdomainSearch < BaseTask
       resp = http_get_body uri, nil, {"APIKEY" => api_key}
       json = JSON.parse(resp)
 
+      return nil unless json
+
       _log "Got #{json["subdomains"].count} subdomains!"
 
       json["subdomains"].each do |x|
