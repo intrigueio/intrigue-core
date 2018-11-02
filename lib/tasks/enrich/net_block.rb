@@ -48,10 +48,17 @@ class NetBlock < Intrigue::Task::BaseTask
       _set_entity_detail "ipv6", true
     end
 
-    ### Determine if scoped
-    @entity.project.entities.where(:scoped => true).each do |e|
+    ###
+    ### Determine if automatically scoped
+    ###
+    scoped_entity_types = [
+      "Intrigue::Entity::Organization",
+      "Intrigue::Entity::DnsRecord",
+      "Intrigue::Entity::Domain" ]
+
+    @entity.project.entities.where(:scoped => true, :type => scoped_entity_types ).each do |e|
       if out["whois_full_text"] =~ /#{Regexp.escape(e.name)}/
-        _log "In scope based on #{e.name} whitelisted entity"
+        _log "In scope based on #{e.type}##{e.name} whitelisted entity"
         @entity.scoped = true
         @entity.save
       end
