@@ -15,7 +15,8 @@ module System
       # Set exclusion setting
       auto_enrich = p["auto_enrich"] || true
       project.use_standard_exceptions = p["use_standard_exceptions"]
-      project.additional_exception_list = config["additional_exception_list"]
+      project.additional_exception_list = config["additional_exception_list"].to_a
+      project.seeds = p["seeds"].map{|s| _parse_entity s["entity"] }
       project.save
 
       @task_result.log "Working on project: #{project_name}" if @task_result

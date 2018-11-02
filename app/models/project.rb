@@ -2,7 +2,7 @@ module Intrigue
   module Model
     class Project < Sequel::Model
       plugin :validation_helpers
-      plugin :serialization, :json, :options, :handlers, :additional_exception_list
+      plugin :serialization, :json, :seeds, :options, :handlers, :additional_exception_list
 
       one_to_many :logger
       one_to_many :task_results

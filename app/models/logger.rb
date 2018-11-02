@@ -46,7 +46,7 @@ module Intrigue
       def log_fatal(message)
         _log "[F] #{message}\n"
         # call notifiers
-        Intrigue::NotifierFactory.default.each { |x| x.notify(message, task_result) }
+        #Intrigue::NotifierFactory.default.each { |x| x.notify(message, task_result) }
       end
 
     private
@@ -56,7 +56,7 @@ module Intrigue
         return if location == "none"
 
         begin
-          self.lock!
+          #self.lock!
           # any other value, log to the database
           set(:full_log => "#{full_log}#{message.encode("UTF-8", {
                                               :undef => :replace,

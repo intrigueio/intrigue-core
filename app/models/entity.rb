@@ -14,7 +14,7 @@ module Intrigue
     class Entity < Sequel::Model
       plugin :validation_helpers
       plugin :single_table_inheritance, :type
-      plugin :serialization, :json, :details, :details_raw #, :name
+      plugin :serialization, :json, :details #, :details_raw #, :name
 
       self.raise_on_save_failure = false
 
@@ -167,7 +167,7 @@ module Intrigue
           self.lock!
           temp_details = details.merge({key => value}.sanitize_unicode)
           self.set(:details => temp_details)
-          self.set(:details_raw => temp_details)
+          #self.set(:details_raw => temp_details)
           self.save
         rescue Sequel::DatabaseError => e
           puts "ERROR SAVING DETAILS FOR #{self}: #{e}"
@@ -178,7 +178,7 @@ module Intrigue
         begin
           self.lock!
           self.set(:details => hash.sanitize_unicode)
-          self.set(:details_raw => hash.sanitize_unicode)
+          #self.set(:details_raw => hash.sanitize_unicode)
           self.save
         rescue Sequel::DatabaseError => e
           puts "ERROR SAVING DETAILS FOR #{self}: #{e}"

@@ -95,6 +95,8 @@ def setup_database
   $db.extension :pagination
   #$db.extension :pg_json
   Sequel.extension :pg_json_ops
+
+  Sequel::Model.plugin :update_or_create
 end
 
 sanity_check_system

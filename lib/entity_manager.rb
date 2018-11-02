@@ -58,7 +58,6 @@ class EntityManager
             :project => project,
             :type => type,
             :details => details,
-            :details_raw => details,
             :hidden => false, # first entity should never be hidden - it was intentional
             :scoped => true,  # first entity should always be in scope - it was intentional
             :alias_group_id => g.id
@@ -125,17 +124,16 @@ class EntityManager
       new_entity = true
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
-      $db.transaction do
+      #$db.transaction do
 
         # Create a new alias group
         g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
 
         entity_details = {
-          :name =>  downcased_name,
+          :name => downcased_name,
           :project_id => project.id,
-          :type => type,
+          :type => type.to_s,
           :details => details,
-          :details_raw => details,
           :scoped => tr.auto_scope, # set in scope if task result auto_scope is true
           :hidden => (no_traverse_entity ? true : false ),
           :alias_group_id => g.id
@@ -144,7 +142,7 @@ class EntityManager
         begin
 
           # Create a new entity in that group
-          entity = Intrigue::Model::Entity.create(entity_details)
+          entity = Intrigue::Model::Entity.update_or_create( {name: downcased_name}, entity_details)
 
           unless entity
             task_result.log_fatal "Unable to create entity: #{entity_details}"
@@ -158,7 +156,8 @@ class EntityManager
           task_result.log_fatal "Unable to create entity:#{entity_details}\n #{e}"
           return nil
         end
-      end
+
+      #end
     end
 
     # necessary to relookup?

@@ -49,23 +49,38 @@ class NetBlock < Intrigue::Task::BaseTask
     end
 
     ###
-    ### Determine if automatically scoped
+    ### Determine if SCOPED!!!
     ###
+
+    # Check new entities that we've scoped
     scoped_entity_types = [
       "Intrigue::Entity::Organization",
       "Intrigue::Entity::DnsRecord",
       "Intrigue::Entity::Domain" ]
 
-    @entity.project.entities.where(:scoped => true, :type => scoped_entity_types ).each do |e|
-      if out["whois_full_text"] =~ /#{Regexp.escape(e.name)}/
-        _log "In scope based on #{e.type}##{e.name} whitelisted entity"
+    # check seeds
+    @entity.project.seeds.each do |s|
+      next unless scoped_entity_types.include? s["type"]
+      if out["whois_full_text"] =~ /#{Regexp.escape(s["name"])}/
+        _log "In scope based on #{e.type}##{e.name} SEED"
         @entity.scoped = true
         @entity.save
+        return
+      end
+    end
+
+    # Check new entities that we've scoped in
+    @entity.project.entities.where(:scoped => true, :type => scoped_entity_types ).each do |e|
+      if out["whois_full_text"] =~ /#{Regexp.escape(e.name)}/
+        _log "In scope based on #{e.type}##{e.name} SCOPED"
+        @entity.scoped = true
+        @entity.save
+        return
       end
     end
 
     if @entity.created_by?("search_bgp")
-      _log "In scope because we were created by search_bgp"
+      _log "In scope based on creation by SEARCH_BGP"
       @entity.scoped = true
       @entity.save
     end

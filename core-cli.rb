@@ -232,7 +232,6 @@ class CoreCli < Thor
         :project_id => p.id,
         :type => entity_type_string,
         :details => parsed_entity["details"],
-        :details_raw => parsed_entity["details"],
         :hidden => false,
         :alias_group_id => g.id
        })
