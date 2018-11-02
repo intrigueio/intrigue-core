@@ -126,33 +126,36 @@ class EntityManager
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
       $db.transaction do
+
+        # Create a new alias group
+        g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
+
+        entity_details = {
+          :name =>  downcased_name,
+          :project => project,
+          :type => type,
+          :details => details,
+          :details_raw => details,
+          :scoped => tr.auto_scope, # set in scope if task result auto_scope is true
+          :hidden => (no_traverse_entity ? true : false ),
+          :alias_group_id => g.id
+        }
+
         begin
 
-          # Create a new alias group
-          g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
-
           # Create a new entity in that group
-          entity = Intrigue::Model::Entity.create({
-            :name =>  downcased_name,
-            :project => project,
-            :type => type,
-            :details => details,
-            :details_raw => details,
-            :scoped => tr.auto_scope, # set in scope if task result auto_scope is true
-            :hidden => (no_traverse_entity ? true : false ),
-            :alias_group_id => g.id
-           })
+          entity = Intrigue::Model::Entity.create(entity_details)
 
           unless entity
-            task_result.log_fatal "Unable to create entity: #{entity}"
+            task_result.log_fatal "Unable to create entity: #{entity_details}"
             return nil
           end
 
         rescue Encoding::UndefinedConversionError => e
-          task_result.log_fatal "Unable to create entity:#{entity}\n #{e}"
+          task_result.log_fatal "Unable to create entity:#{entity_details}\n #{e}"
           return nil
         rescue Sequel::DatabaseError => e
-          task_result.log_fatal "Unable to create entity:#{entity}\n #{e}"
+          task_result.log_fatal "Unable to create entity:#{entity_details}\n #{e}"
           return nil
         end
       end
