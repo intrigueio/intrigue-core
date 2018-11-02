@@ -26,9 +26,12 @@ module Notifier
       @channel_name = config_hash["channel_name"]
     end
 
-    def notify(message, result)
+    def notify(message, result=nil)
 
-      result_url = "#{@system_base_uri}/#{result.project.name}/results/#{result.id}"
+      result_url = "#{@system_base_uri}"
+      result_url += "/#{result.project.name}/results/#{result.id}" if result
+
+      constructed_message = "#{message}\nMore details at: #{result_url}"
 
       ::Slack.configure do |config|
         config.token = @access_key
@@ -37,7 +40,7 @@ module Notifier
       begin
         client = ::Slack::Web::Client.new
         client.chat_postMessage(
-          text: "#{message}\nMore details at: #{result_url}",
+          text: constructed_message,
           as_user: false,
           username: @bot_name,
           channel: @channel_name
