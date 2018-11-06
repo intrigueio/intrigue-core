@@ -162,14 +162,17 @@ class UriGatherSslCert  < BaseTask
       # Create an SSL Certificate entity
       _create_entity "SslCertificate", {
         "name" => "#{cert.subject.to_s.split("CN=").last} (#{cert.serial})",
-        "version" => "#{cert.version}",
+        "version" => cert.version,
         "serial" => "#{cert.serial}",
         "not_before" => "#{cert.not_before}",
         "not_after" => "#{cert.not_after}",
+        #"valid" => (ssl_socket.verify_result == 0),
         "subject" => "#{cert.subject}",
         "issuer" => "#{cert.issuer}",
-        "algorithm" => "#{cert.signature_algorithm}",
-        "hidden_text" => "#{cert.to_text}" }
+        "key_length" => cert.public_key.n.num_bytes * 8,
+        "signature_algorithm" => "#{cert.signature_algorithm}",
+        "hidden_text" => "#{cert.to_text}"
+      }
 
     rescue SocketError => e
       _log_error "Caught an error: #{e}"
