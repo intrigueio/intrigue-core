@@ -6,6 +6,15 @@ GIT
       nokogiri
 
 GIT
+  remote: https://github.com/intrigueio/rex-sslscan.git
+  revision: a52c53ec09bd70cdd025b49c16dfeafe9fd3be5a
+  specs:
+    rex-sslscan (0.1.6)
+      rex-core
+      rex-socket
+      rex-text
+
+GIT
   remote: https://github.com/intrigueio/ruby-snmp.git
   revision: e41bb0e04b1fe9be4e02d261012ef52c3db217b6
   specs:
@@ -192,6 +201,10 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
+    rex-core (0.1.13)
+    rex-socket (0.1.15)
+      rex-core
+    rex-text (0.2.21)
     rprogram (0.3.2)
     rspec (3.8.0)
       rspec-core (~> 3.8.0)
@@ -302,6 +315,7 @@ DEPENDENCIES
   redis
   redis-namespace
   rest-client
+  rex-sslscan!
   rspec
   ruby-nmap!
   selenium-webdriver (~> 3.12.0)

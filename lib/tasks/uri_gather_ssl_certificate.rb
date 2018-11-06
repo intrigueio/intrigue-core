@@ -32,7 +32,7 @@ class UriGatherSslCert  < BaseTask
 
     begin
       hostname = URI.parse(uri).host
-      port = 443
+      port = URI.parse(uri).port
       timeout = 60
 
       # Create a socket and connect
@@ -162,6 +162,7 @@ class UriGatherSslCert  < BaseTask
       # Create an SSL Certificate entity
       _create_entity "SslCertificate", {
         "name" => "#{cert.subject.to_s.split("CN=").last} (#{cert.serial})",
+        "version" => "#{cert.version}",
         "serial" => "#{cert.serial}",
         "not_before" => "#{cert.not_before}",
         "not_after" => "#{cert.not_after}",

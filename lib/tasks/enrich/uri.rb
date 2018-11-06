@@ -25,6 +25,8 @@ class Uri < Intrigue::Task::BaseTask
   def run
 
     uri = _get_entity_name
+    hostname = URI.parse(uri).host
+    port = URI.parse(uri).port
 
     _log "Making requests"
     # Grab the full response
@@ -119,6 +121,8 @@ class Uri < Intrigue::Task::BaseTask
       fingerprint_matches = []
     end
 
+    _log "Gathering ciphers since this is an ssl endpoint"
+    accepted_ciphers = _gather_ciphers(hostname,port).select{|x| x[:status] == :accepted} if uri =~ /^https/
 
     # and then just stick the name and the version in our fingerprint
     _log "Inferring app stack from Fingerprints!"
@@ -172,7 +176,8 @@ class Uri < Intrigue::Task::BaseTask
         "include_fingerprint" => uniq_include_stack,
         "app_fingerprint" =>  app_stack.uniq,
         "server_fingerprint" => uniq_server_stack,
-        "fingerprint" => fingerprint_matches.uniq #,
+        "fingerprint" => fingerprint_matches.uniq,
+        "ciphers" => accepted_ciphers
         #"extended_fingerprints" => extended_fingerprints
       })
 
@@ -192,6 +197,13 @@ class Uri < Intrigue::Task::BaseTask
     #  end
     #end
 
+  end
+
+  def _gather_ciphers(hostname,port)
+    require 'rex/sslscan'
+    scanner = Rex::SSLScan::Scanner.new(hostname, port)
+    result = scanner.scan
+  result.ciphers
   end
 
 
