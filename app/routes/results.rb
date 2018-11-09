@@ -92,7 +92,7 @@ class IntrigueApp < Sinatra::Base
       depth = @params["depth"].to_i
       current_project = Intrigue::Model::Project.first(:name => @project_name)
       entity_name = "#{@params["attrib_name"]}"
-      auto_scope = true # manually created 
+      auto_scope = true # manually created
 
       ### Handler definition, make sure we have a valid handler type
       if Intrigue::HandlerFactory.include? "#{@params["handler"]}"
@@ -156,7 +156,7 @@ class IntrigueApp < Sinatra::Base
       entity.save
 
       # Manually starting enrichment here
-      if auto_enrich
+      if auto_enrich && !task_name =~ /^enrich/
         task_result.log "User-created entity, manually creating and enriching!"
         entity.enrich(task_result)
       end
@@ -225,7 +225,7 @@ class IntrigueApp < Sinatra::Base
         entity.save
 
         # manually start enrichment for the first entity
-        entity.enrich(task_result) if auto_enrich
+        entity.enrich(task_result) if auto_enrich && !task_name =~ /^enrich/
 
       end
 

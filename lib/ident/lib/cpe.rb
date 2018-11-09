@@ -2,6 +2,8 @@ module Intrigue
 module Ident
 class Cpe
 
+  include Intrigue::Task::Web
+
   def initialize(cpe_string)
     @cpe = cpe_string
     x = _parse_cpe(@cpe)
@@ -12,10 +14,35 @@ class Cpe
     @product = x[:product]
     @version = x[:version]
     @variant = x[:variant] # TODO... currenty not used
+
+  end
+
+  def vulns
+    query_intrigue_vulndb_api
+  end
+
+  def query_intrigue_vulndb_api
+
+    #puts "Querying VulnDB API!"
+    #puts "https://intrigue.io/api/vulndb/match/#{@vendor}/#{@product}/#{@version}"
+
+    response = http_request :get, "https://intrigue.io/api/vulndb/match/#{@vendor}/#{@product}/#{@version}"
+    result = JSON.parse(response.body)
+
+    # return our normal hash
+    result.map do |x|
+      vuln = {
+        cve_id: x,
+        cwe_id: nil,
+        cvss_v2: {score: nil, vector: nil },
+        cvss_v3: {score: nil, vector: nil }
+      }
+    end
+
   end
 
   # hacktastic! matches vulns by CPE
-  def vulns
+  def query_local_nvd_json
 
     # Set a data directory underneath our folder if we're not in the context of core
     if $intrigue_basedir
@@ -32,12 +59,7 @@ class Cpe
     files = [
         "#{nvd_data_directory}/nvdcve-1.0-2018.json",
         "#{nvd_data_directory}/nvdcve-1.0-2017.json",
-        "#{nvd_data_directory}/nvdcve-1.0-2016.json",
-        #"#{nvd_data_directory}/nvdcve-1.0-2015.json",
-        #"#{nvd_data_directory}/nvdcve-1.0-2014.json",
-        #"#{nvd_data_directory}/nvdcve-1.0-2013.json",
-        #"#{nvd_data_directory}/nvdcve-1.0-2012.json",
-        #"#{nvd_data_directory}/nvdcve-1.0-2011.json"
+        "#{nvd_data_directory}/nvdcve-1.0-2016.json"
       ]
 
     files.each do |file|

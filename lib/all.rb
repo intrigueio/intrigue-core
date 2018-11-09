@@ -34,11 +34,6 @@ require 'yomu'
 require_relative 'system'
 
 ####
-# ident (currently local, in /lib/ident)
-####
-require 'intrigue-ident'
-
-####
 # Task-specific libraries
 ####
 require_relative 'task_factory'
@@ -47,6 +42,11 @@ require_relative 'task_factory'
 require_relative 'tasks/helpers/generic'
 tasks_folder = File.expand_path('../tasks/helpers', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
+
+####
+# ident (currently local, in /lib/ident)
+####
+require 'intrigue-ident'
 
 # Load all discovery tasks
 require_relative 'tasks/base'

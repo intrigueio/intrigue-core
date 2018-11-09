@@ -17,9 +17,11 @@ require_relative 'cpe'
 require_relative 'traverse_exceptions'
 include Intrigue::Ident::TraverseExceptions
 
+include Intrigue::Task::Web
+
 module Intrigue
   module Ident
-    
+
     def generate_requests_and_check(url, options)
 
       results = []
@@ -38,10 +40,10 @@ module Intrigue
         target_url = ggc.first
 
         # get the response
-        response = _http_request :get, "#{target_url}"
+        response = http_request :get, "#{target_url}"
 
         unless response
-          puts "Unable to get a response at: #{target_url}, failing"
+          #puts "Unable to get a response at: #{target_url}, failing"
           return nil
         end
 
@@ -131,6 +133,7 @@ module Intrigue
       }
 
       if options[:match_vulns]
+        puts "Matching vulns"
         to_return["vulns"] = Cpe.new(cpe_string).vulns
       end
 
@@ -250,162 +253,6 @@ module Intrigue
 
       # call the actual matcher & return
       _match_uri_hash check, data, options
-    end
-
-    def _http_request(method, uri_string, credentials=nil, headers={}, data=nil, limit = 10, open_timeout=15, read_timeout=15)
-
-      response = nil
-      begin
-
-        # set user agent
-        headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.73 Safari/537.36"
-
-        attempts=0
-        max_attempts=10
-        found = false
-
-        uri = URI.parse uri_string
-
-        unless uri
-          _log error "Unable to parse URI from: #{uri_string}"
-          return
-        end
-
-        until( found || attempts >= max_attempts)
-         attempts+=1
-
-         #proxy_addr = "127.0.0.1"
-         proxy_addr = nil
-         #proxy_port = "8080"
-         proxy_port = nil
-
-         # set options
-         opts = {}
-         if uri.instance_of? URI::HTTPS
-           opts[:use_ssl] = true
-           opts[:verify_mode] = OpenSSL::SSL::VERIFY_NONE
-         end
-
-         http = Net::HTTP.start(uri.host, uri.port, proxy_addr, proxy_port, opts)
-         #http.set_debug_output($stdout)
-         http.read_timeout = 20
-         http.open_timeout = 20
-
-         path = "#{uri.path}"
-         path = "/" if path==""
-
-         # add in the query parameters
-         if uri.query
-           path += "?#{uri.query}"
-         end
-
-         ### ALLOW DIFFERENT VERBS HERE
-         if method == :get
-           request = Net::HTTP::Get.new(uri)
-         elsif method == :post
-           # see: https://coderwall.com/p/c-mu-a/http-posts-in-ruby
-           request = Net::HTTP::Post.new(uri)
-           request.body = data
-         elsif method == :head
-           request = Net::HTTP::Head.new(uri)
-         elsif method == :propfind
-           request = Net::HTTP::Propfind.new(uri.request_uri)
-           request.body = "Here's the body." # Set your body (data)
-           request["Depth"] = "1" # Set your headers: one header per line.
-         elsif method == :options
-           request = Net::HTTP::Options.new(uri.request_uri)
-         elsif method == :trace
-           request = Net::HTTP::Trace.new(uri.request_uri)
-           request.body = "intrigue"
-         end
-         ### END VERBS
-
-         # set the headers
-         headers.each do |k,v|
-           request[k] = v
-         end
-
-         # handle credentials
-         #if credentials
-         # request.basic_auth(credentials[:username],credentials[:password])
-         #end
-
-         # get the response
-         response = http.request(request)
-
-         if response.code=="200"
-           break
-         end
-
-         if (response.header['location']!=nil)
-           newuri=URI.parse(response.header['location'])
-           if(newuri.relative?)
-               newuri=uri+response.header['location']
-           end
-           uri=newuri
-
-         else
-           found=true #resp was 404, etc
-         end #end if location
-       end #until
-
-      ### TODO - this code may be be called outside the context of a task,
-      ###  meaning @task_result is not available to it. Below, we check to
-      ###  make sure that it exists before attempting to log anything,
-      ###  but there may be a cleaner way to do this (hopefully?). Maybe a
-      ###  global logger or logging queue?
-      ###
-      #rescue TypeError
-      #  # https://github.com/jaimeiniesta/metainspector/issues/125
-      #  puts "TypeError - unknown failure"
-      rescue ArgumentError => e
-        puts "Unable to open connection: #{e}"
-      rescue Net::OpenTimeout => e
-        puts "Timeout : #{e}"
-      rescue Net::ReadTimeout => e
-        puts "Timeout : #{e}"
-      rescue Errno::ETIMEDOUT => e
-        puts "Timeout : #{e}"
-      rescue Errno::EINVAL => e
-        puts "Unable to connect: #{e}"
-      rescue Errno::ENETUNREACH => e
-        puts "Unable to connect: #{e}"
-      rescue Errno::EHOSTUNREACH => e
-        puts "Unable to connect: #{e}"
-      rescue URI::InvalidURIError => e
-        #
-        # XXX - This is an issue. We should catch this and ensure it's not
-        # due to an underscore / other acceptable character in the URI
-        # http://stackoverflow.com/questions/5208851/is-there-a-workaround-to-open-urls-containing-underscores-in-ruby
-        #
-        puts "Unable to request URI: #{uri} #{e}"
-      rescue OpenSSL::SSL::SSLError => e
-        puts "SSL connect error : #{e}"
-      rescue Errno::ECONNREFUSED => e
-        puts "Unable to connect: #{e}"
-      rescue Errno::ECONNRESET => e
-        puts "Unable to connect: #{e}"
-      rescue Net::HTTPBadResponse => e
-        puts "Unable to connect: #{e}"
-      rescue Zlib::BufError => e
-        puts "Unable to connect: #{e}"
-      rescue Zlib::DataError => e # "incorrect header check - may be specific to ruby 2.0"
-        puts "Unable to connect: #{e}"
-      rescue EOFError => e
-        puts "Unable to connect: #{e}"
-      rescue SocketError => e
-        puts "Unable to connect: #{e}"
-      #rescue SystemCallError => e
-      #  puts "Unable to connect: #{e}"
-      #rescue ArgumentError => e
-      #  puts "Argument Error: #{e}"
-      rescue Encoding::InvalidByteSequenceError => e
-        puts "Encoding error: #{e}"
-      rescue Encoding::UndefinedConversionError => e
-        puts "Encoding error: #{e}"
-      end
-
-    response
     end
 
 end
