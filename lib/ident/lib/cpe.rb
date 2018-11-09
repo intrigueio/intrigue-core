@@ -26,7 +26,11 @@ class Cpe
     #puts "Querying VulnDB API!"
     #puts "https://intrigue.io/api/vulndb/match/#{@vendor}/#{@product}/#{@version}"
     begin
-      response = http_request :get, "https://intrigue.io/api/vulndb/match/#{Uri.escape(@vendor)}/#{Uri.escape(@product)}/#{Uri.escape(@version)}"
+      vendor_string = Uri.escape(@vendor)
+      product_string = Uri.escape(@product)
+      version_string = Uri.escape(@version)
+
+      response = http_request :get, "https://intrigue.io/api/vulndb/match/#{vendor_string}/#{product_string}/#{version_string}"
       result = JSON.parse(response.body
       # return our normal hash
       out = result.map do |x|
