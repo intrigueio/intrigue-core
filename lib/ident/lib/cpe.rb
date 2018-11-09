@@ -30,8 +30,11 @@ class Cpe
       product_string = Uri.escape(@product)
       version_string = Uri.escape(@version)
 
-      response = http_request :get, "https://intrigue.io/api/vulndb/match/#{vendor_string}/#{product_string}/#{version_string}"
-      result = JSON.parse(response.body
+      uri = "https://intrigue.io/api/vulndb/match/#{vendor_string}/#{product_string}/#{version_string}"
+
+      response = http_request :get, uri
+      result = JSON.parse(response.body)
+      
       # return our normal hash
       out = result.map do |x|
         vuln = {
