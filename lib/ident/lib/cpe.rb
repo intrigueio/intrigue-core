@@ -26,15 +26,15 @@ class Cpe
     #puts "Querying VulnDB API!"
     #puts "https://intrigue.io/api/vulndb/match/#{@vendor}/#{@product}/#{@version}"
     begin
-      vendor_string = Uri.escape(@vendor)
-      product_string = Uri.escape(@product)
-      version_string = Uri.escape(@version)
+      vendor_string = URI.escape(@vendor)
+      product_string = URI.escape(@product)
+      version_string = URI.escape(@version)
 
       uri = "https://intrigue.io/api/vulndb/match/#{vendor_string}/#{product_string}/#{version_string}"
 
       response = http_request :get, uri
       result = JSON.parse(response.body)
-      
+
       # return our normal hash
       out = result.map do |x|
         vuln = {
@@ -44,9 +44,9 @@ class Cpe
           cvss_v3: {score: nil, vector: nil }
         }
       end
-    rescue Json::ParserError =>e
+    rescue JSON::ParserError => e
     end
-  out
+  out || []
   end
 
   # hacktastic! matches vulns by CPE

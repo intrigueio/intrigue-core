@@ -100,11 +100,11 @@ class Uri < Intrigue::Task::BaseTask
       # Make sure the key is set
       api_key = _get_task_config("intrigue_core_api_key")
       if api_key
-        _log_error "Matching vulns via Intrigue API"
+        _log "Matching vulns via Intrigue API"
         options = {:match_vulns => true, :match_vuln_method => "api"}
       else
         # TODO additional checks here?  smaller boxes will have trouble with all the json
-        _log_error "No api_key for vuln match, falling back to local resolution"
+        _log "No api_key for vuln match, falling back to local resolution"
         options = { :match_vulns => true, :match_vuln_method => "local"}
       end
 
