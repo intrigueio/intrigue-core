@@ -133,8 +133,11 @@ module Intrigue
       }
 
       if options[:match_vulns]
-        puts "Matching vulns"
-        to_return["vulns"] = Cpe.new(cpe_string).vulns
+        if options[:match_vuln_method] == "api"
+          to_return["vulns"] = Cpe.new(cpe_string).query_intrigue_vulndb_api
+        else
+          to_return["vulns"] = Cpe.new(cpe_string).query_local_nvd_json
+        end
       end
 
     to_return

@@ -215,6 +215,12 @@
       "uri" : "https://domainlists.io/domains-api/",
       "editable" : "true",
       "comment" : ""
+    },
+    "intrigue_core_api_key" : {
+      "value" : "",
+      "uri" : "https://intrigue.io/core/api",
+      "editable" : "true",
+      "comment" : ""
     }
   }
 }

@@ -92,10 +92,23 @@ class Uri < Intrigue::Task::BaseTask
     app_stack.concat _check_x_headers(response)
 
     begin
+
       _log "Attempting to fingerprint!"
       # Use intrigue-ident code to request all of the pages we need to properly fingerprint
       # from the ident library
-      fingerprint_matches = generate_requests_and_check(uri,{:match_vulns => true}) || []
+
+      # Make sure the key is set
+      api_key = _get_task_config("intrigue_core_api_key")
+      if api_key
+        _log_error "Matching vulns via Intrigue API"
+        options = {:match_vulns => true, :match_vuln_method => "api"}
+      else
+        # TODO additional checks here?  smaller boxes will have trouble with all the json
+        _log_error "No api_key for vuln match, falling back to local resolution"
+        options = { :match_vulns => true, :match_vuln_method => "local"}
+      end
+
+      fingerprint_matches = generate_requests_and_check(uri, options) || []
 
       # if we ever match something we know the user won't
       # need to see (aka the fingerprint's :hide parameter is true), go ahead
