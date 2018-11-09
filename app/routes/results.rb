@@ -156,7 +156,7 @@ class IntrigueApp < Sinatra::Base
       entity.save
 
       # Manually starting enrichment here
-      if auto_enrich && !task_name =~ /^enrich/
+      if auto_enrich && !(task_name =~ /^enrich/)
         task_result.log "User-created entity, manually creating and enriching!"
         entity.enrich(task_result)
       end
@@ -225,7 +225,7 @@ class IntrigueApp < Sinatra::Base
         entity.save
 
         # manually start enrichment for the first entity
-        entity.enrich(task_result) if auto_enrich && !task_name =~ /^enrich/
+        entity.enrich(task_result) if auto_enrich && !(task_name =~ /^enrich/)
 
       end
 
