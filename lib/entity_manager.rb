@@ -113,11 +113,17 @@ class EntityManager
     skip_regexes = []
     # check seeds
     project.seeds.each do |s|
-      skip_regexes << project.non_traversable?(s["name"], s["type"].split(":").last)
+      r = project.non_traversable?(s["name"], s["type"].split(":").last)
+      if r
+        skip_regexes << r
+      end
     end
     skip_regexes.compact!
-    task_result.log "This no-traverse regex will be bypassed since it matches a seed: #{skip_regexes}"
 
+    if skip_regexes.count > 0
+      task_result.log "This no-traverse regex will be bypassed since it matches a seed: #{skip_regexes}"
+    end
+    
     # check if this is actually an exception (no-traverse for this proj) entity
     no_traverse_regex = project.exception_entity?(name, type_string, skip_regexes)
     #task_result.log "Checking if #{type_string}##{name} matches a no-traverse regex: #{no_traverse_regex}"
