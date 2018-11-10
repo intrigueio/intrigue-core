@@ -116,11 +116,11 @@ class EntityManager
       skip_regexes << project.non_traversable?(s["name"], s["type"].split(":").last)
     end
     skip_regexes.compact!
-    task_result.log "This no-traverse entry will be bypassed since it matches a seed: #{skip_regexes}"
+    task_result.log "This no-traverse regex will be bypassed since it matches a seed: #{skip_regexes}"
 
     # check if this is actually an exception (no-traverse for this proj) entity
     no_traverse_regex = project.exception_entity?(name, type_string, skip_regexes)
-    task_result.log "Checking if #{type_string}##{name} matches a no-traverse regex: #{no_traverse_regex}"
+    #task_result.log "Checking if #{type_string}##{name} matches a no-traverse regex: #{no_traverse_regex}"
 
     # Check if there's an existing entity, if so, merge and move forward
     if entity
