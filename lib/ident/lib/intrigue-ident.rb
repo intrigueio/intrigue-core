@@ -106,24 +106,30 @@ module Intrigue
     private
 
     def _construct_match_response(check, data, options={})
-      calculated_version = (check[:dynamic_version].call(data) if check[:dynamic_version]) || check[:version]
+
+      calculated_version = (check[:dynamic_version].call(data) if check[:dynamic_version]) || check[:version] || ""
+      calculated_update = (check[:dynamic_update].call(data) if check[:dynamic_update]) || check[:update] || ""
 
       calculated_type = "a" if check[:type] == "application"
       calculated_type = "h" if check[:type] == "hardware"
       calculated_type = "o" if check[:type] == "operating_system"
       calculated_type = "s" if check[:type] == "service" # literally made up
-
+      
       vendor_string = check[:vendor].gsub(" ","_")
       product_string = check[:product].gsub(" ","_")
 
-      cpe_string = "cpe:2.3:#{calculated_type}:#{vendor_string}:#{product_string}".downcase
-      cpe_string << ":#{calculated_version}".downcase if calculated_version
+      version = "#{calculated_version}".gsub(" ","_")
+      update = "#{calculated_update}".gsub(" ","_")
+
+      cpe_string = "cpe:2.3:#{calculated_type}:#{vendor_string}:#{product_string}:#{version}:#{update}".downcase
+
 
       to_return = {
         "type" => check[:type],
         "vendor" => check[:vendor],
         "product" => check[:product],
         "version" => calculated_version,
+        "update" => calculated_update,
         "tags" => check[:tags],
         "matched_content" => check[:match_content],
         "match_type" => check[:match_type],

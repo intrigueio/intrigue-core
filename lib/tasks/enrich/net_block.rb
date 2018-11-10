@@ -63,14 +63,14 @@ class NetBlock < Intrigue::Task::BaseTask
       @entity.project.seeds.each do |s|
         next unless scoped_entity_types.include? s["type"]
         if out["whois_full_text"] =~ /#{Regexp.escape(s["name"])}/
-          _log "In scope based on #{e.type}##{e.name} SEED"
+          _log "In scope based on matched name #{s["name"]} in whois text"
           @entity.scoped = true
           @entity.save
           return
         end
       end
     end
-    
+
     # Check new entities that we've scoped in
     @entity.project.entities.where(:scoped => true, :type => scoped_entity_types ).each do |e|
       if out["whois_full_text"] =~ /#{Regexp.escape(e.name)}/

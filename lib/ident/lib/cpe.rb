@@ -5,15 +5,18 @@ class Cpe
   include Intrigue::Task::Web
 
   def initialize(cpe_string)
+    puts "Creating CPE with CPE: #{cpe_string}"
     @cpe = cpe_string
     x = _parse_cpe(@cpe)
+
+    puts "Got Parsed CPE: #{x}"
 
     return nil unless x
 
     @vendor = x[:vendor]
     @product = x[:product]
     @version = x[:version]
-    @variant = x[:variant] # TODO... currenty not used
+    @update = x[:update]
 
   end
 
@@ -28,9 +31,14 @@ class Cpe
     begin
       vendor_string = URI.escape(@vendor)
       product_string = URI.escape(@product)
-      version_string = URI.escape(@version)
+      version_string = @version ? URI.escape(@version) : "-"
+      update_string = @update ? URI.escape(@update) : "-"
 
-      uri = "https://intrigue.io/api/vulndb/match/#{vendor_string}/#{product_string}/#{version_string}"
+      uri = "https://intrigue.io/api/vulndb/match/#{vendor_string}/#{product_string}"
+      uri << "/#{version_string}" if version_string
+      uri << "/#{update_string}" if update_string
+
+      puts "Sending intrigue vulndb api: #{uri}"
 
       response = http_request :get, uri
       result = JSON.parse(response.body)
@@ -173,41 +181,39 @@ class Cpe
 
   def _parse_cpe(string)
 
-    m = string.match(/^cpe:2.3:[o|a|s|h]:(.*?):.*$/)
-    vendor = m[1] if m
-    #puts "DEBUG Got Vendor: #{vendor}"
-    m = string.match(/^cpe:2.3:[o|a|s|h]:.*?:(.*?):.*$/)
-    product = m[1] if m
-    #puts "DEBUG Got Product: #{product}"
-    m = string.match(/^cpe:2.3:[o|a|s|h]:.*?:.*?:(.*)$/)
-    version = m[1] if m
-    #puts "DEBUG Got Version: #{version}"
+    m = string.match(/^cpe:2.3:[o|a|s|h]:(.*?):(.*?):(.*?):(.*?)$/)
+    vendor = "#{m[1]}"
+    product = "#{m[2]}"
+    version = "#{m[3]}"
+    update = "#{m[4]}"
 
     # if version has parens, only use the stuff priior (apache, nginx, etc)
     if version =~ /\(/
       old_version = version
-      #puts "DEBUG Splitting Version: #{version}"
+      puts "DEBUG Splitting Version: #{version}"
 
       version = old_version.split("(").first.chomp
-      #puts "DEBUG New Version: #{version}"
+      puts "DEBUG New Version: #{version}"
 
-      variant = old_version.split("(").last.split(")").first.chomp  #HACK
-      #puts "DEBUG New Variant: #{variant}"
+    #  update = old_version.split("(").last.split(")").first.chomp  #HACK
+    #  #puts "DEBUG New Variant: #{variant}"
 
     end
 
     # if there's nothing to do here...
-    return unless product && vendor && version
+    #return unless product && vendor && version
 
     # HACK... cleanup version if needed
-    version = version.gsub(/\(.*/,"").gsub(/\+.*/,"").gsub(/-.*/,"").gsub(/\s.*/,"")
+    version = "#{version}".gsub(/\(.*/,"").gsub(/\+.*/,"").gsub(/-.*/,"").gsub(/\s.*/,"")
 
     parsed = {
       :vendor => vendor,
       :product => product,
       :version => version,
-      :variant => variant
+      :update => update
     }
+
+    puts "returning #{parsed}"
 
   parsed
   end

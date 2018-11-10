@@ -70,6 +70,10 @@ class EntityManager
     # necessary because of our single table inheritance?
     our_entity = Intrigue::Model::Entity.find(:id => entity.id)
 
+    # Add it to seeds since it was created manually
+    project.seeds = (project.seeds || []) << {"name" => our_entity.name, "type" => our_entity.type}
+    project.save
+
     ### Ensure we have an entity
     return nil unless our_entity
     return nil unless our_entity.transform!
@@ -105,9 +109,18 @@ class EntityManager
     # Merge the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name)
 
+    # find exception regexes we can skip (if they're a seed or an ancestor)
+    skip_regexes = []
+    # check seeds
+    project.seeds.each do |s|
+      skip_regexes << project.non_traversable?(s["name"], s["type"].split(":").last)
+    end
+    skip_regexes.compact!
+    task_result.log_debug "This no-traverse entry will be bypassed since it matches a seed: #{skip_regexes}"
+
     # check if this is actually an exception (no-traverse for this proj) entity
-    no_traverse_entity = project.exception_entity?(name, type_string)
-    task_result.log "Checking if #{type_string}##{name} is a no-traverse: #{no_traverse_entity}"
+    no_traverse_regex = project.exception_entity?(name, type_string, skip_regexes)
+    task_result.log_debug "Checking if #{type_string}##{name} matches a no-traverse regex: #{no_traverse_regex}"
 
     # Check if there's an existing entity, if so, merge and move forward
     if entity
@@ -120,7 +133,7 @@ class EntityManager
       entity_already_existed = true
 
     else
-      task_result.log_good "New Entity: #{type_string} #{name}. Scoped: #{tr.auto_scope}. No-Traverse: #{no_traverse_entity}"
+      task_result.log_good "New Entity: #{type_string} #{name}. Scoped: #{tr.auto_scope}. No-Traverse: #{no_traverse_regex}"
       new_entity = true
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
@@ -135,7 +148,7 @@ class EntityManager
           :type => type.to_s,
           :details => details,
           :scoped => tr.auto_scope, # set in scope if task result auto_scope is true
-          :hidden => (no_traverse_entity ? true : false ),
+          :hidden => (no_traverse_regex ? true : false ),
           :alias_group_id => g.id
         }
 
@@ -206,7 +219,7 @@ class EntityManager
 
     # ENRICHMENT LAUNCH
     if task_result.auto_enrich && !entity_already_existed
-      if !no_traverse_entity
+      if !no_traverse_regex
         # Check if we've alrady run first and return gracefully if so
         if created_entity.enriched
           task_result.log "Skipping enrichment... already completed!"

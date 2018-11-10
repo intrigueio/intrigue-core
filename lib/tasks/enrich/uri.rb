@@ -128,10 +128,10 @@ class Uri < Intrigue::Task::BaseTask
       #extended_fingerprints << wordpress_fingerprint
 
     # TODO, clean up fingerprint / regexes
-    rescue NoMethodError => e
-      _log_error "Fingerprint effort failed: #{e}"
+    #rescue NoMethodError => e
+    #  _log_error "Fingerprint effort failed: #{e}"
       # assume no matches in this case
-      fingerprint_matches = []
+    #  fingerprint_matches = []
     end
 
     _log "Gathering ciphers since this is an ssl endpoint"

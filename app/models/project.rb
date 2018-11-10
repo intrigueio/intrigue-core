@@ -2,7 +2,7 @@ module Intrigue
   module Model
     class Project < Sequel::Model
       plugin :validation_helpers
-      plugin :serialization, :json, :seeds, :options, :handlers, :additional_exception_list
+        plugin :serialization, :json, :seeds, :options, :handlers, :additional_exception_list
 
       one_to_many :logger
       one_to_many :task_results
@@ -27,10 +27,20 @@ module Intrigue
         Intrigue::Model::Entity.scope_by_project(self.name)
       end
 
+      def seed_entity?(entity_name, type_string)
+        if seeds
+          seeds.each do |s|
+            return true if entity_name == s["name"] && type_string == s["type"]
+          end
+        end
+      false
+      end
+
       def export_hash
         {
           :id => id,
           :name => "#{name}",
+          :seeds => seeds,
           :entities => entities.map {|e| e.export_hash }
           #:task_results => task_results.map {|t| t.export_hash }
           #:scan_results => scan_results.map {|s| s.export_hash }
