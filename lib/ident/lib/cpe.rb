@@ -31,8 +31,8 @@ class Cpe
     begin
       vendor_string = URI.escape(@vendor)
       product_string = URI.escape(@product)
-      version_string = @version ? URI.escape(@version) : "-"
-      update_string = @update ? URI.escape(@update) : "-"
+      version_string = @version ? URI.escape(@version) : ""
+      update_string = @update ? URI.escape(@update) : ""
 
       uri = "https://intrigue.io/api/vulndb/match/#{vendor_string}/#{product_string}"
       uri << "/#{version_string}" if version_string
