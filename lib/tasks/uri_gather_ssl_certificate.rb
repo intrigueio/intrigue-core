@@ -160,6 +160,9 @@ class UriGatherSslCert  < BaseTask
       socket.close
 
       # Create an SSL Certificate entity
+
+      key_size = "#{cert.public_key.n.num_bytes * 8}" if cert.public_key.n
+
       _create_entity "SslCertificate", {
         "name" => "#{cert.subject.to_s.split("CN=").last} (#{cert.serial})",
         "version" => cert.version,
@@ -169,7 +172,7 @@ class UriGatherSslCert  < BaseTask
         #"valid" => (ssl_socket.verify_result == 0),
         "subject" => "#{cert.subject}",
         "issuer" => "#{cert.issuer}",
-        "key_length" => cert.public_key.n.num_bytes * 8,
+        "key_length" => key_size,
         "signature_algorithm" => "#{cert.signature_algorithm}",
         "hidden_text" => "#{cert.to_text}"
       }
