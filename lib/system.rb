@@ -60,6 +60,12 @@ module System
   # parse out entity from the cli
   def _parse_entity(entity_string)
     entity_type = entity_string.split("#").first
+
+    # hack - fixes entities with full type
+    unless entity_type =~ /::/
+      entity_type = "Intrigue::Entity::#{entity_type}"
+    end
+
     entity_name = entity_string.split("#").last
 
     entity_hash = {

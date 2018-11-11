@@ -71,8 +71,10 @@ class EntityManager
     our_entity = Intrigue::Model::Entity.find(:id => entity.id)
 
     # Add it to seeds since it was created manually
-    project.seeds = (project.seeds || []) << {"name" => our_entity.name, "type" => our_entity.type}
-    project.save
+    unless project.seed_entity? our_entity.name, our_entity.type
+      project.seeds = (project.seeds || []) << {"name" => our_entity.name, "type" => our_entity.type}
+      project.save
+    end
 
     ### Ensure we have an entity
     return nil unless our_entity
@@ -84,7 +86,7 @@ class EntityManager
   end
 
   # This method creates a new entity, and kicks off a machine
-  def self.create_or_merge_entity(task_result,type_string,name,details, primary_entity=nil)
+  def self.create_or_merge_entity(task_result,type_string,name,details,primary_entity=nil)
 
     unless task_result && type_string && name && details
       task_result.log_error "Broken entity attempted: #{task_result}, #{type_string}##{name}, #{details}"
@@ -111,19 +113,18 @@ class EntityManager
 
     # find exception regexes we can skip (if they're a seed or an ancestor)
     skip_regexes = []
+
     # check seeds
     project.seeds.each do |s|
       r = project.non_traversable?(s["name"], s["type"].split(":").last)
-      if r
-        skip_regexes << r
-      end
+      skip_regexes << r if r
     end
     skip_regexes.compact!
 
     if skip_regexes.count > 0
-      task_result.log "This no-traverse regex will be bypassed since it matches a seed: #{skip_regexes}"
+      tr.log "This no-traverse regex will be bypassed since it matches a seed: #{skip_regexes}"
     end
-    
+
     # check if this is actually an exception (no-traverse for this proj) entity
     no_traverse_regex = project.exception_entity?(name, type_string, skip_regexes)
     #task_result.log "Checking if #{type_string}##{name} matches a no-traverse regex: #{no_traverse_regex}"
@@ -139,11 +140,11 @@ class EntityManager
       entity_already_existed = true
 
     else
-      task_result.log_good "New Entity: #{type_string} #{name}. Scoped: #{tr.auto_scope}. No-Traverse: #{no_traverse_regex}"
+      tr.log_good "New Entity: #{type_string} #{name}. Scoped: #{tr.auto_scope}. No-Traverse: #{no_traverse_regex}"
       new_entity = true
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
-      #$db.transaction do
+      $db.transaction do
 
         # Create a new alias group
         g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
@@ -153,10 +154,26 @@ class EntityManager
           :project_id => project.id,
           :type => type.to_s,
           :details => details,
-          :scoped => tr.auto_scope, # set in scope if task result auto_scope is true
           :hidden => (no_traverse_regex ? true : false ),
           :alias_group_id => g.id
         }
+
+        # handle scoping (which controls whether we iterate automatically)
+        # if it's not explicitly provided to us as a detail "unscoped"
+        # rely on the task result's auto_scope setting
+        # otherwise default to unscoped
+        if details["scoped"] == true
+          details = details.tap { |h| h.delete("scoped") }
+          entity_details[:scoped] = true
+        elsif details["unscoped"] == true
+          details = details.tap { |h| h.delete("unscoped") }
+          entity_details[:scoped] = false
+        elsif tr.auto_scope
+          entity_details[:scoped] = true
+        else
+          entity_details[:scoped] = false
+        end
+
 
         begin
 
@@ -164,19 +181,19 @@ class EntityManager
           entity = Intrigue::Model::Entity.update_or_create( {name: downcased_name}, entity_details)
 
           unless entity
-            task_result.log_fatal "Unable to create entity: #{entity_details}"
+            tr.log_fatal "Unable to create entity: #{entity_details}"
             return nil
           end
 
         rescue Encoding::UndefinedConversionError => e
-          task_result.log_fatal "Unable to create entity:#{entity_details}\n #{e}"
+          tr.log_fatal "Unable to create entity:#{entity_details}\n #{e}"
           return nil
         rescue Sequel::DatabaseError => e
-          task_result.log_fatal "Unable to create entity:#{entity_details}\n #{e}"
+          tr.log_fatal "Unable to create entity:#{entity_details}\n #{e}"
           return nil
         end
 
-      #end
+      end
     end
 
     # necessary to relookup?

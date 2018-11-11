@@ -1,5 +1,6 @@
+
 <h3>Statistics</h3>
-Total: <%= Intrigue::Model::Project.first(:name => @project_name).entities.count %> entities
+Total Entities: <%= Intrigue::Model::Project.first(:name => @project_name).entities.count %> entities
 <p>
   <ul>
     <% Intrigue::Model::Entity.descendants.each do |d| %>
@@ -13,3 +14,12 @@ Total: <%= Intrigue::Model::Project.first(:name => @project_name).entities.count
     <% end %>
   </ul>
 </p>
+<% if Intrigue::Model::Project.first(:name => @project_name).seeds %>
+  <h3>Seeds</h3>
+  <p>
+  <%= Intrigue::Model::Project.first(:name => @project_name).seeds.count %> seeds:
+  <ul>
+    <%= Intrigue::Model::Project.first(:name => @project_name).seeds.map{|x| "<li>#{x["type"]}##{x["name"]}</li>" }.join("") %>
+  </ul>
+  </p>
+<% end%>

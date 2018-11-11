@@ -28,11 +28,13 @@ module Intrigue
       end
 
       def seed_entity?(entity_name, type_string)
+
         if seeds
           seeds.each do |s|
-            return true if entity_name == s["name"] && type_string == s["type"]
+            return true if entity_name == s["name"] && (type_string == s["type"] || type_string == "Intrigue::Entity#{s["type"]}")
           end
         end
+
       false
       end
 

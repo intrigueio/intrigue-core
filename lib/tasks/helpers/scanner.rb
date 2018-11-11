@@ -59,10 +59,13 @@ module Scanner
 
           ## TODO ... follow location headers?
 
+
         rescue ArgumentError => e
-          _log_error "Error requesting resource, skipping: #{uri} #{e}"
+          _log_error "Error, skipping: #{uri} #{e}"
         rescue SocketError => e
           _log_error "Error requesting resource, skipping: #{uri} #{e}"
+        rescue Errno::EINVAL => e
+          _log_error "Error, skipping: #{uri} #{e}"
         rescue Errno::EPIPE => e
           _log_error "Error requesting resource, skipping: #{uri} #{e}"
         rescue Errno::ECONNRESET => e

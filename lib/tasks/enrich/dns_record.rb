@@ -29,7 +29,6 @@ class DnsRecord < Intrigue::Task::BaseTask
   end
 
   def run
-
     lookup_name = _get_entity_name
 
     # Do a lookup and keep track of all aliases
@@ -42,52 +41,36 @@ class DnsRecord < Intrigue::Task::BaseTask
     _create_vhost_entities(lookup_name)
 
     _log "Grabbing resolutions"
-    _set_entity_detail("resolutions", collect_resolutions(results) )
+    resolutions = collect_resolutions(results)
+    _set_entity_detail("resolutions", resolutions)
 
     _log "Grabbing SOA"
     soa_details = collect_soa_details(lookup_name)
     _set_entity_detail("soa_record", soa_details)
-    #check_and_create_domain(soa_details["primary_name_server"]) if soa_details
+    check_and_create_unscoped_domain(soa_details["primary_name_server"]) if soa_details
 
-    # possible we're a tld, so do a whois query
     if soa_details
 
-      # grab whois info
-      out = whois(lookup_name)
-      if out
-        _set_entity_detail("whois_full_text", out["whois_full_text"])
-        _set_entity_detail("nameservers", out["nameservers"])
-        _set_entity_detail("contacts", out["contacts"])
+      # grab any / all MX records (useful to see who accepts mail)
+      _log "Grabbing MX"
+      mx_records = collect_mx_records(lookup_name)
+      _set_entity_detail("mx_records", mx_records)
+      mx_records.each{|mx| check_and_create_unscoped_domain(mx["host"]) }
 
-        # create domains from each of the nameservers
-        #if out["nameservers"]
-        #  out["nameservers"].each do |n|
-        #    check_and_create_domain(n)
-        #  end
-        #end
+      # collect TXT records (useful for random things)
+      _log "Grabbing TXT"
+      txt_records = collect_txt_records(lookup_name)
+      _set_entity_detail("txt_records", txt_records)
 
-      end
+      # grab any / all SPF records (useful to see who accepts mail)
+      _log "Grabbing SPF"
+      spf_details = collect_spf_details(lookup_name)
+      _set_entity_detail("spf_record", spf_details)
 
     end
 
-    # grab any / all MX records (useful to see who accepts mail)
-    _log "Grabbing MX"
-    mx_records = collect_mx_records(lookup_name)
-    _set_entity_detail("mx_records", mx_records)
-    #x_records.each{|mx| check_and_create_domain(mx["host"]) }
-
-    # collect TXT records (useful for random things)
-    _log "Grabbing TXT"
-    txt_records = collect_txt_records(lookup_name)
-    _set_entity_detail("txt_records", txt_records)
-
-    # grab any / all SPF records (useful to see who accepts mail)
-    _log "Grabbing SPF"
-    spf_details = collect_spf_details(lookup_name)
-    _set_entity_detail("spf_record", spf_details)
-
     # create a domain for this entity
-    #check_and_create_domain(lookup_name)
+    check_and_create_unscoped_domain(lookup_name)
 
   end
 

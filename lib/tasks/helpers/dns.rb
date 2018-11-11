@@ -5,12 +5,12 @@ module Intrigue
       include Intrigue::Task::Generic
 
       # convenience method to just send back name
-      def resolve_name(lookup_name, lookup_types=[Dnsruby::Types::A, Dnsruby::Types::CNAME])
+      def resolve_name(lookup_name, lookup_types=[Dnsruby::Types::A, Dnsruby::Types::CNAME, Dnsruby::Types::PTR])
         resolve_names(lookup_name,lookup_types).first
       end
 
       # convenience method to just send back names
-      def resolve_names(lookup_name, lookup_types=[Dnsruby::Types::A, Dnsruby::Types::CNAME])
+      def resolve_names(lookup_name, lookup_types=[Dnsruby::Types::A, Dnsruby::Types::CNAME, Dnsruby::Types::PTR])
 
         names = []
         x = resolve(lookup_name, lookup_types)
@@ -19,7 +19,7 @@ module Intrigue
       names.uniq
       end
 
-      def resolve(lookup_name, lookup_types=[Dnsruby::Types::A, Dnsruby::Types::CNAME])
+      def resolve(lookup_name, lookup_types=[Dnsruby::Types::A, Dnsruby::Types::CNAME, Dnsruby::Types::PTR])
 
         resolver_name = _get_system_config "resolver"
 
@@ -220,7 +220,7 @@ module Intrigue
       dns_entries.uniq
       end
 
-      def check_and_create_domain(lookup_name)
+      def check_and_create_unscoped_domain(lookup_name)
         # handy in general, do this for all TLDs
         #if _get_entity_detail("soa_record")
         #  _log_good "Creating domain: #{_get_entity_name}"
@@ -252,6 +252,7 @@ module Intrigue
               # since we are creating an identical domain, send up the details
               e = _create_entity "Domain", {
                 "name" => "#{lookup_name}",
+                "unscoped" => true,
                 "resolutions" => _get_entity_detail("resolutions"),
                 "soa_record" => _get_entity_detail("soa_record"),
                 "mx_records" => _get_entity_detail("mx_records"),
@@ -265,7 +266,10 @@ module Intrigue
               # make sure we don't accidentially create another TLD (co.uk)
               next if clean_suffix_list.include? inferred_tld
 
-              e = _create_entity "Domain", "name" => "#{inferred_tld}"
+              e = _create_entity "Domain", {
+                "name" => "#{inferred_tld}",
+                "unscoped" => true
+              }
             else
               _log "Subtracting suffix (#{suffix}) doesnt make this a tld, moving on."
             end

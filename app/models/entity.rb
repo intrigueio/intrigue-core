@@ -273,7 +273,7 @@ module Intrigue
           :alias_group => alias_group_id,
           :detail_string => detail_string,
           :details => details,
-          :ancestors => ancestors,
+          :ancestors => ancestors.map{|x| { "type" => x.type, "name" => x.name }},
           :task_results => task_results.map{ |t|
             { :id => t.id,
               :name => t.name,
