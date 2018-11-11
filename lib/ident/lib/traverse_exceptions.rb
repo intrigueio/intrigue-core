@@ -111,6 +111,7 @@ module TraverseExceptions
         /^.*\.hscoscdn[0-9]+.net(:[0-9]*)?$/,
         /^.*\.hubspot.com(:[0-9]*)?$/,
         /^.*\.hubspot.net(:[0-9]*)?$/,
+        /^.*\.in-addr.arpa(:[0-9]*)?$/,
         /^.*\.incapdns.net(:[0-9]*)?$/,
         /^.*\.incapsula.com(:[0-9]*)?$/,
         /^.*\.ink1001.com(:[0-9]*)?$/, # Movable Ink
@@ -228,13 +229,13 @@ module TraverseExceptions
       if type_string == "IpAddress"
 
         (standard_ip_exceptions - skip_exceptions).each do |exception|
-          return exception if entity_name =~ exception
+          return exception if (entity_name =~ exception)
         end
 
-      elsif (type_string == "Domain" || type_string == "DnsRecord" || type_string == "Uri")
+      elsif (type_string == "Domain" || type_string == "DnsRecord" || type_string == "Uri" )
 
         (standard_name_exceptions - skip_exceptions).each do |exception|
-          return exception if entity_name =~ exception ||  ".#{entity_name}" =~ exception
+          return exception if (entity_name =~ exception ||  ".#{entity_name}" =~ exception)
         end
 
       end
