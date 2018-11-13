@@ -34,11 +34,12 @@ class Cpe
       version_string = @version ? URI.escape(@version) : ""
       update_string = @update ? URI.escape(@update) : ""
 
+      # not enough information otherwise
+      return [] unless vendor_string && product_string && version_string
+
       uri = "https://intrigue.io/api/vulndb/match/#{vendor_string}/#{product_string}"
       uri << "/#{version_string}" if version_string
       uri << "/#{update_string}" if update_string
-
-      puts "Sending intrigue vulndb api: #{uri}"
 
       response = http_request :get, uri
       result = JSON.parse(response.body)
