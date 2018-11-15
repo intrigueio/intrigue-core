@@ -66,7 +66,7 @@ module Check
           :references => ["https://dcid.me/texts/fingerprinting-web-apps.html"],
           :version => "2.0",
           :match_type => :checksum_body,
-          :checksum => "a306a72ce0f250e5f67132dc6bcb2ccb",
+          :match_content => "a306a72ce0f250e5f67132dc6bcb2ccb",
           :paths => ["#{url}/wp-includes/js/tinymce/tiny_mce.js"]
         },
         {
@@ -78,7 +78,7 @@ module Check
           :references => ["https://dcid.me/texts/fingerprinting-web-apps.html"],
           :version => "2.1",
           :match_type => :checksum_body,
-          :checksum => "4f04728cb4631a553c4266c14b9846aa",
+          :match_content => "4f04728cb4631a553c4266c14b9846aa",
           :paths => ["#{url}/wp-includes/js/tinymce/tiny_mce.js"]
         },
         {
@@ -90,7 +90,7 @@ module Check
           :references => ["https://dcid.me/texts/fingerprinting-web-apps.html"],
           :version => "2.2",
           :match_type => :checksum_body,
-          :checksum => "25e1e78d5b0c221e98e14c6e8c62084f",
+          :match_content => "25e1e78d5b0c221e98e14c6e8c62084f",
           :paths => ["#{url}/wp-includes/js/tinymce/tiny_mce.js"]
         },
         {
@@ -102,7 +102,7 @@ module Check
           :references => ["https://dcid.me/texts/fingerprinting-web-apps.html"],
           :version => "2.3",
           :match_type => :checksum_body,
-          :checksum => "83c83d0f0a71bd57c320d93e59991c53",
+          :match_content => "83c83d0f0a71bd57c320d93e59991c53",
           :paths => ["#{url}/wp-includes/js/tinymce/tiny_mce.js"]
         },
         {
@@ -114,7 +114,7 @@ module Check
           :references => ["https://dcid.me/texts/fingerprinting-web-apps.html"],
           :version => "2.5",
           :match_type => :checksum_body,
-          :checksum => "7293453cf0ff5a9a4cfe8cebd5b5a71a",
+          :match_content => "7293453cf0ff5a9a4cfe8cebd5b5a71a",
           :paths => ["#{url}/wp-includes/js/tinymce/tiny_mce.js"]
         },
         {
@@ -126,7 +126,7 @@ module Check
           :references => ["https://dcid.me/texts/fingerprinting-web-apps.html"],
           :version => "2.6",
           :match_type => :checksum_body,
-          :checksum => "61740709537bd19fb6e03b7e11eb8812",
+          :match_content => "61740709537bd19fb6e03b7e11eb8812",
           :paths => ["#{url}/wp-includes/js/tinymce/tiny_mce.js"]
         },
         {
@@ -138,7 +138,7 @@ module Check
           :references => ["https://dcid.me/texts/fingerprinting-web-apps.html"],
           :version => "2.7",
           :match_type => :checksum_body,
-          :checksum => "e6bbc53a727f3af003af272fd229b0b2",
+          :match_content => "e6bbc53a727f3af003af272fd229b0b2",
           :paths => ["#{url}/wp-includes/js/tinymce/tiny_mce.js"]
         },
         {
@@ -150,7 +150,7 @@ module Check
           :references => ["https://dcid.me/texts/fingerprinting-web-apps.html"],
           :version => "2.7.1",
           :match =>:checksum_body,
-          :checksum => "e6bbc53a727f3af003af272fd229b0b2",
+          :match_content => "e6bbc53a727f3af003af272fd229b0b2",
           :paths => ["#{url}/wp-includes/js/tinymce/tiny_mce.js"]
         },
         {
@@ -162,7 +162,7 @@ module Check
           :references => ["https://dcid.me/texts/fingerprinting-web-apps.html"],
           :version => "2.9.1",
           :match_type => :checksum_body,
-          :checksum => "128e75ed19d49a94a771586bf83265ec",
+          :match_content => "128e75ed19d49a94a771586bf83265ec",
           :paths => ["#{url}/wp-includes/js/tinymce/tiny_mce.js"]
         }
       ]

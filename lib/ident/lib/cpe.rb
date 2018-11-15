@@ -5,11 +5,11 @@ class Cpe
   include Intrigue::Task::Web
 
   def initialize(cpe_string)
-    puts "Creating CPE with CPE: #{cpe_string}"
+    #puts "Creating CPE with CPE: #{cpe_string}"
     @cpe = cpe_string
     x = _parse_cpe(@cpe)
 
-    puts "Got Parsed CPE: #{x}"
+    #puts "Got Parsed CPE: #{x}"
 
     return nil unless x
 

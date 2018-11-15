@@ -185,7 +185,7 @@ module Intrigue
         end
       elsif check[:match_type] == :checksum_body
         if data["details"] && data["details"]["response_data_hash"]
-          match = _construct_match_response(check,data,options) if Digest::MD5.hexdigest(data["details"]["response_data_hash"]) == check[:checksum]
+          match = _construct_match_response(check,data,options) if Digest::MD5.hexdigest(data["details"]["response_data_hash"]) == check[:match_content]
         end
       end
 
