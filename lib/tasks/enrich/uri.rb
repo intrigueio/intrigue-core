@@ -38,8 +38,7 @@ class Uri < Intrigue::Task::BaseTask
       return
     end
 
-    response_data = response.body.sanitize_unicode
-    response_data_hash = Digest::SHA256.base64digest(response_data) if response_data
+    response_data_hash = Digest::SHA256.base64digest(response.body) 
 
     # we can check the existing response, so send that
     api_enabled = check_api_endpoint(response)
