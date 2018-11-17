@@ -38,19 +38,19 @@ class Uri < Intrigue::Task::BaseTask
       return
     end
 
-    response_data_hash = Digest::SHA256.base64digest(response.body) 
+    response_data_hash = Digest::SHA256.base64digest(response.body)
 
     # we can check the existing response, so send that
     api_enabled = check_api_endpoint(response)
 
     # we can check the existing response, so send that
-    contains_forms = check_forms(response_data)
+    contains_forms = check_forms(response.body)
 
     # we'll need to make another request
     verbs_enabled = check_options_endpoint(uri)
 
     # grab all script_references
-    script_links = response_data.scan(/<script.*?src=["|'](.*?)["|']/).map{|x| x.first if x }
+    script_links = response.body.scan(/<script.*?src=["|'](.*?)["|']/).map{|x| x.first if x }
 
     # save the Headers
     headers = []
@@ -182,7 +182,7 @@ class Uri < Intrigue::Task::BaseTask
         "cookies" => response.header['set-cookie'],
         "forms" => contains_forms,
         "response_data_hash" => response_data_hash,
-        "hidden_response_data" => response_data,
+        "hidden_response_data" => response.body,
         "hidden_screenshot_contents" => encoded_screenshot,
         "javascript" => js_libraries,
         "products" => products.compact,
