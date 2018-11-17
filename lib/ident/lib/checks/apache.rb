@@ -35,6 +35,8 @@ class Apache < Intrigue::Ident::Check::Base
         :version => nil,
         :match_type => :content_headers,
         :match_content =>  /server:\ Apache[\s|\/]+[0-9]+/i,
+        :dynamic_version_field => "headers",
+        :dynamic_version_regex => /[s|S]erver:\s?Apache[\s|\/](.*)$/,
         :dynamic_version => lambda { |x|
           _first_header_capture(x,/[s|S]erver:\s?Apache[\s|\/](.*)$/,["Apache","/","(Ubuntu)"])
         },
