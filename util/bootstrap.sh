@@ -25,8 +25,13 @@ wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-
 
 ##### Install postgres, redis
 echo "[+] Updating from Third Party Reposoitories ..."
+
 sudo apt-get -y update
-sudo apt-get -y upgrade
+sudo DEBIAN_FRONTEND=noninteractive \
+	apt-get -y -o \
+	DPkg::options::="--force-confdef" -o \
+	DPkg::options::="--force-confold" \
+	upgrade
 
 echo "[+] Installing Intrigue Dependencies..."
 sudo apt-get -y install libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libsqlite3-dev net-tools libpq-dev postgresql-9.6 postgresql-server-dev-9.6 redis-server boxes nmap zmap default-jre thc-ipv6 unzip curl git gcc make libpcap-dev
