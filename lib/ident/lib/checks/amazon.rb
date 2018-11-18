@@ -60,7 +60,9 @@ class Amazon < Intrigue::Ident::Check::Base
         :match_content =>  /awselb\/\d.\d/,
         :match_details =>"Amazon Elastic Load Balancer",
         :hide => true,
-        :dynamic_version => lambda { |x| x["details"]["headers"].join("\n").match(/awselb\/(\d.\d)/).captures[0] },
+        :dynamic_version => lambda { |x| _first_header_capture(/awselb\/(\d.\d)/) },
+        :dynamic_version_field => "headers",
+        :dynamic_version_regex => /awselb\/(\d.\d)/,
         :verify_sites => ["http://52.4.103.22:80"],
         :paths => ["#{url}"]
       }

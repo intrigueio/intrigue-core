@@ -66,6 +66,8 @@ class Apache < Intrigue::Ident::Check::Base
         :version => nil,
         :match_type => :content_headers,
         :match_content =>  /server:\ Apache-Coyote/i,
+        :dynamic_version_field => "headers",
+        :dynamic_version_regex => /server: Apache-Coyote\/(.*)/i,
         :dynamic_version => lambda { |x|
           _first_header_capture(x,/server: Apache-Coyote\/(.*)/i)
         },
@@ -108,6 +110,8 @@ class Apache < Intrigue::Ident::Check::Base
         :match_type => :content_body,
         :version => nil,
         :match_content =>  /<title>Apache Tomcat/,
+        :dynamic_version_field => "title",
+        :dynamic_version_regex => /Apache Tomcat\/(.*?) - Error report/i,
         :dynamic_version => lambda{ |x|
           _first_body_capture(x, /<title>(.*)<\/title>/,["Apache Tomcat/"," - Error report"])
         },

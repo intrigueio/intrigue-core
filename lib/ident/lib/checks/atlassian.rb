@@ -33,6 +33,8 @@ class Atlassian < Intrigue::Ident::Check::Base
         :version => nil,
         :match_type => :content_body,
         :match_content =>  /FishEye and Crucible/,
+        :dynamic_version_field => "body",
+        :dynamic_version_regex => /Log in to FishEye and Crucible (.*)\</,
         :dynamic_version => lambda{ |x|
           _first_body_capture(x, /Log in to FishEye and Crucible (.*)\</)
         },
@@ -57,6 +59,8 @@ class Atlassian < Intrigue::Ident::Check::Base
         :version => nil,
         :match_type => :content_cookies,
         :match_content =>  /atlassian.xsrf.token=/i,
+        :dynamic_version_field => "body",
+        :dynamic_version_regex => /<meta name="ajs-version-number" content="(.*)">/,
         :dynamic_version => lambda{ |x|
             _first_body_capture(x,/<meta name="ajs-version-number" content="(.*)">/)
         },

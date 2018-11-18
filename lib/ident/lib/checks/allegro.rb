@@ -13,6 +13,8 @@ class Allegro < Intrigue::Ident::Check::Base
         :dynamic_version => lambda { |x|
           _first_header_capture(x,/Allegro-Software-RomPager\/(.*)$/i)
         },
+        :dynamic_version_field => "headers",
+        :dynamic_version_regex => /Allegro-Software-RomPager\/(.*)$/i,
         :examples => [ "http://120.127.142.126" ],
         :match_type => :content_headers,
         :match_content =>  /server:\ Allegro-Software-RomPager/,
