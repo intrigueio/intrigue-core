@@ -183,10 +183,10 @@ class Cpe
   def _parse_cpe(string)
 
     m = string.match(/^cpe:2.3:[o|a|s|h]:(.*?):(.*?):(.*?):(.*?)$/)
-    vendor = "#{m[1]}"
-    product = "#{m[2]}"
-    version = "#{m[3]}"
-    update = "#{m[4]}"
+    vendor = "#{m[1]}".strip
+    product = "#{m[2]}".strip
+    version = "#{m[3]}".strip
+    update = "#{m[4]}".strip
 
     # if version has parens, only use the stuff priior (apache, nginx, etc)
     if version =~ /\(/
