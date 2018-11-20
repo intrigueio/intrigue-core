@@ -11,7 +11,7 @@ If you'd like assistance getting started or have development-related questions, 
 
 # Users
 
-If you just want to get started and play around with an instance, have a look at the [Getting Started Guide](https://intrigue.io/getting-started/)
+If you just want to get started and play around with an instance, have a look at the [Getting Started Guide](https://core.intrigue.io/getting-started/)
 
 # Developers
 
@@ -21,14 +21,14 @@ To get started setting up a development environment, follow the instructions bel
 
 Follow the appropriate setup guide:
 
- * Vagrant (preferred) - http://intrigue.io/getting-started-with-intrigue-core-on-vagrant-virtualbox/
- * Docker - https://intrigue.io/2017/03/07/using-intrigue-core-with-docker/
+ * Vagrant (preferred) - http://core.intrigue.io/getting-started-with-intrigue-core-on-vagrant-virtualbox/
+ * Docker - https://core.intrigue.io/2017/03/07/using-intrigue-core-with-docker/
 
 Now that you have a working environment, browse to the web interface.
 
 ### Using the web interface
 
-To use the web interface, browse to http://127.0.0.1:7777. Once you're able to connect, you can follow the instructions here: http://intrigue.io/up-and-running/
+To use the web interface, browse to http://127.0.0.1:7777. Once you're able to connect, you can follow the instructions here: http://core.intrigue.io/up-and-running/
 
 ### Configuring the system
 
