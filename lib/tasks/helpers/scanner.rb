@@ -11,6 +11,108 @@ module Intrigue
 module Task
 module Scanner
 
+  def _gather_http_response(uri)
+
+    # FIRST CHECK TO SEE IF WE GET A RESPONSE FOR THIS HOSTNAME
+    begin
+
+      out = {}
+      out[:http_response] = false
+      out[:extra_details] = {}
+
+      _log "connecting to #{uri}"
+
+      http_response = RestClient::Request.execute({
+        :method => :get,
+        :url => uri,
+        :timeout => 30,
+        :open_timeout => 30
+      })
+
+      ## TODO ... follow & track location headers?
+      ## TODO ... proxy
+
+    rescue ArgumentError => e
+      _log_error "Error, skipping: #{uri} #{e}"
+      out[:http_response] = false
+    rescue SocketError => e
+      _log_error "Error requesting resource, skipping: #{uri} #{e}"
+      out[:http_response] = false
+    rescue Errno::EINVAL => e
+      _log_error "Error, skipping: #{uri} #{e}"
+      out[:http_response] = false
+    rescue Errno::EPIPE => e
+      _log_error "Error requesting resource, skipping: #{uri} #{e}"
+      out[:http_response] = false
+    rescue Errno::ECONNRESET => e
+      _log_error "Error requesting resource, skipping: #{uri} #{e}"
+      out[:http_response] = false
+    rescue Errno::ECONNREFUSED => e
+      _log_error "Error requesting resource, skipping: #{uri} #{e}"
+      out[:http_response] = false
+    rescue Errno::EHOSTUNREACH => e
+      _log_error "Error requesting resource, skipping: #{uri} #{e}"
+      out[:http_response] = false
+    rescue URI::InvalidURIError => e
+      _log_error "Error requesting resource, skipping: #{uri} #{e}"
+      out[:http_response] = false
+    rescue RestClient::RequestTimeout => e
+      _log_error "Timeout requesting resource, skipping: #{uri} #{e}"
+      out[:http_response] = false
+    rescue RestClient::BadRequest => e
+      _log_error "Error requesting resource, skipping: #{uri} #{e}"
+      out[:http_response] = false
+    rescue RestClient::ResourceNotFound => e
+      _log_error "Error (404) requesting resource, creating anyway: #{uri}"
+      out[:http_response] = true
+    rescue RestClient::MaxRedirectsReached => e
+      _log_error "Error (too many redirects) requesting resource, creating anyway: #{uri}"
+      out[:http_response] = true
+    rescue RestClient::Unauthorized => e
+      _log_error "Error (401) requesting resource, creating anyway: #{uri}"
+      out[:http_response] = true
+      out[:extra_details].merge!("http_server_error" => "#{e}" )
+    rescue RestClient::Forbidden => e
+      _log_error "Error (403) requesting resource, creating anyway: #{uri}"
+      out[:http_response] = true
+      out[:extra_details].merge!("http_server_error" => "#{e}" )
+    rescue RestClient::InternalServerError => e
+      _log_error "Error (500) requesting resource, creating anyway: #{uri}"
+      out[:http_response] = true
+      out[:extra_details].merge!("http_server_error" => "#{e}" )
+    rescue RestClient::BadGateway => e
+      _log_error "Error (Bad Gateway) requesting resource #{uri}, creating anyway."
+      out[:http_response] = true
+      out[:extra_details].merge!("http_server_error" => "#{e}" )
+    rescue RestClient::ServiceUnavailable => e
+      _log_error "Error (Service Unavailable) requesting resource #{uri}, creating anyway."
+      out[:http_response] = true
+      out[:extra_details].merge!("http_server_error" => "#{e}" )
+    rescue RestClient::ServerBrokeConnection => e
+      _log_error "Error (Server broke connection) requesting resource #{uri}, creating anyway."
+      out[:http_response] = true
+      out[:extra_details].merge!("http_server_error" => "#{e}" )
+    rescue RestClient::SSLCertificateNotVerified => e
+      _log_error "Error (SSL Certificate Invalid) requesting resource #{uri}, creating anyway."
+      out[:http_response] = true
+      out[:extra_details].merge!("http_server_error" => "#{e}" )
+    rescue OpenSSL::SSL::SSLError => e
+      _log_error "Error (SSL Certificate Invalid) requesting resource #{uri}, creating anyway."
+      out[:http_response] = true
+      out[:extra_details].merge!("http_server_error" => "#{e}" )
+    rescue Net::HTTPBadResponse => e
+      _log_error "Error (Bad HTTP Response) requesting resource #{uri}, creating anyway."
+      out[:http_response] = true
+      out[:extra_details].merge!("http_server_error" => "#{e}" )
+    rescue RestClient::ExceptionWithResponse => e
+      _log_error "Unknown error requesting resource #{uri}, skipping"
+      _log_error "#{e}"
+    rescue Zlib::GzipFile::Error => e
+      _log_error "compression error on #{uri}" => e
+    end
+  out
+  end
+
   def _create_network_service_entity(ip_entity,port_num,protocol="tcp",extra_details={})
 
     # first, save the port details on the ip_entity
@@ -46,88 +148,9 @@ module Scanner
         # construct the uri
         uri = "#{prefix}#{h.name}:#{port_num}"
 
-        # FIRST CHECK TO SEE IF WE GET A RESPONSE FOR THIS HOSTNAME
-        begin
-
-          _log "connecting to #{uri}"
-          http_response = RestClient::Request.execute({
-            :method => :get,
-            :url => uri,
-            :timeout => 30,
-            :open_timeout => 30
-          })
-
-          ## TODO ... follow location headers?
-
-
-        rescue ArgumentError => e
-          _log_error "Error, skipping: #{uri} #{e}"
-        rescue SocketError => e
-          _log_error "Error requesting resource, skipping: #{uri} #{e}"
-        rescue Errno::EINVAL => e
-          _log_error "Error, skipping: #{uri} #{e}"
-        rescue Errno::EPIPE => e
-          _log_error "Error requesting resource, skipping: #{uri} #{e}"
-        rescue Errno::ECONNRESET => e
-          _log_error "Error requesting resource, skipping: #{uri} #{e}"
-        rescue Errno::ECONNREFUSED => e
-          _log_error "Error requesting resource, skipping: #{uri} #{e}"
-        rescue Errno::EHOSTUNREACH => e
-          _log_error "Error requesting resource, skipping: #{uri} #{e}"
-        rescue URI::InvalidURIError => e
-          _log_error "Error requesting resource, skipping: #{uri} #{e}"
-        rescue RestClient::RequestTimeout => e
-          _log_error "Timeout requesting resource, skipping: #{uri} #{e}"
-        rescue RestClient::BadRequest => e
-          _log_error "Error requesting resource, skipping: #{uri} #{e}"
-        rescue RestClient::ResourceNotFound => e
-          _log_error "Error (404) requesting resource, creating anyway: #{uri}"
-          http_response = true
-        rescue RestClient::MaxRedirectsReached => e
-          _log_error "Error (too many redirects) requesting resource, creating anyway: #{uri}"
-          http_response = true
-        rescue RestClient::Unauthorized => e
-          _log_error "Error (401) requesting resource, creating anyway: #{uri}"
-          http_response = true
-          extra_details.merge!("http_server_error" => "#{e}" )
-        rescue RestClient::Forbidden => e
-          _log_error "Error (403) requesting resource, creating anyway: #{uri}"
-          http_response = true
-          extra_details.merge!("http_server_error" => "#{e}" )
-        rescue RestClient::InternalServerError => e
-          _log_error "Error (500) requesting resource, creating anyway: #{uri}"
-          http_response = true
-          extra_details.merge!("http_server_error" => "#{e}" )
-        rescue RestClient::BadGateway => e
-          _log_error "Error (Bad Gateway) requesting resource #{uri}, creating anyway."
-          http_response = true
-          extra_details.merge!("http_server_error" => "#{e}" )
-        rescue RestClient::ServiceUnavailable => e
-          _log_error "Error (Service Unavailable) requesting resource #{uri}, creating anyway."
-          http_response = true
-          extra_details.merge!("http_server_error" => "#{e}" )
-        rescue RestClient::ServerBrokeConnection => e
-          _log_error "Error (Server broke connection) requesting resource #{uri}, creating anyway."
-          http_response = true
-          extra_details.merge!("http_server_error" => "#{e}" )
-        rescue RestClient::SSLCertificateNotVerified => e
-          _log_error "Error (SSL Certificate Invalid) requesting resource #{uri}, creating anyway."
-          http_response = true
-          extra_details.merge!("http_server_error" => "#{e}" )
-        rescue OpenSSL::SSL::SSLError => e
-          _log_error "Error (SSL Certificate Invalid) requesting resource #{uri}, creating anyway."
-          http_response = true
-          extra_details.merge!("http_server_error" => "#{e}" )
-        rescue Net::HTTPBadResponse => e
-          _log_error "Error (Bad HTTP Response) requesting resource #{uri}, creating anyway."
-          http_response = true
-          extra_details.merge!("http_server_error" => "#{e}" )
-        rescue RestClient::ExceptionWithResponse => e
-          _log_error "Unknown error requesting resource #{uri}, skipping"
-          _log_error "#{e}"
-        rescue Zlib::GzipFile::Error => e
-          _log_error "compression error on #{uri}" => e
-        end
+        x = _gather_http_response(uri)
+        http_response = x[:http_response]
+        extra_details.merge!(x[:extra_details])
 
         unless http_response
           _log_error "Didn't get a response when we reqested one"
@@ -155,7 +178,6 @@ module Scanner
           "port" => port_num,
           "ip_address" => h.name,
           "protocol" => protocol}.merge!(extra_details)
-
 
         sister_entity = _create_entity("FtpService", entity_details, sister_entity)
 

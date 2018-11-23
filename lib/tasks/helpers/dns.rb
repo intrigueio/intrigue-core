@@ -35,6 +35,8 @@ module Intrigue
             begin
               #_log "Attempting lookup on #{lookup_name} with type #{t}"
               results << resolver.query(lookup_name, t)
+            rescue IOError => e
+              _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
             rescue Dnsruby::NXDomain => e
               _log_error "Unable to resolve: #{lookup_name}, no such domain: #{e}"
             rescue Dnsruby::SocketEofResolvError => e
