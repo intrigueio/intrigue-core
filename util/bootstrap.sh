@@ -8,6 +8,9 @@ export RUBY_VERSION="${RUBY_VERSION:=2.5.1}"
 ##### SYSTEM SETUP / CONFIG
 #####
 
+# UPGRADE FULLY NON-INTERACTIVE
+export DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
+
 echo "[+] Preparing the System"
 sudo apt-get -y update
 
