@@ -9,10 +9,12 @@ export RUBY_VERSION="${RUBY_VERSION:=2.5.1}"
 #####
 
 # UPGRADE FULLY NON-INTERACTIVE
-export DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
-
 echo "[+] Preparing the System"
-sudo apt-get -y update
+sudo DEBIAN_FRONTEND=noninteractive \
+	apt-get -y -o \
+	DPkg::options::="--force-confdef" -o \
+	DPkg::options::="--force-confold" \
+	upgrade
 
 echo "[+] Installing System Essentials"
 sudo apt-get -y install git git-core bzip2 autoconf bison build-essential apt-utils software-properties-common lsb-release sudo wget make
