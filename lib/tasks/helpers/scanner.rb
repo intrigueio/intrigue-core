@@ -22,15 +22,9 @@ module Scanner
 
       _log "connecting to #{uri}"
 
-      http_response = RestClient::Request.execute({
-        :method => :get,
-        :url => uri,
-        :timeout => 30,
-        :open_timeout => 30
-      })
+      out[:http_response] = http_request(:get, uri)
 
       ## TODO ... follow & track location headers?
-      ## TODO ... proxy
 
     rescue ArgumentError => e
       _log_error "Error, skipping: #{uri} #{e}"
