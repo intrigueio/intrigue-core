@@ -95,19 +95,23 @@ class Uri < Intrigue::Task::BaseTask
       _log "Attempting to fingerprint!"
       # Use intrigue-ident code to request all of the pages we need to properly fingerprint
       # from the ident library
+      fingerprint_matches = ident_generate_requests_and_check(uri) || []
 
-      # Make sure the key is set
+      # Make sure the key is set before querying intrigue api
       api_key = _get_task_config("intrigue_core_api_key")
       if api_key
+        # get vulns via intrigue API
         _log "Matching vulns via Intrigue API"
-        options = {:match_vulns => true, :match_vuln_method => "api"}
+        fingerprint_matches = fingerprint_matches.map {|m|
+          m.merge!({"vulns" => Intrigue::Vulndb::Cpe.new(m["cpe"]).query_intrigue_vulndb_api })
+        }
       else
         # TODO additional checks here?  smaller boxes will have trouble with all the json
         _log "No api_key for vuln match, falling back to local resolution"
-        options = { :match_vulns => true, :match_vuln_method => "local"}
+        fingerprint_matches = fingerprint_matches.map {|m|
+          m.merge!({"vulns" => Intrigue::Vulndb::Cpe.new(m["cpe"]).query_local_nvd_json})
+        }
       end
-
-      fingerprint_matches = generate_requests_and_check(uri, options) || []
 
       # if we ever match something we know the user won't
       # need to see (aka the fingerprint's :hide parameter is true), go ahead
@@ -118,7 +122,7 @@ class Uri < Intrigue::Task::BaseTask
       #  _set_entity_detail "hidden_for"
       #  @entity.hidden = true
       #  @entity.save
-      #end
+      # end
 
       # in some cases, we should go further
       #extended_fingerprints = []

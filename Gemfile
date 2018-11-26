@@ -55,9 +55,11 @@ gem 'capybara'                # uri_screenshot, etc
 gem 'selenium-webdriver',     '~> 3.12.0'
 gem 'rex-sslscan',            :git => 'https://github.com/intrigueio/rex-sslscan.git'
 
-# fingerprinting
+# ident
 gem 'recog-intrigue',         :git => 'https://github.com/intrigueio/recog.git'
-gem 'intrigue-ident',         :path => "lib/ident"
+gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git'
+
+# vulndb
 gem 'versionomy'
 
 # Handlers

@@ -15,7 +15,7 @@ module MatchExceptions
     end
 
     # Check standard exceptions first
-    # (which now reside in Intrigue::Ident::TraverseExceptions)
+    # (which now reside in Intrigue::TraverseExceptions)
     if non_traversable?(entity_name,type_string, skip_regexes)
       return true
     end
@@ -33,9 +33,6 @@ module MatchExceptions
       # neither of these cases should match the case: jcpenney.com
       if entity_name.downcase =~ /^#{Regexp.escape(x.downcase)}(:[0-9]*)?$/ ||
         entity_name.downcase =~ /^.*\.#{Regexp.escape(x.downcase)}(:[0-9]*)?$/
-
-        #puts "EXCEPTION ENTITY!!! Entity Name: #{entity_name.downcase}"
-        #puts "EXCEPTION ENTITY!!! Regex: #{Regexp.escape(x.downcase)}"
         return true
       end
     end

@@ -229,12 +229,13 @@ module Task
          @task_result.logger.log "Getting #{uri}, attempt #{attempts}" if @task_result
          attempts+=1
 
-         global_config = $global_config
-         if global_config.config["http_proxy"]
-           proxy_addr = global_config.config["http_proxy"]["host"]
-           proxy_port = global_config.config["http_proxy"]["port"]
-           proxy_user = global_config.config["http_proxy"]["user"]
-           proxy_pass = global_config.config["http_proxy"]["pass"]
+         if $global_config
+           if $global_config.config["http_proxy"]
+             proxy_addr = $global_config.config["http_proxy"]["host"]
+             proxy_port = $global_config.config["http_proxy"]["port"]
+             proxy_user = $global_config.config["http_proxy"]["user"]
+             proxy_pass = $global_config.config["http_proxy"]["pass"]
+           end
          end
 
          # set options

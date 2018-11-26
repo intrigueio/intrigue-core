@@ -1,5 +1,4 @@
 module Intrigue
-module Ident
 module TraverseExceptions
 
     def standard_name_exceptions
@@ -242,6 +241,5 @@ module TraverseExceptions
 
     false
     end
-end
 end
 end

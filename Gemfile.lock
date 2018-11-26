@@ -1,4 +1,10 @@
 GIT
+  remote: https://github.com/intrigueio/intrigue-ident.git
+  revision: d65aded86b8dae36d7df5d4ec2e997d064c8aadd
+  specs:
+    intrigue-ident (0.8.0)
+
+GIT
   remote: https://github.com/intrigueio/recog.git
   revision: 26664d2e6becb788751557378d6d08e825c2480d
   specs:
@@ -59,11 +65,6 @@ PATH
     intrigue_api_client (1.5.0)
       json (~> 1.8)
       rest-client (~> 1.8)
-
-PATH
-  remote: lib/ident
-  specs:
-    intrigue-ident (0.7.4)
 
 GEM
   remote: https://rubygems.org/

@@ -173,6 +173,7 @@ else
   echo "[+] Using Ruby $RUBY_VERSION"
 fi
 
+source ~/.bash_profile
 rbenv global $RUBY_VERSION
 echo "Ruby version: `ruby -v`"
 

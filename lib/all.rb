@@ -45,7 +45,7 @@ tasks_folder = File.expand_path('../tasks/helpers', __FILE__) # get absolute dir
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
 ####
-# ident (currently local, in /lib/ident)
+# ident (gem)
 ####
 require 'intrigue-ident'
 

@@ -8,7 +8,6 @@ module Intrigue
         aliases_and_name = [self].concat aliases
 
         aliases_and_name.each do |a|
-          #puts "checking for #{a} in #{aliases_and_name}"
 
           if a.name =~ /\.omtrdc.net/
             providers << "Adobe Marketing Cloud"
