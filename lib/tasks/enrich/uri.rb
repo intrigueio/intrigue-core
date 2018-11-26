@@ -93,9 +93,9 @@ class Uri < Intrigue::Task::BaseTask
     begin
 
       _log "Attempting to fingerprint!"
-      # Use intrigue-ident code to request all of the pages we need to properly fingerprint
-      # from the ident library
-      fingerprint_matches = ident_generate_requests_and_check(uri) || []
+      # Use intrigue-ident code to request all of the pages we
+      # need to properly fingerprint
+      fingerprint_matches = generate_http_requests_and_check(uri) || []
 
       # Make sure the key is set before querying intrigue api
       api_key = _get_task_config("intrigue_core_api_key")
