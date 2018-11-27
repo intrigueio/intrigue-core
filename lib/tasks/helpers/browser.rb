@@ -164,16 +164,21 @@ module Task
         # Jquery UI
         # Test site: http://www.eddiebauer.com/
         # Test site: https://www.underarmour.com
+        { library: "jQuery UI", script: 'jQuery.ui.version' },
 
         # Test site:
         # Examples: http://knockoutjs.com/examples/
         #version = session.evaluate_script('knockout.version')
         # { :product => "Knockout", check: 'knockout.version' }
 
-        { library: "jQuery UI", script: 'jQuery.ui.version' },
+        # Modernizr
+        { library: "Modernizr", script: 'Modernizr._version' },
+
         # Paper.js
         # Test site: http://paperjs.org/examples/boolean-operations
         # Examples: http://paperjs.org/examples
+
+
 
         # Prototype
         # Test site:
