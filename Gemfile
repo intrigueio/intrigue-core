@@ -65,7 +65,11 @@ gem 'versionomy'
 # Handlers
 gem 'couchrest'
 gem 'fog-aws'
+
+
+# notifiers
 gem 'slack-ruby-client'
+gem 'logstash-logger'
 
 # Development
 gem 'foreman'

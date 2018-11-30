@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: 0d04934d67f37984506c3df1f5720b301e70b11e
+  revision: 764a1d0594aade3d55e1bb6ed9440eda53752953
   specs:
     intrigue-ident (0.8.0)
 
@@ -169,6 +169,9 @@ GEM
     ipaddress (0.8.3)
     jmespath (1.4.0)
     json (1.8.6)
+    logstash-event (1.2.02)
+    logstash-logger (0.26.1)
+      logstash-event (~> 1.2)
     method_source (0.9.2)
     mime-types (1.25.1)
     mini_mime (1.0.1)
@@ -304,6 +307,7 @@ DEPENDENCIES
   iconv
   intrigue-ident!
   intrigue_api_client!
+  logstash-logger
   net-dns
   nokogiri
   opencorporates!

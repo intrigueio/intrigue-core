@@ -90,64 +90,60 @@ class Uri < Intrigue::Task::BaseTask
     app_stack.concat _check_generator(response)
     app_stack.concat _check_x_headers(response)
 
-    begin
 
-      _log "Attempting to fingerprint!"
-      # Use intrigue-ident code to request all of the pages we
-      # need to properly fingerprint
-      fingerprint_matches = generate_http_requests_and_check(uri) || []
+    _log "Attempting to fingerprint!"
+    # Use intrigue-ident code to request all of the pages we
+    # need to properly fingerprint
+    ident_matches = generate_http_requests_and_check(uri) || {}
 
-      # Make sure the key is set before querying intrigue api
-      api_key = _get_task_config("intrigue_core_api_key")
-      if api_key
-        # get vulns via intrigue API
-        _log "Matching vulns via Intrigue API"
-        fingerprint_matches = fingerprint_matches.map {|m|
-          m.merge!({"vulns" => Intrigue::Vulndb::Cpe.new(m["cpe"]).query_intrigue_vulndb_api })
-        }
-      else
-        # TODO additional checks here?  smaller boxes will have trouble with all the json
-        _log "No api_key for vuln match, falling back to local resolution"
-        fingerprint_matches = fingerprint_matches.map {|m|
-          m.merge!({"vulns" => Intrigue::Vulndb::Cpe.new(m["cpe"]).query_local_nvd_json})
-        }
+    ident_fingerprints = ident_matches["fingerprint"]
+    ident_config_checks = ident_matches["configuration"]
+
+    # Make sure the key is set before querying intrigue api
+    api_key =
+    if api_key
+      # get vulns via intrigue API
+      _log "Matching vulns via Intrigue API"
+      ident_fingerprints = ident_fingerprints.map do |m|
+        m.merge!({"vulns" => Intrigue::Vulndb::Cpe.new(m["cpe"]).query_intrigue_vulndb_api })
       end
-
-      # if we ever match something we know the user won't
-      # need to see (aka the fingerprint's :hide parameter is true), go ahead
-      # and hide the entity... meaning no recursion and it shouldn't show up in
-      # the UI / queries if any of the matches told us to hide the entity, do it.
-      # EXAMPLE TEST CASE: http://103.24.203.121:80 (cpanel missing page)
-      #if fingerprint_matches.detect{|x| x["hide"] == true }
-      #  _set_entity_detail "hidden_for"
-      #  @entity.hidden = true
-      #  @entity.save
-      # end
-
-      # in some cases, we should go further
-      #extended_fingerprints = []
-      #if fingerprint_matches.detect{|x| x["product"] == "Wordpress" }
-      #  wordpress_fingerprint = {"wordpress" => `nmap -sV --script http-wordpress-enum #{uri}`}
-      #end
-      #extended_fingerprints << wordpress_fingerprint
-
-    # TODO, clean up fingerprint / regexes
-    #rescue NoMethodError => e
-    #  _log_error "Fingerprint effort failed: #{e}"
-      # assume no matches in this case
-    #  fingerprint_matches = []
+    else
+      # TODO additional checks here?  smaller boxes will have trouble with all the json
+      _log "No api_key for vuln match, falling back to local resolution"
+      ident_fingerprints = ident_fingerprints.map do |m|
+        m.merge!({"vulns" => Intrigue::Vulndb::Cpe.new(m["cpe"]).query_intrigue_vulndb_api })
+      end
     end
+
+    # if we ever match something we know the user won't
+    # need to see (aka the fingerprint's :hide parameter is true), go ahead
+    # and hide the entity... meaning no recursion and it shouldn't show up in
+    # the UI / queries if any of the matches told us to hide the entity, do it.
+    # EXAMPLE TEST CASE: http://103.24.203.121:80 (cpanel missing page)
+    #if ident_fingerprints.detect{|x| x["hide"] == true }
+    #  _set_entity_detail "hidden_for"
+    #  @entity.hidden = true
+    #  @entity.save
+    # end
+
+    # in some cases, we should go further
+    #extended_fingerprints = []
+    #if ident_fingerprints.detect{|x| x["product"] == "Wordpress" }
+    #  wordpress_fingerprint = {"wordpress" => `nmap -sV --script http-wordpress-enum #{uri}`}
+    #end
+    #extended_fingerprints << wordpress_fingerprint
 
     _log "Gathering ciphers since this is an ssl endpoint"
     accepted_ciphers = _gather_ciphers(hostname,port).select{|x| x[:status] == :accepted} if uri =~ /^https/
 
     # and then just stick the name and the version in our fingerprint
-    _log "Inferring app stack from Fingerprints!"
-    app_stack.concat(fingerprint_matches.map do |x|
+    _log "Inferring app stack from fingerprints!"
+    ident_app_stack = ident_fingerprints.map do |x|
       version_string = "#{x["vendor"]} #{x["product"]}"
       version_string += " #{x["version"]}" if x["version"]
     version_string
-    end)
+    end
+    app_stack.concat(ident_app_stack)
     _log "Setting app stack to #{app_stack.uniq}"
 
     ###
@@ -193,7 +189,8 @@ class Uri < Intrigue::Task::BaseTask
         "include_fingerprint" => uniq_include_stack,
         "app_fingerprint" =>  app_stack.uniq,
         "server_fingerprint" => uniq_server_stack,
-        "fingerprint" => fingerprint_matches.uniq,
+        "fingerprint" => ident_fingerprints.uniq,
+        "configuration" => ident_config_checks.uniq,
         "ciphers" => accepted_ciphers
         #"extended_fingerprints" => extended_fingerprints
       })
