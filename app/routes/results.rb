@@ -225,7 +225,10 @@ class IntrigueApp < Sinatra::Base
         entity.save
 
         # manually start enrichment for the first entity
-        entity.enrich(task_result) if auto_enrich && !(task_name =~ /^enrich/)
+        if auto_enrich && !(task_name =~ /^enrich/)
+          task_result.log "User-created entity, manually creating and enriching!"
+          entity.enrich(task_result)
+        end
 
       end
 
@@ -269,7 +272,7 @@ class IntrigueApp < Sinatra::Base
 
       # Parse the incoming request
       payload = JSON.parse(request.body.read) if (request.content_type == "application/json" && request.body)
-      #puts "Got Payload #{payload}"
+      puts "Got payload: #{payload}"
 
       ### don't take any shit
       return "No payload!" unless payload
@@ -288,7 +291,7 @@ class IntrigueApp < Sinatra::Base
         "name" => "#{name}"
       )
 
-      # get the details from the payload
+      # Get the details from the payload
       task_name = payload["task"]
       options = payload["options"]
       handlers = payload["handlers"]
@@ -307,7 +310,13 @@ class IntrigueApp < Sinatra::Base
       task_result = start_task("task", project, nil, task_name, entity, depth,
                                   options, handlers, machine_name, auto_enrich, auto_scope)
 
-      status 200 if task_result
+      # manually start enrichment, since we've already created the entity above, it won't auto-enrich ^
+      if auto_enrich && !(task_name =~ /^enrich/)
+        task_result.log "User-created entity, manually creating and enriching!"
+        entity.enrich(task_result)
+      end
+
+      #status 200 if task_result
 
     # must be a string otherwise it can be interpreted as a status code
     {"result_id" => task_result.id}.to_json
