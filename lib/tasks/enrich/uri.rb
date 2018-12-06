@@ -96,22 +96,24 @@ class Uri < Intrigue::Task::BaseTask
     # need to properly fingerprint
     ident_matches = generate_http_requests_and_check(uri) || {}
 
-    ident_fingerprints = ident_matches["fingerprint"]
-    ident_config_checks = ident_matches["configuration"]
+    ident_fingerprints = ident_matches["fingerprint"] || []
+    ident_config_checks = ident_matches["configuration"] || []
 
-    # Make sure the key is set before querying intrigue api
-    api_key =
-    if api_key
-      # get vulns via intrigue API
-      _log "Matching vulns via Intrigue API"
-      ident_fingerprints = ident_fingerprints.map do |m|
-        m.merge!({"vulns" => Intrigue::Vulndb::Cpe.new(m["cpe"]).query_intrigue_vulndb_api })
-      end
-    else
-      # TODO additional checks here?  smaller boxes will have trouble with all the json
-      _log "No api_key for vuln match, falling back to local resolution"
-      ident_fingerprints = ident_fingerprints.map do |m|
-        m.merge!({"vulns" => Intrigue::Vulndb::Cpe.new(m["cpe"]).query_intrigue_vulndb_api })
+    if ident_fingerprints
+      # Make sure the key is set before querying intrigue api
+      vulndb_api_key = _get_task_config "intrigue_vulndb_api_key"
+      if vulndb_api_key
+        # get vulns via intrigue API
+        _log "Matching vulns via Intrigue API"
+        ident_fingerprints = ident_fingerprints.map do |m|
+          m.merge!({"vulns" => Intrigue::Vulndb::Cpe.new(m["cpe"]).query_intrigue_vulndb_api(vulndb_api_key) })
+        end
+      else
+        # TODO additional checks here?  smaller boxes will have trouble with all the json
+        _log "No api_key for vuln match, falling back to local resolution"
+        ident_fingerprints = ident_fingerprints.map do |m|
+          m.merge!({"vulns" => Intrigue::Vulndb::Cpe.new(m["cpe"]).query_intrigue_vulndb_api })
+        end
       end
     end
 

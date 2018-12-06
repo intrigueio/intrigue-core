@@ -26,7 +26,7 @@ module Vulndb
     #  query_local_nvd_json
     #end
 
-    def query_intrigue_vulndb_api
+    def query_intrigue_vulndb_api(api_key)
 
       #puts "Querying VulnDB API!"
       #puts "https://intrigue.io/api/vulndb/match/#{@vendor}/#{@product}/#{@version}"
@@ -42,6 +42,7 @@ module Vulndb
         uri = "https://intrigue.io/api/vulndb/match/#{vendor_string}/#{product_string}"
         uri << "/#{version_string}" if version_string
         uri << "/#{update_string}" if update_string
+        uri << "?key=#{api_key}"
 
         response = http_request :get, uri
         result = JSON.parse(response.body)
