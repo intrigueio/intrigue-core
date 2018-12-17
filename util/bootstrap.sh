@@ -16,6 +16,11 @@ sudo DEBIAN_FRONTEND=noninteractive \
 	DPkg::options::="--force-confold" \
 	upgrade
 
+# UPGRADE FULLY NON-INTERACTIVE
+# See: https://askubuntu.com/questions/146921/how-do-i-apt-get-y-dist-upgrade-without-a-grub-config-prompt
+sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o DPkg::options::="--force-confdef" -o DPkg::options::="--force-confold" install grub-pc
+sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade
+
 echo "[+] Installing System Essentials"
 sudo apt-get -y install git git-core bzip2 autoconf bison build-essential apt-utils software-properties-common lsb-release sudo wget make
 
@@ -173,6 +178,7 @@ else
   echo "[+] Using Ruby $RUBY_VERSION"
 fi
 
+source ~/.bash_profile
 rbenv global $RUBY_VERSION
 echo "Ruby version: `ruby -v`"
 

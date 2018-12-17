@@ -23,9 +23,10 @@ class CreateEntity < BaseTask
   ## Default method, subclasses must override this
   def run
     super
+
     name = _get_entity_name
     type = _get_entity_type_string
-    _create_entity type, {"name" => name }
+    e = _create_entity type, {"name" => name }
   end
 
 end

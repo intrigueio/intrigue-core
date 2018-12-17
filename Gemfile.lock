@@ -1,4 +1,10 @@
 GIT
+  remote: https://github.com/intrigueio/intrigue-ident.git
+  revision: 577f37168e0f1d677ea0d709c029a185ba3aca7f
+  specs:
+    intrigue-ident (0.8.0)
+
+GIT
   remote: https://github.com/intrigueio/recog.git
   revision: 26664d2e6becb788751557378d6d08e825c2480d
   specs:
@@ -56,14 +62,9 @@ GIT
 PATH
   remote: api_client
   specs:
-    intrigue_api_client (1.5.0)
+    intrigue_api_client (1.6.0)
       json (~> 1.8)
-      rest-client (~> 1.8)
-
-PATH
-  remote: lib/ident
-  specs:
-    intrigue-ident (0.7.4)
+      rest-client (~> 2.0)
 
 GEM
   remote: https://rubygems.org/
@@ -76,38 +77,39 @@ GEM
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
     aws-eventstream (1.0.1)
-    aws-partitions (1.105.0)
-    aws-sdk-core (3.30.0)
+    aws-partitions (1.117.0)
+    aws-sdk-core (3.40.0)
       aws-eventstream (~> 1.0)
       aws-partitions (~> 1.0)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-kms (1.9.0)
-      aws-sdk-core (~> 3, >= 3.26.0)
+    aws-sdk-kms (1.13.0)
+      aws-sdk-core (~> 3, >= 3.39.0)
       aws-sigv4 (~> 1.0)
-    aws-sdk-s3 (1.21.0)
-      aws-sdk-core (~> 3, >= 3.26.0)
+    aws-sdk-s3 (1.27.0)
+      aws-sdk-core (~> 3, >= 3.39.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.0)
-    aws-sdk-sqs (1.7.0)
-      aws-sdk-core (~> 3, >= 3.26.0)
+    aws-sdk-sqs (1.10.0)
+      aws-sdk-core (~> 3, >= 3.39.0)
       aws-sigv4 (~> 1.0)
     aws-sigv4 (1.0.3)
     backports (3.11.4)
     blockenspiel (0.5.0)
     builder (3.2.3)
     byebug (10.0.2)
-    capybara (3.9.0)
+    capybara (3.11.1)
       addressable
       mini_mime (>= 0.1.3)
       nokogiri (~> 1.8)
       rack (>= 1.6.0)
       rack-test (>= 0.6.3)
-      xpath (~> 3.1)
+      regexp_parser (~> 1.2)
+      xpath (~> 3.2)
     childprocess (0.9.0)
       ffi (~> 1.0, >= 1.0.11)
     coderay (1.1.2)
-    concurrent-ruby (1.0.5)
+    concurrent-ruby (1.1.3)
     connection_pool (2.2.2)
     couchrest (2.0.1)
       httpclient (~> 2.8)
@@ -161,13 +163,16 @@ GEM
     http-cookie (1.0.3)
       domain_name (~> 0.5)
     httpclient (2.8.3)
-    i18n (1.1.0)
+    i18n (1.1.1)
       concurrent-ruby (~> 1.0)
     iconv (1.0.5)
     ipaddress (0.8.3)
     jmespath (1.4.0)
     json (1.8.6)
-    method_source (0.9.0)
+    logstash-event (1.2.02)
+    logstash-logger (0.26.1)
+      logstash-event (~> 1.2)
+    method_source (0.9.2)
     mime-types (1.25.1)
     mini_mime (1.0.1)
     mini_portile2 (2.3.0)
@@ -175,12 +180,12 @@ GEM
     multi_json (1.13.1)
     multipart-post (2.0.0)
     mustermann (1.0.3)
-    net-dns (0.8.0)
+    net-dns (0.9.0)
     netrc (0.11.0)
     nokogiri (1.8.5)
       mini_portile2 (~> 2.3.0)
     pg (1.1.3)
-    pry (0.11.3)
+    pry (0.12.2)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
     pry-byebug (3.6.0)
@@ -188,19 +193,20 @@ GEM
       pry (~> 0.10)
     public_suffix (3.0.3)
     puma (3.12.0)
-    rack (2.0.5)
+    rack (2.0.6)
     rack-protection (2.0.4)
       rack
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
     rake (12.3.1)
-    redis (4.0.2)
+    redis (4.0.3)
     redis-namespace (1.6.0)
       redis (>= 3.0.4)
-    rest-client (1.8.0)
+    regexp_parser (1.3.0)
+    rest-client (2.0.2)
       http-cookie (>= 1.0.2, < 2.0)
-      mime-types (>= 1.16, < 3.0)
-      netrc (~> 0.7)
+      mime-types (>= 1.16, < 4.0)
+      netrc (~> 0.8)
     rex-core (0.1.13)
     rex-socket (0.1.15)
       rex-core
@@ -212,7 +218,7 @@ GEM
       rspec-mocks (~> 3.8.0)
     rspec-core (3.8.0)
       rspec-support (~> 3.8.0)
-    rspec-expectations (3.8.1)
+    rspec-expectations (3.8.2)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.8.0)
     rspec-mocks (3.8.0)
@@ -223,10 +229,10 @@ GEM
     selenium-webdriver (3.12.0)
       childprocess (~> 0.5)
       rubyzip (~> 1.2)
-    sequel (5.13.0)
+    sequel (5.14.0)
     shodan (1.0.0)
       json (>= 1.4.6)
-    sidekiq (5.2.2)
+    sidekiq (5.2.3)
       connection_pool (~> 2.2, >= 2.2.2)
       rack-protection (>= 1.5.0)
       redis (>= 3.3.5, < 5)
@@ -273,7 +279,7 @@ GEM
     whois-parser (1.1.0)
       activesupport (>= 4)
       whois (>= 4.0.6)
-    xpath (3.1.0)
+    xpath (3.2.0)
       nokogiri (~> 1.8)
     yajl-ruby (1.4.1)
     yard (0.9.16)
@@ -301,6 +307,7 @@ DEPENDENCIES
   iconv
   intrigue-ident!
   intrigue_api_client!
+  logstash-logger
   net-dns
   nokogiri
   opencorporates!

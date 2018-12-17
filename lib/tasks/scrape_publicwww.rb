@@ -37,7 +37,8 @@ class ScrapePublicwww < BaseTask
 
       # Get a page
       uri = "https://publicwww.com/websites/%22.#{domain_name}%22/#{page_count + 1}"
-      body_text = capture_document(uri).text
+      session = create_browser_session
+      body_text = capture_document(session,uri)[:contents]
       _log "Got text: #{body_text}"
 
       body_text.gsub("<\/?b>","").scan(/[a-z0-9\.\-_]+\.#{domain_name}/).each do |d|

@@ -164,8 +164,8 @@ class CoreCli < Thor
   end
 
 
-  desc "local_load [Project] [Task] [File] [Depth] [Opt1=Val1#Opt2=Val2#...] [Enrich] [Handlers] [Machine]", "Load entities from a file and runs a task on each in a new project."
-  def local_load(project_name, task_name,filename,depth=1,options_string=nil,enrich=false,handler_string=nil, machine_name=nil)
+  desc "local_start_bulk [Project] [Task] [File] [Depth] [Opt1=Val1#Opt2=Val2#...] [Enrich] [Handlers] [Machine]", "Load entities from a file and runs a task on each in a new project."
+  def local_start_bulk(project_name, task_name, filename, depth=1,options_string=nil,enrich=true,handler_string=nil, machine_name=nil)
 
     # Load in the main core file for direct access to TaskFactory and the Tasks
     # This makes this super speedy.
@@ -192,15 +192,16 @@ class CoreCli < Thor
       else
         puts "Unable to create entity: #{entity["type"]} #{entity["details"]["name"]}, skipping."
       end
-      # manually start enrichment on first entity
-      #Intrigue::EntityManager.enrich_entity(created_entity, task_result) if enrich
 
-      #puts "Created task #{task_result.inspect} for entity #{created_entity}"
+      # manually start enrichment on first entity
+      created_entity.enrich(task_result) if enrich
+
+      puts "Created task #{task_result.inspect} for entity #{created_entity}"
     end
   end
 
-  desc "local_load_bulk [Project] [File] [Enrich (optional)]", "Bulk load entities from a file."
-  def local_load_bulk(projectname, filename, enrich=false)
+  desc "local_load_bulk [Project] [File]]", "Bulk load entities from a file."
+  def local_load_bulk(projectname, filename)
 
     p = Intrigue::Model::Project.find_or_create(:name => projectname)
 
@@ -235,9 +236,6 @@ class CoreCli < Thor
         :hidden => false,
         :alias_group_id => g.id
        })
-
-       # enrich if we're asked
-       e.schedule_enrichment if enrich
 
        # Print & increment
        #puts "#{i}: #{e.type}##{e.name} created!"

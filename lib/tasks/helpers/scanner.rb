@@ -22,15 +22,9 @@ module Scanner
 
       _log "connecting to #{uri}"
 
-      http_response = RestClient::Request.execute({
-        :method => :get,
-        :url => uri,
-        :timeout => 30,
-        :open_timeout => 30
-      })
+      out[:http_response] = http_request(:get, uri)
 
       ## TODO ... follow & track location headers?
-      ## TODO ... proxy
 
     rescue ArgumentError => e
       _log_error "Error, skipping: #{uri} #{e}"
@@ -139,7 +133,7 @@ module Scanner
     hosts.uniq.each do |h|
 
       # Handle Web Apps first
-      if (protocol == "tcp" && [80,443,8080,8000,8081,8443].include?(port_num))
+      if (protocol == "tcp" && [80,81,443,8080,8000,8081,8443].include?(port_num))
 
         # Determine if this is SSL
         ssl = true if [443,8443].include?(port_num)

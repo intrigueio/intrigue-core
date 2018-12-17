@@ -39,12 +39,13 @@ require_relative 'system'
 require_relative 'task_factory'
 
 ### Mixins with common task functionality
+require_relative 'tasks/helpers/web'
 require_relative 'tasks/helpers/generic'
 tasks_folder = File.expand_path('../tasks/helpers', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
 ####
-# ident (currently local, in /lib/ident)
+# ident (gem)
 ####
 require 'intrigue-ident'
 
@@ -119,22 +120,22 @@ if global_config.config["intrigue_load_paths"]
     load_path = "#{load_path}" unless load_path[0] == "/"
 
     Dir["#{load_path}/entities/*.rb"].each do |file|
-      puts "Adding user entity from: #{file}"
+      #puts "Adding user entity from: #{file}"
       require_relative file
     end
 
     Dir["#{load_path}/handlers/*.rb"].each do |file|
-      puts "Adding user handler from: #{file}"
+      #puts "Adding user handler from: #{file}"
       require_relative file
     end
 
     Dir["#{load_path}/machines/*.rb"].each do |file|
-      puts "Adding user machine from: #{file}"
+      #puts "Adding user machine from: #{file}"
       require_relative file
     end
 
     Dir["#{load_path}/tasks/*.rb"].each do |file|
-      puts "Adding user task from: #{file}"
+      #puts "Adding user task from: #{file}"
       require_relative file
     end
 
