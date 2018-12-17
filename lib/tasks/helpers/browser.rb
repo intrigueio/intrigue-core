@@ -79,13 +79,17 @@ module Task
       end
 
       # Capture Title
-      page_contents = session.document.text(:all)
       page_title = session.document.title
-      # TODO ... DOM
+      # Capture Body Text
+      page_contents = session.document.text(:all)
+      # Capture DOM
+      rendered_page = nil
+      safe_browser_action do
+        rendered_page = session.evaluate_script("document.documentElement.innerHTML",[])
+      end
 
-    { :title => page_title, :contents => page_contents }
-    end
-
+    { :title => page_title, :contents => page_contents, :rendered => rendered_page }
+  end
 
     def capture_screenshot(session, uri)
       # browse to our target
@@ -177,8 +181,6 @@ module Task
         # Paper.js
         # Test site: http://paperjs.org/examples/boolean-operations
         # Examples: http://paperjs.org/examples
-
-
 
         # Prototype
         # Test site:
