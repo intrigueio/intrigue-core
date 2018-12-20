@@ -69,7 +69,7 @@ module Intrigue
 
       def export_applications_csv
         out = ""
-        out << "IpAddress,Uri,ServerFingerprint,AppFingerprint,IncludeFingerprint,Title\n"
+        out << "IpAddress,Uri,Title,Fingerprint,Javascript,XFrameOptions,Http Auth,Forms Auth,Any Auth\n"
 
         self.entities.sort_by{|e| e.to_s }.each do |x|
 
@@ -90,21 +90,55 @@ module Intrigue
           #product_string = products.map{|p| p["matched"] }.compact.join("; ") if products
           #out << "#{product_string}" if product_string
 
-          server_fingerprint = x.get_detail("server_fingerprint")
-          server_fingerprint_string = server_fingerprint.join("; ") if server_fingerprint
-          out << "#{server_fingerprint_string},"
-
-          app_fingerprint = x.get_detail("app_fingerprint")
-          app_fingerprint_string = app_fingerprint.join("; ") if app_fingerprint
-          out << "#{app_fingerprint_string},"
-
-          include_fingerprint = x.get_detail("include_fingerprint")
-          include_fingerprint_string = include_fingerprint.join("; ") if include_fingerprint
-          out << "#{include_fingerprint_string},"
-
           page_title = x.get_detail("title")
           page_title_string = page_title.gsub(",","") if page_title
-          out << "#{page_title_string}\n"
+          out << "#{page_title_string},"
+
+
+          fingerprint = x.get_detail("fingerprint")
+          if fingerprint
+            fingerprint.each do |f|
+              temp = "#{f["vendor"]}"
+              temp << " #{f["product"]}"
+              temp << " #{f["version"]}" if f["version"]
+              temp << " #{f["update"]}"  if f["update"]
+              temp << " | "
+              out << temp.gsub(",",";")
+            end
+          end
+          out << ","
+
+          fingerprint = x.get_detail("javascript")
+          if fingerprint
+            fingerprint.each do |f|
+              temp = "#{f["library"]}"
+              temp << " #{f["version"]}"
+              temp << " | "
+              out << temp.gsub(",",";")
+            end
+          end
+          out << ","
+
+          # authentication
+          configuration = x.get_detail("configuration")
+          http_auth = false
+          forms_auth = false
+          any_auth = false
+          x_frame_options = false
+          if configuration
+            configuration.each do |c|
+              if c["name"] == "Form Authentication Detected"
+                forms_auth = c["result"]
+              elsif c["name"] == "HTTP Authentication Detected"
+                http_auth = c["result"]
+              elsif c["name"] == "X-Frame-Options Header Exists"
+                x_frame_options = true
+              end
+            end
+            any_auth = true if (forms_auth || http_auth)
+          end
+          out << "#{x_frame_options}#{http_auth},#{forms_auth},#{any_auth}\n"
+
 
         end
 
