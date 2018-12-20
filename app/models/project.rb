@@ -137,7 +137,7 @@ module Intrigue
             end
             any_auth = true if (forms_auth || http_auth)
           end
-          out << "#{x_frame_options}#{http_auth},#{forms_auth},#{any_auth}\n"
+          out << "#{x_frame_options},#{http_auth},#{forms_auth},#{any_auth}\n"
 
 
         end
