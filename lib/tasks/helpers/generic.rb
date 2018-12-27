@@ -151,8 +151,9 @@ module Generic
     begin
       value = $global_config.config["intrigue_global_module_config"][key]["value"]
       unless value && value != ""
-        _log "Module config (#{key}) is blank or missing. Check the admin tab!"
-        raise "Invalid value for #{key}!"
+        _log "Module config (#{key}) is blank or missing!"
+        _log_error "Invalid value for #{key}!"
+        _log "Please configure #{key} in the admin tab!"
       end
     rescue NoMethodError => e
       _log "Error, invalid config key requested (#{key}) #{e}"
