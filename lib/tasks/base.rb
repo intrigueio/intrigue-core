@@ -157,11 +157,15 @@ class BaseTask
       end
 
     ensure
-      @task_result.complete = true
-      @task_result.timestamp_end = end_time
-      @task_result.logger.save
-      @task_result.save
-      _log "Task complete. Ship it!"
+      begin
+        @task_result.complete = true
+        @task_result.timestamp_end = end_time
+        @task_result.logger.save
+        @task_result.save
+        _log "Task complete. Ship it!"
+      rescue Sequel::NoExistingObject => e
+        puts "Failing to update task_result: #{task_result_id}"
+      end
     end
 
 
