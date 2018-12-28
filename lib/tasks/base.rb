@@ -28,7 +28,14 @@ class BaseTask
 
     # Get the task result and fail if we can't
     @task_result = Intrigue::Model::TaskResult.first(:id => task_result_id)
-    raise "Unable continue without task result #{task_result_id}. Bailing." unless @task_result
+
+    # gracefully handle situations where the task result has gone missing
+    # usually this is a deleted project
+    unless @task_result
+      _log_error "Unable continue without task result #{task_result_id}. Bailing."
+      _log_error "Does the project still exist?"
+      return nil
+    end
 
     # Handle cancellation
     if @task_result.cancelled
