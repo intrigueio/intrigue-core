@@ -93,12 +93,14 @@ class EntityManager
       return
     end
 
-    # Deal with canceled tasks!
+    # Deal with canceled tasks and deleted projects!
     # Do a lookup to make sure we have the latest...
     tr = Intrigue::Model::TaskResult.first(:id => task_result.id)
+    return nil unless tr
+
     if tr.cancelled
       task_result.log "Returning, task was cancelled"
-      return
+      return nil
     end
 
     # Convenience

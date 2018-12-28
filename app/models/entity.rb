@@ -170,7 +170,9 @@ module Intrigue
           #self.set(:details_raw => temp_details)
           self.save
         rescue Sequel::DatabaseError => e
-          puts "ERROR SAVING DETAILS FOR #{self}: #{e}"
+          puts "Error saving details for #{self}: #{e}, deleted?"
+        rescue Sequel::NoExistingObject => e
+          puts "Error saving details for #{self}: #{e}, deleted?"
         end
       end
 
