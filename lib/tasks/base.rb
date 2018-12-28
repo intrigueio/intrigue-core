@@ -32,8 +32,8 @@ class BaseTask
     # gracefully handle situations where the task result has gone missing
     # usually this is a deleted project
     unless @task_result
-      _log_error "Unable continue without task result #{task_result_id}. Bailing."
-      _log_error "Does the project still exist?"
+      #_log_error "Unable continue without task result #{task_result_id}. Bailing."
+      #_log_error "Does the project still exist?"
       return nil
     end
 
