@@ -25,8 +25,14 @@ class Uri < Intrigue::Task::BaseTask
   def run
 
     uri = _get_entity_name
-    hostname = URI.parse(uri).host
-    port = URI.parse(uri).port
+    begin
+      hostname = URI.parse(uri).host
+      port = URI.parse(uri).port
+    rescue URI::InvalidURIError => e
+      _log_error "Error parsing... #{uri}"
+      return nil
+    end
+
 
     _log "Making requests"
     # Grab the full response
