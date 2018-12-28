@@ -273,6 +273,8 @@ module Whois
       _log_error "Unable to parse attribute: #{e}"
     rescue ::Whois::ParserError => e
       _log_error "Unable to parse attribute: #{e}"
+    rescue ::Whois::ResponseIsThrottled => e
+      _log_error "Unable to parse attribute: #{e}"
     end
   hash
   end

@@ -28,6 +28,11 @@ module Helper
       :depth => depth
     })
 
+    # cancel any new tasks if the project has been cancelled
+    if project.cancelled
+      task_result.cancelled = true
+    end
+
     # only assign handlers if this isn't a scan (in that case, we want to send the whole scan)
     task_result.handlers = handlers unless (!existing_scan_result && depth > 1)
 

@@ -30,7 +30,7 @@ class SecurityTrailsNameserverSearch < BaseTask
       name = _get_entity_name
       resp = st_nameserver_search name
 
-      unless resp
+      unless resp && resp["meta"]
         _log_error "unable to get a response"
         return
       end
