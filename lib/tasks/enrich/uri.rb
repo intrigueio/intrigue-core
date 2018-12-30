@@ -96,7 +96,6 @@ class Uri < Intrigue::Task::BaseTask
     app_stack.concat _check_generator(response)
     app_stack.concat _check_x_headers(response)
 
-
     _log "Attempting to fingerprint!"
     # Use intrigue-ident code to request all of the pages we
     # need to properly fingerprint
