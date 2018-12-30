@@ -57,7 +57,9 @@ gem 'rex-sslscan',            :git => 'https://github.com/intrigueio/rex-sslscan
 
 # ident
 gem 'recog-intrigue',         :git => 'https://github.com/intrigueio/recog.git'
+# swap these if developing on ident locally
 gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git'
+#gem 'intrigue-ident', :path => "~/ident"
 
 # vulndb
 gem 'versionomy'

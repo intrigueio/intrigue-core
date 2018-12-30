@@ -104,6 +104,9 @@ class Uri < Intrigue::Task::BaseTask
     ident_fingerprints = ident_matches["fingerprint"] || []
     ident_config_checks = ident_matches["configuration"] || []
 
+    # get the requests we made so we can save off all details
+    ident_responses = ident_matches["responses"]
+
     if ident_fingerprints
       # Make sure the key is set before querying intrigue api
       vulndb_api_key = _get_task_config "intrigue_vulndb_api_key"
