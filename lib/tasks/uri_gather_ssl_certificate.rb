@@ -161,7 +161,7 @@ class UriGatherSslCert  < BaseTask
 
       # Create an SSL Certificate entity
 
-      key_size = "#{cert.public_key.n.num_bytes * 8}" if cert.public_key && cert.public_key.n
+      key_size = "#{cert.public_key.n.num_bytes * 8}" if cert.public_key && cert.public_key.respond_to?(:n)
 
       _create_entity "SslCertificate", {
         "name" => "#{cert.subject.to_s.split("CN=").last} (#{cert.serial})",
