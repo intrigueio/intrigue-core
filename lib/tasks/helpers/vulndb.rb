@@ -44,7 +44,12 @@ module Vulndb
         uri << "/#{update_string}" if update_string
         uri << "?key=#{api_key}"
 
+
         response = http_request :get, uri
+
+        # if the API is down, we'll get a nil response, so handle that case gracefully
+        return [] unless response
+
         result = JSON.parse(response.body)
 
         # return our normal hash
