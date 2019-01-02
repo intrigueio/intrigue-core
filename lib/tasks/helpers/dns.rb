@@ -38,7 +38,7 @@ module Intrigue
             max_attempts = 5
             attempts = 0
             done = false
-            while attempts < max_attempts || done
+            while attempts < max_attempts || !done
               attempts +=1
               begin
                 _log "Attempting lookup (#{attempts}/#{max_attempts}) on #{lookup_name} for A Record"
