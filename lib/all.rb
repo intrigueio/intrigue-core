@@ -134,6 +134,11 @@ if global_config.config["intrigue_load_paths"]
       require_relative file
     end
 
+    Dir["#{load_path}/notifiers/*.rb"].each do |file|
+      #puts "Adding user notifier from: #{file}"
+      require_relative file
+    end
+
     Dir["#{load_path}/tasks/*.rb"].each do |file|
       #puts "Adding user task from: #{file}"
       require_relative file
