@@ -44,7 +44,7 @@ module Intrigue
               attempts +=1
 
               begin
-                _log "Attempting lookup (#{attempts}/#{max_attempts}) on #{lookup_name} for A Record"
+                #_log "Attempting lookup (#{attempts}/#{max_attempts}) on #{lookup_name} for A Record"
                 results << resolver.query(lookup_name, Dnsruby::Types::A)
                 done = true
               rescue IOError => e
