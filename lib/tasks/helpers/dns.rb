@@ -29,8 +29,8 @@ module Intrigue
             :search => [],
             :nameserver => [resolver_name],
             :query_timeout => 10,
-            :retry_types => 3,
-            :retry_delay => 3
+            :retry_times => 1,
+            :retry_delay => 1
           )
 
           results = []
@@ -39,6 +39,10 @@ module Intrigue
             attempts = 0
             done = false
             while attempts < max_attempts && !done
+
+              # increment attempts
+              attempts +=1
+
               begin
                 _log "Attempting lookup (#{attempts}/#{max_attempts}) on #{lookup_name} for A Record"
                 results << resolver.query(lookup_name, Dnsruby::Types::A)
@@ -54,9 +58,6 @@ module Intrigue
               rescue Dnsruby::ResolvTimeout => e
                 _log_error "Unable to resolve: #{lookup_name}, timed out: #{e}"
               end
-
-              # increment
-              attempts +=1
 
             end
           end
