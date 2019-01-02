@@ -43,7 +43,10 @@ class FtpService < Intrigue::Task::BaseTask
         sockets = Array.new #select() requires an array
         #fill the first index with a socket
         sockets[0] = TCPSocket.open(ip_address, port)
-        while true #loop till it breaks
+        iterations = 0
+        max_iterations
+        while iterations < max_iterations # loop till we hit max iterations
+        _log "Reading from socket #{iterations}/#{max_iterations}"
         # listen for a read, timeout 5
         res = select(sockets, nil, nil, 5)
           if res != nil  # a nil is a timeout and will break
@@ -53,6 +56,7 @@ class FtpService < Intrigue::Task::BaseTask
             sockets[0].close
             break
           end
+          iterations += 1
         end
       rescue Errno::ETIMEDOUT => e
         _log_error "Unable to connect: #{e}"
