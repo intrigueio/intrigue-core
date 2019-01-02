@@ -24,27 +24,37 @@ module Intrigue
         resolver_name = _get_system_config "resolver"
 
         begin
+
           resolver = Dnsruby::Resolver.new(
             :search => [],
             :nameserver => [resolver_name],
-            :query_timeout => 6
+            :query_timeout => 10,
+            :retry_types => 3,
+            :retry_delay => 3
           )
 
           results = []
           lookup_types.each do |t|
-            begin
-              #_log "Attempting lookup on #{lookup_name} with type #{t}"
-              results << resolver.query(lookup_name, t)
-            rescue IOError => e
-              _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
-            rescue Dnsruby::NXDomain => e
-              _log_error "Unable to resolve: #{lookup_name}, no such domain: #{e}"
-            rescue Dnsruby::SocketEofResolvError => e
-              _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
-            rescue Dnsruby::ServFail => e
-              _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
-            rescue Dnsruby::ResolvTimeout => e
-              _log_error "Unable to resolve: #{lookup_name}, timed out: #{e}"
+            max_attempts = 5
+            attempts = 0
+            done = false
+            while attempts < max_attempts || done
+              attempts +=1
+              begin
+                _log "Attempting lookup (#{attempts}/#{max_attempts}) on #{lookup_name} for A Record"
+                results << resolver.query(lookup_name, Dnsruby::Types::A)
+                done = true
+              rescue IOError => e
+                _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
+              rescue Dnsruby::NXDomain => e
+                _log_error "Unable to resolve: #{lookup_name}, no such domain: #{e}"
+              rescue Dnsruby::SocketEofResolvError => e
+                _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
+              rescue Dnsruby::ServFail => e
+                _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
+              rescue Dnsruby::ResolvTimeout => e
+                _log_error "Unable to resolve: #{lookup_name}, timed out: #{e}"
+              end
             end
           end
 
