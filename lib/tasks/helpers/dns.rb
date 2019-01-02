@@ -38,8 +38,7 @@ module Intrigue
             max_attempts = 5
             attempts = 0
             done = false
-            while attempts < max_attempts || !done
-              attempts +=1
+            while attempts < max_attempts && !done
               begin
                 _log "Attempting lookup (#{attempts}/#{max_attempts}) on #{lookup_name} for A Record"
                 results << resolver.query(lookup_name, Dnsruby::Types::A)
@@ -55,6 +54,10 @@ module Intrigue
               rescue Dnsruby::ResolvTimeout => e
                 _log_error "Unable to resolve: #{lookup_name}, timed out: #{e}"
               end
+
+              # increment
+              attempts +=1
+
             end
           end
 
