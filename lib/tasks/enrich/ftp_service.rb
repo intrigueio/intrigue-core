@@ -44,7 +44,7 @@ class FtpService < Intrigue::Task::BaseTask
         #fill the first index with a socket
         sockets[0] = TCPSocket.open(ip_address, port)
         iterations = 0
-        max_iterations
+        max_iterations = 100
         while iterations < max_iterations # loop till we hit max iterations
         _log "Reading from socket #{iterations}/#{max_iterations}"
         # listen for a read, timeout 5
