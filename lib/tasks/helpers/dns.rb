@@ -35,10 +35,10 @@ module Intrigue
 
           results = []
           lookup_types.each do |t|
-            max_attempts = 5
+            max_attempts = 3
             attempts = 0
             done = false
-            while attempts < max_attempts && !done
+            while attempts < max_attempts || !done
 
               # increment attempts
               attempts +=1
