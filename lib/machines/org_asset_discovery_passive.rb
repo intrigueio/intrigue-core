@@ -40,8 +40,8 @@ module Machine
           {"name" => "use_file", "value" => true },
           {"name" => "brute_alphanumeric_size", "value" => 1 }], true)
 
-        start_recursive_task(task_result,"public_trello_check",entity)
-        start_recursive_task(task_result,"public_google_groups_check", entity)
+        start_recursive_task(task_result,"saas_trello_check",entity)
+        start_recursive_task(task_result,"saas_google_groups_check", entity)
 
         # GITHUB!
 
@@ -164,7 +164,7 @@ module Machine
       start_recursive_task(task_result,"search_bgp",entity, [], true)
 
       #
-      #start_recursive_task(task_result,"public_trello_check",entity)
+      #start_recursive_task(task_result,"saas_trello_check",entity)
 
       ### AWS_S3_brute the name
       #start_recursive_task(task_result,"aws_s3_brute",entity)

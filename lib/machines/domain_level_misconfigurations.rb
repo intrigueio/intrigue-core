@@ -14,10 +14,11 @@ module Machine
     end
 
     def self.recurse(entity, task_result)
-      if entity.type_string == "DnsRecord"
-        start_recursive_task(task_result,"public_google_groups_check",entity)
+      if entity.type_string == "Domain"
         start_recursive_task(task_result,"aws_s3_brute",entity)
-        start_recursive_task(task_result,"public_trello_check",entity)
+        start_recursive_task(task_result,"saas_google_groups_check",entity)
+        start_recursive_task(task_result,"saas_trello_check",entity)
+        start_recursive_task(task_result,"saas_jira_check",entity)
       end
     end
 

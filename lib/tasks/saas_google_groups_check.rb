@@ -1,12 +1,12 @@
 module Intrigue
 module Task
-class PublicGoogleGroupsCheck < BaseTask
+class SaasGoogleGroupsCheck < BaseTask
 
 
   def self.metadata
     {
-      :name => "public_google_groups_check",
-      :pretty_name => "Public Google Groups Check",
+      :name => "saas_google_groups_check",
+      :pretty_name => "SaaS Google Groups Check",
       :authors => ["jcran","jgamblin"],
       :description => "Checks to see if public Google Groups exist for a given domain",
       :references => [
@@ -21,7 +21,7 @@ class PublicGoogleGroupsCheck < BaseTask
         {"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}
       ],
       :allowed_options => [],
-      :created_types => ["GoogleGroups"]
+      :created_types => ["WebAccount"]
     }
   end
 
@@ -38,7 +38,8 @@ class PublicGoogleGroupsCheck < BaseTask
 
       _log_good "Success! Domain is configured and public."
 
-      _create_entity "GoogleGroups", {
+      _create_entity "WebAccount", {
+        "subtype" => "GoogleGroups",
         "name" => domain,
         "uri" => uri
       }

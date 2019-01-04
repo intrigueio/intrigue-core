@@ -15,9 +15,7 @@ class NmapScan < BaseTask
       :passive => false,
       :allowed_types => ["DnsRecord","IpAddress","NetBlock"],
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
-      :allowed_options => [
-        {:name => "top_ports", :regex => "integer", :default => 10 },
-      ],
+      :allowed_options => [],
       :created_types => [ "DnsRecord","DnsService","FingerService", "FtpService",
                           "IpAddress", "NetworkService","SshService","SnmpService",
                           "MongoService","Uri" ]
@@ -55,10 +53,10 @@ class NmapScan < BaseTask
       _log "NMap options: #{nmap_options}"
 
       # shell out to nmap and run the scan
-      # TODO - move this to scanner mixin
-      nmap_string = "nmap #{scan_item} #{nmap_options} -sSUV -P0 -T5 --top-ports #{opt_top_ports} -O --max-os-tries 2 -oX #{temp_file}"
+      nmap_string = "nmap #{scan_item} #{nmap_options} -sSUV -P0 -T5 -p 21,22,23,35,80,81,443,502,503,1883,2181,2222,2888,3389,3888,5000,5900,5901,6379,6380,6443,7001,8032,8050,8080,8081,8291,8443,8883,9091,9092,9200,9201,9300,9301,27017,27018,27019,U:161 -O --max-os-tries 2 -oX #{temp_file}"
       nmap_string = "sudo #{nmap_string}" unless Process.uid == 0
 
+      _log "Starting Scan: #{nmap_string}"
       output = _unsafe_system(nmap_string)
       _log "Nmap Output:\n#{output}"
 

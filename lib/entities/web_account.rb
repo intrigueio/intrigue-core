@@ -5,14 +5,13 @@ class WebAccount < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "WebAccount",
-      :description => "A login username identified for a specific website",
+      :description => "An account identified for a specific hosted service",
       :user_creatable => false
     }
   end
 
   def validate_entity
     name =~ /^\w.*$/ &&
-    details["domain"] =~ /^.*$/ &&
     details["uri"] =~ /^http.*$/
   end
 
