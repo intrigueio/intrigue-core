@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: 16d50d1015978093eaaf2c18b60aa9a878742412
+  revision: 89a3f6f0173ec77645f67fae92d5b2485034b654
   specs:
     intrigue-ident (0.8.0)
       capybara
@@ -184,7 +184,7 @@ GEM
     mustermann (1.0.3)
     net-dns (0.9.0)
     netrc (0.11.0)
-    nokogiri (1.9.1)
+    nokogiri (1.10.0)
       mini_portile2 (~> 2.4.0)
     pg (1.1.3)
     pry (0.12.2)
