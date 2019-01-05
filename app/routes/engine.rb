@@ -4,7 +4,6 @@ class IntrigueApp < Sinatra::Base
     ### status
     ###
     get "/engine/?" do
-      content_type "application/json"
 
       sidekiq_stats = Sidekiq::Stats.new
       project_listing = Intrigue::Model::Project.all.map { |p|
@@ -20,6 +19,10 @@ class IntrigueApp < Sinatra::Base
         }
       }
 
+    headers 'Access-Control-Allow-Origin' => '*',
+            'Access-Control-Allow-Methods' => ['OPTIONS','GET']
+
+    content_type "application/json"
     output.to_json
     end
 
