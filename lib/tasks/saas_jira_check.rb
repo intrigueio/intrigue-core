@@ -27,12 +27,14 @@ class SaasJiraCheck < BaseTask
     super
 
     entity_name = _get_entity_name
-    check_and_create entity_name
 
     # try a couple variations
     if _get_entity_type_string == "Domain" && entity_name =~ /\./
       check_and_create entity_name.split(".").first
       check_and_create entity_name.gsub(".","")
+      check_and_create "#{entity_name.split(".")[0...-1].join("")}"
+    else
+      check_and_create entity_name
     end
 
   end
