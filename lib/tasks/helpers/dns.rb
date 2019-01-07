@@ -23,44 +23,35 @@ module Intrigue
 
         resolver_name = _get_system_config "resolver"
 
-        begin
+        _log "ASDF"
 
-          resolver = Dnsruby::Resolver.new(
-            :search => [],
-            :nameserver => [resolver_name],
-            :query_timeout => 10,
-            :retry_times => 1,
-            :retry_delay => 1
-          )
+        resolver = Dnsruby::Resolver.new({
+          :search => [],
+          :nameserver => [resolver_name],
+          :query_timeout => 10,
+          :retry_times => 3,
+          :retry_delay => 1
+        })
 
-          results = []
-          lookup_types.each do |t|
-            max_attempts = 3
-            attempts = 0
-            done = false
-            while attempts < max_attempts || !done
+        results = []
+        lookup_types.each do |t|
 
-              # increment attempts
-              attempts +=1
-
-              begin
-                #_log "Attempting lookup (#{attempts}/#{max_attempts}) on #{lookup_name} for A Record"
-                results << resolver.query(lookup_name, Dnsruby::Types::A)
-                done = true
-              rescue IOError => e
-                _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
-              rescue Dnsruby::NXDomain => e
-                _log_error "Unable to resolve: #{lookup_name}, no such domain: #{e}"
-              rescue Dnsruby::SocketEofResolvError => e
-                _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
-              rescue Dnsruby::ServFail => e
-                _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
-              rescue Dnsruby::ResolvTimeout => e
-                _log_error "Unable to resolve: #{lookup_name}, timed out: #{e}"
-              end
-
-            end
+          begin
+            results << resolver.query(lookup_name, t)
+          rescue Dnsruby::NXDomain => e
+            _log_error "Unable to resolve: #{lookup_name}, no entry exists: #{e}"
+          rescue IOError => e
+            _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
+          rescue Dnsruby::SocketEofResolvError => e
+            _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
+          rescue Dnsruby::ServFail => e
+            _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
+          rescue Dnsruby::ResolvTimeout => e
+            _log_error "Unable to resolve: #{lookup_name}, timed out: #{e}"
           end
+        end
+
+        begin
 
           # For each of the found addresses
           resources = []
@@ -71,7 +62,7 @@ module Intrigue
 
             result.answer.map do |resource|
 
-              next if resource.type == Dnsruby::Types::NS
+              #next if resource.type == Dnsruby::Types::NS
 
               resources << {
                 "name" => resource.address.to_s,
