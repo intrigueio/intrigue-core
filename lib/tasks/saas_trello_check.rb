@@ -58,7 +58,7 @@ class SaasTrelloCheck < BaseTask
       }
     elsif body =~ /ProfileCardsTeamsActivity/
       _log "The #{name} member account exists!"
-      _create_entity "TrelloAccount", {
+      _create_entity "WebAccount", {
         "name" => name,
         "uri" => uri,
         "web_account_type" => "TrelloAccount"
