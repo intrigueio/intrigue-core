@@ -3,16 +3,22 @@
 # GeoLiteCity download function
 function get_maxmind() {
   echo "[+] Getting latest MaxMind GeoLite2-City database"
+  # get and unzip
   wget -N -q  https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz
   tar -zxvf GeoLite2-City*.tar.gz
-  mv GeoLite2-City*/GeoLite2-City.mmdb geolitecity
-  rm -rf GeoLite2-City*
+  # remove the file
+  rm GeoLite2-City.tar.gz
+  # move the file into the right place
+  mv GeoLite2-City*/GeoLite2-City.mmdb .
+  # clean up
+  rm -rf GeoLite2-City/*
+  rmdir GeoLite2-City/
 }
 
 # GeoLiteCity
 if [ -d "geolitecity" ]; then
   cd geolitecity
-  if [ ! -f geolitecity/latest.dat ]; then
+  if [ ! -f GeoLite2-City.mmdb ]; then
     get_maxmind
   else
     echo "[+] Removing old MaxMind GeoLiteCity database"
