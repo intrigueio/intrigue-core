@@ -30,7 +30,7 @@ module Data
   end
 
   def geolocate_ip(ip)
-    db = GeoIP.new(File.join('data', 'geolitecity', 'latest.dat'))
+    db = MaxMindDB.new("#{$intrigue_basedir}/data/geolitecity/GeoLite2-City.mmdb", MaxMindDB::LOW_MEMORY_FILE_READER)
 
     begin
       _log "looking up location for #{ip}"
@@ -38,7 +38,7 @@ module Data
       #
       # This call attempts to do a lookup
       #
-      loc = db.city(ip)
+      location = db.lookup(ip)
 
     rescue ArgumentError => e
       _log "Argument Error #{e}"
@@ -47,7 +47,7 @@ module Data
     rescue Encoding::UndefinedConversionError => e
       _log "Encoding error: #{e}"
     end
-  loc.to_h.stringify_keys
+  location.to_h.stringify_keys
   end
 
 

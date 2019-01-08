@@ -10,7 +10,7 @@ config/redis.yml
 config/*.backup
 data/.local
 data/alexa-latest.csv
-data/geolitecity/latest.dat
+data/geolitecity/GeoLite2-City.mmdb
 data/iana/ipv4-address-space.csv
 data/web_accounts_list/web_accounts_list.json
 data/asn_info/*

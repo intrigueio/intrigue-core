@@ -39,7 +39,7 @@ gem 'em-resolv-replace'       # dns_brute_sub
 gem 'whois'                   # dns_zone_transfer, whois
 gem 'whois-parser'            # whois
 gem 'googleajax'              # search_google
-gem 'geoip'                   # geolocate_host
+gem 'maxminddb',             :git => "https://github.com/intrigueio/maxminddb"
 gem 'shodan'                  # search_shodan
 gem 'towerdata_api'           # search_towerdata
 gem 'yomu'                    # uri_spider
