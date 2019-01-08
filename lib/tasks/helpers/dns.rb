@@ -23,8 +23,6 @@ module Intrigue
 
         resolver_name = _get_system_config "resolver"
 
-        _log "ASDF"
-
         resolver = Dnsruby::Resolver.new({
           :search => [],
           :nameserver => [resolver_name],

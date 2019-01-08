@@ -9,9 +9,9 @@ function get_maxmind() {
   # remove the file
   rm GeoLite2-City.tar.gz
   # move the file into the right place
-  mv GeoLite2-City*/GeoLite2-City.mmdb .
+  mv GeoLite2-City_*/GeoLite2-City.mmdb .
   # clean up
-  rm -rf GeoLite2-City/*
+  rm -rf GeoLite2-City_*
   rmdir GeoLite2-City/
 }
 

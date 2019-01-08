@@ -47,7 +47,8 @@ module Data
     rescue Encoding::UndefinedConversionError => e
       _log "Encoding error: #{e}"
     end
-  location.to_h.stringify_keys
+
+  location.to_hash
   end
 
 
