@@ -45,7 +45,11 @@ module Task
 
     def safe_browser_action
       begin
+        
         results = yield
+
+      rescue Addressable::URI::InvalidURIError => e
+        _log_error "Invalid URI: #{e}" if @task_result
       rescue Capybara::ElementNotFound => e
         _log_error "Element not found: #{e}" if @task_result
       rescue Net::ReadTimeout => e
