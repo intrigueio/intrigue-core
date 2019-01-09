@@ -134,6 +134,10 @@ else
   echo "[+] nmap, masscan already configured to run as sudo"
 fi
 
+# bump file limits
+sudo echo "* soft nofile 16384" >> /etc/security/limits.conf
+sudo echo "* hard nofile 16384" >> /etc/security/limits.conf
+
 # Set the database to trust
 echo "[+] Updating postgres configuration"
 sudo sed -i 's/md5/trust/g' /etc/postgresql/9.6/main/pg_hba.conf
