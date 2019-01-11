@@ -4,7 +4,7 @@ module Intrigue
 
       include Intrigue::Task::Generic
 
-      def check_resolv_timeout
+      def check_resolv_timeout(lookup_name)
 
         resolver_name = _get_system_config "resolver"
 
