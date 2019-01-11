@@ -16,10 +16,19 @@ module Intrigue
 
         begin
           resolver.query(lookup_name)
+        rescue Dnsruby::NXDomain => e
+          _log_error "Unable to resolve: #{lookup_name}, no entry exists: #{e}"
+        rescue IOError => e
+          _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
+        rescue Dnsruby::SocketEofResolvError => e
+          _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
+        rescue Dnsruby::ServFail => e
+          _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
         rescue Dnsruby::ResolvTimeout => e
+          _log_error "Timed out: #{lookup_name}, error: #{e}"
           return true
         end
-        
+
       false
       end
 
@@ -64,6 +73,7 @@ module Intrigue
           rescue Dnsruby::ServFail => e
             _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
           rescue Dnsruby::ResolvTimeout => e
+            _log_error "Timed out: #{lookup_name}, error: #{e}"
           end
         end
 
