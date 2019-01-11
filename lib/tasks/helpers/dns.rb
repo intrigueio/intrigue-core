@@ -15,10 +15,11 @@ module Intrigue
         })
 
         begin
-          resolver.query(lookup_name, t)
+          resolver.query(lookup_name)
         rescue Dnsruby::ResolvTimeout => e
           return true
         end
+        
       false
       end
 
