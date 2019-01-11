@@ -4,6 +4,24 @@ module Intrigue
 
       include Intrigue::Task::Generic
 
+      def check_resolv_timeout
+
+        resolver_name = _get_system_config "resolver"
+
+        resolver = Dnsruby::Resolver.new({
+          :search => [],
+          :nameserver => [resolver_name],
+          :query_timeout => 10
+        })
+
+        begin
+          resolver.query(lookup_name, t)
+        rescue Dnsruby::ResolvTimeout => e
+          return true
+        end
+      false
+      end
+
       # convenience method to just send back name
       def resolve_name(lookup_name, lookup_types=[Dnsruby::Types::A, Dnsruby::Types::CNAME, Dnsruby::Types::PTR])
         resolve_names(lookup_name,lookup_types).first
@@ -45,7 +63,6 @@ module Intrigue
           rescue Dnsruby::ServFail => e
             _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
           rescue Dnsruby::ResolvTimeout => e
-            _log_error "Unable to resolve: #{lookup_name}, timed out: #{e}"
           end
         end
 

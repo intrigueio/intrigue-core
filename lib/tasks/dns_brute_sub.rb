@@ -204,16 +204,30 @@ class DnsBruteSub < BaseTask
   def _check_wildcard(suffix)
     _log "Checking for wildcards on #{suffix}."
 
+    timeout_count = 0
     all_discovered_wildcards = []
       # First we look for a single address that won't exist
       10.times do
         random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}"
+
+        # keep track of timeouts
+        if check_resolv_timeout random_string
+          timeout_count +=1
+        end
+
+        # do the resolution
         resolved_address = _resolve(random_string)
 
         # keep track of it unless we already have it
         unless resolved_address.nil? || all_discovered_wildcards.include?(resolved_address)
           all_discovered_wildcards << resolved_address
         end
+
+      end
+
+      # catch wildcard domains that can't resolve as fast as we need
+      if timeout_count > 5
+        _log_error "More than 50% of our wildcard checks timed out, cowardly refusing to continue"
       end
 
       # If that resolved, we know that we're in a wildcard situation.
