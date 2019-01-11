@@ -228,6 +228,7 @@ class DnsBruteSub < BaseTask
       # catch wildcard domains that can't resolve as fast as we need
       if timeout_count > 5
         _log_error "More than 50% of our wildcard checks timed out, cowardly refusing to continue"
+        return nil
       end
 
       # If that resolved, we know that we're in a wildcard situation.
