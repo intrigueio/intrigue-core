@@ -49,21 +49,23 @@ class SaasTrelloCheck < BaseTask
       destroy_browser_session(session)
     end
 
+    service_name = "trello.com"
+
     if body =~ /BoardsMembers/
       _log "The #{name} org exists!"
       _create_entity "WebAccount", {
-        "name" => "#{name} (trello organization)",
+        "name" => "#{service_name}: #{name}",
         "uri" => url,
         "username" => "#{name}",
-        "service" => "trello.com"
+        "service" => service_name
       }
     elsif body =~ /ProfileCardsTeamsActivity/
       _log "The #{name} member account exists!"
       _create_entity "WebAccount", {
-        "name" => "#{name} (trello user)",
+        "name" => "#{service_name}: #{name}",
         "uri" => url,
         "username" => "#{name}",
-        "service" => "trello.com"
+        "service" => service_names
       }
     else
       _log "Nothing found for #{name}"

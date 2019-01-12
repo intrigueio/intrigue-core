@@ -56,11 +56,13 @@ class SaasJiraCheck < BaseTask
 
     if body =~ /Log in to Jira, Confluence, and all other Atlassian Cloud products here/
       _log_good "The #{name} org exists!"
+
+      service_name = "atlassian.net"
       _create_entity "WebAccount", {
-        "name" => "#{name} (atlassian.net)",
+        "name" => "#{service_name}: #{name}",
         "uri" => url,
         "username" => "#{name}",
-        "service" => "atlassian.net"
+        "service" => service_name
       }
     elsif body =~ /Your Atlassian Cloud site is currently unavailable./
       _log_error "Nothing found for #{name}"

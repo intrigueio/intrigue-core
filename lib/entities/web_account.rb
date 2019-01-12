@@ -11,7 +11,7 @@ class WebAccount < Intrigue::Model::Entity
   end
 
   def validate_entity
-    name =~ /^\w.\ \(.*\)$/ &&
+    name =~ /^\w*:\s?\w*$/ &&
     details["username"] =~ /^\w*$/
     details["service"] =~ /^\w*$/
     details["uri"] =~ /^http.*$/
