@@ -43,7 +43,7 @@ module Services
     hosts.uniq.each do |h|
 
       # Handle web app case first
-      if (protocol == "tcp" && [80,81,443,8080,8000,8081,8443].include?(port_num))
+      if (protocol == "tcp" && [80,81,443,8000,8080,8081,8443].include?(port_num))
 
         # Determine if this is SSL
         ssl = true if [443,8443].include?(port_num)
@@ -78,7 +78,7 @@ module Services
         case port_num
           when 21
             service = "FTP"
-          when 22
+          when 22,2222
             service = "SSH"
           when 23
             service = "TELNET"
@@ -90,8 +90,34 @@ module Services
             service = "POP3"
           when 111
             service = "SUNRPC"
+          when 502,503
+            service = "MODBUS"
+          when 1883
+            service = "MQLSDP"
+          when 2181,2888,3888
+            service = "ZOOKEEPER"
+          when 3389
+            service = "RDP"
+          when 5000
+            service = "UPNP"
+          when 5900,5901
+            service = "VNC"
+          when 6379,6380
+            service = "REDIS"
+          when 6443
+            service = "KUBERNETES"
           when 7001
             service = "WEBLOGIC"
+          when 8032
+            service = "YARN"
+          when 8278,8291
+            service = "MIKROTIK"
+          when 8883
+            service = "MQTT"
+          when 9200,9201,9300,9301
+            service = "ELASTICSEARCH"
+          when 9091,9092,9094
+            service = "NETSCALER"
           when 27017,27018,27019
             service = "MONGODB"
           else
@@ -124,6 +150,8 @@ module Services
             service = "DNS"
           when 161
             service = "SNMP"
+          when 1900
+            service = "UPNP"
           else
             service = "UNKNOWN"
         end
