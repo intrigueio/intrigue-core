@@ -32,7 +32,58 @@ class NetworkService < Intrigue::Task::BaseTask
     _log "Enriching... Network Service: #{_get_entity_name}"
 
     enrich_ftp if _get_entity_detail("service") == "FTP"
+    enrich_snmp if _get_entity_detail("service") == "SNMP"
 
+  end
+
+  def enrich_snmp
+    _log "Enriching... SNMP service: #{_get_entity_name}"
+
+    port = _get_entity_detail("port").to_i || 161
+    ip_address = _get_entity_detail "ip_address"
+
+    # Create a tempfile to store results
+    temp_file = "#{Dir::tmpdir}/nmap_snmp_info_#{rand(100000000)}.xml"
+
+    nmap_string = "nmap #{ip_address} -sU -p #{port} --script=snmp-info -oX #{temp_file}"
+    nmap_string = "sudo #{nmap_string}" unless Process.uid == 0
+
+    _log "Running... #{nmap_string}"
+    nmap_output = _unsafe_system nmap_string
+
+    # parse the file and get output, setting it in details
+    doc = File.open(temp_file) { |f| Nokogiri::XML(f) }
+
+    service_doc = doc.xpath("//service")
+    begin
+      if service_doc && service_doc.attr("product")
+        snmp_product = service_doc.attr("product").text
+      end
+    rescue NoMethodError => e
+      _log_error "Unable to find attribute: product"
+    end
+
+    begin
+      script_doc = doc.xpath("//script")
+      if script_doc && script_doc.attr("output")
+        script_output = script_doc.attr("output").text
+      end
+    rescue NoMethodError => e
+      _log_error "Unable to find attribute: output"
+    end
+
+
+    _log "Got SNMP details:#{script_output}"
+
+    _set_entity_detail("product", snmp_product)
+    _set_entity_detail("script_output", script_output)
+
+    # cleanup
+    begin
+      File.delete(temp_file)
+    rescue Errno::EPERM
+      _log_error "Unable to delete file"
+    end
   end
 
   def enrich_ftp
