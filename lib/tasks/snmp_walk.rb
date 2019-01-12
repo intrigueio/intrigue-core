@@ -11,10 +11,11 @@ class SnmpWalk < BaseTask
       :references => ["https://community.rapid7.com/community/services/blog/2016/05/05/snmp-data-harvesting-during-penetration-testing"],
       :type => "enrichment",
       :passive => false,
-      :allowed_types => ["SnmpService"],
+      :allowed_types => ["NetworkService"],
       :example_entities => [
-        { "type" => "SnmpService",
+        { "type" => "NetworkService",
           "details" => {
+            "service" => "SNMP",
             "ip_address" => "1.1.1.1",
             "port" => 161,
             "protocol" => "udp"

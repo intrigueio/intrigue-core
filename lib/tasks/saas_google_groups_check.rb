@@ -39,9 +39,10 @@ class SaasGoogleGroupsCheck < BaseTask
       _log_good "Success! Domain is configured and public."
 
       _create_entity "WebAccount", {
-        "subtype" => "GoogleGroups",
-        "name" => domain,
-        "uri" => uri
+        "name" => "#{name} (Google Groups)",
+        "uri" => url,
+        "username" => "#{name}",
+        "service" => "groups.google.com"
       }
 
     elsif text =~ /This group is on a private domain/

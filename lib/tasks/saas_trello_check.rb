@@ -52,16 +52,18 @@ class SaasTrelloCheck < BaseTask
     if body =~ /BoardsMembers/
       _log "The #{name} org exists!"
       _create_entity "WebAccount", {
-        "name" => name,
-        "uri" => uri,
-        "web_account_type" => "TrelloOrganization"
+        "name" => "#{name} (trello organization)",
+        "uri" => url,
+        "username" => "#{name}",
+        "service" => "trello.com"
       }
     elsif body =~ /ProfileCardsTeamsActivity/
       _log "The #{name} member account exists!"
       _create_entity "WebAccount", {
-        "name" => name,
-        "uri" => uri,
-        "web_account_type" => "TrelloAccount"
+        "name" => "#{name} (trello user)",
+        "uri" => url,
+        "username" => "#{name}",
+        "service" => "trello.com"
       }
     else
       _log "Nothing found for #{name}"

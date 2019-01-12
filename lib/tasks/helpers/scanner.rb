@@ -11,6 +11,217 @@ module Intrigue
 module Task
 module Scanner
 
+  def _create_network_service_entity(ip_entity,port_num,protocol="tcp",generic_details={})
+
+    # first, save the port details on the ip_entity
+    ports = ip_entity.get_detail("ports") || []
+    updated_ports = ports.append({"number" => port_num, "protocol" => protocol}).uniq
+    ip_entity.set_detail("ports", updated_ports)
+
+    # Ensure we always save our host and key details.
+    # note that we might add service specifics to this below
+    generic_details.merge!({
+      "port" => port_num,
+      "protocol" => protocol,
+      "ip_address" => ip_entity.name,
+      "host_id" => ip_entity.id
+    })
+
+    # Grab all the aliases, since we'll want to auto-create services on them
+    # (VHOSTS use case)
+    hosts = [ip_entity]
+    if ip_entity.aliases.count > 0
+      ip_entity.aliases.each do |a|
+        next unless a.type_string == "DnsRecord" #  only dns records
+        next if a.hidden # skip hidden
+        hosts << a # add to the list
+      end
+    end
+    _log "Creating services on each of: #{hosts.map{|h| h.name } }"
+
+    sister_entity = nil
+    hosts.uniq.each do |h|
+
+      # Handle web app case first
+      if (protocol == "tcp" && [80,81,443,8080,8000,8081,8443].include?(port_num))
+
+        # Determine if this is SSL
+        ssl = true if [443,8443].include?(port_num)
+        prefix = ssl ? "https" : "http" # construct uri
+
+        # Construct the uri
+        uri = "#{prefix}://#{h.name}:#{port_num}"
+
+        x= _gather_http_response(uri)
+        http_response = x[:http_response]
+        generic_details.merge!(x[:extra_details])
+
+        unless http_response
+          _log_error "Didn't get a response when we requested one, moving on"
+          next
+        end
+
+        entity_details = {
+          "name" => uri,
+          "uri" => uri,
+          "service" => prefix
+        }.merge!(generic_details)
+
+        # Create entity and track this entity so we can manage a group of aliases (called sisters here)
+        sister_entity = _create_entity("Uri", entity_details, sister_entity)
+
+      # otherwise, create a network service on the IP, either UDP or TCP - fail otherwise
+      elsif protocol == "tcp" && h.name.is_ip_address?
+
+        service_specific_details = {}
+
+        case port_num
+          when 21
+            service = "FTP"
+          when 22
+            service = "SSH"
+          when 23
+            service = "TELNET"
+          when 25
+            service = "SMTP"
+          when 79
+            service = "FINGER"
+          when 110
+            service = "POP3"
+          when 111
+            service = "SUNRPC"
+          when 7001
+            service = "WEBLOGIC"
+          when 27017,27018,27019
+            service = "MONGODB"
+          else
+            service = "UNKNOWN"
+        end
+
+        # now we have all the details we need, create it
+
+        name = "#{h.name}:#{port_num}"
+
+        entity_details = {
+          "name" => name,
+          "service" => service
+        }
+
+        # merge in all generic details
+        entity_details = entity_details.merge!(generic_details)
+
+        # merge in any service specifics
+        entity_details = entity_details.merge!(service_specific_details)
+
+        sister_entity = _create_entity("NetworkService", entity_details, sister_entity)
+
+      elsif protocol == "udp" && h.name.is_ip_address?
+
+        service_specific_details = {}
+
+        case port_num
+          when 53
+            service = "DNS"
+          when 161
+            service = "SNMP"
+          else
+            service = "UNKNOWN"
+        end
+
+        # now we have all the details we need, create it
+
+        name = "#{h.name}:#{port_num}"
+
+        entity_details = {
+          "name" => name,
+          "service" => service
+        }
+
+        # merge in all generic details
+        entity_details = entity_details.merge!(generic_details)
+
+        # merge in any service specifics
+        entity_details = entity_details.merge!(service_specific_details)
+
+        sister_entity = _create_entity("NetworkService", entity_details, sister_entity)
+
+      else
+        raise "Unknown protocol" if h.name.is_ip_address?
+      end
+
+
+    end # each hostname
+  end
+
+  ## Default method, subclasses must override this
+  def _masscan_netblock(range,tcp_ports,udp_ports,max_rate=1000)
+
+    ### Santity checking so this function is safe
+    unless range.kind_of? Intrigue::Entity::NetBlock
+      raise "Invalid range: #{range}"
+    end
+    unless tcp_ports.all?{|p| p.kind_of? Integer}
+      raise "Invalid tcp ports: #{tcp_ports}"
+    end
+    unless udp_ports.all?{|p| p.kind_of? Integer}
+      raise "Invalid udp ports: #{udp_ports}"
+    end
+    unless max_rate.kind_of? Integer
+      raise "Invalid max rate: #{max_rate}"
+    end
+    ### end santity checking
+
+    begin
+
+      # Create a tempfile to store result
+      temp_file = Tempfile.new("masscan")
+
+      port_string = "-p"
+      port_string << "#{tcp_ports.join(",")}," if tcp_ports.length > 0
+      port_string << "#{udp_ports.map{|x| "U:#{x}" }.join(",")}"
+
+      # shell out to masscan and run the scan
+      masscan_string = "masscan #{port_string} --max-rate #{max_rate} -oL #{temp_file.path} --range #{range.name}"
+      _log "Running... #{masscan_string}"
+      _unsafe_system(masscan_string)
+
+      results = []
+      f = File.open(temp_file.path).each_line do |line|
+
+        # Skip comments
+        next if line =~ /^#.*/
+        next if line.nil?
+
+        # PARSE
+        state = line.delete("\n").strip.split(" ")[0]
+        protocol = line.delete("\n").strip.split(" ")[1]
+        port = line.delete("\n").strip.split(" ")[2].to_i
+        ip_address = line.delete("\n").strip.split(" ")[3]
+
+        results << {
+          "state" => state,
+          "protocol" => protocol,
+          "port" => port,
+          "ip_address" => ip_address
+        }
+
+      end
+
+    ensure
+      temp_file.close
+      temp_file.unlink
+    end
+
+  results
+  end
+
+  def check_external_dependencies
+    # Check to see if masscan is in the path, and raise an error if not
+    return false unless _unsafe_system("masscan") =~ /^usage/
+  true
+  end
+
+
   def _gather_http_response(uri)
 
     # FIRST CHECK TO SEE IF WE GET A RESPONSE FOR THIS HOSTNAME
@@ -105,266 +316,6 @@ module Scanner
       _log_error "compression error on #{uri}" => e
     end
   out
-  end
-
-  def _create_network_service_entity(ip_entity,port_num,protocol="tcp",extra_details={})
-
-    # first, save the port details on the ip_entity
-    ports = ip_entity.get_detail("ports") || []
-    updated_ports = ports.append({"number" => port_num, "protocol" => protocol}).uniq
-    ip_entity.set_detail("ports", updated_ports)
-
-    # Ensure we always save our host
-    extra_details.merge!("host_id" => ip_entity.id)
-
-    # Grab all the aliases
-    hosts = [ip_entity]
-    if ip_entity.aliases.count > 0
-      ip_entity.aliases.each do |a|
-        next unless a.type_string == "DnsRecord" #  only dns records
-        next if a.hidden # skip hidden
-        hosts << a # add to the list
-      end
-    end
-
-    _log "Creating services on each of: #{hosts.map{|h| h.name } }"
-
-    sister_entity = nil
-    hosts.uniq.each do |h|
-
-      # Handle Web Apps first
-      if (protocol == "tcp" && [80,81,443,8080,8000,8081,8443].include?(port_num))
-
-        # Determine if this is SSL
-        ssl = true if [443,8443].include?(port_num)
-        prefix = ssl ? "https://" : "http://" # construct uri
-
-        # construct the uri
-        uri = "#{prefix}#{h.name}:#{port_num}"
-
-        x = _gather_http_response(uri)
-        http_response = x[:http_response]
-        extra_details.merge!(x[:extra_details])
-
-        unless http_response
-          _log_error "Didn't get a response when we reqested one"
-          next
-        end
-
-        entity_details = {
-          "name" => uri,
-          "uri" => uri,
-          "port" => port_num,
-          "ip_address" => h.name,
-          "protocol" => protocol}.merge!(extra_details)
-
-        # Create entity
-        sister_entity = _create_entity("Uri", entity_details, sister_entity)
-
-      # then FtpService
-      elsif protocol == "tcp" && [21].include?(port_num) && h.name.is_ip_address?
-
-        name = "#{h.name}:#{port_num}"
-        uri = "ftp://#{name}"
-        entity_details = {
-          "name" => name,
-          "uri" => uri,
-          "port" => port_num,
-          "ip_address" => h.name,
-          "protocol" => protocol}.merge!(extra_details)
-
-        sister_entity = _create_entity("FtpService", entity_details, sister_entity)
-
-      # Then SshService
-      elsif protocol == "tcp" && [22].include?(port_num) && h.name.is_ip_address?
-
-        name = "#{h.name}:#{port_num}"
-        uri = "ssh://#{name}"
-
-        entity_details = {
-          "name" => uri,
-          "uri" => uri,
-          "port" => port_num,
-          "ip_address" => h.name,
-          "protocol" => protocol}.merge!(extra_details)
-
-        sister_entity = _create_entity("SshService", entity_details, sister_entity)
-
-      # then SMTPService
-      elsif protocol == "tcp" && [25].include?(port_num) && h.name.is_ip_address?
-
-        name = "#{h.name}:#{port_num}"
-        uri = "smtp://#{name}"
-
-        entity_details = {
-          "name" => uri,
-          "uri" => uri,
-          "port" => port_num,
-          "ip_address" => h.name,
-          "protocol" => protocol}.merge!(extra_details)
-
-        sister_entity = _create_entity("SmtpService", entity_details, sister_entity)
-
-      # then DnsService
-      elsif [53].include?(port_num) && h.name.is_ip_address? # could be either tcp or udp
-
-        name = "#{h.name}:#{port_num}"
-        uri = "dns://#{name}"
-
-        entity_details = {
-          "name" => uri,
-          "uri" => uri,
-          "port" => port_num,
-          "ip_address" => h.name,
-          "protocol" => protocol}.merge!(extra_details)
-
-        sister_entity = _create_entity("DnsService", entity_details, sister_entity)
-
-      # then FingerService
-      elsif protocol == "tcp" && [79].include?(port_num) && h.name.is_ip_address?
-
-        name = "#{h.name}:#{port_num}"
-        uri = "finger://#{name}"
-
-        entity_details = {
-          "name" => uri,
-          "uri" => uri,
-          "port" => port_num,
-          "ip_address" => h.name,
-          "protocol" => protocol}.merge!(extra_details)
-
-        sister_entity = _create_entity("FingerService", entity_details, sister_entity)
-
-      # Then SnmpService
-      elsif protocol == "udp" && [161].include?(port_num) && h.name.is_ip_address?
-
-        name = "#{h.name}:#{port_num}"
-        uri = "snmp://#{name}"
-
-        entity_details = {
-          "name" => uri,
-          "uri" => uri,
-          "port" => port_num,
-          "ip_address" => h.name,
-          "protocol" => protocol}.merge!(extra_details)
-
-        sister_entity = _create_entity("SnmpService", entity_details, sister_entity)
-
-      # then WeblogicService
-      elsif protocol == "tcp" && [7001].include?(port_num) && h.name.is_ip_address?
-
-        name = "#{h.name}:#{port_num}"
-        uri = "http://#{name}"
-
-        entity_details = {
-          "name" => uri,
-          "uri" => uri,
-          "port" => port_num,
-          "ip_address" => h.name,
-          "protocol" => protocol}.merge!(extra_details)
-
-        sister_entity = _create_entity("WeblogicService", entity_details, sister_entity)
-
-      # then MongoService
-    elsif protocol == "tcp" && [27017,27018,27019].include?(port_num) && h.name.is_ip_address?
-
-        name = "#{h.name}:#{port_num}"
-        uri = "mongo://#{name}"
-
-        entity_details = {
-          "name" => uri,
-          "uri" => uri,
-          "port" => port_num,
-          "ip_address" => h.name,
-          "protocol" => protocol}.merge!(extra_details)
-
-        sister_entity = _create_entity("MongoService", entity_details, sister_entity)
-
-      else # Create a generic network service
-        next unless h.name.is_ip_address?
-
-        name = "#{h.name}:#{port_num}"
-        uri = "netsvc://#{name}"
-
-        entity_details = {
-          "name" => uri,
-          "uri" => uri,
-          "port" => port_num,
-          "ip_address" => h.name,
-          "protocol" => protocol}.merge!(extra_details)
-
-        sister_entity = _create_entity("NetworkService", entity_details, sister_entity)
-      end
-
-    end # hostnames
-  end
-
-  ## Default method, subclasses must override this
-  def _masscan_netblock(range,tcp_ports,udp_ports,max_rate=1000)
-
-    ### Santity checking so this function is safe
-    unless range.kind_of? Intrigue::Entity::NetBlock
-      raise "Invalid range: #{range}"
-    end
-    unless tcp_ports.all?{|p| p.kind_of? Integer}
-      raise "Invalid tcp ports: #{tcp_ports}"
-    end
-    unless udp_ports.all?{|p| p.kind_of? Integer}
-      raise "Invalid udp ports: #{udp_ports}"
-    end
-    unless max_rate.kind_of? Integer
-      raise "Invalid max rate: #{max_rate}"
-    end
-    ### end santity checking
-
-    begin
-
-      # Create a tempfile to store result
-      temp_file = Tempfile.new("masscan")
-
-      port_string = "-p"
-      port_string << "#{tcp_ports.join(",")}," if tcp_ports.length > 0
-      port_string << "#{udp_ports.map{|x| "U:#{x}" }.join(",")}"
-
-      # shell out to masscan and run the scan
-      masscan_string = "masscan #{port_string} --max-rate #{max_rate} -oL #{temp_file.path} --range #{range.name}"
-      _log "Running... #{masscan_string}"
-      _unsafe_system(masscan_string)
-
-      results = []
-      f = File.open(temp_file.path).each_line do |line|
-
-        # Skip comments
-        next if line =~ /^#.*/
-        next if line.nil?
-
-        # PARSE
-        state = line.delete("\n").strip.split(" ")[0]
-        protocol = line.delete("\n").strip.split(" ")[1]
-        port = line.delete("\n").strip.split(" ")[2].to_i
-        ip_address = line.delete("\n").strip.split(" ")[3]
-
-        results << {
-          "state" => state,
-          "protocol" => protocol,
-          "port" => port,
-          "ip_address" => ip_address
-        }
-
-      end
-
-    ensure
-      temp_file.close
-      temp_file.unlink
-    end
-
-  results
-  end
-
-  def check_external_dependencies
-    # Check to see if masscan is in the path, and raise an error if not
-    return false unless _unsafe_system("masscan") =~ /^usage/
-  true
   end
 
 

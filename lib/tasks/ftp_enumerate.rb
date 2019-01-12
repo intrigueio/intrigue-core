@@ -16,11 +16,12 @@ class FtpEnumerate < BaseTask
       :references => [],
       :type => "discovery",
       :passive => false,
-      :allowed_types => ["FtpService","NetworkService"],
+      :allowed_types => ["NetworkService"],
       :example_entities => [
-        {"type" => "FtpService", "details" => {
+        {"type" => "NetworkService", "details" => {
+          "name" => "1.1.1.1:21",
           "ip_address" => "1.1.1.1",
-          "port" => 1111,
+          "port" => 21,
           "protocol" => "tcp"
           }
         }
