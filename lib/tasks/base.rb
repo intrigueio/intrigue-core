@@ -10,7 +10,7 @@ class BaseTask
   include Intrigue::Task::Parse
   include Intrigue::Task::Product
   include Intrigue::Task::Regex
-  include Intrigue::Task::Scanner
+  include Intrigue::Task::Services
   include Intrigue::Task::Web
   include Intrigue::Task::Whois
 

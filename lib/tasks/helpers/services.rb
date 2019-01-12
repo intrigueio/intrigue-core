@@ -9,7 +9,7 @@
 # This module exists for common web functionality
 module Intrigue
 module Task
-module Scanner
+module Services
 
   def _create_network_service_entity(ip_entity,port_num,protocol="tcp",generic_details={})
 
