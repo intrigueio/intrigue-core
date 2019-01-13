@@ -114,7 +114,7 @@ module Intrigue
 
       def enrich(task_result)
         # Run background task here
-        task_result.log "Starting enrichment on #{self.name}."
+        #task_result.log "Starting enrichment on #{self.name}."
         enrichment_tasks.each do |task_name|
 
           # skip unless we actually have a task (since enrichment is

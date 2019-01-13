@@ -249,7 +249,6 @@ class EntityManager
         if created_entity.enriched
           task_result.log "Skipping enrichment... already completed!"
         else
-          task_result.log "Starting enrichment!"
           # starts a new background task... so anything that needs to happen from
           # this point should happen in that new background task
           created_entity.enrich(task_result)

@@ -58,7 +58,7 @@ module Intrigue
         begin
           #self.lock!
           # any other value, log to the database
-          set(:full_log => "#{full_log}#{message.encode("UTF-8", {
+          update(:full_log => "#{full_log}#{message.encode("UTF-8", {
                                               :undef => :replace,
                                               :invalid => :replace,
                                               :replace => "?" })}")
