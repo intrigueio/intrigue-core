@@ -45,7 +45,7 @@ class Masscan < BaseTask
       # Create a tempfile to store result
       temp_file = Tempfile.new("masscan-#{rand(10000000)}")
 
-      port_string = "-p"
+      port_string = ""
       port_string << "#{opt_tcp_ports}" if opt_tcp_ports.length > 0
       port_string << "," if (opt_tcp_ports.length > 0 && opt_udp_ports.length > 0)
       port_string << "U:#{opt_udp_ports}" if opt_udp_ports.length > 0
