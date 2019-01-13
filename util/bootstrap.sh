@@ -9,26 +9,26 @@ export RUBY_VERSION="${RUBY_VERSION:=2.5.1}"
 #####
 
 # Clean up apt
-echo  "ClDisablingeaning up apt-daily.service"
+echo "[+] Disablingeaning up apt-daily.service"
 sudo systemctl stop apt-daily.service
 sudo systemctl kill --kill-who=all apt-daily.service
 sudo systemctl disable apt-daily.service
 
-echo  "Disabling apt-daily-upgrade.service"
+echo "[+] Disabling apt-daily-upgrade.service"
 sudo systemctl stop apt-daily-upgrade.timer
 sudo systemctl kill --kill-who=all apt-daily-upgrade.service
 sudo systemctl disable apt-daily-upgrade.service
 
 # wait until `apt-get updated` has been killed
-echo "Wait until apt-get udpate has been killed"
+echo "[+] Wait until apt-get udpate has been killed"
 while ! (systemctl list-units --all apt-daily.service | fgrep -q dead)
 do
-  echo "Waiting for systemd apt-daily.service to die"
+  echo "[+] Waiting for systemd apt-daily.service to die"
   sleep 1;
 done
 
 # Buffer
-echo "Buffer 5 seconds"
+echo "[+] Buffer 5 seconds"
 sleep 5
 
 # Dump current process list
@@ -42,6 +42,9 @@ ps aux > ~/bootstrap_process_list
 #	DPkg::options::="--force-confdef" -o \
 #	DPkg::options::="--force-confold" \
 #	upgrade
+
+echo "[+] Reconfigure Dpkg"
+sudo dpkg --configure -a
 
 echo "[+] Installing Apt Essentials"
 sudo apt-get -y install wget
@@ -57,10 +60,12 @@ echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sud
 sudo add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -sc)-pgdg main"
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 
-##### Install postgres, redis
-echo "[+] Updating Apt..."
+##### Install dependencies after update
+echo "[+] Updating via Apt..."
 sudo apt-get -y update
-#sudo apt-get -y upgrade
+
+echo "[+] Upgrading via Apt..."
+sudo apt-get -y upgrade
 
 echo "[+] Installing Intrigue Dependencies..."
 sudo apt-get -y install make \
