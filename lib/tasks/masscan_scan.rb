@@ -48,7 +48,7 @@ class Masscan < BaseTask
       port_string = ""
       port_string << "#{opt_tcp_ports}" if opt_tcp_ports.length > 0
       port_string << "," if (opt_tcp_ports.length > 0 && opt_udp_ports.length > 0)
-      port_string << "U:#{opt_udp_ports}" if opt_udp_ports.length > 0
+      port_string << "#{opt_udp_ports.split(",").map{|p| "U:#{p}" }.join(",")}" if opt_udp_ports.length > 0
 
       # shell out to masscan and run the scan
       # TODO - move this to scanner mixin
