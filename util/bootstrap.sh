@@ -31,10 +31,6 @@ done
 echo "[+] Buffer 5 seconds"
 sleep 5
 
-# Dump current process list
-echo "Grabbing process list"
-ps aux > ~/bootstrap_process_list
-
 # UPGRADE FULLY NON-INTERACTIVE
 #echo "[+] Preparing the System"
 #sudo DEBIAN_FRONTEND=noninteractive \

@@ -80,23 +80,6 @@ class NmapScan < BaseTask
         end
 
         ip_entity.set_detail("os", host.os.matches)
-        #ip_entity.set_detail("ports", host.each_port.select{|p| p.state == :open}.map{ |p|
-        #                            { "state" => "#{p.state}",
-        #                              "number" => p.number,
-        #                              "protocol" => "#{p.protocol}",
-        #                              "service" => {
-        #                                "protocol" => "#{p.service.protocol}",
-        #                                "ssl" => "#{p.service.ssl?}",
-        #                                "product" => "#{p.service.product}",
-        #                                "version" => "#{p.service.version}",
-        #                                "extra_info" => "#{p.service.extra_info}",
-        #                                "hostname" => "#{p.service.hostname}",
-        #                                "os_type" => "#{p.service.os_type}",
-        #                                "device_type" => "#{p.service.device_type}",
-        #                                "fingerprint_method" => "#{p.service.fingerprint_method}",
-        #                                "fingerprint" => "#{p.service.fingerprint}",
-        #                                "confidence" => "#{p.service.confidence}"
-        #                              }}})
 
         # iterate through all ports
         host.ports.each do |port|
