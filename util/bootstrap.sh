@@ -97,6 +97,16 @@ sudo apt-get -y update && sudo apt-get install -y \
 #  rm -rf dumb-init
 #fi
 
+#####  Install golang & gitrob
+sudo apt-get -y install golang
+
+# add go vars (and note that we source this file later as well)
+echo export GOPATH=$HOME/go >> ~/.bash_profile
+echo export PATH=$PATH:$GOROOT/bin:$GOPATH/bin >> ~/.bash_profile
+source ~/.bash_profile
+
+# get the code
+go get github.com/intrigueio/gitrob
 
 ##### Install masscan
 echo "[+] Installing Masscan"
@@ -136,8 +146,8 @@ fi
 
 # bump file limits
 echo "Bumping ulimit settings"
-echo "* soft nofile 16384" | sudo tee --append /etc/security/limits.conf > /dev/null
-echo "* hard nofile 16384" | sudo tee --append /etc/security/limits.conf > /dev/null
+sudo bash -c "echo * soft nofile 16384 >> /etc/security/limits.conf"
+sudo bash -c "echo * hard nofile 16384 >> /etc/security/limits.conf"
 
 # Set the database to trust
 echo "[+] Updating postgres configuration"
