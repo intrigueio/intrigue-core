@@ -65,7 +65,7 @@ class SaasTrelloCheck < BaseTask
         "name" => "#{service_name}: #{name}",
         "uri" => url,
         "username" => "#{name}",
-        "service" => service_names
+        "service" => service_name
       }
     else
       _log "Nothing found for #{name}"
