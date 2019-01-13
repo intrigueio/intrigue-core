@@ -69,6 +69,12 @@ class DnsBruteSub < BaseTask
     # when we know there's a new host associated)
     wildcard_ips = _check_wildcard(suffix)
 
+    unless wildcard_ips
+      _log_error "Unable to continue, we can't verify wildcard status"
+      @entity.set_detail "wildcard_brute_error", true
+      return
+    end
+
     # Generate alphanumeric list of hostnames and add them to the end of the list
     if opt_brute_alphanumeric_size
       _log "Alphanumeric list generation is pretty huge - this will take a long time" if opt_brute_alphanumeric_size > 3
