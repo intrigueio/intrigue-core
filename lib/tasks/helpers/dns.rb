@@ -4,28 +4,34 @@ module Intrigue
 
       include Intrigue::Task::Generic
 
-      def check_resolv_timeout(lookup_name)
+      def check_resolv_sanity(lookup_name)
 
-        resolver_name = _get_system_config "resolver"
+        resolver_names = _get_system_config("resolvers").split(",")
 
         resolver = Dnsruby::Resolver.new({
           :search => [],
-          :nameserver => [resolver_name],
-          :query_timeout => 10
+          :nameserver => resolver_names,
+          :query_timeout => 15,
+          :retry_delay => 5,
+          :retry_count => 0
         })
 
         begin
           resolver.query(lookup_name)
         rescue Dnsruby::NXDomain => e
-          _log_error "Unable to resolve: #{lookup_name}, no entry exists: #{e}"
+          #_log_good "No timeout! #{e}"
+          return false
         rescue IOError => e
-          _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
+          _log_error "Unable to resolve, ioerror: #{e}"
+          return true
         rescue Dnsruby::SocketEofResolvError => e
-          _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
+          _log_error "Unable to resolve, server failure: #{e}"
+          return true
         rescue Dnsruby::ServFail => e
-          _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
+          _log_error "Unable to resolve, server failure: #{e}"
+          return true
         rescue Dnsruby::ResolvTimeout => e
-          _log_error "Timed out: #{lookup_name}, error: #{e}"
+          _log_error "Timed out"
           return true
         end
 
@@ -49,11 +55,11 @@ module Intrigue
 
       def resolve(lookup_name, lookup_types=[Dnsruby::Types::A, Dnsruby::Types::CNAME, Dnsruby::Types::PTR])
 
-        resolver_name = _get_system_config "resolver"
+        resolver_names = _get_system_config("resolvers").split(",")
 
         resolver = Dnsruby::Resolver.new({
           :search => [],
-          :nameserver => [resolver_name],
+          :nameserver => resolver_names,
           :query_timeout => 10,
           :retry_times => 3,
           :retry_delay => 1
@@ -65,15 +71,19 @@ module Intrigue
           begin
             results << resolver.query(lookup_name, t)
           rescue Dnsruby::NXDomain => e
-            _log_error "Unable to resolve: #{lookup_name}, no entry exists: #{e}"
+            return []
           rescue IOError => e
-            _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
+            _log_error "Error resolving: #{lookup_name}, error: #{e}"
+            return []
           rescue Dnsruby::SocketEofResolvError => e
-            _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
+            _log_error "Error resolving: #{lookup_name}, error: #{e}"
+            return []
           rescue Dnsruby::ServFail => e
-            _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
+            _log_error "Error resolving: #{lookup_name}, error: #{e}"
+            return []
           rescue Dnsruby::ResolvTimeout => e
-            _log_error "Timed out: #{lookup_name}, error: #{e}"
+            _log_error "Error resolving: #{lookup_name}, error: #{e}"
+            return []
           end
         end
 

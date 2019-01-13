@@ -59,10 +59,12 @@ class DnsBruteSub < BaseTask
     if opt_use_file
       _log "Using file: #{opt_filename}"
       subdomain_list = File.read("#{$intrigue_basedir}/data/#{opt_filename}").split("\n")
+      _log "Checking #{subdomain_list.count} subdomains"
     else
       _log "Using provided brute list."
       subdomain_list = opt_brute_list
       subdomain_list = subdomain_list.split(",") if subdomain_list.kind_of? String
+      _log "Checking #{subdomain_list.count} subdomains"
     end
 
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
@@ -77,8 +79,9 @@ class DnsBruteSub < BaseTask
 
     # Generate alphanumeric list of hostnames and add them to the end of the list
     if opt_brute_alphanumeric_size
-      _log "Alphanumeric list generation is pretty huge - this will take a long time" if opt_brute_alphanumeric_size > 3
+      _log "Alphanumeric list generation is pretty huge - this will take a long time" if opt_brute_alphanumeric_size > 2
       subdomain_list.concat(("#{'a' * opt_brute_alphanumeric_size }".."#{'z' * opt_brute_alphanumeric_size}").map {|x| x })
+      _log "Checking #{subdomain_list.count} subdomains"
     end
 
     # Create a queue to hold our list of domains
@@ -210,79 +213,82 @@ class DnsBruteSub < BaseTask
   def _check_wildcard(suffix)
     _log "Checking for wildcards on #{suffix}."
 
+    # First check if we can even get a reliable result
     timeout_count = 0
+    10.times do
+      random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}"
+
+      # keep track of timeouts
+      timeout_count += 1 if check_resolv_sanity random_string
+    end
+
+    # fail if most timed out
+    if timeout_count > 5
+      _log_error "More than 50% of our wildcard checks timed out, cowardly refusing to continue"
+      return nil
+    end
+
+    # Now check for wildcards
     all_discovered_wildcards = []
-      # First we look for a single address that won't exist
-      10.times do
-        random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}"
+    10.times do
+      random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}"
 
-        # keep track of timeouts
-        if check_resolv_timeout random_string
-          timeout_count +=1
-        end
+      # do the resolution
+      resolved_address = _resolve(random_string)
 
-        # do the resolution
-        resolved_address = _resolve(random_string)
-
-        # keep track of it unless we already have it
-        unless resolved_address.nil? || all_discovered_wildcards.include?(resolved_address)
-          all_discovered_wildcards << resolved_address
-        end
-
+      # keep track of it unless we already have it
+      unless resolved_address.nil? || all_discovered_wildcards.include?(resolved_address)
+        all_discovered_wildcards << resolved_address
       end
 
-      # catch wildcard domains that can't resolve as fast as we need
-      if timeout_count > 5
-        _log_error "More than 50% of our wildcard checks timed out, cowardly refusing to continue"
-        return nil
-      end
+    end
 
-      # If that resolved, we know that we're in a wildcard situation.
-      #
-      # Some domains have a pool of IPs that they'll resolve to, so
-      # let's go ahead and test a bunch of different domains to try
-      # and collect those IPs
-      if all_discovered_wildcards.uniq.count > 1
-        _log "Multiple wildcard ips for #{suffix} after resolving these: #{all_discovered_wildcards}."
-        _log "Trying to create an exhaustive list."
+    # If that resolved, we know that we're in a wildcard situation.
+    #
+    # Some domains have a pool of IPs that they'll resolve to, so
+    # let's go ahead and test a bunch of different domains to try
+    # and collect those IPs
+    if all_discovered_wildcards.uniq.count > 1
+      _log "Multiple wildcard ips for #{suffix} after resolving these: #{all_discovered_wildcards}."
+      _log "Trying to create an exhaustive list."
 
-        # Now we have to test for things that return a block of addresses as a wildcard.
-        # we to be adaptive (to a point), so let's keep looking in chuncks until we find
-        # no new ones...
-        no_new_wildcards = false
+      # Now we have to test for things that return a block of addresses as a wildcard.
+      # we to be adaptive (to a point), so let's keep looking in chuncks until we find
+      # no new ones...
+      no_new_wildcards = false
 
-        until no_new_wildcards
-          _log "Testing #{all_discovered_wildcards.count * 20} new entries..."
-          newly_discovered_wildcards = []
+      until no_new_wildcards
+        _log "Testing #{all_discovered_wildcards.count * 20} new entries..."
+        newly_discovered_wildcards = []
 
-          (all_discovered_wildcards.count * 20).times do |x|
-            random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}"
-            resolved_address = _resolve(random_string)
+        (all_discovered_wildcards.count * 20).times do |x|
+          random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}"
+          resolved_address = _resolve(random_string)
 
-            # keep track of it unless we already have it
-            unless resolved_address.nil? || newly_discovered_wildcards.include?(resolved_address)
-              newly_discovered_wildcards << resolved_address
-            end
+          # keep track of it unless we already have it
+          unless resolved_address.nil? || newly_discovered_wildcards.include?(resolved_address)
+            newly_discovered_wildcards << resolved_address
           end
-
-          # check if our newly discovered is a subset of all
-          if (newly_discovered_wildcards - all_discovered_wildcards).empty?
-            _log "Hurray! No new wildcards in #{newly_discovered_wildcards}. Finishing up!"
-            no_new_wildcards = true
-          else
-            _log "Continuing to search, found: #{(newly_discovered_wildcards - all_discovered_wildcards).count} new results."
-            all_discovered_wildcards += newly_discovered_wildcards.uniq
-          end
-
-          _log "Known wildcard count: #{all_discovered_wildcards.uniq.count}"
-          _log "Known wildcards: #{all_discovered_wildcards.uniq}"
         end
 
-      elsif all_discovered_wildcards.uniq.count == 1
-        _log "Only a single wildcard ip: #{all_discovered_wildcards.sort.uniq}"
-      else
-        _log "No wildcard detected! Moving on!"
+        # check if our newly discovered is a subset of all
+        if (newly_discovered_wildcards - all_discovered_wildcards).empty?
+          _log "Hurray! No new wildcards in #{newly_discovered_wildcards}. Finishing up!"
+          no_new_wildcards = true
+        else
+          _log "Continuing to search, found: #{(newly_discovered_wildcards - all_discovered_wildcards).count} new results."
+          all_discovered_wildcards += newly_discovered_wildcards.uniq
+        end
+
+        _log "Known wildcard count: #{all_discovered_wildcards.uniq.count}"
+        _log "Known wildcards: #{all_discovered_wildcards.uniq}"
       end
+
+    elsif all_discovered_wildcards.uniq.count == 1
+      _log "Only a single wildcard ip: #{all_discovered_wildcards.sort.uniq}"
+    else
+      _log "No wildcard detected! Moving on!"
+    end
 
   all_discovered_wildcards.uniq # if it's not a wildcard, this will be an empty array.
   end
