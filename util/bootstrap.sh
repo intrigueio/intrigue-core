@@ -8,6 +8,12 @@ export RUBY_VERSION="${RUBY_VERSION:=2.5.1}"
 ##### SYSTEM SETUP / CONFIG
 #####
 
+# Clean up apt
+sudo rm /var/lib/apt/lists/lock
+sudo rm /var/cache/apt/archives/lock
+sudo rm /var/lib/dpkg/lock
+
+
 # UPGRADE FULLY NON-INTERACTIVE
 echo "[+] Preparing the System"
 sudo DEBIAN_FRONTEND=noninteractive \
@@ -99,7 +105,7 @@ sudo apt-get -y update && sudo apt-get install -y \
 
 #####  Install golang & gitrob
 echo "[+] Installing Golang"
-sudo apt-get -y install golang
+sudo apt-get -y install golang-go
 
 # add go vars (and note that we source this file later as well)
 echo "[+] Installing Golang environment"
