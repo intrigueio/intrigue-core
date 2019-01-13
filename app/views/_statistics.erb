@@ -1,4 +1,3 @@
-
 <h3>Statistics</h3>
 Total Entities: <%= Intrigue::Model::Project.first(:name => @project_name).entities.count %> entities
 <p>
@@ -14,12 +13,3 @@ Total Entities: <%= Intrigue::Model::Project.first(:name => @project_name).entit
     <% end %>
   </ul>
 </p>
-<% if Intrigue::Model::Project.first(:name => @project_name).seeds %>
-  <h3>Seeds</h3>
-  <p>
-  <%= Intrigue::Model::Project.first(:name => @project_name).seeds.count %> seeds:
-  <ul>
-    <%= Intrigue::Model::Project.first(:name => @project_name).seeds.map{|x| "<li>#{x["type"]}##{x["name"]}</li>" }.join("") %>
-  </ul>
-  </p>
-<% end%>
