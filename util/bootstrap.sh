@@ -135,8 +135,9 @@ else
 fi
 
 # bump file limits
-sudo echo "* soft nofile 16384" >> /etc/security/limits.conf
-sudo echo "* hard nofile 16384" >> /etc/security/limits.conf
+echo "Bumping ulimit settings"
+echo "* soft nofile 16384" | sudo tee --append /etc/security/limits.conf > /dev/null
+echo "* hard nofile 16384" | sudo tee --append /etc/security/limits.conf > /dev/null
 
 # Set the database to trust
 echo "[+] Updating postgres configuration"

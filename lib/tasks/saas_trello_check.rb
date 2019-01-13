@@ -38,11 +38,11 @@ class SaasTrelloCheck < BaseTask
   end
 
   def check_and_create(name)
-    uri = "https://trello.com/#{name}"
+    url = "https://trello.com/#{name}"
 
     begin
       session = create_browser_session
-      document = capture_document session, uri
+      document = capture_document session, url
       title = document[:title]
       body = document[:contents]
     ensure
