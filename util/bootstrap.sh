@@ -9,15 +9,31 @@ export RUBY_VERSION="${RUBY_VERSION:=2.5.1}"
 #####
 
 # Clean up apt
+echo  "ClDisablingeaning up apt-daily.service"
 sudo systemctl stop apt-daily.service
 sudo systemctl kill --kill-who=all apt-daily.service
+sudo systemctl disable apt-daily.service
+
+echo  "Disabling apt-daily-upgrade.service"
+sudo systemctl stop apt-daily-upgrade.timer
+sudo systemctl kill --kill-who=all apt-daily-upgrade.service
+sudo systemctl disable apt-daily-upgrade.service
 
 # wait until `apt-get updated` has been killed
+echo "Wait until apt-get udpate has been killed"
 while ! (systemctl list-units --all apt-daily.service | fgrep -q dead)
 do
   echo "Waiting for systemd apt-daily.service to die"
   sleep 1;
 done
+
+# Buffer
+echo "Buffer 5 seconds"
+sleep 5
+
+# Dump current process list
+echo "Grabbing process list"
+ps aux > ~/bootstrap_process_list
 
 # UPGRADE FULLY NON-INTERACTIVE
 #echo "[+] Preparing the System"
@@ -31,10 +47,12 @@ echo "[+] Installing Apt Essentials"
 sudo apt-get -y install wget
 
 ##### Add external repositories
+
 # chrome repo
 echo "[+] Adding Third Party Repos"
 wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
 echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+
 # postgres repo
 sudo add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -sc)-pgdg main"
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
