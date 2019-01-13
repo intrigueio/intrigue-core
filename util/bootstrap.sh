@@ -146,12 +146,15 @@ sudo apt-get -y install make \
 
 # add go vars (and note that we source this file later as well)
 echo "[+] Installing Golang environment"
+# ensure we have the path
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+# and for later
 echo export GOPATH=$HOME/go >> ~/.bash_profile
 echo export PATH=$PATH:$GOROOT/bin:$GOPATH/bin >> ~/.bash_profile
-source ~/.bash_profile > /dev/null
 
 # get the code
-echo "[+] Getting Gitrob"
+echo "[+] Getting Gitrob... "
 go get github.com/intrigueio/gitrob
 
 ##### Install masscan
