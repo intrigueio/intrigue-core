@@ -13,7 +13,7 @@ class DnsTransferZone < BaseTask
       :type => "discovery",
       :passive => false,
       :example_entities => [
-        {"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}
+        {"type" => "Domain", "details" => {"name" => "intrigue.io"}}
       ],
       :allowed_options => [ ],
       :created_types => ["DnsRecord","Info"]
@@ -46,16 +46,15 @@ class DnsTransferZone < BaseTask
         zt.server = nameserver
         zone = zt.transfer(domain_name)
 
-        _create_entity "Info", {
-          "name" => "Zone Transfer",
-          "content" => "#{nameserver} -> #{domain_name}",
-          "details" => zone
+        _create_entity "Finding", {
+          "name" => "AXFR enabled on #{domain_name}",
+          "nameserver" => "#{nameserver}"
         }
 
         # Create host records for each item in the zone
         zone.each do |z|
-          if z.type == "SOA" || z.type == "TXT"
-            _create_entity "DnsRecord", { "name" => z.name.to_s, "type" => z.type.to_s, "content" => "#{z.to_s}" }
+          if z.type == "SOA"
+            _create_entity "Domain", { "name" => z.name.to_s, "record_type" => z.type.to_s, "record_content" => "#{z.to_s}" }
           else
             # Check to see what type this record's content is.
             # MX records are of form: [10, #<Dnsruby::Name: vv-cephei.ac-grenoble.fr.>
@@ -63,7 +62,7 @@ class DnsTransferZone < BaseTask
 
             # Check to see if it's an ip address or a dns record
             #record.is_ip_address? ? entity_type = "IpAddress" : entity_type = "DnsRecord"
-            _create_entity "DnsRecord", { "name" => "#{record}", "type" => "#{z.type.to_s}", "content" => "#{record}" }
+            _create_entity "DnsRecord", { "name" => "#{record}", "record_type" => "#{z.type.to_s}", "record_content" => "#{record}" }
           end
         end
 
