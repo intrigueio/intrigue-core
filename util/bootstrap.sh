@@ -9,23 +9,23 @@ export RUBY_VERSION="${RUBY_VERSION:=2.5.1}"
 #####
 
 # Clean up apt
-sudo rm /var/lib/apt/lists/lock
-sudo rm /var/cache/apt/archives/lock
-sudo rm /var/lib/dpkg/lock
-
+#echo "[+] Cleaning apt locks"
+#sudo rm /var/lib/apt/lists/lock
+#sudo rm /var/cache/apt/archives/lock
+#sudo rm /var/lib/dpkg/lock
 
 # UPGRADE FULLY NON-INTERACTIVE
-echo "[+] Preparing the System"
-sudo DEBIAN_FRONTEND=noninteractive \
-	apt-get -y -o \
-	DPkg::options::="--force-confdef" -o \
-	DPkg::options::="--force-confold" \
-	upgrade
+#echo "[+] Preparing the System"
+#sudo DEBIAN_FRONTEND=noninteractive \
+#	apt-get -y -o \
+#	DPkg::options::="--force-confdef" -o \
+#	DPkg::options::="--force-confold" \
+#	upgrade
 
 # UPGRADE FULLY NON-INTERACTIVE
 # See: https://askubuntu.com/questions/146921/how-do-i-apt-get-y-dist-upgrade-without-a-grub-config-prompt
-sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o DPkg::options::="--force-confdef" -o DPkg::options::="--force-confold" install grub-pc
-sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade
+#sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o DPkg::options::="--force-confdef" -o DPkg::options::="--force-confold" install grub-pc
+#sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade
 
 echo "[+] Installing System Essentials"
 sudo apt-get -y install git git-core bzip2 autoconf bison build-essential apt-utils software-properties-common lsb-release sudo wget make
