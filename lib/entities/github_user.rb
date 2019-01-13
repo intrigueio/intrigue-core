@@ -11,7 +11,7 @@ class GithubUser < Intrigue::Model::Entity
   end
 
   def validate_entity
-    name =~ /^\w.*/ && details["uri"] =~ /^.*/
+    name =~ /^\w.*/
   end
 
   def enrichment_tasks
