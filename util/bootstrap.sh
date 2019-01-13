@@ -27,12 +27,12 @@ export RUBY_VERSION="${RUBY_VERSION:=2.5.1}"
 #sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o DPkg::options::="--force-confdef" -o DPkg::options::="--force-confold" install grub-pc
 #sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade
 
-echo "[+] Installing System Essentials"
-sudo apt-get -y install git git-core bzip2 autoconf bison build-essential apt-utils software-properties-common lsb-release sudo wget make
+echo "[+] Installing Apt Essentials"
+sudo apt-get -y install sudo wget
 
 ##### Add external repositories
 # chrome repo
-echo "[+] Adding 3rd Party Repos"
+echo "[+] Adding Third Party Repos"
 wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
 echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
 # postgres repo
@@ -40,15 +40,44 @@ sudo add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_rele
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 
 ##### Install postgres, redis
-echo "[+] Updating from Third Party Reposoitories ..."
+echo "[+] Updating Apt..."
 sudo apt-get -y update
-sudo apt-get -y upgrade
+#sudo apt-get -y upgrade
 
 echo "[+] Installing Intrigue Dependencies..."
-sudo apt-get -y install libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libsqlite3-dev net-tools libpq-dev postgresql-9.6 postgresql-server-dev-9.6 redis-server boxes nmap zmap default-jre thc-ipv6 unzip curl git gcc make libpcap-dev
-
-echo "[+] Installing Google Chrome Headless dependencies"
-sudo apt-get -y update && sudo apt-get install -y \
+sudo apt-get -y install make \
+  git \
+  git-core \
+  bzip2 \
+  autoconf \
+  bison \
+  build-essential \
+  apt-utils \
+  software-properties-common \
+  lsb-release \
+  libssl-dev \
+  libyaml-dev \
+  libreadline6-dev \
+  zlib1g-dev \
+  libncurses5-dev \
+  libffi-dev \
+  libsqlite3-dev \
+  net-tools \
+  libpq-dev \
+  postgresql-9.6 \
+  postgresql-server-dev-9.6 \
+  redis-server \
+  boxes \
+  nmap \
+  zmap \
+  default-jre \
+  thc-ipv6 \
+  unzip \
+  curl \
+  git \
+  gcc \
+  make \
+  libpcap-dev \
   fontconfig \
   locales \
   gconf-service \
@@ -89,23 +118,8 @@ sudo apt-get -y update && sudo apt-get install -y \
   libnss3 \
   lsb-release \
   xdg-utils \
-  google-chrome-stable
-
-# Get dumb-init
-#echo "[+] Installing dumb-init"
-#if [ ! -f /usr/bin/dumb-init ]; then
-#  mkdir dumb-init
-#  cd dumb-init
-#  wget -q "https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64"
-#  sudo cp dumb-init_1.2.0_amd64 /usr/bin/dumb-init
-#  sudo chmod +x /usr/bin/dumb-init
-#  cd ..
-#  rm -rf dumb-init
-#fi
-
-#####  Install golang & gitrob
-echo "[+] Installing Golang"
-sudo apt-get -y install golang-go
+  google-chrome-stable \
+  golang-go
 
 # add go vars (and note that we source this file later as well)
 echo "[+] Installing Golang environment"
