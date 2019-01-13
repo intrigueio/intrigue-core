@@ -98,14 +98,17 @@ sudo apt-get -y update && sudo apt-get install -y \
 #fi
 
 #####  Install golang & gitrob
+echo "[+] Installing Golang"
 sudo apt-get -y install golang
 
 # add go vars (and note that we source this file later as well)
+echo "[+] Installing Golang environment"
 echo export GOPATH=$HOME/go >> ~/.bash_profile
 echo export PATH=$PATH:$GOROOT/bin:$GOPATH/bin >> ~/.bash_profile
-source ~/.bash_profile
+source ~/.bash_profile > /dev/null
 
 # get the code
+echo "[+] Getting Gitrob"
 go get github.com/intrigueio/gitrob
 
 ##### Install masscan
@@ -165,7 +168,7 @@ if [ ! -d ~/.rbenv ]; then
   cd ~/.rbenv && src/configure && make -C src
   echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bash_profile
   echo 'eval "$(rbenv init -)"' >> ~/.bash_profile
-  source ~/.bash_profile
+  source ~/.bash_profile > /dev/null
   # manually load it up... for docker
   eval "$(rbenv init -)"
   export PATH="$HOME/.rbenv/bin:$PATH"
@@ -193,7 +196,7 @@ else
   echo "[+] Using Ruby $RUBY_VERSION"
 fi
 
-source ~/.bash_profile
+source ~/.bash_profile > /dev/null
 rbenv global $RUBY_VERSION
 echo "Ruby version: `ruby -v`"
 
