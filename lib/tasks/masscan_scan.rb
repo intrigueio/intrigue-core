@@ -48,11 +48,11 @@ class Masscan < BaseTask
       port_string = "-p"
       port_string << "#{opt_tcp_ports}" if opt_tcp_ports.length > 0
       port_string << "," if (opt_tcp_ports.length > 0 && opt_udp_ports.length > 0)
-      port_string << "#{opt_udp_ports.split(",").map{|x| "U:#{x}" }.join(",")}" if opt_udp_ports.length > 0
+      port_string << "U:#{opt_udp_ports}" if opt_udp_ports.length > 0
 
       # shell out to masscan and run the scan
       # TODO - move this to scanner mixin
-      masscan_string = "masscan #{port_string} --max-rate #{opt_max_rate} -oL #{temp_file.path} --range #{to_scan}"
+      masscan_string = "masscan --ports #{port_string} --max-rate #{opt_max_rate} -oL #{temp_file.path} --range #{to_scan}"
       masscan_string = "sudo #{masscan_string}" unless Process.uid == 0
 
       _log "Running... #{masscan_string}"
