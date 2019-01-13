@@ -9,10 +9,15 @@ export RUBY_VERSION="${RUBY_VERSION:=2.5.1}"
 #####
 
 # Clean up apt
-#echo "[+] Cleaning apt locks"
-#sudo rm /var/lib/apt/lists/lock
-#sudo rm /var/cache/apt/archives/lock
-#sudo rm /var/lib/dpkg/lock
+sudo systemctl stop apt-daily.service
+sudo systemctl kill --kill-who=all apt-daily.service
+
+# wait until `apt-get updated` has been killed
+while ! (systemctl list-units --all apt-daily.service | fgrep -q dead)
+do
+  echo "Waiting for systemd apt-daily.service to die"
+  sleep 1;
+done
 
 # UPGRADE FULLY NON-INTERACTIVE
 #echo "[+] Preparing the System"
@@ -22,13 +27,8 @@ export RUBY_VERSION="${RUBY_VERSION:=2.5.1}"
 #	DPkg::options::="--force-confold" \
 #	upgrade
 
-# UPGRADE FULLY NON-INTERACTIVE
-# See: https://askubuntu.com/questions/146921/how-do-i-apt-get-y-dist-upgrade-without-a-grub-config-prompt
-#sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o DPkg::options::="--force-confdef" -o DPkg::options::="--force-confold" install grub-pc
-#sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade
-
 echo "[+] Installing Apt Essentials"
-sudo apt-get -y install sudo wget
+sudo apt-get -y install wget
 
 ##### Add external repositories
 # chrome repo
