@@ -20,7 +20,7 @@ module System
       machine = p["machine"] || "org_asset_discovery_active"
       depth = p["depth"] || 5
       options = p["options"] || []
-      handlers = p["handlers"] || []
+      per_scan_handlers = p["per_scan_handlers"] || []
       auto_enrich = p["auto_enrich"] || true
       auto_scope = true
       project.use_standard_exceptions = p["use_standard_exceptions"] || true
@@ -57,9 +57,9 @@ module System
               created_entity = Intrigue::EntityManager.create_first_entity(
                 project_name, entity["type"], entity["details"]["name"], entity["details"])
 
-              # Kick off the task
+              # Kick off the task (don't set handler on the task)
               task_result = start_task(nil, project, nil, task_name,
-                created_entity, depth, options, handlers, machine, auto_enrich, auto_scope)
+                created_entity, depth, options, per_scan_handlers, machine, auto_enrich, auto_scope)
 
               # Manually start enrichment for the first entity
               created_entity.enrich(task_result) if auto_enrich
