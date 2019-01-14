@@ -8,7 +8,9 @@ module System
 
     # XXX - Assumes we start at a clean system!!!!
     config["projects"].each do |p|
+
       project_name = p["name"]
+      @task_result.log "Working on project: #{project_name}" if @task_result
 
       project = Intrigue::Model::Project.find_or_create(:name => "#{project_name}")
 
@@ -19,38 +21,56 @@ module System
       project.seeds = p["seeds"].map{|s| _parse_entity s["entity"] }
       project.save
 
-      @task_result.log "Working on project: #{project_name}" if @task_result
-      p["seeds"].each do |s|
-        @task_result.log " - Seed: #{s}" if @task_result
+      # Create a queue to hold our list of seeds
+      work_q = Queue.new
 
-        entity = _parse_entity s["entity"]
-        task_name = s["task"] || "create_entity"
-        machine = p["machine"] || "org_asset_discovery_active"
-        depth = s["depth"] || 5
-        options = s["options"] || []
-        handlers = s["handlers"] || []
-        auto_scope = true
-
-        # Create & scope the entity
-        created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"])
-
-        # Kick off the task
-        task_result = start_task(nil, project, nil, task_name, created_entity, depth, options, handlers, machine, auto_enrich, auto_scope)
-
-        # Manually start enrichment for the first entity
-        created_entity.enrich(task_result) if auto_enrich
-
+      # Enqueue our seeds
+      project.seeds.each do |s|
+        work_q.push(s)
       end
 
-      # sometimes we need to run a custom command in the context of a project
-      if p["custom_commands"]
-        p["custom_commands"].each do |c|
-          Dir.chdir($intrigue_basedir) do
-            `#{c["command"]}`
+      # Create a pool of worker threads to work on the queue
+      max_threads = 50
+
+       workers = (0...max_threads).map do
+        Thread.new do
+          _log "Starting thread"
+          begin
+
+            while entity = work_q.pop(true)
+              @task_result.log "Working on seed: #{entity}" if @task_result
+
+              task_name = p["task"] || "create_entity"
+              machine = p["machine"] || "org_asset_discovery_active"
+              depth = p["depth"] || 5
+              options = p["options"] || []
+              handlers = p["handlers"] || []
+              auto_scope = true
+
+              # Create & scope the entity
+              created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"])
+
+              # Kick off the task
+              task_result = start_task(nil, project, nil, task_name, created_entity, depth, options, handlers, machine, auto_enrich, auto_scope)
+
+              # Manually start enrichment for the first entity
+              created_entity.enrich(task_result) if auto_enrich
+            end
+
+            # sometimes we need to run a custom command in the context of a project
+            if p["custom_commands"]
+              p["custom_commands"].each do |c|
+                Dir.chdir($intrigue_basedir) do
+                  `#{c["command"]}`
+                end
+              end
+            end
+
+          rescue ThreadError
           end
         end
-      end
-
+      end; "ok"
+      workers.map(&:join); "ok"
     end
   end
 

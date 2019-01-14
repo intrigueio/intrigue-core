@@ -129,7 +129,6 @@ class EntityManager
 
     # check if this is actually an exception (no-traverse for this proj) entity
     no_traverse_regex = project.exception_entity?(name, type_string, skip_regexes)
-    #task_result.log "Checking if #{type_string}##{name} matches a no-traverse regex: #{no_traverse_regex}"
 
     # Check if there's an existing entity, if so, merge and move forward
     if entity
@@ -139,11 +138,13 @@ class EntityManager
       # if it already exists, it'll have an alias group ID and we'll
       # want to use that to preserve pre-existing relatiohships
       # also... prevents an enrichment loop
+      created_entity = entity
       entity_already_existed = true
 
     else
       tr.log_good "New Entity: #{type_string} #{name}. Scoped: #{tr.auto_scope}. No-Traverse: #{no_traverse_regex}"
       new_entity = true
+
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
       $db.transaction do
@@ -180,7 +181,7 @@ class EntityManager
         begin
 
           # Create a new entity in that group
-          entity = Intrigue::Model::Entity.update_or_create( {name: downcased_name}, entity_details)
+          created_entity = Intrigue::Model::Entity.update_or_create( {name: downcased_name}, entity_details)
 
           unless entity
             tr.log_fatal "Unable to create entity: #{entity_details}"
@@ -199,7 +200,7 @@ class EntityManager
     end
 
     # necessary to relookup?
-    created_entity = Intrigue::Model::Entity.find(:id => entity.id)
+    #created_entity = Intrigue::Model::Entity.find(:id => entity.id)
 
     ### Ensure we have an entity
     unless created_entity
