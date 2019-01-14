@@ -31,7 +31,7 @@ module System
 
       # Create a pool of worker threads to work on the queue
       max_threads = 20
-      max_threads = 50 if p["seeds"] > 50
+      max_threads = 50 if p["seeds"].count > 50
        workers = (0...max_threads).map do
         Thread.new do
           _log "Starting thread"
