@@ -48,7 +48,7 @@ module System
        workers = (0...max_threads).map do
         Thread.new do
           _log "Starting thread"
-          #begin
+          begin
 
             while entity = work_q.pop(true)
               @task_result.log "Working on seed: #{entity}" if @task_result
@@ -65,8 +65,8 @@ module System
               created_entity.enrich(task_result) if auto_enrich
             end
 
-          #rescue ThreadError
-          #end
+          rescue ThreadError
+          end
         end
       end; "ok"
       workers.map(&:join); "ok"
