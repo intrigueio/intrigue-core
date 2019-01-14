@@ -12,9 +12,9 @@ class SearchGithubCode < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["GithubUser","GithubRepository"],
+      :allowed_types => ["GithubAccount","GithubRepository"],
       :example_entities => [
-        {"type" => "GithubUser", "details" => {"name" => "intrigueio"}}],
+        {"type" => "GithubAccount", "details" => {"name" => "intrigueio"}}],
       :allowed_options => [
         {:name => "keywords", :regex => "alpha_numeric", :default => "password" },
         {:name => "max_item_count", :regex => "integer", :default => 5 },
@@ -33,7 +33,7 @@ class SearchGithubCode < BaseTask
 
     keywords.split(",").each do |keyword|
       # Search users
-      if entity_type == "GithubUser"
+      if entity_type == "GithubAccount"
         search_uri = "https://api.github.com/search/code?q=#{keyword} user:#{entity_name}"
       elsif entity_type == "GithubRepository"
         search_uri = "https://api.github.com/search/code?q=#{keyword} repo:#{entity_name}"

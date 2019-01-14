@@ -51,6 +51,7 @@ class EntityManager
       type = resolve_type_from_string(type_string)
       $db.transaction do
         begin
+
           g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
 
           entity = Intrigue::Model::Entity.create({
@@ -138,7 +139,6 @@ class EntityManager
       # if it already exists, it'll have an alias group ID and we'll
       # want to use that to preserve pre-existing relatiohships
       # also... prevents an enrichment loop
-      created_entity = entity
       entity_already_existed = true
 
     else
@@ -181,7 +181,7 @@ class EntityManager
         begin
 
           # Create a new entity in that group
-          created_entity = Intrigue::Model::Entity.update_or_create( {name: downcased_name}, entity_details)
+          entity = Intrigue::Model::Entity.update_or_create( {name: downcased_name}, entity_details)
 
           unless entity
             tr.log_fatal "Unable to create entity: #{entity_details}"
@@ -200,7 +200,7 @@ class EntityManager
     end
 
     # necessary to relookup?
-    #created_entity = Intrigue::Model::Entity.find(:id => entity.id)
+    created_entity = Intrigue::Model::Entity.find(:id => entity.id)
 
     ### Ensure we have an entity
     unless created_entity
@@ -262,7 +262,6 @@ class EntityManager
       task_result.log "Skipping enrichment... entity exists!" if entity_already_existed
     end
 
-    #task_result.log "Created entity: #{created_entity.name}"
   # return the entity
   created_entity
   end

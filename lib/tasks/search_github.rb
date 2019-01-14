@@ -15,10 +15,8 @@ class SearchGithub < BaseTask
       :allowed_types => ["Organization","String"],
       :example_entities => [
         {"type" => "String", "details" => {"name" => "intrigue"}}],
-      :allowed_options => [
-        {:name => "max_item_count", :regex => "integer", :default => 20 },
-      ],
-      :created_types => ["GithubRepository","GithubUser"]
+      :allowed_options => [],
+      :created_types => ["GithubRepository","GithubAccount"]
     }
   end
 
@@ -31,13 +29,39 @@ class SearchGithub < BaseTask
     # Search users
     search_uri = "https://api.github.com/search/users?q=#{entity_name}"
     response = _get_response(search_uri)
-    _parse_items(response["items"],"GithubUser")
+    # Create
+    response["items"].each do |result|
+      _create_entity "GithubAccount", {
+        "name" => result["login"],
+        "uri" => result["html_url"],
+        "account_type" => result["type"],
+        "raw" => result
+      }
+    end
 
-    # Search respositories
+    # Search repositories
     search_uri = "https://api.github.com/search/repositories?q=#{entity_name}"
     response = _get_response(search_uri)
-    _parse_items(response["items"],"GithubRepository")
+    # Create
+    response["items"].each do |result|
+      _create_entity "GithubRepository", {
+        "name" => result["full_name"],
+        "uri" => result["html_url"],
+        "raw" => result
+      }
+    end
 
+    # grab the users from the repo strings
+    response["items"].each do |result|
+      _create_entity "GithubAccount", {
+        "name" => result["owner"]["login"],
+        "uri" => result["owner"]["html_url"],
+        "account_type" => result["owner"]["type"],
+        "raw" => result["owner"]
+      }
+    end
+
+    # Issues
     #search_uri = "https://api.github.com/search/issues?q=#{entity_name}"
     #response = _search_github(search_uri,"GithubIssue")
     #_parse_items response["items"]
@@ -57,24 +81,6 @@ class SearchGithub < BaseTask
     # TODO deal with pagination here
     _log "API responded with #{response["total_count"]} items!"
   response
-  end
-
-  def _parse_items(items,type)
-    # make sure we don't have too many items
-
-
-    max_item_count = [items.count,_get_option("max_item_count")].min
-    _log "Processing #{max_item_count} #{type} entities"
-
-    # only do 10 items max
-    items[0..max_item_count].each do |result|
-      _log "Processing #{type}: #{ result["full_name"] || result["login"] }"
-      _create_entity type, {
-        "name" => result["full_name"] || result["login"],
-        "uri" => result["html_url"],
-        "raw" => result
-      }
-    end
   end
 
 end
