@@ -32,12 +32,12 @@ echo "[+] Buffer 5 seconds"
 sleep 5
 
 # UPGRADE FULLY NON-INTERACTIVE
-#echo "[+] Preparing the System"
-#sudo DEBIAN_FRONTEND=noninteractive \
-#	apt-get -y -o \
-#	DPkg::options::="--force-confdef" -o \
-#	DPkg::options::="--force-confold" \
-#	upgrade
+echo "[+] Preparing the System by upgrading"
+sudo DEBIAN_FRONTEND=noninteractive \
+	apt-get -y -o \
+	DPkg::options::="--force-confdef" -o \
+	DPkg::options::="--force-confold" \
+	upgrade
 
 echo "[+] Reconfigure Dpkg"
 sudo dpkg --configure -a
@@ -59,9 +59,6 @@ wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-
 ##### Install dependencies after update
 echo "[+] Updating via Apt..."
 sudo apt-get -y update
-
-echo "[+] Upgrading via Apt..."
-sudo apt-get -y upgrade
 
 echo "[+] Installing Intrigue Dependencies..."
 sudo apt-get -y install make \
