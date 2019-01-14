@@ -16,7 +16,7 @@ class DnsTransferZone < BaseTask
         {"type" => "Domain", "details" => {"name" => "intrigue.io"}}
       ],
       :allowed_options => [ ],
-      :created_types => ["DnsRecord","Info"]
+      :created_types => ["DnsRecord","Finding"]
     }
   end
 
@@ -46,9 +46,14 @@ class DnsTransferZone < BaseTask
         zt.server = nameserver
         zone = zt.transfer(domain_name)
 
+        # create a finding
         _create_entity "Finding", {
-          "name" => "AXFR enabled on #{domain_name}",
-          "nameserver" => "#{nameserver}"
+          "name" => "AXFR enabled on #{domain_name} using #{nameserver}",
+          "finding_type" => "dns_zone_transfer",
+          "finding_details" => {
+            "count" => "#{result.split("\n").count}",
+            "records" => result.split("\n")
+          }
         }
 
         # Create host records for each item in the zone
