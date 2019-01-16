@@ -188,8 +188,8 @@ fi
 
 # bump file limits
 echo "Bumping ulimit settings"
-sudo bash -c "echo * soft nofile 16384 >> /etc/security/limits.conf"
-sudo bash -c "echo * hard nofile 16384 >> /etc/security/limits.conf"
+sudo bash -c "echo * soft nofile 65535 >> /etc/security/limits.conf"
+sudo bash -c "echo * hard nofile 65535 >> /etc/security/limits.conf"
 
 # Set the database to trust
 echo "[+] Updating postgres configuration"
