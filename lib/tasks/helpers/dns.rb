@@ -6,15 +6,16 @@ module Intrigue
 
       def check_resolv_sanity(lookup_name)
 
-        resolver_names = _get_system_config("resolvers").split(",")
-
-        resolver = Dnsruby::Resolver.new({
+        config = {
           :search => [],
-          :nameserver => resolver_names,
-          :query_timeout => 15,
-          :retry_delay => 5,
-          :retry_count => 0
-        })
+          :query_timeout => 30
+        }
+
+        if _get_system_config("resolvers")
+          config[:nameserver] = _get_system_config("resolvers").split(",")
+        end
+
+        resolver = Dnsruby::Resolver.new(config)
 
         begin
           resolver.query(lookup_name)
@@ -55,15 +56,16 @@ module Intrigue
 
       def resolve(lookup_name, lookup_types=[Dnsruby::Types::A, Dnsruby::Types::CNAME, Dnsruby::Types::PTR])
 
-        resolver_names = _get_system_config("resolvers").split(",")
-
-        resolver = Dnsruby::Resolver.new({
+        config = {
           :search => [],
-          :nameserver => resolver_names,
-          :query_timeout => 10,
-          :retry_times => 3,
-          :retry_delay => 1
-        })
+          :query_timeout => 30
+        }
+
+        if _get_system_config("resolvers")
+          config[:nameserver] = _get_system_config("resolvers").split(",")
+        end
+
+        resolver = Dnsruby::Resolver.new(config)
 
         results = []
         lookup_types.each do |t|
