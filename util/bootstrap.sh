@@ -45,7 +45,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
   Dpkg::Options::="--force-confdef" -o \
   Dpkg::Options::="--force-confold" \
   install grub-pc
-  
+
 echo "[+] Preparing the System by dist-upgrading"
 sudo DEBIAN_FRONTEND=noninteractive \
   apt-get -y -o \
@@ -149,7 +149,8 @@ sudo apt-get -y install make \
   lsb-release \
   xdg-utils \
   google-chrome-stable \
-  golang-go
+  golang-go \
+  dnsmasq
 
 # add go vars (and note that we source this file later as well)
 echo "[+] Installing Golang environment"
