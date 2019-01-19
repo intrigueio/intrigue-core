@@ -39,6 +39,20 @@ sudo DEBIAN_FRONTEND=noninteractive \
 	DPkg::options::="--force-confold" \
 	upgrade
 
+echo "[+] Preparing the System by installing grub-pc"
+sudo DEBIAN_FRONTEND=noninteractive \
+  apt-get -y -o \
+  Dpkg::Options::="--force-confdef" -o \
+  Dpkg::Options::="--force-confold" \
+  install grub-pc
+  
+echo "[+] Preparing the System by dist-upgrading"
+sudo DEBIAN_FRONTEND=noninteractive \
+  apt-get -y -o \
+  Dpkg::Options::="--force-confdef" -o \
+  Dpkg::Options::="--force-confold" \
+  dist-upgrade
+
 echo "[+] Reconfigure Dpkg"
 sudo dpkg --configure -a
 
