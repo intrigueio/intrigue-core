@@ -1,7 +1,8 @@
 require_relative '../spec_helper'
 
-describe "Intrigue v1.0 Tasks" do
-  describe "DnsSubBruteTask" do
+describe "Intrigue" do
+describe "Task" do
+describe "DnsBruteSub" do
 
     ###
     ### This test runs a dns_brute_sub with the brute_list option, allowing us to check
@@ -35,5 +36,6 @@ describe "Intrigue v1.0 Tasks" do
       #expect(result["entities"]).to match correct
     end
 
-  end
+end
+end
 end

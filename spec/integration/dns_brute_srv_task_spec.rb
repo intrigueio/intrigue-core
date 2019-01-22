@@ -1,7 +1,8 @@
 require_relative '../spec_helper'
 
-describe "Intrigue v1.0 Tasks" do
-  describe "DnsSrvBruteTask" do
+describe "Intrigue" do
+describe "Task" do
+describe "DnsBruteSrv" do
 
     ###
     ### dns_brute_srv
@@ -19,5 +20,6 @@ describe "Intrigue v1.0 Tasks" do
       #expect(result["entities"]).to exist
     end
 
-  end
+end
+end
 end

@@ -6,6 +6,7 @@ module Whois
 
   include Intrigue::Task::Web
 
+
   def whois(lookup_string)
 
     begin
@@ -50,11 +51,17 @@ module Whois
       if out["whois_full_text"] =~ /RIPE/
         out = _whois_query_ripe_ip(lookup_string, out)
       elsif out["whois_full_text"] =~ /APNIC/
-        _log_error "APNIC specific lookups not yet enabled"
-      elsif out["whois_full_text"] =~ /LACNIC/
-        _log_error "LACNIC specific lookups not yet enabled"
+        _log "using RDAP to query APNIC"
+        rdap_info = _rdap_ip_lookup lookup_string
+        out = out.merge(rdap_info)
+      elsif out["whois_full_text"] =~ /Joint Whois - whois.lacnic.net/
+        _log "using RDAP to query LACNIC"
+        rdap_info = _rdap_ip_lookup lookup_string
+        out = out.merge(rdap_info)
       elsif out["whois_full_text"] =~ /AFRINIC/
-        _log_error "AFRINIC specific lookups not yet enabled"
+        _log "using RDAP to query AFRINIC"
+        rdap_info = _rdap_ip_lookup lookup_string
+        out = out.merge(rdap_info)
       else # Default to ARIN
         out = _whois_query_arin_ip(lookup_string, out)
       end
@@ -134,6 +141,43 @@ module Whois
 
 
   private  # helper methods for parsing
+
+  # use RDAP to query an IP
+  def _rdap_ip_lookup(ip_address)
+    response = http_get_body "https://rdap.arin.net/registry/ip/#{ip_address}"
+
+    begin
+      json = JSON.parse(response)
+    rescue JSON::ParserError => e
+      return nil
+    end
+
+    # This is just terrible. I am ashamed.
+    start_address = json["startAddress"]
+    if response =~ /apnic/
+      regex = Regexp.new(/rdap.apnic.net\/ip\/\d.\d.\d.\d\/(\d*)\",/)
+      match = response.match(regex)
+      cidr_length = match.captures.first.strip if match
+    else # do something sane
+      cidr_length = "#{json["handle"]}".split("/").last
+    end
+
+    description = "Queried via RDAP: #{json["links"].first["value"]}"
+    type = "#{json["type"]}"
+
+    # return a standard set of info
+    out = {
+      "name" => "#{start_address}/#{cidr_length}",
+      "start_address" => "#{start_address}",
+      "end_address" => "#{json["endAddress"]}",
+      "cidr" => "#{cidr_length}",
+      "description" => "#{description}",
+      "block_type" => "#{type}"
+    }
+
+  out
+  end
+
 
   # returns a hash that can create a netblock
   def _whois_query_ripe_ip(lookup_string,out={})

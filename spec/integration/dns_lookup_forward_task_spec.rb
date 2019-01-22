@@ -1,7 +1,9 @@
 require_relative '../spec_helper'
 
-describe "Intrigue v1.0 Tasks" do
-  describe "DnsLookupForwardTask" do
+describe "Intrigue" do
+describe "Task" do
+describe "DnsLookupForward" do
+
 
     ###
     ### dns_lookup_forward
@@ -27,5 +29,6 @@ describe "Intrigue v1.0 Tasks" do
       expect(result["entity_ids"].first["details"]["name"]).to match /192.0.78.*/
     end
 
-  end
+end
+end
 end

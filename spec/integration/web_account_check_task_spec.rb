@@ -1,7 +1,8 @@
 require_relative '../spec_helper'
 
-describe "Intrigue v1.0 Tasks" do
-  describe "WebAccountCheckTask" do
+describe "Intrigue" do
+describe "Task" do
+describe "WebAccountCheck" do
 
 
     it "checks each site in data/web_accounts_list.json for false negatives" do
@@ -52,4 +53,5 @@ describe "Intrigue v1.0 Tasks" do
     end
 
   end
+end
 end

@@ -1,7 +1,8 @@
 require_relative '../spec_helper'
 
-describe "Intrigue v1.0 Tasks" do
-  describe "ExampleTask" do
+describe "Intrigue" do
+describe "Task" do
+describe "Example" do
 
     ###
     ### example
@@ -52,4 +53,5 @@ describe "Intrigue v1.0 Tasks" do
     end
 
   end
+end
 end

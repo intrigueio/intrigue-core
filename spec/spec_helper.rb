@@ -23,11 +23,11 @@ RSpec.configure do |c|
     #puts "Starting #{example.description}"
     example.run
     #puts "Cleaning up #{example.description}"
-    Intrigue::Model::Project.all.each {|x| x.destroy }
-    Intrigue::Model::Logger.all.each {|x| x.destroy }
-    Intrigue::Model::ScanResult.all.each {|x| x.destroy }
-    Intrigue::Model::TaskResult.all.each {|x| x.destroy }
-    Intrigue::Model::Entity.all.each {|x| x.destroy }
+    #Intrigue::Model::Project.all.each {|x| x.destroy }
+    #Intrigue::Model::Logger.all.each {|x| x.destroy }
+    #Intrigue::Model::ScanResult.all.each {|x| x.destroy }
+    #Intrigue::Model::TaskResult.all.each {|x| x.destroy }
+    #Intrigue::Model::Entity.all.each {|x| x.destroy }
     #puts "Ending #{example.description}"
   end
 end

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require_relative 'spec_helper'
 
 describe "Intrigue" do
 describe "API" do
@@ -17,7 +17,7 @@ describe "API" do
     get '/tasks.json'
     expect(last_response.status).to match 200
   end
-  
+
 =begin
   it "should perform an example task" do
 
