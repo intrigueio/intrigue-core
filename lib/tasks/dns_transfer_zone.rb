@@ -67,7 +67,7 @@ class DnsTransferZone < BaseTask
             # Check to see if it's an ip address or a dns record
             record.is_ip_address? ? entity_type = "IpAddress" : entity_type = "DnsRecord"
             _create_entity entity_type, { "name" => "#{record}", "record_type" => "#{z.type.to_s}", "record_content" => "#{record}" }
-            
+            g
           end
         end
 
@@ -82,6 +82,8 @@ class DnsTransferZone < BaseTask
       rescue Errno::ECONNREFUSED => e
         _log_error "Unable to connect: (#{e})"
       rescue Errno::ECONNRESET => e
+        _log_error "Unable to connect: (#{e})"
+      rescue Errno::EPIPE => e
         _log_error "Unable to connect: (#{e})"
       rescue Errno::ETIMEDOUT => e
         _log_error "Unable to connect: (#{e})"
