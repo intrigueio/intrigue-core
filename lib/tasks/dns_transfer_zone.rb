@@ -46,17 +46,17 @@ class DnsTransferZone < BaseTask
         zt.server = nameserver
         zone = zt.transfer(domain_name)
 
+        _log "Got result: #{zone.inspect}"
+
         # create a finding
         _create_entity "Finding", {
           "name" => "AXFR enabled on #{domain_name} using #{nameserver}",
           "finding_type" => "dns_zone_transfer",
-          "finding_details" => {
-            "count" => "#{result.split("\n").count}",
-            "records" => result.split("\n")
+          "description" => "Zone transfer on #{domain_name} using #{nameserver} resulted in leak of #{zone.count} records."
           }
         }
 
-        # Create host records for each item in the zone
+        # Create records for each item in the zone
         zone.each do |z|
           if z.type == "SOA"
             _create_entity "Domain", { "name" => z.name.to_s, "record_type" => z.type.to_s, "record_content" => "#{z.to_s}" }
@@ -88,8 +88,6 @@ class DnsTransferZone < BaseTask
       end # end begin
     end # end .each
   end # end run
-
-
 
 end
 end
