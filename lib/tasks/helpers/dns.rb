@@ -72,21 +72,19 @@ module Intrigue
           begin
             results << resolver.query(lookup_name, t)
           rescue Dnsruby::NXDomain => e
-            return []
+            # silently move on
           rescue IOError => e
             _log_error "Error resolving: #{lookup_name}, error: #{e}"
-            return []
           rescue Dnsruby::SocketEofResolvError => e
             _log_error "Error resolving: #{lookup_name}, error: #{e}"
-            return []
           rescue Dnsruby::ServFail => e
             _log_error "Error resolving: #{lookup_name}, error: #{e}"
-            return []
           rescue Dnsruby::ResolvTimeout => e
             _log_error "Error resolving: #{lookup_name}, error: #{e}"
-            return []
           end
         end
+
+        return [] if results.empty?
 
         begin
 
