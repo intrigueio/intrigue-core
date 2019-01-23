@@ -39,12 +39,12 @@ module Intrigue
       end
 
       # convenience method to just send back name
-      def resolve_name(lookup_name, lookup_types=[Dnsruby::Types::A, Dnsruby::Types::CNAME, Dnsruby::Types::PTR])
+      def resolve_name(lookup_name, lookup_types=[Dnsruby::Types::AAAA, Dnsruby::Types::A, Dnsruby::Types::CNAME, Dnsruby::Types::PTR])
         resolve_names(lookup_name,lookup_types).first
       end
 
       # convenience method to just send back names
-      def resolve_names(lookup_name, lookup_types=[Dnsruby::Types::A, Dnsruby::Types::CNAME, Dnsruby::Types::PTR])
+      def resolve_names(lookup_name, lookup_types=[Dnsruby::Types::AAAA, Dnsruby::Types::A, Dnsruby::Types::CNAME, Dnsruby::Types::PTR])
 
         names = []
         x = resolve(lookup_name, lookup_types)
@@ -53,7 +53,7 @@ module Intrigue
       names.uniq
       end
 
-      def resolve(lookup_name, lookup_types=[Dnsruby::Types::A, Dnsruby::Types::CNAME, Dnsruby::Types::PTR])
+      def resolve(lookup_name, lookup_types=[Dnsruby::Types::AAAA, Dnsruby::Types::A, Dnsruby::Types::CNAME, Dnsruby::Types::PTR])
 
         config = {
           :search => [],
