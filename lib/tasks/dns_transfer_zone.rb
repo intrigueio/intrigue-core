@@ -46,13 +46,12 @@ class DnsTransferZone < BaseTask
         zt.server = nameserver
         zone = zt.transfer(domain_name)
 
-        #_log "Got result: #{zone.map{|x| x.name }}"
-
         # create a finding
         _create_entity "Finding", {
           "name" => "AXFR enabled on #{domain_name} using #{nameserver}",
           "finding_type" => "dns_zone_transfer",
           "description" => "Zone transfer on #{domain_name} using #{nameserver} resulted in leak of #{zone.count} records."
+          "records" = zone.map {|r| r.name.to_s }
         }
 
         # Create records for each item in the zone
