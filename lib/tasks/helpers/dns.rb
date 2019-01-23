@@ -7,8 +7,7 @@ module Intrigue
       def check_resolv_sanity(lookup_name)
 
         config = {
-          :search => [],
-          :query_timeout => 30
+          :search => []
         }
 
         if _get_system_config("resolvers")
@@ -16,6 +15,7 @@ module Intrigue
         end
 
         resolver = Dnsruby::Resolver.new(config)
+        resolver.query_timeout = 60
 
         begin
           resolver.query(lookup_name)
@@ -64,7 +64,7 @@ module Intrigue
         end
 
         resolver = Dnsruby::Resolver.new(config)
-        resolver.query_timeout = 30
+        resolver.query_timeout = 60
 
         results = []
         lookup_types.each do |t|
