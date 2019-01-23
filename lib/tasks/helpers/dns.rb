@@ -20,7 +20,6 @@ module Intrigue
         begin
           resolver.query(lookup_name)
         rescue Dnsruby::NXDomain => e
-          #_log_good "No timeout! #{e}"
           return false
         rescue IOError => e
           _log_error "Unable to resolve, ioerror: #{e}"
@@ -58,7 +57,6 @@ module Intrigue
 
         config = {
           :search => [],
-          :query_timeout => 30
         }
 
         if _get_system_config("resolvers")
@@ -66,6 +64,7 @@ module Intrigue
         end
 
         resolver = Dnsruby::Resolver.new(config)
+        resolver.query_timeout = 30
 
         results = []
         lookup_types.each do |t|

@@ -219,6 +219,7 @@ class DnsBruteSub < BaseTask
       random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}"
 
       # keep track of timeouts
+      _log "Checking: #{random_string}"
       timeout_count += 1 if check_resolv_sanity random_string
     end
 
