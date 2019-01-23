@@ -46,13 +46,13 @@ class DnsTransferZone < BaseTask
         zt.server = nameserver
         zone = zt.transfer(domain_name)
 
-        _log "Got result: #{zone.map{|x| x.name }}"
+        #_log "Got result: #{zone.map{|x| x.name }}"
 
         # create a finding
         _create_entity "Finding", {
           "name" => "AXFR enabled on #{domain_name} using #{nameserver}",
           "finding_type" => "dns_zone_transfer",
-          "description" => "Zone transfer on #{domain_name} using #{nameserver} resulted in leak of #{zone.count} records.
+          "description" => "Zone transfer on #{domain_name} using #{nameserver} resulted in leak of #{zone.count} records."
         }
 
         # Create records for each item in the zone
@@ -65,8 +65,9 @@ class DnsTransferZone < BaseTask
             z.rdata.respond_to?("last") ? record = "#{z.rdata.last.to_s}" : record = "#{z.rdata.to_s}"
 
             # Check to see if it's an ip address or a dns record
-            #record.is_ip_address? ? entity_type = "IpAddress" : entity_type = "DnsRecord"
-            _create_entity "DnsRecord", { "name" => "#{record}", "record_type" => "#{z.type.to_s}", "record_content" => "#{record}" }
+            record.is_ip_address? ? entity_type = "IpAddress" : entity_type = "DnsRecord"
+            _create_entity entity_type, { "name" => "#{record}", "record_type" => "#{z.type.to_s}", "record_content" => "#{record}" }
+            
           end
         end
 
