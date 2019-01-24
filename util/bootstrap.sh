@@ -211,14 +211,14 @@ sudo bash -c "echo fs.file-max = 65535 >> /etc/sysctl.conf"
 sudo sysctl -p
 
 echo "Bumping ulimit file/proc settings in /etc/security/limits.conf"
-sudo bash -c "echo 'root hard nofile 65535' >> /etc/security/limits.conf"
-sudo bash -c "echo 'root soft nofile 65535' >> /etc/security/limits.conf"
-sudo bash -c "echo 'root hard nproc 65535' >> /etc/security/limits.conf"
-sudo bash -c "echo 'root soft nproc 65535' >> /etc/security/limits.conf"
-sudo bash -c "echo '* hard nproc 65535' >> /etc/security/limits.conf"
-sudo bash -c "echo '* soft nproc 65535' >> /etc/security/limits.conf"
-sudo bash -c "echo '* hard nofile 65535' >> /etc/security/limits.conf"
-sudo bash -c "echo '* soft nofile 65535' >> /etc/security/limits.conf"
+sudo bash -c "echo 'root hard nofile 524288' >> /etc/security/limits.conf"
+sudo bash -c "echo 'root soft nofile 524288' >> /etc/security/limits.conf"
+sudo bash -c "echo 'root hard nproc 524288' >> /etc/security/limits.conf"
+sudo bash -c "echo 'root soft nproc 524288' >> /etc/security/limits.conf"
+sudo bash -c "echo '* hard nproc 524288' >> /etc/security/limits.conf"
+sudo bash -c "echo '* soft nproc 524288' >> /etc/security/limits.conf"
+sudo bash -c "echo '* hard nofile 524288' >> /etc/security/limits.conf"
+sudo bash -c "echo '* soft nofile 524288' >> /etc/security/limits.conf"
 sudo bash -c "echo session required pam_limits.so >> /etc/pam.d/common-session"
 
 # Set the database to trust
