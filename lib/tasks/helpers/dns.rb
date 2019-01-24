@@ -63,7 +63,7 @@ module Intrigue
           :retry_times => 10,
           :retry_delay => 10,
           :packet_timeout => 20,
-          :query_timeout => 120
+          :query_timeout => 180
         }
 
         if _get_system_config("resolvers")
