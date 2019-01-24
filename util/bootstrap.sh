@@ -206,11 +206,16 @@ else
 fi
 
 # bump file limits
-echo "Bumping ulimit settings"
+echo "bumping file-max setting"
+sudo bash -c "echo fs.file-max = 65535 >> /etc/sysctl.conf"
+sudo sysctl -p
+
+echo "Bumping ulimit settings in /etc/security/limits.conf"
 sudo bash -c "echo root hard nofile 65535 >> /etc/security/limits.conf"
 sudo bash -c "echo root soft nofile 65535 >> /etc/security/limits.conf"
 sudo bash -c "echo * hard nofile 65535 >> /etc/security/limits.conf"
 sudo bash -c "echo * soft nofile 65535 >> /etc/security/limits.conf"
+sudo bash -c "session required pam_limits.so >> /etc/pam.d/common-session"
 
 # Set the database to trust
 echo "[+] Updating postgres configuration"
