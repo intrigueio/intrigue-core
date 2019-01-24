@@ -56,7 +56,7 @@ class DnsTransferZone < BaseTask
 
         # Create records for each item in the zone
         zone.each do |z|
-          if z.type == "SOA"
+          if z.type.to_s == "SOA"
             _create_entity "Domain", { "name" => z.name.to_s, "record_type" => z.type.to_s, "record_content" => "#{z.to_s}" }
           else
             # Check to see what type this record's content is.
@@ -66,7 +66,6 @@ class DnsTransferZone < BaseTask
             # Check to see if it's an ip address or a dns record
             record.is_ip_address? ? entity_type = "IpAddress" : entity_type = "DnsRecord"
             _create_entity entity_type, { "name" => "#{record}", "record_type" => "#{z.type.to_s}", "record_content" => "#{record}" }
-            g
           end
         end
 
