@@ -64,7 +64,7 @@ module Intrigue
         end
 
         resolver = Dnsruby::Resolver.new(config)
-        resolver.query_timeout = 60
+        resolver.query_timeout = 120
 
         results = []
         lookup_types.each do |t|
