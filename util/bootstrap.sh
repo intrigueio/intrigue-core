@@ -165,6 +165,10 @@ echo export PATH=$PATH:$GOROOT/bin:$GOPATH/bin >> ~/.bash_profile
 echo "[+] Getting Gitrob... "
 go get github.com/intrigueio/gitrob
 
+# get the code
+echo "[+] Getting Gobuster... "
+go get github.com/intrigueio/gobuster.git
+
 ##### Install masscan
 echo "[+] Installing Masscan"
 if [ ! -f /usr/bin/masscan ]; then
@@ -203,8 +207,10 @@ fi
 
 # bump file limits
 echo "Bumping ulimit settings"
-sudo bash -c "echo * soft nofile 65535 >> /etc/security/limits.conf"
+sudo bash -c "echo root hard nofile 65535 >> /etc/security/limits.conf"
+sudo bash -c "echo root soft nofile 65535 >> /etc/security/limits.conf"
 sudo bash -c "echo * hard nofile 65535 >> /etc/security/limits.conf"
+sudo bash -c "echo * soft nofile 65535 >> /etc/security/limits.conf"
 
 # Set the database to trust
 echo "[+] Updating postgres configuration"
