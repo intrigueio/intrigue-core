@@ -145,6 +145,26 @@ class DnsBruteSub < BaseTask
                   #
                   if opt_use_permutations
 
+                    # first check to make sure that it's not just simple pattern matching.
+                    #
+                    # for example... if we get webfarm, check that
+                    # webfarm-anythingcouldhappen123213213.whitehouse.gov doesnt
+                    # exist.
+                    # "#{subdomain}-anythingcouldhappen#{rand(100000000)}"
+                    # TODO - keep track of this address and add anything
+                    # that's not it, like our wildcard checking!
+                    original_address = _resolve(resolved_address)
+                    invalid_name = "#{subdomain}-nowaythisexists#{rand(10000000000)}.#{suffix}"
+                    invalid_address = _resolve(invalid_name)
+                    _log "Checking invalid permutation: #{invalid_name}"
+
+                    if invalid_address == original_address
+                      _log_error "Looks like we found a pattern matching DNS server, lets skip this: #{subdomain}.#{suffix}"
+                      next
+                    else
+                      _log_good "Looks like we are not pattern matching, continuing on with permutation checking!"
+                    end
+
                     # Create a list of permutations based on this success
                     permutation_list = [
                       "#{subdomain}#{subdomain}",
