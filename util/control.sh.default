@@ -28,6 +28,11 @@ function setup_server {
 }
 
 function start_server {
+
+  # try setting ulimit here
+  echo "Bumping ulimit before starting task processing!"
+  ulimit -n 100000
+
   for x in 1; do
     echo "Starting task processing... $x"
     bundle exec sidekiq -C $IDIR/config/sidekiq.yml -r $IDIR/core.rb -d -L $IDIR/log/sidekiq.log -P $IDIR/tmp/pids/sidekiq.pid
