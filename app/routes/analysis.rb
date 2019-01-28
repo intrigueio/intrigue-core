@@ -24,14 +24,14 @@ class IntrigueApp < Sinatra::Base
 
     get '/:project/analysis/javascripts' do
       @javascripts = []
-      Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::Uri").each do |u|
-        js_libraries = u.get_detail("libraries")
-        next unless js_libraries
+      Intrigue::Model::Entity.scope_by_project(@project_name).where(type: "Intrigue::Entity::Uri").each do |u|
+        libs = u.get_detail("javascript")
+        next unless libs
 
         # capture name, version, sites here ... only select detected stuff
-        libs = js_libraries.select{|x| x["detected"] == true }
-        @javascripts.concat libs.map{|x| x.merge({"name" =>"#{x["product"]} #{x["version"]}", "site" => u.name, "id" => u.id})}
-
+        @javascripts.concat libs.map{|x| x.merge(
+          {"name" => "#{x["library"]} #{x["version"]}", "site" => u.name, "id" => u.id}
+        )}
       end
 
       erb :'analysis/javascripts'
