@@ -39,7 +39,8 @@ class EntityManager
     # Merge the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name)
 
-    if entity
+    if entity # already exists
+
       entity.set_details(details.to_h.deep_merge(entity.details.to_h))
 
       # scope it since we manually created
@@ -143,7 +144,6 @@ class EntityManager
 
     else
       tr.log_good "New Entity: #{type_string} #{name}. Scoped: #{tr.auto_scope}. No-Traverse: #{no_traverse_regex}"
-      new_entity = true
 
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
@@ -177,11 +177,11 @@ class EntityManager
           entity_details[:scoped] = false
         end
 
-
         begin
 
           # Create a new entity in that group
-          entity = Intrigue::Model::Entity.update_or_create( {name: downcased_name}, entity_details)
+          entity = Intrigue::Model::Entity.update_or_create(
+            {name: downcased_name, project: project}, entity_details)
 
           unless entity
             tr.log_fatal "Unable to create entity: #{entity_details}"
@@ -200,28 +200,28 @@ class EntityManager
     end
 
     # necessary to relookup?
-    created_entity = Intrigue::Model::Entity.find(:id => entity.id)
+    entity = Intrigue::Model::Entity.find(:id => entity.id)
 
     ### Ensure we have an entity
-    unless created_entity
+    unless entity
       task_result.log "ERROR! Unable to create or find entity: #{type}##{downcased_name}, failing!!"
       return nil
     end
 
     ### Run Data transformation (to hide attributes... HACK)
-    unless created_entity.transform!
+    unless entity.transform!
       task_result.log "ERROR! Transformation of entity failed: #{entity}, failing!!"
       return nil
     end
 
     ### Run Validation
-    unless created_entity.validate_entity
+    unless entity.validate_entity
       task_result.log "ERROR! Validation of entity failed: #{entity}, failing!!"
       return nil
     end
 
     # Add to our result set for this task
-    task_result.add_entity created_entity
+    task_result.add_entity entity
     task_result.save
 
     # Attach the alias.. this can be confusing....
@@ -230,29 +230,25 @@ class EntityManager
     # think about the case of a domain lookup where many resolve to a single
     # ip address
     if primary_entity
-      task_result.log "Aliasing #{created_entity.name} to existing group: #{primary_entity.alias_group_id}"
+      task_result.log "Aliasing #{entity.name} to existing group: #{primary_entity.alias_group_id}"
 
       # Take the smaller group id, and use that to alias together
-      cid = created_entity.alias_group_id
+      cid = entity.alias_group_id
       pid = primary_entity.alias_group_id
+      cid < pid ? entity.alias(primary_entity) : primary_entity.alias(entity)
 
-      if cid > pid
-        created_entity.alias(primary_entity)
-      else
-        primary_entity.alias(created_entity)
-      end
     end
 
     # ENRICHMENT LAUNCH
     if task_result.auto_enrich && !entity_already_existed
       if !no_traverse_regex
         # Check if we've alrady run first and return gracefully if so
-        if created_entity.enriched
+        if entity.enriched
           task_result.log "Skipping enrichment... already completed!"
         else
           # starts a new background task... so anything that needs to happen from
           # this point should happen in that new background task
-          created_entity.enrich(task_result)
+          entity.enrich(task_result)
         end
       else
         task_result.log "Skipping enrichment... this is a no-traverse!"
@@ -263,7 +259,7 @@ class EntityManager
     end
 
   # return the entity
-  created_entity
+  entity
   end
 
   private

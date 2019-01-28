@@ -9,7 +9,7 @@ class DnsBruteSubAsync < BaseTask
   RESOLVER = Dnsruby::Resolver.new(:nameserver => %w(8.8.8.8  8.8.4.4))
 
   # Experiment with this to get fast throughput but not overload the dnsruby async mechanism:
-  RESOLVE_CHUNK_SIZE = 50
+  #RESOLVE_CHUNK_SIZE = 50
 
   def self.metadata
     {
@@ -31,10 +31,11 @@ class DnsBruteSubAsync < BaseTask
             "mickey", "time", "web", "it", "my", "photos", "safe", "download",
             "dl", "search", "staging", "fw", "firewall", "email"]  },
         {:name => "use_mashed_domains", :type => "Boolean", :regex => "boolean", :default => false },
-        {:name => "use_permutations", :type => "Boolean", :regex => "boolean", :default => true },
-        {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
+        #{:name => "use_permutations", :type => "Boolean", :regex => "boolean", :default => true },
+        {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_sub.list" },
         {:name => "brute_alphanumeric_size", :type => "Integer", :regex => "integer", :default => 0 },
+        {:name => "records_per_request", :type => "Integer", :regex => "integer", :default => 50 },
       ],
       :created_types => ["DnsRecord"]
     }
@@ -51,6 +52,7 @@ class DnsBruteSubAsync < BaseTask
     opt_use_permutations = _get_option("use_permutations")
     opt_brute_list = _get_option("brute_list")
     opt_brute_alphanumeric_size = _get_option("brute_alphanumeric_size")
+    opt_records_per_request = _get_option("records_per_request")
 
     # Set the suffix
     suffix = _get_entity_name
@@ -70,7 +72,6 @@ class DnsBruteSubAsync < BaseTask
       _log "Using provided brute list."
       subdomain_list = opt_brute_list
       subdomain_list = subdomain_list.split(",") if subdomain_list.kind_of? String
-      _log "Checking #{subdomain_list.count} subdomains"
     end
 
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
@@ -85,25 +86,47 @@ class DnsBruteSubAsync < BaseTask
 
     # Generate alphanumeric list of hostnames and add them to the end of the list
     if opt_brute_alphanumeric_size
-      _log "Alphanumeric list generation is pretty huge - this will take a long time" if opt_brute_alphanumeric_size > 2
+
+      _log "Alphanumeric list generation is pretty huge - this will take a long time" if opt_brute_alphanumeric_size > 3
+
+      if opt_brute_alphanumeric_size >=5
+        _log "Capping alphanumeric list at size 5"
+        opt_brute_alphanumeric_size = 5
+      end
+
       subdomain_list.concat(("#{'a' * opt_brute_alphanumeric_size }".."#{'z' * opt_brute_alphanumeric_size}").map {|x| x })
-      _log "Checking #{subdomain_list.count} subdomains"
     end
 
     # Enqueue our generated subdomains
     fqdn_list = subdomain_list.map { |d| "#{d}.#{suffix}"}
 
+    _log "Checking #{fqdn_list.count} subdomains"
+
     start_time = Time.now
-    ip_entries = fqdn_list.each_slice(RESOLVE_CHUNK_SIZE).each_with_object([]) do |ip_entries_chunk, results|
+    ip_entries = fqdn_list.each_slice(opt_records_per_request).each_with_object([]) do |ip_entries_chunk, results|
       _log "Working on slice starting with... #{ip_entries_chunk.first}"
       results.concat get_ip_entries(ip_entries_chunk)
     end
-    duration = Time.now - start_time
 
     found, not_found = ip_entries.partition { |entry| entry.ip }
 
-    _log_good "Found:\n#{found.map(&:to_s)}";
-    _log "Not Found: #{not_found.count}";
+    # create entities
+    found.each do |f|
+
+      unless wildcard_ips.include?(f.ip)
+        dns_entity = _create_entity("DnsRecord", {"name" => f.name })
+        _create_entity("IpAddress", {"name" => f.ip }, dns_entity)
+      else
+        _log "Resolved #{f.name} to a known wildcard: #{f.ip}"
+      end
+
+      #if opt_use_permutations
+      #  _check_permutations(subdomain,suffix,resolved_address,work_q,depth)
+      #end # end opt_use_permutations
+
+    end
+
+    duration = Time.now - start_time
 
     stats = {
         duration:        duration,
@@ -111,14 +134,82 @@ class DnsBruteSubAsync < BaseTask
         found_count:     found.size,
         not_found_count: not_found.size,
     }
-
     _log "Stats:\n: #{stats}"
-
   end
 
   IpEntry = Struct.new(:name, :ip) do
     def to_s
       "#{name}: #{ip ? ip : '(nil)'}"
+    end
+  end
+
+
+  def _check_permutations(subdomain,suffix,resolved_address,queue,depth)
+    # first check to make sure that it's not just simple pattern matching.
+    #
+    # for example... if we get webfarm, check that
+    # webfarm-anythingcouldhappen123213213.whitehouse.gov doesnt
+    # exist.
+    # "#{subdomain}-anythingcouldhappen#{rand(100000000)}"
+    # TODO - keep track of this address and add anything
+    # that's not it, like our wildcard checking!
+    original_address = _resolve(resolved_address)
+    invalid_name = "#{subdomain}-nowaythisexists#{rand(10000000000)}.#{suffix}"
+    invalid_address = _resolve(invalid_name)
+    _log "Checking invalid permutation: #{invalid_name}"
+
+    if invalid_address == original_address
+      _log_error "Looks like we found a pattern matching DNS server, lets skip this: #{subdomain}.#{suffix}"
+      return
+    else
+      _log_good "Looks like we are not pattern matching, continuing on with permutation checking!"
+    end
+
+    # Create a list of permutations based on this success
+    permutation_list = [
+      "#{subdomain}#{subdomain}",
+      "#{subdomain}-#{subdomain}",
+      "#{subdomain}001",
+      "#{subdomain}01",
+      "#{subdomain}1",
+      "#{subdomain}-1",
+      "#{subdomain}2",
+      "#{subdomain}-3t",
+      "#{subdomain}-city",
+      "#{subdomain}-client",
+      "#{subdomain}-customer",
+      "#{subdomain}-edge",
+      "#{subdomain}-guest",
+      "#{subdomain}-host",
+      "#{subdomain}-mgmt",
+      "#{subdomain}-net",
+      "#{subdomain}-prod",
+      "#{subdomain}-production",
+      "#{subdomain}-rtr",
+      "#{subdomain}-stage",
+      "#{subdomain}-staging",
+      "#{subdomain}-static",
+      "#{subdomain}-tc",
+      "#{subdomain}-temp",
+      "#{subdomain}-test",
+      "#{subdomain}-vpn",
+      "#{subdomain}-wifi",
+      "#{subdomain}-wireless",
+      "#{subdomain}-www"
+    ]
+
+    # test to first make sure we don't have a subdomain specific wildcard
+    subdomain_wildcard_ips = _check_wildcard("#{subdomain}.#{suffix}")
+
+    # Before we iterate on this subdomain, let's make sure it's not a wildcard
+    if subdomain_wildcard_ips.empty?
+      _log "Adding permutations: #{permutation_list.join(", ")}"
+      permutation_list.each do |p|
+        queue.push({:subdomain => "#{p}", :fqdn => "#{p}.#{suffix}", :depth => depth+1})
+        to_check_count+=1
+      end
+    else
+      _log "Avoiding permutations on #{fqdn} because it appears to be a wildcard."
     end
   end
 

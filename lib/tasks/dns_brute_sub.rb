@@ -59,12 +59,10 @@ class DnsBruteSub < BaseTask
     if opt_use_file
       _log "Using file: #{opt_filename}"
       subdomain_list = File.read("#{$intrigue_basedir}/data/#{opt_filename}").split("\n")
-      _log "Checking #{subdomain_list.count} subdomains"
     else
       _log "Using provided brute list."
       subdomain_list = opt_brute_list
       subdomain_list = subdomain_list.split(",") if subdomain_list.kind_of? String
-      _log "Checking #{subdomain_list.count} subdomains"
     end
 
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
@@ -79,9 +77,15 @@ class DnsBruteSub < BaseTask
 
     # Generate alphanumeric list of hostnames and add them to the end of the list
     if opt_brute_alphanumeric_size
-      _log "Alphanumeric list generation is pretty huge - this will take a long time" if opt_brute_alphanumeric_size > 2
+
+      _log "Alphanumeric list generation is pretty huge - this will take a long time" if opt_brute_alphanumeric_size > 3
+
+      if opt_brute_alphanumeric_size >=5
+        _log "Capping alphanumeric list at size 5"
+        opt_brute_alphanumeric_size = 5
+      end
+
       subdomain_list.concat(("#{'a' * opt_brute_alphanumeric_size }".."#{'z' * opt_brute_alphanumeric_size}").map {|x| x })
-      _log "Checking #{subdomain_list.count} subdomains"
     end
 
     # Create a queue to hold our list of domains
@@ -105,7 +109,12 @@ class DnsBruteSub < BaseTask
       work_q.push({:subdomain => "#{d}", :fqdn => "#{d}.#{suffix}", :depth => 1})
     end
 
+    to_check_count = work_q.size
+    _log "Checking #{to_check_count} subdomains"
+
     # Create a pool of worker threads to work on the queue
+    start_time = Time.now
+    found_count = 0
     workers = (0...opt_threads).map do
       Thread.new do
         _log "Starting thread"
@@ -122,19 +131,11 @@ class DnsBruteSub < BaseTask
               if resolved_address # If we resolved, create the right entities
 
                 unless wildcard_ips.include?(resolved_address)
-                  _log_good "Resolved address #{resolved_address} for #{fqdn} and it wasn't in our wildcard list."
+                  found_count += 1
+                  _log_good "Resolved address #{resolved_address} for #{fqdn}!"
 
                   main_entity = _create_entity("DnsRecord", {"name" => fqdn })
-
-                  # Create new host entity
-                  resolve(resolved_address).each do |rr|
-                    #_log "Creating... #{rr}"
-                    if rr["name"].is_ip_address?
-                      _log "Skipping IP... #{rr}"
-                    else
-                      _create_entity("DnsRecord", {"name" => rr["name"]}, main_entity )
-                    end
-                  end
+                  ip_address = _create_entity("IpAddress", {"name" => resolved_address }, main_entity)
 
                   #
                   # This section will add permutations to our list, if the
@@ -144,72 +145,7 @@ class DnsBruteSub < BaseTask
                   # www1 and www2, etc
                   #
                   if opt_use_permutations
-
-                    # first check to make sure that it's not just simple pattern matching.
-                    #
-                    # for example... if we get webfarm, check that
-                    # webfarm-anythingcouldhappen123213213.whitehouse.gov doesnt
-                    # exist.
-                    # "#{subdomain}-anythingcouldhappen#{rand(100000000)}"
-                    # TODO - keep track of this address and add anything
-                    # that's not it, like our wildcard checking!
-                    original_address = _resolve(resolved_address)
-                    invalid_name = "#{subdomain}-nowaythisexists#{rand(10000000000)}.#{suffix}"
-                    invalid_address = _resolve(invalid_name)
-                    _log "Checking invalid permutation: #{invalid_name}"
-
-                    if invalid_address == original_address
-                      _log_error "Looks like we found a pattern matching DNS server, lets skip this: #{subdomain}.#{suffix}"
-                      next
-                    else
-                      _log_good "Looks like we are not pattern matching, continuing on with permutation checking!"
-                    end
-
-                    # Create a list of permutations based on this success
-                    permutation_list = [
-                      "#{subdomain}#{subdomain}",
-                      "#{subdomain}-#{subdomain}",
-                      "#{subdomain}001",
-                      "#{subdomain}01",
-                      "#{subdomain}1",
-                      "#{subdomain}-1",
-                      "#{subdomain}2",
-                      "#{subdomain}-3t",
-                      "#{subdomain}-city",
-                      "#{subdomain}-client",
-                      "#{subdomain}-customer",
-                      "#{subdomain}-edge",
-                      "#{subdomain}-guest",
-                      "#{subdomain}-host",
-                      "#{subdomain}-mgmt",
-                      "#{subdomain}-net",
-                      "#{subdomain}-prod",
-                      "#{subdomain}-production",
-                      "#{subdomain}-rtr",
-                      "#{subdomain}-stage",
-                      "#{subdomain}-staging",
-                      "#{subdomain}-static",
-                      "#{subdomain}-tc",
-                      "#{subdomain}-temp",
-                      "#{subdomain}-test",
-                      "#{subdomain}-vpn",
-                      "#{subdomain}-wifi",
-                      "#{subdomain}-wireless",
-                      "#{subdomain}-www"
-                    ]
-
-                    # test to first make sure we don't have a subdomain specific wildcard
-                    subdomain_wildcard_ips = _check_wildcard(fqdn)
-
-                    # Before we iterate on this subdomain, let's make sure it's not a wildcard
-                    if subdomain_wildcard_ips.empty?
-                      _log "Adding permutations: #{permutation_list.join(", ")}"
-                      permutation_list.each do |p|
-                        work_q.push({:subdomain => "#{p}", :fqdn => "#{p}.#{suffix}", :depth => depth+1})
-                      end
-                    else
-                      _log "Avoiding permutations on #{fqdn} because it appears to be a wildcard."
-                    end
+                    _check_permutations(subdomain,suffix,resolved_address,work_q,depth)
                   end # end opt_use_permutations
                 else
                   _log "Resolved #{resolved_address} for #{fqdn} to a known wildcard."
@@ -223,10 +159,86 @@ class DnsBruteSub < BaseTask
       end
     end; "ok"
     workers.map(&:join); "ok"
+    duration = Time.now - start_time
+
+    _log "Stats:"
+    _log "Ran for #{duration}"
+    _log "Checked #{to_check_count} domains"
+    _log "Found #{found_count} domains"
+
   end
 
   def _resolve(hostname)
     resolve_name(hostname,[Dnsruby::Types::AAAA, Dnsruby::Types::A, Dnsruby::Types::CNAME])
+  end
+
+  def _check_permutations(subdomain,suffix,resolved_address,queue,depth)
+    # first check to make sure that it's not just simple pattern matching.
+    #
+    # for example... if we get webfarm, check that
+    # webfarm-anythingcouldhappen123213213.whitehouse.gov doesnt
+    # exist.
+    # "#{subdomain}-anythingcouldhappen#{rand(100000000)}"
+    # TODO - keep track of this address and add anything
+    # that's not it, like our wildcard checking!
+    original_address = _resolve(resolved_address)
+    invalid_name = "#{subdomain}-nowaythisexists#{rand(10000000000)}.#{suffix}"
+    invalid_address = _resolve(invalid_name)
+    _log "Checking invalid permutation: #{invalid_name}"
+
+    if invalid_address == original_address
+      _log_error "Looks like we found a pattern matching DNS server, lets skip this: #{subdomain}.#{suffix}"
+      return
+    else
+      _log_good "Looks like we are not pattern matching, continuing on with permutation checking!"
+    end
+
+    # Create a list of permutations based on this success
+    permutation_list = [
+      "#{subdomain}#{subdomain}",
+      "#{subdomain}-#{subdomain}",
+      "#{subdomain}001",
+      "#{subdomain}01",
+      "#{subdomain}1",
+      "#{subdomain}-1",
+      "#{subdomain}2",
+      "#{subdomain}-3t",
+      "#{subdomain}-city",
+      "#{subdomain}-client",
+      "#{subdomain}-customer",
+      "#{subdomain}-edge",
+      "#{subdomain}-guest",
+      "#{subdomain}-host",
+      "#{subdomain}-mgmt",
+      "#{subdomain}-net",
+      "#{subdomain}-prod",
+      "#{subdomain}-production",
+      "#{subdomain}-rtr",
+      "#{subdomain}-stage",
+      "#{subdomain}-staging",
+      "#{subdomain}-static",
+      "#{subdomain}-tc",
+      "#{subdomain}-temp",
+      "#{subdomain}-test",
+      "#{subdomain}-vpn",
+      "#{subdomain}-wifi",
+      "#{subdomain}-wireless",
+      "#{subdomain}-www"
+    ]
+
+    # test to first make sure we don't have a subdomain specific wildcard
+    subdomain_wildcard_ips = _check_wildcard("#{subdomain}.#{suffix}")
+
+    # Before we iterate on this subdomain, let's make sure it's not a wildcard
+    if subdomain_wildcard_ips.empty?
+      _log "Adding permutations: #{permutation_list.join(", ")}"
+      permutation_list.each do |p|
+        queue.push({:subdomain => "#{p}", :fqdn => "#{p}.#{suffix}", :depth => depth+1})
+        to_check_count+=1
+      end
+    else
+      _log "Avoiding permutations on #{fqdn} because it appears to be a wildcard."
+    end
   end
 
   # Check for wildcard DNS

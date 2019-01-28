@@ -45,45 +45,6 @@ class DnsBruteTld < BaseTask
       tld_list = tld_list.map {|x| x.downcase }
     end
 
-### The usual suspects need to be dealt with here. These are largely
-### useless for our purposes.
-=begin
-{"type"=>"IpAddress", "details"=>{"name"=>"Airforce.com.com"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"54.201.82.69"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"Airforce.com.net"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"74.221.212.214"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"Airforce.com.org"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"23.21.224.150"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"Airforce.com.jobs"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"50.19.241.165"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"Airforce.com.ninja"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"127.0.53.53"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"Air.com.co"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"72.52.4.91"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"Air.com.com"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"54.201.82.69"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"Air.com.net"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"106.186.123.143"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"Air.com.org"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"23.21.224.150"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"Air.com.jobs"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"50.19.241.165"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"Air.com.ninja"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"127.0.53.53"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"Bathtub.com.com"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"54.201.82.69"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"Bathtub.com.net"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"74.221.212.214"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"Bathtub.com.org"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"23.21.224.150"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"Bathtub.com.jobs"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"50.19.241.165"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"Bathtub.com.cn"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"222.73.20.195"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"Bathtub.com.ninja"}}
-{"type"=>"IpAddress", "details"=>{"name"=>"127.0.53.53"}}
-=end
-
     _log_good "Using TLD list: #{tld_list}"
 
     resolved_addresses = []
