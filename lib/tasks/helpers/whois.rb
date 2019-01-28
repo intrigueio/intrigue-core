@@ -187,7 +187,12 @@ module Whois
     _log "Got RIPE Response: #{json}"
 
     data = json["data"]
-    range = data["last_updated"].first["ip_space"]
+    if data["last_updated"]
+      range = data["last_updated"].first["ip_space"]
+    else
+      _log_error "Bad response, unable to continue: #{json}"
+      return nil
+    end
 
     # parse out description
     begin
@@ -216,6 +221,7 @@ module Whois
     rescue TypeError => e
       _log_error "PARSING ERROR! Unable to get details from #{less_specific_hash} #{e}"
     end
+
   out
   end
 
