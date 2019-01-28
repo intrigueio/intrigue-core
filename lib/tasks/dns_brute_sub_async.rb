@@ -26,7 +26,6 @@ class DnsBruteSubAsync < BaseTask
             "mickey", "time", "web", "it", "my", "photos", "safe", "download",
             "dl", "search", "staging", "fw", "firewall", "email"]  },
         {:name => "use_mashed_domains", :type => "Boolean", :regex => "boolean", :default => false },
-        #{:name => "use_permutations", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_sub.list" },
         {:name => "brute_alphanumeric_size", :type => "Integer", :regex => "integer", :default => 0 },
@@ -40,11 +39,9 @@ class DnsBruteSubAsync < BaseTask
     super
 
     # get options
-    opt_threads = _get_option("threads")
     opt_use_file = _get_option("use_file")
     opt_filename = _get_option("brute_file")
     opt_mashed_domains = _get_option("use_mashed_domains")
-    opt_use_permutations = _get_option("use_permutations")
     opt_brute_list = _get_option("brute_list")
     opt_brute_alphanumeric_size = _get_option("brute_alphanumeric_size")
     opt_records_per_request = _get_option("records_per_request")
@@ -68,11 +65,16 @@ class DnsBruteSubAsync < BaseTask
       subdomain_list = subdomain_list.split(",") if subdomain_list.kind_of? String
     end
 
+    # always check the base domain
+    subdomain_list << "#{suffix}"
+
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)
-    wildcard_ips = _check_wildcard(suffix)
+    wildcard_ips = check_wildcard(suffix)
 
-    unless wildcard_ips
+    if wildcard_ips
+      _log "Known wildcards: #{wildcard_ips}"
+    else
       _log_error "Unable to continue, we can't verify wildcard status"
       @entity.set_detail "wildcard_brute_error", true
       return
@@ -101,6 +103,7 @@ class DnsBruteSubAsync < BaseTask
       _log "Working on slice starting with... #{ip_entries_chunk.first}"
       results.concat get_ip_entries(ip_entries_chunk)
     end
+    duration = Time.now - start_time
 
     found, not_found = ip_entries.partition { |entry| entry.ip }
 
@@ -114,13 +117,8 @@ class DnsBruteSubAsync < BaseTask
         _log "Resolved #{f.name} to a known wildcard: #{f.ip}"
       end
 
-      #if opt_use_permutations
-      #  _check_permutations(subdomain,suffix,resolved_address,work_q,depth)
-      #end # end opt_use_permutations
-
     end
 
-    duration = Time.now - start_time
 
     stats = {
         duration:        duration,
@@ -136,77 +134,6 @@ class DnsBruteSubAsync < BaseTask
       "#{name}: #{ip ? ip : '(nil)'}"
     end
   end
-
-
-  def _check_permutations(subdomain,suffix,resolved_address,queue,depth)
-    # first check to make sure that it's not just simple pattern matching.
-    #
-    # for example... if we get webfarm, check that
-    # webfarm-anythingcouldhappen123213213.whitehouse.gov doesnt
-    # exist.
-    # "#{subdomain}-anythingcouldhappen#{rand(100000000)}"
-    # TODO - keep track of this address and add anything
-    # that's not it, like our wildcard checking!
-    original_address = _resolve(resolved_address)
-    invalid_name = "#{subdomain}-nowaythisexists#{rand(10000000000)}.#{suffix}"
-    invalid_address = _resolve(invalid_name)
-    _log "Checking invalid permutation: #{invalid_name}"
-
-    if invalid_address == original_address
-      _log_error "Looks like we found a pattern matching DNS server, lets skip this: #{subdomain}.#{suffix}"
-      return
-    else
-      _log_good "Looks like we are not pattern matching, continuing on with permutation checking!"
-    end
-
-    # Create a list of permutations based on this success
-    permutation_list = [
-      "#{subdomain}#{subdomain}",
-      "#{subdomain}-#{subdomain}",
-      "#{subdomain}001",
-      "#{subdomain}01",
-      "#{subdomain}1",
-      "#{subdomain}-1",
-      "#{subdomain}2",
-      "#{subdomain}-3t",
-      "#{subdomain}-city",
-      "#{subdomain}-client",
-      "#{subdomain}-customer",
-      "#{subdomain}-edge",
-      "#{subdomain}-guest",
-      "#{subdomain}-host",
-      "#{subdomain}-mgmt",
-      "#{subdomain}-net",
-      "#{subdomain}-prod",
-      "#{subdomain}-production",
-      "#{subdomain}-rtr",
-      "#{subdomain}-stage",
-      "#{subdomain}-staging",
-      "#{subdomain}-static",
-      "#{subdomain}-tc",
-      "#{subdomain}-temp",
-      "#{subdomain}-test",
-      "#{subdomain}-vpn",
-      "#{subdomain}-wifi",
-      "#{subdomain}-wireless",
-      "#{subdomain}-www"
-    ]
-
-    # test to first make sure we don't have a subdomain specific wildcard
-    subdomain_wildcard_ips = _check_wildcard("#{subdomain}.#{suffix}")
-
-    # Before we iterate on this subdomain, let's make sure it's not a wildcard
-    if subdomain_wildcard_ips.empty?
-      _log "Adding permutations: #{permutation_list.join(", ")}"
-      permutation_list.each do |p|
-        queue.push({:subdomain => "#{p}", :fqdn => "#{p}.#{suffix}", :depth => depth+1})
-        to_check_count+=1
-      end
-    else
-      _log "Avoiding permutations on #{fqdn} because it appears to be a wildcard."
-    end
-  end
-
 
   def assemble_subdomains(subdomain_prefixes, domains)
     domains.each_with_object([]) do |domain, subdomains|
@@ -250,7 +177,7 @@ class DnsBruteSubAsync < BaseTask
     if _get_system_config("resolvers")
       config[:nameserver] = _get_system_config("resolvers").split(",")
     end
-    
+
     resolver = Dnsruby::Resolver.new(config)
 
     names.each do |name|
@@ -286,8 +213,9 @@ class DnsBruteSubAsync < BaseTask
   end
 
   # Check for wildcard DNS
-  def _check_wildcard(suffix)
+  def check_wildcard(suffix)
     _log "Checking for wildcards on #{suffix}."
+    all_discovered_wildcards = []
 
     # First check if we can even get a reliable result
     timeout_count = 0
@@ -305,12 +233,33 @@ class DnsBruteSubAsync < BaseTask
       return nil
     end
 
+    # first, check wordpress....
+    # www*
+    # ww01*
+    # web*
+    # home*
+    # my*
+    check_wordpress_list = []
+    ["www.doesntexist.#{suffix}","ww01.#{suffix}","web1.#{suffix}","hometeam.#{suffix}","myc.#{suffix}"].each do |d|
+      resolved_address = _resolve(d)
+      check_wordpress_list << resolved_address
+      #unless resolved_address.nil? || all_discovered_wildcards.include?(resolved_address)
+      #  all_discovered_wildcards << resolved_address
+      #end
+    end
+
+    if check_wordpress_list.compact.count == 5
+      _log "Looks like  wordpress-connected domain"
+      all_discovered_wildcards = check_wordpress_list
+    end
+
     # Now check for wildcards
-    all_discovered_wildcards = []
     10.times do
       random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}"
 
       # do the resolution
+      # www.shopping.intrigue.io - 198.105.244.228
+      # www.search.intrigue.io - 198.105.254.228
       resolved_address = _resolve(random_string)
 
       # keep track of it unless we already have it

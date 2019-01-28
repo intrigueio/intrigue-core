@@ -54,6 +54,7 @@ gem 'aws-sdk-s3'              #,         '~> 3'
 gem 'capybara'                # uri_screenshot, etc
 gem 'selenium-webdriver',     '~> 3.12.0'
 gem 'rex-sslscan',            :git => 'https://github.com/intrigueio/rex-sslscan.git'
+gem 'flareon'                    # dns resolution over http
 
 # ident
 gem 'recog-intrigue',         :git => 'https://github.com/intrigueio/recog.git'

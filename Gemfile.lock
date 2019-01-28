@@ -117,6 +117,7 @@ GEM
     childprocess (0.9.0)
       ffi (~> 1.0, >= 1.0.11)
     coderay (1.1.2)
+    command_lion (2.0.1)
     concurrent-ruby (1.1.4)
     connection_pool (2.2.2)
     couchrest (2.0.1)
@@ -144,6 +145,10 @@ GEM
     faraday_middleware (0.13.0)
       faraday (>= 0.7.4, < 1.0)
     ffi (1.10.0)
+    flareon (1.0.5)
+      command_lion (= 2.0.1)
+      httparty (~> 0.16.2)
+      parallel (~> 1.12.1)
     fog-aws (3.3.0)
       fog-core (~> 2.1)
       fog-json (~> 1.1)
@@ -169,6 +174,8 @@ GEM
     hashie (3.6.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
+    httparty (0.16.2)
+      multi_xml (>= 0.5.2)
     httpclient (2.8.3)
     i18n (1.5.3)
       concurrent-ruby (~> 1.0)
@@ -185,12 +192,14 @@ GEM
     mini_portile2 (2.4.0)
     minitest (5.11.3)
     multi_json (1.13.1)
+    multi_xml (0.6.0)
     multipart-post (2.0.0)
     mustermann (1.0.3)
     net-dns (0.9.0)
     netrc (0.11.0)
     nokogiri (1.10.1)
       mini_portile2 (~> 2.4.0)
+    parallel (1.12.1)
     pg (1.1.4)
     pry (0.12.2)
       coderay (~> 1.1.0)
@@ -307,6 +316,7 @@ DEPENDENCIES
   elasticsearch
   em-resolv-replace
   eventmachine
+  flareon
   fog-aws
   foreman
   googleajax
