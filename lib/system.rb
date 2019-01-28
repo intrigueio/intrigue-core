@@ -51,6 +51,7 @@ module System
           begin
 
             while entity = work_q.pop(true)
+              next unless entity # handle nil entries
               @task_result.log "Working on seed: #{entity}" if @task_result
 
               # Create & scope the entity
