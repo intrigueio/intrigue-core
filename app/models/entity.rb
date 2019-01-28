@@ -62,8 +62,6 @@ module Intrigue
       ancestors.uniq
       end
 
-
-
       # Intrigue::Model::Entity.where(:name => "aim.com").first.ancestor_path;nil
       # while true; sleep 1; Intrigue::Model::Entity.last.ancestor_path; end
 =begin

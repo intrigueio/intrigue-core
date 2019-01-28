@@ -6,11 +6,6 @@ class DnsBruteSubAsync < BaseTask
 
   include Intrigue::Task::Dns
 
-  RESOLVER = Dnsruby::Resolver.new(:nameserver => %w(8.8.8.8  8.8.4.4))
-
-  # Experiment with this to get fast throughput but not overload the dnsruby async mechanism:
-  #RESOLVE_CHUNK_SIZE = 50
-
   def self.metadata
     {
       :name => "dns_brute_sub_async",
@@ -67,7 +62,6 @@ class DnsBruteSubAsync < BaseTask
     if opt_use_file
       _log "Using file: #{opt_filename}"
       subdomain_list = File.read("#{$intrigue_basedir}/data/#{opt_filename}").split("\n")
-      _log "Checking #{subdomain_list.count} subdomains"
     else
       _log "Using provided brute list."
       subdomain_list = opt_brute_list
@@ -244,11 +238,25 @@ class DnsBruteSubAsync < BaseTask
 
     queue = Queue.new
 
+    # Set up the resolver here
+    config = {
+      :search => [],
+      :retry_times => 10,
+      :retry_delay => 10,
+      :packet_timeout => 20,
+      :query_timeout => 120
+    }
+
+    if _get_system_config("resolvers")
+      config[:nameserver] = _get_system_config("resolvers").split(",")
+    end
+    
+    resolver = Dnsruby::Resolver.new(config)
+
     names.each do |name|
       query_message = create_query_message(name)
-      RESOLVER.send_async(query_message, queue, name)
+      resolver.send_async(query_message, queue, name)
     end
-
 
     # Note: although map is used here, the record in the output array will not necessarily correspond
     # to the record in the input array, since the order of the messages returned is not guaranteed.
