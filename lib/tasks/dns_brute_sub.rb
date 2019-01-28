@@ -25,10 +25,10 @@ class DnsBruteSub < BaseTask
             "dl", "search", "staging", "fw", "firewall", "email"]  },
         {:name => "use_mashed_domains", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "use_permutations", :type => "Boolean", :regex => "boolean", :default => true },
-        {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
+        {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_sub.list" },
         {:name => "brute_alphanumeric_size", :type => "Integer", :regex => "integer", :default => 0 },
-        {:name => "threads", :type => "Integer", :regex => "integer", :default => 5 },
+        {:name => "threads", :type => "Integer", :regex => "integer", :default => 20 },
       ],
       :created_types => ["DnsRecord"]
     }
@@ -234,7 +234,6 @@ class DnsBruteSub < BaseTask
       _log "Adding permutations: #{permutation_list.join(", ")}"
       permutation_list.each do |p|
         queue.push({:subdomain => "#{p}", :fqdn => "#{p}.#{suffix}", :depth => depth+1})
-        to_check_count+=1
       end
     else
       _log "Avoiding permutations on #{fqdn} because it appears to be a wildcard."

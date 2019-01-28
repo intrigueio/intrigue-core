@@ -29,7 +29,7 @@ class DnsBruteSubOverHttp < BaseTask
         {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => true },
         {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_sub.list" },
         {:name => "brute_alphanumeric_size", :type => "Integer", :regex => "integer", :default => 0 },
-        {:name => "threads", :type => "Integer", :regex => "integer", :default => 5 }
+        {:name => "threads", :type => "Integer", :regex => "integer", :default => 20 }
       ],
       :created_types => ["DnsRecord"]
     }
@@ -106,6 +106,7 @@ class DnsBruteSubOverHttp < BaseTask
 
     # create entities
     results.each do |r|
+      next unless r["Answer"]
       unless wildcard_ips.include?(r["Answer"].first["data"])
         dns_entity = _create_entity("DnsRecord", {"name" => r["Question"].first["name"] })
         _create_entity("IpAddress", {"name" => r["Answer"].first["data"] }, dns_entity)
