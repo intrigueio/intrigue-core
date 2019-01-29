@@ -32,8 +32,10 @@ class DnsRecord < Intrigue::Task::BaseTask
     lookup_name = _get_entity_name
 
     # Do a lookup and keep track of all aliases
+    _log "Resolving: #{lookup_name}"
     results = resolve(lookup_name)
-    _log "Creating aliases"
+
+    _log "Creating aliases for #{@entity.name}"
     _create_aliases(results)
 
     # Create new entities if we found vhosts / aliases
@@ -81,6 +83,7 @@ class DnsRecord < Intrigue::Task::BaseTask
       ### Create aliased entities
       ####
       results.each do |result|
+        next if @entity.name == result["name"]
         _log "Creating entity for... #{result}"
         if "#{result["name"]}".is_ip_address?
           _create_entity("IpAddress", { "name" => result["name"] }, @entity)

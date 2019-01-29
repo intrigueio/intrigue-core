@@ -31,7 +31,7 @@ class DnsBruteSubAsync < BaseTask
         {:name => "brute_alphanumeric_size", :type => "Integer", :regex => "integer", :default => 0 },
         {:name => "records_per_request", :type => "Integer", :regex => "integer", :default => 50 },
       ],
-      :created_types => ["IpAddress","DnsRecord","Domain"] 
+      :created_types => ["IpAddress","DnsRecord","Domain"]
     }
   end
 
@@ -198,6 +198,9 @@ class DnsBruteSubAsync < BaseTask
           IpEntry.new(name, nil)
         when Dnsruby::ResolvTimeout
           _log_error "Timed out on: #{_id}"
+          IpEntry.new(name, nil)
+        when Dnsruby::ServFail
+          _log_error "Server failed on: #{_id}"
           IpEntry.new(name, nil)
         when NilClass
          ip = parse_response_for_address(result)

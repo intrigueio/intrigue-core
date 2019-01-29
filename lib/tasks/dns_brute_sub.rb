@@ -137,8 +137,8 @@ class DnsBruteSub < BaseTask
                   dns_entity = _create_entity("DnsRecord", {"name" => fqdn })
 
                   # since we can get a CNAME response, check type before creating
-                  create_type = "#{["Answer"].first["data"]}".is_ip_address? ? "IpAddress" : "DnsRecord"
-                  _create_entity(create_type, {"name" => r["Answer"].first["data"] }, dns_entity)
+                  create_type = "#{resolved_address}".is_ip_address? ? "IpAddress" : "DnsRecord"
+                  _create_entity(create_type, {"name" => resolved_address }, dns_entity)
 
                   #
                   # This section will add permutations to our list, if the

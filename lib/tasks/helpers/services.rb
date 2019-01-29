@@ -260,7 +260,7 @@ module Services
       out[:extra_details] = {}
 
       _log "connecting to #{uri}"
-
+      
       out[:http_response] = http_request(:get, uri)
 
       ## TODO ... follow & track location headers?

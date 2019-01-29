@@ -13,6 +13,120 @@ module Intrigue
 module Task
   module Web
 
+    def connect_socket(hostname,port,timeout)
+      # Create a socket and connect
+      # https://apidock.com/ruby/Net/HTTP/connect
+      #addr = Socket.getaddrinfo(hostname, nil)
+      #sockaddr = Socket.pack_sockaddr_in(port, addr[0][3])
+      #socket = Socket.new(Socket.const_get(addr[0][0]), Socket::SOCK_STREAM, 0)
+      #socket.setsockopt(Socket::IPPROTO_TCP, Socket::TCP_NODELAY, 1)
+      socket = TCPSocket.new hostname, port
+      context= OpenSSL::SSL::SSLContext.new
+      ssl_socket = OpenSSL::SSL::SSLSocket.new socket, context
+      ssl_socket.sync = true
+
+      begin
+        _log "Attempting to connect to #{hostname}:#{port}"
+        ssl_socket.connect_nonblock
+      rescue IO::WaitReadable
+        if IO.select([ssl_socket], nil, nil, timeout)
+          _log "retrying..."
+          retry
+        else
+          # timeout
+        end
+      rescue IO::WaitWritable
+        if IO.select(nil, [ssl_socket], nil, timeout)
+          _log "retrying..."
+          retry
+        else
+          # timeout
+        end
+      end
+
+      # fail if we can't connect
+      unless ssl_socket
+        _log_error "Unable to connect!!"
+        return nil
+      end
+
+      # fail if no ceritificate
+      unless ssl_socket.peer_cert
+        _log_error "No certificate!!"
+        return nil
+      end
+
+      # Close the sockets
+      ssl_socket.sysclose
+      socket.close
+
+    raw_certificate = ssl_socket.peer_cert
+    end
+
+    def parse_certificate(cert, opt_skip_hosted_services=true)
+
+      # default to empty alt_names
+      alt_names = []
+
+      # Check the subjectAltName property, and if we have names, here, parse them.
+      cert.extensions.each do |ext|
+        if "#{ext.oid}" =~ /subjectAltName/
+
+          alt_names = ext.value.split(",").collect do |x|
+            "#{x}".gsub(/DNS:/,"").strip
+          end
+          _log "Got alt names: #{alt_names.inspect}"
+
+          tlds = []
+
+          # Iterate through, looking for trouble
+          alt_names.each do |alt_name|
+
+            # collect all top-level domains
+            tlds << alt_name.split(".").last(2).join(".")
+
+            universal_cert_domains = [
+              "acquia-sites.com",
+              "chinanetcenter.com",
+              "cloudflare.com",
+              "cloudflaressl.com",
+              "distilnetworks.com",
+              "edgecastcdn.net",
+              "fastly.net",
+              "freshdesk.com",
+              "jiveon.com",
+              "incapsula.com",
+              "lithium.com",
+              "wpengine.com"
+            ]
+
+            universal_cert_domains.each do |cert_domain|
+              if (alt_name =~ /#{cert_domain}$/ ) && opt_skip_hosted_services
+                _log "This is a universal #{cert_domain} certificate, skipping further entity creation"
+                return
+              end
+            end
+
+          end
+
+          if opt_skip_hosted_services
+            # Generically try to find certs that aren't useful to us
+            suspicious_count = 80
+            # Check to see if we have over suspicious_count top level domains in this cert
+            if tlds.uniq.count >= suspicious_count
+              # and then check to make sure none of the domains are greate than a quarter
+              _log "This looks suspiciously like a third party cert... over #{suspicious_count} unique TLDs: #{tlds.uniq.count}"
+              _log "Total Unique Domains: #{alt_names.uniq.count}"
+              _log "Bailing!"
+              return
+            end
+          end
+        end
+      end
+      alt_names
+    end
+
+
     def fingerprint_uri(uri)
 
       results = []

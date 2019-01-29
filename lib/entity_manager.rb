@@ -235,7 +235,7 @@ class EntityManager
       # Take the smaller group id, and use that to alias together
       cid = entity.alias_group_id
       pid = primary_entity.alias_group_id
-      cid < pid ? entity.alias(primary_entity) : primary_entity.alias(entity)
+      cid > pid ? entity.alias(primary_entity) : primary_entity.alias(entity)
 
     end
 
