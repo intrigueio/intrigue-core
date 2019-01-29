@@ -17,7 +17,6 @@ module Task
     end
 
     def destroy_browser_session(session)
-      #session.visit('about:blank')
 
       # get the full group id (driver + browser)
       begin
@@ -45,7 +44,7 @@ module Task
 
     def safe_browser_action
       begin
-        
+
         results = yield
 
       rescue Addressable::URI::InvalidURIError => e
@@ -79,18 +78,18 @@ module Task
     def capture_document(session, uri)
       # browse to our target
       safe_browser_action do
+        # visit the page
         session.visit(uri)
-      end
-
-      # Capture Title
-      page_title = session.document.title
-      # Capture Body Text
-      page_contents = session.document.text(:all)
-      # Capture DOM
-      rendered_page = nil
-      safe_browser_action do
+        # Capture Title
+        page_title = session.document.title
+        # Capture Body Text
+        page_contents = session.document.text(:all)
+        # Capture DOM
         rendered_page = session.evaluate_script("document.documentElement.innerHTML",[])
       end
+
+      #
+
 
     { :title => page_title, :contents => page_contents, :rendered => rendered_page }
   end
