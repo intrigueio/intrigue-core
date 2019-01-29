@@ -10,8 +10,6 @@ module Vulndb
       @cpe = cpe_string
       x = _parse_cpe(@cpe)
 
-      #puts "Got Parsed CPE: #{x}"
-
       return nil unless x
 
       @vendor = x[:vendor]
@@ -192,6 +190,8 @@ module Vulndb
     def _parse_cpe(string)
 
       m = string.match(/^cpe:2.3:[o|a|s|h]:(.*?):(.*?):(.*?):(.*?)$/)
+      return nil unless m
+
       vendor = "#{m[1]}".strip
       product = "#{m[2]}".strip
       version = "#{m[3]}".strip
