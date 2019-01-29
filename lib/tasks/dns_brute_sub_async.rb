@@ -31,7 +31,7 @@ class DnsBruteSubAsync < BaseTask
         {:name => "brute_alphanumeric_size", :type => "Integer", :regex => "integer", :default => 0 },
         {:name => "records_per_request", :type => "Integer", :regex => "integer", :default => 50 },
       ],
-      :created_types => ["DnsRecord"]
+      :created_types => ["IpAddress","DnsRecord","Domain"] 
     }
   end
 

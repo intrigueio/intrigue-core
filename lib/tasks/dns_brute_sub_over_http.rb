@@ -31,7 +31,7 @@ class DnsBruteSubOverHttp < BaseTask
         {:name => "brute_alphanumeric_size", :type => "Integer", :regex => "integer", :default => 0 },
         {:name => "threads", :type => "Integer", :regex => "integer", :default => 20 }
       ],
-      :created_types => ["DnsRecord"]
+      :created_types => ["IpAddress","DnsRecord","Domain"]
     }
   end
 
@@ -100,16 +100,26 @@ class DnsBruteSubOverHttp < BaseTask
 
     start_time = Time.now
 
-    # resolve using flareon
-    results = Flareon.batch_query_multithreaded(fqdn_list, threads: opt_threads)
+    ###
+    ### Resolve using Flareon!
+    ###
+    begin
+      results = Flareon.batch_query_multithreaded(fqdn_list, threads: opt_threads)
+    rescue OpenSSL::SSL::SSLError => e
+      _log_error "Got OpenSSL error"
+    end
     duration = Time.now - start_time
 
-    # create entities
+    # create entities based on our responses
     results.each do |r|
       next unless r["Answer"]
       unless wildcard_ips.include?(r["Answer"].first["data"])
         dns_entity = _create_entity("DnsRecord", {"name" => r["Question"].first["name"] })
-        _create_entity("IpAddress", {"name" => r["Answer"].first["data"] }, dns_entity)
+
+        # since we can get a CNAME response, check type before creating
+        create_type = "#{["Answer"].first["data"]}".is_ip_address? ? "IpAddress" : "DnsRecord"
+        _create_entity(create_type, {"name" => r["Answer"].first["data"] }, dns_entity)
+
       else
         _log "Resolved #{f.name} to a known wildcard: #{f.ip}"
       end
@@ -119,7 +129,7 @@ class DnsBruteSubOverHttp < BaseTask
     stats = {
         duration:        duration,
         domain_count:    fqdn_list.count,
-        found_count:     results.count
+        found_count:     results.map{|r| r["Answer"]}.compact.count
     }
     _log "Stats:\n: #{stats}"
   end

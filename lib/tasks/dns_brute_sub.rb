@@ -30,7 +30,7 @@ class DnsBruteSub < BaseTask
         {:name => "brute_alphanumeric_size", :type => "Integer", :regex => "integer", :default => 0 },
         {:name => "threads", :type => "Integer", :regex => "integer", :default => 20 },
       ],
-      :created_types => ["DnsRecord"]
+      :created_types => ["IpAddress","DnsRecord","Domain"]
     }
   end
 
@@ -134,8 +134,11 @@ class DnsBruteSub < BaseTask
                   found_count += 1
                   _log_good "Resolved address #{resolved_address} for #{fqdn}!"
 
-                  main_entity = _create_entity("DnsRecord", {"name" => fqdn })
-                  ip_address = _create_entity("IpAddress", {"name" => resolved_address }, main_entity)
+                  dns_entity = _create_entity("DnsRecord", {"name" => fqdn })
+
+                  # since we can get a CNAME response, check type before creating
+                  create_type = "#{["Answer"].first["data"]}".is_ip_address? ? "IpAddress" : "DnsRecord"
+                  _create_entity(create_type, {"name" => r["Answer"].first["data"] }, dns_entity)
 
                   #
                   # This section will add permutations to our list, if the
