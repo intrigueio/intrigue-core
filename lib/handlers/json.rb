@@ -15,7 +15,7 @@ module Handler
       return "Unable to process" unless result.respond_to? "export_json"
 
       # write to a file bit by bit
-      file = File.open("#{$intrigue_basedir}/tmp/#{result.name}.json", "a")
+      file = File.open("#{$intrigue_basedir}/public/export/#{result.name}.json", "a")
       result.entities.paged_each(rows_per_fetch: 1000) do |e|
         file.puts("#{e.export_json}\n")
         file.flush

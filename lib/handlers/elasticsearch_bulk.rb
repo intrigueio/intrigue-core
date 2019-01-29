@@ -16,7 +16,7 @@ module Handler
       return "Unable to process" unless result.respond_to? "export_json"
 
       # Write it out
-      File.open("#{prefix_name}#{result.name}.bulk", "a") do |file|
+      File.open("#{$intrigue_basedir}/public/export/#{prefix_name}#{result.name}.bulk", "a") do |file|
         _lock(file) do
           file.write("{ \"index\" : { \"_index\" : \"results\", \"_type\" : \"#{result.task_name}\", \"_id\" : \"#{result.id}\" } }\n")
           file.write(result.export_json)
