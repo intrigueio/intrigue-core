@@ -32,8 +32,37 @@ class TcpBindAndCollect < BaseTask
 
   def track_connection(c)
     _log "#{c}"
-    e = _create_entity("IpAddress",{"name" => c["source_address"], "certificate" => "#{c["source_certificate"]}"}) if _get_option "create_entity"
-    _notify "#{c["source_address"]}:#{c["source_port"]} -> #{c["listening_port"]} ```#{c["message"]}```" if _get_option "notify"
+
+    if _get_option "create_entity"
+
+      source_address = "#{c["source_address"]}"
+
+      # look up the details in team cymru's whois
+      whois_details = Intrigue::Client::Search::Cymru::IPAddress.new.whois(source_address)
+
+      # create an entity for the IP
+      e = _create_entity("IpAddress",{
+        "name" => source_address,
+        "asn" => whois_details.first,
+        "certificate" => "#{c["source_certificate"]}"
+      })
+
+      # create an ASN
+      _create_entity "AutonomousSystem", "name" => "AS#{whois_details.first}"
+
+      # create an info for the message (maybe custom type later)
+      e = _create_entity("Info",{
+        "name" => "#{Base64.encode64(c["message"]).strip[0..79]}",
+        "source_address" => source_address,
+        "source_certificate" => "#{c["source_certificate"]}",
+        "request" => "#{c["message"]}",
+
+      })
+    end
+
+    if _get_option "notify"
+      _notify "#{c["source_address"]}:#{c["source_port"]} -> #{c["listening_port"]} ```#{c["message"]}```"
+    end
   end
 
   def bind_and_listen(ports=[])
@@ -44,11 +73,12 @@ class TcpBindAndCollect < BaseTask
 
     # Create threads to listen to each port
     threads = ports.map do |port|
+      _log_good "Creating Background thread to listen for port #{port}"
       Thread.new do
 
         # if ssl server
         if port =~ /443$/ || port == "22"
-          _log_good "Creating SSL Listener for port #{port}"
+          _log_good "Establishing SSL Listener for port #{port}"
           start_ssl_listener(port) do |c|
             connection_details = {}
             connection_details["timestamp"] = DateTime.now
@@ -69,7 +99,7 @@ class TcpBindAndCollect < BaseTask
           end
         else
           # if normal
-          _log_good "Creating TCP Listener for port #{port}"
+          _log_good "Establishing TCP Listener for port #{port}"
           start_tcp_listener(port) do |c|
             connection_details = {}
             connection_details["timestamp"] = DateTime.now

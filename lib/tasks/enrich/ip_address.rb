@@ -63,10 +63,10 @@ class IpAddress < Intrigue::Task::BaseTask
 
       lookup_details = result["lookup_details"].first["response_record_data"]
       if lookup_details.kind_of?(Dnsruby::IPv4) || lookup_details.kind_of?(Dnsruby::IPv6) || lookup_details.kind_of?(Dnsruby::Name)
-        _log "Sanitizing Dnsruby Object"
+        #_log "Sanitizing Dnsruby Object"
         xdata = result["lookup_details"].first["response_record_data"].to_s.sanitize_unicode
       else
-        _log "Sanitizing String or array"
+        #_log "Sanitizing String or array"
         xdata = result["lookup_details"].first["response_record_data"].to_s.sanitize_unicode
       end
 
