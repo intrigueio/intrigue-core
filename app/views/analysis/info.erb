@@ -1,5 +1,5 @@
 <div class="row">
-  <div id="aflkj" class="col-sm-12">
+  <div id="info-table" class="col-sm-12">
     <script type="text/javascript" src="/js/sorttable.js"></script>
     <style>
     /* Sortable tables */
@@ -22,15 +22,14 @@
     <table class="sortable" border="1" width=100%>
       <colgroup>
         <col style="width:20%">
-        <col style="width:20%">
-        <col style="width:60%">
+        <col style="width:70%">
       </colgroup>
       <tbody>
-      <tr><th>Name</th><th>Details</th></tr>
+        <tr><th>Name</th><th>Details</th></tr>
       <% @infos.each do |x| %>
         <tr>
           <td><a href="<%="/#{h @project_name}/entities/#{h x.id}"%>"><%= h x %></a></td>
-          <td><pre><%=h x.details%></pre></td>
+          <td><pre><%=h JSON.pretty_generate x.details%></pre></td>
         </tr>
       <% end %>
       </tbody>
