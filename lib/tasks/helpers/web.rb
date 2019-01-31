@@ -13,13 +13,20 @@ module Intrigue
 module Task
   module Web
 
-    def connect_socket(hostname,port,timeout)
+    def ssl_connect_and_get_cert_names(hostname,port,timeout=30)
+      # connect
+      socket = connect_socket(hostname,port,timeout=30)
+      return [] unless socket && socket.peer_cert
+      # Parse the cert
+      cert = OpenSSL::X509::Certificate.new(socket.peer_cert)
+      # get the names
+      names = parse_names_from_cert(cert)
+    end
+
+    def connect_socket(hostname,port,timeout=30)
       # Create a socket and connect
       # https://apidock.com/ruby/Net/HTTP/connect
-      #addr = Socket.getaddrinfo(hostname, nil)
-      #sockaddr = Socket.pack_sockaddr_in(port, addr[0][3])
-      #socket = Socket.new(Socket.const_get(addr[0][0]), Socket::SOCK_STREAM, 0)
-      #socket.setsockopt(Socket::IPPROTO_TCP, Socket::TCP_NODELAY, 1)
+
       socket = TCPSocket.new hostname, port
       context= OpenSSL::SSL::SSLContext.new
       ssl_socket = OpenSSL::SSL::SSLSocket.new socket, context
@@ -42,6 +49,22 @@ module Task
         else
           # timeout
         end
+      rescue SocketError => e
+        _log_error "Error requesting resource, skipping: #{hostname} #{port}"
+      rescue Errno::EINVAL => e
+        _log_error "Error requesting resource, skipping: #{hostname} #{port}"
+      rescue Errno::EMFILE => e
+        _log_error "Error requesting resource, skipping: #{hostname} #{port}"
+      rescue Errno::EPIPE => e
+        _log_error "Error requesting cert, skipping: #{hostname} #{port}"
+      rescue Errno::ECONNRESET => e
+        _log_error "Error requesting cert, skipping: #{hostname} #{port}"
+      rescue Errno::ECONNREFUSED => e
+        _log_error "Error requesting cert, skipping: #{hostname} #{port}"
+      rescue Errno::ETIMEDOUT => e
+        _log_error "Error requesting cert, skipping: #{hostname} #{port}"
+      rescue Errno::EHOSTUNREACH => e
+        _log_error "Error requesting cert, skipping: #{hostname} #{port}"
       end
 
       # fail if we can't connect
@@ -60,10 +83,10 @@ module Task
       ssl_socket.sysclose
       socket.close
 
-    raw_certificate = ssl_socket.peer_cert
+    ssl_socket
     end
 
-    def parse_certificate(cert, opt_skip_hosted_services=true)
+    def parse_names_from_cert(cert, skip_hosted=true)
 
       # default to empty alt_names
       alt_names = []
@@ -73,9 +96,9 @@ module Task
         if "#{ext.oid}" =~ /subjectAltName/
 
           alt_names = ext.value.split(",").collect do |x|
-            "#{x}".gsub(/DNS:/,"").strip
+            "#{x}".gsub(/DNS:/,"").strip.gsub("*.","")
           end
-          _log "Got alt names: #{alt_names.inspect}"
+          _log "Got cert's alt names: #{alt_names.inspect}"
 
           tlds = []
 
@@ -109,7 +132,7 @@ module Task
 
           end
 
-          if opt_skip_hosted_services
+          if skip_hosted
             # Generically try to find certs that aren't useful to us
             suspicious_count = 80
             # Check to see if we have over suspicious_count top level domains in this cert

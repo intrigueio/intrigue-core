@@ -19,7 +19,7 @@ class CreateService < BaseTask
         {:name => "port", :regex=> "integer", :default => 80 },
         {:name => "protocol", :regex=> "alpha_numeric", :default => "tcp" }
       ],
-      :created_types => ["IpAddress"]
+      :created_types => ["NetworkService","Url"]
     }
   end
 

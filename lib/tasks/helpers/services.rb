@@ -11,6 +11,8 @@ module Intrigue
 module Task
 module Services
 
+  include Intrigue::Task::Web
+
   def _create_network_service_entity(ip_entity,port_num,protocol="tcp",generic_details={})
 
     # first, save the port details on the ip_entity
@@ -18,18 +20,35 @@ module Services
     updated_ports = ports.append({"number" => port_num, "protocol" => protocol}).uniq
     ip_entity.set_detail("ports", updated_ports)
 
+    ssl = true if [443,8443].include?(port_num)
+
     # Ensure we always save our host and key details.
     # note that we might add service specifics to this below
     generic_details.merge!({
       "port" => port_num,
+      "ssl" => ssl,
       "protocol" => protocol,
       "ip_address" => ip_entity.name,
+      "asn" => ip_entity.get_detail("asn"),
       "host_id" => ip_entity.id
     })
 
+    # if this is an ssl port, let's get the CNs and crate
+    # dns records
+    cert_entities = []
+    if ssl
+      # connect, grab the socket and make sure we
+      # keep track of these details, and create entitie
+      cert_names = ssl_connect_and_get_cert_names(ip_entity.name,port_num)
+      generic_details.merge!({"cert_names" => cert_names})
+      cert_names.uniq do |cn|
+        cert_entities << _create_entity("DnsRecord", {"name" => cn}, ip_entity)
+      end
+    end
+
     # Grab all the aliases, since we'll want to auto-create services on them
     # (VHOSTS use case)
-    hosts = [ip_entity]
+    hosts = [ip_entity].concat cert_entities.uniq
     if ip_entity.aliases.count > 0
       ip_entity.aliases.each do |a|
         next unless a.type_string == "DnsRecord" #  only dns records
@@ -45,8 +64,7 @@ module Services
       # Handle web app case first
       if (protocol == "tcp" && [80,81,443,8000,8080,8081,8443].include?(port_num))
 
-        # Determine if this is SSL
-        ssl = true if [443,8443].include?(port_num)
+        # If SSL, use the appropriate prefix
         prefix = ssl ? "https" : "http" # construct uri
 
         # Construct the uri
@@ -55,6 +73,7 @@ module Services
         x= _gather_http_response(uri)
         http_response = x[:http_response]
         generic_details.merge!(x[:extra_details])
+
 
         unless http_response
           _log_error "Didn't get a response when we requested one, moving on"
@@ -260,7 +279,7 @@ module Services
       out[:extra_details] = {}
 
       _log "connecting to #{uri}"
-      
+
       out[:http_response] = http_request(:get, uri)
 
       ## TODO ... follow & track location headers?

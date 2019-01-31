@@ -34,7 +34,7 @@ module Task
         Process.kill('KILL', driver_pid )
 
       rescue Errno::ESRCH => e
-        # already dead
+          # already dead
         _log_error "Error trying to kill our browser session #{e}"
       rescue Net::ReadTimeout => e
         _log_error "Timed out trying to close our session.. #{e}"
@@ -47,6 +47,8 @@ module Task
 
         results = yield
 
+      rescue Errno::EMFILE => e
+        _log_error "Too many open files: #{e}" if @task_result
       rescue Addressable::URI::InvalidURIError => e
         _log_error "Invalid URI: #{e}" if @task_result
       rescue Capybara::ElementNotFound => e
@@ -106,20 +108,17 @@ module Task
       #
       # Capture a screenshot
       #
-      tempfile = Tempfile.new(['screenshot', '.png'])
-
+      base64_image_contents = nil
       safe_browser_action do
+        tempfile = Tempfile.new(['screenshot', '.png'])
         session.save_screenshot(tempfile.path)
         _log "Saved Screenshot to #{tempfile.path}"
+        # open and read the file's contents, and base64 encode them
+        base64_image_contents = Base64.encode64(File.read(tempfile.path))
+        # cleanup
+        tempfile.close
+        tempfile.unlink
       end
-
-      # open and read the file's contents, and base64 encode them
-      base64_image_contents = Base64.encode64(File.read(tempfile.path))
-
-      # cleanup
-      tempfile.close
-      tempfile.unlink
-
     base64_image_contents
     end
 

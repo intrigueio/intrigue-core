@@ -35,28 +35,19 @@ class UriGatherSslCert  < BaseTask
       port = URI.parse(uri).port
       timeout = 60
 
-      raw_certificate_data = connect_socket(hostname,port,timeout)
-
+      # connect
+      socket = connect_socket(hostname,port,timeout=30)
+      return [] unless socket && socket.peer_cert
       # Parse the cert
-      cert = OpenSSL::X509::Certificate.new(raw_certificate_data)
-
-      names = parse_certificate(cert, opt_skip_hosted_services)
+      cert = OpenSSL::X509::Certificate.new(socket.peer_cert)
 
       #assuming we made it this far, let's proceed
-      names.each do |name|
-
-        # Remove any leading wildcards so we get a sensible domain name
-        if name[0..1] == "*."
-          name = name[2..-1]
-        end
-
-        _create_entity "DnsRecord", { "name" => name }
-      end
+      #names.each do |name|
+      #  _create_entity "DnsRecord", { "name" => name }
+      #end
 
       # Create an SSL Certificate entity
-
       key_size = "#{cert.public_key.n.num_bytes * 8}" if cert.public_key && cert.public_key.respond_to?(:n)
-
       _create_entity "SslCertificate", {
         "name" => "#{cert.subject.to_s.split("CN=").last} (#{cert.serial})",
         "version" => cert.version,
@@ -89,8 +80,6 @@ class UriGatherSslCert  < BaseTask
       # TODO this is probably an issue with an IPv6 URL... need to be adjusted:
       # https://www.ietf.org/rfc/rfc2732.txt
     rescue OpenSSL::SSL::SSLError => e
-      _log_error "Caught an error: #{e}"
-    rescue RuntimeError => e
       _log_error "Caught an error: #{e}"
     end
   end

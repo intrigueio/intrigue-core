@@ -484,7 +484,7 @@ class Uri < Intrigue::Task::BaseTask
     return true if response_body =~ /<form/i
   false
   end
-
+  
 end
 end
 end
