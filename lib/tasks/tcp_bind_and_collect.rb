@@ -55,7 +55,7 @@ class TcpBindAndCollect < BaseTask
 
       # create an info for the message (maybe custom type later)
       msg = _create_entity("Info",{
-        "name" => "#{Base64.encode64(c["message"]).strip[0..25]}",
+        "name" => "#{Digest::SHA1.hexdigest(c["message"])}",
         "request" => "#{c["message"]}"
       })
 
