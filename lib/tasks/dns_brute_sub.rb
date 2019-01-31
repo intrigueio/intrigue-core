@@ -25,7 +25,7 @@ class DnsBruteSub < BaseTask
             "dl", "search", "staging", "fw", "firewall", "email"]  },
         {:name => "use_mashed_domains", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "use_permutations", :type => "Boolean", :regex => "boolean", :default => true },
-        {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => true },
+        {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
         {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_sub.list" },
         {:name => "brute_alphanumeric_size", :type => "Integer", :regex => "integer", :default => 0 },
         {:name => "threads", :type => "Integer", :regex => "integer", :default => 20 },
