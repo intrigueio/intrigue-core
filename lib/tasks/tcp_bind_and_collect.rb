@@ -48,7 +48,10 @@ class TcpBindAndCollect < BaseTask
       })
 
       # create an ASN
-      _create_entity "AutonomousSystem", "name" => "AS#{whois_details.first}"
+      _create_entity("AutonomousSystem", {
+        "name" => "AS#{whois_details.first}",
+        "cymru" => whois_details
+      })
 
       # create an info for the message (maybe custom type later)
       e = _create_entity("Info",{
