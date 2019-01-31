@@ -54,13 +54,19 @@ class TcpBindAndCollect < BaseTask
       })
 
       # create an info for the message (maybe custom type later)
-      e = _create_entity("Info",{
-        "name" => "#{Base64.encode64(c["message"]).strip[0..79]}",
-        "source_address" => source_address,
-        "source_certificate" => "#{c["source_certificate"]}",
-        "request" => "#{c["message"]}",
-
+      msg = _create_entity("Info",{
+        "name" => "#{Base64.encode64(c["message"]).strip[0..25]}",
+        "request" => "#{c["message"]}"
       })
+
+      requests = msg.get_detail("requests") || []
+      requests << {
+        "source_address" => [source_address],
+        "source_port" => c["source_port"],
+        "source_certificate" => "#{c["source_certificate"]}",
+        "dest_port" => c["listening_port"]
+      }
+      msg.set_detail("requests",requests)
     end
 
     if _get_option "notify"
@@ -81,7 +87,8 @@ class TcpBindAndCollect < BaseTask
 
         # if ssl server
         if port =~ /443$/ || port == "22"
-          _log_good "Establishing SSL Listener for port #{port}"
+
+          _log_good "Establishing SSL-Enabled Listener for port #{port}"
           start_ssl_listener(port) do |c|
             connection_details = {}
             connection_details["timestamp"] = DateTime.now
@@ -91,12 +98,16 @@ class TcpBindAndCollect < BaseTask
             connection_details["source_address"] = "#{c.peeraddr.last}"
             connection_details["source_port"] = "#{c.peeraddr[1]}"
             connection_details["message"] = ""
-            while (lineIn = c.gets)
-              connection_details["message"] << "#{lineIn.chomp}\n"
-            end
-            c.each_line do |line|
 
-            end
+            readfds = true
+            message = []
+            begin
+              readfds, writefds, exceptfds = select([c], nil, nil, 0.1)
+              _log :r => readfds, :w => writefds, :e => exceptfds
+              message << c.gets if readfds
+            end while readfds
+            connection_details["message"] = message.compact.join("")
+
             track_connection connection_details
             c.close
           end
@@ -111,9 +122,16 @@ class TcpBindAndCollect < BaseTask
             connection_details["source_address"] = "#{c.peeraddr.last}"
             connection_details["source_port"] = "#{c.peeraddr[1]}"
             connection_details["message"] = ""
-            while (lineIn = c.gets)
-              connection_details["message"] << "#{lineIn.chomp}\n"
-            end
+
+            readfds = true
+            message = []
+            begin
+              readfds, writefds, exceptfds = select([c], nil, nil, 0.1)
+              _log :r => readfds, :w => writefds, :e => exceptfds
+              message << c.gets if readfds
+            end while readfds
+            connection_details["message"] = message.compact.join("")
+
             track_connection connection_details
             c.close
           end
@@ -122,7 +140,9 @@ class TcpBindAndCollect < BaseTask
     end
 
     # Wait for all threads to complete
-    threads.map &:join
+    _log "This is a long-running task"
+    _log "...waiting until all threads complete to close the task"
+    threads.each &:join
   end
 
 
