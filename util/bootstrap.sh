@@ -74,8 +74,9 @@ wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-
 echo "[+] Updating via Apt..."
 sudo apt-get -y update
 
+# just in case, do the fix-broken flag
 echo "[+] Installing Intrigue Dependencies..."
-sudo apt-get -y install make \
+sudo apt-get -y --fix-broken install make \
   git \
   git-core \
   bzip2 \
