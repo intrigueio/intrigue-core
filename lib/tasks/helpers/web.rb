@@ -120,6 +120,7 @@ module Task
               "jiveon.com",
               "incapsula.com",
               "lithium.com",
+              "swagcache.com",
               "wpengine.com"
             ]
 

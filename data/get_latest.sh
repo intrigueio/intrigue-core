@@ -81,8 +81,8 @@ if [ ! -f public_suffix_list.dat ]; then
 fi
 
 # NVD feeds
-NVD_YEARS="2018 2017 2016 2015 2014 2013 2012 2011"
-
+NVD_YEARS="2019 2018 2017 2016 2015 2014 2013 2012 2011"
+x
 # nvd download function
 function get_nvd_json() {
   echo "[+] Getting latest NVD JSON Feed: $YEAR"
