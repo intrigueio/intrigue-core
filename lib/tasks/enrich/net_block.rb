@@ -63,7 +63,7 @@ class NetBlock < Intrigue::Task::BaseTask
       @entity.project.seeds.each do |s|
         next unless scoped_entity_types.include? s["type"]
         if out["whois_full_text"] =~ /#{Regexp.escape(s["name"])}/
-          _log "Marking as scoped: SEED MATCHED TEXT: #{e.type}##{e.name}"
+          _log "Marking as scoped: SEED ENTITY NAME MATCHED TEXT: #{s["name"]}}"
           @entity.scoped = true
           @entity.save
           return
@@ -88,7 +88,7 @@ class NetBlock < Intrigue::Task::BaseTask
     end
 
     if @entity.created_by?("search_bgp")
-      _log "Marking as scoped: CREATED BY SEARCH_BGP: #{e.type}##{e.name}"
+      _log "Marking as scoped: CREATED BY SEARCH_BGP"
       @entity.scoped = true
       @entity.save
     end
