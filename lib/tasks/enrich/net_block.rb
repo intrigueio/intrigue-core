@@ -63,7 +63,7 @@ class NetBlock < Intrigue::Task::BaseTask
       @entity.project.seeds.each do |s|
         next unless scoped_entity_types.include? s["type"]
         if out["whois_full_text"] =~ /#{Regexp.escape(s["name"])}/
-          _log "In scope based on matched name #{s["name"]} in whois text"
+          _log "Marking as scoped: SEED MATCHED TEXT: #{e.type}##{e.name}"
           @entity.scoped = true
           @entity.save
           return
@@ -73,16 +73,22 @@ class NetBlock < Intrigue::Task::BaseTask
 
     # Check new entities that we've scoped in
     @entity.project.entities.where(:scoped => true, :type => scoped_entity_types ).each do |e|
+
+      # make sure we skip any dns entries that are not fqdns. this will prevent
+      # auto-scoping on a single name like "log" or even a number like "1"
+      next if (e.type == "DnsRecord" || e.type == "Domain") && e.name.split(".").count == 1
+
       if out["whois_full_text"] =~ /#{Regexp.escape(e.name)}/
-        _log "In scope based on #{e.type}##{e.name} SCOPED"
+        _log "Marking as scoped: PROJECT ENTITY MATCHED TEXT: #{e.type}##{e.name}"
         @entity.scoped = true
         @entity.save
         return
       end
+
     end
 
     if @entity.created_by?("search_bgp")
-      _log "In scope based on creation by SEARCH_BGP"
+      _log "Marking as scoped: CREATED BY SEARCH_BGP: #{e.type}##{e.name}"
       @entity.scoped = true
       @entity.save
     end
