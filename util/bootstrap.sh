@@ -21,7 +21,7 @@ sudo systemctl disable apt-daily-upgrade.service
 
 # wait until `apt-get updated` has been killed
 echo "[+] Wait until apt-get udpate has been killed"
-while ! (systemctl list-units --all apt-daily.service | fgrep -q dead)
+while ! (systemctl list-units --all apt-daily.service | egrep -q 'dead|fail')
 do
   echo "[+] Waiting for systemd apt-daily.service to die"
   sleep 1;
