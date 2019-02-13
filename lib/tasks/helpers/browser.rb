@@ -88,12 +88,11 @@ module Task
         page_contents = session.document.text(:all)
         # Capture DOM
         rendered_page = session.evaluate_script("document.documentElement.innerHTML",[])
+
+        # return our hash
+        return { :title => page_title, :contents => page_contents, :rendered => rendered_page }
+
       end
-
-      #
-
-
-    { :title => page_title, :contents => page_contents, :rendered => rendered_page }
   end
 
     def capture_screenshot(session, uri)
