@@ -1,0 +1,42 @@
+<div class="row">
+  <div id="aflkj" class="col-sm-12">
+    <script type="text/javascript" src="/js/sorttable.js"></script>
+    <style>
+    /* Sortable tables */
+    table.sortable {
+      width: 100%;
+      border: 0;
+      table-layout:fixed;
+      word-wrap:break-word;
+      border-collapse:collapse;
+    }
+
+    table.sortable thead {
+        background-color:#eee;
+        color:#666666;
+        font-weight: bold;
+        cursor: default;
+    }
+    </style>
+    <p></p>
+    <table class="sortable" border="1" width=100%>
+      <colgroup>
+        <col style="width:10%">
+        <col style="width:25s%">
+        <col style="width:10%">
+        <col style="width:55%">
+      </colgroup>
+      <tbody>
+      <tr><th>Protocol</th><th>Cipher</th><th>Key Length</th><th>Site</th></tr>
+      <% @ciphers.each do |x| %>
+        <tr>
+          <td><%=h x["version"] %></td>
+          <td><%=h x["cipher"] %></td>
+          <td><%=h x["key_length"] %></td>
+          <td><a href="<%=h "/#{@project_name}/entities/#{x["id"]}"%>"><%= h x["site"] %></a></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

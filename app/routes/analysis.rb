@@ -19,6 +19,45 @@ class IntrigueApp < Sinatra::Base
     erb :'analysis/certificates'
   end
 
+  get '/:project/analysis/ciphers' do
+    cipher_arrays = []
+    Intrigue::Model::Entity.scope_by_project(@project_name).where(type: "Intrigue::Entity::Uri").each do |u|
+      c = u.get_detail("ciphers")
+      next unless c
+
+      # capture name, version, sites here ... only select detected stuff
+      cipher_arrays << c.map{|x| x.merge("site" => u.name, "id" => u.id )}
+    end
+
+    @ciphers = cipher_arrays.flatten
+
+    erb :'analysis/ciphers'
+  end
+
+  get '/:project/analysis/cves' do
+    @cves = []
+    Intrigue::Model::Entity.scope_by_project(@project_name).where(type: "Intrigue::Entity::Uri").each do |u|
+      fps = u.get_detail("fingerprint")
+      next unless fps
+
+      # capture only select selected fields
+      @cves.concat(
+        fps.map { |fp|
+            fp["vulns"].map { |v|
+              {
+                "cpe" => "#{fp["cpe"]}",
+                "cve_id" => "#{v["cve_id"]}",
+                "site" => u.name,
+                "id" => u.id
+              }
+            }
+          }.flatten
+        )
+    end
+
+    erb :'analysis/cves'
+  end
+
   get '/:project/analysis/domains' do
     length = params["length"].to_i
     @domains = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::DnsRecord").sort_by{|x| x.name }

@@ -8,7 +8,7 @@ class DnsRecurseSpf < BaseTask
     {
       :name => "dns_recurse_spf",
       :pretty_name => "DNS SPF Recursive Lookup",
-      :authors => ["@markstanislav","jcran"],
+      :authors => ["markstanislav","jcran"],
       :description => "Check the SPF records of a domain (recursively) and create entities",
       :references => [
         "http://www.openspf.org/",
