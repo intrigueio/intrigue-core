@@ -12,7 +12,6 @@ function get_maxmind() {
   mv GeoLite2-City_*/GeoLite2-City.mmdb .
   # clean up
   rm -rf GeoLite2-City_*
-  rmdir GeoLite2-City/
 }
 
 # GeoLiteCity
@@ -21,8 +20,6 @@ if [ -d "geolitecity" ]; then
   if [ ! -f GeoLite2-City.mmdb ]; then
     get_maxmind
   else
-    echo "[+] Removing old MaxMind GeoLiteCity database"
-    rm -rf geolitecity/*.mmdb
     get_maxmind
   fi
   cd ..

@@ -19,17 +19,27 @@ sudo systemctl stop apt-daily-upgrade.timer
 sudo systemctl kill --kill-who=all apt-daily-upgrade.service
 sudo systemctl disable apt-daily-upgrade.service
 
-# wait until `apt-get updated` has been killed
-echo "[+] Wait until apt-get udpate has been killed"
-while ! (systemctl list-units --all apt-daily.service | egrep -q 'dead|fail')
+# ensure any running `apt-get update` has been killed
+echo "[+] Wait until apt-get update has been killed:"
+while ! (systemctl list-units --all apt-daily.service 2>&1 | egrep -qi 'dead|fail')
 do
-  echo "[+] Waiting for systemd apt-daily.service to die"
+  echo "[+] Waiting for systemd apt-daily.service to die:"
+  echo `systemctl list-units --all apt-daily.service`
   sleep 1;
 done
 
 # Buffer
 echo "[+] Buffer 5 seconds"
 sleep 5
+
+# Clean up
+echo "[+] Ensuring Apt is clean"
+sudo apt-get autoremove
+sudo apt-get --purge remove
+sudo apt-get autoclean
+sudo apt-get clean
+sudo apt-get update --fix-missing
+echo "[+] Proceeding with system setup"
 
 # UPGRADE FULLY NON-INTERACTIVE
 echo "[+] Preparing the System by upgrading"
@@ -57,7 +67,7 @@ echo "[+] Reconfigure Dpkg"
 sudo dpkg --configure -a
 
 echo "[+] Installing Apt Essentials"
-sudo apt-get -y install wget
+sudo apt-get -y install wget lsb-core software-properties-common dirmngr apt-transport-https lsb-release ca-certificates
 
 ##### Add external repositories
 
