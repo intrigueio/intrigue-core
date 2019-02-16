@@ -58,6 +58,9 @@ module System
               created_entity = Intrigue::EntityManager.create_first_entity(
                 project_name, entity["type"], entity["details"]["name"], entity["details"])
 
+              # just in case we tried to create an invalid entity, skip
+              next unless created_entity
+
               # Kick off the task (don't set handler on the task)
               task_result = start_task(nil, project, nil, task_name,
                 created_entity, depth, options, scan_handlers, machine, auto_enrich, auto_scope)
