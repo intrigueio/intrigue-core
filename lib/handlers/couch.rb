@@ -7,7 +7,7 @@ module Handler
     def self.metadata
       {
         :name => "couch",
-        :pretty_name => "Export to Couchbase",
+        :pretty_name => "Upload to Couchbase",
         :type => "export"
       }
     end

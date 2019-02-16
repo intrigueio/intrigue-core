@@ -69,7 +69,7 @@ module Intrigue
 
       def export_applications_csv
         out = ""
-        out << "IpAddress,Uri,Title,Fingerprint,Javascript,XFrameOptions,Http Auth,Forms Auth,Any Auth\n"
+        out << "IpAddress,Uri,Title,Fingerprint,Javascript,XFrameOptions,Form,Dir Listing,Http Auth,Forms Auth,User Account,Any Auth\n"
 
         self.entities.sort_by{|e| e.to_s }.each do |x|
 
@@ -127,17 +127,26 @@ module Intrigue
           x_frame_options = false
           if configuration
             configuration.each do |c|
-              if c["name"] == "Form Authentication Detected"
+              if c["name"] == "Authentication - Forms"
                 forms_auth = c["result"]
-              elsif c["name"] == "HTTP Authentication Detected"
+              elsif c["name"] == "Authentication - HTTP"
                 http_auth = c["result"]
-              elsif c["name"] == "X-Frame-Options Header Exists"
+              elsif c["name"] == "Authentication - User Account Required"
+                user_account = c["result"]
+              elsif c["name"] == "Content - Form Detected"
+                form_detected = c["result"]
+              elsif c["name"] == "Content - Directory Listing"
+                dir_listing_detected = c["result"]
+              elsif c["name"] == "Header Existence - X-Frame-Options"
                 x_frame_options = true
               end
             end
+            
+            # Calculated
             any_auth = true if (forms_auth || http_auth)
           end
-          out << "#{x_frame_options},#{http_auth},#{forms_auth},#{any_auth}\n"
+
+          out << "#{x_frame_options},#{form_detected},#{dir_listing_detected},#{http_auth},#{forms_auth},#{user_account},#{any_auth}\n"
 
 
         end

@@ -5,7 +5,7 @@ module Handler
     def self.metadata
       {
         :name => "json",
-        :pretty_name => "Export to JSON in /tmp",
+        :pretty_name => "Export JSON (/public)",
         :type => "export"
       }
     end
@@ -15,7 +15,7 @@ module Handler
       return "Unable to process" unless result.respond_to? "export_json"
 
       # write to a file bit by bit
-      file = File.open("#{$intrigue_basedir}/public/export/#{result.name}.json", "a")
+      file = File.open("#{$intrigue_basedir}/public/#{result.name}.json", "a")
       result.entities.paged_each(rows_per_fetch: 1000) do |e|
         file.puts("#{e.export_json}\n")
         file.flush

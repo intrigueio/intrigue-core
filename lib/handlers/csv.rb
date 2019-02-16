@@ -5,7 +5,7 @@ module Handler
     def self.metadata
       {
         :name => "csv",
-        :pretty_name => "Export to CSV file (/tmp)",
+        :pretty_name => "Export CSV (/public)",
         :type => "export"
       }
     end
@@ -16,7 +16,7 @@ module Handler
       return "Unable to process" unless result.respond_to? "export_csv"
 
       # write to a file bit by bit
-      file = File.open("#{$intrigue_basedir}/public/export/#{result.name}.csv", "a")
+      file = File.open("#{$intrigue_basedir}/public/#{result.name}.csv", "a")
       result.entities.paged_each(rows_per_fetch: 1000) do |e|
         file.puts("#{e.export_csv}\n")
         file.flush

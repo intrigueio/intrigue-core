@@ -5,7 +5,7 @@ module Handler
     def self.metadata
       {
         :name => "elasticsearch",
-        :pretty_name => "Export to ElasticSearch",
+        :pretty_name => "Upload to ElasticSearch",
         :type => "export"
       }
     end

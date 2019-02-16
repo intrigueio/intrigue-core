@@ -7,7 +7,7 @@ module Handler
     def self.metadata
       {
         :name => "s3_csv",
-        :pretty_name => "Export to CSV and upload to s3",
+        :pretty_name => "Upload to S3 (CSV)",
         :type => "export"
       }
     end

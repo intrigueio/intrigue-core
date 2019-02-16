@@ -45,14 +45,16 @@
               <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">Export<span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a href="/<%= @project_name %>/export/csv">Download CSV</a></li>
-                  <li><a href="/<%= @project_name %>/export/json">Download JSON</a></li>
-                  <li><a href="/<%= @project_name %>/export/applications/csv">Download Application CSV</a></li>
-                  <li><a href="/<%= @project_name %>/export/gexf">Download Graph (Gephi)</a></li>
-                  <li><a href="/<%= @project_name %>/export/graph_json">Download Graph (JSON)</a></li>
+                  <li><a href=""><b>Default</b></a></li>
+                  <li><a href="/<%= @project_name %>/export/csv">Export Project CSV</a></li>
+                  <li><a href="/<%= @project_name %>/export/json">Export Project JSON</a></li>
+                  <li><a href="/<%= @project_name %>/export/applications/csv">Export Application CSV</a></li>
+                  <li><a href="/<%= @project_name %>/export/gexf">Export Project Graph (Gephi)</a></li>
+                  <li><a href="/<%= @project_name %>/export/graph_json">Export Project Graph (JSON)</a></li>
+                  <li><a href=""><b>Dynamic</b></a></li>
                   <% Intrigue::HandlerFactory.handlers.each do |h| %>
                     <% next unless h.metadata[:type] == "export" %>
-                    <li><a href=/<%= "#{@project_name}/handle/#{h.metadata[:name]}" %>><%= "[handler] #{h.metadata[:pretty_name]}" %></a></li>
+                    <li><a href=/<%= "#{@project_name}/handle/#{h.metadata[:name]}" %>><%= "#{h.metadata[:pretty_name]}" %></a></li>
                   <% end %>
                 </ul>
               </li>
