@@ -8,10 +8,10 @@ module Intrigue
 
         config = {
           :search => [],
-          :retry_times => 10,
-          :retry_delay => 10,
-          :packet_timeout => 20,
-          :query_timeout => 120
+          :retry_times => 3,
+          :retry_delay => 3,
+          :packet_timeout => 10,
+          :query_timeout => 30
         }
 
         if _get_system_config("resolvers")
@@ -168,10 +168,10 @@ module Intrigue
 
         config = {
           :search => [],
-          :retry_times => 10,
-          :retry_delay => 10,
-          :packet_timeout => 20,
-          :query_timeout => 180
+          :retry_times => 3,
+          :retry_delay => 3,
+          :packet_timeout => 10,
+          :query_timeout => 30
         }
 
         if _get_system_config("resolvers")
