@@ -67,7 +67,7 @@ module Helper
 
       # Add the task result
       scan_result.add_task_result(task_result)
-      scan_result.save
+      #scan_result.save
 
       # Add the scan result
       task_result.scan_result = scan_result
