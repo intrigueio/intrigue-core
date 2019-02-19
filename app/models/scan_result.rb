@@ -24,13 +24,13 @@ module Intrigue
       def start(queue)
         # Start our first task
         self.job_id = task_results.first.start(queue)
-        save
+        self.save
       job_id
       end
 
       def add_filter_string(string)
         whitelist_strings << "#{string}"
-        save
+        self.save
       end
 
       def log
@@ -43,11 +43,6 @@ module Intrigue
       end
 
       def entities
-        #Intrigue::Model::Entity.join_table(:inner,
-        #  :entities_task_results, 'entity_id': :'id').join_table(:inner,
-        #    :task_results, 'id': :'task_result_id').join_table(:inner,
-        #      :scan_results, 'id': :'scan_result_id').where(:'scan_result_id' => self.id).select_map{|x| x.id}
-
         # HACK!!!
         if self.project.scan_results.count > 1
           raise "unable to export"
@@ -58,17 +53,13 @@ module Intrigue
       end
 
       def increment_task_count
-        $db.transaction do
-          self.incomplete_task_count += 1
-          self.save
-        end
+        self.incomplete_task_count += 1
+        self.save
       end
 
       def decrement_task_count
-        $db.transaction do
-          self.incomplete_task_count -= 1
-          self.save
-        end
+        self.incomplete_task_count -= 1
+        self.save
       end
 
       # just calculate it vs storing another property
