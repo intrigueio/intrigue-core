@@ -50,7 +50,9 @@ class DnsTransferZone < BaseTask
         _create_entity "Finding", {
           "name" => "AXFR enabled on #{domain_name} using #{nameserver}",
           "finding_type" => "dns_zone_transfer",
-          "description" => "Zone transfer on #{domain_name} using #{nameserver} resulted in leak of #{zone.count} records.",
+          "severity" => "medium",
+          "status" => "potential",
+           "description" => "Zone transfer on #{domain_name} using #{nameserver} resulted in leak of #{zone.count} records.",
           "records" => zone.map{|r| r.name.to_s }
         }
 
@@ -68,7 +70,7 @@ class DnsTransferZone < BaseTask
             record.is_ip_address? ? entity_type = "IpAddress" : entity_type = "DnsRecord"
 
             # ensure it is a valid address
-            # check for base64 records 
+            # check for base64 records
             next if record =~ /^.*==$/
 
             # create it
