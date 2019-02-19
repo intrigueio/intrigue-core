@@ -7,7 +7,7 @@ module Intrigue
 
       def self.scope_by_project(project_name)
         named_project = Intrigue::Model::Project.first(:name => project_name)
-        where(Sequel.&(:project_id => named_project.id))
+        where(Sequel.&(:project => named_project))
       end
     end
 
@@ -30,13 +30,13 @@ module Intrigue
 
       def self.scope_by_project(project_name)
         named_project = Intrigue::Model::Project.first(:name => project_name)
-        where(Sequel.&(:project_id => named_project.id))
+        where(Sequel.&(:project => named_project))
       end
 
       def self.scope_by_project_and_type(project_name, entity_type_string)
         resolved_entity_type = Intrigue::EntityManager.resolve_type_from_string(entity_type_string)
         named_project = Intrigue::Model::Project.first(:name => project_name)
-        where(Sequel.&(:project_id => named_project.id, :type => resolved_entity_type.to_s))
+        where(Sequel.&(:project => named_project, :type => resolved_entity_type.to_s))
       end
 
       def self.scope_by_project_and_type_and_detail_value(project_name, entity_type, detail_name, detail_value)
