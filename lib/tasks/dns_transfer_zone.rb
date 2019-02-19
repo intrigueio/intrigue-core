@@ -59,12 +59,19 @@ class DnsTransferZone < BaseTask
           if z.type.to_s == "SOA"
             _create_entity "Domain", { "name" => z.name.to_s, "record_type" => z.type.to_s, "record_content" => "#{z.to_s}" }
           else
+
             # Check to see what type this record's content is.
             # MX records are of form: [10, #<Dnsruby::Name: vv-cephei.ac-grenoble.fr.>
             z.rdata.respond_to?("last") ? record = "#{z.rdata.last.to_s}" : record = "#{z.rdata.to_s}"
 
             # Check to see if it's an ip address or a dns record
             record.is_ip_address? ? entity_type = "IpAddress" : entity_type = "DnsRecord"
+
+            # ensure it is a valid address
+            # check for base64 records 
+            next if record =~ /^.*==$/
+
+            # create it
             _create_entity entity_type, { "name" => "#{record}", "record_type" => "#{z.type.to_s}", "record_content" => "#{record}" }
           end
         end
