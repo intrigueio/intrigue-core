@@ -239,7 +239,7 @@ class DnsBruteSub < BaseTask
         queue.push({:subdomain => "#{p}", :fqdn => "#{p}.#{suffix}", :depth => depth+1})
       end
     else
-      _log "Avoiding permutations on #{fqdn} because it appears to be a wildcard."
+      _log "Avoiding permutations on #{p}.#{suffix} because it appears to be a wildcard."
     end
   end
 

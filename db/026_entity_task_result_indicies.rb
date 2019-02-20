@@ -2,7 +2,6 @@ Sequel.migration do
   change do
 
     alter_table(:entities) do
-      #add_index :alias_group_id
       add_index [:alias_group_id,:project_id]
     end
 

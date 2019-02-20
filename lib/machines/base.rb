@@ -23,7 +23,11 @@ module Machine
       project = old_task_result.project
 
       # check to see if it already exists, return nil if it does
-      existing_task_result = Intrigue::Model::TaskResult.where(:project => project).first(:task_name => "#{task_name}", :base_entity_id => entity.id)
+      existing_task_result = Intrigue::Model::TaskResult.first(
+        :project => project,
+        :task_name => "#{task_name}",
+        :base_entity_id => entity.id
+      )
 
       if existing_task_result && (existing_task_result.options == options)
         # Don't schedule a new one, just notify that it's already scheduled.

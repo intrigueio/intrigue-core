@@ -49,6 +49,8 @@ module Task
         else
           # timeout
         end
+      rescue OpenSSL::SSL::SSLError => e
+        _log_error "Error requesting resource, skipping: #{hostname} #{port}"
       rescue SocketError => e
         _log_error "Error requesting resource, skipping: #{hostname} #{port}"
       rescue Errno::EINVAL => e

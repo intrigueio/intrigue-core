@@ -77,7 +77,7 @@ module Intrigue
 
           # Resolve the host
           host_id = x.get_detail("host_id")
-          host = Intrigue::Model::Entity.first(:id => host_id)
+          host = Intrigue::Model::Entity.scope_by_project(self).first(:id => host_id)
           if host
             out << "#{host.name},"
           else
@@ -141,7 +141,7 @@ module Intrigue
                 x_frame_options = true
               end
             end
-            
+
             # Calculated
             any_auth = true if (forms_auth || http_auth)
           end
