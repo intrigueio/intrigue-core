@@ -55,16 +55,23 @@ module Intrigue
         # if method is set to none, don't log anything
         return if location == "none"
 
-        begin
-          #self.lock!
-          # any other value, log to the database
-          update(:full_log => "#{full_log}#{message.encode("UTF-8", {
-                                              :undef => :replace,
-                                              :invalid => :replace,
-                                              :replace => "?" })}")
-          save
-        rescue Sequel::DatabaseError => e
-          puts "ERROR WRITING LOG FOR #{self}: #{e}"
+        encoded_out = message.encode("UTF-8", {
+                                :undef => :replace,
+                                :invalid => :replace,
+                                :replace => "?" })
+
+        if location == "database"
+          begin
+            # any other value, log to the database
+            update(:full_log => "#{full_log}#{encoded_out}")
+            save
+          rescue Sequel::DatabaseError => e
+            puts "ERROR WRITING LOG FOR #{self}: #{e}"
+          end
+        elsif location == "file"
+          File.open("#{$intrigue_basedir}/log/#{task_result.id}.log","a").puts "#{encoded_out}"
+        else
+          raise "Fatal! Unknown value for intrigue_task_log_location: #{intrigue_task_log_location}"
         end
 
       end
