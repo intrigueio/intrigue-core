@@ -41,6 +41,17 @@ class Example < BaseTask
       return
     end
 
+    # create a finding
+    zone = [1,2,3,4]
+    _create_finding({
+      name: "Example finding!",
+      type: "example",
+      severity: 5,
+      status: "confirmed",
+      description: "just an example.",
+      details: { example_attribute: zone }
+    })
+
     # just return if we have bad data
     return unless _get_option("count") > 0
 

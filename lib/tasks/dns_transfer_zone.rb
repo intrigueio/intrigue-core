@@ -16,7 +16,7 @@ class DnsTransferZone < BaseTask
         {"type" => "Domain", "details" => {"name" => "intrigue.io"}}
       ],
       :allowed_options => [ ],
-      :created_types => ["DnsRecord","Finding"]
+      :created_types => ["DnsRecord"]
     }
   end
 
@@ -47,14 +47,14 @@ class DnsTransferZone < BaseTask
         zone = zt.transfer(domain_name)
 
         # create a finding
-        _create_entity "Finding", {
-          "name" => "AXFR enabled on #{domain_name} using #{nameserver}",
-          "finding_type" => "dns_zone_transfer",
-          "severity" => "medium",
-          "status" => "potential",
-           "description" => "Zone transfer on #{domain_name} using #{nameserver} resulted in leak of #{zone.count} records.",
-          "records" => zone.map{|r| r.name.to_s }
-        }
+        _create_finding({
+          name: "AXFR enabled on #{domain_name} using #{nameserver}",
+          type: "dns_zone_transfer",
+          severity: 4,
+          status: "confirmed",
+          description: "Zone transfer on #{domain_name} using #{nameserver} resulted in leak of #{zone.count} records.",
+          details: { records: zone.map{|r| r.name.to_s } }
+        })
 
         # Create records for each item in the zone
         zone.each do |z|

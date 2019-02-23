@@ -28,8 +28,8 @@
       <tr><th>Name</th><th>Details</th></tr>
       <% @findings.each do |x| %>
         <tr>
-          <td><a href="<%="/#{h @project_name}/entities/#{h x.id}"%>"><%= h x %></a></td>
-          <td><pre><%=h JSON.pretty_generate x.details%></pre></td>
+          <td><a href="<%="/#{h @project_name}/findings/#{h x.id}"%>"><%= h x.name %></a></td>
+          <td><pre><%=h JSON.pretty_generate x%></pre></td>
         </tr>
       <% end %>
       </tbody>

@@ -219,7 +219,7 @@ class IntrigueApp < Sinatra::Base
 
         # Start the task run!
         task_result = start_task("task", current_project, nil, task_name, entity,
-                                  depth, options, handlers, machine_name, auto_enrich, auto_scope)
+                                  depth, nil, handlers, machine_name, auto_enrich, auto_scope)
 
         entity.task_results << task_result
         entity.save
