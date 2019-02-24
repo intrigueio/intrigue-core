@@ -127,7 +127,7 @@ module Task
             ]
 
             universal_cert_domains.each do |cert_domain|
-              if (alt_name =~ /#{cert_domain}$/ ) && opt_skip_hosted_services
+              if (alt_name =~ /#{cert_domain}$/ ) 
                 _log "This is a universal #{cert_domain} certificate, skipping further entity creation"
                 return
               end
@@ -379,6 +379,7 @@ module Task
       #rescue TypeError
       #  # https://github.com/jaimeiniesta/metainspector/issues/125
       #  @task_result.logger.log_error "TypeError - unknown failure" if @task_result
+      rescue Errno::EMFILE
       rescue ArgumentError => e
         @task_result.logger.log_error "Unable to open connection: #{e}" if @task_result
       rescue Net::OpenTimeout => e
@@ -486,7 +487,7 @@ module Task
 
      def check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content)
 
-       to_return = []
+       to_return = false
 
        _log "Attempting #{request_uri}"
        response = http_request :get, request_uri
@@ -528,21 +529,22 @@ module Task
        if missing_page_test == :code
          case response.code
            when "200"
-             _log_good "Clean 200! Creating a page for #{request_uri}"
-             to_return << {
-               "name" => request_uri,
-               "uri" => request_uri,
-               "response_code" => response.code
+             _log_good "Clean 200 for #{request_uri}!s"
+             to_return = {
+               name: request_uri,
+               uri: request_uri,
+               response_code: response.code,
+               response_body: response.body
              }
            when missing_page_test
              _log "Got code: #{response.code}. Same as missing page code. Skipping"
            else
              _log "Flagging #{request_uri} because of response code #{response.code}!"
-             to_return << {
-               "name" => request_uri,
-               "uri" => request_uri,
-               "response_code" => response.code,
-               "brute_response_body" => response.body
+             to_return = {
+               name: request_uri,
+               uri: request_uri,
+               response_code: response.code,
+               response_body: response.body
              }
          end
 
@@ -553,12 +555,12 @@ module Task
            _log "Skipping #{request_uri} based on page content"
          else
            _log "Flagging #{request_uri} because of content!"
-           to_return << {
-             "name" => request_uri,
-             "uri" => request_uri,
-             "response_code" => response.code,
-             "brute_response_body" => response.body
-           }
+           to_return = {
+             name: request_uri,
+             uri: request_uri,
+             response_code: response.code,
+             response_body: response.body
+            }
          end
        end
 

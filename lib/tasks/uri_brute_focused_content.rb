@@ -20,7 +20,8 @@ class UriBruteFocusedContent < BaseTask
         {"type" => "Uri", "details" => {"name" => "http://intrigue.io"}}
       ],
       :allowed_options => [
-        {:name => "threads", :regex => "integer", :default => 1 }
+        {:name => "threads", :regex => "integer", :default => 1 },
+        {:name => "create_url", :regex => "boolean", :default => false }
       ],
       :created_types => ["Uri"]
     }
@@ -37,7 +38,8 @@ class UriBruteFocusedContent < BaseTask
     super
 
     uri = _get_entity_name
-    opt_threads = _get_option("threads") || 1
+    opt_threads = _get_option("threads") 
+    opt_create_url = _get_option("create_url")
 
     always_list = [  "/api", "/admin","/.git", "/.hg", "/.svn", "/.bzr", "/.csv", "/.bak", 
                     "/crossdomain.xml", "/clientaccesspolicy.xml", "/sitemap.xml",
@@ -47,10 +49,13 @@ class UriBruteFocusedContent < BaseTask
     # technology specifics 
     asp_net_list = ["/elmah.axd", "/web.config", "/Trace.axd"]
 
+    coldfusion_list = ["/CFIDE", "CFIDE/administrator/enter.cfm" ] # TODO see metasploit for more ideas here
+
     tomcat_list = [ '/status', '/admin', '/web-console', '/jmx-console', '/admin-console', 
                     '/manager/html', '/tomcat/manager/html', '/host-manager/html', '/server-manager/html', 
                     '/web-console/Invoker', '/jmx-console/HtmlAdaptor', '/invoker/JMXInvokerServlet' ]
-    coldfusion_list = ["/CFIDE", "CFIDE/administrator/enter.cfm" ] # TODO see metasploit for more ideas here
+
+    wordpress_list = ["/wp-admin" ] # TODO see metasploit for more ideas here
 
     ###
     ### Get the default case (a page that doesn't exist)
@@ -99,6 +104,7 @@ class UriBruteFocusedContent < BaseTask
     asp_net_list.each { |path| work_q.push "#{uri}#{path}" } if is_product?("ASP.NET") || is_product?("ASP.NET MVC")
     coldfusion_list.each { |path| work_q.push "#{uri}#{path}" } if is_product? "Coldfusion"  
     tomcat_list.each { |path| work_q.push "#{uri}#{path}" } if is_product? "Tomcat" 
+    wordpress_list.each { |path| work_q.push "#{uri}#{path}" } if is_product? "Wordpress" 
 
 
     # Create a pool of worker threads to work on the queue
@@ -108,11 +114,22 @@ class UriBruteFocusedContent < BaseTask
           while request_uri = work_q.pop(true)
 
             # Do the check
-            results = check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content)
+            result = check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content)
 
-            # create a new entity for each one
-            _create_entity("Uri", results) if results
-            #_create_finding() 
+              if result 
+
+                # create a new entity for each one if we specified that 
+                _create_entity("Uri", result) if  opt_create_url
+                
+                _create_finding({
+                  name: "Discovered Content at #{result[:name]}!",
+                  type: "discovered_content",
+                  severity: 5,
+                  status: "potential",
+                  description: "Content was found by url_brute_focused_content at #{result[:name]}",
+                  details: result.except!(:name,:uri)
+                })
+              end
 
           end # end while
         rescue ThreadError
