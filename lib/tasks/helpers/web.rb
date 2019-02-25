@@ -485,7 +485,7 @@ module Task
 
 
 
-     def check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content)
+     def check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content, positive_regex=nil)
 
        to_return = false
 
@@ -506,6 +506,26 @@ module Task
        # make sure we have a valid response
        return false unless response
 
+       ######### BEST CASE IS WHEN WE KNOW WHAT IT SHOULD LOOK LIKE
+       # if we have a positive regex, always check that first and just return it if it matches 
+       if positive_regex
+         if response.body =~ positive_regex        
+           _log_good "Matched positive regex!!! #{positive_regex}"
+           return {
+             name: request_uri,
+             uri: request_uri,
+             response_code: response.code,
+             response_body: response.body
+           }
+         else 
+           _log "Didn't match our positive regex, skipping"
+           return false 
+         end
+       end
+       ##############
+
+       # otherwise fall through into our more generic checking.
+
        # always check for content...
        ["404", "forbidden", "Request Rejected"].each do |s|
          if (response.body =~ /#{s}/i )
@@ -513,7 +533,6 @@ module Task
            return false
          end
        end
-
 
        _log "Response.code is a #{response.code.class}"
 
@@ -529,12 +548,7 @@ module Task
          case response.code
            when "200"
              _log_good "Clean 200 for #{request_uri}"
-             to_return = {
-               name: request_uri,
-               uri: request_uri,
-               response_code: response.code,
-               response_body: response.body
-             }
+
            when missing_page_code
              _log "Got code: #{response.code}. Same as missing page code: #{missing_page_code}. Ignoring!"
            else

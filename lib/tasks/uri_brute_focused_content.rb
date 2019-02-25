@@ -41,22 +41,54 @@ class UriBruteFocusedContent < BaseTask
     opt_threads = _get_option("threads") 
     opt_create_url = _get_option("create_url")
 
-    always_list = [ "/api", "/admin","/.git", "/.hg", "/.svn", "/.bzr", "/.csv", "/.bak", 
-                    "/crossdomain.xml", "/clientaccesspolicy.xml", "/sitemap.xml",
-                    "/portal","/admin","/test","/server-status" ]
-                    # "/WS_FTP.LOG", "/ws_ftp.log"
+    always_list = [ 
+      { path: "/api", :regex => nil },
+      { path: "/.git", :regex => nil },
+      { path: "/.hg", :regex => nil },
+      { path: "/.svn", :regex => nil },
+      { path: "/.bzr", :regex => nil },
+      { path: "/.csv", :regex => nil },
+      { path: "/.bak",  :regex => nil },
+      { path: "/crossdomain.xml", :regex => nil },
+      { path: "/clientaccesspolicy.xml", :regex => nil },
+      #{ path: "/sitemap.xml", :regex => nil },
+      { path: "/portal", :regex => nil },
+      { path: "/admin", :regex => nil },
+      { path: "/test", :regex => nil },
+      { path: "/server-status", :regex => nil }
+    ]
+      # "/WS_FTP.LOG", "/ws_ftp.log"
 
     # technology specifics 
-    asp_net_list = ["/elmah.axd", "/web.config", "/Trace.axd"]
-    # /Trace.axd - /<h1>Request Details/
+    asp_net_list = [
+      { path: "/elmah.axd", :regex => nil },
+      { path: "/web.config", :regex => nil },
+      { path: "/Trace.axd", :regex => /Microsoft \.NET Framework Version/ }
+    ]
+    # /Trace.axd - 
 
-    coldfusion_list = ["/CFIDE", "CFIDE/administrator/enter.cfm" ] # TODO see metasploit for more ideas here
+    coldfusion_list = [
+      { path: "/CFIDE",  :regex => nil },
+      { path: "CFIDE/administrator/enter.cfm",  :regex => nil }
+    ] # TODO see metasploit for more ideas here
 
-    tomcat_list = [ '/status', '/admin', '/web-console', '/jmx-console', '/admin-console', 
-                    '/manager/html', '/tomcat/manager/html', '/host-manager/html', '/server-manager/html', 
-                    '/web-console/Invoker', '/jmx-console/HtmlAdaptor', '/invoker/JMXInvokerServlet' ]
+    tomcat_list = [ 
+      { path: '/status',  :regex => nil },
+      { path: '/web-console', :regex => nil },
+      { path: '/jmx-console', :regex => nil },
+      { path: '/admin-console',  :regex => nil },
+      { path: '/manager/html', :regex => nil },
+      { path: '/tomcat/manager/html', :regex => nil },
+      { path: '/host-manager/html', :regex => nil },
+      { path: '/server-manager/html', :regex => nil },
+      { path: '/web-console/Invoker', :regex => nil },
+      { path: '/jmx-console/HtmlAdaptor', :regex => nil },
+      { path: '/invoker/JMXInvokerServlet', :regex => nil }
+    ]
 
-    wordpress_list = ["/wp-admin" ] # TODO see metasploit for more ideas here
+    wordpress_list = [
+      { path: '/wp-admin',  :regex => nil },
+    ]
 
     ###
     ### Get the default case (a page that doesn't exist)
@@ -93,29 +125,31 @@ class UriBruteFocusedContent < BaseTask
         missing_page_test = :code
         missing_page_code = response.code
     end
-
-    # Create our queue of work from the checks in brute_list
     ##########################
 
-    # first add our "always" stuff:
+    # Create our queue of work from the checks in brute_list
     work_q = Queue.new
-    always_list.each { |path| work_q.push "#{uri}#{path}" }
     
-    #  handle our specific here
-    asp_net_list.each { |path| work_q.push "#{uri}#{path}" } if is_product?("ASP.NET") || is_product?("ASP.NET MVC")
-    coldfusion_list.each { |path| work_q.push "#{uri}#{path}" } if is_product? "Coldfusion"  
-    tomcat_list.each { |path| work_q.push "#{uri}#{path}" } if is_product? "Tomcat" 
-    wordpress_list.each { |path| work_q.push "#{uri}#{path}" } if is_product? "Wordpress" 
+    #  first handle our specific here (more likely to be interesting)
+    asp_net_list.each { |x| work_q.push x } if is_product?("ASP.NET") || is_product?("ASP.NET MVC")
+    coldfusion_list.each { |x| work_q.push x } if is_product? "Coldfusion"  
+    tomcat_list.each { |x| work_q.push x } if is_product? "Tomcat" 
+    wordpress_list.each { |x| work_q.push x } if is_product? "Wordpress" 
 
+    # then add our "always" stuff:
+    always_list.each { |x| work_q.push x }
 
     # Create a pool of worker threads to work on the queue
     workers = (0...opt_threads).map do
       Thread.new do
         begin
-          while request_uri = work_q.pop(true)
+          while request_details = work_q.pop(true)
+
+            request_uri = "#{uri}#{request_details[:path]}"
+            positive_regex = request_details[:regex]
 
             # Do the check
-            result = check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content)
+            result = check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content, positive_regex)
 
             if result 
 
