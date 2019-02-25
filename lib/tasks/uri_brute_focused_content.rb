@@ -44,11 +44,11 @@ class UriBruteFocusedContent < BaseTask
     always_list = [ 
       { path: "/api", :regex => nil },
       { path: "/.git", :regex => nil },
-      { path: "/.hg", :regex => nil },
+      #{ path: "/.hg", :regex => nil },
       { path: "/.svn", :regex => nil },
-      { path: "/.bzr", :regex => nil },
-      { path: "/.csv", :regex => nil },
-      { path: "/.bak",  :regex => nil },
+      #{ path: "/.bzr", :regex => nil },
+      {# path: "/.csv", :regex => nil },
+      #{ path: "/.bak",  :regex => nil },
       { path: "/crossdomain.xml", :regex => nil },
       { path: "/clientaccesspolicy.xml", :regex => nil },
       #{ path: "/sitemap.xml", :regex => nil },
@@ -117,11 +117,14 @@ class UriBruteFocusedContent < BaseTask
     # But select based on the response to our random page check
     case response.code
       when "404"
+        _log "Using CODE as missing page test, missing page will give a 404"
         missing_page_test = :code
       when "200"
+        _log "Using CONTENT as missing page test, missing page will give a 200"
         missing_page_test = :content
         missing_page_content = response.body
       else
+        _log "Defaulting to CODE as missing page test, missing page will give a #{response.code}"
         missing_page_test = :code
         missing_page_code = response.code
     end
