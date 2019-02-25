@@ -7,7 +7,7 @@ class BaseTask
   include Intrigue::Task::Browser
   include Intrigue::Task::Data
   include Intrigue::Task::Dns
-  include Intrigue::Task::Finding
+  include Intrigue::Task::Issue
   include Intrigue::Task::Helper
   include Intrigue::Task::Product
   include Intrigue::Task::Regex

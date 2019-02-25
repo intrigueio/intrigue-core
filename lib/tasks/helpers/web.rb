@@ -515,13 +515,11 @@ module Task
        end
 
        # always check code
-       if (  response.code == "400" ||
-             response.code == "401" ||
-             response.code == "403" ||
-             response.code == "404" ||
-             response.code == "500" ||
-             response.code == "503")
-         _log "Skipping #{request_uri} based on code: #{response.code}"
+       if ( response.code == /301/ || 
+            response.code == /302/ || 
+            response.code =~ /4??/ || 
+            response.code =~ /5??/    )
+         _log "Ignoring #{request_uri} based on code: #{response.code}"
          return false
        end
 

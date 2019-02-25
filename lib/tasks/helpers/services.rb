@@ -20,7 +20,7 @@ module Services
     updated_ports = ports.append({"number" => port_num, "protocol" => protocol}).uniq
     ip_entity.set_detail("ports", updated_ports)
 
-    ssl = true if [443,8443].include?(port_num)
+    ssl = true if [443, 8443].include?(port_num)
 
     # Ensure we always save our host and key details.
     # note that we might add service specifics to this below
@@ -40,9 +40,11 @@ module Services
       # connect, grab the socket and make sure we
       # keep track of these details, and create entitie
       cert_names = ssl_connect_and_get_cert_names(ip_entity.name,port_num)
-      generic_details.merge!({"cert_names" => cert_names})
-      cert_names.uniq do |cn|
-        cert_entities << _create_entity("DnsRecord", {"name" => cn}, ip_entity)
+      if cert_names
+        generic_details.merge!({"cert_names" => cert_names})
+        cert_names.uniq do |cn|
+          cert_entities << _create_entity("DnsRecord", {"name" => cn}, ip_entity)
+        end
       end
     end
 

@@ -180,11 +180,8 @@ module Machine
         ## Grab the SSL Certificate
         start_recursive_task(task_result,"uri_gather_ssl_certificate",entity, [],  true) if entity.name =~ /^https/
 
-        ## Grab the SSL Certificate
-        start_recursive_task(task_result,"uri_gather_ssl_certificate",entity, [],  true) if entity.name =~ /^https/
-
         # Check for exploitable URIs, but don't recurse on things we've already found
-        unless (entity.created_by?("uri_brute") || entity.created_by?("uri_spider") )
+        unless (entity.created_by?("uri_brute_focused_content") || entity.created_by?("uri_spider") )
           start_recursive_task(task_result,"uri_brute_focused_content", entity)
         end
 

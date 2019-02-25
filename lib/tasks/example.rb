@@ -16,6 +16,7 @@ class Example < BaseTask
         {"type" => "String", "details" => {"name" => "intrigue"}}
       ],
       :allowed_options => [
+        {:name => "notify", :regex=> "boolean", :default => false },
         {:name => "unused_option", :regex=> "integer", :default => 100 },
         {:name => "count", :regex=> "integer", :default => 3 },
         {:name => "sleep", :regex=> "integer", :default => 0 }
@@ -29,6 +30,7 @@ class Example < BaseTask
     super
 
     name = _get_entity_name
+    opt_notify = _get_option("notify")
 
     # Show some test messages
     _log_good "Got entity: #{name}"
@@ -43,8 +45,8 @@ class Example < BaseTask
 
     # create a finding
     zone = [1,2,3,4]
-    _create_finding({
-      name: "Example finding!",
+    _create_issue({
+      name: "Example issue!",
       type: "example",
       severity: 5,
       status: "confirmed",
@@ -72,7 +74,7 @@ class Example < BaseTask
       ###
 
       # notifies all notifiers configured with "enabled" and "default"
-      _notify "[+] Randomly generated an IP address: #{ip_address}"
+      _notify "[+] Randomly generated an IP address: #{ip_address}" if opt_notify
 
       # notifies via all channels of type "slack" and "enabled" set to true
       #_notify_type "slack", "[slack] Randomly generated an IP address: #{ip_address}"

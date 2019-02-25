@@ -121,13 +121,13 @@ class UriBruteFocusedContent < BaseTask
                 # create a new entity for each one if we specified that 
                 _create_entity("Uri", result) if  opt_create_url
                 
-                _create_finding({
-                  name: "Discovered Content at #{result[:name]}!",
+                _create_issue({
+                  name: "Discovered Content at #{result[:name]}",
                   type: "discovered_content",
                   severity: 5,
                   status: "potential",
                   description: "Content was found by url_brute_focused_content at #{result[:name]}",
-                  details: result.except!(:name,:uri)
+                  details: result.except!(:name)
                 })
               end
 

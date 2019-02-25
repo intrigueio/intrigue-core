@@ -46,8 +46,8 @@ class DnsTransferZone < BaseTask
         zt.server = nameserver
         zone = zt.transfer(domain_name)
 
-        # create a finding
-        _create_finding({
+        # create an issue to track this
+        _create_issue({
           name: "AXFR enabled on #{domain_name} using #{nameserver}",
           type: "dns_zone_transfer",
           severity: 4,
