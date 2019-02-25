@@ -21,15 +21,21 @@
     <p></p>
     <table class="sortable" border="1" width=100%>
       <colgroup>
-        <col style="width:20%">
-        <col style="width:70%">
+        <col style="width:30%">
+        <col style="width:10%">
+        <col style="width:10%">
+        <col style="width:10%">
+        <col style="width:40%">
       </colgroup>
       <tbody>
-      <tr><th>Name</th><th>Details</th></tr>
-      <% @findings.each do |x| %>
+      <tr><th>Name</th><th>Type</th><th>Status</th><th>Severity</th><th>Description</th></tr>
+      <% @issues.each do |issue| %>
         <tr>
-          <td><a href="<%="/#{h @project_name}/entities/#{h x.id}"%>"><%= h x %></a></td>
-          <td><pre><%=h JSON.pretty_generate x.details%></pre></td>
+          <td><a href="<%="/#{h @project_name}/issues/#{h issue.id}"%>"><%= h issue.name %></a></td>
+          <td><%=issue.type%></td>
+          <td><%=issue.status%></td>
+          <td><%=issue.severity%></td>
+          <td><%=issue.description%></td>
         </tr>
       <% end %>
       </tbody>

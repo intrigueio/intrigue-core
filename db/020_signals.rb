@@ -17,7 +17,7 @@ Sequel.migration do
     create_table :signals_entities do
       primary_key :id
       Integer :entity_id
-      Integer :signal_id      
+      Integer :signal_id
     end
 
   end

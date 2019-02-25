@@ -127,7 +127,7 @@ module Task
             ]
 
             universal_cert_domains.each do |cert_domain|
-              if (alt_name =~ /#{cert_domain}$/ ) && opt_skip_hosted_services
+              if (alt_name =~ /#{cert_domain}$/ ) 
                 _log "This is a universal #{cert_domain} certificate, skipping further entity creation"
                 return
               end
@@ -151,89 +151,6 @@ module Task
       end
       alt_names
     end
-
-
-    def fingerprint_uri(uri)
-
-      results = []
-
-      # gather all fingeprints for each product
-      # this will look like an array of fingerprints, each with a uri and a SET of checks
-      generated_fingerprints = FingerprintFactory.fingerprints.map{|x| x.new.generate_fingerprints(uri) }.flatten
-
-      # group by the uris, with the associated checks
-      grouped_generated_fingerprints = generated_fingerprints.group_by{|x| x[:uri]}
-
-      # call the check on each uri
-      grouped_generated_fingerprints.each do |ggf|
-
-        # get the response
-        response = http_request :get, "#{ggf.first}"
-
-        unless response
-          #puts "Unable to get a response at: #{ggf.first}"
-          return nil
-        end
-
-        # construct the headers into a big string block
-        header_string = ""
-        response.each_header do |h,v|
-          header_string << "#{h}: #{v}\n"
-        end
-
-        if response
-          # call each check, collecting the product if it's a match
-          ggf.last.map{|x| x[:checklist] }.each do |checklist|
-
-            checklist.each do |check|
-
-              # if type "content", do the content check
-              if check[:type] == :content_body
-                results << {
-                  :version => (check[:dynamic_version].call(response) if check[:dynamic_version]) || check[:version],
-                  :name => check[:name],
-                  :match => check[:type],
-                  :hide => check[:hide],
-                  :uri => uri
-                } if "#{response.body}" =~ check[:content]
-
-              elsif check[:type] == :content_headers
-                results << {
-                  :version => (check[:dynamic_version].call(response) if check[:dynamic_version]) || check[:version],
-                  :name => check[:name],
-                  :match => check[:type],
-                  :hide => check[:hide],
-                  :uri => uri
-                } if header_string =~ check[:content]
-
-              elsif check[:type] == :content_cookies
-                # Check only the set-cookie header
-                  results << {
-                    :version => (check[:dynamic_version].call(response) if check[:dynamic_version]) || check[:version],
-                    :name => check[:name],
-                    :match => check[:type],
-                    :hide => check[:hide],
-                    :uri => uri
-                  } if response.header['set-cookie'] =~ check[:content]
-
-              elsif check[:type] == :checksum_body
-                  results << {
-                    :version => (check[:dynamic_version].call(response) if check[:dynamic_version]) || check[:version],
-                    :name => check[:name],
-                    :match => check[:type],
-                    :hide => check[:hide],
-                    :uri => uri
-                  } if Digest::MD5.hexdigest("#{response.body}") == check[:checksum]
-
-              end
-
-            end
-          end
-        end # if response
-      end
-    results
-    end
-
 
 
     #
@@ -462,6 +379,7 @@ module Task
       #rescue TypeError
       #  # https://github.com/jaimeiniesta/metainspector/issues/125
       #  @task_result.logger.log_error "TypeError - unknown failure" if @task_result
+      rescue Errno::EMFILE
       rescue ArgumentError => e
         @task_result.logger.log_error "Unable to open connection: #{e}" if @task_result
       rescue Net::OpenTimeout => e
@@ -565,85 +483,87 @@ module Task
 
      end
 
-     ###
-     ### Entity Parsing
-     ###
-     def parse_entities_from_content(source_uri, content)
-       parse_email_addresses_from_content(source_uri, content)
-       parse_dns_records_from_content(source_uri, content)
-       parse_phone_numbers_from_content(source_uri, content)
-       #parse_uris_from_content(source_uri, content)
+
+
+     def check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content)
+
+       to_return = false
+
+       _log "Attempting #{request_uri}"
+       response = http_request :get, request_uri
+       return false unless response
+
+       # try again if we got a blank page (some WAFs seem to do this?)
+       if response.body = ""
+         10.times do
+           _log "Re-attempting #{request_uri}... verifying we should really have a blank page"
+           response = http_request :get, request_uri
+           next unless response
+           break if response.body != ""
+         end
+       end
+
+       # make sure we have a valid response
+       return false unless response
+
+       # always check for content...
+       ["404", "forbidden", "Request Rejected"].each do |s|
+         if (response.body =~ /#{s}/i )
+           _log "Skipping #{request_uri}, contains a missing page string: #{s}"
+           return false
+         end
+       end
+
+       # always check code
+       if ( response.code == /301/ || 
+            response.code == /302/ || 
+            response.code =~ /4??/ || 
+            response.code =~ /5??/    )
+         _log "Ignoring #{request_uri} based on code: #{response.code}"
+         return false
+       end
+
+       ## If we are able to guess based on the code, we're super lucky!
+       if missing_page_test == :code
+         case response.code
+           when "200"
+             _log_good "Clean 200 for #{request_uri}!s"
+             to_return = {
+               name: request_uri,
+               uri: request_uri,
+               response_code: response.code,
+               response_body: response.body
+             }
+           when missing_page_test
+             _log "Got code: #{response.code}. Same as missing page code. Skipping"
+           else
+             _log "Flagging #{request_uri} because of response code #{response.code}!"
+             to_return = {
+               name: request_uri,
+               uri: request_uri,
+               response_code: response.code,
+               response_body: response.body
+             }
+         end
+
+       ## Otherwise, let's guess based on the content. Does this page look
+       ## like a missing page?
+       elsif missing_page_test == :content
+         if response.body[0..100] == missing_page_content[0..100]
+           _log "Skipping #{request_uri} based on page content"
+         else
+           _log "Flagging #{request_uri} because of content!"
+           to_return = {
+             name: request_uri,
+             uri: request_uri,
+             response_code: response.code,
+             response_body: response.body
+            }
+         end
+       end
+
+     to_return
      end
-
-     def parse_email_addresses_from_content(source_uri, content)
-
-       @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
-
-       # Make sure we have something to parse
-       unless content
-         @task_result.logger.log_error "No content to parse, returning" if @task_result
-         return nil
-       end
-
-       # Scan for email addresses
-       addrs = content.scan(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,8}/)
-       addrs.each do |addr|
-         x = _create_entity("EmailAddress", {"name" => addr, "origin" => source_uri}) unless addr =~ /.png$|.jpg$|.gif$|.bmp$|.jpeg$/
-       end
-
-     end
-
-     def parse_dns_records_from_content(source_uri, content)
-
-       @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
-
-       # Make sure we have something to parse
-       unless content
-         @task_result.logger.log_error "No content to parse, returning" if @task_result
-         return nil
-       end
-
-       # Scan for dns records
-       dns_records = content.scan(/^[A-Za-z0-9]+\.[A-Za-z0-9]+\.[a-zA-Z]{2,6}$/)
-       dns_records.each do |dns_record|
-         x = _create_entity("DnsRecord", {"name" => dns_record, "origin" => source_uri})
-       end
-     end
-
-     def parse_phone_numbers_from_content(source_uri, content)
-
-       @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
-
-       # Make sure we have something to parse
-       unless content
-         @task_result.logger.log_error "No content to parse, returning" if @task_result
-         return nil
-       end
-
-       # Scan for phone numbers
-       phone_numbers = content.scan(/((\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4})/)
-       phone_numbers.each do |phone_number|
-         x = _create_entity("PhoneNumber", { "name" => "#{phone_number[0]}", "origin" => source_uri})
-       end
-     end
-
-     def parse_uris_from_content(source_uri, content)
-
-       @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
-
-       # Make sure we have something to parse
-       unless content
-         @task_result.logger.log_error "No content to parse, returning" if @task_result
-         return nil
-       end
-
-       # Scan for uris
-       urls = content.scan(/https?:\/\/[\S]+/)
-       urls.each do |url|
-         _create_entity("Uri", {"name" => url, "uri" => url, "origin" => source_uri })
-       end
-     end
-
 
   end
 end

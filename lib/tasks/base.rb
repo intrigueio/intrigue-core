@@ -2,16 +2,18 @@ module Intrigue
 module Task
 class BaseTask
 
+  # include default helpers
   include Intrigue::Task::Generic
   include Intrigue::Task::Browser
   include Intrigue::Task::Data
   include Intrigue::Task::Dns
+  include Intrigue::Task::Issue
   include Intrigue::Task::Helper
-  include Intrigue::Task::Parse
   include Intrigue::Task::Product
   include Intrigue::Task::Regex
   include Intrigue::Task::Services
   include Intrigue::Task::Web
+  include Intrigue::Task::WebContent
   include Intrigue::Task::Whois
 
   include Sidekiq::Worker
@@ -276,7 +278,6 @@ class BaseTask
   # This method is overridden
   def run
   end
-
   #
   #########################################################
 

@@ -19,11 +19,7 @@ class DnsRecord < Intrigue::Task::BaseTask
       :created_types => [
         "DnsRecord",
         "IpAddress",
-        "FtpService",
-        "MongoService",
-        "NetworkService",
-        "SmtpService",
-        "SnmpService"
+        "NetworkService"
       ]
     }
   end

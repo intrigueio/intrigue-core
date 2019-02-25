@@ -46,7 +46,6 @@ module Generic
     EntityManager.create_or_merge_entity(@task_result, type, name, hash, primary_entity)
   end
 
-
   ###
   ### Logging helpers
   ###

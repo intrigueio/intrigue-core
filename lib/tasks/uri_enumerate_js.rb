@@ -10,7 +10,7 @@ class UriEnumerateJs  < BaseTask
       :name => "uri_enumerate_js",
       :pretty_name => "URI Enumerate JS",
       :authors => ["jcran"],
-      :description => "This task enumerates javascript library.",
+      :description => "This task enumerates javascript libraries.",
       :references => [],
       :type => "discovery",
       :passive => false,

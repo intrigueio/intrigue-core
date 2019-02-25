@@ -1,13 +1,13 @@
 module Intrigue
 module Task
-class UriGatherAndAnalyzeLinks  < BaseTask
+class UriAnalyzeTarget  < BaseTask
 
   include Intrigue::Task::Web
 
   def self.metadata
     {
-      :name => "uri_gather_and_analyze_links",
-      :pretty_name => "URI Gather And Analyze Links",
+      :name => "uri_analyze_target",
+      :pretty_name => "URI Analyze Target",
       :authors => ["dan_geer","jcran"],
       :description => "This task parses the main page and performs analysis on links.",
       :references => [],

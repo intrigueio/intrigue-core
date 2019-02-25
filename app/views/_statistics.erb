@@ -1,5 +1,5 @@
 <h3>Statistics</h3>
-Total Entities: <%= Intrigue::Model::Project.first(:name => @project_name).entities.count %> entities
+Total Entities: <%= Intrigue::Model::Entity.scope_by_project(@project_name).count %> entities
 <p>
   <ul>
     <% Intrigue::Model::Entity.descendants.each do |d| %>
@@ -13,3 +13,6 @@ Total Entities: <%= Intrigue::Model::Project.first(:name => @project_name).entit
     <% end %>
   </ul>
 </p>
+
+<h3>Issues</h3>
+<p><a href="/<%=@project_name%>/analysis/issues"><%= Intrigue::Model::Issue.scope_by_project(@project_name).count %> issues</a></p>

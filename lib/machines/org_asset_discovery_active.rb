@@ -181,9 +181,9 @@ module Machine
         start_recursive_task(task_result,"uri_gather_ssl_certificate",entity, [],  true) if entity.name =~ /^https/
 
         # Check for exploitable URIs, but don't recurse on things we've already found
-        #start_recursive_task(task_result,"uri_brute", entity, [
-        #  {"name"=> "threads", "value" => 1},
-        #  {"name" => "user_list", "value" => "portal,admin,test,server-status,.svn,.git"}])
+        unless (entity.created_by?("uri_brute_focused_content") || entity.created_by?("uri_spider") )
+          start_recursive_task(task_result,"uri_brute_focused_content", entity)
+        end
 
         #unless (entity.created_by?("uri_brute") || entity.created_by?("uri_spider") )
           ## Super-lite spider, looking for metadata

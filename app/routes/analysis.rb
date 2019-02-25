@@ -66,11 +66,6 @@ class IntrigueApp < Sinatra::Base
     erb :'analysis/domains'
   end
 
-  get '/:project/analysis/findings' do
-    @findings = Intrigue::Model::Entity.scope_by_project(@project_name).where(type: "Intrigue::Entity::Finding")
-    erb :'analysis/findings'
-  end
-
   get '/:project/analysis/info' do
     @infos = Intrigue::Model::Entity.scope_by_project(@project_name).where(type: "Intrigue::Entity::Info")
     erb :'analysis/info'

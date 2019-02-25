@@ -33,7 +33,6 @@ class Uri < Intrigue::Task::BaseTask
       return nil
     end
 
-
     _log "Making requests"
     # Grab the full response
     response = http_request :get, uri
@@ -145,6 +144,19 @@ class Uri < Intrigue::Task::BaseTask
 
     _log "Gathering ciphers since this is an ssl endpoint"
     accepted_ciphers = _gather_ciphers(hostname,port).select{|x| x[:status] == :accepted} if uri =~ /^https/
+
+    # Create findings if we have a weak cipher
+    if accepted_ciphers && accepted_ciphers.detect{|x| x[:weak] == true }
+      # create a finding
+      _create_entity "Finding", {
+        "name" => "Weak cipher enabled on #{domain_name} using #{nameserver}",
+        "finding_type" => "weak_cipher",
+        "severity" => "low",
+        "status" => "confirmed",
+        "url" => url,
+        "ciphers" => accepted_ciphers
+      }
+    end
 
     # and then just stick the name and the version in our fingerprint
     _log "Inferring app stack from fingerprints!"
@@ -484,7 +496,7 @@ class Uri < Intrigue::Task::BaseTask
     return true if response_body =~ /<form/i
   false
   end
-  
+
 end
 end
 end
