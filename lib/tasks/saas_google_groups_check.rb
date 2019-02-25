@@ -41,7 +41,7 @@ class SaasGoogleGroupsCheck < BaseTask
       service_name = "groups.google.com"
       _create_entity "WebAccount", {
         "name" => "#{service_name}: #{domain}",
-        "uri" => url,
+        "uri" => uri,
         "username" => "#{domain}",
         "service" => service_name
       }

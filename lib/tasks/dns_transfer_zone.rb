@@ -66,15 +66,17 @@ class DnsTransferZone < BaseTask
             # MX records are of form: [10, #<Dnsruby::Name: vv-cephei.ac-grenoble.fr.>
             z.rdata.respond_to?("last") ? record = "#{z.rdata.last.to_s}" : record = "#{z.rdata.to_s}"
 
+            sanitized_record = record.sanitize_unicode
+
             # Check to see if it's an ip address or a dns record
             record.is_ip_address? ? entity_type = "IpAddress" : entity_type = "DnsRecord"
 
-            # ensure it is a valid address
-            # check for base64 records
-            next if record =~ /^.*==$/
+            # ensure it is a valid address & check for base64 records
+            next if sanitized_record =~ /^.*==$/
 
             # create it
-            _create_entity entity_type, { "name" => "#{record}", "record_type" => "#{z.type.to_s}", "record_content" => "#{record}" }
+            _create_entity entity_type, { "name" => "#{sanitized_record.strip}", "record_type" => "#{z.type.to_s}", "record_content" => "#{sanitized_record.strip}" }
+
           end
         end
 
