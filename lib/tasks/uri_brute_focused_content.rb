@@ -43,8 +43,8 @@ class UriBruteFocusedContent < BaseTask
 
     always_list = [  "/api", "/admin","/.git", "/.hg", "/.svn", "/.bzr", "/.csv", "/.bak", 
                     "/crossdomain.xml", "/clientaccesspolicy.xml", "/sitemap.xml",
-                    "/portal","/admin","/test","/server-status", "/WS_FTP.LOG", 
-                    "/ws_ftp.log" ]
+                    "/portal","/admin","/test","/server-status" ]
+                    # "/WS_FTP.LOG", "/ws_ftp.log"
 
     # technology specifics 
     asp_net_list = ["/elmah.axd", "/web.config", "/Trace.axd"]
@@ -117,7 +117,7 @@ class UriBruteFocusedContent < BaseTask
             result = check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content)
 
             if result 
-              
+
               # create a new entity for each one if we specified that 
               _create_entity("Uri", result) if  opt_create_url
               
