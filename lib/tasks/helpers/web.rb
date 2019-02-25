@@ -515,10 +515,8 @@ module Task
        end
 
        # always check code
-       if ( response.code == /301/ || 
-            response.code == /302/ || 
-            response.code =~ /4??/ || 
-            response.code =~ /5??/    )
+       if ( response.code == 301 || response.code == 302 || 
+            "#{response.code}" =~ /^4\d\d/ ||  "#{response.code}" =~ /^5\d\d/ )
          _log "Ignoring #{request_uri} based on code: #{response.code}"
          return false
        end

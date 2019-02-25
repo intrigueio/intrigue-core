@@ -26,7 +26,8 @@ class UriBruteCommonContent < BaseTask
       ],
       :allowed_options => [
         {:name => "threads", :regex => "integer", :default => 1 },
-        {:name => "user_list", :regex => "alpha_numeric_list", :default => [] }
+        {:name => "user_list", :regex => "alpha_numeric_list", :default => [] },
+        {:name => "create_url", :regex => "boolean", :default => false }
       ],
       :created_types => ["Uri"]
     }
@@ -38,10 +39,10 @@ class UriBruteCommonContent < BaseTask
     # TODO - integrate a simple default list:
     ## "admin, test, server-status, .svn, .git, wp-config.php, config.php, configuration.php, LocalSettings.php, mediawiki/LocalSettings.php, mt-config.cgi, mt-static/mt-config.cgi, settings.php, .htaccess, config.bak, config.php.bak, config.php~, #config.php#, config.php.save, .config.php.swp, config.php.swp, config.php.old"
 
-
     # Get options
     uri = _get_entity_name
     opt_threads = _get_option("threads")
+    opt_create_url = _get_option("create_url")
     user_list = _get_option("user_list")
 
     # TODO - what's going on here? shouldn't this always be a string?
@@ -108,13 +109,25 @@ class UriBruteCommonContent < BaseTask
     workers = (0...opt_threads).map do
       Thread.new do
         begin
-          while uri = work_q.pop(true)
-
+          while request_uri = work_q.pop(true)
+            
             # Do the check
-            results = check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content)
+            result = check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content)
 
-            # create a new entity for each one
-            _create_entity "Uri", results
+            if result 
+              
+              # create a new entity for each one if we specified that 
+              _create_entity("Uri", result) if  opt_create_url
+              
+              _create_issue({
+                name: "Discovered Content at #{result[:name]}",
+                type: "discovered_content",
+                severity: 5,
+                status: "potential",
+                description: "Page was found with a code #{result[:response_code]} by url_brute_focused_content at #{result[:name]}",
+                details: result.except!(:name)
+              })
+            end
 
           end # end while
         rescue ThreadError

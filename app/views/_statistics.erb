@@ -15,4 +15,4 @@ Total Entities: <%= Intrigue::Model::Entity.scope_by_project(@project_name).coun
 </p>
 
 <h3>Issues</h3>
-<p><a href="/<%=@project_name%>/analysis/issues"><%= Intrigue::Model::Issue.scope_by_project(@project_name).count %> issues</a></p>
+<p><a href="/<%=@project_name%>/issues"><%= Intrigue::Model::Issue.scope_by_project(@project_name).count %> issues</a></p>

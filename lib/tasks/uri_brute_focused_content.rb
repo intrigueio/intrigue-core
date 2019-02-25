@@ -116,20 +116,20 @@ class UriBruteFocusedContent < BaseTask
             # Do the check
             result = check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content)
 
-              if result 
-
-                # create a new entity for each one if we specified that 
-                _create_entity("Uri", result) if  opt_create_url
-                
-                _create_issue({
-                  name: "Discovered Content at #{result[:name]}",
-                  type: "discovered_content",
-                  severity: 5,
-                  status: "potential",
-                  description: "Content was found by url_brute_focused_content at #{result[:name]}",
-                  details: result.except!(:name)
-                })
-              end
+            if result 
+              
+              # create a new entity for each one if we specified that 
+              _create_entity("Uri", result) if  opt_create_url
+              
+              _create_issue({
+                name: "Discovered Content at #{result[:name]}",
+                type: "discovered_content",
+                severity: 5,
+                status: "potential",
+                description: "Page was found with a code #{result[:response_code]} by url_brute_focused_content at #{result[:name]}",
+                details: result.except!(:name)
+              })
+            end
 
           end # end while
         rescue ThreadError
