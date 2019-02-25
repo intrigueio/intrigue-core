@@ -47,7 +47,7 @@ class UriBruteFocusedContent < BaseTask
       #{ path: "/.hg", :regex => nil },
       { path: "/.svn", :regex => nil },
       #{ path: "/.bzr", :regex => nil },
-      {# path: "/.csv", :regex => nil },
+      #{ path: "/.csv", :regex => nil },
       #{ path: "/.bak",  :regex => nil },
       { path: "/crossdomain.xml", :regex => nil },
       { path: "/clientaccesspolicy.xml", :regex => nil },
