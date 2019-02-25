@@ -41,13 +41,14 @@ class UriBruteFocusedContent < BaseTask
     opt_threads = _get_option("threads") 
     opt_create_url = _get_option("create_url")
 
-    always_list = [  "/api", "/admin","/.git", "/.hg", "/.svn", "/.bzr", "/.csv", "/.bak", 
+    always_list = [ "/api", "/admin","/.git", "/.hg", "/.svn", "/.bzr", "/.csv", "/.bak", 
                     "/crossdomain.xml", "/clientaccesspolicy.xml", "/sitemap.xml",
                     "/portal","/admin","/test","/server-status" ]
                     # "/WS_FTP.LOG", "/ws_ftp.log"
 
     # technology specifics 
     asp_net_list = ["/elmah.axd", "/web.config", "/Trace.axd"]
+    # /Trace.axd - /<h1>Request Details/
 
     coldfusion_list = ["/CFIDE", "CFIDE/administrator/enter.cfm" ] # TODO see metasploit for more ideas here
 
