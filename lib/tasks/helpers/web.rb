@@ -514,8 +514,11 @@ module Task
          end
        end
 
+
+       _log "Response.code is a #{response.code.class}"
+
        # always check code
-       if ( response.code == 301 || response.code == 302 || 
+       if ( response.code == "301" || response.code == "302" || 
             "#{response.code}" =~ /^4\d\d/ ||  "#{response.code}" =~ /^5\d\d/ )
          _log "Ignoring #{request_uri} based on code: #{response.code}"
          return false
@@ -525,15 +528,15 @@ module Task
        if missing_page_test == :code
          case response.code
            when "200"
-             _log_good "Clean 200 for #{request_uri}!s"
+             _log_good "Clean 200 for #{request_uri}"
              to_return = {
                name: request_uri,
                uri: request_uri,
                response_code: response.code,
                response_body: response.body
              }
-           when missing_page_test
-             _log "Got code: #{response.code}. Same as missing page code. Skipping"
+           when missing_page_code
+             _log "Got code: #{response.code}. Same as missing page code: #{missing_page_code}. Ignoring!"
            else
              _log "Flagging #{request_uri} because of response code #{response.code}!"
              to_return = {
@@ -549,6 +552,7 @@ module Task
        elsif missing_page_test == :content
          if response.body[0..100] == missing_page_content[0..100]
            _log "Skipping #{request_uri} based on page content"
+
          else
            _log "Flagging #{request_uri} because of content!"
            to_return = {
