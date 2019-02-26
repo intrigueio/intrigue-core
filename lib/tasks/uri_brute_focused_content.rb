@@ -44,19 +44,19 @@ class UriBruteFocusedContent < BaseTask
 
     always_list = [ 
       { path: "/api", :regex => nil },
-      { path: "/.git", :regex => nil },
-      #{ path: "/.hg", :regex => nil },
-      { path: "/.svn", :regex => nil },
-      #{ path: "/.bzr", :regex => nil },
-      #{ path: "/.csv", :regex => nil },
-      #{ path: "/.bak",  :regex => nil },
+      { path: "/.git", :regex => /<h1>Index of/ },
+      { path: "/.hg", :regex => /<h1>Index of/ },
+      { path: "/.svn", :regex => /<h1>Index of/ },
+      { path: "/.bzr", :regex => /<h1>Index of/ },
+      #{ path: "/.csv", :regex => /<h1>Index of/ },
+      #{ path: "/.bak",  :regex => /<h1>Index of/ },
       { path: "/crossdomain.xml", :regex => /<cross-domain-policy/ },
-      { path: "/clientaccesspolicy.xml", :regex => nil },
+      { path: "/clientaccesspolicy.xml", :regex => /<access-policy/ },
       #{ path: "/sitemap.xml", :regex => nil },
       { path: "/portal", :regex => nil },
       { path: "/admin", :regex => nil },
       { path: "/test", :regex => nil },
-      { path: "/server-status", :regex => /<title>Apache Status/ }
+      { path: "/server-status", :regex => / <title>Apache Status/ }
     ]
       # "/WS_FTP.LOG", "/ws_ftp.log"
 
