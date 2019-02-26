@@ -534,7 +534,7 @@ module Task
          end
        end
 
-       _log "Response.code is a #{response.code.class}"
+       #_log "Response.code is a #{response.code.class}"
 
        # always check code
        if ( response.code == "301" || response.code == "302" || 

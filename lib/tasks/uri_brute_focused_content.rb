@@ -9,7 +9,8 @@ class UriBruteFocusedContent < BaseTask
       :name => "uri_brute_focused_content",
       :pretty_name => "URI Brute Focused Content",
       :authors => ["jcran"],
-      :description => "Check for pages specific to the site's technology. Supported Tech: ASP.net, Coldfusion, Tomcat",
+      :description => "Check for pages specific to the site's technology." + 
+        "Supported Tech: ASP.net, Coldfusion, Tomcat",
       :references => [
         ""
       ],
@@ -49,13 +50,13 @@ class UriBruteFocusedContent < BaseTask
       #{ path: "/.bzr", :regex => nil },
       #{ path: "/.csv", :regex => nil },
       #{ path: "/.bak",  :regex => nil },
-      { path: "/crossdomain.xml", :regex => nil },
+      { path: "/crossdomain.xml", :regex => /<cross-domain-policy/ },
       { path: "/clientaccesspolicy.xml", :regex => nil },
       #{ path: "/sitemap.xml", :regex => nil },
       { path: "/portal", :regex => nil },
       { path: "/admin", :regex => nil },
       { path: "/test", :regex => nil },
-      { path: "/server-status", :regex => nil }
+      { path: "/server-status", :regex => /<title>Apache Status/ }
     ]
       # "/WS_FTP.LOG", "/ws_ftp.log"
 

@@ -1,6 +1,6 @@
 module Intrigue
 module Task
-class UriCheckSecurityHeaders  < BaseTask
+class UriCheckSecurityHeaders < BaseTask
 
   include Intrigue::Task::Web
 
@@ -9,14 +9,21 @@ class UriCheckSecurityHeaders  < BaseTask
       :name => "uri_check_security_headers",
       :pretty_name => "URI Check Security Headers",
       :authors => ["jcran"],
-      :description =>   "This task checks for typical HTTP security headers on a web application",
-      :references => [],
+      :description =>   "This task checks for compliance with a security policy, including security headers",
+      :references => [
+        "https://securityheaders.com"
+      ],
       :type => "discovery",
       :passive => false,
       :allowed_types => ["Uri"],
-      :example_entities => [{"type" => "Uri", "details" => {"name" => "http://www.intrigue.io"}}],
+      :example_entities => [
+        { 
+          "type" => "Uri", 
+          "details" => {"name" => "http://www.intrigue.io"} 
+        }
+      ],
       :allowed_options => [],
-      :created_types => ["Info"]
+      :created_types => []
     }
   end
 
@@ -24,35 +31,58 @@ class UriCheckSecurityHeaders  < BaseTask
     super
 
     uri = _get_entity_name
+    response = http_request(:get, uri)
+    
+    # return immediately unless we got a response 
+    return nil unless response 
 
-    response = http_get(uri)
+    # other things to check: (?)
+    # form available over HTTP
+    # set cookie over http 
+    # server header
 
-    security_headers = [ "strict-transport-security", "x-frame-options",
-      "x-xss-protection", "x-content-type-options", "content-security-policy",
-      "content-security-policy-report-only"]
+    # security headers 
+    required_headers = [ 
+      "content-security-policy",
+      "strict-transport-security", 
+      "x-frame-options",
+      "x-xss-protection", 
+      "x-content-type-options", 
+      "feature-policy", 
+      "x-content-type-options"
+    ]
 
-    if response
-      found_security_headers = []
-      response.each_header do |name,value|
-        _log "Checking #{name}"
-        if security_headers.include? name
-          _log_good "Got header #{name}"
-          found_security_headers << {:name => name, :value => value}
-        end # end if
-      end # end each_header
+    # TODO - check for optional headers ?
+    #optional_security_headers = [
+    #  "expect-ct"
+    #]
 
-      # If we have identified any headers...
-      if found_security_headers.count > 0
-        _create_entity("Info", {
-          "name" => "#{uri} provides HTTP security headers",
-          "uri" => "#{uri}",
-          "security_header_check" => true,
-          "security_headers" => found_security_headers,
-          #"headers" => response.each_header.map{|name,value| {:name => name, :value => value}  }
-          })
-      end
+    found_headers = []
 
-    end # response
+    # iterate through and find the ones we have
+    response.each_header do |name,value|
+      found_headers << name if required_headers.include? name
+    end # end each_header
+
+    # If we have identified any headers...
+    if found_headers.count != required_headers.count
+      missing_headers = required_headers - found_headers
+      # report the headers that are missing 
+      _create_issue({
+        name: "Missing #{missing_headers.count} security headers at #{uri}",
+        type: "security_headers",
+        severity: 5,
+        status: "confirmed",
+        description:  "One or more security headers was missing from this site. " +
+                      "You can learn more about security headers at " + 
+                      "https://www.keycdn.com/blog/http-security-headers",
+        details: {
+          uri: uri,
+          missing:  missing_headers
+        }
+      })
+    end
+
   end #end run
 
 end

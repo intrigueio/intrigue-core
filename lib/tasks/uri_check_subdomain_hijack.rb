@@ -1,12 +1,12 @@
 module Intrigue
 module Task
-class UriSudomainHijack  < BaseTask
+class UriCheckSudomainHijack  < BaseTask
 
   include Intrigue::Task::Web
 
   def self.metadata
     {
-      :name => "uri_subdomain_hijack",
+      :name => "uri_check_subdomain_hijack",
       :pretty_name => "URI Check Subdomain Hijack",
       :authors => ["jcran"],
       :description =>   "This task checks for a specific string on a matched uri, indicating that it's a hijackable domain",
@@ -24,33 +24,40 @@ class UriSudomainHijack  < BaseTask
     super
 
     uri = _get_entity_name
-    response = http_get(uri)
+    response = http_request(:get, uri)
 
       if response =~ /The specified bucket does not exist/
-        _create_hijack_finding "AWS"
+        _hijackable_subdomain "AWS S3", uri, "potential"
       elsif response =~ /No such app/
-        _create_hijack_finding "Heroku"
+        _hijackable_subdomain "Heroku", uri, "potential"
       elsif response =~ /No settings were found for this company:/
-        _create_hijack_finding "Help Scout"
+        _hijackable_subdomain "Help Scout", uri, "potential"
       elsif response =~ /We could not find what you're looking for./
-        _create_hijack_finding "Help Juice"
+        _hijackable_subdomain "Help Juice", uri, "potential"
       elsif response =~ /is not a registered InCloud YouTrack/
-        _create_hijack_finding "JetBrains"
+        _hijackable_subdomain "JetBrains", uri, "potential"
       elsif response =~ /Unrecognized domain/
-        _create_hijack_finding "Mashery"
+        _hijackable_subdomain "Mashery", uri, "potential"
       elsif response =~ /Project doesnt exist... yet!s/
-        _create_hijack_finding "Readme.io"
-
+        _hijackable_subdomain "Readme.io", uri, "potential"
       end
   end #end run
 
-  def create_hijack_finding source
-    _create_entity "Finding", {
-      "name" => "#{source} Subdomain Takeover: #{uri}",
-      "uri" => "#{uri}",
-      "severity" => "high",
-      "status" => "potential"
-    }
+  def _hijackable_subdomain type, uri, status
+      _create_issue({
+        name: "Subdomain Hijacking at #{uri}",
+        type: "subdomain_hijack",
+        severity: 3,
+        status: status,
+        description:  "This uri appears to be unclaimed on a third party host, meaning," + 
+                      " there's a DNS record at (#{uri}) that points to #{type}, but it" +
+                      " appears to be unclaimed and you should be able to register it with" + 
+                      " the host, effectively 'hijacking' the domain.",
+        details: {
+          uri: uri,
+          type: type
+        }
+      })
   end
 
 end
