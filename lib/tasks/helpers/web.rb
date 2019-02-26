@@ -548,7 +548,12 @@ module Task
          case response.code
            when "200"
              _log_good "Clean 200 for #{request_uri}"
-
+             to_return = {
+               name: request_uri,
+               uri: request_uri,
+               response_code: response.code,
+               response_body: response.body
+             }
            when missing_page_code
              _log "Got code: #{response.code}. Same as missing page code: #{missing_page_code}. Ignoring!"
            else

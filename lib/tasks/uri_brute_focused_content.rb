@@ -30,7 +30,7 @@ class UriBruteFocusedContent < BaseTask
 
   def is_product?(product_name)
     return false unless _get_entity_detail("fingerprint")
-    out = _get_entity_detail("fingerprint").any?{|v| v['product'] == product_name if v['product']}
+    out = _get_entity_detail("fingerprint").any?{|v| v['product'] =~ /#{product_name}/ if v['product']}
     _log_good "Matched URI to Product: #{product_name} !" if out
   out
   end
@@ -58,20 +58,37 @@ class UriBruteFocusedContent < BaseTask
       { path: "/test", :regex => nil },
       { path: "/server-status", :regex => / <title>Apache Status/ }
     ]
-      # "/WS_FTP.LOG", "/ws_ftp.log"
 
     # technology specifics 
+    apache_list = [
+      { path: "/.htaccess", :regex => /AuthName/ },
+      { path: "/.htaccess.bak", :regex => /AuthName/ },
+      { path: "/.htpasswd", :regex => /^\w:.*$/ }
+    ]
+
     asp_net_list = [
       { path: "/elmah.axd", :regex => nil },
       { path: "/web.config", :regex => nil },
       { path: "/Trace.axd", :regex => /Microsoft \.NET Framework Version/ }
     ]
-    # /Trace.axd - 
 
     coldfusion_list = [
       { path: "/CFIDE",  :regex => nil },
       { path: "CFIDE/administrator/enter.cfm",  :regex => nil }
     ] # TODO see metasploit for more ideas here
+
+    php_list =[
+      { path: "/phpinfo.php",  :regex => nil },
+      #{ path: "/public.php",  :regex => nil },
+      #{ path: "/service.php",  :regex => nil },
+    ]
+
+    sharepoint_list =[
+      { path: "/_vti_bin/spsdisco.aspx",  :regex => /<discovery/ },
+      { path: "/_vti_pvt/service.cnf",  :regex => /vti_encoding/ },
+      { path: "/_vti_inf.html",  :regex => nil },
+      { path: "/_vti_bin/",  :regex => nil },
+    ]
 
     tomcat_list = [ 
       { path: '/status',  :regex => nil },
@@ -135,8 +152,11 @@ class UriBruteFocusedContent < BaseTask
     work_q = Queue.new
     
     #  first handle our specific here (more likely to be interesting)
+    apache_list.each { |x| work_q.push x } if is_product? "HTTP Server"  # Apache
     asp_net_list.each { |x| work_q.push x } if is_product?("ASP.NET") || is_product?("ASP.NET MVC")
     coldfusion_list.each { |x| work_q.push x } if is_product? "Coldfusion"  
+    sharepoint_list.each { |x| work_q.push x } if is_product? "Sharepoint"
+    php_list.each { |x| work_q.push x } if is_product? "PHP" 
     tomcat_list.each { |x| work_q.push x } if is_product? "Tomcat" 
     wordpress_list.each { |x| work_q.push x } if is_product? "Wordpress" 
 
@@ -156,9 +176,8 @@ class UriBruteFocusedContent < BaseTask
             result = check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content, positive_regex)
 
             if result 
-
               # create a new entity for each one if we specified that 
-              _create_entity("Uri", result) if  opt_create_url
+              _create_entity("Uri", result[:uri]) if  opt_create_url
               
               _create_issue({
                 name: "Discovered Content at #{result[:name]}",
