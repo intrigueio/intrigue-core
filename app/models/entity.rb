@@ -95,6 +95,10 @@ module Intrigue
         true
       end
 
+      def enriched? 
+        self.enriched
+      end
+
       # overridden in the individual entities
       def enrichment_tasks
         []
