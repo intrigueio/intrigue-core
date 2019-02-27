@@ -79,7 +79,7 @@ class UriBruteFocusedContent < BaseTask
     ] # TODO see metasploit for more ideas here
 
 
-    coldfusion_list = [
+    lotus_domino_list = [
       { path: "/$defaultview?Readviewentries",  :regex => /\<viewentries/, :severity => 2 , :status => "confirmed" }
     ] # TODO see metasploit for more ideas here
 
@@ -162,6 +162,7 @@ class UriBruteFocusedContent < BaseTask
     apache_list.each { |x| work_q.push x } if is_product? "HTTP Server"  # Apache
     asp_net_list.each { |x| work_q.push x } if is_product?("ASP.NET") || is_product?("ASP.NET MVC")
     coldfusion_list.each { |x| work_q.push x } if is_product? "Coldfusion"  
+    lotus_domino_list.each { |x| work_q.push x } if is_product? "Domino"  
     sharepoint_list.each { |x| work_q.push x } if is_product? "Sharepoint"
     php_list.each { |x| work_q.push x } if is_product? "PHP" 
     tomcat_list.each { |x| work_q.push x } if is_product? "Tomcat" 
