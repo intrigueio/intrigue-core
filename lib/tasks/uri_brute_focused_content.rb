@@ -51,32 +51,38 @@ class UriBruteFocusedContent < BaseTask
       { path: "/.bzr", :regex => /<h1>Index of/ },
       #{ path: "/.csv", :regex => /<h1>Index of/ },
       #{ path: "/.bak",  :regex => /<h1>Index of/ },
-      { path: "/crossdomain.xml", :regex => /<cross-domain-policy/ },
-      { path: "/clientaccesspolicy.xml", :regex => /<access-policy/ },
+      { path: "/crossdomain.xml", :regex => /\<cross-domain-policy/, :status => "confirmed" },
+      { path: "/clientaccesspolicy.xml", :regex => /\<access-policy/, :status => "confirmed"},
       #{ path: "/sitemap.xml", :regex => nil },
       { path: "/portal", :regex => nil },
       { path: "/admin", :regex => nil },
       { path: "/test", :regex => nil },
-      { path: "/server-status", :regex => / <title>Apache Status/ }
+      { path: "/server-status", :regex => /\<title\>Apache Status/, :status => "confirmed" }
     ]
 
     # technology specifics 
     apache_list = [
-      { path: "/.htaccess", :regex => /AuthName/ },
-      { path: "/.htaccess.bak", :regex => /AuthName/ },
+      { path: "/.htaccess", :regex => /AuthName/, :status => "confirmed" },
+      { path: "/.htaccess.bak", :regex => /AuthName/, :status => "confirmed" },
       { path: "/.htpasswd", :regex => /^\w:.*$/ }
     ]
 
     asp_net_list = [
       { path: "/elmah.axd", :regex => nil },
       { path: "/web.config", :regex => nil },
-      { path: "/Trace.axd", :regex => /Microsoft \.NET Framework Version/ }
+      { path: "/Trace.axd", :regex => /Microsoft \.NET Framework Version/, :status => "confirmed" }
     ]
 
     coldfusion_list = [
       { path: "/CFIDE",  :regex => nil },
       { path: "CFIDE/administrator/enter.cfm",  :regex => nil }
     ] # TODO see metasploit for more ideas here
+
+
+    coldfusion_list = [
+      { path: "/$defaultview?Readviewentries",  :regex => /\<viewentries/, :severity => 2 , :status => "confirmed" }
+    ] # TODO see metasploit for more ideas here
+
 
     php_list =[
       { path: "/phpinfo.php",  :regex => nil },
@@ -85,8 +91,8 @@ class UriBruteFocusedContent < BaseTask
     ]
 
     sharepoint_list =[
-      { path: "/_vti_bin/spsdisco.aspx",  :regex => /<discovery/ },
-      { path: "/_vti_pvt/service.cnf",  :regex => /vti_encoding/ },
+      { path: "/_vti_bin/spsdisco.aspx",  :regex => /\<discovery/, :status => "confirmed" },
+      { path: "/_vti_pvt/service.cnf",  :regex => /vti_encoding/, :status => "confirmed" },
       { path: "/_vti_inf.html",  :regex => nil },
       { path: "/_vti_bin/",  :regex => nil },
     ]
@@ -183,8 +189,8 @@ class UriBruteFocusedContent < BaseTask
               _create_issue({
                 name: "Discovered Content at #{result[:name]}",
                 type: "discovered_content",
-                severity: 5,
-                status: "potential",
+                severity: request_details[:severity] || 5,
+                status: request_details[:status] || "potential",
                 description: "Page was found with a code #{result[:response_code]} by url_brute_focused_content at #{result[:name]}",
                 details: result.except!(:name)
               })
