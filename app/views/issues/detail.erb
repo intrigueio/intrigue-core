@@ -1,7 +1,7 @@
 <!-- name -->
 <div class="col-sm-7">
 <h3>
-<% if uri = @issue.entity.details["uri"] %>
+<% if uri = @issue.details["uri"] %>
  <p><a href="<%= h uri  %>"><%= h @issue.name %></a><br/></p>
 <% else %>
    <%= h @issue.name %>
