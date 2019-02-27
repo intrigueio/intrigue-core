@@ -8,10 +8,10 @@ module Issue
   def _create_issue(details)
     # No need for a name in the hash now, remove it & pull out the name from the hash
 
-    # check and make sure we're allowed to create issues
-    # TODO
-
-    _notify("New Issue! #{details[:name]}")
+    # TODO - check and make sure we're allowed to create issues
+    # TODO - only create issues at severity X and above 
+    # 
+    _notify("Sev #{details[:severity]}! #{details[:name]}") if details[:severity] > 5
     
     hash = details.merge({ entity_id: @entity.id,
                            task_result_id: @task_result.id,

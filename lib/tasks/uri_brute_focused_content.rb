@@ -9,11 +9,11 @@ class UriBruteFocusedContent < BaseTask
       :name => "uri_brute_focused_content",
       :pretty_name => "URI Brute Focused Content",
       :authors => ["jcran"],
-      :description => "Check for pages specific to the site's technology." + 
-        "Supported Tech: ASP.net, Coldfusion, Tomcat",
-      :references => [
-        ""
-      ],
+      :description => "Check for juicy content based on the site's technology stack." + 
+        " Supported Tech: ASP.net, Coldfusion, PHP, Sharepoint, Tomcat, Wordpress" + 
+        " (Some pages can be parsed for additional entities, select the parse_content" + 
+        " option if you'd like this to be done.)",      
+      :references => [],
       :type => "discovery",
       :passive => false,
       :allowed_types => ["Uri"],
@@ -23,6 +23,7 @@ class UriBruteFocusedContent < BaseTask
       :allowed_options => [
         {:name => "threads", :regex => "integer", :default => 1 },
         {:name => "create_url", :regex => "boolean", :default => false }
+        {:name => "parse_content", :regex => "boolean", :default => false }
       ],
       :created_types => ["Uri"]
     }
