@@ -62,7 +62,21 @@ module Intrigue
       end
 
       def get_log
-        logger.full_log
+        if logger.location == "database"
+          out = logger.full_log
+        elsif logger.location == "file"
+          logfile = "#{$intrigue_basedir}/log/#{self.id}.log"
+          if File.exist? logfile
+            out = File.open(logfile,"r").read
+          else 
+            out = "Missing Logfile: #{logfile}"
+          end
+        elsif location == "none"
+          out = "No log"
+        else
+          raise "Invalid log location"
+        end
+      out
       end
       # END EXPOSE LOGGING METHODS
 

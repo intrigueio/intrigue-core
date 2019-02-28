@@ -33,9 +33,25 @@ module Intrigue
         self.save
       end
 
+=begin
       def log
-        logger.full_log
+        if logger.location == "database"
+          out = logger.full_log
+        elsif logger.location == "file"
+          logfile = "#{$intrigue_basedir}/log/scan_#{self.id}.log"
+          if File.exist? logfile
+            out = File.open(logfile,"r").read
+          else 
+            out = "Missing Logfile: #{logfile}"
+          end
+        elsif location == "none"
+          out = "No log"
+        else
+          raise "Invalid log location"
+        end
+      out
       end
+=end
 
       # Matches based on type and the attribute "name"
       def has_entity? entity
