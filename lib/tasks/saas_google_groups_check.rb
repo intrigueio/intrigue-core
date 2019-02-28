@@ -39,12 +39,20 @@ class SaasGoogleGroupsCheck < BaseTask
       _log_good "Success! Domain is configured and public."
 
       service_name = "groups.google.com"
-      _create_entity "WebAccount", {
-        "name" => "#{service_name}: #{domain}",
-        "uri" => uri,
-        "username" => "#{domain}",
-        "service" => service_name
-      }
+
+      _create_issue({
+        name: "Public Google Groups enabled for #{domain}!",
+        type: "google_groups",
+        severity: 4,
+        status: "confirmed",
+        description: "Public Google Groups settings can cause sensitive data leakage.",
+        details: {
+          "name" => "#{service_name}: #{domain}",
+          "uri" => uri,
+          "username" => "#{domain}",
+          "service" => service_name
+        }
+      })
 
     elsif text =~ /This group is on a private domain/
       # good

@@ -65,12 +65,12 @@ class UriBruteFocusedContent < BaseTask
       { path: "/.bzr", regex: /<h1>Index of/ },
       #{ path: "/.csv", :regex => /<h1>Index of/ },
       #{ path: "/.bak",  :regex => /<h1>Index of/ },
-      { path: "/crossdomain.xml", regex: /\<cross-domain-policy/, status: "confirmed" },
-      { path: "/clientaccesspolicy.xml", regex: /\<access-policy/, status: "confirmed"},
+      { path: "/crossdomain.xml", regex: /\<cross-domain-policy/, severity: 6, status: "confirmed"}, #tighten regex?
+      { path: "/clientaccesspolicy.xml", regex: /\<access-policy/, severity: 6, status: "confirmed"}, #tighten regex?
       #{ path: "/sitemap.xml",regex: nil },
-      { path: "/portal", regex: nil },
-      { path: "/admin", regex: nil },
-      { path: "/test", regex: nil },
+      { path: "/portal", severity: 5, regex: nil },
+      { path: "/admin", severity: 5, regex: nil },
+      { path: "/test", severity: 5, regex: nil },
       { path: "/server-status", regex: /\<title\>Apache Status/, status: "confirmed" }
     ]
 
@@ -93,10 +93,23 @@ class UriBruteFocusedContent < BaseTask
     ] # TODO see metasploit for more ideas here
 
 
+    jenkins_list = [
+      { path: "/view/All/builds", regex: nil },
+      { path: "/view/All/newjob",  :regex => nil },
+      { path: "/asynchPeople/",  :regex => nil },
+      { path: "/userContent/",  :regex => nil },
+      { path: "/computer/",  :regex => nil },
+      { path: "/pview/",  :regex => nil },
+      { path: "/systeminf",  :regex => nil },
+      { path: "/systemInfo",  :regex => nil },
+      { path: "/script",  :regex => nil },
+      { path: "/signup",  :regex => nil },
+      { path: "/securityRealm/createAccount",  :regex => nil }
+    ]
+
     lotus_domino_list = [
       { path: "/$defaultview?Readviewentries", regex: /\<viewentries/, severity: 2, status: "confirmed" }
     ]
-
 
     php_list =[
       { path: "/phpinfo.php",  :regex => nil }
@@ -175,6 +188,7 @@ class UriBruteFocusedContent < BaseTask
     asp_net_list.each { |x| work_q.push x } if is_product?("ASP.NET") || is_product?("ASP.NET MVC")
     coldfusion_list.each { |x| work_q.push x } if is_product? "Coldfusion"  
     lotus_domino_list.each { |x| work_q.push x } if is_product? "Domino" 
+    jenkins_list.each { |x| work_q.push x } if is_product? "Jenkins" 
     sharepoint_list.each { |x| work_q.push x } if is_product? "Sharepoint"
     php_list.each { |x| work_q.push x } if is_product? "PHP" 
     tomcat_list.each { |x| work_q.push x } if is_product? "Tomcat" 

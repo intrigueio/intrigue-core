@@ -16,7 +16,7 @@ class UriCheckSudomainHijack  < BaseTask
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "details" => {"name" => "http://www.intrigue.io"}}],
       :allowed_options => [],
-      :created_types => ["Finding"]
+      :created_types => []
     }
   end
 
