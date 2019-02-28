@@ -49,16 +49,19 @@ class NetBlock < Intrigue::Task::BaseTask
     end
 
     ###
-    ### Determine if SCOPED!!!
+    ### SCOPING
     ###
 
-    # Check new entities that we've scoped
+    # Check types we'll check for indicators 
+    # of in-scope-ness
+    #
     scoped_entity_types = [
       "Intrigue::Entity::Organization",
       "Intrigue::Entity::DnsRecord",
       "Intrigue::Entity::Domain" ]
 
-    # check seeds
+    ### CHECK OUR SEED ENTITIES TO SEE IF THE TEXT MATCHES
+    ######################################################
     if @entity.project.seeds
       @entity.project.seeds.each do |s|
         next unless scoped_entity_types.include? s["type"]
@@ -71,8 +74,11 @@ class NetBlock < Intrigue::Task::BaseTask
       end
     end
 
+    ### CHECK OUR DISCOVERED ENTITIES TO SEE IF THE TEXT MATCHES 
+    ############################################################
     # Check new entities that we've scoped in
-    @entity.project.entities.where(:scoped => true, :type => scoped_entity_types ).each do |e|
+    @entity.project.entities.where(scoped: true, 
+      type: scoped_entity_types, hidden: false ).each do |e|
 
       # make sure we skip any dns entries that are not fqdns. this will prevent
       # auto-scoping on a single name like "log" or even a number like "1"
@@ -87,6 +93,8 @@ class NetBlock < Intrigue::Task::BaseTask
 
     end
 
+    ### CHECK OUR TRUSTED SOURCES
+    ###############################
     if @entity.created_by?("search_bgp")
       _log "Marking as scoped: CREATED BY SEARCH_BGP"
       @entity.scoped = true
