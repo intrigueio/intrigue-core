@@ -22,8 +22,9 @@ class UriBruteFocusedContent < BaseTask
       ],
       :allowed_options => [
         {:name => "threads", :regex => "integer", :default => 1 },
-        {:name => "create_url", :regex => "boolean", :default => false }
-        {:name => "parse_content", :regex => "boolean", :default => false }
+        {:name => "create_url", :regex => "boolean", :default => false },
+        {:name => "parse_content", :regex => "boolean", :default => false },
+        {:name => "check_generic_content", :regex => "boolean", :default => false }
       ],
       :created_types => ["Uri"]
     }
@@ -36,83 +37,94 @@ class UriBruteFocusedContent < BaseTask
   out
   end
 
+  def sleep_until_enriched
+    entity_enriched = @entity.enriched?
+    until entity_enriched
+      _log "Waiting 10s for entity to be enriched..."
+      sleep 10
+      entity_enriched = Intrigue::Model::Entity.first(:id => @entity.id).enriched?
+    end
+  end
+
   def run
     super
+
+    sleep_until_enriched
 
     uri = _get_entity_name
     opt_threads = _get_option("threads") 
     opt_create_url = _get_option("create_url")
+    opt_parse_content = _get_option("parse_content") # TODO, not implemented today
+    opt_generic_content = _get_option("check_generic_content") 
 
-    always_list = [ 
-      { path: "/api", :regex => nil },
-      { path: "/.git", :regex => /<h1>Index of/ },
-      { path: "/.hg", :regex => /<h1>Index of/ },
-      { path: "/.svn", :regex => /<h1>Index of/ },
-      { path: "/.bzr", :regex => /<h1>Index of/ },
+    generic_list = [ 
+      { path: "/api", regex: nil },
+      { path: "/.git", regex: /<h1>Index of/ },
+      { path: "/.hg", regex: /<h1>Index of/ },
+      { path: "/.svn", regex: /<h1>Index of/ },
+      { path: "/.bzr", regex: /<h1>Index of/ },
       #{ path: "/.csv", :regex => /<h1>Index of/ },
       #{ path: "/.bak",  :regex => /<h1>Index of/ },
-      { path: "/crossdomain.xml", :regex => /\<cross-domain-policy/, :status => "confirmed" },
-      { path: "/clientaccesspolicy.xml", :regex => /\<access-policy/, :status => "confirmed"},
-      #{ path: "/sitemap.xml", :regex => nil },
-      { path: "/portal", :regex => nil },
-      { path: "/admin", :regex => nil },
-      { path: "/test", :regex => nil },
-      { path: "/server-status", :regex => /\<title\>Apache Status/, :status => "confirmed" }
+      { path: "/crossdomain.xml", regex: /\<cross-domain-policy/, status: "confirmed" },
+      { path: "/clientaccesspolicy.xml", regex: /\<access-policy/, status: "confirmed"},
+      #{ path: "/sitemap.xml",regex: nil },
+      { path: "/portal", regex: nil },
+      { path: "/admin", regex: nil },
+      { path: "/test", regex: nil },
+      { path: "/server-status", regex: /\<title\>Apache Status/, status: "confirmed" }
     ]
 
     # technology specifics 
     apache_list = [
-      { path: "/.htaccess", :regex => /AuthName/, :status => "confirmed" },
-      { path: "/.htaccess.bak", :regex => /AuthName/, :status => "confirmed" },
-      { path: "/.htpasswd", :regex => /^\w:.*$/ }
+      { path: "/.htaccess", regex: /AuthName/, status: "confirmed" },
+      { path: "/.htaccess.bak", regex: /AuthName/, status: "confirmed" },
+      { path: "/.htpasswd", regex: /^\w:.*$/ }
     ]
 
     asp_net_list = [
-      { path: "/elmah.axd", :regex => nil },
-      { path: "/web.config", :regex => nil },
+      { path: "/elmah.axd", regex: nil },
+      { path: "/web.config", regex: nil },
       { path: "/Trace.axd", :regex => /Microsoft \.NET Framework Version/, :status => "confirmed" }
     ]
 
     coldfusion_list = [
-      { path: "/CFIDE",  :regex => nil },
+      { path: "/CFIDE", regex: nil },
       { path: "CFIDE/administrator/enter.cfm",  :regex => nil }
     ] # TODO see metasploit for more ideas here
 
 
     lotus_domino_list = [
-      { path: "/$defaultview?Readviewentries",  :regex => /\<viewentries/, :severity => 2 , :status => "confirmed" }
-    ] # TODO see metasploit for more ideas here
+      { path: "/$defaultview?Readviewentries", regex: /\<viewentries/, severity: 2, status: "confirmed" }
+    ]
 
 
     php_list =[
-      { path: "/phpinfo.php",  :regex => nil },
-      #{ path: "/public.php",  :regex => nil },
-      #{ path: "/service.php",  :regex => nil },
+      { path: "/phpinfo.php",  :regex => nil }
     ]
 
     sharepoint_list =[
-      { path: "/_vti_bin/spsdisco.aspx",  :regex => /\<discovery/, :status => "confirmed" },
-      { path: "/_vti_pvt/service.cnf",  :regex => /vti_encoding/, :status => "confirmed" },
-      { path: "/_vti_inf.html",  :regex => nil },
-      { path: "/_vti_bin/",  :regex => nil },
+      { path: "/_vti_bin/spsdisco.aspx",  regex: /\<discovery/, status: "confirmed" },
+      { path: "/_vti_pvt/service.cnf",  regex: /vti_encoding/, status: "confirmed" },
+      { path: "/_vti_inf.html", regex: nil },
+      { path: "/_vti_bin/", regex: nil },
     ]
 
     tomcat_list = [ 
-      { path: '/status',  :regex => nil },
-      { path: '/web-console', :regex => nil },
-      { path: '/jmx-console', :regex => nil },
-      { path: '/admin-console',  :regex => nil },
-      { path: '/manager/html', :regex => nil },
-      { path: '/tomcat/manager/html', :regex => nil },
-      { path: '/host-manager/html', :regex => nil },
-      { path: '/server-manager/html', :regex => nil },
-      { path: '/web-console/Invoker', :regex => nil },
-      { path: '/jmx-console/HtmlAdaptor', :regex => nil },
-      { path: '/invoker/JMXInvokerServlet', :regex => nil }
+      { path: '/status', regex: nil },
+      { path: '/web-console', regex: nil },
+      { path: '/jmx-console',regex: nil },
+      { path: '/admin-console', regex: nil },
+      { path: '/manager/html',regex: nil },
+      { path: '/tomcat/manager/html',regex: nil },
+      { path: '/host-manager/html',regex: nil },
+      { path: '/server-manager/html',regex: nil },
+      { path: '/web-console/Invoker',regex: nil },
+      { path: '/jmx-console/HtmlAdaptor',regex: nil },
+      { path: '/invoker/JMXInvokerServlet', regex: nil}
     ]
 
     wordpress_list = [
-      { path: '/wp-admin',  :regex => nil },
+      { path: '/wp-admin', regex: nil },
     ]
 
     ###
@@ -162,14 +174,14 @@ class UriBruteFocusedContent < BaseTask
     apache_list.each { |x| work_q.push x } if is_product? "HTTP Server"  # Apache
     asp_net_list.each { |x| work_q.push x } if is_product?("ASP.NET") || is_product?("ASP.NET MVC")
     coldfusion_list.each { |x| work_q.push x } if is_product? "Coldfusion"  
-    lotus_domino_list.each { |x| work_q.push x } if is_product? "Domino"  
+    lotus_domino_list.each { |x| work_q.push x } if is_product? "Domino" 
     sharepoint_list.each { |x| work_q.push x } if is_product? "Sharepoint"
     php_list.each { |x| work_q.push x } if is_product? "PHP" 
     tomcat_list.each { |x| work_q.push x } if is_product? "Tomcat" 
     wordpress_list.each { |x| work_q.push x } if is_product? "Wordpress" 
 
     # then add our "always" stuff:
-    always_list.each { |x| work_q.push x }
+    generic_list.each { |x| work_q.push x } if opt_generic_content
 
     # Create a pool of worker threads to work on the queue
     workers = (0...opt_threads).map do
