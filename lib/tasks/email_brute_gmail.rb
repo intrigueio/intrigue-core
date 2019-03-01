@@ -6,7 +6,7 @@ class EmailBruteGmailGlxu < BaseTask
     {
       :name => "email_brute_gmail_glxu",
       :pretty_name => "Email Brute Gmail GLXU",
-      :authors => ["jcran"],
+      :authors => ["jcran", "x0rz"],
       :description => "This task uses an enumeration bug in the mail/glxu endpoint on gmail to check account existence.",
       :references => [
         "https://blog.0day.rocks/abusing-gmail-to-get-previously-unlisted-e-mail-addresses-41544b62b2"
