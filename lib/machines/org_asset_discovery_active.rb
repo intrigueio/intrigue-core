@@ -35,6 +35,8 @@ module Machine
         start_recursive_task(task_result,"search_crt", entity,[
           {"name" => "extract_pattern", "value" => filter_strings.first}], true)
 
+        start_recursive_task(task_result,"dns_search_sonar",entity)
+
         start_recursive_task(task_result,"dns_brute_sub",entity,[
           {"name" => "threads", "value" => 10 },
           {"name" => "use_file", "value" => true },

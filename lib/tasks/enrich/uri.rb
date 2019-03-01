@@ -101,7 +101,7 @@ class Uri < Intrigue::Task::BaseTask
     ident_matches = generate_http_requests_and_check(uri) || {}
 
     ident_fingerprints = ident_matches["fingerprint"] || []
-    ident_config_checks = ident_matches["configuration"] || []
+    ident_content_checks = ident_matches["content"] || []
 
     # get the requests we made so we can save off all details
     ident_responses = ident_matches["responses"]
@@ -147,15 +147,7 @@ class Uri < Intrigue::Task::BaseTask
 
     # Create findings if we have a weak cipher
     if accepted_ciphers && accepted_ciphers.detect{|x| x[:weak] == true }
-      # create a finding
-      _create_entity "Finding", {
-        "name" => "Weak cipher enabled on #{domain_name} using #{nameserver}",
-        "finding_type" => "weak_cipher",
-        "severity" => "low",
-        "status" => "confirmed",
-        "url" => url,
-        "ciphers" => accepted_ciphers
-      }
+      create_weak_cipher_issue(accepted_ciphers)
     end
 
     # and then just stick the name and the version in our fingerprint
@@ -212,9 +204,8 @@ class Uri < Intrigue::Task::BaseTask
         "app_fingerprint" =>  app_stack.uniq,
         "server_fingerprint" => uniq_server_stack,
         "fingerprint" => ident_fingerprints.uniq,
-        "configuration" => ident_config_checks.uniq,
+        "content" => ident_content_checks.uniq,
         "ciphers" => accepted_ciphers
-        #"extended_fingerprints" => extended_fingerprints
       })
 
       # Set the details, and make sure raw response data is a hidden (not searchable) detail
@@ -252,50 +243,50 @@ class Uri < Intrigue::Task::BaseTask
     # https://vagosec.org/2014/11/clubbing-seals/
     #
     http_body_checks = [
-      { :regex => /sealserver.trustwave.com\/seal.js/, :finding_name => "Trustwave Security Seal"},
-      { :regex => /Norton Secured, Powered by Symantec/, :finding_name => "Norton Security Seal"},
-      { :regex => /PathDefender/, :finding_name => "McAfee Pathdefender Security Seal"},
+      { :regex => /sealserver.trustwave.com\/seal.js/, :fingerprint_name => "Trustwave Security Seal"},
+      { :regex => /Norton Secured, Powered by Symantec/, :fingerprint_name => "Norton Security Seal"},
+      { :regex => /PathDefender/, :fingerprint_name => "McAfee Pathdefender Security Seal"},
 
       ### Marketing / Tracking
-      {:regex => /urchin.js/, :finding_name => "Google Analytics"},
-      {:regex => /GoogleAnalyticsObject/, :finding_name => "Google Analytics"},
-      {:regex => /MonsterInsights/, :finding_name => "MonsterInsights plugin"},
-      {:regex => /optimizely/, :finding_name => "Optimizely"},
-      {:regex => /trackalyze/, :finding_name => "Trackalyze"},
-      {:regex => /doubleclick.net|googleadservices/, :finding_name => "Google Ads"},
-      {:regex => /munchkin.js/, :finding_name => "Marketo"},
-      {:regex => /omniture/, :finding_name => "Omniture"},
-      {:regex => /w._hsq/, :finding_name => "Hubspot"},
-      {:regex => /Async HubSpot Analytics/, :finding_name => "Async HubSpot Analytics Code for WordPress"},
-      {:regex => /Olark live chat software/, :finding_name => "Olark"},
-      {:regex => /intercomSettings/, :finding_name => "Intercom"},
-      {:regex => /vidyard/, :finding_name => "Vidyard"},
+      {:regex => /urchin.js/, :fingerprint_name => "Google Analytics"},
+      {:regex => /GoogleAnalyticsObject/, :fingerprint_name => "Google Analytics"},
+      {:regex => /MonsterInsights/, :fingerprint_name => "MonsterInsights plugin"},
+      {:regex => /optimizely/, :fingerprint_name => "Optimizely"},
+      {:regex => /trackalyze/, :fingerprint_name => "Trackalyze"},
+      {:regex => /doubleclick.net|googleadservices/, :fingerprint_name => "Google Ads"},
+      {:regex => /munchkin.js/, :fingerprint_name => "Marketo"},
+      {:regex => /omniture/, :fingerprint_name => "Omniture"},
+      {:regex => /w._hsq/, :fingerprint_name => "Hubspot"},
+      {:regex => /Async HubSpot Analytics/, :fingerprint_name => "Async HubSpot Analytics Code for WordPress"},
+      {:regex => /Olark live chat software/, :fingerprint_name => "Olark"},
+      {:regex => /intercomSettings/, :fingerprint_name => "Intercom"},
+      {:regex => /vidyard/, :fingerprint_name => "Vidyard"},
 
       ### External accounts
-      {:regex => /http:\/\/www.twitter.com.*?/, :finding_name => "Twitter"},
-      {:regex => /http:\/\/www.facebook.com.*?/, :finding_name => "Facebook"},
-      {:regex => /googleadservices/, :finding_name => "Google Ads"},
+      {:regex => /http:\/\/www.twitter.com.*?/, :fingerprint_name => "Twitter"},
+      {:regex => /http:\/\/www.facebook.com.*?/, :fingerprint_name => "Facebook"},
+      {:regex => /googleadservices/, :fingerprint_name => "Google Ads"},
 
       ### Libraries / Base Technologies
-      {:regex => /jquery.js/, :finding_name => "JQuery"},
-      {:regex => /bootstrap.css/, :finding_name => "Bootstrap"},
+      {:regex => /jquery.js/, :fingerprint_name => "JQuery"},
+      {:regex => /bootstrap.css/, :fingerprint_name => "Bootstrap"},
 
 
       ### Platforms
-      {:regex => /[W|w]ordpress/, :finding_name => "Wordpress"},
-      {:regex => /[D|d]rupal/, :finding_name => "Drupal"},
-      {:regex => /[C|c]loudflare/, :finding_name => "Cloudflare"},
+      {:regex => /[W|w]ordpress/, :fingerprint_name => "Wordpress"},
+      {:regex => /[D|d]rupal/, :fingerprint_name => "Drupal"},
+      {:regex => /[C|c]loudflare/, :fingerprint_name => "Cloudflare"},
 
 
       ### Provider
-      #{:regex => /Content Delivery Network via Amazon Web Services/, :finding_name => "Amazon CDN"},
+      #{:regex => /Content Delivery Network via Amazon Web Services/, :fingerprint_name => "Amazon CDN"},
 
       ### Wordpress Plugins
-      #{ :regex => /wp-content\/plugins\/.*?\//, :finding_name => "Wordpress Plugin" },
-      #{ :regex => /xmlrpc.php/, :finding_name => "Wordpress API"},
-      #{ :regex => /Yoast SEO Plugin/, :finding_name => "Wordpress: Yoast SEO Plugin"},
-      #{ :regex => /All in One SEO Pack/, :finding_name => "Wordpress: All in One SEO Pack"},
-      #{:regex => /PowerPressPlayer/, :finding_name => "Powerpress Wordpress Plugin"}
+      #{ :regex => /wp-content\/plugins\/.*?\//, :fingerprint_name => "Wordpress Plugin" },
+      #{ :regex => /xmlrpc.php/, :fingerprint_name => "Wordpress API"},
+      #{ :regex => /Yoast SEO Plugin/, :fingerprint_name => "Wordpress: Yoast SEO Plugin"},
+      #{ :regex => /All in One SEO Pack/, :fingerprint_name => "Wordpress: All in One SEO Pack"},
+      #{:regex => /PowerPressPlayer/, :fingerprint_name => "Powerpress Wordpress Plugin"}
       ]
     ###
 
@@ -307,7 +298,7 @@ class Uri < Intrigue::Task::BaseTask
 
       # Iterate through all matches
       matches.each do |match|
-        stack << check[:finding_name]
+        stack << check[:fingerprint_name]
       end if matches
     end
     # End interation through the target strings
@@ -495,6 +486,21 @@ class Uri < Intrigue::Task::BaseTask
   def check_forms(response_body)
     return true if response_body =~ /<form/i
   false
+  end
+
+  def create_weak_cipher_issue
+    _create_issue({
+      name: "Weak Ciphers enabled on #{uri}",
+      type: "weak_cipher_suite",
+      severity: 5,
+      status: "confirmed",
+      description: "This server is configured to allow a known-weak cipher suite",
+      recommendation: "Disable the weak ciphers.",
+      references: [
+        "https://thycotic.com/company/blog/2014/05/16/ssl-beyond-the-basics-part-2-ciphers/"
+      ],
+      details: { allowed_ciphers: accepted_ciphers }
+    })
   end
 
 end

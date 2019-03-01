@@ -55,10 +55,15 @@ class SearchCrt < BaseTask
       subdomains = raw_html.scan(/<summary type="html">(.*?)\.#{search_domain}[&<\ ]/)
       _log "No matching domains found" if subdomains.count == 0
 
-      subdomains.each do |d|
-        domain = d.first
-        _log "Got domain: #{domain}.#{search_domain}"
+      subdomains.uniq.each do |d|
 
+        # remove any whitespace, and skip if it's a wildcard
+        domain = d.first.strip 
+        if domain == "*"
+          _log "Skipping wildcard: #{domain}.#{search_domain}"
+          next
+        end
+      
         # Remove any leading wildcards
         if domain[0..1] == "*."
           domain = domain[2..-1]
