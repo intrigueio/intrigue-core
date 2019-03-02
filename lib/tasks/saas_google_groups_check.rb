@@ -18,7 +18,7 @@ class SaasGoogleGroupsCheck < BaseTask
       :passive => true,
       :allowed_types => ["Domain","DnsRecord"],
       :example_entities => [
-        {"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}
+        {"type" => "Domain", "details" => {"name" => "intrigue.io"}}
       ],
       :allowed_options => [],
       :created_types => ["WebAccount"]
@@ -42,12 +42,12 @@ class SaasGoogleGroupsCheck < BaseTask
 
       _create_issue({
         name: "Public Google Groups enabled for #{domain}!",
-        type: "google_groups",
-        severity: 4,
+        type: "google_groups_leak",
+        severity: 3,
         status: "confirmed",
         description: "Public Google Groups settings can cause sensitive data leakage.",
         details: {
-          "name" => "#{service_name}: #{domain}",
+          "name" => "#{service_name} leak: #{domain}",
           "uri" => uri,
           "username" => "#{domain}",
           "service" => service_name
