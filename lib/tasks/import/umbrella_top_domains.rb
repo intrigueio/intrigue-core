@@ -19,7 +19,7 @@ class ImportUmbrellaTopDomains < BaseTask
         {:name => "threads", :regex => "integer", :default => 1 },
         {:name => "max_sleep", :regex => "integer", :default => 10 }
       ],
-      :created_types => ["DnsRecord"]
+      :created_types => ["Domain"]
     }
   end
 
@@ -32,7 +32,7 @@ class ImportUmbrellaTopDomains < BaseTask
 
     lammylam = lambda { |d|
       sleep(rand(_get_option("max_sleep")))
-      _create_entity "DnsRecord", { "name" => "#{d}" }
+      _create_entity "Domain", { "name" => "#{d}" }
     true
     }
 

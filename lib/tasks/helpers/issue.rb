@@ -17,7 +17,7 @@ module Issue
                            task_result_id: @task_result.id,
                            project_id: @project.id })
 
-    _log_good "creating finding with name: #{details[:name]}"
+    _log_good "Creating issue with name: #{details[:name]}"
     issue = Intrigue::Model::Issue.create(hash)
   end
 

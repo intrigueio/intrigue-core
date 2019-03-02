@@ -1,10 +1,10 @@
 module Intrigue
 module Task
-class SearchCorpwatch < BaseTask
+class SearchEdgar < BaseTask
 
   def self.metadata
     {
-      :name => "search_corpwatch",
+      :name => "search_edgar",
       :pretty_name => "Search Corpwatch (EDGAR) Database",
       :authors => ["jcran"],
       :description => "Corpwatch is an intereface to EDGAR. This task allows you to search for US organization data.",

@@ -7,7 +7,7 @@ module Machine
         :name => "domain_misconfigurations",
         :pretty_name => "Check Domain Misconfigurations",
         :passive => true,
-        :user_selectable => false,
+        :user_selectable => true,
         :authors => ["jcran"],
         :description => "This machine checks for common misconfigurations in a domain."
       }

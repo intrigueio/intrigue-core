@@ -268,9 +268,6 @@ module Task
       response = nil
       begin
 
-        # set user agent
-        headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.73 Safari/537.36"
-
         attempts=0
         max_attempts=10
         found = false
@@ -336,7 +333,14 @@ module Task
          end
          ### END VERBS
 
-         # set the headers
+        # set user agent unless one was provided
+        unless headers["User-Agent"]
+          headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1)" + 
+          " AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.73 Safari/537.36"
+        end
+
+
+         # set the user-specified headers
          headers.each do |k,v|
            request[k] = v
          end
