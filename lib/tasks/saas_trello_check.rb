@@ -43,8 +43,12 @@ class SaasTrelloCheck < BaseTask
     begin
       session = create_browser_session
       document = capture_document session, url
-      title = document[:title]
-      body = document[:contents]
+      if document
+        title = document[:title]
+        body = document[:contents]
+      else 
+        _log "No response"
+      end
     ensure
       destroy_browser_session(session)
     end

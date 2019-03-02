@@ -18,8 +18,12 @@ class EmailBruteGmailGlxu < BaseTask
         {"type" => "Domain", "details" => {"name" => "intrigue.io"}}
       ],
       :allowed_options => [
-        {:name => "alias_list", :regex => "alpha_numeric_list", :default => "admin,john,mike,sharon,michelle,bob,jsmith,test,guest,x" },
-      ],
+        { name: "alias_list", regex: "alpha_numeric_list", default:
+          "x,admin,user,test,guest,jsmith,msmith,rsmith,mgarcia,dsmith,mrodriguez,msmith," + 
+          "mhernandez,mmartinez,jjohnson,james.smith,michael.smith,robert.smith,maria.garcia," +
+          "david.smith,maria.rodriguez,mary.smith,maria.hernandez,maria.martinez,james.johnson," +
+          "james_smith,michael_smith,robert_smith,maria_garcia,david_smith,maria_rodriguez,mary_smith," + 
+          "maria_hernandez,maria_martinez,james_johnson"  }],
       :created_types => ["EmailAddress"]
     }
   end
@@ -28,7 +32,7 @@ class EmailBruteGmailGlxu < BaseTask
     super
 
     domain = _get_entity_name
-    alias_list = _get_option "alias_list"
+    alias_list = _get_option("alias_list").split(",")
 
     alias_list.each do |a|
       email_address = "#{a}@#{domain}"

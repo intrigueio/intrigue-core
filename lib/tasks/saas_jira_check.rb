@@ -47,8 +47,12 @@ class SaasJiraCheck < BaseTask
     begin
       session = create_browser_session
       document = capture_document session, url
-      title = document[:title]
-      body = document[:rendered]
+      if document 
+        title = document[:title]
+        body = document[:rendered]
+      else
+        _log "No response"
+      end
     ensure
       destroy_browser_session(session)
     end

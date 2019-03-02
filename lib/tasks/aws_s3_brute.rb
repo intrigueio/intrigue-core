@@ -13,7 +13,7 @@ class AwsS3Brute < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["DnsRecord","EmailAddress","IpAddress","Person","Organization","String"],
+      :allowed_types => ["DnsRecord","Domain","EmailAddress","IpAddress","Person","Organization","String"],
       :example_entities => [
         {"type" => "String", "details" => {"name" => "test"}}
       ],
@@ -138,16 +138,21 @@ class AwsS3Brute < BaseTask
             #########################
             else
 
+
+              # check new format first
               s3_uri = "https://#{bucket_name}.s3.amazonaws.com"
               exists = check_existence_unauthenticated(s3_uri)
+
               _create_entity("AwsS3Bucket", {
                 "name" => "#{s3_uri}",
                 "uri" => "#{s3_uri}",
                 "authenticated" => false
               }) if exists
 
-              next if exists ## Only proceed if we got an error above (bucket exists!) !!!
+              ### and if we got it there, no need to continue
+              next unless ! exists 
 
+              #### but if not, try the old format 
               s3_uri = "https://s3.amazonaws.com/#{bucket_name}"
               exists = check_existence_unauthenticated(s3_uri)
               _create_entity("AwsS3Bucket", {
@@ -168,6 +173,19 @@ class AwsS3Brute < BaseTask
 
   end
 
+  def create_s3_bucket_issue(url)
+
+    _create_issue({
+      name: "Open s3 bucket: #{url}",
+      type: "s3_bucket",
+      severity: 4,
+      status: "potential",
+      description: "investigate this open s3 bucket",
+      details: { url: url }
+    })
+
+  end
+
 
   def check_existence_unauthenticated(s3_uri)
     result = http_get_body("#{s3_uri}?max-keys=1")
@@ -182,6 +200,7 @@ class AwsS3Brute < BaseTask
       _log_error "Got response: #{doc.xpath("//code").text} (#{s3_uri})"
     else
       exists = true
+      create_s3_bucket_issue s3_url
     end
 
   exists # will be nil if we got nothing

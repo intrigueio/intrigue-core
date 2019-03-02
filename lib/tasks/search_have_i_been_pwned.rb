@@ -29,7 +29,7 @@ class SearchHaveIBeenPwned < BaseTask
 
     # TODO deal with pagination here
     if results.count > 0
-      _log_good "API responded with #{results.count} items!" 
+      _log_good "Found #{results.count} items!" 
     else
       _log "No results found."
     end
@@ -61,18 +61,16 @@ class SearchHaveIBeenPwned < BaseTask
     _log "Searching HIBP for #{email_address}"
 
     begin
-
       url = "https://haveibeenpwned.com/api/v2/breachedaccount/#{email_address}"
+
       response = http_request :get, url, nil, { "User-Agent" => "intrigue-core #{IntrigueApp.version}"}
-      json = JSON.parse(response.body)
-      
+      json = JSON.parse(response.body)   
+
     rescue JSON::ParserError
       _log_error "Error retrieving results"
-      json = [] 
     end
 
-    
-  json
+  json || []
   end
 
 end
