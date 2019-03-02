@@ -39,8 +39,9 @@ class UriBruteFocusedContent < BaseTask
 
   def sleep_until_enriched
     entity_enriched = @entity.enriched?
-    until entity_enriched
-      _log "Waiting 10s for entity to be enriched..."
+    cycles = 60
+    until entity_enriched || cycles == 0
+      _log "Waiting 10s for entity to be enriched... (#{cycles-=1} / 60)"
       sleep 10
       entity_enriched = Intrigue::Model::Entity.first(:id => @entity.id).enriched?
     end
