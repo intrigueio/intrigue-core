@@ -11,7 +11,7 @@ class Domain < Intrigue::Model::Entity
   end
 
   def validate_entity
-    name =~ /(?=^.{1,254}$)(^(?:(?!\d+\.)[a-zA-Z0-9_\-]{1,63}\.?)+(?:[a-zA-Z]{2,})$)/ #_dns_regex
+    name =~ /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-\_]*[a-zA-Z0-9\-\_])\.)+([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-\_]*[A-Za-z])$/ #_dns_regex
   end
 
   def detail_string

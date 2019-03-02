@@ -44,7 +44,8 @@ class EntityManager
       entity.set_details(details.to_h.deep_merge(entity.details.to_h))
 
       # scope it since we manually created
-      entity.scoped = true
+      entity.set_detail("unscoped", false)
+      details = details.tap { |h| h.delete("unscoped") }
       entity.save
 
     else
@@ -181,7 +182,7 @@ class EntityManager
 
           # Create a new entity in that group
           entity = Intrigue::Model::Entity.update_or_create(
-            {name: downcased_name, project: project}, entity_details)
+            {name: downcased_name, type: type.to_s, project: project}, entity_details)
 
           unless entity
             tr.log_fatal "Unable to create entity: #{entity_details}"
