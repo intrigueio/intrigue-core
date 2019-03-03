@@ -15,6 +15,7 @@ module Notifier
 
       # Assumes amazon...
       if config_hash["system_base_uri"] == "AMAZON"
+        # use the standard endpoint to grab info 
         system_ip = http_get_body("http://169.254.169.254/latest/meta-data/public-ipv4")
         @system_base_uri = "http://#{system_ip}:7777"
       else # use as is
