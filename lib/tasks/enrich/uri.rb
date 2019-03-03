@@ -23,7 +23,7 @@ class Uri < Intrigue::Task::BaseTask
   end
 
   def run
-
+    
     uri = _get_entity_name
     begin
       hostname = URI.parse(uri).host
