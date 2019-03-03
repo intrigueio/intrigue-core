@@ -7,6 +7,8 @@ module Intrigue
       one_to_many :logger
       one_to_many :task_results
       one_to_many :scan_results
+      one_to_many :issues
+      one_to_many :entities
 
       include Intrigue::Model::Mixins::Handleable
       include Intrigue::Model::Mixins::MatchExceptions
@@ -23,9 +25,9 @@ module Intrigue
         self.delete
       end
 
-      def entities
-        Intrigue::Model::Entity.scope_by_project(self.name)
-      end
+      #def entities
+      #  Intrigue::Model::Entity.scope_by_project(self.name)
+      #end
 
       def seed_entity?(entity_name, type_string)
 
