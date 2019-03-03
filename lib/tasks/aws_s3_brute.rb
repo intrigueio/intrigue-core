@@ -200,7 +200,7 @@ class AwsS3Brute < BaseTask
       _log_error "Got response: #{doc.xpath("//code").text} (#{s3_uri})"
     else
       exists = true
-      create_s3_bucket_issue s3_url
+      create_s3_bucket_issue s3_uri
     end
 
   exists # will be nil if we got nothing
