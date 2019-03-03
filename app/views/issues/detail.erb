@@ -7,6 +7,11 @@
    <%= h @issue.name %>
 <% end %>
 </h3>
+
+Entity: <a href="/<%=@issue.project.name%>/entities/<%=@issue.entity.id%>"><%= @issue.entity.type_string %> <%= @issue.entity.name %></a><br/>
+
+Task Result: <a href="/<%=@issue.project.name%>/results/<%=@issue.task_result.id%>"><%= @issue.task_result.name %></a> <br/>
+
 <br/>
 <div class="panel-group">
   <div class="panel panel-default">
@@ -16,7 +21,7 @@
       </h4>
     </div>
     <div id="collapse1" class="panel-collapse collapse in">
-      <div class="panel-body"><pre class="prettyprint"><%=h JSON.pretty_generate @issue %></pre></div>
+      <div class="panel-body"><pre class="prettyprint"><%=h JSON.pretty_generate @issue.to_hash %></pre></div>
     </div>
   </div>
 </div>
