@@ -30,6 +30,7 @@ class Domain < Intrigue::Task::BaseTask
     unless _get_entity_detail("resolutions")
 
       results = resolve(lookup_name)
+      _create_aliases results
 
       resolutions = collect_resolutions(results)
       _set_entity_detail("resolutions", resolutions )
@@ -86,6 +87,21 @@ class Domain < Intrigue::Task::BaseTask
       end
     end
 
+  end
+
+  def _create_aliases(results)
+    ####
+    ### Create aliased entities
+    ####
+    results.each do |result|
+      next if @entity.name == result["name"]
+      _log "Creating entity for... #{result}"
+      if "#{result["name"]}".is_ip_address?
+        _create_entity("IpAddress", { "name" => result["name"] }, @entity)
+      else
+        _create_entity("Domain", { "name" => result["name"] }, @entity)
+      end
+    end
   end
 
 end
