@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: ec59f3fd81efdbd6d01e9199bce0d869d49270d4
+  revision: fc10541d6582fce10089986accfd2721e9db5d68
   specs:
-    intrigue-ident (0.8.0)
+    intrigue-ident (0.8.1)
       capybara
       selenium-webdriver (~> 3.12.0)
 
