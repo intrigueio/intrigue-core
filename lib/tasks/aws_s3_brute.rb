@@ -60,12 +60,13 @@ class AwsS3Brute < BaseTask
       # Add permutations
       if opt_permute
         begin
+          
           # AWS is case sensitive.
           # https://forums.aws.amazon.com/thread.jspa?threadID=19928
           first_letter_cap = "#{pb.strip}".slice(0,1).upcase + "#{pb.strip}".slice(1..-1)
-          work_q << "#{first_letter_cap}" unless "#{first_letter_cap}" == "#{pb.strip}"
-          work_q << "#{pb.strip.upcase}" unless "#{pb.strip.upcase}" == "#{pb.strip}"
-          work_q << "#{pb.strip.downcase}" unless "#{pb.strip.downcase}" == "#{pb.strip}"
+          #work_q << "#{first_letter_cap}" unless "#{first_letter_cap}" == "#{pb.strip}"
+          #work_q << "#{pb.strip.upcase}" unless "#{pb.strip.upcase}" == "#{pb.strip}"
+          #work_q << "#{pb.strip.downcase}" unless "#{pb.strip.downcase}" == "#{pb.strip}"
 
           # General development permutations
           work_q << "#{pb.strip}-backup"
@@ -141,25 +142,36 @@ class AwsS3Brute < BaseTask
 
               # check new format first
               s3_uri = "https://#{bucket_name}.s3.amazonaws.com"
-              exists = check_existence_unauthenticated(s3_uri)
+              exists = check_existence_unauthenticated(s3_uri,bucket_name)
 
-              _create_entity("AwsS3Bucket", {
-                "name" => "#{s3_uri}",
-                "uri" => "#{s3_uri}",
-                "authenticated" => false
-              }) if exists
+              if exists
+                _create_entity("AwsS3Bucket", {
+                  "name" => "#{s3_uri}",
+                  "uri" => "#{s3_uri}",
+                  "authenticated" => false
+                }) 
+
+                # create a bucket issue 
+                create_s3_bucket_issue s3_uri 
+              end
 
               ### and if we got it there, no need to continue
-              next unless ! exists 
+              next unless !exists 
 
               #### but if not, try the old format 
               s3_uri = "https://s3.amazonaws.com/#{bucket_name}"
-              exists = check_existence_unauthenticated(s3_uri)
-              _create_entity("AwsS3Bucket", {
-                "name" => "#{s3_uri}",
-                "uri" => "#{s3_uri}",
-                "authenticated" => false,
-              }) if exists
+              exists = check_existence_unauthenticated(s3_uri,bucket_name)
+
+              if exists 
+                # create a bucket issue
+                create_s3_bucket_issue s3_uri
+
+                _create_entity("AwsS3Bucket", {
+                  "name" => "#{s3_uri}",
+                  "uri" => "#{s3_uri}",
+                  "authenticated" => false,
+                }) 
+              end
 
             end # end if opt_use_creds
 
@@ -187,20 +199,29 @@ class AwsS3Brute < BaseTask
   end
 
 
-  def check_existence_unauthenticated(s3_uri)
-    result = http_get_body("#{s3_uri}?max-keys=1")
-    return unless result
+  def check_existence_unauthenticated(s3_uri, key)
+    response = http_get_body("#{s3_uri}?max-keys=1")
+    exists = false
+    return exists unless response
 
-    doc = Nokogiri::HTML(result)
+    doc = Nokogiri::HTML(response)
     if  ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
           doc.xpath("//code").text =~ /InvalidBucketName/ ||
           doc.xpath("//code").text =~ /AllAccessDisabled/ ||
           doc.xpath("//code").text =~ /AccessDenied/ ||
           doc.xpath("//code").text =~ /PermanentRedirect/)
-      _log_error "Got response: #{doc.xpath("//code").text} (#{s3_uri})"
-    else
+
+      _log_error "Got negative response: #{doc.xpath("//code").text} (#{s3_uri})"
+
+    elsif doc.xpath("//name").text =~ /#{key}/
+      
+      _log "Got positive response: #{response}"
       exists = true
-      create_s3_bucket_issue s3_uri
+
+    else 
+
+      _log "Got unknown response: #{response}"
+
     end
 
   exists # will be nil if we got nothing
