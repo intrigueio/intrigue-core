@@ -34,6 +34,8 @@ class DnsRecord < Intrigue::Task::BaseTask
     _log "Creating aliases for #{@entity.name}"
     _create_aliases(results)
 
+    return unless results.count > 0
+
     # Create new entities if we found vhosts / aliases
     _log "Creating vhost services"
     _create_vhost_entities(lookup_name)

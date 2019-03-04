@@ -17,11 +17,9 @@ class IntrigueApp < Sinatra::Base
       erb :index
     end
 
-
     ###                  ###
     ### System Config    ###
     ###                  ###
-
     post '/:project/config/system' do
       global_config = $global_config
       global_config.config["credentials"]["username"] = "#{params["username"]}"
