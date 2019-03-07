@@ -74,8 +74,12 @@ uri = "https://calendar.google.com/calendar/htmlembed?src=#{email_address}"
      _log "404, doesnt exist or not public..."
     else
       _log "Unknown response..."
-      _log "Code: #{response.code}"
-      _log "Code: #{response.body}"
+      if response
+        _log "Code: #{response.code}" 
+        _log "Code: #{response.body}"
+      else 
+        _log_error "No response!"
+      end
     end
   end
 

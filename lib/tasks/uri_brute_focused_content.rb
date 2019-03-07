@@ -39,7 +39,7 @@ class UriBruteFocusedContent < BaseTask
 
   def sleep_until_enriched
     entity_enriched = @entity.enriched?
-    cycles = 30
+    cycles = 30 
     until entity_enriched || cycles == 0
       _log "Waiting 10s for entity to be enriched... (#{cycles-=1} / 60)"
         sleep 10
