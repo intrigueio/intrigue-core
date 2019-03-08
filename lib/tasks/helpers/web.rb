@@ -117,6 +117,7 @@ module Task
               "cloudflaressl.com",
               "distilnetworks.com",
               "edgecastcdn.net",
+              "hexagon-cdn.com",
               "fastly.net",
               "freshdesk.com",
               "jiveon.com",
