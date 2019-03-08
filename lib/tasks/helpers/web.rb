@@ -117,7 +117,7 @@ module Task
               "cloudflaressl.com",
               "distilnetworks.com",
               "edgecastcdn.net",
-              "hexagon-cdn.com",
+              "hexagon-cdn.com", # TODO - worth revisiting, may include related hosts
               "fastly.net",
               "freshdesk.com",
               "jiveon.com",
