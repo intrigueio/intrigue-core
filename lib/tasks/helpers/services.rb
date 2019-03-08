@@ -43,6 +43,12 @@ module Services
       if cert_names
         generic_details.merge!({"cert_names" => cert_names})
         cert_names.uniq do |cn|
+
+          if entity_exists?(ip_entity.project, "DnsRecord", cn)
+            _log "Skipping entity creation for DnsRecord#{cn}, already exists"
+            next 
+          end
+
           cert_entities << _create_entity("DnsRecord", {"name" => cn}, ip_entity)
         end
       end
@@ -75,14 +81,21 @@ module Services
           # Construct the uri
           uri = "#{prefix}://#{h.name}:#{port_num}"
 
-          x= _gather_http_response(uri)
-          http_response = x[:http_response]
-          generic_details.merge!(x[:extra_details])
 
+          # if we've never seen this before, go ahead and open it to ensure it's 
+          # something we want to create (this helps eliminate unusable urls). However, 
+          # skip if we have, we want to minimize requests to the services
+          if !entity_exists? ip_entity.project, "Uri", uri
 
-          unless http_response
-            _log_error "Didn't get a response when we requested one, moving on"
-            next
+            x = _gather_http_response(uri)
+            http_response = x[:http_response]
+            generic_details.merge!(x[:extra_details])
+
+            unless http_response
+              _log_error "Didn't get a response when we requested one, moving on"
+              next
+            end
+
           end
 
           entity_details = {
