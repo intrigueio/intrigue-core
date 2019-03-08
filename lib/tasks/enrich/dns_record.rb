@@ -18,6 +18,7 @@ class DnsRecord < Intrigue::Task::BaseTask
       :allowed_options => [],
       :created_types => [
         "DnsRecord",
+        "Domain",
         "IpAddress",
         "NetworkService"
       ]

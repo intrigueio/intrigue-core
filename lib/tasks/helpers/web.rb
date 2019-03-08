@@ -248,7 +248,7 @@ module Task
     # Helper method to easily get an HTTP Response BODY
     #
     def http_get_body(uri, credentials=nil, headers={})
-      response = http_request(:get,uri, credentials, headers)
+      response = http_request(:get, uri, credentials, headers)
 
       ### filter body
       if response
@@ -263,13 +263,14 @@ module Task
     ### XXX - significant updates made to zlib, determine whether to
     ### move this over to RestClient: https://github.com/ruby/ruby/commit/3cf7d1b57e3622430065f6a6ce8cbd5548d3d894
     ###
-    def http_request(method, uri_string, credentials=nil, headers={}, data=nil, limit = 10, open_timeout=15, read_timeout=15)
+    def http_request(method, uri_string, credentials=nil, headers={}, 
+        data=nil, attempts_limit=10, open_timeout=10, read_timeout=10)
 
       response = nil
       begin
 
         attempts=0
-        max_attempts=10
+        max_attempts=attempts_limit
         found = false
 
         uri = URI.parse uri_string
@@ -301,8 +302,8 @@ module Task
 
          http = Net::HTTP.start(uri.host, uri.port, proxy_addr, proxy_port, opts)
          #http.set_debug_output($stdout) if _get_system_config "debug"
-         http.read_timeout = 20
-         http.open_timeout = 20
+         http.read_timeout = read_timeout
+         http.open_timeout = open_timeout
 
          path = "#{uri.path}"
          path = "/" if path==""

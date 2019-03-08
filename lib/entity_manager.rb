@@ -231,6 +231,7 @@ class EntityManager
     # think about the case of a domain lookup where many resolve to a single
     # ip address
     if primary_entity
+      
       task_result.log "Aliasing #{entity.name} to existing group: #{primary_entity.alias_group_id}"
 
       # Take the smaller group id, and use that to alias together

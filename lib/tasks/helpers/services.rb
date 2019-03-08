@@ -62,143 +62,145 @@ module Services
 
     sister_entity = nil
     hosts.uniq.each do |h|
+      Thread.new do 
 
-      # Handle web app case first
-      if (protocol == "tcp" && [80,81,443,8000,8080,8081,8443].include?(port_num))
+        _log_good "New Thread!"
 
-        # If SSL, use the appropriate prefix
-        prefix = ssl ? "https" : "http" # construct uri
+        # Handle web app case first
+        if (protocol == "tcp" && [80,81,443,8000,8080,8081,8443].include?(port_num))
 
-        # Construct the uri
-        uri = "#{prefix}://#{h.name}:#{port_num}"
+          # If SSL, use the appropriate prefix
+          prefix = ssl ? "https" : "http" # construct uri
 
-        x= _gather_http_response(uri)
-        http_response = x[:http_response]
-        generic_details.merge!(x[:extra_details])
+          # Construct the uri
+          uri = "#{prefix}://#{h.name}:#{port_num}"
+
+          x= _gather_http_response(uri)
+          http_response = x[:http_response]
+          generic_details.merge!(x[:extra_details])
 
 
-        unless http_response
-          _log_error "Didn't get a response when we requested one, moving on"
-          next
+          unless http_response
+            _log_error "Didn't get a response when we requested one, moving on"
+            next
+          end
+
+          entity_details = {
+            "name" => uri,
+            "uri" => uri,
+            "service" => prefix
+          }.merge!(generic_details)
+
+          # Create entity and track this entity so we can manage a group of aliases (called sisters here)
+          sister_entity = _create_entity("Uri", entity_details, sister_entity)
+
+        # otherwise, create a network service on the IP, either UDP or TCP - fail otherwise
+        elsif protocol == "tcp" && h.name.is_ip_address?
+
+          service_specific_details = {}
+
+          case port_num
+            when 21
+              service = "FTP"
+            when 22,2222
+              service = "SSH"
+            when 23
+              service = "TELNET"
+            when 25
+              service = "SMTP"
+            when 79
+              service = "FINGER"
+            when 110
+              service = "POP3"
+            when 111
+              service = "SUNRPC"
+            when 502,503
+              service = "MODBUS"
+            when 1883
+              service = "MQLSDP"
+            when 2181,2888,3888
+              service = "ZOOKEEPER"
+            when 3389
+              service = "RDP"
+            when 5000
+              service = "UPNP"
+            when 5900,5901
+              service = "VNC"
+            when 6379,6380
+              service = "REDIS"
+            when 6443
+              service = "KUBERNETES"
+            when 7001
+              service = "WEBLOGIC"
+            when 8032
+              service = "YARN"
+            when 8278,8291
+              service = "MIKROTIK"
+            when 8883
+              service = "MQTT"
+            when 9200,9201,9300,9301
+              service = "ELASTICSEARCH"
+            when 9091,9092,9094
+              service = "NETSCALER"
+            when 27017,27018,27019
+              service = "MONGODB"
+            else
+              service = "UNKNOWN"
+          end
+
+          # now we have all the details we need, create it
+
+          name = "#{h.name}:#{port_num}"
+
+          entity_details = {
+            "name" => name,
+            "service" => service
+          }
+
+          # merge in all generic details
+          entity_details = entity_details.merge!(generic_details)
+
+          # merge in any service specifics
+          entity_details = entity_details.merge!(service_specific_details)
+
+          sister_entity = _create_entity("NetworkService", entity_details, sister_entity)
+
+        elsif protocol == "udp" && h.name.is_ip_address?
+
+          service_specific_details = {}
+
+          case port_num
+            when 53
+              service = "DNS"
+            when 161
+              service = "SNMP"
+            when 1900
+              service = "UPNP"
+            else
+              service = "UNKNOWN"
+          end
+
+          # now we have all the details we need, create it
+
+          name = "#{h.name}:#{port_num}"
+
+          entity_details = {
+            "name" => name,
+            "service" => service
+          }
+
+          # merge in all generic details
+          entity_details = entity_details.merge!(generic_details)
+
+          # merge in any service specifics
+          entity_details = entity_details.merge!(service_specific_details)
+
+          sister_entity = _create_entity("NetworkService", entity_details, sister_entity)
+
+        else
+          raise "Unknown protocol" if h.name.is_ip_address?
         end
-
-        entity_details = {
-          "name" => uri,
-          "uri" => uri,
-          "service" => prefix
-        }.merge!(generic_details)
-
-        # Create entity and track this entity so we can manage a group of aliases (called sisters here)
-        sister_entity = _create_entity("Uri", entity_details, sister_entity)
-
-      # otherwise, create a network service on the IP, either UDP or TCP - fail otherwise
-      elsif protocol == "tcp" && h.name.is_ip_address?
-
-        service_specific_details = {}
-
-        case port_num
-          when 21
-            service = "FTP"
-          when 22,2222
-            service = "SSH"
-          when 23
-            service = "TELNET"
-          when 25
-            service = "SMTP"
-          when 79
-            service = "FINGER"
-          when 110
-            service = "POP3"
-          when 111
-            service = "SUNRPC"
-          when 502,503
-            service = "MODBUS"
-          when 1883
-            service = "MQLSDP"
-          when 2181,2888,3888
-            service = "ZOOKEEPER"
-          when 3389
-            service = "RDP"
-          when 5000
-            service = "UPNP"
-          when 5900,5901
-            service = "VNC"
-          when 6379,6380
-            service = "REDIS"
-          when 6443
-            service = "KUBERNETES"
-          when 7001
-            service = "WEBLOGIC"
-          when 8032
-            service = "YARN"
-          when 8278,8291
-            service = "MIKROTIK"
-          when 8883
-            service = "MQTT"
-          when 9200,9201,9300,9301
-            service = "ELASTICSEARCH"
-          when 9091,9092,9094
-            service = "NETSCALER"
-          when 27017,27018,27019
-            service = "MONGODB"
-          else
-            service = "UNKNOWN"
-        end
-
-        # now we have all the details we need, create it
-
-        name = "#{h.name}:#{port_num}"
-
-        entity_details = {
-          "name" => name,
-          "service" => service
-        }
-
-        # merge in all generic details
-        entity_details = entity_details.merge!(generic_details)
-
-        # merge in any service specifics
-        entity_details = entity_details.merge!(service_specific_details)
-
-        sister_entity = _create_entity("NetworkService", entity_details, sister_entity)
-
-      elsif protocol == "udp" && h.name.is_ip_address?
-
-        service_specific_details = {}
-
-        case port_num
-          when 53
-            service = "DNS"
-          when 161
-            service = "SNMP"
-          when 1900
-            service = "UPNP"
-          else
-            service = "UNKNOWN"
-        end
-
-        # now we have all the details we need, create it
-
-        name = "#{h.name}:#{port_num}"
-
-        entity_details = {
-          "name" => name,
-          "service" => service
-        }
-
-        # merge in all generic details
-        entity_details = entity_details.merge!(generic_details)
-
-        # merge in any service specifics
-        entity_details = entity_details.merge!(service_specific_details)
-
-        sister_entity = _create_entity("NetworkService", entity_details, sister_entity)
-
-      else
-        raise "Unknown protocol" if h.name.is_ip_address?
-      end
-
-
+      end # end thread 
     end # each hostname
   end
 

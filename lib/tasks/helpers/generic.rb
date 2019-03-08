@@ -15,7 +15,7 @@ module Generic
     output_queue = Queue.new
 
     items.each do |item|
-        input_queue << item
+      input_queue << item
     end
 
     # Create a pool of worker threads to work on the queue
