@@ -79,12 +79,12 @@ class UriBruteFocusedContent < BaseTask
     apache_list = [
       { path: "/.htaccess", regex: /AuthName/, status: "confirmed" },
       { path: "/.htaccess.bak", regex: /AuthName/, status: "confirmed" },
-      { path: "/.htpasswd", regex: /^\w:.*$/ }
+      { path: "/.htpasswd", regex: /^\w:.*$/, status: "potential" }
     ]
 
     asp_net_list = [
-      { path: "/elmah.axd", regex: nil },
-      { path: "/web.config", regex: nil },
+      { path: "/elmah.axd", regex: /Error log for/i, status: "confirmed" },
+      #{ path: "/web.config", regex: nil },
       { path: "/Trace.axd", :regex => /Microsoft \.NET Framework Version/, :status => "confirmed" }
     ]
 
@@ -95,17 +95,17 @@ class UriBruteFocusedContent < BaseTask
 
 
     jenkins_list = [
-      { path: "/view/All/builds", regex: nil },
-      { path: "/view/All/newjob",  :regex => nil },
-      { path: "/asynchPeople/",  :regex => nil },
-      { path: "/userContent/",  :regex => nil },
-      { path: "/computer/",  :regex => nil },
-      { path: "/pview/",  :regex => nil },
-      { path: "/systeminf",  :regex => nil },
-      { path: "/systemInfo",  :regex => nil },
-      { path: "/script",  :regex => nil },
-      { path: "/signup",  :regex => nil },
-      { path: "/securityRealm/createAccount",  :regex => nil }
+      { path: "/view/All/builds", regex: /Jenkins ver./i, status: "confirmed" },
+      { path: "/view/All/newjob",  :regex => /Jenkins/i, status: "confirmed" },
+      { path: "/asynchPeople/",  :regex => /Jenkins/i, status: "confirmed" },
+      { path: "/userContent/",  :regex => /Jenkins/i, status: "confirmed" },
+      { path: "/computer/",  :regex => /Jenkins/i, status: "confirmed" },
+      { path: "/pview/",  :regex => /Jenkins/i, status: "confirmed" },
+      { path: "/systeminf",  :regex => /Jenkins/i, status: "confirmed" },
+      { path: "/systemInfo",  :regex => /Jenkins/i, status: "confirmed" },
+      { path: "/script",  :regex => /Jenkins/i, status: "confirmed" },
+      { path: "/signup",  :regex => /Jenkins/i, status: "confirmed" },
+      { path: "/securityRealm/createAccount",  :regex => /Jenkins/i , status: "confirmed"}
     ]
 
     lotus_domino_list = [
@@ -113,15 +113,24 @@ class UriBruteFocusedContent < BaseTask
     ]
 
     php_list =[
-      { path: "/phpinfo.php",  :regex => nil }
+      { path: "/phpinfo.php",  :regex => /<title>phpinfo\(\)/, status: "confirmed" }
     ]
 
     sharepoint_list =[
       { path: "/_vti_bin/spsdisco.aspx",  regex: /\<discovery/, status: "confirmed" },
       { path: "/_vti_pvt/service.cnf",  regex: /vti_encoding/, status: "confirmed" },
-      { path: "/_vti_inf.html", regex: nil },
-      { path: "/_vti_bin/", regex: nil },
+      #{ path: "/_vti_inf.html", regex: nil },
+      #{ path: "/_vti_bin/", regex: nil },
     ]
+
+    # https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Insecure%20Management%20Interface
+    spring_boot_list =[
+      { path: "/trace", regex: nil, status: "potential" },
+      { path: "/env", regex: nil, status: "potential" },
+      { path: "/heapdump", regex: nil, status: "potential" },
+      { path: "/actuator/env", regex: nil, status: "potential" },
+      { path: "/actuator/health", regex: nil, status: "potential" },
+    ] # more: https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Insecure%20Management%20Interface/Intruder/springboot_actuator.txt
 
     tomcat_list = [ 
       { path: '/status', regex: nil },
@@ -135,6 +144,9 @@ class UriBruteFocusedContent < BaseTask
       { path: '/web-console/Invoker',regex: nil },
       { path: '/jmx-console/HtmlAdaptor',regex: nil },
       { path: '/invoker/JMXInvokerServlet', regex: nil}
+      # http://[host]:8090/invoker/EJBInvokerServlet
+      # https://[host]:8453//invoker/EJBInvokerServlet
+      #{ path: '/invoker/EJBInvokerServlet', regex: nil} 
     ]
 
     wordpress_list = [
@@ -190,8 +202,9 @@ class UriBruteFocusedContent < BaseTask
     coldfusion_list.each { |x| work_q.push x } if is_product? "Coldfusion"  
     lotus_domino_list.each { |x| work_q.push x } if is_product? "Domino" 
     jenkins_list.each { |x| work_q.push x } if is_product? "Jenkins" 
-    sharepoint_list.each { |x| work_q.push x } if is_product? "Sharepoint"
     php_list.each { |x| work_q.push x } if is_product? "PHP" 
+    sharepoint_list.each { |x| work_q.push x } if is_product? "Sharepoint"
+    spring_boot_list { |x| work_q.push x } if is_product? "Spring Boot"
     tomcat_list.each { |x| work_q.push x } if is_product? "Tomcat" 
     wordpress_list.each { |x| work_q.push x } if is_product? "Wordpress" 
 

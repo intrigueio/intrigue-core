@@ -13,7 +13,7 @@ class SearchHaveIBeenPwned < BaseTask
       :passive => true,
       :allowed_types => ["EmailAddress"],
       :example_entities => [
-        {"type" => "EmailAddress", "details" => {"name" => "nobody@intrigue.io"}}],
+        {"type" => "EmailAddress", "details" => {"name" => "nobody@nowhere.com"}}],
       :allowed_options => [],
       :created_types => []
     }
