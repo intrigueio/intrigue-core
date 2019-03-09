@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: f4203765b73bcb2635a1021445f4ef9f87b9e162
+  revision: e533b6ac53d888a9b01a386f2d9d89656aaf18be
   specs:
     intrigue-ident (0.8.1)
       capybara

@@ -11,7 +11,7 @@ module Issue
     # TODO - check and make sure we're allowed to create issues
     # TODO - only create issues at severity X and above 
     # 
-    _notify("Sev #{details[:severity]}! #{details[:name]}") if details[:severity] > 6
+    _notify("Sev #{details[:severity]}! #{details[:name]}") if details[:severity] <= 4
     
     hash = details.merge({ entity_id: @entity.id,
                            task_result_id: @task_result.id,
