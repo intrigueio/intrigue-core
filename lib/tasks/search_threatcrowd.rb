@@ -17,7 +17,7 @@ class SearchThreatcrowd < BaseTask
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "extract_pattern", :regex => "alpha_numeric", :default => false },
-        {:name => "gather_resolutions", :regex => "boolean", :default => true },
+        {:name => "gather_resolutions", :regex => "boolean", :default => false },
         {:name => "gather_subdomains", :regex => "boolean", :default => true },
         {:name => "gather_email_addresses", :regex => "boolean", :default => true }
       ],

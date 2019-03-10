@@ -33,8 +33,8 @@ class SearchGithub < BaseTask
       _create_entity "GithubAccount", {
         "name" => result["login"],
         "uri" => result["html_url"],
-        "account_type" => result["type"],
-        "raw" => result
+        "type" => result["type"],
+        "github" => result
       }
     end
 
@@ -46,7 +46,7 @@ class SearchGithub < BaseTask
       _create_entity "GithubRepository", {
         "name" => result["full_name"],
         "uri" => result["html_url"],
-        "raw" => result
+        "github" => result
       }
     end
 
@@ -55,8 +55,8 @@ class SearchGithub < BaseTask
       _create_entity "GithubAccount", {
         "name" => result["owner"]["login"],
         "uri" => result["owner"]["html_url"],
-        "account_type" => result["owner"]["type"],
-        "raw" => result["owner"]
+        "type" => result["owner"]["type"],
+        "github" => result["owner"]
       }
     end
 
@@ -64,7 +64,6 @@ class SearchGithub < BaseTask
     #search_uri = "https://api.github.com/search/issues?q=#{entity_name}"
     #response = _search_github(search_uri,"GithubIssue")
     #_parse_items response["items"]
-
 
   end
 

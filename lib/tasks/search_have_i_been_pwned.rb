@@ -40,7 +40,7 @@ class SearchHaveIBeenPwned < BaseTask
       _create_issue({
         name: "Leaked account: #{email_address} on #{r["Domain"]} at #{r["BreachDate"]}",
         type: "leaked_account_details",
-        severity: 3,
+        severity: 4,
         status: "confirmed",
         description: "Details for a leaked account were found in Have I Been Pwned." + 
                       "User: #{email_address} Domain: #{r["Domain"]}.\n" + 

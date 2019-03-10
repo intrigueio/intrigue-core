@@ -9,12 +9,14 @@ class SearchBuiltwith < BaseTask
       :name => "search_builtwith",
       :pretty_name => "Search BuiltWith",
       :authors => ["jcran"],
-      :description => "This task hits the Builtwith Free API and enriches a domain",
+      :description => "This task hits the Builtwith (free) API and enriches a domain",
       :references => [],
       :type => "discovery",
       :passive => true,
       :allowed_types => ["Domain","DnsRecord"],
-      :example_entities => [{"type" => "String", "details" => {"name" => "intrigue.io"}}],
+      :example_entities => [
+        {"type" => "String", "details" => {"name" => "intrigue.io"}}
+      ],
       :allowed_options => [],
       :created_types => []
     }
@@ -35,10 +37,14 @@ class SearchBuiltwith < BaseTask
 
       # Attach to the builtwith service & search
       begin
-        response = http_get_body("https://api.builtwith.com/v12/api.json?KEY=#{api_key}&LOOKUP=#{entity_name}")
+
+        builtwith_uri = "https://api.builtwith.com/v12/api.json?KEY=#{api_key}&LOOKUP=#{entity_name}"
+        response = http_get_body(builtwith_uri)
         json = JSON.parse(response)
         json["Results"].each do |result|
+
           result["Result"]["Paths"].each do |path|
+            
             path["Technologies"].each do |tech|
               _log_good "http://#{path["Domain"]}/#{path["Url"]}: #{tech["Name"]}: #{tech["Description"]} (#{tech["Link"]})"
             end

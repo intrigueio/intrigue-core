@@ -32,6 +32,7 @@ class SearchGithubCode < BaseTask
     keywords = _get_option "keywords"
 
     keywords.split(",").each do |keyword|
+      
       # Search users
       if entity_type == "GithubAccount"
         search_uri = "https://api.github.com/search/code?q=#{keyword} user:#{entity_name}"
@@ -49,11 +50,12 @@ class SearchGithubCode < BaseTask
 
       # only do 10 items max
       items[0..max_item_count].each do |result|
+        
         #_log "Processing #{result}"
         _create_entity "Info", {
           "name" => result["path"],
           "uri" => result["html_url"],
-          "raw" => result
+          "github" => result
         }
       end
     end

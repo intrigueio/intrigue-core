@@ -39,8 +39,12 @@ module Corpwatch
       corps = []
 
       # For each result, create a corp
-      resp["result"]["companies"].each do |key, value|
-        corps << Corpwatch::Corporation.new(value)
+      if resp["result"] && resp["result"]["companies"]
+        resp["result"]["companies"].each do |key, value|
+          corps << Corpwatch::Corporation.new(value)
+        end
+      else
+        return nil
       end
 
     corps

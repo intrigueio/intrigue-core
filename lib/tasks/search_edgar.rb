@@ -5,14 +5,17 @@ class SearchEdgar < BaseTask
   def self.metadata
     {
       :name => "search_edgar",
-      :pretty_name => "Search Corpwatch (EDGAR) Database",
+      :pretty_name => "Search EDGAR",
       :authors => ["jcran"],
-      :description => "Corpwatch is an intereface to EDGAR. This task allows you to search for US organization data.",
+      :description => "Corpwatch is an interface to EDGAR. " + 
+        "This task allows you to search for US organization data.",
       :references => [],
       :type => "discovery",
       :passive => true,
       :allowed_types => ["String","Organization"],
-      :example_entities => [{"type" => "String", "details" => {"name" => "intrigue"}}],
+      :example_entities => [
+        {"type" => "String", "details" => {"name" => "intrigue"} }
+      ],
       :allowed_options => [],
       :created_types => ["Organization"]
     }
@@ -34,10 +37,11 @@ class SearchEdgar < BaseTask
       # Create a new organization entity & attach a record
       _create_entity "Organization", {
         "name" => corp.name,
-        "data" => corp.to_s,
-        "address" => corp.address,
-        "state" => corp.state,
-        "country" => corp.country
+        "edgar" => {
+         "address" => corp.address,
+          "state" => corp.state,
+          "country" => corp.country
+       }
       }
 
     end

@@ -185,14 +185,15 @@ class AwsS3Brute < BaseTask
 
   end
 
+  # TODO... check contents before creating an issue?
   def create_s3_bucket_issue(url)
 
     _create_issue({
       name: "Open s3 bucket: #{url}",
       type: "s3_bucket",
-      severity: 4,
+      severity: 5,
       status: "potential",
-      description: "investigate this open s3 bucket",
+      description: "Investigate this open s3 bucket",
       details: { url: url }
     })
 
