@@ -84,7 +84,7 @@ class NetBlock < Intrigue::Task::BaseTask
       # auto-scoping on a single name like "log" or even a number like "1"
       next if (e.type == "DnsRecord" || e.type == "Domain") && e.name.split(".").count == 1
 
-      if out["whois_full_text"] =~ /#{Regexp.escape(e.name)}/
+      if out["whois_full_text"] =~ /[\s@]#{Regexp.escape(e.name)}/
         _log "Marking as scoped: PROJECT ENTITY MATCHED TEXT: #{e.type}##{e.name}"
         @entity.scoped = true
         @entity.save
