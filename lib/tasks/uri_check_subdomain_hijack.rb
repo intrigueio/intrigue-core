@@ -38,8 +38,10 @@ class UriCheckSudomainHijack  < BaseTask
         _hijackable_subdomain "JetBrains", uri, "potential"
       elsif response =~ /Unrecognized domain/
         _hijackable_subdomain "Mashery", uri, "potential"
-      elsif response =~ /Project doesnt exist... yet!s/
+      elsif response =~ /Project doesnt exist... yet!/
         _hijackable_subdomain "Readme.io", uri, "potential"
+      elsif response =~ /This domain is successfully pointed at WP Engine, but is not configured/
+        _hijackable_subdomain "WPEngine", uri, "potential"
       end
   end #end run
 
@@ -47,7 +49,7 @@ class UriCheckSudomainHijack  < BaseTask
       _create_issue({
         name: "Subdomain Hijacking at #{uri}",
         type: "subdomain_hijack",
-        severity: 3,
+        severity: 2,
         status: status,
         description:  "This uri appears to be unclaimed on a third party host, meaning," + 
                       " there's a DNS record at (#{uri}) that points to #{type}, but it" +

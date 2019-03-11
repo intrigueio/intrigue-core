@@ -21,10 +21,10 @@ class UriBruteFocusedContent < BaseTask
         {"type" => "Uri", "details" => {"name" => "http://intrigue.io"}}
       ],
       :allowed_options => [
-        {:name => "threads", :regex => "integer", :default => 1 },
-        {:name => "create_url", :regex => "boolean", :default => false },
-        {:name => "parse_content", :regex => "boolean", :default => false },
-        {:name => "check_generic_content", :regex => "boolean", :default => false }
+        {:name => "threads", regex: "integer", :default => 1 },
+        {:name => "create_url", regex: "boolean", :default => false },
+        {:name => "parse_content", regex: "boolean", :default => false },
+        {:name => "check_generic_content", regex: "boolean", :default => false }
       ],
       :created_types => ["Uri"]
     }
@@ -60,19 +60,18 @@ class UriBruteFocusedContent < BaseTask
 
     generic_list = [ 
       { path: "/api", regex: nil },
-      { path: "/.git", regex: /<h1>Index of/ },
-      { path: "/.hg", regex: /<h1>Index of/ },
-      { path: "/.svn", regex: /<h1>Index of/ },
-      { path: "/.bzr", regex: /<h1>Index of/ },
-      #{ path: "/.csv", :regex => /<h1>Index of/ },
-      #{ path: "/.bak",  :regex => /<h1>Index of/ },
+      { path: "/.git", severity: 3, regex: /<h1>Index of/ },
+      { path: "/.hg", severity: 3, regex: /<h1>Index of/ },
+      { path: "/.svn", severity: 3, regex: /<h1>Index of/ },
+      { path: "/.bzr", severity: 3, regex: /<h1>Index of/ },
+      #{ path: "/.csv", regex: /<h1>Index of/ },
+      #{ path: "/.bak", regex: /<h1>Index of/ },
       { path: "/crossdomain.xml", regex: /\<cross-domain-policy/, severity: 6, status: "confirmed"}, #tighten regex?
       { path: "/clientaccesspolicy.xml", regex: /\<access-policy/, severity: 6, status: "confirmed"}, #tighten regex?
-      #{ path: "/sitemap.xml",regex: nil },
-      { path: "/portal", severity: 5, regex: nil },
-      { path: "/admin", severity: 5, regex: nil },
-      { path: "/test", severity: 5, regex: nil },
-      { path: "/server-status", regex: /\<title\>Apache Status/, status: "confirmed" }
+      { path: "/portal", regex: nil },
+      { path: "/admin", regex: nil },
+      { path: "/test", regex: nil },
+      { path: "/server-status", severity: 4, regex: /\<title\>Apache Status/, status: "confirmed" }
     ]
 
     # technology specifics 
@@ -83,70 +82,69 @@ class UriBruteFocusedContent < BaseTask
     ]
 
     asp_net_list = [
-      { path: "/elmah.axd", regex: /Error log for/i, status: "confirmed" },
-      #{ path: "/web.config", regex: nil },
-      { path: "/Trace.axd", :regex => /Microsoft \.NET Framework Version/, :status => "confirmed" }
+      { path: "/elmah.axd", severity: 3, regex: /Error log for/i, status: "confirmed" },
+      { path: "/Trace.axd", regex: /Microsoft \.NET Framework Version/, :status => "confirmed" }
     ]
 
     coldfusion_list = [
-      { path: "/CFIDE", regex: nil },
-      { path: "CFIDE/administrator/enter.cfm",  :regex => nil }
+      { path: "/CFIDE", severity: 4, regex: nil },
+      { path: "CFIDE/administrator/enter.cfm", severity: 4, regex: nil }
     ] # TODO see metasploit for more ideas here
 
 
     jenkins_list = [
       { path: "/view/All/builds", regex: /Jenkins ver./i, status: "confirmed" },
-      { path: "/view/All/newjob",  :regex => /Jenkins/i, status: "confirmed" },
-      { path: "/asynchPeople/",  :regex => /Jenkins/i, status: "confirmed" },
-      { path: "/userContent/",  :regex => /Jenkins/i, status: "confirmed" },
-      { path: "/computer/",  :regex => /Jenkins/i, status: "confirmed" },
-      { path: "/pview/",  :regex => /Jenkins/i, status: "confirmed" },
-      { path: "/systeminf",  :regex => /Jenkins/i, status: "confirmed" },
-      { path: "/systemInfo",  :regex => /Jenkins/i, status: "confirmed" },
-      { path: "/script",  :regex => /Jenkins/i, status: "confirmed" },
-      { path: "/signup",  :regex => /Jenkins/i, status: "confirmed" },
-      { path: "/securityRealm/createAccount",  :regex => /Jenkins/i , status: "confirmed"}
+      { path: "/view/All/newjob", regex: /Jenkins/i, status: "confirmed" },
+      { path: "/asynchPeople/", regex: /Jenkins/i, status: "confirmed" },
+      { path: "/userContent/", regex: /Jenkins/i, status: "confirmed" },
+      { path: "/computer/", regex: /Jenkins/i, status: "confirmed" },
+      { path: "/pview/", regex: /Jenkins/i, status: "confirmed" },
+      { path: "/systeminf", regex: /Jenkins/i, status: "confirmed" },
+      { path: "/systemInfo", regex: /Jenkins/i, status: "confirmed" },
+      { path: "/script", regex: /Jenkins/i, status: "confirmed" },
+      { path: "/signup", regex: /Jenkins/i, status: "confirmed" },
+      { path: "/securityRealm/createAccount", regex: /Jenkins/i , status: "confirmed"}
     ]
 
     lotus_domino_list = [
-      { path: "/$defaultview?Readviewentries", regex: /\<viewentries/, severity: 2, status: "confirmed" }
+      { path: "/$defaultview?Readviewentries", severity: 3, regex: /\<viewentries/, status: "confirmed" }
     ]
 
     php_list =[
-      { path: "/phpinfo.php",  :regex => /<title>phpinfo\(\)/, status: "confirmed" }
+      { path: "/phpinfo.php", severity: 4, regex: /<title>phpinfo\(\)/, status: "confirmed" }
     ]
 
     sharepoint_list =[
-      { path: "/_vti_bin/spsdisco.aspx",  regex: /\<discovery/, status: "confirmed" },
-      { path: "/_vti_pvt/service.cnf",  regex: /vti_encoding/, status: "confirmed" },
+      { path: "/_vti_bin/spsdisco.aspx", regex: /\<discovery/, status: "confirmed" },
+      { path: "/_vti_pvt/service.cnf", regex: /vti_encoding/, status: "confirmed" },
       #{ path: "/_vti_inf.html", regex: nil },
       #{ path: "/_vti_bin/", regex: nil },
     ]
 
     # https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Insecure%20Management%20Interface
     spring_boot_list =[
-      { path: "/trace", regex: nil, status: "potential" },
-      { path: "/env", regex: nil, status: "potential" },
-      { path: "/heapdump", regex: nil, status: "potential" },
-      { path: "/actuator/env", regex: nil, status: "potential" },
-      { path: "/actuator/health", regex: nil, status: "potential" },
+      { path: "/trace", severity: 4, regex: nil, status: "potential" },
+      { path: "/env", severity: 4, regex: nil, status: "potential" },
+      { path: "/heapdump", severity: 4, regex: nil, status: "potential" },
+      { path: "/actuator/env", severity: 4, regex: nil, status: "potential" },
+      { path: "/actuator/health", severity: 4, regex: nil, status: "potential" },
     ] # more: https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Insecure%20Management%20Interface/Intruder/springboot_actuator.txt
 
     tomcat_list = [ 
-      { path: '/status', regex: nil },
-      { path: '/web-console', regex: nil },
-      { path: '/jmx-console',regex: nil },
-      { path: '/admin-console', regex: nil },
-      { path: '/manager/html',regex: nil },
-      { path: '/tomcat/manager/html',regex: nil },
-      { path: '/host-manager/html',regex: nil },
-      { path: '/server-manager/html',regex: nil },
-      { path: '/web-console/Invoker',regex: nil },
-      { path: '/jmx-console/HtmlAdaptor',regex: nil },
-      { path: '/invoker/JMXInvokerServlet', regex: nil}
+      { path: '/status', severity: 4, regex: nil },
+      { path: '/web-console', severity: 4, regex: nil },
+      { path: '/jmx-console', severity: 4, regex: nil },
+      { path: '/admin-console', severity: 4, regex: nil },
+      { path: '/manager/html', severity: 4, regex: nil },
+      { path: '/tomcat/manager/html', severity: 4, regex: nil },
+      { path: '/host-manager/html', severity: 4, regex: nil },
+      { path: '/server-manager/html', severity: 4, regex: nil },
+      { path: '/web-console/Invoker', severity: 4, regex: nil },
+      { path: '/jmx-console/HtmlAdaptor', severity: 4, regex: nil },
+      { path: '/invoker/JMXInvokerServlet', severity: 4, regex: nil}
       # http://[host]:8090/invoker/EJBInvokerServlet
       # https://[host]:8453//invoker/EJBInvokerServlet
-      #{ path: '/invoker/EJBInvokerServlet', regex: nil} 
+      #{ path: '/invoker/EJBInvokerServlet', severity: 4,  regex: nil} 
     ]
 
     wordpress_list = [

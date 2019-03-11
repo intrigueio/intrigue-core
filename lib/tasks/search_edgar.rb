@@ -31,6 +31,9 @@ class SearchEdgar < BaseTask
     # Attach to the corpwatch service & search
     x = Client::Search::Corpwatch::ApiClient.new(api_key)
     corps = x.search(_get_entity_name)
+      
+    # nil if empty response
+    return unless corps
 
     corps.each do |corp|
 

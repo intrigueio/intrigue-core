@@ -28,6 +28,7 @@ module Vulndb
 
       #puts "Querying VulnDB API!"
       #puts "https://intrigue.io/api/vulndb/match/#{@vendor}/#{@product}/#{@version}"
+
       begin
         vendor_string = URI.escape(@vendor)
         product_string = URI.escape(@product)
@@ -42,7 +43,6 @@ module Vulndb
         uri << "/#{update_string}" if update_string
         uri << "?key=#{api_key}"
 
-
         response = http_request :get, uri
 
         # if the API is down, we'll get a nil response, so handle that case gracefully
@@ -51,17 +51,9 @@ module Vulndb
         result = JSON.parse(response.body)
 
         # return our normal hash
-        out = result.map do |x|
-          vuln = {
-            cve_id: x,
-            cwe_id: nil,
-            cvss_v2: {score: nil, vector: nil },
-            cvss_v3: {score: nil, vector: nil }
-          }
-        end
       rescue JSON::ParserError => e
       end
-    out || []
+    result || []
     end
 
     # hacktastic! matches vulns by CPE
