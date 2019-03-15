@@ -45,7 +45,7 @@ module Machine
         start_recursive_task(task_result,"saas_trello_check",entity)
         start_recursive_task(task_result,"saas_google_groups_check", entity)
 
-        # GITHUB!
+        # Check GITHUB!
 
         base_name = entity.name.split(".")[0...-1].join(".")
         start_recursive_task(task_result,"aws_s3_brute",entity,[

@@ -4,6 +4,7 @@ module Enrich
 class Uri < Intrigue::Task::BaseTask
 
   include Intrigue::Ident
+  #include Intrigue::Vulndb
 
   def self.metadata
     {
@@ -15,7 +16,8 @@ class Uri < Intrigue::Task::BaseTask
       :type => "enrichment",
       :passive => false,
       :allowed_types => ["Uri"],
-      :example_entities => [{"type" => "Uri", "details" => {"name" => "https://intrigue.io"}}],
+      :example_entities => [
+        {"type" => "Uri", "details" => {"name" => "https://intrigue.io"}}],
       :allowed_options => [],
       :created_types => [],
       :queue => "task_browser"
@@ -61,6 +63,10 @@ class Uri < Intrigue::Task::BaseTask
     headers = []
     response.each_header{|x| headers << "#{x}: #{response[x]}" }
 
+
+    ### 
+    ### Fingerprint Javascript
+    ###
     begin
       _log "Creating browser session"
       session = create_browser_session
@@ -82,18 +88,18 @@ class Uri < Intrigue::Task::BaseTask
     ### Fingerprint the server
     ###
     server_stack = []  # Use various techniques to build out the "stack"
-    server_stack << _check_server_header(response, response2)
-    uniq_server_stack = server_stack.select{ |x| x != nil }.uniq
-    _log "Setting server stack to #{uniq_server_stack}"
+    #server_stack << _check_server_header(response, response2)
+    #uniq_server_stack = server_stack.select{ |x| x != nil }.uniq
+    #_log "Setting server stack to #{uniq_server_stack}"
 
     ###
     ### Fingerprint the app server
     ###
     app_stack = []
-    app_stack.concat _check_uri(uri)
-    app_stack.concat _check_cookies(response)
-    app_stack.concat _check_generator(response)
-    app_stack.concat _check_x_headers(response)
+    #app_stack.concat _check_uri(uri)
+    #app_stack.concat _check_cookies(response)
+    #app_stack.concat _check_generator(response)
+    #app_stack.concat _check_x_headers(response)
 
     _log "Attempting to fingerprint!"
     # Use intrigue-ident code to request all of the pages we
@@ -109,18 +115,25 @@ class Uri < Intrigue::Task::BaseTask
     if ident_fingerprints
       # Make sure the key is set before querying intrigue api
       vulndb_api_key = _get_task_config "intrigue_vulndb_api_key"
-      if vulndb_api_key
-        # get vulns via intrigue API
-        _log "Matching vulns via Intrigue API"
-        ident_fingerprints = ident_fingerprints.map do |m|
-          m.merge!({"vulns" => Intrigue::Vulndb::Cpe.new(m["cpe"]).query_intrigue_vulndb_api(vulndb_api_key) })
+      use_api = vulndb_api_key && vulndb_api_key.length > 0
+      ident_fingerprints = ident_fingerprints.map do |fp|
+        
+        _log "Working on fingerprint: #{fp}"
+
+        vulns = []
+        if fp["inference"]
+          cpe = Intrigue::Vulndb::Cpe.new(fp["cpe"])
+          if use_api # get vulns via intrigue API
+            _log "Matching vulns for #{fp["cpe"]} via Intrigue API"
+            vulns = cpe.query_intrigue_vulndb_api(vulndb_api_key)
+          else 
+            vulns = cpe.query_local_nvd_json(vulndb_api_key)
+          end
+        else 
+          _log "Skipping inference on #{fp["cpe"]}"
         end
-      else
-        # TODO additional checks here?  smaller boxes will have trouble with all the json
-        _log "No api_key for vuln match, falling back to local resolution"
-        ident_fingerprints = ident_fingerprints.map do |m|
-          m.merge!({"vulns" => Intrigue::Vulndb::Cpe.new(m["cpe"]).query_intrigue_vulndb_api })
-        end
+
+        fp.merge!({"vulns" => vulns })
       end
     end
 
@@ -143,11 +156,18 @@ class Uri < Intrigue::Task::BaseTask
     #extended_fingerprints << wordpress_fingerprint
 
     _log "Gathering ciphers since this is an ssl endpoint"
-    accepted_ciphers = _gather_ciphers(hostname,port).select{|x| x[:status] == :accepted} if uri =~ /^https/
+    accepted_connections = _gather_supported_connections(hostname,port).select{|x| 
+      x[:status] == :accepted} if uri =~ /^https/
 
     # Create findings if we have a weak cipher
-    if accepted_ciphers && accepted_ciphers.detect{|x| x[:weak] == true }
-      create_weak_cipher_issue(accepted_ciphers)
+    if accepted_connections && accepted_connections.detect{|x| x[:weak] == true }
+      create_weak_cipher_issue(uri, accepted_connections)
+    end
+
+    # Create findings if we have a deprecated protocol
+    if accepted_connections && accepted_connections.detect{|x| 
+      (x[:version] =~ /TLSv1_1/ || x[:version] =~ /TLSv1_2/ || x[:version] =~ /TLSv1_3/)}     
+      create_deprecated_protocol_issue(uri, accepted_connections)
     end
 
     # and then just stick the name and the version in our fingerprint
@@ -163,18 +183,19 @@ class Uri < Intrigue::Task::BaseTask
     ###
     ### Legacy Fingerprinting (raw regex'ing)
     ###
-    include_stack = []
-    include_stack.concat _check_page_contents_legacy(response)
-    uniq_include_stack = include_stack.select{ |x| x != nil }.uniq
-    _log "Setting include stack to #{uniq_include_stack}"
+    #include_stack = []
+    #include_stack.concat _check_page_contents_legacy(response)
+    #uniq_include_stack = include_stack.select{ |x| x != nil }.uniq
+    #_log "Setting include stack to #{uniq_include_stack}"
 
     ###
     ### Product matching
     ###
+    products = []
     # match products based on gathered server software
-    products = uniq_server_stack.map{|x| product_match_http_server_banner(x).first}
+    products << product_match_http_server_banner(response.header['server']).first
     # match products based on cookies
-    products.concat product_match_http_cookies(_gather_cookies(response))
+    products << product_match_http_cookies(response.header['set-cookie'])
 
     ###
     ### grab the page attributes
@@ -200,12 +221,12 @@ class Uri < Intrigue::Task::BaseTask
         "hidden_screenshot_contents" => encoded_screenshot,
         "javascript" => js_libraries,
         "products" => products.compact,
-        "include_fingerprint" => uniq_include_stack,
-        "app_fingerprint" =>  app_stack.uniq,
-        "server_fingerprint" => uniq_server_stack,
+        # => include_fingerprint" => uniq_include_stack,
+        #"app_fingerprint" =>  app_stack.uniq,
+        #"server_fingerprint" => uniq_server_stack,
         "fingerprint" => ident_fingerprints.uniq,
         "content" => ident_content_checks.uniq,
-        "ciphers" => accepted_ciphers
+        "ciphers" => accepted_connections
       })
 
       # Set the details, and make sure raw response data is a hidden (not searchable) detail
@@ -226,7 +247,7 @@ class Uri < Intrigue::Task::BaseTask
 
   end
 
-  def _gather_ciphers(hostname,port)
+  def _gather_supported_connections(hostname,port)
     require 'rex/sslscan'
     scanner = Rex::SSLScan::Scanner.new(hostname, port)
     result = scanner.scan
@@ -334,10 +355,6 @@ class Uri < Intrigue::Task::BaseTask
     _log "Returning: #{temp}"
 
   temp
-  end
-
-  def _gather_cookies(response)
-    header = response.header['set-cookie']
   end
 
   def _check_cookies(response)
@@ -488,18 +505,33 @@ class Uri < Intrigue::Task::BaseTask
   false
   end
 
-  def create_weak_cipher_issue
+  def create_weak_cipher_issue(uri, accepted_connections)
     _create_issue({
       name: "Weak Ciphers enabled on #{uri}",
-      type: "weak_cipher_suite",
+      type: "weak_cipher_suite_detected",
       severity: 5,
       status: "confirmed",
       description: "This server is configured to allow a known-weak cipher suite",
-      recommendation: "Disable the weak ciphers.",
+      #recommendation: "Disable the weak ciphers.",
       references: [
         "https://thycotic.com/company/blog/2014/05/16/ssl-beyond-the-basics-part-2-ciphers/"
       ],
-      details: { allowed_ciphers: accepted_ciphers }
+      details: { allowed: accepted_connections }
+    })
+  end
+
+  def create_deprecated_protocol_issue(uri, accepted_connections)
+    _create_issue({
+      name: "Deprecated protocol enabled on #{uri}",
+      type: "deprecated_protocol_detected",
+      severity: 5,
+      status: "confirmed",
+      description: "This server is configured to allow a deprecated ssl / tls protocol",
+      #recommendation: "Disable the protocol, ensure support for the latest version.",
+      references: [
+        "https://tools.ietf.org/id/draft-moriarty-tls-oldversions-diediedie-00.html"
+      ],
+      details: { accepted_connections: accepted_connections }
     })
   end
 
