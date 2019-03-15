@@ -49,7 +49,10 @@ module Services
             next 
           end
 
-          cert_entities << _create_entity("DnsRecord", {"name" => cn}, ip_entity)
+          # unscope, bc we don't want to scope in the hosting company ... 
+          cert_entities << _create_entity("DnsRecord", { "name" => cn
+            "unscoped" => true }, ip_entity) 
+            
         end
       end
     end
