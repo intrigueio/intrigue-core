@@ -155,19 +155,22 @@ class Uri < Intrigue::Task::BaseTask
     #end
     #extended_fingerprints << wordpress_fingerprint
 
-    _log "Gathering ciphers since this is an ssl endpoint"
-    accepted_connections = _gather_supported_connections(hostname,port).select{|x| 
-      x[:status] == :accepted} if uri =~ /^https/
+    # figure out ciphers if this is an ssl connection
+    if uri =~ /^https/
+      _log "Gathering ciphers since this is an ssl endpoint"
+      accepted_connections = _gather_supported_connections(hostname,port).select{|x| 
+        x[:status] == :accepted } 
 
-    # Create findings if we have a weak cipher
-    if accepted_connections && accepted_connections.detect{|x| x[:weak] == true }
-      create_weak_cipher_issue(uri, accepted_connections)
-    end
+      # Create findings if we have a weak cipher 
+      if accepted_connections && accepted_connections.detect{ |x| x[:weak] == true }
+        create_weak_cipher_issue(uri, accepted_connections)
+      end
 
-    # Create findings if we have a deprecated protocol
-    if accepted_connections && accepted_connections.detect{|x| 
-      (x[:version] =~ /TLSv1_1/ || x[:version] =~ /TLSv1_2/ || x[:version] =~ /TLSv1_3/)}     
-      create_deprecated_protocol_issue(uri, accepted_connections)
+      # Create findings if we have a deprecated protocol
+      if accepted_connections && accepted_connections.detect{ |x| 
+          (x[:version] =~ /SSL/ || x[:version] == "TLSv1") }     
+        create_deprecated_protocol_issue(uri, accepted_connections)
+      end
     end
 
     # and then just stick the name and the version in our fingerprint
@@ -251,7 +254,7 @@ class Uri < Intrigue::Task::BaseTask
     require 'rex/sslscan'
     scanner = Rex::SSLScan::Scanner.new(hostname, port)
     result = scanner.scan
-  result.ciphers
+  result.ciphers.to_a
   end
 
 
@@ -531,7 +534,7 @@ class Uri < Intrigue::Task::BaseTask
       references: [
         "https://tools.ietf.org/id/draft-moriarty-tls-oldversions-diediedie-00.html"
       ],
-      details: { accepted_connections: accepted_connections }
+      details: { allowed: accepted_connections }
     })
   end
 

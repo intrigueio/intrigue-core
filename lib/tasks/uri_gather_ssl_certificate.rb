@@ -48,7 +48,7 @@ class UriGatherSslCert  < BaseTask
 
       # Create an SSL Certificate entity
       key_size = "#{cert.public_key.n.num_bytes * 8}" if cert.public_key && cert.public_key.respond_to?(:n)
-      _create_entity "SslCertificate", {
+      certificate_details = {
         "name" => "#{cert.subject.to_s.split("CN=").last} (#{cert.serial})",
         "version" => cert.version,
         "serial" => "#{cert.serial}",
@@ -60,6 +60,17 @@ class UriGatherSslCert  < BaseTask
         "signature_algorithm" => "#{cert.signature_algorithm}",
         "hidden_text" => "#{cert.to_text}"
       }
+      _create_entity "SslCertificate", certificate_details
+
+    # one way to detect self-signed 
+    # https://security.stackexchange.com/questions/93162/how-to-know-if-certificate-is-self-signed/162263
+    if cert.subject == cert.issuer
+      _create_issue({
+        name: "Self-signed certificate detected on #{uri}",
+        severity: 5,
+        details: { certificate: certificate_details }
+      })
+    end
 
     rescue SocketError => e
       _log_error "Caught an error: #{e}"
