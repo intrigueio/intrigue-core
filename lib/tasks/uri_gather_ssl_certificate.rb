@@ -63,13 +63,18 @@ class UriGatherSslCert  < BaseTask
       _create_entity "SslCertificate", certificate_details
 
     # one way to detect self-signed 
-    # https://security.stackexchange.com/questions/93162/how-to-know-if-certificate-is-self-signed/162263
     if cert.subject == cert.issuer
       _create_issue({
         name: "Self-signed certificate detected on #{uri}",
         severity: 5,
-        details: { certificate: certificate_details }
-      })
+        type: "self_signed_certificate",
+        status: "confirmed",
+        description: "This server is configured with a self-signed certificate",
+        references: [
+          "https://security.stackexchange.com/questions/93162/how-to-know-if-certificate-is-self-signed/162263"
+        ],
+          details: { certificate: certificate_details }
+        })
     end
 
     rescue SocketError => e
