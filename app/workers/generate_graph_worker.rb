@@ -2,7 +2,7 @@ module Intrigue
 module Workers
 class GenerateGraphWorker
   include Sidekiq::Worker
-  sidekiq_options :queue => "app", :backtrace => true
+  sidekiq_options :queue => "graph", :backtrace => true
 
   def perform(id)
 
@@ -23,12 +23,12 @@ class GenerateGraphWorker
       puts "Done with graph generation for #{project.name}!"
       puts "Length: #{project.graph_json.length}"
     ensure
+      _log "Failed to generate graph for #{project.name}!"
       project.graph_generation_in_progress = false
       project.save
     end
 
   end
-
 
   def generate_graph(project)
     # generate the nodes

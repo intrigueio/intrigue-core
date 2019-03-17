@@ -2,7 +2,7 @@ module Intrigue
 module Workers
 class GenerateMetaGraphWorker
   include Sidekiq::Worker
-  sidekiq_options :queue => "app", :backtrace => true
+  sidekiq_options :queue => "graph", :backtrace => true
 
   def perform(id)
 
@@ -10,7 +10,7 @@ class GenerateMetaGraphWorker
     project = Intrigue::Model::Project.where(:id => id).first
 
     begin
-      puts "Starting META graph generation for #{project.name}!"
+      puts "Starting Meta-graph generation for #{project.name}!"
 
       # Notify that it's in progress
       project.graph_generation_in_progress = true
@@ -20,7 +20,7 @@ class GenerateMetaGraphWorker
       project.graph_json = generate_meta_graph(project)
       project.graph_generated_at = DateTime.now
 
-      puts "Done with META graph generation for #{project.name}!"
+      puts "Done with Meta-graph generation for #{project.name}!"
       puts "Length: #{project.graph_json.length}"
     ensure
       project.graph_generation_in_progress = false

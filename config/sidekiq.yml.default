@@ -9,3 +9,4 @@
   task_autoscheduled: 20
   task_scan: 3
   app: 5
+  graph: 1

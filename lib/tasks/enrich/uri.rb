@@ -551,7 +551,7 @@ class Uri < Intrigue::Task::BaseTask
     _create_issue({
       name: "Insecure cookie detected on #{uri}",
       type: "insecure_cookie_detected",
-      severity: 4,
+      severity: 5,
       status: "confirmed",
       description: "This server is configured without secure or httpOnly cookie flags",
       references: [],
@@ -561,7 +561,7 @@ class Uri < Intrigue::Task::BaseTask
 
   def create_weak_cipher_issue(uri, accepted_connections)
     _create_issue({
-      name: "Weak Ciphers enabled on #{uri}",
+      name: "Weak ciphers enabled on #{uri}",
       type: "weak_cipher_suite_detected",
       severity: 5,
       status: "confirmed",

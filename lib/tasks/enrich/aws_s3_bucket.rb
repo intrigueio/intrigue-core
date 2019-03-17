@@ -68,7 +68,18 @@ class AwsS3Bucket < Intrigue::Task::BaseTask
 
     # this should be a "Finding" or some sort of success event ?
     if interesting_files.sort.uniq.count > 0
-      _notify("Interesting Files: #{interesting_files}")
+      #_notify("Interesting Files: #{interesting_files}")
+      _create_issue({
+        name: "S3 data leak at #{bucket_uri}",
+        type: "s3_bucket_data_leak",
+        severity: 4,
+        status: "confirmed",
+        description: "Interesting files located in #{bucket_uri}",
+        details: { 
+          interesting_files: interesting_files, 
+          uri: bucket_uri 
+        }
+      })
     end
 
     ### TODO - determine if scoped
@@ -117,7 +128,7 @@ class AwsS3Bucket < Intrigue::Task::BaseTask
 
         # handle our interesting files
         large_file_size = _get_option("large_file_size")
-        file_size = (size * 1.0) / 1000000
+        file_size = (size * 1.0) / 100000
         if ((file_size > large_file_size) && bucket_resp.code.to_i == 200)
           unless matches_ignore_list(item_uri)
             _log "Interesting File: #{item_uri} (#{size*1.0/1000000}MB)"
