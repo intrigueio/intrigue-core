@@ -34,19 +34,19 @@ class SearchHaveIBeenPwned < BaseTask
       _log "No results found."
     end
 
-    results.each do |r|
+    results.each do |result|
 
       # create an issue for each found result
       _create_issue({
-        name: "Leaked account: #{email_address} on #{r["Domain"]} at #{r["BreachDate"]}",
+        name: "Leaked account: #{email_address} on #{result["Domain"]} at #{result["BreachDate"]}",
         type: "leaked_account_details",
-        severity: 4,
+        severity: 5,
         status: "confirmed",
         description: "Details for a leaked account were found in Have I Been Pwned." + 
-                      "User: #{email_address} Domain: #{r["Domain"]}.\n" + 
-                      "The details were leaked on #{r["BreachDate"]}.\n" +
-                      "About this Breach:\n#{r["Description"]}",
-        details: r
+                      "User: #{email_address} Domain: #{result["Domain"]}.\n" + 
+                      "The details were leaked on #{result["BreachDate"]}.\n" +
+                      "About this Breach:\n#{result["Description"]}",
+        details: result
       })
 
       # TODO - create a web account? 

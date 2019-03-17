@@ -38,7 +38,7 @@ class Uri < Intrigue::Task::BaseTask
     _log "Making requests"
     # Grab the full response
     response = http_request :get, uri
-    response2 = http_request :get,uri
+    response2 = http_request :get, uri
 
     unless response && response2 && response.body
       _log_error "Unable to receive a response for #{uri}, bailing"
@@ -156,22 +156,61 @@ class Uri < Intrigue::Task::BaseTask
     #extended_fingerprints << wordpress_fingerprint
 
     # figure out ciphers if this is an ssl connection
-    if uri =~ /^https/
-      _log "Gathering ciphers since this is an ssl endpoint"
-      accepted_connections = _gather_supported_connections(hostname,port).select{|x| 
-        x[:status] == :accepted } 
+    # only create issues if we're getting a 200
 
-      # Create findings if we have a weak cipher 
-      if accepted_connections && accepted_connections.detect{ |x| x[:weak] == true }
-        create_weak_cipher_issue(uri, accepted_connections)
+    if response.code == "200"
+
+      # capture cookies
+      set_cookie = response.header['set-cookie']
+      _log "Got Cookie: #{set_cookie}" if set_cookie
+      # TODO - cookie scoped to parent domain
+      _log "Domain Cookie: #{set_cookie.split(";").detect{|x| x =~ /Domain:/i }}" if set_cookie
+
+      if uri =~ /^https/
+        _log "HTTPS endpoint, checking security..."
+
+        if set_cookie 
+          _log "Secure Cookie: #{set_cookie.split(";").detect{|x| x =~ /secure/i }}"
+          _log "Http_only Cookie: #{set_cookie.split(";").detect{|x| x =~ /httponly/i }}"
+
+          # create an issue if not detected
+          if !(set_cookie.split(";").detect{|x| x =~ /httponly/i } && 
+                set_cookie.split(";").detect{|x| x =~ /secure/i })
+            create_insecure_cookie_issue(uri, set_cookie)
+          end 
+
+        end
+
+        _log "Gathering ciphers since this is an ssl endpoint"
+        accepted_connections = _gather_supported_connections(hostname,port).select{|x| 
+          x[:status] == :accepted } 
+
+        # Create findings if we have a weak cipher 
+        if accepted_connections && accepted_connections.detect{ |x| x[:weak] == true }
+          create_weak_cipher_issue(uri, accepted_connections)
+        end
+
+        # Create findings if we have a deprecated protocol
+        if accepted_connections && accepted_connections.detect{ |x| 
+            (x[:version] =~ /SSL/ || x[:version] == "TLSv1") }     
+          create_deprecated_protocol_issue(uri, accepted_connections)
+        end
+
+      else # http endpoint 
+                
+        if set_cookie 
+          _log "Http_only Cookie: #{set_cookie.split(";").detect{|x| x =~ /httponly/i }}"
+
+          # create an issue if not detected
+          if !set_cookie.split(";").detect{|x| x =~ /httponly/i }
+            create_insecure_cookie_issue(uri, set_cookie)
+          end 
+
+        end
       end
 
-      # Create findings if we have a deprecated protocol
-      if accepted_connections && accepted_connections.detect{ |x| 
-          (x[:version] =~ /SSL/ || x[:version] == "TLSv1") }     
-        create_deprecated_protocol_issue(uri, accepted_connections)
-      end
     end
+
 
     # and then just stick the name and the version in our fingerprint
     _log "Inferring app stack from fingerprints!"
@@ -506,6 +545,18 @@ class Uri < Intrigue::Task::BaseTask
   def check_forms(response_body)
     return true if response_body =~ /<form/i
   false
+  end
+
+   def create_insecure_cookie_issue(uri, cookie)
+    _create_issue({
+      name: "Insecure cookie detected on #{uri}",
+      type: "insecure_cookie_detected",
+      severity: 4,
+      status: "confirmed",
+      description: "This server is configured without secure or httpOnly cookie flags",
+      references: [],
+      details: { cookie: cookie }
+    })
   end
 
   def create_weak_cipher_issue(uri, accepted_connections)
