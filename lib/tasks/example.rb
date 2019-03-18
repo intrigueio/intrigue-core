@@ -46,7 +46,7 @@ class Example < BaseTask
     # create a finding
     zone = [1,2,3,4]
     _create_issue({
-      name: "Example issue!",
+      name: "Example issue",
       type: "example",
       severity: 5,
       status: "confirmed",

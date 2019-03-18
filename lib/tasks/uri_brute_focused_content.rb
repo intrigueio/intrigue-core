@@ -147,8 +147,12 @@ class UriBruteFocusedContent < BaseTask
       #{ path: '/invoker/EJBInvokerServlet', severity: 4,  regex: nil} 
     ]
 
+    vmware_horizon_list = [
+      { path: "/portal/info.jsp", regex: /clientIPAddress/ } # CVE-2019-5513
+    ]
+
     wordpress_list = [
-      { path: '/wp-admin', regex: nil },
+      { path: '/wp-admin', severity: 4,  regex: nil, status: "confirmed" },
     ]
 
     ###
@@ -196,7 +200,8 @@ class UriBruteFocusedContent < BaseTask
     
     #  first handle our specific here (more likely to be interesting)
     apache_list.each { |x| work_q.push x } if is_product? "HTTP Server"  # Apache
-    asp_net_list.each { |x| work_q.push x } if is_product?("ASP.NET") || is_product?("ASP.NET MVC")
+    asp_net_list.each { |x| work_q.push x } if ( 
+      is_product?("ASP.NET") || is_product?("ASP.NET MVC") )
     coldfusion_list.each { |x| work_q.push x } if is_product? "Coldfusion"  
     lotus_domino_list.each { |x| work_q.push x } if is_product? "Domino" 
     jenkins_list.each { |x| work_q.push x } if is_product? "Jenkins" 
@@ -204,6 +209,8 @@ class UriBruteFocusedContent < BaseTask
     sharepoint_list.each { |x| work_q.push x } if is_product? "Sharepoint"
     spring_boot_list { |x| work_q.push x } if is_product? "Spring Boot"
     tomcat_list.each { |x| work_q.push x } if is_product? "Tomcat" 
+    vmware_horizon_list.each { |x| work_q.push x } if (
+      is_product?("VMWare Horizon") || is_product?("VMWare Horizon View") ) 
     wordpress_list.each { |x| work_q.push x } if is_product? "Wordpress" 
 
     # then add our "always" stuff:

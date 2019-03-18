@@ -5,7 +5,7 @@ class EtcdHarvester < BaseTask
   def self.metadata
     {
       :name => "vuln/etcd_harvester",
-      :pretty_name => "Vulnerability Check - etcd Harvester",
+      :pretty_name => "Vuln - etcd Harvester",
       :authors => ["jcran"],
       :identifiers => [{ "cve" =>  false }],
       :description => "Grab keys from etcd daemon.",
