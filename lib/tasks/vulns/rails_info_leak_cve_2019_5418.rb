@@ -1,6 +1,6 @@
 module Intrigue
 module Task
-class RailsFileExposure < BaseTask
+class RailsFileExposureCve20195418 < BaseTask
 
   def self.metadata
     {

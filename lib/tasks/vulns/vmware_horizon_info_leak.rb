@@ -51,7 +51,7 @@ class VmwareHorizonInfoLeak < BaseTask
         status: "confirmed",
         description: "This issue, described in CVE-2019-5513, allows an anonymous user to " + 
          " gather information about the internal IP address, domain, and configuration" +
-         " of the system",
+         " of the system. Systems are vulnerable in the default configuration.",
         details: { 
           cve: "CVE-2019-5513",
           uri: uri, 
