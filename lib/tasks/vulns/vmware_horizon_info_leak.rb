@@ -6,7 +6,7 @@ class VmwareHorizonInfoLeak < BaseTask
     {
       :name => "vuln/vmware_horizon_info_leak",
       :pretty_name => "Vuln - VMWare Horizon Info Leak",
-      :authors => ["jcran"],
+      :authors => ["jcran", "hdm"],
       :identifiers => [{ "cve" =>  "CVE-2019-5513" }],
       :description => "Pull info from VMWare Horizon.",
       :references => [
