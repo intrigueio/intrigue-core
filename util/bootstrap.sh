@@ -32,13 +32,6 @@ sleep 5
 export INTRIGUE_DIRECTORY="${INTRIGUE_DIRECTORY:=/core}"
 export RUBY_VERSION="${RUBY_VERSION:=2.5.1}"
 
-# alternative
-echo "LC_ALL=en_US.UTF-8" >> /etc/environment
-echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
-echo "LANG=en_US.UTF-8" > /etc/locale.conf
-locale-gen en_US.UTF-8
-
-
 # Clean up
 echo "[+] Ensuring Apt is clean"
 sudo apt-get autoremove
@@ -74,7 +67,7 @@ echo "[+] Reconfigure Dpkg"
 sudo dpkg --configure -a
 
 echo "[+] Installing Apt Essentials"
-sudo apt-get -y install wget lsb-core software-properties-common dirmngr apt-transport-https lsb-release ca-certificates
+sudo apt-get -y install wget lsb-core software-properties-common dirmngr apt-transport-https lsb-release ca-certificates locales
 
 ##### Add external repositories
 
@@ -90,6 +83,12 @@ wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-
 ##### Install dependencies after update
 echo "[+] Updating via Apt..."
 sudo apt-get -y update
+
+# set locales
+echo "LC_ALL=en_US.UTF-8" >> /etc/environment
+echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+echo "LANG=en_US.UTF-8" > /etc/locale.conf
+locale-gen en_US.UTF-8
 
 # just in case, do the fix-broken flag
 echo "[+] Installing Intrigue Dependencies..."
