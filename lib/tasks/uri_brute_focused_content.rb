@@ -131,7 +131,7 @@ class UriBruteFocusedContent < BaseTask
     ] # more: https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Insecure%20Management%20Interface/Intruder/springboot_actuator.txt
 
     tomcat_list = [ 
-      { path: '/status', severity: 4, regex: nil },
+      { path: '/status', severity: 4, regex: /<p> Free memory:/ },
       { path: '/web-console', severity: 4, regex: nil },
       { path: '/jmx-console', severity: 4, regex: nil },
       { path: '/admin-console', severity: 4, regex: nil },
