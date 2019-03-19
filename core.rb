@@ -35,7 +35,9 @@ require_relative 'lib/initialize/string'
 
 $intrigue_basedir = File.dirname(__FILE__)
 $intrigue_environment = ENV.fetch("INTRIGUE_ENV","development")
-$global_config = Intrigue::Config::GlobalConfig.new
+
+# load up our config
+Intrigue::Config::GlobalConfig.load_config
 
 # Webdriver
 Selenium::WebDriver.logger.level = :warn
@@ -111,7 +113,7 @@ class IntrigueApp < Sinatra::Base
   set :views, "#{$intrigue_basedir}/app/views"
   set :public_folder, 'public'
 
-  if $global_config.config["debug"]
+  if Intrigue::Config::GlobalConfig.config["debug"]
     set :logging, true
   end
 
@@ -127,16 +129,19 @@ class IntrigueApp < Sinatra::Base
   ###
   ### (Very) Simple Auth
   ###
-  if $global_config
-    if $global_config.config["http_security"]
+  if Intrigue::Config::GlobalConfig.config
+    if Intrigue::Config::GlobalConfig.config["http_security"]
       use Rack::Auth::Basic, "Restricted" do |username, password|
         [username, password] == [
-          $global_config.config["credentials"]["username"],
-          $global_config.config["credentials"]["password"]
+          Intrigue::Config::GlobalConfig.config["credentials"]["username"],
+          Intrigue::Config::GlobalConfig.config["credentials"]["password"]
         ]
       end
     end
+  else
+    puts "FATAL!! unable to access global config, cowardly refusing to start."
   end
+
 
   before do
 

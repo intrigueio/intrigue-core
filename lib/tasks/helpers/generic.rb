@@ -141,18 +141,20 @@ module Generic
   end
 
   ### GLOBAL CONFIG INTERFACE
-
   def _get_system_config(key)
-    value = $global_config.config[key]
+    Intrigue::Config::GlobalConfig.load_config
+    value = Intrigue::Config::GlobalConfig.config[key]
   end
 
   def _get_task_config(key)
     begin
-      value = $global_config.config["intrigue_global_module_config"][key]["value"]
+      Intrigue::Config::GlobalConfig.load_config
+      config = Intrigue::Config::GlobalConfig.config["intrigue_global_module_config"]
+      value = config[key]["value"]
       unless value && value != ""
         _log "Module config (#{key}) is blank or missing!"
         _log_error "Invalid value for #{key}!"
-        _log "Please configure #{key} in the admin tab!"
+        _log "Please configure #{key} in the 'System -> Configure' section!"
       end
     rescue NoMethodError => e
       _log "Error, invalid config key requested (#{key}) #{e}"

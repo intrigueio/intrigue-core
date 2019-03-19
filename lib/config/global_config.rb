@@ -1,6 +1,7 @@
 require 'json'
 require 'fileutils'
 require 'tempfile'
+
 ###
 ### Global Config Management
 ###
@@ -9,44 +10,24 @@ module Intrigue
 
     class GlobalConfig
 
-      attr_accessor :config
-
-      def initialize
-        @config = {}
-        @config_file = "#{$intrigue_basedir}/config/config.json"
-
-        # load up the config 
-        reload_running_config
+      def self.config
+        @@config
       end
 
-      def reload_running_config
-        # load up the config file (if it exists)
-        f = File.open(@config_file,"r")
-        config = JSON.parse(f.read)
-        f.close
-
-        # load up the default config file
-        f = File.open("#{@config_file}.default","r")
-        default_config = JSON.parse(f.read)
-        f.close
-
-        # merge them
-        @config = default_config.deep_merge config
-        save
+      def self.load_config
+        _reload_running_config
       end
 
-      def save
+      def self.save
         # Generate the JSON and move to the config file location
         # Use safe_write since there are other processes using the config
         # file at the same time we're writing it (TODO.. handle this...)
-        json_config = JSON.pretty_generate(@config)
-        safe_write "#{@config_file}", json_config
-
-        # reload the config
-        reload_running_config
+        json_config = JSON.pretty_generate(@@config)
+        safe_write "#{@@config_file}", json_config
+        _reload_running_config
       end
 
-      def safe_write(path, content)
+      def self.safe_write(path, content)
         # Create a tempfile and write to it
         temp_file = Tempfile.new 'config'
         File.open(temp_file, 'w+') do |f|
@@ -54,6 +35,27 @@ module Intrigue
         end
         # move it to the correct location
         FileUtils.mv temp_file, path
+      end
+
+      private 
+
+      def self._reload_running_config
+
+        @@config = {}
+        @@config_file = "#{$intrigue_basedir}/config/config.json"
+
+        # load up the config file (if it exists)
+        f = File.open(@@config_file,"r")
+        config = JSON.parse(f.read)
+        f.close
+
+        # load up the default config file
+        f = File.open("#{@@config_file}.default","r")
+        default_config = JSON.parse(f.read)
+        f.close
+
+        # merge them
+        @@config = default_config.deep_merge config
       end
 
     end

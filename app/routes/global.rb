@@ -21,11 +21,14 @@ class IntrigueApp < Sinatra::Base
     ### System Config    ###
     ###                  ###
     post '/:project/config/system' do
-      global_config = $global_config
-      global_config.config["credentials"]["username"] = "#{params["username"]}"
-      global_config.config["credentials"]["password"] = "#{params["password"]}"
-      global_config.save
-      global_config.reload_running_config
+      
+      Intrigue::Config::GlobalConfig.config["credentials"]["username"] = "#{params["username"]}"
+      Intrigue::Config::GlobalConfig.config["credentials"]["password"] = "#{params["password"]}"
+
+      # save and reload
+      Intrigue::Config::GlobalConfig.save
+
+
       redirect "/#{@project_name}"  # handy if we're in a browser
     end
 
@@ -34,15 +37,15 @@ class IntrigueApp < Sinatra::Base
       # Update our config if one of the fields have been changed. Note that we use ***
       # as a way to mask out the full details in the view. If we have one that doesn't lead with ***
       # go ahead and update it
-      global_config = $global_config
       params.each do |k,v|
         # skip unless we already know about this config setting, helps us avoid
         # other parameters sent to this page (splat, project, etc)
-        next unless global_config.config["intrigue_global_module_config"][k]
-        global_config.config["intrigue_global_module_config"][k]["value"] = v unless v =~ /^\*\*\*/
+        next unless Intrigue::Config::GlobalConfig.config["intrigue_global_module_config"][k]
+        Intrigue::Config::GlobalConfig.config["intrigue_global_module_config"][k]["value"] = v unless v =~ /^\*\*\*/
       end
-      global_config.save
-      global_config.reload_running_config
+
+      # save and reload 
+      Intrigue::Config::GlobalConfig.save
 
       redirect "/#{@project_name}"  # handy if we're in a browser
     end
@@ -54,10 +57,11 @@ class IntrigueApp < Sinatra::Base
       # go ahead and update it
       begin
         handler_hash = JSON.parse(params["handler_json"])
-        global_config = $global_config
-        global_config.config["intrigue_handlers"] = handler_hash
-        global_config.save
-        global_config.reload_running_config
+         Intrigue::Config::GlobalConfig.config["intrigue_handlers"] = handler_hash
+
+        # save and reload 
+        Intrigue::Config::GlobalConfig.save
+
       rescue JSON::ParserError => e
         return "Error! #{e}"
       end
@@ -68,7 +72,7 @@ class IntrigueApp < Sinatra::Base
 
     # get config
     get '/:project/system/config/?' do
-      @global_config = $global_config
+      @global_config = Intrigue::Config::GlobalConfig
       erb :"system/config"
     end
 

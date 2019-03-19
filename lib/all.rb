@@ -115,9 +115,9 @@ Dir["#{notifiers_folder}/*.rb"].each {|f| require_relative f}
 ### User-specified directories
 ###
 # And check to see if there are any specified load paths
-global_config = $global_config
-if global_config.config["intrigue_load_paths"]
-  global_config.config["intrigue_load_paths"].each do |load_path|
+
+if Intrigue::Config::GlobalConfig.config["intrigue_load_paths"]
+  Intrigue::Config::GlobalConfig.config["intrigue_load_paths"].each do |load_path|
     load_path = "#{load_path}" unless load_path[0] == "/"
 
     Dir["#{load_path}/entities/*.rb"].each do |file|
