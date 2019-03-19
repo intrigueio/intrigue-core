@@ -31,9 +31,13 @@ sleep 5
 # if these are already set by our parent, use that.. otherwise sensible defaults
 export INTRIGUE_DIRECTORY="${INTRIGUE_DIRECTORY:=/core}"
 export RUBY_VERSION="${RUBY_VERSION:=2.5.1}"
-export LANG=en_US.UTF-8
-export LANGUAGE=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
+
+# alternative
+echo "LC_ALL=en_US.UTF-8" >> /etc/environment
+echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+echo "LANG=en_US.UTF-8" > /etc/locale.conf
+locale-gen en_US.UTF-8
+
 
 # Clean up
 echo "[+] Ensuring Apt is clean"
