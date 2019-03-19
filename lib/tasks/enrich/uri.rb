@@ -555,7 +555,10 @@ class Uri < Intrigue::Task::BaseTask
       status: "confirmed",
       description: "This server is configured without secure or httpOnly cookie flags",
       references: [],
-      details: { cookie: cookie }
+      details: { 
+        uri: uri,
+        cookie: cookie 
+      }
     })
   end
 
@@ -570,7 +573,10 @@ class Uri < Intrigue::Task::BaseTask
       references: [
         "https://thycotic.com/company/blog/2014/05/16/ssl-beyond-the-basics-part-2-ciphers/"
       ],
-      details: { allowed: accepted_connections }
+      details: { 
+        uri: uri,
+        allowed: accepted_connections 
+      }
     })
   end
 
@@ -585,7 +591,10 @@ class Uri < Intrigue::Task::BaseTask
       references: [
         "https://tools.ietf.org/id/draft-moriarty-tls-oldversions-diediedie-00.html"
       ],
-      details: { allowed: accepted_connections }
+      details: { 
+        uri: uri,
+        allowed: accepted_connections 
+      }
     })
   end
 
