@@ -127,7 +127,7 @@ class Uri < Intrigue::Task::BaseTask
             _log "Matching vulns for #{fp["cpe"]} via Intrigue API"
             vulns = cpe.query_intrigue_vulndb_api(vulndb_api_key)
           else 
-            vulns = cpe.query_local_nvd_json(vulndb_api_key)
+            vulns = cpe.query_local_nvd_json
           end
         else 
           _log "Skipping inference on #{fp["cpe"]}"

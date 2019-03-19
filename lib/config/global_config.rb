@@ -15,6 +15,11 @@ module Intrigue
         @config = {}
         @config_file = "#{$intrigue_basedir}/config/config.json"
 
+        # load up the config 
+        reload_running_config
+      end
+
+      def reload_running_config
         # load up the config file (if it exists)
         f = File.open(@config_file,"r")
         config = JSON.parse(f.read)
@@ -36,6 +41,9 @@ module Intrigue
         # file at the same time we're writing it (TODO.. handle this...)
         json_config = JSON.pretty_generate(@config)
         safe_write "#{@config_file}", json_config
+
+        # reload the config
+        reload_running_config
       end
 
       def safe_write(path, content)
