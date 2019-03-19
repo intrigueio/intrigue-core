@@ -152,7 +152,7 @@ class UriBruteFocusedContent < BaseTask
     ]
 
     wordpress_list = [
-      { path: '/wp-admin', severity: 5,  regex: nil, status: "confirmed" },
+      { path: '/wp-admin', severity: 5,  regex: nil, status: "potential" }, # TODO ... confirmed
     ]
 
     ###

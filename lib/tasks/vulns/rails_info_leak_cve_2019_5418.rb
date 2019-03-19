@@ -26,6 +26,8 @@ class RailsFileExposureCve20195418 < BaseTask
     }
   end
 
+  # TODO... reporting feature
+
   ## Default method, subclasses must override this
   def run
     super

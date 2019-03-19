@@ -110,8 +110,10 @@ module Task
             # collect all top-level domains
             tlds << alt_name.split(".").last(2).join(".")
 
+            # annoying!
             universal_cert_domains = [
               "acquia-sites.com",
+              "careers.talemetry.com",
               "chinanetcenter.com",
               "cloudflare.com",
               "cloudflaressl.com",
