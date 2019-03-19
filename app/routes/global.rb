@@ -25,6 +25,7 @@ class IntrigueApp < Sinatra::Base
       global_config.config["credentials"]["username"] = "#{params["username"]}"
       global_config.config["credentials"]["password"] = "#{params["password"]}"
       global_config.save
+      global_config.reload_running_config
       redirect "/#{@project_name}"  # handy if we're in a browser
     end
 
@@ -41,6 +42,7 @@ class IntrigueApp < Sinatra::Base
         global_config.config["intrigue_global_module_config"][k]["value"] = v unless v =~ /^\*\*\*/
       end
       global_config.save
+      global_config.reload_running_config
 
       redirect "/#{@project_name}"  # handy if we're in a browser
     end
@@ -55,6 +57,7 @@ class IntrigueApp < Sinatra::Base
         global_config = $global_config
         global_config.config["intrigue_handlers"] = handler_hash
         global_config.save
+        global_config.reload_running_config
       rescue JSON::ParserError => e
         return "Error! #{e}"
       end
