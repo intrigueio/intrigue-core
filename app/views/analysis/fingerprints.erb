@@ -3,11 +3,51 @@
   <div id="fingerprints" class="col-sm-6">
     <p>Fingerprints:</p>
     <p>
+    
+    </p>
+  </div>
+</div>
+
+
+
+<!-- Statistics! -->
+<div class="row">
+  <div id="aflkj" class="col-sm-12">
+    <script type="text/javascript" src="/js/sorttable.js"></script>
+    <style>
+    /* Sortable tables */
+    table.sortable {
+      width: 100%;
+      border: 0;
+      table-layout:fixed;
+      word-wrap:break-word;
+      border-collapse:collapse;
+    }
+
+    table.sortable thead {
+        background-color:#eee;
+        color:#666666;
+        font-weight: bold;
+        cursor: default;
+    }
+    </style>
+    <p></p>
+    <table class="sortable" border="1" width=100%>
+      <colgroup>
+        <col style="width:30%">
+        <col style="width:70%">
+      </colgroup>
+      <tbody>
+      <tr><th>Fingerprint</th><th>CPE</th></tr>
       <% @fingerprints.each do |fingerprint| %>
         <% fingerprint.each do |f| %>
-         <a href="/<%= h @project_name%>/entities?search_string=details:<%=h f["cpe"] %>"><%= h f["cpe"] %></a><br>
-      <% end %>
-      <% end %>
-    </p>
+        <tr>
+          <td><%= h "#{f["vendor"]} #{f["product"]} #{f["version"]}"%> </td>
+          <td><a href="/<%= h @project_name%>/entities?search_string=details:<%=h f["cpe"] %>"><%= h f["cpe"] %></a><br></td>
+        </tr>
+       <% end %>
+        <% end %>
+      </tbody>
+    </table>
   </div>
 </div>
