@@ -130,22 +130,11 @@ class IntrigueApp < Sinatra::Base
     erb :'analysis/systems'
   end
 
-  get '/:project/analysis/stats/applications' do
+  get '/:project/analysis/fingerprints' do
     selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::Uri").order(:name)
 
-    all_entries = []
-    selected_entities.map{|x|  x.details["server_fingerprint"].each{|y| all_entries << "#{y}" } if x.details["server_fingerprint"] }
-    @server_fingerprints = Hash.new(0).tap { |h| all_entries.each { |x| h[x] += 1 }  }.sort
+    @fingerprints = selected_entities.map{|x| x.details["fingerprint"] }.compact
 
-    all_entries = []
-    selected_entities.map{|x|  x.details["app_fingerprint"].each{|y| all_entries << "#{y}" } if x.details["app_fingerprint"] }
-    @app_fingerprints = Hash.new(0).tap { |h| all_entries.each { |x| h[x] += 1 }  }.sort
-
-    all_entries = []
-    selected_entities.map{|x|  x.details["include_fingerprint"].each{|y| all_entries << "#{y}" } if x.details["include_fingerprint"] }
-    @include_fingerprints = Hash.new(0).tap { |h| all_entries.each { |x| h[x] += 1 }  }.sort
-
-
-    erb :'analysis/stats/applications'
+    erb :'analysis/fingerprints'
   end
 end

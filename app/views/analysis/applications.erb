@@ -58,7 +58,8 @@
           <td>
             <% entities.map do |x| %>
               <% products = x.get_detail("products") %>
-              <%= "#{h products.map{|x| x["matched"] if x } if products && products.count > 0 }<br/>" %>
+
+              <%= "#{h products.map{|x| x if x } if products && products.count > 0 }<br/>" %>
             <% end %>
           </td>
           <td>

@@ -114,6 +114,13 @@ class UriBruteFocusedContent < BaseTask
       { path: "/phpinfo.php", severity: 4, regex: /<title>phpinfo\(\)/, status: "confirmed" }
     ]
 
+    sap_netweaver =[
+      { path: "/webdynpro/dispatcher/sap.com/caf~eu~gp~example~timeoff~wd/ACreate", 
+        severity: 3, regex: nil, status: "potential" },
+      { path: "/webdynpro/dispatcher/sap.com/caf~eu~gp~example~timeoff~wd/com.sap.caf.eu.gp.example.timeoff.wd.create.ACreate", 
+        severity: 3, regex: nil, status: "potential" },
+    ]
+
     sharepoint_list =[
       { path: "/_vti_bin/spsdisco.aspx", regex: /\<discovery/, status: "confirmed" },
       { path: "/_vti_pvt/service.cnf", regex: /vti_encoding/, status: "confirmed" },
@@ -209,6 +216,7 @@ class UriBruteFocusedContent < BaseTask
     jenkins_list.each { |x| work_q.push x } if is_product? "Jenkins" 
     php_list.each { |x| work_q.push x } if is_product? "PHP" 
     sharepoint_list.each { |x| work_q.push x } if is_product? "Sharepoint"
+    spring_boot_list { |x| work_q.push x } if is_product? "SAP Netweaver"
     spring_boot_list { |x| work_q.push x } if is_product? "Spring Boot"
     tomcat_list.each { |x| work_q.push x } if is_product? "Tomcat" 
     vmware_horizon_list.each { |x| work_q.push x } if (
