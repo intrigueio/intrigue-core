@@ -153,7 +153,9 @@ class UriBruteFocusedContent < BaseTask
 
     wordpress_list = [
       { path: '/wp-admin', severity: 5,  regex: nil, status: "potential" }, # TODO ... confirmed
-    ]
+      { path: '/xmlrpc.php', severity: 5, status: "confirmed", 
+          regex: /XML-RPC server accepts POST requests only./ }
+    ] 
 
     ###
     ### Get the default case (a page that doesn't exist)
