@@ -33,7 +33,6 @@ class UriExtractMetadata < BaseTask
 
   end
 
-
 end
 end
 end
