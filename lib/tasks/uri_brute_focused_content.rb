@@ -114,14 +114,14 @@ class UriBruteFocusedContent < BaseTask
       { path: "/phpinfo.php", severity: 4, regex: /<title>phpinfo\(\)/, status: "confirmed" }
     ]
 
-    sap_netweaver_list =[
+    sap_netweaver_list =[ 
       { path: "/webdynpro/dispatcher/sap.com/caf~eu~gp~example~timeoff~wd/ACreate", 
-        severity: 3, regex: nil, status: "potential" },
+        severity: 3, regex: nil, status: "potential" }, # https://www.exploit-db.com/exploits/44647
       { path: "/webdynpro/dispatcher/sap.com/caf~eu~gp~example~timeoff~wd/com.sap.caf.eu.gp.example.timeoff.wd.create.ACreate", 
-        severity: 3, regex: nil, status: "potential" },
+        severity: 3, regex: nil, status: "potential" }, # https://www.exploit-db.com/exploits/44647
     ]
 
-    sharepoint_list =[
+    sharepoint_list = [ 
       { path: "/_vti_bin/spsdisco.aspx", regex: /\<discovery/, status: "confirmed" },
       { path: "/_vti_pvt/service.cnf", regex: /vti_encoding/, status: "confirmed" },
       #{ path: "/_vti_inf.html", regex: nil },
@@ -130,7 +130,7 @@ class UriBruteFocusedContent < BaseTask
 
     splunk_list = [
       { path: "/en-US/splunkd/__raw/services/server/info/server-info?output_mode=json", 
-        regex: /os_name_extended/, severity: 4, status: "confirmed" },
+        regex: /os_name_extended/, severity: 4, status: "confirmed" }, # CVE-2018-11409
     ]
 
     # https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Insecure%20Management%20Interface
