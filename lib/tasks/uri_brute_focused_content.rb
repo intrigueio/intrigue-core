@@ -128,6 +128,11 @@ class UriBruteFocusedContent < BaseTask
       #{ path: "/_vti_bin/", regex: nil },
     ]
 
+    splunk_list = [
+      { path: "/en-US/splunkd/__raw/services/server/info/server-info?output_mode=json", 
+        regex: /os_name_extended/, severity: 4, status: "confirmed" },
+    ]
+
     # https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Insecure%20Management%20Interface
     spring_boot_list =[
       { path: "/trace", severity: 4, regex: nil, status: "potential" },
@@ -217,6 +222,7 @@ class UriBruteFocusedContent < BaseTask
     php_list.each { |x| work_q.push x } if is_product? "PHP" 
     sharepoint_list.each { |x| work_q.push x } if is_product? "Sharepoint"
     sap_netweaver_list.each { |x| work_q.push x } if is_product? "NetWeaver"
+    splunk_list.each {|x| work_q.push x } if is_product? "Splunk"
     spring_boot_list.each { |x| work_q.push x } if is_product? "Spring Boot"
     tomcat_list.each { |x| work_q.push x } if is_product? "Tomcat" 
     vmware_horizon_list.each { |x| work_q.push x } if (

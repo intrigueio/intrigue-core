@@ -26,23 +26,24 @@ class UriCheckSudomainHijack  < BaseTask
     uri = _get_entity_name
     response = http_request(:get, uri)
 
-      if response =~ /The specified bucket does not exist/
-        _hijackable_subdomain "AWS S3", uri, "potential"
-      elsif response =~ /No such app/
-        _hijackable_subdomain "Heroku", uri, "potential"
-      elsif response =~ /No settings were found for this company:/
-        _hijackable_subdomain "Help Scout", uri, "potential"
-      elsif response =~ /We could not find what you're looking for./
-        _hijackable_subdomain "Help Juice", uri, "potential"
-      elsif response =~ /is not a registered InCloud YouTrack/
-        _hijackable_subdomain "JetBrains", uri, "potential"
-      elsif response =~ /Unrecognized domain/
-        _hijackable_subdomain "Mashery", uri, "potential"
-      elsif response =~ /Project doesnt exist... yet!/
-        _hijackable_subdomain "Readme.io", uri, "potential"
-      elsif response =~ /This domain is successfully pointed at WP Engine, but is not configured/
-        _hijackable_subdomain "WPEngine", uri, "potential"
-      end
+    if response =~ /The specified bucket does not exist/
+      _hijackable_subdomain "AWS S3", uri, "potential"
+    elsif response =~ /No such app/
+      _hijackable_subdomain "Heroku", uri, "potential"
+    elsif response =~ /No settings were found for this company:/
+      _hijackable_subdomain "Help Scout", uri, "potential"
+    elsif response =~ /We could not find what you're looking for./
+      _hijackable_subdomain "Help Juice", uri, "potential"
+    elsif response =~ /is not a registered InCloud YouTrack/
+      _hijackable_subdomain "JetBrains", uri, "potential"
+    elsif response =~ /Unrecognized domain/
+      _hijackable_subdomain "Mashery", uri, "potential"
+    elsif response =~ /Project doesnt exist... yet!/
+      _hijackable_subdomain "Readme.io", uri, "potential"
+    elsif response =~ /This domain is successfully pointed at WP Engine, but is not configured/
+      _hijackable_subdomain "WPEngine", uri, "potential"
+    end
+    
   end #end run
 
   def _hijackable_subdomain type, uri, status
