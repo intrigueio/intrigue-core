@@ -106,6 +106,11 @@ class UriBruteFocusedContent < BaseTask
       { path: "/securityRealm/createAccount", regex: /Jenkins/i , status: "confirmed"}
     ]
 
+    jforum_list = [ # CVE-2019-7550
+      { path: "/register/check/username?username=thisaccountdoesntexist", severity: 4,
+          regex: /^true$/i, status: "confirmed" } # CVE-2019-7550
+    ] 
+
     lotus_domino_list = [
       { path: "/$defaultview?Readviewentries", severity: 3, regex: /\<viewentries/, status: "confirmed" }
     ]
@@ -219,6 +224,7 @@ class UriBruteFocusedContent < BaseTask
     coldfusion_list.each { |x| work_q.push x } if is_product? "Coldfusion"  
     lotus_domino_list.each { |x| work_q.push x } if is_product? "Domino" 
     jenkins_list.each { |x| work_q.push x } if is_product? "Jenkins" 
+    jforum_list.each { |x| work_q.push x } if is_product? "Jforum" 
     php_list.each { |x| work_q.push x } if is_product? "PHP" 
     sharepoint_list.each { |x| work_q.push x } if is_product? "Sharepoint"
     sap_netweaver_list.each { |x| work_q.push x } if is_product? "NetWeaver"
