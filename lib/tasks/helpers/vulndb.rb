@@ -168,7 +168,6 @@ module Vulndb
                           cvss_v2["cvssV2"]["integrityImpact"] == "COMPLETE") : nil)
                   }
 
-                  _log "VulnDB DEBUG - Got Vuln: #{vuln}"
                   vulns << vuln
                 end
 
