@@ -18,7 +18,7 @@ module Issue
                            project_id: @project.id })
 
     _log_good "Creating issue with name: #{details[:name]}"
-    issue = Intrigue::Model::Issue.create(hash)
+    issue = Intrigue::Model::Issue.create(_encode_hash(hash))
   end
 
 end

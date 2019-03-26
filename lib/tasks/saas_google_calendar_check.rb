@@ -49,7 +49,7 @@ class SaasGoogleCalendarCheck < BaseTask
 
 
   def check_email(email_address)
-uri = "https://calendar.google.com/calendar/htmlembed?src=#{email_address}"
+    uri = "https://calendar.google.com/calendar/htmlembed?src=#{email_address}"
     response = http_request :get, uri
 
     if response && response.code == "200"

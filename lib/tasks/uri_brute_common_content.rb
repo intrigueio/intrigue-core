@@ -33,6 +33,7 @@ class UriBruteCommonContent < BaseTask
     }
   end
 
+
   def run
     super
 
@@ -60,83 +61,20 @@ class UriBruteCommonContent < BaseTask
       brute_list = JSON.parse(File.read("#{$intrigue_basedir}/data/exploitable.json"))
     end
 
-    ###
-    ### Get the default case (a page that doesn't exist)
-    ###
-    random_value = "#{rand(100000000)}"
-    request_page_one = "doesntexist-#{random_value}"
-    request_page_two = "def-#{random_value}-doesntexist"
-    response = http_request :get,"#{uri}/#{request_page_one}"
-    response2 = http_request :get,"#{uri}/#{request_page_two}"
-
-    # check for sanity
-    unless response && response2
-      _log_error "Unable to connect to site!"
-      return false
-    end
-
-    # check to make sure we don't just go down the rabbit hole
-    # some pages print back our uri, so first remove that if it exists
-    unless response.body.gsub(request_page_one,"") && response2.body.gsub(request_page_two,"")
-      _log_error "Cowardly refusing to test - different responses on our missing page checks"
-      return false
-    end
-
-    # Default to code
-    missing_page_test = :code
-    # But select based on the response to our random page check
-    case response.code
-      when "404"
-        missing_page_test = :code
-      when "200"
-        missing_page_test = :content
-        missing_page_content = response.body
-      else
-        missing_page_test = :code
-        missing_page_code = response.code
-    end
-
     # Create our queue of work from the checks in brute_list
     work_q = Queue.new
     brute_list.each do |item|
       item["check_paths"].each do |dir|
-        request_uri = "#{uri}#{"/" unless uri[-1] == "/"}#{dir}"
-        work_q << request_uri
+        request_path = "#{"/" unless uri[-1] == "/"}#{dir}"
+        work_q << { path: request_path, regex: nil, severity: 5, status: "potential" }
       end
     end
 
-    # Create a pool of worker threads to work on the queue
-    workers = (0...opt_threads).map do
-      Thread.new do
-        begin
-          while request_uri = work_q.pop(true)
-            
-            # Do the check
-            result = check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content)
+    ## do the work 
+    ##
+    make_http_requests_from_queue(uri, work_q, opt_threads, opt_create_url)    
 
-            if result 
-              
-              # create a new entity for each one if we specified that 
-              _create_entity("Uri", result) if  opt_create_url
-              
-              _create_issue({
-                name: "Discovered Content at #{result[:name]}",
-                type: "discovered_content",
-                severity: 5,
-                status: "potential",
-                description: "Page was found with a code #{result[:response_code]} by url_brute_focused_content at #{result[:name]}",
-                details: result.except!(:name)
-              })
-            end
-
-          end # end while
-        rescue ThreadError
-        end
-      end
-    end; "ok"
-    workers.map(&:join); "ok"
-  end # end run method
-
+  end
 
 end
 end

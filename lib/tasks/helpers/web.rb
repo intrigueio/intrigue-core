@@ -13,6 +13,85 @@ module Intrigue
 module Task
   module Web
 
+
+    
+  def make_http_requests_from_queue(uri,work_q,threads=1, create_url=false, create_issue=false)
+
+    ###
+    ### Get the default case (a page that doesn't exist)
+    ###
+    random_value = "#{rand(100000000)}"
+    request_page_one = "doesntexist-#{random_value}"
+    request_page_two = "def-#{random_value}-doesntexist"
+    response = http_request :get,"#{uri}/#{request_page_one}"
+    response_two = http_request :get,"#{uri}/#{request_page_two}"
+
+    # check for sanity
+    unless response && response_two
+      _log_error "Unable to connect to site!"
+      return false
+    end
+
+    # check to make sure we don't just go down the rabbit hole
+    # some pages print back our uri, so first remove that if it exists
+    unless response.body.gsub(request_page_one,"") && response_two.body.gsub(request_page_two,"")
+      _log_error "Cowardly refusing to test - different responses on our missing page checks"
+      return false
+    end
+
+    # Default to code
+    missing_page_test = :code
+    # But select based on the response to our random page check
+    case response.code
+      when "404"
+        _log "Using CODE as missing page test, missing page will give a 404"
+        missing_page_test = :code
+      when "200"
+        _log "Using CONTENT as missing page test, missing page will give a 200"
+        missing_page_test = :content
+        missing_page_content = response.body
+      else
+        _log "Defaulting to CODE as missing page test, missing page will give a #{response.code}"
+        missing_page_test = :code
+        missing_page_code = response.code
+    end
+    ##########################
+
+    # Create a pool of worker threads to work on the queue
+    workers = (0...threads).map do
+      Thread.new do
+        begin
+          while request_details = work_q.pop(true)
+
+            request_uri = "#{uri}#{request_details[:path]}"
+            positive_regex = request_details[:regex]
+
+            # Do the check
+            _log "Checking #{request_uri}"
+            result = check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content, positive_regex)
+
+            if result 
+              # create a new entity for each one if we specified that 
+              _create_entity("Uri", { "name" => result[:uri] }) if  create_url
+              
+              _create_issue({
+                name: "Discovered Content at #{result[:name]}",
+                type: "discovered_content",
+                severity: request_details[:severity] || 5,
+                status: request_details[:status] || "potential",
+                description: "Page was found with a code #{result[:response_code]} by url_brute_focused_content at #{result[:name]}",
+                details: result.except!(:name)
+              }) if create_issue
+            end
+
+          end # end while
+        rescue ThreadError
+        end
+      end
+    end; "ok"
+    workers.map(&:join); "ok"
+  end
+
     def ssl_connect_and_get_cert_names(hostname,port,timeout=30)
       # connect
       socket = connect_socket(hostname,port,timeout=30)

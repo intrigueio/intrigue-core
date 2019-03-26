@@ -110,8 +110,8 @@ class EntityManager
     project = task_result.project
 
     # Save the original and downcase our name
-    details["hidden_original"] = name
-    downcased_name = name.downcase
+    details["hidden_original"] = "#{name}"
+    downcased_name = "#{name}".downcase
 
     # Merge the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name)

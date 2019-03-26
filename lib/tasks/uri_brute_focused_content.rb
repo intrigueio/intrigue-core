@@ -23,7 +23,6 @@ class UriBruteFocusedContent < BaseTask
       :allowed_options => [
         {:name => "threads", regex: "integer", :default => 1 },
         {:name => "create_url", regex: "boolean", :default => false },
-        {:name => "parse_content", regex: "boolean", :default => false },
         {:name => "check_generic_content", regex: "boolean", :default => false }
       ],
       :created_types => ["Uri"]
@@ -55,7 +54,6 @@ class UriBruteFocusedContent < BaseTask
     uri = _get_entity_name
     opt_threads = _get_option("threads") 
     opt_create_url = _get_option("create_url")
-    opt_parse_content = _get_option("parse_content") # TODO, not implemented today
     opt_generic_content = _get_option("check_generic_content") 
 
     generic_list = [ 
@@ -131,6 +129,27 @@ class UriBruteFocusedContent < BaseTask
       { path: "/_vti_pvt/service.cnf", regex: /vti_encoding/, status: "confirmed" },
       #{ path: "/_vti_inf.html", regex: nil },
       #{ path: "/_vti_bin/", regex: nil },
+      #_vti_bin/shtml.exe/junk_nonexistant.exe
+      #_vti_txt/_vti_cnf/
+      #_vti_txt/
+      #_vti_pvt/deptodoc.btr
+      #_vti_pvt/doctodep.btr
+      #_vti_pvt/services.org
+      #_vti_bin/shtml.dll/_vti_rpc?method=server+version%3a4%2e0%2e2%2e2611
+      #_vti_bin/shtml.exe/_vti_rpc?method=server+version%3a4%2e0%2e2%2e2611
+      #_vti_bin/_vti_aut/author.dll?method=list+documents%3a3%2e0%2e2%2e1706&service%5fname=&listHiddenDocs=true&listExplorerDocs=true&listRecurse=false&listFiles=true&listFolders=true&listLinkInfo=true&listInclude
+      #_vti_bin/_vti_aut/author.exe?method=list+documents%3a3%2e0%2e2%2e1706&service%5fname=&listHiddenDocs=true&listExplorerDocs=true&listRecurse=false&listFiles=true&listFolders=true&listLinkInfo=true&listInclude
+      #_vti_bin/_vti_aut/dvwssr.dll
+      #_vti_bin/_vti_aut/fp30reg.dll?xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      #_vti_bin/_vti_aut/fp30reg.dll
+      #_vti_pvt/access.cnf
+      #_vti_pvt/botinfs.cnf
+      #_vti_pvt/bots.cnf
+      #_vti_pvt/service.cnf
+      #_vti_pvt/services.cnf
+      #_vti_pvt/svacl.cnf
+      #_vti_pvt/writeto.cnf
+      #_vti_pvt/linkinfo.cnf
     ]
 
     splunk_list = [
@@ -173,46 +192,14 @@ class UriBruteFocusedContent < BaseTask
       { path: '/xmlrpc.php', severity: 5, status: "confirmed", 
           regex: /XML-RPC server accepts POST requests only./ }
     ] 
-
-    ###
-    ### Get the default case (a page that doesn't exist)
-    ###
-    random_value = "#{rand(100000000)}"
-    request_page_one = "doesntexist-#{random_value}"
-    request_page_two = "def-#{random_value}-doesntexist"
-    response = http_request :get,"#{uri}/#{request_page_one}"
-    response_two = http_request :get,"#{uri}/#{request_page_two}"
-
-    # check for sanity
-    unless response && response_two
-      _log_error "Unable to connect to site!"
-      return false
+    
+    # add wordpress plugins list from a file
+    File.open("#{$intrigue_basedir}/data/wordpress_plugins.list").each_line do |l|
+      next if l =~ /^#/
+      #_log "Adding Wordpress plugin check: #{l.strip}"
+      wordpress_list << { path: "#{l.strip}/" , severity: 5,  regex: nil, status: "potential" }
+      wordpress_list << { path: "#{l.strip}/readme.txt" , severity: 5,  regex: /Contributors:/i, status: "confirmed" }
     end
-
-    # check to make sure we don't just go down the rabbit hole
-    # some pages print back our uri, so first remove that if it exists
-    unless response.body.gsub(request_page_one,"") && response_two.body.gsub(request_page_two,"")
-      _log_error "Cowardly refusing to test - different responses on our missing page checks"
-      return false
-    end
-
-    # Default to code
-    missing_page_test = :code
-    # But select based on the response to our random page check
-    case response.code
-      when "404"
-        _log "Using CODE as missing page test, missing page will give a 404"
-        missing_page_test = :code
-      when "200"
-        _log "Using CONTENT as missing page test, missing page will give a 200"
-        missing_page_test = :content
-        missing_page_content = response.body
-      else
-        _log "Defaulting to CODE as missing page test, missing page will give a #{response.code}"
-        missing_page_test = :code
-        missing_page_code = response.code
-    end
-    ##########################
 
     # Create our queue of work from the checks in brute_list
     work_q = Queue.new
@@ -221,6 +208,7 @@ class UriBruteFocusedContent < BaseTask
     apache_list.each { |x| work_q.push x } if is_product? "HTTP Server"  # Apache
     asp_net_list.each { |x| work_q.push x } if ( 
       is_product?("ASP.NET") || is_product?("ASP.NET MVC") )
+
     coldfusion_list.each { |x| work_q.push x } if is_product? "Coldfusion"  
     lotus_domino_list.each { |x| work_q.push x } if is_product? "Domino" 
     jenkins_list.each { |x| work_q.push x } if is_product? "Jenkins" 
@@ -233,45 +221,22 @@ class UriBruteFocusedContent < BaseTask
     tomcat_list.each { |x| work_q.push x } if is_product? "Tomcat" 
     vmware_horizon_list.each { |x| work_q.push x } if (
       is_product?("VMWare Horizon") || is_product?("VMWare Horizon View") ) 
+
     wordpress_list.each { |x| work_q.push x } if is_product? "Wordpress" 
 
     # then add our "always" stuff:
     generic_list.each { |x| work_q.push x } if opt_generic_content
 
-    # Create a pool of worker threads to work on the queue
-    workers = (0...opt_threads).map do
-      Thread.new do
-        begin
-          while request_details = work_q.pop(true)
+    ###
+    ### Do the work 
+    ###
+    make_http_requests_from_queue(uri, work_q, opt_threads)
 
-            request_uri = "#{uri}#{request_details[:path]}"
-            positive_regex = request_details[:regex]
-
-            # Do the check
-            result = check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content, positive_regex)
-
-            if result 
-              # create a new entity for each one if we specified that 
-              _create_entity("Uri", result[:uri]) if  opt_create_url
-              
-              _create_issue({
-                name: "Discovered Content at #{result[:name]}",
-                type: "discovered_content",
-                severity: request_details[:severity] || 5,
-                status: request_details[:status] || "potential",
-                description: "Page was found with a code #{result[:response_code]} by url_brute_focused_content at #{result[:name]}",
-                details: result.except!(:name)
-              })
-            end
-
-          end # end while
-        rescue ThreadError
-        end
-      end
-    end; "ok"
-    workers.map(&:join); "ok"
   end # end run method
 
 end
 end
 end
+
+
+
