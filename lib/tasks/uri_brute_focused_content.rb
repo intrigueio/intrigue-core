@@ -86,7 +86,7 @@ class UriBruteFocusedContent < BaseTask
 
     coldfusion_list = [
       { path: "/CFIDE", severity: 4, regex: nil },
-      { path: "CFIDE/administrator/enter.cfm", severity: 4, regex: nil }
+      { path: "/CFIDE/administrator/enter.cfm", severity: 4, regex: nil }
     ] # TODO see metasploit for more ideas here
 
 
