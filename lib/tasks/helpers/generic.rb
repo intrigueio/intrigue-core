@@ -53,8 +53,8 @@ module Generic
     @task_result.logger.log message
   end
 
-  def _log_good(message)
-    @task_result.logger.log_good message
+  def _log_debug(message)
+    @task_result.logger.log_debug message
   end
 
   def _log_error(message)
@@ -63,6 +63,10 @@ module Generic
 
   def _log_fatal(message)
     @task_result.logger.log_fatal message
+  end
+
+  def _log_good(message)
+    @task_result.logger.log_good message
   end
 
   # Convenience Method to execute a system command semi-safely
