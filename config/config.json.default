@@ -28,14 +28,6 @@
     }
   },
   "intrigue_handlers" : {
-    "data.intrigue.io": {
-      "uri": "https://data.intrigue.io/process",
-      "api_key": "",
-      "access_key" : "",
-      "secret_key" : "",
-      "region" : "",
-      "bucket" : ""
-    },
     "s3_json" : {
       "access_key" : "",
       "secret_key" : "",
@@ -220,6 +212,18 @@
     "intrigue_vulndb_api_key" : {
       "value" : "",
       "uri" : "https://intrigue.io/core/api",
+      "editable" : "true",
+      "comment" : ""
+    },
+    "grayhat_warfare_api_key" : {
+      "value" : "",
+      "uri" : "https://buckets.grayhatwarfare.com/account",
+      "editable" : "true",
+      "comment" : ""
+    },
+    "binary_edge_api_key" : {
+      "value" : "",
+      "uri" : "https://app.binaryedge.io/account/api",
       "editable" : "true",
       "comment" : ""
     }
