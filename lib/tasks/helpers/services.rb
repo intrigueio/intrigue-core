@@ -124,6 +124,8 @@ module Services
               service = "TELNET"
             when 25
               service = "SMTP"
+            when 53
+              service = "DNS"
             when 79
               service = "FINGER"
             when 110
