@@ -194,12 +194,12 @@ class UriBruteFocusedContent < BaseTask
     ] 
     
     # add wordpress plugins list from a file
-    File.open("#{$intrigue_basedir}/data/wordpress_plugins.list").each_line do |l|
-      next if l =~ /^#/
-      #_log "Adding Wordpress plugin check: #{l.strip}"
-      wordpress_list << { path: "#{l.strip}/" , severity: 5,  regex: nil, status: "potential" }
-      wordpress_list << { path: "#{l.strip}/readme.txt" , severity: 5,  regex: /Contributors:/i, status: "confirmed" }
-    end
+    #File.open("#{$intrigue_basedir}/data/wordpress_plugins.list").each_line do |l|
+    #  next if l =~ /^#/
+    #  #_log "Adding Wordpress plugin check: #{l.strip}"
+    #  wordpress_list << { path: "#{l.strip}/" , severity: 5,  regex: nil, status: "potential" }
+    #  wordpress_list << { path: "#{l.strip}/readme.txt" , severity: 5,  regex: /Contributors:/i, status: "confirmed" }
+    #end
 
     # Create our queue of work from the checks in brute_list
     work_q = Queue.new
