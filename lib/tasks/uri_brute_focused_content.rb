@@ -23,6 +23,7 @@ class UriBruteFocusedContent < BaseTask
       :allowed_options => [
         {:name => "threads", regex: "integer", :default => 1 },
         {:name => "create_url", regex: "boolean", :default => false },
+        {:name => "override_fingerprint", regex: "alpha_numeric", :default => "" },
         {:name => "check_generic_content", regex: "boolean", :default => false }
       ],
       :created_types => ["Uri"]
@@ -30,7 +31,16 @@ class UriBruteFocusedContent < BaseTask
   end
 
   def is_product?(product_name)
+
+    # first, if an override fingerprint was specified, just use that
+    override = _get_option("override_fingerprint")
+    if override.length > 0
+      return (override == product_name) ? true : false
+    end
+
+    # okay no override, check the enity's fingerprint
     return false unless _get_entity_detail("fingerprint")
+    
     out = _get_entity_detail("fingerprint").any?{|v| v['product'] =~ /#{product_name}/ if v['product']}
     _log_good "Matched URI to Product: #{product_name} !" if out
   out
@@ -49,7 +59,7 @@ class UriBruteFocusedContent < BaseTask
   def run
     super
 
-    sleep_until_enriched
+    sleep_until_enriched unless _get_option("override_fingerprint").length > 0
 
     uri = _get_entity_name
     opt_threads = _get_option("threads") 
@@ -192,7 +202,7 @@ class UriBruteFocusedContent < BaseTask
       { path: '/xmlrpc.php', severity: 5, status: "confirmed", regex: /XML-RPC server accepts POST requests only./ },
       { path: '/wp-content/plugins/easy-wp-smtp/css/style.css', severity: 1,  regex: /swpsmtp_settings_form/i, status: "confirmed" }, 
       { path: '/wp-content/plugins/easy-wp-smtp/', severity: 1,  regex: /debug_log/i, status: "confirmed" },
-      { path: '/wp-content/plugins/easy-wp-smtp/inc/', severity: 1,  /debug_log/i: nil, status: "confirmed" }
+      { path: '/wp-content/plugins/easy-wp-smtp/inc/', severity: 1,  regex: /debug_log/i, status: "confirmed" }
     ] 
     
     # add wordpress plugins list from a file
@@ -232,7 +242,7 @@ class UriBruteFocusedContent < BaseTask
     ###
     ### Do the work 
     ###
-    make_http_requests_from_queue(uri, work_q, opt_threads)
+    make_http_requests_from_queue(uri, work_q, opt_threads, opt_create_url, true) # always create an issue
 
   end # end run method
 

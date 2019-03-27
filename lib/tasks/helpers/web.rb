@@ -15,7 +15,7 @@ module Task
 
 
     
-  def make_http_requests_from_queue(uri,work_q,threads=1, create_url=false, create_issue=false)
+  def make_http_requests_from_queue(uri, work_q, threads=1, create_url=false, create_issue=false)
 
     ###
     ### Get the default case (a page that doesn't exist)
