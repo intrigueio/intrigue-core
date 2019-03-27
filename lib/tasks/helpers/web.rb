@@ -205,7 +205,8 @@ module Task
               "incapsula.com",
               "lithium.com",
               "swagcache.com",
-              "wpengine.com"
+              "wpengine.com",
+              "yottaa.net"
             ]
 
             universal_cert_domains.each do |cert_domain|
@@ -219,7 +220,7 @@ module Task
 
           if skip_hosted
             # Generically try to find certs that aren't useful to us
-            suspicious_count = 80
+            suspicious_count = 20
             # Check to see if we have over suspicious_count top level domains in this cert
             if tlds.uniq.count >= suspicious_count
               # and then check to make sure none of the domains are greate than a quarter
