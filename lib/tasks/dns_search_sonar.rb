@@ -16,7 +16,7 @@ class DnsSearchSonar < BaseTask
       :allowed_types => ["DnsRecord","Domain"],
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
-        {:name => "endpoint", :regex => "alpha_numeric_list", :default => "http://ec2-52-91-225-3.compute-1.amazonaws.com/dns?q=" },
+        {:name => "endpoint", :regex => "alpha_numeric_list", :default => "http://18.204.76.30/dns?q=" },
       ],
       :created_types => ["DnsRecord"]
     }
