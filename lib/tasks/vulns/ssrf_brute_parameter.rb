@@ -21,7 +21,7 @@ class SsrfBruteParameters < BaseTask
       ],
       :allowed_options => [
         {:name => "ssrf_target_uri", :regex => "alpha_numeric_list", :default => "http://localhost:55555" },
-        {:name => "parameter_list", :regex => "alpha_numeric_list", :default => "referrer,url,uri,location,host" }
+        {:name => "parameter_list", :regex => "alpha_numeric_list", :default => "redirect,url,uri,location,host,next,referer" }
       ],
       :created_types => []
     }
