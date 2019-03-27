@@ -14,7 +14,7 @@ class SearchGrayhatWarfare < BaseTask
       :allowed_types => ["String"],
       :example_entities => [{"type" => "String", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
-      :created_types => ["Uri"]
+      :created_types => ["AwsS3Bucket"]
     }
   end
 

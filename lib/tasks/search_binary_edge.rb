@@ -14,7 +14,7 @@ class SearchBinaryEdge < BaseTask
       :allowed_types => ["IpAddress"],
       :example_entities => [{"type" => "IpAddress", "details" => {"name" => "8.8.8.8"}}],
       :allowed_options => [],
-      :created_types => ["Uri"]
+      :created_types => ["NetworkService","Uri"]
     }
   end
 
