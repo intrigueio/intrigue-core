@@ -106,11 +106,15 @@ module Intrigue
 
       def enrich(task_result)
 
-        if enrichment_tasks.count > 0
-          # Run background tasks here
-          enrichment_tasks.each do |task_name|
+        # if a machine exists, grab it 
+        machine_name = task_result.scan_result ? task_result.scan_result.machine : nil
 
-            machine_name = task_result.scan_result ? task_result.scan_result.machine : nil
+
+        # if this entity has any configured enrichment tasks.. 
+        if enrichment_tasks.count > 0
+
+          # Run each one
+          enrichment_tasks.each do |task_name|
 
             # if task doesnt exist, mark it enriched using the task of that name
             # ensure we always mark an entity enriched, and then can continue on
@@ -122,7 +126,8 @@ module Intrigue
 
             start_task("task_enrichment", self.project, task_result.scan_result, task_name, self, task_result.depth, [], [], machine_name, true, true)
           end
-        else # always enrich
+
+        else # always enrich, even if something is not configured
           start_task("task_enrichment", self.project, task_result.scan_result, "enrich/generic", self, task_result.depth, [], [], machine_name, true, true)
         end
       end
