@@ -92,9 +92,9 @@ module Task
     workers.map(&:join); "ok"
   end
 
-    def ssl_connect_and_get_cert_names(hostname,port,timeout=30)
+    def ssl_connect_and_get_cert_names(hostname,port,timeout=20)
       # connect
-      socket = connect_socket(hostname,port,timeout=30)
+      socket = connect_socket(hostname,port,timeout)
       return [] unless socket && socket.peer_cert
       # Parse the cert
       cert = OpenSSL::X509::Certificate.new(socket.peer_cert)
@@ -102,10 +102,13 @@ module Task
       names = parse_names_from_cert(cert)
     end
 
-    def connect_socket(hostname,port,timeout=30)
+    def connect_socket(hostname, port, timeout=20, max_attempts=5)
       # Create a socket and connect
       # https://apidock.com/ruby/Net/HTTP/connect
+      attempts=0
+
       begin 
+      attempts +=1
       socket = TCPSocket.new hostname, port
       context= OpenSSL::SSL::SSLContext.new
       ssl_socket = OpenSSL::SSL::SSLSocket.new socket, context
@@ -113,20 +116,25 @@ module Task
 
         _log "Attempting to connect to #{hostname}:#{port}"
         ssl_socket.connect_nonblock
+
       rescue IO::WaitReadable
+        
         if IO.select([ssl_socket], nil, nil, timeout)
-          _log "retrying..."
-          retry
+          _log "retrying... attempt: #{attempts}/#{max_attempts}"
+          retry unless attempts >= max_attempts
         else
           # timeout
         end
+
       rescue IO::WaitWritable
-        if IO.select(nil, [ssl_socket], nil, timeout)
-          _log "retrying..."
-          retry
+       
+       if IO.select(nil, [ssl_socket], nil, timeout)
+          _log "retrying... attempt: #{attempts}/#{max_attempts}"
+          retry unless attempts >= max_attempts
         else
           # timeout
         end
+
       rescue OpenSSL::SSL::SSLError => e
         _log_error "Error requesting resource, skipping: #{hostname} #{port}"
       rescue SocketError => e
@@ -145,6 +153,8 @@ module Task
         _log_error "Error requesting cert, skipping: #{hostname} #{port}"
       rescue Errno::EHOSTUNREACH => e
         _log_error "Error requesting cert, skipping: #{hostname} #{port}"
+      ensure 
+        attempts +=1
       end
 
       # fail if we can't connect
@@ -437,6 +447,18 @@ module Task
          # END USE THIS TO PRINT HTTP REQUEST
 
          # get the response
+         puts
+         puts 
+         puts "===== BEGIN REQUEST ====="
+         puts "Endpoint: #{request.method} http://#{uri}"
+         puts "Headers:\n"
+         request.each_header do |key, value|
+          puts "\t#{key}: #{value}"
+         end
+         puts "POST Data:\n#{request.body}" if request.method == 'POST'
+         puts "=====  END  REQUEST ====="
+         puts
+         puts 
          response = http.request(request)
 
          if response.code=="200"
