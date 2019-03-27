@@ -106,23 +106,25 @@ module Intrigue
 
       def enrich(task_result)
 
-        # Run background tasks here
-        enrichment_tasks.each do |task_name|
+        if enrichment_tasks.count > 0
+          # Run background tasks here
+          enrichment_tasks.each do |task_name|
 
-          machine_name = task_result.scan_result ? task_result.scan_result.machine : nil
+            machine_name = task_result.scan_result ? task_result.scan_result.machine : nil
 
-          # if task doesnt exist, mark it enriched using the task of that name
-          # ensure we always mark an entity enriched, and then can continue on
-          # with the machine
-          unless Intrigue::TaskFactory.include? task_name
-            start_task("task_enrichment", self.project, task_result.scan_result, "enrich/generic", self, task_result.depth, [], [], machine_name, true, true)
-            next
+            # if task doesnt exist, mark it enriched using the task of that name
+            # ensure we always mark an entity enriched, and then can continue on
+            # with the machine
+            unless Intrigue::TaskFactory.include? task_name
+              start_task("task_enrichment", self.project, task_result.scan_result, "enrich/generic", self, task_result.depth, [], [], machine_name, true, true)
+              next
+            end
+
+            start_task("task_enrichment", self.project, task_result.scan_result, task_name, self, task_result.depth, [], [], machine_name, true, true)
           end
-
-          start_task("task_enrichment", self.project, task_result.scan_result, task_name, self, task_result.depth, [], [], machine_name, true, true)
+        else # always enrich
+          start_task("task_enrichment", self.project, task_result.scan_result, "enrich/generic", self, task_result.depth, [], [], machine_name, true, true)
         end
-
-
       end
 
       def alias(entity)
