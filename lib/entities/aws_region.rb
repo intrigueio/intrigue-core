@@ -37,7 +37,7 @@ class AwsRegion < Intrigue::Model::Entity
   end
 
   def enrichment_tasks
-    ["enrich/aws_region"]
+    ["enrich/generic"]
   end
 
 end
