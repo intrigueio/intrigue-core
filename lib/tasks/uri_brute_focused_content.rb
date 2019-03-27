@@ -189,8 +189,10 @@ class UriBruteFocusedContent < BaseTask
 
     wordpress_list = [
       { path: '/wp-admin', severity: 5,  regex: nil, status: "potential" }, # TODO ... confirmed
-      { path: '/xmlrpc.php', severity: 5, status: "confirmed", 
-          regex: /XML-RPC server accepts POST requests only./ }
+      { path: '/xmlrpc.php', severity: 5, status: "confirmed", regex: /XML-RPC server accepts POST requests only./ },
+      { path: '/wp-content/plugins/easy-wp-smtp/css/style.css', severity: 1,  regex: /swpsmtp_settings_form/i, status: "confirmed" }, 
+      { path: '/wp-content/plugins/easy-wp-smtp/', severity: 1,  regex: /debug_log/i, status: "confirmed" },
+      { path: '/wp-content/plugins/easy-wp-smtp/inc/', severity: 1,  /debug_log/i: nil, status: "confirmed" }
     ] 
     
     # add wordpress plugins list from a file
