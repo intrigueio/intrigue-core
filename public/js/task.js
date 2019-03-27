@@ -17,7 +17,9 @@
       // get the specific task JSON and set the allowed / default fields
       var form = $("form")[0]
       var attrib_name = form.attrib_name.value
-      $.getJSON(location.origin + "/tasks/" + task_name + ".json", function(data) {
+      var task_json = location.origin + "/tasks/" + encodeURI(task_name) + ".json"
+      console.log("Requesting... " + task_json)
+      $.getJSON(task_json, function(data) {
         if ((window.location.href.indexOf("entities/")) +
             (window.location.href.indexOf("entity_id=")) +
             (window.location.href.indexOf("result_id=")) < 0 )  {
@@ -69,13 +71,13 @@
       // Clear entity type
       $('#entity_type').empty()
 
-      // Check to see if we have a *
+      // Check to see if we have a "*" type
       if (task_hash["allowed_types"].indexOf("*") != -1) {
         // get the full entity_types.json
         $.getJSON(location.origin + "/entity_types.json", function(data) {
           $.each(data, function(key, value) {
             if (value["user_creatable"]) {
-              console.log("value: " + value);
+              console.log("value: " + value["name"] + " " + value["user_creatable"] );
               $('#entity_type')
                  .append($("<option></option>")
                  .attr("value",value["name"])

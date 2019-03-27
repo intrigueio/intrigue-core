@@ -198,9 +198,9 @@ class IntrigueApp < Sinatra::Base
   end
 
   # Export a single task
-  get '/tasks/:task_name.json/?' do
+  get '/tasks/*.json/?' do
     content_type 'application/json'
-    task_name = params[:task_name]
+    task_name = params[:splat][0..-1].join('/')
     Intrigue::TaskFactory.list.select{|t| t.metadata[:name] == task_name }.first.metadata.to_json
   end
 
