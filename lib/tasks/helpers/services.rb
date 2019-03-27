@@ -73,8 +73,6 @@ module Services
     hosts.uniq.each do |h|
       Thread.new do 
 
-        _log_good "New Thread!"
-
         # Handle web app case first
         if (protocol == "tcp" && [80,81,443,8000,8080,8081,8443].include?(port_num))
 
@@ -98,7 +96,6 @@ module Services
               _log_error "Didn't get a response when we requested one, moving on"
               next
             end
-
           end
 
           entity_details = {

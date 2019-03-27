@@ -4,8 +4,8 @@ class SearchBinaryEdge < BaseTask
 
   def self.metadata
     {
-      :name => "search_binary_edge_ip",
-      :pretty_name => "Search Binary Edge (by IpAddress)",
+      :name => "search_binary_edge",
+      :pretty_name => "Search Binary Edge",
       :authors => ["jcran"],
       :description => "This task hits the Binary Edge API for a given IpAddress",
       :references => [],

@@ -105,13 +105,12 @@ module Task
     def connect_socket(hostname,port,timeout=30)
       # Create a socket and connect
       # https://apidock.com/ruby/Net/HTTP/connect
-
+      begin 
       socket = TCPSocket.new hostname, port
       context= OpenSSL::SSL::SSLContext.new
       ssl_socket = OpenSSL::SSL::SSLSocket.new socket, context
       ssl_socket.sync = true
 
-      begin
         _log "Attempting to connect to #{hostname}:#{port}"
         ssl_socket.connect_nonblock
       rescue IO::WaitReadable
