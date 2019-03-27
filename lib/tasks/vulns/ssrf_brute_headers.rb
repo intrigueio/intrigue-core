@@ -1,11 +1,11 @@
 module Intrigue
 module Task
-class SsrfBruteParameters < BaseTask
+class SsrfBruteHeaders < BaseTask
 
   def self.metadata
     {
-      :name => "vuln/ssrf_brute_parameters",
-      :pretty_name => "Vuln - Brute Parameters for SSRF",
+      :name => "vuln/ssrf_brute_headers",
+      :pretty_name => "Vuln - Brute Headers for SSRF",
       :authors => ["jcran"],
       :identifiers => [
         { "cve" =>  false },
@@ -21,7 +21,7 @@ class SsrfBruteParameters < BaseTask
       ],
       :allowed_options => [
         {:name => "ssrf_target_uri", :regex => "alpha_numeric_list", :default => "http://localhost:55555" },
-        {:name => "parameter_list", :regex => "alpha_numeric_list", :default => "referrer,url,uri,location,host" }
+        {:name => "header_list", :regex => "alpha_numeric_list", :default => "referer,url,uri,location,host" }
       ],
       :created_types => []
     }
@@ -33,18 +33,21 @@ class SsrfBruteParameters < BaseTask
 
     uri = _get_entity_name
     ssrf_target_uri = _get_option("ssrf_target_uri")
-    parameter_list = _get_option("parameter_list").split(",")
+    header_list = _get_option("header_list").split(",")
 
     _log "Starting SSRF Responder server"
     Intrigue::Task::Server::SsrfResponder.start_and_background
 
-    parameter_list.each do |parameter|
+    header_list.each do |header|
+
       # make the request and collect the response
       # https://stackoverflow.com/questions/7012810/url-encoding-ampersand-problem
-      payload = "#{ssrf_target_uri}?int_id=#{@task_result.id}%26int_param=#{parameter}"
-      generated_test_uri = "#{uri}?#{parameter}=#{payload}"
-      response  = http_request :get, generated_test_uri
-      _log "Sent: (#{generated_test_uri}), Got: #{response.code} for parameter #{parameter}"
+      payload = "#{ssrf_target_uri}?int_id=#{@task_result.id}%26int_header=#{header}"
+      generated_test_uri = "#{payload}"
+      response  = http_request :get, uri, nil, {header => generated_test_uri}
+      _log "Sent: (#{generated_test_uri}), Got: #{response.code} for header #{header}"
+
+
     end
 
     # Future work... actually exfil data (enrichment?)
