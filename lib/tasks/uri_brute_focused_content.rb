@@ -119,9 +119,9 @@ class UriBruteFocusedContent < BaseTask
 
     sap_netweaver_list =[ 
       { path: "/webdynpro/dispatcher/sap.com/caf~eu~gp~example~timeoff~wd/ACreate", 
-        severity: 3, regex: /data-sap-ls-system-platform/, status: "potential" }, # https://www.exploit-db.com/exploits/44647
+        severity: 3, regex: /data-sap-ls-system-platform/, status: "confirmed" }, # https://www.exploit-db.com/exploits/44647
       { path: "/webdynpro/dispatcher/sap.com/caf~eu~gp~example~timeoff~wd/com.sap.caf.eu.gp.example.timeoff.wd.create.ACreate", 
-        severity: 3, regex: /data-sap-ls-system-platform/, status: "potential" }, # https://www.exploit-db.com/exploits/44647
+        severity: 3, regex: /data-sap-ls-system-platform/, status: "confirmed" }, # https://www.exploit-db.com/exploits/44647
     ]
 
     sharepoint_list = [ 
