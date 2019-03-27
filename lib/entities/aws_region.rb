@@ -14,7 +14,6 @@ class AwsRegion < Intrigue::Model::Entity
     [ "all",
       "us-east-1",
       "us-east-2",
-      "us-east-1",
       "us-west-1",
       "us-west-2",
       "ap-south-1",

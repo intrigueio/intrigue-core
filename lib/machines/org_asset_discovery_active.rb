@@ -32,21 +32,24 @@ module Machine
         # get the nameservers, so we can go further
         start_recursive_task(task_result,"enumerate_nameservers", entity)
 
+        # search certificate transparency
         start_recursive_task(task_result,"search_crt", entity,[
           {"name" => "extract_pattern", "value" => filter_strings.first}], true)
 
+        # do a search of current sonar records
         start_recursive_task(task_result,"dns_search_sonar",entity)
 
+        # do a light bruteforce
         start_recursive_task(task_result,"dns_brute_sub",entity,[
           {"name" => "threads", "value" => 10 },
           {"name" => "use_file", "value" => true },
           {"name" => "brute_alphanumeric_size", "value" => 1 }], true)
 
+        # check saas services that take a domain 
         start_recursive_task(task_result,"saas_trello_check",entity)
         start_recursive_task(task_result,"saas_google_groups_check", entity)
 
-        # Check GITHUB!
-
+        # check for basename and domain name buckets
         base_name = entity.name.split(".")[0...-1].join(".")
         start_recursive_task(task_result,"aws_s3_brute",entity,[
           {"name" => "additional_buckets", "value" => "#{base_name},#{entity.name}"}
@@ -54,12 +57,10 @@ module Machine
 
       elsif entity.type_string == "DnsRecord"
 
+        # very light bruteforce
         start_recursive_task(task_result,"dns_brute_sub",entity,[
           {"name" => "threads", "value" => 5 }])
 
-      elsif entity.type_string == "FtpService"
-
-        start_recursive_task(task_result,"ftp_enumerate",entity, [], true)
 
       elsif entity.type_string == "IpAddress"
 
@@ -158,10 +159,10 @@ module Machine
       ### search for netblocks
       start_recursive_task(task_result,"whois_lookup",entity, [], true)
 
-      # search bgp data for netblocks
+      # search bgp data for netblocks (see http://intrigue.io/api)
       start_recursive_task(task_result,"search_bgp",entity, [], true)
 
-      #
+      # search for the organization's slug
       start_recursive_task(task_result,"saas_trello_check",entity)
 
       ### AWS_S3_brute the name
