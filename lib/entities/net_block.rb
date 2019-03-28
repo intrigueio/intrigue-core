@@ -53,8 +53,8 @@ class NetBlock < Intrigue::Model::Entity
       end
     end
 
-    ### CHECK OUR DISCOVERED ENTITIES TO SEE IF THE TEXT MATCHES 
-    ############################################################
+    ### CHECK OUR IN-PROJECT DISCOVERED ENTITIES TO SEE IF THE TEXT MATCHES 
+    #######################################################################
     self.project.entities.where(scoped: true, type: scope_check_entity_types, hidden: false ).each do |e|
 
       # make sure we skip any dns entries that are not fqdns. this will prevent
