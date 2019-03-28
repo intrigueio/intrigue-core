@@ -82,7 +82,12 @@ class SearchBgp < BaseTask
         # this key doesn't always exist
         if r["netblocks"]
           r["netblocks"].each do |nb|
-            _create_entity "NetBlock", {"name" => "#{nb}", "organization" => org_string, "as_number" => as_number_string}
+            _create_entity "NetBlock", {
+              "name" => "#{nb}", 
+              "organization" => org_string, 
+              "as_number" => as_number_string,
+              "scoped" => true
+            }
           end
         end
 
