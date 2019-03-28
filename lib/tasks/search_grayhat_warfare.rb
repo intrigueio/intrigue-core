@@ -26,7 +26,7 @@ class SearchGrayhatWarfare < BaseTask
     api_key = _get_task_config("grayhat_warfare_api_key")
 
     search_string = _get_entity_name
-    search_uri = "https://buckets.grayhatwarfare.com/api/v1/buckets/0/10?access_token=#{api_key}&keywords=#{search_string}"
+    search_uri = "https://buckets.grayhatwarfare.com/api/v1/buckets/0/1000?access_token=#{api_key}&keywords=#{search_string}"
 
     output = JSON.parse(http_get_body(search_uri))
     output["buckets"].each do |b|
