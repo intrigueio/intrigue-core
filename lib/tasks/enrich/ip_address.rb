@@ -86,12 +86,6 @@ class IpAddress < Intrigue::Task::BaseTask
     _set_entity_detail("asn", whois_asn)
     _set_entity_detail("network", whois_network)
 
-    # scoping ... HACKY
-    if @entity.created_by? "masscan_scan"
-      @entity.scoped = true
-      @entity.save
-    end
-
   end
 
 end

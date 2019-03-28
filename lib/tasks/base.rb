@@ -106,9 +106,22 @@ class BaseTask
       ### ENRICHMENT TASK SPECIFICS
       # Now, if this is an enrichment task, we want to do some things
       if @task_result.task_type == "enrichment"
-        # mark entity as enriched
+        
+        # MARK ENTITY AS ENRICHED
         _log "Marking entity as enriched!"
         @entity.enriched = true
+        
+        ### HANDLE SCOPING.. We should have enough info now that enrichment is complete 
+        if @entity.scoped? 
+          _log "Marking entity as scoped!"
+          @entity.scoped = true
+        else 
+          _log "Marking entity as unscoped!"
+          @entity.scoped = false 
+        end
+
+        # Save it!
+        _log "Saving entity!"
         @entity.save
 
         # MACHINE LAUNCH

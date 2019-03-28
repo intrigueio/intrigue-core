@@ -39,14 +39,27 @@ class EntityManager
     # Merge the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name)
 
-    if entity # already exists
+    if entity # already exists, but now it's created by us... let's clean it up
 
       entity.set_details(details.to_h.deep_merge(entity.details.to_h))
 
-      # scope it since we manually created
-      entity.set_detail("unscoped", false)
-      details = details.tap { |h| h.delete("unscoped") }
-      entity.save
+        #####
+        ### HANDLE USER- or TASK- PROVIDED SCOPING 
+        #####
+    
+          # remove any scope details (though i'm not sure this condition could ever exist on a
+          # manually created entity)
+          details = details.tap { |h| h.delete("unscoped") }
+          details = details.tap { |h| h.delete("scoped") }
+          entity.scoped = true
+          entity.save
+
+        #####
+        ### END ... USER- or TASK- PROVIDED SCOPING 
+        ### 
+        ### ENTITIES can SELF-SCOPE, however, for more info on that 
+        ### see the individual entity file
+        #####
 
     else
       # Create a new entity, validating the attributes
@@ -61,8 +74,8 @@ class EntityManager
             :project => project,
             :type => type,
             :details => details,
-            :hidden => false, # first entity should never be hidden - it was intentional
-            :scoped => true,  # first entity should always be in scope - it was intentional
+            :hidden => false, # first entity should NEVER be hidden - it was intentional
+            :scoped => true,  # first entity should ALWAYS be in scope - it was intentional
             :alias_group_id => g.id
            })
 
@@ -162,21 +175,44 @@ class EntityManager
           :alias_group_id => g.id
         }
 
-        # handle scoping (which controls whether we iterate automatically)
-        # if it's not explicitly provided to us as a detail "unscoped"
-        # rely on the task result's auto_scope setting
-        # otherwise default to unscoped
-        if details["scoped"] == true
+        #####
+        ### HANDLE USER- or TASK- PROVIDED SCOPING 
+        #####
+
+        # if we're told this thing is scoped, let's just mark it scoped
+        # note that we delete the detail since we no longer need it 
+        # TODO... is this used today?
+        if (details["scoped"] == true || details["unscoped"] == "true")
+          task_result.log "Entity was specifically requested to be scoped"
           details = details.tap { |h| h.delete("scoped") }
           entity_details[:scoped] = true
-        elsif details["unscoped"] == true
+        
+        # otherwise ____ default to unscoped ___ 
+        # note that we delete the detail since we no longer need it 
+        elsif (details["unscoped"] == true || details["unscoped"] == "true")
+          task_result.log "Entity was specifically requested to be unscoped"
           details = details.tap { |h| h.delete("unscoped") }
           entity_details[:scoped] = false
+        
+        # if it's set, rely on the task result's auto_scope setting 
+        # - which is set when the entity is created, based on context 
+        # that is (or at least should be) specific to that task
         elsif tr.auto_scope
+          task_result.log "Task result scoped this entity based on auto_scope"
           entity_details[:scoped] = true
+        
+        # otherwise, fall back to false
         else
+          task_result.log "No specific scope request, falling to entity's default scoping rules"
           entity_details[:scoped] = false
         end
+
+        #####
+        ### END ... USER- or TASK- PROVIDED SCOPING 
+        ### 
+        ### ENTITIES can SELF-SCOPE, however, for more info on that 
+        ### see the individual entity file
+        #####
 
         begin
 

@@ -18,6 +18,8 @@ class AutonomousSystem < Intrigue::Model::Entity
     ["enrich/autonomous_system"]
   end
 
+  
+
 end
 end
 end

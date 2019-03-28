@@ -49,7 +49,10 @@ class ImportAwsIpv4Ranges < BaseTask
       _log " -> Creating #{prefix}"
 
       _create_entity("NetBlock", {
-         "name" => "#{prefix}", "aws_region" => region, "aws_service" => service
+         "name" => "#{prefix}", 
+         "aws_region" => region, 
+         "aws_service" => service, 
+         "scoped" => true
       })
     end
 

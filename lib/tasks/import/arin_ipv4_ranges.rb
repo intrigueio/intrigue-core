@@ -27,7 +27,10 @@ class ImportArinIpv4Ranges < BaseTask
     super
     filter = _get_entity_name || nil
     _allocated_ipv4_ranges(filter).each do |range|
-      _create_entity("NetBlock", {"name" => "#{range}" })
+      _create_entity("NetBlock", {
+        "name" => "#{range}",
+        "scoped" => true
+      })
     end
 
   end

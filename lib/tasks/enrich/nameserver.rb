@@ -25,6 +25,7 @@ class Nameserver < Intrigue::Task::BaseTask
     super
     _log "Enriching... Nameserver: #{_get_entity_name}"
 
+
     # this is cheating, but handy for now
     # start a separate task to check security trails if we're
     # part of a scan and we're definitely scoped

@@ -376,6 +376,7 @@ module Intrigue
       dns_entries.uniq
       end
 
+      # TODO ... maybe this should move to the entity itself?
       def check_and_create_unscoped_domain(lookup_name)
         # handy in general, do this for all TLDs
         #if _get_entity_detail("soa_record")
@@ -407,8 +408,8 @@ module Intrigue
 
               # since we are creating an identical domain, send up the details
               e = _create_entity "Domain", {
-                "name" => "#{lookup_name}",
                 "unscoped" => true,
+                "name" => "#{lookup_name}",
                 "resolutions" => _get_entity_detail("resolutions"),
                 "soa_record" => _get_entity_detail("soa_record"),
                 "mx_records" => _get_entity_detail("mx_records"),
@@ -423,8 +424,8 @@ module Intrigue
               next if clean_suffix_list.include? inferred_tld
 
               e = _create_entity "Domain", {
-                "name" => "#{inferred_tld}",
-                "unscoped" => true
+                "unscoped" => true,
+                "name" => "#{inferred_tld}"
               }
             else
               _log "Subtracting suffix (#{suffix}) doesnt make this a tld, moving on."

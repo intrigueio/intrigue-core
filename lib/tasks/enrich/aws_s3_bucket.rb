@@ -82,8 +82,6 @@ class AwsS3Bucket < Intrigue::Task::BaseTask
       })
     end
 
-    ### TODO - determine if scoped
-
   end
 
   def get_contents_unauthenticated(s3_uri, prefix)

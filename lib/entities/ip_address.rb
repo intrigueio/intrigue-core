@@ -26,6 +26,15 @@ class IpAddress < Intrigue::Model::Entity
     ["enrich/ip_address"]
   end
 
+  def scoped?
+
+    # scoping ... TODO (this should be done in the task itself!!!!!)
+    if self.created_by? "masscan_scan"
+      self.scoped = true
+      self.save
+    end
+  end
+
 end
 end
 end
