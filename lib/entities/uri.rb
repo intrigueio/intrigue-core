@@ -11,7 +11,7 @@ class Uri < Intrigue::Model::Entity
   end
 
   def validate_entity
-    name =~ /^http[s]?:\w.*$/
+    name =~ /^https?:.*$/
   end
 
   def detail_string

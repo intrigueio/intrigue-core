@@ -93,9 +93,11 @@ class EntityManager
     end
 
     ### Ensure we have an entity
-    return nil unless our_entity
-    return nil unless our_entity.transform!
-    return nil unless our_entity.validate_entity
+    unless our_entity && our_entity.transform! && our_entity.validate_entity
+      puts "Error creating entity: #{our_entity}." + "Entity: #{type_string}##{name} #{details}"
+      return nil
+    end
+
     # ENRICHMENT MUST BE STARTED MANUALLY!!!!!
 
   our_entity
@@ -241,19 +243,19 @@ class EntityManager
 
     ### Ensure we have an entity
     unless entity
-      task_result.log "ERROR! Unable to create or find entity: #{type}##{downcased_name}, failing!!"
+      task_result.log_error "Unable to create or find entity: #{type}##{downcased_name}, failing!!"
       return nil
     end
 
     ### Run Data transformation (to hide attributes... HACK)
     unless entity.transform!
-      task_result.log "ERROR! Transformation of entity failed: #{entity}, failing!!"
+      task_result.log_error "Transformation of entity failed: #{entity}, failing!!"
       return nil
     end
 
     ### Run Validation
     unless entity.validate_entity
-      task_result.log "ERROR! Validation of entity failed: #{entity}, failing!!"
+      task_result.log_error "Validation of entity failed: #{entity}, failing!!"
       return nil
     end
 

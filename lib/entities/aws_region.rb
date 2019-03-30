@@ -6,7 +6,7 @@ class AwsRegion < Intrigue::Model::Entity
     {
       :name => "AwsRegion",
       :description => "A specific AWS Region",
-      :user_creatable => true
+      :user_creatable => false
     }
   end
 

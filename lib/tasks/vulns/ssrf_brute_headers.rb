@@ -36,7 +36,7 @@ class SsrfBruteHeaders < BaseTask
     header_list = _get_option("header_list").split(",")
 
     _log "Starting SSRF Responder server"
-    Intrigue::Task::Server::SsrfResponder.start_and_background
+    #Intrigue::Task::Server::SsrfResponder.start_and_background
 
     header_list.each do |header|
 

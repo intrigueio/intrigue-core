@@ -36,7 +36,7 @@ class SsrfBruteParameters < BaseTask
     parameter_list = _get_option("parameter_list").split(",")
 
     _log "Starting SSRF Responder server"
-    Intrigue::Task::Server::SsrfResponder.start_and_background
+    #Intrigue::Task::Server::SsrfResponder.start_and_background
 
     parameter_list.each do |parameter|
       # make the request and collect the response

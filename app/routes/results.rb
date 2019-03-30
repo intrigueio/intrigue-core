@@ -214,8 +214,11 @@ class IntrigueApp < Sinatra::Base
         # create the first entity with empty details
         entity = Intrigue::EntityManager.create_first_entity(@project_name,entity_type,entity_name,{})
 
-        # silently skip anything we can't parse (no bueno, raises larger questions)
-        next unless entity
+        # skip anything we can't parse, but throw an error
+        unless entity
+          task_result.log_error "Could not create entity!! #{entity_type} #{entity_name}"
+          next
+        end
 
         # Start the task run!
         task_result = start_task("task", current_project, nil, task_name, entity,

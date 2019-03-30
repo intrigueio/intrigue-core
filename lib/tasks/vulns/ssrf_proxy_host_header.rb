@@ -23,6 +23,7 @@ class SsrfProxyHostHeader < BaseTask
         {"type" => "Uri", "details" => {"name" => "https://intrigue.io"}}
       ],
       :allowed_options => [
+        {:name => "ssrf_target_uri", :regex => "alpha_numeric_list", :default => "http://localhost:55555" },
         {:name => "target_environment", :regex => "alpha_numeric_list", :default => "all" }
       ],
       :created_types => []
@@ -67,7 +68,7 @@ class SsrfProxyHostHeader < BaseTask
       }
     ]
 
-    #_log "Starting SSRF Responder server"
+    _log "Starting SSRF Responder server"
     #Intrigue::Task::Server::SsrfResponder.start_and_background
 
     # TODO We should test here for an ignored host header - just send nonsense
@@ -98,7 +99,7 @@ class SsrfProxyHostHeader < BaseTask
       #_log "Testing payload: #{payload} on #{generated_uri}"
 
       # check the response for success
-      if response && #not nil
+      if response && #n ot nil
           response.body[0..50] != normal.body[0..50] && # not the same
           !(response["location"] =~ /127.0.0.1/) && # redirect... usually useless
           response.code != "301" && # redirect... usually useless
@@ -125,9 +126,13 @@ class SsrfProxyHostHeader < BaseTask
         #}
 
         # save off enough information to investigate
-        info = {
+        ssrf_issue = {
           "name" => "#{payload[:environment]} SSRF on #{uri}",
-          "ssrf" => {
+          "type" => "detected_ssrf",
+          "description" => "SSRF on #{uri}",
+          "severity" => 3,
+          "status" => "potential",
+          "details" => {
             "uri" => "#{generated_uri}",
             "host_header" => "#{payload[:host]}",
             "code" => "#{response.code}",
@@ -138,10 +143,10 @@ class SsrfProxyHostHeader < BaseTask
         }
 
           if response.code =~ /^3/
-            info["3xx_location"] = response["location"]
+            ssrf_issue["3xx_location"] = response["location"]
           end
 
-        _create_entity "Info", info
+        _create_issue ssrf_issue
 
       else
 

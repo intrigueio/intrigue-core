@@ -6,7 +6,7 @@ module Machine
       {
         :name => "enumerate_certificates",
         :pretty_name => "Grab SSL Certificate for every URI",
-        :passive => true,
+        :passive => false,
         :user_selectable => false,
         :authors => ["jcran"],
         :description => "This machine grabs the certificate for every URI."
