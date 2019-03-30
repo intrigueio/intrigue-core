@@ -11,7 +11,7 @@ class PhoneNumber < Intrigue::Model::Entity
   end
 
   def validate_entity
-    name =~ /^\w.*$/
+    name =~ /^\D*([2-9]\d{2})(\D*)([2-9]\d{2})(\D*)(\d{4})\D*$/
   end
 
   def detail_string

@@ -28,11 +28,6 @@ class SearchShodan < BaseTask
     api_key = _get_task_config "shodan_api_key"
     search_term = _get_entity_name
 
-    unless api_key
-      _log_error "No api_key?"
-      return
-    end
-
     @client = Client::Search::Shodan::ApiClient.new(api_key)
     response = @client.search_ip(search_term)
 

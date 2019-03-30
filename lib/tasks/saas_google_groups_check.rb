@@ -37,7 +37,6 @@ class SaasGoogleGroupsCheck < BaseTask
     if text =~ /gpf_stats.js/
 
       _log_good "Success! Domain is configured and public."
-
       service_name = "groups.google.com"
 
       _create_issue({

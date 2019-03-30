@@ -50,7 +50,6 @@ class SearchHaveIBeenPwned < BaseTask
       })
 
       # TODO - create a web account? 
-
     end
 
 

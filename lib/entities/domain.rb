@@ -11,12 +11,13 @@ class Domain < Intrigue::Model::Entity
   end
 
   def validate_entity
-    name =~ /^[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-\_]*[a-zA-Z0-9\-\_]\.*[A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-\_]*[A-Za-z\.]$/ #_dns_regex
+    name =~ _dns_regex
   end
 
   def detail_string
     return "" unless details["resolutions"]
-    details["resolutions"].each.group_by{|k| k["response_type"] }.map{|k,v| "#{k}: #{v.length}"}.join("| ")
+    details["resolutions"].each.group_by{|k| 
+      k["response_type"] }.map{|k,v| "#{k}: #{v.length}"}.join(" | ")
   end
 
   def enrichment_tasks
