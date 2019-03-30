@@ -84,14 +84,15 @@ class UriBruteFocusedContent < BaseTask
 
     # technology specifics 
     apache_list = [
-      { path: "/.htaccess", regex: /AuthName/, status: "confirmed" },
-      { path: "/.htaccess.bak", regex: /AuthName/, status: "confirmed" },
-      { path: "/.htpasswd", regex: /^\w:.*$/, status: "potential" }
+      { path: "/.htaccess", regex: /AuthName/, severity: 3, status: "confirmed" },
+      { path: "/.htaccess.bak", regex: /AuthName/, severity: 3, status: "confirmed" },
+      { path: "/.htpasswd", regex: /^\w:.*$/, severity: 1, status: "potential" },
+      { path: "/server-status", regex: /Server Version/, severity: 4, status: "confirmed" }
     ]
 
     asp_net_list = [
       { path: "/elmah.axd", severity: 3, regex: /Error log for/i, status: "confirmed" },
-      { path: "/Trace.axd", regex: /Microsoft \.NET Framework Version/, :status => "confirmed" }
+      { path: "/Trace.axd", severity: 4, regex: /Microsoft \.NET Framework Version/, :status => "confirmed" }
     ]
 
     coldfusion_list = [
