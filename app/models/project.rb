@@ -71,15 +71,13 @@ module Intrigue
 
       def export_applications_csv
         out = ""
-        out << "IpAddress,Uri,Title,Fingerprint,Javascript,Form,Http Auth,Forms Auth,Any Auth\n"
+        out << "IpAddress,Uri,Title,Fingerprint,Javascript"
 
-        self.entities.sort_by{|e| e.to_s }.each do |x|
-
-          next unless x.kind_of? Intrigue::Entity::Uri
+        Intrigue::Model::Entity.scope_by_project_and_type(self.name, "Intrigue::Entity::Uri").sort_by{|e| e.name }.each do |x|
 
           # Resolve the host
           host_id = x.get_detail("host_id")
-          host = Intrigue::Model::Entity.scope_by_project(self).first(:id => host_id)
+          host = Intrigue::Model::Entity.scope_by_project(self.name).first(:id => host_id)
           if host
             out << "#{host.name},"
           else
@@ -119,34 +117,20 @@ module Intrigue
               out << temp.gsub(",",";")
             end
           end
-          out << ","
 
-          # authentication
-          configuration = x.get_detail("content")
-          http_auth = false
-          forms_auth = false
-          any_auth = false
-          x_frame_options = false
-          if configuration
-            configuration.each do |c|
-              if c["name"] == "Authentication - Forms"
-                forms_auth = c["result"]
-              elsif c["name"] == "Authentication - HTTP"
-                http_auth = c["result"]
-              elsif c["name"] == "Form Detected"
-                form_detected = c["result"]
-              elsif c["name"] == "Directory Listing Detected"
-                dir_listing_detected = c["result"]
-              end
-            end
+          out << "\n"
+        end
 
-            # Calculated
-            any_auth = true if (forms_auth || http_auth)
-          end
-
-          out << "#{form_detected},#{dir_listing_detected},#{http_auth},#{forms_auth},#{any_auth}\n"
+      out
+      end
 
 
+       def export_issues_csv
+        out = ""
+        out << "Name,Type,Status,Severity,Description\n"
+
+        self.issues.sort_by{|i| i.severity }.each do |i|
+          out << "#{i.name.gsub(","," ")}, #{i.type}, #{i.status}, #{i.severity}, #{i.description.gsub(","," ")}\n"
         end
 
       out

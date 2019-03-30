@@ -127,23 +127,23 @@ class SsrfProxyHostHeader < BaseTask
 
         # save off enough information to investigate
         ssrf_issue = {
-          "name" => "#{payload[:environment]} SSRF on #{uri}",
-          "type" => "detected_ssrf",
-          "description" => "SSRF on #{uri}",
-          "severity" => 3,
-          "status" => "potential",
-          "details" => {
-            "uri" => "#{generated_uri}",
-            "host_header" => "#{payload[:host]}",
-            "code" => "#{response.code}",
-            "body" => "#{response.body.sanitize_unicode}",
-            "normal_code" => "#{normal.code}",
-            "normal_body" => "#{normal.body.sanitize_unicode}"
+          name: "#{payload[:environment]} SSRF on #{uri}",
+          type: "detected_ssrf",
+          description: "SSRF on #{uri}",
+          severity: 3,
+          status: "potential",
+          details: {
+            uri: "#{generated_uri}",
+            host_header: "#{payload[:host]}",
+            code: "#{response.code}",
+            body: "#{response.body.sanitize_unicode}",
+            normal_code: "#{normal.code}",
+            normal_body: "#{normal.body.sanitize_unicode}"
           }
         }
 
           if response.code =~ /^3/
-            ssrf_issue["3xx_location"] = response["location"]
+            ssrf_issue[:details][:redirect_location] = response["location"]
           end
 
         _create_issue ssrf_issue

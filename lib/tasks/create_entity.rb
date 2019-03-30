@@ -26,7 +26,9 @@ class CreateEntity < BaseTask
 
     name = _get_entity_name
     type = _get_entity_type_string
+
     e = _create_entity type, {"name" => name }
+
   end
 
 end

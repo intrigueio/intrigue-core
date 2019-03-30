@@ -79,7 +79,6 @@ class UriBruteFocusedContent < BaseTask
       { path: "/portal", regex: nil },
       { path: "/admin", regex: nil },
       { path: "/test", regex: nil },
-      { path: "/server-status", severity: 4, regex: /\<title\>Apache Status/, status: "confirmed" }
     ]
 
     # technology specifics 
@@ -87,7 +86,7 @@ class UriBruteFocusedContent < BaseTask
       { path: "/.htaccess", regex: /AuthName/, severity: 3, status: "confirmed" },
       { path: "/.htaccess.bak", regex: /AuthName/, severity: 3, status: "confirmed" },
       { path: "/.htpasswd", regex: /^\w:.*$/, severity: 1, status: "potential" },
-      { path: "/server-status", regex: /Server Version/, severity: 4, status: "confirmed" }
+      { path: "/server-status", regex: /Server Version/i, severity: 4, status: "confirmed" }
     ]
 
     asp_net_list = [

@@ -149,6 +149,15 @@ class IntrigueApp < Sinatra::Base
       @project.export_applications_csv
     end
 
+    get '/:project/export/issues/csv' do
+      content_type 'application/csv'
+      headers["Content-Disposition"] = "attachment;filename=#{@project_name}.issues.csv"
+
+      @project = Intrigue::Model::Project.first(:name => @project_name)
+      @project.export_issues_csv
+    end
+
+
 
     # Show the results in a gexf format
     get '/:project/export/gexf/?' do
