@@ -157,8 +157,6 @@ class IntrigueApp < Sinatra::Base
       @project.export_issues_csv
     end
 
-
-
     # Show the results in a gexf format
     get '/:project/export/gexf/?' do
       content_type 'text/plain'

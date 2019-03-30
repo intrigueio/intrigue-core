@@ -71,7 +71,7 @@ module Intrigue
 
       def export_applications_csv
         out = ""
-        out << "IpAddress,Uri,Title,Fingerprint,Javascript"
+        out << "IpAddress,Uri,Enriched,Title,Fingerprint,Javascript"
 
         Intrigue::Model::Entity.scope_by_project_and_type(self.name, "Intrigue::Entity::Uri").sort_by{|e| e.name }.each do |x|
 
@@ -89,6 +89,8 @@ module Intrigue
           #products = x.get_detail("products")
           #product_string = products.map{|p| p["matched"] }.compact.join("; ") if products
           #out << "#{product_string}" if product_string
+
+          out << "#{.enriched},"
 
           page_title = x.get_detail("title")
           page_title_string = page_title.gsub(",","") if page_title
