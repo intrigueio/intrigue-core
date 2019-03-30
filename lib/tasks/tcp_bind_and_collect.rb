@@ -21,7 +21,8 @@ class TcpBindAndCollect < BaseTask
         {:name => "notify", :regex=> "boolean", :default => true },
         {:name => "create_entity", :regex=> "boolean", :default => true }
       ],
-      :created_types => ["String"]
+      :created_types => ["String"],
+      :queue => "app"
     }
   end
 
