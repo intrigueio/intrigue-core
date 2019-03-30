@@ -90,7 +90,7 @@ module Intrigue
           #product_string = products.map{|p| p["matched"] }.compact.join("; ") if products
           #out << "#{product_string}" if product_string
 
-          out << "#{.enriched},"
+          out << "#{x.enriched},"
 
           page_title = x.get_detail("title")
           page_title_string = page_title.gsub(",","") if page_title
