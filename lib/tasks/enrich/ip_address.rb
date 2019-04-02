@@ -60,6 +60,27 @@ class IpAddress < Intrigue::Task::BaseTask
     whois_asn = "AS#{whois_details.first}"
     whois_network = whois_details[1]
 
+    ### 
+    ### Check Whois
+    ### 
+    if _get_entity_detail "whois_full_text" # skip lookup if we already have it
+      _log "Skipping lookup, we already have the details"
+      out = @entity.details
+    else # do the lookup
+      out = whois(lookup_name) || {}
+      _set_entity_detail "whois_full_text", out["whois_full_text"]
+    end
+
+    # check transferred
+    if out["whois_full_text"] =~ /Early Registrations, Transferred to/
+      _set_entity_detail "transferred", true
+    end
+
+    # check ipv6
+    if _get_entity_name =~ /::/
+      _set_entity_detail "ipv6", true
+    end
+
     ####
     ### Set details for this entity
     ####

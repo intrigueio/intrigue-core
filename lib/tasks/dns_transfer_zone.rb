@@ -68,14 +68,14 @@ class DnsTransferZone < BaseTask
 
             sanitized_record = record.sanitize_unicode
 
-            # Check to see if it's an ip address or a dns record
-            record.is_ip_address? ? entity_type = "IpAddress" : entity_type = "DnsRecord"
+            # only create DNS records
+            next if record.is_ip_address? 
 
             # ensure it is a valid address & check for base64 records
             next if sanitized_record =~ /^.*==$/
 
             # create it
-            _create_entity entity_type, { "name" => "#{sanitized_record.strip}", "record_type" => "#{z.type.to_s}", "record_content" => "#{sanitized_record.strip}" }
+            _create_entity "DnsRecord", { "name" => "#{sanitized_record.strip}", "record_type" => "#{z.type.to_s}", "record_content" => "#{sanitized_record.strip}" }
 
           end
         end

@@ -99,7 +99,7 @@ class SsrfProxyHostHeader < BaseTask
       #_log "Testing payload: #{payload} on #{generated_uri}"
 
       # check the response for success
-      if response && #n ot nil
+      if response
           response.body[0..50] != normal.body[0..50] && # not the same
           !(response["location"] =~ /127.0.0.1/) && # redirect... usually useless
           response.code != "301" && # redirect... usually useless

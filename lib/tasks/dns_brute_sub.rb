@@ -23,12 +23,12 @@ class DnsBruteSub < BaseTask
             "en", "sharepoint", "portal", "public", "private", "pub", "zeus",
             "mickey", "time", "web", "it", "my", "photos", "safe", "download",
             "dl", "search", "staging", "fw", "firewall", "email"]  },
-        {:name => "use_mashed_domains", :type => "Boolean", :regex => "boolean", :default => false },
-        {:name => "use_permutations", :type => "Boolean", :regex => "boolean", :default => true },
-        {:name => "use_file", :type => "Boolean", :regex => "boolean", :default => false },
-        {:name => "brute_file", :type => "String", :regex => "filename", :default => "dns_sub.list" },
-        {:name => "brute_alphanumeric_size", :type => "Integer", :regex => "integer", :default => 0 },
-        {:name => "threads", :type => "Integer", :regex => "integer", :default => 20 },
+        {:name => "use_mashed_domains", :regex => "boolean", :default => false },
+        {:name => "use_permutations", :regex => "boolean", :default => true },
+        {:name => "use_file", :regex => "boolean", :default => false },
+        {:name => "brute_file", :regex => "filename", :default => "dns_sub.list" },
+        {:name => "brute_alphanumeric_size", :regex => "integer", :default => 0 },
+        {:name => "threads", :regex => "integer", :default => 20 },
       ],
       :created_types => ["IpAddress","DnsRecord","Domain"]
     }

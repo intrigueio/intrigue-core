@@ -43,7 +43,7 @@ class Example < BaseTask
       return
     end
 
-    # create a finding
+    # create an issue
     zone = [1,2,3,4]
     _create_issue({
       name: "Example issue",
