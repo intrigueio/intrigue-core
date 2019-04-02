@@ -15,8 +15,10 @@ class ApacheStrutsJakartaParser < BaseTask
       :type => "vuln_check",
       :passive => false,
       :allowed_types => ["Uri"],
-      :example_entities => [ {"type" => "Uri", "details" => {"name" => "https://intrigue.io"}} ],
-      :allowed_options => [  ],
+      :example_entities => [ 
+        {"type" => "Uri", "details" => {"name" => "https://intrigue.io"}} 
+      ],
+      :allowed_options => [],
       :created_types => []
     }
   end
@@ -36,24 +38,23 @@ class ApacheStrutsJakartaParser < BaseTask
       return
     end
 
-    # show the response
+    # show the response in the logs 
     response.each {|x| _log "#{x}: #{response.header[x]}"}
 
     if response.header['X-Intrigue-Struts'] =~ /788544/
-
-      # set a vulns hash
-      vulns = _get_entity_detail("vulns") || {}
-      vulns["CVE-2017-5638"] = {"vulnerable" => true}
-      _set_entity_detail("vulns",vulns)
-
-      # TODO - create finding ?!?
-
-      _log_good "XXXXX-Struts-XXXXX"
-      _log_good "Vulnerable to Apache Struts CVE-2017-5638!"
-      _log_good "XXXXX-Struts-XXXXX"
+      _create_issue({
+        name: "Vulnerable to Apache Struts Jakarta Parser Vulnerability (CVE-2017-5638) RCE",
+        type: "vulnerability",
+        severity: 1,
+        status: "confirmed",
+        description: "Vulnerable to Apache Struts Jakarta Parser Vulnerability (CVE-2017-5638) RCE",
+        details: { 
+          uri: uri,
+          cve_id: "CVE-2017-5638",
+          positive_response: "#{response.header['X-Intrigue-Struts']}",
+        }
+      })
     end
-
-
   end
 
 end

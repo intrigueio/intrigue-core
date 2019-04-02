@@ -16,8 +16,12 @@ class AtlassianFisheyeMostactivecommitersDisclosure < BaseTask
       :type => "vuln_check",
       :passive => false,
       :allowed_types => ["Uri"],
-      :example_entities => [ {"type" => "Uri", "details" => {"name" => "https://intrigue.io"}} ],
-      :allowed_options => [  ],
+      :example_entities => [ 
+        {"type" => "Uri", "details" => {"name" => "https://intrigue.io"}} 
+      ],
+      :allowed_options => [
+        {:name => "project_name", :type => "alpha_numeric", :regex => "boolean", :default => false },
+      ],
       :created_types => []
     }
   end
@@ -27,10 +31,29 @@ class AtlassianFisheyeMostactivecommitersDisclosure < BaseTask
     super
 
     uri = _get_entity_name
+    opt_project_name = _get_option "project_name"
 
-    ## https://url/fe/mostActiveCommitters.do?path=&repname=REPONAME&maxCommitters=9&numDays=90
-    # https://fisheye.student.fiw.fhws.de:8443/fe/mostActiveCommitters.do?path=&repname=lambeth&maxCommitters=9&numDays=90
+    begin 
+      j = JSON.parse = http_get_body "#{uri}/fe/mostActiveCommitters.do?path=&repname=#{project_name}&maxCommitters=9&numDays=90"
 
+      _create_issue({
+        name: "Vulnerable to Atlassian Fisheye mostactivecommiters.do Information Disclosure (CVE-2017-9512)",
+        type: "vulnerability",
+        severity: 1,
+        status: "confirmed",
+        description: "Vulnerable to Atlassian Fisheye mostactivecommiters.do Information Disclosure (CVE-2017-9512)",
+        details: { 
+          uri: uri,
+          cve_id: "CVE-2017-9512",
+          project_name: "#{opt_project_name}",
+        }
+      })
+
+      _log_good "Successful response. Vulnerable!"
+
+    rescue JSON::ParserError => e 
+      _log_error "Unable to parse response. Not vulnerable?"
+    end
 
   end
 
