@@ -132,7 +132,7 @@ module Machine
 
       elsif entity.type_string == "NetBlock"
 
-        inferred_whitelist = "#{entity.get_detail("whois_full_text")}".downcase =~ /#{filter_strings.map{|x| Regexp.escape(x.downcase) }.join("|")}/i
+        inferred_whitelist = "#{entity.get_detail("whois_full_text")}".downcase =~ /#{whitelist_strings.map{|x| Regexp.escape(x.downcase) }.join("|")}/i
 
         transferred = entity.get_detail("transferred")
 
@@ -265,13 +265,13 @@ module Machine
     # Recurse should receive a fully enriched object from the creator task
     def self.recurse(entity, task_result)
 
-      filter_strings = task_result.scan_result.whitelist_strings
+      whitelist_strings = task_result.scan_result.whitelist_strings
 
       if entity.type_string == "Domain"
 
         # only applicable to dns_record, domain, and netblock for now
         # whitelisted still checks project name, so leave it for now
-        inferred_whitelist = "#{entity.get_detail("whois_full_text")}".downcase =~ /#{filter_strings.map{|x| Regexp.escape(x.downcase) }.join("|")}/i
+        inferred_whitelist = "#{entity.get_detail("whois_full_text")}".downcase =~ /#{whitelist_strings.map{|x| Regexp.escape(x.downcase) }.join("|")}/i
 
         return unless (entity.scoped || inferred_whitelist )
 
@@ -283,7 +283,7 @@ module Machine
 
         # search certificate transparency
         start_recursive_task(task_result,"search_crt", entity,[
-          {"name" => "extract_pattern", "value" => filter_strings.first}], true)
+          {"name" => "extract_pattern", "value" => whitelist_strings.first}], true)
 
         # do a search of current sonar records
         start_recursive_task(task_result,"dns_search_sonar",entity)
@@ -325,7 +325,7 @@ module Machine
 
       elsif entity.type_string == "Nameserver"
 
-        inferred_whitelist = ("#{entity.name}" =~ /#{filter_strings.map{|x| Regexp.escape(x.downcase) }.join("|")}/i)
+        inferred_whitelist = ("#{entity.name}" =~ /#{whitelist_strings.map{|x| Regexp.escape(x.downcase) }.join("|")}/i)
 
         return unless (entity.scoped || inferred_whitelist )
 
@@ -336,7 +336,7 @@ module Machine
 
         # only applicable to dns_record, domain, and netblock for now
         # whitelisted still checks project name, so leave it for now
-        inferred_whitelist = "#{entity.get_detail("whois_full_text")}".downcase =~ /#{filter_strings.map{|x| Regexp.escape(x.downcase) }.join("|")}/i
+        inferred_whitelist = "#{entity.get_detail("whois_full_text")}".downcase =~ /#{whitelist_strings.map{|x| Regexp.escape(x.downcase) }.join("|")}/i
 
         transferred = entity.get_detail("transferred")
 
@@ -442,7 +442,7 @@ module Machine
           #start_recursive_task(task_result,"uri_spider",entity,[
           #    {"name" => "max_pages", "value" => 10 },
           #    {"name" => "extract_dns_records", "value" => true },
-          #    {"name" => "extract_dns_record_pattern", "value" => "#{filter_strings.first}"}])
+          #    {"name" => "extract_dns_record_pattern", "value" => "#{whitelist_strings.first}"}])
         #end
 
       else
