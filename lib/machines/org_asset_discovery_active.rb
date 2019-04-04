@@ -132,6 +132,8 @@ module Machine
 
       elsif entity.type_string == "NetBlock"
 
+        inferred_whitelist = "#{entity.get_detail("whois_full_text")}".downcase =~ /#{filter_strings.map{|x| Regexp.escape(x.downcase) }.join("|")}/i
+
         transferred = entity.get_detail("transferred")
 
         scannable = entity.scoped && !transferred
