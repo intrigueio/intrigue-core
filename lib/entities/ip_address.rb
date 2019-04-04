@@ -48,7 +48,7 @@ class IpAddress < Intrigue::Model::Entity
         if ( details["whois_full_text"] =~ /#{Regexp.escape(s["name"])}/ ||
 
               ## SHARED HOSTING... opt in
-              details["whois_full_text"] =~ /\sabuse@amazonaws.com/) ## match aws 
+              #details["whois_full_text"] =~ /\sabuse@amazonaws.com/) ## match aws 
           
           return true
         end
@@ -74,12 +74,6 @@ class IpAddress < Intrigue::Model::Entity
 
   # always default to whatever was passed to us (could have been set in the task)
   scoped
-  end
-
-  def scoped?
-
-
-
   end
 
 end
