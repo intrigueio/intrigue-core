@@ -45,12 +45,12 @@ class IpAddress < Intrigue::Model::Entity
     if self.project.seeds
       self.project.seeds.each do |s|
         next unless scope_check_entity_types.include? s["type"]
-        if ( details["whois_full_text"] =~ /#{Regexp.escape(s["name"])}/ ||
-
-              ## SHARED HOSTING... opt in
-              #details["whois_full_text"] =~ /\sabuse@amazonaws.com/) ## match aws 
-          
-          return true
+        return true if details["whois_full_text"] =~ /#{Regexp.escape(s["name"])}/ 
+        
+        # only if it's a domain
+        if s["type"] == "Intrigue::Entity::Domain" # try the basename )
+          base_name = s["name"].split(".").first # x.com -> x
+          return true if (details["whois_full_text"] =~ /#{Regexp.escape(base_name)}/)
         end
       end
     end
@@ -74,7 +74,7 @@ class IpAddress < Intrigue::Model::Entity
 
   # always default to whatever was passed to us (could have been set in the task)
   scoped
-  end
+  end 
 
 end
 end
