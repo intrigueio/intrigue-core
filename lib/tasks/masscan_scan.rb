@@ -72,7 +72,7 @@ class Masscan < BaseTask
         created_entity = _create_entity("IpAddress", { 
           "name" => ip_address, 
           "scoped" => true,
-          "whois_full_text" => entity.get_detail["whois_full_text"] 
+          "whois_full_text" => _get_entity_detail("whois_full_text")
         })
 
         # this will also add teh the port to the ip address

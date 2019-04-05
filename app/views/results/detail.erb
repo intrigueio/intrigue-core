@@ -47,7 +47,6 @@ getEntities(<%=@result.id%>);
   <p>Entity Count: <%= @result.entities.count %></p>
   <p>Machine: <%= @result.scan_result.machine if @result.scan_result %></p>
   <p>Max Depth: <%=@result.scan_result.depth if @result.scan_result %> </p>
-  <p>Whitelist Strings: <%= @result.scan_result.whitelist_strings if @result.scan_result %></p>
 
   Export:
   <ul>
