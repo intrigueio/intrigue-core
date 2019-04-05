@@ -22,18 +22,25 @@ module Machine
       # don't go any further unless we're scoped & not no-traverse (hidden)! 
       ### 
       traversable = false # default to no traverse
+      traversable = true if entity.scoped # true if we're scoped and not hidden
       traversable = true if entity.type_string == "AwsS3Bucket" # allow these until scoping gets better
       traversable = true if entity.type_string == "AwsRegion" # allow these until scoping gets better
       traversable = true if entity.type_string == "DnsRecord" # allow these until scoping gets better
       traversable = true if entity.type_string == "EmailAddress" # allow these until scoping gets better
       traversable = true if entity.type_string == "IpAddress" # allow these until scoping gets better
       traversable = true if entity.type_string == "Organization" # allow these until scoping gets better
+      traversable = true if entity.type_string == "NetworkService" # allow these until scoping gets better
       traversable = true if entity.type_string == "String" # allow these until scoping gets better
       traversable = true if entity.type_string == "Uri" # allow these until scoping gets better
-      traversable = true if entity.scoped && !entity.hidden # true if we're scoped and not hidden
-      return unless traversable 
-
-      puts "#{entity.name} traversable!!"
+      traversable = false if entity.hidden # always skip hiddens (implicitly non-traversable)
+      
+      # LOG THE CHOICE
+      if traversable 
+        puts "#{entity.type_string} #{entity.name} traversable!!"
+      else
+        puts "#{entity.type_string} #{entity.name} NOT traversable!!" 
+        return
+      end
 
       if entity.type_string == "AwsS3Bucket"
         
@@ -53,31 +60,31 @@ module Machine
         #start_recursive_task(task_result,"security_trails_subdomain_search",entity, [], true)
 
         # try an nsec walk
-        start_recursive_task(task_result,"dns_nsec_walk", entity ,[], true)
+        start_recursive_task(task_result,"dns_nsec_walk", entity ,[])
 
         # attempt a zone transfer
-        start_recursive_task(task_result,"dns_transfer_zone", entity, [], true)
+        start_recursive_task(task_result,"dns_transfer_zone", entity, [])
 
         # check certificate records
         start_recursive_task(task_result,"search_crt", entity,[
-          {"name" => "extract_pattern", "value" => seed_list }], true)
+          {"name" => "extract_pattern", "value" => seed_list }])
 
         # search sonar results
-        start_recursive_task(task_result,"dns_search_sonar",entity, [], true)
+        start_recursive_task(task_result,"dns_search_sonar",entity, [])
 
         # threatcrowd 
-        start_recursive_task(task_result,"search_threatcrowd", entity,[], true)
+        start_recursive_task(task_result,"search_threatcrowd", entity,[])
 
         # bruteforce email addresses
-        start_recursive_task(task_result,"email_brute_gmail_glxu",entity,[], true)
+        start_recursive_task(task_result,"email_brute_gmail_glxu",entity,[])
 
         # subdomain bruteforce
         #start_recursive_task(task_result,"dns_brute_sub_async",entity,[
         #  {"name" => "brute_alphanumeric_size", "value" => 1 }], true)
 
-        start_recursive_task(task_result,"saas_google_groups_check",entity,[], true)
-        start_recursive_task(task_result,"saas_trello_check",entity,[], true)
-        start_recursive_task(task_result,"saas_jira_check",entity,[], true)
+        start_recursive_task(task_result,"saas_google_groups_check",entity,[])
+        start_recursive_task(task_result,"saas_trello_check",entity,[])
+        start_recursive_task(task_result,"saas_jira_check",entity,[])
 
         # S3 bruting based on domain name
        generated_names = [
@@ -92,39 +99,41 @@ module Machine
         ]
 
         start_recursive_task(task_result,"aws_s3_brute",entity,[
-          {"name" => "additional_buckets", "value" => generated_names.join(",")}], true)
+          {"name" => "additional_buckets", "value" => generated_names.join(",")}])
 
       elsif entity.type_string == "DnsRecord"
 
         # search sonar results
-        start_recursive_task(task_result,"dns_search_sonar",entity, [], true)
+        start_recursive_task(task_result,"dns_search_sonar",entity, [])
 
         #start_recursive_task(task_result,"dns_brute_sub_async",entity)
 
       elsif entity.type_string == "EmailAddress"
 
-        start_recursive_task(task_result,"search_have_i_been_pwned",entity,[], true)
-        start_recursive_task(task_result,"saas_google_calendar_check",entity,[], true)
+        start_recursive_task(task_result,"search_have_i_been_pwned",entity,[])
+        start_recursive_task(task_result,"saas_google_calendar_check",entity,[])
 
       elsif entity.type_string == "GithubAccount"
 
         #if entity.get_detail("account_type") == "Organization"
-          start_recursive_task(task_result,"gitrob", entity, [], true)
+          start_recursive_task(task_result,"gitrob", entity, [])
         #end
 
       elsif entity.type_string == "IpAddress"
-
-        ### search for netblocks
-        start_recursive_task(task_result,"whois_lookup",entity, [], true)
-
+      
         # Prevent us from re-scanning services
         unless entity.created_by?("masscan_scan")
-          start_recursive_task(task_result,"nmap_scan",entity, [], true)
+  
+          ### search for netblocks
+          start_recursive_task(task_result,"whois_lookup",entity, [])
+
+          # scan if we haven't already hit the network range
+          start_recursive_task(task_result,"nmap_scan",entity, [])
         end
 
       elsif entity.type_string == "Nameserver"
 
-        start_recursive_task(task_result,"security_trails_nameserver_search",entity, [], true)
+        start_recursive_task(task_result,"security_trails_nameserver_search",entity, [])
 
       elsif entity.type_string == "NetBlock"
 
@@ -144,7 +153,7 @@ module Machine
             {"name"=> "tcp_ports", "value" => "21,23,35,22,2222,5000,502,503,80,443,81,4786,8080,8081," + 
               "8443,3389,1883,8883,6379,6443,8032,9200,9201,9300,9301,9091,9092,9094,2181,2888,3888,5900," + 
               "5901,7001,27017,27018,27019,8278,8291"},
-            {"name"=>"udp_ports", "value" => "161,1900"}], true)
+            {"name"=>"udp_ports", "value" => "161,1900"}])
 
         else
           task_result.log "Cowardly refusing to scan this netblock: #{entity}.. it's not scannable!"
@@ -153,7 +162,7 @@ module Machine
       elsif entity.type_string == "Organization"
 
         ### search for netblocks
-        start_recursive_task(task_result,"whois_lookup",entity, [], true)
+        start_recursive_task(task_result,"whois_lookup",entity, [])
 
         # search bgp data for netblocks
         start_recursive_task(task_result,"search_bgp",entity, [], true)
@@ -209,14 +218,14 @@ module Machine
       elsif entity.type_string == "Uri"
 
         ## Grab the SSL Certificate
-        start_recursive_task(task_result,"uri_gather_ssl_certificate",entity, [],  true) if entity.name =~ /^https/
+        start_recursive_task(task_result,"uri_gather_ssl_certificate",entity, []) if entity.name =~ /^https/
 
         # Check for exploitable URIs, but don't recurse on things we've already found
         #unless (entity.created_by?("uri_brute_focused_content") || entity.created_by?("uri_spider") )
         start_recursive_task(task_result,"uri_brute_focused_content", entity)
         #end
 
-        start_recursive_task(task_result,"uri_check_subdomain_hijack",entity, [],  true)
+        start_recursive_task(task_result,"uri_check_subdomain_hijack",entity, [])
 
         # Check for exploitable URIs, but don't recurse on things we've already found
         #start_recursive_task(task_result,"uri_brute", entity, [
