@@ -32,7 +32,7 @@ module Notifier
       result_url = "#{@system_base_uri}"
       result_url += "/#{result.project.name}/results/#{result.id}" if result
 
-      constructed_message = "#{message}\nMore details at: ```#{result_url}```"
+      constructed_message = "#{message}\nMore details at: #{result_url}"
 
       ::Slack.configure do |config|
         config.token = @access_key
