@@ -90,8 +90,8 @@ class UriBruteFocusedContent < BaseTask
     ]
 
     asp_net_list = [
-      { path: "/elmah.axd", severity: 3, regex: /Error log for/i, status: "confirmed" },
-      { path: "/Trace.axd", severity: 4, regex: /Microsoft \.NET Framework Version/, :status => "confirmed" }
+      { path: "/elmah.axd", severity: 2, regex: /Error log for/i, status: "confirmed" },
+      { path: "/Trace.axd", severity: 5, regex: /Microsoft \.NET Framework Version/, :status => "confirmed" }
     ]
 
     coldfusion_list = [
@@ -101,17 +101,16 @@ class UriBruteFocusedContent < BaseTask
 
 
     jenkins_list = [
-      { path: "/view/All/builds", regex: /Jenkins ver./i, status: "confirmed" },
-      { path: "/view/All/newjob", regex: /Jenkins/i, status: "confirmed" },
-      { path: "/asynchPeople/", regex: /Jenkins/i, status: "confirmed" },
-      { path: "/userContent/", regex: /Jenkins/i, status: "confirmed" },
-      { path: "/computer/", regex: /Jenkins/i, status: "confirmed" },
-      { path: "/pview/", regex: /Jenkins/i, status: "confirmed" },
-      { path: "/systeminf", regex: /Jenkins/i, status: "confirmed" },
-      { path: "/systemInfo", regex: /Jenkins/i, status: "confirmed" },
-      { path: "/script", regex: /Jenkins/i, status: "confirmed" },
-      { path: "/signup", regex: /Jenkins/i, status: "confirmed" },
-      { path: "/securityRealm/createAccount", regex: /Jenkins/i , status: "confirmed"}
+      { path: "/view/All/builds", severity: 4, regex: /Jenkins ver./i, status: "confirmed" },
+      { path: "/view/All/newjob",  severity: 4, regex: /Jenkins/i, status: "confirmed" },
+      { path: "/asynchPeople/",  severity: 4, regex: /Jenkins/i, status: "confirmed" },
+      { path: "/userContent/",  severity: 4, regex: /Jenkins/i, status: "confirmed" },
+      { path: "/computer/",  severity: 4, regex: /Jenkins/i, status: "confirmed" },
+      { path: "/pview/",  severity: 4, regex: /Jenkins/i, status: "confirmed" },
+      { path: "/systemInfo",  severity: 4, regex: /Jenkins/i, status: "confirmed" },
+      { path: "/script",  severity: 4, regex: /Jenkins/i, status: "confirmed" },
+      { path: "/signup",  severity: 5, regex: /Jenkins/i, status: "confirmed" },
+      { path: "/securityRealm/createAccount", severity: 4, regex: /Jenkins/i , status: "confirmed"}
     ]
 
     jforum_list = [ # CVE-2019-7550
@@ -125,6 +124,10 @@ class UriBruteFocusedContent < BaseTask
 
     php_list =[
       { path: "/phpinfo.php", severity: 4, regex: /<title>phpinfo\(\)/, status: "confirmed" }
+    ]
+
+    php_my_admin_list = [
+      { path: "/phpMyAdmin/scripts/setup.php", severity: 4, regex: nil, status: "potential" }
     ]
 
     sap_netweaver_list =[ 
@@ -194,7 +197,7 @@ class UriBruteFocusedContent < BaseTask
     ]
 
     vmware_horizon_list = [
-      { path: "/portal/info.jsp", regex: /clientIPAddress/ } # CVE-2019-5513
+      { path: "/portal/info.jsp", severity: 4, regex: /clientIPAddress/, status: "confirmed" } # CVE-2019-5513
    ]
     wordpress_list = [
       { path: '/wp-admin', severity: 5,  regex: /Powered by WordPress/, status: "confirmed" }, # TODO ... confirmed
