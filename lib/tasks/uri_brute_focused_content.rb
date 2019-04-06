@@ -24,7 +24,7 @@ class UriBruteFocusedContent < BaseTask
         {:name => "threads", regex: "integer", :default => 1 },
         {:name => "create_url", regex: "boolean", :default => false },
         {:name => "override_fingerprint", regex: "alpha_numeric", :default => "" },
-        {:name => "check_generic_content", regex: "boolean", :default => false }
+        {:name => "check_generic_content", regex: "boolean", :default => true }
       ],
       :created_types => ["Uri"]
     }
@@ -67,25 +67,25 @@ class UriBruteFocusedContent < BaseTask
     opt_generic_content = _get_option("check_generic_content") 
 
     generic_list = [ 
-      { path: "/api", regex: nil },
+      #{ path: "/api", regex: nil },
       { path: "/.git", severity: 3, regex: /<h1>Index of/ },
       { path: "/.hg", severity: 3, regex: /<h1>Index of/ },
       { path: "/.svn", severity: 3, regex: /<h1>Index of/ },
       { path: "/.bzr", severity: 3, regex: /<h1>Index of/ },
       #{ path: "/.csv", regex: /<h1>Index of/ },
       #{ path: "/.bak", regex: /<h1>Index of/ },
-      { path: "/crossdomain.xml", regex: /\<cross-domain-policy/, severity: 6, status: "confirmed"}, #tighten regex?
-      { path: "/clientaccesspolicy.xml", regex: /\<access-policy/, severity: 6, status: "confirmed"}, #tighten regex?
-      { path: "/portal", regex: nil },
-      { path: "/admin", regex: nil },
-      { path: "/test", regex: nil },
+      #{ path: "/crossdomain.xml", regex: /\<cross-domain-policy/, severity: 6, status: "confirmed"}, #tighten regex?
+      #{ path: "/clientaccesspolicy.xml", regex: /\<access-policy/, severity: 6, status: "confirmed"}, #tighten regex?
+      #{ path: "/portal", regex: nil },
+      #{ path: "/admin", regex: nil },
+      #{ path: "/test", regex: nil },
     ]
 
     # technology specifics 
     apache_list = [
       { path: "/.htaccess", regex: /AuthName/, severity: 3, status: "confirmed" },
       { path: "/.htaccess.bak", regex: /AuthName/, severity: 3, status: "confirmed" },
-      { path: "/.htpasswd", regex: /^\w:.*$/, severity: 1, status: "potential" },
+      #{ path: "/.htpasswd", regex: /^\w:.*$/, severity: 1, status: "potential" },
       { path: "/server-status", regex: /Server Version/i, severity: 4, status: "confirmed" }
     ]
 
