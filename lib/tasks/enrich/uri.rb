@@ -112,7 +112,7 @@ class Uri < Intrigue::Task::BaseTask
     # get the requests we made so we can save off all details
     ident_responses = ident_matches["responses"]
 
-    if ident_fingerprints
+    if ident_fingerprints.count > 0
       # Make sure the key is set before querying intrigue api
       vulndb_api_key = _get_task_config "intrigue_vulndb_api_key"
       use_api = vulndb_api_key && vulndb_api_key.length > 0
@@ -134,6 +134,14 @@ class Uri < Intrigue::Task::BaseTask
         end
 
         fp.merge!({"vulns" => vulns })
+      end
+    end
+
+    # process interesting content checks that requested an issue be created
+    issues_to_be_created = ident_content_checks.select {|c| c["issue"] }
+    if issues_to_be_created.count > 0
+      issues_to_be_created.each do |c|
+        create_content_issue(uri, c)
       end
     end
 
@@ -547,7 +555,22 @@ class Uri < Intrigue::Task::BaseTask
   false
   end
 
-   def create_insecure_cookie_issue(uri, cookie)
+  def create_content_issue(uri, check)
+    _create_issue({
+      name: "Content issue: #{check["name"]} on #{uri}",
+      type: "#{check["name"].downcase.gsub(" ","_")}",
+      severity: 4, # todo... 
+      status: "confirmed",
+      description: "This server had a content issue: #{check["name"]}.",
+      references: [],
+      details: { 
+        uri: uri,
+        check: check 
+      }
+    })
+  end
+
+  def create_insecure_cookie_issue(uri, cookie)
     _create_issue({
       name: "Insecure cookie detected on #{uri}",
       type: "insecure_cookie_detected",
