@@ -49,8 +49,6 @@ class AtlassianFisheyeMostactivecommitersDisclosure < BaseTask
         }
       })
 
-      _log_good "Successful response. Vulnerable!"
-
     rescue JSON::ParserError => e 
       _log_error "Unable to parse response. Not vulnerable?"
     end

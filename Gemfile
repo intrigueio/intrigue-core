@@ -69,7 +69,6 @@ gem 'versionomy'
 gem 'couchrest'
 gem 'fog-aws'
 
-
 # notifiers
 gem 'slack-ruby-client'
 gem 'logstash-logger'

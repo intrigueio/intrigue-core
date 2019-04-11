@@ -118,7 +118,7 @@ class Uri < Intrigue::Task::BaseTask
       use_api = vulndb_api_key && vulndb_api_key.length > 0
       ident_fingerprints = ident_fingerprints.map do |fp|
         
-        _log "Working on fingerprint: #{fp}"
+        #_log "Working on fingerprint: #{fp}"
 
         vulns = []
         if fp["inference"]
@@ -139,6 +139,7 @@ class Uri < Intrigue::Task::BaseTask
 
     # process interesting content checks that requested an issue be created
     issues_to_be_created = ident_content_checks.select {|c| c["issue"] }
+    _log "Issues to be created: #{issues_to_be_created}"
     if issues_to_be_created.count > 0
       issues_to_be_created.each do |c|
         create_content_issue(uri, c)
