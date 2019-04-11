@@ -545,15 +545,18 @@ module Task
          # Note that we don't care who it is, we'll download indescriminently.
          file = open(uri, {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE})
 
+         begin 
          # Parse the file
          yomu = Yomu.new file
 
          # create a uri for everything
-         _create_entity "Document", {
-             "content_type" => file.content_type,
-             "name" => "#{uri}",
-             "uri" => "#{uri}",
-             "metadata" => yomu.metadata }
+         #_create_entity "Document", {
+         #    "content_type" => file.content_type,
+         #    "name" => "#{uri}",
+         #    "uri" => "#{uri}",
+         # =>     "metadata" => yomu.metadata }
+         @task_result.logger.log "Parsing #{file}"
+         @task_result.logger.log "Metadata #{yomu.metadata}"
 
          # Handle audio files
          if yomu.metadata["Content-Type"] == "audio/mpeg" # Handle MP3/4
@@ -566,7 +569,7 @@ module Task
            _create_entity "Person", {"name" => yomu.metadata["meta:author"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["meta:author"]
            _create_entity "Person", {"name" => yomu.metadata["dc:creator"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["dc:creator"]
            _create_entity "Organization", {"name" => yomu.metadata["Company"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["Company"]
-           _create_entity "SoftwarePackage", {"name" => yomu.metadata["producer"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["producer"]
+           #_create_entity "SoftwarePackage", {"name" => yomu.metadata["producer"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["producer"]
            _create_entity "SoftwarePackage", {"name" => yomu.metadata["xmp:CreatorTool"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["Company"]
          end
 
@@ -574,18 +577,18 @@ module Task
          parse_entities_from_content(uri,yomu.text) if extract_content
 
        # Don't die if we lose our connection to the tika server
-       rescue RuntimeError => e
-         @task_result.logger.log "ERROR Unable to download file: #{e}"
+       rescue StandardError => e
+         @task_result.logger.log_error "Unable to parse file: #{e}"
        rescue EOFError => e
-         @task_result.logger.log "ERROR Unable to download file: #{e}"
+         @task_result.logger.log_error "Unable to parse file: #{e}"
        rescue OpenURI::HTTPError => e     # don't die if we can't find the file
-         @task_result.logger.log "ERROR Unable to download file: #{e}"
+         @task_result.logger.log_error "Unable to download file: #{e}"
        rescue URI::InvalidURIError => e     # handle invalid uris
-         @task_result.logger.log "ERROR Unable to download file: #{e}"
+         @task_result.logger.log_error "Unable to download file: #{e}"
        rescue Errno::EPIPE => e
-         @task_result.logger.log "ERROR Unable to contact Tika: #{e}"
+         @task_result.logger.log_error "Unable to contact Tika: #{e}"
        rescue JSON::ParserError => e
-         @task_result.logger.log "ERROR parsing JSON: #{e}"
+         @task_result.logger.log_error "Unable to parse file: #{e}"
        end
 
      end
