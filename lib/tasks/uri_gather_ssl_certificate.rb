@@ -33,11 +33,12 @@ class UriGatherSslCert  < BaseTask
     begin
       hostname = URI.parse(uri).host
       port = URI.parse(uri).port
-      timeout = 60
 
       # connect
-      socket = connect_socket(hostname,port,timeout=30)
+      socket = connect_ssl_socket(hostname,port,timeout=30)
+
       return [] unless socket && socket.peer_cert
+
       # Parse the cert
       cert = OpenSSL::X509::Certificate.new(socket.peer_cert)
 

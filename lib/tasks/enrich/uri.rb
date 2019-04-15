@@ -176,8 +176,12 @@ class Uri < Intrigue::Task::BaseTask
       _log "Domain Cookie: #{set_cookie.split(";").detect{|x| x =~ /Domain:/i }}" if set_cookie
 
       if uri =~ /^https/
-        _log "HTTPS endpoint, checking security..."
+        
+        _log "HTTPS endpoint, checking security, grabbing certificate..."
 
+        # grab and parse the certificate
+        alt_names = connect_ssl_socket_get_cert_names(hostname,port) || []
+  
         if set_cookie 
           _log "Secure Cookie: #{set_cookie.split(";").detect{|x| x =~ /secure/i }}"
           _log "Http_only Cookie: #{set_cookie.split(";").detect{|x| x =~ /httponly/i }}"
@@ -214,8 +218,10 @@ class Uri < Intrigue::Task::BaseTask
           if !set_cookie.split(";").detect{|x| x =~ /httponly/i }
             create_insecure_cookie_issue(uri, set_cookie)
           end 
-
         end
+
+        alt_names = []
+
       end
 
     end
@@ -258,6 +264,7 @@ class Uri < Intrigue::Task::BaseTask
 
     $db.transaction do
       new_details = @entity.details.merge({
+        "alt_names" => alt_names,
         "api_endpoint" => api_enabled,
         "code" => response.code,
         "title" => title,
