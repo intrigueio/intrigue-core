@@ -39,7 +39,7 @@ module Services
     if ssl
       # connect, grab the socket and make sure we
       # keep track of these details, and create entitie
-      cert_names = ssl_connect_and_get_cert_names(ip_entity.name,port_num)
+      cert_names = connect_ssl_socket_get_cert_names(ip_entity.name,port_num)
       if cert_names
         generic_details.merge!({"cert_names" => cert_names})
         cert_names.uniq do |cn|
