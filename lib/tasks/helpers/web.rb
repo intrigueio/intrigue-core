@@ -104,7 +104,7 @@ module Task
 
       socket = TCPSocket.new hostname, port
       context = OpenSSL::SSL::SSLContext.new
-      #context.min_version = OpenSSL::SSL::SSL2_VERSION
+      context.min_version = OpenSSL::SSL::SSL2_VERSION
       #context.ssl_version = :SSLv23
       
       # possible min versions: 
@@ -115,9 +115,10 @@ module Task
       # OpenSSL::SSL::TLS1_VERSION
 
       ssl_socket = OpenSSL::SSL::SSLSocket.new socket, context
-      ssl_socket.sync = true
+      ssl_socket.hostname = hostname # Required for SNI (cloudflare)
+      #ssl_socket.sync = true
 
-      _log "Attempting to connect to #{hostname}:#{port}"
+      _log "Negotiating connection to #{hostname}:#{port}"
       ssl_socket.connect
 
 
@@ -222,7 +223,7 @@ module Task
 
           universal_cert_domains.each do |cert_domain|
             if (alt_name =~ /#{cert_domain}$/ ) 
-              _log "This is a universal #{cert_domain} certificate, skipping further entity creation"
+              _log "This is a universal #{cert_domain} certificate, no entity creation"
               return
             end
           end
