@@ -33,7 +33,7 @@ module Services
       "host_id" => ip_entity.id
     })
 
-    # if this is an ssl port, let's get the CNs and crate
+    # if this is an ssl port, let's get the CNs and create
     # dns records
     cert_entities = []
     if ssl
@@ -41,7 +41,7 @@ module Services
       # keep track of these details, and create entitie
       cert_names = connect_ssl_socket_get_cert_names(ip_entity.name,port_num)
       if cert_names
-        generic_details.merge!({"cert_names" => cert_names})
+        generic_details.merge!({"alt_names" => cert_names})
         cert_names.uniq do |cn|
 
           if entity_exists?(ip_entity.project, "DnsRecord", cn)

@@ -42,11 +42,6 @@ class UriGatherSslCert  < BaseTask
       # Parse the cert
       cert = OpenSSL::X509::Certificate.new(socket.peer_cert)
 
-      #assuming we made it this far, let's proceed
-      #names.each do |name|
-      #  _create_entity "DnsRecord", { "name" => name }
-      #end
-
       # Create an SSL Certificate entity
       key_size = "#{cert.public_key.n.num_bytes * 8}" if cert.public_key && cert.public_key.respond_to?(:n)
       certificate_details = {
