@@ -104,7 +104,7 @@ module Task
 
       socket = TCPSocket.new hostname, port
       context = OpenSSL::SSL::SSLContext.new
-      context.min_version = OpenSSL::SSL::SSL2_VERSION
+      #context.min_version = OpenSSL::SSL::SSL2_VERSION
       #context.ssl_version = :SSLv23
       
       # possible min versions: 
