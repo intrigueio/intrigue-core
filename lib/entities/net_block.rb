@@ -46,7 +46,7 @@ class NetBlock < Intrigue::Model::Entity
     if self.project.seeds
       self.project.seeds.each do |s|
         next unless scope_check_entity_types.include? s["type"]
-        if details["whois_full_text"] =~ /#{Regexp.escape(s["name"])}/
+        if details["whois_full_text"] =~ /[\s@]#{Regexp.escape(s["name"])}/
           #_log "Marking as scoped: SEED ENTITY NAME MATCHED TEXT: #{s["name"]}}"
           return true
         end
