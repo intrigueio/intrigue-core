@@ -50,7 +50,7 @@ class UriBruteFocusedContent < BaseTask
     entity_enriched = @entity.enriched?
     cycles = 30 
     until entity_enriched || cycles == 0
-      _log "Waiting 10s for entity to be enriched... (#{cycles-=1} / 60)"
+      _log "Waiting 10s for entity to be enriched... (#{cycles-=1} / #{cycles})"
         sleep 10
       entity_enriched = Intrigue::Model::Entity.first(:id => @entity.id).enriched?
     end
@@ -196,9 +196,25 @@ class UriBruteFocusedContent < BaseTask
       #{ path: '/invoker/EJBInvokerServlet', severity: 4,  regex: nil} 
     ]
 
+    # VMware Horizon
     vmware_horizon_list = [
       { path: "/portal/info.jsp", severity: 4, regex: /clientIPAddress/, status: "confirmed" } # CVE-2019-5513
-   ]
+    ]
+
+    # Oracle Weblogic Server
+    #  - CVE-2017-10271
+    #  - April 2019 0day: http://bit.ly/2ZxYIjS
+    weblogic_list = [
+      { path: "/wls-wsat/CoordinatorPortType", severity: 3, regex: /<td>WSDL:/, status: "potential" },
+      { path: "/wls-wsat/RegistrationPortTypeRPC", severity: 3, regex: /<td>WSDL:/, status: "potential" },
+      { path: "/wls-wsat/ParticipantPortType", severity: 3, regex: /<td>WSDL:/, status: "potential" }, 
+      { path: "/wls-wsat/RegistrationRequesterPortType", severity: 3, regex: /<td>WSDL:/, status: "potential" },
+      { path: "/wls-wsat/CoordinatorPortType11", severity: 3, regex: /<td>WSDL:/, status: "potential" },
+      { path: "/wls-wsat/RegistrationPortTypeRPC11", severity: 3, regex: /<td>WSDL:/, status: "potential" }, 
+      { path: "/wls-wsat/ParticipantPortType11", severity: 3, regex: /<td>WSDL:/,status: "potential" }, 
+      { path: "/wls-wsat/RegistrationRequesterPortType11", severity: 3, regex: /<td>WSDL:/, status: "potential" }
+    ]
+
     wordpress_list = [
       { path: '/wp-admin', severity: 5,  regex: /Powered by WordPress/, status: "confirmed" }, # TODO ... confirmed
       { path: '/xmlrpc.php', severity: 5, status: "confirmed", regex: /XML-RPC server accepts POST requests only./ },
@@ -235,9 +251,11 @@ class UriBruteFocusedContent < BaseTask
     splunk_list.each {|x| work_q.push x } if is_product? "Splunk"
     spring_boot_list.each { |x| work_q.push x } if is_product? "Spring Boot"
     tomcat_list.each { |x| work_q.push x } if is_product? "Tomcat" 
+
     vmware_horizon_list.each { |x| work_q.push x } if (
       is_product?("VMWare Horizon") || is_product?("VMWare Horizon View") ) 
 
+    weblogic_list.each { |x| work_q.push x } if is_product? "Weblogic Server" 
     wordpress_list.each { |x| work_q.push x } if is_product? "Wordpress" 
 
     # then add our "always" stuff:
