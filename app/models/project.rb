@@ -126,8 +126,12 @@ module Intrigue
       out
       end
 
+      # TODO - there must be a cleaner way? 
+      def get_option(option_name)
+        options.detect{|h| h[option_name] }.each{|k,v| return v }
+      end
 
-       def export_issues_csv
+      def export_issues_csv
         out = ""
         out << "Name,Type,Status,Severity,Description\n"
 

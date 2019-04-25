@@ -16,13 +16,15 @@ module System
 
       # Set exclusion setting
 
-      task_name = p["task"] || "create_entity"
+      task_name = p["task_name"] || "create_entity"
+      options = p["task_options"] || []
       machine = p["machine"] || "org_asset_discovery_active"
       depth = p["depth"] || 5
-      options = p["options"] || []
       scan_handlers = p["scan_handlers"] || []
       auto_enrich = p["auto_enrich"] || true
       auto_scope = true
+
+      project.options = p["project_options"] || []
       project.use_standard_exceptions = p["use_standard_exceptions"] || true
 
       if config["additional_exception_list"]

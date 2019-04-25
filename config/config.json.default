@@ -46,6 +46,8 @@
       "uri": "http://127.0.0.1:9999/"
     }
   },
+  "intrigue_global_machine_config": {
+  },
   "intrigue_global_module_config": {
     "aws_access_key_id" : {
       "value" : "XXX",

@@ -12,7 +12,7 @@ module Handler
 
     def perform(result_type, result_id, prefix_name=nil)
       result = eval(result_type).first(id: result_id)
-      return "Unable to process" unless result.respond_to? "export_json"
+      raise "Unable to process" unless result.respond_to? "export_json"
 
       # write to a file bit by bit
       file = File.open("#{$intrigue_basedir}/public/#{result.name}.json", "a")

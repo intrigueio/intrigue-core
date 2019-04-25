@@ -16,7 +16,8 @@ module Machine
     # Recurse should receive a fully enriched object from the creator task
     def self.recurse(entity, task_result)
 
-      seed_list = entity.project.seeds.map{|s| s["name"]}.join(",")
+      project = entity.project
+      seed_list = project.seeds.map{|s| s["name"]}.join(",")
 
       ### 
       # don't go any further unless we're scoped & not no-traverse (hidden)! 
@@ -27,9 +28,11 @@ module Machine
       traversable = true if entity.type_string == "AwsRegion" # allow these until scoping gets better
       traversable = true if entity.type_string == "DnsRecord" # allow these until scoping gets better
       traversable = true if entity.type_string == "EmailAddress" # allow these until scoping gets better
+      traversable = true if entity.type_string == "GithubAccount" # allow these until scoping gets better
       traversable = true if entity.type_string == "IpAddress" # allow these until scoping gets better
       traversable = true if entity.type_string == "Organization" # allow these until scoping gets better
       traversable = true if entity.type_string == "NetworkService" # allow these until scoping gets better
+      traversable = true if entity.type_string == "SslCertificate" # allow these until scoping gets better
       traversable = true if entity.type_string == "String" # allow these until scoping gets better
       traversable = true if entity.type_string == "Uri" # allow these until scoping gets better
       traversable = false if entity.hidden # always skip hiddens (implicitly non-traversable)
