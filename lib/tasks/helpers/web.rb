@@ -205,6 +205,7 @@ module Task
             "acquia-sites.com",
             "careers.talemetry.com",
             "chinanetcenter.com",
+            "chinacloudsites.cn",
             "cloudflare.com",
             "cloudflaressl.com",
             "distilnetworks.com",
