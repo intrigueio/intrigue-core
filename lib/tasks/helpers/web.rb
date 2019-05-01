@@ -92,7 +92,8 @@ module Task
     workers.map(&:join); "ok"
   end
 
-  def connect_ssl_socket(hostname, port, timeout=20, max_attempts=5)
+  # See: https://raw.githubusercontent.com/zendesk/ruby-kafka/master/lib/kafka/ssl_socket_with_timeout.rb
+  def connect_ssl_socket(hostname, port, timeout=20, max_attempts=3)
     # Create a socket and connect
     # https://apidock.com/ruby/Net/HTTP/connect
     attempts=0
@@ -102,10 +103,9 @@ module Task
       # keep track of how many times we've tried
       attempts +=1
 
-      socket = TCPSocket.new hostname, port
-      context = OpenSSL::SSL::SSLContext.new
-      #context.min_version = OpenSSL::SSL::SSL2_VERSION
-      #context.ssl_version = :SSLv23
+      ssl_context = OpenSSL::SSL::SSLContext.new
+      #ssl_context.min_version = OpenSSL::SSL::SSL2_VERSION
+      #ssl_context.ssl_version = :SSLv23
       
       # possible min versions: 
       # OpenSSL::SSL::SSL2_VERSION
@@ -114,18 +114,73 @@ module Task
       # OpenSSL::SSL::TLS1_2_VERSION
       # OpenSSL::SSL::TLS1_VERSION
 
-      ssl_socket = OpenSSL::SSL::SSLSocket.new socket, context
+      # Open a tcp socket 
+      addr = Socket.getaddrinfo(hostname, nil)
+      sockaddr = Socket.pack_sockaddr_in(port, addr[0][3])
+
+      tcp_socket = Socket.new(Socket.const_get(addr[0][0]), Socket::SOCK_STREAM, 0)
+      tcp_socket.setsockopt(Socket::IPPROTO_TCP, Socket::TCP_NODELAY, 1)
+
+      # first initiate the TCP socket
+      begin
+        # Initiate the socket connection in the background. If it doesn't fail
+        # immediately it will raise an IO::WaitWritable (Errno::EINPROGRESS)
+        # indicating the connection is in progress.
+        tcp_socket.connect_nonblock(sockaddr)
+      rescue IO::WaitWritable
+        # select will block until the socket is writable or the timeout
+        # is exceeded, whichever comes first.
+        unless _select_with_timeout(tcp_socket, :connect_write, timeout)
+          # select returns nil when the socket is not ready before timeout
+          # seconds have elapsed
+          tcp_socket.close
+          raise Errno::ETIMEDOUT
+        end
+
+        begin
+          # Verify there is now a good connection.
+          tcp_socket.connect_nonblock(sockaddr)
+        rescue Errno::EISCONN
+          # The socket is connected, we're good!
+        end
+      end
+
+      # once that's connected, we can start initiating the ssl socket
+      ssl_socket = OpenSSL::SSL::SSLSocket.new(tcp_socket, ssl_context)
       ssl_socket.hostname = hostname # Required for SNI (cloudflare)
-      #ssl_socket.sync = true
 
-      _log "Negotiating connection to #{hostname}:#{port}"
-      ssl_socket.connect
-
+      begin
+        # Initiate the socket connection in the background. If it doesn't fail
+        # immediately it will raise an IO::WaitWritable (Errno::EINPROGRESS)
+        # indicating the connection is in progress.
+        # Unlike waiting for a tcp socket to connect, you can't time out ssl socket
+        # connections during the connect phase properly, because IO.select only partially works.
+        # Instead, you have to retry.
+        ssl_socket.connect_nonblock
+      rescue Errno::EAGAIN, Errno::EWOULDBLOCK, IO::WaitReadable
+        if _select_with_timeout(ssl_socket, :connect_read, timeout)
+          _log "retrying... attempt: #{attempts}/#{max_attempts}"
+          retry unless attempts == max_attempts
+        else
+          ssl_socket.close
+          tcp_socket.close
+          raise Errno::ETIMEDOUT
+        end
+      rescue IO::WaitWritable
+        if _select_with_timeout(ssl_socket, :connect_write, timeout)
+          _log "retrying... attempt: #{attempts}/#{max_attempts}"
+          retry unless attempts == max_attempts
+        else
+          ssl_socket.close
+          tcp_socket.close
+          raise Errno::ETIMEDOUT
+        end
+      end
 
     rescue OpenSSL::SSL::SSLError => e
       _log_error "Error requesting resource, skipping: #{hostname} #{port}: #{e}"
       _log "retrying... attempt: #{attempts}/#{max_attempts}"
-      retry unless attempts = max_attempts
+      retry unless attempts == max_attempts
     rescue SocketError => e
       _log_error "Error requesting resource, skipping: #{hostname} #{port}: #{e}"
     rescue Errno::EINVAL => e
@@ -137,15 +192,15 @@ module Task
     rescue Errno::ECONNRESET => e
       _log_error "Error requesting cert, skipping: #{hostname} #{port}: #{e}"
     rescue Errno::ECONNREFUSED => e
-      _log_error "Error requesting cert, skipping: #{hostname} #{port}: #{e}"
+      _log_error "Error requesting cert - refused, skipping: #{hostname} #{port}: #{e}"
       _log_error "Error requesting resource, skipping: #{hostname} #{port}"
-      _log "retrying... attempt: #{attempts}/#{max_attempts}"
-      retry unless attempts = max_attempts
+      log "retrying... attempt: #{attempts}/#{max_attempts}"
+      retry unless attempts == max_attempts
     rescue Errno::ETIMEDOUT => e
-      _log_error "Error requesting cert, timeout: #{hostname} #{port}: #{e}"
+      _log_error "Error requesting cert - timed out, timeout: #{hostname} #{port}: #{e}"
       _log_error "Error requesting resource, skipping: #{hostname} #{port}"
       _log "retrying... attempt: #{attempts}/#{max_attempts}"
-      retry unless attempts = max_attempts
+      retry unless attempts == max_attempts
     rescue Errno::EHOSTUNREACH => e
       _log_error "Error requesting cert, skipping: #{hostname} #{port}: #{e}"
     ensure 
@@ -158,12 +213,22 @@ module Task
       return nil
     end
 
-    # Close the sockets
-    #ssl_socket.sysclose
-    #socket.close
-
   ssl_socket
   end
+
+  def _select_with_timeout(socket, type, timeout)
+    case type
+    when :connect_read
+      IO.select([socket], nil, nil, timeout)
+    when :connect_write
+      IO.select(nil, [socket], nil, timeout)
+    when :read
+      IO.select([socket], nil, nil, timeout)
+    when :write
+      IO.select(nil, [socket], nil, timeout)
+    end
+  end
+
 
   def connect_ssl_socket_get_cert_names(hostname,port,timeout=20)
     # connect

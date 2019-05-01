@@ -90,7 +90,6 @@ module Intrigue
         # if a machine exists, grab it 
         machine_name = task_result.scan_result ? task_result.scan_result.machine : nil
 
-
         # if this entity has any configured enrichment tasks.. 
         if enrichment_tasks.count > 0
 
