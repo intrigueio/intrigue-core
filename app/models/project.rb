@@ -128,7 +128,8 @@ module Intrigue
 
       # TODO - there must be a cleaner way? 
       def get_option(option_name)
-        options.detect{|h| h[option_name] }.each{|k,v| return v }
+        opt = options.detect{|h| h[option_name] }
+        opt.each{|k,v| return v } if opt
       end
 
       def export_issues_csv
