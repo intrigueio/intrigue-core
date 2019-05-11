@@ -7,14 +7,14 @@ class SearchHunterIo < BaseTask
       :name => "search_hunter_io",
       :pretty_name => "Search Hunter.io",
       :authors => ["jcran"],
-      :description => "This task hits the Hunter.io API. EmailAddresses are created",
+      :description => "This task hits the Hunter.io API. Email Addresses are created.",
       :references => [],
       :type => "discovery",
       :passive => true,
       :allowed_types => ["Domain"],
       :example_entities => [{"type" => "Domain", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
-      :created_types => ["Uri"]
+      :created_types => ["EmailAddress"]
     }
   end
 
