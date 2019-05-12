@@ -228,6 +228,12 @@
       "uri" : "https://app.binaryedge.io/account/api",
       "editable" : "true",
       "comment" : ""
+    },
+    "hunter_io_api_key" : {
+      "value" : "",
+      "uri" : "https://hunter.io/api_keys",
+      "editable" : "true",
+      "comment" : ""
     }
   }
 }
