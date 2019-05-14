@@ -173,9 +173,15 @@ class IntrigueApp < Sinatra::Base
 
       # handle file if we got it
       if @params["entity_file"]
-        # barf if we got a bad file
-        raise "Bad file type" unless @params["entity_file"]["type"] == "text/plain" || @params["entity_file"]["type"] == "text/csv"
 
+        file_type = @params["entity_file"]["type"]
+
+        puts "Got file of type: #{file_type}"
+
+        # barf if we got a bad file
+        unless file_type =~ /^text/ || file_type == "application/octet-stream"
+          raise "Bad file type: #{file_type}" 
+        end
         # get the file
         entity_file = @params["entity_file"]["tempfile"]
 
