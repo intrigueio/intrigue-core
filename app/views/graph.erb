@@ -70,8 +70,8 @@ function delete_entity_children(id){
       defaultNodeColor: '#FFFFFF',
       defaultEdgeColor: '#00B8E6',
       defaultLabelColor:'#FFFFFF',
-      defaultLabelSize: 11,
-      labelThreshold: 2,
+      defaultLabelSize: 8,
+      labelThreshold: 5,
       edgeHoverSizeRatio: 10,
       edgeHoverColor: '#ff0000',
       defaultNodeHoverColor: '#ff0000',
@@ -87,9 +87,9 @@ function delete_entity_children(id){
     });
 
     // adjust slowdown based on the size
-    var slowdown = 1000;
+    var slowdown = 200;
     if (s.graph.nodes().length > 1000) {
-      slowdown = 50;
+      slowdown = 20;
     }
 
     // start the layout
