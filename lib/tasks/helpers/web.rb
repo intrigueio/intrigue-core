@@ -93,7 +93,7 @@ module Task
   end
 
   # See: https://raw.githubusercontent.com/zendesk/ruby-kafka/master/lib/kafka/ssl_socket_with_timeout.rb
-  def connect_ssl_socket(hostname, port, timeout=20, max_attempts=3)
+  def connect_ssl_socket(hostname, port, timeout=31, max_attempts=3)
     # Create a socket and connect
     # https://apidock.com/ruby/Net/HTTP/connect
     attempts=0
