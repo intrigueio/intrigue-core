@@ -425,7 +425,7 @@ module Task
   ### move this over to RestClient: https://github.com/ruby/ruby/commit/3cf7d1b57e3622430065f6a6ce8cbd5548d3d894
   ###
   def http_request(method, uri_string, credentials=nil, headers={}, 
-      data=nil, attempts_limit=10, open_timeout=10, read_timeout=10)
+      data=nil, attempts_limit=10, open_timeout=31, read_timeout=31)
 
     response = nil
     begin
@@ -495,8 +495,8 @@ module Task
 
       # set user agent unless one was provided
       unless headers["User-Agent"]
-        headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1)" + 
-        " AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.73 Safari/537.36"
+        headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1)" +
+        " AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36"
       end
 
 
