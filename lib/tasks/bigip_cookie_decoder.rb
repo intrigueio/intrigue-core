@@ -12,11 +12,10 @@ class BigipCookieDecoder < BaseTask
     {
       :name => "vuln/bigip_cookie_decoder",
       :pretty_name => "BigIP Cookie Decoder",
-      :authors => ["jcran", "jhawthorn"],
-      :identifiers => [{ "cve" =>  "CVE-2019-5418" }],
-      :description => "Rails < 6.0.0.beta3, 5.2.2.1, 5.1.6.2, 5.0.7.2, 4.2.11.1 is subject to" + 
-        " an information disclosure vulnerability which can be triggered by a specially crafted" +
-        " accept header.",
+      :authors => ["jcran"],
+      :identifiers => [],
+      :description => "This task, when given a uri, will request the uri, grab the cookies," + 
+        " and if a BigIP cookie is found, decode and log it." ,
       :references => [
         "http://support.f5.com/kb/en-us/solutions/public/6000/900/sol6917.html",
         "http://support.f5.com/kb/en-us/solutions/public/7000/700/sol7784.html?sr=14607726"
@@ -32,7 +31,7 @@ class BigipCookieDecoder < BaseTask
     }
   end
 
-  ## Cookies to match
+  ## Cookie types we can match
   ##
   ## Get the SLB session IDs for all cases:
   ## 1. IPv4 pool members - "BIGipServerWEB=2263487148.3013.0000",
