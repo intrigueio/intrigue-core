@@ -34,30 +34,33 @@ class ScrapePublicwww < BaseTask
     domain_name = _get_entity_name
 
     max_page_count.times do |page_count|
+      begin
+        # Get a page
+        uri = "https://publicwww.com/websites/%22.#{domain_name}%22/#{page_count + 1}"
+        session = create_browser_session
+        body_text = capture_document(session,uri)[:contents]
+        _log "Got text: #{body_text}"
 
-      # Get a page
-      uri = "https://publicwww.com/websites/%22.#{domain_name}%22/#{page_count + 1}"
-      session = create_browser_session
-      body_text = capture_document(session,uri)[:contents]
-      _log "Got text: #{body_text}"
-
-      body_text.gsub("<\/?b>","").scan(/[a-z0-9\.\-_]+\.#{domain_name}/).each do |d|
-        _log_good "Got: #{d}"
-        if d =~ /__/ || d =~ /\*\*/
-          _log "Skipping #{d}, looks obfu'd"
-          next
+        body_text.gsub("<\/?b>","").scan(/[a-z0-9\.\-_]+\.#{domain_name}/).each do |d|
+          _log_good "Got: #{d}"
+          if d =~ /__/ || d =~ /\*\*/
+            _log "Skipping #{d}, looks obfu'd"
+            next
+          end
+          _create_entity "DnsRecord", "name" => d
         end
-        _create_entity "DnsRecord", "name" => d
+        # Sleep randomly
+        sleep_max = _get_option("sleep_max")
+        sleep rand(sleep_max)        
+      rescue 
+        next
+      ensure
+        # kill the session / cleanup
+        _log "Destroying browser session"
+        destroy_browser_session(session)
       end
-
-      # Sleep randomly
-      sleep_max = _get_option("sleep_max")
-      sleep rand(sleep_max)
-
     end
-
   end
-
 end
 end
 end
