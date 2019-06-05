@@ -70,8 +70,9 @@ module Services
     _log "Creating services on each of: #{hosts.map{|h| h.name } }"
 
     sister_entity = nil
+    thread_list = []
     hosts.uniq.each do |h|
-      Thread.new do 
+      thread_list << Thread.new do 
 
         # Handle web app case first
         if (protocol == "tcp" && [80,81,443,8000,8080,8081,8443].include?(port_num))
@@ -217,6 +218,7 @@ module Services
         end
       end # end thread 
     end # each hostname
+    thread_list.map(&:join)
   end
 
   ## Default method, subclasses must override this
