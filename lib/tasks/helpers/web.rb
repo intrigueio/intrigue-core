@@ -12,8 +12,6 @@ require 'digest'
 module Intrigue
 module Task
   module Web
-
-
     
   def make_http_requests_from_queue(uri, work_q, threads=1, create_url=false, create_issue=false)
 

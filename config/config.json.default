@@ -13,6 +13,7 @@
    "pass": null
   },
   "debug" : false,
+  "browser_enabled": true,
   "intrigue_task_log_location" : "database",
   "intrigue_load_paths": [],
   "intrigue_handler_processing_wait_time" : 60,
