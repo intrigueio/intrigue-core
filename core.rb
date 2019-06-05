@@ -86,11 +86,16 @@ def setup_database
   database_host = database_config[$intrigue_environment]["host"] || "localhost"
   database_port = database_config[$intrigue_environment]["port"] || 5432
   database_user = database_config[$intrigue_environment]["user"]
-  database_pass = database_config[$intrigue_environment]["pass"]
+  database_pass = database_config[$intrigue_environment]["password"]
   database_name = database_config[$intrigue_environment]["database"]
   database_debug = database_config[$intrigue_environment]["debug"]
 
-  $db = Sequel.connect("postgres://#{database_user}@#{database_host}:#{database_port}/#{database_name}", options)
+  if database_pass 
+    $db = Sequel.connect("postgres://#{database_user}:#{database_pass}@#{database_host}:#{database_port}/#{database_name}", options)
+  else
+    $db = Sequel.connect("postgres://#{database_user}@#{database_host}:#{database_port}/#{database_name}", options)
+  end
+
   $db.loggers << Logger.new($stdout) if database_debug
 
   # Allow datasets to be paginated
