@@ -35,11 +35,14 @@ class UriEnumerateJs  < BaseTask
 
     session = create_browser_session
 
-    # Run the version checking scripts in our session (See lib/helpers/browser)
-    new_libraries = gather_javascript_libraries(session, uri)
-
-    # set the new details
-    _set_entity_detail("javascript", new_libraries)
+    if session # make sure we're enabled
+      # Run the version checking scripts in our session (See lib/helpers/browser)
+      new_libraries = gather_javascript_libraries(session, uri)
+      # set the new details
+      _set_entity_detail("javascript", new_libraries)
+    else 
+      _log "No browser session created. Is the browser enabled in global options?"
+    end
 
     # cleanup
     destroy_browser_session(session)

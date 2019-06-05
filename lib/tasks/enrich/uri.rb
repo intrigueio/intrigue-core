@@ -63,18 +63,15 @@ class Uri < Intrigue::Task::BaseTask
     headers = []
     response.each_header{|x| headers << "#{x}: #{response[x]}" }
 
-
-    ### determine if we're brower-enabled
-    browser_enabled = Intrigue::Config::GlobalConfig.config["enable_browser"]
-
     ### 
     ### Fingerprint Javascript
     ###
-    if browser_enabled
-      begin
-        _log "Creating browser session"
-        session = create_browser_session
-
+    begin
+      _log "Creating browser session"
+      session = create_browser_session
+      
+      # note that we might not have a session if it's diabled globally 
+      if session 
         # Run the version checking scripts
         _log "Grabbing Javascript libraries"
         js_libraries = gather_javascript_libraries(session, uri)
@@ -82,14 +79,17 @@ class Uri < Intrigue::Task::BaseTask
         # screenshot
         _log "Capturing screenshot"
         encoded_screenshot = capture_screenshot(session, uri)
-      ensure
-        # kill the session / cleanup
-        _log "Destroying browser session"
-        destroy_browser_session(session)
       end
+
+    ensure
+      # kill the session / cleanup - if we never had a session, this'll 
+      # just complete gracefully
+      _log "Destroying browser session"
+      destroy_browser_session(session)
     end
 
-
+    # Grab the global option since we'll need to pass it to ident
+    browser_enabled = Intrigue::Config::GlobalConfig.config["enable_browser"]
 
     _log "Attempting to fingerprint!"
     # Use intrigue-ident code to request all of the pages we

@@ -33,8 +33,12 @@ class UriScreenshot < BaseTask
 
     session = create_browser_session
 
-    # capture a screenshot and save it as a detail
-    _set_entity_detail("hidden_screenshot_contents",capture_screenshot(session, uri))
+    if session 
+      # capture a screenshot and save it as a detail
+      _set_entity_detail("hidden_screenshot_contents",capture_screenshot(session, uri))
+    else 
+      _log "No screenshot capture, session was not created. Is the browser enabled in global options?"
+    end
 
     # cleanup
     destroy_browser_session(session)

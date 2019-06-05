@@ -38,20 +38,26 @@ class ScrapePublicwww < BaseTask
         # Get a page
         uri = "https://publicwww.com/websites/%22.#{domain_name}%22/#{page_count + 1}"
         session = create_browser_session
-        body_text = capture_document(session,uri)[:contents]
-        _log "Got text: #{body_text}"
 
-        body_text.gsub("<\/?b>","").scan(/[a-z0-9\.\-_]+\.#{domain_name}/).each do |d|
-          _log_good "Got: #{d}"
-          if d =~ /__/ || d =~ /\*\*/
-            _log "Skipping #{d}, looks obfu'd"
-            next
+        if session # make sure we're enabled
+          body_text = capture_document(session,uri)[:contents]
+          _log "Got text: #{body_text}"
+
+          body_text.gsub("<\/?b>","").scan(/[a-z0-9\.\-_]+\.#{domain_name}/).each do |d|
+            _log_good "Got: #{d}"
+            if d =~ /__/ || d =~ /\*\*/
+              _log "Skipping #{d}, looks obfu'd"
+              next
+            end
+            _create_entity "DnsRecord", "name" => d
           end
-          _create_entity "DnsRecord", "name" => d
+          # Sleep randomly
+          sleep_max = _get_option("sleep_max")
+          sleep rand(sleep_max)  
+        else 
+          _log "No browser session created. Is the browser enabled in global options?"
         end
-        # Sleep randomly
-        sleep_max = _get_option("sleep_max")
-        sleep rand(sleep_max)        
+
       rescue 
         next
       ensure

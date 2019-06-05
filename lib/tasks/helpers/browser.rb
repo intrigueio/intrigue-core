@@ -12,11 +12,17 @@ module Task
   module Browser
 
     def create_browser_session
+
+      # first check if we're allowed to create a session by the global config
+      return nil unless Intrigue::Config::GlobalConfig.config["enable_browser"]
+
       # Start a new session
       Capybara::Session.new(:headless_chrome)
     end
 
     def destroy_browser_session(session)
+
+      return false unless session
 
       # get the full group id (driver + browser)
       begin
@@ -40,6 +46,7 @@ module Task
         _log_error "Timed out trying to close our session.. #{e}"
       end
 
+    true 
     end
 
     def safe_browser_action
@@ -78,6 +85,8 @@ module Task
     end
 
     def capture_document(session, uri)
+      return nil unless session # always make sure the session is real
+
       # browse to our target
       safe_browser_action do
         # visit the page
@@ -96,6 +105,8 @@ module Task
   end
 
     def capture_screenshot(session, uri)
+      return nil unless session # always make sure the session is real
+
       # browse to our target
       safe_browser_action do
         session.visit(uri)
@@ -122,6 +133,7 @@ module Task
     end
 
     def gather_javascript_libraries(session, uri)
+      return nil unless session # always make sure the session is real
 
       # Test site: https://www.jetblue.com/plan-a-trip/#/
       # Examples: https://builtwith.angularjs.org/

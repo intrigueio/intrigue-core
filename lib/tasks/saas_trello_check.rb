@@ -42,13 +42,21 @@ class SaasTrelloCheck < BaseTask
 
     begin
       session = create_browser_session
-      document = capture_document session, url
-      if document
-        title = document[:title]
-        body = document[:contents]
+
+      if session # make sure we're enabled
+
+        document = capture_document session, url
+        if document
+          title = document[:title]
+          body = document[:contents]
+        else 
+          _log "No response"
+        end
+
       else 
-        _log "No response"
+        _log "No browser session created. Is the browser enabled in global options?"
       end
+
     ensure
       destroy_browser_session(session)
     end
