@@ -12,6 +12,7 @@ class BaseTask
   include Intrigue::Task::Product
   include Intrigue::Task::Regex
   include Intrigue::Task::Services
+  include Intrigue::Task::Socket
   include Intrigue::Task::Web
   include Intrigue::Task::WebContent
   include Intrigue::Task::Whois
