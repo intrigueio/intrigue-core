@@ -36,10 +36,10 @@ class EmailBruteGmailGlxu < BaseTask
 
     alias_list.each do |a|
       email_address = "#{a}@#{domain}"
-      req = http_request :get, "https://mail.google.com/mail/gxlu?email=#{email_address}"
+      response = http_request :get, "https://mail.google.com/mail/gxlu?email=#{email_address}"
 
       # if valid, create the email
-      if req["set-cookie"]
+      if response && response["set-cookie"]
         _log_good "Found: #{email_address}"
         _create_entity "EmailAddress", "name" => email_address
       else 
