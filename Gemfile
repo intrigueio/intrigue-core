@@ -78,3 +78,4 @@ gem 'foreman'
 gem 'pry'                     # Debugging
 gem 'pry-byebug'              # Debugging
 gem 'yard'
+gem "sentry-raven"            # Error tracking (disabled by default)

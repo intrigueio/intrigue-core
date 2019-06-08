@@ -13,6 +13,7 @@
    "pass": null
   },
   "debug" : false,
+  "sentry_key" : "",
   "browser_enabled": true,
   "intrigue_task_log_location" : "database",
   "intrigue_load_paths": [],
