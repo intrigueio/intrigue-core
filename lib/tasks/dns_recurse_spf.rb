@@ -19,7 +19,7 @@ class DnsRecurseSpf < BaseTask
       :passive => true,
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
-      :created_types => ["IpAddress","Info","NetBlock"]
+      :created_types => ["Domain", "Info", "IpAddress", "NetBlock"]
     }
   end
 
@@ -47,49 +47,106 @@ class DnsRecurseSpf < BaseTask
         _log_good "Result:\n=======\n#{result.to_s}======"
 
         # Make sure there was actually a record
-        unless result.answer.count == 0
+        unless result.count == 0
 
           # Iterate through each answer
-          result.answer.each do |answer|
+          result.each do |r|
 
-            if answer.rdata.first =~ /^v=spf1/
+            r["lookup_details"].each do |response|
 
-              # We have an SPF record, so let's process it
-              answer.rdata.first.split(" ").each do |data|
+              response["response_record_data"].each do |record|
 
-                _log "Processing SPF component: #{data}"
+                _log "Got record: #{record}"
 
-                if data =~ /^v=spf1/
-                  next #skip!
+                if record =~ /^v=spf1/
 
-                elsif data =~ /^include:.*/
-                  spf_data = data.split(":").last
-                  _create_entity "IpAddress", {"name" => spf_data}
+                  _log_good "SPF Record: #{record}"
 
-                  # RECURSE!
-                  lookup_txt_record spf_data
+                  # We have an SPF record, so let's process it
+                  record.split(" ").each do |data|
 
-                elsif data =~ /^ip4:.*/
-                  range = data.split(":").last
+                    _log "Processing SPF component: #{data}"
 
-                  if data.include? "/"
-                    _create_entity "NetBlock", {"name" => range }
-                  else
-                    _create_entity "IpAddress", {"name" => range }
+                    if data =~ /^v=spf1/
+                      next #skip!
+
+                    elsif data =~ /^include:.*/
+                      spf_data = data.split(":").last
+
+                      # Create a domain
+                      domain_name = spf_data.split(".").last(2).join(".")
+                      _create_entity "Domain", { "name" => domain_name, "unscoped" => true }
+
+                      # RECURSE!
+                      lookup_txt_record spf_data
+
+                    elsif data =~ /^redirect=.*/
+                      spf_data = data.split("=").last
+
+                      # Create a domain
+                      domain_name = spf_data.split(".").last(2).join(".")
+                      _create_entity "Domain", { "name" => domain_name, "unscoped" => true }
+
+                      # RECURSE!
+                      lookup_txt_record spf_data
+
+                    elsif data =~ /^exists:.*/ 
+                      spf_data = data.split("=").last
+                      spf_data = spf_data.gsub("%{i}.","") # https://pastebin.com/ug0xHf6H
+                      
+                      # Create a domain
+                      domain_name = spf_data.split(".").last(2).join(".")
+                      _create_entity "Domain", { "name" => domain_name, "unscoped" => true }
+
+                      # RECURSE!
+                      lookup_txt_record spf_data
+
+                    elsif data =~ /^ptr:.*/
+                      spf_data = data.split(":").last
+                      
+                      # Create a domain
+                      domain_name = spf_data.split(".").last(2).join(".")
+                      _create_entity "Domain", { "name" => domain_name, "unscoped" => true }
+
+
+                      # RECURSE!
+                      #lookup_txt_record spf_data
+
+                      # Create an issue here? PTR is a "do not use" type
+                      # https://www.sparkpost.com/blog/spf-authentication/
+
+                      # Excerpt: 
+                      #
+                      # A final mechanism, “ptr” existed in the original specification for SPF, 
+                      # but has been declared “do not use” in the current specification. The ptr 
+                      # mechanism was used to declare that if the sending IP address had a DNS PTR 
+                      # record that resolved to the domain name in question, then that IP address 
+                      # was authorized to send mail for the domain.
+                      #
+                      # The current status of this mechanism is that it should not be used. However, 
+                      # sites doing SPF validation must accept it as valid.
+
+                    elsif data =~ /^ip4:.*/
+                      range = data.split(":").last
+
+                      if data.include? "/"
+                        _create_entity "NetBlock", {"name" => range, "unscoped" => true }
+                      else
+                        _create_entity "IpAddress", {"name" => range, "unscoped" => true }
+                      end
+
+                    end
                   end
+                
+                else  # store everything else as info
+                  _create_entity "Info", { "name" => "TXT Record for #{dns_name} (#{record})", "content" => record }
                 end
+
               end
-
-            else  # store everything else as info
-              _create_entity "Info", { "name" => "Non-SPF TXT Record for #{dns_name}", "content" => answer.to_s }
             end
-
           end
 
           _log "No more records"
-
-        else
-          _log "Lookup succeeded, but no records found"
         end
       else
         _log "Lookup failed, no result"
@@ -107,8 +164,8 @@ class DnsRecurseSpf < BaseTask
     rescue Errno::ENETUNREACH => e
       _log_error "Hit exception: #{e}. Are you sure you're connected?"
 
-    rescue Exception => e
-      _log_error "Unknown exception: #{e}"
+    #rescue Exception => e
+    #  _log_error "Unknown exception: #{e}"
     end
   end
 
