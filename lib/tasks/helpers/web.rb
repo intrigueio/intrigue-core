@@ -580,6 +580,8 @@ module Task
       @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
     rescue Errno::ECONNRESET => e
       @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
+    rescue Errno::EHOSTDOWN => e
+      @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
     rescue Net::HTTPBadResponse => e
       @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
     rescue Zlib::BufError => e

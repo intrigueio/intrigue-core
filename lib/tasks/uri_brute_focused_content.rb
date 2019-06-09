@@ -118,6 +118,13 @@ class UriBruteFocusedContent < BaseTask
           regex: /^true$/i, status: "confirmed" } # CVE-2019-7550
     ] 
 
+    # 
+    joomla_list = [
+        # https://packetstormsecurity.com/files/151619/Joomla-Agora-4.10-Bypass-SQL-Injection.html
+        { path: "/index.php?option=com_agora&task='", severity: 2, status: "potential" } 
+    ] 
+
+
     lotus_domino_list = [
       { path: "/$defaultview?Readviewentries", severity: 3, regex: /\<viewentries/, status: "confirmed" }
     ]
@@ -245,6 +252,7 @@ class UriBruteFocusedContent < BaseTask
     lotus_domino_list.each { |x| work_q.push x } if is_product? "Domino" 
     jenkins_list.each { |x| work_q.push x } if is_product? "Jenkins" 
     jforum_list.each { |x| work_q.push x } if is_product? "Jforum" 
+    joomla_list.each { |x| work_q.push x } if is_product? "Joomla!" 
     php_list.each { |x| work_q.push x } if is_product? "PHP" 
     sharepoint_list.each { |x| work_q.push x } if is_product? "Sharepoint"
     sap_netweaver_list.each { |x| work_q.push x } if is_product? "NetWeaver"

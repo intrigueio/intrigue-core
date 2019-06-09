@@ -21,7 +21,7 @@ class IpAddress < Intrigue::Task::BaseTask
 
   def run
 
-    lookup_name = _get_entity_name
+    lookup_name = _get_entity_name.strip
 
     # Set IP version
     if @entity.name =~ /:/

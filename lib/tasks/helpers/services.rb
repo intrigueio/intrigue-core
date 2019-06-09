@@ -67,7 +67,7 @@ module Services
         hosts << a # add to the list
       end
     end
-    _log "Creating services on each of: #{hosts.map{|h| h.name } }"
+    _log "Creating service (#{port_num}) on each of: #{hosts.map{|h| h.name.strip } }"
 
     sister_entity = nil
     thread_list = []
@@ -81,7 +81,7 @@ module Services
           prefix = ssl ? "https" : "http" # construct uri
 
           # Construct the uri
-          uri = "#{prefix}://#{h.name}:#{port_num}"
+          uri = "#{prefix}://#{h.name.strip}:#{port_num}"
 
 
           # if we've never seen this before, go ahead and open it to ensure it's 
@@ -109,7 +109,7 @@ module Services
           sister_entity = _create_entity("Uri", entity_details, sister_entity)
 
         # otherwise, create a network service on the IP, either UDP or TCP - fail otherwise
-        elsif protocol == "tcp" && h.name.is_ip_address?
+        elsif protocol == "tcp" && h.name.strip.is_ip_address?
 
           service_specific_details = {}
 
@@ -166,7 +166,7 @@ module Services
 
           # now we have all the details we need, create it
 
-          name = "#{h.name}:#{port_num}"
+          name = "#{h.name.strip}:#{port_num}"
 
           entity_details = {
             "name" => name,
@@ -181,7 +181,7 @@ module Services
 
           sister_entity = _create_entity("NetworkService", entity_details, sister_entity)
 
-        elsif protocol == "udp" && h.name.is_ip_address?
+        elsif protocol == "udp" && h.name.strip.is_ip_address?
 
           service_specific_details = {}
 
@@ -198,7 +198,7 @@ module Services
 
           # now we have all the details we need, create it
 
-          name = "#{h.name}:#{port_num}"
+          name = "#{h.name.strip}:#{port_num}"
 
           entity_details = {
             "name" => name,
@@ -214,7 +214,7 @@ module Services
           sister_entity = _create_entity("NetworkService", entity_details, sister_entity)
 
         else
-          raise "Unknown protocol" if h.name.is_ip_address?
+          raise "Unknown protocol" if h.name.strip.is_ip_address?
         end
       end # end thread 
     end # each hostname
