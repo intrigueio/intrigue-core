@@ -192,7 +192,7 @@ module Task
     rescue Errno::ECONNREFUSED => e
       _log_error "Error requesting cert - refused, skipping: #{hostname} #{port}: #{e}"
       _log_error "Error requesting resource, skipping: #{hostname} #{port}"
-      log "retrying... attempt: #{attempts}/#{max_attempts}"
+      _log "retrying... attempt: #{attempts}/#{max_attempts}"
       retry unless attempts == max_attempts
     rescue Errno::ETIMEDOUT => e
       _log_error "Error requesting cert - timed out, timeout: #{hostname} #{port}: #{e}"
