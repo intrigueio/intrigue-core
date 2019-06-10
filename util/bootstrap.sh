@@ -197,6 +197,17 @@ if [ ! -f /usr/bin/masscan ]; then
   rm -rf masscan
 fi
 
+##### Install masscan
+echo "[+] Installing Rdpscan"
+if [ ! -f /usr/bin/rdpscan ]; then
+  git clone https://github.com/robertdavidgraham/rdpscan
+  cd rdpscan
+  make
+  sudo make install
+  cd ..
+  rm -rf rdpscan
+fi
+
 # Get chromedriver
 echo "[+] Installing Chromedriver"
 if [ ! -f /usr/bin/chromedriver ]; then
@@ -214,10 +225,11 @@ fi
 # update sudoers
 echo "[+] Updating Sudo configuration"
 if ! sudo grep -q NMAP /etc/sudoers; then
-  echo "[+] Configuring sudo for nmap, masscan"
+  echo "[+] Configuring sudo for nmap, masscan, rdpscan"
   echo "Cmnd_Alias NMAP = /usr/local/bin/nmap" | sudo tee --append /etc/sudoers
   echo "Cmnd_Alias MASSCAN = /usr/local/bin/masscan" | sudo tee --append /etc/sudoers
-  echo "%admin ALL=(root) NOPASSWD: NMAP, MASSCAN" | sudo tee --append /etc/sudoers
+  echo "Cmnd_Alias RDPSCAN = /usr/local/bin/rdpscan" | sudo tee --append /etc/sudoers
+  echo "%admin ALL=(root) NOPASSWD: MASSCAN, NMAP, RDPSCAN" | sudo tee --append /etc/sudoers
 else
   echo "[+] nmap, masscan already configured to run as sudo"
 fi
