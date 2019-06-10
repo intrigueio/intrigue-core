@@ -12,6 +12,11 @@ module Helper
   def start_task(queue, project, existing_scan_result, task_name, entity, depth,
                   options=[], handlers=[], machine_name="asset_discovery_active", auto_enrich=true, auto_scope=false)
 
+    unless entity
+      task_result.log_error "attempted to start #{task_name} at depth #{depth} in scan " + 
+      "#{existing_scan_result.name} but we were given a nil entity. Cowardly refusing to continue." 
+    end
+    
     # Create the task result, and associate our entity and options
     task_result = Intrigue::Model::TaskResult.create({
       :project => project,
