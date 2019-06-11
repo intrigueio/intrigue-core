@@ -197,13 +197,13 @@ if [ ! -f /usr/bin/masscan ]; then
   rm -rf masscan
 fi
 
-##### Install masscan
+##### Install rdpscan
 echo "[+] Installing Rdpscan"
 if [ ! -f /usr/bin/rdpscan ]; then
   git clone https://github.com/robertdavidgraham/rdpscan
   cd rdpscan
   make
-  sudo make install
+  sudo cp rdpscan /usr/bin
   cd ..
   rm -rf rdpscan
 fi
