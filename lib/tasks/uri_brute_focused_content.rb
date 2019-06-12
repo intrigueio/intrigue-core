@@ -223,7 +223,8 @@ class UriBruteFocusedContent < BaseTask
     ]
 
     wordpress_list = [
-      { path: '/wp-admin', severity: 5,  regex: /Powered by WordPress/, status: "confirmed" }, # TODO ... confirmed
+      { path: '/wp-json', severity: 4,  regex: /gmt_offset/, status: "confirmed" }, 
+      { path: '/wp-admin', severity: 5,  regex: /Powered by WordPress/, status: "confirmed" },
       { path: '/xmlrpc.php', severity: 5, status: "confirmed", regex: /XML-RPC server accepts POST requests only./ },
       # TODO - look for "1.3.9.1" to disprove vulnerability 
       #{ path: '/wp-content/plugins/easy-wp-smtp/readme.txt', severity: 1,  regex: /Easy WP SMTP/i, status: "potential" },  
