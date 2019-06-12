@@ -1,11 +1,11 @@
 module Intrigue
 module Task
-class WordpressUserEnumeration < BaseTask
+class WordpressEnumerateUsers < BaseTask
 
   def self.metadata
     {
-      :name => "wordpress_user_enumeration",
-      :pretty_name => "Wordpress User Enumeration",
+      :name => "wordpress_enumerate_users",
+      :pretty_name => "Wordpress Enumerate Users",
       :authors => ["jcran", "jgamblin"],
       :description => "If the target's running Wordpress, this'll enumerate the users",
       :references => [],
@@ -27,7 +27,7 @@ class WordpressUserEnumeration < BaseTask
       body = http_get_body "#{uri}/wp-json/wp/v2/users"
       parsed = JSON.parse body 
 
-      usernames = parsed.map{|x| x["name"] }
+      usernames = parsed.map{|x| x["name"] }.uniq
       _set_entity_detail("wordpress_users", usernames )
 
     rescue JSON::ParserError

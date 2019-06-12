@@ -128,7 +128,7 @@ module Intrigue
 
       # TODO - there must be a cleaner way? 
       def get_option(option_name)
-        opt = options.detect{|h| h[option_name] }
+        opt = options.detect{|h| h[option_name] } if options
         opt.each{|k,v| return v } if opt
       end
 

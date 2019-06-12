@@ -1,11 +1,11 @@
 module Intrigue
 module Task
-class WordpressPluginEnumeration < BaseTask
+class WordpressEnumeratePlugins < BaseTask
 
   def self.metadata
     {
-      :name => "wordpress_plugin_enumeration",
-      :pretty_name => "Wordpress Plugin Enumeration",
+      :name => "wordpress_enumerate_plugins",
+      :pretty_name => "Wordpress Enumerate Plugins",
       :authors => ["jcran"],
       :description => "If the target's running Wordpress, this'll enumerate the plugins",
       :references => [],
@@ -27,7 +27,7 @@ class WordpressPluginEnumeration < BaseTask
       body = http_get_body "#{uri}/wp-json"
       parsed = JSON.parse body 
 
-      plugins = (parsed["namespaces"] || []).map{|x| x.gsub("\\","") }
+      plugins = (parsed["namespaces"] || []).uniq.map{|x| x.gsub("\\","") }
 
       _set_entity_detail("wordpress_plugins", plugins )
 
