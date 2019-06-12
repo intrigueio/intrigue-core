@@ -48,12 +48,14 @@ class IntrigueApp < Sinatra::Base
   get "/:project/entities/:id.csv" do
     content_type 'text/plain'
     @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id].to_i)
+    attachment "#{@project_name}_#{@entity.id}.csv"
     @entity.export_csv
   end
 
   get "/:project/entities/:id.json" do
     content_type 'application/json'
     @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id].to_i)
+    attachment "#{@project_name}_#{@entity.id}.json"
     @entity.export_json
   end
 
