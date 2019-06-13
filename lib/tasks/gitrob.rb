@@ -94,7 +94,7 @@ class Gitrob < BaseTask
           type: "gitrob",
           severity: 4,
           status: "potential",
-          description: "#{f["CommitAuthor"]}: #{f["CommitMessage"]}\n\n#{f["Action"]} #{f["Description"]} at #{f["FileUrl"]}\n\n#{f["Comment"]}"
+          description: "#{f["CommitAuthor"]}: #{f["CommitMessage"]}\n\n#{f["Action"]} #{f["Description"]} at #{f["FileUrl"]}\n\n#{f["Comment"]}",
           details: f
         })
 
