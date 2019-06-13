@@ -30,6 +30,7 @@ require 'logger'
 require_relative 'lib/initialize/array'
 require_relative 'lib/initialize/capybara'
 require_relative 'lib/initialize/hash'
+require_relative 'lib/initialize/json_export_file'
 require_relative 'lib/initialize/sidekiq_profiler'
 require_relative 'lib/initialize/string'
 
