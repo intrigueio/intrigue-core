@@ -31,7 +31,6 @@ class Gitrob < BaseTask
     # task assumes gitrob is in our path and properly configured
     _log "Starting Gitrob on #{github_account}, saving to #{temp_file}!"
     command_string = "gitrob -github-access-token #{token} -save #{temp_file} #{github_account}"
-    _log "Running command: #{command_string}"
     _unsafe_system command_string
     _log "Gitrob finished on #{github_account}!"
 
