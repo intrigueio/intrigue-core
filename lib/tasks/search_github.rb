@@ -40,7 +40,7 @@ class SearchGithub < BaseTask
 
     # Search repositories
     search_uri = "https://api.github.com/search/repositories?q=#{entity_name}"
-    response = _get_response(search_uri)
+    response = _get_github_response(search_uri)
     # Create
     response["items"].each do |result|
       _create_entity "GithubRepository", {

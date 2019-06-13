@@ -80,6 +80,8 @@ class Gitrob < BaseTask
       _log "No repositories!"
     end
 
+    _log "Got output: #{output}"
+
     # create findings
     if output["Findings"]
       finding_hash = {}
@@ -92,6 +94,7 @@ class Gitrob < BaseTask
         _create_issue({
           name: "Gitrob: #{f["Action"]} #{f["Description"]} at #{f["FileUrl"]}",
           type: "gitrob",
+          uri: "#{f["CommitUrl"]}"
           severity: 4,
           status: "potential",
           description: "#{f["CommitAuthor"]}: #{f["CommitMessage"]}\n\n#{f["Action"]} #{f["Description"]} at #{f["FileUrl"]}\n\n#{f["Comment"]}",
