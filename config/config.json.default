@@ -236,6 +236,12 @@
       "uri" : "https://hunter.io/api_keys",
       "editable" : "true",
       "comment" : ""
+    }, 
+   "gitrob_access_token" : {
+      "value" : "",
+      "uri" : "https://github.com/settings/tokens",
+      "editable" : "true",
+      "comment" : ""
     }
   }
 }
