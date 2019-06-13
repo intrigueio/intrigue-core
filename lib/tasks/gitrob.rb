@@ -89,15 +89,15 @@ class Gitrob < BaseTask
         next if (f["Description"] == "Contains word: credential" && f["FilePath"] =~ /credential.html/i )
         next if (f["Description"] == "Contains word: password" && f["FilePath"] =~ /password.html/i )
 
-        _create_entity "Finding", {
-          "name" => "Gitrob: #{f["Action"]} #{f["Description"]} at #{f["FileUrl"]}",
-          "uri" => "#{f["CommitUrl"]}",
-          "summary" => "#{f["CommitAuthor"]}: #{f["CommitMessage"]}\n\n#{f["Action"]} #{f["Description"]} at #{f["FileUrl"]}\n\n#{f["Comment"]}",
-          "finding_type" => "gitrob",
-          "finding_details" => f,
-          "severity" => "medium",
-          "status" => "potential"
-        }
+        _create_issue({
+          name: "Gitrob: #{f["Action"]} #{f["Description"]} at #{f["FileUrl"]}",
+          type: "gitrob",
+          severity: 4,
+          status: "potential",
+          description: "#{f["CommitAuthor"]}: #{f["CommitMessage"]}\n\n#{f["Action"]} #{f["Description"]} at #{f["FileUrl"]}\n\n#{f["Comment"]}"
+          details: f
+        })
+
       end
     else
       _log "No findings!"
