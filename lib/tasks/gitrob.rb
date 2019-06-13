@@ -96,7 +96,7 @@ class Gitrob < BaseTask
           severity: 4,
           status: "potential",
           description:  "A suspicious commit was found in a public Github repository.\n" + 
-                        "Repository URL: #{RepositoryUrl}\n" + 
+                        "Repository URL: #{f['RepositoryUrl']}\n" + 
                         "Commit Author: #{f["CommitAuthor"]}\n" + 
                         "Commit Message #{f["CommitMessage"]}\n" + 
                         "Details: #{f["Action"]} #{f["Description"]} at #{f["FileUrl"]}\n\n#{f["Comment"]}",
