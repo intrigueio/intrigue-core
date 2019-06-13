@@ -80,8 +80,6 @@ class Gitrob < BaseTask
       _log "No repositories!"
     end
 
-    _log "Got output: #{output}"
-
     # create findings
     if output["Findings"]
       finding_hash = {}
@@ -94,10 +92,14 @@ class Gitrob < BaseTask
         _create_issue({
           name: "Gitrob: #{f["Action"]} #{f["Description"]} at #{f["FileUrl"]}",
           type: "gitrob",
-          uri: "#{f["CommitUrl"]}"
+          uri: "#{f["CommitUrl"]}",
           severity: 4,
           status: "potential",
-          description: "#{f["CommitAuthor"]}: #{f["CommitMessage"]}\n\n#{f["Action"]} #{f["Description"]} at #{f["FileUrl"]}\n\n#{f["Comment"]}",
+          description:  "A suspicious commit was found in a public Github repository.\n" + 
+                        "Repository URL: #{RepositoryUrl}\n" + 
+                        "Commit Author: #{f["CommitAuthor"]}\n" + 
+                        "Commit Message #{f["CommitMessage"]}\n" + 
+                        "Details: #{f["Action"]} #{f["Description"]} at #{f["FileUrl"]}\n\n#{f["Comment"]}",
           details: f
         })
 
