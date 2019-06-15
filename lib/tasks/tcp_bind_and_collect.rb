@@ -13,7 +13,7 @@ class TcpBindAndCollect < BaseTask
       :description => "Given a set of ports (or all), bind and collect all connections",
       :references => [],
       :type => "discovery",
-      :passive => false,
+      :passive => true,
       :allowed_types => ["String"],
       :example_entities =>  [{"type" => "String", "details" => {"name" => "default"}}],
       :allowed_options => [
