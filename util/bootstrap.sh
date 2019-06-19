@@ -300,9 +300,8 @@ echo "Ruby version: `ruby -v`"
 
 # Install bundler
 echo "[+] Installing Latest Bundler"
-gem install bundler --no-ri --no-rdoc
+gem install bundler:2.0.1 --no-ri --no-rdoc
 bundle update --bundler
-# gem install bundler:2.0.1
 rbenv rehash
 
 #####

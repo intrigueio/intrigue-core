@@ -92,7 +92,6 @@ class Gitrob < BaseTask
         _create_issue({
           name: "Gitrob: #{f["Action"]} #{f["Description"]} at #{f["FileUrl"]}",
           type: "gitrob",
-          uri: "#{f["CommitUrl"]}",
           severity: 4,
           status: "potential",
           description:  "A suspicious commit was found in a public Github repository.\n" + 
@@ -100,7 +99,7 @@ class Gitrob < BaseTask
                         "Commit Author: #{f["CommitAuthor"]}\n" + 
                         "Commit Message #{f["CommitMessage"]}\n" + 
                         "Details: #{f["Action"]} #{f["Description"]} at #{f["FileUrl"]}\n\n#{f["Comment"]}",
-          details: f
+          details: f.merge({uri: "#{f["CommitUrl"]}"})
         })
 
       end
