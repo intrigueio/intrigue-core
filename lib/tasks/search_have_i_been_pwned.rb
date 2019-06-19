@@ -36,18 +36,22 @@ class SearchHaveIBeenPwned < BaseTask
 
     results.each do |result|
 
-      # create an issue for each found result
-      _create_issue({
-        name: "Leaked account: #{email_address} on #{result["Domain"]} at #{result["BreachDate"]}",
-        type: "leaked_account_details",
-        severity: 5,
-        status: "confirmed",
-        description: "Details for a leaked account were found in Have I Been Pwned." + 
-                      "User: #{email_address} Domain: #{result["Domain"]}.\n" + 
-                      "The details were leaked on #{result["BreachDate"]}.\n" +
-                      "About this Breach:\n#{result["Description"]}",
-        details: result
-      })
+      if result["IsSensitive"]
+
+        # create an issue for each found result
+        _create_issue({
+          name: "Leaked account: #{email_address} on #{result["Domain"]} at #{result["BreachDate"]}",
+          type: "leaked_account_details",
+          severity: 4,
+          status: "confirmed",
+          description: "Details for a leaked account were found in Have I Been Pwned." + 
+                        "User: #{email_address} Domain: #{result["Domain"]}.\n" + 
+                        "The details were leaked on #{result["BreachDate"]}.\n" +
+                        "About this Breach:\n#{result["Description"]}",
+          details: result
+        })
+
+      end
 
       # TODO - create a web account? 
     end
