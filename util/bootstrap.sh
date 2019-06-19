@@ -31,6 +31,7 @@ sleep 5
 # if these are already set by our parent, use that.. otherwise sensible defaults
 export INTRIGUE_DIRECTORY="${INTRIGUE_DIRECTORY:=/core}"
 export RUBY_VERSION="${RUBY_VERSION:=2.5.1}"
+export DEBIAN_FRONTEND=noninteractive
 
 # Clean up
 echo "[+] Ensuring Apt is clean"
