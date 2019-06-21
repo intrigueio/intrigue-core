@@ -52,7 +52,7 @@ class DnsRecurseSpf < BaseTask
 
           r["lookup_details"].each do |response|
 
-            response["response_record_data"].each do |record|
+            response["response_record_data"].split(",").each do |record|
 
               _log "Got record: #{record}"
 

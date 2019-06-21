@@ -4,65 +4,11 @@ module Intrigue
 
       include Intrigue::Task::Generic
 
-=begin
-      def check_resolv_timeout(lookup_name)
-
-        config = {
-          :search => [],
-          :retry_times => 3,
-          :retry_delay => 3,
-          :packet_timeout => 10,
-          :query_timeout => 30
-        }
-
-        if _get_system_config("resolvers")
-          config[:nameserver] = _get_system_config("resolvers").split(",")
-        end
-
-        resolver = Dnsruby::Resolver.new(config)
-
-        begin
-          resolver.query(lookup_name)
-        rescue Dnsruby::NXDomain => e
-          return false
-        rescue IOError => e
-          _log_error "Unable to resolve, ioerror: #{e}"
-          return true
-        rescue Dnsruby::SocketEofResolvError => e
-          _log_error "Unable to resolve, server failure: #{e}"
-          return true
-        rescue Dnsruby::ServFail => e
-          _log_error "Unable to resolve, server failure: #{e}"
-          return true
-        rescue Dnsruby::ResolvTimeout => e
-          _log_error "Timed out"
-          return true
-        end
-
-      false
-      end
-=end
 
       # Check for wildcard DNS
       def check_wildcard(suffix)
         _log "Checking for wildcards on #{suffix}."
         all_discovered_wildcards = []
-
-        # First check if we can even get a reliable result
-        #timeout_count = 0
-        #10.times do
-        #  random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}"
-        #
-        #  # keep track of timeouts
-        #  _log "Checking: #{random_string}"
-        #  timeout_count += 1 if check_resolv_timeout random_string
-        #end
-
-        # fail if most timed out
-        #if timeout_count > 5
-        #  _log_error "More than 50% of our wildcard checks timed out, cowardly refusing to continue"
-        #  return nil
-        #end
 
         # first, check wordpress....
         # www*
@@ -211,6 +157,8 @@ module Intrigue
             # translate results into a ruby hash
             out = resources.map do |r|
 
+              puts "Got response record: #{r.inspect}"
+
               entry = lookup_name
               entry = r.address.to_s if r.respond_to? "address"
               entry = r.name.to_s if r.respond_to? "name"
@@ -222,10 +170,14 @@ module Intrigue
               record_data = r.data.to_s if r.respond_to? "data" # Type257_Class1
               record_data = r.address.to_s if (record_type == "A" || record_type == "AAAA") # && r.respond_to?("name")
               record_data = r.strings.join(",") if record_type == "TXT"
-              record_data = r.exchange.to_s if record_type == "MX"
+              record_data = {"exchange" => r.exchange.to_s, "priority" => r.preference} if record_type == "MX"
+              record_data = r.name.to_s if record_type == "CNAME"
               record_data = r.name.to_s if record_type == "NS"
-              record_data = {"cpu" => r.cpu.to_s, "os" => r.os.to_s } if record_type == "HINFO"
-              record_data = {"mname" => r.mname.to_s, "rname"=> r.rname.to_s, "serial" => r.serial} if record_type == "SOA"
+              record_data = { "cpu" => r.cpu.to_s, "os" => r.os.to_s } if record_type == "HINFO"
+              record_data = {
+                  "mname" => r.mname.to_s, 
+                  "rname"=> r.rname.to_s, 
+                  "serial" => r.serial } if record_type == "SOA"
 
               {
                 "name" => entry,
@@ -338,55 +290,37 @@ module Intrigue
       end
 
 
+        # https://support.dnsimple.com/articles/soa-record/
+        # [0] primary name server
+        # [1] responsible party for the domain
+        # [2] timestamp that changes whenever you update your domain
+        # [3] number of seconds before the zone should be refreshed
+        # [4] number of seconds before a failed refresh should be retried
+        # [5] upper limit in seconds before a zone is considered no longer authoritative
+        # [6]  negative result TTL
       def collect_soa_details(lookup_name)
         _log "Checking start of authority"
         response = resolve(lookup_name, [Resolv::DNS::Resource::IN::SOA])
 
-        # Check for sanity
-        skip = true unless response &&
-                           !response.empty? &&
-                           response.first["lookup_details"].first["response_record_type"] == "SOA"
+        data = response.first["lookup_details"].first["response_record_data"]
 
-        soa = nil
-        unless skip
-          data = response.first["lookup_details"].first["response_record_data"]
-
-          # https://support.dnsimple.com/articles/soa-record/
-          # [0] primary name server
-          # [1] responsible party for the domain
-          # [2] timestamp that changes whenever you update your domain
-          # [3] number of seconds before the zone should be refreshed
-          # [4] number of seconds before a failed refresh should be retried
-          # [5] upper limit in seconds before a zone is considered no longer authoritative
-          # [6]  negative result TTL
-
-          soa = {
-            "primary_name_server" => "#{data[0]}",
-            "responsible_party" => "#{data[1]}",
-            "timestamp" => data[2],
-            "refresh_after" => data[3],
-            "retry_refresh_after" => data[4],
-            "nonauthoritative_after" => data[5],
-            "retry_fail_after" => data[6]
-          }
-        end
-      soa
+        {
+          "primary_name_server" => "#{data["mname"]}",
+          "responsible_party" => "#{data["rname"]}",
+          "serial" => data["serial"]
+        }
       end
 
       def collect_mx_records(lookup_name)
         _log "Collecting MX records"
         response = resolve(lookup_name, [Resolv::DNS::Resource::IN::MX])
-        skip = true unless response && !response.empty?
-
         mx_records = []
-        unless skip
-          response.each do |r|
-            r["lookup_details"].each do |record|
-              next unless record["response_record_type"] == "MX"
-              mx_records << {
-                "priority" => record["response_record_data"].first,
-                "host" => "#{record["response_record_data"].last}" }
-            end
+        response.each do |r|
+          r["lookup_details"].each do |record|
+            next unless record["response_record_type"] == "MX"
+            mx_records << {
+              "priority" => record["response_record_data"]["priority"],
+              "host" => "#{record["response_record_data"]["exchange"]}" }
           end
         end
 
@@ -396,18 +330,16 @@ module Intrigue
       def collect_spf_details(lookup_name)
         _log "Collecting SPF records"
         response = resolve(lookup_name, [Resolv::DNS::Resource::IN::TXT])
-        skip = true unless response && !response.empty?
 
         spf_records = []
-        unless skip
-          response.each do |r|
-            r["lookup_details"].each do |record|
-              next unless record["response_record_type"] == "TXT"
-              next unless record["response_record_data"].first =~ /spf/i
-              spf_records << record["response_record_data"].first
-            end
+        response.each do |r|
+          r["lookup_details"].each do |record|
+            next unless record["response_record_type"] == "TXT"
+            next unless record["response_record_data"] =~ /spf/i
+            spf_records << record["response_record_data"]
           end
         end
+        
 
       spf_records
       end
@@ -415,15 +347,12 @@ module Intrigue
       def collect_txt_records(lookup_name)
         _log "Collecting TXT records"
         response = resolve(lookup_name, [Resolv::DNS::Resource::IN::TXT])
-        skip = true unless response && !response.empty?
 
         txt_records = []
-        unless skip
-          response.each do |r|
-            r["lookup_details"].each do |record|
-              next unless record["response_record_type"] == "TXT"
-              txt_records << record["response_record_data"].first
-            end
+        response.each do |r|
+          r["lookup_details"].each do |record|
+            next unless record["response_record_type"] == "TXT"
+            txt_records << record["response_record_data"]
           end
         end
 
