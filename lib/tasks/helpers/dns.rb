@@ -157,7 +157,7 @@ module Intrigue
             # translate results into a ruby hash
             out = resources.map do |r|
 
-              puts "Got response record: #{r.inspect}"
+              #puts "Got response record: #{r.inspect}"
 
               entry = lookup_name
               entry = r.address.to_s if r.respond_to? "address"
@@ -301,6 +301,7 @@ module Intrigue
       def collect_soa_details(lookup_name)
         _log "Checking start of authority"
         response = resolve(lookup_name, [Resolv::DNS::Resource::IN::SOA])
+        return unless response && !response.empty?
 
         data = response.first["lookup_details"].first["response_record_data"]
 
@@ -314,6 +315,8 @@ module Intrigue
       def collect_mx_records(lookup_name)
         _log "Collecting MX records"
         response = resolve(lookup_name, [Resolv::DNS::Resource::IN::MX])
+        return unless response && !response.empty?
+
         mx_records = []
         response.each do |r|
           r["lookup_details"].each do |record|
@@ -330,6 +333,7 @@ module Intrigue
       def collect_spf_details(lookup_name)
         _log "Collecting SPF records"
         response = resolve(lookup_name, [Resolv::DNS::Resource::IN::TXT])
+        return unless response && !response.empty?
 
         spf_records = []
         response.each do |r|
@@ -347,6 +351,7 @@ module Intrigue
       def collect_txt_records(lookup_name)
         _log "Collecting TXT records"
         response = resolve(lookup_name, [Resolv::DNS::Resource::IN::TXT])
+        return unless response && !response.empty?
 
         txt_records = []
         response.each do |r|

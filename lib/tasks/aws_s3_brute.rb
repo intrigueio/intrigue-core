@@ -95,6 +95,7 @@ class AwsS3Brute < BaseTask
           work_q << "staging-#{pb.strip}"
           work_q << "test-#{pb.strip}"
           work_q << "web-#{pb.strip}"
+          
         rescue TypeError => e
           puts "Unable to permute: #{pb}, failing"
         end
