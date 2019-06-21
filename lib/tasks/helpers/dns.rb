@@ -4,7 +4,8 @@ module Intrigue
 
       include Intrigue::Task::Generic
 
-      def check_resolv_sanity(lookup_name)
+=begin
+      def check_resolv_timeout(lookup_name)
 
         config = {
           :search => [],
@@ -40,6 +41,7 @@ module Intrigue
 
       false
       end
+=end
 
       # Check for wildcard DNS
       def check_wildcard(suffix)
@@ -47,20 +49,20 @@ module Intrigue
         all_discovered_wildcards = []
 
         # First check if we can even get a reliable result
-        timeout_count = 0
-        10.times do
-          random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}"
-
-          # keep track of timeouts
-          _log "Checking: #{random_string}"
-          timeout_count += 1 if check_resolv_sanity random_string
-        end
+        #timeout_count = 0
+        #10.times do
+        #  random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}"
+        #
+        #  # keep track of timeouts
+        #  _log "Checking: #{random_string}"
+        #  timeout_count += 1 if check_resolv_timeout random_string
+        #end
 
         # fail if most timed out
-        if timeout_count > 5
-          _log_error "More than 50% of our wildcard checks timed out, cowardly refusing to continue"
-          return nil
-        end
+        #if timeout_count > 5
+        #  _log_error "More than 50% of our wildcard checks timed out, cowardly refusing to continue"
+        #  return nil
+        #end
 
         # first, check wordpress....
         # www*
@@ -150,12 +152,12 @@ module Intrigue
 
 
       # convenience method to just send back name
-      def resolve_name(lookup_name, lookup_types=[Dnsruby::Types::AAAA, Dnsruby::Types::A, Dnsruby::Types::CNAME, Dnsruby::Types::PTR])
+      def resolve_name(lookup_name, lookup_types=nil)
         resolve_names(lookup_name,lookup_types).first
       end
 
       # convenience method to just send back names
-      def resolve_names(lookup_name, lookup_types=[Dnsruby::Types::AAAA, Dnsruby::Types::A, Dnsruby::Types::CNAME, Dnsruby::Types::PTR])
+      def resolve_names(lookup_name, lookup_types=nil)
 
         names = []
         x = resolve(lookup_name, lookup_types)
@@ -164,13 +166,96 @@ module Intrigue
       names.uniq
       end
 
-      def resolve(lookup_name, lookup_types=[Dnsruby::Types::AAAA, Dnsruby::Types::A, Dnsruby::Types::CNAME, Dnsruby::Types::PTR])
+      def resolve(lookup_name, lookup_types=nil)
+        
+        resources = []
+
+        # Handle ptr type first
+        if lookup_name.is_ip_address?
+          
+          begin   
+            entry = Resolv.new.getname lookup_name
+
+            out = [{
+              "name" => entry,
+              "lookup_details" => [{
+                "request_record" => lookup_name,
+                "response_record_type" => "PTR",
+                "response_record_data" => entry 
+              }]
+            }]
+          rescue Resolv::ResolvError =>e 
+            _log_error "Hit exception: #{e}."
+          rescue Errno::ENETUNREACH => e
+            _log_error "Hit exception: #{e}. Are you sure you're connected?"
+          end
+
+        # Then everything else 
+        else
+
+          begin 
+            # default types to check 
+            lookup_types = [
+              Resolv::DNS::Resource::IN::AAAA, 
+              Resolv::DNS::Resource::IN::A,
+              Resolv::DNS::Resource::IN::CNAME] unless lookup_types
+
+            # lookup each type
+            lookup_types.each do |t|
+              Resolv::DNS.open {|dns|
+                dns.timeouts = 2 
+                resources.concat(dns.getresources(lookup_name, t)) 
+              }
+            end
+
+            # translate results into a ruby hash
+            out = resources.map do |r|
+
+              entry = lookup_name
+              entry = r.address.to_s if r.respond_to? "address"
+              entry = r.name.to_s if r.respond_to? "name"
+              entry = r.exchange.to_s if r.respond_to? "exchange"
+
+              record_type = r.class.to_s.split(":").last
+
+              record_data = r.inspect.to_s # default to just dumping the object (gross)
+              record_data = r.data.to_s if r.respond_to? "data" # Type257_Class1
+              record_data = r.address.to_s if (record_type == "A" || record_type == "AAAA") # && r.respond_to?("name")
+              record_data = r.strings.join(",") if record_type == "TXT"
+              record_data = r.exchange.to_s if record_type == "MX"
+              record_data = r.name.to_s if record_type == "NS"
+              record_data = {"cpu" => r.cpu.to_s, "os" => r.os.to_s } if record_type == "HINFO"
+              record_data = {"mname" => r.mname.to_s, "rname"=> r.rname.to_s, "serial" => r.serial} if record_type == "SOA"
+
+              {
+                "name" => entry,
+                "ttl" => r.ttl,
+                "lookup_details" => [{
+                  "request_record" => lookup_name,
+                  "response_record_type" => record_type,
+                  "response_record_data" => record_data 
+                }]
+              }
+            end
+
+          rescue Resolv::ResolvError => e 
+            _log_error "Hit exception: #{e}."
+          rescue Errno::ENETUNREACH => e
+            _log_error "Hit exception: #{e}. Are you sure you're connected?"
+          end
+        end 
+
+      out || []
+      end
+
+      def resolve_old(lookup_name, lookup_types=nil)
+        lookup_types = [Dnsruby::Types::AAAA, Dnsruby::Types::A, Dnsruby::Types::CNAME, Dnsruby::Types::PTR] unless lookup_types
 
         config = {
           :search => [],
           :retry_times => 3,
           :retry_delay => 3,
-          :packet_timeout => 10,
+          :packet_timeout => 30,
           :query_timeout => 30
         }
 
@@ -229,7 +314,7 @@ module Intrigue
                   "response_record_data" => resource.rdata,
                   "nameservers" => resolver.config.nameserver }]} if resource.respond_to? :domainname
 
-              resources << {
+              resources << { # always
                 "name" => resource.name.to_s.downcase,
                 "lookup_details" => [{
                   "request_record" => lookup_name,
@@ -255,7 +340,7 @@ module Intrigue
 
       def collect_soa_details(lookup_name)
         _log "Checking start of authority"
-        response = resolve(lookup_name, [Dnsruby::Types::SOA])
+        response = resolve(lookup_name, [Resolv::DNS::Resource::IN::SOA])
 
         # Check for sanity
         skip = true unless response &&
@@ -290,7 +375,7 @@ module Intrigue
 
       def collect_mx_records(lookup_name)
         _log "Collecting MX records"
-        response = resolve(lookup_name, [Dnsruby::Types::MX])
+        response = resolve(lookup_name, [Resolv::DNS::Resource::IN::MX])
         skip = true unless response && !response.empty?
 
         mx_records = []
@@ -310,7 +395,7 @@ module Intrigue
 
       def collect_spf_details(lookup_name)
         _log "Collecting SPF records"
-        response = resolve(lookup_name, [Dnsruby::Types::TXT])
+        response = resolve(lookup_name, [Resolv::DNS::Resource::IN::TXT])
         skip = true unless response && !response.empty?
 
         spf_records = []
@@ -329,7 +414,7 @@ module Intrigue
 
       def collect_txt_records(lookup_name)
         _log "Collecting TXT records"
-        response = resolve(lookup_name, [Dnsruby::Types::TXT])
+        response = resolve(lookup_name, [Resolv::DNS::Resource::IN::TXT])
         skip = true unless response && !response.empty?
 
         txt_records = []
@@ -363,13 +448,10 @@ module Intrigue
           # Clean up the response and make it serializable
           xtype = result["lookup_details"].first["response_record_type"].to_s.sanitize_unicode
           lookup_details = result["lookup_details"].first["response_record_data"]
-          if lookup_details.kind_of?(Dnsruby::IPv4) || lookup_details.kind_of?(Dnsruby::IPv6) || lookup_details.kind_of?(Dnsruby::Name)
-            _log "Sanitizing Dnsruby Object"
-            xdata = result["lookup_details"].first["response_record_data"].to_s.sanitize_unicode
-          else
-            _log "Sanitizing String or Array"
-            xdata = result["lookup_details"].first["response_record_data"].to_s.sanitize_unicode
-          end
+          
+          _log "Sanitizing String or Array"
+          xdata = result["lookup_details"].first["response_record_data"].to_s.sanitize_unicode
+
           dns_entries << { "response_data" => xdata, "response_type" => xtype }
         end
 

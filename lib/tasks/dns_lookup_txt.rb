@@ -29,58 +29,40 @@ class DnsLookupTxt < BaseTask
 
     _log "Running TXT lookup on #{domain_name}"
 
-    begin
+    res_answer = collect_txt_records
 
-    res_answer = resolve_name(fqdn, [Dnsruby::Types::TXT])
+    # If we got a success to the query.
+    if res_answer
+      _log_good "TXT lookup succeeded on #{domain_name}:"
+      _log_good "Answer:\n=======\n#{res_answer.to_s}======"
 
-      # If we got a success to the query.
-      if res_answer
-        _log_good "TXT lookup succeeded on #{domain_name}:"
-        _log_good "Answer:\n=======\n#{res_answer.to_s}======"
+      # Create a finding for each
+      unless res_answer.answer.count == 0
+        res_answer.answer.each do |answer|
+          answer.rdata.first.split(" ").each do |record|
 
-        # Create a finding for each
-        unless res_answer.answer.count == 0
-          res_answer.answer.each do |answer|
-            answer.rdata.first.split(" ").each do |record|
-
-              if record =~ /^include:.*/
-                _create_entity "IpAddress", {"name" => record.split(":").last}
-              elsif record =~ /^ip4:.*/
-                s = record.split(":").last
-                if s.include? "/"
-                  _create_entity "NetBlock", {"name" => s }
-                else
-                  _create_entity "IpAddress", {"name" => s }
-                end
-              #elsif record =~ /^google-site-verification.*/
-              #  _create_entity "Info", {"name" => "DNS Verification Code", "type" =>"Google", "content" => #record.split(":").last}
-              #elsif record =~ /^yandex-verification.*/
-              #  _create_entity "Info", {"name" => "DNS Verification Code", "type" =>"Yandex", "content" => #record.split(":").last}
+            if record =~ /^include:.*/
+              _create_entity "IpAddress", {"name" => record.split(":").last}
+            elsif record =~ /^ip4:.*/
+              s = record.split(":").last
+              if s.include? "/"
+                _create_entity "NetBlock", {"name" => s }
+              else
+                _create_entity "IpAddress", {"name" => s }
               end
+            #elsif record =~ /^google-site-verification.*/
+            #  _create_entity "Info", {"name" => "DNS Verification Code", "type" =>"Google", "content" => #record.split(":").last}
+            #elsif record =~ /^yandex-verification.*/
+            #  _create_entity "Info", {"name" => "DNS Verification Code", "type" =>"Yandex", "content" => #record.split(":").last}
             end
-
-            # Log an info record with full detail
-            _create_entity "Info", { :name => "TXT Record", :content => answer.to_s , :details => res_answer.to_s }
-
           end
-        end
 
+          # Log an info record with full detail
+          _create_entity "Info", { :name => "TXT Record", :content => answer.to_s , :details => res_answer.to_s }
+
+        end
       end
 
-    rescue Dnsruby::Refused
-      _log "Lookup against #{domain_name} refused."
-
-    rescue Dnsruby::ResolvError
-      _log "Unable to resolve #{domain_name}"
-
-    rescue Dnsruby::ResolvTimeout
-      _log "Timed out while querying #{domain_name}."
-
-    rescue Errno::ENETUNREACH => e
-      _log_error "Hit exception: #{e}. Are you sure you're connected?"
-
-    rescue Exception => e
-      _log "Unknown exception: #{e}"
     end
 
     _log "done"

@@ -172,7 +172,7 @@ class DnsBruteSub < BaseTask
   end
 
   def _resolve(hostname)
-    resolve_name(hostname,[Dnsruby::Types::AAAA, Dnsruby::Types::A, Dnsruby::Types::CNAME])
+    resolve_name(hostname)
   end
 
   def _check_permutations(subdomain,suffix,resolved_address,queue,depth)

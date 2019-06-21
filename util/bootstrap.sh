@@ -5,7 +5,7 @@
 #####
 
 # Clean up apt
-echo "[+] Disablingeaning up apt-daily.service"
+echo "[+] Disabling up apt-daily.service"
 sudo systemctl stop apt-daily.service
 sudo systemctl kill --kill-who=all apt-daily.service
 sudo systemctl disable apt-daily.service

@@ -212,7 +212,7 @@ class DnsBruteSubAsync < BaseTask
   end
 
   def _resolve(hostname)
-    resolve_name(hostname,[Dnsruby::Types::AAAA, Dnsruby::Types::A, Dnsruby::Types::CNAME])
+    resolve_name(hostname)
   end
 
   # Check for wildcard DNS
@@ -220,6 +220,7 @@ class DnsBruteSubAsync < BaseTask
     _log "Checking for wildcards on #{suffix}."
     all_discovered_wildcards = []
 
+=begin
     # First check if we can even get a reliable result
     timeout_count = 0
     10.times do
@@ -227,7 +228,7 @@ class DnsBruteSubAsync < BaseTask
 
       # keep track of timeouts
       _log "Checking: #{random_string}"
-      timeout_count += 1 if check_resolv_sanity random_string
+      timeout_count += 1 if check_resolv_timeout random_string
     end
 
     # fail if most timed out
@@ -235,6 +236,7 @@ class DnsBruteSubAsync < BaseTask
       _log_error "More than 50% of our wildcard checks timed out, cowardly refusing to continue"
       return nil
     end
+=end
 
     # first, check wordpress....
     # www*

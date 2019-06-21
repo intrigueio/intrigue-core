@@ -221,8 +221,6 @@ module Vulndb
         :update => update
       }
 
-      puts "returning #{parsed}"
-
     parsed
     end
   end

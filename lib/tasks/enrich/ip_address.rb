@@ -89,15 +89,7 @@ class IpAddress < Intrigue::Task::BaseTask
 
       # Clean up the dns data
       xtype = result["lookup_details"].first["response_record_type"].to_s.sanitize_unicode
-
-      lookup_details = result["lookup_details"].first["response_record_data"]
-      if lookup_details.kind_of?(Dnsruby::IPv4) || lookup_details.kind_of?(Dnsruby::IPv6) || lookup_details.kind_of?(Dnsruby::Name)
-        #_log "Sanitizing Dnsruby Object"
-        xdata = result["lookup_details"].first["response_record_data"].to_s.sanitize_unicode
-      else
-        #_log "Sanitizing String or array"
-        xdata = result["lookup_details"].first["response_record_data"].to_s.sanitize_unicode
-      end
+      xdata = result["lookup_details"].first["response_record_data"].to_s.sanitize_unicode
 
       dns_entries << { "response_data" => xdata, "response_type" => xtype }
     end

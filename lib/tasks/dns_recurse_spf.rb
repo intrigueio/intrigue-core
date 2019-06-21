@@ -37,135 +37,117 @@ class DnsRecurseSpf < BaseTask
 
   def lookup_txt_record(dns_name)
 
-    begin
+    result = resolve(dns_name, [Resolv::DNS::Resource::IN::TXT])
 
-      result = resolve(dns_name, [Dnsruby::Types.TXT])
+    # If we got a success to the query.
+    if result
+      _log_good "TXT lookup succeeded on #{dns_name}:"
+      _log_good "Result:\n=======\n#{result.to_s}======"
 
-      # If we got a success to the query.
-      if result
-        _log_good "TXT lookup succeeded on #{dns_name}:"
-        _log_good "Result:\n=======\n#{result.to_s}======"
+      # Make sure there was actually a record
+      unless result.count == 0
 
-        # Make sure there was actually a record
-        unless result.count == 0
+        # Iterate through each answer
+        result.each do |r|
 
-          # Iterate through each answer
-          result.each do |r|
+          r["lookup_details"].each do |response|
 
-            r["lookup_details"].each do |response|
+            response["response_record_data"].each do |record|
 
-              response["response_record_data"].each do |record|
+              _log "Got record: #{record}"
 
-                _log "Got record: #{record}"
+              if record =~ /^v=spf1/
 
-                if record =~ /^v=spf1/
+                _log_good "SPF Record: #{record}"
 
-                  _log_good "SPF Record: #{record}"
+                # We have an SPF record, so let's process it
+                record.split(" ").each do |data|
 
-                  # We have an SPF record, so let's process it
-                  record.split(" ").each do |data|
+                  _log "Processing SPF component: #{data}"
 
-                    _log "Processing SPF component: #{data}"
+                  if data =~ /^v=spf1/
+                    next #skip!
 
-                    if data =~ /^v=spf1/
-                      next #skip!
+                  elsif data =~ /^include:.*/
+                    spf_data = data.split(":").last
 
-                    elsif data =~ /^include:.*/
-                      spf_data = data.split(":").last
+                    # Create a domain
+                    domain_name = spf_data.split(".").last(2).join(".")
+                    _create_entity "Domain", { "name" => domain_name, "unscoped" => true }
 
-                      # Create a domain
-                      domain_name = spf_data.split(".").last(2).join(".")
-                      _create_entity "Domain", { "name" => domain_name, "unscoped" => true }
+                    # RECURSE!
+                    lookup_txt_record spf_data
 
-                      # RECURSE!
-                      lookup_txt_record spf_data
+                  elsif data =~ /^redirect=.*/
+                    spf_data = data.split("=").last
 
-                    elsif data =~ /^redirect=.*/
-                      spf_data = data.split("=").last
+                    # Create a domain
+                    domain_name = spf_data.split(".").last(2).join(".")
+                    _create_entity "Domain", { "name" => domain_name, "unscoped" => true }
 
-                      # Create a domain
-                      domain_name = spf_data.split(".").last(2).join(".")
-                      _create_entity "Domain", { "name" => domain_name, "unscoped" => true }
+                    # RECURSE!
+                    lookup_txt_record spf_data
 
-                      # RECURSE!
-                      lookup_txt_record spf_data
+                  elsif data =~ /^exists:.*/ 
+                    spf_data = data.split("=").last
+                    spf_data = spf_data.gsub("%{i}.","") # https://pastebin.com/ug0xHf6H
+                    
+                    # Create a domain
+                    domain_name = spf_data.split(".").last(2).join(".")
+                    _create_entity "Domain", { "name" => domain_name, "unscoped" => true }
 
-                    elsif data =~ /^exists:.*/ 
-                      spf_data = data.split("=").last
-                      spf_data = spf_data.gsub("%{i}.","") # https://pastebin.com/ug0xHf6H
-                      
-                      # Create a domain
-                      domain_name = spf_data.split(".").last(2).join(".")
-                      _create_entity "Domain", { "name" => domain_name, "unscoped" => true }
+                    # RECURSE!
+                    lookup_txt_record spf_data
 
-                      # RECURSE!
-                      lookup_txt_record spf_data
-
-                    elsif data =~ /^ptr:.*/
-                      spf_data = data.split(":").last
-                      
-                      # Create a domain
-                      domain_name = spf_data.split(".").last(2).join(".")
-                      _create_entity "Domain", { "name" => domain_name, "unscoped" => true }
+                  elsif data =~ /^ptr:.*/
+                    spf_data = data.split(":").last
+                    
+                    # Create a domain
+                    domain_name = spf_data.split(".").last(2).join(".")
+                    _create_entity "Domain", { "name" => domain_name, "unscoped" => true }
 
 
-                      # RECURSE!
-                      #lookup_txt_record spf_data
+                    # RECURSE!
+                    #lookup_txt_record spf_data
 
-                      # Create an issue here? PTR is a "do not use" type
-                      # https://www.sparkpost.com/blog/spf-authentication/
+                    # Create an issue here? PTR is a "do not use" type
+                    # https://www.sparkpost.com/blog/spf-authentication/
 
-                      # Excerpt: 
-                      #
-                      # A final mechanism, “ptr” existed in the original specification for SPF, 
-                      # but has been declared “do not use” in the current specification. The ptr 
-                      # mechanism was used to declare that if the sending IP address had a DNS PTR 
-                      # record that resolved to the domain name in question, then that IP address 
-                      # was authorized to send mail for the domain.
-                      #
-                      # The current status of this mechanism is that it should not be used. However, 
-                      # sites doing SPF validation must accept it as valid.
+                    # Excerpt: 
+                    #
+                    # A final mechanism, “ptr” existed in the original specification for SPF, 
+                    # but has been declared “do not use” in the current specification. The ptr 
+                    # mechanism was used to declare that if the sending IP address had a DNS PTR 
+                    # record that resolved to the domain name in question, then that IP address 
+                    # was authorized to send mail for the domain.
+                    #
+                    # The current status of this mechanism is that it should not be used. However, 
+                    # sites doing SPF validation must accept it as valid.
 
-                    elsif data =~ /^ip4:.*/
-                      range = data.split(":").last
+                  elsif data =~ /^ip4:.*/
+                    range = data.split(":").last
 
-                      if data.include? "/"
-                        _create_entity "NetBlock", {"name" => range, "unscoped" => true }
-                      else
-                        _create_entity "IpAddress", {"name" => range, "unscoped" => true }
-                      end
-
+                    if data.include? "/"
+                      _create_entity "NetBlock", {"name" => range, "unscoped" => true }
+                    else
+                      _create_entity "IpAddress", {"name" => range, "unscoped" => true }
                     end
-                  end
-                
-                else  # store everything else as info
-                  _create_entity "Info", { "name" => "TXT Record for #{dns_name} (#{record})", "content" => record }
-                end
 
+                  end
+                end
+              
+              else  # store everything else as info
+                _create_entity "Info", { "name" => "TXT Record for #{dns_name} (#{record})", "content" => record }
               end
+
             end
           end
-
-          _log "No more records"
         end
-      else
-        _log "Lookup failed, no result"
+
+        _log "No more records"
       end
-
-    rescue Dnsruby::Refused
-      _log_error "Lookup against #{dns_name} refused"
-
-    rescue Dnsruby::ResolvError
-      _log_error "Unable to resolve #{dns_name}"
-
-    rescue Dnsruby::ResolvTimeout
-      _log_error "Timed out while querying #{dns_name}."
-
-    rescue Errno::ENETUNREACH => e
-      _log_error "Hit exception: #{e}. Are you sure you're connected?"
-
-    #rescue Exception => e
-    #  _log_error "Unknown exception: #{e}"
+    else
+      _log "Lookup failed, no result"
     end
   end
 

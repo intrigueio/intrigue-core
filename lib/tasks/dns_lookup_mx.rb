@@ -26,15 +26,15 @@ class DnsLookupMx < BaseTask
     name = _get_entity_name
 
     begin
-      # XXX - we should probably call this a couple times to deal
-      # with round-robin DNS & load balancers. We'd need to merge results
-      # across the queries
-      # use the global resolver
-      resources = resolve_names(name, [Dnsruby::Types::MX])
+      resources = collect_mx_records
 
       resources.each do |r|
         # Create a DNS record
-        _create_entity("IpAddress", { "name" => r})
+        if r["name"].is_ip_address?
+          _create_entity("IpAddress", { "name" => r["name"]}) 
+        else
+          _create_entity("DnsRecord", { "name" => r["name"]})
+        end
       end
 
     rescue Errno::ENETUNREACH => e
