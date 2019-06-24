@@ -112,6 +112,8 @@ class AwsS3Brute < BaseTask
             #skip anything that isn't a real name
             next unless bucket_name && bucket_name.length > 0
 
+            s3_uri = "https://#{bucket_name}.s3.amazonaws.com"
+
             # Authenticated method
             if opt_use_creds
 
@@ -139,10 +141,7 @@ class AwsS3Brute < BaseTask
             # Unauthenticated check #
             #########################
             else
-
-
-              # check new format first
-              s3_uri = "https://#{bucket_name}.s3.amazonaws.com"
+            
               exists = check_existence_unauthenticated(s3_uri,bucket_name)
 
               if exists
