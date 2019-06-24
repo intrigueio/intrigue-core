@@ -43,9 +43,15 @@ class SearchCertSpotter < BaseTask
       json = JSON.parse(response.body)
 
       # a little wicked but we want to only select those that match our pattern(s)
-      records = json.map { |x| x["dns_names"].map{|d| d if extract_patterns.select{|p| d =~ /#{p}/}.count > 0 }}.flatten.compact.uniq
-
-      records.each do |domain|
+      records = json.map do |x|
+        next unless x 
+        x["dns_names"].map do |d|
+          next unless x["dns_names"]
+          d if extract_patterns.select {|p| d =~ /#{p}/}.count > 0 
+        end
+      end
+      
+      records.flatten.compact.uniq.each do |domain|
 
         # remove any whitespace, and skip if it's a wildcard
         if domain == "*"
