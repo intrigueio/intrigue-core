@@ -9,7 +9,7 @@ class SearchCrt < BaseTask
       :pretty_name => "Search CRT",
       :authors => ["jcran"],
       :description => "This task hit CRT's API and creates new DnsRecord entities.",
-      :references => ["https://www.virustotal.com/en/documentation/"],
+      :references => [],
       :type => "discovery",
       :passive => true,
       :allowed_types => ["Domain","DnsRecord"],

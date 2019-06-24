@@ -242,6 +242,12 @@
       "uri" : "https://github.com/settings/tokens",
       "editable" : "true",
       "comment" : ""
-    }
+    },
+   "certspotter_api_key" : {
+    "value" : "",
+    "uri" : "https://sslmate.com/certspotter/api/",
+    "editable" : "true",
+    "comment" : ""
+  }
   }
 }
