@@ -242,8 +242,9 @@ class Uri < Intrigue::Task::BaseTask
     match = response.body.match(/<title>(.*?)<\/title>/i)
     title = match.captures.first if match
 
-    match = response.body.match(/<meta name="generator" content=(.*?)>/i)
-    generator = match.captures.first.gsub("\"","") if match
+    # save off the generator string
+    generator_match = response.body.match(/<meta name=\"?generator\"? content=\"?(.*?)\"?\/>/i)
+    generator_string = generator_match.captures.first.gsub("\"","") if generator_match
 
     $db.transaction do
       new_details = @entity.details.merge({
@@ -251,7 +252,7 @@ class Uri < Intrigue::Task::BaseTask
         "api_endpoint" => api_enabled,
         "code" => response.code,
         "title" => title,
-        "generator" => generator,
+        "generator" => generator_string,
         "verbs" => verbs_enabled,
         "scripts" => script_links,
         "headers" => headers,
