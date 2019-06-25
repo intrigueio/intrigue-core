@@ -48,7 +48,8 @@ class IpAddress < Intrigue::Task::BaseTask
         _create_entity("DnsRecord", { "name" => result["name"] }, @entity)
         
         # create a domain for this entity
-        check_and_create_unscoped_domain(result["name"])
+        tld = result["name"].split(".").last(2).join(".")
+        check_and_create_unscoped_domain(tld)
       end
     end
 

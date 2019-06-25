@@ -70,8 +70,9 @@ class DnsRecord < Intrigue::Task::BaseTask
 
     end
 
-    # create a domain for this entity
-    check_and_create_unscoped_domain(lookup_name)
+    # create a domain for this entity     
+    tld = lookup_name.split(".").last(2).join(".")
+    check_and_create_unscoped_domain(tld)
 
   end
 
