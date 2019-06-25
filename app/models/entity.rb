@@ -151,26 +151,24 @@ module Intrigue
 
       def set_detail(key, value)
         begin
-          self.lock!
-          temp_details = details.merge({key => value}.sanitize_unicode)
+          details.merge({key => value}.sanitize_unicode)
           self.set(:details => temp_details)
-          #self.set(:details_raw => temp_details)
           self.save
-        rescue Sequel::DatabaseError => e
-          puts "Error saving details for #{self}: #{e}, deleted?"
         rescue Sequel::NoExistingObject => e
+          puts "Error saving details for #{self}: #{e}, deleted?"
+        rescue Sequel::DatabaseError => e
           puts "Error saving details for #{self}: #{e}, deleted?"
         end
       end
 
       def set_details(hash)
         begin
-          self.lock!
           self.set(:details => hash.sanitize_unicode)
-          #self.set(:details_raw => hash.sanitize_unicode)
           self.save
+        rescue Sequel::NoExistingObject => e
+          puts "Error saving details for #{self}: #{e}, deleted?"
         rescue Sequel::DatabaseError => e
-          puts "ERROR SAVING DETAILS FOR #{self}: #{e}"
+          puts "Error saving details for #{self}: #{e}, deleted?"
         end
       end
 
