@@ -26,6 +26,7 @@ class WordpressEnumeratePlugins < BaseTask
     begin
       body = http_get_body "#{uri}/wp-json"
       parsed = JSON.parse body 
+      return nil unless parsed 
 
       plugins = (parsed["namespaces"] || []).uniq.map{|x| x.gsub("\\","") }
 

@@ -26,6 +26,17 @@ class WordpressEnumerateUsers < BaseTask
     begin
       body = http_get_body "#{uri}/wp-json/wp/v2/users"
       parsed = JSON.parse body 
+      return nil unless parsed
+      
+      if parsed.kind_of? Hash
+        if parsed["code"] == "rest_no_route"
+          _log_error "No route available to enumerate users}"
+          return nil 
+        else 
+          _log_error "Unknown error"
+          _log "Response: #{parsed.to_json}"
+        end
+      end
 
       usernames = parsed.map{|x| x["name"] }.uniq
       _set_entity_detail("wordpress_users", usernames )
