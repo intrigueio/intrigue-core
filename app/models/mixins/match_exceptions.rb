@@ -106,6 +106,7 @@ module MatchExceptions
       /^.*\.gcs-web.com(:[0-9]*)?$/,
       /^.*\.ghs.google.com(:[0-9]*)?$/,
       /^.*\.github.com(:[0-9]*)?$/,
+      /^.*\.github.io(:[0-9]*)?$/,
       /^.*\.goo.gl(:[0-9]*)?$/,
       /^.*\.google-analytics.com(:[0-9]*)?$/,
       /^.*\.githubapp.com(:[0-9]*)?$/,

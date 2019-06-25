@@ -4,6 +4,24 @@ module Intrigue
 
       include Intrigue::Task::Generic
 
+      # assumes we get a dns name of arbitrary length
+      def parse_tld(record)
+
+        record_arr = record.split(".")
+
+        # not long enough to split 
+        return record if record_arr.length < 3 
+
+        # handle special cases like domain.co.uk. 
+        if ["com","co","net","ne"].include? "#{record_arr[-2]}"
+          out = record.split(".").last(3).join(".")
+        else
+          out = record.split(".").last(2).join(".")
+        end
+
+      out 
+      end
+
 
       # Check for wildcard DNS
       def check_wildcard(suffix)

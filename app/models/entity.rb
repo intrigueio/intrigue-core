@@ -16,7 +16,6 @@ module Intrigue
       many_to_one  :project
 
       include Intrigue::Task::Helper
-      include Intrigue::Model::Mixins::CalculateProvider
 
       def self.scope_by_project(project_name)
         named_project = Intrigue::Model::Project.first(:name => project_name)

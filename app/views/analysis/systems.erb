@@ -1,18 +1,18 @@
 <!-- Statistics! -->
 <div class="row">
-  <div id="aflkj" class="col-sm-6">
-    <p>Provider Information:</p>
+  <div id="asn_info" class="col-sm-6">
+    <p>ASN Information:</p>
     <p>
-      <% @providers.sort_by{|k,v| v.count }.reverse.each do |k,v| %>
-        <%= v.count %>: <a href="/<%=@project_name%>/entities?search_string=<%=k%>"><%= k %></a><br>
+      <% @asns.sort_by{|k,v| v.count }.reverse.each do |k,v| %>
+        <%= v.count %>: <a href="/<%=@project_name%>/entities?search_string=details:<%=k%>"><%= k %></a><br>
       <% end %>
     </p>
   </div>
-  <div id="aflkj" class="col-sm-6">
+  <div id="os_info" class="col-sm-6">
     <p>OS Information:</p>
     <p>
       <% @os.sort_by{|k,v| v.count }.reverse.each do |k,v| %>
-         <%= v.count %>: <a href="/<%=@project_name%>/entities?search_string=<%=k%>"><%= k %></a><br>
+         <%= v.count %>: <a href="/<%=@project_name%>/entities?search_string=details:<%=k%>"><%= k %></a><br>
       <% end %>
     </p>
   </div>

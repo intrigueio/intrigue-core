@@ -81,8 +81,8 @@ def setup_database
   database_config = YAML.load_file("#{$intrigue_basedir}/config/database.yml")
 
   options = {
-    :max_connections => database_config[$intrigue_environment]["max_connections"] || 12,
-    :pool_timeout => database_config[$intrigue_environment]["pool_timeout"] || 120 
+    :max_connections => database_config[$intrigue_environment]["max_connections"] || 20,
+    :pool_timeout => database_config[$intrigue_environment]["pool_timeout"] || 240 
   }
   
   database_host = database_config[$intrigue_environment]["host"] || "localhost"

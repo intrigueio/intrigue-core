@@ -4,7 +4,7 @@ require 'ostruct'
 
 module Intrigue
 module Task
-module Product
+module Recog
 
   def product_match_http_server_banner(banner)
     options = OpenStruct.new(color: false, detail: true, fail_fast: false, multi_match: true)

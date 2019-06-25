@@ -96,16 +96,16 @@ class IntrigueApp < Sinatra::Base
     @entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::IpAddress").sort_by{|x| x.name }
 
     # Grab providers & analyse
-    @providers = {}
+    @asns = {}
     @entities.each do |e|
-      pname = e.get_detail("provider") || "None"
+      aname = e.get_detail("asn") || "Unknown"
 
-      pname = "None" if pname.length == 0
+      aname = "Unknown" if aname.length == 0
 
-      if @providers[pname]
-        @providers[pname] << e
+      if @asns[aname]
+        @asns[aname] << e
       else
-        @providers[pname] = [e]
+        @asns[aname] = [e]
       end
     end
 

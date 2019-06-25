@@ -13,7 +13,8 @@ class IpAddress < Intrigue::Task::BaseTask
       :allowed_types => ["IpAddress"],
       :type => "enrichment",
       :passive => true,
-      :example_entities => [{"type" => "IpAddress", "details" => {"name" => "8.8.8.8"}}],
+      :example_entities => [
+        {"type" => "IpAddress", "details" => {"name" => "8.8.8.8"}}],
       :allowed_options => [],
       :created_types => ["DnsRecord","IpAddress"]
     }
@@ -48,8 +49,7 @@ class IpAddress < Intrigue::Task::BaseTask
         _create_entity("DnsRecord", { "name" => result["name"] }, @entity)
         
         # create a domain for this entity
-        tld = result["name"].split(".").last(2).join(".")
-        check_and_create_unscoped_domain(tld)
+        check_and_create_unscoped_domain(parse_tld(result["name"]))
       end
     end
 

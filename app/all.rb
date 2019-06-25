@@ -10,7 +10,6 @@ require_relative "routes/issues"
 require_relative "routes/project"
 require_relative "routes/results"
 
-require_relative "models/mixins/calculate_provider"
 require_relative "models/mixins/handleable"
 require_relative "models/mixins/match_exceptions"
 require_relative "models/mixins/path_traversal"
