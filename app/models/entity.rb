@@ -151,8 +151,7 @@ module Intrigue
 
       def set_detail(key, value)
         begin
-          details.merge({key => value}.sanitize_unicode)
-          self.set(:details => temp_details)
+          self.set(:details => details.merge({key => value}.sanitize_unicode))
           self.save
         rescue Sequel::NoExistingObject => e
           puts "Error saving details for #{self}: #{e}, deleted?"
