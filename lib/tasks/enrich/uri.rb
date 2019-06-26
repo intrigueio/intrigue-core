@@ -141,11 +141,11 @@ class Uri < Intrigue::Task::BaseTask
     # and hide the entity... meaning no recursion and it shouldn't show up in
     # the UI / queries if any of the matches told us to hide the entity, do it.
     # EXAMPLE TEST CASE: http://103.24.203.121:80 (cpanel missing page)
-    #if ident_fingerprints.detect{|x| x["hide"] == true }
-    #  _set_entity_detail "hidden_for"
-    #  @entity.hidden = true
-    #  @entity.save
-    # end
+    if ident_fingerprints.detect{|x| x["hide"] == true }
+      _set_entity_detail "hidden_for"
+      @entity.hidden = true
+      @entity.save
+    end
 
     # in some cases, we should go further
     #extended_fingerprints = []
