@@ -164,7 +164,10 @@ module Whois
       cidr_length = "#{json["handle"]}".split("/").last
     end
 
-    description = "Queried via RDAP: #{json["links"].first["value"]}"
+    if json["links"]
+      description = "Queried via RDAP: #{json["links"].first["value"]}"
+    end
+    
     type = "#{json["type"]}"
 
     # return a standard set of info

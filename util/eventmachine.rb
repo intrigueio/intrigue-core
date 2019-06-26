@@ -1,8 +1,6 @@
 require_relative '../core'
 require 'eventmachine'
 
-
-puts "Starting EventMachine Loop for DNS Resolution"
 # Note that this will block current thread.
 begin
   EventMachine.run {

@@ -15,8 +15,6 @@ run Rack::URLMap.new({
 })
 
 
-
-
 #configure sentry.io error reporting (only if a key was provided) 
 if (Intrigue::Config::GlobalConfig.config && Intrigue::Config::GlobalConfig.config["sentry_dsn"])
 
