@@ -224,7 +224,13 @@ require_relative "lib/all"
 Thread.new do 
   puts "Starting EventMachine Loop"
   # Note that this will block current thread.
-  EventMachine.run {
-    EventMachine.start_server "127.0.0.1", 8081, EventMachine::DnsResolver
-  }
+  begin
+    EventMachine.run {
+      EventMachine.start_server "127.0.0.1", 8081, EventMachine::DnsResolver
+    }
+  rescue RuntimeError => e 
+    puts "Event machine loop can be started once: #{e}"
+  rescue FiberError => e
+    puts "Caught fiber error, safe to ignore: #{e}"
+  end
 end
