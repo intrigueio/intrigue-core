@@ -40,6 +40,10 @@ function start_server {
 
   echo "Starting puma..."
   bundle exec puma -C $IDIR/config/puma.rb --pidfile $IDIR/tmp/pids/puma.pid 2>&1 > $IDIR/log/puma.log
+
+  echo "Starting eventmachine..."
+  bundle exec ruby $IDIR/util/eventmachine.rb & 
+  echo $! > $IDIR/tmp/pids/eventmachine.pid 
 }
 
 function stop_server {
@@ -55,6 +59,7 @@ function stop_server {
 function kill_all {
   for x  in `pgrep -l -f puma| cut -d ' ' -f 1`;do kill -9 $x;done
   for x  in `pgrep -l -f sidekiq| cut -d ' ' -f 1`;do kill -9 $x;done
+  for x  in `pgrep -l -f ruby| cut -d ' ' -f 1`;do kill -9 $x;done
 }
 
 function status_server {

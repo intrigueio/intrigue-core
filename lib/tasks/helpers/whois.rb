@@ -152,6 +152,8 @@ module Whois
       return nil
     end
 
+    return nil unless json
+
     # This is just terrible. I am ashamed.
     start_address = json["startAddress"]
     if response =~ /apnic/
