@@ -9,7 +9,7 @@ class BaseTask
   include Intrigue::Task::Dns
   include Intrigue::Task::Issue
   include Intrigue::Task::Helper
-  include Intrigue::Task::Recog
+  include Intrigue::Task::RecogWrapper
   include Intrigue::Task::Regex
   include Intrigue::Task::Services
   include Intrigue::Task::Web
