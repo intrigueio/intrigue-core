@@ -59,7 +59,7 @@ module Services
 
     # Grab all the aliases, since we'll want to auto-create services on them
     # (VHOSTS use case)
-    hosts = [ip_entity].concat cert_entities.uniq
+    hosts = [ip_entity].concat(cert_entities.uniq)
     if ip_entity.aliases.count > 0
       ip_entity.aliases.each do |a|
         next unless a.type_string == "DnsRecord" #  only dns records
@@ -67,11 +67,14 @@ module Services
         hosts << a # add to the list
       end
     end
+
+    hosts = hosts.compact.uniq
+
     _log "Creating service (#{port_num}) on each of: #{hosts.map{|h| h.name.strip } }"
 
     sister_entity = nil
     thread_list = []
-    hosts.uniq.each do |h|
+    hosts.each do |h|
       thread_list << Thread.new do 
 
         # Handle web app case first
