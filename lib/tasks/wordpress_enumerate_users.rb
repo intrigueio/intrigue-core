@@ -30,8 +30,14 @@ class WordpressEnumerateUsers < BaseTask
       
       if parsed.kind_of? Hash
         if parsed["code"] == "rest_no_route"
-          _log_error "No route available to enumerate users}"
+          _log_error "No route available to enumerate users"
           return nil 
+        elsif parsed["code"]== "rest_user_cannot_view"
+          _log_good "No permission to view"
+          return nil 
+        elsif parsed["code"]
+          _log "Got code: #{parsed["code"]}"
+          return nil
         else 
           _log_error "Unknown error"
           _log "Response: #{parsed.to_json}"
