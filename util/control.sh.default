@@ -18,8 +18,9 @@
 # eval "$(rbenv init -)"
 #
 
-WORKER_COUNT=${WORKER_COUNT:=1}
-echo "Got worker count: $WORKER_COUNT"
+# Example:  use "1 2 3" for 3 workers 
+SIDEKIQ_WORKERS=${SIDEKIQ_WORKERS:="1 2"}
+echo "Got worker count: $SIDEKIQ_WORKERS"
 
 
 IDIR=/core
@@ -36,8 +37,8 @@ function start_server {
   echo "Bumping ulimit before starting task processing!"
   ulimit -n 100000
 
-  for x in $WORKER_COUNT; do
-    echo "Starting task processing... $x"
+  for x in $SIDEKIQ_WORKERS; do
+    echo "Starting task processing for worker: $x"
     bundle exec sidekiq -C $IDIR/config/sidekiq.yml -r $IDIR/core.rb -d -L $IDIR/log/sidekiq-$x.log -P $IDIR/tmp/pids/sidekiq-$x.pid
   done
 
