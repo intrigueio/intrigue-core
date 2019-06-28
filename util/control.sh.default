@@ -19,6 +19,8 @@
 #
 
 WORKER_COUNT=${WORKER_COUNT:=1}
+echo "Got worker count: $WORKER_COUNT"
+
 
 IDIR=/core
 cd $IDIR
