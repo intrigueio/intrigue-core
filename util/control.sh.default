@@ -18,7 +18,7 @@
 # eval "$(rbenv init -)"
 #
 
-WORKER_COUNT=${WORKER_COUNT:-1}
+WORKER_COUNT=${WORKER_COUNT:=1}
 
 IDIR=/core
 cd $IDIR
