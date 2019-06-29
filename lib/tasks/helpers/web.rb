@@ -622,7 +622,7 @@ module Task
        #    "name" => "#{uri}",
        #    "uri" => "#{uri}",
        # =>     "metadata" => yomu.metadata }
-       @task_result.logger.log "Parsing #{file}"
+       @task_result.logger.log "Parsing #{file.path}"
        @task_result.logger.log "Metadata #{yomu.metadata}"
 
        # Handle audio files
