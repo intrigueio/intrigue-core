@@ -27,7 +27,8 @@ class UriSpider < BaseTask
         {:name => "extract_uris", :regex => "boolean", :default => false },
         {:name => "user_agent", :regex => "alpha_numeric", :default => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36"}
       ],
-      :created_types =>  ["DnsRecord", "EmailAddress", "File", "Info", "Person", "PhoneNumber", "SoftwarePackage"]
+      :created_types =>  ["DnsRecord", "EmailAddress", "File", "Info", "Person", "PhoneNumber", "SoftwarePackage"],
+      :queue => "task_spider"
     }
   end
 
@@ -84,11 +85,10 @@ class UriSpider < BaseTask
     Spidr.start_at(uri, options) do |spider|
 
       # Handle redirects
-      spider.every_redirect_page do |page|
-        next unless page.location
-        spider.visit_hosts << page.to_absolute(page.location).host
-        spider.enqueue page.to_absolute(page.location)
-      end
+      #spider.every_redirect_page do |page|
+      #  spider.visit_hosts << page.to_absolute(page.location).host
+      #  spider.enqueue page.to_absolute(page.location)
+      #end
 
       # Request every link & check content_type. Parse if interesting
       spider.every_link do |origin,dest|
@@ -114,8 +114,10 @@ class UriSpider < BaseTask
                     content_type == "text/html" or
                     content_type == "text/javascript" or
                     content_type == "text/xml"  )
+
             _log_good "Parsing document of type #{content_type} @ #{dest}"
             download_and_extract_metadata "#{dest}"
+            
           end
         end
       end

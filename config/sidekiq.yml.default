@@ -8,5 +8,6 @@
   task_browser: 10
   task_autoscheduled: 20
   task_scan: 3
+  task_spider: 6
   app: 5
   graph: 1
