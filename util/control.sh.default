@@ -18,9 +18,6 @@
 # eval "$(rbenv init -)"
 #
 
-# Example:  use "1 2 3" for 3 workers 
-SIDEKIQ_WORKERS=${SIDEKIQ_WORKERS:="1 2"}
-echo "Got worker count: $SIDEKIQ_WORKERS"
 
 
 IDIR=/core
@@ -36,6 +33,10 @@ function start_server {
   # try setting ulimit here
   echo "Bumping ulimit before starting task processing!"
   ulimit -n 100000
+
+  # Example:  use "1 2 3" for 3 workers 
+  SIDEKIQ_WORKERS=${SIDEKIQ_WORKERS:=1 2}
+  echo "Got worker count: $SIDEKIQ_WORKERS"
 
   for x in $SIDEKIQ_WORKERS; do
     echo "Starting task processing for worker: $x"
