@@ -240,11 +240,14 @@ class AwsS3Brute < BaseTask
 
     s3_uri = "https://#{bucket_name}.s3.amazonaws.com/"
 
-    begin # check prefix
+    begin
+      # check prefix
       s3 = Aws::S3::Client.new({region: 'us-east-1'})
       resp = s3.list_objects(bucket: "#{bucket_name}", max_keys: 1000)
       exists = true
 
+    rescue Aws::S3::Errors::PermanentRedirect => e 
+      _log_error "Permanent redirect: #{e} (region?)"
     rescue *s3_errors => e
       _log_error "S3 error: #{e} (#{bucket_name})"
     end
