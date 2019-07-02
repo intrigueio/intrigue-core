@@ -91,7 +91,7 @@ module Task
   end
 
   # See: https://raw.githubusercontent.com/zendesk/ruby-kafka/master/lib/kafka/ssl_socket_with_timeout.rb
-  def connect_ssl_socket(hostname, port, timeout=31, max_attempts=3)
+  def connect_ssl_socket(hostname, port, timeout=15, max_attempts=3)
     # Create a socket and connect
     # https://apidock.com/ruby/Net/HTTP/connect
     attempts=0
@@ -228,7 +228,7 @@ module Task
   end
 
 
-  def connect_ssl_socket_get_cert_names(hostname,port,timeout=20)
+  def connect_ssl_socket_get_cert_names(hostname,port,timeout=15)
     # connect
     socket = connect_ssl_socket(hostname,port,timeout)
     return [] unless socket && socket.peer_cert
@@ -334,8 +334,8 @@ module Task
 
       # TODO enable proxy
       http = Net::HTTP.start(uri.host, uri.port, nil, nil, opts) do |http|
-        http.read_timeout = 20
-        http.open_timeout = 20
+        http.read_timeout = 15
+        http.open_timeout = 15
         http.request_get(uri.path) do |resp|
           resp.read_body do |segment|
             file.write(segment)
@@ -423,7 +423,7 @@ module Task
   ### move this over to RestClient: https://github.com/ruby/ruby/commit/3cf7d1b57e3622430065f6a6ce8cbd5548d3d894
   ###
   def http_request(method, uri_string, credentials=nil, headers={}, 
-      data=nil, attempts_limit=10, open_timeout=31, read_timeout=31)
+      data=nil, attempts_limit=10, open_timeout=15, read_timeout=15)
 
     response = nil
     begin
