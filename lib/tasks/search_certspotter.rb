@@ -46,8 +46,9 @@ class SearchCertSpotter < BaseTask
       records = json.map do |x|
         next unless x && x.kind_of?(Hash)
 
-        # unbase64 the jason
+        # unbase64 the json, parse into asn1 
         cert_raw = OpenSSL::ASN1.decode(Base64.decode64(x["cert"]["data"]))
+        # parse out the cert from the asn1 encoding
         cert = OpenSSL::X509::Certificate.new cert_raw
 
         # Create the SSLCertificate
