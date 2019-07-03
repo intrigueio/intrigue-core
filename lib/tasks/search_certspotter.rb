@@ -53,7 +53,7 @@ class SearchCertSpotter < BaseTask
 
         # Create the SSLCertificate
         _create_entity "SslCertificate", {
-          "cert_type" => x["type"],
+          "cert_type" => x["cert"]["type"],
           "name" => "#{cert.subject.to_s.gsub("/CN=","")} (#{cert.serial.to_s})", 
           "issuer" => cert.issuer.to_s,
           "not_before" => cert.not_before.to_s,
