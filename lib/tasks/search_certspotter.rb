@@ -45,6 +45,22 @@ class SearchCertSpotter < BaseTask
       # a little wicked but we want to only select those that match our pattern(s)
       records = json.map do |x|
         next unless x && x.kind_of?(Hash)
+
+        # unbase64 the jason
+        cert_raw = OpenSSL::ASN1.decode(Base64.decode64(x["cert"]["data"]))
+        cert = OpenSSL::X509::Certificate.new cert_raw
+
+        # Create the SSLCertificate
+        _create_entity "SslCertificate", {
+          "name" => "#{cert.subject.to_s.gsub("/CN=","")} (#{cert.serial.to_s})", 
+          "issuer" => cert.issuer.to_s,
+          "not_before" => cert.not_before.to_s,
+          "not_after" => cert.not_after.to_s,
+          "serial" => cert.serial.to_s,
+          "subject" => cert.subject.to_s,
+          "hidden_text" => cert.to_text
+        }
+
         x["dns_names"].map do |d|
           next unless x["dns_names"]
           d if extract_patterns.select {|p| d =~ /#{p}/}.count > 0 
