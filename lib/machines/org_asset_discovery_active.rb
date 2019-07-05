@@ -82,8 +82,8 @@ module Machine
         start_recursive_task(task_result,"email_brute_gmail_glxu",entity,[])
 
         # subdomain bruteforce
-        #start_recursive_task(task_result,"dns_brute_sub_async",entity,[
-        #  {"name" => "brute_alphanumeric_size", "value" => 1 }], true)
+        start_recursive_task(task_result,"dns_brute_sub_async",entity,[
+          {"name" => "brute_alphanumeric_size", "value" => 1 }], true)
 
         start_recursive_task(task_result,"saas_google_groups_check",entity,[])
         start_recursive_task(task_result,"saas_trello_check",entity,[])
@@ -108,8 +108,6 @@ module Machine
 
         # search sonar results
         start_recursive_task(task_result,"dns_search_sonar",entity, [])
-
-        #start_recursive_task(task_result,"dns_brute_sub_async",entity)
 
       elsif entity.type_string == "EmailAddress"
 
@@ -170,15 +168,6 @@ module Machine
         # search bgp data for netblocks
         start_recursive_task(task_result,"search_bgp",entity, [], true)
 
-        ### search for netblocks
-        #start_recursive_task(task_result,"search_github",entity, [], true)
-
-        # Search for trello accounts
-        #start_recursive_task(task_result,"saas_trello_check",entity)
-
-        # Search for jira accounts
-        #start_recursive_task(task_result,"saas_jira_check",entity)
-
         ### AWS_S3_brute the name
         # S3!
         generated_names = [
@@ -224,24 +213,10 @@ module Machine
         start_recursive_task(task_result,"uri_gather_ssl_certificate",entity, []) if entity.name =~ /^https/
 
         # Check for exploitable URIs, but don't recurse on things we've already found
-        #unless (entity.created_by?("uri_brute_focused_content") || entity.created_by?("uri_spider") )
         start_recursive_task(task_result,"uri_brute_focused_content", entity)
-        #end
 
         start_recursive_task(task_result,"uri_check_subdomain_hijack",entity, [])
 
-        # Check for exploitable URIs, but don't recurse on things we've already found
-        #start_recursive_task(task_result,"uri_brute", entity, [
-        #  {"name"=> "threads", "value" => 1},
-        #  {"name" => "user_list", "value" => "reports,portal,admin,test,server-status,.svn,.git"}])
-
-        #unless (entity.created_by?("uri_brute") || entity.created_by?("uri_spider") )
-          ## Super-lite spider, looking for metadata
-          #start_recursive_task(task_result,"uri_spider",entity,[
-          #    {"name" => "max_pages", "value" => 10 },
-          #    {"name" => "extract_dns_records", "value" => true }
-          # ])
-        #end
 
       else
         task_result.log "No actions for entity: #{entity.type}##{entity.name}"
