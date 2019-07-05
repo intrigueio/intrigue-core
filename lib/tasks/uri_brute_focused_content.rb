@@ -95,8 +95,11 @@ class UriBruteFocusedContent < BaseTask
     ]
 
     coldfusion_list = [
-      { path: "/CFIDE", severity: 5, regex: nil },
-      { path: "/CFIDE/administrator/enter.cfm", severity: 5, regex: nil }
+      { path: "/CFIDE", severity: 5, regex: nil, :status => "potential"  },
+      { path: "/CFIDE/administrator/enter.cfm", severity: 5, regex: nil, :status => "potential"  },
+      { path: "/CFIDE/administrator/aboutcf.cfm", severity: 5, regex: nil, :status => "potential"  },
+      { path: "/CFIDE/administrator/welcome.cfm", severity: 5, regex: nil, :status => "potential"  },
+      { path: "/CFIDE/administrator/index.cfm", severity: 5, regex: nil, :status => "potential"  }
     ] # TODO see metasploit for more ideas here
 
 
@@ -222,15 +225,22 @@ class UriBruteFocusedContent < BaseTask
       { path: "/wls-wsat/RegistrationRequesterPortType11", severity: 3, regex: /<td>WSDL:/, status: "potential" }
     ]
 
+    websphere_list = [
+      { path: "/AddressBookJ2WB", severity: 5, status: "potential" },
+      { path: "/AddressBookJ2WE/services/AddressBook", severity: 5, status: "potential" },
+      { path: "/AlbumCatalogWeb", severity: 5, status: "potential" },
+      { path: "/AppManagementStatus", severity: 5, status: "potential" }
+    ] # see more at https://github.com/danielmiessler/SecLists/blob/master/Discovery/Web-Content/websphere.txt
+
     wordpress_list = [
-      { path: '/wp-json', severity: 4,  regex: /gmt_offset/, status: "confirmed" }, 
+      { path: '/wp-json/wp/v2/users', severity: 4,  regex: /slug/, status: "confirmed" }, 
       { path: '/wp-admin', severity: 5,  regex: /Powered by WordPress/, status: "confirmed" },
       { path: '/xmlrpc.php', severity: 5, status: "confirmed", regex: /XML-RPC server accepts POST requests only./ },
       # TODO - look for "1.3.9.1" to disprove vulnerability 
       #{ path: '/wp-content/plugins/easy-wp-smtp/readme.txt', severity: 1,  regex: /Easy WP SMTP/i, status: "potential" },  
-      { path: '/wp-content/plugins/easy-wp-smtp/css/style.css', severity: 2,  regex: /swpsmtp_settings_form/i, status: "potential" },  
-      { path: '/wp-content/plugins/easy-wp-smtp/', severity: 2,  regex: /debug_log/i, status: "potential" },
-      { path: '/wp-content/plugins/easy-wp-smtp/inc/', severity: 2,  regex: /debug_log/i, status: "potential" }
+      #{ path: '/wp-content/plugins/easy-wp-smtp/css/style.css', severity: 2,  regex: /swpsmtp_settings_form/i, status: "potential" },  
+      #{ path: '/wp-content/plugins/easy-wp-smtp/', severity: 2,  regex: /debug_log/i, status: "potential" },
+      #{ path: '/wp-content/plugins/easy-wp-smtp/inc/', severity: 2,  regex: /debug_log/i, status: "potential" }
     ] 
     
     # add wordpress plugins list from a file
@@ -248,7 +258,6 @@ class UriBruteFocusedContent < BaseTask
     apache_list.each { |x| work_q.push x } if is_product? "HTTP Server"  # Apache
     asp_net_list.each { |x| work_q.push x } if ( 
       is_product?("ASP.NET") || is_product?("ASP.NET MVC") )
-
     coldfusion_list.each { |x| work_q.push x } if is_product? "Coldfusion"  
     lotus_domino_list.each { |x| work_q.push x } if is_product? "Domino" 
     jenkins_list.each { |x| work_q.push x } if is_product? "Jenkins" 
@@ -260,11 +269,10 @@ class UriBruteFocusedContent < BaseTask
     splunk_list.each {|x| work_q.push x } if is_product? "Splunk"
     spring_boot_list.each { |x| work_q.push x } if is_product? "Spring Boot"
     tomcat_list.each { |x| work_q.push x } if is_product? "Tomcat" 
-
     vmware_horizon_list.each { |x| work_q.push x } if (
       is_product?("VMWare Horizon") || is_product?("VMWare Horizon View") ) 
-
     weblogic_list.each { |x| work_q.push x } if is_product? "Weblogic Server" 
+    websphere_list.each { |x| work_q.push x } if is_product? "WebSphere" 
     wordpress_list.each { |x| work_q.push x } if is_product? "Wordpress" 
 
     # then add our "always" stuff:
