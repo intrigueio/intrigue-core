@@ -9,7 +9,7 @@ class SearchCertSpotter < BaseTask
       :pretty_name => "Search CertSpotter",
       :authors => ["jcran"],
       :description => "This task hits SSLMate's CertSpotter API and creates new DnsRecord / Certificate entities.",
-      :references => ["https://www.virustotal.com/en/documentation/"],
+      :references => ["https://sslmate.com/certspotter/api/"],
       :type => "discovery",
       :passive => true,
       :allowed_types => ["Domain","DnsRecord"],
