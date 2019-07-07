@@ -54,7 +54,7 @@ module Whois
         _log "using RDAP to query APNIC"
         rdap_info = _rdap_ip_lookup lookup_string
         out = out.merge(rdap_info)
-      elsif out["whois_full_text"] =~ /Joint Whois - whois.lacnic.net/
+      elsif out["whois_full_text"] =~ /whois.lacnic.net/ || out["whois_full_text"] =~ /cert\@cert\.br/
         _log "using RDAP to query LACNIC"
         rdap_info = _rdap_ip_lookup lookup_string
         out = out.merge(rdap_info)

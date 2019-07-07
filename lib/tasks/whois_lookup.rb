@@ -50,8 +50,7 @@ class WhoisLookup < BaseTask
       # TODO... there might be a way to shortcut so many lookups... 
       # store on the ipaddress? or create earlier
       #  _get_entity_detail "whois_full_text" # return if we have it
-      
-      
+            
       out = whois_safe _get_entity_name
       return nil unless out
       
