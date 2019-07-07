@@ -89,7 +89,7 @@ class Uri < Intrigue::Task::BaseTask
     end
 
     # Grab the global option since we'll need to pass it to ident
-    browser_enabled = Intrigue::Config::GlobalConfig.config["enable_browser"]
+    browser_enabled = Intrigue::Config::GlobalConfig.config["browser_enabled"]
 
     _log "Attempting to fingerprint!"
     # Use intrigue-ident code to request all of the pages we

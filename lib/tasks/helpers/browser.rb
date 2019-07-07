@@ -14,7 +14,7 @@ module Task
     def create_browser_session
 
       # first check if we're allowed to create a session by the global config
-      return nil unless Intrigue::Config::GlobalConfig.config["enable_browser"]
+      return nil unless Intrigue::Config::GlobalConfig.config["browser_enabled"]
 
       # Start a new session
       Capybara::Session.new(:headless_chrome)
