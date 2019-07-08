@@ -18,7 +18,7 @@ module Task
       return nil unless Intrigue::Config::GlobalConfig.config["browser_enabled"]
 
       # Start a new session
-      ::Watir::Browser.new(:chrome, {:chromeOptions => {:args => ['--headless', '--window-size=1024x768']}})
+      ::Watir::Browser.new(:chrome, {:chromeOptions => {:args => ['--headless', '--no-sandbox', '--disable-dev-shm-usage', '--window-size=1024x768']}})
     end
 
     def destroy_browser_session(session)
