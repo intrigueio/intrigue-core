@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: 6ab7116250f0167ce894e58cc89e6205f4e25009
+  revision: b8321226280d23b8261049c3053b2a1194138ac7
   specs:
     intrigue-ident (0.8.1)
       capybara
@@ -206,7 +206,7 @@ GEM
     mustermann (1.0.3)
     net-dns (0.9.0)
     netrc (0.11.0)
-    nio4r (2.3.1)
+    nio4r (2.4.0)
     nokogiri (1.10.3)
       mini_portile2 (~> 2.4.0)
     parallel (1.12.1)
@@ -301,6 +301,9 @@ GEM
     unf_ext (0.0.7.6)
     versionomy (0.5.0)
       blockenspiel (~> 0.5)
+    watir (6.16.5)
+      regexp_parser (~> 1.2)
+      selenium-webdriver (~> 3.6)
     websocket-driver (0.7.1)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.4)
@@ -319,7 +322,6 @@ PLATFORMS
 DEPENDENCIES
   aws-sdk-s3
   aws-sdk-sqs
-  capybara
   censys!
   couchrest
   dnsruby
@@ -352,7 +354,7 @@ DEPENDENCIES
   rex-sslscan!
   rspec
   ruby-nmap!
-  selenium-webdriver (~> 3.12.0)
+  selenium-webdriver
   sentry-raven
   sequel
   shodan
@@ -368,6 +370,7 @@ DEPENDENCIES
   thor
   towerdata_api
   versionomy
+  watir
   whois
   whois-parser
   whoisology!

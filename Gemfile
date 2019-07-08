@@ -51,8 +51,8 @@ gem 'spidr',                  :git => 'https://github.com/intrigueio/spidr.git'
 gem 'snmp',                   :git => 'https://github.com/intrigueio/ruby-snmp.git'
 gem 'aws-sdk-sqs'             #,        '~> 3'
 gem 'aws-sdk-s3'              #,         '~> 3'
-gem 'capybara'                # uri_screenshot, etc
-gem 'selenium-webdriver',     '~> 3.12.0'
+gem 'watir'                   # uri_screenshot, etc
+gem 'selenium-webdriver'      #  '~> 3.12.0'
 gem 'rex-sslscan',            :git => 'https://github.com/intrigueio/rex-sslscan.git'
 gem 'flareon'                    # dns resolution over http
 

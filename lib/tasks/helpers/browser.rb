@@ -1,3 +1,4 @@
+require 'watir'
 ###
 ### Please note - these methods may be used inside task modules, or inside libraries within
 ### Intrigue. An attempt has been made to make them abstract enough to use anywhere inside the
@@ -17,7 +18,7 @@ module Task
       return nil unless Intrigue::Config::GlobalConfig.config["browser_enabled"]
 
       # Start a new session
-      Capybara::Session.new(:headless_chrome)
+      ::Watir::Browser.new(:chrome, {:chromeOptions => {:args => ['--headless', '--window-size=1024x768']}})
     end
 
     def destroy_browser_session(session)
@@ -28,17 +29,18 @@ module Task
       begin
 
         # HACK HACK HACK- get the chromedriver process before we quit
-        driver_pid = session.driver.browser.instance_variable_get(:@service).instance_variable_get(:@process).pid
+        #driver_pid = session.driver.browser.instance_variable_get(:@service).instance_variable_get(:@process).pid
 
         # attempt to quit gracefully...
-        session.driver.quit
+        session.close
 
-        pgid = Process.getpgid(driver_pid)
+        #pgid = Process.getpgid(driver_pid)
 
         # violent delights have violent ends
-        Process.kill('KILL', -pgid )
-        Process.kill('KILL', driver_pid )
-
+        #Process.kill('KILL', -pgid )
+        #Process.kill('KILL', driver_pid )
+      rescue Selenium::WebDriver::Error::UnknownError => e
+        _log_error "Error trying to kill our browser session #{e}"
       rescue Errno::ESRCH => e
           # already dead
         _log_error "Error trying to kill our browser session #{e}"
@@ -58,8 +60,6 @@ module Task
         _log_error "Too many open files: #{e}" if @task_result
       rescue Addressable::URI::InvalidURIError => e
         _log_error "Invalid URI: #{e}" if @task_result
-      rescue Capybara::ElementNotFound => e
-        _log_error "Element not found: #{e}" if @task_result
       rescue Net::ReadTimeout => e
         _log_error "Timed out, moving on" if @task_result
       rescue Selenium::WebDriver::Error::WebDriverError => e
@@ -90,30 +90,28 @@ module Task
       # browse to our target
       safe_browser_action do
         # visit the page
-        session.visit(uri)
+        session.goto(uri)
+        session.wait(3)
         # Capture Title
-        page_title = session.document.title
+        page_title = session.title
         # Capture Body Text
-        page_contents = session.document.text(:all)
+        page_contents = session.text
         # Capture DOM
-        rendered_page = session.evaluate_script("document.documentElement.innerHTML",[])
+        rendered_page = session.execute_script("return document.documentElement.innerHTML")
 
         # return our hash
         return { :title => page_title, :contents => page_contents, :rendered => rendered_page }
-
       end
-  end
+    end
 
     def capture_screenshot(session, uri)
       return nil unless session # always make sure the session is real
 
       # browse to our target
       safe_browser_action do
-        session.visit(uri)
+        session.goto(uri)
+        session.wait(3)
       end
-
-      # wait for the page to render
-      #sleep 5
 
       #
       # Capture a screenshot
@@ -121,7 +119,7 @@ module Task
       base64_image_contents = nil
       safe_browser_action do
         tempfile = Tempfile.new(['screenshot', '.png'])
-        session.save_screenshot(tempfile.path)
+        session.driver.save_screenshot(tempfile.path)
         _log "Saved Screenshot to #{tempfile.path}"
         # open and read the file's contents, and base64 encode them
         base64_image_contents = Base64.encode64(File.read(tempfile.path))
@@ -129,6 +127,7 @@ module Task
         tempfile.close
         tempfile.unlink
       end
+
     base64_image_contents
     end
 
@@ -140,7 +139,7 @@ module Task
       # Examples: https://www.madewithangular.com/
 
       safe_browser_action do
-        session.visit(uri)
+        session.goto(uri)
       end
 
       libraries = []
@@ -225,11 +224,11 @@ module Task
 
       checks.each do |check|
 
-        hacky_javascript = "#{check[:script]};"
+        hacky_javascript = "return #{check[:script]};"
 
         # run our script in a browser
         version = safe_browser_action do
-          session.evaluate_script(hacky_javascript, check[:arguments] || [])
+          session.execute_script(hacky_javascript)
         end
 
         if version
