@@ -8,7 +8,7 @@ module Issue
   def _create_issue(details)
     # No need for a name in the hash now, remove it & pull out the name from the hash
 
-    _notify("Sev #{details[:severity]}! ```#{details[:name]}```") if details[:severity] <= 4
+    _notify("```Sev #{details[:severity]}! #{details[:name]}```") if details[:severity] <= 4
     
     hash = details.merge({ entity_id: @entity.id,
                            task_result_id: @task_result.id,

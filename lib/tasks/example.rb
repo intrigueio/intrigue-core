@@ -16,7 +16,7 @@ class Example < BaseTask
         {"type" => "String", "details" => {"name" => "intrigue"}}
       ],
       :allowed_options => [
-        {:name => "notify", :regex=> "boolean", :default => false },
+        {:name => "notify", :regex=> "boolean", :default => true },
         {:name => "unused_option", :regex=> "integer", :default => 100 },
         {:name => "count", :regex=> "integer", :default => 3 },
         {:name => "sleep", :regex=> "integer", :default => 0 }

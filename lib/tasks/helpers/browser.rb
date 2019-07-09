@@ -18,7 +18,9 @@ module Task
       return nil unless Intrigue::Config::GlobalConfig.config["browser_enabled"]
 
       # Start a new session
-      ::Watir::Browser.new(:chrome, {:chromeOptions => {:args => ['--headless', '--no-sandbox', '--disable-dev-shm-usage', '--window-size=1024x768']}})
+      args = ['--headless','--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage', 
+       '--ignore-certificate-errors', '--disable-popup-blocking', '--disable-translate']
+      ::Watir::Browser.new(:chrome, {args: args})
     end
 
     def destroy_browser_session(session)
@@ -102,6 +104,7 @@ module Task
         # return our hash
         return { :title => page_title, :contents => page_contents, :rendered => rendered_page }
       end
+    nil 
     end
 
     def capture_screenshot(session, uri)

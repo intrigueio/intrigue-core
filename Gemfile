@@ -70,8 +70,7 @@ gem 'couchrest'
 gem 'fog-aws'
 
 # notifiers
-gem 'slack-ruby-client'
-gem 'logstash-logger'
+#gem 'logstash-logger'
 
 # Development
 gem 'foreman'
