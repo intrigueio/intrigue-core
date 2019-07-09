@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: b8321226280d23b8261049c3053b2a1194138ac7
+  revision: b818f63bccbe5d17c61b1e3e714995ac03299261
   specs:
     intrigue-ident (0.8.1)
       capybara
@@ -190,7 +190,7 @@ GEM
     json (1.8.6)
     method_source (0.9.2)
     mime-types (1.25.1)
-    mini_mime (1.0.1)
+    mini_mime (1.0.2)
     mini_portile2 (2.4.0)
     minitest (5.11.3)
     multi_json (1.13.1)

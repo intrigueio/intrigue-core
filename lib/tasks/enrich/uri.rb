@@ -108,8 +108,6 @@ class Uri < Intrigue::Task::BaseTask
       use_api = vulndb_api_key && vulndb_api_key.length > 0
       ident_fingerprints = ident_fingerprints.map do |fp|
         
-        #_log "Working on fingerprint: #{fp}"
-
         vulns = []
         if fp["inference"]
           cpe = Intrigue::Vulndb::Cpe.new(fp["cpe"])
