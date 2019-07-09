@@ -450,7 +450,7 @@ module Intrigue
                 "txt_records" => _get_entity_detail("txt_records"),
                 "spf_record" => _get_entity_detail("spf_record")}
 
-            elsif x.last == "." # clean
+            elsif x[-1] == "." # clean
               inferred_tld = "#{x.split(".").last}.#{suffix}"
               _log "Inferred TLD: #{inferred_tld}"
 

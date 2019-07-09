@@ -10,7 +10,7 @@ module System
     config["projects"].each do |p|
 
       Intrigue::NotifierFactory.default.each { |x| 
-        x.notify("#{p["name"]} collection starting with #{p["seeds"].count if p["seeds"]}!") }
+        x.notify("#{p["name"]} collection starting with #{p["seeds"].count if p["seeds"]} seeds!") }
 
       project_name = p["name"]
       @task_result.log "Working on project: #{project_name}" if @task_result
