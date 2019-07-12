@@ -242,8 +242,7 @@ class UriBruteFocusedContent < BaseTask
       { path: '/wp-json/wp/v2/users', severity: 4,  regex: /slug/, status: "confirmed" }, 
       { path: '/wp-admin', severity: 5,  regex: /Powered by WordPress/, status: "confirmed" },
       { path: '/xmlrpc.php', severity: 5, status: "confirmed", regex: /XML-RPC server accepts POST requests only./ },
-      { path: '/wp-login.php?action=register', severity: 4, status: "potential"},
-      { path: '/wp-content/uploads/saml-20-single-sign-on/etc/certs', severity: 2, , regex: /<h1>Index of/ status: "confirmed"},
+      { path: '/wp-login.php?action=register', severity: 4, status: "potential"}
       # 
 
       # TODO - look for "1.3.9.1" to disprove vulnerability 
