@@ -72,7 +72,7 @@ class UriBruteFocusedContent < BaseTask
       { path: "/.hg", severity: 2, regex: /<h1>Index of/ },
       { path: "/.svn", severity: 2, regex: /<h1>Index of/ },
       { path: "/.bzr", severity: 2, regex: /<h1>Index of/ },
-      { path: "/.env", severity: 2, status: "potential" },
+      #{ path: "/.env", severity: 2, status: "potential" },
       #{ path: "/.csv", regex: /<h1>Index of/ },
       #{ path: "/.bak", regex: /<h1>Index of/ },
       #{ path: "/crossdomain.xml", regex: /\<cross-domain-policy/, severity: 6, status: "confirmed"}, #tighten regex?
@@ -87,7 +87,8 @@ class UriBruteFocusedContent < BaseTask
       { path: "/.htaccess", regex: /AuthName/, severity: 3, status: "confirmed" },
       { path: "/.htaccess.bak", regex: /AuthName/, severity: 3, status: "confirmed" },
       #{ path: "/.htpasswd", regex: /(:\$|:\{.*\n|[a-z]:.*$)/, severity: 1, status: "confirmed" },
-      { path: "/server-status", regex: /Server Version/i, severity: 4, status: "confirmed" }
+      { path: "/server-status", regex: /Server Version/i, severity: 3, status: "confirmed" }
+      { path: "/server-info", regex: /Apache Server Information/i, severity: 4, status: "confirmed" }
     ]
 
     asp_net_list = [
@@ -278,8 +279,7 @@ class UriBruteFocusedContent < BaseTask
     splunk_list.each {|x| work_q.push x } if is_product? "Splunk"
     spring_boot_list.each { |x| work_q.push x } if is_product? "Spring Boot"
     tomcat_list.each { |x| work_q.push x } if is_product? "Tomcat" 
-    vmware_horizon_list.each { |x| work_q.push x } if (
-      is_product?("VMWare Horizon") || is_product?("VMWare Horizon View") ) 
+    vmware_horizon_list.each { |x| work_q.push x } if is_product?("Horizon View")
     weblogic_list.each { |x| work_q.push x } if is_product? "Weblogic Server" 
     websphere_list.each { |x| work_q.push x } if is_product? "WebSphere" 
     wordpress_list.each { |x| work_q.push x } if is_product? "Wordpress" 
