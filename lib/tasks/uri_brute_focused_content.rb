@@ -68,10 +68,10 @@ class UriBruteFocusedContent < BaseTask
 
     generic_list = [ 
       #{ path: "/api", regex: nil },
-      { path: "/.git", severity: 2, regex: /<h1>Index of/ },
-      { path: "/.hg", severity: 2, regex: /<h1>Index of/ },
-      { path: "/.svn", severity: 2, regex: /<h1>Index of/ },
-      { path: "/.bzr", severity: 2, regex: /<h1>Index of/ },
+      { path: "/.git", severity: 2, regex: /<h1>Index of/, status: "confirmed" },
+      { path: "/.hg", severity: 2, regex: /<h1>Index of/, status: "confirmed"  },
+      { path: "/.svn", severity: 2, regex: /<h1>Index of/, status: "confirmed" },
+      { path: "/.bzr", severity: 2, regex: /<h1>Index of/, status: "confirmed" }
       #{ path: "/.env", severity: 2, status: "potential" },
       #{ path: "/.csv", regex: /<h1>Index of/ },
       #{ path: "/.bak", regex: /<h1>Index of/ },
@@ -87,7 +87,7 @@ class UriBruteFocusedContent < BaseTask
       { path: "/.htaccess", regex: /AuthName/, severity: 3, status: "confirmed" },
       { path: "/.htaccess.bak", regex: /AuthName/, severity: 3, status: "confirmed" },
       #{ path: "/.htpasswd", regex: /(:\$|:\{.*\n|[a-z]:.*$)/, severity: 1, status: "confirmed" },
-      { path: "/server-status", regex: /Server Version/i, severity: 3, status: "confirmed" }
+      { path: "/server-status", regex: /Server Version/i, severity: 3, status: "confirmed" },
       { path: "/server-info", regex: /Apache Server Information/i, severity: 4, status: "confirmed" }
     ]
 
@@ -221,14 +221,14 @@ class UriBruteFocusedContent < BaseTask
     #  - CVE-2017-10271
     #  - April 2019 0day: http://bit.ly/2ZxYIjS
     weblogic_list = [
-      { path: "/wls-wsat/CoordinatorPortType", severity: 3, regex: /<td>WSDL:/, status: "potential" },
-      { path: "/wls-wsat/RegistrationPortTypeRPC", severity: 3, regex: /<td>WSDL:/, status: "potential" },
-      { path: "/wls-wsat/ParticipantPortType", severity: 3, regex: /<td>WSDL:/, status: "potential" }, 
-      { path: "/wls-wsat/RegistrationRequesterPortType", severity: 3, regex: /<td>WSDL:/, status: "potential" },
-      { path: "/wls-wsat/CoordinatorPortType11", severity: 3, regex: /<td>WSDL:/, status: "potential" },
-      { path: "/wls-wsat/RegistrationPortTypeRPC11", severity: 3, regex: /<td>WSDL:/, status: "potential" }, 
-      { path: "/wls-wsat/ParticipantPortType11", severity: 3, regex: /<td>WSDL:/,status: "potential" }, 
-      { path: "/wls-wsat/RegistrationRequesterPortType11", severity: 3, regex: /<td>WSDL:/, status: "potential" }
+      { path: "/wls-wsat/CoordinatorPortType", severity: 3, regex: /<td>WSDL:/, status: "confirmed" },
+      { path: "/wls-wsat/RegistrationPortTypeRPC", severity: 3, regex: /<td>WSDL:/, status: "confirmed" },
+      { path: "/wls-wsat/ParticipantPortType", severity: 3, regex: /<td>WSDL:/, status: "confirmed" }, 
+      { path: "/wls-wsat/RegistrationRequesterPortType", severity: 3, regex: /<td>WSDL:/, status: "confirmed" },
+      { path: "/wls-wsat/CoordinatorPortType11", severity: 3, regex: /<td>WSDL:/, status: "confirmed" },
+      { path: "/wls-wsat/RegistrationPortTypeRPC11", severity: 3, regex: /<td>WSDL:/, status: "confirmed" }, 
+      { path: "/wls-wsat/ParticipantPortType11", severity: 3, regex: /<td>WSDL:/,status: "confirmed" }, 
+      { path: "/wls-wsat/RegistrationRequesterPortType11", severity: 3, regex: /<td>WSDL:/, status: "confirmed" }
     ]
 
     websphere_list = [
