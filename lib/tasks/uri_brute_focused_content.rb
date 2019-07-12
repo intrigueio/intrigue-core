@@ -68,10 +68,11 @@ class UriBruteFocusedContent < BaseTask
 
     generic_list = [ 
       #{ path: "/api", regex: nil },
-      { path: "/.git", severity: 3, regex: /<h1>Index of/ },
-      { path: "/.hg", severity: 3, regex: /<h1>Index of/ },
-      { path: "/.svn", severity: 3, regex: /<h1>Index of/ },
-      { path: "/.bzr", severity: 3, regex: /<h1>Index of/ },
+      { path: "/.git", severity: 2, regex: /<h1>Index of/ },
+      { path: "/.hg", severity: 2, regex: /<h1>Index of/ },
+      { path: "/.svn", severity: 2, regex: /<h1>Index of/ },
+      { path: "/.bzr", severity: 2, regex: /<h1>Index of/ },
+      { path: "/.env", severity: 2, status: "potential" },
       #{ path: "/.csv", regex: /<h1>Index of/ },
       #{ path: "/.bak", regex: /<h1>Index of/ },
       #{ path: "/crossdomain.xml", regex: /\<cross-domain-policy/, severity: 6, status: "confirmed"}, #tighten regex?
@@ -85,13 +86,16 @@ class UriBruteFocusedContent < BaseTask
     apache_list = [
       { path: "/.htaccess", regex: /AuthName/, severity: 3, status: "confirmed" },
       { path: "/.htaccess.bak", regex: /AuthName/, severity: 3, status: "confirmed" },
-      #{ path: "/.htpasswd", regex: /^\w:.*$/, severity: 1, status: "potential" },
+      { path: "/.htpasswd", regex: /(:\$|:\{.*\n|[a-z]:.*$)/, severity: 1, status: "confirmed" },
       { path: "/server-status", regex: /Server Version/i, severity: 4, status: "confirmed" }
     ]
 
     asp_net_list = [
-      { path: "/elmah.axd", severity: 2, regex: /Error log for/i, status: "confirmed" },
+      { path: "/elmah.axd", severity: 1, regex: /Error log for/i, status: "confirmed" },
+      { path: "/errorlog.axd", severity: 1, regex: /Error log for/i, status: "confirmed" },
       { path: "/Trace.axd", severity: 5, regex: /Microsoft \.NET Framework Version/, :status => "confirmed" }
+      # /páginas/default.aspx
+      # /pages/default.aspx 
     ]
 
     coldfusion_list = [
@@ -149,6 +153,7 @@ class UriBruteFocusedContent < BaseTask
 
     sharepoint_list = [ 
       { path: "/_vti_bin/spsdisco.aspx", regex: /\<discovery/, status: "confirmed" },
+      { path: "_vti_bin/sites.asmx?wsdl", severity: 4, status: "potential" },
       { path: "/_vti_pvt/service.cnf", regex: /vti_encoding/, status: "confirmed" },
       #{ path: "/_vti_inf.html", regex: nil },
       #{ path: "/_vti_bin/", regex: nil },
@@ -233,9 +238,14 @@ class UriBruteFocusedContent < BaseTask
     ] # see more at https://github.com/danielmiessler/SecLists/blob/master/Discovery/Web-Content/websphere.txt
 
     wordpress_list = [
+      { path: '/wp-config.php~', severity: 1,  regex: /DB_PASSWORD/, status: "confirmed" },
       { path: '/wp-json/wp/v2/users', severity: 4,  regex: /slug/, status: "confirmed" }, 
       { path: '/wp-admin', severity: 5,  regex: /Powered by WordPress/, status: "confirmed" },
       { path: '/xmlrpc.php', severity: 5, status: "confirmed", regex: /XML-RPC server accepts POST requests only./ },
+      { path: '/wp-login.php?action=register', severity: 4, status: "potential"},
+      { path: '/wp-content/uploads/saml-20-single-sign-on/etc/certs', severity: 2, , regex: /<h1>Index of/ status: "confirmed"},
+      # 
+
       # TODO - look for "1.3.9.1" to disprove vulnerability 
       #{ path: '/wp-content/plugins/easy-wp-smtp/readme.txt', severity: 1,  regex: /Easy WP SMTP/i, status: "potential" },  
       #{ path: '/wp-content/plugins/easy-wp-smtp/css/style.css', severity: 2,  regex: /swpsmtp_settings_form/i, status: "potential" },  

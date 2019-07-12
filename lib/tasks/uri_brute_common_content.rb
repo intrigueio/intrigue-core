@@ -51,7 +51,6 @@ class UriBruteCommonContent < BaseTask
     # 21:43:09 WARN: /Users/jcran/work/intrigue/projects/intrigue-core/lib/tasks/uri_brute.rb:34:in `run'
     user_list = user_list.split(",") unless user_list.kind_of? Array
 
-
     # Pull our list from a file if it's set
     if user_list.length > 0
       _log "Using custom list: #{user_list.to_s}"

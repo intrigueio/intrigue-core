@@ -16,7 +16,7 @@ module Regex
       elsif regex_type == :alpha_numeric
         regex = /^[a-zA-Z0-9\_\:\;\(\)\,\?\.\-\_\/\~\=\ \,\#\?\*]*$/
       elsif regex_type == :alpha_numeric_list
-        regex = /^[a-zA-Z0-9\_\:\;\(\)\,\?\.\-\_\/\~\=\ \#\?\*]*$/
+        regex = /^[a-zA-Z0-9\_\:\;\(\)\,\?\.\-\_\/\~\=\ \#\?\$\*]*$/
       elsif regex_type == :numeric_list
         regex = /^[0-9\,]*$/
       elsif regex_type == :filename
