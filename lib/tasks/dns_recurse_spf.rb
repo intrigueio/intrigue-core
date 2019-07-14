@@ -136,8 +136,6 @@ class DnsRecurseSpf < BaseTask
                   end
                 end
               
-              else  # store everything else as info
-                _create_entity "Info", { "name" => "TXT Record for #{dns_name} (#{record})", "content" => record }
               end
 
             end
