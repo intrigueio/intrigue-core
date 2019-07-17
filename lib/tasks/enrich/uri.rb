@@ -212,6 +212,22 @@ class Uri < Intrigue::Task::BaseTask
 
     end
 
+    ### 
+    ### get the favicon & hash it 
+    ###
+    favicon_response = http_request(:get, "#{uri}/favicon.ico")
+    if favicon_response.code == "200"
+      favicon_data = Base64.strict_encode64(favicon_response.body)
+      favicon_md5 = Digest::MD5.hexdigest(favicon_response.body)
+      favicon_sha1 = Digest::SHA1.hexdigest(favicon_response.body)
+    # else 
+    #
+    # try link in the body 
+    # TODO... maybe this should be the other way around? 
+    #
+    end
+          
+
     ###
     ### Fingerprint the app server
     ###
@@ -249,6 +265,8 @@ class Uri < Intrigue::Task::BaseTask
         "api_endpoint" => api_enabled,
         "code" => response.code,
         "title" => title,
+        "favicon_md5" => favicon_md5,
+        "favicon_sha1" => favicon_sha1,
         "generator" => generator_string,
         "verbs" => verbs_enabled,
         "scripts" => script_links,
@@ -256,6 +274,7 @@ class Uri < Intrigue::Task::BaseTask
         "cookies" => response.header['set-cookie'],
         "forms" => contains_forms,
         "response_data_hash" => response_data_hash,
+        "hidden_favicon_data" => favicon_data,
         "hidden_response_data" => response.body,
         "hidden_screenshot_contents" => encoded_screenshot,
         "javascript" => js_libraries,

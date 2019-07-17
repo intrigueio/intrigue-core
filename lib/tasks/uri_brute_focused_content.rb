@@ -67,63 +67,67 @@ class UriBruteFocusedContent < BaseTask
     opt_generic_content = _get_option("check_generic_content") 
 
     generic_list = [ 
-      #{ path: "/api", regex: nil },
-      { path: "/.git", severity: 2, regex: /<h1>Index of/, status: "confirmed" },
-      { path: "/.hg", severity: 2, regex: /<h1>Index of/, status: "confirmed"  },
-      { path: "/.svn", severity: 2, regex: /<h1>Index of/, status: "confirmed" },
-      { path: "/.bzr", severity: 2, regex: /<h1>Index of/, status: "confirmed" }
+      #{ path: "/api", body_regex: nil },
+      { path: "/.git", severity: 2, body_regex: /<h1>Index of/, status: "confirmed" },
+      { path: "/.hg", severity: 2, body_regex: /<h1>Index of/, status: "confirmed"  },
+      { path: "/.svn", severity: 2, body_regex: /<h1>Index of/, status: "confirmed" },
+      { path: "/.bzr", severity: 2, body_regex: /<h1>Index of/, status: "confirmed" }
       #{ path: "/.env", severity: 2, status: "potential" },
-      #{ path: "/.csv", regex: /<h1>Index of/ },
-      #{ path: "/.bak", regex: /<h1>Index of/ },
-      #{ path: "/crossdomain.xml", regex: /\<cross-domain-policy/, severity: 6, status: "confirmed"}, #tighten regex?
-      #{ path: "/clientaccesspolicy.xml", regex: /\<access-policy/, severity: 6, status: "confirmed"}, #tighten regex?
-      #{ path: "/portal", regex: nil },
-      #{ path: "/admin", regex: nil },
-      #{ path: "/test", regex: nil },
+      #{ path: "/.csv", body_regex: /<h1>Index of/ },
+      #{ path: "/.bak", body_regex: /<h1>Index of/ },
+      #{ path: "/crossdomain.xml", body_regex: /\<cross-domain-policy/, severity: 6, status: "confirmed"}, #tighten regex?
+      #{ path: "/clientaccesspolicy.xml", body_regex: /\<access-policy/, severity: 6, status: "confirmed"}, #tighten regex?
+      #{ path: "/portal", body_regex: nil },
+      #{ path: "/admin", body_regex: nil },
+      #{ path: "/test", body_regex: nil },
     ]
 
     # technology specifics 
     apache_list = [
-      { path: "/.htaccess", regex: /AuthName/, severity: 3, status: "confirmed" },
-      { path: "/.htaccess.bak", regex: /AuthName/, severity: 3, status: "confirmed" },
-      #{ path: "/.htpasswd", regex: /(:\$|:\{.*\n|[a-z]:.*$)/, severity: 1, status: "confirmed" },
-      { path: "/server-status", regex: /Server Version/i, severity: 3, status: "confirmed" },
-      { path: "/server-info", regex: /Apache Server Information/i, severity: 4, status: "confirmed" }
+      { path: "/.htaccess", body_regex: /AuthName/, severity: 3, status: "confirmed" },
+      { path: "/.htaccess.bak", body_regex: /AuthName/, severity: 3, status: "confirmed" },
+      #{ path: "/.htpasswd", body_regex: /(:\$|:\{.*\n|[a-z]:.*$)/, severity: 1, status: "confirmed" },
+      { path: "/server-status", body_regex: /Server Version/i, severity: 3, status: "confirmed" },
+      { path: "/server-info", body_regex: /Apache Server Information/i, severity: 4, status: "confirmed" }
     ]
 
     asp_net_list = [
-      { path: "/elmah.axd", severity: 1, regex: /Error log for/i, status: "confirmed" },
-      { path: "/errorlog.axd", severity: 1, regex: /Error log for/i, status: "confirmed" },
-      { path: "/Trace.axd", severity: 5, regex: /Microsoft \.NET Framework Version/, :status => "confirmed" }
+      { path: "/elmah.axd", severity: 1, body_regex: /Error log for/i, status: "confirmed" },
+      { path: "/errorlog.axd", severity: 1, body_regex: /Error log for/i, status: "confirmed" },
+      { path: "/Trace.axd", severity: 5, body_regex: /Microsoft \.NET Framework Version/, :status => "confirmed" }
       # /páginas/default.aspx
       # /pages/default.aspx 
     ]
 
     coldfusion_list = [
-      { path: "/CFIDE", severity: 5, regex: nil, :status => "potential"  },
-      { path: "/CFIDE/administrator/enter.cfm", severity: 5, regex: nil, :status => "potential"  },
-      { path: "/CFIDE/administrator/aboutcf.cfm", severity: 5, regex: nil, :status => "potential"  },
-      { path: "/CFIDE/administrator/welcome.cfm", severity: 5, regex: nil, :status => "potential"  },
-      { path: "/CFIDE/administrator/index.cfm", severity: 5, regex: nil, :status => "potential"  }
+      { path: "/CFIDE", severity: 5, body_regex: nil, :status => "potential"  },
+      { path: "/CFIDE/administrator/enter.cfm", severity: 5, body_regex: nil, :status => "potential"  },
+      { path: "/CFIDE/administrator/aboutcf.cfm", severity: 5, body_regex: nil, :status => "potential"  },
+      { path: "/CFIDE/administrator/welcome.cfm", severity: 5, body_regex: nil, :status => "potential"  },
+      { path: "/CFIDE/administrator/index.cfm", severity: 5, body_regex: nil, :status => "potential"  }
     ] # TODO see metasploit for more ideas here
 
+    globalprotect_list = [ # https://blog.orange.tw/2019/07/attacking-ssl-vpn-part-1-preauth-rce-on-palo-alto.html
+      { path: "/global-protect/portal/css/login.css", severity: 1,
+          header_regex: /^Last-Modified:.*(Jan 2018|Feb 2018|Mar 2018|Apr 2018|May 2018|Jun 2018|2017).*$/i, status: "confirmed" } 
+    ] 
 
     jenkins_list = [
-      { path: "/view/All/builds", severity: 4, regex: /Jenkins ver./i, status: "confirmed" },
-      { path: "/view/All/newjob",  severity: 4, regex: /Jenkins/i, status: "confirmed" },
-      { path: "/asynchPeople/",  severity: 4, regex: /Jenkins/i, status: "confirmed" },
-      { path: "/userContent/",  severity: 4, regex: /Jenkins/i, status: "confirmed" },
-      { path: "/computer/",  severity: 4, regex: /Jenkins/i, status: "confirmed" },
-      { path: "/pview/",  severity: 4, regex: /Jenkins/i, status: "confirmed" },
-      { path: "/systemInfo",  severity: 4, regex: /Jenkins/i, status: "confirmed" },
-      { path: "/script",  severity: 4, regex: /Jenkins/i, status: "confirmed" },
-      { path: "/signup",  severity: 5, regex: /Jenkins/i, status: "confirmed" },
-      { path: "/securityRealm/createAccount", severity: 4, regex: /Jenkins/i , status: "confirmed"}
+      { path: "/view/All/builds", severity: 4, body_regex: /Jenkins ver./i, status: "confirmed" },
+      { path: "/view/All/newjob",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { path: "/asynchPeople/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { path: "/userContent/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { path: "/computer/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { path: "/pview/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { path: "/systemInfo",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { path: "/script",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { path: "/signup",  severity: 5, body_regex: /Jenkins/i, status: "confirmed" },
+      { path: "/securityRealm/createAccount", severity: 4, body_regex: /Jenkins/i , status: "confirmed"}
     ]
 
     jforum_list = [ # CVE-2019-7550
       { path: "/register/check/username?username=thisaccountdoesntexist", severity: 4,
-          regex: /^true$/i, status: "confirmed" } # CVE-2019-7550
+          body_regex: /^true$/i, status: "confirmed" } # CVE-2019-7550
     ] 
 
     # 
@@ -132,32 +136,31 @@ class UriBruteFocusedContent < BaseTask
         { path: "/index.php?option=com_agora&task='", severity: 2, status: "potential" } 
     ] 
 
-
     lotus_domino_list = [
-      { path: "/$defaultview?Readviewentries", severity: 3, regex: /\<viewentries/, status: "confirmed" }
+      { path: "/$defaultview?Readviewentries", severity: 3, body_regex: /\<viewentries/, status: "confirmed" }
     ]
 
     php_list =[
-      { path: "/phpinfo.php", severity: 4, regex: /<title>phpinfo\(\)/, status: "confirmed" }
+      { path: "/phpinfo.php", severity: 4, body_regex: /<title>phpinfo\(\)/, status: "confirmed" }
     ]
 
     php_my_admin_list = [
-      { path: "/phpMyAdmin/scripts/setup.php", severity: 4, regex: nil, status: "potential" }
+      { path: "/phpMyAdmin/scripts/setup.php", severity: 4, body_regex: nil, status: "potential" }
     ]
 
     sap_netweaver_list =[ 
       { path: "/webdynpro/dispatcher/sap.com/caf~eu~gp~example~timeoff~wd/ACreate", 
-        severity: 3, regex: /data-sap-ls-system-platform/, status: "confirmed" }, # https://www.exploit-db.com/exploits/44647
+        severity: 3, body_regex: /data-sap-ls-system-platform/, status: "confirmed" }, # https://www.exploit-db.com/exploits/44647
       { path: "/webdynpro/dispatcher/sap.com/caf~eu~gp~example~timeoff~wd/com.sap.caf.eu.gp.example.timeoff.wd.create.ACreate", 
-        severity: 3, regex: /data-sap-ls-system-platform/, status: "confirmed" }, # https://www.exploit-db.com/exploits/44647
+        severity: 3, body_regex: /data-sap-ls-system-platform/, status: "confirmed" }, # https://www.exploit-db.com/exploits/44647
     ]
 
     sharepoint_list = [ 
-      { path: "/_vti_bin/spsdisco.aspx", regex: /\<discovery/, status: "confirmed" },
+      { path: "/_vti_bin/spsdisco.aspx", body_regex: /\<discovery/, status: "confirmed" },
       { path: "_vti_bin/sites.asmx?wsdl", severity: 4, status: "potential" },
-      { path: "/_vti_pvt/service.cnf", regex: /vti_encoding/, status: "confirmed" },
-      #{ path: "/_vti_inf.html", regex: nil },
-      #{ path: "/_vti_bin/", regex: nil },
+      { path: "/_vti_pvt/service.cnf", body_regex: /vti_encoding/, status: "confirmed" },
+      #{ path: "/_vti_inf.html", body_regex: nil },
+      #{ path: "/_vti_bin/", body_regex: nil },
       #_vti_bin/shtml.exe/junk_nonexistant.exe
       #_vti_txt/_vti_cnf/
       #_vti_txt/
@@ -183,52 +186,52 @@ class UriBruteFocusedContent < BaseTask
 
     splunk_list = [
       { path: "/en-US/splunkd/__raw/services/server/info/server-info?output_mode=json", 
-        regex: /os_name_extended/, severity: 4, status: "confirmed" }, # CVE-2018-11409
+        body_regex: /os_name_extended/, severity: 4, status: "confirmed" }, # CVE-2018-11409
     ]
 
     # https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Insecure%20Management%20Interface
     spring_boot_list =[
-      { path: "/trace", severity: 4, regex: nil, status: "potential" },
-      { path: "/env", severity: 4, regex: nil, status: "potential" },
-      { path: "/heapdump", severity: 4, regex: nil, status: "potential" },
-      { path: "/actuator/env", severity: 4, regex: nil, status: "potential" },
-      { path: "/actuator/health", severity: 4, regex: nil, status: "potential" },
+      { path: "/trace", severity: 4, body_regex: nil, status: "potential" },
+      { path: "/env", severity: 4, body_regex: nil, status: "potential" },
+      { path: "/heapdump", severity: 4, body_regex: nil, status: "potential" },
+      { path: "/actuator/env", severity: 4, body_regex: nil, status: "potential" },
+      { path: "/actuator/health", severity: 4, body_regex: nil, status: "potential" },
     ] # more: https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Insecure%20Management%20Interface/Intruder/springboot_actuator.txt
 
     tomcat_list = [ 
-      { path: '/status', severity: 4, regex: /<p> Free memory:/ },
-      { path: '/web-console', severity: 4, regex: nil },
-      { path: '/jmx-console', severity: 4, regex: nil },
-      { path: '/admin-console', severity: 4, regex: nil },
-      { path: '/manager/html', severity: 4, regex: nil },
-      { path: '/tomcat/manager/html', severity: 4, regex: nil },
-      { path: '/host-manager/html', severity: 4, regex: nil },
-      { path: '/server-manager/html', severity: 4, regex: nil },
-      { path: '/web-console/Invoker', severity: 4, regex: nil },
-      { path: '/jmx-console/HtmlAdaptor', severity: 4, regex: nil },
-      { path: '/invoker/JMXInvokerServlet', severity: 4, regex: nil}
+      { path: '/status', severity: 4, body_regex: /<p> Free memory:/ },
+      { path: '/web-console', severity: 4, body_regex: nil },
+      { path: '/jmx-console', severity: 4, body_regex: nil },
+      { path: '/admin-console', severity: 4, body_regex: nil },
+      { path: '/manager/html', severity: 4, body_regex: nil },
+      { path: '/tomcat/manager/html', severity: 4, body_regex: nil },
+      { path: '/host-manager/html', severity: 4, body_regex: nil },
+      { path: '/server-manager/html', severity: 4, body_regex: nil },
+      { path: '/web-console/Invoker', severity: 4, body_regex: nil },
+      { path: '/jmx-console/HtmlAdaptor', severity: 4, body_regex: nil },
+      { path: '/invoker/JMXInvokerServlet', severity: 4, body_regex: nil}
       # http://[host]:8090/invoker/EJBInvokerServlet
       # https://[host]:8453//invoker/EJBInvokerServlet
-      #{ path: '/invoker/EJBInvokerServlet', severity: 4,  regex: nil} 
+      #{ path: '/invoker/EJBInvokerServlet', severity: 4,  body_regex: nil} 
     ]
 
     # VMware Horizon
     vmware_horizon_list = [
-      { path: "/portal/info.jsp", severity: 4, regex: /clientIPAddress/, status: "confirmed" } # CVE-2019-5513
+      { path: "/portal/info.jsp", severity: 4, body_regex: /clientIPAddress/, status: "confirmed" } # CVE-2019-5513
     ]
 
     # Oracle Weblogic Server
     #  - CVE-2017-10271
     #  - April 2019 0day: http://bit.ly/2ZxYIjS
     weblogic_list = [
-      { path: "/wls-wsat/CoordinatorPortType", severity: 3, regex: /<td>WSDL:/, status: "confirmed" },
-      { path: "/wls-wsat/RegistrationPortTypeRPC", severity: 3, regex: /<td>WSDL:/, status: "confirmed" },
-      { path: "/wls-wsat/ParticipantPortType", severity: 3, regex: /<td>WSDL:/, status: "confirmed" }, 
-      { path: "/wls-wsat/RegistrationRequesterPortType", severity: 3, regex: /<td>WSDL:/, status: "confirmed" },
-      { path: "/wls-wsat/CoordinatorPortType11", severity: 3, regex: /<td>WSDL:/, status: "confirmed" },
-      { path: "/wls-wsat/RegistrationPortTypeRPC11", severity: 3, regex: /<td>WSDL:/, status: "confirmed" }, 
-      { path: "/wls-wsat/ParticipantPortType11", severity: 3, regex: /<td>WSDL:/,status: "confirmed" }, 
-      { path: "/wls-wsat/RegistrationRequesterPortType11", severity: 3, regex: /<td>WSDL:/, status: "confirmed" }
+      { path: "/wls-wsat/CoordinatorPortType", severity: 3, body_regex: /<td>WSDL:/, status: "confirmed" },
+      { path: "/wls-wsat/RegistrationPortTypeRPC", severity: 3, body_regex: /<td>WSDL:/, status: "confirmed" },
+      { path: "/wls-wsat/ParticipantPortType", severity: 3, body_regex: /<td>WSDL:/, status: "confirmed" }, 
+      { path: "/wls-wsat/RegistrationRequesterPortType", severity: 3, body_regex: /<td>WSDL:/, status: "confirmed" },
+      { path: "/wls-wsat/CoordinatorPortType11", severity: 3, body_regex: /<td>WSDL:/, status: "confirmed" },
+      { path: "/wls-wsat/RegistrationPortTypeRPC11", severity: 3, body_regex: /<td>WSDL:/, status: "confirmed" }, 
+      { path: "/wls-wsat/ParticipantPortType11", severity: 3, body_regex: /<td>WSDL:/,status: "confirmed" }, 
+      { path: "/wls-wsat/RegistrationRequesterPortType11", severity: 3, body_regex: /<td>WSDL:/, status: "confirmed" }
     ]
 
     websphere_list = [
@@ -239,26 +242,26 @@ class UriBruteFocusedContent < BaseTask
     ] # see more at https://github.com/danielmiessler/SecLists/blob/master/Discovery/Web-Content/websphere.txt
 
     wordpress_list = [
-      { path: '/wp-config.php~', severity: 1,  regex: /DB_PASSWORD/, status: "confirmed" },
-      { path: '/wp-json/wp/v2/users', severity: 4,  regex: /slug/, status: "confirmed" }, 
-      { path: '/wp-admin', severity: 5,  regex: /Powered by WordPress/, status: "confirmed" },
-      { path: '/xmlrpc.php', severity: 5, status: "confirmed", regex: /XML-RPC server accepts POST requests only./ }
+      { path: '/wp-config.php~', severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },
+      { path: '/wp-json/wp/v2/users', severity: 4,  body_regex: /slug/, status: "confirmed" }, 
+      { path: '/wp-admin', severity: 5,  body_regex: /Powered by WordPress/, status: "confirmed" },
+      { path: '/xmlrpc.php', severity: 5, status: "confirmed", body_regex: /XML-RPC server accepts POST requests only./ }
       #{ path: '/wp-login.php?action=register', severity: 4, status: "potential"} # "User registration is currently not allowed."
       # 
 
       # TODO - look for "1.3.9.1" to disprove vulnerability 
-      #{ path: '/wp-content/plugins/easy-wp-smtp/readme.txt', severity: 1,  regex: /Easy WP SMTP/i, status: "potential" },  
-      #{ path: '/wp-content/plugins/easy-wp-smtp/css/style.css', severity: 2,  regex: /swpsmtp_settings_form/i, status: "potential" },  
-      #{ path: '/wp-content/plugins/easy-wp-smtp/', severity: 2,  regex: /debug_log/i, status: "potential" },
-      #{ path: '/wp-content/plugins/easy-wp-smtp/inc/', severity: 2,  regex: /debug_log/i, status: "potential" }
+      #{ path: '/wp-content/plugins/easy-wp-smtp/readme.txt', severity: 1,  body_regex: /Easy WP SMTP/i, status: "potential" },  
+      #{ path: '/wp-content/plugins/easy-wp-smtp/css/style.css', severity: 2,  body_regex: /swpsmtp_settings_form/i, status: "potential" },  
+      #{ path: '/wp-content/plugins/easy-wp-smtp/', severity: 2,  body_regex: /debug_log/i, status: "potential" },
+      #{ path: '/wp-content/plugins/easy-wp-smtp/inc/', severity: 2,  body_regex: /debug_log/i, status: "potential" }
     ] 
     
     # add wordpress plugins list from a file
     #File.open("#{$intrigue_basedir}/data/wordpress_plugins.list").each_line do |l|
     #  next if l =~ /^#/
     #  #_log "Adding Wordpress plugin check: #{l.strip}"
-    #  wordpress_list << { path: "#{l.strip}/" , severity: 5,  regex: nil, status: "potential" }
-    #  wordpress_list << { path: "#{l.strip}/readme.txt" , severity: 5,  regex: /Contributors:/i, status: "confirmed" }
+    #  wordpress_list << { path: "#{l.strip}/" , severity: 5,  body_regex: nil, status: "potential" }
+    #  wordpress_list << { path: "#{l.strip}/readme.txt" , severity: 5,  body_regex: /Contributors:/i, status: "confirmed" }
     #end
 
     # Create our queue of work from the checks in brute_list
@@ -269,10 +272,11 @@ class UriBruteFocusedContent < BaseTask
     asp_net_list.each { |x| work_q.push x } if ( 
       is_product?("ASP.NET") || is_product?("ASP.NET MVC") )
     coldfusion_list.each { |x| work_q.push x } if is_product? "Coldfusion"  
-    lotus_domino_list.each { |x| work_q.push x } if is_product? "Domino" 
+    globalprotect_list.each { |x| work_q.push x } if is_product? "GlobalProtect" 
     jenkins_list.each { |x| work_q.push x } if is_product? "Jenkins" 
     jforum_list.each { |x| work_q.push x } if is_product? "Jforum" 
     joomla_list.each { |x| work_q.push x } if is_product? "Joomla!" 
+    lotus_domino_list.each { |x| work_q.push x } if is_product? "Domino" 
     php_list.each { |x| work_q.push x } if is_product? "PHP" 
     sharepoint_list.each { |x| work_q.push x } if is_product? "Sharepoint"
     sap_netweaver_list.each { |x| work_q.push x } if is_product? "NetWeaver"

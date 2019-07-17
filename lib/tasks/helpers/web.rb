@@ -62,11 +62,11 @@ module Task
           while request_details = work_q.pop(true)
 
             request_uri = "#{uri}#{request_details[:path]}"
-            positive_regex = request_details[:regex]
-
+            
             # Do the check
             _log "Checking #{request_uri}"
-            result = check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content, positive_regex)
+            # request details will have regexes if we want to check, so just pass it directly
+            result = check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content, request_details)
 
             if result 
               # create a new entity for each one if we specified that 
@@ -662,7 +662,7 @@ module Task
 
 
 
-   def check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content, positive_regex=nil)
+   def check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content, success_cases=nil)
 
      to_return = false
 
@@ -683,25 +683,44 @@ module Task
      # make sure we have a valid response
      return false unless response
 
-     ######### BEST CASE IS WHEN WE KNOW WHAT IT SHOULD LOOK LIKE
+     ######### BEST CASE IS WHEN WE KNOW WHAT IT SHOULD LOOK LIKE 
      # if we have a positive regex, always check that first and just return it if it matches 
-     if positive_regex
-       if response.body =~ positive_regex        
-         _log_good "Matched positive regex!!! #{positive_regex}"
-         return {
-           name: request_uri,
-           uri: request_uri,
-           response_code: response.code,
-           response_body: response.body
-         }
-       else 
-         _log "Didn't match our positive regex, skipping"
-         return false 
+     if success_cases
+
+      _log "Checking success cases: #{success_cases}"
+
+       if success_cases[:body_regex]
+         if response.body =~ success_cases[:body_regex]        
+           _log_good "Matched positive body regex!!! #{success_cases[:body_regex]}"
+           return {
+             name: request_uri,
+             uri: request_uri,
+             response_code: response.code,
+             response_body: response.body
+           }
+         else 
+           _log "Didn't match our positive body regex, skipping"
+           return false 
+         end
+       elsif success_cases[:header_regex]
+         response.each do |header|
+          _log "Checking header: '#{header}: #{response[header]}'" 
+          if "#{header}: #{response[header]}" =~ success_cases[:header_regex]   ### ALWAYS LOWERCASE!!!!      
+           _log_good "Matched positive header regex!!! #{success_cases[:header_regex]}"
+           return {
+             name: request_uri,
+             uri: request_uri,
+             response_code: response.code,
+             response_body: response.body
+           }
+          end
+        end 
+       return false 
        end
      end
-     ##############
-
-     # otherwise fall through into our more generic checking.
+    ##############
+  
+    # otherwise fall through into our more generic checking.
 
      # always check for content...
      ["404", "forbidden", "Request Rejected"].each do |s|
