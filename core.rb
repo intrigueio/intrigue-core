@@ -157,24 +157,24 @@ class IntrigueApp < Sinatra::Base
     $intrigue_server_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
 
     # Parse out our project
-    project_string = URI.unescape(request.path_info.split("/")[1] || "Default")
-    #puts "Got Project string: #{project_string}"
+    directive = URI.unescape(request.path_info.split("/")[1] || "Default")
 
     # Allow certain requests without a project string... these are systemwide,
     # and do not depend on a specific project
-    pass if ["favicon.ico", "project", "tasks", "tasks.json", "entity_types.json", "version.json", "engine", nil].include? project_string
+    pass if ["entity_types.json", "engine", "favicon.ico", "project", "tasks", "tasks.json", 
+      "version.json", "system", nil].include? directive
     pass if request.path_info =~ /js$/ # if we're submitting a new task result via api
     pass if request.path_info =~ /css$/ # if we're submitting a new task result via api
     pass if request.path_info =~ /(.jpg|.png)$/ # if we're submitting a new task result via api
     pass if request.path_info =~ /linkurious/ # if we're submitting a new task result via api
 
-    # Set the project based on the project_string
-    project = Intrigue::Model::Project.first(:name => project_string)
+    # Set the project based on the directive
+    project = Intrigue::Model::Project.first(:name => directive)
 
     # If we haven't resolved a project, let's handle it
     unless project
       # Creating a default project since it doesn't appear to exist (it should always exist)
-      if project_string == "Default"
+      if directive == "Default"
         project = Intrigue::Model::Project.create(:name => "Default")
       else
         redirect "/"

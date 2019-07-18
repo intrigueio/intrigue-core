@@ -3,12 +3,11 @@
 require_relative "helpers"
 
 require_relative "routes/analysis"
-require_relative "routes/engine"
 require_relative "routes/entities"
-require_relative "routes/global"
 require_relative "routes/issues"
 require_relative "routes/project"
 require_relative "routes/results"
+require_relative "routes/system"
 
 require_relative "models/mixins/handleable"
 require_relative "models/mixins/match_exceptions"

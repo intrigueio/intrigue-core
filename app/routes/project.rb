@@ -1,5 +1,28 @@
 class IntrigueApp < Sinatra::Base
 
+    # Main Page
+    get '/:project/?' do
+      erb :index
+    end
+
+    # Main Page
+    get '/:project/config?' do
+      @project_name = params[:project]
+      @project = Intrigue::Model::Project.first(:name => @project_name)
+    erb :'project/config'
+    end
+
+    post '/:project/config?' do
+      @project_name = params[:project]
+      @project = Intrigue::Model::Project.first(:name => @project_name)
+      @project.additional_exception_list = @params["exception_strings"].split("\n").map{|x|x.strip}.sort.uniq
+      @project.save
+
+    redirect "/#{@project_name}/config"
+    end
+
+
+
     # Create a project!
     post '/project' do
 

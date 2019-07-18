@@ -12,11 +12,6 @@ class IntrigueApp < Sinatra::Base
       erb :index
     end
 
-    # Main Page
-    get '/:project/?' do
-      erb :index
-    end
-
     ###                  ###
     ### System Config    ###
     ###                  ###
@@ -71,15 +66,51 @@ class IntrigueApp < Sinatra::Base
 
 
     # get config
-    get '/:project/system/config/?' do
+    get '/system/config/?' do
       @global_config = Intrigue::Config::GlobalConfig
       erb :"system/config"
     end
 
-    get "/:project/system/tasks" do
+    get "/system/tasks" do
       @tasks = Intrigue::TaskFactory.list
       erb :"system/tasks"
     end
+
+    get "/:project/config" do
+      erb :"project/config"
+    end
+
+
+  ###  
+  #### engine api 
+  ###
+
+  #
+  # status
+  #
+  get "/engine/?" do
+
+    sidekiq_stats = Sidekiq::Stats.new
+    project_listing = Intrigue::Model::Project.all.map { |p|
+        { :name => "#{p.name}", :entities => "#{p.entities.count}" } }
+
+    output = {
+      :version => IntrigueApp.version,
+      :projects => project_listing,
+      :tasks => {
+        :processed => sidekiq_stats.processed,
+        :failed => sidekiq_stats.failed,
+        :queued => sidekiq_stats.queues
+      }
+    }
+
+  headers 'Access-Control-Allow-Origin' => '*',
+          'Access-Control-Allow-Methods' => ['OPTIONS','GET']
+
+  content_type "application/json"
+  output.to_json
+  end
+
 
 
 end
