@@ -136,10 +136,20 @@ class EntityManager
 
     # check seeds
     project.seeds.each do |s|
-      r = project.non_traversable?(s["name"], s["type"].split(":").last)
+      seed_type_string = s["type"].split(":").last
+      
+      # IpAddresses can't be used to skip, since they mess up netblocks
+      next if seed_type_string == "IpAddress"  # TOOD.. this should really be a global list (see: netblock scoping)
+
+      # check if the seed matches a non-traversable entity
+      r = project.non_traversable?(s["name"], seed_type_string)
+
+      # okay so if a seed is non-traversable, we'll skip it going forward
       skip_regexes << r if r
     end
-    skip_regexes.compact!
+
+    # simplify so we dont end up with a bunch of dupes
+    skip_regexes = skip_regexes.uniq.compact
 
     if skip_regexes.count > 0
       tr.log "This no-traverse regex will be bypassed since it matches a seed: #{skip_regexes}"

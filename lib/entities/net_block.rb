@@ -39,7 +39,8 @@ class NetBlock < Intrigue::Model::Entity
     scope_check_entity_types = [
       "Intrigue::Entity::Organization",
       "Intrigue::Entity::DnsRecord",
-      "Intrigue::Entity::Domain" ]
+      "Intrigue::Entity::Domain" 
+    ]
 
     ### CHECK OUR SEED ENTITIES TO SEE IF THE TEXT MATCHES
     ######################################################
