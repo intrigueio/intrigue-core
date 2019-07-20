@@ -22,7 +22,6 @@ module Intrigue
       out 
       end
 
-
       # Check for wildcard DNS
       def check_wildcard(suffix)
         _log "Checking for wildcards on #{suffix}."
