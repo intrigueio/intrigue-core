@@ -20,11 +20,6 @@ class ApacheServerStatusParser < BaseTask
     }
   end
 
-  #uri = "http://micronautomata-vip.micron.com:80"
-  #uri = "https://tdousmobile.bdc.tdbank.com:443/"
-  #uri = "http://164.144.3.170:80" #/server-status
-
-
   def run
     super
     uri = _get_entity_name
@@ -33,6 +28,11 @@ class ApacheServerStatusParser < BaseTask
     uri = uri[0..-2] if uri[-1] == "/"
 
     server_status_page = http_get_body("#{uri}/server-status");nil
+
+    unless server_status_page && server_status_page =~ /Server Version/
+      _log "Unable to find status page, returning"
+      return
+    end
 
     info_hash = {}
     xmatch = server_status_page.match(/<dl><dt>Server Version:(.*)<\/dt>/)
