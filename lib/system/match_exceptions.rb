@@ -1,6 +1,5 @@
 module Intrigue
-module Model
-module Mixins
+module System
 module MatchExceptions
 
   # Method gives us a true/false, depending on whether the entity is in an
@@ -282,7 +281,6 @@ module MatchExceptions
   false
   end
 
-end
 end
 end
 end

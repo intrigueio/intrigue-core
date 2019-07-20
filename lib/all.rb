@@ -30,8 +30,26 @@ require 'whois-parser'
 require 'whoisology'
 require 'yomu'
 
-# Intrigue System Management
-require_relative 'system'
+###
+### SYSTEM HELPERS (for use everywhere)
+###
+
+# Intrigue System-wide Bootstrap
+require_relative 'system/bootstrap'
+include Intrigue::System::Bootstrap
+
+# Intrigue System-wide Match Exeptions
+require_relative 'system/match_exceptions'
+include Intrigue::System::MatchExceptions
+
+# Intrigue System-wide Validations 
+require_relative 'system/validations'
+include Intrigue::System::Validations
+
+###
+### END SYSTEM HELPERS
+###
+
 
 ####
 # Task-specific libraries

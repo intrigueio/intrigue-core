@@ -11,7 +11,7 @@ class IpAddress < Intrigue::Model::Entity
   end
 
   def validate_entity
-    return (name =~ _v4_regex || name =~ _v6_regex)
+    return ( name =~ ipv4_regex  || name =~ ipv6_regex )
   end
 
   def detail_string

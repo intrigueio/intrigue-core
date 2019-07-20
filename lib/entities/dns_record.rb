@@ -12,7 +12,7 @@ class DnsRecord < Intrigue::Model::Entity
   end
 
   def validate_entity
-    name =~ _dns_regex
+    name =~ dns_regex
   end
 
   def detail_string

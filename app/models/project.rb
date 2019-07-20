@@ -11,7 +11,6 @@ module Intrigue
       #one_to_many :entities
 
       include Intrigue::Model::Mixins::Handleable
-      include Intrigue::Model::Mixins::MatchExceptions
 
       def validate
         super

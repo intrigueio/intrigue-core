@@ -1,5 +1,6 @@
 module Intrigue
 module System
+module Bootstrap
 
   def bootstrap_system(config)
     extend Intrigue::Task::Helper
@@ -140,5 +141,6 @@ module System
   handler_list
   end
 
+end
 end
 end

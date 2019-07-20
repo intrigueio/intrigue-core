@@ -10,7 +10,6 @@ require_relative "routes/results"
 require_relative "routes/system"
 
 require_relative "models/mixins/handleable"
-require_relative "models/mixins/match_exceptions"
 require_relative "models/mixins/path_traversal"
 
 require_relative "models/alias_group"
