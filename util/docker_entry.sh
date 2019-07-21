@@ -11,4 +11,4 @@ echo "[+] Restarting Intrigue..."
 /core/util/control.sh start
 
 echo "[+] Tailing sidekiq.log..."
-tail -f /core/log/sidekiq.log
+tail -f /core/log/sidekiq*.log
