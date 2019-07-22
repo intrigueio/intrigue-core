@@ -3,8 +3,7 @@ module Intrigue
 
     class Issue < Sequel::Model
       plugin :validation_helpers
-      #plugin :single_table_inheritance, :type
-      plugin :serialization, :json, :details
+        plugin :serialization, :json, :details
 
       many_to_one  :project
       many_to_one  :task_result

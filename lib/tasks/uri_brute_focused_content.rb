@@ -157,7 +157,7 @@ class UriBruteFocusedContent < BaseTask
 
     sharepoint_list = [ 
       { path: "/_vti_bin/spsdisco.aspx", body_regex: /\<discovery/, status: "confirmed" },
-      { path: "_vti_bin/sites.asmx?wsdl", severity: 4, status: "potential" },
+      { path: "/_vti_bin/sites.asmx?wsdl", severity: 4, status: "potential" },
       { path: "/_vti_pvt/service.cnf", body_regex: /vti_encoding/, status: "confirmed" },
       #{ path: "/_vti_inf.html", body_regex: nil },
       #{ path: "/_vti_bin/", body_regex: nil },
@@ -247,7 +247,6 @@ class UriBruteFocusedContent < BaseTask
       { path: '/wp-admin', severity: 5,  body_regex: /Powered by WordPress/, status: "confirmed" },
       { path: '/xmlrpc.php', severity: 5, status: "confirmed", body_regex: /XML-RPC server accepts POST requests only./ }
       #{ path: '/wp-login.php?action=register', severity: 4, status: "potential"} # "User registration is currently not allowed."
-      # 
 
       # TODO - look for "1.3.9.1" to disprove vulnerability 
       #{ path: '/wp-content/plugins/easy-wp-smtp/readme.txt', severity: 1,  body_regex: /Easy WP SMTP/i, status: "potential" },  

@@ -40,7 +40,7 @@ module Vulndb
         # not enough information otherwise
         return [] unless vendor_string && product_string && version_string
 
-        uri = "https://intrigue.io/api/vulndb/match/#{vendor_string}/#{product_string}"
+        uri = "https://app.intrigue.io/api/vulndb/match/#{vendor_string}/#{product_string}"
         uri << "/#{version_string}" if version_string
         uri << "/#{update_string}" if update_string
         uri << "?key=#{api_key}"
