@@ -81,10 +81,9 @@ class ApacheServerStatusParser < BaseTask
 
     gathered_uris = []
 
+    sleep_sec = 10
 
-    sleep_sec = 20
-
-    60.times do |t|
+    10.times do |t|
       server_status_page = http_get_body("#{uri}/server-status");nil
 
       # <td nowrap>GET /content/dam/MGM/akamai/healthcheck.svg HTTP/1.1</td></tr>
