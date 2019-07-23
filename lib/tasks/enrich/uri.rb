@@ -216,7 +216,8 @@ class Uri < Intrigue::Task::BaseTask
     ### get the favicon & hash it 
     ###
     favicon_response = http_request(:get, "#{uri}/favicon.ico")
-    if favicon_response.code == "200"
+
+    if favicon_response && favicon_response.code == "200"
       favicon_data = Base64.strict_encode64(favicon_response.body)
       favicon_md5 = Digest::MD5.hexdigest(favicon_response.body)
       favicon_sha1 = Digest::SHA1.hexdigest(favicon_response.body)
