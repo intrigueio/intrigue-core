@@ -115,7 +115,7 @@ class ApacheServerStatusParser < BaseTask
         end
       end;nil
 
-      puts "sleeping #{sleep_sec} seconds before checking again"
+      _log "sleeping #{sleep_sec} seconds before checking again"
       sleep sleep_sec
     end
 
