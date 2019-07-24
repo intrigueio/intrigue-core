@@ -4,8 +4,8 @@
 function get_maxmind() {
   echo "[+] Getting latest MaxMind GeoLite2-City database"
   # get and unzip
-  wget -N -q  https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz
-  tar -zxvf GeoLite2-City*.tar.gz
+  wget -N -q  https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz 
+  tar -zxf GeoLite2-City*.tar.gz
   # remove the file
   rm GeoLite2-City.tar.gz
   # move the file into the right place
@@ -43,26 +43,6 @@ if [ -d "iana" ]; then
   cd ..
 fi
 
-# ASN Info
-# https://www.quaxio.com/bgp/
-if [ -d "asn_info" ]; then
-  cd asn_info
-  echo "[+] Getting latest ASN data from APNIC"
-  wget -N -q http://thyme.apnic.net/current/data-raw-table
-  wget -N -q http://thyme.apnic.net/current/data-used-autnums
-  cd ..
-fi
-
-#if [ -d "alexa" ]; then
-#  echo "Getting latest Alexa database"
-#  cd alexa
-#  wget -N -q http://s3.amazonaws.com/alexa-static/top-1m.csv.zip
-#  unzip top-1m.csv.zip
-#  mv top-1m.csv latest.csv
-#  rm top-1m.csv.zip
-#  cd ..
-#fi
-
 # TLD Info
 if [ ! -f tlds-alpha-by-domain.txt ]; then
   echo "[+] Getting latest TLDs"
@@ -71,14 +51,14 @@ fi
 
 # public suffix info
 if [ ! -f public_suffix_list.dat ]; then
-  echo "[+] Getting latest Public Suffix list"
+  echo "[+] Getting latest Public suffix list"
   wget -N -q https://publicsuffix.org/list/public_suffix_list.dat
   cat public_suffix_list.dat | grep -i -e '^/' -v | awk 'NF' | sed 's/\*\.//g' > public_suffix_list.clean.txt
   rm public_suffix_list.dat
 fi
 
 # NVD feeds
-NVD_YEARS="2019 2018 2017 2016 2015 2014 2013 2012 2011"
+NVD_YEARS="2019 2018 2017"
 
 # nvd download function
 function get_nvd_json() {
@@ -102,5 +82,6 @@ for YEAR in $NVD_YEARS; do
 
 done
 
+echo "[+] Data Update Complete!"
 
 
