@@ -18,8 +18,6 @@
 # eval "$(rbenv init -)"
 #
 
-
-
 IDIR=/core
 cd $IDIR
 
@@ -35,7 +33,7 @@ function start_server {
   ulimit -n 100000
 
   # Example:  use "1 2 3" for 3 workers 
-  SIDEKIQ_WORKERS=${SIDEKIQ_WORKERS:=1 2}
+  SIDEKIQ_WORKERS=${SIDEKIQ_WORKERS:=1}
   echo "Got worker count: $SIDEKIQ_WORKERS"
 
   for x in $SIDEKIQ_WORKERS; do
