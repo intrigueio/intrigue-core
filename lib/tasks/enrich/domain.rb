@@ -72,7 +72,18 @@ class Domain < Intrigue::Task::BaseTask
 
       # collect TXT records (useful for random things)
       _set_entity_detail("txt_records", collect_txt_records(lookup_name))
-      # TODO ... parse these into domains too
+
+      # Collect DMARC info 
+      dmarc_record_name = "_dmarc.#{_get_entity_name}"
+      result = resolve(dmarc_record_name, [Resolv::DNS::Resource::IN::TXT])
+      if result.count > 0 # No record!
+        # set dmarc to the first record we get back 
+        dmarc_details = result.first["lookup_details"].first["response_record_data"]
+        _set_entity_detail("dmarc", dmarc_details)
+      else 
+         _set_entity_detail("dmarc", nil) 
+      end
+
 
       # grab any / all SPF records (useful to see who accepts mail)
       spf_details = collect_spf_details(lookup_name)
@@ -85,6 +96,9 @@ class Domain < Intrigue::Task::BaseTask
           check_and_create_unscoped_domain(domain_name) if @entity.scoped?
         end
       end
+
+
+
     end
 
   end

@@ -3,11 +3,9 @@ module Task
 module Issue
 
   ###
-  ### Helper method to create findings
+  ### Helper method to create issues
   ###
   def _create_issue(details)
-    # No need for a name in the hash now, remove it & pull out the name from the hash
-
     _notify("Sev #{details[:severity]}!```#{details[:name]}```") if details[:severity] <= 3
     
     hash = details.merge({ entity_id: @entity.id,
