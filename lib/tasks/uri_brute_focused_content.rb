@@ -110,7 +110,7 @@ class UriBruteFocusedContent < BaseTask
     globalprotect_list = [ # https://blog.orange.tw/2019/07/attacking-ssl-vpn-part-1-preauth-rce-on-palo-alto.html
       { path: "/global-protect/portal/css/login.css", severity: 1,
           header_regex: /^Last-Modified:.*(Jan 2018|Feb 2018|Mar 2018|Apr 2018|May 2018|Jun 2018|2017).*$/i, status: "confirmed" } 
-    ] 
+    ]
 
     jenkins_list = [
       { path: "/view/All/builds", severity: 4, body_regex: /Jenkins ver./i, status: "confirmed" },

@@ -39,6 +39,8 @@ class UriCheckSudomainHijack  < BaseTask
         _hijackable_subdomain "JetBrains", uri, "potential"
       elsif response.body =~ /Unrecognized domain/i
         _hijackable_subdomain "Mashery", uri, "potential"
+      elsif response.body =~ /^Not Found$/i
+        _hijackable_subdomain "Netlify", uri, "potential"
       elsif response.body =~ /Project doesnt exist... yet!/i
         _hijackable_subdomain "Readme.io", uri, "potential"
       elsif response.body =~ /This domain is successfully pointed at WP Engine, but is not configured/i

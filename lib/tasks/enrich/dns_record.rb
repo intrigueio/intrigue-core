@@ -88,7 +88,7 @@ class DnsRecord < Intrigue::Task::BaseTask
           _create_entity("IpAddress", { "name" => result["name"] }, @entity)
         else
           _create_entity("DnsRecord", { "name" => result["name"] }, @entity)
-          check_and_create_unscoped_domain(result["name"])
+          check_and_create_unscoped_domain(parse_tld(result["name"]))
         end
       end
     end

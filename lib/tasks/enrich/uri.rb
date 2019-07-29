@@ -223,6 +223,7 @@ class Uri < Intrigue::Task::BaseTask
       favicon_sha1 = Digest::SHA1.hexdigest(favicon_response.body)
     # else 
     #
+    # <link rel="shortcut icon" href="https://static.dyn.com/static/ico/favicon.1d6c21680db4.ico"/>
     # try link in the body 
     # TODO... maybe this should be the other way around? 
     #

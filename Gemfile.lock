@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: b818f63bccbe5d17c61b1e3e714995ac03299261
+  revision: 67ae9b61629f4d18a23dc066e1e295a27f727748
   specs:
     intrigue-ident (0.8.1)
       capybara
@@ -115,7 +115,7 @@ GEM
     blockenspiel (0.5.0)
     builder (3.2.3)
     byebug (11.0.1)
-    capybara (3.25.0)
+    capybara (3.27.0)
       addressable
       mini_mime (>= 0.1.3)
       nokogiri (~> 1.8)
@@ -222,7 +222,7 @@ GEM
     redis (4.1.2)
     redis-namespace (1.6.0)
       redis (>= 3.0.4)
-    regexp_parser (1.5.1)
+    regexp_parser (1.6.0)
     rest-client (2.0.2)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)

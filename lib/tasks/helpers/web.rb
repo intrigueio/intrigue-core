@@ -666,7 +666,6 @@ module Task
 
      to_return = false
 
-     _log "Attempting #{request_uri}"
      response = http_request :get, request_uri
      return false unless response
 

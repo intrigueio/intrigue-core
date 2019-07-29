@@ -37,7 +37,7 @@ class Domain < Intrigue::Task::BaseTask
       resolutions.each do |r|
         # create unscoped domains for all CNAMEs
         if r["response_type"] == "CNAME"
-          check_and_create_unscoped_domain r["response_data"]
+          check_and_create_unscoped_domain r["response_data"] if @entity.scoped?
         end
       end
 
@@ -45,7 +45,7 @@ class Domain < Intrigue::Task::BaseTask
       _log "Grabbing SOA"
       soa_details = collect_soa_details(lookup_name)
       _set_entity_detail("soa_record", soa_details)
-      check_and_create_unscoped_domain(soa_details["primary_name_server"]) if soa_details
+      check_and_create_unscoped_domain(soa_details["primary_name_server"]) if soa_details && @entity.scoped?
 
       # grab whois info & all nameservers
       if soa_details
@@ -58,7 +58,7 @@ class Domain < Intrigue::Task::BaseTask
           # create domains from each of the nameservers
           if out["nameservers"]
             out["nameservers"].each do |n|
-              check_and_create_unscoped_domain(n)
+              check_and_create_unscoped_domain(n) if @entity.scoped?
             end
           end
         end
@@ -68,7 +68,7 @@ class Domain < Intrigue::Task::BaseTask
       _log "Grabbing MX"
       mx_records = collect_mx_records(lookup_name)
       _set_entity_detail("mx_records", mx_records)
-      mx_records.each{|mx| check_and_create_unscoped_domain(mx["host"]) }
+      mx_records.each{|mx| check_and_create_unscoped_domain(mx["host"]) if @entity.scoped? }
 
       # collect TXT records (useful for random things)
       _set_entity_detail("txt_records", collect_txt_records(lookup_name))
@@ -82,7 +82,7 @@ class Domain < Intrigue::Task::BaseTask
           next unless spf =~ /^include:/
           domain_name = spf.split("include:").last
           _log "Found Associated SPF Domain: #{domain_name}"
-          check_and_create_unscoped_domain(domain_name)
+          check_and_create_unscoped_domain(domain_name) if @entity.scoped?
         end
       end
     end
