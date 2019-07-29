@@ -71,9 +71,11 @@ class Domain < Intrigue::Task::BaseTask
       mx_records.each{|mx| check_and_create_unscoped_domain(mx["host"]) if @entity.scoped? }
 
       # collect TXT records (useful for random things)
+      _log "Grabbing TXT Records"
       _set_entity_detail("txt_records", collect_txt_records(lookup_name))
 
       # Collect DMARC info 
+      _log "Grabbing DMARC"
       dmarc_record_name = "_dmarc.#{_get_entity_name}"
       result = resolve(dmarc_record_name, [Resolv::DNS::Resource::IN::TXT])
       if result.count > 0 # No record!
@@ -86,6 +88,7 @@ class Domain < Intrigue::Task::BaseTask
 
 
       # grab any / all SPF records (useful to see who accepts mail)
+      _log "Grabbing SPF Records"
       spf_details = collect_spf_details(lookup_name)
       _set_entity_detail("spf_record", spf_details)
       spf_details.each do |record|
