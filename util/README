@@ -1,6 +1,7 @@
-                       Intrigue Core
+                      Welcome to Intrigue Core!
 
-To start/restart the Core server, run: /core/util/control.sh restart
+To start/restart the Core server on DOCKER, run: /core/util/control.sh stop && /core/util/control.sh start 
+To start/restart the Core server on EC2,    run: /home/ubuntu/core/util/control.sh start
 
 Please file bugs & requests: https://github.com/intrigueio/intrigue-core/issues
 
