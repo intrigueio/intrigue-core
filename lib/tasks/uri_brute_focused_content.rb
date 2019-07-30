@@ -71,7 +71,7 @@ class UriBruteFocusedContent < BaseTask
       { path: "/.git", severity: 2, body_regex: /<h1>Index of/, status: "confirmed" },
       { path: "/.hg", severity: 2, body_regex: /<h1>Index of/, status: "confirmed"  },
       { path: "/.svn", severity: 2, body_regex: /<h1>Index of/, status: "confirmed" },
-      { path: "/.bzr", severity: 2, body_regex: /<h1>Index of/, status: "confirmed" }
+      { path: "/.bzr", severity: 2, body_regex: /<h1>Index of/, status: "confirmed" },
       # https://github.com/laravel/laravel/blob/master/.env.example
       { path: "/.env", severity: 1, body_regex: /APP_ENV/, status: "confirmed" },  
       #{ path: "/.csv", body_regex: /<h1>Index of/ },
