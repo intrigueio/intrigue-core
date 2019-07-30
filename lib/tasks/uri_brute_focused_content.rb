@@ -72,7 +72,8 @@ class UriBruteFocusedContent < BaseTask
       { path: "/.hg", severity: 2, body_regex: /<h1>Index of/, status: "confirmed"  },
       { path: "/.svn", severity: 2, body_regex: /<h1>Index of/, status: "confirmed" },
       { path: "/.bzr", severity: 2, body_regex: /<h1>Index of/, status: "confirmed" }
-      #{ path: "/.env", severity: 2, status: "potential" },
+      # https://github.com/laravel/laravel/blob/master/.env.example
+      { path: "/.env", severity: 2, body_regex: /APP_ENV/, status: "confirmed" },  
       #{ path: "/.csv", body_regex: /<h1>Index of/ },
       #{ path: "/.bak", body_regex: /<h1>Index of/ },
       #{ path: "/crossdomain.xml", body_regex: /\<cross-domain-policy/, severity: 6, status: "confirmed"}, #tighten regex?
