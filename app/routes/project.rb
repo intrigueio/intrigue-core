@@ -21,8 +21,6 @@ class IntrigueApp < Sinatra::Base
     redirect "/#{@project_name}/config"
     end
 
-
-
     # Create a project!
     post '/project' do
 

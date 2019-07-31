@@ -15,7 +15,7 @@ class IntrigueApp < Sinatra::Base
     ###                  ###
     ### System Config    ###
     ###                  ###
-    post '/:project/config/system' do
+    post '/system/config' do
       
       Intrigue::Config::GlobalConfig.config["credentials"]["username"] = "#{params["username"]}"
       Intrigue::Config::GlobalConfig.config["credentials"]["password"] = "#{params["password"]}"
@@ -27,8 +27,19 @@ class IntrigueApp < Sinatra::Base
       redirect "/#{@project_name}"  # handy if we're in a browser
     end
 
+    # get config
+    get '/system/config/?' do
+      @global_config = Intrigue::Config::GlobalConfig
+      erb :"system/config"
+    end
+
+    get "/system/tasks" do
+      @tasks = Intrigue::TaskFactory.list
+      erb :"system/tasks"
+    end
+
     # save the config
-    post '/:project/config/task' do
+    post '/system/config/tasks' do
       # Update our config if one of the fields have been changed. Note that we use ***
       # as a way to mask out the full details in the view. If we have one that doesn't lead with ***
       # go ahead and update it
@@ -42,44 +53,8 @@ class IntrigueApp < Sinatra::Base
       # save and reload 
       Intrigue::Config::GlobalConfig.save
 
-      redirect "/#{@project_name}"  # handy if we're in a browser
+      redirect "/system/config"  # handy if we're in a browser
     end
-
-    # save the config
-    post '/:project/config/handler' do
-      # Update our config if one of the fields have been changed. Note that we use ***
-      # as a way to mask out the full details in the view. If we have one that doesn't lead with ***
-      # go ahead and update it
-      begin
-        handler_hash = JSON.parse(params["handler_json"])
-         Intrigue::Config::GlobalConfig.config["intrigue_handlers"] = handler_hash
-
-        # save and reload 
-        Intrigue::Config::GlobalConfig.save
-
-      rescue JSON::ParserError => e
-        return "Error! #{e}"
-      end
-
-      redirect "/#{@project_name}"  # handy if we're in a browser
-    end
-
-
-    # get config
-    get '/system/config/?' do
-      @global_config = Intrigue::Config::GlobalConfig
-      erb :"system/config"
-    end
-
-    get "/system/tasks" do
-      @tasks = Intrigue::TaskFactory.list
-      erb :"system/tasks"
-    end
-
-    get "/:project/config" do
-      erb :"project/config"
-    end
-
 
   ###  
   #### engine api 

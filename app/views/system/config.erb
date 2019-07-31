@@ -1,14 +1,14 @@
 <h3>Global Configuration</h3>
 
 <h4> System Configuration </h4>
-<form action="/<%=@project_name%>/config/system" method="post">
+<form action="/system/config" method="post">
   Username: <input class="form-control" style="width:150px" type="text" name="username" value="<%=@global_config.config["credentials"]["username"]%>">
   Password: <input class="form-control" style="width:150px" type="password" name="password" value="<%=@global_config.config["credentials"]["username"]%>">
   <input class="btn btn-primary" type="submit">
 </form>
 <hr>
 <h4> Task Configuration </h4>
-<form action="/<%=@project_name%>/config/task" method="post">
+<form action="/system/config/tasks" method="post">
 <table class="table">
   <colgroup>
     <col style="width:20%">
@@ -29,9 +29,3 @@
 <tbody>
 </table>
 </form>
-
-<style>
-textarea: {
-    color: black;
-}
-</style>

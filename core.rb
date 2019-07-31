@@ -2,8 +2,6 @@ require 'eventmachine'
 require 'logger'
 require 'sinatra'
 require 'sinatra/contrib'
-#require 'json'
-#require 'yajl'
 require 'yajl/json_gem'
 require 'yaml'
 require 'rest-client'
@@ -161,12 +159,12 @@ class IntrigueApp < Sinatra::Base
 
     # Allow certain requests without a project string... these are systemwide,
     # and do not depend on a specific project
-    pass if ["entity_types.json", "engine", "favicon.ico", "project", "tasks", "tasks.json", 
-      "version.json", "system", nil].include? directive
-    pass if request.path_info =~ /js$/ # if we're submitting a new task result via api
-    pass if request.path_info =~ /css$/ # if we're submitting a new task result via api
-    pass if request.path_info =~ /(.jpg|.png)$/ # if we're submitting a new task result via api
-    pass if request.path_info =~ /linkurious/ # if we're submitting a new task result via api
+    pass if [ "entity_types.json", "engine", "favicon.ico", 
+              "project", "tasks", "tasks.json", 
+              "version.json", "system", nil ].include? directive
+    pass if request.path_info =~ /\.js$/ # all js
+    pass if request.path_info =~ /\.css$/ # all css
+    pass if request.path_info =~ /(.jpg|.png)$/ # all images
 
     # Set the project based on the directive
     project = Intrigue::Model::Project.first(:name => directive)
