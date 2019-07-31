@@ -55,6 +55,8 @@ module Task
     end
     ##########################
 
+    matching_urls = Queue.new
+
     # Create a pool of worker threads to work on the queue
     workers = (0...threads).map do
       Thread.new do
@@ -70,7 +72,10 @@ module Task
 
             if result 
               # create a new entity for each one if we specified that 
-              _create_entity("Uri", { "name" => result[:uri] }) if  create_url
+              _create_entity("Uri", { "name" => result[:uri] }) if create_url
+
+              # dump it into our queue so we can push matches back
+              matching_urls.push({ start: request_uri, final: result[:uri] })
               
               _create_issue({
                 name: "Discovered Content at #{result[:name]}",
@@ -88,6 +93,9 @@ module Task
       end
     end; "ok"
     workers.map(&:join); "ok"
+
+    # push back a list of matching urls in case of post processing
+    matching_urls.size.times.map {|x| matching_urls.pop } 
   end
 
   # See: https://raw.githubusercontent.com/zendesk/ruby-kafka/master/lib/kafka/ssl_socket_with_timeout.rb
