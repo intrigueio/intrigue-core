@@ -294,7 +294,9 @@ class UriBruteFocusedContent < BaseTask
     ###
     ### Do the work 
     ###
-    make_http_requests_from_queue(uri, work_q, opt_threads, opt_create_url, true) # always create an issue
+    results = make_http_requests_from_queue(uri, work_q, opt_threads, opt_create_url, true) # always create an issue
+
+    _log "Got matches: #{results}"
 
   end # end run method
 
