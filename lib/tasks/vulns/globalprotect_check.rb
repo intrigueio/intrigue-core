@@ -3,14 +3,12 @@
 ###
 module Intrigue
 module Task
-class  GlobalunprotectCheck < BaseTask
-
-  include Intrigue::Task::Dns
+class  GlobalprotectCheck < BaseTask
 
   def self.metadata
     {
-      :name => "vuln/globalunprotect_check",
-      :pretty_name => "Vuln - Globalunprotect Check",
+      :name => "vuln/globalprotect_check",
+      :pretty_name => "Vuln - GlobalProtect Check",
       :authors => ["jcran"],
       :description => "This task checks for the Palo Alto Globalprotect vulnerability announced by Orange Tsai prior to Black Hat 2019.",
       :references => [
@@ -41,19 +39,32 @@ class  GlobalunprotectCheck < BaseTask
       return
     end
 
-    # check that it matches our vuln versions
-    if last_modified_header =~ /^Last-Modified:.*(Jan 2018|Feb 2018|Mar 2018|Apr 2018|May 2018|Jun 2018|2017).*$/i
-      _log "Vulnerable! #{output.strip}"
+    # Get the date to see it's vuln
+    matches = last_modified_header.match(/(Jan 2018|Feb 2018|Mar 2018|Apr 2018|May 2018|Jun 2018|2017|2016)/i)
+
+    # check that it matches our known vuln versions
+    vuln_versions = ["Jan 2018","Feb 2018","Mar 2018","Apr 2018","May 2018","Jun 2018","2017","2016"]
+    if matches && matches.captures
+      date = matches.captures.first.strip
+      _log "Checking... #{last_modified_header}, date: #{date}"
+      vulnerable = true if vuln_versions.include? date
+    else
+      _log "No capture :["
+    end
+
+    # example: Last-Modified: Wed, 06 Jun 2018 20:52:55 GMT
+    if vulnerable
+      _log "Vulnerable!"
       _create_issue({
-        name: "System vulnerable to a remote unauthenticated RCE: #{to_scan}",
+        name: "System vulnerable to a remote unauthenticated RCE in Palo Alto GlobalProtect: #{check_url}",
         severity: 1,
         type: "vulnerability_globalunprotect",
         status: "confirmed",
-        description: "This server is vulnerable to an unauthenticated RCE bug announced in July 2019. No CVE exists. See references for more details.",
-        references: self.metadata["references"]
+        description: "This server is vulnerable to an unauthenticated RCE bug announced in July 2019. No CVE exists. See references for more details.\n\nProof: #{last_modified_header}",
+        references: self.class.metadata["references"]
         })
     else
-      _log "Not Vulnerable! Last-Modified Header:  #{last_modified_header.strip}"
+      _log "Not Vulnerable! Header: #{last_modified_header}"
     end
 
   end
