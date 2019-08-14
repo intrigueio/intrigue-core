@@ -131,9 +131,12 @@ class UriBruteFocusedContent < BaseTask
           body_regex: /^true$/i, status: "confirmed" } # CVE-2019-7550
     ] 
 
+    jira_list = [ # https://x.x.x.x?filterView=popular
+      { path: "/secure/ManageFilters.jspa", severity: 3,
+          body_regex: /<title>Manage Filters/i, status: "confirmed" } 
+    ]
     # 
-    joomla_list = [
-        # https://packetstormsecurity.com/files/151619/Joomla-Agora-4.10-Bypass-SQL-Injection.html
+    joomla_list = [   # https://packetstormsecurity.com/files/151619/Joomla-Agora-4.10-Bypass-SQL-Injection.html
         { path: "/index.php?option=com_agora&task='", severity: 2, status: "potential" } 
     ] 
 
@@ -274,7 +277,8 @@ class UriBruteFocusedContent < BaseTask
     coldfusion_list.each { |x| work_q.push x } if is_product? "Coldfusion"  
     globalprotect_list.each { |x| work_q.push x } if is_product? "GlobalProtect" 
     jenkins_list.each { |x| work_q.push x } if is_product? "Jenkins" 
-    jforum_list.each { |x| work_q.push x } if is_product? "Jforum" 
+    jforum_list.each { |x| work_q.push x } if is_product? "Jforum"
+    jira_list.each { |x| work_q.push x } if is_product? "Jira"
     joomla_list.each { |x| work_q.push x } if is_product? "Joomla!" 
     lotus_domino_list.each { |x| work_q.push x } if is_product? "Domino" 
     php_list.each { |x| work_q.push x } if is_product? "PHP" 
