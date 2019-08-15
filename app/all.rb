@@ -2,12 +2,15 @@
 
 require_relative "helpers"
 
+# must be brought in first, system should be skipped as a directive
+require_relative "routes/system"
+
 require_relative "routes/analysis"
 require_relative "routes/entities"
 require_relative "routes/issues"
 require_relative "routes/project"
 require_relative "routes/results"
-require_relative "routes/system"
+
 
 require_relative "models/mixins/handleable"
 require_relative "models/mixins/path_traversal"
