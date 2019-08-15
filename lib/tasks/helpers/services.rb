@@ -78,14 +78,13 @@ module Services
       thread_list << Thread.new do 
 
         # Handle web app case first
-        if (protocol == "tcp" && [80,81,443,8000,8080,8081,8443].include?(port_num))
+        if (protocol == "tcp" && [80,81,443,6443,8000,8001,8080,8081,8443,8888].include?(port_num))
 
           # If SSL, use the appropriate prefix
           prefix = ssl ? "https" : "http" # construct uri
 
           # Construct the uri
           uri = "#{prefix}://#{h.name.strip}:#{port_num}"
-
 
           # if we've never seen this before, go ahead and open it to ensure it's 
           # something we want to create (this helps eliminate unusable urls). However, 
@@ -136,7 +135,7 @@ module Services
             when 502,503
               service = "MODBUS"
             when 1883
-              service = "MQLSDP"
+              service = "MQTT"
             when 2181,2888,3888
               service = "ZOOKEEPER"
             when 3389
@@ -156,7 +155,7 @@ module Services
             when 8278,8291
               service = "MIKROTIK"
             when 8883
-              service = "MQTT"
+              service = "MQTT-SSL"
             when 9200,9201,9300,9301
               service = "ELASTICSEARCH"
             when 9091,9092,9094
