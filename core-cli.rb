@@ -251,11 +251,14 @@ private
 
   # parse out entity from the cli
   def _parse_entity(entity_string)
-    return nil if entity_string.first == "#"
+    # check and return nil if the first char is a "#"
+    return nil if entity_string[0] == "#"
 
+    # otherwise split on our delimiter
     entity_type = entity_string.split(@delim).first
     entity_name = entity_string.split(@delim).last
 
+    # create the hash we'll return
     entity_hash = {
       "type" => entity_type,
       "name" => entity_name,
