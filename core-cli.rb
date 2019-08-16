@@ -212,6 +212,8 @@ class CoreCli < Thor
 
       # prep the entity
       parsed_entity = _parse_entity line
+      next unless parsed_entity 
+
       parsed_entity["details"].merge!({
         "hidden_original": parsed_entity["name"],
       })
@@ -249,6 +251,8 @@ private
 
   # parse out entity from the cli
   def _parse_entity(entity_string)
+    return nil if entity_string.first == "#"
+
     entity_type = entity_string.split(@delim).first
     entity_name = entity_string.split(@delim).last
 
