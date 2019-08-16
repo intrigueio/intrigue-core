@@ -188,6 +188,7 @@ class IntrigueApp < Sinatra::Base
         #f = File.open entity_file,"r"
         entities = []
         entity_file.each_line do |l|
+          next if l[0] == "#" # skip comment lines
           raise "Bad file content: #{l}" unless l =~ /[a-z]+\#.*/
           et = l.split("#").first.chomp
           en = l.split("#").last.chomp
