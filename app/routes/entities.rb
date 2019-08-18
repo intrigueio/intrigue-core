@@ -4,14 +4,16 @@ class IntrigueApp < Sinatra::Base
 
     params[:search_string] == "" ? @search_string = nil : @search_string = params[:search_string]
     params[:entity_types] == "" ? @entity_types = nil : @entity_types = params[:entity_types]
-    #params[:correlate] == "on" ? @correlate = true : @correlate = false
     params[:include_hidden] == "on" ? @include_hidden = true : @include_hidden = false
+    params[:only_enriched] == "on" ? @only_enriched = true : @only_enriched = false
     (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
     (params[:count] != "" && params[:count].to_i > 0) ? @count = params[:count].to_i : @count = 100
 
     selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name)
     selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
     selected_entities = _tokenized_search(@search_string, selected_entities) if @search_string
+
+    selected_entities = selected_entities.where(:enriched => true) if  @only_enriched
 
     if params[:export] == "csv"
 

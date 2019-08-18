@@ -77,8 +77,12 @@ module Services
     hosts.each do |h|
       thread_list << Thread.new do 
 
+        http_ports = [  80,81,82,83,84,85,88,443,3000,6443,8000,8080,8081,
+                        8080,8081,8087,8088,8089,8090,8095,8098,
+                        8161,8180,8443,8888,10000 ] 
+
         # Handle web app case first
-        if (protocol == "tcp" && [80,81,443,6443,8000,8001,8080,8081,8443,8888].include?(port_num))
+        if (protocol == "tcp" && http_ports.include?(port_num))
 
           # If SSL, use the appropriate prefix
           prefix = ssl ? "https" : "http" # construct uri
@@ -116,6 +120,16 @@ module Services
           service_specific_details = {}
 
           case port_num
+            when 1 
+              service = "TCPMUX"
+            when 7
+              service = "ECHO"
+            when 9
+              service = "DISCARD"
+            when 13
+              service = "DAYTIME"
+            when 19
+              service = "CHARGEN"
             when 21
               service = "FTP"
             when 22,2222
@@ -124,14 +138,34 @@ module Services
               service = "TELNET"
             when 25
               service = "SMTP"
+            when 37
+              service = "TIME"
+            when 42
+              service = "NAMESERVER"
+            when 49
+              service = "TACACS"
             when 53
               service = "DNS"
+            when 69
+              service = "TFTP"
             when 79
               service = "FINGER"
+            when 102 
+              service = "TSAP"
+            when 105
+              service = "CCSO"
+            when 109 
+              service = "POP2"
             when 110
               service = "POP3"
             when 111
               service = "SUNRPC"
+            when 113
+              service = "IDENT"
+            when 123
+              service = "NTP"
+            when 135
+              service = "DCERPC"
             when 502,503
               service = "MODBUS"
             when 1883
