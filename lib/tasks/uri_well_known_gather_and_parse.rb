@@ -41,7 +41,6 @@ class UriWellKnownGatherAndParse < BaseTask
     opt_threads = _get_option("threads").to_i
     opt_create_url = _get_option("create_url")
     opt_create_issue = _get_option("create_issue")
-    opt_generic_content = _get_option("check_generic_content") 
 
     well_known_uri_list = [
       # Phase 1, make this actually find the files, if it does, phase 2 is to open each one of these and get more data.
