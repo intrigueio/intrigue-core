@@ -26,7 +26,7 @@ class UriWellKnownGatherAndParse < BaseTask
       ],
       :allowed_options => [
         {:name => "threads", regex: "integer", :default => 1 },
-        {:name => "create_url", regex: "boolean", :default => false },
+        {:name => "create_url", regex: "boolean", :default => true },
         {:name => "create_issue", regex: "boolean", :default => false }
       ],
       :created_types => ["Uri"]
