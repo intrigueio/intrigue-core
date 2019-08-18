@@ -208,6 +208,11 @@ module Machine
           {"name" => "additional_buckets", "value" => generated_names.join(",")}])
 
       elsif entity.type_string == "Uri"
+          
+        if entity.get_detail("content").any?{|check| check['name'] == ".well-known" && check["result"] == true }
+          puts "Checking .wellknown specifics on #{entity.name}!"
+          start_recursive_task(task_result,"well_known_gather_and_parse",entity, [])
+        end
 
         ## Grab the SSL Certificate
         start_recursive_task(task_result,"uri_gather_ssl_certificate",entity, []) if entity.name =~ /^https/
