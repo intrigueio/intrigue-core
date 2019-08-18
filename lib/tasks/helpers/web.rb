@@ -534,6 +534,20 @@ module Task
        # get the response
        response = http.request(request)
 
+       # USE THIS TO PRINT HTTP RESPONSE
+       #puts
+       #puts 
+       #puts "===== BEGIN RESPONSE ====="
+       #puts "Endpoint: #{response.code} http://#{uri}"
+       #puts "HEADERS:"
+       #response.each_header{ |h| puts "#{h}: #{response[h]}"} 
+       #puts
+       #puts "Body:\n#{response.body}" 
+       #puts "=====  END RESPONSE ====="
+       #puts
+       #puts 
+       # END USE THIS TO PRINT HTTP RESPONSE
+
        if response.code=="200"
          break
        end

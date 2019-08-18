@@ -9,7 +9,7 @@ class  GlobalprotectCheck < BaseTask
     {
       :name => "vuln/globalprotect_check",
       :pretty_name => "Vuln - GlobalProtect Check",
-      :authors => ["jcran"],
+      :authors => ["jcran","@orange_8361","@mehqq_"],
       :description => "This task checks for the Palo Alto Globalprotect vulnerability announced by Orange Tsai prior to Black Hat 2019.",
       :references => [
         "https://blog.orange.tw/2019/07/attacking-ssl-vpn-part-1-preauth-rce-on-palo-alto.html",
@@ -56,7 +56,7 @@ class  GlobalprotectCheck < BaseTask
     if vulnerable
       _log "Vulnerable!"
       _create_issue({
-        name: "System vulnerable to a remote unauthenticated RCE in Palo Alto GlobalProtect: #{check_url}",
+        name: "Vulnerable Palo Alto GlobalProtect: #{check_url}",
         severity: 1,
         type: "vulnerability_globalunprotect",
         status: "confirmed",

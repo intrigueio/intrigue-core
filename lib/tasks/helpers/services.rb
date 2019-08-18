@@ -20,7 +20,7 @@ module Services
     updated_ports = ports.append({"number" => port_num, "protocol" => protocol}).uniq
     ip_entity.set_detail("ports", updated_ports)
 
-    ssl = true if [443, 8443].include?(port_num)
+    ssl = true if [443, 6443, 8443, 10000].include?(port_num)
 
     # Ensure we always save our host and key details.
     # note that we might add service specifics to this below
@@ -77,12 +77,12 @@ module Services
     hosts.each do |h|
       thread_list << Thread.new do 
 
-        http_ports = [  80,81,82,83,84,85,88,443,3000,6443,8000,8080,8081,
-                        8080,8081,8087,8088,8089,8090,8095,8098,
-                        8161,8180,8443,8888,10000 ] 
+        try_http_ports = [  80,81,82,83,84,85,88,443,888,3000,6443,
+                            8000,8080,8081,8087,8088,8089,8090,8095,
+                            8098,8161,8180,8443,8888,10000 ] 
 
         # Handle web app case first
-        if (protocol == "tcp" && http_ports.include?(port_num))
+        if (protocol == "tcp" && try_http_ports.include?(port_num))
 
           # If SSL, use the appropriate prefix
           prefix = ssl ? "https" : "http" # construct uri
