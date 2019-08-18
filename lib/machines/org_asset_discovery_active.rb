@@ -208,15 +208,18 @@ module Machine
           {"name" => "additional_buckets", "value" => generated_names.join(",")}])
 
       elsif entity.type_string == "Uri"
-
+          
         ## Grab the SSL Certificate
         start_recursive_task(task_result,"uri_gather_ssl_certificate",entity, []) if entity.name =~ /^https/
 
         # Check for exploitable URIs, but don't recurse on things we've already found
         start_recursive_task(task_result,"uri_brute_focused_content", entity)
 
+        # check for subdomain hijack 
         start_recursive_task(task_result,"uri_check_subdomain_hijack",entity, [])
 
+        # Checking .well-known specifics on #{entity.name}!
+        # start_recursive_task(task_result,"uri_well_known_gather_and_parse",entity, [])
 
       else
         task_result.log "No actions for entity: #{entity.type}##{entity.name}"
