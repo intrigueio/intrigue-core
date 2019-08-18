@@ -16,7 +16,8 @@ class UriWellKnownGatherAndParse < BaseTask
         " other technologies which may or may live within RFC Spec. See refs for more detail",      
       :references => [
         "https://tools.ietf.org/html/rfc5785",
-        "https://www.iana.org/assignments/well-known-uris/well-known-uris.xhtml"
+        "https://www.iana.org/assignments/well-known-uris/well-known-uris.xhtml",
+        "https://en.wikipedia.org/wiki/List_of_/.well-known/_services_offered_by_webservers"
       ],
       :type => "discovery",
       :passive => false,
