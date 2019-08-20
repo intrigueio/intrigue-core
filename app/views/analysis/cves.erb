@@ -30,8 +30,8 @@
       <tr><th>CVE</th><th>CWE</th><th>CPE</th><th>Site</th></tr>
       <% @cves.each do |x| %>
         <tr>
-          <td><%=h x["cve"] %></td>
-          <td><%=h x["cwe"] %></td>
+          <td><%=h x["cve"] || x["cve_id"] %></td>
+          <td><%=h x["cwe"] || x["cwe_id"] %></td>
           <td><%=h x["cpe"] %></td>
           <td><a href="<%=h "/#{@project_name}/entities/#{x["id"]}"%>"><%= h x["site"] %></a></td>
         </tr>
