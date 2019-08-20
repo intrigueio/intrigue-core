@@ -18,6 +18,7 @@ module Task
     ###
     ### Get the default case (a page that doesn't exist)
     ###
+    threads = threads.to_i # jsut in case 
     random_value = "#{rand(100000000)}"
     request_page_one = "doesntexist-#{random_value}"
     request_page_two = "def-#{random_value}-doesntexist"
@@ -64,9 +65,10 @@ module Task
           while request_details = work_q.pop(true)
 
             request_uri = "#{uri}#{request_details[:path]}"
-            
+
             # Do the check
-            _log "Checking #{request_uri}"
+            #_log "Checking #{request_uri}"
+
             # request details will have regexes if we want to check, so just pass it directly
             result = check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content, request_details)
 
@@ -709,7 +711,7 @@ module Task
      # if we have a positive regex, always check that first and just return it if it matches 
      if success_cases
 
-      _log "Checking success cases: #{success_cases}"
+      #_log "Checking success cases: #{success_cases}"
 
        if success_cases[:body_regex]
          if response.body =~ success_cases[:body_regex]        
@@ -721,7 +723,7 @@ module Task
              response_body: response.body
            }
          else 
-           _log "Didn't match our positive body regex, skipping"
+           #_log "Didn't match our positive body regex, skipping"
            return false 
          end
        elsif success_cases[:header_regex]
