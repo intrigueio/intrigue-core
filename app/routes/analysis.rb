@@ -48,6 +48,7 @@ class IntrigueApp < Sinatra::Base
                 "cpe" => "#{fp["cpe"]}",
                 "cve" => "#{v["cve"]}",
                 "cwe" => "#{v["cwe"]}",
+                "cvss_score" => "#{v["cvss_v3_score"]}",
                 "site" => u.name,
                 "id" => u.id
               }
