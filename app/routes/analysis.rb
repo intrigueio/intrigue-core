@@ -46,7 +46,8 @@ class IntrigueApp < Sinatra::Base
             fp["vulns"].map { |v|
               {
                 "cpe" => "#{fp["cpe"]}",
-                "cve_id" => "#{v["cve_id"]}",
+                "cve" => "#{v["cve"]}",
+                "cwe" => "#{v["cwe"]}",
                 "site" => u.name,
                 "id" => u.id
               }
