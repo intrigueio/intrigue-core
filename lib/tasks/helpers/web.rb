@@ -288,6 +288,7 @@ module Task
             "jiveon.com",
             "incapsula.com",
             "lithium.com",
+            "sucuri.net",
             "swagcache.com",
             "wpengine.com",
             "yottaa.net"

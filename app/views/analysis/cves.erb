@@ -22,14 +22,16 @@
     <table class="sortable" border="1" width=100%>
       <colgroup>
         <col style="width:13%">
-        <col style="width:47%">
+        <col style="width:13%">
+        <col style="width:34%">
         <col style="width:40%">
       </colgroup>
       <tbody>
-      <tr><th>CVE</th><th>CPE</th><th>Site</th></tr>
+      <tr><th>CVE</th><th>CWE</th><th>CPE</th><th>Site</th></tr>
       <% @cves.each do |x| %>
         <tr>
           <td><%=h x["cve"] %></td>
+          <td><%=h x["cwe"] %></td>
           <td><%=h x["cpe"] %></td>
           <td><a href="<%=h "/#{@project_name}/entities/#{x["id"]}"%>"><%= h x["site"] %></a></td>
         </tr>
