@@ -246,6 +246,12 @@
       "editable": "true",
       "comment": ""
     },
+    "viewdns_api_key": {
+      "value": "XXX",
+      "uri": "https://viewdns.info/api",
+      "editable": "true",
+      "comment": ""
+    },
     "virustotal_api_key": {
       "value": "XXX",
       "uri": "https://developers.virustotal.com/reference",
