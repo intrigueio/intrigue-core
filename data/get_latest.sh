@@ -40,7 +40,6 @@ if [ -d "iana" ]; then
   cd iana
   echo "[+] Getting latest ipv4-address-space.csv"
   wget -N -q https://www.iana.org/assignments/ipv4-address-space/ipv4-address-space.csv
-  cd ..
 
   echo "[+] Getting latest tcp / udp port numbers"
   wget -N -q https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.csv
