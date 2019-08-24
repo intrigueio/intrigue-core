@@ -178,6 +178,7 @@ GEM
     formatador (0.2.5)
     googleajax (1.0.1)
       json (>= 1.0.0)
+    http-2 (0.10.1)
     http-accept (1.7.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
@@ -200,6 +201,8 @@ GEM
     multipart-post (2.1.1)
     mustermann (1.0.3)
     net-dns (0.9.0)
+    net-http2 (0.18.2)
+      http-2 (~> 0.10.1)
     netrc (0.11.0)
     nio4r (2.4.0)
     nokogiri (1.10.4)
@@ -324,6 +327,7 @@ DEPENDENCIES
   intrigue_api_client!
   maxminddb!
   net-dns
+  net-http2
   nokogiri
   opencorporates!
   pg
