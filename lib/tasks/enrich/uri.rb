@@ -63,38 +63,45 @@ class Uri < Intrigue::Task::BaseTask
     headers = []
     response.each_header{|x| headers << "#{x}: #{response[x]}" }
 
-    ### 
-    ### Fingerprint Javascript
-    ###
-    begin
-      _log "Creating browser session"
-      session = create_browser_session
-      
-      # note that we might not have a session if it's diabled globally 
-      if session 
-        # Run the version checking scripts
-        _log "Grabbing Javascript libraries"
-        js_libraries = gather_javascript_libraries(session, uri)
-
-        # screenshot
-        _log "Capturing screenshot"
-        encoded_screenshot = capture_screenshot(session, uri)
-      end
-
-    ensure
-      # kill the session / cleanup - if we never had a session, this'll 
-      # just complete gracefully
-      _log "Destroying browser session"
-      destroy_browser_session(session)
-    end
-
-    # Grab the global option since we'll need to pass it to ident
+    # Grab the global option since we'll need to pass it to ident 
+    # and limit some functionality
     browser_enabled = Intrigue::Config::GlobalConfig.config["browser_enabled"]
 
-    _log "Attempting to fingerprint!"
+    if browser_enabled 
+      ### 
+      ### Fingerprint Javascript
+      ###
+      begin
+        _log "Creating browser session"
+        session = create_browser_session
+        
+        # note that we might not have a session if it's diabled globally 
+        if session 
+          # Run the version checking scripts
+          _log "Grabbing Javascript libraries"
+          js_libraries = gather_javascript_libraries(session, uri)
+
+          # screenshot
+          #_log "Capturing screenshot"
+          encoded_screenshot = capture_screenshot(session, uri)
+        end
+
+      ensure
+        # kill the session / cleanup - if we never had a session, this'll 
+        # just complete gracefully
+        _log "Destroying browser session"
+        destroy_browser_session(session)
+      end
+    end
+
     # Use intrigue-ident code to request all of the pages we
     # need to properly fingerprint
-    ident_matches = generate_http_requests_and_check(uri,browser_enabled) || {}
+    _log "Attempting to fingerprint!"
+    _log "Ident browser disabled!"
+    # TODO - move screenshotting into ident so we don't have to
+    # do it separately above. for now, no browser fingerprints. 
+    # too resource intensive.  (change the false param below to enable)
+    ident_matches = generate_http_requests_and_check(uri,false) || {}
 
     ident_fingerprints = ident_matches["fingerprint"] || []
     ident_content_checks = ident_matches["content"] || []

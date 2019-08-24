@@ -1,4 +1,3 @@
-require 'watir'
 ###
 ### Please note - these methods may be used inside task modules, or inside libraries within
 ### Intrigue. An attempt has been made to make them abstract enough to use anywhere inside the
@@ -17,10 +16,28 @@ module Task
       # first check if we're allowed to create a session by the global config
       return nil unless Intrigue::Config::GlobalConfig.config["browser_enabled"]
 
-      # Start a new session
-      args = ['--headless','--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage', 
-       '--ignore-certificate-errors', '--disable-popup-blocking', '--disable-translate']
-      ::Watir::Browser.new(:chrome, {args: args})
+      # start a new session
+      args = ['headless','no-sandbox', 'disable-gpu', 'disable-dev-shm-usage', 
+       'ignore-certificate-errors', 'disable-popup-blocking', 'disable-translate']
+
+      # configure the driver to run in headless mode
+      options = Selenium::WebDriver::Chrome::Options.new(args: args)
+      
+      # Set a lower timeout for client reads
+      client = Selenium::WebDriver::Remote::Http::Default.new
+      client.read_timeout = 20 # seconds
+
+      # create a driver
+      driver = Selenium::WebDriver.for :chrome, {
+        options: options, http_client: client }
+      
+      # set http client timeout
+      client.read_timeout = 20 # seconds
+
+      # set default timeout
+      driver.manage.timeouts.implicit_wait = 3 # seconds
+    
+    driver 
     end
 
     def destroy_browser_session(session)
@@ -92,8 +109,7 @@ module Task
       # browse to our target
       safe_browser_action do
         # visit the page
-        session.goto(uri)
-        session.wait(3)
+        session.navigate.to(uri)
         # Capture Title
         page_title = session.title
         # Capture Body Text
@@ -112,8 +128,7 @@ module Task
 
       # browse to our target
       safe_browser_action do
-        session.goto(uri)
-        session.wait(3)
+        session.navigate.to(uri)
       end
 
       #
@@ -122,7 +137,7 @@ module Task
       base64_image_contents = nil
       safe_browser_action do
         tempfile = Tempfile.new(['screenshot', '.png'])
-        session.driver.save_screenshot(tempfile.path)
+        session.save_screenshot(tempfile.path)
         _log "Saved Screenshot to #{tempfile.path}"
         # open and read the file's contents, and base64 encode them
         base64_image_contents = Base64.encode64(File.read(tempfile.path))
@@ -142,7 +157,7 @@ module Task
       # Examples: https://www.madewithangular.com/
 
       safe_browser_action do
-        session.goto(uri)
+        session.navigate.to(uri)
       end
 
       libraries = []
