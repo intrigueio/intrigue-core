@@ -9,7 +9,7 @@ class DnsPermute < BaseTask
       :name => "dns_permute",
       :pretty_name => "DNS Permute",
       :authors => ["jcran"],
-      :description => "Given a DnsRecord, find others that are like it",
+      :description => "Given a Domain or DnsRecord, find others that are like it",
       :references => [],
       :type => "discovery",
       :passive => false,
@@ -42,7 +42,7 @@ class DnsPermute < BaseTask
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)
 
-    wildcard_ips = _check_wildcard(brute_domain)
+    wildcard_ips = check_wildcard(brute_domain)
 
     # Create a queue to hold our list of attempts
     work_q = Queue.new
@@ -167,7 +167,7 @@ class DnsPermute < BaseTask
     workers.map(&:join); "ok"
   end
 
-
+=begin
   # Check for wildcard DNS
   def _check_wildcard(basename)
     _log "Checking for wildcards on #{basename}."
@@ -237,7 +237,7 @@ class DnsPermute < BaseTask
 
   all_discovered_wildcards.uniq # if it's not a wildcard, this will be an empty array.
   end
-
+=end
 
 end
 end

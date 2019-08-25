@@ -11,7 +11,7 @@ class GithubAccount < Intrigue::Model::Entity
   end
 
   def validate_entity
-    name =~ /^\w.*/
+    name =~ /^[\d\w]+/
   end
 
   def enrichment_tasks

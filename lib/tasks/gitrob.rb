@@ -9,7 +9,7 @@ class Gitrob < BaseTask
       :authors => ["michenriksen", "jcran"],
       :description => "Uses the excellent Gitrob by Michael Henriksen to search a given GithubAccount for committed secrets",
       :type => "discovery",
-      :references => ["https://github.com/michenriksen/gitrob"]
+      :references => ["https://github.com/michenriksen/gitrob"],
       :passive => true,
       :allowed_types => ["GithubAccount"],
       :example_entities => [
@@ -44,10 +44,8 @@ class Gitrob < BaseTask
       _log_error "Unable to parse: #{temp_file}"
     end
 
-    unless output
-      _log_error "No output, failing"
-      return
-    end
+    # sanity check
+    _log_error "No output, failing" and return unless output 
 
     _log "Gitrob Version: #{output["Version"]}"
     _log "Gitrob Stats: #{output["Stats"]}"
@@ -65,7 +63,6 @@ class Gitrob < BaseTask
     #else
     #  _log "No targets!"
     #end
-
 
     # create respositories
     if output["Repositories"]

@@ -172,22 +172,32 @@ sudo apt-get -y --fix-broken install make \
 
 # add go vars (and note that we source this file later as well)
 echo "[+] Installing Golang environment"
+
 # ensure we have the path
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+
 # and for later
 echo export GOPATH=$HOME/go >> ~/.bash_profile
 echo export PATH=$PATH:$GOROOT/bin:$GOPATH/bin >> ~/.bash_profile
 
-# get the code
+# dnsmorph
+echo "[+] Getting DNSMORPH... "
+go get -v github.com/intrigueio/dnsmorph
+cd /$GOPATH/src/github.com/intrigueio/dnsmorph
+go get -v ./...
+go build
+cd ~ # always go back to base user directory
+
+# gitrob
 echo "[+] Getting Gitrob... "
 go get github.com/intrigueio/gitrob
 
-# get the code
+# gobuster
 echo "[+] Getting Gobuster... "
 go get github.com/intrigueio/gobuster.git
 
-##### Install masscan
+# masscan
 echo "[+] Installing Masscan"
 if [ ! -f /usr/bin/masscan ]; then
   git clone https://github.com/robertdavidgraham/masscan
@@ -198,7 +208,7 @@ if [ ! -f /usr/bin/masscan ]; then
   rm -rf masscan
 fi
 
-##### Install rdpscan
+# rdpscan
 echo "[+] Installing Rdpscan"
 if [ ! -f /usr/bin/rdpscan ]; then
   git clone https://github.com/robertdavidgraham/rdpscan
