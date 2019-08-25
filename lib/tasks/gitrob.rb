@@ -6,16 +6,17 @@ class Gitrob < BaseTask
     {
       :name => "gitrob",
       :pretty_name => "Gitrob",
-      :authors => ["jcran"],
-      :description => "Gitrob",
+      :authors => ["michenriksen", "jcran"],
+      :description => "Uses the excellent Gitrob by Michael Henriksen to search a given GithubAccount for committed secrets",
       :type => "discovery",
+      :references => ["https://github.com/michenriksen/gitrob"]
       :passive => true,
       :allowed_types => ["GithubAccount"],
       :example_entities => [
         {"type" => "GithubAccount", "attributes" => {"name" => "intrigueio"}}
       ],
       :allowed_options => [ ],
-      :created_types => ["Finding"]
+      :created_types => ["GithubRepository"]
     }
   end
 
