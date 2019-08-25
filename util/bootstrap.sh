@@ -168,7 +168,8 @@ sudo apt-get -y --fix-broken install make \
   xdg-utils \
   google-chrome-stable \
   golang-go \
-  dnsmasq
+  dnsmasq \ 
+  python-minimal
 
 # add go vars (and note that we source this file later as well)
 echo "[+] Installing Golang environment"
