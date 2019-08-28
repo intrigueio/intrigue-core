@@ -48,7 +48,7 @@ class DnsMorph < BaseTask
         domain_arguments = { "name" => "#{d["domain"]}" }
         
         # if the option is set, mark this domain unscoped (so we don't try to iterate on it)
-        domain_arguments.merge({ "unscoped" => true }) if _get_option("unscope_domains")
+        domain_arguments.merge({ "unscoped" => true, "morph" => true  }) if _get_option("unscope_domains")
 
         _create_entity "Domain", domain_arguments
       end
