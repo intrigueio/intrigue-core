@@ -36,9 +36,6 @@ class NmapScan < BaseTask
 
     to_scan.each do |scan_item|
 
-      ### SECURITY!
-      #raise "INVALID INPUT: #{scan_item}" unless match_regex :ip_address, scan_item
-
       # Create a tempfile to store results
       temp_file = "#{Dir::tmpdir}/nmap_scan_#{rand(100000000)}.xml"
 
