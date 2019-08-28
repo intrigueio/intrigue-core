@@ -30,23 +30,22 @@ module Notifier
 
       constructed_message = "#{message}\nMore details at: #{result_url}"
 
-        begin 
-          response = RestClient.post @hook_url,{
-            :text => constructed_message
-          }.to_json,{content_type: :json, accept: :json}
-        rescue RestClient::BadRequest => e
-          puts "ERROR! #{e}"
-        end
-
-
       begin
-        
+
+        response = RestClient.post @hook_url,{
+          :text => constructed_message
+        }.to_json,{content_type: :json, accept: :json}
+    
+  
+      rescue RestClient::BadRequest => e
+        puts "ERROR! #{e}"
+      rescue SocketError => e
+        puts "ERROR! #{e}"    
       rescue Errno::EADDRNOTAVAIL => e
         # fail silently? :(
-      rescue ::Slack::Web::Api::Errors::TooManyRequestsError => e
-        # fail silently? :(
-      rescue Faraday::ConnectionFailed => e
-        # fail silently? :(
+        puts "ERROR! #{e}"
+      rescue RestClient::Exceptions::OpenTimeout => e
+        puts "ERROR! Timed out attempting to notify: #{e}"
       end
 
     end
