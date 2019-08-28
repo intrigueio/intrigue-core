@@ -409,12 +409,8 @@ module Intrigue
       dns_entries.uniq
       end
 
-      # TODO ... maybe this should move to the entity itself?
       def check_and_create_unscoped_domain(lookup_name)
-        # handy in general, do this for all TLDs
-        #if _get_entity_detail("soa_record")
-        #  _log_good "Creating domain: #{_get_entity_name}"
-        #  _create_entity "Domain", "name" => _get_entity_name
+
         # one at a time, check all known TLDs and see what we have left. if we
         # have a single string, this is TLD and we should create it as a domain
         begin
@@ -430,8 +426,10 @@ module Intrigue
         clean_suffix_list.each do |l|
           entity_name = "#{lookup_name}".downcase # TODO - downcase necessary?
           suffix = "#{l.chomp}".downcase
+         
           # determine if there's a match with this suffix
           if entity_name =~ /\.#{suffix}$/
+            
             # if so, remove it
             remove_length = ".#{suffix}".length
             x = entity_name[0..-remove_length]

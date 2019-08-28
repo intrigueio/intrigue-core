@@ -15,6 +15,7 @@ class DnsMorph < BaseTask
       :example_entities => [ {"type" => "Domain", "attributes" => {"name" => "intrigue.io"}} ],
       :allowed_options => [
         {:name => "create_domains", :regex => "boolean", :default => false },
+        {:name => "unscope_domains", :regex => "boolean", :default => true },
       ],
       :created_types => []
     }
@@ -43,8 +44,13 @@ class DnsMorph < BaseTask
 
     if _get_option "create_domains"
       output["results"].each do |d|
-        #_create_entity "IpAddress", "name" => "#{d["a_record"]}"
-        _create_entity "Domain", "name" => "#{d["domain"]}"
+        
+        domain_arguments = { "name" => "#{d["domain"]}" }
+        
+        # if the option is set, mark this domain unscoped (so we don't try to iterate on it)
+        domain_arguments.merge({ "unscoped" => true }) if _get_option("unscope_domains")
+
+        _create_entity "Domain", domain_arguments
       end
     end
 
