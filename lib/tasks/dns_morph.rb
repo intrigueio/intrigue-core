@@ -7,7 +7,7 @@ class DnsMorph < BaseTask
       :name => "dns_morph",
       :pretty_name => "DNS Morph",
       :authors => ["netevert", "jcran"],
-      :description => "Uses the excellent DNSMORPH by @netevert to find purmuted domains",
+      :description => "Uses the excellent DNSMORPH by @netevert to find permuted domains",
       :type => "discovery",
       :references => ["https://github.com/netevert/dnsmorph"],
       :passive => true,
@@ -54,7 +54,7 @@ class DnsMorph < BaseTask
       end
     end
 
-    _set_entity_detail "dnsmorph", output["results"]
+    _set_entity_detail "permutations", output["results"]
 
   end # end run
 
