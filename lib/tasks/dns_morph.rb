@@ -27,7 +27,7 @@ class DnsMorph < BaseTask
 
     # task assumes gitrob is in our path and properly configured
     _log "Starting DNSMORPH on #{domain_name}"
-    command_string = "dnsmorph -d #{domain_name} -r -json"
+    command_string = "dnsmorph -d #{domain_name} -json"
     json_output = _unsafe_system command_string
     _log "DNSMORPH finished on #{domain_name}!"
 
@@ -43,7 +43,8 @@ class DnsMorph < BaseTask
 
     if _get_option "create_domains"
       output["results"].each do |d|
-        _create_entity "IpAddress", "name" => "#{d["a_record"]}"
+        #_create_entity "IpAddress", "name" => "#{d["a_record"]}"
+        _create_entity "Domain", "name" => "#{d["domain"]}"
       end
     end
 
