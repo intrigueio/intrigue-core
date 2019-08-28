@@ -113,7 +113,7 @@ module Task
         # Capture Title
         page_title = session.title
         # Capture Body Text
-        page_contents = session.text
+        page_contents = session.page_source
         # Capture DOM
         rendered_page = session.execute_script("return document.documentElement.innerHTML")
 
