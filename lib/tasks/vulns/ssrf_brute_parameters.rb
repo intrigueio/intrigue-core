@@ -20,7 +20,7 @@ class SsrfBruteParameters < BaseTask
         {"type" => "Uri", "details" => {"name" => "https://intrigue.io"}}
       ],
       :allowed_options => [
-        {:name => "ssrf_target_uri", :regex => "alpha_numeric_list", :default => "http://localhost:55555" },
+        {:name => "ssrf_target_uri", :regex => "alpha_numeric_list", :default => "http://172.19.131.128:55555" },
         {:name => "parameter_list", :regex => "alpha_numeric_list", :default => "redirect,url,uri,location,host,next,referer" }
       ],
       :created_types => []
@@ -36,7 +36,7 @@ class SsrfBruteParameters < BaseTask
     parameter_list = _get_option("parameter_list").split(",")
 
     _log "Starting SSRF Responder server"
-    #Intrigue::Task::Server::SsrfResponder.start_and_background
+    Intrigue::Task::Server::SsrfResponder.start_and_background
 
     parameter_list.each do |parameter|
       # make the request and collect the response
@@ -45,6 +45,7 @@ class SsrfBruteParameters < BaseTask
       generated_test_uri = "#{uri}?#{parameter}=#{payload}"
       response  = http_request :get, generated_test_uri
       _log "Sent: (#{generated_test_uri}), Got: #{response.code} for parameter #{parameter}"
+      _log "Response: #{response.body}"
     end
 
     # Future work... actually exfil data (enrichment?)

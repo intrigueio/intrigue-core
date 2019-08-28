@@ -45,31 +45,31 @@ class SsrfProxyHostHeader < BaseTask
         :path => "/",
         :success_regex => /^.*$/
       },
-      {
-        :environment => "aws",
-        :name => "AWS Credential Metadata",
-        :host => "169.254.169.254",
-        :path => "/latest/meta-data/",
-        :success_regex => /Code\"/
-      },
-      {
-        :environment => "aws",
-        :name => "AWS Host Metadata",
-        :host => "169.254.169.254",
-        :path => "/latest/meta-data/hostname",
-        :success_regex => /$.*internal$/
-      },
-      {
-        :environment => "azure",
-        :name => "Azure Metadata",
-        :host => "169.254.169.254",
-        :path => "/metadata/instance?api-version=2017-08-01",
-        :success_regex => /compute\"/
-      }
+      #{
+      #  :environment => "aws",
+      #  :name => "AWS Credential Metadata",
+      #  :host => "169.254.169.254",
+      #  :path => "/latest/meta-data/",
+      #  :success_regex => /Code\"/
+      #},
+      #{
+      #  :environment => "aws",
+      #  :name => "AWS Host Metadata",
+      #  :host => "169.254.169.254",
+      #  :path => "/latest/meta-data/hostname",
+      #  :success_regex => /$.*internal$/
+      #},
+      #{
+      #  :environment => "azure",
+      #  :name => "Azure Metadata",
+      #  :host => "169.254.169.254",
+      #  :path => "/metadata/instance?api-version=2017-08-01",
+      #  :success_regex => /compute\"/
+      #}
     ]
 
     _log "Starting SSRF Responder server"
-    #Intrigue::Task::Server::SsrfResponder.start_and_background
+    Intrigue::Task::Server::SsrfResponder.start_and_background
 
     # TODO We should test here for an ignored host header - just send nonsense
     # and see if it behaves the same (returns same content), if so, probably not
@@ -99,14 +99,14 @@ class SsrfProxyHostHeader < BaseTask
       #_log "Testing payload: #{payload} on #{generated_uri}"
 
       # check the response for success
-      if response
-          response.body[0..50] != normal.body[0..50] && # not the same
-          !(response["location"] =~ /127.0.0.1/) && # redirect... usually useless
-          response.code != "301" && # redirect... usually useless
-          response.code != "302" && # redirect... usually useless
-          response.code != "400" && # sometimes it's a generic 400, useless
-          response.code != "403" && # not a 403 (Cloudfront)
-          response.code != "404" # not a 404
+      if response &&
+          response.body[0..50] != normal.body[0..50] # && # not the same
+          #!(response["location"] =~ /127.0.0.1/) && # redirect... usually useless
+          #response.code != "301" && # redirect... usually useless
+          #response.code != "302" && # redirect... usually useless
+          #response.code != "400" && # sometimes it's a generic 400, useless
+          #response.code != "403" && # not a 403 (Cloudfront)
+          #response.code != "404" # not a 404
 
           # only if it matches our success cond.
           unless response.body.match(payload[:success_regex])
@@ -127,8 +127,8 @@ class SsrfProxyHostHeader < BaseTask
 
         # save off enough information to investigate
         ssrf_issue = {
-          name: "#{payload[:environment]} SSRF on #{uri}",
-          type: "detected_ssrf",
+          name: "Potential #{payload[:environment]} SSRF on #{uri}",
+          type: "ssrf",
           description: "SSRF on #{uri}",
           severity: 3,
           status: "potential",
