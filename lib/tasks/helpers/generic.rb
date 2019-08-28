@@ -77,7 +77,7 @@ module Generic
     ###  XXX - SECURITY  ###
     ###                  ###
 
-    if command =~ /(\||\;|\`|\:|\>|\<|\'|\%|\(|\)|\{|\}|\$|\&)/
+    if command =~ /(\||\;|\`|\>|\<|\'|\%|\(|\)|\{|\}|\|\&)/
       #raise "Illegal character"
       _log_error "FATAL Illegal character in #{command}"
       return
