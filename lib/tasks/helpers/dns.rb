@@ -166,8 +166,9 @@ module Intrigue
             # lookup each type
             lookup_types.each do |t|
               Resolv::DNS.open {|dns|
-                dns.timeouts = 2 
-                resources.concat(dns.getresources(lookup_name, t)) 
+                dns.timeouts = 5
+
+                resources.concat(dns.getresources(lookup_name, t).map{|x| x.force_encoding("UTF-8")}) 
               }
             end
 
