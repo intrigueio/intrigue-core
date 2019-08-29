@@ -45,7 +45,7 @@ class DnsMorph < BaseTask
     if _get_option "create_domains"
       output["results"].each do |d|
         
-        domain_arguments = { "name" => "#{d["domain"]}" }
+        domain_arguments = { "name" => "#{d["domain"]}".force_encoding("UTF-8") }
         
         # if the option is set, mark this domain unscoped (so we don't try to iterate on it)
         domain_arguments.merge({ "unscoped" => true, "morph" => true  }) if _get_option("unscope_domains")
