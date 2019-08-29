@@ -28,13 +28,20 @@ class DnsMorph < BaseTask
 
     # task assumes gitrob is in our path and properly configured
     _log "Starting DNSMORPH on #{domain_name}"
-    command_string = "dnsmorph -d #{domain_name} -json"
+    command_string = "dnsmorph -d #{domain_name} -r -json"
     json_output = _unsafe_system command_string
     _log "DNSMORPH finished on #{domain_name}!"
 
     # parse output
     begin
       output = JSON.parse(json_output)
+      
+      _log_good "Created #{output["results"].count} permutations!"
+
+      # select only those that resovled
+      resolved_domains = output["results"].select{|x| x["a_record"] != "" }
+      _log_good "resolved #{resolved_domains.count} domains!"
+
     rescue JSON::ParserError => e
       _log_error "Unable to parse!"
     end
@@ -43,7 +50,7 @@ class DnsMorph < BaseTask
     _log_error "No output, failing" and return unless output 
 
     if _get_option "create_domains"
-      output["results"].each do |d|
+      resolved_domains.each do |d|
         
         domain_arguments = { "name" => "#{d["domain"]}".force_encoding("UTF-8") }
         
@@ -54,7 +61,7 @@ class DnsMorph < BaseTask
       end
     end
 
-    _set_entity_detail "permutations", output["results"]
+    _set_entity_detail "permutations", resolved_domains
 
   end # end run
 

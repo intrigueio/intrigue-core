@@ -199,12 +199,12 @@ module Intrigue
 
               # sanitize and return
               {
-                "name" => entry.force_encoding("UTF-8"),
+                "name" => entry.sanitize_unicode,
                 "ttl" => r.ttl,
                 "lookup_details" => [{
-                  "request_record" => lookup_name.force_encoding("UTF-8"),
-                  "response_record_type" => record_type.force_encoding("UTF-8"),
-                  "response_record_data" => record_data.force_encoding("UTF-8") 
+                  "request_record" => lookup_name.sanitize_unicode,
+                  "response_record_type" => record_type,
+                  "response_record_data" => record_data.sanitize_unicode 
                 }]
               }
             end
