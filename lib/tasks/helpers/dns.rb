@@ -168,7 +168,7 @@ module Intrigue
               Resolv::DNS.open {|dns|
                 dns.timeouts = 5
 
-                resources.concat(dns.getresources(lookup_name, t).map{|x| x.force_encoding("UTF-8")}) 
+                resources.concat(dns.getresources(lookup_name, t)) 
               }
             end
 
@@ -197,13 +197,14 @@ module Intrigue
                   "rname"=> r.rname.to_s, 
                   "serial" => r.serial } if record_type == "SOA"
 
+              # sanitize and return
               {
-                "name" => entry,
+                "name" => entry.force_encoding("UTF-8"),
                 "ttl" => r.ttl,
                 "lookup_details" => [{
-                  "request_record" => lookup_name,
-                  "response_record_type" => record_type,
-                  "response_record_data" => record_data 
+                  "request_record" => lookup_name.force_encoding("UTF-8"),
+                  "response_record_type" => record_type.force_encoding("UTF-8"),
+                  "response_record_data" => record_data.force_encoding("UTF-8") 
                 }]
               }
             end
