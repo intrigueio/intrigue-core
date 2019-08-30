@@ -82,8 +82,14 @@ module Generic
       _log_error "FATAL Illegal character in #{command}"
       return
     end
+    
+    # run in a temp dir
+    output = ""
+    Dir.chdir(Dir::tmpdir) do
+      output = `#{command} 2>&1`
+    end 
 
-    `#{command} 2>&1`
+  output
   end
 
   ###
