@@ -344,6 +344,7 @@ DEPENDENCIES
   rex-sslscan!
   rspec
   ruby-nmap!
+  rubyzip
   selenium-webdriver
   sentry-raven
   sequel

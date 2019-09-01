@@ -56,6 +56,7 @@ gem 'selenium-webdriver'      # '~> 3.12.0'
 gem 'rex-sslscan',            :git => 'https://github.com/intrigueio/rex-sslscan.git'
 gem 'flareon'                 # dns resolution over http
 gem 'net-http2'               # http2 client support
+gem 'rubyzip'
 
 # ident
 gem 'recog-intrigue',         :git => 'https://github.com/intrigueio/recog.git'

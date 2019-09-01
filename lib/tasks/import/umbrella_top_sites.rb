@@ -17,8 +17,7 @@ class ImportUmbrellaTopSites < BaseTask
       :allowed_types => ["*"],
       :example_entities => [{"type" => "String", "details" => {"name" => "NA"}}],
       :allowed_options => [
-        {:name => "threads", :regex => "integer", :default => 1 },
-        {:name => "max_sleep", :regex => "integer", :default => 10 }
+        {:name => "threads", :regex => "integer", :default => 1 }
       ],
       :created_types => ["Uri"]
     }
@@ -27,27 +26,44 @@ class ImportUmbrellaTopSites < BaseTask
   ## Default method, subclasses must override this
   def run
     super
+  ## Default method, subclasses must override this
+  def run
+    super
 
-    # TODO - this shouldn't be static
-    f = download_and_store "https://s3.amazonaws.com/public.intrigue.io/top-1m-2018-04-20.csv"
+    _log_good "Downloading latest file"
+    z = download_and_store "http://s3-us-west-1.amazonaws.com/umbrella-static/top-1m.csv.zip"
 
-    # Read and split the file up into a list of domains
-    lines = File.open(f,"r").read.split("\n")
-    domains = lines.map{|l| l.split(",").last.chomp }
+    # unzip
+    _log_good "Extracting into memory"
+    Zip::File.open(z) do |zip_file|
+      
+      # Handle entries one by one
+      zip_file.each do |entry|
 
-    lammylam = lambda { |d|
-      sleep(rand(_get_option("max_sleep")))
-      #_log "Creating sites for domain: #{d}"
-      #_create_entity "Uri", { "name" => "http://#{d}", "uri"=>"https://#{d}" }
-      _create_entity "Uri", { "name" => "https://#{d}", "uri"=>"https://#{d}" }
-    true
-    }
+        # Read into memory     
+        content = entry.get_input_stream.read
 
-    # use a generic threaded iteration method to create them,
-    # with the desired number of threads
-    thread_count = _get_option "threads"
-    _threaded_iteration(thread_count, domains, lammylam)
+        ### Do the thing 
 
+        _log_good "Parsing out domains"
+        domains = content.split("\n").map{|l| l.split(",").last.chomp }
+
+        lammylam = lambda { |d|
+          _create_entity "Uri", { "name" => "http://#{d}" }
+          _create_entity "Uri", { "name" => "https://#{d}" }
+        true
+        }
+
+        # use a generic threaded iteration method to create them,
+        # with the desired number of threads
+        thread_count = _get_option "threads"
+        _threaded_iteration(thread_count, domains, lammylam)
+
+      end
+
+    end
+
+  end
   end
 
 
