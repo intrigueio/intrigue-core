@@ -15,53 +15,57 @@
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
              
-              <li><a href="/<%= @project_name %>/start">[<%= @project_name %>]</a></li>
-              
-              <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="/<%= @project_name %>/start">Start<span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                  <li><a href="/<%= @project_name %>/start">Single Task</a></li>
-                  <li><a href="/<%= @project_name %>/start/upload">Upload File</a></li>
-                  <li><a href="/<%= @project_name %>/config">Configuration</a></li>
-                </ul>
-              </li>
+             <% if @project_name %>
+                <li><a href="/<%= @project_name %>/start">[<%= @project_name %>]</a></li>
+                
+                <li class="dropdown">
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="/<%= @project_name %>/start">Start<span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="/<%= @project_name %>/start">Single Task</a></li>
+                    <li><a href="/<%= @project_name %>/start/upload">Upload File</a></li>
+                    <li><a href="/<%= @project_name %>/config">Configuration</a></li>
+                  </ul>
+                </li>
 
-              <li><a href="/<%= @project_name %>/entities">Entities</a></li>
-              <li><a href="/<%= @project_name %>/results">Results</a></li>
-              <li><a href="/<%= @project_name %>/issues">Issues</a></li>
-              <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Analysis<span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                  <li><a href="/<%= @project_name %>/graph">Graph</a></li>
-                  <li><a href="/<%= @project_name %>/analysis/domains?length=2">Domains</a></li>
-                  <li><a href="/<%= @project_name %>/analysis/systems">Systems</a></li>
-                  <li><a href="/<%= @project_name %>/analysis/services">Services</a></li>
-                  <li><hr></li>
-                  <li><a href="/<%= @project_name %>/analysis/applications">Apps</a></li>
-                  <li><a href="/<%= @project_name %>/analysis/certificates">App Certificates</a></li>
-                  <li><a href="/<%= @project_name %>/analysis/ciphers">App Ciphers</a></li>
-                  <li><a href="/<%= @project_name %>/analysis/cves">App Vulns (CVE)</a></li>
-                  <li><a href="/<%= @project_name %>/analysis/javascripts">App Javascript</a></li>
-                  <li><a href="/<%= @project_name %>/analysis/fingerprints">App Technology</a></li>
-                </ul>
-              </li>
-              <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Export<span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                  <li><a href=""><b>Default</b></a></li>
-                  <li><a href="/<%= @project_name %>/export/csv">Export Project CSV</a></li>
-                  <li><a href="/<%= @project_name %>/export/json">Export Project JSON</a></li>
-                  <li><a href="/<%= @project_name %>/export/applications/csv">Export Applications CSV</a></li>
-                  <li><a href="/<%= @project_name %>/export/issues/csv">Export Issues CSV</a></li>
-                  <li><a href="/<%= @project_name %>/export/gexf">Export Project Graph (Gephi)</a></li>
-                  <li><a href="/<%= @project_name %>/export/graph_json">Export Project Graph (JSON)</a></li>
-                  <li><a href=""><b>Dynamic</b></a></li>
-                  <% Intrigue::HandlerFactory.handlers.each do |h| %>
-                    <% next unless h.metadata[:type] == "export" %>
-                    <li><a href=/<%= "#{@project_name}/handle/#{h.metadata[:name]}" %>><%= "#{h.metadata[:pretty_name]}" %></a></li>
-                  <% end %>
-                </ul>
-              </li>
+                <li><a href="/<%= @project_name %>/entities">Entities</a></li>
+                <li><a href="/<%= @project_name %>/results">Results</a></li>
+                <li><a href="/<%= @project_name %>/issues">Issues</a></li>
+                <li class="dropdown">
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">Analysis<span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="/<%= @project_name %>/graph">Graph</a></li>
+                    <li><a href="/<%= @project_name %>/analysis/domains?length=2">Domains</a></li>
+                    <li><a href="/<%= @project_name %>/analysis/systems">Systems</a></li>
+                    <li><a href="/<%= @project_name %>/analysis/services">Services</a></li>
+                    <li><hr></li>
+                    <li><a href="/<%= @project_name %>/analysis/applications">Apps</a></li>
+                    <li><a href="/<%= @project_name %>/analysis/certificates">App Certificates</a></li>
+                    <li><a href="/<%= @project_name %>/analysis/ciphers">App Ciphers</a></li>
+                    <li><a href="/<%= @project_name %>/analysis/cves">App Vulns (CVE)</a></li>
+                    <li><a href="/<%= @project_name %>/analysis/javascripts">App Javascript</a></li>
+                    <li><a href="/<%= @project_name %>/analysis/fingerprints">App Technology</a></li>
+                  </ul>
+                </li>
+                <li class="dropdown">
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">Export<span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href=""><b>Default</b></a></li>
+                    <li><a href="/<%= @project_name %>/export/csv">Export Project CSV</a></li>
+                    <li><a href="/<%= @project_name %>/export/json">Export Project JSON</a></li>
+                    <li><a href="/<%= @project_name %>/export/applications/csv">Export Applications CSV</a></li>
+                    <li><a href="/<%= @project_name %>/export/issues/csv">Export Issues CSV</a></li>
+                    <li><a href="/<%= @project_name %>/export/gexf">Export Project Graph (Gephi)</a></li>
+                    <li><a href="/<%= @project_name %>/export/graph_json">Export Project Graph (JSON)</a></li>
+                    <li><a href=""><b>Dynamic</b></a></li>
+                    <% Intrigue::HandlerFactory.handlers.each do |h| %>
+                      <% next unless h.metadata[:type] == "export" %>
+                      <li><a href=/<%= "#{@project_name}/handle/#{h.metadata[:name]}" %>><%= "#{h.metadata[:pretty_name]}" %></a></li>
+                    <% end %>
+                  </ul>
+                </li>
+              <% else %>
+                <li><a href="/">Project List</a></li>
+              <% end %>
               <!--<li><a href="/<%= @project_name %>/findings">Findings</a></li>-->
               <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">System<span class="caret"></span></a>
