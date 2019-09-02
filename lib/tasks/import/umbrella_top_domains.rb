@@ -29,7 +29,9 @@ class ImportUmbrellaTopDomains < BaseTask
 
     _log_good "Downloading latest file"
     z = download_and_store "http://s3-us-west-1.amazonaws.com/umbrella-static/top-1m.csv.zip"
-    #t = "#{Dir::tmpdir}/umbrella_#{rand(100000000)}.csv"
+
+    # domains
+    domains = []
 
     # unzip
     _log_good "Extracting into memory"
@@ -46,19 +48,22 @@ class ImportUmbrellaTopDomains < BaseTask
         _log_good "Parsing out domains"
         domains = content.split("\n").map{|l| l.split(",").last.chomp }
 
-        lammylam = lambda { |d|
-          _create_entity "Domain", { "name" => "#{d}" }
-        true
-        }
-
-        # use a generic threaded iteration method to create them,
-        # with the desired number of threads
-        thread_count = _get_option "threads"
-        _threaded_iteration(thread_count, domains, lammylam)
-
       end
 
     end
+
+    # Now really do the thing 
+    _log_good "Setting up the lambda"
+    lammylam = lambda { |d|
+      _create_entity "Domain", { "name" => "#{d}" }
+    true
+    }
+
+    # use a generic threaded iteration method to create them,
+    # with the desired number of threads
+    _log_good "Fanning out"
+    thread_count = _get_option "threads"
+    _threaded_iteration(thread_count, domains, lammylam)
 
   end
 
