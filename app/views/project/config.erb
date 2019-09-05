@@ -3,9 +3,13 @@
 Project Created at: <%= @project.created_at %>
 
 <br>
-Exception Strings (one per line):
+
 <form method=POST action="/<%=@project_name%>/config">
-	<textarea name=exception_strings rows="20" cols="80"><%= "#{@project.additional_exception_list.join("\n") if @project.additional_exception_list}" %></textarea><br>
+  Additional Exception Strings (one per line):<br>
+	<textarea name=exception_strings rows="20" cols="80"><%= "#{@project.additional_exception_list.join("\n") if @project.additional_exception_list}" %> </textarea><br>
 	<input type="submit" value="Submit" class="btn btn-primary">
+  <br><br>
+  <i>Note: Standard exceptions can be found in the file: <%=$intrigue_basedir%>/data/standard_name_exceptions.list</i> 
+
 </form>
   
