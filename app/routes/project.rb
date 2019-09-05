@@ -5,7 +5,13 @@ class IntrigueApp < Sinatra::Base
       erb :index
     end
 
-    # Main Page
+    get '/:project/seeds?' do
+      @project_name = params[:project]
+      @project = Intrigue::Model::Project.first(:name => @project_name)
+    erb :'project/seeds'
+    end
+
+    # configuration
     get '/:project/config?' do
       @project_name = params[:project]
       @project = Intrigue::Model::Project.first(:name => @project_name)

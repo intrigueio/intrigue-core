@@ -6,5 +6,6 @@ Project Created at: <%= @project.created_at %>
 Exception Strings (one per line):
 <form method=POST action="/<%=@project_name%>/config">
 	<textarea name=exception_strings rows="20" cols="80"><%= "#{@project.additional_exception_list.join("\n") if @project.additional_exception_list}" %></textarea><br>
-	<input type="submit" value="Submit">
+	<input type="submit" value="Submit" class="btn btn-primary">
 </form>
+  
