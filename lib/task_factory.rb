@@ -10,18 +10,18 @@ class TaskFactory
   end
 
   def self.list
-    available_tasks
+    @tasks
   end
 
   def self.allowed_tasks_for_entity_type(entity_type)
-    available_tasks.select {|task_class| task_class if task_class.metadata[:allowed_types].include? entity_type}
+    @tasks.select {|task_class| task_class if task_class.metadata[:allowed_types].include? entity_type}
   end
   #
   # XXX - can :name be set on the class vs the object
   # to prevent the need to call "new" ?
   #
   def self.include?(name)
-    available_tasks.each do |t|
+    @tasks.each do |t|
       if (t.metadata[:name] == name)
         return true
       end
@@ -34,7 +34,7 @@ class TaskFactory
   # to prevent the need to call "new" ?
   #
   def self.create_by_name(name)
-    available_tasks.each do |t|
+    @tasks.each do |t|
       if (t.metadata[:name] == name)
         return t.new # Create a new object and send it back
       end
@@ -48,7 +48,7 @@ class TaskFactory
   # to prevent the need to call "new" ?
   #
   def self.create_by_pretty_name(pretty_name)
-    available_tasks.each do |t|
+    @tasks.each do |t|
       if (t.metadata[:pretty_name] == pretty_name)
         return t.new # Create a new object and send it back
       end
@@ -56,12 +56,6 @@ class TaskFactory
 
     ### XXX - exception handling? Should this return an exception?
     raise "No task by that name!"
-  end
-
-  private
-
-  def self.available_tasks
-    @tasks
   end
 
 end

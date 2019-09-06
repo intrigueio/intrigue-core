@@ -18,4 +18,5 @@ Total Entities: <%= Intrigue::Model::Entity.scope_by_project(@project_name).coun
 <p><a href="/<%=@project_name%>/issues"><%= Intrigue::Model::Issue.scope_by_project(@project_name).count %> issues</a></p>
 
 <h3>Seeds</h3>
-<p><a href="/<%=@project_name%>/seeds"><%= Intrigue::Model::Project.first(name: @project_name).seeds.count %> seeds</a></p>
+<% seeds = Intrigue::Model::Project.first(name: @project_name).seeds || []%>
+<p><a href="/<%=@project_name%>/seeds"><%= seeds.count %> seeds</a></p>
