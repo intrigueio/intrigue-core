@@ -42,21 +42,8 @@ class SaasJiraCheck < BaseTask
   def check_and_create(name)
     url = "https://#{name}.atlassian.net/login"
 
-    # requires a browser?
-    #body = http_get_body url
-    begin
-      session = create_browser_session
-      document = capture_document session, url
-      if document 
-        title = document[:title]
-        body = document[:rendered]
-      else
-        _log "No response"
-      end
-    ensure
-      destroy_browser_session(session)
-    end
-
+    # grab the page 
+    body = http_get_body url
 
     if body =~ /Log in to Jira, Confluence, and all other Atlassian Cloud products here/
       _log_good "The #{name} org exists!"

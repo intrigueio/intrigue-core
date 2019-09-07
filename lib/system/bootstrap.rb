@@ -83,15 +83,6 @@ module Bootstrap
       end; "ok"
       workers.map(&:join); "ok"
 
-      # sometimes we need to run a custom command in the context of a project
-      #if p["custom_commands"]
-      #  p["custom_commands"].each do |c|
-      #    Dir.chdir($intrigue_basedir) do
-      #      `#{c["command"]}`
-      #    end
-      #  end
-      #end
-
     end
   end
 

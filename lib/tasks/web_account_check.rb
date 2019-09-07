@@ -32,13 +32,12 @@ class WebAccountCheck < BaseTask
     check_file = "data/web_accounts_list/web_accounts_list.json"
 
     unless File.exists? check_file
-      _log_error "#{check_file} does not exist. Did you run the script in data/ ?"
+      _log_error "#{check_file} does not exist. Cannot Proceed!"
       return
     end
 
     account_list_data = File.open(check_file).read
     account_list = JSON.parse(account_list_data)
-
 
     _log "Checking target against #{account_list["sites"].count} possible sites"
 
