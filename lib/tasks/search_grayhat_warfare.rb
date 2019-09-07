@@ -11,7 +11,7 @@ class SearchGrayhatWarfare < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["String"],
+      :allowed_types => ["*"],
       :example_entities => [{"type" => "String", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "max_buckets", :regex => "integer", :default => 100 }
