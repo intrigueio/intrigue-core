@@ -31,7 +31,7 @@ class IntrigueApp < Sinatra::Base
     get '/:project/results' do
       paginate_count = 100
 
-      params[:search_string] == "" ? @search_string = nil : @search_string = "#{params[:search_string]}"
+      params[:search_string] == "" ? @search_string = nil : @search_string = "#{params[:search_string]}".strip
       params[:inverse] == "on" ? @inverse = true : @inverse = false
       params[:hide_enrichment] == "on" ? @hide_enrichment = true : @hide_enrichment = false
       params[:hide_autoscheduled] == "on" ? @hide_autoscheduled = true : @hide_autoscheduled = false
@@ -169,7 +169,7 @@ class IntrigueApp < Sinatra::Base
       entity_id = @params["entity_id"]
       depth = @params["depth"].to_i
       current_project = Intrigue::Model::Project.first(:name => @project_name)
-      entity_name = "#{@params["attrib_name"]}"
+      entity_name = "#{@params["attrib_name"]}".strip
 
       # handle file if we got it
       if @params["entity_file"]
