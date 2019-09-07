@@ -10,8 +10,9 @@ module Bootstrap
     # XXX - Assumes we start at a clean system!!!!
     config["projects"].each do |p|
 
-      Intrigue::NotifierFactory.default.each { |x| 
-        x.notify("#{p["name"]} collection starting with #{p["seeds"].count if p["seeds"]} seeds!") }
+      Intrigue::NotifierFactory.default.each do |x| 
+        x.notify("#{p["name"]} collection starting with #{p["seeds"].count if p["seeds"]} seeds!") 
+      end
 
       project_name = p["name"]
       @task_result.log "Working on project: #{project_name}" if @task_result
@@ -51,7 +52,8 @@ module Bootstrap
       # Create a pool of worker threads to work on the queue
       max_threads = 20
       max_threads = 50 if parsed_seeds.count > 50
-       workers = (0...max_threads).map do
+
+      workers = (0...max_threads).map do
         Thread.new do
           _log "Starting thread"
           begin
@@ -82,13 +84,13 @@ module Bootstrap
       workers.map(&:join); "ok"
 
       # sometimes we need to run a custom command in the context of a project
-      if p["custom_commands"]
-        p["custom_commands"].each do |c|
-          Dir.chdir($intrigue_basedir) do
-            `#{c["command"]}`
-          end
-        end
-      end
+      #if p["custom_commands"]
+      #  p["custom_commands"].each do |c|
+      #    Dir.chdir($intrigue_basedir) do
+      #      `#{c["command"]}`
+      #    end
+      #  end
+      #end
 
     end
   end
@@ -112,8 +114,6 @@ module Bootstrap
       "name" => entity_name,
       "details" => { "name" => entity_name, "whitelist" => true }
     }
-
-    #puts "Got entity: #{entity_hash}" if @debug
 
   entity_hash
   end

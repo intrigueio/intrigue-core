@@ -38,15 +38,35 @@ class SearchShodan < BaseTask
     end
 
     # Go through the results
-    if response["data"]
-
-      # save raw data on the IP
-      _set_entity_detail("shodan",response["data"])
-
-      # create an entity for each service (this handles known aliases)
+    _set_entity_detail("shodan",response["data"])
+    
+    response["data"].each do |resp|
+      
+      # create an entity for each service (this handles known aliases), save the raw data 
       response["data"].each do |s|
         _log_good "Creating service on #{s["ip_str"]}: #{s["port"]}"
-        _create_network_service_entity(@entity, s["port"], s["transport"] || "tcp")
+        _create_network_service_entity(@entity, s["port"], s["transport"] || "tcp", { 
+          "timestamp" => resp["timestamp"], 
+          "response" => resp["data"], 
+          "shodan" => resp } )
+      end
+
+      # Create all hostnames 
+      resp["hostnames"].each do |h|
+        _log_good "Creating hostname: #{h}"
+        _create_entity "DnsRecord", "name" => "#{h}"
+      end
+
+      # Create all domains  
+      resp["domains"].each do |d|
+        _log_good "Creating domain: #{d}"
+        check_and_create_unscoped_domain d
+      end
+
+      # Create the organization if we have it
+      if resp["org"]
+        _log_good "Creating organization: #{resp["org"]}"
+        _create_entity "Organization", "name" => "#{resp["org"]}"
       end
 
     end

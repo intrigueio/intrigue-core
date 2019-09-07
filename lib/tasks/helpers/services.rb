@@ -146,8 +146,6 @@ module Services
               service = "TACACS"
             when 53
               service = "DNS"
-            when 69
-              service = "TFTP"
             when 79
               service = "FINGER"
             when 102 
@@ -162,8 +160,6 @@ module Services
               service = "SUNRPC"
             when 113
               service = "IDENT"
-            when 123
-              service = "NTP"
             when 135
               service = "DCERPC"
             when 502,503
@@ -174,8 +170,6 @@ module Services
               service = "ZOOKEEPER"
             when 3389
               service = "RDP"
-            when 5000
-              service = "UPNP"
             when 5900,5901
               service = "VNC"
             when 6379,6380
@@ -224,9 +218,15 @@ module Services
           case port_num
             when 53
               service = "DNS"
+            when 69
+              service = "TFTP"
+            when 123
+              service = "NTP"
             when 161
               service = "SNMP"
             when 1900
+              service = "UPNP"
+            when 5000
               service = "UPNP"
             else
               service = "UNKNOWN"
