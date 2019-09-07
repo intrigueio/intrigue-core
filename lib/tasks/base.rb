@@ -130,6 +130,11 @@ class BaseTask
           machine_name = @task_result.scan_result.machine
           @task_result.log "Launching machine #{machine_name} on #{@entity.name}"
           machine = Intrigue::MachineFactory.create_by_name(machine_name)
+
+          unless machine
+            raise "Unable to continue, missing machine: #{machine_name}!!!"
+          end
+
           machine.start(@entity, @task_result)
         else
           @task_result.log "No machine configured for #{@entity.name}!"
