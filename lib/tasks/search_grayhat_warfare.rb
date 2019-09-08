@@ -31,15 +31,18 @@ class SearchGrayhatWarfare < BaseTask
     search_string = _get_entity_name
     search_uri = "https://buckets.grayhatwarfare.com/api/v1/buckets/0/#{max_buckets}?access_token=#{api_key}&keywords=#{search_string}"
 
-    output = JSON.parse(http_get_body(search_uri))
-    output["buckets"].each do |b|
-      # {"id":21,"bucket":"0x4e84.test.s3-eu-west-1.amazonaws.com"}
-      _create_entity "AwsS3Bucket", { 
-        "name" => "https://#{b["bucket"]}",
-        "uri" => "https://#{b["bucket"]}"
-      }
+    begin 
+      output = JSON.parse(http_get_body(search_uri))
+      output["buckets"].each do |b|
+        # {"id":21,"bucket":"0x4e84.test.s3-eu-west-1.amazonaws.com"}
+        _create_entity "AwsS3Bucket", { 
+          "name" => "https://#{b["bucket"]}",
+          "uri" => "https://#{b["bucket"]}"
+        }
+      end
+    rescue JSON::ParserError => e 
+      _log_error "Unable to parse: #{e}"
     end
-
     
   end # end run
 
