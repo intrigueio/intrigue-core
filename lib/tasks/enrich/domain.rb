@@ -86,7 +86,6 @@ class Domain < Intrigue::Task::BaseTask
          _set_entity_detail("dmarc", nil) 
       end
 
-
       # grab any / all SPF records (useful to see who accepts mail)
       _log "Grabbing SPF Records"
       spf_details = collect_spf_details(lookup_name)
@@ -99,8 +98,6 @@ class Domain < Intrigue::Task::BaseTask
           check_and_create_unscoped_domain(domain_name) if @entity.scoped?
         end
       end
-
-
 
     end
 

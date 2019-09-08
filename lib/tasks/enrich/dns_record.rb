@@ -28,6 +28,9 @@ class DnsRecord < Intrigue::Task::BaseTask
   def run
     lookup_name = _get_entity_name
 
+    # always create a domain 
+    check_and_create_unscoped_domain(lookup_name)
+
     # Do a lookup and keep track of all aliases
     _log "Resolving: #{lookup_name}"
     results = resolve(lookup_name)
@@ -48,7 +51,9 @@ class DnsRecord < Intrigue::Task::BaseTask
     _log "Grabbing SOA"
     soa_details = collect_soa_details(lookup_name)
     _set_entity_detail("soa_record", soa_details)
-    check_and_create_unscoped_domain(soa_details["primary_name_server"]) if soa_details
+    if soa_details && soa_details["primary_name_server"]
+      check_and_create_unscoped_domain(soa_details["primary_name_server"]) 
+    end
 
     if soa_details
 
@@ -70,9 +75,6 @@ class DnsRecord < Intrigue::Task::BaseTask
 
     end
 
-    # create a domain for this entity
-    check_and_create_unscoped_domain(parse_tld(lookup_name))
-
   end
 
   private
@@ -88,7 +90,7 @@ class DnsRecord < Intrigue::Task::BaseTask
           _create_entity("IpAddress", { "name" => result["name"] }, @entity)
         else
           _create_entity("DnsRecord", { "name" => result["name"] }, @entity)
-          check_and_create_unscoped_domain(parse_tld(result["name"]))
+          check_and_create_unscoped_domain(result["name"])
         end
       end
     end

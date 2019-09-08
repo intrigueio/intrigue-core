@@ -35,14 +35,20 @@ class DnsRecurseSpf < BaseTask
 
   end
 
+  def create_spf_domain(spf_data)
+    # Create a domain, accounting for tld
+    domain_name = parse_domain_name(spf_data)
+    _create_entity "Domain", { "name" => domain_name, "unscoped" => true }
+  end 
+
   def lookup_txt_record(dns_name)
 
     result = resolve(dns_name, [Resolv::DNS::Resource::IN::TXT])
 
     # If we got a success to the query.
     if result
-      _log_good "TXT lookup succeeded on #{dns_name}:"
-      _log_good "Result:\n=======\n#{result.to_s}======"
+      _log_good "TXT lookup succeeded on #{dns_name}!"
+      #_log_good "Result:\n=======\n#{result.to_s}======"
 
       # Make sure there was actually a record
       unless result.count == 0
@@ -69,43 +75,42 @@ class DnsRecurseSpf < BaseTask
                     next #skip!
 
                   elsif data =~ /^include:.*/
+                    _log_good "Parsing 'include' directive: #{data}"
                     spf_data = data.split(":").last
 
-                    # Create a domain
-                    domain_name = spf_data.split(".").last(2).join(".")
-                    _create_entity "Domain", { "name" => domain_name, "unscoped" => true }
+                    # create a domain
+                    create_spf_domain spf_data
 
                     # RECURSE!
                     lookup_txt_record spf_data
 
                   elsif data =~ /^redirect=.*/
+                    _log_good "Parsing 'redirect' directive: #{data}"
                     spf_data = data.split("=").last
 
-                    # Create a domain
-                    domain_name = spf_data.split(".").last(2).join(".")
-                    _create_entity "Domain", { "name" => domain_name, "unscoped" => true }
+                    # create a domain
+                    create_spf_domain spf_data
 
                     # RECURSE!
                     lookup_txt_record spf_data
 
                   elsif data =~ /^exists:.*/ 
+                    _log_good "Parsing 'exists' directive: #{data}"
                     spf_data = data.split("=").last
                     spf_data = spf_data.gsub("%{i}.","") # https://pastebin.com/ug0xHf6H
                     
-                    # Create a domain
-                    domain_name = spf_data.split(".").last(2).join(".")
-                    _create_entity "Domain", { "name" => domain_name, "unscoped" => true }
+                    # create a domain
+                    create_spf_domain spf_data
 
                     # RECURSE!
                     lookup_txt_record spf_data
 
                   elsif data =~ /^ptr:.*/
+                    _log_good "Parsing 'ptr' directive: #{data}"
                     spf_data = data.split(":").last
-                    
-                    # Create a domain
-                    domain_name = spf_data.split(".").last(2).join(".")
-                    _create_entity "Domain", { "name" => domain_name, "unscoped" => true }
 
+                    # create a domain
+                    create_spf_domain spf_data  
 
                     # RECURSE!
                     #lookup_txt_record spf_data
@@ -125,6 +130,7 @@ class DnsRecurseSpf < BaseTask
                     # sites doing SPF validation must accept it as valid.
 
                   elsif data =~ /^ip4:.*/
+                    _log_good "Parsing 'ipv4' directive: #{data}"
                     range = data.split(":").last
 
                     if data.include? "/"
