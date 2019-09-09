@@ -28,15 +28,14 @@ module Dns
       # first find all matches
       matches = []
       suffix_list.each do |s|
-        if record.include? s.strip # we have a match
+        if record =~ /.*#{Regexp.escape(s.strip)}$/i # we have a match ..
           matches << s.strip 
         end
       end
 
       # then find the longest match
       if matches.count > 0
-        longest_match = matches.sort_by{|x| x.split(".").length }.last
-        _log_good "RETURNING TLD: #{longest_match}"
+        longest_match = matches.sort_by{|x| x.split(".").length }.first
         return longest_match
       end
 
