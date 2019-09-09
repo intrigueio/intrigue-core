@@ -23,19 +23,20 @@ module Dns
     # now one at a time, check all known TLDs and match
     begin
       raw_suffix_list = File.open("#{$intrigue_basedir}/data/public_suffix_list.clean.txt").read.split("\n")
-      suffix_list = raw_suffix_list.map{|l| "#{l.downcase}".chomp }
+      suffix_list = raw_suffix_list.map{|l| "#{l.downcase}".strip }
 
       # first find all matches
       matches = []
       suffix_list.each do |s|
-        if record =~ /#{s.strip}/ # we have a match
+        if record.include? s.strip # we have a match
           matches << s.strip 
         end
       end
 
       # then find the longest match
       if matches.count > 0
-        longest_match = matches.max_by{|x| x.split(".").length }
+        longest_match = matches.sort_by{|x| x.split(".").length }.last
+        _log_good "RETURNING TLD: #{longest_match}"
         return longest_match
       end
 
