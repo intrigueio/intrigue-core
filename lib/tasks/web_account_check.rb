@@ -1,3 +1,5 @@
+require 'uri'
+
 module Intrigue
 module Task
 class WebAccountCheck < BaseTask
@@ -26,7 +28,7 @@ class WebAccountCheck < BaseTask
   def run
     super
 
-    account_name = _get_entity_name
+    entity_name = _get_entity_name
     opt_specific_sites = _get_option "specific_sites"
 
     check_file = "data/web_accounts_list/web_accounts_list.json"
@@ -41,38 +43,50 @@ class WebAccountCheck < BaseTask
 
     _log "Checking target against #{account_list["sites"].count} possible sites"
 
-    account_list["sites"].each do |site|
+    check_account_names = [
+      URI.escape(entity_name.gsub(" ", "_")),
+      URI.escape(entity_name.gsub(" ", "-")),
+      URI.escape(entity_name)
+    ].sort.uniq
 
-      # This allows us to only check specific sites - good for testing
-      unless opt_specific_sites == ""
-        next unless opt_specific_sites.split(",").include? site["name"]
-      end
+    _log "Checking accounts: #{check_account_names}"
 
-      # craft the uri with our entity's properties
-      account_uri = site["check_uri"].gsub("{account}",account_name)
-      pretty_uri = site["pretty_uri"].gsub("{account}",account_name) if site["pretty_uri"]
+    check_account_names.each do  |account_name|
 
-      # Skip if the site tags don't match our type
-      if site["allowed_types"]
-        unless site["allowed_types"].include? @entity.type_string
-          _log "Skipping #{account_uri}, doesn't match our type"
-          next
+      account_list["sites"].each do |site|
+
+        # This allows us to only check specific sites - good for testing
+        unless opt_specific_sites == ""
+          next unless opt_specific_sites.split(",").include? site["name"]
         end
-      end
 
-      # Otherwise, go get it
-      _log "Checking #{account_uri}"
-      body = http_get_body(account_uri)
-      next unless body
+        # craft the uri with our entity's properties
+        account_uri = site["check_uri"].gsub("{account}",account_name)
+        pretty_uri = site["pretty_uri"].gsub("{account}",account_name) if site["pretty_uri"]
 
-      # Check the verify string
-      if body.include? site["account_existence_string"]
-        _create_entity "WebAccount", {
-            "name" => "#{site["name"].downcase}: #{account_name}",
-            "username" => "#{account_name}",
-            "service" => "#{site["name"]}".downcase,
-            "uri" => "#{pretty_uri || account_uri}"
-           }
+        # Skip if the site tags don't match our type
+        if site["allowed_types"]
+          unless site["allowed_types"].include? @entity.type_string
+            _log "Skipping #{account_uri}, doesn't match our type"
+            next
+          end
+        end
+
+        # Otherwise, go get it
+        _log "Checking #{account_uri}"
+        body = http_get_body(account_uri)
+        next unless body
+
+        # Check the verify string
+        if body.include? site["account_existence_string"]
+          _create_entity "WebAccount", {
+              "name" => "#{site["name"].downcase}: #{account_name}",
+              "username" => "#{account_name}",
+              "service" => "#{site["name"]}".downcase,
+              "uri" => "#{pretty_uri || account_uri}"
+             }
+        end
+
       end
 
     end
