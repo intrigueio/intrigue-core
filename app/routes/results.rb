@@ -223,7 +223,7 @@ class IntrigueApp < Sinatra::Base
 
         # skip anything we can't parse, but throw an error
         unless entity
-          task_result.log_error "Could not create entity!! #{entity_type} #{entity_name}"
+          #task_result.log_error "Could not create entity!!"
           next
         end
 

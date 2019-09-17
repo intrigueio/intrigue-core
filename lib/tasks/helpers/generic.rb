@@ -98,7 +98,7 @@ module Generic
 
   def _encode_string(string)
     return string unless string.kind_of? String
-    string.encode("UTF-8", :undef => :replace, :invalid => :replace, :replace => "?")
+    string.scrub("?") #.encode("UTF-8", :undef => :replace, :invalid => :replace, :replace => "?")
   end
 
   def _encode_hash(hash)

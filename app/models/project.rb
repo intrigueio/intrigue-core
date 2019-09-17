@@ -8,7 +8,6 @@ module Intrigue
       one_to_many :task_results
       one_to_many :scan_results
       one_to_many :issues
-      #one_to_many :entities
 
       include Intrigue::Model::Mixins::Handleable
 
@@ -45,8 +44,6 @@ module Intrigue
           :name => "#{name}",
           :seeds => seeds,
           :entities => entities.map {|e| e.export_hash }
-          #:task_results => task_results.map {|t| t.export_hash }
-          #:scan_results => scan_results.map {|s| s.export_hash }
         }
       end
 

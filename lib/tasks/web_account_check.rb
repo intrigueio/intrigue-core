@@ -45,8 +45,7 @@ class WebAccountCheck < BaseTask
 
     check_account_names = [
       URI.escape(entity_name.gsub(" ", "_")),
-      URI.escape(entity_name.gsub(" ", "-")),
-      URI.escape(entity_name)
+      URI.escape(entity_name.gsub(" ", "-"))
     ].sort.uniq
 
     _log "Checking accounts: #{check_account_names}"
