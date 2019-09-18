@@ -66,18 +66,30 @@ module Intrigue
       end
 
       def export_applications_csv
-        out = ""
-        out << "IpAddress,Uri,Enriched,Title,Fingerprint,Javascript"
+        headings = ["IpAddress","Uri","Enriched","Title","Fingerprint","Javascript"]
+        static_heading_count = 6
 
-        Intrigue::Model::Entity.scope_by_project_and_type(self.name, "Intrigue::Entity::Uri").sort_by{|e| e.name }.each do |x|
+        # this is pretty hacky... take the content of the first entity that has content
+        # and use the keys of that field as additional headings. See below, 
+        # we'll ask every application for this same set of fields
+        entities = Intrigue::Model::Entity.scope_by_project_and_type(self.name, "Intrigue::Entity::Uri")
+        content_entity = entities.select{|x| x.get_detail("content") != nil && x.get_detail("content") != [] }.first
+        if first_entity
+          headings.concat content_entity.get_detail("content").map{|c| c["name"] }
+        end
+
+        out = headings.join(", ") 
+        out << "\n"
+
+        entities.sort_by{|e| e.name }.each do |x|
 
           # Resolve the host
           host_id = x.get_detail("host_id")
           host = Intrigue::Model::Entity.scope_by_project(self.name).first(:id => host_id)
           if host
-            out << "#{host.name},"
+            out << "#{host.name.gsub(",",";")},"
           else
-            out << "[Unknown host],"
+            out << "[Unknown],"
           end
 
           out << "#{x.name.gsub(",",";")},"
@@ -92,7 +104,6 @@ module Intrigue
           page_title_string = page_title.gsub(",","") if page_title
           out << "#{page_title_string},"
 
-
           fingerprint = x.get_detail("fingerprint")
           if fingerprint
             fingerprint.each do |f|
@@ -106,13 +117,25 @@ module Intrigue
           end
           out << ","
 
-          fingerprint = x.get_detail("javascript")
-          if fingerprint
-            fingerprint.each do |f|
+          js = x.get_detail("javascript")
+          if js
+            js.each do |f|
               temp = "#{f["library"]}"
               temp << " #{f["version"]}"
               temp << " | "
               out << temp.gsub(",",";")
+            end
+          end
+          out << ","
+
+
+          if content_entity
+            # dynamically dump all config values in the correct orders
+            content = x.get_detail("content")
+            if content
+              headings[static_heading_count..-1].each do |h|
+                out << "#{content.select{|x| x["name"] == h }.first["result"]}".gsub(",",";") << ","
+              end
             end
           end
 

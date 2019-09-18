@@ -165,15 +165,13 @@ class CoreCli < Thor
 
 
   desc "local_start_bulk [Project] [Task] [File] [Depth] [Opt1=Val1#Opt2=Val2#...] [Enrich] [Handlers] [Machine]", "Load entities from a file and runs a task on each in a new project."
-  def local_start_bulk(project_name, task_name, filename, depth=1,options_string=nil,enrich=true,handler_string=nil, machine_name=nil)
+  def local_start_bulk(project_name, task_name, filename, depth=1,options_string=nil,enrich=false,handler_string=nil, machine_name=nil)
 
     # Load in the main core file for direct access to TaskFactory and the Tasks
     # This makes this super speedy.
     extend Intrigue::Task::Helper
 
     lines = File.open(filename,"r").readlines
-
-    p = Intrigue::Model::Project.find_or_create(:name => project_name)
 
     lines.each do |line|
       line.chomp!
@@ -183,32 +181,43 @@ class CoreCli < Thor
       handlers = _parse_handlers handler_string
       depth = depth.to_i
 
+      if project_name == "-"
+        p = Intrigue::Model::Project.find_or_create(:name => entity["project_name"])
+      else 
+        p = Intrigue::Model::Project.find_or_create(:name => project_name)
+      end
+
       # Create the entity
-      created_entity = Intrigue::EntityManager.create_first_entity(project_name, entity["type"], entity["details"]["name"], entity["details"])
+      created_entity = Intrigue::EntityManager.create_first_entity(p.name, entity["type"], entity["details"]["name"], entity["details"])
 
       if created_entity
         # kick off the task
         task_result = start_task(nil, p, nil, task_name, created_entity, depth, options, handlers, machine_name, enrich)
       else
         puts "Unable to create entity: #{entity["type"]} #{entity["details"]["name"]}, skipping."
+        next
       end
 
       # manually start enrichment on first entity
       created_entity.enrich(task_result) if enrich
 
-      puts "Created task #{task_result.inspect} for entity #{created_entity}"
+      puts "Created task #{task_result.name} in #{p.name}"
     end
   end
 
-  desc "local_load_bulk [Project] [File]]", "Bulk load entities from a file."
-  def local_load_bulk(projectname, filename)
-
-    p = Intrigue::Model::Project.find_or_create(:name => projectname)
+  desc "local_load_bulk [Project] [File]", "Bulk load entities from a file."
+  def local_load_bulk(project_name, filename)
 
     i=0
     lines = File.open(filename,"r").readlines
     lines.each do |line|
       line.chomp!
+
+      if project_name == "-"
+        p = Intrigue::Model::Project.find_or_create(:name => entity["project_name"])
+      else 
+        p = Intrigue::Model::Project.find_or_create(:name => project_name)
+      end
 
       # prep the entity
       parsed_entity = _parse_entity line
@@ -255,11 +264,18 @@ private
     return nil if entity_string[0] == "#"
 
     # otherwise split on our delimiter
-    entity_type = entity_string.split(@delim).first
-    entity_name = entity_string.split(@delim).last
+    split_string = entity_string.split(@delim)
+    entity_type = split_string[0]
+    entity_name = split_string[1] 
+    
+    # if a project name is specified, grab it
+    if split_string.count > 2 
+      project_name = split_string[2]
+    end
 
     # create the hash we'll return
     entity_hash = {
+      "project_name" => project_name,
       "type" => entity_type,
       "name" => entity_name,
       "details" => { "name" => entity_name }
