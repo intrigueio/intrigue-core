@@ -74,7 +74,7 @@ module Intrigue
         # we'll ask every application for this same set of fields
         entities = Intrigue::Model::Entity.scope_by_project_and_type(self.name, "Intrigue::Entity::Uri")
         content_entity = entities.select{|x| x.get_detail("content") != nil && x.get_detail("content") != [] }.first
-        if first_entity
+        if content_entity
           headings.concat content_entity.get_detail("content").map{|c| c["name"] }
         end
 
