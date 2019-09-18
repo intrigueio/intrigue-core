@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.5.1'
+ruby '2.6.3'
 
 # core
 gem 'sinatra',         '~> 2.0.1'
@@ -51,16 +51,16 @@ gem 'spidr',                  :git => 'https://github.com/intrigueio/spidr.git'
 gem 'snmp',                   :git => 'https://github.com/intrigueio/ruby-snmp.git'
 gem 'aws-sdk-sqs'             #,        '~> 3'
 gem 'aws-sdk-s3'              #,         '~> 3'
-gem 'watir'                   # uri_screenshot, etc
-gem 'selenium-webdriver'      # '~> 3.12.0'
 gem 'rex-sslscan',            :git => 'https://github.com/intrigueio/rex-sslscan.git'
 gem 'flareon'                 # dns resolution over http
 gem 'net-http2'               # http2 client support
 gem 'rubyzip'
-
-# ident
+gem 'watir'
+gem 'selenium-webdriver'
 gem 'recog-intrigue',         :git => 'https://github.com/intrigueio/recog.git'
+
 # swap these if developing on ident locally
+# ident
 gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git'
 #gem 'intrigue-ident', :path => "~/ident"
 

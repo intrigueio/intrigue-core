@@ -1,5 +1,9 @@
+
+require 'selenium-webdriver'
+require 'watir'
+=begin
 require 'capybara'
-require "selenium/webdriver"
+
 
 Capybara.register_driver :headless_chrome do |app|
   options = ::Selenium::WebDriver::Chrome::Options.new
@@ -24,3 +28,4 @@ Capybara.default_selector = :xpath
 Capybara.javascript_driver = :headless_chrome
 Capybara.run_server = false
 Capybara.threadsafe = true
+=end

@@ -69,13 +69,19 @@ module Intrigue
         headings = ["IpAddress","Uri","Enriched","Title","Fingerprint","Javascript"]
         static_heading_count = 6
 
+        entities = Intrigue::Model::Entity.scope_by_project_and_type(self.name, "Intrigue::Entity::Uri")
+        
         # this is pretty hacky... take the content of the first entity that has content
         # and use the keys of that field as additional headings. See below, 
         # we'll ask every application for this same set of fields
-        entities = Intrigue::Model::Entity.scope_by_project_and_type(self.name, "Intrigue::Entity::Uri")
-        content_entity = entities.select{|x| x.get_detail("content") != nil && x.get_detail("content") != [] }.first
-        if content_entity
-          headings.concat content_entity.get_detail("content").map{|c| c["name"] }
+        #content_entities = entities.select{|x| x.get_detail("content").kind_of?(Array) and x.get_detail("content").count > 0 }
+       # puts "Got content entities: #{content_entities.count} #{content_entities.first}"
+        content_entity_headings = entities.map{ |x| x.get_detail("content").map{|h| h["name"]} if x.get_detail("content") }.flatten.uniq.compact
+        puts "Got Headings: #{content_entity_headings}"
+        STDOUT.flush
+
+        if content_entity_headings.count > 0
+          headings.concat(content_entity_headings)
         end
 
         out = headings.join(", ") 
@@ -129,12 +135,13 @@ module Intrigue
           out << ","
 
 
-          if content_entity
+          if content_entity_headings.count > 0
             # dynamically dump all config values in the correct orders
             content = x.get_detail("content")
             if content
               headings[static_heading_count..-1].each do |h|
-                out << "#{content.select{|x| x["name"] == h }.first["result"]}".gsub(",",";") << ","
+                next unless h
+                out << "#{content.select{|x| x["name"] == h if x  }.first["result"]}".gsub(",",";") << ","
               end
             end
           end

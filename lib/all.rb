@@ -67,7 +67,7 @@ Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 ####
 # ident (gem)
 ####
-require 'intrigue-ident'
+require 'ident'
 
 # Load all discovery tasks
 require_relative 'tasks/base'
