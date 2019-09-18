@@ -145,6 +145,7 @@ module Intrigue
       end
 
       def get_detail(key)
+        return nil unless details
         details[key]
       end
 
