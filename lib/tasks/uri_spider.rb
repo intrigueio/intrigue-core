@@ -17,8 +17,8 @@ class UriSpider < BaseTask
       ],
       :allowed_options => [
         {:name => "spider_user_agent", :regex => "alpha_numeric", :default => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36"},
-        {:name => "spider_limit", :regex => "integer", :default => 100 },
-        {:name => "spider_max_depth", :regex => "integer", :default => 3 },
+        {:name => "spider_limit", :regex => "integer", :default => 20 },
+        {:name => "spider_max_depth", :regex => "integer", :default => 2 },
         {:name => "spider_whitelist", :regex => "alpha_numeric_list", :default => "(current domain)" },
         {:name => "extract_dns_records", :regex => "boolean", :default => true },
         {:name => "extract_dns_record_pattern", :regex => "alpha_numeric_list", :default => "(current domain)" },
@@ -81,14 +81,9 @@ class UriSpider < BaseTask
     _log "Options: #{options}"
 
     dns_records = []
+    crawled_pages = []
 
     Spidr.start_at(uri, options) do |spider|
-
-      # Handle redirects
-      #spider.every_redirect_page do |page|
-      #  spider.visit_hosts << page.to_absolute(page.location).host
-      #  spider.enqueue page.to_absolute(page.location)
-      #end
 
       # spider each page
       spider.every_page do |page|
@@ -98,6 +93,7 @@ class UriSpider < BaseTask
           next unless "#{page.url}".length > 3
 
           _log "Got... #{page.url}"
+          crawled_pages << page.url
 
           if @opt_extract_uris
             _create_entity("Uri", { "name" => "#{page.url}", "uri" => "#{page.url}" })
@@ -142,7 +138,6 @@ class UriSpider < BaseTask
             end
           end
 
-
           if @opt_parse_file_metadata
             content_type = "#{page.content_type}".split(";").first
 
@@ -179,8 +174,11 @@ class UriSpider < BaseTask
           _log_error "got invalid error on uri: #{e}"
         end
 
-      end
+      end # end spider 
+
     end
+
+    _set_entity_detail "spider", crawled_pages
 
   end
 

@@ -134,7 +134,7 @@ module Task
         # Initiate the socket connection in the background. If it doesn't fail
         # immediately it will raise an IO::WaitWritable (Errno::EINPROGRESS)
         # indicating the connection is in progress.
-        tcp_socket.connect_nonblock(sockaddr)
+          tcp_socket.connect_nonblock(sockaddr)
       rescue IO::WaitWritable
         # select will block until the socket is writable or the timeout
         # is exceeded, whichever comes first.
@@ -151,6 +151,7 @@ module Task
         rescue Errno::EISCONN
           # The socket is connected, we're good!
         end
+
       end
 
       # once that's connected, we can start initiating the ssl socket
@@ -204,6 +205,9 @@ module Task
       _log_error "Error requesting resource, skipping: #{hostname} #{port}"
       _log "retrying... attempt: #{attempts}/#{max_attempts}"
       retry unless attempts == max_attempts
+    rescue Errno::ENETUNREACH
+      # unable to connect
+      _log_error "Error requesting cert, skipping: #{hostname} #{port}: #{e}"
     rescue Errno::ETIMEDOUT => e
       _log_error "Error requesting cert - timed out, timeout: #{hostname} #{port}: #{e}"
       _log_error "Error requesting resource, skipping: #{hostname} #{port}"

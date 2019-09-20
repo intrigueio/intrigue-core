@@ -32,7 +32,7 @@ class SearchShodan < BaseTask
     response = @client.search_ip(search_term)
 
     # check to make sure we got a response.
-    unless response
+    unless response && response["data"]
       _log_error "ERROR: No response. Do you have API Access / Credits?"
       return false
     end
