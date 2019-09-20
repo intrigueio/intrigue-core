@@ -23,19 +23,14 @@ module Task
       # configure the driver to run in headless mode
       options = Selenium::WebDriver::Chrome::Options.new(args: args)
       
-      # Set a lower timeout for client reads
-      client = Selenium::WebDriver::Remote::Http::Default.new
-      client.read_timeout = 20 # seconds
-
       # create a driver
-      driver = Selenium::WebDriver.for :chrome, {
-        options: options, http_client: client }
-      
-      # set http client timeout
-      client.read_timeout = 20 # seconds
+      driver = Selenium::WebDriver.for :chrome, { options: options }
 
-      # set default timeout
-      driver.manage.timeouts.implicit_wait = 3 # seconds
+      # set size 
+      driver.manage.window.size = Selenium::WebDriver::Dimension.new(1280, 1024)
+
+      # set a default timeout
+      driver.manage.timeouts.implicit_wait = 20 # seconds
     
     driver 
     end
