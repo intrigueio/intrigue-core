@@ -42,7 +42,7 @@ function start_server {
   done
 
   echo "Starting puma..."
-  bundle exec puma -C $IDIR/config/puma.rb --pidfile $IDIR/tmp/pids/puma.pid 2>&1 > $IDIR/log/puma.log
+  bundle exec puma -C $IDIR/config/puma.rb --pidfile $IDIR/tmp/pids/puma.pid --redirect-stdout $IDIR/log/puma.log --redirect-stderr $IDIR/log/puma.log 
 
   echo "Starting eventmachine..."
   bundle exec ruby $IDIR/util/eventmachine.rb & 
