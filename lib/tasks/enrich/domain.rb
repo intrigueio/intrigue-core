@@ -45,7 +45,9 @@ class Domain < Intrigue::Task::BaseTask
       _log "Grabbing SOA"
       soa_details = collect_soa_details(lookup_name)
       _set_entity_detail("soa_record", soa_details)
-      check_and_create_unscoped_domain(soa_details["primary_name_server"]) if soa_details && @entity.scoped?
+      if soa_details && soa_details["primary_name_server"] && @entity.scoped?
+        check_and_create_unscoped_domain(soa_details["primary_name_server"]) 
+      end
 
       # grab whois info & all nameservers
       if soa_details
