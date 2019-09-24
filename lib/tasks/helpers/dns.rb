@@ -29,7 +29,7 @@ module Dns
       matches = []
       suffix_list.each do |s|
         if record =~ /.*#{Regexp.escape(s.strip)}$/i # we have a match ..
-          matches << s.strip 
+          matches << s.strip
         end
       end
 

@@ -117,12 +117,12 @@ class EntityManager
     return nil unless tr
 
     if tr.cancelled
-      task_result.log "Returning, task was cancelled"
+      tr.log "Returning, task was cancelled"
       return nil
     end
 
     # Convenience
-    project = task_result.project
+    project = tr.project
 
     # Save the original and downcase our name
     details["hidden_original"] = "#{name}"
@@ -195,14 +195,14 @@ class EntityManager
         # note that we delete the detail since we no longer need it 
         # TODO... is this used today?
         if (details["scoped"] == true || details["unscoped"] == "true")
-          task_result.log "Entity was specifically requested to be scoped"
+          tr.log "Entity was specifically requested to be scoped"
           details = details.tap { |h| h.delete("scoped") }
           entity_details[:scoped] = true
         
         # otherwise ____ default to unscoped ___ 
         # note that we delete the detail since we no longer need it 
         elsif (details["unscoped"] == true || details["unscoped"] == "true")
-          task_result.log "Entity was specifically requested to be unscoped"
+          tr.log "Entity was specifically requested to be unscoped"
           details = details.tap { |h| h.delete("unscoped") }
           entity_details[:scoped] = false
         
@@ -210,12 +210,12 @@ class EntityManager
         # - which is set when the entity is created, based on context 
         # that is (or at least should be) specific to that task
         elsif tr.auto_scope
-          task_result.log "Task result scoped this entity based on auto_scope"
+          tr.log "Task result scoped this entity based on auto_scope"
           entity_details[:scoped] = true
         
         # otherwise, fall back to false
         else
-          task_result.log "No specific scope request, falling to entity's default scoping rules"
+          tr.log "No specific scope request, falling to entity's default scoping rules"
           entity_details[:scoped] = false
         end
 
@@ -253,25 +253,25 @@ class EntityManager
 
     ### Ensure we have an entity
     unless entity
-      task_result.log_error "Unable to create or find entity: #{type}##{downcased_name}, failing!!"
+      tr.log_error "Unable to create or find entity: #{type}##{downcased_name}, failing!!"
       return nil
     end
 
     ### Run Data transformation (to hide attributes... HACK)
     unless entity.transform!
-      task_result.log_error "Transformation of entity failed: #{entity}, failing!!"
+      tr.log_error "Transformation of entity failed: #{entity}, failing!!"
       return nil
     end
 
     ### Run Validation
     unless entity.validate_entity
-      task_result.log_error "Validation of entity failed: #{entity}, failing!!"
+      tr.log_error "Validation of entity failed: #{entity}, failing!!"
       return nil
     end
 
     # Add to our result set for this task
-    task_result.add_entity entity
-    task_result.save
+    tr.add_entity entity
+    #tr.save
 
     # Attach the alias.. this can be confusing....
     # ----
@@ -280,7 +280,7 @@ class EntityManager
     # ip address
     if primary_entity
       
-      task_result.log "Aliasing #{entity.name} to existing group: #{primary_entity.alias_group_id}"
+      tr.log "Aliasing #{entity.name} to existing group: #{primary_entity.alias_group_id}"
 
       # Take the smaller group id, and use that to alias together
       cid = entity.alias_group_id
@@ -290,22 +290,22 @@ class EntityManager
     end
 
     # ENRICHMENT LAUNCH
-    if task_result.auto_enrich && !entity_already_existed
+    if tr.auto_enrich && !entity_already_existed
       if !no_traverse_regex
         # Check if we've alrady run first and return gracefully if so
         if entity.enriched
-          task_result.log "Skipping enrichment... already completed!"
+          tr.log "Skipping enrichment... already completed!"
         else
           # starts a new background task... so anything that needs to happen from
           # this point should happen in that new background task
-          entity.enrich(task_result)
+          entity.enrich(tr)
         end
       else
-        task_result.log "Skipping enrichment... this is a no-traverse!"
+        tr.log "Skipping enrichment... this is a no-traverse!"
       end
     else
-      task_result.log "Skipping enrichment... enrich not enabled!" unless task_result.auto_enrich
-      task_result.log "Skipping enrichment... entity exists!" if entity_already_existed
+      tr.log "Skipping enrichment... enrich not enabled!" unless tr.auto_enrich
+      tr.log "Skipping enrichment... entity exists!" if entity_already_existed
     end
 
   # return the entity
