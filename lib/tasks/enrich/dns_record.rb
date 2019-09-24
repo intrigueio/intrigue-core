@@ -101,7 +101,6 @@ class DnsRecord < Intrigue::Task::BaseTask
       ###
       @entity.aliases.each do |a|
         next unless a.type_string == "IpAddress" #  only ips
-        #next if a.hidden # skip hidden
         existing_ports = a.get_detail("ports")
         if existing_ports
           existing_ports.each do |p|

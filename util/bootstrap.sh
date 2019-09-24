@@ -112,8 +112,8 @@ sudo apt-get -y --fix-broken install make \
   libsqlite3-dev \
   net-tools \
   libpq-dev \
-  postgresql-9.6 \
-  postgresql-server-dev-9.6 \
+  postgresql \
+  postgresql-server-dev \
   redis-server \
   boxes \
   nmap \

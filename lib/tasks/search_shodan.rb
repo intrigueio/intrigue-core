@@ -58,16 +58,16 @@ class SearchShodan < BaseTask
       end
 
       # Create all domains  
-      resp["domains"].each do |d|
-        _log_good "Creating domain: #{d}"
-        check_and_create_unscoped_domain d
-      end
+      #resp["domains"].each do |d|
+      #  _log_good "Creating domain: #{d}"
+      #  check_and_create_unscoped_domain d
+      #end
 
       # Create the organization if we have it
-      if resp["org"]
-        _log_good "Creating organization: #{resp["org"]}"
-        _create_entity "Organization", "name" => "#{resp["org"]}"
-      end
+      #if resp["org"]
+      #  _log_good "Creating organization: #{resp["org"]}"
+      #  _create_entity "Organization", "name" => "#{resp["org"]}"
+      #end
 
     end
 
