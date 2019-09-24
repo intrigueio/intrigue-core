@@ -61,7 +61,7 @@ module Intrigue
           begin
             # any other value, log to the database
             update(:full_log => "#{full_log}#{encoded_out}")
-            save
+            save_changes
           rescue Sequel::DatabaseError => e
             puts "ERROR WRITING LOG FOR #{self}: #{e}"
           end

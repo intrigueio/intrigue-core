@@ -112,10 +112,10 @@ module Intrigue
 
       end
 
-      def alias(entity)
+      def alias_to(new_id)
         # They'd share the same group...
-        self.alias_group_id = entity.alias_group_id
-        save
+        self.alias_group_id = new_id
+        save_changes
       end
 
       # Override this if you are creating a secondary entity
@@ -153,7 +153,7 @@ module Intrigue
       def set_detail(key, value)
         begin
           self.set(:details => details.merge({key => value}.sanitize_unicode))
-          self.save
+          save_changes
         rescue Sequel::NoExistingObject => e
           puts "Error saving details for #{self}: #{e}, deleted?"
         rescue Sequel::DatabaseError => e
@@ -164,7 +164,7 @@ module Intrigue
       def set_details(hash)
         begin
           self.set(:details => hash.sanitize_unicode)
-          self.save
+          save_changes
         rescue Sequel::NoExistingObject => e
           puts "Error saving details for #{self}: #{e}, deleted?"
         rescue Sequel::DatabaseError => e
@@ -186,7 +186,7 @@ module Intrigue
         # clean up aliases at the same time
         alias_group.each {|x| x.soft_delete!}
         deleted = true
-        save
+        save_changes
       end
 
       # Check whether the entity is deleted

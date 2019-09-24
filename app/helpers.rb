@@ -30,8 +30,7 @@ module Helper
 
     # cancel any new tasks if the project has been cancelled
     if project.cancelled
-      task_result.cancelled = true
-      task_result.save
+      task_result.cancel!
     end
 
     # only assign handlers if this isn't a scan (in that case, we want to send the whole scan)
@@ -43,7 +42,7 @@ module Helper
 
       # we are in the middle of a change, let's preserve the recursive trail
       task_result.scan_result_id = existing_scan_result.id
-      task_result.save
+      task_result.save_changes
 
       # lets also add one to the incomplete task count, so we can determine if we're actually done
       existing_scan_result.increment_task_count
@@ -68,7 +67,7 @@ module Helper
 
       # Add the scan result
       task_result.scan_result_id = new_scan_result.id
-      task_result.save
+      task_result.save_changes
 
       # Add the task result
       new_scan_result.add_task_result(task_result)

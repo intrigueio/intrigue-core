@@ -148,7 +148,7 @@ class Uri < Intrigue::Task::BaseTask
     # EXAMPLE TEST CASE: http://103.24.203.121:80 (cpanel missing page)
     if ident_fingerprints.detect{|x| x["hide"] == true }
       @entity.hidden = true
-      @entity.save
+      @entity.save_changes
     end
 
     # in some cases, we should go further

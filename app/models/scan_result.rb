@@ -22,16 +22,18 @@ module Intrigue
       end
 
       def start(queue)
+
         # Start our first task
-        self.incomplete_task_count += 1
+        #self.incomplete_task_count += 1
         self.job_id = task_results.first.start(queue)
-        self.save
+        save_changes
+
       job_id
       end
 
       def add_filter_string(string)
         whitelist_strings << "#{string}"
-        self.save
+        save_changes
       end
 
 =begin
@@ -70,14 +72,14 @@ module Intrigue
       end
 
       def increment_task_count
-        self.incomplete_task_count += 1
-        self.save
+        #self.incomplete_task_count += 1
+        save_changes
       end
 
 
       def decrement_task_count
-        self.incomplete_task_count -= 1
-        self.save
+        #self.incomplete_task_count -= 1
+        save_changes
       end
 
       # just calculate it vs storing another property

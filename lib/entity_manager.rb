@@ -52,7 +52,7 @@ class EntityManager
           details = details.tap { |h| h.delete("unscoped") }
           details = details.tap { |h| h.delete("scoped") }
           entity.scoped = true
-          entity.save
+          entitysave_changes
 
         #####
         ### END ... USER- or TASK- PROVIDED SCOPING 
@@ -89,7 +89,7 @@ class EntityManager
     # Add it to seeds since it was created manually
     unless project.seed_entity? our_entity.name, our_entity.type
       project.seeds = (project.seeds || []) << {"name" => our_entity.name, "type" => our_entity.type}
-      project.save
+      project.save_changes
     end
 
     ### Ensure we have an entity
@@ -271,7 +271,6 @@ class EntityManager
 
     # Add to our result set for this task
     tr.add_entity entity
-    #tr.save
 
     # Attach the alias.. this can be confusing....
     # ----
@@ -285,7 +284,7 @@ class EntityManager
       # Take the smaller group id, and use that to alias together
       cid = entity.alias_group_id
       pid = primary_entity.alias_group_id
-      cid > pid ? entity.alias(primary_entity) : primary_entity.alias(entity)
+      cid > pid ? entity.alias_to(pid) : primary_entity.alias_to(cid)
 
     end
 

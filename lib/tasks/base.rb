@@ -94,7 +94,7 @@ class BaseTask
         # @task_result - the final result to be passed back to the caller
         if setup(task_result_id, @entity, options)
             _log "Starting task run at #{start_time}!"
-            @task_result.save # Save the task
+            @task_result.save_changes # Save the task
             run # Run the task, which will update @task_result
             end_time = Time.now.getutc
             _log "Task run finished at #{end_time}!"
@@ -122,7 +122,7 @@ class BaseTask
 
         # Save it!
         _log "Saving entity!"
-        @entity.save
+        @entity.save_changes
 
         # MACHINE LAUNCH
         # if this is part of a scan and we're in depth
@@ -169,7 +169,7 @@ class BaseTask
             # let's mark it complete if there's nothing else to do here.
             scan_result.handlers_complete = true
             scan_result.complete = true
-            scan_result.save
+            scan_result.save_changes
           end
         else
           _log "No scan result handlers configured."
@@ -180,8 +180,8 @@ class BaseTask
       begin
         @task_result.complete = true
         @task_result.timestamp_end = end_time
-        @task_result.logger.save
-        @task_result.save
+        @task_result.logger.save_changes
+        @task_result.save_changes
         _log "Task complete. Ship it!"
       rescue Sequel::NoExistingObject => e
         puts "Failing to update task_result: #{task_result_id}"

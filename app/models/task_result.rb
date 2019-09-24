@@ -32,7 +32,7 @@ module Intrigue
           "retry" => true,
           "args" => [id]
         })
-        save
+        save_changes
 
       self.job_id
       end
@@ -40,7 +40,7 @@ module Intrigue
       def cancel!
         unless complete
           self.cancelled = true
-          save
+          save_changes
         end
       end
 
