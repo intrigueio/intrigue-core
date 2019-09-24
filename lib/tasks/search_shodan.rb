@@ -38,7 +38,7 @@ class SearchShodan < BaseTask
     end
 
     # Go through the results
-    _set_entity_detail("shodan",response["data"])
+    _set_entity_detail("extended_shodan",response["data"])
     
     response["data"].each do |resp|
       
