@@ -23,6 +23,7 @@ module Intrigue
 
       def start(queue)
         # Start our first task
+        self.incomplete_task_count += 1
         self.job_id = task_results.first.start(queue)
         self.save
       job_id
@@ -72,6 +73,7 @@ module Intrigue
         self.incomplete_task_count += 1
         self.save
       end
+
 
       def decrement_task_count
         self.incomplete_task_count -= 1

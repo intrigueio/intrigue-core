@@ -31,6 +31,7 @@ module Helper
     # cancel any new tasks if the project has been cancelled
     if project.cancelled
       task_result.cancelled = true
+      task_result.save
     end
 
     # only assign handlers if this isn't a scan (in that case, we want to send the whole scan)
@@ -40,7 +41,7 @@ module Helper
     # belongs to it, and we should associate those
     if existing_scan_result
 
-      # we are in the middle of recursion, let's preserve the chain
+      # we are in the middle of a change, let's preserve the recursive trail
       task_result.scan_result_id = existing_scan_result.id
       task_result.save
 
@@ -52,7 +53,7 @@ module Helper
     # prexisting scan id, start a new scan
     if !existing_scan_result && depth > 1
 
-      scan_result = Intrigue::Model::ScanResult.create({
+      new_scan_result = Intrigue::Model::ScanResult.create({
         :name => "#{machine_name}_on_#{entity.name}",
         :project => project,
         :base_entity_id => entity.id,
@@ -65,23 +66,21 @@ module Helper
         :incomplete_task_count => 0
       })
 
-      # Add the task result
-      scan_result.add_task_result(task_result)
-      #scan_result.save
-
       # Add the scan result
-      task_result.scan_result = scan_result
+      task_result.scan_result_id = new_scan_result.id
       task_result.save
 
-      # update our count
-      scan_result.increment_task_count
+      # Add the task result
+      new_scan_result.add_task_result(task_result)
 
       # Start it
-      scan_result.start(queue)
+      new_scan_result.start(queue)
 
     else
+
       # otherwise, we're a task, and we're ready to go
       task_result.start(queue)
+
     end
 
   task_result
