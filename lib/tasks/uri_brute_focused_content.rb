@@ -100,13 +100,51 @@ class UriBruteFocusedContent < BaseTask
       # /pages/default.aspx 
     ]
 
+    # TODO - see: https://foundeo.com/hack-my-cf/coldfusion-security-issues.cfm
+    # TODO - see: metasploit
     coldfusion_list = [
       { path: "/CFIDE", severity: 5, body_regex: nil, :status => "potential"  },
+      
+      { path: "/CFIDE/scripts", severity: 4, body_regex: nil, :status => "potential"  },
+      # 
+      { path: "/CFIDE/debug/", severity: 1, body_regex: nil, :status => "potential"  },
       { path: "/CFIDE/administrator/enter.cfm", severity: 5, body_regex: nil, :status => "potential"  },
       { path: "/CFIDE/administrator/aboutcf.cfm", severity: 5, body_regex: nil, :status => "potential"  },
       { path: "/CFIDE/administrator/welcome.cfm", severity: 5, body_regex: nil, :status => "potential"  },
-      { path: "/CFIDE/administrator/index.cfm", severity: 5, body_regex: nil, :status => "potential"  }
-    ] # TODO see metasploit for more ideas here
+      { path: "/CFIDE/administrator/index.cfm", severity: 5, body_regex: nil, :status => "potential"  },
+      # Jakarta Virtual Directory Exposed 
+      { path: "/jakarta/isapi_redirect.log", severity: 4, body_regex: nil, :status => "potential"  },
+      { path: "/jakarta/isapi_redirect.properties", severity: 4, body_regex: nil, :status => "potential"  },
+      # Bitcoin Miner Discovered 
+      { path: "/CFIDE/m", severity: 1, body_regex: nil, :status => "potential"  },
+      { path: "/CFIDE/m32", severity: 1, body_regex: nil, :status => "potential"  },
+      { path: "/CFIDE/m64", severity: 1, body_regex: nil, :status => "potential"  },
+      { path: "/CFIDE/updates.cfm", severity: 1, body_regex: nil, :status => "potential" },
+      # XSS Injection in cfform.js 
+      { path: "/CFIDE/scripts/cfform.js", severity: 3, body_regex: /document\.write/, :status => "confirmed"  },
+      # OpenBD AdminAPI Exposed to the Public 
+      { path: "/bluedragon/adminapi/", severity: 1, body_regex: nil, :status => "potential"  },
+      # ColdFusion Example Applications Installed -
+      { path: "/cfdocs/exampleapps/", severity: 4, body_regex: nil, :status => "potential"  },
+      { path: "/CFIDE/gettingstarted/", severity: 4, body_regex: nil, :status => "potential"  },
+      # Svn / git Hidden Directory Exposed 
+      { path: "/.svn/text-base/index.cfm.svn-base", severity: 4, body_regex: nil, :status => "potential"  },
+      { path: "/.git/config", severity: 4, body_regex: nil, :status => "potential"  },
+      # Lucee Server Context is Public
+      { path: "/lucee-server/", severity: 3, body_regex: nil, :status => "potential"  },
+      # Lucee Docs are Public -
+      { path: "/lucee/doc.cfm", severity: 4, body_regex: nil, :status => "potential"  },
+      { path: "/lucee/doc/index.cfm", severity: 3, body_regex: nil, :status => "potential"  },
+      # Lucee Server Context is Public
+      { path: "/railo-server-context/", severity: 3, body_regex: nil, :status => "potential"  },
+      # The /cf_scripts/scripts directory is in default location
+      { path: "/cf_scripts/scripts/", severity: 3, body_regex: nil, :status => "potential"  },
+      { path: "/cfscripts_2018/", severity: 3, body_regex: nil, :status => "potential"  },
+      # Backdoor Discovered
+      { path: "/CFIDE/h.cfm", severity: 1, body_regex: nil, :status => "potential"  },
+      # Exposed _mmServerScripts
+      { path: "/_mmServerScripts", severity: 1, body_regex: nil, :status => "potential"  }
+    ]
 
     globalprotect_list = [ # https://blog.orange.tw/2019/07/attacking-ssl-vpn-part-1-preauth-rce-on-palo-alto.html
       { path: "/global-protect/portal/css/login.css", severity: 1,
@@ -196,6 +234,10 @@ class UriBruteFocusedContent < BaseTask
       #_vti_pvt/writeto.cnf
       #_vti_pvt/linkinfo.cnf
     ]
+
+    # https://www.exploit-db.com/exploits/43009 - c
+    #"/solr/gettingstarted/select?q=test"
+
 
     splunk_list = [
       { path: "/en-US/splunkd/__raw/services/server/info/server-info?output_mode=json", 

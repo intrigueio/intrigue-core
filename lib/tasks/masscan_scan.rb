@@ -79,7 +79,7 @@ class Masscan < BaseTask
         _create_network_service_entity(created_entity,
             port, protocol, { 
               "scoped" => true,
-              "masscan_string" => masscan_string 
+              "extended_masscan" => masscan_string 
           })
 
       end

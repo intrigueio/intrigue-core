@@ -52,7 +52,7 @@ class EntityManager
           details = details.tap { |h| h.delete("unscoped") }
           details = details.tap { |h| h.delete("scoped") }
           entity.scoped = true
-          entitysave_changes
+          entity.save_changes
 
         #####
         ### END ... USER- or TASK- PROVIDED SCOPING 
