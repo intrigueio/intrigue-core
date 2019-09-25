@@ -48,7 +48,7 @@ class SearchShodan < BaseTask
         _create_network_service_entity(@entity, s["port"], s["transport"] || "tcp", { 
           "timestamp" => resp["timestamp"], 
           "response" => resp["data"], 
-          "shodan" => resp } )
+          "extended_hodan" => resp } )
       end
 
       # Create all hostnames 
