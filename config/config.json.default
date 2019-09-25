@@ -162,6 +162,12 @@
       "editable": "true",
       "comment": ""
     },
+    "hibp_api_key": {
+      "value": "",
+      "uri": "https://haveibeenpwned.com/API",
+      "editable": "true",
+      "comment": ""
+    },  
     "hunter_io_api_key": {
       "value": "",
       "uri": "https://hunter.io/api_keys",
