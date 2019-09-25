@@ -17,7 +17,7 @@ module Task
       return nil unless Intrigue::Config::GlobalConfig.config["browser_enabled"]
 
       # start a new session
-      args = ['headless','no-sandbox', 'disable-gpu', 'disable-dev-shm-usage', 
+      args = ['headless', 'disable-gpu', 'disable-dev-shm-usage', 
        'ignore-certificate-errors', 'disable-popup-blocking', 'disable-translate']
 
       # configure the driver to run in headless mode
