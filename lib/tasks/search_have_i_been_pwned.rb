@@ -84,20 +84,19 @@ class SearchHaveIBeenPwned < BaseTask
     end
 
     results.each do |result|
-      if _get_option("IsSensitive")
-        # create an issue for each found result
-        _create_issue({
-          name: "Leaked account: #{email_address} on #{result["Domain"]} at #{result["BreachDate"]}",
-          type: "email_found_in_breach",
-          severity: 4,
-          status: "confirmed",
-          description: "Email account was found in a breach of : #{result["Name"]}\n" +  
-                        "User: #{email_address} Domain: #{result["Domain"]}.\n" + 
-                        "The details were leaked on #{result["BreachDate"]}.\n" +
-                        "About this Breach:\n#{result["Description"]}",
-          details: result
-        }) if _get_option("create_issues")
-      end
+      next if _get_option("only_sensitive") && !result["IsSensitive"]      
+      # create an issue for each found result
+      _create_issue({
+        name: "Leaked account: #{email_address} on #{result["Domain"]} at #{result["BreachDate"]}",
+        type: "email_found_in_breach",
+        severity: 4,
+        status: "confirmed",
+        description: "Email account was found in a breach of : #{result["Name"]}\n" +  
+                      "User: #{email_address} Domain: #{result["Domain"]}.\n" + 
+                      "The details were leaked on #{result["BreachDate"]}.\n" +
+                      "About this Breach:\n#{result["Description"]}",
+        details: result
+      }) if _get_option("create_issues")
     end
 
   end

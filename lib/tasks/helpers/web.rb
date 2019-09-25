@@ -524,18 +524,18 @@ module Task
        end
 
        # USE THIS TO PRINT HTTP REQUEST
-       puts
-       puts 
-       puts "===== BEGIN REQUEST ====="
-       puts "Endpoint: #{request.method} http://#{uri}"
-       puts "Headers:\n"
-       request.each_header do |key, value|
-        puts "\t#{key}: #{value}"
-       end
-       puts "POST Data:\n#{request.body}" if request.method == 'POST'
-       puts "=====  END  REQUEST ====="
-       puts
-       puts 
+       #puts
+       #puts 
+       #puts "===== BEGIN REQUEST ====="
+       #puts "Endpoint: #{request.method} http://#{uri}"
+       #puts "Headers:\n"
+       #request.each_header do |key, value|
+       # puts "\t#{key}: #{value}"
+       #end
+       #puts "POST Data:\n#{request.body}" if request.method == 'POST'
+       #puts "=====  END  REQUEST ====="
+       #puts
+       #puts 
        # END USE THIS TO PRINT HTTP REQUEST
 
        # get the response
