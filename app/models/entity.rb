@@ -66,8 +66,18 @@ module Intrigue
         raise "Should be called on subclass..."
       end
 
-      def safe_details
-        details.select { |k,v| !k.to_s.match(/^hidden_.*$/) }
+      def short_details
+        details.select { |k,v| 
+          !k.to_s.match(/^hidden_.*$/) || !k.to_s.match(/^extended_.*$/)   }
+      end
+
+      def extended_details
+        details.select { |k,v| 
+          k.to_s.match(/^hidden_.*$/) || k.to_s.match(/^extended_.*$/)   }
+      end
+
+      def has_extended_details?
+        extended_details.count > 0
       end
 
       # override me... see: lib/entities/aws_credential.rb
