@@ -196,6 +196,8 @@ module Task
       _log_error "Error requesting resource, skipping: #{hostname} #{port}: #{e}"
     rescue Errno::EMFILE => e
       _log_error "Error requesting resource, skipping: #{hostname} #{port}: #{e}"
+    rescue Errno::EAFNOSUPPORT => e
+      _log_error "Error requesting resource, skipping: #{hostname} #{port}: #{e}"
     rescue Errno::EPIPE => e
       _log_error "Error requesting cert, skipping: #{hostname} #{port}: #{e}"
     rescue Errno::ECONNRESET => e
@@ -591,6 +593,8 @@ module Task
     rescue Errno::ETIMEDOUT => e
       @task_result.logger.log_error "ETIMEDOUT Timeout : #{e}" if @task_result
     rescue Errno::EINVAL => e
+      @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
+    rescue Errno::EAFNOSUPPORT => e
       @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
     rescue Errno::ENETUNREACH => e
       @task_result.logger.log_error "Unable to connect: #{e}" if @task_result

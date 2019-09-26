@@ -59,202 +59,112 @@ module Services
 
     # Grab all the aliases, since we'll want to auto-create services on them
     # (VHOSTS use case)
-    hosts = [ip_entity].concat(cert_entities.uniq)
+    hosts = [] 
+    hosts << ip_entity
+    cert_entities.each {|ce| hosts << ce} 
+
     if ip_entity.aliases.count > 0
-      ip_entity.aliases.each do |a|
-        next unless a.type_string == "DnsRecord" #  only dns records
-        next if a.hidden # skip hidden
-        hosts << a # add to the list
+      ip_entity.aliases.each do |al|
+        next unless al.type_string == "DnsRecord" #  only dns records
+        next if al.hidden # skip hidden
+        hosts << al # add to the list
       end
     end
 
-    hosts = hosts.compact.uniq
-
-    _log "Creating service (#{port_num}) on each of: #{hosts.map{|h| h.name.strip } }"
-
-    sister_entity = nil
-    thread_list = []
-    hosts.each do |h|
-      thread_list << Thread.new do 
-
-        try_http_ports = [  80,81,82,83,84,85,88,443,888,3000,6443,
+    create_service_lambda = lambda do |h|
+      try_http_ports = [  80,81,82,83,84,85,88,443,888,3000,6443,
                             8000,8080,8081,8087,8088,8089,8090,8095,
                             8098,8161,8180,8443,8888,10000 ] 
 
-        # Handle web app case first
-        if (protocol == "tcp" && try_http_ports.include?(port_num))
+      # Handle web app case first
+      if (protocol == "tcp" && try_http_ports.include?(port_num))
 
-          # If SSL, use the appropriate prefix
-          prefix = ssl ? "https" : "http" # construct uri
+        # If SSL, use the appropriate prefix
+        prefix = ssl ? "https" : "http" # construct uri
 
-          # Construct the uri
-          uri = "#{prefix}://#{h.name.strip}:#{port_num}"
+        # Construct the uri
+        uri = "#{prefix}://#{h.name.strip}:#{port_num}"
 
-          # if we've never seen this before, go ahead and open it to ensure it's 
-          # something we want to create (this helps eliminate unusable urls). However, 
-          # skip if we have, we want to minimize requests to the services
-          if !entity_exists? ip_entity.project, "Uri", uri
+        # if we've never seen this before, go ahead and open it to ensure it's 
+        # something we want to create (this helps eliminate unusable urls). However, 
+        # skip if we have, we want to minimize requests to the services
+        if !entity_exists? ip_entity.project, "Uri", uri
 
-            x = _gather_http_response(uri)
-            http_response = x[:http_response]
-            generic_details.merge!(x[:extra_details])
+          r = _gather_http_response(uri)
+          http_response = r[:http_response]
+          generic_details.merge!(r[:extra_details])
 
-            unless http_response
-              _log_error "Didn't get a response when we requested one, moving on"
-              next
-            end
+          unless http_response
+            _log_error "Didn't get a response when we requested one, moving on"
+            next
           end
 
-          entity_details = {
-            "name" => uri,
-            "uri" => uri,
-            "service" => prefix
-          }.merge!(generic_details)
-
-          # Create entity and track this entity so we can manage a group of aliases (called sisters here)
-          sister_entity = _create_entity("Uri", entity_details, sister_entity)
-
-        # otherwise, create a network service on the IP, either UDP or TCP - fail otherwise
-        elsif protocol == "tcp" && h.name.strip.is_ip_address?
-
-          service_specific_details = {}
-
-          case port_num
-            when 1 
-              service = "TCPMUX"
-            when 7
-              service = "ECHO"
-            when 9
-              service = "DISCARD"
-            when 13
-              service = "DAYTIME"
-            when 19
-              service = "CHARGEN"
-            when 21
-              service = "FTP"
-            when 22,2222
-              service = "SSH"
-            when 23
-              service = "TELNET"
-            when 25
-              service = "SMTP"
-            when 37
-              service = "TIME"
-            when 42
-              service = "NAMESERVER"
-            when 49
-              service = "TACACS"
-            when 53
-              service = "DNS"
-            when 79
-              service = "FINGER"
-            when 102 
-              service = "TSAP"
-            when 105
-              service = "CCSO"
-            when 109 
-              service = "POP2"
-            when 110
-              service = "POP3"
-            when 111
-              service = "SUNRPC"
-            when 113
-              service = "IDENT"
-            when 135
-              service = "DCERPC"
-            when 502,503
-              service = "MODBUS"
-            when 1883
-              service = "MQTT"
-            when 2181,2888,3888
-              service = "ZOOKEEPER"
-            when 3389
-              service = "RDP"
-            when 5900,5901
-              service = "VNC"
-            when 6379,6380
-              service = "REDIS"
-            when 6443
-              service = "KUBERNETES"
-            when 7001
-              service = "WEBLOGIC"
-            when 8032
-              service = "YARN"
-            when 8278,8291
-              service = "MIKROTIK"
-            when 8883
-              service = "MQTT-SSL"
-            when 9200,9201,9300,9301
-              service = "ELASTICSEARCH"
-            when 9091,9092,9094
-              service = "NETSCALER"
-            when 27017,27018,27019
-              service = "MONGODB"
-            else
-              service = "UNKNOWN"
-          end
-
-          # now we have all the details we need, create it
-
-          name = "#{h.name.strip}:#{port_num}"
-
-          entity_details = {
-            "name" => name,
-            "service" => service
-          }
-
-          # merge in all generic details
-          entity_details = entity_details.merge!(generic_details)
-
-          # merge in any service specifics
-          entity_details = entity_details.merge!(service_specific_details)
-
-          sister_entity = _create_entity("NetworkService", entity_details, sister_entity)
-
-        elsif protocol == "udp" && h.name.strip.is_ip_address?
-
-          service_specific_details = {}
-
-          case port_num
-            when 53
-              service = "DNS"
-            when 69
-              service = "TFTP"
-            when 123
-              service = "NTP"
-            when 161
-              service = "SNMP"
-            when 1900
-              service = "UPNP"
-            when 5000
-              service = "UPNP"
-            else
-              service = "UNKNOWN"
-          end
-
-          # now we have all the details we need, create it
-
-          name = "#{h.name.strip}:#{port_num}"
-
-          entity_details = {
-            "name" => name,
-            "service" => service
-          }
-
-          # merge in all generic details
-          entity_details = entity_details.merge!(generic_details)
-
-          # merge in any service specifics
-          entity_details = entity_details.merge!(service_specific_details)
-
-          sister_entity = _create_entity("NetworkService", entity_details, sister_entity)
-
-        else
-          raise "Unknown protocol" if h.name.strip.is_ip_address?
         end
-      end # end thread 
-    end # each hostname
-    thread_list.map(&:join)
+
+        entity_details = {
+          "name" => uri,
+          "uri" => uri,
+          "service" => prefix
+        }.merge!(generic_details)
+
+        # Create entity
+        _create_entity("Uri", entity_details)
+
+      # otherwise, create a network service on the IP, either UDP or TCP - fail otherwise
+      elsif protocol == "tcp" && h.name.strip.is_ip_address?
+
+        service_specific_details = {}
+        service = _map_tcp_port_to_name(port_num)
+
+        name = "#{h.name.strip}:#{port_num}"
+
+        entity_details = {
+          "name" => name,
+          "service" => service
+        }
+
+        # merge in all generic details
+        entity_details = entity_details.merge!(generic_details)
+        # merge in any service specifics
+        entity_details = entity_details.merge!(service_specific_details)
+
+        # now we have all the details we need, create it
+        _create_entity("NetworkService", entity_details)
+
+      elsif protocol == "udp" && h.name.strip.is_ip_address?
+
+        service_specific_details = {}
+        service = _map_udp_port_to_name(port_num)
+
+        # now we have all the details we need, create it
+        name = "#{h.name.strip}:#{port_num}"
+
+        entity_details = {
+          "name" => name,
+          "service" => service
+        }
+
+        # merge in all generic details
+        entity_details = entity_details.merge!(generic_details)
+
+        # merge in any service specifics
+        entity_details = entity_details.merge!(service_specific_details)
+
+        _create_entity("NetworkService", entity_details)
+
+      else
+        raise "Unknown protocol" if h.name.strip.is_ip_address?
+
+      end
+    true
+    end
+
+    # use a generic threaded iteration method to create them,
+    # with the desired number of threads
+    thread_count = (hosts.count / 2) + 1 
+    _log "Creating service (#{port_num}) on #{hosts.map{|x|x.name}} with #{thread_count} threads."
+    _threaded_iteration(thread_count, hosts, create_service_lambda)
+        
   end
 
   ## Default method, subclasses must override this
@@ -337,7 +247,7 @@ module Services
 
       _log "connecting to #{uri}"
 
-      out[:http_response] = http_request(:get, uri)
+      out[:http_response] = http_request(:get, uri, nil, {}, nil, attempts_limit=2, open_timeout=5, read_timeout=5)
 
       ## TODO ... follow & track location headers?
 
@@ -420,6 +330,104 @@ module Services
       _log_error "compression error on #{uri}" => e
     end
   out
+  end
+
+  def _map_tcp_port_to_name(port_num)
+    case port_num
+    when 1 
+      service = "TCPMUX"
+    when 7
+      service = "ECHO"
+    when 9
+      service = "DISCARD"
+    when 13
+      service = "DAYTIME"
+    when 19
+      service = "CHARGEN"
+    when 21
+      service = "FTP"
+    when 22,2222
+      service = "SSH"
+    when 23
+      service = "TELNET"
+    when 25
+      service = "SMTP"
+    when 37
+      service = "TIME"
+    when 42
+      service = "NAMESERVER"
+    when 49
+      service = "TACACS"
+    when 53
+      service = "DNS"
+    when 79
+      service = "FINGER"
+    when 102 
+      service = "TSAP"
+    when 105
+      service = "CCSO"
+    when 109 
+      service = "POP2"
+    when 110
+      service = "POP3"
+    when 111
+      service = "SUNRPC"
+    when 113
+      service = "IDENT"
+    when 135
+      service = "DCERPC"
+    when 502,503
+      service = "MODBUS"
+    when 1883
+      service = "MQTT"
+    when 2181,2888,3888
+      service = "ZOOKEEPER"
+    when 3389
+      service = "RDP"
+    when 5900,5901
+      service = "VNC"
+    when 6379,6380
+      service = "REDIS"
+    when 6443
+      service = "KUBERNETES"
+    when 7001
+      service = "WEBLOGIC"
+    when 8032
+      service = "YARN"
+    when 8278,8291
+      service = "MIKROTIK"
+    when 8883
+      service = "MQTT-SSL"
+    when 9200,9201,9300,9301
+      service = "ELASTICSEARCH"
+    when 9091,9092,9094
+      service = "NETSCALER"
+    when 27017,27018,27019
+      service = "MONGODB"
+    else
+      service = "UNKNOWN"
+    end
+  service
+  end
+
+  def _map_udp_port_to_name(port_num)
+    case port_num
+    when 53
+      service = "DNS"
+    when 69
+      service = "TFTP"
+    when 123
+      service = "NTP"
+    when 161
+      service = "SNMP"
+    when 1900
+      service = "UPNP"
+    when 5000
+      service = "UPNP"
+    else
+      service = "UNKNOWN"
+    end
+  service 
   end
 
 

@@ -57,7 +57,7 @@ module Whois
       elsif out["whois_full_text"] =~ /whois.lacnic.net/ || out["whois_full_text"] =~ /cert\@cert\.br/
         _log "using RDAP to query LACNIC"
         rdap_info = _rdap_ip_lookup lookup_string
-        out = out.merge(rdap_info)
+        out = out.merge(rdap_info) if rdap_info
       elsif out["whois_full_text"] =~ /AFRINIC/
         _log "using RDAP to query AFRINIC"
         rdap_info = _rdap_ip_lookup lookup_string

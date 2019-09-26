@@ -174,10 +174,11 @@ class Uri < Intrigue::Task::BaseTask
 
         # grab and parse the certificate
         alt_names = connect_ssl_socket_get_cert_names(hostname,port) || []
-  
+        _log "Got cert's alt names: #{alt_names.inspect}"
+
         if set_cookie 
           _log "Secure Cookie: #{set_cookie.split(";").detect{|x| x =~ /secure/i }}"
-          _log "Http_only Cookie: #{set_cookie.split(";").detect{|x| x =~ /httponly/i }}"
+          _log "Httponly Cookie: #{set_cookie.split(";").detect{|x| x =~ /httponly/i }}"
 
           # create an issue if not detected
           if !(set_cookie.split(";").detect{|x| x =~ /httponly/i } && 
@@ -202,10 +203,10 @@ class Uri < Intrigue::Task::BaseTask
           create_deprecated_protocol_issue(uri, accepted_connections)
         end
 
-      else # http endpoint 
+      else # http endpoint, just check for httponly
                 
         if set_cookie 
-          _log "Http_only Cookie: #{set_cookie.split(";").detect{|x| x =~ /httponly/i }}"
+          _log "Httponly Cookie: #{set_cookie.split(";").detect{|x| x =~ /httponly/i }}"
 
           # create an issue if not detected
           if !set_cookie.split(";").detect{|x| x =~ /httponly/i }
@@ -317,7 +318,6 @@ class Uri < Intrigue::Task::BaseTask
     result = scanner.scan
   result.ciphers.to_a
   end
-
 
   def check_options_endpoint(uri)
     response = http_request(:options, uri)

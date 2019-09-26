@@ -61,9 +61,10 @@ class Example < BaseTask
     sleep(_get_option("sleep"))
 
     # Generate a number of hosts based on the user option
+=begin
     _get_option("count").times do
 
-      # Generate a fake IP address
+    # Generate a fake IP address
       ip_address = "#{rand(255)}.#{rand(255)}.#{rand(255)}.#{rand(255)}"
 
       # display a log message
@@ -74,20 +75,37 @@ class Example < BaseTask
       ###
 
       # notifies all notifiers configured with "enabled" and "default"
-      _notify "[+] Randomly generated an IP address: #{ip_address}" if opt_notify
+      #_notify "[+] Randomly generated an IP address: #{ip_address}" if opt_notify
 
       # notifies via all channels of type "slack" and "enabled" set to true
       #_notify_type "slack", "[slack] Randomly generated an IP address: #{ip_address}"
 
-      _log_fatal "Oh no, it's a fatal error!"
+      #_log_fatal "Oh no, it's a fatal error!"
 
       # notifies via a specifically named channel
       #_notify_specific "specific_slack", "[specific_slack] Randomly generated an IP address: #{ip_address}"
 
       # Create & return the entity
-      _create_entity("IpAddress", {"name" => ip_address })
+      e = _create_entity("IpAddress", {"name" => ip_address })
+      _create_network_service_entity(e,443)
 
     end
+=end
+    ips = []
+    _get_option("count").times do 
+      ips  << "#{rand(255)}.#{rand(255)}.#{rand(255)}.#{rand(255)}"
+    end
+
+    lammylam = lambda { |ip|
+      #_log "Creating domain: #{d}"
+      e = _create_entity("IpAddress", {"name" => ip })
+      _create_network_service_entity(e,443)
+    true
+    }
+
+    # use a generic threaded iteration method to create them,
+    # with the desired number of threads
+    _threaded_iteration(20, ips, lammylam)
 
   end
 
