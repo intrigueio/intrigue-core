@@ -58,6 +58,7 @@ gem 'rubyzip'
 gem 'watir'
 gem 'selenium-webdriver'
 gem 'recog-intrigue',         :git => 'https://github.com/intrigueio/recog.git'
+gem 'chrome_remote'
 
 # swap these if developing on ident locally
 # ident

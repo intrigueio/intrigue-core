@@ -4,7 +4,6 @@ module Enrich
 class Uri < Intrigue::Task::BaseTask
 
   include Intrigue::Ident
-  #include Intrigue::Vulndb
 
   def self.metadata
     {
@@ -67,31 +66,14 @@ class Uri < Intrigue::Task::BaseTask
     # and limit some functionality
     browser_enabled = Intrigue::Config::GlobalConfig.config["browser_enabled"]
 
-    if browser_enabled 
-      ### 
-      ### Fingerprint Javascript
-      ###
-      begin
-        _log "Creating browser session"
-        session = create_browser_session
-        
-        # note that we might not have a session if it's diabled globally 
-        if session 
-          # Run the version checking scripts
-          _log "Grabbing Javascript libraries"
-          js_libraries = gather_javascript_libraries(session, uri)
-
-          # screenshot
-          #_log "Capturing screenshot"
-          encoded_screenshot = capture_screenshot(session, uri)
-        end
-
-      ensure
-        # kill the session / cleanup - if we never had a session, this'll 
-        # just complete gracefully
-        _log "Destroying browser session"
-        destroy_browser_session(session)
-      end
+    ### 
+    ### Screenshot
+    ###
+    if browser_enabled  
+      c = Intrigue::ChromeBrowser.new
+      browser_response = c.navigate_and_capture(uri)
+    else 
+      browser_response = {}
     end
 
     # Use intrigue-ident code to request all of the pages we
@@ -189,7 +171,7 @@ class Uri < Intrigue::Task::BaseTask
         end
 
         _log "Gathering ciphers since this is an ssl endpoint"
-        accepted_connections = _gather_supported_connections(hostname,port).select{|x| 
+        accepted_connections = _gather_supported_ciphers(hostname,port).select{|x| 
           x[:status] == :accepted } 
 
         # Create findings if we have a weak cipher 
@@ -285,13 +267,20 @@ class Uri < Intrigue::Task::BaseTask
         "forms" => contains_forms,
         "response_data_hash" => response_data_hash,
         "hidden_favicon_data" => favicon_data,
+        "extended_favicon_data" => favicon_data,
         "hidden_response_data" => response.body,
-        "hidden_screenshot_contents" => encoded_screenshot,
-        "javascript" => js_libraries,
+        "extended_response_body" => response.body,
+        "hidden_screenshot_contents" => browser_response["encoded_screenshot"],
+        "extended_screenshot_contents" => browser_response["encoded_screenshot"],
+        "extended_requests" => browser_response["requests"],
+        "request_hosts" => browser_response["requests"].map{|x| x["hostname"] }.compact.uniq.sort,
+        #"javascript" => js_libraries,
         "products" => products.compact,
         "fingerprint" => ident_fingerprints.uniq,
         "content" => ident_content_checks.uniq,
-        "ciphers" => accepted_connections
+        "extended_configuration" => ident_content_checks.uniq, # new content field
+        "ciphers" => accepted_connections.map{|x| },
+        "extended_ciphers" => accepted_connections # new ciphers field
       })
 
       # Set the details, and make sure raw response data is a hidden (not searchable) detail
@@ -312,7 +301,7 @@ class Uri < Intrigue::Task::BaseTask
 
   end
 
-  def _gather_supported_connections(hostname,port)
+  def _gather_supported_ciphers(hostname,port)
     require 'rex/sslscan'
     scanner = Rex::SSLScan::Scanner.new(hostname, port)
     result = scanner.scan

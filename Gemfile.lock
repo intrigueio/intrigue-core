@@ -120,6 +120,8 @@ GEM
     byebug (11.0.1)
     childprocess (2.0.0)
       rake (< 13.0)
+    chrome_remote (0.2.0)
+      websocket-driver (~> 0.6)
     coderay (1.1.2)
     command_lion (2.0.1)
     concurrent-ruby (1.1.5)
@@ -291,6 +293,9 @@ GEM
     watir (6.16.5)
       regexp_parser (~> 1.2)
       selenium-webdriver (~> 3.6)
+    websocket-driver (0.7.1)
+      websocket-extensions (>= 0.1.0)
+    websocket-extensions (0.1.4)
     whois (4.1.0)
     whois-parser (1.2.0)
       activesupport (>= 4)
@@ -306,6 +311,7 @@ DEPENDENCIES
   aws-sdk-s3
   aws-sdk-sqs
   censys!
+  chrome_remote
   couchrest
   dnsruby
   elasticsearch
