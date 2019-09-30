@@ -162,10 +162,7 @@ module Vulndb
                     cwe: cwe_id,
                     cvss_v2_score: cvss_v2_score,
                     cvss_v3_score: cvss_v3_score,
-                    auth: (cvss_v2 && cvss_v2["cvssV2"] ? !(cvss_v2["cvssV2"]["authentication"] == "NONE") : nil ),
-                    rce: (cvss_v2 && cvss_v2["cvssV2"] ? (cvss_v2["cvssV2"]["confidentialityImpact"] == "COMPLETE" &&
-                          cvss_v2["cvssV2"]["availabilityImpact"] == "COMPLETE" &&
-                          cvss_v2["cvssV2"]["integrityImpact"] == "COMPLETE") : nil)
+                    auth: (cvss_v2 && cvss_v2["cvssV2"] ? !(cvss_v2["cvssV2"]["authentication"] == "NONE") : nil )
                   }
 
                   vulns << vuln
