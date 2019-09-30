@@ -1,4 +1,11 @@
 GIT
+  remote: https://github.com/intrigueio/chrome_remote.git
+  revision: 98b75a08a182934fb0370b4b086e0e60d2929cd4
+  specs:
+    chrome_remote (0.2.0)
+      websocket-driver (~> 0.6)
+
+GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
   revision: dd2fd2c9a76f017e299eaa0fac86f33fea8bf3b1
   specs:
@@ -120,8 +127,6 @@ GEM
     byebug (11.0.1)
     childprocess (2.0.0)
       rake (< 13.0)
-    chrome_remote (0.2.0)
-      websocket-driver (~> 0.6)
     coderay (1.1.2)
     command_lion (2.0.1)
     concurrent-ruby (1.1.5)
@@ -311,7 +316,7 @@ DEPENDENCIES
   aws-sdk-s3
   aws-sdk-sqs
   censys!
-  chrome_remote
+  chrome_remote!
   couchrest
   dnsruby
   elasticsearch
@@ -359,7 +364,6 @@ DEPENDENCIES
   thor
   towerdata_api
   versionomy
-  watir
   whois
   whois-parser
   whoisology!

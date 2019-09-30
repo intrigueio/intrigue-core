@@ -34,7 +34,7 @@ class Uri < Intrigue::Task::BaseTask
       return nil
     end
 
-    _log "Making requests"
+    _log "Making initial requests"
     # Grab the full response
     response = http_request :get, uri
     response2 = http_request :get, uri
@@ -47,12 +47,15 @@ class Uri < Intrigue::Task::BaseTask
     response_data_hash = Digest::SHA256.base64digest(response.body)
 
     # we can check the existing response, so send that
+    _log "Checking if API Endpoint"
     api_enabled = check_api_endpoint(response)
 
     # we can check the existing response, so send that
+    _log "Checking if Forms"
     contains_forms = check_forms(response.body)
 
     # we'll need to make another request
+    _log "Checking OPTIONS"
     verbs_enabled = check_options_endpoint(uri)
 
     # grab all script_references

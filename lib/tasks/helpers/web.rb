@@ -444,7 +444,7 @@ module Task
   ### move this over to RestClient: https://github.com/ruby/ruby/commit/3cf7d1b57e3622430065f6a6ce8cbd5548d3d894
   ###
   def http_request(method, uri_string, credentials=nil, headers={}, 
-      data=nil, attempts_limit=10, open_timeout=15, read_timeout=15)
+      data=nil, attempts_limit=3, open_timeout=15, read_timeout=15)
 
     response = nil
     begin
@@ -479,7 +479,6 @@ module Task
        end
 
        http = Net::HTTP.start(uri.host, uri.port, proxy_addr, proxy_port, opts)
-       #http.set_debug_output($stdout) if _get_system_config "debug"
        http.read_timeout = read_timeout
        http.open_timeout = open_timeout
 

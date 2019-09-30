@@ -55,10 +55,12 @@ gem 'rex-sslscan',            :git => 'https://github.com/intrigueio/rex-sslscan
 gem 'flareon'                 # dns resolution over http
 gem 'net-http2'               # http2 client support
 gem 'rubyzip'
-gem 'watir'
 gem 'selenium-webdriver'
 gem 'recog-intrigue',         :git => 'https://github.com/intrigueio/recog.git'
-gem 'chrome_remote'
+
+# swap these if developing on chrome_remote locally
+gem 'chrome_remote',          :git => 'https://github.com/intrigueio/chrome_remote.git'
+#gem 'chrome_remote',          :path => "~/work/intrigue/local/chrome_remote"
 
 # swap these if developing on ident locally
 # ident
