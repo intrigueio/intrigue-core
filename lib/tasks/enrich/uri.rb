@@ -279,7 +279,7 @@ class Uri < Intrigue::Task::BaseTask
         "fingerprint" => ident_fingerprints.uniq,
         "content" => ident_content_checks.uniq,
         "extended_configuration" => ident_content_checks.uniq, # new content field
-        "ciphers" => accepted_connections.map{|x| },
+        "ciphers" => accepted_connections,
         "extended_ciphers" => accepted_connections # new ciphers field
       })
 
