@@ -45,8 +45,12 @@ function start_server {
   bundle exec puma -C $IDIR/config/puma.rb --pidfile $IDIR/tmp/pids/puma.pid --redirect-stdout $IDIR/log/puma.log --redirect-stderr $IDIR/log/puma.log
 
   echo "Starting eventmachine..."
-  bundle exec ruby $IDIR/util/eventmachine.rb & 
+  nohup bundle exec ruby $IDIR/util/eventmachine.rb & 
   echo $! > $IDIR/tmp/pids/eventmachine.pid 
+
+  echo "Starting Chrome DevTools API"
+  nohup google-chrome --headless --remote-debugging-port=9222 &
+  echo $! > $IDIR/tmp/pids/chrome.pid 
 }
 
 function stop_server {
