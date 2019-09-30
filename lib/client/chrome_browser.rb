@@ -18,7 +18,7 @@ module Intrigue
       @chrome.on "Network.requestWillBeSent" do |params|
 
         begin 
-          hostname = URI.parse(params["request"].["url"]).host
+          hostname = URI.parse(params["request"]["url"]).host
         rescue URI::InvalidURIError => e
           hostname = nil
         end
