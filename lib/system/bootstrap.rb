@@ -43,6 +43,9 @@ module Bootstrap
       project.seeds = parsed_seeds
       project.save
 
+      # handle no-seed cases
+      next unless parsed_seeds.count > 0 
+
       # Create a queue to hold our list of seeds & enqueue
       work_q = Queue.new
       parsed_seeds.each do |s|
@@ -50,8 +53,9 @@ module Bootstrap
       end
 
       # Create a pool of worker threads to work on the queue
-      max_threads = 20
-      max_threads = 50 if parsed_seeds.count > 50
+      max_threads = 5
+      max_threads = 20 if parsed_seeds.count > 20
+      max_threads = 40 if parsed_seeds.count > 40
 
       workers = (0...max_threads).map do
         Thread.new do
