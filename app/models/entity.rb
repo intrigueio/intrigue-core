@@ -67,12 +67,12 @@ module Intrigue
       end
 
       def short_details
-        details.select { |k,v| 
-          !k.to_s.match(/^hidden_.*$/) || !k.to_s.match(/^extended_.*$/)   }
+        details.reject { |k,v| 
+          k.to_s.match(/^hidden_.*$/) || k.to_s.match(/^extended_.*$/)   }
       end
 
       def extended_details
-        details.select { |k,v| 
+        details.select{ |k,v| 
           k.to_s.match(/^hidden_.*$/) || k.to_s.match(/^extended_.*$/)   }
       end
 
