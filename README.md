@@ -1,33 +1,18 @@
 # Welcome!
 
-Intrigue-core is a framework for external attack surface discovery and automated OSINT. 
+Intrigue-core is a framework for external attack surface discovery and automated OSINT. The framework is designed for use cases such as:
 
-The framework is designed to support OSINT and automation-related use cases such as:
-
-  * Asset (Application and Infrastructure) Discovery
+  * Asset Discovery (Application and Infrastructure)
   * Security Research and Vulnerability Scanning
-  * Exploratory OSINT
+  * Exploratory OSINT (People, Systems, Entities)
   * Malware IOC Enrichment
   * General Data Gathering Pipelines
 
-If you'd like assistance getting started or have development-related questions, feel free to join us in the [chat](https://gitter.im/intrigueio/intrigue-core).
+If you'd like assistance getting started or have development-related questions, feel free to join us in slack channel, simply drop a line to hello@intrigue.io
 
 # Users
 
-If you want started quickly and play around, head on over to the [Getting Started Guide](https://core.intrigue.io/getting-started/)
-
-# Developers
-
-To get started setting up a development environment, follow the instructions below!
-
-### Setting up a development environment
-
-Follow the appropriate setup guide:
-
- * Vagrant (preferred for development) - http://core.intrigue.io/getting-started-with-intrigue-core-on-vagrant-virtualbox/
- * Docker - https://core.intrigue.io/2017/03/07/using-intrigue-core-with-docker/
-
-Now that you have a working environment, browse to the web interface.
+To get started quickly and play around with an instance, head on over to the [Getting Started Guide](https://core.intrigue.io/getting-started/). We suggest the Docker image as a first place to start. It's actively built on the master branch of Intrigue Core. 
 
 ### Using the web interface
 
@@ -68,3 +53,16 @@ Task Result: {"result_id":66103}
 
 ### API SDK (Ruby)
 A Ruby gem is available for your convenience: [![Gem Version](https://badge.fury.io/rb/intrigue_api_client.svg)](http://badge.fury.io/rb/intrigue_api_client)
+
+
+# Developers
+
+To get started setting up a development environment, follow the instructions below!
+
+### Setting up a development environment
+
+While you can build a local setup and develop, we'd suggest starting with one of the following setup guides:
+
+ * Vagrant - http://core.intrigue.io/getting-started-with-intrigue-core-on-vagrant-virtualbox/
+ * Docker - https://core.intrigue.io/2017/03/07/using-intrigue-core-with-docker/
+
