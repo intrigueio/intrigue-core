@@ -257,6 +257,7 @@ sudo service postgresql restart
 
 echo "[+] Creating database"
 sudo -u postgres createuser intrigue
+sudo -u postgres dropdb intrigue_dev # just in case it exists
 sudo -u postgres createdb intrigue_dev --owner intrigue
 
 ##### Install rbenv
