@@ -53,7 +53,6 @@ function start_server {
   nohup google-chrome --headless --disable-gpu --disable-dev-shm-usage --ignore-certificate-errors --disable-popup-blocking --disable-translate --remote-debugging-port=9222 &
   echo $! > $IDIR/tmp/pids/chrome.pid 
 }
-}
 
 function stop_server {
   for x in `ls $IDIR/tmp/pids/*.pid`; do
