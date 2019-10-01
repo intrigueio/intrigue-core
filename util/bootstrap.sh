@@ -113,7 +113,7 @@ sudo apt-get -y --fix-broken install make \
   net-tools \
   libpq-dev \
   postgresql \
-  postgresql-server-dev \
+  postgresql-server-dev-all \
   redis-server \
   boxes \
   nmap \
