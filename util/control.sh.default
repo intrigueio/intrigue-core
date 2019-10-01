@@ -18,6 +18,7 @@
 # eval "$(rbenv init -)"
 #
 
+MALLOC_ARENA_MAX=2
 IDIR=/core
 cd $IDIR
 
@@ -38,7 +39,7 @@ function start_server {
 
   for x in $SIDEKIQ_WORKERS; do
     echo "Starting task processing for worker: $x"
-    bundle exec sidekiq -C $IDIR/config/sidekiq.yml -r $IDIR/core.rb -d -L $IDIR/log/sidekiq-$x.log -P $IDIR/tmp/pids/sidekiq-$x.pid
+    nohup bundle exec sidekiq -C $IDIR/config/sidekiq.yml -r $IDIR/core.rb -L $IDIR/log/sidekiq-$x.log -P $IDIR/tmp/pids/sidekiq-$x.pid & 
   done
 
   echo "Starting puma..."

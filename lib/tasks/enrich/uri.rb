@@ -254,6 +254,13 @@ class Uri < Intrigue::Task::BaseTask
     generator_match = response.body.match(/<meta name=\"?generator\"? content=\"?(.*?)\"?\/>/i)
     generator_string = generator_match.captures.first.gsub("\"","") if generator_match
 
+    # in case we're missing requests
+    if browser_response["requests"]
+      request_hosts = browser_response["requests"].map{|x| x["hostname"] }.compact.uniq.sort
+    else 
+      request_hosts = []
+    end
+
     $db.transaction do
       new_details = @entity.details.merge({
         "alt_names" => alt_names,
@@ -277,7 +284,7 @@ class Uri < Intrigue::Task::BaseTask
         "hidden_screenshot_contents" => browser_response["encoded_screenshot"],
         "extended_screenshot_contents" => browser_response["encoded_screenshot"],
         "extended_requests" => browser_response["requests"],
-        "request_hosts" => browser_response["requests"].map{|x| x["hostname"] }.compact.uniq.sort,
+        "request_hosts" => request_hosts,
         #"javascript" => js_libraries,
         "products" => products.compact,
         "fingerprint" => ident_fingerprints.uniq,
