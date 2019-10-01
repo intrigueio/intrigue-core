@@ -40,8 +40,8 @@ class ImportUmbrellaTopSites < BaseTask
         entry.get_input_stream.read.split("\n").map do |l| 
           domain = l.split(",").last.chomp
           # create entities
-          e = _create_entity "Uri", { "name" => "http://#{d}" }
-          _create_entity "Uri", { "name" => "https://#{d}"}, e
+          e = _create_entity "Uri", { "name" => "http://#{domain}" }
+          _create_entity "Uri", { "name" => "https://#{domain}"}, e
         end
 
       end
