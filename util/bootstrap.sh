@@ -249,8 +249,10 @@ sudo bash -c "echo '* soft nofile 524288' >> /etc/security/limits.conf"
 sudo bash -c "echo session required pam_limits.so >> /etc/pam.d/common-session"
 
 # Set the database to trust
-echo "[+] Updating postgres configuration"
-sudo sed -i 's/md5/trust/g' /etc/postgresql/9.6/main/pg_hba.conf
+echo "[+] Updating postgres configuration to TRUST"
+sudo sed -i 's/md5/trust/g' /etc/postgresql/*/main/pg_hba.conf
+sudo sed -i 's/peer/trust/g' /etc/postgresql/*/main/pg_hba.conf
+
 sudo service postgresql restart
 
 echo "[+] Creating database"
