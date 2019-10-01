@@ -91,7 +91,7 @@ class Uri < Intrigue::Task::BaseTask
     ident_fingerprints = ident_matches["fingerprint"] || []
     ident_content_checks = ident_matches["content"] || []
 
-    # get the requests we made so we can save off all details
+    # get the request/response we made so we can keep track of redirects
     ident_responses = ident_matches["responses"]
 
     if ident_fingerprints.count > 0
@@ -271,7 +271,8 @@ class Uri < Intrigue::Task::BaseTask
         "response_data_hash" => response_data_hash,
         "hidden_favicon_data" => favicon_data,
         "extended_favicon_data" => favicon_data,
-        "hidden_response_data" => response.body,
+        "hidden_response_data" => response.body, 
+        "extended_full_responses" => ident_responses, # includes all the redirects etc
         "extended_response_body" => response.body,
         "hidden_screenshot_contents" => browser_response["encoded_screenshot"],
         "extended_screenshot_contents" => browser_response["encoded_screenshot"],
