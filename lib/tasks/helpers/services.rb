@@ -161,7 +161,7 @@ module Services
 
     # use a generic threaded iteration method to create them,
     # with the desired number of threads
-    thread_count = (hosts.count / 2) + 1 
+    thread_count = (hosts.count / 10) + 1 
     _log "Creating service (#{port_num}) on #{hosts.map{|x|x.name}} with #{thread_count} threads."
     _threaded_iteration(thread_count, hosts, create_service_lambda)
         

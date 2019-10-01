@@ -227,7 +227,6 @@ class EntityManager
         #####
 
         begin
-
           # Create a new entity in that group
           entity = Intrigue::Model::Entity.update_or_create(
             {name: downcased_name, type: type.to_s, project: project}, entity_details)
