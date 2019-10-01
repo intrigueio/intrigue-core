@@ -50,8 +50,9 @@ function start_server {
   echo $! > $IDIR/tmp/pids/eventmachine.pid 
 
   echo "Starting Chrome DevTools API"
-  nohup google-chrome --headless --remote-debugging-port=9222 &
+  nohup google-chrome --headless --disable-gpu --disable-dev-shm-usage --ignore-certificate-errors --disable-popup-blocking --disable-translate --remote-debugging-port=9222 &
   echo $! > $IDIR/tmp/pids/chrome.pid 
+}
 }
 
 function stop_server {
