@@ -65,4 +65,3 @@ While you can build a local setup and develop, we'd suggest starting with one of
 
  * Vagrant - http://core.intrigue.io/getting-started-with-intrigue-core-on-vagrant-virtualbox/
  * Docker - https://core.intrigue.io/2017/03/07/using-intrigue-core-with-docker/
-
