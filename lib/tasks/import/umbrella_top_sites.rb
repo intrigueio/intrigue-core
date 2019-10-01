@@ -55,8 +55,10 @@ class ImportUmbrellaTopSites < BaseTask
     # Now really do the thing 
     _log_good "Setting up the lambda"
     lammylam = lambda { |d|
-      _create_entity "Uri", { "name" => "http://#{d}" }
-      _create_entity "Uri", { "name" => "https://#{d}" }
+      e = _create_entity "Uri", { "name" => "http://#{d}" }
+      _create_entity "Uri", { "name" => "http://www.#{d}", e} # create as a sister
+      _create_entity "Uri", { "name" => "https://#{d}", e} # create as a sister
+      _create_entity "Uri", { "name" => "https://www.#{d}", e} # create as a sister
     true
     }
 
@@ -65,7 +67,6 @@ class ImportUmbrellaTopSites < BaseTask
     _log_good "Fanning out"
     thread_count = _get_option "threads"
     _threaded_iteration(thread_count, domains, lammylam)
-
   end
 
 
