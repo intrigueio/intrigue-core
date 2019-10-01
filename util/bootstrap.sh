@@ -5,12 +5,12 @@
 #####
 
 # Clean up apt
-echo "[+] Disabling up apt-daily.service"
+echo "[+] Disabling up apt-daily.service (required for EC2)"
 sudo systemctl stop apt-daily.service
 sudo systemctl kill --kill-who=all apt-daily.service
 sudo systemctl disable apt-daily.service
 
-echo "[+] Disabling apt-daily-upgrade.service"
+echo "[+] Disabling apt-daily-upgrade.service (required for EC2)"
 sudo systemctl stop apt-daily-upgrade.timer
 sudo systemctl kill --kill-who=all apt-daily-upgrade.service
 sudo systemctl disable apt-daily-upgrade.service
@@ -218,20 +218,6 @@ if [ ! -f /usr/bin/rdpscan ]; then
   sudo cp rdpscan /usr/bin
   cd ..
   rm -rf rdpscan
-fi
-
-# Get chromedriver
-echo "[+] Installing Chromedriver"
-if [ ! -f /usr/bin/chromedriver ]; then
-  mkdir chromedriver
-  cd chromedriver
-  CHROMEDRIVER_VERSION=`wget -q -O - "http://chromedriver.storage.googleapis.com/LATEST_RELEASE"`
-  wget -q "http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
-  unzip chromedriver_linux64.zip
-  sudo cp chromedriver /usr/bin/chromedriver
-  sudo chmod +x /usr/bin/chromedriver
-  cd ..
-  rm -rf chromedriver
 fi
 
 # update sudoers
