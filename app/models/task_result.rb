@@ -26,15 +26,16 @@ module Intrigue
         task_class = Intrigue::TaskFactory.create_by_name(task_name).class
         forced_queue = task_class.metadata[:queue]
 
-        self.job_id = Sidekiq::Client.push({
+        sjid = Sidekiq::Client.push({
           "class" => task_class.to_s,
           "queue" => forced_queue || requested_queue || "task",
           "retry" => true,
           "args" => [id]
         })
+        self.job_id = sjid
         save_changes
 
-      self.job_id
+      sjid
       end
 
       def cancel!

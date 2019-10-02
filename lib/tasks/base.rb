@@ -33,11 +33,7 @@ class BaseTask
 
     # gracefully handle situations where the task result has gone missing
     # usually this is a deleted project
-    unless @task_result
-      #_log_error "Unable continue without task result #{task_result_id}. Bailing."
-      #_log_error "Does the project still exist?"
-      return nil
-    end
+    return nil unless @task_result
 
     # Handle cancellation
     if @task_result.cancelled
@@ -59,19 +55,16 @@ class BaseTask
 
     # We need a flag to skip the actual setup, run, cleanup of the task if
     # the caller gave us something broken. We still want to get the final
-    #  task result back to the caller though (so no raise). Assume it's good,
+    # task result back to the caller though (so no raise). Assume it's good,
     # and check input along the way.
     broken_input_flag = false
-
-    # Do a little logging. Do it for the kids!
-    #_log "Entity: #{@entity.type_string}##{@entity.name}"
 
     ###################
     # Sanity Checking #
     ###################
     allowed_types = self.class.metadata[:allowed_types]
 
-    # Check to make sure this task can receive an entity of this type and if
+    # Check to make sure this task can receive an entity of this type
     unless allowed_types.include?(@entity.type_string) || allowed_types.include?("*")
       _log_error "Unable to call #{self.class.metadata[:name]} on entity: #{@entity}"
       broken_input_flag = true
@@ -124,7 +117,7 @@ class BaseTask
         _log "Saving entity!"
         @entity.save_changes
 
-        # MACHINE LAUNCH
+        # MACHINE LAUNCH (ONLY IF WE ARE ATTACHED TO A MACHINE) 
         # if this is part of a scan and we're in depth
         if @task_result.scan_result && @task_result.depth > 0
           machine_name = @task_result.scan_result.machine

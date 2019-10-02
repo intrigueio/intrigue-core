@@ -14,8 +14,8 @@ module Helper
 
     # Create the task result, and associate our entity and options
     task_result = Intrigue::Model::TaskResult.create({
-      :project => project,
-      :logger => Intrigue::Model::Logger.create(:project => project),
+      :project_id => project.id,
+      :logger => Intrigue::Model::Logger.create(:project_id => project.id),
       :name => "#{task_name}_on_#{entity.name}",
       :task_name => task_name,
       :task_type => Intrigue::TaskFactory.create_by_name(task_name).class.metadata[:type],
