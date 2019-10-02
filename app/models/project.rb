@@ -32,7 +32,7 @@ module Intrigue
       end
 
       def seed_entity?(entity_name, type_string)
-        seeds.all.each do |s|
+        seeds.each do |s|
           return true if entity_name == s.name && type_string == s.type.to_s
         end
       false
