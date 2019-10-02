@@ -39,7 +39,8 @@ function start_server {
 
   for x in $SIDEKIQ_WORKERS; do
     echo "Starting task processing for worker: $x"
-    bundle exec sidekiq -C $IDIR/config/sidekiq.yml -r $IDIR/core.rb -L $IDIR/log/sidekiq-$x.log -P $IDIR/tmp/pids/sidekiq-$x.pid >> $IDIR/log/sidekiq.log & 
+    bundle exec sidekiq -C $IDIR/config/sidekiq.yml -r $IDIR/core.rb >> $IDIR/log/sidekiq.log & 
+    echo $! > $IDIR/tmp/pids/sidekiq-$x.pid 
   done
 
   echo "Starting puma..."
