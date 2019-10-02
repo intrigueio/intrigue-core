@@ -1,4 +1,4 @@
-module Intrigue
+  module Intrigue
 module Task
 module Enrich
 class Uri < Intrigue::Task::BaseTask
@@ -59,22 +59,29 @@ class Uri < Intrigue::Task::BaseTask
     verbs_enabled = check_options_endpoint(uri)
 
     # grab all script_references
+    _log "Parsing out Scripts"
     script_links = response.body.scan(/<script.*?src=["|'](.*?)["|']/).map{|x| x.first if x }
 
     # save the Headers
     headers = []
+    _log "Saving Headers"
     response.each_header{|x| headers << "#{x}: #{response[x]}" }
 
     # Grab the global option since we'll need to pass it to ident 
     # and limit some functionality
     browser_enabled = Intrigue::Config::GlobalConfig.config["browser_enabled"]
-
+    _log "Browser Enabled: #{browser_enabled}"
     ### 
     ### Screenshot
     ###
     if browser_enabled  
-      c = Intrigue::ChromeBrowser.new
-      browser_response = c.navigate_and_capture(uri)
+      begin 
+        _log "Browser Navigating to #{uri}"
+        c = Intrigue::ChromeBrowser.new
+        browser_response = c.navigate_and_capture(uri)
+      rescue Errno::ECONNREFUSED => e 
+        _log_error "Unable to connect to chrome browser. Is it running on :9222?"
+      end
     else 
       browser_response = {}
     end
@@ -82,7 +89,7 @@ class Uri < Intrigue::Task::BaseTask
     # Use intrigue-ident code to request all of the pages we
     # need to properly fingerprint
     _log "Attempting to fingerprint!"
-    _log "Ident browser disabled!"
+    _log "NOTE! Ident browser disabled!"
     # TODO - move screenshotting into ident so we don't have to
     # do it separately above. for now, no browser fingerprints. 
     # too resource intensive.  (change the false param below to enable)
@@ -90,11 +97,14 @@ class Uri < Intrigue::Task::BaseTask
 
     ident_fingerprints = ident_matches["fingerprint"] || []
     ident_content_checks = ident_matches["content"] || []
+    _log "Got #{ident_fingerprints.count} fingerprints!"
 
     # get the request/response we made so we can keep track of redirects
     ident_responses = ident_matches["responses"]
+    _log "Received #{ident_responses.count} responses for fingerprints!"
 
     if ident_fingerprints.count > 0
+      _log "Attempting to match to vulnerabilities!"
       # Make sure the key is set before querying intrigue api
       vulndb_api_key = _get_task_config "intrigue_vulndb_api_key"
       use_api = vulndb_api_key && vulndb_api_key.length > 0
@@ -132,6 +142,7 @@ class Uri < Intrigue::Task::BaseTask
     # the UI / queries if any of the matches told us to hide the entity, do it.
     # EXAMPLE TEST CASE: http://103.24.203.121:80 (cpanel missing page)
     if ident_fingerprints.detect{|x| x["hide"] == true }
+      _log "Entity hidden based on fingerprint"
       @entity.hidden = true
       @entity.save_changes
     end
@@ -208,6 +219,7 @@ class Uri < Intrigue::Task::BaseTask
     ### 
     ### get the favicon & hash it 
     ###
+    _log "Getting Favicon"
     favicon_response = http_request(:get, "#{uri}/favicon.ico")
 
     if favicon_response && favicon_response.code == "200"
@@ -239,6 +251,7 @@ class Uri < Intrigue::Task::BaseTask
     ###
     ### Product matching
     ###
+    _log "Matching to products"
     products = []
     # match products based on gathered server software
     products << product_match_http_server_banner(response.header['server']).first
@@ -255,7 +268,7 @@ class Uri < Intrigue::Task::BaseTask
     generator_string = generator_match.captures.first.gsub("\"","") if generator_match
 
     # in case we're missing requests
-    if browser_response["requests"]
+    if browser_response && browser_response["requests"]
       request_hosts = browser_response["requests"].map{|x| x["hostname"] }.compact.uniq.sort
     else 
       request_hosts = []
@@ -281,11 +294,7 @@ class Uri < Intrigue::Task::BaseTask
         "hidden_response_data" => response.body, 
         "extended_full_responses" => ident_responses, # includes all the redirects etc
         "extended_response_body" => response.body,
-        "hidden_screenshot_contents" => browser_response["encoded_screenshot"],
-        "extended_screenshot_contents" => browser_response["encoded_screenshot"],
-        "extended_requests" => browser_response["requests"],
         "request_hosts" => request_hosts,
-        #"javascript" => js_libraries,
         "products" => products.compact,
         "fingerprint" => ident_fingerprints.uniq,
         "content" => ident_content_checks.uniq,
@@ -293,6 +302,15 @@ class Uri < Intrigue::Task::BaseTask
         "ciphers" => accepted_connections,
         "extended_ciphers" => accepted_connections # new ciphers field
       })
+
+      if browser_response 
+        new_details.merge({
+          "hidden_screenshot_contents" => browser_response["encoded_screenshot"],
+          "extended_screenshot_contents" => browser_response["encoded_screenshot"],
+          "extended_requests" => browser_response["requests"],
+          #"javascript" => js_libraries,
+        })
+      end
 
       # Set the details, and make sure raw response data is a hidden (not searchable) detail
       @entity.set_details new_details

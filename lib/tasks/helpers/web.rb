@@ -479,8 +479,8 @@ module Task
        end
 
        http = Net::HTTP.start(uri.host, uri.port, proxy_addr, proxy_port, opts)
-       http.read_timeout = read_timeout
        http.open_timeout = open_timeout
+       http.read_timeout = read_timeout
 
        path = "#{uri.path}"
        path = "/" if path==""
