@@ -17,7 +17,7 @@ module Machine
     # Recurse should receive a fully enriched object from the creator task
     def self.recurse(entity, task_result)
 
-      seed_list = entity.project.seeds.map{|s| s["name"]}.join(",")
+      seed_list = project.seeds.map{|s| s.name }.join(",")
 
       ### 
       # don't go any further unless we're scoped & not no-traverse (hidden)! 

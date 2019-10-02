@@ -17,7 +17,7 @@ module Machine
     def self.recurse(entity, task_result)
 
       project = entity.project
-      seed_list = project.seeds.map{|s| s["name"]}.join(",")
+      seed_list = project.seeds.map{|s| s.name }.join(",")
 
       ### 
       # don't go any further unless we're scoped & not no-traverse (hidden)! 

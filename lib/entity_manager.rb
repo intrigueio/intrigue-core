@@ -59,42 +59,33 @@ class EntityManager
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
       $db.transaction do
-        begin
+        g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
 
-          g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
-
-          entity = Intrigue::Model::Entity.create({
-            :name =>  downcased_name,
-            :project => project,
-            :type => type,
-            :details => details,
-            :hidden => false, # first entity should NEVER be hidden - it was intentional
-            :scoped => true,  # first entity should ALWAYS be in scope - it was intentional
-            :alias_group_id => g.id
-           })
-
-         end
+        entity = Intrigue::Model::Entity.create({
+          :name =>  downcased_name,
+          :project => project,
+          :type => type,
+          :details => details,
+          :hidden => false, # first entity should NEVER be hidden - it was intentional
+          :scoped => true,  # first entity should ALWAYS be in scope - it was intentional
+          :alias_group_id => g.id,
+          :seed => true
+         })
       end
     end
 
     # necessary because of our single table inheritance?
-    our_entity = Intrigue::Model::Entity.find(:id => entity.id)
-
-    # Add it to seeds since it was created manually
-    unless project.seed_entity? our_entity.name, our_entity.type
-      project.seeds = (project.seeds || []) << {"name" => our_entity.name, "type" => our_entity.type}
-      project.save_changes
-    end
+    new_entity = Intrigue::Model::Entity.find(:id => entity.id)
 
     ### Ensure we have an entity
-    unless our_entity && our_entity.transform! && our_entity.validate_entity
-      puts "Error creating entity: #{our_entity}." + "Entity: #{type_string}##{name} #{details}"
+    unless new_entity && new_entity.transform! && new_entity.validate_entity
+      puts "Error creating entity: #{new_entity}." + "Entity: #{type_string}##{name} #{details}"
       return nil
     end
 
     # ENRICHMENT MUST BE STARTED MANUALLY!!!!!
 
-  our_entity
+  new_entity
   end
 
   # This method creates a new entity, and kicks off a machine
@@ -130,13 +121,13 @@ class EntityManager
 
     # check seeds
     project.seeds.each do |s|
-      seed_type_string = s["type"].split(":").last
+      seed_type_string = s.type.to_s.split(":").last
       
       # IpAddresses can't be used to skip, since they mess up netblocks
       next if seed_type_string == "IpAddress"  # TOOD.. this should really be a global list (see: netblock scoping)
 
       # check if the seed matches a non-traversable entity
-      r = project.non_traversable?(s["name"], seed_type_string)
+      r = project.non_traversable?(s.name, seed_type_string)
 
       # okay so if a seed is non-traversable, we'll skip it going forward
       skip_regexes << r if r

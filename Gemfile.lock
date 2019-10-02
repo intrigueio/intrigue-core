@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/intrigueio/chrome_remote.git
-  revision: 98b75a08a182934fb0370b4b086e0e60d2929cd4
+  revision: 7f7743ee521e2147a95ba57adb8a4c640de61a52
   specs:
     chrome_remote (0.2.0)
       websocket-driver (~> 0.6)
@@ -257,7 +257,7 @@ GEM
       rubyzip (>= 1.2.2)
     sentry-raven (2.11.3)
       faraday (>= 0.7.6, < 1.0)
-    sequel (5.24.0)
+    sequel (5.25.0)
     shodan (1.0.0)
       json (>= 1.4.6)
     sidekiq (6.0.0)

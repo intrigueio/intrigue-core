@@ -44,8 +44,7 @@ class IpAddress < Intrigue::Model::Entity
     ######################################################
     if self.project.seeds
       self.project.seeds.each do |s|
-        next unless scope_check_entity_types.include? s["type"]
-        return true if details["whois_full_text"] =~ /#{Regexp.escape(s["name"])}/ 
+        next unless scope_check_entity_types.include?(s.type.to_s) 
         
         # only if it's a domain
         if s["type"] == "Intrigue::Entity::Domain" # try the basename )

@@ -40,8 +40,8 @@ class EmailAddress < Intrigue::Model::Entity
     ######################################################
     if self.project.seeds
       self.project.seeds.each do |s|
-        next unless scope_check_entity_types.include? s["type"]
-        if self.name =~ /[\s@]#{Regexp.escape(s["name"])}/
+        next unless scope_check_entity_types.include? s.type.to_s
+        if self.name =~ /[\s@]#{Regexp.escape(s.name)}/
           #_log "Marking as scoped: SEED ENTITY NAME MATCHED TEXT: #{s["name"]}}"
           return true
         end
