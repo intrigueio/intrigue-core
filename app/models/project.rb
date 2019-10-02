@@ -28,15 +28,13 @@ module Intrigue
       end
 
       def seeds
-        Intrigue::Model::Entity.scope_by_project(self.name).where(seed: true)
+        Intrigue::Model::Entity.scope_by_project(self.name).where(seed: true).all || [] 
       end
 
       def seed_entity?(entity_name, type_string)
-
         seeds.all.each do |s|
           return true if entity_name == s.name && type_string == s.type.to_s
         end
-        
       false
       end
 

@@ -132,6 +132,7 @@ class EntityManager
       # okay so if a seed is non-traversable, we'll skip it going forward
       skip_regexes << r if r
     end
+  
 
     # simplify so we dont end up with a bunch of dupes
     skip_regexes = skip_regexes.uniq.compact
