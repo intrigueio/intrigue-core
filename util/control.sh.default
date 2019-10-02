@@ -39,18 +39,18 @@ function start_server {
 
   for x in $SIDEKIQ_WORKERS; do
     echo "Starting task processing for worker: $x"
-    nohup bundle exec sidekiq -C $IDIR/config/sidekiq.yml -r $IDIR/core.rb -L $IDIR/log/sidekiq-$x.log -P $IDIR/tmp/pids/sidekiq-$x.pid >> $IDIR/log/sidekiq.log & 
+    bundle exec sidekiq -C $IDIR/config/sidekiq.yml -r $IDIR/core.rb -L $IDIR/log/sidekiq-$x.log -P $IDIR/tmp/pids/sidekiq-$x.pid >> $IDIR/log/sidekiq.log & 
   done
 
   echo "Starting puma..."
   bundle exec puma -C $IDIR/config/puma.rb --pidfile $IDIR/tmp/pids/puma.pid --redirect-stdout $IDIR/log/puma.log --redirect-stderr $IDIR/log/puma.log
 
   echo "Starting eventmachine..."
-  nohup bundle exec ruby $IDIR/util/eventmachine.rb & 
+  bundle exec ruby $IDIR/util/eventmachine.rb & 
   echo $! > $IDIR/tmp/pids/eventmachine.pid 
 
   echo "Starting Chrome DevTools API"
-  nohup google-chrome --headless --disable-gpu --disable-dev-shm-usage --ignore-certificate-errors --disable-popup-blocking --disable-translate --remote-debugging-port=9222 &
+  google-chrome --headless --disable-gpu --disable-dev-shm-usage --ignore-certificate-errors --disable-popup-blocking --disable-translate --remote-debugging-port=9222 &
   echo $! > $IDIR/tmp/pids/chrome.pid 
 }
 
