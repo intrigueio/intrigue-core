@@ -74,7 +74,7 @@ class Uri < Intrigue::Task::BaseTask
     ### 
     ### Screenshot
     ###
-    if browser_enabled  
+    if browser_enabled && response.code =~ /^2\d\d/
       begin 
         _log "Browser Navigating to #{uri}"
         c = Intrigue::ChromeBrowser.new
@@ -83,6 +83,7 @@ class Uri < Intrigue::Task::BaseTask
         _log_error "Unable to connect to chrome browser. Is it running on :9222?"
       end
     else 
+      _log "Skipping browser, got code: #{response.code}"
       browser_response = {}
     end
 
