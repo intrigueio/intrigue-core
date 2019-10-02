@@ -3,20 +3,14 @@ class EntityManager
   extend Intrigue::Task::Helper
   extend Intrigue::Task::Data
 
-  # NOTE: We don't auto-register entities like the other factories (handled by
-  # single table inheritance)
-  def self.entity_types
-    Intrigue::Model::Entity.descendants
-  end
-
   def self.resolve_type_from_string(type_string)
     raise "INVALID TYPE TO RESOLVE: #{type_string}. DID YOU SEND A STRING? FAILING!" unless type_string.kind_of? String
 
     # Check full namespace first
-    matches = entity_types.select{|x| x.to_s == type_string }
+    matches = EntityFactory.entity_types.select{|x| x.to_s == type_string }
 
     # Then check all namespaces underneath
-    matches.concat(entity_types.select{|x|x.to_s.split(":").last.to_s == type_string })
+    matches.concat(EntityFactory.entity_types.select{|x|x.to_s.split(":").last.to_s == type_string })
 
     #note this will be nil if we didn't match
     unless matches.first

@@ -106,6 +106,7 @@ require_relative 'client'
 ####
 # Entity-specific libraries
 ####
+require_relative 'entity_factory'
 require_relative 'entity_manager'
 
 # Load all .rb file in lib/entities by default

@@ -8,14 +8,16 @@ module Intrigue
 
       self.raise_on_save_failure = false
 
-      # Keep track of subclasses
-      @@descendants = []
-
       many_to_one  :alias_group
       many_to_many :task_results
       many_to_one  :project
 
       include Intrigue::Task::Helper
+
+      def self.inherited(base)
+        EntityFactory.register(base)
+        super
+      end
 
       def self.scope_by_project(project_name)
         named_project = Intrigue::Model::Project.first(:name => project_name)
@@ -32,15 +34,6 @@ module Intrigue
         json_details = Sequel.pg_jsonb_op(:details)
         candidate_entities = scope_by_project_and_type(project_name,entity_type)
         candidate_entities.where(json_details.get_text(detail_name) => detail_value)
-      end
-
-      def self.descendants
-        @@descendants
-      end
-
-      def self.inherited(subclass)
-        @@descendants << subclass
-        super
       end
 
       def ancestors
