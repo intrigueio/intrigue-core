@@ -305,7 +305,7 @@ class Uri < Intrigue::Task::BaseTask
       })
 
       if browser_response 
-        new_details.merge({
+        new_details = new_details.merge({
           "hidden_screenshot_contents" => browser_response["encoded_screenshot"],
           "extended_screenshot_contents" => browser_response["encoded_screenshot"],
           "extended_requests" => browser_response["requests"],
