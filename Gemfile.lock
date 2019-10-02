@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/intrigueio/chrome_remote.git
-  revision: 7f7743ee521e2147a95ba57adb8a4c640de61a52
+  revision: 31326b59d76f0a944f9f90c80af8ca1d2b43ff5c
   specs:
     chrome_remote (0.2.0)
       websocket-driver (~> 0.6)
