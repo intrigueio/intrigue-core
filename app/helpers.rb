@@ -18,7 +18,6 @@ module Helper
       :logger => Intrigue::Model::Logger.create(:project_id => project.id),
       :name => "#{task_name}_on_#{entity.name}",
       :task_name => task_name,
-      :task_type => Intrigue::TaskFactory.create_by_name(task_name).class.metadata[:type],
       :options => options,
       :handlers => [],
       :base_entity => entity,

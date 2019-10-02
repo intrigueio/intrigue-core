@@ -98,7 +98,7 @@ class BaseTask
 
       ### ENRICHMENT TASK SPECIFICS
       # Now, if this is an enrichment task, we want to do some things
-      if @task_result.task_type == "enrichment"
+      if @task_result.task_name =~ /^enrich\/.*/
         
         # MARK ENTITY AS ENRICHED
         _log "Marking entity as enriched!"
