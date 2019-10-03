@@ -74,7 +74,7 @@ class Uri < Intrigue::Task::BaseTask
     ### 
     ### Screenshot
     ###
-    if browser_enabled && response.code =~ /^2\d\d/
+    if browser_enabled
       begin 
         _log "Browser Navigating to #{uri}"
         c = Intrigue::ChromeBrowser.new
