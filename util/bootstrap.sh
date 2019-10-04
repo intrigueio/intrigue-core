@@ -328,13 +328,14 @@ if ! $(grep -q README ~/.bash_profile); then
   echo "boxes -a c $INTRIGUE_DIRECTORY/util/README" >> ~/.bash_profile
 fi
 
+### HANDLE DOCKER STUFF HERE
 if [ -f /.dockerenv ]; then
-  echo "I'm inside matrix ;(";
+  echo "I'm inside docker!";
 else
-  echo "I'm living in real world!";
+  echo "I'm not inside docer!";
   echo "echo ''" > ~/.bash_profile
-  echo "echo To enable Intrigue services, run the following command:" > ~/.bash_profile
-  echo "echo $ god -c /home/ubuntu/util/god/intrigue-simple.rb && god start" > ~/.bash_profile
+  echo "echo To enable Intrigue services, run the following command:" >> ~/.bash_profile
+  echo "echo $ god -c /home/ubuntu/util/god/intrigue-simple.rb && god start" >> ~/.bash_profile
 fi
 
 # if we're configuring as root, we're probably going to run as root, so
