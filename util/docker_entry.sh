@@ -1,5 +1,5 @@
 #! /bin/bash
-source ~/.bash_profile
+#source ~/.bash_profile
 
 echo "[+] Restarting Postgres..."
 service postgresql restart
@@ -8,7 +8,7 @@ echo "[+] Restarting Redis..."
 service redis-server restart
 
 echo "[+] Restarting Intrigue..."
-/core/util/control.sh start
+foreman start -e /core/util/env-prod-docker
 
 echo "[+] Tailing sidekiq.log..."
 tail -f /core/log/sidekiq*.log

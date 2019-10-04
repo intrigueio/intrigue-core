@@ -34,7 +34,7 @@ environment ENV.fetch('INTRIGUE_ENV', 'development')
 # Daemonize the server into the background. Highly suggest that
 # this be combined with "pidfile" and "stdout_redirect".
 #
-# The default is "false".
+# The default is "true".
 #
 daemonize true
 

@@ -268,7 +268,8 @@ if [ ! -d ~/.rbenv ]; then
   echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bash_profile
   echo 'eval "$(rbenv init -)"' >> ~/.bash_profile
   source ~/.bash_profile > /dev/null
-  # manually load it up... for docker
+  
+  # manually load it up...
   eval "$(rbenv init -)"
   export PATH="$HOME/.rbenv/bin:$PATH"
   # ruby-build
@@ -318,16 +319,10 @@ bundle exec rake setup
 echo "[+] Running DB Migrations"
 bundle exec rake db:migrate
 
-echo "[+] Configuring puma to listen on 0.0.0.0"
-sed -i "s/tcp:\/\/127.0.0.1:7777/tcp:\/\/0.0.0.0:7777/g" $INTRIGUE_DIRECTORY/config/puma.rb
-
-echo "[+] Configuring puma to daemonize"
-sed -i "s/daemonize false/daemonize true/g" $INTRIGUE_DIRECTORY/config/puma.rb
-
 if [ ! -f /etc/init.d/intrigue ]; then
-  echo "[+] Creating Intrigue system service"
-  sudo cp $INTRIGUE_DIRECTORY/util/intrigue.service /lib/systemd/system
-  sudo chmod +x $INTRIGUE_DIRECTORY/util/control.sh
+  echo "[+] Creating intrigue services and starting AS root..."
+  cp util/Profile.prod Procfile
+  sudo foreman export upstart --app=intrigue --user= /etc/init
 fi
 
 if ! $(grep -q README ~/.bash_profile); then
@@ -349,3 +344,6 @@ fi
 # Cleaning up
 echo "[+] Cleaning up!"
 sudo apt-get -y clean
+
+echo "[+] Starting services"
+sudo service intrigue start
