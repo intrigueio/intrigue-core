@@ -328,6 +328,15 @@ if ! $(grep -q README ~/.bash_profile); then
   echo "boxes -a c $INTRIGUE_DIRECTORY/util/README" >> ~/.bash_profile
 fi
 
+if [ -f /.dockerenv ]; then
+  echo "I'm inside matrix ;(";
+else
+  echo "I'm living in real world!";
+  echo "echo ''" > ~/.bash_profile
+  echo "echo To enable Intrigue services, run the following command:" > ~/.bash_profile
+  echo "echo $ god -c /home/ubuntu/util/god/intrigue-simple.rb && god start" > ~/.bash_profile
+fi
+
 # if we're configuring as root, we're probably going to run as root, so
 #   manually force the .bash_profile to be run every login
 if [ $(id -u) = 0 ]; then
