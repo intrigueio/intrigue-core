@@ -37,7 +37,6 @@ class UriBrute < BaseTask
     # TODO - integrate a simple default list:
     ## "admin, test, server-status, .svn, .git, wp-config.php, config.php, configuration.php, LocalSettings.php, mediawiki/LocalSettings.php, mt-config.cgi, mt-static/mt-config.cgi, settings.php, .htaccess, config.bak, config.php.bak, config.php~, #config.php#, config.php.save, .config.php.swp, config.php.swp, config.php.old"
 
-
     # Get options
     uri = _get_entity_name
     opt_threads = _get_option("threads")

@@ -1,35 +1,42 @@
 #!/bin/bash
 
 #####
-##### SYSTEM SETUP / CONFIG
+##### SYSTEM CONFIG
 #####
 
-# Clean up apt
-echo "[+] Disabling up apt-daily.service (required for EC2)"
-sudo systemctl stop apt-daily.service
-sudo systemctl kill --kill-who=all apt-daily.service
-sudo systemctl disable apt-daily.service
+#!/bin/bash
 
-echo "[+] Disabling apt-daily-upgrade.service (required for EC2)"
-sudo systemctl stop apt-daily-upgrade.timer
-sudo systemctl kill --kill-who=all apt-daily-upgrade.service
-sudo systemctl disable apt-daily-upgrade.service
+# Clean up apt
+#echo "[+] Disabling up apt-daily.service (required for EC2)"
+#sudo systemctl stop apt-daily.service
+#sudo systemctl kill --kill-who=all apt-daily.service
+#sudo systemctl disable apt-daily.service
+
+#echo "[+] Disabling apt-daily-upgrade.service (required for EC2)"
+#sudo systemctl stop apt-daily-upgrade.timer
+#sudo systemctl kill --kill-who=all apt-daily-upgrade.service
+#sudo systemctl disable apt-daily-upgrade.service
 
 # ensure any running `apt-get update` has been killed
-echo "[+] Wait until apt-get update has been killed:"
-while ! (systemctl list-units --all apt-daily.service 2>&1 | egrep -qi 'dead|fail')
-do
-  echo "[+] Waiting for systemd apt-daily.service to die:"
-  echo `systemctl list-units --all apt-daily.service`
-  sleep 1;
-done
+#echo "[+] Wait until apt-get update has been killed:"
+#while ! (systemctl list-units --all apt-daily.service 2>&1 | egrep -qi 'dead|fail')
+#do
+#  echo "[+] Waiting for systemd apt-daily.service to die:"
+#  echo `systemctl list-units --all apt-daily.service`
+#  sleep 1;
+#done
 
 # Buffer
-echo "[+] Buffer 5 seconds"
-sleep 5
+#echo "[+] Buffer 5 seconds"
+#sleep 5
+
+#####
+##### SYSTEM SOFTWARE INSTALLATION
+#####
+
 
 # if these are already set by our parent, use that.. otherwise sensible defaults
-export INTRIGUE_DIRECTORY="${INTRIGUE_DIRECTORY:=/core}"
+export INTRIGUE_DIRECTORY="${IDIR:=//home/ubuntu/core}"
 export RUBY_VERSION="${RUBY_VERSION:=2.6.3}"
 export DEBIAN_FRONTEND=noninteractive
 
@@ -45,45 +52,27 @@ echo "[+] Proceeding with system setup"
 # UPGRADE FULLY NON-INTERACTIVE
 echo "[+] Preparing the System by upgrading"
 sudo DEBIAN_FRONTEND=noninteractive \
-	apt-get -y -o \
-	DPkg::options::="--force-confdef" -o \
-	DPkg::options::="--force-confold" \
-	upgrade
-
-echo "[+] Preparing the System by installing grub-pc"
-sudo DEBIAN_FRONTEND=noninteractive \
   apt-get -y -o \
-  Dpkg::Options::="--force-confdef" -o \
-  Dpkg::Options::="--force-confold" \
-  install grub-pc
-
-echo "[+] Preparing the System by dist-upgrading"
-sudo DEBIAN_FRONTEND=noninteractive \
-  apt-get -y -o \
-  Dpkg::Options::="--force-confdef" -o \
-  Dpkg::Options::="--force-confold" \
-  dist-upgrade
+  DPkg::options::="--force-confdef" -o \
+  DPkg::options::="--force-confold" \
+  upgrade grub-pc dist-upgrade
 
 echo "[+] Reconfigure Dpkg"
 sudo dpkg --configure -a
 
 echo "[+] Installing Apt Essentials"
-sudo apt-get -y install wget lsb-core software-properties-common dirmngr apt-transport-https lsb-release ca-certificates locales
+sudo apt-get -y install tzdata wget 
+sudo apt-get -y install lsb-core software-properties-common dirmngr apt-transport-https lsb-release ca-certificates locales
 
 ##### Add external repositories
 
 # chrome repo
-echo "[+] Adding Third Party Repos"
-wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
-
-# postgres repo
-sudo add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -sc)-pgdg main"
-wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-
+echo "[+] Installing Chromium"
+#sudo apt-get install software-properties-common
+sudo add-apt-repository ppa:canonical-chromium-builds/stage
+sudo apt-get update
+sudo apt-get -y install chromium-browser
 ##### Install dependencies after update
-echo "[+] Updating via Apt..."
-sudo apt-get -y update
 
 # set locales
 echo "LC_ALL=en_US.UTF-8" >> /etc/environment
@@ -93,7 +82,7 @@ locale-gen en_US.UTF-8
 
 # just in case, do the fix-broken flag
 echo "[+] Installing Intrigue Dependencies..."
-sudo apt-get -y --fix-broken install make \
+sudo apt-get -y --fix-broken --no-install-recommends install make \
   git \
   git-core \
   bzip2 \
@@ -166,10 +155,12 @@ sudo apt-get -y --fix-broken install make \
   libnss3 \
   lsb-release \
   xdg-utils \
-  google-chrome-stable \
   golang-go \
   dnsmasq \
-  python-minimal
+  systemd \
+  python-minimal && 
+  rm -rf /var/lib/apt/lists/*
+
 
 # add go vars (and note that we source this file later as well)
 echo "[+] Installing Golang environment"
@@ -248,21 +239,27 @@ sudo bash -c "echo '* hard nofile 524288' >> /etc/security/limits.conf"
 sudo bash -c "echo '* soft nofile 524288' >> /etc/security/limits.conf"
 sudo bash -c "echo session required pam_limits.so >> /etc/pam.d/common-session"
 
+
+echo "[+] Updating Redis configuration to only listen on ipv4 (ubuntu bug?)"
+sed -i '/^bind/s/bind.*/bind 0.0.0.0/' /etc/redis/redis.conf
+
 # Set the database to trust
 echo "[+] Updating postgres configuration to TRUST"
 sudo sed -i 's/md5/trust/g' /etc/postgresql/*/main/pg_hba.conf
 sudo sed -i 's/peer/trust/g' /etc/postgresql/*/main/pg_hba.conf
 
-sudo service postgresql restart
-
-echo "[+] Creating database"
+echo "[+] Creating clean database"
+sudo service postgresql stop
+sudo service postgresql start
 sudo -u postgres createuser intrigue
 sudo -u postgres dropdb intrigue_dev # just in case it exists
 sudo -u postgres createdb intrigue_dev --owner intrigue
 
+
 ##### Install rbenv
+echo "[+] Installing & Configuring rbenv"
 if [ ! -d ~/.rbenv ]; then
-  echo "[+] Configuring rbenv"
+
   git clone https://github.com/rbenv/rbenv.git ~/.rbenv
   cd ~/.rbenv && src/configure && make -C src
   echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bash_profile
@@ -278,7 +275,7 @@ if [ ! -d ~/.rbenv ]; then
   # rbenv gemset
   git clone git://github.com/jf/rbenv-gemset.git ~/.rbenv/plugins/rbenv-gemset
 else
-  echo "[+] Upgrading rbenv"
+  echo "[+] rbenv installed, upgrading..."
   # upgrade rbenv
   cd ~/.rbenv && git pull
   # upgrade rbenv-root
@@ -303,7 +300,6 @@ echo "Ruby version: `ruby -v`"
 # Install bundler
 echo "[+] Installing Latest Bundler"
 gem install bundler:2.0.2 --no-document
-bundle update --bundler
 rbenv rehash
 
 #####
@@ -311,23 +307,25 @@ rbenv rehash
 #####
 echo "[+] Installing Gem Dependencies"
 cd $INTRIGUE_DIRECTORY
+bundle update --bundler
 bundle install
 
 echo "[+] Running System Setup"
 bundle exec rake setup
 
 echo "[+] Running DB Migrations"
+service postgresql start
 bundle exec rake db:migrate
 
+# TOOD ... remove this on next major release
+echo "[+] Intrigue services exist, removing... (ec2 legacy)"
 if [ ! -f /etc/init.d/intrigue ]; then
-  echo "[+] Creating intrigue services and starting AS root..."
-  cp util/Profile.prod Procfile
-  sudo foreman export upstart --app=intrigue --user= /etc/init
+  rm -rf /etc/init.d/intrigue
 fi
 
 if ! $(grep -q README ~/.bash_profile); then
   echo "[+] Configuring startup message"
-  echo "boxes -a c -d unicornthink $INTRIGUE_DIRECTORY/util/README" >> ~/.bash_profile
+  echo "boxes -a c $INTRIGUE_DIRECTORY/util/README" >> ~/.bash_profile
 fi
 
 # if we're configuring as root, we're probably going to run as root, so
@@ -337,13 +335,10 @@ if [ $(id -u) = 0 ]; then
 fi
 
 # Handy for future, given this may differ across platforms
-if ! $(grep -q INTRIGUE_DIRECTORY ~/.bash_profile); then
-  echo "export INTRIGUE_DIRECTORY=$INTRIGUE_DIRECTORY" >> ~/.bash_profile
+if ! $(grep -q IDIR ~/.bash_profile); then
+  echo "export IDIR=$INTRIGUE_DIRECTORY" >> ~/.bash_profile
 fi
 
 # Cleaning up
 echo "[+] Cleaning up!"
 sudo apt-get -y clean
-
-echo "[+] Starting services"
-sudo service intrigue start

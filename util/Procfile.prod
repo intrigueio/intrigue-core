@@ -1,4 +1,0 @@
-eventmachine: bundle exec ruby ./util/eventmachine.rb
-chrome: chrome --headless --disable-gpu --disable-dev-shm-usage --ignore-certificate-errors --disable-popup-blocking --disable-translate --remote-debugging-port=9222
-worker: bundle exec sidekiq -C ./config/sidekiq.yml -r ./core.rb
-web: bundle exec puma -C ./config/puma.rb -b tcp://0.0.0.0:7777

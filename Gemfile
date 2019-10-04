@@ -73,8 +73,8 @@ gem 'versionomy'
 gem 'couchrest'
 gem 'fog-aws'
 
-# notifiers
-#gem 'logstash-logger'
+# produciton
+gem 'god'
 
 # Development
 gem 'foreman'

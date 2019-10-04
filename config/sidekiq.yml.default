@@ -1,12 +1,12 @@
 :verbose: true
 :dynamic: true
-:concurrency: 65
+:concurrency: 40
 :process_limits:
   task: 5
   control: 1
-  task_enrichment: 20
+  task_enrichment: 10
   task_browser: 5
-  task_autoscheduled: 20
+  task_autoscheduled: 10
   task_scan: 2
   task_spider: 3
   app: 3

@@ -123,29 +123,7 @@ task :setup do
 
   puts "[+] Downloading latest data files..."
   Dir.chdir("#{$intrigue_basedir}/data/"){ puts %x["./get_latest.sh"] }
-
-  ## Copy control script
-  puts "[+] Copying control script..."
-  if File.exist? control_script
-    puts "[ ] File already exists, skipping: #{control_script}"
-  else
-    puts "[+] Creating.... #{control_script}"
-    FileUtils.cp "#{control_script}.default", control_script
-
-    # Configure the IDIR directory
-    script_text = File.read(control_script)
-    new_script_text = script_text.gsub("IDIR=/core","IDIR=#{$intrigue_basedir}")
-    File.open(control_script,"w").puts new_script_text
-
-    # Make a link
-    # TODO - this should be deprecated.
-    if Dir.exist?("/etc/init.d") && !File.exist?("#{$intrigue_basedir}/util/control.sh")
-      puts '[+] Creating system-level startup script'
-      `ln -s #{$intrigue_basedir}/util/control.sh /etc/init.d/intrigue`
-    end
-
-  end
-
+  
   puts "[+] Complete!"
 
 end
