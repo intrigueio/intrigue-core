@@ -335,7 +335,7 @@ else
   echo "[+] Nooooo I'm not inside docker!";
   echo "echo ''" >> ~/.bash_profile
   echo "echo To enable Intrigue services, run the following command:" >> ~/.bash_profile
-  echo "echo $ god -c /home/ubuntu/util/god/intrigue-simple.rb && god start" >> ~/.bash_profile
+  echo "echo '$ cd core && god -c /home/ubuntu/core/util/god/intrigue-ec2.rb && god start'" >> ~/.bash_profile
 fi
 
 # if we're configuring as root, we're probably going to run as root, so
