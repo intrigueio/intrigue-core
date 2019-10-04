@@ -241,7 +241,7 @@ sudo bash -c "echo session required pam_limits.so >> /etc/pam.d/common-session"
 
 
 echo "[+] Updating Redis configuration to only listen on ipv4 (ubuntu bug?)"
-sed -i '/^bind/s/bind.*/bind 0.0.0.0/' /etc/redis/redis.conf
+sed -i '/^bind/s/bind.*/bind 127.0.0.1/' /etc/redis/redis.conf
 
 # Set the database to trust
 echo "[+] Updating postgres configuration to TRUST"
@@ -330,10 +330,10 @@ fi
 
 ### HANDLE DOCKER STUFF HERE
 if [ -f /.dockerenv ]; then
-  echo "I'm inside docker!";
+  echo "[+] I'm inside docker, i can start services automatically!";
 else
-  echo "I'm not inside docer!";
-  echo "echo ''" > ~/.bash_profile
+  echo "[+] Nooooo I'm not inside docker!";
+  echo "echo ''" >> ~/.bash_profile
   echo "echo To enable Intrigue services, run the following command:" >> ~/.bash_profile
   echo "echo $ god -c /home/ubuntu/util/god/intrigue-simple.rb && god start" >> ~/.bash_profile
 fi
