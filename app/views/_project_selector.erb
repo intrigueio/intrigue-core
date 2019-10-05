@@ -31,14 +31,34 @@ function delete_project( name )
     </div>
   </form>
   <form name="project_delete_form" action="/project/delete" method="post"><input type="hidden" id="project" name="project"/></form>
-Or select an existing project:
+
+
 <p>
-<ul>
-<% Intrigue::Model::Project.order(:name).each do |p| %>
-  <li>
-    <%= h p.created_at.to_date %> | <a href="javascript:set_project('<%= p.name %>')"> <%= h p.name %></a> <%= "(#{p.entities.count} entities, " %> <%= "#{p.issues.count} issues)" %> <a href="javascript:delete_project('<%= p.name %>')">[x]</a>
-  </li>
-<% end %>
-</ul>
+Or select an existing project:
+<div class="projects-table">
+  <table id="projects" class="display responsive" border="1" width=100%>
+    <thead>
+      <tr>
+        <th class="centered-text">Name</th>
+        <th class="centered-text">Entities</th>
+        <th class="centered-text">Issues</th>
+        <th class="centered-text">Created</th>
+        <th class="centered-text">Manage</th>
+      </tr>
+    </thead>
+    <tbody>
+        <% @projects.each do |p| %>
+      <tr>
+        <td><a href="/<%=p.name%>/start"x><%= p.name %></a></td>
+        <td><%= p.entities.count %></td>
+        <td><%= p.issues.count %></td>
+        <td><%=h p.created_at.to_date %></td>
+        <td>[x]</td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+</p>
 </div>
 </div>
