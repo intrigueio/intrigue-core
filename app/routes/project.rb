@@ -2,7 +2,7 @@ class IntrigueApp < Sinatra::Base
 
     # Main Page
     get '/:project/?' do
-      @projects = Intrigue::Model::Project.order(:created_at).reverse.all
+      @projects = Intrigue::Model::Project.exclude(:deleted).order(:created_at).reverse.all
       erb :index
     end
 
