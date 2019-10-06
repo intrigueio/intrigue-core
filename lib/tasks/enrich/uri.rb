@@ -82,7 +82,7 @@ class Uri < Intrigue::Task::BaseTask
       rescue Errno::ECONNREFUSED => e 
         _log_error "Unable to connect to chrome browser. Is it running on :9222?"
       rescue StandardError => e
-        `kill -9 chromium` # hacktastic
+        `pkill -9 chromium` # hacktastic
       end
     else 
       _log "Skipping browser, got code: #{response.code}"
