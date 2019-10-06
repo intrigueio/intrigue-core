@@ -16,3 +16,6 @@ bundle exec rake setup
 echo "[+] Enabling Intrigue Services"
 god -c /core/util/god/intrigue-docker.rb
 god start intrigue
+
+echo "[+] Tailing worker log"
+tail -f /core/log/worker.log
