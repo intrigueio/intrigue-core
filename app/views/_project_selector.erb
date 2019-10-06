@@ -21,6 +21,24 @@ function delete_project( name )
 }
 -->
 </script>
+<script type="text/javascript" src="/js/sorttable.js"></script>
+<style>
+/* Sortable tables */
+table.sortable {
+  width: 100%;
+  border: 0;
+  table-layout:fixed;
+  word-wrap:break-word;
+  border-collapse:collapse;
+}
+
+table.sortable thead {
+    background-color:#eee;
+    color:#666666;
+    font-weight: bold;
+    cursor: default;
+}
+</style>
 <div class="row">
 <div class="col-sm-8">
   <form class="form-inline" name="project_select_form" action="/project" method="post">
@@ -32,11 +50,10 @@ function delete_project( name )
   </form>
   <form name="project_delete_form" action="/project/delete" method="post"><input type="hidden" id="project" name="project"/></form>
 
-
 <p>
 Or select an existing project:
 <div class="projects-table">
-  <table id="projects" class="display responsive" border="1" width=100%>
+  <table id="projects" class="sortable display responsive" border="1" width=100%>
     <thead>
       <tr>
         <th class="centered-text">Name</th>
@@ -53,7 +70,7 @@ Or select an existing project:
         <td><%= p.entities.count %></td>
         <td><%= p.issues.count %></td>
         <td><%=h p.created_at.to_date %></td>
-        <td>[x]</td>
+        <td>&nbsp;<a href="javascript:delete_project('<%=p.name%>')">[delete]</a></td>
       </tr>
       <% end %>
     </tbody>
