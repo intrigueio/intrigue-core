@@ -61,7 +61,6 @@ class Example < BaseTask
     sleep(_get_option("sleep"))
 
     # Generate a number of hosts based on the user option
-=begin
     _get_option("count").times do
 
     # Generate a fake IP address
@@ -90,22 +89,6 @@ class Example < BaseTask
       _create_network_service_entity(e,443)
 
     end
-=end
-    ips = []
-    _get_option("count").times do 
-      ips  << "#{rand(255)}.#{rand(255)}.#{rand(255)}.#{rand(255)}"
-    end
-
-    lammylam = lambda { |ip|
-      #_log "Creating domain: #{d}"
-      e = _create_entity("IpAddress", {"name" => ip })
-      _create_network_service_entity(e,443)
-    true
-    }
-
-    # use a generic threaded iteration method to create them,
-    # with the desired number of threads
-    _threaded_iteration(20, ips, lammylam)
 
   end
 

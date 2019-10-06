@@ -65,7 +65,7 @@ class NetBlock < Intrigue::Model::Entity
       # Now, check to see if the entity's name matches something in our # whois text, 
       # and especially make sure 
       if details["whois_full_text"] =~ /[\s@]#{Regexp.escape(e.name)}/
-        #_log "Marking as scoped: PROJECT ENTITY MATCHED TEXT: #{e.type}##{e.name}"
+        _log "Marking as scoped. Matched: #{e.type}##{e.name}"
         return true
       end
 
