@@ -45,6 +45,9 @@ class UriCheckSudomainHijack  < BaseTask
         _hijackable_subdomain "Readme.io", uri, "potential"
       elsif response.body =~ /This domain is successfully pointed at WP Engine, but is not configured/i
         _hijackable_subdomain "WPEngine", uri, "potential"
+      # currently disabled, see: https://github.com/EdOverflow/can-i-take-over-xyz/issues/11
+      #elsif response.body =~ /The requested URL was not found on this server./
+      #  _hijackable_subdomain "Unbounce", uri, "potential"
       end
     end
       

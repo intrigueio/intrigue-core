@@ -35,7 +35,7 @@ module Dns
 
       # then find the longest match
       if matches.count > 0
-        longest_match = matches.sort_by{|x| x.split(".").length }.last
+        longest_match = matches.sort_by{|x| x.split(".").length }.sort_by{|x| x.length }.last
         return longest_match
       end
 
