@@ -1,0 +1,48 @@
+<h3>Tasks</h3>
+
+<%i=0%>
+
+  <script type="text/javascript" src="/js/sorttable.js"></script>
+  <style>
+  /* Sortable tables */
+  table.sortable {
+    width: 100%;
+    border: 0;
+    table-layout:fixed;
+    word-wrap:break-word;
+    border-collapse:collapse;
+  }
+
+  table.sortable thead {
+      background-color:#eee;
+      color:#666666;
+      font-weight: bold;
+      cursor: default;
+  }
+  </style>
+  <p></p>
+  <table class="sortable" border="1" width=100%>
+    <colgroup>
+      <col style="width:5%">
+      <col style="width:20%">
+      <col style="width:30%">
+      <col style="width:15%">
+      <col style="width:8%">
+      <col style="width:12%">
+    </colgroup>
+    <tbody>
+      <tr><th>Count</th><th>Type</th><th>Description</th><th>Example</th><th>User Creatable</th><th>Enrichment Tasks</th></tr>
+      <% @entities.sort_by{|x| x.to_s }.each do |e| %>
+        <tr>
+          <td><%=i%></td>
+          <td><%= "#{e} <a href='https://github.com/intrigueio/intrigue-core/tree/master/lib/entities/#{e.metadata[:name].downcase}.rb'> [code] </a>" %></td> 
+          <td><%= e.metadata[:description] %></td>
+          <td><%= e.metadata[:example] || "-" %></td>
+          <td><%= e.metadata[:user_creatable] %></td>
+          <td><%= e.new.enrichment_tasks.map{|x| "<a href='https://github.com/intrigueio/intrigue-core/tree/master/lib/tasks/#{x}.rb'>#{x}</a>"}.join("<br/>") %></td>
+        </tr>
+        <%i+=1%>
+      <% end %>
+    </tbody>
+  </table>
+  <br><br>

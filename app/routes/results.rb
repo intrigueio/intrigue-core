@@ -3,7 +3,8 @@ class IntrigueApp < Sinatra::Base
 
     # Export All task results
     get '/:project/results.json/?' do
-       raise "Not implemented"
+       session[:flash] = "Not implemented"
+       redirect FRONT_PAGE
     end
 
     # Show the results in a CSV format
@@ -134,7 +135,9 @@ class IntrigueApp < Sinatra::Base
       end
 
       unless entity
-        raise "Unable to create entity, check your parameters: #{entity_name} #{entity_type}!"
+        session[:flash] = "Unable to create entity, check your parameters: #{entity_name} #{entity_type}!" + 
+        " For more help see <a href=\"systems/entities\">Entity Help</a>"
+        redirect FRONT_PAGE
       end
 
       # Construct the options hash from the parameters
@@ -180,7 +183,8 @@ class IntrigueApp < Sinatra::Base
 
         # barf if we got a bad file
         unless file_type =~ /^text/ || file_type == "application/octet-stream"
-          raise "Bad file type: #{file_type}" 
+          session[:flash] = "Bad file type: #{file_type}" 
+          redirect FRONT_PAGE
         end
         # get the file
         entity_file = @params["entity_file"]["tempfile"]
@@ -189,7 +193,8 @@ class IntrigueApp < Sinatra::Base
         entities = []
         entity_file.each_line do |l|
           next if l[0] == "#" # skip comment lines
-          raise "Bad file content: #{l}" unless l =~ /[a-z]+\#.*/
+          session[:flash] = "Bad file content: #{l}" unless l =~ /[a-z]+\#.*/
+          redirect FRONT_PAGE
           et = l.split("#").first.chomp
           en = l.split("#").last.chomp
           entities << {entity_type: "#{et}", entity_name: "#{en}", }

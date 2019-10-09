@@ -12,7 +12,6 @@ class AwsCredential < Intrigue::Model::Entity
 
 
   def transform!
-
     # We'll want to obfuscate our name
     new_name = "#{name[0..3]}****"
 
@@ -33,11 +32,6 @@ class AwsCredential < Intrigue::Model::Entity
     details["hidden_access_id"] &&
     details["hidden_secret_key"]
   end
-
-  def enrichment_tasks
-    ["enrich/aws_credential"]
-  end
-
 
 end
 end

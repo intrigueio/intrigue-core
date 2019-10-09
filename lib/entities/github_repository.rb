@@ -6,16 +6,13 @@ class GithubRepository < Intrigue::Model::Entity
     {
       :name => "GithubRepository",
       :description => "A Github Repository",
-      :user_creatable => false
+      :user_creatable => true,
+      :example => "intrigueio/intrigue-core"
     }
   end
 
   def validate_entity
-    name =~ /^\w.*/
-  end
-
-  def enrichment_tasks
-    ["enrich/github_repository"]
+    name =~ /^[\d\w]+\/[\d\w]+/
   end
 
 end

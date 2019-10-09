@@ -1,0 +1,24 @@
+<% if @flash %>
+ <div class="container-fluid">
+   <div class="row">
+    <div class=col-2>&nbsp;</div>
+     <div class=col-8 id="flash">
+      <div class="alert alert-success alert-dismissible">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        
+        <% if @flash.kind_of?(Hash) %>
+          <h4 class="alert-heading"><%=@flash[:heading]%></h4>
+        <% end %>
+
+        <% if @flash.kind_of?(Hash) %>
+          <%= @flash[:message] %>   
+        <% else # old way %> 
+          <%= @flash %>
+        <% end %>
+
+      </div>
+    </div>
+    <div class=col-2>&nbsp;</div>
+   </div>
+ </div><!-- /.container -->
+<% end %>

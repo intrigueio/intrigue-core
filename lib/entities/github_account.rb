@@ -6,7 +6,8 @@ class GithubAccount < Intrigue::Model::Entity
     {
       :name => "GithubAccount",
       :description => "A Github Account",
-      :user_creatable => true
+      :user_creatable => true,
+      :example => "intrigueio"
     }
   end
 

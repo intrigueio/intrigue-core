@@ -16,10 +16,6 @@ class PhysicalLocation < Intrigue::Model::Entity
     #details["longitude"] =~ /^([-+]?\d{1,3}[.]\d+)$/
   end
 
-  def enrichment_tasks
-      ["enrich/physical_location"]
-  end
-
 
 end
 end

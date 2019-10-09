@@ -14,10 +14,6 @@ class File < Intrigue::Model::Entity
     name =~ /^\w.*$/
   end
 
-  def enrichment_tasks
-    ["enrich/file"]
-  end
-
 end
 end
 end

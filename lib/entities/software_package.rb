@@ -18,11 +18,6 @@ class SoftwarePackage < Intrigue::Model::Entity
     "#{details["origin"]}"
   end
 
-  def enrichment_tasks
-    ["enrich/software_package"]
-  end
-
-
 end
 end
 end

@@ -18,10 +18,6 @@ class Document < Intrigue::Model::Entity
     "#{details["content_type"]}"
   end
 
-  def enrichment_tasks
-    ["enrich/document"]
-  end
-
 end
 end
 end

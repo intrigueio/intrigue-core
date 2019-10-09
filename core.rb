@@ -159,6 +159,12 @@ class IntrigueApp < Sinatra::Base
     # Parse out our project
     directive = URI.unescape(request.path_info.split("/")[1] || "Default")
 
+    # set flash message if we have one
+    if session[:flash]
+      @flash = session[:flash]
+      session[:flash] = nil
+    end
+
     # Allow certain requests without a project string... these are systemwide,
     # and do not depend on a specific project
     pass if [ "entity_types.json", "engine", "favicon.ico", 
@@ -190,8 +196,14 @@ class IntrigueApp < Sinatra::Base
   end
 
   ###                                  ###
-  ### System-Level Informational Calls ###
+  ### App-Level Constants              ###
   ###                                  ###
+
+  FRONT_PAGE = "/"
+
+  ###                                    ###
+  ### App-Level Informational API Calls  ###
+  ###                                    ###
 
   # Return a JSON array of all entity type
   get '/entity_types.json' do

@@ -5,13 +5,14 @@ class Uri < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "Uri",
-      :description => "A Website or Webpage",
-      :user_creatable => true
+      :description => "A link to a website or webpage",
+      :user_creatable => true,
+      :example => "https://intrigue.io"
     }
   end
 
   def validate_entity
-    name =~ /^https?:.*$/
+    name =~ /^https?:\/\/.*$/
   end
 
   def detail_string

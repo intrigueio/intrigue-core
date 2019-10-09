@@ -6,7 +6,8 @@ class Organization < Intrigue::Model::Entity
     {
       :name => "Organization",
       :description => "An organization",
-      :user_creatable => true
+      :user_creatable => true,
+      :example => "Intrigue Corporation"
     }
   end
 

@@ -6,7 +6,8 @@ class AwsS3Bucket < Intrigue::Model::Entity
     {
       :name => "AwsS3Bucket",
       :description => "An S3 Bucket",
-      :user_creatable => true
+      :user_creatable => true,
+      :example => "http://s3.amazonaws.com/bucket/"
     }
   end
 

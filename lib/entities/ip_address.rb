@@ -6,7 +6,8 @@ class IpAddress < Intrigue::Model::Entity
     {
       :name => "IpAddress",
       :description => "An IP Address",
-      :user_creatable => true
+      :user_creatable => true,
+      :example => "1.1.1.1"
     }
   end
 

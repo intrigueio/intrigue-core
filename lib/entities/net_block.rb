@@ -6,7 +6,8 @@ class NetBlock < Intrigue::Model::Entity
     {
       :name => "NetBlock",
       :description => "A Block of IPs",
-      :user_creatable => true
+      :user_creatable => true,
+      :example => "1.1.1.1/24"
     }
   end
 

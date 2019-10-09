@@ -6,7 +6,8 @@ class PhoneNumber < Intrigue::Model::Entity
     {
       :name => "PhoneNumber",
       :description => "A Phone Number",
-      :user_creatable => false
+      :user_creatable => true,
+      :example => "555-555-5555"
     }
   end
 
@@ -17,11 +18,7 @@ class PhoneNumber < Intrigue::Model::Entity
   def detail_string
     "#{details["origin"]}"
   end
-
-  def enrichment_tasks
-    ["enrich/phone_number"]
-  end
-
+  
 end
 end
 end

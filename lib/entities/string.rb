@@ -6,7 +6,8 @@ class String < Intrigue::Model::Entity
     {
       :name => "String",
       :description => "A Generic Search String",
-      :user_creatable => true
+      :user_creatable => true,
+      :example => "Literally any @#$%$!!$^'n old thing!"
     }
   end
 

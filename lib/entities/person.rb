@@ -6,10 +6,10 @@ class Person < Intrigue::Model::Entity
     {
       :name => "Person",
       :description => "A Person",
-      :user_creatable => true
+      :user_creatable => true,
+      :example => "Bazooka Joe"
     }
   end
-
 
   def validate_entity
     name =~ /^\w.*$/
@@ -17,10 +17,6 @@ class Person < Intrigue::Model::Entity
 
   def detail_string
     "#{details["origin"]}"
-  end
-
-  def enrichment_tasks
-    ["enrich/person"]
   end
 
 end

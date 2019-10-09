@@ -6,7 +6,8 @@ class Nameserver < Intrigue::Model::Entity
     {
       :name => "Nameserver",
       :description => "A DNS Nameserver",
-      :user_creatable => true
+      :user_creatable => true,
+      :example => "ns1.intrigue.io"
     }
   end
 

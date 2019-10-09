@@ -6,7 +6,8 @@ class Domain < Intrigue::Model::Entity
     {
       :name => "Domain",
       :description => "A Top-Level Domain",
-      :user_creatable => true
+      :user_creatable => true,
+      :example => "intrigue.io"
     }
   end
 

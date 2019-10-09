@@ -15,8 +15,9 @@
 </head>
 <body>
   <%= erb :_navbar, :layout => false %>
-<div class="container-fluid">
-  <%= yield %>
-</div>
+  <%= erb :_flash, :layout => false %>
+  <div class="container-fluid">
+	   <%= yield %>
+  </div>
 </body>
 </html>

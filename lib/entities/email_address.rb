@@ -6,7 +6,8 @@ class EmailAddress < Intrigue::Model::Entity
     {
       :name => "EmailAddress",
       :description => "An Email Address",
-      :user_creatable => true
+      :user_creatable => true,
+      :example => "no-reply@intrigue.io"
     }
   end
 
@@ -16,10 +17,6 @@ class EmailAddress < Intrigue::Model::Entity
 
   def detail_string
     details["origin"] if details && details["origin"]
-  end
-
-  def enrichment_tasks
-    ["enrich/email_address"]
   end
 
   ###

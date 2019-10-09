@@ -14,9 +14,6 @@ class Screenshot < Intrigue::Model::Entity
     name =~ /^\w.*$/ # TODO - tighten this up
   end
 
-  def enrichment_tasks
-    ["enrich/screenshot"]
-  end
 
 end
 end

@@ -5,19 +5,16 @@ class AutonomousSystem < Intrigue::Model::Entity
   def self.metadata
     {
       :name => "AutonomousSystem",
-      :description => "Network Routes",
-      :user_creatable => false
+      :description => "Unique number that's available globally to exchange network routes",
+      :user_creatable => true,
+      :example => "AS1234"
     }
   end
 
   def validate_entity
     name =~ /^(as|AS).?[0-9].*$/
   end
-
-  def enrichment_tasks
-    ["enrich/autonomous_system"]
-  end
-
+  
 end
 end
 end

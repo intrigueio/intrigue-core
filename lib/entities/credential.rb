@@ -17,10 +17,6 @@ class Credential < Intrigue::Model::Entity
     details["uri"].to_s =~ /^http:.*$/
   end
 
-  def enrichment_tasks
-    ["enrich/credential"]
-  end
-
 end
 end
 end

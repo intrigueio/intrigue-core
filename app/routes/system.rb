@@ -34,6 +34,11 @@ class IntrigueApp < Sinatra::Base
       erb :"system/config"
     end
 
+    get "/system/entities" do
+      @entities = Intrigue::EntityFactory.entity_types
+      erb :"system/entities"
+    end
+
     get "/system/tasks" do
       @tasks = Intrigue::TaskFactory.list
       erb :"system/tasks"

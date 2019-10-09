@@ -7,7 +7,8 @@ class DnsRecord < Intrigue::Model::Entity
     {
       :name => "DnsRecord",
       :description => "A Dns Record",
-      :user_creatable => true
+      :user_creatable => true,
+      :example => "test.intrigue.io"
     }
   end
 
