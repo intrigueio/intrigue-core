@@ -47,7 +47,8 @@ module Intrigue
       # default method that scopes/unscopes entities (can be overridden)
       # TODO ... maybe we move the logic of details that exists in entity_manager here? 
       def scoped? 
-        scoped # just default to whatever's already been set 
+        return false if self.hidden
+      scoped || true # otherwise just default to whatever's already been set or true
       end
 
       def validate
@@ -216,7 +217,7 @@ module Intrigue
       end
 
       def to_s
-        "#{type_string}: #{name}#{' <H>' if hidden}"
+        "#{type_string}: #{name}#{' <Hidden>' if hidden} #{' <Unscoped>' unless scoped}"
       end
 
       def type_string

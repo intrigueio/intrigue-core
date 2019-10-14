@@ -27,11 +27,11 @@ class IpAddress < Intrigue::Model::Entity
     ["enrich/ip_address"]
   end
 
-
   ###
   ### SCOPING
   ###
   def scoped?(conditions={}) 
+    return false if self.hidden
 
     # Check types we'll check for indicators 
     # of in-scope-ness

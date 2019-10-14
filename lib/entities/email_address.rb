@@ -23,6 +23,7 @@ class EmailAddress < Intrigue::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
+    return false if self.hidden
 
     # Check types we'll check for indicators 
     # of in-scope-ness

@@ -152,6 +152,47 @@ module Intrigue
       out
       end
 
+      # Method gives us a true/false, depending on whether the entity is in an
+      # exception list. Currently only used on project, but could be included
+      # in task_result or scan_result. Note that they'd need the "additional_exception_list"
+      # to be populated (automated by bootstrap)
+      def exception_entity?(entity_name, type_string=nil, skip_regexes)
+
+        # if it's a seed exception, can't be an exception.
+        return false if seed_entity?(type_string,entity_name)
+
+        # Check standard exceptions first
+        return false if standard_exception?(entity_name, type_string, skip_regexes)
+
+        # if we don't have a list, safe to return false now, otherwise proceed to additional exceptions
+        # which are provided as an attribute on the object
+        return false unless additional_exception_list
+
+        # check additional exception strings
+        out = false
+        
+        # first shorten up our list (speed it way up)
+        check_list = additional_exception_list.select{ |x| entity_name.include? x }
+
+        # then check each for a match 
+        check_list.each do |x|
+          # this needs a couple (3) cases:
+          # 1) case where we're an EXACT match (ey.com)
+          # 2) case where we're a subdomain of an exception domain (x.ey.com)
+          # 3) case where we're a uri and should match an exception domain (https://ey.com)
+          # none of these cases should match the case: jcpenney.com
+          if (entity_name.downcase =~ /^#{Regexp.escape(x.downcase)}(:[0-9]*)?$/ ||
+            entity_name.downcase =~ /^.*\.#{Regexp.escape(x.downcase)}(:[0-9]*)?$/ ||
+            entity_name.downcase =~ /^https?:\/\/#{Regexp.escape(x.downcase)}(:[0-9]*)?$/)
+            out = x
+          end
+        end
+
+        puts "Checking if #{entity_name} matches our additional exception list: #{out}"
+
+      out
+      end
+
       # TODO - there must be a cleaner way? 
       def get_option(option_name)
         opt = options.detect{|h| h[option_name] } if options

@@ -127,26 +127,27 @@ class EntityManager
       next if seed_type_string == "IpAddress"  # TOOD.. this should really be a global list (see: netblock scoping)
 
       # check if the seed matches a non-traversable entity
-      r = project.non_traversable?(s.name, seed_type_string)
+      r = project.standard_exception?(s.name, seed_type_string)
 
-      # okay so if a seed is non-traversable, we'll skip it going forward
+      # okay so if a seed is in the standard list we can prevent it from becoming an eception
       skip_regexes << r if r
     end
-  
 
     # simplify so we dont end up with a bunch of dupes
     skip_regexes = skip_regexes.uniq.compact
+    #tr.log "Got Skip Regexes: #{skip_regexes}"
 
     if skip_regexes.count > 0
       tr.log "This no-traverse regex will be bypassed since it matches a seed: #{skip_regexes}"
     end
 
-    # check if this is actually an exception (no-traverse for this proj) entity
-    no_traverse_regex = project.exception_entity?(name, type_string, skip_regexes)
+    # check if this is actually a provided exception (no-traverse for this proj) entity
+    exception_pattern = project.exception_entity?(name, type_string, skip_regexes)
 
     # Check if there's an existing entity, if so, merge and move forward
     if entity
-
+      tr.log_good "Existing Entity: #{type_string} #{name}. No-Traverse: #{exception_pattern}"
+      
       entity.set_details(details.to_h.deep_merge(entity.details.to_h))
 
       # if it already exists, it'll have an alias group ID and we'll
@@ -155,7 +156,7 @@ class EntityManager
       entity_already_existed = true
 
     else
-      tr.log_good "New Entity: #{type_string} #{name}. Scoped: #{tr.auto_scope}. No-Traverse: #{no_traverse_regex}"
+      tr.log_good "New Entity: #{type_string} #{name}. No-Traverse: #{exception_pattern}"
 
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
@@ -169,7 +170,7 @@ class EntityManager
           :project_id => project.id,
           :type => type.to_s,
           :details => details,
-          :hidden => (no_traverse_regex ? true : false ),
+          :hidden => (exception_pattern ? true : false ),
           :alias_group_id => g.id
         }
 
@@ -201,7 +202,7 @@ class EntityManager
         
         # otherwise, fall back to false
         else
-          tr.log "No specific scope request, falling to entity's default scoping rules"
+          tr.log "No specific scope request, assuming we're not scoped!"
           entity_details[:scoped] = false
         end
 
@@ -275,7 +276,7 @@ class EntityManager
 
     # ENRICHMENT LAUNCH
     if tr.auto_enrich && !entity_already_existed
-      if !no_traverse_regex
+      if !exception_pattern
         # Check if we've alrady run first and return gracefully if so
         if entity.enriched
           tr.log "Skipping enrichment... already completed!"

@@ -33,8 +33,7 @@ module Services
       "host_id" => ip_entity.id
     })
 
-    # if this is an ssl port, let's get the CNs and create
-    # dns records
+    # if this is an ssl port, let's get the CNs and create dns records
     cert_entities = []
     if ssl
       # connect, grab the socket and make sure we
@@ -49,9 +48,8 @@ module Services
             next 
           end
 
-          # unscope, bc we don't want to scope in the hosting company ... 
-          cert_entities << _create_entity("DnsRecord", { "name" => cn,
-            "unscoped" => true }, ip_entity) 
+          # create each entity 
+          cert_entities << _create_entity("DnsRecord", { "name" => cn }, ip_entity ) 
           
         end
       end
@@ -66,7 +64,7 @@ module Services
     if ip_entity.aliases.count > 0
       ip_entity.aliases.each do |al|
         next unless al.type_string == "DnsRecord" #  only dns records
-        next if al.hidden # skip hidden
+        next unless al.scoped? # skip blacklisted / unscoped
         hosts << al # add to the list
       end
     end

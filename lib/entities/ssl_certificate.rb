@@ -27,6 +27,36 @@ class SslCertificate < Intrigue::Model::Entity
     "#{details["not_after"]} | #{details["subject"]} | #{details["issuer"]}"
   end
 
+  ###
+  ### SCOPING
+  ###
+  def scoped?(conditions={}) 
+    return false if self.hidden
+
+    # Check types we'll check for indicators 
+    # of in-scope-ness
+    #
+    scope_check_entity_types = [
+      "Intrigue::Entity::Organization",
+      "Intrigue::Entity::DnsRecord",
+      "Intrigue::Entity::Domain" 
+    ]
+
+    ### CHECK OUR SEED ENTITIES TO SEE IF THE TEXT MATCHES
+    ######################################################
+    if self.project.seeds
+      self.project.seeds.each do |s|
+        next unless scope_check_entity_types.include? s.type.to_s
+        if self.name =~ /#{Regexp.escape(s.name)}/
+          #_log "Marking as scoped: SEED ENTITY NAME MATCHED TEXT: #{s["name"]}}"
+          return true
+        end
+      end
+    false
+    end
+
+  end
+
 end
 end
 end

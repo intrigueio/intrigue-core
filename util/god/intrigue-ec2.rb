@@ -7,7 +7,7 @@ God.watch do |w|
   w.log = "#{BASEDIR}/log/web.log"
   w.dir = "#{BASEDIR}" 
   w.start = "bundle exec puma -C #{BASEDIR}/config/puma.rb -b tcp://0.0.0.0:7777"
-  w.pid_file = File.join("/core/tmp/pids/puma.pid")
+  w.pid_file = File.join("#{BASEDIR}/tmp/pids/puma.pid")
   w.keepalive
 end
 
@@ -17,7 +17,7 @@ God.watch do |w|
   w.log = "#{BASEDIR}/log/worker.log"
   w.dir = "#{BASEDIR}" 
   w.start = "bundle exec sidekiq -C #{BASEDIR}/config/sidekiq.yml -r #{BASEDIR}/core.rb"
-  w.pid_file = File.join("/core/tmp/pids/worker.pid")
+  w.pid_file = File.join("#{BASEDIR}/tmp/pids/worker.pid")
   w.keepalive
 end
 
@@ -27,7 +27,7 @@ God.watch do |w|
   w.log = "#{BASEDIR}/log/resolver.log"
   w.dir = "#{BASEDIR}" 
   w.start = "bundle exec ruby #{BASEDIR}/util/resolver.rb"
-  w.pid_file = File.join("/core/tmp/pids/resolver.pid")
+  w.pid_file = File.join("#{BASEDIR}/tmp/pids/resolver.pid")
   w.keepalive
 end
 

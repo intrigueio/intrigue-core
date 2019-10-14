@@ -5,6 +5,7 @@ class IntrigueApp < Sinatra::Base
     params[:search_string] == "" ? @search_string = nil : @search_string = params[:search_string]
     params[:entity_types] == "" ? @entity_types = nil : @entity_types = params[:entity_types]
     params[:include_hidden] == "on" ? @include_hidden = true : @include_hidden = false
+    params[:include_unscoped] == "on" ? @include_unscoped = true : @include_unscoped = false
     params[:only_enriched] == "on" ? @only_enriched = true : @only_enriched = false
     (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
     (params[:count] != "" && params[:count].to_i > 0) ? @count = params[:count].to_i : @count = 100

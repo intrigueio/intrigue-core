@@ -104,8 +104,9 @@ class BaseTask
         _log "Marking entity as enriched!"
         @entity.enriched = true
         
-        ### HANDLE SCOPING - We should have enough info now that enrichment is complete 
-        if @entity.scoped? 
+        ### HANDLE SCOPING - We should have enough info now that enrichment is complete
+        # check the scoped? method on the entity and set the attribute
+        if @entity.scoped?
           _log "Marking entity as scoped!"
           @entity.scoped = true
         else 

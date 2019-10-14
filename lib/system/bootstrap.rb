@@ -33,10 +33,12 @@ module Bootstrap
       project.use_standard_exceptions = p["use_standard_exceptions"] || true
 
       if config["additional_exception_list"]
-        project.additional_exception_list = config["additional_exception_list"].to_a
+        project.additional_exception_list = config["additional_exception_list"].sort.to_a
       else
         project.additional_exception_list = []
       end
+
+      project.save
 
       # parse up the seeds
       parsed_seeds = p["seeds"].map{|s| _parse_entity s["entity"] }
