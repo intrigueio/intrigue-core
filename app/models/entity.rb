@@ -48,7 +48,7 @@ module Intrigue
       # TODO ... maybe we move the logic of details that exists in entity_manager here? 
       def scoped? 
         return false if self.hidden
-      scoped || true # otherwise just default to whatever's already been set or true
+      scoped # otherwise just default to whatever's already been set or true
       end
 
       def validate
