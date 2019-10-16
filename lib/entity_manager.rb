@@ -202,8 +202,8 @@ class EntityManager
         
         # otherwise, fall back to false
         else
-          tr.log "No specific scope request, assuming we're not scoped!"
-          entity_details[:scoped] = false
+          tr.log "No specific scope request, assuming we're scoped!"
+          entity_details[:scoped] = true
         end
 
         #####

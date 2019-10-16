@@ -33,7 +33,7 @@ class NetBlock < Intrigue::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
-    return false if self.hidden
+    return false if self.hidden # hit our blacklist so definitely false
 
     # Check types we'll check for indicators 
     # of in-scope-ness

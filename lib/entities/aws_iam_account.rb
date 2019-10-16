@@ -17,7 +17,6 @@ class AwsIamAccount < Intrigue::Model::Entity
   def detail_string
     "Organization: #{details["organization"]} / Type: #{details["account_type"]} / Name: #{name}" 
   end
-
  
 end
 end
