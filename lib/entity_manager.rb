@@ -223,7 +223,6 @@ class EntityManager
             return nil
           end
 
-
         rescue Encoding::UndefinedConversionError => e
           tr.log_fatal "Unable to create entity:#{entity_details}\n #{e}"
           return nil
@@ -278,7 +277,7 @@ class EntityManager
     ## Now, if we're still scoped, set the scoping based on entity rules
     if entity.scoped
       
-      entity.scoped = scoped?
+      entity.scoped = entity.scoped?
       entity.save_changes
 
       tr.log "Entity was scoped by task process, so we set scoped based on entity rules: #{entity.scoped}"
