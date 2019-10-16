@@ -202,7 +202,7 @@ class EntityManager
         
         # otherwise, fall back to false
         else
-          tr.log "No specific scope request, assuming we're scoped!"
+          tr.log "No specific scope request, asking entity rules!"
           entity_details[:scoped] = true
         end
 
@@ -222,6 +222,7 @@ class EntityManager
             tr.log_fatal "Unable to create entity: #{entity_details}"
             return nil
           end
+
 
         rescue Encoding::UndefinedConversionError => e
           tr.log_fatal "Unable to create entity:#{entity_details}\n #{e}"
@@ -273,6 +274,16 @@ class EntityManager
       cid > pid ? entity.alias_to(pid) : primary_entity.alias_to(cid)
 
     end
+
+    ## Now, if we're still scoped, set the scoping based on entity rules
+    if entity.scoped
+      
+      entity.scoped = scoped?
+      entity.save_changes
+
+      tr.log "Entity was scoped by task process, so we set scoped based on entity rules: #{entity.scoped}"
+    end
+
 
     # ENRICHMENT LAUNCH
     if tr.auto_enrich && !entity_already_existed
