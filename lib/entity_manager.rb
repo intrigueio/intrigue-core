@@ -202,12 +202,11 @@ class EntityManager
         
         # otherwise, fall back to false
         else
-          tr.log "No specific scope request, asking entity rules!"
-          entity_details[:scoped] = entity.scoped? || true
+          
+          tr.log "No specific scope request from the task result"
+          entity_details[:scoped] = true
+
         end
-
-        tr.log "Scoping decision for #{downcased_name}: #{entity_details[:scoped]}"
-
 
         #####
         ### END ... USER- or TASK- PROVIDED SCOPING 
@@ -245,6 +244,17 @@ class EntityManager
       tr.log_error "Unable to create or find entity: #{type}##{downcased_name}, failing!!"
       return nil
     end
+
+    ### revisit scoping in case the entity has specific scoping instructions 
+    ##   (now that we have an entity)
+    ##
+    ##  the default method on the base class simply sets what was available previously
+    ##  See Intrigue::Model::Entity -> scoped?
+    ##
+    entity.scoped = entity.scoped?
+    entity.save_changes
+    tr.log "Final scoping decision for #{entity.name}: #{entity.scoped}"
+
 
     ### Run Data transformation (to hide attributes... HACK)
     unless entity.transform!
