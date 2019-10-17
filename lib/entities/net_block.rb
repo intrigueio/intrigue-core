@@ -73,8 +73,8 @@ class NetBlock < Intrigue::Model::Entity
 
     end
 
-  # always default to whatever was passed to us (could have been set in the task)
-  scoped
+  # if we didnt match the above and we were asked, it's false 
+  false
   end
 
 

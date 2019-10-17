@@ -44,9 +44,10 @@ class EmailAddress < Intrigue::Model::Entity
           return true
         end
       end
-    false
     end
-
+  
+  # if we didnt match the above and we were asked, it's false 
+  false
   end
 
 

@@ -203,8 +203,11 @@ class EntityManager
         # otherwise, fall back to false
         else
           tr.log "No specific scope request, asking entity rules!"
-          entity_details[:scoped] = true
+          entity_details[:scoped] = entity.scoped? || true
         end
+
+        tr.log "Scoping decision for #{downcased_name}: #{entity_details[:scoped]}"
+
 
         #####
         ### END ... USER- or TASK- PROVIDED SCOPING 
@@ -273,16 +276,6 @@ class EntityManager
       cid > pid ? entity.alias_to(pid) : primary_entity.alias_to(cid)
 
     end
-
-    ## Now, if we're still scoped, set the scoping based on entity rules
-    if entity.scoped
-      
-      entity.scoped = entity.scoped?
-      entity.save_changes
-
-      tr.log "Entity was scoped by task process, so we set scoped based on entity rules: #{entity.scoped}"
-    end
-
 
     # ENRICHMENT LAUNCH
     if tr.auto_enrich && !entity_already_existed
