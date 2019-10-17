@@ -54,8 +54,8 @@ class SslCertificate < Intrigue::Model::Entity
       end
     end
 
-  # if we didnt match the above and we were asked, it's false 
-  false
+  # if we didnt match the above and we were asked, it's still true
+  true
   end
 
 end
