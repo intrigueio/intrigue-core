@@ -1,21 +1,43 @@
 require_relative 'spec_helper'
 
 describe "Intrigue" do
+
 describe "API" do
 
-  it "should redirect to the current version" do
-    get "/"
-    expect(last_response.status).to match 302
-  end
-
-  it "should have v1 as the current version" do
+  it "should return a 200" do
     get "/"
     expect(last_response.status).to match 200
   end
 
+end
+
+describe "EntityApi" do 
+
+  it "should return a list of entity types" do
+    get '/entity_types.json'
+    expect(last_response.status).to match 200
+  end
+
+  it "the entity list should contain a AutonomousSystem type" do
+    get '/entity_types.json'
+    json = JSON.parse(last_response.body)
+    as = json.select{|x| x["name"] == "AutonomousSystem"} 
+    expect(as).not_to be nil
+  end
+
+end
+
+describe "TaskApi" do
   it "should return a list of tasks" do
     get '/tasks.json'
     expect(last_response.status).to match 200
+  end
+
+  it "entity list should contain a AutonomousSystem type" do
+    get '/entity_types.json'
+    json = JSON.parse(last_response.body)
+    as = json.select{|x| x["name"] == "AutonomousSystem"} 
+    expect(as).not_to be nil
   end
 
 =begin
@@ -49,4 +71,5 @@ describe "API" do
 =end
 
 end
+
 end
