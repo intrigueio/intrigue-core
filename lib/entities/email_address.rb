@@ -23,6 +23,7 @@ class EmailAddress < Intrigue::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
+    return true if self.seed
     return false if self.hidden
 
     # Check types we'll check for indicators 
@@ -46,8 +47,8 @@ class EmailAddress < Intrigue::Model::Entity
       end
     end
   
-  # if we didnt match the above and we were asked, it's false 
-  false
+  # if we didnt match the above and we were asked, let's allow it
+  true
   end
 
 

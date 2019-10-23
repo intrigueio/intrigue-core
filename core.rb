@@ -18,7 +18,7 @@ require 'sidekiq-limit_fetch'
 require 'sequel'
 
 # Config
-require_relative 'lib/config/global_config'
+require_relative 'lib/system/global_config'
 
 # Debug
 require 'pry'

@@ -31,6 +31,7 @@ class IpAddress < Intrigue::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
+    return true if self.seed
     return false if self.hidden
 
     # Check types we'll check for indicators 

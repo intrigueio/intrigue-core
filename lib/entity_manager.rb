@@ -202,10 +202,8 @@ class EntityManager
         
         # otherwise, fall back to false
         else
-          
           tr.log "No specific scope request from the task result"
           entity_details[:scoped] = true
-
         end
 
         #####
@@ -251,9 +249,10 @@ class EntityManager
     ##  the default method on the base class simply sets what was available previously
     ##  See Intrigue::Model::Entity -> scoped?
     ##
-    entity.scoped = entity.scoped?
+    entity.scoped = entity.scoped? 
     entity.save_changes
     tr.log "Final scoping decision for #{entity.name}: #{entity.scoped}"
+
 
 
     ### Run Data transformation (to hide attributes... HACK)

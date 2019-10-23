@@ -81,7 +81,7 @@ module Task
               
               _create_issue({
                 name: "Discovered Content at #{result[:name]}",
-                type: "discovered_content",
+                type:  request_details[:issue_type] || "discovered_content",
                 severity: request_details[:severity] || 5,
                 status: request_details[:status] || "potential",
                 description: "Page was found with a code #{result[:response_code]} by url_brute_focused_content at #{result[:name]}",
