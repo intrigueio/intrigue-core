@@ -92,7 +92,7 @@ task :setup do
     config = YAML.load_file(database_config_file)
     config["development"]["password"] = system_password
     config["production"]["password"] = system_password
-    config["docker"]["password"] = system_password
+    #config["docker"]["password"] = system_password
     File.open(database_config_file,"w").puts YAML.dump config
   end
 
