@@ -106,7 +106,7 @@ class IntrigueApp < Sinatra::Base
       if Intrigue::MachineFactory.has_machine? "#{@params["machine"]}"
         machine_name = "#{@params["machine"]}"
       else
-        machine_name = "org_asset_discovery_active"
+        machine_name = "external_discovery_light_active"
       end
 
       auto_enrich = @params["auto_enrich"] == "on" ? true : false
@@ -212,7 +212,7 @@ class IntrigueApp < Sinatra::Base
       if Intrigue::MachineFactory.has_machine? "#{@params["machine"]}"
         machine_name = "#{@params["machine"]}"
       else
-        machine_name = "org_asset_discovery_active"
+        machine_name = "external_discovery_light_active"
       end
 
       auto_enrich = @params["auto_enrich"] == "on" ? true : false

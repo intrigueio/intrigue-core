@@ -23,7 +23,7 @@ module Bootstrap
 
       task_name = p["task_name"] || "create_entity"
       options = p["task_options"] || []
-      machine = p["machine"] || "org_asset_discovery_active"
+      machine = p["machine"] || "external_discovery_light_active"
       depth = p["depth"] || 5
       scan_handlers = p["scan_handlers"] || []
       auto_enrich = p["auto_enrich"] || true

@@ -10,7 +10,7 @@ module Helper
   ### Helper method for starting a task run
   ###
   def start_task(queue, project, existing_scan_result, task_name, entity, depth,
-        options=[], handlers=[], machine_name="asset_discovery_active", auto_enrich=true, auto_scope=false)
+        options=[], handlers=[], machine_name="external_discovery_light_active", auto_enrich=true, auto_scope=false)
 
     # Create the task result, and associate our entity and options
     task_result = Intrigue::Model::TaskResult.create({
