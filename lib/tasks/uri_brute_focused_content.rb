@@ -69,7 +69,7 @@ class UriBruteFocusedContent < BaseTask
     generic_list = [ 
       #{ path: "/api", body_regex: nil },
       { issue_type: "leaked_repository", path: "/.git", severity: 2, body_regex: /<h1>Index of/, status: "confirmed" },
-      { issue_type: "leaked_repository", path: "/.git/config", severity: 2, body_regex: nil, :status => "potential"  },
+      { issue_type: "leaked_repository", path: "/.git/config", severity: 2, body_regex: /repositoryformatversion/, :status => "confirmed"  },
       { issue_type: "leaked_repository", path: "/.hg", severity: 2, body_regex: /<h1>Index of/, status: "confirmed"  },
       { issue_type: "leaked_repository", path: "/.svn", severity: 2, body_regex: /<h1>Index of/, status: "confirmed" },
       { issue_type: "leaked_repository", path: "/.bzr", severity: 2, body_regex: /<h1>Index of/, status: "confirmed" },
