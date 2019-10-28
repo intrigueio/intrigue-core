@@ -143,7 +143,7 @@ class UriSpider < BaseTask
 
             ignore_types = [
               "application/javascript", "text/xml", "application/atom+xml",
-              "application/rss+xml", "application/x-javascript", "application/xml"
+              "application/rss+xml", "application/x-javascript", "application/xml",
               "image/jpeg", "image/png", "image/svg+xml", "image/vnd.microsoft.icon", 
               "image/x-icon", "text/css", "text/html", "text/javascript", "text/plain" ]
 

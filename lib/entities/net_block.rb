@@ -50,29 +50,42 @@ class NetBlock < Intrigue::Model::Entity
     if self.project.seeds
       self.project.seeds.each do |s|
         next unless scope_check_entity_types.include? s.type.to_s
-        if details["whois_full_text"] =~ /[\s@]#{Regexp.escape(s.name)}/
-          #_log "Marking as scoped. Matched Seed entity: #{s.name}}" # TODO... can't log here. 
+        if "#{details["whois_full_text"]}" =~ /[\s@]#{Regexp.escape(s.name)}/i
           return true
         end
       end
     end
 
-    ### CHECK OUR IN-PROJECT DISCOVERED ENTITIES TO SEE IF THE TEXT MATCHES 
+    ### CHECK OUR IN-PROJECT ENTITIES TO SEE IF THE TEXT MATCHES 
     #######################################################################
     self.project.entities.where(scoped: true, type: scope_check_entity_types, hidden: false ).each do |e|
-
       # make sure we skip any dns entries that are not fqdns. this will prevent
       # auto-scoping on a single name like "log" or even a number like "1"
       next if (e.type == "DnsRecord" || e.type == "Domain") && e.name.split(".").count == 1
-
       # Now, check to see if the entity's name matches something in our # whois text, 
       # and especially make sure 
-      if details["whois_full_text"] =~ /[\s@]#{Regexp.escape(e.name)}/
-        #_log "Marking as scoped. Matched Non-seed entity: #{e.type}##{e.name}}" # TODO... can't log here
+      if "#{details["whois_full_text"]}" =~ /[\s@]#{Regexp.escape(e.name)}/i
         return true
       end
-
     end
+
+    # now check more edge cases
+
+    ### CHECK OUR IN-PROJECT ENTITIES TO SEE IF THE ORG NAME MATCHES 
+    #######################################################################
+    self.project.entities.where(scoped: true, type: scope_check_entity_types, hidden: false ).each do |e|
+      # make sure we skip any dns entries that are not fqdns. this will prevent
+      # auto-scoping on a single name like "log" or even a number like "1"
+      next if (e.type == "DnsRecord" || e.type == "Domain") && e.name.split(".").count == 1
+      # Now, check to see if the entity's name matches something in our # whois text, 
+      # and especially make sure 
+      if "#{details["organization"]}" =~ /[\s@]#{Regexp.escape(e.name)}/i
+        return true
+      end
+    end
+
+    # if we were created by search bgp AND we don't have any real attributes, be generous
+    return true if !details["organization"] && !details["whois_full_text"] && details["cidr"].to_i > 8
 
   # if we didnt match the above and we were asked, it's false 
   false

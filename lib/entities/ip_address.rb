@@ -51,7 +51,7 @@ class IpAddress < Intrigue::Model::Entity
         # only if it's a domain
         if s["type"] == "Intrigue::Entity::Domain" # try the basename )
           base_name = s["name"].split(".").first # x.com -> x
-          return true if (details["whois_full_text"] =~ /#{Regexp.escape(base_name)}/)
+          return true if ("#{details["whois_full_text"]}" =~ /#{Regexp.escape(base_name)}/i)
         end
       end
     end
@@ -66,7 +66,7 @@ class IpAddress < Intrigue::Model::Entity
 
       # Now, check to see if the entity's name matches something in our # whois text, 
       # and especially make sure 
-      if details["whois_full_text"] =~ /[\s@]#{Regexp.escape(e.name)}/
+      if "#{details["whois_full_text"]}" =~ /[\s@]#{Regexp.escape(e.name)}/i
         #_log "Marking as scoped: PROJECT ENTITY MATCHED TEXT: #{e.type}##{e.name}"
         return true
       end
