@@ -8,7 +8,7 @@ class UriSpider < BaseTask
       :pretty_name => "URI Spider",
       :authors => ["jcran"],
       :description => "This task spiders a given URI, creating entities from the page text, as well as from parsed files.",
-      :references => ["http://tika.apache.org/0.9/formats.html"],
+      :references => ["http://tika.apache.org/1.22/formats.html"],
       :allowed_types => ["Uri"],
       :type => "discovery",
       :passive => false,
@@ -17,8 +17,8 @@ class UriSpider < BaseTask
       ],
       :allowed_options => [
         {:name => "spider_user_agent", :regex => "alpha_numeric", :default => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36"},
-        {:name => "spider_limit", :regex => "integer", :default => 20 },
-        {:name => "spider_max_depth", :regex => "integer", :default => 2 },
+        {:name => "spider_limit", :regex => "integer", :default => 100 },
+        {:name => "spider_max_depth", :regex => "integer", :default => 5 },
         {:name => "spider_whitelist", :regex => "alpha_numeric_list", :default => "(current domain)" },
         {:name => "extract_dns_records", :regex => "boolean", :default => true },
         {:name => "extract_dns_record_pattern", :regex => "alpha_numeric_list", :default => "(current domain)" },
@@ -85,14 +85,14 @@ class UriSpider < BaseTask
 
     Spidr.start_at(uri, options) do |spider|
 
-      # spider each page
-      spider.every_page do |page|
+      begin
+        # spider each page
+        spider.every_page do |page|         
 
-        begin 
+          next if crawled_pages.include? page.url
 
           next unless "#{page.url}".length > 3
 
-          _log "Got... #{page.url}"
           crawled_pages << page.url
 
           if @opt_extract_uris
@@ -135,48 +135,39 @@ class UriSpider < BaseTask
                 end
 
               end
-            end
+            end # end dns records 
           end
 
           if @opt_parse_file_metadata
             content_type = "#{page.content_type}".split(";").first
 
-            unless (  content_type == "application/javascript" or
-                      content_type == "application/json" or
-                      content_type == "application/atom+xml" or
-                      content_type == "application/rss+xml" or
-                      content_type == "application/x-javascript" or
-                      content_type == "application/xml" or
-                      content_type == "image/jpeg" or
-                      content_type == "image/png" or
-                      content_type == "image/svg+xml" or
-                      content_type == "image/vnd.microsoft.icon" or
-                      content_type == "image/x-icon" or
-                      content_type == "text/css" or
-                      content_type == "text/html" or
-                      content_type == "text/javascript" or
-                      content_type == "text/xml"  )
+            ignore_types = [
+              "application/javascript", "text/xml", "application/atom+xml",
+              "application/rss+xml", "application/x-javascript", "application/xml"
+              "image/jpeg", "image/png", "image/svg+xml", "image/vnd.microsoft.icon", 
+              "image/x-icon", "text/css", "text/html", "text/javascript", "text/plain" ]
+
+            unless ignore_types.include? content_type
               _log_good "Parsing document of type #{content_type} @ #{page.url}"
-              download_and_extract_metadata "#{page.url}"
+              metadata = download_and_extract_metadata "#{page.url}"
+              _set_entity_detail("extended_metadata",metadata)
             else
-              _log "Skipping parsing file of type: #{content_type}"
+              _log "Parsing as a regular file!"
+              parse_phone_numbers_from_content("#{page.url}", encoded_page_body) if @opt_extract_phone_numbers
+              parse_email_addresses_from_content("#{page.url}", encoded_page_body) if @opt_extract_email_addresses
             end
+
           end
 
+          encoded_page_body = nil      
 
-          _log "Parsing as a regular file!"
-          parse_phone_numbers_from_content("#{page.url}", encoded_page_body) if @opt_extract_phone_numbers
-          parse_email_addresses_from_content("#{page.url}", encoded_page_body) if @opt_extract_email_addresses
+        end # end every page 
 
-          encoded_page_body = nil
+      rescue URI::InvalidURIError => e
+        _log_error "#{e} ... #{page.url}"
+      end # end begin 
 
-        rescue URI::InvalidURIError => e 
-          _log_error "got invalid error on uri: #{e}"
-        end
-
-      end # end spider 
-
-    end
+    end # end start_at
 
     _set_entity_detail "spider", crawled_pages
 

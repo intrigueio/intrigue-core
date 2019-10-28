@@ -41,3 +41,12 @@ God.watch do |w|
   w.keepalive
 end
 
+God.watch do |w|
+  w.group = "intrigue"
+  w.name = "intrigue-tika"
+  w.dir = "#{BASEDIR}" 
+  w.log = "#{BASEDIR}/log/tika.log"
+  w.start = "java -jar #{BASEDIR}/tmp/tika-server-1.22.jar"
+  w.pid_file = File.join("#{BASEDIR}/tmp/pids/tika.pid")
+  w.keepalive
+end

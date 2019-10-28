@@ -79,24 +79,9 @@ module Generic
   # Convenience Method to execute a system command semi-safely
   #  !!!! Don't send anything to this without first whitelisting user input!!!
   def _unsafe_system(command)
-
-    ###                  ###
-    ###  XXX - SECURITY  ###
-    ###                  ###
-
-    if command =~ /(\||\;|\`|\>|\<|\'|\%|\(|\)|\{|\}|\|\&)/
-      #raise "Illegal character"
-      _log_error "FATAL Illegal character in #{command}"
-      return
+    Dir.chdir Dir::tmpdir do
+      ShellCommand::execute(command).stdout
     end
-    
-    # run in a temp dir
-    output = ""
-    Dir.chdir(Dir::tmpdir) do
-      output = `#{command} 2>&1`
-    end 
-
-  output
   end
 
   ###

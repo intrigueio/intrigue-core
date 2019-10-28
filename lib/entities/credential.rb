@@ -11,7 +11,7 @@ class Credential < Intrigue::Model::Entity
   end
 
   def validate_entity
-    name =~ /^\w.*/ &&
+    name =~ /^[\w\s\d\.\-\_\&\;\:\,\@]+$/ &&
     details["username"].to_s =~ /^\w.*$/ &&
     details["password"].to_s =~ /^\w.*$/ &&
     details["uri"].to_s =~ /^http:.*$/

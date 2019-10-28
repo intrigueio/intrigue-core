@@ -42,7 +42,7 @@ gem 'googleajax'              # search_google
 gem 'maxminddb',              :git => "https://github.com/intrigueio/maxminddb"
 gem 'shodan'                  # search_shodan
 gem 'towerdata_api'           # search_towerdata
-gem 'yomu',                   :git => 'https://github.com/intrigueio/yomu.git' # uri_spider
+#gem 'yomu',                   :git => 'https://github.com/intrigueio/yomu.git' # uri_spider
 gem 'ruby-nmap',              :git => 'https://github.com/pentestify/ruby-nmap.git'
 gem 'censys',                 :git => 'https://github.com/pentestify/censys.git'
 gem 'whoisology',             :git => 'https://github.com/pentestify/whoisology.git'

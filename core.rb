@@ -7,6 +7,7 @@ require 'yaml'
 require 'rest-client'
 require 'cgi'
 require 'uri'
+require 'shellwords' # shell escapin'
 
 # Sidekiq
 require 'sidekiq'

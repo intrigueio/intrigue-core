@@ -3,6 +3,63 @@ module Intrigue
 module Task
 module WebContent
 
+  def download_and_extract_metadata(uri,extract_content=true)
+
+     begin
+        # Download file and store locally before parsing. This helps prevent mime-type confusion
+        # Note that we don't care who it is, we'll download indescriminently.
+        filename = ""
+        open("#{Dir::tmpdir}/#{rand(9999999999)}", "wb", {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}) do |file|
+          open(uri) do |uri|
+            file.write(uri.read)
+            filename = file.path
+          end
+        end  
+
+       mimetype = `file --brief --mime-type - < #{Shellwords.shellescape(filename)}`.strip
+
+       ## Send to Apache Tika for analysis 
+       @task_result.logger.log "Parsing #{filename}, mimetype: #{mimetype}"
+       
+       response = RestClient.put('http://127.0.0.1:9998/rmeta', File.open(filename,"rb").read, :accept => "application/json",:'content-type' => mimetype )
+       metadata = JSON.parse(response).first
+
+       # Handle audio files
+       if metadata["Content-Type"] == "audio/mpeg" # Handle MP3/4
+         _create_entity "Person", {"name" => metadata["meta:author"], "origin" => uri }
+         _create_entity "Person", {"name" => metadata["creator"], "origin" => uri }
+         _create_entity "Person", {"name" => metadata["xmpDM:artist"], "origin" => uri }
+
+       elsif metadata["Content-Type"] == "application/pdf" # Handle PDF
+
+         _create_entity "Person", {"name" => metadata["Author"], "origin" => uri, "modified" => metadata["Last-Modified"] } if metadata["Author"]
+         _create_entity "Person", {"name" => metadata["meta:author"], "origin" => uri, "modified" => metadata["Last-Modified"] } if metadata["meta:author"]
+         _create_entity "Person", {"name" => metadata["dc:creator"], "origin" => uri, "modified" => metadata["Last-Modified"] } if metadata["dc:creator"]
+         _create_entity "Person", {"name" => metadata["xmp:CreatorTool"], "origin" => uri, "modified" => metadata["Last-Modified"] } if metadata["xmp:CreatorTool"]
+         _create_entity "Organization", {"name" => metadata["Company"], "origin" => uri, "modified" => metadata["Last-Modified"] } if metadata["Company"]
+         
+       end
+
+       # Look for entities in the text of the entity
+       parse_entities_from_content(uri,metadata["X-TIKA:content"]) if extract_content
+
+     rescue RuntimeError => e
+      @task_result.logger.log_error "Runtime error: #{e}"
+     rescue EOFError => e
+       @task_result.logger.log_error "Unable to parse file: #{e}"
+     rescue OpenURI::HTTPError => e     # don't die if we can't find the file
+       @task_result.logger.log_error "Unable to download file: #{e}"
+     rescue URI::InvalidURIError => e     # handle invalid uris
+       @task_result.logger.log_error "Unable to download file: #{e}"
+     rescue JSON::ParserError => e
+       @task_result.logger.log_error "Unable to parse file: #{e}"
+     end
+
+   # return metadata
+   metadata
+   end
+
+
    ###
    ### Entity Parsing
    ###

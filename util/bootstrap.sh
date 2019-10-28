@@ -211,6 +211,13 @@ if [ ! -f /usr/bin/rdpscan ]; then
   rm -rf rdpscan
 fi
 
+### Install latest tika
+echo "[+] Installing Apache Tika"
+cd $INTRIGUE_DIRECTORY/tmp
+LATEST_TIKA_VERSION=1.22
+wget http://apache-mirror.8birdsvideo.com/tika/tika-server-$LATEST_TIKA_VERSION.jar
+cd $HOME
+
 # update sudoers
 echo "[+] Updating Sudo configuration"
 if ! sudo grep -q NMAP /etc/sudoers; then
@@ -335,7 +342,7 @@ else
   echo "[+] Nooooo I'm not inside docker!";
   echo "echo ''" >> ~/.bash_profile
   echo "echo To enable Intrigue services, run the following command:" >> ~/.bash_profile
-  echo "echo '$ cd core && god -c /home/ubuntu/core/util/god/intrigue-ec2.rb && god start'" >> ~/.bash_profile
+  echo "echo '$ cd core && god -c $INTRIGUE_DIRECTORY/util/god/intrigue-ec2.rb && god start'" >> ~/.bash_profile
 fi
 
 # if we're configuring as root, we're probably going to run as root, so

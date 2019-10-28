@@ -29,7 +29,6 @@ require 'uri'
 require 'whois'
 require 'whois-parser'
 require 'whoisology'
-require 'yomu'
 require 'zip'
 
 ###

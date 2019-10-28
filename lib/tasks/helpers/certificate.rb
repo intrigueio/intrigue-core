@@ -28,7 +28,6 @@ class SelfSignedCertificate
     cert.add_extension ef.create_extension("authorityKeyIdentifier",
                                            "keyid:always,issuer:always")
 
-
     cert.sign key, OpenSSL::Digest::SHA256.new
   {"cert" => cert.to_pem, "key" => key.to_pem }
   end

@@ -641,64 +641,7 @@ module Task
   response
   end
 
-
-   def download_and_extract_metadata(uri,extract_content=true)
-
-     begin
-       # Download file and store locally before parsing. This helps prevent mime-type confusion
-       # Note that we don't care who it is, we'll download indescriminently.
-       file = open(uri, {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE})
-
-       # Parse the file
-       yomu = Yomu.new file
-
-       # create a uri for everything
-       #_create_entity "Document", {
-       #    "content_type" => file.content_type,
-       #    "name" => "#{uri}",
-       #    "uri" => "#{uri}",
-       # =>     "metadata" => yomu.metadata }
-       @task_result.logger.log "Parsing #{file.path}"
-       @task_result.logger.log "Metadata #{yomu.metadata}"
-
-       # Handle audio files
-       if yomu.metadata["Content-Type"] == "audio/mpeg" # Handle MP3/4
-         _create_entity "Person", {"name" => yomu.metadata["meta:author"], "origin" => uri }
-         _create_entity "Person", {"name" => yomu.metadata["creator"], "origin" => uri }
-         _create_entity "Person", {"name" => yomu.metadata["xmpDM:artist"], "origin" => uri }
-
-       elsif yomu.metadata["Content-Type"] == "application/pdf" # Handle PDF
-         _create_entity "Person", {"name" => yomu.metadata["Author"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["Author"]
-         _create_entity "Person", {"name" => yomu.metadata["meta:author"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["meta:author"]
-         _create_entity "Person", {"name" => yomu.metadata["dc:creator"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["dc:creator"]
-         _create_entity "Organization", {"name" => yomu.metadata["Company"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["Company"]
-         #_create_entity "SoftwarePackage", {"name" => yomu.metadata["producer"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["producer"]
-         _create_entity "SoftwarePackage", {"name" => yomu.metadata["xmp:CreatorTool"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["Company"]
-       end
-
-       # Look for entities in the text of the entity
-       parse_entities_from_content(uri,yomu.text) if extract_content
-
-     # Don't die if we lose our connection to the tika server
-     rescue StandardError => e
-       @task_result.logger.log_error "Unable to parse file: #{e}"
-     rescue EOFError => e
-       @task_result.logger.log_error "Unable to parse file: #{e}"
-     rescue OpenURI::HTTPError => e     # don't die if we can't find the file
-       @task_result.logger.log_error "Unable to download file: #{e}"
-     rescue URI::InvalidURIError => e     # handle invalid uris
-       @task_result.logger.log_error "Unable to download file: #{e}"
-     rescue Errno::EPIPE => e
-       @task_result.logger.log_error "Unable to contact Tika: #{e}"
-     rescue JSON::ParserError => e
-       @task_result.logger.log_error "Unable to parse file: #{e}"
-     end
-
-   end
-
-
-
-   def check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content, success_cases=nil)
+  def check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content, success_cases=nil)
 
      to_return = false
 
