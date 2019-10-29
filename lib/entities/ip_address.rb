@@ -58,7 +58,7 @@ class IpAddress < Intrigue::Model::Entity
 
     ### CHECK OUR IN-PROJECT DISCOVERED ENTITIES TO SEE IF THE TEXT MATCHES 
     #######################################################################
-    self.project.entities.where(scoped: true, type: scope_check_entity_types, hidden: false ).each do |e|
+    self.project.entities.where(scoped: true, type: scope_check_entity_types ).each do |e|
 
       # make sure we skip any dns entries that are not fqdns. this will prevent
       # auto-scoping on a single name like "log" or even a number like "1"
