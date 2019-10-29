@@ -55,7 +55,8 @@ class NmapScan < BaseTask
       _log "NMap options: #{nmap_options}"
 
       # shell out to nmap and run the scan
-      nmap_string = "nmap #{scan_item} #{nmap_options} -sSUV -P0 -T5 #{port_list} -O --max-os-tries 2 -oX #{temp_file}"
+      nmap_string = "nmap #{scan_item} #{nmap_options} -sSUV -P0 -T5 #{port_list}"
+      nmap_string << " -O --max-os-tries 2 -oX #{temp_file}"
       nmap_string = "sudo #{nmap_string}" unless Process.uid == 0
 
       _log "Starting Scan: #{nmap_string}"
@@ -69,12 +70,15 @@ class NmapScan < BaseTask
 
       # Create entities for each discovered service
       parser.each_host do |host|
+        
         _log "Handling nmap data for #{host.ip}"
         _log "Total ports: #{host.ports.count}"
         _log "Total open ports: #{host.each_port.select{|p| p.state == :open}.count}"
 
         # Handle the case of a netblock or domain
-        if @entity.type_string == "NetBlock" || @entity.type_string == "DnsRecord" || @entity.type_string == "Domain" 
+        if @entity.type_string == "NetBlock"   || 
+           @entity.type_string == "DnsRecord"  || 
+           @entity.type_string == "Domain" 
           # Only create if we've got ports to report.
           ip_entity = _create_entity("IpAddress", { "name" => host.ip } )
         else
@@ -88,14 +92,14 @@ class NmapScan < BaseTask
         host_details = [] 
 
         # iterate through all open ports
-        host.open_ports  do |port|
+        host.open_ports.each do |port|
 
           # construct a hash of details for this port
           port_details = nmap_details_for_port(port)
-          
+
           # create a network service entity
           _create_network_service_entity(
-            ip_entity,
+            ip_entity,  
             port.number,
             "#{port.protocol}",
             { "nmap" => port_details})
@@ -114,11 +118,11 @@ class NmapScan < BaseTask
       # Clean up!
       parser = nil
 
-      begin
-        File.delete(temp_file)
-      rescue Errno::EPERM
-        _log_error "Unable to delete file"
-      end
+      #begin
+      #  File.delete(temp_file)
+      #rescue Errno::EPERM
+      #  _log_error "Unable to delete file"
+      #end
 
     end
   end

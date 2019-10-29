@@ -71,8 +71,8 @@ module Services
 
     create_service_lambda = lambda do |h|
       try_http_ports = [  80,81,82,83,84,85,88,443,888,3000,6443,
-                            8000,8080,8081,8087,8088,8089,8090,8095,
-                            8098,8161,8180,8443,8888,10000 ] 
+                          8000,8080,8081,8087,8088,8089,8090,8095,
+                          8098,8161,8180,8443,8888,10000 ] 
 
       # Handle web app case first
       if (protocol == "tcp" && try_http_ports.include?(port_num))
@@ -100,6 +100,7 @@ module Services
         end
 
         entity_details = {
+          "scoped" => true, # always scope in
           "name" => uri,
           "uri" => uri,
           "service" => prefix
@@ -117,6 +118,7 @@ module Services
         name = "#{h.name.strip}:#{port_num}"
 
         entity_details = {
+          "scoped" => true, # always scope in
           "name" => name,
           "service" => service
         }
@@ -138,6 +140,7 @@ module Services
         name = "#{h.name.strip}:#{port_num}"
 
         entity_details = {
+          "scoped" => true, # always scope in
           "name" => name,
           "service" => service
         }

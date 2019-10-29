@@ -25,7 +25,6 @@ class NetworkService < Intrigue::Model::Entity
     ["enrich/network_service"]
   end
 
-
 end
 end
 end
