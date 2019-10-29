@@ -77,7 +77,7 @@ class Uri < Intrigue::Task::BaseTask
     if browser_enabled
       begin 
         _log "Browser Navigating to #{uri}"
-        c = Intrigue::ChromeBrowser.new
+        c = Intrigue::ChromeBrowser.new(:host => "127.0.0.1", :port => 9222)
         browser_response = c.navigate_and_capture(uri)
       rescue Errno::ECONNREFUSED => e 
         _log_error "Unable to connect to chrome browser. Is it running on :9222?"

@@ -4,9 +4,10 @@ require 'base64'
 module Intrigue
   class ChromeBrowser
 
-    def initialize
+    # set host and port options if desired
+    def initialize(options=nil)
       @requests = []
-      @chrome = ChromeRemote.client
+      @chrome = ChromeRemote.client(options)
 
       # Enable events
       @chrome.send_cmd "Network.enable"
