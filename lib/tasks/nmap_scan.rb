@@ -118,11 +118,11 @@ class NmapScan < BaseTask
       # Clean up!
       parser = nil
 
-      #begin
-      #  File.delete(temp_file)
-      #rescue Errno::EPERM
-      #  _log_error "Unable to delete file"
-      #end
+      begin
+        File.delete(temp_file)
+      rescue Errno::EPERM
+        _log_error "Unable to delete file"
+      end
 
     end
   end
