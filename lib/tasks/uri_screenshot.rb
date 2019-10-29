@@ -30,18 +30,23 @@ class UriScreenshot < BaseTask
     super
 
     uri = _get_entity_name
-
-    session = create_browser_session
-
-    if session 
-      # capture a screenshot and save it as a detail
-      _set_entity_detail("hidden_screenshot_contents",capture_screenshot(session, uri))
-    else 
-      _log "No screenshot capture, session was not created. Is the browser enabled in global options?"
+      
+    begin 
+      _log "Browser Navigating to #{uri}"
+      c = Intrigue::ChromeBrowser.new
+      browser_response = c.navigate_and_capture(uri)
+    rescue Errno::ECONNREFUSED => e 
+      _log_error "Unable to connect to chrome browser. Is it running on :9222?"
+    rescue StandardError => e
+      `pkill -9 chromium` # hacktastic
     end
 
-    # cleanup
-    destroy_browser_session(session)
+    if browser_response 
+      # capture a screenshot and save it as a detail
+      _set_entity_detail("hidden_screenshot_contents",browser_response["encoded_screenshot"])
+      _set_entity_detail("extended_screenshot_contents",browser_response["encoded_screenshot"])
+      _set_entity_detail("extended_requests",browser_response["requests"])
+    end
 
   end
 
