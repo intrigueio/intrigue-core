@@ -82,6 +82,8 @@ class Uri < Intrigue::Task::BaseTask
       rescue Errno::ECONNREFUSED => e 
         _log_error "Unable to connect to chrome browser. Is it running on :9222?"
       rescue StandardError => e
+        _log_error "Oops! Got error attempting to screenshot: #{e}"
+        _log_error "Attempting to restart chromium."
         `pkill -9 chromium` # hacktastic
       end
     else 
