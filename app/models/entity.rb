@@ -269,6 +269,7 @@ module Intrigue
           :task_results => task_results.map{ |t|
             { :id => t.id,
               :name => t.name,
+              #:type => t.type,
               :base_entity_name => t.base_entity.name,
               :base_entity_type => t.base_entity.type  }
           }

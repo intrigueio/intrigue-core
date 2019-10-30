@@ -420,8 +420,8 @@ module Task
   end
 
   # XXX - move this over to net-http (?)
-  def http_post(uri, data)
-    RestClient.post(uri, data)
+  def http_post(uri, data, params)
+    RestClient.post(uri, data, params)
   end
 
   #
@@ -529,18 +529,20 @@ module Task
        end
 
        # USE THIS TO PRINT HTTP REQUEST
-       #puts
-       #puts 
-       #puts "===== BEGIN REQUEST ====="
-       #puts "Endpoint: #{request.method} http://#{uri}"
-       #puts "Headers:\n"
-       #request.each_header do |key, value|
-       # puts "\t#{key}: #{value}"
-       #end
-       #puts "POST Data:\n#{request.body}" if request.method == 'POST'
-       #puts "=====  END  REQUEST ====="
-       #puts
-       #puts 
+=begin
+       puts
+       puts 
+       puts "===== BEGIN REQUEST ====="
+       puts "Endpoint: #{request.method} #{uri}"
+       puts "Headers:\n"
+       request.each_header do |key, value|
+        puts "\t#{key}: #{value}"
+       end
+       puts "POST Data:\n#{request.body}" if request.method == 'POST'
+       puts "=====  END  REQUEST ====="
+       puts
+       puts 
+=end
        # END USE THIS TO PRINT HTTP REQUEST
 
        # get the response

@@ -196,7 +196,13 @@
       "value": "",
       "uri": "https://www.phishtank.com",
       "editable": "true",
-      "comment": ""
+      "comment": "this is your phishtank api key"
+    },
+    "phishtank_username": {
+      "value": "",
+      "uri": "https://www.phishtank.com",
+      "editable": "true",
+      "comment": "this is your phishtank username"
     },
     "pipl_api_key": {
       "value": "XXX",
