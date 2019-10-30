@@ -44,6 +44,21 @@ class WordpressEnumerateUsers < BaseTask
         end
       end
 
+      # create users
+      parsed.each do |u| 
+        p = _create_entity "Person", { 
+          "known_usernames" => ["#{u["slug"]}"],
+          "name" => u["name"], 
+          "uri" => u["link"] } if u["name"] =~ /\s/
+
+        _create_entity "WebAccount", {
+          "name" => u["slug"],           
+          "username" => u["slug"], 
+          "service" => "wordpress",  
+          "uri" => u["link"] }, p
+      end
+
+      # save on the entity
       usernames = parsed.map{|x| x["name"] }.uniq
       _set_entity_detail("wordpress_users", usernames )
 
