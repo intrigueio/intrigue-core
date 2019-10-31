@@ -23,6 +23,10 @@ class AwsS3Bucket < Intrigue::Model::Entity
     ["enrich/aws_s3_bucket"]
   end
 
+  def scoped?(conditions={})
+    return true
+  end
+
 end
 end
 end
