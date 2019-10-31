@@ -73,19 +73,20 @@ class NetBlock < Intrigue::Model::Entity
 
     ### CHECK OUR IN-PROJECT ENTITIES TO SEE IF THE ORG NAME MATCHES 
     #######################################################################
-    self.project.entities.where(scoped: true, type: scope_check_entity_types ).each do |e|
-      # make sure we skip any dns entries that are not fqdns. this will prevent
-      # auto-scoping on a single name like "log" or even a number like "1"
-      next if (e.type == "DnsRecord" || e.type == "Domain") && e.name.split(".").count == 1
-      # Now, check to see if the entity's name matches something in our # whois text, 
-      # and especially make sure 
-      if "#{details["organization"]}" =~ /[\s@]#{Regexp.escape(e.name)}/i
-        return true
+    if details["organization"] || details["organization_name"]
+      self.project.entities.where(scoped: true, type: scope_check_entity_types ).each do |e|
+        # make sure we skip any dns entries that are not fqdns. this will prevent
+        # auto-scoping on a single name like "log" or even a number like "1"
+        next if (e.type == "DnsRecord" || e.type == "Domain") && e.name.split(".").count == 1
+        # Now, check to see if the entity's name matches something in our # whois text, 
+        # and especially make sure 
+        if details["organization"] || details["organization_name"] =~ /[\s@]#{Regexp.escape(e.name)}/i
+          return true
+        end
       end
+    else
+      return true if (!details["whois_full_text"] && details["cidr"].to_i > 8)
     end
-
-    # if we were created by search bgp AND we don't have any real attributes, be generous
-    return true if !details["organization"] && !details["whois_full_text"] && details["cidr"].to_i > 8
 
   # if we didnt match the above and we were asked, it's false 
   false
