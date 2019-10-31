@@ -17,13 +17,13 @@ class UriSpider < BaseTask
       ],
       :allowed_options => [
         {:name => "spider_user_agent", :regex => "alpha_numeric", :default => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36"},
-        {:name => "spider_limit", :regex => "integer", :default => 100 },
+        {:name => "spider_limit", :regex => "integer", :default => 100     },
         {:name => "spider_max_depth", :regex => "integer", :default => 3 },
         {:name => "spider_whitelist", :regex => "alpha_numeric_list", :default => "(current domain)" },
         {:name => "extract_dns_records", :regex => "boolean", :default => true },
         {:name => "extract_dns_record_pattern", :regex => "alpha_numeric_list", :default => "(current domain)" },
         {:name => "extract_email_addresses", :regex => "boolean", :default => true },
-        {:name => "extract_phone_numbers", :regex => "boolean", :default => true },
+        {:name => "extract_phone_numbers", :regex => "boolean", :default => false },
         {:name => "parse_file_metadata", :regex => "boolean", :default => true },
         {:name => "extract_uris", :regex => "boolean", :default => false }
       ],
