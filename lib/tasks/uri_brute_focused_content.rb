@@ -107,44 +107,44 @@ class UriBruteFocusedContent < BaseTask
     # TODO - see: https://foundeo.com/hack-my-cf/coldfusion-security-issues.cfm
     # TODO - see: metasploit
     coldfusion_list = [
-      { issue_type: "coldfusion_config", path: "/CFIDE", severity: 5, body_regex: nil, :status => "potential"  },
-      { issue_type: "coldfusion_config", path: "/CFIDE/scripts", severity: 4, body_regex: nil, :status => "potential"  },
-      { issue_type: "coldfusion_config", path: "/CFIDE/debug/", severity: 1, body_regex: nil, :status => "potential"  },
-      { issue_type: "coldfusion_config", path: "/CFIDE/administrator/enter.cfm", severity: 5, body_regex: nil, :status => "potential"  },
-      { issue_type: "coldfusion_config", path: "/CFIDE/administrator/aboutcf.cfm", severity: 5, body_regex: nil, :status => "potential"  },
-      { issue_type: "coldfusion_config", path: "/CFIDE/administrator/welcome.cfm", severity: 5, body_regex: nil, :status => "potential"  },
-      { issue_type: "coldfusion_config", path: "/CFIDE/administrator/index.cfm", severity: 5, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/CFIDE", severity: 5, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/CFIDE/scripts", severity: 4, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/CFIDE/debug/", severity: 1, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/CFIDE/administrator/enter.cfm", severity: 5, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/CFIDE/administrator/aboutcf.cfm", severity: 5, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/CFIDE/administrator/welcome.cfm", severity: 5, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/CFIDE/administrator/index.cfm", severity: 5, body_regex: nil, :status => "potential"  },
       # Jakarta Virtual Directory Exposed 
-      { issue_type: "coldfusion_config", path: "/jakarta/isapi_redirect.log", severity: 4, body_regex: nil, :status => "potential"  },
-      { issue_type: "coldfusion_config", path: "/jakarta/isapi_redirect.properties", severity: 4, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/jakarta/isapi_redirect.log", severity: 4, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/jakarta/isapi_redirect.properties", severity: 4, body_regex: nil, :status => "potential"  },
       # Bitcoin Miner Discovered 
       { issue_type: "coldfusion_config", path: "/CFIDE/m", severity: 1, body_regex: nil, :status => "potential"  },
       { issue_type: "coldfusion_config", path: "/CFIDE/m32", severity: 1, body_regex: nil, :status => "potential"  },
       { issue_type: "coldfusion_config", path: "/CFIDE/m64", severity: 1, body_regex: nil, :status => "potential"  },
-      { issue_type: "coldfusion_config", path: "/CFIDE/updates.cfm", severity: 1, body_regex: nil, :status => "potential" },
+      #{ issue_type: "coldfusion_config", path: "/CFIDE/updates.cfm", severity: 1, body_regex: nil, :status => "potential" },
       # XSS Injection in cfform.js 
-      { issue_type: "coldfusion_config", path: "/CFIDE/scripts/cfform.js", severity: 3, body_regex: /document\.write/, :status => "confirmed"  },
+      #{ issue_type: "coldfusion_config", path: "/CFIDE/scripts/cfform.js", severity: 3, body_regex: /document\.write/, :status => "confirmed"  },
       # OpenBD AdminAPI Exposed to the Public 
-      { issue_type: "coldfusion_config", path: "/bluedragon/adminapi/", severity: 1, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/bluedragon/adminapi/", severity: 1, body_regex: nil, :status => "potential"  },
       # ColdFusion Example Applications Installed -
-      { issue_type: "coldfusion_config", path: "/cfdocs/exampleapps/", severity: 4, body_regex: nil, :status => "potential"  },
-      { issue_type: "coldfusion_config", path: "/CFIDE/gettingstarted/", severity: 4, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/cfdocs/exampleapps/", severity: 4, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/CFIDE/gettingstarted/", severity: 4, body_regex: nil, :status => "potential"  },
       # Svn / git Hidden Directory Exposed 
-      { issue_type: "coldfusion_config",  path: "/.svn/text-base/index.cfm.svn-base", severity: 4, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config",  path: "/.svn/text-base/index.cfm.svn-base", severity: 4, body_regex: nil, :status => "potential"  },
       # Lucee Server Context is Public
-      { issue_type: "coldfusion_config", path: "/lucee-server/", severity: 3, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/lucee-server/", severity: 3, body_regex: nil, :status => "potential"  },
       # Lucee Docs are Public -
-      { issue_type: "coldfusion_config", path: "/lucee/doc.cfm", severity: 4, body_regex: nil, :status => "potential"  },
-      { issue_type: "coldfusion_config", path: "/lucee/doc/index.cfm", severity: 3, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/lucee/doc.cfm", severity: 4, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/lucee/doc/index.cfm", severity: 3, body_regex: nil, :status => "potential"  },
       # Lucee Server Context is Public
-      { issue_type: "coldfusion_config", path: "/railo-server-context/", severity: 3, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/railo-server-context/", severity: 3, body_regex: nil, :status => "potential"  },
       # The /cf_scripts/scripts directory is in default location
-      { issue_type: "coldfusion_config", path: "/cf_scripts/scripts/", severity: 3, body_regex: nil, :status => "potential"  },
-      { issue_type: "coldfusion_config", path: "/cfscripts_2018/", severity: 3, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/cf_scripts/scripts/", severity: 3, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/cfscripts_2018/", severity: 3, body_regex: nil, :status => "potential"  },
       # Backdoor Discovered
-      { issue_type: "coldfusion_config", path: "/CFIDE/h.cfm", severity: 1, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/CFIDE/h.cfm", severity: 1, body_regex: nil, :status => "potential"  },
       # Exposed _mmServerScripts
-      { issue_type: "coldfusion_config", path: "/_mmServerScripts", severity: 1, body_regex: nil, :status => "potential"  }
+      #{ issue_type: "coldfusion_config", path: "/_mmServerScripts", severity: 1, body_regex: nil, :status => "potential"  }
     ]
 
     globalprotect_list = [ # https://blog.orange.tw/2019/07/attacking-ssl-vpn-part-1-preauth-rce-on-palo-alto.html
