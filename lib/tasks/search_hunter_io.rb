@@ -30,7 +30,7 @@ class SearchHunterIo < BaseTask
 
     domain_name = _get_entity_name
 
-    url = "https://api.hunter.io/v2/domain-search?domain=#{domain_name}&api_key=#{api_key}" 
+    url = "https://api.hunter.io/v2/domain-search?domain=#{domain_name}&api_key=#{api_key}&limit=1000" 
 
     response = http_get_body(url)
     JSON.parse(response)["data"]["emails"].each do |e|

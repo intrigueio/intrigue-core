@@ -10,6 +10,23 @@ module Intrigue
 
     class GlobalConfig
 
+      def self.set_task_config(option_name,val)
+        
+        # create the correct format
+        option_hash = {
+          "value" =>  val,
+          "editable" => "false",
+          "uri" => "http://intrigue.io",
+          "comment" => "programmatically set option"
+        }
+
+        # Add it into the running config
+        @@config["intrigue_global_module_config"][option_name] = option_hash
+        
+        # save to persist it in case we reboot
+        save
+      end
+
       def self.config
         @@config
       end

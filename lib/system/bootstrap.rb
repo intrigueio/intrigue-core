@@ -7,6 +7,15 @@ module Bootstrap
 
     return nil unless config["projects"]
 
+    ### Set any system configuration
+
+    ### Set any task configuration
+    if config["task_configuration"]
+      config["task_configuration"].each do |k,v|
+        Intrigue::Config::GlobalConfig.set_task_config(k,v)
+      end
+    end
+
     # XXX - Assumes we start at a clean system!!!!
     config["projects"].each do |p|
 
@@ -20,7 +29,6 @@ module Bootstrap
       project = Intrigue::Model::Project.find_or_create(:name => "#{project_name}")
 
       # Set exclusion setting
-
       task_name = p["task_name"] || "create_entity"
       options = p["task_options"] || []
       machine = p["machine"] || "external_discovery_light_active"

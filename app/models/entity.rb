@@ -1,3 +1,12 @@
+# Adding to make it easier to query 
+module Intrigue
+module Model
+class EntitiesTaskResults < Sequel::Model
+end
+end
+end
+
+
 module Intrigue
   module Model
 
@@ -269,7 +278,7 @@ module Intrigue
           :task_results => task_results.map{ |t|
             { :id => t.id,
               :name => t.name,
-              #:type => t.type,
+              #:task_type => t.task_type,
               :base_entity_name => t.base_entity.name,
               :base_entity_type => t.base_entity.type  }
           }
@@ -292,3 +301,4 @@ module Intrigue
     end
   end
 end
+
