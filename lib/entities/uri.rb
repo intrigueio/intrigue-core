@@ -16,9 +16,10 @@ class Uri < Intrigue::Model::Entity
   end
 
   def detail_string
-    "Server: #{details["server_fingerprint"].to_a.join("; ")} | " +
-    "App: #{details["app_fingerprint"].to_a.join("; ")} | " +
-    "Title: #{details["title"]}"
+    fingerprint_array = details["fingerprint"].map{|x| "#{x['vendor']} #{x['product'] unless x['vendor'] == x['product']} #{x['version']}".strip} 
+    out = "Fingerprint: #{fingerprint_array.join("; ")}"
+    out << " | Title: #{details["title"]}" if details["title"]
+  out
   end
 
   def enrichment_tasks
