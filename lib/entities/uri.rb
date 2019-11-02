@@ -17,7 +17,7 @@ class Uri < Intrigue::Model::Entity
 
   def detail_string
     fingerprint_array = details["fingerprint"].map{|x| "#{x['vendor']} #{x['product'] unless x['vendor'] == x['product']} #{x['version']}".strip} 
-    out = "Fingerprint: #{fingerprint_array.join("; ")}"
+    out = "Fingerprint: #{fingerprint_array.join("; ")}" if details["fingerprint"]
     out << " | Title: #{details["title"]}" if details["title"]
   out
   end
