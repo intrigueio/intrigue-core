@@ -181,12 +181,12 @@ class EntityManager
         # if we're told this thing is scoped, let's just mark it scoped
         # note that we delete the detail since we no longer need it 
         # TODO... is this used today?
-        if (details["scoped"] == true || details["unscoped"] == "true")
+        if (details["scoped"] == true || details["scoped"] == "true")
           tr.log "Entity was specifically requested to be scoped"
           details = details.tap { |h| h.delete("scoped") }
           entity_details[:scoped] = true
         
-        # otherwise ____ default to unscoped ___ 
+        # otherwise if we've specifically decided to unscoped
         # note that we delete the detail since we no longer need it 
         elsif (details["unscoped"] == true || details["unscoped"] == "true")
           tr.log "Entity was specifically requested to be unscoped"

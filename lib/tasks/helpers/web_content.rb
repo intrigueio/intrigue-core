@@ -26,18 +26,23 @@ module WebContent
 
        # Handle audio files
        if metadata["Content-Type"] == "audio/mpeg" # Handle MP3/4
-         _create_entity "Person", {"name" => metadata["meta:author"], "origin" => uri }
-         _create_entity "Person", {"name" => metadata["creator"], "origin" => uri }
-         _create_entity "Person", {"name" => metadata["xmpDM:artist"], "origin" => uri }
-
-       elsif metadata["Content-Type"] == "application/pdf" # Handle PDF
-
-         _create_entity "Person", {"name" => metadata["Author"], "origin" => uri, "modified" => metadata["Last-Modified"] } if metadata["Author"]
-         _create_entity "Person", {"name" => metadata["meta:author"], "origin" => uri, "modified" => metadata["Last-Modified"] } if metadata["meta:author"]
-         _create_entity "Person", {"name" => metadata["dc:creator"], "origin" => uri, "modified" => metadata["Last-Modified"] } if metadata["dc:creator"]
-         _create_entity "Person", {"name" => metadata["xmp:CreatorTool"], "origin" => uri, "modified" => metadata["Last-Modified"] } if metadata["xmp:CreatorTool"]
-         _create_entity "Organization", {"name" => metadata["Company"], "origin" => uri, "modified" => metadata["Last-Modified"] } if metadata["Company"]
+        
+        # create people but unscoped since these files can come from anywhere
+        create_unscoped_person_or_software(metadata["Author"], metadata["Last-Modified"], uri, {} ) if metadata["Author"]
+        create_unscoped_person_or_software(metadata["creator"], metadata["Last-Modified"], uri) if metadata["creator"]
+        create_unscoped_person_or_software(metadata["xmpDM:artist"], metadata["Last-Modified"], uri) if metadata["xmpDM:artist"]
          
+       elsif metadata["Content-Type"] == "application/pdf" # Handle PDF
+  
+        # create people but unscoped since these files can come from anywhere
+        create_unscoped_person_or_software(metadata["Author"], metadata["Last-Modified"], uri)  if metadata["Author"]
+        create_unscoped_person_or_software(metadata["meta:author"], metadata["Last-Modified"], uri) if metadata["meta:author"]
+        create_unscoped_person_or_software(metadata["xmp:CreatorTool"], metadata["Last-Modified"], uri) if metadata["xmp:CreatorTool"]
+        create_unscoped_person_or_software(metadata["dc:creator"], metadata["Last-Modified"], uri)  if metadata["dc:creator"]
+      
+        # create an organization but it needs to be unscoped
+        create_unscoped_organization(metadata["Company"], metadata["Last-Modified"], uri) if metadata["Company"]
+       
        end
 
        # Look for entities in the text of the entity
@@ -57,6 +62,41 @@ module WebContent
 
    # return metadata
    metadata
+   end
+
+   def create_unscoped_person_or_software(create_string,last_modified, origin_uri, additional_details={})
+      
+      # skip if this is useless
+      return nil if create_string == "user"
+
+      to_create = { 
+        "unscoped" => true,
+        "name" => create_string, 
+        "origin" => origin_uri,
+        "modified" => last_modified }.merge(additional_details)
+
+      # there's a bunch of stuff we know is just software
+      if create_string =~ /microsoft/i || 
+         create_string =~ /adobe/i     || 
+         create_string =~ /pdf/i       ||
+         create_string =~ /coreldraw/i
+        _create_entity "SoftwarePackage", to_create
+      else 
+        _create_entity "Person", to_create
+      end
+
+   end
+
+   def create_unscoped_organization(create_string,last_modified, origin_uri, additional_details={})
+      
+      to_create = { 
+        "unscoped" => true,
+        "name" => create_string, 
+        "origin" => origin_uri,
+        "modified" => last_modified }.merge(additional_details)
+
+      _create_entity "Organization", to_create
+     
    end
 
 
