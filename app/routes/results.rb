@@ -186,17 +186,23 @@ class IntrigueApp < Sinatra::Base
           session[:flash] = "Bad file type: #{file_type}" 
           redirect FRONT_PAGE
         end
+
         # get the file
         entity_file = @params["entity_file"]["tempfile"]
 
-        #f = File.open entity_file,"r"
+        f = File.open entity_file,"r"
         entities = []
-        entity_file.each_line do |l|
+        f.each_line do |l|
           next if l[0] == "#" # skip comment lines
-          session[:flash] = "Bad file content: #{l}" unless l =~ /[a-z]+\#.*/
-          redirect FRONT_PAGE
-          et = l.split("#").first.chomp
-          en = l.split("#").last.chomp
+          
+          unless l =~ /[\w]+\#[\w\d\s\_\-\:\\\/]+/ # check for entity sanity
+            session[:flash] = "Bad file content: #{l}" 
+            redirect FRONT_PAGE
+          end
+
+          et = l.split("#").first.strip
+          en = l.split("#").last.strip
+ 
           entities << {entity_type: "#{et}", entity_name: "#{en}", }
         end
       end
