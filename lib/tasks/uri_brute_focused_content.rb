@@ -300,7 +300,7 @@ class UriBruteFocusedContent < BaseTask
     wordpress_list = [
       { issue_type: "wordpress_config_leak", path: "/wp-config.php~", severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },
       { issue_type: "wordpress_config_leak", path: "/wp-config.php.bak", severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },
-      { issue_type: "wordpress_config_leak", path: "/wp-config.php_bak",, severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },
+      { issue_type: "wordpress_config_leak", path: "/wp-config.php_bak", severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },
       { issue_type: "wordpress_config_leak", path: "/wp-config.php.old", severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },
       { issue_type: "wordpress_config_leak", path: "/wp-config.php.save", severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },    
       { issue_type: "wordpress_config_leak", path: "/wp-config.php.orig", severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },
