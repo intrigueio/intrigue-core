@@ -298,7 +298,13 @@ class UriBruteFocusedContent < BaseTask
     ] # see more at https://github.com/danielmiessler/SecLists/blob/master/Discovery/Web-Content/websphere.txt
 
     wordpress_list = [
-      { issue_type: "wordpress_config_leak", path: '/wp-config.php~', severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },
+      { issue_type: "wordpress_config_leak", path: "/wp-config.php~", severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },
+      { issue_type: "wordpress_config_leak", path: "/wp-config.php.bak", severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },
+      { issue_type: "wordpress_config_leak", path: "/wp-config.php_bak",, severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },
+      { issue_type: "wordpress_config_leak", path: "/wp-config.php.old", severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },
+      { issue_type: "wordpress_config_leak", path: "/wp-config.php.save", severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },    
+      { issue_type: "wordpress_config_leak", path: "/wp-config.php.orig", severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },
+      { issue_type: "wordpress_config_leak", path: "/wp-config.php.original", severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },
       { issue_type: "wordpress_user_info_leak", path: '/wp-json/wp/v2/users', severity: 4,  body_regex: /slug/, status: "confirmed" }, 
       { issue_type: "wordpress_admin_login_exposed", path: '/wp-admin', severity: 5,  body_regex: /Powered by WordPress/, status: "confirmed" },
       { issue_type: "wordpress_api_exposed", path: '/xmlrpc.php', severity: 5, status: "confirmed", body_regex: /XML-RPC server accepts POST requests only./ }
