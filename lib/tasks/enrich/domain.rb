@@ -84,6 +84,17 @@ class Domain < Intrigue::Task::BaseTask
         # set dmarc to the first record we get back 
         dmarc_details = result.first["lookup_details"].first["response_record_data"]
         _set_entity_detail("dmarc", dmarc_details)
+
+        # parse up the 'rua' component into email addresses
+        dmarc_details.split(";").each do |component|
+          # https://dmarcian.com/rua-vs-ruf/
+          if component.strip =~ /^rua/ || component.strip =~ /^ruf/
+            component.split("mailto:").last.split(",").each do |address|
+              _create_entity "EmailAddress", :name => address
+            end
+          end
+        end
+
       else 
          _set_entity_detail("dmarc", nil) 
       end

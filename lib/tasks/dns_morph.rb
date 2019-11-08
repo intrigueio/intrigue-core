@@ -28,7 +28,7 @@ class DnsMorph < BaseTask
 
     # task assumes gitrob is in our path and properly configured
     _log "Starting DNSMORPH on #{domain_name}"
-    command_string = "dnsmorph -d #{domain_name} -r -json"
+    command_string = "dnsmorph -d #{domain_name} -w -r -json"
     json_output = _unsafe_system command_string
     _log "DNSMORPH finished on #{domain_name}!"
 
@@ -40,6 +40,26 @@ class DnsMorph < BaseTask
 
       # select only those that resovled
       resolved_domains = output["results"].select{|x| x["a_record"] != "" }
+
+      # now add geolocation & a whois lookup
+      resolved_domains = resolved_domains.clone.map do |x|
+        
+        # make sure it's a string
+        ip_address = "#{x["a_record"]}"
+        
+        # use local maxmind
+        geo = geolocate_ip(ip_address)
+        x["country_code"] = geo["country_code"]
+        
+        # use team cymru lookup
+        info = Intrigue::Client::Search::Cymru::IPAddress.new.whois(ip_address)
+        x["asn_id"] = info[0]
+        x["asn_name"] = info[5]
+        x["allocation_date"] = info[4]
+
+      x
+      end
+
       _log_good "resolved #{resolved_domains.count} domains!"
 
     rescue JSON::ParserError => e
@@ -52,14 +72,21 @@ class DnsMorph < BaseTask
     if _get_option "create_domains"
       resolved_domains.each do |d|
         
-        domain_arguments = { "name" => "#{d["domain"]}".force_encoding("UTF-8") }
+        domain_arguments = { 
+          "name" => "#{d["domain"]}".force_encoding("UTF-8") 
+        }
         
         # if the option is set, mark this domain unscoped (so we don't try to iterate on it)
-        domain_arguments.merge({ "unscoped" => true, "morph" => true  }) if _get_option("unscope_domains")
+        if _get_option("unscope_domains")
+          domain_arguments.merge({ "unscoped" => true, "morph" => true  }) 
+        end
 
         _create_entity "Domain", domain_arguments
       end
     end
+
+    # enrich the resolved domains with geo info
+
 
     _set_entity_detail "permutations", resolved_domains
 
