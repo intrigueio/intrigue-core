@@ -13,30 +13,38 @@ module WebContent
     their_doc = Nokogiri::HTML(textb)
 
     # compare
-    diffs = CompareXML.equivalent?(our_doc, their_doc, {verbose: true})
+    diffs = CompareXML.equivalent?(our_doc, their_doc, {
+      verbose: true,
+      ignore_text_nodes: true,
+      ignore_comments: true,
+       })
 
     ####################################
     # now skip stuff we don't care about
     ###################################
     if diffs.count > 0
 
-      skip_if_matched = [
-        /email-protection\#/,             # cloudflare
-        /Ray ID/,                         # cloudflare 
-        /\d+/                             # cloudflare and others, just digits (ray id)
+      skip_regexes = [
+        /__cf_email__/,                     # cloudflare
+        /email protected/,                  # cloudflare
+        /Ray ID/,                           # cloudflare 
+        /heading-ray-id/,                   # cloudflare 
+        /data-cf-beacon/,                   # cloudflare
+        /wordpress\.com/i,                  # wordpress
+        /wp-content/,                       # wordpress 
+        /wpcom_request_access_iframe/       # wordpress
       ]
 
       # run through our diffs and see if these are things we know 
       # we can skip. all must be true in order to allow this to pass. 
+
+      # BROKEN?
+
       diffs = diffs.map do |d| 
-        skip_if_matched.map do |s| 
-          if (d["diff1"] =~ s || d["diff2"] =~ s) 
-            d 
-          else 
-            nil
-          end
-        end 
-      end
+        matched = skip_regexes.select{|s| d if d =~ s} 
+        false if matched
+        true if !matched
+      end 
 
       puts "Diffs: #{diffs.flatten.uniq.compact.to_json}"
 

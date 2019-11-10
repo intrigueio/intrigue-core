@@ -43,7 +43,7 @@ module Intrigue
       #  json_details = Sequel.pg_jsonb_op(:details)
       #  candidate_entities = scope_by_project_and_type(project_name,entity_type)
       #  our_value = json_details.get_text(detail_name)
-      #  candidate_entities.where(our_vaule => detail_value)
+      #  candidate_entities.where(our_value => detail_value)
       #end
 
       def ancestors

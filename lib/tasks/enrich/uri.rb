@@ -224,7 +224,7 @@ class Uri < Intrigue::Task::BaseTask
 
           # create an issue if not detected
           if !set_cookie.split(";").detect{|x| x =~ /httponly/i }
-            create_insecure_cookie_issue(uri, set_cookie)
+            _create_missing_cookie_attribute_http_only_issue(uri, set_cookie)
           end 
         end
 
@@ -370,7 +370,6 @@ class Uri < Intrigue::Task::BaseTask
       if diffs.empty?
         _log "No difference, match found!! Attaching to entity: #{e.name}"
         e.alias_to @entity.alias_group_id
-  
       else 
         _log "Not a match (#{e.name}): #{diffs.to_json}"
       end
