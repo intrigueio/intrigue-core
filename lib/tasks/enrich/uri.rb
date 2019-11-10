@@ -182,9 +182,26 @@ class Uri < Intrigue::Task::BaseTask
           _log "Httponly Cookie: #{set_cookie.split(";").detect{|x| x =~ /httponly/i }}"
 
           # create an issue if not detected
-          if !(set_cookie.split(";").detect{|x| x =~ /httponly/i } && 
-                set_cookie.split(";").detect{|x| x =~ /secure/i })
-            create_insecure_cookie_issue(uri, set_cookie)
+          if !(set_cookie.split(";").detect{|x| x =~ /httponly/i })
+            severity = 5 # set a default 
+          
+            # check for authentication and if so, bump the severity
+            auth_endpoint - ident_content_checks.select{|x| 
+              x["result"]}.join(" ") =~ /Authentication/
+            severity = 4 if ident_content_checks
+
+            _create_missing_cookie_attribute_http_only_issue(uri, set_cookie)
+          end
+
+          if !(set_cookie.split(";").detect{|x| x =~ /secure/i } )
+            severity = 5 # set a default 
+
+            # check for authentication and if so, bump the severity
+            auth_endpoint - ident_content_checks.select{|x| 
+              x["result"]}.join(" ") =~ /Authentication/
+            severity = 4 if ident_content_checks
+
+            _create_missing_cookie_attribute_secure_issue(uri, set_cookie)
           end 
 
         end
@@ -355,72 +372,6 @@ class Uri < Intrigue::Task::BaseTask
   def check_forms(response_body)
     return true if response_body =~ /<form/i
   false
-  end
-
-  def create_content_issue(uri, check)
-    _create_issue({
-      name: "Content issue: #{check["name"]} on #{uri}",
-      type: "#{check["name"].downcase.gsub(" ","_")}",
-      severity: 4, # todo... 
-      status: "confirmed",
-      description: "This server had a content issue: #{check["name"]}.",
-      references: [],
-      details: { 
-        uri: uri,
-        check: check 
-      }
-    })
-  end
-
-  def create_insecure_cookie_issue(uri, cookie)
-    _create_issue({
-      name: "Insecure cookie detected on #{uri}",
-      type: "insecure_cookie_detected",
-      severity: 5,
-      status: "confirmed",
-      description: "This server is configured without secure or httpOnly cookie flags",
-      references: [],
-      details: { 
-        uri: uri,
-        cookie: cookie 
-      }
-    })
-  end
-
-  def create_weak_cipher_issue(uri, accepted_connections)
-    _create_issue({
-      name: "Weak ciphers enabled on #{uri}",
-      type: "weak_cipher_suite_detected",
-      severity: 5,
-      status: "confirmed",
-      description: "This server is configured to allow a known-weak cipher suite",
-      #recommendation: "Disable the weak ciphers.",
-      references: [
-        "https://thycotic.com/company/blog/2014/05/16/ssl-beyond-the-basics-part-2-ciphers/"
-      ],
-      details: { 
-        uri: uri,
-        allowed: accepted_connections 
-      }
-    })
-  end
-
-  def create_deprecated_protocol_issue(uri, accepted_connections)
-    _create_issue({
-      name: "Deprecated protocol enabled on #{uri}",
-      type: "deprecated_protocol_detected",
-      severity: 5,
-      status: "confirmed",
-      description: "This server is configured to allow a deprecated ssl / tls protocol",
-      #recommendation: "Disable the protocol, ensure support for the latest version.",
-      references: [
-        "https://tools.ietf.org/id/draft-moriarty-tls-oldversions-diediedie-00.html"
-      ],
-      details: { 
-        uri: uri,
-        allowed: accepted_connections 
-      }
-    })
   end
 
 end

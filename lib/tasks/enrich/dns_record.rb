@@ -55,6 +55,17 @@ class DnsRecord < Intrigue::Task::BaseTask
       check_and_create_unscoped_domain(soa_details["primary_name_server"]) 
     end
 
+    # Checking dev test 
+    # if we're external, let's see if this matches 
+    # a known dev or staging server pattern
+    if !match_rfc1918_address?(resolutions.map{|x| x["response_data"]}.join(", "))
+      dev_server_name_patterns.each do |p|
+        if lookup_name =~ p
+          _exposed_server_identified(p)
+        end
+      end
+    end
+
     if soa_details
 
       # grab any / all MX records (useful to see who accepts mail)

@@ -2,6 +2,14 @@ module Intrigue
 module Task
 module Data
 
+  def dev_server_name_patterns
+    [/-staging$/,/-dev$/,/-development$/,/-test$/,/-qa$/].concat(
+    [/^staging-/,/^dev-/,/^development-/,/^test-/,/^qa-/].concat(
+    [/^staging\./,/^dev\./,/^development\./,/^test\./,/^qa\./].concat(
+    [/^test/,/^staging/,/^qa/] # possibly too aggressive
+    )))
+  end
+
   def _allocated_ipv4_ranges(filter="ALLOCATED")
     ranges = []
     file = File.open("#{$intrigue_basedir}/data/iana/ipv4-address-space.csv","r")

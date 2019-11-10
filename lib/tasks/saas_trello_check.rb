@@ -2,7 +2,6 @@ module Intrigue
 module Task
 class SaasTrelloCheck < BaseTask
 
-
   def self.metadata
     {
       :name => "saas_trello_check",

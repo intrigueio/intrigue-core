@@ -20,6 +20,9 @@ module Services
     updated_ports = ports.append({"number" => port_num, "protocol" => protocol}).uniq
     ip_entity.set_detail("ports", updated_ports)
 
+    weak_tcp_services = [21, 23, 25]
+    weak_udp_services = [60, 1900, 5000]
+
     ssl = true if [443, 6443, 8443, 10000].include?(port_num)
 
     # Ensure we always save our host and key details.
@@ -131,6 +134,11 @@ module Services
         # now we have all the details we need, create it
         _create_entity("NetworkService", entity_details)
 
+        # if its a weak service, file an issue
+        if weak_tcp_services.include?(port_num)
+          _create_weak_service_issue(name, port_num, service, 'tcp')
+        end
+
       elsif protocol == "udp" && h.name.strip.is_ip_address?
 
         service_specific_details = {}
@@ -152,6 +160,12 @@ module Services
         entity_details = entity_details.merge!(service_specific_details)
 
         _create_entity("NetworkService", entity_details)
+
+        # if its a weak service, file an issue
+        if weak_udp_services.include?(port_num)
+          _create_weak_service_issue(name, port_num, service, 'udp')
+        end
+
 
       else
         raise "Unknown protocol" if h.name.strip.is_ip_address?

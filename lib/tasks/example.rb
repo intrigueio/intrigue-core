@@ -87,6 +87,10 @@ class Example < BaseTask
       # Create & return the entity
       e = _create_entity("IpAddress", {"name" => ip_address })
       _create_network_service_entity(e,443)
+      _create_network_service_entity(e,21)
+      _create_network_service_entity(e,22)
+      _create_network_service_entity(e,23)
+      _create_network_service_entity(e,25)
 
     end
 

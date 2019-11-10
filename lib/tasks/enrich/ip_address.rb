@@ -43,6 +43,9 @@ class IpAddress < Intrigue::Task::BaseTask
     ####
     results.each do |result|
       _log "Creating entity for... #{result["name"]}"
+
+      next unless result["name"]
+
       if "#{result["name"]}".is_ip_address?
         _create_entity("IpAddress", { "name" => result["name"] }, @entity)
       else
@@ -50,6 +53,18 @@ class IpAddress < Intrigue::Task::BaseTask
         
         # create a domain for this entity
         check_and_create_unscoped_domain(result["name"])
+
+        # check dev/staging server
+        # if we're external, let's see if this matches 
+        # a known dev or staging server pattern
+        if !match_rfc1918_address?(lookup_name)
+          dev_server_name_patterns.each do |p|
+            if result["name"] =~ p
+              _exposed_server_identified(p,result["name"])
+            end
+          end
+        end
+
       end
     end
 
