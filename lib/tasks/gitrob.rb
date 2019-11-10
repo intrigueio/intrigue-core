@@ -45,7 +45,10 @@ class Gitrob < BaseTask
     end
 
     # sanity check
-    _log_error "No output, failing" and return unless output 
+    unless output 
+      _log_error "No output, failing"
+      return 
+    end
 
     _log "Gitrob Version: #{output["Version"]}"
     _log "Gitrob Stats: #{output["Stats"]}"

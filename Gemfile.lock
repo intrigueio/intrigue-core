@@ -120,6 +120,8 @@ GEM
     childprocess (3.0.0)
     coderay (1.1.2)
     command_lion (2.0.1)
+    compare-xml (0.66)
+      nokogiri (~> 1.8)
     concurrent-ruby (1.1.5)
     connection_pool (2.2.2)
     couchrest (2.0.1)
@@ -311,6 +313,7 @@ DEPENDENCIES
   aws-sdk-sqs
   censys!
   chrome_remote!
+  compare-xml
   couchrest
   dnsruby
   elasticsearch

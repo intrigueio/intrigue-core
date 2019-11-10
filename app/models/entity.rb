@@ -39,11 +39,12 @@ module Intrigue
         where(Sequel.&(project_id: named_project.id, type: resolved_entity_type.to_s))
       end
 
-      def self.scope_by_project_and_type_and_detail_value(project_name, entity_type, detail_name, detail_value)
-        json_details = Sequel.pg_jsonb_op(:details)
-        candidate_entities = scope_by_project_and_type(project_name,entity_type)
-        candidate_entities.where(json_details.get_text(detail_name) => detail_value)
-      end
+      #def self.scope_by_project_and_type_and_detail_value(project_name, entity_type, detail_name, detail_value)
+      #  json_details = Sequel.pg_jsonb_op(:details)
+      #  candidate_entities = scope_by_project_and_type(project_name,entity_type)
+      #  our_value = json_details.get_text(detail_name)
+      #  candidate_entities.where(our_vaule => detail_value)
+      #end
 
       def ancestors
         ancestors = []

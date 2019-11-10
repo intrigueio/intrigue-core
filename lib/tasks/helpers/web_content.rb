@@ -3,6 +3,48 @@ module Intrigue
 module Task
 module WebContent
 
+  # compare_html response.body.sanitize_unicode, e.details["hidden_response_data"]
+
+  def parse_html_diffs(texta, textb)
+    # parse our content with Nokogiri
+    our_doc = Nokogiri::HTML(texta)
+
+    # parse them
+    their_doc = Nokogiri::HTML(textb)
+
+    # compare
+    diffs = CompareXML.equivalent?(our_doc, their_doc, {verbose: true})
+
+    ####################################
+    # now skip stuff we don't care about
+    ###################################
+    if diffs.count > 0
+
+      skip_if_matched = [
+        /email-protection\#/,             # cloudflare
+        /Ray ID/,                         # cloudflare 
+        /\d+/                             # cloudflare and others, just digits (ray id)
+      ]
+
+      # run through our diffs and see if these are things we know 
+      # we can skip. all must be true in order to allow this to pass. 
+      diffs = diffs.map do |d| 
+        skip_if_matched.map do |s| 
+          if (d["diff1"] =~ s || d["diff2"] =~ s) 
+            d 
+          else 
+            nil
+          end
+        end 
+      end
+
+      puts "Diffs: #{diffs.flatten.uniq.compact.to_json}"
+
+    end
+
+  diffs.flatten.uniq.compact 
+  end
+
   def download_and_extract_metadata(uri,extract_content=true)
 
      begin

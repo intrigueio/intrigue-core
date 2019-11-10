@@ -2,6 +2,7 @@
 require 'aws-sdk-sqs'
 require 'aws-sdk-s3'
 require 'censys'
+require 'compare-xml'
 require 'digest'
 require 'dnsruby'
 require 'em-resolv-replace'

@@ -181,25 +181,21 @@ class Uri < Intrigue::Task::BaseTask
           _log "Secure Cookie: #{set_cookie.split(";").detect{|x| x =~ /secure/i }}"
           _log "Httponly Cookie: #{set_cookie.split(";").detect{|x| x =~ /httponly/i }}"
 
+          # check for authentication and if so, bump the severity
+          auth_endpoint = ident_content_checks.select{|x| 
+            x["result"]}.join(" ") =~ /Authentication/
+
           # create an issue if not detected
           if !(set_cookie.split(";").detect{|x| x =~ /httponly/i })
             severity = 5 # set a default 
-          
-            # check for authentication and if so, bump the severity
-            auth_endpoint - ident_content_checks.select{|x| 
-              x["result"]}.join(" ") =~ /Authentication/
-            severity = 4 if ident_content_checks
+            severity = 4 if auth_endpoint
 
             _create_missing_cookie_attribute_http_only_issue(uri, set_cookie)
           end
 
           if !(set_cookie.split(";").detect{|x| x =~ /secure/i } )
             severity = 5 # set a default 
-
-            # check for authentication and if so, bump the severity
-            auth_endpoint - ident_content_checks.select{|x| 
-              x["result"]}.join(" ") =~ /Authentication/
-            severity = 4 if ident_content_checks
+            severity = 4 if auth_endpoint
 
             _create_missing_cookie_attribute_secure_issue(uri, set_cookie)
           end 
@@ -218,7 +214,7 @@ class Uri < Intrigue::Task::BaseTask
         # Create findings if we have a deprecated protocol
         if accepted_connections && accepted_connections.detect{ |x| 
             (x[:version] =~ /SSL/ || x[:version] == "TLSv1") }     
-          create_deprecated_protocol_issue(uri, accepted_connections)
+          _create_deprecated_protocol_issue(uri, accepted_connections)
         end
 
       else # http endpoint, just check for httponly
@@ -339,16 +335,46 @@ class Uri < Intrigue::Task::BaseTask
     end
 
     # Check for other entities with this same response hash
-    #if response_data_hash
-    #  Intrigue::Model::Entity.scope_by_project_and_type_and_detail_value(@entity.project.name,"Uri","response_data_hash", response_data_hash).each do |e|
-    #    _log "Checking for Uri with detail: 'response_data_hash' == #{response_data_hash}"
-    #    next if @entity.id == e.id
-    #
-    #    _log "Attaching entity: #{e} to #{@entity}"
-    #    @entity.alias e
-    #    @entity.save
-    #  end
-    #end
+    _log "Attempting to identify aliases"
+    Intrigue::Model::Entity.scope_by_project_and_type(
+      @entity.project.name,"Uri").each do |e|
+      next if @entity.id == e.id
+
+      # Do some basic up front checking
+      # TODO... make this a filter using JSONb in postgres
+      old_title = e.get_detail("title")
+      unless "#{title}".strip.sanitize_unicode == "#{old_title}".strip.sanitize_unicode
+        _log "Skipping #{e.name}, title doesnt match (#{old_title})"
+        next
+      end
+
+      unless response.code == e.get_detail("code")
+        _log "Skipping #{e.name}, code doesnt match"
+        next
+      end
+
+      _log "Checking match candidate: #{e.name} #{e.get_detail("title")}"
+
+      # parse our content with Nokogiri
+      #our_doc = Nokogiri::HTML(open(a));nil
+      our_doc = "#{response.body}".sanitize_unicode
+
+      # parse them
+      #their_doc = Nokogiri::HTML(open(b));nil
+      their_doc = e.details["hidden_response_data"]
+
+      # compare them
+      diffs = parse_html_diffs(our_doc,their_doc)
+
+      # if they're the same, alias
+      if diffs.empty?
+        _log "No difference, match found!! Attaching to entity: #{e.name}"
+        e.alias_to @entity.alias_group_id
+  
+      else 
+        _log "Not a match (#{e.name}): #{diffs.to_json}"
+      end
+    end
 
   end
 

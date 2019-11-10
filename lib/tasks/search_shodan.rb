@@ -46,8 +46,7 @@ class SearchShodan < BaseTask
       response["data"].each do |s|
         _log_good "Creating service on #{s["ip_str"]}: #{s["port"]}"
         _create_network_service_entity(@entity, s["port"], s["transport"] || "tcp", { 
-          "timestamp" => resp["timestamp"], 
-          "response" => resp["data"], 
+          "shodan_timestamp" => resp["timestamp"], 
           "extended_shodan" => resp } )
       end
 
