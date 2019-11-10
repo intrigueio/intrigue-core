@@ -460,6 +460,17 @@ module Dns
 
   end
 
+  # this method is used to test a string 
+  # for whether it it matches the pattern of an 
+  # RFC1918 (internal) address
+  def match_rfc1918_address?(range_or_ip)
+    return true if ( 
+      range_or_ip =~ /^172\.16\.\d\.\d/
+      range_or_ip =~ /^192\.168\.\d\.\d/
+      range_or_ip =~ /^10\.\d\.\d\.\d/)
+  false 
+  end
+
 end
 end
 end
