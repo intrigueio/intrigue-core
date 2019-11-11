@@ -84,6 +84,7 @@ class SearchHaveIBeenPwned < BaseTask
     end
 
     results.each do |result|
+      _log "Result: #{result}"
       next if _get_option("only_sensitive") && !result["IsSensitive"]      
       # create an issue for each found result
       _create_issue({
@@ -103,14 +104,31 @@ class SearchHaveIBeenPwned < BaseTask
 
   def _get_hibp_response(endpoint)
 
+    try_counter = 0
+    max_tries = 9
     begin
       url = "https://haveibeenpwned.com/api/v3/#{endpoint}"
+      response = nil
+      until response || (try_counter == max_tries)
+        try_counter += 1
 
-      response = http_request(:get, url, nil, { 
-        "hibp-api-key" => @api_key,
-        "User-Agent" => "intrigue-core #{IntrigueApp.version}",
-        "Accept" => "application/json"
-      })
+        response = http_request(:get, url, nil, { 
+          "hibp-api-key" => @api_key,
+          "User-Agent" => "intrigue-core #{IntrigueApp.version}",
+          "Accept" => "application/json"
+        })
+
+        unless response 
+          sleep_time = rand(300)
+          _log_error "Unable to get response, sleeping #{sleep_time}s"
+          sleep sleep_time
+        end
+      end
+
+      unless response
+        _log "Error! Failing after #{max_tries} attempts to reach the HIBP api"
+        return nil 
+      end
 
       json = JSON.parse(response.body)   
 

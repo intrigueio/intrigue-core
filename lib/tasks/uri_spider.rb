@@ -114,7 +114,11 @@ class UriSpider < BaseTask
             _log "Extracting DNS records from #{page.url}"
             URI.extract(encoded_page_body, ["https", "http","ftp"]) do |link|
               # Collect the host
-              host = URI(link).host
+              begin 
+                host = URI(link).host
+              rescue URI::InvalidURIError => e
+                next
+              end
 
               # if we have a valid host
               if host

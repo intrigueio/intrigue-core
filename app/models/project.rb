@@ -188,7 +188,7 @@ module Intrigue
           end
         end
 
-        puts "Checking if #{entity_name} matches our additional exception list: #{out}"
+        puts "Checking if #{entity_name} matches our no-traverse list: #{out}"
 
       out
       end

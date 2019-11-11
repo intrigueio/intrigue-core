@@ -16,41 +16,46 @@ module WebContent
     diffs = CompareXML.equivalent?(our_doc, their_doc, {
       verbose: true,
       ignore_text_nodes: true,
-      ignore_comments: true,
-       })
+      ignore_comments: true
+    })
 
-    ####################################
-    # now skip stuff we don't care about
-    ###################################
+    ###########################################
+    # now filter down stuff we know we can skip 
+    ##########################################
     if diffs.count > 0
 
       skip_regexes = [
-        /__cf_email__/,                     # cloudflare
-        /email protected/,                  # cloudflare
-        /Ray ID/,                           # cloudflare 
-        /heading-ray-id/,                   # cloudflare 
-        /data-cf-beacon/,                   # cloudflare
-        /wordpress\.com/i,                  # wordpress
-        /wp-content/,                       # wordpress 
-        /wpcom_request_access_iframe/       # wordpress
+        "email-protection",                 # cloudflare
+        "__cf_email__",                     # cloudflare
+        "Ray ID",                           # cloudflare 
+        "heading-ray-id",                   # cloudflare 
+        "data-cf-beacon",                   # cloudflare
+        "wordpress\.com",                   # wordpress
+        "wp-content",                       # wordpress 
+        "wpcom_request_access_iframe",      # wordpress
+        "xmlrpc.php"                        # wordpress
       ]
 
-      # run through our diffs and see if these are things we know 
+      # Run through our diffs and see if these are things we know 
       # we can skip. all must be true in order to allow this to pass. 
+      diffs = diffs.map do |d|
+        puts 
+        
+        matched_skip_regex = skip_regexes.map{ |s| 
+          d if "#{d[:node1] || d[:node2]}" =~ /#{Regexp.escape(s)}/im }.include?(d)
+        
+        out = nil if matched_skip_regex
+        out = d if !matched_skip_regex
 
-      # BROKEN?
-
-      diffs = diffs.map do |d| 
-        matched = skip_regexes.select{|s| d if d =~ s} 
-        false if matched
-        true if !matched
+      out 
       end 
 
-      puts "Diffs: #{diffs.flatten.uniq.compact.to_json}"
-
+      #puts "DEBUG Diffs (full): #{diffs}"
+      puts "DEBUG Diffs: #{diffs.flatten.uniq.compact.map{|x| x[:node1].to_json}}" 
+      diffs = diffs.flatten.uniq.compact 
     end
 
-  diffs.flatten.uniq.compact 
+  diffs
   end
 
   def download_and_extract_metadata(uri,extract_content=true)
