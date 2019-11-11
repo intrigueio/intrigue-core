@@ -94,7 +94,7 @@ class SearchHaveIBeenPwned < BaseTask
         status: "confirmed",
         description: "Email account was found in a breach of : #{result["Name"]}\n" +  
                       "User: #{email_address} Domain: #{result["Domain"]}.\n" + 
-                      "The details were leaked on #{result["BreachDate"]}.\n" +
+                      "The details were leaked on #{result["BreachDate"]} and included #{result["DataClasses"].join(", ")}.\n" +
                       "About this Breach:\n#{result["Description"]}",
         details: result
       }) if _get_option("create_issues")
@@ -108,9 +108,14 @@ class SearchHaveIBeenPwned < BaseTask
     max_tries = 9
     begin
       url = "https://haveibeenpwned.com/api/v3/#{endpoint}"
+      
       response = nil
-      until response || (try_counter == max_tries)
+      json = nil 
+
+
+      until json || (try_counter == max_tries)
         try_counter += 1
+        sleep_time = rand(300)
 
         response = http_request(:get, url, nil, { 
           "hibp-api-key" => @api_key,
@@ -119,21 +124,46 @@ class SearchHaveIBeenPwned < BaseTask
         })
 
         unless response 
-          sleep_time = rand(300)
           _log_error "Unable to get response, sleeping #{sleep_time}s"
           sleep sleep_time
         end
+
+
+        # Okay we got something
+        begin
+          json = JSON.parse(response.body)
+
+          # in case it's blank
+          unless json 
+            _log_error "Unable to get response, sleeping #{sleep_time}s"
+            sleep sleep_time
+            next
+          end
+          
+          # okay 
+          status_code = json["statusCode"]
+          if status_code.to_i == 429 
+            _log_error "Rate limit hit, sleeping #{sleep_time}s"
+            json = nil # reset 
+            sleep sleep_time
+          elsif status_code.to_i == 503
+            _log_error "Service unavailable, sleeping #{sleep_time}s"
+            json = nil # reset 
+            sleep sleep_time
+          end
+
+        # in case we can't parse it
+        rescue JSON::ParserError => e
+          _log_error "Error retrieving results: #{response}"
+          sleep sleep_time
+        end
+
       end
 
-      unless response
+      unless response && json
         _log "Error! Failing after #{max_tries} attempts to reach the HIBP api"
-        return nil 
       end
 
-      json = JSON.parse(response.body)   
-
-    rescue JSON::ParserError
-      _log_error "Error retrieving results"
     end
 
   json || []
