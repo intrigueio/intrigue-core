@@ -137,7 +137,7 @@ class Uri < Intrigue::Task::BaseTask
     _log "Issues to be created: #{issues_to_be_created}"
     if issues_to_be_created.count > 0
       issues_to_be_created.each do |c|
-        create_content_issue(uri, c)
+        _create_content_issue(uri, c)
       end
     end
 
