@@ -74,15 +74,15 @@ class Example < BaseTask
       ###
 
       # notifies all notifiers configured with "enabled" and "default"
-      #_notify "[+] Randomly generated an IP address: #{ip_address}" if opt_notify
+      _notify "[+] Randomly generated an IP address: #{ip_address}" if opt_notify
 
       # notifies via all channels of type "slack" and "enabled" set to true
-      #_notify_type "slack", "[slack] Randomly generated an IP address: #{ip_address}"
+      _notify_type "slack", "[slack] Randomly generated an IP address: #{ip_address}"
 
-      #_log_fatal "Oh no, it's a fatal error!"
+      _log_fatal "Oh no, it's a fatal error!"
 
       # notifies via a specifically named channel
-      #_notify_specific "specific_slack", "[specific_slack] Randomly generated an IP address: #{ip_address}"
+      _notify_specific "specific_slack", "[specific_slack] Randomly generated an IP address: #{ip_address}"
 
       # Create & return the entity
       e = _create_entity("IpAddress", {"name" => ip_address })

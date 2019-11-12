@@ -371,7 +371,13 @@ class Uri < Intrigue::Task::BaseTask
         _log "No difference, match found!! Attaching to entity: #{e.name}"
         e.alias_to @entity.alias_group_id
       else 
-        _log "Not a match (#{e.name}): #{diffs.to_json}"
+        _log "Not a match (#{e.name}):"
+        _log ""
+        _log "Diffs: "
+        diffs.each do |d|
+          _log "#{d}"
+        end
+        _log ""
       end
     end
 

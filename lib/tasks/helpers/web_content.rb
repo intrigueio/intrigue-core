@@ -25,15 +25,18 @@ module WebContent
     if diffs.count > 0
 
       skip_regexes = [
-        "email-protection",                 # cloudflare
-        "__cf_email__",                     # cloudflare
-        "Ray ID",                           # cloudflare 
-        "heading-ray-id",                   # cloudflare 
-        "data-cf-beacon",                   # cloudflare
-        "wordpress\.com",                   # wordpress
-        "wp-content",                       # wordpress 
-        "wpcom_request_access_iframe",      # wordpress
-        "xmlrpc.php"                        # wordpress
+        /csrf/,                             # generic csrf
+        /authenticity_token/,               # generic csrf
+        /asset_pipeline/,                   # generic asset pipeline
+        /email-protection/,                 # cloudflare
+        /__cf_email__/,                     # cloudflare
+        /Ray ID/,                           # cloudflare 
+        /heading-ray-id/,                   # cloudflare 
+        /data-cf-beacom/,                   # cloudflare
+        /wordpress\.com/,                   # wordpress
+        /wp-content/,                       # wordpress 
+        /wpcom_request_access_iframe/,      # wordpress
+        /xmlrpc.php/                       # wordpress
       ]
 
       # Run through our diffs and see if these are things we know 
@@ -42,7 +45,7 @@ module WebContent
         puts 
         
         matched_skip_regex = skip_regexes.map{ |s| 
-          d if "#{d[:node1] || d[:node2]}" =~ /#{Regexp.escape(s)}/im }.include?(d)
+          d if "#{d[:node1] || d[:node2]}" =~ s }.include?(d)
         
         out = nil if matched_skip_regex
         out = d if !matched_skip_regex

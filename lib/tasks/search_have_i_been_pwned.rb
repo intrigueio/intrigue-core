@@ -126,8 +126,8 @@ class SearchHaveIBeenPwned < BaseTask
         unless response 
           _log_error "Unable to get response, sleeping #{sleep_time}s"
           sleep sleep_time
+          next
         end
-
 
         # Okay we got something
         begin
