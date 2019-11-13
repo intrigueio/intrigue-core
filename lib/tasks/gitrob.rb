@@ -7,7 +7,7 @@ class Gitrob < BaseTask
       :name => "gitrob",
       :pretty_name => "Gitrob",
       :authors => ["michenriksen", "jcran"],
-      :description => "Uses the excellent Gitrob by Michael Henriksen to search a given GithubAccount for committed secrets",
+      :description => "Uses the excellent Gitrob by Michael Henriksen to search a given Github Account for committed secrets",
       :type => "discovery",
       :references => ["https://github.com/michenriksen/gitrob"],
       :passive => true,
@@ -91,8 +91,8 @@ class Gitrob < BaseTask
         next if (f["Description"] == "Contains word: password" && f["FilePath"] =~ /password.html/i )
 
         _create_issue({
-          name: "Gitrob: #{f["Action"]} #{f["Description"]} at #{f["FileUrl"]}",
-          type: "gitrob",
+          name: "Suspicious #{f["Action"]} Commit Found In Github Repository",
+          type: "suspicious_commit  ",
           severity: 4,
           status: "potential",
           description:  "A suspicious commit was found in a public Github repository.\n" + 

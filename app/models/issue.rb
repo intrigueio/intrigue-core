@@ -20,6 +20,28 @@ module Intrigue
         validates_unique([:project_id, :type, :name])
       end
       
+      ###
+      ### Export!
+      ###
+      def export_hash
+        {
+          :type => type,
+          :name =>  name,
+          :severity =>  severity,
+          :status =>  status,
+          :description =>  description,
+          :entity_type => entity.type,
+          :entity_name => entity.name,
+          :entity_aliases => entity.aliases.map{|a| {:type => a.type, :name => a.name} },  
+          :details => details,
+          :task_result => task_result.name,
+          :task_result_entity_name => task_result.base_entity.name,
+          :task_result_entity_type => task_result.base_entity.type
+        }
+      end
+
+
+
     end
 
   end

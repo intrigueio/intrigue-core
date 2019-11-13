@@ -189,11 +189,11 @@ class AwsS3Brute < BaseTask
   def create_s3_bucket_issue(url)
 
     _create_issue({
-      name: "Open s3 bucket: #{url}",
-      type: "s3_bucket",
+      name: "Open S3 Bucket Detected",
+      type: "open_s3_bucket_detected",
       severity: 5,
       status: "potential",
-      description: "Investigate this open s3 bucket",
+      description: "Investigate this open s3 bucket: #{url}",
       details: { url: url }
     })
 

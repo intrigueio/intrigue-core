@@ -28,47 +28,30 @@ class UriCheckSudomainHijack  < BaseTask
 
     if response
       if response.body =~ /The specified bucket does not exist/i
-        _hijackable_subdomain "AWS S3", uri, "potential"
+        _create_hijackable_subdomain_issue "AWS S3", uri, "potential"
       elsif response.body =~ /No such app/i
-        _hijackable_subdomain "Heroku", uri, "potential"
+        _create_hijackable_subdomain_issue "Heroku", uri, "potential"
       elsif response.body =~ /No settings were found for this company:/i
-        _hijackable_subdomain "Help Scout", uri, "potential"
+        _create_hijackable_subdomain_issue "Help Scout", uri, "potential"
       elsif response.body =~ /We could not find what you're looking for\./i
-        _hijackable_subdomain "Help Juice", uri, "potential"
+        _create_hijackable_subdomain_issue "Help Juice", uri, "potential"
       elsif response.body =~ /is not a registered InCloud YouTrack/i
-        _hijackable_subdomain "JetBrains", uri, "potential"
+        _create_hijackable_subdomain_issue "JetBrains", uri, "potential"
       elsif response.body =~ /Unrecognized domain/i
-        _hijackable_subdomain "Mashery", uri, "potential"
+        _create_hijackable_subdomain_issue "Mashery", uri, "potential"
       elsif response.body =~ /^Not Found$/i
-        _hijackable_subdomain "Netlify", uri, "potential"
+        _create_hijackable_subdomain_issue "Netlify", uri, "potential"
       elsif response.body =~ /Project doesnt exist... yet!/i
-        _hijackable_subdomain "Readme.io", uri, "potential"
+        _create_hijackable_subdomain_issue "Readme.io", uri, "potential"
       elsif response.body =~ /This domain is successfully pointed at WP Engine, but is not configured/i
-        _hijackable_subdomain "WPEngine", uri, "potential"
+        _create_hijackable_subdomain_issue "WPEngine", uri, "potential"
       # currently disabled, see: https://github.com/EdOverflow/can-i-take-over-xyz/issues/11
       #elsif response.body =~ /The requested URL was not found on this server./
-      #  _hijackable_subdomain "Unbounce", uri, "potential"
+      #  _create_hijackable_subdomain_issue "Unbounce", uri, "potential"
       end
     end
       
   end #end run
-
-  def _hijackable_subdomain type, uri, status
-      _create_issue({
-        name: "Subdomain Hijacking at #{uri}",
-        type: "subdomain_hijack",
-        severity: 2,
-        status: status,
-        description:  "This uri appears to be unclaimed on a third party host, meaning," + 
-                      " there's a DNS record at (#{uri}) that points to #{type}, but it" +
-                      " appears to be unclaimed and you should be able to register it with" + 
-                      " the host, effectively 'hijacking' the domain.",
-        details: {
-          uri: uri,
-          type: type
-        }
-      })
-  end
 
 end
 end

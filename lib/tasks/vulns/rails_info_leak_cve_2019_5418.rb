@@ -50,11 +50,11 @@ class RailsFileExposureCve20195418 < BaseTask
         if "#{etc_passwd_body}" =~ /root\:x/
           _log "Got vulnerable response: #{response.body}"
           _create_issue({ 
-            name: "Rails information disclosure on #{uri}", 
-            type: "internal_information_leak",
+            name: "Rails information disclosure", 
+            type: "vulnerability",
             severity: 1,
             status: "confirmed",
-            description: "This issue, described in CVE-2019-5418, allows an anonymous user" + 
+            description: "This issue found on #{uri}, described in CVE-2019-5418, allows an anonymous user" + 
              " to gather internal files from the affected system, up to and including the" + 
              " /etc/shadow file, depending on permissions. The 'render' command must be" + 
              " used to render a file from disk in order to be vulnerable",

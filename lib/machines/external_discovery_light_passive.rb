@@ -100,9 +100,6 @@ module Machine
 
       elsif entity.type_string == "DnsRecord"
 
-        # search sonar results
-        #start_recursive_task(task_result,"dns_search_sonar",entity, [])
-
         #start_recursive_task(task_result,"dns_brute_sub",entity)
 
       elsif entity.type_string == "EmailAddress"
@@ -184,29 +181,6 @@ module Machine
           {"name" => "additional_buckets", "value" => generated_names.join(",")}])
 
       elsif entity.type_string == "Uri"
-
-        puts "Working on URI #{entity.name}!"
-
-        # wordpress specific checks
-        if entity.get_detail("fingerprint")
-
-          if entity.get_detail("fingerprint").any?{|v| v['product'] =~ /Wordpress/i }
-            puts "Checking Wordpress specifics on #{entity.name}!"
-            start_recursive_task(task_result,"wordpress_enumerate_users",entity, [])
-            start_recursive_task(task_result,"wordpress_enumerate_plugins",entity, [])
-          end
-
-          if entity.get_detail("fingerprint").any?{|v| v['product'] =~ /GlobalProtect/ }
-            puts "Checking GlobalProtect specifics on #{entity.name}!"
-            start_recursive_task(task_result,"vuln/globalprotect_check",entity, [])
-          end
-
-          # Hold on this for now, memory leak?
-          #if entity.get_detail("fingerprint").any?{|v| v['vendor'] == "Apache" && v["product"] == "HTTP Server" }
-          #  start_recursive_task(task_result,"apache_server_status_parser",entity, [])
-          #end
-
-        end
 
         ## Grab the SSL Certificate
         start_recursive_task(task_result,"uri_gather_ssl_certificate",entity, []) if entity.name =~ /^https/

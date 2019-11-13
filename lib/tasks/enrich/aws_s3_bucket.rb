@@ -70,7 +70,7 @@ class AwsS3Bucket < Intrigue::Task::BaseTask
     if interesting_files.sort.uniq.count > 0
       #_notify("Interesting Files: #{interesting_files}")
       _create_issue({
-        name: "S3 data leak at #{bucket_uri}",
+        name: "S3 Bucket Data Leak",
         type: "s3_bucket_data_leak",
         severity: 4,
         status: "confirmed",

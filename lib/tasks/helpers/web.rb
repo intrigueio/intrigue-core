@@ -80,11 +80,11 @@ module Task
               matching_urls.push({ start: request_uri, final: result[:uri] })
               
               _create_issue({
-                name: "Discovered Content at #{result[:name]}",
-                type:  request_details[:issue_type] || "discovered_content",
+                name: "Discovered Sensitive Content at #{request_details[:path]}",
+                type:  request_details[:issue_type] || "discovered_sensitive_content",
                 severity: request_details[:severity] || 5,
                 status: request_details[:status] || "potential",
-                description: "Page was found with a code #{result[:response_code]} by url_brute_focused_content at #{result[:name]}",
+                description: "Page was found at #{result[:name]} with a code #{result[:response_code]} by url_brute_focused_content.",
                 details: result.except!(:name)
               }) if create_issue
             end

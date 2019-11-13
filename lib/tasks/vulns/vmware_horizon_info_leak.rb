@@ -45,11 +45,11 @@ class VmwareHorizonInfoLeak < BaseTask
     # create an issue
     if broker_data || info_data
       _create_issue({ 
-        name: "Leaked VMWare Horizon Info on #{uri}", 
-        type: "internal_information_leak",
+        name: "Leaked VMWare Horizon Info", 
+        type: "vmware_information_leak",
         severity: 4,
         status: "confirmed",
-        description: "This issue, described in CVE-2019-5513, allows an anonymous user to " + 
+        description: "This issue found on #{uri} and described in CVE-2019-5513, allows an anonymous user to " + 
          " gather information about the internal IP address, domain, and configuration" +
          " of the system. Systems are vulnerable in the default configuration.",
         details: { 

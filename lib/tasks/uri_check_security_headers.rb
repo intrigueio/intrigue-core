@@ -67,11 +67,11 @@ class UriCheckSecurityHeaders < BaseTask
       missing_headers = required_headers - found_headers
       # report the headers that are missing 
       _create_issue({
-        name: "Missing #{missing_headers.count} security headers at #{uri}",
-        type: "security_headers",
+        name: "Missing security headers",
+        type: "missing_security_headers",
         severity: 5,
         status: "confirmed",
-        description:  "One or more security headers was missing from this site. " +
+        description:  "One or more security headers was missing from #{uri}. " +
                       "You can learn more about security headers at " + 
                       "https://www.keycdn.com/blog/http-security-headers",
         details: {

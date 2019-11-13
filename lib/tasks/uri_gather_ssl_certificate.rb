@@ -61,11 +61,11 @@ class UriGatherSslCert  < BaseTask
     # one way to detect self-signed 
     if cert.subject == cert.issuer
       _create_issue({
-        name: "Self-signed certificate detected on #{uri}",
+        name: "Self-signed Certificate Detected",
         severity: 5,
         type: "self_signed_certificate",
         status: "confirmed",
-        description: "This server is configured with a self-signed certificate",
+        description: "The following site: #{uri} is configured with a self-signed certificate",
         references: [
           "https://security.stackexchange.com/questions/93162/how-to-know-if-certificate-is-self-signed/162263"
         ],

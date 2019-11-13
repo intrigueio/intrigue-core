@@ -40,11 +40,11 @@ class SaasGoogleGroupsCheck < BaseTask
       service_name = "groups.google.com"
 
       _create_issue({
-        name: "Public Google Groups enabled for #{domain}!",
+        name: "Public Google Groups Enabled!",
         type: "google_groups_leak",
         severity: 3,
         status: "confirmed",
-        description: "Public Google Groups settings can cause sensitive data leakage.",
+        description: "Public Google Groups settings enabled on #{domain} can cause sensitive data leakage.",
         details: {
           "name" => "#{service_name} leak: #{domain}",
           "uri" => uri,

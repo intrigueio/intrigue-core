@@ -127,8 +127,8 @@ class SsrfProxyHostHeader < BaseTask
 
         # save off enough information to investigate
         ssrf_issue = {
-          name: "Potential #{payload[:environment]} SSRF on #{uri}",
-          type: "ssrf",
+          name: "Potential #{payload[:environment]} SSRF",
+          type: "vulnerability",
           description: "SSRF on #{uri}",
           severity: 3,
           status: "potential",

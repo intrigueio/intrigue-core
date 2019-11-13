@@ -111,9 +111,6 @@ module Machine
 
       elsif entity.type_string == "DnsRecord"
 
-        # search sonar results
-        #start_recursive_task(task_result,"dns_search_sonar",entity, [])
-
         #start_recursive_task(task_result,"dns_brute_sub",entity)
 
       elsif entity.type_string == "EmailAddress"
@@ -215,7 +212,7 @@ module Machine
 
       elsif entity.type_string == "Uri"
 
-        puts "Working on URI #{entity.name}!"
+        #puts "Working on URI #{entity.name}!"
 
         # wordpress specific checks
         if entity.get_detail("fingerprint")

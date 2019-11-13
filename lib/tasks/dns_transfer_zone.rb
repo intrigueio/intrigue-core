@@ -48,7 +48,7 @@ class DnsTransferZone < BaseTask
 
         # create an issue to track this
         _create_issue({
-          name: "AXFR enabled on #{domain_name} using #{nameserver}",
+          name: "DNS Zone (AXFR) Transfer Enabled",
           type: "dns_zone_transfer",
           severity: 4,
           status: "confirmed",

@@ -47,11 +47,11 @@ class  WebminPwreset < BaseTask
     end
 
     _create_issue({
-        name: "Vulnerable Webmin install at #{_get_entity_name}",
+        name: "Vulnerable Webmin Install",
         severity: 1,
         type: "vulnerability_webmin_cve_2019_15107",
         status: "potential",
-        description: "This server is vulnerable to an unauthenticated admin password reset.",
+        description: "This server found at #{_get_entity_name} is vulnerable to an unauthenticated admin password reset.",
         references: self.class.metadata["references"]
       })
 

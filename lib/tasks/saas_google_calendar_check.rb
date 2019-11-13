@@ -57,11 +57,11 @@ class SaasGoogleCalendarCheck < BaseTask
       service_name = "calendar.google.com"
 
       _create_issue({
-        name: "Public Google Calendar enabled for #{email_address}!",
+        name: "Public Google Calendar Enabled!",
         type: "google_calendar_leak",
         severity: 2,
         status: "confirmed",
-        description: "Public Google Calendaer settings can cause sensitive data leakage.",
+        description: "Google Calendar settings are set to public for #{email_address}. This setting can cause sensitive data leakage.",
         details: {
           "name" => "#{service_name} leak: #{email_address} ",
           "uri" => uri,

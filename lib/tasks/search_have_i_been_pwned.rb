@@ -59,7 +59,7 @@ class SearchHaveIBeenPwned < BaseTask
       _log "Result: #{result}"
       # create an issue for each found result
       _create_issue({
-         name: "Email account found in Paste: #{email_address} in #{result["Source"]} on #{result["Date"]}",
+         name: "Email Account Found In Public Paste",
          type: "email_found_in_paste",
          severity: 4,
          status: "confirmed",
@@ -88,7 +88,7 @@ class SearchHaveIBeenPwned < BaseTask
       next if _get_option("only_sensitive") && !result["IsSensitive"]      
       # create an issue for each found result
       _create_issue({
-        name: "Leaked account: #{email_address} on #{result["Domain"]} at #{result["BreachDate"]}",
+        name: "Email Account Found In Public Breach",
         type: "email_found_in_breach",
         severity: 4,
         status: "confirmed",

@@ -42,7 +42,6 @@ module WebContent
       # Run through our diffs and see if these are things we know 
       # we can skip. all must be true in order to allow this to pass. 
       diffs = diffs.map do |d|
-        puts 
         
         matched_skip_regex = skip_regexes.map{ |s| 
           d if "#{d[:node1] || d[:node2]}" =~ s }.include?(d)
@@ -53,8 +52,6 @@ module WebContent
       out 
       end 
 
-      #puts "DEBUG Diffs (full): #{diffs}"
-      puts "DEBUG Diffs: #{diffs.flatten.uniq.compact.map{|x| x[:node1].to_json}}" 
       diffs = diffs.flatten.uniq.compact 
     end
 
@@ -146,17 +143,14 @@ module WebContent
    end
 
    def create_unscoped_organization(create_string,last_modified, origin_uri, additional_details={})
-      
       to_create = { 
         "unscoped" => true,
         "name" => create_string, 
         "origin" => origin_uri,
         "modified" => last_modified }.merge(additional_details)
 
-      _create_entity "Organization", to_create
-     
+      _create_entity "Organization", to_create     
    end
-
 
    ###
    ### Entity Parsing
