@@ -188,17 +188,17 @@ class Uri < Intrigue::Task::BaseTask
           if auth_endpoint
             # create an issue if not detected
             if !(set_cookie.split(";").detect{|x| x =~ /httponly/i })
-                # 4 since we only create an issue if it's an auth endpoint
-                severity = 4
-                _create_missing_cookie_attribute_http_only_issue(uri, set_cookie)
-              end
+              # 4 since we only create an issue if it's an auth endpoint
+              severity = 4
+              _create_missing_cookie_attribute_http_only_issue(uri, set_cookie)
             end
 
             if !(set_cookie.split(";").detect{|x| x =~ /secure/i } )
               # set a default,4 since we only create an issue if it's an auth endpoint 
-              severity = 4 if auth_endpoint
+              severity = 4
               _create_missing_cookie_attribute_secure_issue(uri, set_cookie)
             end 
+
           end
 
         end
