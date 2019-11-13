@@ -3,11 +3,12 @@ module Task
 module Data
 
   def dev_server_name_patterns
-    [/-staging$/,/-dev$/,/-development$/,/-test$/,/-qa$/].concat(
-    [/^staging-/,/^dev-/,/^development-/,/^test-/,/^qa-/].concat(
-    [/^staging\./,/^dev\./,/^development\./,/^test\./,/^qa\./].concat(
-    [/^test/,/^staging/,/^qa/] # possibly too aggressive
-    )))
+    [
+      /-stage$/, /-staging$/,/-dev$/,/-development$/,/-test$/,/-qa$/, 
+      /^staging-/,/^dev-/,/^development-/,/^test-/,/^qa-/,
+      /^staging\./,/^dev\./,/^development\./,/^test\./,/^qa\./,
+      /^test/,/^staging/,/^qa/
+    ] # possibly too aggressive
   end
 
   def _allocated_ipv4_ranges(filter="ALLOCATED")

@@ -60,7 +60,7 @@ class DnsRecord < Intrigue::Task::BaseTask
     # a known dev or staging server pattern
     if !match_rfc1918_address?(resolutions.map{|x| x["response_data"]}.join(", "))
       dev_server_name_patterns.each do |p|
-        if lookup_name =~ p
+        if "#{lookup_name}".split(".").first =~ p
           _exposed_server_identified(p)
         end
       end

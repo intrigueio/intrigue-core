@@ -59,7 +59,7 @@ class IpAddress < Intrigue::Task::BaseTask
         # a known dev or staging server pattern
         if !match_rfc1918_address?(lookup_name)
           dev_server_name_patterns.each do |p|
-            if result["name"] =~ p
+            if "#{result["name"]}".split(".").first =~ p
               _exposed_server_identified(p,result["name"])
             end
           end

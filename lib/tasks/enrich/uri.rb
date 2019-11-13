@@ -184,21 +184,22 @@ class Uri < Intrigue::Task::BaseTask
           # check for authentication and if so, bump the severity
           auth_endpoint = ident_content_checks.select{|x| 
             x["result"]}.join(" ") =~ /Authentication/
+          
+          if auth_endpoint
+            # create an issue if not detected
+            if !(set_cookie.split(";").detect{|x| x =~ /httponly/i })
+                # 4 since we only create an issue if it's an auth endpoint
+                severity = 4
+                _create_missing_cookie_attribute_http_only_issue(uri, set_cookie)
+              end
+            end
 
-          # create an issue if not detected
-          if !(set_cookie.split(";").detect{|x| x =~ /httponly/i })
-            severity = 5 # set a default 
-            severity = 4 if auth_endpoint
-
-            _create_missing_cookie_attribute_http_only_issue(uri, set_cookie)
+            if !(set_cookie.split(";").detect{|x| x =~ /secure/i } )
+              # set a default,4 since we only create an issue if it's an auth endpoint 
+              severity = 4 if auth_endpoint
+              _create_missing_cookie_attribute_secure_issue(uri, set_cookie)
+            end 
           end
-
-          if !(set_cookie.split(";").detect{|x| x =~ /secure/i } )
-            severity = 5 # set a default 
-            severity = 4 if auth_endpoint
-
-            _create_missing_cookie_attribute_secure_issue(uri, set_cookie)
-          end 
 
         end
 
