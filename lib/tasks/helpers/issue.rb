@@ -24,7 +24,6 @@ module Issue
       if existing_issue
         _log "Already had an issue (#{details[:name]}) for this Uri: #{@entity.name} in #{@project.name}, cowardly refusing to file another one." 
         _log "Would have filed: #{details}" 
-        _log "Would have filed: #{details}" 
         return 
       end
     end      
