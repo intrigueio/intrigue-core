@@ -87,11 +87,8 @@ module Vulndb
 
         # open and read the file
         f = File.open(file,"r")
-        parser = Yajl::Parser.new
-        json = parser.parse(f)
-
+        json = JSON.parse(f)
         # free memory
-        parser = nil
         f.close
 
         json["CVE_Items"].each do |v|

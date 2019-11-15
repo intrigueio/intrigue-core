@@ -22,7 +22,7 @@ Task Result: <a href="/<%=@issue.project.name%>/results/<%=@issue.task_result.id
       </h4>
     </div>
     <div id="collapse1" class="panel-collapse collapse in">
-      <div class="panel-body"><pre class="prettyprint"><%=h JSON.pretty_generate @issue.to_hash %></pre></div>
+      <div class="panel-body"><pre class="prettyprint"><%=h JSON.pretty_generate @issue.details %></pre></div>
     </div>
   </div>
 </div>

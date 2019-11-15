@@ -21,18 +21,18 @@
     <p></p>
     <table class="sortable" border="1" width=100%>
       <colgroup>
-        <col style="width:30%">
-        <col style="width:15%">
+        <col style="width:20%">
+        <col style="width:25%">
         <col style="width:7%">
         <col style="width:5%">
         <col style="width:43%">
       </colgroup>
       <tbody>
-      <tr><th>Name</th><th>Type</th><th>Status</th><th>Severity</th><th>Description</th></tr>
+      <tr><th>Name</th><th>Entity</th><th>Status</th><th>Severity</th><th>Description</th></tr>
       <% @issues.each do |issue| %>
         <tr>
           <td><a href="<%="/#{h @project_name}/issues/#{h issue.id}"%>"><%= h issue.name %></a></td>
-          <td><%=issue.type%></td>
+          <td><%=issue.entity.name%><br><%issue.entity.aliases{ |x|%> <%=x.name%> <br><%}%></td>
           <td><%=issue.status%></td>
           <td><%=issue.severity%></td>
           <td><%=issue.description%></td>

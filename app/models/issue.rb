@@ -40,7 +40,9 @@ module Intrigue
         }
       end
 
-
+      def export_json
+        export_hash.to_json
+      end
 
     end
 

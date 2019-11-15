@@ -301,7 +301,6 @@ GEM
     whois-parser (1.2.0)
       activesupport (>= 4)
       whois (>= 4.0.7)
-    yajl-ruby (1.4.1)
     yard (0.9.20)
     zeitwerk (2.2.0)
 
@@ -365,7 +364,6 @@ DEPENDENCIES
   whois
   whois-parser
   whoisology!
-  yajl-ruby
   yard
 
 RUBY VERSION

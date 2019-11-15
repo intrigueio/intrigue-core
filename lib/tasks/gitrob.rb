@@ -37,7 +37,7 @@ class Gitrob < BaseTask
 
     # parse output
     begin
-      output = JSON.parse(File.open(temp_file,"r"))
+      output = JSON.parse(File.open(temp_file,"r").read)
     rescue Errno::ENOENT => e
       _log_error "No such file: #{temp_file}"
     rescue JSON::ParserError => e
