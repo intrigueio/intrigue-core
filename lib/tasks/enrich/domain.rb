@@ -76,29 +76,6 @@ class Domain < Intrigue::Task::BaseTask
       _log "Grabbing TXT Records"
       _set_entity_detail("txt_records", collect_txt_records(lookup_name))
 
-      # Collect DMARC info 
-      _log "Grabbing DMARC"
-      dmarc_record_name = "_dmarc.#{_get_entity_name}"
-      result = resolve(dmarc_record_name, [Resolv::DNS::Resource::IN::TXT])
-      if result.count > 0 # No record!
-        # set dmarc to the first record we get back 
-        dmarc_details = result.first["lookup_details"].first["response_record_data"]
-        _set_entity_detail("dmarc", dmarc_details)
-
-        # parse up the 'rua' component into email addresses
-        dmarc_details.split(";").each do |component|
-          # https://dmarcian.com/rua-vs-ruf/
-          if component.strip =~ /^rua/ || component.strip =~ /^ruf/
-            component.split("mailto:").last.split(",").each do |address|
-              _create_entity "EmailAddress", :name => address
-            end
-          end
-        end
-
-      else 
-         _set_entity_detail("dmarc", nil) 
-      end
-
       # grab any / all SPF records (useful to see who accepts mail)
       _log "Grabbing SPF Records"
       spf_details = collect_spf_details(lookup_name)
@@ -110,6 +87,38 @@ class Domain < Intrigue::Task::BaseTask
           _log "Found Associated SPF Domain: #{domain_name}"
           check_and_create_unscoped_domain(domain_name) if @entity.scoped?
         end
+      end
+
+      # Collect DMARC info 
+      _log "Grabbing DMARC Details"
+      dmarc_record_name = "_dmarc.#{_get_entity_name}"
+      result = resolve(dmarc_record_name, [Resolv::DNS::Resource::IN::TXT])
+      if result.count > 0 # No record!
+        # set dmarc to the first record we get back 
+        dmarc_details = result.first["lookup_details"].first["response_record_data"]
+        _set_entity_detail("dmarc", dmarc_details)
+
+        # parse up the 'rua' component into email addresses
+        dmarc_details.split(";").each do |component|
+          
+          # https://dmarcian.com/rua-vs-ruf/
+          if component.strip =~ /^rua/ || component.strip =~ /^ruf/
+            component.split("mailto:").last.split(",").each do |address|
+              _create_entity "EmailAddress", :name => address
+            end
+          end
+
+        end
+      else 
+
+        # Set DMARC empty
+        _set_entity_detail("dmarc", nil) 
+
+        # set mx records 
+        if mx_records.count > 0
+          _create_dmarc_issues(mx_records, dmarc_details)
+        end
+
       end
 
     end

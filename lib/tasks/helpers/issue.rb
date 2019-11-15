@@ -36,6 +36,38 @@ module Issue
     issue = Intrigue::Model::Issue.create(_encode_hash(hash))
   end
 
+  ###
+  ### DNS / Email issues
+  ### 
+  def _create_dmarc_issues(mx_records, dmarc_record)
+    
+    # if we can't accept mail, no point in continuing 
+    return unless mx_records.count > 0
+
+    if !dmarc_record
+      _create_issue({
+        name: "Missing DMARC Configuration",
+        type: "missing_dmarc_configuration",
+        severity: 4,
+        status: "confirmed",
+        description: "Domains that are configured to send email should implement one or more forms " +  
+          "of email authentication to verify that an email is actually from the domain it claims it is from. " +
+          "Configuring a DMARC record provides the receiving mail server with the information needed to " +
+          "evaluate messages that claim to be from the domain, and it is one of the most important steps " +
+          "that can be taken to improve email deliverability.",
+        references: [
+          "https://www.sparkpost.com/resources/email-explained/dmarc-explained/",
+          "https://www.sonicwall.com/support/knowledge-base/what-is-a-dmarc-record-and-how-do-i-create-it-on-dns-server/170504796167071/"
+        ],
+        details: { 
+          mx_records: mx_records, 
+          dmarc_record: dmarc_record 
+        }
+      })
+    end
+
+  end
+
   ### 
   ### Host oriented issues
   ###
