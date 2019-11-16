@@ -6,27 +6,7 @@ module Issue
   ### Generic helper method to create issues
   ###
   def _create_issue(details)
-    _notify("Sev #{details[:severity]}!```#{details[:name]}```") if details[:severity] <= 3
-    
-    #########
-    ###
-    ### URIs will be hit from many angles
-    ###
-    ### So let's check if we already have one for each of entities 
-    ###
-    #########
-    if @entity.type_string == 'Uri'
-      _log "Creating an issue against a Uri, so first checking if one of our aliases has the same issue"
-      existing_issues = Intrigue::Model::Issue.scope_by_project(@project.name).where(:name => "#{details[:name]}")
-      existing_issue = existing_issues.map{|x| x.entity.alias_group_id }.compact.uniq.include? @entity.alias_group_id
-      
-      # move on if we already have it 
-      if existing_issue
-        _log "Already had an issue (#{details[:name]}) for this Uri: #{@entity.name} in #{@project.name}, cowardly refusing to file another one." 
-        _log "Would have filed: #{details}" 
-        return 
-      end
-    end      
+    _notify("Sev #{details[:severity]}!```#{details[:name]}```") if details[:severity] <= 3   
 
     hash = details.merge({ entity_id: @entity.id,
                            task_result_id: @task_result.id,
