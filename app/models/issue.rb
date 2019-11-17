@@ -26,13 +26,14 @@ module Intrigue
       def export_hash
         {
           :type => type,
-          :name =>  "#{name} [#{entity.name}]",
+          :name =>  "#{name}",
           :severity =>  severity,
           :status =>  status,
           :description =>  description,
           :entity_type => entity.type,
           :entity_name => entity.name,
           :entity_aliases => entity.aliases.map{|a| {:type => a.type, :name => a.name} },  
+          :entity_alias_group_id => entity.alias_group_id,
           :details => details,
           :task_result => task_result.name,
           :task_result_entity_name => task_result.base_entity.name,
