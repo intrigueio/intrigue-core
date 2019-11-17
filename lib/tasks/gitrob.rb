@@ -92,7 +92,7 @@ class Gitrob < BaseTask
 
         _create_issue({
           name: "Suspicious #{f["Action"]} Commit Found In Github Repository",
-          type: "suspicious_commit  ",
+          type: "suspicious_commit",
           severity: 4,
           status: "potential",
           description:  "A suspicious commit was found in a public Github repository.\n" + 
