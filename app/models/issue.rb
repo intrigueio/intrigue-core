@@ -26,7 +26,7 @@ module Intrigue
       def export_hash
         {
           :type => type,
-          :name =>  "#{name}",
+          :name => name,
           :severity =>  severity,
           :status =>  status,
           :description =>  description,
