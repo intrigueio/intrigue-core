@@ -41,6 +41,11 @@ module Intrigue
         }
       end
 
+      def export_csv
+        "#{type}, #{name}, #{severity}, #{status}, #{description.gsub(",",";")}, #{entity.type}, #{entity.name}, #{entity.alias_group_id}"
+      end
+
+
       def export_json
         export_hash.to_json
       end

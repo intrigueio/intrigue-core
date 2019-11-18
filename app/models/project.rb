@@ -43,7 +43,7 @@ module Intrigue
           :id => id,
           :name => "#{name}",
           :seeds => seeds,
-          :entities => entities.map {|e| e.export_hash }
+          :entities => entities.map {|e| e.export_hash },
           :issues => issues.map {|i| i.export_hash }
         }
       end
@@ -52,7 +52,7 @@ module Intrigue
         export_hash.merge("generated_at" => "#{DateTime.now}").to_json
       end
 
-      def export_csv
+      def export_entities_csv
 
         output_string = ""
         self.entities.paged_each do |e|
@@ -200,6 +200,7 @@ module Intrigue
         opt.each{|k,v| return v } if opt
       end
 
+      # TODO ... move this into the issue model
       def export_issues_csv
         out = ""
         out << "Name,Type,Status,Severity,Description\n"

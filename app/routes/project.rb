@@ -155,7 +155,7 @@ class IntrigueApp < Sinatra::Base
     ### EXPORT
     get '/:project/export/json' do
       content_type 'application/json'
-      headers["Content-Disposition"] = "attachment;filename=#{@project_name}.entities.json"
+      headers["Content-Disposition"] = "attachment;filename=#{@project_name}.json"
 
       @project = Intrigue::Model::Project.first(:name => @project_name)
       @project.export_json
@@ -166,7 +166,7 @@ class IntrigueApp < Sinatra::Base
       headers["Content-Disposition"] = "attachment;filename=#{@project_name}.entities.csv"
 
       @project = Intrigue::Model::Project.first(:name => @project_name)
-      @project.export_csv
+      @project.export_entities_csv
     end
 
     get '/:project/export/applications/csv' do
