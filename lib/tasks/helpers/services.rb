@@ -136,7 +136,7 @@ module Services
 
         # if its a weak service, file an issue
         if weak_tcp_services.include?(port_num)
-          _create_weak_service_issue(name, port_num, service, 'tcp')
+          _create_weak_service_issue(h.name.strip, port_num, service, 'tcp')
         end
 
       elsif protocol == "udp" && h.name.strip.is_ip_address?
