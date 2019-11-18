@@ -76,7 +76,7 @@ module Issue
   def _create_weak_service_issue(ip_address, port, proto, tcp)
     transport = tcp ? "TCP" : "UDP"
     _create_issue({
-      name: "Weak Service Identified",
+      name: "Weak Service Identified: #{proto} on #{port}",
       type: "weak_service_identified",
       severity: 4,
       status: "confirmed",
