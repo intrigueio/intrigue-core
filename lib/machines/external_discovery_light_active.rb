@@ -47,9 +47,6 @@ module Machine
         # get the nameservers
         start_recursive_task(task_result,"enumerate_nameservers", entity)
 
-        # try an nsec walk
-        start_recursive_task(task_result,"dns_nsec_walk", entity ,[], true)
-
         # attempt a zone transfer
         start_recursive_task(task_result,"dns_transfer_zone", entity, [], true)
 
