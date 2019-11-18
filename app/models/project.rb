@@ -44,6 +44,7 @@ module Intrigue
           :name => "#{name}",
           :seeds => seeds,
           :entities => entities.map {|e| e.export_hash }
+          :issues => issues.map {|i| i.export_hash }
         }
       end
 
