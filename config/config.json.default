@@ -167,7 +167,7 @@
       "uri": "https://haveibeenpwned.com/API",
       "editable": "true",
       "comment": ""
-    },  
+    },
     "hunter_io_api_key": {
       "value": "",
       "uri": "https://hunter.io/api_keys",
@@ -183,6 +183,12 @@
     "mailbox_layer_apikey": {
       "value": "",
       "uri": "https://mailboxlayer.com/dashboard",
+      "editable": "true",
+      "comment": ""
+    },
+    "otx_api_key": {
+      "value": "XXX",
+      "uri": "https://otx.alienvault.com/api",
       "editable": "true",
       "comment": ""
     },
@@ -207,6 +213,12 @@
     "pipl_api_key": {
       "value": "XXX",
       "uri": "http://dev.pipl.com/choosekey",
+      "editable": "true",
+      "comment": ""
+    },
+    "pulsedive_api_key": {
+      "value": "XXX",
+      "uri": "https://pulsedive.com/api/",
       "editable": "true",
       "comment": ""
     },
