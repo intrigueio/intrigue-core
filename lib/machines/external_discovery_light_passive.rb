@@ -37,9 +37,6 @@ module Machine
         start_recursive_task(task_result,"enumerate_nameservers", entity)
 
         # attempt a zone transfer.. unlikely to be noticed, so allowing
-        start_recursive_task(task_result,"dns_nsec_walk", entity ,[], true)
-
-        # attempt a zone transfer.. unlikely to be noticed, so allowing
         start_recursive_task(task_result,"dns_transfer_zone", entity, [], true)
 
         # check certificate records

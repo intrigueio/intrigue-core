@@ -87,7 +87,7 @@ module Vulndb
 
         # open and read the file
         f = File.open(file,"r")
-        json = JSON.parse(f)
+        json = JSON.parse(f.read)
         # free memory
         f.close
 
