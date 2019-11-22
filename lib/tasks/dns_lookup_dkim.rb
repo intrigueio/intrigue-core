@@ -4,6 +4,20 @@ class DnsLookupDkim < BaseTask
 
   include Intrigue::Task::Dns
 
+=begin
+TODO implement issue creation for policy settings
+
+When you use DomainKeys you can publish policy statements in DNS that help 
+email receivers understand how they should treat your email. There are three 
+main statements that can be published:
+
+"t=y" - Which means that your email DomainKeys are in test mode.
+"o=-" - All email from your domain is digitally signed.
+"o=~" - Some email from your domain is digitally signed.
+"n=*" - n stands for notes. Replace the * symbol, with any note you like
+=end
+
+
   def self.metadata
     {
       :name => "dns_lookup_dkim",
@@ -18,21 +32,12 @@ class DnsLookupDkim < BaseTask
       :type => "discovery",
       :passive => true,
       :example_entities => [{"type" => "Domain", "details" => {"name" => "intrigue.io"}}],
-      :allowed_options => [],
-      :created_types => ["DnsRecord" ]
+      :allowed_options => [
+        {:name => "create_domain", :regex => "boolean", :default => false },
+      ],
+      :created_types => ["DnsRecord", "Domain"]
     }
   end
-
-=begin
-When you use DomainKeys you can publish policy statements in DNS that help 
-email receivers understand how they should treat your email. There are three 
-main statements that can be published:
-
-"t=y" - Which means that your email DomainKeys are in test mode.
-"o=-" - All email from your domain is digitally signed.
-"o=~" - Some email from your domain is digitally signed.
-"n=*" - n stands for notes. Replace the * symbol, with any note you like
-=end
 
   def run
     super
@@ -46,7 +51,8 @@ main statements that can be published:
     # If we got a success to the query.
     if dkim_records
       dkim_records.each do |record|
-          _create_entity "DnsRecord", record.merge
+        _create_entity "DnsRecord", record.merge
+        _create_entity "Domain", record["domain"] if _get_option("create_domain")
       end
 
       # save them 
@@ -96,16 +102,18 @@ main statements that can be published:
     common_selectors.each do |cs| 
 
       lookup_name = "#{cs["selector"]}._domainkey.#{domain}"
-      _log "Looking up.. #{lookup_name}"
+      _log "Looking up... #{lookup_name}"
 
       response = resolve(lookup_name, [Resolv::DNS::Resource::IN::TXT])
       next unless response && !response.empty?
 
       response.each do |r|
         r["lookup_details"].each do |record|
-          dkim_records << { "name" => lookup_name, 
+          dkim_records << { 
+            "name" => lookup_name, 
+            "domain" => record["domain"],
             "record" => record["response_record_data"], 
-            "type" => "TXT" 
+            "type" => "TXT"
           }
         end
       end
