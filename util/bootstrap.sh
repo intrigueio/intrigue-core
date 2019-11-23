@@ -1,43 +1,12 @@
 #!/bin/bash
 
 #####
-##### SYSTEM CONFIG
-#####
-
-#!/bin/bash
-
-# Clean up apt
-#echo "[+] Disabling up apt-daily.service (required for EC2)"
-#sudo systemctl stop apt-daily.service
-#sudo systemctl kill --kill-who=all apt-daily.service
-#sudo systemctl disable apt-daily.service
-
-#echo "[+] Disabling apt-daily-upgrade.service (required for EC2)"
-#sudo systemctl stop apt-daily-upgrade.timer
-#sudo systemctl kill --kill-who=all apt-daily-upgrade.service
-#sudo systemctl disable apt-daily-upgrade.service
-
-# ensure any running `apt-get update` has been killed
-#echo "[+] Wait until apt-get update has been killed:"
-#while ! (systemctl list-units --all apt-daily.service 2>&1 | egrep -qi 'dead|fail')
-#do
-#  echo "[+] Waiting for systemd apt-daily.service to die:"
-#  echo `systemctl list-units --all apt-daily.service`
-#  sleep 1;
-#done
-
-# Buffer
-#echo "[+] Buffer 5 seconds"
-#sleep 5
-
-#####
 ##### SYSTEM SOFTWARE INSTALLATION
 #####
 
-
 # if these are already set by our parent, use that.. otherwise sensible defaults
-export INTRIGUE_DIRECTORY="${IDIR:=/home/ubuntu/core}"
-export RUBY_VERSION="${RUBY_VERSION:=2.6.3}"
+export INTRIGUE_DIRECTORY="${IDIR:=//home/ubuntu/core}"
+export RUBY_VERSION="${RUBY_VERSION:=2.6.5}"
 export DEBIAN_FRONTEND=noninteractive
 
 # Clean up
@@ -342,7 +311,7 @@ else
   echo "[+] Nooooo I'm not inside docker!";
   echo "echo ''" >> ~/.bash_profile
   echo "echo To enable Intrigue services, run the following command:" >> ~/.bash_profile
-  echo "echo '$ cd core && god -c ./util/god/intrigue-ec2.rb'" >> ~/.bash_profile
+  echo "echo '$ cd core && god -c $INTRIGUE_DIRECTORY/util/god/intrigue-ec2.rb && god start'" >> ~/.bash_profile
 fi
 
 # if we're configuring as root, we're probably going to run as root, so
