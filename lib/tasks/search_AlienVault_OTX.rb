@@ -5,9 +5,9 @@ class SearchAlienvaultOtx < BaseTask
  def self.metadata
    {
      :name => "search_alienvault_otx",
-     :pretty_name => "Search AlienvaultOTX",
+     :pretty_name => "Search Alienvault OTX",
      :authors => ["Anas Ben Salah"],
-     :description => "This task hits AlienVault OTX API and checks for related hostnames,IP's and hashes reputation",
+     :description => "This task hits AlienVault OTX API and checks for related hostnames, IpAddress and Hashes",
      :references => ["https://otx.alienvault.com/api"],
      :type => "discovery",
      :passive => true,
@@ -28,11 +28,6 @@ class SearchAlienvaultOtx < BaseTask
 
     # Make sure the key is set
     api_key = _get_task_config("otx_api_key")
-
-    unless api_key
-      _log_error "unable to proceed, no API key for AlienVault OTX provided"
-      return
-    end
 
     headers ={
       Accept: 'application/json',
@@ -115,7 +110,7 @@ class SearchAlienvaultOtx < BaseTask
 
          end
 
-    #handling json exceptions
+    # handling json exceptions
     rescue JSON::ParserError => e
       _log_error "unable to parse json!"
     end

@@ -1,20 +1,22 @@
 module Intrigue
 module Task
-class SearchBinary < BaseTask
+class SearchBinaryEdge < BaseTask
 
   def self.metadata
     {
       :name => "search_binaryedge",
       :pretty_name => "Search BinaryEdge",
       :authors => ["jcran","AnasBenSalah"],
-      :description => "This task hits the Binary Edge API for a given IpAddress,Domain name  and Email Address",
+      :description => "This task hits the BinaryEdge API for a given IpAddress, Domain, " +
+      "or Email Address, and returns data that BinaryEdge has, including ports, torrents, " + 
+      "and checks for maliciousness",
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["IpAddress","Domain","EmailAddress"],
-      :example_entities => [{"type" => "IpAddress", "details" => {"name" => "8.8.8.8"}}],
+      :allowed_types => ["IpAddress", "Domain", "EmailAddress"],
+      :example_entities => [],
       :allowed_options => [],
-      :created_types => ["NetworkService","Uri","Subdomain"]
+      :created_types => ["NetworkService","Uri", "DnsRecord"]
     }
   end
 
@@ -30,13 +32,13 @@ class SearchBinary < BaseTask
     headers = {"X-Key" =>  "#{api_key}" }
 
     if entity_type == "IpAddress"
-       search_ip entity_name,headers
-       search_ip_torrent entity_name,headers
-       search_ip_score entity_name,headers
+       search_ip entity_name, headers
+       search_ip_torrent entity_name, headers
+       search_ip_score entity_name, headers
     elsif entity_type == "Domain"
-       search_subdomain entity_name,headers
+       search_subdomain entity_name, headers
     elsif entity_type == "EmailAddress"
-       search_emailaddress entity_name,headers
+       search_emailaddress entity_name, headers
     else
        _log_error "Unsupported entity type"
     end
@@ -54,22 +56,23 @@ class SearchBinary < BaseTask
         json["events"].each do |e|
 
           e["results"].each do |r|
-            _log "result: #{r}"
 
             _create_network_service_entity(@entity, r["target"]["port"],
                 r["target"]["protocol"], {"binary_edge" => e})
-          if e["port"] != "443"
-
+            
+            # this should be optional... 
+            if e["port"] != "443"
                   _create_issue({
-                              name: "#{entity_name}:#{e["port"]}  [Binary Edge]",
-                              type: "Malicious IP",
-                              severity: 3 ,
-                              status: "confirmed",
-                              description: "Port: #{e["port"]} || State:#{r["result"]["data"]["state"]} || Security issue:#{r["result"]["data"]["security"]}
-                              || Reason:#{r["result"]["data"]["reason"]} || ",#Running Service:#{r["result"]["data"]["service"]}",
-                              details: json
-                              })
+              name: "#{entity_name}:#{e["port"]}  [Binary Edge]",
+              type: "Malicious IP",
+              severity: 3 ,
+              status: "confirmed",
+              description: "Port: #{e["port"]} || State:#{r["result"]["data"]["state"]} || Security issue:#{r["result"]["data"]["security"]}
+              || Reason:#{r["result"]["data"]["reason"]} || ",#Running Service:#{r["result"]["data"]["service"]}",
+              details: json
+              })
             end
+
           end
         end
       end
@@ -82,25 +85,30 @@ class SearchBinary < BaseTask
 
       begin
 
-      uri2 = "https://api.binaryedge.io/v2/query/torrent/ip/#{entity_name}"
-      json2 = JSON.parse(http_request(:get, uri2, nil, headers).body)
+        uri = "https://api.binaryedge.io/v2/query/torrent/ip/#{entity_name}"
+        json = JSON.parse(http_request(:get, uri2, nil, headers).body)
 
-      if json2["title"] == "Not Found"
+        if json["title"] == "Not Found"
           return
         end
 
-      json2["events"].each do |t|
+      json["events"].each do |t|
 
           _create_issue({
-            name: "IP related to torrent: #{entity_name}:#{t["peer"]["port"]}",
-            type: "Suspicios Torrent IP",
+            name: "IP Affiliated with Torrent",
+            type: "torrent_affiliated_ip",
             severity: 4 ,
             status: "confirmed",
-            description: "Torrent details:|| Name: #{t["torrent"]["name"]}\n  Source: #{t["torrent"]["source"]}\n  Category: #{t["torrent"]["category"]}\n Subcategory: #{t["torrent"]["subcategory"]}",
+            description: "
+              Ip Address: #{entity_name}:#{t["peer"]["port"]}
+              Name: #{t["torrent"]["name"]}\n
+              Source: #{t["torrent"]["source"]}\n  
+              Category: #{t["torrent"]["category"]}\n 
+              Subcategory: #{t["torrent"]["subcategory"]}",
             references:"https://binaryedge.com/",
-            details: json2
-          }
-          )
+            details: json
+          })
+
         end
     rescue JSON::ParserError => e
       _log_error "Unable to parse JSON: #{e}"
@@ -111,54 +119,48 @@ class SearchBinary < BaseTask
   def search_ip_score entity_name,headers
 
     begin
-      uri3 = "https://api.binaryedge.io/v2/query/score/ip/#{entity_name}"
-      json3 = JSON.parse(http_request(:get, uri3, nil, headers).body)
+      uri = "https://api.binaryedge.io/v2/query/score/ip/#{entity_name}"
+      json = JSON.parse(http_request(:get, uri3, nil, headers).body)
 
-      if json3["normalized_ip_score"] == 0
-          return
+      if json["normalized_ip_score"] == 0
+        return
       end
 
-      score = json3["normalized_ip_score"]
-      #sev = 4
+      score = json["normalized_ip_score"]
 
-        if ((1..20) === score)
-           sev = 5
+      if score < 20 && score > 0
+         calculated_sev = 5
+      elsif score < 40 && score > 21
+         calculated_sev = 4
+      elsif score < 60 && score > 41
+         calculated_sev = 3
+      elsif score < 80 && score > 61
+         calculated_sev = 2
+      elsif score > 80
+         calculated_sev = 1
+      end
 
-        elsif ((21..40) === score)
-           sev = 4
-
-        elsif ((41..60) === score)
-           sev = 3
-
-        elsif ((61..80) === score)
-           sev = 2
-        elsif ((81..95) === score)
-           sev = 1
-        else
-           sev = 0
-        end
-
-
-          _create_issue({
-            name: "Binaryedge Vulnerable IP Score:#{entity_name}",
-            type: "Malicious IP",
-            severity: sev ,
-            status: "confirmed",
-            description: "Overall score:#{json3["normalized_ip_score"]} || Detailed ip Score: Cve: #{json3["normalized_ip_score_detailed"]["cve"]}\n
+        _create_issue({
+          name: "BinaryEdge Vulnerable IP Score: #{entity_name}",
+          type: "malicious_ip",
+          severity: calculated_sev,
+          status: "confirmed",
+          description: "
+            Overall score:#{json3["normalized_ip_score"]} || Detailed ip Score: Cve: #{json3["normalized_ip_score_detailed"]["cve"]}\n
             Attack Surface: #{json3["normalized_ip_score_detailed"]["attack_surface"]}\n
             Encryption: #{json3["normalized_ip_score_detailed"]["encryption"]}\n
             Remote management service: #{json3["normalized_ip_score_detailed"]["rms"]}\n
             Storage: #{json3["normalized_ip_score_detailed"]["storage"]}\n
             Web: #{json3["normalized_ip_score_detailed"]["web"]}\n
             Torrent: #{json3["normalized_ip_score_detailed"]["torrents"]} ",
-            references:"https://binaryedge.com/",
-            details: json3
-          }
-          )
-        rescue JSON::ParserError => e
-          _log_error "Unable to parse JSON: #{e}"
-        end
-      end # end run
+          references:"https://binaryedge.com/",
+          details: json3
+        }
+        )
+      rescue JSON::ParserError => e
+        _log_error "Unable to parse JSON: #{e}"
+      end
+    end # end search_ip_score
 
 
   def search_subdomain entity_name,headers
@@ -202,7 +204,7 @@ class SearchBinary < BaseTask
         }
         )
 
-  end
+      end
 
     rescue JSON::ParserError => e
       _log_error "Unable to parse JSON: #{e}"
