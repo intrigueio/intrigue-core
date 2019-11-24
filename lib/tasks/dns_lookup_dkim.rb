@@ -17,7 +17,6 @@ main statements that can be published:
 "n=*" - n stands for notes. Replace the * symbol, with any note you like
 =end
 
-
   def self.metadata
     {
       :name => "dns_lookup_dkim",
@@ -50,9 +49,11 @@ main statements that can be published:
 
     # If we got a success to the query.
     if dkim_records
-      dkim_records.each do |record|
-        _create_entity "DnsRecord", record.merge
-        _create_entity "Domain", record["domain"] if _get_option("create_domain")
+
+      dkim_records.each do |d|
+        next unless d["record"] =~ /DKIM/
+        _create_entity "DnsRecord", d
+        _create_entity "Domain", d["domain"] if _get_option("create_domain")
       end
 
       # save them 
@@ -62,8 +63,9 @@ main statements that can be published:
 
   end
 
-  def common_selectors
-    [
+  def common_selectors(s=nil)
+
+    selectors = [
       { "service"=>"Amazon", "domain" => "amazon.com", "selector"=>"amazonses" },
       { "service"=>"BSD Tools", "domain" => "bluestatedigital.com", "selector"=>"omega" },
       { "service"=>"BSD Tools", "domain" => "bluestatedigital.com", "selector"=>"omicron" },
@@ -93,6 +95,12 @@ main statements that can be published:
       { "service"=>"Zendesk", "domain" => "zendesk.com", "selector"=>"zendesk1" },
       { "service"=>"Zendesk", "domain" => "zendesk.com", "selector"=>"zendesk2" }
    ]
+
+   # if we were passed a selector, send it back (alone) 
+   out = nil
+   out = selectors.select{|x| x if x["selector"] == s} if s
+
+  out || selectors 
   end
 
   def collect_dkim_records(domain)
@@ -109,9 +117,11 @@ main statements that can be published:
 
       response.each do |r|
         r["lookup_details"].each do |record|
+          selector = lookup_name.gsub("._domainkey.#{domain}","")
           dkim_records << { 
             "name" => lookup_name, 
-            "domain" => record["domain"],
+            "domain" => common_selectors(selector),
+            "selector" => selector,
             "record" => record["response_record_data"], 
             "type" => "TXT"
           }
