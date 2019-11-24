@@ -33,8 +33,6 @@ class DnsLookupTxt < BaseTask
 
     # If we got a success to the query.
     if res_answer
-      _log_good "TXT lookup succeeded on #{domain_name}:"
-      _log_good "Answer:\n=======\n#{res_answer.to_s}======"
 
       # Create a finding for each
       unless res_answer.answer.count == 0
@@ -50,22 +48,14 @@ class DnsLookupTxt < BaseTask
               else
                 _create_entity "IpAddress", {"name" => s }
               end
-            #elsif record =~ /^google-site-verification.*/
-            #  _create_entity "Info", {"name" => "DNS Verification Code", "type" =>"Google", "content" => #record.split(":").last}
-            #elsif record =~ /^yandex-verification.*/
-            #  _create_entity "Info", {"name" => "DNS Verification Code", "type" =>"Yandex", "content" => #record.split(":").last}
             end
+            
           end
-
-          # Log an info record with full detail
-          _create_entity "Info", { :name => "TXT Record", :content => answer.to_s , :details => res_answer.to_s }
-
         end
       end
 
+      _set_entity_detail "txt_records", res_anwer.answer
     end
-
-    _log "done"
   end
 
 
