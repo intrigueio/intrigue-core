@@ -47,17 +47,25 @@ main statements that can be published:
 
     dkim_records = collect_dkim_records(domain_name)
 
+    # always start out empty
+    _set_entity_detail "dkim_records", []
+
+
     # If we got a success to the query.
     if dkim_records
 
       dkim_records.each do |d|
         next unless d["record"] =~ /DKIM/
+
+        # save them 
+        _set_entity_detail "dkim_records", dkim_records
+
+        # create a dns record for it
         _create_entity "DnsRecord", d
+
+        # optionally create a domain
         _create_entity "Domain", d["domain"] if _get_option("create_domain")
       end
-
-      # save them 
-      _set_entity_detail "dkim_records", dkim_records
 
     end
 
