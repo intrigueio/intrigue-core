@@ -34,8 +34,9 @@ class SearchCertSpotter < BaseTask
       extract_patterns = [search_domain]
     end
 
-    search_url = "https://api.certspotter.com/v1/issuances?domain=#{search_domain}&include_subdomains=true&expand=dns_names" + 
-    "&expand=issuer&expand=not_before&expand=not_after&expand=cert&expand=tbs_sha256&expand=pubkey_sha256&expand=id"
+    search_url = "https://api.certspotter.com/v1/issuances?domain=#{search_domain}"+
+      "&include_subdomains=true&expand=dns_names&expand=issuer&expand=not_before" + 
+      "&expand=not_after&expand=cert&expand=tbs_sha256&expand=pubkey_sha256&expand=id"
 
     begin
 
