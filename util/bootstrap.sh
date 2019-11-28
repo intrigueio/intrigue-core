@@ -131,6 +131,22 @@ sudo apt-get -y --fix-broken --no-install-recommends install make \
   rm -rf /var/lib/apt/lists/*
 
 
+echo "[+] Creating a home for binaries"
+mkdir -p $HOME/bin
+export BINPATH=$HOME/bin
+export PATH=$PATH:$BINPATH
+# and for latere
+echo export PATH=$PATH:$BINPATH ~/.bash_profile
+
+# dnsmorph
+echo "[+] Getting DNSMORPH binaries... "
+cd $BINPATH
+wget https://github.com/netevert/dnsmorph/releases/download/v1.2.7/dnsmorph_1.2.7_linux_64-bit.tar.gz
+tar -zxvf dnsmorph_1.2.7_linux_64-bit.tar.gz
+chmod +x dnsmorph
+rm dnsmorph_1.2.7_linux_64-bit.tar.gz
+cd $HOME
+
 # add go vars (and note that we source this file later as well)
 echo "[+] Installing Golang environment"
 
@@ -141,14 +157,6 @@ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 # and for later
 echo export GOPATH=$HOME/go >> ~/.bash_profile
 echo export PATH=$PATH:$GOROOT/bin:$GOPATH/bin >> ~/.bash_profile
-
-# dnsmorph
-echo "[+] Getting DNSMORPH... "
-go get -v github.com/intrigueio/dnsmorph
-cd /$GOPATH/src/github.com/intrigueio/dnsmorph
-go get -v ./...
-go build
-cd ~ # always go back to base user directory
 
 # gitrob
 echo "[+] Getting Gitrob... "
