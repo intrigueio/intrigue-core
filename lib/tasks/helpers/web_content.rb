@@ -131,12 +131,30 @@ module WebContent
         "modified" => last_modified }.merge(additional_details)
 
       # there's a bunch of stuff we know is just software
-      if create_string =~ /microsoft/i || 
-         create_string =~ /adobe/i     || 
-         create_string =~ /pdf/i       ||
-         create_string =~ /coreldraw/i
+      if create_string =~ /adobe/i                    ||  
+         create_string =~ /apeosport-v/i              ||
+         create_string =~ /canon/i                    ||
+         create_string =~ /coreldraw/i                ||
+         create_string =~ /exe/i                      ||
+         create_string =~ /hewlett packard/i          ||
+         create_string =~ /hp/i                       ||
+         create_string =~ /lexmark/i                  ||
+         create_string =~ /microsoft/i                || 
+         create_string =~ /pdf/i                      ||
+         create_string =~ /postscript/i               ||
+         create_string =~ /pscript/i                  ||
+         create_string =~ /scansnap/i                 ||
+         create_string =~ /softquad/i                 ||
+         create_string =~ /snagit/i                   ||
+         create_string =~ /twain/i                    ||
+         create_string =~ /winver/i                   ||
+         create_string =~ /^word$/i                   ||
+         create_string =~ /workcentre/i
+
         _create_entity "SoftwarePackage", to_create
-      else 
+      elsif create_string =~ /\d+/i || create_string.length == 0
+        # do nothing
+      else
         _create_entity "Person", to_create
       end
 

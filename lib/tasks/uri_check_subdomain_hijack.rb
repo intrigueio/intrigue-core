@@ -29,8 +29,10 @@ class UriCheckSudomainHijack  < BaseTask
     if response
       if response.body =~ /The specified bucket does not exist/i
         _create_hijackable_subdomain_issue "AWS S3", uri, "potential"
-      elsif response.body =~ /No such app/i
-        _create_hijackable_subdomain_issue "Heroku", uri, "potential"
+      elsif response.body =~ /No such app/i 
+        if !(uri =! /heroku.com/ || uri =~ /herokussl.com/ || uri =~ /herokudns.com/ || uri =~ /herokuapp.com/) 
+          _create_hijackable_subdomain_issue "Heroku", uri, "potential"
+        end
       elsif response.body =~ /No settings were found for this company:/i
         _create_hijackable_subdomain_issue "Help Scout", uri, "potential"
       elsif response.body =~ /We could not find what you're looking for\./i

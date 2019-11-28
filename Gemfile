@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.6.3'
+ruby '2.6.5'
 
 # core
 gem 'sinatra',         '~> 2.0.1'

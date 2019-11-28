@@ -229,7 +229,6 @@ module Machine
           #if entity.get_detail("fingerprint").any?{|v| v['vendor'] == "Apache" && v["product"] == "HTTP Server" }
           #  start_recursive_task(task_result,"apache_server_status_parser",entity, [])
           #end
-
         end
 
         ## Grab the SSL Certificate

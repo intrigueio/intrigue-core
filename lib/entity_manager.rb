@@ -124,18 +124,18 @@ class EntityManager
       seed_type_string = s.type.to_s.split(":").last
       
       # IpAddresses can't be used to skip, since they mess up netblocks
-      next if seed_type_string == "IpAddress"  # TOOD.. this should really be a global list (see: netblock scoping)
+      # TOOD.. this should really be a global list (see: netblock scoping)
+      next if seed_type_string == "IpAddress"  
 
       # check if the seed matches a non-traversable entity
       r = project.standard_exception?(s.name, seed_type_string)
 
-      # okay so if a seed is in the standard list we can prevent it from becoming an eception
+      # okay so if a seed is in the standard list we can prevent it from becoming an exception
       skip_regexes << r if r
     end
 
     # simplify so we dont end up with a bunch of dupes
     skip_regexes = skip_regexes.uniq.compact
-    #tr.log "Got Skip Regexes: #{skip_regexes}"
 
     if skip_regexes.count > 0
       tr.log "This no-traverse regex will be bypassed since it matches a seed: #{skip_regexes}"
@@ -252,8 +252,6 @@ class EntityManager
     entity.scoped = entity.scoped? 
     entity.save_changes
     tr.log "Final scoping decision for #{entity.name}: #{entity.scoped}"
-
-
 
     ### Run Data transformation (to hide attributes... HACK)
     unless entity.transform!

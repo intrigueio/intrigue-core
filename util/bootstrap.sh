@@ -1,43 +1,12 @@
 #!/bin/bash
 
 #####
-##### SYSTEM CONFIG
-#####
-
-#!/bin/bash
-
-# Clean up apt
-#echo "[+] Disabling up apt-daily.service (required for EC2)"
-#sudo systemctl stop apt-daily.service
-#sudo systemctl kill --kill-who=all apt-daily.service
-#sudo systemctl disable apt-daily.service
-
-#echo "[+] Disabling apt-daily-upgrade.service (required for EC2)"
-#sudo systemctl stop apt-daily-upgrade.timer
-#sudo systemctl kill --kill-who=all apt-daily-upgrade.service
-#sudo systemctl disable apt-daily-upgrade.service
-
-# ensure any running `apt-get update` has been killed
-#echo "[+] Wait until apt-get update has been killed:"
-#while ! (systemctl list-units --all apt-daily.service 2>&1 | egrep -qi 'dead|fail')
-#do
-#  echo "[+] Waiting for systemd apt-daily.service to die:"
-#  echo `systemctl list-units --all apt-daily.service`
-#  sleep 1;
-#done
-
-# Buffer
-#echo "[+] Buffer 5 seconds"
-#sleep 5
-
-#####
 ##### SYSTEM SOFTWARE INSTALLATION
 #####
 
-
 # if these are already set by our parent, use that.. otherwise sensible defaults
 export INTRIGUE_DIRECTORY="${IDIR:=//home/ubuntu/core}"
-export RUBY_VERSION="${RUBY_VERSION:=2.6.3}"
+export RUBY_VERSION="${RUBY_VERSION:=2.6.5}"
 export DEBIAN_FRONTEND=noninteractive
 
 # Clean up
@@ -162,6 +131,22 @@ sudo apt-get -y --fix-broken --no-install-recommends install make \
   rm -rf /var/lib/apt/lists/*
 
 
+echo "[+] Creating a home for binaries"
+mkdir -p $HOME/bin
+export BINPATH=$HOME/bin
+export PATH=$PATH:$BINPATH
+# and for latere
+echo export PATH=$PATH:$BINPATH ~/.bash_profile
+
+# dnsmorph
+echo "[+] Getting DNSMORPH binaries... "
+cd $BINPATH
+wget https://github.com/netevert/dnsmorph/releases/download/v1.2.7/dnsmorph_1.2.7_linux_64-bit.tar.gz
+tar -zxvf dnsmorph_1.2.7_linux_64-bit.tar.gz
+chmod +x dnsmorph
+rm dnsmorph_1.2.7_linux_64-bit.tar.gz
+cd $HOME
+
 # add go vars (and note that we source this file later as well)
 echo "[+] Installing Golang environment"
 
@@ -172,14 +157,6 @@ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 # and for later
 echo export GOPATH=$HOME/go >> ~/.bash_profile
 echo export PATH=$PATH:$GOROOT/bin:$GOPATH/bin >> ~/.bash_profile
-
-# dnsmorph
-echo "[+] Getting DNSMORPH... "
-go get -v github.com/intrigueio/dnsmorph
-cd /$GOPATH/src/github.com/intrigueio/dnsmorph
-go get -v ./...
-go build
-cd ~ # always go back to base user directory
 
 # gitrob
 echo "[+] Getting Gitrob... "

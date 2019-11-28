@@ -54,16 +54,17 @@ class Domain < Intrigue::Task::BaseTask
         out = whois(lookup_name)
         if out
           _set_entity_detail("whois_full_text", out["whois_full_text"])
-          _set_entity_detail("nameservers", out["nameservers"])
           _set_entity_detail("contacts", out["contacts"])
-
-          # create domains from each of the nameservers
-          if out["nameservers"]
-            out["nameservers"].each do |n|
-              check_and_create_unscoped_domain(n) if @entity.scoped?
-            end
-          end
         end
+      end
+
+      _log "Grabbing Nameservers"
+      ns_records = collect_ns_details(lookup_name)
+      _set_entity_detail("nameservers", ns_records)
+      
+      # make sure we create affiliated domains
+      ns_records.each do |ns|
+        check_and_create_unscoped_domain(ns) if @entity.scoped?
       end
 
       # grab any / all MX records (useful to see who accepts mail)

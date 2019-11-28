@@ -15,7 +15,7 @@ module Dns
   def parse_tld(record)
 
     # first check if we're not long enough to split, just returning the domain
-    return record if record.split(".").length <= 2
+    return record if record.split(".").length < 2
 
     # Make sure we're comparing bananas to bananas
     record = record.downcase
@@ -45,7 +45,7 @@ module Dns
     end
 
   # unknown tld
-  record 
+  record
   end
 
   # Check for wildcard DNS
@@ -334,6 +334,22 @@ module Dns
   resources || []
   end
 
+  def collect_ns_details(lookup_name)
+    _log "Collecting NS records"
+    response = resolve(lookup_name, [Resolv::DNS::Resource::IN::NS])
+    return [] unless response && !response.empty?
+
+    ns_records = []
+    response.each do |r|
+      r["lookup_details"].each do |record|
+        next unless record["response_record_type"] == "NS"
+        ns_records << record["response_record_data"]
+      end
+    end
+    
+  ns_records
+  end
+
 
     # https://support.dnsimple.com/articles/soa-record/
     # [0] primary name server
@@ -389,7 +405,6 @@ module Dns
       end
     end
     
-
   spf_records
   end
 
