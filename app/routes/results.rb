@@ -135,8 +135,8 @@ class IntrigueApp < Sinatra::Base
       end
 
       unless entity
-        session[:flash] = "Unable to create entity, check your parameters: #{entity_name} #{entity_type}!" + 
-        " For more help see <a href=\"systems/entities\">Entity Help</a>"
+        session[:flash] = "Unable to create entity, check your parameters: #{entity_name} #{entity_type}!" +
+        " For more help see <a href=\"/system/entities\">Entity Help</a>"
         redirect FRONT_PAGE
       end
 
@@ -183,7 +183,7 @@ class IntrigueApp < Sinatra::Base
 
         # barf if we got a bad file
         unless file_type =~ /^text/ || file_type == "application/octet-stream"
-          session[:flash] = "Bad file type: #{file_type}" 
+          session[:flash] = "Bad file type: #{file_type}"
           redirect FRONT_PAGE
         end
 
@@ -194,15 +194,15 @@ class IntrigueApp < Sinatra::Base
         entities = []
         f.each_line do |l|
           next if l[0] == "#" # skip comment lines
-          
+
           unless l =~ /[\w]+\#[\w\d\s\_\-\:\\\/]+/ # check for entity sanity
-            session[:flash] = "Bad file content: #{l}" 
+            session[:flash] = "Bad file content: #{l}"
             redirect FRONT_PAGE
           end
 
           et = l.split("#").first.strip
           en = l.split("#").last.strip
- 
+
           entities << {entity_type: "#{et}", entity_name: "#{en}", }
         end
       end

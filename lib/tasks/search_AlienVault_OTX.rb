@@ -2,27 +2,26 @@ module Intrigue
 module Task
 class SearchAlienvaultOtx < BaseTask
 
- def self.metadata
-   {
-     :name => "search_alienvault_otx",
-     :pretty_name => "Search Alienvault OTX",
-     :authors => ["Anas Ben Salah"],
-     :description => "This task hits AlienVault OTX API and checks for related hostnames, IpAddress and Hashes",
-     :references => ["https://otx.alienvault.com/api"],
-     :type => "discovery",
-     :passive => true,
-     :allowed_types => ["Domain","IpAddress","String"],
-     :example_entities => [{"type" => "Domain", "details" => {"name" => "intrigue.io"}}],
-     :allowed_options => [],
-     :created_types => ["Domain"]
-   }
- end
+    def self.metadata
+    {:name => "search_alienvault_otx",
+      :pretty_name => "Search Alienvault OTX",
+      :authors => ["Anas Ben Salah"],
+      :description => "This task searches AlienVault OTX via API and checks for related hostnames, IpAddresses & Hashes",
+      :references => ["https://otx.alienvault.com/api"],
+      :type => "discovery",
+      :passive => true,
+      :allowed_types => ["Domain", "FileHash", "IpAddress"],
+      :example_entities => [{"type" => "Domain", "details" => {"name" => "intrigue.io"}}],
+      :allowed_options => [],
+      :created_types => ["Domain"]
 
- ## Default method, subclasses must override this
+    }
+    end
+
   def run
-
     super
 
+    # get entity details
     entity_name = _get_entity_name
     entity_type = _get_entity_type_string
 
@@ -38,7 +37,7 @@ class SearchAlienvaultOtx < BaseTask
       search_hostname entity_name,headers
     elsif entity_type == "IpAddress"
       search_ip entity_name,headers
-    elsif entity_type == "String"
+    elsif entity_type == "FileHash"
       search_hash entity_name,headers
     else
       _log_error "Unsupported entity type"
@@ -46,13 +45,9 @@ class SearchAlienvaultOtx < BaseTask
 
   end #end run
 
-
-
   def search_hostname entity_name,headers
-
     begin
-
-      # get the initial repsonse for domain_name
+      # get the initial repsonse for the a domain
       url = "https://otx.alienvault.com:443/api/v1/indicators/hostname/#{entity_name}/url_list"
       response = http_get_body("#{url}?limit=50&page=1", headers: headers)
       json = JSON.parse(response)
@@ -63,7 +58,6 @@ class SearchAlienvaultOtx < BaseTask
       end
 
       # if it's paged, cycle through all responses
-
       page_num = 2
       until json["has_next"] || json["url_list"]
         # get the response, grab 50 at a time per alienvault docs
@@ -118,11 +112,11 @@ class SearchAlienvaultOtx < BaseTask
   end # end search_ip
 
 
-  def search_hash entity_name,headers
+  def search_hash hash,headers
     begin
 
       # get the initial repsonse for domain_name
-      url = "https://otx.alienvault.com/api/v1/indicators/file/#{entity_name}/general"
+      url = "https://otx.alienvault.com/api/v1/indicators/file/#{hash}/general"
       response = http_get_body("#{url}", headers: headers)
       json = JSON.parse(response)
 
@@ -133,13 +127,13 @@ class SearchAlienvaultOtx < BaseTask
       i=1
       #for each item in the activites list, Create issue and pull out the malicious File and some related informations
       json["pulse_info"]["pulses"].each do |e|
-
         _create_issue({
-            name: "#{i}: Malicious File Flagged by OTX",
-            type: "Malicious File",
+            name: "Malicious File Flagged by OTX: #{hash}",
+            type: "malicious_file",
             severity: 3,
             status: "confirmed",
-            description: "#{json["pulse_info"]["count"]} pulse found in alienvault with this description:#{e["description"]} || [References]:#{json["pulse_info"]["references"]}",
+            references: json["pulse_info"]["references"],
+            description: "#{json["pulse_info"]["count"]} pulse found in alienvault with this description: #{e["description"]}",
             details: json
           })
         i += 1
