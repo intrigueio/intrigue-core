@@ -6,7 +6,6 @@ end
 end
 end
 
-
 module Intrigue
   module Model
 
