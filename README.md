@@ -6,7 +6,7 @@ Intrigue-core is a framework for external attack surface discovery and automated
   * Security Research and Vulnerability Scanning
   * Exploratory OSINT (People, Systems, Entities)
   * Malware IOC Enrichment
-  * General Data Gathering Pipelines
+  * Security-Oriented Data Gathering Pipelines
 
 If you'd like assistance getting started or have development-related questions, feel free to join us in slack channel, simply drop a line to hello@intrigue.io
 
