@@ -14,25 +14,25 @@ module Task
     def create_browser_session
 
       # first check if we're allowed to create a session by the global config
-      return nil unless Intrigue::Config::GlobalConfig.config["browser_enabled"]
+      return nil unless Intrigue::System::Config.config["browser_enabled"]
 
       # start a new session
-      args = ['headless', 'disable-gpu', 'disable-dev-shm-usage', 
+      args = ['headless', 'disable-gpu', 'disable-dev-shm-usage',
        'ignore-certificate-errors', 'disable-popup-blocking', 'disable-translate']
 
       # configure the driver to run in headless mode
       options = Selenium::WebDriver::Chrome::Options.new(args: args)
-      
+
       # create a driver
       driver = Selenium::WebDriver.for :chrome, { options: options }
 
-      # set size 
+      # set size
       driver.manage.window.size = Selenium::WebDriver::Dimension.new(1280, 1024)
 
       # set a default timeout
       driver.manage.timeouts.implicit_wait = 20 # seconds
-    
-    driver 
+
+    driver
     end
 
     def destroy_browser_session(session)
@@ -62,7 +62,7 @@ module Task
         _log_error "Timed out trying to close our session.. #{e}"
       end
 
-    true 
+    true
     end
 
     def safe_browser_action
@@ -115,7 +115,7 @@ module Task
         # return our hash
         return { :title => page_title, :contents => page_contents, :rendered => rendered_page }
       end
-    nil 
+    nil
     end
 
     def capture_screenshot(session, uri)

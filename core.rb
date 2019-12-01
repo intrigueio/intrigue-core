@@ -14,18 +14,11 @@ require 'sidekiq/api'
 require 'sidekiq/web'
 require 'sidekiq-limit_fetch'
 
-# Database
-require 'sequel'
+# Global vars
+$intrigue_basedir = File.dirname(__FILE__)
+$intrigue_environment = ENV.fetch("INTRIGUE_ENV","development")
 
-# Config
-require_relative 'lib/system/global_config'
-
-# Debug
-require 'pry'
-require 'pry-byebug'
-require 'logger'
-
-# System-level Initializers
+# System-level Monkey patches
 require_relative 'lib/initialize/array'
 require_relative 'lib/initialize/browser'
 require_relative 'lib/initialize/hash'
@@ -34,16 +27,18 @@ require_relative 'lib/initialize/queue'
 require_relative 'lib/initialize/sidekiq_profiler'
 require_relative 'lib/initialize/string'
 
+# load up our system config
+require_relative 'lib/system/config'
+Intrigue::System::Config.load_config
 
-$intrigue_basedir = File.dirname(__FILE__)
-$intrigue_environment = ENV.fetch("INTRIGUE_ENV","development")
+# system database configuration
+require_relative 'lib/system/database'
+include Intrigue::System::Database
 
-# load up our config
-Intrigue::Config::GlobalConfig.load_config
-
-# Webdriver
-Selenium::WebDriver.logger.level = :warn
-Selenium::WebDriver.logger.output = "#{$intrigue_basedir}/log/selenium.log"
+# Debug
+require 'pry'
+require 'pry-byebug'
+require 'logger'
 
 #
 # Simple configuration check to ensure we have configs in place
@@ -66,47 +61,23 @@ end
 
 def setup_redis
   redis_config = YAML.load_file("#{$intrigue_basedir}/config/redis.yml")
-  redis_host = redis_config[$intrigue_environment]["host"] || "localhost"
-  redis_port = redis_config[$intrigue_environment]["port"] || 6379
+  $redis_host = ENV["REDIS_HOST"] || redis_config[$intrigue_environment]["host"] || "localhost"
+  $redis_port = ENV["REDIS_PORT"] || redis_config[$intrigue_environment]["port"] || 6379
+  $redis_connect_string = "redis://#{$redis_host}:#{$redis_port}/"
 
   # Pull sidekiq config from the environment if it's available (see docker config)
   Sidekiq.configure_server do |config|
-    redis_uri = ENV.fetch("REDIS_URI","redis://#{redis_host}:#{redis_port}/")
-    config.redis = { url: "#{redis_uri}" }
+    # configure the ur
+    puts "Connecting to Redis Server at: #{$redis_connect_string}"
+    config.redis = { url: $redis_connect_string}
+  end
+  # configure the client
+  Sidekiq.configure_client do |config|
+    puts "Configuring Redis Client for: #{$redis_connect_string}"
+    config.redis = { :url => $redis_connect_string }
   end
 
-end
 
-# database set up
-def setup_database
-  database_config = YAML.load_file("#{$intrigue_basedir}/config/database.yml")
-
-  options = {
-    :max_connections => database_config[$intrigue_environment]["max_connections"] || 20,
-    :pool_timeout => database_config[$intrigue_environment]["pool_timeout"] || 240 
-  }
-  
-  database_host = database_config[$intrigue_environment]["host"] || "localhost"
-  database_port = database_config[$intrigue_environment]["port"] || 5432
-  database_user = database_config[$intrigue_environment]["user"]
-  database_pass = database_config[$intrigue_environment]["password"]
-  database_name = database_config[$intrigue_environment]["database"]
-  database_debug = database_config[$intrigue_environment]["debug"]
-
-  if database_pass 
-    $db = Sequel.connect("postgres://#{database_user}:#{database_pass}@#{database_host}:#{database_port}/#{database_name}", options)
-  else
-    $db = Sequel.connect("postgres://#{database_user}@#{database_host}:#{database_port}/#{database_name}", options)
-  end
-
-  $db.loggers << Logger.new($stdout) if database_debug
-
-  # Allow datasets to be paginated
-  $db.extension :pagination
-  #$db.extension :pg_json
-  Sequel.extension :pg_json_ops
-
-  Sequel::Model.plugin :update_or_create
 end
 
 sanity_check_system
@@ -121,7 +92,7 @@ class IntrigueApp < Sinatra::Base
   set :views, "#{$intrigue_basedir}/app/views"
   set :public_folder, 'public'
 
-  if Intrigue::Config::GlobalConfig.config["debug"]
+  if Intrigue::System::Config.config["debug"]
     set :logging, true
   end
 
@@ -137,12 +108,12 @@ class IntrigueApp < Sinatra::Base
   ###
   ### (Very) Simple Auth
   ###
-  if Intrigue::Config::GlobalConfig.config
-    if Intrigue::Config::GlobalConfig.config["http_security"]
+  if Intrigue::System::Config.config
+    if Intrigue::System::Config.config["http_security"]
       use Rack::Auth::Basic, "Restricted" do |username, password|
         [username, password] == [
-          Intrigue::Config::GlobalConfig.config["credentials"]["username"],
-          Intrigue::Config::GlobalConfig.config["credentials"]["password"]
+          Intrigue::System::Config.config["credentials"]["username"],
+          Intrigue::System::Config.config["credentials"]["password"]
         ]
       end
     end
@@ -167,8 +138,8 @@ class IntrigueApp < Sinatra::Base
 
     # Allow certain requests without a project string... these are systemwide,
     # and do not depend on a specific project
-    pass if [ "entity_types.json", "engine", "favicon.ico", 
-              "project", "tasks", "tasks.json", 
+    pass if [ "entity_types.json", "engine", "favicon.ico",
+              "project", "tasks", "tasks.json",
               "version.json", "system", nil ].include? directive
     pass if request.path_info =~ /\.js$/ # all js
     pass if request.path_info =~ /\.css$/ # all css
@@ -232,12 +203,12 @@ end
 # Core libraries
 require_relative "lib/all"
 
-#configure sentry.io error reporting (only if a key was provided) 
-if (Intrigue::Config::GlobalConfig.config && Intrigue::Config::GlobalConfig.config["sentry_dsn"])
+#configure sentry.io error reporting (only if a key was provided)
+if (Intrigue::System::Config.config && Intrigue::System::Config.config["sentry_dsn"])
   require "raven"
-  puts "!!! Configuring Sentry error reporting to: #{Intrigue::Config::GlobalConfig.config["sentry_dsn"]}"
+  puts "!!! Configuring Sentry error reporting to: #{Intrigue::System::Config.config["sentry_dsn"]}"
 
   Raven.configure do |config|
-    config.dsn = Intrigue::Config::GlobalConfig.config["sentry_dsn"]
+    config.dsn = Intrigue::System::Config.config["sentry_dsn"]
   end
 end

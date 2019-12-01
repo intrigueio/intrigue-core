@@ -39,8 +39,8 @@ module Generic
   ### Helper method to reach out to the entity manager
   ###
   def _create_entity(type, hash, primary_entity=nil)
-    
-    # just in case we were given a hash with symbolized keys, convert to strings for 
+
+    # just in case we were given a hash with symbolized keys, convert to strings for
     # our purposes... bitten by the bug a bunch lately
     hash = hash.collect{|k,v| [k.to_s, v]}.to_h
 
@@ -54,7 +54,7 @@ module Generic
   ###
   ### Helper method .. should this check with the entity manager?
   ###
-  def _entity_exists?(type,name)         
+  def _entity_exists?(type,name)
     entity_exists?(@entity.project, type, name)
   end
 
@@ -149,14 +149,14 @@ module Generic
 
   ### GLOBAL CONFIG INTERFACE
   def _get_system_config(key)
-    Intrigue::Config::GlobalConfig.load_config
-    value = Intrigue::Config::GlobalConfig.config[key]
+    Intrigue::System::Config.load_config
+    value = Intrigue::System::Config.config[key]
   end
 
   def _get_task_config(key)
     begin
-      Intrigue::Config::GlobalConfig.load_config
-      config = Intrigue::Config::GlobalConfig.config["intrigue_global_module_config"]
+      Intrigue::System::Config.load_config
+      config = Intrigue::System::Config.config["intrigue_global_module_config"]
       value = config[key]["value"]
       unless value && value != ""
         _log "Module config (#{key}) is blank or missing!"

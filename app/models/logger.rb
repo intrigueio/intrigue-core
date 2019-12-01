@@ -14,7 +14,7 @@ module Intrigue
       end
 
       def before_create
-        self.location = Intrigue::Config::GlobalConfig.config["intrigue_task_log_location"] || "database"
+        self.location = Intrigue::System::Config.config["intrigue_task_log_location"] || "database"
         super
       end
 

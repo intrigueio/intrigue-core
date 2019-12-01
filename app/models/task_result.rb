@@ -26,7 +26,9 @@ module Intrigue
         task_class = Intrigue::TaskFactory.create_by_name(task_name).class
         forced_queue = task_class.metadata[:queue]
 
-        sjid = Sidekiq::Client.push({
+        sidekiq_client = Sidekiq::Client.new
+
+        sjid = sidekiq_client.push({
           "class" => task_class.to_s,
           "queue" => forced_queue || requested_queue || "task",
           "retry" => true,
@@ -69,7 +71,7 @@ module Intrigue
           logfile = "#{$intrigue_basedir}/log/#{self.id}.log"
           if File.exist? logfile
             out = File.open(logfile,"r").read
-          else 
+          else
             out = "Missing Logfile: #{logfile}"
           end
         elsif location == "none"
@@ -110,7 +112,7 @@ module Intrigue
           "options" => options,
           "complete" => complete,
           "base_entity" => base_entity.export_hash,
-          "entities" => entities.uniq.map{ |e| {:id => e.id, 
+          "entities" => entities.uniq.map{ |e| {:id => e.id,
             :type => e.type, :name => e.name, :details => e.short_details } },
           "log" => get_log
         }

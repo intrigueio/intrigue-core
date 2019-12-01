@@ -24,7 +24,7 @@ class Uri < Intrigue::Task::BaseTask
   end
 
   def run
-    
+
     uri = _get_entity_name
     begin
       hostname = URI.parse(uri).host
@@ -67,26 +67,26 @@ class Uri < Intrigue::Task::BaseTask
     _log "Saving Headers"
     response.each_header{|x| headers << "#{x}: #{response[x]}" }
 
-    # Grab the global option since we'll need to pass it to ident 
+    # Grab the global option since we'll need to pass it to ident
     # and limit some functionality
-    browser_enabled = Intrigue::Config::GlobalConfig.config["browser_enabled"]
+    browser_enabled = Intrigue::System::Config.config["browser_enabled"]
     _log "Browser Enabled: #{browser_enabled}"
-    ### 
+    ###
     ### Screenshot
     ###
     if browser_enabled
-      begin 
+      begin
         _log "Browser Navigating to #{uri}"
         c = Intrigue::ChromeBrowser.new(:host => "127.0.0.1", :port => 9222)
         browser_response = c.navigate_and_capture(uri)
-      rescue Errno::ECONNREFUSED => e 
+      rescue Errno::ECONNREFUSED => e
         _log_error "Unable to connect to chrome browser. Is it running on :9222?"
       rescue StandardError => e
         _log_error "Oops! Got error attempting to screenshot: #{e}"
         _log_error "Attempting to restart chromium."
         `pkill -9 chromium` # hacktastic
       end
-    else 
+    else
       _log "Skipping browser, got code: #{response.code}"
       browser_response = {}
     end
@@ -96,7 +96,7 @@ class Uri < Intrigue::Task::BaseTask
     _log "Attempting to fingerprint!"
     _log "NOTE! Ident browser disabled!"
     # TODO - move screenshotting into ident so we don't have to
-    # do it separately above. for now, no browser fingerprints. 
+    # do it separately above. for now, no browser fingerprints.
     # too resource intensive.  (change the false param below to enable)
     ident_matches = generate_http_requests_and_check(uri,false) || {}
 
@@ -114,17 +114,17 @@ class Uri < Intrigue::Task::BaseTask
       vulndb_api_key = _get_task_config "intrigue_vulndb_api_key"
       use_api = vulndb_api_key && vulndb_api_key.length > 0
       ident_fingerprints = ident_fingerprints.map do |fp|
-        
+
         vulns = []
         if fp["inference"]
           cpe = Intrigue::Vulndb::Cpe.new(fp["cpe"])
           if use_api # get vulns via intrigue API
             _log "Matching vulns for #{fp["cpe"]} via Intrigue API"
             vulns = cpe.query_intrigue_vulndb_api(vulndb_api_key)
-          else 
+          else
             vulns = cpe.query_local_nvd_json
           end
-        else 
+        else
           _log "Skipping inference on #{fp["cpe"]}"
         end
 
@@ -170,21 +170,21 @@ class Uri < Intrigue::Task::BaseTask
       _log "Domain Cookie: #{set_cookie.split(";").detect{|x| x =~ /Domain:/i }}" if set_cookie
 
       if uri =~ /^https/
-        
+
         _log "HTTPS endpoint, checking security, grabbing certificate..."
 
         # grab and parse the certificate
         alt_names = connect_ssl_socket_get_cert_names(hostname,port) || []
         _log "Got cert's alt names: #{alt_names.inspect}"
 
-        if set_cookie 
+        if set_cookie
           _log "Secure Cookie: #{set_cookie.split(";").detect{|x| x =~ /secure/i }}"
           _log "Httponly Cookie: #{set_cookie.split(";").detect{|x| x =~ /httponly/i }}"
 
           # check for authentication and if so, bump the severity
-          auth_endpoint = ident_content_checks.select{|x| 
+          auth_endpoint = ident_content_checks.select{|x|
             x["result"]}.join(" ") =~ /Authentication/
-          
+
           if auth_endpoint
             # create an issue if not detected
             if !(set_cookie.split(";").detect{|x| x =~ /httponly/i })
@@ -194,39 +194,39 @@ class Uri < Intrigue::Task::BaseTask
             end
 
             if !(set_cookie.split(";").detect{|x| x =~ /secure/i } )
-              # set a default,4 since we only create an issue if it's an auth endpoint 
+              # set a default,4 since we only create an issue if it's an auth endpoint
               severity = 4
               _create_missing_cookie_attribute_secure_issue(uri, set_cookie)
-            end 
+            end
 
           end
 
         end
 
         _log "Gathering ciphers since this is an ssl endpoint"
-        accepted_connections = _gather_supported_ciphers(hostname,port).select{|x| 
-          x[:status] == :accepted } 
+        accepted_connections = _gather_supported_ciphers(hostname,port).select{|x|
+          x[:status] == :accepted }
 
-        # Create findings if we have a weak cipher 
+        # Create findings if we have a weak cipher
         if accepted_connections && accepted_connections.detect{ |x| x[:weak] == true }
           create_weak_cipher_issue(uri, accepted_connections)
         end
 
         # Create findings if we have a deprecated protocol
-        if accepted_connections && accepted_connections.detect{ |x| 
-            (x[:version] =~ /SSL/ || x[:version] == "TLSv1") }     
+        if accepted_connections && accepted_connections.detect{ |x|
+            (x[:version] =~ /SSL/ || x[:version] == "TLSv1") }
           _create_deprecated_protocol_issue(uri, accepted_connections)
         end
 
       else # http endpoint, just check for httponly
-                
-        if set_cookie 
+
+        if set_cookie
           _log "Httponly Cookie: #{set_cookie.split(";").detect{|x| x =~ /httponly/i }}"
 
           # create an issue if not detected
           if !set_cookie.split(";").detect{|x| x =~ /httponly/i }
             _create_missing_cookie_attribute_http_only_issue(uri, set_cookie)
-          end 
+          end
         end
 
         alt_names = []
@@ -235,8 +235,8 @@ class Uri < Intrigue::Task::BaseTask
 
     end
 
-    ### 
-    ### get the favicon & hash it 
+    ###
+    ### get the favicon & hash it
     ###
     _log "Getting Favicon"
     favicon_response = http_request(:get, "#{uri}/favicon.ico")
@@ -245,14 +245,14 @@ class Uri < Intrigue::Task::BaseTask
       favicon_data = Base64.strict_encode64(favicon_response.body)
       favicon_md5 = Digest::MD5.hexdigest(favicon_response.body)
       favicon_sha1 = Digest::SHA1.hexdigest(favicon_response.body)
-    # else 
+    # else
     #
     # <link rel="shortcut icon" href="https://static.dyn.com/static/ico/favicon.1d6c21680db4.ico"/>
-    # try link in the body 
-    # TODO... maybe this should be the other way around? 
+    # try link in the body
+    # TODO... maybe this should be the other way around?
     #
     end
-          
+
 
     ###
     ### Fingerprint the app server
@@ -289,7 +289,7 @@ class Uri < Intrigue::Task::BaseTask
     # in case we're missing requests
     if browser_response && browser_response["requests"]
       request_hosts = browser_response["requests"].map{|x| x["hostname"] }.compact.uniq.sort
-    else 
+    else
       request_hosts = []
     end
 
@@ -310,7 +310,7 @@ class Uri < Intrigue::Task::BaseTask
         "response_data_hash" => response_data_hash,
         "hidden_favicon_data" => favicon_data,
         "extended_favicon_data" => favicon_data,
-        "hidden_response_data" => response.body, 
+        "hidden_response_data" => response.body,
         "extended_full_responses" => ident_responses, # includes all the redirects etc
         "extended_response_body" => response.body,
         "request_hosts" => request_hosts,
@@ -322,7 +322,7 @@ class Uri < Intrigue::Task::BaseTask
         "extended_ciphers" => accepted_connections # new ciphers field
       })
 
-      if browser_response 
+      if browser_response
         new_details = new_details.merge({
           "hidden_screenshot_contents" => browser_response["encoded_screenshot"],
           "extended_screenshot_contents" => browser_response["encoded_screenshot"],
@@ -371,7 +371,7 @@ class Uri < Intrigue::Task::BaseTask
       if diffs.empty?
         _log "No difference, match found!! Attaching to entity: #{e.name}"
         e.alias_to @entity.alias_group_id
-      else 
+      else
         _log  "HTML Content Diffs for #{e.name}"
         diffs.each do |d|
           _log "DIFF #{d}"

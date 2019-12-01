@@ -17,12 +17,12 @@ class IntrigueApp < Sinatra::Base
     ### System Config    ###
     ###                  ###
     post '/system/config' do
-      
-      Intrigue::Config::GlobalConfig.config["credentials"]["username"] = "#{params["username"]}"
-      Intrigue::Config::GlobalConfig.config["credentials"]["password"] = "#{params["password"]}"
+
+      Intrigue::System::Config.config["credentials"]["username"] = "#{params["username"]}"
+      Intrigue::System::Config.config["credentials"]["password"] = "#{params["password"]}"
 
       # save and reload
-      Intrigue::Config::GlobalConfig.save
+      Intrigue::System::Config.save
 
 
       redirect "/#{@project_name}"  # handy if we're in a browser
@@ -30,7 +30,7 @@ class IntrigueApp < Sinatra::Base
 
     # get config
     get '/system/config/?' do
-      @global_config = Intrigue::Config::GlobalConfig
+      @global_config = Intrigue::System::Config
       erb :"system/config"
     end
 
@@ -52,18 +52,18 @@ class IntrigueApp < Sinatra::Base
       params.each do |k,v|
         # skip unless we already know about this config setting, helps us avoid
         # other parameters sent to this page (splat, project, etc)
-        next unless Intrigue::Config::GlobalConfig.config["intrigue_global_module_config"][k]
-        Intrigue::Config::GlobalConfig.config["intrigue_global_module_config"][k]["value"] = v unless v =~ /^\*\*\*/
+        next unless Intrigue::System::Config.config["intrigue_global_module_config"][k]
+        Intrigue::System::Config.config["intrigue_global_module_config"][k]["value"] = v unless v =~ /^\*\*\*/
       end
 
-      # save and reload 
-      Intrigue::Config::GlobalConfig.save
+      # save and reload
+      Intrigue::System::Config.save
 
       redirect "/system/config"  # handy if we're in a browser
     end
 
-  ###  
-  #### engine api 
+  ###
+  #### engine api
   ###
 
   #

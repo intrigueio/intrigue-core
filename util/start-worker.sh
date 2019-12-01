@@ -3,13 +3,7 @@
 # Set path to include rbenv
 source /root/.bash_profile
 
-echo "[+] Starting Postgresql Service"
-sudo service postgresql restart
-	
-echo "[+] Starting Redis Service"
-sudo service redis-server restart
-
-echo "[+] Setting up Intrigue Engine"
+echo "[+] Setting up Intrigue Worker"
 bundle exec rake db:migrate
 bundle exec rake setup
 

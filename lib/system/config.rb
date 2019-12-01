@@ -6,12 +6,11 @@ require 'tempfile'
 ### Global Config Management
 ###
 module Intrigue
-  module Config
-
-    class GlobalConfig
+  module System
+    class Config
 
       def self.set_task_config(option_name,val)
-        
+
         # create the correct format
         option_hash = {
           "value" =>  val,
@@ -22,7 +21,7 @@ module Intrigue
 
         # Add it into the running config
         @@config["intrigue_global_module_config"][option_name] = option_hash
-        
+
         # save to persist it in case we reboot
         save
       end
@@ -54,7 +53,7 @@ module Intrigue
         FileUtils.mv temp_file, path
       end
 
-      private 
+      private
 
       def self._reload_running_config
 

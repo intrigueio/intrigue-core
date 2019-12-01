@@ -12,13 +12,13 @@ require 'digest'
 module Intrigue
 module Task
   module Web
-    
+
   def make_http_requests_from_queue(uri, work_q, threads=1, create_url=false, create_issue=false)
 
     ###
     ### Get the default case (a page that doesn't exist)
     ###
-    threads = threads.to_i # jsut in case 
+    threads = threads.to_i # jsut in case
     random_value = "#{rand(100000000)}"
     request_page_one = "doesntexist-#{random_value}"
     request_page_two = "def-#{random_value}-doesntexist"
@@ -72,13 +72,13 @@ module Task
             # request details will have regexes if we want to check, so just pass it directly
             result = check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content, request_details)
 
-            if result 
-              # create a new entity for each one if we specified that 
+            if result
+              # create a new entity for each one if we specified that
               _create_entity("Uri", { "name" => result[:uri] }) if create_url
 
               # dump it into our queue so we can push matches back
               matching_urls.push({ start: request_uri, final: result[:uri] })
-              
+
               _create_issue({
                 name: "Discovered Sensitive Content at #{request_details[:path]}",
                 type:  request_details[:issue_type] || "discovered_sensitive_content",
@@ -97,7 +97,7 @@ module Task
     workers.map(&:join); "ok"
 
     # push back a list of matching urls in case of post processing
-    matching_urls.size.times.map {|x| matching_urls.pop } 
+    matching_urls.size.times.map {|x| matching_urls.pop }
   end
 
   # See: https://raw.githubusercontent.com/zendesk/ruby-kafka/master/lib/kafka/ssl_socket_with_timeout.rb
@@ -106,7 +106,7 @@ module Task
     # https://apidock.com/ruby/Net/HTTP/connect
     attempts=0
 
-    begin 
+    begin
 
       # keep track of how many times we've tried
       attempts +=1
@@ -114,15 +114,15 @@ module Task
       ssl_context = OpenSSL::SSL::SSLContext.new
       #ssl_context.min_version = OpenSSL::SSL::SSL2_VERSION
       #ssl_context.ssl_version = :SSLv23
-      
-      # possible min versions: 
+
+      # possible min versions:
       # OpenSSL::SSL::SSL2_VERSION
       # OpenSSL::SSL::SSL3_VERSION
       # OpenSSL::SSL::TLS1_1_VERSION
       # OpenSSL::SSL::TLS1_2_VERSION
       # OpenSSL::SSL::TLS1_VERSION
 
-      # Open a tcp socket 
+      # Open a tcp socket
       addr = Socket.getaddrinfo(hostname, nil)
       sockaddr = Socket.pack_sockaddr_in(port, addr[0][3])
 
@@ -217,7 +217,7 @@ module Task
       retry unless attempts == max_attempts
     rescue Errno::EHOSTUNREACH => e
       _log_error "Error requesting cert, skipping: #{hostname} #{port}: #{e}"
-    ensure 
+    ensure
       attempts +=1
     end
 
@@ -250,7 +250,7 @@ module Task
     return [] unless socket && socket.peer_cert
     # Grab the cert
     cert = OpenSSL::X509::Certificate.new(socket.peer_cert)
-    # parse the cert 
+    # parse the cert
     socket.sysclose
     # get the names
     names = parse_names_from_cert(cert)
@@ -303,7 +303,7 @@ module Task
           ]
 
           universal_cert_domains.each do |cert_domain|
-            if (alt_name =~ /#{cert_domain}$/ ) 
+            if (alt_name =~ /#{cert_domain}$/ )
               _log "This is a universal #{cert_domain} certificate, no entity creation"
               return
             end
@@ -334,7 +334,7 @@ module Task
   # and also useful in situations were we need to verify content-type
   #
   def download_and_store(url, filename="#{SecureRandom.uuid}")
-    
+
     # https://ruby-doc.org/stdlib-1.9.3/libdoc/tempfile/rdoc/Tempfile.html
     file = Tempfile.new(filename) # use an array to enforce a format
 
@@ -443,7 +443,7 @@ module Task
   ### XXX - significant updates made to zlib, determine whether to
   ### move this over to RestClient: https://github.com/ruby/ruby/commit/3cf7d1b57e3622430065f6a6ce8cbd5548d3d894
   ###
-  def http_request(method, uri_string, credentials=nil, headers={}, 
+  def http_request(method, uri_string, credentials=nil, headers={},
       data=nil, attempts_limit=3, open_timeout=15, read_timeout=15)
 
     response = nil
@@ -464,11 +464,11 @@ module Task
        @task_result.logger.log "Getting #{uri}, attempt #{attempts}" if @task_result
        attempts+=1
 
-       if Intrigue::Config::GlobalConfig.config["http_proxy"]
-         proxy_addr = Intrigue::Config::GlobalConfig.config["http_proxy"]["host"]
-         proxy_port = Intrigue::Config::GlobalConfig.config["http_proxy"]["port"]
-         proxy_user = Intrigue::Config::GlobalConfig.config["http_proxy"]["user"]
-         proxy_pass = Intrigue::Config::GlobalConfig.config["http_proxy"]["pass"]
+       if Intrigue::System::Config.config["http_proxy"]
+         proxy_addr = Intrigue::System::Config.config["http_proxy"]["host"]
+         proxy_port = Intrigue::System::Config.config["http_proxy"]["port"]
+         proxy_user = Intrigue::System::Config.config["http_proxy"]["user"]
+         proxy_pass = Intrigue::System::Config.config["http_proxy"]["pass"]
        end
 
        # set options
@@ -531,7 +531,7 @@ module Task
        # USE THIS TO PRINT HTTP REQUEST
 =begin
        puts
-       puts 
+       puts
        puts "===== BEGIN REQUEST ====="
        puts "Endpoint: #{request.method} #{uri}"
        puts "Headers:\n"
@@ -541,7 +541,7 @@ module Task
        puts "POST Data:\n#{request.body}" if request.method == 'POST'
        puts "=====  END  REQUEST ====="
        puts
-       puts 
+       puts
 =end
        # END USE THIS TO PRINT HTTP REQUEST
 
@@ -550,16 +550,16 @@ module Task
 
        # USE THIS TO PRINT HTTP RESPONSE
        #puts
-       #puts 
+       #puts
        #puts "===== BEGIN RESPONSE ====="
        #puts "Endpoint: #{response.code} http://#{uri}"
        #puts "HEADERS:"
-       #response.each_header{ |h| puts "#{h}: #{response[h]}"} 
+       #response.each_header{ |h| puts "#{h}: #{response[h]}"}
        #puts
-       #puts "Body:\n#{response.body}" 
+       #puts "Body:\n#{response.body}"
        #puts "=====  END RESPONSE ====="
        #puts
-       #puts 
+       #puts
        # END USE THIS TO PRINT HTTP RESPONSE
 
        if response.code=="200"
@@ -663,14 +663,14 @@ module Task
      # make sure we have a valid response
      return false unless response
 
-     ######### BEST CASE IS WHEN WE KNOW WHAT IT SHOULD LOOK LIKE 
-     # if we have a positive regex, always check that first and just return it if it matches 
+     ######### BEST CASE IS WHEN WE KNOW WHAT IT SHOULD LOOK LIKE
+     # if we have a positive regex, always check that first and just return it if it matches
      if success_cases
 
       #_log "Checking success cases: #{success_cases}"
 
        if success_cases[:body_regex]
-         if response.body =~ success_cases[:body_regex]        
+         if response.body =~ success_cases[:body_regex]
            _log_good "Matched positive body regex!!! #{success_cases[:body_regex]}"
            return {
              name: request_uri,
@@ -678,14 +678,14 @@ module Task
              response_code: response.code,
              response_body: response.body
            }
-         else 
+         else
            #_log "Didn't match our positive body regex, skipping"
-           return false 
+           return false
          end
        elsif success_cases[:header_regex]
          response.each do |header|
-          _log "Checking header: '#{header}: #{response[header]}'" 
-          if "#{header}: #{response[header]}" =~ success_cases[:header_regex]   ### ALWAYS LOWERCASE!!!!      
+          _log "Checking header: '#{header}: #{response[header]}'"
+          if "#{header}: #{response[header]}" =~ success_cases[:header_regex]   ### ALWAYS LOWERCASE!!!!
            _log_good "Matched positive header regex!!! #{success_cases[:header_regex]}"
            return {
              name: request_uri,
@@ -694,12 +694,12 @@ module Task
              response_body: response.body
            }
           end
-        end 
-       return false 
+        end
+       return false
        end
      end
     ##############
-  
+
     # otherwise fall through into our more generic checking.
 
      # always check for content...
@@ -713,7 +713,7 @@ module Task
      #_log "Response.code is a #{response.code.class}"
 
      # always check code
-     if ( response.code == "301" || response.code == "302" || 
+     if ( response.code == "301" || response.code == "302" ||
           "#{response.code}" =~ /^4\d\d/ ||  "#{response.code}" =~ /^5\d\d/ )
        _log "Ignoring #{request_uri} based on code: #{response.code}"
        return false

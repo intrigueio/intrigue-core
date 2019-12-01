@@ -1,0 +1,33 @@
+version: "3.7"
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    expose:
+      - "5432"
+    environment:
+      - POSTGRES_PASSWORD='intrigue' # maybe we don't need this now or autogen?
+    volumes: # this script will create our database
+      - ./util/sql/01-pginit.sql:/docker-entrypoint-initdb.d/01-pginit.sql
+  redis:
+    image: redis
+    restart: always
+    expose:
+      - "6739"
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile-worker
+    restart: always
+    ports:
+      - "27777:7777"
+    links:
+      - redis
+      - postgres
+    environment: # note that the db vars can be set in the default config in the future
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - DB_HOST=postgres
+      - DB_USER=intrigue
+      - DB_PASS=intrigue
+      - DB_NAME=intriguedb

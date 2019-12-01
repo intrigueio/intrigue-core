@@ -14,7 +14,7 @@ module Notifier
 
       def _get_notifier_config(key)
         begin
-          Intrigue::Config::GlobalConfig.config["intigue_notifiers"][self.class.metadata[:name]][key]
+          Intrigue::System::Config.config["intigue_notifiers"][self.class.metadata[:name]][key]
         rescue NoMethodError => e
           puts "Error, invalid config key requested (#{key}) for #{self.class.metadata[:name]}: #{e}"
         end

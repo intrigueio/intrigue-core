@@ -3,10 +3,15 @@ require 'rspec/core/rake_task'
 require 'json'
 require 'yaml'
 require 'fileutils'
+require 'sequel'
+
+# system database configuration
+require_relative 'lib/system/database'
+include Intrigue::System::Database
 
 # Config files
 $intrigue_basedir = File.dirname(__FILE__)
-$intrigue_environment = "development"
+$intrigue_environment = ENV["INTRIGUE_ENV"] || "development"
 
 # Configuration and scripts
 puma_config_file = "#{$intrigue_basedir}/config/puma.rb"
@@ -123,7 +128,7 @@ task :setup do
 
   puts "[+] Downloading latest data files..."
   Dir.chdir("#{$intrigue_basedir}/data/"){ puts %x["./get_latest.sh"] }
-  
+
   puts "[+] Complete!"
 
 end
@@ -148,7 +153,7 @@ end
 #  t.rspec_opts = "--pattern spec/integration/*_spec.rb"
 #end
 
-
+=begin
 # database set up
 def setup_database
   require "sequel"
@@ -166,7 +171,7 @@ def setup_database
   database_name = database_config[$intrigue_environment]["database"]
   database_debug = database_config[$intrigue_environment]["debug"]
 
-  if database_pass 
+  if database_pass
     $db = Sequel.connect("postgres://#{database_user}:#{database_pass}@#{database_host}:#{database_port}/#{database_name}", options)
   else
     $db = Sequel.connect("postgres://#{database_user}@#{database_host}:#{database_port}/#{database_name}", options)
@@ -179,7 +184,7 @@ def setup_database
   Sequel.extension :pg_json_ops
   Sequel.extension :migration
 end
-
+=end
 
 namespace :db do
   desc "Prints current schema version"
@@ -194,7 +199,7 @@ namespace :db do
   desc "Perform migration up to latest migration available"
   task :migrate do
     setup_database
-    Sequel::Migrator.run($db, "db")
+    ::Sequel::Migrator.run($db, "db")
     Rake::Task['db:version'].execute
   end
 
@@ -202,15 +207,15 @@ namespace :db do
   task :rollback, :target do |t, args|
     setup_database
     args.with_defaults(:target => 0)
-    Sequel::Migrator.run($db, "db", :target => args[:target].to_i)
+    ::Sequel::Migrator.run($db, "db", :target => args[:target].to_i)
     Rake::Task['db:version'].execute
   end
 
   desc "Perform migration reset (full rollback and migration)"
   task :reset do
     setup_database
-    Sequel::Migrator.run($db, "db", :target => 0)
-    Sequel::Migrator.run($db, "db")
+    ::Sequel::Migrator.run($db, "db", :target => 0)
+    ::Sequel::Migrator.run($db, "db")
     Rake::Task['db:version'].execute
   end
 end

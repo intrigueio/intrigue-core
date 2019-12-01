@@ -12,15 +12,15 @@ module Bootstrap
     ### Set any task configuration
     if config["task_configuration"]
       config["task_configuration"].each do |k,v|
-        Intrigue::Config::GlobalConfig.set_task_config(k,v)
+        Intrigue::System::Config.set_task_config(k,v)
       end
     end
 
     # XXX - Assumes we start at a clean system!!!!
     config["projects"].each do |p|
 
-      Intrigue::NotifierFactory.default.each do |x| 
-        x.notify("#{p["name"]} collection starting with #{p["seeds"].count if p["seeds"]} seeds!") 
+      Intrigue::NotifierFactory.default.each do |x|
+        x.notify("#{p["name"]} collection starting with #{p["seeds"].count if p["seeds"]} seeds!")
       end
 
       project_name = p["name"]
@@ -50,9 +50,9 @@ module Bootstrap
 
       # parse up the seeds
       parsed_seeds = p["seeds"].map{|s| _parse_entity s["entity"] }
-        
+
       # handle no-seed cases
-      next unless parsed_seeds.count > 0 
+      next unless parsed_seeds.count > 0
 
       # Create a queue to hold our list of seeds & enqueue
       work_q = Queue.new
