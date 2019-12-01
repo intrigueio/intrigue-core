@@ -4,11 +4,12 @@ ENV DEBIAN_FRONTEND noninteractive
 
 USER root
 
-# Get intrigue-core code
-RUN apt-get -y update && apt-get -y install sudo
+RUN apt-get -y update && apt-get -y install curl
 
 # Place base deps here so we don't have to reinstall every time
-RUN apt-get -y --fix-broken --no-install-recommends install make \
+RUN apt-get -qq -y --fix-broken --no-install-recommends install\
+  make \
+  sudo \
   git \
   git-core \
   bzip2 \
@@ -37,7 +38,6 @@ RUN apt-get -y --fix-broken --no-install-recommends install make \
   thc-ipv6 \
   unzip \
   curl \
-  git \
   gcc \
   make \
   libpcap-dev \
@@ -99,11 +99,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 # copy intrigue code
 COPY . /core/
 
-# get intrigue-specific software & config
-RUN /bin/bash /core/util/bootstrap-worker.sh
-
-# Remove the config file so one generates on startup (useful when testing)
+# Remove the config files so we don't accidentally image ours!
 RUN rm /core/config/config.json
+
+# Go get intrigue-specific software & config
+RUN /bin/bash /core/util/bootstrap-worker.sh
 
 # Expose the port
 EXPOSE 7777

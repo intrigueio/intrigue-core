@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 USER root
 
-# Get intrigue-core code
+# Get up to date
 RUN apt-get -y update && apt-get -y install sudo
 
 # Place base deps here so we don't have to reinstall every time
@@ -100,7 +100,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 COPY . /core/
 
 # get intrigue-specific software & config
-RUN /bin/bash /core/util/bootstrap-all-in-one.sh
+RUN /bin/bash /core/util/bootstrap-standalone.sh
 
 # Remove the config file so one generates on startup (useful when testing)
 RUN rm /core/config/config.json
@@ -108,5 +108,5 @@ RUN rm /core/config/config.json
 # Expose the port
 EXPOSE 7777
 
-RUN chmod +x /core/util/start-all-in-one.sh
-ENTRYPOINT ["/core/util/start-all-in-one.sh"]
+RUN chmod +x /core/util/start-standalone.sh
+ENTRYPOINT ["/core/util/start-standalone.sh"]
