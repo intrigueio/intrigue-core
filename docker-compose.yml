@@ -14,7 +14,7 @@ services:
     restart: always
     expose:
       - "6739"
-  web:
+  web:  # Uses the worker image, but is the only one that exposes a web interface
     build:
       context: .
       dockerfile: Dockerfile-worker
@@ -25,6 +25,21 @@ services:
       - redis
       - postgres
     environment: # note that the db vars can be set in the default config in the future
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - DB_HOST=postgres
+      - DB_USER=intrigue
+      - DB_PASS=intrigue
+      - DB_NAME=intriguedb
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile-worker
+    restart: always
+    links:
+      - redis
+      - postgres
+    environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - DB_HOST=postgres
