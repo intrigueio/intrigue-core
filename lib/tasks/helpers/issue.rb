@@ -200,10 +200,34 @@ module Issue
 
         _create_issue({
           name: "Suspicious Resource Requested on #{uri}",
-          type: "suspcious_resource_requested",
+          type: "suspicious_resource_requested",
           severity: 2,
           status: "confirmed",
           description: "When a browser requested the resource(s) located at #{uri}, a suspicious request was made.",
+          #recommendation: "Verify if the host has been infected with malware and clean it.",
+          references: [],
+          details: {
+            uri: uri,
+            request_hosts: request_hosts
+          }
+        })
+
+      end
+
+  end
+
+  def _check_request_hosts_for_uniquely_hosted_resources(uri, request_hosts, host_count=20)
+
+    if  ( request_hosts.uniq.count > host_count)
+        _create_issue({
+          name: "Large Number of Uniquely Hosted Resources on #{uri}",
+          type: "large_number_of_uniquely_hosted_resources",
+          severity: 4,
+          status: "confirmed",
+          description: "When a browser requested the resource located at #{uri}, a large number" +
+          " of connections (#{request_hosts.count}) to unique hosts were made. In itself, this may" +
+          " not be a security problem, but can introduce more attack surface than necessary, and is" +
+          " indicative of poor security hygiene." ,
           #recommendation: "Verify if the host has been infected with malware and clean it.",
           references: [],
           details: {
