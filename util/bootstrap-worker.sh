@@ -71,6 +71,7 @@ sudo apt-get -y --fix-broken --no-install-recommends install make \
   net-tools \
   libpq-dev \
   boxes \
+  ssh \
   nmap \
   zmap \
   default-jre \

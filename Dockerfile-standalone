@@ -33,6 +33,7 @@ RUN apt-get -y --fix-broken --no-install-recommends install make \
   boxes \
   nmap \
   zmap \
+  ssh \
   default-jre \
   thc-ipv6 \
   unzip \

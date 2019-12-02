@@ -33,6 +33,7 @@ RUN apt-get -qq -y --fix-broken --no-install-recommends install\
   redis-server \
   boxes \
   nmap \
+  ssh \
   zmap \
   default-jre \
   thc-ipv6 \

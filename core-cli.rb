@@ -171,9 +171,7 @@ class CoreCli < Thor
     # This makes this super speedy.
     extend Intrigue::Task::Helper
 
-    lines = File.open(filename,"r").readlines
-
-    lines.each do |line|
+    File.open(filename,"r").each_line do  |line
       line.chomp!
 
       entity = _parse_entity line
@@ -183,7 +181,7 @@ class CoreCli < Thor
 
       if project_name == "-"
         p = Intrigue::Model::Project.find_or_create(:name => entity["project_name"])
-      else 
+      else
         p = Intrigue::Model::Project.find_or_create(:name => project_name)
       end
 
@@ -203,6 +201,7 @@ class CoreCli < Thor
 
       puts "Created task #{task_result.name} in #{p.name}"
     end
+    
   end
 
   desc "local_load_bulk [Project] [File]", "Bulk load entities from a file."
@@ -215,13 +214,13 @@ class CoreCli < Thor
 
       if project_name == "-"
         p = Intrigue::Model::Project.find_or_create(:name => entity["project_name"])
-      else 
+      else
         p = Intrigue::Model::Project.find_or_create(:name => project_name)
       end
 
       # prep the entity
       parsed_entity = _parse_entity line
-      next unless parsed_entity 
+      next unless parsed_entity
 
       parsed_entity["details"].merge!({
         "hidden_original": parsed_entity["name"],
@@ -266,10 +265,10 @@ private
     # otherwise split on our delimiter
     split_string = entity_string.split(@delim)
     entity_type = split_string[0]
-    entity_name = split_string[1] 
-    
+    entity_name = split_string[1]
+
     # if a project name is specified, grab it
-    if split_string.count > 2 
+    if split_string.count > 2
       project_name = split_string[2]
     end
 
