@@ -7,7 +7,7 @@ class SearchEdgar < BaseTask
       :name => "search_edgar",
       :pretty_name => "Search EDGAR",
       :authors => ["jcran"],
-      :description => "Corpwatch is an interface to EDGAR. " + 
+      :description => "Corpwatch is an interface to EDGAR. " +
         "This task allows you to search for US organization data.",
       :references => [],
       :type => "discovery",
@@ -31,7 +31,7 @@ class SearchEdgar < BaseTask
     # Attach to the corpwatch service & search
     x = Client::Search::Corpwatch::ApiClient.new(api_key)
     corps = x.search(_get_entity_name)
-      
+
     # nil if empty response
     return unless corps
 

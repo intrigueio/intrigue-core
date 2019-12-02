@@ -289,6 +289,7 @@ class Uri < Intrigue::Task::BaseTask
     # in case we're missing requests
     if browser_response && browser_response["requests"]
       request_hosts = browser_response["requests"].map{|x| x["hostname"] }.compact.uniq.sort
+      _check_request_hosts_for_suspicious_request(uri, request_hosts)
     else
       request_hosts = []
     end
