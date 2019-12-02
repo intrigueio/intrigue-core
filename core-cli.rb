@@ -171,7 +171,7 @@ class CoreCli < Thor
     # This makes this super speedy.
     extend Intrigue::Task::Helper
 
-    File.open(filename,"r").each_line do  |line
+    File.open(filename,"r").each_line do  |line|
       line.chomp!
 
       entity = _parse_entity line
@@ -201,7 +201,7 @@ class CoreCli < Thor
 
       puts "Created task #{task_result.name} in #{p.name}"
     end
-    
+
   end
 
   desc "local_load_bulk [Project] [File]", "Bulk load entities from a file."
