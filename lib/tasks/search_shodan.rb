@@ -33,30 +33,30 @@ class SearchShodan < BaseTask
 
     # check to make sure we got a response.
     unless response && response["data"]
-      _log_error "ERROR: No response. Do you have API Access / Credits?"
+      _log_error "ERROR: #{response["error"]}"
       return false
     end
 
     # Go through the results
     _set_entity_detail("extended_shodan",response["data"])
-    
+
     response["data"].each do |resp|
-      
-      # create an entity for each service (this handles known aliases), save the raw data 
+
+      # create an entity for each service (this handles known aliases), save the raw data
       response["data"].each do |s|
         _log_good "Creating service on #{s["ip_str"]}: #{s["port"]}"
-        _create_network_service_entity(@entity, s["port"], s["transport"] || "tcp", { 
-          "shodan_timestamp" => resp["timestamp"], 
+        _create_network_service_entity(@entity, s["port"], s["transport"] || "tcp", {
+          "shodan_timestamp" => resp["timestamp"],
           "extended_shodan" => resp } )
       end
 
-      # Create all hostnames 
+      # Create all hostnames
       resp["hostnames"].each do |h|
         _log_good "Creating hostname: #{h}"
         _create_entity "DnsRecord", "name" => "#{h}"
       end
 
-      # Create all domains  
+      # Create all domains
       #resp["domains"].each do |d|
       #  _log_good "Creating domain: #{d}"
       #  check_and_create_unscoped_domain d
