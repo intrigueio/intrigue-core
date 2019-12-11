@@ -216,28 +216,54 @@ module Issue
 
   end
 
-  def _check_request_hosts_for_uniquely_hosted_resources(uri, request_hosts, host_count=20)
+  def _check_request_hosts_for_uniquely_hosted_resources(uri, request_hosts, host_count=30)
 
     if  ( request_hosts.uniq.count > host_count)
+      _create_issue({
+        name: "Large Number of Uniquely Hosted Resources on #{uri}",
+        type: "large_number_of_uniquely_hosted_resources",
+        severity: 4,
+        status: "confirmed",
+        description: "When a browser requested the resource located at #{uri}, a large number" +
+        " of connections (#{request_hosts.count}) to unique hosts were made. In itself, this may" +
+        " not be a security problem, but can introduce more attack surface than necessary, and is" +
+        " indicative of poor security hygiene." ,
+        #recommendation: "Verify if the host has been infected with malware and clean it.",
+        references: [],
+        details: {
+          uri: uri,
+          request_hosts: request_hosts
+        }
+      })
+
+    end
+  end
+
+  def _check_requests_for_mixed_content(uri, requests)
+    requests.each do |req|
+
+      resource_url = req["url"]
+
+      if resource_url =~ /^http:.*$/ 
         _create_issue({
-          name: "Large Number of Uniquely Hosted Resources on #{uri}",
-          type: "large_number_of_uniquely_hosted_resources",
+          name: "Mixed content loaded on #{uri}",
+          type: "mixed_content",
           severity: 4,
           status: "confirmed",
-          description: "When a browser requested the resource located at #{uri}, a large number" +
-          " of connections (#{request_hosts.count}) to unique hosts were made. In itself, this may" +
-          " not be a security problem, but can introduce more attack surface than necessary, and is" +
-          " indicative of poor security hygiene." ,
+          description: "When a browser requested the resource located at #{uri}, a resource was" +
+          " requested at (#{req}) over HTTP. This resource could be intercepted by a malicious" +
+          " user and they may be able to take control of the information on the page.",
           #recommendation: "Verify if the host has been infected with malware and clean it.",
-          references: [],
+          references: ["https://developers.google.com/web/fundamentals/security/prevent-mixed-content/what-is-mixed-content"],
           details: {
             uri: uri,
-            request_hosts: request_hosts
+            resource_url: resource_url,
+            request: req
           }
         })
-
       end
 
+    end
   end
 
 

@@ -1,4 +1,4 @@
-# Adding to make it easier to query 
+# Adding to make it easier to query
 module Intrigue
 module Model
 class EntitiesTaskResults < Sequel::Model
@@ -54,8 +54,8 @@ module Intrigue
       end
 
       # default method that scopes/unscopes entities (can be overridden)
-      # TODO ... maybe we move the logic of details that exists in entity_manager here? 
-      def scoped? 
+      # TODO ... maybe we move the logic of details that exists in entity_manager here?
+      def scoped?
         return true if self.seed
         return false if self.hidden
       scoped # otherwise just default to whatever's already been set or true
@@ -71,12 +71,12 @@ module Intrigue
       end
 
       def short_details
-        details.reject { |k,v| 
+        details.reject { |k,v|
           k.to_s.match(/^hidden_.*$/) || k.to_s.match(/^extended_.*$/)   }
       end
 
       def extended_details
-        details.select{ |k,v| 
+        details.select{ |k,v|
           k.to_s.match(/^hidden_.*$/) || k.to_s.match(/^extended_.*$/)   }
       end
 
@@ -89,7 +89,7 @@ module Intrigue
         true
       end
 
-      def enriched? 
+      def enriched?
         self.enriched
       end
 
@@ -100,10 +100,10 @@ module Intrigue
 
       def enrich(task_result)
 
-        # if a machine exists, grab it 
+        # if a machine exists, grab it
         machine_name = task_result.scan_result ? task_result.scan_result.machine : nil
 
-        # if this entity has any configured enrichment tasks.. 
+        # if this entity has any configured enrichment tasks..
         if enrichment_tasks.count > 0
 
           # Run each one
@@ -301,4 +301,3 @@ module Intrigue
     end
   end
 end
-

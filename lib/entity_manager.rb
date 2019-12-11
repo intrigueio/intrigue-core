@@ -38,9 +38,9 @@ class EntityManager
       entity.set_details(details.to_h.deep_merge(entity.details.to_h))
 
         #####
-        ### HANDLE USER- or TASK- PROVIDED SCOPING 
+        ### HANDLE USER- or TASK- PROVIDED SCOPING
         #####
-    
+
           # remove any scope details (though i'm not sure this condition could ever exist on a
           # manually created entity)
           details = details.tap { |h| h.delete("unscoped") }
@@ -49,9 +49,9 @@ class EntityManager
           entity.save_changes
 
         #####
-        ### END ... USER- or TASK- PROVIDED SCOPING 
-        ### 
-        ### ENTITIES can SELF-SCOPE, however, for more info on that 
+        ### END ... USER- or TASK- PROVIDED SCOPING
+        ###
+        ### ENTITIES can SELF-SCOPE, however, for more info on that
         ### see the individual entity file
         #####
 
@@ -122,10 +122,10 @@ class EntityManager
     # check seeds
     project.seeds.each do |s|
       seed_type_string = s.type.to_s.split(":").last
-      
+
       # IpAddresses can't be used to skip, since they mess up netblocks
       # TOOD.. this should really be a global list (see: netblock scoping)
-      next if seed_type_string == "IpAddress"  
+      next if seed_type_string == "IpAddress"
 
       # check if the seed matches a non-traversable entity
       r = project.standard_exception?(s.name, seed_type_string)
@@ -147,7 +147,7 @@ class EntityManager
     # Check if there's an existing entity, if so, merge and move forward
     if entity
       tr.log_good "Existing Entity: #{type_string} #{name}. No-Traverse: #{exception_pattern}"
-      
+
       entity.set_details(details.to_h.deep_merge(entity.details.to_h))
 
       # if it already exists, it'll have an alias group ID and we'll
@@ -175,41 +175,41 @@ class EntityManager
         }
 
         #####
-        ### HANDLE USER- or TASK- PROVIDED SCOPING 
+        ### HANDLE USER- or TASK- PROVIDED SCOPING
         #####
 
         # if we're told this thing is scoped, let's just mark it scoped
-        # note that we delete the detail since we no longer need it 
+        # note that we delete the detail since we no longer need it
         # TODO... is this used today?
         if (details["scoped"] == true || details["scoped"] == "true")
           tr.log "Entity was specifically requested to be scoped"
           details = details.tap { |h| h.delete("scoped") }
           entity_details[:scoped] = true
-        
+
         # otherwise if we've specifically decided to unscoped
-        # note that we delete the detail since we no longer need it 
+        # note that we delete the detail since we no longer need it
         elsif (details["unscoped"] == true || details["unscoped"] == "true")
           tr.log "Entity was specifically requested to be unscoped"
           details = details.tap { |h| h.delete("unscoped") }
           entity_details[:scoped] = false
-        
-        # if it's set, rely on the task result's auto_scope setting 
-        # - which is set when the entity is created, based on context 
+
+        # if it's set, rely on the task result's auto_scope setting
+        # - which is set when the entity is created, based on context
         # that is (or at least should be) specific to that task
         elsif tr.auto_scope
           tr.log "Task result scoped this entity based on auto_scope"
           entity_details[:scoped] = true
-        
-        # otherwise, fall back to false
+
+        # otherwise default to true 
         else
           tr.log "No specific scope request from the task result"
           entity_details[:scoped] = true
         end
 
         #####
-        ### END ... USER- or TASK- PROVIDED SCOPING 
-        ### 
-        ### ENTITIES can SELF-SCOPE, however, for more info on that 
+        ### END ... USER- or TASK- PROVIDED SCOPING
+        ###
+        ### ENTITIES can SELF-SCOPE, however, for more info on that
         ### see the individual entity file
         #####
 
@@ -243,13 +243,13 @@ class EntityManager
       return nil
     end
 
-    ### revisit scoping in case the entity has specific scoping instructions 
+    ### revisit scoping in case the entity has specific scoping instructions
     ##   (now that we have an entity)
     ##
     ##  the default method on the base class simply sets what was available previously
     ##  See Intrigue::Model::Entity -> scoped?
     ##
-    entity.scoped = entity.scoped? 
+    entity.scoped = entity.scoped?
     entity.save_changes
     tr.log "Final scoping decision for #{entity.name}: #{entity.scoped}"
 
@@ -274,7 +274,7 @@ class EntityManager
     # think about the case of a domain lookup where many resolve to a single
     # ip address
     if primary_entity
-      
+
       tr.log "Aliasing #{entity.name} to existing group: #{primary_entity.alias_group_id}"
 
       # Take the smaller group id, and use that to alias together
