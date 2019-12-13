@@ -115,8 +115,8 @@ class Domain < Intrigue::Task::BaseTask
         # Set DMARC empty
         _set_entity_detail("dmarc", nil) 
 
-        # set mx records 
-        if mx_records.count > 0
+        # if we have mx records and we're scoped, create an issue
+        if mx_records.count > 0 && @entity.scoped?
           _create_dmarc_issues(mx_records, dmarc_details)
         end
 
