@@ -36,7 +36,7 @@ class Uri < Intrigue::Model::Entity
   end
 
   def enrichment_tasks
-    ["enrich/uri"]
+    ["enrich/uri", "uri_screenshot"]
   end
 
 end

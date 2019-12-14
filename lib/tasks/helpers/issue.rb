@@ -216,9 +216,9 @@ module Issue
 
   end
 
-  def _check_request_hosts_for_uniquely_hosted_resources(uri, request_hosts, host_count=30)
+  def _check_request_hosts_for_uniquely_hosted_resources(uri, request_hosts, min_host_count=40)
 
-    if  ( request_hosts.uniq.count > host_count)
+    if  ( request_hosts.uniq.count >= min_host_count)
       _create_issue({
         name: "Large Number of Uniquely Hosted Resources on #{uri}",
         type: "large_number_of_uniquely_hosted_resources",
@@ -227,10 +227,11 @@ module Issue
         description: "When a browser requested the resource located at #{uri}, a large number" +
         " of connections (#{request_hosts.count}) to unique hosts were made. In itself, this may" +
         " not be a security problem, but can introduce more attack surface than necessary, and is" +
-        " indicative of poor security hygiene." ,
+        " indicative of poor security hygiene, as well as slow load times for a service." ,
         #recommendation: "Verify if the host has been infected with malware and clean it.",
         references: [],
         details: {
+          min_host_count: min_host_count,
           uri: uri,
           request_hosts: request_hosts
         }

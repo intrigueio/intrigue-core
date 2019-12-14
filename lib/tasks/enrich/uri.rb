@@ -1,4 +1,4 @@
-  module Intrigue
+module Intrigue
 module Task
 module Enrich
 class Uri < Intrigue::Task::BaseTask
@@ -18,8 +18,7 @@ class Uri < Intrigue::Task::BaseTask
       :example_entities => [
         {"type" => "Uri", "details" => {"name" => "https://intrigue.io"}}],
       :allowed_options => [],
-      :created_types => [],
-      :queue => "task_browser"
+      :created_types => []
     }
   end
 
@@ -67,37 +66,9 @@ class Uri < Intrigue::Task::BaseTask
     _log "Saving Headers"
     response.each_header{|x| headers << "#{x}: #{response[x]}" }
 
-    # Grab the global option since we'll need to pass it to ident
-    # and limit some functionality
-    browser_enabled = Intrigue::System::Config.config["browser_enabled"]
-    _log "Browser Enabled: #{browser_enabled}"
-    ###
-    ### Screenshot
-    ###
-    if browser_enabled
-      begin
-        _log "Browser Navigating to #{uri}"
-        c = Intrigue::ChromeBrowser.new(:host => "127.0.0.1", :port => 9222)
-        browser_response = c.navigate_and_capture(uri)
-      rescue Errno::ECONNREFUSED => e
-        _log_error "Unable to connect to chrome browser. Is it running on :9222?"
-      rescue StandardError => e
-        _log_error "Oops! Got error attempting to screenshot: #{e}"
-        _log_error "Attempting to restart chromium."
-        `pkill -9 chromium` # hacktastic
-      end
-    else
-      _log "Skipping browser, got code: #{response.code}"
-      browser_response = {}
-    end
-
     # Use intrigue-ident code to request all of the pages we
     # need to properly fingerprint
-    _log "Attempting to fingerprint!"
-    _log "NOTE! Ident browser disabled!"
-    # TODO - move screenshotting into ident so we don't have to
-    # do it separately above. for now, no browser fingerprints.
-    # too resource intensive.  (change the false param below to enable)
+    _log "Attempting to fingerprint (without the browser)!"
     ident_matches = generate_http_requests_and_check(uri,false) || {}
 
     ident_fingerprints = ident_matches["fingerprint"] || []
@@ -172,9 +143,6 @@ class Uri < Intrigue::Task::BaseTask
       if uri =~ /^https/
 
         _log "HTTPS endpoint, checking security, grabbing certificate..."
-
-        _log "checking for mixed content..."
-        _check_requests_for_mixed_content(uri, browser_response["requests"]) if browser_response
 
         # grab and parse the certificate
         alt_names = connect_ssl_socket_get_cert_names(hostname,port) || []
@@ -289,15 +257,6 @@ class Uri < Intrigue::Task::BaseTask
     generator_match = response.body.match(/<meta name=\"?generator\"? content=\"?(.*?)\"?\/>/i)
     generator_string = generator_match.captures.first.gsub("\"","") if generator_match
 
-    # in case we're missing requests
-    if browser_response && browser_response["requests"]
-      request_hosts = browser_response["requests"].map{|x| x["hostname"] }.compact.uniq.sort
-      _check_request_hosts_for_suspicious_request(uri, request_hosts)
-      _check_request_hosts_for_uniquely_hosted_resources(uri,request_hosts)
-    else
-      request_hosts = []
-    end
-
     $db.transaction do
       new_details = @entity.details.merge({
         "alt_names" => alt_names,
@@ -318,7 +277,6 @@ class Uri < Intrigue::Task::BaseTask
         "hidden_response_data" => response.body,
         "extended_full_responses" => ident_responses, # includes all the redirects etc
         "extended_response_body" => response.body,
-        "request_hosts" => request_hosts,
         "products" => products.compact,
         "fingerprint" => ident_fingerprints.uniq,
         "content" => ident_content_checks.uniq,
@@ -326,15 +284,6 @@ class Uri < Intrigue::Task::BaseTask
         "ciphers" => accepted_connections,
         "extended_ciphers" => accepted_connections # new ciphers field
       })
-
-      if browser_response
-        new_details = new_details.merge({
-          "hidden_screenshot_contents" => browser_response["encoded_screenshot"],
-          "extended_screenshot_contents" => browser_response["encoded_screenshot"],
-          "extended_requests" => browser_response["requests"],
-          #"javascript" => js_libraries,
-        })
-      end
 
       # Set the details, and make sure raw response data is a hidden (not searchable) detail
       @entity.set_details new_details

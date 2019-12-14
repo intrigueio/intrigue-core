@@ -5,7 +5,7 @@ module Intrigue
   class ChromeBrowser
 
     # set host and port options if desired
-    def initialize(options=nil)
+    def initialize(options={})
       @requests = []
       @chrome = ChromeRemote.client(options)
 
@@ -38,7 +38,6 @@ module Intrigue
 
       # Take page screenshot
       encoded_screenshot = @chrome.send_cmd "Page.captureScreenshot"
-      #File.write "screenshot.png", Base64.decode64()
 
       { "requests" => @requests, "encoded_screenshot" => encoded_screenshot["data"] }
     end
