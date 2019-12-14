@@ -251,7 +251,7 @@ module Issue
           severity: 4,
           status: "confirmed",
           description: "When a browser requested the resource located at #{uri}, a resource was" +
-          " requested at (#{req}) over HTTP. This resource could be intercepted by a malicious" +
+          " requested at (#{resource_url}) over HTTP. This resource could be intercepted by a malicious" +
           " user and they may be able to take control of the information on the page.",
           #recommendation: "Verify if the host has been infected with malware and clean it.",
           references: ["https://developers.google.com/web/fundamentals/security/prevent-mixed-content/what-is-mixed-content"],
