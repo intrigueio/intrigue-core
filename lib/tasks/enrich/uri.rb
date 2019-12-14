@@ -174,7 +174,7 @@ class Uri < Intrigue::Task::BaseTask
         _log "HTTPS endpoint, checking security, grabbing certificate..."
 
         _log "checking for mixed content..."
-        _check_requests_for_mixed_content(uri, browser_response["requests"])
+        _check_requests_for_mixed_content(uri, browser_response["requests"]) if browser_response
 
         # grab and parse the certificate
         alt_names = connect_ssl_socket_get_cert_names(hostname,port) || []
