@@ -9,7 +9,7 @@ module Intrigue
       @requests = []
     
       # allow port to be set, and respect local config, then env, then default
-      port_number = options[:port] || ENV["CHROME_PORT"] || 9222
+      port_number = options[:port] || "#{ENV["CHROME_PORT"]}".to_i || 9222
       options[:port] = port_number
 
       # create the client
