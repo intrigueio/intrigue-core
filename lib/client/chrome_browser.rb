@@ -4,6 +4,8 @@ require 'base64'
 module Intrigue
   class ChromeBrowser
 
+    include Intrigue::Task::Generic
+
     # set host and port options if desired
     def initialize(options={})
       @requests = []
@@ -52,9 +54,9 @@ module Intrigue
       # so first check that the port number has been set)
       if ENV["CHROME_PORT"]
         chrome_port = "#{ENV["CHROME_PORT"]}".to_i
-        processes = unsafe_system("sudo lsof -t -i:#{chrome_port}")
+        processes = _unsafe_system("sudo lsof -t -i:#{chrome_port}")
         processes.split("\n").each do |p|
-          unsafe_system "kill -9 #{p.strip}"
+          _unsafe_system "kill -9 #{p.strip}"
         end
 
         # give it time to restart

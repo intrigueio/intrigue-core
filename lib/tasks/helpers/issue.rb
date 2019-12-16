@@ -204,7 +204,6 @@ module Issue
           severity: 2,
           status: "confirmed",
           description: "When a browser requested the resource(s) located at #{uri}, a suspicious request was made.",
-          #recommendation: "Verify if the host has been infected with malware and clean it.",
           references: [],
           details: {
             uri: uri,
@@ -222,13 +221,12 @@ module Issue
       _create_issue({
         name: "Large Number of Uniquely Hosted Resources on #{uri}",
         type: "large_number_of_uniquely_hosted_resources",
-        severity: 4,
+        severity: 5,
         status: "confirmed",
         description: "When a browser requested the resource located at #{uri}, a large number" +
         " of connections (#{request_hosts.count}) to unique hosts were made. In itself, this may" +
         " not be a security problem, but can introduce more attack surface than necessary, and is" +
         " indicative of poor security hygiene, as well as slow load times for a service." ,
-        #recommendation: "Verify if the host has been infected with malware and clean it.",
         references: [],
         details: {
           min_host_count: min_host_count,
