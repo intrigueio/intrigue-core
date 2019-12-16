@@ -55,10 +55,11 @@ module Intrigue
       if ENV["CHROME_PORT"]
         chrome_port = "#{ENV["CHROME_PORT"]}".to_i
         processes = _unsafe_system("sudo lsof -t -i:#{chrome_port}")
-        processes.split("\n").each do |p|
-          _unsafe_system "kill -9 #{p.strip}"
-        end
-
+        
+        # we will have spawned from sidekiq, so only kill the last one 
+        p = processes.split("\n").last
+        _unsafe_system "kill -9 #{p.strip}"
+        
         # give it time to restart
         sleep 3
       end
