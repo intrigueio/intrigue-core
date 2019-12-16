@@ -45,6 +45,9 @@ module Intrigue
       # Take page screenshot
       encoded_screenshot = @chrome.send_cmd "Page.captureScreenshot"
 
+      # give it time to screenshot
+      sleep 3
+
       # Tear down the service (it'll auto-restart via process manager...  
       # so first check that the port number has been set)
       if ENV["CHROME_PORT"]
