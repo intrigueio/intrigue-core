@@ -10,9 +10,20 @@ module Intrigue
     def initialize(options={})
       @requests = []
     
-      # allow port to be set, and respect local config, then env, then default
-      port_number = options[:port] || "#{ENV["CHROME_PORT"]}".to_i || 9222
-      options[:port] = port_number
+      # allow host & port to be set, and respect local config, then env, then default
+      chrome_host = options[:host] || ENV["CHROME_HOST"]
+      unless chrome_host && chrome_host.length > 0
+        chrome_host = "127.0.0.1"
+      end
+      options[:host] = chrome_host
+
+      chrome_port = options[:port] || ENV["CHROME_PORT"].to_i
+      unless chrome_port && chrome_port > 0
+        chrome_port = 9222 
+      end
+      options[:port] = chrome_port
+
+      puts "Using Chrome with options: #{options}"
 
       # create the client
       @chrome = ChromeRemote.client(options)
