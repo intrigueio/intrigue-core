@@ -45,6 +45,19 @@ module Intrigue
       # Take page screenshot
       encoded_screenshot = @chrome.send_cmd "Page.captureScreenshot"
 
+      # Tear down the service (it'll auto-restart via process manager...  
+      # so first check that the port number has been set)
+      if ENV["CHROME_PORT"]
+        chrome_port = "#{ENV["CHROME_PORT"]}".to_i
+        processes = unsafe_system("sudo lsof -t -i:#{chrome_port}")
+        processes.split("\n").each do |p|
+          unsafe_system "kill -9 #{p.strip}"
+        end
+
+        # give it time to restart
+        sleep 3
+      end
+
       { "requests" => @requests, "encoded_screenshot" => encoded_screenshot["data"] }
     end
 
