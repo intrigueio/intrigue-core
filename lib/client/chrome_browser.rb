@@ -66,11 +66,10 @@ module Intrigue
       if ENV["CHROME_PORT"]
         chrome_port = "#{ENV["CHROME_PORT"]}".to_i
         
-        # we will have spawned from sidekiq, so only kill the last one 
-        p = processes.split("\n").last
+        # kill the process
         _unsafe_system "pkill -f -9 remote-debugging-port=#{chrome_port}"
         
-        # give it time to restart
+        # give it time to restart via process monitoring
         sleep 3
       end
 
