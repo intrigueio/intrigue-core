@@ -65,11 +65,10 @@ module Intrigue
       # so first check that the port number has been set)
       if ENV["CHROME_PORT"]
         chrome_port = "#{ENV["CHROME_PORT"]}".to_i
-        processes = _unsafe_system("sudo lsof -t -i:#{chrome_port}")
         
         # we will have spawned from sidekiq, so only kill the last one 
         p = processes.split("\n").last
-        _unsafe_system "kill -9 #{p.strip}"
+        _unsafe_system "pkill -f -9 remote-debugging-port=#{chrome_port}"
         
         # give it time to restart
         sleep 3
