@@ -78,7 +78,7 @@ module Intrigue
         chrome_worker_number = chrome_port - 9221
         
         # kill the process
-        puts "Whacking our chrome service (#{chrome_worker_numbrer}) running on: #{chrome_port}"
+        puts "Whacking our chrome service (#{chrome_worker_number}) running on: #{chrome_port}"
         _unsafe_system "pkill -f -9 remote-debugging-port=#{chrome_port} && god restart intrigue-chrome-#{chrome_worker_number}"
         
         # give it time to restart via process monitoring
