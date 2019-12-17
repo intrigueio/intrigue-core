@@ -26,7 +26,15 @@ module Intrigue
       puts "Using Chrome with options: #{options}"
 
       # create the client
-      @chrome = ChromeRemote.client(options)
+      until @chrome 
+        begin 
+          @chrome = ChromeRemote.client(options)
+        rescue StandardError => e
+          puts "Unable to get a chrome client started, going nuclear!!!"
+          _unsafe_system "pkill -f -9 remote-debugging-port=#{chrome_port}"
+          sleep 3 + rand(10)
+        end
+      end
 
       # Enable events
       @chrome.send_cmd "Network.enable"
@@ -70,6 +78,7 @@ module Intrigue
         chrome_worker_number = chrome_port - 9221
         
         # kill the process
+        puts "Whacking our chrome service (#{chrome_worker_numbrer}) running on: #{chrome_port}"
         _unsafe_system "pkill -f -9 remote-debugging-port=#{chrome_port} && god restart intrigue-chrome-#{chrome_worker_number}"
         
         # give it time to restart via process monitoring
