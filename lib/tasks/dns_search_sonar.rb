@@ -31,14 +31,15 @@ class DnsSearchSonar < BaseTask
 
     _log_good "Searching data for: #{domain_name}"
 
-    response_body = http_get_body "#{search_url}"
-    unless response_body
+    
+    response = http_request(:get, search_url, nil, {}, nil, 3, 60, 60)
+    unless response
       _log_error "Unable to get a response. Is the server up?"
       return false
     end
 
     begin
-      json = JSON.parse(response_body)
+      json = JSON.parse(response.body)
 
       # Create forward dns entries
       if json["FDNS_A"]
