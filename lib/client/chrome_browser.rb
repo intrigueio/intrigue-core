@@ -32,11 +32,11 @@ module Intrigue
         rescue Socketry::TimeoutError => e
           puts "TIMED OUT client to the service running on #{chrome_port}, killing and restarting!!!"
           _unsafe_system "pkill -f -9 remote-debugging-port=#{chrome_port}"
-          sleep 10 + rand(5)
+          sleep 20
         rescue StandardError => e
           puts "ERROR Unable to get a chrome client to the service running on #{chrome_port}, killing and restarting!!!"
           _unsafe_system "pkill -f -9 remote-debugging-port=#{chrome_port}"
-          sleep 10 + rand(5)
+          sleep 20
         end
       end
 
