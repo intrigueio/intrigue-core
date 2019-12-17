@@ -58,6 +58,7 @@ module Intrigue
         } 
       end
 
+      encoded_screenshot=nil
       until encoded_screenshot
         begin 
           encoded_screenshot = _navigate_and_screenshot(url)
