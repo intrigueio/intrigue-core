@@ -65,9 +65,11 @@ module Intrigue
       # so first check that the port number has been set)
       if ENV["CHROME_PORT"]
         chrome_port = "#{ENV["CHROME_PORT"]}".to_i
+        chrome_worker = 1 if chrome_port == 9222
+        chrome_worker = 2 if chrome_port == 9223
         
         # kill the process
-        _unsafe_system "pkill -f -9 remote-debugging-port=#{chrome_port}"
+        _unsafe_system "pkill -f -9 remote-debugging-port=#{chrome_port} && god restart intrigue-chrome-#{chrome-worker}"
         
         # give it time to restart via process monitoring
         sleep 3
