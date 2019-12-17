@@ -62,7 +62,18 @@ module Intrigue
       until encoded_screenshot
         begin 
           encoded_screenshot = _navigate_and_screenshot(url)
-          _tear_down
+          
+          sleep 1
+          # Tear down the service (it'll auto-restart via process manager...  
+          # so first check that the port number has been set)
+          
+          chrome_port = "#{ENV["CHROME_PORT"]}".to_i || 9222
+  
+          # relies on sequential worker numbers
+          chrome_worker_number = chrome_port - 9221
+          
+          _killit(chrome_port)
+
         rescue Socketry::TimeoutError => e
           _killit(chrome_port)
         end
@@ -91,23 +102,6 @@ module Intrigue
 
       # Take page screenshot
     encoded_screenshot = @chrome.send_cmd "Page.captureScreenshot"
-    end
-
-    def _tear_down
-      sleep 1
-      # Tear down the service (it'll auto-restart via process manager...  
-      # so first check that the port number has been set)
-      if ENV["CHROME_PORT"]
-        chrome_port = "#{ENV["CHROME_PORT"]}".to_i
-
-        # relies on sequential worker numbers
-        chrome_worker_number = chrome_port - 9221
-        
-        # kill the process
-        puts "Success! Killing and restarting our chrome service (#{chrome_worker_number}) running on: #{chrome_port}"
-        _unsafe_system "pkill -f -9 remote-debugging-port=#{chrome_port} && god restart intrigue-chrome-#{chrome_worker_number}"
-        sleep 5
-      end
     end
 
   end
