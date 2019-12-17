@@ -31,10 +31,10 @@ module Intrigue
           _connect_and_enable options
         rescue Socketry::TimeoutError => e
           _killit(chrome_port)
-          _connect_and_enable # simply retry
+          _connect_and_enable options # simply retry
         rescue StandardError => e
           _killit(chrome_port)
-          _connect_and_enable # simply retry
+          _connect_and_enable options # simply retry
         end
       end
     end
