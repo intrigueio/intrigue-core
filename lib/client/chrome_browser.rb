@@ -29,10 +29,14 @@ module Intrigue
       until @chrome 
         begin 
           @chrome = ChromeRemote.client(options)
-        rescue StandardError => e
-          puts "Unable to get a chrome client to the service running on #{chrome_port}, going nuclear!!!"
+        rescue Socketry::TimeoutError => e
+          puts "TIMED OUT client to the service running on #{chrome_port}, killing and restarting!!!"
           _unsafe_system "pkill -f -9 remote-debugging-port=#{chrome_port}"
-          sleep 3 + rand(10)
+          sleep 3
+        rescue StandardError => e
+          puts "ERRPR Unable to get a chrome client to the service running on #{chrome_port}, killing and restarting!!!"
+          _unsafe_system "pkill -f -9 remote-debugging-port=#{chrome_port}"
+          sleep 3
         end
       end
 
@@ -78,11 +82,8 @@ module Intrigue
         chrome_worker_number = chrome_port - 9221
         
         # kill the process
-        puts "Whacking our chrome service (#{chrome_worker_number}) running on: #{chrome_port}"
+        puts "Success! Killing and restarting our chrome service (#{chrome_worker_number}) running on: #{chrome_port}"
         _unsafe_system "pkill -f -9 remote-debugging-port=#{chrome_port} && god restart intrigue-chrome-#{chrome_worker_number}"
-        
-        # give it time to restart via process monitoring
-        sleep 3
       end
 
       { "requests" => @requests, "encoded_screenshot" => encoded_screenshot["data"] }
