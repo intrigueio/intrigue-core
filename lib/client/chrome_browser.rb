@@ -28,14 +28,13 @@ module Intrigue
       # create the client
       until @chrome 
         begin 
-          @chrome = ChromeRemote.client(options)
-          # Enable events
-          @chrome.send_cmd "Network.enable"
-          @chrome.send_cmd "Page.enable"
+          _connect_and_enable
         rescue Socketry::TimeoutError => e
           _killit(chrome_port)
+          _connect_and_enable # simply retry
         rescue StandardError => e
           _killit(chrome_port)
+          _connect_and_enable # simply retry
         end
       end
     end
@@ -59,32 +58,13 @@ module Intrigue
         } 
       end
 
-      begin 
-        # Navigate to the site and wait for the page to load
-        @chrome.send_cmd "Page.navigate", url: url
-        @chrome.wait_for "Page.loadEventFired"
-
-        # Take page screenshot
-        encoded_screenshot = @chrome.send_cmd "Page.captureScreenshot"
-
-        # give it time to screenshot 
-        sleep 1
-
-        # Tear down the service (it'll auto-restart via process manager...  
-        # so first check that the port number has been set)
-        if ENV["CHROME_PORT"]
-          chrome_port = "#{ENV["CHROME_PORT"]}".to_i
-
-          # relies on sequential worker numbers
-          chrome_worker_number = chrome_port - 9221
-          
-          # kill the process
-          puts "Success! Killing and restarting our chrome service (#{chrome_worker_number}) running on: #{chrome_port}"
-          _unsafe_system "pkill -f -9 remote-debugging-port=#{chrome_port} && god restart intrigue-chrome-#{chrome_worker_number}"
-          sleep 5
+      until encoded_screenshot
+        begin 
+          encoded_screenshot = _navigate_and_screenshot(url)
+          _tear_down
+        rescue Socketry::TimeoutError => e
+          _killit(chrome_port)
         end
-      rescue Socketry::TimeoutError => e
-        _killit(chrome_port)
       end
 
       { "requests" => @requests, "encoded_screenshot" => encoded_screenshot["data"] }
@@ -94,6 +74,39 @@ module Intrigue
       puts "Unable to connect to client to the service running on #{port}, killing it!!!"
       _unsafe_system "pkill -f -9 remote-debugging-port=#{port}"
       sleep 20
+    end
+
+    def _connect_and_enable
+      @chrome = ChromeRemote.client(options)
+      # Enable events
+      @chrome.send_cmd "Network.enable"
+      @chrome.send_cmd "Page.enable"
+    end
+
+    def _navigate_and_screenshot(url)
+      # Navigate to the site and wait for the page to load
+      @chrome.send_cmd "Page.navigate", url: url
+      @chrome.wait_for "Page.loadEventFired"
+
+      # Take page screenshot
+    encoded_screenshot = @chrome.send_cmd "Page.captureScreenshot"
+    end
+
+    def _tear_down
+      sleep 1
+      # Tear down the service (it'll auto-restart via process manager...  
+      # so first check that the port number has been set)
+      if ENV["CHROME_PORT"]
+        chrome_port = "#{ENV["CHROME_PORT"]}".to_i
+
+        # relies on sequential worker numbers
+        chrome_worker_number = chrome_port - 9221
+        
+        # kill the process
+        puts "Success! Killing and restarting our chrome service (#{chrome_worker_number}) running on: #{chrome_port}"
+        _unsafe_system "pkill -f -9 remote-debugging-port=#{chrome_port} && god restart intrigue-chrome-#{chrome_worker_number}"
+        sleep 5
+      end
     end
 
   end
