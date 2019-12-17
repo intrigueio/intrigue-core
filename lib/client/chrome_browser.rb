@@ -30,7 +30,7 @@ module Intrigue
         begin 
           @chrome = ChromeRemote.client(options)
         rescue StandardError => e
-          puts "Unable to get a chrome client started, going nuclear!!!"
+          puts "Unable to get a chrome client to the service running on #{chrome_port}, going nuclear!!!"
           _unsafe_system "pkill -f -9 remote-debugging-port=#{chrome_port}"
           sleep 3 + rand(10)
         end
