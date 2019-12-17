@@ -28,7 +28,7 @@ module Intrigue
       # create the client
       until @chrome 
         begin 
-          _connect_and_enable
+          _connect_and_enable options
         rescue Socketry::TimeoutError => e
           _killit(chrome_port)
           _connect_and_enable # simply retry
@@ -76,7 +76,7 @@ module Intrigue
       sleep 20
     end
 
-    def _connect_and_enable
+    def _connect_and_enable(options)
       @chrome = ChromeRemote.client(options)
       # Enable events
       @chrome.send_cmd "Network.enable"
