@@ -46,11 +46,6 @@ module Services
         generic_details.merge!({"alt_names" => cert_names})
         cert_names.uniq do |cn|
 
-          if entity_exists?(ip_entity.project, "DnsRecord", cn)
-            _log "Skipping entity creation for DnsRecord#{cn}, already exists"
-            next 
-          end
-
           # create each entity 
           cert_entities << _create_entity("DnsRecord", { "name" => cn }, ip_entity ) 
           
