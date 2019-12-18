@@ -82,7 +82,7 @@ module Intrigue
     def _killit(port)
       
       # relies on sequential worker numbers
-      chrome_worker_number = chrome_port - 9221
+      chrome_worker_number = port - 9221
       
       puts "Unable to connect to client to the chrome devtools service (#{chrome_worker_number}) running on #{port}, killing it!!!"
     
