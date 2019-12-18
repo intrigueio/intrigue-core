@@ -113,7 +113,7 @@ class EntityManager
     details["hidden_original"] = "#{name}"
     downcased_name = "#{name}".downcase
 
-    # Merge the details if it already exists
+    # Find the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name)
 
     # find exception regexes we can skip (if they're a seed or an ancestor)
@@ -141,7 +141,7 @@ class EntityManager
       tr.log "This no-traverse regex will be bypassed since it matches a seed: #{skip_regexes}"
     end
 
-    # check if this is actually a provided exception (no-traverse for this proj) entity
+    # check if this is actually a no-traverse for this proj
     exception_pattern = project.exception_entity?(name, type_string, skip_regexes)
 
     # Check if there's an existing entity, if so, merge and move forward
