@@ -68,9 +68,6 @@ module Intrigue
           # so first check that the port number has been set)
           
           chrome_port = "#{ENV["CHROME_PORT"]}".to_i || 9222
-  
-          # relies on sequential worker numbers
-          chrome_worker_number = chrome_port - 9221
           
           _killit(chrome_port)
 
@@ -83,9 +80,14 @@ module Intrigue
     end
 
     def _killit(port)
-      puts "Unable to connect to client to the service running on #{port}, killing it!!!"
-      _unsafe_system "pkill -f -9 remote-debugging-port=#{port}"
-      sleep 20
+      
+      # relies on sequential worker numbers
+      chrome_worker_number = chrome_port - 9221
+      
+      puts "Unable to connect to client to the chrome devtools service (#{chrome_worker_number}) running on #{port}, killing it!!!"
+    
+      _unsafe_system "pkill -f -9 remote-debugging-port=#{port} && god restart intrigue-chrome-#{chrome_worker_number}"
+      sleep 10
     end
 
     def _connect_and_enable(options)
