@@ -59,15 +59,15 @@ module Intrigue
       end
 
       encoded_screenshot=nil
+      
       until encoded_screenshot
+        chrome_port = "#{ENV["CHROME_PORT"]}".to_i || 9222
         begin 
           encoded_screenshot = _navigate_and_screenshot(url)
           
           sleep 1
           # Tear down the service (it'll auto-restart via process manager...  
           # so first check that the port number has been set)
-          
-          chrome_port = "#{ENV["CHROME_PORT"]}".to_i || 9222
           
           _killit(chrome_port)
 
