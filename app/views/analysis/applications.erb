@@ -39,7 +39,7 @@
             <% entities.map do |x| %>
               <% if x.has_detail('extended_screenshot_contents') %>
                 <%= "<a href='/#{h @project_name}/entities/#{x.id}'>"%>
-                  <img height=200 width=240 src="data:image/png;base64, <%= h x.get_detail('hidden_screenshot_contents') %>" alt="Screenshot" />
+                  <img height=200 width=240 src="data:image/png;base64, <%= h x.get_detail('extended_screenshot_contents') %>" alt="Screenshot" />
                 </a>
               <% end %>
             <% end %>
