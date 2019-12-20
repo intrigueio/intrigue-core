@@ -139,7 +139,6 @@ module Dns
   all_discovered_wildcards.uniq # if it's not a wildcard, this will be an empty array.
   end
 
-
   # convenience method to just send back name
   def resolve_name(lookup_name, lookup_types=nil)
     resolve_names(lookup_name,lookup_types).first
