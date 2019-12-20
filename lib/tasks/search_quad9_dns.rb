@@ -27,7 +27,12 @@ class SearchQuad9DnS < BaseTask
     res = []
     entity_name = _get_entity_name
 
-c
+    # Query quad9 nameservers
+    nameservers = ['9.9.9.9']
+    _log "Querying #{nameservers}"
+    dns_obj = Resolv::DNS.new(nameserver: nameservers)
+    res = dns_obj.getaddresses(entity_name)
+
     # Detected only if there's no resolution
     if res.any?
       _log "Resolves to #{res.map{|x| "#{x.to_name}" }}. Seems we're good!"
