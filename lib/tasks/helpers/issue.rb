@@ -194,6 +194,10 @@ module Issue
 
   def _check_request_hosts_for_suspicious_request(uri, request_hosts)
 
+    # don't flag on actual localhost
+    return if uri =~ /:\/\/127\.0\.0\./
+    return if uri =~ /:\/\/localhost/
+
     if  ( request_hosts.include?("localhost") ||
           request_hosts.include?("0.0.0.0") ||
           !request_hosts.select{|x| x =~ /^127\.\d\.\d\.\d$/ }.empty?)
