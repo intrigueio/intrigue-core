@@ -41,15 +41,29 @@ module Services
     if ssl
       # connect, grab the socket and make sure we
       # keep track of these details, and create entitie
-      cert_names = connect_ssl_socket_get_cert_names(ip_entity.name,port_num)
-      if cert_names
-        generic_details.merge!({"alt_names" => cert_names})
-        cert_names.uniq do |cn|
+      cert = connect_ssl_socket_get_cert(ip_entity.name,port_num)
+      cert_names = parse_names_from_cert(cert)      
+ 
+      if cert && cert_names
+        generic_details.merge!({
+          "alt_names" => cert_names,
+          "cert" => {
+            "version" => cert.version,
+            "serial" => "#{cert.serial}",
+            "not_before" => "#{cert.not_before}",
+            "not_after" => "#{cert.not_after}",
+            "subject" => "#{cert.subject}",
+            "issuer" => "#{cert.issuer}",
+            "key_length" => key_size,
+            "signature_algorithm" => "#{cert.signature_algorithm}"
+          }
+        })
 
+        cert_names.uniq do |cn|
           # create each entity 
-          cert_entities << _create_entity("DnsRecord", { "name" => cn }, ip_entity ) 
-          
+          cert_entities << _create_entity("DnsRecord", { "name" => cn }, ip_entity )   
         end
+
       end
     end
 
