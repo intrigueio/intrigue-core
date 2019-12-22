@@ -286,7 +286,7 @@ class EntityManager
 
     # ENRICHMENT LAUNCH
     if tr.auto_enrich && !entity_already_existed
-      if !exception_pattern
+      #if !exception_pattern
         # Check if we've alrady run first and return gracefully if so
         if entity.enriched
           tr.log "Skipping enrichment... already completed!"
@@ -295,9 +295,9 @@ class EntityManager
           # this point should happen in that new background task
           entity.enrich(tr)
         end
-      else
-        tr.log "Skipping enrichment... this is a no-traverse!"
-      end
+      #else
+      #  tr.log "Skipping enrichment... this is a no-traverse!"
+      #end
     else
       tr.log "Skipping enrichment... enrich not enabled!" unless tr.auto_enrich
       tr.log "Skipping enrichment... entity exists!" if entity_already_existed

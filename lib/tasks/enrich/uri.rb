@@ -145,7 +145,8 @@ class Uri < Intrigue::Task::BaseTask
         _log "HTTPS endpoint, checking security, grabbing certificate..."
 
         # grab and parse the certificate
-        alt_names = connect_ssl_socket_get_cert_names(hostname,port) || []
+        cert = connect_ssl_socket_get_cert(hostname,port) || []
+        alt_names = parse_names_from_cert(cert)
         _log "Got cert's alt names: #{alt_names.inspect}"
 
         if set_cookie

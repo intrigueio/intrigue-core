@@ -29,6 +29,23 @@ class UriCheckSudomainHijack  < BaseTask
     if response
       if response.body =~ /The specified bucket does not exist/i
         _create_hijackable_subdomain_issue "AWS S3", uri, "potential"
+      elsif response.body =~ /^Repository not found$/i
+        _create_hijackable_subdomain_issue "Bitbucket", uri, "potential"
+      elsif response.body =~ /^Trying to access your account\?$/i
+        _create_hijackable_subdomain_issue "CampaignMonitor", uri, "potential"
+      elsif response.body =~ /^404 Not Found$/i # TODO... check uri && file against alias groups?
+        _create_hijackable_subdomain_issue "CargoCollective", uri, "potential"
+      elsif response.body =~ /^The feed has not been found\.$/i
+        _create_hijackable_subdomain_issue "Feedpress", uri, "potential"
+      elsif response.body =~ /^Not Found$/i  # TODO... check uri && file against alias groups?
+        # This could also be fly.io 
+        if uri != /fly.io/ 
+          _create_hijackable_subdomain_issue "Fly.io", uri, "potential"
+        end
+      elsif response.body =~ /The thing you were looking for is no longer here, or never was/i
+        _create_hijackable_subdomain_issue "Ghost", uri, "potential"
+      elsif response.body =~ /There isn't a Github Pages site here/i
+        _create_hijackable_subdomain_issue "Github", uri, "potential"
       elsif response.body =~ /No such app/i 
         if !(uri =! /heroku.com/ || uri =~ /herokussl.com/ || uri =~ /herokudns.com/ || uri =~ /herokuapp.com/) 
           _create_hijackable_subdomain_issue "Heroku", uri, "potential"
@@ -39,10 +56,14 @@ class UriCheckSudomainHijack  < BaseTask
         _create_hijackable_subdomain_issue "Help Juice", uri, "potential"
       elsif response.body =~ /is not a registered InCloud YouTrack/i
         _create_hijackable_subdomain_issue "JetBrains", uri, "potential"
+      elsif response.body =~ /Uh oh. That page doesn\'t exist/i
+        _create_hijackable_subdomain_issue "Intercom", uri, "potential"
       elsif response.body =~ /Unrecognized domain/i
         _create_hijackable_subdomain_issue "Mashery", uri, "potential"
-      elsif response.body =~ /^Not Found$/i
-        _create_hijackable_subdomain_issue "Netlify", uri, "potential"
+      elsif response.body =~ /^Not Found$/i  # TODO... check uri && file against alias groups?
+        if uri == /netlify.com/ 
+          _create_hijackable_subdomain_issue "Netlify", uri, "potential"
+        end
       elsif response.body =~ /Project doesnt exist... yet!/i
         _create_hijackable_subdomain_issue "Readme.io", uri, "potential"
       elsif response.body =~ /This domain is successfully pointed at WP Engine, but is not configured/i

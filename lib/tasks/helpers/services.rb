@@ -54,7 +54,7 @@ module Services
             "not_after" => "#{cert.not_after}",
             "subject" => "#{cert.subject}",
             "issuer" => "#{cert.issuer}",
-            "key_length" => key_size,
+            #"key_length" => key_size,
             "signature_algorithm" => "#{cert.signature_algorithm}"
           }
         })
