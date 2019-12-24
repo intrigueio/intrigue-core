@@ -231,7 +231,7 @@ module Intrigue
       end
 
       def type_string
-        type.to_s.gsub(/^.*::/, '')
+        self.class.to_s.split(":").last
       end
 
       # Method returns true if entity has the same attributes
