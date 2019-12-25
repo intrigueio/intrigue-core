@@ -42,9 +42,9 @@ module Services
       # connect, grab the socket and make sure we
       # keep track of these details, and create entitie
       cert = connect_ssl_socket_get_cert(ip_entity.name,port_num)
-      cert_names = parse_names_from_cert(cert)      
- 
-      if cert && cert_names
+
+      if cert 
+        cert_names = parse_names_from_cert(cert)       
         generic_details.merge!({
           "alt_names" => cert_names,
           "cert" => {
@@ -59,9 +59,11 @@ module Services
           }
         })
 
-        cert_names.uniq do |cn|
-          # create each entity 
-          cert_entities << _create_entity("DnsRecord", { "name" => cn }, ip_entity )   
+        if cert_names
+          cert_names.uniq do |cn|
+            # create each entity 
+            cert_entities << _create_entity("DnsRecord", { "name" => cn }, ip_entity )   
+          end
         end
 
       end

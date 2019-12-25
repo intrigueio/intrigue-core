@@ -27,7 +27,10 @@ class UriCheckSudomainHijack  < BaseTask
     response = http_request(:get, uri)
 
     if response
-      if response.body =~ /The specified bucket does not exist/i
+      if response.body =~ /^Not Found$/i  
+        #_create_hijackable_subdomain_issue "Apache?", uri, "potential", 4
+        # TODO ... might also be Netlify or Fly.io 
+      elsif response.body =~ /The specified bucket does not exist/i
         _create_hijackable_subdomain_issue "AWS S3", uri, "potential"
       elsif response.body =~ /^Repository not found$/i
         _create_hijackable_subdomain_issue "Bitbucket", uri, "potential"
@@ -37,11 +40,6 @@ class UriCheckSudomainHijack  < BaseTask
         _create_hijackable_subdomain_issue "CargoCollective", uri, "potential"
       elsif response.body =~ /^The feed has not been found\.$/i
         _create_hijackable_subdomain_issue "Feedpress", uri, "potential"
-      elsif response.body =~ /^Not Found$/i  # TODO... check uri && file against alias groups?
-        # This could also be fly.io 
-        if uri != /fly.io/ 
-          _create_hijackable_subdomain_issue "Fly.io", uri, "potential"
-        end
       elsif response.body =~ /The thing you were looking for is no longer here, or never was/i
         _create_hijackable_subdomain_issue "Ghost", uri, "potential"
       elsif response.body =~ /There isn't a Github Pages site here/i
@@ -60,10 +58,6 @@ class UriCheckSudomainHijack  < BaseTask
         _create_hijackable_subdomain_issue "Intercom", uri, "potential"
       elsif response.body =~ /Unrecognized domain/i
         _create_hijackable_subdomain_issue "Mashery", uri, "potential"
-      elsif response.body =~ /^Not Found$/i  # TODO... check uri && file against alias groups?
-        if uri == /netlify.com/ 
-          _create_hijackable_subdomain_issue "Netlify", uri, "potential"
-        end
       elsif response.body =~ /Project doesnt exist... yet!/i
         _create_hijackable_subdomain_issue "Readme.io", uri, "potential"
       elsif response.body =~ /This domain is successfully pointed at WP Engine, but is not configured/i
@@ -75,6 +69,24 @@ class UriCheckSudomainHijack  < BaseTask
     end
       
   end #end run
+
+  def _create_hijackable_subdomain_issue type, uri, status, severity=2
+    _create_issue({
+      name: "Subdomain Hijacking Detected (#{type})",
+      type: "subdomain_hijack_detected",
+      severity: severity,
+      status: status,
+      description:  "This uri #{uri} appears to be unclaimed on a third party host, meaning," +
+                    " there's a DNS record at (#{uri}) that points to #{type}, but it" +
+                    " appears to be unclaimed and you should be able to register it with" +
+                    " the host, effectively 'hijacking' the domain.",
+      details: {
+        uri: uri,
+        type: type
+      }
+    })
+end
+
 
 end
 end

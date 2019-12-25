@@ -94,23 +94,6 @@ module Issue
   ### Application oriented issues
   ###
 
-   def _create_hijackable_subdomain_issue type, uri, status
-      _create_issue({
-        name: "Subdomain Hijacking Detected",
-        type: "subdomain_hijack_detected",
-        severity: 2,
-        status: status,
-        description:  "This uri #{uri} appears to be unclaimed on a third party host, meaning," +
-                      " there's a DNS record at (#{uri}) that points to #{type}, but it" +
-                      " appears to be unclaimed and you should be able to register it with" +
-                      " the host, effectively 'hijacking' the domain.",
-        details: {
-          uri: uri,
-          type: type
-        }
-      })
-  end
-
   def _create_content_issue(uri, check)
     _create_issue({
       name: "Content Issue Discovered: #{check["name"]}",
