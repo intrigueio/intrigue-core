@@ -20,7 +20,7 @@ module Services
     updated_ports = ports.append({"number" => port_num, "protocol" => protocol}).uniq
     ip_entity.set_detail("ports", updated_ports)
 
-    weak_tcp_services = [21, 23, 25]
+    weak_tcp_services = [21, 23]  #possibly 25, but STARTTLS support is currently unclear
     weak_udp_services = [60, 1900, 5000]
 
     ssl = true if [443, 6443, 8443, 10000].include?(port_num)
@@ -86,7 +86,7 @@ module Services
     create_service_lambda = lambda do |h|
       try_http_ports = [  80,81,82,83,84,85,88,443,888,3000,6443,
                           8000,8080,8081,8087,8088,8089,8090,8095,
-                          8098,8161,8180,8443,8888,10000 ] 
+                          8098,8161,8180,8443,8880, 8888,10000 ] 
 
       # Handle web app case first
       if (protocol == "tcp" && try_http_ports.include?(port_num))
@@ -402,12 +402,42 @@ module Services
       service = "IDENT"
     when 135
       service = "DCERPC"
+    when 143
+      service = "IMAP"
+    when 465
+      service = "SMTPS"
     when 502,503
       service = "MODBUS"
+    when 587
+      service = "SMTP" # https://stackoverflow.com/questions/15796530/what-is-the-difference-between-ports-465-and-587
+    when 993
+      service = "IMAPS"
+    when 995
+      service = "POP3S"
     when 1883
       service = "MQTT"
-    when 2181,2888,3888
+    # https://support.cloudflare.com/hc/en-us/articles/200169156-Identifying-network-ports-compatible-with-Cloudflare-s-proxy
+    when 2052
+      service = "HTTP-CLOUDFLARE"
+    when 2053
+      service = "HTTPS-CLOUDFLARE"
+    when 2082
+      service = "HTTP-CLOUDFLARE"
+    when 2083
+      service = "HTTPS-CLOUDFLARE"
+    when 2086
+      service = "HTTP-CLOUDFLARE"
+    when 2087
+      service = "HTTPS-CLOUDFLARE"
+    when 2095
+      service = "HTTP-CLOUDFLARE"  
+    when 2096
+      service = "HTTPS-CLOUDFLARE"
+    # End cloudflare oddities
+    when 2181,2888,3888 
       service = "ZOOKEEPER"
+    when 3306
+      service = "MYSQL"
     when 3389
       service = "RDP"
     when 5900,5901
