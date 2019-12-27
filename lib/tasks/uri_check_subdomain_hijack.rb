@@ -37,8 +37,8 @@ class UriCheckSudomainHijack  < BaseTask
       elsif response.body =~ /Trying to access your account\?/i
         _create_hijackable_subdomain_issue "CampaignMonitor", uri, "potential"
       
-      elsif response.body =~ /404 Not Found/i # TODO... check uri && file against alias groups?
-        _create_hijackable_subdomain_issue "CargoCollective | Fly.io | Netlify", uri, "potential"  
+      #elsif response.body =~ /404 Not Found/i # TODO... check uri && file against alias groups?
+      #  _create_hijackable_subdomain_issue "CargoCollective | Fly.io | Netlify", uri, "potential"  
       
       # TODO ... digital ocean https://github.com/EdOverflow/can-i-take-over-xyz
 
@@ -98,8 +98,8 @@ class UriCheckSudomainHijack  < BaseTask
       elsif response.body =~ /<title>Statuspage \| Hosted Status Page/i
         _create_hijackable_subdomain_issue "Statuspage", uri, "potential"
 
-      elsif response.body =~ /page not found/i
-        _create_hijackable_subdomain_issue "Strikingly", uri, "potential"
+      #elsif response.body =~ /page not found/i
+      #  _create_hijackable_subdomain_issue "Strikingly", uri, "potential"
 
       elsif response.body =~ /project not found/i
         _create_hijackable_subdomain_issue "Surge.sh", uri, "potential"
