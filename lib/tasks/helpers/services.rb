@@ -33,6 +33,8 @@ module Services
       "protocol" => protocol,
       "ip_address" => ip_entity.name,
       "asn" => ip_entity.get_detail("asn"),
+      "net_name" => ip_entity.get_detail("net_name"),
+      "net_country_code" => ip_entity.get_detail("net_country_code"),
       "host_id" => ip_entity.id
     })
 

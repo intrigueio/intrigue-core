@@ -6,9 +6,11 @@ module Issue
   ### Generic helper method to create issues
   ###
   def _create_issue(details)
+
     _notify("Sev #{details[:severity]}!```#{details[:name]}```") if details[:severity] <= 3
 
     hash = details.merge({ entity_id: @entity.id,
+                           scoped: @entity.scoped,
                            task_result_id: @task_result.id,
                            project_id: @project.id })
 

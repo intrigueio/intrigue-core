@@ -29,6 +29,7 @@ module Intrigue
           :name => name,
           :severity =>  severity,
           :status =>  status,
+          :scoped =>  scoped,
           :description =>  description,
           :entity_type => entity.type,
           :entity_name => entity.name,
