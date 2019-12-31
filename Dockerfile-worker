@@ -101,7 +101,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 COPY . /core/
 
 # Remove the config files so we don't accidentally image ours!
-RUN rm /core/config/config.json
+RUN if [ -e /core/config/config.json ]; then rm /core/config/config.json; fi
 
 # Go get intrigue-specific software & config
 RUN /bin/bash /core/util/bootstrap-worker.sh
