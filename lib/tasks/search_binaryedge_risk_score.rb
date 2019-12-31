@@ -1,14 +1,15 @@
 module Intrigue
 module Task
-class SearchBinaryedgeIpRiskScore < BaseTask
+class SearchBinaryedgeRiskScore < BaseTask
 
   def self.metadata
     {
-      :name => "binaryedge_risk_score",
-      :pretty_name => "BinaryEdge Risk Score",
+      :name => "search_binaryedge_risk_score",
+      :pretty_name => "Search BinaryEdge Risk Score",
       :authors => ["AnasBenSalah"],
-      :description => "This task hits the BinaryEdge API for a given IP, and provides " +
-                      " a risk score", 
+      :description => "This task hits the BinaryEdge API and provides " +
+                      "a risk score detail for a given IPAddress. It can optionally " + 
+                      "create an issue for high risk IPs.", 
       :references => [],
       :type => "discovery",
       :passive => true,
@@ -38,15 +39,15 @@ class SearchBinaryedgeIpRiskScore < BaseTask
       headers = {"X-Key" =>  "#{api_key}" }
 
       uri = "https://api.binaryedge.io/v2/query/score/ip/#{entity_name}"
-      json = JSON.parse(http_request(:get, uri, nil, headers).body)
+      result = JSON.parse(http_request(:get, uri, nil, headers).body)
 
-      if json["normalized_ip_score"] == 0
+      if result["normalized_ip_score"] == 0
         _log "Unable to find ip address or no score"
         return 
       end
 
       # Normalize the score
-      score = json["normalized_ip_score"]
+      score = result["normalized_ip_score"]
       if score < 20 && score > 0
         calculated_sev = 5
       elsif score < 40 && score > 21
@@ -66,15 +67,15 @@ class SearchBinaryedgeIpRiskScore < BaseTask
           severity: calculated_sev,
           status: "confirmed",
           description: "
-            Overall score:#{json["normalized_ip_score"]} || Detailed IP Score: Cve: #{json["normalized_ip_score_detailed"]["cve"]}\n
-            Attack Surface: #{json["normalized_ip_score_detailed"]["attack_surface"]}\n
-            Encryption: #{json["normalized_ip_score_detailed"]["encryption"]}\n
-            Remote management service: #{json["normalized_ip_score_detailed"]["rms"]}\n
-            Storage: #{json["normalized_ip_score_detailed"]["storage"]}\n
-            Web: #{json["normalized_ip_score_detailed"]["web"]}\n
-            Torrent: #{json["normalized_ip_score_detailed"]["torrents"]} ",
+            Overall score:#{result["normalized_ip_score"]} || Detailed IP Score: Cve: #{result["normalized_ip_score_detailed"]["cve"]}\n
+            Attack Surface: #{result["normalized_ip_score_detailed"]["attack_surface"]}\n
+            Encryption: #{result["normalized_ip_score_detailed"]["encryption"]}\n
+            Remote management service: #{result["normalized_ip_score_detailed"]["rms"]}\n
+            Storage: #{result["normalized_ip_score_detailed"]["storage"]}\n
+            Web: #{result["normalized_ip_score_detailed"]["web"]}\n
+            Torrent: #{result["normalized_ip_score_detailed"]["torrents"]} ",
           references: ["https://binaryedge.com/"],
-          details: json
+          details: result
         })
       else
         _log "Issue creation disabled for severity #{calculated_sev} asset"

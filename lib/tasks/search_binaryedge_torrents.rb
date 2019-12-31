@@ -1,6 +1,6 @@
 module Intrigue
 module Task
-class SearchBinaryEdge < BaseTask
+class SearchBinaryEdgeTorrents < BaseTask
 
   def self.metadata
     {

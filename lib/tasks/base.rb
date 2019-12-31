@@ -4,10 +4,12 @@ class BaseTask
 
   # include default helpers
   include Intrigue::Task::Generic
+  include Intrigue::Task::Issue
+
+  include Intrigue::Task::BinaryEdge
   include Intrigue::Task::Browser
   include Intrigue::Task::Data
   include Intrigue::Task::Dns
-  include Intrigue::Task::Issue
   include Intrigue::Task::Helper
   include Intrigue::Task::RecogWrapper
   include Intrigue::Task::Regex

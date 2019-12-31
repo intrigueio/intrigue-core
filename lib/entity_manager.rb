@@ -255,14 +255,16 @@ class EntityManager
 
     ### Run Data transformation (to hide attributes... HACK)
     unless entity.transform!
-      tr.log_error "Transformation of entity failed: #{entity}, failing!!"
-      return nil
+      tr.log_error "Transformation of entity failed: #{entity}, rolling back entity creation!!"
+      entity.delete
+      raise "Invalid entity attempted: #{entity.type} #{entity.name}!"
     end
 
     ### Run Validation
     unless entity.validate_entity
-      tr.log_error "Validation of entity failed: #{entity}, failing!!"
-      return nil
+      tr.log_error "Validation of entity failed: #{entity}, rolling back entity creation!!"
+      entity.delete
+      raise "Invalid entity attempted: #{entity.type} #{entity.name}!"
     end
 
     # Add to our result set for this task

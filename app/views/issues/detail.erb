@@ -9,6 +9,7 @@
 <% end %>
 </h3>
 Scoped: <%= @issue.scoped %> <br/>
+Category: <%= @issue.category %> <br/>
 
 Entity: <a href="/<%=@issue.project.name%>/entities/<%=@issue.entity.id%>"><%= @issue.entity.type_string %> <%= @issue.entity.name %></a><br/>
 
