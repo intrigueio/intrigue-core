@@ -124,12 +124,12 @@ module Handler
       # Always use the project name when saving files for this project
       prefix_name = "#{result.name}/#{DateTime.now.to_date.to_s.gsub("-","_")}/"
 
-      result.issues.each do |i|
+      result.issues.paged_each(rows_per_fetch: 100) do |i|
         # toss it in issues list
         db.store_issue i.export_hash
       end
 
-      result.entities.each do |e|
+      result.entities.paged_each(rows_per_fetch: 100) do |e|
 
         entity_name = e.name
         entity_type = e.type
@@ -157,7 +157,6 @@ module Handler
           alias_group: e.alias_group_id,
           hidden: e.hidden,
           scoped: e.scoped,
-          ancestors: [],
           ancestors: ancestor_hash,
           deleted: e.deleted,
           details: e.details, #only send lite details (no extened)

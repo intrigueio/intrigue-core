@@ -77,11 +77,11 @@ module Intrigue
 
       def extended_details
         details.select{ |k,v|
-          k.to_s.match(/^hidden_.*$/) || k.to_s.match(/^extended_.*$/)   }
+          k.to_s.match(/^hidden_.*$/) || k.to_s.match(/^extended_.*$/) }
       end
 
       def has_extended_details?
-        extended_details.count > 0
+        extended_details.count > 1 # hidden_name will always exist...
       end
 
       # override me... see: lib/entities/aws_credential.rb
@@ -231,7 +231,7 @@ module Intrigue
       end
 
       def type_string
-        type.to_s.gsub(/^.*::/, '')
+        self.class.to_s.split(":").last
       end
 
       # Method returns true if entity has the same attributes

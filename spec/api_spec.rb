@@ -1,7 +1,6 @@
 require_relative 'spec_helper'
 
 describe "Intrigue" do
-
 describe "API" do
 
   it "should return a 200" do

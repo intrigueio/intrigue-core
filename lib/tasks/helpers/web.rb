@@ -244,16 +244,16 @@ module Task
   end
 
 
-  def connect_ssl_socket_get_cert_names(hostname,port,timeout=15)
+  def connect_ssl_socket_get_cert(hostname,port,timeout=15)
     # connect
     socket = connect_ssl_socket(hostname,port,timeout)
-    return [] unless socket && socket.peer_cert
+    return nil unless socket && socket.peer_cert
     # Grab the cert
     cert = OpenSSL::X509::Certificate.new(socket.peer_cert)
     # parse the cert
     socket.sysclose
     # get the names
-    names = parse_names_from_cert(cert)
+  cert
   end
 
 
@@ -325,6 +325,7 @@ module Task
         end
       end
     end
+
   alt_names
   end
 

@@ -38,7 +38,22 @@ module Data
     ]
   end
 
+  def cymru_ip_whois_lookup(ip)
+    whois_detail = Intrigue::Client::Search::Cymru::IPAddress.new.whois(ip)
+    { 
+      :net_asn => "AS#{whois_detail[0]}",
+      :net_block => "#{whois_detail[1]}",
+      :net_country_code => "#{whois_detail[2]}",
+      :net_rir => "#{whois_detail[3]}",
+      :net_allocation_date => "#{whois_detail[4]}",
+      :net_name => "#{whois_detail[5]}"
+    }
+  end
+
+
   def geolocate_ip(ip)
+
+    return nil unless File.exist? "#{$intrigue_basedir}/data/geolitecity/GeoLite2-City.mmdb"
 
     begin 
       db = MaxMindDB.new("#{$intrigue_basedir}/data/geolitecity/GeoLite2-City.mmdb", MaxMindDB::LOW_MEMORY_FILE_READER)
@@ -53,16 +68,16 @@ module Data
       #translate the hash to remove some of the multiingual stuff
       hash = {}
 
-      hash["city"] = location.to_hash["city"]["names"]["en"] if location.to_hash["city"]
-      hash["continent"] = location.to_hash["continent"]["names"]["en"] if location.to_hash["continent"]
-      hash["continent_code"] = location.to_hash["continent"]["code"] if location.to_hash["continent"]
-      hash["country"] = location.to_hash["country"]["names"]["en"] if location.to_hash["country"]
-      hash["country_code"] = location.to_hash["country"]["iso_code"] if location.to_hash["country"]
-      hash.merge(location.to_hash["location"]) if location.to_hash["location"]
-      hash["postal"] = location.to_hash["postal"]["code"] if location.to_hash["postal"]
-      hash["registered_country"] = location.to_hash["registered_country"]["names"]["en"] if location.to_hash["registered_country"]
-      hash["registered_country_code"] = location.to_hash["registered_country"]["iso_code"] if location.to_hash["registered_country"]
-      hash["subdivisions"] = location.to_hash["subdivisions"].map{|s| s["names"]["en"] } if location.to_hash["subdivisions"]
+      hash[:city] = location.to_hash["city"]["names"]["en"] if location.to_hash["city"]
+      hash[:continent] = location.to_hash["continent"]["names"]["en"] if location.to_hash["continent"]
+      hash[:continent_code] = location.to_hash["continent"]["code"] if location.to_hash["continent"]
+      hash[:country] = location.to_hash["country"]["names"]["en"] if location.to_hash["country"]
+      hash[:country_code] = location.to_hash["country"]["iso_code"] if location.to_hash["country"]
+      hash.merge(location.to_hash["location"].map { |k, v| [k.to_sym, v] }.to_h) if location.to_hash["location"]
+      hash[:postal] = location.to_hash["postal"]["code"] if location.to_hash["postal"]
+      hash[:registered_country] = location.to_hash["registered_country"]["names"]["en"] if location.to_hash["registered_country"]
+      hash[:registered_country_code] = location.to_hash["registered_country"]["iso_code"] if location.to_hash["registered_country"]
+      hash[:subdivisions] = location.to_hash["subdivisions"].map{|s| s["names"]["en"] } if location.to_hash["subdivisions"]
       
     rescue RuntimeError => e
       _log "Error reading file: #{e}"

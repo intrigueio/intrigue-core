@@ -1,6 +1,3 @@
-###
-### Task is in good shape, just needs some option parsing, and needs to deal with paths
-###
 module Intrigue
 module Task
 class  GlobalprotectCheck < BaseTask
@@ -10,10 +7,12 @@ class  GlobalprotectCheck < BaseTask
       :name => "vuln/globalprotect_check",
       :pretty_name => "Vuln - GlobalProtect Check",
       :authors => ["jcran","@orange_8361","@mehqq_"],
+      :identifiers => [{ "cve" =>  "CVE-2019-1579" }],
       :description => "This task checks for the Palo Alto Globalprotect vulnerability announced by Orange Tsai prior to Black Hat 2019.",
       :references => [
         "https://blog.orange.tw/2019/07/attacking-ssl-vpn-part-1-preauth-rce-on-palo-alto.html",
-        "https://www.blackhat.com/us-19/briefings/schedule/#infiltrating-corporate-intranet-like-nsa---pre-auth-rce-on-leading-ssl-vpns-15545"
+        "https://www.blackhat.com/us-19/briefings/schedule/#infiltrating-corporate-intranet-like-nsa---pre-auth-rce-on-leading-ssl-vpns-15545",
+        "cve-2019-1579-critical-pre-authentication-vulnerability-in-palo-alto-networks-globalprotect-ssl"
       ],
       :type => "vuln",
       :passive => false,
@@ -60,7 +59,7 @@ class  GlobalprotectCheck < BaseTask
         severity: 1,
         type: "vulnerability_globalunprotect",
         status: "confirmed",
-        description: "This server is vulnerable to an unauthenticated RCE bug announced in July 2019. No CVE exists. See references for more details.\n\nProof: #{last_modified_header}",
+        description: "This server is vulnerable to an unauthenticated RCE bug announced in July 2019, named CVE-2019-1579. See references for more details.\n\nProof: #{last_modified_header}",
         references: self.class.metadata["references"]
         })
     else

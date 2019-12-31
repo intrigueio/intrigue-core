@@ -90,7 +90,7 @@ module Intrigue
 
       # Matches based on type and the attribute "name"
       def has_entity? entity
-        entities.each {|e| return true if e.match?(entity) }
+        entities.paged_each(rows_per_fetch: 100){|e| return true if e.match?(entity) }
       false
       end
 

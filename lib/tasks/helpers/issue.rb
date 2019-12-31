@@ -6,9 +6,11 @@ module Issue
   ### Generic helper method to create issues
   ###
   def _create_issue(details)
+
     _notify("Sev #{details[:severity]}!```#{details[:name]}```") if details[:severity] <= 3
 
     hash = details.merge({ entity_id: @entity.id,
+                           scoped: @entity.scoped,
                            task_result_id: @task_result.id,
                            project_id: @project.id })
 
@@ -54,6 +56,7 @@ module Issue
     ### Application oriented issues
     ###
 
+<<<<<<< HEAD
    def _create_hijackable_subdomain_issue type, uri, status
       _create_issue({
         name: "Subdomain Hijacking Detected",
@@ -72,6 +75,8 @@ module Issue
       })
   end
 
+=======
+>>>>>>> develop
   def _create_content_issue(uri, check)
     _create_issue({
       name: "Content Issue Discovered: #{check["name"]}",
@@ -159,6 +164,10 @@ module Issue
   end
 
   def _check_request_hosts_for_suspicious_request(uri, request_hosts)
+
+    # don't flag on actual localhost
+    return if uri =~ /:\/\/127\.0\.0\./
+    return if uri =~ /:\/\/localhost/
 
     if  ( request_hosts.include?("localhost") ||
           request_hosts.include?("0.0.0.0") ||
