@@ -55,13 +55,14 @@ class UriCheckSudomainHijack  < BaseTask
         _create_hijackable_subdomain_issue "Ghost", uri, "potential"
       
       elsif response.body =~ /There isn\'t a Github Pages site here/i
-        _create_hijackable_subdomain_issue "Github", uri, "potential"
+        _create_hijackable_subdomain_issue("Github", uri, "potential") unless (uri =~ /github.com/ || uri =~ /github.io/) 
       
       elsif response.body =~ /404 Blog is not found/i
         _create_hijackable_subdomain_issue "", uri, "potential"
 
       elsif response.body =~ /No such app/i 
-        if !(uri =! /heroku.com/ || uri =~ /herokussl.com/ || uri =~ /herokudns.com/ || uri =~ /herokuapp.com/) 
+        
+        if !(uri =~ /heroku.com/ || uri =~ /herokussl.com/ || uri =~ /herokudns.com/ || uri =~ /herokuapp.com/) 
           _create_hijackable_subdomain_issue "Heroku", uri, "potential"
         end
         
@@ -72,7 +73,7 @@ class UriCheckSudomainHijack  < BaseTask
         _create_hijackable_subdomain_issue "Help Juice", uri, "potential"
 
       elsif response.body =~ /Uh oh. That page doesn\'t exist/i
-        _create_hijackable_subdomain_issue "Intercom", uri, "potential"
+        _create_hijackable_subdomain_issue("Intercom", uri, "potential") unless (uri =~ /intercom.com/ || uri =~ /intercom.io/) 
 
       elsif response.body =~ /is not a registered InCloud YouTrack/i
         _create_hijackable_subdomain_issue "JetBrains", uri, "potential"
@@ -93,10 +94,10 @@ class UriCheckSudomainHijack  < BaseTask
         _create_hijackable_subdomain_issue "Readme.io", uri, "potential"
 
       elsif response.body =~ /Sorry, this shop is currently unavailable./i
-        _create_hijackable_subdomain_issue "Shopify", uri, "potential"
+        _create_hijackable_subdomain_issue("Shopify", uri, "potential") unless (uri =~ /shopify.com/ || uri =~ /myshopify.com/) 
 
       elsif response.body =~ /<title>Statuspage \| Hosted Status Page/i
-        _create_hijackable_subdomain_issue "Statuspage", uri, "potential"
+        _create_hijackable_subdomain_issue("Statuspage", uri, "potential") unless (uri =~ /statuspage.com/ || uri =~ /statuspage.io/) 
 
       #elsif response.body =~ /page not found/i
       #  _create_hijackable_subdomain_issue "Strikingly", uri, "potential"
