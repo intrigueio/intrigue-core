@@ -110,8 +110,8 @@ class UriCheckSudomainHijack  < BaseTask
       elsif response.body =~ /Please renew your subscription/i
         _create_hijackable_subdomain_issue "Tilda", uri, "potential"
 
-      elsif response.body =~ /page not found/i
-        _create_hijackable_subdomain_issue "UptimeRobot", uri, "potential"        
+      #elsif response.body =~ /page not found/i
+      #  _create_hijackable_subdomain_issue "UptimeRobot", uri, "potential"        
 
       elsif response.body =~ /This UserVoice subdomain is currently available\!/i
         _create_hijackable_subdomain_issue "UserVoice", uri, "potential"	
