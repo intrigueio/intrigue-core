@@ -1,30 +1,5 @@
 #!/bin/bash
 
-# GeoLiteCity download function
-function get_maxmind() {
-  echo "[+] Getting latest MaxMind GeoLite2-City database"
-  # get and unzip
-  wget -N -q  https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz 
-  tar -zxf GeoLite2-City*.tar.gz
-  # remove the file
-  rm GeoLite2-City.tar.gz
-  # move the file into the right place
-  mv GeoLite2-City_*/GeoLite2-City.mmdb .
-  # clean up
-  rm -rf GeoLite2-City_*
-}
-
-# GeoLiteCity
-if [ -d "geolitecity" ]; then
-  cd geolitecity
-  if [ ! -f GeoLite2-City.mmdb ]; then
-    get_maxmind
-  else
-    get_maxmind
-  fi
-  cd ..
-fi
-
 # Web Account List
 #  https://raw.githubusercontent.com/WebBreacher/WhatsMyName
 if [ -d "web_accounts_list" ]; then

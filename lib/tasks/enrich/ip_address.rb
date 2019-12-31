@@ -68,27 +68,29 @@ class IpAddress < Intrigue::Task::BaseTask
       end
     end
 
-    # geolocate
-    _log "Geolocating..."
-    location_hash = geolocate_ip(lookup_name)
-    _set_entity_detail("geolocation", location_hash)
+
 
     # get ASN
     # look up the details in team cymru's whois
     _log "Using Team Cymru's Whois Service..."
-    whois_detail = Intrigue::Client::Search::Cymru::IPAddress.new.whois(lookup_name)
-    net_asn = "AS#{whois_detail[0]}"
-    net_block = "#{whois_detail[1]}"
-    net_country_code = "#{whois_detail[2]}"
-    net_rir = "#{whois_detail[3]}"
-    net_allocation_date = "#{whois_detail[4]}"
-    net_name = "#{whois_detail[5]}"
-    _set_entity_detail("asn", net_asn)
-    _set_entity_detail("net_block", net_block)
-    _set_entity_detail("net_country_code", net_country_code)
-    _set_entity_detail("net_rir", net_rir)
-    _set_entity_detail("net_allocation_date",net_allocation_date )
-    _set_entity_detail("net_name",net_name)
+    cymru = cymru_ip_whois_lookup(lookup_name)
+    _set_entity_detail("asn", cymru[:net_asn])
+    _set_entity_detail("net_block", cymru[:net_block])
+    _set_entity_detail("net_country_code", cymru[:net_country_code])
+    _set_entity_detail("net_rir", cymru[:net_rir])
+    _set_entity_detail("net_allocation_date",cymru[:net_allocation_date])
+    _set_entity_detail("net_name",cymru[:net_name])
+
+    # geolocate
+    _log "Geolocating..."
+    location_hash = geolocate_ip(lookup_name)
+    unless location_hash
+      # fall back on cymru country code 
+      country_code = cymru[:net_country_code]
+      location_hash = {}
+      location_hash[:country_code] = country_code
+    end
+    _set_entity_detail("geolocation", location_hash)
 
     ### 
     ### Check Whois
