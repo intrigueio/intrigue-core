@@ -104,7 +104,7 @@ COPY . /core/
 RUN /bin/bash /core/util/bootstrap-standalone.sh
 
 # Remove the config file so one generates on startup (useful when testing)
-RUN rm /core/config/config.json
+RUN if [ -e /core/config/config.json ]; then rm /core/config/config.json; fi
 
 # Expose the port
 EXPOSE 7777
