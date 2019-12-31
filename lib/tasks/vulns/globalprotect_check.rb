@@ -1,6 +1,3 @@
-###
-### Task is in good shape, just needs some option parsing, and needs to deal with paths
-###
 module Intrigue
 module Task
 class  GlobalprotectCheck < BaseTask
