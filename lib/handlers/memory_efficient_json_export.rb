@@ -157,7 +157,6 @@ module Handler
           alias_group: e.alias_group_id,
           hidden: e.hidden,
           scoped: e.scoped,
-          ancestors: [],
           ancestors: ancestor_hash,
           deleted: e.deleted,
           details: e.details, #only send lite details (no extened)
