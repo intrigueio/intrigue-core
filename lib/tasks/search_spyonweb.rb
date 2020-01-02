@@ -70,22 +70,22 @@ module Intrigue
 
       begin
 
-          url = "https://api.spyonweb.com/v1/domain/#{entity_name}?access_token=#{api_key}"
+        url = "https://api.spyonweb.com/v1/domain/#{entity_name}?access_token=#{api_key}"
 
-          response = http_get_body url
-          json = JSON.parse(response)
+        response = http_get_body url
+        json = JSON.parse(response)
 
-          #Check if spyonweb API has data about the domain
-          if json["status"] == "found"
+        #Check if spyonweb API has data about the domain
+        if json["status"] == "found"
 
-            #create shared absense of the specific domain
-            if json["result"]["domain"]["#{entity_name}"]["items"]["adsense"]
+          #create shared absense of the specific domain
+          if json["result"]["domain"]["#{entity_name}"]["items"]["adsense"]
 
-                json["result"]["domain"]["#{entity_name}"]["items"]["adsense"].each do |u|
-                    _create_entity "AnalyticsId" , "name" => u[0]
-                end
+              json["result"]["domain"]["#{entity_name}"]["items"]["adsense"].each do |u|
+                  _create_entity "AnalyticsId" , "name" => u[0]
+              end
 
-            end
+          end
 
           #Create shared analytics of the specific domain
           if json["result"]["domain"]["#{entity_name}"]["items"]["analytics"]
@@ -119,52 +119,52 @@ module Intrigue
 
       begin
 
-            url = "https://api.spyonweb.com/v1/analytics/#{entity_name.upcase}?access_token=#{api_key}"
+        url = "https://api.spyonweb.com/v1/analytics/#{entity_name.upcase}?access_token=#{api_key}"
 
-            response = http_get_body url
-            json = JSON.parse(response)
+        response = http_get_body url
+        json = JSON.parse(response)
 
-            #Check if spyonweb API has data about the google analytics ID
-            if json["status"] == "found"
+        #Check if spyonweb API has data about the google analytics ID
+        if json["status"] == "found"
 
-              #create DnsRecord for domain share the specific google analytics id
-              json["result"]["analytics"]["#{entity_name.upcase}"]["items"].each do |u|
+          #create DnsRecord for domain share the specific google analytics id
+          json["result"]["analytics"]["#{entity_name.upcase}"]["items"].each do |u|
 
-                  _create_entity "DnsRecord" , "name" => u[0]
+              _create_entity "DnsRecord" , "name" => u[0]
 
-              end
-            end
-
-          rescue JSON::ParserError => e
-            _log_error "Unable to parse JSON: #{e}"
           end
+        end
 
+      rescue JSON::ParserError => e
+        _log_error "Unable to parse JSON: #{e}"
       end
+
+    end
 
     #Search for DNS record share the same google adsense id
     def search_adsense(entity_name,api_key)
 
       begin
 
-          url = "https://api.spyonweb.com/v1/adsense/#{entity_name}?access_token=#{api_key}"
+        url = "https://api.spyonweb.com/v1/adsense/#{entity_name}?access_token=#{api_key}"
 
-          response = http_get_body url
-          json = JSON.parse(response)
+        response = http_get_body url
+        json = JSON.parse(response)
 
-          #Check if spyonweb API has data about the google adsense ID
-          if json["status"] == "found"
+        #Check if spyonweb API has data about the google adsense ID
+        if json["status"] == "found"
 
-              #create DnsRecord for domain share the specific google analytics id
-              json["result"]["adsense"]["#{entity_name}"]["items"].each do |u|
+          #create DnsRecord for domain share the specific google analytics id
+          json["result"]["adsense"]["#{entity_name}"]["items"].each do |u|
 
-                _create_entity "DnsRecord" , "name" => u[0]
+            _create_entity "DnsRecord" , "name" => u[0]
 
-              end
           end
+        end
 
-          rescue JSON::ParserError => e
-            _log_error "Unable to parse JSON: #{e}"
-          end
+      rescue JSON::ParserError => e
+        _log_error "Unable to parse JSON: #{e}"
+      end
     end
 
 
