@@ -28,8 +28,9 @@ module Issue
 
     if !dmarc_record
       _create_issue({
-        name: "Missing DMARC Configuration",
+        name: "Missing DMARC Configuration on Email-enabled Domain",
         type: "missing_dmarc_configuration",
+        category: "email", 
         severity: 4,
         status: "confirmed",
         description: "Domains that are configured to send email should implement one or more forms " +
@@ -49,49 +50,7 @@ module Issue
     end
 
   end
-
-  ###
-  ### Host oriented issues
-  ###
-
-  # Development or Staging
-  def _exposed_server_identified(regex, name=nil, type="Development")
-
-    exposed_name = name || @entity.name
-
-    _create_issue({
-      name: "#{type} System Identified",
-      type: "#{type}_system_identified".downcase,
-      severity: 5,
-      status: "potential",
-      description: "A system was identified that may be part of a #{type.downcase} " +
-      "effort. Typically these systems should not be exposed to the internet. " +
-      "Resolutions: #{@entity.aliases.map{|x| x.name}}",
-      details: {
-        matched_regex: "#{regex}",
-        resolutions: "#{@entity.aliases.map{|x| x.name}}"
-      }
-    })
-  end
-
-
-  def _create_weak_service_issue(ip_address, port, proto, tcp)
-    transport = tcp ? "TCP" : "UDP"
-    _create_issue({
-      name: "Weak Service Identified: #{proto} on #{port}",
-      type: "weak_service_identified",
-      severity: 4,
-      status: "confirmed",
-      description: "A service known to be weak and have more modern alternatives " +
-      "was identified: #{proto} on #{ip_address}:#{port}/#{transport}",
-      details: {
-        ip_address: ip_address,
-        port: port,
-        proto: proto,
-        transport: transport }
-    })
-  end
-
+  
   ###
   ### Application oriented issues
   ###
@@ -100,6 +59,7 @@ module Issue
     _create_issue({
       name: "Content Issue Discovered: #{check["name"]}",
       type: "#{check["name"].downcase.gsub(" ","_")}",
+      category: "application",
       severity: 4, # todo...
       status: "confirmed",
       description: "This server had a content issue: #{check["name"]}.",
@@ -115,6 +75,7 @@ module Issue
     _create_issue({
       name: "Insecure cookie detected: missing 'httpOnly' attribute",
       type: "insecure_cookie_detected",
+      category: "application",
       severity: severity,
       status: "confirmed",
       description: "A cookie was identified without the 'httpOnly' cookie attribute on #{uri}",
@@ -130,6 +91,7 @@ module Issue
     _create_issue({
       name: "Insecure cookie detected: missing 'secure' attribute",
       type: "insecure_cookie_detected",
+      category: "application",
       severity: severity,
       status: "confirmed",
       description: "A cookie was identified without the 'secure' cookie attribute on #{uri}",
@@ -145,6 +107,7 @@ module Issue
     _create_issue({
       name: "Weak ciphers enabled",
       type: "weak_cipher_suite_detected",
+      category: "application",
       severity: 5,
       status: "confirmed",
       description: "This server is configured to allow a known-weak cipher suite on #{uri}",
@@ -163,6 +126,7 @@ module Issue
     _create_issue({
       name: "Deprecated protocol enabled",
       type: "deprecated_protocol_detected",
+      category: "application",
       severity: 5,
       status: "confirmed",
       description: "This server is configured to allow a deprecated ssl / tls protocol on #{uri}",
@@ -187,18 +151,19 @@ module Issue
           request_hosts.include?("0.0.0.0") ||
           !request_hosts.select{|x| x =~ /^127\.\d\.\d\.\d$/ }.empty?)
 
-        _create_issue({
-          name: "Suspicious Resource Requested on #{uri}",
-          type: "suspicious_resource_requested",
-          severity: 2,
-          status: "confirmed",
-          description: "When a browser requested the resource(s) located at #{uri}, a suspicious request was made.",
-          references: [],
-          details: {
-            uri: uri,
-            request_hosts: request_hosts
-          }
-        })
+      _create_issue({
+        name: "Suspicious Resource Requested on #{uri}",
+        type: "suspicious_resource_requested",
+        category: "application",
+        severity: 2,
+        status: "confirmed",
+        description: "When a browser requested the resource(s) located at #{uri}, a suspicious request was made.",
+        references: [],
+        details: {
+          uri: uri,
+          request_hosts: request_hosts
+        }
+      })
 
       end
 
@@ -210,6 +175,7 @@ module Issue
       _create_issue({
         name: "Large Number of Uniquely Hosted Resources on #{uri}",
         type: "large_number_of_uniquely_hosted_resources",
+        category: "application",
         severity: 5,
         status: "confirmed",
         description: "When a browser requested the resource located at #{uri}, a large number" +
@@ -236,6 +202,7 @@ module Issue
         _create_issue({
           name: "Mixed content loaded on #{uri}",
           type: "mixed_content",
+          category: "application",
           severity: 4,
           status: "confirmed",
           description: "When a browser requested the resource located at #{uri}, a resource was" +
@@ -250,10 +217,75 @@ module Issue
           }
         })
       end
-
     end
   end
 
+  ###
+  ### Network and Host oriented issues
+  ###
+
+  # Development or Staging
+  def _exposed_server_identified(regex, name=nil, type="Development")
+
+    exposed_name = name || @entity.name
+
+    _create_issue({
+      name: "#{type} System Identified",
+      type: "#{type}_system_identified".downcase,
+      category: "network",
+      severity: 5,
+      status: "potential",
+      description: "A system was identified that may be part of a #{type.downcase} " +
+      "effort. Typically these systems should not be exposed to the internet. " +
+      "Resolutions: #{@entity.aliases.map{|x| x.name}}",
+      details: {
+        matched_regex: "#{regex}",
+        resolutions: "#{@entity.aliases.map{|x| x.name}}"
+      }
+    })
+  end
+
+  def _create_weak_service_issue(ip_address, port, proto, tcp)
+    transport = tcp ? "TCP" : "UDP"
+    _create_issue({
+      name: "Weak Service Identified: #{proto} on #{port}",
+      type: "weak_service_identified",
+      category: "network",
+      severity: 4,
+      status: "confirmed",
+      description: "A service known to be weak and have more modern alternatives " +
+      "was identified: #{proto} on #{ip_address}:#{port}/#{transport}",
+      details: {
+        ip_address: ip_address,
+        port: port,
+        proto: proto,
+        transport: transport }
+    })
+  end
+
+
+  ###
+  ### Malware Entities (network category)
+  ###
+  def _malicious_entity_detected(source, severity=3, details={}, references=[])
+    
+    # create the issues
+    _create_issue({
+      name: "Detected as malicious by #{source}",
+      type: "detected_malicious",
+      category: "network",
+      severity: severity,
+      status: "confirmed",
+      description: "This website has been deemed malicious or otherwise harmfule and blocked by #{source}",
+      references: references,
+      details: details.merge({ source: source })
+    })
+
+    # Also store it on the entity 
+    blocked_list = @entity.get_detail("detected_malicious") || [] 
+    @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
+
+  end    
 
 end
 end

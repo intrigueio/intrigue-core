@@ -2,7 +2,7 @@ module Intrigue
 module Task
 module Enrich
 class DnsRecord < Intrigue::Task::BaseTask
-
+  
   def self.metadata
     {
       :name => "enrich/dns_record",

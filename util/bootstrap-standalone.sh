@@ -30,7 +30,7 @@ echo "[+] Reconfigure Dpkg"
 sudo dpkg --configure -a
 
 echo "[+] Installing Apt Essentials"
-sudo apt-get -y install tzdata wget 
+sudo apt-get -y install tzdata wget
 sudo apt-get -y install lsb-core software-properties-common dirmngr apt-transport-https lsb-release ca-certificates locales
 
 ##### Add external repositories
@@ -249,7 +249,7 @@ if [ ! -d ~/.rbenv ]; then
   echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bash_profile
   echo 'eval "$(rbenv init -)"' >> ~/.bash_profile
   source ~/.bash_profile > /dev/null
-  
+
   # manually load it up...
   eval "$(rbenv init -)"
   export PATH="$HOME/.rbenv/bin:$PATH"
@@ -269,37 +269,37 @@ else
 fi
 
 # setup ruby
-if [ ! -e ~/.rbenv/versions/$RUBY_VERSION ]; then
-  echo "[+] Installing Ruby $RUBY_VERSION"
-  rbenv install $RUBY_VERSION
-  export PATH="$HOME/.rbenv/versions/$RUBY_VERSION:$PATH"
-else
-  echo "[+] Using Ruby $RUBY_VERSION"
-fi
+#if [ ! -e ~/.rbenv/versions/$RUBY_VERSION ]; then
+#  echo "[+] Installing Ruby $RUBY_VERSION"
+#  rbenv install $RUBY_VERSION
+#  export PATH="$HOME/.rbenv/versions/$RUBY_VERSION:$PATH"
+#else
+#  echo "[+] Using Ruby $RUBY_VERSION"
+#fi
 
-source ~/.bash_profile > /dev/null
-rbenv global $RUBY_VERSION
-echo "Ruby version: `ruby -v`"
+#source ~/.bash_profile > /dev/null
+#rbenv global $RUBY_VERSION
+#echo "Ruby version: `ruby -v`"
 
 # Install bundler
-echo "[+] Installing Latest Bundler"
-gem install bundler:2.0.2 --no-document
-rbenv rehash
+#echo "[+] Installing Latest Bundler"
+#gem install bundler:2.0.2 --no-document
+#rbenv rehash
 
 #####
 ##### INTRIGUE SETUP / CONFIGURATION
 #####
-echo "[+] Installing Gem Dependencies"
-cd $INTRIGUE_DIRECTORY
-bundle update --bundler
-bundle install
+#echo "[+] Installing Gem Dependencies"
+#cd $INTRIGUE_DIRECTORY
+#bundle update --bundler
+#bundle install
 
-echo "[+] Running System Setup"
-bundle exec rake setup
+#echo "[+] Running System Setup"
+#bundle exec rake setup
 
-echo "[+] Running DB Migrations"
-service postgresql start
-bundle exec rake db:migrate
+#echo "[+] Running DB Migrations"
+#service postgresql start
+#bundle exec rake db:migrate
 
 # TOOD ... remove this on next major release
 echo "[+] Intrigue services exist, removing... (ec2 legacy)"

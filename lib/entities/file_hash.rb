@@ -12,10 +12,8 @@ class FileHash < Intrigue::Model::Entity
   end
 
   def validate_entity
-    # check that we know the name of this hash type
-    supported_hash_types.map{|x| x[:type] }.include?(name) &&
-    # and that our regex for the hash matches
-    supported_hash_types.map{|x| x[:regex] }.include?(details["hash_type"])
+    # check that our regex for the hash matches
+    !supported_hash_types.select{|x| x[:regex] =~ name }.empty?
   end
 
   # just a list of supported types and their regexen

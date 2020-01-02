@@ -24,7 +24,7 @@ class SearchHaveIBeenPwned < BaseTask
     }
   end
 
-  
+
 
   ## Default method, subclasses must override this
   def run
@@ -33,7 +33,7 @@ class SearchHaveIBeenPwned < BaseTask
     email_address = _get_entity_name
 
     @api_key = _get_task_config("hibp_api_key")
-    unless @api_key 
+    unless @api_key
       _log_error "unable to proceed, no API key for HIBP provided"
       return
     end
@@ -50,7 +50,7 @@ class SearchHaveIBeenPwned < BaseTask
 
     # TODO deal with pagination here
     if results.count > 0
-      _log_good "Found #{results.count} paste entries!" 
+      _log_good "Found #{results.count} paste entries!"
     else
       _log "No results found."
     end
@@ -63,7 +63,7 @@ class SearchHaveIBeenPwned < BaseTask
          type: "email_found_in_paste",
          severity: 4,
          status: "confirmed",
-         description: "Email account found in paste: #{email_address} in " + 
+         description: "Email account found in paste: #{email_address} in " +
                      "#{result["Source"]} on #{result["Date"]} with #{result["EmailCount"] - 1} others.",
          details: result
       }) if _get_option("create_issues")
@@ -78,22 +78,22 @@ class SearchHaveIBeenPwned < BaseTask
 
     # TODO deal with pagination here
     if results.count > 0
-      _log_good "Found #{results.count} breach entries!" 
+      _log_good "Found #{results.count} breach entries!"
     else
       _log "No results found."
     end
 
     results.each do |result|
       _log "Result: #{result}"
-      next if _get_option("only_sensitive") && !result["IsSensitive"]      
+      next if _get_option("only_sensitive") && !result["IsSensitive"]
       # create an issue for each found result
       _create_issue({
         name: "Email Account Found In Public Breach",
         type: "email_found_in_breach",
         severity: 4,
         status: "confirmed",
-        description: "Email account was found in a breach of : #{result["Name"]}\n" +  
-                      "User: #{email_address} Domain: #{result["Domain"]}.\n" + 
+        description: "Email account was found in a breach of : #{result["Name"]}\n" +
+                      "User: #{email_address} Domain: #{result["Domain"]}.\n" +
                       "The details were leaked on #{result["BreachDate"]} and included #{result["DataClasses"].join(", ")}.\n" +
                       "About this Breach:\n#{result["Description"]}",
         details: result
@@ -108,22 +108,22 @@ class SearchHaveIBeenPwned < BaseTask
     max_tries = 9
     begin
       url = "https://haveibeenpwned.com/api/v3/#{endpoint}"
-      
+
       response = nil
-      json = nil 
+      json = nil
 
 
       until json || (try_counter == max_tries)
         try_counter += 1
         sleep_time = rand(300)
 
-        response = http_request(:get, url, nil, { 
+        response = http_request(:get, url, nil, {
           "hibp-api-key" => @api_key,
           "User-Agent" => "intrigue-core #{IntrigueApp.version}",
           "Accept" => "application/json"
         })
 
-        unless response 
+        unless response
           _log_error "Unable to get response, sleeping #{sleep_time}s"
           sleep sleep_time
           next
@@ -134,21 +134,21 @@ class SearchHaveIBeenPwned < BaseTask
           json = JSON.parse(response.body)
 
           # in case it's blank
-          unless json 
+          unless json
             _log_error "Unable to get response, sleeping #{sleep_time}s"
             sleep sleep_time
             next
           end
-          
-          # okay 
-          status_code = json["statusCode"]
-          if status_code.to_i == 429 
+
+          # okay
+          status_code = json["statuscode"]
+          if status_code.to_i == 429
             _log_error "Rate limit hit, sleeping #{sleep_time}s"
-            json = nil # reset 
+            json = nil # reset
             sleep sleep_time
           elsif status_code.to_i == 503
             _log_error "Service unavailable, sleeping #{sleep_time}s"
-            json = nil # reset 
+            json = nil # reset
             sleep sleep_time
           end
 

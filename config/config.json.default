@@ -54,6 +54,18 @@
       "uri": "https://aws.amazon.com/",
       "comment": ""
     },
+    "adblockplus_username": {
+      "value": "",
+      "uri": "",
+      "editable": "true",
+      "comment": ""
+    },
+    "adblockplus_api_key": {
+      "value": "",
+      "uri": "",
+      "editable": "true",
+      "comment": ""
+    },
     "aws_secret_access_key": {
       "value": "XXX",
       "editable": "true",
@@ -111,6 +123,18 @@
     "data_gov_api_key": {
       "value": "XXX",
       "uri": "https://api.data.gov/signup/",
+      "editable": "true",
+      "comment": ""
+    },
+    "dehashed_username": {
+      "value": "",
+      "uri": "https://dehashed.com/",
+      "editable": "true",
+      "comment": ""
+    },
+    "dehashed_api_key": {
+      "value": "",
+      "uri": "https://dehashed.com/",
       "editable": "true",
       "comment": ""
     },
@@ -231,6 +255,12 @@
     "security_trails_api_key": {
       "value": "",
       "uri": "https://securitytrails.com/corp/apidocs",
+      "editable": "true",
+      "comment": ""
+    },
+    "spyonweb_api_key": {
+      "value": "XXX",
+      "uri": "https://api.spyonweb.com/",
       "editable": "true",
       "comment": ""
     },
