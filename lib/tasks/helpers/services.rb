@@ -23,7 +23,9 @@ module Services
     weak_tcp_services = [21, 23]  #possibly 25, but STARTTLS support is currently unclear
     weak_udp_services = [60, 1900, 5000]
 
-    ssl = true if [443, 6443, 8443, 10000].include?(port_num)
+    # set sssl if we end in 443 or are in our includeed list 
+    ssl = true if port_num.to_s =~ /443$/
+    ssl = true if [10000].include?(port_num)
 
     # Ensure we always save our host and key details.
     # note that we might add service specifics to this below
@@ -86,9 +88,9 @@ module Services
     end
 
     create_service_lambda = lambda do |h|
-      try_http_ports = [  80,81,82,83,84,85,88,443,888,3000,6443,
+      try_http_ports = [  80,81,82,83,84,85,88,443,888,3000,6443,7443,
                           8000,8080,8081,8087,8088,8089,8090,8095,
-                          8098,8161,8180,8443,8880, 8888,10000 ] 
+                          8098,8161,8180,8443,8880,8888,9443,10000 ] 
 
       # Handle web app case first
       if (protocol == "tcp" && try_http_ports.include?(port_num))

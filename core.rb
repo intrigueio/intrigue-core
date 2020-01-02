@@ -8,6 +8,10 @@ require 'cgi'
 require 'uri'
 require 'shellwords' # shell escapin'
 
+# Improved Json memory efficiency
+require 'yajl'
+require 'yajl/json_gem'
+
 # Sidekiq
 require 'sidekiq'
 require 'sidekiq/api'
