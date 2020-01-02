@@ -7,15 +7,14 @@ module Intrigue
         :name => "search_SpyOnWeb",
         :pretty_name => "Search SpyOnWEB",
         :authors => ["AnasBenSalah"],
-        :description => "This task hits the SpyOnWEB API for hosts sharing the same IP address, domains,
-         Google Analytics code, or Google Adsense code. ",
+        :description => "This task hits the SpyOnWEB API for hosts sharing the same IP address, domains, Google Analytics code, or Google Adsense code.",
         :references => [],
         :type => "discovery",
         :passive => true,
-        :allowed_types => ["IpAddress", "Domain", "Adsense", "Analytics"],
+        :allowed_types => ["IpAddress", "Domain", "AnalyticsId"],
         :example_entities => [{"type" => "IpAddress", "details" => {"name" => "192.0.78.13"}}],
         :allowed_options => [],
-        :created_types => ["IpAddress","Analytics", "DnsRecord", "Adsense"]
+        :created_types => ["IpAddress","AnalyticsId", "DnsRecord"]
       }
     end
 
@@ -30,17 +29,15 @@ module Intrigue
       api_key = _get_task_config("spyonweb_api_key")
 
       if entity_type == "IpAddress"
-         search_ip entity_name, api_key
+        search_ip entity_name, api_key
       elsif entity_type == "Domain"
-          search_domain entity_name, api_key
-      elsif entity_type == "Analytics"
-          search_Analytics entity_name, api_key
-      elsif entity_type == "Adsense"
-          search_Adsense entity_name, api_key
+        search_domain entity_name, api_key
+      elsif entity_type == "AnalyticsId"
+        search_adsense(entity_name, api_key) if entity_name =~ /^pub-\d*/i
+        search_analytics(entity_name,api_key) if entity_name =~ /^UA-\d*/i 
       else
-         _log_error "Unsupported entity type"
+        _log_error "Unsupported entity type"
       end
-
     end #end run
 
 
@@ -85,7 +82,7 @@ module Intrigue
             if json["result"]["domain"]["#{entity_name}"]["items"]["adsense"]
 
                 json["result"]["domain"]["#{entity_name}"]["items"]["adsense"].each do |u|
-                    _create_entity "Adsense" , "name" => u[0]
+                    _create_entity "AnalyticsId" , "name" => u[0]
                 end
 
             end
@@ -94,7 +91,7 @@ module Intrigue
           if json["result"]["domain"]["#{entity_name}"]["items"]["analytics"]
 
             json["result"]["domain"]["#{entity_name}"]["items"]["analytics"].each do |u|
-                _create_entity "Analytics" , "name" => u[0]
+                _create_entity "AnalyticsId" , "name" => u[0]
             end
 
           end
@@ -118,7 +115,7 @@ module Intrigue
 
 
     #Search for DNS record share the same google analytics id
-    def search_Analytics(entity_name,api_key)
+    def search_analytics(entity_name,api_key)
 
       begin
 
@@ -131,7 +128,7 @@ module Intrigue
             if json["status"] == "found"
 
               #create DnsRecord for domain share the specific google analytics id
-              json["result"]["analytics"]["#{entity_name.upcase }"]["items"].each do |u|
+              json["result"]["analytics"]["#{entity_name.upcase}"]["items"].each do |u|
 
                   _create_entity "DnsRecord" , "name" => u[0]
 
@@ -145,7 +142,7 @@ module Intrigue
       end
 
     #Search for DNS record share the same google adsense id
-    def search_Adsense(entity_name,api_key)
+    def search_adsense(entity_name,api_key)
 
       begin
 

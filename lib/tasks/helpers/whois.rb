@@ -189,8 +189,6 @@ module Whois
     ripe_uri = "https://stat.ripe.net/data/address-space-hierarchy/data.json?resource=#{lookup_string}/32"
     json = JSON.parse(http_get_body(ripe_uri))
 
-    _log "Got RIPE Response: #{json}"
-
     data = json["data"]
     if data["last_updated"]
       range = data["last_updated"].first["ip_space"]

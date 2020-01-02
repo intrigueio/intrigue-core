@@ -28,8 +28,8 @@ class SearchShodan < BaseTask
     api_key = _get_task_config "shodan_api_key"
     search_term = _get_entity_name
 
-    @client = Client::Search::Shodan::ApiClient.new(api_key)
-    response = @client.search_ip(search_term)
+    client = Client::Search::Shodan::ApiClient.new(api_key)
+    response = client.search_ip(search_term)
 
     # check to make sure we got a response.
     unless response && response["data"]
@@ -52,7 +52,7 @@ class SearchShodan < BaseTask
 
       # Create all hostnames
       resp["hostnames"].each do |h|
-        _log_good "Creating hostname: #{h}"
+        _log_good "Creating dns record: #{h}"
         _create_entity "DnsRecord", "name" => "#{h}"
       end
 

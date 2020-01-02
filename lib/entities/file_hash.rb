@@ -13,7 +13,7 @@ class FileHash < Intrigue::Model::Entity
 
   def validate_entity
     # check that our regex for the hash matches
-    !supported_hash_types.map{|x| x[:regex] =~ name }.compact.empty?
+    !supported_hash_types.select{|x| x[:regex] =~ name }.empty?
   end
 
   # just a list of supported types and their regexen
