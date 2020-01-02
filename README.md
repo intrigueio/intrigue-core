@@ -54,14 +54,22 @@ Task Result: {"result_id":66103}
 ### API SDK (Ruby)
 A Ruby gem is available for your convenience: [![Gem Version](https://badge.fury.io/rb/intrigue_api_client.svg)](http://badge.fury.io/rb/intrigue_api_client)
 
-
-# Developers
+# Setting up a development environment
 
 To get started setting up a development environment, follow the instructions below!
 
-### Setting up a development environment
-
 While you can build a local setup and develop, we'd suggest starting with one of the following setup guides:
 
- * Vagrant - http://core.intrigue.io/getting-started-with-intrigue-core-on-vagrant-virtualbox/
- * Docker - https://core.intrigue.io/2017/03/07/using-intrigue-core-with-docker/
+ * Ubuntu/Debian: https://github.com/intrigueio/intrigue-core/wiki/Setting-up-a-Test-Environment-on-Ubuntu-Linux
+ * Vagrant: http://core.intrigue.io/getting-started-with-intrigue-core-on-vagrant-virtualbox/
+ * Docker: https://core.intrigue.io/2017/03/07/using-intrigue-core-with-docker/
+
+You'll probably want to take a look at the following resources: 
+
+ * Key System Files: https://github.com/intrigueio/intrigue-core/wiki/Understanding-Intrigue-Core%3A-Key-System-Files
+
+# Contributors
+
+Intrigue Core would not be possible without hard work, time, and attention from the following contributors: 
+
+ * [Anas Ben Salah](https://twitter.com/bensalah_anas)
