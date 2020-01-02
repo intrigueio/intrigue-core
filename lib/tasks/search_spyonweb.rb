@@ -4,8 +4,8 @@ module Intrigue
 
     def self.metadata
       {
-        :name => "search_SpyOnWeb",
-        :pretty_name => "Search SpyOnWEB",
+        :name => "search_spyonweb",
+        :pretty_name => "Search SpyOnWeb",
         :authors => ["AnasBenSalah"],
         :description => "This task hits the SpyOnWEB API for hosts sharing the same IP address, domains, Google Analytics code, or Google Adsense code.",
         :references => [],

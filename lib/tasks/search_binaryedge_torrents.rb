@@ -6,7 +6,7 @@ class SearchBinaryEdgeTorrents < BaseTask
     {
       :name => "search_binaryedge_torrents",
       :pretty_name => "Search BinaryEdge Torrent",
-      :authors => ["jcran", "AnasBenSalah"],
+      :authors => ["Anas Ben Salah"],
       :description => "This task hits the BinaryEdge API for a given" + 
         "IP, and tells us if the address has seen activity consistent with torrenting", 
       :references => [],

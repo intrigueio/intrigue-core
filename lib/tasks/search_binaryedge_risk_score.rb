@@ -6,7 +6,7 @@ class SearchBinaryedgeRiskScore < BaseTask
     {
       :name => "search_binaryedge_risk_score",
       :pretty_name => "Search BinaryEdge Risk Score",
-      :authors => ["AnasBenSalah"],
+      :authors => ["Anas Ben Salah"],
       :description => "This task hits the BinaryEdge API and provides " +
                       "a risk score detail for a given IPAddress. It can optionally " + 
                       "create an issue for high risk IPs.", 

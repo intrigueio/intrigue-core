@@ -6,7 +6,7 @@ module Intrigue
       {
         :name => "search_binaryedge",
         :pretty_name => "Search BinaryEdge",
-        :authors => ["jcran","AnasBenSalah"],
+        :authors => ["jcran","Anas Ben Salah"],
         :description => "This task hits the BinaryEdge API for a given IpAddress, DnsRecord or Domain, and " +
           "create new entities such as NetworkServices and Uri, as well as associated host details.",
         :references => [],
