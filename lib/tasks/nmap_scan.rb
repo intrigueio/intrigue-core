@@ -44,10 +44,10 @@ class NmapScan < BaseTask
       nmap_options = ""
       nmap_options << "-6" if scan_item =~ /:/
 
-      # construct port list 
+      # construct port list
       port_list = "-p "
       port_list << _get_option("tcp_ports") if _get_option("tcp_ports").split(",").count > 0
-      port_list << "," if _get_option("udp_ports").split(",").count > 0 
+      port_list << "," if _get_option("udp_ports").split(",").count > 0
       port_list << _get_option("udp_ports").split(",").map{|p| "U:#{p}" }.join(",")
 
       # shell out to nmap and run the scan
@@ -70,15 +70,15 @@ class NmapScan < BaseTask
 
       # Create entities for each discovered service
       parser.each_host do |host|
-        
+
         _log "Handling nmap data for #{host.ip}"
         _log "Total ports: #{host.ports.count}"
         _log "Total open ports: #{host.each_port.select{|p| p.state == :open}.count}"
 
         # Handle the case of a netblock or domain
-        if @entity.type_string == "NetBlock"   || 
-           @entity.type_string == "DnsRecord"  || 
-           @entity.type_string == "Domain" 
+        if @entity.type_string == "NetBlock"   ||
+           @entity.type_string == "DnsRecord"  ||
+           @entity.type_string == "Domain"
           # Only create if we've got ports to report.
           ip_entity = _create_entity("IpAddress", { "name" => host.ip } )
         else
@@ -89,7 +89,7 @@ class NmapScan < BaseTask
         ip_entity.set_detail("os", host.os.matches)
 
         # create an array to save all port details for this host
-        host_details = [] 
+        host_details = []
 
         # iterate through all open ports
         host.open_ports.each do |port|
@@ -99,7 +99,7 @@ class NmapScan < BaseTask
 
           # create a network service entity
           _create_network_service_entity(
-            ip_entity,  
+            ip_entity,
             port.number,
             "#{port.protocol}",
             { "nmap" => port_details})
@@ -109,7 +109,7 @@ class NmapScan < BaseTask
 
         end # end ports
 
-        # set the details      
+        # set the details
         ip_entity.set_detail("nmap", host_details)
         host_details = nil
 

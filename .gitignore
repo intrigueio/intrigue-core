@@ -27,3 +27,4 @@ data/iana/data-raw-table
 data/public_suffix_list.clean.txt
 data/tlds-alpha-by-domain.txt
 data/nvd
+Procfile
