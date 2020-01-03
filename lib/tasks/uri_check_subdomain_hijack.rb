@@ -97,7 +97,8 @@ class UriCheckSudomainHijack  < BaseTask
         _create_hijackable_subdomain_issue("Shopify", uri, "potential") unless (uri =~ /shopify.com/ || uri =~ /myshopify.com/) 
 
       elsif response.body =~ /<title>Statuspage \| Hosted Status Page/i
-        _create_hijackable_subdomain_issue("Statuspage", uri, "potential") unless (uri =~ /statuspage.com/ || uri =~ /statuspage.io/) 
+        _create_hijackable_subdomain_issue("Statuspage", uri, "potential") unless (
+          uri =~ /statuspage.com/ || uri =~ /statuspage.io/ || uri =! /amazonaws.com/) 
 
       #elsif response.body =~ /page not found/i
       #  _create_hijackable_subdomain_issue "Strikingly", uri, "potential"
