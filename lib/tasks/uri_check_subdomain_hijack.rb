@@ -87,7 +87,7 @@ class UriCheckSudomainHijack  < BaseTask
       elsif response.body =~ /Unrecognized domain/i
         _create_hijackable_subdomain_issue "Mashery", uri, "potential"
       
-      elsif response.body =~ /404 error unknown site\!/i
+      elsif response.body =~ /The gods are wise, but do not know of the site which you seek\!/i
         _create_hijackable_subdomain_issue "Pantheon", uri, "potential"
       
       elsif response.body =~ /Project doesnt exist... yet!/i
