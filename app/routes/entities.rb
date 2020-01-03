@@ -28,9 +28,9 @@ class IntrigueApp < Sinatra::Base
 
       content_type 'application/json'
       attachment "#{@project_name}.json"
-      result = ""
-      selected_entities.each  { |e| result << "#{e.export_json}\n" }
-      return result
+      result = []
+      selected_entities.each  { |e| result << "#{e.export_json}" }
+      return result.to_json
 
     else # normal page
 
