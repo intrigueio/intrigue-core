@@ -128,7 +128,7 @@ class EntityManager
       next if seed_type_string == "IpAddress"
 
       # check if the seed matches a non-traversable entity
-      r = project.standard_exception?(s.name, seed_type_string)
+      r = project.standard_no_traverse?(s.name, seed_type_string)
 
       # okay so if a seed is in the standard list we can prevent it from becoming an exception
       skip_regexes << r if r
@@ -142,11 +142,11 @@ class EntityManager
     end
 
     # check if this is actually a no-traverse for this proj
-    exception_pattern = project.standard_no_traverse?(name, type_string, skip_regexes)
+    traversable = project.traversable_entity?(name, type_string, skip_regexes)
 
     # Check if there's an existing entity, if so, merge and move forward
     if entity
-      tr.log_good "Existing Entity: #{type_string} #{name}. No-Traverse: #{exception_pattern}"
+      tr.log_good "Existing Entity: #{type_string} #{name}. Traversable: #{traversable}"
 
       entity.set_details(details.to_h.deep_merge(entity.details.to_h))
 
@@ -156,7 +156,7 @@ class EntityManager
       entity_already_existed = true
 
     else
-      tr.log_good "New Entity: #{type_string} #{name}. No-Traverse: #{exception_pattern}"
+      tr.log_good "New Entity: #{type_string} #{name}. Traversable: #{traversable}"
 
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
@@ -170,7 +170,7 @@ class EntityManager
           :project_id => project.id,
           :type => type.to_s,
           :details => details,
-          :hidden => (exception_pattern ? true : false ),
+          :hidden => (traversable ? false : true ),
           :alias_group_id => g.id
         }
 
@@ -288,18 +288,14 @@ class EntityManager
 
     # ENRICHMENT LAUNCH
     if tr.auto_enrich && !entity_already_existed
-      #if !exception_pattern
-        # Check if we've alrady run first and return gracefully if so
-        if entity.enriched
-          tr.log "Skipping enrichment... already completed!"
-        else
-          # starts a new background task... so anything that needs to happen from
-          # this point should happen in that new background task
-          entity.enrich(tr)
-        end
-      #else
-      #  tr.log "Skipping enrichment... this is a no-traverse!"
-      #end
+      # Check if we've alrady run first and return gracefully if so
+      if entity.enriched
+        tr.log "Skipping enrichment... already completed!"
+      else
+        # starts a new background task... so anything that needs to happen from
+        # this point should happen in that new background task
+        entity.enrich(tr)
+      end
     else
       tr.log "Skipping enrichment... enrich not enabled!" unless tr.auto_enrich
       tr.log "Skipping enrichment... entity exists!" if entity_already_existed

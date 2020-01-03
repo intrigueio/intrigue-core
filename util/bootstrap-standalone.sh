@@ -37,7 +37,6 @@ sudo apt-get -y install lsb-core software-properties-common dirmngr apt-transpor
 
 # chrome repo
 echo "[+] Installing Chromium"
-#sudo apt-get install software-properties-common
 sudo add-apt-repository ppa:canonical-chromium-builds/stage
 sudo apt-get update
 sudo apt-get -y install chromium-browser
@@ -241,9 +240,9 @@ sudo -u postgres createdb intrigue_dev --owner intrigue
 
 
 ##### Install rbenv
-echo "[+] Installing & Configuring rbenv"
 if [ ! -d ~/.rbenv ]; then
-
+  echo "[+] Installing & Configuring rbenv"
+  
   git clone https://github.com/rbenv/rbenv.git ~/.rbenv
   cd ~/.rbenv && src/configure && make -C src
   echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bash_profile
@@ -253,6 +252,7 @@ if [ ! -d ~/.rbenv ]; then
   # manually load it up...
   eval "$(rbenv init -)"
   export PATH="$HOME/.rbenv/bin:$PATH"
+  
   # ruby-build
   mkdir -p ~/.rbenv/plugins
   git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
@@ -269,37 +269,37 @@ else
 fi
 
 # setup ruby
-#if [ ! -e ~/.rbenv/versions/$RUBY_VERSION ]; then
-#  echo "[+] Installing Ruby $RUBY_VERSION"
-#  rbenv install $RUBY_VERSION
-#  export PATH="$HOME/.rbenv/versions/$RUBY_VERSION:$PATH"
-#else
-#  echo "[+] Using Ruby $RUBY_VERSION"
-#fi
+if [ ! -e ~/.rbenv/versions/$RUBY_VERSION ]; then
+  echo "[+] Installing Ruby $RUBY_VERSION"
+  rbenv install $RUBY_VERSION
+  export PATH="$HOME/.rbenv/versions/$RUBY_VERSION:$PATH"
+else
+  echo "[+] Using Ruby $RUBY_VERSION"
+fi
 
-#source ~/.bash_profile > /dev/null
-#rbenv global $RUBY_VERSION
-#echo "Ruby version: `ruby -v`"
+source ~/.bash_profile > /dev/null
+rbenv global $RUBY_VERSION
+echo "Ruby version: `ruby -v`"
 
 # Install bundler
-#echo "[+] Installing Latest Bundler"
-#gem install bundler:2.0.2 --no-document
-#rbenv rehash
+echo "[+] Installing Latest Bundler"
+gem install bundler:2.0.2 --no-document
+rbenv rehash
 
 #####
 ##### INTRIGUE SETUP / CONFIGURATION
 #####
-#echo "[+] Installing Gem Dependencies"
-#cd $INTRIGUE_DIRECTORY
-#bundle update --bundler
-#bundle install
+echo "[+] Installing Gem Dependencies"
+cd $INTRIGUE_DIRECTORY
+bundle update --bundler
+bundle install
 
 #echo "[+] Running System Setup"
-#bundle exec rake setup
+bundle exec rake setup
 
 #echo "[+] Running DB Migrations"
-#service postgresql start
-#bundle exec rake db:migrate
+service postgresql start
+bundle exec rake db:migrate
 
 # TOOD ... remove this on next major release
 echo "[+] Intrigue services exist, removing... (ec2 legacy)"
