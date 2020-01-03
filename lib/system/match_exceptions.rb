@@ -36,7 +36,7 @@ module MatchExceptions
   #
   # RETURNS A STRING (THE EXCEPTION) OR FALSE
   #
-  def standard_exception?(entity_name, type_string="Domain", skip_exceptions=[])
+  def standard_no_traverse?(entity_name, type_string="Domain", skip_exceptions=[])
 
     out = false
 

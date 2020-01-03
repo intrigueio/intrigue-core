@@ -37,6 +37,14 @@ task :clean do
   end
 end
 
+desc "Get Global Namespace"
+task :load_global_namespace do
+  puts "Pulling global namespace"
+  require './core'
+  Intrigue::Model::GlobalEntity.load_global_namespace(ENV["INTRIGUEIO_DATA_API_KEY"])
+  puts "Done pulling global namespace"
+end
+
 desc "System Setup"
 task :setup do
 
@@ -132,59 +140,6 @@ task :setup do
   puts "[+] Complete!"
 
 end
-
-desc "Reset Workers"
-task :reset_workers do
-  puts "[ ] Resetting workers"
-  require './core'
-  Intrigue::Model::Project.all.each do |p|
-    puts "[+] Clean state for #{p.name}"
-    p.graph_generation_in_progress=false
-    p.save
-  end
-end
-
-#desc "Run Specs"
-#task :spec do
-#end
-
-#desc "Run Integration Specs (requires API running)"
-#task :integration do
-#  t.rspec_opts = "--pattern spec/integration/*_spec.rb"
-#end
-
-=begin
-# database set up
-def setup_database
-  require "sequel"
-
-  options = {
-    :max_connections => 16,
-    :pool_timeout => 240
-  }
-
-  database_config = YAML.load_file("#{$intrigue_basedir}/config/database.yml")
-  database_host = database_config[$intrigue_environment]["host"] || "localhost"
-  database_port = database_config[$intrigue_environment]["port"] || 5432
-  database_user = database_config[$intrigue_environment]["user"]
-  database_pass = database_config[$intrigue_environment]["password"]
-  database_name = database_config[$intrigue_environment]["database"]
-  database_debug = database_config[$intrigue_environment]["debug"]
-
-  if database_pass
-    $db = Sequel.connect("postgres://#{database_user}:#{database_pass}@#{database_host}:#{database_port}/#{database_name}", options)
-  else
-    $db = Sequel.connect("postgres://#{database_user}@#{database_host}:#{database_port}/#{database_name}", options)
-  end
-
-  $db.loggers << Logger.new($stdout) if database_debug
-
-  # Allow datasets to be paginated
-  $db.extension :pagination
-  Sequel.extension :pg_json_ops
-  Sequel.extension :migration
-end
-=end
 
 namespace :db do
   desc "Prints current schema version"

@@ -22,7 +22,7 @@ class IntrigueApp < Sinatra::Base
     post '/:project/config?' do
       @project_name = params[:project]
       @project = Intrigue::Model::Project.first(:name => @project_name)
-      @project.additional_exception_list = @params["exception_strings"].split("\n").map{|x|x.strip}.sort.uniq
+      @project.allowed_namespaces = @params["allowed_namespaces"].split("\n").map{|x|x.strip}.sort.uniq
       @project.save
 
     redirect "/#{@project_name}/config"

@@ -53,6 +53,12 @@ module Intrigue
       ancestors.uniq
       end
 
+      def match_entity_string?(entity_type, entity_name)
+        return true if (self.type_string.downcase == entity_type.downcase && 
+          self.name.downcase == entity_name.downcase)
+      false
+      end 
+
       # default method that scopes/unscopes entities (can be overridden)
       # TODO ... maybe we move the logic of details that exists in entity_manager here?
       def scoped?
@@ -238,7 +244,7 @@ module Intrigue
       # false otherwise
       def match?(entity)
         if ( entity.name == name && entity.type == type )
-            return true
+          return true
         end
       false
       end

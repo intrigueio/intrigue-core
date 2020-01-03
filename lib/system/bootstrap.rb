@@ -39,14 +39,15 @@ module Bootstrap
 
       project.options = p["project_options"] || []
       project.use_standard_exceptions = p["use_standard_exceptions"] || true
+      project.allowed_namespaces = p["allowed_namespaces"] || []
+      project.save 
 
+      # Add our exceptions
+      puts "Adding exceptions to the database"
       if config["additional_exception_list"]
-        project.additional_exception_list = config["additional_exception_list"].sort.to_a
-      else
-        project.additional_exception_list = []
+        _add_no_traverse_entities(project.id, config["additional_exception_list"].sort.to_a)
       end
-
-      project.save
+      puts "Done!"
 
       # parse up the seeds
       parsed_seeds = p["seeds"].map{|s| _parse_entity s["entity"] }
@@ -72,7 +73,6 @@ module Bootstrap
 
             while entity = work_q.pop(true)
               next unless entity # handle nil entries
-              @task_result.log "Working on seed: #{entity}" if @task_result
 
               # Create & scope the entity
               created_entity = Intrigue::EntityManager.create_first_entity(

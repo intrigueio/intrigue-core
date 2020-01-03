@@ -142,7 +142,7 @@ class EntityManager
     end
 
     # check if this is actually a no-traverse for this proj
-    exception_pattern = project.exception_entity?(name, type_string, skip_regexes)
+    exception_pattern = project.standard_no_traverse?(name, type_string, skip_regexes)
 
     # Check if there's an existing entity, if so, merge and move forward
     if entity

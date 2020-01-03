@@ -60,17 +60,23 @@ module Intrigue
 
       encoded_screenshot=nil
       
-      until encoded_screenshot
+      max_retries = 5 
+      tries = 0
+      until encoded_screenshot || (tries > max_retries)
+        tries +=1
         chrome_port = "#{ENV["CHROME_PORT"]}".to_i || 9222
         begin 
           encoded_screenshot = _navigate_and_screenshot(url)
           
-          sleep 1
+          sleep 3
+
           # Tear down the service (it'll auto-restart via process manager...  
-          # so first check that the port number has been set)
-          
+          # so first check that the port number has been set)  
           _killit(chrome_port)
 
+        # WARN: NoMethodError: undefined method `bytesize' for :eof:Symbol
+        rescue NoMethodError => e 
+          _killit(chrome_port)
         rescue Socketry::TimeoutError => e
           _killit(chrome_port)
         end

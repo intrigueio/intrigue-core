@@ -2,7 +2,7 @@ module Intrigue
   module Model
     class Project < Sequel::Model
       plugin :validation_helpers
-      plugin :serialization, :json, :options, :handlers, :additional_exception_list
+      plugin :serialization, :json, :options, :handlers, :allowed_namespaces
 
       one_to_many :logger
       one_to_many :task_results
@@ -37,7 +37,11 @@ module Intrigue
 
       def seed_entity?(entity_name, type_string)
         seeds.each do |s|
-          return true if entity_name == s.name && type_string == s.type.to_s
+          puts "Checking seed #{s} vs #{entity_name} #{type_string}"
+          if s.match_entity_string?(type_string, entity_name)
+            puts "It's a seed!"
+            return true 
+          end
         end
       false
       end
@@ -161,41 +165,26 @@ module Intrigue
       # exception list. Currently only used on project, but could be included
       # in task_result or scan_result. Note that they'd need the "additional_exception_list"
       # to be populated (automated by bootstrap)
-      def exception_entity?(entity_name, type_string=nil, skip_regexes)
+      def traversable_entity?(entity_name, type_string=nil, skip_regexes)
+
+        puts "Checking if #{type_string} #{entity_name} matches our no-traverse list"
 
         # if it's a seed exception, can't be an exception.
-        return false if seed_entity?(type_string,entity_name)
+        return true if seed_entity?(type_string,entity_name)
 
-        # Check standard exceptions first
-        return false if standard_exception?(entity_name, type_string, skip_regexes)
+        # Check standard exceptions (hardcoded list) first
+        # if we show up here, we skip 
+        if use_standard_exceptions
+          return false if standard_no_traverse?(entity_name, type_string, skip_regexes)
+        end
 
         # if we don't have a list, safe to return false now, otherwise proceed to additional exceptions
         # which are provided as an attribute on the object
-        return false unless additional_exception_list
+        return true if Intrigue::Model::GlobalEntity.traversable?(
+            "Intrigue::Entity::#{type_string}", entity_name, self)
 
-        # check additional exception strings
-        out = false
-        
-        # first shorten up our list (speed it way up)
-        check_list = additional_exception_list.select{ |x| entity_name.include? x }
 
-        # then check each for a match 
-        check_list.each do |x|
-          # this needs a couple (3) cases:
-          # 1) case where we're an EXACT match (ey.com)
-          # 2) case where we're a subdomain of an exception domain (x.ey.com)
-          # 3) case where we're a uri and should match an exception domain (https://ey.com)
-          # none of these cases should match the case: jcpenney.com
-          if (entity_name.downcase =~ /^#{Regexp.escape(x.downcase)}(:[0-9]*)?$/ ||
-            entity_name.downcase =~ /^.*\.#{Regexp.escape(x.downcase)}(:[0-9]*)?$/ ||
-            entity_name.downcase =~ /^https?:\/\/#{Regexp.escape(x.downcase)}(:[0-9]*)?$/)
-            out = x
-          end
-        end
-
-        #puts "Checking if #{entity_name} matches our no-traverse list: #{out}"
-
-      out
+      false
       end
 
       # TODO - there must be a cleaner way? 

@@ -5,8 +5,8 @@ Project Created at: <%= @project.created_at %>
 <br>
 
 <form method=POST action="/<%=@project_name%>/config">
-  Additional Exception Strings (one per line):<br>
-	<textarea name=exception_strings rows="20" cols="80"><%= "#{@project.additional_exception_list.join("\n") if @project.additional_exception_list}" %> </textarea><br>
+  Allowed Global Namespaces for scoping (one per line):<br>
+	<textarea name=allowed_namespaces rows="20" cols="80"><%= "#{@project.allowed_namespaces.join("\n") if @project.allowed_namespaces}" %> </textarea><br>
 	<input type="submit" value="Submit" class="btn btn-primary">
   <br><br>
   <i>Note: Standard exceptions can be found in the file: <%=$intrigue_basedir%>/data/standard_name_exceptions.list</i> 
