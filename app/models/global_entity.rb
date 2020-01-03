@@ -10,7 +10,13 @@ module Intrigue
       end
 
       def self.parse_domain_name(record)
-        length = parse_tld(record).split(".").count + 1
+        split_tld = parse_tld(record).split(".")
+        if split_tld.last == "com" && split_tld.count > 1 # handle cases like amazonaws.com, netlify.com
+          length = split_tld.count
+        else
+          length = split_tld.count + 1
+        end
+        
       record.split(".").last(length).join(".")
       end
     
@@ -38,7 +44,7 @@ module Intrigue
     
           # then find the longest match
           if matches.count > 0
-            longest_match = matches.sort_by{|x| x.split(".").length }.sort_by{|x| x.length }.last
+            longest_match = matches.sort_by{|x| x.split(".").length }.last
             return longest_match
           end
     
@@ -149,44 +155,6 @@ module Intrigue
         end
       end
 
-=begin
-      def self.add_list(list)
-      
-          #{
-          #  "namespace" => "intrigueio",
-          #  "type" => "Intrigue::Entity::Domain",
-          #  "name" => "intrigue/io",
-          #}
-
-          # Create a queue to hold our list of exceptions & enqueue
-          work_q = Queue.new
-          list.each do |s|
-            work_q.push(s)
-          end
-      
-          # Create a pool of worker threads to work on the queue
-          max_threads = 1
-          max_threads = 10 if list.count > 10000
-          max_threads = 30 if list.count > 100000
-      
-          workers = (0...max_threads).map do
-            Thread.new do
-              _log "Starting thread to parse exception entities"
-              begin
-                while entity = work_q.pop(true) do
-                  next unless entity # handle nil entries
-                  Intrigue::Model::NoTraverseEntity.create(
-                    :namespace => entity["namespace"], 
-                    :name => entity["name"], 
-                    :type => entity["type"])
-                end
-              rescue ThreadError
-              end
-            end
-          end; "ok"
-          workers.map(&:join); "ok"
-        end
-=end
     end
   end
 end
