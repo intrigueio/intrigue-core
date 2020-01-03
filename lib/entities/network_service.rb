@@ -11,10 +11,7 @@ class NetworkService < Intrigue::Model::Entity
   end
 
   def validate_entity
-    name =~ /(\w.*):\d{1,5}/ &&
-    details["port"].to_s =~ /^\d{1,5}$/ &&
-    details["service"].to_s =~ /^\w*$/ &&
-    (details["protocol"].to_s == "tcp" || details["protocol"].to_s == "udp")
+    name =~ /[\d\.\:]+:\d{1,5}/
   end
 
   def detail_string

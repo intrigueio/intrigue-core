@@ -12,13 +12,7 @@ class NetBlock < Intrigue::Model::Entity
   end
 
   def validate_entity
-
-    # fail if they don't exist
-    name =~ /^\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}\/\d{1,2}$/
-
-    # warn if they don't exist:
-    # details["organization_reference"]
-    # details["whois_full_text"]
+    name =~ /^\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}\/\d{1,2}$/ || name =~ /^[\d\:]+\/\d{1,2}$/
   end
 
   def detail_string
