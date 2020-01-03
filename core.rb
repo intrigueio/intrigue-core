@@ -207,6 +207,8 @@ end
 # Core libraries
 require_relative "lib/all"
 
+
+
 #configure sentry.io error reporting (only if a key was provided)
 if (Intrigue::System::Config.config && Intrigue::System::Config.config["sentry_dsn"])
   require "raven"

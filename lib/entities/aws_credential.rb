@@ -10,7 +10,6 @@ class AwsCredential < Intrigue::Model::Entity
     }
   end
 
-
   def transform!
     # We'll want to obfuscate our name
     new_name = "#{name[0..3]}****"

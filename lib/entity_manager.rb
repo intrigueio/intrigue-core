@@ -116,33 +116,13 @@ class EntityManager
     # Find the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name)
 
-    # find exception regexes we can skip (if they're a seed or an ancestor)
-    skip_regexes = []
-
-    # check seeds
-    project.seeds.each do |s|
-      seed_type_string = s.type.to_s.split(":").last
-
-      # IpAddresses can't be used to skip, since they mess up netblocks
-      # TOOD.. this should really be a global list (see: netblock scoping)
-      next if seed_type_string == "IpAddress"
-
-      # check if the seed matches a non-traversable entity
-      r = project.standard_no_traverse?(s.name, seed_type_string)
-
-      # okay so if a seed is in the standard list we can prevent it from becoming an exception
-      skip_regexes << r if r
-    end
-
-    # simplify so we dont end up with a bunch of dupes
-    skip_regexes = skip_regexes.uniq.compact
-
-    if skip_regexes.count > 0
-      tr.log "This no-traverse regex will be bypassed since it matches a seed: #{skip_regexes}"
-    end
-
     # check if this is actually a no-traverse for this proj
-    traversable = project.traversable_entity?(name, type_string, skip_regexes)
+    if entity
+      traversable = entity.hidden
+    else
+      # checks to see if we should be hidden or not
+      traversable = project.traversable_entity?(name, type_string)
+    end
 
     # Check if there's an existing entity, if so, merge and move forward
     if entity

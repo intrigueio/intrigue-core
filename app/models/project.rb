@@ -37,9 +37,7 @@ module Intrigue
 
       def seed_entity?(entity_name, type_string)
         seeds.each do |s|
-          puts "Checking seed #{s} vs #{entity_name} #{type_string}"
           if s.match_entity_string?(type_string, entity_name)
-            puts "It's a seed!"
             return true 
           end
         end
@@ -86,7 +84,6 @@ module Intrigue
         #content_entities = entities.select{|x| x.get_detail("content").kind_of?(Array) and x.get_detail("content").count > 0 }
        # puts "Got content entities: #{content_entities.count} #{content_entities.first}"
         content_entity_headings = entities.map{ |x| x.get_detail("content").map{|h| h["name"]} if x.get_detail("content") }.flatten.uniq.compact
-        puts "Got Headings: #{content_entity_headings}"
         STDOUT.flush
 
         if content_entity_headings.count > 0
@@ -165,26 +162,28 @@ module Intrigue
       # exception list. Currently only used on project, but could be included
       # in task_result or scan_result. Note that they'd need the "additional_exception_list"
       # to be populated (automated by bootstrap)
-      def traversable_entity?(entity_name, type_string=nil, skip_regexes)
+      def traversable_entity?(entity_name, type_string)
 
         puts "Checking if #{type_string} #{entity_name} matches our no-traverse list"
 
         # if it's a seed exception, can't be an exception.
         return true if seed_entity?(type_string,entity_name)
 
-        # Check standard exceptions (hardcoded list) first
-        # if we show up here, we skip 
+        # Check standard exceptions (hardcoded list) first if we show up here (and we werent' a seed), we should skip
         if use_standard_exceptions
-          return false if standard_no_traverse?(entity_name, type_string, skip_regexes)
+          return false if standard_no_traverse?(entity_name, type_string)
         end
 
-        # if we don't have a list, safe to return false now, otherwise proceed to additional exceptions
-        # which are provided as an attribute on the object
-        return true if Intrigue::Model::GlobalEntity.traversable?(
-            "Intrigue::Entity::#{type_string}", entity_name, self)
-
-
-      false
+        # unless we can verify it against a domain, it's probably not that helpful to do this
+        # just assume we can't go any further
+        verifiable_entity_types = ["DnsRecord", "Domain", "EmailAddress", "NameServer" "Uri"]
+        if verifiable_entity_types.include? type_string
+          # if we don't have a list, safe to return false now, otherwise proceed to additional exceptions
+          # which are provided as an attribute on the object
+          return false unless Intrigue::Model::GlobalEntity.traversable?(type_string, entity_name, self)
+        end
+        
+      true
       end
 
       # TODO - there must be a cleaner way? 
