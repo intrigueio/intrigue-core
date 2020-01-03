@@ -14,7 +14,7 @@ module Validations
   end
 
   def dns_regex 
-    /(?=^.{1,253}$)(^((?!-)[a-zA-Z0-9-]{0,62}[a-zA-Z0-9]\.)*[a-zA-Z]{1,63}$)/
+    /(?=^.{1,253}$)(^((?!-)[\_a-zA-Z0-9-]{0,62}[a-zA-Z0-9]\.)*[a-zA-Z]{1,63}$)/
   end
 
 end
