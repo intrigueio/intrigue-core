@@ -38,9 +38,10 @@ class  CitrixNetscalerRceCVE201919781 < BaseTask
     end
 
     # Get the date to see it's vuln
-    date_string = last_modified_header.split(":").last
-
+    date_string = last_modified_header.gsub("Last-Modified:","").strip
+    _log "Got Date String: #{date_string}"
     # check that it matches our known vuln versions
+
     if Time.parse(date_string) < Time.parse("Sun, 17 Dec 2019 00:00:00 GMT")
       _log "Vulnerable, got date string: #{date_string}!"
       _create_issue({
