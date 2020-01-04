@@ -62,7 +62,7 @@ class UriCheckSudomainHijack  < BaseTask
 
       elsif response.body =~ /No such app/i 
         
-        if !(uri =~ /heroku.com/ || uri =~ /herokussl.com/ || uri =~ /herokudns.com/ || uri =~ /herokuapp.com/) 
+        if !(uri =~ /heroku.com/ || uri =~ /herokussl.com/ || uri =~ /herokudns.com/ || uri =~ /herokuapp.com/ || uri=~ /amazonaws.com/) 
           _create_hijackable_subdomain_issue "Heroku", uri, "potential"
         end
         
