@@ -318,7 +318,7 @@ class UriBruteFocusedContent < BaseTask
     ] 
     
     # add wordpress plugins list from a file
-    #File.open("#{$intrigue_basedir}/data/wordpress_plugins.list").each_line do |l|
+    #File.open("#{$intrigue_basedir}/data/tech/wordpress_plugins.list").each_line do |l|
     #  next if l =~ /^#/
     #  #_log "Adding Wordpress plugin check: #{l.strip}"
     #  wordpress_list << { path: "#{l.strip}/" , severity: 5,  body_regex: nil, status: "potential" }

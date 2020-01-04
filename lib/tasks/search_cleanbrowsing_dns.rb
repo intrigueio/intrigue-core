@@ -10,7 +10,7 @@ class SearchCleanBrowsingDns < BaseTask
       :references => ["Cleanbrowsing.org"],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["Domain"],
+      :allowed_types => ["Domain", "DnsRecord"],
       :example_entities => [{"type" => "Domain", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
       :created_types => []
@@ -34,7 +34,7 @@ class SearchCleanBrowsingDns < BaseTask
     if res.any?
       _log "Resolves to #{res.map{|x| "#{x.to_name}" }}. Seems we're good!"
     else
-      _malicious_entity_detected("CleanBrowsing ") 
+      _malicious_entity_detected("CleanBrowsing") 
     end
 
   end

@@ -12,7 +12,7 @@ class SearchComodoDns < BaseTask
       :references => ["Cleanbrowsing.org"],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["Domain"],
+      :allowed_types => ["Domain", "DnsRecord"],
       :example_entities => [{"type" => "Domain", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
       :created_types => []

@@ -11,6 +11,22 @@ module Data
     ] # possibly too aggressive
   end
 
+  def _service_name_for(port_num, proto)
+    service_name = nil
+    file = File.open("#{$intrigue_basedir}/data/service-names-port-numbers.csv","r")
+    file.read.split("\n").each do |line|
+      data = line.split(",")
+      line_port_num = data[1]
+      if line_port_num.to_i == port_num.to_i
+        if "#{data[2]}".upcase == proto.upcase
+          service_name = "#{data[0]}".upcase if data[0]
+        end
+      end
+    end
+    service_name || "UNKNOWN"
+  end
+
+
   def _allocated_ipv4_ranges(filter="ALLOCATED")
     ranges = []
     file = File.open("#{$intrigue_basedir}/data/iana/ipv4-address-space.csv","r")

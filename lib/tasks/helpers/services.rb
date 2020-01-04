@@ -465,7 +465,7 @@ module Services
     when 27017,27018,27019
       service = "MONGODB"
     else
-      service = "UNKNOWN"
+      service = _service_name_for(port_num, "tcp")
     end
   service
   end
@@ -485,7 +485,7 @@ module Services
     when 5000
       service = "UPNP"
     else
-      service = "UNKNOWN"
+      service = _port_name_for(port_num, "udp")
     end
   service 
   end

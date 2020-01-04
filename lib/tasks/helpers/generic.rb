@@ -109,8 +109,12 @@ module Generic
   end
 
   def _notify(message)
-    _log "Notifying via default channels"
-    Intrigue::NotifierFactory.default.each { |x| x.notify(message, @task_result) }
+    if Intrigue::NotifierFactory.default
+      _log "Notifying via default channels"
+      Intrigue::NotifierFactory.default.each { |x| x.notify(message, @task_result) }
+    else 
+      _log "Unable to notify on default channels!"
+    end
   end
 
   def _notify_type(notifier_type, message)
