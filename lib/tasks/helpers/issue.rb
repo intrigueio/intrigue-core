@@ -267,7 +267,7 @@ module Issue
   ###
   ### Malware Entities (network category)
   ###
-  def _malicious_entity_detected(source, severity=3, details={}, references=[])
+  def _malicious_entity_detected(source, source_desc=nil, severity=3, details={}, references=[])
     
     # create the issues
     _create_issue({
@@ -276,7 +276,7 @@ module Issue
       category: "network",
       severity: severity,
       status: "confirmed",
-      description: "This website has been deemed malicious or otherwise harmfule and blocked by #{source}",
+      description: "This website has been detected as malicious, fraudulent, or otherwise harmful by the source. It is currently blocked when resolving it via #{source}. #{source} provides this additional description:\n\n" + source_desc || "None",
       references: references,
       details: details.merge({ source: source })
     })

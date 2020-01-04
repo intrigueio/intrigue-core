@@ -7,7 +7,7 @@ class SearchAlienvaultOtx < BaseTask
       :name => "search_alienvault_otx",
       :pretty_name => "Search Alienvault OTX",
       :authors => ["Anas Ben Salah"],
-      :description => "This task searches AlienVault OTX via API and checks for related hostnames, IpAddresses & FileHashes",
+      :description => "This task searches AlienVault OTX via API and checks for related Hostnames, IpAddresses",
       :references => ["https://otx.alienvault.com/api"],
       :type => "discovery",
       :passive => true,
