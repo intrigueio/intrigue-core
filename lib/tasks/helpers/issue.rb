@@ -276,7 +276,7 @@ module Issue
       category: "network",
       severity: severity,
       status: "confirmed",
-      description: "This website has been detected as malicious, fraudulent, or otherwise harmful by the source. It is currently blocked when resolving it via #{source}. #{source} provides this additional description:\n\n" + source_desc || "None",
+      description: "This website has been detected as malicious, fraudulent, or otherwise harmful by the source. It is currently blocked when resolving it via #{source}. #{source} provides this additional description:\n\n" + (source_desc || "None"),
       references: references,
       details: details.merge({ source: source })
     })

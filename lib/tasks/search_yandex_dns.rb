@@ -2,7 +2,7 @@ require 'resolv'
 
 module Intrigue
 module Task
-class SearchYandexDnS < BaseTask
+class SearchYandexDns < BaseTask
 
 
   def self.metadata
