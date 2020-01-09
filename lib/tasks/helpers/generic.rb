@@ -43,7 +43,7 @@ module Generic
     name = hash.delete("name")
 
     # Create or merge the entity
-    EntityManager.create_or_merge_entity(@task_result, type, name, hash, primary_entity)
+    EntityManager.create_or_merge_entity(@task_result.id, type, name, hash, primary_entity)
   end
 
   ###

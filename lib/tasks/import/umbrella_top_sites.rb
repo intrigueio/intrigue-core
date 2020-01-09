@@ -27,6 +27,8 @@ class ImportUmbrellaTopSites < BaseTask
 
     _log_good "Downloading latest file"
     z = download_and_store "http://s3-us-west-1.amazonaws.com/umbrella-static/top-1m.csv.zip"
+    
+    domains = []
     # unzip
     _log_good "Extracting into memory"
     Zip::File.open(z) do |zip_file|
@@ -35,13 +37,17 @@ class ImportUmbrellaTopSites < BaseTask
         ### Do the thing 
         _log_good "Parsing out domains"
         entry.get_input_stream.read.split("\n").map do |l| 
-          domain = l.split(",").last.chomp
+          domains << l.split(",").last.chomp
           # create entities
-          e = _create_entity "Uri", { "name" => "http://#{domain}" }
-          _create_entity "Uri", { "name" => "https://#{domain}"}, e
         end
       end
     end
+
+    domains.each do |domain|
+      _create_entity "Uri", { "name" => "http://#{domain}" }
+      _create_entity "Uri", { "name" => "https://#{domain}" }
+    end
+
   end
 
 

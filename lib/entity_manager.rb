@@ -89,16 +89,11 @@ class EntityManager
   end
 
   # This method creates a new entity, and kicks off a machine
-  def self.create_or_merge_entity(task_result,type_string,name,details,primary_entity=nil)
-
-    unless task_result && type_string && name && details
-      task_result.log_error "Broken entity attempted: #{task_result}, #{type_string}##{name}, #{details}"
-      return
-    end
+  def self.create_or_merge_entity(task_result_id,type_string,name,details,primary_entity=nil)
 
     # Deal with canceled tasks and deleted projects!
     # Do a lookup to make sure we have the latest...
-    tr = Intrigue::Model::TaskResult.first(:id => task_result.id)
+    tr = Intrigue::Model::TaskResult.first(:id => task_result_id)
     return nil unless tr
 
     if tr.cancelled
