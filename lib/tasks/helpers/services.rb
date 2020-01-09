@@ -193,7 +193,14 @@ module Services
     # with the desired number of threads
     thread_count = (hosts.compact.count / 10) + 1 
     _log "Creating service (#{port_num}) on #{hosts.compact.map{|x|x.name}} with #{thread_count} threads."
-    _threaded_iteration(thread_count, hosts.compact, create_service_lambda)
+        
+    # Create our queue of work from the checks in brute_list
+    input_queue = Queue.new
+    hosts.compact.each do |item|
+      input_queue << item
+    end
+    
+    _threaded_iteration(thread_count, input_queue, create_service_lambda)
         
   end
 

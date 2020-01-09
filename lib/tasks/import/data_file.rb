@@ -51,6 +51,12 @@ class ImportDataFile < BaseTask
     # use a generic threaded iteration method to create them,
     # with the desired number of threads
     thread_count = _get_option "threads"
+
+    input_queue = Queue.new
+    entities.each do |item|
+      input_queue << item
+    end
+
     _threaded_iteration(thread_count, entities, lammylam)
 
   end
