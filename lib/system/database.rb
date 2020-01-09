@@ -36,10 +36,13 @@ def setup_database
 
   # Allow datasets to be paginated
   $db.extension :pagination
+  
+
 
   # Allow data to be stored / queryed in JSON format
-  ::Sequel.extension :pg_json_ops
-  ::Sequel.extension :migration, :core_extensions
+  $db.extension :pg_json
+  Sequel.extension :pg_json_ops
+  Sequel.extension :migration, :core_extensions
 
   ::Sequel::Model.plugin :update_or_create
 end

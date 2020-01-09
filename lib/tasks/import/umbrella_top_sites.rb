@@ -59,9 +59,6 @@ class ImportUmbrellaTopSites < BaseTask
       start_task("task_enrichment", project,nil, "enrich/uri", e, 1) if e
     end
 
-
-
-
   end
 
 
