@@ -34,14 +34,10 @@ class SearchCleanBrowsingDns < BaseTask
     if res.any?
       _log "Resolves to #{res.map{|x| "#{x.to_name}" }}. Seems we're good!"
     else
-<<<<<<< HEAD:lib/tasks/search_cleanbrowsing_dns.rb
-      _malicious_entity_detected("CleanBrowsing") 
-=======
       description = "The Cleanbrowsing DNS security filter focuses on restricting access " + 
         "to malicious activity. It blocks phishing, spam and malicious domains."
         
       _malicious_entity_detected("CleanBrowsing", description) 
->>>>>>> develop:lib/tasks/search_cleanbrowsing.rb
     end
 
   end
