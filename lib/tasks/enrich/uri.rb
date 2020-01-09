@@ -265,7 +265,7 @@ class Uri < Intrigue::Task::BaseTask
 
     $db.transaction do
       new_details = @entity.details
-      new_details.merge({
+      new_details.merge!({
         "alt_names" => alt_names,
         "api_endpoint" => api_enabled,
         "code" => response.code,
