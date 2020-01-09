@@ -48,7 +48,7 @@ class ImportUmbrellaTopSites < BaseTask
     entity_ids = []
     
     # Create the entities 
-    domains.first(100).each do |domain|
+    domains.each do |domain|
       entity_ids << Intrigue::EntityManager.create_bulk_entity(project.id, 
         "Intrigue::Entity::Uri", "http://#{domain}", {"name" => "http://#{domain}"}).id
     end
