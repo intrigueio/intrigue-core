@@ -4,6 +4,7 @@ class ImportUmbrellaTopSites < BaseTask
 
   include Intrigue::Task::Generic
   include Intrigue::Task::Web
+  include Intrigue::Task::Helper
 
   def self.metadata
     {
@@ -43,9 +44,10 @@ class ImportUmbrellaTopSites < BaseTask
       end
     end
 
+    project = @entity.project
     domains.each do |domain|
-      _create_entity "Uri", { "name" => "http://#{domain}" }
-      _create_entity "Uri", { "name" => "https://#{domain}" }
+      e = Intrigue::EntityManager.create_bulk_entity(project.id, "Intrigue::Entity::Uri", "http://#{domain}", {})
+      start_task("task_enrichment", project,nil, "enrich/uri", e, 1) if e
     end
 
   end

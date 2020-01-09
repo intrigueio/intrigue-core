@@ -298,7 +298,7 @@ class Uri < Intrigue::Task::BaseTask
     # Check for other entities with this same response hash
     _log "Attempting to identify aliases"
     Intrigue::Model::Entity.scope_by_project_and_type(
-      @entity.project.name,"Uri").each do |e|
+      @entity.project.name,"Uri").paged_each(:rows_per_fetch => 200) do |e|
       next if @entity.id == e.id
 
       # Do some basic up front checking
