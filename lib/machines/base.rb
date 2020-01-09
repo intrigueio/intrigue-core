@@ -37,7 +37,8 @@ module Machine
         task_class = Intrigue::TaskFactory.create_by_name(task_name).class
         forced_queue = task_class.metadata[:queue]
 
-        new_task_result = start_task(forced_queue || "task_autoscheduled", project,
+        new_task_result = start_task(forced_queue || "task_autoscheduled", 
+                            project,
                             old_task_result.scan_result,
                             task_name,
                             entity,

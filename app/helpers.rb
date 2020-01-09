@@ -9,7 +9,7 @@ module Helper
   ###
   ### Helper method for starting a task run
   ###
-  def start_task(queue, project, existing_scan_result, task_name, entity, depth,
+  def start_task(queue, project, existing_scan_result_id, task_name, entity, depth,
         options=[], handlers=[], machine_name="external_discovery_light_active", auto_enrich=true, auto_scope=false)
 
     # Create the task result, and associate our entity and options
@@ -33,23 +33,23 @@ module Helper
     end
 
     # only assign handlers if this isn't a scan (in that case, we want to send the whole scan)
-    task_result.handlers = handlers unless (!existing_scan_result && depth > 1)
+    task_result.handlers = handlers unless (!existing_scan_result_id && depth > 1)
 
     # if we were passed a scan result, we know this new task
     # belongs to it, and we should associate those
-    if existing_scan_result
+    if existing_scan_result_id
 
       # we are in the middle of a change, let's preserve the recursive trail
-      task_result.scan_result_id = existing_scan_result.id
+      task_result.scan_result_id = existing_scan_result_id
       task_result.save_changes
 
       # lets also add one to the incomplete task count, so we can determine if we're actually done
-      existing_scan_result.increment_task_count
+      #existing_scan_result.increment_task_count
     end
 
     # If the depth is greater than 1, AND we don't have a
     # prexisting scan id, start a new scan
-    if !existing_scan_result && depth > 1
+    if !existing_scan_result_id && depth > 1
 
       new_scan_result = Intrigue::Model::ScanResult.create({
         :name => "#{machine_name}_on_#{entity.name}",

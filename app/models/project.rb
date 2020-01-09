@@ -164,7 +164,7 @@ module Intrigue
       # to be populated (automated by bootstrap)
       def traversable_entity?(entity_name, type_string)
 
-        puts "Checking if #{type_string} #{entity_name} matches our no-traverse list"
+        #puts "Checking if #{type_string} #{entity_name} matches our no-traverse list"
 
         # if it's a seed exception, can't be an exception.
         return true if seed_entity?(type_string,entity_name)

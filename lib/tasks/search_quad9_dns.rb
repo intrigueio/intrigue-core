@@ -37,7 +37,14 @@ class SearchQuad9DnS < BaseTask
     if res.any?
       _log "Resolves to #{res.map{|x| "#{x.to_name}" }}. Seems we're good!"
     else
-      _malicious_entity_detected("Quad9") 
+      description = "Quad9 routes your DNS queries through a secure network of servers around the " +  
+        "globe. The system uses threat intelligence from more than a dozen of the industry’s leading " +
+        "cyber security companies to give a real-time perspective on what websites are safe and what " +
+        "sites are known to include malware or other threats. If the system detects that the site you " + 
+        "want to reach is known to be infected, you’ll automatically be blocked from entry – keeping " +
+        "your data and computer safe."
+
+      _malicious_entity_detected("Quad9", description) 
     end
 
   end #end run

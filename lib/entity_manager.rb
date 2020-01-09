@@ -21,6 +21,24 @@ class EntityManager
   matches.first
   end
 
+  def self.create_bulk_entity(project_id,entity_type_string,entity_name,details)
+    
+    # create a group
+    g = Intrigue::Model::AliasGroup.create(:project_id => project_id)
+
+    # create the entity
+    klass = Intrigue::EntityManager.resolve_type_from_string(entity_type_string)
+    e = klass.create({
+      :name => entity_name.downcase,
+      :project_id => project_id,
+      :type => entity_type_string,
+      :details => details,
+      :hidden => false,
+      :scoped => true,
+      :alias_group_id => g.id
+    })
+  end
+
   def self.create_first_entity(project_name,type_string,name,details)
 
     # Save the original and downcase our name
@@ -89,16 +107,11 @@ class EntityManager
   end
 
   # This method creates a new entity, and kicks off a machine
-  def self.create_or_merge_entity(task_result,type_string,name,details,primary_entity=nil)
-
-    unless task_result && type_string && name && details
-      task_result.log_error "Broken entity attempted: #{task_result}, #{type_string}##{name}, #{details}"
-      return
-    end
+  def self.create_or_merge_entity(task_result_id,type_string,name,details,primary_entity=nil)
 
     # Deal with canceled tasks and deleted projects!
     # Do a lookup to make sure we have the latest...
-    tr = Intrigue::Model::TaskResult.first(:id => task_result.id)
+    tr = Intrigue::Model::TaskResult.first(:id => task_result_id)
     return nil unless tr
 
     if tr.cancelled

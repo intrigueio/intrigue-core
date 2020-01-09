@@ -23,20 +23,45 @@ class WordpressEnumeratePlugins < BaseTask
 
     uri = _get_entity_name
 
+    # First just get the easy stuff 
+    _set_entity_detail("wordpress_plugins", get_wordpress_parsable_plugins(uri) )
+    
+    # Then, attempt to brute
+    _set_entity_detail("wordpress_bruted_plugins", brute_wordpress_plugin_paths(uri) )
+
+  end # end run()
+
+  def brute_wordpress_plugin_paths(uri)
+
+    # add wordpress plugins list from a file
+    work_q = Queue.new
+    File.open("#{$intrigue_basedir}/data/tech/wordpress_plugins.list").each_line do |l|
+      next if l =~ /^#/
+      _log "Wordpress plugin check: #{l.strip}"
+      work_q.push({ path: "#{l.strip}/" , severity: 5,  body_regex: nil, status: "potential" })
+      work_q.push({ path: "#{l.strip}/readme.txt" , severity: 5,  body_regex: /Contributors:/i, status: "confirmed" })
+    end
+    
+    # then make the requests
+    results = make_http_requests_from_queue(uri, work_q, thread_count=5, false, false) # always create an issue
+    _log "Got matches: #{results}"
+  
+  results
+  end
+
+  def get_wordpress_parsable_plugins(uri)
+    
+    body = http_get_body "#{uri}/wp-json"
     begin
-      body = http_get_body "#{uri}/wp-json"
       parsed = JSON.parse body 
-      return nil unless parsed 
-
-      plugins = (parsed["namespaces"] || []).uniq.map{|x| x.gsub("\\","") }
-
-      _set_entity_detail("wordpress_plugins", plugins )
-
     rescue JSON::ParserError
       _log_error "Unable to parse!"
     end
+   
+    return nil unless parsed 
 
-  end # end run()
+    plugins = (parsed["namespaces"] || []).uniq.map{|x| x.gsub("\\","") }
+  end
 
 end
 end

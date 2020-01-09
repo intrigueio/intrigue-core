@@ -2,7 +2,7 @@ require 'resolv'
 
 module Intrigue
 module Task
-class SearchYandexDnS < BaseTask
+class SearchYandexDns < BaseTask
 
 
   def self.metadata
@@ -38,7 +38,13 @@ class SearchYandexDnS < BaseTask
     if res.any?
       _log "Resolves to #{res.map{|x| "#{x.to_name}" }}. Seems we're good!"
     else
-      _malicious_entity_detected("YandexDNS") 
+      
+      description = "When attempting to open a site, Yandex.DNS (Safe) will block the download " +
+      "of any information from it and warn the user. Yandex uses its own anti-virus software that " +  
+      "checks sites for malware. Yandex.DNS uses its own anti-virus software operating on Yandex " +
+      "algorithms, as well as signature technology by Sophos."
+
+      _malicious_entity_detected("YandexDNS", description) 
     end
 
   end #end run

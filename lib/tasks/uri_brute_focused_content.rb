@@ -316,6 +316,7 @@ class UriBruteFocusedContent < BaseTask
       #{ path: '/wp-content/plugins/easy-wp-smtp/', severity: 2,  body_regex: /debug_log/i, status: "potential" },
       #{ path: '/wp-content/plugins/easy-wp-smtp/inc/', severity: 2,  body_regex: /debug_log/i, status: "potential" }
     ] 
+<<<<<<< HEAD
     
     # add wordpress plugins list from a file
     #File.open("#{$intrigue_basedir}/data/tech/wordpress_plugins.list").each_line do |l|
@@ -325,6 +326,9 @@ class UriBruteFocusedContent < BaseTask
     #  wordpress_list << { path: "#{l.strip}/readme.txt" , severity: 5,  body_regex: /Contributors:/i, status: "confirmed" }
     #end
 
+=======
+  
+>>>>>>> develop
     # Create our queue of work from the checks in brute_list
     work_q = Queue.new
     

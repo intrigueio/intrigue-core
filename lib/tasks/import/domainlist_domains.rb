@@ -55,7 +55,13 @@ class ImportDomainlists < BaseTask
     # use a generic threaded iteration method to create them,
     # with the desired number of threads
     thread_count = _get_option "threads"
-    _threaded_iteration(thread_count, domains, lammylam)
+
+    input_queue = Queue.new
+    domains.each do |item|
+      input_queue << item
+    end
+
+    _threaded_iteration(thread_count, input_queue, lammylam)
 
   end
 
