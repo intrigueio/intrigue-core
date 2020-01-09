@@ -38,17 +38,29 @@ class ImportUmbrellaTopSites < BaseTask
         ### Do the thing 
         _log_good "Parsing out domains"
         entry.get_input_stream.read.split("\n").map do |l| 
+          # Drop them into an array 
           domains << l.split(",").last.chomp
-          # create entities
         end
       end
     end
 
     project = @entity.project
+    entity_ids = []
+    
+    # Create the entities 
     domains.each do |domain|
-      e = Intrigue::EntityManager.create_bulk_entity(project.id, "Intrigue::Entity::Uri", "http://#{domain}", {})
+      entity_ids << Intrigue::EntityManager.create_bulk_entity(project.id, 
+        "Intrigue::Entity::Uri", "http://#{domain}", {}).id
+    end
+
+    # Now schedule enrichemnt 
+    entity_ids.each do |eid|
+      e = Intrigue::Entity::Uri.first :id => eid
       start_task("task_enrichment", project,nil, "enrich/uri", e, 1) if e
     end
+
+
+
 
   end
 
