@@ -114,6 +114,18 @@
       "editable": "true",
       "comment": ""
     },
+    "cloudflare_username": {
+      "value": "XXX",
+      "uri": "",
+      "editable": "true",
+      "comment": ""
+    },
+    "cloudflare_api_key": {
+      "value": "XXX",
+      "uri": "",
+      "editable": "true",
+      "comment": ""
+    },
     "corpwatch_api_key": {
       "value": "XXX",
       "uri": "http://api.corpwatch.org/register.php",
