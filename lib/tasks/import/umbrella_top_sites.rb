@@ -48,15 +48,15 @@ class ImportUmbrellaTopSites < BaseTask
     entity_ids = []
     
     # Create the entities 
-    domains.each do |domain|
+    domains.first(100).each do |domain|
       entity_ids << Intrigue::EntityManager.create_bulk_entity(project.id, 
-        "Intrigue::Entity::Uri", "http://#{domain}", {}).id
+        "Intrigue::Entity::Uri", "http://#{domain}", {"name" => "http://#{domain}"}).id
     end
 
     # Now schedule enrichemnt 
     entity_ids.each do |eid|
       e = Intrigue::Entity::Uri.first :id => eid
-      start_task("task_enrichment", project,nil, "enrich/uri", e, 1) if e
+      start_task("task_enrichment", project,nil, "enrich/uri", e, 1, [{"name" => "correlate_endpoints", "value" => false}]) if e
     end
 
   end

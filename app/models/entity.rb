@@ -188,7 +188,7 @@ module Intrigue
       def set_details(hash)
         begin
           self.set(:details => hash.sanitize_unicode)
-          save_changes
+          save
         rescue Sequel::NoExistingObject => e
           puts "Error saving details for #{self}: #{e}, deleted?"
         rescue Sequel::DatabaseError => e
