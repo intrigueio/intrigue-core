@@ -56,8 +56,8 @@ class  CitrixNetscalerRceCVE201919781 < BaseTask
       else
         _log "Not Vulnerable, couldnt match our regex: #{response.body}"
       end
-    elsif response.code.to_ == 403
-
+    elsif response.code.to_i == 403
+      _log "Not Vulnerable, invalid code: #{response.code}"
     end
 
   end
