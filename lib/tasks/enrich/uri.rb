@@ -264,7 +264,8 @@ class Uri < Intrigue::Task::BaseTask
     generator_string = generator_match.captures.first.gsub("\"","") if generator_match
 
     $db.transaction do
-      new_details = @entity.details.merge({
+      new_details = @entity.details
+      new_details.merge({
         "alt_names" => alt_names,
         "api_endpoint" => api_enabled,
         "code" => response.code,
@@ -293,10 +294,13 @@ class Uri < Intrigue::Task::BaseTask
 
       # Set the details, and make sure raw response data is a hidden (not searchable) detail
       @entity.set_details new_details
+      new_details = nil
     end
 
     # Check for other entities with this same response hash
     _log "Attempting to identify aliases"
+      # parse our content with Nokogiri
+    our_doc = "#{response.body}".sanitize_unicode
     Intrigue::Model::Entity.scope_by_project_and_type(
       @entity.project.name,"Uri").paged_each(:rows_per_fetch => 200) do |e|
       next if @entity.id == e.id
@@ -314,18 +318,10 @@ class Uri < Intrigue::Task::BaseTask
         next
       end
 
-      _log "Checking match candidate: #{e.name} #{e.get_detail("title")}"
-
-      # parse our content with Nokogiri
-      #our_doc = Nokogiri::HTML(open(a));nil
-      our_doc = "#{response.body}".sanitize_unicode
-
-      # parse them
-      #their_doc = Nokogiri::HTML(open(b));nil
+      # parse them & compare them
       their_doc = e.details["hidden_response_data"]
-
-      # compare them
-      diffs = parse_html_diffs(our_doc,their_doc)
+      diffs = parse_html_diffs(our_doc, their_doc)
+      their_doc = nil
 
       # if they're the same, alias
       if diffs.empty?
@@ -333,10 +329,12 @@ class Uri < Intrigue::Task::BaseTask
         e.alias_to @entity.alias_group_id
       else
         _log  "HTML Content Diffs for #{e.name}"
-        diffs.each do |d|
-          _log "DIFF #{d}"
-        end
+        #diffs.each do |d|
+        #  _log "DIFF #{d}"
+        #end
       end
+
+      e = nil 
     end
 
   end
