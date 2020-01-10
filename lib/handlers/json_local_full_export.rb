@@ -9,18 +9,14 @@ module Handler
 
   class JsonDataExportFile
 
-    def initialize(name,version)
+    def initialize(name,version, timestamp)
       @version = version
       @name = name
-
-      @nonce = "#{Time.now.strftime("%y%m%d%H%M%S")}"
-
+      
       @prefix = "intrigue_export_#{name}"
-      @entities_file = "#{$intrigue_basedir}/tmp/#{name}.entities-#{@nonce}.tmp"
-      @issues_file = "#{$intrigue_basedir}/tmp/#{name}.issues-#{@nonce}.tmp"
+      @entities_file = "#{$intrigue_basedir}/tmp/#{@name}.entities.#{timestamp}.tmp"
+      @issues_file = "#{$intrigue_basedir}/tmp/#{@name}.issues.#{timestamp}.tmp"
     
-      @file_mutex = Mutex.new
-
       # prep files
       _write_and_flush @entities_file
       _write_and_flush @issues_file
@@ -119,7 +115,8 @@ module Handler
       end
 
       # export into data export db
-      db = Intrigue::Handler::JsonDataExportFile.new(result.name, version)
+      timestamp = "#{Time.now.strftime("%Y%m%d%H%M%S")}"
+      db = Intrigue::Handler::JsonDataExportFile.new(result.name, version, timestamp)
 
       # Always use the project name when saving files for this project
       prefix_name = "#{result.name}/#{DateTime.now.to_date.to_s.gsub("-","_")}/"
@@ -181,8 +178,8 @@ module Handler
       db.close_files
         
       # dumping files
-      File.open("#{$intrigue_basedir}/tmp/#{name}.entities-#{@nonce}.json", "w").write db.dump_entities_json
-      File.open("#{$intrigue_basedir}/tmp/#{name}.issues-#{@nonce}.json", "w").write db.dump_issues_json
+      File.open("#{$intrigue_basedir}/tmp/#{result.name}.entities.#{timestamp}.json", "w").write db.dump_entities_json
+      File.open("#{$intrigue_basedir}/tmp/#{result.name}.issues.#{timestamp}.json", "w").write db.dump_issues_json
 
       puts "Cleaning up"
       db.cleanup
