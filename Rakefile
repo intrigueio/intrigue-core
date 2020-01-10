@@ -14,6 +14,7 @@ $intrigue_basedir = File.dirname(__FILE__)
 $intrigue_environment = ENV["INTRIGUE_ENV"] || "development"
 
 # Configuration and scripts
+procfile_file = "#{$intrigue_basedir}/Procfile"
 puma_config_file = "#{$intrigue_basedir}/config/puma.rb"
 system_config_file = "#{$intrigue_basedir}/config/config.json"
 database_config_file = "#{$intrigue_basedir}/config/database.yml"
@@ -22,6 +23,7 @@ redis_config_file = "#{$intrigue_basedir}/config/redis.yml"
 control_script = "#{$intrigue_basedir}/util/control.sh"
 
 all_config_files = [
+  procfile_file,
   puma_config_file,
   system_config_file,
   database_config_file,
@@ -49,6 +51,15 @@ desc "System Setup"
 task :setup do
 
   puts "[+] Setup initiated!"
+
+  ## Copy puma config into place
+  puts "[+] Copying Procfile...."
+  if File.exist? procfile_file
+    puts "[ ] File already exists, skipping: #{procfile_file}"
+  else
+    puts "[+] Creating.... #{procfile_file}"
+    FileUtils.cp "#{procfile_file}.default", procfile_file
+  end
 
   ## Copy puma config into place
   puts "[+] Copying puma config...."
