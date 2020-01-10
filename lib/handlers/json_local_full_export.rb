@@ -94,12 +94,12 @@ module Handler
 
   end
 
-  class MemoryEfficientJsonExport < Intrigue::Handler::Base
+  class JsonLocalFullExport < Intrigue::Handler::Base
 
     def self.metadata
       {
-        :name => "memory_efficient_json_export",
-        :pretty_name => "Memory Efficient JSON Export",
+        :name => "json_local_full_export",
+        :pretty_name => "Export to Local File (JSON in ./tmp)",
         :type => "export"
       }
     end
@@ -124,12 +124,12 @@ module Handler
       # Always use the project name when saving files for this project
       prefix_name = "#{result.name}/#{DateTime.now.to_date.to_s.gsub("-","_")}/"
 
-      result.issues.paged_each(rows_per_fetch: 100) do |i|
+      result.issues.paged_each(rows_per_fetch: 500) do |i|
         # toss it in issues list
         db.store_issue i.export_hash
       end
 
-      result.entities.paged_each(rows_per_fetch: 100) do |e|
+      result.entities.paged_each(rows_per_fetch: 500) do |e|
 
         entity_name = e.name
         entity_type = e.type
@@ -172,20 +172,19 @@ module Handler
         
       end
 
-      puts "Done storing entities"
-
-      # clear queue
-      puts "Clearing qeue"
-      entity_q = nil
+      
+      # dumping files
+      db.dump_entities_json
+      db.dump_issues_json
 
       # close off ou(r specific files
       puts "Closing off files"
       db.close_files
 
-      # dumping files
-      db.dump_entities_json
-      db.dump_issues_json
-
+      # clear queue
+      puts "Clearing queue"
+      entity_q = nil
+      
       puts "Cleaning up"
       db.cleanup
     end

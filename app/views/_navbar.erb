@@ -51,12 +51,12 @@
                   <a class="dropdown-toggle" data-toggle="dropdown" href="#">Export<span class="caret"></span></a>
                   <ul class="dropdown-menu">
                     <li><a href=""><b>Default</b></a></li>
-                    <li><a href="/<%= @project_name %>/export/json">Export Project JSON</a></li>
-                    <li><a href="/<%= @project_name %>/export/applications/csv">Export Applications CSV</a></li>
-                    <li><a href="/<%= @project_name %>/export/csv">Export Entities CSV</a></li>
-                    <li><a href="/<%= @project_name %>/export/issues/csv">Export Issues CSV</a></li>
-                    <li><a href="/<%= @project_name %>/export/gexf">Export Project Graph (Gephi)</a></li>
-                    <li><a href="/<%= @project_name %>/export/graph_json">Export Project Graph (JSON)</a></li>
+                    <li><a href="/<%= @project_name %>/export/json">Export Project (JSON)</a></li>
+                    <li><a href="/<%= @project_name %>/export/applications/csv">Export Applications (CSV)</a></li>
+                    <li><a href="/<%= @project_name %>/export/csv">Export Entities (CSV)</a></li>
+                    <li><a href="/<%= @project_name %>/export/issues/csv">Export Issues (CSV)</a></li>
+                    <li><a href="/<%= @project_name %>/export/gexf">Export Project Graph (Gephi XML)</a></li>
+                    <li><a href="/<%= @project_name %>/export/graph_json">Export Project Graph (Graph JSON)</a></li>
                     <li><a href=""><b>Dynamic</b></a></li>
                     <% Intrigue::HandlerFactory.handlers.each do |h| %>
                       <% next unless h.metadata[:type] == "export" %>

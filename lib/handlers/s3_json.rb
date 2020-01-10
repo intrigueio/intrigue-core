@@ -29,7 +29,7 @@ module Handler
 
       # write to a tempfile first
       tempfile = Tempfile.new("export-#{rand(10000000)}.json")
-      result.entities.paged_each(rows_per_fetch: 100) do |e|
+      result.entities.paged_each(rows_per_fetch: 500) do |e|
         tempfile.write("#{e.export_json}\n")
       end
       # rewind to beginning

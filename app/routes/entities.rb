@@ -21,7 +21,7 @@ class IntrigueApp < Sinatra::Base
       content_type 'application/csv'
       attachment "#{@project_name}.csv"
       result = ""
-      selected_entities.each  { |e| result << "#{e.export_csv}\n" }
+      selected_entities.paged_each(:rows_per_fetch => 300){ |e| result << "#{e.export_csv}\n" }
       return result
 
     elsif params[:export] == "json"
@@ -29,7 +29,7 @@ class IntrigueApp < Sinatra::Base
       content_type 'application/json'
       attachment "#{@project_name}.json"
       result = []
-      selected_entities.each  { |e| result << "#{e.export_json}" }
+      selected_entities.paged_each(:rows_per_fetch => 300){ |e| result << "#{e.export_json}" }
       return result.to_json
 
     else # normal page
