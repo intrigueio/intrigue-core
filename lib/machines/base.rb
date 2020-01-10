@@ -39,7 +39,7 @@ module Machine
 
         new_task_result = start_task(forced_queue || "task_autoscheduled", 
                             project,
-                            old_task_result.scan_result,
+                            old_task_result.scan_result.id,
                             task_name,
                             entity,
                             old_task_result.depth - 1,

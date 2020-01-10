@@ -13,9 +13,10 @@ module Helper
         options=[], handlers=[], machine_name="external_discovery_light_active", auto_enrich=true, auto_scope=false)
 
     # Create the task result, and associate our entity and options
+    logger = Intrigue::Model::Logger.create(:project_id => project.id)
     task_result = Intrigue::Model::TaskResult.create({
       :project_id => project.id,
-      :logger => Intrigue::Model::Logger.create(:project_id => project.id),
+      :logger_id => logger.id,
       :name => "#{task_name}_on_#{entity.name}",
       :task_name => task_name,
       :options => options,
@@ -50,12 +51,12 @@ module Helper
     # If the depth is greater than 1, AND we don't have a
     # prexisting scan id, start a new scan
     if !existing_scan_result_id && depth > 1
-
+      logger = Intrigue::Model::Logger.create(:project => project)
       new_scan_result = Intrigue::Model::ScanResult.create({
         :name => "#{machine_name}_on_#{entity.name}",
         :project => project,
         :base_entity_id => entity.id,
-        :logger => Intrigue::Model::Logger.create(:project => project),
+        :logger_id => logger.id,
         :depth => depth,
         :machine => machine_name,
         :whitelist_strings => ["#{entity.name}"], # this is a list of strings that we know are good
