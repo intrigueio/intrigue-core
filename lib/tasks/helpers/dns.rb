@@ -361,7 +361,7 @@ module Dns
     # [3] number of seconds before the zone should be refreshed
     # [4] number of seconds before a failed refresh should be retried
     # [5] upper limit in seconds before a zone is considered no longer authoritative
-    # [6]  negative result TTL
+    # [6] negative result TTL
   def collect_soa_details(lookup_name)
     _log "Checking start of authority"
     response = resolve(lookup_name, [Resolv::DNS::Resource::IN::SOA])
@@ -369,11 +369,9 @@ module Dns
 
     data = response.first["lookup_details"].first["response_record_data"]
 
-    {
-      "primary_name_server" => "#{data["mname"]}",
+    { "primary_name_server" => "#{data["mname"]}",
       "responsible_party" => "#{data["rname"]}",
-      "serial" => data["serial"]
-    }
+      "serial" => data["serial"] }
   end
 
   def collect_mx_records(lookup_name)

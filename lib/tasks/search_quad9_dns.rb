@@ -27,6 +27,12 @@ class SearchQuad9DnS < BaseTask
     res = []
     entity_name = _get_entity_name
 
+    # check that it resolves
+    unless resolve_name entity_name
+      _log "No resolution for this record, unable to check"
+      return 
+    end
+
     # Query quad9 nameservers
     nameservers = ['9.9.9.9']
     _log "Querying #{nameservers}"

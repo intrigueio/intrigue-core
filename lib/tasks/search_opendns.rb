@@ -24,7 +24,13 @@ class SearchOpenDns < BaseTask
   def run
     super
     entity_name = _get_entity_name
-
+    
+    # check that it resolves
+    unless resolve_name entity_name
+      _log "No resolution for this record, unable to check"
+      return 
+    end
+    
     # Query opendns nameservers
     nameservers = ['208.67.222.222', '208.67.220.220']
     _log "Querying #{nameservers}"

@@ -25,6 +25,12 @@ class SearchComodoDns < BaseTask
     super
     entity_name = _get_entity_name
 
+    # check that it resolves
+    unless resolve_name entity_name
+      _log "No resolution for this record, unable to check"
+      return 
+    end
+
     # Query comodo nameservers
     nameservers = ['8.26.56.26', '8.20.247.20']
     _log "Querying #{nameservers}"

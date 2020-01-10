@@ -24,6 +24,12 @@ class SearchCleanBrowsingDns < BaseTask
     entity_name = _get_entity_name
     entity_type = _get_entity_type_string
 
+    # check that it resolves
+    unless resolve_name entity_name
+      _log "No resolution for this record, unable to check"
+      return 
+    end
+
     # We use their DNS servers to query
     nameservers= ['185.228.168.168', '185.228.168.169']
     _log "Querying #{nameservers}"

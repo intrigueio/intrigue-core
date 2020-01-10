@@ -28,6 +28,12 @@ class SearchYandexDns < BaseTask
 
     entity_name = _get_entity_name
 
+    # check that it resolves
+    unless resolve_name entity_name
+      _log "No resolution for this record, unable to check"
+      return 
+    end
+
     # Query yandex nameservers
     nameservers = ['77.88.8.88','77.88.8.2']
     _log "Querying #{nameservers}"

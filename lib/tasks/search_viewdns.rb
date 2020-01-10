@@ -49,8 +49,6 @@ class SearchViewdns < BaseTask
 
       page += 1
     end
-
-    
   end
 
   # Helper function to query thte api 
