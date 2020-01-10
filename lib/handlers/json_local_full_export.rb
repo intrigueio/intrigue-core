@@ -16,8 +16,8 @@ module Handler
       @nonce = "#{Time.now.strftime("%y%m%d%H%M%S")}"
 
       @prefix = "intrigue_export_#{name}"
-      @entities_file = "#{$intrigue_basedir}/tmp/#{name}.entities-#{@nonce}.list"
-      @issues_file = "#{$intrigue_basedir}/tmp/#{name}.issues-#{@nonce}.list"
+      @entities_file = "#{$intrigue_basedir}/tmp/#{name}.entities-#{@nonce}.tmp"
+      @issues_file = "#{$intrigue_basedir}/tmp/#{name}.issues-#{@nonce}.tmp"
     
       @file_mutex = Mutex.new
 
@@ -171,20 +171,19 @@ module Handler
         e = nil
         
       end
-
-      
-      # dumping files
-      db.dump_entities_json
-      db.dump_issues_json
-
-      # close off ou(r specific files
-      puts "Closing off files"
-      db.close_files
-
+    
       # clear queue
       puts "Clearing queue"
       entity_q = nil
-      
+
+      # close off our temp files
+      puts "Closing off files"
+      db.close_files
+        
+      # dumping files
+      File.open("#{$intrigue_basedir}/tmp/#{name}.entities-#{@nonce}.json", "w").write db.dump_entities_json
+      File.open("#{$intrigue_basedir}/tmp/#{name}.issues-#{@nonce}.json", "w").write db.dump_issues_json
+
       puts "Cleaning up"
       db.cleanup
     end
