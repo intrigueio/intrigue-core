@@ -29,7 +29,6 @@ class AwsS3PutFile < BaseTask
     bucket_name = bucket_url.split("//").last.split(".").first
     _log "Working on bucket: #{bucket_name}"
     
-    
     _log "Trying public file write"
     positive_result = _write_test_file(bucket_name) # try public first
 

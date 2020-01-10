@@ -12,7 +12,7 @@ module Intrigue
     class Entity < Sequel::Model
       plugin :validation_helpers
       plugin :single_table_inheritance, :type
-      plugin :serialization, :json, :details #, :details_raw #, :name
+      #plugin :serialization, :json, :details #, :details_raw #, :name
 
       self.raise_on_save_failure = false
 
@@ -106,6 +106,10 @@ module Intrigue
 
       def enrich(task_result)
 
+        # grab the task result
+        scan_result_id = task_result.scan_result.id if task_result.scan_result 
+        task_result_depth = task_result.depth 
+
         # if a machine exists, grab it
         machine_name = task_result.scan_result ? task_result.scan_result.machine : nil
 
@@ -119,15 +123,15 @@ module Intrigue
             # ensure we always mark an entity enriched, and then can continue on
             # with the machine
             unless Intrigue::TaskFactory.include? task_name
-              start_task("task_enrichment", self.project, task_result.scan_result, "enrich/generic", self, task_result.depth, [], [], machine_name, true, true)
+              start_task("task_enrichment", self.project, scan_result_id, "enrich/generic", self, task_result_depth, [], [], machine_name, true, true)
               next
             end
 
-            start_task("task_enrichment", self.project, task_result.scan_result, task_name, self, task_result.depth, [], [], machine_name, true, true)
+            start_task("task_enrichment", self.project, scan_result_id, task_name, self, task_result_depth, [], [], machine_name, true, true)
           end
 
         else # always enrich, even if something is not configured
-          start_task("task_enrichment", self.project, task_result.scan_result, "enrich/generic", self, task_result.depth, [], [], machine_name, true, true)
+          start_task("task_enrichment", self.project, scan_result_id, "enrich/generic", self, task_result_depth, [], [], machine_name, true, true)
         end
 
       end
@@ -184,7 +188,7 @@ module Intrigue
       def set_details(hash)
         begin
           self.set(:details => hash.sanitize_unicode)
-          save_changes
+          save
         rescue Sequel::NoExistingObject => e
           puts "Error saving details for #{self}: #{e}, deleted?"
         rescue Sequel::DatabaseError => e

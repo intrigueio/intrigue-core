@@ -132,9 +132,10 @@ class UriSpider < BaseTask
 
                 # if we got a pass, check to make sure we don't already have it, and add it
                 if pattern_allowed
-                  unless dns_records.include?(host)
-                    _create_entity("DnsRecord", "name" => host, "origin_list" => [page.url] )
-                    dns_records << host
+                  if host.is_ip_address?
+                    _create_entity("IpAddress", "name" => host )
+                  else
+                    _create_entity("DnsRecord", "name" => host )
                   end
                 end
 

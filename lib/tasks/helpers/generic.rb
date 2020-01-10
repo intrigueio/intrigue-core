@@ -8,15 +8,10 @@ module Generic
 
   private
 
-  def _threaded_iteration(thread_count, items, funct)
+  def _threaded_iteration(thread_count, input_queue, funct)
 
     # Create our queue of work from the checks in brute_list
-    input_queue = Queue.new
-    output_queue = Queue.new
-
-    items.each do |item|
-      input_queue << item
-    end
+    #output_queue = Queue.new
 
     # Create a pool of worker threads to work on the queue
     workers = (0...thread_count).map do
@@ -32,7 +27,7 @@ module Generic
     end; "ok"
     workers.map(&:join); "ok"
 
-  output_queue
+  #output_queue
   end # end run method
 
   ###
@@ -48,7 +43,7 @@ module Generic
     name = hash.delete("name")
 
     # Create or merge the entity
-    EntityManager.create_or_merge_entity(@task_result, type, name, hash, primary_entity)
+    EntityManager.create_or_merge_entity(@task_result.id, type, name, hash, primary_entity)
   end
 
   ###
@@ -109,8 +104,12 @@ module Generic
   end
 
   def _notify(message)
-    _log "Notifying via default channels"
-    Intrigue::NotifierFactory.default.each { |x| x.notify(message, @task_result) }
+    if Intrigue::NotifierFactory.default
+      _log "Notifying via default channels"
+      Intrigue::NotifierFactory.default.each { |x| x.notify(message, @task_result) }
+    else 
+      _log "Unable to notify on default channels!"
+    end
   end
 
   def _notify_type(notifier_type, message)

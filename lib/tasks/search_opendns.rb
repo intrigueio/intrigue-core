@@ -12,7 +12,7 @@ class SearchOpenDns < BaseTask
       :references => ["https://www.opendns.com"],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["Domain"],
+      :allowed_types => ["Domain", "DnsRecord"],
       :example_entities => [{"type" => "Domain", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
       :created_types => []
@@ -35,7 +35,10 @@ class SearchOpenDns < BaseTask
     if res.any?
       _log "Resolves to #{res.map{|x| "#{x.to_name}" }}. Seems we're good!"
     else
-      _malicious_entity_detected("OpenDNS") 
+      description = "Cisco Umbrella provides protection against threats on the internet such as malware, " + 
+        "phishing, and ransomware."
+
+      _malicious_entity_detected("OpenDNS", description) 
     end
 
   end #end run

@@ -9,18 +9,14 @@ module Handler
 
   class JsonDataExportFile
 
-    def initialize(name,version)
+    def initialize(name,version, timestamp)
       @version = version
       @name = name
-
-      @nonce = "#{Time.now.strftime("%y%m%d%H%M%S")}"
-
+      
       @prefix = "intrigue_export_#{name}"
-      @entities_file = "#{$intrigue_basedir}/tmp/#{name}.entities-#{@nonce}.list"
-      @issues_file = "#{$intrigue_basedir}/tmp/#{name}.issues-#{@nonce}.list"
+      @entities_file = "#{$intrigue_basedir}/tmp/#{@name}.entities.#{timestamp}.tmp"
+      @issues_file = "#{$intrigue_basedir}/tmp/#{@name}.issues.#{timestamp}.tmp"
     
-      @file_mutex = Mutex.new
-
       # prep files
       _write_and_flush @entities_file
       _write_and_flush @issues_file
@@ -94,12 +90,12 @@ module Handler
 
   end
 
-  class MemoryEfficientJsonExport < Intrigue::Handler::Base
+  class JsonLocalFullExport < Intrigue::Handler::Base
 
     def self.metadata
       {
-        :name => "memory_efficient_json_export",
-        :pretty_name => "Memory Efficient JSON Export",
+        :name => "json_local_full_export",
+        :pretty_name => "Export to Local File (JSON in ./tmp)",
         :type => "export"
       }
     end
@@ -119,17 +115,18 @@ module Handler
       end
 
       # export into data export db
-      db = Intrigue::Handler::JsonDataExportFile.new(result.name, version)
+      timestamp = "#{Time.now.strftime("%Y%m%d%H%M%S")}"
+      db = Intrigue::Handler::JsonDataExportFile.new(result.name, version, timestamp)
 
       # Always use the project name when saving files for this project
       prefix_name = "#{result.name}/#{DateTime.now.to_date.to_s.gsub("-","_")}/"
 
-      result.issues.paged_each(rows_per_fetch: 100) do |i|
+      result.issues.paged_each(rows_per_fetch: 500) do |i|
         # toss it in issues list
         db.store_issue i.export_hash
       end
 
-      result.entities.paged_each(rows_per_fetch: 100) do |e|
+      result.entities.paged_each(rows_per_fetch: 500) do |e|
 
         entity_name = e.name
         entity_type = e.type
@@ -171,20 +168,18 @@ module Handler
         e = nil
         
       end
-
-      puts "Done storing entities"
-
+    
       # clear queue
-      puts "Clearing qeue"
+      puts "Clearing queue"
       entity_q = nil
 
-      # close off ou(r specific files
+      # close off our temp files
       puts "Closing off files"
       db.close_files
-
+        
       # dumping files
-      db.dump_entities_json
-      db.dump_issues_json
+      File.open("#{$intrigue_basedir}/tmp/#{result.name}.entities.#{timestamp}.json", "w").write db.dump_entities_json
+      File.open("#{$intrigue_basedir}/tmp/#{result.name}.issues.#{timestamp}.json", "w").write db.dump_issues_json
 
       puts "Cleaning up"
       db.cleanup

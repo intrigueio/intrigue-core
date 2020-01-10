@@ -62,7 +62,8 @@ class UriCheckSudomainHijack  < BaseTask
 
       elsif response.body =~ /No such app/i 
         
-        if !(uri =~ /heroku.com/ || uri =~ /herokussl.com/ || uri =~ /herokudns.com/ || uri =~ /herokuapp.com/) 
+        if !(uri =~ /heroku.com/ || uri =~ /herokussl.com/ || uri =~ /herokudns.com/ || 
+              uri =~ /herokuapp.com/ || uri =~ /amazonaws.com/ ) 
           _create_hijackable_subdomain_issue "Heroku", uri, "potential"
         end
         
@@ -87,7 +88,7 @@ class UriCheckSudomainHijack  < BaseTask
       elsif response.body =~ /Unrecognized domain/i
         _create_hijackable_subdomain_issue "Mashery", uri, "potential"
       
-      elsif response.body =~ /404 error unknown site\!/i
+      elsif response.body =~ /The gods are wise, but do not know of the site which you seek\!/i
         _create_hijackable_subdomain_issue "Pantheon", uri, "potential"
       
       elsif response.body =~ /Project doesnt exist... yet!/i
@@ -97,7 +98,8 @@ class UriCheckSudomainHijack  < BaseTask
         _create_hijackable_subdomain_issue("Shopify", uri, "potential") unless (uri =~ /shopify.com/ || uri =~ /myshopify.com/) 
 
       elsif response.body =~ /<title>Statuspage \| Hosted Status Page/i
-        _create_hijackable_subdomain_issue("Statuspage", uri, "potential") unless (uri =~ /statuspage.com/ || uri =~ /statuspage.io/) 
+        _create_hijackable_subdomain_issue("Statuspage", uri, "potential") unless (
+          uri =~ /statuspage.com/ || uri =~ /statuspage.io/ || uri =! /amazonaws.com/) 
 
       #elsif response.body =~ /page not found/i
       #  _create_hijackable_subdomain_issue "Strikingly", uri, "potential"

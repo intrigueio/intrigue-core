@@ -48,6 +48,12 @@
   },
   "intrigue_global_machine_config": {},
   "intrigue_global_module_config": {
+    "aws_region": {
+      "value": "us-east-1",
+      "editable": "true",
+      "uri": "https://aws.amazon.com/",
+      "comment": "the region to which all aws connections will be made"
+    },
     "aws_access_key_id": {
       "value": "XXX",
       "editable": "true",

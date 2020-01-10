@@ -63,7 +63,13 @@ class ImportUmbrellaTopDomains < BaseTask
     # with the desired number of threads
     _log_good "Fanning out"
     thread_count = _get_option "threads"
-    _threaded_iteration(thread_count, domains, lammylam)
+
+    input_queue = Queue.new
+    domains.each do |item|
+      input_queue << item
+    end
+    
+    _threaded_iteration(thread_count, input_queue, lammylam)
 
   end
 

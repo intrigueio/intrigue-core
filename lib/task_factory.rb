@@ -40,7 +40,7 @@ class TaskFactory
       end
     end
     ### XXX - exception handling? This should return a specific exception.
-    raise "No task by that name!"
+    raise "No task with the name: #{name}!"
   end
 
   #
@@ -55,7 +55,7 @@ class TaskFactory
     end
 
     ### XXX - exception handling? Should this return an exception?
-    raise "No task by that name!"
+    raise "No task with the name: #{name}!"
   end
 
 end

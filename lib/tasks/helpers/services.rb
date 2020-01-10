@@ -193,7 +193,14 @@ module Services
     # with the desired number of threads
     thread_count = (hosts.compact.count / 10) + 1 
     _log "Creating service (#{port_num}) on #{hosts.compact.map{|x|x.name}} with #{thread_count} threads."
-    _threaded_iteration(thread_count, hosts.compact, create_service_lambda)
+        
+    # Create our queue of work from the checks in brute_list
+    input_queue = Queue.new
+    hosts.compact.each do |item|
+      input_queue << item
+    end
+    
+    _threaded_iteration(thread_count, input_queue, create_service_lambda)
         
   end
 
@@ -465,7 +472,7 @@ module Services
     when 27017,27018,27019
       service = "MONGODB"
     else
-      service = "UNKNOWN"
+      service = _service_name_for(port_num, "tcp")
     end
   service
   end
@@ -485,7 +492,7 @@ module Services
     when 5000
       service = "UPNP"
     else
-      service = "UNKNOWN"
+      service = _port_name_for(port_num, "udp")
     end
   service 
   end

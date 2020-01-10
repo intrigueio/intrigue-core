@@ -25,37 +25,39 @@ class  CitrixNetscalerRceCVE201919781 < BaseTask
   ## Default method, subclasses must override this
   def run
     super
-    
-    check_url = "#{_get_entity_name}/vpn/login.js"
+
+    check_url = "#{_get_entity_name}/vpn/../vpns/cfg/smb.conf"
     response = http_request(:get, check_url)
 
     # grab header
-    last_modified_header = false
-    response.each_header{|h| last_modified_header = response[h] if h =~ /Last-Modified/i}
-    unless last_modified_header
-      _log "No Last-Modified Header! Failing"
+    unless response && response.body 
+      _log "No response! Failing"
       return
     end
+    
+    if response.code.to_i == 200
 
-    # Get the date to see it's vuln
-    date_string = last_modified_header.split(":").last
-
-    # check that it matches our known vuln versions
-    if Time.parse(date_string) < Time.parse("Sun, 17 Dec 2019 00:00:00 GMT")
-      _log "Vulnerable, got date string: #{date_string}!"
-      _create_issue({
-        name: "Vulnerable Citrix Netscaler",
-        severity: 1,
-        type: "vulnerability_citrix_netscaler_rce_cve_2019_19871",
-        status: "potential",
-        description: "This server (#{check_url}) appears vulnerable to an unauthenticated RCE bug announced in December 2019. See references for more details." + 
-         "\n\nProof: #{last_modified_header}. \n\nNote that a mitigation may be in place per instruction from Citrix provided shortly after the release of" + 
-         " the patch.",
-        references: self.class.metadata["references"],
-        details: {}
-        })
-    else
-      _log "Not Vulnerable! Proof: #{last_modified_header}"
+      # check that it matches our known vuln versions
+      if response.body =~ /\[global\]/
+        _log "Vulnerable!"
+        _create_issue({
+          name: "Vulnerable Citrix Netscaler",
+          severity: 1,
+          type: "vulnerability_citrix_netscaler_rce_cve_2019_19871",
+          status: "potential",
+          category: "network",
+          description: "This server (#{check_url}) is vulnerable to an unauthenticated RCE bug announced in December 2019. See references for more details.\n\nProof: Positive match on response body.",
+          references: self.class.metadata["references"],
+          details: {
+            "response_body" => response.body,
+            "response_code" => response.code
+          }
+          })
+      else
+        _log "Not Vulnerable, couldnt match our regex: #{response.body}"
+      end
+    elsif response.code.to_i == 403
+      _log "Not Vulnerable, invalid code: #{response.code}"
     end
 
   end

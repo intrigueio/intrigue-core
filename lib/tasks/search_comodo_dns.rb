@@ -12,7 +12,7 @@ class SearchComodoDns < BaseTask
       :references => ["Cleanbrowsing.org"],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["Domain"],
+      :allowed_types => ["Domain", "DnsRecord"],
       :example_entities => [{"type" => "Domain", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
       :created_types => []
@@ -35,7 +35,11 @@ class SearchComodoDns < BaseTask
     if res.any?
       _log "Resolves to #{res.map{|x| "#{x.to_name}" }}. Seems we're good!"
     else
-      _malicious_entity_detected("ComodoDNS") 
+      description = "Comodo Secure DNS is a domain name resolution service that resolves "  + 
+        "DNS requests through our worldwide network of redundant DNS servers, bringing you " + 
+        "the most reliable fully redundant DNS service anywhere, for a safer, smarter and" 
+        "faster Internet experience."
+      _malicious_entity_detected("ComodoDNS", description) 
     end
     
   end #end run

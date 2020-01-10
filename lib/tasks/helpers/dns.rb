@@ -5,9 +5,13 @@ module Dns
   include Intrigue::Task::Generic
 
   def parse_domain_name(record)
-
-    length = parse_tld(record).split(".").count + 1
-
+    split_tld = parse_tld(record).split(".")
+    if (split_tld.last == "com" || split_tld.last == "net") && split_tld.count > 1 # handle cases like amazonaws.com, netlify.com
+      length = split_tld.count
+    else
+      length = split_tld.count + 1
+    end
+    
   record.split(".").last(length).join(".")
   end
 

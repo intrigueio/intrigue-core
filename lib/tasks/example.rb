@@ -61,6 +61,7 @@ class Example < BaseTask
     sleep(_get_option("sleep"))
 
     # Generate a number of hosts based on the user option
+    x = nil
     _get_option("count").times do
 
     # Generate a fake IP address
@@ -82,17 +83,18 @@ class Example < BaseTask
       #_log_fatal "Oh no, it's a fatal error!"
 
       # notifies via a specifically named channel
-      _notify_specific "specific_slack", "[specific_slack] Randomly generated an IP address: #{ip_address}"
+      #_notify_specific "specific_slack", "[specific_slack] Randomly generated an IP address: #{ip_address}"
 
       # Create & return the entity
-      e = _create_entity("IpAddress", {"name" => ip_address })
-      _create_network_service_entity(e,443)
-      _create_network_service_entity(e,21)
-      _create_network_service_entity(e,22)
-      _create_network_service_entity(e,23)
-      _create_network_service_entity(e,25)
-
+      x = _create_entity("IpAddress", {"name" => ip_address })
     end
+
+    100.times do 
+      port_num = rand(10000)
+      _log "creating a port on #{x.name} at #{port_num}, service: #{_service_name_for(port_num, "tcp")}"
+      _create_network_service_entity(x,port_num)
+    end
+
 
   end
 
