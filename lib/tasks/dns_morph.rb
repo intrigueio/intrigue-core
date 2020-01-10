@@ -49,13 +49,15 @@ class DnsMorph < BaseTask
         
         # use local maxmind
         geo = geolocate_ip(ip_address)
-        x["country_code"] = geo["country_code"]
+        x["country_code"] = geo["country_code"] if geo
         
         # use team cymru lookup
         info = Intrigue::Client::Search::Cymru::IPAddress.new.whois(ip_address)
-        x["asn_id"] = info[0]
-        x["asn_name"] = info[5]
-        x["allocation_date"] = info[4]
+        if info
+          x["asn_id"] = info[0] 
+          x["asn_name"] = info[5]
+          x["allocation_date"] = info[4]
+        end
 
       x
       end
