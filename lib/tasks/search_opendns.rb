@@ -42,7 +42,7 @@ class SearchOpenDns < BaseTask
     if res.any?
       _log "Resolves to #{res.map{|x| "#{x.to_name}" }}. Seems we're good!"
     else
-      description = "Cisco Umbrella provides protection against threats on the internet such as malware, " + 
+      description = "OpenDNS (now Cisco Umbrella) provides protection against threats on the internet such as malware, " + 
         "phishing, and ransomware."
 
       _blocked_by_source("OpenDNS", description, 3, {"expected_resolution" => resolves_to}) 
