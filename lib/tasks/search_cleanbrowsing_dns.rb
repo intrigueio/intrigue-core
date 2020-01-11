@@ -25,7 +25,8 @@ class SearchCleanBrowsingDns < BaseTask
     entity_type = _get_entity_type_string
 
     # check that it resolves
-    unless resolve_name entity_name
+    resolves_to =  resolve_nams entity_name
+    unless resolves_to.first
       _log "No resolution for this record, unable to check"
       return 
     end
@@ -41,9 +42,9 @@ class SearchCleanBrowsingDns < BaseTask
       _log "Resolves to #{res.map{|x| "#{x.to_name}" }}. Seems we're good!"
     else
       description = "The Cleanbrowsing DNS security filter focuses on restricting access " + 
-        "to malicious activity. It blocks phishing, spam and malicious domains."
+        "to malicious activity. It blocks phishing, spam and known malicious domains."
         
-      _malicious_entity_detected("CleanBrowsing", description) 
+      _blocked_by_source("CleanBrowsing", description, 3, {"expected_resolution" => resolves_to}) 
     end
 
   end

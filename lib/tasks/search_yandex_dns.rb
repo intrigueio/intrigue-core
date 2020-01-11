@@ -29,7 +29,8 @@ class SearchYandexDns < BaseTask
     entity_name = _get_entity_name
 
     # check that it resolves
-    unless resolve_name entity_name
+    resolves_to =  resolve_names entity_name
+    unless resolves_to.first
       _log "No resolution for this record, unable to check"
       return 
     end
@@ -50,7 +51,7 @@ class SearchYandexDns < BaseTask
       "checks sites for malware. Yandex.DNS uses its own anti-virus software operating on Yandex " +
       "algorithms, as well as signature technology by Sophos."
 
-      _malicious_entity_detected("YandexDNS", description) 
+      _blocked_by_source("Yandex", description, 3, {"expected_resolution" => resolves_to}) 
     end
 
   end #end run

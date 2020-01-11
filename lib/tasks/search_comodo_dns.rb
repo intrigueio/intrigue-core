@@ -26,7 +26,8 @@ class SearchComodoDns < BaseTask
     entity_name = _get_entity_name
 
     # check that it resolves
-    unless resolve_name entity_name
+    resolves_to = resolve_names entity_name
+    unless resolves_to.first
       _log "No resolution for this record, unable to check"
       return 
     end
@@ -45,7 +46,7 @@ class SearchComodoDns < BaseTask
         "DNS requests through our worldwide network of redundant DNS servers, bringing you " + 
         "the most reliable fully redundant DNS service anywhere, for a safer, smarter and" 
         "faster Internet experience."
-      _malicious_entity_detected("ComodoDNS", description) 
+      _blocked_by_source("Comodo", description, 3, {"expected_resolution" => resolves_to}) 
     end
     
   end #end run

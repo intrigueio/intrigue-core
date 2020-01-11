@@ -26,7 +26,8 @@ class SearchOpenDns < BaseTask
     entity_name = _get_entity_name
     
     # check that it resolves
-    unless resolve_name entity_name
+    resolves_to = resolve_names entity_name
+    unless resolves_to.first
       _log "No resolution for this record, unable to check"
       return 
     end
@@ -44,7 +45,7 @@ class SearchOpenDns < BaseTask
       description = "Cisco Umbrella provides protection against threats on the internet such as malware, " + 
         "phishing, and ransomware."
 
-      _malicious_entity_detected("OpenDNS", description) 
+      _blocked_by_source("OpenDNS", description, 3, {"expected_resolution" => resolves_to}) 
     end
 
   end #end run
