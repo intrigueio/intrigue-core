@@ -25,7 +25,7 @@ class SearchCleanBrowsingDns < BaseTask
     entity_type = _get_entity_type_string
 
     # check that it resolves
-    resolves_to =  resolve_nams entity_name
+    resolves_to = resolve_names entity_name
     unless resolves_to.first
       _log "No resolution for this record, unable to check"
       return 
