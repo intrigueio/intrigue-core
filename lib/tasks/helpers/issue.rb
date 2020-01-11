@@ -276,7 +276,7 @@ module Issue
       category: "network",
       severity: severity,
       status: "confirmed",
-      description: "This website has been detected as malicious, fraudulent, or otherwise harmful and blocked when attempting to resolve. " + 
+      description: "This host has been detected as malicious, fraudulent, or otherwise harmful and blocked when attempting to resolve. " + 
       "Users attempting to resolve this resource through #{source} will not be able to reach it. The resource should be investigated for " + 
       "malicious activity. After investigation and cleanup, a notification can be sent to #{source} to have it removed from the block list." + 
       "\n\n#{source_desc}",
