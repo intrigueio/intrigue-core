@@ -3,19 +3,36 @@ module Task
 module Issue
 
   ###
-  ### Generic helper method to create issues
+  ### DEPRECATED!!!! Generic helper method to create issues
   ###
   def _create_issue(details)
 
     _notify("Sev #{details[:severity]}!```#{details[:name]}```") if details[:severity] <= 3
 
-    hash = details.merge({ entity_id: @entity.id,
+    issue_hash = details.merge({ entity_id: @entity.id,
                            scoped: @entity.scoped,
                            task_result_id: @task_result.id,
                            project_id: @project.id })
 
     _log_good "Creating issue with name: #{details[:name]}"
-    issue = Intrigue::Model::Issue.create(_encode_hash(hash))
+    issue = Intrigue::Model::Issue.create(_encode_hash(issue_hash))
+  end
+
+  ### USE THIS GOING FORWARD
+  def _create_linked_issue(issue_type, instance_specifics)
+
+    _log_good "Creating linked issue of type: #{issue_type}"
+
+    issue_model_details = {  
+      entity_id: @entity.id,
+      task_result_id: @task_result.id,
+      project_id: @project.id, 
+      scoped: @entity.scoped
+    }
+
+    issue = Intrigue::IssueFactory.create_by_type(issue_type, issue_model_details, _encode_hash(instance_specifics))
+  
+  issue 
   end
 
   ###

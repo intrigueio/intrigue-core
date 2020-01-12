@@ -44,15 +44,8 @@ class Example < BaseTask
     end
 
     # create an issue
-    zone = [1,2,3,4]
-    _create_issue({
-      name: "Example Issue",
-      type: "example",
-      severity: 5,
-      status: "confirmed",
-      description: "just an example.",
-      details: { example_attribute: zone }
-    })
+    example_issue_details = { uri: _get_entity_name, verification_uri: _get_entity_name, proof: "wheee!"  }
+    _create_linked_issue("example", example_issue_details)
 
     # just return if we have bad data
     return unless _get_option("count") > 0

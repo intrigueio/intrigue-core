@@ -3,7 +3,8 @@ module Intrigue
 
     class Issue < Sequel::Model
       plugin :validation_helpers
-      plugin :serialization, :json, :details
+      plugin :single_table_inheritance, :type
+      #plugin :serialization, :json, :details
 
       many_to_one  :project
       many_to_one  :task_result
@@ -11,13 +12,18 @@ module Intrigue
 
       self.raise_on_save_failure = false
 
+      def self.inherited(base)
+        IssueFactory.register(base)
+        super
+      end
+
       def self.scope_by_project(project_name)
         where(:project => Intrigue::Model::Project.first(:name => project_name))
       end
 
       def validate
         super
-        validates_unique([:project_id, :type, :name, :entity_id, :description])
+        validates_unique([:project_id, :type, :entity_id])
       end
       
       ###
@@ -25,12 +31,16 @@ module Intrigue
       ###
       def export_hash
         {
-          :type => type,
+          :class => type,
+          :type => label, # legacy... before STI
+          :label => label,
           :name => name,
           :severity =>  severity,
           :status =>  status,
           :scoped =>  scoped,
-          :description =>  description,
+          :description =>  details[:description],
+          :remediation =>  details[:remediation],
+          :references =>  details[:references],
           :entity_type => entity.type,
           :entity_name => entity.name,
           :entity_aliases => entity.aliases.map{|a| {:type => a.type, :name => a.name} },  

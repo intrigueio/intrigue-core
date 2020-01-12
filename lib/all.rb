@@ -99,12 +99,11 @@ machines_folder = File.expand_path('../machines', __FILE__) # get absolute direc
 Dir["#{machines_folder}/*.rb"].each {|f| require_relative f}
 
 
-
 # Client libraries
 require_relative 'client'
 
 ####
-# Entity-specific libraries
+# Entity Libraries
 ####
 require_relative 'entity_factory'
 require_relative 'entity_manager'
@@ -114,6 +113,13 @@ entities_folder = File.expand_path('../entities', __FILE__) # get absolute direc
 require_relative "#{entities_folder}/network_service" # have to do this first, since others dep on it
 Dir["#{entities_folder}/*.rb"].each {|f| require_relative f}
 
+####
+# Issue Libraries
+####
+require_relative 'issue_factory'
+tasks_folder = File.expand_path('../issues', __FILE__) # get absolute directory
+Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
+
 
 ####
 # Handler Libraries
@@ -122,6 +128,7 @@ require_relative 'handler_factory'
 require_relative 'handlers/base'
 handlers_folder = File.expand_path('../handlers', __FILE__) # get absolute directory
 Dir["#{handlers_folder}/*.rb"].each {|f| require_relative f}
+
 
 ####
 # Notifier Libraries
