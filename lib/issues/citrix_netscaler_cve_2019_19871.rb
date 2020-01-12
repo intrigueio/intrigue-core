@@ -32,7 +32,7 @@ class VulnCitrixNetscalerCve201919871 < BaseIssue
         { type: "threat_intelligence", uri: "https://isc.sans.edu/forums/diary/Citrix+ADC+Exploits+are+Public+and+Heavily+Used+Attempts+to+Install+Backdoor/25700/" },
         { type: "threat_intelligence", uri: "https://www.trustedsec.com/blog/netscaler-remote-code-execution-forensics" }
       ]
-    }.merge(instance_details)
+    }.merge!(instance_details)
   end
 
 end

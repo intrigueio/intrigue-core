@@ -15,7 +15,7 @@ class Example < BaseIssue
         { type: "vulnerability", uri: "https://allabouttheexamplevulnerability.com" },
         { type: "remediation", uri: "https://www.youtube.com/watch?v=FDv566DSTKg" }
       ]
-    }.merge(instance_details)
+    }.merge!(instance_details)
   end
 
 end

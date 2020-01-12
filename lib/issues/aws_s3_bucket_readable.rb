@@ -4,6 +4,7 @@ module Issue
 class AwsS3BucketReadable < BaseIssue
 
   def self.generate(instance_details={})
+    
     to_return = {
       name: "aws_s3_bucket_readable",
       pretty_name: "Readable AWS S3 Bucket",
