@@ -22,7 +22,7 @@ class  CitrixNetscalerRceCVE201919781 < BaseTask
   def run
     super
 
-    uri = "#{_get_entity_name}/vpn/../vpns/cfg/smb.conf"
+    check_url = "#{_get_entity_name}/vpn/../vpns/cfg/smb.conf"
     response = http_request(:get, check_url)
 
     # grab header
@@ -39,7 +39,7 @@ class  CitrixNetscalerRceCVE201919781 < BaseTask
         # file issue
         _create_linked_issue("vulnerability_citrix_netscaler_rce_cve_2019_19781", { 
           status: "confirmed", 
-          verify_url: uri,
+          checked_url: check_url,
           proof: response.body })
       else
         _log "Not Vulnerable, couldnt match our regex: #{response.body}"
