@@ -42,12 +42,8 @@ module Intrigue
         return
       end
     
-      puts "Got Issue Type: #{issue_type}"
-      puts "Got Issue Type Metadata: #{issue_type.metadata}"
-
       issue_instance_details = issue_type.metadata.merge!(instance_specifics)
-      puts "Got Issue Instance Details: #{issue_instance_details}"
-
+      
       combined_issue_details = issue_model_details.merge({
         name: issue_type.metadata[:name],
         #type: issue_type.metadata[:type],
@@ -58,8 +54,7 @@ module Intrigue
         #description: issue_type.metadata[:description],
         #references: issue_type.metadata[:references],
         details: issue_instance_details})
-      puts "Got Combined [FINAL] Details: #{combined_issue_details}"
-
+ 
       # then create the darn thing
       issue = issue_type.create(combined_issue_details)
     

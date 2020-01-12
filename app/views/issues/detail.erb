@@ -14,12 +14,15 @@ Scoped: <%= @issue.scoped %> <br/>
 Category: <%= @issue.category %> <br/>
 Description: <%= @issue.details["description"] %> <br/>
 Remediation: <%= @issue.details["remediation"] %> <br/>
-References: 
+
+<% if @issue.details["references"] %>
+References:
 <ul>
 <% @issue.details["references"].each do |r| %>
   <li><a href=<%=r["uri"]%>><%=r["uri"]%></a> (<%=r["type"]%>)</li>
 <% end %>
 </ul>
+<% end %>
 
 <br/>
 <div class="panel-group">
