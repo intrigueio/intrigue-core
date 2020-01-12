@@ -44,8 +44,7 @@ class Example < BaseTask
     end
 
     # create an issue
-    example_issue_details = { uri: _get_entity_name, verification_uri: _get_entity_name, proof: "wheee!"  }
-    _create_linked_issue("example", example_issue_details)
+    _create_linked_issue( "example", { status: "confirmed", proof: "wheee!" })
 
     # just return if we have bad data
     return unless _get_option("count") > 0
