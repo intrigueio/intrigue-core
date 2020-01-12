@@ -8,6 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["jcran"]
   s.email       = 'jcran@intrigue.io'
   s.files       = Dir.glob("./*.rb")
+  s.require_paths = ['.']
   s.homepage    = 'http://github.com/intrigueio/intrigueio/intrigue-core'
   s.license     = 'BSD-3-Clause'
+ 
 end
