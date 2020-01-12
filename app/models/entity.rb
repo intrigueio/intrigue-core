@@ -19,6 +19,7 @@ module Intrigue
       many_to_one  :alias_group
       many_to_many :task_results
       many_to_one  :project
+      one_to_many  :issues
 
       include Intrigue::Task::Helper
 
@@ -44,7 +45,7 @@ module Intrigue
       #  our_value = json_details.get_text(detail_name)
       #  candidate_entities.where(our_value => detail_value)
       #end
-
+      
       def ancestors
         ancestors = []
         task_results.each do |tr|

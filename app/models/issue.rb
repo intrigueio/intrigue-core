@@ -18,6 +18,10 @@ module Intrigue
         super
         validates_unique([:project_id, :type, :entity_id])
       end
+
+      def to_s
+        "#{name} on #{entity.type} #{entity.name}"
+      end
       
       ###
       ### Export!

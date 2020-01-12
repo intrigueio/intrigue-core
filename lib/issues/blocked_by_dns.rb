@@ -2,7 +2,7 @@ module Intrigue
 module Issue
 class BlockedPotentiallyCompromised < BaseIssue
 
-  def self.generate(instance_details={source: "Unknown"})
+  def self.generate(instance_details={source: "DNS"})
 
     to_return = {
       pretty_name: "Blocked by #{instance_details[:source]}, potentially compromised",
@@ -25,6 +25,3 @@ class BlockedPotentiallyCompromised < BaseIssue
 end
 end
 end
-
-
-        

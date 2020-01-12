@@ -27,6 +27,12 @@ Hidden: <%= @entity.hidden %> <br/>
   </div>
 </div>
 
+Discovered Issues:<br/>
+<ul>
+<%=out = []; results = @entity.issues.uniq.sort_by{|x|x.name}; results.each {|x| out << "<li><a href='/#{@project_name}/issues/#{x.id}'>#{h x}</a></li>"; } if results; out.uniq.join("") %>
+</ul>
+
+
 Alias Group: <%= @entity.alias_group.id %> <br/>
 Aliases: <br/>
 <ul>

@@ -13,7 +13,7 @@ class VulnCitrixNetscalerCve201919871 < BaseIssue
       category: "network",
       description: "A Citrix Netscaler device was found to be vulnerable to an unauthenticated RCE (CVE-2019-19781). The vulnerability was released in Dec 2019 and no patch was released immediately. Remote, Pre-auth Arbitrary Command Execution is possible due to the logic vulnerability.",
       remediation: "No patch is currently available, apply the workarounds provided by Citrix (see references).",
-      affected: [
+      affected_software: [ # TODO ... convert these to CPE?
         "Citrix ADC and Citrix Gateway version 13.0 all supported builds",
         "Citrix ADC and NetScaler Gateway version 12.1 all supported builds",
         "Citrix ADC and NetScaler Gateway version 12.0 all supported builds",
