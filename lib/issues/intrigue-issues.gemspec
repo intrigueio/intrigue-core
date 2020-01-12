@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.description = "Intrigue Core Issues"
   s.authors     = ["jcran"]
   s.email       = 'jcran@intrigue.io'
-  s.files       = Dir.glob("*.rb")
-  s.homepage    = 'http://rubygems.org/gems/intrigue-issues'
+  s.files       = Dir.glob("./*.rb")
+  s.homepage    = 'http://github.com/intrigueio/intrigueio/intrigue-core'
   s.license     = 'BSD-3-Clause'
 end
