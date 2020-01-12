@@ -42,10 +42,23 @@ class SearchOpenDns < BaseTask
     if res.any?
       _log "Resolves to #{res.map{|x| "#{x.to_name}" }}. Seems we're good!"
     else
+      source = "OpenDNS"
       description = "OpenDNS (now Cisco Umbrella) provides protection against threats on the internet such as malware, " + 
         "phishing, and ransomware."
 
-      _blocked_by_source("OpenDNS", description, 3, {"expected_resolution" => resolves_to}) 
+      _create_linked_issue("blocked_potentially_compromised", {
+        status: "confirmed",
+        additional_description: description,
+        source: source, 
+        proof: "Resolved to the following address(es) outside of #{source}: #{resolves_to.join(", ")}",
+        references:  
+          [{type: "remediation", uri: "https://support.opendns.com/hc/en-us/articles/227987347-Why-is-this-Domain-Blocked-or-not-Blocked-" }]
+      })     
+      
+      # Also store it on the entity 
+      blocked_list = @entity.get_detail("detected_malicious") || [] 
+      @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
+
     end
 
   end #end run

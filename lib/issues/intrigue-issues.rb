@@ -41,27 +41,26 @@ class IssueFactory
   def self.create_instance_by_type(requested_type, issue_model_details, instance_specifics)
     
     # first look thorugh our issue types and get the right one
-    issue_type = @issue_types.select{ |h| h.metadata[:name] == requested_type }.first
+    issue_type = @issue_types.select{ |h| h.generate({})[:name] == requested_type }.first
     unless issue_type 
       raise "Unknown issue type: #{requested_type}"
       return
     end
   
-    issue_instance_details = issue_type.metadata.merge!(instance_specifics)
+    issue_instance_details = issue_type.generate(instance_specifics)
 
-    combined_issue_details = issue_model_details.merge({
-      name: issue_type.metadata[:name],
-      #type: issue_type.metadata[:type],
-      pretty_name: issue_type.metadata[:pretty_name],
-      status: issue_type.metadata[:status],
-      severity: issue_type.metadata[:severity],
-      category: issue_type.metadata[:category],
+    issue_model = issue_model_details.merge({
+      name: issue_instance_details[:name],
+      pretty_name: issue_instance_details[:pretty_name],
+      status: issue_instance_details[:status],
+      severity: issue_instance_details[:severity],
+      category: issue_instance_details[:category],
       #description: issue_type.metadata[:description],
       #references: issue_type.metadata[:references],
       details: issue_instance_details})
 
     # then create the darn thing
-    issue = Intrigue::Model::Issue.create(combined_issue_details)
+    issue = Intrigue::Model::Issue.create(issue_model)
   
   issue
   end
@@ -89,8 +88,6 @@ end
 # Finally, source in all the issues, becasue this lets this folder stand 
 # alone and be published as a gem (since it's helpful to get this info out in the world)
 #
-
-
 issues_folder= File.expand_path('..', __FILE__) # get absolute directory
 puts "Sourcing intrigue issues from  #{issues_folder}"
 Dir["#{issues_folder}/*.rb"].each {|f| require_relative f}

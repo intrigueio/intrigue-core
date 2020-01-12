@@ -2,7 +2,7 @@ module Intrigue
 module Issue
 class Example < BaseIssue
 
-  def self.metadata
+  def self.generate(instance_details={})
     {
       name: "example",
       pretty_name: "Just an Example Issue",
@@ -15,7 +15,7 @@ class Example < BaseIssue
         { type: "vulnerability", uri: "https://allabouttheexamplevulnerability.com" },
         { type: "remediation", uri: "https://www.youtube.com/watch?v=FDv566DSTKg" }
       ]
-    }
+    }.merge(instance_details)
   end
 
 end

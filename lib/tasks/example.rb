@@ -56,7 +56,7 @@ class Example < BaseTask
 
 
     # create an issue 
-    _create_linked_issue( "example", { status: "confirmed", proof: "wheee!" })
+    _create_linked_issue("example", { status: "confirmed", proof: "wheee!" })
 
     # just return if we have bad data
     return unless _get_option("count") > 0

@@ -280,33 +280,6 @@ module Issue
     })
   end
 
-
-  ###
-  ### Malwarish Entities (network category)
-  ###
-  def _blocked_by_source(source, source_desc=nil, severity=3, details={}, references=[])
-    
-    # create the issues
-    _create_issue({
-      name: "Blocked by #{source}",
-      type: "blocked_by_source",
-      category: "network",
-      severity: severity,
-      status: "confirmed",
-      description: "This host has been detected as malicious, fraudulent, or otherwise harmful and blocked when attempting to resolve. " + 
-      "Users attempting to resolve this resource through #{source} will not be able to reach it. The resource should be investigated for " + 
-      "malicious activity. After investigation and cleanup, a notification can be sent to #{source} to have it removed from the block list." + 
-      "\n\n#{source_desc}",
-      references: references,
-      details: details.merge({ source: source })
-    })
-
-    # Also store it on the entity 
-    blocked_list = @entity.get_detail("detected_malicious") || [] 
-    @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
-
-  end    
-
 end
 end
 end

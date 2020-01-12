@@ -45,13 +45,25 @@ class SearchYandexDns < BaseTask
     if res.any?
       _log "Resolves to #{res.map{|x| "#{x.to_name}" }}. Seems we're good!"
     else
-      
+
+      source =  "Yandex"
       description = "When attempting to open a site, Yandex.DNS (Safe) will block the download " +
       "of any information from it and warn the user. Yandex uses its own anti-virus software that " +  
       "checks sites for malware. Yandex.DNS uses its own anti-virus software operating on Yandex " +
       "algorithms, as well as signature technology by Sophos."
 
-      _blocked_by_source("Yandex", description, 3, {"expected_resolution" => resolves_to}) 
+      _create_linked_issue("blocked_potentially_compromised", {
+        status: "confirmed",
+        additional_description: description,
+        source: source, 
+        proof: "Resolved to the following address(es) outside of #{source}: #{resolves_to.join(", ")}",
+        references: [{ type: "remediation", uri: "https://dns.yandex.com/" }]
+      })
+
+      # Also store it on the entity 
+      blocked_list = @entity.get_detail("detected_malicious") || [] 
+      @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
+
     end
 
   end #end run

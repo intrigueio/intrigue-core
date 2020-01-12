@@ -42,11 +42,24 @@ class SearchComodoDns < BaseTask
     if res.any?
       _log "Resolves to #{res.map{|x| "#{x.to_name}" }}. Seems we're good!"
     else
+      source = "Comodo"
       description = "Comodo Secure DNS is a domain name resolution service that resolves "  + 
         "DNS requests through our worldwide network of redundant DNS servers, bringing you " + 
         "the most reliable fully redundant DNS service anywhere, for a safer, smarter and" 
         "faster Internet experience."
-      _blocked_by_source("Comodo", description, 3, {"expected_resolution" => resolves_to}) 
+      
+      _create_linked_issue("blocked_potentially_compromised", {
+        status: "confirmed",
+        additional_description: description,
+        source: source, 
+        proof: "Resolved to the following address(es) outside of #{source}: #{resolves_to.join(", ")}",
+        references: [{type: "remediation", uri: "https://www.comodo.com/secure-dns/" }]
+      })
+
+      # Also store it on the entity 
+      blocked_list = @entity.get_detail("detected_malicious") || [] 
+      @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
+
     end
     
   end #end run

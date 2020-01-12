@@ -41,10 +41,22 @@ class SearchCleanBrowsingDns < BaseTask
     if res.any?
       _log "Resolves to #{res.map{|x| "#{x.to_name}" }}. Seems we're good!"
     else
+      source = "CleanBrowsing"
       description = "The Cleanbrowsing DNS security filter focuses on restricting access " + 
         "to malicious activity. It blocks phishing, spam and known malicious domains."
-        
-      _blocked_by_source("CleanBrowsing", description, 3, {"expected_resolution" => resolves_to}) 
+      
+      _create_linked_issue("blocked_potentially_compromised", {
+        status: "confirmed",
+        additional_description: description,
+        source: source, 
+        proof: "Resolved to the following address(es) outside of #{source}: #{resolves_to.join(", ")}",
+        references: [{ type: "remediation", uri: "https://cleanbrowsing.org/" }]
+      }) 
+      
+      # Also store it on the entity 
+      blocked_list = @entity.get_detail("detected_malicious") || [] 
+      @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
+
     end
 
   end
