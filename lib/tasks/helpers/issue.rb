@@ -30,7 +30,7 @@ module Issue
       scoped: @entity.scoped
     }
 
-    issue = Intrigue::IssueFactory.create_by_type(issue_type, issue_model_details, _encode_hash(instance_specifics))
+    issue = Intrigue::Issue::IssueFactory.create_instance_by_type(issue_type, issue_model_details, _encode_hash(instance_specifics))
   
   issue 
   end

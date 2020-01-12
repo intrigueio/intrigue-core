@@ -116,10 +116,8 @@ Dir["#{entities_folder}/*.rb"].each {|f| require_relative f}
 ####
 # Issue Libraries
 ####
-require_relative 'issue_factory'
-tasks_folder = File.expand_path('../issues', __FILE__) # get absolute directory
-Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
-
+require_relative 'issues/intrigue-issues'
+#  note that all specific issues are sourced in via this file (for reasons described in that file)
 
 ####
 # Handler Libraries

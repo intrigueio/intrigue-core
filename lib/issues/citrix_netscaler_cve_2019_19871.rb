@@ -1,6 +1,6 @@
 module Intrigue
 module Issue
-class VulnCitrixNetscalerCve201919871 < Intrigue::Model::Issue
+class VulnCitrixNetscalerCve201919871 < BaseIssue
 
   def self.metadata
     {
@@ -8,7 +8,6 @@ class VulnCitrixNetscalerCve201919871 < Intrigue::Model::Issue
       pretty_name: "Vulnerable Citrix Netscaler (CVE-2019-19871)",
       cves: ["CVE-2019-19871"], 
       severity: 1,
-      status:  "confirmed",
       category: "network",
       description: "A Citrix Netscaler device was found to be vulnerable to an unauthenticated RCE (CVE-2019-19781). The vulnerability was released in Dec 2019 and no patch was released immediately. Remote, Pre-auth Arbitrary Command Execution is possible due to the logic vulnerability.",
       remediation: "No patch is currently available, apply the workarounds provided by Citrix (see references).",

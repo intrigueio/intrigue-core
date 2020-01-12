@@ -1,6 +1,6 @@
 module Intrigue
 module Issue
-class Example < Intrigue::Model::Issue
+class Example < BaseIssue
 
   def self.metadata
     {

@@ -3,19 +3,12 @@ module Intrigue
 
     class Issue < Sequel::Model
       plugin :validation_helpers
-      plugin :single_table_inheritance, :type
-      #plugin :serialization, :json, :details
-
+    
       many_to_one  :project
       many_to_one  :task_result
       many_to_one  :entity
 
       self.raise_on_save_failure = false
-
-      def self.inherited(base)
-        IssueFactory.register(base)
-        super
-      end
 
       def self.scope_by_project(project_name)
         where(:project => Intrigue::Model::Project.first(:name => project_name))
@@ -31,9 +24,8 @@ module Intrigue
       ###
       def export_hash
         {
-          :class => type,
-          :type => label, # legacy... before STI
-          :label => label,
+          :type => name,
+          :pretty_name => pretty_name,
           :name => name,
           :severity =>  severity,
           :status =>  status,
