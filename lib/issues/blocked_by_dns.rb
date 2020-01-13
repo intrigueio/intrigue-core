@@ -14,7 +14,7 @@ class BlockedPotentiallyCompromised < BaseIssue
         "Users attempting to resolve this resource through the source will not be able to reach it.",
       remediation:  "The resource should be investigated for malicious activity. After investigation and cleanup, a notification can " +  
         "be sent to the source to have it removed from the block list.",
-      references: [
+      references: [ # types: description, remediation, detection_rule, exploit, threat_intel
         { type: "description", uri: "https://www.spamtitan.com/web-filtering/how-does-dns-filtering-work/" }
       ]
     }.merge(instance_details)

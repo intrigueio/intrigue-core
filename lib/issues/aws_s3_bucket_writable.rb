@@ -13,7 +13,7 @@ class AwsS3BucketWriteable < BaseIssue
       category: "application",
       description: "A writable AWS S3 bucket was found at #{instance_details[:uri]} after authentication",
       remediation: "Investigate whether this bucket should be writable, and if not, adjust the settings",
-      references: [
+      references: [ # types: description, remediation, detection_rule, exploit, threat_intels
         { type: "vulnerability", uri: "https://aws.amazon.com/premiumsupport/knowledge-center/secure-s3-resources/" },
         { type: "vulnerability", uri: "https://blog.detectify.com/2017/07/13/aws-s3-misconfiguration-explained-fix/" },
         { type: "remediation", uri: "https://auth0.com/blog/fantastic-public-s3-buckets-and-how-to-find-them/" },

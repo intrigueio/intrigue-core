@@ -178,12 +178,16 @@ module Intrigue
       def set_detail(key, value)
         begin
           self.set(:details => details.merge({key => value}.sanitize_unicode))
-          save_changes
+          save
         rescue Sequel::NoExistingObject => e
           puts "Error saving details for #{self}: #{e}, deleted?"
         rescue Sequel::DatabaseError => e
           puts "Error saving details for #{self}: #{e}, deleted?"
         end
+      end
+
+      def get_details
+        details
       end
 
       def set_details(hash)
@@ -211,7 +215,7 @@ module Intrigue
         # clean up aliases at the same time
         alias_group.each {|x| x.soft_delete!}
         deleted = true
-        save_changes
+        save
       end
 
       # Check whether the entity is deleted

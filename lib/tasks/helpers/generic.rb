@@ -134,6 +134,10 @@ module Generic
     @entity.set_detail(detail_name, detail_value)
   end
 
+  def _get_entity_details
+    @entity.get_details
+  end
+
   def _set_entity_details(hash)
     @entity.set_details hash
   end

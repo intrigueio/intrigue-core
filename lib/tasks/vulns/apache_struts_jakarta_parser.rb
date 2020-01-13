@@ -40,20 +40,13 @@ class ApacheStrutsJakartaParser < BaseTask
 
     # show the response in the logs 
     response.each {|x| _log "#{x}: #{response.header[x]}"}
-
+        
     if response.header['X-Intrigue-Struts'] =~ /788544/
-      _create_issue({
-        name: "Vulnerable to Apache Struts Jakarta Parser Vulnerability (CVE-2017-5638) RCE",
-        type: "vulnerability",
-        severity: 1,
-        status: "confirmed",
-        description: "Vulnerable to Apache Struts Jakarta Parser Vulnerability (CVE-2017-5638) RCE",
-        details: { 
-          uri: uri,
-          cve_id: "CVE-2017-5638",
-          positive_response: "#{response.header['X-Intrigue-Struts']}",
-        }
-      })
+      
+      instance_details = { 
+        proof: "#{response.header['X-Intrigue-Struts']}",
+      }
+      _create_linked_issue "apache_struts_jakarta_parser", instance_details
     end
   end
 
