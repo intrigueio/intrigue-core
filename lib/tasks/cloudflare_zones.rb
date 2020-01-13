@@ -30,10 +30,10 @@ class CloudflareZones < BaseTask
     email =_get_task_config("cloudflare_username")
     key =_get_task_config("cloudflare_api_key")
 
-    headers = {"X-Auth-Email" => email,
-               "X-Auth-Key" => key,
-               "Accept" =>  "application/json"
-           }
+    headers = {
+      "X-Auth-Email" => email,
+      "X-Auth-Key" => key,
+      "Accept" =>  "application/json" }
 
     # Def cloudflare_connection (email, key, entity_name)
     Cloudflare.connect(key: key, email: email) do |connection|
