@@ -39,10 +39,14 @@ class SearchYandexDns < BaseTask
     nameservers = ['77.88.8.88','77.88.8.2']
     _log "Querying #{nameservers}"
     dns_obj = Resolv::DNS.new(nameserver: nameservers)
+    
+    # Try twice, just in case (avoid FP's)
     res = dns_obj.getaddresses(entity_name)
+    res2 = dns_obj.getaddresses(entity_name)
 
     # Detected only if there's no resolution
-    if res.any?
+    if res.any? || res2.any?
+      _log "Resolves to #{res.map{|x| "#{x.to_name}" }}  and #{res2.map{|x| "#{x.to_name}" }}. Seems we're good!"
       _log "Resolves to #{res.map{|x| "#{x.to_name}" }}. Seems we're good!"
     else
 

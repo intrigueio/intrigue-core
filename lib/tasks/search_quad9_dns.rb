@@ -38,11 +38,14 @@ class SearchQuad9DnS < BaseTask
     nameservers = ['9.9.9.9']
     _log "Querying #{nameservers}"
     dns_obj = Resolv::DNS.new(nameserver: nameservers)
+    
+    # Try twice, just in case (avoid FP's)
     res = dns_obj.getaddresses(entity_name)
+    res2 = dns_obj.getaddresses(entity_name)
 
     # Detected only if there's no resolution
-    if res.any?
-      _log "Resolves to #{res.map{|x| "#{x.to_name}" }}. Seems we're good!"
+    if res.any? || res2.any?
+      _log "Resolves to #{res.map{|x| "#{x.to_name}" }}  and #{res2.map{|x| "#{x.to_name}" }}. Seems we're good!"
     else
       source = "Quad9"
       description = "Quad9 routes your DNS queries through a secure network of servers around the " +  

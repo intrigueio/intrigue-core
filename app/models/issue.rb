@@ -28,12 +28,14 @@ module Intrigue
       ###
       def export_hash
         {
-          :type => name,
-          :pretty_name => pretty_name,
-          :name => name,
-          :severity =>  severity,
-          :status =>  status,
-          :scoped =>  scoped,
+          :type => details[:name],
+          :pretty_name => details[:pretty_name],
+          :name => details[:name],
+          :identifiers =>  details[:identifiers],
+          :category =>  details[:category],
+          :severity =>  details[:severity],
+          :status =>  details[:status],
+          :scoped =>  details[:scoped],
           :description =>  details[:description],
           :remediation =>  details[:remediation],
           :references =>  details[:references],

@@ -36,11 +36,13 @@ class SearchOpenDns < BaseTask
     nameservers = ['208.67.222.222', '208.67.220.220']
     _log "Querying #{nameservers}"
     dns_obj = Resolv::DNS.new(nameserver: nameservers)
+    # Try twice, just in case (avoid FP's)
     res = dns_obj.getaddresses(entity_name)
+    res2 = dns_obj.getaddresses(entity_name)
 
     # Detected only if there's no resolution
-    if res.any?
-      _log "Resolves to #{res.map{|x| "#{x.to_name}" }}. Seems we're good!"
+    if res.any? || res2.any?
+      _log "Resolves to #{res.map{|x| "#{x.to_name}" }}  and #{res2.map{|x| "#{x.to_name}" }}. Seems we're good!"
     else
       source = "OpenDNS"
       description = "OpenDNS (now Cisco Umbrella) provides protection against threats on the internet such as malware, " + 
