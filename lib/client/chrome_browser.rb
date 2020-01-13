@@ -89,11 +89,9 @@ module Intrigue
       # relies on sequential worker numbers
       port = 9222 if port == 0 # just a failsafe 
       chrome_worker_number = port - 9221
-      
-      #puts "Unable to connect to client to the chrome devtools service (worker: #{chrome_worker_number}) running on #{port}, killing it!!!"
-    
+          
       _unsafe_system "pkill -f -9 remote-debugging-port=#{port} && god restart intrigue-chrome-#{chrome_worker_number}"
-      sleep 10
+      sleep 5
     end
 
     def _connect_and_enable(options)
