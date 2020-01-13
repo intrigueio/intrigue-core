@@ -44,16 +44,15 @@ class AWSroute53 < BaseTask
       zoneid = zone[:id]
       end
 
-    #_log_error "No zone with that name, failing"
-
     # info on zone
     zoneinfo = r53.get_hosted_zone({:id => zoneid})
     #puts zoneinfo
 
-    zoneinfo[:delegation_set][:name_servers].each do |e|
-      puts e #puts e[:delegation_set][:name_servers]
-      _create_entity("DnsRecord", {"name" => (e).to_s })
-      #puts e[:name_servers]
+    zoneinfo["delegation_set"]["name_servers"].each do |e|
+      puts e.class #puts e[:delegation_set][:name_servers]
+      #binding.pry
+      _create_entity("DnsRecord", {"name" => e})
+
     end
     #all records for zone
     #records = r53.list_resource_record_sets({:hosted_zone_id => zoneid})
