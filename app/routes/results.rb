@@ -56,7 +56,6 @@ class IntrigueApp < Sinatra::Base
       selected_results = selected_results.exclude(:autoscheduled) if @hide_autoscheduled
       selected_results = selected_results.exclude(:complete => false) if @only_complete
 
-
       # PAGINATE
       @result_count = selected_results.count
       @results = selected_results.extension(:pagination).paginate(@page,paginate_count)
@@ -77,7 +76,7 @@ class IntrigueApp < Sinatra::Base
     get '/:project/results/:id/cancel' do
       id = params[:id]
       if id == "all"
-        Intrigue::Model::TaskResult.scope_by_project(@project_name).each {|x| x.cancel! }
+        Intrigue::Model::TaskResult.scope_by_project(@project_name).paged_each(:rows_per_fetch => 500) {|x| x.cancel! }
         redirect "/#{@project_name}/results"
       else
         Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id]).cancel!
