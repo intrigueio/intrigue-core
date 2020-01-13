@@ -3,19 +3,36 @@ module Task
 module Issue
 
   ###
-  ### Generic helper method to create issues
+  ### DEPRECATED!!!! Generic helper method to create issues
   ###
   def _create_issue(details)
 
     _notify("Sev #{details[:severity]}!```#{details[:name]}```") if details[:severity] <= 3
 
-    hash = details.merge({ entity_id: @entity.id,
+    issue_hash = details.merge({ entity_id: @entity.id,
                            scoped: @entity.scoped,
                            task_result_id: @task_result.id,
                            project_id: @project.id })
 
     _log_good "Creating issue with name: #{details[:name]}"
-    issue = Intrigue::Model::Issue.create(_encode_hash(hash))
+    issue = Intrigue::Model::Issue.create(_encode_hash(issue_hash))
+  end
+
+  ### USE THIS GOING FORWARD
+  def _create_linked_issue(issue_type, instance_specifics)
+
+    _log_good "Creating linked issue of type: #{issue_type}"
+
+    issue_model_details = {  
+      entity_id: @entity.id,
+      task_result_id: @task_result.id,
+      project_id: @project.id, 
+      scoped: @entity.scoped
+    }
+
+    issue = Intrigue::Issue::IssueFactory.create_instance_by_type(issue_type, issue_model_details, _encode_hash(instance_specifics))
+  
+  issue 
   end
 
   ###
@@ -262,30 +279,6 @@ module Issue
         transport: transport }
     })
   end
-
-
-  ###
-  ### Malware Entities (network category)
-  ###
-  def _malicious_entity_detected(source, source_desc=nil, severity=3, details={}, references=[])
-    
-    # create the issues
-    _create_issue({
-      name: "Detected as malicious by #{source}",
-      type: "detected_malicious",
-      category: "network",
-      severity: severity,
-      status: "confirmed",
-      description: "This website has been detected as malicious, fraudulent, or otherwise harmful by the source. It is currently blocked when resolving it via #{source}. #{source} provides this additional description:\n\n" + (source_desc || "None"),
-      references: references,
-      details: details.merge({ source: source })
-    })
-
-    # Also store it on the entity 
-    blocked_list = @entity.get_detail("detected_malicious") || [] 
-    @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
-
-  end    
 
 end
 end

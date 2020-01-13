@@ -129,13 +129,18 @@ class AwsS3Brute < BaseTask
               Aws.config[:credentials] = Aws::Credentials.new(access_key_id, secret_access_key)
               exists = check_existence_authenticated(bucket_name)
 
-              # create our entity and store the username with it
-              _create_entity("AwsS3Bucket", {
-                "name" => "#{s3_uri}",
-                "uri" => "#{s3_uri}",
-                "authenticated" => true,
-                "username" => access_key_id
-              }) if exists
+              if exists
+                # create our entity and store the username with it
+                _create_entity("AwsS3Bucket", {
+                  "name" => "#{s3_uri}",
+                  "uri" => "#{s3_uri}",
+                  "authenticated" => true,
+                  "username" => access_key_id
+                })
+              
+                # create a bucket issue
+                _create_linked_issue "aws_s3_bucket_readable", {uri:  s3_uri, public: false}
+              end
 
             #########################
             # Unauthenticated check #
@@ -151,8 +156,8 @@ class AwsS3Brute < BaseTask
                   "authenticated" => false
                 }) 
 
-                # create a bucket issue 
-                create_s3_bucket_issue s3_uri 
+                # create a bucket issue
+                _create_linked_issue "aws_s3_bucket_readable", {uri:  s3_uri, public: true}
               end
 
               ### and if we got it there, no need to continue
@@ -163,14 +168,15 @@ class AwsS3Brute < BaseTask
               exists = check_existence_unauthenticated(s3_uri,bucket_name)
 
               if exists 
-                # create a bucket issue
-                create_s3_bucket_issue s3_uri
 
                 _create_entity("AwsS3Bucket", {
                   "name" => "#{s3_uri}",
                   "uri" => "#{s3_uri}",
                   "authenticated" => false,
                 }) 
+
+                # create a bucket issue
+                _create_linked_issue "aws_s3_bucket_readable", {uri:  s3_uri, public: true}
               end
 
             end # end if opt_use_creds
@@ -184,21 +190,6 @@ class AwsS3Brute < BaseTask
     workers.map(&:join); "ok"
 
   end
-
-  # TODO... check contents before creating an issue?
-  def create_s3_bucket_issue(url)
-
-    _create_issue({
-      name: "Open S3 Bucket Detected",
-      type: "open_s3_bucket_detected",
-      severity: 5,
-      status: "potential",
-      description: "Investigate this open s3 bucket: #{url}",
-      details: { url: url }
-    })
-
-  end
-
 
   def check_existence_unauthenticated(s3_uri, key)
     response = http_get_body("#{s3_uri}?max-keys=1")

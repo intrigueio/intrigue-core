@@ -27,6 +27,13 @@ class SearchQuad9DnS < BaseTask
     res = []
     entity_name = _get_entity_name
 
+    # check that it resolves
+    resolves_to = resolve_names entity_name
+    unless resolves_to.first
+      _log "No resolution for this record, unable to check"
+      return 
+    end
+
     # Query quad9 nameservers
     nameservers = ['9.9.9.9']
     _log "Querying #{nameservers}"
@@ -37,6 +44,7 @@ class SearchQuad9DnS < BaseTask
     if res.any?
       _log "Resolves to #{res.map{|x| "#{x.to_name}" }}. Seems we're good!"
     else
+      source = "Quad9"
       description = "Quad9 routes your DNS queries through a secure network of servers around the " +  
         "globe. The system uses threat intelligence from more than a dozen of the industry’s leading " +
         "cyber security companies to give a real-time perspective on what websites are safe and what " +
@@ -44,7 +52,18 @@ class SearchQuad9DnS < BaseTask
         "want to reach is known to be infected, you’ll automatically be blocked from entry – keeping " +
         "your data and computer safe."
 
-      _malicious_entity_detected("Quad9", description) 
+      _create_linked_issue("blocked_potentially_compromised", {
+        status: "confirmed",
+        additional_description: description,
+        source: source, 
+        proof: "Resolved to the following address(es) outside of #{source}: #{resolves_to.join(", ")}",
+        references:  [{type: "remediation", uri: "https://www.quad9.net/" }]
+      })
+
+      # Also store it on the entity 
+      blocked_list = @entity.get_detail("detected_malicious") || [] 
+      @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
+
     end
 
   end #end run

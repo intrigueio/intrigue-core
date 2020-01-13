@@ -492,7 +492,7 @@ module Services
     when 5000
       service = "UPNP"
     else
-      service = _port_name_for(port_num, "udp")
+      service = _service_name_for(port_num, "udp")
     end
   service 
   end

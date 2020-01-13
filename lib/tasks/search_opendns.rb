@@ -24,7 +24,14 @@ class SearchOpenDns < BaseTask
   def run
     super
     entity_name = _get_entity_name
-
+    
+    # check that it resolves
+    resolves_to = resolve_names entity_name
+    unless resolves_to.first
+      _log "No resolution for this record, unable to check"
+      return 
+    end
+    
     # Query opendns nameservers
     nameservers = ['208.67.222.222', '208.67.220.220']
     _log "Querying #{nameservers}"
@@ -35,10 +42,23 @@ class SearchOpenDns < BaseTask
     if res.any?
       _log "Resolves to #{res.map{|x| "#{x.to_name}" }}. Seems we're good!"
     else
-      description = "Cisco Umbrella provides protection against threats on the internet such as malware, " + 
+      source = "OpenDNS"
+      description = "OpenDNS (now Cisco Umbrella) provides protection against threats on the internet such as malware, " + 
         "phishing, and ransomware."
 
-      _malicious_entity_detected("OpenDNS", description) 
+      _create_linked_issue("blocked_potentially_compromised", {
+        status: "confirmed",
+        additional_description: description,
+        source: source, 
+        proof: "Resolved to the following address(es) outside of #{source}: #{resolves_to.join(", ")}",
+        references:  
+          [{type: "remediation", uri: "https://support.opendns.com/hc/en-us/articles/227987347-Why-is-this-Domain-Blocked-or-not-Blocked-" }]
+      })     
+      
+      # Also store it on the entity 
+      blocked_list = @entity.get_detail("detected_malicious") || [] 
+      @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
+
     end
 
   end #end run

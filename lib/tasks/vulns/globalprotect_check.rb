@@ -14,7 +14,7 @@ class  GlobalprotectCheck < BaseTask
         "https://www.blackhat.com/us-19/briefings/schedule/#infiltrating-corporate-intranet-like-nsa---pre-auth-rce-on-leading-ssl-vpns-15545",
         "cve-2019-1579-critical-pre-authentication-vulnerability-in-palo-alto-networks-globalprotect-ssl"
       ],
-      :type => "vuln",
+      :type => "vuln_check",
       :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "details" => {"name" => "https://intrigue.io"}}],

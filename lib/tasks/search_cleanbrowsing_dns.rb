@@ -24,6 +24,13 @@ class SearchCleanBrowsingDns < BaseTask
     entity_name = _get_entity_name
     entity_type = _get_entity_type_string
 
+    # check that it resolves
+    resolves_to = resolve_names entity_name
+    unless resolves_to.first
+      _log "No resolution for this record, unable to check"
+      return 
+    end
+
     # We use their DNS servers to query
     nameservers= ['185.228.168.168', '185.228.168.169']
     _log "Querying #{nameservers}"
@@ -34,10 +41,22 @@ class SearchCleanBrowsingDns < BaseTask
     if res.any?
       _log "Resolves to #{res.map{|x| "#{x.to_name}" }}. Seems we're good!"
     else
+      source = "CleanBrowsing"
       description = "The Cleanbrowsing DNS security filter focuses on restricting access " + 
-        "to malicious activity. It blocks phishing, spam and malicious domains."
-        
-      _malicious_entity_detected("CleanBrowsing", description) 
+        "to malicious activity. It blocks phishing, spam and known malicious domains."
+      
+      _create_linked_issue("blocked_potentially_compromised", {
+        status: "confirmed",
+        additional_description: description,
+        source: source, 
+        proof: "Resolved to the following address(es) outside of #{source}: #{resolves_to.join(", ")}",
+        references: [{ type: "remediation", uri: "https://cleanbrowsing.org/" }]
+      }) 
+      
+      # Also store it on the entity 
+      blocked_list = @entity.get_detail("detected_malicious") || [] 
+      @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
+
     end
 
   end

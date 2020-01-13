@@ -2,6 +2,37 @@ require 'rubygems'
 require 'json'
 require 'rest_client'
 
+###
+### SAMPLE USAGE
+###
+
+=begin
+x =  Intrigue.new
+
+  #
+  # Create an entity hash, must have a :type key
+  # and (in the case of most tasks)  a :attributes key
+  # with a hash containing a :name key (as shown below)
+  #
+  entity = {
+    :type => "String",
+    :attributes => { :name => "intrigue.io"}
+  }
+
+  #
+  # Create a list of options (this can be empty)
+  #
+  options_list = [
+    { :name => "resolver", :value => "8.8.8.8" }
+  ]
+
+x.start "example", entity_hash, options_list
+id  = x.start "search_bing", entity_hash, options_list
+#puts x._get_log id
+#puts x._get_result id
+
+=end
+
 class IntrigueApi
 
     def self.version
@@ -137,35 +168,3 @@ class IntrigueApi
 
 
 end
-
-
-###
-### SAMPLE USAGE
-###
-
-=begin
-x =  Intrigue.new
-
-  #
-  # Create an entity hash, must have a :type key
-  # and (in the case of most tasks)  a :attributes key
-  # with a hash containing a :name key (as shown below)
-  #
-  entity = {
-    :type => "String",
-    :attributes => { :name => "intrigue.io"}
-  }
-
-  #
-  # Create a list of options (this can be empty)
-  #
-  options_list = [
-    { :name => "resolver", :value => "8.8.8.8" }
-  ]
-
-x.start "example", entity_hash, options_list
-id  = x.start "search_bing", entity_hash, options_list
-#puts x._get_log id
-#puts x._get_result id
-
-=end

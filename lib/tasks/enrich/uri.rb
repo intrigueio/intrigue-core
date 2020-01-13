@@ -265,9 +265,12 @@ class Uri < Intrigue::Task::BaseTask
     generator_match = response.body.match(/<meta name=\"?generator\"? content=\"?(.*?)\"?\/>/i)
     generator_string = generator_match.captures.first.gsub("\"","") if generator_match
 
+    browser_results = capture_screenshot_and_request_hosts(uri)
+
     $db.transaction do
 
       new_details = @entity.details
+
       new_details.merge!({
         "alt_names" => alt_names,
         "api_endpoint" => api_enabled,
@@ -294,9 +297,13 @@ class Uri < Intrigue::Task::BaseTask
         "ciphers" => accepted_connections,
         "extended_ciphers" => accepted_connections # new ciphers field
       })
+      
+      # add in the browser results
+      new_details.merge! browser_results
 
       # Set the details, and make sure raw response data is a hidden (not searchable) detail
-      @entity.set_details new_details
+      _set_entity_details new_details
+      
     end
     new_details = nil
 
@@ -341,6 +348,8 @@ class Uri < Intrigue::Task::BaseTask
         e = nil 
       end
     end
+
+    
 
   end
 

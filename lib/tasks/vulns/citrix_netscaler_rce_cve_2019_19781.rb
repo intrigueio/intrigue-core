@@ -9,11 +9,7 @@ class  CitrixNetscalerRceCVE201919781 < BaseTask
       :authors => ["jcran"],
       :identifiers => [{ "cve" =>  "CVE-2019-19781" }],
       :description => "This task checks checks a Citrix Netscaler for a version vulnerable to the Dec 2019 /vpns RCE.",
-      :references => [
-          "https://support.citrix.com/article/CTX267027",
-          "https://support.citrix.com/article/CTX267679"
-      ],
-      :type => "vuln",
+      :type => "vuln_check",
       :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "details" => {"name" => "https://intrigue.io"}}],
@@ -40,19 +36,11 @@ class  CitrixNetscalerRceCVE201919781 < BaseTask
       # check that it matches our known vuln versions
       if response.body =~ /\[global\]/
         _log "Vulnerable!"
-        _create_issue({
-          name: "Vulnerable Citrix Netscaler",
-          severity: 1,
-          type: "vulnerability_citrix_netscaler_rce_cve_2019_19871",
-          status: "potential",
-          category: "network",
-          description: "This server (#{check_url}) is vulnerable to an unauthenticated RCE bug announced in December 2019. See references for more details.\n\nProof: Positive match on response body.",
-          references: self.class.metadata["references"],
-          details: {
-            "response_body" => response.body,
-            "response_code" => response.code
-          }
-          })
+        # file issue
+        _create_linked_issue("vulnerability_citrix_netscaler_rce_cve_2019_19781", { 
+          status: "confirmed", 
+          checked_url: check_url,
+          proof: response.body })
       else
         _log "Not Vulnerable, couldnt match our regex: #{response.body}"
       end

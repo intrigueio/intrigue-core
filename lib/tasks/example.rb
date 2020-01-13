@@ -43,7 +43,7 @@ class Example < BaseTask
       return
     end
 
-    # create an issue
+    # create an issue the old school way
     zone = [1,2,3,4]
     _create_issue({
       name: "Example Issue",
@@ -53,6 +53,10 @@ class Example < BaseTask
       description: "just an example.",
       details: { example_attribute: zone }
     })
+
+
+    # create an issue 
+    _create_linked_issue("example", { status: "confirmed", proof: "wheee!" })
 
     # just return if we have bad data
     return unless _get_option("count") > 0

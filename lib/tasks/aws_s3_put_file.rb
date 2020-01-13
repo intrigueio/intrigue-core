@@ -67,17 +67,11 @@ class AwsS3PutFile < BaseTask
 
       _log_good "Successful write to #{public ? "public" : "private"} file: #{url}"
 
-      _create_issue({
-        name: "Writeable S3 bucket",
-        type: "writeable_s3_bucket",
-        severity: 3,
-        status: "confirmed",
-        description: "The S3 bucket #{bucket_name} was found to be writable.",
-        details: { 
-          public: public,
-          uri: url
-        }
-      })
+      if public 
+        _create_linked_issue "aws_s3_bucket_writable", {uri: url, public: false}
+      else
+        _create_linked_issue "aws_s3_bucket_writable", {uri: url, public: true}
+      end
 
     rescue Excon::Error::Forbidden => e
       _log_error "Permission denied writing #{public ? "public" : "private"} file."

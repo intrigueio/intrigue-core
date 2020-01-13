@@ -3,8 +3,7 @@ module Intrigue
 
     class Issue < Sequel::Model
       plugin :validation_helpers
-      plugin :serialization, :json, :details
-
+    
       many_to_one  :project
       many_to_one  :task_result
       many_to_one  :entity
@@ -17,7 +16,11 @@ module Intrigue
 
       def validate
         super
-        validates_unique([:project_id, :type, :name, :entity_id, :description])
+        validates_unique([:project_id, :type, :entity_id])
+      end
+
+      def to_s
+        "#{name} on #{entity.type} #{entity.name}"
       end
       
       ###
@@ -25,12 +28,15 @@ module Intrigue
       ###
       def export_hash
         {
-          :type => type,
+          :type => name,
+          :pretty_name => pretty_name,
           :name => name,
           :severity =>  severity,
           :status =>  status,
           :scoped =>  scoped,
-          :description =>  description,
+          :description =>  details[:description],
+          :remediation =>  details[:remediation],
+          :references =>  details[:references],
           :entity_type => entity.type,
           :entity_name => entity.name,
           :entity_aliases => entity.aliases.map{|a| {:type => a.type, :name => a.name} },  

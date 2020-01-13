@@ -2,7 +2,7 @@
 Total Entities: <%= Intrigue::Model::Entity.scope_by_project(@project_name).count %> entities
 <p>
   <ul>
-    <% Intrigue::EntityFactory.entity_types.each do |d| %>
+    <% Intrigue::EntityFactory.entity_types.sort_by{|x| x.to_s }.each do |d| %>
     <% count = Intrigue::Model::Entity.scope_by_project_and_type(@project_name,d.to_s).count %>
     <% next unless count > 0 %>
     <li>

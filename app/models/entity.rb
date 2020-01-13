@@ -19,6 +19,7 @@ module Intrigue
       many_to_one  :alias_group
       many_to_many :task_results
       many_to_one  :project
+      one_to_many  :issues
 
       include Intrigue::Task::Helper
 
@@ -44,7 +45,7 @@ module Intrigue
       #  our_value = json_details.get_text(detail_name)
       #  candidate_entities.where(our_value => detail_value)
       #end
-
+      
       def ancestors
         ancestors = []
         task_results.each do |tr|
@@ -177,12 +178,16 @@ module Intrigue
       def set_detail(key, value)
         begin
           self.set(:details => details.merge({key => value}.sanitize_unicode))
-          save_changes
+          save
         rescue Sequel::NoExistingObject => e
           puts "Error saving details for #{self}: #{e}, deleted?"
         rescue Sequel::DatabaseError => e
           puts "Error saving details for #{self}: #{e}, deleted?"
         end
+      end
+
+      def get_details
+        details
       end
 
       def set_details(hash)
@@ -210,7 +215,7 @@ module Intrigue
         # clean up aliases at the same time
         alias_group.each {|x| x.soft_delete!}
         deleted = true
-        save_changes
+        save
       end
 
       # Check whether the entity is deleted
