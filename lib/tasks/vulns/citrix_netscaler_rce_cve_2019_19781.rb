@@ -9,7 +9,7 @@ class  CitrixNetscalerRceCVE201919781 < BaseTask
       :authors => ["jcran"],
       :identifiers => [{ "cve" =>  "CVE-2019-19781" }],
       :description => "This task checks checks a Citrix Netscaler for a version vulnerable to the Dec 2019 /vpns RCE.",
-      :type => "vuln",
+      :type => "vuln_check",
       :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "details" => {"name" => "https://intrigue.io"}}],

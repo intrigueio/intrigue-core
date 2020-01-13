@@ -7,18 +7,18 @@ class VulnCitrixNetscalerCve201919871 < BaseIssue
       name: "vulnerability_citrix_netscaler_rce_cve_2019_19781",
       pretty_name: "Vulnerable Citrix Netscaler (CVE-2019-19871)",
       identifiers: [
-        { type: "CVE", name: "CVE-2019-19871" },
+        { type: "CVE", name: "CVE-2019-19871" }
       ],
       severity: 1,
       category: "network",
       description: "A Citrix Netscaler device was found to be vulnerable to an unauthenticated RCE (CVE-2019-19781). The vulnerability was released in Dec 2019 and no patch was released immediately. Remote, Pre-auth Arbitrary Command Execution is possible due to the logic vulnerability.",
       remediation: "No patch is currently available, apply the workarounds provided by Citrix (see references).",
-      affected_software: [ # TODO ... convert these to CPE?
-        "Citrix ADC and Citrix Gateway version 13.0 all supported builds",
-        "Citrix ADC and NetScaler Gateway version 12.1 all supported builds",
-        "Citrix ADC and NetScaler Gateway version 12.0 all supported builds",
-        "Citrix ADC and NetScaler Gateway version 12.0 all supported builds",
-        "Citrix NetScaler ADC and NetScaler Gateway version 10.5 all supported builds"
+      affected_software: [
+        { :vendor => "Citrix", :product => "NetScaler Gateway", :version => "13.0" },
+        { :vendor => "Citrix", :product => "NetScaler Gateway", :version => "12.1" },
+        { :vendor => "Citrix", :product => "NetScaler Gateway", :version => "12.0" },
+        { :vendor => "Citrix", :product => "NetScaler Gateway", :version => "11.1" },
+        { :vendor => "Citrix", :product => "NetScaler Gateway", :version => "10.5" }
       ],
       references: [
         { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-19781" },
@@ -31,7 +31,8 @@ class VulnCitrixNetscalerCve201919871 < BaseIssue
         { type: "detection", uri: "https://www.reddit.com/r/netsec/comments/en4mmo/multiple_exploits_for_cve201919781_citrix/" },
         { type: "threat_intelligence", uri: "https://isc.sans.edu/forums/diary/Citrix+ADC+Exploits+are+Public+and+Heavily+Used+Attempts+to+Install+Backdoor/25700/" },
         { type: "threat_intelligence", uri: "https://www.trustedsec.com/blog/netscaler-remote-code-execution-forensics" }
-      ]
+      ], 
+      task: "vuln/citrix_netscaler_rce_cve_2019_19781"
     }.merge!(instance_details)
   end
 

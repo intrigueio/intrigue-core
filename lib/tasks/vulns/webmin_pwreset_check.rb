@@ -15,7 +15,7 @@ class  WebminPwreset < BaseTask
       :references => [
         "https://pentest.com.tr/exploits/DEFCON-Webmin-1920-Unauthenticated-Remote-Command-Execution.html"
       ],
-      :type => "vuln",
+      :type => "vuln_check",
       :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "details" => {"name" => "https://intrigue.io"}}],
