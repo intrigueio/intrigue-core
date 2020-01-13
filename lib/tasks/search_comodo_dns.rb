@@ -37,13 +37,14 @@ class SearchComodoDns < BaseTask
     _log "Querying #{nameservers}"
     dns_obj = Resolv::DNS.new(nameserver: nameservers)
     
+    
     # Try twice, just in case (avoid FP's)
     res = dns_obj.getaddresses(entity_name)
-    res2 = dns_obj.getaddresses(entity_name)
+    res.concat(dns_obj.getaddresses(entity_name, Resolv::DNS::Resource::IN::CNAME)).flatten
 
     # Detected only if there's no resolution
-    if res.any? || res2.any?
-      _log "Resolves to #{res.map{|x| "#{x.to_name}" }}  and #{res2.map{|x| "#{x.to_name}" }}. Seems we're good!"
+    if res.any?
+      _log "Resolves to #{res.map{|x| "#{x.to_name}" }}. Seems we're good!"
     else
       source = "Comodo"
       description = "Comodo Secure DNS is a domain name resolution service that resolves "  + 

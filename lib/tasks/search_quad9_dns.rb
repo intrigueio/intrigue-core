@@ -2,7 +2,7 @@ require 'resolv'
 
 module Intrigue
 module Task
-class SearchQuad9DnS < BaseTask
+class SearchQuad9Dns < BaseTask
 
   def self.metadata
     {
@@ -41,11 +41,11 @@ class SearchQuad9DnS < BaseTask
     
     # Try twice, just in case (avoid FP's)
     res = dns_obj.getaddresses(entity_name)
-    res2 = dns_obj.getaddresses(entity_name)
+    res.concat(dns_obj.getresources(entity_name, Resolv::DNS::Resource::IN::CNAME)).flatten
 
     # Detected only if there's no resolution
-    if res.any? || res2.any?
-      _log "Resolves to #{res.map{|x| "#{x.to_name}" }}  and #{res2.map{|x| "#{x.to_name}" }}. Seems we're good!"
+    if res.any?
+      _log "Resolves to #{res.map{|x| "#{x.to_s}" }}. Seems we're good!"
     else
       source = "Quad9"
       description = "Quad9 routes your DNS queries through a secure network of servers around the " +  
