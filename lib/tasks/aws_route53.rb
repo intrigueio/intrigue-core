@@ -26,7 +26,7 @@ class AWSroute53 < BaseTask
     # Get the entity name to investigate
     entity_name= _get_entity_name
 
-    # set zoneid 
+    # set zoneid
     zoneid = "unknown"
 
     # Get the AWS Route53 Credentials
@@ -40,24 +40,28 @@ class AWSroute53 < BaseTask
     resp = r53.list_hosted_zones
 
     resp[:hosted_zones].each do |zone|
-      _log "ZONE: #{zone[:name]} #{zone[:id]} #{zone[:config][:comment]}"
-      #if (zone[:name] == "entity_name")then zoneid = zone[:id] end
-      zoneid = zone[:id]
 
-      # info on zone
-      zoneinfo = r53.get_hosted_zone({:id => zoneid})
+      #check if the zone name matches the domain to investigate
+      if zone[:name].include? entity_name
 
-      # create nameservers for each zone
-      zoneinfo["delegation_set"]["name_servers"].each do |e|
-        _create_entity("Nameserver", {"name" => e})
+        zoneid = zone[:id]
+        # info on zone
+        zoneinfo = r53.get_hosted_zone({:id => zoneid})
+        #records = r53.list_resource_record_sets({:hosted_zone_id => zoneid})
+        # create nameservers for each zone
+        zoneinfo["delegation_set"]["name_servers"].each do |e|
+
+          _create_entity("Nameserver", {"name" => (e).to_s})
+        end
+
+        #all records for zone
+        #records = r53.list_resource_record_sets({:hosted_zone_id => zoneid})
+        #puts records
+
       end
-      
     end
 
 
-    #all records for zone
-    #records = r53.list_resource_record_sets({:hosted_zone_id => zoneid})
-    #puts records
 
   end #end run
 
