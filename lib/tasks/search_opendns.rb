@@ -38,7 +38,7 @@ class SearchOpenDns < BaseTask
     dns_obj = Resolv::DNS.new(nameserver: nameservers)
     # Try twice, just in case (avoid FP's)
     res = dns_obj.getaddresses(entity_name)
-    res.concat(dns_obj.getaddresses(entity_name, Resolv::DNS::Resource::IN::CNAME)).flatten
+    res.concat(dns_obj.getresources(entity_name, Resolv::DNS::Resource::IN::CNAME)).flatten
 
     # Detected only if there's no resolution
     if res.any?
