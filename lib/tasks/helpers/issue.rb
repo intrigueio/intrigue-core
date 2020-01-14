@@ -5,17 +5,32 @@ module Issue
   ###
   ### DEPRECATED!!!! Generic helper method to create issues
   ###
-  def _create_issue(details)
+  def _create_issue(issue_hash)
 
-    _notify("Sev #{details[:severity]}!```#{details[:name]}```") if details[:severity] <= 3
+    puts "got issue hash: #{issue_hash}"
 
-    issue_hash = details.merge({ entity_id: @entity.id,
-                           scoped: @entity.scoped,
-                           task_result_id: @task_result.id,
-                           project_id: @project.id })
+    issue = issue_hash.merge({  entity_id: @entity.id,
+                                scoped: @entity.scoped,
+                                task_result_id: @task_result.id,
+                                project_id: @project.id })
 
-    _log_good "Creating issue with name: #{details[:name]}"
-    issue = Intrigue::Model::Issue.create(_encode_hash(issue_hash))
+    _notify("Sev #{issue[:severity]}!```#{issue[:name]}```") if issue[:severity] <= 3
+
+    # adjust naming per new schema
+    temp_name = issue[:type]
+    temp_pretty_name = issue[:name]
+
+    # copy values into the detailss
+    issue[:details][:description] = issue[:description]
+    issue[:details][:references] = issue[:references]
+    issue[:details][:category] = issue[:category]
+    issue[:details][:status] = issue[:status]
+    issue[:details][:severity] = issue[:severity]
+    issue[:details][:pretty_name] = temp_pretty_name
+    issue[:details][:name] = temp_name
+
+    _log_good "Creating issue: #{temp_pretty_name}"
+  Intrigue::Model::Issue.create(_encode_hash(issue))
   end
 
   ### USE THIS GOING FORWARD
