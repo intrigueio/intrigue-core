@@ -77,14 +77,14 @@ module Intrigue
         raise "Should be called on subclass..."
       end
 
-      def short_details
+      def short_details # ideally this is just excluding extended_ stuff
         details.reject{ |k,v|
-          k.to_s.match(/^hidden_.*$/) || k.to_s.match(/^extended_.*$/)   }
+          k.to_s.match(/^hidden_.*$/) || k.to_s.match(/^extended_.*$/) || k.to_s.match(/^encoded_.*$/)  }
       end
 
-      def extended_details
+      def extended_details # ideally this is just including extended_ stuff
         details.select{ |k,v|
-          k.to_s.match(/^hidden_.*$/) || k.to_s.match(/^extended_.*$/) }
+          k.to_s.match(/^hidden_.*$/) || k.to_s.match(/^extended_.*$/)|| k.to_s.match(/^encoded_.*$/) }
       end
 
       def has_extended_details?
