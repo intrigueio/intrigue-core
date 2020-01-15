@@ -168,6 +168,18 @@
       "editable": "true",
       "comment": ""
     },
+    "dnsimple_api_key": {
+      "value": "",
+      "uri": "https://developer.dnsimple.com/v2/",
+      "editable": "true",
+      "comment": ""
+    },
+    "dnsimple_account_id": {
+      "value": "",
+      "uri": "https://developer.dnsimple.com/v2/",
+      "editable": "true",
+      "comment": ""
+    },
     "email_validator_apikey": {
       "value": "",
       "uri": "http://www.email-validator.net/email-address-online-verification-api.html",
