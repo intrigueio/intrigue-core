@@ -49,7 +49,7 @@ module Task
         browser_response = {}
       end
 
-    browser_response
+    to_return
     end
     
     # TODO

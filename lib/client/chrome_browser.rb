@@ -58,15 +58,15 @@ module Intrigue
         } 
       end
 
-      encoded_screenshot=nil
+      hidden_screenshot_contents=nil
       
       max_retries = 5 
       tries = 0
-      until encoded_screenshot || (tries > max_retries)
+      until hidden_screenshot_contents || (tries > max_retries)
         tries +=1
         chrome_port = "#{ENV["CHROME_PORT"]}".to_i || 9222
         begin 
-          encoded_screenshot = _navigate_and_screenshot(url)
+          hidden_screenshot_contents = _navigate_and_screenshot(url)
           
           sleep 3
 
