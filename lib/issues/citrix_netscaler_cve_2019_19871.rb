@@ -5,7 +5,7 @@ class VulnCitrixNetscalerCve201919871 < BaseIssue
   def self.generate(instance_details={})
     {
       name: "vulnerability_citrix_netscaler_rce_cve_2019_19781",
-      pretty_name: "Vulnerable Citrix Netscaler (CVE-2019-19871)",
+      pretty_name: "Vulnerable Citrix Netscaler (CVE-2019-19781)",
       identifiers: [
         { type: "CVE", name: "CVE-2019-19871" }
       ],
