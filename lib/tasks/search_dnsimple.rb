@@ -42,7 +42,7 @@ class SearchDnsimple < BaseTask
 
         #this should be optional...
         #Create issue if the domain will expire in 30 days
-        # if ((Date.parse(domain.expires_on)- DateTime.now).to_i) > 30
+        # if ((Date.parse(domain.expires_on)- DateTime.now).to_i) < 30
         #   _create_issue({
         #     name: "Domain name will be expired soon",
         #     type: "Domain expired",
