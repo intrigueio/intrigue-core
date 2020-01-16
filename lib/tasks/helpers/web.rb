@@ -279,28 +279,7 @@ module Task
           # collect all top-level domains
           tlds << alt_name.split(".").last(2).join(".")
 
-          # annoying!
-          universal_cert_domains = [
-            "acquia-sites.com",
-            "careers.talemetry.com",
-            "chinanetcenter.com",
-            "chinacloudsites.cn",
-            "cloudflare.com",
-            "cloudflaressl.com",
-            "distilnetworks.com",
-            "edgecastcdn.net",
-            "helloworld.com",
-            "hexagon-cdn.com", # TODO - worth revisiting, may include related hosts
-            "fastly.net",
-            "freshdesk.com",
-            "jiveon.com",
-            "incapsula.com",
-            "lithium.com",
-            "sucuri.net",
-            "swagcache.com",
-            "wpengine.com",
-            "yottaa.net"
-          ]
+          universal_cert_domains = get_universal_cert_domains
 
           universal_cert_domains.each do |cert_domain|
             if (alt_name =~ /#{cert_domain}$/ )

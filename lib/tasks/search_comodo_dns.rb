@@ -37,7 +37,6 @@ class SearchComodoDns < BaseTask
     _log "Querying #{nameservers}"
     dns_obj = Resolv::DNS.new(nameserver: nameservers)
     
-    
     # Try twice, just in case (avoid FP's)
     res = dns_obj.getaddresses(entity_name)
     res.concat(dns_obj.getresources(entity_name, Resolv::DNS::Resource::IN::CNAME)).flatten
@@ -56,7 +55,8 @@ class SearchComodoDns < BaseTask
         status: "confirmed",
         additional_description: description,
         source: source, 
-        proof: "Resolved to the following address(es) outside of #{source}: #{resolves_to.join(", ")}",
+        proof: "Resolved to the following address(es) outside of #{source} (#{nameservers}): #{resolves_to.join(", ")}",
+        to_reproduce: "dig #{entity_name} @#{nameservers.first}",
         references: [{type: "remediation", uri: "https://www.comodo.com/secure-dns/" }]
       })
 

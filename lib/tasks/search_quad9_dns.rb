@@ -59,7 +59,8 @@ class SearchQuad9Dns < BaseTask
         status: "confirmed",
         additional_description: description,
         source: source, 
-        proof: "Resolved to the following address(es) outside of #{source}: #{resolves_to.join(", ")}",
+        proof: "Resolved to the following address(es) outside of #{source} (#{nameservers}): #{resolves_to.join(", ")}",
+        to_reproduce: "dig #{entity_name} @#{nameservers.first}",
         references:  [{type: "remediation", uri: "https://www.quad9.net/" }]
       })
 

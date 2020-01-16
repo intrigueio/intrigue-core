@@ -232,8 +232,8 @@ module Issue
 
       if resource_url =~ /^http:.*$/ 
         _create_issue({
-          name: "Mixed content loaded on #{uri}",
-          type: "mixed_content",
+          name: "Insecure content loaded by page",
+          type: "insecure_content",
           category: "application",
           severity: 4,
           status: "confirmed",

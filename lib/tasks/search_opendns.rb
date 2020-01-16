@@ -24,13 +24,13 @@ class SearchOpenDns < BaseTask
   def run
     super
     entity_name = _get_entity_name
-    
+
     # check that it resolves
     resolves_to = resolve_names entity_name
     unless resolves_to.first
       _log "No resolution for this record, unable to check"
       return 
-    end
+    endZ
     
     # Query opendns nameservers
     nameservers = ['208.67.222.222', '208.67.220.220']
@@ -52,7 +52,8 @@ class SearchOpenDns < BaseTask
         status: "confirmed",
         additional_description: description,
         source: source, 
-        proof: "Resolved to the following address(es) outside of #{source}: #{resolves_to.join(", ")}",
+        proof: "Resolved to the following address(es) outside of #{source} (#{nameservers}): #{resolves_to.join(", ")}",
+        to_reproduce: "dig #{entity_name} @#{nameservers.first}",
         references:  
           [{type: "remediation", uri: "https://support.opendns.com/hc/en-us/articles/227987347-Why-is-this-Domain-Blocked-or-not-Blocked-" }]
       })     

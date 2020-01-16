@@ -33,7 +33,7 @@ class SearchYandexDns < BaseTask
     unless resolves_to.first
       _log "No resolution for this record, unable to check"
       return 
-    end
+    end 
 
     # Query yandex nameservers
     nameservers = ['77.88.8.88','77.88.8.2']
@@ -59,7 +59,8 @@ class SearchYandexDns < BaseTask
         status: "confirmed",
         additional_description: description,
         source: source, 
-        proof: "Resolved to the following address(es) outside of #{source}: #{resolves_to.join(", ")}",
+        proof: "Resolved to the following address(es) outside of #{source} (#{nameservers}): #{resolves_to.join(", ")}",
+        to_reproduce: "dig #{entity_name} @#{nameservers.first}",
         references: [{ type: "remediation", uri: "https://dns.yandex.com/" }]
       })
 
