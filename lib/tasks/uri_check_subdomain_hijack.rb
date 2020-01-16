@@ -35,7 +35,9 @@ class UriCheckSudomainHijack  < BaseTask
         _create_hijackable_subdomain_issue "Bitbucket", uri, "potential"
       
       elsif response.body =~ /Trying to access your account\?/i
-        _create_hijackable_subdomain_issue "CampaignMonitor", uri, "potential"
+        unless (uri =~ /createsend.com/ || uri =~ /amazonaws.com/)
+          _create_hijackable_subdomain_issue "CampaignMonitor", uri, "potential" 
+        end
       
       #elsif response.body =~ /404 Not Found/i # TODO... check uri && file against alias groups?
       #  _create_hijackable_subdomain_issue "CargoCollective | Fly.io | Netlify", uri, "potential"  

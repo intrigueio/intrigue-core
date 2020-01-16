@@ -35,7 +35,7 @@
       <tr><th>Name</th><th>Entity</th><th>Status</th><th>Severity</th><th>Scoped</th><th>Category</th><th>Description</th></tr>
       <% @issues.each do |issue| %>
         <tr>
-          <td><a href="<%="/#{h @project_name}/issues/#{h issue.id}"%>"><%= h issue.pretty_name || issue.name %></a></td>
+          <td><a href="<%="/#{h @project_name}/issues/#{h issue.id}"%>"><%= h issue.name %></a></td>
           <td><%=issue.entity.name%><br><%issue.entity.aliases{ |x|%> <%=x.name%> <br><%}%></td>
           <td><%=issue.status%></td>
           <td><%=issue.severity%></td>

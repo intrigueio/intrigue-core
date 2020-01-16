@@ -29,17 +29,19 @@ module Intrigue
       def export_hash
         {
           :type => name,
-          :pretty_name => pretty_name,
           :name => name,
-          :severity =>  severity,
+          :category => category,
+          :severity => severity,
           :status =>  status,
           :scoped =>  scoped,
-          :description =>  details[:description],
-          :remediation =>  details[:remediation],
-          :references =>  details[:references],
+          :description =>  description,
+          :pretty_name => details["pretty_name"],
+          :identifiers =>  details["identifiers"],
+          :remediation =>  details["remediation"],
+          :references =>  details["references"],
           :entity_type => entity.type,
           :entity_name => entity.name,
-          :entity_aliases => entity.aliases.map{|a| {:type => a.type, :name => a.name} },  
+          :entity_aliases => entity.aliases.map{|a| {"type" => a.type, "name" => a.name} },  
           :entity_alias_group_id => entity.alias_group_id,
           :details => details,
           :task_result => task_result.name,
@@ -52,10 +54,10 @@ module Intrigue
         "#{type}, #{name}, #{severity}, #{status}, #{description.gsub(",",";")}, #{entity.type}, #{entity.name}, #{entity.alias_group_id}"
       end
 
-
       def export_json
-        export_hash.to_json
+        export_hash.merge("generated_at" => "#{Time.now.utc}").to_json
       end
+
 
     end
 

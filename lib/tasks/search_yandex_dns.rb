@@ -33,17 +33,20 @@ class SearchYandexDns < BaseTask
     unless resolves_to.first
       _log "No resolution for this record, unable to check"
       return 
-    end
+    end 
 
     # Query yandex nameservers
     nameservers = ['77.88.8.88','77.88.8.2']
     _log "Querying #{nameservers}"
     dns_obj = Resolv::DNS.new(nameserver: nameservers)
+    
+    # Try twice, just in case (avoid FP's)
     res = dns_obj.getaddresses(entity_name)
+    res.concat(dns_obj.getresources(entity_name, Resolv::DNS::Resource::IN::CNAME)).flatten
 
     # Detected only if there's no resolution
     if res.any?
-      _log "Resolves to #{res.map{|x| "#{x.to_name}" }}. Seems we're good!"
+      _log "Resolves to #{res.map{|x| "#{x.to_s}" }}. Seems we're good!"
     else
 
       source =  "Yandex"
@@ -56,7 +59,8 @@ class SearchYandexDns < BaseTask
         status: "confirmed",
         additional_description: description,
         source: source, 
-        proof: "Resolved to the following address(es) outside of #{source}: #{resolves_to.join(", ")}",
+        proof: "Resolved to the following address(es) outside of #{source} (#{nameservers}): #{resolves_to.join(", ")}",
+        to_reproduce: "dig #{entity_name} @#{nameservers.first}",
         references: [{ type: "remediation", uri: "https://dns.yandex.com/" }]
       })
 

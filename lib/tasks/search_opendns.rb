@@ -24,23 +24,25 @@ class SearchOpenDns < BaseTask
   def run
     super
     entity_name = _get_entity_name
-    
+
     # check that it resolves
     resolves_to = resolve_names entity_name
     unless resolves_to.first
       _log "No resolution for this record, unable to check"
       return 
-    end
+    endZ
     
     # Query opendns nameservers
     nameservers = ['208.67.222.222', '208.67.220.220']
     _log "Querying #{nameservers}"
     dns_obj = Resolv::DNS.new(nameserver: nameservers)
+    # Try twice, just in case (avoid FP's)
     res = dns_obj.getaddresses(entity_name)
+    res.concat(dns_obj.getresources(entity_name, Resolv::DNS::Resource::IN::CNAME)).flatten
 
     # Detected only if there's no resolution
     if res.any?
-      _log "Resolves to #{res.map{|x| "#{x.to_name}" }}. Seems we're good!"
+      _log "Resolves to #{res.map{|x| "#{x.to_s}" }}. Seems we're good!"
     else
       source = "OpenDNS"
       description = "OpenDNS (now Cisco Umbrella) provides protection against threats on the internet such as malware, " + 
@@ -50,7 +52,8 @@ class SearchOpenDns < BaseTask
         status: "confirmed",
         additional_description: description,
         source: source, 
-        proof: "Resolved to the following address(es) outside of #{source}: #{resolves_to.join(", ")}",
+        proof: "Resolved to the following address(es) outside of #{source} (#{nameservers}): #{resolves_to.join(", ")}",
+        to_reproduce: "dig #{entity_name} @#{nameservers.first}",
         references:  
           [{type: "remediation", uri: "https://support.opendns.com/hc/en-us/articles/227987347-Why-is-this-Domain-Blocked-or-not-Blocked-" }]
       })     

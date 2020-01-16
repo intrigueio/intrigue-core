@@ -55,7 +55,7 @@ module Intrigue
       end
 
       def export_json
-        export_hash.merge("generated_at" => "#{DateTime.now}").to_json
+        export_hash.merge("generated_at" => "#{Time.now.utc}").to_json
       end
 
       def export_entities_csv

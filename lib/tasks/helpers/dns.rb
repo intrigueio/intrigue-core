@@ -162,9 +162,10 @@ module Dns
     
     resources = []
 
-    # Handle ptr type first
+    # Handle ip lookup (PTR) first
     if lookup_name.is_ip_address?
       
+      # TODO... this should return multiple
       begin   
         entry = Resolv.new.getname lookup_name
 
@@ -194,7 +195,7 @@ module Dns
 
         # lookup each type
         lookup_types.each do |t|
-          Resolv::DNS.open {|dns|
+          Resolv::DNS.open() {|dns|
             dns.timeouts = 5
 
             resources.concat(dns.getresources(lookup_name, t)) 
@@ -203,8 +204,6 @@ module Dns
 
         # translate results into a ruby hash
         out = resources.map do |r|
-
-          #puts "Got response record: #{r.inspect}"
 
           entry = lookup_name
           entry = r.address.to_s if r.respond_to? "address"

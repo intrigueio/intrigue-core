@@ -39,13 +39,17 @@ module Task
         else
           request_hosts = []
         end
+
+        to_return = { 
+          "extended_screenshot_contents" => browser_response["encoded_screenshot"],
+          "request_hosts" => request_hosts,
+          "extended_requests" => browser_response["requests"]
+        }
+      else 
+        to_return = {}
       end
 
-      to_return = { 
-        "extended_screenshot_contents" => browser_response["encoded_screenshot"],
-        "request_hosts" => request_hosts,
-        "extended_requests" => browser_response["requests"]
-      }
+    to_return
     end
     
     # TODO

@@ -3,9 +3,9 @@
 <h3>
 <% if @issue.details && @issue.details["uri"] %>
 <% uri = @issue.details["uri"] %>
- <p><a href="<%= h uri  %>"><%= h @issue.name %></a><br/></p>
+ <p><a href="<%= h uri  %>"><%= h @issue.details[:pretty_name] || @issue.name %></a><br/></p>
 <% else %>
-   <%= h @issue.name %>
+   <%= h @issue.details[:pretty_name] || @issue.name %>
 <% end %>
 </h3>
 Affected Entity: <a href="/<%=@issue.project.name%>/entities/<%=@issue.entity.id%>"><%= @issue.entity.type_string %> <%= @issue.entity.name %></a><br/>

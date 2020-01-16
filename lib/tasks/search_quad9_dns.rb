@@ -2,7 +2,7 @@ require 'resolv'
 
 module Intrigue
 module Task
-class SearchQuad9DnS < BaseTask
+class SearchQuad9Dns < BaseTask
 
   def self.metadata
     {
@@ -38,11 +38,14 @@ class SearchQuad9DnS < BaseTask
     nameservers = ['9.9.9.9']
     _log "Querying #{nameservers}"
     dns_obj = Resolv::DNS.new(nameserver: nameservers)
+    
+    # Try twice, just in case (avoid FP's)
     res = dns_obj.getaddresses(entity_name)
+    res.concat(dns_obj.getresources(entity_name, Resolv::DNS::Resource::IN::CNAME)).flatten
 
     # Detected only if there's no resolution
     if res.any?
-      _log "Resolves to #{res.map{|x| "#{x.to_name}" }}. Seems we're good!"
+      _log "Resolves to #{res.map{|x| "#{x.to_s}" }}. Seems we're good!"
     else
       source = "Quad9"
       description = "Quad9 routes your DNS queries through a secure network of servers around the " +  
@@ -56,7 +59,8 @@ class SearchQuad9DnS < BaseTask
         status: "confirmed",
         additional_description: description,
         source: source, 
-        proof: "Resolved to the following address(es) outside of #{source}: #{resolves_to.join(", ")}",
+        proof: "Resolved to the following address(es) outside of #{source} (#{nameservers}): #{resolves_to.join(", ")}",
+        to_reproduce: "dig #{entity_name} @#{nameservers.first}",
         references:  [{type: "remediation", uri: "https://www.quad9.net/" }]
       })
 
