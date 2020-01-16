@@ -46,7 +46,7 @@ module Task
           "extended_requests" => browser_response["requests"]
         }
       else 
-        browser_response = {}
+        to_return = {}
       end
 
     to_return
