@@ -43,7 +43,7 @@ class WordpressEnumeratePlugins < BaseTask
     end
     
     # then make the requests
-    results = make_http_requests_from_queue(uri, work_q, thread_count=5, false, false) # always create an issue
+    results = make_http_requests_from_queue(uri, work_q, thread_count=1, false, false) # always create an issue
     _log "Got matches: #{results}"
   
   results
