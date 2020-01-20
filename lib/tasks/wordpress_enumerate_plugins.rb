@@ -35,7 +35,7 @@ class WordpressEnumeratePlugins < BaseTask
 
     # add wordpress plugins list from a file
     work_q = Queue.new
-    File.open("#{$intrigue_basedir}/data/tech/wordpress_plugins.list").each_line do |l|
+    File.open("#{$intrigue_basedir}/data/tech/wordpress_plugins.short.list").each_line do |l|
       next if l =~ /^#/
       _log "Wordpress plugin check: #{l.strip}"
       work_q.push({ path: "#{l.strip}/" , severity: 5,  body_regex: nil, status: "potential" })
