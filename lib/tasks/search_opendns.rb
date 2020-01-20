@@ -25,6 +25,12 @@ class SearchOpenDns < BaseTask
     super
     entity_name = _get_entity_name
 
+    # skip cdns
+    if !get_cdn_domains.select{ |x| entity_name =~ /#{x}/}.empty?
+      _log "This domains resolves to a known cdn, skipping"
+      return
+    end
+
     # check that it resolves
     resolves_to = resolve_names entity_name
     unless resolves_to.first

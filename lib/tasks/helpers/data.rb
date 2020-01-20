@@ -66,9 +66,18 @@ module Data
     }
   end
 
+  def get_cdn_domains
+    [
+      "hexagon-cdn.com",
+      "edgecastcdn.net",
+      "akamaitechnologies.com",
+      "e100.net"
+    ]   
+  end
+
+
   def get_universal_cert_domains
-    # annoying!
-    universal_cert_domains = [
+    [
       "acquia-sites.com",
       "careers.talemetry.com",
       "chinanetcenter.com",
