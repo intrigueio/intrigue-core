@@ -75,7 +75,7 @@ module Data
       "hexagon-cdn.com",
       "edgecastcdn.net",
       "akamaitechnologies.com",
-      "e100.net"
+      "1e100.net"
     ]   
   end
 
