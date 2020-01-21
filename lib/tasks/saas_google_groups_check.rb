@@ -34,7 +34,7 @@ class SaasGoogleGroupsCheck < BaseTask
     uri = "https://groups.google.com/a/#{domain}/forum/#!search/a"
     text = http_get_body uri
 
-    if text =~ /gpf_stats.js/
+    if text =~ /gpf_stats.js/  && !text =~ /This group is on a private domain/
 
       _log_good "Success! Domain is configured and public."
       service_name = "groups.google.com"
