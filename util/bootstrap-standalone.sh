@@ -222,14 +222,23 @@ sudo bash -c "echo '* hard nofile 524288' >> /etc/security/limits.conf"
 sudo bash -c "echo '* soft nofile 524288' >> /etc/security/limits.conf"
 sudo bash -c "echo session required pam_limits.so >> /etc/pam.d/common-session"
 
+echo "[+] Created /data directories for postgress and redis"
+mkdir /data
+mkdir /data/postgres
+chown postgres:postgres /data/postgres
+su - postgres -c "/usr/lib/postgresql/*/bin/initdb /data/postgres"
+mkdir /data/redis
+chown redis:redis /data/redis
 
 echo "[+] Updating Redis configuration to only listen on ipv4 (ubuntu bug?)"
 sed -i '/^bind/s/bind.*/bind 127.0.0.1/' /etc/redis/redis.conf
+sed -i 's/dir \/var\/lib\/redis/dir \/data\/redis/g' /etc/redis/redis.conf
 
 # Set the database to trust
 echo "[+] Updating postgres configuration to TRUST"
 sudo sed -i 's/md5/trust/g' /etc/postgresql/*/main/pg_hba.conf
 sudo sed -i 's/peer/trust/g' /etc/postgresql/*/main/pg_hba.conf
+sudo sed -i "s/data_directory = .*/data_directory = \'\/data\/postgres\'/g" /etc/postgresql/*/main/postgresql.conf
 
 echo "[+] Creating clean database"
 sudo service postgresql stop
