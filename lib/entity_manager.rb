@@ -76,20 +76,17 @@ class EntityManager
     else
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
-      $db.transaction do
-        g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
-
-        entity = Intrigue::Model::Entity.create({
-          :name =>  downcased_name,
-          :project => project,
-          :type => type,
-          :details => details,
-          :hidden => false, # first entity should NEVER be hidden - it was intentional
-          :scoped => true,  # first entity should ALWAYS be in scope - it was intentional
-          :alias_group_id => g.id,
-          :seed => true
-         })
-      end
+      g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
+      entity = Intrigue::Model::Entity.create({
+        :name =>  downcased_name,
+        :project => project,
+        :type => type,
+        :details => details,
+        :hidden => false, # first entity should NEVER be hidden - it was intentional
+        :scoped => true,  # first entity should ALWAYS be in scope - it was intentional
+        :alias_group_id => g.id,
+        :seed => true
+        })
     end
 
     # necessary because of our single table inheritance?
@@ -153,78 +150,75 @@ class EntityManager
 
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
-      $db.transaction do
 
-        # Create a new alias group
-        g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
+      # Create a new alias group
+      g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
+      entity_details = {
+        :name => downcased_name,
+        :project_id => project.id,
+        :type => type.to_s,
+        :details => details,
+        :hidden => (traversable ? false : true ),
+        :alias_group_id => g.id
+      }
 
-        entity_details = {
-          :name => downcased_name,
-          :project_id => project.id,
-          :type => type.to_s,
-          :details => details,
-          :hidden => (traversable ? false : true ),
-          :alias_group_id => g.id
-        }
+      #####
+      ### HANDLE USER- or TASK- PROVIDED SCOPING
+      #####
 
-        #####
-        ### HANDLE USER- or TASK- PROVIDED SCOPING
-        #####
+      # if we're told this thing is scoped, let's just mark it scoped
+      # note that we delete the detail since we no longer need it
+      # TODO... is this used today?
+      if (details["scoped"] == true || details["scoped"] == "true")
+        tr.log "Entity was specifically requested to be scoped"
+        details = details.tap{ |h| h.delete("scoped") }
+        entity_details[:scoped] = true
 
-        # if we're told this thing is scoped, let's just mark it scoped
-        # note that we delete the detail since we no longer need it
-        # TODO... is this used today?
-        if (details["scoped"] == true || details["scoped"] == "true")
-          tr.log "Entity was specifically requested to be scoped"
-          details = details.tap { |h| h.delete("scoped") }
-          entity_details[:scoped] = true
+      # otherwise if we've specifically decided to unscoped
+      # note that we delete the detail since we no longer need it
+      elsif (details["unscoped"] == true || details["unscoped"] == "true")
+        tr.log "Entity was specifically requested to be unscoped"
+        details = details.tap{ |h| h.delete("unscoped") }
+        entity_details[:scoped] = false
 
-        # otherwise if we've specifically decided to unscoped
-        # note that we delete the detail since we no longer need it
-        elsif (details["unscoped"] == true || details["unscoped"] == "true")
-          tr.log "Entity was specifically requested to be unscoped"
-          details = details.tap { |h| h.delete("unscoped") }
-          entity_details[:scoped] = false
+      # if it's set, rely on the task result's auto_scope setting
+      # - which is set when the entity is created, based on context
+      # that is (or at least should be) specific to that task
+      elsif tr.auto_scope
+        tr.log "Task result scoped this entity based on auto_scope"
+        entity_details[:scoped] = true
 
-        # if it's set, rely on the task result's auto_scope setting
-        # - which is set when the entity is created, based on context
-        # that is (or at least should be) specific to that task
-        elsif tr.auto_scope
-          tr.log "Task result scoped this entity based on auto_scope"
-          entity_details[:scoped] = true
-
-        # otherwise default to true 
-        else
-          tr.log "No specific scope request from the task result"
-          entity_details[:scoped] = true
-        end
-
-        #####
-        ### END ... USER- or TASK- PROVIDED SCOPING
-        ###
-        ### ENTITIES can SELF-SCOPE, however, for more info on that
-        ### see the individual entity file
-        #####
-
-        begin
-          # Create a new entity in that group
-          entity = Intrigue::Model::Entity.update_or_create(
-            {name: downcased_name, type: type.to_s, project: project}, entity_details)
-
-          unless entity
-            tr.log_fatal "Unable to create entity: #{entity_details}"
-            return nil
-          end
-
-        rescue Encoding::UndefinedConversionError => e
-          tr.log_fatal "Unable to create entity:#{entity_details}\n #{e}"
-          return nil
-        rescue Sequel::DatabaseError => e
-          tr.log_fatal "Unable to create entity:#{entity_details}\n #{e}"
-          return nil
-        end
-
+      # otherwise default to true 
+      else
+        tr.log "No specific scope request from the task result"
+        entity_details[:scoped] = true
       end
+
+      #####
+      ### END ... USER- or TASK- PROVIDED SCOPING
+      ###
+      ### ENTITIES can SELF-SCOPE, however, for more info on that
+      ### see the individual entity file
+      #####
+
+      begin
+        # Create a new entity in that group
+        entity = Intrigue::Model::Entity.update_or_create(
+          {name: downcased_name, type: type.to_s, project: project}, entity_details)
+
+        unless entity
+          tr.log_fatal "Unable to create entity: #{entity_details}"
+          return nil
+        end
+
+      rescue Encoding::UndefinedConversionError => e
+        tr.log_fatal "Unable to create entity:#{entity_details}\n #{e}"
+        return nil
+      rescue Sequel::DatabaseError => e
+        tr.log_fatal "Unable to create entity:#{entity_details}\n #{e}"
+        return nil
+      end
+
     end
 
     # necessary to relookup?

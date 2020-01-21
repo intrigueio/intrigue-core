@@ -267,44 +267,41 @@ class Uri < Intrigue::Task::BaseTask
 
     browser_results = capture_screenshot_and_request_hosts(uri)
 
-    $db.transaction do
+    new_details = @entity.details
 
-      new_details = @entity.details
+    new_details.merge!({
+      "alt_names" => alt_names,
+      "api_endpoint" => api_enabled,
+      "code" => response.code,
+      "title" => title,
+      "favicon_md5" => favicon_md5,
+      "favicon_sha1" => favicon_sha1,
+      "generator" => generator_string,
+      "verbs" => verbs_enabled,
+      "scripts" => script_links,
+      "headers" => headers,
+      "cookies" => response.header['set-cookie'],
+      "forms" => contains_forms,
+      "response_data_hash" => response_data_hash,
+      "hidden_favicon_data" => favicon_data,
+      "extended_favicon_data" => favicon_data,
+      "hidden_response_data" => response.body,
+      "extended_full_responses" => ident_responses, # includes all the redirects etc
+      "extended_response_body" => response.body,
+      "products" => products.compact,
+      "fingerprint" => ident_fingerprints.uniq,
+      "content" => ident_content_checks.uniq,
+      "extended_configuration" => ident_content_checks.uniq, # new content field
+      "ciphers" => accepted_connections,
+      "extended_ciphers" => accepted_connections # new ciphers field
+    })
+    
+    # add in the browser results
+    new_details.merge! browser_results
 
-      new_details.merge!({
-        "alt_names" => alt_names,
-        "api_endpoint" => api_enabled,
-        "code" => response.code,
-        "title" => title,
-        "favicon_md5" => favicon_md5,
-        "favicon_sha1" => favicon_sha1,
-        "generator" => generator_string,
-        "verbs" => verbs_enabled,
-        "scripts" => script_links,
-        "headers" => headers,
-        "cookies" => response.header['set-cookie'],
-        "forms" => contains_forms,
-        "response_data_hash" => response_data_hash,
-        "hidden_favicon_data" => favicon_data,
-        "extended_favicon_data" => favicon_data,
-        "hidden_response_data" => response.body,
-        "extended_full_responses" => ident_responses, # includes all the redirects etc
-        "extended_response_body" => response.body,
-        "products" => products.compact,
-        "fingerprint" => ident_fingerprints.uniq,
-        "content" => ident_content_checks.uniq,
-        "extended_configuration" => ident_content_checks.uniq, # new content field
-        "ciphers" => accepted_connections,
-        "extended_ciphers" => accepted_connections # new ciphers field
-      })
+    # Set the details, and make sure raw response data is a hidden (not searchable) detail
+    _set_entity_details new_details
       
-      # add in the browser results
-      new_details.merge! browser_results
-
-      # Set the details, and make sure raw response data is a hidden (not searchable) detail
-      _set_entity_details new_details
-      
-    end
     new_details = nil
 
     if _get_option("correlate_endpoints")
