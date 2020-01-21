@@ -66,6 +66,10 @@ module Data
     }
   end
 
+  def get_internal_domains
+    ["ec2.internal"]
+  end
+
   def get_cdn_domains
     [
       "hexagon-cdn.com",

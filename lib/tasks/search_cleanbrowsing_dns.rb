@@ -25,8 +25,9 @@ class SearchCleanBrowsingDns < BaseTask
     entity_type = _get_entity_type_string
 
     # skip cdns
-    if !get_cdn_domains.select{ |x| entity_name =~ /#{x}/}.empty?
-      _log "This domains resolves to a known cdn, skipping"
+    if !get_cdn_domains.select{ |x| entity_name =~ /#{x}/}.empty? || 
+      !get_internal_domains.select{ |x| entity_name =~ /#{x}/}.empty?
+      _log "This domain resolves to a known cdn or internal host, skipping"
       return
     end
 
