@@ -64,16 +64,19 @@ module Handler
       }.to_json
     end
 
-    def dump_entities_json
+    def dump_entities_json(start,finish, final=false)
       # dump out the hash, closing files as you go
       {
         "name" => "#{@name}",
         "ingest_at" => "#{@ingest_at}",
-        "generated_at" => "#{DateTime.now}",
+        "generated_at" => "#{Time.now.utc}",
         "version" => "#{@version}",
-        "entities" => File.open(@entities_file).readlines.reject { 
-          |s| s.strip.empty? }.compact.map{ |x| 
-          JSON.parse(x) }
+        "entities" => File.open(@entities_file).readlines[start..finish].reject { 
+          |s| s.strip.empty? }.compact.map{|x| 
+          JSON.parse(x) },
+        "start" => start, 
+        "finish" => finish,
+        "final" => final
       }.to_json
     end
 
@@ -105,7 +108,7 @@ module Handler
       @debug = false
 
       result = eval(result_type).first(id: result_id)
-      puts "memory efficent json handler called!"
+      puts "Memory efficent json handler called!"
 
       version = "v4"
 
@@ -177,10 +180,42 @@ module Handler
       puts "Closing off files"
       db.close_files
         
-      # dumping files
-      File.open("#{$intrigue_basedir}/tmp/#{result.name}.entities.#{timestamp}.json", "w").write db.dump_entities_json
-      File.open("#{$intrigue_basedir}/tmp/#{result.name}.issues.#{timestamp}.json", "w").write db.dump_issues_json
+      ###
+      ### Issues
+      ###
 
+      ### Dump issues in one file 
+      issues_file = { 
+        :key => "index/#{version}/#{prefix_name}#{result.name}.#{version}.issues.json",
+        :body => db.dump_issues_json
+      }
+      File.open("#{$intrigue_basedir}/tmp/#{result.name}.issues.#{timestamp}.json", "w").write issues_file.to_json
+
+      ###
+      ### Entities
+      ###
+
+      ### Dump entities in one file per XXX
+      entities_count = result.entities.count
+      entities_per_file = 10000 # XXX
+      count = 0
+      
+      ((entities_count / entities_per_file) + 1).times do 
+
+        start_line = count*entities_per_file
+        end_line = (count+1)*entities_per_file
+
+        final = true if end_line > entities_count
+
+        entity_file = { 
+          :key => "index/#{version}/#{prefix_name}#{result.name}.#{version}.entities.#{count}.json",
+          :body => db.dump_entities_json(start_line,end_line,final)
+        }
+
+        File.open("#{$intrigue_basedir}/tmp/#{result.name}.entities.#{timestamp}.json", "w").write entity_file.to_json
+        count +=1
+      end
+      
       puts "Cleaning up"
       db.cleanup
     end
