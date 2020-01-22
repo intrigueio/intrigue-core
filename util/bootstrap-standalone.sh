@@ -207,8 +207,8 @@ else
 fi
 
 # bump file limits
-echo "bumping file-max setting"
-sudo bash -c "echo fs.file-max = 65535 >> /etc/sysctl.conf"
+echo "bumping file-max settings"
+sudo bash -c "echo fs.file-max = 655355 >> /etc/sysctl.conf"
 sudo sysctl -p
 
 echo "Bumping ulimit file/proc settings in /etc/security/limits.conf"
@@ -222,31 +222,36 @@ sudo bash -c "echo '* hard nofile 524288' >> /etc/security/limits.conf"
 sudo bash -c "echo '* soft nofile 524288' >> /etc/security/limits.conf"
 sudo bash -c "echo session required pam_limits.so >> /etc/pam.d/common-session"
 
-echo "[+] Created /data directories for postgress and redis"
-mkdir /data
-mkdir /data/postgres
-chown postgres:postgres /data/postgres
-su - postgres -c "/usr/lib/postgresql/*/bin/initdb /data/postgres"
-mkdir /data/redis
-chown redis:redis /data/redis
+echo "[+] Create /data directories for postgres and redis"
+sudo service postgresql stop
+sudo mkdir -p /data/postgres
+sudo chown postgres:postgres /data/postgres
+sudo -u postgres /usr/lib/postgresql/*/bin/initdb /data/postgres
 
-echo "[+] Updating Redis configuration to only listen on ipv4 (ubuntu bug?)"
-sed -i '/^bind/s/bind.*/bind 127.0.0.1/' /etc/redis/redis.conf
-sed -i 's/dir \/var\/lib\/redis/dir \/data\/redis/g' /etc/redis/redis.conf
+sudo mkdir /data/redis
+sudo chown redis:redis /data/redis
 
 # Set the database to trust
-echo "[+] Updating postgres configuration to TRUST"
+echo "[+] Updating postgres configuration"
 sudo sed -i 's/md5/trust/g' /etc/postgresql/*/main/pg_hba.conf
 sudo sed -i 's/peer/trust/g' /etc/postgresql/*/main/pg_hba.conf
 sudo sed -i "s/data_directory = .*/data_directory = \'\/data\/postgres\'/g" /etc/postgresql/*/main/postgresql.conf
 
+echo "[+] Updating Redis configuration"
+sed -i '/^bind/s/bind.*/bind 127.0.0.1/' /etc/redis/redis.conf
+sed -i 's/dir \/var\/lib\/redis/dir \/data\/redis/g' /etc/redis/redis.conf
+
 echo "[+] Creating clean database"
-sudo service postgresql stop
 sudo service postgresql start
 sudo -u postgres createuser intrigue
 sudo -u postgres dropdb intrigue_dev # just in case it exists
 sudo -u postgres createdb intrigue_dev --owner intrigue
 
+# remove old data directories
+echo "[+] Cleaning old db directories"
+rm -rf /var/lib/pgsql/*
+rm -rf /var/lib/pgsql/backups/*
+rm -rf /var/lib/pgsql/data/
 
 ##### Install rbenv
 if [ ! -d ~/.rbenv ]; then
