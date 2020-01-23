@@ -14,7 +14,7 @@ class VulnCitrixNetscalerCve201919871 < BaseIssue
       description: "A remote pre-auth RCE path traversal vulnerability in Citrix NetScaler affecting devices in " + 
                    "the default configuration. Existence of the vulnerability was announced by Citrix in late Dec 2019 " +
                    "with no patch immediately released. Exploits are now available and active exploitation has been detected in the wild.", 
-      remediation: "No patch is currently available, apply the workarounds provided by Citrix (see references).",
+      remediation: "Apply the patch provided by Citrix (see references).",
       affected_software: [
         { :vendor => "Citrix", :product => "NetScaler Gateway", :version => "13.0" },
         { :vendor => "Citrix", :product => "NetScaler Gateway", :version => "12.1" },
