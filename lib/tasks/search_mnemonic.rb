@@ -34,27 +34,28 @@ class SearchMnemonic < BaseTask
     response = http_get_body("https://api.mnemonic.no/pdns/v3/#{entity_name}?limit=#{limit}")
     result = JSON.parse(response)
 
-    #puts result
 
     #check if the resultset exceeds server resource constraints
     if result["responseCode"] == 421
       _log_error("the requested resultset exceeds server resource constraints (100 000 values currently)")
+      #return
     end
 
     # Check if data different to null
     if result["data"] == nil
       _log_error("object.not.found")
+      return
     end
 
     # Get all the related IPs to the domain name
     if entity_type =="Domain"
       result["data"].each do |e|
-        _create_entity("IpAddress", {"name" => e["answer"], "details" => e})
+        _create_entity("IpAddress", {"name" => e["answer"], "mnemonic_details" => e})
       end
     # Get all the domain names related to the IP
     elsif entity_type =="IpAddress"
       result["data"].each do |e|
-        _create_entity("DnsRecord", {"name" => e["query"], "details" => e })
+        _create_entity("DnsRecord", {"name" => e["query"], "mnemonic_details" => e })
       end
     # log error if Unsupported entity type
     else
