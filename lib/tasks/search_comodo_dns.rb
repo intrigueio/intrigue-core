@@ -58,7 +58,7 @@ class SearchComodoDns < BaseTask
         "the most reliable fully redundant DNS service anywhere, for a safer, smarter and" 
         "faster Internet experience."
       
-      _create_linked_issue("blocked_potentially_compromised", {
+      _create_linked_issue("blocked_by_dns", {
         status: "confirmed",
         additional_description: description,
         source: source, 

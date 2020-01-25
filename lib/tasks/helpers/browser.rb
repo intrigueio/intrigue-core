@@ -19,7 +19,7 @@ module Task
         c = Intrigue::ChromeBrowser.new
         browser_response = c.navigate_and_capture(uri)  
       rescue Errno::ECONNREFUSED => e 
-        _log_error "Unable to connect to chrome browser. Is it running on :9222?"
+        _log_error "Unable to connect to chrome browser. Is it running as a service?"
       end
   
       if browser_response 
@@ -35,7 +35,7 @@ module Task
           request_hosts = browser_response["requests"].map{|x| x["hostname"] }.compact.uniq.sort
           _log "Since we're here (and https), checking for mixed content..."
           _check_request_hosts_for_suspicious_request(uri, request_hosts)
-          _check_request_hosts_for_uniquely_hosted_resources(uri,request_hosts)
+          _check_request_hosts_for_exernally_hosted_resources(uri,request_hosts)
         else
           request_hosts = []
         end

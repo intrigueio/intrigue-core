@@ -62,7 +62,7 @@ class SearchQuad9Dns < BaseTask
         "want to reach is known to be infected, you’ll automatically be blocked from entry – keeping " +
         "your data and computer safe."
 
-      _create_linked_issue("blocked_potentially_compromised", {
+      _create_linked_issue("blocked_by_dns", {
         status: "confirmed",
         additional_description: description,
         source: source, 

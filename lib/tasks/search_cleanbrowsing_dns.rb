@@ -55,7 +55,7 @@ class SearchCleanBrowsingDns < BaseTask
       description = "The Cleanbrowsing DNS security filter focuses on restricting access " + 
         "to malicious activity. It blocks phishing, spam and known malicious domains."
       
-      _create_linked_issue("blocked_potentially_compromised", {
+      _create_linked_issue("blocked_by_dns", {
         status: "confirmed",
         additional_description: description,
         source: source, 

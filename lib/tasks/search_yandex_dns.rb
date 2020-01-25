@@ -62,7 +62,7 @@ class SearchYandexDns < BaseTask
       "checks sites for malware. Yandex.DNS uses its own anti-virus software operating on Yandex " +
       "algorithms, as well as signature technology by Sophos."
 
-      _create_linked_issue("blocked_potentially_compromised", {
+      _create_linked_issue("blocked_by_dns", {
         status: "confirmed",
         additional_description: description,
         source: source, 

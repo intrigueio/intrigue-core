@@ -312,7 +312,7 @@ bundle install
 bundle exec rake setup
 
 #echo "[+] Running DB Migrations"
-service postgresql start
+sudo service postgresql start
 bundle exec rake db:migrate
 
 # TOOD ... remove this on next major release

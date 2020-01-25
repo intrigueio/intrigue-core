@@ -55,7 +55,7 @@ class SearchOpenDns < BaseTask
       description = "OpenDNS (now Cisco Umbrella) provides protection against threats on the internet such as malware, " +
         "phishing, and ransomware."
 
-      _create_linked_issue("blocked_potentially_compromised", {
+      _create_linked_issue("blocked_by_dns", {
         status: "confirmed",
         additional_description: description,
         source: source,
