@@ -140,7 +140,6 @@ module Intrigue
           end
           out << ","
 
-
           if content_entity_headings.count > 0
             # dynamically dump all config values in the correct orders
             content = x.get_detail("content")

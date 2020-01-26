@@ -12,7 +12,7 @@ module Handler
 
     def perform(result_type, result_id, prefix_name=nil)
       result = eval(result_type).first(id: result_id)
-      puts "S3 CSV Handler called on #{result.type}: #{result.name}"
+      puts "S3 CSV Handler called on #{result_type}: #{result.name}"
 
       # write to a tempfile first
       timestamp = "#{Time.now.strftime("%Y%m%d%H%M%S")}"
