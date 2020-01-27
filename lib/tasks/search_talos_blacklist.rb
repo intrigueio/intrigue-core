@@ -28,9 +28,8 @@ class SearchTalosBlackList < BaseTask
     entity_name = _get_entity_name
 
     # Get talos Blacklist IP
-    # data = open("https://talos-intelligence-site.s3.amazonaws.com/production/document_files/files/000/089/235/original/ip_filter.blf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIXACIED2SPMSC7GA%2F20200127%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20200127T095320Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=50bb05427739ddaa28996435ab3fc219c3734a31d194335e6ad8ee0e3c1f7540").read
     data = open("https://talosintelligence.com/documents/ip-blacklist").read
-    puts data
+
     if data == nil
       _log_error("Unable to fetch Url !")
       return
