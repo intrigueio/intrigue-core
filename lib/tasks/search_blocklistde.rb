@@ -37,7 +37,25 @@ class SearchBlocklistde < BaseTask
 
     # Create an issue if an IP found in the blocklist.de list
     if data.include? entity_name
-       _create_malicious_ip_issue(entity_name, severity=4)
+       #_create_malicious_ip_issue(entity_name, severity=4)
+       source = "Blocklist.de"
+       description = "www.blocklist.de is a free and voluntary service provided by a Fraud/Abuse-specialist" +
+        "whose servers are often attacked via SSH-, Mail-Login-, FTP-, Webserver- and other services." +
+        "The mission is to report any and all attacks to the respective abuse departments of the infected PCs/servers"
+
+       _create_linked_issue("malicious_ip", {
+         status: "confirmed",
+         #description: "This IP was founded related to malicious activities in Blocklist.de",
+         additional_description: description,
+         source: source,
+         proof: "This IP was founded related to malicious activities in #{source}",
+         references: []
+       })
+
+       # Also store it on the entity
+       blocked_list = @entity.get_detail("detected_malicious") || []
+       @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
+
     end
 
   end #end run
