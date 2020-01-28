@@ -56,11 +56,13 @@ class IssueFactory
       severity: issue_instance_details[:severity],
       category: issue_instance_details[:category],
       #description: issue_type.metadata[:description],
-      #references: issue_type.metadata[:references],
-      details: issue_instance_details})
+      #references: issue_type.metadata[:references]
+    })
 
     # then create the darn thing
-    issue = Intrigue::Model::Issue.create(issue_model)
+    issue = Intrigue::Model::Issue.update_or_create(issue_model)
+    issue.details = issue_instance_details
+    issue.save
   
   issue
   end

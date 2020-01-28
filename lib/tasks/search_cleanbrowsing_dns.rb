@@ -24,6 +24,13 @@ class SearchCleanBrowsingDns < BaseTask
     entity_name = _get_entity_name
     entity_type = _get_entity_type_string
 
+    # skip cdns
+    if !get_cdn_domains.select{ |x| entity_name =~ /#{x}/}.empty? || 
+      !get_internal_domains.select{ |x| entity_name =~ /#{x}/}.empty?
+      _log "This domain resolves to a known cdn or internal host, skipping"
+      return
+    end
+
     # check that it resolves
     resolves_to = resolve_names entity_name
     unless resolves_to.first
@@ -48,7 +55,7 @@ class SearchCleanBrowsingDns < BaseTask
       description = "The Cleanbrowsing DNS security filter focuses on restricting access " + 
         "to malicious activity. It blocks phishing, spam and known malicious domains."
       
-      _create_linked_issue("blocked_potentially_compromised", {
+      _create_linked_issue("blocked_by_dns", {
         status: "confirmed",
         additional_description: description,
         source: source, 

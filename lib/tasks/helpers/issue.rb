@@ -201,12 +201,12 @@ module Issue
 
   end
 
-  def _check_request_hosts_for_uniquely_hosted_resources(uri, request_hosts, min_host_count=40)
+  def _check_request_hosts_for_exernally_hosted_resources(uri, request_hosts, min_host_count=50)
 
     if  ( request_hosts.uniq.count >= min_host_count)
       _create_issue({
-        name: "Large Number of Uniquely Hosted Resources on #{uri}",
-        type: "large_number_of_uniquely_hosted_resources",
+        name: "Large Number of Externally Hosted Resources",
+        type: "large_number_of_externally_hosted_resources",
         category: "application",
         severity: 5,
         status: "confirmed",

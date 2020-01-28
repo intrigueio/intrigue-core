@@ -35,7 +35,7 @@ class WordpressEnumeratePlugins < BaseTask
 
     # add wordpress plugins list from a file
     work_q = Queue.new
-    File.open("#{$intrigue_basedir}/data/tech/wordpress_plugins.list").each_line do |l|
+    File.open("#{$intrigue_basedir}/data/tech/wordpress_plugins.short.list").each_line do |l|
       next if l =~ /^#/
       _log "Wordpress plugin check: #{l.strip}"
       work_q.push({ path: "#{l.strip}/" , severity: 5,  body_regex: nil, status: "potential" })
@@ -43,7 +43,7 @@ class WordpressEnumeratePlugins < BaseTask
     end
     
     # then make the requests
-    results = make_http_requests_from_queue(uri, work_q, thread_count=5, false, false) # always create an issue
+    results = make_http_requests_from_queue(uri, work_q, thread_count=1, false, false) # always create an issue
     _log "Got matches: #{results}"
   
   results

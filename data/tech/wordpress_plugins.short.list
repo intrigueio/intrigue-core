@@ -1,0 +1,25 @@
+###
+### Modified version of https://github.com/danielbachhuber/gutenberg-plugin-compatibility/blob/master/20180820plugincompatibility.csv
+###   Last updated: 20180820
+###
+/wp-content/plugins/contact-form-7
+/wp-content/plugins/wordpress-seo
+/wp-content/plugins/jetpack
+/wp-content/plugins/wordpress-importer
+/wp-content/plugins/woocommerce
+/wp-content/plugins/all-in-one-seo-pack
+/wp-content/plugins/tinymce-advanced
+/wp-content/plugins/google-sitemap-generator
+/wp-content/plugins/wp-super-cache
+/wp-content/plugins/wordfence
+/wp-content/plugins/duplicate-post
+/wp-content/plugins/limit-login-attempts
+/wp-content/plugins/so-widgets-bundle
+/wp-content/plugins/disable-comments
+/wp-content/plugins/ninja-forms
+/wp-content/plugins/mailchimp-for-wp
+/wp-content/plugins/advanced-custom-fields
+/wp-content/plugins/google-analytics-for-wordpress
+/wp-content/plugins/updraftplus
+/wp-content/plugins/siteorigin-panels
+/wp-content/plugins/hello-dolly

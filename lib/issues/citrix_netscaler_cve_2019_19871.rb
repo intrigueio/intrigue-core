@@ -5,7 +5,7 @@ class VulnCitrixNetscalerCve201919871 < BaseIssue
   def self.generate(instance_details={})
     {
       name: "vulnerability_citrix_netscaler_rce_cve_2019_19781",
-      pretty_name: "Vulnerable Citrix Netscaler (CVE-2019-19871)",
+      pretty_name: "Vulnerable Citrix Netscaler (CVE-2019-19781)",
       identifiers: [
         { type: "CVE", name: "CVE-2019-19871" }
       ],
@@ -14,7 +14,7 @@ class VulnCitrixNetscalerCve201919871 < BaseIssue
       description: "A remote pre-auth RCE path traversal vulnerability in Citrix NetScaler affecting devices in " + 
                    "the default configuration. Existence of the vulnerability was announced by Citrix in late Dec 2019 " +
                    "with no patch immediately released. Exploits are now available and active exploitation has been detected in the wild.", 
-      remediation: "No patch is currently available, apply the workarounds provided by Citrix (see references).",
+      remediation: "Apply the patch provided by Citrix (see references).",
       affected_software: [
         { :vendor => "Citrix", :product => "NetScaler Gateway", :version => "13.0" },
         { :vendor => "Citrix", :product => "NetScaler Gateway", :version => "12.1" },

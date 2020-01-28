@@ -25,6 +25,13 @@ class SearchOpenDns < BaseTask
     super
     entity_name = _get_entity_name
 
+    # skip cdns
+    if !get_cdn_domains.select{ |x| entity_name =~ /#{x}/}.empty? || 
+      !get_internal_domains.select{ |x| entity_name =~ /#{x}/}.empty?
+      _log "This domain resolves to a known cdn or internal host, skipping"
+      return
+    end
+
     # check that it resolves
     resolves_to = resolve_names entity_name
     unless resolves_to.first
@@ -48,7 +55,7 @@ class SearchOpenDns < BaseTask
       description = "OpenDNS (now Cisco Umbrella) provides protection against threats on the internet such as malware, " +
         "phishing, and ransomware."
 
-      _create_linked_issue("blocked_potentially_compromised", {
+      _create_linked_issue("blocked_by_dns", {
         status: "confirmed",
         additional_description: description,
         source: source,
