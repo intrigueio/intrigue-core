@@ -54,10 +54,10 @@
       "uri": "https://aws.amazon.com/",
       "comment": "the region to which all aws connections will be made"
     },
-    "aws_access_key_id": {
+    "apility_api_key": {
       "value": "XXX",
       "editable": "true",
-      "uri": "https://aws.amazon.com/",
+      "uri": "https://apility.io/",
       "comment": ""
     },
     "adblockplus_username": {
@@ -70,6 +70,12 @@
       "value": "",
       "uri": "",
       "editable": "true",
+      "comment": ""
+    },
+    "aws_access_key_id": {
+      "value": "XXX",
+      "editable": "true",
+      "uri": "https://aws.amazon.com/",
       "comment": ""
     },
     "aws_secret_access_key": {
@@ -204,9 +210,33 @@
       "editable": "true",
       "comment": ""
     },
+    "google_project_id": {
+      "value": "XXX",
+      "uri": "",
+      "editable": "true",
+      "comment": ""
+    },
+    "google_client_secret": {
+      "value": "XXX",
+      "uri": "",
+      "editable": "true",
+      "comment": ""
+    },
+    "google_project_name": {
+      "value": "XXX",
+      "uri": "https://developers.google.com/safe-browsing/lookup_guide#GettingStarted",
+      "editable": "true",
+      "comment": ""
+    },
     "google_safebrowsing_lookup_key": {
       "value": "XXX",
       "uri": "https://developers.google.com/safe-browsing/lookup_guide#GettingStarted",
+      "editable": "true",
+      "comment": ""
+    },
+    "google_refresh_token": {
+      "value": "XXX",
+      "uri": "",
       "editable": "true",
       "comment": ""
     },
