@@ -61,7 +61,9 @@ gem 'selenium-webdriver'
 gem 'recog-intrigue',         :git => 'https://github.com/intrigueio/recog.git'
 gem 'cloudflare',             :git => 'https://github.com/AnasBensalah/cloudflare.git'
 gem 'dnsimple'
-
+gem 'google-api-client'
+gem 'googleauth'
+gem 'google-cloud-storage'
 # swap these if developing on chrome_remote locally
 gem 'chrome_remote',          :git => 'https://github.com/intrigueio/chrome_remote.git'
 #gem 'chrome_remote',          :path => "~/chrome_remote"
