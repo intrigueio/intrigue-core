@@ -120,7 +120,7 @@ class SearchApility < BaseTask
 
       # Create an IP entity
       _create_entity("IpAddress", "name" => json["response"]["ip"]["address"])
-      _create_entity("IpAddress", "name" => json["response"]["source_ip"]["address"])
+      
 
     end
   end # end search_apility_by_domain
