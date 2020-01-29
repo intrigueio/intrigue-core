@@ -17,7 +17,7 @@ if [ ! -d /data/postgres ]; then
 
   # creating database 
   echo "[+] Creating Intrigue DB"
-  sudo service postgres start
+  sudo service postgresql start
   sudo -u postgres createuser intrigue
   sudo -u postgres createdb intrigue_dev --owner intrigue
 else
