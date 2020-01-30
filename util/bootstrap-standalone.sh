@@ -244,8 +244,8 @@ sed -i 's/dir \/var\/lib\/redis/dir \/data\/redis/g' /etc/redis/redis.conf
 
 echo "[+] Creating clean database"
 sudo service postgresql start
-su - postgres createuser intrigue
-su - postgres createdb intrigue_dev --owner intrigue
+sudo -u postgres createuser intrigue
+sudo -u postgres createdb intrigue_dev --owner intrigue
 
 # remove old data directories
 echo "[+] Cleaning old db directories"
