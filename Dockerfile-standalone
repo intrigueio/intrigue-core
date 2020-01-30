@@ -97,10 +97,13 @@ ENV PATH /root/.rbenv/bin:$PATH
 ENV IDIR=/core
 ENV DEBIAN_FRONTEND=noninteractive
 
+# create a volume
+VOLUME /data
+
 # copy intrigue code
 COPY . /core/
 
-# get intrigue-specific software & config
+# install intrigue-specific software & config
 RUN /bin/bash /core/util/bootstrap-standalone.sh
 
 # Remove the config file so one generates on startup (useful when testing)

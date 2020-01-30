@@ -309,12 +309,11 @@ cd $INTRIGUE_DIRECTORY
 bundle update --bundler
 bundle install
 
-#echo "[+] Running System Setup"
-bundle exec rake setup
-
-#echo "[+] Running DB Migrations"
-sudo service postgresql start
+echo "[+] Running DB Migrations"
 bundle exec rake db:migrate
+
+echo "[+] Running System Setup"
+bundle exec rake setup
 
 # TOOD ... remove this on next major release
 echo "[+] Intrigue services exist, removing... (ec2 legacy)"
