@@ -20,6 +20,7 @@ module Intrigue
         self.scan_results.each{|x| x.delete }
         self.task_results.each{|x| x.delete }
         self.entities.each{|x| x.delete }
+        self.issues.each{|x| x.delete }
         self.delete
       end
 
