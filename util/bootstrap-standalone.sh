@@ -241,6 +241,7 @@ sudo sed -i "s/data_directory = .*/data_directory = \'\/data\/postgres\'/g" /etc
 echo "[+] Updating Redis configuration"
 sed -i '/^bind/s/bind.*/bind 127.0.0.1/' /etc/redis/redis.conf
 sed -i 's/dir \/var\/lib\/redis/dir \/data\/redis/g' /etc/redis/redis.conf
+sudo service redis-server start
 
 echo "[+] Creating clean database"
 sudo service postgresql start
