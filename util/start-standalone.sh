@@ -24,7 +24,7 @@ else
   # always reset permission
   chown postgres:postgres /data/postgres
 fi 
-sudo service postgres restart
+sudo service postgresql restart
 
 echo "[+] Migrating DB for Intrigue Standalone"
 bundle exec rake db:migrate
