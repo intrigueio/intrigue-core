@@ -114,7 +114,7 @@ sudo apt-get -y --fix-broken --no-install-recommends install make \
   libxrandr2 \
   libxrender1 \
   libxss1 \
-  libxtst6 \
+  libxtst6 
   ca-certificates \
   fonts-liberation \
   fonts-thai-tlwg \
@@ -125,6 +125,7 @@ sudo apt-get -y --fix-broken --no-install-recommends install make \
   golang-go \
   dnsmasq \
   systemd \
+  wget \
   python-minimal &&
   rm -rf /var/lib/apt/lists/*
 

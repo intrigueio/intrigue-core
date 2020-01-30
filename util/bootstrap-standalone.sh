@@ -126,6 +126,7 @@ sudo apt-get -y --fix-broken --no-install-recommends install make \
   golang-go \
   dnsmasq \
   systemd \
+  wget \
   python-minimal && 
   rm -rf /var/lib/apt/lists/*
 
