@@ -9,17 +9,16 @@ if [ ! -d /data/postgres ]; then
   sudo mkdir -p /data/postgres
   sudo chown postgres:postgres /data/postgres
   sudo -u postgres /usr/lib/postgresql/*/bin/initdb /data/postgres > /dev/null
-
-  # set up the user 
-  echo "[+] Creating clean database"
-  sudo service postgresql start
-  sudo -u postgres createuser intrigue
-  sudo -u postgres createdb intrigue_dev --owner intrigue
-
-else # just start the service 
-  echo "[+] Starting postgres"
-  sudo service postgresql start
 fi 
+
+# now start the service 
+echo "[+] Starting postgres"
+sudo service postgresql start
+
+# force user/db creation, just in case
+sudo -u postgres createuser intrigue
+sudo -u postgres createdb intrigue_dev --owner intrigue
+
 
 if [ ! -d /data/redis ]; then
   sudo mkdir -p /data/redis
