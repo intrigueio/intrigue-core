@@ -126,6 +126,7 @@ sudo apt-get -y --fix-broken --no-install-recommends install make \
   golang-go \
   dnsmasq \
   systemd \
+  wget \
   python-minimal && 
   rm -rf /var/lib/apt/lists/*
 
@@ -240,11 +241,11 @@ sudo sed -i "s/data_directory = .*/data_directory = \'\/data\/postgres\'/g" /etc
 echo "[+] Updating Redis configuration"
 sed -i '/^bind/s/bind.*/bind 127.0.0.1/' /etc/redis/redis.conf
 sed -i 's/dir \/var\/lib\/redis/dir \/data\/redis/g' /etc/redis/redis.conf
+sudo service redis-server start
 
 echo "[+] Creating clean database"
 sudo service postgresql start
 sudo -u postgres createuser intrigue
-sudo -u postgres dropdb intrigue_dev # just in case it exists
 sudo -u postgres createdb intrigue_dev --owner intrigue
 
 # remove old data directories
@@ -308,12 +309,11 @@ cd $INTRIGUE_DIRECTORY
 bundle update --bundler
 bundle install
 
-#echo "[+] Running System Setup"
-bundle exec rake setup
-
-#echo "[+] Running DB Migrations"
-sudo service postgresql start
+echo "[+] Running DB Migrations"
 bundle exec rake db:migrate
+
+echo "[+] Running System Setup"
+bundle exec rake setup
 
 # TOOD ... remove this on next major release
 echo "[+] Intrigue services exist, removing... (ec2 legacy)"

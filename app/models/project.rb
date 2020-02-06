@@ -20,6 +20,7 @@ module Intrigue
         self.scan_results.each{|x| x.delete }
         self.task_results.each{|x| x.delete }
         self.entities.each{|x| x.delete }
+        self.issues.each{|x| x.delete }
         self.delete
       end
 
@@ -163,8 +164,6 @@ module Intrigue
       # to be populated (automated by bootstrap)
       def traversable_entity?(entity_name, type_string)
 
-        #puts "Checking if #{type_string} #{entity_name} matches our no-traverse list"
-
         # if it's a seed exception, can't be an exception.
         return true if seed_entity?(type_string,entity_name)
 
@@ -177,8 +176,8 @@ module Intrigue
         # just assume we can't go any further
         verifiable_entity_types = ["DnsRecord", "Domain", "EmailAddress", "NameServer" "Uri"]
         if verifiable_entity_types.include? type_string
-          # if we don't have a list, safe to return false now, otherwise proceed to additional exceptions
-          # which are provided as an attribute on the object
+          # if we don't have a list, safe to return false now, otherwise proceed to 
+          # additional exceptions which are provided as an attribute on the object
           return false unless Intrigue::Model::GlobalEntity.traversable?(type_string, entity_name, self)
         end
         

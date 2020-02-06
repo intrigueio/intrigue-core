@@ -42,7 +42,8 @@ module Issue
       entity_id: @entity.id,
       task_result_id: @task_result.id,
       project_id: @project.id, 
-      scoped: @entity.scoped
+      scoped: @entity.scoped,
+      source: instance_specifics[:source]
     }
 
     issue = Intrigue::Issue::IssueFactory.create_instance_by_type(issue_type, issue_model_details, _encode_hash(instance_specifics))
