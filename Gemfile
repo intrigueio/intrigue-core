@@ -64,6 +64,7 @@ gem 'dnsimple'
 gem 'google-api-client'
 gem 'googleauth'
 gem 'google-cloud-storage'
+gem 'dnsbl-client',           :git => 'https://github.com/AnasBensalah/dnsbl-client.git'
 # swap these if developing on chrome_remote locally
 gem 'chrome_remote',          :git => 'https://github.com/intrigueio/chrome_remote.git'
 #gem 'chrome_remote',          :path => "~/chrome_remote"
