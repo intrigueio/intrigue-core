@@ -39,7 +39,7 @@ task :clean do
   end
 end
 
-desc "Get Global Namespace"
+desc "Load Global Namespace"
 task :load_global_namespace do
   puts "Pulling global namespace"
   require './core'

@@ -28,6 +28,7 @@ class VulnSharepointCve20190604 < BaseIssue
         { type: "description", uri: "https://www.thezdi.com/blog/2019/12/18/looking-back-at-the-impact-of-cve-2019-0604-a-sharepoint-rce"},
         { type: "exploit", uri: "https://twitter.com/1oopho1e/status/1127916284899995648"},
         { type: "exploit", uri: "https://github.com/k8gege/CVE-2019-0604"},
+        { type: "threat_intelligence", uri: "https://unit42.paloaltonetworks.com/actors-still-exploiting-sharepoint-vulnerability-to-attack-middle-east-government-organizations/"},
         { type: "threat_intelligence", uri: "https://www.helpnetsecurity.com/2019/05/13/sharepoint-servers-attack-cve-2019-0604/"}
       ]
     }.merge!(instance_details)

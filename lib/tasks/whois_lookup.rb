@@ -66,7 +66,7 @@ class WhoisLookup < BaseTask
         end
       end
 
-    elsif _get_entity_type_string == "DnsRecord"
+    elsif _get_entity_type_string == "DnsRecord" || _get_entity_type_string == "Domain"
 
       out = whois_safe _get_entity_name
       return nil unless out

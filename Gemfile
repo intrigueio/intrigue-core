@@ -52,7 +52,11 @@ gem 'spidr',                  :git => 'https://github.com/intrigueio/spidr.git'
 gem 'snmp',                   :git => 'https://github.com/intrigueio/ruby-snmp.git'
 gem 'aws-sdk-sqs'             #,        '~> 3'
 gem 'aws-sdk-s3'              #,         '~> 3'
+<<<<<<< HEAD
 gem 'aws-sdk-route53'
+=======
+gem 'rex'
+>>>>>>> develop
 gem 'rex-sslscan',            :git => 'https://github.com/intrigueio/rex-sslscan.git'
 gem 'flareon'                 # dns resolution over http
 gem 'net-http2'               # http2 client support

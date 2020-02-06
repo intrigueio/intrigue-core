@@ -28,7 +28,7 @@ class UriCheckSudomainHijack  < BaseTask
 
     if response
       
-      if response.body =~ /The specified bucket does not exist/i
+      if response.body =~ /The specified bucket does not exist/i && uri =~ /amazonaws.com/  
         _create_hijackable_subdomain_issue "AWS S3", uri, "potential"
       
       elsif response.body =~ /Repository not found/i
@@ -44,8 +44,8 @@ class UriCheckSudomainHijack  < BaseTask
       
       # TODO ... digital ocean https://github.com/EdOverflow/can-i-take-over-xyz
 
-      elsif response.body =~ /Fastly error: unknown domain/i
-        _create_hijackable_subdomain_issue "Fastly", uri, "potential"      
+      elsif response.body =~ /Fastly error: unknown domain/i 
+        _create_hijackable_subdomain_issue "Fastly", uri, "potential" unless uri =~ /fastly.com/      
 
       elsif response.body =~ /The feed has not been found\./i
         _create_hijackable_subdomain_issue "Feedpress", uri, "potential"      
@@ -70,7 +70,7 @@ class UriCheckSudomainHijack  < BaseTask
         end
         
       elsif response.body =~ /No settings were found for this company:/i
-        _create_hijackable_subdomain_issue "Help Scout", uri, "potential"
+        _create_hijackable_subdomain_issue "Help Scout", uri, "potential" unless (uri =~ /helpscoutdocs.com/ || uri =~ /amazonaws.com/) 
       
       elsif response.body =~ /We could not find what you're looking for\./i
         _create_hijackable_subdomain_issue "Help Juice", uri, "potential"

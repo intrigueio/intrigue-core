@@ -16,7 +16,7 @@ module Intrigue
 
       def validate
         super
-        validates_unique([:project_id, :name, :entity_id])
+        validates_unique([:project_id, :name, :entity_id, :source])
       end
 
       def to_s

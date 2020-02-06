@@ -63,6 +63,9 @@ module Services
           }
         })
 
+        # For each of the discovered cert names, now create a 
+        # DnsRecord. Note that we need to first ensure that this dns record doesn't 
+        # match our hidden list 
         if cert_names
           cert_names.uniq do |cn|
             # create each entity 
