@@ -43,7 +43,7 @@ module Issue
       task_result_id: @task_result.id,
       project_id: @project.id, 
       scoped: @entity.scoped,
-      source: instance_specifics[:source]
+      source: instance_specifics[:source] || @task_result.name
     }
 
     issue = Intrigue::Issue::IssueFactory.create_instance_by_type(issue_type, issue_model_details, _encode_hash(instance_specifics))
@@ -60,26 +60,7 @@ module Issue
     return unless mx_records.count > 0
 
     if !dmarc_record
-      _create_issue({
-        name: "Missing DMARC Configuration on Email-enabled Domain",
-        type: "missing_dmarc_configuration",
-        category: "email", 
-        severity: 4,
-        status: "confirmed",
-        description: "Domains that are configured to send email should implement one or more forms " +
-          "of email authentication to verify that an email is actually from the domain it claims it is from. " +
-          "Configuring a DMARC record provides the receiving mail server with the information needed to " +
-          "evaluate messages that claim to be from the domain, and it is one of the most important steps " +
-          "that can be taken to improve email deliverability.",
-        references: [
-          "https://www.sparkpost.com/resources/email-explained/dmarc-explained/",
-          "https://www.sonicwall.com/support/knowledge-base/what-is-a-dmarc-record-and-how-do-i-create-it-on-dns-server/170504796167071/"
-        ],
-        details: {
-          mx_records: mx_records,
-          dmarc_record: dmarc_record
-        }
-      })
+      _create_linked_issue "missing_dmarc_policy", { mx_records: mx_records, dmarc_record: dmarc_record }
     end
 
   end
@@ -94,6 +75,7 @@ module Issue
       type: "#{check["name"].downcase.gsub(" ","_")}",
       category: "application",
       severity: 4, # todo...
+      source: "self",
       status: "confirmed",
       description: "This server had a content issue: #{check["name"]}.",
       references: [],
@@ -109,6 +91,7 @@ module Issue
       name: "Insecure cookie detected: missing 'httpOnly' attribute",
       type: "insecure_cookie_detected",
       category: "application",
+      source: "self",
       severity: severity,
       status: "confirmed",
       description: "A cookie was identified without the 'httpOnly' cookie attribute on #{uri}",
@@ -125,6 +108,7 @@ module Issue
       name: "Insecure cookie detected: missing 'secure' attribute",
       type: "insecure_cookie_detected",
       category: "application",
+      source: "self",
       severity: severity,
       status: "confirmed",
       description: "A cookie was identified without the 'secure' cookie attribute on #{uri}",
@@ -142,6 +126,7 @@ module Issue
       type: "weak_cipher_suite_detected",
       category: "application",
       severity: 5,
+      source: "self",
       status: "confirmed",
       description: "This server is configured to allow a known-weak cipher suite on #{uri}",
       #recommendation: "Disable the weak ciphers.",
@@ -161,6 +146,7 @@ module Issue
       type: "deprecated_protocol_detected",
       category: "application",
       severity: 5,
+      source: "self",
       status: "confirmed",
       description: "This server is configured to allow a deprecated ssl / tls protocol on #{uri}",
       #recommendation: "Disable the protocol, ensure support for the latest version.",
@@ -189,6 +175,7 @@ module Issue
         type: "suspicious_resource_requested",
         category: "application",
         severity: 2,
+        source: "self",
         status: "confirmed",
         description: "When a browser requested the resource(s) located at #{uri}, a suspicious request was made.",
         references: [],
@@ -210,6 +197,7 @@ module Issue
         type: "large_number_of_externally_hosted_resources",
         category: "application",
         severity: 5,
+        source: "self",
         status: "confirmed",
         description: "When a browser requested the resource located at #{uri}, a large number" +
         " of connections (#{request_hosts.count}) to unique hosts were made. In itself, this may" +
@@ -237,6 +225,7 @@ module Issue
           type: "insecure_content",
           category: "application",
           severity: 4,
+          source: "self",
           status: "confirmed",
           description: "When a browser requested the resource located at #{uri}, a resource was" +
           " requested at (#{resource_url}) over HTTP. This resource could be intercepted by a malicious" +
@@ -267,6 +256,7 @@ module Issue
       type: "#{type}_system_identified".downcase,
       category: "network",
       severity: 5,
+      source: "dns",
       status: "potential",
       description: "A system was identified that may be part of a #{type.downcase} " +
       "effort. Typically these systems should not be exposed to the internet. " +
@@ -284,6 +274,7 @@ module Issue
       name: "Weak Service Identified: #{proto} on #{port}",
       type: "weak_service_identified",
       category: "network",
+      source: "self",
       severity: 4,
       status: "confirmed",
       description: "A service known to be weak and have more modern alternatives " +
