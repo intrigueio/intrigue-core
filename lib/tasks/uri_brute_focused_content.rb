@@ -172,7 +172,12 @@ class UriBruteFocusedContent < BaseTask
 
     jira_list = [ # https://x.x.x.x?filterView=popular
       { issue_type: "jira_info_leak", path: "/secure/ManageFilters.jspa", severity: 3,
-          body_regex: /<title>Manage Filters/i, status: "confirmed" } 
+          body_regex: /<title>Manage Filters/i, status: "confirmed" },
+      { issue_type: "jira_2fa_bypass", path: "/login.action?nosso", severity: 3,
+        body_regex: //i, status: "confirmed" } 
+    
+          # 
+
     ]
     # 
     joomla_list = [   # https://packetstormsecurity.com/files/151619/Joomla-Agora-4.10-Bypass-SQL-Injection.html

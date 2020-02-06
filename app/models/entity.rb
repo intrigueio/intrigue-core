@@ -60,7 +60,7 @@ module Intrigue
       false
       end 
 
-      # default method that scopes/unscopes entities (can be overridden)
+      # default method that scopes / unscoped entities (can be overridden)
       # TODO ... maybe we move the logic of details that exists in entity_manager here?
       def scoped?
         return true if self.seed

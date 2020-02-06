@@ -19,7 +19,6 @@ sudo service postgresql start
 sudo -u postgres createuser intrigue
 sudo -u postgres createdb intrigue_dev --owner intrigue
 
-
 if [ ! -d /data/redis ]; then
   sudo mkdir -p /data/redis
   sudo chown redis:redis /data/redis

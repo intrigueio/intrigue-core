@@ -3,7 +3,7 @@ module System
 module MatchExceptions
 
   def standard_name_exceptions
-    File.open("#{$intrigue_basedir}/data/standard_name_exceptions.list").readlines.map{|x| Regexp.new x if x }
+    File.open("#{$intrigue_basedir}/data/standard_name_exceptions.list").readlines.map{|x| eval(x.strip) if x }
   end
 
   def standard_ip_exceptions
@@ -37,20 +37,21 @@ module MatchExceptions
   # RETURNS A STRING (THE EXCEPTION) OR FALSE
   #
   def standard_no_traverse?(entity_name, type_string="Domain", skip_exceptions=[])
-
     out = false
+    puts "Working on #{type_string} #{entity_name}"
 
     if type_string == "IpAddress"
       (standard_ip_exceptions - skip_exceptions).each do |exception|
-        out = exception if (entity_name =~ exception)
+        out = exception if exception.match(entity_name)
       end
     elsif (type_string == "Domain" || type_string == "DnsRecord" || type_string == "Uri" )
       (standard_name_exceptions - skip_exceptions).each do |exception|
-        out = exception if (entity_name =~ exception ||  ".#{entity_name}" =~ exception)
+        if exception.match(entity_name) || exception.match(".#{entity_name}")
+          puts "Matched #{exception}"
+          out = exception 
+        end
       end
     end
-
-    #puts "Checking for standard exception: #{type_string}##{entity_name}, skip: #{skip_exceptions} ... #{out}"
 
   out
   end
