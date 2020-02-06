@@ -6,6 +6,18 @@ GIT
       async-rest (~> 0.10.0)
 
 GIT
+  remote: https://github.com/AnasBensalah/dnsbl-client.git
+  revision: d88bb5eae3dfd03c418f67ae5767234a862a92b8
+  specs:
+    dnsbl-client (1.0.4)
+
+GIT
+  remote: https://github.com/hpricot/hpricot.git
+  revision: 187336f2a434ffa2038ec705294412c9e6baacdb
+  specs:
+    hpricot (0.8.6)
+
+GIT
   remote: https://github.com/intrigueio/chrome_remote.git
   revision: fb2ca2b645e48f3ec1ace65732833eb7f892b0fe
   specs:
@@ -402,6 +414,7 @@ DEPENDENCIES
   cloudflare!
   compare-xml
   couchrest
+  dnsbl-client!
   dnsimple
   dnsruby
   elasticsearch
@@ -415,6 +428,7 @@ DEPENDENCIES
   google-cloud-storage
   googleajax
   googleauth
+  hpricot!
   iconv
   intrigue-ident!
   intrigue_api_client!
