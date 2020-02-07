@@ -5,7 +5,7 @@
 #####
 
 # if these are already set by our parent, use that.. otherwise sensible defaults
-export INTRIGUE_DIRECTORY="${IDIR:=//home/ubuntu/core}"
+export INTRIGUE_DIRECTORY="${IDIR:=/home/ubuntu/core}"
 export RUBY_VERSION="${RUBY_VERSION:=2.6.5}"
 export DEBIAN_FRONTEND=noninteractive
 
@@ -333,7 +333,7 @@ else
   echo "[+] Nooooo I'm not inside docker!";
   echo "echo ''" >> ~/.bash_profile
   echo "echo To enable Intrigue services, run the following command:" >> ~/.bash_profile
-  echo "echo '$ cd core && god -c $INTRIGUE_DIRECTORY/util/god/intrigue-ec2.rb && god start'" >> ~/.bash_profile
+  echo "echo '$ cd core && rake setup && god -c $INTRIGUE_DIRECTORY/util/god/intrigue-ec2.rb && god start'" >> ~/.bash_profile
 fi
 
 # if we're configuring as root, we're probably going to run as root, so
