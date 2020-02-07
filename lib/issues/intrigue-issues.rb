@@ -49,20 +49,25 @@ class IssueFactory
   
     issue_instance_details = issue_type.generate(instance_specifics)
 
+    # add in the fields we want to use when querying... 
     issue_model = issue_model_details.merge({
       name: issue_instance_details[:name],
-      pretty_name: issue_instance_details[:pretty_name],
-      status: issue_instance_details[:status],
-      severity: issue_instance_details[:severity],
-      category: issue_instance_details[:category],
-      #description: issue_type.metadata[:description],
-      #references: issue_type.metadata[:references]
+      source: issue_instance_details[:source]
     })
 
     # then create the darn thing
     issue = Intrigue::Model::Issue.update_or_create(issue_model)
+    
+    # save the specifics 
+    issue.description = issue_type.generate({})[:description]
+    issue.pretty_name = issue_instance_details[:pretty_name]
+    issue.status = issue_instance_details[:status]
+    issue.severity = issue_instance_details[:severity]
+    issue.category = issue_instance_details[:category]
+    issue.remediation = issue_type.generate({})[:remediation]
+    issue.references = issue_type.generate({})[:references]
     issue.details = issue_instance_details
-    issue.save
+    issue.save_changes
   
   issue
   end
