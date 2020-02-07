@@ -37,7 +37,6 @@ gem 'pg'
 gem 'aws-sdk-sqs'             #,        '~> 3'
 gem 'aws-sdk-s3'              #,         '~> 3'
 gem 'aws-sdk-route53'
-<<<<<<< HEAD
 gem 'rex'
 gem 'rex-sslscan',            :git => 'https://github.com/intrigueio/rex-sslscan.git'
 gem 'flareon'                 # dns resolution over http
@@ -45,9 +44,7 @@ gem 'net-http2'               # http2 client support
 gem 'rubyzip'
 gem 'selenium-webdriver'
 gem 'recog-intrigue',         :git => 'https://github.com/intrigueio/recog.git'
-=======
 gem 'censys',                 :git => 'https://github.com/pentestify/censys.git'
->>>>>>> ac718311a41092e10263cff96cd97cd9ecec9aaa
 gem 'cloudflare',             :git => 'https://github.com/AnasBensalah/cloudflare.git'
 gem 'dnsbl-client',           :git => 'https://github.com/AnasBensalah/dnsbl-client.git'
 gem 'dnsimple'
