@@ -9,7 +9,7 @@ class CreateEntity < BaseTask
       :authors => ["jcran"],
       :description => "This task simply creates an entity.",
       :references => [],
-      :type => "discovery",
+      :type => "creation",
       :passive => true,
       :allowed_types => ["*"],
       :example_entities => [
