@@ -39,6 +39,7 @@ module Machine
         # return the appropriate thing
         next if task.metadata[:type] == "creation"
         next if task.metadata[:type] == "enrichment"
+        next if task.metadata[:type] == "example"
       
         task.metadata[:name]
       end 
