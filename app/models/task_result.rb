@@ -5,6 +5,7 @@ module Intrigue
       plugin :serialization, :json, :options, :handlers
 
       many_to_many :entities
+      one_to_many :issues
       many_to_one :scan_result
       many_to_one :logger
       many_to_one :project
@@ -114,6 +115,7 @@ module Intrigue
           "base_entity" => base_entity.export_hash,
           "entities" => entities.uniq.map{ |e| {:id => e.id,
             :type => e.type, :name => e.name, :details => e.short_details } },
+          "issues" => issues.uniq.map{ |e| {:id => e.id, :name => e.name, uri: e.uri } },
           "log" => get_log
         }
       end

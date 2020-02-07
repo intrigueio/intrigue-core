@@ -1,13 +1,14 @@
 <script>
 // super hacky ajax
-function getEntities(id){
+function getResultJson(id){
   //get the list of tasks and rewrite the task
   $.getJSON(location.origin + "/<%=@project_name%>/results/"+ id +".json", function(data) {
+    
     //console.log(data);
     $( "#entities" ).empty();
+    
     // Set the values based on just this task's allowed type
     var entity_string="<ul>";
-
     $.each(data["entities"], function(id, hash) {
       type = hash["type"].split(':')[4];
       name = hash["name"];
@@ -20,6 +21,24 @@ function getEntities(id){
     entity_string += "</ul>";
     //console.log(entity_string);
     $( "#entities" ).append(entity_string);
+
+    $( "#issues" ).empty();
+    // Set the values based on just this task's allowed type
+    var entity_string="<ul>";
+    $.each(data["issues"], function(id, hash) {
+      name = hash["name"];
+      //pretty_name = hash["details"]["pretty_name"];
+      entity_string += "<li><a href='/<%=@project_name%>/issues/" + hash["id"] + "'> " + name + "</a> ";
+      if (hash["uri"]){
+        entity_string += ("<a target='_blank' href='" + hash["uri"] + "'>[link]</a>");
+      };
+      entity_string += "</li>";
+    });
+    entity_string += "</ul>";
+    //console.log(entity_string);
+    $( "#issues" ).append(entity_string);
+
+
   });
 }
 
@@ -28,7 +47,7 @@ window.setInterval(function(){
 }, 2000);
 
 //call right away
-getEntities(<%=@result.id%>);
+getResultJson(<%=@result.id%>);
 </script>
 <div class="row">
 <div class="col-sm-5">
@@ -52,6 +71,11 @@ getEntities(<%=@result.id%>);
   <ul>
     <li><a href=<%="#{request.url}.json"%>> JSON </a></li>
   </ul>
+  Issues:
+  <div id="issues">
+    <p>[Gathering issues...]</p>
+  </div>
+
   Entities:
   <div id="entities">
     <p>[Gathering entities...]</p>

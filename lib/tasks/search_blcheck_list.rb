@@ -24,11 +24,8 @@ class SearchBlcheckList < BaseTask
   ## Default method, subclasses must override this
   def run
     super
-    ip = _get_entity_name
-
-    # How many tries and for how long to wait for DNS queries
-    conf_dns_tries = 2
-    conf_dns_duration = 3
+    entity_name = _get_entity_name
+    entity_type = _get_entity_type_string
 
     # Blacklists to check
     blacklists=[
@@ -152,30 +149,57 @@ class SearchBlcheckList < BaseTask
       "zen.spamhaus.org"
     ]
 
-    f = []
+    # Initialisation
     dns_obj = Resolv::DNS.new()
-    revip = ip.split(/\./).reverse.join(".")
+    f = []
 
+    # Check IP if they are listed in one of 117 blacklists
+    if entity_type == "IpAddress"
+      # Set the issue type
+      issue_type = "malicious_ip"
+      inves = entity_name
+      check_blcheck inves, dns_obj, blacklists, issue_type
+    elsif entity_type == "Domain"
+      # Set the issue type
+      issue_type = "malicious_domain"
+      # Resolv domin name address
+      inves = dns_obj.getaddress(entity_name)
+      check_blcheck inves, dns_obj, blacklists, issue_type
+    else
+      _log_error "Unsupported entity type"
+    end
+
+  end #run
+
+  # Check the BlackLists database for suspicious or malicious IP addresses or domains
+  def check_blcheck inves, dns_obj, blacklists, issue_type
+    # Reverse the IP to match the Dbl rules for checks
+    revip = inves.to_s.split(/\./).reverse.join(".")
+    # Perform nslookup vs every bl in the list
     blacklists.each do |e|
       query = revip +"."+ e
       f = dns_obj.getaddresses(query)
-      if f[0].to_s.include? "127"
-        source = e
-        description = "ip blacklisted by #{e}"
-        # Create an issue if the ip is flaged in one of the blacklists
-        _create_linked_issue("malicious_ip", {
-          status: "confirmed",
-          additional_description: description,
-          source: source,
-          proof: "This domain was founded flaged in #{e} blacklist",
-        })
-      # Also store it on the entity
-      blocked_list = @entity.get_detail("detected_malicious") || []
-      @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
+      # Getting multiple addresses results from the nslookup
+      f.each do |i|
+        # Investigate if the response is similar to 127.0.0. # for confirming the listing
+        if i.to_s.include? "127."
+          # Get the source of the blocker
+          source = e
+          # Create an issue if the IP is blacklisted
+          _create_linked_issue(issue_type, {
+            status: "confirmed",
+            description: "This IP was founded related to malicious activities",
+            proof: "This IP was founded flaged in #{e} blacklist",
+            source: source
+          })
+          # Also store it on the entity
+          blocked_list = @entity.get_detail("detected_malicious") || []
+          @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
+        end
       end
     end
+  end
 
-  end #end run
 end
 end
 end
