@@ -43,20 +43,34 @@ class Example < BaseTask
       return
     end
 
+    ########################
+    ### Old issue format ###
+    ########################
+
     # create an issue the old school way
     zone = [1,2,3,4]
     _create_issue({
       name: "Example Issue",
       type: "example",
       severity: 5,
+      category: "network",
       status: "confirmed",
       description: "just an example.",
       details: { example_attribute: zone }
     })
 
+    ########################
+    ### New issue format ###
+    ########################
 
     # create an issue 
-    _create_linked_issue("example", { status: "confirmed", proof: "wheee!" })
+    _create_linked_issue("example", { status: "confirmed", proof: "wheee!" }) # no source (aka we only really have one source)
+    _create_linked_issue("example", { status: "confirmed", proof: "wheee 2!", source: "source_2" })
+    
+    # wont be created  (not a unique source)
+    _create_linked_issue("example", { status: "confirmed", proof: "wheee 2!", source: "source_2" }) 
+    _create_linked_issue("example", { status: "confirmed", proof: "wheee 3!", source: "source_3" })
+    _create_linked_issue("example", { status: "confirmed", proof: "wheee 4!", source: "source_4" })
 
     # just return if we have bad data
     return unless _get_option("count") > 0
