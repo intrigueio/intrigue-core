@@ -15,6 +15,7 @@ $intrigue_environment = ENV["INTRIGUE_ENV"] || "development"
 
 # Configuration and scripts
 procfile_file = "#{$intrigue_basedir}/Procfile"
+config_directory = "#{$intrigue_basedir}/config"
 puma_config_file = "#{$intrigue_basedir}/config/puma.rb"
 system_config_file = "#{$intrigue_basedir}/config/config.json"
 database_config_file = "#{$intrigue_basedir}/config/database.yml"
@@ -99,10 +100,19 @@ task :setup do
 
   end
 
-  # Print it
-  puts "[+] SYSTEM USERNAME: intrigue"
-  puts "[+] SYSTEM PASSWORD: #{system_password}"
-  puts "[+] ==================================="
+  # Create SSL Cert
+
+  
+  if !(File.exist?("#{$intrigue_basedir}/config/server.key") || File.exist?("#{$intrigue_basedir}/config/server.crt"))
+    puts "[+] Generating A new Self-signed SSL Certificate..."
+    Dir.chdir("#{$intrigue_basedir}/config/"){ 
+      subject_name = "/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN=intrigue.local"
+      command = "openssl req -subj '#{subject_name}' -new -newkey rsa:2048 -sha256 -days 365 -nodes -x509 -keyout server.key -out server.crt"
+      puts `#{command}`
+    }
+  else
+    puts "[+] SSL Certificate exists..."
+  end
 
   ## Copy database config into place
   puts "[+] Copying database config."
@@ -116,7 +126,6 @@ task :setup do
     config = YAML.load_file(database_config_file)
     config["development"]["password"] = system_password
     config["production"]["password"] = system_password
-    #config["docker"]["password"] = system_password
     File.open(database_config_file,"w").puts YAML.dump config
   end
 
@@ -147,6 +156,14 @@ task :setup do
 
   puts "[+] Downloading latest data files..."
   Dir.chdir("#{$intrigue_basedir}/data/"){ puts %x["./get_latest.sh"] }
+
+  # Print it
+  puts 
+  puts "[+] ==================================="
+  puts "[+] SYSTEM USERNAME: intrigue"
+  puts "[+] SYSTEM PASSWORD: #{system_password}"
+  puts "[+] ==================================="
+  puts 
 
   puts "[+] Complete!"
 

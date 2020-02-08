@@ -74,7 +74,7 @@ cwd = File.expand_path(File.dirname(__FILE__) + "/..")
 # The default is "tcp://0.0.0.0:9292".
 #
 # bind unix:///tmp/core_puma.sock
-bind 'tcp://127.0.0.1:7777'
+# bind 'tcp://127.0.0.1:7777'
 # bind 'unix:///var/run/puma.sock'
 # bind 'unix:///var/run/puma.sock?umask=0111'
 # bind 'ssl://127.0.0.1:9292?key=path_to_key&cert=path_to_cert'
@@ -82,7 +82,12 @@ bind 'tcp://127.0.0.1:7777'
 # Instead of "bind 'ssl://127.0.0.1:9292?key=path_to_key&cert=path_to_cert'" you
 # can also use the "ssl_bind" option.
 #
-# ssl_bind '127.0.0.1', '9292', { key: path_to_key, cert: path_to_cert }
+ssl_bind '127.0.0.1', '7777', { 
+  key: "#{cwd}/config/server.key", 
+  cert: "#{cwd}/config/server.crt", 
+  no_tlsv1: true, 
+  no_tlsv1_1: true 
+  }
 
 # Code to run before doing a restart. This code should
 # close log files, database connections, etc.
