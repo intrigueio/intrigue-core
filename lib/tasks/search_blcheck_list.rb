@@ -44,10 +44,10 @@ class SearchBlcheckList < BaseTask
       "bl.konstant.no",
       "bl.nszones.com",
       "bl.spamcannibal.org",
+      "bl.spamcop.net",
       "bl.spameatingmonkey.net",
       "bl.spamstinks.com",
       "black.junkemailfilter.com",
-      "blackholes.five-ten-sg.com",
       "blackholes.five-ten-sg.com",
       "blacklist.sci.kun.nl",
       "blacklist.woody.ch",
@@ -71,24 +71,31 @@ class SearchBlcheckList < BaseTask
       "dnsbl-3.uceprotect.net",
       "dnsbl.anticaptcha.net",
       "dnsbl.aspnet.hu",
+      "dnsbl.dronebl.org",
       "dnsbl.inps.de",
       "dnsbl.justspam.org",
       "dnsbl.kempt.net",
       "dnsbl.madavi.de",
+      "dnsbl.mailshell.net",
+      "dnsbl.njabl.org",
       "dnsbl.rizon.net",
       "dnsbl.rv-soft.info",
       "dnsbl.rymsho.ru",
       "dnsbl.sorbs.net",
       "dnsbl.zapbl.net",
+      "dnsbl.spfbl.net",
       "dnsrbl.swinog.ch",
       "dul.pacifier.net",
+      "drone.abuse.ch",
       "dyn.nszones.com",
       "dyna.spamrats.com",
       "fnrbl.fast.net",
       "fresh.spameatingmonkey.net",
       "hostkarma.junkemailfilter.com",
+      "httpbl.abuse.ch",
       "images.rbl.msrbl.net",
       "ips.backscatterer.org",
+      "ips.whitelisted.org",
       "ix.dnsbl.manitu.net",
       "korea.services.net",
       "l2.bbfh.ext.sorbs.net",
@@ -97,6 +104,8 @@ class SearchBlcheckList < BaseTask
       "list.bbfh.org",
       "list.blogspambl.com",
       "mail-abuse.blacklist.jippg.org",
+      "multi.uribl.com",
+      "multi.surbl.org",
       "netbl.spameatingmonkey.net",
       "netscan.rbl.blockedservers.com",
       "no-more-funn.moensted.dk",
@@ -120,6 +129,7 @@ class SearchBlcheckList < BaseTask
       "sbl.nszones.com",
       "sbl.spamhaus.org",
       "short.rbl.jp",
+      "spam.abuse.ch",
       "spam.dnsbl.anonmails.de",
       "spam.pedantic.org",
       "spam.rbl.blockedservers.com",
@@ -175,10 +185,12 @@ class SearchBlcheckList < BaseTask
   def check_blcheck inves, dns_obj, blacklists, issue_type
     # Reverse the IP to match the Dbl rules for checks
     revip = inves.to_s.split(/\./).reverse.join(".")
+    i = 1
     # Perform nslookup vs every bl in the list
     blacklists.each do |e|
       query = revip +"."+ e
       f = dns_obj.getaddresses(query)
+      _log "#{i}/ 128  checks vs #{e} ... "
       # Getting multiple addresses results from the nslookup
       f.each do |i|
         # Investigate if the response is similar to 127.0.0. # for confirming the listing
@@ -197,6 +209,7 @@ class SearchBlcheckList < BaseTask
           @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
         end
       end
+      i += 1
     end
   end
 
