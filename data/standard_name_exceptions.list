@@ -38,6 +38,7 @@
 /^.*\.clickdimensions.com(:[0-9]*)?$/
 /^.*\.cloudapp.net(:[0-9]*)?$/
 /^.*\.cloudflare.com(:[0-9]*)?$/
+/^.*\.cloudflaressl.com(:[0-9]*)?$/
 /^.*\.cloudfront.net(:[0-9]*)?$/
 /^.*\.cloudflare-dns.com(:[0-9]*)?$/
 /^.*\.convertlanguage.com(:[0-9]*)?$/
@@ -93,6 +94,7 @@
 /^.*\.googlecommerce.com(:[0-9]*)?$/
 /^.*\.googlehosted.com(:[0-9]*)?$/
 /^.*\.googlemail.com(:[0-9]*)?$/
+/^.*\.googleusercontent.com(:[0-9]*)?$/
 /^.*\.googlevideo.com(:[0-9]*)?$/
 /^.*\.gigya.com(:[0-9]*)?$/
 /^.*\.gridserver.com(:[0-9]*)?$/
@@ -142,6 +144,7 @@
 /^.*\.ogp.me(:[0-9]*)?$/
 /^.*\.outlook.com(:[0-9]*)?$/
 /^.*\.outrch.com(:[0-9]*)?$/
+/^.*\.pageserve.co(:[0-9]*)?$/
 /^.*\.pardot.com(:[0-9]*)?$/
 /^.*\.parklogic.com(:[0-9]*)?$/
 /^.*\.photorank.me(:[0-9]*)?$/
