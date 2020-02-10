@@ -28,3 +28,5 @@ data/public_suffix_list.clean.txt
 data/tlds-alpha-by-domain.txt
 data/nvd
 Procfile
+config/server.crt
+config/server.key

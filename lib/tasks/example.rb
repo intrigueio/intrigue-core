@@ -9,7 +9,7 @@ class Example < BaseTask
       :authors => ["jcran"],
       :description => "This is an example task. It returns a randomly-generated host.",
       :references => [],
-      :type => "discovery",
+      :type => "example",
       :passive => true,
       :allowed_types => ["*"],
       :example_entities => [

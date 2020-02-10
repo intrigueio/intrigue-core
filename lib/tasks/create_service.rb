@@ -9,7 +9,7 @@ class CreateService < BaseTask
       :authors => ["jcran"],
       :description => "This just creates a network service, like a scanner would.",
       :references => [],
-      :type => "discovery",
+      :type => "creation",
       :passive => true,
       :allowed_types => ["IpAddress"],
       :example_entities => [

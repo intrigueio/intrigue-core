@@ -77,10 +77,10 @@ class Masscan < BaseTask
 
         # this will also add teh the port to the ip address
         _create_network_service_entity(created_entity,
-            port, protocol, { 
-              "scoped" => true,
-              "extended_masscan" => masscan_string 
-          })
+          port, protocol, { 
+            "scoped" => true,
+            "extended_masscan" => masscan_string 
+        })
 
       end
 
