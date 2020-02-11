@@ -3,7 +3,6 @@
 # Set path to include rbenv
 source /root/.bash_profile
 
-
 echo "[+] Setting up Intrigue Standalone"
 bundle exec rake setup
 

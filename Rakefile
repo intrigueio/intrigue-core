@@ -116,7 +116,7 @@ task :setup do
     Dir.chdir("#{$intrigue_basedir}/config/"){ 
       subject_name = "/C=US/ST=Texas/L=Austin/O=Intrigue Corp/OU=HTP/CN=intrigue.local"
       command = "openssl req -subj '#{subject_name}' -new -newkey rsa:2048 -sha256 -days 365 -nodes -x509 -keyout server.key -out server.crt > /dev/null 2>&1"
-      puts `#{command}`
+      `#{command}`
     }
   end
 
