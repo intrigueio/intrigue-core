@@ -3,9 +3,15 @@
 # Set path to include rbenv
 source /root/.bash_profile
 
+
+echo "[+] Setting up Intrigue Standalone"
+bundle exec rake setup
+
 echo "[+] Setting up Intrigue Database"
 bundle exec rake db:migrate
-bundle exec rake setup
+
+echo "[+] Updating Intrigue Standalone"
+bundle exec rake update
 
 echo "[+] Starting Intrigue Worker"
 god -c /core/util/god/intrigue-docker.rb

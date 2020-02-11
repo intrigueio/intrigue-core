@@ -28,13 +28,13 @@ fi
 echo "[+] Starting redis"
 sudo service redis-server start
 
+echo "[+] Setting up Intrigue System Files"
+bundle exec rake setup
+
 echo "[+] Migrating DB for Intrigue Standalone"
 bundle exec rake db:migrate
 
-echo "[+] Setting up Intrigue Standalone"
-bundle exec rake setup
-
-echo "[+] Updating Intrigue System"
+echo "[+] Updating Intrigue Data"
 bundle exec rake update
 
 echo "[+] Enabling Intrigue Services"
