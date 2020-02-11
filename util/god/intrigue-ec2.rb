@@ -6,7 +6,7 @@ God.watch do |w|
   w.name = "intrigue-web"
   w.log = "#{BASEDIR}/log/web.log"
   w.dir = "#{BASEDIR}" 
-  w.start = "bundle exec puma -C #{BASEDIR}/config/puma.rb -b tcp://0.0.0.0:7777"
+  w.start = "bundle exec puma -C #{BASEDIR}/config/puma.rb"
   w.keepalive
 end
 

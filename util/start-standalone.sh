@@ -34,6 +34,9 @@ bundle exec rake db:migrate
 echo "[+] Setting up Intrigue Standalone"
 bundle exec rake setup
 
+echo "[+] Updating Intrigue System"
+bundle exec rake update
+
 echo "[+] Enabling Intrigue Services"
 god -c /core/util/god/intrigue-docker.rb
 god start intrigue

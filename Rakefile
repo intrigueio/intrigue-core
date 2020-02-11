@@ -21,7 +21,6 @@ system_config_file = "#{$intrigue_basedir}/config/config.json"
 database_config_file = "#{$intrigue_basedir}/config/database.yml"
 sidekiq_config_file = "#{$intrigue_basedir}/config/sidekiq.yml"
 redis_config_file = "#{$intrigue_basedir}/config/redis.yml"
-control_script = "#{$intrigue_basedir}/util/control.sh"
 
 all_config_files = [
   procfile_file,
@@ -46,6 +45,24 @@ task :load_global_namespace do
   require './core'
   Intrigue::Model::GlobalEntity.load_global_namespace(ENV["INTRIGUEIO_DATA_API_KEY"])
   puts "Done pulling global namespace"
+end
+
+desc "System Cleanup"
+task :cleanup do
+  FileUtils.rm procfile_file
+  FileUtils.rm puma_config_file
+  FileUtils.rm system_config_file
+  FileUtils.rm database_config_file
+  FileUtils.rm sidekiq_config_file
+  FileUtils.rm redis_config_file
+  FileUtils.rm "#{config_directory}/config/server.key"
+  FileUtils.rm "#{config_directory}/config/server.crt"
+end
+
+desc "System Update"
+task :update do
+  puts "[+] Downloading latest data files..."
+  Dir.chdir("#{$intrigue_basedir}/data/"){ puts %x["./get_latest.sh"] }
 end
 
 desc "System Setup"
@@ -100,15 +117,15 @@ task :setup do
   end
 
   # Create SSL Cert
-  if !(File.exist?("#{$intrigue_basedir}/config/server.key") && File.exist?("#{$intrigue_basedir}/config/server.crt"))
+  if (File.exist?("#{$intrigue_basedir}/config/server.key") || File.exist?("#{$intrigue_basedir}/config/server.crt"))
+    puts "[+] SSL Certificate already exists, skipping generation!"
+  else
     puts "[+] Generating a new self-signed SSL Certificate..."
     Dir.chdir("#{$intrigue_basedir}/config/"){ 
       subject_name = "/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN=intrigue.local"
       command = "openssl req -subj '#{subject_name}' -new -newkey rsa:2048 -sha256 -days 365 -nodes -x509 -keyout server.key -out server.crt"
       puts `#{command}`
     }
-  else
-    puts "[+] SSL Certificate already exists!"
   end
 
   ## Copy database config into place
@@ -150,9 +167,6 @@ task :setup do
     end
   end
   # end worker config placement
-
-  puts "[+] Downloading latest data files..."
-  Dir.chdir("#{$intrigue_basedir}/data/"){ puts %x["./get_latest.sh"] }
 
   # Print it
   puts 
