@@ -97,21 +97,18 @@ task :setup do
     else
       system_password = config["credentials"]["password"]
     end
-
   end
 
   # Create SSL Cert
-
-  
-  if !(File.exist?("#{$intrigue_basedir}/config/server.key") || File.exist?("#{$intrigue_basedir}/config/server.crt"))
-    puts "[+] Generating A new Self-signed SSL Certificate..."
+  if !(File.exist?("#{$intrigue_basedir}/config/server.key") && File.exist?("#{$intrigue_basedir}/config/server.crt"))
+    puts "[+] Generating a new self-signed SSL Certificate..."
     Dir.chdir("#{$intrigue_basedir}/config/"){ 
       subject_name = "/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN=intrigue.local"
       command = "openssl req -subj '#{subject_name}' -new -newkey rsa:2048 -sha256 -days 365 -nodes -x509 -keyout server.key -out server.crt"
       puts `#{command}`
     }
   else
-    puts "[+] SSL Certificate exists..."
+    puts "[+] SSL Certificate already exists!"
   end
 
   ## Copy database config into place
