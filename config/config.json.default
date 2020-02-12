@@ -198,6 +198,18 @@
       "editable": "true",
       "comment": "https://github.com/intrigueio/intrigue-core/issues/6"
     },
+    "fraudguard_username": {
+      "value": "",
+      "uri": "",
+      "editable": "true",
+      "comment": ""
+    },
+    "fraudguard_api_key": {
+      "value": "",
+      "uri": "",
+      "editable": "true",
+      "comment": ""
+    },
     "gitrob_access_token": {
       "value": "",
       "uri": "https://github.com/settings/tokens",

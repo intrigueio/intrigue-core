@@ -1,0 +1,70 @@
+module Intrigue
+module Task
+class SearchFraudGuard < BaseTask
+
+
+  def self.metadata
+    {
+      :name => "search_fraudguard",
+      :pretty_name => "Search FraudGuard",
+      :authors => ["Anas Ben Salah"],
+      :description => "This task hits FraudGuard api ",
+      :references => ["https://docs.fraudguard.io/"],
+      :type => "discovery",
+      :passive => true,
+      :allowed_types => ["IpAddress"],
+      :example_entities => [{"type" => "IpAddress", "details" => {"name" => "1.1.1.1"}}],
+      :allowed_options => [],
+      :created_types => []
+    }
+  end
+
+
+  ## Default method, subclasses must override this
+  def run
+    super
+
+      #get entity name and type
+      entity_name = _get_entity_name
+
+      #get keys for API authorization
+      username =_get_task_config("fraudguard_username")
+      password =_get_task_config("fraudguard_api_key")
+
+      unless password or username
+        _log_error "unable to proceed, no API key for AdblockPlus provided"
+        return
+      end
+
+      # Get responce
+      response = get_ip("api.fraudguard.io","/ip/#{entity_name}",username,password)
+
+      if response
+        _create_linked_issue("malicious_ip", {
+          status: "confirmed",
+          description: "",
+          fraudguard_details: response,
+          proof: "This IP was founded flaged ",
+          source: "FraudGuard.io"
+        })
+        # Also store it on the entity
+        blocked_list = @entity.get_detail("detected_malicious") || []
+        @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
+    end
+  end #end run
+
+  #retrieves IP reputation data for a specific IP
+  def get_ip(server,path,username,password)
+
+    http = Net::HTTP.new(server,443)
+    req = Net::HTTP::Get.new(path)
+    http.use_ssl = true
+    req.basic_auth username, password
+    response = http.request(req)
+    return response.body
+
+  end
+
+end
+end
+end

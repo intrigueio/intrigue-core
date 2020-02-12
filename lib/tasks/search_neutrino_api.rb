@@ -11,7 +11,7 @@ class SearchNeutrinoAPI < BaseTask
       :description => "This task hits NeutrinoAPI.",
       :references => [],
       :type => "discovery",
-      :allowed_types => ["IpAddress","EmailAddress"],
+      :allowed_types => ["IpAddress"],
       :example_entities => [
         {"type" => "IpAddress", "details" => {"name" => "1.1.1.1"}}
       ],
@@ -53,18 +53,13 @@ class SearchNeutrinoAPI < BaseTask
 
     securityAndNetworking_controller = client.security_and_networking
 
-    if entity_type == "IpAddress"
-      if opt_description == true
-        description = get_full_ip_info securityAndNetworking_controller, entity_name
-        search_ip_blocklist securityAndNetworking_controller, entity_name, description
-      else
-        description = "Not selected as an option"
-        search_ip_blocklist securityAndNetworking_controller, entity_name, description
-      end
-
-    elsif entity_type == "EmailAddress"
-      verify_email securityAndNetworking_controller, entity_name, fix_typos
-
+    if opt_description == true
+      description = get_full_ip_info securityAndNetworking_controller, entity_name
+      search_ip_blocklist securityAndNetworking_controller, entity_name, description
+    else
+      description = "Not selected as an option"
+      search_ip_blocklist securityAndNetworking_controller, entity_name, description
+    end
 
   end
 
