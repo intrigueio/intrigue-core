@@ -50,12 +50,13 @@ class SearchApility < BaseTask
 
     # Get the Api response
     response = http_get_body("https://api.apility.net/badip/#{entity_name}",nil, headers)
+    if response == "Resource not found"
+      return
+    end
     json = JSON.parse(response)
 
     # Check if the result is not empty
-    if json == "Resource not found"
-      return
-    end
+
 
     # Check if response different to nil
     if json["response"]

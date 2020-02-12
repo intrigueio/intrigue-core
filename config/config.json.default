@@ -270,6 +270,18 @@
       "editable": "true",
       "comment": ""
     },
+    "neutrinoapi_user_id": {
+      "value": "",
+      "uri": "https://www.neutrinoapi.com/api/api-basics/",
+      "editable": "true",
+      "comment": ""
+    },
+    "neutrinoapi_master_key": {
+      "value": "",
+      "uri": "https://www.neutrinoapi.com/api/api-basics/",
+      "editable": "true",
+      "comment": ""
+    },
     "otx_api_key": {
       "value": "XXX",
       "uri": "https://otx.alienvault.com/api",

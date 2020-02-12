@@ -58,6 +58,7 @@ gem 'googleajax'              # search_google
 gem 'maxminddb',              :git => "https://github.com/intrigueio/maxminddb"
 gem 'net-dns'                 # dns_cache_snoop
 gem 'net-http2'               # http2 client support
+gem 'neutrino_api',           :git => 'https://github.com/NeutrinoAPI/NeutrinoAPI-Ruby.git'
 gem 'opencorporates',         :git => 'https://github.com/pentestify/opencorporates.git'
 gem 'recog-intrigue',         :git => 'https://github.com/intrigueio/recog.git'
 gem 'rex-sslscan',            :git => 'https://github.com/intrigueio/rex-sslscan.git'
