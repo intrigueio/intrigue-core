@@ -145,6 +145,7 @@
 /^.*\.outlook.com(:[0-9]*)?$/
 /^.*\.outrch.com(:[0-9]*)?$/
 /^.*\.pageserve.co(:[0-9]*)?$/
+/^.*\.pantheon.io(:[0-9]*)?$/
 /^.*\.pardot.com(:[0-9]*)?$/
 /^.*\.parklogic.com(:[0-9]*)?$/
 /^.*\.photorank.me(:[0-9]*)?$/
