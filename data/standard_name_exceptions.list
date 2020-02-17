@@ -151,6 +151,7 @@
 /^.*\.photorank.me(:[0-9]*)?$/
 /^.*\.plus.google.com(:[0-9]*)?$/
 /^.*\.posterous.com(:[0-9]*)?$/
+/^.*\.prioritymedical.in(:[0-9]*)?$
 /^.*\.purl.org(:[0-9]*)?$/
 /^.*\.q4web.com(:[0-9]*)?$/
 /^.*\.rdfs.org(:[0-9]*)?$/
@@ -171,6 +172,7 @@
 /^.*\.twitter.com(:[0-9]*)?$/
 /^.*\.uberflip.com(:[0-9]*)?$/
 /^.*\.ultradns.com(:[0-9]*)?$/
+/^.*\.unbouncepages.com(:[0-9]*)?$/
 /^.*\.unifiedlayer.com(:[0-9]*)?$/
 /^.*\.urchin.com(:[0-9]*)?$/
 /^.*\.url.google.com(:[0-9]*)?$/
