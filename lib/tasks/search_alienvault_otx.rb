@@ -47,21 +47,21 @@
       begin
         # get the initial repsonse for the a domain
         url = "https://otx.alienvault.com:443/api/v1/indicators/hostname/#{entity_name}/url_list"
-        
+
         page_num = 1
         result = {"has_next" => true}
 
         while result["has_next"]
-        
+
           # get the response, grab 50 at a time per alienvault docs
           response = http_get_body("#{url}?limit=50&page=#{page_num}", headers: headers)
           result = JSON.parse(response)
-          
+
           # for each item in the url list, extarct Related IP from linked url
           result["url_list"].each do |u|
             if u && u["result"] && u["result"]["urlworker"] && u["result"]["urlworker"]["ip"]
               _create_entity "IpAddress", "name" => u["result"]["urlworker"]["ip"]
-            else 
+            else
               _log "Couldnt find: result/urlworker/ip... #{u}"
             end
           end
@@ -93,13 +93,25 @@
 
           #for each item in the activites list, pull out the malicious ip and some related informations
           result["reputation"]["activities"].each do |u|
-            _create_issue({
+            ############################################
+            ###      Old Issue                      ###
+            ###########################################
+            # _create_issue({
+            #   name: "Malicious IP Flagged by OTX: #{_get_entity_name}",
+            #   type: "malicious_check",
+            #   category: "network",
+            #   severity: result["reputation"]["threat_score"],
+            #   status: "confirmed",
+            #   description: "Alienvault OTX has this IP flagged as dangerous.",
+            #   details: u
+            # })
+            ############################################
+            ###      New Issue                      ###
+            ###########################################
+            _create_linked_issue("malicious_ip",{
               name: "Malicious IP Flagged by OTX: #{_get_entity_name}",
-              type: "malicious_check",
-              category: "network",
               severity: result["reputation"]["threat_score"],
-              status: "confirmed",
-              description: "Alienvault OTX has this IP flagged as dangerous.",
+              detailed_description: "Alienvault OTX has this IP flagged as dangerous.",
               details: u
             })
           end

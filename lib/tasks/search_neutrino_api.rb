@@ -178,10 +178,12 @@ class SearchNeutrinoAPI < BaseTask
       _create_entity("Domain", {"name" => hostname})
     end
 
-    full_description = "country: #{country}, provider_type: #{provider_type}, hostname: #{hostname}, provider_domain: #{provider_domain}
-    provider_website: #{provider_website}, region: #{region}, provider_description: #{provider_description}, this compnay is a hosting company or VPN/proxy: #{is_hosting}
-    This IP belongs to an internet service provider: #{is_isp}, This IP is VPN: #{is_vpn}, This IP ia a proxy: #{is_proxy}, ASN: #{asn}, as_cidr: #{as_cidr}
-    Associated domains to the AS : #{as_domains} ,company name: #{as_description}, age: #{as_age} years, host_domain: #{host_domain}, vpn_domain: #{vpn_domain}"
+    full_description = "country: #{country}, provider_type: #{provider_type}, hostname: #{hostname}, provider_domain: #{provider_domain}, " +
+    "provider_website: #{provider_website}, region: #{region}, provider_description: #{provider_description}, " +
+    "this compnay is a hosting company or VPN/proxy: #{is_hosting}, This IP belongs to an internet service provider: #{is_isp}," +
+    "This IP is VPN: #{is_vpn}, This IP ia a proxy: #{is_proxy}, ASN: #{asn}, as_cidr: #{as_cidr}" +
+    "Associated domains to the AS : #{as_domains}, company name: #{as_description}, " +
+    "age: #{as_age} year, host_domain: #{host_domain}, vpn_domain: #{vpn_domain}"
 
     return full_description
 
@@ -259,23 +261,25 @@ class SearchNeutrinoAPI < BaseTask
     # An array of objects containing details on which sensors were used to detect this IP
     # @return [List of String]
     sensors = result_bl.sensors
-
-    source = "NeutrinoAPI"
+    #json = JSON.parse(sensors)
+    #puts json
+    
 
     if is_listed == 'true' or is_bot  == 'true'  or is_exploit_bot == 'true'  or is_malware == 'true'  or is_spider == 'true'  or is_hijacked == 'true'  or is_tor == 'true'  or is_spyware == 'true'  or is_spam_bot == 'true'
       _create_linked_issue("malicious_ip", {
         status: "confirmed",
-        description: "IP is hosting a malicious bot or is part of a botnet: #{is_bot}, IP is hosting an exploit finding bot or is running exploit scanning software : #{is_exploit_bot},
-         IP is involved in distributing or is running malware: #{is_malware}, IP is running a hostile web spider / web crawler: #{is_spider}
-         IP has been flagged as an attack source on DShield (dshield.org): #{is_dshield},
-         IP is part of a hijacked netblock or a netblock controlled by a criminal: #{is_hijacked},
-         IP is a Tor node or running a Tor related service: #{is_tor}, IP is involved in distributing or is running spyware: #{is_spyware},
-         IP address is hosting a spam bot: #{is_spam_bot}, this IP on a blocklist: #{is_listed},  The number of blocklists the IP is listed on: #{list_count},
-         The last time this IP was seen on a blocklist: #{last_seen} ,this IP is listed on: #{blocklists},
-         sensors were used to detect this IP: #{sensors}",
+        description: "IP is hosting a malicious bot or is part of a botnet: #{is_bot}, " +
+        "IP is hosting an exploit finding bot or is running exploit scanning software : #{is_exploit_bot}, " +
+        "IP is involved in distributing or is running malware: #{is_malware}, IP is running a hostile web spider / web crawler: #{is_spider} " +
+        "IP has been flagged as an attack source on DShield (dshield.org): #{is_dshield}, " +
+        "IP is part of a hijacked netblock or a netblock controlled by a criminal: #{is_hijacked}, " +
+        "IP is a Tor node or running a Tor related service: #{is_tor}, IP is involved in distributing or is running spyware: #{is_spyware}, " +
+        "IP address is hosting a spam bot: #{is_spam_bot}, this IP on a blocklist: #{is_listed}, " +
+        "The number of blocklists the IP is listed on: #{list_count}, The last time this IP was seen on a blocklist: #{last_seen} , " +
+        "this IP is listed on: #{blocklists}, sensors were used to detect this IP: #{sensors}",
         neutrinoapi_details: description,
         proof: "This IP was founded flaged ",
-        source: source
+        source: "NeutrinoAPI"
       })
       # Also store it on the entity
       blocked_list = @entity.get_detail("detected_malicious") || []

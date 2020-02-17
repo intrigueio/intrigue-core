@@ -37,14 +37,14 @@ class SearchFraudGuard < BaseTask
       end
 
       # Get responce
-      response = get_ip("api.fraudguard.io","/ip/#{entity_name}",username,password)
+      response = JSON.parse(get_ip("api.fraudguard.io","/ip/#{entity_name}",username,password))
 
       if response
         _create_linked_issue("malicious_ip", {
           status: "confirmed",
-          description: "",
+          description: "This ip was flagged by fraudguard.io for #{response["threat"]} threat with risk level: #{response["risk_level"]} ",
           fraudguard_details: response,
-          proof: "This IP was founded flaged ",
+          proof: "This IP was founded flaged",
           source: "FraudGuard.io"
         })
         # Also store it on the entity

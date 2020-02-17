@@ -35,12 +35,25 @@ class SearchAlienvaultOtxHashes < BaseTask
 
     #Create issue and pull out the malicious File and some related informations
     result["pulse_info"]["pulses"].each do |e|
-      _create_issue({
-        name: "File Found In Alienvault OTX",
-        type: "malicious_file",
-        category: "network",
-        severity: 3,
-        status: "confirmed",
+      ############################################
+      ###      Old Issue                      ###
+      ###########################################
+      # _create_issue({
+      #   name: "File Found In Alienvault OTX",
+      #   type: "malicious_file",
+      #   category: "network",
+      #   severity: 3,
+      #   status: "confirmed",
+      #   references: result["pulse_info"]["references"],
+      #   description: "#{e["description"]}",
+      #   details: e
+      # })
+      ############################################
+      ###      New Issue                      ###
+      ###########################################
+      source = "Alienvault OTX"
+      _create_linked_issue("malicious_file",{
+        name: "Malicious File Found In #{source}",
         references: result["pulse_info"]["references"],
         description: "#{e["description"]}",
         details: e

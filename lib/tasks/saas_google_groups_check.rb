@@ -39,12 +39,27 @@ class SaasGoogleGroupsCheck < BaseTask
       _log_good "Success! Domain is configured and public."
       service_name = "groups.google.com"
 
-      _create_issue({
-        name: "Public Google Groups Enabled!",
-        type: "google_groups_leak",
-        severity: 3,
-        status: "confirmed",
-        description: "Public Google Groups settings enabled on #{domain} can cause sensitive data leakage.",
+      ############################################
+      ###      Old Issue                      ###
+      ###########################################
+      # _create_issue({
+      #   name: "Public Google Groups Enabled!",
+      #   type: "google_groups_leak",
+      #   severity: 3,
+      #   status: "confirmed",
+      #   description: "Public Google Groups settings enabled on #{domain} can cause sensitive data leakage.",
+      #   details: {
+      #     "name" => "#{service_name} leak: #{domain}",
+      #     "uri" => uri,
+      #     "username" => "#{domain}",
+      #     "service" => service_name
+      #   }
+      # })
+      ############################################
+      ###      New Issue                      ###
+      ###########################################
+      _create_linked_issue("google_groups_leak", {
+        detailed_description: "Public Google Groups settings enabled on #{domain} can cause sensitive data leakage.",
         details: {
           "name" => "#{service_name} leak: #{domain}",
           "uri" => uri,
@@ -52,7 +67,6 @@ class SaasGoogleGroupsCheck < BaseTask
           "service" => service_name
         }
       })
-
     elsif text =~ /This group is on a private domain/
       # good
       _log "This domain is configured in G Suite, but is not public."
