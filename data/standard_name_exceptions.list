@@ -131,7 +131,7 @@
 /^.*\.metric.gstatic.com(:[0-9]*)?$/
 /^.*\.mktossl.com(:[0-9]*)?$/
 /^.*\.mktoweb.com(:[0-9]*)?$/
-/^.*\.mkto-[a-z]+[0-9]+.com(:[0-9]*)?$/# marketo branding domain
+/^.*\.mkto-[a-z]+[0-9]+.com(:[0-9]*)?$/
 /^.*\.microsoft.com(:[0-9]*)?$/
 /^.*\.microsoftonline.com(:[0-9]*)?$/
 /^.*\.mpmsx.net(:[0-9]*)?$/
@@ -151,7 +151,7 @@
 /^.*\.photorank.me(:[0-9]*)?$/
 /^.*\.plus.google.com(:[0-9]*)?$/
 /^.*\.posterous.com(:[0-9]*)?$/
-/^.*\.prioritymedical.in(:[0-9]*)?$
+/^.*\.prioritymedical.in(:[0-9]*)?$/
 /^.*\.purl.org(:[0-9]*)?$/
 /^.*\.q4web.com(:[0-9]*)?$/
 /^.*\.rdfs.org(:[0-9]*)?$/
