@@ -26,9 +26,9 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: ea15f6dde7c6633bdde7089035dd5f0074b134d6
+  revision: 4ea4960215bad4989eec4cf8f950d9335f0a4d2b
   specs:
-    intrigue-ident (0.9.1)
+    intrigue-ident (0.9.2)
       selenium-webdriver
       snmp
       socketry
@@ -358,7 +358,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.9.0)
     rspec-support (3.9.0)
-    rubyzip (2.1.0)
+    rubyzip (2.2.0)
     selenium-webdriver (3.142.7)
       childprocess (>= 0.5, < 4.0)
       rubyzip (>= 1.2.2)

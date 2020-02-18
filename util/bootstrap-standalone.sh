@@ -309,11 +309,11 @@ cd $INTRIGUE_DIRECTORY
 bundle update --bundler
 bundle install
 
-echo "[+] Running DB Migrations"
-bundle exec rake db:migrate
-
 echo "[+] Running System Setup"
 bundle exec rake setup
+
+echo "[+] Running DB Migrations"
+bundle exec rake db:migrate
 
 # TOOD ... remove this on next major release
 echo "[+] Intrigue services exist, removing... (ec2 legacy)"
@@ -333,7 +333,7 @@ else
   echo "[+] Nooooo I'm not inside docker!";
   echo "echo ''" >> ~/.bash_profile
   echo "echo To enable Intrigue services, run the following command:" >> ~/.bash_profile
-  echo "echo '$ cd core && rake setup && god -c $INTRIGUE_DIRECTORY/util/god/intrigue-ec2.rb && god start'" >> ~/.bash_profile
+  echo "echo '$ cd core && rake setup && rake update && god -c $INTRIGUE_DIRECTORY/util/god/intrigue-ec2.rb && god start'" >> ~/.bash_profile
 fi
 
 # if we're configuring as root, we're probably going to run as root, so
@@ -347,6 +347,9 @@ if ! $(grep -q IDIR ~/.bash_profile); then
   echo "export IDIR=$INTRIGUE_DIRECTORY" >> ~/.bash_profile
 fi
 
+echo "[+] Running Config Cleanup"
+bundle exec rake cleanup
+
 # Cleaning up
-echo "[+] Cleaning up!"
+echo "[+] Cleaning up packages!"
 sudo apt-get -y clean
