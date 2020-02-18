@@ -12,10 +12,16 @@ GIT
     dnsbl-client (1.0.4)
 
 GIT
-  remote: https://github.com/hpricot/hpricot.git
-  revision: 187336f2a434ffa2038ec705294412c9e6baacdb
+  remote: https://github.com/NeutrinoAPI/NeutrinoAPI-Ruby.git
+  revision: b2d0648773bc852d75ab41c321b55695b690e131
   specs:
-    hpricot (0.8.6)
+    neutrino_api (3.4.5)
+      certifi (~> 2016)
+      faraday (~> 0.10)
+      faraday-http-cache (~> 1.2, >= 1.2.2)
+      faraday_middleware (~> 0.13.1)
+      logging (~> 2.0)
+      test-unit (~> 3.1, >= 3.1.5)
 
 GIT
   remote: https://github.com/intrigueio/chrome_remote.git
@@ -26,7 +32,7 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: ea15f6dde7c6633bdde7089035dd5f0074b134d6
+  revision: 02836bbe399e0fbccb3d5e4b0413d29a9c0a5a6a
   specs:
     intrigue-ident (0.9.1)
       selenium-webdriver
@@ -105,26 +111,26 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (6.0.0)
+    activesupport (6.0.2.1)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
-      zeitwerk (~> 2.1, >= 2.1.8)
+      zeitwerk (~> 2.2)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
-    async (1.24.1)
+    async (1.24.2)
       console (~> 1.0)
       nio4r (~> 2.3)
       timers (~> 4.1)
-    async-http (0.50.0)
+    async-http (0.50.2)
       async (~> 1.23)
       async-io (~> 1.27.0)
       async-pool (~> 0.2)
       protocol-http (~> 0.13.0)
       protocol-http1 (~> 0.10.0)
       protocol-http2 (~> 0.10.0)
-    async-io (1.27.1)
+    async-io (1.27.3)
       async (~> 1.14)
     async-pool (0.2.0)
       async (~> 1.8)
@@ -132,31 +138,32 @@ GEM
       async-http (~> 0.42)
       protocol-http (~> 0.7)
     aws-eventstream (1.0.3)
-    aws-partitions (1.229.0)
-    aws-sdk-core (3.72.0)
+    aws-partitions (1.271.0)
+    aws-sdk-core (3.89.1)
       aws-eventstream (~> 1.0, >= 1.0.2)
-      aws-partitions (~> 1, >= 1.228.0)
+      aws-partitions (~> 1, >= 1.239.0)
       aws-sigv4 (~> 1.1)
       jmespath (~> 1.0)
-    aws-sdk-kms (1.25.0)
+    aws-sdk-kms (1.28.0)
       aws-sdk-core (~> 3, >= 3.71.0)
       aws-sigv4 (~> 1.1)
     aws-sdk-route53 (1.30.0)
       aws-sdk-core (~> 3, >= 3.71.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-s3 (1.51.0)
-      aws-sdk-core (~> 3, >= 3.71.0)
+    aws-sdk-s3 (1.60.2)
+      aws-sdk-core (~> 3, >= 3.83.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.1)
-    aws-sdk-sqs (1.23.0)
+    aws-sdk-sqs (1.23.1)
       aws-sdk-core (~> 3, >= 3.71.0)
       aws-sigv4 (~> 1.1)
     aws-sigv4 (1.1.0)
       aws-eventstream (~> 1.0, >= 1.0.2)
-    backports (3.15.0)
+    backports (3.16.0)
     blockenspiel (0.5.0)
-    builder (3.2.3)
-    byebug (11.0.1)
+    builder (3.2.4)
+    byebug (11.1.1)
+    certifi (2016.09.26)
     childprocess (3.0.0)
     coderay (1.1.2)
     command_lion (2.0.1)
@@ -164,7 +171,7 @@ GEM
       nokogiri (~> 1.8)
     concurrent-ruby (1.1.5)
     connection_pool (2.2.2)
-    console (1.7.0)
+    console (1.8.1)
     couchrest (2.0.1)
       httpclient (~> 2.8)
       mime-types (>= 1.15)
@@ -179,19 +186,23 @@ GEM
       addressable (~> 2.5)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
-    elasticsearch (7.3.0)
-      elasticsearch-api (= 7.3.0)
-      elasticsearch-transport (= 7.3.0)
-    elasticsearch-api (7.3.0)
+    elasticsearch (7.4.0)
+      elasticsearch-api (= 7.4.0)
+      elasticsearch-transport (= 7.4.0)
+    elasticsearch-api (7.4.0)
       multi_json
-    elasticsearch-transport (7.3.0)
+    elasticsearch-transport (7.4.0)
       faraday
       multi_json
     em-resolv-replace (1.1.3)
     eventmachine (1.2.7)
-    excon (0.68.0)
-    faraday (0.17.0)
+    excon (0.72.0)
+    faraday (0.17.3)
       multipart-post (>= 1.2, < 3)
+    faraday-http-cache (1.3.1)
+      faraday (~> 0.8)
+    faraday_middleware (0.13.1)
+      faraday (>= 0.7.4, < 1.0)
     filesize (0.2.0)
     flareon (1.0.5)
       command_lion (= 2.0.1)
@@ -202,9 +213,9 @@ GEM
       fog-json (~> 1.1)
       fog-xml (~> 0.1)
       ipaddress (~> 0.8)
-    fog-core (2.1.2)
+    fog-core (2.2.0)
       builder
-      excon (~> 0.58)
+      excon (~> 0.71)
       formatador (~> 0.2)
       mime-types
     fog-json (1.2.0)
@@ -213,7 +224,7 @@ GEM
     fog-xml (0.1.3)
       fog-core
       nokogiri (>= 1.5.11, < 2.0.0)
-    foreman (0.86.0)
+    foreman (0.87.0)
     formatador (0.2.5)
     god (0.13.7)
     google-api-client (0.36.4)
@@ -255,7 +266,7 @@ GEM
       mime-types (~> 3.0)
       multi_xml (>= 0.5.2)
     httpclient (2.8.3)
-    i18n (1.7.0)
+    i18n (1.8.2)
       concurrent-ruby (~> 1.0)
     iconv (1.0.8)
     ipaddress (0.8.3)
@@ -263,36 +274,39 @@ GEM
     jsobfu (0.4.2)
       rkelly-remix
     json (1.8.6)
-<<<<<<< HEAD
     jwt (2.2.1)
+    little-plugger (1.1.4)
+    logging (2.2.2)
+      little-plugger (~> 1.1)
+      multi_json (~> 1.10)
     memoist (0.16.2)
-=======
     metasm (1.0.4)
->>>>>>> develop
     method_source (0.9.2)
-    mime-types (3.3)
+    mime-types (3.3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2019.1009)
     mini_mime (1.0.2)
     mini_portile2 (2.4.0)
-    minitest (5.12.2)
+    minitest (5.14.0)
     multi_json (1.14.1)
     multi_xml (0.6.0)
     multipart-post (2.1.1)
-    mustermann (1.0.3)
+    mustermann (1.1.1)
+      ruby2_keywords (~> 0.0.1)
     net-dns (0.9.0)
     net-http2 (0.18.2)
       http-2 (~> 0.10.1)
     netrc (0.11.0)
     nio4r (2.5.2)
-    nokogiri (1.10.4)
+    nokogiri (1.10.7)
       mini_portile2 (~> 2.4.0)
     os (1.0.1)
     parallel (1.12.1)
-    pg (1.1.4)
-    protocol-hpack (1.4.1)
-    protocol-http (0.13.0)
-    protocol-http1 (0.10.0)
+    pg (1.2.2)
+    power_assert (1.1.5)
+    protocol-hpack (1.4.2)
+    protocol-http (0.13.1)
+    protocol-http1 (0.10.1)
       protocol-http (~> 0.13)
     protocol-http2 (0.10.4)
       protocol-hpack (~> 1.4)
@@ -300,21 +314,21 @@ GEM
     pry (0.12.2)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
-    pry-byebug (3.7.0)
+    pry-byebug (3.8.0)
       byebug (~> 11.0)
       pry (~> 0.10)
-    public_suffix (4.0.1)
+    public_suffix (4.0.3)
     puma (4.3.1)
       nio4r (~> 2.0)
-    rack (2.0.8)
-    rack-protection (2.0.7)
+    rack (2.2.1)
+    rack-protection (2.0.8.1)
       rack
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
-    rake (13.0.0)
+    rake (13.0.1)
     rb-readline (0.5.5)
     redis (4.1.3)
-    redis-namespace (1.6.0)
+    redis-namespace (1.7.0)
       redis (>= 3.0.4)
     regexp_parser (1.6.0)
     representable (3.0.4)
@@ -326,9 +340,7 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
-<<<<<<< HEAD
     retriable (3.1.2)
-=======
     rex (2.0.11)
       filesize
       jsobfu (~> 0.4.1)
@@ -337,9 +349,8 @@ GEM
       nokogiri
       rb-readline
       robots
->>>>>>> develop
     rex-core (0.1.13)
-    rex-socket (0.1.20)
+    rex-socket (0.1.21)
       rex-core
     rex-text (0.2.24)
     rkelly-remix (0.0.7)
@@ -349,25 +360,26 @@ GEM
       rspec-core (~> 3.9.0)
       rspec-expectations (~> 3.9.0)
       rspec-mocks (~> 3.9.0)
-    rspec-core (3.9.0)
-      rspec-support (~> 3.9.0)
+    rspec-core (3.9.1)
+      rspec-support (~> 3.9.1)
     rspec-expectations (3.9.0)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.9.0)
-    rspec-mocks (3.9.0)
+    rspec-mocks (3.9.1)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.9.0)
-    rspec-support (3.9.0)
-    rubyzip (2.1.0)
+    rspec-support (3.9.2)
+    ruby2_keywords (0.0.2)
+    rubyzip (2.2.0)
     selenium-webdriver (3.142.7)
       childprocess (>= 0.5, < 4.0)
       rubyzip (>= 1.2.2)
-    sentry-raven (2.12.2)
+    sentry-raven (2.13.0)
       faraday (>= 0.7.6, < 1.0)
-    sequel (5.25.0)
+    sequel (5.29.0)
     shodan (1.0.0)
       json (>= 1.4.6)
-    sidekiq (6.0.3)
+    sidekiq (6.0.4)
       connection_pool (>= 2.2.2)
       rack (>= 2.0.0)
       rack-protection (>= 2.0.0)
@@ -381,27 +393,29 @@ GEM
       faraday (~> 0.9)
       jwt (>= 1.5, < 3.0)
       multi_json (~> 1.10)
-    sinatra (2.0.7)
+    sinatra (2.0.8.1)
       mustermann (~> 1.0)
       rack (~> 2.0)
-      rack-protection (= 2.0.7)
+      rack-protection (= 2.0.8.1)
       tilt (~> 2.0)
-    sinatra-contrib (2.0.7)
+    sinatra-contrib (2.0.8.1)
       backports (>= 2.8.2)
       multi_json
       mustermann (~> 1.0)
-      rack-protection (= 2.0.7)
-      sinatra (= 2.0.7)
+      rack-protection (= 2.0.8.1)
+      sinatra (= 2.0.8.1)
       tilt (~> 2.0)
     socketry (0.5.1)
       hitimes (~> 1.2)
-    sqlite3 (1.4.1)
-    thor (0.20.3)
+    sqlite3 (1.4.2)
+    test-unit (3.3.5)
+      power_assert
+    thor (1.0.1)
     thread_safe (0.3.6)
     tilt (2.0.10)
     timers (4.3.0)
     towerdata_api (1.3.1)
-    tzinfo (1.2.5)
+    tzinfo (1.2.6)
       thread_safe (~> 0.1)
     uber (0.1.0)
     unf (0.1.4)
@@ -415,13 +429,13 @@ GEM
     websocket-driver (0.7.1)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.4)
-    whois (5.0.0)
+    whois (5.0.1)
     whois-parser (1.2.0)
       activesupport (>= 4)
       whois (>= 4.0.7)
     yajl-ruby (1.4.1)
-    yard (0.9.20)
-    zeitwerk (2.2.0)
+    yard (0.9.24)
+    zeitwerk (2.2.2)
 
 PLATFORMS
   ruby
@@ -449,13 +463,13 @@ DEPENDENCIES
   google-cloud-storage
   googleajax
   googleauth
-  hpricot!
   iconv
   intrigue-ident!
   intrigue_api_client!
   maxminddb!
   net-dns
   net-http2
+  neutrino_api!
   nokogiri
   opencorporates!
   pg
