@@ -131,7 +131,7 @@
 /^.*\.metric.gstatic.com(:[0-9]*)?$/
 /^.*\.mktossl.com(:[0-9]*)?$/
 /^.*\.mktoweb.com(:[0-9]*)?$/
-/^.*\.mkto-[a-z]+[0-9]+.com(:[0-9]*)?$/# marketo branding domain
+/^.*\.mkto-[a-z]+[0-9]+.com(:[0-9]*)?$/
 /^.*\.microsoft.com(:[0-9]*)?$/
 /^.*\.microsoftonline.com(:[0-9]*)?$/
 /^.*\.mpmsx.net(:[0-9]*)?$/
@@ -145,11 +145,13 @@
 /^.*\.outlook.com(:[0-9]*)?$/
 /^.*\.outrch.com(:[0-9]*)?$/
 /^.*\.pageserve.co(:[0-9]*)?$/
+/^.*\.pantheon.io(:[0-9]*)?$/
 /^.*\.pardot.com(:[0-9]*)?$/
 /^.*\.parklogic.com(:[0-9]*)?$/
 /^.*\.photorank.me(:[0-9]*)?$/
 /^.*\.plus.google.com(:[0-9]*)?$/
 /^.*\.posterous.com(:[0-9]*)?$/
+/^.*\.prioritymedical.in(:[0-9]*)?$/
 /^.*\.purl.org(:[0-9]*)?$/
 /^.*\.q4web.com(:[0-9]*)?$/
 /^.*\.rdfs.org(:[0-9]*)?$/
@@ -170,6 +172,7 @@
 /^.*\.twitter.com(:[0-9]*)?$/
 /^.*\.uberflip.com(:[0-9]*)?$/
 /^.*\.ultradns.com(:[0-9]*)?$/
+/^.*\.unbouncepages.com(:[0-9]*)?$/
 /^.*\.unifiedlayer.com(:[0-9]*)?$/
 /^.*\.urchin.com(:[0-9]*)?$/
 /^.*\.url.google.com(:[0-9]*)?$/

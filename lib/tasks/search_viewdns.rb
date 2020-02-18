@@ -8,7 +8,7 @@ class SearchViewdns < BaseTask
       :name => "search_viewdns_reverse_whois",
       :pretty_name => "Search ViewDNS (Reverse Whois)",
       :authors => ["jcran"],
-      :description => "This task hits the ViewDNS.info API and returns records that match WHOIS data.",
+      :description => "This task hits the ViewDNS API and returns records that match WHOIS data.",
       :references => ["https://viewdns.info/reversewhois/"],
       :type => "discovery",
       :passive => true,

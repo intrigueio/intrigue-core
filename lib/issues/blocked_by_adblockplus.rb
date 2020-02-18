@@ -10,7 +10,7 @@ class BlockedByAdBlockPlus < BaseIssue
       category: "network",
       severity: 5,
       status: "confirmed",
-      description: "This website matches one of the rules of AdBlockPlus List and it is gonna be blocked whenever the adblocker extension is activated",
+      description: "This website matches one of the rules of AdBlockPlus List, and will be blocked by AdBlockPlus users.",
       remediation:  "The resource should be investigated for malicious activity.",
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
         { type: "description", uri: "https://adblockplus.org/getting_started" }

@@ -1,6 +1,6 @@
 module Intrigue
 module Issue
-class GoogleGroupsLeakr< BaseIssue
+class GoogleGroupsLeak < BaseIssue
 
   def self.generate(instance_details={})
     to_return = {
@@ -9,10 +9,11 @@ class GoogleGroupsLeakr< BaseIssue
       severity: 3,
       status: "confirmed",
       category: "application",
-      description: "Public Google Groups settings enabled can cause sensitive data leakage.",
-      remediation: "Set the visibility level when you create groups in the Admin console.",
+      description: "Enabling public Google Groups can cause sensitive data leakage.",
+      remediation: "Review the visibility level of this group in the Google Admin console.",
       affected: [],
-      references: ["https://support.google.com/a/answer/167427?hl=en" # types: description, remediation, detection_rule, exploit, threat_intel
+      references: [ # types: description, remediation, detection_rule, exploit, threat_intel
+        { type: "remediation", uri: "https://support.google.com/a/answer/167427?hl=en" }
       ]
     }.merge!(instance_details)
 

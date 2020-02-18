@@ -12,7 +12,7 @@ class SearchYandexDns < BaseTask
       :authors => ["Anas Ben Salah"],
       :description => "This task looks up whether hosts are blocked by Yandex DNS",
       :references => ["https://dns.yandex.com/"],
-      :type => "discovery",
+      :type => "threat_check",
       :passive => true,
       :allowed_types => ["Domain", "DnsRecord"],
       :example_entities => [{"type" => "Domain", "details" => {"name" => "intrigue.io"}}],
@@ -72,8 +72,8 @@ class SearchYandexDns < BaseTask
       })
 
       # Also store it on the entity 
-      blocked_list = @entity.get_detail("detected_malicious") || [] 
-      @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
+      blocked_list = @entity.get_detail("suspicious_activity_detected") || [] 
+      @entity.set_detail("suspicious_activity_detected", blocked_list.concat([{source: source}]))
 
     end
 

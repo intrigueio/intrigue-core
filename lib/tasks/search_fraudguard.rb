@@ -10,7 +10,7 @@ class SearchFraudGuard < BaseTask
       :authors => ["Anas Ben Salah"],
       :description => "This task hits FraudGuard api ",
       :references => ["https://docs.fraudguard.io/"],
-      :type => "discovery",
+      :type => "threat_check",
       :passive => true,
       :allowed_types => ["IpAddress"],
       :example_entities => [{"type" => "IpAddress", "details" => {"name" => "1.1.1.1"}}],
@@ -37,19 +37,19 @@ class SearchFraudGuard < BaseTask
       end
 
       # Get responce
+
       response = JSON.parse(get_ip("api.fraudguard.io","/ip/#{entity_name}",username,password))
 
       if response
-        _create_linked_issue("suspicious_ip", {
+        _create_linked_issue("suspicious_activity_detected", {
           status: "confirmed",
           description: "This ip was flagged by fraudguard.io for #{response["threat"]} threat with risk level: #{response["risk_level"]} ",
           fraudguard_details: response,
-          proof: "This IP was founded flaged",
           source: "FraudGuard.io"
         })
         # Also store it on the entity
-        blocked_list = @entity.get_detail("detected_malicious") || []
-        @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
+        blocked_list = @entity.get_detail("suspicious_activity_detected") || []
+        @entity.set_detail("suspicious_activity_detected", blocked_list.concat([{source: source}]))
     end
   end #end run
 

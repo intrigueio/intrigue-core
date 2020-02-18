@@ -9,10 +9,11 @@ class DnsZoneTransfer< BaseIssue
       severity: 4,
       status: "confirmed",
       category: "network",
-      description: "AXFR refers to the protocol used during a DNS zone transfer, It is a client-initiated request to get a copy of the zone from the primary server",
-      remediation: "DNS server should be configured to only allow zone transfers from trusted IP addresses.",
+      description: "AXFR refers to the protocol used during a DNS zone transfer, it is a client-initiated request to get a copy of the zone from the primary server. When we requested an AXFR from this server, the zone was transferred.",
+      remediation: "All DNS servers should be configured to only allow zone transfers from trusted IP addresses.",
       affected: [],
-      references: ["https://www.acunetix.com/blog/articles/dns-zone-transfers-axfr/" # types: description, remediation, detection_rule, exploit, threat_intel
+      references: [ # types: description, remediation, detection_rule, exploit, threat_intel
+        { type: "vulnerability", uri: "https://www.acunetix.com/blog/articles/dns-zone-transfers-axfr/" }
       ]
     }.merge!(instance_details)
 

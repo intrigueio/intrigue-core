@@ -1,15 +1,15 @@
 module Intrigue
 module Issue
-class MaliciousIP< BaseIssue
+class SuspiciousIP< BaseIssue
 
-  def self.generate(instance_details={source: "IP"})
+  def self.generate(instance_details={})
     to_return = {
-      name: "malicious_ip",
-      pretty_name: "Malicious IP related to suspicious activity",
+      name: "suspicious_ip",
+      pretty_name: "Suspicious IP related to suspicious activity",
       severity: 3,
       status: "confirmed",
       category: "network",
-      description: "This IP address has a suspicious activity in the last 48 hours",
+      description: "This IP address has a suspicious activity",
       remediation: "This IP should be Investigated before taking blocking actions",
       affected: [],
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel

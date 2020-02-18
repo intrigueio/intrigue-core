@@ -9,7 +9,7 @@ class SearchApility < BaseTask
       :authors => ["Anas Ben Salah"],
       :description => "This task search Apility API for IP address and domain reputation",
       :references => ["https://api.apility.net/v2.0/ip/"],
-      :type => "discovery",
+      :type => "threat_check",
       :passive => true,
       :allowed_types => ["IpAddress","Domain"],
       :example_entities => [
@@ -49,33 +49,41 @@ class SearchApility < BaseTask
   def search_apility_by_ip entity_name, headers
 
     # Get the Api response
-    response = http_get_body("https://api.apility.net/badip/#{entity_name}",nil, headers)
-    if response == "Resource not found"
+    response_body = http_get_body("https://api.apility.net/badip/#{entity_name}",nil, headers)
+
+    if response_body == "Resource not found"
+      _log_error "Response not found"
       return
     end
-    json = JSON.parse(response)
 
-    # Check if the result is not empty
+    begin
+      json = JSON.parse(response_body)
+    rescue JSON::ParserError => e
+      _log_error "Error parsing JSON"
+      _log_error "Response:\n#{response_body}"
+      return
+    end
+
 
 
     # Check if response different to nil
     if json["response"]
       json["response"].each do |e|
         source = e
-        description = "apility.io is a blacklist aggregator"
+        description = "Apility.io is a blacklist aggregator"
 
         # Create an issue if the ip is flaged in one of the blacklists
-        _create_linked_issue("suspicious_ip", {
+        _create_linked_issue("suspicious_activity_detected", {
           status: "confirmed",
           additional_description: description,
           source: source,
-          proof: "This IP was founded related to malicious activities in #{source}",
+          proof: "This IP was founded related to suspicious activities in #{source}",
           references: []
         })
 
        # Also store it on the entity
-        blocked_list = @entity.get_detail("detected_malicious") || []
-        @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
+        blocked_list = @entity.get_detail("suspicious_activity_detected") || []
+        @entity.set_detail("suspicious_activity_detected", blocked_list.concat([{source: source}]))
 
       end
     end
@@ -86,8 +94,20 @@ class SearchApility < BaseTask
   def search_apility_by_domain entity_name, headers
 
     # Get the Api response
-    response = http_get_body("https://api.apility.net/baddomain/#{entity_name}",nil, headers)
-    json = JSON.parse(response)
+    response_body = http_get_body("https://api.apility.net/baddomain/#{entity_name}",nil, headers)
+
+    if response_body == "Resource not found"
+      _log_error "Response not found"
+      return
+    end
+
+    begin
+      json = JSON.parse(response_body)
+    rescue JSON::ParserError => e
+      _log_error "Error parsing JSON"
+      _log_error "Response:\n#{response_body}"
+      return
+    end
 
 
     # Check if response different to nil
@@ -99,15 +119,15 @@ class SearchApility < BaseTask
           source = e
           description = "apility.io is a blacklist aggregator"
           # Create an issue if the ip is flaged in one of the blacklists
-          _create_linked_issue("suspicious_domain", {
+          _create_linked_issue("suspicious_activity_detected", {
             status: "confirmed",
             additional_description: description,
             source: source,
-            proof: "This domain was founded flaged in #{source} blacklist",
+            proof: "This domain was flagged as suspicious in #{source} blacklist",
           })
          # Also store it on the entity
-          blocked_list = @entity.get_detail("detected_malicious") || []
-          @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
+          blocked_list = @entity.get_detail("suspicious_activity_detected") || []
+          @entity.set_detail("suspicious_activity_detected", blocked_list.concat([{source: source}]))
         end
       end
 
@@ -121,7 +141,6 @@ class SearchApility < BaseTask
 
       # Create an IP entity
       _create_entity("IpAddress", "name" => json["response"]["ip"]["address"])
-
 
     end
   end # end search_apility_by_domain

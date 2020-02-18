@@ -1,11 +1,11 @@
 module Intrigue
 module Issue
-class MaliciousDomain< BaseIssue
+class SuspiciousDomain< BaseIssue
 
-  def self.generate(instance_details={source: "IP"})
+  def self.generate(instance_details={})
     to_return = {
-      name: "malicious_domain",
-      pretty_name: "Malicious domain related to suspicious activity",
+      name: "suspicious_domain",
+      pretty_name: "Suspicious domain related to suspicious activity",
       severity: 3,
       status: "confirmed",
       category: "network",

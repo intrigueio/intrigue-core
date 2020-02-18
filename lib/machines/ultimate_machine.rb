@@ -1,11 +1,11 @@
 module Intrigue
 module Machine
-  class UltimateMachine < Intrigue::Machine::Base
+  class EveryDicoveryTask < Intrigue::Machine::Base
 
     def self.metadata
       {
-        :name => "ultimate_machine",
-        :pretty_name => "THE ULTIMATE MACHINE",
+        :name => "every_discovery_task",
+        :pretty_name => "Run Every Discovery Task",
         :passive => false,
         :user_selectable => true,
         :authors => ["jcran","AnasBenSalah"],
@@ -17,7 +17,10 @@ module Machine
 
       # enumerate what we'll run on
       allowed_entity_types = ["Domain", "DnsRecord", "IpAddress"]
-      return unless allowed_entity_types.include? entity.type_string
+      unless allowed_entity_types.include? entity.type_string
+        task_result.log "Can't do anything with this entity type, returning: #{entity.type_string}"
+        return
+      end
 
       # get the names that apply for us to run
       task_names = get_runnable_tasks_for_type entity.type_string
@@ -44,7 +47,7 @@ module Machine
         task.metadata[:name]
       end
 
-    result.compact
+    result.uniq.compact
     end
 
 

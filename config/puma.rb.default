@@ -82,7 +82,7 @@ cwd = File.expand_path(File.dirname(__FILE__) + "/..")
 # Instead of "bind 'ssl://127.0.0.1:9292?key=path_to_key&cert=path_to_cert'" you
 # can also use the "ssl_bind" option.
 #
-ssl_bind '127.0.0.1', '7777', { 
+ssl_bind '0.0.0.0', '7777', { 
   key: "#{cwd}/config/server.key", 
   cert: "#{cwd}/config/server.crt", 
   no_tlsv1: true, 

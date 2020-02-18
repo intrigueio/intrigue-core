@@ -10,7 +10,7 @@ class SearchBadIps < BaseTask
       :authors => ["Anas Ben Salah"],
       :description => "This task search BadIps blacklist for listed IP address",
       :references => ["https://www.badips.com/"],
-      :type => "discovery",
+      :type => "threat_check",
       :passive => true,
       :allowed_types => ["IpAddress"],
       :example_entities => [
@@ -41,18 +41,18 @@ class SearchBadIps < BaseTask
       description = "www.badips.com is an abuse tracker with a simple API to report and consume blocklists."
 
       # Create an issue if the ip is flaged in one of the blacklists
-      _create_linked_issue("suspicious_ip", {
+      _create_linked_issue("suspicious_activity_detected", {
         status: "confirmed",
         additional_description: description,
         source: source,
-        proof: "This IP was founded related to malicious activities in #{source}",
+        proof: "This IP was detected as suspicious in #{source}",
         details: result ,
         references: []
       })
 
       # Also store it on the entity
-      blocked_list = @entity.get_detail("detected_malicious") || []
-      @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
+      blocked_list = @entity.get_detail(" ") || []
+      @entity.set_detail("suspicious_activity_detected", blocked_list.concat([{source: source}]))
     # if error return
     else
       _log_error "data is unreachable !"

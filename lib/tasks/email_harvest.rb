@@ -28,7 +28,7 @@ class EmailHarvest < BaseTask
 
     # Bing
     _log "Scraping Bing for email addresses"
-    responses = Client::Search::Bing::SearchScraper.new.search("#{domain}+email")
+    responses = Client::Search::Bing::SearchService.new.search("#{domain}+email")
     email_list = []
     responses.each do |r|
       # Bing auto-bolds these
