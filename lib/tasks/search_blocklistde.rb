@@ -7,7 +7,7 @@ class SearchBlocklistde < BaseTask
     {
       :name => "search_blocklistde",
       :pretty_name => "Search Blocklist.de",
-      :authors => ["AnasBensalah"],
+      :authors => ["Anas Ben Salah"],
       :description => "This task checks IPs vs blocklist.de list for maliciousness IPs ",
       :references => [],
       :type => "discovery",
@@ -43,7 +43,7 @@ class SearchBlocklistde < BaseTask
         "whose servers are often attacked via SSH-, Mail-Login-, FTP-, Webserver- and other services." +
         "The mission is to report any and all attacks to the respective abuse departments of the infected PCs/servers"
 
-       _create_linked_issue("malicious_ip", {
+       _create_linked_issue("suspicious_ip", {
          status: "confirmed",
          #description: "This IP was founded related to malicious activities in Blocklist.de",
          additional_description: description,

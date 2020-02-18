@@ -7,7 +7,7 @@ class SearchTalosBlackList < BaseTask
     {
       :name => "search_talos_blacklist",
       :pretty_name => "Search Talos BlackList",
-      :authors => ["AnasBensalah"],
+      :authors => ["Anas Ben salah"],
       :description => "This task checks IPs vs Talos IP BlackList for maliciousness IPs ",
       :references => [],
       :type => "discovery",
@@ -43,7 +43,7 @@ class SearchTalosBlackList < BaseTask
       "comprised of world-class researchers, analysts and engineers. These teams are supported by unrivaled telemetry and sophisticated systems to create accurate,"+
       "rapid and actionable threat intelligence for Cisco customers"
 
-       _create_linked_issue("malicious_ip", {
+       _create_linked_issue("suspicious_ip", {
          status: "confirmed",
          #description: "This IP was founded related to malicious activities in Talos Intelligence IP BlackList",
          additional_description: description,

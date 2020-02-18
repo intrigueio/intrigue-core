@@ -58,13 +58,28 @@ class SearchHaveIBeenPwned < BaseTask
     results.each do |result|
       _log "Result: #{result}"
       # create an issue for each found result
-      _create_issue({
-         name: "Email Account Found In Public Paste",
-         type: "email_found_in_paste",
+      ############################################
+      ###      Old Issue                      ###
+      ###########################################
+      # _create_issue({
+      #    name: "Email Account Found In Public Paste",
+      #    type: "email_found_in_paste",
+      #    severity: 4,
+      #    status: "confirmed",
+      #    description: "Email account found in paste: #{email_address} in " +
+      #                "#{result["Source"]} on #{result["Date"]} with #{result["EmailCount"] - 1} others.",
+      #    details: result
+      # }) if _get_option("create_issues")
+      ############################################
+      ###      New Issue                      ###
+      ###########################################
+      _create_linked_issue("leaked_data",{
+         name: "Email Found in Public Paste",
+         type:"leaked_email",
          severity: 4,
-         status: "confirmed",
-         description: "Email account found in paste: #{email_address} in " +
-                     "#{result["Source"]} on #{result["Date"]} with #{result["EmailCount"] - 1} others.",
+         detailed_description: "Email account found in paste: #{email_address} in " +
+          "#{result["Source"]} on #{result["Date"]} with #{result["EmailCount"] - 1} others.",
+         references:"https://haveibeenpwned.com/",
          details: result
       }) if _get_option("create_issues")
     end
@@ -87,19 +102,35 @@ class SearchHaveIBeenPwned < BaseTask
       _log "Result: #{result}"
       next if _get_option("only_sensitive") && !result["IsSensitive"]
       # create an issue for each found result
-      _create_issue({
+      ############################################
+      ###      Old Issue                      ###
+      ###########################################
+      # _create_issue({
+      #   name: "Email Account Found In Public Breach",
+      #   type: "email_found_in_breach",
+      #   severity: 4,
+      #   status: "confirmed",
+      #   description: "Email account was found in a breach of : #{result["Name"]}\n" +
+      #                 "User: #{email_address} Domain: #{result["Domain"]}.\n" +
+      #                 "The details were leaked on #{result["BreachDate"]} and included #{result["DataClasses"].join(", ")}.\n" +
+      #                 "About this Breach:\n#{result["Description"]}",
+      #   details: result
+      # }) if _get_option("create_issues")
+      ############################################
+      ###      New Issue                      ###
+      ###########################################
+      _create_linked_issue("leaked_data",{
         name: "Email Account Found In Public Breach",
-        type: "email_found_in_breach",
+        type: "leaked_email",
         severity: 4,
-        status: "confirmed",
-        description: "Email account was found in a breach of : #{result["Name"]}\n" +
-                      "User: #{email_address} Domain: #{result["Domain"]}.\n" +
-                      "The details were leaked on #{result["BreachDate"]} and included #{result["DataClasses"].join(", ")}.\n" +
-                      "About this Breach:\n#{result["Description"]}",
+        detailed_description: "Email account was found in a breach of : #{result["Name"]}\n" +
+          "User: #{email_address} Domain: #{result["Domain"]}.\n" +
+          "The details were leaked on #{result["BreachDate"]} and included #{result["DataClasses"].join(", ")}.\n" +
+          "About this Breach:\n#{result["Description"]}",
+        references:"https://haveibeenpwned.com/",
         details: result
-      }) if _get_option("create_issues")
+       }) if _get_option("create_issues")
     end
-
   end
 
   def _get_hibp_response(endpoint)

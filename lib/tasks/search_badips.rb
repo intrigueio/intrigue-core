@@ -41,7 +41,7 @@ class SearchBadIps < BaseTask
       description = "www.badips.com is an abuse tracker with a simple API to report and consume blocklists."
 
       # Create an issue if the ip is flaged in one of the blacklists
-      _create_linked_issue("malicious_ip", {
+      _create_linked_issue("suspicious_ip", {
         status: "confirmed",
         additional_description: description,
         source: source,

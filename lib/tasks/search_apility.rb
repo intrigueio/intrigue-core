@@ -65,7 +65,7 @@ class SearchApility < BaseTask
         description = "apility.io is a blacklist aggregator"
 
         # Create an issue if the ip is flaged in one of the blacklists
-        _create_linked_issue("malicious_ip", {
+        _create_linked_issue("suspicious_ip", {
           status: "confirmed",
           additional_description: description,
           source: source,
@@ -99,7 +99,7 @@ class SearchApility < BaseTask
           source = e
           description = "apility.io is a blacklist aggregator"
           # Create an issue if the ip is flaged in one of the blacklists
-          _create_linked_issue("malicious_domain", {
+          _create_linked_issue("suspicious_domain", {
             status: "confirmed",
             additional_description: description,
             source: source,

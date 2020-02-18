@@ -6,7 +6,7 @@ class SearchMnemonic < BaseTask
     {
       :name => "search_mnemonic",
       :pretty_name => "Search Mnemonic",
-      :authors => ["AnasBensalah"],
+      :authors => ["Anas Ben Salah"],
       :description => "This task offers passive DNS data by querying passive DNS data collected in malware lab.",
       :references => [],
       :type => "discovery",

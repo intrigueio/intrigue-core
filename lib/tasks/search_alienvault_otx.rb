@@ -108,8 +108,8 @@
             ############################################
             ###      New Issue                      ###
             ###########################################
-            _create_linked_issue("malicious_ip",{
-              name: "Malicious IP Flagged by OTX: #{_get_entity_name}",
+            _create_linked_issue("suspicious_ip",{
+              name: "Suspicious IP Flagged by OTX: #{_get_entity_name}",
               severity: result["reputation"]["threat_score"],
               detailed_description: "Alienvault OTX has this IP flagged as dangerous.",
               details: u

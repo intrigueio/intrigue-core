@@ -39,7 +39,7 @@ class SearchBadIps < BaseTask
        #_create_malicious_ip_issue(entity_name, severity=4)
        source = "emergingthreats.net"
        description = "emerginthreats.net is a well reputed blacklist "
-       _create_linked_issue("malicious_ip", {
+       _create_linked_issue("suspicious_ip", {
          status: "confirmed",
          additional_description: description,
          source: source,

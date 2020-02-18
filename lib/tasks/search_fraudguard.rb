@@ -40,7 +40,7 @@ class SearchFraudGuard < BaseTask
       response = JSON.parse(get_ip("api.fraudguard.io","/ip/#{entity_name}",username,password))
 
       if response
-        _create_linked_issue("malicious_ip", {
+        _create_linked_issue("suspicious_ip", {
           status: "confirmed",
           description: "This ip was flagged by fraudguard.io for #{response["threat"]} threat with risk level: #{response["risk_level"]} ",
           fraudguard_details: response,

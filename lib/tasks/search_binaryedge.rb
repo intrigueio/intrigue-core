@@ -72,7 +72,7 @@ module Intrigue
         response = search_binaryedge_leaks_by_domain entity_name, api_key
         response["groups"].each do |t|
           # create issues if we found any
-          _create_linked_issue("leaked_account",{
+          _create_linked_issue("leaked_data",{
             detailed_description: "#{t["count"]} accounts found related to #{entity_name} in #{t["leak"]}",
             references:["https://binaryedge.com/",
             "https://askleo.com/account-involved-breach/"] ,
@@ -104,16 +104,16 @@ module Intrigue
           #    references:"https://binaryedge.com/",
           #    details: u
           #  })
-           ############################################
-           ###      New Issue                      ###
-           ###########################################
-           _create_linked_issue({
-              name: "Email Found in Data Leak #{u}",
-              type: "leaked_email",
-              detailed_description: "This Email has been found in this breach: #{u}, via BinaryEdge",
-              references:"https://binaryedge.com/",
-              details: u
-            })
+          ############################################
+          ###      New Issue                      ###
+          ###########################################
+          _create_linked_issue("leaked_data",{
+            name: "Email Found in Data Leak #{u}",
+            type: "leaked_email",
+            detailed_description: "This Email has been found in this breach: #{u}, via BinaryEdge",
+            references:"https://binaryedge.com/",
+            details: u
+          })
         end
 
       else

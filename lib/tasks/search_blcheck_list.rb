@@ -166,12 +166,12 @@ class SearchBlcheckList < BaseTask
     # Check IP if they are listed in one of 117 blacklists
     if entity_type == "IpAddress"
       # Set the issue type
-      issue_type = "malicious_ip"
+      issue_type = "suspicious_ip"
       inves = entity_name
       check_blcheck inves, dns_obj, blacklists, issue_type
     elsif entity_type == "Domain"
       # Set the issue type
-      issue_type = "malicious_domain"
+      issue_type = "suspicious_domain"
       # Resolv domin name address
       inves = dns_obj.getaddress(entity_name)
       check_blcheck inves, dns_obj, blacklists, issue_type

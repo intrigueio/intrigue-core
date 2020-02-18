@@ -15,9 +15,9 @@ class UriCheckSecurityHeaders < BaseTask
       :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [
-        { 
-          "type" => "Uri", 
-          "details" => {"name" => "http://www.intrigue.io"} 
+        {
+          "type" => "Uri",
+          "details" => {"name" => "http://www.intrigue.io"}
         }
       ],
       :allowed_options => [],
@@ -30,23 +30,23 @@ class UriCheckSecurityHeaders < BaseTask
 
     uri = _get_entity_name
     response = http_request(:get, uri)
-    
-    # return immediately unless we got a response 
-    return nil unless response 
+
+    # return immediately unless we got a response
+    return nil unless response
 
     # other things to check: (?)
     # form available over HTTP
-    # set cookie over http 
+    # set cookie over http
     # server header
 
-    # security headers 
-    required_headers = [ 
+    # security headers
+    required_headers = [
       "content-security-policy",
-      "strict-transport-security", 
+      "strict-transport-security",
       "x-frame-options",
-      "x-xss-protection", 
-      "x-content-type-options", 
-      "feature-policy", 
+      "x-xss-protection",
+      "x-content-type-options",
+      "feature-policy",
       "x-content-type-options"
     ]
 
@@ -65,20 +65,31 @@ class UriCheckSecurityHeaders < BaseTask
     # If we have identified any headers...
     if found_headers.count != required_headers.count
       missing_headers = required_headers - found_headers
-      # report the headers that are missing 
-      _create_issue({
-        name: "Missing security headers",
-        type: "missing_security_headers",
-        severity: 5,
-        status: "confirmed",
-        description:  "One or more security headers was missing from #{uri}. " +
-                      "You can learn more about security headers at " + 
-                      "https://www.keycdn.com/blog/http-security-headers",
+      # report the headers that are missing
+      ############################################
+      ###      Old Issue                      ###
+      ###########################################
+      # _create_issue({
+      #   name: "Missing security headers",
+      #   type: "missing_security_headers",
+      #   severity: 5,
+      #   status: "confirmed",
+      #   detailed_description:  "One or more security headers was missing from #{uri}. ",
+      #   details: {
+      #     uri: uri,
+      #     missing:  missing_headers
+      #   }
+      # })
+      ############################################
+      ###      New Issue                      ###
+      ###########################################
+      _create_linked_issue("missing_security_headers",{
+        detailed_description:  "One or more security headers was missing from #{uri}. ",
         details: {
           uri: uri,
           missing:  missing_headers
         }
-      })
+       })
     end
 
   end #end run
