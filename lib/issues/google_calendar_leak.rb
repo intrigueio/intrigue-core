@@ -1,6 +1,6 @@
 module Intrigue
 module Issue
-class GoogleCalendarLeakr< BaseIssue
+class GoogleCalendarLeak < BaseIssue
 
   def self.generate(instance_details={})
     to_return = {
@@ -9,10 +9,11 @@ class GoogleCalendarLeakr< BaseIssue
       severity: 2,
       status: "confirmed",
       category: "application",
-      description: "Google Calendar settings are set to public. This setting can cause sensitive data leakage.",
-      remediation: "Change your event privacy settings to only share with specific people",
+      description: "This Google Calendar is set to public. This setting can cause sensitive data leakage.",
+      remediation: "Review your event privacy settings to ensure this calendar should be public with specific people",
       affected: [],
-      references: ["https://support.google.com/calendar/answer/34580?co=GENIE.Platform%3DDesktop&hl=en" # types: description, remediation, detection_rule, exploit, threat_intel
+      references: [ # types: description, remediation, detection_rule, exploit, threat_intel
+        { type: "remediation", uri: "https://support.google.com/calendar/answer/34580?co=GENIE.Platform%3DDesktop&hl=en" },
       ]
     }.merge!(instance_details)
 

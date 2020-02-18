@@ -121,7 +121,7 @@
 
                 #create an issue about the investigited email
                 _create_issue({
-                    name: "leak found related to:  #{_get_entity_name}",
+                    name: "Account Details found for:  #{_get_entity_name}",
                     type: "Data leak",
                     severity: 2,
                     status: "confirmed",

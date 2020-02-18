@@ -51,8 +51,8 @@ class SearchBadIps < BaseTask
       })
 
       # Also store it on the entity
-      blocked_list = @entity.get_detail("detected_malicious") || []
-      @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
+      blocked_list = @entity.get_detail("suspicious_activity_detected") || []
+      @entity.set_detail("suspicious_activity_detected", blocked_list.concat([{source: source}]))
     # if error return
     else
       _log_error "data is unreachable !"

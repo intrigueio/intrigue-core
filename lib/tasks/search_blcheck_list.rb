@@ -165,16 +165,12 @@ class SearchBlcheckList < BaseTask
 
     # Check IP if they are listed in one of 117 blacklists
     if entity_type == "IpAddress"
-      # Set the issue type
-      issue_type = "malicious_ip"
       inves = entity_name
-      check_blcheck inves, dns_obj, blacklists, issue_type
+      check_blcheck inves, dns_obj, blacklists
     elsif entity_type == "Domain"
-      # Set the issue type
-      issue_type = "malicious_domain"
       # Resolv domin name address
       inves = dns_obj.getaddress(entity_name)
-      check_blcheck inves, dns_obj, blacklists, issue_type
+      check_blcheck inves, dns_obj, blacklists
     else
       _log_error "Unsupported entity type"
     end
@@ -182,7 +178,7 @@ class SearchBlcheckList < BaseTask
   end #run
 
   # Check the BlackLists database for suspicious or malicious IP addresses or domains
-  def check_blcheck inves, dns_obj, blacklists, issue_type
+  def check_blcheck inves, dns_obj, blacklists
     # Reverse the IP to match the Dbl rules for checks
     revip = inves.to_s.split(/\./).reverse.join(".")
     i = 1
@@ -198,15 +194,15 @@ class SearchBlcheckList < BaseTask
           # Get the source of the blocker
           source = e
           # Create an issue if the IP is blacklisted
-          _create_linked_issue(issue_type, {
+          _create_linked_issue("suspicious_activity", {
             status: "confirmed",
-            description: "This IP was founded related to malicious activities",
-            proof: "This IP was founded flaged in #{e} blacklist",
+            description: "Suspicious activity was detcted on this entity.",
+            proof: "This IP was found in the #{source} list",
             source: source
           })
           # Also store it on the entity
-          blocked_list = @entity.get_detail("detected_malicious") || []
-          @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
+          blocked_list = @entity.get_detail("suspicious_activity_detected") || []
+          @entity.set_detail("suspicious_activity_detected", blocked_list.concat([{source: source}]))
         end
       end
       i += 1
