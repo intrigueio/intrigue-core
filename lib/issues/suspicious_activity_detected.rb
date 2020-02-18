@@ -1,11 +1,11 @@
 module Intrigue
 module Issue
-class SuspiciousActivity < BaseIssue
+class SuspiciousActivityDetected < BaseIssue
 
-  def self.generate(instance_details={source: "IP"})
+  def self.generate(instance_details={source: "ip"})
     to_return = {
-      name: "suspicious_activity",
-      pretty_name: "Suspicious Activity was detected on this Entity",
+      name: "suspicious_activity_detected",
+      pretty_name: "Suspicious Activity was detected on this entity",
       severity: 3,
       status: "confirmed",
       category: "network",

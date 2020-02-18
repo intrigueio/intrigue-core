@@ -10,7 +10,7 @@ class SearchBadIps < BaseTask
       :authors => ["Anas Ben Salah"],
       :description => "This task search Emerging Threats blacklist for listed IP address",
       :references => ["https://rules.emergingthreats.net/"],
-      :type => "discovery",
+      :type => "threat_check",
       :passive => true,
       :allowed_types => ["IpAddress"],
       :example_entities => [
@@ -36,10 +36,9 @@ class SearchBadIps < BaseTask
 
     # Create an issue if an IP found in the Talos IP Blacklist
     if data.include? entity_name
-       #_create_malicious_ip_issue(entity_name, severity=4)
        source = "emergingthreats.net"
        description = "emerginthreats.net is a well reputed blacklist "
-       _create_linked_issue("malicious_ip", {
+       _create_linked_issue("suspicious_activity_detected", {
          status: "confirmed",
          additional_description: description,
          source: source,

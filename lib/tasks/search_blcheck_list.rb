@@ -11,7 +11,7 @@ class SearchBlcheckList < BaseTask
       :authors => ["Anas Ben Salah"],
       :description => "This task Test any domain against more then 100 black lists.",
       :references => [],
-      :type => "discovery",
+      :type => "threat_check",
       :passive => true,
       :allowed_types => ["IpAddress","Domain"],
       :example_entities => [{"type" => "IpAddress", "details" => {"name" => "1.1.1.1"}}],
@@ -194,7 +194,7 @@ class SearchBlcheckList < BaseTask
           # Get the source of the blocker
           source = e
           # Create an issue if the IP is blacklisted
-          _create_linked_issue("suspicious_activity", {
+          _create_linked_issue("suspicious_activity_detected", {
             status: "confirmed",
             description: "Suspicious activity was detcted on this entity.",
             proof: "This IP was found in the #{source} list",

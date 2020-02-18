@@ -8,9 +8,9 @@ class SearchTalosBlackList < BaseTask
       :name => "search_talos_blacklist",
       :pretty_name => "Search Talos BlackList",
       :authors => ["AnasBensalah"],
-      :description => "This task checks IPs vs Talos IP BlackList for maliciousness IPs ",
+      :description => "This task checks IPs vs Talos IP BlackList for threat data.",
       :references => [],
-      :type => "discovery",
+      :type => "threat_check",
       :passive => true,
       :allowed_types => ["IpAddress"],
       :example_entities => [
@@ -31,24 +31,25 @@ class SearchTalosBlackList < BaseTask
     data = open("https://talosintelligence.com/documents/ip-blacklist").read
 
     if data == nil
-      _log_error("Unable to fetch Url !")
+      _log_error("Unable to fetch Url!")
       return
     end
 
     # Create an issue if an IP found in the Talos IP Blacklist
     if data.include? entity_name
-       #_create_malicious_ip_issue(entity_name, severity=4)
-       source = "talosintelligence.com"
-       description = "Cisco Talos Intelligence Group is one of the largest commercial threat intelligence teams in the world,"+
-      "comprised of world-class researchers, analysts and engineers. These teams are supported by unrivaled telemetry and sophisticated systems to create accurate,"+
-      "rapid and actionable threat intelligence for Cisco customers"
 
-       _create_linked_issue("malicious_ip", {
+      source = "talosintelligence.com"
+       description = "Cisco Talos Intelligence Group is one of the largest commercial threat" + 
+       " intelligence teams in the world, comprised of world-class researchers, analysts and "
+       " engineers. These teams are supported by unrivaled telemetry and sophisticated systems "
+       " to create accurate, rapid and actionable threat intelligence for Cisco customers."
+
+       _create_linked_issue("suspicious_activity_detected", {
          status: "confirmed",
-         #description: "This IP was founded related to malicious activities in Talos Intelligence IP BlackList",
+         #description: "This IP was found related to malicious activities in Talos Intelligence IP BlackList",
          additional_description: description,
          source: source,
-         proof: "This IP was founded related to malicious activities in #{source}",
+         proof: "This IP was detected as suspicious in #{source}",
          references: []
        })
 

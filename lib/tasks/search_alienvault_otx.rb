@@ -93,25 +93,10 @@
 
           #for each item in the activites list, pull out the malicious ip and some related informations
           result["reputation"]["activities"].each do |u|
-            ############################################
-            ###      Old Issue                      ###
-            ###########################################
-            # _create_issue({
-            #   name: "Malicious IP Flagged by OTX: #{_get_entity_name}",
-            #   type: "malicious_check",
-            #   category: "network",
-            #   severity: result["reputation"]["threat_score"],
-            #   status: "confirmed",
-            #   description: "Alienvault OTX has this IP flagged as dangerous.",
-            #   details: u
-            # })
-            ############################################
-            ###      New Issue                      ###
-            ###########################################
-            _create_linked_issue("malicious_ip",{
-              name: "Malicious IP Flagged by OTX: #{_get_entity_name}",
+            _create_linked_issue("suspicious_activity_detected",{
+              name: "Suspicious IP Flagged by OTX: #{_get_entity_name}",
               severity: result["reputation"]["threat_score"],
-              detailed_description: "Alienvault OTX has this IP flagged as dangerous.",
+              detailed_description: "Alienvault OTX has this IP flagged as suspicious.",
               details: u
             })
           end

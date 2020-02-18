@@ -10,7 +10,7 @@ class SearchPhishtank < BaseTask
       :authors => ["jcran"],
       :description => "Uses the Phishtank API to search for a uri",
       :references => [],
-      :type => "malicious_check",
+      :type => "threat_check",
       :passive => true,
       :allowed_types => ["Uri"],
       :example_entities => [

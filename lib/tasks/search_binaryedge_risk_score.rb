@@ -18,7 +18,7 @@ class SearchBinaryedgeRiskScore < BaseTask
         {"type" => "IpAddress", "details" => {"name" => "1.1.1.1"}}
       ],
       :allowed_options => [
-        {:name => "create_issue", :regex=> "boolean", :default => true },
+        {:name => "create_issue", :regex => "boolean", :default => true },
         {:name => "create_issue_greater_than_sev", :regex=> "integer", :default => 3 },
       ],
       :created_types => []
@@ -36,7 +36,7 @@ class SearchBinaryedgeRiskScore < BaseTask
     begin
       # Make sure the key is set
       api_key = _get_task_config("binary_edge_api_key")
-      headers = {"X-Key" =>  "#{api_key}" }
+      headers = {"X-Key" => "#{api_key}" }
 
       uri = "https://api.binaryedge.io/v2/query/score/ip/#{entity_name}"
       result = JSON.parse(http_request(:get, uri, nil, headers).body)

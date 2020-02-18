@@ -12,7 +12,7 @@ class SearchYandexDns < BaseTask
       :authors => ["Anas Ben Salah"],
       :description => "This task looks up whether hosts are blocked by Yandex DNS",
       :references => ["https://dns.yandex.com/"],
-      :type => "discovery",
+      :type => "threat_check",
       :passive => true,
       :allowed_types => ["Domain", "DnsRecord"],
       :example_entities => [{"type" => "Domain", "details" => {"name" => "intrigue.io"}}],

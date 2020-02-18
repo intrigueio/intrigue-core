@@ -59,7 +59,7 @@ module Intrigue
                 # create an issue to track this
                 _create_issue({
                   name: "#{entity_name}  [Pulsedive]",
-                  type: "malicious_check",
+                  type: "threat_check",
                   category: "network",
                   severity: sev ,
                   status: "confirmed",
@@ -77,7 +77,7 @@ module Intrigue
                 # create an issue to track this
                 _create_issue({
                   name: "Malicious Entity Found (Pulsedive)",
-                  type: "malicious_check",
+                  type: "threat_check",
                   category: "network",
                   severity: sev,
                   status: "confirmed",
@@ -92,7 +92,7 @@ module Intrigue
                 # create an issue to track this
                 _create_issue({
                   name: "Malicious Entity Found (Pulsedive)",
-                  type: "malicious_check",
+                  type: "threat_check",
                   category: "network",
                   severity: sev ,
                   status: "confirmed",

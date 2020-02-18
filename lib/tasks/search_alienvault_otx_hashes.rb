@@ -9,7 +9,7 @@ class SearchAlienvaultOtxHashes < BaseTask
       :authors => ["Anas Ben Salah"],
       :description => "This task searches AlienVault OTX via API and checks for information related to a FileHash",
       :references => ["https://otx.alienvault.com/api"],
-      :type => "discovery",
+      :type => "threat_check",
       :passive => true,
       :allowed_types => ["FileHash"],
       :example_entities => [{"type" => "FileHash", "details" => {"name" => "4fa5ecd96c3f8d90efe4db2ed4b3afd0"}}],
@@ -35,25 +35,9 @@ class SearchAlienvaultOtxHashes < BaseTask
 
     #Create issue and pull out the malicious File and some related informations
     result["pulse_info"]["pulses"].each do |e|
-      ############################################
-      ###      Old Issue                      ###
-      ###########################################
-      # _create_issue({
-      #   name: "File Found In Alienvault OTX",
-      #   type: "malicious_file",
-      #   category: "network",
-      #   severity: 3,
-      #   status: "confirmed",
-      #   references: result["pulse_info"]["references"],
-      #   description: "#{e["description"]}",
-      #   details: e
-      # })
-      ############################################
-      ###      New Issue                      ###
-      ###########################################
       source = "Alienvault OTX"
-      _create_linked_issue("malicious_file",{
-        name: "Malicious File Found In #{source}",
+      _create_linked_issue("suspicious_activity_detected",{
+        name: "File detected as suspicious in #{source}",
         references: result["pulse_info"]["references"],
         description: "#{e["description"]}",
         details: e
