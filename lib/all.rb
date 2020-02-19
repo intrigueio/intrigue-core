@@ -56,39 +56,7 @@ include Intrigue::System::Validations
 ####
 # Task-specific libraries
 ####
-require_relative 'task_factory'
-
-### Mixins with common task functionality
-require_relative 'tasks/helpers/web'
-require_relative 'tasks/helpers/generic'
-tasks_folder = File.expand_path('../tasks/helpers', __FILE__) # get absolute directory
-Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
-
-####
-# ident (gem)
-####
-require 'ident'
-
-# Load all discovery tasks
-require_relative 'tasks/base'
-tasks_folder = File.expand_path('../tasks', __FILE__) # get absolute directory
-Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
-
-# Load control tasks
-tasks_folder = File.expand_path('../tasks/control', __FILE__) # get absolute directory
-Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
-
-# Load import tasks
-tasks_folder = File.expand_path('../tasks/import', __FILE__) # get absolute directory
-Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
-
-# Load vuln check tasks
-tasks_folder = File.expand_path('../tasks/vulns', __FILE__) # get absolute directory
-Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
-
-# Load enrichment functfions
-tasks_folder = File.expand_path('../tasks/enrich', __FILE__) # get absolute directory
-Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
+require_relative 'intrigue-tasks'
 
 ####
 ## Machines
@@ -116,7 +84,7 @@ Dir["#{entities_folder}/*.rb"].each {|f| require_relative f}
 ####
 # Issue Libraries
 ####
-require_relative 'issues/intrigue-issues'
+require_relative 'intrigue-issues'
 #  note that all specific issues are sourced in via this file (for reasons described in that file)
 
 ####
