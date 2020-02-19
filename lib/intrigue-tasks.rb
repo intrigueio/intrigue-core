@@ -64,8 +64,8 @@ end
 
 
 ### Mixins with common task functionality
-#require_relative 'tasks/helpers/web'
-#require_relative 'tasks/helpers/generic'
+require_relative 'tasks/helpers/generic'
+require_relative 'tasks/helpers/web'
 tasks_folder = File.expand_path('../tasks/helpers', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
