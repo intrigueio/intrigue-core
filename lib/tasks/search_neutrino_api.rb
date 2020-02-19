@@ -8,9 +8,9 @@ class SearchNeutrinoAPI < BaseTask
       :name => "search_neutrino_api",
       :pretty_name => "Search NeutrinoAPI",
       :authors => ["Anas Ben Salah"],
-      :description => "This task hits NeutrinoAPI and pulls out metadata for an IpAddress.",
+      :description => "This task hits NeutrinoAPI.",
       :references => [],
-      :type => "threat_check",
+      :type => "discovery",
       :allowed_types => ["IpAddress"],
       :example_entities => [
         {"type" => "IpAddress", "details" => {"name" => "1.1.1.1"}}
@@ -36,38 +36,38 @@ class SearchNeutrinoAPI < BaseTask
     #Automatically attempt to fix typos in the address
     fix_typos = _get_option("fix_typos")
 
-    user_id = _get_task_config("neutrinoapi_user_id")
-    master_key = _get_task_config("neutrinoapi_master_key")
+    user_id =_get_task_config("neutrinoapi_user_id")
+    master_key =_get_task_config("neutrinoapi_master_key")
 
     unless master_key or user_id
-      _log_error "Unable to proceed, no API key for Neutrino API provided"
-      return
+        _log_error "unable to proceed, no API key for Dehashed provided"
+        return
     end
 
+    description = nil
 
     client = NeutrinoApi::NeutrinoApiClient.new(
       user_id: user_id,
       api_key: master_key
     )
 
-    security_and_networking_controller = client.security_and_networking
+    securityAndNetworking_controller = client.security_and_networking
 
-    description = nil
     if opt_description == true
-      description = get_full_ip_info security_and_networking_controller, entity_name
-      search_ip_blocklist security_and_networking_controller, entity_name, description
+      description = get_full_ip_info securityAndNetworking_controller, entity_name
+      search_ip_blocklist securityAndNetworking_controller, entity_name, description
     else
       description = "Not selected as an option"
-      search_ip_blocklist security_and_networking_controller, entity_name, description
+      search_ip_blocklist securityAndNetworking_controller, entity_name, description
     end
 
   end
 
 
   # Perform a live (realtime) scan against the given IP using various network level checks
-  def get_full_ip_info controller, entity_name
+  def get_full_ip_info securityAndNetworking_controller, entity_name
 
-    result = controller.ip_probe(entity_name)
+    result = securityAndNetworking_controller.ip_probe(entity_name)
 
     # Full country name
     # @return [String]
@@ -156,10 +156,6 @@ class SearchNeutrinoAPI < BaseTask
     vpn_domain = result.vpn_domain
 
 
-    ###
-    ### Create Entities
-    ###
-
     if as_description
       _create_entity("Organization", {"name" => as_description})
     end
@@ -179,12 +175,8 @@ class SearchNeutrinoAPI < BaseTask
     end
 
     if hostname
-      _create_entity("DnsRecord", {"name" => hostname})
+      _create_entity("Domain", {"name" => hostname})
     end
-
-    ###
-    ### Calculate a description
-    ###
 
     full_description = "country: #{country}, provider_type: #{provider_type}, hostname: #{hostname}, provider_domain: #{provider_domain}, " +
     "provider_website: #{provider_website}, region: #{region}, provider_description: #{provider_description}, " +
@@ -198,9 +190,9 @@ class SearchNeutrinoAPI < BaseTask
   end
 
   #IP Blocklist will detect potentially malicious or dangerous IP addresses, anonymous proxies, Tor, botnets, spammers and more.
-  def search_ip_blocklist controller, entity_name, description
+  def search_ip_blocklist securityAndNetworking_controller, entity_name, description
 
-    result_bl = controller.ip_blocklist(entity_name)
+    result_bl = securityAndNetworking_controller.ip_blocklist(entity_name)
 
     # The IP address
     # @return [String]
@@ -285,15 +277,13 @@ class SearchNeutrinoAPI < BaseTask
         "IP address is hosting a spam bot: #{is_spam_bot}, this IP on a blocklist: #{is_listed}, " +
         "The number of blocklists the IP is listed on: #{list_count}, The last time this IP was seen on a blocklist: #{last_seen} , " +
         "this IP is listed on: #{blocklists}, sensors were used to detect this IP: #{sensors}",
-        neutrinoapi: result_bl.to_hash,
-        detailed_description: description,
-        proof: "This IP was founded flagged",
+        neutrinoapi_details: description,
+        proof: "This IP was founded flaged ",
         source: "NeutrinoAPI"
-
       })
       # Also store it on the entity
-      blocked_list = @entity.get_detail("suspicious_activity_detected") || []
-      @entity.set_detail("suspicious_activity_detected", blocked_list.concat([{source: source}]))
+      blocked_list = @entity.get_detail("detected_malicious") || []
+      @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
     end
   end
 
