@@ -1,3 +1,10 @@
+
+####
+# ident (gem)
+####
+require 'ident'
+
+
 module Intrigue
 module Task
 class BaseTask
