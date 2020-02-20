@@ -150,7 +150,7 @@ module Intrigue
 
       def self.load_global_namespace(data)
         (data["entities"] || []).each do |x|
-          Intrigue::Model::GlobalEntity.create(:name => x["name"], :type => x["type"], :namespace => x["namespace"])
+          Intrigue::Model::GlobalEntity.update_or_create(:name => x["name"], :type => x["type"], :namespace => x["namespace"])
         end
       end
 
