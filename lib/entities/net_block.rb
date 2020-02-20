@@ -74,7 +74,8 @@ class NetBlock < Intrigue::Model::Entity
         next if (e.type == "DnsRecord" || e.type == "Domain") && e.name.split(".").count == 1
         # Now, check to see if the entity's name matches something in our # whois text, 
         # and especially make sure 
-        if details["organization"] || details["organization_name"] =~ /[\s@]#{Regexp.escape(e.name)}/i
+        if (details["organization"] =~ /[\s@]#{Regexp.escape(e.name)}/i) || 
+            (details["organization_name"] =~ /[\s@]#{Regexp.escape(e.name)}/i)
           return true
         end
       end

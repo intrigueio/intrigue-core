@@ -148,8 +148,7 @@ module Intrigue
       out 
       end
 
-      def self.load_global_namespace(api_key)
-        data = JSON.parse(RestClient.get("https://app.intrigue.io/api/global/entities?key=#{api_key}"))
+      def self.load_global_namespace(data)
         (data["entities"] || []).each do |x|
           Intrigue::Model::GlobalEntity.create(:name => x["name"], :type => x["type"], :namespace => x["namespace"])
         end
