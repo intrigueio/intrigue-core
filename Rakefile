@@ -39,14 +39,6 @@ task :clean do
   end
 end
 
-desc "Load Global Namespace"
-task :load_global_namespace do
-  puts "Pulling global namespace"
-  require './core'
-  Intrigue::Model::GlobalEntity.load_global_namespace(ENV["INTRIGUEIO_DATA_API_KEY"])
-  puts "Done pulling global namespace"
-end
-
 desc "System Cleanup"
 task :cleanup do
   FileUtils.rm procfile_file, :force => true
