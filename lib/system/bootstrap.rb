@@ -5,7 +5,7 @@ module Bootstrap
   def bootstrap_system(config)
     extend Intrigue::Task::Helper
 
-    return nil unless config["projects"]
+    return nil unless config && config["projects"]
 
     ### Set any system configuration
 
