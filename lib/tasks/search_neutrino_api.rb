@@ -274,7 +274,7 @@ class SearchNeutrinoAPI < BaseTask
 
 
     if is_listed == 'true' or is_bot  == 'true'  or is_exploit_bot == 'true'  or is_malware == 'true'  or is_spider == 'true'  or is_hijacked == 'true'  or is_tor == 'true'  or is_spyware == 'true'  or is_spam_bot == 'true'
-      _create_linked_issue("suspicious_ip", {
+      _create_linked_issue("suspicious_activity_detected", {
         status: "confirmed",
         description: "IP is hosting a malicious bot or is part of a botnet: #{is_bot}, " +
         "IP is hosting an exploit finding bot or is running exploit scanning software : #{is_exploit_bot}, " +

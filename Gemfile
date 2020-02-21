@@ -38,7 +38,7 @@ gem 'aws-sdk-sqs'             #,        '~> 3'
 gem 'aws-sdk-s3'              #,         '~> 3'
 gem 'aws-sdk-route53'
 gem 'censys',                 :git => 'https://github.com/pentestify/censys.git'
-gem 'cloudflare',             :git => 'https://github.com/AnasBensalah/cloudflare.git'
+gem 'cloudflare',             :git => 'https://github.com/intrigueio/cloudflare.git'
 gem 'dnsbl-client',           :git => 'https://github.com/AnasBensalah/dnsbl-client.git'
 gem 'dnsimple'
 gem 'dnsruby'                 # dns_zone_transfer
@@ -82,7 +82,7 @@ gem 'versionomy'
 gem 'couchrest'
 gem 'fog-aws'
 
-# produciton
+# production process management
 gem 'god'
 
 # Development

@@ -1,11 +1,4 @@
 GIT
-  remote: https://github.com/AnasBensalah/cloudflare.git
-  revision: be12151e164f2e636560f7947cdbc601ab003ce6
-  specs:
-    cloudflare (4.2.0)
-      async-rest (~> 0.10.0)
-
-GIT
   remote: https://github.com/AnasBensalah/dnsbl-client.git
   revision: d88bb5eae3dfd03c418f67ae5767234a862a92b8
   specs:
@@ -29,6 +22,13 @@ GIT
   specs:
     chrome_remote (0.2.0)
       websocket-driver (~> 0.6)
+
+GIT
+  remote: https://github.com/intrigueio/cloudflare.git
+  revision: be12151e164f2e636560f7947cdbc601ab003ce6
+  specs:
+    cloudflare (4.2.0)
+      async-rest (~> 0.10.0)
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git

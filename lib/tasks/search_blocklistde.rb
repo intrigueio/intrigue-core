@@ -43,7 +43,7 @@ class SearchBlocklistde < BaseTask
         "whose servers are often attacked via SSH-, Mail-Login-, FTP-, Webserver- and other services." +
         "The mission is to report any and all attacks to the respective abuse departments of the infected PCs/servers"
 
-       _create_linked_issue("suspicious_ip", {
+       _create_linked_issue("suspicious_activity_detected", {
          status: "confirmed",
          #description: "This IP was founded related to malicious activities in Blocklist.de",
          additional_description: description,
@@ -53,8 +53,8 @@ class SearchBlocklistde < BaseTask
        })
 
        # Also store it on the entity
-       blocked_list = @entity.get_detail("detected_malicious") || []
-       @entity.set_detail("detected_malicious", blocked_list.concat([{source: source}]))
+       blocked_list = @entity.get_detail("suspicious_activity_detected") || []
+       @entity.set_detail("suspicious_activity_detected", blocked_list.concat([{source: source}]))
 
     end
 

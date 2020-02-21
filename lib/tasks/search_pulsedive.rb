@@ -62,7 +62,7 @@ module Intrigue
         
             detailed_description = "Location: #{result["properties"]["geo"]["country"]} Threats: \n" + " #{u["name"]} category: #{u["category"]} risk level: #{u["risk"]}"
 
-            _create_linked_issue("suspicious_domain",{
+            _create_linked_issue("suspicious_activity_detected",{
               source: "Pulsedive",
               severity: sev ,
               detailed_description: detailed_description,
