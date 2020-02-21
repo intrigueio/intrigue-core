@@ -8,9 +8,9 @@ class SuspiciousActivityDetected < BaseIssue
       pretty_name: "Suspicious Activity was detected on this entity",
       severity: 3,
       status: "confirmed",
-      category: "network",
-      description: "This entity has recently been detected as having suspicious activity.",
-      remediation: "This entity should be further investigated for activity.",
+      category: "reputation",
+      description: "This entity has recently been detected as having suspicious activity by the source.",
+      remediation: "This entity should be further investigated.",
       affected: [],
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
       ]

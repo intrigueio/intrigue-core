@@ -6,8 +6,7 @@ module Issue
   ### DEPRECATED!!!! Generic helper method to create issues
   ###
   def _create_issue(issue_hash)
-
-    puts "got issue hash: #{issue_hash}"
+    puts "DEPRECATED METHOD (_create_issue) called on #{issue_hash}"
 
     issue = issue_hash.merge({  entity_id: @entity.id,
                                 scoped: @entity.scoped,
@@ -44,9 +43,13 @@ module Issue
       project_id: @project.id, 
       scoped: @entity.scoped,
     }
-
-    issue = Intrigue::Issue::IssueFactory.create_instance_by_type(issue_type, issue_model_details, _encode_hash(instance_specifics))
+    
+    issue = Intrigue::Issue::IssueFactory.create_instance_by_type(
+      issue_type, issue_model_details, _encode_hash(instance_specifics))
   
+    # Notify 
+    _notify("Sev #{issue[:severity]}!```#{issue[:name]}```") if issue[:severity] <= 3
+
   issue 
   end
 

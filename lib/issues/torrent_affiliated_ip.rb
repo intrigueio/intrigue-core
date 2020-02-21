@@ -8,10 +8,9 @@ class TorrentAffIP< BaseIssue
       pretty_name: "Torrent Affiliated IP",
       severity: 4,
       status: "confirmed",
-      category: "network",
+      category: "reputation",
       description:"This IP is related to Torrent",
       remediation: "This IP address related to Torrent should be blocked in case of malicious activity",
-
     }.merge!(instance_details)
 
   to_return

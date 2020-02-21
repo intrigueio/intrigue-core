@@ -7,7 +7,7 @@ class BlockedByAdBlockPlus < BaseIssue
     to_return = {
       pretty_name: "Blocked by AdBlockPlus",
       name: "blocked_by_adblockplus",
-      category: "network",
+      category: "reputation",
       severity: 5,
       status: "confirmed",
       description: "This website matches one of the rules of AdBlockPlus List, and will be blocked by AdBlockPlus users.",

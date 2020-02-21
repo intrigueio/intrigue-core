@@ -9,7 +9,7 @@ class Confluence2faBypass < BaseIssue
       name: "confluence_2fa_bypass",
       category: "application",
       severity: 3,
-      status: "confirmed",
+      status: "application",
       description: "We detected a confluence instance with 2FA configured, but were able to bypass 2FA utilizing the provided link.",
       remediation:  "Consult your confluence configuration and 2FA provider for instructions on how to prevent this bypass",
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel

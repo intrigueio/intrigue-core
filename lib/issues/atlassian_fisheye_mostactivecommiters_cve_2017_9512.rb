@@ -13,7 +13,7 @@ class AtlassianFisheyeMostactivecommitersVuln < BaseIssue
       remediation: "Upgraded your Fisheye and Crucible installations to version 4.4.3 or 4.5.1 or higher.",
       affected: [ "Before version 4.4.1 " ],
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
-        "https://confluence.atlassian.com/crucible/fisheye-and-crucible-security-advisory-2017-11-29-939939750.html"
+        { type: "description", uri: "https://confluence.atlassian.com/crucible/fisheye-and-crucible-security-advisory-2017-11-29-939939750.html" }
       ]
     }.merge!(instance_details)
   end

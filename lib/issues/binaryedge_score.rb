@@ -7,7 +7,7 @@ class BinaryEdgeScore< BaseIssue
       name: "binaryedge_score",
       pretty_name: "High Risk Asset in BinaryEdge",
       status: "confirmed",
-      category: "network"
+      category: "endpoint"
     }.merge!(instance_details)
 
   to_return

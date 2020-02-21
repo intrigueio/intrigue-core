@@ -8,10 +8,9 @@ class LeakedData< BaseIssue
       pretty_name: "Leaked Data",
       severity: 3,
       status: "confirmed",
-      category: "network",
+      category: "leak",
       description: "Related account found leaked",
       remediation: "leaked accounts should be notified to reset their passwords and check for suspicious activities related to their accounts",
-
     }.merge!(instance_details)
 
   to_return

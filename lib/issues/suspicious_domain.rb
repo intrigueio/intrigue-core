@@ -5,10 +5,10 @@ class SuspiciousDomain< BaseIssue
   def self.generate(instance_details={})
     to_return = {
       name: "suspicious_domain",
-      pretty_name: "Suspicious domain related to suspicious activity",
+      pretty_name: "Suspicious Activity Detected",
       severity: 3,
       status: "confirmed",
-      category: "network",
+      category: "reputation",
       description: "This domain has a suspicious activity in the last 48 hours",
       remediation: "This domain should be Investigated before taking blocking actions",
       affected: [],
