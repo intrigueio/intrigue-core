@@ -28,14 +28,11 @@ fi
 echo "[+] Starting redis"
 sudo service redis-server start
 
-echo "[+] Setting up Intrigue System Files"
-bundle exec rake setup
-
 echo "[+] Migrating DB for Intrigue Standalone"
 bundle exec rake db:migrate
 
-echo "[+] Updating Intrigue Data"
-bundle exec rake update
+echo "[+] Setting up Intrigue Standalone"
+bundle exec rake setup
 
 echo "[+] Enabling Intrigue Services"
 god -c /core/util/god/intrigue-docker.rb

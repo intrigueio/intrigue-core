@@ -106,6 +106,9 @@ COPY . /core/
 # install intrigue-specific software & config
 RUN /bin/bash /core/util/bootstrap-standalone.sh
 
+# Remove the config file so one generates on startup (useful when testing)
+RUN if [ -e /core/config/config.json ]; then rm /core/config/config.json; fi
+
 # Expose the port
 EXPOSE 7777
 

@@ -1,4 +1,3 @@
-
 # 
 # First, a simple factory interface
 #
@@ -41,7 +40,7 @@ class IssueFactory
   def self.create_instance_by_type(requested_type, issue_model_details, instance_specifics)
     
     # first look thorugh our issue types and get the right one
-    issue_type = @issue_types.select{ |h| h.generate({})[:name] == requested_type }.first
+    issue_type = self.issues.select{ |h| h.generate({})[:name] == requested_type }.first
     unless issue_type 
       raise "Unknown issue type: #{requested_type}"
       return
@@ -107,4 +106,4 @@ end
 #
 issues_folder= File.expand_path('..', __FILE__) # get absolute directory
 puts "Sourcing intrigue issues from  #{issues_folder}"
-Dir["#{issues_folder}/*.rb"].each {|f| require_relative f}
+Dir["#{issues_folder}/issues/*.rb"].each {|f| require_relative f}

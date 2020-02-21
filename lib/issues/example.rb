@@ -12,7 +12,7 @@ class Example < BaseIssue
       remediation: "No patch is currently available, and only screaming seems to help.",
       affected: [ "Every version of everything" ],
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
-        { type: "vulnerability", uri: "https://allabouttheexamplevulnerability.com" },
+        { type: "description", uri: "https://allabouttheexamplevulnerability.com" },
         { type: "remediation", uri: "https://www.youtube.com/watch?v=FDv566DSTKg" }
       ]
     }.merge!(instance_details)

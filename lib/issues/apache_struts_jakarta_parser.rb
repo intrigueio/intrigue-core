@@ -10,7 +10,8 @@ class VulnApacheStrutsJakartaParser20175638 < BaseIssue
         { type: "CVE", name: "CVE-2017-5638" }
       ],
       severity: 1,
-      category: "network",
+      status: "confirmed",
+      category: "vulnerability",
       description: "A remote code execution vulnerability (CVE-2017-5638) in the Jakarta Multipart Parser in affected versions of the Apache Struts framework can enable a remote attacker to run arbitrary commands on the web server. Since its initial disclosure, this vulnerability has received significant attention, and has been exploited in the wild. Public exploits are also available for this vulnerability.", 
       remediation: "Customers are advised to immediately patch their servers to the latest versions of Apache Struts or implement recommended workarounds. See https://cwiki.apache.org/confluence/display/WW/S2-045 for more details.",
       affected_software: [

@@ -54,10 +54,10 @@
       "uri": "https://aws.amazon.com/",
       "comment": "the region to which all aws connections will be made"
     },
-    "aws_access_key_id": {
+    "apility_api_key": {
       "value": "XXX",
       "editable": "true",
-      "uri": "https://aws.amazon.com/",
+      "uri": "https://apility.io/",
       "comment": ""
     },
     "adblockplus_username": {
@@ -70,6 +70,12 @@
       "value": "",
       "uri": "",
       "editable": "true",
+      "comment": ""
+    },
+    "aws_access_key_id": {
+      "value": "XXX",
+      "editable": "true",
+      "uri": "https://aws.amazon.com/",
       "comment": ""
     },
     "aws_secret_access_key": {
@@ -120,6 +126,18 @@
       "editable": "true",
       "comment": ""
     },
+    "cloudflare_username": {
+      "value": "XXX",
+      "uri": "",
+      "editable": "true",
+      "comment": ""
+    },
+    "cloudflare_api_key": {
+      "value": "XXX",
+      "uri": "",
+      "editable": "true",
+      "comment": ""
+    },
     "corpwatch_api_key": {
       "value": "XXX",
       "uri": "http://api.corpwatch.org/register.php",
@@ -156,6 +174,18 @@
       "editable": "true",
       "comment": ""
     },
+    "dnsimple_api_key": {
+      "value": "",
+      "uri": "https://developer.dnsimple.com/v2/",
+      "editable": "true",
+      "comment": ""
+    },
+    "dnsimple_account_id": {
+      "value": "",
+      "uri": "https://developer.dnsimple.com/v2/",
+      "editable": "true",
+      "comment": ""
+    },
     "email_validator_apikey": {
       "value": "",
       "uri": "http://www.email-validator.net/email-address-online-verification-api.html",
@@ -167,6 +197,18 @@
       "uri": "https://www.fullcontact.com/developer",
       "editable": "true",
       "comment": "https://github.com/intrigueio/intrigue-core/issues/6"
+    },
+    "fraudguard_username": {
+      "value": "",
+      "uri": "",
+      "editable": "true",
+      "comment": ""
+    },
+    "fraudguard_api_key": {
+      "value": "",
+      "uri": "",
+      "editable": "true",
+      "comment": ""
     },
     "gitrob_access_token": {
       "value": "",
@@ -180,9 +222,33 @@
       "editable": "true",
       "comment": ""
     },
+    "google_project_id": {
+      "value": "XXX",
+      "uri": "",
+      "editable": "true",
+      "comment": ""
+    },
+    "google_client_secret": {
+      "value": "XXX",
+      "uri": "",
+      "editable": "true",
+      "comment": ""
+    },
+    "google_project_name": {
+      "value": "XXX",
+      "uri": "https://developers.google.com/safe-browsing/lookup_guide#GettingStarted",
+      "editable": "true",
+      "comment": ""
+    },
     "google_safebrowsing_lookup_key": {
       "value": "XXX",
       "uri": "https://developers.google.com/safe-browsing/lookup_guide#GettingStarted",
+      "editable": "true",
+      "comment": ""
+    },
+    "google_refresh_token": {
+      "value": "XXX",
+      "uri": "",
       "editable": "true",
       "comment": ""
     },
@@ -213,6 +279,18 @@
     "mailbox_layer_apikey": {
       "value": "",
       "uri": "https://mailboxlayer.com/dashboard",
+      "editable": "true",
+      "comment": ""
+    },
+    "neutrinoapi_user_id": {
+      "value": "",
+      "uri": "https://www.neutrinoapi.com/api/api-basics/",
+      "editable": "true",
+      "comment": ""
+    },
+    "neutrinoapi_master_key": {
+      "value": "",
+      "uri": "https://www.neutrinoapi.com/api/api-basics/",
       "editable": "true",
       "comment": ""
     },

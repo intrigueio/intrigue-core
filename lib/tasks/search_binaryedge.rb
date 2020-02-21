@@ -18,14 +18,14 @@ module Intrigue
         :created_types => ["NetworkService", "Uri", "DnsRecord"]
       }
     end
-  
+
     ## Default method, subclasses must override this
     def run
       super
-  
+
       entity_name = _get_entity_name
       entity_type = _get_entity_type_string
-      
+
       # Make sure the key is set
       api_key = _get_task_config("binary_edge_api_key")
 
@@ -42,7 +42,7 @@ module Intrigue
               proto = r["target"]["protocol"]
               be_details = {"extended_binaryedge" => e }
               _create_network_service_entity(@entity,port,proto, be_details)
-      
+
               # this should be optional...
               #if port != "443"
               #  _create_issue({
@@ -61,34 +61,30 @@ module Intrigue
         end
 
       elsif entity_type == "Domain"
-
-        # look for related eentities? 
+        # look for related eentities?
         dns_records = search_binaryedge_by_subdomain entity_name, api_key
 
         dns_records.each do |d|
           _create_entity "DnsRecord" , "name" => d
         end
 
-        # also check for data leaks 
+        # also check for data leaks
         response = search_binaryedge_leaks_by_domain entity_name, api_key
         response["groups"].each do |t|
           # create issues if we found any
-          _create_issue({
-            name: "Domain found in data leak: #{t["leak"]}",
-            type: "leaked_account",
-            severity: 4 ,
-            status: "confirmed",
-            description: "#{t["count"]} accounts found related to #{entity_name} in #{t["leak"]}",
-            references:"https://binaryedge.com/",
+          _create_linked_issue("leaked_data",{
+            detailed_description: "#{t["count"]} accounts found related to #{entity_name} in #{t["leak"]}",
+            references:["https://binaryedge.com/",
+            "https://askleo.com/account-involved-breach/"] ,
             details: t
           })
         end
 
       elsif entity_type == "EmailAddress"
-        
-        # checks for data leaks 
+
+        # checks for data leaks
         response = search_binaryedge_leaks_by_email_address entity_name, api_key
-        
+
         if response["total"] == 0
           _log "No results found!"
           return
@@ -96,23 +92,36 @@ module Intrigue
 
         # create issues if we found any
         response["events"].each do |u|
-          _create_issue({
-             name: "Email Found in Data Leak #{u}",
-             type: "leaked_account",
-             severity: 3,
-             status: "confirmed",
-             description: "This Email has been found in this breach: #{u}, via BinaryEdge",
-             references:"https://binaryedge.com/",
-             details: u
-           })
+          ############################################
+          ###      Old Issue                      ###
+          ###########################################
+          # _create_issue({
+          #    name: "Email Found in Data Leak #{u}",
+          #    type: "leaked_account",
+          #    severity: 3,
+          #    status: "confirmed",
+          #    detailed_description: "This Email has been found in this breach: #{u}, via BinaryEdge",
+          #    references:"https://binaryedge.com/",
+          #    details: u
+          #  })
+          ############################################
+          ###      New Issue                      ###
+          ###########################################
+          _create_linked_issue("leaked_data",{
+            name: "Email Found in Data Leak #{u}",
+            type: "leaked_email",
+            detailed_description: "This Email has been found in this breach: #{u}, via BinaryEdge",
+            references:"https://binaryedge.com/",
+            details: u
+          })
         end
 
       else
         _log_error "Unsupported entity type"
       end
-  
+
     end #end run
-  
+
   end
-end  
+end
 end

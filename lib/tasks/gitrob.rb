@@ -45,9 +45,9 @@ class Gitrob < BaseTask
     end
 
     # sanity check
-    unless output 
+    unless output
       _log_error "No output, failing"
-      return 
+      return
     end
 
     _log "Gitrob Version: #{output["Version"]}"
@@ -90,20 +90,36 @@ class Gitrob < BaseTask
         next if (f["Description"] == "Contains word: credential" && f["FilePath"] =~ /credential.html/i )
         next if (f["Description"] == "Contains word: password" && f["FilePath"] =~ /password.html/i )
 
-        _create_issue({
+        ############################################
+        ###      Old Issue                      ###
+        ###########################################
+        # _create_issue({
+        #   name: "Suspicious #{f["Action"]} Commit Found In Github Repository",
+        #   type: "suspicious_commit",
+        #   severity: 4,
+        #   status: "potential",
+        #   description:  "A suspicious commit was found in a public Github repository.\n" +
+        #                 "Repository URL: #{f['RepositoryUrl']}\n" +
+        #                 "Commit Author: #{f["CommitAuthor"]}\n" +
+        #                 "Commit Message #{f["CommitMessage"]}\n" +
+        #                 "Details: #{f["Action"]} #{f["Description"]} at #{f["FileUrl"]}\n\n#{f["Comment"]}",
+        #   details: f.merge({uri: "#{f["CommitUrl"]}"})
+        # })
+
+        ############################################
+        ###      New Issue                      ###
+        ###########################################
+        _create_linked_issue({
           name: "Suspicious #{f["Action"]} Commit Found In Github Repository",
-          type: "suspicious_commit",
-          severity: 4,
-          status: "potential",
-          description:  "A suspicious commit was found in a public Github repository.\n" + 
-                        "Repository URL: #{f['RepositoryUrl']}\n" + 
-                        "Commit Author: #{f["CommitAuthor"]}\n" + 
-                        "Commit Message #{f["CommitMessage"]}\n" + 
+          detailed_description:  "A suspicious commit was found in a public Github repository.\n" +
+                        "Repository URL: #{f['RepositoryUrl']}\n" +
+                        "Commit Author: #{f["CommitAuthor"]}\n" +
+                        "Commit Message #{f["CommitMessage"]}\n" +
                         "Details: #{f["Action"]} #{f["Description"]} at #{f["FileUrl"]}\n\n#{f["Comment"]}",
           details: f.merge({uri: "#{f["CommitUrl"]}"})
         })
-
       end
+
     else
       _log "No findings!"
     end

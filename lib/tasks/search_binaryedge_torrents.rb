@@ -7,8 +7,8 @@ class SearchBinaryEdgeTorrents < BaseTask
       :name => "search_binaryedge_torrents",
       :pretty_name => "Search BinaryEdge Torrent",
       :authors => ["Anas Ben Salah"],
-      :description => "This task hits the BinaryEdge API for a given" + 
-        "IP, and tells us if the address has seen activity consistent with torrenting", 
+      :description => "This task hits the BinaryEdge API for a given" +
+        "IP, and tells us if the address has seen activity consistent with torrenting",
       :references => [],
       :type => "discovery",
       :passive => true,
@@ -49,23 +49,39 @@ class SearchBinaryEdgeTorrents < BaseTask
       # TODO ... is there a better attribute to check?
       if json["title"] == "Not Found"
         _log "Not Found!"
-        return 
-      else 
+        return
+      else
         _log "Found!"
       end
 
       # TODO .... do we need to paginate this?
       json["events"].each do |t|
-        _create_issue({
-          name: "Torrent-Affiliated IpAddress",
-          type: "torrent_affiliated_ip",
-          severity: 4,
-          status: "confirmed",
-          description: "
+        ############################################
+        ###      Old Issue                      ###
+        ###########################################
+        # _create_linked_issue({
+        #   name: "Torrent-Affiliated IpAddress",
+        #   type: "torrent_affiliated_ip",
+        #   severity: 4,
+        #   status: "confirmed",
+        #   description: "
+        #     Ip Address: #{entity_name}:#{t["peer"]["port"]}
+        #     Name: #{t["torrent"]["name"]}\n
+        #     Source: #{t["torrent"]["source"]}\n
+        #     Category: #{t["torrent"]["category"]}\n
+        #     Subcategory: #{t["torrent"]["subcategory"]}",
+        #   references: ["https://binaryedge.com/"],
+        #   details: t
+        # })
+        ############################################
+        ###      New Issue                      ###
+        ###########################################
+        _create_linked_issue("torrent_affiliated_ip",{
+          detailed_description: "
             Ip Address: #{entity_name}:#{t["peer"]["port"]}
             Name: #{t["torrent"]["name"]}\n
-            Source: #{t["torrent"]["source"]}\n  
-            Category: #{t["torrent"]["category"]}\n 
+            Source: #{t["torrent"]["source"]}\n
+            Category: #{t["torrent"]["category"]}\n
             Subcategory: #{t["torrent"]["subcategory"]}",
           references: ["https://binaryedge.com/"],
           details: t

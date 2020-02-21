@@ -6,7 +6,7 @@ module Intrigue
       {
         :name => "search_spyonweb",
         :pretty_name => "Search SpyOnWeb",
-        :authors => ["AnasBenSalah"],
+        :authors => ["Anas Ben Salah"],
         :description => "This task hits the SpyOnWEB API for hosts sharing the same IP address, domains, Google Analytics code, or Google Adsense code.",
         :references => [],
         :type => "discovery",
@@ -34,7 +34,7 @@ module Intrigue
         search_domain entity_name, api_key
       elsif entity_type == "AnalyticsId"
         search_adsense(entity_name, api_key) if entity_name =~ /^pub-\d*/i
-        search_analytics(entity_name,api_key) if entity_name =~ /^UA-\d*/i 
+        search_analytics(entity_name,api_key) if entity_name =~ /^UA-\d*/i
       else
         _log_error "Unsupported entity type"
       end

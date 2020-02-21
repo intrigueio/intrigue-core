@@ -58,19 +58,29 @@ class UriGatherSslCert  < BaseTask
       }
       _create_entity "SslCertificate", certificate_details
 
-    # one way to detect self-signed 
+    # one way to detect self-signed
     if cert.subject == cert.issuer
-      _create_issue({
-        name: "Self-signed Certificate Detected",
-        severity: 5,
-        type: "self_signed_certificate",
-        status: "confirmed",
-        description: "The following site: #{uri} is configured with a self-signed certificate",
-        references: [
-          "https://security.stackexchange.com/questions/93162/how-to-know-if-certificate-is-self-signed/162263"
-        ],
-          details: { certificate: certificate_details }
-        })
+      ############################################
+      ####            Old Issue              ####
+      ###########################################
+      # _create_issue({
+      #   name: "Self-signed Certificate Detected",
+      #   severity: 5,
+      #   type: "self_signed_certificate",
+      #   status: "confirmed",
+      #   description: "The following site: #{uri} is configured with a self-signed certificate",
+      #   references: [
+      #     "https://security.stackexchange.com/questions/93162/how-to-know-if-certificate-is-self-signed/162263"
+      #   ],
+      #     details: { certificate: certificate_details }
+      # })
+      ############################################
+      ####            New Issue               ####
+      ############################################
+      _create_linked_issue("self_signed_certificate",{
+        detailed_description: "The following site: #{uri} is configured with a self-signed certificate",
+        details: { certificate: certificate_details }
+      })
     end
 
     rescue SocketError => e
@@ -99,4 +109,3 @@ class UriGatherSslCert  < BaseTask
 end
 end
 end
-

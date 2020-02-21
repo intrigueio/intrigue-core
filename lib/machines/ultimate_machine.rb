@@ -14,8 +14,8 @@ module Machine
     end
 
     def self.recurse(entity, task_result)
-      
-      # enumerate what we'll run on 
+
+      # enumerate what we'll run on
       allowed_entity_types = ["Domain", "DnsRecord", "IpAddress"]
       unless allowed_entity_types.include? entity.type_string
         task_result.log "Can't do anything with this entity type, returning: #{entity.type_string}"
@@ -37,15 +37,15 @@ module Machine
     def self.get_runnable_tasks_for_type(entity_type)
 
       tasks = Intrigue::TaskFactory.allowed_tasks_for_entity_type entity_type
-      result = tasks.sort_by{|x| x.metadata[:name] }.map do |task| 
-        
+      result = tasks.sort_by{|x| x.metadata[:name] }.map do |task|
+
         # return the appropriate thing
         next if task.metadata[:type] == "creation"
         next if task.metadata[:type] == "enrichment"
         next if task.metadata[:type] == "example"
-      
+
         task.metadata[:name]
-      end 
+      end
 
     result.uniq.compact
     end

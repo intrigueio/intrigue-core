@@ -85,6 +85,9 @@ Dir["#{entities_folder}/*.rb"].each {|f| require_relative f}
 # Issue Libraries
 ####
 require_relative 'intrigue-issues'
+issues_folder = File.expand_path('../issues', __FILE__) # get absolute directory
+Dir["#{issues_folder}/*.rb"].each {|f| require_relative f}
+
 #  note that all specific issues are sourced in via this file (for reasons described in that file)
 
 ####
