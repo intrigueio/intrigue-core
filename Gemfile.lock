@@ -32,9 +32,9 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: 02836bbe399e0fbccb3d5e4b0413d29a9c0a5a6a
+  revision: 831dd04ca13d276835238df344e1d365e87ded33
   specs:
-    intrigue-ident (0.9.1)
+    intrigue-ident (0.9.2)
       selenium-webdriver
       snmp
       socketry
@@ -488,7 +488,6 @@ DEPENDENCIES
   rspec
   ruby-nmap!
   rubyzip
-  selenium-webdriver
   sentry-raven
   sequel
   shodan
