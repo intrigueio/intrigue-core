@@ -32,7 +32,7 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: 831dd04ca13d276835238df344e1d365e87ded33
+  revision: 234c34947bed267b1bc2e7c5060d86574f6cb03e
   specs:
     intrigue-ident (0.9.2)
       selenium-webdriver
