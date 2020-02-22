@@ -24,7 +24,7 @@ class IssueFactory
   # Check to see if this handler exists (check by type)
   #
   def self.include?(type)
-    @issue_types.each { |h| return true if "#{h.metadata[:name]}" == "#{type}" }
+    @issue_types.each { |h| return true if "#{h.generate[:name]}" == "#{type}" }
   false
   end
 

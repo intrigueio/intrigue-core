@@ -5,7 +5,7 @@ class GoogleGroupsLeak < BaseIssue
   def self.generate(instance_details={})
     to_return = {
       name: "google_groups_leak",
-      pretty_name: "Public Google Groups Enabled!",
+      pretty_name: "Public Google Groups Detected",
       severity: 3,
       status: "confirmed",
       category: "application",

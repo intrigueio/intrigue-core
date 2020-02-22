@@ -98,7 +98,7 @@ class UriBruteFocusedContent < BaseTask
 
     asp_net_list = [
       { issue_type: "aspnet_elmah_axd", path: "/elmah.axd", severity: 1, body_regex: /Error log for/i, status: "confirmed" },
-      { issue_type: "aspnet_errorlog_axd", path: "/errorlog.axd", severity: 1, body_regex: /Error log for/i, status: "confirmed" },
+      { issue_type: "aspnet_elmah_axd", path: "/errorlog.axd", severity: 1, body_regex: /Error log for/i, status: "confirmed" },
       { issue_type: "aspnet_trace_axd", path: "/Trace.axd", severity: 5, body_regex: /Microsoft \.NET Framework Version/, :status => "confirmed" }
       # /páginas/default.aspx
       # /pages/default.aspx 
@@ -148,7 +148,7 @@ class UriBruteFocusedContent < BaseTask
     ]
 
     globalprotect_list = [ # https://blog.orange.tw/2019/07/attacking-ssl-vpn-part-1-preauth-rce-on-palo-alto.html
-      { issue_type: "vulnerable_globalprotect", path: "/global-protect/portal/css/login.css", severity: 1,
+      { issue_type: "vulnerable_globalprotect_cve_2019_1579", path: "/global-protect/portal/css/login.css", severity: 1,
           header_regex: /^Last-Modified:.*(Jan 2018|Feb 2018|Mar 2018|Apr 2018|May 2018|Jun 2018|2017).*$/i, status: "confirmed" } 
     ]
 
@@ -175,9 +175,6 @@ class UriBruteFocusedContent < BaseTask
           body_regex: /<title>Manage Filters/i, status: "confirmed" },
       { issue_type: "jira_2fa_bypass", path: "/login.action?nosso", severity: 3,
         body_regex: //i, status: "confirmed" } 
-    
-          # 
-
     ]
     # 
     joomla_list = [   # https://packetstormsecurity.com/files/151619/Joomla-Agora-4.10-Bypass-SQL-Injection.html

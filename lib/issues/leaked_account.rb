@@ -5,7 +5,7 @@ class LeakedAccountDetails < BaseIssue
   def self.generate(instance_details={})
     to_return = {
       name: "leaked_account_details",
-      pretty_name: "Leaked Account Details",
+      pretty_name: "Leaked Account Detected",
       severity: 4,
       status: "confirmed",
       category: "leak",

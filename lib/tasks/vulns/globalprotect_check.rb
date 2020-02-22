@@ -6,7 +6,7 @@ class  GlobalprotectCheck < BaseTask
     {
       :name => "vuln/globalprotect_check",
       :pretty_name => "Vuln - GlobalProtect Check",
-      :authors => ["jcran","@orange_8361","@mehqq_"],
+      :authors => ["jcran","orange_8361","mehqq_"],
       :identifiers => [{ "cve" =>  "CVE-2019-1579" }],
       :description => "This task checks for the Palo Alto Globalprotect vulnerability announced by Orange Tsai prior to Black Hat 2019.",
       :references => [
@@ -54,14 +54,8 @@ class  GlobalprotectCheck < BaseTask
     # example: Last-Modified: Wed, 06 Jun 2018 20:52:55 GMT
     if vulnerable
       _log "Vulnerable!"
-      _create_issue({
-        name: "Vulnerable Palo Alto GlobalProtect: #{check_url}",
-        severity: 1,
-        type: "vulnerability_globalunprotect",
-        status: "confirmed",
-        description: "This server is vulnerable to an unauthenticated RCE bug announced in July 2019, named CVE-2019-1579. See references for more details.\n\nProof: #{last_modified_header}",
-        references: self.class.metadata["references"]
-        })
+      last_modified_header
+      _create_linked_issue("vulnerable_globalprotect_cve_2019_1579", {proof: last_modified_header})
     else
       _log "Not Vulnerable! Header: #{last_modified_header}"
     end

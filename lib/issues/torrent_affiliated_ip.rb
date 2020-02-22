@@ -5,7 +5,7 @@ class TorrentAffIP< BaseIssue
   def self.generate(instance_details={})
     to_return = {
       name: "torrent_affiliated_ip",
-      pretty_name: "Torrent Affiliated IP",
+      pretty_name: "Torrent Activity Detected",
       severity: 4,
       status: "confirmed",
       category: "reputation",

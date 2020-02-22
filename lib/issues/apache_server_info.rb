@@ -5,7 +5,7 @@ module Intrigue
     def self.generate(instance_details={})
       {
         name: "apache_server_info",
-        pretty_name: "Apache Server Info",
+        pretty_name: "Apache ServerInfo Information Leak",
         severity: 2,
         category: "application",
         description: "This system was found running mod_info, which leaks details about the configuration of thee server. The module (mod_info) can leak sensitive information from the configuration directives of other Apache modules such as system paths, usernames/passwords, database names, etc. Therefore, this module should only be used in a controlled environment and always with caution.",

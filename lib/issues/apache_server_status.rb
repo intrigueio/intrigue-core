@@ -1,23 +1,21 @@
 module Intrigue
   module Issue
-  class AspnetElmahAxd < BaseIssue
+  class ApacheServerStatus < BaseIssue
   
     def self.generate(instance_details={})
       {
-        name: "aspnet_elmah_axd",
-        pretty_name: "ASP.NET Elmah.axd",
+        name: "apache_server_status",
+        pretty_name: "Apache ServerStatus information Leak",
         severity: 3,
         category: "application",
-        description: "Elmah.axd is a development library that retains full details about errors - including authenticated session information. This library can be dangerous when exposed to unauthenticated users.",
-        remediation: "Adjust the security settings for the library or remove it. See: https://blog.elmah.io/elmah-security-and-allowremoteaccess-explained/.",
+        description: "This system was found running mod_status, which leaks information about the configuration of this server",
+        remediation: "Use mod_authz_host to limit access to your server configuration information, or disable the module altogether.",
         affected: [ 
-          { :vendor => "Microsoft", :product => "ASP.NET"},
+          { :vendor => "Apache", :product => "HTTP Server"},
         ],
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel
-          { type: "description", uri: "https://blog.elmah.io/elmah-tutorial/" },
-          { type: "description", uri: "https://www.hanselman.com/blog/ELMAHErrorLoggingModulesAndHandlersForASPNETAndMVCToo.aspx" }, 
-          { type: "remediation", uri: "https://blog.elmah.io/elmah-security-and-allowremoteaccess-explained/" }
-
+          { type: "description", uri: "https://httpd.apache.org/docs/2.4/mod/mod_status.html" },
+          { type: "remediation", uri: "https://httpd.apache.org/docs/2.4/mod/mod_status.html" }
         ]
       }.merge!(instance_details)
     end

@@ -13,7 +13,7 @@ module Issue
                                 task_result_id: @task_result.id,
                                 project_id: @project.id })
 
-    _notify("Sev #{issue[:severity]}!```#{issue[:name]}```") if issue[:severity] <= 3
+    _notify("CI Sev #{issue[:severity]}!```#{issue[:name]}```") if issue[:severity] <= 3
 
     # adjust naming per new schema
     temp_name = issue[:type]
@@ -32,8 +32,12 @@ module Issue
   Intrigue::Model::Issue.create(_encode_hash(issue))
   end
 
+  def _linkable_issue_exists(issue_type)
+    Intrigue::Issue::IssueFactory.include?(issue_type)
+  end
+
   ### USE THIS GOING FORWARD
-  def _create_linked_issue(issue_type, instance_specifics)
+  def _create_linked_issue(issue_type, instance_specifics={})
 
     _log_good "Creating linked issue of type: #{issue_type}"
 
@@ -48,7 +52,7 @@ module Issue
       issue_type, issue_model_details, _encode_hash(instance_specifics))
   
     # Notify 
-    _notify("Sev #{issue[:severity]}!```#{issue[:name]}```") if issue[:severity] <= 3
+    _notify("LI Sev #{issue[:severity]}!```#{issue[:name]}```") if issue[:severity] <= 3
 
   issue 
   end
