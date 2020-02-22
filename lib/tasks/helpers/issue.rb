@@ -93,77 +93,21 @@ module Issue
   end
 
   def _create_missing_cookie_attribute_http_only_issue(uri, cookie, severity=5)
-    _create_issue({
-      name: "Insecure cookie detected: missing 'httpOnly' attribute",
-      type: "insecure_cookie_detected",
-      category: "application",
-      source: "self",
-      severity: severity,
-      status: "confirmed",
-      description: "A cookie was identified without the 'httpOnly' cookie attribute on #{uri}",
-      references: [],
-      details: {
-        uri: uri,
-        cookie: cookie
-      }
-    })
+    addtl_details = { cookie: cookie }
+    _create_linked_issue("insecure_cookie_httponly_attribute", addtl_details)
   end
 
   def _create_missing_cookie_attribute_secure_issue(uri, cookie, severity=5)
-    _create_issue({
-      name: "Insecure cookie detected: missing 'secure' attribute",
-      type: "insecure_cookie_detected",
-      category: "application",
-      source: "self",
-      severity: severity,
-      status: "confirmed",
-      description: "A cookie was identified without the 'secure' cookie attribute on #{uri}",
-      references: [],
-      details: {
-        uri: uri,
-        cookie: cookie
-      }
-    })
+    addtl_details = { cookie: cookie }
+    _create_linked_issue("insecure_cookie_secure_attribute", addtl_details)
   end
 
   def _create_weak_cipher_issue(uri, accepted_connections)
-    _create_issue({
-      name: "Weak ciphers enabled",
-      type: "weak_cipher_suite_detected",
-      category: "application",
-      severity: 5,
-      source: "self",
-      status: "confirmed",
-      description: "This server is configured to allow a known-weak cipher suite on #{uri}",
-      #recommendation: "Disable the weak ciphers.",
-      references: [
-        "https://thycotic.com/company/blog/2014/05/16/ssl-beyond-the-basics-part-2-ciphers/"
-      ],
-      details: {
-        uri: uri,
-        allowed: accepted_connections
-      }
-    })
+    _create_linked_issue("weak_ssl_ciphers_enabled",{ accepted: accepted_connections})
   end
 
   def _create_deprecated_protocol_issue(uri, accepted_connections)
-    _create_issue({
-      name: "Deprecated protocol enabled",
-      type: "deprecated_protocol_detected",
-      category: "application",
-      severity: 5,
-      source: "self",
-      status: "confirmed",
-      description: "This server is configured to allow a deprecated ssl / tls protocol on #{uri}",
-      #recommendation: "Disable the protocol, ensure support for the latest version.",
-      references: [
-        "https://tools.ietf.org/id/draft-moriarty-tls-oldversions-diediedie-00.html"
-      ],
-      details: {
-        uri: uri,
-        allowed: accepted_connections
-      }
-    })
+    _create_linked_issue("deprecated_ssl_protocol_detected",{ accepted: accepted_connections})
   end
 
   def _check_request_hosts_for_suspicious_request(uri, request_hosts)
@@ -176,20 +120,10 @@ module Issue
           request_hosts.include?("0.0.0.0") ||
           !request_hosts.select{|x| x =~ /^127\.\d\.\d\.\d$/ }.empty?)
 
-      _create_issue({
-        name: "Suspicious Resource Requested on #{uri}",
-        type: "suspicious_resource_requested",
-        category: "application",
-        severity: 2,
-        source: "self",
-        status: "confirmed",
-        description: "When a browser requested the resource(s) located at #{uri}, a suspicious request was made.",
-        references: [],
-        details: {
-          uri: uri,
-          request_hosts: request_hosts
-        }
-      })
+        _create_linked_issue("suspicious_web_resource_requested",{ 
+          requests: request_hosts,
+          reason: "Localhost or otherwise unroutable IP address"
+        })
 
       end
 
@@ -198,26 +132,10 @@ module Issue
   def _check_request_hosts_for_exernally_hosted_resources(uri, request_hosts, min_host_count=50)
 
     if  ( request_hosts.uniq.count >= min_host_count)
-      _create_issue({
-        name: "Large Number of Externally Hosted Resources",
-        type: "large_number_of_externally_hosted_resources",
-        category: "application",
-        severity: 5,
-        source: "self",
-        status: "confirmed",
-        description: "When a browser requested the resource located at #{uri}, a large number" +
-        " of connections (#{request_hosts.count}) to unique hosts were made. In itself, this may" +
-        " not be a security problem, but can introduce more attack surface than necessary, and is" +
-        " indicative of poor security hygiene, as well as slow load times for a service." ,
-        references: [],
-        details: {
-          min_host_count: min_host_count,
-          uri: uri,
-          request_hosts: request_hosts
-        }
-      })
-
+      addtl_details = { min_host_count: min_host_count, request_hosts: request_hosts }
+      _create_linked_issue("gratuitous_external_resources_requested", addtl_details)
     end
+    
   end
 
   def _check_requests_for_mixed_content(uri, requests)

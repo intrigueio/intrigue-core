@@ -5,7 +5,7 @@ class BlockedByAdBlockPlus < BaseIssue
   def self.generate(instance_details={})
 
     to_return = {
-      pretty_name: "Blocked by AdBlockPlus",
+      pretty_name: "Entity Blocked in AdBlockPlus Rules",
       name: "blocked_by_adblockplus",
       category: "reputation",
       severity: 5,
