@@ -20,6 +20,7 @@ tmp/
 log/
 lib/tasks/disabled
 lib/tasks/survey
+lib/*.gem
 util/control.sh
 paused.conf
 data/iana/data-used-autnums
