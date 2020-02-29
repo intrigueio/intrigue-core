@@ -202,7 +202,7 @@ module Intrigue
           end
         end
         
-        puts "Defaulting to traversable "
+        puts "Defaulting to traversable"
 
       true
       end

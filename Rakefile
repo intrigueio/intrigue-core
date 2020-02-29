@@ -12,6 +12,7 @@ include Intrigue::System::Database
 # Config files
 $intrigue_basedir = File.dirname(__FILE__)
 $intrigue_environment = ENV["INTRIGUE_ENV"] || "development"
+$intrigueio_api_key = ENV["INTRIGUEIO_API_KEY"]
 
 # Configuration and scripts
 procfile_file = "#{$intrigue_basedir}/Procfile"
@@ -58,12 +59,49 @@ task :update do
   Dir.chdir("#{$intrigue_basedir}/data/"){ puts %x["./get_latest.sh"] }
 end
 
+def _get_global_entities
+  uri = "https://app.intrigue.io/api/global/entities?key=#{$intrigueio_api_key}"
+  begin
+    puts "[+] Making request for global entities"
+    response = RestClient.get(uri)
+
+    # handle missing data
+    return -1 unless response && response.length > 0
+
+    j = JSON.parse(response.body)
+  rescue JSON::ParserError => e
+    puts "[+] Unable to parse bootstrap json"
+    return -1
+  end
+j
+end
+
 desc "Load Global Namespace"
 task :load_global_namespace do
-  puts "Pulling global namespace"
-  require './core'
-  Intrigue::Model::GlobalEntity.load_global_namespace(ENV["INTRIGUE_DATA_KEY"])
-  puts "Done pulling global namespace"
+  require_relative 'core'
+
+ # First, always pull, and load in the global entities
+ puts "[+] Getting global entities intel from Intrigue.io API"
+ global_entities = _get_global_entities
+ # wait a while and try again if we didnt get an bootstrap list
+ until global_entities && global_entities.kind_of?(Hash)
+   wait_time = rand(100)
+   puts "[ ] Trying again after #{wait_time} to get global entities"
+   sleep wait_time
+   global_entities = _get_global_entities
+   # check it first
+   if global_entities == -1
+      puts "[-] unable to get global entities intel, retrying..."
+      next
+   end
+ end
+
+ # LOAD IT IN  
+ puts "[+] Loading in entities intel from Intrigue.io API"
+ Intrigue::Model::GlobalEntity.load_global_namespace(global_entities)
+ global_entities = nil
+
+  puts "[+] Done pulling global namespace"
 end
 
 desc "System Setup"

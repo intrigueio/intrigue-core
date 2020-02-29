@@ -65,7 +65,7 @@ module Intrigue
         out = false 
 
         # first check to see if we know about this exact entity (type matters too)
-        puts "Looking for global entity; #{entity_type} #{entity_name}"
+        puts "Looking for global entity: #{entity_type} #{entity_name}"
         global_entity = Intrigue::Model::GlobalEntity.first(:name => entity_name, :type => entity_type)
 
         # If we know it exists, is it in our project (cool) or someone else (no traverse!)
