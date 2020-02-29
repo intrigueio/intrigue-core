@@ -25,6 +25,17 @@ class Domain < Intrigue::Model::Entity
     ["enrich/domain"]
   end
 
+  ###
+  ### SCOPING
+  ###
+  def scoped?(conditions={}) 
+    return true if self.seed
+    return false if self.hidden
+
+  # if we didnt match the above and we were asked, let's not allow it 
+  false
+  end
+
 end
 end
 end

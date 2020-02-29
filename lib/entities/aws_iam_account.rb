@@ -18,6 +18,12 @@ class AwsIamAccount < Intrigue::Model::Entity
     "Organization: #{details["organization"]} / Type: #{details["account_type"]} / Name: #{name}" 
   end
  
+  def scoped?
+    return true if self.seed
+    return false if self.hidden
+  true # otherwise just default to true
+  end
+
 end
 end
 end

@@ -166,32 +166,36 @@ class EntityManager
       ### HANDLE USER- or TASK- PROVIDED SCOPING
       #####
 
+      # this will help us handle cases of explicit scoping
+      # three possible values - nil, "true", "false"
+      # will bec converted into a boolean down below
+      scope_request = nil
+
       # if we're told this thing is scoped, let's just mark it scoped
       # note that we delete the detail since we no longer need it
       # TODO... is this used today?
       if (details["scoped"] == true || details["scoped"] == "true")
         tr.log "Entity was specifically requested to be scoped"
         details = details.tap{ |h| h.delete("scoped") }
-        entity_details[:scoped] = true
+        scope_request = "true"
 
       # otherwise if we've specifically decided to unscoped
       # note that we delete the detail since we no longer need it
       elsif (details["unscoped"] == true || details["unscoped"] == "true")
         tr.log "Entity was specifically requested to be unscoped"
         details = details.tap{ |h| h.delete("unscoped") }
-        entity_details[:scoped] = false
+        scope_request = "false"
 
       # if it's set, rely on the task result's auto_scope setting
       # - which is set when the entity is created, based on context
       # that is (or at least should be) specific to that task
       elsif tr.auto_scope
         tr.log "Task result scoped this entity based on auto_scope"
-        entity_details[:scoped] = true
-
-      # otherwise default to true 
+        scope_request = "true"
+      # otherwise default to false, (and let the entity scoping handle it below) 
       else
         tr.log "No specific scope request from the task result"
-        entity_details[:scoped] = true
+        #entity_details[:scoped] = false
       end
 
       #####
@@ -230,13 +234,18 @@ class EntityManager
       return nil
     end
 
-    ### revisit scoping in case the entity has specific scoping instructions
+    ### final scoping in case the entity has specific scoping instructions
     ##   (now that we have an entity)
     ##
     ##  the default method on the base class simply sets what was available previously
-    ##  See Intrigue::Model::Entity -> scoped?
+    ##  See the inidivdiual entity files for this logic.
     ##
-    entity.scoped = entity.scoped?
+    if scope_request
+      entity.scoped = scope_request.to_bool
+    else
+      entity.scoped = entity.scoped? #always fall back to our entity-specific logic.
+      tr.log "Using entity scoping logic, got #{entity.scoped}"
+    end
     entity.save_changes
     tr.log "Final scoping decision for #{entity.name}: #{entity.scoped}"
 

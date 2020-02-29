@@ -120,7 +120,7 @@ class Uri < Intrigue::Task::BaseTask
     # the UI / queries if any of the matches told us to hide the entity, do it.
     # EXAMPLE TEST CASE: http://103.24.203.121:80 (cpanel missing page)
     if ident_fingerprints.detect{|x| x["hide"] == true }
-      _log "Entity hidden based on fingerprint"
+      _log "Entity hidden based on fingerprint!"
       @entity.hidden = true
       @entity.save_changes
     end
@@ -345,9 +345,6 @@ class Uri < Intrigue::Task::BaseTask
         e = nil 
       end
     end
-
-    
-
   end
 
   def _gather_supported_ciphers(hostname,port)

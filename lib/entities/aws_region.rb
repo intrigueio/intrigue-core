@@ -39,6 +39,12 @@ class AwsRegion < Intrigue::Model::Entity
     ["import/aws_ipv4_ranges"]
   end
 
+  def scoped?
+    return true if self.seed
+    return false if self.hidden
+  true # otherwise just default to true
+  end
+
 end
 end
 end

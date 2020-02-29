@@ -16,7 +16,7 @@ class NmapScan < BaseTask
       :allowed_types => ["DnsRecord", "Domain", "IpAddress", "NetBlock"],
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
-        {:name => "tcp_ports", :regex => "numeric_list", :default => "21,80,443,8000,8080,8081,8443" },
+        {:name => "tcp_ports", :regex => "numeric_list", :default => "21,80,443,8000,8009,8080,8081,8443" },
         {:name => "udp_ports", :regex => "numeric_list", :default => "161,500,1900" }
       ],
       :created_types => [ "DnsRecord", "IpAddress", "NetworkService", "Uri" ]

@@ -24,6 +24,12 @@ class FileHash < Intrigue::Model::Entity
     ]
   end
 
+  def scoped?
+    return true if self.seed
+    return false if self.hidden
+  true # otherwise just default to true
+  end
+
 end
 end
 end

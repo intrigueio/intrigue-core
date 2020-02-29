@@ -25,6 +25,17 @@ class DnsRecord < Intrigue::Model::Entity
     ["enrich/dns_record"]
   end
 
+  ###
+  ### SCOPING
+  ###
+  def scoped?(conditions={}) 
+    return true if self.seed
+    return false if self.hidden # hit our blacklist so definitely false
+
+  # if we didnt match the above and we were asked, it's still true
+  true
+  end
+
 end
 end
 end

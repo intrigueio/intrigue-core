@@ -16,6 +16,12 @@ class PhysicalLocation < Intrigue::Model::Entity
     #details["longitude"] =~ /^([-+]?\d{1,3}[.]\d+)$/
   end
 
+  def scoped?
+    return true if self.seed
+    return false if self.hidden
+  true # otherwise just default to true
+  end
+
 
 end
 end

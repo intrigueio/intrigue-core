@@ -144,23 +144,10 @@ module Issue
       resource_url = req["url"]
 
       if resource_url =~ /^http:.*$/ 
-        _create_issue({
-          name: "Insecure content loaded by page",
-          type: "insecure_content",
-          category: "application",
-          severity: 4,
-          source: "self",
-          status: "confirmed",
-          description: "When a browser requested the resource located at #{uri}, a resource was" +
-          " requested at (#{resource_url}) over HTTP. This resource could be intercepted by a malicious" +
-          " user and they may be able to take control of the information on the page.",
-          #recommendation: "Verify if the host has been infected with malware and clean it.",
-          references: ["https://developers.google.com/web/fundamentals/security/prevent-mixed-content/what-is-mixed-content"],
-          details: {
-            uri: uri,
-            resource_url: resource_url,
-            request: req
-          }
+        _create_linked_issue("insecure_content_loaded", {
+          uri: uri,
+          insecure_resource_url: resource_url,
+          request: req
         })
       end
     end
@@ -172,43 +159,21 @@ module Issue
 
   # Development or Staging
   def _exposed_server_identified(regex, name=nil, type="Development")
-
     exposed_name = name || @entity.name
-
-    _create_issue({
-      name: "#{type} System Identified",
-      type: "#{type}_system_identified".downcase,
-      category: "network",
-      severity: 5,
-      source: "dns",
-      status: "potential",
-      description: "A system was identified that may be part of a #{type.downcase} " +
-      "effort. Typically these systems should not be exposed to the internet. " +
-      "Resolutions: #{@entity.aliases.map{|x| x.name}}",
-      details: {
-        matched_regex: "#{regex}",
-        resolutions: "#{@entity.aliases.map{|x| x.name}}"
-      }
+    _create_linked_issue("development_system_identified", {
+      matched_regex: "#{regex}",
+      resolutions: "#{@entity.aliases.map{|x| x.name}}",
+      exposed_ports: @entity.details["ports"]
     })
   end
 
   def _create_weak_service_issue(ip_address, port, proto, tcp)
     transport = tcp ? "TCP" : "UDP"
-    _create_issue({
-      name: "Weak Service Identified: #{proto} on #{port}",
-      type: "weak_service_identified",
-      category: "network",
-      source: "self",
-      severity: 4,
-      status: "confirmed",
-      description: "A service known to be weak and have more modern alternatives " +
-      "was identified: #{proto} on #{ip_address}:#{port}/#{transport}",
-      details: {
-        ip_address: ip_address,
-        port: port,
-        proto: proto,
-        transport: transport }
-    })
+    _create_linked_issue("weak_service_identified", {
+      ip_address: ip_address,
+      port: port,
+      proto: proto,
+      transport: transport })
   end
 
 end

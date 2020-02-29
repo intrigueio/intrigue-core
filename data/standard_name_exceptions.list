@@ -20,7 +20,7 @@
 /^.*\.android.com(:[0-9]*)?$/
 /^.*\.anubisnetworks.com(:[0-9]*)?$/
 /^.*\.apache.org(:[0-9]*)?$/
-/^.*\.\.arpa(:[0-9]*)?$/
+/^.*\.arpa(:[0-9]*)?$/
 /^.*\.atlinkservices.com(:[0-9]*)?$/
 /^.*\.azure-mobile.net(:[0-9]*)?$/
 /^.*\.azureedge-test.net(:[0-9]*)?$/

@@ -153,16 +153,16 @@ class UriBruteFocusedContent < BaseTask
     ]
 
     jenkins_list = [
-      { issue_type: "jenkins_config", path: "/view/All/builds", severity: 4, body_regex: /Jenkins ver./i, status: "confirmed" },
-      { issue_type: "jenkins_config", path: "/view/All/newjob",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
-      { issue_type: "jenkins_config", path: "/asynchPeople/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
-      { issue_type: "jenkins_config", path: "/userContent/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
-      { issue_type: "jenkins_config", path: "/computer/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
-      { issue_type: "jenkins_config", path: "/pview/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
-      { issue_type: "jenkins_config", path: "/systemInfo",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
-      { issue_type: "jenkins_config", path: "/script",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
-      { issue_type: "jenkins_config", path: "/signup",  severity: 5, body_regex: /Jenkins/i, status: "confirmed" },
-      { issue_type: "jenkins_config", path: "/securityRealm/createAccount", severity: 4, body_regex: /Jenkins/i , status: "confirmed"}
+      { issue_type: "jenkins_exposed_path", path: "/view/All/builds", severity: 4, body_regex: /Jenkins ver./i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/view/All/newjob",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/asynchPeople/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/userContent/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/computer/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/pview/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/systemInfo",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/script",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/signup",  severity: 5, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/securityRealm/createAccount", severity: 4, body_regex: /Jenkins/i , status: "confirmed"}
     ]
 
     jforum_list = [ # CVE-2019-7550
@@ -171,7 +171,7 @@ class UriBruteFocusedContent < BaseTask
     ] 
 
     jira_list = [ # https://x.x.x.x?filterView=popular
-      { issue_type: "jira_info_leak", path: "/secure/ManageFilters.jspa", severity: 3,
+      { issue_type: "jira_managefilters_info_leak", path: "/secure/ManageFilters.jspa", severity: 3,
           body_regex: /<title>Manage Filters/i, status: "confirmed" },
       { issue_type: "jira_2fa_bypass", path: "/login.action?nosso", severity: 3,
         body_regex: //i, status: "confirmed" } 
@@ -340,6 +340,7 @@ class UriBruteFocusedContent < BaseTask
     sap_netweaver_list.each { |x| work_q.push x } if is_product? "NetWeaver"
     splunk_list.each {|x| work_q.push x } if is_product? "Splunk"
     spring_boot_list.each { |x| work_q.push x } if is_product? "Spring Boot"
+    spring_boot_list.each { |x| work_q.push x } if is_product? "Spring Framework"
     tomcat_list.each { |x| work_q.push x } if is_product? "Tomcat" 
     vmware_horizon_list.each { |x| work_q.push x } if is_product?("Horizon View")
     weblogic_list.each { |x| work_q.push x } if is_product? "Weblogic Server" 

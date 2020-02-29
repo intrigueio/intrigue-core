@@ -46,7 +46,7 @@ class Nameserver < Intrigue::Model::Entity
     end
 
   # if we didnt match the above and we were asked, it's false 
-  false
+  true
   end
 
 end

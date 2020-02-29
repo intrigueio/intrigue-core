@@ -184,11 +184,10 @@ module Services
           _create_weak_service_issue(name, port_num, service, 'udp')
         end
 
-
       else
         raise "Unknown protocol" if h.name.strip.is_ip_address?
-
       end
+
     true
     end
 

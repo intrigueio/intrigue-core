@@ -13,7 +13,10 @@ class WordpressEnumeratePlugins < BaseTask
       :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [{"type" => "Uri", "details" => {"name" => "https://intrigue.io"}}],
-      :allowed_options => [],
+      :allowed_options => [
+        { :name => "use_extended_list", :regex => "boolean", :default => false },
+        { :name => "threads", :regex => "integer", :default => 5 }
+      ],
       :created_types => []
     }
   end
@@ -33,17 +36,26 @@ class WordpressEnumeratePlugins < BaseTask
 
   def brute_wordpress_plugin_paths(uri)
 
+    if _get_option("use_extended_list")
+      _log "Using extended list"
+      file_path = "#{$intrigue_basedir}/data/tech/wordpress_plugins.list"
+    else 
+      _log "Using short list"
+      file_path = "#{$intrigue_basedir}/data/tech/wordpress_plugins.short.list"
+    end
+
     # add wordpress plugins list from a file
     work_q = Queue.new
-    File.open("#{$intrigue_basedir}/data/tech/wordpress_plugins.short.list").each_line do |l|
+    File.open(file_path,"r").each_line do |l|
       next if l =~ /^#/
-      _log "Wordpress plugin check: #{l.strip}"
       work_q.push({ path: "#{l.strip}/" , severity: 5,  body_regex: nil, status: "potential" })
       work_q.push({ path: "#{l.strip}/readme.txt" , severity: 5,  body_regex: /Contributors:/i, status: "confirmed" })
     end
     
     # then make the requests
-    results = make_http_requests_from_queue(uri, work_q, thread_count=1, false, false) # always create an issue
+    thread_count = _get_option("threads") || 5
+
+    results = make_http_requests_from_queue(uri, work_q, thread_count, false, false) # always create an issue
     _log "Got matches: #{results}"
   
   results

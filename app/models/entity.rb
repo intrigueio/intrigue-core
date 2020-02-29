@@ -54,17 +54,15 @@ module Intrigue
       end
 
       def match_entity_string?(entity_type, entity_name)
-        return true if (self.type_string.downcase == entity_type.downcase && 
-          self.name.downcase == entity_name.downcase)
+        #puts "Attempting to match #{entity_type} #{entity_name} to #{self.type_string} #{self.name}"
+        return true if (self.type_string.downcase == entity_type.downcase && self.name.downcase == entity_name.downcase)
       false
       end 
 
       # default method that scopes / unscoped entities (can be overridden)
       # TODO ... maybe we move the logic of details that exists in entity_manager here?
       def scoped?
-        return true if self.seed
-        return false if self.hidden
-      scoped # otherwise just default to whatever's already been set or true
+        raise "Method must be oveeridden!"
       end
 
       def validate
