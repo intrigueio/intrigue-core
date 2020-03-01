@@ -9,8 +9,8 @@ class ColdfusionCryptominer < BaseIssue
       severity: 1,
       category: "application",
       status: "potential",
-      description: "A cryptominer was found on this coldfusion server.",
-      remediation: "Investigate  .",
+      description: "A file matching the pattern of a cryptominer was found on this server.",
+      remediation: "Investigate and determine if the server is affected. Remove the infection if so.",
       affected_software: [ 
         { :vendor => "Adobe", :product => "Coldfusion" }
         ],

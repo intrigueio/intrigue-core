@@ -5,8 +5,8 @@ class Jira2faBypass < BaseIssue
   def self.generate(instance_details={})
 
     to_return = {
-      pretty_name: "Jira 2FA Bypassable",
       name: "jira_2fa_bypass",
+      pretty_name: "Jira 2FA Bypassable",
       category: "application",
       severity: 3,
       status: "confirmed",
