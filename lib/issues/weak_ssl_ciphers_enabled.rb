@@ -5,7 +5,7 @@ module Intrigue
     def self.generate(instance_details={})
       {
         name: "weak_ssl_ciphers_enabled",
-        pretty_name: "Weak SSL/TLS Cipher Enable",
+        pretty_name: "Weak SSL/TLS Cipher Enabled",
         severity: 5,
         category: "application",
         status: "confirmed",

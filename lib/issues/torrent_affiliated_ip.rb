@@ -9,8 +9,8 @@ class TorrentAffIP< BaseIssue
       severity: 4,
       status: "confirmed",
       category: "reputation",
-      description:"This IP is related to known Torrent traffic.",
-      remediation: "This IP address related to Torrent should be blocked in case of malicious activity",
+      description:"This IP is related to known BitTorrent traffic. This can be indicative of a compromised or otherwise abused host.",
+      remediation: "This IP address related to BitTorrent should be blocked in case of malicious activity",
     }.merge!(instance_details)
 
   to_return
