@@ -166,6 +166,10 @@ go get github.com/intrigueio/gitrob
 echo "[+] Getting Gobuster... "
 go get github.com/intrigueio/gobuster.git
 
+# ghostcat
+echo "[+] Getting Ghostcat Vuln... "
+go get github.com/intrigueio/tomcat-cve-2020-1938-check
+
 # masscan
 echo "[+] Installing Masscan"
 if [ ! -f /usr/bin/masscan ]; then
