@@ -8,6 +8,7 @@ module Intrigue
         pretty_name: "Insecure Cookie ('Secure' Attribute)",
         severity: 5,
         category: "application",
+        status: "confirmed",
         description: "A cookie was found, missing the 'secure' attribute",
         remediation: "Add the 'secure' attribute to ensure the cookie is only every sent via TLS.",
         affected_software: [ ],

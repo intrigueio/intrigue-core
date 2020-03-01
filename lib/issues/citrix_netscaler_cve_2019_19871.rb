@@ -11,6 +11,7 @@ class VulnCitrixNetscalerCve201919871 < BaseIssue
       ],
       severity: 1,
       category: "vulnerability",
+      status: "confirmed",
       description: "A remote pre-auth RCE path traversal vulnerability in Citrix NetScaler affecting devices in " + 
                    "the default configuration. Existence of the vulnerability was announced by Citrix in late Dec 2019 " +
                    "with no patch immediately released. Exploits are now available and active exploitation has been detected in the wild.", 

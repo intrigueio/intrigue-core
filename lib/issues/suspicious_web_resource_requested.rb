@@ -8,6 +8,7 @@ module Intrigue
         pretty_name: "Deprecated SSL/TLS Protocol Detected",
         severity: 5,
         category: "application",
+        status: "confirmed",
         description: "When a browser requested the resource, a suspicious request was made.",
         remediation: "Investigate the request.",
         affected_software: [ ],

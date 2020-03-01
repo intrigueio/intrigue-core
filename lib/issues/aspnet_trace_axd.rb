@@ -8,6 +8,7 @@ module Intrigue
         pretty_name: "ASP.NET Trace.axd Information Leak",
         severity: 5,
         category: "application",
+        status: "confirmed",
         description: "Trace.axd leaks sensitive information. The page exposes the full version details of the ASP.NET libraries in the best case, and sensitive information (application contents) in the worst case. Best practice is to disable it in production.",
         remediation: "Disable error tracing in your web.config.",
         affected_software: [ 

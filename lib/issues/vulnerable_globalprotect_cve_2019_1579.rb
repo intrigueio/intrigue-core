@@ -11,6 +11,7 @@ module Intrigue
         ],        
         severity: 1,
         category: "vulnerability",
+        status: "confirmed",
         description: "A known format string vulnerability in the PAN SSL Gateway was discovered, which handles client/server SSL handshakes. More specifically, the vulnerability exists because the gateway passes the value of a particular parameter to snprintf in an unsanitized, and exploitable, fashion. An unauthenticated attacker could exploit the vulnerability by sending a specially crafted request to a vulnerable SSL VPN target in order to remotely execute code on the system.",
         remediation: "Apply the Vendor-provided patch: https://docs.paloaltonetworks.com/pan-os",
         affected: [ 
