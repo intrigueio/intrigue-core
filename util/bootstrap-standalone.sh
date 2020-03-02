@@ -37,8 +37,8 @@ sudo apt-get -y install lsb-core software-properties-common dirmngr apt-transpor
 
 # chrome repo
 echo "[+] Installing Chromium"
-sudo add-apt-repository ppa:canonical-chromium-builds/stage
-sudo apt-get update
+#sudo add-apt-repository ppa:canonical-chromium-builds/stage
+#sudo apt-get update
 sudo apt-get -y install chromium-browser
 ##### Install dependencies after update
 
