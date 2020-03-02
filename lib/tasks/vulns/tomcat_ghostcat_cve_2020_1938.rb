@@ -16,7 +16,7 @@ module Intrigue
         ],
         :type => "vuln_check",
         :passive => false,
-        :allowed_types => ["IpAddress", "NetworkService"],
+        :allowed_types => ["IpAddress", "NetworkService", "Uri"],
         :example_entities => [ {"type" => "IpAddress", "details" => {"name" => "1.1.1.1"}} ],
         :allowed_options => [  ],
         :created_types => []
@@ -28,20 +28,24 @@ module Intrigue
       super
   
       if @entity.kind_of? Intrigue::Entity::IpAddress
-        ip_address = _get_entity_name
+        ip_address_or_hostname = _get_entity_name
         port = 8009
       elsif @entity.kind_of? Intrigue::Entity::NetworkService
-        ip_address = _get_entity_detail("ip_address") || _get_entity_name.split(":").first
+        ip_address_or_hostname = _get_entity_detail("ip_address") || _get_entity_name.split(":").first
         port = _get_entity_detail("port") || _get_entity_name.split(":").last
+      elsif @entity.kind_of? Intrigue::Entity::Uri
+        ip_address_or_hostname = URI.parse(_get_entity_name).host.to_s
+        port = 8009
       end
     
       begin
 
         # run the exploit 
-        command_string = "tomcat-cve-2020-1938-check -h #{ip_address} -p #{port}"
+        command_string = "tomcat-cve-2020-1938-check -h #{ip_address_or_hostname} -p #{port}"
+        _log "Command: #{command_string}"
 
         output = _unsafe_system(command_string).strip
-        _log "Output:\n#{output}"
+        _log "Output: #{output}"
 
         # test the response
         if output.strip =~ /is vulnerable/
