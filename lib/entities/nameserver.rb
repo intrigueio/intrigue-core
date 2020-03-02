@@ -31,23 +31,11 @@ class Nameserver < Intrigue::Model::Entity
     scope_check_entity_types = [ "Intrigue::Entity::Domain" ]
 
     seeds.each do |s|
-      next unless scope_check_entity_types.include? "Intrigue::Entity::#{type_string}"
       if entity_name =~ /[\.\s\@]#{Regexp.escape(s.name)}/i
         return true
       end
     end
-      
-    ### CHECK OUR SEED ENTITIES TO SEE IF THE TEXT MATCHES
-    ######################################################
-    if self.project.seeds
-      self.project.seeds.each do |s|
-        next unless scope_check_entity_types.include? s.type.to_s
-        if "#{details["whois_full_text"]}" =~ /#{Regexp.escape(s.name)}/i
-          return true
-        end
-      end
-    end
-
+    
   # if we didnt match the above and we were asked, it's false 
   false
   end
