@@ -123,7 +123,6 @@ sudo apt-get -y --fix-broken --no-install-recommends install make \
   libnss3 \
   lsb-release \
   xdg-utils \
-  golang-go \
   dnsmasq \
   systemd \
   wget \
@@ -149,6 +148,10 @@ cd $HOME
 
 # add go vars (and note that we source this file later as well)
 echo "[+] Installing Golang environment"
+sudo add-apt-repository --yes ppa:longsleep/golang-backports
+sudo apt update
+sudo apt install golang-go
+
 
 # ensure we have the path
 export GOPATH=$HOME/go
