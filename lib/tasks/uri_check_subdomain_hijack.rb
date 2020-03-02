@@ -119,7 +119,8 @@ class UriCheckSudomainHijack  < BaseTask
       #  _create_hijackable_subdomain_issue "UptimeRobot", uri, "potential"
 
       elsif response.body =~ /The requested URL was not found on this server\./i
-        _create_hijackable_subdomain_issue "Unbounce", uri, "potential"
+        _create_hijackable_subdomain_issue("Unbounce", uri, "potential")  unless (uri =~ /unbounce.com/)
+
 
       elsif response.body =~ /This UserVoice subdomain is currently available\!/i
         _create_hijackable_subdomain_issue "UserVoice", uri, "potential"
