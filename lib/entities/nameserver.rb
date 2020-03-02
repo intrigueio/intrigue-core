@@ -26,14 +26,17 @@ class Nameserver < Intrigue::Model::Entity
     return true if self.seed
     return false if self.hidden # hit our blacklist so definitely false
 
-    # Check types we'll check for indicators 
-    # of in-scope-ness
     #
-    scope_check_entity_types = [
-      "Intrigue::Entity::Organization",
-      "Intrigue::Entity::DnsRecord",
-      "Intrigue::Entity::Domain" ]
+    # Check types we'll check for indicators of in-scope-ness
+    scope_check_entity_types = [ "Intrigue::Entity::Domain" ]
 
+    seeds.each do |s|
+      next unless scope_check_entity_types.include? "Intrigue::Entity::#{type_string}"
+      if entity_name =~ /[\.\s\@]#{Regexp.escape(s.name)}/i
+        return true
+      end
+    end
+      
     ### CHECK OUR SEED ENTITIES TO SEE IF THE TEXT MATCHES
     ######################################################
     if self.project.seeds
@@ -46,7 +49,7 @@ class Nameserver < Intrigue::Model::Entity
     end
 
   # if we didnt match the above and we were asked, it's false 
-  true
+  false
   end
 
 end
