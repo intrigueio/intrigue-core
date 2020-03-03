@@ -29,7 +29,7 @@ module Intrigue
 
       def self.scope_by_project(project_name)
         named_project = Intrigue::Model::Project.first(:name => project_name)
-        where(Sequel.&(project: named_project))
+        where(Sequel.&(project_id: named_project.id)) if named_project
       end
 
       def self.scope_by_project_and_type(project_name, entity_type_string)
