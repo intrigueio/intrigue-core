@@ -25,7 +25,7 @@ module Intrigue
       end
 
       def issues
-        Intrigue::Model::Issue. (self.name)
+        Intrigue::Model::Issue.scope_by_project(self.name)
       end
 
       def entities
