@@ -31,9 +31,7 @@ class Nameserver < Intrigue::Model::Entity
     scope_check_entity_types = [ "Intrigue::Entity::Domain" ]
 
     self.project.seeds.each do |s|
-      if entity_name =~ /[\.\s\@]#{Regexp.escape(s.name)}/i
-        return true
-      end
+      return true if self.name =~ /[\.\s\@]#{Regexp.escape(s.name)}/i
     end
     
   # if we didnt match the above and we were asked, it's false 
