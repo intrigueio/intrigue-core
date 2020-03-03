@@ -129,7 +129,6 @@ sudo apt-get -y --fix-broken --no-install-recommends install make \
   python-minimal && 
   rm -rf /var/lib/apt/lists/*
 
-
 echo "[+] Creating a home for binaries"
 mkdir -p $HOME/bin
 export BINPATH=$HOME/bin
@@ -151,7 +150,6 @@ echo "[+] Installing Golang environment"
 sudo add-apt-repository --yes ppa:longsleep/golang-backports
 sudo apt update
 sudo apt install golang-go
-
 
 # ensure we have the path
 export GOPATH=$HOME/go

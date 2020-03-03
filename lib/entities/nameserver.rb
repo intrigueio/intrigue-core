@@ -30,7 +30,7 @@ class Nameserver < Intrigue::Model::Entity
     # Check types we'll check for indicators of in-scope-ness
     scope_check_entity_types = [ "Intrigue::Entity::Domain" ]
 
-    seeds.each do |s|
+    self.project.seeds.each do |s|
       if entity_name =~ /[\.\s\@]#{Regexp.escape(s.name)}/i
         return true
       end
