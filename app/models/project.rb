@@ -37,7 +37,7 @@ module Intrigue
       end
 
       def seed_entity?(type_string, entity_name)
-        seeds.each do |s|
+        seeds.compact.each do |s|
           return true if s.match_entity_string?(type_string, entity_name)
         end
       false
