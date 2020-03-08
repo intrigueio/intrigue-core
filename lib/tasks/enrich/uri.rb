@@ -286,6 +286,7 @@ class Uri < Intrigue::Task::BaseTask
       "hidden_favicon_data" => favicon_data,
       "extended_favicon_data" => favicon_data,
       "hidden_response_data" => response.body,
+      "redirect_chain" => ident_responses.first[:response_urls] || [],
       "extended_full_responses" => ident_responses, # includes all the redirects etc
       "extended_response_body" => response.body,
       "products" => products.compact,
