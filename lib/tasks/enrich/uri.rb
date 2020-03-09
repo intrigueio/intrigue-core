@@ -71,7 +71,7 @@ class Uri < Intrigue::Task::BaseTask
     # Use intrigue-ident code to request all of the pages we
     # need to properly fingerprint
     _log "Attempting to fingerprint (without the browser)!"
-    ident_matches = generate_http_requests_and_check(uri,false) || {}
+    ident_matches = generate_http_requests_and_check(uri,{:enable_browser => false}) || {}
 
     ident_fingerprints = ident_matches["fingerprint"] || []
     ident_content_checks = ident_matches["content"] || []
