@@ -56,7 +56,7 @@ class NmapScan < BaseTask
 
       # shell out to nmap and run the scan
       nmap_string = "nmap #{scan_item} #{nmap_options} -sSUV -P0 -T5 #{port_list}"
-      nmap_string << " -O --max-os-tries 2 -oX #{temp_file}"
+      nmap_string << " -O --max-os-tries 1 -oX #{temp_file}"
       nmap_string = "sudo #{nmap_string}" unless Process.uid == 0
 
       _log "Starting Scan: #{nmap_string}"
