@@ -32,6 +32,12 @@ class AwsCredential < Intrigue::Model::Entity
     details["hidden_secret_key"]
   end
 
+  def scoped?
+    return true if self.seed
+    return false if self.hidden
+  true # otherwise just default to true
+  end
+
 end
 end
 end

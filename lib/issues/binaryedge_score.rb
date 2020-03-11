@@ -5,9 +5,9 @@ class BinaryEdgeScore< BaseIssue
   def self.generate(instance_details={})
     to_return = {
       name: "binaryedge_score",
-      pretty_name: "High Risk Asset in BinaryEdge",
+      pretty_name: "High Risk Asset in Binary Edge",
       status: "confirmed",
-      category: "network"
+      category: "risk_score"
     }.merge!(instance_details)
 
   to_return

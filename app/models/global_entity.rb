@@ -65,20 +65,23 @@ module Intrigue
         out = false 
 
         # first check to see if we know about this exact entity (type matters too)
+        puts "Looking for global entity: #{entity_type} #{entity_name}"
         global_entity = Intrigue::Model::GlobalEntity.first(:name => entity_name, :type => entity_type)
 
         # If we know it exists, is it in our project (cool) or someone else (no traverse!)
         if global_entity
+          puts "Global entity found: #{entity_type} #{entity_name}!"
           # we need to have a namespace to validate against
-          if !project.allowed_namespaces.empty?
-            # Checking it's namespace vs our allowed namespaces
-            project.allowed_namespaces.each do |namespace|
-              # if the entitys' namespace matches one of ours, we're good!
-              if global_entity.namespace.downcase == namespace.downcase 
-                return true # we can immediately return 
-              end
+          project.allowed_namespaces.each do |namespace|
+
+            # if the entity's' namespace matches one of ours, we're good!
+            if global_entity.namespace.downcase == namespace.downcase 
+              puts "Matches our namespace!"
+              return true # we can immediately return 
             end
           end
+        else 
+          puts "No Global entity found!"
         end
 
         # okay so if we made it this far, we may or may not have a matching entiy, so now 
@@ -130,7 +133,7 @@ module Intrigue
           end
         end
 
-      if found_entity  # now lets check if we have an allowance for it
+      if found_entity && !project.allowed_namespaces.empty? # now lets check if we have an allowance for it
 
          (project.allowed_namespaces || []).each do |namespace|
           if found_entity.namespace.downcase == namespace.downcase # Good! 
@@ -139,7 +142,7 @@ module Intrigue
         end
 
         out = false
-      else # we never found it! 
+      else # we never found it or we don't care (no namespaces)! 
         out = true 
       end
 
@@ -148,10 +151,9 @@ module Intrigue
       out 
       end
 
-      def self.load_global_namespace(api_key)
-        data = JSON.parse(RestClient.get("https://app.intrigue.io/api/global/entities?key=#{api_key}"))
+      def self.load_global_namespace(data)
         (data["entities"] || []).each do |x|
-          Intrigue::Model::GlobalEntity.create(:name => x["name"], :type => x["type"], :namespace => x["namespace"])
+          Intrigue::Model::GlobalEntity.update_or_create(:name => x["name"], :type => x["type"], :namespace => x["namespace"])
         end
       end
 

@@ -11,7 +11,7 @@ module Intrigue
           :references => ["https://pulsedive.com/api/"],
           :type => "discovery",
           :passive => true,
-          :allowed_types => ["Domain","IpAddress","Uri"],
+          :allowed_types => ["Domain", "IpAddress", "Uri"],
           :example_entities => [
             {"type" => "String", "details" => {"name" => "intrigue.io"}}
           ],
@@ -53,154 +53,44 @@ module Intrigue
             sev = 5 # informational
           end
 
-          if entity_type == "Domain"
-            if result["threats"]
-              result["threats"].each do |u|
-                # create an issue to track this
-                _create_issue({
-                  name: "#{entity_name}  [Pulsedive]",
-                  type: "threat_check",
-                  category: "network",
-                  severity: sev ,
-                  status: "confirmed",
-                  description: "Location: #{result["properties"]["geo"]["country"]} Threats: \n" + " #{u["name"]} category: #{u["category"]} risk level: #{u["risk"]}",
-                  details: u
-                })
-              end
-            else
-              _log "No threats detected!"
-            end
 
-          elsif entity_type == "IpAddress"
-            if result["threats"]
-              result["threats"].each do |u|
-                # create an issue to track this
-                _create_issue({
-                  name: "Malicious Entity Found (Pulsedive)",
-                  type: "threat_check",
-                  category: "network",
-                  severity: sev,
-                  status: "confirmed",
-                  description: "Location: #{json["properties"]["geo"]["country"]} Threats: \n" + " #{u["name"]} category: #{u["category"]} risk level: #{u["risk"]}",
-                  details: json
-                })
-              end
-            end
-          elsif entity_type == "Uri"
-            if result["feeds"]
-              result["feeds"].each do |v|
-                # create an issue to track this
-                _create_issue({
-                  name: "Malicious Entity Found (Pulsedive)",
-                  type: "threat_check",
-                  category: "network",
-                  severity: sev ,
-                  status: "confirmed",
-                  description: "Location: #{json["properties"]["geo"]["country"]} Threats: \n" + " #{v["name"]} category: #{v["category"]} risk level: #{json["risk"]}",
-                  details: json
-                })
-              end
-            end
+      if entity_type == "Domain" || entity_type == "IpAddress"
+        
+        if result["threats"]
 
-          else
-            _log_error "Unsupported entity type"
-            return
+          result["threats"].each do |u|
+        
+            detailed_description = "Location: #{result["properties"]["geo"]["country"]} Threats: \n" + " #{u["name"]} category: #{u["category"]} risk level: #{u["risk"]}"
+
+            _create_linked_issue("suspicious_activity_detected",{
+              source: "Pulsedive",
+              severity: sev ,
+              detailed_description: detailed_description,
+              details: u
+            })
+
           end
-
-    if result["risk"] == "critical"
-      sev = 1
-    elsif result["risk"] == "high"
-      sev = 2
-    elsif result["risk"] == "medium"
-      sev = 3
-    elsif result["risk"] == "low"
-      sev = 4
-    else
-      sev = 5 # informational
-    end
-
-    if entity_type == "Domain"
-      if result["threats"]
-        result["threats"].each do |u|
-          # create an issue to track this
-          ############################################
-          ###      Old Issue                      ###
-          ###########################################
-          # _create_issue({
-          #   name: "#{entity_name}  [Pulsedive]",
-          #   type: "malicious_check",
-          #   category: "network",
-          #   severity: sev ,
-          #   status: "confirmed",
-          #   description: "Location: #{result["properties"]["geo"]["country"]} Threats: \n" + " #{u["name"]} category: #{u["category"]} risk level: #{u["risk"]}",
-          #   details: u
-          # })
-          ############################################
-          ###         New Issue                   ###
-          ###########################################
-          _create_linked_issue("suspicious_domain",{
-            source: "Pulsdive",
-            severity: sev ,
-            detailed_description: "Location: #{result["properties"]["geo"]["country"]} Threats: \n" + " #{u["name"]} category: #{u["category"]} risk level: #{u["risk"]}",
-            details: u
-           })
+        else
+          _log "No threats detected!"
         end
+    
+      elsif entity_type == "Uri"
+        
+        if result["feeds"]
+          result["feeds"].each do |v|
+            _create_linked_issue("suspicious_activity_detected",{
+              source: "Pulsedive",
+              severity: sev ,
+              detailed_description: detailed_description,
+              details: json
+            })
+          end
+        end
+
       else
-        _log "No threats detected!"
+        _log_error "Unsupported entity type"
+        return
       end
-    elsif entity_type == "IpAddress"
-      if result["threats"]
-        result["threats"].each do |u|
-          # create an issue to track this
-          ############################################
-          ###      Old Issue                      ###
-          ###########################################
-          # _create_issue({
-          #   name: "Malicious Entity Found (Pulsedive)",
-          #   type: "malicious_check",
-          #   category: "network",
-          #   severity: sev,
-          #   status: "confirmed",
-          #   description: "Location: #{json["properties"]["geo"]["country"]} Threats: \n" + " #{u["name"]} category: #{u["category"]} risk level: #{u["risk"]}",
-          #   details: json
-          # })
-          ############################################
-          ###         New Issue                   ###
-          ###########################################
-          _create_linked_issue("suspicious_ip",{
-            source: "Pulsdive",
-            severity: sev ,
-            detailed_description: "Location: #{json["properties"]["geo"]["country"]} Threats: \n" + " #{u["name"]} category: #{u["category"]} risk level: #{u["risk"]}",
-            details: json
-           })
-        end
-      end
-    elsif entity_type == "Uri"
-      if result["feeds"]
-        result["feeds"].each do |v|
-          # # create an issue to track this
-          # _create_issue({
-          #   name: "Malicious Entity Found (Pulsedive)",
-          #   type: "malicious_check",
-          #   category: "network",
-          #   severity: sev ,
-          #   status: "confirmed",
-          #   description: "Location: #{json["properties"]["geo"]["country"]} Threats: \n" + " #{v["name"]} category: #{v["category"]} risk level: #{json["risk"]}",
-          #   details: json
-          # })
-          _create_linked_issue("suspicious_uri",{
-            source: "Pulsdive",
-            severity: sev ,
-            detailed_description: "Location: #{json["properties"]["geo"]["country"]} Threats: \n" + " #{v["name"]} category: #{v["category"]} risk level: #{json["risk"]}",
-            details: json
-           })
-        end
-      end
-
-    else
-      _log_error "Unsupported entity type"
-      return
-    end
 
 
     rescue JSON::ParserError => e

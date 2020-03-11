@@ -16,7 +16,7 @@ class NmapScan < BaseTask
       :allowed_types => ["DnsRecord", "Domain", "IpAddress", "NetBlock"],
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
-        {:name => "tcp_ports", :regex => "numeric_list", :default => "21,80,443,8000,8080,8081,8443" },
+        {:name => "tcp_ports", :regex => "numeric_list", :default => "21,22,23,80,81,443,445,3389,8000,8009,8080,8081,8443" },
         {:name => "udp_ports", :regex => "numeric_list", :default => "161,500,1900" }
       ],
       :created_types => [ "DnsRecord", "IpAddress", "NetworkService", "Uri" ]
@@ -56,7 +56,7 @@ class NmapScan < BaseTask
 
       # shell out to nmap and run the scan
       nmap_string = "nmap #{scan_item} #{nmap_options} -sSUV -P0 -T5 #{port_list}"
-      nmap_string << " -O --max-os-tries 2 -oX #{temp_file}"
+      nmap_string << " -O --max-os-tries 1 -oX #{temp_file}"
       nmap_string = "sudo #{nmap_string}" unless Process.uid == 0
 
       _log "Starting Scan: #{nmap_string}"

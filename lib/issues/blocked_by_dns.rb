@@ -7,7 +7,7 @@ class BlockedByDns < BaseIssue
     to_return = {
       pretty_name: "Blocked by #{instance_details[:source]}",
       name: "blocked_by_dns",
-      category: "network",
+      category: "reputation",
       severity: 4,
       status: "confirmed",
       description: "This host has been detected as compromised, fraudulent, or otherwise harmful and blocked when attempting to resolve. " + 

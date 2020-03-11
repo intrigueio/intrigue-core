@@ -65,7 +65,7 @@ class UriCheckSudomainHijack  < BaseTask
       elsif response.body =~ /No such app/i
 
         if !(uri =~ /heroku.com/ || uri =~ /herokussl.com/ || uri =~ /herokudns.com/ ||
-              uri =~ /herokuapp.com/ || uri =~ /amazonaws.com/ )
+              uri =~ /herokuapp.com/ || uri =~ /amazonaws.com/)
           _create_hijackable_subdomain_issue "Heroku", uri, "potential"
         end
 
@@ -117,6 +117,10 @@ class UriCheckSudomainHijack  < BaseTask
 
       #elsif response.body =~ /page not found/i
       #  _create_hijackable_subdomain_issue "UptimeRobot", uri, "potential"
+
+      elsif response.body =~ /The requested URL was not found on this server\./i
+        _create_hijackable_subdomain_issue("Unbounce", uri, "potential") unless (uri =~ /unbounce.com/)
+
 
       elsif response.body =~ /This UserVoice subdomain is currently available\!/i
         _create_hijackable_subdomain_issue "UserVoice", uri, "potential"

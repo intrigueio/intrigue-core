@@ -19,7 +19,7 @@ class Masscan < BaseTask
       :allowed_types => ["IpAddress","NetBlock"],
       :example_entities => [{"type" => "NetBlock", "details" => {"name" => "10.0.0.0/24"}}],
       :allowed_options => [
-        {:name => "tcp_ports", :regex => "numeric_list", :default => "21,80,443,8000,8080,8081,8443" },
+        {:name => "tcp_ports", :regex => "numeric_list", :default => "21,80,443,8000,8009,8080,8081,8443" },
         {:name => "udp_ports", :regex => "numeric_list", :default => "161,500,1900" },
         {:name => "send_rate", :regex => "integer", :default => 100000 },
       ],

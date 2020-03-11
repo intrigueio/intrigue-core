@@ -98,7 +98,7 @@ class UriBruteFocusedContent < BaseTask
 
     asp_net_list = [
       { issue_type: "aspnet_elmah_axd", path: "/elmah.axd", severity: 1, body_regex: /Error log for/i, status: "confirmed" },
-      { issue_type: "aspnet_errorlog_axd", path: "/errorlog.axd", severity: 1, body_regex: /Error log for/i, status: "confirmed" },
+      { issue_type: "aspnet_elmah_axd", path: "/errorlog.axd", severity: 1, body_regex: /Error log for/i, status: "confirmed" },
       { issue_type: "aspnet_trace_axd", path: "/Trace.axd", severity: 5, body_regex: /Microsoft \.NET Framework Version/, :status => "confirmed" }
       # /páginas/default.aspx
       # /pages/default.aspx 
@@ -148,21 +148,21 @@ class UriBruteFocusedContent < BaseTask
     ]
 
     globalprotect_list = [ # https://blog.orange.tw/2019/07/attacking-ssl-vpn-part-1-preauth-rce-on-palo-alto.html
-      { issue_type: "vulnerable_globalprotect", path: "/global-protect/portal/css/login.css", severity: 1,
+      { issue_type: "vulnerable_globalprotect_cve_2019_1579", path: "/global-protect/portal/css/login.css", severity: 1,
           header_regex: /^Last-Modified:.*(Jan 2018|Feb 2018|Mar 2018|Apr 2018|May 2018|Jun 2018|2017).*$/i, status: "confirmed" } 
     ]
 
     jenkins_list = [
-      { issue_type: "jenkins_config", path: "/view/All/builds", severity: 4, body_regex: /Jenkins ver./i, status: "confirmed" },
-      { issue_type: "jenkins_config", path: "/view/All/newjob",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
-      { issue_type: "jenkins_config", path: "/asynchPeople/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
-      { issue_type: "jenkins_config", path: "/userContent/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
-      { issue_type: "jenkins_config", path: "/computer/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
-      { issue_type: "jenkins_config", path: "/pview/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
-      { issue_type: "jenkins_config", path: "/systemInfo",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
-      { issue_type: "jenkins_config", path: "/script",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
-      { issue_type: "jenkins_config", path: "/signup",  severity: 5, body_regex: /Jenkins/i, status: "confirmed" },
-      { issue_type: "jenkins_config", path: "/securityRealm/createAccount", severity: 4, body_regex: /Jenkins/i , status: "confirmed"}
+      { issue_type: "jenkins_exposed_path", path: "/view/All/builds", severity: 4, body_regex: /Jenkins ver./i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/view/All/newjob",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/asynchPeople/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/userContent/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/computer/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/pview/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/systemInfo",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/script",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/signup",  severity: 5, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/securityRealm/createAccount", severity: 4, body_regex: /Jenkins/i , status: "confirmed"}
     ]
 
     jforum_list = [ # CVE-2019-7550
@@ -171,13 +171,10 @@ class UriBruteFocusedContent < BaseTask
     ] 
 
     jira_list = [ # https://x.x.x.x?filterView=popular
-      { issue_type: "jira_info_leak", path: "/secure/ManageFilters.jspa", severity: 3,
+      { issue_type: "jira_managefilters_info_leak", path: "/secure/ManageFilters.jspa", severity: 3,
           body_regex: /<title>Manage Filters/i, status: "confirmed" },
       { issue_type: "jira_2fa_bypass", path: "/login.action?nosso", severity: 3,
         body_regex: //i, status: "confirmed" } 
-    
-          # 
-
     ]
     # 
     joomla_list = [   # https://packetstormsecurity.com/files/151619/Joomla-Agora-4.10-Bypass-SQL-Injection.html
@@ -343,6 +340,7 @@ class UriBruteFocusedContent < BaseTask
     sap_netweaver_list.each { |x| work_q.push x } if is_product? "NetWeaver"
     splunk_list.each {|x| work_q.push x } if is_product? "Splunk"
     spring_boot_list.each { |x| work_q.push x } if is_product? "Spring Boot"
+    spring_boot_list.each { |x| work_q.push x } if is_product? "Spring Framework"
     tomcat_list.each { |x| work_q.push x } if is_product? "Tomcat" 
     vmware_horizon_list.each { |x| work_q.push x } if is_product?("Horizon View")
     weblogic_list.each { |x| work_q.push x } if is_product? "Weblogic Server" 

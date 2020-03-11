@@ -1,9 +1,10 @@
 ## Monkeypatch string to include a boolean option
 ## https://gist.github.com/ChuckJHardySnippets/2000623
 class String
+  
   def to_bool
     return true   if self =~ (/(true|t|yes|y|1)$/i) || self == true
-    return false  if self =~ (/(false|f|no|n|0)$/i) || self == false  || self.blank?
+    return false  if self =~ (/(false|f|no|n|0)$/i) || self == false || self.blank?
     raise ArgumentError.new("invalid value for Boolean: \"#{self}\"")
   end
 

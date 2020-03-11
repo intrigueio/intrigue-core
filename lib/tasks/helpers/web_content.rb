@@ -36,7 +36,7 @@ module WebContent
         /wordpress\.com/,                   # wordpress
         /wp-content/,                       # wordpress 
         /wpcom_request_access_iframe/,      # wordpress
-        /xmlrpc.php/                       # wordpress
+        /xmlrpc.php/                        # wordpress
       ]
 
       # Run through our diffs and see if these are things we know 

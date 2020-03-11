@@ -36,11 +36,9 @@ module Intrigue
         Intrigue::Model::Entity.scope_by_project(self.name).where(seed: true).all || [] 
       end
 
-      def seed_entity?(entity_name, type_string)
-        seeds.each do |s|
-          if s.match_entity_string?(type_string, entity_name)
-            return true 
-          end
+      def seed_entity?(type_string, entity_name)
+        seeds.compact.each do |s|
+          return true if s.match_entity_string?(type_string, entity_name)
         end
       false
       end
@@ -164,12 +162,32 @@ module Intrigue
       # to be populated (automated by bootstrap)
       def traversable_entity?(entity_name, type_string)
 
-        # if it's a seed exception, can't be an exception.
+        # if it's an explicit seed, it's always traversable
         return true if seed_entity?(type_string,entity_name)
 
+        ### CHECK OUR SEED ENTITIES TO SEE IF THE TEXT MATCHES A DOMAIN
+        ######################################################
+        # if it matches an explicit seed pattern, it's always traversable
+        scope_check_entity_types = [
+          "Intrigue::Entity::DnsRecord",
+          "Intrigue::Entity::Domain",
+          "Intrigue::Entity::EmailAddress",
+          "Intrigue::Entity::Organization"
+        ]
+        seeds.each do |s|
+          next unless scope_check_entity_types.include? "Intrigue::Entity::#{type_string}"
+          if entity_name =~ /[\.\s\@]#{Regexp.escape(s.name)}/i
+            puts "matched a seed, returning true"
+            return true
+          end
+        end
+      
         # Check standard exceptions (hardcoded list) first if we show up here (and we werent' a seed), we should skip
         if use_standard_exceptions
-          return false if standard_no_traverse?(entity_name, type_string)
+          if standard_no_traverse?(entity_name, type_string)
+            puts 'Matched a standard exception, returning false'
+            return false 
+          end
         end
 
         # unless we can verify it against a domain, it's probably not that helpful to do this
@@ -178,9 +196,14 @@ module Intrigue
         if verifiable_entity_types.include? type_string
           # if we don't have a list, safe to return false now, otherwise proceed to 
           # additional exceptions which are provided as an attribute on the object
-          return false unless Intrigue::Model::GlobalEntity.traversable?(type_string, entity_name, self)
+          unless Intrigue::Model::GlobalEntity.traversable?(type_string, entity_name, self)
+            puts 'Global intelligence says not traversable, returning false'
+            return false 
+          end
         end
         
+        puts "Defaulting to traversable"
+
       true
       end
 

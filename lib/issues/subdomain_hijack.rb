@@ -7,7 +7,8 @@ class SubdomainHijack < BaseIssue
       name: "subdomain_hijack",
       pretty_name: "Subdomain Hijacking Detected",
       severity: 2,
-      category: "network",
+      category: "dns",
+      status: "potential",
       description:  " This uri appears to be unclaimed on a third party host, meaning," +
                     " there's a DNS record that points to the same address, but it" +
                     " appears to be unclaimed and you should be able to register it with" +

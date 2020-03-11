@@ -7,7 +7,7 @@ module Machine
         :name => "every_discovery_task",
         :pretty_name => "Run Every Discovery Task",
         :passive => false,
-        :user_selectable => true,
+        :user_selectable => false,
         :authors => ["jcran","AnasBenSalah"],
         :description => "This machine runs all ips for a given entity."
       }

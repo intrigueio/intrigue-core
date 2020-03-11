@@ -37,15 +37,8 @@ gem 'pg'
 gem 'aws-sdk-sqs'             #,        '~> 3'
 gem 'aws-sdk-s3'              #,         '~> 3'
 gem 'aws-sdk-route53'
-gem 'rex'
-gem 'rex-sslscan',            :git => 'https://github.com/intrigueio/rex-sslscan.git'
-gem 'flareon'                 # dns resolution over http
-gem 'net-http2'               # http2 client support
-gem 'rubyzip'
-gem 'selenium-webdriver'
-gem 'recog-intrigue',         :git => 'https://github.com/intrigueio/recog.git'
 gem 'censys',                 :git => 'https://github.com/pentestify/censys.git'
-gem 'cloudflare',             :git => 'https://github.com/AnasBensalah/cloudflare.git'
+gem 'cloudflare',             :git => 'https://github.com/intrigueio/cloudflare.git'
 gem 'dnsbl-client',           :git => 'https://github.com/AnasBensalah/dnsbl-client.git'
 gem 'dnsimple'
 gem 'dnsruby'                 # dns_zone_transfer
@@ -61,10 +54,10 @@ gem 'net-http2'               # http2 client support
 gem 'neutrino_api',           :git => 'https://github.com/NeutrinoAPI/NeutrinoAPI-Ruby.git'
 gem 'opencorporates',         :git => 'https://github.com/pentestify/opencorporates.git'
 gem 'recog-intrigue',         :git => 'https://github.com/intrigueio/recog.git'
+gem 'rex'
 gem 'rex-sslscan',            :git => 'https://github.com/intrigueio/rex-sslscan.git'
 gem 'ruby-nmap',              :git => 'https://github.com/pentestify/ruby-nmap.git'
 gem 'rubyzip'
-gem 'selenium-webdriver'
 gem 'shodan'                  # search_shodan
 gem 'snmp',                   :git => 'https://github.com/intrigueio/ruby-snmp.git'
 gem 'spidr',                  :git => 'https://github.com/intrigueio/spidr.git'
@@ -89,7 +82,7 @@ gem 'versionomy'
 gem 'couchrest'
 gem 'fog-aws'
 
-# produciton
+# production process management
 gem 'god'
 
 # Development

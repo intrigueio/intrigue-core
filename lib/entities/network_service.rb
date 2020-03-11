@@ -22,6 +22,12 @@ class NetworkService < Intrigue::Model::Entity
     ["enrich/network_service"]
   end
 
+  def scoped?
+    return true if self.seed
+    return false if self.hidden
+  true # otherwise just default to true
+  end
+
 end
 end
 end

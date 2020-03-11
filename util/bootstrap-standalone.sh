@@ -37,8 +37,8 @@ sudo apt-get -y install lsb-core software-properties-common dirmngr apt-transpor
 
 # chrome repo
 echo "[+] Installing Chromium"
-sudo add-apt-repository ppa:canonical-chromium-builds/stage
-sudo apt-get update
+#sudo add-apt-repository ppa:canonical-chromium-builds/stage
+#sudo apt-get update
 sudo apt-get -y install chromium-browser
 ##### Install dependencies after update
 
@@ -123,13 +123,11 @@ sudo apt-get -y --fix-broken --no-install-recommends install make \
   libnss3 \
   lsb-release \
   xdg-utils \
-  golang-go \
   dnsmasq \
   systemd \
   wget \
   python-minimal && 
   rm -rf /var/lib/apt/lists/*
-
 
 echo "[+] Creating a home for binaries"
 mkdir -p $HOME/bin
@@ -149,6 +147,9 @@ cd $HOME
 
 # add go vars (and note that we source this file later as well)
 echo "[+] Installing Golang environment"
+sudo add-apt-repository --yes ppa:longsleep/golang-backports
+sudo apt update
+sudo apt install golang-go
 
 # ensure we have the path
 export GOPATH=$HOME/go
@@ -165,6 +166,10 @@ go get github.com/intrigueio/gitrob
 # gobuster
 echo "[+] Getting Gobuster... "
 go get github.com/intrigueio/gobuster.git
+
+# ghostcat
+echo "[+] Getting Ghostcat Vuln... "
+go get github.com/intrigueio/tomcat-cve-2020-1938-check
 
 # masscan
 echo "[+] Installing Masscan"

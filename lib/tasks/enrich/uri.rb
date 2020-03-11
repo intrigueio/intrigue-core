@@ -71,7 +71,7 @@ class Uri < Intrigue::Task::BaseTask
     # Use intrigue-ident code to request all of the pages we
     # need to properly fingerprint
     _log "Attempting to fingerprint (without the browser)!"
-    ident_matches = generate_http_requests_and_check(uri,false) || {}
+    ident_matches = generate_http_requests_and_check(uri,{:enable_browser => false}) || {}
 
     ident_fingerprints = ident_matches["fingerprint"] || []
     ident_content_checks = ident_matches["content"] || []
@@ -120,7 +120,7 @@ class Uri < Intrigue::Task::BaseTask
     # the UI / queries if any of the matches told us to hide the entity, do it.
     # EXAMPLE TEST CASE: http://103.24.203.121:80 (cpanel missing page)
     if ident_fingerprints.detect{|x| x["hide"] == true }
-      _log "Entity hidden based on fingerprint"
+      _log "Entity hidden based on fingerprint!"
       @entity.hidden = true
       @entity.save_changes
     end
@@ -286,6 +286,7 @@ class Uri < Intrigue::Task::BaseTask
       "hidden_favicon_data" => favicon_data,
       "extended_favicon_data" => favicon_data,
       "hidden_response_data" => response.body,
+      "redirect_chain" => ident_responses.first[:response_urls] || [],
       "extended_full_responses" => ident_responses, # includes all the redirects etc
       "extended_response_body" => response.body,
       "products" => products.compact,
@@ -345,9 +346,6 @@ class Uri < Intrigue::Task::BaseTask
         e = nil 
       end
     end
-
-    
-
   end
 
   def _gather_supported_ciphers(hostname,port)

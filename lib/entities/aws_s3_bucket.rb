@@ -24,7 +24,9 @@ class AwsS3Bucket < Intrigue::Model::Entity
   end
 
   def scoped?(conditions={})
-    return true
+    return true if self.seed
+    return false if self.hidden
+  true # otherwise just default to true
   end
 
 end

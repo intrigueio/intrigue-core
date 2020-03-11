@@ -49,33 +49,7 @@ class RailsFileExposureCve20195418 < BaseTask
       if response
         if "#{etc_passwd_body}" =~ /root\:x/
           _log "Got vulnerable response: #{response.body}"
-          ############################################
-          ###      Old Issue                      ###
-          ###########################################
-          # _create_issue({
-          #   name: "Rails information disclosure",
-          #   type: "vulnerability",
-          #   severity: 1,
-          #   status: "confirmed",
-          #   description: "This issue found on #{uri}, described in CVE-2019-5418, allows an anonymous user" +
-          #    " to gather internal files from the affected system, up to and including the" +
-          #    " /etc/shadow file, depending on permissions. The 'render' command must be" +
-          #    " used to render a file from disk in order to be vulnerable",
-          #   details: {
-          #     cve: "CVE-2019-5418",
-          #     uri: uri,
-          #     data: etc_passwd_body }
-          # })
-          ############################################
-          ###      New Issue                      ###
-          ###########################################
-          _create_linked_issue("rails_information_disclosure_cve_2019-5418",{
-            type: "vulnerability",
-            details: {
-              cve: "CVE-2019-5418",
-              uri: uri,
-              data: etc_passwd_body }
-          })
+          _create_linked_issue("rails_information_disclosure_cve_2019_5418",{data: etc_passwd_body })
         else
           _log "Got non-vulnerable response: #{response.body}"
         end

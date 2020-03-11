@@ -79,14 +79,22 @@ module Task
               # dump it into our queue so we can push matches back
               matching_urls.push({ start: request_uri, final: result[:uri] })
 
-              _create_issue({
-                name: "Discovered Sensitive Content at #{request_details[:path]}",
-                type:  request_details[:issue_type] || "discovered_sensitive_content",
-                severity: request_details[:severity] || 5,
-                status: request_details[:status] || "potential",
-                description: "Page was found at #{result[:name]} with a code #{result[:response_code]} by url_brute_focused_content.",
-                details: result.except!(:name)
-              }) if create_issue
+              # Create a linked issue if the type exists
+              if _linkable_issue_exists "#{request_details[:issue_type]}"
+                _log "Creating  linked issue of type: #{request_details[:issue_type]}"
+                _create_linked_issue(request_details[:issue_type], result.except!(:name)) 
+              else
+                # Generic fallback 
+                _log "Creating issue of type: #{request_details[:issue_type]}"
+                _create_issue({
+                  name: "Discovered Sensitive Content at #{request_details[:path]}",
+                  type:  request_details[:issue_type] || "discovered_sensitive_content",
+                  severity: request_details[:severity] || 5,
+                  status: request_details[:status] || "potential",
+                  description: "Page was found at #{result[:name]} with a code #{result[:response_code]} by url_brute_focused_content.",
+                  details: result.except!(:name)
+                }) if create_issue
+              end
             end
 
           end # end while

@@ -5,12 +5,13 @@ class VulnSharepointCve20190604 < BaseIssue
   def self.generate(instance_details={})
     {
       name: "vulnerability_sharepoint_cve_2019_0604",
-      pretty_name: "Vulnerable Sharepoint (CVE-2019-0604)",
+      pretty_name: "Vulnerable Microsoft Sharepoint (CVE-2019-0604)",
       identifiers: [
         { type: "CVE", name: "CVE-2019-0604" }
       ],
       severity: 1,
-      category: "application",
+      status: "confirmed",
+      category: "vulnerability",
       description: "A remote code execution vulnerability exists in Microsoft SharePoint when the software fails to check the source markup of an application package, aka 'Microsoft SharePoint Remote Code Execution Vulnerability'.",
       remediation: "To comprehensively address CVE-2019-0604 Microsoft is releasing the following security updates: 4462199 for Microsoft SharePoint Server 2019, 4462211 for Microsoft SharePoint Enterprise Server 2016, 4462202 for Microsoft SharePoint Foundation 2013 Service Pack 1, and 4462184 for Microsoft SharePoint Server 2010 Service Pack 2. Microsoft recommends that customers running these versions of SharePoint Server install the updates to be protected from this vulnerability.",
       affected_software: [
