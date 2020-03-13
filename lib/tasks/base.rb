@@ -21,9 +21,12 @@ class BaseTask
   include Intrigue::Task::RecogWrapper
   include Intrigue::Task::Regex
   include Intrigue::Task::Services
+  include Intrigue::Task::VulnCheck
   include Intrigue::Task::Web
   include Intrigue::Task::WebContent
   include Intrigue::Task::Whois
+  
+  
 
   include Sidekiq::Worker
   sidekiq_options :queue => "task", :backtrace => true

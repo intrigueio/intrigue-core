@@ -2,8 +2,6 @@ module Intrigue
 module Task
 class UriBruteFocusedContent < BaseTask
 
-  include Intrigue::Task::Web
-
   def self.metadata
     {
       :name => "uri_brute_focused_content",
@@ -30,41 +28,21 @@ class UriBruteFocusedContent < BaseTask
     }
   end
 
-  def is_product?(product_name)
-
-    # first, if an override fingerprint was specified, just use that
-    override = _get_option("override_fingerprint")
-    if override.length > 0
-      return (override == product_name) ? true : false
-    end
-
-    # okay no override, check the enity's fingerprint
-    return false unless _get_entity_detail("fingerprint")
-    
-    out = _get_entity_detail("fingerprint").any?{|v| v['product'] =~ /#{product_name}/ if v['product']}
-    _log_good "Matched URI to Product: #{product_name} !" if out
-  out
-  end
-
-  def sleep_until_enriched
-    entity_enriched = @entity.enriched?
-    cycles = 30 
-    until entity_enriched || cycles == 0
-      _log "Waiting 10s for entity to be enriched... (#{cycles-=1} / #{cycles})"
-        sleep 10
-      entity_enriched = Intrigue::Model::Entity.first(:id => @entity.id).enriched?
-    end
-  end
-
   def run
     super
-
-    sleep_until_enriched unless _get_option("override_fingerprint").length > 0
 
     uri = _get_entity_name
     opt_threads = _get_option("threads") 
     opt_create_url = _get_option("create_url")
     opt_generic_content = _get_option("check_generic_content") 
+
+    # first, if an override fingerprint was specified, just use that
+    override = _get_option("override_fingerprint")
+
+    # we need a FP here, so hold off until 
+    sleep_until_enriched unless override.length > 0
+
+    fingerprint = _get_entity_detail("fingerprint")
 
     generic_list = [ 
       #{ path: "/api", body_regex: nil },
@@ -323,29 +301,29 @@ class UriBruteFocusedContent < BaseTask
     work_q = Queue.new
     
     #  first handle our specific here (more likely to be interesting)
-    apache_list.each { |x| work_q.push x } if is_product? "HTTP Server"  # Apache
+    apache_list.each { |x| work_q.push x } if is_product?(fingerprint,"HTTP Server")  # Apache
     asp_net_list.each { |x| work_q.push x } if ( 
-      is_product?("ASP.NET") || is_product?("ASP.NET MVC") )
-    coldfusion_list.each { |x| work_q.push x } if is_product? "Coldfusion"  
-    globalprotect_list.each { |x| work_q.push x } if is_product? "GlobalProtect" 
-    jenkins_list.each { |x| work_q.push x } if is_product? "Jenkins" 
-    jforum_list.each { |x| work_q.push x } if is_product? "Jforum"
-    jira_list.each { |x| work_q.push x } if is_product? "Jira"
-    joomla_list.each { |x| work_q.push x } if is_product? "Joomla!" 
-    lotus_domino_list.each { |x| work_q.push x } if is_product? "Domino" 
-    php_list.each { |x| work_q.push x } if is_product? "PHP" 
-    php_my_admin_list.each { |x| work_q.push x } if is_product? "phpMyAdmin" 
-    pulse_secure_list.each { |x| work_q.push x } if is_product? "Junos Pulse Secure Access Service" 
-    sharepoint_list.each { |x| work_q.push x } if is_product? "Sharepoint"
-    sap_netweaver_list.each { |x| work_q.push x } if is_product? "NetWeaver"
-    splunk_list.each {|x| work_q.push x } if is_product? "Splunk"
-    spring_boot_list.each { |x| work_q.push x } if is_product? "Spring Boot"
-    spring_boot_list.each { |x| work_q.push x } if is_product? "Spring Framework"
-    tomcat_list.each { |x| work_q.push x } if is_product? "Tomcat" 
-    vmware_horizon_list.each { |x| work_q.push x } if is_product?("Horizon View")
-    weblogic_list.each { |x| work_q.push x } if is_product? "Weblogic Server" 
-    websphere_list.each { |x| work_q.push x } if is_product? "WebSphere" 
-    wordpress_list.each { |x| work_q.push x } if is_product? "Wordpress" 
+      is_product?(fingerprint,"ASP.NET") || is_product?(fingerprint,"ASP.NET MVC") )
+    coldfusion_list.each { |x| work_q.push x } if is_product?(fingerprint,"Coldfusion") 
+    globalprotect_list.each { |x| work_q.push x } if is_product?(fingerprint,"GlobalProtect")
+    jenkins_list.each { |x| work_q.push x } if is_product?(fingerprint,"Jenkins")
+    jforum_list.each { |x| work_q.push x } if is_product?(fingerprint,"Jforum")
+    jira_list.each { |x| work_q.push x } if is_product?(fingerprint,"Jira")
+    joomla_list.each { |x| work_q.push x } if is_product?(fingerprint,"Joomla!")
+    lotus_domino_list.each { |x| work_q.push x } if is_product?(fingerprint,"Domino")
+    php_list.each { |x| work_q.push x } if is_product?(fingerprint,"PHP")
+    php_my_admin_list.each { |x| work_q.push x } if is_product?(fingerprint,"phpMyAdmin")
+    pulse_secure_list.each { |x| work_q.push x } if is_product?(fingerprint,"Junos Pulse Secure Access Service")
+    sharepoint_list.each { |x| work_q.push x } if is_product?(fingerprint,"Sharepoint")
+    sap_netweaver_list.each { |x| work_q.push x } if is_product?(fingerprint,"NetWeaver")
+    splunk_list.each {|x| work_q.push x } if is_product?(fingerprint,"Splunk")
+    spring_boot_list.each { |x| work_q.push x } if is_product?(fingerprint,"Spring Boot")
+    spring_boot_list.each { |x| work_q.push x } if is_product?(fingerprint,"Spring Framework")
+    tomcat_list.each { |x| work_q.push x } if is_product?(fingerprint,"Tomcat") 
+    vmware_horizon_list.each { |x| work_q.push x } if is_product?(fingerprint,"Horizon View")
+    weblogic_list.each { |x| work_q.push x } if is_product?(fingerprint,"Weblogic Server")
+    websphere_list.each { |x| work_q.push x } if is_product?(fingerprint,"WebSphere")
+    wordpress_list.each { |x| work_q.push x } if is_product?(fingerprint,"Wordpress") 
 
     # then add our "always" stuff:
     generic_list.each { |x| work_q.push x } if opt_generic_content
