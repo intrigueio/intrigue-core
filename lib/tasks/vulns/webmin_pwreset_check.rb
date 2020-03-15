@@ -8,7 +8,7 @@ class  WebminPwreset < BaseTask
   def self.metadata
     {
       :name => "vuln/webmin_pwreset",
-      :pretty_name => "Vuln - Webmin Password Reset Check",
+      :pretty_name => "Vuln Check - Webmin Password Reset Check",
       :authors => ["jcran","AkkuS <Özkan Mustafa Akkuş>"],
       :identifiers => [{ "cve" =>  "CVE-2019-15107" }],
       :description => "Check for a webmine unauthenticated RCE. Requires a specific configuration, see references.",

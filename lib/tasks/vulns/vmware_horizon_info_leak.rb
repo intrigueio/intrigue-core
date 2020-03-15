@@ -5,7 +5,7 @@ class VmwareHorizonInfoLeak < BaseTask
   def self.metadata
     {
       :name => "vuln/vmware_horizon_info_leak",
-      :pretty_name => "Vuln - VMWare Horizon Info Leak",
+      :pretty_name => "Vuln Check - VMWare Horizon Info Leak",
       :authors => ["jcran", "hdm"],
       :identifiers => [{ "cve" =>  "CVE-2019-5513" }],
       :description => "Pull info from VMWare Horizon.",

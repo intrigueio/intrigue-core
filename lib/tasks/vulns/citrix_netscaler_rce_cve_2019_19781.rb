@@ -5,7 +5,7 @@ class  CitrixNetscalerRceCVE201919781 < BaseTask
   def self.metadata
     {
       :name => "vuln/citrix_netscaler_rce_cve_2019_19781",
-      :pretty_name => "Vuln - Citrix Netscaler RCE (CVE-2019-19781)",
+      :pretty_name => "Vuln Check - Citrix Netscaler RCE (CVE-2019-19781)",
       :authors => ["jcran"],
       :identifiers => [{ "cve" =>  "CVE-2019-19781" }],
       :description => "This task checks checks a Citrix Netscaler for a version vulnerable to the Dec 2019 /vpns RCE.",

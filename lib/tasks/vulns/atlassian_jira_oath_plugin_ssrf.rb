@@ -5,7 +5,7 @@ class AtlassianJiraOauthPluginSsrf < BaseTask
   def self.metadata
     {
       :name => "vuln/atlassian_jira_oath_plugin_ssrf",
-      :pretty_name => "Vuln - Atlassian Jira Oauth Plugin SSRF",
+      :pretty_name => "Vuln Check - Atlassian Jira Oauth Plugin SSRF",
       :identifiers => [{ "cve" =>  "TODO" }],
       :authors => ["jcran"],
       :description => "SSRF in jira oauth plugin",

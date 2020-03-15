@@ -5,7 +5,7 @@ class CiscoSmartInstallScan < BaseTask
   def self.metadata
     {
       :name => "vuln/cisco_smart_install_scan",
-      :pretty_name => "Vuln - Cisco Smart Install Scanner",
+      :pretty_name => "Vuln Check - Cisco Smart Install Scanner",
       :authors => ["jcran"],
       :identifiers => [{ "cve" =>  false }],
       :description => "Check for Cisoc Smart Install Misconfiguration",

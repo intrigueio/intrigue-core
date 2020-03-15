@@ -5,7 +5,7 @@ module Intrigue
     def self.metadata
       {
         :name => "vuln/tomcat_ghostcat_cve_2020_1938",
-        :pretty_name => "Vuln - Tomcat Ghostcat",
+        :pretty_name => "Vuln Check - Tomcat Ghostcat",
         :identifiers => [
           { "cve" =>  "CVE-2020-1938" }
         ],
@@ -44,7 +44,7 @@ module Intrigue
         command_string = "tomcat-cve-2020-1938-check -h #{ip_address_or_hostname} -p #{port}"
         _log "Command: #{command_string}"
 
-        output = _unsafe_system(command_string).strip
+        output = "#{_unsafe_system(command_string)}"
         _log "Output: #{output}"
 
         # test the response

@@ -5,7 +5,7 @@ class ExchangeCve20200688 < BaseTask
   def self.metadata
     {
       :name => "vuln/microsoft_exchange_cve_2020_0688",
-      :pretty_name => "Vuln - Microsoft Exchange RCE (CVE-2020-0688) ",
+      :pretty_name => "Vuln Check - Microsoft Exchange RCE (CVE-2020-0688) ",
       :authors => ["jcran"],
       :identifiers => [{ "cve" =>  "CVE-2020-0688" }],
       :description => "This task does a version check for CVE-2020-0688 in Microsoft Exchange",
@@ -25,6 +25,7 @@ class ExchangeCve20200688 < BaseTask
     
     # first, ensure we're fingerprinted
     sleep_until_enriched
+    
     fingerprint = _get_entity_detail("fingerprint")
 
     if is_product?(fingerprint, "Exchange Server")

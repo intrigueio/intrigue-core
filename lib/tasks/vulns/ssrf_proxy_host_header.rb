@@ -5,7 +5,7 @@ class SsrfProxyHostHeader < BaseTask
   def self.metadata
     {
       :name => "vuln/ssrf_proxy_host_header",
-      :pretty_name => "Vuln - Check SSRF in Proxy Host header",
+      :pretty_name => "Vuln Check - Check SSRF in Proxy Host header",
       :authors => ["jcran"],
       :identifiers => [
         { "cve" =>  false },

@@ -54,7 +54,7 @@ class UriBruteFocusedContent < BaseTask
       
       # TODO ... move this to laravel-only. 
       # https://github.com/laravel/laravel/blob/master/.env.example
-      { issue_type: "env_file", path: "/.env", severity: 1, body_regex: /DB_CONNECTION/, status: "confirmed" },
+      { issue_type: "laravel_env_file", path: "/.env", severity: 1, body_regex: /DB_CONNECTION/, status: "confirmed" },
       
       { issue_type: "htaccess", path: "/.htaccess", body_regex: /AuthName/, severity: 3, status: "confirmed" },
       { issue_type: "htaccess", path: "/.htaccess.bak", body_regex: /AuthName/, severity: 3, status: "confirmed" },

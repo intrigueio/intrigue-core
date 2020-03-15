@@ -5,7 +5,7 @@ class ApacheStrutsJakartaParser < BaseTask
   def self.metadata
     {
       :name => "vuln/apache_struts_jakarta_parser",
-      :pretty_name => "Vuln - Apache Struts Jakarta Parser",
+      :pretty_name => "Vuln Check - Apache Struts Jakarta Parser",
       :identifiers => [{ "cve" =>  "CVE-2017-5638" }],
       :authors => ["jcran"],
       :description => "Trigger Apache Struts CVE-2017-5638 Jakarta Parser",
