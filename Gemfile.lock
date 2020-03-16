@@ -32,7 +32,7 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: f15f82787f324d2f7a4a0b57fbd34197ddb551cf
+  revision: d3fb92fe9a402a3be8a9979a43860951802620f5
   specs:
     intrigue-ident (0.9.2)
       selenium-webdriver
@@ -370,7 +370,7 @@ GEM
       rspec-support (~> 3.9.0)
     rspec-support (3.9.2)
     ruby2_keywords (0.0.2)
-    rubyzip (2.2.0)
+    rubyzip (2.3.0)
     selenium-webdriver (3.142.7)
       childprocess (>= 0.5, < 4.0)
       rubyzip (>= 1.2.2)
