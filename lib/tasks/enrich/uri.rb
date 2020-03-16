@@ -311,7 +311,7 @@ class Uri < Intrigue::Task::BaseTask
         # parse our content with Nokogiri
       our_doc = "#{response.body}".sanitize_unicode
       Intrigue::Model::Entity.scope_by_project_and_type(
-        @entity.project.name,"Uri").paged_each(:rows_per_fetch => 200) do |e|
+        @entity.project.name,"Uri").paged_each(:rows_per_fetch => 100) do |e|
         next if @entity.id == e.id
 
         # Do some basic up front checking
@@ -321,13 +321,23 @@ class Uri < Intrigue::Task::BaseTask
           _log "Skipping #{e.name}, title doesnt match (#{old_title})"
           next
         end
-
+        
+        # check response code  
         unless response.code == e.get_detail("code")
           _log "Skipping #{e.name}, code doesnt match"
           next
         end
+        
+        # check fingeprint
+        unless ident_fingerprints.uniq.map{|x| 
+          "#{x["vendor"]} #{x["product"]} #{x["version"]}"} == e.get_detail("fingerprint").map{ |x| 
+            "#{x["vendor"]} #{x["product"]} #{x["version"]}" }
+          _log "Skipping #{e.name}, fingerprint doesnt match"
+          next
+        end
 
-        # parse them & compare them
+        # if we made it this far, parse them & compare them
+        # TODO ... is this overkill? 
         their_doc = e.details["hidden_response_data"]
         diffs = parse_html_diffs(our_doc, their_doc)
         their_doc = nil
