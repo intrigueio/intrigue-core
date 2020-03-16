@@ -25,11 +25,11 @@ module Intrigue
       end
 
       def issues
-        Intrigue::Model::Issue.scope_by_project(self.name)
+        Intrigue::Model::Issue.scope_by_project(self.name) || []
       end
 
       def entities
-        Intrigue::Model::Entity.scope_by_project(self.name)
+        Intrigue::Model::Entity.scope_by_project(self.name) || []
       end
 
       def seeds
