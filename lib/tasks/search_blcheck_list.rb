@@ -27,8 +27,7 @@ class SearchBlcheckList < BaseTask
     entity_name = _get_entity_name
     entity_type = _get_entity_type_string
 
-    ]
-    file = File.open "/home/anas/Desktop/intrigue-core/data/blcheck.json"
+    file = File.open "/path_tp_file/intrigue-core/data/blcheck.json"
     blacklists = JSON.load file
 
     # Initialisation
@@ -54,15 +53,15 @@ class SearchBlcheckList < BaseTask
     f = []
     # Perform nslookup vs every bl in the list
     blacklists.each do |data|
-      puts data["dnsbl"]
-       query = revip +"."+ data["dnsbl"]
-       f = dns_obj.getaddresses(query)
-       _log "#{i}/ 122  checks vs #{data["dnsbl"]} ... "
+      #puts data["dnsbl"]
+      query = revip +"."+ data["dnsbl"]
+      f = dns_obj.getaddresses(query)
+      _log "#{i}/ 122  checks vs #{data["dnsbl"]} ... "
       # Get the source of the blocker
 
       # Getting multiple addresses results from the nslookup
-       f.each do |j|
-       # Investigate if the response is similar to 127.0.0. # for confirming the listing
+      f.each do |j|
+        # Investigate if the response is similar to 127.0.0. # for confirming the listing
         if j.to_s.include? "127."
           # Create an issue if the IP is blacklisted
           if data["query"] == true
@@ -70,9 +69,8 @@ class SearchBlcheckList < BaseTask
           else
             source = data["reference"]
           end
-           _log "creating issue ... #{source}"
-           #puts data["dnsbl"]
-           #puts data["confidence"]
+            #_log "creating issue ... #{source}"
+
           _create_linked_issue("suspicious_activity_detected", {
             status: "confirmed",
             description: "Suspicious activity was detcted on this entity.",
@@ -81,8 +79,8 @@ class SearchBlcheckList < BaseTask
             confidence: data["confidence"]
           })
           # Also store it on the entity
-          #blocked_list = @entity.get_detail("suspicious_activity_detected") || []
-          #@entity.set_detail("suspicious_activity_detected", blocked_list.concat([{source: source}]))
+          blocked_list = @entity.get_detail("suspicious_activity_detected") || []
+          @entity.set_detail("suspicious_activity_detected", blocked_list.concat([{source: source}]))
         end
       end
       i += 1
