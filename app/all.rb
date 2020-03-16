@@ -11,7 +11,6 @@ require_relative "routes/issues"
 require_relative "routes/project"
 require_relative "routes/results"
 
-
 require_relative "models/mixins/handleable"
 require_relative "models/mixins/path_traversal"
 
@@ -26,3 +25,5 @@ require_relative "models/scan_result"
 
 require_relative "workers/generate_graph_worker"
 require_relative "workers/generate_meta_graph_worker"
+
+require_relative "api/api"

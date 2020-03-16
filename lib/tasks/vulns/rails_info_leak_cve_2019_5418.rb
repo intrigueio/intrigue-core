@@ -5,7 +5,7 @@ class RailsFileExposureCve20195418 < BaseTask
   def self.metadata
     {
       :name => "vuln/rails_file_exposure",
-      :pretty_name => "Vuln - Rails File Exposure (CVE-2019-5418)",
+      :pretty_name => "Vuln Check - Rails File Exposure (CVE-2019-5418)",
       :authors => ["jcran", "jhawthorn"],
       :identifiers => [{ "cve" =>  "CVE-2019-5418" }],
       :description => "Rails < 6.0.0.beta3, 5.2.2.1, 5.1.6.2, 5.0.7.2, 4.2.11.1 is subject to" +

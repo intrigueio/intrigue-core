@@ -5,7 +5,7 @@ class WordpressEzSmtpPluginRce < BaseTask
   def self.metadata
     {
       :name => "vuln/wordpress_ez_smtp_plugin_rce",
-      :pretty_name => "Vuln - Wordpress EZ SMTP Plugin RCE",
+      :pretty_name => "Vuln  Check - Wordpress EZ SMTP Plugin RCE",
       :identifiers => [{ "cve" =>  "CVE-2019-" }],
       :authors => ["jcran"],
       :description => "RCE in word",

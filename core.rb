@@ -142,7 +142,7 @@ class IntrigueApp < Sinatra::Base
 
     # Allow certain requests without a project string... these are systemwide,
     # and do not depend on a specific project
-    pass if [ "entity_types.json", "engine", "favicon.ico",
+    pass if [ "api", "entity_types.json", "engine", "favicon.ico",
               "project", "tasks", "tasks.json",
               "version.json", "system", nil ].include? directive
     pass if request.path_info =~ /\.js$/ # all js

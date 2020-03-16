@@ -5,7 +5,7 @@ class AtlassianFisheyeMostactivecommitersDisclosure < BaseTask
   def self.metadata
     {
       :name => "vuln/atlassian_fisheye_mostactivecommiters_disclosure",
-      :pretty_name => "Vuln - Atlassian Fisheye mostactivecommiters.do Information Disclosure",
+      :pretty_name => "Vuln Check - Atlassian Fisheye mostactivecommiters.do Information Disclosure",
       :identifiers => [{ "cve" =>  "CVE-2017-9512" }],
       :authors => ["jcran"],
       :description => "Information disclosure in Fisheye",

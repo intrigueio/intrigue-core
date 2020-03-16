@@ -2,7 +2,6 @@ module Intrigue
 module Task
 class SaasJiraCheck < BaseTask
 
-
   def self.metadata
     {
       :name => "saas_jira_check",
@@ -17,8 +16,7 @@ class SaasJiraCheck < BaseTask
         {"type" => "String", "details" => {"name" => "intrigue"}}
       ],
       :allowed_options => [],
-      :created_types => ["WebAccount"],
-      :queue => "task_browser"
+      :created_types => ["WebAccount"]
     }
   end
 

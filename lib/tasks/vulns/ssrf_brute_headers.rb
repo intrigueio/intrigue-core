@@ -5,7 +5,7 @@ class SsrfBruteHeaders < BaseTask
   def self.metadata
     {
       :name => "vuln/ssrf_brute_headers",
-      :pretty_name => "Vuln - Brute Headers for SSRF",
+      :pretty_name => "Vuln Check - Brute Headers for SSRF",
       :authors => ["jcran"],
       :identifiers => [
         { "cve" =>  false },
