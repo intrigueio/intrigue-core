@@ -35,7 +35,7 @@ module Intrigue
       def self.scope_by_project_and_type(project_name, entity_type_string)
         resolved_entity_type = Intrigue::EntityManager.resolve_type_from_string(entity_type_string)
         named_project = Intrigue::Model::Project.first(name: project_name)
-        where(Sequel.&(project_id: named_project.id, type: resolved_entity_type.to_s))
+        where(Sequel.&(project_id: named_project.id, type: resolved_entity_type.to_s)) if named_project
       end
 
       #def self.scope_by_project_and_type_and_detail_value(project_name, entity_type, detail_name, detail_value)
@@ -54,6 +54,10 @@ module Intrigue
       end
 
       def match_entity_string?(entity_type, entity_name)
+        
+        # just in case (handles a current error)
+        return false unless entity_type && entity_name && self.name
+
         #puts "Attempting to match #{entity_type} #{entity_name} to #{self.type_string} #{self.name}"
         return true if (self.type_string.downcase == entity_type.downcase && self.name.downcase == entity_name.downcase)
       false

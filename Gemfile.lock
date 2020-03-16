@@ -18,10 +18,11 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/chrome_remote.git
-  revision: fb2ca2b645e48f3ec1ace65732833eb7f892b0fe
+  revision: 752ae5882605f638ee2f797cfd289fc01f3f78cf
   specs:
     chrome_remote (0.2.0)
-      websocket-driver (~> 0.6)
+      socketry
+      websocket-driver (~> 0.7)
 
 GIT
   remote: https://github.com/intrigueio/cloudflare.git
