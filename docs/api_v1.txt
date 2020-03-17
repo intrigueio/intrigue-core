@@ -40,6 +40,6 @@ DELETE api/v1/:project_name/entities/:entity_id - delete entity
 #
 GET api/v1/:project_name/task_results/:task_result_id - read a task result's details
 GET api/v1/:project_name/task_results/:task_result_id/log - read a task result's log
-POST api/v1/:project_name/task_results - create a new entity
+POST api/v1/:project_name/task_results - create a new task resultw
 PUT api/v1/:project_name/task_results/:task_result_id - update task result details 
 DELETE api/v1/:project_name/task_results/:task_result_id - delete task result
