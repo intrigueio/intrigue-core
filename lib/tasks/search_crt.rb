@@ -36,12 +36,12 @@ class SearchCrt < BaseTask
     begin
 
       # Grab the ATOM feed
-      not_to_exceed = 0
+      not_to_exceed = 1
       crt_query_uri = "https://crt.sh/atom?q=%25.#{search_domain}"
       raw_html = http_get_large_body(crt_query_uri)
 
       # if we don't get it, loop until we do
-      until raw_html || not_to_exceed == 10
+      until raw_html || not_to_exceed == 20
         _log_error "Error getting #{crt_query_uri}, trying again"
         backoff = rand(20) * not_to_exceed # slowly backoff
         _log "Waiting #{backoff} seconds"
