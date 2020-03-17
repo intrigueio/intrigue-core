@@ -17,7 +17,7 @@ In order to authenticate, all endpoints must accept and verify a single paramete
 GET api/v1/tasks - list all system tasks  **
 GET api/v1/entities - list all system entities
 GET api/v1/projects - list all projects
-GET api/v1/system - list system configuation
+GET api/v1/configuration - list system configuation
 
 # 
 # Project Endpoints - these endpoints allow you to CRUD projects - which can be thought of as a container for all other types
