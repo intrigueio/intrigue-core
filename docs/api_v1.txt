@@ -1,0 +1,45 @@
+
+###
+### This is the working document for the v1 api (which will be converted into OpenAPI spec)
+###
+### This api should be (as) restful (as possible) - as described in https://www.restapitutorial.com/lessons/httpmethods.html
+###
+
+#
+# Authentication
+#
+
+In order to authenticate, all endpoints must accept and verify a single parameter, provided as a header: "X-INTRIGUE-CORE-TOKEN"
+
+#
+# System level Endpoints 
+#
+GET api/v1/tasks - list all system tasks  **
+GET api/v1/entities - list all system entities
+GET api/v1/projects - list all projects
+GET api/v1/configuration - list system configuation
+
+# 
+# Project Endpoints - these endpoints allow you to CRUD projects - which can be thought of as a container for all other types
+#
+GET api/v1/:project_name - get the metrics for a given project (entities, tasks etc)
+POST api/v1/projects - create a new project
+PUT api/v1/:project_name - update project settings 
+DELETE api/v1/:project_name - delete a project
+
+# 
+# Entity Endpoints - these endpoints allow you to CRUD entities
+#
+GET api/v1/:project_name/entities/:entity_id - read an entity's details
+POST api/v1/:project_name/entities - create a new entity
+PUT api/v1/:project_name/entities/:entity_id - update entity details 
+DELETE api/v1/:project_name/entities/:entity_id - delete entity
+
+# 
+# TaskResult Endpoints - these endpoints allow you to CRUD task results
+#
+GET api/v1/:project_name/task_results/:task_result_id - read a task result's details
+GET api/v1/:project_name/task_results/:task_result_id/log - read a task result's log
+POST api/v1/:project_name/task_results - create a new task resultw
+PUT api/v1/:project_name/task_results/:task_result_id - update task result details 
+DELETE api/v1/:project_name/task_results/:task_result_id - delete task result
