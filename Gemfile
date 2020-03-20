@@ -34,6 +34,7 @@ gem 'sqlite3'
 gem 'pg'
 
 # Tasks
+gem 'json', '>= 2.3.0'
 gem 'aws-sdk-sqs'             #,        '~> 3'
 gem 'aws-sdk-s3'              #,         '~> 3'
 gem 'aws-sdk-route53'
