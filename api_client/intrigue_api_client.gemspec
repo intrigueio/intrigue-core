@@ -10,6 +10,6 @@ Gem::Specification.new do |s|
   s.files       = ["lib/intrigue_api_client.rb"]
   s.homepage    = 'http://rubygems.org/gems/intrigue_api_client'
   s.license     = 'BSD-3-Clause'
-  s.add_dependency 'rest-client', '~> 2.0'
-  s.add_dependency 'json', '~> 1.8'
+  s.add_dependency 'rest-client'
+  s.add_dependency 'json'
 end
