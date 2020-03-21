@@ -66,7 +66,7 @@ module Intrigue
       # default method that scopes / unscoped entities (can be overridden)
       # TODO ... maybe we move the logic of details that exists in entity_manager here?
       def scoped?
-        raise "Method must be oveeridden!"
+        raise "Method must be oveeridden for #{self.class}!"
       end
 
       def validate

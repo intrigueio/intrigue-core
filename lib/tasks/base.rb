@@ -15,6 +15,7 @@ class BaseTask
 
   include Intrigue::Task::BinaryEdge
   include Intrigue::Task::Browser
+  include Intrigue::Task::CloudProviders
   include Intrigue::Task::Data
   include Intrigue::Task::Dns
   include Intrigue::Task::Helper
@@ -25,8 +26,6 @@ class BaseTask
   include Intrigue::Task::Web
   include Intrigue::Task::WebContent
   include Intrigue::Task::Whois
-  
-  
 
   include Sidekiq::Worker
   sidekiq_options :queue => "task", :backtrace => true
