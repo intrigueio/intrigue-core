@@ -34,8 +34,12 @@ module CloudProviders
       resp = http_get_body(api_url)
 
       json = JSON.parse(resp) if resp
-      if json && json["cloudProvider"] && json["cloudProvider"].length > 0
-        return "#{json["cloudProvider"]}_#{json["cloudService"]}".downcase 
+      if json && json["name"]
+        if json["name"] == json["service"]
+          return "#{json["name"]}".downcase 
+        else
+          return "#{json["name"]}_#{json["service"]}".downcase 
+        end
       end
     rescue JSON::ParserError => e 
       _log_error "Unable to parse API response"
