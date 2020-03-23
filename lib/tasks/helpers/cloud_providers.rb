@@ -41,6 +41,7 @@ module CloudProviders
           return "#{json["name"]}_#{json["service"]}".downcase 
         end
       end
+
     rescue JSON::ParserError => e 
       _log_error "Unable to parse API response"
     end
@@ -93,7 +94,7 @@ module CloudProviders
     ### USE IP ADDRESS
     ###
     ip_address = _get_entity_detail("ip_address")
-    lookup_result = _cloud_classifier_lookup(ip_address) 
+    lookup_result = _cloud_classifier_lookup(ip_address) if ip_address
     cloud_providers << lookup_result if lookup_result
     
     ###

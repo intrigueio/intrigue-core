@@ -32,6 +32,16 @@ GIT
       async-rest (~> 0.10.0)
 
 GIT
+  remote: https://github.com/intrigueio/intrigue-ident.git
+  revision: 8bab99524648980b5c63e2cf7edecfc882320ae3
+  specs:
+    intrigue-ident (0.9.2)
+      selenium-webdriver
+      snmp
+      socketry
+      watir
+
+GIT
   remote: https://github.com/intrigueio/maxminddb
   revision: 1a48218c7577bc137bd7736e62a28e2d7d92b39c
   specs:
@@ -91,15 +101,6 @@ GIT
   revision: e143ac84c6b1baf72ea7cb8a3d8bdfb260f96e36
   specs:
     whoisology (0.1.0)
-
-PATH
-  remote: ../../../../ident
-  specs:
-    intrigue-ident (0.9.2)
-      selenium-webdriver
-      snmp
-      socketry
-      watir
 
 PATH
   remote: api_client
