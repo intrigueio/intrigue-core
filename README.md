@@ -1,6 +1,6 @@
 # Welcome!
 
-Intrigue-core is a framework for external attack surface discovery and automated OSINT. The framework is designed for use cases such as:
+Intrigue-core is an automation framework and orchestrator for external attack surface discovery and cybersecurity intelligence. The framework is designed for use cases such as:
 
   * Asset Discovery (Application and Infrastructure)
   * Security Research and Vulnerability Scanning
