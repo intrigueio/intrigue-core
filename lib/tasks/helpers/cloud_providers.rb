@@ -72,8 +72,12 @@ module CloudProviders
     cloud_providers = []
 
     _get_entity_detail("resolutions").each do |resolution| 
-      ip_address = resolution["response_data"]
-      lookup_result = _cloud_classifier_lookup(ip_address) 
+      
+      # only check ip addresses 
+      res = resolution["response_data"] 
+      next unless res.is_ip_address?
+      
+      lookup_result = _cloud_classifier_lookup(res) 
       cloud_providers << lookup_result if lookup_result
     end
 
