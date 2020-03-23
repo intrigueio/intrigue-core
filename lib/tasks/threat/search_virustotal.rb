@@ -5,10 +5,10 @@ class SearchVirustotal < BaseTask
 
   def self.metadata
     {
-      :name => "search_virustotal",
-      :pretty_name => "Search VirusTotal",
+      :name => "threat/search_virustotal",
+      :pretty_name => "Threat Check - Search VirusTotal",
       :authors => ["jcran"],
-      :description => "This task hit VirusTotal's API and creates new DnsRecord entities.",
+      :description => "This task hits VirusTotal's API and creates new DnsRecord entities.",
       :references => ["https://www.virustotal.com/en/documentation/"],
       :type => "discovery",
       :passive => true,

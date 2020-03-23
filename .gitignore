@@ -18,6 +18,7 @@ data/asn_info/*
 public/
 tmp/
 log/
+.env
 lib/tasks/disabled
 lib/tasks/survey
 lib/*.gem

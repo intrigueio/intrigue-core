@@ -1,15 +1,15 @@
 module Intrigue
 module Task
-class SearchComodoDns < BaseTask
+class SearchOpenDns < BaseTask
 
 
   def self.metadata
     {
-      :name => "search_comodo_dns",
-      :pretty_name => "Search Comodo DNS",
+      :name => "threat/search_opendns",
+      :pretty_name => "Threat Check - Search OpenDNS",
       :authors => ["Anas Ben Salah"],
-      :description => "This task looks up whether hosts are blocked byCleanbrowsing.org DNS (8.26.56.26 and 8.20.247.20)",
-      :references => ["Cleanbrowsing.org"],
+      :description => "This task looks up whether hosts are blocked by OpenDNS",
+      :references => ["https://www.opendns.com"],
       :type => "threat_check",
       :passive => true,
       :allowed_types => ["Domain", "DnsRecord"],
@@ -36,14 +36,13 @@ class SearchComodoDns < BaseTask
     resolves_to = resolve_names entity_name
     unless resolves_to.first
       _log "No resolution for this record, unable to check"
-      return 
+      return
     end
 
-    # Query comodo nameservers
-    nameservers = ['8.26.56.26', '8.20.247.20']
+    # Query opendns nameservers
+    nameservers = ['208.67.222.222', '208.67.220.220']
     _log "Querying #{nameservers}"
     dns_obj = Resolv::DNS.new(nameserver: nameservers)
-    
     # Try twice, just in case (avoid FP's)
     res = dns_obj.getaddresses(entity_name)
     res.concat(dns_obj.getresources(entity_name, Resolv::DNS::Resource::IN::CNAME)).flatten
@@ -52,27 +51,26 @@ class SearchComodoDns < BaseTask
     if res.any?
       _log "Resolves to #{res.map{|x| "#{x.to_s}" }}. Seems we're good!"
     else
-      source = "Comodo"
-      description = "Comodo Secure DNS is a domain name resolution service that resolves "  + 
-        "DNS requests through our worldwide network of redundant DNS servers, bringing you " + 
-        "the most reliable fully redundant DNS service anywhere, for a safer, smarter and" 
-        "faster Internet experience."
-      
+      source = "OpenDNS"
+      description = "OpenDNS (now Cisco Umbrella) provides protection against threats on the internet such as malware, " +
+        "phishing, and ransomware."
+
       _create_linked_issue("blocked_by_dns", {
         status: "confirmed",
         additional_description: description,
-        source: source, 
+        source: source,
         proof: "Resolved to the following address(es) outside of #{source} (#{nameservers}): #{resolves_to.join(", ")}",
         to_reproduce: "dig #{entity_name} @#{nameservers.first}",
-        references: [{type: "remediation", uri: "https://www.comodo.com/secure-dns/" }]
+        references:
+          [{type: "remediation", uri: "https://support.opendns.com/hc/en-us/articles/227987347-Why-is-this-Domain-Blocked-or-not-Blocked-" }]
       })
 
-      # Also store it on the entity 
-      blocked_list = @entity.get_detail("suspicious_activity_detected") || [] 
+      # Also store it on the entity
+      blocked_list = @entity.get_detail("suspicious_activity_detected") || []
       @entity.set_detail("suspicious_activity_detected", blocked_list.concat([{source: source}]))
 
     end
-    
+
   end #end run
 
 

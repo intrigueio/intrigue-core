@@ -74,8 +74,8 @@ require_relative 'tasks/base'
 tasks_folder = File.expand_path('../tasks', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
-# Load control tasks
-tasks_folder = File.expand_path('../tasks/control', __FILE__) # get absolute directory
+# Load enrichment functfions
+tasks_folder = File.expand_path('../tasks/enrich', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
 # Load import tasks
@@ -83,9 +83,9 @@ tasks_folder = File.expand_path('../tasks/import', __FILE__) # get absolute dire
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
 # Load vuln check tasks
-tasks_folder = File.expand_path('../tasks/vulns', __FILE__) # get absolute directory
+tasks_folder = File.expand_path('../tasks/threat', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
-# Load enrichment functfions
-tasks_folder = File.expand_path('../tasks/enrich', __FILE__) # get absolute directory
+# Load vuln check tasks
+tasks_folder = File.expand_path('../tasks/vulns', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }

@@ -82,10 +82,12 @@ class Uri < Intrigue::Task::BaseTask
     _log "Received #{ident_responses.count} responses for fingerprints!"
 
     if ident_fingerprints.count > 0
-      _log "Attempting to match to vulnerabilities!"
+
       # Make sure the key is set before querying intrigue api
-      vulndb_api_key = _get_task_config "intrigue_vulndb_api_key"
-      use_api = vulndb_api_key && vulndb_api_key.length > 0
+      intrigueio_api_key = _get_task_config "intrigueio_api_key"
+      use_api = intrigueio_api_key && intrigueio_api_key.length > 0
+
+      # for ech fingerprint, map vulns 
       ident_fingerprints = ident_fingerprints.map do |fp|
 
         vulns = []
@@ -93,7 +95,7 @@ class Uri < Intrigue::Task::BaseTask
           cpe = Intrigue::Vulndb::Cpe.new(fp["cpe"])
           if use_api # get vulns via intrigue API
             _log "Matching vulns for #{fp["cpe"]} via Intrigue API"
-            vulns = cpe.query_intrigue_vulndb_api(vulndb_api_key)
+            vulns = cpe.query_intrigue_vulndb_api(intrigueio_api_key)
           else
             vulns = cpe.query_local_nvd_json
           end
@@ -103,6 +105,7 @@ class Uri < Intrigue::Task::BaseTask
 
         fp.merge!({"vulns" => vulns })
       end
+
     end
 
     # process interesting content checks that requested an issue be created
@@ -364,7 +367,7 @@ class Uri < Intrigue::Task::BaseTask
     ### Finally, cloud provider determination
     ###
 
-    # Now that we have our core details, check cloud status
+    # Now that we have our core details, check cloud statusi
     cloud_providers = determine_cloud_status(@entity)
     _set_entity_detail "cloud_providers", cloud_providers.uniq.sort
     _set_entity_detail "cloud_hosted",  !cloud_providers.empty?

@@ -11,9 +11,9 @@ module CloudProviders
     out = []
 
     # Check the relevant attributes on a per-entity basis 
-    out = _get_cloud_status_dns_record(entity) if entity.kind_of? Intrigue::Entity::DnsRecord 
-    out = _get_cloud_status_ip_address(entity) if entity.kind_of? Intrigue::Entity::IpAddress 
-    out = _get_cloud_status_uri(entity) if entity.kind_of? Intrigue::Entity::Uri
+    out = _get_cloud_status_dns_record(entity.name) if entity.kind_of? Intrigue::Entity::DnsRecord 
+    out = _get_cloud_status_ip_address(entity.name) if entity.kind_of? Intrigue::Entity::IpAddress 
+    out = _get_cloud_status_uri(entity.name) if entity.kind_of? Intrigue::Entity::Uri
     
   # return it   
   out 
@@ -21,24 +21,56 @@ module CloudProviders
 
   private 
 
+  def _cloud_classifier_lookup(ip_address)
+    
+    intrigueio_api_key = _get_task_config "intrigueio_api_key"
+    unless intrigueio_api_key
+      _log_error "Unable to check, verify you've entered a valid Intrigue.io API key!"
+      return nil
+    end
+
+    begin 
+      api_url = "https://app.intrigue.io/api/cloudclassifier/lookup/ip/#{ip_address}?key=#{intrigueio_api_key}"
+      resp = http_get_body(api_url)
+
+      json = JSON.parse(resp) if resp
+      if json && json["cloudProvider"] && json["cloudProvider"].length > 0
+        return "#{json["cloudProvider"]}_#{json["cloudService"]}".downcase 
+      end
+    rescue JSON::ParserError => e 
+      _log_error "Unable to parse API response"
+    end
+  
+  nil
+  end
+
   def _get_cloud_status_ip_address(ip_address)
     cloud_providers = []
 
     ###
     ### USE IP DATA
     ###
-
+    lookup_result = _cloud_classifier_lookup(ip_address) 
+    cloud_providers << lookup_result if lookup_result
 
     ###
     ### USE ASN / NET_NAME
     ###
-    cloud_providers << "fastly" if _get_entity_detail("net_name") == "FASTLY, US"
+    cloud_providers << "fastly" if _get_entity_detail("net_name") =~ /FASTLY/
+    cloud_providers << "cloudflare" if _get_entity_detail("net_name") =~ /CLOUDFLARENET/
+    cloud_providers << "amazon" if _get_entity_detail("net_name") =~ /AMAZON/
 
   cloud_providers
   end
 
   def _get_cloud_status_dns_record(dns_record)
     cloud_providers = []
+
+    _get_entity_detail("resolutions").each do |resolution| 
+      ip_address = resolution["response_data"]
+      lookup_result = _cloud_classifier_lookup(ip_address) 
+      cloud_providers << lookup_result if lookup_result
+    end
 
     ###
     ### USE DNS
@@ -53,6 +85,13 @@ module CloudProviders
   def _get_cloud_status_uri(app)
     cloud_providers = []
 
+    ###
+    ### USE IP ADDRESS
+    ###
+    ip_address = _get_entity_detail("ip_address")
+    lookup_result = _cloud_classifier_lookup(ip_address) 
+    cloud_providers << lookup_result if lookup_result
+    
     ###
     ### USE DNS
     ###

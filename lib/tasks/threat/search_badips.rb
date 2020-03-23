@@ -5,8 +5,8 @@ class SearchBadIps < BaseTask
 
   def self.metadata
     {
-      :name => "search_badips",
-      :pretty_name => "Search Badips.com",
+      :name => "threat/search_badips",
+      :pretty_name => "Threat Check - Search Badips.com",
       :authors => ["Anas Ben Salah"],
       :description => "This task search BadIps blacklist for listed IP address",
       :references => ["https://www.badips.com/"],
@@ -28,7 +28,7 @@ class SearchBadIps < BaseTask
     entity_name = _get_entity_name
 
     # Get the Api response
-    response = open("https://www.badips.com/get/info/#{entity_name}").read
+    response = http_get_body("https://www.badips.com/get/info/#{entity_name}")
     result = JSON.parse(response)
 
     # Check if the IP is listed

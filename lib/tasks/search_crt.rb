@@ -8,7 +8,7 @@ class SearchCrt < BaseTask
       :name => "search_crt",
       :pretty_name => "Search CRT",
       :authors => ["jcran"],
-      :description => "This task hit CRT's API and creates new DnsRecord entities.",
+      :description => "This task searches CRT's API and creates new subdomains.",
       :references => [],
       :type => "discovery",
       :passive => true,

@@ -42,23 +42,7 @@ class Example < BaseTask
       _log_error "Invalid option: sleep"
       return
     end
-
-    ########################
-    ### Old issue format ###
-    ########################
-
-    # create an issue the old school way
-    zone = [1,2,3,4]
-    _create_issue({
-      name: "Example Issue",
-      type: "example",
-      severity: 5,
-      category: "network",
-      status: "confirmed",
-      description: "just an example.",
-      details: { example_attribute: zone }
-    })
-
+    
     ########################
     ### New issue format ###
     ########################

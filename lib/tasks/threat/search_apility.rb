@@ -4,8 +4,8 @@ class SearchApility < BaseTask
 
   def self.metadata
     {
-      :name => "search_apility",
-      :pretty_name => "Search Apility",
+      :name => "threat/search_apility",
+      :pretty_name => "Threat Check - Search Apility",
       :authors => ["Anas Ben Salah"],
       :description => "This task search Apility API for IP address and domain reputation",
       :references => ["https://api.apility.net/v2.0/ip/"],
@@ -29,10 +29,7 @@ class SearchApility < BaseTask
 
     api_key =_get_task_config("apility_api_key")
 
-    headers = {
-      "Accept" =>  "application/json" ,
-      "X-Auth-Token" => api_key
-    }
+    headers = { "Accept" =>  "application/json", "X-Auth-Token" => api_key }
 
     if entity_type == "IpAddress"
       search_apility_by_ip entity_name, headers

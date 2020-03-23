@@ -7,7 +7,7 @@ class SearchThreatcrowd < BaseTask
   def self.metadata
     {
       :name => "search_threatcrowd",
-      :pretty_name => "Search ThreatCrowd",
+      :pretty_name => "Threat Check - Search ThreatCrowd",
       :authors => ["jcran"],
       :description => "This task hits the ThreatCrowd API and finds related content. Discovered IPs / subdomains / emails are created.",
       :references => [],

@@ -86,6 +86,15 @@ class DnsRecord < Intrigue::Task::BaseTask
 
     end
 
+    ###
+    ### Finally, cloud provider determination
+    ###
+
+    # Now that we have our core details, check cloud status
+    cloud_providers = determine_cloud_status(@entity)
+    _set_entity_detail "cloud_providers", cloud_providers.uniq.sort
+    _set_entity_detail "cloud_hosted",  !cloud_providers.empty?
+
   end
 
   private

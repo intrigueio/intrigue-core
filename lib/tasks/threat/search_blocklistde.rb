@@ -5,8 +5,8 @@ class SearchBlocklistde < BaseTask
 
   def self.metadata
     {
-      :name => "search_blocklistde",
-      :pretty_name => "Search Blocklist.de",
+      :name => "threat/search_blocklistde",
+      :pretty_name => "Threat Check - Search Blocklist.de",
       :authors => ["Anas Ben Salah"],
       :description => "This task checks IPs vs blocklist.de list for maliciousness IPs ",
       :references => [],

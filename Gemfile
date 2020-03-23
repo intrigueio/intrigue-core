@@ -2,8 +2,8 @@ source 'https://rubygems.org'
 ruby '2.6.5'
 
 # core
-gem 'sinatra',         '~> 2.0.1'
-gem 'sinatra-contrib', '~> 2.0.1'
+gem 'sinatra'                 #'~> 2.0.1'
+gem 'sinatra-contrib'         #'~> 2.0.1'
 gem 'puma'                    # Application Server
 gem 'eventmachine'
 
@@ -67,14 +67,13 @@ gem 'whois'                   # dns_zone_transfer, whois
 gem 'whois-parser'            # whois
 gem 'whoisology',             :git => 'https://github.com/pentestify/whoisology.git'
 
-
 # swap these if developing on chrome_remote locally
 gem 'chrome_remote',          :git => 'https://github.com/intrigueio/chrome_remote.git'
 #gem 'chrome_remote',          :path => "~/chrome_remote"
 
 # swap these if developing on ident locally
-gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git'
-#gem 'intrigue-ident',         :path => "~/ident"
+#gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git'
+gem 'intrigue-ident',         :path => "~/ident"
 
 # vulndb
 gem 'versionomy'

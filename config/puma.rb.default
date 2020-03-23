@@ -87,7 +87,7 @@ ssl_bind '0.0.0.0', '7777', {
   cert: "#{cwd}/config/server.crt", 
   no_tlsv1: true, 
   no_tlsv1_1: true 
-  }
+}
 
 # Code to run before doing a restart. This code should
 # close log files, database connections, etc.

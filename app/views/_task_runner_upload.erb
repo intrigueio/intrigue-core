@@ -28,6 +28,17 @@
   </div>
 
   <div class="form-group">
+    <!-- <select name="task" id="task_name"> -->
+    <label for="file_format" class="col-xs-4 control-label">File Format</label>
+    <div class="col-xs-8">
+    <select class="form-control input-sm" name="file_format" id="file_format">
+      <option value="entity_list" selected>Intrigue.io Entity List (Type#Name)</option>
+      <option value="otx_csv">Alienvault OTX CSV</option>
+    </select>
+    </div>
+  </div>
+
+  <div class="form-group">
     <div id="file_upload">
       <label for="entity_file" class="col-xs-4 control-label">Entity File</label>
       <div class="col-xs-8"><input type="file" name=entity_file></div>

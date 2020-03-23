@@ -5,8 +5,8 @@ class SearchFraudGuard < BaseTask
 
   def self.metadata
     {
-      :name => "search_fraudguard",
-      :pretty_name => "Search FraudGuard",
+      :name => "threat/search_fraudguard",
+      :pretty_name => "Threat Check - Search FraudGuard",
       :authors => ["Anas Ben Salah"],
       :description => "This task hits FraudGuard api ",
       :references => ["https://docs.fraudguard.io/"],

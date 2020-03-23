@@ -5,8 +5,8 @@ class SearchProjectHoneypot < BaseTask
 
   def self.metadata
     {
-      :name => "search_project_honeypot",
-      :pretty_name => "Search Project Honeypot",
+      :name => "threat/search_project_honeypot",
+      :pretty_name => "Threat Check - Search Project Honeypot",
       :authors => ["jcran"],
       :description => "This task checks the projecthoneypot site for information.",
       :type => "discovery",

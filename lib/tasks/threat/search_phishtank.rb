@@ -5,8 +5,8 @@ class SearchPhishtank < BaseTask
 
   def self.metadata
     {
-      :name => "search_phishtank",
-      :pretty_name => "Search Phishtank",
+      :name => "threat/search_phishtank",
+      :pretty_name => "Threat Check - Search Phishtank",
       :authors => ["jcran"],
       :description => "Uses the Phishtank API to search for a uri",
       :references => [],

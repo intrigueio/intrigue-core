@@ -270,9 +270,9 @@
       "editable": "true",
       "comment": ""
     },
-    "intrigue_vulndb_api_key": {
+    "intrigueio_api_key": {
       "value": "",
-      "uri": "https://intrigue.io/core/api",
+      "uri": "https://app.intrigue.io/api",
       "editable": "true",
       "comment": ""
     },

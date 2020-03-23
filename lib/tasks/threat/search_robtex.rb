@@ -5,8 +5,8 @@ class SearchRobtex < BaseTask
 
   def self.metadata
     {
-      :name => "search_robtex",
-      :pretty_name => "Search Robtex",
+      :name => "threat/search_robtex",
+      :pretty_name => "Threat Check - Search Robtex",
       :authors => ["jcran"],
       :description => "Use Robtex API to find detail on IpAddresses",
       :references => ["https://www.robtex.com/","https://market.mashape.com/robtex/robtex"],
