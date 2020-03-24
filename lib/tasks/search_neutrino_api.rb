@@ -19,7 +19,7 @@ class SearchNeutrinoAPI < BaseTask
         {:name => "description", :regex=> "boolean", :default => true },
         {:name => "fix_typos", :regex=> "boolean", :default => false }
       ],
-      :created_types => ["IpAddress"]
+      :created_types => ["DnsRecord", "Domain", "IpAddress", "Organization"]
     }
   end
 
@@ -278,7 +278,7 @@ class SearchNeutrinoAPI < BaseTask
         "The number of blocklists the IP is listed on: #{list_count}, The last time this IP was seen on a blocklist: #{last_seen} , " +
         "this IP is listed on: #{blocklists}, sensors were used to detect this IP: #{sensors}",
         neutrinoapi_details: description,
-        proof: "This IP was founded flaged ",
+        proof: "This IP was flagged",
         source: "NeutrinoAPI"
       })
       # Also store it on the entity

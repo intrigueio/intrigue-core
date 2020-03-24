@@ -7,7 +7,7 @@ class SearchSpyse < BaseTask
       :name => "search_spyse",
       :pretty_name => "Search Spyse",
       :authors => ["Anas Ben Salah"],
-      :description => "This task hits Spyse API for subdomains, IP / Port lookup, DNS records and SslCertificate informations",
+      :description => "This task hits Spyse API for subdomains, IP / Port lookup, DNS records and SslCertificate information",
       :references => ["https://spyse.com/apidocs"],
       :type => "discovery",
       :passive => true,

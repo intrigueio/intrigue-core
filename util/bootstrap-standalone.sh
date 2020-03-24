@@ -232,10 +232,12 @@ echo "[+] Create /data directories for postgres and redis"
 sudo service postgresql stop
 sudo mkdir -p /data/postgres
 sudo chown postgres:postgres /data/postgres
+sudo chmod 644 /data/postgres
 sudo -u postgres /usr/lib/postgresql/*/bin/initdb /data/postgres
 
 sudo mkdir /data/redis
 sudo chown redis:redis /data/redis
+sudo chmod 644 /data/redis
 
 # Set the database to trust
 echo "[+] Updating postgres configuration"
@@ -244,8 +246,9 @@ sudo sed -i 's/peer/trust/g' /etc/postgresql/*/main/pg_hba.conf
 sudo sed -i "s/data_directory = .*/data_directory = \'\/data\/postgres\'/g" /etc/postgresql/*/main/postgresql.conf
 
 echo "[+] Updating Redis configuration"
-sed -i '/^bind/s/bind.*/bind 127.0.0.1/' /etc/redis/redis.conf
-sed -i 's/dir \/var\/lib\/redis/dir \/data\/redis/g' /etc/redis/redis.conf
+#sudo sed -i '/^bind/s/bind.*/bind 127.0.0.1/' /etc/redis/redis.conf
+#sudo sed -i 's/dir \/var\/lib\/redis/dir \/data\/redis/g' /etc/redis/redis.conf
+
 sudo service redis-server start
 
 echo "[+] Creating clean database"
@@ -303,7 +306,7 @@ echo "Ruby version: `ruby -v`"
 
 # Install bundler
 echo "[+] Installing Latest Bundler"
-gem install bundler:2.0.2 --no-document
+gem install bundler:2.1.4 --no-document
 rbenv rehash
 
 #####

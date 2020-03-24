@@ -3,11 +3,10 @@ module Intrigue
 module Task
 class SearchBlcheckList < BaseTask
 
-
   def self.metadata
     {
-      :name => "search_blcheck_list",
-      :pretty_name => "Search Blcheck List",
+      :name => "threat/blcheck_list",
+      :pretty_name => "Threat Check - Search Blcheck List",
       :authors => ["Anas Ben Salah"],
       :description => "This task Test any domain against more then 100 black lists.",
       :references => [],
@@ -27,7 +26,7 @@ class SearchBlcheckList < BaseTask
     entity_name = _get_entity_name
     entity_type = _get_entity_type_string
 
-    file = File.open "/path_tp_file/intrigue-core/data/blcheck.json"
+    file = File.open "#{$intrigue_basedir}/data/blcheck.json"
     blacklists = JSON.load file
 
     # Initialisation

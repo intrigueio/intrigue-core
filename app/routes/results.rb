@@ -172,39 +172,79 @@ class IntrigueApp < Sinatra::Base
       depth = @params["depth"].to_i
       current_project = Intrigue::Model::Project.first(:name => @project_name)
       entity_name = "#{@params["attrib_name"]}".strip
+      file_format = "#{@params["file_format"]}".strip
 
-      # handle file if we got it
-      if @params["entity_file"]
+      # first check that our file is sane 
+      file_type = @params["entity_file"]["type"]
+      puts "Got file of type: #{file_type}"
 
-        file_type = @params["entity_file"]["type"]
+      # barf if we got a bad file
+      unless file_type =~ /^text/ || file_type == "application/octet-stream"
+        session[:flash] = "Bad file data, ensure we're a text file and valid format: #{file_type}"
+        redirect FRONT_PAGE
+      end
+      
+      # get the file
+      entity_file = @params["entity_file"]["tempfile"]
+      f = File.open entity_file,"r"
+      file_lines = f.readlines
+      f.close 
 
-        puts "Got file of type: #{file_type}"
-
-        # barf if we got a bad file
-        unless file_type =~ /^text/ || file_type == "application/octet-stream"
-          session[:flash] = "Bad file type: #{file_type}"
+      # ensure we're sane  with the data we're bringing in
+      file_lines.each do |l|
+        unless l =~ /[\w\d\s\_\-\:\\\/\#\.]+/ # check for entity sanity
+          session[:flash] = "Unacceptable entity: #{l}, failing"
           redirect FRONT_PAGE
         end
+      end
 
-        # get the file
-        entity_file = @params["entity_file"]["tempfile"]
 
-        f = File.open entity_file,"r"
-        entities = []
-        f.each_line do |l|
+      ###
+      ### Standard file type (entity list)
+      ###
+      entities = []
+      # handle file if we got it
+      if file_format == "entity_list"
+        puts 'Parsing Standard entity file'
+        file_lines.each do |l|
           next if l[0] == "#" # skip comment lines
 
-          unless l =~ /[\w]+\#[\w\d\s\_\-\:\\\/]+/ # check for entity sanity
-            session[:flash] = "Bad file content: #{l}"
-            redirect FRONT_PAGE
-          end
-
-          et = l.split("#").first.strip
-          en = l.split("#").last.strip
+          # strip out the data
+          et, en = l.split("#").map{|x| x.strip}
 
           entities << {entity_type: "#{et}", entity_name: "#{en}", }
         end
+      ###
+      ### Alienvault OTX (CSV)
+      ###
+      elsif file_format == "otx_csv"
+        puts 'Parsing Alienvault file'
+        file_lines.each do |l|
+          
+          next if l =~ /^Indicator type,Indicator,Description\r\n$/
+          
+          # strip out the data
+          split_line = l.split(",").map{|x| x.strip }
+          et = split_line[0] # indicator type
+          en = split_line[1] # indicator
+
+          # start here
+          modified_et = et.capitalize
+          
+          # translate
+          modified_et = "Uri" if modified_et == "Url"
+          modified_et = "DnsRecord" if modified_et == "Hostname"
+          modified_et = "IpAddress" if modified_et == "Ipv4"
+          modified_et = "IpAddress" if modified_et == "Ipv6"
+
+          entities << {entity_type: "#{modified_et}", entity_name: "#{en}" }
+        end
+      else 
+        session[:flash] = "Unkown File Format #{file_format}, failing"
+        redirect FRONT_PAGE
       end
+
+      puts "Got entities: #{entities}"
 
       ### Handler definition, make sure we have a valid handler type
       if Intrigue::HandlerFactory.include? "#{@params["handler"]}"
@@ -229,17 +269,18 @@ class IntrigueApp < Sinatra::Base
         entity_name = e[:entity_name]
 
         # create the first entity with empty details
+        #next unless Intrigue::EntityFactory.entity_types.include?(entity_type)
         entity = Intrigue::EntityManager.create_first_entity(@project_name,entity_type,entity_name,{})
 
         # skip anything we can't parse, but throw an error
         unless entity
-          #task_result.log_error "Could not create entity!!"
+          task_result.log_error "Could not create entity!!"
           next
         end
 
         # Start the task run!
         task_result = start_task("task", current_project, nil, task_name, entity,
-                                  depth, nil, handlers, machine_name, auto_enrich, auto_scope)
+                  depth, nil, handlers, machine_name, auto_enrich, auto_scope)
 
         entity.task_results << task_result
         entity.save

@@ -1,17 +1,13 @@
-require 'resolv'
-
 module Intrigue
 module Task
-class SearchYandexDns < BaseTask
-
-
+class SearchCleanBrowsingDns < BaseTask
   def self.metadata
     {
-      :name => "search_yandex_dns",
-      :pretty_name => "Search Yandex DNS",
+      :name => "threat/search_cleanbrowsing_dns",
+      :pretty_name => "Threat Check - Search CleanBrowsing DNS",
       :authors => ["Anas Ben Salah"],
-      :description => "This task looks up whether hosts are blocked by Yandex DNS",
-      :references => ["https://dns.yandex.com/"],
+      :description => "This task looks up whether hosts are blocked by Cleanbrowsing.org DNS",
+      :references => ["Cleanbrowsing.org"],
       :type => "threat_check",
       :passive => true,
       :allowed_types => ["Domain", "DnsRecord"],
@@ -21,12 +17,12 @@ class SearchYandexDns < BaseTask
     }
   end
 
-
   ## Default method, subclasses must override this
   def run
     super
-
+    res = []
     entity_name = _get_entity_name
+    entity_type = _get_entity_type_string
 
     # skip cdns
     if !get_cdn_domains.select{ |x| entity_name =~ /#{x}/}.empty? || 
@@ -40,10 +36,10 @@ class SearchYandexDns < BaseTask
     unless resolves_to.first
       _log "No resolution for this record, unable to check"
       return 
-    end 
+    end
 
-    # Query yandex nameservers
-    nameservers = ['77.88.8.88','77.88.8.2']
+    # We use their DNS servers to query
+    nameservers= ['185.228.168.168', '185.228.168.169']
     _log "Querying #{nameservers}"
     dns_obj = Resolv::DNS.new(nameserver: nameservers)
     
@@ -55,30 +51,26 @@ class SearchYandexDns < BaseTask
     if res.any?
       _log "Resolves to #{res.map{|x| "#{x.to_s}" }}. Seems we're good!"
     else
-
-      source =  "Yandex"
-      description = "When attempting to open a site, Yandex.DNS (Safe) will block the download " +
-      "of any information from it and warn the user. Yandex uses its own anti-virus software that " +  
-      "checks sites for malware. Yandex.DNS uses its own anti-virus software operating on Yandex " +
-      "algorithms, as well as signature technology by Sophos."
-
+      source = "CleanBrowsing"
+      description = "The Cleanbrowsing DNS security filter focuses on restricting access " + 
+        "to malicious activity. It blocks phishing, spam and known malicious domains."
+      
       _create_linked_issue("blocked_by_dns", {
         status: "confirmed",
         additional_description: description,
         source: source, 
         proof: "Resolved to the following address(es) outside of #{source} (#{nameservers}): #{resolves_to.join(", ")}",
         to_reproduce: "dig #{entity_name} @#{nameservers.first}",
-        references: [{ type: "remediation", uri: "https://dns.yandex.com/" }]
-      })
-
+        references: [{ type: "remediation", uri: "https://cleanbrowsing.org/" }]
+      }) 
+      
       # Also store it on the entity 
       blocked_list = @entity.get_detail("suspicious_activity_detected") || [] 
       @entity.set_detail("suspicious_activity_detected", blocked_list.concat([{source: source}]))
 
     end
 
-  end #end run
-
+  end
 
 end
 end

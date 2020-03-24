@@ -82,10 +82,12 @@ class Uri < Intrigue::Task::BaseTask
     _log "Received #{ident_responses.count} responses for fingerprints!"
 
     if ident_fingerprints.count > 0
-      _log "Attempting to match to vulnerabilities!"
+
       # Make sure the key is set before querying intrigue api
-      vulndb_api_key = _get_task_config "intrigue_vulndb_api_key"
-      use_api = vulndb_api_key && vulndb_api_key.length > 0
+      intrigueio_api_key = _get_task_config "intrigueio_api_key"
+      use_api = intrigueio_api_key && intrigueio_api_key.length > 0
+
+      # for ech fingerprint, map vulns 
       ident_fingerprints = ident_fingerprints.map do |fp|
 
         vulns = []
@@ -93,7 +95,7 @@ class Uri < Intrigue::Task::BaseTask
           cpe = Intrigue::Vulndb::Cpe.new(fp["cpe"])
           if use_api # get vulns via intrigue API
             _log "Matching vulns for #{fp["cpe"]} via Intrigue API"
-            vulns = cpe.query_intrigue_vulndb_api(vulndb_api_key)
+            vulns = cpe.query_intrigue_vulndb_api(intrigueio_api_key)
           else
             vulns = cpe.query_local_nvd_json
           end
@@ -103,6 +105,7 @@ class Uri < Intrigue::Task::BaseTask
 
         fp.merge!({"vulns" => vulns })
       end
+
     end
 
     # process interesting content checks that requested an issue be created
@@ -232,7 +235,6 @@ class Uri < Intrigue::Task::BaseTask
     #
     end
 
-
     ###
     ### Fingerprint the app server
     ###
@@ -272,29 +274,29 @@ class Uri < Intrigue::Task::BaseTask
     new_details.merge!({
       "alt_names" => alt_names,
       "api_endpoint" => api_enabled,
+      #"ciphers" => accepted_connections,
       "code" => response.code,
-      "title" => title,
+      "cookies" => response.header['set-cookie'],
+      "content" => ident_content_checks.uniq,
+      "extended_ciphers" => accepted_connections,             # new ciphers field
+      "extended_configuration" => ident_content_checks.uniq,  # new content field
+      "extended_full_responses" => ident_responses,           # includes all the redirects etc
+      "extended_favicon_data" => favicon_data,
+      "extended_response_body" => response.body,
       "favicon_md5" => favicon_md5,
       "favicon_sha1" => favicon_sha1,
-      "generator" => generator_string,
-      "verbs" => verbs_enabled,
-      "scripts" => script_links,
-      "headers" => headers,
-      "cookies" => response.header['set-cookie'],
-      "forms" => contains_forms,
-      "response_data_hash" => response_data_hash,
-      "hidden_favicon_data" => favicon_data,
-      "extended_favicon_data" => favicon_data,
-      "hidden_response_data" => response.body,
-      "redirect_chain" => ident_responses.first[:response_urls] || [],
-      "extended_full_responses" => ident_responses, # includes all the redirects etc
-      "extended_response_body" => response.body,
-      "products" => products.compact,
       "fingerprint" => ident_fingerprints.uniq,
-      "content" => ident_content_checks.uniq,
-      "extended_configuration" => ident_content_checks.uniq, # new content field
-      "ciphers" => accepted_connections,
-      "extended_ciphers" => accepted_connections # new ciphers field
+      "forms" => contains_forms,
+      "generator" => generator_string,
+      "headers" => headers,
+      "hidden_favicon_data" => favicon_data,
+      "hidden_response_data" => response.body,
+      "products" => products.compact,
+      "redirect_chain" => ident_responses.first[:response_urls] || [],
+      "response_data_hash" => response_data_hash,
+      "scripts" => script_links,
+      "title" => title,
+      "verbs" => verbs_enabled
     })
     
     # add in the browser results
@@ -304,6 +306,10 @@ class Uri < Intrigue::Task::BaseTask
     _set_entity_details new_details
       
     new_details = nil
+
+    ###
+    ### Alias Grouping
+    ###
 
     if _get_option("correlate_endpoints")
       # Check for other entities with this same response hash
@@ -356,6 +362,16 @@ class Uri < Intrigue::Task::BaseTask
         e = nil 
       end
     end
+
+    ###
+    ### Finally, cloud provider determination
+    ###
+
+    # Now that we have our core details, check cloud statusi
+    cloud_providers = determine_cloud_status(@entity)
+    _set_entity_detail "cloud_providers", cloud_providers.uniq.sort
+    _set_entity_detail "cloud_hosted",  !cloud_providers.empty?
+
   end
 
   def _gather_supported_ciphers(hostname,port)

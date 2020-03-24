@@ -5,8 +5,8 @@ class SearchBadIps < BaseTask
 
   def self.metadata
     {
-      :name => "search_emerging_threats",
-      :pretty_name => "Search Emerging Threats",
+      :name => "threat/search_emerging_threats",
+      :pretty_name => "Threat Check - Search Emerging Threats",
       :authors => ["Anas Ben Salah"],
       :description => "This task search Emerging Threats blacklist for listed IP address",
       :references => ["https://rules.emergingthreats.net/"],

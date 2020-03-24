@@ -4,8 +4,8 @@ class SearchAlienvaultOtxHashes < BaseTask
 
    def self.metadata
     {
-      :name => "search_alienvault_otx_hashes",
-      :pretty_name => "Search Alienvault OTX Hashes",
+      :name => "threat/alienvault_otx_hashes",
+      :pretty_name => "Threat Check - Search Alienvault OTX (Hash)",
       :authors => ["Anas Ben Salah"],
       :description => "This task searches AlienVault OTX via API and checks for information related to a FileHash",
       :references => ["https://otx.alienvault.com/api"],
@@ -50,10 +50,7 @@ class SearchAlienvaultOtxHashes < BaseTask
     # Make sure the key is set
     api_key = _get_task_config("otx_api_key")
 
-    headers ={
-      Accept: 'application/json',
-      'X-OTX-API-KEY': api_key
-    }
+    headers = { 'Accept': 'application/json', 'X-OTX-API-KEY': api_key }
 
     begin
       # get the initial response for the hash

@@ -4,8 +4,8 @@
 
     def self.metadata
       {
-        :name => "search_alienvault_otx",
-        :pretty_name => "Search Alienvault OTX",
+        :name => "threat/search_alienvault_otx",
+        :pretty_name => "Threat Check - Search Alienvault OTX",
         :authors => ["Anas Ben Salah"],
         :description => "This task searches AlienVault OTX via API and checks for related Hostnames, IpAddresses",
         :references => ["https://otx.alienvault.com/api"],
@@ -28,10 +28,7 @@
       # Make sure the key is set
       api_key = _get_task_config("otx_api_key")
 
-      headers ={
-        Accept: 'application/json',
-        'X-OTX-API-KEY': api_key
-      }
+      headers = { 'Accept': 'application/json', 'X-OTX-API-KEY': api_key }
 
       if entity_type == "Domain" || entity_type == "DnsRecord"
         search_otx_by_hostname entity_name, headers

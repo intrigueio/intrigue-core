@@ -4,8 +4,8 @@ module Intrigue
 
       def self.metadata
         {
-          :name => "search_pulsedive",
-          :pretty_name => "Search Pulsedive",
+          :name => "threat/search_pulsedive",
+          :pretty_name => "Threat Check - Search Pulsedive",
           :authors => ["Anas Ben Salah"],
           :description => "This task hits the Pulsedive API and enriches a domain",
           :references => ["https://pulsedive.com/api/"],

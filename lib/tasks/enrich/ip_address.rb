@@ -128,6 +128,14 @@ class IpAddress < Intrigue::Task::BaseTask
 
     _set_entity_detail("resolutions", dns_entries.uniq )
 
+    ###
+    ### Finally, cloud provider determination
+    ###
+
+    # Now that we have our core details, check cloud status
+    #cloud_providers = determine_cloud_status(@entity)
+    #_set_entity_detail "cloud_providers", cloud_providers.uniq.sort
+    #_set_entity_detail "cloud_hosted",  !cloud_providers.empty?
 
   end
 

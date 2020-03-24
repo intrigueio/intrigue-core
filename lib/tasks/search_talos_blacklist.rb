@@ -5,8 +5,8 @@ class SearchTalosBlackList < BaseTask
 
   def self.metadata
     {
-      :name => "search_talos_blacklist",
-      :pretty_name => "Search Talos BlackList",
+      :name => "threat/search_talos_blacklist",
+      :pretty_name => "Threat Check - Search Talos BlackList",
       :authors => ["Anas Ben Salah"],
       :description => "This task checks IPs vs Talos IP BlackList for threat data.",
       :references => [],

@@ -2,8 +2,8 @@ source 'https://rubygems.org'
 ruby '2.6.5'
 
 # core
-gem 'sinatra',         '~> 2.0.1'
-gem 'sinatra-contrib', '~> 2.0.1'
+gem 'sinatra'                 #'~> 2.0.1'
+gem 'sinatra-contrib'         #'~> 2.0.1'
 gem 'puma'                    # Application Server
 gem 'eventmachine'
 
@@ -66,7 +66,6 @@ gem 'towerdata_api'           # search_towerdata
 gem 'whois'                   # dns_zone_transfer, whois
 gem 'whois-parser'            # whois
 gem 'whoisology',             :git => 'https://github.com/pentestify/whoisology.git'
-
 
 # swap these if developing on chrome_remote locally
 gem 'chrome_remote',          :git => 'https://github.com/intrigueio/chrome_remote.git'

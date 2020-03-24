@@ -11,7 +11,7 @@ class SearchMnemonic < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["Domain","IpAddress"],
+      :allowed_types => ["Domain", "IpAddress"],
       :example_entities => [
         {"type" => "Domain", "details" => {"name" => "intrigue.io"}}
       ],

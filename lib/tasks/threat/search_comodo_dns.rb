@@ -1,16 +1,15 @@
-require 'resolv'
-
 module Intrigue
 module Task
-class SearchQuad9Dns < BaseTask
+class SearchComodoDns < BaseTask
+
 
   def self.metadata
     {
-      :name => "search_quad9_dns",
-      :pretty_name => "Search Quad9 DNS",
+      :name => "threat/search_comodo_dns",
+      :pretty_name => "Threat Check - Search Comodo DNS",
       :authors => ["Anas Ben Salah"],
-      :description => "This task looks up whether hosts are blocked by Quad9 DNS (9.9.9.9)",
-      :references => ["https://www.quad9.net"],
+      :description => "This task looks up whether hosts are blocked byCleanbrowsing.org DNS (8.26.56.26 and 8.20.247.20)",
+      :references => ["Cleanbrowsing.org"],
       :type => "threat_check",
       :passive => true,
       :allowed_types => ["Domain", "DnsRecord"],
@@ -24,13 +23,12 @@ class SearchQuad9Dns < BaseTask
   ## Default method, subclasses must override this
   def run
     super
-    res = []
     entity_name = _get_entity_name
 
     # skip cdns
     if !get_cdn_domains.select{ |x| entity_name =~ /#{x}/}.empty? || 
-        !get_internal_domains.select{ |x| entity_name =~ /#{x}/}.empty?
-        _log "This domain resolves to a known cdn or internal host, skipping"
+      !get_internal_domains.select{ |x| entity_name =~ /#{x}/}.empty?
+      _log "This domain resolves to a known cdn or internal host, skipping"
       return
     end
 
@@ -40,9 +38,9 @@ class SearchQuad9Dns < BaseTask
       _log "No resolution for this record, unable to check"
       return 
     end
-    
-    # Query quad9 nameservers
-    nameservers = ['9.9.9.9']
+
+    # Query comodo nameservers
+    nameservers = ['8.26.56.26', '8.20.247.20']
     _log "Querying #{nameservers}"
     dns_obj = Resolv::DNS.new(nameserver: nameservers)
     
@@ -54,21 +52,19 @@ class SearchQuad9Dns < BaseTask
     if res.any?
       _log "Resolves to #{res.map{|x| "#{x.to_s}" }}. Seems we're good!"
     else
-      source = "Quad9"
-      description = "Quad9 routes your DNS queries through a secure network of servers around the " +  
-        "globe. The system uses threat intelligence from more than a dozen of the industry’s leading " +
-        "cyber security companies to give a real-time perspective on what websites are safe and what " +
-        "sites are known to include malware or other threats. If the system detects that the site you " + 
-        "want to reach is known to be infected, you’ll automatically be blocked from entry – keeping " +
-        "your data and computer safe."
-
+      source = "Comodo"
+      description = "Comodo Secure DNS is a domain name resolution service that resolves "  + 
+        "DNS requests through our worldwide network of redundant DNS servers, bringing you " + 
+        "the most reliable fully redundant DNS service anywhere, for a safer, smarter and" 
+        "faster Internet experience."
+      
       _create_linked_issue("blocked_by_dns", {
         status: "confirmed",
         additional_description: description,
         source: source, 
         proof: "Resolved to the following address(es) outside of #{source} (#{nameservers}): #{resolves_to.join(", ")}",
         to_reproduce: "dig #{entity_name} @#{nameservers.first}",
-        references:  [{type: "remediation", uri: "https://www.quad9.net/" }]
+        references: [{type: "remediation", uri: "https://www.comodo.com/secure-dns/" }]
       })
 
       # Also store it on the entity 
@@ -76,7 +72,7 @@ class SearchQuad9Dns < BaseTask
       @entity.set_detail("suspicious_activity_detected", blocked_list.concat([{source: source}]))
 
     end
-
+    
   end #end run
 
 
