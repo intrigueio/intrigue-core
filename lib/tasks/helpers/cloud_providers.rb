@@ -111,8 +111,9 @@ module CloudProviders
     ###
     ### USE ASN / NET_NAME
     ###
-    cloud_providers << "fastly" if _get_entity_detail("net_name") == "FASTLY, US"
-    cloud_providers << "amazon" if _get_entity_detail("net_name") == "AMAZON"
+    #cloud_providers << "fastly" if _get_entity_detail("net_name") == "FASTLY, US"
+    cloud_providers << "amazon" if _get_entity_detail("net_name") =~ /AMAZON/
+
 
     ###
     ### FINGERPRINT

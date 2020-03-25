@@ -17,7 +17,8 @@ class DnsRecurseSpf < BaseTask
       :allowed_types => ["Domain","DnsRecord"],
       :type => "discovery",
       :passive => true,
-      :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
+      :example_entities => [
+        {"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
       :created_types => ["Domain", "IpAddress", "NetBlock"]
     }

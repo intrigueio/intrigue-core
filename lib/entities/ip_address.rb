@@ -73,8 +73,9 @@ class IpAddress < Intrigue::Model::Entity
 
     end
 
-  # if we didnt match the above and we were asked, it's still true 
-  true
+  # if we didnt match the above and we were asked, return whatever we got
+  # during the creation process
+  self.scoped
   end 
 
 end
