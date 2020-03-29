@@ -158,7 +158,7 @@ class ExchangeCve20200688 < BaseTask
       { version: "2013", update: "Cumulative Update 20" },
       { version: "2013", update: "Cumulative Update 21" },
       { version: "2013", update: "Cumulative Update 22" },
-      { version: "2013", update: "Cumulative Update 23" },
+      #{ version: "2013", update: "Cumulative Update 23" },
       #{ version: "2013", update: "Cumulative Update 23" },
       
       # 2016
