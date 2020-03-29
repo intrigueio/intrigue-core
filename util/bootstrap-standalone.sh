@@ -196,8 +196,8 @@ fi
 ### Install latest tika
 echo "[+] Installing Apache Tika"
 cd $INTRIGUE_DIRECTORY/tmp
-LATEST_TIKA_VERSION=1.23
-wget http://apache-mirror.8birdsvideo.com/tika/tika-server-$LATEST_TIKA_VERSION.jar
+LATEST_TIKA_VERSION=1.24
+wget http://apache.mirrors.hoobly.com/tika/$LATEST_TIKA_VERSION.jar
 cd $HOME
 
 # update sudoers
@@ -216,7 +216,7 @@ fi
 echo "bumping file-max settings"
 sudo bash -c "echo fs.file-max = 655355 >> /etc/sysctl.conf"
 sudo sysctl -p
-
+  
 echo "Bumping ulimit file/proc settings in /etc/security/limits.conf"
 sudo bash -c "echo 'root hard nofile 524288' >> /etc/security/limits.conf"
 sudo bash -c "echo 'root soft nofile 524288' >> /etc/security/limits.conf"
@@ -240,14 +240,18 @@ sudo chown redis:redis /data/redis
 sudo chmod 644 /data/redis
 
 # Set the database to trust
-echo "[+] Updating postgres configuration"
+echo "[+] Updating postgres configuration, moving it to /data"
 sudo sed -i 's/md5/trust/g' /etc/postgresql/*/main/pg_hba.conf
 sudo sed -i 's/peer/trust/g' /etc/postgresql/*/main/pg_hba.conf
 sudo sed -i "s/data_directory = .*/data_directory = \'\/data\/postgres\'/g" /etc/postgresql/*/main/postgresql.conf
 
-echo "[+] Updating Redis configuration"
-#sudo sed -i '/^bind/s/bind.*/bind 127.0.0.1/' /etc/redis/redis.conf
-#sudo sed -i 's/dir \/var\/lib\/redis/dir \/data\/redis/g' /etc/redis/redis.conf
+sudo service redis-server stop
+
+echo "[+] Updating Redis configuration, moving it to /data"
+# ensure we bind to localhost
+sudo sed -i '/^bind/s/bind.*/bind 127.0.0.1/' /etc/redis/redis.conf
+# change defualt direectory for ubuntu
+sudo sed -i 's/dir \/var\/lib\/redis \/data\/redis/g' /etc/redis/redis.conf
 
 sudo service redis-server start
 
