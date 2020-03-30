@@ -196,8 +196,7 @@ fi
 ### Install latest tika
 echo "[+] Installing Apache Tika"
 cd $INTRIGUE_DIRECTORY/tmp
-LATEST_TIKA_VERSION=1.24
-wget http://apache.mirrors.hoobly.com/tika/$LATEST_TIKA_VERSION.jar
+wget http://mirror.cogentco.com/pub/apache/tika/tika-server-1.24.jar
 cd $HOME
 
 # update sudoers
@@ -251,7 +250,7 @@ echo "[+] Updating Redis configuration, moving it to /data"
 # ensure we bind to localhost
 sudo sed -i '/^bind/s/bind.*/bind 127.0.0.1/' /etc/redis/redis.conf
 # change defualt direectory for ubuntu
-sudo sed -i 's/dir \/var\/lib\/redis \/data\/redis/g' /etc/redis/redis.conf
+sudo sed -i '/^dir/s/dir \/var\/lib\/redis/\/data\/redis/' /etc/redis/redis.conf
 
 sudo service redis-server start
 
