@@ -249,8 +249,9 @@ sudo service redis-server stop
 echo "[+] Updating Redis configuration, moving it to /data"
 # ensure we bind to localhost
 sudo sed -i '/^bind/s/bind.*/bind 127.0.0.1/' /etc/redis/redis.conf
-# change defualt direectory for ubuntu
-sudo sed -i '/^dir/s/dir \/var\/lib\/redis/\/data\/redis/' /etc/redis/redis.conf
+# change default direectory for ubuntu
+#sudo sed -i '/^dir/s/dir \/var\/lib\/redis/\/data\/redis/' /etc/redis/redis.conf
+sudo sed -i 's/dir \/var\/lib\/redis \/data\/redis/g' /etc/redis/redis.conf
 
 sudo service redis-server start
 
