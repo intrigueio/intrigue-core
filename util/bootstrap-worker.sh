@@ -190,7 +190,8 @@ fi
 echo "[+] Installing Apache Tika"
 cd $INTRIGUE_DIRECTORY/tmp
 LATEST_TIKA_VERSION=1.24
-wget http://apache.mirrors.hoobly.com/tika/$LATEST_TIKA_VERSION.jar
+wget http://apache.mirrors.ovh.net/ftp.apache.org/dist/tika/tika-server-$LATEST_TIKA_VERSION.jar
+mv $INTRIGUE_DIRECTORY/tmp/tika-server-$LATEST_TIKA_VERSION.jar $INTRIGUE_DIRECTORY/tmp/tika-server.jar
 cd $HOME
 
 # update sudoers
