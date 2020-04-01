@@ -216,6 +216,12 @@
       "editable": "true",
       "comment": ""
     },
+    "greynoise_api_key": {
+      "value": "XXX",
+      "uri": "https://docs.greynoise.io/#greynoise-api",
+      "editable": "true",
+      "comment": ""
+    },
     "gmail_account_credentials": {
       "value": "username:password",
       "uri": "https://www.gmail.com",
