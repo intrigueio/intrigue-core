@@ -45,6 +45,7 @@ class DnsSearchSonar < BaseTask
       if json["FDNS_A"]
         json["FDNS_A"].each do |entry|
           # format: "199.34.228.55,red-buddha-american-apparel-llc.company.com",
+          next if entry.split(",").last =~ /mail\.mail/
           _create_entity "DnsRecord", "name" => entry.split(",").last
         end
       end
