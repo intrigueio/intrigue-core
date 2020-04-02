@@ -8,7 +8,7 @@ Intrigue-core is an automation framework and orchestrator for external attack su
   * Malware IOC Enrichment
   * Security-Oriented Data Gathering Pipelines
 
-If you'd like assistance getting started or have development-related questions, feel free to join us in slack channel, simply drop a line to hello@intrigue.io
+If you'd like assistance getting started or have development-related questions, feel free to join us in slack channel, simply drop a line to hello-at-intrigue.io
 
 # Users
 
@@ -67,6 +67,10 @@ While you can build a local setup and develop, we'd suggest starting with one of
 You'll probably want to take a look at the following resources: 
 
  * Key System Files: https://github.com/intrigueio/intrigue-core/wiki/Understanding-Intrigue-Core%3A-Key-System-Files
+
+# Getting Help
+
+Send an email to hello-at-intrigue.io to receive an invite to our private slack community, where you'll be able to interact directly with us. 
 
 # Contributors
 
