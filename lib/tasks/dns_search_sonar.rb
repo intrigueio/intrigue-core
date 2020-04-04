@@ -16,7 +16,7 @@ class DnsSearchSonar < BaseTask
       :allowed_types => ["DnsRecord","Domain"],
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
-        {:name => "endpoint", :regex => "alpha_numeric_list", :default => "http://sonar.intrigue.io/dns?q=" },
+        {:name => "endpoint", :regex => "alpha_numeric_list", :default => "http://tls.bufferover.run/dns?q=" },
       ],
       :created_types => ["DnsRecord"]
     }
