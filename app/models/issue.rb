@@ -44,9 +44,9 @@ module Intrigue
           :entity_aliases => entity.aliases.map{|a| {"type" => a.type, "name" => a.name} },  
           :entity_alias_group_id => entity.alias_group_id,
           :details => details,
-          :task_result => task_result.name,
-          :task_result_entity_name => task_result.base_entity.name,
-          :task_result_entity_type => task_result.base_entity.type
+          :task_result => "#{task_result.name if task_result}",
+          :task_result_entity_name => "#{task_result.base_entity.name if task_result}",
+          :task_result_entity_type => "#{task_result.base_entity.type if task_result}"
         }
       end
 
