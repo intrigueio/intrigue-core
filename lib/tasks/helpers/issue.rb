@@ -37,15 +37,15 @@ module Issue
   end
 
   ### USE THIS GOING FORWARD
-  def _create_linked_issue(issue_type, instance_specifics={})
+  def _create_linked_issue(issue_type, instance_specifics={}, linked_entity=@entity)
 
     _log_good "Creating linked issue of type: #{issue_type}"
 
     issue_model_details = {  
-      entity_id: @entity.id,
+      entity_id: linked_entity.id,
       task_result_id: @task_result.id,
       project_id: @project.id, 
-      scoped: @entity.scoped,
+      scoped: linked_entity.scoped,
     }
     
     issue = Intrigue::Issue::IssueFactory.create_instance_by_type(
