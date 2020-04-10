@@ -297,6 +297,11 @@ class UriBruteFocusedContent < BaseTask
       #{ path: '/wp-content/plugins/easy-wp-smtp/', severity: 2,  body_regex: /debug_log/i, status: "potential" },
       #{ path: '/wp-content/plugins/easy-wp-smtp/inc/', severity: 2,  body_regex: /debug_log/i, status: "potential" }
     ] 
+
+    wpengine_list = {
+      { issue_type: "wpengine_config_leak", path: "/_wpeprivate/config.json", severity: 1,  body_regex: /wpengine_apikey/, status: "confirmed" },
+    }
+
   
     # Create our queue of work from the checks in brute_list
     work_q = Queue.new
@@ -325,6 +330,7 @@ class UriBruteFocusedContent < BaseTask
     weblogic_list.each { |x| work_q.push x } if is_product?(fingerprint,"Weblogic Server")
     websphere_list.each { |x| work_q.push x } if is_product?(fingerprint,"WebSphere")
     wordpress_list.each { |x| work_q.push x } if is_product?(fingerprint,"Wordpress") 
+    wpengine_list.each { |x| work_q.push x } if is_product?(fingerprint,"WPEngine") 
 
     # then add our "always" stuff:
     generic_list.each { |x| work_q.push x } if opt_generic_content
