@@ -76,20 +76,7 @@ module Issue
   ###
 
   def _create_content_issue(uri, check)
-    _create_issue({
-      name: "Content Issue Discovered: #{check["name"]}",
-      type: "#{check["name"].downcase.gsub(" ","_")}",
-      category: "application",
-      severity: 4, # todo...
-      source: "self",
-      status: "confirmed",
-      description: "This server had a content issue: #{check["name"]}.",
-      references: [],
-      details: {
-        uri: uri,
-        check: check
-      }
-    })
+    _create_linked_issue("content_issue", { uri: uri, check: check })
   end
 
   def _create_missing_cookie_attribute_http_only_issue(uri, cookie, severity=5)
