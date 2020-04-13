@@ -65,8 +65,10 @@ class SearchDehashed < BaseTask
     #check if entries different to null
     begin
 
-      response = http_get_body('https://api.dehashed.com/search?query="'+"#{entity_name}"+'"',nil,headers)
+      response = http_get_body("https://api.dehashed.com/search?query=#{entity_name}",nil,headers)
       json = JSON.parse(response)
+
+      _log "Got JSON: #{json}"
 
       if json["entries"]
         json["entries"].each do |result|

@@ -192,7 +192,7 @@
       "editable": "true",
       "comment": ""
     },
-    "farsight_api_key": {
+    "farsight_dnsdb_api_key": {
       "value": "",
       "uri": "https://www.farsightsecurity.com/get-started-guide/",
       "editable": "true",
