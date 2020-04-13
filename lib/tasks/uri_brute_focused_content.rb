@@ -219,7 +219,6 @@ class UriBruteFocusedContent < BaseTask
     # https://www.exploit-db.com/exploits/43009 - c
     #"/solr/gettingstarted/select?q=test"
 
-
     splunk_list = [
       { issue_type: "splunk_info_leak", path: "/en-US/splunkd/__raw/services/server/info/server-info?output_mode=json", 
         body_regex: /os_name_extended/, severity: 4, status: "confirmed" }, # CVE-2018-11409
@@ -298,9 +297,9 @@ class UriBruteFocusedContent < BaseTask
       #{ path: '/wp-content/plugins/easy-wp-smtp/inc/', severity: 2,  body_regex: /debug_log/i, status: "potential" }
     ] 
 
-    wpengine_list = {
-      { issue_type: "wpengine_config_leak", path: "/_wpeprivate/config.json", severity: 1,  body_regex: /wpengine_apikey/, status: "confirmed" },
-    }
+    wpengine_list = [
+      { issue_type: "wpengine_config_leak", path: "/_wpeprivate/config.json", severity: 1,  body_regex: /wpengine_apikey/, status: "confirmed" }
+    ]
 
   
     # Create our queue of work from the checks in brute_list

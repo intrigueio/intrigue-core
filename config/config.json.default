@@ -192,6 +192,12 @@
       "editable": "true",
       "comment": ""
     },
+    "farsight_api_key": {
+      "value": "",
+      "uri": "https://www.farsightsecurity.com/get-started-guide/",
+      "editable": "true",
+      "comment": ""
+    },
     "fullcontact_api_key": {
       "value": "XXX",
       "uri": "https://www.fullcontact.com/developer",

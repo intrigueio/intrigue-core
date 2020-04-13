@@ -5,14 +5,14 @@ class SearchCensys < BaseTask
   def self.metadata
     {
       :name => "search_censys",
-      :pretty_name => "Search Censys.io",
+      :pretty_name => "Search Censys",
       :authors => ["jcran"],
       :description => "This task hits the Censys API and finds matches",
       :references => [],
       :type => "discovery",
       :passive => true,
       :allowed_types => ["IpAddress"],
-      :example_entities => [{"type" => "String", "details" => {"name" => "intrigue.io"}}],
+      :example_entities => [{"type" => "IpAddress", "details" => {"name" => "8.8.8.8"}}],
       :allowed_options => [],
       :created_types => ["DnsRecord","FtpService","SslCertificate"]
     }
@@ -41,7 +41,6 @@ class SearchCensys < BaseTask
       response = censys.search("ip:#{entity_name}","ipv4")
       response["results"].each do |r|
         next unless r
-        _log "Got result: #{r}"
 
         if r
           # Go ahead and create the entity
