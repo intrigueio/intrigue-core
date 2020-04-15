@@ -36,18 +36,21 @@ class SslCertificate < Intrigue::Task::BaseTask
   def run
     _log "Enriching... SSL Certificate: #{_get_entity_name}"
 
-    if Time.parse(_get_entity_detail("not_before")) > Time.now
+    not_before = _get_entity_detail("not_before")
+    if not_before && Time.parse(not_before) < Time.now
       _log "Creating issue for certificate that is not valid yet"
       _create_linked_issue "invalid_certificate_premature"
     end
 
-    if Time.parse(_get_entity_detail("not_after")) < Time.now
+    not_after = _get_entity_detail("not_after")
+    if not_after && Time.parse(not_after) < Time.now
       _log "Creating issue for expired certificate"
       _create_linked_issue "invalid_certificate_expired"
     end
 
     # https://www.globalsign.com/en/blog/moving-from-sha-1-to-sha-256
-    if _get_entity_detail("algorithm") == "SHA1" || _get_entity_detail("algorithm") == "MD5" 
+    algo = _get_entity_detail("algorithm")
+    if algo && (algo == "SHA1" || algo == "MD5")
       _log "Creating issue for certificate with invalid algorighm"
       _create_linked_issue "invalid_certificate_algorithm"
     end

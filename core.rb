@@ -24,7 +24,6 @@ $intrigue_environment = ENV.fetch("INTRIGUE_ENV","development")
 
 # System-level Monkey patches
 require_relative 'lib/initialize/array'
-require_relative 'lib/initialize/browser'
 require_relative 'lib/initialize/hash'
 require_relative 'lib/initialize/json_export_file'
 require_relative 'lib/initialize/queue'
