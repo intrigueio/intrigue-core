@@ -69,8 +69,8 @@ sudo apt-get -y --fix-broken --no-install-recommends install make \
   libsqlite3-dev \
   net-tools \
   libpq-dev \
-  postgresql \
-  postgresql-server-dev-all \
+  postgresql-12 \
+  postgresql-server-dev-12 \
   redis-server \
   boxes \
   nmap \
@@ -134,8 +134,8 @@ sudo apt-get install wget ca-certificates
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 sudo apt-get update
-#sudo apt-get install postgresql-server-dev-11
-sudo apt-get install postgresql-11-repack
+sudo apt-get install postgresql-server-dev-12
+sudo apt-get install postgresql-12-repack
 
 echo "[+] Creating a home for binaries"
 mkdir -p $HOME/bin
