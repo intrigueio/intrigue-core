@@ -50,7 +50,7 @@ locale-gen en_US.UTF-8
 
 # just in case, do the fix-broken flag
 echo "[+] Installing Intrigue Dependencies..."
-sudo apt-get -y --fix-broken --no-install-recommends install make \
+sudo apt-get -y --no-install-recommends install make \
   git \
   git-core \
   bzip2 \
@@ -68,9 +68,6 @@ sudo apt-get -y --fix-broken --no-install-recommends install make \
   libffi-dev \
   libsqlite3-dev \
   net-tools \
-  libpq-dev \
-  postgresql-12 \
-  postgresql-server-dev-12 \
   redis-server \
   boxes \
   nmap \
@@ -133,7 +130,7 @@ echo "[+] Installing Postgres 12"
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list
 sudo apt-get update
-sudo apt-get -y install postgresql-12 postgresql-client-12 postgresql-server-dev-12 postgresql-12-repack
+sudo apt-get -y install postgresql-12 postgresql-client-12 postgresql-server-dev-12 postgresql-12-repack libpq-dev
 sudo systemctl status postgresql
 
 echo "[+] Creating a home for binaries"
