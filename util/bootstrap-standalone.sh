@@ -129,6 +129,14 @@ sudo apt-get -y --fix-broken --no-install-recommends install make \
   python-minimal && 
   rm -rf /var/lib/apt/lists/*
 
+echo "[+] Installing pg_repack"
+sudo apt-get install wget ca-certificates
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+sudo apt-get update
+#sudo apt-get install postgresql-server-dev-11
+sudo apt-get install postgresql-11-repack
+
 echo "[+] Creating a home for binaries"
 mkdir -p $HOME/bin
 export BINPATH=$HOME/bin
@@ -214,6 +222,9 @@ fi
 # bump file limits
 echo "bumping file-max settings"
 sudo bash -c "echo fs.file-max = 655355 >> /etc/sysctl.conf"
+# disable memory overcommit
+echo "disable memory overcommit"
+sudo bash -c "echo vm.overcommit_memory=2 >> /etc/sysctl.conf"
 sudo sysctl -p
   
 echo "Bumping ulimit file/proc settings in /etc/security/limits.conf"
