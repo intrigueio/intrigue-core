@@ -37,7 +37,7 @@ class SslCertificate < Intrigue::Task::BaseTask
     _log "Enriching... SSL Certificate: #{_get_entity_name}"
 
     not_before = _get_entity_detail("not_before")
-    if not_before && Time.parse(not_before) < Time.now
+    if not_before && Time.parse(not_before) > Time.now
       _log "Creating issue for certificate that is not valid yet"
       _create_linked_issue "invalid_certificate_premature"
     end
