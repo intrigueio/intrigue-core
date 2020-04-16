@@ -129,13 +129,12 @@ sudo apt-get -y --fix-broken --no-install-recommends install make \
   python-minimal && 
   rm -rf /var/lib/apt/lists/*
 
-echo "[+] Installing pg_repack"
-sudo apt-get install wget ca-certificates
+echo "[+] Installing Postgres 12"
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list
 sudo apt-get update
-sudo apt-get install postgresql-server-dev-12
-sudo apt-get install postgresql-12-repack
+sudo apt-get -y install postgresql-12 postgresql-client-12 postgresql-server-dev-12 postgresql-12-repack
+sudo systemctl status postgresql
 
 echo "[+] Creating a home for binaries"
 mkdir -p $HOME/bin
@@ -239,7 +238,7 @@ sudo bash -c "echo '* soft nofile 524288' >> /etc/security/limits.conf"
 sudo bash -c "echo session required pam_limits.so >> /etc/pam.d/common-session"
 
 echo "[+] Create /data directories for postgres and redis"
-sudo service postgresql stop
+sudo systemctl stop postgresql
 sudo mkdir -p /data/postgres
 sudo chown postgres:postgres /data/postgres
 sudo chmod 644 /data/postgres
@@ -255,7 +254,7 @@ sudo sed -i 's/md5/trust/g' /etc/postgresql/*/main/pg_hba.conf
 sudo sed -i 's/peer/trust/g' /etc/postgresql/*/main/pg_hba.conf
 sudo sed -i "s/data_directory = .*/data_directory = \'\/data\/postgres\'/g" /etc/postgresql/*/main/postgresql.conf
 
-sudo service redis-server stop
+sudo systemctl stop redis-server
 
 echo "[+] Updating Redis configuration, moving it to /data"
 # ensure we bind to localhost
@@ -264,10 +263,10 @@ sudo sed -i '/^bind/s/bind.*/bind 127.0.0.1/' /etc/redis/redis.conf
 #sudo sed -i '/^dir/s/dir \/var\/lib\/redis/\/data\/redis/' /etc/redis/redis.conf
 sudo sed -i 's/dir \/var\/lib\/redis \/data\/redis/g' /etc/redis/redis.conf
 
-sudo service redis-server start
+sudo systemctl start redis-server
 
 echo "[+] Creating clean database"
-sudo service postgresql start
+sudo systemctl start postgresql
 sudo -u postgres createuser intrigue
 sudo -u postgres createdb intrigue_dev --owner intrigue
 
