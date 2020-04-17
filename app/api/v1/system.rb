@@ -19,6 +19,13 @@ class IntrigueApp < Sinatra::Base
   wrapped_api_response(nil, tasks_metadata)
   end
 
+  # Export All Task Metadata
+  get "/api/v1/machines" do
+    content_type 'application/json'
+    machine_metadata = Intrigue::MachineFactory.list.map{ |t| t.metadata }.sort_by{|m| m[:name] }
+  wrapped_api_response(nil, machine_metadata)
+  end
+
   # Export a specific Task's metadataa
   get "/api/v1/tasks/:task_name" do
     content_type 'application/json'
