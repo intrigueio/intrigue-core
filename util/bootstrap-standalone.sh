@@ -218,9 +218,10 @@ fi
 # bump file limits
 echo "bumping file-max settings"
 sudo bash -c "echo fs.file-max = 655355 >> /etc/sysctl.conf"
+
 # disable memory overcommit
-echo "disable memory overcommit"
-sudo bash -c "echo vm.overcommit_memory=2 >> /etc/sysctl.conf"
+echo "enable memory overcommit"
+sudo bash -c "echo vm.overcommit_memory=0 >> /etc/sysctl.conf"
 sudo sysctl -p
   
 echo "Bumping ulimit file/proc settings in /etc/security/limits.conf"

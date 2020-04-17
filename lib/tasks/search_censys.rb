@@ -12,7 +12,10 @@ class SearchCensys < BaseTask
       :type => "discovery",
       :passive => true,
       :allowed_types => ["Domain", "IpAddress", "NetBlock"],
-      :example_entities => [{"type" => "IpAddress", "details" => {"name" => "8.8.8.8"}}],
+      :example_entities => [
+        {"type" => "Domain", "details" => {"name" => "intrigue.io"}},
+        {"type" => "IpAddress", "details" => {"name" => "8.8.8. 8"}}
+      ],
       :allowed_options => [],
       :created_types => ["DnsRecord", "Domain","IpAddress","SslCertificate"]
     }
@@ -109,7 +112,7 @@ class SearchCensys < BaseTask
 
   def search_for_individual_ip(ip_address)
     ## Grab IPv4 Results
-    results = @client.search_ipv4_index("ip:#{entity_name}","ipv4")
+    results = @client.search_ipv4_index("ip:#{ip_address}","ipv4")
     return unless results 
 
     results.each do |r|
