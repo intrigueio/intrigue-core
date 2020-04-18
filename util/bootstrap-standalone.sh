@@ -200,7 +200,9 @@ fi
 ### Install latest tika
 echo "[+] Installing Apache Tika"
 cd $INTRIGUE_DIRECTORY/tmp
-wget http://mirror.cogentco.com/pub/apache/tika/tika-server-1.24.jar
+LATEST_TIKA_VERSION=1.24
+wget http://apache.mirrors.ovh.net/ftp.apache.org/dist/tika/tika-server-$LATEST_TIKA_VERSION.jar
+mv $INTRIGUE_DIRECTORY/tmp/tika-server-$LATEST_TIKA_VERSION.jar $INTRIGUE_DIRECTORY/tmp/tika-server.jar
 cd $HOME
 
 # update sudoers
