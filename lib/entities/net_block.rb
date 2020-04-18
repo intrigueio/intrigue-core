@@ -30,6 +30,30 @@ class NetBlock < Intrigue::Model::Entity
     return true if self.seed
     return false if self.hidden # hit our blacklist so definitely false
 
+    our_ip = self.name.split("/").first
+    our_route = self.name.split("/").last
+    whois_text = "#{details["whois_full_text"]}"
+
+    # it's just one ip
+    return true if our_route == "32"
+
+    ###
+    ### First, Check our text to see if there's a more specific route in here, 
+    ###  and if so, not ours.
+    ####################################################################################
+    netblock_regex = /(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}\/(\d{1,2}))/
+    match_captures = whois_text.scan(netblock_regex)
+    match_captures.each do |capture|
+      
+      ip = capture.first.split("/").first
+      route = capture.last
+      
+      # compare each to our lookup stringg
+      if ip == our_ip && route > our_route
+        return false
+      end
+    end
+
     # Check types we'll check for indicators 
     # of in-scope-ness
     #
@@ -39,26 +63,27 @@ class NetBlock < Intrigue::Model::Entity
       "Intrigue::Entity::Domain" 
     ]
 
-    ### CHECK OUR SEED ENTITIES TO SEE IF THE TEXT MATCHES
+
+    ### Now check our seed entities for a match
     ######################################################
     if self.project.seeds
       self.project.seeds.each do |s|
         next unless scope_check_entity_types.include? s.type.to_s
-        if "#{details["whois_full_text"]}" =~ /[\s@]#{Regexp.escape(s.name)}/i
+        if whois_text =~ /[\s@]#{Regexp.escape(s.name)}/i
           return true
         end
       end
     end
 
-    ### CHECK OUR IN-PROJECT ENTITIES TO SEE IF THE TEXT MATCHES 
-    #######################################################################
+    ### And now, let's check our corpus of already-scoped stuff from this run 
+    #############################################################################
     self.project.entities.where(scoped: true, type: scope_check_entity_types ).each do |e|
       # make sure we skip any dns entries that are not fqdns. this will prevent
       # auto-scoping on a single name like "log" or even a number like "1"
       next if (e.type == "DnsRecord" || e.type == "Domain") && e.name.split(".").count == 1
       # Now, check to see if the entity's name matches something in our # whois text, 
       # and especially make sure 
-      if "#{details["whois_full_text"]}" =~ /[\s@]#{Regexp.escape(e.name)}/i
+      if whois_text =~ /[\s@]#{Regexp.escape(e.name)}/i
         return true
       end
     end
@@ -80,7 +105,7 @@ class NetBlock < Intrigue::Model::Entity
         end
       end
     else
-      return true if (!details["whois_full_text"] && details["cidr"].to_i > 8)
+      return true if (!whois_text && details["cidr"].to_i > 8)
     end
 
   # if we didnt match the above and we were asked, it's false 

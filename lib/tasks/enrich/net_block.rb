@@ -25,6 +25,7 @@ class NetBlock < Intrigue::Task::BaseTask
 
     netblock_string = _get_entity_name
     lookup_string = _get_entity_name.split("/").first
+    cidr_string = _get_entity_name.split("/").last
 
     if _get_entity_detail "whois_full_text" # skip lookup if we already have it
       _log "Skipping lookup, we already have the details"
@@ -36,6 +37,22 @@ class NetBlock < Intrigue::Task::BaseTask
       # lazy but easier than setting invidually
       _log "Setting entity details to... #{out}"
       _set_entity_details out
+    end
+
+
+    ###
+    ### Find related netblock via whois
+    ###
+
+    # okay now, let's check to see if there's a reference to a more specific block here
+    netblock_regex = /(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}\/(\d{1,2}))/
+    whois_text = _get_entity_detail("whois_full_text")
+    match_captures = whois_text.scan(netblock_regex)
+    match_captures.each do |capture|
+      # create it 
+      netblock = capture.first
+      _log "Found related netblock: #{netblock}"
+      _create_entity "NetBlock", "name" => "#{netblock}"
     end
 
     # check transferred
