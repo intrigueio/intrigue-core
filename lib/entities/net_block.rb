@@ -35,7 +35,11 @@ class NetBlock < Intrigue::Model::Entity
     whois_text = "#{details["whois_full_text"]}"
 
     # it's just one ip
-    return true if our_route == "32"
+    if our_ip =~ /:/ && our_route == "64"
+      return true # ipv6
+    elsif our_route == "32"
+      return true # ipv4
+    end
 
     ###
     ### First, Check our text to see if there's a more specific route in here, 
