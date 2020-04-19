@@ -32,7 +32,25 @@ class WordpressEnumeratePlugins < BaseTask
     # Then, attempt to brute
     _set_entity_detail("wordpress_bruted_plugins", brute_wordpress_plugin_paths(uri) )
 
+    # Then, attempt to brute
+    _set_entity_detail("wordpress_extracted_plugins", extract_wordpress_plugin_paths(uri) )
+
   end # end run()
+
+  def extract_wordpress_plugin_paths(uri)
+    sleep_until_enriched
+
+    page_content = _get_entity_detail("hidden_response_data")
+    extract_plugins_regex = /\/wp-content\/plugins\/(.*?)\//
+    plugins = []
+    match_captures = page_content.scan(extract_plugins_regex)
+    match_captures.each do |capture|
+      _log "Got plugin: #{capture}"
+      plugins << capture
+    end
+
+  plugins.flatten.sort.uniq
+  end
 
   def brute_wordpress_plugin_paths(uri)
 

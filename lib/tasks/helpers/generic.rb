@@ -6,6 +6,17 @@ module Generic
      include Intrigue::Task::Web
    end
 
+   def sleep_until_enriched
+    entity_enriched = @entity.enriched?
+    cycles = 10 
+    until entity_enriched || cycles == 0
+      _log "Waiting 20s for entity to be enriched... (#{cycles-=1} / #{cycles})"
+        sleep 20
+      entity_enriched = Intrigue::Model::Entity.first(:id => @entity.id).enriched?
+    end
+  end
+
+
   private
 
   def _threaded_iteration(thread_count, input_queue, funct)
