@@ -43,21 +43,22 @@ class NetBlock < Intrigue::Task::BaseTask
     ###
     ### Find related netblock via whois
     ###
-
-    # okay now, let's check to see if there's a reference to a more specific block here
-    netblock_regex = /(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}\/(\d{1,2}))/
     whois_text = _get_entity_detail("whois_full_text")
-    match_captures = whois_text.scan(netblock_regex)
-    match_captures.each do |capture|
-      # create it 
-      netblock = capture.first
-      _log "Found related netblock: #{netblock}"
-      _create_entity "NetBlock", "name" => "#{netblock}"
-    end
+    if whois_text
+      # okay now, let's check to see if there's a reference to a more specific block here
+      netblock_regex = /(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}\/(\d{1,2}))/
+      match_captures = whois_text.scan(netblock_regex)
+      match_captures.each do |capture|
+        # create it 
+        netblock = capture.first
+        _log "Found related netblock: #{netblock}"
+        _create_entity "NetBlock", "name" => "#{netblock}"
+      end
 
-    # check transferred
-    if out["whois_full_text"] =~ /Early Registrations, Transferred to/
-      _set_entity_detail "transferred", true
+      # check transferred
+      if whois_text =~ /Early Registrations, Transferred to/
+        _set_entity_detail "transferred", true
+      end
     end
 
     # check ipv6
