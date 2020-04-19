@@ -6,7 +6,7 @@ class GoogleGroupsLeak < BaseIssue
     to_return = {
       name: "google_groups_leak",
       pretty_name: "Public Google Groups Detected",
-      severity: 3,
+      severity: 2,
       status: "confirmed",
       category: "application",
       description: "Enabling public Google Groups can cause sensitive data leakage.",
