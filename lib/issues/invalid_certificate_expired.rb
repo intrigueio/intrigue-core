@@ -10,7 +10,7 @@ module Intrigue
         category: "application",
         status: "confirmed",
         description: "This certificate was found to be expired",
-        remediation: "Replace the certificate and/oor de-provision the service",
+        remediation: "Replace the certificate and/or de-provision the service",
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel
         ]
       }.merge!(instance_details)
