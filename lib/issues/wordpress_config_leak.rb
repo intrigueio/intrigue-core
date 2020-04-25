@@ -5,7 +5,7 @@ module Intrigue
     def self.generate(instance_details={})
       {
         name: "wordpress_config_leak",
-        pretty_name: "Wordpress Configuraton Info Leak",
+        pretty_name: "Wordpress Configuration Information Leak",
         severity: 1,
         category: "application",
         status: "confirmed",

@@ -12,7 +12,7 @@ class NetBlock < Intrigue::Model::Entity
   end
 
   def validate_entity
-    name =~ /^\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}\/\d{1,2}$/ || name =~ /^[a-z\d\:]+\/\d{1,2}$/
+    name =~ netblock_regex || name =~ /^[a-z\d\:]+\/\d{1,2}$/
   end
 
   def detail_string
@@ -31,21 +31,20 @@ class NetBlock < Intrigue::Model::Entity
     return false if self.hidden # hit our blacklist so definitely false
 
     our_ip = self.name.split("/").first
-    our_route = self.name.split("/").last
+    our_route = self.name.split("/").last.to_i
     whois_text = "#{details["whois_full_text"]}"
 
-    # it's just one ip
-    if our_ip =~ /:/ && our_route == "64"
-      return true # ipv6
-    elsif our_route == "32"
-      return true # ipv4
+    # Check for case where we're just one ip address
+    if our_ip =~ ipv6_regex && our_route == 64
+      return true # ipv6 single ip
+    elsif our_ip =~ ipv4_regex && our_route == 32
+      return true # ipv4 single ip
     end
 
     ###
     ### First, Check our text to see if there's a more specific route in here, 
     ###  and if so, not ours.
     ####################################################################################
-    netblock_regex = /(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}\/(\d{1,2}))/
     match_captures = whois_text.scan(netblock_regex)
     match_captures.each do |capture|
       

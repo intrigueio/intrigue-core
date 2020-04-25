@@ -38,9 +38,12 @@ Intrigue::System::Config.load_config
 require_relative 'lib/system/database'
 include Intrigue::System::Database
 
+# used in app as well as tasks
+require_relative 'lib/system/validations'
+
 # Debug
-require 'pry'
-require 'pry-byebug'
+#require 'pry'
+#require 'pry-byebug'
 require 'logger'
 
 #
