@@ -14,7 +14,7 @@ module Intrigue
         affected_software: [ ],
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel
           { type: "description", uri: "https://owasp.org/www-community/HttpOnly" },
-          { type: "remediations", uri: "https://owasp.org/www-community/HttpOnly" }
+          { type: "remediation", uri: "https://owasp.org/www-community/HttpOnly" }
         ]
       }.merge!(instance_details)
     end

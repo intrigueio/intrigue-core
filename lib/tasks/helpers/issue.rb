@@ -75,16 +75,29 @@ module Issue
   ### Application oriented issues
   ###
 
+  ###
+  ### Generic finding coming from ident. 
+  ###
   def _create_content_issue(uri, check)
     _create_linked_issue("content_issue", { uri: uri, check: check })
   end
 
   def _create_missing_cookie_attribute_http_only_issue(uri, cookie, severity=5)
+    
+    # skip this for anything other than hostnames 
+    hostname = URI(uri).hostname
+    return if hostname =~ ipv4_regex || hostname =~ /ipv6_regex/
+    
     addtl_details = { cookie: cookie }
     _create_linked_issue("insecure_cookie_httponly_attribute", addtl_details)
   end
 
   def _create_missing_cookie_attribute_secure_issue(uri, cookie, severity=5)
+    
+    # skip this for anything other than hostnames 
+    hostname = URI(uri).hostname
+    return if hostname =~ ipv4_regex || hostname =~ /ipv6_regex/
+    
     addtl_details = { cookie: cookie }
     _create_linked_issue("insecure_cookie_secure_attribute", addtl_details)
   end
@@ -129,6 +142,10 @@ module Issue
     requests.each do |req|
 
       resource_url = req["url"]
+
+      # skip this for anything other than hostnames 
+      hostname = URI(resource_url).hostname
+      return if hostname =~ ipv4_regex || hostname =~ /ipv6_regex/
 
       if resource_url =~ /^http:.*$/ 
         _create_linked_issue("insecure_content_loaded", {
