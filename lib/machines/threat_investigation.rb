@@ -4,12 +4,12 @@ class RunInvestigationTask < Intrigue::Machine::Base
 
     def self.metadata
       {
-        :name => "run_investigation_task",
-        :pretty_name => "Investigation Machine",
-        :passive => false,
+        :name => "threat_investigation",
+        :pretty_name => "Threat Investigation",
+        :passive => true,
         :user_selectable => true,
         :authors => ["Anas Ben Salah"],
-        :description => "This machine is for investigation purpose."
+        :description => "This machine is for gathering data on an IoC or suspected IoC. It gathers data from many different threat sources."
       }
     end
 
