@@ -3,6 +3,10 @@ module Intrigue
 module System
 module Validations
 
+  def netblock_regex
+    /^\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}\/\d{1,2}$/
+  end
+
   ### Standard Validations, for use throughout the platform
   # https://tools.ietf.org/html/rfc1123
   def ipv4_regex

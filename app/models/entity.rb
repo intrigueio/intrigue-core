@@ -21,7 +21,8 @@ module Intrigue
       one_to_many  :issues
 
       include Intrigue::Task::Helper
-
+      include Intrigue::System::Validations
+      
       def self.inherited(base)
         EntityFactory.register(base)
         super
