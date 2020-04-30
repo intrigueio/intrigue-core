@@ -40,22 +40,24 @@
     <p></p>
     <table class="sortable" border="1" width=100%>
       <colgroup>
-        <col style="width:20%">
-        <col style="width:20%">
-        <col style="width:20%">
-        <col style="width:20%">
-        <col style="width:20%">
+        <col style="width:15%">
+        <col style="width:15%">
+        <col style="width:15%">
+        <col style="width:15%">
+        <col style="width:15%">
+        <col style="width:15%">
       </colgroup>
       <tbody>
-      <tr><th>Ip Address</th><th>Aliases</th><th>OS</th><th>Ports</th><th>Provider</th></tr>
+      <tr><th>Ip Address</th><th>Aliases</th><th>OS</th><th>Ports</th><th>Network</th><th>Country</th></tr>
       <% @entities.each do |x| %>
         <tr>
           <% next unless x.type_string == "IpAddress" %>
           <td><a href="<%="/#{h @project_name}/entities/#{h x.id}"%>"><%= h x.name %></a></td>
-          <td><%= (x.aliases - [x.name]).map{|x| "<a href='/#{@project_name}/entities/#{h x.id}'>#{h x.name}</a>" }.join("<br/>") %></td>
+          <td><%= (x.aliases - [x.name]).map{|x| next unless !x.is_ip_address?; "<a href='/#{@project_name}/entities/#{h x.id}'>#{h x.name}</a>" }.join("<br/>") %></td>
           <td><%= h x.details["os"].first["name"] if x.details["os"] && x.details["os"].first %> </td>
           <td><%= h "#{x.details["ports"].map{ |x| x["number"] }.join(", ") if x.details["ports"]}" %></td>
-          <td><%= h "#{x.details["provider"]}"%></td>
+          <td><%= h "#{x.details["net_name"]}"%></td>
+          <td><%= h "#{x.details["geolocation"]["country_code"] if x.details["geolocation"]}"%></td>
         </tr>
       <% end %>
       </tbody>
