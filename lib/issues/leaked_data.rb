@@ -11,6 +11,7 @@ class LeakedData< BaseIssue
       category: "leak",
       description: "Related account found leaked",
       remediation: "leaked accounts should be notified to reset their passwords and check for suspicious activities related to their accounts",
+      references: []
     }.merge!(instance_details)
 
   to_return

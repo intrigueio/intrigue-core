@@ -16,7 +16,7 @@ class DnsSearchSonar < BaseTask
       :allowed_types => ["DnsRecord","Domain"],
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
-        {:name => "endpoint", :regex => "alpha_numeric_list", :default => "http://tls.bufferover.run/dns?q=" },
+        {:name => "endpoint", :regex => "alpha_numeric_list", :default => "http://sonar.intrigue.io/dns?q=" },
       ],
       :created_types => ["DnsRecord"]
     }
@@ -28,9 +28,7 @@ class DnsSearchSonar < BaseTask
     endpoint = _get_option("endpoint")
     domain_name = ".#{_get_entity_name}"
     search_url = "#{endpoint}#{domain_name}"
-
     _log_good "Searching data for: #{domain_name}"
-
     
     response = http_request(:get, search_url, nil, {}, nil, 3, 60, 60)
     unless response
@@ -49,7 +47,6 @@ class DnsSearchSonar < BaseTask
           _create_entity "DnsRecord", "name" => entry.split(",").last
         end
       end
-
 
       # Create reverse dns entries
       if json["RDNS"]

@@ -9,8 +9,11 @@ class LeakedAccountDetails < BaseIssue
       severity: 2,
       status: "confirmed",
       category: "leak",
-      description: "Related account found leaked",
+      description: "Account found in public leak data",
       remediation: "Leaked accounts should have their passwords reset and examined for suspicious activities.",
+      references: [
+        { type: "description", uri: "https://haveibeenpwned.com/"}
+      ]
     }.merge!(instance_details)
 
   to_return
