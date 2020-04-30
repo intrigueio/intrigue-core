@@ -1,5 +1,5 @@
-God.pid_file_directory = "/home/ubuntu/core/tmp/pids"
-BASEDIR = "/home/ubuntu/core"
+God.pid_file_directory = "/home/#{ENV["USER"]}/core/tmp/pids"
+BASEDIR = "/home/#{ENV["USER"]}/core"
 
 God.watch do |w|
   w.group = "intrigue"
