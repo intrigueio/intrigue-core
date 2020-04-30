@@ -192,6 +192,12 @@
       "editable": "true",
       "comment": ""
     },
+    "farsight_dnsdb_api_key": {
+      "value": "",
+      "uri": "https://www.farsightsecurity.com/get-started-guide/",
+      "editable": "true",
+      "comment": ""
+    },
     "fullcontact_api_key": {
       "value": "XXX",
       "uri": "https://www.fullcontact.com/developer",
@@ -213,6 +219,12 @@
     "gitrob_access_token": {
       "value": "",
       "uri": "https://github.com/settings/tokens",
+      "editable": "true",
+      "comment": ""
+    },
+    "greynoise_api_key": {
+      "value": "XXX",
+      "uri": "https://docs.greynoise.io/#greynoise-api",
       "editable": "true",
       "comment": ""
     },

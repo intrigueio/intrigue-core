@@ -14,7 +14,7 @@ module Intrigue
         affected_software: [ ],
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel
           { type: "description", uri: "https://owasp.org/www-community/controls/SecureFlag" },
-          { type: "remediations", uri: "https://owasp.org/www-community/controls/SecureFlag" }
+          { type: "remediation", uri: "https://owasp.org/www-community/controls/SecureFlag" }
         ]
       }.merge!(instance_details)
     end

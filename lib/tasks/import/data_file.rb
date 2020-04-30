@@ -33,7 +33,7 @@ class ImportDataFile < BaseTask
     filename = _get_option("filename")
 
     # Check data type string to make sure we have a valid type
-    data_type = Intrigue::EntityManager.resolve_type_from_string data_type_String
+    data_type = Intrigue::EntityManager.resolve_type_from_string data_type_string
     unless data_type # fail if not
       _log_error "Unknown data type: #{data_type_string}, failing"
     end

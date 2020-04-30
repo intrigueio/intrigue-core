@@ -56,35 +56,10 @@ class SaasGoogleCalendarCheck < BaseTask
 
       service_name = "calendar.google.com"
 
-      ############################################
-      ###      Old Issue                      ###
-      ###########################################
-      # _create_issue({
-      #   name: "Public Google Calendar Enabled!",
-      #   type: "google_calendar_leak",
-      #   severity: 2,
-      #   status: "confirmed",
-      #   description: "Google Calendar settings are set to public for #{email_address}. This setting can cause sensitive data leakage.",
-      #   details: {
-      #     "name" => "#{service_name} leak: #{email_address} ",
-      #     "uri" => uri,
-      #     "email" => "#{email_address}",
-      #     "service" => service_name
-      #   }
-      # })
-      
-      ############################################
-      ###      New Issue                      ###
-      ###########################################
-      _create_linked_issue({
-        detailed_description: "Google Calendar settings are set to public for #{email_address}. This setting can cause sensitive data leakage.",
-        details: {
-          "name" => "#{service_name} leak: #{email_address} ",
-          "uri" => uri,
-          "email" => "#{email_address}",
-          "service" => service_name
-        }
-      })
+      _create_linked_issue("google_calendar_leak", {
+        "uri" => uri,
+        "username" => "#{domain}",
+        "service" => service_name})
 
     elsif response && response.code == "404"
      _log "404, doesnt exist or not public..."

@@ -24,7 +24,6 @@ $intrigue_environment = ENV.fetch("INTRIGUE_ENV","development")
 
 # System-level Monkey patches
 require_relative 'lib/initialize/array'
-require_relative 'lib/initialize/browser'
 require_relative 'lib/initialize/hash'
 require_relative 'lib/initialize/json_export_file'
 require_relative 'lib/initialize/queue'
@@ -39,9 +38,12 @@ Intrigue::System::Config.load_config
 require_relative 'lib/system/database'
 include Intrigue::System::Database
 
+# used in app as well as tasks
+require_relative 'lib/system/validations'
+
 # Debug
-require 'pry'
-require 'pry-byebug'
+#require 'pry'
+#require 'pry-byebug'
 require 'logger'
 
 #

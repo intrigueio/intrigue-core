@@ -18,7 +18,7 @@ class Uri < Intrigue::Task::BaseTask
       :example_entities => [
         {"type" => "Uri", "details" => {"name" => "https://intrigue.io"}}],
       :allowed_options => [
-        {:name => "correlate_endpoints", :regex => "boolean", :default => true }
+        {:name => "correlate_endpoints", :regex => "boolean", :default => false }
       ],
       :created_types => []
     }
@@ -30,12 +30,13 @@ class Uri < Intrigue::Task::BaseTask
     begin
       hostname = URI.parse(uri).host
       port = URI.parse(uri).port
+      scheme = URI.parse(uri).scheme
     rescue URI::InvalidURIError => e
       _log_error "Error parsing... #{uri}"
       return nil
     end
 
-    _log "Making initial requests"
+    _log "Making initial requests, following redirect"
     # Grab the full response
     response = http_request :get, uri
     response2 = http_request :get, uri
@@ -142,10 +143,11 @@ class Uri < Intrigue::Task::BaseTask
       # capture cookies
       set_cookie = response.header['set-cookie']
       _log "Got Cookie: #{set_cookie}" if set_cookie
+      
       # TODO - cookie scoped to parent domain
       _log "Domain Cookie: #{set_cookie.split(";").detect{|x| x =~ /Domain:/i }}" if set_cookie
 
-      if uri =~ /^https/
+      if scheme == "https"
 
         _log "HTTPS endpoint, checking security, grabbing certificate..."
 
@@ -196,7 +198,8 @@ class Uri < Intrigue::Task::BaseTask
 
         # Create findings if we have a deprecated protocol
         if accepted_connections && accepted_connections.detect{ |x|
-            (x[:version] =~ /SSL/ || x[:version] == "TLSv1") }
+            (x[:version] =~ /SSL/ || x[:version] == "TLSv1" ) }
+            
           _create_deprecated_protocol_issue(uri, accepted_connections)
         end
 
@@ -214,7 +217,8 @@ class Uri < Intrigue::Task::BaseTask
         alt_names = []
 
       end
-
+    else 
+      _log "Did not receive 200, got #{response.code}!"
     end
 
     ###

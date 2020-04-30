@@ -38,6 +38,11 @@ class SslCertificate < Intrigue::Model::Entity
   true
   end
 
+  def enrichment_tasks
+    ["enrich/ssl_certificate"]
+  end
+
+
 end
 end
 end

@@ -68,8 +68,6 @@ class IpAddress < Intrigue::Task::BaseTask
       end
     end
 
-
-
     # get ASN
     # look up the details in team cymru's whois
     _log "Using Team Cymru's Whois Service..."
@@ -80,6 +78,7 @@ class IpAddress < Intrigue::Task::BaseTask
     _set_entity_detail("net_rir", cymru[:net_rir])
     _set_entity_detail("net_allocation_date",cymru[:net_allocation_date])
     _set_entity_detail("net_name",cymru[:net_name])
+    _create_entity "AutonomousSystem", :name => cymru[:net_asn]
 
     # geolocate
     _log "Geolocating..."
@@ -103,9 +102,23 @@ class IpAddress < Intrigue::Task::BaseTask
       _set_entity_detail "whois_full_text", out["whois_full_text"]
     end
 
-    # check transferred
-    if out["whois_full_text"] =~ /Early Registrations, Transferred to/
-      _set_entity_detail "transferred", true
+    whois_text = _get_entity_detail("whois_full_text")    
+    if whois_text
+      
+      # okay now, let's check to see if there's a reference to a netblock here
+      netblock_regex = /(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}\/(\d{1,2}))/
+      match_captures = whois_text.scan(netblock_regex)
+      match_captures.each do |capture|
+        # create it 
+        netblock = capture.first
+        _log "Found related netblock: #{netblock}"
+        _create_entity "NetBlock", "name" => "#{netblock}"
+      end
+
+      # check transferred
+      if whois_text =~ /Early Registrations, Transferred to/
+        _set_entity_detail "transferred", true
+      end
     end
 
     # check ipv6

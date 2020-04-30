@@ -219,7 +219,6 @@ class UriBruteFocusedContent < BaseTask
     # https://www.exploit-db.com/exploits/43009 - c
     #"/solr/gettingstarted/select?q=test"
 
-
     splunk_list = [
       { issue_type: "splunk_info_leak", path: "/en-US/splunkd/__raw/services/server/info/server-info?output_mode=json", 
         body_regex: /os_name_extended/, severity: 4, status: "confirmed" }, # CVE-2018-11409
@@ -285,6 +284,7 @@ class UriBruteFocusedContent < BaseTask
       { issue_type: "wordpress_config_leak", path: "/wp-config.php.save", severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },    
       { issue_type: "wordpress_config_leak", path: "/wp-config.php.orig", severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },
       { issue_type: "wordpress_config_leak", path: "/wp-config.php.original", severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },
+      { issue_type: "wordpress_debug_log_leak", path: "/wp-content/debug.log", severity: 2,  header_regex: /text\/plain/, status: "confirmed" },      
       { issue_type: "wordpress_user_info_leak", path: '/wp-json/wp/v2/users', severity: 4,  body_regex: /slug/, status: "confirmed" }, 
       { issue_type: "wordpress_admin_login_exposed", path: '/wp-admin', severity: 5,  body_regex: /Powered by WordPress/, status: "confirmed" },
       { issue_type: "wordpress_api_exposed", path: '/xmlrpc.php', severity: 5, status: "confirmed", body_regex: /XML-RPC server accepts POST requests only./ }
@@ -296,6 +296,11 @@ class UriBruteFocusedContent < BaseTask
       #{ path: '/wp-content/plugins/easy-wp-smtp/', severity: 2,  body_regex: /debug_log/i, status: "potential" },
       #{ path: '/wp-content/plugins/easy-wp-smtp/inc/', severity: 2,  body_regex: /debug_log/i, status: "potential" }
     ] 
+
+    wpengine_list = [
+      { issue_type: "wpengine_config_leak", path: "/_wpeprivate/config.json", severity: 1,  body_regex: /wpengine_apikey/, status: "confirmed" }
+    ]
+
   
     # Create our queue of work from the checks in brute_list
     work_q = Queue.new
@@ -324,6 +329,7 @@ class UriBruteFocusedContent < BaseTask
     weblogic_list.each { |x| work_q.push x } if is_product?(fingerprint,"Weblogic Server")
     websphere_list.each { |x| work_q.push x } if is_product?(fingerprint,"WebSphere")
     wordpress_list.each { |x| work_q.push x } if is_product?(fingerprint,"Wordpress") 
+    wpengine_list.each { |x| work_q.push x } if is_product?(fingerprint,"WPEngine") 
 
     # then add our "always" stuff:
     generic_list.each { |x| work_q.push x } if opt_generic_content

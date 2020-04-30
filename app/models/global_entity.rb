@@ -24,7 +24,7 @@ module Intrigue
       def self.parse_tld(record)
     
         # first check if we're not long enough to split, just returning the domain
-        return record if record.split(".").length < 2
+        return record if record && record.split(".").length < 2
     
         # Make sure we're comparing bananas to bananas
         record = record.downcase

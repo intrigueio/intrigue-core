@@ -26,7 +26,6 @@ module Data
     service_name || "UNKNOWN"
   end
 
-
   def _allocated_ipv4_ranges(filter="ALLOCATED")
     ranges = []
     file = File.open("#{$intrigue_basedir}/data/iana/ipv4-address-space.csv","r")

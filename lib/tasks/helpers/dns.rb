@@ -4,6 +4,23 @@ module Dns
 
   include Intrigue::Task::Generic
 
+  def create_dns_entity_from_string(s)
+
+    if s.is_ip_address?
+      _create_entity("IpAddress", "name" => s)
+    else
+
+      # clean it up 
+      x = "#{s}".strip.gsub(/^\*\./,"").gsub(/\.$/,"")
+
+      if s.split(".").length == 2
+        _create_entity "Domain", "name" => x
+      else 
+        _create_entity "DnsRecord", "name" => x
+      end
+    end
+  end
+
   def parse_domain_name(record)
     split_tld = parse_tld(record).split(".")
     if (split_tld.last == "com" || split_tld.last == "net") && split_tld.count > 1 # handle cases like amazonaws.com, netlify.com

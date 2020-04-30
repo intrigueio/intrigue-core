@@ -4,13 +4,16 @@ class LeakedAccountDetails < BaseIssue
 
   def self.generate(instance_details={})
     to_return = {
-      name: "leaked_account_details",
+      name: "leaked_account",
       pretty_name: "Leaked Account Detected",
-      severity: 4,
+      severity: 2,
       status: "confirmed",
       category: "leak",
-      description: "Related account found leaked",
+      description: "Account found in public leak data",
       remediation: "Leaked accounts should have their passwords reset and examined for suspicious activities.",
+      references: [
+        { type: "description", uri: "https://haveibeenpwned.com/"}
+      ]
     }.merge!(instance_details)
 
   to_return

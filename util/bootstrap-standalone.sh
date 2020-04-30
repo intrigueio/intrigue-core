@@ -50,7 +50,7 @@ locale-gen en_US.UTF-8
 
 # just in case, do the fix-broken flag
 echo "[+] Installing Intrigue Dependencies..."
-sudo apt-get -y --fix-broken --no-install-recommends install make \
+sudo apt-get -y --no-install-recommends install make \
   git \
   git-core \
   bzip2 \
@@ -68,9 +68,6 @@ sudo apt-get -y --fix-broken --no-install-recommends install make \
   libffi-dev \
   libsqlite3-dev \
   net-tools \
-  libpq-dev \
-  postgresql \
-  postgresql-server-dev-all \
   redis-server \
   boxes \
   nmap \
@@ -128,6 +125,13 @@ sudo apt-get -y --fix-broken --no-install-recommends install make \
   wget \
   python-minimal && 
   rm -rf /var/lib/apt/lists/*
+
+echo "[+] Installing Postgres 12"
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list
+sudo apt-get update
+sudo apt-get -y install postgresql-12 postgresql-client-12 postgresql-server-dev-12 postgresql-12-repack libpq-dev
+sudo systemctl status postgresql
 
 echo "[+] Creating a home for binaries"
 mkdir -p $HOME/bin
@@ -196,7 +200,9 @@ fi
 ### Install latest tika
 echo "[+] Installing Apache Tika"
 cd $INTRIGUE_DIRECTORY/tmp
-wget http://mirror.cogentco.com/pub/apache/tika/tika-server-1.24.jar
+LATEST_TIKA_VERSION=1.24
+wget http://apache.mirrors.ovh.net/ftp.apache.org/dist/tika/tika-server-$LATEST_TIKA_VERSION.jar
+mv $INTRIGUE_DIRECTORY/tmp/tika-server-$LATEST_TIKA_VERSION.jar $INTRIGUE_DIRECTORY/tmp/tika-server.jar
 cd $HOME
 
 # update sudoers
@@ -214,6 +220,10 @@ fi
 # bump file limits
 echo "bumping file-max settings"
 sudo bash -c "echo fs.file-max = 655355 >> /etc/sysctl.conf"
+
+# disable memory overcommit
+echo "enable memory overcommit"
+sudo bash -c "echo vm.overcommit_memory=0 >> /etc/sysctl.conf"
 sudo sysctl -p
   
 echo "Bumping ulimit file/proc settings in /etc/security/limits.conf"
@@ -228,7 +238,7 @@ sudo bash -c "echo '* soft nofile 524288' >> /etc/security/limits.conf"
 sudo bash -c "echo session required pam_limits.so >> /etc/pam.d/common-session"
 
 echo "[+] Create /data directories for postgres and redis"
-sudo service postgresql stop
+sudo systemctl stop postgresql
 sudo mkdir -p /data/postgres
 sudo chown postgres:postgres /data/postgres
 sudo chmod 644 /data/postgres
@@ -244,7 +254,7 @@ sudo sed -i 's/md5/trust/g' /etc/postgresql/*/main/pg_hba.conf
 sudo sed -i 's/peer/trust/g' /etc/postgresql/*/main/pg_hba.conf
 sudo sed -i "s/data_directory = .*/data_directory = \'\/data\/postgres\'/g" /etc/postgresql/*/main/postgresql.conf
 
-sudo service redis-server stop
+sudo systemctl stop redis-server
 
 echo "[+] Updating Redis configuration, moving it to /data"
 # ensure we bind to localhost
@@ -253,10 +263,10 @@ sudo sed -i '/^bind/s/bind.*/bind 127.0.0.1/' /etc/redis/redis.conf
 #sudo sed -i '/^dir/s/dir \/var\/lib\/redis/\/data\/redis/' /etc/redis/redis.conf
 sudo sed -i 's/dir \/var\/lib\/redis \/data\/redis/g' /etc/redis/redis.conf
 
-sudo service redis-server start
+sudo systemctl start redis-server
 
 echo "[+] Creating clean database"
-sudo service postgresql start
+sudo systemctl start postgresql
 sudo -u postgres createuser intrigue
 sudo -u postgres createdb intrigue_dev --owner intrigue
 

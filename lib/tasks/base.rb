@@ -4,6 +4,13 @@
 ####
 require 'ident'
 
+begin  # try to load in private checks
+  require 'intrigue-ident-private'
+rescue LoadError
+  # unable to load private checks, presumable unavailable
+end
+
+
 module Intrigue
 module Task
 class BaseTask

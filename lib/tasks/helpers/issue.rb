@@ -37,15 +37,15 @@ module Issue
   end
 
   ### USE THIS GOING FORWARD
-  def _create_linked_issue(issue_type, instance_specifics={})
+  def _create_linked_issue(issue_type, instance_specifics={}, linked_entity=@entity)
 
     _log_good "Creating linked issue of type: #{issue_type}"
 
     issue_model_details = {  
-      entity_id: @entity.id,
+      entity_id: linked_entity.id,
       task_result_id: @task_result.id,
       project_id: @project.id, 
-      scoped: @entity.scoped,
+      scoped: linked_entity.scoped,
     }
     
     issue = Intrigue::Issue::IssueFactory.create_instance_by_type(
@@ -75,29 +75,29 @@ module Issue
   ### Application oriented issues
   ###
 
+  ###
+  ### Generic finding coming from ident. 
+  ###
   def _create_content_issue(uri, check)
-    _create_issue({
-      name: "Content Issue Discovered: #{check["name"]}",
-      type: "#{check["name"].downcase.gsub(" ","_")}",
-      category: "application",
-      severity: 4, # todo...
-      source: "self",
-      status: "confirmed",
-      description: "This server had a content issue: #{check["name"]}.",
-      references: [],
-      details: {
-        uri: uri,
-        check: check
-      }
-    })
+    _create_linked_issue("content_issue", { uri: uri, check: check })
   end
 
   def _create_missing_cookie_attribute_http_only_issue(uri, cookie, severity=5)
+    
+    # skip this for anything other than hostnames 
+    hostname = URI(uri).hostname
+    return if hostname =~ ipv4_regex || hostname =~ /ipv6_regex/
+    
     addtl_details = { cookie: cookie }
     _create_linked_issue("insecure_cookie_httponly_attribute", addtl_details)
   end
 
   def _create_missing_cookie_attribute_secure_issue(uri, cookie, severity=5)
+    
+    # skip this for anything other than hostnames 
+    hostname = URI(uri).hostname
+    return if hostname =~ ipv4_regex || hostname =~ /ipv6_regex/
+    
     addtl_details = { cookie: cookie }
     _create_linked_issue("insecure_cookie_secure_attribute", addtl_details)
   end
@@ -142,6 +142,10 @@ module Issue
     requests.each do |req|
 
       resource_url = req["url"]
+
+      # skip this for anything other than hostnames 
+      hostname = URI(resource_url).hostname
+      return if hostname =~ ipv4_regex || hostname =~ /ipv6_regex/
 
       if resource_url =~ /^http:.*$/ 
         _create_linked_issue("insecure_content_loaded", {

@@ -26,7 +26,30 @@ class UriCheckSudomainHijack  < BaseTask
     uri = _get_entity_name
     response = http_request(:get, uri)
 
-    if response
+    ###
+    ### First, let's make sure we don't flag on domains we don't care about
+    ###
+    seed_domain = false
+    if seeds = @project.seeds
+      # if we have seeds, unless this seed matches one, skip
+      seeds.each do |s|
+        next unless s.type_string == "Domain" # only look at domains
+        seed_domain = true if uri =~ /#{s.name}/i
+        break
+      end
+    else 
+      seed_domain = true # assume true if we have no seeds
+    end
+
+    unless seed_domain
+      _log "Not looking at a domain we care about, skipping!"
+      return 
+    end
+
+    ###
+    ### Now that we know we're good to check...  
+    ###
+    if response && seed_domain
 
       if response.body =~ /The specified bucket does not exist/i && uri =~ /amazonaws.com/
         _create_hijackable_subdomain_issue "AWS S3", uri, "potential"
@@ -141,26 +164,6 @@ class UriCheckSudomainHijack  < BaseTask
   end #end run
 
   def _create_hijackable_subdomain_issue type, uri, status
-    ############################################
-    ###      Old Issue                      ###
-    ###########################################
-    # _create_issue({
-    #   name: "Subdomain Hijacking Detected (#{type})",
-    #   type: "subdomain_hijack_detected",
-    #   severity: severity,
-    #   status: status,
-    #   description:  "This uri #{uri} appears to be unclaimed on a third party host, meaning," +
-    #                 " there's a DNS record at (#{uri}) that points to #{type}, but it" +
-    #                 " appears to be unclaimed and you should be able to register it with" +
-    #                 " the host, effectively 'hijacking' the domain.",
-    #   details: {
-    #     uri: uri,
-    #     type: type
-    #   }
-    # })
-    ############################################
-    ###      New Issue                      ###
-    ###########################################
     _create_linked_issue("subdomain_hijack",{
       type: "Subdomain Hijacking Detected (#{type})",
       detailed_description: " This uri #{uri} appears to be unclaimed on a third party host, meaning," +

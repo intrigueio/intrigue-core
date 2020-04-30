@@ -43,6 +43,6 @@ God.watch do |w|
   w.name = "intrigue-tika"
   w.dir = "#{BASEDIR}" 
   w.log = "#{BASEDIR}/log/tika.log"
-  w.start = "java -jar #{BASEDIR}/tmp/tika-server-1.24.jar"
+  w.start = "java -jar #{BASEDIR}/tmp/tika-server.jar"
   w.keepalive
 end
