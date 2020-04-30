@@ -5,7 +5,7 @@
 #####
 
 # if these are already set by our parent, use that.. otherwise sensible defaults
-export INTRIGUE_DIRECTORY="${IDIR:=/home/ubuntu/core}"
+export INTRIGUE_DIRECTORY="${IDIR:=/home/$USER/core}"
 export RUBY_VERSION="${RUBY_VERSION:=2.6.5}"
 export DEBIAN_FRONTEND=noninteractive
 
@@ -259,7 +259,7 @@ sudo systemctl stop redis-server
 echo "[+] Updating Redis configuration, moving it to /data"
 # ensure we bind to localhost
 sudo sed -i '/^bind/s/bind.*/bind 127.0.0.1/' /etc/redis/redis.conf
-# change default direectory for ubuntu
+# change default direectory
 #sudo sed -i '/^dir/s/dir \/var\/lib\/redis/\/data\/redis/' /etc/redis/redis.conf
 sudo sed -i 's/dir \/var\/lib\/redis \/data\/redis/g' /etc/redis/redis.conf
 
