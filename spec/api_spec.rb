@@ -3,10 +3,10 @@ require_relative 'spec_helper'
 describe "Intrigue" do
 describe "API" do
 
-  it "should return a 200" do
-    get "/"
-    expect(last_response.status).to match 200
-  end
+  #it "should return a 200" do
+  #  get "/"
+  #  expect(last_response.status).to match 200
+  #end
 
 end
 

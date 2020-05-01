@@ -7,12 +7,13 @@ set :run, false
 set :raise_errors, true
 set :logging, false
 
+
 def app
   IntrigueApp
 end
 
-DB = Sequel.connect("sqlite:///tmp/test")
-Sequel::Model.db = DB
+#DB = Sequel.connect("sqlite:///tmp/test")
+#Sequel::Model.db = DB
 
 #puts "DB: #{DB}"
 #puts "Sequel::Model.db: #{Sequel::Model.db}"
