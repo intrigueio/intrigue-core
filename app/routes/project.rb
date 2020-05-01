@@ -42,7 +42,7 @@ class IntrigueApp < Sinatra::Base
 
       # create the project unless it exists
       unless Intrigue::Model::Project.first(:name => new_project_name)
-        Intrigue::Model::Project.create(:name => new_project_name)
+        Intrigue::Model::Project.create(:name => new_project_name, :created_at => Time.now.utc)
       end
 
       redirect "/#{new_project_name}/start" # handy if we're in a browser
@@ -61,7 +61,7 @@ class IntrigueApp < Sinatra::Base
 
         # recreate the default project if we've removed
         if @project_name == "Default"
-          Intrigue::Model::Project.create(:name => "Default")
+          Intrigue::Model::Project.create(:name => "Default", :created_at => Time.now.utc)
         end
       end
 

@@ -82,12 +82,10 @@ def setup_redis
     puts "Configuring Redis Client for: #{$redis_connect_string}"
     config.redis = { :url => $redis_connect_string }
   end
-
-
 end
 
 sanity_check_system
-setup_redis
+setup_redis unless ENV["INTRIGUE_ENV"] == "test"
 setup_database
 
 class IntrigueApp < Sinatra::Base

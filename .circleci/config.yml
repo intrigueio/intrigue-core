@@ -1,0 +1,23 @@
+version: 2.1
+orbs:
+  ruby: circleci/ruby@0.1.2 
+
+jobs:
+  build:
+    docker:
+      - image: circleci/ruby:2.6.5-stretch-node
+        environment:
+          BUNDLER_VERSION: 2.1.4
+    executor: ruby/default
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies & run specs 
+          command:  | 
+            gem update --system
+            gem install bundler:2.1.4
+            INTRIGUE_ENV=test bundle install
+            INTRIGUE_ENV=test bundle exec rake setup
+            INTRIGUE_ENV=test bundle exec rake db:migrate
+            INTRIGUE_ENV=test bundle exec rspec spec/*.rb   
+    
