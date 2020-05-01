@@ -110,9 +110,6 @@ class IntrigueApp < Sinatra::Base
             if ss =~ /^name:/
               ss.gsub!(/^name:/,"")
               selected_entities = selected_entities.exclude(Sequel.ilike(:name, "%#{ss}%"))
-            elsif ss =~ /^details:/
-              ss.gsub!(/^details:/,"")
-              selected_entities = selected_entities.exclude(Sequel.ilike(:details, "%#{ss}%"))
             else
               selected_entities = selected_entities.exclude(Sequel.ilike(:name, "%#{ss}%"))
             end
@@ -121,9 +118,6 @@ class IntrigueApp < Sinatra::Base
             if ss =~ /^name:/
               ss.gsub!(/^name:/,"")
               selected_entities = selected_entities.where(Sequel.ilike(:name, "%#{ss}%"))
-            elsif ss =~ /^details:/
-              ss.gsub!(/^details:/,"")
-              selected_entities = selected_entities.where(Sequel.ilike(:details, "%#{ss}%"))
             else
               selected_entities = selected_entities.where(Sequel.ilike(:name, "%#{ss}%"))
             end

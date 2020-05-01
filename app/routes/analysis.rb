@@ -134,9 +134,7 @@ class IntrigueApp < Sinatra::Base
   end
 
   get '/:project/analysis/fingerprints' do
-    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::Uri").order(:name)
-
-    @fingerprints = selected_entities.map{|x| x.details["fingerprint"] }.compact
+    @selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::Uri").order(:name)
 
     erb :'analysis/fingerprints'
   end
