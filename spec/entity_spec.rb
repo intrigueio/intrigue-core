@@ -18,7 +18,6 @@ describe "Entity" do
   it "can be added to an entity group" do
     p = Intrigue::Model::Project.create(:name => "testkasdfjh-#{rand(1000000)}")
     e = Intrigue::Model::Entity.create(:project => p, :type => "Intrigue::Entity::String", :name => "z")
-    puts e
     g = Intrigue::Model::AliasGroup.create(:project => p, :name=>"xyz"); g.save
     g.add_entity e;
 

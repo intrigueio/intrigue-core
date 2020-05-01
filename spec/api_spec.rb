@@ -20,6 +20,7 @@ describe "EntityApi" do
   it "the entity list should contain a AutonomousSystem type" do
     get '/entity_types.json'
     json = JSON.parse(last_response.body)
+    expect(json).not_to be nil 
     as = json.select{|x| x["name"] == "AutonomousSystem"} 
     expect(as).not_to be nil
   end
@@ -35,6 +36,7 @@ describe "TaskApi" do
   it "entity list should contain a AutonomousSystem type" do
     get '/entity_types.json'
     json = JSON.parse(last_response.body)
+    expect(json).not_to be nil 
     as = json.select{|x| x["name"] == "AutonomousSystem"} 
     expect(as).not_to be nil
   end
