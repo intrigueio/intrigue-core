@@ -3,6 +3,7 @@ module Intrigue
     class Logger < Sequel::Model
       plugin :serialization, :json
       plugin :validation_helpers
+      plugin :timestamps
 
       one_to_one :task_result
       one_to_one :scan_result

@@ -3,7 +3,8 @@ module Intrigue
 
     class Issue < Sequel::Model
       plugin :validation_helpers
-    
+      plugin :timestamps
+
       many_to_one  :project
       many_to_one  :task_result
       many_to_one  :entity

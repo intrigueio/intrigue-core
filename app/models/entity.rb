@@ -12,6 +12,7 @@ module Intrigue
     class Entity < Sequel::Model
       plugin :validation_helpers
       plugin :single_table_inheritance, :type
+      plugin :timestamps
 
       self.raise_on_save_failure = false
 

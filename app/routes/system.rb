@@ -24,7 +24,6 @@ class IntrigueApp < Sinatra::Base
       # save and reload
       Intrigue::System::Config.save
 
-
       redirect "/#{@project_name}"  # handy if we're in a browser
     end
 

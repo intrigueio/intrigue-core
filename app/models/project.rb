@@ -3,6 +3,7 @@ module Intrigue
     class Project < Sequel::Model
       plugin :validation_helpers
       plugin :serialization, :json, :options, :handlers, :allowed_namespaces
+      plugin :timestamps
 
       one_to_many :logger
       one_to_many :task_results

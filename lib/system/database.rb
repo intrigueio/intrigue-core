@@ -32,7 +32,7 @@ def setup_database
       postgres_connect_string = "postgres://#{database_user}@#{database_host}:#{database_port}/#{database_name}"
     end
 
-    puts "Connecting to Postgres at: #{postgres_connect_string}"
+    #puts "Connecting to Postgres at: #{postgres_connect_string}"
     $db = ::Sequel.connect(postgres_connect_string, options)
 
     # Allow data to be stored / queryed in JSON format

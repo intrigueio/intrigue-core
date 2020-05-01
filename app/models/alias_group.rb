@@ -1,6 +1,8 @@
 module Intrigue
 module Model
   class AliasGroup < Sequel::Model
+    plugin :timestamps
+
     one_to_many :entities
     many_to_one :project
 
