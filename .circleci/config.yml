@@ -17,6 +17,7 @@ jobs:
             gem update --system
             gem install bundler:2.1.4
             INTRIGUE_ENV=test bundle install
+            INTRIGUE_ENV=test bundle exec rake setup
             INTRIGUE_ENV=test bundle exec rake db:migrate
             INTRIGUE_ENV=test bundle exec rspec spec/*.rb   
     
