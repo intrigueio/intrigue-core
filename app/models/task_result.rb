@@ -3,6 +3,7 @@ module Intrigue
     class TaskResult < Sequel::Model
       plugin :validation_helpers
       plugin :serialization, :json, :options, :handlers
+      plugin :timestamps
 
       many_to_many :entities
       one_to_many :issues

@@ -156,7 +156,7 @@ class IntrigueApp < Sinatra::Base
     unless project
       # Creating a default project since it doesn't appear to exist (it should always exist)
       if directive == "Default"
-        project = Intrigue::Model::Project.create(:name => "Default")
+        project = Intrigue::Model::Project.create(:name => "Default", :created_at => Time.now.utc )
       else
         redirect "/"
       end

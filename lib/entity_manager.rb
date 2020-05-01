@@ -223,46 +223,62 @@ class EntityManager
         return nil
       end
 
+      # necessary to relookup?
+      entity = Intrigue::Model::Entity.find(:id => entity.id)
+
+      ### Ensure we have an entity
+      unless entity
+        tr.log_error "Unable to create or find entity: #{type}##{downcased_name}, failing!!"
+        return nil
+      end
+
+      ### final scoping in case the entity has specific scoping instructions
+      ##   (now that we have an entity)
+      ##
+      ##  the default method on the base class simply sets what was available previously
+      ##  See the inidivdiual entity files for this logic.
+      ##
+      if scope_request
+        entity.scoped = scope_request.to_bool
+      else
+        entity.scoped = entity.scoped? #always fall back to our entity-specific logic.
+        tr.log "Using entity scoping logic, got #{entity.scoped}"
+      end
+      entity.save_changes
+      tr.log "Final scoping decision for #{entity.name}: #{entity.scoped}"
+
+      ### Run Data transformation (to hide attributes... HACK)
+      unless entity.transform!
+        tr.log_error "Transformation of entity failed: #{entity}, rolling back entity creation!!"
+        entity.delete
+        raise "Invalid entity attempted: #{entity.type} #{entity.name}"
+      end
+
+      ### Run Validation
+      unless entity.validate_entity
+        tr.log_error "Validation of entity failed: #{entity}, rolling back entity creation!!"
+        entity.delete
+        raise "Invalid entity attempted: #{entity.type} #{entity.name}"
+      end
+
+      # ENRICHMENT LAUNCH
+      if tr.auto_enrich && !entity_already_existed
+        # Check if we've alrady run first and return gracefully if so
+        if entity.enriched
+          tr.log "Skipping enrichment... already completed!"
+        else
+          # starts a new background task... so anything that needs to happen from
+          # this point should happen in that new background task
+          entity.enrich(tr)
+        end
+      else
+        tr.log "Skipping enrichment... enrich not enabled!" unless tr.auto_enrich
+        tr.log "Skipping enrichment... entity exists!" if entity_already_existed
+      end
+
     end
 
-    # necessary to relookup?
-    entity = Intrigue::Model::Entity.find(:id => entity.id)
-
-    ### Ensure we have an entity
-    unless entity
-      tr.log_error "Unable to create or find entity: #{type}##{downcased_name}, failing!!"
-      return nil
-    end
-
-    ### final scoping in case the entity has specific scoping instructions
-    ##   (now that we have an entity)
-    ##
-    ##  the default method on the base class simply sets what was available previously
-    ##  See the inidivdiual entity files for this logic.
-    ##
-    if scope_request
-      entity.scoped = scope_request.to_bool
-    else
-      entity.scoped = entity.scoped? #always fall back to our entity-specific logic.
-      tr.log "Using entity scoping logic, got #{entity.scoped}"
-    end
-    entity.save_changes
-    tr.log "Final scoping decision for #{entity.name}: #{entity.scoped}"
-
-    ### Run Data transformation (to hide attributes... HACK)
-    unless entity.transform!
-      tr.log_error "Transformation of entity failed: #{entity}, rolling back entity creation!!"
-      entity.delete
-      raise "Invalid entity attempted: #{entity.type} #{entity.name}"
-    end
-
-    ### Run Validation
-    unless entity.validate_entity
-      tr.log_error "Validation of entity failed: #{entity}, rolling back entity creation!!"
-      entity.delete
-      raise "Invalid entity attempted: #{entity.type} #{entity.name}"
-    end
-
+    
     # Add to our result set for this task
     tr.add_entity entity
 
@@ -280,21 +296,6 @@ class EntityManager
       pid = primary_entity.alias_group_id
       cid > pid ? entity.alias_to(pid) : primary_entity.alias_to(cid)
 
-    end
-
-    # ENRICHMENT LAUNCH
-    if tr.auto_enrich && !entity_already_existed
-      # Check if we've alrady run first and return gracefully if so
-      if entity.enriched
-        tr.log "Skipping enrichment... already completed!"
-      else
-        # starts a new background task... so anything that needs to happen from
-        # this point should happen in that new background task
-        entity.enrich(tr)
-      end
-    else
-      tr.log "Skipping enrichment... enrich not enabled!" unless tr.auto_enrich
-      tr.log "Skipping enrichment... entity exists!" if entity_already_existed
     end
 
   # return the entity

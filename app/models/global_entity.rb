@@ -2,6 +2,8 @@ module Intrigue
   module Model
     class GlobalEntity < Sequel::Model
       plugin :validation_helpers
+      plugin :timestamps
+
       self.raise_on_save_failure = false
 
       def validate
