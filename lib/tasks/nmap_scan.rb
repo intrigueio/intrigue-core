@@ -2,8 +2,6 @@ module Intrigue
 module Task
 class NmapScan < BaseTask
 
-  include Intrigue::Task::Dns
-
   def self.metadata
     {
       :name => "nmap_scan",
@@ -16,9 +14,9 @@ class NmapScan < BaseTask
       :allowed_types => ["DnsRecord", "Domain", "IpAddress", "NetBlock"],
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
-        {:name => "top_ports", :regex => "integer", :default => "0" },
-        {:name => "tcp_ports", :regex => "numeric_list", :default => "21,22,23,80,81,443,445,3389,8000,8009,8080,8081,8443" },
-        {:name => "udp_ports", :regex => "numeric_list", :default => "161,500,1900" }
+        {:name => "top_ports", :regex => "integer", :default => "-1" },
+        {:name => "tcp_ports", :regex => "numeric_list", :default => "21,22,23,35,80,81,443,502,503,1883,2181,2222,2888,3389,3888,4443,4444,4505,4506,4786,5000,5556,5900,5901,6379,6443,7001,7002,7443,7777,8001,8009,8032,8080,8081,8278,8291,8443,8883,9000,9001,9091,9092,9094,9200,9201,9300,9301,9443,10443,11443,11994,12443,13443,20443,27017,27018,27019,22222,30443,40443,53413" },
+        {:name => "udp_ports", :regex => "numeric_list", :default => "53,123,161,500,1900,17185" }
       ],
       :created_types => [ "DnsRecord", "IpAddress", "NetworkService", "Uri" ]
     }

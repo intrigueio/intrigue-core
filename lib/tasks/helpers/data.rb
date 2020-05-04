@@ -103,9 +103,93 @@ module Data
       "yottaa.net"
     ]
   end
+
+  def scannable_udp_ports
+    udp_ports = ""
+    udp_ports << "53," # dns
+    udp_ports << "123," # ntp
+    udp_ports << "135,"  # msrpc
+    udp_ports << "139,"  # netbios session
+    udp_ports << "161," # snmp
+    udp_ports << "500," # isakmp
+    udp_ports << "631,"  # ipp
+    udp_ports << "1434,"  # msrpc
+    udp_ports << "1900," # upnp
+    udp_ports << "2049," # nfs 
+    udp_ports << "17185" # vxworks https://blog.rapid7.com/2010/08/02/new-vxworks-vulnerabilities/
+
+  udp_ports
+  end
+
+
+  def scannable_tcp_ports
+
+    # https://duo.com/decipher/mapping-the-internet-whos-who-part-three
+    # https://docs.oracle.com/cd/E16340_01/core.1111/e10105/portnums.htm
+    # https://svn.nmap.org/nmap/nmap-services
+    # https://docs.google.com/spreadsheets/d/1r_IriqmkTNPSTiUwii_hQ8Gwl2tfTUz8AGIOIL-wMIE/pub?output=html
+
+    tcp_ports = ""
+    tcp_ports << "21,"
+    tcp_ports << "22,"
+    tcp_ports << "23,"
+    tcp_ports << "35,"
+    tcp_ports << "80,81,"
+    tcp_ports << "443,"
+    tcp_ports << "445,"
+    tcp_ports << "502,503,"
+    tcp_ports << "993,"             # imaps
+    tcp_ports << "995,"             # pops
+    tcp_ports << "1723,"            # pptp
+    tcp_ports << "1883,"
+    tcp_ports << "2181,"
+    tcp_ports << "2222,"
+    tcp_ports << "2888,"
+    tcp_ports << "3306,"            # mysql
+    tcp_ports << "3389,"            # RDP
+    tcp_ports << "3888,"
+    tcp_ports << "4443,"            # HTTPS
+    tcp_ports << "4444,"            # Bind
+    tcp_ports << "4505,4506,"       # salt stack
+    tcp_ports << "4786,"
+    tcp_ports << "5000,"            # Oracle WebLogic Server Node Manager Port	
+    tcp_ports << "5556,"
+    tcp_ports << "5900,5901,"       # vnc
+    tcp_ports << "6379,"            # redis 
+    tcp_ports << "6443,"
+    tcp_ports << "7001,7002,"       # Oracle WebLogic Server Listen Port for Administration Server 
+                                    # Oracle WebLogic Server SSL Listen Port for Administration Server	
+    tcp_ports << "7443,"        
+    tcp_ports << "7777,"
+    tcp_ports << "8001,"            # Oracle WebLogic Server Listen Port for Managed Server	
+    tcp_ports << "8009,"
+    tcp_ports << "8032,"
+    tcp_ports << "8080,8081,"       # HTTP
+    tcp_ports << "8278,"
+    tcp_ports << "8291,"
+    tcp_ports << "8443,"
+    tcp_ports << "8883,"
+    tcp_ports << "9000,9001,"
+    tcp_ports << "9091,9092,"
+    tcp_ports << "9094,"
+    tcp_ports << "9200,9201,"         # elasticsearch
+    tcp_ports << "9300,9301,"         # elasticsearch
+    tcp_ports << "9443,"
+    tcp_ports << "10443,"
+    tcp_ports << "11443,"
+    tcp_ports << "11994,"
+    tcp_ports << "12443,"
+    tcp_ports << "13443,"
+    tcp_ports << "20443,"
+    tcp_ports << "27017,27018,27019," # mongodb
+    tcp_ports << "22222,"
+    tcp_ports << "30443,"
+    tcp_ports << "40443,"
+    tcp_ports << "53413"
+
+  tcp_ports
+  end
   
-
-
   def geolocate_ip(ip)
 
     return nil unless File.exist? "#{$intrigue_basedir}/data/geolitecity/GeoLite2-City.mmdb"
