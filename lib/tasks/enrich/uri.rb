@@ -60,9 +60,13 @@ class Uri < Intrigue::Task::BaseTask
     _log "Checking OPTIONS"
     verbs_enabled = check_options_endpoint(uri)
 
-    # grab all script_references
+    # grab all script_references, normalize to include full uri if needed 
     _log "Parsing out Scripts"
-    script_links = response.body.scan(/<script.*?src=["|'](.*?)["|']/).map{|x| x.first if x }
+    temp_script_links = response.body.scan(/<script.*?src=["|'](.*?)["|']/).map{ |x| x.first if x }
+    # add http/https where appropriate
+    temp_script_links = temp_script_links.map { |x| x =~ /^\/\// ? "#{scheme}:#{x}" : x }
+    # add base_url where appropriate
+    script_links = temp_script_links.map { |x| x =~ /^\// ? "#{uri}#{x}" : x }
 
     # save the Headers
     headers = []

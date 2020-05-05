@@ -26,11 +26,13 @@ class WordpressEnumeratePlugins < BaseTask
 
     uri = _get_entity_name
 
+    require_enrichment
+
     # First just get the easy stuff 
     _set_entity_detail("wordpress_plugins", get_wordpress_parsable_plugins(uri) )
     
     # Then, attempt to brute
-    _set_entity_detail("wordpress_bruted_plugins", brute_wordpress_plugin_paths(uri) )
+    _set_entity_detail("wordpress_bruted_plugins", brute_wordpress_plugin_paths(uri).map{|x| x["final"] } )
 
     # Then, attempt to brute
     _set_entity_detail("wordpress_extracted_plugins", extract_wordpress_plugin_paths(uri) )
@@ -38,8 +40,6 @@ class WordpressEnumeratePlugins < BaseTask
   end # end run()
 
   def extract_wordpress_plugin_paths(uri)
-    sleep_until_enriched
-
     page_content = _get_entity_detail("hidden_response_data")
     extract_plugins_regex = /\/wp-content\/plugins\/(.*?)\//
     plugins = []
