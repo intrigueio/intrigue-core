@@ -25,6 +25,7 @@ class BaseTask
   include Intrigue::Task::Web
   include Intrigue::Task::WebContent
   include Intrigue::Task::Whois
+  include Intrigue::Task::CheckDatabase
 
   include Sidekiq::Worker
   sidekiq_options :queue => "task", :backtrace => true
@@ -109,26 +110,26 @@ class BaseTask
       ### ENRICHMENT TASK SPECIFICS
       # Now, if this is an enrichment task, we want to do some things
       if @task_result.task_name =~ /^enrich\/.*/
-        
+
         # MARK ENTITY AS ENRICHED
         _log "Marking entity as enriched!"
         @entity.enriched = true
-        
+
         ### HANDLE SCOPING - We should have enough info now that enrichment is complete
         # check the scoped? method on the entity and set the attribute
         if @entity.scoped?
           _log "Marking entity as scoped!"
           @entity.scoped = true
-        else 
+        else
           _log "Marking entity as unscoped!"
-          @entity.scoped = false 
+          @entity.scoped = false
         end
 
         # Save it!
         _log "Saving entity!"
         @entity.save_changes
 
-        # MACHINE LAUNCH (ONLY IF WE ARE ATTACHED TO A MACHINE) 
+        # MACHINE LAUNCH (ONLY IF WE ARE ATTACHED TO A MACHINE)
         # if this is part of a scan and we're in depth
         if @task_result.scan_result && @task_result.depth > 0
           machine_name = @task_result.scan_result.machine
