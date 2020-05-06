@@ -153,7 +153,7 @@ cd $HOME
 echo "[+] Installing Golang environment"
 sudo add-apt-repository --yes ppa:longsleep/golang-backports
 sudo apt update
-sudo apt install golang-go
+sudo apt install -y golang-go
 
 # ensure we have the path
 export GOPATH=$HOME/go
