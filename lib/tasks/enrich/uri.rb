@@ -68,6 +68,9 @@ class Uri < Intrigue::Task::BaseTask
     # add base_url where appropriate
     script_links = temp_script_links.map { |x| x =~ /^\// ? "#{uri}#{x}" : x }
 
+    # parse out the componeents
+    script_components = extract_javascript_components(script_links)
+  
     # save the Headers
     headers = []
     _log "Saving Headers"
@@ -285,12 +288,6 @@ class Uri < Intrigue::Task::BaseTask
       #"ciphers" => accepted_connections,
       "code" => response.code,
       "cookies" => response.header['set-cookie'],
-      "content" => ident_content_checks.uniq,
-      "extended_ciphers" => accepted_connections,             # new ciphers field
-      "extended_configuration" => ident_content_checks.uniq,  # new content field
-      "extended_full_responses" => ident_responses,           # includes all the redirects etc
-      "extended_favicon_data" => favicon_data,
-      "extended_response_body" => response.body,
       "favicon_md5" => favicon_md5,
       "favicon_sha1" => favicon_sha1,
       "fingerprint" => ident_fingerprints.uniq,
@@ -302,9 +299,15 @@ class Uri < Intrigue::Task::BaseTask
       "products" => products.compact,
       "redirect_chain" => ident_responses.first[:response_urls] || [],
       "response_data_hash" => response_data_hash,
-      "scripts" => script_links,
       "title" => title,
-      "verbs" => verbs_enabled
+      "verbs" => verbs_enabled,
+      "scripts" => script_components,
+      "extended_content" => ident_content_checks.uniq,
+      "extended_ciphers" => accepted_connections,             # new ciphers field
+      "extended_configuration" => ident_content_checks.uniq,  # new content field
+      "extended_full_responses" => ident_responses,           # includes all the redirects etc
+      "extended_favicon_data" => favicon_data,
+      "extended_response_body" => response.body,
     })
     
     # add in the browser results
