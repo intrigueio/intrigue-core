@@ -26,8 +26,8 @@ module Intrigue
   
       url = _get_entity_name
        
-      # first, ensure we're fingerprinted
-      sleep_until_enriched
+      # first, ensure we're enriched / fingerprinted
+      @entity = require_enrichment
       fingerprint = _get_entity_detail("fingerprint")
       
       # then check and make sure we're gitlab
