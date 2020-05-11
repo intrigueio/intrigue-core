@@ -61,8 +61,6 @@ module Intrigue
   end
 end
   
-
-
 ### Mixins with common task functionality
 require_relative 'tasks/helpers/generic'
 require_relative 'tasks/helpers/web'

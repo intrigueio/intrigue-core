@@ -40,7 +40,7 @@ class UriBruteFocusedContent < BaseTask
     override = _get_option("override_fingerprint")
 
     # we need a FP here, so hold off until 
-    sleep_until_enriched unless override.length > 0
+    require_enrichment unless override.length > 0
 
     fingerprint = _get_entity_detail("fingerprint")
 

@@ -6,14 +6,19 @@ module Generic
      include Intrigue::Task::Web
    end
 
-   def sleep_until_enriched
+   def require_enrichment
     entity_enriched = @entity.enriched?
     cycles = 10 
+    max_cycles = cycles
     until entity_enriched || cycles == 0
-      _log "Waiting 20s for entity to be enriched... (#{cycles-=1} / #{cycles})"
-        sleep 20
+      _log "Waiting 10s for entity to be enriched... (#{cycles-=1} / #{max_cycles})"
+        sleep 10
       entity_enriched = Intrigue::Model::Entity.first(:id => @entity.id).enriched?
     end
+
+    # re-pull
+    @entity = Intrigue::Model::Entity.first(:id => @entity.id)
+    
   end
 
 
