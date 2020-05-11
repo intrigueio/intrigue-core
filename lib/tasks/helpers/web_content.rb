@@ -3,8 +3,90 @@ module Intrigue
 module Task
 module WebContent
 
-  # compare_html response.body.sanitize_unicode, e.details["hidden_response_data"]
+  def extract_javascript_components(script_list)
+    components = []
+    script_list.each do |s|
+    
+      # Try common pattern: "#{name}.#{version}"
+      name_version_match = "#{s}".match(/([\w\d]+)\.(\d+\.\d+\.\d+)/i)    
+      if (name_version_match && name_version_match.captures)
+        name = name_version_match.captures.first.strip
+        version = name_version_match.captures.last.strip 
+        components << {"uri" => s, "component" => name.downcase, "version" => version}
+        next
+      end
+      
+      # Try common pattern: "#{versioni}/#{name}"
+      name_version_match = "#{s}".match(/(\d+\.\d+\.\d+)\/([\w\d]+)/i)    
+      if (name_version_match && name_version_match.captures)
+        version = name_version_match.captures.first.strip
+        name = name_version_match.captures.last.strip 
+        components << {"uri" => s, "component" => name.downcase, "version" => version}
+        next
+      end
 
+      # Try common pattern: "#{name}/#{version}"
+      name_version_match = "#{s}".match(/([\w\d]+)\/(\d+\.\d+\.\d+)/i)    
+      if (name_version_match && name_version_match.captures)
+        name = name_version_match.captures.first.strip
+        version = name_version_match.captures.last.strip 
+        components << {"uri" => s, "component" => name.downcase, "version" => version}
+        next
+      end
+
+      # Try common pattern: "#{name}-#{version}"
+      name_version_match = "#{s}".match(/\/([\w\-\d]+)\-(\d+\.\d+\.\d+)/i)    
+      if (name_version_match && name_version_match.captures)
+        name = name_version_match.captures.first.strip
+        version = name_version_match.captures.last.strip 
+        components << {"uri" => s, "component" => name.downcase, "version" => version}
+        next
+      end
+
+      # Try common pattern: "#{name}_#{version}"
+      name_version_match = "#{s}".match(/\/([\w\-\d]+)\_(\d+\.\d+\.\d+)/i)    
+      if (name_version_match && name_version_match.captures)
+        name = name_version_match.captures.first.strip
+        version = name_version_match.captures.last.strip 
+        components << {"uri" => s, "component" => name.downcase, "version" => version}
+        next
+      end
+
+      # Try common pattern: "#{name}.min.js?ver=#{version}"
+      name_version_match = "#{s}".match(/([\-\w\d]+)\.(min\.)?js\?ver=([\d\.\-\w]+)$/i)    
+      if (name_version_match && name_version_match.captures)
+        name = name_version_match.captures.first.strip
+        version = name_version_match.captures.last.strip 
+        components << {"uri" => s, "component" => name.downcase, "version" => version}
+        next
+      end
+
+      # make sure to capture any specific libs - jquery
+      if "#{s}".match(/jquery(\.min)?\.js/i)
+        components << {"uri" => s, "component" => "jquery"}
+        next
+      end
+
+      # make sure to capture any specific libs - jquery
+      if "#{s}".match(/polyfill(\.min)?\.js/i)
+        components << {"uri" => s, "component" => "polyfill"}
+        next
+      end
+
+      # otherwise, we didnt find it, so just stick in a url withoout a name
+      components << {"uri" => s }
+      
+    end
+
+    ### TODO... parse the actual content of the script to look for patterns!
+
+    ### Maybe re-enable eventually
+    #new_libraries = gather_javascript_libraries(session, uri)
+
+  components
+  end
+
+  # compare_html response.body.sanitize_unicode, e.details["hidden_response_data"]  
   def parse_html_diffs(texta, textb)
     # parse our content with Nokogiri
     our_doc = Nokogiri::HTML(texta)

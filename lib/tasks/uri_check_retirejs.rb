@@ -18,8 +18,7 @@ module Intrigue
           {"type" => "Uri", "details" => {"name" => "http://www.intrigue.io"}}
         ],
         :allowed_options => [],
-        :created_types =>  [],
-        :queue => "task_browser"
+        :created_types =>  []
       }
     end
   
@@ -64,32 +63,41 @@ module Intrigue
       # make sure we can pull scripts
       require_enrichment
   
-      # now for each script that we have on the URI, go get it, and stick it in memory
+      # keep track of what's been found 
+      found = []
+
+      # now for each script that we have on the URI, go get it
       scripts = _get_entity_detail("scripts")
       scripts.each do |s|
 
-        _log "Working on script: #{s}"
-        file_content = http_get_body s
+        #_log "Working on script: #{s}"
+        file_content = http_get_body s["uri"]
 
         # now traverse the list
         checks.each do |name, check| 
-          #_log name
-          
+          #_log "Checking... #{name}"
+
+          ###
+          ### In order to be able to effectively regex, we need the version
+          ###
+
           # get the content extractors
           content_extractors = check["extractors"]["filecontent"]
           next unless content_extractors
           
-          # extractors
+          # now for each extractor, add the version and test
           content_extractors.each do |fc|
-            #_log " - #{fc}"
-            if file_content =~ /#{fc}/
-              _log "Got a match: #{name}!"
+            if file_content =~ /#{fc.gsub("§§version§§", version)}/
+              _log "Got a match: #{name} #{fc}!"
             end
           end
 
         end
   
       end 
+
+      _log "Found: #{found}"
+
       # now merge them together and set as the new details
       #_set_entity_detail("retirejs",found)
   
