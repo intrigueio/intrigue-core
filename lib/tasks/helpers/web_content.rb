@@ -8,7 +8,7 @@ module WebContent
     script_list.each do |s|
     
       # Try common pattern: "#{name}.#{version}"
-      name_version_match = "#{s}".match(/([\w\d]+)\.(\d\.\d\.\d)/i)    
+      name_version_match = "#{s}".match(/([\w\d]+)\.(\d+\.\d+\.\d+)/i)    
       if (name_version_match && name_version_match.captures)
         name = name_version_match.captures.first.strip
         version = name_version_match.captures.last.strip 
@@ -17,7 +17,7 @@ module WebContent
       end
       
       # Try common pattern: "#{versioni}/#{name}"
-      name_version_match = "#{s}".match(/(\d\.\d\.\d)\/([\w\d]+)/i)    
+      name_version_match = "#{s}".match(/(\d+\.\d+\.\d+)\/([\w\d]+)/i)    
       if (name_version_match && name_version_match.captures)
         version = name_version_match.captures.first.strip
         name = name_version_match.captures.last.strip 
@@ -26,7 +26,7 @@ module WebContent
       end
 
       # Try common pattern: "#{name}/#{version}"
-      name_version_match = "#{s}".match(/([\w\d]+)\/(\d\.\d\.\d)/i)    
+      name_version_match = "#{s}".match(/([\w\d]+)\/(\d+\.\d+\.\d+)/i)    
       if (name_version_match && name_version_match.captures)
         name = name_version_match.captures.first.strip
         version = name_version_match.captures.last.strip 
@@ -35,7 +35,16 @@ module WebContent
       end
 
       # Try common pattern: "#{name}-#{version}"
-      name_version_match = "#{s}".match(/([\w\d]+)\-(\d\.\d\.\d)/i)    
+      name_version_match = "#{s}".match(/\/([\w\-\d]+)\-(\d+\.\d+\.\d+)/i)    
+      if (name_version_match && name_version_match.captures)
+        name = name_version_match.captures.first.strip
+        version = name_version_match.captures.last.strip 
+        components << {"uri" => s, "component" => name.downcase, "version" => version}
+        next
+      end
+
+      # Try common pattern: "#{name}_#{version}"
+      name_version_match = "#{s}".match(/\/([\w\-\d]+)\_(\d+\.\d+\.\d+)/i)    
       if (name_version_match && name_version_match.captures)
         name = name_version_match.captures.first.strip
         version = name_version_match.captures.last.strip 
