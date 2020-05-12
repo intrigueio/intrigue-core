@@ -3,16 +3,26 @@ module Intrigue
 module Task
 module WebContent
 
-  def extract_javascript_components(script_list)
+  def extract_javascript_components(script_list, host)
     components = []
     script_list.each do |s|
+
+      ### 
+      ### Determine who's hosting
+      ### 
+      if URI.parse(s).host =~ /#{host}/
+        host_location = "local"
+      else
+        host_location = "remote"
+      end
+       
     
       # Try common pattern: "#{name}.#{version}"
       name_version_match = "#{s}".match(/([\w\d]+)\.(\d+\.\d+\.\d+)/i)    
       if (name_version_match && name_version_match.captures)
         name = name_version_match.captures.first.strip
         version = name_version_match.captures.last.strip 
-        components << {"uri" => s, "component" => name.downcase, "version" => version}
+        components << {"uri" => s, "component" => name.downcase, "version" => version, "relative_host" =>  host_location }
         next
       end
       
@@ -21,7 +31,7 @@ module WebContent
       if (name_version_match && name_version_match.captures)
         version = name_version_match.captures.first.strip
         name = name_version_match.captures.last.strip 
-        components << {"uri" => s, "component" => name.downcase, "version" => version}
+        components << {"uri" => s, "component" => name.downcase, "version" => version, "relative_host" =>  host_location }
         next
       end
 
@@ -30,7 +40,7 @@ module WebContent
       if (name_version_match && name_version_match.captures)
         name = name_version_match.captures.first.strip
         version = name_version_match.captures.last.strip 
-        components << {"uri" => s, "component" => name.downcase, "version" => version}
+        components << {"uri" => s, "component" => name.downcase, "version" => version, "relative_host" =>  host_location }
         next
       end
 
@@ -39,7 +49,7 @@ module WebContent
       if (name_version_match && name_version_match.captures)
         name = name_version_match.captures.first.strip
         version = name_version_match.captures.last.strip 
-        components << {"uri" => s, "component" => name.downcase, "version" => version}
+        components << {"uri" => s, "component" => name.downcase, "version" => version, "relative_host" =>  host_location }
         next
       end
 
@@ -48,7 +58,7 @@ module WebContent
       if (name_version_match && name_version_match.captures)
         name = name_version_match.captures.first.strip
         version = name_version_match.captures.last.strip 
-        components << {"uri" => s, "component" => name.downcase, "version" => version}
+        components << {"uri" => s, "component" => name.downcase, "version" => version, "relative_host" =>  host_location }
         next
       end
 
@@ -57,24 +67,24 @@ module WebContent
       if (name_version_match && name_version_match.captures)
         name = name_version_match.captures.first.strip
         version = name_version_match.captures.last.strip 
-        components << {"uri" => s, "component" => name.downcase, "version" => version}
+        components << {"uri" => s, "component" => name.downcase, "version" => version, "relative_host" =>  host_location }
         next
       end
 
       # make sure to capture any specific libs - jquery
       if "#{s}".match(/jquery(\.min)?\.js/i)
-        components << {"uri" => s, "component" => "jquery"}
+        components << {"uri" => s, "component" => "jquery", "relative_host" =>  host_location}
         next
       end
 
       # make sure to capture any specific libs - jquery
       if "#{s}".match(/polyfill(\.min)?\.js/i)
-        components << {"uri" => s, "component" => "polyfill"}
+        components << {"uri" => s, "component" => "polyfill", "relative_host" =>  host_location}
         next
       end
 
-      # otherwise, we didnt find it, so just stick in a url withoout a name
-      components << {"uri" => s }
+      # otherwise, we didnt find it, so just stick in a url withoout a name / version
+      components << {"uri" => s, "relative_host" =>  host_location }
       
     end
 
