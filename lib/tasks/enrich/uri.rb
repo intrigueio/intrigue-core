@@ -69,7 +69,7 @@ class Uri < Intrigue::Task::BaseTask
     script_links = temp_script_links.map { |x| x =~ /^\// ? "#{uri}#{x}" : x }
 
     # parse out the componeents
-    script_components = extract_javascript_components(script_links)
+    script_components = extract_javascript_components(script_links, hostname)
   
     # save the Headers
     headers = []
