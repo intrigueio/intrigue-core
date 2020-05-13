@@ -67,16 +67,17 @@ module Machine
         # Prevent us from re-scanning services
         unless entity.created_by?("masscan_scan")
           # and we might as well scan to cover any new info
-          start_recursive_task(task_result,"nmap_scan",entity, [])
+          # and we might as well scan to cover any new info
+          start_recursive_task(task_result,"nmap_scan",entity, [
+            {"name"=> "tcp_ports", "value" => scannable_tcp_ports},
+            {"name"=>"udp_ports", "value" => scannable_udp_ports}])
         end
 
       elsif entity.type_string == "NetBlock"
 
         start_recursive_task(task_result,"masscan_scan",entity,[
-          {"name"=> "tcp_ports", "value" => "21,23,35,22,2222,5000,502,503,80,443,81,4786,8080,8081," + 
-            "8443,3389,1883,8883,6379,6443,8032,9200,9201,9300,9301,9091,9092,9094,2181,2888,3888,5900," + 
-            "5901,7001,27017,27018,27019,8278,8291,53413,9000,11994"},
-          {"name"=>"udp_ports", "value" => "123,161,1900,17185"}])
+          {"name"=> "tcp_ports", "value" => scannable_tcp_ports},
+          {"name"=>"udp_ports", "value" => scannable_udp_ports}])
 
       elsif entity.type_string == "NetworkService"
 

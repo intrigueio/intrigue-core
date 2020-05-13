@@ -46,26 +46,26 @@ class IpAddress < Intrigue::Task::BaseTask
 
       next unless result["name"]
 
-      if "#{result["name"]}".is_ip_address?
-        _create_entity("IpAddress", { "name" => result["name"] }, @entity)
-      else
-        _create_entity("DnsRecord", { "name" => result["name"] }, @entity)
-        
-        # create a domain for this entity
-        check_and_create_unscoped_domain(result["name"])
+      # create a domain for this entity
+      entity = create_dns_entity_from_string(result["name"], @entity)
 
-        # check dev/staging server
-        # if we're external, let's see if this matches 
-        # a known dev or staging server pattern
-        if !match_rfc1918_address?(lookup_name)
-          dev_server_name_patterns.each do |p|
-            if "#{result["name"]}".split(".").first =~ p
-              _exposed_server_identified(p,result["name"])
-            end
+      # always create a domain for this entity, if it's a subdomain
+      if entity.kind_of? Intrigue::Entity::DnsRecord
+        check_and_create_unscoped_domain(result["name"]) 
+      end
+
+      # if we're external, let's see if this matches 
+      # a known dev or staging server pattern, and if we're internal, just
+      if match_rfc1918_address?(lookup_name)
+        _internal_system_exposed_via_dns(result["name"])
+      else # normal case
+        dev_server_name_patterns.each do |p|
+          if "#{result["name"]}".split(".").first =~ p
+            _exposed_server_identified(p, result["name"])
           end
         end
-
       end
+
     end
 
     # get ASN

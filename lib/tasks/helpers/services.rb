@@ -79,12 +79,14 @@ module Services
     # Grab all the aliases, since we'll want to auto-create services on them
     # (VHOSTS use case)
     hosts = [] 
+    # add our ip 
     hosts << ip_entity
+    # add everything we got from the cert
     cert_entities.each {|ce| hosts << ce} 
-
+    # and add our aliases
     if ip_entity.aliases.count > 0
       ip_entity.aliases.each do |al|
-        next unless al.type_string == "DnsRecord" #  only dns records
+        next unless al.type_string == "DnsRecord" || al.type_string == "Domain" #  only dns records
         next unless al.scoped? # skip blacklisted / unscoped
         hosts << al # add to the list
       end

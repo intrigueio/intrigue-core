@@ -169,12 +169,12 @@ module Intrigue
       end
 
       def has_detail(key)
-        return nil unless details
+        return nil unless self.details
         details[key] != nil
       end
 
       def get_detail(key)
-        return nil unless details
+        return nil unless self.details
         details[key]
       end
 

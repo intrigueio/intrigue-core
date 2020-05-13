@@ -24,7 +24,7 @@ class ExchangeCve20200688 < BaseTask
     super
     
     # first, ensure we're fingerprinted
-    sleep_until_enriched
+    require_enrichment
     
     fingerprint = _get_entity_detail("fingerprint")
 

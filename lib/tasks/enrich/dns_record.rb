@@ -46,6 +46,7 @@ class DnsRecord < Intrigue::Task::BaseTask
 
     _log "Grabbing resolutions"
     resolutions = collect_resolutions(results)
+
     _set_entity_detail("resolutions", resolutions)
 
     _log "Grabbing SOA"
@@ -106,13 +107,16 @@ class DnsRecord < Intrigue::Task::BaseTask
       results.each do |result|
         next if @entity.name == result["name"]
         _log "Creating entity for... #{result}"
-        if "#{result["name"]}".is_ip_address?
-          _create_entity("IpAddress", { "name" => result["name"] }, @entity)
-        else
-          _create_entity("DnsRecord", { "name" => result["name"] }, @entity)
-          check_and_create_unscoped_domain(result["name"])
+      
+        # create a domain for this entity
+        entity = create_dns_entity_from_string(result["name"], @entity)
+
+        # always create a domain for this entity, if it's a subdomain
+        if entity.kind_of? Intrigue::Entity::DnsRecord
+          check_and_create_unscoped_domain(result["name"]) 
         end
       end
+      
     end
 
     def _create_vhost_entities(lookup_name)

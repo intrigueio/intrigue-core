@@ -82,7 +82,8 @@ class SearchCertSpotter < BaseTask
         domain = domain[2..-1] if domain[0..1] == "*."
           
         # woot, made it
-        _create_entity("DnsRecord", "name"=> "#{domain}" )
+        create_dns_entity_from_string(domain)
+
       end
 
     rescue JSON::ParserError => e 
