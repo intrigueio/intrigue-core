@@ -161,8 +161,16 @@ module Issue
   ### Network and Host oriented issues
   ###
 
+  # RFC1918 DNS
+  def _internal_system_exposed_via_dns
+    _create_linked_issue("internal_system_exposed_via_dns", {
+      resolutions: "#{@entity.aliases.map{|x| x.name}}",
+      exposed_ports: @entity.details["ports"]
+    })
+  end
+
   # Development or Staging
-  def _exposed_server_identified(regex, name=nil, type="Development")
+  def _exposed_server_identified(regex, name=nil)
     exposed_name = name || @entity.name
     _create_linked_issue("development_system_identified", {
       matched_regex: "#{regex}",

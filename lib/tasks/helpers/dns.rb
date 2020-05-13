@@ -4,19 +4,18 @@ module Dns
 
   include Intrigue::Task::Generic
 
-  def create_dns_entity_from_string(s)
+  def create_dns_entity_from_string(s, alias_entity=nil)
 
     if s.is_ip_address?
-      _create_entity("IpAddress", "name" => s)
+      _create_entity("IpAddress",{"name" => s}, alias_entity)
     else
-
       # clean it up 
       x = "#{s}".strip.gsub(/^\*\./,"").gsub(/\.$/,"")
 
       if s.split(".").length == 2
-        _create_entity "Domain", "name" => x
+        _create_entity "Domain", {"name" => x}, alias_entity
       else 
-        _create_entity "DnsRecord", "name" => x
+        _create_entity "DnsRecord",{"name" => x}, alias_entity
       end
     end
   end

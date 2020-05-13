@@ -3,6 +3,7 @@ module Machine
   class Base
 
     extend Intrigue::Task::Helper
+    extend Intrigue::Task::Data
 
     def self.inherited(base)
       MachineFactory.register(base)

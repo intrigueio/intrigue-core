@@ -10,12 +10,15 @@ module WebContent
       ### 
       ### Determine who's hosting
       ### 
-      if URI.parse(s).host =~ /#{host}/
-        host_location = "local"
-      else
-        host_location = "remote"
+      begin
+        if URI.parse(s).host =~ /#{host}/
+          host_location = "local"
+        else
+          host_location = "remote"
+        end
+      rescue URI::InvalidURIError => e
+        host_location = "unknown"
       end
-       
     
       # Try common pattern: "#{name}.#{version}"
       name_version_match = "#{s}".match(/([\w\d]+)\.(\d+\.\d+\.\d+)/i)    

@@ -152,15 +152,22 @@ class EntityManager
       type = resolve_type_from_string(type_string)
 
       # Create a new alias group
-      g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
+      
       entity_details = {
         :name => downcased_name,
         :project_id => project.id,
         :type => type.to_s,
         :details => details,
-        :hidden => (traversable ? false : true ),
-        :alias_group_id => g.id
+        :hidden => (traversable ? false : true )
       }
+
+      # handle alias group
+      if primary_entity
+        entity_details[:alias_group_id] = primary_entity.alias_group_id
+      else
+        g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
+        entity_details[:alias_group_id] = g.id
+      end
 
       #####
       ### HANDLE USER- or TASK- PROVIDED SCOPING
@@ -289,12 +296,22 @@ class EntityManager
     # ip address
     if primary_entity
 
-      tr.log "Aliasing #{entity.name} to existing group: #{primary_entity.alias_group_id}"
+      $db.transaction do
+        
+        # Alias to the parent
+        pid = primary_entity.alias_group_id
+        tr.log "Aliasing #{entity.name} #{entity.alias_group_id} to #{primary_entity.name}'s existing group: #{pid}"
+        entity.alias_to(pid)
 
-      # Take the smaller group id, and use that to alias together
-      cid = entity.alias_group_id
-      pid = primary_entity.alias_group_id
-      cid > pid ? entity.alias_to(pid) : primary_entity.alias_to(cid)
+        # alias all others to the parent
+        entity.aliases.each do |a|
+          next if a == primary_entity
+          next if a.alias_group_id == primary_entity.alias_group_id
+          tr.log "Aliasing #{a.name} #{a.alias_group_id} to #{primary_entity.name}'s existing group: #{pid}"
+          a.alias_to(pid)
+        end
+
+      end
 
     end
 
