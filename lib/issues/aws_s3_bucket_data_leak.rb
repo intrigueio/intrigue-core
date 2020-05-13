@@ -11,7 +11,7 @@ class AwsS3BucketDataLeak < BaseIssue
       severity: 2,
       status: "confirmed",
       category: "application",
-      description: "Interesting files located in an S3 bucket.",
+      description: "Interesting files located in an S3 bucket at #{instance_details[:uri]}",
       remediation: "Investigate whether these files should be exposed, and if not, adjust the settings of the S3 Bucket",
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
         { type: "description", uri: "https://aws.amazon.com/fr/blogs/security/how-to-use-bucket-policies-and-apply-defense-in-depth-to-help-secure-your-amazon-s3-data/" }

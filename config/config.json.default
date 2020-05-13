@@ -360,6 +360,12 @@
       "editable": "true",
       "comment": ""
     },
+    "spyse_api_key": {
+      "value": "XXX",
+      "uri": "https://spyse.com/tools/api",
+      "editable": "true",
+      "comment": ""
+    },
     "towerdata_api_key": {
       "value": "",
       "uri": "http://intelligence.towerdata.com/developers/personalization-api",
