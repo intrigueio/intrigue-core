@@ -40,7 +40,7 @@ gem 'aws-sdk-s3'              #,         '~> 3'
 gem 'aws-sdk-route53'
 gem 'censys',                 :git => 'https://github.com/pentestify/censys.git'
 gem 'cloudflare',             :git => 'https://github.com/intrigueio/cloudflare.git'
-gem 'dnsbl-client',           :git => 'https://github.com/AnasBensalah/dnsbl-client.git'
+gem 'dnsbl-client',           :git => 'https://github.com/intrigueio/dnsbl-client.git'
 gem 'dnsimple'
 gem 'dnsruby'                 # dns_zone_transfer
 gem 'em-resolv-replace'       # dns_brute_sub
