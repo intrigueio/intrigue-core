@@ -96,7 +96,7 @@ class NmapScan < BaseTask
         end
 
         # either way, set os details from nmap
-        ip_entity.set_detail("os", host.os.matches)
+        ip_entity.set_detail("os", host.os.matches) if host.os
 
         # create an array to save all port details for this host
         host_details = []
