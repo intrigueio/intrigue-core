@@ -299,12 +299,13 @@ module Intrigue
               #:task_type => t.task_type,
               :base_entity_name => t.base_entity.name,
               :base_entity_type => t.base_entity.type  }
-          }
+          }, 
+          :generated_at => Time.now.utc
         }
       end
 
       def export_json
-        export_hash.merge("generated_at" => "#{Time.now.utc}").to_json
+        export_hash.to_json
       end
 
       def export_csv
