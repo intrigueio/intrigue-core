@@ -33,8 +33,6 @@ module Intrigue
         response = http_get_body(url)
         result = JSON.parse(response)
       rescue JSON::ParserError => e
-        require 'pry'
-        binding.pry
         _log_error "Unable to parse, not JSON!"
         return  
       end
