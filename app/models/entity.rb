@@ -180,8 +180,10 @@ module Intrigue
 
       def set_detail(key, value)
         begin
-          self.set(:details => details.merge({key => value}.sanitize_unicode))
-          save
+          $db.transaction do 
+            self.set(:details => details.merge({key => value}.sanitize_unicode))
+            save
+          end
         rescue Sequel::NoExistingObject => e
           puts "Error saving details for #{self}: #{e}, deleted?"
         rescue Sequel::DatabaseError => e
@@ -195,8 +197,10 @@ module Intrigue
 
       def set_details(hash)
         begin
-          self.set(:details => hash.sanitize_unicode)
-          save
+          $db.transaction do
+            self.set(:details => hash.sanitize_unicode)
+            save
+          end
         rescue Sequel::NoExistingObject => e
           puts "Error saving details for #{self}: #{e}, deleted?"
         rescue Sequel::DatabaseError => e
