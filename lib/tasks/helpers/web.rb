@@ -448,7 +448,7 @@ module Task
       end
 
       until( found || attempts >= max_attempts)
-       @task_result.logger.log_debug "Getting #{uri}, attempt #{attempts}" if @task_result
+       _log_debug "Getting #{uri}, attempt #{attempts}" if @task_result
        attempts+=1
 
        if Intrigue::System::Config.config["http_proxy"]

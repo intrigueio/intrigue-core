@@ -197,11 +197,11 @@ class EntityManager
       # - which is set when the entity is created, based on context
       # that is (or at least should be) specific to that task
       elsif tr.auto_scope
-        tr.log_debug "Task result scoped this entity based on auto_scope"
+        #tr.log "Task result scoped this entity based on auto_scope"
         scope_request = "true"
       # otherwise default to false, (and let the entity scoping handle it below) 
       else
-        tr.log_debug "No specific scope request from the task result"
+        #tr.log "No specific scope request from the task result"
         #entity_details[:scoped] = false
       end
 
