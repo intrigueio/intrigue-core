@@ -1,36 +1,68 @@
-# Task-related Gems
-require 'aws-sdk-sqs'
-require 'aws-sdk-s3'
-require 'censys'
-require 'compare-xml'
+####
+### These should always be availble 
+###
+require 'base64'
+require 'date'
 require 'digest'
-require 'dnsruby'
-require 'em-resolv-replace'
-require 'ipaddr'
+require 'ident'
 require 'json'
-require 'maxminddb'
 require 'net/dns'
+require 'net/ftp'
 require 'net/http'
-require 'net-http2'
-require 'nmap/xml'
-require 'nokogiri'
-require 'open-uri'
-require 'opencorporates'
-require 'openssl'
 require 'resolv'
-require 'resolv-replace'
-require 'rexml/document'
-require 'snmp'
 require 'socket'
-require 'spidr'
 require 'tempfile'
 require 'thread'
-require 'towerdata_api'
 require 'uri'
-require 'whois'
-require 'whois-parser'
-require 'whoisology'
-require 'zip'
+require 'webrick'
+
+###
+### These may / may not be available so let's wrap them 
+###
+begin  # try to load runtime deps 
+  
+  require 'aws-sdk-route53'
+  require 'aws-sdk-s3'
+  require 'aws-sdk-sqs'
+  require 'censys'
+  require 'cloudflare'
+  require 'compare-xml'
+  require 'digest'
+  require 'dnsruby'
+  require 'dnsimple'
+  require 'em-resolv-replace'
+  require 'flareon'
+  require 'intrigue-ident-private'
+  require 'ipaddr'
+  require 'maxminddb'
+  require 'net-http2'
+  require 'neutrino_api'
+  require 'nmap/xml'
+  require 'nokogiri'
+  require 'open-uri'
+  require 'opencorporates'
+  require 'openssl'
+  require 'ostruct'
+  require 'recog'
+  require 'resolv-replace'
+  require 'rexml/document'
+  require 'snmp'
+  require 'spidr'
+  require 'towerdata_api'
+  require 'versionomy'
+  require 'whois'
+  require 'whois-parser'
+  require 'whoisology'
+  require 'zip'
+
+rescue LoadError => e 
+  # unable to load private checks, presumable unavailable
+  puts "ERROR! Unable to load some dependencies, functionality may be limited: #{e}"
+end
+
+
+
+
 
 ###
 ### SYSTEM HELPERS (for use everywhere)

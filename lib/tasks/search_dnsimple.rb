@@ -1,5 +1,3 @@
-require "dnsimple"
-require "date"
 module Intrigue
 module Task
 class SearchDnsimple < BaseTask

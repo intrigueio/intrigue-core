@@ -1,22 +1,3 @@
-
-####
-# ident (gem)
-###
-begin  # try to load runtime deps 
-  require 'ident'
-  require 'intrigue-ident-private'
-  require 'digest'
-  require 'versionomy'
-  require 'webrick'
-  require 'socket'
-  require 'recog'
-  require 'ostruct'
-rescue LoadError => e 
-  # unable to load private checks, presumable unavailable
-  puts "ERROR! Unable to load some dependencies, functionality may be limited: #{e}"
-end
-
-
 module Intrigue
 module Task
 class BaseTask
@@ -24,7 +5,6 @@ class BaseTask
   # include default helpers
   include Intrigue::Task::Generic
   include Intrigue::Task::Issue
-
   include Intrigue::Task::BinaryEdge
   include Intrigue::Task::Browser
   include Intrigue::Task::CloudProviders
