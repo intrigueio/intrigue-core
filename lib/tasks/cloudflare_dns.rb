@@ -1,4 +1,3 @@
-require 'cloudflare'
 module Intrigue
 module Task
 class CloudflareZones < BaseTask
