@@ -1,14 +1,11 @@
-
 ####
-### These should always be availble 
+### These /should/ always be availble 
 ###
 require 'base64'
 require 'date'
 require 'digest'
 require 'ident'
 require 'json'
-require 'net/dns'
-require 'net/ftp'
 require 'net/http'
 require 'resolv'
 require 'socket'
@@ -37,6 +34,8 @@ begin  # try to load runtime deps
   require 'ipaddr'
   require 'maxminddb'
   require 'net-http2'
+  require 'net/dns'
+  require 'net/ftp'
   require 'neutrino_api'
   require 'nmap/xml'
   require 'nokogiri'
