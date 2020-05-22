@@ -1,4 +1,67 @@
 
+####
+### These should always be availble 
+###
+require 'base64'
+require 'date'
+require 'digest'
+require 'ident'
+require 'json'
+require 'net/dns'
+require 'net/ftp'
+require 'net/http'
+require 'resolv'
+require 'socket'
+require 'tempfile'
+require 'thread'
+require 'uri'
+require 'webrick'
+
+###
+### These may / may not be available so let's wrap them 
+###
+begin  # try to load runtime deps 
+  
+  require 'aws-sdk-route53'
+  require 'aws-sdk-s3'
+  require 'aws-sdk-sqs'
+  require 'censys'
+  require 'cloudflare'
+  require 'compare-xml'
+  require 'digest'
+  require 'dnsruby'
+  require 'dnsimple'
+  require 'em-resolv-replace'
+  require 'flareon'
+  require 'intrigue-ident-private'
+  require 'ipaddr'
+  require 'maxminddb'
+  require 'net-http2'
+  require 'neutrino_api'
+  require 'nmap/xml'
+  require 'nokogiri'
+  require 'open-uri'
+  require 'opencorporates'
+  require 'openssl'
+  require 'ostruct'
+  require 'recog'
+  require 'resolv-replace'
+  require 'rexml/document'
+  require 'snmp'
+  require 'spidr'
+  require 'towerdata_api'
+  require 'versionomy'
+  require 'whois'
+  require 'whois-parser'
+  require 'whoisology'
+  require 'zip'
+
+rescue LoadError => e 
+  # unable to load private checks, presumable unavailable
+  puts "ERROR! Unable to load some dependencies, functionality may be limited: #{e}"
+end
+
+
 ###
 ### Task factory: Standardize the creation and validation of tasks
 ###
