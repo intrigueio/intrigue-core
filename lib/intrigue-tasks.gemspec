@@ -1,8 +1,8 @@
 # coding: utf-8
 Gem::Specification.new do |s|
   s.name        = 'intrigue-tasks'
-  s.version     = '0.0.1'
-  s.date        = '2020-02-20'
+  s.version     = '0.0.2'
+  s.date        = '2020-05-20'
   s.summary     = "Intrigue Core Tasks"
   s.description = "Intrigue Core Issues"
   s.authors     = ["jcran"]

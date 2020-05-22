@@ -1,13 +1,19 @@
 
 ####
 # ident (gem)
-####
-require 'ident'
-
-begin  # try to load in private checks
+###
+begin  # try to load runtime deps 
+  require 'ident'
   require 'intrigue-ident-private'
-rescue LoadError
+  require 'digest'
+  require 'versionomy'
+  require 'webrick'
+  require 'socket'
+  require 'recog'
+  require 'ostruct'
+rescue LoadError => e 
   # unable to load private checks, presumable unavailable
+  puts "ERROR! Unable to load some dependencies, functionality may be limited: #{e}"
 end
 
 

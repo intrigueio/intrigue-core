@@ -1,5 +1,3 @@
-require 'pry'
-
 module Intrigue
 module Task
 module CloudProviders
