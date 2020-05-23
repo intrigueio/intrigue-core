@@ -2,7 +2,7 @@
 Gem::Specification.new do |s|
 
   s.name        = 'intrigue-tasks'
-  s.version     = '0.08'
+  s.version     = '0.1.0'
   s.date        = '2020-05-22'
   s.summary     = "Intrigue Core Tasks"
   s.description = "Intrigue Core Task Library"
