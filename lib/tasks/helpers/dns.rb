@@ -60,7 +60,7 @@ module Dns
       end
 
     rescue Errno::ENOENT => e
-      _log_error "Unable to locate public suffix list, failing to check / create domain for #{lookup_name}"
+      _log_error "Unable to locate public suffix list, failing to check / create domain"
       return nil
     end
 
