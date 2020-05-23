@@ -1,5 +1,6 @@
 module Intrigue
 class EntityManager
+  
   extend Intrigue::System::Helpers
   extend Intrigue::Task::Data
 
