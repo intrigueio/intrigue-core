@@ -1,6 +1,5 @@
 class IntrigueApp < Sinatra::Base
-  include Intrigue::Task::Helper
-
+  
     # Export All task results
     get '/:project/results.json/?' do
        session[:flash] = "Not implemented"

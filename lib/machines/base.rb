@@ -2,7 +2,7 @@ module Intrigue
 module Machine
   class Base
 
-    extend Intrigue::Task::Helper
+    extend Intrigue::System::Helpers
     extend Intrigue::Task::Data
 
     def self.inherited(base)

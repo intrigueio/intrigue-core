@@ -2,10 +2,10 @@
 Gem::Specification.new do |s|
 
   s.name        = 'intrigue-tasks'
-  s.version     = '0.0.6'
+  s.version     = '0.0.7'
   s.date        = '2020-05-20'
   s.summary     = "Intrigue Core Tasks"
-  s.description = "Intrigue Core Issues"
+  s.description = "Intrigue Core Task Library"
   s.authors     = ["jcran"]
   s.email       = 'jcran@intrigue.io'
   s.files       = Dir.glob("tasks/*/*.rb").concat Dir.glob("tasks/*.rb").concat ["./intrigue-tasks.rb"]

@@ -15,6 +15,10 @@ include Intrigue::System::MatchExceptions
 require_relative 'system/validations'
 include Intrigue::System::Validations
 
+# Intrigue System-wide Helpers (both app and backend) 
+require_relative 'system/helpers'
+include Intrigue::System::Helpers
+
 ###
 ### END SYSTEM HELPERS
 ###

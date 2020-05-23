@@ -15,7 +15,9 @@ require 'uri'
 require 'webrick'
 
 ###
-### These may / may not be available so let's wrap them 
+### These may / may not be available so let's wrap them  
+###
+### In the case where we're a gem, they're not yet available. add them as deps
 ###
 begin  # try to load runtime deps 
   
@@ -30,7 +32,6 @@ begin  # try to load runtime deps
   require 'dnsimple'
   require 'em-resolv-replace'
   require 'flareon'
-  require 'intrigue-ident-private'
   require 'ipaddr'
   require 'maxminddb'
   require 'net-http2'
@@ -55,6 +56,14 @@ begin  # try to load runtime deps
   require 'whoisology'
   require 'zip'
 
+rescue LoadError => e 
+  # unable to load private checks, presumable unavailable
+  puts "ERROR! Unable to load some dependencies, functionality may be limited: #{e}"
+end
+
+# only available in hosted service
+begin
+  require 'intrigue-ident-private'
 rescue LoadError => e 
   # unable to load private checks, presumable unavailable
   puts "ERROR! Unable to load some dependencies, functionality may be limited: #{e}"
@@ -124,6 +133,8 @@ module Intrigue
   end
 end
   
+
+
 ### Mixins with common task functionality
 require_relative 'tasks/helpers/generic'
 require_relative 'tasks/helpers/web'
@@ -150,3 +161,4 @@ Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 # Load vuln check tasks
 tasks_folder = File.expand_path('../tasks/vulns', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
+

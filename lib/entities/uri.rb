@@ -2,7 +2,7 @@ module Intrigue
 module Entity
 class Uri < Intrigue::Model::Entity
 
-  include Intrigue::Task::Dns # TODO ... move parse_domain_name up in the heirarchy
+  include Intrigue::Task::Dns # TODO ... move parse_domain_name up in the heirarchys
 
   def self.metadata
     {
@@ -42,6 +42,7 @@ class Uri < Intrigue::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
+
     return true if self.seed
 
     ## CHECK IF DOMAIN NAME IS KNOWN

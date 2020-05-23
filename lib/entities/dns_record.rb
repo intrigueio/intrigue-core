@@ -1,8 +1,7 @@
 module Intrigue
 module Entity
 class DnsRecord < Intrigue::Model::Entity
-  include Intrigue::Task::Helper
-
+  
   def self.metadata
     {
       :name => "DnsRecord",

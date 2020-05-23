@@ -10,7 +10,6 @@ class BaseTask
   include Intrigue::Task::CloudProviders
   include Intrigue::Task::Data
   include Intrigue::Task::Dns
-  include Intrigue::Task::Helper
   include Intrigue::Task::RecogWrapper
   include Intrigue::Task::Regex
   include Intrigue::Task::Services
@@ -23,7 +22,7 @@ class BaseTask
   sidekiq_options :queue => "task", :backtrace => true
 
   def self.inherited(base)
-    TaskFactory.register(base)
+    ::Intrigue::TaskFactory.register(base)
   end
 
   def perform(task_result_id)

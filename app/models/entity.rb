@@ -20,9 +20,6 @@ module Intrigue
       many_to_many :task_results
       many_to_one  :project
       one_to_many  :issues
-
-      include Intrigue::Task::Helper
-      include Intrigue::System::Validations
       
       def self.inherited(base)
         EntityFactory.register(base)

@@ -2,7 +2,7 @@ module Intrigue
 module Task
 module Generic
 
-  def self.included(base)
+   def self.included(base)
      include Intrigue::Task::Web
    end
 
@@ -20,7 +20,6 @@ module Generic
     @entity = Intrigue::Model::Entity.first(:id => @entity.id)
     
   end
-
 
   private
 

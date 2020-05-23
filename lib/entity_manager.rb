@@ -1,6 +1,6 @@
 module Intrigue
 class EntityManager
-  extend Intrigue::Task::Helper
+  extend Intrigue::System::Helpers
   extend Intrigue::Task::Data
 
   def self.resolve_type_from_string(type_string)
