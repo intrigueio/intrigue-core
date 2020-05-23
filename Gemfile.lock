@@ -33,7 +33,7 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: 7210df553657c0b140b4b519b464b82dfcdb5d20
+  revision: 1e4b945d516cf35430d6faa6632f9ab29f0eff90
   specs:
     intrigue-ident (0.9.3)
       snmp
