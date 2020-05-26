@@ -66,7 +66,7 @@ begin
   require 'intrigue-ident-private'
 rescue LoadError => e 
   # unable to load private checks, presumable unavailable
-  puts "ERROR! Unable to load some dependencies, functionality may be limited: #{e}"
+  #puts "Unable to load hosted-version-only fingerprints #{e}"
 end
 
 
