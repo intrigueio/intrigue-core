@@ -19,6 +19,10 @@ class EmailAddress < Intrigue::Model::Entity
     details["origin"] if details && details["origin"]
   end
 
+  def enrichment_tasks
+    ["enrich/email_address"]
+  end
+
   ###
   ### SCOPING
   ###
@@ -26,8 +30,8 @@ class EmailAddress < Intrigue::Model::Entity
     return true if self.seed
     return false if self.hidden
 
-  # if we didnt match the above and we were asked, let's just allow it 
-  true
+  # otherwise, scope us out
+  false
   end
 
 

@@ -49,9 +49,9 @@ class IpAddress < Intrigue::Task::BaseTask
       # create a domain for this entity
       entity = create_dns_entity_from_string(result["name"], @entity)
 
-      # always create a domain for this entity, if it's a subdomain
-      if entity.kind_of? Intrigue::Entity::DnsRecord
-        check_and_create_unscoped_domain(result["name"]) 
+      # always create a domain for this entity, if it's a domain or subdomain
+      if entity.kind_of?(Intrigue::Entity::DnsRecord) || entity.kind_of?(Intrigue::Entity::Domain)
+        create_dns_entity_from_string(result["name"]) 
       end
 
       # if we're external, let's see if this matches 
@@ -65,7 +65,6 @@ class IpAddress < Intrigue::Task::BaseTask
           end
         end
       end
-
     end
 
     # get ASN
@@ -112,7 +111,9 @@ class IpAddress < Intrigue::Task::BaseTask
         # create it 
         netblock = capture.first
         _log "Found related netblock: #{netblock}"
-        _create_entity "NetBlock", "name" => "#{netblock}"
+        # Note that everything created from enrich is autoscoped, so specifically
+        # unscope this. If it gets scoped later, all the better
+        _create_entity "NetBlock", { "name" => "#{netblock}" } 
       end
 
       # check transferred

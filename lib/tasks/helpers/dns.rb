@@ -478,7 +478,7 @@ module Dns
       
       # since we are creating an identical domain, send up the details
       e = _create_entity "Domain", {
-        "unscoped" => true,
+        #"unscoped" => true,
         "name" => "#{domain_name}",
         "resolutions" => _get_entity_detail("resolutions"),
         "soa_record" => _get_entity_detail("soa_record"),

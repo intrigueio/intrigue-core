@@ -52,7 +52,7 @@ class NetBlock < Intrigue::Task::BaseTask
         # create it 
         netblock = capture.first
         _log "Found related netblock: #{netblock}"
-        _create_entity "NetBlock", "name" => "#{netblock}"
+        _create_entity "NetBlock", { "name" => "#{netblock}", } # "unscoped" => "true" 
       end
 
       # check transferred

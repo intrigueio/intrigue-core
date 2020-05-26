@@ -29,7 +29,7 @@ class DnsRecord < Intrigue::Task::BaseTask
     lookup_name = _get_entity_name
 
     # always create a domain 
-    check_and_create_unscoped_domain(lookup_name)
+    create_dns_entity_from_string(lookup_name)
 
     # Do a lookup and keep track of all aliases
     _log "Resolving: #{lookup_name}"
@@ -53,7 +53,7 @@ class DnsRecord < Intrigue::Task::BaseTask
     soa_details = collect_soa_details(lookup_name)
     _set_entity_detail("soa_record", soa_details)
     if soa_details && soa_details["primary_name_server"]
-      check_and_create_unscoped_domain(soa_details["primary_name_server"]) 
+      create_dns_entity_from_string(soa_details["primary_name_server"]) 
     end
 
     # Checking dev test 
@@ -73,7 +73,7 @@ class DnsRecord < Intrigue::Task::BaseTask
       _log "Grabbing MX"
       mx_records = collect_mx_records(lookup_name)
       _set_entity_detail("mx_records", mx_records)
-      mx_records.each{|mx| check_and_create_unscoped_domain(mx["host"]) }
+      mx_records.each{|mx| create_dns_entity_from_string(mx["host"]) }
 
       # collect TXT records (useful for random things)
       _log "Grabbing TXT"
@@ -111,10 +111,8 @@ class DnsRecord < Intrigue::Task::BaseTask
         # create a domain for this entity
         entity = create_dns_entity_from_string(result["name"], @entity)
 
-        # always create a domain for this entity, if it's a subdomain
-        if entity.kind_of? Intrigue::Entity::DnsRecord
-          check_and_create_unscoped_domain(result["name"]) 
-        end
+        ## TODO... get the domain?
+        ## ... 
       end
       
     end

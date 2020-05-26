@@ -79,7 +79,7 @@ module Task
 
               # Create a linked issue if the type exists
               if _linkable_issue_exists "#{request_details[:issue_type]}"
-                _log "Creating  linked issue of type: #{request_details[:issue_type]}"
+                _log "Creating linked issue of type: #{request_details[:issue_type]}"
                 _create_linked_issue(request_details[:issue_type], result.except!(:name)) 
               else
                 # Generic fallback 

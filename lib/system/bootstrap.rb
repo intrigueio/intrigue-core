@@ -3,7 +3,7 @@ module System
 module Bootstrap
 
   def bootstrap_system(config)
-    extend Intrigue::Task::Helper
+    extend Intrigue::System::Helpers
 
     return nil unless config && config["projects"]
 

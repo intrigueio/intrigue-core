@@ -31,9 +31,8 @@ class DnsRecord < Intrigue::Model::Entity
     return true if self.seed
     return false if self.hidden # hit our blacklist so definitely false
 
-  # if we didnt match the above and we were asked, return whatever we got
-  # during the creation process
-  self.scoped
+  # if we didnt match the above and we were asked, default to true
+  true
   end
 
 end
