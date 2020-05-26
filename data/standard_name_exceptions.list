@@ -45,6 +45,7 @@
 /^.*\.corporate-ir.net(:[0-9]*)?$/
 /^.*\.decipherinc.com(:[0-9]*)?$/
 /^.*\.discourse.org(:[0-9]*)?$/
+/^.*\.dmarcian.org(:[0-9]*)?$/
 /^.*\.drupal.org(:[0-9]*)?$/
 /^.*\.ed[0-9]+.com(:[0-9]*)?$/
 /^.*\.edgecastcdn.net(:[0-9]*)?$/
