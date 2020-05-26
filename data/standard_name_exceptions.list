@@ -45,7 +45,10 @@
 /^.*\.corporate-ir.net(:[0-9]*)?$/
 /^.*\.decipherinc.com(:[0-9]*)?$/
 /^.*\.discourse.org(:[0-9]*)?$/
+/^.*\.discoursemail.com(:[0-9]*)?$/
 /^.*\.dmarcian.org(:[0-9]*)?$/
+/^.*\.dmarcian.com(:[0-9]*)?$/
+/^.*\.dreamhost.com(:[0-9]*)?$/
 /^.*\.drupal.org(:[0-9]*)?$/
 /^.*\.ed[0-9]+.com(:[0-9]*)?$/
 /^.*\.edgecastcdn.net(:[0-9]*)?$/
@@ -156,6 +159,7 @@
 /^.*\.purl.org(:[0-9]*)?$/
 /^.*\.q4web.com(:[0-9]*)?$/
 /^.*\.rdfs.org(:[0-9]*)?$/
+/^.*\.readmessl.com(:[0-9]*)?$/
 /^.*\.root-servers.net(:[0-9]*)?$/
 /^.*\.schema.org(:[0-9]*)?$/
 /^.*\.salesforce.com(:[0-9]*)?$/
@@ -165,6 +169,7 @@
 /^.*\.sharepointonline.com(:[0-9]*)?$/
 /^.*\.siftscience.com(:[0-9]*)?$/
 /^.*\.silverpop.com(:[0-9]*)?$/
+/^.*\.splashthatd.com(:[0-9]*)?$/
 /^.*\.squarespace.com(:[0-9]*)?$/
 /^.*\.statuscake.io(:[0-9]*)?$/
 /^.*\.statuspage.io(:[0-9]*)?$/
