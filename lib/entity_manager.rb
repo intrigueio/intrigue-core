@@ -277,11 +277,10 @@ class EntityManager
       entity.save_changes
       tr.log "Using entity scoping request, got #{entity.scoped}"
     else
-      entity.scoped = entity.scoped? #always fall back to our entity-specific logic.
+      entity.scoped = entity.scoped? #always fall back to our entity-specific logic if there was no request
       entity.save_changes
       tr.log "Using entity scoping logic, got #{entity.scoped}"
     end
-
 
     tr.log "Final scoping decision for #{entity.name}: #{entity.scoped}"
 

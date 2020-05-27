@@ -46,7 +46,9 @@ class Domain < Intrigue::Task::BaseTask
       soa_details = collect_soa_details(lookup_name)
       _set_entity_detail("soa_record", soa_details)
       if soa_details && soa_details["primary_name_server"] && @entity.scoped?
-        create_dns_entity_from_string(soa_details["primary_name_server"]) 
+        if @entity.scoped
+          _create_entity "Nameserver", "name" => soa_details["primary_name_server"]
+        end
       end
 
       # grab whois info & all nameservers
@@ -64,7 +66,9 @@ class Domain < Intrigue::Task::BaseTask
       
       # make sure we create affiliated domains
       ns_records.each do |ns|
-        create_dns_entity_from_string(ns) if @entity.scoped?
+        if @entity.scoped
+          _create_entity "Nameserver", "name" => ns
+        end
       end
 
       # grab any / all MX records (useful to see who accepts mail)

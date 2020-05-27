@@ -47,11 +47,11 @@ class IpAddress < Intrigue::Task::BaseTask
       next unless result["name"]
 
       # create a domain for this entity
-      entity = create_dns_entity_from_string(result["name"], @entity)
+      entity = create_dns_entity_from_string(result["name"], @entity) if @entity.scoped
 
       # always create a domain for this entity, if it's a domain or subdomain
       if entity.kind_of?(Intrigue::Entity::DnsRecord) || entity.kind_of?(Intrigue::Entity::Domain)
-        create_dns_entity_from_string(result["name"]) 
+        create_dns_entity_from_string(result["name"]) if @entity.scoped
       end
 
       # if we're external, let's see if this matches 
@@ -77,7 +77,7 @@ class IpAddress < Intrigue::Task::BaseTask
     _set_entity_detail("net_rir", cymru[:net_rir])
     _set_entity_detail("net_allocation_date",cymru[:net_allocation_date])
     _set_entity_detail("net_name",cymru[:net_name])
-    _create_entity "AutonomousSystem", :name => cymru[:net_asn]
+    _create_entity("AutonomousSystem", :name => cymru[:net_asn]) if @entity.scoped 
 
     # geolocate
     _log "Geolocating..."
@@ -113,7 +113,9 @@ class IpAddress < Intrigue::Task::BaseTask
         _log "Found related netblock: #{netblock}"
         # Note that everything created from enrich is autoscoped, so specifically
         # unscope this. If it gets scoped later, all the better
-        _create_entity "NetBlock", { "name" => "#{netblock}" } 
+        if @entity.scoped
+          _create_entity "NetBlock", { "name" => "#{netblock}" }
+        end
       end
 
       # check transferred
