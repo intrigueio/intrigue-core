@@ -32,10 +32,6 @@ class Domain < Intrigue::Model::Entity
     return true if self.seed
     return false if self.hidden
 
-    self.project.seeds.each do |s|
-      return true if s.name =~ /#{self.name}}/i
-    end
-
     # check hidden on-demand
     return true if self.project.traversable_entity?(self.name, "Domain")
 

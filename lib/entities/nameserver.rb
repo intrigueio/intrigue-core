@@ -30,11 +30,11 @@ class Nameserver < Intrigue::Model::Entity
 
     #
     # Check types we'll check for indicators of in-scope-ness
-    scope_check_entity_types = [ "Intrigue::Entity::Domain" ]
+    #scope_check_entity_types = [ "Intrigue::Entity::Domain" ]
 
-    self.project.seeds.each do |s|
-      return true if s.name =~ /#{parse_domain_name(self.name)}/i
-    end
+    #self.project.seeds.each do |s|
+    #  return true if s.name =~ /#{parse_domain_name(self.name)}/i
+    #end
 
     # check hidden on-demand
     return true if self.project.traversable_entity?(parse_domain_name(self.name), "Domain")

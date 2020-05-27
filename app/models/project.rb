@@ -175,6 +175,10 @@ module Intrigue
           "Intrigue::Entity::EmailAddress",
           "Intrigue::Entity::Organization"
         ]
+
+        # skip anything else!!
+        return true unless scope_check_entity_types.include? "Intrigue::Entity::#{type_string}"
+
         seeds.each do |s|
           next unless scope_check_entity_types.include? "Intrigue::Entity::#{type_string}"
           if entity_name =~ /[\.\s\@]#{Regexp.escape(s.name)}/i
@@ -203,9 +207,9 @@ module Intrigue
           end
         end
         
-        puts "Defaulting to traversable"
+        puts "Defaulting to not traversable"
 
-      true
+      false
       end
 
       # TODO - there must be a cleaner way? 

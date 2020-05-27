@@ -34,43 +34,9 @@ class IpAddress < Intrigue::Model::Entity
     return true if self.seed
     return false if self.hidden
 
-    # Check types we'll check for indicators 
-    # of in-scope-ness
-    #
-    scope_check_entity_types = [
-      "Intrigue::Entity::Organization",
-      "Intrigue::Entity::DnsRecord",
-      "Intrigue::Entity::Domain" ]
-
-    ### CHECK OUR SEED ENTITIES TO SEE IF THE TEXT MATCHES
-    ######################################################
-    if self.project.seeds
-      self.project.seeds.each do |s|
-        next unless scope_check_entity_types.include?(s.type.to_s) 
-        
-        # only if it's a domain
-        if s["type"] == "Intrigue::Entity::Domain" # try the basename )
-          base_name = s["name"].split(".").first # x.com -> x
-          return true if ("#{details["whois_full_text"]}" =~ /#{Regexp.escape(base_name)}/i)
-        end
-      end
-    end
-
-    ### CHECK OUR IN-PROJECT DISCOVERED ENTITIES TO SEE IF THE TEXT MATCHES 
-    #######################################################################
-    self.project.entities.where(scoped: true, type: scope_check_entity_types ).each do |e|
-
-      # make sure we skip any dns entries that are not fqdns. this will prevent
-      # auto-scoping on a single name like "log" or even a number like "1"
-      next if (e.type == "DnsRecord" || e.type == "Domain") && e.name.split(".").count == 1
-
-      # Now, check to see if the entity's name matches something in our # whois text, 
-      # and especially make sure 
-      if "#{details["whois_full_text"]}" =~ /[\s@]#{Regexp.escape(e.name)}/i
-        #_log "Marking as scoped: PROJECT ENTITY MATCHED TEXT: #{e.type}##{e.name}"
-        return true
-      end
-
+    # if we have aliases and they're all false, we don't really want this thing
+    if self.aliases.count > 0
+      return false unless self.aliases.map{|x| x.hidden }.include? false 
     end
 
   # if we didnt match the above and we were asked, default to true

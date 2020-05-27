@@ -32,14 +32,10 @@ class EmailAddress < Intrigue::Model::Entity
     return true if self.seed
     return false if self.hidden
 
-    self.project.seeds.each do |s|
-      return true if s.name =~ /#{parse_domain_name(self.name)}/i
-    end
-
     # check hidden on-demand
-    return true if self.project.traversable_entity?(parse_domain_name(self.name), "Domain")
+    return false unless self.project.traversable_entity?(self.name.split("@").last, "Domain")
 
-  false
+  true
   end
 
 

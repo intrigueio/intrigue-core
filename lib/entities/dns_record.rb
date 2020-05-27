@@ -33,9 +33,9 @@ class DnsRecord < Intrigue::Model::Entity
     return true if self.seed
     return false if self.hidden # hit our blacklist so definitely false
 
-    self.project.seeds.each do |s|
-      return true if self.name =~ /[\.\s\@]#{Regexp.escape(s.name)}/i
-    end
+    #self.project.seeds.each do |s|
+    #  return true if self.name =~ /[\.\s\@]#{Regexp.escape(s.name)}/i
+    #end
 
     # check hidden on-demand
     return false unless self.project.traversable_entity?(parse_domain_name(self.name), "Domain")

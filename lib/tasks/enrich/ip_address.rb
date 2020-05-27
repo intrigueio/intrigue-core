@@ -47,12 +47,10 @@ class IpAddress < Intrigue::Task::BaseTask
       next unless result["name"]
 
       # create a domain for this entity
-      entity = create_dns_entity_from_string(result["name"], @entity) if @entity.scoped
+      entity = create_dns_entity_from_string(result["name"], @entity)  if @entity.scoped?
 
       # always create a domain for this entity, if it's a domain or subdomain
-      if entity.kind_of?(Intrigue::Entity::DnsRecord) || entity.kind_of?(Intrigue::Entity::Domain)
-        create_dns_entity_from_string(result["name"]) if @entity.scoped
-      end
+      create_dns_entity_from_string(parse_domain_name(result["name"]))  if @entity.scoped?
 
       # if we're external, let's see if this matches 
       # a known dev or staging server pattern, and if we're internal, just
