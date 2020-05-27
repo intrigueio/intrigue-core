@@ -42,14 +42,14 @@ class Uri < Intrigue::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
-
     return true if self.seed
+    return true if self.hidden
 
     ## CHECK IF DOMAIN NAME IS KNOWN
     # =================================    
-    host = URI.parse(self.name).host.to_s
+    hostname = URI.parse(self.name).host.to_s
     if !host.is_ip_address?
-      domain_name = parse_domain_name(host)
+      domain_name = parse_domain_name(hostname)
       return false unless self.project.traversable_entity?(domain_name, "Domain")
     end
       
