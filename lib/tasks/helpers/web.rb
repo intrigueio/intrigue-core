@@ -29,6 +29,12 @@ module Task
       return false
     end
 
+    # check for sanity
+    unless response.body && response_two.body
+      _log_error "Empty body!"
+      return false
+    end
+    
     # check to make sure we don't just go down the rabbit hole
     # some pages print back our uri, so first remove that if it exists
     unless response.body.gsub(request_page_one,"") && response_two.body.gsub(request_page_two,"")

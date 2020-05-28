@@ -48,7 +48,7 @@ class Uri < Intrigue::Model::Entity
     ## CHECK IF DOMAIN NAME IS KNOWN
     # =================================    
     hostname = URI.parse(self.name).host.to_s
-    if !host.is_ip_address?
+    if !hostname.is_ip_address?
       domain_name = parse_domain_name(hostname)
       return false unless self.project.traversable_entity?(domain_name, "Domain")
     end
