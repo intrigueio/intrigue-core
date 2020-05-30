@@ -24,4 +24,7 @@ require_relative "models/scan_result"
 require_relative "workers/generate_graph_worker"
 require_relative "workers/generate_meta_graph_worker"
 
+require_relative "api/v1/helpers"
+require_relative "api/v1/project"
+require_relative "api/v1/task_result"
 require_relative "api/v1/system"
