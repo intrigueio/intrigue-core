@@ -52,7 +52,7 @@ class NetBlock < Intrigue::Task::BaseTask
         # create it 
         netblock = capture.first
         _log "Found related netblock: #{netblock}"
-        _create_entity "NetBlock", { "name" => "#{netblock}", } # "unscoped" => "true" 
+        _create_entity "NetBlock", { "name" => "#{netblock}" }
       end
 
       # check transferred
@@ -64,6 +64,46 @@ class NetBlock < Intrigue::Task::BaseTask
     # check ipv6
     if _get_entity_name =~ /::/
       _set_entity_detail "ipv6", true
+    end
+
+    ###
+    ### Clean up org name ... some examples:
+    ###
+
+    #org-name:       Acme Sciences, Inc.      
+    #Organization:   Acme sciences (ACME-3)\n
+    #Organization:   Confluence Networks Inc (CN)
+    #Organization:   CyrusOne LLC (CL-260)
+    #Organization:   Rackspace Hosting (RACKS-8)
+    existing_org_name = _get_entity_detail("organization_name")
+    unless existing_org_name && existing_org_name.length >  0 
+   
+      org_name = nil
+      org_regex = /org-name:.*$/i
+      match_captures = whois_text.scan(org_regex)
+      org_name = match_captures.last
+
+      unless org_name
+        org_regex = /Customer:.*$/i
+        match_captures = whois_text.scan(org_regex)
+        org_name = match_captures.last  
+      end
+
+      unless org_name
+        org_regex = /Organization:.*$/i
+        match_captures = whois_text.scan(org_regex)
+        org_name = match_captures.last  
+      end
+
+      unless org_name
+        org_regex = /descr:.*$/i
+        match_captures = whois_text.scan(org_regex)
+        org_name = match_captures.last  
+      end
+      
+
+      clean_org_name = org_name.split(":").last.strip
+      _set_entity_detail("organization_name", clean_org_name) if org_name
     end
 
   end
