@@ -1,5 +1,3 @@
-require 'net/ftp'
-
 ###
 ### XXX - This module has not been extensively tested!
 ###

@@ -1,5 +1,3 @@
-require 'versionomy'
-
 module Intrigue
 module Vulndb
 

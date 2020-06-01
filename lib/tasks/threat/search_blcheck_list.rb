@@ -1,4 +1,3 @@
-require "resolv"
 module Intrigue
 module Task
 class SearchBlcheckList < BaseTask

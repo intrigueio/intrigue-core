@@ -4,18 +4,24 @@ module Dns
 
   include Intrigue::Task::Generic
 
-  def create_dns_entity_from_string(s, alias_entity=nil)
+  def create_unscoped_dns_entity_from_string(s)
+    create_dns_entity_from_string(s, nil, true)
+  end
+
+  def create_dns_entity_from_string(s, alias_entity=nil, unscoped=false)
+
+    entity_details = { "name" => s }
+    entity_details.merge!({"unscoped" => true }) if unscoped
 
     if s.is_ip_address?
-      _create_entity("IpAddress",{"name" => s}, alias_entity)
+      _create_entity("IpAddress", entity_details, alias_entity)
     else
-      # clean it up 
-      x = "#{s}".strip.gsub(/^\*\./,"").gsub(/\.$/,"")
-
-      if s.split(".").length == 2
-        _create_entity "Domain", {"name" => x}, alias_entity
+      # clean it up and create 
+      entity_details["name"] = "#{s}".strip.gsub(/^\*\./,"").gsub(/\.$/,"")
+      if entity_details["name"].split(".").length == 2
+        _create_entity "Domain", entity_details, alias_entity
       else 
-        _create_entity "DnsRecord",{"name" => x}, alias_entity
+        _create_entity "DnsRecord", entity_details, alias_entity
       end
     end
   end
@@ -60,7 +66,7 @@ module Dns
       end
 
     rescue Errno::ENOENT => e
-      _log_error "Unable to locate public suffix list, failing to check / create domain for #{lookup_name}"
+      _log_error "Unable to locate public suffix list, failing to check / create domain"
       return nil
     end
 
@@ -478,7 +484,7 @@ module Dns
       
       # since we are creating an identical domain, send up the details
       e = _create_entity "Domain", {
-        "unscoped" => true,
+        #"unscoped" => true,
         "name" => "#{domain_name}",
         "resolutions" => _get_entity_detail("resolutions"),
         "soa_record" => _get_entity_detail("soa_record"),

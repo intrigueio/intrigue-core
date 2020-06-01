@@ -1,7 +1,5 @@
  require_relative "version"
 
-require_relative "helpers"
-
 # must be brought in first, system should be skipped as a directive
 require_relative "routes/system"
 

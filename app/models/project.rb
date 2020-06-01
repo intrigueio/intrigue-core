@@ -173,10 +173,15 @@ module Intrigue
           "Intrigue::Entity::DnsRecord",
           "Intrigue::Entity::Domain",
           "Intrigue::Entity::EmailAddress",
-          "Intrigue::Entity::Organization"
+          "Intrigue::Entity::Organization",
+          "Intrigue::Entity::Nameserver",
+          "Intrigue::Entity::Uri"
         ]
+
+        # skip anything else!!
+        return true unless scope_check_entity_types.include? "Intrigue::Entity::#{type_string}"
+
         seeds.each do |s|
-          next unless scope_check_entity_types.include? "Intrigue::Entity::#{type_string}"
           if entity_name =~ /[\.\s\@]#{Regexp.escape(s.name)}/i
             puts "matched a seed, returning true"
             return true
@@ -203,9 +208,9 @@ module Intrigue
           end
         end
         
-        puts "Defaulting to traversable"
+        #puts "Defaulting to not traversable (Whitelist approach!)"
 
-      true
+      false
       end
 
       # TODO - there must be a cleaner way? 

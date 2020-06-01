@@ -40,6 +40,12 @@ include Intrigue::System::Database
 
 # used in app as well as tasks
 require_relative 'lib/system/validations'
+include Intrigue::System::Validations
+
+# used in app as well as tasks
+require_relative 'lib/system/helpers'
+include Intrigue::System::Helpers
+
 
 # Debug
 #require 'pry'

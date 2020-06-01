@@ -2,7 +2,6 @@ module Intrigue
 module Task
 class SaasGoogleCalendarCheck < BaseTask
 
-
   def self.metadata
     {
       :name => "saas_google_calendar_check",

@@ -2,6 +2,8 @@ module Intrigue
 module Entity
 class EmailAddress < Intrigue::Model::Entity
 
+  include Intrigue::Task::Dns
+
   def self.metadata
     {
       :name => "EmailAddress",
@@ -19,6 +21,10 @@ class EmailAddress < Intrigue::Model::Entity
     details["origin"] if details && details["origin"]
   end
 
+  def enrichment_tasks
+    ["enrich/email_address"]
+  end
+
   ###
   ### SCOPING
   ###
@@ -26,7 +32,9 @@ class EmailAddress < Intrigue::Model::Entity
     return true if self.seed
     return false if self.hidden
 
-  # if we didnt match the above and we were asked, let's just allow it 
+    # check hidden on-demand
+    return false unless self.project.traversable_entity?(self.name.split("@").last, "Domain")
+
   true
   end
 

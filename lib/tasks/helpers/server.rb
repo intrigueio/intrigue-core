@@ -1,6 +1,3 @@
-require 'webrick'
-require 'socket'
-
 module Intrigue
 module Task
 module Server

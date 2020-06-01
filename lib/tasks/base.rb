@@ -1,16 +1,3 @@
-
-####
-# ident (gem)
-####
-require 'ident'
-
-begin  # try to load in private checks
-  require 'intrigue-ident-private'
-rescue LoadError
-  # unable to load private checks, presumable unavailable
-end
-
-
 module Intrigue
 module Task
 class BaseTask
@@ -18,13 +5,11 @@ class BaseTask
   # include default helpers
   include Intrigue::Task::Generic
   include Intrigue::Task::Issue
-
   include Intrigue::Task::BinaryEdge
   include Intrigue::Task::Browser
   include Intrigue::Task::CloudProviders
   include Intrigue::Task::Data
   include Intrigue::Task::Dns
-  include Intrigue::Task::Helper
   include Intrigue::Task::RecogWrapper
   include Intrigue::Task::Regex
   include Intrigue::Task::Services
@@ -37,7 +22,7 @@ class BaseTask
   sidekiq_options :queue => "task", :backtrace => true
 
   def self.inherited(base)
-    TaskFactory.register(base)
+    ::Intrigue::TaskFactory.register(base)
   end
 
   def perform(task_result_id)

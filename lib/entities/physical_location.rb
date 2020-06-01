@@ -19,7 +19,8 @@ class PhysicalLocation < Intrigue::Model::Entity
   def scoped?
     return true if self.seed
     return false if self.hidden
-  true # otherwise just default to true
+  
+  true
   end
 
 

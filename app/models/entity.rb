@@ -20,9 +20,6 @@ module Intrigue
       many_to_many :task_results
       many_to_one  :project
       one_to_many  :issues
-
-      include Intrigue::Task::Helper
-      include Intrigue::System::Validations
       
       def self.inherited(base)
         EntityFactory.register(base)
@@ -71,6 +68,12 @@ module Intrigue
         raise "Method must be oveeridden for #{self.class}!"
       end
 
+      def seed?
+        true if self.project.seeds.map{|x| self.name == x.name }
+      false
+      end
+
+      
       def validate
         super
         validates_unique([:project_id, :type, :name])
@@ -127,15 +130,15 @@ module Intrigue
             # ensure we always mark an entity enriched, and then can continue on
             # with the machine
             unless Intrigue::TaskFactory.include? task_name
-              start_task("task_enrichment", self.project, scan_result_id, "enrich/generic", self, task_result_depth, [], [], machine_name, true, true)
+              start_task("task_enrichment", self.project, scan_result_id, "enrich/generic", self, task_result_depth, [], [], machine_name, true)
               next
             end
 
-            start_task("task_enrichment", self.project, scan_result_id, task_name, self, task_result_depth, [], [], machine_name, true, true)
+            start_task("task_enrichment", self.project, scan_result_id, task_name, self, task_result_depth, [], [], machine_name, true)
           end
 
         else # always enrich, even if something is not configured
-          start_task("task_enrichment", self.project, scan_result_id, "enrich/generic", self, task_result_depth, [], [], machine_name, true, true)
+          start_task("task_enrichment", self.project, scan_result_id, "enrich/generic", self, task_result_depth, [], [], machine_name, true)
         end
 
       end

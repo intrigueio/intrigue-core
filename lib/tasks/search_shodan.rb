@@ -53,7 +53,8 @@ class SearchShodan < BaseTask
       # Create all hostnames
       resp["hostnames"].each do |h|
         _log_good "Creating dns record: #{h}"
-        _create_entity "DnsRecord", "name" => "#{h}"
+        #_create_entity "DnsRecord", "name" => "#{h}"
+        create_dns_entity_from_string h
       end
 
       # Create all domains

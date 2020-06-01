@@ -1,6 +1,7 @@
 module Intrigue
 class EntityManager
-  extend Intrigue::Task::Helper
+  
+  extend Intrigue::System::Helpers
   extend Intrigue::Task::Data
 
   def self.resolve_type_from_string(type_string)
@@ -126,17 +127,20 @@ class EntityManager
     # Find the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name)
 
+      
     # check if this is actually a no-traverse for this proj
     if entity
-      traversable = entity.hidden
+      traversable = !entity.hidden
+      tr.log "Existing entity...checking traversable, got: #{traversable}"
     else
       # checks to see if we should be hidden or not
       traversable = project.traversable_entity?(name, type_string)
+      tr.log "New entity ...checking traversable, got: #{traversable}"
     end
 
     # Check if there's an existing entity, if so, merge and move forward
+    entity_already_existed = false
     if entity
-      tr.log_good "Existing Entity: #{type_string} #{name}. Traversable: #{traversable}"
 
       entity.set_details(details.to_h.deep_merge(entity.details.to_h))
 
@@ -144,15 +148,11 @@ class EntityManager
       # want to use that to preserve pre-existing relatiohships
       # also... prevents an enrichment loop
       entity_already_existed = true
-
     else
-      tr.log_good "New Entity: #{type_string} #{name}. Traversable: #{traversable}"
 
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
 
-      # Create a new alias group
-      
       entity_details = {
         :name => downcased_name,
         :project_id => project.id,
@@ -168,49 +168,6 @@ class EntityManager
         g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
         entity_details[:alias_group_id] = g.id
       end
-
-      #####
-      ### HANDLE USER- or TASK- PROVIDED SCOPING
-      #####
-
-      # this will help us handle cases of explicit scoping
-      # three possible values - nil, "true", "false"
-      # will bec converted into a boolean down below
-      scope_request = nil
-
-      # if we're told this thing is scoped, let's just mark it scoped
-      # note that we delete the detail since we no longer need it
-      # TODO... is this used today?
-      if (details["scoped"] == true || details["scoped"] == "true")
-        tr.log "Entity was specifically requested to be scoped"
-        details = details.tap{ |h| h.delete("scoped") }
-        scope_request = "true"
-
-      # otherwise if we've specifically decided to unscoped
-      # note that we delete the detail since we no longer need it
-      elsif (details["unscoped"] == true || details["unscoped"] == "true")
-        tr.log "Entity was specifically requested to be unscoped"
-        details = details.tap{ |h| h.delete("unscoped") }
-        scope_request = "false"
-
-      # if it's set, rely on the task result's auto_scope setting
-      # - which is set when the entity is created, based on context
-      # that is (or at least should be) specific to that task
-      elsif tr.auto_scope
-        tr.log "Task result scoped this entity based on auto_scope"
-        scope_request = "true"
-      # otherwise default to false, (and let the entity scoping handle it below) 
-      else
-        tr.log "No specific scope request from the task result"
-        #entity_details[:scoped] = false
-      end
-
-      #####
-      ### END ... USER- or TASK- PROVIDED SCOPING
-      ###
-      ### ENTITIES can SELF-SCOPE, however, for more info on that
-      ### see the individual entity file
-      #####
 
       begin
         # Create a new entity in that group
@@ -239,22 +196,7 @@ class EntityManager
         return nil
       end
 
-      ### final scoping in case the entity has specific scoping instructions
-      ##   (now that we have an entity)
-      ##
-      ##  the default method on the base class simply sets what was available previously
-      ##  See the inidivdiual entity files for this logic.
-      ##
-      if scope_request
-        entity.scoped = scope_request.to_bool
-      else
-        entity.scoped = entity.scoped? #always fall back to our entity-specific logic.
-        tr.log "Using entity scoping logic, got #{entity.scoped}"
-      end
-      entity.save_changes
-      tr.log "Final scoping decision for #{entity.name}: #{entity.scoped}"
-
-      ### Run Data transformation (to hide attributes... HACK)
+      ### Run transformation (to hide attributes... HACK)
       unless entity.transform!
         tr.log_error "Transformation of entity failed: #{entity}, rolling back entity creation!!"
         entity.delete
@@ -268,7 +210,77 @@ class EntityManager
         raise "Invalid entity attempted: #{entity.type} #{entity.name}"
       end
 
-      # ENRICHMENT LAUNCH
+      #####
+      ### HANDLE TASK DRIVE ENTITY SCOPING - which can be applied to existing entities
+      ### ... first, deal with USER- or TASK-PROVIDED SCOPING
+      #####
+
+      # this will help us handle cases of explicit scoping
+      # three possible values - nil, "true", "false"
+      # will bec converted into a boolean down below
+      scope_request = nil
+
+      # If we're told this thing is scoped, let's just mark it scoped
+      # note that we delete the detail since we no longer need it
+      # TODO... is this used today?
+      if (details["scoped"] == true || details["scoped"] == "true")
+        tr.log "Entity was specifically requested to be scoped"
+        details = details.tap{ |h| h.delete("scoped") }
+        scope_request = "true"
+
+      # otherwise if we've specifically decided to unscope
+      # note that we delete the detail since we no longer need it
+      elsif (details["unscoped"] == true || details["unscoped"] == "true")
+
+        unless entity.seed? 
+          tr.log "Entity was specifically requested to be unscoped"
+          details = details.tap{ |h| h.delete("unscoped") }
+          scope_request = "false"
+        else
+          #puts "SEED ENTITY!!!! REFUSED!!!"
+          tr.log "Entity was specifically requested to be unscoped, but it's a seed, so we refused!"
+        end
+      # if it's set, rely on the task result's auto_scope setting
+      # - which is set when the entity is created, based on context
+      # that is (or at least should be) specific to that task... this 
+      # is usually specific to enrichment tasks
+      elsif tr.auto_scope
+        tr.log "Task result scoped this entity based on auto_scope, created by enrichment task?"
+        scope_request = "true"
+      else # otherwise default to false, (and let the entity scoping handle it below) 
+        tr.log "No specific scope request from the task result or the entity creation"
+        #entity_details[:scoped] = false
+      end
+
+      #####
+      ### END ... USER- or TASK- PROVIDED SCOPING
+      ###
+      ### ENTITIES can SELF-SCOPE, however, for more info on that
+      ### see the individual entity file's scoped? method
+      ###
+      ### this is the default case when entities are created by 
+      ### normal tasks
+      ###
+      #####
+
+      ### if the entity has specific scoping instructions (now that we have an entity)
+      ##
+      ##  the default method on the base class simply sets what was available previously
+      ##  See the inidivdiual entity files for this logic.
+      ##
+      if scope_request
+        tr.log "Entity Scope request!"
+        entity.scoped = scope_request.to_bool
+        tr.log "Using entity scoping request, got #{entity.scoped}"
+      else
+        entity.scoped = entity.scoped? #always fall back to our entity-specific logic if there was no request
+        tr.log "Using entity scoping logic, got #{entity.scoped}"
+      end
+      
+      entity.save_changes
+      tr.log "Final scoping decision for #{entity.name}: #{entity.scoped}"
+
+      # ENRICHMENT LAUNCH (this may re-run if an entity has just been scoped in)
       if tr.auto_enrich && !entity_already_existed
         # Check if we've alrady run first and return gracefully if so
         if entity.enriched
@@ -283,11 +295,11 @@ class EntityManager
         tr.log "Skipping enrichment... entity exists!" if entity_already_existed
       end
 
-    end
+      # Add to our result set for this task
+      tr.add_entity entity
 
-    
-    # Add to our result set for this task
-    tr.add_entity entity
+    end # end new entity
+  
 
     # Attach the alias.. this can be confusing....
     # ----

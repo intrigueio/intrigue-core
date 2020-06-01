@@ -32,6 +32,9 @@ class Domain < Intrigue::Model::Entity
     return true if self.seed
     return false if self.hidden
 
+    # check hidden on-demand
+    return true if self.project.traversable_entity?(self.name, "Domain")
+
   # if we didnt match the above and we were asked, let's not allow it 
   false
   end

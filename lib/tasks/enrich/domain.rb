@@ -37,7 +37,7 @@ class Domain < Intrigue::Task::BaseTask
       resolutions.each do |r|
         # create unscoped domains for all CNAMEs
         if r["response_type"] == "CNAME"
-          check_and_create_unscoped_domain r["response_data"] if @entity.scoped?
+          create_dns_entity_from_string(r["response_data"]) 
         end
       end
 
@@ -46,7 +46,7 @@ class Domain < Intrigue::Task::BaseTask
       soa_details = collect_soa_details(lookup_name)
       _set_entity_detail("soa_record", soa_details)
       if soa_details && soa_details["primary_name_server"] && @entity.scoped?
-        check_and_create_unscoped_domain(soa_details["primary_name_server"]) 
+        _create_entity "Nameserver", "name" => soa_details["primary_name_server"]
       end
 
       # grab whois info & all nameservers
@@ -64,14 +64,16 @@ class Domain < Intrigue::Task::BaseTask
       
       # make sure we create affiliated domains
       ns_records.each do |ns|
-        check_and_create_unscoped_domain(ns) if @entity.scoped?
+        if @entity.scoped
+          _create_entity "Nameserver", "name" => ns
+        end
       end
 
       # grab any / all MX records (useful to see who accepts mail)
       _log "Grabbing MX"
       mx_records = collect_mx_records(lookup_name)
       _set_entity_detail("mx_records", mx_records)
-      mx_records.each{|mx| check_and_create_unscoped_domain(mx["host"]) if @entity.scoped? }
+      mx_records.each{|mx| create_dns_entity_from_string(mx["host"]) }
 
       # collect TXT records (useful for random things)
       _log "Grabbing TXT Records"
@@ -86,7 +88,7 @@ class Domain < Intrigue::Task::BaseTask
           next unless spf =~ /^include:/
           domain_name = spf.split("include:").last
           _log "Found Associated SPF Domain: #{domain_name}"
-          check_and_create_unscoped_domain(domain_name) if @entity.scoped?
+          create_dns_entity_from_string(domain_name)
         end
       end
 
@@ -116,7 +118,7 @@ class Domain < Intrigue::Task::BaseTask
         _set_entity_detail("dmarc", nil) 
 
         # if we have mx records and we're scoped, create an issue
-        if mx_records.count > 0 && @entity.scoped?
+        if mx_records.count > 0
           _create_dmarc_issues(mx_records, dmarc_details)
         end
 

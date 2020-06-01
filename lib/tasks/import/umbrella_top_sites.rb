@@ -2,10 +2,6 @@ module Intrigue
 module Task
 class ImportUmbrellaTopSites < BaseTask
 
-  include Intrigue::Task::Generic
-  include Intrigue::Task::Web
-  include Intrigue::Task::Helper
-
   def self.metadata
     {
       :name => "import/umbrella_top_sites",

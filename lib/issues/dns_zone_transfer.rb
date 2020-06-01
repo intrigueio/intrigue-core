@@ -1,6 +1,6 @@
 module Intrigue
 module Issue
-class DnsZoneTransfer< BaseIssue
+class DnsZoneTransfer < BaseIssue
 
   def self.generate(instance_details={source: "Domain name"})
     to_return = {

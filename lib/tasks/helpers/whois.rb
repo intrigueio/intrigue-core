@@ -138,8 +138,6 @@ module Whois
   out
   end
 
-
-
   private  # helper methods for parsing
 
   # use RDAP to query an IP

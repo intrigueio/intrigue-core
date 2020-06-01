@@ -1,7 +1,8 @@
 module Intrigue
 module Entity
 class DnsRecord < Intrigue::Model::Entity
-  include Intrigue::Task::Helper
+  
+  include Intrigue::Task::Dns
 
   def self.metadata
     {
@@ -32,9 +33,15 @@ class DnsRecord < Intrigue::Model::Entity
     return true if self.seed
     return false if self.hidden # hit our blacklist so definitely false
 
-  # if we didnt match the above and we were asked, return whatever we got
-  # during the creation process
-  self.scoped
+    #self.project.seeds.each do |s|
+    #  return true if self.name =~ /[\.\s\@]#{Regexp.escape(s.name)}/i
+    #end
+
+    # check hidden on-demand
+    return false unless self.project.traversable_entity?(parse_domain_name(self.name), "Domain")
+
+  # if we didnt match the above and we were asked, default to true
+  true
   end
 
 end

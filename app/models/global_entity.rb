@@ -73,15 +73,21 @@ module Intrigue
         # If we know it exists, is it in our project (cool) or someone else (no traverse!)
         if global_entity
           puts "Global entity found: #{entity_type} #{entity_name}!"
+          
           # we need to have a namespace to validate against
-          project.allowed_namespaces.each do |namespace|
-
-            # if the entity's' namespace matches one of ours, we're good!
-            if global_entity.namespace.downcase == namespace.downcase 
-              puts "Matches our namespace!"
-              return true # we can immediately return 
+          if project.allowed_namespaces
+            project.allowed_namespaces.each do |namespace|
+              # if the entity's' namespace matches one of ours, we're good!
+              if global_entity.namespace.downcase == namespace.downcase 
+                puts "Matches our namespace!"
+                return true # we can immediately return 
+              end
             end
+          else
+            puts "No Allowed Namespaces, but this is a claimed entity!"
+            return false
           end
+
         else 
           puts "No Global entity found!"
         end
@@ -98,7 +104,7 @@ module Intrigue
         ## Okay let's get smart by getting down to the smallest searchable unit first
         searchable_name = nil
         
-        include Intrigue::Task::Dns # useful for parsing domain names
+        #include Intrigue::Task::Dns # useful for parsing domain names
         
         if entity_type == "Domain"
           # this should have gotten caught above... 

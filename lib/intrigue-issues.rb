@@ -24,7 +24,7 @@ class IssueFactory
   # Check to see if this handler exists (check by type)
   #
   def self.include?(type)
-    @issue_types.each { |h| return true if "#{h.generate[:name]}" == "#{type}" }
+    @issue_types.each { |h| return true if "#{h.generate({})[:name]}" == "#{type}" }
   false
   end
 
@@ -37,7 +37,7 @@ class IssueFactory
   # Returns:
   #   - A handler, which you can call generate on
   #
-  def self.create_instance_by_type(requested_type, issue_model_details, instance_specifics)
+  def self.create_instance_by_type(requested_type, issue_model_details, instance_specifics={})
     
     # first look thorugh our issue types and get the right one
     issue_type = self.issues.select{ |h| h.generate({})[:name] == requested_type }.first

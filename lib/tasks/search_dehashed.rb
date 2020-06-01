@@ -1,4 +1,3 @@
-require 'base64'
 module Intrigue
 module Task
 class SearchDehashed < BaseTask

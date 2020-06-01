@@ -1,5 +1,3 @@
-require 'digest'
-
 ###
 ### Please note - these methods may be used inside task modules, or inside libraries within
 ### Intrigue. An attempt has been made to make them abstract enough to use anywhere inside the
@@ -31,6 +29,12 @@ module Task
       return false
     end
 
+    # check for sanity
+    unless response.body && response_two.body
+      _log_error "Empty body!"
+      return false
+    end
+    
     # check to make sure we don't just go down the rabbit hole
     # some pages print back our uri, so first remove that if it exists
     unless response.body.gsub(request_page_one,"") && response_two.body.gsub(request_page_two,"")
@@ -81,7 +85,7 @@ module Task
 
               # Create a linked issue if the type exists
               if _linkable_issue_exists "#{request_details[:issue_type]}"
-                _log "Creating  linked issue of type: #{request_details[:issue_type]}"
+                _log "Creating linked issue of type: #{request_details[:issue_type]}"
                 _create_linked_issue(request_details[:issue_type], result.except!(:name)) 
               else
                 # Generic fallback 
@@ -448,7 +452,7 @@ module Task
       end
 
       until( found || attempts >= max_attempts)
-       @task_result.logger.log "Getting #{uri}, attempt #{attempts}" if @task_result
+       _log_debug "Getting #{uri}, attempt #{attempts}" if @task_result
        attempts+=1
 
        if Intrigue::System::Config.config["http_proxy"]

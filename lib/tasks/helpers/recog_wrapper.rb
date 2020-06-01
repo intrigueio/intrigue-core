@@ -1,7 +1,3 @@
-require 'recog'
-require 'ostruct'
-
-
 module Intrigue
 module Task
 module RecogWrapper

@@ -104,6 +104,12 @@
       "editable": "true",
       "comment": ""
     },
+    "c99_subdomainfinder_api_key": {
+      "value": "XXX",
+      "uri": "https://api.c99.nl/api_overview",
+      "editable": "true",
+      "comment": ""
+    },
     "carrierlookup_api_key": {
       "value": "XXX",
       "uri": "https://www.carrierlookup.com",

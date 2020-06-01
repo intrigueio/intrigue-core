@@ -2,7 +2,7 @@ module Intrigue
 module Entity
 class Uri < Intrigue::Model::Entity
 
-  include Intrigue::Task::Dns # TODO ... move parse_domain_name up in the heirarchy
+  include Intrigue::Task::Dns # TODO ... move parse_domain_name up in the heirarchys
 
   def self.metadata
     {
@@ -43,12 +43,13 @@ class Uri < Intrigue::Model::Entity
   ###
   def scoped?(conditions={}) 
     return true if self.seed
+    return true if self.hidden
 
     ## CHECK IF DOMAIN NAME IS KNOWN
     # =================================    
-    host = URI.parse(self.name).host.to_s
-    if !host.is_ip_address?
-      domain_name = parse_domain_name(host)
+    hostname = URI.parse(self.name).host.to_s
+    if !hostname.is_ip_address?
+      domain_name = parse_domain_name(hostname)
       return false unless self.project.traversable_entity?(domain_name, "Domain")
     end
       

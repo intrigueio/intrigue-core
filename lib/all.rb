@@ -1,36 +1,3 @@
-# Task-related Gems
-require 'aws-sdk-sqs'
-require 'aws-sdk-s3'
-require 'censys'
-require 'compare-xml'
-require 'digest'
-require 'dnsruby'
-require 'em-resolv-replace'
-require 'ipaddr'
-require 'json'
-require 'maxminddb'
-require 'net/dns'
-require 'net/http'
-require 'net-http2'
-require 'nmap/xml'
-require 'nokogiri'
-require 'open-uri'
-require 'opencorporates'
-require 'openssl'
-require 'resolv'
-require 'resolv-replace'
-require 'rexml/document'
-require 'snmp'
-require 'socket'
-require 'spidr'
-require 'tempfile'
-require 'thread'
-require 'towerdata_api'
-require 'uri'
-require 'whois'
-require 'whois-parser'
-require 'whoisology'
-require 'zip'
 
 ###
 ### SYSTEM HELPERS (for use everywhere)
@@ -47,6 +14,10 @@ include Intrigue::System::MatchExceptions
 # Intrigue System-wide Validations 
 require_relative 'system/validations'
 include Intrigue::System::Validations
+
+# Intrigue System-wide Helpers (both app and backend) 
+require_relative 'system/helpers'
+include Intrigue::System::Helpers
 
 ###
 ### END SYSTEM HELPERS
