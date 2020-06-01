@@ -31,8 +31,82 @@ class NetworkService < Intrigue::Task::BaseTask
   def run
     _log "Enriching... Network Service: #{_get_entity_name}"
 
-    enrich_ftp if _get_entity_detail("service") == "FTP"
-    enrich_snmp if _get_entity_detail("service") == "SNMP"
+    ###
+    ### First, normalize the nane - split out the various attributes
+    ###
+    entity_name = _get_entity_name
+    ip_address = entity_name.split(":").first
+    port = entity_name.split(":").last.split("/").first.to_i
+    proto = entity_name.split(":").last.split("/").first.upcase
+
+    _set_entity_detail("ip_address", ip_address) unless _get_entity_detail("ip_address")
+    _set_entity_detail("port", port) unless _get_entity_detail("port")
+    _set_entity_detail("proto", proto) unless _get_entity_detail("proto")
+
+    ###
+    ###
+    ###
+    fingerprint_service(ip_address, port) 
+    
+    ###
+    ### Handle SNMP as a special treat
+    ###
+    enrich_snmp if port == 161 && proto.upcase == "UDP"
+
+  end
+
+  def fingerprint_service(ip_address,port=nil)
+
+    # Use intrigue-ident code to request the banner and fingerprint
+    _log "Grabbing banner and fingerprinting!"
+
+    ident_matches = generate_ftp_request_and_check(ip_address) || {} if port == 21
+    ident_matches = generate_smtp_request_and_check(ip_address) || {} if port == 25
+    #ident_matches = generate_http_requests_and_check(_get_entity_name) || {} if port == 80 || port == 443
+    ident_matches = generate_snmp_request_and_check(ip_address) || {} if port == 161 && proto.upcase == "UDP"
+    ident_matches = generate_ssh_request_and_check(ip_address) || {} if port == 22
+    ident_matches = generate_telnet_request_and_check(ip_address) || {} if port == 23
+
+    unless ident_matches
+      _log "Unable to fingerprint!"
+      return
+    end
+
+    ident_fingerprints = ident_matches["fingerprints"]
+    _log "Got #{ident_fingerprints.count} fingerprints!"
+
+    # get the request/response we made so we can keep track of redirects
+    ident_banner = ident_matches["banner"]
+
+    if ident_fingerprints.count > 0
+
+      # Make sure the key is set before querying intrigue api
+      intrigueio_api_key = _get_task_config "intrigueio_api_key"
+      use_api = intrigueio_api_key && intrigueio_api_key.length > 0
+
+      # for ech fingerprint, map vulns 
+      ident_fingerprints = ident_fingerprints.map do |fp|
+
+        vulns = []
+        if fp["inference"]
+          cpe = Intrigue::Vulndb::Cpe.new(fp["cpe"])
+          if use_api # get vulns via intrigue API
+            _log "Matching vulns for #{fp["cpe"]} via Intrigue API"
+            vulns = cpe.query_intrigue_vulndb_api(intrigueio_api_key)
+          else
+            vulns = cpe.query_local_nvd_json
+          end
+        else
+          _log "Skipping inference on #{fp["cpe"]}"
+        end
+
+        fp.merge!({ "vulns" => vulns })
+      end
+
+    end
+
+    _set_entity_detail "banner", ident_banner
+    _set_entity_detail "fingerprint", ident_fingerprints
 
   end
 
@@ -83,55 +157,6 @@ class NetworkService < Intrigue::Task::BaseTask
       File.delete(temp_file)
     rescue Errno::EPERM
       _log_error "Unable to delete file"
-    end
-  end
-
-  def enrich_ftp
-    # TODO this won't work once we fix the name regex
-    port = _get_entity_detail("port").to_i
-    port = 21 if port == 0 # handle empty port
-    protocol = _get_entity_detail("protocol") ||  "tcp"
-    ip_address = _get_entity_detail("ip_address") || _get_entity_name
-
-    # Check to make sure we have a sane target
-    if protocol.downcase == "tcp" && ip_address && port
-
-      banner = ""
-      begin
-        sockets = Array.new #select() requires an array
-        #fill the first index with a socket
-        sockets[0] = TCPSocket.open(ip_address, port)
-        iterations = 0
-        max_iterations = 100
-        while iterations < max_iterations # loop till we hit max iterations
-        _log "Reading from socket #{iterations}/#{max_iterations}"
-        # listen for a read, timeout 5
-        res = select(sockets, nil, nil, 5)
-          if res != nil  # a nil is a timeout and will break
-            break unless sockets[0]
-            banner << "#{sockets[0].gets()}" # WARNING! THIS PRINTS NIL FOREVER on a server crash
-          else
-            sockets[0].close
-            break
-          end
-          iterations += 1
-        end
-      rescue Errno::ETIMEDOUT => e
-        _log_error "Unable to connect: #{e}"
-      rescue Errno::ECONNRESET => e
-        _log_error "Unable to connect: #{e}"
-      rescue SocketError => e
-        _log_error "Unable to connect: #{e}"
-      end
-
-      if banner.length > 0
-        _log "Got banner for #{ip_address}:#{port}/#{protocol}: #{banner}"
-        _log "updating entity with banner info!"
-        _set_entity_detail "banner", banner
-      else
-        _log "No banner available"
-      end
-
     end
   end
 

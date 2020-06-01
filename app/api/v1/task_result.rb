@@ -24,9 +24,12 @@ class IntrigueApp < Sinatra::Base
     # optional / defaulted parameters
     entity_details = payload[:entity_details] || {}
     task_options = payload[:task_options] || {}
-    depth = payload[:depth] || 1
+    
     handler_names = "#{payload[:handler_names]}".split(",") || []
+    
     machine_name = payload[:machine_name] || nil
+    machine_depth = payload[:machine_depth] || 1
+
     auto_enrich = payload[:auto_enrich] || true
     auto_scope = payload[:auto_scope] || false
     queue_name = payload[:queue_name] || "task"
@@ -52,7 +55,7 @@ class IntrigueApp < Sinatra::Base
 
     # Start the task_run
     scan_result_id = nil # only applicable if we're called from a machine
-    task_result = start_task(queue_name, project_object, scan_result_id, task_name, entity_object, depth,
+    task_result = start_task(queue_name, project_object, scan_result_id, task_name, entity_object, machine_depth,
                                 task_options, handler_names, machine_name, auto_enrich, auto_scope)
 
     # manually start enrichment, since we've already created the entity above, it won't auto-enrich ^
