@@ -12,10 +12,8 @@ class Gitrob < BaseTask
       :references => ["https://github.com/michenriksen/gitrob"],
       :passive => true,
       :allowed_types => ["GithubAccount"],
-      :example_entities => [
-        {"type" => "GithubAccount", "attributes" => {"name" => "intrigueio"}}
-      ],
-      :allowed_options => [ ],
+      :example_entities => [{"type" => "GithubAccount", "details" => {"name" => "intrigueio"}}],
+      :allowed_options => [],
       :created_types => ["GithubRepository"]
     }
   end

@@ -14,13 +14,7 @@ class NetworkService < Intrigue::Task::BaseTask
       :passive => false,
       :allowed_types => ["NetworkService"],
       :example_entities => [
-        { "type" => "NetworkService",
-          "details" => {
-            "ip_address" => "1.1.1.1",
-            "port" => 1111,
-            "protocol" => "tcp"
-          }
-        }
+        { "type" => "NetworkService", "details" => { "name" => "1.1.1.1:1111/tcp" } }
       ],
       :allowed_options => [],
       :created_types => []
