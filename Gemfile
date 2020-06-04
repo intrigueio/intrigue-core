@@ -54,7 +54,6 @@ gem 'net-dns'                 # dns_cache_snoop
 gem 'net-http2'               # http2 client support
 gem 'neutrino_api',           :git => 'https://github.com/NeutrinoAPI/NeutrinoAPI-Ruby.git'
 gem 'opencorporates',         :git => 'https://github.com/pentestify/opencorporates.git'
-gem 'recog-intrigue',         :git => 'https://github.com/intrigueio/recog.git'
 gem 'rex'
 gem 'rex-sslscan',            :git => 'https://github.com/intrigueio/rex-sslscan.git'
 gem 'ruby-nmap',              :git => 'https://github.com/pentestify/ruby-nmap.git'

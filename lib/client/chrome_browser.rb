@@ -9,6 +9,8 @@ module Intrigue
     # set host and port options if desired
     def initialize(options={})
       @requests = []
+      @responses = []
+      @wsresponses = []
     
       # allow host & port to be set, and respect local config, then env, then default
       chrome_host = options[:host] || ENV["CHROME_HOST"]
@@ -58,6 +60,20 @@ module Intrigue
         } 
       end
 
+
+      @chrome.on "Network.responseReceived" do |params|
+        @responses << { 
+          "url" => params["response"]["url"], 
+          "headers" => params["response"]["headers"], 
+          "security" => params["response"]["securityDetails"]
+        } 
+      end 
+
+      @chrome.on "Network.WebSocketRequest" do |params|
+        @wsresponses << params
+      end 
+
+
       encoded_screenshot=nil
       
       max_retries = 5 
@@ -82,7 +98,7 @@ module Intrigue
         end
       end
 
-      { "requests" => @requests, "encoded_screenshot" => encoded_screenshot["data"] }
+      { "requests" => @requests, "responses" => @responses, "wsresponses" => @wsresponses, "encoded_screenshot" => encoded_screenshot["data"] }
     end
 
     def _killit(port)

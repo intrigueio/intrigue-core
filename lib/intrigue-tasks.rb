@@ -44,7 +44,6 @@ begin  # try to load runtime deps
   require 'opencorporates'
   require 'openssl'
   require 'ostruct'
-  require 'recog'
   require 'resolv-replace'
   require 'rexml/document'
   require 'snmp'

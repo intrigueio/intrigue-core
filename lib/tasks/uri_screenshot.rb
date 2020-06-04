@@ -30,7 +30,7 @@ class UriScreenshot < BaseTask
     uri = _get_entity_name
 
     old_details = _get_entity_details
-    new_details = capture_screenshot_and_request_hosts(uri)
+    new_details = capture_screenshot_and_requests(uri)
     merged_details = new_details.merge(old_details)
 
     # now merge them together and set as the new details

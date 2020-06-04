@@ -49,10 +49,6 @@ class Uri < Intrigue::Task::BaseTask
     response_data_hash = Digest::SHA256.base64digest(response.body)
 
     # we can check the existing response, so send that
-    _log "Checking if API Endpoint"
-    api_enabled = check_api_endpoint(response)
-
-    # we can check the existing response, so send that
     _log "Checking if Forms"
     contains_forms = check_forms(response.body)
 
@@ -116,6 +112,11 @@ class Uri < Intrigue::Task::BaseTask
 
     end
 
+    # we can check the existing response, so send that
+    # also need to send over the existing fingeprints
+    _log "Checking if API Endpoint" 
+    api_endpoint = check_api_enabled(response, ident_fingerprints)
+    
     # process interesting content checks that requested an issue be created
     issues_to_be_created = ident_content_checks.select {|c| c["issue"] }
     _log "Issues to be created: #{issues_to_be_created}"
@@ -135,13 +136,6 @@ class Uri < Intrigue::Task::BaseTask
       @entity.hidden = true
       @entity.save_changes
     end
-
-    # in some cases, we should go further
-    #extended_fingerprints = []
-    #if ident_fingerprints.detect{|x| x["product"] == "Wordpress" }
-    #  wordpress_fingerprint = {"wordpress" => `nmap -sV --script http-wordpress-enum #{uri}`}
-    #end
-    #extended_fingerprints << wordpress_fingerprint
 
     # figure out ciphers if this is an ssl connection
     # only create issues if we're getting a 200
@@ -260,16 +254,6 @@ class Uri < Intrigue::Task::BaseTask
     _log "Setting app stack to #{app_stack.uniq}"
 
     ###
-    ### Product matching
-    ###
-    _log "Matching to products"
-    products = []
-    # match products based on gathered server software
-    products << product_match_http_server_banner(response.header['server']).first
-    # match products based on cookies
-    products << product_match_http_cookies(response.header['set-cookie'])
-
-    ###
     ### grab the page attributes
     match = response.body.match(/<title>(.*?)<\/title>/i)
     title = match.captures.first if match
@@ -278,14 +262,35 @@ class Uri < Intrigue::Task::BaseTask
     generator_match = response.body.match(/<meta name=\"?generator\"? content=\"?(.*?)\"?\/>/i)
     generator_string = generator_match.captures.first.gsub("\"","") if generator_match
 
-    browser_results = capture_screenshot_and_request_hosts(uri)
+    browser_requests_hash = capture_screenshot_and_requests(uri)
+    # split out request hosts, and then verify them
+    if !browser_requests_hash.empty?
+
+      # look for mixed content
+      if uri =~ /^https/
+        _log "Since we're here (and https), checking for mixed content..."
+        _check_requests_for_mixed_content(uri, browser_requests_hash["extended_requests"])
+      end
+
+      _log "Checking for other oddities..."
+      request_hosts = browser_requests_hash["request_hosts"]
+      _check_request_hosts_for_suspicious_request(uri, request_hosts)
+      _check_request_hosts_for_exernally_hosted_resources(uri,request_hosts)
+
+    else
+      request_hosts = []
+    end
+
+    # TODO... also let's create chrome api edndpoints here? !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    browser_requests_hash["extended_responses"].each do |r|
+      _create_entity("Uri", {"name" => r["url"] }) if r["uri"] =~ /^http/
+    end
 
     new_details = @entity.details
 
     new_details.merge!({
       "alt_names" => alt_names,
-      "api_endpoint" => api_enabled,
-      #"ciphers" => accepted_connections,
+      "api_endpoint" => api_endpoint,
       "code" => response.code,
       "cookies" => response.header['set-cookie'],
       "favicon_md5" => favicon_md5,
@@ -296,7 +301,7 @@ class Uri < Intrigue::Task::BaseTask
       "headers" => headers,
       "hidden_favicon_data" => favicon_data,
       "hidden_response_data" => response.body,
-      "products" => products.compact,
+      #"products" => products.compact,
       "redirect_chain" => ident_responses.first[:response_urls] || [],
       "response_data_hash" => response_data_hash,
       "title" => title,
@@ -311,7 +316,7 @@ class Uri < Intrigue::Task::BaseTask
     })
     
     # add in the browser results
-    new_details.merge! browser_results
+    new_details.merge! browser_requests_hash
 
     # Set the details, and make sure raw response data is a hidden (not searchable) detail
     _set_entity_details new_details
@@ -397,8 +402,28 @@ class Uri < Intrigue::Task::BaseTask
     (response["allow"] || response["Allow"]) if response
   end
 
-  def check_api_endpoint(response)
-    return true if response.header['Content-Type'] =~ /application/
+  ###
+  ### Checks to see if we return anything that's an 'application' content type
+  ###   or if we've been fingerprinted with an "API" tech"
+  ###
+  def check_api_enabled(response, fingerprints)
+    
+    # check for content type
+    return true if response.header['Content-Type'] =~ /application/s
+
+    # check fingeprrints
+    fingerprints.each do |fp|
+      return true if fp["tags"] && fp["tags"].include?("API")
+    end 
+
+    # try to parse it 
+    begin
+      j = JSON.parse(response.body)
+      return true if j
+    rescue JSON::ParserError      
+    end
+
+  # otherwise default to false 
   false
   end
 
@@ -411,3 +436,6 @@ end
 end
 end
 end
+
+
+
