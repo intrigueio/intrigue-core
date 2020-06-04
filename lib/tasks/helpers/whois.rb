@@ -6,7 +6,6 @@ module Whois
 
   include Intrigue::Task::Web
 
-
   def whois(lookup_string)
 
     begin

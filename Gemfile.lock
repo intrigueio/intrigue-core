@@ -46,13 +46,6 @@ GIT
     maxminddb (0.1.22)
 
 GIT
-  remote: https://github.com/intrigueio/recog.git
-  revision: 453b1bb2671eaa65530356dfd684e3b2050ae5c6
-  specs:
-    recog-intrigue (2.3.7)
-      nokogiri
-
-GIT
   remote: https://github.com/intrigueio/rex-sslscan.git
   revision: a52c53ec09bd70cdd025b49c16dfeafe9fd3be5a
   specs:
@@ -470,7 +463,6 @@ DEPENDENCIES
   rack-protection
   rack-test
   rake
-  recog-intrigue!
   redis
   redis-namespace
   rest-client

@@ -10,7 +10,6 @@ class BaseTask
   include Intrigue::Task::CloudProviders
   include Intrigue::Task::Data
   include Intrigue::Task::Dns
-  include Intrigue::Task::RecogWrapper
   include Intrigue::Task::Regex
   include Intrigue::Task::Services
   include Intrigue::Task::VulnCheck

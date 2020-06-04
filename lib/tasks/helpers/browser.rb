@@ -11,7 +11,7 @@ module Intrigue
 module Task
   module Browser
 
-    def capture_screenshot_and_request_hosts(uri)
+    def capture_screenshot_and_requests(uri)
       return {} unless Intrigue::System::Config.config["browser_enabled"]
 
       begin 
@@ -23,28 +23,15 @@ module Task
       end
   
       if browser_response 
-  
-        # look for mixed content
-        if uri =~ /^https/
-          _log "Since we're here (and https), checking for mixed content..."
-          _check_requests_for_mixed_content(uri, browser_response["requests"])
-        end
-  
-        # split out request hosts, and then verify them
-        if browser_response["requests"]
-          request_hosts = browser_response["requests"].map{|x| x["hostname"] }.compact.uniq.sort
-          _log "Since we're here (and https), checking for mixed content..."
-          _check_request_hosts_for_suspicious_request(uri, request_hosts)
-          _check_request_hosts_for_exernally_hosted_resources(uri,request_hosts)
-        else
-          request_hosts = []
-        end
 
         to_return = { 
           "extended_screenshot_contents" => browser_response["encoded_screenshot"],
-          "request_hosts" => request_hosts,
-          "extended_requests" => browser_response["requests"]
+          "request_hosts" => browser_response["requests"].map{|x| x["hostname"] }.compact.uniq.sort,
+          "extended_requests" => browser_response["requests"],
+          "extended_responses" => browser_response["responses"],
+          "extended_wsresponses" => browser_response["wsresponses"]
         }
+
       else 
         to_return = {}
       end
