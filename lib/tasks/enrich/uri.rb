@@ -262,18 +262,21 @@ class Uri < Intrigue::Task::BaseTask
     generator_match = response.body.match(/<meta name=\"?generator\"? content=\"?(.*?)\"?\/>/i)
     generator_string = generator_match.captures.first.gsub("\"","") if generator_match
 
-    browser_requests_hash = capture_screenshot_and_requests(uri)
+    ###
+    ### Browser-based data grab
+    ### 
+    browser_data_hash = capture_screenshot_and_requests(uri)
     # split out request hosts, and then verify them
-    if !browser_requests_hash.empty?
+    if !browser_data_hash.empty?
 
       # look for mixed content
       if uri =~ /^https/
         _log "Since we're here (and https), checking for mixed content..."
-        _check_requests_for_mixed_content(uri, browser_requests_hash["extended_requests"])
+        _check_requests_for_mixed_content(uri, browser_data_hash["extended_browser_requests"])
       end
 
       _log "Checking for other oddities..."
-      request_hosts = browser_requests_hash["request_hosts"]
+      request_hosts = browser_data_hash["request_hosts"]
       _check_request_hosts_for_suspicious_request(uri, request_hosts)
       _check_request_hosts_for_exernally_hosted_resources(uri,request_hosts)
 
@@ -281,13 +284,8 @@ class Uri < Intrigue::Task::BaseTask
       request_hosts = []
     end
 
-    # TODO... also let's create chrome api edndpoints here? !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    browser_requests_hash["extended_responses"].each do |r|
-      _create_entity("Uri", {"name" => r["url"] }) if r["uri"] =~ /^http/
-    end
-
+    # set up the details
     new_details = @entity.details
-
     new_details.merge!({
       "alt_names" => alt_names,
       "api_endpoint" => api_endpoint,
@@ -316,7 +314,7 @@ class Uri < Intrigue::Task::BaseTask
     })
     
     # add in the browser results
-    new_details.merge! browser_requests_hash
+    new_details.merge! browser_data_hash
 
     # Set the details, and make sure raw response data is a hidden (not searchable) detail
     _set_entity_details new_details

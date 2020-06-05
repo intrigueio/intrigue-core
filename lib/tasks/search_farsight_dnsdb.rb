@@ -16,7 +16,7 @@ module Intrigue
           {"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}
         ],
         :allowed_options => [],
-        :created_types => ["*"]
+        :created_types => ["DnsRecord"]
       }
     end
   
@@ -24,29 +24,22 @@ module Intrigue
     def run
       super
   
-      name = _get_entity_name
+      domain_name = _get_entity_name
       api_key = _get_task_config("farsight_dnsdb_api_key")
-      api_endpoint = "https://api.dnsdb.info/"
-
-      #curl -i -H 'Accept: application/json' -H "" 
-
+      api_url = "https://api.dnsdb.info/"
       headers = {"Accept" => "application/json", "X-API-Key" => api_key }
       
       #returns json, one per line 
-      out = http_get_body("#{api_endpoint}/lookup/rrset/name/\*.#{_get_entity_name}?limit=0", nil, headers)
+      request_endpoint = "#{api_url}/lookup/rrset/name/\*.#{domain_name}?limit=0"v
+      out = http_get_body(request_endpoint, nil, headers)
       
       if out && out.kind_of?(String) && !out =~/^Error:/
 
         out.split("\n").each do |line|
           begin
             
-            # parse the line into a record 
-            record = JSON.parse(line)
-
-            # grab the dns name, remove trailing space and wildcards
-            create_dns_entity_from_string dns_name
-  
             # Parse up the data 
+            record = JSON.parse(line)
             rdata = record["rdata"]
             rdata.each do |dns_data|
               if !dns_data.split(" ").length > 1  # skip txt records and such
