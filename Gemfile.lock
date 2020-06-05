@@ -33,10 +33,10 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: 1eaffc345d5c7c4ba555c26b3daa09a9acacf1d4
+  revision: 1789d40e6f4429e35e5654964c6e48bdc471f688
   specs:
-    intrigue-ident (0.9.3)
-      recog
+    intrigue-ident (0.9.9)
+      recog-intrigue
       snmp
       socketry
 
@@ -124,7 +124,7 @@ GEM
       protocol-http (~> 0.20.0)
       protocol-http1 (~> 0.13.0)
       protocol-http2 (~> 0.14.0)
-    async-io (1.29.0)
+    async-io (1.30.0)
       async (~> 1.14)
     async-pool (0.3.2)
       async (~> 1.25)
@@ -132,19 +132,19 @@ GEM
       async-http (~> 0.42)
       protocol-http (~> 0.7)
     aws-eventstream (1.1.0)
-    aws-partitions (1.322.0)
-    aws-sdk-core (3.97.0)
+    aws-partitions (1.325.0)
+    aws-sdk-core (3.97.1)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
       aws-sigv4 (~> 1.1)
       jmespath (~> 1.0)
-    aws-sdk-kms (1.32.0)
+    aws-sdk-kms (1.33.0)
       aws-sdk-core (~> 3, >= 3.71.0)
       aws-sigv4 (~> 1.1)
     aws-sdk-route53 (1.35.0)
       aws-sdk-core (~> 3, >= 3.71.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-s3 (1.67.0)
+    aws-sdk-s3 (1.67.1)
       aws-sdk-core (~> 3, >= 3.96.1)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.1)
@@ -163,7 +163,7 @@ GEM
     compare-xml (0.66)
       nokogiri (~> 1.8)
     concurrent-ruby (1.1.6)
-    connection_pool (2.2.2)
+    connection_pool (2.2.3)
     console (1.8.2)
     couchrest (2.0.1)
       httpclient (~> 2.8)
@@ -220,7 +220,7 @@ GEM
     foreman (0.87.1)
     formatador (0.2.5)
     god (0.13.7)
-    google-api-client (0.39.5)
+    google-api-client (0.40.0)
       addressable (~> 2.5, >= 2.5.1)
       googleauth (~> 0.9)
       httpclient (>= 2.8.1, < 3.0)
@@ -259,7 +259,7 @@ GEM
       mime-types (~> 3.0)
       multi_xml (>= 0.5.2)
     httpclient (2.8.3)
-    i18n (1.8.2)
+    i18n (1.8.3)
       concurrent-ruby (~> 1.0)
     iconv (1.0.8)
     ipaddress (0.8.3)
@@ -320,7 +320,7 @@ GEM
       rack (>= 1.0, < 3)
     rake (13.0.1)
     rb-readline (0.5.5)
-    recog (2.3.8)
+    recog-intrigue (2.3.7)
       nokogiri
     redis (4.1.4)
     redis-namespace (1.7.0)
@@ -365,7 +365,7 @@ GEM
     rubyzip (2.3.0)
     sentry-raven (2.13.0)
       faraday (>= 0.7.6, < 1.0)
-    sequel (5.32.0)
+    sequel (5.33.0)
     shodan (1.0.0)
       json (>= 1.4.6)
     sidekiq (6.0.7)
@@ -414,7 +414,7 @@ GEM
       blockenspiel (~> 0.5)
     websocket-driver (0.7.2)
       websocket-extensions (>= 0.1.0)
-    websocket-extensions (0.1.4)
+    websocket-extensions (0.1.5)
     whois (5.0.1)
     whois-parser (1.2.0)
       activesupport (>= 4)
