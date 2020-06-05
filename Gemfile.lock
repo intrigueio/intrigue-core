@@ -33,9 +33,10 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: a37d79821be63d8a22029b4ba2d8112ca106a629
+  revision: 01af3a494f1ca7b60c2d1ccc1ab7fd921f035ebe
   specs:
     intrigue-ident (0.9.3)
+      recog
       snmp
       socketry
 
@@ -319,6 +320,8 @@ GEM
       rack (>= 1.0, < 3)
     rake (13.0.1)
     rb-readline (0.5.5)
+    recog (2.3.8)
+      nokogiri
     redis (4.1.4)
     redis-namespace (1.7.0)
       redis (>= 3.0.4)
