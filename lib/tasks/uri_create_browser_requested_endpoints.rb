@@ -1,11 +1,11 @@
 module Intrigue
 module Task
-class UriCreateResponseEndpoints < BaseTask
+class UriCreateBrowserRequestedEndpoints < BaseTask
 
   def self.metadata
     {
-      :name => "uri_create_response_endpoints",
-      :pretty_name => "URI Create Response Endpoints",
+      :name => "uri_create_browser_requested_endpoints",
+      :pretty_name => "URI Create Browser-Requested Endpoints",
       :authors => ["jcran"],
       :description =>  "This task creates entities for every requested uri",
       :references => [],
@@ -26,12 +26,11 @@ class UriCreateResponseEndpoints < BaseTask
     require_enrichment
 
     if _get_option("create_endpoints")
-      _log "Creating endpoitns"
+      _log "Creating broswer endpoints"
       if browser_responses = _get_entity_detail("extended_browser_responses")
         _log "Creating #{browser_responses.count} endpoints"
         browser_responses.each do |r|
-          #next unless "#{r["uri"]}" =~ /^ht/i
-          #_log "#{r["url"]}"  
+          next unless "#{r["uri"]}" =~ /^http/i
           _create_entity("Uri", {"name" => r["url"] }) 
         end
       else 
@@ -44,14 +43,14 @@ class UriCreateResponseEndpoints < BaseTask
     if _get_option("create_wsendpoints")
       if browser_responses = _get_entity_detail("extended_browser_wsresponses")
         browser_responses.each do |r|
-          #next unless "#{r["uri"]}" =~ /^ht/i
+          next unless "#{r["uri"]}" =~ /^http/i
           _create_entity("Uri", {"name" => r["url"] })
         end
       else 
         _log_error "Unable to create entities, missing 'extended_responses' detail"
       end
     else 
-      _log "Skipping extended browser responses"
+      _log "Skipping webservice browser responses"
     end
 
   end
