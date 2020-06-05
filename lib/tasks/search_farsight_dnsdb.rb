@@ -30,7 +30,7 @@ module Intrigue
       headers = {"Accept" => "application/json", "X-API-Key" => api_key }
       
       #returns json, one per line 
-      request_endpoint = "#{api_url}/lookup/rrset/name/\*.#{domain_name}?limit=0"v
+      request_endpoint = "#{api_url}/lookup/rrset/name/\*.#{domain_name}?limit=0"
       out = http_get_body(request_endpoint, nil, headers)
       
       if out && out.kind_of?(String) && !out =~/^Error:/
