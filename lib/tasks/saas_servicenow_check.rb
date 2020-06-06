@@ -24,7 +24,7 @@ class SaasServicenowCheck < BaseTask
   def run
     super
 
-    entity_name = _get_entity_name
+    entity_name = _get_entity_detail("username")
 
     # try a couple variations
     if _get_entity_type_string == "Domain" && entity_name =~ /\./

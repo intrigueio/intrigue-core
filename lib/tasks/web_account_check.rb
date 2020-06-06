@@ -26,7 +26,7 @@ class WebAccountCheck < BaseTask
   def run
     super
 
-    entity_name = _get_entity_name
+    entity_name = _get_entity_detail("username")
     opt_specific_sites = _get_option "specific_sites"
 
     check_file = "data/web_accounts_list/web_accounts_list.json"

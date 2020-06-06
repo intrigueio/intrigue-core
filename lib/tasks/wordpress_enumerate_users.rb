@@ -51,11 +51,7 @@ class WordpressEnumerateUsers < BaseTask
           "name" => u["name"], 
           "uri" => u["link"] } if u["name"] =~ /\s/
 
-        _create_entity "WebAccount", {
-          "name" => u["slug"],           
-          "username" => u["slug"], 
-          "service" => "wordpress",  
-          "uri" => u["link"] }, p
+        _create_normalized_webaccount("wordpress", u["slug"], u["link"], p)
       end
 
       # save on the entity

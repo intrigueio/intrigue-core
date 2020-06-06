@@ -340,6 +340,7 @@ module WebContent
      # Scan for uris
      urls = content.scan(/https?:\/\/[\S]+/)
      urls.each do |url|
+       parse_web_account_from_uri(url)
        _create_entity("Uri", {"name" => url, "uri" => url, "origin" => source_uri })
      end
    end
@@ -348,52 +349,27 @@ module WebContent
      # Handle Twitter search results
      if url =~ /https?:\/\/twitter.com\/.*$/
        account_name = url.split("/")[3]
-       _create_entity("WebAccount", {
-         "domain" => "twitter.com",
-         "name" => account_name,
-         "uri" => "#{url}",
-         "type" => "full"
-       })
-
+       _create_normalized_webaccount "twitter", account_name, url
+       
      # Handle Facebook public profile  results
      elsif url =~ /https?:\/\/www.facebook.com\/(public|pages)\/.*$/
        account_name = url.split("/")[4]
-       _create_entity("WebAccount", {
-         "domain" => "facebook.com",
-         "name" => account_name,
-         "uri" => "#{url}",
-         "type" => "public"
-       })
+       _create_normalized_webaccount "facebook", account_name, url
 
      # Handle Facebook search results
      elsif url =~ /https?:\/\/www.facebook.com\/.*$/
        account_name = url.split("/")[3]
-       _create_entity("WebAccount", {
-         "domain" => "facebook.com",
-         "name" => account_name,
-         "uri" => "#{url}",
-         "type" => "full"
-       })
+       _create_normalized_webaccount "facebook", account_name, url
 
      # Handle LinkedIn public profiles
      elsif url =~ /^https?:\/\/www.linkedin.com\/in\/pub\/.*$/
          account_name = url.split("/")[5]
-         _create_entity("WebAccount", {
-           "domain" => "linkedin.com",
-           "name" => account_name,
-           "uri" => "#{url}",
-           "type" => "public"
-         })
+         _create_normalized_webaccount "linkedin", account_name, url
 
      # Handle LinkedIn public directory search results
      elsif url =~ /^https?:\/\/www.linkedin.com\/pub\/dir\/.*$/
        account_name = "#{url.split("/")[5]} #{url.split("/")[6]}"
-       _create_entity("WebAccount", {
-         "domain" => "linkedin.com",
-         "name" => account_name,
-         "uri" => "#{url}",
-         "type" => "public"
-       })
+       _create_normalized_webaccount "linkedin", account_name, url
 
      # Handle LinkedIn world-wide directory results
      elsif url =~ /^http:\/\/[\w]*.linkedin.com\/pub\/.*$/
@@ -403,39 +379,30 @@ module WebContent
      #  - http://uk.linkedin.com/pub/some-one/78/8b/151
 
        account_name = url.split("/")[4]
-       _create_entity("WebAccount", {
-         "domain" => "linkedin.com",
-         "name" => account_name,
-         "uri" => "#{url}",
-         "type" => "public" })
+       _create_normalized_webaccount "linkedin", account_name, url
 
      # Handle LinkedIn profile search results
      elsif url =~ /^https?:\/\/www.linkedin.com\/in\/.*$/
        account_name = url.split("/")[4]
-       _create_entity("WebAccount", {
-         "domain" => "linkedin.com",
-         "name" => account_name,
-         "uri" => "#{url}",
-         "type" => "public" })
+       _create_normalized_webaccount "linkedin", account_name, url
 
      # Handle Google Plus search results
      elsif url =~ /https?:\/\/plus.google.com\/.*$/
        account_name = url.split("/")[3]
-       _create_entity("WebAccount", {
-         "domain" => "google.com",
-         "name" => account_name,
-         "uri" => "#{url}",
-         "type" => "full" })
+       _create_normalized_webaccount "google", account_name, url
 
      # Handle Hackerone search results
      elsif url =~ /https?:\/\/hackerone.com\/.*$/
        account_name = url.split("/")[3]
-       _create_entity("WebAccount", {
-         "domain" => "hackerone.com",
-         "name" => account_name,
-         "uri" => url,
-         "type" => "full" }) unless account_name == "reports"
-     end
+       _create_normalized_webaccount "hackerone", account_name, url
+
+    # Handle Bugcrowd search results
+    elsif url =~ /https?:\/\/bugcrowd.com\/.*$/
+      account_name = url.split("/")[3]
+      _create_normalized_webaccount "bugcrowd", account_name, url
+      
+
+    end
    end
 
 

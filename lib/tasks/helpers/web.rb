@@ -66,6 +66,7 @@ module Task
     workers = (0...threads).map do
       Thread.new do
         begin
+          #_log "Getting request"
           while request_details = work_q.pop(true)
 
             request_uri = "#{uri}#{request_details[:path]}"
