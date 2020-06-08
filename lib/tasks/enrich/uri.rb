@@ -67,6 +67,14 @@ class Uri < Intrigue::Task::BaseTask
     # parse out the componeents
     script_components = extract_javascript_components(script_links, hostname)
   
+    ###
+    ### Check for vulns based on Script versions
+    ###
+    fingerprint = []
+    if script_components.count > 0
+      fingerprint.concat add_vulns_by_cpe(script_components)
+    end
+
     # save the Headers
     headers = []
     _log "Saving Headers"
@@ -75,7 +83,7 @@ class Uri < Intrigue::Task::BaseTask
     # Use intrigue-ident code to request all of the pages we
     # need to properly fingerprint
     _log "Attempting to fingerprint (without the browser)!"
-    ident_matches = generate_http_requests_and_check(uri,{:enable_browser => false}) || {}
+    ident_matches = generate_http_requests_and_check(uri) || {}
 
     ident_fingerprints = ident_matches["fingerprint"] || []
     ident_content_checks = ident_matches["content"] || []
@@ -85,37 +93,17 @@ class Uri < Intrigue::Task::BaseTask
     ident_responses = ident_matches["responses"]
     _log "Received #{ident_responses.count} responses for fingerprints!"
 
+    ###
+    ### Check for vulns based on Ident FPs
+    ###
     if ident_fingerprints.count > 0
-
-      # Make sure the key is set before querying intrigue api
-      intrigueio_api_key = _get_task_config "intrigueio_api_key"
-      use_api = intrigueio_api_key && intrigueio_api_key.length > 0
-
-      # for ech fingerprint, map vulns 
-      ident_fingerprints = ident_fingerprints.map do |fp|
-
-        vulns = []
-        if fp["inference"]
-          cpe = Intrigue::Vulndb::Cpe.new(fp["cpe"])
-          if use_api # get vulns via intrigue API
-            _log "Matching vulns for #{fp["cpe"]} via Intrigue API"
-            vulns = cpe.query_intrigue_vulndb_api(intrigueio_api_key)
-          else
-            vulns = cpe.query_local_nvd_json
-          end
-        else
-          _log "Skipping inference on #{fp["cpe"]}"
-        end
-
-        fp.merge!({"vulns" => vulns })
-      end
-
+      fingerprint.concat add_vulns_by_cpe(ident_fingerprints)
     end
 
     # we can check the existing response, so send that
     # also need to send over the existing fingeprints
     _log "Checking if API Endpoint" 
-    api_endpoint = check_api_enabled(response, ident_fingerprints)
+    api_endpoint = check_api_enabled(response, fingerprint)
     
     # process interesting content checks that requested an issue be created
     issues_to_be_created = ident_content_checks.select {|c| c["issue"] }
@@ -131,7 +119,7 @@ class Uri < Intrigue::Task::BaseTask
     # and hide the entity... meaning no recursion and it shouldn't show up in
     # the UI / queries if any of the matches told us to hide the entity, do it.
     # EXAMPLE TEST CASE: http://103.24.203.121:80 (cpanel missing page)
-    if ident_fingerprints.detect{|x| x["hide"] == true }
+    if fingerprint.detect{|x| x["hide"] == true }
       _log "Entity hidden based on fingerprint!"
       @entity.hidden = true
       @entity.save_changes
@@ -245,7 +233,7 @@ class Uri < Intrigue::Task::BaseTask
     ###
     app_stack = []
     _log "Inferring app stack from fingerprints!"
-    ident_app_stack = ident_fingerprints.map do |x|
+    ident_app_stack = fingerprint.map do |x|
       version_string = "#{x["vendor"]} #{x["product"]}"
       version_string += " #{x["version"]}" if x["version"]
     version_string
@@ -295,7 +283,7 @@ class Uri < Intrigue::Task::BaseTask
       "cookies" => response.header['set-cookie'],
       "favicon_md5" => favicon_md5,
       "favicon_sha1" => favicon_sha1,
-      "fingerprint" => ident_fingerprints.uniq,
+      "fingerprint" => fingerprint.uniq,
       "forms" => contains_forms,
       "generator" => generator_string,
       "headers" => headers,
@@ -351,7 +339,7 @@ class Uri < Intrigue::Task::BaseTask
         end
         
         # check fingeprint
-        unless ident_fingerprints.uniq.map{|x| 
+        unless fingerprint.uniq.map{|x| 
           "#{x["vendor"]} #{x["product"]} #{x["version"]}"} == e.get_detail("fingerprint").map{ |x| 
             "#{x["vendor"]} #{x["product"]} #{x["version"]}" }
           _log "Skipping #{e.name}, fingerprint doesnt match"
@@ -413,6 +401,7 @@ class Uri < Intrigue::Task::BaseTask
 
     # check fingeprrints
     fingerprints.each do |fp|
+      puts "FP: #{fp.inspect}"
       return true if fp["tags"] && fp["tags"].include?("API")
     end 
 
@@ -431,6 +420,42 @@ class Uri < Intrigue::Task::BaseTask
     return true if response_body =~ /<form/i
   false
   end
+
+  #
+  # This method assumes we get a list of objects with a CPE we can parse
+  # and use for a vuln lookup based on the configured methdo
+  #
+  def add_vulns_by_cpe(component_list)
+
+      # Make sure the key is set before querying intrigue api
+      intrigueio_api_key = _get_task_config "intrigueio_api_key"
+      use_api = intrigueio_api_key && intrigueio_api_key.length > 0
+
+      # for ech fingerprint, map vulns 
+      component_list = component_list.map do |fp|
+        next unless fp 
+
+        vulns = []
+        if fp["inference"]
+          cpe = Intrigue::Vulndb::Cpe.new(fp["cpe"])
+          if use_api # get vulns via intrigue API
+            _log "Matching vulns for #{fp["cpe"]} via Intrigue API"
+            vulns = cpe.query_intrigue_vulndb_api(intrigueio_api_key)
+          else
+            vulns = cpe.query_local_nvd_json
+          end
+
+          # merge it in 
+          fp.merge!({"vulns" => vulns })
+        else 
+          _log "Inference disallowed on: #{fp["cpe"]}" if fp["cpe"]
+          nil
+        end
+
+      end
+
+    component_list.compact
+    end
 
 end
 end

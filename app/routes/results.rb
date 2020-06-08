@@ -271,9 +271,8 @@ class IntrigueApp < Sinatra::Base
         #next unless Intrigue::EntityFactory.entity_types.include?(entity_type)
         entity = Intrigue::EntityManager.create_first_entity(@project_name,entity_type,entity_name,{})
 
-        # skip anything we can't parse, but throw an error
+        # skip anything we can't parse, silently fail today :[
         unless entity
-          task_result.log_error "Could not create entity!!"
           next
         end
 
