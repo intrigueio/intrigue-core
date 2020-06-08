@@ -27,9 +27,9 @@ module Task
         to_return = { 
           "extended_screenshot_contents" => browser_response["encoded_screenshot"],
           "request_hosts" => browser_response["requests"].map{|x| x["hostname"] }.compact.uniq.sort,
-          "extended_requests" => browser_response["requests"],
-          "extended_responses" => browser_response["responses"],
-          "extended_wsresponses" => browser_response["wsresponses"]
+          "extended_browser_requests" => browser_response["requests"],
+          "extended_browser_responses" => browser_response["responses"],
+          "extended_browser_wsresponses" => browser_response["wsresponses"]
         }
 
       else 
