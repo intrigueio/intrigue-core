@@ -99,34 +99,34 @@ class IntrigueApp < Sinatra::Base
     @entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::IpAddress").sort_by{|x| x.name }
 
     # Grab providers & analyse
-    @asns = {}
+    @networks = {}
     @entities.each do |e|
-      aname = e.get_detail("asn") || "Unknown"
+      aname = e.get_detail("net_name") || "Unknown"
 
       aname = "Unknown" if aname.length == 0
 
-      if @asns[aname]
-        @asns[aname] << e
+      if @networks[aname]
+        @networks[aname] << e
       else
-        @asns[aname] = [e]
+        @networks[aname] = [e]
       end
     end
 
     # Grab providers & analyse
-    @os = {}
+    @geos = {}
     @entities.each do |e|
       # Get the key for the hash
-      if e.get_detail("os").to_a.first
-        os_string = e.get_detail("os").to_a.first["name"]
+      if e.details["geolocation"]
+        geo = e.details["geolocation"]["country_code"]
       else
-        os_string = "None"
+        geo = "Unknown"
       end
 
       # Set the value
-      if @os[os_string]
-        @os[os_string] << e
+      if @geos[geo]
+        @geos[geo] << e
       else
-        @os[os_string] = [e]
+        @geos[geo] = [e]
       end
     end
 

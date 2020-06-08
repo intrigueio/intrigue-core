@@ -33,9 +33,9 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: 1789d40e6f4429e35e5654964c6e48bdc471f688
+  revision: bf5dea2bbd133be0e313817d1a5e580e0004aa1b
   specs:
-    intrigue-ident (0.9.9)
+    intrigue-ident (1.0.0)
       recog-intrigue
       snmp
       socketry
@@ -132,8 +132,8 @@ GEM
       async-http (~> 0.42)
       protocol-http (~> 0.7)
     aws-eventstream (1.1.0)
-    aws-partitions (1.325.0)
-    aws-sdk-core (3.97.1)
+    aws-partitions (1.326.0)
+    aws-sdk-core (3.98.0)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
       aws-sigv4 (~> 1.1)

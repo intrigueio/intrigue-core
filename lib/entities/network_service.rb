@@ -6,12 +6,12 @@ class NetworkService < Intrigue::Model::Entity
     {
       :name => "NetworkService",
       :description => "A Generic Network Service",
-      :user_creatable => false
+      :user_creatable => true
     }
   end
 
   def validate_entity
-    name =~ /[\d\.\:]+:\d{1,5}/
+    name =~ /[\w\d\.]+:\d{1,5}/
   end
 
   def detail_string
