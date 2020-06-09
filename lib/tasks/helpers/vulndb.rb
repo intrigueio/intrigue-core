@@ -17,7 +17,7 @@ module Intrigue
           next unless fp 
 
           vulns = []
-          if fp["inference"]
+          if fp["type"] == "fingerprint" && fp["inference"]
             cpe = Intrigue::VulnDb::Cpe.new(fp["cpe"])
             if use_api # get vulns via intrigue API
               _log "Matching vulns for #{fp["cpe"]} via Intrigue API"
@@ -30,7 +30,8 @@ module Intrigue
             fp.merge!({"vulns" => vulns })
           else 
             _log "Inference disallowed on: #{fp["cpe"]}" if fp["cpe"]
-            nil
+            _log "Returning un-enriched fps"
+            fp if fp["type"] == "fingerprint"
           end
 
         end

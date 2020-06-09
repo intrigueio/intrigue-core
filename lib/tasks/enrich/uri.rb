@@ -71,8 +71,7 @@ class Uri < Intrigue::Task::BaseTask
     ### Check for vulns in included scripts
     fingerprint = []
     if script_components.count > 0
-      fps = add_vulns_by_cpe(script_components)
-      fingerprint.concat fps
+      fingerprint.concat(add_vulns_by_cpe(script_components))
     end
 
     # Save the Headers
@@ -97,7 +96,7 @@ class Uri < Intrigue::Task::BaseTask
     ### Check for vulns based on Ident FPs
     ###
     if ident_fingerprints.count > 0
-      fingerprint.concat add_vulns_by_cpe(ident_fingerprints)
+      fingerprint.concat(add_vulns_by_cpe(ident_fingerprints))
     end
 
     # we can check the existing response, so send that
@@ -399,7 +398,6 @@ class Uri < Intrigue::Task::BaseTask
 
     # check fingeprrints
     fingerprints.each do |fp|
-      puts "FP: #{fp.inspect}"
       return true if fp["tags"] && fp["tags"].include?("API")
     end 
 

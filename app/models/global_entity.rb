@@ -24,12 +24,13 @@ module Intrigue
     
       # assumes we get a dns name of arbitrary length
       def self.parse_tld(record)
-    
+        return nil unless record
+
         # first check if we're not long enough to split, just returning the domain
         return record if record && record.split(".").length < 2
     
         # Make sure we're comparing bananas to bananas
-        record = record.downcase
+        record = "#{record}".downcase
     
         # now one at a time, check all known TLDs and match
         begin
