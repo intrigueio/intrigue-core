@@ -191,6 +191,8 @@ module Dns
       begin   
         entry = Resolv.new.getname lookup_name
 
+        return [] unless entry && entry.length > 0
+
         out = [{
           "name" => entry,
           "lookup_details" => [{
