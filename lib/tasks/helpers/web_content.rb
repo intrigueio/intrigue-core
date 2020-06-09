@@ -3,7 +3,7 @@ module Intrigue
 module Task
 module WebContent
 
-  def extract_javascript_components(script_list, host)
+  def extract_and_fingerprint_scripts(script_list, host)
     components = []
     script_list.each do |s|
 

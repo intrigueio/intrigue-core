@@ -1,5 +1,51 @@
 module Intrigue
-module Vulndb
+  module Task
+    module VulnDb
+      
+      #
+      # This method assumes we get a list of objects with a CPE we can parse
+      # and use for a vuln lookup based on the configured methdo
+      #
+      def add_vulns_by_cpe(component_list)
+
+        # Make sure the key is set before querying intrigue api
+        intrigueio_api_key = _get_task_config "intrigueio_api_key"
+        use_api = intrigueio_api_key && intrigueio_api_key.length > 0
+
+        # for ech fingerprint, map vulns 
+        component_list = component_list.map do |fp|
+          next unless fp 
+
+          vulns = []
+          if fp["inference"]
+            cpe = Intrigue::VulnDb::Cpe.new(fp["cpe"])
+            if use_api # get vulns via intrigue API
+              _log "Matching vulns for #{fp["cpe"]} via Intrigue API"
+              vulns = cpe.query_intrigue_vulndb_api(intrigueio_api_key)
+            else
+              vulns = cpe.query_local_nvd_json
+            end
+
+            # merge it in 
+            fp.merge!({"vulns" => vulns })
+          else 
+            _log "Inference disallowed on: #{fp["cpe"]}" if fp["cpe"]
+            nil
+          end
+
+        end
+
+      component_list.compact
+      end
+
+    end
+  end
+end
+
+
+
+module Intrigue
+module VulnDb
 
   class Cpe
 
@@ -18,11 +64,6 @@ module Vulndb
       @update = x[:update]
 
     end
-
-    #def vulns
-    #  #query_intrigue_vulndb_api
-    #  query_local_nvd_json
-    #end
 
     def query_intrigue_vulndb_api(api_key)
 

@@ -211,7 +211,7 @@ class EntityManager
       end
 
       #####
-      ### HANDLE TASK DRIVE ENTITY SCOPING - which can be applied to existing entities
+      ### HANDLE TASK DRIVEN ENTITY SCOPING - which can be applied to existing entities
       ### ... first, deal with USER- or TASK-PROVIDED SCOPING
       #####
 
@@ -219,6 +219,18 @@ class EntityManager
       # three possible values - nil, "true", "false"
       # will bec converted into a boolean down below
       scope_request = nil
+
+      # if it's set, rely on the task result's auto_scope setting
+      # - which is set when the entity is created, based on context
+      # that is (or at least should be) specific to that task... this 
+      # is usually specific to enrichment tasks
+      if tr.auto_scope
+        tr.log "Task result scoped this entity based on auto_scope."
+        scope_request = "true"
+      else # otherwise default to false, (and let the entity scoping handle it below) 
+        tr.log "No specific scope request from the task result or the entity creation"
+        #entity_details[:scoped] = false
+      end
 
       # If we're told this thing is scoped, let's just mark it scoped
       # note that we delete the detail since we no longer need it
@@ -237,19 +249,9 @@ class EntityManager
           details = details.tap{ |h| h.delete("unscoped") }
           scope_request = "false"
         else
-          #puts "SEED ENTITY!!!! REFUSED!!!"
           tr.log "Entity was specifically requested to be unscoped, but it's a seed, so we refused!"
         end
-      # if it's set, rely on the task result's auto_scope setting
-      # - which is set when the entity is created, based on context
-      # that is (or at least should be) specific to that task... this 
-      # is usually specific to enrichment tasks
-      elsif tr.auto_scope
-        tr.log "Task result scoped this entity based on auto_scope, created by enrichment task?"
-        scope_request = "true"
-      else # otherwise default to false, (and let the entity scoping handle it below) 
-        tr.log "No specific scope request from the task result or the entity creation"
-        #entity_details[:scoped] = false
+
       end
 
       #####
@@ -277,7 +279,6 @@ class EntityManager
         tr.log "Using entity scoping logic, got #{entity.scoped}"
       end
       
-      entity.save_changes
       tr.log "Final scoping decision for #{entity.name}: #{entity.scoped}"
 
       # ENRICHMENT LAUNCH (this may re-run if an entity has just been scoped in)

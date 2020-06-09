@@ -34,30 +34,7 @@ module Intrigue
       ident_banner = ident_matches["banner"]
 
       if ident_fingerprints.count > 0
-
-        # Make sure the key is set before querying intrigue api
-        intrigueio_api_key = _get_task_config "intrigueio_api_key"
-        use_api = intrigueio_api_key && intrigueio_api_key.length > 0
-
-        # for ech fingerprint, map vulns 
-        ident_fingerprints = ident_fingerprints.map do |fp|
-
-          vulns = []
-          if fp["inference"]
-            cpe = Intrigue::Vulndb::Cpe.new(fp["cpe"])
-            if use_api # get vulns via intrigue API
-              _log "Matching vulns for #{fp["cpe"]} via Intrigue API"
-              vulns = cpe.query_intrigue_vulndb_api(intrigueio_api_key)
-            else
-              vulns = cpe.query_local_nvd_json
-            end
-          else
-            _log "Skipping inference on #{fp["cpe"]}"
-          end
-
-          fp.merge!({ "vulns" => vulns })
-        end
-
+        ident_fingeprints = add_vulns_by_cpe(ident_fingerprints)
       end
 
       _set_entity_detail "banner", ident_banner
