@@ -30,6 +30,7 @@ class UriExtractLinkedHosts  < BaseTask
 
     unless contents
       _log_error "Unable to retrieve uri: #{uri}"
+      return
     end
 
     ###

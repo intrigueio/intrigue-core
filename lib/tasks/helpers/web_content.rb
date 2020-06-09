@@ -7,11 +7,13 @@ module WebContent
     components = []
     script_list.each do |s|
 
+      uri = URI.parse(s)
+      next unless uri.host && uri.port && uri.scheme =~ /^http/
       ### 
       ### Determine who's hosting
       ### 
       begin
-        if URI.parse(s).host =~ /#{host}/
+        if uri.host =~ /#{host}/
           host_location = "local"
         else
           host_location = "remote"
