@@ -1,11 +1,11 @@
 module Intrigue
 module Handler
-  class CsvLocalFileExport < Intrigue::Handler::Base
+  class WriteToFileCsv < Intrigue::Handler::Base
 
     def self.metadata
       {
-        :name => "csv_local_full_export",
-        :pretty_name => "Export to Local File (CSV in ./tmp)",
+        :name => "write_to_file_csv",
+        :pretty_name => "Write to File (CSV in ./tmp)",
         :type => "export"
       }
     end

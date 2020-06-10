@@ -196,6 +196,9 @@ GEM
       faraday (~> 0.8)
     faraday_middleware (0.13.1)
       faraday (>= 0.7.4, < 1.0)
+    faraday_middleware-aws-sigv4 (0.3.0)
+      aws-sigv4 (~> 1.0)
+      faraday (>= 0.15)
     filesize (0.2.0)
     flareon (1.0.5)
       command_lion (= 2.0.1)
@@ -441,6 +444,7 @@ DEPENDENCIES
   elasticsearch
   em-resolv-replace
   eventmachine
+  faraday_middleware-aws-sigv4
   flareon
   fog-aws
   foreman

@@ -53,7 +53,7 @@ class DnsRecord < Intrigue::Task::BaseTask
     soa_details = collect_soa_details(lookup_name)
     _set_entity_detail("soa_record", soa_details)
     if soa_details && soa_details["primary_name_server"]
-      _create_entity "Nameserver", "name" => soa_details["primary_name_server"] if @entity.scoped?
+      _create_entity "Nameserver", "name" => soa_details["primary_name_server"]
     end
 
     # Checking dev test 
@@ -73,7 +73,7 @@ class DnsRecord < Intrigue::Task::BaseTask
       _log "Grabbing MX"
       mx_records = collect_mx_records(lookup_name)
       _set_entity_detail("mx_records", mx_records)
-      mx_records.each{|mx| create_dns_entity_from_string(mx["host"]) if @entity.scoped? }
+      mx_records.each{|mx| create_dns_entity_from_string(mx["host"]) }
 
       # collect TXT records (useful for random things)
       _log "Grabbing TXT"
@@ -109,7 +109,7 @@ class DnsRecord < Intrigue::Task::BaseTask
         _log "Creating entity for... #{result}"
       
         # create a domain for this entity
-        entity = create_dns_entity_from_string(result["name"], @entity) if @entity.scoped?
+        entity = create_dns_entity_from_string(result["name"], @entity) 
       end
       
     end
@@ -123,7 +123,7 @@ class DnsRecord < Intrigue::Task::BaseTask
         existing_ports = a.get_detail("ports")
         if existing_ports
           existing_ports.each do |p|
-            _create_network_service_entity(a,p["number"],p["protocol"],{}) if @entity.scoped?
+            _create_network_service_entity(a,p["number"],p["protocol"],{}) 
           end
         end
       end

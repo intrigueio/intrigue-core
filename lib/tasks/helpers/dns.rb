@@ -9,6 +9,7 @@ module Dns
   end
 
   def create_dns_entity_from_string(s, alias_entity=nil, unscoped=false)
+    return nil unless s && s.length > 0
 
     entity_details = { "name" => s }
     entity_details.merge!({"unscoped" => true }) if unscoped
@@ -386,7 +387,7 @@ module Dns
   def collect_soa_details(lookup_name)
     _log "Checking start of authority"
     response = resolve(lookup_name, [Resolv::DNS::Resource::IN::SOA])
-    return {} unless response && !response.empty?
+    return nil unless response && !response.empty?
 
     data = response.first["lookup_details"].first["response_record_data"]
 
