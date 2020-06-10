@@ -73,7 +73,6 @@ module Intrigue
       false
       end
 
-      
       def validate
         super
         validates_unique([:project_id, :type, :name])
@@ -288,7 +287,16 @@ module Intrigue
       ###
       ### Export!
       ###
-      def export_hash
+      def export_hash(include_extended=true)
+        
+        # check if extended details are allowed to 
+        # be exported. if not, use short details.
+        if include_extended
+          export_details = details 
+        else 
+          export_details = short_details
+        end
+
         {
           :id => id,
           :type => type,
@@ -298,7 +306,7 @@ module Intrigue
           :scoped => scoped,
           :alias_group => alias_group_id,
           :detail_string => detail_string,
-          :details => details,
+          :details => export_details,
           :ancestors => ancestors.map{|x| { "type" => x.type, "name" => x.name }},
           :task_results => task_results.map{ |t|
             { :id => t.id,

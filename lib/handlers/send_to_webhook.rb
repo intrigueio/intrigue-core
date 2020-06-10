@@ -1,11 +1,11 @@
 module Intrigue
 module Handler
-  class Webhook < Intrigue::Handler::Base
+  class SendToWebhook < Intrigue::Handler::Base
 
     def self.metadata
       {
-        :name => "webhook",
-        :pretty_name => "Call Webhook (JSON)",
+        :name => "send_to_webhook",
+        :pretty_name => "Send To Webhook",
         :type => "export"
       }
     end

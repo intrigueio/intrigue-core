@@ -183,7 +183,7 @@ module Intrigue
 
         seeds.each do |s|
           if entity_name =~ /[\.\s\@]#{Regexp.escape(s.name)}/i
-            puts "matched a seed, returning true"
+            #puts "matched a seed, returning true"
             return true
           end
         end
@@ -191,7 +191,7 @@ module Intrigue
         # Check standard exceptions (hardcoded list) first if we show up here (and we werent' a seed), we should skip
         if use_standard_exceptions
           if standard_no_traverse?(entity_name, type_string)
-            puts 'Matched a standard exception, returning false'
+            #puts 'Matched a standard exception, returning false'
             return false 
           end
         end
@@ -203,7 +203,7 @@ module Intrigue
           # if we don't have a list, safe to return false now, otherwise proceed to 
           # additional exceptions which are provided as an attribute on the object
           unless Intrigue::Model::GlobalEntity.traversable?(type_string, entity_name, self)
-            puts 'Global intelligence says not traversable, returning false'
+            puts 'Global intel says not traversable, returning false'
             return false 
           end
         end
