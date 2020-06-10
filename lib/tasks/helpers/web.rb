@@ -25,20 +25,20 @@ module Task
 
     # check for sanity
     unless response && response_two
-      _log_error "Unable to connect to site!"
+      _log_error "Unable to connect to site!" if @task_result
       return false
     end
 
     # check for sanity
     unless response.body && response_two.body
-      _log_error "Empty body!"
+      _log_error "Empty body!" if @task_result
       return false
     end
     
     # check to make sure we don't just go down the rabbit hole
     # some pages print back our uri, so first remove that if it exists
     unless response.body.gsub(request_page_one,"") && response_two.body.gsub(request_page_two,"")
-      _log_error "Cowardly refusing to test - different responses on our missing page checks"
+      _log_error "Cowardly refusing to test - different responses on our missing page checks" if @task_result
       return false
     end
 
@@ -47,14 +47,14 @@ module Task
     # But select based on the response to our random page check
     case response.code
       when "404"
-        _log "Using CODE as missing page test, missing page will give a 404"
+        _log "Using CODE as missing page test, missing page will give a 404" if @task_result
         missing_page_test = :code
       when "200"
-        _log "Using CONTENT as missing page test, missing page will give a 200"
+        _log "Using CONTENT as missing page test, missing page will give a 200" if @task_result
         missing_page_test = :content
         missing_page_content = response.body
       else
-        _log "Defaulting to CODE as missing page test, missing page will give a #{response.code}"
+        _log "Defaulting to CODE as missing page test, missing page will give a #{response.code}" if @task_result
         missing_page_test = :code
         missing_page_code = response.code
     end
@@ -85,11 +85,11 @@ module Task
 
               # Create a linked issue if the type exists
               if _linkable_issue_exists "#{request_details[:issue_type]}"
-                _log "Creating linked issue of type: #{request_details[:issue_type]}"
+                _log "Creating linked issue of type: #{request_details[:issue_type]}" if @task_result
                 _create_linked_issue(request_details[:issue_type], result.except!(:name)) 
               else
                 # Generic fallback 
-                _log "Creating issue of type: #{request_details[:issue_type]}"
+                _log "Creating issue of type: #{request_details[:issue_type]}" if @task_result
                 _create_issue({
                   name: "Discovered Sensitive Content at #{request_details[:path]}",
                   type:  request_details[:issue_type] || "discovered_sensitive_content",
@@ -633,24 +633,33 @@ module Task
   response
   end
 
-  def check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content, success_cases=nil)
+  def check_uri_exists(request_uri, missing_page_test, missing_page_code="404", missing_page_content="", success_cases=nil)
 
      to_return = false
 
      response = http_request :get, request_uri
      return false unless response
 
+     # try again if we got a backoff
+     while response.kind_of? Net::HTTPTooManyRequests do 
+      _log "Got a backoff, sleeping ~60s"
+      sleep 30 + rand(60)
+      response = http_request :get, request_uri
+     end
+
+     return false if response.kind_of? Net::HTTPNotFound
+
      # try again if we got a blank page (some WAFs seem to do this?)
-     if response.body == ""
+     if !response.code == "404" && response.body == ""
        2.times do
-         _log "Re-attempting #{request_uri}... verifying we should really have a blank page"
-         response = http_request :get, request_uri
+         _log "Re-attempting #{request_uri}... verifying we should really have a blank page" if @task_result
+         response = http_request :get, request_uri 
          next unless response
          break if response.body != ""
        end
      end
 
-     # make sure we have a valid response
+     # again make sure we have a valid response
      return false unless response
 
      ######### BEST CASE IS WHEN WE KNOW WHAT IT SHOULD LOOK LIKE
@@ -661,7 +670,7 @@ module Task
 
        if success_cases[:body_regex]
          if response.body =~ success_cases[:body_regex]
-           _log_good "Matched positive body regex!!! #{success_cases[:body_regex]}"
+           _log_good "Matched positive body regex!!! #{success_cases[:body_regex]}" if @task_result
            return {
              name: request_uri,
              uri: request_uri,
@@ -676,7 +685,7 @@ module Task
          response.each do |header|
           _log "Checking header: '#{header}: #{response[header]}'"
           if "#{header}: #{response[header]}" =~ success_cases[:header_regex]   ### ALWAYS LOWERCASE!!!!
-           _log_good "Matched positive header regex!!! #{success_cases[:header_regex]}"
+           _log_good "Matched positive header regex!!! #{success_cases[:header_regex]}" if @task_result
            return {
              name: request_uri,
              uri: request_uri,
@@ -692,20 +701,14 @@ module Task
 
     # otherwise fall through into our more generic checking.
 
-     # always check for content...
-     ["404", "forbidden", "Request Rejected"].each do |s|
-       if (response.body =~ /#{s}/i )
-         _log "Skipping #{request_uri}, contains a missing page string: #{s}"
-         return false
-       end
-     end
-
      #_log "Response.code is a #{response.code.class}"
 
      # always check code
      if ( response.code == "301" || response.code == "302" ||
           "#{response.code}" =~ /^4\d\d/ ||  "#{response.code}" =~ /^5\d\d/ )
-       _log "Ignoring #{request_uri} based on code: #{response.code}"
+        
+        # often will be redirected or 500'd and that doesnt count as existence 
+       _log "Ignoring #{request_uri} based on redirect code: #{response.code}" if @task_result
        return false
      end
 
@@ -713,7 +716,7 @@ module Task
      if missing_page_test == :code
        case response.code
          when "200"
-           _log_good "Clean 200 for #{request_uri}"
+           _log_good "Clean 200 for #{request_uri}" if @task_result
            to_return = {
              name: request_uri,
              uri: request_uri,
@@ -721,9 +724,9 @@ module Task
              response_body: response.body
            }
          when missing_page_code
-           _log "Got code: #{response.code}. Same as missing page code: #{missing_page_code}. Ignoring!"
+           _log "Got code: #{response.code}. Same as missing page code: #{missing_page_code}. Ignoring!" if @task_result
          else
-           _log "Flagging #{request_uri} because of response code #{response.code}!"
+           _log "Flagging #{request_uri} because of response code #{response.code}!" if @task_result
            to_return = {
              name: request_uri,
              uri: request_uri,
@@ -735,11 +738,20 @@ module Task
      ## Otherwise, let's guess based on the content. Does this page look
      ## like a missing page?
      elsif missing_page_test == :content
+
+       # check for default content...
+       ["404", "forbidden", "Request Rejected"].each do |s|
+         if (response.body =~ /#{s}/i )
+           _log "Skipping #{request_uri}, contains a missing page string: #{s}" if @task_result
+           return false
+         end
+       end
+
        if response.body[0..100] == missing_page_content[0..100]
-         _log "Skipping #{request_uri} based on page content"
+         _log "Skipping #{request_uri} based on page content" if @task_result
 
        else
-         _log "Flagging #{request_uri} because of content!"
+         _log "Flagging #{request_uri} because of content!" if @task_result
          to_return = {
            name: request_uri,
            uri: request_uri,

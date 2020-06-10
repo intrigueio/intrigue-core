@@ -30,6 +30,7 @@ class UriExtractLinkedHosts  < BaseTask
 
     unless contents
       _log_error "Unable to retrieve uri: #{uri}"
+      return
     end
 
     ###
@@ -40,9 +41,7 @@ class UriExtractLinkedHosts  < BaseTask
 
         # Collect the host
         host = URI(link).host
-
-        #_create_entity "Uri", "name" => link, "uri" => link
-        _create_entity "DnsRecord", "name" => host
+        create_dns_entity_from_string host
 
       rescue URI::InvalidURIError => e
         _log_error "Error, unable to parse #{link}"

@@ -3,15 +3,17 @@ module Intrigue
 module Task
 module WebContent
 
-  def extract_javascript_components(script_list, host)
+  def extract_and_fingerprint_scripts(script_list, host)
     components = []
     script_list.each do |s|
 
+      uri = URI.parse(s)
+      next unless uri.host && uri.port && uri.scheme =~ /^http/
       ### 
       ### Determine who's hosting
       ### 
       begin
-        if URI.parse(s).host =~ /#{host}/
+        if uri.host =~ /#{host}/
           host_location = "local"
         else
           host_location = "remote"

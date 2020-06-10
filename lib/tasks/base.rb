@@ -13,6 +13,7 @@ class BaseTask
   include Intrigue::Task::Regex
   include Intrigue::Task::Services
   include Intrigue::Task::VulnCheck
+  include Intrigue::Task::VulnDb
   include Intrigue::Task::Web
   include Intrigue::Task::WebContent
   include Intrigue::Task::Whois

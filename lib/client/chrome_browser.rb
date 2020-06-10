@@ -119,11 +119,18 @@ module Intrigue
 
     def _navigate_and_screenshot(url)
       # Navigate to the site and wait for the page to load
-      @chrome.send_cmd "Page.navigate", url: url
-      @chrome.wait_for "Page.loadEventFired"
+      begin
+        @chrome.send_cmd "Page.navigate", url: url
+        @chrome.wait_for "Page.loadEventFired"
 
-      # Take page screenshot
-    encoded_screenshot = @chrome.send_cmd "Page.captureScreenshot"
+        # Take page screenshot
+        encoded_screenshot = @chrome.send_cmd "Page.captureScreenshot"
+      rescue NameError => e
+        puts "NameError FIX UPSTREAM :["
+        return nil
+      end
+      
+    encoded_screenshot
     end
 
   end

@@ -19,6 +19,9 @@ include Intrigue::System::Validations
 require_relative 'system/helpers'
 include Intrigue::System::Helpers
 
+# Intrigue Export Format
+require_relative 'system/json_data_export_file'
+
 ###
 ### END SYSTEM HELPERS
 ###

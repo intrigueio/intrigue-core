@@ -64,18 +64,17 @@ class Uri < Intrigue::Task::BaseTask
     # add base_url where appropriate
     script_links = temp_script_links.map { |x| x =~ /^\// ? "#{uri}#{x}" : x }
 
-    # parse out the componeents
-    script_components = extract_javascript_components(script_links, hostname)
-  
-    ###
-    ### Check for vulns based on Script versions
-    ###
+    # Parse out, and fingeprint the componentes 
+    script_components = extract_and_fingerprint_scripts(script_links, hostname)
+    _log "Got fingerprinted script components: #{script_components.map{|x| x["product"] }}"
+
+    ### Check for vulns in included scripts
     fingerprint = []
     if script_components.count > 0
-      fingerprint.concat add_vulns_by_cpe(script_components)
+      fingerprint.concat(add_vulns_by_cpe(script_components))
     end
 
-    # save the Headers
+    # Save the Headers
     headers = []
     _log "Saving Headers"
     response.each_header{|x| headers << "#{x}: #{response[x]}" }
@@ -83,7 +82,7 @@ class Uri < Intrigue::Task::BaseTask
     # Use intrigue-ident code to request all of the pages we
     # need to properly fingerprint
     _log "Attempting to fingerprint (without the browser)!"
-    ident_matches = generate_http_requests_and_check(uri) || {}
+    ident_matches = generate_http_requests_and_check(uri,{:enable_browser => false}) || {}
 
     ident_fingerprints = ident_matches["fingerprint"] || []
     ident_content_checks = ident_matches["content"] || []
@@ -97,7 +96,7 @@ class Uri < Intrigue::Task::BaseTask
     ### Check for vulns based on Ident FPs
     ###
     if ident_fingerprints.count > 0
-      fingerprint.concat add_vulns_by_cpe(ident_fingerprints)
+      fingerprint.concat(add_vulns_by_cpe(ident_fingerprints))
     end
 
     # we can check the existing response, so send that
@@ -399,7 +398,6 @@ class Uri < Intrigue::Task::BaseTask
 
     # check fingeprrints
     fingerprints.each do |fp|
-      puts "FP: #{fp.inspect}"
       return true if fp["tags"] && fp["tags"].include?("API")
     end 
 
@@ -419,42 +417,7 @@ class Uri < Intrigue::Task::BaseTask
   false
   end
 
-  #
-  # This method assumes we get a list of objects with a CPE we can parse
-  # and use for a vuln lookup based on the configured methdo
-  #
-  def add_vulns_by_cpe(component_list)
-
-      # Make sure the key is set before querying intrigue api
-      intrigueio_api_key = _get_task_config "intrigueio_api_key"
-      use_api = intrigueio_api_key && intrigueio_api_key.length > 0
-
-      # for ech fingerprint, map vulns 
-      component_list = component_list.map do |fp|
-        next unless fp 
-
-        vulns = []
-        if fp["inference"]
-          cpe = Intrigue::Vulndb::Cpe.new(fp["cpe"])
-          if use_api # get vulns via intrigue API
-            _log "Matching vulns for #{fp["cpe"]} via Intrigue API"
-            vulns = cpe.query_intrigue_vulndb_api(intrigueio_api_key)
-          else
-            vulns = cpe.query_local_nvd_json
-          end
-
-          # merge it in 
-          fp.merge!({"vulns" => vulns })
-        else 
-          _log "Inference disallowed on: #{fp["cpe"]}" if fp["cpe"]
-          nil
-        end
-
-      end
-
-    component_list.compact
-    end
-
+ 
 end
 end
 end

@@ -35,19 +35,18 @@ class IpAddress < Intrigue::Task::BaseTask
     ## Handle ANY Records ##
     ########################
     results = resolve(lookup_name)
-
-    _log "Got results: #{results}"
-
+    
     ####
     ### Create aliased entities
-    ####
+    #### 
     results.each do |result|
       _log "Creating entity for... #{result["name"]}"
 
       next unless result["name"]
+      next unless result["name"].length > 0
 
       # create a domain for this entity
-      entity = create_dns_entity_from_string(result["name"], @entity)  if @entity.scoped?
+      entity = create_dns_entity_from_string(result["name"], @entity) if @entity.scoped?
 
       # always create a domain for this entity, if it's a domain or subdomain
       create_dns_entity_from_string(parse_domain_name(result["name"]))  if @entity.scoped?
@@ -64,7 +63,8 @@ class IpAddress < Intrigue::Task::BaseTask
         end
       end
     end
-
+    
+    
     # get ASN
     # look up the details in team cymru's whois
     _log "Using Team Cymru's Whois Service..."
