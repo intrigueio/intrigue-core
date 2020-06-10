@@ -19,8 +19,7 @@ module Handler
 
     def perform(result_type, result_id, prefix_name=nil)
 
-      @debug = false
-
+      timestamp = Time.now.utc.strftime("%Y%m%d%H%M%S")
       result = eval(result_type).first(id: result_id)
       puts "Memory efficent json handler called!"
 
@@ -35,7 +34,7 @@ module Handler
       db = Intrigue::System::JsonDataExportFile.new(result.name, version)
 
       # Always use the project name when saving files for this project
-      prefix_name = "#{result.name}/#{DateTime.now.to_date.to_s.gsub("-","_")}/"
+      prefix_name = "#{result.name}/"
 
       result.issues.paged_each(rows_per_fetch: 500) do |i|
         # toss it in issues list
@@ -94,21 +93,29 @@ module Handler
       db.close_files
         
       ###
-      ### Issues
+      ### Write Issues
       ###
 
-      ### Dump issues in one file 
-      issues_file = { 
-        :key => "index/#{version}/#{prefix_name}#{result.name}.#{version}.issues.json",
-        :body => db.dump_issues_json
-      }
-      File.open("#{$intrigue_basedir}/tmp/#{result.name}.issues.#{timestamp}.json", "w").write issues_file.to_json
+      ### Convert the JSONL to a JSON File 
+      issues_count = result.issues.count
+      issues_per_file = 10000 # XXX
+      count = 0
+      
+      ((issues_count / issues_per_file) + 1).times do 
+
+        start_line = count*issues_per_file
+        end_line = (count+1)*issues_per_file
+
+        file_path = "#{$intrigue_basedir}/tmp/#{result.name}.#{timestamp}.issues.#{count}.json"
+        File.open(file_path, "w").write db.dump_issues_json(start_line,end_line)
+        count +=1
+      end
 
       ###
-      ### Entities
+      ### Write Entities
       ###
 
-      ### Dump entities in one file per XXX
+      ### Convert the JSONL to a JSON File 
       entities_count = result.entities.count
       entities_per_file = 10000 # XXX
       count = 0
@@ -118,14 +125,11 @@ module Handler
         start_line = count*entities_per_file
         end_line = (count+1)*entities_per_file
 
+        # calculate the final file
         final = true if end_line > entities_count
 
-        entity_file = { 
-          :key => "index/#{version}/#{prefix_name}#{result.name}.#{version}.entities.#{count}.json",
-          :body => db.dump_entities_json(start_line,end_line,final)
-        }
-
-        File.open("#{$intrigue_basedir}/tmp/#{result.name}.entities.#{timestamp}.json", "w").write entity_file.to_json
+        file_path = "#{$intrigue_basedir}/tmp/#{result.name}.#{timestamp}.entities.#{count}.json"
+        File.open(file_path, "w").write db.dump_entities_json(start_line,end_line,final)
         count +=1
       end
       
