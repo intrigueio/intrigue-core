@@ -15,6 +15,7 @@ gem 'sidekiq-limit_fetch'     # Dynamic queueing
 
 gem 'thor'                    # CLI
 gem 'elasticsearch'           # Database
+gem 'faraday_middleware-aws-sigv4' # AWS elasticsearch
 gem 'iconv'                   # Encoding
 gem 'rest-client'             # Web hooks, some tasks
 gem 'rack-protection'         # https://github.com/sinatra/rack-protection

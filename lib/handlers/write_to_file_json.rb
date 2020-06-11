@@ -7,12 +7,12 @@ require "json"
 module Intrigue
 module Handler
 
-  class JsonLocalFullExport < Intrigue::Handler::Base
+  class WriteToFileJson < Intrigue::Handler::Base
 
     def self.metadata
       {
-        :name => "json_local_full_export",
-        :pretty_name => "Export to Local File (JSON in ./tmp)",
+        :name => "write_to_file_json",
+        :pretty_name => "Write to File (JSON in ./tmp)",
         :type => "export"
       }
     end

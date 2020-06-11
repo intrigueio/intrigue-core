@@ -30,21 +30,27 @@
     }
   },
   "intrigue_handlers": {
-    "s3_json": {
-      "access_key": "",
-      "secret_key": "",
-      "region": "",
-      "bucket": "",
+    "send_to_aws_elasticsearch": {
+      "aws_endpoint" : "",
+      "aws_region" : "",
+      "aws_access_key" : "",
+      "aws_secret_key" : ""
+    },
+    "send_to_aws_s3_json": {
+      "aws_access_key": "",
+      "aws_secret_key": "",
+      "aws_region": "",
+      "aws_s3_bucket": "",
       "uri": ""
     },
-    "s3_csv": {
-      "access_key": "",
-      "secret_key": "",
-      "region": "",
-      "bucket": "",
+    "send_to_s3_csv": {
+      "aws_access_key": "",
+      "aws_secret_key": "",
+      "aws_region": "",
+      "aws_s3_bucket": "",
       "uri": ""
     },
-    "webhook": {
+    "send_to_webhook": {
       "uri": "http://127.0.0.1:9999/"
     }
   },
