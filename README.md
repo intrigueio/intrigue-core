@@ -1,12 +1,12 @@
 # Welcome!
 
-Intrigue-core is an automation framework and orchestrator for external attack surface discovery and cybersecurity intelligence. The framework is designed for use cases such as:
-
-  * Asset Discovery (Application and Infrastructure)
+Intrigu Core is an automation framework and orchestration engine for cybersecurity data collection and normalization. While the framework is primarily designed for external attack surface discovery, it has been adopted for a wide variety of use cases such as:
+  * Asset and Exposure Discovery (Application and Infrastructure)
   * Security Research and Vulnerability Scanning
-  * Exploratory OSINT (People, Systems, Entities)
-  * Malware IOC Enrichment
+  * Exploratory OSINT (People, Systems, Applications, and arbitrary entities)
   * Security-Oriented Data Gathering Pipelines
+  * Threat Data Gathering and Enrichment
+  * Malware IOC Enrichment
 
 If you'd like assistance getting started or have development-related questions, feel free to join us in slack channel, simply drop a line to hello-at-intrigue.io
 
