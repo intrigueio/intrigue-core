@@ -1,0 +1,35 @@
+<h3>Global Configuration</h3>
+
+<h4> Handler Configuration </h4>
+<form action="/system/config/handlers" method="post">
+<table class="table">
+  <colgroup>
+    <col style="width:20%">
+    <col style="width:20%">
+    <col style="width:30%">
+  </colgroup>
+<tr><th>Handler</th><th>Setting</th><th>Value</th></tr>
+<tbody>
+  <% @global_config.config["intrigue_handlers"].each do |handler_name,settings| %>
+    
+    <% settings.each do |k,v| %>
+
+      <tr>
+        <td><%= handler_name %></td>
+        <td><%= k %></td>
+        <td><input class="form-control" style="width:100%" type="text" name="<%=h "#{handler_name}____#{k}" %>" value="<%="**********#{v[-8..-1] if v }"%>"></td>
+      </tr>
+
+    <% end %>
+    
+  <% end %>
+
+  <tr>
+    <td><input class="btn btn-primary" type="submit"></td>
+    <td></td>
+    <td></td>
+  </tr>
+  
+<tbody>
+</table>
+</form>

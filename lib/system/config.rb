@@ -41,6 +41,7 @@ module Intrigue
         json_config = JSON.pretty_generate(@@config)
         safe_write "#{@@config_file}", json_config
         _reload_running_config
+      
       end
 
       def self.safe_write(path, content)
