@@ -28,9 +28,14 @@ class IntrigueApp < Sinatra::Base
     end
 
     # get config
-    get '/system/config/?' do
+    get '/system/config/tasks/?' do
       @global_config = Intrigue::System::Config
-      erb :"system/config"
+      erb :"system/task_config"
+    end
+
+    get '/system/config/handlers/?' do
+      @global_config = Intrigue::System::Config
+      erb :"system/handler_config"
     end
 
     get "/system/entities" do
@@ -58,7 +63,30 @@ class IntrigueApp < Sinatra::Base
       # save and reload
       Intrigue::System::Config.save
 
-      redirect "/system/config"  # handy if we're in a browser
+      redirect "/system/config/tasks"  # handy if we're in a browser
+    end
+
+    # save the handler config
+    post '/system/config/handlers' do
+      # Update our config if one of the fields have been changed. Note that we use ***
+      # as a way to mask out the full details in the view. If we have one that doesn't lead with ***
+      # go ahead and update it
+      params.each do |k,v|
+
+        handler_name = k.split("____").first
+        parameter_name = k.split("____").last
+
+        # skip unless we already know about this config setting, helps us avoid
+        # other parameters sent to this page (splat, project, etc)
+        next unless Intrigue::System::Config.config["intrigue_handlers"][handler_name]
+
+        Intrigue::System::Config.config["intrigue_handlers"][handler_name][parameter_name] = v unless v =~ /^\*\*\*/
+      end
+
+      # save and reload
+      Intrigue::System::Config.save
+
+      redirect "/system/config/handlers"  # handy if we're in a browser
     end
 
   ###
