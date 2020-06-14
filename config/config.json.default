@@ -50,6 +50,10 @@
       "aws_s3_bucket": "",
       "uri": ""
     },
+    "send_to_elasticsearch": {
+      "endpoint" : "http://localhost",
+      "port" : 9200
+    },
     "send_to_webhook": {
       "uri": "http://127.0.0.1:9999/"
     }

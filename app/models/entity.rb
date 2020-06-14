@@ -37,13 +37,14 @@ module Intrigue
         where(Sequel.&(project_id: named_project.id, type: resolved_entity_type.to_s)) if named_project
       end
 
-      #def self.scope_by_project_and_type_and_detail_value(project_name, entity_type, detail_name, detail_value)
-      #  json_details = Sequel.pg_jsonb_op(:details)
-      #  candidate_entities = scope_by_project_and_type(project_name,entity_type)
-      #  our_value = json_details.get_text(detail_name)
-      #  candidate_entities.where(our_value => detail_value)
-      #end
-      
+      def uuid
+        project_name = self.project.name if self.project
+        project_name = "missing_project" unless project_name
+
+        out = "#{project_name}##{self.type}##{self.name}"
+        Digest::SHA2.hexdigest(out)
+      end
+
       def ancestors
         ancestors = []
         task_results.each do |tr|
