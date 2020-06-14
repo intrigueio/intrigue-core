@@ -67,6 +67,12 @@ Dir["#{issues_folder}/*.rb"].each {|f| require_relative f}
 ####
 # Handler Libraries
 ####
+
+# require handler-specifics here
+require 'faraday_middleware'
+require 'elasticsearch'
+
+###
 require_relative 'handler_factory'
 require_relative 'handlers/base'
 handlers_folder = File.expand_path('../handlers', __FILE__) # get absolute directory

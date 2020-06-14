@@ -1,13 +1,14 @@
-require 'faraday_middleware/aws_sigv4'
+
+
 
 module Intrigue
 module Handler
-  class SendToAwsElasticsearch < Intrigue::Handler::Base
+  class SendToElasticsearch < Intrigue::Handler::Base
 
     def self.metadata
       {
-        :name => "send_to_aws_elasticsearch",
-        :pretty_name => "Send to AWS ElasticSearch",
+        :name => "send_to_elasticsearch",
+        :pretty_name => "Send to ElasticSearch",
         :type => "export"
       }
     end
@@ -16,9 +17,9 @@ module Handler
       result = eval(result_type).first(id: result_id)
       return "Unable to process" unless result.respond_to? "export_json"
       
-      puts "Uploading entities to AWS Elasticsearch!"
+      puts "Uploading entities to Elasticsearch!"
       client = elasticsearch_client
-
+      
       # upload entities
       index_name = "#{prefix_name}#{result.name}-entities"
       result.entities.paged_each(rows_per_fetch: 100) do |e|
@@ -45,22 +46,16 @@ module Handler
   
     def elasticsearch_client
       
-      endpoint = _get_handler_config("aws_endpoint")
-      region = _get_handler_config("aws_region")
-      access_key = _get_handler_config("aws_access_key")
-      secret_key = _get_handler_config("aws_secret_key")
+      endpoint = _get_handler_config("endpoint") || "http://localhost:9200/"
+      port = _get_handler_config("port") || 9200
       
-      client = Elasticsearch::Client.new(url: endpoint, port: 443) do |f|
-        f.request :aws_sigv4,
-          service: "es",
-          region: region,
-          access_key_id: access_key,
-          secret_access_key: secret_key
-      end
-      
+      client = Elasticsearch::Client.new(url: endpoint, :port => port)
+      client.transport.reload_connections!
+
+
     client
     end
-  
+
     #def to_bulk_json(entities_slice)
     #
     #  bulk_list = []

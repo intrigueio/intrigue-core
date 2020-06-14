@@ -20,6 +20,19 @@ module Intrigue
         validates_unique([:entity_id, :name, :project_id, :source], allow_nil: true)
       end
 
+      def uuid
+        project_name = self.project.name if self.project
+        project_name = "missing_project" unless project_name
+
+        source = source if source
+        source = 'intrigue' unless source
+
+        out = "#{project_name}##{self.name}#{source}##{entity.uuid}"
+        
+        Digest::SHA2.hexdigest(out)
+      end
+
+
       def to_s
         "#{name} on #{entity.type} #{entity.name}"
       end
