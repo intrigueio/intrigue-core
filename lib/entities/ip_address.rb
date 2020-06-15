@@ -36,7 +36,9 @@ class IpAddress < Intrigue::Model::Entity
 
     # if we have aliases and they're all false, we don't really want this thing
     if self.aliases.count > 0
-      return false unless self.aliases.map{|x| x.hidden }.include? false 
+      return false unless self.aliases.select{|x| x if (
+        x.type == Intrigue::Entity::DnsRecord || x.type == Intrigue::Entity::Domain) && 
+        !x.hidden}.count > 0
     end
 
   # if we didnt match the above and we were asked, default to true
