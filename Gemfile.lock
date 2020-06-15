@@ -397,6 +397,7 @@ GEM
       rack-protection (= 2.0.8.1)
       sinatra (= 2.0.8.1)
       tilt (~> 2.0)
+    sinatra-cors (1.1.0)
     socketry (0.5.1)
       hitimes (~> 1.2)
     sqlite3 (1.4.2)
@@ -486,6 +487,7 @@ DEPENDENCIES
   sidekiq-limit_fetch
   sinatra
   sinatra-contrib
+  sinatra-cors
   snmp!
   spidr!
   sqlite3

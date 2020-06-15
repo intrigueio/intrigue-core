@@ -1,6 +1,7 @@
 require 'eventmachine'
 require 'logger'
 require 'sinatra'
+require "sinatra/cors"
 require 'sinatra/contrib'
 require 'yaml'
 require 'rest-client'
@@ -212,8 +213,6 @@ end
 
 # Core libraries
 require_relative "lib/all"
-
-
 
 #configure sentry.io error reporting (only if a key was provided)
 if (Intrigue::System::Config.config && Intrigue::System::Config.config["sentry_dsn"])
