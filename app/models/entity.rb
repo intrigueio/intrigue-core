@@ -69,6 +69,11 @@ module Intrigue
         raise "Method must be oveeridden for #{self.class}!"
       end
 
+      def set_scoped! 
+        scoped = true
+        save_changes
+      end
+
       def seed?
         true if self.project.seeds.map{|x| self.name == x.name }
       false
@@ -130,15 +135,15 @@ module Intrigue
             # ensure we always mark an entity enriched, and then can continue on
             # with the machine
             unless Intrigue::TaskFactory.include? task_name
-              start_task("task_enrichment", self.project, scan_result_id, "enrich/generic", self, task_result_depth, [], [], machine_name, true, true)
+              start_task("task_enrichment", self.project, scan_result_id, "enrich/generic", self, task_result_depth, [], [], machine_name, true)
               next
             end
 
-            start_task("task_enrichment", self.project, scan_result_id, task_name, self, task_result_depth, [], [], machine_name, true, true)
+            start_task("task_enrichment", self.project, scan_result_id, task_name, self, task_result_depth, [], [], machine_name, true)
           end
 
         else # always enrich, even if something is not configured
-          start_task("task_enrichment", self.project, scan_result_id, "enrich/generic", self, task_result_depth, [], [], machine_name, true, true)
+          start_task("task_enrichment", self.project, scan_result_id, "enrich/generic", self, task_result_depth, [], [], machine_name, true)
         end
 
       end

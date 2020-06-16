@@ -34,15 +34,18 @@ class IpAddress < Intrigue::Model::Entity
     return true if self.seed
     return false if self.hidden
 
+    # scanner use case 
+    #return true if created_by?("masscan_scan")
+    #return true if created_by?("nmap_scan")
+
     # if we have aliases and they're all false, we don't really want this thing
     if self.aliases.count > 0
-      return false unless self.aliases.select{|x| x if (
-        x.type == Intrigue::Entity::DnsRecord || x.type == Intrigue::Entity::Domain) && 
-        !x.hidden}.count > 0
+      return false unless self.aliases.select{ |x| x if 
+        (x.kind_of?(Intrigue::Entity::DnsRecord) || x.kind_of?(Intrigue::Entity::Domain)) && !x.hidden }.count > 0
     end
 
-  # if we didnt match the above and we were asked, default to true
-  true 
+  # if we didnt match the above and we were asked, default to falsse
+  true
   end 
 
 end
