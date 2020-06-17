@@ -143,6 +143,9 @@ module Issue
 
       resource_url = req["url"]
 
+      # skip data 
+      return if uri =~ /^data:.*$/
+
       # skip this for anything other than hostnames 
       hostname = URI(resource_url).hostname
       return if hostname =~ ipv4_regex || hostname =~ /ipv6_regex/

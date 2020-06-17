@@ -31,8 +31,8 @@ class IpAddress < Intrigue::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
-    return true if self.seed
-    return false if self.hidden
+    return true if self.allow_list
+    return false if self.deny_list
 
     # if we have aliases and they're all false, we don't really want this thing
     if self.aliases.count > 0

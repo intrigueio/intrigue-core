@@ -53,6 +53,9 @@ include Intrigue::System::Helpers
 #require 'pry-byebug'
 require 'logger'
 
+# disable annoying redis messages 
+Redis.exists_returns_integer = false
+
 #
 # Simple configuration check to ensure we have configs in place
 def sanity_check_system
