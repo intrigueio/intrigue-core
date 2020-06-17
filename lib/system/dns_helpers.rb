@@ -47,7 +47,6 @@ module DnsHelpers
       # then find the longest match
       if matches.count > 0
         longest_match = matches.sort_by{|x| x.split(".").length + x.split(".").last.length }.last
-        puts "Returning: #{longest_match} from #{matches}"
         return longest_match
       end
 

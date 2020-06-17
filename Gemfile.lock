@@ -105,7 +105,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (6.0.3.1)
+    activesupport (6.0.3.2)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
@@ -132,7 +132,7 @@ GEM
       async-http (~> 0.42)
       protocol-http (~> 0.7)
     aws-eventstream (1.1.0)
-    aws-partitions (1.329.0)
+    aws-partitions (1.330.0)
     aws-sdk-core (3.100.0)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
@@ -141,7 +141,7 @@ GEM
     aws-sdk-kms (1.34.1)
       aws-sdk-core (~> 3, >= 3.99.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-route53 (1.36.1)
+    aws-sdk-route53 (1.37.0)
       aws-sdk-core (~> 3, >= 3.99.0)
       aws-sigv4 (~> 1.1)
     aws-sdk-s3 (1.68.1)
@@ -151,8 +151,8 @@ GEM
     aws-sdk-sqs (1.27.1)
       aws-sdk-core (~> 3, >= 3.99.0)
       aws-sigv4 (~> 1.1)
-    aws-sigv4 (1.1.4)
-      aws-eventstream (~> 1.0, >= 1.0.2)
+    aws-sigv4 (1.2.0)
+      aws-eventstream (~> 1, >= 1.0.2)
     backports (3.17.2)
     blockenspiel (0.5.0)
     builder (3.2.4)
@@ -189,7 +189,7 @@ GEM
       multi_json
     em-resolv-replace (1.1.3)
     eventmachine (1.2.7)
-    excon (0.74.0)
+    excon (0.75.0)
     faraday (0.17.3)
       multipart-post (>= 1.2, < 3)
     faraday-http-cache (1.3.1)
