@@ -30,30 +30,30 @@ Allow List Status: <%= @entity.allow_list %> <br/>
 
 Discovered Issues:<br/>
 <ul>
-<%=out = []; results = @entity.issues.uniq.sort_by{|x|x.name}; results.each {|x| out << "<li><a href='/#{@project_name}/issues/#{x.id}'>#{h x}</a></li>"; } if results; out.uniq.join("") %>
+<%=out = []; results = @entity.issues.uniq.sort_by{|x|x.name}; results.each {|x| out << "<li><a href='/#{h @project_name}/issues/#{x.id}'>#{h x}</a></li>"; } if results; out.uniq.join("") %>
 </ul>
 
 Alias Group: <%= @entity.alias_group.id %> <br/>
 Aliases: <br/>
 <ul>
-<%=out = []; results = @entity.aliases.uniq.sort_by{|x|x.name}; results.each {|x| out << "<li><a href='/#{@project_name}/entities/#{x.id}'>#{h x}</a></li>"; } if results; out.uniq.join("") %>
+<%=out = []; results = @entity.aliases.uniq.sort_by{|x|x.name}; results.each {|x| out << "<li><a href='/#{h @project_name}/entities/#{x.id}'>#{h x}</a></li>"; } if results; out.uniq.join("") %>
 </ul>
 
-Ancestors: <ul><% @entity.ancestors.each do |a|%> <%="<li><a href='/#{@project_name}/entities/#{a.id}'>#{h a}</a></li>"%> <% end %> </ul><br/>
+Ancestors: <ul><% @entity.ancestors.each do |a|%> <%="<li><a href='/#{h @project_name}/entities/#{a.id}'>#{h a}</a></li>"%> <% end %> </ul><br/>
 
 Tasks that created this entity:<br/>
 <ul>
-<%= out = []; @entity.task_results.each {|x| out << "<li><a href='/#{@project_name}/results/#{x.id}'>#{h x.task_name} (#{h x.base_entity})</a></li>" }; out.uniq.join("") %>
+<%= out = []; @entity.task_results.each {|x| out << "<li><a href='/#{h @project_name}/results/#{x.id}'>#{h x.task_name} (#{h x.base_entity})</a></li>" }; out.uniq.join("") %>
 </ul>
 
 Tasks run on this entity:<br/>
 <ul>
-<%= out = []; results = Intrigue::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => @entity); results.each {|r| out << "<li><a href='/#{@project_name}/results/#{r.id}'>#{h r.task_name} (#{h r.base_entity})</a></li>"; }; out.uniq.join("") %>
+<%= out = []; results = Intrigue::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => @entity); results.each {|r| out << "<li><a href='/#{h @project_name}/results/#{r.id}'>#{h r.task_name} (#{h r.base_entity})</a></li>"; }; out.uniq.join("") %>
 </ul>
 
 Entities discovered from this entity: <br/>
 <ul>
-<%=out = []; results = Intrigue::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => @entity); results.each {|r| r.entities.each {|x| out << "<li><a href='/#{@project_name}/entities/#{x.id}'>#{h x}</a></li>"; }}; out.uniq.join("") %>
+<%=out = []; results = Intrigue::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => @entity); results.each {|r| r.entities.each {|x| out << "<li><a href='/#{h @project_name}/entities/#{x.id}'>#{h x}</a></li>"; }}; out.uniq.join("") %>
 </ul>
 
 </div>

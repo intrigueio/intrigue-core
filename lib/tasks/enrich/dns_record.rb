@@ -88,6 +88,16 @@ class DnsRecord < Intrigue::Task::BaseTask
     end
 
     ###
+    ### Scope all aliases if we're scoped
+    ###
+    if @entity.scoped? # TODO .. is the eor necessary
+      @entity.aliases.each do |a|
+        _log "Setting #{a.name} scoped!"
+        a.set_scoped!
+      end
+    end 
+
+    ###
     ### Finally, cloud provider determination
     ###
 
@@ -109,9 +119,9 @@ class DnsRecord < Intrigue::Task::BaseTask
         _log "Creating entity for... #{result}"
       
         # create a domain for this entity
-        entity = create_dns_entity_from_string(result["name"], @entity) 
+        entity = create_dns_entity_from_string(result["name"], @entity)
       end
-      
+
     end
 
     def _create_vhost_entities(lookup_name)

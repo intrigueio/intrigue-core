@@ -126,6 +126,16 @@ class Domain < Intrigue::Task::BaseTask
 
     end
 
+    ###
+    ### Scope all aliases if we're scoped
+    ###
+    if @entity.scoped? # TODO .. is the eor necessary
+      @entity.aliases.each do |a|
+        _log "Setting #{a.name} scoped!"
+        a.set_scoped!
+      end
+    end 
+
   end
 
   def _create_aliases(results)

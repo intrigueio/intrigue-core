@@ -35,7 +35,7 @@
           <td><%=h x["cvss_v3_score"] %></td>
           <td><%=h x["cwe"] %></td>
           <td><%=h x["cpe"] %></td>
-          <td><a href="<%=h "/#{@project_name}/entities/#{x["id"]}"%>"><%= h x["site"] %></a></td>
+          <td><a href="<%="/#{h @project_name}/entities/#{x["id"]}"%>"><%= h x["site"] %></a></td>
         </tr>
       <% end %>
       </tbody>

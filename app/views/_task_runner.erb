@@ -1,6 +1,6 @@
 
 <div class="col-sm-7">
-<form class="form-horizontal" id="task_runner" enctype="multipart/form-data" target="_self" method="post" action="/<%=@project_name%>/interactive/single">
+<form class="form-horizontal" id="task_runner" enctype="multipart/form-data" target="_self" method="post" action="/<%=h @project_name%>/interactive/single">
   <div class="form-group">
     <!-- <select name="task" id="task_name"> -->
     <label for="task_name" class="col-xs-4 control-label">Task</label>
@@ -32,7 +32,7 @@
   <!-- Get all attributes and use this to create an entity -->
   <% if @entity %>
       <%= @entity.form  %>
-      <input type="hidden" name="entity_id" value="<%=@entity.id%>">
+      <input type="hidden" name="entity_id" value="<%=h @entity.id%>">
   <% else %>
     <div class="form-group">
       <label for="entity_type" class="col-xs-4 control-label">Entity Type</label>

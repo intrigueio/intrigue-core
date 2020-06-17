@@ -4,7 +4,7 @@ Selected Count: <%= @result_count %><br/>
 </p>
 
 <div class="col-sm-2">
-  <form class="form-horizontal" id="result_search" target="_self" method="get" action="/<%=@project_name%>/results">
+  <form class="form-horizontal" id="result_search" target="_self" method="get" action="/<%=h @project_name%>/results">
 
     Search:
     <input type="text" style='width:100%' class="form-control sm" id="search_string" name="search_string">
@@ -22,8 +22,8 @@ Selected Count: <%= @result_count %><br/>
 <div class="col-sm-10">
   <%= "Page: #{@page}" %>
   <%= "Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %>
-  <a href="<%=request.path%>?page=<%=@page-1%>&search_string=<%=@search_string%>">previous</a>
-  <a href="<%=request.path%>?page=<%=@page+1%>&search_string=<%=@search_string%>">next</a>
+  <a href="<%=h request.path%>?page=<%=@page-1%>&search_string=<%=@search_string%>">previous</a>
+  <a href="<%=h request.path%>?page=<%=@page+1%>&search_string=<%=h @search_string%>">next</a>
 
   <script src="/js/sorttable.js"></script>
   <style>
@@ -56,7 +56,7 @@ Selected Count: <%= @result_count %><br/>
         <% @results.each do |x| %>
         <tr>
           <td><%= h x.timestamp_start %> </td>
-          <td><a href="/<%=@project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity.to_s %></a> </td>
+          <td><a href="/<%=h @project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity.to_s %></a> </td>
           <td><%= h x.entities.uniq.count %> </td>
           <td><%= x.complete ? "complete" : "incomplete" %></td>
         </tr>

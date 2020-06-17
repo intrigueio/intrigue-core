@@ -66,7 +66,7 @@ class NetworkService < Intrigue::Task::BaseTask
       return
     end
 
-    ident_fingerprints = ident_matches["fingerprints"]
+    ident_fingerprints = ident_matches["fingerprints"] || []
     _log "Got #{ident_fingerprints.count} fingerprints!"
 
     # get the request/response we made so we can keep track of redirects

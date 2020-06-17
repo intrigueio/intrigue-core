@@ -3,6 +3,15 @@ module Intrigue
 module Task
 module WebContent
 
+  def _create_normalized_webaccount(site, account_name, link, sister_entity )
+    _create_entity "WebAccount", {
+      "name" => "#{site.downcase}: #{account_name.downcase}",
+      "username" => "#{account_name.downcase}",
+      "service" => "#{site}".downcase,
+      "uri" => "#{link}"
+     }, sister_entity
+  end
+
   def extract_and_fingerprint_scripts(script_list, host)
     components = []
     script_list.each do |s|
