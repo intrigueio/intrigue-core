@@ -16,7 +16,16 @@ module WebContent
     components = []
     script_list.each do |s|
 
-      uri = URI.parse(s)
+      # skip anything that's not http
+      next unless s =~ /^http/
+
+      begin 
+        uri = URI.parse(s)
+      rescue URI::InvalidURIError => e
+        @task_result.logger.log "Unable to parse improperly formatted URI: #{s}"
+        next # unable to parse 
+      end
+
       next unless uri.host && uri.port && uri.scheme =~ /^http/
       ### 
       ### Determine who's hosting

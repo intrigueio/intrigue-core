@@ -29,11 +29,8 @@ class Domain < Intrigue::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
-    return true if self.seed
-    return false if self.hidden
-
-    # check hidden on-demand
-    return true if self.project.traversable_entity?(self.name, "Domain")
+    return true if self.allow_list
+    return false if self.deny_list
 
   # if we didnt match the above and we were asked, let's not allow it 
   false

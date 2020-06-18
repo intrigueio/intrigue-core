@@ -31,21 +31,32 @@ class IpAddress < Intrigue::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
-    return true if self.seed
-    return false if self.hidden
+    return true if self.allow_list
+    return false if self.deny_list
 
     # scanner use case 
-    #return true if created_by?("masscan_scan")
-    #return true if created_by?("nmap_scan")
+    return true if created_by?("masscan_scan")
+    return true if created_by?("nmap_scan")
 
     # if we have aliases and they're all false, we don't really want this thing
     if self.aliases.count > 0
-      return false unless self.aliases.select{ |x| x if 
-        (x.kind_of?(Intrigue::Entity::DnsRecord) || x.kind_of?(Intrigue::Entity::Domain)) && !x.hidden }.count > 0
+      
+      # first set scoped if any of the aliases match. If we depend on'm, 
+      # we gotta take care of them
+      self.aliases.each do |a|
+        next if a.scoped # never go back 
+        a.scoped = true if self.aliases.select{ |x| x if x.allow_list }.count > 0
+        a.save_changes
+      end
+
+      return true if self.aliases.select{ |x| x if x.allow_list }.count > 0
     end
 
+    # do the same thing for all aliases 
+    
+
   # if we didnt match the above and we were asked, default to falsse
-  true
+  false
   end 
 
 end
