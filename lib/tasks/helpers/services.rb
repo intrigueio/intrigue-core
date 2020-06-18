@@ -123,7 +123,6 @@ module Services
         end
 
         entity_details = {
-          "scoped" => true, # always scope in
           "name" => uri,
           "uri" => uri,
           "service" => prefix
@@ -141,7 +140,6 @@ module Services
         name = "#{h.name.strip}:#{port_num}"
 
         entity_details = {
-          "scoped" => true, # always scope in
           "name" => name,
           "service" => service
         }
@@ -168,7 +166,6 @@ module Services
         name = "#{h.name.strip}:#{port_num}"
 
         entity_details = {
-          "scoped" => true, # always scope in
           "name" => name,
           "service" => service
         }

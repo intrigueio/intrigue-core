@@ -27,8 +27,8 @@ class NetBlock < Intrigue::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
-    return true if self.seed
-    return false if self.hidden # hit our blacklist so definitely false
+    return true if self.allow_list
+    return false if self.deny_list
 
     our_ip = self.name.split("/").first
     our_route = self.name.split("/").last.to_i

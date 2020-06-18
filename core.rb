@@ -1,6 +1,7 @@
 require 'eventmachine'
 require 'logger'
 require 'sinatra'
+require "sinatra/cors"
 require 'sinatra/contrib'
 require 'yaml'
 require 'rest-client'
@@ -51,6 +52,9 @@ include Intrigue::System::Helpers
 #require 'pry'
 #require 'pry-byebug'
 require 'logger'
+
+# disable annoying redis messages 
+Redis.exists_returns_integer = false
 
 #
 # Simple configuration check to ensure we have configs in place
@@ -212,8 +216,6 @@ end
 
 # Core libraries
 require_relative "lib/all"
-
-
 
 #configure sentry.io error reporting (only if a key was provided)
 if (Intrigue::System::Config.config && Intrigue::System::Config.config["sentry_dsn"])

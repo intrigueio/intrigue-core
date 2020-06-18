@@ -60,9 +60,9 @@ task :update do
 end
 
 def _get_global_entities
-  uri = "https://app.intrigue.io/api/global/entities?key=#{$intrigueio_api_key}"
+  uri = "https://app.intrigue.io/api/system/entities/global/entities/?key=#{$intrigueio_api_key}"
   begin
-    puts "[+] Making request for global entities"
+    puts "[+] Making request for global entities!"
     response = RestClient.get(uri)
 
     # handle missing data
@@ -70,7 +70,7 @@ def _get_global_entities
 
     j = JSON.parse(response.body)
   rescue JSON::ParserError => e
-    puts "[+] Unable to parse bootstrap json"
+    puts "[+] Unable to parse json: #{e}"
     return -1
   end
 j

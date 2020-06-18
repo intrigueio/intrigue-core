@@ -98,27 +98,15 @@ class BaseTask
         end
       end
 
-      ### ENRICHMENT TASK SPECIFICS
+      ### POST ENRICHMENT
+      # 
       # Now, if this is an enrichment task, we want to do some things
       if @task_result.task_name =~ /^enrich\/.*/
-        
-        # MARK ENTITY AS ENRICHED
-        _log "Marking entity as enriched!"
-        @entity.enriched = true
-        
-        ### HANDLE SCOPING - We should have enough info now that enrichment is complete
-        # check the scoped? method on the entity and set the attribute
-        if @entity.scoped?
-          _log "Marking entity as scoped!"
-          @entity.scoped = true
-        else 
-          _log "Marking entity as unscoped!"
-          @entity.scoped = false 
-        end
-
-        # Save it!
-        _log "Saving entity!"
-        @entity.save_changes
+      
+        # entity should now be enriched!
+        #
+        @entity.enriched = true 
+        @entity.save_changes 
 
         # MACHINE LAUNCH (ONLY IF WE ARE ATTACHED TO A MACHINE) 
         # if this is part of a scan and we're in depth
@@ -132,6 +120,7 @@ class BaseTask
           end
 
           machine.start(@entity, @task_result)
+
         else
           @task_result.log "No machine configured for #{@entity.name}!"
         end
