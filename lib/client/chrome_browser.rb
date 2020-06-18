@@ -98,7 +98,17 @@ module Intrigue
         end
       end
 
-      { "requests" => @requests, "responses" => @responses, "wsresponses" => @wsresponses, "encoded_screenshot" => encoded_screenshot["data"] }
+      # grab screenshot data - it's possible this was nil, so check 
+      screenshot_data = encoded_screenshot["data"] if encoded_screenshot
+
+      out = { 
+        "requests" => @requests, 
+        "responses" => @responses, 
+        "wsresponses" => @wsresponses, 
+        "encoded_screenshot" => screenshot_data
+      }
+      
+    out
     end
 
     def _killit(port)
