@@ -61,6 +61,7 @@ class JsonDataExportFile
       "version" => "#{@version}",
       "entities" => File.open(@entities_file).readlines[start..finish].reject { |s|
         s.strip.empty? }.compact.map{|x| JSON.parse(x) },
+      "final" => final,
       "start" => start, 
       "finish" => finish
     }.to_json
