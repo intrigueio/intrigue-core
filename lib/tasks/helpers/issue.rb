@@ -147,7 +147,13 @@ module Issue
       return if uri =~ /^data:.*$/
 
       # skip this for anything other than hostnames 
-      hostname = URI(resource_url).hostname
+      begin 
+        hostname = URI(resource_url).hostname
+      rescue URI::InvalidURIError => e 
+        @task_result.logger.log_error "Unable to parse URI: #{resource_url}"
+        return 
+      end
+      
       return if hostname =~ ipv4_regex || hostname =~ /ipv6_regex/
 
       if resource_url =~ /^http:.*$/ 

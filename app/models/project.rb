@@ -373,7 +373,8 @@ module Intrigue
       def traversable_entity?(type_string, entity_name)
         return true if allow_list_entity?(type_string, entity_name)
         return false if deny_list_entity?(type_string, entity_name)
-      # otherwise, perimissive
+      
+      # otherwise, permissive
       true
       end
 

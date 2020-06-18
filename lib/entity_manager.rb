@@ -36,6 +36,8 @@ class EntityManager
       :details => details,
       :hidden => false,
       :scoped => true,
+      :allow_list => true,
+      :deny_list => false,
       :alias_group_id => g.id
     })
   end
@@ -85,6 +87,8 @@ class EntityManager
         :details => details,
         :hidden => false, # first entity should NEVER be hidden - it was intentional
         :scoped => true,  # first entity should ALWAYS be in scope - it was intentional
+        :allow_list => true,
+        :deny_list => false,
         :alias_group_id => g.id,
         :seed => true
         })
@@ -127,17 +131,6 @@ class EntityManager
     # Find the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name)
 
-      
-    # check if this is actually a no-traverse for this proj
-    if entity
-      traversable = !entity.hidden
-      tr.log "Existing entity...checking traversable, got: #{traversable}"
-    else
-      # checks to see if we should be hidden or not
-      traversable = project.traversable_entity?(name, type_string)
-      tr.log "New entity ...checking traversable, got: #{traversable}"
-    end
-
     # Check if there's an existing entity, if so, merge and move forward
     entity_already_existed = false
     if entity
@@ -153,12 +146,18 @@ class EntityManager
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
 
+      allowed_list = project.allow_list_entity?(type_string, downcased_name)
+      denied_list = project.deny_list_entity?(type_string, downcased_name)
+
       entity_details = {
         :name => downcased_name,
         :project_id => project.id,
         :type => type.to_s,
         :details => details,
-        :hidden => (traversable ? false : true )
+        :allow_list => allowed_list,
+        :deny_list => denied_list,
+        :traversable => project.traversable_entity?(type_string, downcased_name) ? true : false, 
+        :hidden => (project.traversable_entity?(type_string, downcased_name) ? false : true )
       }
 
       # handle alias group
@@ -288,6 +287,9 @@ class EntityManager
       tr.log "Using entity scoping logic, got #{entity.scoped}"
     end
     
+    # SAVE IT
+    entity.save_changes
+
     tr.log "FINAL scoping decision for #{entity.name}: #{entity.scoped}"
 
     # ENRICHMENT LAUNCH (this may re-run if an entity has just been scoped in)
