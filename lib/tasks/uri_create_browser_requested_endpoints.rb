@@ -44,7 +44,7 @@ class UriCreateBrowserRequestedEndpoints < BaseTask
       if browser_responses = _get_entity_detail("extended_browser_wsresponses")
         browser_responses.each do |r|
           next unless "#{r["uri"]}" =~ /^http/i
-          _create_entity("Uri", {"name" => r["url"] })
+          _create_entity("Uri", {"name" => r["url"], "api_endpoint" => true })
         end
       else 
         _log_error "Unable to create entities, missing 'extended_responses' detail"
