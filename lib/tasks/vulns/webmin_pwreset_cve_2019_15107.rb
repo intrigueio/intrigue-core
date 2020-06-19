@@ -7,11 +7,11 @@ class  WebminPwreset < BaseTask
 
   def self.metadata
     {
-      :name => "vuln/webmin_pwreset",
+      :name => "vuln/webmin_pwreset_cve_2019_15107",
       :pretty_name => "Vuln Check - Webmin Password Reset Check",
       :authors => ["jcran","AkkuS <Özkan Mustafa Akkuş>"],
       :identifiers => [{ "cve" =>  "CVE-2019-15107" }],
-      :description => "Check for a webmine unauthenticated RCE. Requires a specific configuration, see references.",
+      :description => "Check for a webmin unauthenticated RCE. Requires a specific configuration, see references.",
       :references => [
         "https://pentest.com.tr/exploits/DEFCON-Webmin-1920-Unauthenticated-Remote-Command-Execution.html"
       ],
@@ -46,15 +46,13 @@ class  WebminPwreset < BaseTask
       return
     end
 
-    _create_issue({
-        name: "Vulnerable Webmin Install",
-        severity: 1,
-        type: "vulnerability_webmin_cve_2019_15107",
-        status: "potential",
-        description: "This server found at #{_get_entity_name} is vulnerable to an unauthenticated admin password reset.",
-        references: self.class.metadata["references"]
-      })
+    
 
+    ###
+    ### TODO ... needs to verify, this has been fixed.
+    ###
+    # Create as potential
+    _create_linked_issue( "vulnerability_webmin_cve_2019_15107") 
 
     # if we made it this far, try to reset
     #headers = { 'Cookie' => "redirect=1; testing=1; sid=x; sessiontest=1",

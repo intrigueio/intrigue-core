@@ -37,10 +37,11 @@ class UriCheckApiEndpoint < BaseTask
     api_endpoint = true if url =~ /\/api/
     api_endpoint = true if url =~ /\/json/
     api_endpoint = true if url =~ /\.json/
+    api_endpoint = true if url =~ /\.xml/
 
     # check for content type of applciation.. note that this will flag
     # application/javascript, which is probably not wanted
-    headers = _get_entity_detail("headers")
+    headers = _get_entity_detail("headers") || []
     if headers
       content_type_header = headers.select{|x| x =~ /content-type/i }
       
@@ -50,7 +51,7 @@ class UriCheckApiEndpoint < BaseTask
     end
     
     # check fingerprints8
-    fingerprint = _get_entity_detail("fingerprint")
+    fingerprint = _get_entity_detail("fingerprint") || []
     fingerprint.each do |fp|
       api_endpoint = true if fp["tags"] && fp["tags"].include?("API")
     end 
@@ -59,9 +60,12 @@ class UriCheckApiEndpoint < BaseTask
     begin
       # get request body
       body = _get_entity_detail("extended_response_body")
-      json = JSON.parse(body)
-      api_endpoint = true if json
+      if body 
+        json = JSON.parse(body)
+        api_endpoint = true if json
+      end
     rescue JSON::ParserError      
+      _log "No body"
     end
 
     # set the details 

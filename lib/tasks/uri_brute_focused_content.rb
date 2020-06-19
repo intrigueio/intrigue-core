@@ -42,7 +42,12 @@ class UriBruteFocusedContent < BaseTask
     # we need a FP here, so hold off until 
     require_enrichment unless override.length > 0
 
-    fingerprint = _get_entity_detail("fingerprint")
+    if override
+      _log "SEtting Override to #{override}"
+      fingerprint = [{"product" => override }]
+    else 
+      fingerprint = _get_entity_detail("fingerprint")
+    end
 
     generic_list = [ 
       #{ path: "/api", body_regex: nil },
@@ -140,7 +145,8 @@ class UriBruteFocusedContent < BaseTask
       { issue_type: "jenkins_exposed_path", path: "/systemInfo",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
       { issue_type: "jenkins_exposed_path", path: "/script",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
       { issue_type: "jenkins_exposed_path", path: "/signup",  severity: 5, body_regex: /Jenkins/i, status: "confirmed" },
-      { issue_type: "jenkins_exposed_path", path: "/securityRealm/createAccount", severity: 4, body_regex: /Jenkins/i , status: "confirmed"}
+      { issue_type: "jenkins_exposed_path", path: "/securityRealm/createAccount", severity: 4, body_regex: /Jenkins/i , status: "confirmed"},
+      { issue_type: "unauthenticated_jenkins_create_projects", path: "/view/all/newJob", severity: 1, body_regex: /form#createItem/i , status: "confirmed"}
     ]
 
     jforum_list = [ # CVE-2019-7550
@@ -154,9 +160,14 @@ class UriBruteFocusedContent < BaseTask
       { issue_type: "jira_2fa_bypass", path: "/login.action?nosso", severity: 3,
         body_regex: //i, status: "confirmed" } 
     ]
+
     # 
     joomla_list = [   # https://packetstormsecurity.com/files/151619/Joomla-Agora-4.10-Bypass-SQL-Injection.html
       { issue_type: "vulnerable_joomla", path: "/index.php?option=com_agora&task='", severity: 2, status: "potential" } 
+    ] 
+
+    jupyter_notebook_list = [ 
+      { issue_type: "jupyter_exposed_ui_detection", path: "/terminals/1", severity: 1, body_regex: /terminals\/websocket\/1/i, status: "confirmed" } 
     ] 
 
     lotus_domino_list = [
@@ -315,6 +326,7 @@ class UriBruteFocusedContent < BaseTask
     jforum_list.each { |x| work_q.push x } if is_product?(fingerprint,"Jforum")
     jira_list.each { |x| work_q.push x } if is_product?(fingerprint,"Jira")
     joomla_list.each { |x| work_q.push x } if is_product?(fingerprint,"Joomla!")
+    jupyter_notebook_list.each { |x| work_q.push x } if is_product?(fingerprint,"Notebook")
     lotus_domino_list.each { |x| work_q.push x } if is_product?(fingerprint,"Domino")
     php_list.each { |x| work_q.push x } if is_product?(fingerprint,"PHP")
     php_my_admin_list.each { |x| work_q.push x } if is_product?(fingerprint,"phpMyAdmin")
