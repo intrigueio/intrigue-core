@@ -12,7 +12,7 @@ module Dns
   def create_dns_entity_from_string(s, alias_entity=nil, unscoped=false)
     return nil unless s && s.length > 0
 
-    entity_details = { "name" => s }
+    entity_details = { "name" => s.gsub("domain: ","").gsub("*.","") }
     entity_details.merge!({"unscoped" => true }) if unscoped
 
     if s.is_ip_address?
