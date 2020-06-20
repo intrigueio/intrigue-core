@@ -31,7 +31,7 @@ class BaseTask
     # enrichment tasks.. which must notify when done, and will launch a machine!!!
 
     # Get the task result and fail if we can't
-    @task_result = Intrigue::Model::TaskResult.first(:id => task_result_id)
+    @task_result = Intrigue::Core::Model::TaskResult.first(:id => task_result_id)
 
     # gracefully handle situations where the task result has gone missing
     # usually this is a deleted project

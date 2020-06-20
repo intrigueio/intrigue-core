@@ -1,4 +1,4 @@
-class IntrigueApp < Sinatra::Base
+class CoreApp < Sinatra::Base
 
   def wrapped_api_response(error, result=nil)
     success = error.nil?
@@ -46,7 +46,7 @@ class IntrigueApp < Sinatra::Base
   # Export All projects
   get "/api/v1/projects" do
     content_type 'application/json'
-    projects = Intrigue::Model::Project.order(:created_at).reverse.all
+    projects = Intrigue::Core::Model::Project.order(:created_at).reverse.all
   wrapped_api_response(nil, projects)
   end
 

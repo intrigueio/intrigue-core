@@ -1,4 +1,4 @@
-class IntrigueApp < Sinatra::Base
+class CoreApp < Sinatra::Base
 
   # Create a project!
   post '/api/v1/project' do
@@ -18,10 +18,10 @@ class IntrigueApp < Sinatra::Base
     end
 
     # create the project unless it exists
-    if Intrigue::Model::Project.first(:name => new_project_name)
+    if Intrigue::Core::Model::Project.first(:name => new_project_name)
       return wrap_core_api_response "Project exists!"
     else
-      Intrigue::Model::Project.create(:name => new_project_name, :created_at => Time.now.utc)
+      Intrigue::Core::Model::Project.create(:name => new_project_name, :created_at => Time.now.utc)
     end
 
     # woo success

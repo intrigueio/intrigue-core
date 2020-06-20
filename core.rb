@@ -33,19 +33,19 @@ require_relative 'lib/initialize/string'
 
 # load up our system config
 require_relative 'lib/system/config'
-Intrigue::System::Config.load_config
+Intrigue::Core::System::Config.load_config
 
 # system database configuration
 require_relative 'lib/system/database'
-include Intrigue::System::Database
+include Intrigue::Core::System::Database
 
 # used in app as well as tasks
 require_relative 'lib/system/validations'
-include Intrigue::System::Validations
+include Intrigue::Core::System::Validations
 
 # used in app as well as tasks
 require_relative 'lib/system/helpers'
-include Intrigue::System::Helpers
+include Intrigue::Core::System::Helpers
 
 
 # Debug
@@ -98,15 +98,21 @@ sanity_check_system
 setup_redis unless ENV["INTRIGUE_ENV"] == "test"
 setup_database
 
-class IntrigueApp < Sinatra::Base
+class CoreApp < Sinatra::Base
   register Sinatra::Namespace
+
+  set :allow_origin, "https://localhost:7778"
+  set :allow_methods, "GET,HEAD,POST"
+  set :allow_headers, "content-type,if-modified-since,allow"
+  set :expose_headers, "location,link"
+  set :allow_credentials, true
 
   set :sessions => true
   set :root, "#{$intrigue_basedir}"
   set :views, "#{$intrigue_basedir}/app/views"
   set :public_folder, 'public'
 
-  if Intrigue::System::Config.config["debug"]
+  if Intrigue::Core::System::Config.config["debug"]
     set :logging, true
   end
 
@@ -122,12 +128,12 @@ class IntrigueApp < Sinatra::Base
   ###
   ### (Very) Simple Auth
   ###
-  if Intrigue::System::Config.config
-    if Intrigue::System::Config.config["http_security"]
+  if Intrigue::Core::System::Config.config
+    if Intrigue::Core::System::Config.config["http_security"]
       use Rack::Auth::Basic, "Restricted" do |username, password|
         [username, password] == [
-          Intrigue::System::Config.config["credentials"]["username"],
-          Intrigue::System::Config.config["credentials"]["password"]
+          Intrigue::Core::System::Config.config["credentials"]["username"],
+          Intrigue::Core::System::Config.config["credentials"]["password"]
         ]
       end
     end
@@ -160,13 +166,13 @@ class IntrigueApp < Sinatra::Base
     pass if request.path_info =~ /(.jpg|.png)$/ # all images
 
     # Set the project based on the directive
-    project = Intrigue::Model::Project.first(:name => directive)
+    project = Intrigue::Core::Model::Project.first(:name => directive)
 
     # If we haven't resolved a project, let's handle it
     unless project
       # Creating a default project since it doesn't appear to exist (it should always exist)
       if directive == "Default"
-        project = Intrigue::Model::Project.create(:name => "Default", :created_at => Time.now.utc )
+        project = Intrigue::Core::Model::Project.create(:name => "Default", :created_at => Time.now.utc )
       else
         redirect "/"
       end
@@ -218,11 +224,11 @@ end
 require_relative "lib/all"
 
 #configure sentry.io error reporting (only if a key was provided)
-if (Intrigue::System::Config.config && Intrigue::System::Config.config["sentry_dsn"])
+if (Intrigue::Core::System::Config.config && Intrigue::Core::System::Config.config["sentry_dsn"])
   require "raven"
-  puts "!!! Configuring Sentry error reporting to: #{Intrigue::System::Config.config["sentry_dsn"]}"
+  puts "!!! Configuring Sentry error reporting to: #{Intrigue::Core::System::Config.config["sentry_dsn"]}"
 
   Raven.configure do |config|
-    config.dsn = Intrigue::System::Config.config["sentry_dsn"]
+    config.dsn = Intrigue::Core::System::Config.config["sentry_dsn"]
   end
 end

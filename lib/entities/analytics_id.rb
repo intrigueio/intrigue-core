@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class AnalyticsId < Intrigue::Model::Entity
+class AnalyticsId < Intrigue::Core::Model::Entity
 
   def self.metadata
     {

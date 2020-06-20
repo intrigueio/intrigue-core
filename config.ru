@@ -10,6 +10,6 @@ Sidekiq::Web.use Rack::Protection::AuthenticityToken
 #Sidekiq::Web.instance_eval { @middleware.rotate!(-1) }
 
 run Rack::URLMap.new({
-  "/" => IntrigueApp,
+  "/" => CoreApp,
   "/sidekiq" => Sidekiq::Web
 })

@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class AwsS3Bucket < Intrigue::Model::Entity
+class AwsS3Bucket < Intrigue::Core::Model::Entity
 
   def self.metadata
     {

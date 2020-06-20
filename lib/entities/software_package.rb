@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class SoftwarePackage < Intrigue::Model::Entity
+class SoftwarePackage < Intrigue::Core::Model::Entity
 
   def self.metadata
     {

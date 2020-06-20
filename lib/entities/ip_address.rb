@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class IpAddress < Intrigue::Model::Entity
+class IpAddress < Intrigue::Core::Model::Entity
 
   def self.metadata
     {

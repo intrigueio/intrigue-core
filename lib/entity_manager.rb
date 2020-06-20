@@ -1,7 +1,7 @@
 module Intrigue
 class EntityManager
   
-  extend Intrigue::System::Helpers
+  extend Intrigue::Core::System::Helpers
   extend Intrigue::Task::Data
 
   def self.resolve_type_from_string(type_string)
@@ -25,7 +25,7 @@ class EntityManager
   def self.create_bulk_entity(project_id,entity_type_string,entity_name,details)
     
     # create a group
-    g = Intrigue::Model::AliasGroup.create(:project_id => project_id)
+    g = Intrigue::Core::Model::AliasGroup.create(:project_id => project_id)
 
     # create the entity
     klass = Intrigue::EntityManager.resolve_type_from_string(entity_type_string)
@@ -49,7 +49,7 @@ class EntityManager
     downcased_name = name.downcase
 
     # Try to find our project and create it if it doesn't exist
-    project = Intrigue::Model::Project.find_or_create(:name => project_name)
+    project = Intrigue::Core::Model::Project.find_or_create(:name => project_name)
 
     # Merge the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name)
@@ -79,8 +79,8 @@ class EntityManager
     else
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
-      g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
-      entity = Intrigue::Model::Entity.create({
+      g = Intrigue::Core::Model::AliasGroup.create(:project_id => project.id)
+      entity = Intrigue::Core::Model::Entity.create({
         :name =>  downcased_name,
         :project => project,
         :type => type,
@@ -95,7 +95,7 @@ class EntityManager
     end
 
     # necessary because of our single table inheritance?
-    new_entity = Intrigue::Model::Entity.find(:id => entity.id)
+    new_entity = Intrigue::Core::Model::Entity.find(:id => entity.id)
 
     ### Ensure we have an entity
     unless new_entity && new_entity.transform! && new_entity.validate_entity
@@ -113,7 +113,7 @@ class EntityManager
 
     # Deal with canceled tasks and deleted projects!
     # Do a lookup to make sure we have the latest...
-    tr = Intrigue::Model::TaskResult.first(:id => task_result_id)
+    tr = Intrigue::Core::Model::TaskResult.first(:id => task_result_id)
     return nil unless tr
 
     if tr.cancelled
@@ -164,13 +164,13 @@ class EntityManager
       if primary_entity
         entity_details[:alias_group_id] = primary_entity.alias_group_id
       else
-        g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
+        g = Intrigue::Core::Model::AliasGroup.create(:project_id => project.id)
         entity_details[:alias_group_id] = g.id
       end
 
       begin
         # Create a new entity in that group
-        entity = Intrigue::Model::Entity.update_or_create(
+        entity = Intrigue::Core::Model::Entity.update_or_create(
           {name: downcased_name, type: type.to_s, project: project}, entity_details)
 
         unless entity
@@ -187,7 +187,7 @@ class EntityManager
       end
 
       # necessary to relookup?
-      entity = Intrigue::Model::Entity.find(:id => entity.id)
+      entity = Intrigue::Core::Model::Entity.find(:id => entity.id)
 
       ### Ensure we have an entity
       unless entity

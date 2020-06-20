@@ -1,12 +1,13 @@
 module Intrigue
 module Entity
-class AwsRegion < Intrigue::Model::Entity
+class AwsRegion < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
       :name => "AwsRegion",
       :description => "A specific AWS Region",
-      :user_creatable => false
+      :user_creatable => true, 
+      :example => "us-east-1"
     }
   end
 

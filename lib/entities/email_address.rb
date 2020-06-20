@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class EmailAddress < Intrigue::Model::Entity
+class EmailAddress < Intrigue::Core::Model::Entity
 
   include Intrigue::Task::Dns
 

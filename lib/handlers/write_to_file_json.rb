@@ -25,13 +25,13 @@ module Handler
 
       version = "v4"
 
-      unless result.kind_of? Intrigue::Model::Project
+      unless result.kind_of? Intrigue::Core::Model::Project
         puts "Unable to call handler on this type: #{result}"
         return false
       end
 
       # export into data export db
-      db = Intrigue::System::JsonDataExportFile.new(result.name, version)
+      db = Intrigue::Core::System::JsonDataExportFile.new(result.name, version)
 
       # Always use the project name when saving files for this project
       prefix_name = "#{result.name}/"
@@ -47,9 +47,9 @@ module Handler
         entity_type = e.type
 
         # Get the task results, as efficiently as possible. 
-        eid = Intrigue::Model::Entity.last.id
-        tr_ids = Intrigue::Model::EntitiesTaskResults.where(:entity_id => eid).select(:task_result_id).map{|x| x.task_result_id } 
-        task_result_hash = Intrigue::Model::TaskResult.where(:id => tr_ids).select(:name, :task_name, :base_entity_id, :depth).map {
+        eid = Intrigue::Core::Model::Entity.last.id
+        tr_ids = Intrigue::Core::Model::EntitiesTaskResults.where(:entity_id => eid).select(:task_result_id).map{|x| x.task_result_id } 
+        task_result_hash = Intrigue::Core::Model::TaskResult.where(:id => tr_ids).select(:name, :task_name, :base_entity_id, :depth).map {
           |t| {  :name => t.name,
                  :task => t.task_name, 
                  :entity_type => "#{t.base_entity.type}",
@@ -57,9 +57,9 @@ module Handler
                  :depth => t.depth } }
 
         # Get the ancestors, as efficiently as possible
-        sr_ids = Intrigue::Model::TaskResult.where(:id => tr_ids).select(:scan_result_id).map{|x| x.scan_result_id}
-        entity_ids = Intrigue::Model::ScanResult.where(:id => sr_ids).select(:base_entity_id).map{ |x| x.base_entity_id }
-        ancestor_hash = Intrigue::Model::Entity.where(:id => entity_ids).select(:name, :type).map{|x| {name: x.name, type: x.type} }
+        sr_ids = Intrigue::Core::Model::TaskResult.where(:id => tr_ids).select(:scan_result_id).map{|x| x.scan_result_id}
+        entity_ids = Intrigue::Core::Model::ScanResult.where(:id => sr_ids).select(:base_entity_id).map{ |x| x.base_entity_id }
+        ancestor_hash = Intrigue::Core::Model::Entity.where(:id => entity_ids).select(:name, :type).map{|x| {name: x.name, type: x.type} }
 
         # create an export hash
         entity_hash =  {

@@ -455,11 +455,11 @@ module Task
        _log_debug "Getting #{uri}, attempt #{attempts}" if @task_result
        attempts+=1
 
-       if Intrigue::System::Config.config["http_proxy"]
-         proxy_addr = Intrigue::System::Config.config["http_proxy"]["host"]
-         proxy_port = Intrigue::System::Config.config["http_proxy"]["port"]
-         proxy_user = Intrigue::System::Config.config["http_proxy"]["user"]
-         proxy_pass = Intrigue::System::Config.config["http_proxy"]["pass"]
+       if Intrigue::Core::System::Config.config["http_proxy"]
+         proxy_addr = Intrigue::Core::System::Config.config["http_proxy"]["host"]
+         proxy_port = Intrigue::Core::System::Config.config["http_proxy"]["port"]
+         proxy_user = Intrigue::Core::System::Config.config["http_proxy"]["user"]
+         proxy_pass = Intrigue::Core::System::Config.config["http_proxy"]["pass"]
        end
 
        # set options

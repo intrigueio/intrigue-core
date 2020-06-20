@@ -1,6 +1,6 @@
 module Intrigue
   module Entity
-  class Mailserver < Intrigue::Model::Entity
+  class Mailserver < Intrigue::Core::Model::Entity
   
     include Intrigue::Task::Dns
   

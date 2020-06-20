@@ -1,4 +1,4 @@
-class IntrigueApp < Sinatra::Base
+class CoreApp < Sinatra::Base
 
   get '/:project/entities' do
 
@@ -10,7 +10,7 @@ class IntrigueApp < Sinatra::Base
     (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
     (params[:count] != "" && params[:count].to_i > 0) ? @count = params[:count].to_i : @count = 100
 
-    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name)
+    selected_entities = Intrigue::Core::Model::Entity.scope_by_project(@project_name)
     selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
     selected_entities = _tokenized_search(@search_string, selected_entities) if @search_string
 
@@ -36,7 +36,7 @@ class IntrigueApp < Sinatra::Base
 
      selected_entities = selected_entities.paginate(@page, @count).order(:name)
      alias_group_ids = selected_entities.select_map(:alias_group_id).uniq
-     @alias_groups = Intrigue::Model::AliasGroup.where({:id => alias_group_ids })
+     @alias_groups = Intrigue::Core::Model::AliasGroup.where({:id => alias_group_ids })
      erb :'entities/index'
 
     end
@@ -50,21 +50,21 @@ class IntrigueApp < Sinatra::Base
 
   get "/:project/entities/:id.csv" do
     content_type 'text/plain'
-    @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id].to_i)
+    @entity = Intrigue::Core::Model::Entity.scope_by_project(@project_name).first(:id => params[:id].to_i)
     attachment "#{@project_name}_#{@entity.id}.csv"
     @entity.export_csv
   end
 
   get "/:project/entities/:id.json" do
     content_type 'application/json'
-    @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id].to_i)
+    @entity = Intrigue::Core::Model::Entity.scope_by_project(@project_name).first(:id => params[:id].to_i)
     attachment "#{@project_name}_#{@entity.id}.json"
     @entity.export_json
   end
 
 
  get '/:project/entities/:id' do
-   @entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
+   @entity = Intrigue::Core::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
    return "No such entity in this project" unless @entity
 
    @task_classes = Intrigue::TaskFactory.list
@@ -73,7 +73,7 @@ class IntrigueApp < Sinatra::Base
   end
 
     get '/:project/entities/:id/delete' do
-      entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
+      entity = Intrigue::Core::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
       return "No such entity in this project" unless entity
       entity.deleted = true
       entity.save
@@ -82,12 +82,12 @@ class IntrigueApp < Sinatra::Base
     end
 
     get '/:project/entities/:id/delete_children' do
-      entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
+      entity = Intrigue::Core::Model::Entity.scope_by_project(@project_name).first(:id => params[:id])
       return "No such entity in this project" unless entity
       #entity.deleted = true
       #entity.save
 
-      Intrigue::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => entity).each do |t|
+      Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => entity).each do |t|
         t.entities.each { |e| e.deleted = true; e.save }
       end
 

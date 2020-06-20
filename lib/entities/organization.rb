@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class Organization < Intrigue::Model::Entity
+class Organization < Intrigue::Core::Model::Entity
 
   def self.metadata
     {

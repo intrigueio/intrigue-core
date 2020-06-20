@@ -7,7 +7,7 @@ require 'sequel'
 
 # system database configuration
 require_relative 'lib/system/database'
-include Intrigue::System::Database
+include Intrigue::Core::System::Database
 
 # Config files
 $intrigue_basedir = File.dirname(__FILE__)
@@ -98,7 +98,7 @@ task :load_global_namespace do
 
  # LOAD IT IN  
  puts "[+] Loading in entities intel from Intrigue.io API"
- Intrigue::Model::GlobalEntity.load_global_namespace(global_entities)
+ Intrigue::Core::Model::GlobalEntity.load_global_namespace(global_entities)
  global_entities = nil
 
   puts "[+] Done pulling global namespace"

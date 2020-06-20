@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class Nameserver < Intrigue::Model::Entity
+class Nameserver < Intrigue::Core::Model::Entity
 
   include Intrigue::Task::Dns
 

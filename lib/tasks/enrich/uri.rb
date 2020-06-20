@@ -317,7 +317,7 @@ class Uri < Intrigue::Task::BaseTask
       _log "Attempting to identify aliases"
         # parse our content with Nokogiri
       our_doc = "#{response.body}".sanitize_unicode
-      Intrigue::Model::Entity.scope_by_project_and_type(
+      Intrigue::Core::Model::Entity.scope_by_project_and_type(
         @entity.project.name,"Uri").paged_each(:rows_per_fetch => 100) do |e|
         next if @entity.id == e.id
 

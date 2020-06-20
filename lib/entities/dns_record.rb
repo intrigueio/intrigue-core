@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class DnsRecord < Intrigue::Model::Entity
+class DnsRecord < Intrigue::Core::Model::Entity
   
   include Intrigue::Task::Dns
 

@@ -1,5 +1,5 @@
 <p>
-Total Count: <%= Intrigue::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>
+Total Count: <%= Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>
 Selected Count: <%= @result_count %><br/>
 </p>
 

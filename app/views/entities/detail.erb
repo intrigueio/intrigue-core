@@ -50,12 +50,12 @@ Tasks that created this entity:<br/>
 
 Tasks run on this entity:<br/>
 <ul>
-<%= out = []; results = Intrigue::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => @entity); results.each {|r| out << "<li><a href='/#{h @project_name}/results/#{r.id}'>#{h r.task_name} (#{h r.base_entity})</a></li>"; }; out.uniq.join("") %>
+<%= out = []; results = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => @entity); results.each {|r| out << "<li><a href='/#{h @project_name}/results/#{r.id}'>#{h r.task_name} (#{h r.base_entity})</a></li>"; }; out.uniq.join("") %>
 </ul>
 
 Entities discovered from this entity: <br/>
 <ul>
-<%=out = []; results = Intrigue::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => @entity); results.each {|r| r.entities.each {|x| out << "<li><a href='/#{h @project_name}/entities/#{x.id}'>#{h x}</a></li>"; }}; out.uniq.join("") %>
+<%=out = []; results = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => @entity); results.each {|r| r.entities.each {|x| out << "<li><a href='/#{h @project_name}/entities/#{x.id}'>#{h x}</a></li>"; }}; out.uniq.join("") %>
 </ul>
 
 </div>

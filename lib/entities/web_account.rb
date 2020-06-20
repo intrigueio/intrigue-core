@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class WebAccount < Intrigue::Model::Entity
+class WebAccount < Intrigue::Core::Model::Entity
 
   def self.metadata
     {

@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class String < Intrigue::Model::Entity
+class String < Intrigue::Core::Model::Entity
 
   def self.metadata
     {

@@ -1,9 +1,10 @@
 module Intrigue
+module Core
 module System
 module Bootstrap
 
   def bootstrap_system(config)
-    extend Intrigue::System::Helpers
+    extend Intrigue::Core::System::Helpers
 
     return nil unless config && config["projects"]
 
@@ -12,7 +13,7 @@ module Bootstrap
     ### Set any task configuration
     if config["task_configuration"]
       config["task_configuration"].each do |k,v|
-        Intrigue::System::Config.set_task_config(k,v)
+        Intrigue::Core::System::Config.set_task_config(k,v)
       end
     end
 
@@ -26,7 +27,7 @@ module Bootstrap
       project_name = p["name"]
       @task_result.log "Working on project: #{project_name}" if @task_result
 
-      project = Intrigue::Model::Project.find_or_create(:name => "#{project_name}")
+      project = Intrigue::Core::Model::Project.find_or_create(:name => "#{project_name}")
 
       # Set exclusion setting
       task_name = p["task_name"] || "create_entity"
@@ -144,6 +145,7 @@ module Bootstrap
   handler_list
   end
 
+end
 end
 end
 end

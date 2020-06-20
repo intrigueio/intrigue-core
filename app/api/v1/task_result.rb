@@ -1,4 +1,4 @@
-class IntrigueApp < Sinatra::Base
+class CoreApp < Sinatra::Base
 
   # Create a task result!
   post '/api/v1/task_result' do
@@ -35,7 +35,7 @@ class IntrigueApp < Sinatra::Base
     queue_name = payload[:queue_name] || "task"
 
     # determine our type from the type string
-    project_object = Intrigue::Model::Project.first :name => project_name
+    project_object = Intrigue::Core::Model::Project.first :name => project_name
     unless project_object
       return wrap_core_api_response "Invalid project"
     end      

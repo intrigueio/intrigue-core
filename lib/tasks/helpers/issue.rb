@@ -29,7 +29,7 @@ module Issue
     issue[:details][:name] = temp_name
 
     _log_good "Creating issue: #{temp_pretty_name}"
-  Intrigue::Model::Issue.create(_encode_hash(issue))
+  Intrigue::Core::Model::Issue.create(_encode_hash(issue))
   end
 
   def _linkable_issue_exists(issue_type)

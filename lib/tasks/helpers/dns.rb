@@ -3,7 +3,7 @@ module Task
 module Dns
 
   include Intrigue::Task::Generic
-  include Intrigue::System::DnsHelpers # parse_tld, parse_domain_name
+  include Intrigue::Core::System::DnsHelpers # parse_tld, parse_domain_name
 
   def create_unscoped_dns_entity_from_string(s)
     create_dns_entity_from_string(s, nil, true)

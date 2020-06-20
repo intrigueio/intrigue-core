@@ -6,17 +6,17 @@ describe "ScanResult" do
 
   it "can be created" do
 
-    project = Intrigue::Model::Project.create(:name => "x")
+    project = Intrigue::Core::Model::Project.create(:name => "x")
 
-    logger = Intrigue::Model::Logger.create( :project => project )
+    logger = Intrigue::Core::Model::Logger.create( :project => project )
 
-    entity = Intrigue::Model::Entity.create({
+    entity = Intrigue::Core::Model::Entity.create({
         :project => project,
-        :type => "Intrigue::Model::Host",
+        :type => "Intrigue::Core::Model::Host",
         :name => "test",
         :details => {} })
 
-    x = Intrigue::Model::ScanResult.create({
+    x = Intrigue::Core::Model::ScanResult.create({
       :project => project,
       :logger => logger,
       :base_entity => entity
@@ -27,17 +27,17 @@ describe "ScanResult" do
 
   it "exports graph json" do
 
-    project = Intrigue::Model::Project.create(:name => "x")
+    project = Intrigue::Core::Model::Project.create(:name => "x")
 
-    logger = Intrigue::Model::Logger.create( :project => project )
+    logger = Intrigue::Core::Model::Logger.create( :project => project )
 
-    entity = Intrigue::Model::Entity.create({
+    entity = Intrigue::Core::Model::Entity.create({
         :project => project,
-        :type => "Intrigue::Model::Host",
+        :type => "Intrigue::Core::Model::Host",
         :name => "test",
         :details => {} })
 
-    x = Intrigue::Model::ScanResult.create({
+    x = Intrigue::Core::Model::ScanResult.create({
       :project => project,
       :logger => logger,
       :base_entity => entity

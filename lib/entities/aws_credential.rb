@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class AwsCredential < Intrigue::Model::Entity
+class AwsCredential < Intrigue::Core::Model::Entity
 
   def self.metadata
     {

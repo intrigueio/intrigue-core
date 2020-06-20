@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class GithubAccount < Intrigue::Model::Entity
+class GithubAccount < Intrigue::Core::Model::Entity
 
   def self.metadata
     {

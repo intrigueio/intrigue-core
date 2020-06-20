@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class FileHash < Intrigue::Model::Entity
+class FileHash < Intrigue::Core::Model::Entity
 
   def self.metadata
     {

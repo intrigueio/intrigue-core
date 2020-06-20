@@ -55,7 +55,7 @@ class IssueFactory
     })
 
     # then create the darn thing
-    issue = Intrigue::Model::Issue.update_or_create(issue_model)
+    issue = Intrigue::Core::Model::Issue.update_or_create(issue_model)
     
     # save the specifics 
     issue.description = issue_type.generate({})[:description]

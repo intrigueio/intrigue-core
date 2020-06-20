@@ -6,16 +6,16 @@ describe "TaskResult" do
 
   it "can be created" do
 
-    project = Intrigue::Model::Project.create(:name => "x")
+    project = Intrigue::Core::Model::Project.create(:name => "x")
 
-    logger = Intrigue::Model::Logger.create( :project => project )
+    logger = Intrigue::Core::Model::Logger.create( :project => project )
 
-    entity = Intrigue::Model::Entity.create({
+    entity = Intrigue::Core::Model::Entity.create({
         :project => project,
-        :type => "Intrigue::Model::Host",
+        :type => "Intrigue::Core::Model::Host",
         :name => "test"})
 
-    x = Intrigue::Model::TaskResult.create({
+    x = Intrigue::Core::Model::TaskResult.create({
       :project => project,
       :logger => logger,
       :base_entity => entity,

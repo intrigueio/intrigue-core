@@ -5,23 +5,23 @@
 
 # Intrigue System-wide Bootstrap
 require_relative 'system/bootstrap'
-include Intrigue::System::Bootstrap
+include Intrigue::Core::System::Bootstrap
 
 # Intrigue System-wide Match Exeptions
 require_relative 'system/match_exceptions'
-include Intrigue::System::MatchExceptions
+include Intrigue::Core::System::MatchExceptions
 
 # Intrigue System-wide Validations 
 require_relative 'system/validations'
-include Intrigue::System::Validations
+include Intrigue::Core::System::Validations
 
 # Intrigue System-wide Helpers (both app and backend) 
 require_relative 'system/helpers'
-include Intrigue::System::Helpers
+include Intrigue::Core::System::Helpers
 
 # Intrigue System-wide Helpers (both app and backend) 
 require_relative 'system/dns_helpers'
-#include Intrigue::System::DnsHelpers
+#include Intrigue::Core::System::DnsHelpers
 
 
 # Intrigue Export Format
@@ -98,8 +98,8 @@ Dir["#{notifiers_folder}/*.rb"].each {|f| require_relative f}
 ###
 # And check to see if there are any specified load paths
 
-if Intrigue::System::Config.config["intrigue_load_paths"]
-  Intrigue::System::Config.config["intrigue_load_paths"].each do |load_path|
+if Intrigue::Core::System::Config.config["intrigue_load_paths"]
+  Intrigue::Core::System::Config.config["intrigue_load_paths"].each do |load_path|
     load_path = "#{load_path}" unless load_path[0] == "/"
 
     Dir["#{load_path}/entities/*.rb"].each do |file|

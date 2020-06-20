@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class NetBlock < Intrigue::Model::Entity
+class NetBlock < Intrigue::Core::Model::Entity
 
   def self.metadata
     {

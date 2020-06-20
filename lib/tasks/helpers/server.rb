@@ -90,7 +90,7 @@ class SsrfResponderServerBehavior < ::WEBrick::HTTPServlet::AbstractServlet
     #
     task_result_id = request.query["int_id"]
     parameter = request.query["int_param"]
-    t = Intrigue::Model::TaskResult.first(:id => task_result_id )
+    t = Intrigue::Core::Model::TaskResult.first(:id => task_result_id )
     t.log_good "VULNERABLE! #{parameter}"
     #t.log_good "REQUEST: #{request.inspect}"
 
@@ -112,7 +112,7 @@ class SsrfResponderServerBehavior < ::WEBrick::HTTPServlet::AbstractServlet
     #
     task_result_id = request.query["int_id"]
     parameter = request.query["int_param"]
-    t = Intrigue::Model::TaskResult.first(:id => task_result_id )
+    t = Intrigue::Core::Model::TaskResult.first(:id => task_result_id )
     t.log_good "VULNERABLE! #{parameter}"
     #t.log_good "REQUEST: #{request.inpect}"
 

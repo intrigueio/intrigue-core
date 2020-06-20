@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class AutonomousSystem < Intrigue::Model::Entity
+class AutonomousSystem < Intrigue::Core::Model::Entity
 
   def self.metadata
     {

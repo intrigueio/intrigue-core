@@ -2,7 +2,7 @@ module Intrigue
 module Machine
   class Base
 
-    extend Intrigue::System::Helpers
+    extend Intrigue::Core::System::Helpers
     extend Intrigue::Task::Data
 
     def self.inherited(base)
@@ -24,7 +24,7 @@ module Machine
       project = old_task_result.project
 
       # check to see if it already exists, return nil if it does
-      existing_task_result = Intrigue::Model::TaskResult.first(
+      existing_task_result = Intrigue::Core::Model::TaskResult.first(
         :project => project,
         :task_name => "#{task_name}",
         :base_entity_id => entity.id

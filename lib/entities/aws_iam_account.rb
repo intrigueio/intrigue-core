@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class AwsIamAccount < Intrigue::Model::Entity
+class AwsIamAccount < Intrigue::Core::Model::Entity
 
   def self.metadata
     {

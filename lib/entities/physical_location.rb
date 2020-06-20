@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class PhysicalLocation < Intrigue::Model::Entity
+class PhysicalLocation < Intrigue::Core::Model::Entity
 
   def self.metadata
     {

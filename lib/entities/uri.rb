@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class Uri < Intrigue::Model::Entity
+class Uri < Intrigue::Core::Model::Entity
 
   include Intrigue::Task::Dns # TODO ... move parse_domain_name up in the heirarchys
 

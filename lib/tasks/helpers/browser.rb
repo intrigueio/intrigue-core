@@ -12,7 +12,7 @@ module Task
   module Browser
 
     def capture_screenshot_and_requests(uri)
-      return {} unless Intrigue::System::Config.config["browser_enabled"]
+      return {} unless Intrigue::Core::System::Config.config["browser_enabled"]
 
       begin 
         _log "Browser Navigating to #{uri}"
@@ -43,7 +43,7 @@ module Task
     # TODO ... convert this to new way of controlling browser
     # TODO 
     def gather_javascript_libraries(session, uri)
-      return [] unless Intrigue::System::Config.config["browser_enabled"]
+      return [] unless Intrigue::Core::System::Config.config["browser_enabled"]
 
       # Test site: https://www.jetblue.com/plan-a-trip/#/
       # Examples: https://builtwith.angularjs.org/
