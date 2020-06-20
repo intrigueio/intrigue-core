@@ -260,6 +260,7 @@ module Intrigue
         
         # if it's an explicit seed, it's whitelisted 
         return true if seed_entity?(type_string,entity_name)
+        return true unless Intrigue::Model::GlobalEntity.count > 0
 
         ### CHECK OUR SEED ENTITIES TO SEE IF THE TEXT MATCHES A DOMAIN
         ######################################################
@@ -315,6 +316,7 @@ module Intrigue
 
         # if it's an explicit seed, it's not blacklisted 
         return false if seed_entity?(type_string,entity_name)
+        return false unless Intrigue::Model::GlobalEntity.count > 0
 
         ### CHECK OUR SEED ENTITIES TO SEE IF THE TEXT MATCHES A DOMAIN
         ######################################################
