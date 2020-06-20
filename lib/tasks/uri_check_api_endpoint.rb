@@ -39,18 +39,17 @@ class UriCheckApiEndpoint < BaseTask
     api_endpoint = true if url =~ /\.json/
     api_endpoint = true if url =~ /\.xml/
 
-    # check for content type of applciation.. note that this will flag
+    # check for content type of application.. note that this will flag
     # application/javascript, which is probably not wanted
     headers = _get_entity_detail("headers") || []
     if headers
       content_type_header = headers.select{|x| x =~ /content-type/i }
-      
       api_endpoint = true if "#{content_type_header}" =~ /^application\/xml/i
       api_endpoint = true if "#{content_type_header}" =~ /^application\/json/i
       api_endpoint = true if "#{content_type_header}" =~ /^text\/csv/i
     end
     
-    # check fingerprints8
+    # check fingerprints!
     fingerprint = _get_entity_detail("fingerprint") || []
     fingerprint.each do |fp|
       api_endpoint = true if fp["tags"] && fp["tags"].include?("API")

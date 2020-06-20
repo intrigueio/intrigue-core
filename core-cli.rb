@@ -8,17 +8,26 @@ require_relative 'core'
 
 class CoreCli < Thor
 
-  include Intrigue::System
+  include Intrigue::Core::System
 
   def initialize(*args)
     super
     $intrigue_basedir = File.dirname(__FILE__)
     $config = JSON.parse File.open("#{$intrigue_basedir}/config/config.json").read
-    @server_uri = ENV.fetch("INTRIGUE_API_URI", "http://#{$config["credentials"]["username"]}:#{$config["credentials"]["password"]}@127.0.0.1:7777")
+    
+    # now uses https by default
+    username = $config["credentials"]["username"]
+    password = $config["credentials"]["password"]
+    password = $config["credentials"]["endpoint"] || "127.0.0.1:7777"
+    scheme = $config["http_security"] ? "https" : "http"
+
+
+    @server_uri = ENV.fetch("INTRIGUE_API_URI", "#{scheme}://#{username}:#{password}@")
     @delim = "#"
     @debug = true
+
     # Connect to Intrigue API
-    @api = IntrigueApi.new(@server_uri)
+    @api = IntrigueCoreApi.new(@server_uri)
   end
 
   desc "create_project [project_name]", "Create a project"
