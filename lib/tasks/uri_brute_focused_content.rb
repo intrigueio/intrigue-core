@@ -158,7 +158,10 @@ class UriBruteFocusedContent < BaseTask
       { issue_type: "jira_managefilters_info_leak", path: "/secure/ManageFilters.jspa", severity: 3,
           body_regex: /<title>Manage Filters/i, status: "confirmed" },
       { issue_type: "jira_2fa_bypass", path: "/login.action?nosso", severity: 3,
-        body_regex: //i, status: "confirmed" } 
+        body_regex: /Atlassian Jira Project Management Software/i, status: "confirmed" },
+      { issue_type: "jira_iconuriservlet_ssrf_cve_2017_9506", 
+        path: "/plugins/servlet/oauth/users/icon-uri?consumerUri=https://ipinfo.io/json", severity: 2,
+        body_regex: /ipinfo.io\/missingauth/i, status: "confirmed" } 
     ]
 
     # 
