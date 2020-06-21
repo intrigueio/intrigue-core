@@ -6,7 +6,7 @@ module Intrigue
   
       to_return = {
         name: "jira_iconuriservlet_ssrf_cve_2017_9506",
-        pretty_name: "Jira (CVE-2017-9506)",
+        pretty_name: "Jira IconURIServlet SSRF (CVE-2017-9506)",
         category: "application",
         severity: 2,
         status: "confirmed",

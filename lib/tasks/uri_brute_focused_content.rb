@@ -87,6 +87,11 @@ class UriBruteFocusedContent < BaseTask
       # /pages/default.aspx 
     ]
 
+    # https://bambootest.ACME.com%2F
+    bamboo_list = [ # https://x.x.x.x?filterView=popular
+      { issue_type: "bamboo_2fa_bypass", path: "/userlogin!doDefault.action?nosso&os_destination=", severity: 3,
+        body_regex: /Log in as a Bamboo user/i, status: "confirmed" }
+    ]
     # TODO - see: https://foundeo.com/hack-my-cf/coldfusion-security-issues.cfm
     # TODO - see: metasploit
     coldfusion_list = [
@@ -130,6 +135,11 @@ class UriBruteFocusedContent < BaseTask
       #{ issue_type: "coldfusion_config", path: "/_mmServerScripts", severity: 1, body_regex: nil, :status => "potential"  }
     ]
 
+    confluence_list = [ # https://x.x.x.x?filterView=popular
+      { issue_type: "confluence_2fa_bypass", path: "/login.action?nosso", severity: 3,
+        body_regex: /com-atlassian-confluence/i, status: "confirmed" }
+    ]
+
     globalprotect_list = [ # https://blog.orange.tw/2019/07/attacking-ssl-vpn-part-1-preauth-rce-on-palo-alto.html
       { issue_type: "vulnerable_globalprotect_cve_2019_1579", path: "/global-protect/portal/css/login.css", severity: 1,
           header_regex: /^Last-Modified:.*(Jan 2018|Feb 2018|Mar 2018|Apr 2018|May 2018|Jun 2018|2017).*$/i, status: "confirmed" } 
@@ -157,8 +167,10 @@ class UriBruteFocusedContent < BaseTask
     jira_list = [ # https://x.x.x.x?filterView=popular
       { issue_type: "jira_managefilters_info_leak", path: "/secure/ManageFilters.jspa", severity: 3,
           body_regex: /<title>Manage Filters/i, status: "confirmed" },
+      { issue_type: "jira_2fa_bypass", path: "/login.jsp?nosso", severity: 3,
+        body_regex: /jira_request_timing_info/i, status: "confirmed" },
       { issue_type: "jira_2fa_bypass", path: "/login.action?nosso", severity: 3,
-        body_regex: /Atlassian Jira Project Management Software/i, status: "confirmed" },
+        body_regex: //i, status: "confirmed" },
       { issue_type: "jira_iconuriservlet_ssrf_cve_2017_9506", 
         path: "/plugins/servlet/oauth/users/icon-uri?consumerUri=https://ipinfo.io/json", severity: 2,
         body_regex: /ipinfo.io\/missingauth/i, status: "confirmed" } 
@@ -323,7 +335,9 @@ class UriBruteFocusedContent < BaseTask
     apache_list.each { |x| work_q.push x } if is_product?(fingerprint,"HTTP Server")  # Apache
     asp_net_list.each { |x| work_q.push x } if ( 
       is_product?(fingerprint,"ASP.NET") || is_product?(fingerprint,"ASP.NET MVC") )
+    bamboo_list.each { |x| work_q.push x } if is_product?(fingerprint,"Bamboo") 
     coldfusion_list.each { |x| work_q.push x } if is_product?(fingerprint,"Coldfusion") 
+    confluence_list.each { |x| work_q.push x } if is_product?(fingerprint,"Confluence") 
     globalprotect_list.each { |x| work_q.push x } if is_product?(fingerprint,"GlobalProtect")
     jenkins_list.each { |x| work_q.push x } if is_product?(fingerprint,"Jenkins")
     jforum_list.each { |x| work_q.push x } if is_product?(fingerprint,"Jforum")
