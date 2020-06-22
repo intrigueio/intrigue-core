@@ -58,7 +58,7 @@ class NetworkService < Intrigue::Task::BaseTask
     ]
 
     # drop them if we don't have a fingerprint
-    if noise_networks.include?(details["net_name"]) && @details.fingerprint.empty?
+    if noise_networks.include?(_get_entity_detail("net_name")) && _get_entity_detail("fingerprint").empty?
       @entity.deny_list = true && @entity.hidden = true && @entity.scoped = false
       @entity.save
     end
