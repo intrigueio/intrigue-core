@@ -296,6 +296,7 @@ GEM
     nio4r (2.5.2)
     nokogiri (1.10.9)
       mini_portile2 (~> 2.4.0)
+    oj (3.10.6)
     os (1.1.0)
     parallel (1.12.1)
     pg (1.2.3)
@@ -371,6 +372,9 @@ GEM
     sequel (5.33.0)
     shodan (1.0.0)
       json (>= 1.4.6)
+    shodanz (1.0.0)
+      oj
+      unirest
     sidekiq (6.0.7)
       connection_pool (>= 2.2.2)
       rack (~> 2.0)
@@ -414,6 +418,10 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.7)
+    unirest (1.0.8)
+      addressable
+      json
+      rest-client
     versionomy (0.5.0)
       blockenspiel (~> 0.5)
     websocket-driver (0.7.2)
@@ -482,6 +490,7 @@ DEPENDENCIES
   sentry-raven
   sequel
   shodan
+  shodanz
   sidekiq
   sidekiq-failures
   sidekiq-limit_fetch

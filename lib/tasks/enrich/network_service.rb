@@ -47,6 +47,23 @@ class NetworkService < Intrigue::Task::BaseTask
     ###
     enrich_snmp if port == 161 && proto.upcase == "UDP"
 
+    # Unless we could verify futher, consider these noise
+    noise_networks = [
+      "GOOGLE, US", 
+      "CLOUDFLARENET, US", 
+      "GOOGLE-PRIVATE-CLOUD, US", 
+      "INCAPSULA, US", 
+      "CLOUDFLARENET - CLOUDFLARE, INC., US", 
+      "INCAPSULA - INCAPSULA INC, US"
+    ]
+
+    # drop them if we don't have a fingerprint
+    if noise_networks.include?(details["net_name"]) && @details.fingerprint.empty?
+      @entity.deny_list = true && @entity.hidden = true && @entity.scoped = false
+      @entity.save
+    end
+  
+
   end
 
   def fingerprint_service(ip_address,port=nil)

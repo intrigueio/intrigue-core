@@ -61,6 +61,7 @@ gem 'rex-sslscan',            :git => 'https://github.com/intrigueio/rex-sslscan
 gem 'ruby-nmap',              :git => 'https://github.com/pentestify/ruby-nmap.git'
 gem 'rubyzip'
 gem 'shodan'                  # search_shodan
+gem 'shodanz'                 # modern shodan lib
 gem 'snmp',                   :git => 'https://github.com/intrigueio/ruby-snmp.git'
 gem 'spidr',                  :git => 'https://github.com/intrigueio/spidr.git'
 gem 'towerdata_api'           # search_towerdata

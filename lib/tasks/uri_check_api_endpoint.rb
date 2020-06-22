@@ -46,6 +46,9 @@ class UriCheckApiEndpoint < BaseTask
       content_type_header = headers.select{|x| x =~ /content-type/i }
       api_endpoint = true if "#{content_type_header}" =~ /^application\/xml/i
       api_endpoint = true if "#{content_type_header}" =~ /^application\/json/i
+      api_endpoint = true if "#{content_type_header}" =~ /^application\/ld+json/i
+      api_endpoint = true if "#{content_type_header}" =~ /^application\/x-protobuf/i
+      api_endpoint = true if "#{content_type_header}" =~ /^application\/octet-stream/i
       api_endpoint = true if "#{content_type_header}" =~ /^text\/csv/i
     end
     
