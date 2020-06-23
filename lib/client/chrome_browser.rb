@@ -32,10 +32,10 @@ module Intrigue
         begin 
           _connect_and_enable options
         rescue Socketry::TimeoutError => e
-          _killit(chrome_port)
+          _killitwithfire(chrome_port)
           _connect_and_enable options # simply retry
         rescue StandardError => e
-          _killit(chrome_port)
+          _killitwithfire(chrome_port)
           _connect_and_enable options # simply retry
         end
       end
@@ -88,13 +88,17 @@ module Intrigue
 
           # Tear down the service (it'll auto-restart via process manager...  
           # so first check that the port number has been set)  
-          _killit(chrome_port)
+          _killitwithfire(chrome_port)
 
         # WARN: NoMethodError: undefined method `bytesize' for :eof:Symbol
         rescue NoMethodError => e 
-          _killit(chrome_port)
+          _killitwithfire(chrome_port)
         rescue Socketry::TimeoutError => e
-          _killit(chrome_port)
+          _killitwithfire(chrome_port)
+        rescue StandardException => e 
+          _killitwithfire(chrome_port)
+        rescue Exception => e 
+          _killitwithfire(chrome_port)
         end
       end
 
@@ -111,12 +115,14 @@ module Intrigue
     out
     end
 
-    def _killit(port)
+    def _killitwithfire(port)
+      
       # relies on sequential worker numbers
       port = 9222 if port == 0 # just a failsafe 
       chrome_worker_number = port - 9221
           
-      _unsafe_system "pkill -f -9 remote-debugging-port=#{port} && god restart intrigue-chrome-#{chrome_worker_number}"
+      _unsafe_system "pkill -f -9 remote-debugging-port=#{port}"
+
       sleep 10
     end
 
