@@ -63,7 +63,6 @@ class NetworkService < Intrigue::Task::BaseTask
       @entity.save
     end
   
-
   end
 
   def fingerprint_service(ip_address,port=nil)

@@ -84,7 +84,7 @@ module Intrigue
 
       encoded_screenshot=nil
       
-      max_retries = 2 
+      max_retries = 3
       tries = 0
       until encoded_screenshot || (tries > max_retries)
         tries +=1
@@ -96,8 +96,7 @@ module Intrigue
           _killitwithfire(chrome_port)
 
           encoded_screenshot = _navigate_and_screenshot(url)
-
-          sleep 3
+          sleep 10
 
           # Tear down the service (it'll auto-restart via process manager...  
           # so first check that the port number has been set)  
@@ -140,7 +139,7 @@ module Intrigue
           
       _unsafe_system "pkill -f -9 remote-debugging-port=#{port} && god restart intrigue-chrome-#{chrome_worker_number}"
 
-      sleep 8
+      sleep 12
     end
 
     def _connect_and_enable(options)
