@@ -122,19 +122,11 @@ module Data
   end
 
   def fingerprintable_udp_ports
-    "161"
+    [161]
   end
 
   def fingerprintable_tcp_ports
-    tcp_ports = ""
-    tcp_ports << "21,"
-    tcp_ports << "22,"
-    tcp_ports << "23,"
-    tcp_ports << "25,"
-    
-    # add web ports 
-    tcp_ports.concat scannable_web_ports
-  
+    [21,22,23,25].concat scannable_web_ports
   tcp_ports 
   end
 
@@ -143,7 +135,7 @@ module Data
       80,81,82,83,84,85,88,443,888,3000,6443,7443,
       8000,8080,8081,8087,8088,8089,8090,8095,
       8098,8161,8180,8443,8880,8888,9443,10000 
-    ].join(",")
+    ]
   end
 
 
@@ -212,7 +204,7 @@ module Data
     tcp_ports << "40443,"
     tcp_ports << "53413"
 
-  tcp_ports
+  tcp_ports.split(",")
   end
   
   def geolocate_ip(ip)

@@ -93,7 +93,7 @@ module Services
     end
 
     create_service_lambda = lambda do |h|
-      try_http_ports = scannable_web_ports 
+      try_http_ports = scannable_web_ports
 
       # Handle web app case first
       if (protocol == "tcp" && try_http_ports.include?(port_num))

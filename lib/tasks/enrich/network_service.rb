@@ -49,16 +49,16 @@ class NetworkService < Intrigue::Task::BaseTask
 
     # Unless we could verify futher, consider these noise
     noise_networks = [
+      "CLOUDFLARENET - CLOUDFLARE, INC., US", 
       "GOOGLE, US", 
       "CLOUDFLARENET, US", 
       "GOOGLE-PRIVATE-CLOUD, US", 
       "INCAPSULA, US", 
-      "CLOUDFLARENET - CLOUDFLARE, INC., US", 
       "INCAPSULA - INCAPSULA INC, US"
     ]
 
     # drop them if we don't have a fingerprint
-    if noise_networks.include?(_get_entity_detail("net_name")) && _get_entity_detail("fingerprint").empty?
+    if noise_networks.include?(_get_entity_detail("net_name")) && (_get_entity_detail("fingerprint") || []) .empty?
       @entity.deny_list = true && @entity.hidden = true && @entity.scoped = false
       @entity.save
     end

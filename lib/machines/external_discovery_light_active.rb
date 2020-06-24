@@ -134,8 +134,8 @@ module Machine
 
           # and we might as well scan to cover any new info
           start_recursive_task(task_result,"nmap_scan",entity, [
-            {"name"=> "tcp_ports", "value" => scannable_tcp_ports},
-            {"name"=> "udp_ports", "value" => scannable_udp_ports}])
+            {"name"=> "tcp_ports", "value" => scannable_tcp_ports.join(",")},
+            {"name"=> "udp_ports", "value" => scannable_udp_ports.join(",")}])
         end
 
       elsif entity.type_string == "NetBlock"
@@ -156,8 +156,8 @@ module Machine
           # https://duo.com/decipher/mapping-the-internet-whos-who-part-three 
 
           start_recursive_task(task_result,"masscan_scan",entity,[
-            {"name"=> "tcp_ports", "value" => scannable_tcp_ports},
-            {"name"=> "udp_ports", "value" => scannable_udp_ports}])
+            {"name"=> "tcp_ports", "value" => scannable_tcp_ports.join(",")},
+            {"name"=> "udp_ports", "value" => scannable_udp_ports.join(",")}])
 
         else
           task_result.log "Cowardly refusing to scan this netblock: #{entity}.. it's not scannable!"
