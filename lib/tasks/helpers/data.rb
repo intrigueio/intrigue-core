@@ -126,8 +126,8 @@ module Data
   end
 
   def fingerprintable_tcp_ports
-    [21,22,23,25].concat scannable_web_ports
-  tcp_ports 
+    ports = [21,22,23,25].concat(scannable_web_ports)
+  ports
   end
 
   def scannable_web_ports
