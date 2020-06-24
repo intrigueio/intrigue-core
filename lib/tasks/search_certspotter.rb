@@ -41,6 +41,11 @@ class SearchCertSpotter < BaseTask
     begin
 
       response = http_request :get, search_url, nil, {"Authorization" => "Bearer #{api_key}"}
+      
+      unless response && response.body
+        _log_error "Unable to get a response, returning"
+      end
+
       json = JSON.parse(response.body)
 
       # a little wicked but we want to only select those that match our pattern(s)

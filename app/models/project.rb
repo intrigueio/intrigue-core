@@ -255,13 +255,13 @@ module Model
 
 
     ###
-    ### Use this when you wan to scope in stuff 
+    ### Use this when you want to scope in stuff 
     ###
     def allow_list_entity?(type_string, entity_name)
       
       # if it's an explicit seed, it's whitelisted 
       return true if seed_entity?(type_string,entity_name)
-      return true unless Intrigue::Core::Model::GlobalEntity.count > 0
+      #return true unless Intrigue::Core::Model::GlobalEntity.count > 0
 
       ### CHECK OUR SEED ENTITIES TO SEE IF THE TEXT MATCHES A DOMAIN
       ######################################################

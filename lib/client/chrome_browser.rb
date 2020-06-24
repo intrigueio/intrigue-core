@@ -31,19 +31,26 @@ module Intrigue
       until @chrome 
         begin 
           _connect_and_enable options
+        # WARN: NoMethodError: undefined method `bytesize' for :eof:Symbol
+        rescue NoMethodError => e 
+          puts "ERROR.... nomethoderror exception: #{e} when attempting to screenshot"
+          _killitwithfire(chrome_port)
         rescue Socketry::TimeoutError => e
-          _killit(chrome_port)
-          _connect_and_enable options # simply retry
-        rescue StandardError => e
-          _killit(chrome_port)
-          _connect_and_enable options # simply retry
+          puts "ERROR.... timeout exception: #{e} when attempting to screenshot"
+          _killitwithfire(chrome_port)
+        rescue StandardError => e 
+          puts "ERROR.... standard exception: #{e} when attempting to screenshot"
+          _killitwithfire(chrome_port)
+        rescue Exception => e 
+          puts "ERROR.... exception: #{e} when attempting to screenshot"
+          _killitwithfire(chrome_port)
         end
       end
     end
 
     def navigate_and_capture(url)
       
-      # Setup handler to log network requests
+      # Setup handler to log requests
       @chrome.on "Network.requestWillBeSent" do |params|
 
         begin 
@@ -58,9 +65,10 @@ module Intrigue
           "method" => params["request"]["method"], 
           "headers" => params["request"]["headers"]
         } 
+
       end
 
-
+      # setup handler for responses 
       @chrome.on "Network.responseReceived" do |params|
         @responses << { 
           "url" => params["response"]["url"], 
@@ -69,32 +77,45 @@ module Intrigue
         } 
       end 
 
+      # setup handler for websocket responses 
       @chrome.on "Network.WebSocketRequest" do |params|
         @wsresponses << params
       end 
 
-
       encoded_screenshot=nil
       
-      max_retries = 5 
+      max_retries = 2 
       tries = 0
       until encoded_screenshot || (tries > max_retries)
         tries +=1
         chrome_port = "#{ENV["CHROME_PORT"]}".to_i || 9222
         begin 
-          encoded_screenshot = _navigate_and_screenshot(url)
           
+          # Tear down the service (it'll auto-restart via process manager...  
+          # so first check that the port number has been set)  
+          _killitwithfire(chrome_port)
+
+          encoded_screenshot = _navigate_and_screenshot(url)
+
           sleep 3
 
           # Tear down the service (it'll auto-restart via process manager...  
           # so first check that the port number has been set)  
-          _killit(chrome_port)
+          _killitwithfire(chrome_port)
 
         # WARN: NoMethodError: undefined method `bytesize' for :eof:Symbol
         rescue NoMethodError => e 
-          _killit(chrome_port)
+          puts "ERROR.... nomethoderror exception: #{e} when attempting to screenshot"
+          _killitwithfire(chrome_port)
         rescue Socketry::TimeoutError => e
-          _killit(chrome_port)
+          puts "ERROR.... timeout exception: #{e} when attempting to screenshot"
+          _killitwithfire(chrome_port)
+        rescue StandardError => e 
+          puts "ERROR.... standard exception: #{e} when attempting to screenshot"
+          _killitwithfire(chrome_port)
+        rescue Exception => e 
+          puts "ERROR.... exception: #{e} when attempting to screenshot"
+          _killitwithfire(chrome_port)
         end
       end
 
@@ -111,13 +132,15 @@ module Intrigue
     out
     end
 
-    def _killit(port)
+    def _killitwithfire(port)
+
       # relies on sequential worker numbers
       port = 9222 if port == 0 # just a failsafe 
       chrome_worker_number = port - 9221
           
       _unsafe_system "pkill -f -9 remote-debugging-port=#{port} && god restart intrigue-chrome-#{chrome_worker_number}"
-      sleep 10
+
+      sleep 8
     end
 
     def _connect_and_enable(options)

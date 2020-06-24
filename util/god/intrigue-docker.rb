@@ -34,7 +34,7 @@ God.watch do |w|
   w.name = "intrigue-chrome"
   w.dir = "#{BASEDIR}" 
   w.log = "#{BASEDIR}/log/chome.log"
-  w.start = "chromium-browser --remote-debugging-port=9222 --headless --disable-gpu --disable-dev-shm-usage --ignore-certificate-errors --disable-popup-blocking --disable-translate --no-sandbox"
+  w.start = "chromium-browser --remote-debugging-port=9222 --headless --disable-gpu --disable-dev-shm-usage --ignore-certificate-errors --disable-popup-blocking --disable-translate --no-sandbox --ignore-certificate-errors-spki-list --ignore-ssl-errors"
   w.keepalive
 end
 
