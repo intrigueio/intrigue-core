@@ -34,7 +34,7 @@ class SearchSpyseDomain < BaseTask
       # Search Ip for domain hosted on the same IP
       search_domain_on_same_ip entity_name,headers
 
-      # Search subdomain related to the domain 
+      # Search subdomain related to the domain
       search_subdomains entity_name,headers
     else
       _log_error "Unsupported entity type"
@@ -46,7 +46,7 @@ class SearchSpyseDomain < BaseTask
   def search_domain_on_same_ip(entity_name, headers)
 
     # Set the URL for ip data
-    url = "https://api.spyse.com/v2/data/domain/on_same_ip?limit=100&domain=#{entity_name}"
+    url = "https://api.spyse.com/v3/data/domain/on_same_ip?limit=100&domain=#{entity_name}"
 
     # make the request
     response = http_get_body(url,nil,headers)
@@ -80,7 +80,7 @@ class SearchSpyseDomain < BaseTask
   def search_subdomains entity_name, headers
 
     # Set the URL for ip open ports
-    url2 = "https://api.spyse.com/v2/data/domain/subdomain?limit=100&domain=#{entity_name}"
+    url2 = "https://api.spyse.com/v3/data/domain/subdomain?limit=100&domain=#{entity_name}"
 
     # make the request
     response2 = http_get_body(url2,nil,headers)
