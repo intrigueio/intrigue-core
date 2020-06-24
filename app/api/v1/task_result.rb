@@ -4,7 +4,8 @@ class CoreApp < Sinatra::Base
   post '/api/v1/task_result' do
 
     content_type "application/json"
-
+    add_standard_cors_headers
+    
     halt_unless_authenticated(@params["key"])
 
     # When we create the project, we want to make sure no HTML is
