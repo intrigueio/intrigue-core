@@ -518,23 +518,6 @@ module Task
          request.basic_auth(credentials[:username],credentials[:password])
        end
 
-       # USE THIS TO PRINT HTTP REQUEST
-=begin
-       puts
-       puts
-       puts "===== BEGIN REQUEST ====="
-       puts "Endpoint: #{request.method} #{uri}"
-       puts "Headers:\n"
-       request.each_header do |key, value|
-        puts "\t#{key}: #{value}"
-       end
-       puts "POST Data:\n#{request.body}" if request.method == 'POST'
-       puts "=====  END  REQUEST ====="
-       puts
-       puts
-=end
-       # END USE THIS TO PRINT HTTP REQUEST
-
        # get the response
        response = http.request(request)
 
