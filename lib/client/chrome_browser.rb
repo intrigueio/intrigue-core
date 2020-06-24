@@ -138,9 +138,9 @@ module Intrigue
       port = 9222 if port == 0 # just a failsafe 
       chrome_worker_number = port - 9221
           
-      _unsafe_system "pkill -f -9 remote-debugging-port=#{port}"
+      _unsafe_system "pkill -f -9 remote-debugging-port=#{port} && god restart intrigue-chrome-#{chrome_worker_number}"
 
-      sleep 6
+      sleep 8
     end
 
     def _connect_and_enable(options)
