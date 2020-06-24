@@ -25,6 +25,11 @@ class CoreApp < Sinatra::Base
   false  
   end
 
+  def add_standard_cors_headers
+    headers 'Access-Control-Allow-Origin' => '*',
+    'Access-Control-Allow-Methods' => ['OPTIONS','GET']
+  end
+
   def get_json_payload
     @request.body.rewind
     begin 
