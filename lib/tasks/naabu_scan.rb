@@ -1,6 +1,6 @@
 module Intrigue
   module Task
-  class NmapScan < BaseTask
+  class NaabuScan < BaseTask
   
     def self.metadata
       {

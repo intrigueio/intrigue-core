@@ -32,6 +32,8 @@ class UriCheckApiEndpoint < BaseTask
     # get our url
     url = _get_entity_name
 
+    standard_response = http_request :get, url
+
     [ "#{url}", "#{url}/api", "#{url}/graphql" ].each do |u|
 
       _log "Checking... #{u}"
@@ -83,7 +85,7 @@ class UriCheckApiEndpoint < BaseTask
       end
 
       # set the details
-      if api_endpoint
+      if api_endpoint && (body != standard_response.body)
         _create_entity "ApiEndpoint", { "name" => u }
         _set_entity_detail "api_endpoint", api_endpoint # legacy (keep the attribute on the base entity)
       end
