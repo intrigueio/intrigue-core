@@ -62,7 +62,7 @@ class UriBrowser < BaseTask
         _log "Creating #{browser_responses.count} endpoints"
         browser_responses.each do |r|
           next unless "#{r["uri"]}" =~ /^http/i
-          _create_entity("ApiEndpoint", {"name" => r["url"] })
+          _create_entity "Uri", "name" => r["uri"]
         end
       else 
         _log_error "Unable to create entities, missing 'extended_responses' detail"

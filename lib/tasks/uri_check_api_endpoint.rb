@@ -32,21 +32,37 @@ class UriCheckApiEndpoint < BaseTask
     # get our url
     url = _get_entity_name
 
+
+    ####
+    # first just check keywords in the url 
+    ####
+
+    api_endpoint = true if url =~ /api\./
+    api_endpoint = true if url =~ /\/api/
+    api_endpoint = true if url =~ /\/json/
+    api_endpoint = true if url =~ /\.json/
+    api_endpoint = true if url =~ /\.xml/
+
+    if api_endpoint
+      # set the details
+      _create_entity "ApiEndpoint", { "name" => u }
+      _set_entity_detail "api_endpoint", api_endpoint # legacy (keep the attribute on the base entity)
+      return # return if our base URL was an endpoint
+    end
+
+    ####
+    # otherwise check patterns around the original
+    ####
+
+    # first get a standard response
     standard_response = http_request :get, url
 
     [ "#{url}", "#{url}/api", "#{url}/graphql" ].each do |u|
 
       _log "Checking... #{u}"
       api_endpoint = false 
-
-      # check keywords in the url 
-      api_endpoint = true if url =~ /api\./
-      api_endpoint = true if url =~ /\/api/
-      api_endpoint = true if url =~ /\/json/
-      api_endpoint = true if url =~ /\.json/
-      api_endpoint = true if url =~ /\.xml/
-
-      # Go ahead and get the response 
+      
+      # Go ahead and get the response for this paritcular endpoint
       response = http_request :get, u
 
       # check for content type of application.. note that this will flag
@@ -64,7 +80,7 @@ class UriCheckApiEndpoint < BaseTask
         end
       end
       
-      # try to parse it 
+      # try to parse it (JSON)
       begin
         # get request body
         body = response.body
@@ -76,7 +92,7 @@ class UriCheckApiEndpoint < BaseTask
         _log "No body!"
       end
 
-      # fingerprint and check
+      # check known fingeprints
       _log "Attempting to fingerprint (without the browser)!"
       ident_matches = generate_http_requests_and_check(u,{:enable_browser => false, :'only-check-base-url' => true}) || {}
       ident_fingerprints = ident_matches["fingerprint"] || []
@@ -84,8 +100,11 @@ class UriCheckApiEndpoint < BaseTask
         api_endpoint = true if fp["tags"] && fp["tags"].include?("API")
       end
 
-      # set the details
-      if api_endpoint && (body != standard_response.body)
+      # skip if we're not the original url, but we're getting the same response
+      next if u != url && body == standard_response.body
+
+      # set the details and create a new entity if we made it this far!
+      if api_endpoint
         _create_entity "ApiEndpoint", { "name" => u }
         _set_entity_detail "api_endpoint", api_endpoint # legacy (keep the attribute on the base entity)
       end
