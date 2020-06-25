@@ -133,7 +133,7 @@ module Machine
           start_recursive_task(task_result,"whois_lookup",entity, [])
 
           # and we might as well scan to cover any new info
-          start_recursive_task(task_result,"nmap_scan",entity, [
+          start_recursive_task(task_result,"naabu_scan",entity, [
             {"name"=> "tcp_ports", "value" => scannable_tcp_ports.join(",")},
             {"name"=> "udp_ports", "value" => scannable_udp_ports.join(",")}])
         end

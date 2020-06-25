@@ -4,6 +4,7 @@ module System
   module Helpers
 
     def entity_exists?(project, entity_type, entity_name)
+      return false unless project
       entities = Intrigue::Core::Model::Entity.scope_by_project_and_type(project.name, entity_type)
       return entities.first(:name => entity_name) if entities
     false

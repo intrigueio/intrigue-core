@@ -14,7 +14,9 @@ class UriCheckApiEndpoint < BaseTask
       :type => "discovery",
       :passive => false,
       :allowed_types => ["Uri"],
-      :example_entities => [{"type" => "Uri", "details" => {"name" => "http://www.intrigue.io"}}],
+      :example_entities => [
+        {"type" => "Uri", "details" => {"name" => "http://www.intrigue.io"}}
+      ],
       :allowed_options => [],
       :created_types =>  []
     }
@@ -24,54 +26,69 @@ class UriCheckApiEndpoint < BaseTask
   def run
     super
 
-    require_enrichment
-
     # start with negative
     api_endpoint = nil
 
     # get our url
     url = _get_entity_name
 
-    # check keywords in the url 
-    api_endpoint = true if url =~ /api\./
-    api_endpoint = true if url =~ /\/api/
-    api_endpoint = true if url =~ /\/json/
-    api_endpoint = true if url =~ /\.json/
-    api_endpoint = true if url =~ /\.xml/
+    [ "#{url}", "#{url}/api", "#{url}/graphql" ].each do |u|
 
-    # check for content type of application.. note that this will flag
-    # application/javascript, which is probably not wanted
-    headers = _get_entity_detail("headers") || []
-    if headers
-      content_type_header = headers.select{|x| x =~ /content-type/i }
-      api_endpoint = true if "#{content_type_header}" =~ /^application\/xml/i
-      api_endpoint = true if "#{content_type_header}" =~ /^application\/json/i
-      api_endpoint = true if "#{content_type_header}" =~ /^application\/ld+json/i
-      api_endpoint = true if "#{content_type_header}" =~ /^application\/x-protobuf/i
-      api_endpoint = true if "#{content_type_header}" =~ /^application\/octet-stream/i
-      api_endpoint = true if "#{content_type_header}" =~ /^text\/csv/i
-    end
-    
-    # check fingerprints!
-    fingerprint = _get_entity_detail("fingerprint") || []
-    fingerprint.each do |fp|
-      api_endpoint = true if fp["tags"] && fp["tags"].include?("API")
-    end 
+      _log "Checking... #{u}"
+      api_endpoint = false 
 
-    # try to parse it 
-    begin
-      # get request body
-      body = _get_entity_detail("extended_response_body")
-      if body 
-        json = JSON.parse(body)
-        api_endpoint = true if json
+      # check keywords in the url 
+      api_endpoint = true if url =~ /api\./
+      api_endpoint = true if url =~ /\/api/
+      api_endpoint = true if url =~ /\/json/
+      api_endpoint = true if url =~ /\.json/
+      api_endpoint = true if url =~ /\.xml/
+
+      # Go ahead and get the response 
+      response = http_request :get, u
+
+      # check for content type of application.. note that this will flag
+      # application/javascript, which is probably not wanted
+      headers = response.each_header.to_h
+      if headers
+        ct = headers.find{|x, y| x if x =~ /^content-type/i }
+        if ct
+          api_endpoint = true if "#{headers[ct]}" =~ /^application\/xml/i
+          api_endpoint = true if "#{headers[ct]}" =~ /^application\/json/i
+          api_endpoint = true if "#{headers[ct]}" =~ /^application\/ld+json/i
+          api_endpoint = true if "#{headers[ct]}" =~ /^application\/x-protobuf/i
+          api_endpoint = true if "#{headers[ct]}" =~ /^application\/octet-stream/i
+          api_endpoint = true if "#{headers[ct]}" =~ /^text\/csv/i
+        end
       end
-    rescue JSON::ParserError      
-      _log "No body"
-    end
+      
+      # try to parse it 
+      begin
+        # get request body
+        body = response.body
+        if body 
+          json = JSON.parse(body)
+          api_endpoint = true if json
+        end
+      rescue JSON::ParserError      
+        _log "No body!"
+      end
 
-    # set the details 
-    _set_entity_detail "api_endpoint", api_endpoint
+      # fingerprint and check
+      _log "Attempting to fingerprint (without the browser)!"
+      ident_matches = generate_http_requests_and_check(u,{:enable_browser => false, :'only-check-base-url' => true}) || {}
+      ident_fingerprints = ident_matches["fingerprint"] || []
+      ident_fingerprints.each do |fp|
+        api_endpoint = true if fp["tags"] && fp["tags"].include?("API")
+      end
+
+      # set the details
+      if api_endpoint
+        _create_entity "ApiEndpoint", { "name" => u }
+        _set_entity_detail "api_endpoint", api_endpoint # legacy (keep the attribute on the base entity)
+      end
+    
+    end
 
   end
 

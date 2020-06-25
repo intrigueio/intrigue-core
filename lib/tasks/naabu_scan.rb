@@ -25,10 +25,14 @@ module Intrigue
       ip_address = _get_entity_name
 
       out = _unsafe_system("naabu -host #{ip_address} -ports #{fingerprintable_tcp_ports.join(",")} -silent --json")
+      
+      # handle the no-result case
       unless out 
         _log "No output! returning!"
+        return
       end
 
+      # otherwise, create network services 
       lines = out.split("\n")
       lines.each do |l|
         j = JSON.parse(l)

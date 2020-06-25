@@ -2,8 +2,6 @@ module Intrigue
 module Entity
 class Uri < Intrigue::Core::Model::Entity
 
-  include Intrigue::Task::Dns # TODO ... move parse_domain_name up in the heirarchys
-
   def self.metadata
     {
       :name => "Uri",
@@ -50,7 +48,7 @@ class Uri < Intrigue::Core::Model::Entity
   end
 
   def enrichment_tasks
-    ["enrich/uri"]
+    ["enrich/uri", "enrich/uri_browser", "uri_check_api_endpoint", "uri_extract_linked_hosts"]
   end
 
 end

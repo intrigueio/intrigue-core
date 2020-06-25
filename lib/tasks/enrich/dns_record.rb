@@ -52,7 +52,7 @@ class DnsRecord < Intrigue::Task::BaseTask
     _log "Grabbing SOA"
     soa_details = collect_soa_details(lookup_name)
     _set_entity_detail("soa_record", soa_details)
-    if soa_details && soa_details["primary_name_server"]
+    if soa_details && soa_details["primary_name_server"] && soa_details["primary_name_server"].length > 0
       _create_entity "Nameserver", "name" => soa_details["primary_name_server"]
     end
 

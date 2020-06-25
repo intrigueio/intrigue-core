@@ -36,7 +36,7 @@ class UriExtractLinkedHosts  < BaseTask
     ###
     ### Now, parse out all links and do analysis on the individual links
     ###
-    URI.extract(contents, ["https","http"]) do |link|
+    URI.extract(contents, ["https","http"] ) do |link|
       begin
 
         # Collect the host
