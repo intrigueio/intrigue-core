@@ -165,12 +165,12 @@ module Model
       out = false
 
       # first check to see if we know about this exact entity (type matters too)
-      puts "Looking for global entity: #{entity_type} #{entity_name}"
+      #puts "Looking for global entity: #{entity_type} #{entity_name}"
       global_entity = Intrigue::Core::Model::GlobalEntity.first(:name => entity_name, :type => entity_type)
 
       # If we know it exists, is it in our project (cool) or someone else (no traverse!)
       if global_entity
-        puts "Global entity found: #{entity_type} #{entity_name}!"
+        #puts "Global entity found: #{entity_type} #{entity_name}!"
         
         # we need to have a namespace to validate against
         if self.allowed_namespaces
@@ -187,7 +187,7 @@ module Model
         end
 
       else 
-        puts "No Global entity found, trying harder!"
+        #puts "No Global entity found, trying harder!"
       end
 
       # okay so if we made it this far, we may or may not have a matching entiy, so now 

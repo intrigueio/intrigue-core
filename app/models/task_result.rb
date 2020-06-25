@@ -38,6 +38,7 @@ module Model
         "retry" => true,
         "args" => [id]
       })
+      
       self.job_id = sjid
       save_changes
 

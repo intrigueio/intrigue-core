@@ -105,18 +105,19 @@ module Data
   end
 
   def scannable_udp_ports
+    
     udp_ports = ""
-    udp_ports << "53," # dns
-    udp_ports << "123," # ntp
-    udp_ports << "135,"  # msrpc
-    udp_ports << "139,"  # netbios session
-    udp_ports << "161," # snmp
-    udp_ports << "500," # isakmp
-    udp_ports << "631,"  # ipp
-    udp_ports << "1434,"  # msrpc
-    udp_ports << "1900," # upnp
-    udp_ports << "2049," # nfs 
-    udp_ports << "17185" # vxworks https://blog.rapid7.com/2010/08/02/new-vxworks-vulnerabilities/
+    udp_ports << "53,"      # dns
+    udp_ports << "123,"     # ntp
+    udp_ports << "135,"     # msrpc
+    udp_ports << "139,"     # netbios session
+    udp_ports << "161,"     # snmp
+    udp_ports << "500,"     # isakmp
+    udp_ports << "631,"     # ipp
+    udp_ports << "1434,"    # msrpc
+    udp_ports << "1900,"    # upnp
+    udp_ports << "2049,"    # nfs 
+    udp_ports << "17185"    # vxworks https://blog.rapid7.com/2010/08/02/new-vxworks-vulnerabilities/
 
   udp_ports
   end
@@ -137,7 +138,6 @@ module Data
       8098,8161,8180,8443,8880,8888,9443,10000 
     ]
   end
-
 
   def scannable_tcp_ports
 

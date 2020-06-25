@@ -68,6 +68,10 @@ module Services
         # match our hidden list 
         if cert_names
           cert_names.uniq do |cn|
+
+            # only try to create stuff that looks like a dnsrecord
+            next unless cn =~ dns_regex
+
             # create each entity 
             cert_entities << _create_entity("DnsRecord", { "name" => cn }, ip_entity )   
           end

@@ -39,7 +39,7 @@ module System
     #
     def standard_no_traverse?(entity_name, type_string="Domain", skip_exceptions=[])
       out = false
-      puts "Working on #{type_string} #{entity_name}"
+      #puts "Working on #{type_string} #{entity_name}"
 
       if type_string == "IpAddress"
         (standard_ip_exceptions - skip_exceptions).each do |exception|
