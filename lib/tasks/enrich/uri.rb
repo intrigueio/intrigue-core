@@ -264,7 +264,6 @@ class Uri < Intrigue::Task::BaseTask
       "headers" => headers,
       "hidden_favicon_data" => favicon_data,
       "hidden_response_data" => response.body,
-      #"products" => products.compact,
       "redirect_chain" => ident_responses.first[:response_urls] || [],
       "response_data_hash" => response_data_hash,
       "title" => title,
@@ -277,8 +276,6 @@ class Uri < Intrigue::Task::BaseTask
       "extended_favicon_data" => favicon_data,
       "extended_response_body" => response.body,
     })
-    
-    # add in the browser results
 
     # Set the details, and make sure raw response data is a hidden (not searchable) detail
     _set_entity_details new_details

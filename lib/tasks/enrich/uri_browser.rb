@@ -51,9 +51,6 @@ class UriBrowser < BaseTask
       request_hosts = browser_data_hash["request_hosts"]
       _check_request_hosts_for_suspicious_request(uri, request_hosts)
       _check_request_hosts_for_exernally_hosted_resources(uri,request_hosts)
-
-    else
-      request_hosts = []
     end
 
     ###

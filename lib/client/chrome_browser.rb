@@ -8,6 +8,7 @@ module Intrigue
 
     # set host and port options if desired
     def initialize(options={})
+
       @requests = []
       @responses = []
       @wsresponses = []
@@ -40,9 +41,6 @@ module Intrigue
           _killitwithfire(chrome_port)
         rescue StandardError => e 
           puts "ERROR.... standard exception: #{e} when attempting to screenshot"
-          _killitwithfire(chrome_port)
-        rescue Exception => e 
-          puts "ERROR.... exception: #{e} when attempting to screenshot"
           _killitwithfire(chrome_port)
         end
       end
@@ -90,10 +88,6 @@ module Intrigue
         tries +=1
         chrome_port = "#{ENV["CHROME_PORT"]}".to_i || 9222
         begin 
-          
-          # Tear down the service (it'll auto-restart via process manager...  
-          # so first check that the port number has been set)  
-          _killitwithfire(chrome_port)
 
           encoded_screenshot = _navigate_and_screenshot(url)
           sleep 10
@@ -112,9 +106,6 @@ module Intrigue
         rescue StandardError => e 
           puts "ERROR.... standard exception: #{e} when attempting to screenshot"
           _killitwithfire(chrome_port)
-        rescue Exception => e 
-          puts "ERROR.... exception: #{e} when attempting to screenshot"
-          _killitwithfire(chrome_port)
         end
       end
 
@@ -127,7 +118,7 @@ module Intrigue
         "wsresponses" => @wsresponses, 
         "encoded_screenshot" => screenshot_data
       }
-      
+
     out
     end
 
@@ -139,7 +130,7 @@ module Intrigue
           
       _unsafe_system "pkill -f -9 remote-debugging-port=#{port} && god restart intrigue-chrome-#{chrome_worker_number}"
 
-      sleep 12
+      sleep 6
     end
 
     def _connect_and_enable(options)
