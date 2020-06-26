@@ -1,7 +1,6 @@
 require 'eventmachine'
 require 'logger'
 require 'sinatra'
-require "sinatra/cors"
 require 'sinatra/contrib'
 require 'yaml'
 require 'rest-client'
@@ -47,10 +46,7 @@ include Intrigue::Core::System::Validations
 require_relative 'lib/system/helpers'
 include Intrigue::Core::System::Helpers
 
-
 # Debug
-#require 'pry'
-#require 'pry-byebug'
 require 'logger'
 
 # disable annoying redis messages 

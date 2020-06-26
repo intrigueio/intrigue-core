@@ -2,9 +2,7 @@ class CoreApp < Sinatra::Base
 
   # Create a task result!
   post '/api/v1/task_result' do
-
     content_type "application/json"
-    add_standard_cors_headers
     
     halt_unless_authenticated(@params["key"])
 
@@ -68,7 +66,5 @@ class CoreApp < Sinatra::Base
     # woo success
     wrap_core_api_response "Task result created!", { task_result_id: task_result.id } 
   end
-  
-
 
 end

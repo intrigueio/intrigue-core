@@ -4,9 +4,9 @@ ruby '2.6.5'
 # core
 gem 'sinatra'                 #'~> 2.0.1'
 gem 'sinatra-contrib'         #'~> 2.0.1'
-gem 'sinatra-cors'
 gem 'puma'                    # Application Server
 gem 'eventmachine'
+gem 'rack-cors'
 
 gem 'redis'                   # Redis
 gem 'redis-namespace'         # Redis

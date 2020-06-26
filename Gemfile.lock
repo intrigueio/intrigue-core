@@ -317,6 +317,8 @@ GEM
     puma (4.3.5)
       nio4r (~> 2.0)
     rack (2.2.3)
+    rack-cors (1.1.1)
+      rack (>= 2.0.0)
     rack-protection (2.0.8.1)
       rack
     rack-test (1.1.0)
@@ -400,7 +402,6 @@ GEM
       rack-protection (= 2.0.8.1)
       sinatra (= 2.0.8.1)
       tilt (~> 2.0)
-    sinatra-cors (1.1.0)
     socketry (0.5.1)
       hitimes (~> 1.2)
     sqlite3 (1.4.2)
@@ -471,6 +472,7 @@ DEPENDENCIES
   pry
   pry-byebug
   puma
+  rack-cors
   rack-protection
   rack-test
   rake
@@ -491,7 +493,6 @@ DEPENDENCIES
   sidekiq-limit_fetch
   sinatra
   sinatra-contrib
-  sinatra-cors
   snmp!
   spidr!
   sqlite3
