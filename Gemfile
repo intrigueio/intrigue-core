@@ -75,7 +75,7 @@ gem 'chrome_remote',          :git => 'https://github.com/intrigueio/chrome_remo
 
 # swap these if developing on ident locally
 gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git'
-#gem 'intrigue-ident',         :path => "~/ident"
+#gem 'intrigue-ident',         :path => "~/ident/intrigue-ident"
 
 # vulndb
 gem 'versionomy'

@@ -104,8 +104,8 @@ class Uri < Intrigue::Task::BaseTask
     _log "Checking if API Endpoint" 
     api_endpoint = check_api_enabled(response, fingerprint)
     
-    # process interesting content checks that requested an issue be created
-    issues_to_be_created = ident_content_checks.select {|c| c["issue"] }
+    # process interesting fingeprints and content checks that requested an issue be created
+    issues_to_be_created = ident_content_checks.concat(ident_fingerprints).select {|c| c["issue"] }
     _log "Issues to be created: #{issues_to_be_created}"
     if issues_to_be_created.count > 0
       issues_to_be_created.each do |c|
