@@ -9,7 +9,9 @@ module Intrigue
         severity: 1, # default
         category: "application",
         status: "confirmed",
-        description: "Werkzeug is a debugger for Flask Python applications. This panel should not be exposed to non-development enviornments, and can lead to remote compromise. It is known to have been used in high profile breaches.",
+        description:  "Werkzeug is a debugger for Flask Python applications. This panel should not be exposed " + 
+                      "to non-development enviornments, and can lead to remote compromise. It is known to have " + 
+                      "been used in high profile breaches.",
         remediation: "Prevent access to this panel by placing it behind a firewall or otherwise restricting access",
         affected_software: [
           { :vendor => "Pallets Projects", :product => "Werkzeug" }

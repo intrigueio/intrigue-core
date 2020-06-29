@@ -249,36 +249,38 @@ class Uri < Intrigue::Task::BaseTask
     generator_match = response.body.match(/<meta name=\"?generator\"? content=\"?(.*?)\"?\/>/i)
     generator_string = generator_match.captures.first.gsub("\"","") if generator_match
 
-    # set up the details
-    new_details = @entity.details
-    new_details.merge!({
-      "alt_names" => alt_names,
-      "api_endpoint" => api_endpoint,
-      "code" => response.code,
-      "cookies" => response.header['set-cookie'],
-      "favicon_md5" => favicon_md5,
-      "favicon_sha1" => favicon_sha1,
-      "fingerprint" => fingerprint.uniq,
-      "forms" => contains_forms,
-      "generator" => generator_string,
-      "headers" => headers,
-      "hidden_favicon_data" => favicon_data,
-      "hidden_response_data" => response.body,
-      "redirect_chain" => ident_responses.first[:response_urls] || [],
-      "response_data_hash" => response_data_hash,
-      "title" => title,
-      "verbs" => verbs_enabled,
-      "scripts" => script_components,
-      "extended_content" => ident_content_checks.uniq,
-      "extended_ciphers" => accepted_connections,             # new ciphers field
-      "extended_configuration" => ident_content_checks.uniq,  # new content field
-      "extended_full_responses" => ident_responses,           # includes all the redirects etc
-      "extended_favicon_data" => favicon_data,
-      "extended_response_body" => response.body,
-    })
+    $db.transaction do
+      # set up the details
+      new_details = @entity.details
+      new_details.merge!({
+        "alt_names" => alt_names,
+        "api_endpoint" => api_endpoint,
+        "code" => response.code,
+        "cookies" => response.header['set-cookie'],
+        "favicon_md5" => favicon_md5,
+        "favicon_sha1" => favicon_sha1,
+        "fingerprint" => fingerprint.uniq,
+        "forms" => contains_forms,
+        "generator" => generator_string,
+        "headers" => headers,
+        "hidden_favicon_data" => favicon_data,
+        "hidden_response_data" => response.body,
+        "redirect_chain" => ident_responses.first[:response_urls] || [],
+        "response_data_hash" => response_data_hash,
+        "title" => title,
+        "verbs" => verbs_enabled,
+        "scripts" => script_components,
+        "extended_content" => ident_content_checks.uniq,
+        "extended_ciphers" => accepted_connections,             # new ciphers field
+        "extended_configuration" => ident_content_checks.uniq,  # new content field
+        "extended_full_responses" => ident_responses,           # includes all the redirects etc
+        "extended_favicon_data" => favicon_data,
+        "extended_response_body" => response.body,
+      })
 
-    # Set the details, and make sure raw response data is a hidden (not searchable) detail
-    _set_entity_details new_details
+      # Set the details, and make sure raw response data is a hidden (not searchable) detail
+      _set_entity_details new_details
+    end
       
     new_details = nil
 

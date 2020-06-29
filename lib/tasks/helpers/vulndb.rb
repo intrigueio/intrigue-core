@@ -43,13 +43,10 @@ module Intrigue
   end
 end
 
-
-
 module Intrigue
 module VulnDb
 
   class Cpe
-
     include Intrigue::Task::Web
 
     def initialize(cpe_string)
@@ -180,13 +177,12 @@ module VulnDb
                   if v["impact"]
 
                     cvss_v2 = v["impact"]["baseMetricV2"]["cvssV2"]
-                    cvss_v3 = v["impact"]["baseMetricV3"]["cvssV3"]
-
                     cvss_v2_score = v["impact"]["baseMetricV2"]["cvssV2"]["baseScore"]
                     cvss_v2_vector = v["impact"]["baseMetricV2"]["cvssV2"]["vectorString"]
 
                     # v3 only goes back to 2016
                     if v["impact"]["baseMetricV3"]
+                      cvss_v3 = v["impact"]["baseMetricV3"]["cvssV3"]
                       cvss_v3_score = v["impact"]["baseMetricV3"]["cvssV3"]["baseScore"]
                       cvss_v3_vector = v["impact"]["baseMetricV3"]["cvssV3"]["vectorString"]
                     end

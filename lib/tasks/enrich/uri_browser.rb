@@ -84,8 +84,11 @@ class UriBrowser < BaseTask
       _log "Skipping webservice browser responses"
     end
 
+
     # now merge them together and set as the new details
-    _set_entity_details(_get_entity_details.merge(browser_data_hash))
+    $db.transaction do
+      _set_entity_details(_get_entity_details.merge(browser_data_hash))
+    end
 
   end
 

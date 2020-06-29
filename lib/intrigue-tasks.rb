@@ -40,6 +40,7 @@ begin  # try to load runtime deps
   require 'neutrino_api'
   require 'nmap/xml'
   require 'nokogiri'
+  require 'open3'
   require 'open-uri'
   require 'opencorporates'
   require 'openssl'
