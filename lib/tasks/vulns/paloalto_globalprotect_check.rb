@@ -1,6 +1,6 @@
 module Intrigue
 module Task
-class  GlobalprotectCheck < BaseTask
+class  PaloAltoGlobalprotectCheck < BaseTask
 
   def self.metadata
     {

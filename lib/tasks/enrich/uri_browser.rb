@@ -86,9 +86,7 @@ class UriBrowser < BaseTask
 
 
     # now merge them together and set as the new details
-    $db.transaction do
-      _set_entity_details(_get_entity_details.merge(browser_data_hash))
-    end
+    _get_and_set_entity_details browser_data_hash
 
   end
 

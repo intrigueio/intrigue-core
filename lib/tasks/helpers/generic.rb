@@ -153,8 +153,9 @@ module Generic
     @entity.get_details
   end
 
-  def _set_entity_details(hash)
-    @entity.set_details hash
+  # Deprecated, use... 
+  def _get_and_set_entity_details(hash)
+    @entity.get_and_set_details hash
   end
 
   def _get_entity_name

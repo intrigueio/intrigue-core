@@ -192,6 +192,7 @@ module Model
     def set_detail(key, value)
       begin
         $db.transaction do 
+          refresh
           self.set(:details => details.merge({key => value}.sanitize_unicode))
           save
         end
@@ -206,11 +207,21 @@ module Model
       details
     end
 
-    def set_details(hash)
+    def get_and_set_details(new_details={})
+      $db.transaction do
+        refresh
+        self.set(:details => details.merge(new_details.sanitize_unicode))
+        save_changes
+      end
+
+    end
+
+    def set_details(new_details)
       begin
         $db.transaction do
-          self.set(:details => hash.sanitize_unicode)
-          save
+          refresh
+          self.set(:details => new_details.sanitize_unicode)
+          save_changes
         end
       rescue Sequel::NoExistingObject => e
         puts "Error saving details for #{self}: #{e}, deleted?"

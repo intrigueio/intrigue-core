@@ -105,13 +105,24 @@ class Uri < Intrigue::Task::BaseTask
     api_endpoint = check_api_enabled(response, fingerprint)
     
     # process interesting fingeprints and content checks that requested an issue be created
-    issues_to_be_created = ident_content_checks.concat(ident_fingerprints).select {|c| c["issue"] }
+    issues_to_be_created = ident_content_checks.concat(ident_fingerprints).collect{|x| x["issues"] }.flatten.compact.uniq
     _log "Issues to be created: #{issues_to_be_created}"
     if issues_to_be_created.count > 0
       issues_to_be_created.each do |c|
         _create_linked_issue c["issue"], c
       end
     end
+
+    # process interesting fingeprints and content checks that requested an issue be created
+    tasks_to_be_run = ident_content_checks.concat(ident_fingerprints).collect{|x| x["tasks"] }.flatten.compact.uniq
+    _log "Tasks to be Run: #{tasks_to_be_run}"
+    if tasks_to_be_run.count > 0
+      tasks_to_be_run.each do |t|
+        _log "Queuing task of name: #{t}"
+        start_task("task", @project, nil, t, @entity, 1)
+      end
+    end
+
 
     # if we ever match something we know the user won't
     # need to see (aka the fingerprint's :hide parameter is true), go ahead
@@ -249,41 +260,36 @@ class Uri < Intrigue::Task::BaseTask
     generator_match = response.body.match(/<meta name=\"?generator\"? content=\"?(.*?)\"?\/>/i)
     generator_string = generator_match.captures.first.gsub("\"","") if generator_match
 
-    $db.transaction do
-      # set up the details
-      new_details = @entity.details
-      new_details.merge!({
-        "alt_names" => alt_names,
-        "api_endpoint" => api_endpoint,
-        "code" => response.code,
-        "cookies" => response.header['set-cookie'],
-        "favicon_md5" => favicon_md5,
-        "favicon_sha1" => favicon_sha1,
-        "fingerprint" => fingerprint.uniq,
-        "forms" => contains_forms,
-        "generator" => generator_string,
-        "headers" => headers,
-        "hidden_favicon_data" => favicon_data,
-        "hidden_response_data" => response.body,
-        "redirect_chain" => ident_responses.first[:response_urls] || [],
-        "response_data_hash" => response_data_hash,
-        "title" => title,
-        "verbs" => verbs_enabled,
-        "scripts" => script_components,
-        "extended_content" => ident_content_checks.uniq,
-        "extended_ciphers" => accepted_connections,             # new ciphers field
-        "extended_configuration" => ident_content_checks.uniq,  # new content field
-        "extended_full_responses" => ident_responses,           # includes all the redirects etc
-        "extended_favicon_data" => favicon_data,
-        "extended_response_body" => response.body,
-      })
+    # set up the new details
+    new_details = {
+      "alt_names" => alt_names,
+      "api_endpoint" => api_endpoint,
+      "code" => response.code,
+      "cookies" => response.header['set-cookie'],
+      "favicon_md5" => favicon_md5,
+      "favicon_sha1" => favicon_sha1,
+      "fingerprint" => fingerprint.uniq,
+      "forms" => contains_forms,
+      "generator" => generator_string,
+      "headers" => headers,
+      "hidden_favicon_data" => favicon_data,
+      "hidden_response_data" => response.body,
+      "redirect_chain" => ident_responses.first[:response_urls] || [],
+      "response_data_hash" => response_data_hash,
+      "title" => title,
+      "verbs" => verbs_enabled,
+      "scripts" => script_components,
+      "extended_content" => ident_content_checks.uniq,
+      "extended_ciphers" => accepted_connections,             # new ciphers field
+      "extended_configuration" => ident_content_checks.uniq,  # new content field
+      "extended_full_responses" => ident_responses,           # includes all the redirects etc
+      "extended_favicon_data" => favicon_data,
+      "extended_response_body" => response.body,
+    }
 
-      # Set the details, and make sure raw response data is a hidden (not searchable) detail
-      _set_entity_details new_details
-    end
+    # Set the details, and make sure raw response data is a hidden (not searchable) detail
+    _get_and_set_entity_details new_details
       
-    new_details = nil
-
     ###
     ### Alias Grouping
     ###

@@ -36,8 +36,7 @@ module Intrigue
       browser_data_hash = capture_screenshot_and_requests(uri)
       
       # now merge them together and set as the new details
-      _set_entity_details(_get_entity_details.merge(browser_data_hash))
-  
+      _get_and_set_entity_details browser_data_hash  
     end
   
   end
