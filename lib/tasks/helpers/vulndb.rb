@@ -50,10 +50,10 @@ module VulnDb
     include Intrigue::Task::Web
 
     def initialize(cpe_string)
-      #puts "Creating CPE with CPE: #{cpe_string}"
+      
       @cpe = cpe_string
+      
       x = _parse_cpe(@cpe)
-
       return nil unless x
 
       @vendor = x[:vendor]
@@ -69,19 +69,13 @@ module VulnDb
       #puts "https://intrigue.io/api/vulndb/match/#{@vendor}/#{@product}/#{@version}"
 
       begin
-        vendor_string = URI.escape(@vendor)
-        product_string = URI.escape(@product)
-        version_string = @version ? URI.escape(@version) : ""
-        update_string = @update ? URI.escape(@update) : ""
 
-        # not enough information otherwise
-        return [] unless vendor_string && product_string && version_string
-
-        uri = "https://app.intrigue.io/api/vulndb/match/#{vendor_string}/#{product_string}"
-        uri << "/#{version_string}" if version_string
-        uri << "/#{update_string}" if update_string
+        
+        uri = "https://app.intrigue.io/api/vulndb/match_cpe/#{@cpe}"
         uri << "?key=#{api_key}"
 
+        puts "Requesting Vulns for CPE: #{@cpe}"
+        
         response = http_request :get, uri
 
         # if the API is down, we'll get a nil response, so handle that case gracefully

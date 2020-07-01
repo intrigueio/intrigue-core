@@ -41,11 +41,19 @@ module Intrigue
   
         # Create forward dns entries
         if json["Results"]
+          
+          # get the hostnames so we can uniq
+          hostnames = []
           json["Results"].each do |entry|
             # format: "54.201.204.183,,blog.erbbysam.com"
-            hostname = entry.split(",").last
+            hostnames << entry.split(",").last
+          end
+
+          # create the hostnames
+          hostnames.uniq.each do |hostname|
             create_dns_entity_from_string(hostname)
           end
+
         end
   
       rescue JSON::ParserError => e

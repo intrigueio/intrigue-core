@@ -4,8 +4,8 @@ class  GlobalprotectCheck < BaseTask
 
   def self.metadata
     {
-      :name => "vuln/globalprotect_check",
-      :pretty_name => "Vuln Check - GlobalProtect RCE",
+      :name => "vuln/paloalto_globalprotect_check",
+      :pretty_name => "Vuln Check - PaloAlto GlobalProtect RCE",
       :authors => ["jcran","orange_8361","mehqq_"],
       :identifiers => [{ "cve" =>  "CVE-2019-1579" }],
       :description => "This task checks for the Palo Alto Globalprotect vulnerability announced by Orange Tsai prior to Black Hat 2019.",

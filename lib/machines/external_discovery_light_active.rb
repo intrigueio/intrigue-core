@@ -218,7 +218,7 @@ module Machine
 
           if entity.get_detail("fingerprint").any?{|v| v['product'] =~ /GlobalProtect/ }
             puts "Checking GlobalProtect specifics on #{entity.name}!"
-            start_recursive_task(task_result,"vuln/globalprotect_check",entity, [])
+            start_recursive_task(task_result,"vuln/paloalto_globalprotect_check",entity, [])
           end
 
           # Hold on this for now, memory leak?
