@@ -119,7 +119,7 @@ module Data
     udp_ports << "2049,"    # nfs 
     udp_ports << "17185"    # vxworks https://blog.rapid7.com/2010/08/02/new-vxworks-vulnerabilities/
 
-  udp_ports
+  udp_ports.split(",")
   end
 
   def fingerprintable_udp_ports
