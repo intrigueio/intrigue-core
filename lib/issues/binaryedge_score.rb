@@ -9,7 +9,6 @@ class BinaryEdgeScore< BaseIssue
       status: "confirmed",
       category: "risk_score"
     }.merge!(instance_details)
-
   to_return
   end
 

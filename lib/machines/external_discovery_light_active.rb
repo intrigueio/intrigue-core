@@ -76,8 +76,6 @@ module Machine
         # quick subdomain bruteforce
         #start_recursive_task(task_result,"dns_brute_sub",entity,[
         #  {"name" => "brute_alphanumeric_size", "value" => 1 }], true)
-
-        start_recursive_task(task_result,"saas_google_groups_check",entity,[])
         
         #start_recursive_task(task_result,"saas_trello_check",entity,[])
         start_recursive_task(task_result,"saas_jira_check",entity,[])
@@ -101,10 +99,8 @@ module Machine
        #   {"name" => "use_creds", "value" => true},
        #   {"name" => "additional_buckets", "value" => generated_names.join(",")}])
         
-        if project.get_option("authorized")
-          task_result.log_good "Project authorized, so searching hunter.io!"
-          start_recursive_task(task_result,"search_hunter_io",entity,[])
-        end
+       start_recursive_task(task_result,"vuln/saas_google_groups_check",entity,[])
+       start_recursive_task(task_result,"vuln/saas_google_calendar_check",entity,[])
 
       elsif entity.type_string == "DnsRecord"
 
@@ -115,7 +111,7 @@ module Machine
         start_recursive_task(task_result,"search_have_i_been_pwned",entity,[
           {"name" => "only_sensitive", "value" => true }])
   
-        start_recursive_task(task_result,"saas_google_calendar_check",entity,[])
+        start_recursive_task(task_result,"vuln/saas_google_calendar_check",entity,[])
 
       elsif entity.type_string == "GithubAccount"
 
@@ -229,11 +225,6 @@ module Machine
 
         ## Grab the SSL Certificate
         start_recursive_task(task_result,"uri_gather_ssl_certificate",entity, []) if entity.name =~ /^https/
-
-        # Check for exploitable URIs, but don't recurse on things we've already found
-        #unless (entity.created_by?("uri_brute_focused_content") || entity.created_by?("uri_spider") )
-        start_recursive_task(task_result,"uri_brute_focused_content", entity)
-        #end
         
         if entity.name =~ (ipv4_regex || ipv6_regex)
           puts "Cowardly refusing to check for subdomain hijack, #{entity.name} looks like an access-by-ip uri"

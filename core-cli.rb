@@ -21,9 +21,8 @@ class CoreCli < Thor
     password = $config["credentials"]["endpoint"] || "127.0.0.1:7777"
     scheme = $config["http_security"] ? "https" : "http"
 
-
     @server_uri = ENV.fetch("INTRIGUE_API_URI", "#{scheme}://#{username}:#{password}@")
-    @delim = "#"
+    @delim = ","
     @debug = true
 
     # Connect to Intrigue API
@@ -178,7 +177,7 @@ class CoreCli < Thor
 
     # Load in the main core file for direct access to TaskFactory and the Tasks
     # This makes this super speedy.
-    extend Intrigue::Task::Helper
+    #extend Intrigue::Task::Helper
 
     File.open(filename,"r").each_line do  |line|
       line.chomp!
@@ -221,15 +220,15 @@ class CoreCli < Thor
     lines.each do |line|
       line.chomp!
 
-      if project_name == "-"
-        p = Intrigue::Core::Model::Project.find_or_create(:name => entity["project_name"])
-      else
-        p = Intrigue::Core::Model::Project.find_or_create(:name => project_name)
-      end
-
       # prep the entity
       parsed_entity = _parse_entity line
       next unless parsed_entity
+
+      if project_name == "-"
+        p = Intrigue::Core::Model::Project.find_or_create(:name => parsed_entity["project_name"])
+      else
+        p = Intrigue::Core::Model::Project.find_or_create(:name => project_name)
+      end
 
       parsed_entity["details"].merge!({
         "hidden_original": parsed_entity["name"],

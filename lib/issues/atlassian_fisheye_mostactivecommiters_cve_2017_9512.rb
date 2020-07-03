@@ -10,7 +10,7 @@ class AtlassianFisheyeMostactivecommitersVuln < BaseIssue
         { type: "CVE", name: "CVE-2017-9512" }
       ],
       severity: 1,
-      category: "network",
+      category: "application",
       status: "confirmed",
       description: "Vulnerable to Atlassian Fisheye mostactivecommiters.do Information Disclosure",
       remediation: "Upgrade your Fisheye and Crucible installations to version 4.4.3 or 4.5.1 or higher.",
@@ -18,7 +18,8 @@ class AtlassianFisheyeMostactivecommitersVuln < BaseIssue
         { :vendor => "Atlassian", :product => "Fisheye", :version_from => "0", :version_to => "4.4.1" } ],
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
         { type: "description", uri: "https://confluence.atlassian.com/crucible/fisheye-and-crucible-security-advisory-2017-11-29-939939750.html" }
-      ]
+      ], 
+      check: "vuln/atlassian_fisheye_mostactivecommiters_disclosure"
     }.merge!(instance_details)
   end
 

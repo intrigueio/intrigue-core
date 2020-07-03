@@ -11,7 +11,6 @@ module Intrigue
         status: "confirmed",
         description: "A cookie was found, missing the 'secure' attribute",
         remediation: "Add the 'secure' attribute to ensure the cookie is only every sent via TLS.",
-        affected_software: [ ],
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel
           { type: "description", uri: "https://owasp.org/www-community/controls/SecureFlag" },
           { type: "remediation", uri: "https://owasp.org/www-community/controls/SecureFlag" }

@@ -13,9 +13,13 @@ class RailsInformationDisclosure < BaseIssue
        " to gather internal files from the affected system, up to and including the" +
        " /etc/shadow file, depending on permissions. The 'render' command must be" +
        " used to render a file from disk in order to be vulnerable",
+      affected_software: [ 
+        { :vendor => "Ruby", :product => "Rails" }
+      ],
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
         { type: "description", uri: "https://github.com/mpgn/Rails-doubletap-RCE" }
-      ]
+      ], 
+      check: "vuln/rails_file_exposure"
     }.merge!(instance_details)
   end
 

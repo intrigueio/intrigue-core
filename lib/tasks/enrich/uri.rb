@@ -365,13 +365,30 @@ class Uri < Intrigue::Task::BaseTask
     end
 
     ###
-    ### Finally, cloud provider determination
+    ### Do the cloud provider determination
     ###
 
     # Now that we have our core details, check cloud statusi
     cloud_providers = determine_cloud_status(@entity)
-    _set_entity_detail "cloud_providers", cloud_providers.uniq.sort
-    _set_entity_detail "cloud_hosted",  !cloud_providers.empty?
+    _set_entity_detail("cloud_providers", cloud_providers.uniq.sort)
+    _set_entity_detail("cloud_hosted",  !cloud_providers.empty?)
+
+    ###
+    ### Finally, start checks based on FP
+    ###
+    all_checks = []
+    fingerprint.each do |f|
+      # kick off all vuln checks for this product 
+      vendor_string = f["vendor"]
+      product_string = f["product"]
+      _log "Getting checks for #{vendor_string} #{product_string}"
+      checks_to_be_run = Intrigue::Issue::IssueFactory.checks_for_vendor_product(vendor_string, product_string)
+      all_checks << checks_to_be_run
+      checks_to_be_run.each do |t|
+        start_task("task_autoscheduled", @project, nil, t, @entity, 1)
+      end
+    end
+    _set_entity_detail("additional_checks", all_checks.flatten.compact.uniq)
 
   end
 
