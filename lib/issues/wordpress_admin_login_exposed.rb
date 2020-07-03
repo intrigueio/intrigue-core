@@ -11,12 +11,11 @@ module Intrigue
         status: "confirmed",
         description: "This Wordpress site is exposing its admin login.",
         remediation: ".",
-        affected_software: [ 
-          { :vendor => "Wordpress", :product => "Wordpress" }
-          ],
+        affected_software: [{ :vendor => "Wordpress", :product => "Wordpress" }],
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel
           { type: "remediation", uri: "https://pagely.com/blog/hiding-wordpress-login-page/" }
-        ]
+        ], 
+        check: "uri_brute_focused_content"
       }.merge!(instance_details)
     end
   

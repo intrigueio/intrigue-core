@@ -17,7 +17,6 @@ module Intrigue
           check: instance_details["check"]
         }
       }.merge!(instance_details)
-  
     to_return
     end
   

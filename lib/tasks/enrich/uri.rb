@@ -113,17 +113,6 @@ class Uri < Intrigue::Task::BaseTask
       end
     end
 
-    # process interesting fingeprints and content checks that requested an issue be created
-    tasks_to_be_run = ident_content_checks.concat(ident_fingerprints).collect{|x| x["tasks"] }.flatten.compact.uniq
-    _log "Tasks to be Run: #{tasks_to_be_run}"
-    if tasks_to_be_run.count > 0
-      tasks_to_be_run.each do |t|
-        _log "Queuing task of name: #{t}"
-        start_task("task", @project, nil, t, @entity, 1)
-      end
-    end
-
-
     # if we ever match something we know the user won't
     # need to see (aka the fingerprint's :hide parameter is true), go ahead
     # and hide the entity... meaning no recursion and it shouldn't show up in
@@ -347,13 +336,33 @@ class Uri < Intrigue::Task::BaseTask
     end
 
     ###
-    ### Finally, cloud provider determination
+    ### Do the cloud provider determination
     ###
 
     # Now that we have our core details, check cloud statusi
     cloud_providers = determine_cloud_status(@entity)
-    _set_entity_detail "cloud_providers", cloud_providers.uniq.sort
-    _set_entity_detail "cloud_hosted",  !cloud_providers.empty?
+    _set_entity_detail("cloud_providers", cloud_providers.uniq.sort)
+    _set_entity_detail("cloud_hosted",  !cloud_providers.empty?)
+
+    ###
+    ### Finally, start checks based on FP
+    ###
+    all_checks = []
+    fingerprint.each do |f|
+      vendor_string = f["vendor"]
+      product_string = f["product"]
+      _log "Getting checks for #{vendor_string} #{product_string}"
+      checks_to_be_run = Intrigue::Issue::IssueFactory.checks_for_vendor_product(vendor_string, product_string)
+      all_checks << checks_to_be_run
+    end
+    
+    # kick off all vuln checks for this product 
+    all_checks.flatten.compact.uniq.each do |t|
+      start_task("task_autoscheduled", @project, nil, t, @entity, 1)
+    end
+
+    # and save'm off
+    _set_entity_detail("additional_checks", all_checks.flatten.compact.uniq)
 
   end
 

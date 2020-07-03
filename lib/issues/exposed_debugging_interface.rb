@@ -11,9 +11,9 @@ class ExposedDebuggingInterface < BaseIssue
       category: "application",
       description: "A development debugging interface was found exposed, allowing untrusted and authenticated users to perform authenticated actions.",
       remediation: "Disable the interface.",
-      affected: [ ],
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
-      ]
+      ],
+      # task: handled in ident
     }.merge!(instance_details)
   end
 

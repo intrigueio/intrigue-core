@@ -11,9 +11,9 @@ class ExposedAdminPanelUnauthenticated < BaseIssue
       status: "confirmed",
       description: "An admin panel was discovered. This panel should generally not be exposed to unauthenticated users.",
       remediation: "Prevent access to this panel by placing it behind a firewall or otherwise restricting access.",
-      affected_software: [],
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
-      ]
+      ],
+      # task: handled in ident
     }.merge!(instance_details)
   end
 

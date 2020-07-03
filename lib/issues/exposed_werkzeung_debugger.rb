@@ -18,7 +18,8 @@ module Intrigue
         ],
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel
           { :type => "threat_intel", :uri => "https://labs.detectify.com/2015/10/02/how-patreon-got-hacked-publicly-exposed-werkzeug-debugger/" } 
-        ]
+        ],
+        # task: handled in ident
       }.merge!(instance_details)
     end
   

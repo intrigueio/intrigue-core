@@ -11,9 +11,7 @@ class OpenRdpPort < BaseIssue
       category: "application",
       description: "A system exposing RDP to the Internet was identified.",
       remediation: "Verify that this port should be exposed to the Internet.",
-      references: [
-        { type: "description", uri: ""}
-      ]
+      references: []
     }.merge!(instance_details)
 
   to_return

@@ -12,12 +12,13 @@ module Intrigue
         description: "This site is leaking sensitve infomration via a exposed path.",
         remediation: "Investigate the endpoint and place it behind authenication if it should not be exposed.",
         affected_software: [ 
-          { :vendor => "Wordpress", :product => "Spring Boot" },
-          { :vendor => "Pivotal", :product => "Spring Framework" }
+          { :vendor => "Pivotal Software", :product => "Spring Boot" },
+          { :vendor => "Pivotal Software", :product => "Spring Framework" }
         ],
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel
           { type: "description", uri: "https://howtodoinjava.com/spring-boot/actuator-endpoints-example/" }
-        ]
+        ], 
+        check: "uri_brute_focused_content"
       }.merge!(instance_details)
     end
   

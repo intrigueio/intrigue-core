@@ -9,13 +9,12 @@ module Intrigue
         severity: 4,
         category: "application",
         status: "confirmed",
-        description: "A misconfigured Jenkins serer was identified.",
+        description: "A misconfigured Jenkins server was identified.",
         remediation: "Investigate the configuration and adjust it to ensure this path is not unexpectedly exposed.",
-        affected_software: [ 
-          { :vendor => "Jenkins", :product => "Jenkins" }
-          ],
+        affected_software: [ { :vendor => "Jenkins", :product => "Jenkins" } ],
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel
-        ]
+        ],
+        task: "uri_brute_focused_content"
       }.merge!(instance_details)
     end
   

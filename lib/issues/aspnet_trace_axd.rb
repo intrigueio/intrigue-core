@@ -17,7 +17,8 @@ module Intrigue
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel
           { type: "description", uri: "https://hackerone.com/reports/519418" },
           { type: "remediation", uri: "https://www.netsparker.com/web-vulnerability-scanner/vulnerabilities/traceaxd-detected/" }
-        ]
+        ], 
+        check: "uri_brute_focused_content"
       }.merge!(instance_details)
     end
   

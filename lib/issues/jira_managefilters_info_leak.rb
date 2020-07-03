@@ -19,7 +19,8 @@ module Intrigue
           { type: "description", uri: "https://medium.flatstack.com/misconfig-in-jira-for-accessing-internal-information-of-any-company-2f54827a1cc5" },
           { type: "remeediation", uri: "https://medium.flatstack.com/misconfig-in-jira-for-accessing-internal-information-of-any-company-2f54827a1cc5" },
           { type: "remediation", uri: "https://confluence.atlassian.com/adminjiraserver/managing-shared-filters-938847876.html" }
-        ]
+        ], 
+        check: "uri_brute_focused_content"
       }.merge(instance_details)
       
     to_return

@@ -11,7 +11,6 @@ module Intrigue
         status: "confirmed",
         description: "When a browser requested the page, an external resource was requested over HTTP. This resource could be intercepted by a malicious user and they may be able to take control of the information on the page.",
         remediation: "Investigate the page and ensure all resources are loaded over HTTPS.",
-        affected_software: [],
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel
           { type: "description", uri: "https://developers.google.com/web/fundamentals/security/prevent-mixed-content/what-is-mixed-content" }
         ]

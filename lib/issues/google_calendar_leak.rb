@@ -11,10 +11,10 @@ class GoogleCalendarLeak < BaseIssue
       category: "application",
       description: "This Google Calendar is set to public. This setting can cause sensitive data leakage.",
       remediation: "Review your event privacy settings to ensure this calendar should be public with specific people",
-      affected: [],
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
         { type: "remediation", uri: "https://support.google.com/calendar/answer/34580?co=GENIE.Platform%3DDesktop&hl=en" },
-      ]
+      ], 
+      task: "vuln/saas_google_calendar_check"
     }.merge!(instance_details)
 
   to_return

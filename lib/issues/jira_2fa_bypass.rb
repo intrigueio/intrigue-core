@@ -17,7 +17,8 @@ class Jira2faBypass < BaseIssue
       ],
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
         { type: "description", uri: "https://community.atlassian.com/t5/Jira-questions/How-to-skip-SSO-for-API/qaq-p/697711" }
-      ]
+      ], 
+      check: "uri_brute_focused_content"
     }.merge(instance_details)
     
   to_return

@@ -15,10 +15,10 @@ module Intrigue
         description: "When using the Apache JServ Protocol (AJP), care must be taken when trusting incoming connections to Apache Tomcat. Tomcat treats AJP connections as having higher trust than, for example, a similar HTTP connection. If such connections are available to an attacker, they can be exploited in ways that may be surprising. In Apache Tomcat 9.0.0.M1 to 9.0.0.30, 8.5.0 to 8.5.50 and 7.0.0 to 7.0.99, Tomcat shipped with an AJP Connector enabled by default that listened on all configured IP addresses. It was expected (and recommended in the security guide) that this Connector would be disabled if not required.",
         remediation: "Disable port 8009 and update the tomcat software.",
         affected_software: [
-          { :vendor => "Tomcat", :product => "Tomcat", :version => "6" },
-          { :vendor => "Tomcat", :product => "Tomcat", :version => "7" },
-          { :vendor => "Tomcat", :product => "Tomcat", :version => "8" },
-          { :vendor => "Tomcat", :product => "Tomcat", :version => "9" }
+          { :vendor => "Apache", :product => "Tomcat", :version => "6" },
+          { :vendor => "Apache", :product => "Tomcat", :version => "7" },
+          { :vendor => "Apache", :product => "Tomcat", :version => "8" },
+          { :vendor => "Apache", :product => "Tomcat", :version => "9" }
         ],
         references: [ # description, remediation, detection rule, exploit, threat intel
           { type: "description", uri: "https://www.chaitin.cn/en/ghostcat" },
