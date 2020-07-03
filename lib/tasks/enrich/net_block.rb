@@ -36,7 +36,7 @@ class NetBlock < Intrigue::Task::BaseTask
       out = out.merge({"name" => netblock_string, "_hidden_name" => netblock_string})
       # lazy but easier than setting invidually
       _log "Setting entity details to... #{out}"
-      _set_entity_details out
+      _get_and_set_entity_details out
     end
 
 

@@ -64,6 +64,7 @@ class UriCheckApiEndpoint < BaseTask
       
       # Go ahead and get the response for this paritcular endpoint
       response = http_request :get, u
+      return unless response
 
       # check for content type of application.. note that this will flag
       # application/javascript, which is probably not wanted
