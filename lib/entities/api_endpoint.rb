@@ -35,7 +35,6 @@ module Intrigue
     out
     end
   
-  
     ###
     ### SCOPING
     ###
@@ -48,7 +47,7 @@ module Intrigue
     end
   
     def enrichment_tasks
-      []
+      ["enrich/api_endpoint"]
     end
   
   end
