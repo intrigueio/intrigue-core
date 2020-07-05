@@ -68,7 +68,7 @@ class UriCheckApiEndpoint < BaseTask
       return unless response
 
       # skip if we're not the original url, but we're getting the same response
-      next if u != url && body == standard_response.body
+      next if u != url && response.body == standard_response.body
 
       # check for content type of application.. note that this will flag
       # application/javascript, which is probably not wanted

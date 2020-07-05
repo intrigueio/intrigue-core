@@ -107,10 +107,8 @@ class Uri < Intrigue::Task::BaseTask
     # process interesting fingeprints and content checks that requested an issue be created
     issues_to_be_created = ident_content_checks.concat(ident_fingerprints).collect{|x| x["issues"] }.flatten.compact.uniq
     _log "Issues to be created: #{issues_to_be_created}"
-    if issues_to_be_created.count > 0
-      issues_to_be_created.each do |c|
-        _create_linked_issue c["issue"], c
-      end
+    (issues_to_be_created || []).each do |c|
+      _create_linked_issue c
     end
 
     # if we ever match something we know the user won't
