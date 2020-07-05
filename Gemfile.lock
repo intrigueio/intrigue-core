@@ -33,7 +33,7 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: c6d8e8c27800c2d55d6d1eb76b15a0844c2bff19
+  revision: d4c42d0360dc3afa1a431e576e62fe9e5161a0c4
   branch: main
   specs:
     intrigue-ident (1.0.4)
