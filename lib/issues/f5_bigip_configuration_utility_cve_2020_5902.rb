@@ -5,7 +5,7 @@ module Intrigue
     def self.generate(instance_details={})
       {
         name: "f5_bigip_configuration_utility_cve_2020_5902",
-        pretty_name: "F5 BIG-IP Config Utility RCE (CVE-2929-5902)",
+        pretty_name: "F5 BIG-IP Config Utility RCE (CVE-2020-5902)",
         identifiers: [
           { type: "CVE", name: "CVE-2020-5902" }
         ],
