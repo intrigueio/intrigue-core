@@ -6,7 +6,7 @@ module Intrigue
       {
         name: "exposed_bigip_configuration_utility",
         pretty_name: "Exposed BIG-IP Configuration Utility",
-        severity: 4, # default
+        severity: 3, 
         category: "network",
         status: "confirmed",
         description: "The F5 BigIP configutation utility was discovered. This should never be exposed to the data networks, and should be checked for CVE-2020-5902",
