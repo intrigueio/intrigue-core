@@ -11,9 +11,9 @@ module Intrigue
         status: "confirmed",
         description: "The F5 BigIP configutation utility was discovered. This should never be exposed to the data networks, and should be checked for CVE-2020-5902",
         remediation: "Prevent access to this panel by placing it behind a firewall or otherwise restricting access.",
-        [
-          { :vendor => "F5", :product => "Big-IP Configuration Utility" },
-        ],
+        #affected_software: [
+        #  { :vendor => "F5", :product => "Big-IP Configuration Utility" },
+        #],
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel
           {:type => "threat_intel", :uri => "https://twitter.com/n0x08/status/1278812795031523328"}
         ],
