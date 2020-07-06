@@ -34,6 +34,7 @@ class AtlassianJiraOauthPluginSsrf < BaseTask
     if html =~ /<title>What Is My IP/ 
       _create_linked_issue("atlassian_jira_oauth_plugin_ssrf")
     end
+    
   end
 
 end

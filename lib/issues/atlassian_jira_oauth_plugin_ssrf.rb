@@ -22,7 +22,7 @@ module Intrigue
           { type: "description", uri: "https://twitter.com/Zer0Security/status/983529439433777152" },
           { type: "description", uri: "https://medium.com/bugbountywriteup/piercing-the-veil-server-side-request-forgery-to-niprnet-access-c358fd5e249a" }
         ],
-        check: "vuln/atlassian_jira_oauth_plugin_ssrf"
+        check: "vuln/atlassian_jira_oath_plugin_ssrf"
       }.merge!(instance_details)
     end
   
