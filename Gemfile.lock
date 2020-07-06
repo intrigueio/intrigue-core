@@ -33,7 +33,7 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: fc86fc1b42221886cca15c8b740f07f1224f5d12
+  revision: fa69ef4e5a697b964d2edbc764253f51648f4628
   branch: main
   specs:
     intrigue-ident (1.0.4)
@@ -295,7 +295,7 @@ GEM
       http-2 (~> 0.10.1)
     netrc (0.11.0)
     nio4r (2.5.2)
-    nokogiri (1.10.9)
+    nokogiri (1.10.10)
       mini_portile2 (~> 2.4.0)
     open3 (0.1.0)
     os (1.1.0)

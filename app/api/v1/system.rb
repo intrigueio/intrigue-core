@@ -8,7 +8,6 @@ class CoreApp < Sinatra::Base
   # Export All Entity Types
   get "/api/v1/entities" do
     content_type 'application/json'
-    add_standard_cors_headers
     
     entity_metadata = Intrigue::EntityFactory.entity_types.map{ |e| e.metadata }.sort_by{|m| m[:name] }
   wrapped_api_response(nil, entity_metadata)
@@ -17,7 +16,6 @@ class CoreApp < Sinatra::Base
   # Export All Task Metadata
   get "/api/v1/tasks" do
     content_type 'application/json'
-    add_standard_cors_headers
 
     tasks_metadata = Intrigue::TaskFactory.list.map{ |t| t.metadata }.sort_by{|m| m[:name] }
   wrapped_api_response(nil, tasks_metadata)
@@ -26,7 +24,6 @@ class CoreApp < Sinatra::Base
   # Export All Task Metadata
   get "/api/v1/machines" do
     content_type 'application/json'
-    add_standard_cors_headers
 
     machine_metadata = Intrigue::MachineFactory.list.map{ |t| t.metadata }.sort_by{|m| m[:name] }
   wrapped_api_response(nil, machine_metadata)
@@ -35,7 +32,6 @@ class CoreApp < Sinatra::Base
   # Export a specific Task's metadataa
   get "/api/v1/tasks/:task_name" do
     content_type 'application/json'
-    add_standard_cors_headers
 
     task_name = params[:task_name]
 
@@ -54,7 +50,6 @@ class CoreApp < Sinatra::Base
   # Export All projects
   get "/api/v1/projects" do
     content_type 'application/json'
-    add_standard_cors_headers
 
     projects = Intrigue::Core::Model::Project.order(:created_at).reverse.all
   wrapped_api_response(nil, projects)

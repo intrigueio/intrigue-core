@@ -4,7 +4,6 @@ class CoreApp < Sinatra::Base
   post '/api/v1/project' do
 
     content_type "application/json"
-    add_standard_cors_headers
     
     halt_unless_authenticated(@params["key"])
 
