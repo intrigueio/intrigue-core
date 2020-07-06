@@ -40,7 +40,7 @@ class NetworkService < Intrigue::Task::BaseTask
     ###
     ###
     ###
-    fingerprint_service(ip_address, port) 
+    fingerprint_service(ip_address, port, proto) 
     
     ###
     ### Handle SNMP as a special treat
@@ -65,7 +65,7 @@ class NetworkService < Intrigue::Task::BaseTask
   
   end
 
-  def fingerprint_service(ip_address,port=nil)
+  def fingerprint_service(ip_address,port=nil, proto="TCP")
 
     # Use intrigue-ident code to request the banner and fingerprint
     _log "Grabbing banner and fingerprinting!"
@@ -94,7 +94,6 @@ class NetworkService < Intrigue::Task::BaseTask
 
     _set_entity_detail "banner", ident_banner
     _set_entity_detail "fingerprint", ident_fingerprints
-
   end
 
   def enrich_snmp
