@@ -33,8 +33,10 @@ class TelerikCryptoWeaknessCve20179248 < BaseTask
     our_version = nil
     fp = _get_entity_detail("fingerprint")
     fp.each do |f|
-      next unless f["product"] =~ /Sitefinity/
-      our_version = f["version"]
+      if f["product"] == "Sitefinity" && f["version"]
+        our_version = f["version"]
+        break
+      end
     end
     
     if our_version

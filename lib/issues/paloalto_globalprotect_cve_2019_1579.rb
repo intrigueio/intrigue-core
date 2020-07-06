@@ -1,11 +1,11 @@
 module Intrigue
   module Issue
-  class VulnerableGlobalProtectCve20191579 < BaseIssue
+  class PaloAltoGlobalProtectCve20191579 < BaseIssue
   
     def self.generate(instance_details={})
       {
-        name: "vulnerable_globalprotect_cve_2019_1579",
-        pretty_name: "Vulnerable PaloAlto GlobalProtect (CVE-2019-1579)",
+        name: "paloalto_globalprotect_cve_2019_1579",
+        pretty_name: "PaloAlto GlobalProtect Vulnerability (CVE-2019-1579)",
         identifiers: [
           { type: "CVE", name: "CVE-2019-1579" }
         ],        
@@ -21,7 +21,7 @@ module Intrigue
         affected_software: [
           { :vendor => "PaloAltoNetworks", :product => "GlobalProtect" },
         ],
-        check: "vuln/paloalto_globalprotect_check"
+        check: "vuln/paloalto_globalprotect_check_cve_2019_1579"
       }.merge!(instance_details)
     end
   

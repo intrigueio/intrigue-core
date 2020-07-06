@@ -4,7 +4,7 @@ module Intrigue
   
     def self.metadata
       {
-        :name => "vuln/paloalto_globalprotect_check_cve202020201",
+        :name => "vuln/paloalto_globalprotect_cve_2019_2021",
         :pretty_name => "Vuln Check - PaloAlto GlobalProtect Auth Bypass (CVE-2020-2021)",
         :authors => ["jcran"],
         :identifiers => [{ "cve" =>  "CVE-2020-2021" }],
@@ -25,6 +25,26 @@ module Intrigue
     def run
       super
       
+      ###
+      ### Get the base url, to ensure we're configured for the vuln (no 2fa / client certs enabled)
+      ###
+
+      response = http_request(:get, "#{_get_entity_name}/global-protect/login.esp")
+      rbody = response.body 
+      if !(rbody =~ /SAMLRequest/) # standard response 
+        _log "Not vulnerable - no 2FA detected"
+        return 
+      end
+
+      ###
+      ### otherwise, continue.
+      ###
+
+
+      ###
+      ### Then check version
+      ###
+
       check_url = "#{_get_entity_name}/global-protect/portal/js/ie10-viewport-bug-workaround.js"
       response = http_request(:get, check_url)
   
@@ -37,10 +57,9 @@ module Intrigue
       end
   
       # Get the date to see it's vuln
-      matches = last_modified_header.match(/(Jan 2020|Feb 2020|Mar 2020|Apr 2020|May 2020|2019|2018|2017|2016)/i)
+      matches = last_modified_header.match(/(Jan 2020|Feb 2020|Mar 2020|Apr 2020|May 2020|15 Jun 2020|2019|2018|2017|2016)/i)
   
       # check that it matches our known vuln versions
-      vuln_versions = ["Jan 2018","Feb 2018","Mar 2018","Apr 2018","May 2018","Jun 2018","2017","2016"]
       if matches && matches.captures && matches.captures.first
         date = matches.captures.first.strip
         _log "Checking... #{last_modified_header}, got date: #{date}"
@@ -52,7 +71,7 @@ module Intrigue
       # example: Last-Modified: Wed, 06 Jun 2018 20:52:55 GMT
       if vulnerable
         _log "Potentially Vulnerable! Please check configuration"
-        _create_linked_issue("vulnerable_paloalto_globalprotect_cve_2019_2021", { proof: last_modified_header })
+        _create_linked_issue("paloalto_globalprotect_cve_2019_2021", { proof: last_modified_header })
       else
         _log "Not Vulnerable! Header: #{last_modified_header}"
       end

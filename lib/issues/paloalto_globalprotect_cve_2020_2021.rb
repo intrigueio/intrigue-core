@@ -1,11 +1,11 @@
 module Intrigue
   module Issue
-  class VulnerablePaloAltoGlobalProtectCve20202021 < BaseIssue
+  class PaloAltoGlobalProtectCve20202021 < BaseIssue
   
     def self.generate(instance_details={})
       {
-        name: "vulnerable_paloalto_globalprotect_cve_2019_2021",
-        pretty_name: "Vulnerable PaloAlto GlobalProtect (CVE-2020-2021)",
+        name: "paloalto_globalprotect_cve_2019_2021",
+        pretty_name: "PaloAlto GlobalProtect Vulnerability (CVE-2020-2021)",
         identifiers: [
           { type: "CVE", name: "CVE-2020-2021" }
         ],        
