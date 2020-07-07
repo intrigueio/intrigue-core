@@ -14,6 +14,10 @@ module Task
     def capture_screenshot_and_requests(uri)
       return {} unless Intrigue::Core::System::Config.config["browser_enabled"]
 
+      # First, make sure we can actually connect to it in reasonable time 
+      response = http_request(method, uri, nil, {}, nil, attempts_limit=1, open_timeout=6, read_timeout=6)
+      return {} unless response
+
       begin 
         _log "Browser Navigating to #{uri}"
         c = Intrigue::ChromeBrowser.new
