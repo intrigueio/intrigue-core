@@ -1,5 +1,17 @@
 class CoreApp < Sinatra::Base
 
+
+  # List All projects
+  get "/api/v1/projects" do
+    content_type 'application/json'
+    
+    halt_unless_authenticated(@params["key"])
+
+    projects = Intrigue::Core::Model::Project.order(:created_at).reverse.all
+  wrapped_api_response(nil, projects)
+  end
+
+
   # Create a project!
   post '/api/v1/project' do
 

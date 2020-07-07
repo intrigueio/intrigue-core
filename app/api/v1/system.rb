@@ -29,6 +29,14 @@ class CoreApp < Sinatra::Base
   wrapped_api_response(nil, machine_metadata)
   end
 
+
+  # Export All Task Metadata
+  get "/api/v1/handlers" do
+    content_type 'application/json'
+    handler_metadata = Intrigue::HandlerFactory.list.map{ |t| t.metadata }.sort_by{|m| m[:name] }
+  wrapped_api_response(nil, handler_metadata)
+  end
+
   # Export a specific Task's metadataa
   get "/api/v1/tasks/:task_name" do
     content_type 'application/json'
@@ -46,14 +54,5 @@ class CoreApp < Sinatra::Base
 
     wrapped_api_response(nil, task_metadata)
   end
-
-  # Export All projects
-  get "/api/v1/projects" do
-    content_type 'application/json'
-
-    projects = Intrigue::Core::Model::Project.order(:created_at).reverse.all
-  wrapped_api_response(nil, projects)
-  end
-
 
 end

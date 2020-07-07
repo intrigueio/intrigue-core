@@ -21,7 +21,8 @@ module Intrigue
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel
           {:type => "description", :uri => "https://support.f5.com/csp/article/K52145254" },
           {:type => "description", :uri => "https://threader.app/thread/1279894238793216001" },
-          {:type => "threat_intel", :uri => "https://twitter.com/n0x08/status/1278812795031523328"}
+          {:type => "threat_intel", :uri => "https://twitter.com/n0x08/status/1278812795031523328"}, 
+          {:type => "exploit", :uri => "https://github.com/Critical-Start/Team-Ares/blob/master/CVE-2020-5902/CVE-2020-5902.sh"}
         ],
         check: "vuln/f5_bigip_configuration_utility_cve_2020_5902"
       }.merge!(instance_details)
