@@ -37,11 +37,6 @@ module Intrigue
       end
 
       ###
-      ### otherwise, continue.
-      ###
-
-
-      ###
       ### Then check version
       ###
 
