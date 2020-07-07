@@ -29,13 +29,22 @@ class UriCheckApiEndpoint < BaseTask
     # start with negative
     api_endpoint = nil
 
+    require_enrichment
+
     # get our url
     url = _get_entity_name
 
-    ####
-    # first just check keywords in the url 
-    ####
+    ###
+    # First just check our fingerprint, lots of stuff will already have been 
+    # fingerprinted during our ident run 
+    ###
+    (_get_entity_detail("fingerprint") || []).each do |fp|
+      api_endpoint = tue if fp["tags"] && fp["tags"].include?("API")
+    end
 
+    ####
+    # next just check keywords in the url 
+    ###
     api_endpoint = true if url =~ /api\./
     api_endpoint = true if url =~ /\/api/
     api_endpoint = true if url =~ /\/json/
@@ -59,16 +68,54 @@ class UriCheckApiEndpoint < BaseTask
     # always start empty 
     api_endpoint = nil 
 
-    [ "#{url}", "#{url}/api", "#{url}/graphql" ].each do |u|
+    [ 
+      "#{url}", 
+      "#{url}/api", 
+      "#{url}/api/v1", 
+      "#{url}/api/v2", 
+      "#{url}/api/v3", 
+      "#{url}/docs", 
+      "#{url}/graphql",
+      "#{url}/api-docs",
+      "#{url}/api-docs/swagger.json",
+      "#{url}/api/swagger",
+      "#{url}/api/swagger-ui.html",
+      "#{url}/api/swagger.yml",
+      "#{url}/api/v2/swagger.json",
+      "#{url}/apidocs",
+      "#{url}/apidocs/swagger.json",
+      "#{url}/rest",
+      "#{url}/swagger",
+      "#{url}/swagger/",
+      "#{url}/swagger-resources",
+      "#{url}/swagger-ui",
+      "#{url}/swagger-ui.html",
+      "#{url}/swagger.json",
+      "#{url}/swagger/index.html",
+      "#{url}/swagger/swagger-ui.html",
+      "#{url}/swagger/ui/index",
+      "#{url}/swagger/v1/swagger.json",
+      "#{url}/v1/swagger.json"
+    ].each do |u|
       
       _log "Checking... #{u}"
 
       # Go ahead and get the response for this paritcular endpoint
       response = http_request :get, u
       return unless response
-
       # skip if we're not the original url, but we're getting the same response
       next if u != url && response.body == standard_response.body
+
+      ###
+      ### Check for known strings 
+      ###
+      if response.body =~ /swagger-section/
+        api_endpoint = u
+        break
+      elsif response.body =~ /swaggerhub.com/
+        api_endpoint = u
+        break
+      end
 
       # check for content type of application.. note that this will flag
       # application/javascript, which is probably not wanted
@@ -82,16 +129,20 @@ class UriCheckApiEndpoint < BaseTask
           api_endpoint = u if "#{headers[ct]}" =~ /^application\/x-protobuf/i
           api_endpoint = u if "#{headers[ct]}" =~ /^application\/octet-stream/i
           api_endpoint = u if "#{headers[ct]}" =~ /^text\/csv/i
+          break if api_endpoint
         end
       end
       
+      ###
       # try to parse it (JSON)
+      ###
       begin
         # get request body
         body = response.body
         if body 
           json = JSON.parse(body)
           api_endpoint = u if json
+          break if api_endpoint
         end
       rescue JSON::ParserError      
         _log "No body!"
@@ -103,10 +154,10 @@ class UriCheckApiEndpoint < BaseTask
       ident_fingerprints = ident_matches["fingerprint"] || []
       ident_fingerprints.each do |fp|
         api_endpoint = u if fp["tags"] && fp["tags"].include?("API")
+        break if api_endpoint
       end
 
       # break if it's been set so we dont genereate a bunch of FP's
-      break if api_endpoint
       
     end
 

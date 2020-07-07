@@ -16,6 +16,7 @@ module Generic
       entity_enriched = Intrigue::Core::Model::Entity.first(:id => @entity.id).enriched?
     end
 
+    sleep 1 
     # re-pull
     @entity = Intrigue::Core::Model::Entity.first(:id => @entity.id)
     
