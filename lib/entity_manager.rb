@@ -293,13 +293,17 @@ class EntityManager
     tr.log "FINAL scoping decision for #{entity.name}: #{entity.scoped}"
 
     # ENRICHMENT LAUNCH (this may re-run if an entity has just been scoped in)
-    if tr.auto_enrich && !entity_already_existed && !entity.deny_list
+    if tr.auto_enrich && !entity.deny_list && (!entity_already_existed || project.allow_reenrich)
       # Check if we've alrady run first and return gracefully if so
-      if entity.enriched
-        tr.log "Skipping enrichment... already completed!"
+      if entity.enriched && !project.allow_reenrich
+        tr.log "Skipping enrichment... already completed and re-enrich disabled!"
       else
         # starts a new background task... so anything that needs to happen from
         # this point should happen in that new background task
+        if entity.enriched
+          tr.log "Re-enriching entity!"
+        end
+
         entity.enrich(tr)
       end
     else
