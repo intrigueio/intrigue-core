@@ -38,8 +38,13 @@ class UriBrowser < BaseTask
     ### Browser-based data grab
     ### 
     browser_data_hash = capture_screenshot_and_requests(uri)
+    if browser_data_hash.empty?
+      _log "empty hash, returning w/o setting details"
+      return
+    end
+
     # split out request hosts, and then verify them
-    if !browser_data_hash.empty? && _get_option("create_endpoints")
+    if  _get_option("create_endpoints")
 
       # look for mixed content
       if uri =~ /^https/
