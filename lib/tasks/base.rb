@@ -68,7 +68,7 @@ class BaseTask
 
     # Check to make sure this task can receive an entity of this type
     unless allowed_types.include?(@entity.type_string) || allowed_types.include?("*")
-      _log_error "Unable to call #{self.class.metadata[:name]} on entity: #{@entity}"
+      _log_error "Unable to call #{self.class.metadata[:name]} on entity: #{@entity} of type #{@entity.type_string}. allowed_types: #{allowed_types}"
       broken_input_flag = true
     end
 
