@@ -39,7 +39,7 @@ class UriCheckApiEndpoint < BaseTask
     # fingerprinted during our ident run 
     ###
     (_get_entity_detail("fingerprint") || []).each do |fp|
-      api_endpoint = tue if fp["tags"] && fp["tags"].include?("API")
+      api_endpoint = true if fp["tags"] && fp["tags"].include?("API")
     end
 
     ####
