@@ -46,7 +46,7 @@ class VmwareHorizonInfoLeak < BaseTask
 
     # create an issue
     if broker_data || info_data
-      create_linked_issue( "vmware_horizon_info_leak", {
+      _create_linked_issue( "vmware_horizon_info_leak", {
         leaked_authentication_details: broker_data, 
         leaked_configuration_details: info_data 
       })
