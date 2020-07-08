@@ -31,9 +31,14 @@ module Intrigue
 
       # create the client
       until @chrome 
+        timeout = 20
         begin 
-          _connect_and_enable options
-        # WARN: NoMethodError: undefined method `bytesize' for :eof:Symbol
+          Timeout::timeout(timeout) do
+            _connect_and_enable options
+          end
+        rescue Timeout::Error => e 
+          puts "TIMEOUT killing chrome and trying to connect again"
+          _killitwithfire(chrome_port)
         rescue NoMethodError => e 
           puts "ERROR.... nomethoderror exception: #{e} when attempting to screenshot"
           _killitwithfire(chrome_port)
@@ -147,7 +152,7 @@ module Intrigue
           
       _unsafe_system "pkill -f -9 remote-debugging-port=#{port} && god restart intrigue-chrome-#{chrome_worker_number}"
 
-      sleep 6
+      sleep 10
     end
 
     def _connect_and_enable(options)
