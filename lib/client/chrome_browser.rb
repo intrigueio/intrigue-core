@@ -54,6 +54,8 @@ module Intrigue
 
     def navigate_and_capture(url, timeout=45)
 
+      chrome_port = "#{ENV["CHROME_PORT"]}".to_i || 9222
+
       puts "Chrome navigating and capturing: #{url}"
       out = {}
 
@@ -99,7 +101,6 @@ module Intrigue
           tries = 0
           until encoded_screenshot || (tries > max_retries)
             tries +=1
-            chrome_port = "#{ENV["CHROME_PORT"]}".to_i || 9222
             begin 
 
               puts "Attempt: #{tries}"
@@ -136,7 +137,7 @@ module Intrigue
         end
        
       rescue Timeout::Error => e 
-        puts "carrying on"
+        puts "timeout when screenshotting - carrying on"
         _killitwithfire(chrome_port)
         out = {}
       end
