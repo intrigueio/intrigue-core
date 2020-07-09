@@ -24,6 +24,13 @@ class ApiEndpoint < Intrigue::Task::BaseTask
 
     endpoint = _get_entity_name
     default_response = http_get_body(endpoint)
+
+    begin # live life on the wild side
+      default_response = JSON.parse(default_response)
+    rescue JSON::ParserError => e 
+      # no parse :[
+    end
+
     _set_entity_detail("default_response", default_response)
 
   end
