@@ -92,7 +92,6 @@ require_relative 'notifiers/base'
 notifiers_folder = File.expand_path('../notifiers', __FILE__) # get absolute directory
 Dir["#{notifiers_folder}/*.rb"].each {|f| require_relative f}
 
-
 ###
 ### User-specified directories
 ###

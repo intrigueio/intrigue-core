@@ -137,7 +137,7 @@ module Intrigue
         end
        
       rescue Timeout::Error => e 
-        puts "timeout when screenshotting - carrying on"
+        puts "timeout when screenshotting -carrying on"
         _killitwithfire(chrome_port)
         out = {}
       end

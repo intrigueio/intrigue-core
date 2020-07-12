@@ -23,6 +23,10 @@ module System
       File.delete(@issues_file)
     end
 
+    def set_uuid(uuid_from_user)
+      @uuid = uuid_from_user
+    end
+
     def close_files
       # nothing to do 
     end
@@ -44,6 +48,7 @@ module System
       {
         "name" => "#{@name}",
         "ingest_at" => "#{@ingest_at}",
+        "collection_run_uuid" => "#{@uuid}",
         "generated_at" => "#{Time.now.utc}",
         "version" => "#{@version}",
         "issues" => File.open(@issues_file).readlines[start..finish].reject { |s|
@@ -58,6 +63,7 @@ module System
       {
         "name" => "#{@name}",
         "ingest_at" => "#{@ingest_at}",
+        "collection_run_uuid" => "#{@uuid}",
         "generated_at" => "#{Time.now.utc}",
         "version" => "#{@version}",
         "entities" => File.open(@entities_file).readlines[start..finish].reject { |s|

@@ -44,7 +44,7 @@ class UriBrowser < BaseTask
     end
 
     # split out request hosts, and then verify them
-    if  _get_option("create_endpoints")
+    if _get_option("create_endpoints")
 
       # look for mixed content
       if uri =~ /^https/
