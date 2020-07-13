@@ -9,6 +9,7 @@ module System
     def initialize(name, version=1, timestamp=Time.now.utc.strftime("%Y%m%d%H%M%S"))
       @version = version
       @name = name
+      @uuid = nil
       
       @entities_file = "#{$intrigue_basedir}/tmp/#{@name}_entities.#{timestamp}.jsonl"
       @issues_file = "#{$intrigue_basedir}/tmp/#{@name}_issues.#{timestamp}.jsonl"
