@@ -1,11 +1,11 @@
 module Intrigue
   module Issue
-  class SapNetweaverReconVulnCve20206287 < BaseIssue
+  class SapReconVulnCve20206287 < BaseIssue
   
     def self.generate(instance_details={})
       {
-        name: "sap_netweaver_recon_vuln_cve_2020_6287",
-        pretty_name: "SAP Netweaver RECON Vuln (CVE-2020-6287)",
+        name: "sap_recon_vuln_cve_2020_6287",
+        pretty_name: "SAP RECON Vuln (CVE-2020-6287)",
         identifiers: [
           { type: "CVE", name: "CVE-2020-6287" }
         ],        
