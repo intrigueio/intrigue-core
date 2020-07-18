@@ -64,7 +64,6 @@ class IpAddress < Intrigue::Task::BaseTask
       end
     end
     
-    
     # get ASN
     # look up the details in team cymru's whois
     _log "Using Team Cymru's Whois Service..."

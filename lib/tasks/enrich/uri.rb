@@ -247,6 +247,20 @@ class Uri < Intrigue::Task::BaseTask
     generator_match = response.body.match(/<meta name=\"?generator\"? content=\"?(.*?)\"?\/>/i)
     generator_string = generator_match.captures.first.gsub("\"","") if generator_match
 
+    # get ASN
+    # look up the details in team cymru's whois
+    _log "Looking up network and hostname"
+    hostname = URI(uri).hostname
+    if hostname.is_ip_address?
+      ip_address = hostname
+    else
+      ip_address = resolve_name(hostname)
+    end
+    resp = cymru_ip_whois_lookup(ip_address)
+    net_geo = resp[:net_country_code]
+    net_name = resp[:net_name]
+
+
     # set up the new details
     new_details = {
       "alt_names" => alt_names,
@@ -255,6 +269,9 @@ class Uri < Intrigue::Task::BaseTask
       "cookies" => response.header['set-cookie'],
       "favicon_md5" => favicon_md5,
       "favicon_sha1" => favicon_sha1,
+      "ip_address" => ip_address,
+      "net_name" => net_name,
+      "net_geo" => net_geo,
       "fingerprint" => fingerprint.uniq,
       "forms" => contains_forms,
       "generator" => generator_string,

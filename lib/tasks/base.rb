@@ -37,12 +37,16 @@ class BaseTask
     # usually this is a deleted project
     return nil unless @task_result
 
-    # Handle cancellation
-    if @task_result.cancelled
-      _log "Cancelled, returning without running!"
-      return
-    end
+    ###########################
+    #  Setup the task result  #
+    ###########################
+    @task_result.task_name = self.class.metadata[:name]
+    start_time = Time.now.getutc
+    @task_result.timestamp_start = start_time
 
+    ###
+    ### Check santity
+    ###
     @entity = @task_result.base_entity
     @project = @task_result.project
     options = @task_result.options
@@ -52,7 +56,56 @@ class BaseTask
       _log_error "Unable to find task_result. Bailing." unless @task_result
       _log_error "Unable to find project. Bailing." unless @project
       _log_error "Unable to find entity. Bailing." unless @entity
-      return nil
+      return 
+    end
+
+    ###
+    ### Handle cancellation
+    ###
+    if @task_result.cancelled
+      _log "Cancelled, returning without running!"
+      return
+    end
+    
+    ###
+    ### Handle already finished or already started results with the e
+    ### same name in the same scan. Check for existing "same" task results
+    ### that havec already started or completed, and bail early 
+    ### if that's the case
+    ###
+    return_early = false 
+    if @task_result.scan_result
+      our_task_result_name = @task_result.name
+      
+      # query existing results, limit to those that have been started
+      existing_task_results = Intrigue::Core::Model::TaskResult.scope_by_project(@project.name).where({
+        :name => "#{our_task_result_name}"}).exclude(:timestamp_start => nil)
+
+      # good for debugging 
+      _log "Got existing results for '#{our_task_result_name}': #{existing_task_results.map{|x| x.id }.join(", ")}"
+
+      # if we've already completed another one, return eearly
+      if existing_task_results.count > 1 && existing_task_results.exclude(:timestamp_end => nil).count > 1
+      
+        _log "This task has already been completed in this scan, returning w/o running!"
+        return_early = true 
+      
+      # if we've already even started another one, return eearly
+      elsif existing_task_results.count > 1 
+      
+        _log "This task is currently in progress in this scan, returning w/o running!"
+        return_early = true 
+      
+      end
+    end
+
+    if return_early
+      @task_result.complete = true
+      @task_result.timestamp_end = Time.now.getutc
+      @task_result.logger.save_changes
+      @task_result.save_changes
+      _log "Task returning early!"
+      return 
     end
 
     # We need a flag to skip the actual setup, run, cleanup of the task if
@@ -72,13 +125,6 @@ class BaseTask
       broken_input_flag = true
     end
 
-    ###########################
-    #  Setup the task result  #
-    ###########################
-    @task_result.task_name = self.class.metadata[:name]
-    start_time = Time.now.getutc
-    @task_result.timestamp_start = start_time
-
     begin
       #####################################
       # Perform the setup -> run workflow #
@@ -94,7 +140,7 @@ class BaseTask
             end_time = Time.now.getutc
             _log "Task run finished at #{end_time}!"
         else
-          _log_error "Task setup failed, bailing out!"
+          _log_error "Task setup failed, bailing out w/o running!"
         end
       end
 

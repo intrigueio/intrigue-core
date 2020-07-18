@@ -1,6 +1,6 @@
 module Intrigue
   module Issue
-  class ExposedBigipConfigurationUtility < BaseIssue
+  class ExposedCitrixAdcManagementInterface < BaseIssue
   
     def self.generate(instance_details={})
       {
