@@ -117,7 +117,7 @@ class Uri < Intrigue::Task::BaseTask
     # the UI / queries if any of the matches told us to hide the entity, do it.
     # EXAMPLE TEST CASE: http://103.24.203.121:80 (cpanel missing page)
     if fingerprint.detect{|x| x["hide"] == true }
-      _log "Entity hidden based on fingerprint!"
+      _log "Entity hidden and unscoped based on fingerprint!"
       @entity.hidden = true
       @entity.save_changes
     end

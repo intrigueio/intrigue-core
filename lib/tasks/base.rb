@@ -126,6 +126,7 @@ class BaseTask
     end
 
     begin
+
       #####################################
       # Perform the setup -> run workflow #
       #####################################
@@ -133,30 +134,46 @@ class BaseTask
         # Setup creates the following objects:
         # @user_options - a hash of task options
         # @task_result - the final result to be passed back to the caller
+        ###
+        ### CALL SETUP
+        ###
         if setup(task_result_id, @entity, options)
             _log "Starting task run at #{start_time}!"
             @task_result.save_changes # Save the task
+
+            ###
+            ## RUN IT - THE TASK'S MAGIC HAPPENS HRE
+            ###
             run # Run the task, which will update @task_result
+
             end_time = Time.now.getutc
             _log "Task run finished at #{end_time}!"
         else
           _log_error "Task setup failed, bailing out w/o running!"
         end
       end
-
-      ### POST ENRICHMENT
-      # 
-      # Now, if this is an enrichment task, we want to do some things
-      if @task_result.task_name =~ /^enrich\/.*/
-      
+    
+      ###
+      ## FINALIZE ENRICHMENT
+      ###
+      # Now, if this is an enrichment type task, we want to mark our enrichemnt complete 
+      if Intrigue::TaskFactory.create_by_name(@task_result.task_name).class.metadata[:type] == "enrichment"
         # entity should now be enriched!
-        #
         @entity.enriched = true 
         @entity.save_changes 
+      else
+        _log "Not an enrichment task, skipping machine generation"
+      end
+
+      ###
+      ## POST ENRICHMENT, KICK OFF MACHINES for SCOPED ENTiTIES ONLY
+      ###s
+      if @entity.enriched && @entity.scoped? && !@entity.hidden # technically socpeed shoudl handle but it doesnt
 
         # MACHINE LAUNCH (ONLY IF WE ARE ATTACHED TO A MACHINE) 
         # if this is part of a scan and we're in depth
         if @task_result.scan_result && @task_result.depth > 0
+
           machine_name = @task_result.scan_result.machine
           @task_result.log "Launching machine #{machine_name} on #{@entity.name}"
           machine = Intrigue::MachineFactory.create_by_name(machine_name)
@@ -164,51 +181,60 @@ class BaseTask
           unless machine
             raise "Unable to continue, missing machine: #{machine_name}!!!"
           end
-
+          
+          ## 
+          ## Start the machine!
+          ##
           machine.start(@entity, @task_result)
 
         else
           @task_result.log "No machine configured for #{@entity.name}!"
         end
-      else
-        _log "Not an enrichment task, skipping machine generation"
-      end
 
-      scan_result = @task_result.scan_result
-      if scan_result
-        scan_result.decrement_task_count
 
-        #####################
-        #   Call Handlers   #
-        #####################
+        scan_result = @task_result.scan_result
+        if scan_result
+          scan_result.decrement_task_count
 
-        ### Task Result Handlers
-        if @task_result.handlers.count > 0
-          _log "Launching Task Handlers!"
-          @task_result.handle_attached
-          @task_result.handlers_complete = true
-        else
-          _log "No task result handlers configured."
-        end
+          #####################
+          #   Call Handlers   #
+          #####################
 
-        ### Scan Result Handlers
-        if scan_result.handlers.count > 0
-          # Check our incomplete task count on the scan to see if this is the last one
-          if scan_result.incomplete_task_count <= 0
-            _log "Last task standing, let's handle the scan!"
-            scan_result.handle_attached
-            # let's mark it complete if there's nothing else to do here.
-            scan_result.handlers_complete = true
-            scan_result.complete = true
-            scan_result.save_changes
+          ### Task Result Handlers
+          if @task_result.handlers.count > 0
+            _log "Launching Task Handlers!"
+            @task_result.handle_attached
+            @task_result.handlers_complete = true
+          else
+            _log "No task result handlers configured."
           end
-        else
-          _log "No scan result handlers configured."
+
+          ### Scan Result Handlers
+          if scan_result.handlers.count > 0
+            # Check our incomplete task count on the scan to see if this is the last one
+            if scan_result.incomplete_task_count <= 0
+              _log "Last task standing, let's handle the scan!"
+              scan_result.handle_attached
+              # let's mark it complete if there's nothing else to do here.
+              scan_result.handlers_complete = true
+              scan_result.complete = true
+              scan_result.save_changes
+            end
+          else
+            _log "No scan result handlers configured."
+          end
         end
-      end
+      else 
+        _log "Entity not scoped, no machine will be run."
+      end 
 
     ensure
       begin
+
+        ###
+        ## CLEAN UP HERE. 
+        ###
+
         @task_result.complete = true
         @task_result.timestamp_end = end_time
         @task_result.logger.save_changes

@@ -129,7 +129,7 @@ class Domain < Intrigue::Task::BaseTask
     ###
     ### Scope all aliases if we're scoped
     ###
-    if @entity.scoped? # TODO .. is the eor necessary
+    if @entity.scoped? 
       @entity.aliases.each do |a|
         next if a.id == @entity.id # we're already scoped. 
         _log "Setting #{a.name} scoped!"

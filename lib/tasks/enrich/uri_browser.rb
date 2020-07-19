@@ -12,7 +12,7 @@ class UriBrowser < BaseTask
       :authors => ["jcran"],
       :description => "This task screenshots a Uri, looks for api requests and a few common exposures that can be detected with a browser.",
       :references => [],
-      :type => "discovery",
+      :type => "enhanced_enrichement",
       :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [
