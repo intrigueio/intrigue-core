@@ -111,7 +111,7 @@ class IpAddress < Intrigue::Task::BaseTask
         # Note that everything created from enrich is autoscoped, so specifically
         # unscope this. If it gets scoped later, all the better
         if @entity.scoped
-          _create_entity "NetBlock", { "name" => "#{netblock}" }
+          _create_entity "NetBlock", { "name" => "#{netblock}", "unscoped" => true }
         end
       end
 

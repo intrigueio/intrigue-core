@@ -42,7 +42,7 @@ class NetBlock < Intrigue::Core::Model::Entity
     end
 
     ###
-    ### First, Check our text to see if there's a more specific route in here, 
+    ### First, check our text to see if there's a more specific route in here, 
     ###  and if so, not ours.
     ####################################################################################
     match_captures = whois_text.scan(netblock_regex)
@@ -65,7 +65,6 @@ class NetBlock < Intrigue::Core::Model::Entity
       "Intrigue::Entity::DnsRecord",
       "Intrigue::Entity::Domain" 
     ]
-
 
     ### Now check our seed entities for a match
     ######################################################
