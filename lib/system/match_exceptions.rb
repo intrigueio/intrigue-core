@@ -48,7 +48,7 @@ module System
       elsif (type_string == "Domain" || type_string == "DnsRecord" || type_string == "Uri" )
         (standard_name_exceptions - skip_exceptions).each do |exception|
           if exception.match(entity_name) || exception.match(".#{entity_name}")
-            puts "Matched #{exception}"
+            #puts "Matched #{exception}"
             out = exception 
           end
         end

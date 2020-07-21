@@ -157,77 +157,96 @@ class BaseTask
       ## FINALIZE ENRICHMENT
       ###
       # Now, if this is an enrichment type task, we want to mark our enrichemnt complete 
+      # if it's true, we can set it and launch our followon-work!
       if Intrigue::TaskFactory.create_by_name(@task_result.task_name).class.metadata[:type] == "enrichment"
-        # entity should now be enriched!
+        
+        ### NOW WE CAN SET ENRICHED!
         @entity.enriched = true 
+  
+        ### NOW WE CAN DECIDE SCOPE BASED ON COMPLETE ENTITY (unless we were already scoped in!
+        unless @entity.scoped_at
+          @entity.scoped_at = Time.now.utc
+          @entity.scoped = @entity.scoped? #always fall back to our entity-specific logic if there was no request
+          _log_good "POST-ENRICH AUTOMATED ENTITY SCOPE: #{@entity.scoped}"
+        end
+        
         @entity.save_changes 
+        
+
+        ###
+        ## NOW, KICK OFF MACHINES for SCOPED ENTiTIES ONLY
+        ###
+
+        # technically socped shoudl handle but it doesnt
+        if @entity.enriched && @entity.scoped? #&& !@entity.hidden 
+
+          # MACHINE LAUNCH (ONLY IF WE ARE ATTACHED TO A MACHINE) 
+          # if this is part of a scan and we're in depth
+          if @task_result.scan_result && @task_result.depth > 0
+
+            machine_name = @task_result.scan_result.machine
+            @task_result.log "Launching machine #{machine_name} on #{@entity.name}"
+            machine = Intrigue::MachineFactory.create_by_name(machine_name)
+
+            unless machine
+              raise "Unable to continue, missing machine: #{machine_name}!!!"
+            end
+            
+            ## 
+            ## Start the machine!
+            ##
+            machine.start(@entity, @task_result)
+
+          else
+            @task_result.log "No machine configured for #{@entity.name}!"
+          end
+
+
+          scan_result = @task_result.scan_result
+          if scan_result
+            scan_result.decrement_task_count
+
+            #####################
+            #   Call Handlers   #
+            #####################
+
+            ### Task Result Handlers
+            if @task_result.handlers.count > 0
+              _log "Launching Task Handlers!"
+              @task_result.handle_attached
+              @task_result.handlers_complete = true
+            else
+              _log "No task result handlers configured."
+            end
+
+            ### Scan Result Handlers
+            if scan_result.handlers.count > 0
+              # Check our incomplete task count on the scan to see if this is the last one
+              if scan_result.incomplete_task_count <= 0
+                _log "Last task standing, let's handle the scan!"
+                scan_result.handle_attached
+                # let's mark it complete if there's nothing else to do here.
+                scan_result.handlers_complete = true
+                scan_result.complete = true
+                scan_result.save_changes
+              end
+            else
+              _log "No scan result handlers configured."
+            end
+          end
+        else 
+          _log "Entity not scoped, no machine will be run."
+        end 
+
+
+
+
+
       else
         _log "Not an enrichment task, skipping machine generation"
       end
 
-      ###
-      ## POST ENRICHMENT, KICK OFF MACHINES for SCOPED ENTiTIES ONLY
-      ###s
-      if @entity.enriched && @entity.scoped? && !@entity.hidden # technically socpeed shoudl handle but it doesnt
-
-        # MACHINE LAUNCH (ONLY IF WE ARE ATTACHED TO A MACHINE) 
-        # if this is part of a scan and we're in depth
-        if @task_result.scan_result && @task_result.depth > 0
-
-          machine_name = @task_result.scan_result.machine
-          @task_result.log "Launching machine #{machine_name} on #{@entity.name}"
-          machine = Intrigue::MachineFactory.create_by_name(machine_name)
-
-          unless machine
-            raise "Unable to continue, missing machine: #{machine_name}!!!"
-          end
-          
-          ## 
-          ## Start the machine!
-          ##
-          machine.start(@entity, @task_result)
-
-        else
-          @task_result.log "No machine configured for #{@entity.name}!"
-        end
-
-
-        scan_result = @task_result.scan_result
-        if scan_result
-          scan_result.decrement_task_count
-
-          #####################
-          #   Call Handlers   #
-          #####################
-
-          ### Task Result Handlers
-          if @task_result.handlers.count > 0
-            _log "Launching Task Handlers!"
-            @task_result.handle_attached
-            @task_result.handlers_complete = true
-          else
-            _log "No task result handlers configured."
-          end
-
-          ### Scan Result Handlers
-          if scan_result.handlers.count > 0
-            # Check our incomplete task count on the scan to see if this is the last one
-            if scan_result.incomplete_task_count <= 0
-              _log "Last task standing, let's handle the scan!"
-              scan_result.handle_attached
-              # let's mark it complete if there's nothing else to do here.
-              scan_result.handlers_complete = true
-              scan_result.complete = true
-              scan_result.save_changes
-            end
-          else
-            _log "No scan result handlers configured."
-          end
-        end
-      else 
-        _log "Entity not scoped, no machine will be run."
-      end 
-
+      
     ensure
       begin
 
