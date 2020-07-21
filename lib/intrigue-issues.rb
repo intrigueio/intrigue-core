@@ -21,6 +21,43 @@ class IssueFactory
   end
 
   #
+  # Provide the full list of issues, given a 
+  #
+  def self.issues_for_vendor_product(vendor,product)
+    
+    ### First, get all issues with their affected software
+    mapped_issues = []
+    self.issues.each do |h| 
+      # generate the instances
+      hi = h.generate({}); 
+      # then geet all instaces of affected software with issues names
+      as = (hi[:affected_software] || [])
+      mapped_issues << as.map{|x| x.merge({ :name => hi[:name] }) }
+    end
+
+  mapped_issues.flatten.select{|x| x[:vendor] == vendor && x[:product] == product}.map{|x| x[:name] }.uniq.compact
+  end
+
+  #
+  # Provide the full list of issues, given a 
+  #
+  def self.checks_for_vendor_product(vendor,product)
+    
+    ### First, get all issues with their affected software
+    mapped_issues = []
+    self.issues.each do |h| 
+      # generate the instances
+      hi = h.generate({}); 
+      # then geet all instaces of affected software with issues names
+      as = (hi[:affected_software] || [])
+      mapped_issues << as.map{|x| x.merge({ :check => hi[:check] }) }
+    end
+
+  mapped_issues.flatten.select{|x| x[:vendor] == vendor && x[:product] == product}.map{|x| x[:check] }.uniq.compact
+  end
+
+
+  #
   # Check to see if this handler exists (check by type)
   #
   def self.include?(type)
@@ -55,7 +92,7 @@ class IssueFactory
     })
 
     # then create the darn thing
-    issue = Intrigue::Model::Issue.update_or_create(issue_model)
+    issue = Intrigue::Core::Model::Issue.update_or_create(issue_model)
     
     # save the specifics 
     issue.description = issue_type.generate({})[:description]

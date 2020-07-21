@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class Nameserver < Intrigue::Model::Entity
+class Nameserver < Intrigue::Core::Model::Entity
 
   include Intrigue::Task::Dns
 
@@ -25,11 +25,8 @@ class Nameserver < Intrigue::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
-    return true if self.seed
-    return false if self.hidden # hit our blacklist so definitely false
-    
-    # check hidden on-demand
-    return true if self.project.traversable_entity?(parse_domain_name(self.name), "Domain")
+    return true if self.allow_list
+    return false if self.deny_list
 
   # if we didnt match the above and we were asked, it's false 
   false

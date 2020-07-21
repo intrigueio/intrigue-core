@@ -1,18 +1,18 @@
 <!-- Statistics! -->
 <div class="row">
   <div id="asn_info" class="col-sm-6">
-    <p>ASN Information:</p>
+    <p>Network Providers:</p>
     <p>
-      <% @asns.sort_by{|k,v| v.count }.reverse.each do |k,v| %>
-        <%= v.count %>: <a href="/<%=@project_name%>/entities?search_string=details:<%=k%>"><%= k %></a><br>
+      <% @networks.sort_by{|k,v| v.count }.reverse.each do |k,v| %>
+        <%= v.count %>: <%= k %><br>
       <% end %>
     </p>
   </div>
   <div id="os_info" class="col-sm-6">
-    <p>OS Information:</p>
+    <p>Geographies:</p>
     <p>
-      <% @os.sort_by{|k,v| v.count }.reverse.each do |k,v| %>
-         <%= v.count %>: <a href="/<%=@project_name%>/entities?search_string=details:<%=k%>"><%= k %></a><br>
+      <% @geos.sort_by{|k,v| v.count }.reverse.each do |k,v| %>
+         <%= v.count %>: <%= k %><br>
       <% end %>
     </p>
   </div>
@@ -53,7 +53,7 @@
         <tr>
           <% next unless x.type_string == "IpAddress" %>
           <td><a href="<%="/#{h @project_name}/entities/#{h x.id}"%>"><%= h x.name %></a></td>
-          <td><%= (x.aliases - [x.name]).map{|x| next unless !x.name.is_ip_address?; "<a href='/#{@project_name}/entities/#{h x.id}'>#{h x.name}</a>" }.join("<br/>") %></td>
+          <td><%= (x.aliases - [x.name]).map{|x| next unless !x.name.is_ip_address?; "<a href='/#{h @project_name}/entities/#{h x.id}'>#{h x.name}</a>" }.join("<br/>") %></td>
           <td><%= h x.details["os"].first["name"] if x.details["os"] && x.details["os"].first %> </td>
           <td><%= h "#{x.details["ports"].map{ |x| x["number"] }.join(", ") if x.details["ports"]}" %></td>
           <td><%= h "#{x.details["net_name"]}"%></td>

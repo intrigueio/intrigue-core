@@ -46,4 +46,8 @@ class Hash
     self
   end
 
+  def stringify_keys
+    self.transform_keys(&:to_s)
+  end
+
 end

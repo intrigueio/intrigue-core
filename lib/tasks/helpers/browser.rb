@@ -12,7 +12,11 @@ module Task
   module Browser
 
     def capture_screenshot_and_requests(uri)
-      return {} unless Intrigue::System::Config.config["browser_enabled"]
+      return {} unless Intrigue::Core::System::Config.config["browser_enabled"]
+
+      # First, make sure we can actually connect to it in reasonable time 
+      response = http_request(:get, uri, nil, {}, nil, attempts_limit=1, open_timeout=6, read_timeout=6)
+      return {} unless response
 
       begin 
         _log "Browser Navigating to #{uri}"
@@ -27,9 +31,9 @@ module Task
         to_return = { 
           "extended_screenshot_contents" => browser_response["encoded_screenshot"],
           "request_hosts" => browser_response["requests"].map{|x| x["hostname"] }.compact.uniq.sort,
-          "extended_requests" => browser_response["requests"],
-          "extended_responses" => browser_response["responses"],
-          "extended_wsresponses" => browser_response["wsresponses"]
+          "extended_browser_requests" => browser_response["requests"],
+          "extended_browser_responses" => browser_response["responses"],
+          "extended_browser_wsresponses" => browser_response["wsresponses"]
         }
 
       else 
@@ -43,7 +47,7 @@ module Task
     # TODO ... convert this to new way of controlling browser
     # TODO 
     def gather_javascript_libraries(session, uri)
-      return [] unless Intrigue::System::Config.config["browser_enabled"]
+      return [] unless Intrigue::Core::System::Config.config["browser_enabled"]
 
       # Test site: https://www.jetblue.com/plan-a-trip/#/
       # Examples: https://builtwith.angularjs.org/

@@ -40,6 +40,7 @@ begin  # try to load runtime deps
   require 'neutrino_api'
   require 'nmap/xml'
   require 'nokogiri'
+  require 'open3'
   require 'open-uri'
   require 'opencorporates'
   require 'openssl'
@@ -132,7 +133,9 @@ module Intrigue
   end
 end
   
-
+# system helpers
+system_folder = File.expand_path('../system', __FILE__) # get absolute directory
+Dir["#{system_folder}/*.rb"].each { |file| require_relative file }
 
 ### Mixins with common task functionality
 require_relative 'tasks/helpers/generic'
@@ -158,6 +161,6 @@ tasks_folder = File.expand_path('../tasks/threat', __FILE__) # get absolute dire
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
 # Load vuln check tasks
-tasks_folder = File.expand_path('../tasks/vulns', __FILE__) # get absolute directory
+tasks_folder = File.expand_path('../tasks/vuln', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 

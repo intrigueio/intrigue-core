@@ -13,11 +13,12 @@ module Generic
     until entity_enriched || cycles == 0
       _log "Waiting 10s for entity to be enriched... (#{cycles-=1} / #{max_cycles})"
         sleep 10
-      entity_enriched = Intrigue::Model::Entity.first(:id => @entity.id).enriched?
+      entity_enriched = Intrigue::Core::Model::Entity.first(:id => @entity.id).enriched?
     end
 
+    sleep 1 
     # re-pull
-    @entity = Intrigue::Model::Entity.first(:id => @entity.id)
+    @entity = Intrigue::Core::Model::Entity.first(:id => @entity.id)
     
   end
 
@@ -153,8 +154,9 @@ module Generic
     @entity.get_details
   end
 
-  def _set_entity_details(hash)
-    @entity.set_details hash
+  # Deprecated, use... 
+  def _get_and_set_entity_details(hash)
+    @entity.get_and_set_details hash
   end
 
   def _get_entity_name
@@ -167,14 +169,14 @@ module Generic
 
   ### GLOBAL CONFIG INTERFACE
   def _get_system_config(key)
-    Intrigue::System::Config.load_config
-    value = Intrigue::System::Config.config[key]
+    Intrigue::Core::System::Config.load_config
+    value = Intrigue::Core::System::Config.config[key]
   end
 
   def _get_task_config(key)
     begin
-      Intrigue::System::Config.load_config
-      config = Intrigue::System::Config.config["intrigue_global_module_config"]
+      Intrigue::Core::System::Config.load_config
+      config = Intrigue::Core::System::Config.config["intrigue_global_module_config"]
       value = config[key]["value"]
       unless value && value != ""
         _log "Module config (#{key}) is blank or missing!"

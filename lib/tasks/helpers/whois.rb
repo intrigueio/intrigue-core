@@ -186,11 +186,36 @@ module Whois
     ripe_uri = "https://stat.ripe.net/data/address-space-hierarchy/data.json?resource=#{lookup_string}/32"
     json = JSON.parse(http_get_body(ripe_uri))
 
+    # parse out ranges
     data = json["data"]
     if data["last_updated"]
       range = data["last_updated"].first["ip_space"]
+      start_address = range.split("/").first.strip
+      cidr = range.split("/").last.strip
+      exact = false
+    elsif !data["exact"].empty? # RIPE
+      range = data["exact"].first["inetnum"]
+      start_address = range.split("-").first.strip
+      end_address = range.split("-").last.strip
+      netname = data["exact"].first["netname"]
+      org = data["exact"].first["org"]
+      exact = true 
+    elsif !data["more_specific"].empty? # RIPE
+      range = data["more_specific"].first["inetnum"]
+      start_address = range.split("-").first.strip
+      end_address = range.split("-").last.strip
+      netname = data["more_specific"].first["netname"]
+      org = data["more_specific"].first["org"]
+      exact = false
+    elsif !data["less_specific"].empty? # RIPE
+      range = data["less_specific"].first["inetnum"]
+      start_address = range.split("-").first.strip
+      end_address = range.split("-").last.strip
+      netname = data["less_specific"].first["netname"]
+      org = data["less_specific"].first["org"]
+      exact = false
     else
-      _log_error "Bad response, unable to continue: #{json}"
+      _log_error "Unknown response, unable to continue: #{json}"
       return nil
     end
 
@@ -202,21 +227,17 @@ module Whois
         description = less_specific_hash.first["descr"]
       end
 
-      # parse out netname
-      if less_specific_hash && less_specific_hash.first["netname"]
-        netname = less_specific_hash.first["netname"]
-      end
-
       out = out.merge({
+        "exact" => exact,
         "name" => "#{range}",
-        "start_address" => "#{range.split("/").first}",
-        "cidr" => "#{range.split('/').last}",
-        "description" => "#{description}".force_encoding('ISO-8859-1').sanitize_unicode,
+        "start_address" => "#{start_address}",
+        "end_address" => "#{end_address}",
+        "cidr" => "#{cidr}",
         "rir" => "RIPE",
-        "rir_parsed" => "#{json["data"]["rir"]}",
         "organization_reference" => "#{netname}".sanitize_unicode,
-        "organization_name" => "#{description}".sanitize_unicode,
-        "provider" =>  "#{description}".force_encoding('ISO-8859-1').sanitize_unicode })
+        "organization_name" => "#{org}".sanitize_unicode,
+        "provider" => "#{org}".sanitize_unicode
+        })
 
     rescue TypeError => e
       _log_error "PARSING ERROR! Unable to get details from #{less_specific_hash} #{e}"

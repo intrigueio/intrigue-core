@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "aspnet_elmah_axd",
         pretty_name: "ASP.NET Elmah.axd Sensitive Information Leak",
         severity: 1,
@@ -19,7 +20,8 @@ module Intrigue
           { type: "description", uri: "https://www.hanselman.com/blog/ELMAHErrorLoggingModulesAndHandlersForASPNETAndMVCToo.aspx" }, 
           { type: "remediation", uri: "https://blog.elmah.io/elmah-security-and-allowremoteaccess-explained/" }, 
           { type: "remediation", uri: "https://www.netsparker.com/web-vulnerability-scanner/vulnerabilities/elmahaxd--errorlogaxd-detected/" }
-        ]
+        ], 
+        check: "uri_brute_focused_content"
       }.merge!(instance_details)
     end
   

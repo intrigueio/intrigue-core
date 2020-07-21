@@ -64,10 +64,17 @@ class Uri < Intrigue::Task::BaseTask
     # add base_url where appropriate
     script_links = temp_script_links.map { |x| x =~ /^\// ? "#{uri}#{x}" : x }
 
-    # parse out the componeents
-    script_components = extract_javascript_components(script_links, hostname)
-  
-    # save the Headers
+    # Parse out, and fingeprint the componentes 
+    script_components = extract_and_fingerprint_scripts(script_links, hostname)
+    _log "Got fingerprinted script components: #{script_components.map{|x| x["product"] }}"
+
+    ### Check for vulns in included scripts
+    fingerprint = []
+    if script_components.count > 0
+      fingerprint.concat(add_vulns_by_cpe(script_components))
+    end
+
+    # Save the Headers
     headers = []
     _log "Saving Headers"
     response.each_header{|x| headers << "#{x}: #{response[x]}" }
@@ -85,45 +92,23 @@ class Uri < Intrigue::Task::BaseTask
     ident_responses = ident_matches["responses"]
     _log "Received #{ident_responses.count} responses for fingerprints!"
 
+    ###
+    ### Check for vulns based on Ident FPs
+    ###
     if ident_fingerprints.count > 0
-
-      # Make sure the key is set before querying intrigue api
-      intrigueio_api_key = _get_task_config "intrigueio_api_key"
-      use_api = intrigueio_api_key && intrigueio_api_key.length > 0
-
-      # for ech fingerprint, map vulns 
-      ident_fingerprints = ident_fingerprints.map do |fp|
-
-        vulns = []
-        if fp["inference"]
-          cpe = Intrigue::Vulndb::Cpe.new(fp["cpe"])
-          if use_api # get vulns via intrigue API
-            _log "Matching vulns for #{fp["cpe"]} via Intrigue API"
-            vulns = cpe.query_intrigue_vulndb_api(intrigueio_api_key)
-          else
-            vulns = cpe.query_local_nvd_json
-          end
-        else
-          _log "Skipping inference on #{fp["cpe"]}"
-        end
-
-        fp.merge!({"vulns" => vulns })
-      end
-
+      fingerprint.concat(add_vulns_by_cpe(ident_fingerprints))
     end
 
     # we can check the existing response, so send that
     # also need to send over the existing fingeprints
     _log "Checking if API Endpoint" 
-    api_endpoint = check_api_enabled(response, ident_fingerprints)
+    api_endpoint = check_api_enabled(response, fingerprint)
     
-    # process interesting content checks that requested an issue be created
-    issues_to_be_created = ident_content_checks.select {|c| c["issue"] }
+    # process interesting fingeprints and content checks that requested an issue be created
+    issues_to_be_created = ident_content_checks.concat(ident_fingerprints).collect{|x| x["issues"] }.flatten.compact.uniq
     _log "Issues to be created: #{issues_to_be_created}"
-    if issues_to_be_created.count > 0
-      issues_to_be_created.each do |c|
-        _create_linked_issue c["issue"], c
-      end
+    (issues_to_be_created || []).each do |c|
+      _create_linked_issue c
     end
 
     # if we ever match something we know the user won't
@@ -131,8 +116,8 @@ class Uri < Intrigue::Task::BaseTask
     # and hide the entity... meaning no recursion and it shouldn't show up in
     # the UI / queries if any of the matches told us to hide the entity, do it.
     # EXAMPLE TEST CASE: http://103.24.203.121:80 (cpanel missing page)
-    if ident_fingerprints.detect{|x| x["hide"] == true }
-      _log "Entity hidden based on fingerprint!"
+    if fingerprint.detect{|x| x["hide"] == true }
+      _log "Entity hidden and unscoped based on fingerprint!"
       @entity.hidden = true
       @entity.save_changes
     end
@@ -245,7 +230,7 @@ class Uri < Intrigue::Task::BaseTask
     ###
     app_stack = []
     _log "Inferring app stack from fingerprints!"
-    ident_app_stack = ident_fingerprints.map do |x|
+    ident_app_stack = fingerprint.map do |x|
       version_string = "#{x["vendor"]} #{x["product"]}"
       version_string += " #{x["version"]}" if x["version"]
     version_string
@@ -262,46 +247,37 @@ class Uri < Intrigue::Task::BaseTask
     generator_match = response.body.match(/<meta name=\"?generator\"? content=\"?(.*?)\"?\/>/i)
     generator_string = generator_match.captures.first.gsub("\"","") if generator_match
 
-    browser_requests_hash = capture_screenshot_and_requests(uri)
-    # split out request hosts, and then verify them
-    if !browser_requests_hash.empty?
-
-      # look for mixed content
-      if uri =~ /^https/
-        _log "Since we're here (and https), checking for mixed content..."
-        _check_requests_for_mixed_content(uri, browser_requests_hash["extended_requests"])
-      end
-
-      _log "Checking for other oddities..."
-      request_hosts = browser_requests_hash["request_hosts"]
-      _check_request_hosts_for_suspicious_request(uri, request_hosts)
-      _check_request_hosts_for_exernally_hosted_resources(uri,request_hosts)
-
+    # get ASN
+    # look up the details in team cymru's whois
+    _log "Looking up network and hostname"
+    hostname = URI(uri).hostname
+    if hostname.is_ip_address?
+      ip_address = hostname
     else
-      request_hosts = []
+      ip_address = resolve_name(hostname)
     end
+    resp = cymru_ip_whois_lookup(ip_address)
+    net_geo = resp[:net_country_code]
+    net_name = resp[:net_name]
 
-    # TODO... also let's create chrome api edndpoints here? !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    browser_requests_hash["extended_responses"].each do |r|
-      _create_entity("Uri", {"name" => r["url"] }) if r["uri"] =~ /^http/
-    end
 
-    new_details = @entity.details
-
-    new_details.merge!({
+    # set up the new details
+    new_details = {
       "alt_names" => alt_names,
       "api_endpoint" => api_endpoint,
       "code" => response.code,
       "cookies" => response.header['set-cookie'],
       "favicon_md5" => favicon_md5,
       "favicon_sha1" => favicon_sha1,
-      "fingerprint" => ident_fingerprints.uniq,
+      "ip_address" => ip_address,
+      "net_name" => net_name,
+      "net_geo" => net_geo,
+      "fingerprint" => fingerprint.uniq,
       "forms" => contains_forms,
       "generator" => generator_string,
       "headers" => headers,
       "hidden_favicon_data" => favicon_data,
       "hidden_response_data" => response.body,
-      #"products" => products.compact,
       "redirect_chain" => ident_responses.first[:response_urls] || [],
       "response_data_hash" => response_data_hash,
       "title" => title,
@@ -313,16 +289,11 @@ class Uri < Intrigue::Task::BaseTask
       "extended_full_responses" => ident_responses,           # includes all the redirects etc
       "extended_favicon_data" => favicon_data,
       "extended_response_body" => response.body,
-    })
-    
-    # add in the browser results
-    new_details.merge! browser_requests_hash
+    }
 
     # Set the details, and make sure raw response data is a hidden (not searchable) detail
-    _set_entity_details new_details
+    _get_and_set_entity_details new_details
       
-    new_details = nil
-
     ###
     ### Alias Grouping
     ###
@@ -332,7 +303,7 @@ class Uri < Intrigue::Task::BaseTask
       _log "Attempting to identify aliases"
         # parse our content with Nokogiri
       our_doc = "#{response.body}".sanitize_unicode
-      Intrigue::Model::Entity.scope_by_project_and_type(
+      Intrigue::Core::Model::Entity.scope_by_project_and_type(
         @entity.project.name,"Uri").paged_each(:rows_per_fetch => 100) do |e|
         next if @entity.id == e.id
 
@@ -351,7 +322,7 @@ class Uri < Intrigue::Task::BaseTask
         end
         
         # check fingeprint
-        unless ident_fingerprints.uniq.map{|x| 
+        unless fingerprint.uniq.map{|x| 
           "#{x["vendor"]} #{x["product"]} #{x["version"]}"} == e.get_detail("fingerprint").map{ |x| 
             "#{x["vendor"]} #{x["product"]} #{x["version"]}" }
           _log "Skipping #{e.name}, fingerprint doesnt match"
@@ -380,13 +351,33 @@ class Uri < Intrigue::Task::BaseTask
     end
 
     ###
-    ### Finally, cloud provider determination
+    ### Do the cloud provider determination
     ###
 
     # Now that we have our core details, check cloud statusi
     cloud_providers = determine_cloud_status(@entity)
-    _set_entity_detail "cloud_providers", cloud_providers.uniq.sort
-    _set_entity_detail "cloud_hosted",  !cloud_providers.empty?
+    _set_entity_detail("cloud_providers", cloud_providers.uniq.sort)
+    _set_entity_detail("cloud_hosted",  !cloud_providers.empty?)
+
+    ###
+    ### Finally, start checks based on FP
+    ###
+    all_checks = []
+    fingerprint.each do |f|
+      vendor_string = f["vendor"]
+      product_string = f["product"]
+      _log "Getting checks for #{vendor_string} #{product_string}"
+      checks_to_be_run = Intrigue::Issue::IssueFactory.checks_for_vendor_product(vendor_string, product_string)
+      all_checks << checks_to_be_run
+    end
+    
+    # kick off all vuln checks for this product 
+    all_checks.flatten.compact.uniq.each do |t|
+      start_task("task_autoscheduled", @project, nil, t, @entity, 1)
+    end
+
+    # and save'm off
+    _set_entity_detail("additional_checks", all_checks.flatten.compact.uniq)
 
   end
 
@@ -432,6 +423,7 @@ class Uri < Intrigue::Task::BaseTask
   false
   end
 
+ 
 end
 end
 end

@@ -1,4 +1,4 @@
-class IntrigueApp < Sinatra::Base
+class CoreApp < Sinatra::Base
   
     # Export All task results
     get '/:project/results.json/?' do
@@ -9,21 +9,21 @@ class IntrigueApp < Sinatra::Base
     # Show the results in a CSV format
     get '/:project/results/:id.csv/?' do
       content_type 'text/plain'
-      task_result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
+      task_result = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       task_result.export_csv
     end
 
     # Show the results in a CSV format
     get '/:project/results/:id.tsv/?' do
       content_type 'text/plain'
-      task_result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
+      task_result = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       task_result.export_tsv
     end
 
     # Show the results in a JSON format
     get '/:project/results/:id.json/?' do
       content_type 'application/json'
-      result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
+      result = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       result.export_json if result
     end
 
@@ -40,7 +40,7 @@ class IntrigueApp < Sinatra::Base
 
       (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
 
-      selected_results = Intrigue::Model::TaskResult.scope_by_project(@project_name).reverse(:timestamp_start)
+      selected_results = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).reverse(:timestamp_start)
 
       if @search_string
         if @inverse
@@ -75,10 +75,10 @@ class IntrigueApp < Sinatra::Base
     get '/:project/results/:id/cancel' do
       id = params[:id]
       if id == "all"
-        Intrigue::Model::TaskResult.scope_by_project(@project_name).paged_each(:rows_per_fetch => 500) {|x| x.cancel! }
+        Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).paged_each(:rows_per_fetch => 500) {|x| x.cancel! }
         redirect "/#{@project_name}/results"
       else
-        Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id]).cancel!
+        Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id]).cancel!
         redirect "/#{@project_name}/results/#{params[:id]}"
       end
     end
@@ -89,7 +89,7 @@ class IntrigueApp < Sinatra::Base
       task_name = "#{@params["task"]}"
       entity_id = @params["entity_id"]
       depth = @params["depth"].to_i
-      current_project = Intrigue::Model::Project.first(:name => @project_name)
+      current_project = Intrigue::Core::Model::Project.first(:name => @project_name)
       entity_name = "#{@params["attrib_name"]}"
       auto_scope = true # manually created
 
@@ -122,7 +122,7 @@ class IntrigueApp < Sinatra::Base
 
       # Construct an entity from the data we have
       if entity_id
-        entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => entity_id)
+        entity = Intrigue::Core::Model::Entity.scope_by_project(@project_name).first(:id => entity_id)
       else
         entity_type = @params["entity_type"]
         return unless entity_type
@@ -169,7 +169,7 @@ class IntrigueApp < Sinatra::Base
       task_name = "#{@params["task"]}"
       entity_id = @params["entity_id"]
       depth = @params["depth"].to_i
-      current_project = Intrigue::Model::Project.first(:name => @project_name)
+      current_project = Intrigue::Core::Model::Project.first(:name => @project_name)
       entity_name = "#{@params["attrib_name"]}".strip
       file_format = "#{@params["file_format"]}".strip
 
@@ -271,9 +271,8 @@ class IntrigueApp < Sinatra::Base
         #next unless Intrigue::EntityFactory.entity_types.include?(entity_type)
         entity = Intrigue::EntityManager.create_first_entity(@project_name,entity_type,entity_name,{})
 
-        # skip anything we can't parse, but throw an error
+        # skip anything we can't parse, silently fail today :[
         unless entity
-          task_result.log_error "Could not create entity!!"
           next
         end
 
@@ -300,7 +299,7 @@ class IntrigueApp < Sinatra::Base
       task_result_id = params[:id].to_i
 
       # Get the task result from the database, and fail cleanly if it doesn't exist
-      @result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => task_result_id)
+      @result = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).first(:id => task_result_id)
       return "Unknown Task Result" unless @result
 
       # Assuming it's available, display it
@@ -363,8 +362,8 @@ class IntrigueApp < Sinatra::Base
       entity = Intrigue::EntityManager.create_first_entity(@project_name,type_string,name,{})
 
       # create the project if it doesn't exist
-      project = Intrigue::Model::Project.first(:name => @project_name)
-      project = Intrigue::Model::Project.create(:name => @project_name) unless project
+      project = Intrigue::Core::Model::Project.first(:name => @project_name)
+      project = Intrigue::Core::Model::Project.create(:name => @project_name) unless project
 
       # Start the task_run
       task_result = start_task("task", project, nil, task_name, entity, depth,
@@ -386,7 +385,7 @@ class IntrigueApp < Sinatra::Base
     # Determine if the task run is complete
     get '/:project/results/:id/complete/?' do
       # Get the task result and return unless it's false
-      x = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
+      x = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       return false unless x
 
       # if we got it, and it's complete, return true
@@ -399,7 +398,7 @@ class IntrigueApp < Sinatra::Base
     # Get the task log
     get '/:project/results/:id/log/?' do
       content_type 'application/json'
-      result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
+      result = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       return unless result
 
       {:data => result.get_log}.to_json
@@ -413,7 +412,7 @@ class IntrigueApp < Sinatra::Base
       result_id = params[:id].to_i
 
       # Get the result from the database, and fail cleanly if it doesn't exist
-      result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => result_id)
+      result = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).first(:id => result_id)
 
       # run the handler(s) we set up
       result.handle(handler_name)

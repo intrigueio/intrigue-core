@@ -1,10 +1,22 @@
-class IntrigueApp < Sinatra::Base
+class CoreApp < Sinatra::Base
+
+
+  # List All projects
+  get "/api/v1/projects" do
+    content_type 'application/json'
+    
+    halt_unless_authenticated(@params["key"])
+
+    projects = Intrigue::Core::Model::Project.order(:created_at).reverse.all
+  wrapped_api_response(nil, projects)
+  end
+
 
   # Create a project!
   post '/api/v1/project' do
 
     content_type "application/json"
-
+    
     halt_unless_authenticated(@params["key"])
 
     # When we create the project, we want to make sure no HTML is
@@ -14,18 +26,21 @@ class IntrigueApp < Sinatra::Base
     
     # don't allow empty project names
     if new_project_name.length == 0
-      return wrap_core_api_response "Unable to create unnamed project: #{new_project_name}"
+      out = wrap_core_api_response "Unable to create unnamed project: #{new_project_name}"
     end
 
     # create the project unless it exists
-    if Intrigue::Model::Project.first(:name => new_project_name)
-      return wrap_core_api_response "Project exists!"
+    if Intrigue::Core::Model::Project.first(:name => new_project_name)
+      out = wrap_core_api_response "Project exists!"
     else
-      Intrigue::Model::Project.create(:name => new_project_name, :created_at => Time.now.utc)
+      Intrigue::Core::Model::Project.create(:name => new_project_name, :created_at => Time.now.utc)
     end
 
-    # woo success
-    wrap_core_api_response "Project created!", { project: "#{new_project_name}"} 
+    unless out 
+      # woo success
+      out = wrap_core_api_response "Project created!", { project: "#{new_project_name}"} 
+    end 
+  out 
   end
 
 

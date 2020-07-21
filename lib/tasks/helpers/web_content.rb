@@ -3,15 +3,35 @@ module Intrigue
 module Task
 module WebContent
 
-  def extract_javascript_components(script_list, host)
+  def _create_normalized_webaccount(site, account_name, link, sister_entity )
+    _create_entity "WebAccount", {
+      "name" => "#{site.downcase}: #{account_name.downcase}",
+      "username" => "#{account_name.downcase}",
+      "service" => "#{site}".downcase,
+      "uri" => "#{link}"
+     }, sister_entity
+  end
+
+  def extract_and_fingerprint_scripts(script_list, host)
     components = []
     script_list.each do |s|
 
+      # skip anything that's not http
+      next unless s =~ /^http/
+
+      begin 
+        uri = URI.parse(s)
+      rescue URI::InvalidURIError => e
+        @task_result.logger.log "Unable to parse improperly formatted URI: #{s}"
+        next # unable to parse 
+      end
+
+      next unless uri.host && uri.port && uri.scheme =~ /^http/
       ### 
       ### Determine who's hosting
       ### 
       begin
-        if URI.parse(s).host =~ /#{host}/
+        if uri.host =~ /#{host}/
           host_location = "local"
         else
           host_location = "remote"
@@ -19,85 +39,30 @@ module WebContent
       rescue URI::InvalidURIError => e
         host_location = "unknown"
       end
-    
-      # Try common pattern: "#{name}.#{version}"
-      name_version_match = "#{s}".match(/([\w\d]+)\.(\d+\.\d+\.\d+)/i)    
-      if (name_version_match && name_version_match.captures)
-        name = name_version_match.captures.first.strip
-        version = name_version_match.captures.last.strip 
-        components << {"uri" => s, "component" => name.downcase, "version" => version, "relative_host" =>  host_location }
-        next
-      end
-      
-      # Try common pattern: "#{versioni}/#{name}"
-      name_version_match = "#{s}".match(/(\d+\.\d+\.\d+)\/([\w\d]+)/i)    
-      if (name_version_match && name_version_match.captures)
-        version = name_version_match.captures.first.strip
-        name = name_version_match.captures.last.strip 
-        components << {"uri" => s, "component" => name.downcase, "version" => version, "relative_host" =>  host_location }
-        next
+
+      ###
+      ### Match it up with ident  
+      ###
+      ident_matches = generate_http_requests_and_check(s, {'only-check-base-url':true})
+      js_fp_matches = ident_matches["fingerprint"].select{|x| x["tags"] && x["tags"].include?("Javascript") }
+
+      if js_fp_matches.count > 0
+        js_fp_matches.each do |m|
+          components << m.merge({"uri" => s, "relative_host" =>  host_location })
+        end
+      else 
+        # otherwise, we didnt find it, so just stick in a url withoout a name / version
+        components << {"uri" => s, "relative_host" =>  host_location }
       end
 
-      # Try common pattern: "#{name}/#{version}"
-      name_version_match = "#{s}".match(/([\w\d]+)\/(\d+\.\d+\.\d+)/i)    
-      if (name_version_match && name_version_match.captures)
-        name = name_version_match.captures.first.strip
-        version = name_version_match.captures.last.strip 
-        components << {"uri" => s, "component" => name.downcase, "version" => version, "relative_host" =>  host_location }
-        next
-      end
-
-      # Try common pattern: "#{name}-#{version}"
-      name_version_match = "#{s}".match(/\/([\w\-\d]+)\-(\d+\.\d+\.\d+)/i)    
-      if (name_version_match && name_version_match.captures)
-        name = name_version_match.captures.first.strip
-        version = name_version_match.captures.last.strip 
-        components << {"uri" => s, "component" => name.downcase, "version" => version, "relative_host" =>  host_location }
-        next
-      end
-
-      # Try common pattern: "#{name}_#{version}"
-      name_version_match = "#{s}".match(/\/([\w\-\d]+)\_(\d+\.\d+\.\d+)/i)    
-      if (name_version_match && name_version_match.captures)
-        name = name_version_match.captures.first.strip
-        version = name_version_match.captures.last.strip 
-        components << {"uri" => s, "component" => name.downcase, "version" => version, "relative_host" =>  host_location }
-        next
-      end
-
-      # Try common pattern: "#{name}.min.js?ver=#{version}"
-      name_version_match = "#{s}".match(/([\-\w\d]+)\.(min\.)?js\?ver=([\d\.\-\w]+)$/i)    
-      if (name_version_match && name_version_match.captures)
-        name = name_version_match.captures.first.strip
-        version = name_version_match.captures.last.strip 
-        components << {"uri" => s, "component" => name.downcase, "version" => version, "relative_host" =>  host_location }
-        next
-      end
-
-      # make sure to capture any specific libs - jquery
-      if "#{s}".match(/jquery(\.min)?\.js/i)
-        components << {"uri" => s, "component" => "jquery", "relative_host" =>  host_location}
-        next
-      end
-
-      # make sure to capture any specific libs - jquery
-      if "#{s}".match(/polyfill(\.min)?\.js/i)
-        components << {"uri" => s, "component" => "polyfill", "relative_host" =>  host_location}
-        next
-      end
-
-      # otherwise, we didnt find it, so just stick in a url withoout a name / version
-      components << {"uri" => s, "relative_host" =>  host_location }
-      
     end
-
-    ### TODO... parse the actual content of the script to look for patterns!
-
+    
     ### Maybe re-enable eventually
     #new_libraries = gather_javascript_libraries(session, uri)
 
   components
   end
+
 
   # compare_html response.body.sanitize_unicode, e.details["hidden_response_data"]  
   def parse_html_diffs(texta, textb)

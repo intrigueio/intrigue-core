@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class NetBlock < Intrigue::Model::Entity
+class NetBlock < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
@@ -27,8 +27,8 @@ class NetBlock < Intrigue::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
-    return true if self.seed
-    return false if self.hidden # hit our blacklist so definitely false
+    return true if self.allow_list
+    return false if self.deny_list
 
     our_ip = self.name.split("/").first
     our_route = self.name.split("/").last.to_i
@@ -42,7 +42,7 @@ class NetBlock < Intrigue::Model::Entity
     end
 
     ###
-    ### First, Check our text to see if there's a more specific route in here, 
+    ### First, check our text to see if there's a more specific route in here, 
     ###  and if so, not ours.
     ####################################################################################
     match_captures = whois_text.scan(netblock_regex)
@@ -65,7 +65,6 @@ class NetBlock < Intrigue::Model::Entity
       "Intrigue::Entity::DnsRecord",
       "Intrigue::Entity::Domain" 
     ]
-
 
     ### Now check our seed entities for a match
     ######################################################

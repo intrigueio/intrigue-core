@@ -163,6 +163,10 @@ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 echo export GOPATH=$HOME/go >> ~/.bash_profile
 echo export PATH=$PATH:$GOROOT/bin:$GOPATH/bin >> ~/.bash_profile
 
+# naabu
+echo "[+] Getting Naabu... "
+GO111MODULE=on go get -v github.com/projectdiscovery/naabu/cmd/naabu
+
 # gitrob
 echo "[+] Getting Gitrob... "
 go get github.com/intrigueio/gitrob

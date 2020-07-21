@@ -6,8 +6,8 @@ describe "Logger" do
 
   it "can be created" do
 
-    project = Intrigue::Model::Project.create(:name => "x")
-    logger = Intrigue::Model::Logger.create( :project => project )
+    project = Intrigue::Core::Model::Project.create(:name => "x")
+    logger = Intrigue::Core::Model::Logger.create( :project => project )
 
     logger.log("test")
 
@@ -17,14 +17,14 @@ describe "Logger" do
 
   it "is accessible through task_result" do
 
-    project = Intrigue::Model::Project.create(:name => "x")
-    logger = Intrigue::Model::Logger.create( :project => project )
-    entity = Intrigue::Model::Entity.create({
+    project = Intrigue::Core::Model::Project.create(:name => "x")
+    logger = Intrigue::Core::Model::Logger.create( :project => project )
+    entity = Intrigue::Core::Model::Entity.create({
         :project => project,
-        :type => "Intrigue::Model::Host",
+        :type => "Intrigue::Core::Model::Host",
         :name => "test"})
 
-    x = Intrigue::Model::TaskResult.create({
+    x = Intrigue::Core::Model::TaskResult.create({
       :project => project,
       :logger => logger,
       :base_entity => entity,

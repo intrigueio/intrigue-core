@@ -7,7 +7,7 @@ require 'sequel'
 
 # system database configuration
 require_relative 'lib/system/database'
-include Intrigue::System::Database
+include Intrigue::Core::System::Database
 
 # Config files
 $intrigue_basedir = File.dirname(__FILE__)
@@ -60,9 +60,9 @@ task :update do
 end
 
 def _get_global_entities
-  uri = "https://app.intrigue.io/api/global/entities?key=#{$intrigueio_api_key}"
+  uri = "https://app.intrigue.io/api/system/entities/global/entities/?key=#{$intrigueio_api_key}"
   begin
-    puts "[+] Making request for global entities"
+    puts "[+] Making request for global entities!"
     response = RestClient.get(uri)
 
     # handle missing data
@@ -70,7 +70,7 @@ def _get_global_entities
 
     j = JSON.parse(response.body)
   rescue JSON::ParserError => e
-    puts "[+] Unable to parse bootstrap json"
+    puts "[+] Unable to parse json: #{e}"
     return -1
   end
 j
@@ -98,7 +98,7 @@ task :load_global_namespace do
 
  # LOAD IT IN  
  puts "[+] Loading in entities intel from Intrigue.io API"
- Intrigue::Model::GlobalEntity.load_global_namespace(global_entities)
+ Intrigue::Core::Model::GlobalEntity.load_global_namespace(global_entities)
  global_entities = nil
 
   puts "[+] Done pulling global namespace"
@@ -137,6 +137,7 @@ task :setup do
     system_password = config["credentials"]["password"]
 
   else
+
     puts "[+] Creating system config: #{system_config_file}"
     FileUtils.cp "#{system_config_file}.default", system_config_file
 
@@ -168,7 +169,7 @@ task :setup do
 
   # Create SSL Cert  
   if !(File.exist?("#{$intrigue_basedir}/config/server.key") || File.exist?("#{$intrigue_basedir}/config/server.crt"))
-    puts "[+] Generating A new Self-signed SSL Certificate..."
+    puts "[+] Generating A new self-signed SSL Certificate..."
     Dir.chdir("#{$intrigue_basedir}/config/"){ 
       subject_name = "/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN=intrigue.local"
       command = "openssl req -subj '#{subject_name}' -new -newkey rsa:2048 -sha256 -days 365 -nodes -x509 -keyout server.key -out server.crt"

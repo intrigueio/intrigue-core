@@ -7,7 +7,7 @@ class GenerateGraphWorker
   def perform(id)
 
     # Get the right object
-    project = Intrigue::Model::Project.where(:id => id).first
+    project = Intrigue::Core::Model::Project.where(:id => id).first
 
     begin
       puts "Starting graph generation for #{project.name}!"

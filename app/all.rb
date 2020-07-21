@@ -3,6 +3,9 @@
 # must be brought in first, system should be skipped as a directive
 require_relative "routes/system"
 
+# useful to bring in generic helper functions
+require_relative '../lib/system/dns_helpers'
+
 require_relative "routes/analysis"
 require_relative "routes/entities"
 require_relative "routes/issues"

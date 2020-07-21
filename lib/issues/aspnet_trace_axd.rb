@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "aspnet_trace_axd",
         pretty_name: "ASP.NET Trace.axd Information Leak",
         severity: 5,
@@ -17,7 +18,8 @@ module Intrigue
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel
           { type: "description", uri: "https://hackerone.com/reports/519418" },
           { type: "remediation", uri: "https://www.netsparker.com/web-vulnerability-scanner/vulnerabilities/traceaxd-detected/" }
-        ]
+        ], 
+        check: "uri_brute_focused_content"
       }.merge!(instance_details)
     end
   

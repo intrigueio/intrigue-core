@@ -68,54 +68,23 @@ module Machine
         unless entity.created_by?("masscan_scan")
           # and we might as well scan to cover any new info
           # and we might as well scan to cover any new info
-          start_recursive_task(task_result,"nmap_scan",entity, [
+          start_recursive_task(task_result,"naabu_scan",entity, [
             {"name"=> "tcp_ports", "value" => scannable_tcp_ports},
-            {"name"=>"udp_ports", "value" => scannable_udp_ports}])
+            {"name"=> "udp_ports", "value" => scannable_udp_ports}])
         end
 
       elsif entity.type_string == "NetBlock"
 
         start_recursive_task(task_result,"masscan_scan",entity,[
           {"name"=> "tcp_ports", "value" => scannable_tcp_ports},
-          {"name"=>"udp_ports", "value" => scannable_udp_ports}])
+          {"name"=> "udp_ports", "value" => scannable_udp_ports}])
 
       elsif entity.type_string == "NetworkService"
 
-        #if entity.get_detail("service") == "RDP"
-        #  start_recursive_task(task_result,"rdpscan_scan",entity, [], true)
-        #end
-
       elsif entity.type_string == "Uri"
-
-        # wordpress specific checks
-        if entity.get_detail("fingerprint")
-
-          if entity.get_detail("fingerprint").any?{|v| v['product'] =~ /Wordpress/i }
-            puts "Checking Wordpress specifics on #{entity.name}!"
-            start_recursive_task(task_result,"wordpress_enumerate_users",entity, [])
-            start_recursive_task(task_result,"wordpress_enumerate_plugins",entity, [])
-          end
-
-          if entity.get_detail("fingerprint").any?{|v| v['product'] =~ /GlobalProtect/ }
-            puts "Checking GlobalProtect specifics on #{entity.name}!"
-            start_recursive_task(task_result,"vuln/globalprotect_check",entity, [])
-          end
-
-          # Hold on this for now, memory leak?
-          #if entity.get_detail("fingerprint").any?{|v| v['vendor'] == "Apache" && v["product"] == "HTTP Server" }
-          #  start_recursive_task(task_result,"apache_server_status_parser",entity, [])
-          #end
-
-        end
 
         ## Grab the SSL Certificate
         start_recursive_task(task_result,"uri_gather_ssl_certificate",entity, []) if entity.name =~ /^https/
-
-        # Check for exploitable URIs, but don't recurse on things we've already found
-        #unless (entity.created_by?("uri_brute_focused_content") || entity.created_by?("uri_spider") )
-        start_recursive_task(task_result,"uri_brute_focused_content", entity)
-        #end
-        
 
         # if we're going deeper 
         unless entity.created_by?("uri_spider")

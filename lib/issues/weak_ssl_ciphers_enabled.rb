@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "weak_ssl_ciphers_enabled",
         pretty_name: "Weak SSL/TLS Cipher Enabled",
         severity: 5,

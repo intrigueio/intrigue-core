@@ -36,7 +36,7 @@ class NetBlock < Intrigue::Task::BaseTask
       out = out.merge({"name" => netblock_string, "_hidden_name" => netblock_string})
       # lazy but easier than setting invidually
       _log "Setting entity details to... #{out}"
-      _set_entity_details out
+      _get_and_set_entity_details out
     end
 
 
@@ -80,30 +80,32 @@ class NetBlock < Intrigue::Task::BaseTask
    
       org_name = nil
       org_regex = /org-name:.*$/i
-      match_captures = whois_text.scan(org_regex)
+      match_captures = "#{whois_text}".scan(org_regex)
       org_name = match_captures.last
 
       unless org_name
         org_regex = /Customer:.*$/i
-        match_captures = whois_text.scan(org_regex)
+        match_captures = "#{whois_text}".scan(org_regex)
         org_name = match_captures.last  
       end
 
       unless org_name
         org_regex = /Organization:.*$/i
-        match_captures = whois_text.scan(org_regex)
+        match_captures = "#{whois_text}".scan(org_regex)
         org_name = match_captures.last  
       end
 
       unless org_name
         org_regex = /descr:.*$/i
-        match_captures = whois_text.scan(org_regex)
+        match_captures = "#{whois_text}".scan(org_regex)
         org_name = match_captures.last  
       end
       
+      if org_name
+        clean_org_name = "#{org_name}".split(":").last.strip
+        _set_entity_detail("organization_name", clean_org_name) 
+      end
 
-      clean_org_name = org_name.split(":").last.strip
-      _set_entity_detail("organization_name", clean_org_name) if org_name
     end
 
   end

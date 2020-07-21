@@ -1,9 +1,11 @@
-class IntrigueApp < Sinatra::Base
+class CoreApp < Sinatra::Base
 
   post "/api/v1/entity" do
+    
     content_type "application/json"
-    authenticate_system_api_call @params["key"]
 
+    authenticate_system_api_call @params["key"]
+    
     # For post requests with a json body, just stick it in params
     # don't clobber params, stick it in its own object
     json = get_json_body

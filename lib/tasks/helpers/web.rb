@@ -435,8 +435,7 @@ module Task
   ### XXX - significant updates made to zlib, determine whether to
   ### move this over to RestClient: https://github.com/ruby/ruby/commit/3cf7d1b57e3622430065f6a6ce8cbd5548d3d894
   ###
-  def http_request(method, uri_string, credentials=nil, headers={},
-        data=nil, attempts_limit=3, open_timeout=15, read_timeout=15)
+  def http_request(method, uri_string, credentials=nil, headers={}, data=nil, attempts_limit=3, open_timeout=15, read_timeout=15)
 
     response = nil
     begin
@@ -456,11 +455,11 @@ module Task
        _log_debug "Getting #{uri}, attempt #{attempts}" if @task_result
        attempts+=1
 
-       if Intrigue::System::Config.config["http_proxy"]
-         proxy_addr = Intrigue::System::Config.config["http_proxy"]["host"]
-         proxy_port = Intrigue::System::Config.config["http_proxy"]["port"]
-         proxy_user = Intrigue::System::Config.config["http_proxy"]["user"]
-         proxy_pass = Intrigue::System::Config.config["http_proxy"]["pass"]
+       if Intrigue::Core::System::Config.config["http_proxy"]
+         proxy_addr = Intrigue::Core::System::Config.config["http_proxy"]["host"]
+         proxy_port = Intrigue::Core::System::Config.config["http_proxy"]["port"]
+         proxy_user = Intrigue::Core::System::Config.config["http_proxy"]["user"]
+         proxy_pass = Intrigue::Core::System::Config.config["http_proxy"]["pass"]
        end
 
        # set options
@@ -519,23 +518,6 @@ module Task
          request.basic_auth(credentials[:username],credentials[:password])
        end
 
-       # USE THIS TO PRINT HTTP REQUEST
-=begin
-       puts
-       puts
-       puts "===== BEGIN REQUEST ====="
-       puts "Endpoint: #{request.method} #{uri}"
-       puts "Headers:\n"
-       request.each_header do |key, value|
-        puts "\t#{key}: #{value}"
-       end
-       puts "POST Data:\n#{request.body}" if request.method == 'POST'
-       puts "=====  END  REQUEST ====="
-       puts
-       puts
-=end
-       # END USE THIS TO PRINT HTTP REQUEST
-
        # get the response
        response = http.request(request)
 
@@ -583,11 +565,11 @@ module Task
     rescue ArgumentError => e
       @task_result.logger.log_error "Unable to open connection: #{e}" if @task_result
     rescue Net::OpenTimeout => e
-      @task_result.logger.log_error "OpenTimeout Timeout : #{e}" if @task_result
+      @task_result.logger.log_error "OpenTimeout Timeout: #{e}" if @task_result
     rescue Net::ReadTimeout => e
-      @task_result.logger.log_error "ReadTimeout Timeout : #{e}" if @task_result
+      @task_result.logger.log_error "ReadTimeout Timeout: #{e}" if @task_result
     rescue Errno::ETIMEDOUT => e
-      @task_result.logger.log_error "ETIMEDOUT Timeout : #{e}" if @task_result
+      @task_result.logger.log_error "ETIMEDOUT Timeout: #{e}" if @task_result
     rescue Errno::EINVAL => e
       @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
     rescue Errno::EAFNOSUPPORT => e

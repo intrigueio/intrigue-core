@@ -108,16 +108,16 @@ class UriCheckSudomainHijack  < BaseTask
         _create_hijackable_subdomain_issue "Kinsta", uri, "potential"
 
       elsif response.body =~ /It looks like you may have taken a wrong turn somewhere/i
-        _create_hijackable_subdomain_issue "LaunchRock", uri, "potential"
+        _create_hijackable_subdomain_issue "LaunchRock", uri, "potential"  unless (uri =~ /launchrock.com/ || uri =~ /amazonaws.com/)
 
       elsif response.body =~ /Unrecognized domain/i
-        _create_hijackable_subdomain_issue "Mashery", uri, "potential"
+        _create_hijackable_subdomain_issue "Mashery", uri, "potential" unless (uri =~ /mashery.com/ || uri =~ /amazonaws.com/)
 
       elsif response.body =~ /The gods are wise, but do not know of the site which you seek\!/i
-        _create_hijackable_subdomain_issue "Pantheon", uri, "potential"
+        _create_hijackable_subdomain_issue "Pantheon", uri, "potential" unless (uri =~ /pantheon.io/ || uri =~ /amazonaws.com/)
 
       elsif response.body =~ /Project doesnt exist... yet!/i
-        _create_hijackable_subdomain_issue "Readme.io", uri, "potential"
+        _create_hijackable_subdomain_issue "Readme.io", uri, "potential" unless (uri =~ /readme.io/ || uri =~ /amazonaws.com/)
 
       elsif response.body =~ /Sorry, this shop is currently unavailable./i
         _create_hijackable_subdomain_issue("Shopify", uri, "potential") unless (uri =~ /shopify.com/ || uri =~ /myshopify.com/)
@@ -133,7 +133,7 @@ class UriCheckSudomainHijack  < BaseTask
         _create_hijackable_subdomain_issue "Surge.sh", uri, "potential"
 
       elsif response.body =~ /Whatever you were looking for doesn\'t currently exist at this address/i
-        _create_hijackable_subdomain_issue "Tumblr", uri, "potential"
+        _create_hijackable_subdomain_issue "Tumblr", uri, "potential" unless (uri =~ /tumblr.com/ || uri =~ /yahoo.com/)
 
       elsif response.body =~ /Please renew your subscription/i
         _create_hijackable_subdomain_issue "Tilda", uri, "potential"
@@ -144,15 +144,17 @@ class UriCheckSudomainHijack  < BaseTask
       elsif response.body =~ /The requested URL was not found on this server\./i
         _create_hijackable_subdomain_issue("Unbounce", uri, "potential") unless (uri =~ /unbounce.com/)
 
-
       elsif response.body =~ /This UserVoice subdomain is currently available\!/i
         _create_hijackable_subdomain_issue "UserVoice", uri, "potential"
 
       elsif response.body =~ /domain is already connected to a Webflow site/i
-        _create_hijackable_subdomain_issue "Webflow", uri, "potential"
+        _create_hijackable_subdomain_issue "Webflow", uri, "potential" unless (uri =~ /webflow.io/)
 
       elsif response.body =~ /Do you want to register \*\.wordpress\.com/i
-        _create_hijackable_subdomain_issue "Wordpress", uri, "potential"
+        _create_hijackable_subdomain_issue "Wordpress", uri, "potential" unless (uri =~ /wordpress.com/)
+      
+      elsif response.body =~ /Domain mapping upgrade for this domain not found. Please/i
+        _create_hijackable_subdomain_issue "Wordpress", uri, "potential" unless (uri =~ /wordpress.com/)
 
       # disabled per https://github.com/EdOverflow/can-i-take-over-xyz
       #elsif response.body =~ /This domain is successfully pointed at WP Engine, but is not configured/i

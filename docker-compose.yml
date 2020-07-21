@@ -10,7 +10,7 @@ services:
     volumes: # this script will create our database
       - ./util/sql/01-pginit.sql:/docker-entrypoint-initdb.d/01-pginit.sql
   redis:
-    image: redis
+    image: redis:latest
     restart: always
     expose:
       - "6739"

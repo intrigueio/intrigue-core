@@ -1,10 +1,11 @@
 module Intrigue
 module Issue
-class VulnCitrixNetscalerCve201919871 < BaseIssue
+class CitrixNetscalerCve201919871 < BaseIssue
 
   def self.generate(instance_details={})
     {
-      name: "vulnerability_citrix_netscaler_rce_cve_2019_19781",
+      added: "2020-01-01",
+      name: "citrix_netscaler_rce_cve_2019_19781",
       pretty_name: "Vulnerable Citrix Netscaler (CVE-2019-19781)",
       identifiers: [
         { type: "CVE", name: "CVE-2019-19871" }

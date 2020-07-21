@@ -40,16 +40,32 @@ class NetworkService < Intrigue::Task::BaseTask
     ###
     ###
     ###
-    fingerprint_service(ip_address, port) 
+    fingerprint_service(ip_address, port, proto) 
     
     ###
     ### Handle SNMP as a special treat
     ###
     enrich_snmp if port == 161 && proto.upcase == "UDP"
 
+    # Unless we could verify futher, consider these noise
+    noise_networks = [
+      "CLOUDFLARENET - CLOUDFLARE, INC., US", 
+      "GOOGLE, US", 
+      "CLOUDFLARENET, US", 
+      "GOOGLE-PRIVATE-CLOUD, US", 
+      "INCAPSULA, US", 
+      "INCAPSULA - INCAPSULA INC, US"
+    ]
+
+    # drop them if we don't have a fingerprint
+    if noise_networks.include?(_get_entity_detail("net_name")) && (_get_entity_detail("fingerprint") || []).empty?
+      @entity.deny_list = true && @entity.hidden = true && @entity.scoped = false
+      @entity.save
+    end
+  
   end
 
-  def fingerprint_service(ip_address,port=nil)
+  def fingerprint_service(ip_address,port=nil, proto="TCP")
 
     # Use intrigue-ident code to request the banner and fingerprint
     _log "Grabbing banner and fingerprinting!"
@@ -66,42 +82,18 @@ class NetworkService < Intrigue::Task::BaseTask
       return
     end
 
-    ident_fingerprints = ident_matches["fingerprints"]
+    ident_fingerprints = ident_matches["fingerprints"] || []
     _log "Got #{ident_fingerprints.count} fingerprints!"
 
     # get the request/response we made so we can keep track of redirects
     ident_banner = ident_matches["banner"]
 
     if ident_fingerprints.count > 0
-
-      # Make sure the key is set before querying intrigue api
-      intrigueio_api_key = _get_task_config "intrigueio_api_key"
-      use_api = intrigueio_api_key && intrigueio_api_key.length > 0
-
-      # for ech fingerprint, map vulns 
-      ident_fingerprints = ident_fingerprints.map do |fp|
-
-        vulns = []
-        if fp["inference"]
-          cpe = Intrigue::Vulndb::Cpe.new(fp["cpe"])
-          if use_api # get vulns via intrigue API
-            _log "Matching vulns for #{fp["cpe"]} via Intrigue API"
-            vulns = cpe.query_intrigue_vulndb_api(intrigueio_api_key)
-          else
-            vulns = cpe.query_local_nvd_json
-          end
-        else
-          _log "Skipping inference on #{fp["cpe"]}"
-        end
-
-        fp.merge!({ "vulns" => vulns })
-      end
-
+      ident_fingeprints = add_vulns_by_cpe(ident_fingerprints)
     end
 
     _set_entity_detail "banner", ident_banner
     _set_entity_detail "fingerprint", ident_fingerprints
-
   end
 
   def enrich_snmp

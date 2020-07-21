@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "vmware_horizon_info_leak",
         pretty_name: "Information Leak in Vmware Horizon (CVE-2019-5513)",
         identifiers: [
@@ -20,6 +21,7 @@ module Intrigue
         references: [
           { type: "description", uri: "https://www.atredis.com/blog/2019/3/15/cve-2019-5513-information-leaks-in-vmware-horizon" }
         ],
+        check: "vuln/vmware_horizon_info_leak"
       }.merge!(instance_details)
     end
   

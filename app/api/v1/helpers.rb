@@ -1,5 +1,5 @@
 
-class IntrigueApp < Sinatra::Base
+class CoreApp < Sinatra::Base
 
   def halt_unless_authenticated(user_key)
     if authenticate_system_api_call(user_key)
@@ -12,9 +12,9 @@ class IntrigueApp < Sinatra::Base
   def authenticate_system_api_call(user_key)
 
     cleansed_key = URI.unescape("#{user_key}".strip)
-    system_key = "#{Intrigue::System::Config.config["credentials"]["api_key"]}".strip 
+    system_key = "#{Intrigue::Core::System::Config.config["credentials"]["api_key"]}".strip 
 
-    if Intrigue::System::Config.config["api_security"]
+    if Intrigue::Core::System::Config.config["api_security"]
       if cleansed_key && (cleansed_key == system_key)
         return true
       end

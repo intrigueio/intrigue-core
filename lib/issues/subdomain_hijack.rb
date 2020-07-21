@@ -4,6 +4,7 @@ class SubdomainHijack < BaseIssue
 
   def self.generate(instance_details={})
     {
+      added: "2020-01-01",
       name: "subdomain_hijack",
       pretty_name: "Subdomain Hijacking Detected",
       severity: 2,
@@ -15,7 +16,8 @@ class SubdomainHijack < BaseIssue
                     " the host, effectively 'hijacking' the domain.",
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
         { type: "remediation", uri: "https://securitytrails.com/blog/preventing-domain-hijacking-10-steps-to-increase-your-domain-security" }
-      ]
+      ],
+      check: "uri_check_subdomain_hijack"
     }.merge!(instance_details)
   end
 

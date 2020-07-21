@@ -29,7 +29,7 @@ module Issue
     issue[:details][:name] = temp_name
 
     _log_good "Creating issue: #{temp_pretty_name}"
-  Intrigue::Model::Issue.create(_encode_hash(issue))
+  Intrigue::Core::Model::Issue.create(_encode_hash(issue))
   end
 
   def _linkable_issue_exists(issue_type)
@@ -143,8 +143,17 @@ module Issue
 
       resource_url = req["url"]
 
+      # skip data 
+      return if uri =~ /^data:.*$/
+
       # skip this for anything other than hostnames 
-      hostname = URI(resource_url).hostname
+      begin 
+        hostname = URI(resource_url).hostname
+      rescue URI::InvalidURIError => e 
+        @task_result.logger.log_error "Unable to parse URI: #{resource_url}"
+        return 
+      end
+      
       return if hostname =~ ipv4_regex || hostname =~ /ipv6_regex/
 
       if resource_url =~ /^http:.*$/ 

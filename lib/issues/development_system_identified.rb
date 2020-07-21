@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "development_system_identified",
         pretty_name: "Development System Identified",
         severity: 4,

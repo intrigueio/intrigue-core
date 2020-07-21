@@ -12,7 +12,7 @@ class DnsSearchSonar < BaseTask
       :description => "Search Rapid7's Project Sonar for FDNS and RDNS records matching a given pattern. Utilizes @erbbysam's excellent DNSGrep server to serve results.",
       :references => [],
       :type => "discovery",
-      :passive => false,
+      :passive => true,
       :allowed_types => ["DnsRecord","Domain"],
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
@@ -44,7 +44,7 @@ class DnsSearchSonar < BaseTask
         json["FDNS_A"].each do |entry|
           # format: "199.34.228.55,red-buddha-american-apparel-llc.company.com",
           next if entry.split(",").last =~ /mail\.mail/
-          _create_entity "DnsRecord", "name" => entry.split(",").last
+          create_dns_entity_from_string(entry.split(",").last)
         end
       end
 
@@ -52,7 +52,7 @@ class DnsSearchSonar < BaseTask
       if json["RDNS"]
         json["RDNS"].each do |entry|
           # format: "199.34.228.55,red-buddha-american-apparel-llc.company.com",
-          _create_entity "DnsRecord", "name" => entry.split(",").last
+          create_dns_entity_from_string(entry.split(",").last)
         end
       end
 

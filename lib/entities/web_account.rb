@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class WebAccount < Intrigue::Model::Entity
+class WebAccount < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
@@ -37,8 +37,8 @@ class WebAccount < Intrigue::Model::Entity
 
   
   def scoped?
-    return true if self.seed
-    return false if self.hidden
+    return true if self.allow_list
+    return false if self.deny_list
   
   true
   end

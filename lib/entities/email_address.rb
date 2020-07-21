@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class EmailAddress < Intrigue::Model::Entity
+class EmailAddress < Intrigue::Core::Model::Entity
 
   include Intrigue::Task::Dns
 
@@ -29,11 +29,8 @@ class EmailAddress < Intrigue::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
-    return true if self.seed
-    return false if self.hidden
-
-    # check hidden on-demand
-    return false unless self.project.traversable_entity?(self.name.split("@").last, "Domain")
+    return true if self.allow_list
+    return false if self.deny_list
 
   true
   end

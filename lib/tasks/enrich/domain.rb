@@ -126,6 +126,17 @@ class Domain < Intrigue::Task::BaseTask
 
     end
 
+    ###
+    ### Scope all aliases if we're scoped
+    ###
+    if @entity.scoped? 
+      @entity.aliases.each do |a|
+        next if a.id == @entity.id # we're already scoped. 
+        _log "Setting #{a.name} scoped!"
+        a.set_scoped!
+      end
+    end 
+
   end
 
   def _create_aliases(results)

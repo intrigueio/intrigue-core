@@ -68,6 +68,10 @@ module Services
         # match our hidden list 
         if cert_names
           cert_names.uniq do |cn|
+
+            # only try to create stuff that looks like a dnsrecord
+            next unless cn =~ dns_regex
+
             # create each entity 
             cert_entities << _create_entity("DnsRecord", { "name" => cn }, ip_entity )   
           end
@@ -93,9 +97,7 @@ module Services
     end
 
     create_service_lambda = lambda do |h|
-      try_http_ports = [  80,81,82,83,84,85,88,443,888,3000,6443,7443,
-                          8000,8080,8081,8087,8088,8089,8090,8095,
-                          8098,8161,8180,8443,8880,8888,9443,10000 ] 
+      try_http_ports = scannable_web_ports
 
       # Handle web app case first
       if (protocol == "tcp" && try_http_ports.include?(port_num))
@@ -123,7 +125,6 @@ module Services
         end
 
         entity_details = {
-          "scoped" => true, # always scope in
           "name" => uri,
           "uri" => uri,
           "service" => prefix
@@ -141,7 +142,6 @@ module Services
         name = "#{h.name.strip}:#{port_num}"
 
         entity_details = {
-          "scoped" => true, # always scope in
           "name" => name,
           "service" => service
         }
@@ -168,7 +168,6 @@ module Services
         name = "#{h.name.strip}:#{port_num}"
 
         entity_details = {
-          "scoped" => true, # always scope in
           "name" => name,
           "service" => service
         }
