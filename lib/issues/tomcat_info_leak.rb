@@ -4,6 +4,7 @@ class TomcatInfoLeak < BaseIssue
 
   def self.generate(instance_details)
     to_return = {
+      added: "2020-01-01",
       name: "tomcat_info_leak",
       pretty_name: "Tomcat Info Leak",
       severity: 3,

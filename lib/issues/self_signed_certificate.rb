@@ -4,6 +4,7 @@ class SelfSignedCertif < BaseIssue
 
   def self.generate(instance_details={})
     {
+      added: "2020-01-01",
       name: "self_signed_certificate",
       pretty_name: "Self Signed Certificate Detected",
       severity: 5,

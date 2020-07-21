@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "exposed_bigip_configuration_utility",
         pretty_name: "Exposed BIG-IP Configuration Utility",
         severity: 2, 

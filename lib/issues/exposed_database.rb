@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "exposed_database",
         pretty_name: "Exposed Database",
         severity: 2,

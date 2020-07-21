@@ -4,6 +4,7 @@ class TomcatConfig < BaseIssue
 
   def self.generate(instance_details)
     to_return = {
+      added: "2020-01-01",
       name: "tomcat_config",
       pretty_name: "Tomcat Config",
       severity: 4,

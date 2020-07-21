@@ -4,6 +4,7 @@ class AtlassianFisheyeMostactivecommitersVuln < BaseIssue
 
   def self.generate(instance_details={})
     {
+      added: "2020-01-01",
       name: "atlassian_fisheye_mostactivecommiters_cve_2017_9512",
       pretty_name: "Vulnerable Atlassian Fisheye (CVE-2017-9512)",
       identifiers: [

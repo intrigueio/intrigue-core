@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "insecure_cookie_httponly_attribute",
         pretty_name: "Insecure Cookie (Missing 'HttpOnly' Attribute)",
         severity: 5,

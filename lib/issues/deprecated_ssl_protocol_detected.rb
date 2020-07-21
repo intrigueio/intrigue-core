@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "deprecated_ssl_protocol_detected",
         pretty_name: "Deprecated SSL/TLS Protocol Detected",
         severity: 5,

@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "jupyter_exposed_ui_detection",
         pretty_name: "Jupyter Exposed UI Detection",
         severity: 4,

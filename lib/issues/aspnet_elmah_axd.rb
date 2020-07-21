@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added_at: "2020-01-01",
         name: "aspnet_elmah_axd",
         pretty_name: "ASP.NET Elmah.axd Sensitive Information Leak",
         severity: 1,

@@ -5,9 +5,10 @@ module Intrigue
     def self.generate(instance_details={})
   
       to_return = {
+        added: "2020-01-01",
         name: "sonatype_nexus_cve_2020_10204",
         pretty_name: "Sonatype Nexus (CVE-2020-10204)",
-        category: "application",
+        category: "vulnerability",
         severity: 3,
         status: "confirmed",
         description: "Sonatype Nexus Repository before 3.21.2 allows Remote Code Execution.",

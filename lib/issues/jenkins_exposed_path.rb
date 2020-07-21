@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "jenkins_exposed_path",
         pretty_name: "Jenkins Exposed Path",
         severity: 4,

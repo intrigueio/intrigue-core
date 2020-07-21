@@ -4,6 +4,7 @@ class JoomlaAgoraBypassSqli < BaseIssue
 
   def self.generate(instance_details={})
     {
+      added: "2020-01-01",
       name: "vulnerable_joomla_agora_bypass_sqli",
       pretty_name: "Joomla Agora Bypass Sqlis",
       severity: 4,

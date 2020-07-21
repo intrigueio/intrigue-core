@@ -4,6 +4,7 @@ class DefaultWebServerPageExposed < BaseIssue
 
   def self.generate(instance_details)
     to_return = {
+      added: "2020-01-01",
       name: "default_web_server_page_exposed",
       pretty_name: "Default Web Server Page Exposed",
       severity: 4,

@@ -4,6 +4,7 @@ class ExposedDebuggingInterface < BaseIssue
 
   def self.generate(instance_details={})
     {
+      added: "2020-01-01",
       name: "exposed_debugging_interface",
       pretty_name: "Exposed Debugging Interface",
       severity: 2,

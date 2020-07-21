@@ -4,11 +4,12 @@ module Intrigue
   
     def self.generate(instance_details)
       to_return = {
+        added: "2020-01-01",
         name: "php_info_leak",
         pretty_name: "PHP Info Leak",
         severity: 3,
         status: "confirmed",
-        category: "network",
+        category: "application",
         description: "This server is exposing a phpinfo.php file, which provides detailed information about the configuration of the server.",
         remediation: "Remove the file from the server.",
         affected_software: [

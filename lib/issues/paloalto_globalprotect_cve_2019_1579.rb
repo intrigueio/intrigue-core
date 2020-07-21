@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "paloalto_globalprotect_cve_2019_1579",
         pretty_name: "PaloAlto GlobalProtect Vulnerability (CVE-2019-1579)",
         identifiers: [

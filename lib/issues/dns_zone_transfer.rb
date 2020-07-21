@@ -4,6 +4,7 @@ class DnsZoneTransfer < BaseIssue
 
   def self.generate(instance_details={source: "Domain name"})
     to_return = {
+      added: "2020-01-01",
       name: "dns_zone_transfer",
       pretty_name: "DNS Zone (AXFR) Transfer Enabled",
       severity: 4,

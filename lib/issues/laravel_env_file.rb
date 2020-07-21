@@ -4,10 +4,11 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "laravel_env_file",
         pretty_name: "Exposed Laravel .env File",
         severity: 1,
-        category: "network",
+        category: "application",
         status: "potential",
         description: "This server is exposing a sensitive configuration file for Laravel!",
         remediation: "Disable access for anonymous users and rotate passwords.",

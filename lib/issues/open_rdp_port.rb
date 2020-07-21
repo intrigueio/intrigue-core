@@ -4,6 +4,7 @@ class OpenRdpPort < BaseIssue
 
   def self.generate(instance_details={})
     to_return = {
+      added: "2020-01-01",
       name: "open_rdp_port",
       pretty_name: "Open RDP Port",
       severity: 3,

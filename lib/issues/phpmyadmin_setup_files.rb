@@ -4,6 +4,7 @@ class PhpmyadminSetupFiles < BaseIssue
 
   def self.generate(instance_details={})
     {
+      added: "2020-01-01",
       name: "phpmymyadmin_setup_files",
       pretty_name: "PhpMyAdmin Setup Files",
       severity: 4,

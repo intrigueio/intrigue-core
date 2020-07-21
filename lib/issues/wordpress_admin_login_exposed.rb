@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "wordpress_admin_login_exposed",
         pretty_name: "Wordpress Admin Login Exposed",
         severity: 5,

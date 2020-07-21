@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "internal_system_exposed_via_dns",
         pretty_name: "Internal System Exposed via DNS",
         severity: 4,

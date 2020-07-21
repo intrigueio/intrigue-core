@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-05-01",
         name: "vulnerability_tomcat_ghostcat_cve_2020_1938",
         pretty_name: "Vulnerable Tomcat - Ghostcat (CVE-2020-1938)",
         identifiers: [

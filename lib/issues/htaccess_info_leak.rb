@@ -4,6 +4,7 @@ class HtaccessInfoLeak < BaseIssue
 
   def self.generate(instance_details={})
     {
+      added: "2020-01-01",
       name: "htaccess_info_leak",
       pretty_name: ".htaccess Information Leak",
       severity: 3,

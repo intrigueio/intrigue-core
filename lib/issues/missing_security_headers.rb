@@ -4,6 +4,7 @@ class MissingSecurityHeaders < BaseIssue
 
   def self.generate(instance_details={})
     {
+      added: "2020-01-01",
       name: "missing_security_headers",
       pretty_name: "Missing Application Security Headers",
       category: "application",

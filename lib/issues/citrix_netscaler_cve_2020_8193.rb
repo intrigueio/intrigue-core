@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-07-19",
         name: "citrix_netscaler_rce_cve_2020_8193",
         pretty_name: "Vulnerable Citrix Netscaler (CVE-2020-8193)",
         identifiers: [

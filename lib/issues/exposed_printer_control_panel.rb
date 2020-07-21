@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "exposed_printer_control_panel",
         pretty_name: "Exposed Printer Control Panel",
         severity: 2, # default

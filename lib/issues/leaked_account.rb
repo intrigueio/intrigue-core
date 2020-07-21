@@ -4,6 +4,7 @@ class LeakedAccountDetails < BaseIssue
 
   def self.generate(instance_details={})
     to_return = {
+      added: "2020-01-01",
       name: "leaked_account",
       pretty_name: "Leaked Account Detected",
       severity: 2,

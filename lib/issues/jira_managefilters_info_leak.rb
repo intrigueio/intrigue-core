@@ -5,6 +5,7 @@ module Intrigue
     def self.generate(instance_details={})
   
       to_return = {
+        added: "2020-01-01",
         name: "jira_managefilters_info_leak",
         pretty_name: "Jira (manageFilters.jspa) Info Leak",
         category: "application",

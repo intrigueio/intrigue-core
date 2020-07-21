@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       to_return = {
+        added: "2020-01-01",
         name: "open_gitlab_registration",
         pretty_name: "Open Gitlab Registration",
         severity: 2,

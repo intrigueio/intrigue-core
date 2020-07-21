@@ -4,6 +4,7 @@ class ColdfusionCryptominer < BaseIssue
 
   def self.generate(instance_details={})
     {
+      added: "2020-01-01",
       name: "coldfusion_cryptominer",
       pretty_name: "Coldfusion Cryptominer",
       severity: 1,

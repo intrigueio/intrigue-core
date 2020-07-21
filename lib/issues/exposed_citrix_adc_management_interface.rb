@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "exposed_citrix_adc_management_interface",
         pretty_name: "Exposed Citrix ADC Management Interface",
         severity: 2, 

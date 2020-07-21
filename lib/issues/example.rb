@@ -4,6 +4,7 @@ class Example < BaseIssue
 
   def self.generate(instance_details={})
     {
+      added: "2020-01-01",
       name: "example",
       pretty_name: "Just an Example Issue",
       severity: 1,

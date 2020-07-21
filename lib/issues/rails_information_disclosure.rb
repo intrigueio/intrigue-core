@@ -4,6 +4,7 @@ class RailsInformationDisclosure < BaseIssue
 
   def self.generate(instance_details={})
     {
+      added: "2020-01-01",
       name: "rails_information_disclosure_cve_2019_5418",
       pretty_name: "Rails Sensitive File Disclosure (CVE-2019-5418)",
       severity: 1,

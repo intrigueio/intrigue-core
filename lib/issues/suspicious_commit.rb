@@ -4,6 +4,7 @@ class SuspiciousCommit< BaseIssue
 
   def self.generate(instance_details={})
     to_return = {
+      added: "2020-01-01",
       name: "suspicious_commit",
       pretty_name: "Suspicious Commit in Code Repository",
       severity: 2,

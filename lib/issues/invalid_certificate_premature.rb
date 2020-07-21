@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "invalid_certificate_premature",
         pretty_name: "Invalid (Premature) Certificate",
         severity: 3,

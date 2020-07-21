@@ -4,6 +4,7 @@ class SubdomainHijack < BaseIssue
 
   def self.generate(instance_details={})
     {
+      added: "2020-01-01",
       name: "subdomain_hijack",
       pretty_name: "Subdomain Hijacking Detected",
       severity: 2,

@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "sap_netweaver_info_leak",
         pretty_name: "SAP Netweaver Info Leak",
         severity: 2,

@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "atlassian_jira_oauth_plugin_ssrf",
         pretty_name: "Atlassian Jira OAuth Plugin SSRF (CVE-2017-9506)",
         identifiers: [

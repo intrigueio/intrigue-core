@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "vmware_horizon_info_leak",
         pretty_name: "Information Leak in Vmware Horizon (CVE-2019-5513)",
         identifiers: [
