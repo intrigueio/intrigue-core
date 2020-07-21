@@ -4,7 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
-        added_at: "2020-01-01",
+        added: "2020-01-01",
         name: "apache_server_status",
         pretty_name: "Apache ServerStatus information Leak",
         severity: 3,

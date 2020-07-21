@@ -6,7 +6,7 @@ class AwsS3BucketDataLeak < BaseIssue
   def self.generate(instance_details={})
 
     to_return = {
-      added_at: "2020-01-01",
+      added: "2020-01-01",
       name: "aws_s3_bucket_data_leak",
       pretty_name: "S3 Bucket Data Leak",
       severity: 2,
