@@ -10,7 +10,10 @@ class UriCheckSudomainHijack  < BaseTask
       :pretty_name => "URI Check Subdomain Hijack",
       :authors => ["jcran"],
       :description =>   "This task checks for a specific string on a matched uri, indicating that it's a hijackable domain",
-      :references => ["https://github.com/EdOverflow/can-i-take-over-xyz"],
+      :references => [
+        "https://github.com/EdOverflow/can-i-take-over-xyz",
+        "https://github.com/projectdiscovery/nuclei-templates/blob/master/subdomain-takeover/detect-all-takeovers.yaml"
+      ],
       :type => "discovery",
       :passive => false,
       :allowed_types => ["Uri"],
@@ -27,40 +30,55 @@ class UriCheckSudomainHijack  < BaseTask
     response = http_request(:get, uri)
 
     ###
-    ### First, let's make sure we don't flag on domains we don't care about
-    ###
-    seed_domain = false
-    if seeds = @project.seeds
-      # if we have seeds, unless this seed matches one, skip
-      seeds.each do |s|
-        next unless s.type_string == "Domain" # only look at domains
-        seed_domain = true if uri =~ /#{s.name}/i
-        break
-      end
-    else 
-      seed_domain = true # assume true if we have no seeds
-    end
-
-    unless seed_domain
-      _log "Not looking at a domain we care about, skipping!"
-      return 
-    end
-
-    ###
     ### Now that we know we're good to check...  
     ###
-    if response && seed_domain
+    if response
 
-      if response.body =~ /The specified bucket does not exist/i && uri =~ /amazonaws.com/
+      if response.body =~ /The specified bucket does not exist/i
         _create_hijackable_subdomain_issue "AWS S3", uri, "potential"
 
-      elsif response.body =~ /Repository not found/i
+      elsif response.body =~ /If you are an Acquia Cloud customer and expect to see your site/i
+        _create_hijackable_subdomain_issue "Acquia", uri, "potential"
+
+      elsif response.body =~ /The site you are looking for could not be found./i
+        _create_hijackable_subdomain_issue "Acquia", uri, "potential"
+      
+      elsif response.body =~ /Oops\.<\/h2><p class=\"text-muted text-tight\">The page you\'re looking for doesn/i
+        _create_hijackable_subdomain_issue "Aftership", uri, "potential"
+
+      elsif response.body =~ /Sorry, this page is no longer available./i
+        _create_hijackable_subdomain_issue "AgileCRM", uri, "potential"
+
+      elsif response.body =~ /There is no portal here \.\.\. sending you back to Aha\!/i
+        _create_hijackable_subdomain_issue "Aha.io", uri, "potential"
+
+      elsif response.body =~ /Ошибка 402. Сервис Айри.рф не оплачен/i
+        _create_hijackable_subdomain_issue "Airee", uri, "potential"
+
+      elsif response.body =~ /If this is your website and you've just created it, try refreshing in a minute/i
+        _create_hijackable_subdomain_issue "Anima", uri, "potential"
+        
+      elsif response.body =~ /\<h1\>Oops\! We couldn\&\#8217\;t find that page\.<\/h1>/i
+        _create_hijackable_subdomain_issue "BigCartel", uri, "potential"
+
+      elsif response.body =~ /Repository not found/i || /The page you have requested does not exist/i
         _create_hijackable_subdomain_issue "Bitbucket", uri, "potential"
 
-      elsif response.body =~ /Trying to access your account\?/i
+      elsif response.body =~ /<p class=\"bc-gallery-error-code\">Error Code: 404<\/p>/i
+        _create_hijackable_subdomain_issue "Brightcove", uri, "potential"
+        
+      elsif response.body =~ /<strong>Trying to access your account\?<\/strong>/i
         unless (uri =~ /createsend.com/ || uri =~ /amazonaws.com/)
           _create_hijackable_subdomain_issue "CampaignMonitor", uri, "potential"
         end
+
+      elsif response.body =~ /There is no such company. Did you enter the right URL\?/i ||
+        response.body =~ /Company Not Found/i
+        _create_hijackable_subdomain_issue "Canny", uri, "potential"
+        
+      elsif response.body =~ /If you\'re moving your domain away from Cargo you/i || 
+        (response.body =~ /<title>404 Not Found<\/title>/ && response.body =~ /auth.cargo.site/)
+        _create_hijackable_subdomain_issue "CargoCollective", uri, "potential"
 
       #elsif response.body =~ /404 Not Found/i # TODO... check uri && file against alias groups?
       #  _create_hijackable_subdomain_issue "CargoCollective | Fly.io | Netlify", uri, "potential"
@@ -71,17 +89,29 @@ class UriCheckSudomainHijack  < BaseTask
         _create_hijackable_subdomain_issue "Fastly", uri, "potential" unless uri =~ /fastly.com/
 
       elsif response.body =~ /The feed has not been found\./i
-        _create_hijackable_subdomain_issue "Feedpress", uri, "potential"
+        _create_hijackable_subdomain_issue "Feedpress", uri, "potential" unless uri =~ /feedpress.com.com/
 
       elsif response.body =~ /\<title\>Flywheel - Unknown Domain/i
-        _create_hijackable_subdomain_issue "Flywheel", uri, "potential"
+        _create_hijackable_subdomain_issue "Flywheel", uri, "potential" unless uri =~ /flywheel.com/ || uri =~ /flywheel.io/
 
-      elsif response.body =~ /The thing you were looking for is no longer here, or never was/i
+      # unable to verify 2020-07-21
+      #elsif response.body =~ /Oops… looks like you got lost/i
+      #  _create_hijackable_subdomain_issue "Frontify", uri, "potential" 
+
+      elsif response.body =~ /404: This page could not be found./i
+        _create_hijackable_subdomain_issue "Gemfury", uri, "potential"
+      
+      elsif response.body =~ /With GetResponse Landing Pages, lead generation has never been easier/i
+        _create_hijackable_subdomain_issue "GetRespone", uri, "potential"
+
+      elsif response.body =~ /The thing you were looking for is no longer here/i
         _create_hijackable_subdomain_issue "Ghost", uri, "potential"
 
       elsif response.body =~ /There isn\'t a Github Pages site here/i
         _create_hijackable_subdomain_issue("Github", uri, "potential") unless (uri =~ /github.com/ || uri =~ /github.io/)
 
+      ####
+      
       elsif response.body =~ /404 Blog is not found/i
         _create_hijackable_subdomain_issue "", uri, "potential"
 
