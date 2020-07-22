@@ -1,11 +1,11 @@
 module Intrigue
   module Task
-  class CiscoAsaPathTraversalCve20203452 < BaseTask
+  class CiscoAsaLimitedFileReadCve20203452 < BaseTask
   
     def self.metadata
       {
-        :name => "vuln/cisco_asa_abitrary_file_read_cve_2020_3452",
-        :pretty_name => "Vuln Check - Cisco ASA Path Traversal (CVE-2018-0286)",
+        :name => "vuln/cisco_asa_limited_file_read_cve_2020_3452",
+        :pretty_name => "Vuln Check - Cisco ASA Limited File Read (CVE-2020-3452)",
         :authors => ["jcran"],
         :identifiers => [{ "cve" =>  "CVE-2020-3452" }],
         :description => "This task checks a cisco ASA for a path traversal vulnerability",
@@ -29,7 +29,7 @@ module Intrigue
       body = http_get_body "#{_get_entity_name}#{vuln_path}"
       
       if body =~ /otrizna/
-        _create_linked_issue "cisco_asa_path_traversal_cve_2018_0296", { "proof" => body }
+        _create_linked_issue "cisco_asa_limited_file_read_cve_2020_3452", { "proof" => body }
       else 
         _log "Not vulnerable? Got: #{body}"
       end
