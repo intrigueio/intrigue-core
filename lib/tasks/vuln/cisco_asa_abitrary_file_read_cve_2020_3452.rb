@@ -9,7 +9,7 @@ module Intrigue
         :authors => ["jcran"],
         :identifiers => [{ "cve" =>  "CVE-2020-3452" }],
         :description => "This task checks a cisco ASA for a path traversal vulnerability",
-        :references => ["https://twitter.com/aboul3la/status/1286012324722155525"]
+        :references => ["https://twitter.com/aboul3la/status/1286012324722155525"],
         :type => "vuln_check",
         :passive => false,
         :allowed_types => ["Uri"],
