@@ -1,9 +1,8 @@
 # coding: utf-8
 Gem::Specification.new do |s|
-
   s.name        = 'intrigue-tasks'
-  s.version     = '0.1.4'
-  s.date        = '2020-07-05'
+  s.version     = '0.1.6'
+  s.date        = '2020-07-22'
   s.summary     = "Intrigue Core Tasks"
   s.description = "Intrigue Core Task Library"
   s.authors     = ["jcran"]
@@ -12,5 +11,4 @@ Gem::Specification.new do |s|
   s.require_paths = ['./lib']
   s.homepage    = 'http://github.com/intrigueio/intrigueio/intrigue-core'
   s.license     = 'BSD-3-Clause'
- 
 end
