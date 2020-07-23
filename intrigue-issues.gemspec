@@ -2,7 +2,7 @@
 Gem::Specification.new do |s|
   s.name        = 'intrigue-issues'
   s.version     = '0.1.6'
-  s.date        = '2020-07-15'
+  s.date        = '2020-07-22'
   s.summary     = "Intrigue Core Issues"
   s.description = "Intrigue Core Issues"
   s.authors     = ["jcran"]
