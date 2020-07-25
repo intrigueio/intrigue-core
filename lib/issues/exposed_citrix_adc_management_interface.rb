@@ -13,7 +13,7 @@ module Intrigue
         description: "The Citrix ADC Management interface  was discovered. This should never be exposed to the data networks, and should be checked for vulnerabilties",
         remediation: "Prevent access to this panel by placing it behind a firewall or otherwise restricting access.",
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel
-          {:type => "threat_intel", :uri => "https://blog.unauthorizedaccess.nl/2020/07/07/adventures-in-citrix-security-research.html"}
+          {:type => "description", :uri => "https://blog.unauthorizedaccess.nl/2020/07/07/adventures-in-citrix-security-research.html"}
         ],
         # task: handled in ident
       }.merge!(instance_details)
