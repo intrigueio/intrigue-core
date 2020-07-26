@@ -23,13 +23,13 @@ module Intrigue
       require_enrichment
 
       vuln_paths = [
-        "/actions/seomatic/meta-container/meta-link-container/?uri={{8*'8'}}"
-        "/actions/seomatic/meta-container/all-meta-containers?uri={{8*'8'}}"
+        "/actions/seomatic/meta-container/meta-link-container/?uri={{8*'8'}}",
+        "/actions/seomatic/meta-container/all-meta-containers?uri={{8888*'8'}}"
       ] 
       vuln_paths.each do |vp|
         body = http_get_body "#{_get_entity_name}#{vp}"
         
-        if body =~ /64/
+        if body =~ /71104/
           _create_linked_issue "craft_cms_seomatic_cve_2020_9757", { "proof" => body }
         else 
           _log "Not vulnerable? Got: #{body}"
