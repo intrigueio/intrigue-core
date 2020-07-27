@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-07-27",
         name: "microsoft_sharepoint_rce_cve_2020_1147",
         pretty_name: "Microsoft Sharepoint RCE (CVE-2020-1147)",
         identifiers: [

@@ -33,8 +33,6 @@ echo "[+] Installing Apt Essentials"
 sudo apt-get -y install tzdata wget
 sudo apt-get -y install lsb-core software-properties-common dirmngr apt-transport-https lsb-release ca-certificates locales
 
-##### Add external repositories
-
 # chrome repo
 echo "[+] Installing Chromium"
 #sudo add-apt-repository ppa:canonical-chromium-builds/stage
@@ -53,6 +51,7 @@ echo "[+] Installing Intrigue Dependencies..."
 sudo apt-get -y --no-install-recommends install make \
   git \
   git-core \
+  zip \
   bzip2 \
   autoconf \
   bison \
@@ -169,7 +168,7 @@ GO111MODULE=on go get -v github.com/projectdiscovery/naabu/cmd/naabu
 
 # gitrob
 echo "[+] Getting Gitrob... "
-go get github.com/intrigueio/gitrob
+GO111MODULE=on go get github.com/intrigueio/gitrob
 
 # gobuster
 echo "[+] Getting Gobuster... "

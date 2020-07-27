@@ -118,6 +118,7 @@ sudo apt-get -y --no-install-recommends install make \
   fonts-thai-tlwg \
   libappindicator1 \
   libnss3 \
+  zip \
   lsb-release \
   xdg-utils \
   dnsmasq \
@@ -170,7 +171,7 @@ GO111MODULE=on go get -v github.com/projectdiscovery/naabu/cmd/naabu
 
 # gitrob
 echo "[+] Getting Gitrob... "
-go get github.com/intrigueio/gitrob
+GO111MODULE=on go get github.com/intrigueio/gitrob
 
 # gobuster
 echo "[+] Getting Gobuster... "
