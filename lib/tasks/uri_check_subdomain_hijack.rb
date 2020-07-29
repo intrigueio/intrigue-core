@@ -27,6 +27,14 @@ class UriCheckSudomainHijack  < BaseTask
     super
 
     uri = _get_entity_name
+
+    # check to make sure that it's actually a DNS name
+    hostname = URI.parse(uri).host
+    if hostname.is_ip_address?
+      _log_error "No subdomain hijack possible, this is an access-by-ip!"
+      return
+    end
+
     response = http_request(:get, uri)
 
     ###
