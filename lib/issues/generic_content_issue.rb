@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       to_return = { 
+        added: "2020-01-01",
         name: "generic_content_issue",
         pretty_name: "Generic Content Issue",
         category: "application",

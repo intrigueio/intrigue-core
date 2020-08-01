@@ -33,8 +33,6 @@ echo "[+] Installing Apt Essentials"
 sudo apt-get -y install tzdata wget
 sudo apt-get -y install lsb-core software-properties-common dirmngr apt-transport-https lsb-release ca-certificates locales
 
-##### Add external repositories
-
 # chrome repo
 echo "[+] Installing Chromium"
 #sudo add-apt-repository ppa:canonical-chromium-builds/stage
@@ -53,6 +51,7 @@ echo "[+] Installing Intrigue Dependencies..."
 sudo apt-get -y --no-install-recommends install make \
   git \
   git-core \
+  zip \
   bzip2 \
   autoconf \
   bison \
@@ -163,9 +162,9 @@ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 echo export GOPATH=$HOME/go >> ~/.bash_profile
 echo export PATH=$PATH:$GOROOT/bin:$GOPATH/bin >> ~/.bash_profile
 
-# naabu
-echo "[+] Getting Naabu... "
-GO111MODULE=on go get -v github.com/projectdiscovery/naabu/cmd/naabu
+# ffuf
+echo "[+] Getting Ffuf... "
+go get github.com/intrigueio/ffuf
 
 # gitrob
 echo "[+] Getting Gitrob... "
@@ -189,6 +188,10 @@ if [ ! -f /usr/bin/masscan ]; then
   cd ..
   rm -rf masscan
 fi
+
+# naabu
+echo "[+] Getting Naabu... "
+GO111MODULE=on go get -v github.com/projectdiscovery/naabu/cmd/naabu
 
 # rdpscan
 echo "[+] Installing Rdpscan"

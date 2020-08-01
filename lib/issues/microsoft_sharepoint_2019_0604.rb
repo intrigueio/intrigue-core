@@ -4,6 +4,7 @@ class VulnSharepointCve20190604 < BaseIssue
 
   def self.generate(instance_details={})
     {
+      added: "2020-01-01",
       name: "vulnerability_sharepoint_cve_2019_0604",
       pretty_name: "Vulnerable Microsoft Sharepoint (CVE-2019-0604)",
       identifiers: [

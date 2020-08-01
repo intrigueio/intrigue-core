@@ -7,7 +7,11 @@ module System
     ### TODO ... system helper 
     ###
     def parse_domain_name(record)
+
+      # sanity check
+      return nil if record.is_ip_address?
       return nil unless record 
+
       split_tld = parse_tld(record).split(".")
       if (split_tld.last == "com" || split_tld.last == "net") && split_tld.count > 1 # handle cases like amazonaws.com, netlify.com
         length = split_tld.count

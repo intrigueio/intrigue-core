@@ -1,9 +1,23 @@
 class CoreApp < Sinatra::Base
 
+  #{
+  #  :project_name => "Default", # string, any valie project name, see /api/v1/projects
+  #  :task_name => "example", # string, see /api/v1/tasks api for a list of possible values
+  #  :entity_type_string => "Domain", # string, see /api/v1/entities api for a list of possible values
+  #  :entity_name => "test.com" # string, the name of this entity 
+  #  :entity_details => {}, # hash of values, usually empty  
+  #  :task_options => [{name: "value1", name2: "value2"}],  # hash of values # TODO... verify this format
+  #  :handler_names => [], # list of strings, see /api/v1/handlers for a list of possible values 
+  #  :machine_name => "external_discovery_light_active", # string, a valid machine name, see /api/v1/machines for a list of valid values
+  #  :machine_depth => 1, # integer, max depth (can be 1-5)
+  #  :auto_enrich => 1, # bool, specifies whether to run the automatic entity enrichment 
+  #  :auto_scope => 1, # bool, specifies whether to automatically scope this entity in
+  #  :queue_name => "task", # string specifying which queue to place the task in. best left as 'task'  
+  #}
+
   # Create a task result!
   post '/api/v1/task_result' do
     content_type "application/json"
-    add_standard_cors_headers
     
     halt_unless_authenticated(@params["key"])
 

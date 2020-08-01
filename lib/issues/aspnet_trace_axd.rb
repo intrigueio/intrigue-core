@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "aspnet_trace_axd",
         pretty_name: "ASP.NET Trace.axd Information Leak",
         severity: 5,

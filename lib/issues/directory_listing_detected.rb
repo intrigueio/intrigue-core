@@ -4,6 +4,7 @@ class DirectoryListingDetected < BaseIssue
 
   def self.generate(instance_details)
     to_return = {
+      added: "2020-01-01",
       name: "directory_listing_detected",
       pretty_name: "Directory Listing Detected",
       severity: 4,

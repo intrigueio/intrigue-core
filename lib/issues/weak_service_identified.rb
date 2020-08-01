@@ -4,6 +4,7 @@ class WeakServiceIdentified < BaseIssue
 
   def self.generate(instance_details={})
     {
+      added: "2020-01-01",
       name: "weak_service_identified",
       pretty_name: "Weak Service Identified",
       severity: 4,

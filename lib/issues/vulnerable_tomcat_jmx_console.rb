@@ -4,11 +4,12 @@ class VulnerableTomcatJmxConsole < BaseIssue
 
   def self.generate(instance_details={})
     {
+      added: "2020-01-01",
       name: "vulnerable_tomcat_jmx_console",
-      pretty_name: "Vulnerable ",
+      pretty_name: "Exposed JMX Console",
       identifiers: [],
       severity: 1,
-      category: "vulnerability",
+      category: "application",
       status: "confirmed",
       description: "This server is exposing a sensitive path",
       remediation: "Adjust access controls or remove these files from the server.",

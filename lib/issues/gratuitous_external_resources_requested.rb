@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "gratuitous_external_resources_requested",
         pretty_name: "Abnormally Large Number of External Resources",
         severity: 5,

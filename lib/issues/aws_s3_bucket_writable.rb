@@ -6,12 +6,13 @@ class AwsS3BucketWriteable < BaseIssue
   def self.generate(instance_details={})
     
     to_return = {
+      added: "2020-01-01",
       name: "aws_s3_bucket_writable",
       pretty_name: "World Writeable AWS S3 Bucket",
       severity: 2,
       status: "confirmed",
       category: "application",
-      description: "A world writable AWS S3 bucket was found at #{instance_details[:uri]} after authentication",
+      description: "A world writable AWS S3 bucket was discovered.",
       remediation: "Investigate whether this bucket should be writable, and if not, adjust the settings",
       references: [ # types: description, remediation, detection_rule, exploit, threat_intels
         { type: "description", uri: "https://aws.amazon.com/premiumsupport/knowledge-center/secure-s3-resources/" },

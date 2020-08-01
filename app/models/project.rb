@@ -75,7 +75,7 @@ module Model
     end
 
     def export_applications_csv
-      headings = ["IpAddress","Uri","Enriched","Title","Fingerprint","Javascript"]
+      headings = ["IpAddress","Uri","Enriched","Title","Fingerprint","Network", "Geo"]
       static_heading_count = 6
 
       entities = Intrigue::Core::Model::Entity.scope_by_project_and_type(self.name, "Intrigue::Entity::Uri")
@@ -101,22 +101,22 @@ module Model
         host_id = x.get_detail("host_id")
         host = Intrigue::Core::Model::Entity.scope_by_project(self.name).first(:id => host_id)
         if host
-          out << "#{host.name.gsub(",",";")},"
+          out << "#{host.name.gsub(",",";")}, "
         else
-          out << "[Unknown],"
+          out << "[Unknown], "
         end
 
-        out << "#{x.name.gsub(",",";")},"
+        out << "#{x.name.gsub(",",";")}, "
 
         #products = x.get_detail("products")
         #product_string = products.map{|p| p["matched"] }.compact.join("; ") if products
         #out << "#{product_string}" if product_string
 
-        out << "#{x.enriched},"
+        out << "#{x.enriched}, "
 
         page_title = x.get_detail("title")
         page_title_string = page_title.gsub(",","") if page_title
-        out << "#{page_title_string},"
+        out << "#{page_title_string}, "
 
         fingerprint = x.get_detail("fingerprint")
         if fingerprint
@@ -129,18 +129,27 @@ module Model
             out << temp.gsub(",",";")
           end
         end
-        out << ","
+        out << ", "
 
-        js = x.get_detail("javascript")
-        if js
-          js.each do |f|
-            temp = "#{f["library"]}"
-            temp << " #{f["version"]}"
-            temp << " | "
-            out << temp.gsub(",",";")
-          end
-        end
-        out << ","
+        ###
+        ### Network Name
+        ###
+        net_name = x.get_detail("net_name")
+        out << "#{net_name}".gsub(","," ")
+        out << ", "
+
+        ###
+        ### Geography
+        ###
+        net_geo = x.get_detail("net_geo")
+        out << "#{net_geo}, "
+
+        ###
+        ### Alt Names
+        ###
+        alt_names = x.get_detail("alt_names")
+        out << "#{(alt_names||[]).join(" | ")}, "
+
 
         if content_entity_headings.count > 0
           # dynamically dump all config values in the correct orders

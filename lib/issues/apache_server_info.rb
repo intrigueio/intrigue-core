@@ -4,6 +4,7 @@ class ApacheServerInfo < BaseIssue
 
 def self.generate(instance_details={})
   {
+    added: "2020-01-01",
     name: "apache_server_info",
     pretty_name: "Apache ServerInfo Information Leak",
     severity: 2,

@@ -6,6 +6,7 @@ class AwsS3BucketReadable < BaseIssue
   def self.generate(instance_details={})
     
     to_return = {
+      added: "2020-01-01",
       name: "aws_s3_bucket_readable",
       pretty_name: "World Readable AWS S3 Bucket",
       severity: 4,

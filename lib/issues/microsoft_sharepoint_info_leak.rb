@@ -4,6 +4,7 @@ class MicrosoftSharepointInfoLeak < BaseIssue
 
   def self.generate(instance_details={})
     {
+      added: "2020-01-01",
       name: "microsoft_sharepoint_info_leak",
       pretty_name: "Microsoft Sharepoint Info Leak",
       severity: 4,

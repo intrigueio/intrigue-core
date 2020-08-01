@@ -43,6 +43,9 @@ class Uri < Intrigue::Core::Model::Entity
     return true if self.allow_list
     return false if self.deny_list
 
+    # only scope in stuff that's not hidden
+    return false if self.hidden
+
   # if we didnt match the above and we were asked, it's still true
   true
   end

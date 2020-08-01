@@ -4,6 +4,7 @@ class VulnerablePulseSecure < BaseIssue
 
   def self.generate(instance_details={})
     {
+      added: "2020-01-01",
       name: "vulnerable_pulse_secure",
       pretty_name: "Pulse Secure Info Leak (Version and Configuration)",
       identifiers: [],

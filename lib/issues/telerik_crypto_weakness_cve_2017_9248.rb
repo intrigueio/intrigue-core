@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "telerik_crypto_weakness_cve_2017_9248",
         pretty_name: "Telerik Crypto Weakness (CVE-2017-9248)",
         severity: 1,

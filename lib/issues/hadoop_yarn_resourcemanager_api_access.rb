@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "hadoop_yarn_resourcemanager_api_access",
         pretty_name: "Hadoop YARN ResourceManager API Access",
         severity: 1,

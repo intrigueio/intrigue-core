@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         pretty_name: "Cisco ASA Path Traversal (CVE-2018-0296)",
         name: "cisco_asa_path_traversal_cve_2018_0296",
         category: "network",

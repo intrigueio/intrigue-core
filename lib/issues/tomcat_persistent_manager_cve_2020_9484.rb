@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-05-20",
         name: "tomcat_persistent_manager_cve_2020_9484",
         pretty_name: "Vulnerable Tomcat - Deserialization in Filestore (CVE-2020-9484)",
         identifiers: [

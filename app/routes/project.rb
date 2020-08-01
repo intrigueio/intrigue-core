@@ -22,10 +22,19 @@ class CoreApp < Sinatra::Base
     post '/:project/config?' do
       @project_name = params[:project]
       @project = Intrigue::Core::Model::Project.first(:name => @project_name)
-      
+
       # set standard exceptions
-      if @params["use_standard_exceptions"]
+      if @params["use_standard_exceptions"] == "on"
         @project.use_standard_exceptions = true
+      else 
+        @project.use_standard_exceptions = false
+      end
+
+      # set standard exceptions
+      if @params["allow_entity_reenrich"] == "on"
+        @project.allow_reenrich = true
+      else 
+        @project.allow_reenrich = false
       end
 
       # set allowed namespaces

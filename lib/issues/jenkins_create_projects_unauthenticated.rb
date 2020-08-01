@@ -4,6 +4,7 @@ class JenkinsCreateProjectsUnauthenticated < BaseIssue
 
   def self.generate(instance_details={})
     to_return = {
+      added: "2020-01-01",
       name: "jenkins_create_projects_unauthenticated",
       pretty_name: "Jenkins Misconfiguration - Anauthenticated Users can create Projects",
       severity: 1,

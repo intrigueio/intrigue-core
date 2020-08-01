@@ -5,9 +5,10 @@ module Intrigue
     def self.generate(instance_details={})
   
       to_return = {
+        added: "2020-01-01",
         name: "jira_iconuriservlet_ssrf_cve_2017_9506",
         pretty_name: "Jira IconURIServlet SSRF (CVE-2017-9506)",
-        category: "application",
+        category: "vulnerability",
         severity: 2,
         status: "confirmed",
         description: "We detected a jira instance with an SSRF in the IconURIServlet component. This SSRF can be used to explore the target network.",

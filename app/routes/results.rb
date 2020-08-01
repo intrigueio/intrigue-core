@@ -169,7 +169,6 @@ class CoreApp < Sinatra::Base
       task_name = "#{@params["task"]}"
       entity_id = @params["entity_id"]
       depth = @params["depth"].to_i
-      current_project = Intrigue::Core::Model::Project.first(:name => @project_name)
       entity_name = "#{@params["attrib_name"]}".strip
       file_format = "#{@params["file_format"]}".strip
 
@@ -212,6 +211,23 @@ class CoreApp < Sinatra::Base
           et, en = l.split("#").map{|x| x.strip}
 
           entities << {entity_type: "#{et}", entity_name: "#{en}", }
+        end
+      ###
+      ### Intrigue.io Bulk FP
+      ###
+      elsif file_format == "intrigueio_fingerprint_csv"
+        puts 'Parsing Intrigue.io Bulks Fingerprint file'
+        file_lines.each do |l|
+          
+          next if l =~ /^collection, entity type, entity name/i
+          
+          # strip out the data
+          split_line = l.split(",").map{|x| x.strip }
+          col = split_line[0] # indicator type
+          et = split_line[1] # indicator
+          en = split_line[2] # indicator
+
+          entities << {collection: col, entity_type: "#{et}", entity_name: "#{en}"}
         end
       ###
       ### Alienvault OTX (CSV)
@@ -262,14 +278,27 @@ class CoreApp < Sinatra::Base
       auto_enrich = @params["auto_enrich"] == "on" ? true : false
       auto_scope = true  # manually created
 
+      # set our project (default)
+      current_project = Intrigue::Core::Model::Project.first(:name => @project_name)
+
       # for each entity in thefile
+      
       entities.each do |e|
         entity_type = e[:entity_type]
         entity_name = e[:entity_name]
 
+        ###
+        ### If collection was set, overried the project on a per-entity basis
+        ###
+        if e[:collection]
+          project = e[:collection]
+          current_project = Intrigue::Core::Model::Project.update_or_create(:name => project)
+        end
+      
+
         # create the first entity with empty details
         #next unless Intrigue::EntityFactory.entity_types.include?(entity_type)
-        entity = Intrigue::EntityManager.create_first_entity(@project_name,entity_type,entity_name,{})
+        entity = Intrigue::EntityManager.create_first_entity(current_project.name ,entity_type,entity_name,{})
 
         # skip anything we can't parse, silently fail today :[
         unless entity

@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-06-15",
         name: "exposed_werkzeug_debugger",
         pretty_name: "A Werkzeug debuggging console is exposed",
         severity: 1, # default

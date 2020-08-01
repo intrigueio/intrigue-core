@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "wordpress_config_leak",
         pretty_name: "Wordpress Configuration Information Leak",
         severity: 1,

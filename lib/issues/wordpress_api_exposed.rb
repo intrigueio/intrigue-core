@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "wordpress_api_exposed",
         pretty_name: "Wordpress API Exposed",
         severity: 5,

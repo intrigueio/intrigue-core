@@ -4,11 +4,12 @@ module Intrigue
   
     def self.generate(instance_details)
       to_return = {
+        added: "2020-01-01",
         name: "splunk_info_leak",
         pretty_name: "Splunk Info Leak",
         severity: 1,
         status: "confirmed",
-        category: "network",
+        category: "misconfiguration",
         description: "This server is sensitive information on a status page.",
         remediation: "Update the system.",
         affected_software: [

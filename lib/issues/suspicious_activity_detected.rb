@@ -4,6 +4,7 @@ class SuspiciousActivityDetected < BaseIssue
 
   def self.generate(instance_details={source: "ip"})
     to_return = {
+      added: "2020-01-01",
       name: "suspicious_activity_detected",
       pretty_name: "Suspicious Activity Detected",
       severity: 3,

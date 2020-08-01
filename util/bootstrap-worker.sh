@@ -118,6 +118,7 @@ sudo apt-get -y --no-install-recommends install make \
   fonts-thai-tlwg \
   libappindicator1 \
   libnss3 \
+  zip \
   lsb-release \
   xdg-utils \
   dnsmasq \
@@ -164,13 +165,13 @@ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 echo export GOPATH=$HOME/go >> ~/.bash_profile
 echo export PATH=$PATH:$GOROOT/bin:$GOPATH/bin >> ~/.bash_profile
 
-# naabu
-echo "[+] Getting Naabu... "
-GO111MODULE=on go get -v github.com/projectdiscovery/naabu/cmd/naabu
+# ffuf
+echo "[+] Getting Ffuf... "
+go get github.com/intrigueio/ffuf
 
 # gitrob
 echo "[+] Getting Gitrob... "
-go get github.com/intrigueio/gitrob
+GO111MODULE=on go get github.com/intrigueio/gitrob
 
 # gobuster
 echo "[+] Getting Gobuster... "
@@ -190,6 +191,10 @@ if [ ! -f /usr/bin/masscan ]; then
   cd ..
   rm -rf masscan
 fi
+
+# naabu
+echo "[+] Getting Naabu... "
+GO111MODULE=on go get -v github.com/projectdiscovery/naabu/cmd/naabu
 
 # rdpscan
 echo "[+] Installing Rdpscan"

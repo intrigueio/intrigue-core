@@ -43,7 +43,7 @@ class UriBruteFocusedContent < BaseTask
     require_enrichment unless override.length > 0
 
     if override
-      _log "SEtting Override to #{override}"
+      _log "Setting Override to #{override}"
       fingerprint = [{"product" => override }]
     else
       fingerprint = _get_entity_detail("fingerprint")
@@ -51,15 +51,18 @@ class UriBruteFocusedContent < BaseTask
 
     generic_list = [
       #{ path: "/api", body_regex: nil },
-      { issue_type: "leaked_repository", path: "/.git", severity: 2, body_regex: /<h1>Index of/, status: "confirmed" },
-      { issue_type: "leaked_repository", path: "/.git/config", severity: 2, body_regex: /repositoryformatversion/, :status => "confirmed"  },
-      { issue_type: "leaked_repository", path: "/.hg", severity: 2, body_regex: /<h1>Index of/, status: "confirmed"  },
-      { issue_type: "leaked_repository", path: "/.svn", severity: 2, body_regex: /<h1>Index of/, status: "confirmed" },
-      { issue_type: "leaked_repository", path: "/.bzr", severity: 2, body_regex: /<h1>Index of/, status: "confirmed" },
-
+      { issue_type: "exposed_vc_repository", path: "/.git", severity: 2, body_regex: /<h1>Index of/, status: "confirmed" },
+      { issue_type: "exposed_vc_repository", path: "/.git/config", severity: 2, body_regex: /repositoryformatversion/, :status => "confirmed"  },
+      { issue_type: "exposed_vc_repository", path: "/.hg", severity: 2, body_regex: /<h1>Index of/, status: "confirmed"  },
+      { issue_type: "exposed_vc_repository", path: "/.bzr", severity: 2, body_regex: /<h1>Index of/, status: "confirmed" },
+      { issue_type: "exposed_vc_repository_svn", path: "/.svn", severity: 2, body_regex: /<h1>Index of/, status: "confirmed"  },
+      { issue_type: "exposed_vc_repository_svn", path: "/.svn/entries", severity: 2, body_regex: /^dir|\.svn-base|has-props$/, status: "confirmed" },
+      { issue_type: "exposed_vc_repository_svn", path: "/.svn/prop-base", severity: 2, body_regex: /^dir|\.svn-base|has-props$/, status: "confirmed" },
+      { issue_type: "exposed_vc_repository_svn", path: "/.svn/text-base", severity: 2, body_regex: /^dir|\.svn-base|has-props$/, status: "confirmed" },
+      
       # TODO ... move this to laravel-only.
       # https://github.com/laravel/laravel/blob/master/.env.example
-      { issue_type: "laravel_env_file", path: "/.env", severity: 1, body_regex: /DB_CONNECTION/, status: "confirmed" },
+      { issue_type: "laravel_env_file", path: "/.env", severity: 1, body_regex: /^APP_(NAME|ENV|KEY|DEBUG|URL)=/, status: "confirmed" },
 
       { issue_type: "htaccess_info_leak", path: "/.htaccess", body_regex: /AuthName/, severity: 3, status: "confirmed" },
       { issue_type: "htaccess_info_leak", path: "/.htaccess.bak", body_regex: /AuthName/, severity: 3, status: "confirmed" },
@@ -143,6 +146,9 @@ class UriBruteFocusedContent < BaseTask
         body_regex: /com-atlassian-confluence/i, status: "confirmed" }
     ]
 
+    iis_list = [
+      { issue_type: "exposed_web_config", path: "/web.config", severity: 2, body_regex: /\<configuration\>/i, status: "confirmed" },
+    ]
 
     jenkins_list = [
       { issue_type: "jenkins_exposed_path", path: "/view/All/builds", severity: 4, body_regex: /Jenkins ver./i, status: "confirmed" },
@@ -337,7 +343,8 @@ class UriBruteFocusedContent < BaseTask
     bamboo_list.each { |x| work_q.push x } if is_product?(fingerprint,"Bamboo") 
     coldfusion_list.each { |x| work_q.push x } if is_product?(fingerprint,"Coldfusion") 
     confluence_list.each { |x| work_q.push x } if is_product?(fingerprint,"Confluence") 
-    globalprotect_list.each { |x| work_q.push x } if is_product?(fingerprint,"GlobalProtect")
+    iis_list.each { |x| work_q.push x } if is_product?(fingerprint,"Internet Information Services")
+    #globalprotect_list.each { |x| work_q.push x } if is_product?(fingerprint,"GlobalProtect")
     jenkins_list.each { |x| work_q.push x } if is_product?(fingerprint,"Jenkins")
     jforum_list.each { |x| work_q.push x } if is_product?(fingerprint,"Jforum")
     jira_list.each { |x| work_q.push x } if is_product?(fingerprint,"Jira")

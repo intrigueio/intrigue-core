@@ -5,6 +5,7 @@ module Intrigue
     
     def self.generate(instance_details)
       to_return = {
+        added: "2020-01-01",
         name: "domino_info_leak",
         pretty_name: "Domino Info Leak",
         severity: 3,

@@ -37,11 +37,11 @@ This page lists the entities currently loaded into the instance, and a few attri
       <% @entities.sort_by{|x| x.to_s }.each do |e| %>
         <tr>
           <td><%=i%></td>
-          <td><%= "#{e} <a href='https://github.com/intrigueio/intrigue-core/tree/master/lib/entities/#{e.metadata[:name].downcase}.rb'> [code] </a>" %></td> 
+          <td><%= "#{e} <a href='https://github.com/intrigueio/intrigue-core/tree/main/lib/entities/#{e.metadata[:name].downcase}.rb'> [code] </a>" %></td> 
           <td><%= e.metadata[:description] %></td>
           <td><%= e.metadata[:example] || "-" %></td>
           <td><%= e.metadata[:user_creatable] %></td>
-          <td><%= e.new.enrichment_tasks.map{|x| "<a href='https://github.com/intrigueio/intrigue-core/tree/master/lib/tasks/#{x}.rb'>#{x}</a>"}.join("<br/>") %></td>
+          <td><%= e.new.enrichment_tasks.map{|x| "<a href='https://github.com/intrigueio/intrigue-core/tree/main/lib/tasks/#{x}.rb'>#{x}</a>"}.join("<br/>") %></td>
         </tr>
         <%i+=1%>
       <% end %>

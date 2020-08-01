@@ -273,33 +273,18 @@ class EntityManager
     ###
     #####
 
-    ### if the entity has specific scoping instructions (now that we have an entity)
-    ##
-    ##  the default method on the base class simply sets what was available previously
-    ##  See the inidivdiual entity files for this logic.
-    ##
-    if scope_request
-      tr.log "Entity Scope request!"
-      entity.scoped = scope_request.to_bool
-      tr.log "Using entity scoping request, got #{entity.scoped}"
-    else
-      entity.scoped = entity.scoped? #always fall back to our entity-specific logic if there was no request
-      tr.log "Using entity scoping logic, got #{entity.scoped}"
-    end
-    
-    # SAVE IT
-    entity.save_changes
-
-    tr.log "FINAL scoping decision for #{entity.name}: #{entity.scoped}"
-
     # ENRICHMENT LAUNCH (this may re-run if an entity has just been scoped in)
-    if tr.auto_enrich && !entity_already_existed && !entity.deny_list
+    if tr.auto_enrich && !entity.deny_list && (!entity_already_existed || project.allow_reenrich)
       # Check if we've alrady run first and return gracefully if so
-      if entity.enriched
-        tr.log "Skipping enrichment... already completed!"
+      if entity.enriched && !project.allow_reenrich
+        tr.log "Skipping enrichment... already completed and re-enrich disabled!"
       else
         # starts a new background task... so anything that needs to happen from
         # this point should happen in that new background task
+        if entity.enriched
+          tr.log "Re-scheduling enrichement for entity!"
+        end
+
         entity.enrich(tr)
       end
     else
@@ -307,13 +292,6 @@ class EntityManager
       tr.log "Skipping enrichment... entity exists!" if entity_already_existed
       tr.log "Skipping enrichment... entity on deny list!" if entity.deny_list
     end
-  
-    ###
-    ### TODO
-    ### TODO  push it back into a machine from here if the scope changes
-    ### TODO
-    ###
-
 
     # Attach the alias.. this can be confusing....
     # ----
@@ -341,7 +319,29 @@ class EntityManager
 
     end
 
-  # return the entity
+
+    ####
+    #### Finally, set scope, enrichment has run 
+    ####
+
+    ### if the entity has specific scoping instructions (now that we have an entity)
+    ##
+    ##  the default method on the base class simply sets what was available previously
+    ##  See the inidivdiual entity files for this logic.
+    ##
+    if scope_request
+
+      tr.log "Entity Scope request!"
+      entity.scoped = scope_request.to_bool
+      entity.scoped_at = Time.now.utc
+      tr.log "Using entity scoping request, got #{entity.scoped}"
+      tr.log "MANUAL scoping decision for #{entity.name}: #{entity.scoped}"
+      
+      # SAVE IT
+      entity.save_changes
+    end
+
+  # return the entity, with enrichment now scheduled
   entity
   end
 

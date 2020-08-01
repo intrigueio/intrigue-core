@@ -49,6 +49,7 @@ module Model
         :severity => severity,
         :status =>  status,
         :scoped =>  scoped,
+        :source => source || "intrigue",
         :description =>  description,
         :pretty_name => details["pretty_name"],
         :identifiers =>  details["identifiers"],

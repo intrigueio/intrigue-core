@@ -4,6 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-05-01",
         name: "vulnerability_tomcat_ghostcat_cve_2020_1938",
         pretty_name: "Vulnerable Tomcat - Ghostcat (CVE-2020-1938)",
         identifiers: [
@@ -29,6 +30,7 @@ module Intrigue
           { type: "exploit", uri: "https://github.com/0nise/CVE-2020-1938" },
           { type: "exploit", uri: "https://github.com/xindongzhuaizhuai/CVE-2020-1938" },
           { type: "exploit", uri: "https://github.com/laolisafe/CVE-2020-1938" },
+          { type: "exploit", uri: "https://medium.com/bugbountywriteup/detailed-analysis-of-ghostcat-vulnerability-cve-2020-1938-in-apache-tomcat-servers-and-using-it-736146c986a3"},
           { type: "threat_intel", uri: "https://twitter.com/hrbrmstr/status/1233766331314581509" },
           { type: "detection_rule", uri: "https://github.com/DaemonShao/CVE-2020-1938" }, 
           { type: "detection_rule", uri: "https://github.com/Neo23x0/signature-base/blob/master/yara/vul_cve_2020_1938.yar" }, 

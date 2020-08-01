@@ -8,14 +8,20 @@ module Bootstrap
 
     return nil unless config && config["projects"]
 
+    ###
+    ### TODO ... handle system configuration here
+    ###
     ### Set any system configuration
 
+    ###
+    ### TODO ... handle task configuration here
+    ###
     ### Set any task configuration
-    if config["task_configuration"]
-      config["task_configuration"].each do |k,v|
-        Intrigue::Core::System::Config.set_task_config(k,v)
-      end
-    end
+    #if config["task_configuration"]
+    #  config["task_configuration"].each do |k,v|
+    #    Intrigue::Core::System::Config.set_task_config(k,v)
+    #  end
+    #end
 
     # XXX - Assumes we start at a clean system!!!!
     config["projects"].each do |p|
@@ -41,6 +47,7 @@ module Bootstrap
       project.options = p["project_options"] || []
       project.use_standard_exceptions = p["use_standard_exceptions"] || true
       project.allowed_namespaces = p["allowed_namespaces"] || []
+      project.uuid = p["collection_run_uuid"]
       project.save 
 
       # Add our exceptions
