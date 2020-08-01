@@ -21,6 +21,14 @@ class IssueFactory
   end
 
   #
+  # Provide the full list of issues
+  #
+  def self.issue_by_type(type)
+    x = self.issues.find{|x| x if x.generate({})[:name] == type }
+  x.generate({}) if x 
+  end
+
+  #
   # Provide the full list of issues, given a 
   #
   def self.issues_for_vendor_product(vendor,product)
