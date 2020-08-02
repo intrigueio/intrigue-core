@@ -23,16 +23,20 @@ class ApiEndpoint < Intrigue::Task::BaseTask
   def run
 
     endpoint = _get_entity_name
-    default_response = http_get_body(endpoint)
+    resp = http_request(:get, endpoint)
 
+    hash=nil
     begin # live life on the wild side
-      default_response = JSON.parse(default_response)
+      hash = JSON.parse(resp.body)
+      is_json = true
     rescue JSON::ParserError => e 
+      is_json = false
       # no parse :[
     end
 
-    _set_entity_detail("default_response", default_response)
-
+    _set_entity_detail("response", hash || resp.body )
+    _set_entity_detail("code", resp.code)
+    _set_entity_detail("is_json", is_json)
   end
 
 end

@@ -6,7 +6,7 @@ module Intrigue
       {
         :name => "ApiEndpoint",
         :description => "A http based api endpoint",
-        :user_creatable => false,
+        :user_creatable => true,
         :example => "https://app.intrigue.io/api"
       }
     end
