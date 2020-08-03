@@ -66,7 +66,7 @@ class EntityManager
           # manually created entity)
           details = details.tap { |h| h.delete("unscoped") }
           details = details.tap { |h| h.delete("scoped") }
-          entity.scoped = true
+          entity.set_scoped!
           entity.save_changes
 
         #####
@@ -134,6 +134,14 @@ class EntityManager
     # Check if there's an existing entity, if so, merge and move forward
     entity_already_existed = false
     if entity
+
+      # handle the slightly odd exception case of getting an 
+      # unscoped when we're already a seed. this can happen when
+      # we send in our own domain as unscoped (see enrich/ip_address or enrich/email_address)
+      # 
+      if details["unscoped"] && entity.seed?
+        details["unscoped"] = nil
+      end
 
       entity.set_details(details.to_h.deep_merge(entity.details.to_h))
 
@@ -332,8 +340,7 @@ class EntityManager
     if scope_request
 
       tr.log "Entity Scope request!"
-      entity.scoped = scope_request.to_bool
-      entity.scoped_at = Time.now.utc
+      entity.set_scoped!(scope_request.to_bool)
       tr.log "Using entity scoping request, got #{entity.scoped}"
       tr.log "MANUAL scoping decision for #{entity.name}: #{entity.scoped}"
       

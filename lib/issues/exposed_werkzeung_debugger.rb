@@ -6,7 +6,7 @@ module Intrigue
       {
         added: "2020-06-15",
         name: "exposed_werkzeug_debugger",
-        pretty_name: "A Werkzeug debuggging console is exposed",
+        pretty_name: "A Werkzeug debugging console is exposed",
         severity: 1, # default
         category: "application",
         status: "confirmed",

@@ -6,7 +6,7 @@ class VulnerableTomcatJmxConsole < BaseIssue
     {
       added: "2020-01-01",
       name: "vulnerable_tomcat_jmx_console",
-      pretty_name: "Exposed JMX Console",
+      pretty_name: "Apached Tomcat JMX Console Exposed",
       identifiers: [],
       severity: 1,
       category: "application",

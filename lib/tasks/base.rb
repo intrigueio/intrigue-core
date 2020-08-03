@@ -163,13 +163,11 @@ class BaseTask
         ### NOW WE CAN SET ENRICHED!
         @entity.enriched = true 
   
-        ### NOW WE CAN DECIDE SCOPE BASED ON COMPLETE ENTITY (unless we were already scoped in!
-        unless @entity.scoped_at
-          @entity.scoped_at = Time.now.utc
-          @entity.scoped = @entity.scoped? #always fall back to our entity-specific logic if there was no request
+        ### NOW WE CAN DECIDE SCOPE BASED ON COMPLETE ENTITY (unless we were already scoped in!)
+        unless @entity.scoped
+          @entity.set_scoped!(@entity.scoped?) #always fall back to our entity-specific logic if there was no request
           _log_good "POST-ENRICH AUTOMATED ENTITY SCOPE: #{@entity.scoped}"
         end
-        
         @entity.save_changes 
         
 

@@ -49,8 +49,8 @@ class IpAddress < Intrigue::Task::BaseTask
       entity = create_dns_entity_from_string(result["name"], @entity) if @entity.scoped?
 
       # always create an unscoped domain for this entity
-      domain_name = parse_domain_name(result["name"])
-      create_dns_entity_from_string(domain_name, nil, true) if domain_name && @entity.scoped?
+      #domain_name = parse_domain_name(result["name"])
+      #create_unscoped_dns_entity_from_string(domain_name) if domain_name && @entity.scoped?
 
       # if we're external, let's see if this matches 
       # a known dev or staging server pattern, and if we're internal, just

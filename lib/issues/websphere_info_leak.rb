@@ -6,7 +6,7 @@ class WebsphereInfoLeak < BaseIssue
     {
       added: "2020-01-01",
       name: "websphere_info_leak",
-      pretty_name: "Websphere Info Leak",
+      pretty_name: "IBM Websphere Info Leak",
       identifiers: [],
       severity: 2,
       category: "vulnerability",

@@ -6,7 +6,7 @@ module Intrigue
       {
         added: "2020-01-01",
         name: "vmware_horizon_info_leak",
-        pretty_name: "Information Leak in Vmware Horizon (CVE-2019-5513)",
+        pretty_name: "VMWare Horizon Information Leak (CVE-2019-5513)",
         identifiers: [
           { type: "CVE", name: "CVE-2019-5513" }
         ],

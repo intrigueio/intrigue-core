@@ -113,13 +113,13 @@ module Intrigue
 
             # WARN: NoMethodError: undefined method `bytesize' for :eof:Symbol
             rescue NoMethodError => e 
-              puts "ERROR.... nomethoderror exception: #{e} when attempting to screenshot"
+              puts "#{chrome_port} ERROR.... nomethoderror exception: #{e} when attempting to screenshot"
               _killitwithfire(chrome_port)
             rescue Socketry::TimeoutError => e
-              puts "ERROR.... timeout exception: #{e} when attempting to screenshot"
+              puts "#{chrome_port} ERROR.... timeout exception: #{e} when attempting to screenshot"
               _killitwithfire(chrome_port)
             rescue StandardError => e 
-              puts "ERROR.... standard exception: #{e} when attempting to screenshot"
+              puts "#{chrome_port} ERROR.... standard exception: #{e} when attempting to screenshot"
               _killitwithfire(chrome_port)
             end
           end
@@ -151,7 +151,7 @@ module Intrigue
       port = 9222 if port == 0 # just a failsafe 
       chrome_worker_number = port - 9221
           
-      _unsafe_system "pkill -f -9 remote-debugging-port=#{port} && god restart intrigue-chrome-#{chrome_worker_number}"
+      _unsafe_system "pkill -f -9 remote-debugging-port=#{port}; god restart intrigue-chrome-#{chrome_worker_number}"
 
       sleep 10
     end

@@ -6,7 +6,7 @@ module Intrigue
       {
         added: "2020-01-01",
         name: "vuln/tomcat_put_jsp_cve_2017_12615",
-        pretty_name: "Vulnerable Tomcat - PUT JSP (CVE-2017-12615)",
+        pretty_name: "Apache Tomcat JSP Upload Vulnerability (CVE-2017-12615)",
         identifiers: [
           { type: "CVE", name: "CVE-2017-12615" }
         ],

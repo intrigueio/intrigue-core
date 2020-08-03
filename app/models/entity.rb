@@ -72,8 +72,10 @@ module Model
       raise "Method must be oveeridden for #{self.class}!"
     end
 
-    def set_scoped! 
-      scoped = true
+    def set_scoped!(bool_val=true) 
+      puts "Entity #{self.name} set scoped to #{bool_val}"
+      self.scoped = bool_val
+      self.scoped_at = Time.now.utc
       save_changes
     end
 

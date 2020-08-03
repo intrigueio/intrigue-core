@@ -35,6 +35,14 @@ class UriBrowser < BaseTask
     uri = _get_entity_name
 
     ###
+    ### If deny_list or hidden, just return 
+    ###
+    if @entity.hidden || @entity.deny_list
+      _log "this is a hidden / denied endpoint, we're returning"
+      return
+    end
+
+    ###
     ### Browser-based data grab
     ### 
     browser_data_hash = capture_screenshot_and_requests(uri)
