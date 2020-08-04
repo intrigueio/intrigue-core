@@ -133,7 +133,7 @@ class Domain < Intrigue::Task::BaseTask
       @entity.aliases.each do |a|
         next if a.id == @entity.id # we're already scoped. 
         _log "Setting #{a.name} scoped!"
-        a.set_scoped!
+        a.set_scoped!(true, "alias_of_entity_#{@task_result.name}")
       end
     end 
 

@@ -39,7 +39,7 @@ class DnsRecurseSpf < BaseTask
   def create_spf_domain(spf_data)
     # Create a domain, accounting for tld
     domain_name = parse_domain_name(spf_data)
-    _create_entity "Domain", { "name" => domain_name, "unscoped" => true }
+    _create_entity "Domain", { "name" => domain_name } #"unscoped" => true
   end 
 
   def lookup_txt_record(dns_name)

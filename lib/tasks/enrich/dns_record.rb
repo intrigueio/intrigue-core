@@ -93,7 +93,7 @@ class DnsRecord < Intrigue::Task::BaseTask
     if @entity.scoped? # TODO .. is the eor necessary
       @entity.aliases.each do |a|
         _log "Setting #{a.name} scoped!"
-        a.set_scoped!
+        a.set_scoped!(true, "alias_of_entity_#{@task_result.name}") unless a.deny_list
       end
     end 
 

@@ -18,7 +18,7 @@ class EntityManager
       raise "Unable to match to a known entity. Failing on #{type_string}."
     end
 
-  #only return the first (and best) match
+  # only return the first (and best) match
   matches.first
   end
 
@@ -66,7 +66,7 @@ class EntityManager
           # manually created entity)
           details = details.tap { |h| h.delete("unscoped") }
           details = details.tap { |h| h.delete("scoped") }
-          entity.set_scoped!
+          entity.set_scoped!(true, "first_entity")
           entity.save_changes
 
         #####
@@ -116,6 +116,8 @@ class EntityManager
     tr = Intrigue::Core::Model::TaskResult.first(:id => task_result_id)
     return nil unless tr
 
+    #puts "DEBUG CREATE ENTITY #{tr.name} #{type_string} #{name} #{details}"
+
     if tr.cancelled
       tr.log "Returning, task was cancelled"
       return nil
@@ -134,14 +136,6 @@ class EntityManager
     # Check if there's an existing entity, if so, merge and move forward
     entity_already_existed = false
     if entity
-
-      # handle the slightly odd exception case of getting an 
-      # unscoped when we're already a seed. this can happen when
-      # we send in our own domain as unscoped (see enrich/ip_address or enrich/email_address)
-      # 
-      if details["unscoped"] && entity.seed?
-        details["unscoped"] = nil
-      end
 
       entity.set_details(details.to_h.deep_merge(entity.details.to_h))
 
@@ -338,11 +332,7 @@ class EntityManager
     ##  See the inidivdiual entity files for this logic.
     ##
     if scope_request
-
-      tr.log "Entity Scope request!"
-      entity.set_scoped!(scope_request.to_bool)
-      tr.log "Using entity scoping request, got #{entity.scoped}"
-      tr.log "MANUAL scoping decision for #{entity.name}: #{entity.scoped}"
+      entity.set_scoped!(scope_request.to_bool, "entity_scope_request_during_#{tr.name}")
       
       # SAVE IT
       entity.save_changes

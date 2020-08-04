@@ -72,11 +72,32 @@ module Model
       raise "Method must be oveeridden for #{self.class}!"
     end
 
-    def set_scoped!(bool_val=true) 
-      puts "Entity #{self.name} set scoped to #{bool_val}"
+    def set_scoped!(bool_val=true, reason=nil)
+
+      # always respect the deny list
+      if self.project.deny_list_entity?(type_string, name)
+        bool_value = false
+        reason = "deny_list_override"
+      end
+
+      # but always ALWAYS respect the allow list
+      if self.project.allow_list_entity?(type_string, name)
+        bool_value = true
+        reason = "allow_list_override"
+      end
+
+      # keep a log 
+      File.open("#{$intrigue_basedir}/log/scoping.log","a+") do |f|
+        f.flock(File::LOCK_EX)
+        f.puts "Entity #{self.name} set scoped to #{bool_val}, reason: #{reason}"
+        f.flock(File::LOCK_UN)
+      end
+
       self.scoped = bool_val
       self.scoped_at = Time.now.utc
+      self.scoped_reason = reason
       save_changes
+
     end
 
     def seed?
@@ -326,6 +347,8 @@ module Model
         :deleted => deleted,
         :hidden => hidden,
         :scoped => scoped,
+        :scoped_at => scoped_at,
+        :scoped_reason => scoped_reason,
         :allow_list => allow_list,
         :deny_list => deny_list,
         :alias_group => alias_group_id,

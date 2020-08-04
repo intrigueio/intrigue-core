@@ -165,8 +165,8 @@ class BaseTask
   
         ### NOW WE CAN DECIDE SCOPE BASED ON COMPLETE ENTITY (unless we were already scoped in!)
         unless @entity.scoped
-          @entity.set_scoped!(@entity.scoped?) #always fall back to our entity-specific logic if there was no request
-          _log_good "POST-ENRICH AUTOMATED ENTITY SCOPE: #{@entity.scoped}"
+          @entity.set_scoped!(@entity.scoped?, "entity_scoping_rules") #always fall back to our entity-specific logic if there was no request
+          #_log_good "POST-ENRICH AUTOMATED ENTITY SCOPE: #{@entity.scoped}"
         end
         @entity.save_changes 
         

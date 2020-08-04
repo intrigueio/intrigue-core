@@ -26,7 +26,7 @@ module Intrigue
       domain = email_address.split("@").last
   
       # always create the relevant domain
-      create_unscoped_dns_entity_from_string domain
+      _create_entity "Domain", "name" => domain
     end
   
   end
