@@ -13,7 +13,7 @@ module Issue
                                 task_result_id: @task_result.id,
                                 project_id: @project.id })
 
-    _notify("CI Sev #{issue[:severity]}!```#{issue[:name]}```") if issue[:severity] <= 3
+    _notify("CI Sev #{issue[:severity]}!```#{issue[:name]}```") if issue[:severity] <= 2
 
     # adjust naming per new schema
     temp_name = issue[:type]
@@ -52,7 +52,7 @@ module Issue
       issue_type, issue_model_details, _encode_hash(instance_specifics))
   
     # Notify 
-    _notify("LI Sev #{issue[:severity]}!```#{issue[:name]}```") if issue[:severity] <= 3
+    _notify("LI Sev #{issue[:severity]}!```#{issue[:name]}```") if issue[:severity] <= 2
 
   issue 
   end
