@@ -43,6 +43,7 @@ class CoreApp < Sinatra::Base
       # capture only select selected fields
       @cves.concat(
         fps.map { |fp|
+          next unless fp["vulns"]
             fp["vulns"].map { |v|
               {
                 "cpe" => "#{fp["cpe"]}",
@@ -54,7 +55,7 @@ class CoreApp < Sinatra::Base
                 "id" => u.id
               }
             }
-          }.flatten
+          }.flatten.compact
         )
     end
 
