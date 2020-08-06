@@ -31,7 +31,7 @@
       <tr><th>CVE</th><th>CVSSv3</th><th>CWE</th><th>CPE</th><th>Site</th></tr>
       <% @cves.each do |x| %>
         <tr>
-          <td><%=h x["cve"] %></td>
+          <td><%=h x["cve"] %> <a href='https://nvd.nist.gov/vuln/detail/<%=h x['cve']%>'>[NVD]</a></td>
           <td><%=h x["cvss_v3_score"] %></td>
           <td><%=h x["cwe"] %></td>
           <td><%=h x["cpe"] %></td>
