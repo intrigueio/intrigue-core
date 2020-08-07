@@ -468,9 +468,13 @@ module Task
          opts[:verify_mode] = OpenSSL::SSL::VERIFY_NONE
        end
 
-       http = Net::HTTP.start(uri.host, uri.port, proxy_addr, proxy_port, opts)
+       http = Net::HTTP.new(uri.host, uri.port, proxy_addr, proxy_port, opts)
        http.open_timeout = open_timeout
+       #http.continue_timeout = open_timeout
+       http.ssl_timeout = open_timeout
        http.read_timeout = read_timeout
+       http.write_timeout = open_timeout
+       http.start
 
        path = "#{uri.path}"
        path = "/" if path==""

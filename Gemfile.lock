@@ -33,10 +33,10 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: fbe3e9e3e0b76b0ea07f87f3ddcee9de0840395d
+  revision: cb3a89e9a2b03c0db32d88dde88d08bfe3fab66f
   branch: main
   specs:
-    intrigue-ident (1.0.6)
+    intrigue-ident (1.1.0)
       dnsruby
       recog-intrigue
       snmp
@@ -177,8 +177,8 @@ GEM
     digest-crc (0.5.1)
     dnsimple (5.2.0)
       httparty
-    dnsruby (1.61.3)
-      addressable (~> 2.5)
+    dnsruby (1.61.4)
+      simpleidn (~> 0.1)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     elasticsearch (7.5.0)
@@ -390,6 +390,8 @@ GEM
       faraday (>= 0.17.3, < 2.0)
       jwt (>= 1.5, < 3.0)
       multi_json (~> 1.10)
+    simpleidn (0.1.1)
+      unf (~> 0.1.4)
     sinatra (2.0.8.1)
       mustermann (~> 1.0)
       rack (~> 2.0)

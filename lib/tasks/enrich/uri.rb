@@ -65,6 +65,7 @@ class Uri < Intrigue::Task::BaseTask
     script_links = temp_script_links.map { |x| x =~ /^\// ? "#{uri}#{x}" : x }
 
     # Parse out, and fingeprint the componentes 
+    _log "Extracting and fingerprinting scripts"
     script_components = extract_and_fingerprint_scripts(script_links, hostname)
     _log "Got fingerprinted script components: #{script_components.map{|x| x["product"] }}"
 
