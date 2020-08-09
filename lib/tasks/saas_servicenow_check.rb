@@ -1,13 +1,13 @@
 module Intrigue
 module Task
-class SaasJiraCheck < BaseTask
+class SaasServicenowCheck < BaseTask
 
   def self.metadata
     {
-      :name => "saas_jira_check",
-      :pretty_name => "SaaS Jira Check",
+      :name => "saas_servicenow_check",
+      :pretty_name => "SaaS ServiceNow Check",
       :authors => ["jcran"],
-      :description => "Checks to see if hosted Jira account for a given domain or org",
+      :description => "Checks to see if hosted ServiceNow account exists for a given domain or org",
       :references => [],
       :type => "discovery",
       :passive => true,
@@ -24,7 +24,7 @@ class SaasJiraCheck < BaseTask
   def run
     super
 
-    entity_name = _get_entity_name
+    entity_name = _get_entity_detail("username")
 
     # try a couple variations
     if _get_entity_type_string == "Domain" && entity_name =~ /\./
@@ -37,20 +37,18 @@ class SaasJiraCheck < BaseTask
 
   end
 
-  def check_and_create(name)
-    url = "https://#{name}.atlassian.net/login"
+  def check_and_create(account_name)
+    url = "https://#{account_name}.service-now.com"
+    # https://company.service-now.com/kb_view_customer.do?sysparm_article=KB00xxxx
 
     # grab the page 
     body = http_get_body url
 
-    if body =~ /Log in to Jira, Confluence, and all other Atlassian Cloud products here/
-      _log_good "The #{name} org exists!"
+    if body
+      _log_good "The #{account_name} org exists!"
 
-      service_name = "atlassian.net"
-      _create_normalized_webaccount(service_name, name, url)
-
-    elsif body =~ /Your Atlassian Cloud site is currently unavailable./
-      _log_error "Nothing found for #{name}"
+      service_name = "servicenow"
+      _create_normalized_webaccount service_name, account_name, url
     else
       _log_error "Unknown response! Unable to continue"
     end

@@ -41,6 +41,8 @@ class SaasGoogleGroupsCheck < BaseTask
       _log_good "Success! Domain is configured and public."
       service_name = "groups.google.com"
 
+      _create_normalized_webaccount(service_name, domain, uri)
+
       _create_linked_issue("google_groups_leak", {
         "uri" => uri,
         "username" => "#{domain}",

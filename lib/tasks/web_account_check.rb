@@ -26,7 +26,7 @@ class WebAccountCheck < BaseTask
   def run
     super
 
-    entity_name = _get_entity_name
+    entity_name = _get_entity_detail("username")
     opt_specific_sites = _get_option "specific_sites"
 
     check_file = "data/web_accounts_list/web_accounts_list.json"
@@ -76,12 +76,9 @@ class WebAccountCheck < BaseTask
 
         # Check the verify string
         if body.include? site["account_existence_string"]
-          _create_entity "WebAccount", {
-              "name" => "#{site["name"].downcase}: #{account_name}",
-              "username" => "#{account_name}",
-              "service" => "#{site["name"]}".downcase,
-              "uri" => "#{pretty_uri || account_uri}"
-             }
+          service_name = site["name"].downcase
+          _create_normalized_webaccount(service_name, account_name, pretty_uri || account_uri)
+
         end
 
       end

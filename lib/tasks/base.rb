@@ -16,6 +16,7 @@ class BaseTask
   include Intrigue::Task::VulnDb
   include Intrigue::Task::Web
   include Intrigue::Task::WebContent
+  include Intrigue::Task::WebAccount
   include Intrigue::Task::Whois
 
   include Sidekiq::Worker
