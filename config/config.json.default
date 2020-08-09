@@ -307,6 +307,18 @@
       "editable": "true",
       "comment": ""
     },
+    "ibm_x_force_api_key": {
+      "value": "",
+      "uri": "https://app.intrigue.io/api",
+      "editable": "true",
+      "comment": ""
+    },
+    "ibm_x_force_password": {
+      "value": "",
+      "uri": "https://app.intrigue.io/api",
+      "editable": "true",
+      "comment": ""
+    },
     "mailbox_layer_apikey": {
       "value": "",
       "uri": "https://mailboxlayer.com/dashboard",
