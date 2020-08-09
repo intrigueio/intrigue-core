@@ -446,83 +446,102 @@ module Task
       uri = URI.parse uri_string
 
       unless uri
-        _log error "Unable to parse URI from: #{uri_string}"
+        _log_error "Unable to parse URI from: #{uri_string}"
         return
       end
 
       until( found || attempts >= max_attempts)
-       _log_debug "Getting #{uri}, attempt #{attempts}" if @task_result
-       attempts+=1
+        _log_debug "Getting #{uri}, attempt #{attempts}" if @task_result
+        attempts+=1
 
-       if Intrigue::Core::System::Config.config["http_proxy"]
-         proxy_addr = Intrigue::Core::System::Config.config["http_proxy"]["host"]
-         proxy_port = Intrigue::Core::System::Config.config["http_proxy"]["port"]
-         proxy_user = Intrigue::Core::System::Config.config["http_proxy"]["user"]
-         proxy_pass = Intrigue::Core::System::Config.config["http_proxy"]["pass"]
-       end
+        if Intrigue::Core::System::Config.config["http_proxy"]
+          proxy_addr = Intrigue::Core::System::Config.config["http_proxy"]["host"]
+          proxy_port = Intrigue::Core::System::Config.config["http_proxy"]["port"]
+          proxy_user = Intrigue::Core::System::Config.config["http_proxy"]["user"]
+          proxy_pass = Intrigue::Core::System::Config.config["http_proxy"]["pass"]
+        end
+        
+        opts = {}
+        
+        # set timeouts
+        opts[:open_timeout] = open_timeout
+        opts[:ssl_timeout] = open_timeout
+        opts[:write_timeout] = read_timeout
+        opts[:read_timeout] = read_timeout
+        opts[:continue_timeout] = open_timeout
 
-       # set options
-       opts = {}
-       if uri.instance_of? URI::HTTPS
-         opts[:use_ssl] = true
-         opts[:verify_mode] = OpenSSL::SSL::VERIFY_NONE
-       end
+        # set https
+        
+        #if uri.instance_of? URI::HTTPS
+        #  opts[:use_ssl] = true
+        #  opts[:verify_mode] = OpenSSL::SSL::VERIFY_NONE
+        #end
 
-       http = Net::HTTP.new(uri.host, uri.port, proxy_addr, proxy_port, opts)
-       http.open_timeout = open_timeout
-       #http.continue_timeout = open_timeout
-       http.ssl_timeout = open_timeout
-       http.read_timeout = read_timeout
-       http.write_timeout = open_timeout
-       http.start
+        http = Net::HTTP.new(uri.host, uri.port, proxy_addr, proxy_port, opts)
+        
+        # options dont seem to work when we do 'start', so set these again  
+        if uri.instance_of? URI::HTTPS
+          http.use_ssl = true
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        end
+        
+        # set timeouts
+        http.open_timeout = open_timeout
+        http.ssl_timeout = open_timeout
+        http.write_timeout = read_timeout
+        http.read_timeout = read_timeout
+        http.continue_timeout = open_timeout
+      
+        http.start do |http|
 
-       path = "#{uri.path}"
-       path = "/" if path==""
+        path = "#{uri.path}"
+        path = "/" if path==""
 
-       # add in the query parameters
-       if uri.query
-         path += "?#{uri.query}"
-       end
+        # add in the query parameters
+        if uri.query
+          path += "?#{uri.query}"
+        end
 
-       ### ALLOW DIFFERENT VERBS HERE
-       if method == :get
-         request = Net::HTTP::Get.new(uri)
-       elsif method == :post
-         # see: https://coderwall.com/p/c-mu-a/http-posts-in-ruby
-         request = Net::HTTP::Post.new(uri)
-         request.body = data
-       elsif method == :head
-         request = Net::HTTP::Head.new(uri)
-       elsif method == :propfind
-         request = Net::HTTP::Propfind.new(uri.request_uri)
-         request.body = "Here's the body." # Set your body (data)
-         request["Depth"] = "1" # Set your headers: one header per line.
-       elsif method == :options
-         request = Net::HTTP::Options.new(uri.request_uri)
-       elsif method == :trace
-         request = Net::HTTP::Trace.new(uri.request_uri)
-         request.body = "intrigue"
-       end
-       ### END VERBS
+        ### ALLOW DIFFERENT VERBS HERE
+        if method == :get
+          request = Net::HTTP::Get.new(uri)
+        elsif method == :post
+          # see: https://coderwall.com/p/c-mu-a/http-posts-in-ruby
+          request = Net::HTTP::Post.new(uri)
+          request.body = data
+        elsif method == :head
+          request = Net::HTTP::Head.new(uri)
+        elsif method == :propfind
+          request = Net::HTTP::Propfind.new(uri.request_uri)
+          request.body = "Here's the body." # Set your body (data)
+          request["Depth"] = "1" # Set your headers: one header per line.
+        elsif method == :options
+          request = Net::HTTP::Options.new(uri.request_uri)
+        elsif method == :trace
+          request = Net::HTTP::Trace.new(uri.request_uri)
+          request.body = "intrigue"
+        end
+        ### END VERBS
 
-      # set user agent unless one was provided
-      unless headers["User-Agent"]
-        headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36"
-      end
+        # set user agent unless one was provided
+        unless headers["User-Agent"]
+          headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36"
+        end
 
 
-       # set the user-specified headers
-       headers.each do |k,v|
-         request[k] = v
-       end
+        # set the user-specified headers
+        headers.each do |k,v|
+          request[k] = v
+        end
 
-       # handle credentials
-       if credentials
-         request.basic_auth(credentials[:username],credentials[:password])
-       end
+        # handle credentials
+        if credentials
+          request.basic_auth(credentials[:username],credentials[:password])
+        end
 
-       # get the response
-       response = http.request(request)
+        # get the response
+        response = http.request(request)
+        end
 
        # USE THIS TO PRINT HTTP RESPONSE
        #puts
@@ -538,22 +557,23 @@ module Task
        #puts
        # END USE THIS TO PRINT HTTP RESPONSE
 
-       if response.code=="200"
-         break
-       end
+      if response.code=="200"
+        break
+      end
 
-       if (response.header['location']!=nil)
-         newuri=URI.parse(response.header['location'])
-         if(newuri.relative?)
-             #@task_result.logger.log "url was relative" if @task_result
-             newuri=uri+response.header['location']
-         end
-         uri=newuri
+      if (response.header['location']!=nil)
+        newuri=URI.parse(response.header['location'])
+        if(newuri.relative?)
+            #@task_result.logger.log "url was relative" if @task_result
+            newuri=uri+response.header['location']
+        end
+        uri=newuri
 
-       else
-         found=true #resp was 404, etc
-       end #end if location
-     end #until
+      else
+        found=true #resp was 404, etc
+      end #end if location
+
+    end #until
 
     ### TODO - this code may be be called outside the context of a task,
     ###  meaning @task_result is not available to it. Below, we check to
