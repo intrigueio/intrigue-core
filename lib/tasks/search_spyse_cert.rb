@@ -43,7 +43,7 @@ class SearchSpyseCert < BaseTask
   def search_domain_registered_with_same_cert(entity_name, headers)
 
     # Set the headers
-    url = "https://api.spyse.com/v2/data/cert?limit=100&hash=#{entity_name}"
+    url = "https://api.spyse.com/v3/data/cert?limit=100&hash=#{entity_name}"
 
     # make the request
     response = http_get_body(url,nil,headers)
@@ -73,7 +73,7 @@ class SearchSpyseCert < BaseTask
           _create_entity("Organization", {"name" => organization })
         end
       end
-      
+
     end
   end #end search_domain_registered_with_same_cert
 
