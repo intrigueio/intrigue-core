@@ -8,7 +8,7 @@ class SubdomainHijack < BaseIssue
       name: "subdomain_hijack",
       pretty_name: "Subdomain Vulnerable to Takeover (aka Subdomain Hijack)",
       severity: 2,
-      category: "dns",
+      category: "vulnerability",
       status: "potential",
       description:  " This uri appears to be unclaimed on a third party host, meaning," +
                     " there's a DNS record on a domain that is in scope, pointing to a third party" +

@@ -8,7 +8,7 @@ module Intrigue
         name: "internal_system_exposed_via_dns",
         pretty_name: "Internal System Exposed via DNS",
         severity: 4,
-        category: "network",
+        category: "misconfiguration",
         status: "confirmed",
         description: "An internal system was identified outside the organization via DNS.",
         remediation: "Investigate if this system should be exposed.",

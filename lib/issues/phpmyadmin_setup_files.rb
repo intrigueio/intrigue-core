@@ -8,7 +8,7 @@ class PhpmyadminSetupFiles < BaseIssue
       name: "phpmymyadmin_setup_files",
       pretty_name: "PhpMyAdmin Setup Files",
       severity: 4,
-      category: "application",
+      category: "vulnerability",
       status: "confirmed",
       description: "A server running PhpMyAdmin was found with a setup file",
       remediation: "Remove the file.",

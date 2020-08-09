@@ -6,9 +6,9 @@ module Intrigue
       {
         added: "2020-01-01",
         name: "suspicious_web_resource_requested",
-        pretty_name: "Deprecated SSL/TLS Protocol Detected",
+        pretty_name: "Suspicious Web Resource Requested",
         severity: 5,
-        category: "application",
+        category: "threat",
         status: "confirmed",
         description: "When a browser requested the resource, a suspicious request was made.",
         remediation: "Investigate the request.",

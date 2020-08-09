@@ -10,7 +10,7 @@ module Intrigue
         severity: 1,
         identifiers: [{ "cve" =>  "CVE-2017-9248" }],
         status: "confirmed",
-        category: "application",
+        category: "vulnerability",
         description: "",
         remediation: "Upgrade the Telerik library.",
         affected_software: [ 

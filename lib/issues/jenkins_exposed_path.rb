@@ -8,7 +8,7 @@ module Intrigue
         name: "jenkins_exposed_path",
         pretty_name: "Jenkins Exposed Path",
         severity: 4,
-        category: "application",
+        category: "misconfiguration",
         status: "confirmed",
         description: "A misconfigured Jenkins server was identified.",
         remediation: "Investigate the configuration and adjust it to ensure this path is not unexpectedly exposed.",

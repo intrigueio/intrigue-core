@@ -8,7 +8,7 @@ module Intrigue
         name: "hadoop_yarn_resourcemanager_api_access",
         pretty_name: "Hadoop YARN ResourceManager API Access",
         severity: 1,
-        category: "application",
+        category: "misconfiguration",
         status: "confirmed",
         description: "Hadoop Yarn ResourceManager controls the computation and storage resources of" + 
                      " a Hadoop cluster. Unauthenticated ResourceManager API allows any" + 

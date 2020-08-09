@@ -7,7 +7,7 @@ class MissingSecurityHeaders < BaseIssue
       added: "2020-01-01",
       name: "missing_security_headers",
       pretty_name: "Missing Application Security Headers",
-      category: "application",
+      category: "misconfiguration",
       source: "URI",
       severity: 5,
       status: "confirmed",

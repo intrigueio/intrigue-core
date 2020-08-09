@@ -8,7 +8,7 @@ module Intrigue
         name: "exposed_citrix_adc_management_interface",
         pretty_name: "Exposed Citrix ADC Management Interface",
         severity: 2, 
-        category: "network",
+        category: "misconfiguration",
         status: "confirmed",
         description: "The Citrix ADC Management interface  was discovered. This should never be exposed to the data networks, and should be checked for vulnerabilties",
         remediation: "Prevent access to this panel by placing it behind a firewall or otherwise restricting access.",

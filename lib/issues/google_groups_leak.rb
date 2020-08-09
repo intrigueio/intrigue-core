@@ -9,7 +9,7 @@ class GoogleGroupsLeak < BaseIssue
       pretty_name: "Public Google Groups Detected",
       severity: 2,
       status: "confirmed",
-      category: "application",
+      category: "misconfiguration",
       description: "Enabling public Google Groups can cause sensitive data leakage.",
       remediation: "Review the visibility level of this group in the Google Admin console.",
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel

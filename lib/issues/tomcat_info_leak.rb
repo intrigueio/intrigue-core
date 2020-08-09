@@ -9,7 +9,7 @@ class TomcatInfoLeak < BaseIssue
       pretty_name: "Tomcat Info Leak",
       severity: 3,
       status: "confirmed",
-      category: "network",
+      category: "application",
       description: "This server is sensitive information on a status page.",
       remediation: "Remove the file from the server or adjust the access controsl.",
       affected_software: [

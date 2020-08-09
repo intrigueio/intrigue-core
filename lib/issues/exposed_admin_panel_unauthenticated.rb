@@ -8,7 +8,7 @@ class ExposedAdminPanelUnauthenticated < BaseIssue
       name: "exposed_admin_panel_unauthenticated",
       pretty_name: "Exposed Admin Panel (Unauthenticated)",
       severity: 4, # default
-      category: "application",
+      category: "misconfiguration",
       status: "confirmed",
       description: "An admin panel was discovered. This panel should generally not be exposed to unauthenticated users.",
       remediation: "Prevent access to this panel by placing it behind a firewall or otherwise restricting access.",

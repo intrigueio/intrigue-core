@@ -8,7 +8,7 @@ class Jira2faBypass < BaseIssue
       added: "2020-01-01",
       name: "jira_2fa_bypass",
       pretty_name: "Jira 2FA Bypassable",
-      category: "application",
+      category: "misconfiguration",
       severity: 3,
       status: "potential",
       description: "We detected a jira instance with 2FA configured, but were able to bypass 2FA using the provided link",

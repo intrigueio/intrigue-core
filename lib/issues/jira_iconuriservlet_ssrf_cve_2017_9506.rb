@@ -3,8 +3,7 @@ module Intrigue
   class JiraIconuriservletSsrfCve20179506 < BaseIssue
   
     def self.generate(instance_details={})
-  
-      to_return = {
+      {
         added: "2020-01-01",
         name: "jira_iconuriservlet_ssrf_cve_2017_9506",
         pretty_name: "Jira IconURIServlet SSRF (CVE-2017-9506)",
@@ -20,8 +19,6 @@ module Intrigue
           { type: "description", uri: "https://www.acunetix.com/vulnerabilities/web/atlassian-oauth-plugin-iconuriservlet-ssrf/" }
         ]
       }.merge(instance_details)
-      
-    to_return
     end
   
   end

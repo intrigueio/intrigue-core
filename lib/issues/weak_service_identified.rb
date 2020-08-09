@@ -8,7 +8,7 @@ class WeakServiceIdentified < BaseIssue
       name: "weak_service_identified",
       pretty_name: "Weak Service Identified",
       severity: 4,
-      category: "application",
+      category: "misconfiguration",
       status: "confirmed",
       description: "A service known to be weak (lacking encryption) and have more modern alternatives was identified.",
       remediation: "Disable the weak service and replace it with a more secure alternative.",

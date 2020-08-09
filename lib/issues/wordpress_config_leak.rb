@@ -8,7 +8,7 @@ module Intrigue
         name: "wordpress_config_leak",
         pretty_name: "Wordpress Configuration Information Leak",
         severity: 1,
-        category: "application",
+        category: "misconfiguration",
         status: "confirmed",
         description: "A wordpress site was found with an exposed configuration.",
         remediation: "Set permissions on the configuration file to prevent anonymous users being able to read it.",

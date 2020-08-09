@@ -8,7 +8,7 @@ module Intrigue
         name: "exposed_werkzeug_debugger",
         pretty_name: "A Werkzeug debugging console is exposed",
         severity: 1, # default
-        category: "application",
+        category: "misconfiguration",
         status: "confirmed",
         description:  "Werkzeug is a debugger for Flask Python applications. This panel should not be exposed " + 
                       "to non-development enviornments, and can lead to remote compromise. It is known to have " + 

@@ -8,7 +8,7 @@ module Intrigue
         name: "insecure_content_loaded",
         pretty_name: "Insecure Content Loaded",
         severity: 4,
-        category: "application",
+        category: "misconfiguration",
         status: "confirmed",
         description: "When a browser requested the page, an external resource was requested over HTTP. This resource could be intercepted by a malicious user and they may be able to take control of the information on the page.",
         remediation: "Investigate the page and ensure all resources are loaded over HTTPS.",

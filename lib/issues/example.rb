@@ -8,7 +8,7 @@ class Example < BaseIssue
       name: "example",
       pretty_name: "Just an Example Issue",
       severity: 1,
-      category: "network",
+      category: "misconfiguration",
       status: "potential",
       description: "This example issue is terrible and you should drop everything to fix it!",
       remediation: "No patch is currently available, and only screaming seems to help.",

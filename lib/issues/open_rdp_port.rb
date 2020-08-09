@@ -9,7 +9,7 @@ class OpenRdpPort < BaseIssue
       pretty_name: "Open RDP Port",
       severity: 3,
       status: "confirmed",
-      category: "application",
+      category: "misconfiguration",
       description: "A system exposing RDP to the Internet was identified.",
       remediation: "Verify that this port should be exposed to the Internet.",
       references: []

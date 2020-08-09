@@ -9,7 +9,7 @@ class DirectoryListingDetected < BaseIssue
       pretty_name: "Directory Listing Detected",
       severity: 4,
       status: "confirmed",
-      category: "application",
+      category: "misconfiguration",
       description: "Directory listing is a feature that when enabled the web servers list the content of a directory when there is no index file (e.g. index.php or index.html) present. Therefore if a request is made to a directory on which directory listing is enabled, and there is no index file such as index.php or index.asp, even if there are files from a web application, the web server sends a directory listing as a response. When this happens there is an information leakage issue, and the attackers can use such information to craft other attacks, including direct impact vulnerabilities such as LFI and XSS",
       remediation: "Inspect for sensitive files, and disable the listing unless it's intentional.",
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel

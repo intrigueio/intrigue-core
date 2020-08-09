@@ -10,7 +10,7 @@ module Intrigue
         pretty_name: "Domino Info Leak",
         severity: 3,
         status: "confirmed",
-        category: "network",
+        category: "misconfiguration",
         description: "This Domino server exposes sensitive information.",
         remediation: "Adjust the access control settings to disallow this information for anonymous users.",
         affected_software: [

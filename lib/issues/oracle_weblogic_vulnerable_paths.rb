@@ -6,7 +6,7 @@ class OracleWeblogicVulnerablePaths < BaseIssue
     {
       added: "2020-01-01",
       name: "oracle_weblogic_vulnerable_paths",
-      pretty_name: "Oracle Weblogic Vulenrable Paths",
+      pretty_name: "Oracle Weblogic Vulnerable Paths",
       severity: 2,
       category: "vulnerability",
       status: "confirmed",

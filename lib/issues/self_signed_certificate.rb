@@ -9,7 +9,7 @@ class SelfSignedCertif < BaseIssue
       pretty_name: "Self Signed Certificate Detected",
       severity: 5,
       status: "confirmed",
-      category: "application",
+      category: "misconfiguration",
       description: "The following site is configured with a self-signed certificate",
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
         { type: "description", uri: "https://security.stackexchange.com/questions/93162/how-to-know-if-certificate-is-self-signed/162263"}

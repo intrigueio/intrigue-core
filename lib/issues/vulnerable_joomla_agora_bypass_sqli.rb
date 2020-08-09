@@ -8,7 +8,7 @@ class JoomlaAgoraBypassSqli < BaseIssue
       name: "vulnerable_joomla_agora_bypass_sqli",
       pretty_name: "Joomla Agora Bypass Sqlis",
       severity: 4,
-      category: "application",
+      category: "vulnerability",
       status: "confirmed",
       description: "A server running Joomla Agora was identified as vulnerable to sql injection.",
       remediation: "Upgrade the Agora extension or remove it.",

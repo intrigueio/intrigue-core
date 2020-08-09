@@ -11,7 +11,7 @@ class AwsS3BucketDataLeak < BaseIssue
       pretty_name: "S3 Bucket Data Leak",
       severity: 2,
       status: "confirmed",
-      category: "application",
+      category: "misconfiguration",
       description: "Interesting files located in an S3 bucket at #{instance_details[:uri]}",
       remediation: "Investigate whether these files should be exposed, and if not, adjust the settings of the S3 Bucket",
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel

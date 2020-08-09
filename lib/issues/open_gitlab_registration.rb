@@ -9,7 +9,7 @@ module Intrigue
         pretty_name: "Open Gitlab Registration",
         severity: 2,
         status: "confirmed",
-        category: "application",
+        category: "misconfiguration",
         description: "This server allows anonymous users to register.",
         remediation: "Verify that anonymous users should be able to register on this server.",
         affected_software: [ 

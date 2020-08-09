@@ -6,7 +6,7 @@ module Intrigue
       {
         added: "2020-01-01",
         name: "wordpress_leaked_log",
-        pretty_name: "Wordpress Leaked Logfile",
+        pretty_name: "Wordpress Debug.log Information (Log) Leak",
         severity: 5,
         status: "confirmed",
         category: "application",

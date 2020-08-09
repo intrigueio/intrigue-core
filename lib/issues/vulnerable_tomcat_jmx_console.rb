@@ -9,7 +9,7 @@ class VulnerableTomcatJmxConsole < BaseIssue
       pretty_name: "Apached Tomcat JMX Console Exposed",
       identifiers: [],
       severity: 1,
-      category: "application",
+      category: "misconfiguration",
       status: "confirmed",
       description: "This server is exposing a sensitive path",
       remediation: "Adjust access controls or remove these files from the server.",

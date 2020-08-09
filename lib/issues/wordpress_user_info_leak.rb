@@ -8,7 +8,7 @@ module Intrigue
         name: "wordpress_user_info_leak",
         pretty_name: "Wordpress User Info Leak",
         severity: 4,
-        category: "application",
+        category: "misconfiguration",
         status: "confirmed",
         description: "This Wordpress site is exposing user information via an api endpoint.",
         remediation: "Disable XMLRPC endpoint for non-authenticated users",

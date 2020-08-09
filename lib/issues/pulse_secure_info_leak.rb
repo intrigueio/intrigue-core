@@ -9,7 +9,7 @@ module Intrigue
         pretty_name: "Pulse Secure Info Leak (Version and Configuration)",
         identifiers: [],
         severity: 3,
-        category: "misconfiguration",
+        category: "vulnerability",
         status: "confirmed",
         description: "A file exposed publicly on the Pulse Secure VPN server exposes specific version and configuration information.",
         remediation: "Remove the file or block access.",

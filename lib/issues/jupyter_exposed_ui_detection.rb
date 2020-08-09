@@ -8,7 +8,7 @@ module Intrigue
         name: "jupyter_exposed_ui_detection",
         pretty_name: "Jupyter Exposed UI Detection",
         severity: 4,
-        category: "application",
+        category: "misconfiguration",
         status: "confirmed",
         description:  "This detector checks whether a unauthenticated Jupyter Notebook is exposed. Jupyter" + 
                       " allows by design to run arbitrary code on the host machine. Having it exposed puts" + 

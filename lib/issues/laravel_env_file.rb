@@ -8,7 +8,7 @@ module Intrigue
         name: "laravel_env_file",
         pretty_name: "Exposed Laravel .env File",
         severity: 1,
-        category: "application",
+        category: "misconfiguration",
         status: "potential",
         description: "This server is exposing a sensitive configuration file for Laravel!",
         remediation: "Disable access for anonymous users and rotate passwords.",

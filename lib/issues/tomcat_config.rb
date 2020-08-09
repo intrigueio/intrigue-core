@@ -9,8 +9,8 @@ class TomcatConfig < BaseIssue
       pretty_name: "Tomcat Config",
       severity: 4,
       status: "confirmed",
-      category: "network",
-      description: "This server is exposing a sensitive path on tomcat.",
+      category: "misconfiguration",
+      description: "This server is exposing a sensitive path on an Apache Tomcat instance.",
       remediation: "Adjust access congrols on this server to remove access to this path.",
       affected_software: [
         { :vendor => "Apache", :product => "Tomcat" }

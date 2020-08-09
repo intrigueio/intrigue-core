@@ -9,7 +9,7 @@ module Intrigue
         pretty_name: "Craft CMS SEOmatic < 3.3.0 Server-Side Template Injection",
         severity: 4,
         status: "confirmed",
-        category: "application",
+        category: "vulnerability",
         description: "The SEOmatic component before 3.3.0 for Craft CMS allows Server-Side Template Injection that leads to RCE via malformed data to the metacontainers controller.",
         remediation: "Update the component",
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel

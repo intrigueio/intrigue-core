@@ -8,7 +8,7 @@ module Intrigue
         name: "exposed_printer_control_panel",
         pretty_name: "Exposed Printer Control Panel",
         severity: 2, # default
-        category: "network",
+        category: "vulnerability",
         status: "confirmed",
         description: "A printer control panel was discovered. Printers should not be exposed to unauthenticated users",
         remediation: "Prevent access to this panel by placing it behind a firewall or otherwise restricting access",

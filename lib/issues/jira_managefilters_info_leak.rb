@@ -8,7 +8,7 @@ module Intrigue
         added: "2020-01-01",
         name: "jira_managefilters_info_leak",
         pretty_name: "Jira (manageFilters.jspa) Info Leak",
-        category: "application",
+        category: "misconfiguration",
         severity: 3,
         status: "confirmed",
         description: "We detected a jira instance with a configuration that allows the issue filters to be seen by anonymous users.",

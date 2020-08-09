@@ -8,7 +8,7 @@ module Intrigue
         name: "exposed_bigip_configuration_utility",
         pretty_name: "Exposed BIG-IP Configuration Utility",
         severity: 2, 
-        category: "network",
+        category: "misconfiguration",
         status: "confirmed",
         description: "The F5 BigIP configutation utility was discovered. This should never be exposed to the data networks, and should be checked for CVE-2020-5902",
         remediation: "Prevent access to this panel by placing it behind a firewall or otherwise restricting access.",

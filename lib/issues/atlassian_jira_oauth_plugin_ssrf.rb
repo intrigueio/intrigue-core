@@ -11,7 +11,7 @@ module Intrigue
           { type: "CVE", name: "CVE-2017-9506" }
         ],
         severity: 1,
-        category: "application",
+        category: "vulnerability",
         status: "confirmed",
         description: "This Jira instance is vulnerable to SSRF via the OAuth plugin.",
         remediation: "Upgrade your Jira Instance",

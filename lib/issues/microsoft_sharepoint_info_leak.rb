@@ -8,7 +8,7 @@ class MicrosoftSharepointInfoLeak < BaseIssue
       name: "microsoft_sharepoint_info_leak",
       pretty_name: "Microsoft Sharepoint Info Leak",
       severity: 4,
-      category: "application",
+      category: "misconfiguration",
       status: "confirmed",
       description: "A server running Sharepoint is misconfigured and exposing potentially sensitive information.",
       remediation: "Adjust the configuration of the server to prevent access to this path.",

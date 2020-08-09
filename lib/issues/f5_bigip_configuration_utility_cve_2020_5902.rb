@@ -12,7 +12,7 @@ module Intrigue
         ],
         integrated: "2020-07-05 21:33:03 UTC",
         severity: 1, 
-        category: "network",
+        category: "vulnerability",
         status: "confirmed",
         description: "This Big-IP Configuration Utility was discovered and found vulnerable to CVE-2020-5902",
         remediation: "Update the device, and if possible, remove access from this network.",

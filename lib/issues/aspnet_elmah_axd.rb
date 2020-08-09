@@ -8,7 +8,7 @@ module Intrigue
         name: "aspnet_elmah_axd",
         pretty_name: "ASP.NET Elmah.axd Sensitive Information Leak",
         severity: 1,
-        category: "application",
+        category: "misconfiguration",
         status: "confirmed",
         description: "Elmah.axd is a development library that retains full details about errors - including authenticated session information. This library can be dangerous when exposed to unauthenticated users.",
         remediation: "Adjust the security settings for the library or remove it. See: https://blog.elmah.io/elmah-security-and-allowremoteaccess-explained/.",

@@ -1,6 +1,6 @@
 module Intrigue
 module Issue
-class LeakedData< BaseIssue
+class LeakedData < BaseIssue
 
   def self.generate(instance_details={})
     to_return = {
@@ -9,7 +9,7 @@ class LeakedData< BaseIssue
       pretty_name: "Leaked Data Detected",
       severity: 3,
       status: "confirmed",
-      category: "leak",
+      category: "misconfiguration",
       description: "Related account found leaked",
       remediation: "leaked accounts should be notified to reset their passwords and check for suspicious activities related to their accounts",
       references: []

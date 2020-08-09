@@ -8,7 +8,7 @@ module Intrigue
         added: "2020-01-01",
         name: "bamboo_2fa_bypass",
         pretty_name: "Bamboo 2FA Bypassable",
-        category: "application",
+        category: "misconfiguration",
         severity: 3,
         status: "potential",
         description: "We detected a Bamboo instance with 2FA configured, but were able to bypass 2FA using the provided link",

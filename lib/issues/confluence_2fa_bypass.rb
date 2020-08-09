@@ -8,7 +8,7 @@ class Confluence2faBypass < BaseIssue
       added: "2020-01-01",
       pretty_name: "Confluence 2FA Bypassable",
       name: "confluence_2fa_bypass",
-      category: "application",
+      category: "misconfiguration",
       severity: 3,
       status: "potential",
       description: "We detected a confluence instance with 2FA configured, but were able to bypass 2FA utilizing the provided link.",

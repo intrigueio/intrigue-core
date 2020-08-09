@@ -8,7 +8,7 @@ module Intrigue
         name: "deprecated_ssl_protocol_detected",
         pretty_name: "Deprecated SSL/TLS Protocol Detected",
         severity: 5,
-        category: "application",
+        category: "misconfiguration",
         status: "confirmed",
         description: "This server is configured to allow a deprecated ssl / tls protocol.",
         remediation: "Disable the weak protocol according the the instructions for your web server.",

@@ -9,7 +9,7 @@ module Intrigue
         pretty_name: "Splunk Info Leak",
         severity: 1,
         status: "confirmed",
-        category: "misconfiguration",
+        category: "vulnerability",
         description: "This server is sensitive information on a status page.",
         remediation: "Update the system.",
         affected_software: [

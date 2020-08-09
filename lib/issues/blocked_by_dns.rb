@@ -8,7 +8,7 @@ class BlockedByDns < BaseIssue
       added: "2020-01-01",
       pretty_name: "Blocked by DNS Provider",
       name: "blocked_by_dns",
-      category: "reputation",
+      category: "threat",
       severity: 4,
       status: "confirmed",
       description: "This host has been detected as compromised, fraudulent, or otherwise harmful and blocked when attempting to resolve. " + 

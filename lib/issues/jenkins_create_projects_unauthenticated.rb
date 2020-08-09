@@ -6,12 +6,12 @@ class JenkinsCreateProjectsUnauthenticated < BaseIssue
     to_return = {
       added: "2020-01-01",
       name: "jenkins_create_projects_unauthenticated",
-      pretty_name: "Jenkins Misconfiguration - Anauthenticated Users can create Projects",
+      pretty_name: "Jenkins Misconfiguration - Unauthenticated Users Can Create Projects",
       severity: 1,
       references: [
         { type: "description", uri: "https://github.com/google/tsunami-security-scanner-plugins/blob/master/google/detectors/exposedui/jenkins/src/main/java/com/google/tsunami/plugins/detectors/exposedui/jenkins/JenkinsExposedUiDetector.java" }
       ],
-      category: "application",
+      category: "misconfiguration",
       status: "confirmed",
       affected_software: [ { :vendor => "Jenkins", :product => "Jenkins" } ],
       description:  "Unauthenticated Jenkins instance allows anonymous users to create arbitrary" +

@@ -8,7 +8,7 @@ module Intrigue
         name: "wordpress_api_exposed",
         pretty_name: "Wordpress API Exposed",
         severity: 5,
-        category: "application",
+        category: "misconfiguration",
         status: "confirmed",
         description: "This Wordpress site is exposing its XMLRPC api endpoint.",
         remediation: ".",

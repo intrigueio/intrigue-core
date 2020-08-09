@@ -9,7 +9,7 @@ class GoogleCalendarLeak < BaseIssue
       pretty_name: "Public Google Calendar Enabled!",
       severity: 2,
       status: "confirmed",
-      category: "application",
+      category: "misconfiguration",
       description: "This Google Calendar is set to public. This setting can cause sensitive data leakage.",
       remediation: "Review your event privacy settings to ensure this calendar should be public with specific people",
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel

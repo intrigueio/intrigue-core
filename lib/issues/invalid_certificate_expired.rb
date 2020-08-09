@@ -8,7 +8,7 @@ module Intrigue
         name: "invalid_certificate_expired",
         pretty_name: "Expired Certificate",
         severity: 3,
-        category: "application",
+        category: "misconfiguration",
         status: "confirmed",
         description: "This certificate was found to be expired",
         remediation: "Replace the certificate and/or de-provision the service",

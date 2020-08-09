@@ -6,10 +6,10 @@ module Intrigue
       to_return = {
         added: "2020-01-01",
         name: "leaked_repository",
-        pretty_name: "Leaked Repository",
+        pretty_name: "Exposed Repository",
         severity: 2,
         status: "confirmed",
-        category: "application",
+        category: "vulnerability",
         description: "A version control repository was found, and may be leaking content as account details, passwords, or other sensitive information.",
         remediation: "Block access to the repository using an htaccess or similar file. Leaked repositories should be pulled down locally to your system and checked for sensitive content.",
         references: [

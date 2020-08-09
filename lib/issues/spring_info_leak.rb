@@ -8,7 +8,7 @@ module Intrigue
         name: "spring_info_leak",
         pretty_name: "Spring Info Leak",
         severity: 3,
-        category: "application",
+        category: "misconfiguration",
         status: "confirmed",
         description: "This site is leaking sensitve infomration via a exposed path.",
         remediation: "Investigate the endpoint and place it behind authenication if it should not be exposed.",

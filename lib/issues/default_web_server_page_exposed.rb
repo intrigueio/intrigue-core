@@ -9,7 +9,7 @@ class DefaultWebServerPageExposed < BaseIssue
       pretty_name: "Default Web Server Page Exposed",
       severity: 4,
       status: "confirmed",
-      category: "application",
+      category: "misconfiguration",
       description: "The web server is preseting a default page shown post-install. This is often an indicator that the server has not been hardened for Internet access.",
       remediation: "Inspect for sensitive files, and disable the pgage unless it's intentional.",
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel

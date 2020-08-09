@@ -7,7 +7,7 @@ module Intrigue
         added: "2020-01-01",
         name: "generic_content_issue",
         pretty_name: "Generic Content Issue",
-        category: "application",
+        category: "misconfiguration",
         source: instance_details["check"],
         severity: 4, 
         status: "confirmed",

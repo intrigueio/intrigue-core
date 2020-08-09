@@ -8,7 +8,7 @@ module Intrigue
         name: "weak_ssl_ciphers_enabled",
         pretty_name: "Weak SSL/TLS Cipher Enabled",
         severity: 5,
-        category: "application",
+        category: "misconfiguration",
         status: "confirmed",
         description: "This server is configured to allow a known-weak cipher suite.",
         remediation: "Disable the weak cipher according the the instructions for your web server.",

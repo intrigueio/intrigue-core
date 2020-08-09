@@ -9,7 +9,7 @@ module Intrigue
         pretty_name: "Exposed Database",
         severity: 2,
         status: "confirmed",
-        category: "database",
+        category: "misconfiguration",
         description: "A database was found exposed.",
         remediation: "Investigate and determine if this system should be exposed to anonymous users.",
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel

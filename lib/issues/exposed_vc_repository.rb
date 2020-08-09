@@ -9,7 +9,7 @@ module Intrigue
         pretty_name: "Exposed Version Control Repository",
         severity: 2,
         status: "confirmed",
-        category: "application",
+        category: "vulnerability",
         description: "A version control repository was found on this webserver, and may be leaking content as account details, passwords, or other sensitive information.",
         remediation: "Block access to the repository using a .htaccess or similar method. Leaked repositories should be pulled down locally to your system and checked for sensitive content.",
         references: [

@@ -8,7 +8,7 @@ module Intrigue
         name: "wpengine_config_leak",
         pretty_name: "WPEngine Config Leak",
         severity: 1,
-        category: "application",
+        category: "vulnerability",
         status: "confirmed",
         description: "A wordpress site was found with an exposed configuration.",
         remediation: "Set permissions on the configuration file to prevent anonymous users being able to read it.",

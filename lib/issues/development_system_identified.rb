@@ -8,7 +8,7 @@ module Intrigue
         name: "development_system_identified",
         pretty_name: "Development System Identified",
         severity: 4,
-        category: "network",
+        category: "misconfiguration",
         status: "potential",
         description: "A development system was identified outside the organization.",
         remediation: "Investigate if this system should be exposed.",

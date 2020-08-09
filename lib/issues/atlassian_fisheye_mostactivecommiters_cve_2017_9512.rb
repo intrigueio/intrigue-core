@@ -11,7 +11,7 @@ class AtlassianFisheyeMostactivecommitersVuln < BaseIssue
         { type: "CVE", name: "CVE-2017-9512" }
       ],
       severity: 1,
-      category: "application",
+      category: "vulnerability",
       status: "confirmed",
       description: "Vulnerable to Atlassian Fisheye mostactivecommiters.do Information Disclosure",
       remediation: "Upgrade your Fisheye and Crucible installations to version 4.4.3 or 4.5.1 or higher.",

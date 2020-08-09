@@ -8,7 +8,7 @@ module Intrigue
         name: "jforum_user_info_leak",
         pretty_name: "JForum User Information Leak",
         severity: 3,
-        category: "application",
+        category: "vulnerability",
         status: "confirmed",
         description: "A http request can be sent to determine if a user exists in the system.",
         remediation: "Upgrade the software",

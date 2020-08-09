@@ -11,7 +11,7 @@ class AwsS3BucketWriteable < BaseIssue
       pretty_name: "World Writeable AWS S3 Bucket",
       severity: 2,
       status: "confirmed",
-      category: "application",
+      category: "misconfiguration",
       description: "A world writable AWS S3 bucket was discovered.",
       remediation: "Investigate whether this bucket should be writable, and if not, adjust the settings",
       references: [ # types: description, remediation, detection_rule, exploit, threat_intels
