@@ -11,7 +11,7 @@ module Intrigue
         status: "confirmed",
         category: "misconfiguration",
         description: "This DNS server is configured with NSEC3 records, allowing the contents to be enumerated through a 'nsec walk' technique.",
-        remediation: "Remove DNSSEC NSEC3 records."
+        remediation: "Remove DNSSEC NSEC3 records.",
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel
           { type: "description", uri: "https://appsecco.com/books/subdomain-enumeration/active_techniques/zone_walking.html" },
         ]
