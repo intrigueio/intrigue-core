@@ -1,6 +1,6 @@
 module Intrigue
 module Issue
-class SelfSignedCertif < BaseIssue
+class SelfSignedCertificate < BaseIssue
 
   def self.generate(instance_details={})
     {

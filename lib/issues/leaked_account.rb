@@ -9,7 +9,7 @@ class LeakedAccountDetails < BaseIssue
       pretty_name: "Leaked Account Detected",
       severity: 2,
       status: "confirmed",
-      category: "data_leak",
+      category: "leak",
       description: "Account found in publicly leaked data.",
       remediation: "Leaked accounts should have their passwords reset and examined for suspicious activities.",
       references: [

@@ -9,7 +9,7 @@ class LeakedData < BaseIssue
       pretty_name: "Leaked Data Detected",
       severity: 3,
       status: "confirmed",
-      category: "misconfiguration",
+      category: "leak",
       description: "Related account found leaked",
       remediation: "leaked accounts should be notified to reset their passwords and check for suspicious activities related to their accounts",
       references: []

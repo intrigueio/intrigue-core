@@ -9,8 +9,8 @@ class TomcatInfoLeak < BaseIssue
       pretty_name: "Tomcat Info Leak",
       severity: 3,
       status: "confirmed",
-      category: "application",
-      description: "This server is sensitive information on a status page.",
+      category: "vulnerability",
+      description: "This server is sharing sensitive information on a status page.",
       remediation: "Remove the file from the server or adjust the access controsl.",
       affected_software: [
         { :vendor => "Apache", :product => "Tomcat" }
