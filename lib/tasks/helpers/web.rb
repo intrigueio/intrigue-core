@@ -280,7 +280,7 @@ module Task
       if "#{ext.oid}" =~ /subjectAltName/
 
         alt_names = ext.value.split(",").collect do |x|
-          "#{x}".gsub(/DNS:/,"").strip.gsub("*.","")
+          "#{x}".gsub(/DNS:/,"").gsub("IP Address:","").strip.gsub("*.","")
         end
         _log "Got cert's alt names: #{alt_names.inspect}"
 
