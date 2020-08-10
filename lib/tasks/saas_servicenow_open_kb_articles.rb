@@ -29,7 +29,11 @@ class SaasServicenowOpenKbArticles < BaseTask
   def run
     super
 
-    entity_name = _get_entity_detail("username")
+    if _get_entity_type_string == "WebAccount"
+      entity_name = _get_entity_detail("username")      
+    else 
+      entity_name = _get_entity_name
+    end
 
     # first check if account exists 
     url = "https://#{entity_name}.service-now.com"
@@ -52,7 +56,7 @@ class SaasServicenowOpenKbArticles < BaseTask
     
     # shove our requests into a queue
     work_q = Queue.new
-    (0..20000).each do |d| 
+    (0..20000).step(100).reverse_each do |d| 
       
       # craft the URL 
       article_id = "KB00#{format('%04d',d)}"
@@ -69,7 +73,7 @@ class SaasServicenowOpenKbArticles < BaseTask
         severity: 2,  
         body_regex: /Published/, 
         exclude_body_regex: /PROTECTED ARTICLE/, 
-        status: "potential" 
+        status: "confirmed" 
       }
 
       work_q.push(request)

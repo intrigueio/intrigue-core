@@ -26,7 +26,12 @@ class WebAccountCheck < BaseTask
   def run
     super
 
-    entity_name = _get_entity_detail("username")
+    if _get_entity_type_string == "WebAccount"
+      entity_name = _get_entity_detail("username")
+    else
+      entity_name = _get_entity_name
+    end
+
     opt_specific_sites = _get_option "specific_sites"
 
     check_file = "data/web_accounts_list/web_accounts_list.json"

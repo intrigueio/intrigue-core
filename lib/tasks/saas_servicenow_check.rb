@@ -24,8 +24,8 @@ class SaasServicenowCheck < BaseTask
   def run
     super
 
-    if _get_entity_type_string == "WebAccounts"
-      _get_entity_detail("username")      
+    if _get_entity_type_string == "WebAccount"
+      account_name = _get_entity_detail("username")      
     else 
       account_name = _get_entity_name
     end
