@@ -544,37 +544,37 @@ module Task
         response = http.request(request)
         end
 
-       # USE THIS TO PRINT HTTP RESPONSE
-       #puts
-       #puts
-       #puts "===== BEGIN RESPONSE ====="
-       #puts "Endpoint: #{response.code} http://#{uri}"
-       #puts "HEADERS:"
-       #response.each_header{ |h| puts "#{h}: #{response[h]}"}
-       #puts
-       #puts "Body:\n#{response.body}"
-       #puts "=====  END RESPONSE ====="
-       #puts
-       #puts
-       # END USE THIS TO PRINT HTTP RESPONSE
+        # USE THIS TO PRINT HTTP RESPONSE
+        #puts
+        #puts
+        #puts "===== BEGIN RESPONSE ====="
+        #puts "Endpoint: #{response.code} http://#{uri}"
+        #puts "HEADERS:"
+        #response.each_header{ |h| puts "#{h}: #{response[h]}"}
+        #puts
+        #puts "Body:\n#{response.body}"
+        #puts "=====  END RESPONSE ====="
+        #puts
+        #puts
+        # END USE THIS TO PRINT HTTP RESPONSE
 
-      if response.code=="200"
-        break
-      end
-
-      if (response.header['location']!=nil)
-        newuri=URI.parse(response.header['location'])
-        if(newuri.relative?)
-            #@task_result.logger.log "url was relative" if @task_result
-            newuri=uri+response.header['location']
+        if response.code=="200"
+          break
         end
-        uri=newuri
 
-      else
-        found=true #resp was 404, etc
-      end #end if location
+        if (response.header['location']!=nil)
+          newuri=URI.parse(response.header['location'])
+          if(newuri.relative?)
+              #@task_result.logger.log "url was relative" if @task_result
+              newuri=uri+response.header['location']
+          end
+          uri=newuri
 
-    end #until
+        else
+          found=true #resp was 404, etc
+        end #end if location
+
+      end #until
 
     ### TODO - this code may be be called outside the context of a task,
     ###  meaning @task_result is not available to it. Below, we check to
@@ -698,7 +698,7 @@ module Task
            #_log "Didn't match our positive body regex, skipping"
            return nil
          end
-         
+
        elsif success_cases[:header_regex]
          response.each do |header|
           _log "Checking header: '#{header}: #{response[header]}'"
