@@ -12,6 +12,7 @@ class SaasServicenowOpenKbArticles < BaseTask
         "The misconfiguration allows KB articles to be bruteforced by guessing the last digits " +
         "of articles. The existence of an article results in an issue being created.",
       :references => [
+        "https://medium.com/@th3g3nt3l/multiple-information-exposed-due-to-misconfigured-service-now-itsm-instances-de7a303ebd56",
         "https://github.com/leo-hildegarde/SnowDownKB"
       ],
       :type => "vuln_check",
