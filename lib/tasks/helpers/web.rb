@@ -676,18 +676,29 @@ module Task
       #_log "Checking success cases: #{success_cases}"
 
        if success_cases[:body_regex]
-         if response.body =~ success_cases[:body_regex]
-           _log_good "Matched positive body regex!!! #{success_cases[:body_regex]}" if @task_result
-           return {
-             name: request_uri,
-             uri: request_uri,
-             response_code: response.code,
-             response_body: response.body
-           }
+         if response.body =~ success_cases[:body_regex] 
+          
+          out = {
+            name: request_uri,
+            uri: request_uri,
+            response_code: response.code,
+            response_body: response.body
+          }
+
+          # check to make sure we're not part of our excluded 
+          if success_cases[:exclude_body_regex] && response.body =~ success_cases[:exclude_body_regex] 
+            _log_error "Matched exclude body regex!!! #{success_cases[:exlude_body_regex]}" if @task_result
+            return nil
+          else
+            _log_good "Matched positive body regex!!! #{success_cases[:body_regex]}" if @task_result
+            return out
+          end
+
          else
            #_log "Didn't match our positive body regex, skipping"
-           return false
+           return nil
          end
+         
        elsif success_cases[:header_regex]
          response.each do |header|
           _log "Checking header: '#{header}: #{response[header]}'"
@@ -701,7 +712,7 @@ module Task
            }
           end
         end
-       return false
+       return nil
        end
      end
     ##############

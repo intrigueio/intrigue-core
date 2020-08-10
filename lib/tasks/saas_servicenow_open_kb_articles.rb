@@ -6,12 +6,14 @@ class SaasServicenowOpenKbArticles < BaseTask
     {
       :name => "saas_servicenow_open_kb_articles",
       :pretty_name => "SaaS ServiceNow Open KB Articles",
-      :authors => ["Th3G3nt3lman", "jcran"],
-      :description => "Given a servicenow slug, this task hecks to see if the " + 
-      "account is exposed to the miconfiguration documented by Th3G3nt3lman in June 2020. " + 
-      "The misoncfiguration allows KB articles to be bruteforced by guessing the last digits " +
-      "of articles. The existence of an article results in an issue being created.",
-      :references => [],
+      :authors => ["jcran", "Th3G3nt3lman", "LeoHildegarde"],
+      :description => "Given a servicenow slug, this task checks to see if the " + 
+        "account is exposed to the miconfiguration documented by Th3G3nt3lman in early June 2020. " + 
+        "The misconfiguration allows KB articles to be bruteforced by guessing the last digits " +
+        "of articles. The existence of an article results in an issue being created.",
+      :references => [
+        "https://github.com/leo-hildegarde/SnowDownKB"
+      ],
       :type => "vuln_check",
       :passive => false,
       :allowed_types => ["WebAccount"],
@@ -50,7 +52,7 @@ class SaasServicenowOpenKbArticles < BaseTask
     
     # shove our requests into a queue
     work_q = Queue.new
-    (0..1000).each do |d| 
+    (0..20000).each do |d| 
       
       # craft the URL 
       article_id = "KB00#{format('%04d',d)}"
@@ -66,6 +68,7 @@ class SaasServicenowOpenKbArticles < BaseTask
         path: "#{endpoint}", 
         severity: 2,  
         body_regex: /Published/, 
+        exclude_body_regex: /PROTECTED ARTICLE/, 
         status: "potential" 
       }
 
@@ -79,7 +82,6 @@ class SaasServicenowOpenKbArticles < BaseTask
     _log_good "Making #{work_q.size} requests"
     uri = "https://#{account_name}.service-now.com"
     results = make_http_requests_from_queue(uri, work_q, 3, true, true) # always create an issue
-
   end
 
 end
