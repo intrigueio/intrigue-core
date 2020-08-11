@@ -1,7 +1,7 @@
 module Intrigue
   module Issue
   class InvalidCertificatePremature < BaseIssue
-  
+
     def self.generate(instance_details={})
       {
         added: "2020-01-01",
@@ -16,10 +16,7 @@ module Intrigue
         ]
       }.merge!(instance_details)
     end
-  
+
   end
   end
   end
-  
-  
-          
