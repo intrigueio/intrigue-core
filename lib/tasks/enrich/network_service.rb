@@ -69,30 +69,56 @@ class NetworkService < Intrigue::Task::BaseTask
 
     # Use intrigue-ident code to request the banner and fingerprint
     _log "Grabbing banner and fingerprinting!"
+    ident_matches = nil
 
-    ident_matches = generate_ftp_request_and_check(ip_address) || {} if port == 21
-    ident_matches = generate_smtp_request_and_check(ip_address) || {} if port == 25
-    #ident_matches = generate_http_requests_and_check(_get_entity_name) || {} if port == 80 || port == 443
-    ident_matches = generate_snmp_request_and_check(ip_address) || {} if port == 161 && proto.upcase == "UDP"
-    ident_matches = generate_ssh_request_and_check(ip_address) || {} if port == 22
-    ident_matches = generate_telnet_request_and_check(ip_address) || {} if port == 23
+    ###
+    ### Go through each known port
+    ###
+    if port == 21 && !ident_matches
+      ident_matches = generate_ftp_request_and_check(ip_address) || {}
+    end
+      
+    if port == 22 && !ident_matches
+      ident_matches = generate_ssh_request_and_check(ip_address) || {}
+    end
+      
+    if port == 23 && !ident_matches
+      ident_matches = generate_telnet_request_and_check(ip_address) || {}
+    end
 
+    if port == 25 && !ident_matches
+      ident_matches = generate_smtp_request_and_check(ip_address) || {}
+    end
+    
+    if port == 53 && !ident_matches
+      ident_matches = generate_dns_request_and_check(ip_address) || {}
+    end
+
+    if port == 161 && !ident_matches
+      ident_matches = generate_snmp_request_and_check(ip_address) || {}
+    end
+    
+    ###
+    ### But default to HTTP through each known port
+    ###
+    url = "http://#{ip_address}:#{port}"
+    _log "Checking for HTTP... #{url}"
+    ident_matches = generate_http_requests_and_check(url) || {} unless ident_matches
+    
+    # okay we failed
     unless ident_matches
       _log "Unable to fingerprint!"
       return
     end
 
-    ident_fingerprints = ident_matches["fingerprints"] || []
-    _log "Got #{ident_fingerprints.count} fingerprints!"
-
-    # get the request/response we made so we can keep track of redirects
-    ident_banner = ident_matches["banner"]
-
+    # if we didnt fail, pull out the FP and match to vulns
+    ident_fingerprints = ident_matches["fingerprint"] || []
     if ident_fingerprints.count > 0
-      ident_fingeprints = add_vulns_by_cpe(ident_fingerprints)
+      _log "Got #{ident_fingerprints.count} fingerprints!"
+      ident_fingerprints = add_vulns_by_cpe(ident_fingerprints)
     end
 
-    _set_entity_detail "banner", ident_banner
+    # set entity details 
     _set_entity_detail "fingerprint", ident_fingerprints
   end
 
