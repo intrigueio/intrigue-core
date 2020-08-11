@@ -58,7 +58,7 @@ class BaseTask
       _log_error "Unable to find task_result. Bailing." unless @task_result
       _log_error "Unable to find project. Bailing." unless @project
       _log_error "Unable to find entity. Bailing." unless @entity
-      return 
+      return
     end
 
     ###
@@ -68,36 +68,36 @@ class BaseTask
       _log "Cancelled, returning without running!"
       return
     end
-    
+
     ###
     ### Handle already finished or already started results with the e
     ### same name in the same scan. Check for existing "same" task results
-    ### that havec already started or completed, and bail early 
+    ### that havec already started or completed, and bail early
     ### if that's the case
     ###
-    return_early = false 
+    return_early = false
     if @task_result.scan_result
       our_task_result_name = @task_result.name
-      
+
       # query existing results, limit to those that have been started
       existing_task_results = Intrigue::Core::Model::TaskResult.scope_by_project(@project.name).where({
         :name => "#{our_task_result_name}"}).exclude(:timestamp_start => nil)
 
-      # good for debugging 
+      # good for debugging
       _log "Got existing results for '#{our_task_result_name}': #{existing_task_results.map{|x| x.id }.join(", ")}"
 
       # if we've already completed another one, return eearly
       if existing_task_results.count > 1 && existing_task_results.exclude(:timestamp_end => nil).count > 1
-      
+
         _log "This task has already been completed in this scan, returning w/o running!"
-        return_early = true 
-      
+        return_early = true
+
       # if we've already even started another one, return eearly
-      elsif existing_task_results.count > 1 
-      
+      elsif existing_task_results.count > 1
+
         _log "This task is currently in progress in this scan, returning w/o running!"
-        return_early = true 
-      
+        return_early = true
+
       end
     end
 
@@ -107,7 +107,7 @@ class BaseTask
       @task_result.logger.save_changes
       @task_result.save_changes
       _log "Task returning early!"
-      return 
+      return
     end
 
     # We need a flag to skip the actual setup, run, cleanup of the task if
@@ -154,74 +154,45 @@ class BaseTask
           _log_error "Task setup failed, bailing out w/o running!"
         end
       end
-<<<<<<< HEAD
 
-      ### ENRICHMENT TASK SPECIFICS
-      # Now, if this is an enrichment task, we want to do some things
-      if @task_result.task_name =~ /^enrich\/.*/
-
-        # MARK ENTITY AS ENRICHED
-        _log "Marking entity as enriched!"
-        @entity.enriched = true
-
-        ### HANDLE SCOPING - We should have enough info now that enrichment is complete
-        # check the scoped? method on the entity and set the attribute
-        if @entity.scoped?
-          _log "Marking entity as scoped!"
-          @entity.scoped = true
-        else
-          _log "Marking entity as unscoped!"
-          @entity.scoped = false
-=======
-    
       ###
       ## FINALIZE ENRICHMENT
       ###
-      # Now, if this is an enrichment type task, we want to mark our enrichemnt complete 
+      # Now, if this is an enrichment type task, we want to mark our enrichemnt complete
       # if it's true, we can set it and launch our followon-work!
       if Intrigue::TaskFactory.create_by_name(@task_result.task_name).class.metadata[:type] == "enrichment"
-        
+
         ### NOW WE CAN SET ENRICHED!
-        @entity.enriched = true 
-  
+        @entity.enriched = true
+
         ### NOW WE CAN DECIDE SCOPE BASED ON COMPLETE ENTITY (unless we were already scoped in!)
         unless @entity.scoped
           @entity.set_scoped!(@entity.scoped?, "entity_scoping_rules") #always fall back to our entity-specific logic if there was no request
           #_log_good "POST-ENRICH AUTOMATED ENTITY SCOPE: #{@entity.scoped}"
->>>>>>> 7bcacce1aa058b21884acf92c4b05619be062cbe
         end
-        @entity.save_changes 
-        
+        @entity.save_changes
+
 
         ###
         ## NOW, KICK OFF MACHINES for SCOPED ENTiTIES ONLY
         ###
 
         # technically socped shoudl handle but it doesnt
-        if @entity.enriched && @entity.scoped? #&& !@entity.hidden 
+        if @entity.enriched && @entity.scoped? #&& !@entity.hidden
 
-          # MACHINE LAUNCH (ONLY IF WE ARE ATTACHED TO A MACHINE) 
+          # MACHINE LAUNCH (ONLY IF WE ARE ATTACHED TO A MACHINE)
           # if this is part of a scan and we're in depth
           if @task_result.scan_result && @task_result.depth > 0
 
-<<<<<<< HEAD
-        # MACHINE LAUNCH (ONLY IF WE ARE ATTACHED TO A MACHINE)
-        # if this is part of a scan and we're in depth
-        if @task_result.scan_result && @task_result.depth > 0
-          machine_name = @task_result.scan_result.machine
-          @task_result.log "Launching machine #{machine_name} on #{@entity.name}"
-          machine = Intrigue::MachineFactory.create_by_name(machine_name)
-=======
             machine_name = @task_result.scan_result.machine
             @task_result.log "Launching machine #{machine_name} on #{@entity.name}"
             machine = Intrigue::MachineFactory.create_by_name(machine_name)
->>>>>>> 7bcacce1aa058b21884acf92c4b05619be062cbe
 
             unless machine
               raise "Unable to continue, missing machine: #{machine_name}!!!"
             end
-            
-            ## 
+
+            ##
             ## Start the machine!
             ##
             machine.start(@entity, @task_result)
@@ -263,9 +234,9 @@ class BaseTask
               _log "No scan result handlers configured."
             end
           end
-        else 
+        else
           _log "Entity not scoped, no machine will be run."
-        end 
+        end
 
 
 
@@ -275,12 +246,12 @@ class BaseTask
         _log "Not an enrichment task, skipping machine generation"
       end
 
-      
+
     ensure
       begin
 
         ###
-        ## CLEAN UP HERE. 
+        ## CLEAN UP HERE.
         ###
 
         @task_result.complete = true

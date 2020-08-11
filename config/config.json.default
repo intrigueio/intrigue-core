@@ -307,10 +307,7 @@
       "editable": "true",
       "comment": ""
     },
-    "ipqs_api_key": {
-      "value": "",
-      "uri": "https://www.ipqualityscore.com/documentation/proxy-detection/overview",
-      }
+    
     "ibm_x_force_api_key": {
       "value": "",
       "uri": "https://app.intrigue.io/api",

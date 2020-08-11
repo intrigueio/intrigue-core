@@ -48,6 +48,11 @@ class SslCertificate < Intrigue::Task::BaseTask
       _create_linked_issue "invalid_certificate_expired"
     end
 
+    if not_after && Time.parse(not_after)- 30.days.ago < Time.now < not_after && Time.parse(not_after)
+      _log "Creating issue for expiring certificate"
+      _create_linked_issue "invalid_certificate_expiring"
+    end
+
     # https://www.globalsign.com/en/blog/moving-from-sha-1-to-sha-256
     algo = _get_entity_detail("algorithm")
     if algo && (algo == "SHA1" || algo == "MD5")
