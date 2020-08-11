@@ -17,7 +17,7 @@ class SearchReconDev < BaseTask
         {"type" => "Domain", "details" => {"name" => "intrigue.io"} }
       ],
       :allowed_options => [],
-      :created_types => ["Organization"]
+      :created_types => ["DnsRecord", "Uri"]
     }
   end
 
