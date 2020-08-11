@@ -4,10 +4,10 @@ class SearchGreynoisie < BaseTask
 
   def self.metadata
   {
-    :name => "search_greynoisie",
-    :pretty_name => "Search Greynoise",
+    :name => "threat/search_greynoisie",
+    :pretty_name => "Threat Check - Search Greynoise",
     :authors => ["Anas Ben Salah"],
-    :description => "This task hits the greynoise.io API for IP contexte and information. ",
+    :description => "This task hits the Greynoise API for IP context and information.",
     :references => ["https://docs.greynoise.io/"],
     :type => "discovery",
     :passive => true,
@@ -32,11 +32,10 @@ class SearchGreynoisie < BaseTask
     headers = { "Accept" =>  "application/json" , "Key" => "#{api_key}" }
 
     unless api_key or username
-      _log_error "unable to proceed, no API key for Greynoise provided"
+      _log_error "unable to proceed, no API key for Greynoise provided!"
       return
     end
-
-    #search for EmailAddress if it a partof  in a data breach
+    
     if entity_type == "IpAddress"
       search_greynoise entity_name, headers
     else
