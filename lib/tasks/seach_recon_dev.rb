@@ -7,7 +7,8 @@ class SearchReconDev < BaseTask
       :name => "search_recon_dev",
       :pretty_name => "Search Recon.dev",
       :authors => ["jcran", "nahamsec"],
-      :description => "Search @nahamsec's Recon.dev API for subdomains and urls",
+      :description => "Search @nahamsec's Recon.dev API for DnsRecords and Uris. " + 
+        "This API was released at DEFCON Safe Mode (2020)",
       :references => ["https://twitter.com/NahamSec/status/1291804914943836161"],
       :type => "discovery",
       :passive => true,
@@ -27,17 +28,40 @@ class SearchReconDev < BaseTask
     domain = _get_entity_name 
 
     begin
-      response = _http_get_body "https://api.recon.dev/search?domain=#{domain}"
+      
+      # grab the response from the api
+      response = http_get_body "https://api.recon.dev/search?domain=#{domain}"
       json = JSON.parse(response)
+      
+      # check if it exists, since we'll get a 'null' if it doesnt
+      if json 
+        _log "Parsing #{json.count} results" 
+
+        # grab each one, so we can clean them up individually
+        subdomains = []
+        urls = []
+        json.each do |j|
+          subdomains << "#{j["rawDomain"]}".gsub("*.","")
+          urls << "#{j["domain"]}".gsub(".*","")
+        end    
+
+        # create subdomains
+        subdomains.uniq.each do |s|
+          create_dns_entity_from_string s
+        end
+
+        # create subdomains
+        urls.uniq.each do |url|
+          _create_entity "Uri", "name" => "#{url}"
+        end
+
+      else 
+        _log "No results found"
+      end
+
     rescue JSON::ParserError => e
       _log "Error parsing json"
     end
-
-    json.each do |j|
-      _create_entity "DnsRecord", "name" => "#{j["rawDomain"]}"
-      _create_entity "Uri", "name" => "#{j["domain"]}"
-    end
-
 
   end
 end
