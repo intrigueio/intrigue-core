@@ -33,7 +33,7 @@
           <td><%=h x["version"] %></td>
           <td><%=h x["cipher"] %></td>
           <td><%=h x["key_length"] %></td>
-          <td><a href="<%=h "/#{@project_name}/entities/#{x["id"]}"%>"><%= h x["site"] %></a></td>
+          <td><a href="<%="/#{h @project_name}/entities/#{x["id"]}"%>"><%= h x["site"] %></a></td>
         </tr>
       <% end %>
       </tbody>

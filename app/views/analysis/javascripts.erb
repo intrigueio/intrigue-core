@@ -29,7 +29,7 @@
       <% @javascripts.each do |x| %>
         <tr>
           <td><%=h x["name"] %></td>
-          <td><a href="<%=h "/#{@project_name}/entities/#{x["id"]}"%>"><%= h x["site"] %></a></td>
+          <td><a href="<%="/#{h @project_name}/entities/#{x["id"]}"%>"><%= h x["site"] %></a></td>
         </tr>
       <% end %>
       </tbody>

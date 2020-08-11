@@ -5,9 +5,10 @@ class BlockedByAdBlockPlus < BaseIssue
   def self.generate(instance_details={})
 
     to_return = {
+      added: "2020-01-01",
       pretty_name: "Entity Blocked in AdBlockPlus Rules",
       name: "blocked_by_adblockplus",
-      category: "reputation",
+      category: "threat",
       severity: 5,
       status: "confirmed",
       description: "This website matches one of the rules of AdBlockPlus List, and will be blocked by AdBlockPlus users.",

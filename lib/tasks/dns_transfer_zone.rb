@@ -46,18 +46,7 @@ class DnsTransferZone < BaseTask
         zt.server = nameserver
         zone = zt.transfer(domain_name)
 
-        ############################################
-        ###      Old Issue                      ###
-        ###########################################
-        # create an issue to track this
-        #_create_issue({
-        #  name: "DNS Zone (AXFR) Transfer Enabled",
-        #  type: "dns_zone_transfer",
-        #  severity: 4,
-        #  status: "confirmed",
-        #  description: "Zone transfer on #{domain_name} using #{nameserver} resulted in leak of #{zone.count} records.",
-        #  details: { records: zone.map{|r| r.name.to_s } }
-        #  })
+
         description = "Zone transfer on #{domain_name} using #{nameserver} resulted in leak of #{zone.count} records.",
         ############################################
         ###      New Issue                      ###

@@ -15,7 +15,11 @@ class SearchIPQSEmailAddress < BaseTask
       :allowed_types => ["EmailAddress"],
       :example_entities => [{"type" => "EmailAddress", "details" => {"name" => "test@gmail.com"}}],
       :allowed_options => [],
+<<<<<<< HEAD
       :created_types => []
+=======
+      :created_types => ["EmailAddress"]
+>>>>>>> 7bcacce1aa058b21884acf92c4b05619be062cbe
     }
   end
 
@@ -23,7 +27,10 @@ class SearchIPQSEmailAddress < BaseTask
   ## Default method, subclasses must override this
   def run
     super
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7bcacce1aa058b21884acf92c4b05619be062cbe
       #get entity name and type
       entity_name = _get_entity_name
 
@@ -33,7 +40,11 @@ class SearchIPQSEmailAddress < BaseTask
       headers = { "Accept" =>  "application/json"}
 
       unless password
+<<<<<<< HEAD
         _log_error "unable to proceed, no API key for IpQulaityScore provided"
+=======
+        _log_error "unable to proceed, no API key for IpQualityScore provided"
+>>>>>>> 7bcacce1aa058b21884acf92c4b05619be062cbe
         return
       end
 
@@ -52,6 +63,7 @@ class SearchIPQSEmailAddress < BaseTask
       if result["leaked"]== true or result["suspect"] == true or result["spam_trap_score"] != "none"
         _create_linked_issue("suspicious_activity_detected", {
           status: "confirmed",
+<<<<<<< HEAD
           description: "This Email Address was flagged by IPQulatiyScore for these reasons: Leak:#{result["leaked"]} // suspicious activity:#{result["suspect"]} // Spam:#{result["spam_trap_score"]} ",
           IpQulaityScore_details: result,
           source: "IpQulaityScore.com"
@@ -64,6 +76,15 @@ class SearchIPQSEmailAddress < BaseTask
 
 
 
+=======
+          description: "This Email Address was flagged by IPQualtiyScore for these reasons: Leak:#{result["leaked"]} // suspicious activity:#{result["suspect"]} // Spam:#{result["spam_trap_score"]} ",
+          IpQualityScore_details: result,
+          source: "IpQualityScore.com"
+        })
+      end
+  end #end run
+
+>>>>>>> 7bcacce1aa058b21884acf92c4b05619be062cbe
 end
 end
 end

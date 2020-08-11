@@ -1,4 +1,3 @@
-require 'open-uri'
 module Intrigue
 module Task
 class SearchBlocklistde < BaseTask

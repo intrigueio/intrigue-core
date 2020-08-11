@@ -9,7 +9,7 @@
 class JsonExportFile
 
   def initialize(fullpath=nil)
-    @output_file = fullpath || "#{$intrigue_basedir}/tmp/#{rand(100000000000)}.json"
+    @output_file = fullpath || "#{$intrigue_basedir}/tmp/json_export_#{rand(100000000000)}.json"
     @entity_count = 0
     @closed = false
 

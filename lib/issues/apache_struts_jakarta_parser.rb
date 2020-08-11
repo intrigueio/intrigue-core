@@ -4,6 +4,7 @@ class VulnApacheStrutsJakartaParser20175638 < BaseIssue
 
   def self.generate(instance_details={})
     {
+      added: "2020-01-01",
       name: "apache_struts_jakarta_parser",
       pretty_name: "Vulnerable Apache Struts Jakarta Parser (CVE-2017-5638)",
       identifiers: [

@@ -12,10 +12,8 @@ class Gitrob < BaseTask
       :references => ["https://github.com/michenriksen/gitrob"],
       :passive => true,
       :allowed_types => ["GithubAccount"],
-      :example_entities => [
-        {"type" => "GithubAccount", "attributes" => {"name" => "intrigueio"}}
-      ],
-      :allowed_options => [ ],
+      :example_entities => [{"type" => "GithubAccount", "details" => {"name" => "intrigueio"}}],
+      :allowed_options => [],
       :created_types => ["GithubRepository"]
     }
   end
@@ -91,25 +89,9 @@ class Gitrob < BaseTask
         next if (f["Description"] == "Contains word: password" && f["FilePath"] =~ /password.html/i )
 
         ############################################
-        ###      Old Issue                      ###
-        ###########################################
-        # _create_issue({
-        #   name: "Suspicious #{f["Action"]} Commit Found In Github Repository",
-        #   type: "suspicious_commit",
-        #   severity: 4,
-        #   status: "potential",
-        #   description:  "A suspicious commit was found in a public Github repository.\n" +
-        #                 "Repository URL: #{f['RepositoryUrl']}\n" +
-        #                 "Commit Author: #{f["CommitAuthor"]}\n" +
-        #                 "Commit Message #{f["CommitMessage"]}\n" +
-        #                 "Details: #{f["Action"]} #{f["Description"]} at #{f["FileUrl"]}\n\n#{f["Comment"]}",
-        #   details: f.merge({uri: "#{f["CommitUrl"]}"})
-        # })
-
-        ############################################
         ###      New Issue                      ###
         ###########################################
-        _create_linked_issue({
+        _create_linked_issue("suspicious_commit", {
           name: "Suspicious #{f["Action"]} Commit Found In Github Repository",
           detailed_description:  "A suspicious commit was found in a public Github repository.\n" +
                         "Repository URL: #{f['RepositoryUrl']}\n" +

@@ -51,7 +51,7 @@
         while result["has_next"]
 
           # get the response, grab 50 at a time per alienvault docs
-          response = http_get_body("#{url}?limit=50&page=#{page_num}", headers: headers)
+          response = http_get_body("#{url}?limit=50&page=#{page_num}", nil, headers)
           result = JSON.parse(response)
 
           # for each item in the url list, extarct Related IP from linked url
@@ -79,7 +79,7 @@
 
         # get the initial repsonse for domain_name
         url = "https://otx.alienvault.com:443/api/v1/indicators/IPv4/#{entity_name}/reputation"
-        response = http_get_body("#{url}", headers: headers)
+        response = http_get_body("#{url}", nil, headers)
         result = JSON.parse(response)
 
           # return if response is null

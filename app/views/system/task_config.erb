@@ -1,0 +1,32 @@
+<h3>Global Configuration</h3>
+
+<h4> System Configuration </h4>
+<form action="/system/config/tasks" method="post">
+  Username: <input class="form-control" style="width:150px" type="text" name="username" value="<%=h @global_config.config["credentials"]["username"]%>">
+  Password: <input class="form-control" style="width:150px" type="password" name="password" value="<%="**********#{h @global_config.config["credentials"]["password"]}"%>">
+  
+  <input class="btn btn-primary" type="submit">
+</form>
+<hr>
+<h4> Task Configuration </h4>
+<form action="/system/config/tasks" method="post">
+  <table class="table">
+    <colgroup>
+      <col style="width:20%">
+      <col style="width:30%">
+      <col style="width:50%">
+    </colgroup>
+  <tr><th>Setting</th><th>Password</th><th>Details</th></tr>
+  <tbody>
+  <% @global_config.config["intrigue_global_module_config"].each do |k,v| %>
+    <% next unless v["editable"] %>
+    <tr>
+      <td><a target="_blank" href=<%=h v["uri"]%>><%= k %></a>:</td>
+      <td><input class="form-control" style="width:100%" type="text" name="<%=h k%>" value="<%="**********#{h v["value"][-3..-1] if v && v["value"]}"%>"></td>
+      <td><%= h v["comment"] %></td>
+    </tr>
+    <% end %>
+  <tr><td><input class="btn btn-primary" type="submit"></td><td></td><td></td></tr>
+  <tbody>
+  </table>
+</form>

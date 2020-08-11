@@ -32,13 +32,19 @@ class SearchSpyse < BaseTask
 
     if entity_type == "IpAddress"
       #search Ip for reputation, Open ports, related information
+<<<<<<< HEAD
       search_ip_reputation entity_name,headers
+=======
+      #search_ip_reputation entity_name,headers
+      search_open_ports entity_name,headers
+>>>>>>> 7bcacce1aa058b21884acf92c4b05619be062cbe
     else
       _log_error "Unsupported entity type"
     end
 
-  end #end run
+  end #end
 
+<<<<<<< HEAD
   #Lists open ports on IP
   # def search_ip_port(entity_name, headers)
   #
@@ -111,6 +117,57 @@ class SearchSpyse < BaseTask
 
   
 
+=======
+  # Search IP reputation and gathering data
+  def search_ip_reputation(entity_name, headers)
+
+    # Set the URL for ip data
+    url = "https://api.spyse.com/v2/data/ip?limit=100&ip=#{entity_name}"
+
+    begin 
+      # make the request
+      response = http_get_body(url,nil,headers)
+      json = JSON.parse(response)
+
+      json["data"]["items"].each do |result|
+
+        # Create an issue if result score indicates a score related to the threat
+        if result["score"] < 100
+          _create_linked_issue("suspicious_activity_detected",{
+            severity: result["score"],
+            references: ["https://spyse.com/"],
+            source: "Spyse",
+            details: result
+          })
+        end
+
+      end
+    rescue JSON::ParserError => e
+      _log_error "Error while parsing #{e}"
+    end
+  end
+
+  # Search for open ports
+  def search_open_ports entity_name, headers
+
+    # Set the URL for ip open ports
+    url = "https://api.spyse.com/v3/data/ip/port?limit=100&ip=#{entity_name}"
+
+    begin 
+      # make the request
+      response = http_get_body(url,nil,headers)
+      json = JSON.parse(response)
+
+      json["data"]["items"].each do |result|
+        _log_good "Creating service on #{entity_name}: #{result["port"]}"
+        _create_network_service_entity(@entity, result["port"],protocol="tcp",generic_details={"extended_spyse" => result})
+      end
+    rescue JSON::ParserError => e
+      _log_error "Error while parsing #{e}"
+    end
+    
+  end
+>>>>>>> 7bcacce1aa058b21884acf92c4b05619be062cbe
 
 end
 end

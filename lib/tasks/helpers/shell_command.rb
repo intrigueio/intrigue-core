@@ -33,7 +33,7 @@ module Task
   def self.execute(command)
     command_stdout = nil
     command_stderr = nil
-    process = Open3.popen3(ENV, command + ';') do |stdin, stdout, stderr, thread|
+    process = ::Open3.popen3(ENV, command + ';') do |stdin, stdout, stderr, thread|
       stdin.close
       stdout_buffer   = stdout.read
       stderr_buffer   = stderr.read

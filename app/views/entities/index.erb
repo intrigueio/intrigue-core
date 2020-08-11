@@ -4,7 +4,7 @@ function delete_entity(id)
   var check = confirm('Are you sure?');
   if (check == true) {
       document.entity_delete_form.entity.value = id;
-      document.entity_delete_form.action = "/<%=@project_name%>/meta_entities/" + id + "/delete"
+      document.entity_delete_form.action = "/<%=h @project_name%>/meta_entities/" + id + "/delete"
       document.entity_delete_form.submit();
       return true;
   }
@@ -18,8 +18,8 @@ function delete_entity(id)
   <%= erb :'/entities/_search', :layout => false %>
 </div>
 <div class="col-sm-10">
-  <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&include_hidden=<%= @include_hidden ? 'on' : 'off' %>&include_unscoped=<%=@include_unscoped ? 'on' : 'off'%>&correlate=on&page=<%=@page-1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">previous</a>
-  <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&include_hidden=<%= @include_hidden ? 'on' : 'off' %>&include_unscoped=<%=@include_unscoped ? 'on' : 'off'%>&correlate=on&page=<%=@page+1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">next</a>
+  <a href="/<%=h @project_name%>/entities?search_string=<%=@search_string%>&include_hidden=<%= @include_hidden ? 'on' : 'off' %>&include_unscoped=<%=@include_unscoped ? 'on' : 'off'%>&correlate=on&page=<%=@page-1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">previous</a>
+  <a href="/<%=h @project_name%>/entities?search_string=<%=@search_string%>&include_hidden=<%= @include_hidden ? 'on' : 'off' %>&include_unscoped=<%=@include_unscoped ? 'on' : 'off'%>&correlate=on&page=<%=@page+1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">next</a>
     <%= "Page: #{@page}" %> / <%= "Viewing Results: #{@count * (@page-1)} .. #{@count * @page-1}" %>
 
   <script type="text/javascript" src="/js/sorttable.js"></script>
@@ -67,7 +67,7 @@ function delete_entity(id)
               end
 
             %>
-                <li>[<a href="/<%=@project_name%>/entities/<%=e.id%>"> <%= h e %> </a>]</li>
+                <li>[<a href="/<%=h @project_name%>/entities/<%=e.id%>"> <%= h e %> </a>]</li>
           <% end %>
               </ul>
             </td>
@@ -87,7 +87,7 @@ function delete_entity(id)
               end
 
             %>
-              <li><a href="/<%=@project_name%>/entities/<%=e.id%>"> <%= h e.detail_string %> </a></li>
+              <li><a href="/<%=h @project_name%>/entities/<%=e.id%>"> <%= h e.detail_string %> </a></li>
         <% end %>
             </ul>
           </td>
@@ -96,8 +96,8 @@ function delete_entity(id)
 
     </tbody>
   </table>
-  <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&include_hidden=<%= @include_hidden ? 'on' : 'off' %>&include_unscoped=<%=@include_unscoped ? 'on' : 'off'%>&correlate=on&page=<%=@page-1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">previous</a>
-  <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&include_hidden=<%= @include_hidden ? 'on' : 'off' %>&include_unscoped=<%=@include_unscoped ? 'on' : 'off'%>&correlate=on&page=<%=@page+1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">next</a>
+  <a href="/<%=h @project_name%>/entities?search_string=<%=@search_string%>&include_hidden=<%= @include_hidden ? 'on' : 'off' %>&include_unscoped=<%=@include_unscoped ? 'on' : 'off'%>&correlate=on&page=<%=@page-1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">previous</a>
+  <a href="/<%=h @project_name%>/entities?search_string=<%=@search_string%>&include_hidden=<%= @include_hidden ? 'on' : 'off' %>&include_unscoped=<%=@include_unscoped ? 'on' : 'off'%>&correlate=on&page=<%=@page+1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">next</a>
   <br><br><br>
 <form name="entity_delete_form" method="get"><input type="hidden" id="entity" name="entity"/></form>
 </div>
