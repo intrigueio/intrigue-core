@@ -32,7 +32,7 @@ class SearchOpenDataBase < BaseTask
     }
   end
 
-  ## Default method, subclasses must override this
+  ## Default method, subclasses must override this,
   def run
     super
 
