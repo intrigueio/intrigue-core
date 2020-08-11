@@ -6,10 +6,10 @@ module Intrigue
       {
         added: "2020-01-01",
         name: "wordpress_leaked_log",
-        pretty_name: "Wordpress Debug.log Information (Log) Leak",
+        pretty_name: "Wordpress Information (Log) Leak",
         severity: 5,
         status: "confirmed",
-        category: "application",
+        category: "vulnerability",
         description: "The site was found to be leaking a commonly known logfile to anonymous users.",
         remediation: "Remove the exposed logfile.",
         affected_software: [{ :vendor => "Wordpress", :product => "Wordpress" }],
