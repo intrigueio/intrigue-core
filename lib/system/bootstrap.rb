@@ -45,6 +45,14 @@ module Bootstrap
       auto_scope = true
 
       project.options = p["project_options"] || []
+      
+      # vulnerability checks must be enabled at the project level
+      if p["vulnerability_checks_enabled"]
+        project.vulnerability_checks_enabled = true
+      else 
+        project.vulnerability_checks_enabled = false
+      end
+      
       project.use_standard_exceptions = p["use_standard_exceptions"] || true
       project.allowed_namespaces = p["allowed_namespaces"] || []
       project.uuid = p["collection_run_uuid"]

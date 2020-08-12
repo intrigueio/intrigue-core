@@ -360,21 +360,23 @@ class Uri < Intrigue::Task::BaseTask
     _set_entity_detail("cloud_providers", cloud_providers.uniq.sort)
     _set_entity_detail("cloud_hosted",  !cloud_providers.empty?)
 
-    ###
-    ### Finally, start checks based on FP
-    ###
     all_checks = []
-    fingerprint.each do |f|
-      vendor_string = f["vendor"]
-      product_string = f["product"]
-      _log "Getting checks for #{vendor_string} #{product_string}"
-      checks_to_be_run = Intrigue::Issue::IssueFactory.checks_for_vendor_product(vendor_string, product_string)
-      all_checks << checks_to_be_run
-    end
-    
-    # kick off all vuln checks for this product 
-    all_checks.flatten.compact.uniq.each do |t|
-      start_task("task_autoscheduled", @project, nil, t, @entity, 1)
+    if @project.vulnerability_checks_enabled
+      ###
+      ### Finally, start checks based on FP
+      ###
+      fingerprint.each do |f|
+        vendor_string = f["vendor"]
+        product_string = f["product"]
+        _log "Getting checks for #{vendor_string} #{product_string}"
+        checks_to_be_run = Intrigue::Issue::IssueFactory.checks_for_vendor_product(vendor_string, product_string)
+        all_checks << checks_to_be_run
+      end
+      
+      # kick off all vuln checks for this product 
+      all_checks.flatten.compact.uniq.each do |t|
+        start_task("task_autoscheduled", @project, nil, t, @entity, 1)
+      end
     end
 
     # and save'm off
