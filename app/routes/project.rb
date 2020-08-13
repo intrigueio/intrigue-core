@@ -30,7 +30,14 @@ class CoreApp < Sinatra::Base
         @project.use_standard_exceptions = false
       end
 
-      # set standard exceptions
+      # set vulnerability_checks_enabled
+      if @params["vulnerability_checks_enabled"] == "on"
+        @project.vulnerability_checks_enabled = true
+      else 
+        @project.vulnerability_checks_enabled = false
+      end
+
+      # set reenrich
       if @params["allow_entity_reenrich"] == "on"
         @project.allow_reenrich = true
       else 

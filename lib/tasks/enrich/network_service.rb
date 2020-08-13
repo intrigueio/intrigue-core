@@ -38,9 +38,32 @@ class NetworkService < Intrigue::Task::BaseTask
     _set_entity_detail("proto", proto) unless _get_entity_detail("proto")
 
     ###
+    ### FINGERPRINTING AND VULNERABILITY CHEkING
     ###
-    ###
-    fingerprint_service(ip_address, port, proto) 
+    fingerprint = fingerprint_service(ip_address, port, proto) 
+
+    all_checks = []
+    if @project.vulnerability_checks_enabled
+      ###
+      ### Finally, start checks based on FP
+      ###
+      fingerprint.each do |f|
+        vendor_string = f["vendor"]
+        product_string = f["product"]
+        _log "Getting checks for #{vendor_string} #{product_string}"
+        checks_to_be_run = Intrigue::Issue::IssueFactory.checks_for_vendor_product(vendor_string, product_string)
+        all_checks << checks_to_be_run
+      end
+      
+      # kick off all vuln checks for this product 
+      all_checks.flatten.compact.uniq.each do |t|
+        start_task("task_autoscheduled", @project, nil, t, @entity, 1)
+      end
+    end
+
+    # and save'm off
+    _set_entity_detail("additional_checks", all_checks.flatten.compact.uniq)
+
     
     ###
     ### Handle SNMP as a special treat
@@ -120,6 +143,8 @@ class NetworkService < Intrigue::Task::BaseTask
 
     # set entity details 
     _set_entity_detail "fingerprint", ident_fingerprints
+  
+  ident_fingerprints
   end
 
   def enrich_snmp

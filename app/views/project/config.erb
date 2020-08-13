@@ -1,6 +1,6 @@
 <h3>Project Configuration</h3>
 
-Project Created at: <%= @project.created_at %>
+Project Created at: <%= @project.created_at %><br>
 
 <br>
 
@@ -9,7 +9,9 @@ Project Created at: <%= @project.created_at %>
   <br>
   <label class="checkbox-inline"><input type="checkbox" name="use_standard_exceptions" class="checkbox" <%= "checked" if @project.use_standard_exceptions %>> Use Standard Exceptions? <i>Note: Standard exceptions can be found in the file: <%=$intrigue_basedir%>/data/standard_name_exceptions.list</i></label>  <br>
   
-  
+  <label class="checkbox-inline"><input type="checkbox" name="vulnerability_checks_enabled" class="checkbox" <%= "checked" if @project.vulnerability_checks_enabled %>> Vulnerability Checks Enabled? </label>  <br>
+
+
   <label class="checkbox-inline"><input type="checkbox" name="allow_entity_reenrich" class="checkbox" <%= "checked" if @project.allow_reenrich %>> Allow Entity Re-enrich?</label> 
   
   <br><br>
