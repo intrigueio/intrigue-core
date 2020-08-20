@@ -22,7 +22,6 @@ class UriBruteFocusedContent < BaseTask
         {:name => "threads", regex: "integer", :default => 1 },
         {:name => "create_url", regex: "boolean", :default => false },
         {:name => "override_fingerprint", regex: "alpha_numeric", :default => "" },
-        {:name => "check_generic_content", regex: "boolean", :default => true }
       ],
       :created_types => ["Uri"]
     }
@@ -34,7 +33,6 @@ class UriBruteFocusedContent < BaseTask
     uri = _get_entity_name
     opt_threads = _get_option("threads")
     opt_create_url = _get_option("create_url")
-    opt_generic_content = _get_option("check_generic_content")
 
     # first, if an override fingerprint was specified, just use that
     override = _get_option("override_fingerprint")
@@ -48,36 +46,6 @@ class UriBruteFocusedContent < BaseTask
     else
       fingerprint = _get_entity_detail("fingerprint")
     end
-
-    generic_list = [
-      #{ path: "/api", body_regex: nil },
-      { issue_type: "exposed_vc_repository", path: "/.git", severity: 2, body_regex: /<h1>Index of/, status: "confirmed" },
-      { issue_type: "exposed_vc_repository", path: "/.git/config", severity: 2, body_regex: /repositoryformatversion/, :status => "confirmed"  },
-      { issue_type: "exposed_vc_repository", path: "/.hg", severity: 2, body_regex: /<h1>Index of/, status: "confirmed"  },
-      { issue_type: "exposed_vc_repository", path: "/.bzr", severity: 2, body_regex: /<h1>Index of/, status: "confirmed" },
-      { issue_type: "exposed_vc_repository_svn", path: "/.svn", severity: 2, body_regex: /<h1>Index of/, status: "confirmed"  },
-      { issue_type: "exposed_vc_repository_svn", path: "/.svn/entries", severity: 2, body_regex: /^dir|\.svn-base|has-props$/, status: "confirmed" },
-      { issue_type: "exposed_vc_repository_svn", path: "/.svn/prop-base", severity: 2, body_regex: /^dir|\.svn-base|has-props$/, status: "confirmed" },
-      { issue_type: "exposed_vc_repository_svn", path: "/.svn/text-base", severity: 2, body_regex: /^dir|\.svn-base|has-props$/, status: "confirmed" },
-      
-      # TODO ... move this to laravel-only.
-      # https://github.com/laravel/laravel/blob/master/.env.example
-      { issue_type: "laravel_env_file", path: "/.env", severity: 1, body_regex: /^APP_(NAME|ENV|KEY|DEBUG|URL)=/, status: "confirmed" },
-
-      { issue_type: "htaccess_info_leak", path: "/.htaccess", body_regex: /AuthName/, severity: 3, status: "confirmed" },
-      { issue_type: "htaccess_info_leak", path: "/.htaccess.bak", body_regex: /AuthName/, severity: 3, status: "confirmed" },
-
-      # TODO - TOO NOISY :[
-      #{ issue_type: "htpasswd", path: "/.htpasswd", body_regex: /(:\$|:\{.*\n|[a-z]:.*$)/, severity: 1, status: "confirmed" },
-
-      #{ path: "/.csv", body_regex: /<h1>Index of/ },
-      #{ path: "/.bak", body_regex: /<h1>Index of/ },
-      #{ path: "/crossdomain.xml", body_regex: /\<cross-domain-policy/, severity: 6, status: "confirmed"}, #tighten regex?
-      #{ path: "/clientaccesspolicy.xml", body_regex: /\<access-policy/, severity: 6, status: "confirmed"}, #tighten regex?
-      #{ path: "/portal", body_regex: nil },
-      #{ path: "/admin", body_regex: nil },
-      #{ path: "/test", body_regex: nil },
-    ]
 
     # technology specifics
     apache_list = [
@@ -186,6 +154,12 @@ class UriBruteFocusedContent < BaseTask
 
     jupyter_notebook_list = [
       { issue_type: "jupyter_exposed_ui_detection", path: "/terminals/1", severity: 1, body_regex: /terminals\/websocket\/1/i, status: "confirmed" }
+    ]
+
+    laravel_list = [             
+      # TODO ... move this to laravel-only.
+      # https://github.com/laravel/laravel/blob/master/.env.example
+      { issue_type: "laravel_env_file", path: "/.env", severity: 1, body_regex: /^APP_(NAME|ENV|KEY|DEBUG|URL)=/, status: "confirmed" }
     ]
 
     # TODO https://www.nccgroup.com/globalassets/our-research/uk/whitepapers/hackproofing_lotus_domino_web_server.pdf
@@ -350,6 +324,7 @@ class UriBruteFocusedContent < BaseTask
     jira_list.each { |x| work_q.push x } if is_product?(fingerprint,"Jira")
     joomla_list.each { |x| work_q.push x } if is_product?(fingerprint,"Joomla!")
     jupyter_notebook_list.each { |x| work_q.push x } if is_product?(fingerprint,"Notebook")
+    laravel_list.each { |x| work_q.push x } if is_product?(fingerprint,"Laravel")
     lotus_domino_list.each { |x| work_q.push x } if is_product?(fingerprint,"Domino")
     php_list.each { |x| work_q.push x } if is_product?(fingerprint,"PHP")
     php_my_admin_list.each { |x| work_q.push x } if is_product?(fingerprint,"phpMyAdmin")
@@ -365,9 +340,6 @@ class UriBruteFocusedContent < BaseTask
     websphere_list.each { |x| work_q.push x } if is_product?(fingerprint,"WebSphere")
     wordpress_list.each { |x| work_q.push x } if is_product?(fingerprint,"Wordpress")
     wpengine_list.each { |x| work_q.push x } if is_product?(fingerprint,"WPEngine")
-
-    # then add our "always" stuff:
-    generic_list.each { |x| work_q.push x } if opt_generic_content
 
     ###
     ### Do the work

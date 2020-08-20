@@ -433,6 +433,9 @@ module Task
 
   def http_request(method, uri_string, credentials=nil, headers={}, data=nil, attempts_limit=3, write_timeout=15, read_timeout=15, connect_timeout=15)
 
+    # use redirect following
+    Excon.defaults[:middlewares] << Excon::Middleware::RedirectFollower
+
     # set user agent unless one was provided
     unless headers["User-Agent"]
       headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36"
@@ -457,6 +460,7 @@ module Task
   
       # disable peer verification
       Excon.defaults[:ssl_verify_peer] = false
+      
 
       connection = Excon.new(uri_string,options)
 

@@ -12,7 +12,7 @@ class String < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name =~ /^\w.*$/
+    name =~ /^([\w\d\ \-\(\)\\\/]+)$/
   end
 
   def enrichment_tasks
