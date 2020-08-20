@@ -317,46 +317,6 @@ module Services
     rescue URI::InvalidURIError => e
       _log_error "Error requesting resource, skipping: #{uri} #{e}"
       out[:http_response] = false
-    rescue RestClient::RequestTimeout => e
-      _log_error "Timeout requesting resource, skipping: #{uri} #{e}"
-      out[:http_response] = false
-    rescue RestClient::BadRequest => e
-      _log_error "Error requesting resource, skipping: #{uri} #{e}"
-      out[:http_response] = false
-    rescue RestClient::ResourceNotFound => e
-      _log_error "Error (404) requesting resource, creating anyway: #{uri}"
-      out[:http_response] = true
-    rescue RestClient::MaxRedirectsReached => e
-      _log_error "Error (too many redirects) requesting resource, creating anyway: #{uri}"
-      out[:http_response] = true
-    rescue RestClient::Unauthorized => e
-      _log_error "Error (401) requesting resource, creating anyway: #{uri}"
-      out[:http_response] = true
-      out[:extra_details].merge!("http_server_error" => "#{e}" )
-    rescue RestClient::Forbidden => e
-      _log_error "Error (403) requesting resource, creating anyway: #{uri}"
-      out[:http_response] = true
-      out[:extra_details].merge!("http_server_error" => "#{e}" )
-    rescue RestClient::InternalServerError => e
-      _log_error "Error (500) requesting resource, creating anyway: #{uri}"
-      out[:http_response] = true
-      out[:extra_details].merge!("http_server_error" => "#{e}" )
-    rescue RestClient::BadGateway => e
-      _log_error "Error (Bad Gateway) requesting resource #{uri}, creating anyway."
-      out[:http_response] = true
-      out[:extra_details].merge!("http_server_error" => "#{e}" )
-    rescue RestClient::ServiceUnavailable => e
-      _log_error "Error (Service Unavailable) requesting resource #{uri}, creating anyway."
-      out[:http_response] = true
-      out[:extra_details].merge!("http_server_error" => "#{e}" )
-    rescue RestClient::ServerBrokeConnection => e
-      _log_error "Error (Server broke connection) requesting resource #{uri}, creating anyway."
-      out[:http_response] = true
-      out[:extra_details].merge!("http_server_error" => "#{e}" )
-    rescue RestClient::SSLCertificateNotVerified => e
-      _log_error "Error (SSL Certificate Invalid) requesting resource #{uri}, creating anyway."
-      out[:http_response] = true
-      out[:extra_details].merge!("http_server_error" => "#{e}" )
     rescue OpenSSL::SSL::SSLError => e
       _log_error "Error (SSL Certificate Invalid) requesting resource #{uri}, creating anyway."
       out[:http_response] = true
@@ -365,9 +325,6 @@ module Services
       _log_error "Error (Bad HTTP Response) requesting resource #{uri}, creating anyway."
       out[:http_response] = true
       out[:extra_details].merge!("http_server_error" => "#{e}" )
-    rescue RestClient::ExceptionWithResponse => e
-      _log_error "Unknown error requesting resource #{uri}, skipping"
-      _log_error "#{e}"
     rescue Zlib::GzipFile::Error => e
       _log_error "compression error on #{uri}" => e
     end

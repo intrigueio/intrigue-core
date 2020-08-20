@@ -78,7 +78,7 @@ class Uri < Intrigue::Task::BaseTask
     # Save the Headers
     headers = []
     _log "Saving Headers"
-    response.each_header{|x| headers << "#{x}: #{response[x]}" }
+    headers = response.headers.map{|x,y| "#{x}: #{y}"}
 
     # Use intrigue-ident code to request all of the pages we
     # need to properly fingerprint
@@ -128,7 +128,7 @@ class Uri < Intrigue::Task::BaseTask
     if response.code == "200"
 
       # capture cookies
-      set_cookie = response.header['set-cookie']
+      set_cookie = response['set-cookie'] || response["Set-Cookie"]
       _log "Got Cookie: #{set_cookie}" if set_cookie
       
       # TODO - cookie scoped to parent domain
@@ -248,29 +248,33 @@ class Uri < Intrigue::Task::BaseTask
     generator_match = response.body.match(/<meta name=\"?generator\"? content=\"?(.*?)\"?\/>/i)
     generator_string = generator_match.captures.first.gsub("\"","") if generator_match
 
-    # get ASN
-    # look up the details in team cymru's whois
+    # resolve until we hit an ip address
     _log "Looking up network and hostname"
     hostname = URI(uri).hostname
-    if hostname.is_ip_address?
-      ip_address = hostname
-    else
-      ip_address = resolve_name(hostname)
+    resolved_ip_address = ""
+    tries = 0; max_tries=5
+    until resolved_ip_address.is_ip_address? || (tries > max_tries)
+      tries +=1
+      ### TODO ... keep track of load balancers etc here. 
+      resolved_ip_address = "#{resolve_name(hostname)}"
     end
-    resp = cymru_ip_whois_lookup(ip_address)
-    net_geo = resp[:net_country_code]
-    net_name = resp[:net_name]
 
+    # look up the details in team cymru's whois, for ASN etc
+    if resolved_ip_address.is_ip_address?
+      resp = cymru_ip_whois_lookup(resolved_ip_address)
+      net_geo = resp[:net_country_code]
+      net_name = resp[:net_name]
+    end
 
     # set up the new details
     new_details = {
       "alt_names" => alt_names,
       "api_endpoint" => api_endpoint,
       "code" => response.code,
-      "cookies" => response.header['set-cookie'],
+      "cookies" => set_cookie,
       "favicon_md5" => favicon_md5,
       "favicon_sha1" => favicon_sha1,
-      "ip_address" => ip_address,
+      "ip_address" => resolved_ip_address,
       "net_name" => net_name,
       "net_geo" => net_geo,
       "fingerprint" => fingerprint.uniq,
@@ -403,7 +407,7 @@ class Uri < Intrigue::Task::BaseTask
   def check_api_enabled(response, fingerprints)
     
     # check for content type
-    return true if response.header['Content-Type'] =~ /application/s
+    return true if response['Content-Type'] =~ /application/i
 
     # check fingeprrints
     fingerprints.each do |fp|

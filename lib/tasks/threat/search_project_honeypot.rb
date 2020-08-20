@@ -59,9 +59,8 @@ class SearchProjectHoneypot < BaseTask
 
         _log_good "Got a match: #{match}"
 
-        _create_entity("Info",
-          { "name" => "#{target[:entity_name]}",
-            "uri" => "#{uri}",
+        create_linked_issue( "suspicious_activity_detected",
+          { "uri" => "#{uri}",
             "content" => "#{target[:entity_content]} on #{uri}" })
 
       end if matches # << if it exists

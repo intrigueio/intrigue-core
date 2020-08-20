@@ -122,7 +122,7 @@ class UriCheckApiEndpoint < BaseTask
 
       # check for content type of application.. note that this will flag
       # application/javascript, which is probably not wanted
-      headers = response.each_header.to_h
+      headers = response.headers
       if headers
         ct = headers.find{|x, y| x if x =~ /^content-type/i }
         if ct

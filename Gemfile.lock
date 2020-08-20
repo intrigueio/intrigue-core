@@ -451,6 +451,7 @@ DEPENDENCIES
   elasticsearch
   em-resolv-replace
   eventmachine
+  excon
   faraday_middleware-aws-sigv4
   flareon
   fog-aws

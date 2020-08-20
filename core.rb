@@ -219,6 +219,9 @@ end
 # Core libraries
 require_relative "lib/all"
 
+# Monkey patches, post load
+require_relative 'lib/initialize/excon'
+
 #configure sentry.io error reporting (only if a key was provided)
 if (Intrigue::Core::System::Config.config && Intrigue::Core::System::Config.config["sentry_dsn"])
   require "raven"
