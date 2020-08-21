@@ -58,7 +58,7 @@ class SslCertificate < Intrigue::Task::BaseTask
     ## Time.now = Aug 20
     ## Time.now - 30 days = July 20
     if not_after && 
-      !(Time.parse(not_after) < Time.now) # expired
+      !(Time.parse(not_after) < Time.now) && # expired
       (Time.parse(not_after) - thirty_days) < Time.now # expires in 30 days
       
       _log "Creating issue for almost expired certificate"

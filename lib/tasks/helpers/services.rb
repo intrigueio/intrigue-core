@@ -64,8 +64,7 @@ module Services
         })
 
         # For each of the discovered cert names, now create a 
-        # DnsRecord. Note that we need to first ensure that this dns record doesn't 
-        # match our hidden list 
+        # DnsRecord, Domain, or IpAddress.
         if cert_names
           cert_names.uniq do |cn|
 
@@ -73,7 +72,7 @@ module Services
               cert_entities << _create_entity("IpAddress", { "name" => cn }, ip_entity )   
             else
               # create each entity 
-              cert_entities << _create_entity("DnsRecord", { "name" => cn }, ip_entity )   
+              cert_entities << create_dns_entity_from_string(cn)
             end
             
           end
