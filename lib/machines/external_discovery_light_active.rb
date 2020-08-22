@@ -207,10 +207,10 @@ module Machine
         # check http2 
         start_recursive_task(task_result,"uri_check_http2_support",entity, [])
                   
-        start_recursive_task(task_result,"uri_brute_common_content",entity, [])
+        start_recursive_task(task_result,"uri_brute_generic_content",entity, [])
 
         start_recursive_task(task_result,"uri_extract_tokens",entity, [])
-        
+
 
         if entity.name =~ (ipv4_regex || ipv6_regex)
           puts "Cowardly refusing to check for subdomain hijack, #{entity.name} looks like an access-by-ip uri"
