@@ -222,6 +222,10 @@ require_relative "lib/all"
 # Monkey patches, post load
 require_relative 'lib/initialize/excon'
 
+# use redirect following w/ excon
+Excon.defaults[:middlewares] << Excon::Middleware::RedirectFollower
+
+
 #configure sentry.io error reporting (only if a key was provided)
 if (Intrigue::Core::System::Config.config && Intrigue::Core::System::Config.config["sentry_dsn"])
   require "raven"

@@ -27,7 +27,7 @@ class UniqueToken < Intrigue::Core::Model::Entity
       { provider:"amazon_mws", regex: /^amzn\\.mws\\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, 
           matcher: /(amzn\\.mws\\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i, sensitive: true },
       { provider:"google_api", regex: /^AIza[0-9A-Za-z\\-_]{35}$/, matcher: /(AIza[0-9A-Za-z\\-_]{35})/i, sensitive: true },
-      { provider:"http_auth", regex: /^(ftp|ftps|http|https):\/\/[A-Za-z0-9\-_:\.~]+(@)$/, matcher: /((ftp|ftps|http|https):\/\/[A-Za-z0-9-_:\.~]+(@))/i, sensitive: true },
+      { provider:"http_auth", regex: /^(ftp|ftps|http|https):\/\/[A-Za-z0-9\-_:\.~]+(@)$/, matcher: /((ftp|ftps|http|https):\/\/[A-Za-z0-9\-_:\.~]+(@))/i, sensitive: true },
     ]
   end
 
