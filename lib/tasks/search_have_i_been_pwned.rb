@@ -112,14 +112,14 @@ class SearchHaveIBeenPwned < BaseTask
           "Accept" => "application/json"
         })
 
-        unless response && response.body
+        unless response && response.body_utf8
           _log_error "No results!"
           return
         end
 
         # Okay we got something
         begin
-          json = JSON.parse(response.body)
+          json = JSON.parse(response.body_utf8)
 
           # in case it's blank
           unless json

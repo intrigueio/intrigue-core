@@ -42,7 +42,7 @@ class VmwareHorizonInfoLeak < BaseTask
     # Gather info from the broker endpoint    
     xml_request_data = "<?xml version=\'1.0\' encoding=\'UTF-8\'?><broker version=\'10.0\'><get-configuration></get-configuration></broker>"
     broker_response = http_request :post, "#{uri}/broker/xml", nil, {}, xml_request_data
-    broker_data = broker_response.body if broker_response
+    broker_data = broker_response.body_utf8 if broker_response
 
     # create an issue
     if broker_data || info_data

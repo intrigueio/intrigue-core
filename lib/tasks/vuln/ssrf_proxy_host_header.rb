@@ -100,7 +100,7 @@ class SsrfProxyHostHeader < BaseTask
 
       # check the response for success
       if response &&
-          response.body[0..50] != normal.body[0..50] # && # not the same
+          response.body_utf8[0..50] != normal.body[0..50] # && # not the same
           #!(response["location"] =~ /127.0.0.1/) && # redirect... usually useless
           #response.code != "301" && # redirect... usually useless
           #response.code != "302" && # redirect... usually useless
@@ -109,10 +109,10 @@ class SsrfProxyHostHeader < BaseTask
           #response.code != "404" # not a 404
 
           # only if it matches our success cond.
-          unless response.body.match(payload[:success_regex])
+          unless response.body_utf8.match(payload[:success_regex])
             _log "Interesting response, but doesn't match our success criteria"
             _log "---"
-            _log "#{response.body}"
+            _log "#{response.body_utf8}"
             _log "---"
             next
           end
@@ -122,7 +122,7 @@ class SsrfProxyHostHeader < BaseTask
         #_set_entity_detail "host_header_ssrf", {
         #  "host_header" => "#{payload[:host_header]}",
         #  "code" => "#{response.code}",
-        #  "body" => "#{response.body}"
+        #  "body" => "#{response.body_utf8}"
         #}
 
         # save off enough information to investigate
@@ -136,7 +136,7 @@ class SsrfProxyHostHeader < BaseTask
             uri: "#{generated_uri}",
             host_header: "#{payload[:host]}",
             code: "#{response.code}",
-            body: "#{response.body.sanitize_unicode}",
+            body: "#{response.body_utf8.sanitize_unicode}",
             normal_code: "#{normal.code}",
             normal_body: "#{normal.body.sanitize_unicode}"
           }
@@ -153,8 +153,8 @@ class SsrfProxyHostHeader < BaseTask
         _log "FAIL!"
         if response
           _log "Code: #{response.code}"
-          _log "Response same as normal: #{response.body[0..199] == normal.body[0..199]}"
-          _log "Response: #{response.body[0..79]}"
+          _log "Response same as normal: #{response.body_utf8[0..199] == normal.body[0..199]}"
+          _log "Response: #{response.body_utf8[0..79]}"
         else
           _log "No response!"
         end

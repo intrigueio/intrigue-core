@@ -36,7 +36,7 @@ class MicrosoftExchangeCve20200688 < BaseTask
         check_url = "#{_get_entity_name}/ecp/default.aspx"
         response = http_request(:get, check_url)
 
-        if response.body =~ /<title>Exchange Admin Center/
+        if response.body_utf8 =~ /<title>Exchange Admin Center/
           _create_linked_issue("vulnerability_exchange_cve_2020_0688")
         end
 

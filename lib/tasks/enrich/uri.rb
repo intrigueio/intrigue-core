@@ -41,16 +41,16 @@ class Uri < Intrigue::Task::BaseTask
     response = http_request :get, uri
     response2 = http_request :get, uri
 
-    unless response && response2 && response.body
+    unless response && response2 && response.body_utf8
       _log_error "Unable to receive a response for #{uri}, bailing"
       return
     end
 
-    response_data_hash = Digest::SHA256.base64digest(response.body)
+    response_data_hash = Digest::SHA256.base64digest(response.body_utf8)
 
     # we can check the existing response, so send that
     _log "Checking if Forms"
-    contains_forms = check_forms(response.body)
+    contains_forms = check_forms(response.body_utf8)
 
     # we'll need to make another request
     _log "Checking OPTIONS"
@@ -58,7 +58,7 @@ class Uri < Intrigue::Task::BaseTask
 
     # grab all script_references, normalize to include full uri if needed 
     _log "Parsing out Scripts"
-    temp_script_links = response.body.scan(/<script.*?src=["|'](.*?)["|']/).map{ |x| x.first if x }
+    temp_script_links = response.body_utf8.scan(/<script.*?src=["|'](.*?)["|']/).map{ |x| x.first if x }
     # add http/https where appropriate
     temp_script_links = temp_script_links.map { |x| x =~ /^\/\// ? "#{scheme}:#{x}" : x }
     # add base_url where appropriate
@@ -215,9 +215,9 @@ class Uri < Intrigue::Task::BaseTask
     favicon_response = http_request(:get, "#{uri}/favicon.ico")
 
     if favicon_response && favicon_response.code == "200"
-      favicon_data = Base64.strict_encode64(favicon_response.body)
-      favicon_md5 = Digest::MD5.hexdigest(favicon_response.body)
-      favicon_sha1 = Digest::SHA1.hexdigest(favicon_response.body)
+      favicon_data = Base64.strict_encode64(favicon_response.body_utf8)
+      favicon_md5 = Digest::MD5.hexdigest(favicon_response.body_utf8)
+      favicon_sha1 = Digest::SHA1.hexdigest(favicon_response.body_utf8)
     # else
     #
     # <link rel="shortcut icon" href="https://static.dyn.com/static/ico/favicon.1d6c21680db4.ico"/>
@@ -241,11 +241,11 @@ class Uri < Intrigue::Task::BaseTask
 
     ###
     ### grab the page attributes
-    match = response.body.match(/<title>(.*?)<\/title>/i)
+    match = response.body_utf8.match(/<title>(.*?)<\/title>/i)
     title = match.captures.first if match
 
     # save off the generator string
-    generator_match = response.body.match(/<meta name=\"?generator\"? content=\"?(.*?)\"?\/>/i)
+    generator_match = response.body_utf8.match(/<meta name=\"?generator\"? content=\"?(.*?)\"?\/>/i)
     generator_string = generator_match.captures.first.gsub("\"","") if generator_match
 
     # resolve until we hit an ip address
@@ -282,7 +282,7 @@ class Uri < Intrigue::Task::BaseTask
       "generator" => generator_string,
       "headers" => headers,
       "hidden_favicon_data" => favicon_data,
-      "hidden_response_data" => response.body,
+      "hidden_response_data" => response.body_utf8,
       "redirect_chain" => ident_responses.first[:response_urls] || [],
       "response_data_hash" => response_data_hash,
       "title" => title,
@@ -293,7 +293,7 @@ class Uri < Intrigue::Task::BaseTask
       "extended_configuration" => ident_content_checks.uniq,  # new content field
       "extended_full_responses" => ident_responses,           # includes all the redirects etc
       "extended_favicon_data" => favicon_data,
-      "extended_response_body" => response.body,
+      "extended_response_body" => response.body_utf8,
     }
 
     # Set the details, and make sure raw response data is a hidden (not searchable) detail
@@ -307,7 +307,7 @@ class Uri < Intrigue::Task::BaseTask
       # Check for other entities with this same response hash
       _log "Attempting to identify aliases"
         # parse our content with Nokogiri
-      our_doc = "#{response.body}".sanitize_unicode
+      our_doc = "#{response.body_utf8}".sanitize_unicode
       Intrigue::Core::Model::Entity.scope_by_project_and_type(
         @entity.project.name,"Uri").paged_each(:rows_per_fetch => 100) do |e|
         next if @entity.id == e.id
@@ -416,7 +416,7 @@ class Uri < Intrigue::Task::BaseTask
 
     # try to parse it 
     begin
-      j = JSON.parse(response.body)
+      j = JSON.parse(response.body_utf8)
       return true if j
     rescue JSON::ParserError      
     end

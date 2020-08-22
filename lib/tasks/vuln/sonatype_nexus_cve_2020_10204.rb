@@ -94,11 +94,11 @@ module Intrigue
 
       #response = http_request(:post, uri, nil, headers, body)
 
-      #if response.code == "200" && response.body =~ /1787569/
-      #  _create_linked_issue "sonatype_nexus_cve_2020_10204", {"proof" => response.body }
+      #if response.code == "200" && response.body_utf8 =~ /1787569/
+      #  _create_linked_issue "sonatype_nexus_cve_2020_10204", {"proof" => response.body_utf8 }
       #else 
       #  _log "Not vulnerable!"
-      #  _log "Got response: #{response.code} #{response.body}"
+      #  _log "Got response: #{response.code} #{response.body_utf8}"
       #end
       
   

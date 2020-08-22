@@ -37,7 +37,7 @@ module Intrigue
       end
   
       begin
-        json = JSON.parse(response.body)
+        json = JSON.parse(response.body_utf8)
   
         # Create forward dns entries
         if json["Results"]

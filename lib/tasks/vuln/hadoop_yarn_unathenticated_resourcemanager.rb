@@ -40,16 +40,16 @@ module Intrigue
       # post to endpoint with nothing
       response = http_request(:post, "#{uri}/ws/v1/cluster/apps/new-application")
 
-      _log "Got response: #{response.body}"
-      if response.body == /WebApplicationException/
+      _log "Got response: #{response.body_utf8}"
+      if response.body_utf8 == /WebApplicationException/
         _log "Vulnerable? Got exception"
-        _create_linked_issue "hadoop_yarn_resourcemanager_api_access", {"proof": response.body}
-      elsif response.body == /application-id/
-        json = JSON.parse(response.body)
+        _create_linked_issue "hadoop_yarn_resourcemanager_api_access", {"proof": response.body_utf8}
+      elsif response.body_utf8 == /application-id/
+        json = JSON.parse(response.body_utf8)
         _log "Vulnerable! Created app: #{json["applicationid"]}"
-        _create_linked_issue "hadoop_yarn_resourcemanager_api_access", {"proof": response.body}
+        _create_linked_issue "hadoop_yarn_resourcemanager_api_access", {"proof": response.body_utf8}
       else 
-        _log "Unknown response: #{response.body}"
+        _log "Unknown response: #{response.body_utf8}"
       end
   
     end

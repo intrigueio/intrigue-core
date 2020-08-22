@@ -106,14 +106,14 @@ class UriCheckApiEndpoint < BaseTask
 
       return unless response
       # skip if we're not the original url, but we're getting the same response
-      next if u != url && response.body == standard_response.body
+      next if u != url && response.body_utf8 == standard_response.body_utf8
 
       ###
       ### Check for known strings 
       ###
-      if (response.body =~ /swagger-section/ ||
-          response.body =~ /swaggerhub.com/ || 
-          response.body =~ /soapenv:Envelope/)
+      if (response.body_utf8 =~ /swagger-section/ ||
+          response.body_utf8 =~ /swaggerhub.com/ || 
+          response.body_utf8 =~ /soapenv:Envelope/)
         # break and create it  
         api_reason = "response_body"
         api_endpoint = u
@@ -147,7 +147,7 @@ class UriCheckApiEndpoint < BaseTask
       ###
       begin
         # get request body
-        body = response.body
+        body = response.body_utf8
         if body 
           json = JSON.parse(body)
           if json

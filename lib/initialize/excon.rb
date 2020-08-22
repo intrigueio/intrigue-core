@@ -14,5 +14,9 @@ module Excon
       self.headers[key]
     end
 
+    def body_utf8
+      self.body.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+    end
+
   end
 end
