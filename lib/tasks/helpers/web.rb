@@ -425,7 +425,7 @@ module Task
 
     ### filter body
     if response
-      return response.body_utf8_utf8
+      return response.body_utf8
     end
 
   nil
