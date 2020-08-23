@@ -39,7 +39,7 @@ module Intrigue
       lines.each do |l|
         j = JSON.parse(l)
         port = "#{j["port"]}".to_i
-        return unless scannable_tcp_ports.include? port 
+        return unless scannable_tcp_ports.map{|x| x.to_i }.include? port
         _create_network_service_entity(@entity, port, "tcp")
       end
 
