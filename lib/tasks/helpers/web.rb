@@ -457,7 +457,6 @@ module Task
   
       # disable peer verification
       Excon.defaults[:ssl_verify_peer] = false
-      
 
       connection = Excon.new(uri_string,options)
 
@@ -479,11 +478,13 @@ module Task
       end
       ### END VERBS
     rescue Errno::ETIMEDOUT => e
-      @task_result.logger.log_error "Socket Timeout: #{e}" if @task_result
+      @task_result.logger.log_error "Generic - Socket Timeout: #{e}" if @task_result
+    rescue Excon::Error::TooManyRedirects => e
+      @task_result.logger.log_error "Excon - Too Many Redirects: #{e}" if @task_result
     rescue Excon::Error::Socket => e
-      @task_result.logger.log_error "Excon Socket Timeout: #{e}" if @task_result
+      @task_result.logger.log_error "Excon - Socket Timeout: #{e}" if @task_result
     rescue Excon::Error::Timeout => e 
-      @task_result.logger.log_error "Excon HTTP Timeout: #{e}" if @task_result
+      @task_result.logger.log_error "Excon - HTTP Timeout: #{e}" if @task_result
     end
     
 

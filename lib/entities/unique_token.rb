@@ -22,15 +22,15 @@ class UniqueToken < Intrigue::Core::Model::Entity
       { provider:"slack_bot", regex: /^xoxb-[0-9A-Za-z\\-]{51}$/, matcher: /(xoxp-[0-9A-Za-z\\-]{51})/i, sensitive: true },
       { provider:"slack_bot", regex: /^xoxb-[0-9A-Za-z\\-]{51}$/, matcher: /(xoxp-[0-9A-Za-z\\-]{51})/i, sensitive: true },
       { provider:"mailchimp", regex: /^[0-9a-f]{32}-us[0-9]{1,2}$/, matcher: /([0-9a-f]{32}-us[0-9]{1,2})/i, sensitive: true },
-      { provider:"aws_access_key", regex: /^(A3T[A-Z0-9]|AKIA|AGPA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}$/, 
-          matcher: /((A3T[A-Z0-9]|AKIA|AGPA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16})/i, sensitive: true },
-      { provider:"amazon_mws", regex: /^amzn\\.mws\\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, 
+      { provider:"aws_access_key", regex: /^(A3T[A-Z0-9]|AKIA|AGPA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Za-z0-9]{16}$/i, 
+          matcher: /((A3T[A-Z0-9]|AKIA|AGPA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Za-z0-9]{16})/i, sensitive: true },
+      { provider:"amazon_mws", regex: /^amzn\\.mws\\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, 
           matcher: /(amzn\\.mws\\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i, sensitive: true },
       { provider:"google_api", regex: /^AIza[0-9A-Za-z\\-_]{35}$/, matcher: /(AIza[0-9A-Za-z\\-_]{35})/i, sensitive: true },
-      { provider:"http_auth", regex: /^(ftp|ftps|http|https):\/\/[A-Za-z0-9\-_:\.~]+(@)$/, matcher: /((ftp|ftps|http|https):\/\/[A-Za-z0-9\-_:\.~]+(@))/i, sensitive: true },
+      { provider:"http_auth", regex: /^(ftp|ftps|http|https):\/\/[A-Za-z0-9\-_:\.~]+(@)$/i, matcher: /((ftp|ftps|http|https):\/\/[A-Za-z0-9\-_:\.~]+(@))/i, sensitive: true },
     ]
   end
-
+  
   def validate_entity
     # check that our regex for the hash matches
     supported_type = self.class.supported_token_types.select{|x| x[:regex] =~ name }
