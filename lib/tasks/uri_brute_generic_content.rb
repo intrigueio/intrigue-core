@@ -17,6 +17,7 @@ module Intrigue
         ],
         :allowed_options => [
           {:name => "threads", regex: "integer", :default => 1 },
+          {:name => "create_url", regex: "boolean", :default => false },
         ],
         :created_types => ["Uri"]
       }
@@ -27,6 +28,7 @@ module Intrigue
   
       uri = _get_entity_name
       opt_threads = _get_option("threads")
+      opt_create_url = _get_option("create_url")
     
       generic_list = [
         #{ path: "/api", body_regex: nil },
