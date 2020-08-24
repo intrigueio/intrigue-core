@@ -89,7 +89,7 @@ module Model
       # keep a log 
       File.open("#{$intrigue_basedir}/log/scoping.log","a+") do |f|
         f.flock(File::LOCK_EX)
-        f.puts "Entity #{self.type} #{self.name} set scoped to #{bool_val}, reason: #{reason}"
+        f.puts "[#{self.project.name}] Entity #{self.type} #{self.name} set scoped to #{bool_val}, reason: #{reason}"
         f.flock(File::LOCK_UN)
       end
 
