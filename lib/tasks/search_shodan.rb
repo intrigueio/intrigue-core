@@ -57,6 +57,23 @@ class SearchShodan < BaseTask
         create_dns_entity_from_string h
       end
 
+      # search Ip if it a honeypot
+      response_honeyscore = client.search_ip(search_term)
+
+      # check to make sure we got a response.
+      unless response
+        _log_error "ERROR: could not get response from Shodan.io"
+        return false
+      end
+
+      if response_honeyscore == "1.0"
+        _create_linked_issue("honeypot_detected",{
+         source:"shodan.io" ,
+         references: ["https://honeyscore.shodan.io/"] })
+      else
+        return false
+      end 
+
       # Create all domains
       #resp["domains"].each do |d|
       #  _log_good "Creating domain: #{d}"

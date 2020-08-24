@@ -307,7 +307,7 @@
       "editable": "true",
       "comment": ""
     },
-    
+
     "ibm_x_force_api_key": {
       "value": "",
       "uri": "https://app.intrigue.io/api",
@@ -443,6 +443,18 @@
     "virustotal_api_key": {
       "value": "XXX",
       "uri": "https://developers.virustotal.com/reference",
+      "editable": "true",
+      "comment": ""
+    },
+    "zoomeye_username_key_api_key": {
+      "value": "XXX",
+      "uri": "",
+      "editable": "true",
+      "comment": ""
+    },
+    "zoomeye_password_key": {
+      "value": "XXX",
+      "uri": "",
       "editable": "true",
       "comment": ""
     }

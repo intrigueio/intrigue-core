@@ -268,6 +268,7 @@ class CoreApp < Sinatra::Base
             et = split_line[0] # indicator type
             en = split_line[1] # indicator
 
+
             # start here
             modified_et = et.capitalize
 
