@@ -264,7 +264,7 @@ module Model
 
 
     ###
-    ### Use this when you want to scope in stuff 
+    ### Use this when you want to scope in stuff, but generally prefer 'traversable_entity?'
     ###
     def allow_list_entity?(type_string, entity_name)
       

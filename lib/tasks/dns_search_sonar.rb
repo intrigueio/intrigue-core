@@ -37,7 +37,7 @@ class DnsSearchSonar < BaseTask
     end
 
     begin
-      json = JSON.parse(response.body)
+      json = JSON.parse(response.body_utf8)
 
       # Create forward dns entries
       if json["FDNS_A"]

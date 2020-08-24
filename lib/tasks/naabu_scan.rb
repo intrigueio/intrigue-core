@@ -24,7 +24,9 @@ module Intrigue
 
       ip_address = _get_entity_name
 
-      out = _unsafe_system("naabu -host #{ip_address} -ports #{fingerprintable_tcp_ports.join(",")} -silent --json")
+      command = "naabu -host #{ip_address} -ports #{scannable_tcp_ports.join(",")} -silent --json"
+      _log "Running: #{command}"
+      out = _unsafe_system(command)
       
       # handle the no-result case
       unless out 
@@ -37,7 +39,7 @@ module Intrigue
       lines.each do |l|
         j = JSON.parse(l)
         port = "#{j["port"]}".to_i
-        return unless fingerprintable_tcp_ports.include? port 
+        return unless scannable_tcp_ports.map{|x| x.to_i }.include? port
         _create_network_service_entity(@entity, port, "tcp")
       end
 

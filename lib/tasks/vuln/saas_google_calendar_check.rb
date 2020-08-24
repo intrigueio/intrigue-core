@@ -70,7 +70,7 @@ class SaasGoogleCalendarCheck < BaseTask
       _log "Unknown response..."
       if response
         _log "Code: #{response.code}"
-        _log "Code: #{response.body}"
+        _log "Code: #{response.body_utf8}"
       else
         _log_error "No response!"
       end

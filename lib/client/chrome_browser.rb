@@ -13,7 +13,9 @@ module Intrigue
       @requests = []
       @responses = []
       @wsresponses = []
-    
+      @max_tries = 3
+      @try_timeout = 20
+      
       # allow host & port to be set, and respect local config, then env, then default
       chrome_host = options[:host] || ENV["CHROME_HOST"]
       unless chrome_host && chrome_host.length > 0
@@ -30,10 +32,11 @@ module Intrigue
       puts "Using Chrome with options: #{options}"
 
       # create the client
-      until @chrome 
-        timeout = 20
+      tries = 0
+      until @chrome || tries > @max_tries
+        tries += 1
         begin 
-          Timeout::timeout(timeout) do
+          Timeout::timeout(@try_timeout) do
             _connect_and_enable options
           end
         rescue Timeout::Error => e 
@@ -96,10 +99,9 @@ module Intrigue
           end 
 
           encoded_screenshot=nil
-
-          max_retries = 3
+          
           tries = 0
-          until encoded_screenshot || (tries > max_retries)
+          until encoded_screenshot || (tries > @max_tries)
             tries +=1
             begin 
 

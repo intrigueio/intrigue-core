@@ -1,6 +1,6 @@
 module Intrigue
 module Issue
-class LeakedAccountDetails < BaseIssue
+class LeakedAccount < BaseIssue
 
   def self.generate(instance_details={})
     to_return = {

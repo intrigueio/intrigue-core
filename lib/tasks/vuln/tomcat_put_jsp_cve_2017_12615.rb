@@ -39,6 +39,7 @@ class TomcatPutJsp < BaseTask
 
     #docs/manager-howto.jsp
     begin
+
       response = RestClient::Request.execute(
         :url => "#{uri}/test.jsp/",
         :method => :put,
@@ -54,11 +55,7 @@ class TomcatPutJsp < BaseTask
       if response.code == 201
         _log_good "SUCCESS!"
         _log_good "Access the page at:  #{uri}/test.jsp"
-
-        vulns = _get_entity_detail("vulns") || {}
-        vulns["CVE-2017-12615"] = {"vulnerable" => true}
-        _set_entity_detail("vulns",vulns)
-
+        _create_linked_issue "vuln/tomcat_put_jsp_cve_2017_12615"
       end
 
     rescue RestClient::MethodNotAllowed => e

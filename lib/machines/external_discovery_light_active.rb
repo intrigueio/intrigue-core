@@ -129,7 +129,7 @@ module Machine
           start_recursive_task(task_result,"whois_lookup",entity, [])
 
           # and we might as well scan to cover any new info
-          start_recursive_task(task_result,"naabu_scan",entity, [
+          start_recursive_task(task_result,"nmap_scan",entity, [
             {"name"=> "tcp_ports", "value" => scannable_tcp_ports.join(",")},
             {"name"=> "udp_ports", "value" => scannable_udp_ports.join(",")}])
         end
@@ -204,6 +204,14 @@ module Machine
         ## Grab the SSL Certificate
         start_recursive_task(task_result,"uri_gather_ssl_certificate",entity, []) if entity.name =~ /^https/
         
+        # check http2 
+        start_recursive_task(task_result,"uri_check_http2_support",entity, [])
+                  
+        start_recursive_task(task_result,"uri_brute_generic_content",entity, [])
+
+        start_recursive_task(task_result,"uri_extract_tokens",entity, [])
+
+
         if entity.name =~ (ipv4_regex || ipv6_regex)
           puts "Cowardly refusing to check for subdomain hijack, #{entity.name} looks like an access-by-ip uri"
         else 

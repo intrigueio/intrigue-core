@@ -37,26 +37,44 @@ class SslCertificate < Intrigue::Task::BaseTask
     _log "Enriching... SSL Certificate: #{_get_entity_name}"
 
     not_before = _get_entity_detail("not_before")
+    # not before aug 31 
+    # today aug 20
     if not_before && Time.parse(not_before) > Time.now
-      _log "Creating issue for certificate that is not valid yet"
+      _log "Creating issue for certificate that is not yet valid"
       _create_linked_issue "invalid_certificate_premature"
     end
 
     not_after = _get_entity_detail("not_after")
+    # not after aug 31 
+    # today aug 20
     if not_after && Time.parse(not_after) < Time.now
       _log "Creating issue for expired certificate"
       _create_linked_issue "invalid_certificate_expired"
     end
 
+<<<<<<< HEAD
     if not_after && Time.parse(not_after)- 30.days.ago < Time.now < not_after && Time.parse(not_after)
       _log "Creating issue for expiring certificate"
       _create_linked_issue "invalid_certificate_expiring"
+=======
+    thirty_days = 2592000
+    ## not afere Aug 31
+    ## not afeer - 30 days = July 31
+    ## Time.now = Aug 20
+    ## Time.now - 30 days = July 20
+    if not_after && 
+      !(Time.parse(not_after) < Time.now) && # expired
+      (Time.parse(not_after) - thirty_days) < Time.now # expires in 30 days
+      
+      _log "Creating issue for almost expired certificate"
+      _create_linked_issue "invalid_certificate_almost_expired"
+>>>>>>> a9f50c5d7cfca520a67e8632a4307bb7e3468237
     end
 
     # https://www.globalsign.com/en/blog/moving-from-sha-1-to-sha-256
     algo = _get_entity_detail("algorithm")
     if algo && (algo == "SHA1" || algo == "MD5")
-      _log "Creating issue for certificate with invalid algorighm"
+      _log "Creating issue for certificate with invalid algorithm"
       _create_linked_issue "invalid_certificate_algorithm"
     end
 

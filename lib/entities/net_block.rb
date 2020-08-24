@@ -44,7 +44,7 @@ class NetBlock < Intrigue::Core::Model::Entity
     ###
     ### First, check our text to see if there's a more specific route in here, 
     ###  and if so, not ours.
-    ####################################################################################
+    #########################################################################
     match_captures = whois_text.scan(netblock_regex)
     match_captures.each do |capture|
       
@@ -55,6 +55,7 @@ class NetBlock < Intrigue::Core::Model::Entity
       if ip == our_ip && route > our_route
         return false
       end
+
     end
 
     # Check types we'll check for indicators 
@@ -70,7 +71,7 @@ class NetBlock < Intrigue::Core::Model::Entity
     ######################################################
     if self.project.seeds
       self.project.seeds.each do |s|
-        next unless scope_check_entity_types.include? s.type.to_s
+        next unless scope_check_entity_types.include? "#{s.type}"
         if whois_text =~ /[\s@]#{Regexp.escape(s.name)}/i
           return true
         end
