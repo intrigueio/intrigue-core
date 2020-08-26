@@ -1,4 +1,3 @@
-require "open-uri"
 module Intrigue
 module Task
 class SearchBadIps < BaseTask
@@ -27,7 +26,7 @@ class SearchBadIps < BaseTask
     entity_name = _get_entity_name
 
     # Get talos Blacklist IP
-    data = open("https://rules.emergingthreats.net/blockrules/compromised-ips.txt").read
+    data = http_get_body("https://rules.emergingthreats.net/blockrules/compromised-ips.txt")
 
     if data == nil
       _log_error("Unable to fetch Url !")

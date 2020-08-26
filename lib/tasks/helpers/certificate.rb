@@ -1,6 +1,7 @@
 module Intrigue
 module Task
 class SelfSignedCertificate
+
   def generate
     require 'openssl'
 
@@ -31,6 +32,7 @@ class SelfSignedCertificate
     cert.sign key, OpenSSL::Digest::SHA256.new
   {"cert" => cert.to_pem, "key" => key.to_pem }
   end
+
 end
 end
 end

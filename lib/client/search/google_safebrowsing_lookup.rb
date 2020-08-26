@@ -86,7 +86,7 @@ class SafebrowsingLookup
       case response
         when Net::HTTPOK # 200
           debug("At least 1 match\n")
-          results.merge!( parse(inputs, response.body) )
+          results.merge!( parse(inputs, response.body_utf8) )
 
         when Net::HTTPNoContent # 204
           debug("No match\n")

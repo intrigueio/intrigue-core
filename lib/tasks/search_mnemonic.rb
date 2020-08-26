@@ -30,12 +30,10 @@ class SearchMnemonic < BaseTask
     entity_type = _get_entity_type_string
     limit = _get_option("limit")
 
-
     response = http_get_body("https://api.mnemonic.no/pdns/v3/#{entity_name}?limit=#{limit}")
     result = JSON.parse(response)
 
-
-    #check if the resultset exceeds server resource constraints
+    # check if the resultset exceeds server resource constraints
     if result["responseCode"] == 421
       _log_error("the requested resultset exceeds server resource constraints (100 000 values currently)")
       #return

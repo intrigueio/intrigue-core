@@ -1,12 +1,13 @@
 module Intrigue
 module Entity
-class AwsRegion < Intrigue::Model::Entity
+class AwsRegion < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
       :name => "AwsRegion",
       :description => "A specific AWS Region",
-      :user_creatable => false
+      :user_creatable => true, 
+      :example => "us-east-1"
     }
   end
 
@@ -40,8 +41,8 @@ class AwsRegion < Intrigue::Model::Entity
   end
 
   def scoped?
-    return true if self.seed
-    return false if self.hidden
+    return true if self.allow_list
+    return false if self.deny_list
   true # otherwise just default to true
   end
 

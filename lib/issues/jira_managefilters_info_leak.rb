@@ -5,9 +5,10 @@ module Intrigue
     def self.generate(instance_details={})
   
       to_return = {
+        added: "2020-01-01",
         name: "jira_managefilters_info_leak",
         pretty_name: "Jira (manageFilters.jspa) Info Leak",
-        category: "application",
+        category: "misconfiguration",
         severity: 3,
         status: "confirmed",
         description: "We detected a jira instance with a configuration that allows the issue filters to be seen by anonymous users.",
@@ -19,7 +20,8 @@ module Intrigue
           { type: "description", uri: "https://medium.flatstack.com/misconfig-in-jira-for-accessing-internal-information-of-any-company-2f54827a1cc5" },
           { type: "remeediation", uri: "https://medium.flatstack.com/misconfig-in-jira-for-accessing-internal-information-of-any-company-2f54827a1cc5" },
           { type: "remediation", uri: "https://confluence.atlassian.com/adminjiraserver/managing-shared-filters-938847876.html" }
-        ]
+        ], 
+        check: "uri_brute_focused_content"
       }.merge(instance_details)
       
     to_return

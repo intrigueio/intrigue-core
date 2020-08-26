@@ -35,6 +35,13 @@ if [ ! -f public_suffix_list.dat ]; then
   rm public_suffix_list.dat
 fi
 
+# retirejs data 
+if [ ! -f retirejs.json ]; then
+  echo "[+] Getting latest Retire.js"
+  wget -N -q https://raw.githubusercontent.com/pentestify/retire.js/master/repository/jsrepository.json 
+  mv jsrepository.json retirejs.json
+fi
+
 # NVD feeds
 NVD_YEARS="2019 2018 2017"
 

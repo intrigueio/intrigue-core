@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class SslCertificate < Intrigue::Model::Entity
+class SslCertificate < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
@@ -31,12 +31,16 @@ class SslCertificate < Intrigue::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
-    return true if self.seed
-    return false if self.hidden # hit our blacklist so definitely false
-
-  # if we didnt match the above and we were asked, it's still true
+    return true if self.allow_list
+    return false if self.deny_list
+  
   true
   end
+
+  def enrichment_tasks
+    ["enrich/ssl_certificate"]
+  end
+
 
 end
 end

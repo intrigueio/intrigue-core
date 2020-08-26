@@ -21,10 +21,55 @@ class IssueFactory
   end
 
   #
+  # Provide the full list of issues
+  #
+  def self.issue_by_type(type)
+    x = self.issues.find{|x| x if x.generate({})[:name] == type }
+  x.generate({}) if x 
+  end
+
+  #
+  # Provide the full list of issues, given a 
+  #
+  def self.issues_for_vendor_product(vendor,product)
+    
+    ### First, get all issues with their affected software
+    mapped_issues = []
+    self.issues.each do |h| 
+      # generate the instances
+      hi = h.generate({}); 
+      # then geet all instaces of affected software with issues names
+      as = (hi[:affected_software] || [])
+      mapped_issues << as.map{|x| x.merge({ :name => hi[:name] }) }
+    end
+
+  mapped_issues.flatten.select{|x| x[:vendor] == vendor && x[:product] == product}.map{|x| x[:name] }.uniq.compact
+  end
+
+  #
+  # Provide the full list of issues, given a 
+  #
+  def self.checks_for_vendor_product(vendor,product)
+    
+    ### First, get all issues with their affected software
+    mapped_issues = []
+    self.issues.each do |h| 
+      # generate the instances
+      hi = h.generate({}); 
+      # then geet all instaces of affected software with issues names
+      as = (hi[:affected_software] || [])
+      mapped_issues << as.map{|x| x.merge({ :check => hi[:check] }) }
+    end
+
+  mapped_issues.flatten.select{|x| x[:vendor] == vendor && x[:product] == product}.map{|x| x[:check] }.uniq.compact
+  end
+
+
+  #
   # Check to see if this handler exists (check by type)
   #
   def self.include?(type)
-    @issue_types.each { |h| return true if "#{h.generate[:name]}" == "#{type}" }
+    @issue_types.each { |h| return true if "#{h.generate({})[:name]}" == "#{type}" }
   false
   end
 
@@ -37,7 +82,7 @@ class IssueFactory
   # Returns:
   #   - A handler, which you can call generate on
   #
-  def self.create_instance_by_type(requested_type, issue_model_details, instance_specifics)
+  def self.create_instance_by_type(requested_type, issue_model_details, instance_specifics={})
     
     # first look thorugh our issue types and get the right one
     issue_type = self.issues.select{ |h| h.generate({})[:name] == requested_type }.first
@@ -55,7 +100,7 @@ class IssueFactory
     })
 
     # then create the darn thing
-    issue = Intrigue::Model::Issue.update_or_create(issue_model)
+    issue = Intrigue::Core::Model::Issue.update_or_create(issue_model)
     
     # save the specifics 
     issue.description = issue_type.generate({})[:description]

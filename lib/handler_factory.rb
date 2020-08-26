@@ -10,6 +10,14 @@ class HandlerFactory
   end
 
   #
+  # Similar interface to task factory
+  #
+  def self.list
+    handlers
+  end
+
+  
+  #
   # Provide the full list of handlers
   #
   def self.handlers
