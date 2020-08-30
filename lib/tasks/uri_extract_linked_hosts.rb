@@ -23,7 +23,6 @@ class UriExtractLinkedHosts  < BaseTask
   def run
     super
 
-
     # Go collect the page's contents
     uri = _get_entity_name
     contents = http_get_body(uri)

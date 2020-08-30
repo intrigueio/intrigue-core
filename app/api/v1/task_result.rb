@@ -19,7 +19,7 @@ class CoreApp < Sinatra::Base
   post '/api/v1/task_result' do
     content_type "application/json"
     
-    halt_unless_authenticated(@params["key"])
+    halt_unless_authenticated!
 
     # When we create the project, we want to make sure no HTML is
     # stored, as we'll use this for display later on...

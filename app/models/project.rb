@@ -46,6 +46,32 @@ module Model
     false
     end
 
+    def v1_api_hash(full_details=false)
+      out = {
+        :id => self.id,
+        :uuid => self.uuid,
+        :name => "#{self.name}",
+        :created_at => "#{self.created_at}",
+        :use_standard_exceptions => self.use_standard_exceptions,
+        :allowed_namespaces => self.allowed_namespaces,
+        :allow_reenrich => self.allow_reenrich,
+        :vulnerability_checks_enabled => self.vulnerability_checks_enabled,
+        :cancelled => self.cancelled,
+        :seed_count => seeds.count,
+        :entity_count => self.entities.count,
+        :issue_count => self.issues.count
+      }
+
+      if full_details
+        out.merge!(
+          {}  
+        )
+      end
+
+    out
+    end
+
+
     def export_hash
       {
         :id => id,
