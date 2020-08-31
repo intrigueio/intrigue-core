@@ -14,7 +14,7 @@ class CoreApp < Sinatra::Base
 
   # Create - DONE
   # Read - DONE 
-  # Update
+  # Update - IN PROGRESS
   # Delete - DONE
 
   # Create a project!
@@ -91,7 +91,7 @@ class CoreApp < Sinatra::Base
       project.vulnerability_checks_enabled = config["vulnerability_checks_enabled"]
     end
 
-    # set reenrich
+    # set re-enrich
     if config.has_key? "allow_entity_reenrich"
       project.allow_reenrich = config["allow_entity_reenrich"]
     end
@@ -99,21 +99,27 @@ class CoreApp < Sinatra::Base
     # set allowed namespaces
     project.allowed_namespaces = config["allowed_namespaces"]
     
-    # seeds 
-    (config["seeds"]|| []).each do |s|
-      
-      # TODO... type checking goes here 
-      # XXX - VERIFY THAT THIS IS A VALID TYPE
-
+    ###
+    # First, verify seeds, and bail out if they're not all valid
+    ###
+    (config["seeds"] || []).each do |s|
+      # VERIFY THAT THIS IS A VALID TYPE
+      resolved_type = Intrigue::EntityManager.resolve_type_from_string "#{s["type"]}"
+      unless resolved_type
+        return wrapped_api_response("Invalid type in: #{s}")
+      end      
+    end
+    
+    ###
+    # Then, create seeds
+    ###
+    (config["seeds"] || []).each do |s|
       entity_hash = {
         type: "#{s["type"]}",
         name: "#{s["name"]}",
         project_id: project.id,
         seed: true
       }
-
-      puts "Entity hash: #{entity_hash}"
-
       Intrigue::Core::Model::Entity.update_or_create(entity_hash)
     end
 
@@ -122,10 +128,6 @@ class CoreApp < Sinatra::Base
 
   wrapped_api_response(nil, { project: project.v1_api_hash(full=true) } )
   end
-
-
-
-
 
   # Read a specific project
   delete "/api/v1/project/:project_name/?" do
