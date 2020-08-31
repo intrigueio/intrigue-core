@@ -1,21 +1,86 @@
 class CoreApp < Sinatra::Base
 
-  # Read projects
+  ###
+  # Read ALL projects
+  ###
   get "/api/v1/projects/?" do
     content_type 'application/json'
     
     halt_unless_authenticated!
 
     projects = Intrigue::Core::Model::Project.order(
-      :created_at).reverse.all.map{|x| x.v1_api_hash(full=false) if x }.compact
+      :created_at).reverse.all.map{|x| x.to_v1_api_hash(full=false) if x }.compact
 
   wrapped_api_response(nil, { projects: projects } )
   end
 
-  # Create - DONE
-  # Read - DONE 
-  # Update - IN PROGRESS
-  # Delete - DONE
+  ###
+  # Read ALL task results for a project
+  ###
+  get "/api/v1/project/:project_name/task_results/?" do
+    content_type 'application/json'
+    
+    halt_unless_authenticated!
+
+    # get the project and return it
+    project_name = @params[:project_name]
+    project = Intrigue::Core::Model::Project.first(:name => "#{project_name}")
+
+    unless project
+      return wrapped_api_response("unable to locate project", nil )
+    end
+
+    trs = project.task_results
+
+  wrapped_api_response(nil, { task_results: trs.map{|tr| tr.to_v1_api_hash } } )
+  end
+
+  ###
+  # Read ALL entities for a project
+  ###
+  get "/api/v1/project/:project_name/entities/?" do
+    content_type 'application/json'
+    
+    halt_unless_authenticated!
+
+    # get the project and return it
+    project_name = @params[:project_name]
+    project = Intrigue::Core::Model::Project.first(:name => "#{project_name}")
+
+    unless project
+      return wrapped_api_response("unable to locate project", nil )
+    end
+
+    entities = project.entities
+
+  wrapped_api_response(nil, { entities: entities.map{|e| e.to_v1_api_hash } } )
+  end
+
+  ###
+  # Read ALL issues for a project
+  ###
+  get "/api/v1/project/:project_name/issues/?" do
+    content_type 'application/json'
+    
+    halt_unless_authenticated!
+
+    # get the project and return it
+    project_name = @params[:project_name]
+    project = Intrigue::Core::Model::Project.first(:name => "#{project_name}")
+
+    unless project
+      return wrapped_api_response("unable to locate project", nil )
+    end
+
+    issues = project.issues
+
+  wrapped_api_response(nil, { issues: issues.map{|e| e.to_v1_api_hash } } )
+  end
+
+  # Create  - DONE
+  # Read    - DONE 
+  # Update  - DONE
+  # Delete  - DONE
 
   # Create a project!
   post '/api/v1/project/?' do
@@ -63,7 +128,7 @@ class CoreApp < Sinatra::Base
       return wrapped_api_response("unable to locate project", nil )
     end
 
-  wrapped_api_response(nil, { project: project.v1_api_hash(full=true) } )
+  wrapped_api_response(nil, { project: project.to_v1_api_hash(full=true) } )
   end
 
   patch "/api/v1/project/:project_name/?" do
@@ -126,7 +191,7 @@ class CoreApp < Sinatra::Base
     # save it!
     project.save
 
-  wrapped_api_response(nil, { project: project.v1_api_hash(full=true) } )
+  wrapped_api_response(nil, { project: project.to_v1_api_hash(full=true) } )
   end
 
   # Read a specific project

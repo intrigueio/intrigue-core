@@ -1,5 +1,10 @@
 class CoreApp < Sinatra::Base
 
+  # Create - DONE
+  # Read - DONE
+  # Update - 
+  # Delete - 
+
   #{
   #  :project_name => "Default", # string, any valie project name, see /api/v1/projects
   #  :task_name => "example", # string, see /api/v1/tasks api for a list of possible values
@@ -78,6 +83,25 @@ class CoreApp < Sinatra::Base
 
     # woo success
     wrap_core_api_response "Task result created!", { task_result_id: task_result.id } 
+  end
+
+  ###
+  ### Get a task result
+  ###
+  get '/api/v1/task_result/:task_result_id' do
+    content_type 'application/json'
+    
+    halt_unless_authenticated!
+
+    # get the project and return it
+    task_result_id = @params[:task_result_id]
+    task_result = Intrigue::Core::Model::TaskResult.first(:id => task_result_id)
+
+    unless task_result
+      return wrapped_api_response("Unable to locate task result!", nil )
+    end
+
+  wrapped_api_response(nil, { task_result: task_result.to_v1_api_hash(full=true) } )
   end
 
 end

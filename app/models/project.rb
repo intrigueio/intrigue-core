@@ -46,7 +46,7 @@ module Model
     false
     end
 
-    def v1_api_hash(full_details=false)
+    def to_v1_api_hash(full_details=false)
       out = {
         :id => self.id,
         :uuid => self.uuid,
