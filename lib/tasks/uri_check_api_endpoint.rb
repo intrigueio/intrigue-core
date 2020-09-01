@@ -108,11 +108,6 @@ class UriCheckApiEndpoint < BaseTask
       # skip if we're not the original url, but we're getting the same response
       next if u != url && response.body_utf8 == standard_response.body_utf8
 
-      # always skip 404's 
-      if response.code == "404"
-        _log "Got... 404... skipping: #{u}"
-      end
-
       ###
       ### Check for known strings 
       ###
@@ -156,9 +151,12 @@ class UriCheckApiEndpoint < BaseTask
         if body 
           json = JSON.parse(body)
           if json
-            # now check for common error scenarios, and if we pass
-            # create it as an api endpoint
-            unless json["error"] ==  "Not Found"
+            unless 
+               # now check for common error scenarios, and if we pass
+              (response.code == "404" && json["error"] ==  "Not Found") || 
+              (response.code == "404" && json["response"] == "Content was not found.") 
+
+              # create it as an api endpoint
               api_endpoint = u 
               api_reason = "json_body"
               break
