@@ -44,12 +44,24 @@ class UriCheckApiEndpoint < BaseTask
       api_reason = "fingerprint"
     end
 
+
+    # first get a standard response
+    standard_response = http_request :get, url
+
     ####
-    # next just check keywords in the url 
+    # next just check keywords in the url, but of course, sanity check this. 
     ###
-    if (url =~ /api\./ || url =~ /\/api/ || url =~ /\/json/ || url =~ /\.json/ || url =~ /\.xml/)
-      api_endpoint = true 
-      api_reason = "url"
+    if (  url =~ /api\./ || 
+          url =~ /\/api/ || 
+          url =~ /\/json/ || 
+          url =~ /\.json/ || 
+          url =~ /\.xml/ )
+
+      unless response.body_utf8 =~/^<HTML>/i # this be html
+        api_endpoint = true 
+        api_reason = "url"
+      end 
+
     end
 
     ### 
@@ -62,9 +74,6 @@ class UriCheckApiEndpoint < BaseTask
     ####
     # otherwise check patterns in / around the original
     ####
-
-    # first get a standard response
-    standard_response = http_request :get, url
 
     # always start empty 
     api_endpoint = nil 
