@@ -1,7 +1,8 @@
 
 class CoreApp < Sinatra::Base
 
-  def halt_unless_authenticated(user_key)
+  def halt_unless_authenticated!
+    user_key = request.env["HTTP_AUTHORIZATION"]
     if authenticate_system_api_call(user_key)
       return true
     else
@@ -10,7 +11,6 @@ class CoreApp < Sinatra::Base
   end
 
   def authenticate_system_api_call(user_key)
-
     cleansed_key = URI.unescape("#{user_key}".strip)
     system_key = "#{Intrigue::Core::System::Config.config["credentials"]["api_key"]}".strip 
 
@@ -28,7 +28,7 @@ class CoreApp < Sinatra::Base
   def get_json_payload
     @request.body.rewind
     begin 
-      out = JSON.parse(@request.body.read).symbolize_keys
+      out = JSON.parse(@request.body.read)
     rescue JSON::ParserError => e
       @request.body.rewind
       puts "ERROR! Bad request data #{@request.body.read}"

@@ -46,7 +46,7 @@ class SearchSpyse < BaseTask
     # Set the URL for ip data
     url = "https://api.spyse.com/v2/data/ip?limit=100&ip=#{entity_name}"
 
-    begin
+    begin 
       # make the request
       response = http_get_body(url,nil,headers)
       json = JSON.parse(response)
@@ -75,7 +75,7 @@ class SearchSpyse < BaseTask
     # Set the URL for ip open ports
     url = "https://api.spyse.com/v3/data/ip/port?limit=100&ip=#{entity_name}"
 
-    begin
+    begin 
       # make the request
       response = http_get_body(url,nil,headers)
       json = JSON.parse(response)
@@ -87,7 +87,7 @@ class SearchSpyse < BaseTask
     rescue JSON::ParserError => e
       _log_error "Error while parsing #{e}"
     end
-
+    
   end
 
 end

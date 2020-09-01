@@ -4,14 +4,18 @@ class EntityManager
   extend Intrigue::Core::System::Helpers
   extend Intrigue::Task::Data
 
+  ###
+  ### Resolves a type from a type_string (which is the last part of the type's 
+  ### name as a string.
+  ###
   def self.resolve_type_from_string(type_string)
-    raise "INVALID TYPE TO RESOLVE: #{type_string}. DID YOU SEND A STRING? FAILING!" unless type_string.kind_of? String
+    raise "#{type_string} must be a string. FAILING!" unless type_string.kind_of? String
 
     # Check full namespace first
-    matches = EntityFactory.entity_types.select{|x| x.to_s == type_string }
+    matches = EntityFactory.entity_types.select{|x| "#{x}" == type_string }
 
     # Then check all namespaces underneath
-    matches.concat(EntityFactory.entity_types.select{|x|x.to_s.split(":").last.to_s == type_string })
+    matches.concat(EntityFactory.entity_types.select{|x| "#{x}".split(":").last == type_string })
 
     #note this will be nil if we didn't match
     unless matches.first
