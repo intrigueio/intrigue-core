@@ -327,6 +327,25 @@ module Model
       </div>}
     end
 
+    def to_v1_api_hash(full=false)
+      if full
+        export_hash
+      else 
+        {
+          :id => id,
+          :type => type,
+          :name =>  name,
+          :deleted => deleted,
+          :hidden => hidden,
+          :scoped => scoped,
+          :allow_list => allow_list,
+          :deny_list => deny_list,
+          :alias_group => alias_group_id,
+          :detail_string => detail_string
+        }
+      end
+    end
+
     ###
     ### Export!
     ###
