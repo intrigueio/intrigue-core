@@ -35,41 +35,36 @@ class IpAddress < Intrigue::Task::BaseTask
     ## Handle ANY Records ##
     ########################
     results = resolve(lookup_name)
-
-    _log "Got results: #{results}"
-
+    
     ####
     ### Create aliased entities
-    ####
+    #### 
     results.each do |result|
       _log "Creating entity for... #{result["name"]}"
 
       next unless result["name"]
+      next unless result["name"].length > 0
 
-      if "#{result["name"]}".is_ip_address?
-        _create_entity("IpAddress", { "name" => result["name"] }, @entity)
-      else
-        _create_entity("DnsRecord", { "name" => result["name"] }, @entity)
-        
-        # create a domain for this entity
-        check_and_create_unscoped_domain(result["name"])
+      # create a domain for this entity
+      entity = create_dns_entity_from_string(result["name"], @entity) if @entity.scoped?
 
-        # check dev/staging server
-        # if we're external, let's see if this matches 
-        # a known dev or staging server pattern
-        if !match_rfc1918_address?(lookup_name)
-          dev_server_name_patterns.each do |p|
-            if "#{result["name"]}".split(".").first =~ p
-              _exposed_server_identified(p,result["name"])
-            end
+      # always create an unscoped domain for this entity
+      #domain_name = parse_domain_name(result["name"])
+      #create_unscoped_dns_entity_from_string(domain_name) if domain_name && @entity.scoped?
+
+      # if we're external, let's see if this matches 
+      # a known dev or staging server pattern, and if we're internal, just
+      if match_rfc1918_address?(lookup_name)
+        _internal_system_exposed_via_dns(result["name"])
+      else # normal case
+        dev_server_name_patterns.each do |p|
+          if "#{result["name"]}".split(".").first =~ p
+            _exposed_server_identified(p, result["name"])
           end
         end
-
       end
     end
-
-
-
+    
     # get ASN
     # look up the details in team cymru's whois
     _log "Using Team Cymru's Whois Service..."
@@ -80,6 +75,7 @@ class IpAddress < Intrigue::Task::BaseTask
     _set_entity_detail("net_rir", cymru[:net_rir])
     _set_entity_detail("net_allocation_date",cymru[:net_allocation_date])
     _set_entity_detail("net_name",cymru[:net_name])
+    _create_entity("AutonomousSystem", :name => cymru[:net_asn], "unscoped" => true) if @entity.scoped 
 
     # geolocate
     _log "Geolocating..."
@@ -103,9 +99,27 @@ class IpAddress < Intrigue::Task::BaseTask
       _set_entity_detail "whois_full_text", out["whois_full_text"]
     end
 
-    # check transferred
-    if out["whois_full_text"] =~ /Early Registrations, Transferred to/
-      _set_entity_detail "transferred", true
+    whois_text = _get_entity_detail("whois_full_text")    
+    if whois_text
+      
+      # okay now, let's check to see if there's a reference to a netblock here
+      netblock_regex = /(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}\/(\d{1,2}))/
+      match_captures = whois_text.scan(netblock_regex)
+      match_captures.each do |capture|
+        # create it 
+        netblock = capture.first
+        _log "Found related netblock: #{netblock}"
+        # Note that everything created from enrich is autoscoped, so specifically
+        # unscope this. If it gets scoped later, all the better
+        if @entity.scoped
+          _create_entity "NetBlock", { "name" => "#{netblock}", "unscoped" => true }
+        end
+      end
+
+      # check transferred
+      if whois_text =~ /Early Registrations, Transferred to/
+        _set_entity_detail "transferred", true
+      end
     end
 
     # check ipv6

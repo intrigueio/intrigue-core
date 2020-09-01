@@ -1,4 +1,4 @@
-class IntrigueApp < Sinatra::Base
+class CoreApp < Sinatra::Base
 
   def wrapped_api_response(error, result=nil)
     success = error.nil?
@@ -8,6 +8,7 @@ class IntrigueApp < Sinatra::Base
   # Export All Entity Types
   get "/api/v1/entities" do
     content_type 'application/json'
+    
     entity_metadata = Intrigue::EntityFactory.entity_types.map{ |e| e.metadata }.sort_by{|m| m[:name] }
   wrapped_api_response(nil, entity_metadata)
   end
@@ -15,13 +16,31 @@ class IntrigueApp < Sinatra::Base
   # Export All Task Metadata
   get "/api/v1/tasks" do
     content_type 'application/json'
+
     tasks_metadata = Intrigue::TaskFactory.list.map{ |t| t.metadata }.sort_by{|m| m[:name] }
   wrapped_api_response(nil, tasks_metadata)
+  end
+
+  # Export All Task Metadata
+  get "/api/v1/machines" do
+    content_type 'application/json'
+
+    machine_metadata = Intrigue::MachineFactory.list.map{ |t| t.metadata }.sort_by{|m| m[:name] }
+  wrapped_api_response(nil, machine_metadata)
+  end
+
+
+  # Export All Task Metadata
+  get "/api/v1/handlers" do
+    content_type 'application/json'
+    handler_metadata = Intrigue::HandlerFactory.list.map{ |t| t.metadata }.sort_by{|m| m[:name] }
+  wrapped_api_response(nil, handler_metadata)
   end
 
   # Export a specific Task's metadataa
   get "/api/v1/tasks/:task_name" do
     content_type 'application/json'
+
     task_name = params[:task_name]
 
     # Attempg to get the task
@@ -35,13 +54,5 @@ class IntrigueApp < Sinatra::Base
 
     wrapped_api_response(nil, task_metadata)
   end
-
-  # Export All projects
-  get "/api/v1/projects" do
-    content_type 'application/json'
-    projects = Intrigue::Model::Project.order(:created_at).reverse.all
-  wrapped_api_response(nil, projects)
-  end
-
 
 end

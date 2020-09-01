@@ -57,23 +57,6 @@ class SearchBinaryEdgeTorrents < BaseTask
       # TODO .... do we need to paginate this?
       json["events"].each do |t|
         ############################################
-        ###      Old Issue                      ###
-        ###########################################
-        # _create_linked_issue({
-        #   name: "Torrent-Affiliated IpAddress",
-        #   type: "torrent_affiliated_ip",
-        #   severity: 4,
-        #   status: "confirmed",
-        #   description: "
-        #     Ip Address: #{entity_name}:#{t["peer"]["port"]}
-        #     Name: #{t["torrent"]["name"]}\n
-        #     Source: #{t["torrent"]["source"]}\n
-        #     Category: #{t["torrent"]["category"]}\n
-        #     Subcategory: #{t["torrent"]["subcategory"]}",
-        #   references: ["https://binaryedge.com/"],
-        #   details: t
-        # })
-        ############################################
         ###      New Issue                      ###
         ###########################################
         _create_linked_issue("torrent_affiliated_ip",{

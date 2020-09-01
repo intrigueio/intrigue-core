@@ -66,11 +66,11 @@ Or select an existing project:
     <tbody>
         <% @projects.each do |p| %>
       <tr>
-        <td><a href="/<%=p.name%>/start"x><%= p.name %></a></td>
+        <td><a href="/<%=h p.name%>/start"x><%= h p.name %></a></td>
         <td><%= p.entities.count %></td>
         <td><%= p.issues.count %></td>
         <td><%=h p.created_at.to_date %></td>
-        <td>&nbsp;<a href="javascript:delete_project('<%=p.name%>')">[delete]</a></td>
+        <td>&nbsp;<a href="javascript:delete_project('<%=h p.name%>')">[delete]</a></td>
       </tr>
       <% end %>
     </tbody>

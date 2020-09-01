@@ -6,11 +6,12 @@ class AwsS3BucketReadable < BaseIssue
   def self.generate(instance_details={})
     
     to_return = {
+      added: "2020-01-01",
       name: "aws_s3_bucket_readable",
       pretty_name: "World Readable AWS S3 Bucket",
       severity: 4,
       status: "confirmed",
-      category: "application",
+      category: "misconfiguration",
       description: "A world readable AWS S3 bucket was found at #{instance_details[:uri]}.",
       remediation: "Investigate whether this bucket should be readable, and if not, adjust the settings",
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel

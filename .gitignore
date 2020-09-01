@@ -32,3 +32,5 @@ data/nvd
 Procfile
 config/server.crt
 config/server.key
+data/*.db
+data/retirejs.json

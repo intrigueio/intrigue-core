@@ -46,26 +46,13 @@ class DnsTransferZone < BaseTask
         zt.server = nameserver
         zone = zt.transfer(domain_name)
 
-        ############################################
-        ###      Old Issue                      ###
-        ###########################################
-        # create an issue to track this
-        #_create_issue({
-        #  name: "DNS Zone (AXFR) Transfer Enabled",
-        #  type: "dns_zone_transfer",
-        #  severity: 4,
-        #  status: "confirmed",
-        #  description: "Zone transfer on #{domain_name} using #{nameserver} resulted in leak of #{zone.count} records.",
-        #  details: { records: zone.map{|r| r.name.to_s } }
-        #  })
-        description = "Zone transfer on #{domain_name} using #{nameserver} resulted in leak of #{zone.count} records.",
-        ############################################
-        ###      New Issue                      ###
-        ###########################################
+
+        description = "Zone transfer on #{domain_name} using #{nameserver} resulted in leak of #{zone.count} records. AXFR offers no authentication, so any client can ask a DNS server for a copy of the entire zone. which gives them a lot of potential attack vectors over #{domain_name}",
+        
         _create_linked_issue("dns_zone_transfer", {
           status: "confirmed",
           detailed_description: description,
-          proof: "AXFR offers no authentication, so any client can ask a DNS server for a copy of the entire zone. which gives them a lot of potential attack vectors over #{domain_name}",
+          proof: "Zone transfer for #{domain_name} on #{nameserver} resulted in #{zone.count} records, starting with: #{zone.first}",
           references: ["https://www.acunetix.com/blog/articles/dns-zone-transfers-axfr/"]
         })
 

@@ -65,22 +65,7 @@ class UriCheckSecurityHeaders < BaseTask
     # If we have identified any headers...
     if found_headers.count != required_headers.count
       missing_headers = required_headers - found_headers
-      # report the headers that are missing
-      ############################################
-      ###      Old Issue                      ###
       ###########################################
-      # _create_issue({
-      #   name: "Missing security headers",
-      #   type: "missing_security_headers",
-      #   severity: 5,
-      #   status: "confirmed",
-      #   detailed_description:  "One or more security headers was missing from #{uri}. ",
-      #   details: {
-      #     uri: uri,
-      #     missing:  missing_headers
-      #   }
-      # })
-      ############################################
       ###      New Issue                      ###
       ###########################################
       _create_linked_issue("missing_security_headers",{

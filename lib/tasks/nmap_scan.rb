@@ -2,8 +2,6 @@ module Intrigue
 module Task
 class NmapScan < BaseTask
 
-  include Intrigue::Task::Dns
-
   def self.metadata
     {
       :name => "nmap_scan",
@@ -16,8 +14,9 @@ class NmapScan < BaseTask
       :allowed_types => ["DnsRecord", "Domain", "IpAddress", "NetBlock"],
       :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
-        {:name => "tcp_ports", :regex => "numeric_list", :default => "21,22,23,80,81,443,445,3389,8000,8009,8080,8081,8443" },
-        {:name => "udp_ports", :regex => "numeric_list", :default => "161,500,1900" }
+        {:name => "top_ports", :regex => "integer", :default => "-1" },
+        {:name => "tcp_ports", :regex => "numeric_list", :default => "21,22,23,35,80,81,443,502,503,1883,2181,2222,2888,3389,3888,4443,4444,4505,4506,4786,5000,5556,5900,5901,6379,6443,7001,7002,7443,7777,8001,8009,8032,8080,8081,8278,8291,8443,8883,9000,9001,9091,9092,9094,9200,9201,9300,9301,9443,10443,11443,11994,12443,13443,20443,27017,27018,27019,22222,30443,40443,53413" },
+        {:name => "udp_ports", :regex => "numeric_list", :default => "53,123,161,500,1900,17185" }
       ],
       :created_types => [ "DnsRecord", "IpAddress", "NetworkService", "Uri" ]
     }
@@ -55,7 +54,18 @@ class NmapScan < BaseTask
       _log "NMap options: #{nmap_options}"
 
       # shell out to nmap and run the scan
-      nmap_string = "nmap #{scan_item} #{nmap_options} -sSUV -P0 -T5 #{port_list}"
+      nmap_string = "nmap #{scan_item} #{nmap_options} -sSUV -P0 -T5 "
+      
+      # Top ports
+      top_ports = _get_option("top_ports").to_i
+      if top_ports > 0
+        _log "Using top ports: #{top_ports}"
+        nmap_string << "--top-ports #{top_ports}"
+      else 
+        _log "Using port list: #{port_list}"
+        nmap_string << " #{port_list}" 
+      end
+      
       nmap_string << " -O --max-os-tries 1 -oX #{temp_file}"
       nmap_string = "sudo #{nmap_string}" unless Process.uid == 0
 
@@ -86,7 +96,7 @@ class NmapScan < BaseTask
         end
 
         # either way, set os details from nmap
-        ip_entity.set_detail("os", host.os.matches)
+        ip_entity.set_detail("os", host.os.matches) if host.os
 
         # create an array to save all port details for this host
         host_details = []

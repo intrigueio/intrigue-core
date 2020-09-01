@@ -1,11 +1,10 @@
-require "resolv"
 module Intrigue
 module Task
 class SearchBlcheckList < BaseTask
 
   def self.metadata
     {
-      :name => "threat/blcheck_list",
+      :name => "threat/search_blcheck_list",
       :pretty_name => "Threat Check - Search Blcheck List",
       :authors => ["Anas Ben Salah"],
       :description => "This task Test any domain against more then 100 black lists.",

@@ -84,7 +84,7 @@ class SearchBgp < BaseTask
           r["netblocks"].each do |nb|
             _create_entity "NetBlock", {
               "name" => "#{nb}", 
-              "organization" => org_string, 
+              "organization_name" => org_string, 
               "as_number" => as_number_string,
               "scoped" => true
             }
