@@ -46,9 +46,15 @@ class UniqueToken < Intrigue::Core::Model::Entity
         sensitive: true 
       },
       { 
-        provider:"http_auth", 
+        provider:"http_user", 
         regex: /^(ftp|ftps|http|https):\/\/[A-Za-z0-9\-_:\.~]+(@)$/i, 
         matcher: /((ftp|ftps|http|https):\/\/[A-Za-z0-9\-_:\.~]+(@))/i, 
+        sensitive: false
+      },
+      { 
+        provider:"http_user_pass", 
+        regex: /^(ftp|ftps|http|https):\/\/[A-Za-z0-9\-_:\.~]+:[A-Za-z0-9\-_:\.~]+(@)$/i, 
+        matcher: /((ftp|ftps|http|https):\/\/[A-Za-z0-9\-_:\.~]+:[A-Za-z0-9\-_:\.~]+(@))/i, 
         sensitive: true 
       },
       { 
