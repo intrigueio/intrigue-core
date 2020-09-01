@@ -66,24 +66,8 @@ class AwsS3Bucket < Intrigue::Task::BaseTask
     _log "interesting files: #{interesting_files}"
     _log "downloadable files: #{downloadable_files}"
 
-    # this should be a "Finding" or some sort of success event ?
     if interesting_files.sort.uniq.count > 0
-      #_notify("Interesting Files: #{interesting_files}")
-      ############################################
-      ###      Old Issue                      ###
       ###########################################
-      # _create_issue({
-      #   name: "S3 Bucket Data Leak",
-      #   type: "s3_bucket_data_leak",
-      #   severity: 4,
-      #   status: "confirmed",
-      #   description: "Interesting files located in #{bucket_uri}",
-      #   details: {
-      #     interesting_files: interesting_files,
-      #     uri: bucket_uri
-      #   }
-      # })
-      ############################################
       ###      New Issue                      ###
       ###########################################
       _create_linked_issue("aws_s3_bucket_data_leak", {

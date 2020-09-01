@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class IpAddress < Intrigue::Model::Entity
+class IpAddress < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
@@ -31,51 +31,32 @@ class IpAddress < Intrigue::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
-    return true if self.seed
-    return false if self.hidden
+    return true if self.allow_list
+    return false if self.deny_list
 
-    # Check types we'll check for indicators 
-    # of in-scope-ness
-    #
-    scope_check_entity_types = [
-      "Intrigue::Entity::Organization",
-      "Intrigue::Entity::DnsRecord",
-      "Intrigue::Entity::Domain" ]
+    # scanner use case 
+    return true if created_by?("masscan_scan")
+    return true if created_by?("nmap_scan")
 
-    ### CHECK OUR SEED ENTITIES TO SEE IF THE TEXT MATCHES
-    ######################################################
-    if self.project.seeds
-      self.project.seeds.each do |s|
-        next unless scope_check_entity_types.include?(s.type.to_s) 
-        
-        # only if it's a domain
-        if s["type"] == "Intrigue::Entity::Domain" # try the basename )
-          base_name = s["name"].split(".").first # x.com -> x
-          return true if ("#{details["whois_full_text"]}" =~ /#{Regexp.escape(base_name)}/i)
-        end
-      end
-    end
-
-    ### CHECK OUR IN-PROJECT DISCOVERED ENTITIES TO SEE IF THE TEXT MATCHES 
-    #######################################################################
-    self.project.entities.where(scoped: true, type: scope_check_entity_types ).each do |e|
-
-      # make sure we skip any dns entries that are not fqdns. this will prevent
-      # auto-scoping on a single name like "log" or even a number like "1"
-      next if (e.type == "DnsRecord" || e.type == "Domain") && e.name.split(".").count == 1
-
-      # Now, check to see if the entity's name matches something in our # whois text, 
-      # and especially make sure 
-      if "#{details["whois_full_text"]}" =~ /[\s@]#{Regexp.escape(e.name)}/i
-        #_log "Marking as scoped: PROJECT ENTITY MATCHED TEXT: #{e.type}##{e.name}"
-        return true
+    # if we have aliases and they're all false, we don't really want this thing
+    if self.aliases.count > 0
+      
+      # first set scoped if any of the aliases match. If we depend on'm, 
+      # we gotta take care of them
+      self.aliases.each do |a|
+        next if a.scoped # never go back 
+        a.scoped = true if self.aliases.select{ |x| x if x.allow_list }.count > 0
+        a.save_changes
       end
 
+      return true if self.aliases.select{ |x| x if x.allow_list }.count > 0
     end
 
-  # if we didnt match the above and we were asked, return whatever we got
-  # during the creation process
-  self.scoped
+    # do the same thing for all aliases 
+    
+
+  # if we didnt match the above and we were asked, default to falsse
+  false
   end 
 
 end

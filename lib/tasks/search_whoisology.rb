@@ -7,12 +7,12 @@ class SearchWhoisology < BaseTask
       :name => "search_whoisology",
       :pretty_name => "Search Whoisology",
       :authors => ["jcran"],
-      :description => "This task hits the Whoisology API and finds matches",
+      :description => "This task hits the Whoisology API and finds matches based on the email specified on whois records.",
       :references => [],
       :type => "discovery",
       :passive => true,
       :allowed_types => ["Domain","DnsRecord", "EmailAddress"],
-      :example_entities => [{"type" => "EmailAddress", "details" => {"name" => "spam@intrigue.io"}}],
+      :example_entities => [{"type" => "EmailAddress", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
       :created_types => ["DnsRecord","Info"]
     }
@@ -31,11 +31,12 @@ class SearchWhoisology < BaseTask
       case _get_entity_type_string
 
         when "EmailAddress"
+          
           entity_type = "email"
 
-        when "DnsRecord"
+        when "DnsRecord", "Domain"
 
-          ## When we have a host, we need to do a lookup on the current record,
+          ## When we have a Domain or DnsRecord, we need to do a lookup on the current record,
           ## grab the email address, and then do the search based on that email
 
           _log "Looking up contacts for domain"
@@ -81,14 +82,14 @@ class SearchWhoisology < BaseTask
       result = whoisology.flat entity_type, entity_name
 
       _log_good "Creating entities for #{result["count"]} results."
+     
       if result["domains"]
-        result["domains"].each {|d| _create_entity "DnsRecord", {"name" => d["domain_name"]} }
+        result["domains"].each {|d| 
+          _create_entity "Domain", {"name" => d["domain_name"]} }
       else
         _log_error "No domains, do we have API credits?"
       end
 
-    rescue RuntimeError => e
-      _log_error "Runtime error: #{e.inspect}"
     end
 
   end # end run()

@@ -41,7 +41,12 @@ class SearchCertSpotter < BaseTask
     begin
 
       response = http_request :get, search_url, nil, {"Authorization" => "Bearer #{api_key}"}
-      json = JSON.parse(response.body)
+      
+      unless response && response.body_utf8
+        _log_error "Unable to get a response, returning"
+      end
+
+      json = JSON.parse(response.body_utf8)
 
       # a little wicked but we want to only select those that match our pattern(s)
       records = json.map do |x|
@@ -82,7 +87,8 @@ class SearchCertSpotter < BaseTask
         domain = domain[2..-1] if domain[0..1] == "*."
           
         # woot, made it
-        _create_entity("DnsRecord", "name"=> "#{domain}" )
+        create_dns_entity_from_string(domain)
+
       end
 
     rescue JSON::ParserError => e 

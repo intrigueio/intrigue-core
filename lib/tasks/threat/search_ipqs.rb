@@ -15,7 +15,7 @@ class SearchIPQS < BaseTask
       :allowed_types => ["IpAddress"],
       :example_entities => [{"type" => "IpAddress", "details" => {"name" => "1.1.1.1"}}],
       :allowed_options => [],
-      :created_types => []
+      :created_types => ["Organization","PhysicalLocation"]
     }
   end
 
@@ -33,7 +33,7 @@ class SearchIPQS < BaseTask
       headers = { "Accept" =>  "application/json"}
 
       unless password
-        _log_error "unable to proceed, no API key for IpQulaityScore provided"
+        _log_error "unable to proceed, no API key for IpQualityScore provided"
         return
       end
 
@@ -56,13 +56,11 @@ class SearchIPQS < BaseTask
       if result["success"] and result["fraud_score"] > 0
         _create_linked_issue("suspicious_activity_detected", {
           status: "confirmed",
-          description: "This ip was flagged by IPQulatiyScore for fraud activites",
+          description: "This ip was flagged by IPQualtiyScore for fraud activites",
           IpQulaityScore_details: result,
-          source: "IpQulaityScore.com"
+          source: "IpQualityScore.com"
         })
-        # Also store it on the entity
-        blocked_list = @entity.get_detail("suspicious_activity_detected") || []
-        @entity.set_detail("suspicious_activity_detected", blocked_list.concat([{}]))
+
     end
   end #end run
 

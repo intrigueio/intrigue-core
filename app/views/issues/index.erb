@@ -19,8 +19,8 @@
     }
     </style>
     <p></p>
-    <a href="/<%=@project_name%>/issues?page=<%=@page-1%>">previous</a>
-    <a href="/<%=@project_name%>/issues?page=<%=@page+1%>">next</a>
+    <a href="/<%=h @project_name%>/issues?page=<%=@page-1%>">previous</a>
+    <a href="/<%=h @project_name%>/issues?page=<%=@page+1%>">next</a>
     <table class="sortable" border="1" width=100%>
       <colgroup>
         <col style="width:10%">
@@ -37,7 +37,7 @@
       <% @issues.each do |issue| %>
         <tr>
           <td><a href="<%="/#{h @project_name}/issues/#{h issue.id}"%>"><%= h issue.name %></a></td>
-          <td><%=issue.entity.name%><br><%issue.entity.aliases{ |x|%> <%=x.name%> <br><%}%></td>
+          <td><%=issue.entity.name%><br><%issue.entity.aliases{ |x|%> <%=h x.name%> <br><%}%></td>
           <td><%=issue.status%></td>
           <td><%=issue.severity%></td>
           <td><%=issue.scoped%></td>
@@ -48,7 +48,7 @@
       <% end %>
       </tbody>
     </table>
-    <a href="/<%=@project_name%>/issues?page=<%=@page-1%>">previous</a>
-    <a href="/<%=@project_name%>/issues?page=<%=@page+1%>">next</a>
+    <a href="/<%=h @project_name%>/issues?page=<%=@page-1%>">previous</a>
+    <a href="/<%=h @project_name%>/issues?page=<%=@page+1%>">next</a>
   </div>
 </div>

@@ -13,7 +13,9 @@ module Intrigue
         :type => "discovery",
         :passive => true,
         :allowed_types => ["IpAddress", "DnsRecord", "Domain", "EmailAddress"],
-        :example_entities => [],
+        :example_entities => [
+          {"type" => "Domain", "details" => { "name" => "intrigue.io"}}
+        ],
         :allowed_options => [],
         :created_types => ["NetworkService", "Uri", "DnsRecord"]
       }

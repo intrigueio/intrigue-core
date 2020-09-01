@@ -1,4 +1,3 @@
-require 'aws-sdk-route53'
 module Intrigue
 module Task
 class AWSroute53 < BaseTask

@@ -15,7 +15,7 @@ class SearchIPQSEmailAddress < BaseTask
       :allowed_types => ["EmailAddress"],
       :example_entities => [{"type" => "EmailAddress", "details" => {"name" => "test@gmail.com"}}],
       :allowed_options => [],
-      :created_types => []
+      :created_types => ["EmailAddress"]
     }
   end
 
@@ -23,7 +23,6 @@ class SearchIPQSEmailAddress < BaseTask
   ## Default method, subclasses must override this
   def run
     super
-
       #get entity name and type
       entity_name = _get_entity_name
 
@@ -33,7 +32,7 @@ class SearchIPQSEmailAddress < BaseTask
       headers = { "Accept" =>  "application/json"}
 
       unless password
-        _log_error "unable to proceed, no API key for IpQulaityScore provided"
+        _log_error "unable to proceed, no API key for IpQualityScore provided"
         return
       end
 
@@ -52,17 +51,12 @@ class SearchIPQSEmailAddress < BaseTask
       if result["leaked"]== true or result["suspect"] == true or result["spam_trap_score"] != "none"
         _create_linked_issue("suspicious_activity_detected", {
           status: "confirmed",
-          description: "This Email Address was flagged by IPQulatiyScore for these reasons: Leak:#{result["leaked"]} // suspicious activity:#{result["suspect"]} // Spam:#{result["spam_trap_score"]} ",
-          IpQulaityScore_details: result,
-          source: "IpQulaityScore.com"
+          description: "This Email Address was flagged by IPQualtiyScore for these reasons: Leak:#{result["leaked"]} // suspicious activity:#{result["suspect"]} // Spam:#{result["spam_trap_score"]} ",
+          IpQualityScore_details: result,
+          source: "IpQualityScore.com"
         })
-        # Also store it on the entity
-        blocked_list = @entity.get_detail("suspicious_activity_detected") || []
-        @entity.set_detail("suspicious_activity_detected", blocked_list.concat([{}]))
-    end
+      end
   end #end run
-
-
 
 end
 end

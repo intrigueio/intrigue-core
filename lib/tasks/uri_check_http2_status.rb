@@ -7,16 +7,13 @@ class UriCheckHttp2Support < BaseTask
       :name => "uri_check_http2_support",
       :pretty_name => "URI Check HTTP/2 Support",
       :authors => ["jcran"],
-      :description =>   "This task checks for ",
+      :description =>   "This task checks for http2 protocol support",
       :references => [ "https://github.com/ostinelli/net-http2" ],
       :type => "discovery",
       :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [
-        { 
-          "type" => "Uri", 
-          "details" => {"name" => "http://www.intrigue.io"} 
-        }
+        { "type" => "Uri", "details" => {"name" => "http://www.intrigue.io"} }
       ],
       :allowed_options => [
          {:name => "connect_timeout", regex: "integer", :default => 10 },

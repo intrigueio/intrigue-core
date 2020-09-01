@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # Set path to include rbenv
-source /root/.bash_profile
+source $HOME/.bash_profile
 
 # Set up database if it's not already there 
 if [ ! -d /data/postgres ]; then

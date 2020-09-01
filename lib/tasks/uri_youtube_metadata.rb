@@ -9,7 +9,7 @@ class UriYoutubeMetadata < BaseTask
       :name => "uri_youtube_metadata",
       :pretty_name => "URI Youtube Metadata",
       :authors => ["jcran"],
-      :description => "This task downloads metadata, given a youtube video Uri.",
+      :description => "This task downloads metadata and creates users from the metadata, given a youtube video Uri.",
       :references => [],
       :allowed_types => ["Uri"],
       :type => "discovery",
@@ -35,14 +35,9 @@ class UriYoutubeMetadata < BaseTask
     begin
       video_json = http_get_body "http://www.youtube.com/oembed?url=#{video_uri}&format=json"
       d = JSON.parse video_json
-      _create_entity "Info", d.merge({"name" => "YouTube Video: #{details["title"]}"})
-
+    
       if d["author_name"]
-        _create_entity "WebAccount", {
-          "name" => d["author_name"],
-          "domain" => "youtube.com",
-          "uri" => video_uri
-        }
+        _create_normalized_webaccount("youtube", d["author_name"], video_uri)
       end
 
     rescue JSON::ParserError
