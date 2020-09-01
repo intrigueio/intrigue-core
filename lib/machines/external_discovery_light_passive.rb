@@ -114,7 +114,13 @@ module Machine
 
         # use shodan to "scan" and create ports 
         start_recursive_task(task_result,"search_shodan",entity, [])
-      
+        
+        # use shodan to "scan" and create ports 
+        start_recursive_task(task_result,"search_censys",entity, [])
+
+        # use shodan to "scan" and create ports 
+        start_recursive_task(task_result,"search_binaryedge",entity, [])
+
       elsif entity.type_string == "Nameserver"
 
         start_recursive_task(task_result,"security_trails_nameserver_search",entity, [], true)
