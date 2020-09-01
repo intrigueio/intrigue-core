@@ -13,6 +13,7 @@ class UniqueToken < Intrigue::Core::Model::Entity
 
   # just a list of supported types and their regexen
   # Handy: https://github.com/odomojuli/RegExAPI
+  # Also Handy: https://github.com/projectdiscovery/nuclei-templates/blob/master/tokens/credentials-disclosure.yaml
   def self.supported_token_types
     [
       { 
@@ -47,14 +48,14 @@ class UniqueToken < Intrigue::Core::Model::Entity
       },
       { 
         provider:"http_user", 
-        regex: /^(ftp|ftps|http|https):\/\/[A-Za-z0-9\-_:\.~]+(@)$/i, 
-        matcher: /((ftp|ftps|http|https):\/\/[A-Za-z0-9\-_:\.~]+(@))/i, 
-        sensitive: false
+        regex: /^[A-Za-z0-9\-_:\.~]+$/i, 
+        matcher: /[ftp|ftps|http|https]:\/\/([A-Za-z0-9\-_\.~]+)[@]/i, 
+        sensitive: true 
       },
       { 
         provider:"http_user_pass", 
-        regex: /^(ftp|ftps|http|https):\/\/[A-Za-z0-9\-_:\.~]+:[A-Za-z0-9\-_:\.~]+(@)$/i, 
-        matcher: /((ftp|ftps|http|https):\/\/[A-Za-z0-9\-_:\.~]+:[A-Za-z0-9\-_:\.~]+(@))/i, 
+        regex: /^[A-Za-z0-9\-_:\.~]+:[A-Za-z0-9\-_:\.~]+$/i, 
+        matcher: /[ftp|ftps|http|https]:\/\/([A-Za-z0-9\-_\.~]+:[A-Za-z0-9\-_\.~]+)[@]/i, 
         sensitive: true 
       },
       { 
