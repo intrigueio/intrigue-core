@@ -7,16 +7,17 @@ module Generic
    end
 
    def require_enrichment
+    
     entity_enriched = @entity.enriched?
-    cycles = 10 
+    cycles = 200 
     max_cycles = cycles
+
     until entity_enriched || cycles == 0
-      _log "Waiting 10s for entity to be enriched... (#{cycles-=1} / #{max_cycles})"
-        sleep 10
+      _log "Waiting up to 10m for entity to be enriched... (#{cycles-=1} / #{max_cycles})"
+      sleep 3
       entity_enriched = Intrigue::Core::Model::Entity.first(:id => @entity.id).enriched?
     end
 
-    sleep 1 
     # re-pull
     @entity = Intrigue::Core::Model::Entity.first(:id => @entity.id)
     
