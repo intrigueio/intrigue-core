@@ -36,21 +36,25 @@ module Intrigue
       ### Now, parse out all links and do analysis on the individual links
       ###
       patterns = Intrigue::Entity::UniqueToken.supported_token_types
+      _log "Checking for #{patterns.count} patterns"
 
       patterns.each do |p|
 
-        if contents =~ p[:matcher]
+        # use matcher if it exists, but fall back to regex
+        pattern = p[:matcher] || p[:regex]
+        
+        if contents =~ pattern
 
-          _log "matched: #{p[:matcher]}"
+          _log "Matched: #{pattern}"
 
           # grab it 
-          match_data = p[:matcher].match(contents) do |m|
+          match_data = pattern.match(contents) do |m|
             _log "Got: #{m[1]}"
             _create_entity "UniqueToken", "name" => "#{m[1]}"
           end
         
         else 
-          _log "no match for: #{p[:matcher]}"
+          _log "No match for: #{pattern}"
 
         end
       end
