@@ -151,10 +151,18 @@ module Data
     tcp_ports << "22,"
     tcp_ports << "23,"
     tcp_ports << "35,"
-    tcp_ports << "80,81,"
+    tcp_ports << "53,"
+    tcp_ports << "80,"
+    tcp_ports << "81,"
+    tcp_ports << "106,"
+    tcp_ports << "110,"
+    tcp_ports << "143,"
     tcp_ports << "443,"
     tcp_ports << "445,"
-    tcp_ports << "502,503,"
+    tcp_ports << "465,"
+    tcp_ports << "502,"
+    tcp_ports << "503,"
+    tcp_ports << "587,"
     tcp_ports << "993,"             # imaps
     tcp_ports << "995,"             # pops
     tcp_ports << "1723,"            # pptp
@@ -165,19 +173,22 @@ module Data
     tcp_ports << "3306,"            # mysql
     tcp_ports << "3389,"            # RDP
     tcp_ports << "3888,"
+    tcp_ports << "4190,"
     tcp_ports << "4443,"            # HTTPS
     tcp_ports << "4444,"            # Bind
-    tcp_ports << "4505,4506,"       # salt stack
+    tcp_ports << "4505,"            # salt stack
+    tcp_ports << "4505,"            # salt stack
     tcp_ports << "4786,"
     tcp_ports << "5000,"            # Oracle WebLogic Server Node Manager Port	
     tcp_ports << "5556,"
     tcp_ports << "5900,5901,"       # vnc
     tcp_ports << "6379,"            # redis 
     tcp_ports << "6443,"
-    tcp_ports << "7001,7002,"       # Oracle WebLogic Server Listen Port for Administration Server 
-                                    # Oracle WebLogic Server SSL Listen Port for Administration Server	
+    tcp_ports << "7001,"            # Oracle WebLogic Server Listen Port for Administration Server 
+    tcp_ports << "7002,"            # Oracle WebLogic Server Listen Port for Administration Server 
     tcp_ports << "7443,"        
     tcp_ports << "7777,"
+    tcp_ports << "8000,"
     tcp_ports << "8001,"            # Oracle WebLogic Server Listen Port for Managed Server	
     tcp_ports << "8009,"
     tcp_ports << "8032,"
