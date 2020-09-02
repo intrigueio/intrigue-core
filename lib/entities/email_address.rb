@@ -32,6 +32,10 @@ class EmailAddress < Intrigue::Core::Model::Entity
     return true if self.allow_list
     return false if self.deny_list
 
+    # Check the domain
+    domain_name = self.name.split("@").last
+    return false if self.project.deny_list_entity?("Domain", domain_name)
+
   true
   end
 

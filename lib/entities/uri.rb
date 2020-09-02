@@ -43,15 +43,25 @@ class Uri < Intrigue::Core::Model::Entity
     return true if self.allow_list
     return false if self.deny_list
 
-    # only scope in stuff that's not hidden
+    # only scope in stuff that's not hidden (hnm, is this still needed?)
     return false if self.hidden
+
+    # grab the URL, parse it and get the hostname. Check if this hostname is 
+    # in the deny list... this will stop stuff like sites for known top level domain https://hosting-company.com
+    # from becoming scoped, but keeps us from missing stuff that like https://company.hosting-company.com
+    uri = URI.parse(self.name)
+    hostname = uri.hostname
+    # note - this may not be a domain, but that's okay, we only want to search 'Domain'.
+    if self.project.traversable_entity?("Domain", hostname) 
+      return false
+    end
 
   # if we didnt match the above and we were asked, it's still true
   true
   end
 
   def enrichment_tasks
-    ["enrich/uri", "enrich/uri_browser", "uri_check_api_endpoint", "uri_extract_linked_hosts"]
+    ["enrich/uri", "enrich/uri_browser"]
   end
 
 end

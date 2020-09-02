@@ -38,6 +38,24 @@ module Model
       "#{name} on #{entity.type} #{entity.name}"
     end
     
+    def to_v1_api_hash(full=false)
+      if full 
+        export_hash
+      else
+        {
+          :type => name,
+          :name => name,
+          :category => category,
+          :severity => severity,
+          :status => status,
+          :scoped => scoped,
+          :source => source || "intrigue",
+          :pretty_name => details["pretty_name"],
+          :entity_type => entity.type,
+          :entity_name => entity.name
+        }
+      end
+    end
     ###
     ### Export!
     ###
@@ -47,8 +65,8 @@ module Model
         :name => name,
         :category => category,
         :severity => severity,
-        :status =>  status,
-        :scoped =>  scoped,
+        :status => status,
+        :scoped => scoped,
         :source => source || "intrigue",
         :description =>  description,
         :pretty_name => details["pretty_name"],

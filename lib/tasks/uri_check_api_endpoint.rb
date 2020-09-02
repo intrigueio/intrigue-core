@@ -44,12 +44,24 @@ class UriCheckApiEndpoint < BaseTask
       api_reason = "fingerprint"
     end
 
+
+    # first get a standard response
+    standard_response = http_request :get, url
+
     ####
-    # next just check keywords in the url 
+    # next just check keywords in the url, but of course, sanity check this. 
     ###
-    if (url =~ /api\./ || url =~ /\/api/ || url =~ /\/json/ || url =~ /\.json/ || url =~ /\.xml/)
-      api_endpoint = true 
-      api_reason = "url"
+    if (  url =~ /api\./ || 
+          url =~ /\/api/ || 
+          url =~ /\/json/ || 
+          url =~ /\.json/ || 
+          url =~ /\.xml/ )
+
+      unless response.body_utf8 =~/^<HTML>/i # this be html
+        api_endpoint = true 
+        api_reason = "url"
+      end 
+
     end
 
     ### 
@@ -62,9 +74,6 @@ class UriCheckApiEndpoint < BaseTask
     ####
     # otherwise check patterns in / around the original
     ####
-
-    # first get a standard response
-    standard_response = http_request :get, url
 
     # always start empty 
     api_endpoint = nil 
@@ -106,14 +115,14 @@ class UriCheckApiEndpoint < BaseTask
 
       return unless response
       # skip if we're not the original url, but we're getting the same response
-      next if u != url && response.body == standard_response.body
+      next if u != url && response.body_utf8 == standard_response.body_utf8
 
       ###
       ### Check for known strings 
       ###
-      if (response.body =~ /swagger-section/ ||
-          response.body =~ /swaggerhub.com/ || 
-          response.body =~ /soapenv:Envelope/)
+      if (response.body_utf8 =~ /swagger-section/ ||
+          response.body_utf8 =~ /swaggerhub.com/ || 
+          response.body_utf8 =~ /soapenv:Envelope/)
         # break and create it  
         api_reason = "response_body"
         api_endpoint = u
@@ -122,7 +131,7 @@ class UriCheckApiEndpoint < BaseTask
 
       # check for content type of application.. note that this will flag
       # application/javascript, which is probably not wanted
-      headers = response.each_header.to_h
+      headers = response.headers
       if headers
         ct = headers.find{|x, y| x if x =~ /^content-type/i }
         if ct
@@ -147,13 +156,20 @@ class UriCheckApiEndpoint < BaseTask
       ###
       begin
         # get request body
-        body = response.body
+        body = response.body_utf8
         if body 
           json = JSON.parse(body)
           if json
-            api_endpoint = u 
-            api_reason = "json_body"
-            break
+            unless 
+               # now check for common error scenarios, and if we pass
+              (response.code == "404" && json["error"] ==  "Not Found") || 
+              (response.code == "404" && json["response"] == "Content was not found.") 
+
+              # create it as an api endpoint
+              api_endpoint = u 
+              api_reason = "json_body"
+              break
+            end
           end
         end
       rescue JSON::ParserError      

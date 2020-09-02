@@ -27,6 +27,7 @@ module Intrigue
   
       # always create the relevant domain
       _create_entity "Domain", "name" => domain
+      
     end
   
   end

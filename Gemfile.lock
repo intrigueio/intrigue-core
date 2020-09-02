@@ -33,10 +33,10 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: 76dc20768c689c3f189fc5c89c22166c1482d359
+  revision: e97f974417147df8fa27dcd8f73b7efbb587b942
   branch: main
   specs:
-    intrigue-ident (1.1.2)
+    intrigue-ident (2.0.2)
       dnsruby
       recog-intrigue
       snmp
@@ -451,6 +451,7 @@ DEPENDENCIES
   elasticsearch
   em-resolv-replace
   eventmachine
+  excon
   faraday_middleware-aws-sigv4
   flareon
   fog-aws

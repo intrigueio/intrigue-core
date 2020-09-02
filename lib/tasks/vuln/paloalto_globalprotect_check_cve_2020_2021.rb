@@ -30,7 +30,7 @@ module Intrigue
       ###
 
       response = http_request(:get, "#{_get_entity_name}/global-protect/login.esp")
-      rbody = response.body 
+      rbody = response.body_utf8 
       if !(rbody =~ /SAMLRequest/) # standard response 
         _log "Not vulnerable - no 2FA detected"
         return 

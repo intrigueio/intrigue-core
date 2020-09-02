@@ -56,13 +56,12 @@ class SearchFraudGuard < BaseTask
   #retrieves IP reputation data for a specific IP
   def get_ip(server,path,username,password)
 
-    http = Net::HTTP.new(server,443)
-    req = Net::HTTP::Get.new(path)
-    http.use_ssl = true
-    req.basic_auth username, password
-    response = http.request(req)
-    return response.body
+    resp = http_request :get, "https:///#{server}:443/#{path}", {
+      user: username,
+      password: password
+    }
 
+  resp.body
   end
 
 end

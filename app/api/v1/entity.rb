@@ -4,7 +4,7 @@ class CoreApp < Sinatra::Base
     
     content_type "application/json"
 
-    authenticate_system_api_call @params["key"]
+    halt_unless_authenticated!
     
     # For post requests with a json body, just stick it in params
     # don't clobber params, stick it in its own object

@@ -2,16 +2,7 @@
 module Intrigue
 module Task
 module WebContent
-
-  def _create_normalized_webaccount(site, account_name, link, sister_entity )
-    _create_entity "WebAccount", {
-      "name" => "#{site.downcase}: #{account_name.downcase}",
-      "username" => "#{account_name.downcase}",
-      "service" => "#{site}".downcase,
-      "uri" => "#{link}"
-     }, sister_entity
-  end
-
+  
   def extract_and_fingerprint_scripts(script_list, host)
     components = []
     script_list.each do |s|
@@ -64,7 +55,7 @@ module WebContent
   end
 
 
-  # compare_html response.body.sanitize_unicode, e.details["hidden_response_data"]  
+  # compare_html response.body_utf8.sanitize_unicode, e.details["hidden_response_data"]  
   def parse_html_diffs(texta, textb)
     # parse our content with Nokogiri
     our_doc = Nokogiri::HTML(texta)

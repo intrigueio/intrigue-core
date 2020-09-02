@@ -89,7 +89,7 @@ module Model
       # keep a log 
       File.open("#{$intrigue_basedir}/log/scoping.log","a+") do |f|
         f.flock(File::LOCK_EX)
-        f.puts "Entity #{self.name} set scoped to #{bool_val}, reason: #{reason}"
+        f.puts "[#{self.project.name}] Entity #{self.type} #{self.name} set scoped to #{bool_val}, reason: #{reason}"
         f.flock(File::LOCK_UN)
       end
 
@@ -325,6 +325,25 @@ module Model
           <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name" value="#{self.name}">
         </div>
       </div>}
+    end
+
+    def to_v1_api_hash(full=false)
+      if full
+        export_hash
+      else 
+        {
+          :id => id,
+          :type => type,
+          :name =>  name,
+          :deleted => deleted,
+          :hidden => hidden,
+          :scoped => scoped,
+          :allow_list => allow_list,
+          :deny_list => deny_list,
+          :alias_group => alias_group_id,
+          :detail_string => detail_string
+        }
+      end
     end
 
     ###

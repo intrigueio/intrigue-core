@@ -27,7 +27,7 @@ class  CitrixNetscalerRceCVE201919781 < BaseTask
     response = http_request(:get, check_url)
 
     # grab header
-    unless response && response.body 
+    unless response && response.body_utf8 
       _log "No response! Failing"
       return
     end
@@ -35,15 +35,15 @@ class  CitrixNetscalerRceCVE201919781 < BaseTask
     if response.code.to_i == 200
 
       # check that it matches our known vuln versions
-      if response.body =~ /\[global\]/
+      if response.body_utf8 =~ /\[global\]/
         _log "Vulnerable!"
         # file issue
         _create_linked_issue("citrix_netscaler_rce_cve_2019_19781", { 
           status: "confirmed", 
           checked_url: check_url,
-          proof: response.body })
+          proof: response.body_utf8 })
       else
-        _log "Not Vulnerable, couldnt match our regex: #{response.body}"
+        _log "Not Vulnerable, couldnt match our regex: #{response.body_utf8}"
       end
     elsif response.code.to_i == 403
       _log "Not Vulnerable, invalid code: #{response.code}"

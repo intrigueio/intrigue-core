@@ -105,22 +105,39 @@ module Model
       Intrigue::TaskFactory.create_by_name(task_name)
     end
 
+    def to_v1_api_hash(full=false)
+      if full
+        export_hash 
+      else # just the light version
+        {
+          "id" => self.id,
+          "name" =>  URI.escape(self.name),
+          "task_name" => URI.escape(self.task_name),
+          "timestamp_start" => self.timestamp_start,
+          "timestamp_end" => self.timestamp_end,
+          "options" => self.options,
+          "complete" => self.complete,
+        }
+      end
+    end
+
     def export_hash
       {
-        "id" => id,
-        "job_id" => job_id,
-        "name" =>  URI.escape(name),
-        "task_name" => URI.escape(task_name),
-        "timestamp_start" => timestamp_start,
-        "timestamp_end" => timestamp_end,
-        "project" => project.name,
-        "options" => options,
-        "complete" => complete,
-        "base_entity" => base_entity.export_hash,
-        "entities" => entities.uniq.map{ |e| {:id => e.id,
+        "id" => self.id,
+        "job_id" => self.job_id,
+        "name" =>  URI.escape(self.name),
+        "task_name" => URI.escape(self.task_name),
+        "timestamp_start" => self.timestamp_start,
+        "timestamp_end" => self.timestamp_end,
+        "project" => self.project.name,
+        "options" => self.options,
+        "complete" => self.complete,
+        "base_entity" =>  {:id => self.base_entity.id,
+          :type => self.base_entity.type, :name => self.base_entity.name },
+        "entities" => self.entities.uniq.map{ |e| {:id => e.id,
           :type => e.type, :name => e.name, :details => e.short_details } },
-        "issues" => issues.uniq.map{ |e| {:id => e.id, :name => e.name, uri: e.uri } },
-        "log" => get_log
+        "issues" => self.issues.uniq.map{ |e| {:id => e.id, :name => e.name, uri: e.uri } },
+        "log" => self.get_log
       }
     end
 

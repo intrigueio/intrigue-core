@@ -30,14 +30,14 @@ module Task
     end
 
     # check for sanity
-    unless response.body && response_two.body
+    unless response.body_utf8 && response_two.body
       _log_error "Empty body!" if @task_result
       return false
     end
     
     # check to make sure we don't just go down the rabbit hole
     # some pages print back our uri, so first remove that if it exists
-    unless response.body.gsub(request_page_one,"") && response_two.body.gsub(request_page_two,"")
+    unless response.body_utf8.gsub(request_page_one,"") && response_two.body.gsub(request_page_two,"")
       _log_error "Cowardly refusing to test - different responses on our missing page checks" if @task_result
       return false
     end
@@ -52,7 +52,7 @@ module Task
       when "200"
         _log "Using CONTENT as missing page test, missing page will give a 200" if @task_result
         missing_page_test = :content
-        missing_page_content = response.body
+        missing_page_content = response.body_utf8
       else
         _log "Defaulting to CODE as missing page test, missing page will give a #{response.code}" if @task_result
         missing_page_test = :code
@@ -412,9 +412,9 @@ module Task
   file.path
   end
 
-  # XXX - move this over to net-http (?)
   def http_post(uri, data, params)
-    RestClient.post(uri, data, params)
+    #RestClient.post(uri, data, params)
+    http_request(:post, uri, nil, params, data)
   end
 
   #
@@ -425,17 +425,77 @@ module Task
 
     ### filter body
     if response
-      return response.body.encode('UTF-8', {:invalid => :replace, :undef => :replace, :replace => '?'})
+      return response.body_utf8
     end
 
   nil
+  end
+
+  def http_request(method, uri_string, credentials=nil, headers={}, data=nil, attempts_limit=3, write_timeout=15, read_timeout=15, connect_timeout=15)
+
+    # set user agent unless one was provided
+    unless headers["User-Agent"]
+      headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36"
+    end
+
+    options = {}
+    #options.merge!(debug_request: true, debug_response: true)
+    options.merge!(write_timeout: write_timeout) if write_timeout
+    options.merge!(read_timeout: read_timeout) if read_timeout
+    options.merge!(connect_timeout: connect_timeout) if connect_timeout
+    options.merge!(idempotent: true, retry_limit: attempts_limit) if attempts_limit
+    options.merge!(body: data) if data
+    options.merge!(headers: headers) if headers
+    
+    # TODO ... benchmark to see if this helps
+    #options.merge!(tcp_nodelay: true)
+    
+    # merge in credentials, must be in format :user => 'username', :password => 'password'
+    options.merge!(credentials) if credentials
+
+    begin 
+  
+      # disable peer verification
+      Excon.defaults[:ssl_verify_peer] = false
+
+      connection = Excon.new(uri_string,options)
+
+      if method == :get
+        response = connection.get
+      elsif method == :post
+        # see: https://coderwall.com/p/c-mu-a/http-posts-in-ruby
+        response = connection.post
+      elsif method == :head
+        response = connection.head
+      #elsif method == :propfind
+      #  request = Net::HTTP::Propfind.new(uri.request_uri)
+      #  request.body = "Here's the body." # Set your body (data)
+      #  request["Depth"] = "1" # Set your headers: one header per line.
+      elsif method == :options
+        response = connection.options
+      elsif method == :trace
+        response = connection.trace
+      end
+      ### END VERBS
+    rescue Errno::ETIMEDOUT => e
+      @task_result.logger.log_error "Generic - Socket Timeout: #{e}" if @task_result
+    rescue Excon::Error::TooManyRedirects => e
+      @task_result.logger.log_error "Excon - Too Many Redirects: #{e}" if @task_result
+    rescue Excon::Error::Socket => e
+      @task_result.logger.log_error "Excon - Socket Timeout: #{e}" if @task_result
+    rescue Excon::Error::Timeout => e 
+      @task_result.logger.log_error "Excon - HTTP Timeout: #{e}" if @task_result
+    end
+    
+
+  response
   end
 
   ###
   ### XXX - significant updates made to zlib, determine whether to
   ### move this over to RestClient: https://github.com/ruby/ruby/commit/3cf7d1b57e3622430065f6a6ce8cbd5548d3d894
   ###
-  def http_request(method, uri_string, credentials=nil, headers={}, data=nil, attempts_limit=3, open_timeout=15, read_timeout=15)
+  def http_request_old(method, uri_string, credentials=nil, headers={}, data=nil, attempts_limit=3, open_timeout=15, read_timeout=15)
 
     response = nil
     begin
@@ -452,8 +512,8 @@ module Task
       end
 
       until( found || attempts >= max_attempts)
-        _log_debug "Getting #{uri}, attempt #{attempts}" if @task_result
         attempts+=1
+        _log_debug "Getting #{uri}, attempt #{attempts}" if @task_result
 
         if Intrigue::Core::System::Config.config["http_proxy"]
           proxy_addr = Intrigue::Core::System::Config.config["http_proxy"]["host"]
@@ -467,20 +527,14 @@ module Task
         # set timeouts
         opts[:open_timeout] = open_timeout
         opts[:ssl_timeout] = open_timeout
+        opts[:continue_timeout] = open_timeout
         opts[:write_timeout] = read_timeout
         opts[:read_timeout] = read_timeout
-        opts[:continue_timeout] = open_timeout
 
-        # set https
-        
-        #if uri.instance_of? URI::HTTPS
-        #  opts[:use_ssl] = true
-        #  opts[:verify_mode] = OpenSSL::SSL::VERIFY_NONE
-        #end
-
+        # create the http object
         http = Net::HTTP.new(uri.host, uri.port, proxy_addr, proxy_port, opts)
         
-        # options dont seem to work when we do 'start', so set these again  
+        # set HTTPS options
         if uri.instance_of? URI::HTTPS
           http.use_ssl = true
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -493,55 +547,55 @@ module Task
         http.read_timeout = read_timeout
         http.continue_timeout = open_timeout
       
+        # start the requeat
         http.start do |http|
 
-        path = "#{uri.path}"
-        path = "/" if path==""
+          path = "#{uri.path}"
+          path = "/" if path==""
 
-        # add in the query parameters
-        if uri.query
-          path += "?#{uri.query}"
-        end
+          # add in the query parameters
+          if uri.query
+            path += "?#{uri.query}"
+          end
 
-        ### ALLOW DIFFERENT VERBS HERE
-        if method == :get
-          request = Net::HTTP::Get.new(uri)
-        elsif method == :post
-          # see: https://coderwall.com/p/c-mu-a/http-posts-in-ruby
-          request = Net::HTTP::Post.new(uri)
-          request.body = data
-        elsif method == :head
-          request = Net::HTTP::Head.new(uri)
-        elsif method == :propfind
-          request = Net::HTTP::Propfind.new(uri.request_uri)
-          request.body = "Here's the body." # Set your body (data)
-          request["Depth"] = "1" # Set your headers: one header per line.
-        elsif method == :options
-          request = Net::HTTP::Options.new(uri.request_uri)
-        elsif method == :trace
-          request = Net::HTTP::Trace.new(uri.request_uri)
-          request.body = "intrigue"
-        end
-        ### END VERBS
+          ### ALLOW DIFFERENT VERBS HERE
+          if method == :get
+            request = Net::HTTP::Get.new(uri)
+          elsif method == :post
+            # see: https://coderwall.com/p/c-mu-a/http-posts-in-ruby
+            request = Net::HTTP::Post.new(uri)
+            request.body = data
+          elsif method == :head
+            request = Net::HTTP::Head.new(uri)
+          elsif method == :propfind
+            request = Net::HTTP::Propfind.new(uri.request_uri)
+            request.body = "Here's the body." # Set your body (data)
+            request["Depth"] = "1" # Set your headers: one header per line.
+          elsif method == :options
+            request = Net::HTTP::Options.new(uri.request_uri)
+          elsif method == :trace
+            request = Net::HTTP::Trace.new(uri.request_uri)
+            request.body = "intrigue"
+          end
+          ### END VERBS
 
-        # set user agent unless one was provided
-        unless headers["User-Agent"]
-          headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36"
-        end
+          # set user agent unless one was provided
+          unless headers["User-Agent"]
+            headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36"
+          end
 
+          # set the user-specified headers
+          headers.each do |k,v|
+            request[k] = v
+          end
 
-        # set the user-specified headers
-        headers.each do |k,v|
-          request[k] = v
-        end
+          # handle credentials
+          if credentials
+            request.basic_auth(credentials[:username],credentials[:password])
+          end
 
-        # handle credentials
-        if credentials
-          request.basic_auth(credentials[:username],credentials[:password])
-        end
-
-        # get the response
-        response = http.request(request)
+          # get the response
+          response = http.request(request)
         end
 
         # USE THIS TO PRINT HTTP RESPONSE
@@ -552,7 +606,7 @@ module Task
         #puts "HEADERS:"
         #response.each_header{ |h| puts "#{h}: #{response[h]}"}
         #puts
-        #puts "Body:\n#{response.body}"
+        #puts "Body:\n#{response.body_utf8}"
         #puts "=====  END RESPONSE ====="
         #puts
         #puts
@@ -657,12 +711,12 @@ module Task
      return false if response.kind_of? Net::HTTPNotFound
 
      # try again if we got a blank page (some WAFs seem to do this?)
-     if !response.code == "404" && response.body == ""
+     if !response.code == "404" && response.body_utf8 == ""
        2.times do
          _log "Re-attempting #{request_uri}... verifying we should really have a blank page" if @task_result
          response = http_request :get, request_uri 
          next unless response
-         break if response.body != ""
+         break if response.body_utf8 != ""
        end
      end
 
@@ -676,17 +730,17 @@ module Task
       #_log "Checking success cases: #{success_cases}"
 
        if success_cases[:body_regex]
-         if response.body =~ success_cases[:body_regex] 
+         if response.body_utf8 =~ success_cases[:body_regex] 
           
           out = {
             name: request_uri,
             uri: request_uri,
             response_code: response.code,
-            response_body: response.body
+            response_body: response.body_utf8
           }
 
           # check to make sure we're not part of our excluded 
-          if success_cases[:exclude_body_regex] && response.body =~ success_cases[:exclude_body_regex] 
+          if success_cases[:exclude_body_regex] && response.body_utf8 =~ success_cases[:exclude_body_regex] 
             _log_error "Matched exclude body regex!!! #{success_cases[:exlude_body_regex]}" if @task_result
             return nil
           else
@@ -708,7 +762,7 @@ module Task
              name: request_uri,
              uri: request_uri,
              response_code: response.code,
-             response_body: response.body
+             response_body: response.body_utf8
            }
           end
         end
@@ -739,7 +793,7 @@ module Task
              name: request_uri,
              uri: request_uri,
              response_code: response.code,
-             response_body: response.body
+             response_body: response.body_utf8
            }
          when missing_page_code
            _log "Got code: #{response.code}. Same as missing page code: #{missing_page_code}. Ignoring!" if @task_result
@@ -749,7 +803,7 @@ module Task
              name: request_uri,
              uri: request_uri,
              response_code: response.code,
-             response_body: response.body
+             response_body: response.body_utf8
            }
        end
 
@@ -759,13 +813,13 @@ module Task
 
        # check for default content...
        ["404", "forbidden", "Request Rejected"].each do |s|
-         if (response.body =~ /#{s}/i )
+         if (response.body_utf8 =~ /#{s}/i )
            _log "Skipping #{request_uri}, contains a missing page string: #{s}" if @task_result
            return false
          end
        end
 
-       if response.body[0..100] == missing_page_content[0..100]
+       if response.body_utf8[0..100] == missing_page_content[0..100]
          _log "Skipping #{request_uri} based on page content" if @task_result
 
        else
@@ -774,7 +828,7 @@ module Task
            name: request_uri,
            uri: request_uri,
            response_code: response.code,
-           response_body: response.body
+           response_body: response.body_utf8
           }
        end
      end

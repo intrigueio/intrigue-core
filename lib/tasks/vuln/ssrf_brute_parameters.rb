@@ -45,7 +45,7 @@ class SsrfBruteParameters < BaseTask
       generated_test_uri = "#{uri}?#{parameter}=#{payload}"
       response  = http_request :get, generated_test_uri
       _log "Sent: (#{generated_test_uri}), Got: #{response.code} for parameter #{parameter}"
-      _log "Response: #{response.body}"
+      _log "Response: #{response.body_utf8}"
     end
 
     # Future work... actually exfil data (enrichment?)

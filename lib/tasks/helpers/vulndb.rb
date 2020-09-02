@@ -81,7 +81,7 @@ module VulnDb
         # if the API is down, we'll get a nil response, so handle that case gracefully
         return [] unless response
 
-        result = JSON.parse(response.body)
+        result = JSON.parse(response.body_utf8)
 
         # return our normal hash
       rescue JSON::ParserError => e
