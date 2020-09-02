@@ -28,13 +28,13 @@ class UniqueToken < Intrigue::Core::Model::Entity
       { 
         "provider" => "amazon_mws", 
         "regex" => /^amzn\\.mws\\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, 
-        "matcher" =>  /(amzn\\.mws\\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/, 
+        "matcher" =>  /(amzn\\.mws\\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i, 
         "sensitive" =>  true 
       },
       { 
         "provider" => "google_adsense", 
-        "regex" => /^pub-\d+$/, 
-        "matcher" =>  /(pub-\d+)/, 
+        "regex" => /^pub-\d+$/i, 
+        "matcher" =>  /(pub-\d+)/i, 
         "sensitive" =>  false 
       },
       {
@@ -51,7 +51,7 @@ class UniqueToken < Intrigue::Core::Model::Entity
       },
       { 
         "provider" => "http_user", 
-        "regex" => /^[A-Za-z0-9\-_:\.~]+$/i, 
+        "regex" => /^[A-Za-z0-9\-_:\.~]+@.*$/i, 
         "matcher" =>  /[ftp|ftps|http|https]:\/\/([A-Za-z0-9\-_\.~]+)[@]/i, 
         "sensitive" =>  true 
       },
@@ -76,7 +76,7 @@ class UniqueToken < Intrigue::Core::Model::Entity
       { 
         "provider" => "mailchimp", 
         "regex" => /^[0-9a-f]{32}-us[0-9]{1,2}$/, 
-        "matcher" =>  /([0-9a-f]{32}-us[0-9]{1,2})/i, 
+        "matcher" =>  /[\"\'\=]([0-9a-f]{32}-us[0-9]{1,2})/i, 
         "sensitive" =>  true 
       },    
       { 
@@ -102,7 +102,11 @@ class UniqueToken < Intrigue::Core::Model::Entity
   
   def validate_entity
     # check that our regex for the hash matches
-    supported_type = self.class.supported_token_types.select{|x| x["regex"] =~ name }
+    supported_type = self.class.supported_token_types.select{ |x| 
+      regex = x["regex"]; regex = Regexp.new(regex) unless regex.kind_of?(Regexp)
+      regex =~ name 
+    }
+
     valid = !supported_type.empty?
     
     if valid
