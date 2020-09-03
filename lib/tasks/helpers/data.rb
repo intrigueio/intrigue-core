@@ -177,7 +177,7 @@ module Data
     tcp_ports << "4443,"            # HTTPS
     tcp_ports << "4444,"            # Bind
     tcp_ports << "4505,"            # salt stack
-    tcp_ports << "4505,"            # salt stack
+    tcp_ports << "4506,"            # salt stack
     tcp_ports << "4786,"
     tcp_ports << "5000,"            # Oracle WebLogic Server Node Manager Port	
     tcp_ports << "5556,"
