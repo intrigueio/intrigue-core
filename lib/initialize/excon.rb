@@ -15,7 +15,7 @@ module Excon
     end
 
     def body_utf8
-      self.body.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+      self.body.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '').gsub("\u0000", '')
     end
 
   end
