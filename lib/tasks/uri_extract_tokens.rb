@@ -41,7 +41,10 @@ module Intrigue
       patterns.each do |p|
 
         # use matcher if it exists, but fall back to regex
-        pattern = p[:matcher] || p[:regex]
+        pattern = p["matcher"] || p["regex"]
+
+        # if we're handed a string, convert it to a regex
+        pattern = Regexp.new(pattern) unless pattern.kind_of? Regexp
         
         if contents =~ pattern
 
@@ -54,9 +57,11 @@ module Intrigue
           end
         
         else 
+
           _log "No match for: #{pattern}"
 
         end
+
       end
     end
   
