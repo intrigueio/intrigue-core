@@ -12,7 +12,8 @@ class SearchGithubCode < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["GithubAccount","GithubRepository"],
+      :allowed_types => [ "Domain" "DnsRecord", "GithubAccount", "GithubRepository", 
+                          "String", "UniqueKeyword", "UniqueToken"],
       :example_entities => [
         {"type" => "GithubAccount", "details" => {"name" => "intrigueio"}}],
       :allowed_options => [
@@ -38,6 +39,12 @@ class SearchGithubCode < BaseTask
         search_uri = "https://api.github.com/search/code?q=#{keyword} user:#{entity_name}"
       elsif entity_type == "GithubRepository"
         search_uri = "https://api.github.com/search/code?q=#{keyword} repo:#{entity_name}"
+      elsif ( entity_type == "Domain"      || 
+              entity_type == "DnsRecord"   || 
+              entity_type == "String"      || 
+              entity_type == "UniqueToken" || 
+              entity_type == "UniqueKeyword" )
+        search_uri = "https://api.github.com/search/code?q=#{keyword} #{entity_name}"
       end
 
       response = _get_json_response(search_uri)
@@ -52,7 +59,7 @@ class SearchGithubCode < BaseTask
       items[0..max_item_count].each do |result|
         
         #_log "Processing #{result}"
-        _create_entity "Info", {
+        _create_entity "GithubSearchResult", {
           "name" => result["path"],
           "uri" => result["html_url"],
           "github" => result

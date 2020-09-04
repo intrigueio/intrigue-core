@@ -120,8 +120,8 @@ class UriCheckSudomainHijack  < BaseTask
 
       ####
       
-      elsif response_body =~ /404 Blog is not found/i
-        _create_hijackable_subdomain_issue "", uri, "potential"
+      #elsif response_body =~ /404 Blog is not found/i
+      #  _create_hijackable_subdomain_issue "", uri, "potential"
 
       elsif response_body =~ /No such app/i
 
