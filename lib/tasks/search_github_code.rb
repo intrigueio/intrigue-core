@@ -12,15 +12,23 @@ class SearchGithubCode < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => [ "Domain" "DnsRecord", "GithubAccount", "GithubRepository", 
-                          "String", "UniqueKeyword", "UniqueToken"],
+      :allowed_types => [ 
+        "Domain", 
+        "DnsRecord", 
+        "GithubAccount", 
+        "GithubRepository", 
+        "Organization",
+        "String", 
+        "UniqueKeyword", 
+        "UniqueToken"
+      ],
       :example_entities => [
         {"type" => "GithubAccount", "details" => {"name" => "intrigueio"}}],
       :allowed_options => [
-        {:name => "keywords", :regex => "alpha_numeric", :default => "password" },
-        {:name => "max_item_count", :regex => "integer", :default => 5 },
+        {:name => "keywords", :regex => "alpha_numeric", :default => "" },
+        {:name => "max_item_count", :regex => "integer", :default => 100 },
       ],
-      :created_types => ["Info"]
+      :created_types => ["GithubSearchResult"]
     }
   end
 
@@ -44,7 +52,7 @@ class SearchGithubCode < BaseTask
               entity_type == "String"      || 
               entity_type == "UniqueToken" || 
               entity_type == "UniqueKeyword" )
-        search_uri = "https://api.github.com/search/code?q=#{keyword} #{entity_name}"
+        search_uri = "https://api.github.com/search/code?q=#{entity_name}"
       end
 
       response = _get_json_response(search_uri)
@@ -79,7 +87,7 @@ class SearchGithubCode < BaseTask
 
     # TODO deal with pagination here
 
-    _log "API responded with #{response["total_count"]} items!"
+    _log "API responded with #{response["total_count"] || 0} items!"
 
   response
   end
