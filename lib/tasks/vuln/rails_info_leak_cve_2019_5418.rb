@@ -45,12 +45,12 @@ class RailsFileExposureCve20195418 < BaseTask
       # Request
       uri = "#{_get_entity_name}/#{p}"
       response = http_request :get, "#{uri}", nil, headers
-      etc_passwd_body = response.body_utf8 if response
+      etc_passwd_body = response.body_utf8.split("\n").first(3).join("\n") if response
 
       # Check for validity
       if response
         if "#{etc_passwd_body}" =~ /root\:x/
-          _log "Got vulnerable response: #{response.body_utf8}"
+          _log "Vulnerable! Partial content of response: #{etc_passwd_body}"
           _create_linked_issue("rails_information_disclosure_cve_2019_5418",{data: etc_passwd_body })
         else
           _log "Got non-vulnerable response: #{response.body_utf8}"
