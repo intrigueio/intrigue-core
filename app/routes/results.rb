@@ -261,7 +261,7 @@ class CoreApp < Sinatra::Base
           puts 'Parsing shodan file'
           file_lines.each do |l|
 
-            next if l =~ /^IpAddress,Indicator\r\n$/
+            next if l =~ /^Indicator type,Indicator\r\n$/
 
             # strip out the data
             split_line = l.split(",").map{|x| x.strip }

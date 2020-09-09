@@ -87,7 +87,7 @@ class SearchZoomEye < BaseTask
       # make the request
       response = http_get_body(url,nil,headers)
       json = JSON.parse(response)
-      puts json 
+      puts json
       json["matches"].each do |result|
         # Search for open ports
         _log_good "Creating service on #{entity_name}: #{result["portinfo"]["port"]}"
