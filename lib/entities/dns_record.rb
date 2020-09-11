@@ -35,10 +35,10 @@ class DnsRecord < Intrigue::Core::Model::Entity
 
     # Check the domain
     domain_name = parse_domain_name(self.name)
-    return false if self.project.deny_list_entity?("Domain", domain_name)
+    return true if self.project.allow_list_entity?("Domain", domain_name)
 
   # if we didnt match the above and we were asked, default to false
-  true
+  false
   end
 
 end
