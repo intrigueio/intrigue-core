@@ -52,7 +52,11 @@ class UriCheckHttp2Support < BaseTask
       end
 
       # send request
-      response = client.call(:get, '/')
+      begin 
+        response = client.call(:get, '/')
+      rescue TypeError => e  # IS there a better way to do this?
+        _log_error "Unable to connect"
+      end
 
       # close the connection
       client.close
