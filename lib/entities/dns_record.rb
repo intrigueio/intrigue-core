@@ -33,8 +33,12 @@ class DnsRecord < Intrigue::Core::Model::Entity
     return true if self.allow_list
     return false if self.deny_list
 
-  # if we didnt match the above and we were asked, default to true
-  false
+    # Check the domain
+    domain_name = parse_domain_name(self.name)
+    return false if self.project.deny_list_entity?("Domain", domain_name)
+
+  # if we didnt match the above and we were asked, default to false
+  true
   end
 
 end

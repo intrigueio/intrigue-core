@@ -356,7 +356,7 @@ class Uri < Intrigue::Task::BaseTask
     end
 
     ###
-    ### Do the cloud provider determination
+    ### Do the cloud provider determination 
     ###
 
     # Now that we have our core details, check cloud statusi
@@ -364,8 +364,13 @@ class Uri < Intrigue::Task::BaseTask
     _set_entity_detail("cloud_providers", cloud_providers.uniq.sort)
     _set_entity_detail("cloud_hosted",  !cloud_providers.empty?)
 
+    ###
+    ### Kick off vuln checks if enabled for the project 
+    ###
+
     all_checks = []
     if @project.vulnerability_checks_enabled
+      
       ###
       ### Finally, start checks based on FP
       ###
@@ -381,6 +386,7 @@ class Uri < Intrigue::Task::BaseTask
       all_checks.flatten.compact.uniq.each do |t|
         start_task("task_autoscheduled", @project, nil, t, @entity, 1)
       end
+
     end
 
     # and save'm off
