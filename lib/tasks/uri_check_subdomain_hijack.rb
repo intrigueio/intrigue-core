@@ -38,7 +38,7 @@ class UriCheckSudomainHijack  < BaseTask
     response_body = http_get_body(uri)
 
     ###
-    ### Now that we know we're good to check...  
+    ### Now that we know we're good to check...
     ###
     if response_body
 
@@ -50,7 +50,7 @@ class UriCheckSudomainHijack  < BaseTask
 
       elsif response_body =~ /The site you are looking for could not be found./i
         _create_hijackable_subdomain_issue "Acquia", uri, "potential"
-      
+
       elsif response_body =~ /Oops\.<\/h2><p class=\"text-muted text-tight\">The page you\'re looking for doesn/i
         _create_hijackable_subdomain_issue "Aftership", uri, "potential"
 
@@ -65,7 +65,7 @@ class UriCheckSudomainHijack  < BaseTask
 
       elsif response_body =~ /If this is your website and you've just created it, try refreshing in a minute/i
         _create_hijackable_subdomain_issue "Anima", uri, "potential"
-        
+
       elsif response_body =~ /\<h1\>Oops\! We couldn\&\#8217\;t find that page\.<\/h1>/i
         _create_hijackable_subdomain_issue "BigCartel", uri, "potential"
 
@@ -74,7 +74,7 @@ class UriCheckSudomainHijack  < BaseTask
 
       elsif response_body =~ /<p class=\"bc-gallery-error-code\">Error Code: 404<\/p>/i
         _create_hijackable_subdomain_issue "Brightcove", uri, "potential"
-        
+
       elsif response_body =~ /<strong>Trying to access your account\?<\/strong>/i
         unless (uri =~ /createsend.com/ || uri =~ /amazonaws.com/)
           _create_hijackable_subdomain_issue "CampaignMonitor", uri, "potential"
@@ -83,8 +83,8 @@ class UriCheckSudomainHijack  < BaseTask
       elsif response_body =~ /There is no such company. Did you enter the right URL\?/i ||
         response_body =~ /Company Not Found/i
         _create_hijackable_subdomain_issue "Canny", uri, "potential"
-        
-      elsif response_body =~ /If you\'re moving your domain away from Cargo you/i || 
+
+      elsif response_body =~ /If you\'re moving your domain away from Cargo you/i ||
         (response_body =~ /<title>404 Not Found<\/title>/ && response_body =~ /auth.cargo.site/)
         _create_hijackable_subdomain_issue "CargoCollective", uri, "potential"
 
@@ -104,11 +104,11 @@ class UriCheckSudomainHijack  < BaseTask
 
       # unable to verify 2020-07-21
       #elsif response_body =~ /Oops… looks like you got lost/i
-      #  _create_hijackable_subdomain_issue "Frontify", uri, "potential" 
+      #  _create_hijackable_subdomain_issue "Frontify", uri, "potential"
 
       elsif response_body =~ /404: This page could not be found./i
         _create_hijackable_subdomain_issue "Gemfury", uri, "potential"
-      
+
       elsif response_body =~ /With GetResponse Landing Pages, lead generation has never been easier/i
         _create_hijackable_subdomain_issue "GetRespone", uri, "potential"
 
@@ -119,7 +119,7 @@ class UriCheckSudomainHijack  < BaseTask
         _create_hijackable_subdomain_issue("Github", uri, "potential") unless (uri =~ /github.com/ || uri =~ /github.io/)
 
       ####
-      
+
       #elsif response_body =~ /404 Blog is not found/i
       #  _create_hijackable_subdomain_issue "", uri, "potential"
 
@@ -179,8 +179,8 @@ class UriCheckSudomainHijack  < BaseTask
       #elsif response_body =~ /page not found/i
       #  _create_hijackable_subdomain_issue "UptimeRobot", uri, "potential"
 
-      elsif response_body =~ /The requested URL was not found on this server\./i
-        _create_hijackable_subdomain_issue("Unbounce", uri, "potential") unless (uri =~ /unbounce.com/)
+      #elsif response_body =~ /The requested URL was not found on this server\./i
+      #  _create_hijackable_subdomain_issue("Unbounce", uri, "potential") unless (uri =~ /unbounce.com/)
 
       elsif response_body =~ /This UserVoice subdomain is currently available\!/i
         _create_hijackable_subdomain_issue "UserVoice", uri, "potential"
@@ -190,7 +190,7 @@ class UriCheckSudomainHijack  < BaseTask
 
       elsif response_body =~ /Do you want to register \*\.wordpress\.com/i
         _create_hijackable_subdomain_issue "Wordpress", uri, "potential" unless (uri =~ /wordpress.com/)
-      
+
       elsif response_body =~ /Domain mapping upgrade for this domain not found. Please/i
         _create_hijackable_subdomain_issue "Wordpress", uri, "potential" unless (uri =~ /wordpress.com/)
 
