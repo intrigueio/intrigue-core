@@ -227,7 +227,7 @@ class UriCheckSudomainHijack  < BaseTask
 
       #elsif response_body =~ /page not found/i
       #  _create_hijackable_subdomain_issue "UptimeRobot", uri, "potential"
-
+        
       # Per this issue: https://github.com/EdOverflow/can-i-take-over-xyz/issues/11
       # unbounce is only vulnerable if the pointing cname has NEVER been claimed on unbouce. As this is a rare situation, unbounce is currently disabled.
       #elsif response_body =~ /The requested URL was not found on this server\./i
