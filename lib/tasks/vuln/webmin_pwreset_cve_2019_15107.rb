@@ -36,7 +36,7 @@ class  WebminPwresetCve201915107 < BaseTask
     our_version = nil
     fp = _get_entity_detail("fingerprint")
     fp.each do |f|
-      if f["product"] == "Webmin" && f["version"]
+      if f["product"] == "Webmin" && f["version"] != ""
         our_version = f["version"]
         break
       end
@@ -57,32 +57,32 @@ class  WebminPwresetCve201915107 < BaseTask
         res = http_request :post, url, nil, headers
 
         # make sure we got a response
-        unless res 
+        unless res
           _log "Not vulnerable, no response!"
           return
         end
 
-        # check to see if we got a failure immediately 
-        if res.code == 500 && res.body =~ /Password changing is not enabled/ 
+        # check to see if we got a failure immediately
+        if res.code == 500 && res.body =~ /Password changing is not enabled/
           _log "Not vulnerable, Password changing not enabled!"
           return
         end
 
         ### okay if we made it this far, create an issue
-        _create_linked_issue( "vulnerability_webmin_cve_2019_15107") 
-      else 
+        _create_linked_issue( "vulnerability_webmin_cve_2019_15107")
+      else
         _log "Version #{our_version} is newer than vulnerable version: #{vulnerable_version}"
 
-      end 
+      end
 
-    else 
+    else
       _log_error "Unable to get version, failing"
-      return 
+      return
     end
 
   end
 
- 
+
 end
 end
 end

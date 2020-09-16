@@ -1,7 +1,7 @@
 module Intrigue
   module Task
   class SonatypeNexusCve202010204 < BaseTask
-  
+
     def self.metadata
       {
         :name => "vuln/sonatype_nexus_cve_2020_10204",
@@ -25,13 +25,13 @@ module Intrigue
         :created_types => []
       }
     end
-  
+
     ## Default method, subclasses must override this
     def run
       super
-  
+
       require_enrichment
-  
+
       ###
       ### Just check version, as this requires an autheenticated account to exploit
       ###
@@ -40,26 +40,26 @@ module Intrigue
       our_version = nil
       fp = _get_entity_detail("fingerprint")
       fp.each do |f|
-        if f["product"] == "Nexus Repository Manager" && f["version"]
+        if f["product"] == "Nexus Repository Manager" && f["version"] != ""
           our_version = f["version"]
           break
         end
       end
-      
+
       if our_version
         _log "Got version: #{our_version}"
-      else 
+      else
         _log_error "Unable to get version, failing"
-        return 
+        return
       end
 
       if ::Versionomy.parse(our_version) <= ::Versionomy.parse("3.21.1")
         _log_good "Vulnerable!"
         _create_linked_issue "sonatype_nexus_cve_2020_10204"
-        return 
-      end 
+        return
+      end
 
-      
+
       ###
       ### In the future, consider an actual exploit, if user creds are provided
       ###
@@ -67,8 +67,8 @@ module Intrigue
       #uri = _get_entity_name
       #hostname = URI.parse(uri).hostname.to_s
       #csrf_token = "8d0c3bff-fe84-408e-a60d-c1c49eb07a17"
-      #cookie = "NX-ANTI-CSRF-TOKEN=#{csrf_token}; Path=/"      
-      
+      #cookie = "NX-ANTI-CSRF-TOKEN=#{csrf_token}; Path=/"
+
       #headers = {
       #  "Host" => "#{hostname}",
       #  "Referer" => "#{uri}",
@@ -96,15 +96,14 @@ module Intrigue
 
       #if response.code == "200" && response.body_utf8 =~ /1787569/
       #  _create_linked_issue "sonatype_nexus_cve_2020_10204", {"proof" => response.body_utf8 }
-      #else 
+      #else
       #  _log "Not vulnerable!"
       #  _log "Got response: #{response.code} #{response.body_utf8}"
       #end
-      
-  
+
+
     end
-  
+
   end
   end
   end
-  
