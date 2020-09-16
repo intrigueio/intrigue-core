@@ -20,7 +20,8 @@ module Intrigue
         references: [
           { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2020-8194" },
           { type: "exploit", uri: "https://www.rapid7.com/db/vulnerabilities/citrix-adc-cve-2020-8194" }
-        ]
+        ], 
+        check: "vuln/citrix_netscaler_codeinjection_cve_2020_8194"
       }.merge!(instance_details)
     end
 
