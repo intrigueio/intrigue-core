@@ -6,7 +6,7 @@ If you'd like assistance getting started or have development-related questions, 
 
 # Users
 
-To get started quickly and play around with an instance, head on over to the [Getting Started Guide](https://core.intrigue.io/getting-started/). We suggest the Docker image as a first place to start. It's actively built on the master branch of Intrigue Core.  
+To get started quickly and play around with an instance, head on over to the [Getting Started Guide](https://core.intrigue.io/getting-started/). We suggest the Docker image as a first place to start. It's actively built on the main branch of Intrigue Core.  
 
 ### Using the web interface
 
