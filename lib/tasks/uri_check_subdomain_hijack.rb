@@ -139,9 +139,14 @@ class UriCheckSudomainHijack  < BaseTask
       elsif (response_body =~ /Alias not configured\!/ || response_body =~ /Admin of this Helprace account needs to set up domain alias/)
         _create_hijackable_subdomain_issue "Help Race", uri, "potential"
 
-      # temporary disabled due to false positives - @shpendk.
-      #elsif (response_body =~ /Domain not found/ || response_body =~ /does not exist in our system/)
-      #  _create_hijackable_subdomain_issue("Hubspot", uri, "potential")
+
+      elsif (response_body =~ /Domain not found/ || response_body =~ /does not exist in our system/)
+        # possibly a hubspot entry. Resolve and check CNAME
+        resolved_name = resolve_name hostname, [Resolv::DNS::Resource::IN::CNAME]
+        if "#{resolved_name}" =~ /.*\.hubspot\.net$/
+          # target resolves to a subdomain of .hubspot.net. This is likely a valid finding.
+          _create_hijackable_subdomain_issue("Hubspot", uri, "potential")
+        end
 
       elsif response_body =~ /Uh oh. That page doesn\'t exist/i
         _create_hijackable_subdomain_issue("Intercom", uri, "potential") unless (uri =~ /intercom.com/ || uri =~ /intercom.io/)
