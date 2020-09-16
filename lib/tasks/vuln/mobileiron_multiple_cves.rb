@@ -28,7 +28,7 @@ class MobileIronCve202015506 < BaseTask
     our_version = nil
     fp = _get_entity_detail("fingerprint")
     fp.each do |f|
-      if f["product"] == "MobileIron" && f["version"] != ""
+      if f["vendor"] == "MobileIron" && f["product"] == "Core" && f["version"] != ""
         our_version = f["version"]
         break
       end
