@@ -68,7 +68,7 @@ gem 'whois'                   # dns_zone_transfer, whois
 gem 'whois-parser'            # whois
 gem 'whoisology',             :git => 'https://github.com/pentestify/whoisology.git'
 gem 'open3'
-gem 'excon'
+gem 'excon',                   :git => "https://github.com/intrigueio/excon.git"
 
 # swap these if developing on chrome_remote locally
 gem 'chrome_remote',          :git => 'https://github.com/intrigueio/chrome_remote.git'

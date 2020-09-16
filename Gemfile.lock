@@ -32,11 +32,17 @@ GIT
     dnsbl-client (1.0.4)
 
 GIT
+  remote: https://github.com/intrigueio/excon.git
+  revision: 70eee03a9ed27c4e66e60da1dadbdb5ee8d2460b
+  specs:
+    excon (0.76.0)
+
+GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: f2e56d2d07145574317765dda4cb54357d92d870
+  revision: 8bfc30ec7d67449fbe729e953111e80688bb21e7
   branch: main
   specs:
-    intrigue-ident (3.0.0)
+    intrigue-ident (3.0.1)
       dnsruby
       recog-intrigue
       snmp
@@ -191,7 +197,6 @@ GEM
       multi_json
     em-resolv-replace (1.1.3)
     eventmachine (1.2.7)
-    excon (0.76.0)
     faraday (0.17.3)
       multipart-post (>= 1.2, < 3)
     faraday-http-cache (1.3.1)
@@ -449,7 +454,7 @@ DEPENDENCIES
   elasticsearch
   em-resolv-replace
   eventmachine
-  excon
+  excon!
   faraday_middleware-aws-sigv4
   flareon
   fog-aws
