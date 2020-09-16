@@ -139,8 +139,9 @@ class UriCheckSudomainHijack  < BaseTask
       elsif (response_body =~ /Alias not configured\!/ || response_body =~ /Admin of this Helprace account needs to set up domain alias/)
         _create_hijackable_subdomain_issue "Help Race", uri, "potential"
 
-      elsif (response_body =~ /Domain not found/ || response_body =~ /does not exist in our system/)
-        _create_hijackable_subdomain_issue("Hubspot", uri, "potential")
+      # temporary disabled due to false positives - @shpendk.
+      #elsif (response_body =~ /Domain not found/ || response_body =~ /does not exist in our system/)
+      #  _create_hijackable_subdomain_issue("Hubspot", uri, "potential")
 
       elsif response_body =~ /Uh oh. That page doesn\'t exist/i
         _create_hijackable_subdomain_issue("Intercom", uri, "potential") unless (uri =~ /intercom.com/ || uri =~ /intercom.io/)
@@ -227,7 +228,7 @@ class UriCheckSudomainHijack  < BaseTask
 
       #elsif response_body =~ /page not found/i
       #  _create_hijackable_subdomain_issue "UptimeRobot", uri, "potential"
-        
+
       # Per this issue: https://github.com/EdOverflow/can-i-take-over-xyz/issues/11
       # unbounce is only vulnerable if the pointing cname has NEVER been claimed on unbouce. As this is a rare situation, unbounce is currently disabled.
       #elsif response_body =~ /The requested URL was not found on this server\./i
