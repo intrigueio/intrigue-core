@@ -388,18 +388,19 @@ module Dns
 
   def collect_txt_records(lookup_name)
     _log "Collecting TXT records"
-    response = resolve(lookup_name, [Resolv::DNS::Resource::IN::TXT])
-    return [] unless response && !response.empty?
-
     txt_records = []
-    response.each do |r|
-      r["lookup_details"].each do |record|
-        next unless record["response_record_type"] == "TXT"
-        txt_records << record["response_record_data"]
+    5.times do 
+      response = resolve(lookup_name, [Resolv::DNS::Resource::IN::TXT])
+      return [] unless response && !response.empty?
+
+      response.each do |r|
+        r["lookup_details"].each do |record|
+          next unless record["response_record_type"] == "TXT"
+          txt_records << record["response_record_data"]
+        end
       end
     end
-
-  txt_records
+  txt_records.flatten.uniq
   end
 
   def collect_whois_data(lookup_name)
