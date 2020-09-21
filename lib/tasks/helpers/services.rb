@@ -22,7 +22,8 @@ module Services
       existing_ports = a.get_detail("ports")
       if existing_ports
         existing_ports.each do |p|
-          _create_network_service_entity(a,p["number"],p["protocol"],{}) 
+          _log "Creating network service on #{a.name} #{p["number"]} #{p["protocol"]}"
+          _create_network_service_entity(a, p["number"], p["protocol"],{}) 
         end
       end
     end
@@ -103,6 +104,7 @@ module Services
     hosts << ip_entity
     # add everything we got from the cert
     cert_entities.each {|ce| hosts << ce} 
+    
     # and add our aliases
     if ip_entity.aliases.count > 0
       ip_entity.aliases.each do |al|
@@ -215,7 +217,7 @@ module Services
         
     # Create our queue of work from the checks in brute_list
     input_queue = Queue.new
-    hosts.compact.each do |item|
+    hosts.uniq.compact.each do |item|
       input_queue << item
     end
     
