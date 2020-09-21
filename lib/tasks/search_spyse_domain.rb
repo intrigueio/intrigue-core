@@ -60,9 +60,9 @@ class SearchSpyseDomain < BaseTask
       end
 
       # Create SslCertificate
-      if result["cert_summary"]["fingerprint_sha256"]
-        _create_entity("SslCertificate", "name" => result["cert_summary"]["fingerprint_sha256"], "extended_spyse" => result["cert_summary"])
-      end
+      #if result["cert_summary"]["fingerprint_sha256"]
+      #  _create_entity("SslCertificate", "name" => result["cert_summary"]["fingerprint_sha256"], "extended_spyse" => result["cert_summary"])
+      #end
 
       # Create related IpAddress, physical location and ISP organization
       if result["dns_records"]
