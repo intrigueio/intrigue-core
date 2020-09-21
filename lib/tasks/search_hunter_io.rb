@@ -34,6 +34,7 @@ class SearchHunterIo < BaseTask
 
     response = http_get_body(url)
     JSON.parse(response)["data"]["emails"].each do |e|
+      next unless e 
       _create_entity "EmailAddress", "name" => e["value"], "hunterio" => e
     end
 
