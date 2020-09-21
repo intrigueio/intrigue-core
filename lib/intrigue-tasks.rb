@@ -20,7 +20,7 @@ require 'webrick'
 ### In the case where we're a gem, they're not yet available. add them as deps
 ###
 begin  # try to load runtime deps 
-  require 'excon'
+  
   require 'aws-sdk-route53'
   require 'aws-sdk-s3'
   require 'aws-sdk-sqs'
@@ -50,6 +50,7 @@ begin  # try to load runtime deps
   require 'snmp'
   require 'spidr'
   require 'towerdata_api'
+  require 'typhoeus'
   require 'versionomy'
   require 'whois'
   require 'whois-parser'

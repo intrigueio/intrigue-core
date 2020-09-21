@@ -32,17 +32,11 @@ GIT
     dnsbl-client (1.0.4)
 
 GIT
-  remote: https://github.com/intrigueio/excon.git
-  revision: 70eee03a9ed27c4e66e60da1dadbdb5ee8d2460b
-  specs:
-    excon (0.76.0)
-
-GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: 8bfc30ec7d67449fbe729e953111e80688bb21e7
+  revision: 126eb39f83b47b86d0fde7ab54b05b1bf64662e6
   branch: main
   specs:
-    intrigue-ident (3.0.1)
+    intrigue-ident (3.0.2)
       dnsruby
       recog-intrigue
       snmp
@@ -196,7 +190,10 @@ GEM
       faraday (>= 0.14, < 1)
       multi_json
     em-resolv-replace (1.1.3)
+    ethon (0.12.0)
+      ffi (>= 1.3.0)
     eventmachine (1.2.7)
+    excon (0.76.0)
     faraday (0.17.3)
       multipart-post (>= 1.2, < 3)
     faraday-http-cache (1.3.1)
@@ -206,6 +203,7 @@ GEM
     faraday_middleware-aws-sigv4 (0.3.0)
       aws-sigv4 (~> 1.0)
       faraday (>= 0.15)
+    ffi (1.13.1)
     filesize (0.2.0)
     flareon (1.0.5)
       command_lion (= 2.0.1)
@@ -417,6 +415,8 @@ GEM
     tilt (2.0.10)
     timers (4.3.2)
     towerdata_api (1.3.1)
+    typhoeus (1.4.0)
+      ethon (>= 0.9.0)
     tzinfo (1.2.7)
       thread_safe (~> 0.1)
     uber (0.1.0)
@@ -454,7 +454,6 @@ DEPENDENCIES
   elasticsearch
   em-resolv-replace
   eventmachine
-  excon!
   faraday_middleware-aws-sigv4
   flareon
   fog-aws
@@ -504,6 +503,7 @@ DEPENDENCIES
   sqlite3
   thor
   towerdata_api
+  typhoeus
   versionomy
   whois
   whois-parser

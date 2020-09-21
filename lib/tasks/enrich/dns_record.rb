@@ -41,7 +41,7 @@ class DnsRecord < Intrigue::Task::BaseTask
     return unless results.count > 0
 
     # Create new entities if we found vhosts / aliases
-    _log "Creating vhost services"
+    _log "Creating services for all aliases (vhosts)"
     _create_vhost_entities(lookup_name)
 
     _log "Grabbing resolutions"
@@ -97,6 +97,9 @@ class DnsRecord < Intrigue::Task::BaseTask
       end
     end 
 
+    # now, we need to go back through all affiliated ips and create the port
+    # on any affiliated IPs, as this vhost might matter 
+
     ###
     ### Finally, cloud provider determination
     ###
@@ -123,22 +126,6 @@ class DnsRecord < Intrigue::Task::BaseTask
       end
 
     end
-
-    def _create_vhost_entities(lookup_name)
-      ### For each associated IpAddress, make sure we create any additional
-      ### uris if we already have scan results
-      ###
-      @entity.aliases.each do |a|
-        next unless a.type_string == "IpAddress" #  only ips
-        existing_ports = a.get_detail("ports")
-        if existing_ports
-          existing_ports.each do |p|
-            _create_network_service_entity(a,p["number"],p["protocol"],{}) 
-          end
-        end
-      end
-    end
-
 
 end
 end

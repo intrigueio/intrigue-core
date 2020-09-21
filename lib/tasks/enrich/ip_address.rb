@@ -48,9 +48,9 @@ class IpAddress < Intrigue::Task::BaseTask
       # create a domain for this entity
       entity = create_dns_entity_from_string(result["name"], @entity) if @entity.scoped?
 
-      # always create an unscoped domain for this entity
-      #domain_name = parse_domain_name(result["name"])
-      #create_unscoped_dns_entity_from_string(domain_name) if domain_name && @entity.scoped?
+      # always create a for this entity
+      domain_name = parse_domain_name(result["name"])
+      create_dns_entity_from_string(domain_name)
 
       # if we're external, let's see if this matches 
       # a known dev or staging server pattern, and if we're internal, just
@@ -64,7 +64,11 @@ class IpAddress < Intrigue::Task::BaseTask
         end
       end
     end
-    
+
+    # Create new entities if we found vhosts / aliases
+    _log "Creating services for all aliases (vhosts)"
+    _create_vhost_entities(lookup_name)
+        
     # get ASN
     # look up the details in team cymru's whois
     _log "Using Team Cymru's Whois Service..."
@@ -152,6 +156,7 @@ class IpAddress < Intrigue::Task::BaseTask
     #_set_entity_detail "cloud_hosted",  !cloud_providers.empty?
 
   end
+
 
 end
 end
