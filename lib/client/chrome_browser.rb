@@ -57,6 +57,8 @@ module Intrigue
 
     def navigate_and_capture(url, timeout=45)
 
+      return nil unless @chrome
+
       chrome_port = "#{ENV["CHROME_PORT"]}".to_i || 9222
 
       puts "Chrome navigating and capturing: #{url}"

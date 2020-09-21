@@ -13,6 +13,22 @@ module Services
 
   include Intrigue::Task::Web
 
+  def _create_vhost_entities(lookup_name)
+    ### For each associated IpAddress, make sure we create any additional
+    ### uris if we already have scan results
+    ###
+    @entity.aliases.each do |a|
+      next unless a.type_string == "IpAddress" #  only ips
+      existing_ports = a.get_detail("ports")
+      if existing_ports
+        existing_ports.each do |p|
+          _log "Creating network service on #{a.name} #{p["number"]} #{p["protocol"]}"
+          _create_network_service_entity(a, p["number"], p["protocol"],{}) 
+        end
+      end
+    end
+  end
+
   def _create_network_service_entity(ip_entity,port_num,protocol="tcp",generic_details={})
 
     # first, save the port details on the ip_entity
@@ -88,6 +104,7 @@ module Services
     hosts << ip_entity
     # add everything we got from the cert
     cert_entities.each {|ce| hosts << ce} 
+    
     # and add our aliases
     if ip_entity.aliases.count > 0
       ip_entity.aliases.each do |al|
@@ -200,7 +217,7 @@ module Services
         
     # Create our queue of work from the checks in brute_list
     input_queue = Queue.new
-    hosts.compact.each do |item|
+    hosts.uniq.compact.each do |item|
       input_queue << item
     end
     

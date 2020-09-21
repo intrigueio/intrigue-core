@@ -38,7 +38,7 @@ class UriCheckSudomainHijack  < BaseTask
     response_body = http_get_body(uri)
 
     ###
-    ### Now that we know we're good to check...  
+    ### Now that we know we're good to check...
     ###
     if response_body
 
@@ -50,7 +50,7 @@ class UriCheckSudomainHijack  < BaseTask
 
       elsif response_body =~ /The site you are looking for could not be found./i
         _create_hijackable_subdomain_issue "Acquia", uri, "potential"
-      
+
       elsif response_body =~ /Oops\.<\/h2><p class=\"text-muted text-tight\">The page you\'re looking for doesn/i
         _create_hijackable_subdomain_issue "Aftership", uri, "potential"
 
@@ -65,7 +65,7 @@ class UriCheckSudomainHijack  < BaseTask
 
       elsif response_body =~ /If this is your website and you've just created it, try refreshing in a minute/i
         _create_hijackable_subdomain_issue "Anima", uri, "potential"
-        
+
       elsif response_body =~ /\<h1\>Oops\! We couldn\&\#8217\;t find that page\.<\/h1>/i
         _create_hijackable_subdomain_issue "BigCartel", uri, "potential"
 
@@ -74,7 +74,7 @@ class UriCheckSudomainHijack  < BaseTask
 
       elsif response_body =~ /<p class=\"bc-gallery-error-code\">Error Code: 404<\/p>/i
         _create_hijackable_subdomain_issue "Brightcove", uri, "potential"
-        
+
       elsif response_body =~ /<strong>Trying to access your account\?<\/strong>/i
         unless (uri =~ /createsend.com/ || uri =~ /amazonaws.com/)
           _create_hijackable_subdomain_issue "CampaignMonitor", uri, "potential"
@@ -83,8 +83,8 @@ class UriCheckSudomainHijack  < BaseTask
       elsif response_body =~ /There is no such company. Did you enter the right URL\?/i ||
         response_body =~ /Company Not Found/i
         _create_hijackable_subdomain_issue "Canny", uri, "potential"
-        
-      elsif response_body =~ /If you\'re moving your domain away from Cargo you/i || 
+
+      elsif response_body =~ /If you\'re moving your domain away from Cargo you/i ||
         (response_body =~ /<title>404 Not Found<\/title>/ && response_body =~ /auth.cargo.site/)
         _create_hijackable_subdomain_issue "CargoCollective", uri, "potential"
 
@@ -104,11 +104,11 @@ class UriCheckSudomainHijack  < BaseTask
 
       # unable to verify 2020-07-21
       #elsif response_body =~ /Oops… looks like you got lost/i
-      #  _create_hijackable_subdomain_issue "Frontify", uri, "potential" 
+      #  _create_hijackable_subdomain_issue "Frontify", uri, "potential"
 
       elsif response_body =~ /404: This page could not be found./i
         _create_hijackable_subdomain_issue "Gemfury", uri, "potential"
-      
+
       elsif response_body =~ /With GetResponse Landing Pages, lead generation has never been easier/i
         _create_hijackable_subdomain_issue "GetRespone", uri, "potential"
 
@@ -119,9 +119,9 @@ class UriCheckSudomainHijack  < BaseTask
         _create_hijackable_subdomain_issue("Github", uri, "potential") unless (uri =~ /github.com/ || uri =~ /github.io/)
 
       ####
-      
-      elsif response_body =~ /404 Blog is not found/i
-        _create_hijackable_subdomain_issue "", uri, "potential"
+
+      #elsif response_body =~ /404 Blog is not found/i
+      #  _create_hijackable_subdomain_issue "", uri, "potential"
 
       elsif response_body =~ /No such app/i
 
@@ -136,6 +136,18 @@ class UriCheckSudomainHijack  < BaseTask
       elsif response_body =~ /We could not find what you're looking for\./i
         _create_hijackable_subdomain_issue "Help Juice", uri, "potential"
 
+      elsif (response_body =~ /Alias not configured\!/ || response_body =~ /Admin of this Helprace account needs to set up domain alias/)
+        _create_hijackable_subdomain_issue "Help Race", uri, "potential"
+
+
+      elsif (response_body =~ /Domain not found/ || response_body =~ /does not exist in our system/)
+        # possibly a hubspot entry. Resolve and check CNAME
+        resolved_name = resolve_name hostname, [Resolv::DNS::Resource::IN::CNAME]
+        if "#{resolved_name}" =~ /.*\.hubspot\.net$/
+          # target resolves to a subdomain of .hubspot.net. This is likely a valid finding.
+          _create_hijackable_subdomain_issue("Hubspot", uri, "potential")
+        end
+
       elsif response_body =~ /Uh oh. That page doesn\'t exist/i
         _create_hijackable_subdomain_issue("Intercom", uri, "potential") unless (uri =~ /intercom.com/ || uri =~ /intercom.io/)
 
@@ -145,17 +157,32 @@ class UriCheckSudomainHijack  < BaseTask
       elsif response_body =~ /No Site For Domain/i
         _create_hijackable_subdomain_issue "Kinsta", uri, "potential"
 
+      elsif response_body =~ /It looks like you\'re lost/i
+        _create_hijackable_subdomain_issue "Landingi", uri, "potential"
+
       elsif response_body =~ /It looks like you may have taken a wrong turn somewhere/i
         _create_hijackable_subdomain_issue "LaunchRock", uri, "potential"  unless (uri =~ /launchrock.com/ || uri =~ /amazonaws.com/)
 
       elsif response_body =~ /Unrecognized domain/i
         _create_hijackable_subdomain_issue "Mashery", uri, "potential" unless (uri =~ /mashery.com/ || uri =~ /amazonaws.com/)
 
+      elsif (response_body =~ /ngrok\.io not found/ || response_body =~ /Tunnel \*\.ngrok\.io not found/)
+        _create_hijackable_subdomain_issue "Ngrok", uri, "potential"
+
       elsif response_body =~ /The gods are wise, but do not know of the site which you seek\!/i
         _create_hijackable_subdomain_issue "Pantheon", uri, "potential" unless (uri =~ /pantheon.io/ || uri =~ /amazonaws.com/)
 
+      elsif (response_body =~ /Public Report Not Activated/ || response_body =~ /This public report page has not been activated by the user/)
+        _create_hijackable_subdomain_issue "Pingdom", uri, "potential"
+
+      elsif response_body =~ /If you need immediate assistance, please contact \<a href\=\"mailto\:support\@proposify\.biz/
+        _create_hijackable_subdomain_issue "Propsify", uri, "potential"
+
       elsif response_body =~ /Project doesnt exist... yet!/i
         _create_hijackable_subdomain_issue "Readme.io", uri, "potential" unless (uri =~ /readme.io/ || uri =~ /amazonaws.com/)
+
+      elsif response_body =~ /unknown to Read the Docs/
+        _create_hijackable_subdomain_issue "Readthedocs", uri, "potential"
 
       elsif response_body =~ /Sorry, this shop is currently unavailable./i
         _create_hijackable_subdomain_issue("Shopify", uri, "potential") unless (uri =~ /shopify.com/ || uri =~ /myshopify.com/)
@@ -167,8 +194,24 @@ class UriCheckSudomainHijack  < BaseTask
       #elsif response_body =~ /page not found/i
       #  _create_hijackable_subdomain_issue "Strikingly", uri, "potential"
 
+      elsif response_body =~ /We can\'t find this \<a href=\"https\:\/\/simplebooklet\.com/i
+        _create_hijackable_subdomain_issue "Simplebooklet", uri, "potential"
+
+      elsif (response_body =~ /Job Board Is Unavailable/ || response_body =~ /This job board website is either expired/ || response_body =~ /This job board website is either expired or its domain name is invalid/)
+        _create_hijackable_subdomain_issue "Smartjob", uri, "potential"
+
+      elsif response_body =~ /Domain is not configured/i
+        _create_hijackable_subdomain_issue "Smartling", uri, "potential"
+
+      elsif response_body =~ /\{\"text\"\:\"Page Not Found\"/i
+        _create_hijackable_subdomain_issue "Smugmug", uri, "potential"
+
       elsif response_body =~ /project not found/i
         _create_hijackable_subdomain_issue "Surge.sh", uri, "potential"
+
+      # potentially may lead to false positives, adding for now but will monitor - shpendk
+      elsif response_body =~ /data\-html\-name/i
+        _create_hijackable_subdomain_issue "Surveygizmo", uri, "potential"
 
       elsif response_body =~ /Whatever you were looking for doesn\'t currently exist at this address/i
         _create_hijackable_subdomain_issue "Tumblr", uri, "potential" unless (uri =~ /tumblr.com/ || uri =~ /yahoo.com/)
@@ -176,23 +219,54 @@ class UriCheckSudomainHijack  < BaseTask
       elsif response_body =~ /Please renew your subscription/i
         _create_hijackable_subdomain_issue "Tilda", uri, "potential"
 
+      elsif response_body =~ /Oops \- We didn\'t find your site/i
+        _create_hijackable_subdomain_issue "Teamwork", uri, "potential"
+
+      elsif response_body =~ /You may have mistyped the address or the page may have moved/i
+        _create_hijackable_subdomain_issue "Thinkific", uri, "potential"
+
+      elsif (response_body =~ /Building a brand of your own\?/ || response_body =~ /to target URL\: \<a href\=\"https\:\/\/tictail\.com/ || response_body =~ /Start selling on Tictail/)
+        _create_hijackable_subdomain_issue "Tictail", uri, "potential"
+
+      elsif response_body =~ /Non-hub domain\, The URL you\'ve accessed does not provide a hub/i
+        _create_hijackable_subdomain_issue "Uberflip", uri, "potential"
+
       #elsif response_body =~ /page not found/i
       #  _create_hijackable_subdomain_issue "UptimeRobot", uri, "potential"
 
-      elsif response_body =~ /The requested URL was not found on this server\./i
-        _create_hijackable_subdomain_issue("Unbounce", uri, "potential") unless (uri =~ /unbounce.com/)
+      # Per this issue: https://github.com/EdOverflow/can-i-take-over-xyz/issues/11
+      # unbounce is only vulnerable if the pointing cname has NEVER been claimed on unbouce. As this is a rare situation, unbounce is currently disabled.
+      #elsif response_body =~ /The requested URL was not found on this server\./i
+      #  _create_hijackable_subdomain_issue("Unbounce", uri, "potential") unless (uri =~ /unbounce.com/)
 
       elsif response_body =~ /This UserVoice subdomain is currently available\!/i
         _create_hijackable_subdomain_issue "UserVoice", uri, "potential"
 
+      elsif response_body =~ /Looks like you\'ve traveled too far into cyberspace/i
+        _create_hijackable_subdomain_issue "Vend", uri, "potential"
+
       elsif response_body =~ /domain is already connected to a Webflow site/i
         _create_hijackable_subdomain_issue "Webflow", uri, "potential" unless (uri =~ /webflow.io/)
 
+      elsif response_body =~ /https\:\/\/www\.wishpond\.com\/404\?campaign\=true/i
+        _create_hijackable_subdomain_issue "Wishpond", uri, "potential"
+
       elsif response_body =~ /Do you want to register \*\.wordpress\.com/i
         _create_hijackable_subdomain_issue "Wordpress", uri, "potential" unless (uri =~ /wordpress.com/)
-      
+
       elsif response_body =~ /Domain mapping upgrade for this domain not found. Please/i
         _create_hijackable_subdomain_issue "Wordpress", uri, "potential" unless (uri =~ /wordpress.com/)
+
+      # potentially may lead to false positives, adding for now but will monitor - shpendk
+      elsif response_body =~ /Company not found/i
+        _create_hijackable_subdomain_issue "Worksites", uri, "potential"
+
+      elsif (response_body =~ /Profile not found/ || response_body =~ /Hmmm\.\.\.\.something is not right/)
+        _create_hijackable_subdomain_issue "Wufoo", uri, "potential"
+
+      # disabled per https://github.com/EdOverflow/can-i-take-over-xyz
+      #elsif response_body =~ /this help center no longer exists/i
+      #  _create_hijackable_subdomain_issue "Zendesk", uri, "potential"
 
       # disabled per https://github.com/EdOverflow/can-i-take-over-xyz
       #elsif response_body =~ /This domain is successfully pointed at WP Engine, but is not configured/i

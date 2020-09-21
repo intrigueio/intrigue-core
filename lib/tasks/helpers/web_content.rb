@@ -34,7 +34,7 @@ module WebContent
       ###
       ### Match it up with ident  
       ###
-      ident_matches = generate_http_requests_and_check(s, {'only-check-base-url':true})
+      ident_matches = generate_http_requests_and_check(s, {'only-check-base-url':true, }) # "#{url}"
       js_fp_matches = ident_matches["fingerprint"].select{|x| x["tags"] && x["tags"].include?("Javascript") }
 
       if js_fp_matches.count > 0
@@ -51,7 +51,7 @@ module WebContent
     ### Maybe re-enable eventually
     #new_libraries = gather_javascript_libraries(session, uri)
 
-  components
+  components.compact
   end
 
 

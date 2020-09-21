@@ -29,6 +29,7 @@ require_relative 'lib/initialize/json_export_file'
 require_relative 'lib/initialize/queue'
 require_relative 'lib/initialize/sidekiq_profiler'
 require_relative 'lib/initialize/string'
+require_relative 'lib/initialize/typhoeus'
 
 # load up our system config
 require_relative 'lib/system/config'
@@ -218,13 +219,6 @@ end
 
 # Core libraries
 require_relative "lib/all"
-
-# Monkey patches, post load
-require_relative 'lib/initialize/excon'
-
-# use redirect following w/ excon
-Excon.defaults[:middlewares] << Excon::Middleware::RedirectFollower
-
 
 #configure sentry.io error reporting (only if a key was provided)
 if (Intrigue::Core::System::Config.config && Intrigue::Core::System::Config.config["sentry_dsn"])

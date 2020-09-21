@@ -4,14 +4,14 @@ module Data
 
   def dev_server_name_patterns
     [
-      /-stage$/, /-staging$/,/-dev$/,/-development$/,/-test$/,/-qa$/, 
+      /-stage$/,/-staging$/,/-dev$/,/-development$/,/-test$/,/-qa$/,
       /^staging-/,/^dev-/,/^development-/,/^test-/,/^qa-/,
       /^staging\./,/^dev\./,/^development\./,/^test\./,/^qa\./,
       /^test/,/^staging/,/^qa/
     ] # possibly too aggressive
   end
 
-  def _service_name_for(port_num, proto)
+  def _service_name_for(port_num,proto)
     service_name = nil
     file = File.open("#{$intrigue_basedir}/data/service-names-port-numbers.csv","r")
     file.read.split("\n").each do |line|
@@ -32,24 +32,24 @@ module Data
     file.read.split("\n").each do |line|
       next unless line =~ /#{filter}/
       range = line.split(",").first
-      ranges << range.gsub(/^0*/, "").gsub("/8",".0.0.0/8")
+      ranges << range.gsub(/^0*/,"").gsub("/8",".0.0.0/8")
     end
   ranges
   end
 
   def simple_web_creds
    [
-      {:username => "admin",          :password => "admin"},
-      {:username => "administrator",  :password => "administrator"},
-      {:username => "anonymous",      :password => "anonymous"},
-      {:username => "cisco",          :password => "cisco"},
-      {:username => "demo",           :password => "demo"},
-      {:username => "demo1",          :password => "demo1"},
-      {:username => "guest",          :password => "guest"},
-      {:username => "test",           :password => "test"},
-      {:username => "test1",          :password => "test1"},
-      {:username => "test123",        :password => "test123"},
-      {:username => "test123!!",      :password => "test123!!"}
+      {:username => "admin",         :password => "admin"},
+      {:username => "administrator", :password => "administrator"},
+      {:username => "anonymous",     :password => "anonymous"},
+      {:username => "cisco",         :password => "cisco"},
+      {:username => "demo",          :password => "demo"},
+      {:username => "demo1",         :password => "demo1"},
+      {:username => "guest",         :password => "guest"},
+      {:username => "test",          :password => "test"},
+      {:username => "test1",         :password => "test1"},
+      {:username => "test123",       :password => "test123"},
+      {:username => "test123!!",     :password => "test123!!"}
     ]
   end
 
@@ -91,7 +91,7 @@ module Data
       "distilnetworks.com",
       "edgecastcdn.net",
       "helloworld.com",
-      "hexagon-cdn.com", # TODO - worth revisiting, may include related hosts
+      "hexagon-cdn.com",# TODO - worth revisiting,may include related hosts
       "fastly.net",
       "freshdesk.com",
       "jiveon.com",
@@ -151,10 +151,18 @@ module Data
     tcp_ports << "22,"
     tcp_ports << "23,"
     tcp_ports << "35,"
-    tcp_ports << "80,81,"
+    tcp_ports << "53,"
+    tcp_ports << "80,"
+    tcp_ports << "81,"
+    tcp_ports << "106,"
+    tcp_ports << "110,"
+    tcp_ports << "143,"
     tcp_ports << "443,"
     tcp_ports << "445,"
-    tcp_ports << "502,503,"
+    tcp_ports << "465,"
+    tcp_ports << "502,"
+    tcp_ports << "503,"
+    tcp_ports << "587,"
     tcp_ports << "993,"             # imaps
     tcp_ports << "995,"             # pops
     tcp_ports << "1723,"            # pptp
@@ -165,19 +173,22 @@ module Data
     tcp_ports << "3306,"            # mysql
     tcp_ports << "3389,"            # RDP
     tcp_ports << "3888,"
+    tcp_ports << "4190,"
     tcp_ports << "4443,"            # HTTPS
     tcp_ports << "4444,"            # Bind
-    tcp_ports << "4505,4506,"       # salt stack
+    tcp_ports << "4505,"            # salt stack
+    tcp_ports << "4506,"            # salt stack
     tcp_ports << "4786,"
     tcp_ports << "5000,"            # Oracle WebLogic Server Node Manager Port	
     tcp_ports << "5556,"
     tcp_ports << "5900,5901,"       # vnc
     tcp_ports << "6379,"            # redis 
     tcp_ports << "6443,"
-    tcp_ports << "7001,7002,"       # Oracle WebLogic Server Listen Port for Administration Server 
-                                    # Oracle WebLogic Server SSL Listen Port for Administration Server	
+    tcp_ports << "7001,"            # Oracle WebLogic Server Listen Port for Administration Server 
+    tcp_ports << "7002,"            # Oracle WebLogic Server Listen Port for Administration Server 
     tcp_ports << "7443,"        
     tcp_ports << "7777,"
+    tcp_ports << "8000,"
     tcp_ports << "8001,"            # Oracle WebLogic Server Listen Port for Managed Server	
     tcp_ports << "8009,"
     tcp_ports << "8032,"
@@ -212,7 +223,7 @@ module Data
     return nil unless File.exist? "#{$intrigue_basedir}/data/geolitecity/GeoLite2-City.mmdb"
 
     begin 
-      db = MaxMindDB.new("#{$intrigue_basedir}/data/geolitecity/GeoLite2-City.mmdb", MaxMindDB::LOW_MEMORY_FILE_READER)
+      db = MaxMindDB.new("#{$intrigue_basedir}/data/geolitecity/GeoLite2-City.mmdb",MaxMindDB::LOW_MEMORY_FILE_READER)
 
       _log "looking up location for #{ip}"
 
@@ -229,7 +240,7 @@ module Data
       hash[:continent_code] = location.to_hash["continent"]["code"] if location.to_hash["continent"]
       hash[:country] = location.to_hash["country"]["names"]["en"] if location.to_hash["country"]
       hash[:country_code] = location.to_hash["country"]["iso_code"] if location.to_hash["country"]
-      hash.merge(location.to_hash["location"].map { |k, v| [k.to_sym, v] }.to_h) if location.to_hash["location"]
+      hash.merge(location.to_hash["location"].map { |k,v| [k.to_sym,v] }.to_h) if location.to_hash["location"]
       hash[:postal] = location.to_hash["postal"]["code"] if location.to_hash["postal"]
       hash[:registered_country] = location.to_hash["registered_country"]["names"]["en"] if location.to_hash["registered_country"]
       hash[:registered_country_code] = location.to_hash["registered_country"]["iso_code"] if location.to_hash["registered_country"]

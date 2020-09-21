@@ -33,10 +33,10 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: e97f974417147df8fa27dcd8f73b7efbb587b942
+  revision: 126eb39f83b47b86d0fde7ab54b05b1bf64662e6
   branch: main
   specs:
-    intrigue-ident (2.0.2)
+    intrigue-ident (3.0.2)
       dnsruby
       recog-intrigue
       snmp
@@ -107,7 +107,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (6.0.3.2)
+    activesupport (6.0.3.3)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
@@ -134,28 +134,27 @@ GEM
       async-http (~> 0.42)
       protocol-http (~> 0.7)
     aws-eventstream (1.1.0)
-    aws-partitions (1.354.0)
-    aws-sdk-core (3.104.3)
+    aws-partitions (1.368.0)
+    aws-sdk-core (3.105.0)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
       aws-sigv4 (~> 1.1)
       jmespath (~> 1.0)
-    aws-sdk-kms (1.36.0)
+    aws-sdk-kms (1.37.0)
       aws-sdk-core (~> 3, >= 3.99.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-route53 (1.40.0)
+    aws-sdk-route53 (1.42.0)
       aws-sdk-core (~> 3, >= 3.99.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-s3 (1.78.0)
+    aws-sdk-s3 (1.80.0)
       aws-sdk-core (~> 3, >= 3.104.3)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.1)
-    aws-sdk-sqs (1.30.0)
+    aws-sdk-sqs (1.32.0)
       aws-sdk-core (~> 3, >= 3.99.0)
       aws-sigv4 (~> 1.1)
-    aws-sigv4 (1.2.1)
+    aws-sigv4 (1.2.2)
       aws-eventstream (~> 1, >= 1.0.2)
-    backports (3.18.1)
     blockenspiel (0.5.0)
     builder (3.2.4)
     byebug (11.1.3)
@@ -191,6 +190,8 @@ GEM
       faraday (>= 0.14, < 1)
       multi_json
     em-resolv-replace (1.1.3)
+    ethon (0.12.0)
+      ffi (>= 1.3.0)
     eventmachine (1.2.7)
     excon (0.76.0)
     faraday (0.17.3)
@@ -202,12 +203,13 @@ GEM
     faraday_middleware-aws-sigv4 (0.3.0)
       aws-sigv4 (~> 1.0)
       faraday (>= 0.15)
+    ffi (1.13.1)
     filesize (0.2.0)
     flareon (1.0.5)
       command_lion (= 2.0.1)
       httparty (~> 0.16.2)
       parallel (~> 1.12.1)
-    fog-aws (3.6.6)
+    fog-aws (3.6.7)
       fog-core (~> 2.1)
       fog-json (~> 1.1)
       fog-xml (~> 0.1)
@@ -226,7 +228,7 @@ GEM
     foreman (0.87.2)
     formatador (0.2.5)
     god (0.13.7)
-    google-api-client (0.43.0)
+    google-api-client (0.44.1)
       addressable (~> 2.5, >= 2.5.1)
       googleauth (~> 0.9)
       httpclient (>= 2.8.1, < 3.0)
@@ -240,7 +242,7 @@ GEM
     google-cloud-env (1.3.3)
       faraday (>= 0.17.3, < 2.0)
     google-cloud-errors (1.0.1)
-    google-cloud-storage (1.27.0)
+    google-cloud-storage (1.28.0)
       addressable (~> 2.5)
       digest-crc (~> 0.4)
       google-api-client (~> 0.33)
@@ -273,7 +275,7 @@ GEM
     jsobfu (0.4.2)
       rkelly-remix
     json (2.3.1)
-    jwt (2.2.1)
+    jwt (2.2.2)
     little-plugger (1.1.4)
     logging (2.3.0)
       little-plugger (~> 1.1)
@@ -286,7 +288,7 @@ GEM
     mime-types-data (3.2020.0512)
     mini_mime (1.0.2)
     mini_portile2 (2.4.0)
-    minitest (5.14.1)
+    minitest (5.14.2)
     multi_json (1.15.0)
     multi_xml (0.6.0)
     multipart-post (2.1.1)
@@ -296,7 +298,7 @@ GEM
     net-http2 (0.18.2)
       http-2 (~> 0.10.1)
     netrc (0.11.0)
-    nio4r (2.5.2)
+    nio4r (2.5.3)
     nokogiri (1.10.10)
       mini_portile2 (~> 2.4.0)
     open3 (0.1.0)
@@ -308,7 +310,7 @@ GEM
     protocol-http (0.20.0)
     protocol-http1 (0.13.0)
       protocol-http (~> 0.19)
-    protocol-http2 (0.14.0)
+    protocol-http2 (0.14.1)
       protocol-hpack (~> 1.4)
       protocol-http (~> 0.18)
     pry (0.13.1)
@@ -317,22 +319,22 @@ GEM
     pry-byebug (3.9.0)
       byebug (~> 11.0)
       pry (~> 0.13.0)
-    public_suffix (4.0.5)
-    puma (4.3.5)
+    public_suffix (4.0.6)
+    puma (4.3.6)
       nio4r (~> 2.0)
     rack (2.2.3)
     rack-cors (1.1.1)
       rack (>= 2.0.0)
-    rack-protection (2.0.8.1)
+    rack-protection (2.1.0)
       rack
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
     rake (13.0.1)
     rb-readline (0.5.5)
-    recog-intrigue (2.3.7)
+    recog-intrigue (2.3.14)
       nokogiri
-    redis (4.2.1)
-    redis-namespace (1.7.0)
+    redis (4.2.2)
+    redis-namespace (1.8.0)
       redis (>= 3.0.4)
     representable (3.0.4)
       declarative (< 0.1.0)
@@ -374,10 +376,10 @@ GEM
     rubyzip (2.3.0)
     sentry-raven (2.13.0)
       faraday (>= 0.7.6, < 1.0)
-    sequel (5.35.0)
+    sequel (5.36.0)
     shodan (1.0.0)
       json (>= 1.4.6)
-    sidekiq (6.1.1)
+    sidekiq (6.1.2)
       connection_pool (>= 2.2.2)
       rack (~> 2.0)
       redis (>= 4.2.0)
@@ -392,17 +394,16 @@ GEM
       multi_json (~> 1.10)
     simpleidn (0.1.1)
       unf (~> 0.1.4)
-    sinatra (2.0.8.1)
+    sinatra (2.1.0)
       mustermann (~> 1.0)
-      rack (~> 2.0)
-      rack-protection (= 2.0.8.1)
+      rack (~> 2.2)
+      rack-protection (= 2.1.0)
       tilt (~> 2.0)
-    sinatra-contrib (2.0.8.1)
-      backports (>= 2.8.2)
+    sinatra-contrib (2.1.0)
       multi_json
       mustermann (~> 1.0)
-      rack-protection (= 2.0.8.1)
-      sinatra (= 2.0.8.1)
+      rack-protection (= 2.1.0)
+      sinatra (= 2.1.0)
       tilt (~> 2.0)
     socketry (0.5.1)
       hitimes (~> 1.2)
@@ -412,8 +413,10 @@ GEM
     thor (1.0.1)
     thread_safe (0.3.6)
     tilt (2.0.10)
-    timers (4.3.0)
+    timers (4.3.2)
     towerdata_api (1.3.1)
+    typhoeus (1.4.0)
+      ethon (>= 0.9.0)
     tzinfo (1.2.7)
       thread_safe (~> 0.1)
     uber (0.1.0)
@@ -451,7 +454,6 @@ DEPENDENCIES
   elasticsearch
   em-resolv-replace
   eventmachine
-  excon
   faraday_middleware-aws-sigv4
   flareon
   fog-aws
@@ -501,6 +503,7 @@ DEPENDENCIES
   sqlite3
   thor
   towerdata_api
+  typhoeus
   versionomy
   whois
   whois-parser

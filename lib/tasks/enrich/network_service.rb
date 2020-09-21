@@ -120,6 +120,10 @@ class NetworkService < Intrigue::Task::BaseTask
     if port == 161 && !ident_matches
       ident_matches = generate_snmp_request_and_check(ip_address) || {}
     end
+
+    if port == 3306 && !ident_matches
+      ident_matches = generate_mysql_request_and_check(ip_address) || {}
+    end
     
     ###
     ### But default to HTTP through each known port

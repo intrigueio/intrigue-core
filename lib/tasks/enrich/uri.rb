@@ -100,11 +100,6 @@ class Uri < Intrigue::Task::BaseTask
       fingerprint.concat(add_vulns_by_cpe(ident_fingerprints))
     end
 
-    # we can check the existing response, so send that
-    # also need to send over the existing fingeprints
-    _log "Checking if API Endpoint" 
-    api_endpoint = check_api_enabled(response, fingerprint)
-    
     # process interesting fingeprints and content checks that requested an issue be created
     issues_to_be_created = ident_content_checks.concat(ident_fingerprints).collect{|x| x["issues"] }.flatten.compact.uniq
     _log "Issues to be created: #{issues_to_be_created}"
@@ -269,7 +264,6 @@ class Uri < Intrigue::Task::BaseTask
     # set up the new details
     new_details = {
       "alt_names" => alt_names,
-      "api_endpoint" => api_endpoint,
       "code" => response.code,
       "cookies" => set_cookie,
       "favicon_md5" => favicon_md5,
@@ -293,7 +287,7 @@ class Uri < Intrigue::Task::BaseTask
       "extended_configuration" => ident_content_checks.uniq,  # new content field
       "extended_full_responses" => ident_responses,           # includes all the redirects etc
       "extended_favicon_data" => favicon_data,
-      "extended_response_body" => response.body_utf8,
+      "extended_response_body" => response.body_utf8
     }
 
     # Set the details, and make sure raw response data is a hidden (not searchable) detail
@@ -356,7 +350,7 @@ class Uri < Intrigue::Task::BaseTask
     end
 
     ###
-    ### Do the cloud provider determination
+    ### Do the cloud provider determination 
     ###
 
     # Now that we have our core details, check cloud statusi
@@ -364,8 +358,13 @@ class Uri < Intrigue::Task::BaseTask
     _set_entity_detail("cloud_providers", cloud_providers.uniq.sort)
     _set_entity_detail("cloud_hosted",  !cloud_providers.empty?)
 
+    ###
+    ### Kick off vuln checks if enabled for the project 
+    ###
+
     all_checks = []
     if @project.vulnerability_checks_enabled
+      
       ###
       ### Finally, start checks based on FP
       ###
@@ -381,6 +380,7 @@ class Uri < Intrigue::Task::BaseTask
       all_checks.flatten.compact.uniq.each do |t|
         start_task("task_autoscheduled", @project, nil, t, @entity, 1)
       end
+
     end
 
     # and save'm off
@@ -398,31 +398,6 @@ class Uri < Intrigue::Task::BaseTask
   def check_options_endpoint(uri)
     response = http_request(:options, uri)
     (response["allow"] || response["Allow"]) if response
-  end
-
-  ###
-  ### Checks to see if we return anything that's an 'application' content type
-  ###   or if we've been fingerprinted with an "API" tech"
-  ###
-  def check_api_enabled(response, fingerprints)
-    
-    # check for content type
-    return true if response['Content-Type'] =~ /application/i
-
-    # check fingeprrints
-    fingerprints.each do |fp|
-      return true if fp["tags"] && fp["tags"].include?("API")
-    end 
-
-    # try to parse it 
-    begin
-      j = JSON.parse(response.body_utf8)
-      return true if j
-    rescue JSON::ParserError      
-    end
-
-  # otherwise default to false 
-  false
   end
 
   def check_forms(response_body)

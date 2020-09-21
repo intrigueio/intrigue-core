@@ -208,7 +208,7 @@ class CoreApp < Sinatra::Base
           next if l[0] == "#" # skip comment lines
 
           # strip out the data
-          et, en = l.split("#").map{|x| x.strip}
+          et, en = l.split(",").map{|x| x.strip}
 
           entities << {entity_type: "#{et}", entity_name: "#{en}", }
         end
