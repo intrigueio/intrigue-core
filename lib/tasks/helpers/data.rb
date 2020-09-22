@@ -127,7 +127,7 @@ module Data
   end
 
   def fingerprintable_tcp_ports
-    ports = [21,22,23,25].concat(scannable_web_ports)
+    ports = [21,22,23,25,110,3306].concat(scannable_web_ports)
   ports
   end
 
@@ -156,6 +156,7 @@ module Data
     tcp_ports << "81,"
     tcp_ports << "106,"
     tcp_ports << "110,"
+    tcp_ports << "135,"
     tcp_ports << "143,"
     tcp_ports << "443,"
     tcp_ports << "445,"
@@ -213,6 +214,8 @@ module Data
     tcp_ports << "22222,"
     tcp_ports << "30443,"
     tcp_ports << "40443,"
+    tcp_ports << "49152,"
+    tcp_ports << "49154,"
     tcp_ports << "53413"
 
   tcp_ports.split(",")
