@@ -54,6 +54,15 @@ module WebContent
   components.compact
   end
 
+  def html_dom_to_string(body)
+    dom_string = ""
+    document = Nokogiri::HTML(body);nil
+    document.traverse do |node|
+      next unless node.is_a?(Nokogiri::XML::Element)
+      dom_string << "<#{node.name}>"
+    end
+  dom_string
+  end
 
   # compare_html response.body_utf8.sanitize_unicode, e.details["hidden_response_data"]  
   def parse_html_diffs(texta, textb)

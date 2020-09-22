@@ -261,6 +261,9 @@ class Uri < Intrigue::Task::BaseTask
       net_name = resp[:net_name]
     end
 
+    # get the hashed dom structure
+    dom_sha1 = Digest::SHA1.hexdigest(html_dom_to_string(response.body_utf8))
+
     # set up the new details
     new_details = {
       "alt_names" => alt_names,
@@ -279,6 +282,7 @@ class Uri < Intrigue::Task::BaseTask
       "hidden_response_data" => response.body_utf8,
       "redirect_chain" => ident_responses.first[:response_urls] || [],
       "response_data_hash" => response_data_hash,
+      "dom_sha1" => dom_sha1,
       "title" => title,
       "verbs" => verbs_enabled,
       "scripts" => script_components,
