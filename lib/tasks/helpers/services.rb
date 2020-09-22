@@ -305,7 +305,8 @@ module Services
 
       _log "connecting to #{uri}"
 
-      out[:http_response] = http_request(:get, uri, nil, {}, nil, attempts_limit=2, open_timeout=5, read_timeout=5)
+
+      out[:http_response] = http_request(:get, uri, nil, {}, nil)
 
       ## TODO ... follow & track location headers?
 
