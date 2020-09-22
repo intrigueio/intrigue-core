@@ -181,6 +181,7 @@ module Data
     tcp_ports << "2181,"
     tcp_ports << "2222,"
     tcp_ports << "2375,"            # docker
+    tcp_ports << "2376,"            # docker
     tcp_ports << "2888,"
     tcp_ports << "3306,"            # mysql
     tcp_ports << "3389,"            # RDP
