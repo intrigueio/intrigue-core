@@ -64,7 +64,9 @@ main statements that can be published:
         _create_entity "DnsRecord", d
 
         # optionally create a domain
-        _create_entity "Domain", d["domain"] if _get_option("create_domain")
+        if _get_option("create_domain") && "#{d["domain"]}".length > 0
+          _create_entity "Domain", d["domain"] 
+        end
       end
 
     end

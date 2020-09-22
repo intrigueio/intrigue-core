@@ -80,9 +80,13 @@ class SearchSpyse < BaseTask
       response = http_get_body(url,nil,headers)
       json = JSON.parse(response)
 
-      json["data"]["items"].each do |result|
-        _log_good "Creating service on #{entity_name}: #{result["port"]}"
-        _create_network_service_entity(@entity, result["port"],protocol="tcp",generic_details={"extended_spyse" => result})
+      if json["data"] && json["data"]["items"]
+        json["data"]["items"].each do |result|
+          _log_good "Creating service on #{entity_name}: #{result["port"]}"
+          _create_network_service_entity(@entity, result["port"],protocol="tcp",generic_details={"extended_spyse" => result})
+        end
+      else
+        _log "Got empty result, returning!"
       end
     rescue JSON::ParserError => e
       _log_error "Error while parsing #{e}"
