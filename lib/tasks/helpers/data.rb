@@ -104,6 +104,16 @@ module Data
     ]
   end
 
+  def issueable_tcp_ports
+    [
+      { port: "3389", issue: "exposed_sensitive_service", service_name: "RDP service", severity: 2 },
+      { port: "135", issue: "exposed_sensitive_service", service_name: "SMB Service", severity: 2 },
+      { port: "445", issue: "exposed_sensitive_service", service_name: "SMB Service", severity: 2 },
+      { port: "49152", issue: "exposed_sensitive_service", service_name: "Windows RPC Service", severity: 2 },
+      { port: "49154", issue: "exposed_sensitive_service", service_name: "Windows RPC-over-Http Service", severity: 2 }
+    ]
+  end
+
   def scannable_udp_ports
     
     udp_ports = ""
