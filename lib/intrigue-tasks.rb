@@ -70,7 +70,6 @@ rescue LoadError => e
   #puts "Unable to load hosted-version-only fingerprints #{e}"
 end
 
-
 ###
 ### Task factory: Standardize the creation and validation of tasks
 ###

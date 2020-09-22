@@ -33,14 +33,15 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: e33b379e3d003cfb194ee990e53248b158caee13
+  revision: cbbe3775b94f007de89364448d48bfb911d910e7
   branch: main
   specs:
-    intrigue-ident (3.0.4)
+    intrigue-ident (3.0.5)
       dnsruby
       recog-intrigue
       snmp
       socketry
+      typhoeus
 
 GIT
   remote: https://github.com/intrigueio/maxminddb
