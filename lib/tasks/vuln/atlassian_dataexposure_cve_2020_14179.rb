@@ -9,7 +9,7 @@ module Intrigue
           :authors => ["shpendk","jcran"],
           :identifiers => [{ "cve" =>  "CVE-2020-14179" }],
           :description => "This task performs a vulnerability check for CVE-2020-14179",
-          :references => ["https://nvd.nist.gov/vuln/detail/CVE-2020-14179"],
+          :references => ["https://github.com/projectdiscovery/nuclei-templates/pull/487"],
           :type => "vuln_check",
           :passive => false,
           :allowed_types => ["Uri"],
