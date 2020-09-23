@@ -52,7 +52,7 @@ class NetBlock < Intrigue::Core::Model::Entity
       route = capture.last
       
       # compare each to our lookup stringg
-      if ip == our_ip && route < our_route
+      if ip == our_ip && route > our_route
         return false
       end
 
