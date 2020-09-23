@@ -69,25 +69,29 @@ class SearchWhoisology < BaseTask
         return
       end
 
-      # Attach to the whoisology service & search
-      whoisology = Whoisology::Api.new(api_key)
+      begin 
+        # Attach to the whoisology service & search
+        whoisology = Whoisology::Api.new(api_key)
 
-      # Run a PING to see if we have any results
-      result = whoisology.ping entity_type, entity_name
-      _log "Got #{result}"
-      _log "Got #{result["count"]} results"
-      return if result["count"].to_i == 0
+        # Run a PING to see if we have any results
+        result = whoisology.ping entity_type, entity_name
+        _log "Got #{result}"
+        _log "Got #{result["count"]} results"
+        return if result["count"].to_i == 0
 
-      # do the actual search with the FLAT command
-      result = whoisology.flat entity_type, entity_name
+        # do the actual search with the FLAT command
+        result = whoisology.flat entity_type, entity_name
 
-      _log_good "Creating entities for #{result["count"]} results."
-     
-      if result["domains"]
-        result["domains"].each {|d| 
-          _create_entity "Domain", {"name" => d["domain_name"]} }
-      else
-        _log_error "No domains, do we have API credits?"
+        _log_good "Creating entities for #{result["count"]} results."
+      
+        if result["domains"]
+          result["domains"].each {|d| 
+            _create_entity "Domain", {"name" => d["domain_name"]} }
+        else
+          _log_error "No domains, do we have API credits?"
+        end
+      rescue RestClient::Forbidden => e 
+        _log_error "Error when querying whoisology (forbidden)"
       end
 
     end

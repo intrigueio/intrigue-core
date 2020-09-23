@@ -35,8 +35,15 @@ class SearchHunterIo < BaseTask
     begin 
       response = http_get_body(url)
       
-      unless response
+      # sanity check 
+      unless response && response["data"]
         _log "Unable to get a response"
+        return  
+      end
+
+      # sanity check 
+      unless response["data"]["emails"]
+        _log "Unable to get emails"
         return
       end
 
