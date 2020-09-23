@@ -35,11 +35,11 @@ class NetBlock < Intrigue::Core::Model::Entity
     whois_text = "#{details["whois_full_text"]}"
 
     # Check for case where we're just one ip address
-    if our_ip =~ ipv6_regex && our_route == 64
-      return true # ipv6 single ip
-    elsif our_ip =~ ipv4_regex && our_route == 32
-      return true # ipv4 single ip
-    end
+    #if our_ip =~ ipv6_regex && our_route == 64
+    #  return true # ipv6 single ip
+    #elsif our_ip =~ ipv4_regex && our_route == 32
+    #  return true # ipv4 single ip
+    #end
 
     ###
     ### First, check our text to see if there's a more specific route in here, 
@@ -52,7 +52,7 @@ class NetBlock < Intrigue::Core::Model::Entity
       route = capture.last
       
       # compare each to our lookup stringg
-      if ip == our_ip && route > our_route
+      if ip == our_ip && route < our_route
         return false
       end
 
@@ -72,7 +72,12 @@ class NetBlock < Intrigue::Core::Model::Entity
     if self.project.seeds
       self.project.seeds.each do |s|
         next unless scope_check_entity_types.include? "#{s.type}"
-        if whois_text =~ /[\s@]#{Regexp.escape(s.name)}/i
+        if whois_text =~ /@#{Regexp.escape(s.name)}/i
+          
+          # Log our scope change
+          log_string = " - [#{s.project.name}] Entity #{s.type} #{s.name} set scoped to true, reason: whois text matched #{s.name}"
+          Intrigue::Core::Model::ScopingLog.log log_string
+
           return true
         end
       end
@@ -86,7 +91,12 @@ class NetBlock < Intrigue::Core::Model::Entity
       next if (e.type == "DnsRecord" || e.type == "Domain") && e.name.split(".").count == 1
       # Now, check to see if the entity's name matches something in our # whois text, 
       # and especially make sure 
-      if whois_text =~ /[@]#{Regexp.escape(e.name)}/i
+      if whois_text =~ /@#{Regexp.escape(e.name)}/i
+
+        # Log our scope change
+        log_string = " - [#{e.project.name}] Entity #{e.type} #{e.name} set scoped to true, reason: whois text matched #{e.name}"
+        Intrigue::Core::Model::ScopingLog.log log_string
+
         return true
       end
     end
@@ -102,13 +112,25 @@ class NetBlock < Intrigue::Core::Model::Entity
         next if (e.type == "DnsRecord" || e.type == "Domain") && e.name.split(".").count == 1
         # Now, check to see if the entity's name matches something in our # whois text, 
         # and especially make sure 
-        if (details["organization"] =~ /[@]#{Regexp.escape(e.name)}/i) || 
-            (details["organization_name"] =~ /[@]#{Regexp.escape(e.name)}/i)
+        if (details["organization"] =~ /@#{Regexp.escape(e.name)}/i) || 
+            (details["organization_name"] =~ /@#{Regexp.escape(e.name)}/i)
+
+            # Log our scope change
+            log_string = " - [#{e.project.name}] Entity #{e.type} #{e.name} set scoped to true, reason: org name matched #{e.name}"
+            Intrigue::Core::Model::ScopingLog.log log_string
+
           return true
         end
       end
     else
-      return true if (!whois_text && details["cidr"].to_i > 8)
+      if (!whois_text && details["cidr"].to_i > 23)
+
+        # Log our scope change
+        log_string = " - [#{e.project.name}] Entity #{e.type} #{e.name} set scoped to true, reason: missing whois text and small cidr"
+        Intrigue::Core::Model::ScopingLog.log log_string
+        
+        return true 
+      end
     end
 
   # if we didnt match the above and we were asked, it's false 

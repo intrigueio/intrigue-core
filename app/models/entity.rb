@@ -86,12 +86,9 @@ module Model
         reason = "allow_list_override"
       end
 
-      # keep a log 
-      File.open("#{$intrigue_basedir}/log/scoping.log","a+") do |f|
-        f.flock(File::LOCK_EX)
-        f.puts "[#{self.project.name}] Entity #{self.type} #{self.name} set scoped to #{bool_val}, reason: #{reason}"
-        f.flock(File::LOCK_UN)
-      end
+      # Log our scope change
+      log_string = "[#{self.project.name}] Entity #{self.type} #{self.name} set scoped to #{bool_val}, reason: #{reason}"
+      Intrigue::Core::Model::ScopingLog.log log_string
 
       self.scoped = bool_val
       self.scoped_at = Time.now.utc
