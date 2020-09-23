@@ -200,14 +200,14 @@ module Whois
       netname = data["exact"].first["netname"]
       org = data["exact"].first["org"]
       exact = true 
-    elsif !data["more_specific"].empty? # RIPE
+    elsif !data["more_specific"].empty? && data["more_specific"].first["inetnum"] # RIPE
       range = data["more_specific"].first["inetnum"]
       start_address = range.split("-").first.strip
       end_address = range.split("-").last.strip
       netname = data["more_specific"].first["netname"]
       org = data["more_specific"].first["org"]
       exact = false
-    elsif !data["less_specific"].empty? # RIPE
+    elsif !data["less_specific"].empty? && data["less_specific"].first["inetnum"] # RIPE
       range = data["less_specific"].first["inetnum"]
       start_address = range.split("-").first.strip
       end_address = range.split("-").last.strip
@@ -215,7 +215,8 @@ module Whois
       org = data["less_specific"].first["org"]
       exact = false
     else
-      _log_error "Unknown response, unable to continue: #{json}"
+      _log_error "Unknown response , unable to continue"
+      _log "Got: #{data}"
       return nil
     end
 

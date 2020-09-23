@@ -26,7 +26,7 @@ module Task
         _log_error "Unable to connect to chrome browser. Is it running as a service?"
       end
   
-      if browser_response 
+      if browser_response && browser_response["requests"]
 
         to_return = { 
           "extended_screenshot_contents" => browser_response["encoded_screenshot"],
