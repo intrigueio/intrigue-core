@@ -109,7 +109,7 @@ class NetworkService < Intrigue::Task::BaseTask
       ident_matches = generate_telnet_request_and_check(ip_address) || {}
     end
 
-    if port == 25 && !ident_matches
+    if (port == 25 || port == 587) && !ident_matches
       ident_matches = generate_smtp_request_and_check(ip_address) || {}
     end
     
