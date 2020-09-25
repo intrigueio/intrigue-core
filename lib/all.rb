@@ -111,6 +111,11 @@ if Intrigue::Core::System::Config.config["intrigue_load_paths"]
       require_relative file
     end
 
+    Dir["#{load_path}/issues/*.rb"].each do |file|
+      #puts "Adding user notifier from: #{file}"
+      require_relative file
+    end
+
     Dir["#{load_path}/machines/*.rb"].each do |file|
       #puts "Adding user machine from: #{file}"
       require_relative file
