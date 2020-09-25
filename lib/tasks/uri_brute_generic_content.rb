@@ -37,9 +37,9 @@ module Intrigue
         { issue_type: "exposed_vc_repository", path: "/.hg", severity: 2, body_regex: /<h1>Index of/, status: "confirmed"  },
         { issue_type: "exposed_vc_repository", path: "/.bzr", severity: 2, body_regex: /<h1>Index of/, status: "confirmed" },
         { issue_type: "exposed_vc_repository_svn", path: "/.svn", severity: 2, body_regex: /<h1>Index of/, status: "confirmed"  },
-        { issue_type: "exposed_vc_repository_svn", path: "/.svn/entries", severity: 2, body_regex: /^dir|\.svn-base|has-props$/, status: "confirmed" },
-        { issue_type: "exposed_vc_repository_svn", path: "/.svn/prop-base", severity: 2, body_regex: /^dir|\.svn-base|has-props$/, status: "confirmed" },
-        { issue_type: "exposed_vc_repository_svn", path: "/.svn/text-base", severity: 2, body_regex: /^dir|\.svn-base|has-props$/, status: "confirmed" },
+        { issue_type: "exposed_vc_repository_svn", path: "/.svn/entries", severity: 2, body_regex: /^dir$|\.svn-base|has-props$/, status: "confirmed" },
+        { issue_type: "exposed_vc_repository_svn", path: "/.svn/prop-base", severity: 2, body_regex: /^dir$|\.svn-base|has-props$/, status: "confirmed" },
+        { issue_type: "exposed_vc_repository_svn", path: "/.svn/text-base", severity: 2, body_regex: /^dir$|\.svn-base|has-props$/, status: "confirmed" },
         
         { issue_type: "htaccess_info_leak", path: "/.htaccess", body_regex: /AuthName/, severity: 3, status: "confirmed" },
         { issue_type: "htaccess_info_leak", path: "/.htaccess.bak", body_regex: /AuthName/, severity: 3, status: "confirmed" },
