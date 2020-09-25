@@ -94,9 +94,19 @@ class Uri < Intrigue::Task::BaseTask
     _log "Received #{ident_responses.count} responses for fingerprints!"
 
     ###
-    ### Check for vulns based on Ident FPs
+    ### Check for issues / vulns based on Ident FPs
     ###
     if ident_fingerprints.count > 0
+
+      # first, if we have any fingerprints that have tags known to be 
+      # associated with an issue, let's crerat them here
+      issues_to_create = fingerprint_tags_to_issues(ident_fingerprints)
+      _log "Got issues: #{issues_to_create}"
+      issues_to_create.each do |i|
+        _create_linked_issue i.first, i.last, @entity
+      end
+      
+      # now add vulns based on CPE 
       fingerprint.concat(add_vulns_by_cpe(ident_fingerprints))
     end
 

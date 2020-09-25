@@ -2,6 +2,26 @@ module Intrigue
 module Task
 module Issue
 
+  def fingerprint_tags_to_issues(fps)
+
+    out = []
+    # iterate through the fingerprints and create
+    # issues for each known tag
+    fps.each do |fp|
+      next unless fp && fp["tags"]
+      fp["tags"].each do |t|
+        if t =~ /webcam/i
+          out << ["exposed_webcam_interface", fp]
+        elsif t =~ /DatabaseService/i
+          out << ["exposed_database_service", fp]
+        end
+      end
+
+    end
+
+  out
+  end
+
   ###
   ### DEPRECATED!!!! Generic helper method to create issues
   ###

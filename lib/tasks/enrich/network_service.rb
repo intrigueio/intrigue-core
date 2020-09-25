@@ -42,6 +42,14 @@ class NetworkService < Intrigue::Task::BaseTask
     ###
     fingerprint = fingerprint_service(ip_address, port, proto) 
 
+    # first, if we hhave any fingerprints that have tags known to be 
+    # associated with an issue, let's crerat them here
+    issues_to_create  = fingerprint_tags_to_issues(fingerprint)
+    _log "Got issues: #{issues_to_create}"
+    issues_to_create.each do |i|
+      _create_linked_issue i.first, i.last, @entity
+    end
+
     all_checks = []
     if @project.vulnerability_checks_enabled
       ###
