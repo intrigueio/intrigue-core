@@ -17,7 +17,7 @@ class DnsBruteSub < BaseTask
       :example_entities =>  [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "brute_list", :regex => "alpha_numeric_list", :default =>
-          [ "mx", "mx1", "mx2", "www", "ww2", "ns1", "ns2", "ns3", "test",
+          [ "ftp", "mx", "mx1", "mx2", "www", "ww2", "ns1", "ns2", "ns3", "test",
             "mail", "owa", "vpn", "admin", "intranet", "gateway", "secure",
             "admin", "service", "tools", "doc", "docs", "network", "help",
             "en", "sharepoint", "portal", "public", "private", "pub", "zeus",

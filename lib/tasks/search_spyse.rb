@@ -28,7 +28,8 @@ class SearchSpyse < BaseTask
     # Make sure the key is set
     api_key = _get_task_config("spyse_api_key")
     # Set the headers
-    headers = { "Accept" =>  "application/json" , "Authorization" => "Bearer #{api_key}" }
+    headers = { "Accept" =>  "application/json", 
+      "Authorization" => "Bearer #{api_key}" }
 
     if entity_type == "IpAddress"
       #search Ip for reputation, Open ports, related information
@@ -77,13 +78,14 @@ class SearchSpyse < BaseTask
 
     begin 
       # make the request
-      response = http_get_body(url,nil,headers)
+      response = http_get_body(url, nil, headers)
       json = JSON.parse(response)
 
       if json["data"] && json["data"]["items"]
         json["data"]["items"].each do |result|
           _log_good "Creating service on #{entity_name}: #{result["port"]}"
-          _create_network_service_entity(@entity, result["port"],protocol="tcp",generic_details={"extended_spyse" => result})
+          _create_network_service_entity(@entity, result["port"], protocol="tcp", 
+            {"extended_spyse" => result})
         end
       else
         _log "Got empty result, returning!"

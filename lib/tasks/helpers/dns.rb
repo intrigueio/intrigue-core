@@ -9,15 +9,17 @@ module Dns
     create_dns_entity_from_string(s, nil, true)
   end
 
-  def create_dns_entity_from_string(s, alias_entity=nil, unscoped=false)
+  def create_dns_entity_from_string(s, alias_entity=nil, unscoped=false, more_deets={})
     return nil unless s && s.length > 0
 
     entity_details = { "name" => s.gsub("domain: ","").gsub("*.","") }
     entity_details.merge!({"unscoped" => true }) if unscoped
+    entity_details.merge!(more_deets)
 
     if s.is_ip_address?
       _create_entity("IpAddress", entity_details, alias_entity)
     else
+      
       # clean it up and create 
       entity_details["name"] = "#{s}".strip.gsub(/^\*\./,"").gsub(/\.$/,"")
       if entity_details["name"].split(".").length == 2
@@ -25,6 +27,7 @@ module Dns
       else 
         _create_entity "DnsRecord", entity_details, alias_entity
       end
+
     end
   end
 

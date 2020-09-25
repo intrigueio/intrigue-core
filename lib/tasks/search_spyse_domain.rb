@@ -56,7 +56,8 @@ class SearchSpyseDomain < BaseTask
 
       # Create Dnsrecords shared the same ip
       if result["name"]
-        _create_entity("DnsRecord", "name" => result["name"], "extended_spyse" => result)
+        create_dns_entity_from_string(result["name"], nil, false, 
+          { "extended_spyse" => result})
       end
 
       # Create SslCertificate
@@ -67,7 +68,7 @@ class SearchSpyseDomain < BaseTask
       # Create related IpAddress, physical location and ISP organization
       if result["dns_records"]
         result["dns_records"]["A"].each do |ip_result|
-          _create_entity("IpAddress", "name" => ip_result["ip"], "extended_spyse" => ip_result)
+          _create_entity("IpAddress", { "name" => ip_result["ip"], "extended_spyse" => ip_result } )
           _create_entity("PhysicalLocation", "name" => ip_result["country"])
           _create_entity("Organization", "name" => ip_result["org"])
         end
@@ -89,12 +90,14 @@ class SearchSpyseDomain < BaseTask
     json2["data"]["items"].each do |result|
 
       # Create related subdomains
-      _create_entity("DnsRecord", "name" => result["name"], "extended_spyse" => result)
+      create_dns_entity_from_string(result["name"], nil, false, 
+        { "extended_spyse" => result})
 
       # Create SslCertificate
       if result["cert_summary"]["fingerprint_sha256"] != ""
-        _create_entity("SslCertificate", "name" => result["cert_summary"]["fingerprint_sha256"], "extended_spyse" => result["cert_summary"])
+        #_create_entity("SslCertificate", "name" => result["cert_summary"]["fingerprint_sha256"], "extended_spyse" => result["cert_summary"])
       end
+
       # Create related IpAddress, physical location and ISP organization
       # if result["dns_records"]
       #   result["dns_records"]["A"].each do |ip_result|
