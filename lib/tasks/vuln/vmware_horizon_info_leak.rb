@@ -39,16 +39,30 @@ class VmwareHorizonInfoLeak < BaseTask
       info_data = nil
     end
 
-    # Gather info from the broker endpoint    
+    # Gather info from the broker endpoint
+    broker_uri = "#{uri}/broker/xml"    
     xml_request_data = "<?xml version=\'1.0\' encoding=\'UTF-8\'?><broker version=\'10.0\'><get-configuration></get-configuration></broker>"
-    broker_response = http_request :post, "#{uri}/broker/xml", nil, {}, xml_request_data
-    broker_data = broker_response.body_utf8 if broker_response
+    broker_response = http_request :post, broker_uri, nil, {}, xml_request_data
+
+    # apparently the broker data will be missing if the CVE has been 
+    # fixed, so let's check for a known string
+    if broker_response && broker_response =~ /client-configuration/
+      broker_data = broker_response.body_utf8 
+    else 
+      broker_data = nil
+    end
 
     # create an issue
-    if broker_data || info_data
+    if broker_data && info_data
       _create_linked_issue( "vmware_horizon_info_leak", {
         leaked_authentication_details: broker_data, 
-        leaked_configuration_details: info_data 
+        leaked_configuration_details: info_data,
+        only_info: false
+      })
+    elsif info_data
+      _create_linked_issue( "vmware_horizon_info_leak", {
+        leaked_configuration_details: info_data,
+        only_info: true
       })
     end
 

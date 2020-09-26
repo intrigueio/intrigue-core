@@ -61,6 +61,8 @@ class UriCheckHttp2Support < BaseTask
 
       rescue TypeError => e  # IS there a better way to do this?
         _log_error "Unable to connect"
+      rescue OpenSSL::SSL::SSLError => e 
+        _log_error "Unable to connect, ssl error"
       rescue SocketError => e
         _log_error "Unable to connect, socket error"
       end
