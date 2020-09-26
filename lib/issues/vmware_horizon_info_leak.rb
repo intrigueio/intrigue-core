@@ -14,7 +14,7 @@ module Intrigue
         status: "confirmed",
         category: "vulnerability",
         description: "The VMWare Horizon Connection Server is often used as an internet-facing gateway to an organization’s virtual desktop environment (VDI). Until recently, most of these installations exposed the Connection Server’s internal name, the gateway’s internal IP address, and the Active Directory domain to unauthenticated attackers. Information leaks like these are not a huge risk on their own, but combined with more significant vulnerabilities they can make a remote compromise easier.",
-        remediation: "Apply the relevant patch for your operating system, or disable RDP if not needed.",
+        remediation: "Apply the relevant patch to remove the authentication information from being shared pre-auth.",
         affected_software: [
           { :vendor => "VMWare", :product => "Horizon View" },
         ],
