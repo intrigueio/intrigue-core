@@ -4,19 +4,15 @@ class AzureBlob < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "AzureBLOB",
+      :name => "AzureBlob",
       :description => "Azure Blob storage",
-      :user_creatable => true,
+      :user_creatable => false,
       :example => "https://azure.microsoft.com/en-us/services/storage/blobs/"
     }
   end
 
   def validate_entity
     name =~ /.blob.core.windows.net/
-  end
-
-  def detail_string
-    "File count: #{details["contents"].count}" if details["contents"]
   end
 
   def enrichment_tasks

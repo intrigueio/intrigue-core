@@ -1,7 +1,7 @@
 module Intrigue
 module Task
 module Enrich
-class AwsS3Bucket < Intrigue::Task::BaseTask
+class AzureBLOBT < Intrigue::Task::BaseTask
 
   def self.metadata
     {
@@ -45,9 +45,8 @@ class AwsS3Bucket < Intrigue::Task::BaseTask
 
     response = http_request(azureblob_uri)
 
-    if response.code=="404"
-      break
-    end
+    return if response.code=="404"
+
 
     puts response.reason_phrase
 

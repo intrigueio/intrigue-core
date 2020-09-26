@@ -19,16 +19,16 @@ module Machine
       project = entity.project
       seed_list = project.seeds.map{|s| s.name }.join(",")
 
-      ### 
-      # Don't go any further unless we're scoped! 
-      ### 
+      ###
+      # Don't go any further unless we're scoped!
+      ###
       traversable = false # default to no traverse
       # This is a little trixy, allows for runtime scoping since we're dynamically checking
-      traversable = true if entity.scoped? && !entity.hidden # true if we're scoped and not hidden      
+      traversable = true if entity.scoped? && !entity.hidden # true if we're scoped and not hidden
       # LOG THE CHOICE
-      return unless traversable 
+      return unless traversable
       ###
-      #  End scoping madness 
+      #  End scoping madness
       ###
 
       if entity.type_string == "Domain"
@@ -50,13 +50,13 @@ module Machine
         # search sonar results
         start_recursive_task(task_result,"dns_search_sonar",entity, [], true)
 
-        # threatcrowd 
+        # threatcrowd
         start_recursive_task(task_result,"search_threatcrowd", entity,[], true)
 
         # bruteforce email addresses
         start_recursive_task(task_result,"email_brute_gmail_glxu",entity,[], true)
 
-        # quick spf recurse, creating new (unscoped) domains 
+        # quick spf recurse, creating new (unscoped) domains
         start_recursive_task(task_result,"dns_recurse_spf",entity, [])
 
         # run dnsmorph, looking for permutations
@@ -66,7 +66,7 @@ module Machine
         start_recursive_task(task_result,"dns_brute_sub",entity,[
           {"name" => "brute_alphanumeric_size", "value" => 1 }], true)
 
-        
+
         #start_recursive_task(task_result,"saas_trello_check",entity,[])
         start_recursive_task(task_result,"saas_jira_check",entity,[])
 
@@ -88,7 +88,7 @@ module Machine
        # start_recursive_task(task_result,"aws_s3_brute",entity,[
        #   {"name" => "use_creds", "value" => true},
        #   {"name" => "additional_buckets", "value" => generated_names.join(",")}])
-        
+
        start_recursive_task(task_result,"vuln/saas_google_groups_check",entity,[])
        start_recursive_task(task_result,"vuln/saas_google_calendar_check",entity,[])
 
@@ -100,7 +100,7 @@ module Machine
 
         start_recursive_task(task_result,"search_have_i_been_pwned",entity,[
           {"name" => "only_sensitive", "value" => true }])
-  
+
         start_recursive_task(task_result,"vuln/saas_google_calendar_check",entity,[])
 
       elsif entity.type_string == "GithubAccount"
@@ -108,17 +108,17 @@ module Machine
         start_recursive_task(task_result,"gitrob", entity, [])
 
       elsif entity.type_string == "IpAddress"
-      
+
         ### search for netblocks
         start_recursive_task(task_result,"whois_lookup",entity, [])
 
-        # use shodan to "scan" and create ports 
+        # use shodan to "scan" and create ports
         start_recursive_task(task_result,"search_shodan",entity, [])
-        
-        # use shodan to "scan" and create ports 
+
+        # use shodan to "scan" and create ports
         start_recursive_task(task_result,"search_censys",entity, [])
 
-        # use shodan to "scan" and create ports 
+        # use shodan to "scan" and create ports
         start_recursive_task(task_result,"search_binaryedge",entity, [])
 
       elsif entity.type_string == "Nameserver"
@@ -139,7 +139,7 @@ module Machine
         # Make sure it's owned by the org, and if it is, scan it. also skip ipv6/
         if scannable
 
-          # so this could use up a lot of shodan credits, just be aware. 
+          # so this could use up a lot of shodan credits, just be aware.
           start_recursive_task(task_result,"net_block_expand",entity, [])
 
         else
@@ -166,7 +166,7 @@ module Machine
         # Search for trello accounts - currently requires browser
         #start_recursive_task(task_result,"saas_trello_check",entity)
 
-        ### search for github - too noisy? 
+        ### search for github - too noisy?
         #start_recursive_task(task_result,"search_github",entity, [], true)
 
         ### AWS_S3_brute the name
@@ -182,12 +182,13 @@ module Machine
 
       elsif entity.type_string == "Uri"
 
+        #tostart_recursive_task(task_result,"search_azure_blob_test",entity, []) if entity.name =~ /blob.core.windows.net/
         ## Grab the SSL Certificate
         start_recursive_task(task_result,"uri_gather_ssl_certificate",entity, []) if entity.name =~ /^https/
 
         if entity.name =~ (ipv4_regex || ipv6_regex)
           puts "Cowardly refusing to check for subdomain hijack, #{entity.name} looks like an access-by-ip uri"
-        else 
+        else
           start_recursive_task(task_result,"uri_check_subdomain_hijack",entity, [])
         end
 

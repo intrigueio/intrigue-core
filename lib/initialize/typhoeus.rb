@@ -1,6 +1,6 @@
 module Typhoeus
   class Response
-  
+
     # aliases status to code (as a string, since that tis the behavor of )
     def code
       self.response_code.to_s
