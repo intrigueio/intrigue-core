@@ -47,6 +47,7 @@ class UriCheckApiEndpoint < BaseTask
 
     # first get a standard response
     standard_response = http_request :get, url
+    return unless standard_response
 
     ####
     # next just check keywords in the url, but of course, sanity check this. 
@@ -57,7 +58,7 @@ class UriCheckApiEndpoint < BaseTask
           url =~ /\.json/ || 
           url =~ /\.xml/ )
 
-      unless response.body_utf8 =~/^<HTML>/i # this be html
+      unless standard_response.body_utf8 =~/^<HTML>/i # this be html
         api_endpoint = true 
         api_reason = "url"
       end 
@@ -113,7 +114,7 @@ class UriCheckApiEndpoint < BaseTask
       # Go ahead and get the response for this paritcular endpoint
       response = http_request :get, u
 
-      return unless response
+      next unless response
       # skip if we're not the original url, but we're getting the same response
       next if u != url && response.body_utf8 == standard_response.body_utf8
 
@@ -131,7 +132,7 @@ class UriCheckApiEndpoint < BaseTask
 
       # check for content type of application.. note that this will flag
       # application/javascript, which is probably not wanted
-      headers = response.headers
+      headers = standard_response.headers
       if headers
         ct = headers.find{|x, y| x if x =~ /^content-type/i }
         if ct
@@ -156,14 +157,14 @@ class UriCheckApiEndpoint < BaseTask
       ###
       begin
         # get request body
-        body = response.body_utf8
+        body = standard_response.body_utf8
         if body 
           json = JSON.parse(body)
           if json
             unless 
                # now check for common error scenarios, and if we pass
-              (response.code == "404" && json["error"] ==  "Not Found") || 
-              (response.code == "404" && json["response"] == "Content was not found.") 
+              (standard_response.code == "404" && json["error"] ==  "Not Found") || 
+              (standard_response.code == "404" && json["response"] == "Content was not found.") 
 
               # create it as an api endpoint
               api_endpoint = u 
