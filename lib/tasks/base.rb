@@ -18,6 +18,7 @@ class BaseTask
   include Intrigue::Task::WebContent
   include Intrigue::Task::WebAccount
   include Intrigue::Task::Whois
+  include Intrigue::Task::TlsHandler
 
   include Sidekiq::Worker
   sidekiq_options :queue => "task", :backtrace => true
