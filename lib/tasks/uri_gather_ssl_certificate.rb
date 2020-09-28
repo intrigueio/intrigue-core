@@ -34,32 +34,17 @@ class UriGatherSslCert  < BaseTask
       hostname = URI.parse(uri).host
       port = URI.parse(uri).port
 
-      # connect
-      socket = connect_ssl_socket(hostname,port,timeout=30)
+      # use helper function to grab certificate details
+      certificate_details = get_certificate_details hostname, port
 
-      return [] unless socket && socket.peer_cert
+      # return if no details were provided
+      return [] unless certificate_details
 
-      # Parse the cert
-      cert = OpenSSL::X509::Certificate.new(socket.peer_cert)
-
-      # Create an SSL Certificate entity
-      key_size = "#{cert.public_key.n.num_bytes * 8}" if cert.public_key && cert.public_key.respond_to?(:n)
-      certificate_details = {
-        "name" => "#{cert.subject.to_s.split("CN=").last} (#{cert.serial})",
-        "version" => cert.version,
-        "serial" => "#{cert.serial}",
-        "not_before" => "#{cert.not_before}",
-        "not_after" => "#{cert.not_after}",
-        "subject" => "#{cert.subject}",
-        "issuer" => "#{cert.issuer}",
-        "key_length" => key_size,
-        "signature_algorithm" => "#{cert.signature_algorithm}",
-        "hidden_text" => "#{cert.to_text}"
-      }
+      # create certificate entity
       _create_entity "SslCertificate", certificate_details
 
     # one way to detect self-signed
-    if cert.subject == cert.issuer
+    if certificate_details["subject"] == certificate_details["issuer"]
       ############################################
       ####            Old Issue              ####
       ###########################################
