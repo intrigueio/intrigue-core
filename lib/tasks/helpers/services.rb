@@ -61,7 +61,7 @@ module Services
     if ssl
       # connect, grab the socket and make sure we
       # keep track of these details, and create entitie
-      cert = connect_ssl_socket_get_cert(ip_entity.name,port_num)
+      cert = get_certificate(ip_entity.name,port_num)
 
       if cert 
         cert_names = parse_names_from_cert(cert)       

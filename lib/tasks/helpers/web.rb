@@ -256,15 +256,6 @@ module Task
     end
   end
 
-
-  def connect_ssl_socket_get_cert(hostname,port,timeout=15)
-    # connect
-    cert = get_certificate(hostname, port, timeout)
-    return nil unless cert
-    cert
-  end
-
-
   def parse_names_from_cert(cert, skip_hosted=true)
 
     # default to empty alt_names
