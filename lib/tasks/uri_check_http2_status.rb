@@ -63,6 +63,12 @@ class UriCheckHttp2Support < BaseTask
         _log_error "Unable to connect"
       rescue OpenSSL::SSL::SSLError => e 
         _log_error "Unable to connect, ssl error"
+      rescue Errno::EPIPE => e 
+        _log_error "Unable to connect, broken pipe"
+      rescue Errno::ECONNRESET => e 
+        _log_error "Unable to connect, connection reset"
+      rescue Errno::ETIMEDOUT => e 
+        _log_error "Unable to connect, timed out"
       rescue SocketError => e
         _log_error "Unable to connect, socket error"
       end
