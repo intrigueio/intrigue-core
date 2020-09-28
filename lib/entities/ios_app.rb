@@ -1,10 +1,10 @@
 module Intrigue
     module Entity
-    class IOSApp < Intrigue::Core::Model::Entity
+    class IosApp < Intrigue::Core::Model::Entity
     
       def self.metadata
         {
-          :name => "IOSApp",
+          :name => "IosApp",
           :description => "IOS Mobile Application",
           :user_creatable => true,
           :example => "example"
@@ -12,12 +12,9 @@ module Intrigue
       end
     
       def validate_entity
-        name =~ /^[a-zA-Z0-9\-]+$/
+        # only limit is a maximum of 30 characters, as per https://developer.apple.com/app-store/review/guidelines/
+        name =~ /^.{1,30}$/
       end
-    
-      #def detail_string
-      #  "#{details["origin"]}"
-      #end
     
       def scoped?
         return true if self.allow_list

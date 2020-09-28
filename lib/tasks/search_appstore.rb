@@ -10,13 +10,13 @@ module Intrigue
           :references => [],
           :type => "discovery",
           :passive => true,
-          :allowed_types => ["Organization", "String"],
+          :allowed_types => ["Organization", "String", "UniqueKeyword"],
           :example_entities => [
             {"type" => "String", "details" => {"name" => "intrigue"}}
           ],
           :allowed_options => [
           ],
-          :created_types => ["IOSApp"]
+          :created_types => ["IosApp"]
         }
       end
       
@@ -57,7 +57,7 @@ module Intrigue
                 end
 
                 if is_match
-                    _create_entity "IOSApp", {
+                    _create_entity "IosApp", {
                         "title" => app["title"], 
                         "name" => app["slug"], # slug seems like a good candidate for name, we could use title too.
                         "id" => app["id"], # passing additional attribute for correctness sake

@@ -10,7 +10,7 @@ module Intrigue
           :references => [],
           :type => "discovery",
           :passive => true,
-          :allowed_types => ["Organization", "String"],
+          :allowed_types => ["Organization", "String", "UniqueKeyword"],
           :example_entities => [
             {"type" => "String", "details" => {"name" => "intrigue"}}
           ],

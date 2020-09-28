@@ -12,12 +12,9 @@ module Intrigue
       end
     
       def validate_entity
-        name =~ /^\w+\.\w+\.?(\w*\.*)*$/
+        # regex based on app id naming rules as per https://developer.android.com/studio/build/application-id
+        name =~ /^[a-zA-Z]+[a-zA-Z0-9_]*\.[a-zA-Z]+[a-zA-Z0-9_]*\.?([a-zA-Z0-9_]*\.*)*$/
       end
-    
-      #def detail_string
-      #  "#{details["origin"]}"
-      #end
     
       def scoped?
         return true if self.allow_list
