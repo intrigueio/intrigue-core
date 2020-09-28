@@ -259,14 +259,9 @@ module Task
 
   def connect_ssl_socket_get_cert(hostname,port,timeout=15)
     # connect
-    socket = connect_ssl_socket(hostname,port,timeout)
-    return nil unless socket && socket.peer_cert
-    # Grab the cert
-    cert = OpenSSL::X509::Certificate.new(socket.peer_cert)
-    # parse the cert
-    socket.sysclose
-    # get the names
-  cert
+    cert = get_certificate(hostname, port, timeout)
+    return nil unless cert
+    cert
   end
 
 

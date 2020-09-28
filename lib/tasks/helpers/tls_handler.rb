@@ -2,6 +2,18 @@ module Intrigue
   module Task
     module TlsHandler
     
+      def get_certificate(hostname, port, timeout=30)
+        # connect
+        socket = connect_ssl_socket(hostname,port,timeout)
+        return nil unless socket && socket.peer_cert
+        # Grab the cert
+        cert = OpenSSL::X509::Certificate.new(socket.peer_cert)
+        # parse the cert
+        socket.sysclose
+        # get the names
+        cert
+      end
+      
       def get_certificate_details(hostname, port)
         # connect
         socket = connect_ssl_socket(hostname,port,timeout=30)
