@@ -73,14 +73,17 @@ class CoreApp < Sinatra::Base
       # go ahead and update it
       params.each do |k,v|
 
-        handler_name = k.split("____").first
-        parameter_name = k.split("____").last
+        handler_name = k.split("____").first.strip
+        parameter_name = k.split("____").last.strip
 
         # skip unless we already know about this config setting, helps us avoid
         # other parameters sent to this page (splat, project, etc)
         next unless Intrigue::Core::System::Config.config["intrigue_handlers"][handler_name]
 
-        Intrigue::Core::System::Config.config["intrigue_handlers"][handler_name][parameter_name] = v unless v =~ /^\*\*\*/
+        unless v =~ /^\*\*\*/
+          puts "Setting config for #{handler_name} #{parameter_name}"
+          Intrigue::Core::System::Config.config["intrigue_handlers"][handler_name][parameter_name] = v 
+        end
       end
 
       # save and reload

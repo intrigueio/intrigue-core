@@ -17,7 +17,7 @@
       <tr>
         <td><%= handler_name %></td>
         <td><%= k %></td>
-        <td><input class="form-control" style="width:100%" type="text" name="<%=h "#{handler_name}____#{k}" %>" value="<%="**********#{v[-8..-1] if v }"%>"></td>
+        <td><input class="form-control" style="width:100%" type="text" name=<%=h "#{handler_name}____#{k}" %> value=<%="**********#{h "#{v}"[-5..1] if v }"%>></td>
       </tr>
 
     <% end %>
