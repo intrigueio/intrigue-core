@@ -127,7 +127,7 @@ class UriBrute < BaseTask
     return false unless response
 
     # try again if we got a blank page (some WAFs seem to do this?)
-    if response.body_utf8 = ""
+    if response.body_utf8 == ""
       10.times do
         _log "Re-attempting #{request_uri}... verifying we should really have a blank page"
         response = http_request :get, request_uri
