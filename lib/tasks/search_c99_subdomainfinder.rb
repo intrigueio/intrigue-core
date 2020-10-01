@@ -41,8 +41,7 @@ module Intrigue
       if result["success"]
 
         result["subdomains"].each do |s|
-          _log "Working on #{s}"
-          _create_entity "DnsRecord", "name" => s["subdomain"]
+          create_dns_entity_from_string("#{s["subdomain"]}")
         end
 
       else
