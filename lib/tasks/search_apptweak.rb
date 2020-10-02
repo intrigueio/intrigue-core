@@ -12,7 +12,7 @@ module Intrigue
         :passive => true,
         :allowed_types => ["Organization", "String", "UniqueKeyword"],
         :example_entities => [
-          {"type" => "String", "details" => {"name" => "intrigue"}}
+          {"type" => "UniqueKeyword", "details" => {"name" => "intrigue.io"}}
         ],
         :allowed_options => [
         ],
