@@ -18,41 +18,45 @@ module Intrigue
           ],
           :created_types => ["IosApp", "AndroidApp"]
         }
-      end
-      
-      def _get_json_response(uri, headers = {})
-        begin
-          response = http_request :get, uri, nil, headers
-          parsed_response = JSON.parse(response.body_utf8)
-        rescue JSON::ParserError => e
-          _log "Error retrieving results: #{e}"
-        end
-      parsed_response
-      end
-      
+      end      
       
       # search and look for android apps
       def find_android_apps(api_key, search_term)
-        search_uri = "https://data.42matters.com/api/v2.0/android/apps/search.json?q=#{search_term}&access_token=#{api_key}"
-  
-        response = _get_json_response search_uri
+        search_uri = "https://data.42matters.com/api/v2.0/android/apps/query.json?access_token=#{api_key}"
+        data = {
+          "query" => {
+            "query_params" => {
+              "from": 0,
+              "sort": "score",
+              "include_full_text_desc": true,
+              "include_developer": true,
+              "full_text_term": "#{search_term}"
+            }
+          }
+        }
+        
+        response = http_request :post , search_uri, nil, {}, data.to_json, true, 60
+       
         unless response
           _log_error "Failed to retrieve response from 42matters. Exiting!"
           return
         end
 
         _log "Got response! Parsing..."
+        response_json = JSON.parse(response.body)
         
-        if response["results"]
+        if response_json["results"]
           # iterate through items and if entity name is in title or developer, consider a match
-          response["results"].each do |app|
+          response_json["results"].each do |app|
               is_match = false
-  
+
               if app["title"] =~ /#{search_term}/i
                   #_log "Found matching app #{app}"
                   is_match = true
               elsif app["developer"] =~ /#{search_term}/i
                   is_match = true
+              elsif app["description"] =~ /#{search_term}/i
+                is_match = true
               end
   
               if is_match
@@ -81,19 +85,32 @@ module Intrigue
   
       # search and look for ios apps
       def find_ios_apps(api_key, search_term)
-        search_uri = "https://data.42matters.com/api/v2.0/ios/apps/search.json?q=#{search_term}&access_token=#{api_key}"
-  
-        response = _get_json_response search_uri
+        search_uri = "https://data.42matters.com/api/v2.0/ios/apps/query.json?access_token=#{api_key}"
+        data = {
+          "query" => {
+            "query_params" => {
+              "from": 0,
+              "sort": "score",
+              "include_full_text_desc": true,
+              "include_developer": true,
+              "full_text_term": "#{search_term}"
+            }
+          }
+        }
+        
+        response = http_request :post , search_uri, nil, {}, data.to_json, true, 60
+
         unless response
           _log_error "Failed to retrieve response from 42matters. Exiting!"
           return
         end
 
         _log "Got response! Parsing..."
-  
-        if response["results"]
+        response_json = JSON.parse(response.body)
+
+        if response_json["results"]
           # iterate through items and if entity name is in title or developer, consider a match
-          response["results"].each do |app|
+          response_json["results"].each do |app|
               is_match = false
   
               if app["description"] =~ /#{search_term}/i
