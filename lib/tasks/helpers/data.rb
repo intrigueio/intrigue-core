@@ -176,6 +176,9 @@ module Data
     tcp_ports << "587,"
     tcp_ports << "993,"             # imaps
     tcp_ports << "995,"             # pops
+    tcp_ports << "1090,"            # java rmi
+    tcp_ports << "1098,"            # java rmi
+    tcp_ports << "4444,"            # java rmi
     tcp_ports << "1723,"            # pptp
     tcp_ports << "1883,"
     tcp_ports << "2181,"
@@ -188,35 +191,53 @@ module Data
     tcp_ports << "3888,"
     tcp_ports << "4190,"
     tcp_ports << "4443,"            # HTTPS
-    tcp_ports << "4444,"            # Bind
+    tcp_ports << "4444,"            # Bind / jboss
+    tcp_ports << "4445,"            # jboss
     tcp_ports << "4505,"            # salt stack
     tcp_ports << "4506,"            # salt stack
-    tcp_ports << "4786,"
+    tcp_ports << "4786,"            # Cisco Smart Install
+    tcp_ports << "4848,"            # Glassfish
     tcp_ports << "5000,"            # Oracle WebLogic Server Node Manager Port	
-    tcp_ports << "5556,"
+    tcp_ports << "5555,"            # HP Data Protector
+    tcp_ports << "5556,"            # HP Data Protector
     tcp_ports << "5900,5901,"       # vnc
     tcp_ports << "6379,"            # redis 
     tcp_ports << "6443,"
     tcp_ports << "7001,"            # Oracle WebLogic Server Listen Port for Administration Server 
     tcp_ports << "7002,"            # Oracle WebLogic Server Listen Port for Administration Server 
+    tcp_ports << "7003,"            # Oracle WebLogic Server
+    tcp_ports << "7004,"            # Oracle WebLogic Server
+    tcp_ports << "7070,"            # Oracle WebLogic Server 
+    tcp_ports << "7071,"            # Oracle WebLogic Server 
     tcp_ports << "7443,"        
     tcp_ports << "7777,"
-    tcp_ports << "8000,"
+    tcp_ports << "8000,"            # Oracle WebLogic Server 
     tcp_ports << "8001,"            # Oracle WebLogic Server Listen Port for Managed Server	
+    tcp_ports << "8002,"            # Oracle WebLogic Server 
+    tcp_ports << "8003,"            # Oracle WebLogic Server 
     tcp_ports << "8009,"
     tcp_ports << "8032,"
     tcp_ports << "8080,8081,"       # HTTP
     tcp_ports << "8278,"
     tcp_ports << "8291,"
     tcp_ports << "8443,"
+    tcp_ports << "8686,"            # JMX
     tcp_ports << "8883,"
-    tcp_ports << "9000,9001,"
+    tcp_ports << "9000,"            # Oracle WebLogic Server 
+    tcp_ports << "9001,"            # Oracle WebLogic Server 
+    tcp_ports << "9002,"            # Oracle WebLogic Server 
+    tcp_ports << "9003,"            # Oracle WebLogic Server 
+    tcp_ports << "9012,"            # JMX
     tcp_ports << "9091,9092,"
     tcp_ports << "9094,"
     tcp_ports << "9200,9201,"         # elasticsearch
     tcp_ports << "9300,9301,"         # elasticsearch
     tcp_ports << "9443,"
+    tcp_ports << "9503,"            # Oracle WebLogic Server 
+    tcp_ports << "10999,"            # java rmi
     tcp_ports << "10443,"
+    tcp_ports << "11099,"            # java rmi
+    tcp_ports << "11111,"            # jboss
     tcp_ports << "11443,"
     tcp_ports << "11994,"
     tcp_ports << "12443,"
@@ -226,8 +247,13 @@ module Data
     tcp_ports << "22222,"
     tcp_ports << "30443,"
     tcp_ports << "40443,"
+    tcp_ports << "45000,"            # JDWP
+    tcp_ports << "45001,"            # JDWP
+    tcp_ports << "47001,"            # java rmi
+    tcp_ports << "47002,"            # java rmi
     tcp_ports << "49152,"
     tcp_ports << "49154,"
+    tcp_ports << "50500,"            # JMX
     tcp_ports << "53413"
 
   tcp_ports.split(",")
