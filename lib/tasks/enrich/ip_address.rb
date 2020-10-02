@@ -42,13 +42,14 @@ class IpAddress < Intrigue::Task::BaseTask
     results.each do |result|
       _log "Creating entity for... #{result["name"]}"
 
+      next unless result
       next unless result["name"]
       next unless result["name"].length > 0
 
       # create a domain for this entity
       entity = create_dns_entity_from_string(result["name"], @entity) if @entity.scoped?
       
-      if entity.type_string == "Domain"
+      if entity && entity.type_string == "Domain"
         # unscope it right away, since this can cause scope issues 
         # ... not auto-unscoping it can lead us into trouble (digitalwarlock.com)
         # ... 67.225.252.85
