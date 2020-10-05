@@ -133,7 +133,7 @@ class Uri < Intrigue::Task::BaseTask
     if response.code == "200"
 
       # capture cookies
-      set_cookie = response['set-cookie'] || response["Set-Cookie"]
+      set_cookie = response.headers['set-cookie'] || response.headers["Set-Cookie"]
       _log "Got Cookie: #{set_cookie}" if set_cookie
       
       # TODO - cookie scoped to parent domain
@@ -411,7 +411,7 @@ class Uri < Intrigue::Task::BaseTask
 
   def check_options_endpoint(uri)
     response = http_request(:options, uri)
-    (response["allow"] || response["Allow"]) if response
+    (response.headers["allow"] || response.headers["Allow"]) if response
   end
 
   def check_forms(response_body)
