@@ -12,13 +12,13 @@ class GithubRepository < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name =~ /^[\d\w]+\/[\d\w]+/
+    name =~ /^[\d\w\-]+\/[\d\w\-]+/
   end
 
   def scoped?
     return true if self.allow_list
     return false if self.deny_list
-  
+
   true
   end
 
