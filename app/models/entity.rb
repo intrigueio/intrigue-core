@@ -69,20 +69,20 @@ module Model
     # default method that scopes / unscoped entities (can be overridden)
     # TODO ... maybe we move the logic of details that exists in entity_manager here?
     def scoped?
-      raise "Method must be oveeridden for #{self.class}!"
+      raise "Method must be overidden for #{self.class}!"
     end
 
     def set_scoped!(bool_val=true, reason=nil)
 
       # always respect the deny list
       if self.project.deny_list_entity?(type_string, name)
-        bool_value = false
+        bool_val = false
         reason = "deny_list_override"
       end
 
       # but always ALWAYS respect the allow list
       if self.project.allow_list_entity?(type_string, name)
-        bool_value = true
+        bool_val = true
         reason = "allow_list_override"
       end
 

@@ -75,7 +75,7 @@ class NetBlock < Intrigue::Core::Model::Entity
         if whois_text =~ /@#{Regexp.escape(s.name)}/i
           
           # Log our scope change
-          log_string = " - [#{s.project.name}] Entity #{s.type} #{s.name} set scoped to true, reason: whois text matched #{s.name}"
+          log_string = " - [#{s.project.name}] Entity #{s.type} #{s.name} set scoped on #{self.name} to true, reason: whois text matched #{s.name}"
           Intrigue::Core::Model::ScopingLog.log log_string
 
           return true
@@ -85,53 +85,53 @@ class NetBlock < Intrigue::Core::Model::Entity
 
     ### And now, let's check our corpus of already-scoped stuff from this run 
     #############################################################################
-    self.project.entities.where(scoped: true, type: scope_check_entity_types ).each do |e|
-      # make sure we skip any dns entries that are not fqdns. this will prevent
-      # auto-scoping on a single name like "log" or even a number like "1"
-      next if (e.type == "DnsRecord" || e.type == "Domain") && e.name.split(".").count == 1
-      # Now, check to see if the entity's name matches something in our # whois text, 
-      # and especially make sure 
-      if whois_text =~ /@#{Regexp.escape(e.name)}/i
-
-        # Log our scope change
-        log_string = " - [#{e.project.name}] Entity #{e.type} #{e.name} set scoped to true, reason: whois text matched #{e.name}"
-        Intrigue::Core::Model::ScopingLog.log log_string
-
-        return true
-      end
-    end
+    #self.project.entities.where(scoped: true, type: scope_check_entity_types ).each do |e|
+    #  # make sure we skip any dns entries that are not fqdns. this will prevent
+    #  # auto-scoping on a single name like "log" or even a number like "1"
+    #  next if (e.type == "DnsRecord" || e.type == "Domain") && e.name.split(".").count == 1
+    #  # Now, check to see if the entity's name matches something in our # whois text, 
+    #  # and especially make sure 
+    #  if whois_text =~ /@#{Regexp.escape(e.name)}/i
+    #
+    #    # Log our scope change
+    #    log_string = " - [#{e.project.name}] Entity #{e.type} #{e.name} set scoped on #{self.name} to true, reason: whois text matched #{e.name}"
+    #    Intrigue::Core::Model::ScopingLog.log log_string
+    #
+    #    return true
+    #  end
+    #end
 
     # now check more edge cases
 
     ### CHECK OUR IN-PROJECT ENTITIES TO SEE IF THE ORG NAME MATCHES 
     #######################################################################
-    if details["organization"] || details["organization_name"]
-      self.project.entities.where(scoped: true, type: scope_check_entity_types ).each do |e|
-        # make sure we skip any dns entries that are not fqdns. this will prevent
-        # auto-scoping on a single name like "log" or "www" or even a number like "1"
-        next if (e.type == "DnsRecord" || e.type == "Domain") && e.name.split(".").count == 1
-        # Now, check to see if the entity's name matches something in our # whois text, 
-        # and especially make sure 
-        if (details["organization"] =~ /@#{Regexp.escape(e.name)}/i) || 
-            (details["organization_name"] =~ /@#{Regexp.escape(e.name)}/i)
-
-            # Log our scope change
-            log_string = " - [#{e.project.name}] Entity #{e.type} #{e.name} set scoped to true, reason: org name matched #{e.name}"
-            Intrigue::Core::Model::ScopingLog.log log_string
-
-          return true
-        end
-      end
-    else
-      if (!whois_text && details["cidr"].to_i > 23)
-
-        # Log our scope change
-        log_string = " - [#{e.project.name}] Entity #{e.type} #{e.name} set scoped to true, reason: missing whois text and small cidr"
-        Intrigue::Core::Model::ScopingLog.log log_string
-        
-        return true 
-      end
-    end
+    #if details["organization"] || details["organization_name"]
+    #  self.project.entities.where(scoped: true, type: scope_check_entity_types ).each do |e|
+    #    # make sure we skip any dns entries that are not fqdns. this will prevent
+    #    # auto-scoping on a single name like "log" or "www" or even a number like "1"
+    #    next if (e.type == "DnsRecord" || e.type == "Domain") && e.name.split(".").count == 1
+    #    # Now, check to see if the entity's name matches something in our # whois text, 
+    #    # and especially make sure 
+    #    if (details["organization"] =~ /@#{Regexp.escape(e.name)}/i) || 
+    #        (details["organization_name"] =~ /@#{Regexp.escape(e.name)}/i)
+    #
+    #        # Log our scope change
+    #        log_string = " - [#{e.project.name}] Entity #{e.type} #{e.name} set scoped on #{self.name} to true, reason: org name matched #{e.name}"
+    #        Intrigue::Core::Model::ScopingLog.log log_string
+    #
+    #      return true
+    #    end
+    #  end
+    #else
+    #  if (!whois_text && details["cidr"].to_i > 23)
+    #
+    #    # Log our scope change
+    #    log_string = " - [#{e.project.name}] Entity #{e.type} #{e.name} set scoped on #{self.name} to true, reason: missing whois text and small cidr"
+    #    Intrigue::Core::Model::ScopingLog.log log_string
+    #    
+    #    return true 
+    #  end
+    #end
 
   # if we didnt match the above and we were asked, it's false 
   false
