@@ -7,13 +7,11 @@ gem 'sinatra-contrib'         #'~> 2.0.1'
 gem 'puma'                    # Application Server
 gem 'eventmachine'
 gem 'rack-cors'
-
 gem 'redis'                   # Redis
 gem 'redis-namespace'         # Redis
 gem 'sidekiq'                 # Background Tasks
 gem 'sidekiq-failures'        # Background Tasks
 gem 'sidekiq-limit_fetch'     # Dynamic queueing
-
 gem 'thor'                    # CLI
 gem 'elasticsearch'           # Database
 gem 'faraday_middleware-aws-sigv4' # AWS elasticsearch
@@ -51,6 +49,8 @@ gem 'google-api-client'
 gem 'googleauth'
 gem 'google-cloud-storage'
 gem 'googleajax'              # search_google
+gem 'ip_ranger',              :git => "https://github.com/intrigueio/ip_ranger"
+gem 'ipaddr'
 gem 'maxminddb',              :git => "https://github.com/intrigueio/maxminddb"
 gem 'net-dns'                 # dns_cache_snoop
 gem 'net-http2'               # http2 client support

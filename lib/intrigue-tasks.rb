@@ -19,8 +19,7 @@ require 'webrick'
 ###
 ### In the case where we're a gem, they're not yet available. add them as deps
 ###
-begin  # try to load runtime deps 
-  
+begin  # try to load runtime deps
   require 'aws-sdk-route53'
   require 'aws-sdk-s3'
   require 'aws-sdk-sqs'
@@ -32,6 +31,7 @@ begin  # try to load runtime deps
   require 'dnsimple'
   require 'em-resolv-replace'
   require 'flareon'
+  require 'ip_ranger'
   require 'ipaddr'
   require 'maxminddb'
   require 'net-http2'

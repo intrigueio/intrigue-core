@@ -137,6 +137,14 @@ module Whois
   out
   end
 
+  def range_to_cidrs(lower, upper)
+  
+    ip_range = IPRanger::IPRange.new(lower, upper)
+    cidrs = ip_range.cidrs
+
+  cidrs
+  end
+
   private  # helper methods for parsing
 
   # use RDAP to query an IP
@@ -174,7 +182,8 @@ module Whois
       "end_address" => "#{json["endAddress"]}",
       "cidr" => "#{cidr_length}",
       "description" => "#{description}",
-      "block_type" => "#{type}"
+      "block_type" => "#{type}",
+      "extended_rdap" => response
     }
 
   out
@@ -228,9 +237,14 @@ module Whois
         description = less_specific_hash.first["descr"]
       end
 
-      out = out.merge({
+      # convert the range to cidr format
+      cidrs = range_to_cidrs(start_address, end_address).map{|x| x.to_cidr}
+      raise "Multiple CIDRs available!!!" if cidrs.count > 1
+
+      # merge in our details
+      out.merge!({
         "exact" => exact,
-        "name" => "#{range}",
+        "name" => "#{cidrs.first}",
         "start_address" => "#{start_address}",
         "end_address" => "#{end_address}",
         "cidr" => "#{cidr}",

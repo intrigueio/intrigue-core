@@ -44,6 +44,12 @@ GIT
       typhoeus
 
 GIT
+  remote: https://github.com/intrigueio/ip_ranger
+  revision: e1e4080070cf699cd0b80c5c8d6d5dddfc19d4b8
+  specs:
+    ip_ranger (0.0.2)
+
+GIT
   remote: https://github.com/intrigueio/maxminddb
   revision: 1a48218c7577bc137bd7736e62a28e2d7d92b39c
   specs:
@@ -271,6 +277,7 @@ GEM
     i18n (1.8.5)
       concurrent-ruby (~> 1.0)
     iconv (1.0.8)
+    ipaddr (1.2.2)
     ipaddress (0.8.3)
     jmespath (1.4.0)
     jsobfu (0.4.2)
@@ -467,6 +474,8 @@ DEPENDENCIES
   iconv
   intrigue-ident!
   intrigue_api_client!
+  ip_ranger!
+  ipaddr
   json (>= 2.3.0)
   maxminddb!
   net-dns
