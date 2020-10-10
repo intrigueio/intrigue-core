@@ -36,8 +36,8 @@ class UriCheckApiEndpoint < BaseTask
     url = _get_entity_name
 
     ###
-    # First just check our fingerprint, lots of stuff will already have been 
-    # fingerprinted during our ident run 
+    # First just check our fingerprint, lots of stuff will already have been
+    # fingerprinted during our ident run
     ###
     (_get_entity_detail("fingerprint") || []).each do |fp|
       api_endpoint = true if fp["tags"] && fp["tags"].include?("API")
@@ -50,22 +50,26 @@ class UriCheckApiEndpoint < BaseTask
     return unless standard_response
 
     ####
-    # next just check keywords in the url, but of course, sanity check this. 
+    # next just check keywords in the url, but of course, sanity check this.
     ###
-    if (  url =~ /api\./ || 
-          url =~ /\/api/ || 
-          url =~ /\/json/ || 
-          url =~ /\.json/ || 
-          url =~ /\.xml/ )
+    if (  url =~ /api\./ ||
+          url =~ /apis\./ ||
+          url =~ /\/api/ ||
+          url =~ /\/json/ ||
+          url =~ /\.json/ ||
+          url =~ /\.xml/ ||
+          url =~ /skiptoken/ ||
+          url =~ /\/restapis/
+         )
 
-      unless standard_response.body_utf8 =~/^<HTML>/i # this be html
-        api_endpoint = true 
+      unless ((url =~ /googleapis/) or (url =~ /\.amazonaws\.com/) or (standard_response.body_utf8 =~/^<HTML>/i) or (standard_response.body_utf8 =~/HTTP Status 404/i) or (standard_response.body_utf8 =~/NoSuchBucket/i)) # this be html
+        api_endpoint = true
         api_reason = "url"
-      end 
+      end
 
     end
 
-    ### 
+    ###
     ### If we made it this far, and our base url matches, just return that
     if api_endpoint
       _create_api_endpoint(url, url, api_reason)
@@ -76,16 +80,16 @@ class UriCheckApiEndpoint < BaseTask
     # otherwise check patterns in / around the original
     ####
 
-    # always start empty 
-    api_endpoint = nil 
+    # always start empty
+    api_endpoint = nil
 
-    [ 
-      "#{url}", 
-      "#{url}/api", 
-      "#{url}/api/v1", 
-      "#{url}/api/v2", 
-      "#{url}/api/v3", 
-      "#{url}/docs", 
+    [
+      "#{url}",
+      "#{url}/api",
+      "#{url}/api/v1",
+      "#{url}/api/v2",
+      "#{url}/api/v3",
+      "#{url}/docs",
       "#{url}/graphql",
       "#{url}/api-docs",
       "#{url}/api-docs/swagger.json",
@@ -108,26 +112,28 @@ class UriCheckApiEndpoint < BaseTask
       "#{url}/swagger/v1/swagger.json",
       "#{url}/v1/swagger.json"
     ].each do |u|
-      
+
       _log "Checking... #{u}"
 
       # Go ahead and get the response for this paritcular endpoint
+
       response = http_request :get, u
 
       next unless response
       # skip if we're not the original url, but we're getting the same response
+
       next if u != url && response.body_utf8 == standard_response.body_utf8
 
       ###
-      ### Check for known strings 
+      ### Check for known strings
       ###
       if (response.body_utf8 =~ /swagger-section/ ||
-          response.body_utf8 =~ /swaggerhub.com/ || 
+          response.body_utf8 =~ /swaggerhub.com/ ||
           response.body_utf8 =~ /soapenv:Envelope/)
-        # break and create it  
+        # break and create it
         api_reason = "response_body"
         api_endpoint = u
-        break 
+        break
       end
 
       # check for content type of application.. note that this will flag
@@ -142,38 +148,38 @@ class UriCheckApiEndpoint < BaseTask
           api_endpoint = u if "#{headers[ct]}" =~ /^application\/x-protobuf/i
           api_endpoint = u if "#{headers[ct]}" =~ /^application\/octet-stream/i
           api_endpoint = u if "#{headers[ct]}" =~ /^text\/csv/i
-          
-          # break and create it 
+
+          # break and create it
           if api_endpoint
             api_reason = "content_type"
-            break 
+            break
           end
 
         end
       end
-      
+
       ###
       # try to parse it (JSON)
       ###
       begin
         # get request body
         body = standard_response.body_utf8
-        if body 
+        if body
           json = JSON.parse(body)
           if json
-            unless 
+            unless
                # now check for common error scenarios, and if we pass
-              (standard_response.code == "404" && json["error"] ==  "Not Found") || 
-              (standard_response.code == "404" && json["response"] == "Content was not found.") 
+              (standard_response.code == "404" && json["error"] ==  "Not Found") ||
+              (standard_response.code == "404" && json["response"] == "Content was not found.")
 
               # create it as an api endpoint
-              api_endpoint = u 
+              api_endpoint = u
               api_reason = "json_body"
               break
             end
           end
         end
-      rescue JSON::ParserError      
+      rescue JSON::ParserError
         _log "No body!"
       end
 
@@ -186,7 +192,7 @@ class UriCheckApiEndpoint < BaseTask
         # break if it's been set so we dont genereate a bunch of FP's
         if api_endpoint
           api_reason = "fingerprint"
-          break 
+          break
         end
       end
     end
@@ -197,23 +203,23 @@ class UriCheckApiEndpoint < BaseTask
 
     # set the details and create a new entity if we made it this far!
     if api_endpoint
-      _create_api_endpoint(url, api_endpoint, api_reason) 
-    else 
+      _create_api_endpoint(url, api_endpoint, api_reason)
+    else
       _set_entity_detail "api_endpoint", false
     end
 
   end
 
   def _create_api_endpoint(base_uri, api_endpoint, api_reason)
-    
-    # Create an entity to track this 
-    _create_entity "ApiEndpoint", { 
-      "name" => api_endpoint, 
+
+    # Create an entity to track this
+    _create_entity "ApiEndpoint", {
+      "name" => api_endpoint,
       "base_uri" => base_uri,
       "reason" => api_reason
     }
 
-    ### LEGACY, set this on our original entity 
+    ### LEGACY, set this on our original entity
     _set_entity_detail "api_endpoint", api_endpoint.nil? # legacy (keep the attribute on the base entity)
     _set_entity_detail "api_location", api_endpoint # legacy (keep the attribute on the base entity)
     _set_entity_detail "api_reason", api_reason # legacy (keep the attribute on the base entity)
