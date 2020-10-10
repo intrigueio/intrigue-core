@@ -7,7 +7,7 @@ module Machine
         :name => "internal_light_discovery_active",
         :pretty_name => "Internal Discovery - Light, Active",
         :passive => false,
-        :user_selectable => true,
+        :user_selectable => false,
         :authors => ["jcran"],
         :description => "This machine performs a light enumeration on an internal network. Start with a Domain or NetBlock."
       }
