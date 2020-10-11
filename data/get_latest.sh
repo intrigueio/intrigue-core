@@ -48,8 +48,8 @@ NVD_YEARS="2019 2018 2017"
 # nvd download function
 function get_nvd_json() {
   echo "[+] Getting latest NVD JSON Feed: $YEAR"
-  wget -N -q https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-$YEAR.json.gz -O nvdcve-1.0-$YEAR.json.gz
-  gunzip nvdcve-1.0-$YEAR.json.gz
+  wget -N -q https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-$YEAR.json.gz -O nvdcve-1.1-$YEAR.json.gz
+  gunzip nvdcve-1.1-$YEAR.json.gz
 }
 
 if [ -d "nvd" ]; then
