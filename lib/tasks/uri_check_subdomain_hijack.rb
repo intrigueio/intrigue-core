@@ -245,6 +245,9 @@ class UriCheckSudomainHijack  < BaseTask
       elsif response_body =~ /Looks like you\'ve traveled too far into cyberspace/i
         _create_hijackable_subdomain_issue "Vend", uri, "potential"
 
+      elsif response_body =~ /The deployment could not be found on Vercel\./i
+        _create_hijackable_subdomain_issue "Vercel", uri, "potential"
+
       elsif response_body =~ /domain is already connected to a Webflow site/i
         _create_hijackable_subdomain_issue "Webflow", uri, "potential" unless (uri =~ /webflow.io/)
 
