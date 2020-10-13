@@ -52,7 +52,7 @@ class Uri < Intrigue::Core::Model::Entity
     uri = URI.parse(self.name)
     hostname = uri.hostname
     # note - this may not be a domain, but that's okay, we only want to search 'Domain'.
-    if self.project.traversable_entity?("Domain", hostname) 
+    if !self.project.traversable_entity?("Domain", hostname) 
       return false
     end
 

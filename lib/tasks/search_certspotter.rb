@@ -47,6 +47,7 @@ class SearchCertSpotter < BaseTask
       end
 
       json = JSON.parse(response.body_utf8)
+      return nil unless json  # fail gracefully if we got a nil response
 
       # a little wicked but we want to only select those that match our pattern(s)
       records = json.map do |x|
