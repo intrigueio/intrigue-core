@@ -439,7 +439,7 @@ module Task
       end
 
       # if we're a post, set our body 
-      if method == :post
+      if method == :post || method == :put
         options[:body] = data
       end
 
