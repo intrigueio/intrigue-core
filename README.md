@@ -10,7 +10,7 @@ To get started quickly and play around with an instance, head on over to the [Ge
 
 ### Using the web interface
 
-To use the web interface, browse to http://127.0.0.1:7777. Once you're able to connect, you can follow the instructions here: http://core.intrigue.io/up-and-running/
+To use the web interface, browse to https://127.0.0.1:7777. Once you're able to connect, you can follow the instructions here: http://core.intrigue.io/up-and-running/
 
 ### Configuring the system
 
