@@ -19,7 +19,7 @@ module Intrigue
           { :vendor => "SonicWall", :product => "SonicOS"},
         ],
         references: [
-          { type: "description", uri: "https://psirt.global.sonicwall.com/vuln-detail/SNWLID-2020-0010"}
+          { type: "description", uri: "https://psirt.global.sonicwall.com/vuln-detail/SNWLID-2020-0010"},
           { type: "description", uri: "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-5135"},
           { type: "description", uri: "https://www.tenable.com/blog/cve-2020-5135-critical-sonicwall-vpn-portal-stack-based-buffer-overflow-vulnerability"},
         ],
