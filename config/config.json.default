@@ -307,6 +307,12 @@
       "editable": "true",
       "comment": ""
     },
+    "hostio_api_key": {
+      "value": "",
+      "uri": "https://host.io/docs",
+      "editable": "true",
+      "comment": ""
+    },
     "hunter_io_api_key": {
       "value": "",
       "uri": "https://hunter.io/api_keys",
