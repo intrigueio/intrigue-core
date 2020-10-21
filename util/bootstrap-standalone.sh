@@ -122,7 +122,7 @@ sudo apt-get -y --no-install-recommends install make \
   dnsmasq \
   systemd \
   wget \
-  python-minimal && 
+  python3-minimal && 
   rm -rf /var/lib/apt/lists/*
 
 echo "[+] Installing Postgres 12"
