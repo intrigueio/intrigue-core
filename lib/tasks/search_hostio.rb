@@ -14,7 +14,7 @@ module Intrigue
         :allowed_types => ["Domain"],
         :example_entities => [{"type" => "Domain", "details" => {"name" => "intrigue.io"}}],
         :allowed_options => [],
-        :created_types => ["IpAddress","UniqueToken", "DnsRecord", "EmailAddress"]
+        :created_types => ["IpAddress","UniqueToken", "DnsRecord", "EmailAddress", "Domain"]
       }
     end
 
@@ -36,7 +36,7 @@ module Intrigue
     end #end run
 
 
-    #Search domian name for google analyticis, adsense ,IPs and EmailAddress
+    #Search domain name for google AnalyticsID, AdSense, IPs, and Email Address
     def search_analyticsid(entity_name,api_key)
 
       begin
@@ -50,7 +50,7 @@ module Intrigue
           # Create shared analytics of the specific domain
           _create_entity "UniqueToken" , "name" => json["googleanalytics"]
           google_analyticsid = json["googleanalytics"]
-          # list domains share the same Google analytics tracking ID
+          # List domains share the same Google Analytics tracking ID
           search_domains_related_to_same_googleanalytics google_analyticsid, api_key
         end
 
@@ -89,7 +89,8 @@ module Intrigue
 
       if json["domains"]
         json["domains"].each do |u|
-          _create_entity "DnsRecord" , "name" => u
+          #_create_entity "DnsRecord" , "name" => u
+           create_dns_entity_from_string u
         end
       end
     end
@@ -102,7 +103,8 @@ module Intrigue
 
       if json["domains"]
         json["domains"].each do |u|
-          _create_entity "DnsRecord" , "name" => u
+          #_create_entity "DnsRecord" , "name" => u
+          create_dns_entity_from_string u
         end
       end
     end
