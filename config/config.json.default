@@ -385,6 +385,12 @@
       "editable": "true",
       "comment": ""
     },
+    "publicwww_api_key": {
+      "value": "XXX",
+      "uri": "https://publicwww.com/",
+      "editable": "true",
+      "comment": ""
+    },
     "pulsedive_api_key": {
       "value": "XXX",
       "uri": "https://pulsedive.com/api/",
