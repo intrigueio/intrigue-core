@@ -164,15 +164,17 @@ echo export PATH=$PATH:$GOROOT/bin:$GOPATH/bin >> ~/.bash_profile
 
 # ffuf
 echo "[+] Getting Ffuf... "
-go get github.com/intrigueio/ffuf
+GO111MODULE=on go get -u -v github.com/ffuf/ffuf
 
 # gitrob
 echo "[+] Getting Gitrob... "
-go get github.com/intrigueio/gitrob
+wget https://github.com/michenriksen/gitrob/releases/download/v2.0.0-beta/gitrob_linux_amd64_2.0.0-beta.zip
+unzip gitrob_linux_amd64_2.0.0-beta.zip
+sudo mv gitrob /usr/local/bin
 
 # gobuster
 echo "[+] Getting Gobuster... "
-go get github.com/intrigueio/gobuster.git
+go get github.com/OJ/gobuster
 
 # ghostcat
 echo "[+] Getting Ghostcat Vuln... "
@@ -203,6 +205,9 @@ if [ ! -f /usr/bin/rdpscan ]; then
   cd ..
   rm -rf rdpscan
 fi
+
+# subfinder 
+GO111MODULE=on go get -u -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder
 
 ### Install latest tika
 echo "[+] Installing Apache Tika from public.intrigue.io"
