@@ -13,7 +13,7 @@ class OracleWeblogicVulnerablePaths < BaseIssue
       description: "This server is exposing paths known to be suceptable to many vulnerabilities/",
       remediation: "Block access to these paths.",
       affected_software: [
-        { :vendor => "Oracle", :product => "Weblogic" }
+        { :vendor => "Oracle", :product => "Weblogic Server" }
       ],
       references: [],
       check: "uri_brute_focused_content"
