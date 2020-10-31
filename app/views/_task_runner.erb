@@ -1,6 +1,6 @@
 
 <div class="col-sm-7">
-<form class="form-horizontal" id="task_runner" enctype="multipart/form-data" target="_self" method="post" action="/<%=h @project_name%>/interactive/single">
+<form class="form-horizontal" id="task_runner" enctype="multipart/form-data" target="_self" method="post" action="/<%= h @project_name%>/interactive/single">
   <div class="form-group">
     <!-- <select name="task" id="task_name"> -->
     <label for="task_name" class="col-xs-4 control-label">Task</label>
@@ -16,13 +16,13 @@
         %>
 
         <!-- set up the task in an option box, default to create_entity -->
-        <option value="<%= task_class.metadata[:name] %>"
+        <option value="<%= h task_class.metadata[:name] %>"
           <% if @task_result %>
             <%= "selected='selected'" if @task_result.task_name == task_class.metadata[:name] %>
           <% else %>
             <%= "selected='selected'" if task_class.metadata[:name] == "create_entity" %>
           <% end %>
-          ><%= task_class.metadata[:pretty_name] %>
+          ><%= h task_class.metadata[:pretty_name] %>
         </option>
 
       <% end %>
@@ -60,9 +60,9 @@
           <!-- iterate through stategies -->
           <% Intrigue::MachineFactory.list.each do |machine_class| %>
            <% next unless machine_class.metadata[:user_selectable] %>
-            <option value="<%= machine_class.metadata[:name] %>"
+            <option value="<%= h machine_class.metadata[:name] %>"
               <%= "selected='selected'" if machine_class.metadata[:name] == "org_asset_discovery_active" %> >
-              <%= machine_class.metadata[:pretty_name] %>
+              <%= h machine_class.metadata[:pretty_name] %>
             </option>
           <% end %>
         </select>
