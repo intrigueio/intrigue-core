@@ -15,7 +15,11 @@ class CoreApp < Sinatra::Base
     @selected_entities = Intrigue::Core::Model::Entity.scope_by_project(@project_name)
     @selected_entities = @selected_entities.where(:type => @entity_types) if @entity_types
     @selected_entities = _tokenized_search(@search_string, @selected_entities) if @search_string
-    @selected_entities = @selected_entities.where(:enriched => true) if  @only_enriched
+    
+    #
+    @selected_entities = @selected_entities.where(:enriched => true) if @only_enriched
+    @selected_entities = @selected_entities.where(:hidden => true) unless @include_hidden
+    @selected_entities = @selected_entities.where(:scoped => true) unless @include_unscoped
 
     # create a calculated url with our parameters
     @calculated_url = "/#{h @project_name}/entities?search_string=#{h @search_string}&include_hidden=#{@include_hidden ? 'on' : 'off'}&include_unscoped=#{@include_unscoped ? 'on' : 'off'}&grouped_entities=#{@grouped_entities ? 'on' : 'off'}&#{@entity_types.map{|x| "entity_types[]=#{h x}" }.join("&") if @entity_types}"
