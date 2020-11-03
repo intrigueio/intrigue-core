@@ -4,9 +4,7 @@ class Array
     self.map do |x|
 
       if x.kind_of? String
-        x.encode("UTF-8", { :undef => :replace,
-                            :invalid => :replace,
-                            :replace => "?" })
+        x.sanitize_unicode
       else
         x.inspect.encode("UTF-8", { :undef => :replace,
                             :invalid => :replace,

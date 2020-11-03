@@ -156,11 +156,6 @@ module Machine
             task_result.log "Cowardly refusing to scan this netblock: #{entity}.. it's not scannable!"
           end
   
-        elsif entity.type_string == "NetworkService"
-
-          # run a traceroute
-          start_recursive_task(task_result,"tcp_traceroute",entity, [])
-  
         elsif entity.type_string == "Organization"
   
           ### search for netblocks
