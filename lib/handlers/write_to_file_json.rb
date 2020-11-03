@@ -1,13 +1,8 @@
-require 'digest'
-require 'fog-aws'
-require 'thread'
-require "json"
-
-
 module Intrigue
+module Core
 module Handler
 
-  class WriteToFileJson < Intrigue::Handler::Base
+  class WriteToFileJson < Intrigue::Core::Handler::Base
 
     def self.metadata
       {
@@ -138,5 +133,6 @@ module Handler
     end
 
   end
+end
 end
 end

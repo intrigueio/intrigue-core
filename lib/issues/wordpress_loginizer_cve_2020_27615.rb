@@ -4,7 +4,7 @@ module Intrigue
     
       def self.generate(instance_details={})
         {
-          added: "2020-22-10",
+          added: "2020-10-22",
           name: "wordpress_loginizer_cve_2020_27615",
           pretty_name: "Wordpress Loginizer Plugin SQL Injection - CVE-2020-27615",
           severity: 1,

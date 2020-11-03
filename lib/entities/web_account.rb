@@ -31,7 +31,6 @@ class WebAccount < Intrigue::Core::Model::Entity
         "service" => service_name })
 
     save_changes
-
   true
   end
 
@@ -39,7 +38,6 @@ class WebAccount < Intrigue::Core::Model::Entity
   def scoped?
     return true if self.allow_list
     return false if self.deny_list
-  
   true
   end
 

@@ -1,8 +1,9 @@
 require 'fog-aws'
 
 module Intrigue
+module Core
 module Handler
-  class SendToAwsS3Csv < Intrigue::Handler::Base
+  class SendToAwsS3Csv < Intrigue::Core::Handler::Base
 
     def self.metadata
       {
@@ -49,5 +50,6 @@ module Handler
     end
 
   end
+end
 end
 end

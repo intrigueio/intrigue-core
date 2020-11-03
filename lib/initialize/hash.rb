@@ -9,11 +9,9 @@ class Hash
     new_hash = {}
     self.each_pair do |k,v|
       if v.is_a?(String)
-        new_hash.merge!({
-          k.encode('UTF-8', invalid: :replace, undef: :replace, replace: '?') => v.encode('UTF-8', invalid: :replace, undef: :replace, replace: '?')
-        })
+        new_hash.merge!({ k.sanitize_unicode => value.sanitize_unicode })
       else
-        new_hash.merge!({k.encode('UTF-8', invalid: :replace, undef: :replace, replace: '?') => v})
+        new_hash.merge!({ k.sanitize_unicode => v })
       end
     end
 

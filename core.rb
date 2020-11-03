@@ -22,6 +22,9 @@ require 'sidekiq-limit_fetch'
 $intrigue_basedir = File.dirname(__FILE__)
 $intrigue_environment = ENV.fetch("INTRIGUE_ENV","development")
 
+Encoding.default_external="UTF-8"
+Encoding.default_internal="UTF-8"
+
 # System-level Monkey patches
 require_relative 'lib/initialize/array'
 require_relative 'lib/initialize/hash'

@@ -1,5 +1,5 @@
 Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/bionic64"
+  config.vm.box = "ubuntu/focal64"
 
   config.vm.define "intrigue-core" do |x|
 
@@ -12,9 +12,8 @@ Vagrant.configure("2") do |config|
 	SHELL
 	x.vm.provision "shell", privileged: false, run: "always", inline: <<-SHELL
 		cd /home/ubuntu/core
-		rake setup
-		god -c /home/ubuntu/core/util/god/intrigue-ec2.rb
-		god start
+    rake setup
+    foreman start
 	SHELL
     x.vm.synced_folder ".", "/home/ubuntu/core"
     x.vm.hostname = "intrigue-core"

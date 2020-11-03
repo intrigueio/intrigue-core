@@ -21,7 +21,7 @@ class Nameserver < Intrigue::Core::Model::Entity
     ["enrich/nameserver"]
   end
 
-    ###
+  ###
   ### SCOPING
   ###
   def scoped?(conditions={}) 
