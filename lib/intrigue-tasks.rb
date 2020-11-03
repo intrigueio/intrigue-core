@@ -59,8 +59,7 @@ begin  # try to load runtime deps
   require 'zip'
 
 rescue LoadError => e 
-  # unable to load private deps, presumable unavailable
- puts "ERROR! Unable to load a dep, functionality may be limited: #{e}"
+  puts "ERROR! Unable to load a dep, functionality may be limited: #{e}"
 end
 
 ###
@@ -156,22 +155,3 @@ Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 # Load vuln check tasks
 tasks_folder = File.expand_path('../tasks/vuln', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
-
-###
-# load in any private checks if they're available, fail silently if not
-###
-begin
-  require 'intrigue-ident-private'
-rescue LoadError => e 
-  # unable to load gem, presumably unavailable
-end
-
-###
-# load in any private tasks if they're available, fail silently if not
-###
-begin
-  require 'intrigue-core-private'
-rescue LoadError => e 
-  # unable to load gem, presumably unavailable
-end
-
