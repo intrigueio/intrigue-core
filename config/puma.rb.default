@@ -36,7 +36,7 @@ environment ENV.fetch('INTRIGUE_ENV', 'development')
 #
 # The default is "true".
 #
-daemonize false
+# daemonize false
 
 # Store the pid of the server in the file at "path".
 #
