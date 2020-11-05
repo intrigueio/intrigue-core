@@ -12,7 +12,8 @@ class String < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name =~ /^([\.\w\d\ \-\(\)\\\/]+)$/
+    #name =~ /^([\.\w\d\ \-\(\)\\\/]+)$/
+    name =~ /.*/
   end
 
   def enrichment_tasks
@@ -22,7 +23,7 @@ class String < Intrigue::Core::Model::Entity
   def scoped?
     return true if self.allow_list
     return false if self.deny_list
-  
+
   true
   end
 
