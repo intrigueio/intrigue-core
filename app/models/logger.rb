@@ -54,10 +54,7 @@ module Model
       # if method is set to none, don't log anything
       return if location == "none"
 
-      encoded_out = message.encode("UTF-8", {
-                              :undef => :replace,
-                              :invalid => :replace,
-                              :replace => "?" })
+      encoded_out = message.encode("UTF-8", undef: :replace, invalid: :replace, replace: "?")
 
       if location == "database"
         begin

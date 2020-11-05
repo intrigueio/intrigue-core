@@ -1,4 +1,5 @@
 module Intrigue
+module Core
 module Handler
   class Base
 
@@ -34,5 +35,6 @@ module Handler
      	end
 
   end
+end
 end
 end

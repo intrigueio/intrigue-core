@@ -16,13 +16,13 @@ class DnsBruteSub < BaseTask
       :allowed_types => ["Domain","DnsRecord"],
       :example_entities =>  [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
-        {:name => "brute_list", :regex => "alpha_numeric_list", :default =>
-          [ "ftp", "mx", "mx1", "mx2", "www", "ww2", "ns1", "ns2", "ns3", "test",
-            "mail", "owa", "vpn", "admin", "intranet", "gateway", "secure",
-            "admin", "service", "tools", "doc", "docs", "network", "help",
-            "en", "sharepoint", "portal", "public", "private", "pub", "zeus",
-            "mickey", "time", "web", "it", "my", "photos", "safe", "download",
-            "dl", "search", "staging", "fw", "firewall", "email", "hr"]  },
+        {:name => "brute_list", :regex => "alpha_numeric_list", :default => [
+            "admin", "admin", "dl", "doc", "docs", "download", "email", "en", 
+            "firewall", "ftp", "fw", "gateway", "help", "hr", "intranet", "it", 
+            "mail", "mickey", "mx", "mx1", "mx2", "my", "network", "ns1", "ns2", 
+            "ns3", "owa", "photos", "portal", "private", "pub", "public", "safe", 
+            "search", "secure", "service", "sharepoint", "staging", "test", "time", 
+            "tools", "vpn", "web", "ww2", "www", "zeus" ] },
         {:name => "use_mashed_domains", :regex => "boolean", :default => false },
         {:name => "use_permutations", :regex => "boolean", :default => true },
         {:name => "use_file", :regex => "boolean", :default => false },

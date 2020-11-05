@@ -41,6 +41,7 @@ class SearchReconDev < BaseTask
         subdomains = []
         urls = []
         json.each do |j|
+          next unless j
           subdomains << "#{j["rawDomain"]}".gsub("*.","")
           urls << "#{j["domain"]}".gsub(".*","")
         end    

@@ -22,6 +22,9 @@ require 'sidekiq-limit_fetch'
 $intrigue_basedir = File.dirname(__FILE__)
 $intrigue_environment = ENV.fetch("INTRIGUE_ENV","development")
 
+Encoding.default_external="UTF-8"
+Encoding.default_internal="UTF-8"
+
 # System-level Monkey patches
 require_relative 'lib/initialize/array'
 require_relative 'lib/initialize/hash'
@@ -76,18 +79,28 @@ def setup_redis
   redis_config = YAML.load_file("#{$intrigue_basedir}/config/redis.yml")
   $redis_host = ENV["REDIS_HOST"] || redis_config[$intrigue_environment]["host"] || "localhost"
   $redis_port = ENV["REDIS_PORT"] || redis_config[$intrigue_environment]["port"] || 6379
+  $redis_pass = ENV["REDIS_PASS"] || redis_config[$intrigue_environment]["password"] || nil
   $redis_connect_string = "redis://#{$redis_host}:#{$redis_port}/"
 
   # Pull sidekiq config from the environment if it's available (see docker config)
   Sidekiq.configure_server do |config|
-    # configure the ur
     puts "Connecting to Redis Server at: #{$redis_connect_string}"
-    config.redis = { url: $redis_connect_string}
+    # if password is present, use it
+    if $redis_pass
+      config.redis = { url: $redis_connect_string, password: $redis_pass}
+    else
+      config.redis = { url: $redis_connect_string}
+    end
   end
   # configure the client
   Sidekiq.configure_client do |config|
     puts "Configuring Redis Client for: #{$redis_connect_string}"
-    config.redis = { :url => $redis_connect_string }
+    # if password is present, use it
+    if $redis_pass
+      config.redis = { url: $redis_connect_string, password: $redis_pass}
+    else
+      config.redis = { url: $redis_connect_string}
+    end
   end
 end
 

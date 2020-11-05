@@ -77,7 +77,7 @@ gem 'chrome_remote',          :git => 'https://github.com/intrigueio/chrome_remo
 
 # swap these if developing on ident locally
 gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git', :branch => "main"
-#gem 'intrigue-ident',         :path => "~/ident/intrigue-ident"
+#gem 'intrigue-ident',         :path => "~/intrigue-ident"
 
 # vulndb
 gem 'versionomy'
@@ -95,3 +95,8 @@ gem 'pry'                     # Debugging
 gem 'pry-byebug'              # Debugging
 gem 'yard'
 gem "sentry-raven"            # Error tracking (disabled by default)
+
+
+### Private checks and modules ... uncomment if needed
+##gem 'intrigue-ident-private',        :path => "~/intrigue-ident-private"
+##gem 'intrigue-core-private',         :path => "~/intrigue-core-private"

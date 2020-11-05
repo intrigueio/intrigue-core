@@ -178,7 +178,6 @@ module Dns
         lookup_types.each do |t|
           Resolv::DNS.open() {|dns|
             dns.timeouts = 5
-
             resources.concat(dns.getresources(lookup_name, t)) 
           }
         end

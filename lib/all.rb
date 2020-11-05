@@ -132,3 +132,22 @@ if Intrigue::Core::System::Config.config["intrigue_load_paths"]
 
   end
 end
+
+###
+# load in any private checks if they're available, fail silently if not
+###
+begin
+  require 'intrigue-ident-private'
+rescue LoadError => e 
+  # unable to load gem, presumably unavailable
+end
+
+###
+# load in any private tasks if they're available, fail silently if not
+###
+begin
+  require 'intrigue-core-private'
+rescue LoadError => e 
+  # unable to load gem, presumably unavailable
+end
+
