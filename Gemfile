@@ -97,6 +97,6 @@ gem 'yard'
 gem "sentry-raven"            # Error tracking (disabled by default)
 
 
-### Private checks and modules ... uncomment if needed
-##gem 'intrigue-ident-private',        :path => "~/intrigue-ident-private"
-##gem 'intrigue-core-private',         :path => "~/intrigue-core-private"
+# Private checks and modules ... uncomment if needed
+gem 'intrigue-ident-private',        :path => "~/Desktop/intrigue-ident-private"
+gem 'intrigue-core-private',         :path => "~/Desktop/intrigue-core-private"
