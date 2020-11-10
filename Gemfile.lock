@@ -33,10 +33,10 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: 54d72727bdc2c315765e4fa441b851683511e4f5
+  revision: a70c3184dd698b9cdd4da3ee312147a8ef582fa7
   branch: main
   specs:
-    intrigue-ident (3.1.5)
+    intrigue-ident (3.1.6)
       dnsruby
       murmurhash3
       recog-intrigue
