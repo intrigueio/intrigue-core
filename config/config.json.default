@@ -397,6 +397,12 @@
       "editable": "true",
       "comment": ""
     },
+    "recon_dev_api_key": {
+      "value": "XXX",
+      "uri": "https://recon.dev/api/docs",
+      "editable": "true",
+      "comment": ""
+    },
     "shodan_api_key": {
       "value": "XXX",
       "uri": "https://account.shodan.io/login",
