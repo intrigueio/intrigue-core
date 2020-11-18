@@ -38,7 +38,7 @@ class SearchReconDev < BaseTask
       if json 
         _log "Parsing #{json.count} results" 
 
-        if json == ["message", "Forbidden"]
+        if json == {"message"=>"Forbidden"}
           _log_error "Invalid Key?"
           return
         end
