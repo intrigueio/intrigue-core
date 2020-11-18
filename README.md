@@ -1,4 +1,6 @@
 # Welcome!
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fintrigueio%2Fintrigue-core.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fintrigueio%2Fintrigue-core?ref=badge_shield)
+
 
 Intrigue Core is an open framework for discovering and enumerating the attack surface of organizations. It can be used with a human-in-the-loop running individual tasks, or fully automated through the use of machine files. With a flexible entity model and deep enrichment system, it is the most full-featured open source framework for discovering attack surface.
 
@@ -65,3 +67,7 @@ To get help in real time, join our [Intrigue Community slack](https://join.slack
 Intrigue Core would not be possible without work, time, and attention from the following contributors: 
 
  * [Anas Ben Salah](https://twitter.com/bensalah_anas)
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fintrigueio%2Fintrigue-core.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fintrigueio%2Fintrigue-core?ref=badge_large)
