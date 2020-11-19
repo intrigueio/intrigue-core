@@ -65,3 +65,4 @@ To get help in real time, join our [Intrigue Community slack](https://join.slack
 Intrigue Core would not be possible without work, time, and attention from the following contributors: 
 
  * [Anas Ben Salah](https://twitter.com/bensalah_anas)
+ * [Shpend Kurtishaj](https://twitter.com/)
