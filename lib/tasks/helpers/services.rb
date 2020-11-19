@@ -123,8 +123,12 @@ module Services
         # If SSL, use the appropriate prefix
         prefix = ssl ? "https" : "http" # construct uri
 
-        # Construct the uri
-        uri = "#{prefix}://#{h.name.strip}:#{port_num}"
+        # Construct the uri. We check for ipv6 and add brackets, to be compliant with the RFC
+        if "#{h.name.strip}" =~ ipv6_regex
+          uri = "#{prefix}://[#{h.name.strip}]:#{port_num}"
+        else
+          uri = "#{prefix}://#{h.name.strip}:#{port_num}"
+        end
 
         # if we've never seen this before, go ahead and open it to ensure it's 
         # something we want to create (this helps eliminate unusable urls). However, 
