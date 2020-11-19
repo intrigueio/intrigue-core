@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.6.5'
+ruby '2.7.2'
 
 # core
 gem 'sinatra'                 #'~> 2.0.1'
@@ -97,5 +97,5 @@ gem "sentry-raven"            # Error tracking (disabled by default)
 
 
 ### Private checks and modules ... uncomment if needed
-##gem 'intrigue-ident-private',        :path => "~/intrigue-ident-private"
-##gem 'intrigue-core-private',         :path => "~/intrigue-core-private"
+gem 'intrigue-ident-private',        :path => "~/intrigue-ident-private"
+gem 'intrigue-core-private',         :path => "~/intrigue-core-private"
