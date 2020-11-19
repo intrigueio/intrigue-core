@@ -106,16 +106,6 @@ GIT
     whoisology (0.1.0)
 
 PATH
-  remote: ../../../../intrigue-core-private
-  specs:
-    intrigue-core-private (0.8.7)
-
-PATH
-  remote: ../../../../intrigue-ident-private
-  specs:
-    intrigue-ident-private (3.1.2)
-
-PATH
   remote: api_client
   specs:
     intrigue_api_client (1.6.0)
@@ -488,9 +478,7 @@ DEPENDENCIES
   googleajax
   googleauth
   iconv
-  intrigue-core-private!
   intrigue-ident!
-  intrigue-ident-private!
   intrigue_api_client!
   ip_ranger!
   ipaddr
