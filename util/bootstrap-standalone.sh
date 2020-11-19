@@ -376,8 +376,6 @@ else
   echo "echo ''" >> ~/.bash_profile
   echo "echo To enable Intrigue services, run the following command:" >> ~/.bash_profile
   echo "echo '$ cd core && rake setup && god -c $INTRIGUE_DIRECTORY/util/god/intrigue-ec2.rb && god start'" >> ~/.bash_profile
-  # install god 
-  sudo apt install -y ruby-god
 fi
 
 # if we're configuring as root, we're probably going to run as root, so
