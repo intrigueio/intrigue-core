@@ -64,6 +64,21 @@ class IssueFactory
   mapped_issues.flatten.select{|x| x[:vendor] == vendor && x[:product] == product}.map{|x| x[:check] }.uniq.compact
   end
 
+  #
+  # Find issue based on check value
+  #
+  def self.find_issue_by_check(check)
+
+    self.issues.each do |h| 
+      # generate the instances
+      hi = h.generate({});
+      if hi[:check] == check
+        return hi
+      end
+    end
+    nil
+  end
+
 
   #
   # Check to see if this handler exists (check by type)
