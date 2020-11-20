@@ -20,7 +20,7 @@ module System
       if task_name =~ /^nuclei\:.*/
         template_name = task_name.split(":")[1]
         task_name = "nuclei_runner"
-        options = [{name: "template", regex: "filename", value: template_name}]
+        options = [{name: "template", regex: "alpha_numeric_list", value: template_name}]
       end
       
       # Create the task result, and associate our entity and options
