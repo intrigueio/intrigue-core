@@ -106,6 +106,19 @@ GIT
     whoisology (0.1.0)
 
 PATH
+<<<<<<< Updated upstream
+=======
+  remote: ../../../../intrigue-core-private
+  specs:
+    intrigue-core-private (0.8.8)
+
+PATH
+  remote: ../../../../intrigue-ident-private
+  specs:
+    intrigue-ident-private (3.1.2)
+
+PATH
+>>>>>>> Stashed changes
   remote: api_client
   specs:
     intrigue_api_client (1.6.0)

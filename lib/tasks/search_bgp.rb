@@ -28,17 +28,21 @@ class SearchBgp < BaseTask
     if entity_type == "Organization" || entity_type == "String"
       search_by_org_name entity_name
     elsif entity_type == "IpAddress"
+      
       # lookup the netblock
       out = whois entity_name
-      if out["start_address"]
-        netblock_name = out["start_address"]
-        # lookup the BGP data by netblock
-        _log_good "Searching Netblocks for: #{netblock_name}"
-        search_netblocks netblock_name
-      else
-        _log_error "Didn't get a start address, printing full text"
-        _log out["whois_full_text"]
+      out.each do |hash|
+        if hash["start_address"]
+          netblock_name = hash["start_address"]
+          # lookup the BGP data by netblock
+          _log_good "Searching Netblocks for: #{netblock_name}"
+          search_netblocks netblock_name
+        else
+          _log_error "Didn't get a start address, printing full text"
+          _log hash["whois_full_text"]
+        end
       end
+
     elsif entity_type == "NetBlock"
       search_netblocks entity_name
     else

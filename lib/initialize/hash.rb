@@ -46,8 +46,12 @@ class Hash
     self
   end
 
-  def stringify_keys
+  def stringify_keys!
     self.transform_keys(&:to_s)
+  end
+
+  def symbolize_keys!
+    self.transform_keys(&:to_sym)
   end
 
 end

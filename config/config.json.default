@@ -313,12 +313,6 @@
       "editable": "true",
       "comment": ""
     },
-    "intrigueio_api_key": {
-      "value": "",
-      "uri": "https://app.intrigue.io/api",
-      "editable": "true",
-      "comment": ""
-    },
     "ibm_x_force_api_key": {
       "value": "",
       "uri": "https://app.intrigue.io/api",
@@ -328,6 +322,18 @@
     "ibm_x_force_password": {
       "value": "",
       "uri": "https://app.intrigue.io/api",
+      "editable": "true",
+      "comment": ""
+    },
+    "intrigueio_api_key": {
+      "value": "",
+      "uri": "https://app.intrigue.io/api",
+      "editable": "true",
+      "comment": ""
+    },
+    "ipinfo_api_key": {
+      "value": "XXX",
+      "uri": "https://ipinfo.io/developers",
       "editable": "true",
       "comment": ""
     },

@@ -176,7 +176,7 @@ module Generic
 
   def _get_task_config(key)
     begin
-      Intrigue::Core::System::Config.load_config
+      #Intrigue::Core::System::Config.load_config
       config = Intrigue::Core::System::Config.config["intrigue_global_module_config"]
       value = config[key]["value"]
       unless value && value != ""

@@ -31,7 +31,7 @@
   </div>
   <!-- Get all attributes and use this to create an entity -->
   <% if @entity %>
-      <%= @entity.form  %>
+      <%= @entity.form %>
       <input type="hidden" name="entity_id" value="<%=h @entity.id%>">
   <% else %>
     <div class="form-group">
