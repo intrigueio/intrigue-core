@@ -54,7 +54,7 @@ module Generic
 
     # just in case we were given a hash with symbolized keys, convert to strings for
     # our purposes... bitten by the bug a bunch lately
-    hash = hash.collect{|k,v| [k.to_s, v]}.to_h
+    hash = hash.collect{|k,v| [k.to_s, v] }.to_h
 
     # No need for a name in the hash now, remove it & pull out the name from the hash
     name = hash.delete("name")
@@ -176,7 +176,7 @@ module Generic
 
   def _get_task_config(key)
     begin
-      Intrigue::Core::System::Config.load_config
+      #Intrigue::Core::System::Config.load_config
       config = Intrigue::Core::System::Config.config["intrigue_global_module_config"]
       value = config[key]["value"]
       unless value && value != ""

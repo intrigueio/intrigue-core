@@ -39,11 +39,12 @@ class WhoisLookup < BaseTask
       # look up the first address
       lookup_string = _get_entity_name.split("/").first
       out = whois_safe lookup_string
-      return nil unless out
+      return nil if out.empty?
 
       # and edit this netblock
-      _log_good "Setting entity details!"
-      _get_and_set_entity_details out
+      _log_good "Setting entity details (NOTE, only using first range from whois)!"
+      wh = out.first
+      get_and_set_entity_details wh
 
     elsif _get_entity_type_string == "IpAddress"
       
@@ -52,9 +53,11 @@ class WhoisLookup < BaseTask
       #  _get_entity_detail "whois_full_text" # return if we have it
             
       out = whois_safe _get_entity_name
-      return nil unless out
-      
-      _create_entity "NetBlock", out
+      return nil if out.empty?
+    
+      out.each do |nb|
+        _create_entity "NetBlock",  { "name" => nb["name"] } 
+      end
 
     elsif _get_entity_type_string == "Organization"
 
@@ -62,32 +65,36 @@ class WhoisLookup < BaseTask
       out = whois_query_arin_org _get_entity_name
       unless out.empty?
         out.each do |nb|
-          _create_entity "NetBlock", nb
+          _create_entity "NetBlock", {"name" => nb["name"]}
         end
       end
 
     elsif _get_entity_type_string == "DnsRecord" || _get_entity_type_string == "Domain"
 
       out = whois_safe _get_entity_name
-      return nil unless out
+      return nil if out.empty?
 
-      if opt_create_nameservers
-        out["nameservers"].each do |n|
-          _create_entity("DnsRecord",{"name" => "#{n}"})
+      out.each do |wh| 
+
+        if opt_create_nameservers
+          wh["nameservers"].each do |n|
+            _create_entity("DnsRecord", { "name" => "#{n}" })
+          end
         end
-      end
 
-      if opt_create_contacts
-        out["contacts"].each do |c|
-          _log "Creating person/email from contact: #{c}"
-          _create_entity("Person", {"name" => c["name"]})
-          _create_entity("EmailAddress", {"name" => c["email"]})
+        if opt_create_contacts
+          wh["contacts"].each do |c|
+            _log "Creating person/email from contact: #{c}"
+            _create_entity("Person", {"name" => c["name"]})
+            _create_entity("EmailAddress", {"name" => c["email"]})
+          end
         end
-      end
 
-      _set_entity_detail("whois_full_text", out["whois_full_text"])
-      _set_entity_detail("nameservers", out["nameservers"])
-      _set_entity_detail("contacts", out["contacts"])
+        _set_entity_detail("whois_full_text", wh["whois_full_text"]) unless _get_entity_detail("whois_full_text")
+        _set_entity_detail("nameservers", wh["nameservers"]) unless _get_entity_detail("nameservers")
+        _set_entity_detail("contacts", wh["contacts"]) unless _get_entity_detail("contacts")
+      
+      end
 
     else
       _log_error "Unknown entity type, failing"

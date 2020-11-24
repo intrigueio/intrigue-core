@@ -33,7 +33,7 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: c5b4a7e986e8475fc44985c1d2bdbdc2901ec021
+  revision: 8f804606de39accdf6d6ae29e7ade05842ad1d70
   branch: main
   specs:
     intrigue-ident (3.1.7)
@@ -142,8 +142,8 @@ GEM
       async-http (~> 0.42)
       protocol-http (~> 0.7)
     aws-eventstream (1.1.0)
-    aws-partitions (1.393.0)
-    aws-sdk-core (3.109.2)
+    aws-partitions (1.398.0)
+    aws-sdk-core (3.109.3)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
       aws-sigv4 (~> 1.1)
@@ -154,7 +154,7 @@ GEM
     aws-sdk-route53 (1.44.0)
       aws-sdk-core (~> 3, >= 3.109.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-s3 (1.84.1)
+    aws-sdk-s3 (1.85.0)
       aws-sdk-core (~> 3, >= 3.109.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.1)
@@ -238,7 +238,7 @@ GEM
     foreman (0.87.2)
     formatador (0.2.5)
     god (0.13.7)
-    google-api-client (0.49.0)
+    google-api-client (0.50.0)
       addressable (~> 2.5, >= 2.5.1)
       googleauth (~> 0.9)
       httpclient (>= 2.8.1, < 3.0)
@@ -346,7 +346,7 @@ GEM
     rb-readline (0.5.5)
     recog-intrigue (2.3.14)
       nokogiri
-    redis (4.2.2)
+    redis (4.2.5)
     redis-namespace (1.8.0)
       redis (>= 3.0.4)
     representable (3.0.4)
@@ -422,7 +422,7 @@ GEM
     socketry (0.5.1)
       hitimes (~> 1.2)
     sqlite3 (1.4.2)
-    test-unit (3.3.6)
+    test-unit (3.3.7)
       power_assert
     thor (1.0.1)
     thread_safe (0.3.6)

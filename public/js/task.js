@@ -58,7 +58,7 @@
     //console.log("DEBUG: Setting type to " + entity_type);
 
     // set the name
-    $("#attrib_name").attr("value", entity_name);
+    $("#attrib_name").attr("placeholder", entity_name);
 
     // set the type
     $("#entity_type option[value=\""+entity_type+"\"]").prop('selected', true);

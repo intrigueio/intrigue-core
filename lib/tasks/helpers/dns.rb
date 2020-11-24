@@ -405,11 +405,6 @@ module Dns
   txt_records.flatten.uniq
   end
 
-  def collect_whois_data(lookup_name)
-      _log "Collecting Whois record"
-      whois(lookup_name)
-  end
-
   def collect_resolutions(results)
     ####
     ### Set details for this entity

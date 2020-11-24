@@ -312,14 +312,14 @@ module Model
         <label for="entity_type" class="col-xs-4 control-label">Entity Type</label>
         <div class="col-xs-8">
           <select class="form-control input-sm" id="entity_type" name="entity_type">
-            <option> #{URI.escape self.type_string} </option>
+            <option> #{URI.encode_www_form_component self.type_string} </option>
           </select>
         </div>
       </div>
       <div class="form-group">
         <label for="attrib_name" class="col-xs-4 control-label">Entity Name</label>
         <div class="col-xs-8">
-          <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name" value="#{URI.escape self.name}">
+          <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name" placeholder="#{URI.encode_www_form_component self.name}">
         </div>
       </div>}
     end
