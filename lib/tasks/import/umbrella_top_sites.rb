@@ -2,9 +2,6 @@ module Intrigue
 module Task
 class ImportUmbrellaTopSites < BaseTask
 
-  include Intrigue::Task::Generic
-  include Intrigue::Task::Web
-
   def self.metadata
     {
       :name => "import/umbrella_top_sites",
@@ -16,10 +13,7 @@ class ImportUmbrellaTopSites < BaseTask
       :passive => true,
       :allowed_types => ["*"],
       :example_entities => [{"type" => "String", "details" => {"name" => "NA"}}],
-      :allowed_options => [
-        {:name => "threads", :regex => "integer", :default => 1 },
-        {:name => "max_sleep", :regex => "integer", :default => 10 }
-      ],
+      :allowed_options => [],
       :created_types => ["Uri"]
     }
   end
@@ -28,28 +22,40 @@ class ImportUmbrellaTopSites < BaseTask
   def run
     super
 
-    # TODO - this shouldn't be static
-    f = download_and_store "https://s3.amazonaws.com/public.intrigue.io/top-1m-2018-04-20.csv"
+    _log_good "Downloading latest file"
+    z = download_and_store "http://s3-us-west-1.amazonaws.com/umbrella-static/top-1m.csv.zip"
+    
+    domains = []
+    # unzip
+    _log_good "Extracting into memory"
+    Zip::File.open(z) do |zip_file|
+      # Handle entries one by one
+      zip_file.each do |entry|
+        ### Do the thing 
+        _log_good "Parsing out domains"
+        entry.get_input_stream.read.split("\n").map do |l| 
+          # Drop them into an array 
+          domains << l.split(",").last.chomp
+        end
+      end
+    end
 
-    # Read and split the file up into a list of domains
-    lines = File.open(f,"r").read.split("\n")
-    domains = lines.map{|l| l.split(",").last.chomp }
+    project = @entity.project
+    entity_ids = []
+    
+    # Create the entities 
+    domains.each do |domain|
+      entity_ids << Intrigue::EntityManager.create_bulk_entity(project.id, 
+        "Intrigue::Entity::Uri", "http://#{domain}", {"name" => "http://#{domain}"}).id
+    end
 
-    lammylam = lambda { |d|
-      sleep(rand(_get_option("max_sleep")))
-      #_log "Creating sites for domain: #{d}"
-      #_create_entity "Uri", { "name" => "http://#{d}", "uri"=>"https://#{d}" }
-      _create_entity "Uri", { "name" => "https://#{d}", "uri"=>"https://#{d}" }
-    true
-    }
-
-    # use a generic threaded iteration method to create them,
-    # with the desired number of threads
-    thread_count = _get_option "threads"
-    _threaded_iteration(thread_count, domains, lammylam)
+    # Now schedule enrichemnt 
+    entity_ids.each do |eid|
+      e = Intrigue::Entity::Uri.first :id => eid
+      start_task("task_enrichment", project,nil, "enrich/uri", e, 1, [{"name" => "correlate_endpoints", "value" => false}]) if e
+    end
 
   end
-
 
 
 end

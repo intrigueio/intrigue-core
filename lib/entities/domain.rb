@@ -1,17 +1,18 @@
 module Intrigue
 module Entity
-class Domain < Intrigue::Model::Entity
+class Domain < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
       :name => "Domain",
       :description => "A Top-Level Domain",
-      :user_creatable => true
+      :user_creatable => true,
+      :example => "intrigue.io"
     }
   end
 
   def validate_entity
-    name =~ _dns_regex
+    name =~ dns_regex
   end
 
   def detail_string
@@ -22,6 +23,17 @@ class Domain < Intrigue::Model::Entity
 
   def enrichment_tasks
     ["enrich/domain"]
+  end
+
+  ###
+  ### SCOPING
+  ###
+  def scoped?(conditions={}) 
+    return true if self.allow_list
+    return false if self.deny_list
+
+  # if we didnt match the above and we were asked, let's not allow it 
+  false
   end
 
 end

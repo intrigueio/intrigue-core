@@ -12,7 +12,7 @@ class SecurityTrailsSubdomainSearch < BaseTask
       :type => "discovery",
       :passive => true,
       :allowed_types => ["Domain","DnsRecord"],
-      :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
+      :example_entities => [{"type" => "Domain", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
       :created_types => ["DnsRecord"]
     }
@@ -30,6 +30,10 @@ class SecurityTrailsSubdomainSearch < BaseTask
       # get the data. seriously could this be any easier?
       resp = http_get_body uri, nil, {"APIKEY" => api_key}
       json = JSON.parse(resp)
+
+      unless json && json["subdomains"]
+        _log_error "Unable to get a valid response"
+      end
 
       _log "Got #{json["subdomains"].count} subdomains!"
 

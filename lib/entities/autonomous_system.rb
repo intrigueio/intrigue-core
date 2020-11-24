@@ -1,12 +1,13 @@
 module Intrigue
 module Entity
-class AutonomousSystem < Intrigue::Model::Entity
+class AutonomousSystem < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
       :name => "AutonomousSystem",
-      :description => "Network Routes",
-      :user_creatable => false
+      :description => "Unique number that's available globally to exchange network routes",
+      :user_creatable => true,
+      :example => "AS1234"
     }
   end
 
@@ -14,12 +15,12 @@ class AutonomousSystem < Intrigue::Model::Entity
     name =~ /^(as|AS).?[0-9].*$/
   end
 
-  def enrichment_tasks
-    ["enrich/autonomous_system"]
+  def scoped?
+    return true if self.allow_list
+    return false if self.deny_list
+  false # otherwise false
   end
-
   
-
 end
 end
 end

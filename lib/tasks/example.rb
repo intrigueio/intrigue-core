@@ -9,14 +9,14 @@ class Example < BaseTask
       :authors => ["jcran"],
       :description => "This is an example task. It returns a randomly-generated host.",
       :references => [],
-      :type => "discovery",
+      :type => "example",
       :passive => true,
       :allowed_types => ["*"],
       :example_entities => [
         {"type" => "String", "details" => {"name" => "intrigue"}}
       ],
       :allowed_options => [
-        {:name => "notify", :regex=> "boolean", :default => false },
+        {:name => "notify", :regex=> "boolean", :default => true },
         {:name => "unused_option", :regex=> "integer", :default => 100 },
         {:name => "count", :regex=> "integer", :default => 3 },
         {:name => "sleep", :regex=> "integer", :default => 0 }
@@ -42,17 +42,19 @@ class Example < BaseTask
       _log_error "Invalid option: sleep"
       return
     end
+    
+    ########################
+    ### New issue format ###
+    ########################
 
-    # create an issue
-    zone = [1,2,3,4]
-    _create_issue({
-      name: "Example issue",
-      type: "example",
-      severity: 5,
-      status: "confirmed",
-      description: "just an example.",
-      details: { example_attribute: zone }
-    })
+    # create an issue 
+    _create_linked_issue("example", { status: "confirmed", proof: "wheee!" }) # no source (aka we only really have one source)
+    _create_linked_issue("example", { status: "confirmed", proof: "wheee 2!", source: "source_2" })
+    
+    # wont be created  (not a unique source)
+    _create_linked_issue("example", { status: "confirmed", proof: "wheee 2!", source: "source_2" }) 
+    _create_linked_issue("example", { status: "confirmed", proof: "wheee 3!", source: "source_3" })
+    _create_linked_issue("example", { status: "confirmed", proof: "wheee 4!", source: "source_4" })
 
     # just return if we have bad data
     return unless _get_option("count") > 0
@@ -61,9 +63,10 @@ class Example < BaseTask
     sleep(_get_option("sleep"))
 
     # Generate a number of hosts based on the user option
+    x = nil
     _get_option("count").times do
 
-      # Generate a fake IP address
+    # Generate a fake IP address
       ip_address = "#{rand(255)}.#{rand(255)}.#{rand(255)}.#{rand(255)}"
 
       # display a log message
@@ -74,20 +77,26 @@ class Example < BaseTask
       ###
 
       # notifies all notifiers configured with "enabled" and "default"
-      _notify "[+] Randomly generated an IP address: #{ip_address}" if opt_notify
+      _notify "[+] Randomly generated an IP address: #{ip_address}"
 
       # notifies via all channels of type "slack" and "enabled" set to true
-      #_notify_type "slack", "[slack] Randomly generated an IP address: #{ip_address}"
+      _notify_type "slack", "[slack] Randomly generated an IP address: #{ip_address}"
 
-      _log_fatal "Oh no, it's a fatal error!"
+      #_log_fatal "Oh no, it's a fatal error!"
 
       # notifies via a specifically named channel
       #_notify_specific "specific_slack", "[specific_slack] Randomly generated an IP address: #{ip_address}"
 
       # Create & return the entity
-      _create_entity("IpAddress", {"name" => ip_address })
-
+      x = _create_entity("IpAddress", {"name" => ip_address })
     end
+
+    100.times do 
+      port_num = rand(10000)
+      _log "creating a port on #{x.name} at #{port_num}, service: #{_service_name_for(port_num, "tcp")}"
+      _create_network_service_entity(x,port_num)
+    end
+
 
   end
 

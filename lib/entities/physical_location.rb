@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class PhysicalLocation < Intrigue::Model::Entity
+class PhysicalLocation < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
@@ -11,15 +11,17 @@ class PhysicalLocation < Intrigue::Model::Entity
   end
 
   def validate_entity
-    name =~ /^\w.*$/ #&&
+    name =~ /^[\w\s\d\.\-\_\&\;\:\,\@]*$/
     #details["latitude"] =~ /^([-+]?\d{1,2}[.]\d+)$/ &&
     #details["longitude"] =~ /^([-+]?\d{1,3}[.]\d+)$/
   end
 
-  def enrichment_tasks
-      ["enrich/physical_location"]
+  def scoped?
+    return true if self.allow_list
+    return false if self.deny_list
+  
+  false
   end
-
 
 end
 end

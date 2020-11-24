@@ -11,11 +11,20 @@ class SearchGithub < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["Organization","String"],
+      :allowed_types => [ 
+        "Domain", 
+        "DnsRecord", 
+        "GithubAccount", 
+        "GithubRepository", 
+        "Organization",
+        "String", 
+        "UniqueKeyword", 
+        "UniqueToken"
+      ],
       :example_entities => [
         {"type" => "String", "details" => {"name" => "intrigue"}}],
       :allowed_options => [],
-      :created_types => ["GithubRepository","GithubAccount"]
+      :created_types => [ "GithubRepository", "GithubAccount" ]
     }
   end
 
@@ -28,6 +37,7 @@ class SearchGithub < BaseTask
     # Search users
     search_uri = "https://api.github.com/search/users?q=#{entity_name}"
     response = _get_github_response(search_uri)
+    
     # Create
     response["items"].each do |result|
       _create_entity "GithubAccount", {
@@ -40,7 +50,8 @@ class SearchGithub < BaseTask
 
     # Search repositories
     search_uri = "https://api.github.com/search/repositories?q=#{entity_name}"
-    response = _get_response(search_uri)
+    response = _get_github_response(search_uri)
+
     # Create
     response["items"].each do |result|
       _create_entity "GithubRepository", {

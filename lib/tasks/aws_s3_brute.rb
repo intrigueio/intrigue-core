@@ -95,6 +95,7 @@ class AwsS3Brute < BaseTask
           work_q << "staging-#{pb.strip}"
           work_q << "test-#{pb.strip}"
           work_q << "web-#{pb.strip}"
+          
         rescue TypeError => e
           puts "Unable to permute: #{pb}, failing"
         end
@@ -111,6 +112,8 @@ class AwsS3Brute < BaseTask
             #skip anything that isn't a real name
             next unless bucket_name && bucket_name.length > 0
 
+            s3_uri = "https://#{bucket_name}.s3.amazonaws.com"
+
             # Authenticated method
             if opt_use_creds
 
@@ -126,22 +129,24 @@ class AwsS3Brute < BaseTask
               Aws.config[:credentials] = Aws::Credentials.new(access_key_id, secret_access_key)
               exists = check_existence_authenticated(bucket_name)
 
-              # create our entity and store the username with it
-              _create_entity("AwsS3Bucket", {
-                "name" => "#{s3_uri}",
-                "uri" => "#{s3_uri}",
-                "authenticated" => true,
-                "username" => access_key_id
-              }) if exists
+              if exists
+                # create our entity and store the username with it
+                _create_entity("AwsS3Bucket", {
+                  "name" => "#{s3_uri}",
+                  "uri" => "#{s3_uri}",
+                  "authenticated" => true,
+                  "username" => access_key_id
+                })
+              
+                # create a bucket issue
+                _create_linked_issue "aws_s3_bucket_readable", {uri:  s3_uri, public: false}
+              end
 
             #########################
             # Unauthenticated check #
             #########################
             else
-
-
-              # check new format first
-              s3_uri = "https://#{bucket_name}.s3.amazonaws.com"
+            
               exists = check_existence_unauthenticated(s3_uri,bucket_name)
 
               if exists
@@ -151,8 +156,8 @@ class AwsS3Brute < BaseTask
                   "authenticated" => false
                 }) 
 
-                # create a bucket issue 
-                create_s3_bucket_issue s3_uri 
+                # create a bucket issue
+                _create_linked_issue "aws_s3_bucket_readable", {uri:  s3_uri, public: true}
               end
 
               ### and if we got it there, no need to continue
@@ -163,14 +168,15 @@ class AwsS3Brute < BaseTask
               exists = check_existence_unauthenticated(s3_uri,bucket_name)
 
               if exists 
-                # create a bucket issue
-                create_s3_bucket_issue s3_uri
 
                 _create_entity("AwsS3Bucket", {
                   "name" => "#{s3_uri}",
                   "uri" => "#{s3_uri}",
                   "authenticated" => false,
                 }) 
+
+                # create a bucket issue
+                _create_linked_issue "aws_s3_bucket_readable", {uri:  s3_uri, public: true}
               end
 
             end # end if opt_use_creds
@@ -184,21 +190,6 @@ class AwsS3Brute < BaseTask
     workers.map(&:join); "ok"
 
   end
-
-  # TODO... check contents before creating an issue?
-  def create_s3_bucket_issue(url)
-
-    _create_issue({
-      name: "Open s3 bucket: #{url}",
-      type: "s3_bucket",
-      severity: 5,
-      status: "potential",
-      description: "Investigate this open s3 bucket",
-      details: { url: url }
-    })
-
-  end
-
 
   def check_existence_unauthenticated(s3_uri, key)
     response = http_get_body("#{s3_uri}?max-keys=1")
@@ -240,11 +231,14 @@ class AwsS3Brute < BaseTask
 
     s3_uri = "https://#{bucket_name}.s3.amazonaws.com/"
 
-    begin # check prefix
+    begin
+      # check prefix
       s3 = Aws::S3::Client.new({region: 'us-east-1'})
       resp = s3.list_objects(bucket: "#{bucket_name}", max_keys: 1000)
       exists = true
 
+    rescue Aws::S3::Errors::PermanentRedirect => e 
+      _log_error "Permanent redirect: #{e} (region?)"
     rescue *s3_errors => e
       _log_error "S3 error: #{e} (#{bucket_name})"
     end

@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class AwsCredential < Intrigue::Model::Entity
+class AwsCredential < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
@@ -10,9 +10,7 @@ class AwsCredential < Intrigue::Model::Entity
     }
   end
 
-
   def transform!
-
     # We'll want to obfuscate our name
     new_name = "#{name[0..3]}****"
 
@@ -34,10 +32,11 @@ class AwsCredential < Intrigue::Model::Entity
     details["hidden_secret_key"]
   end
 
-  def enrichment_tasks
-    ["enrich/aws_credential"]
+  def scoped?
+    return true if self.allow_list
+    return false if self.deny_list
+  true # otherwise just default to true
   end
-
 
 end
 end

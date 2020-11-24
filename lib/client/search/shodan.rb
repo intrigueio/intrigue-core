@@ -23,6 +23,16 @@ module Client
           end
           response
         end
+        ### search an IP if it is a honeypot or a real control system.
+        def search_honeypot_ip(string)
+          begin
+            response = http_get_body("https://api.shodan.io/labs/honeyscore/#{string}?key=#{@api_key}")
+          rescue Timeout::Error => e
+            response = nil
+          end
+          response
+        end
+
       end
     end
     end

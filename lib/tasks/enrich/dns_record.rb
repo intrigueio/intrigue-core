@@ -2,7 +2,7 @@ module Intrigue
 module Task
 module Enrich
 class DnsRecord < Intrigue::Task::BaseTask
-
+  
   def self.metadata
     {
       :name => "enrich/dns_record",
@@ -28,6 +28,9 @@ class DnsRecord < Intrigue::Task::BaseTask
   def run
     lookup_name = _get_entity_name
 
+    # always create a domain 
+    create_dns_entity_from_string(parse_domain_name(lookup_name)) if @entity.scoped?
+
     # Do a lookup and keep track of all aliases
     _log "Resolving: #{lookup_name}"
     results = resolve(lookup_name)
@@ -38,17 +41,31 @@ class DnsRecord < Intrigue::Task::BaseTask
     return unless results.count > 0
 
     # Create new entities if we found vhosts / aliases
-    _log "Creating vhost services"
+    _log "Creating services for all aliases (vhosts) of #{lookup_name}"
     _create_vhost_entities(lookup_name)
 
     _log "Grabbing resolutions"
     resolutions = collect_resolutions(results)
+
     _set_entity_detail("resolutions", resolutions)
 
     _log "Grabbing SOA"
     soa_details = collect_soa_details(lookup_name)
     _set_entity_detail("soa_record", soa_details)
-    check_and_create_unscoped_domain(soa_details["primary_name_server"]) if soa_details
+    if soa_details && soa_details["primary_name_server"] && soa_details["primary_name_server"].length > 0
+      _create_entity "Nameserver", "name" => soa_details["primary_name_server"]
+    end
+
+    # Checking dev test 
+    # if we're external, let's see if this matches 
+    # a known dev or staging server pattern
+    if !match_rfc1918_address?(resolutions.map{|x| x["response_data"]}.join(", "))
+      dev_server_name_patterns.each do |p|
+        if "#{lookup_name}".split(".").first =~ p
+          _exposed_server_identified(p)
+        end
+      end
+    end
 
     if soa_details
 
@@ -56,7 +73,7 @@ class DnsRecord < Intrigue::Task::BaseTask
       _log "Grabbing MX"
       mx_records = collect_mx_records(lookup_name)
       _set_entity_detail("mx_records", mx_records)
-      mx_records.each{|mx| check_and_create_unscoped_domain(mx["host"]) }
+      mx_records.each{|mx| create_dns_entity_from_string(mx["host"]) }
 
       # collect TXT records (useful for random things)
       _log "Grabbing TXT"
@@ -70,8 +87,27 @@ class DnsRecord < Intrigue::Task::BaseTask
 
     end
 
-    # create a domain for this entity
-    check_and_create_unscoped_domain(lookup_name)
+    ###
+    ### Scope all aliases if we're scoped
+    ###
+    if @entity.scoped? # TODO .. is the eor necessary
+      @entity.aliases.each do |a|
+        _log "Setting #{a.name} scoped!"
+        a.set_scoped!(true, "alias_of_entity_#{@task_result.name}") unless a.deny_list
+      end
+    end 
+
+    # now, we need to go back through all affiliated ips and create the port
+    # on any affiliated IPs, as this vhost might matter 
+
+    ###
+    ### Finally, cloud provider determination
+    ###
+
+    # Now that we have our core details, check cloud status
+    #cloud_providers = determine_cloud_status(@entity)
+    #_set_entity_detail "cloud_providers", cloud_providers.uniq.sort
+    #_set_entity_detail "cloud_hosted",  !cloud_providers.empty?
 
   end
 
@@ -84,30 +120,12 @@ class DnsRecord < Intrigue::Task::BaseTask
       results.each do |result|
         next if @entity.name == result["name"]
         _log "Creating entity for... #{result}"
-        if "#{result["name"]}".is_ip_address?
-          _create_entity("IpAddress", { "name" => result["name"] }, @entity)
-        else
-          _create_entity("DnsRecord", { "name" => result["name"] }, @entity)
-        end
+      
+        # create a domain for this entity
+        entity = create_dns_entity_from_string(result["name"], @entity)
       end
-    end
 
-    def _create_vhost_entities(lookup_name)
-      ### For each associated IpAddress, make sure we create any additional
-      ### uris if we already have scan results
-      ###
-      @entity.aliases.each do |a|
-        next unless a.type_string == "IpAddress" #  only ips
-        #next if a.hidden # skip hidden
-        existing_ports = a.get_detail("ports")
-        if existing_ports
-          existing_ports.each do |p|
-            _create_network_service_entity(a,p["number"],p["protocol"],{})
-          end
-        end
-      end
     end
-
 
 end
 end

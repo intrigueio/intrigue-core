@@ -32,11 +32,7 @@ class SearchTowerdata < BaseTask
     begin
       api = TowerDataApi::Api.new(api_key) # Set API key here
       hash = api.query_by_email(entity_name)
-      _create_entity "Info", {
-        "name" => "Towerdata details for #{entity_name}",
-        "details" => hash }
-    rescue Exception => e
-      _log_error e.message
+      _set_entity_detail("extended_towerdata",hash)
     end
 
   end # end run()

@@ -19,26 +19,36 @@
     }
     </style>
     <p></p>
+    <a href="/<%=h @project_name%>/issues?page=<%=@page-1%>">previous</a>
+    <a href="/<%=h @project_name%>/issues?page=<%=@page+1%>">next</a>
     <table class="sortable" border="1" width=100%>
       <colgroup>
-        <col style="width:30%">
-        <col style="width:15%">
-        <col style="width:7%">
+        <col style="width:10%">
+        <col style="width:20%">
+        <col style="width:10%">
         <col style="width:5%">
-        <col style="width:43%">
+        <col style="width:5%">
+        <col style="width:10%">
+        <col style="width:35%">
+        <col style="width:5%">
       </colgroup>
       <tbody>
-      <tr><th>Name</th><th>Type</th><th>Status</th><th>Severity</th><th>Description</th></tr>
+      <tr><th>Name</th><th>Entity</th><th>Status</th><th>Severity</th><th>Scoped</th><th>Category</th><th>Description</th><th>Source</th></tr>
       <% @issues.each do |issue| %>
         <tr>
           <td><a href="<%="/#{h @project_name}/issues/#{h issue.id}"%>"><%= h issue.name %></a></td>
-          <td><%=issue.type%></td>
+          <td><%=issue.entity.name%><br><%issue.entity.aliases{ |x|%> <%=h x.name%> <br><%}%></td>
           <td><%=issue.status%></td>
           <td><%=issue.severity%></td>
+          <td><%=issue.scoped%></td>
+          <td><%=issue.category%></td>
           <td><%=issue.description%></td>
+          <td><%=issue.source%></td>
         </tr>
       <% end %>
       </tbody>
     </table>
+    <a href="/<%=h @project_name%>/issues?page=<%=@page-1%>">previous</a>
+    <a href="/<%=h @project_name%>/issues?page=<%=@page+1%>">next</a>
   </div>
 </div>

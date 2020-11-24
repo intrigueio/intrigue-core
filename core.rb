@@ -1,13 +1,16 @@
+require 'eventmachine'
 require 'logger'
 require 'sinatra'
 require 'sinatra/contrib'
-#require 'json'
-#require 'yajl'
-require 'yajl/json_gem'
 require 'yaml'
 require 'rest-client'
 require 'cgi'
 require 'uri'
+require 'shellwords' # shell escapin'
+
+# Improved Json memory efficiency
+require 'yajl'
+require 'yajl/json_gem'
 
 # Sidekiq
 require 'sidekiq'
@@ -15,33 +18,43 @@ require 'sidekiq/api'
 require 'sidekiq/web'
 require 'sidekiq-limit_fetch'
 
-# Database
-require 'sequel'
-
-# Config
-require_relative 'lib/config/global_config'
-
-# Debug
-require 'pry'
-require 'pry-byebug'
-require 'logger'
-
-# System-level Initializers
-require_relative 'lib/initialize/array'
-require_relative 'lib/initialize/capybara'
-require_relative 'lib/initialize/hash'
-require_relative 'lib/initialize/sidekiq_profiler'
-require_relative 'lib/initialize/string'
-
+# Global vars
 $intrigue_basedir = File.dirname(__FILE__)
 $intrigue_environment = ENV.fetch("INTRIGUE_ENV","development")
 
-# load up our config
-Intrigue::Config::GlobalConfig.load_config
+Encoding.default_external="UTF-8"
+Encoding.default_internal="UTF-8"
 
-# Webdriver
-Selenium::WebDriver.logger.level = :warn
-Selenium::WebDriver.logger.output = "#{$intrigue_basedir}/log/selenium.log"
+# System-level Monkey patches
+require_relative 'lib/initialize/array'
+require_relative 'lib/initialize/hash'
+require_relative 'lib/initialize/json_export_file'
+require_relative 'lib/initialize/queue'
+require_relative 'lib/initialize/sidekiq_profiler'
+require_relative 'lib/initialize/string'
+require_relative 'lib/initialize/typhoeus'
+
+# load up our system config
+require_relative 'lib/system/config'
+Intrigue::Core::System::Config.load_config
+
+# system database configuration
+require_relative 'lib/system/database'
+include Intrigue::Core::System::Database
+
+# used in app as well as tasks
+require_relative 'lib/system/validations'
+include Intrigue::Core::System::Validations
+
+# used in app as well as tasks
+require_relative 'lib/system/helpers'
+include Intrigue::Core::System::Helpers
+
+# Debug
+require 'logger'
+
+# disable annoying redis messages 
+Redis.exists_returns_integer = false
 
 #
 # Simple configuration check to ensure we have configs in place
@@ -64,56 +77,52 @@ end
 
 def setup_redis
   redis_config = YAML.load_file("#{$intrigue_basedir}/config/redis.yml")
-  redis_host = redis_config[$intrigue_environment]["host"] || "localhost"
-  redis_port = redis_config[$intrigue_environment]["port"] || 6379
+  $redis_host = ENV["REDIS_HOST"] || redis_config[$intrigue_environment]["host"] || "localhost"
+  $redis_port = ENV["REDIS_PORT"] || redis_config[$intrigue_environment]["port"] || 6379
+  $redis_pass = ENV["REDIS_PASS"] || redis_config[$intrigue_environment]["password"] || nil
+  $redis_connect_string = "redis://#{$redis_host}:#{$redis_port}/"
 
   # Pull sidekiq config from the environment if it's available (see docker config)
   Sidekiq.configure_server do |config|
-    redis_uri = ENV.fetch("REDIS_URI","redis://#{redis_host}:#{redis_port}/")
-    config.redis = { url: "#{redis_uri}" }
+    puts "Connecting to Redis Server at: #{$redis_connect_string}"
+    # if password is present, use it
+    if $redis_pass
+      config.redis = { url: $redis_connect_string, password: $redis_pass}
+    else
+      config.redis = { url: $redis_connect_string}
+    end
   end
-
-end
-
-# database set up
-def setup_database
-  options = {
-    :max_connections => 50,
-    :pool_timeout => 240
-  }
-
-  database_config = YAML.load_file("#{$intrigue_basedir}/config/database.yml")
-  database_host = database_config[$intrigue_environment]["host"] || "localhost"
-  database_port = database_config[$intrigue_environment]["port"] || 5432
-  database_user = database_config[$intrigue_environment]["user"]
-  database_pass = database_config[$intrigue_environment]["pass"]
-  database_name = database_config[$intrigue_environment]["database"]
-  database_debug = database_config[$intrigue_environment]["debug"]
-
-  $db = Sequel.connect("postgres://#{database_user}@#{database_host}:#{database_port}/#{database_name}", options)
-  $db.loggers << Logger.new($stdout) if database_debug
-
-  # Allow datasets to be paginated
-  $db.extension :pagination
-  #$db.extension :pg_json
-  Sequel.extension :pg_json_ops
-
-  Sequel::Model.plugin :update_or_create
+  # configure the client
+  Sidekiq.configure_client do |config|
+    puts "Configuring Redis Client for: #{$redis_connect_string}"
+    # if password is present, use it
+    if $redis_pass
+      config.redis = { url: $redis_connect_string, password: $redis_pass}
+    else
+      config.redis = { url: $redis_connect_string}
+    end
+  end
 end
 
 sanity_check_system
-setup_redis
+setup_redis unless ENV["INTRIGUE_ENV"] == "test"
 setup_database
 
-class IntrigueApp < Sinatra::Base
+class CoreApp < Sinatra::Base
   register Sinatra::Namespace
+
+  set :allow_origin, "https://localhost:7778"
+  set :allow_methods, "GET,HEAD,POST"
+  set :allow_headers, "content-type,if-modified-since,allow"
+  set :expose_headers, "location,link"
+  set :allow_credentials, true
 
   set :sessions => true
   set :root, "#{$intrigue_basedir}"
   set :views, "#{$intrigue_basedir}/app/views"
   set :public_folder, 'public'
 
-  if Intrigue::Config::GlobalConfig.config["debug"]
+  if Intrigue::Core::System::Config.config["debug"]
     set :logging, true
   end
 
@@ -129,12 +138,12 @@ class IntrigueApp < Sinatra::Base
   ###
   ### (Very) Simple Auth
   ###
-  if Intrigue::Config::GlobalConfig.config
-    if Intrigue::Config::GlobalConfig.config["http_security"]
+  if Intrigue::Core::System::Config.config
+    if Intrigue::Core::System::Config.config["http_security"]
       use Rack::Auth::Basic, "Restricted" do |username, password|
         [username, password] == [
-          Intrigue::Config::GlobalConfig.config["credentials"]["username"],
-          Intrigue::Config::GlobalConfig.config["credentials"]["password"]
+          Intrigue::Core::System::Config.config["credentials"]["username"],
+          Intrigue::Core::System::Config.config["credentials"]["password"]
         ]
       end
     end
@@ -149,25 +158,31 @@ class IntrigueApp < Sinatra::Base
     $intrigue_server_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
 
     # Parse out our project
-    project_string = URI.unescape(request.path_info.split("/")[1] || "Default")
-    #puts "Got Project string: #{project_string}"
+    directive = URI.unescape(request.path_info.split("/")[1] || "Default")
+
+    # set flash message if we have one
+    if session[:flash]
+      @flash = session[:flash]
+      session[:flash] = nil
+    end
 
     # Allow certain requests without a project string... these are systemwide,
     # and do not depend on a specific project
-    pass if ["favicon.ico", "project", "tasks", "tasks.json", "entity_types.json", "version.json", "engine", nil].include? project_string
-    pass if request.path_info =~ /js$/ # if we're submitting a new task result via api
-    pass if request.path_info =~ /css$/ # if we're submitting a new task result via api
-    pass if request.path_info =~ /(.jpg|.png)$/ # if we're submitting a new task result via api
-    pass if request.path_info =~ /linkurious/ # if we're submitting a new task result via api
+    pass if [ "api", "entity_types.json", "engine", "favicon.ico",
+              "project", "tasks", "tasks.json",
+              "version.json", "system", nil ].include? directive
+    pass if request.path_info =~ /\.js$/ # all js
+    pass if request.path_info =~ /\.css$/ # all css
+    pass if request.path_info =~ /(.jpg|.png)$/ # all images
 
-    # Set the project based on the project_string
-    project = Intrigue::Model::Project.first(:name => project_string)
+    # Set the project based on the directive
+    project = Intrigue::Core::Model::Project.first(:name => directive)
 
     # If we haven't resolved a project, let's handle it
     unless project
       # Creating a default project since it doesn't appear to exist (it should always exist)
-      if project_string == "Default"
-        project = Intrigue::Model::Project.create(:name => "Default")
+      if directive == "Default"
+        project = Intrigue::Core::Model::Project.create(:name => "Default", :created_at => Time.now.utc )
       else
         redirect "/"
       end
@@ -182,13 +197,19 @@ class IntrigueApp < Sinatra::Base
   end
 
   ###                                  ###
-  ### System-Level Informational Calls ###
+  ### App-Level Constants              ###
   ###                                  ###
+
+  FRONT_PAGE = "/"
+
+  ###                                    ###
+  ### App-Level Informational API Calls  ###
+  ###                                    ###
 
   # Return a JSON array of all entity type
   get '/entity_types.json' do
     content_type 'application/json'
-    Intrigue::Model::Entity.descendants.map{ |e| e.metadata }.sort_by{|m| m[:name] }.to_json
+    Intrigue::EntityFactory.entity_types.map{ |e| e.metadata }.sort_by{|m| m[:name] }.to_json
   end
 
   # Export All Tasks
@@ -211,3 +232,13 @@ end
 
 # Core libraries
 require_relative "lib/all"
+
+#configure sentry.io error reporting (only if a key was provided)
+if (Intrigue::Core::System::Config.config && Intrigue::Core::System::Config.config["sentry_dsn"])
+  require "raven"
+  puts "!!! Configuring Sentry error reporting to: #{Intrigue::Core::System::Config.config["sentry_dsn"]}"
+
+  Raven.configure do |config|
+    config.dsn = Intrigue::Core::System::Config.config["sentry_dsn"]
+  end
+end

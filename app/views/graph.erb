@@ -48,7 +48,7 @@ function delete_entity_children(id){
   });
 
   // We setup our request & send it
-  XHR.open('GET', "/<%=@project_name%>/entities/" + id + "/delete_children");
+  XHR.open('GET', "/<%=h @project_name%>/entities/" + id + "/delete_children");
   XHR.send();
 }
 </script>

@@ -1,6 +1,6 @@
 module Intrigue
-module Model
-module Mixins
+module Core
+module ModelMixins
 module Handleable
 
   def handle(handler_type, prefix=nil)

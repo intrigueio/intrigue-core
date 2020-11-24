@@ -12,13 +12,16 @@ data/.local
 data/alexa-latest.csv
 data/geolitecity/GeoLite2-City.mmdb
 data/iana/ipv4-address-space.csv
+data/iana/service-names-port-numbers.csv
 data/web_accounts_list/web_accounts_list.json
 data/asn_info/*
 public/
 tmp/
 log/
+.env
 lib/tasks/disabled
 lib/tasks/survey
+lib/*.gem
 util/control.sh
 paused.conf
 data/iana/data-used-autnums
@@ -26,3 +29,8 @@ data/iana/data-raw-table
 data/public_suffix_list.clean.txt
 data/tlds-alpha-by-domain.txt
 data/nvd
+Procfile
+config/server.crt
+config/server.key
+data/*.db
+data/retirejs.json

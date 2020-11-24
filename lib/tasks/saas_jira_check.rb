@@ -2,7 +2,6 @@ module Intrigue
 module Task
 class SaasJiraCheck < BaseTask
 
-
   def self.metadata
     {
       :name => "saas_jira_check",
@@ -12,13 +11,12 @@ class SaasJiraCheck < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["Domain","Organization", "String"],
+      :allowed_types => ["Domain","Organization", "String", "WebAccount"],
       :example_entities => [
         {"type" => "String", "details" => {"name" => "intrigue"}}
       ],
       :allowed_options => [],
-      :created_types => ["WebAccount"],
-      :queue => "task_browser"
+      :created_types => ["WebAccount"]
     }
   end
 
@@ -42,32 +40,15 @@ class SaasJiraCheck < BaseTask
   def check_and_create(name)
     url = "https://#{name}.atlassian.net/login"
 
-    # requires a browser?
-    #body = http_get_body url
-    begin
-      session = create_browser_session
-      document = capture_document session, url
-      if document 
-        title = document[:title]
-        body = document[:rendered]
-      else
-        _log "No response"
-      end
-    ensure
-      destroy_browser_session(session)
-    end
-
+    # grab the page 
+    body = http_get_body url
 
     if body =~ /Log in to Jira, Confluence, and all other Atlassian Cloud products here/
       _log_good "The #{name} org exists!"
 
       service_name = "atlassian.net"
-      _create_entity "WebAccount", {
-        "name" => "#{service_name}: #{name}",
-        "uri" => url,
-        "username" => "#{name}",
-        "service" => service_name
-      }
+      _create_normalized_webaccount(service_name, name, url)
+
     elsif body =~ /Your Atlassian Cloud site is currently unavailable./
       _log_error "Nothing found for #{name}"
     else

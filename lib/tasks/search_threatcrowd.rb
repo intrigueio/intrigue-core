@@ -7,7 +7,7 @@ class SearchThreatcrowd < BaseTask
   def self.metadata
     {
       :name => "search_threatcrowd",
-      :pretty_name => "Search ThreatCrowd",
+      :pretty_name => "Search ThreatCrowd (Asset Discovery)",
       :authors => ["jcran"],
       :description => "This task hits the ThreatCrowd API and finds related content. Discovered IPs / subdomains / emails are created.",
       :references => [],
@@ -37,6 +37,7 @@ class SearchThreatcrowd < BaseTask
     # Check Sublist3r API & create domains from returned JSON
     search_domain = _get_entity_name
     search_uri = "https://www.threatcrowd.org/searchApi/v2/domain/report/?domain=#{search_domain}"
+    
     begin
       tc_json = JSON.parse(http_get_body(search_uri))
 

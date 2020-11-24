@@ -37,7 +37,6 @@ class UriBrute < BaseTask
     # TODO - integrate a simple default list:
     ## "admin, test, server-status, .svn, .git, wp-config.php, config.php, configuration.php, LocalSettings.php, mediawiki/LocalSettings.php, mt-config.cgi, mt-static/mt-config.cgi, settings.php, .htaccess, config.bak, config.php.bak, config.php~, #config.php#, config.php.save, .config.php.swp, config.php.swp, config.php.old"
 
-
     # Get options
     uri = _get_entity_name
     opt_threads = _get_option("threads")
@@ -75,7 +74,7 @@ class UriBrute < BaseTask
 
     # check to make sure we don't just go down the rabbit hole
     # some pages print back our uri, so first remove that if it exists
-    unless response.body.gsub(request_page_one,"") && response2.body.gsub(request_page_two,"")
+    unless response.body_utf8.gsub(request_page_one,"") && response2.body.gsub(request_page_two,"")
       _log_error "Cowardly refusing to test - different responses on our missing page checks"
       return false
     end
@@ -88,7 +87,7 @@ class UriBrute < BaseTask
         @missing_page_test = :code
       when "200"
         @missing_page_test = :content
-        @missing_page_content = response.body
+        @missing_page_content = response.body_utf8
       else
         @missing_page_test = :code
         @missing_page_code = response.code
@@ -128,12 +127,12 @@ class UriBrute < BaseTask
     return false unless response
 
     # try again if we got a blank page (some WAFs seem to do this?)
-    if response.body = ""
+    if response.body_utf8 == ""
       10.times do
         _log "Re-attempting #{request_uri}... verifying we should really have a blank page"
         response = http_request :get, request_uri
         next unless response
-        break if response.body != ""
+        break if response.body_utf8 != ""
       end
     end
 
@@ -142,7 +141,7 @@ class UriBrute < BaseTask
 
     # always check for content...
     ["404", "forbidden", "Request Rejected"].each do |s|
-      if (response.body =~ /#{s}/i )
+      if (response.body_utf8 =~ /#{s}/i )
         _log "Skipping #{request_uri}, contains a missing page string: #{s}"
         return false
       end
@@ -176,13 +175,13 @@ class UriBrute < BaseTask
           #  "name" => request_uri,
           #  "uri" => request_uri,
           #  "response_code" => response.code,
-          #  "brute_response_body" => response.body
+          #  "brute_response_body" => response.body_utf8
       end
 
     ## Otherwise, let's guess based on the content. Does this page look
     ## like a missing page?
     elsif @missing_page_test == :content
-      if response.body[0..100] == @missing_page_content[0..100]
+      if response.body_utf8[0..100] == @missing_page_content[0..100]
         _log "Skipping #{request_uri} based on page content"
       else
         _log "Flagging #{request_uri} because of content!"
@@ -190,7 +189,7 @@ class UriBrute < BaseTask
           "name" => request_uri,
           "uri" => request_uri,
           "response_code" => response.code,
-          "brute_response_body" => response.body
+          "brute_response_body" => response.body_utf8
       end
     end
 

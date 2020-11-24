@@ -1,21 +1,25 @@
 module Intrigue
 module Entity
-class GithubRepository < Intrigue::Model::Entity
+class GithubRepository < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
       :name => "GithubRepository",
       :description => "A Github Repository",
-      :user_creatable => false
+      :user_creatable => true,
+      :example => "intrigueio/intrigue-core"
     }
   end
 
   def validate_entity
-    name =~ /^\w.*/
+    name =~ /^[\d\w\-]+\/[\d\w\-]+/
   end
 
-  def enrichment_tasks
-    ["enrich/github_repository"]
+  def scoped?
+    return true if self.allow_list
+    return false if self.deny_list
+
+  true
   end
 
 end

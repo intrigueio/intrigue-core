@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class SslCertificate < Intrigue::Model::Entity
+class SslCertificate < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
@@ -11,7 +11,7 @@ class SslCertificate < Intrigue::Model::Entity
   end
 
   def validate_entity
-    name =~ /^.*$/
+    name =~ /^[\w\s\d\.\-\_\&\;\:\,\@\(\)\*\/\?\=]+$/
   end
 
   ###
@@ -25,6 +25,16 @@ class SslCertificate < Intrigue::Model::Entity
   # "text" => "#{cert.to_text}" }
   def detail_string
     "#{details["not_after"]} | #{details["subject"]} | #{details["issuer"]}"
+  end
+
+  ###
+  ### SCOPING
+  ###
+  def scoped?(conditions={}) 
+    return true if self.allow_list
+    return false if self.deny_list
+  
+  true
   end
 
   def enrichment_tasks

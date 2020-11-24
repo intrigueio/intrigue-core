@@ -29,7 +29,9 @@ class NotifierFactory
   #
   def self.default
     # select all with the default attribute
-    notifiers = Intrigue::Config::GlobalConfig.config["intrigue_notifiers"]
+    notifiers = Intrigue::Core::System::Config.config["intrigue_notifiers"]
+    return unless notifiers # check for nil configtai
+
     enabled_configs = notifiers.select{ |k,v| v["enabled"] && v["default"] }
     # create notifiers for them
     enabled_configs.map{|k,v| self.create_by_type_and_config(v["type"],v)}
@@ -44,7 +46,7 @@ class NotifierFactory
   #   - A notifier, which you can call notify on
   #
   def self.create_by_name(name)
-    notifiers = Intrigue::Config::GlobalConfig.config["intrigue_notifiers"]
+    notifiers = Intrigue::Core::System::Config.config["intrigue_notifiers"]
     notifiers.each do |k,v|
       next unless v["enabled"]
       if k == name
@@ -65,7 +67,7 @@ class NotifierFactory
   #
   def self.create_all_by_type(type)
     notifiers = []
-    Intrigue::Config::GlobalConfig.config["intrigue_notifiers"].each do |k,v|
+    Intrigue::Core::System::Config.config["intrigue_notifiers"].each do |k,v|
       next unless v["enabled"]
       if v["type"] == type
         config = v

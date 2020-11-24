@@ -25,11 +25,11 @@ class UriExtractMetadata < BaseTask
   def run
     super
 
-    # first, follow any redirects
-    uri = http_request(:get,"#{_get_entity_name}").uri
+    # download the file and extract
+    metadata = download_and_extract_metadata _get_entity_name
 
-    # then download the file
-    download_and_extract_metadata uri
+    # set the metadata details
+    _set_entity_detail("extended_metadata",metadata)
 
   end
 

@@ -8,7 +8,7 @@ class SearchSublister < BaseTask
       :name => "search_sublister",
       :pretty_name => "Search Sublist3r",
       :authors => ["jcran"],
-      :description => "This task hit Sublis3r's API for subdomains and creates new DnsRecord entities.",
+      :description => "This task hits Sublis3r's API for subdomains and creates new DnsRecord entities.",
       :references => ["https://github.com/aboul3la/Sublist3r/"],
       :type => "discovery",
       :passive => true,

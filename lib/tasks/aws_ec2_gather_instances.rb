@@ -34,20 +34,23 @@ class AwsEc2GatherInstances < BaseTask
     begin
       # Connect to AWS using fog ...
       # TODO... prob want to remove the fog dep
-      ec2 = Fog::Compute.new({
+      ec2 = Fog::AWS::Compute.new({
         :aws_access_key_id => aws_access_key,
         :aws_secret_access_key => aws_secret_key,
         :provider => "AWS",
         :region => aws_region })
 
+      # "organization" => "#{ec2.arn.split(":")[4]}",
       # Pull each server out and create an IPAddress
       ec2.servers.each do |s|
+
         _create_entity "IpAddress", {
             "name" => "#{s.public_ip_address}",
-            "aws_region" => "#{aws_region}",
+            "region" => "#{aws_region}",
             "private_dns_name" => "#{s.private_dns_name}",
             "private_ip_address" => "#{s.private_ip_address}",
-            "public_dns_name" => "#{s.dns_name}"
+            "public_dns_name" => "#{s.dns_name}",
+            "ec2" => s.attributes.to_h
         }
       end
     rescue Fog::Compute::AWS::Error => e

@@ -2,21 +2,33 @@ module Intrigue
 module Task
 module Generic
 
-  def self.included(base)
+   def self.included(base)
      include Intrigue::Task::Web
    end
 
+   def require_enrichment
+    
+    entity_enriched = @entity.enriched?
+    cycles = 200 
+    max_cycles = cycles
+
+    until entity_enriched || cycles == 0
+      _log "Waiting up to 10m for entity to be enriched... (#{cycles-=1} / #{max_cycles})"
+      sleep 3
+      entity_enriched = Intrigue::Core::Model::Entity.first(:id => @entity.id).enriched?
+    end
+
+    # re-pull
+    @entity = Intrigue::Core::Model::Entity.first(:id => @entity.id)
+    
+  end
+
   private
 
-  def _threaded_iteration(thread_count, items, funct)
+  def _threaded_iteration(thread_count, input_queue, funct)
 
     # Create our queue of work from the checks in brute_list
-    input_queue = Queue.new
-    output_queue = Queue.new
-
-    items.each do |item|
-      input_queue << item
-    end
+    #output_queue = Queue.new
 
     # Create a pool of worker threads to work on the queue
     workers = (0...thread_count).map do
@@ -32,18 +44,30 @@ module Generic
     end; "ok"
     workers.map(&:join); "ok"
 
-  output_queue
+  #output_queue
   end # end run method
 
   ###
   ### Helper method to reach out to the entity manager
   ###
   def _create_entity(type, hash, primary_entity=nil)
+
+    # just in case we were given a hash with symbolized keys, convert to strings for
+    # our purposes... bitten by the bug a bunch lately
+    hash = hash.collect{|k,v| [k.to_s, v]}.to_h
+
     # No need for a name in the hash now, remove it & pull out the name from the hash
     name = hash.delete("name")
 
     # Create or merge the entity
-    EntityManager.create_or_merge_entity(@task_result, type, name, hash, primary_entity)
+    EntityManager.create_or_merge_entity(@task_result.id, type, name, hash, primary_entity)
+  end
+
+  ###
+  ### Helper method .. should this check with the entity manager?
+  ###
+  def _entity_exists?(type,name)
+    entity_exists?(@entity.project, type, name)
   end
 
   ###
@@ -72,18 +96,9 @@ module Generic
   # Convenience Method to execute a system command semi-safely
   #  !!!! Don't send anything to this without first whitelisting user input!!!
   def _unsafe_system(command)
-
-    ###                  ###
-    ###  XXX - SECURITY  ###
-    ###                  ###
-
-    if command =~ /(\||\;|\`)/
-      #raise "Illegal character"
-      _log_error "FATAL Illegal character in #{command}"
-      return
+    Dir.chdir Dir::tmpdir do
+      ShellCommand::execute(command).stdout
     end
-
-    `#{command} 2>&1`
   end
 
   ###
@@ -92,7 +107,7 @@ module Generic
 
   def _encode_string(string)
     return string unless string.kind_of? String
-    string.encode("UTF-8", :undef => :replace, :invalid => :replace, :replace => "?")
+    string.scrub("?") #.encode("UTF-8", :undef => :replace, :invalid => :replace, :replace => "?")
   end
 
   def _encode_hash(hash)
@@ -106,8 +121,12 @@ module Generic
   end
 
   def _notify(message)
-    _log "Notifying via default channels"
-    Intrigue::NotifierFactory.default.each { |x| x.notify(message, @task_result) }
+    if Intrigue::NotifierFactory.default
+      _log "Notifying via default channels"
+      Intrigue::NotifierFactory.default.each { |x| x.notify(message, @task_result) }
+    else 
+      _log "Unable to notify on default channels!"
+    end
   end
 
   def _notify_type(notifier_type, message)
@@ -132,8 +151,13 @@ module Generic
     @entity.set_detail(detail_name, detail_value)
   end
 
-  def _set_entity_details(hash)
-    @entity.set_details hash
+  def _get_entity_details
+    @entity.get_details
+  end
+
+  # Deprecated, use... 
+  def _get_and_set_entity_details(hash)
+    @entity.get_and_set_details hash
   end
 
   def _get_entity_name
@@ -146,14 +170,14 @@ module Generic
 
   ### GLOBAL CONFIG INTERFACE
   def _get_system_config(key)
-    Intrigue::Config::GlobalConfig.load_config
-    value = Intrigue::Config::GlobalConfig.config[key]
+    Intrigue::Core::System::Config.load_config
+    value = Intrigue::Core::System::Config.config[key]
   end
 
   def _get_task_config(key)
     begin
-      Intrigue::Config::GlobalConfig.load_config
-      config = Intrigue::Config::GlobalConfig.config["intrigue_global_module_config"]
+      Intrigue::Core::System::Config.load_config
+      config = Intrigue::Core::System::Config.config["intrigue_global_module_config"]
       value = config[key]["value"]
       unless value && value != ""
         _log "Module config (#{key}) is blank or missing!"

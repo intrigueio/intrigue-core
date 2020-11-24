@@ -1,0 +1,5 @@
+<% seeds = @project.seeds || [] %>
+<h3>Project Seeds (<%= seeds.count %>): </h3>
+<ul>
+  <%= seeds.map{|x| "<li>#{x.type}##{x.name}</li>" }.join("") %>
+</ul>

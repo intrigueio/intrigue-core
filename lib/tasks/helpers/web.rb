@@ -1,5 +1,3 @@
-require 'digest'
-
 ###
 ### Please note - these methods may be used inside task modules, or inside libraries within
 ### Intrigue. An attempt has been made to make them abstract enough to use anywhere inside the
@@ -13,13 +11,12 @@ module Intrigue
 module Task
   module Web
 
-
-    
   def make_http_requests_from_queue(uri, work_q, threads=1, create_url=false, create_issue=false)
 
     ###
     ### Get the default case (a page that doesn't exist)
     ###
+    threads = threads.to_i # jsut in case
     random_value = "#{rand(100000000)}"
     request_page_one = "doesntexist-#{random_value}"
     request_page_two = "def-#{random_value}-doesntexist"
@@ -28,14 +25,20 @@ module Task
 
     # check for sanity
     unless response && response_two
-      _log_error "Unable to connect to site!"
+      _log_error "Unable to connect to site!" if @task_result
       return false
     end
 
+    # check for sanity
+    unless response.body_utf8 && response_two.body
+      _log_error "Empty body!" if @task_result
+      return false
+    end
+    
     # check to make sure we don't just go down the rabbit hole
     # some pages print back our uri, so first remove that if it exists
-    unless response.body.gsub(request_page_one,"") && response_two.body.gsub(request_page_two,"")
-      _log_error "Cowardly refusing to test - different responses on our missing page checks"
+    unless response.body_utf8.gsub(request_page_one,"") && response_two.body.gsub(request_page_two,"")
+      _log_error "Cowardly refusing to test - different responses on our missing page checks" if @task_result
       return false
     end
 
@@ -44,44 +47,59 @@ module Task
     # But select based on the response to our random page check
     case response.code
       when "404"
-        _log "Using CODE as missing page test, missing page will give a 404"
+        _log "Using CODE as missing page test, missing page will give a 404" if @task_result
         missing_page_test = :code
       when "200"
-        _log "Using CONTENT as missing page test, missing page will give a 200"
+        _log "Using CONTENT as missing page test, missing page will give a 200" if @task_result
         missing_page_test = :content
-        missing_page_content = response.body
+        missing_page_content = response.body_utf8
       else
-        _log "Defaulting to CODE as missing page test, missing page will give a #{response.code}"
+        _log "Defaulting to CODE as missing page test, missing page will give a #{response.code}" if @task_result
         missing_page_test = :code
         missing_page_code = response.code
     end
     ##########################
 
+    matching_urls = Queue.new
+
     # Create a pool of worker threads to work on the queue
     workers = (0...threads).map do
       Thread.new do
         begin
+          #_log "Getting request"
           while request_details = work_q.pop(true)
 
             request_uri = "#{uri}#{request_details[:path]}"
-            positive_regex = request_details[:regex]
 
             # Do the check
-            _log "Checking #{request_uri}"
-            result = check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content, positive_regex)
+            #_log "Checking #{request_uri}"
 
-            if result 
-              # create a new entity for each one if we specified that 
-              _create_entity("Uri", { "name" => result[:uri] }) if  create_url
-              
-              _create_issue({
-                name: "Discovered Content at #{result[:name]}",
-                type: "discovered_content",
-                severity: request_details[:severity] || 5,
-                status: request_details[:status] || "potential",
-                description: "Page was found with a code #{result[:response_code]} by url_brute_focused_content at #{result[:name]}",
-                details: result.except!(:name)
-              }) if create_issue
+            # request details will have regexes if we want to check, so just pass it directly
+            result = check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content, request_details)
+
+            if result
+              # create a new entity for each one if we specified that
+              _create_entity("Uri", { "name" => result[:uri] }) if create_url
+
+              # dump it into our queue so we can push matches back
+              matching_urls.push({ start: request_uri, final: result[:uri] })
+
+              # Create a linked issue if the type exists
+              if _linkable_issue_exists "#{request_details[:issue_type]}"
+                _log "Creating linked issue of type: #{request_details[:issue_type]}" if @task_result
+                _create_linked_issue(request_details[:issue_type], result.except!(:name)) 
+              else
+                # Generic fallback 
+                _log "Creating issue of type: #{request_details[:issue_type]}" if @task_result
+                _create_issue({
+                  name: "Discovered Sensitive Content at #{request_details[:path]}",
+                  type:  request_details[:issue_type] || "discovered_sensitive_content",
+                  severity: request_details[:severity] || 5,
+                  status: request_details[:status] || "potential",
+                  description: "Page was found at #{result[:name]} with a code #{result[:response_code]} by url_brute_focused_content.",
+                  details: result.except!(:name)
+                }) if create_issue
+              end
             end
 
           end # end while
@@ -90,15 +108,18 @@ module Task
       end
     end; "ok"
     workers.map(&:join); "ok"
+
+    # push back a list of matching urls in case of post processing
+    matching_urls.size.times.map {|x| matching_urls.pop }
   end
 
   # See: https://raw.githubusercontent.com/zendesk/ruby-kafka/master/lib/kafka/ssl_socket_with_timeout.rb
-  def connect_ssl_socket(hostname, port, timeout=31, max_attempts=3)
+  def connect_ssl_socket(hostname, port, timeout=15, max_attempts=3)
     # Create a socket and connect
     # https://apidock.com/ruby/Net/HTTP/connect
     attempts=0
 
-    begin 
+    begin
 
       # keep track of how many times we've tried
       attempts +=1
@@ -106,15 +127,15 @@ module Task
       ssl_context = OpenSSL::SSL::SSLContext.new
       #ssl_context.min_version = OpenSSL::SSL::SSL2_VERSION
       #ssl_context.ssl_version = :SSLv23
-      
-      # possible min versions: 
+
+      # possible min versions:
       # OpenSSL::SSL::SSL2_VERSION
       # OpenSSL::SSL::SSL3_VERSION
       # OpenSSL::SSL::TLS1_1_VERSION
       # OpenSSL::SSL::TLS1_2_VERSION
       # OpenSSL::SSL::TLS1_VERSION
 
-      # Open a tcp socket 
+      # Open a tcp socket
       addr = Socket.getaddrinfo(hostname, nil)
       sockaddr = Socket.pack_sockaddr_in(port, addr[0][3])
 
@@ -126,7 +147,7 @@ module Task
         # Initiate the socket connection in the background. If it doesn't fail
         # immediately it will raise an IO::WaitWritable (Errno::EINPROGRESS)
         # indicating the connection is in progress.
-        tcp_socket.connect_nonblock(sockaddr)
+          tcp_socket.connect_nonblock(sockaddr)
       rescue IO::WaitWritable
         # select will block until the socket is writable or the timeout
         # is exceeded, whichever comes first.
@@ -143,6 +164,7 @@ module Task
         rescue Errno::EISCONN
           # The socket is connected, we're good!
         end
+
       end
 
       # once that's connected, we can start initiating the ssl socket
@@ -187,6 +209,8 @@ module Task
       _log_error "Error requesting resource, skipping: #{hostname} #{port}: #{e}"
     rescue Errno::EMFILE => e
       _log_error "Error requesting resource, skipping: #{hostname} #{port}: #{e}"
+    rescue Errno::EAFNOSUPPORT => e
+      _log_error "Error requesting resource, skipping: #{hostname} #{port}: #{e}"
     rescue Errno::EPIPE => e
       _log_error "Error requesting cert, skipping: #{hostname} #{port}: #{e}"
     rescue Errno::ECONNRESET => e
@@ -194,8 +218,11 @@ module Task
     rescue Errno::ECONNREFUSED => e
       _log_error "Error requesting cert - refused, skipping: #{hostname} #{port}: #{e}"
       _log_error "Error requesting resource, skipping: #{hostname} #{port}"
-      log "retrying... attempt: #{attempts}/#{max_attempts}"
+      _log "retrying... attempt: #{attempts}/#{max_attempts}"
       retry unless attempts == max_attempts
+    rescue Errno::ENETUNREACH
+      # unable to connect
+      _log_error "Error requesting cert, skipping: #{hostname} #{port}: #{e}"
     rescue Errno::ETIMEDOUT => e
       _log_error "Error requesting cert - timed out, timeout: #{hostname} #{port}: #{e}"
       _log_error "Error requesting resource, skipping: #{hostname} #{port}"
@@ -203,7 +230,7 @@ module Task
       retry unless attempts == max_attempts
     rescue Errno::EHOSTUNREACH => e
       _log_error "Error requesting cert, skipping: #{hostname} #{port}: #{e}"
-    ensure 
+    ensure
       attempts +=1
     end
 
@@ -229,20 +256,6 @@ module Task
     end
   end
 
-
-  def connect_ssl_socket_get_cert_names(hostname,port,timeout=20)
-    # connect
-    socket = connect_ssl_socket(hostname,port,timeout)
-    return [] unless socket && socket.peer_cert
-    # Grab the cert
-    cert = OpenSSL::X509::Certificate.new(socket.peer_cert)
-    # parse the cert 
-    socket.sysclose
-    # get the names
-    names = parse_names_from_cert(cert)
-  end
-
-
   def parse_names_from_cert(cert, skip_hosted=true)
 
     # default to empty alt_names
@@ -253,7 +266,7 @@ module Task
       if "#{ext.oid}" =~ /subjectAltName/
 
         alt_names = ext.value.split(",").collect do |x|
-          "#{x}".gsub(/DNS:/,"").strip.gsub("*.","")
+          "#{x}".gsub(/DNS:/,"").gsub("IP Address:","").strip.gsub("*.","")
         end
         _log "Got cert's alt names: #{alt_names.inspect}"
 
@@ -265,30 +278,10 @@ module Task
           # collect all top-level domains
           tlds << alt_name.split(".").last(2).join(".")
 
-          # annoying!
-          universal_cert_domains = [
-            "acquia-sites.com",
-            "careers.talemetry.com",
-            "chinanetcenter.com",
-            "chinacloudsites.cn",
-            "cloudflare.com",
-            "cloudflaressl.com",
-            "distilnetworks.com",
-            "edgecastcdn.net",
-            "helloworld.com",
-            "hexagon-cdn.com", # TODO - worth revisiting, may include related hosts
-            "fastly.net",
-            "freshdesk.com",
-            "jiveon.com",
-            "incapsula.com",
-            "lithium.com",
-            "swagcache.com",
-            "wpengine.com",
-            "yottaa.net"
-          ]
+          universal_cert_domains = get_universal_cert_domains
 
           universal_cert_domains.each do |cert_domain|
-            if (alt_name =~ /#{cert_domain}$/ ) 
+            if (alt_name =~ /#{cert_domain}$/ )
               _log "This is a universal #{cert_domain} certificate, no entity creation"
               return
             end
@@ -310,6 +303,7 @@ module Task
         end
       end
     end
+
   alt_names
   end
 
@@ -319,14 +313,18 @@ module Task
   # and also useful in situations were we need to verify content-type
   #
   def download_and_store(url, filename="#{SecureRandom.uuid}")
-    file = Tempfile.new(filename) # use an array to enforce a format
+
     # https://ruby-doc.org/stdlib-1.9.3/libdoc/tempfile/rdoc/Tempfile.html
+    file = Tempfile.new(filename) # use an array to enforce a format
+
+    # set to write in binary mode (kinda weird api, but hey)
+    file.binmode
 
     @task_result.logger.log_good "Attempting to download #{url} and store in #{file.path}" if @task_result
 
     begin
 
-      uri = URI.parse(URI.encode("#{url}"))
+      uri = URI.parse(url)
 
       opts = {}
       if uri.instance_of? URI::HTTPS
@@ -336,8 +334,8 @@ module Task
 
       # TODO enable proxy
       http = Net::HTTP.start(uri.host, uri.port, nil, nil, opts) do |http|
-        http.read_timeout = 20
-        http.open_timeout = 20
+        http.read_timeout = 15
+        http.open_timeout = 15
         http.request_get(uri.path) do |resp|
           resp.read_body do |segment|
             file.write(segment)
@@ -400,9 +398,9 @@ module Task
   file.path
   end
 
-  # XXX - move this over to net-http (?)
-  def http_post(uri, data)
-    RestClient.post(uri, data)
+  def http_post(uri, data, params)
+    #RestClient.post(uri, data, params)
+    http_request(:post, uri, nil, params, data)
   end
 
   #
@@ -413,310 +411,158 @@ module Task
 
     ### filter body
     if response
-      return response.body.encode('UTF-8', {:invalid => :replace, :undef => :replace, :replace => '?'})
+      return response.body_utf8
     end
 
   nil
   end
 
+  def http_request(method, uri_string, credentials=nil, headers={}, data=nil, follow_redirects=true, timeout=10)
 
-  ###
-  ### XXX - significant updates made to zlib, determine whether to
-  ### move this over to RestClient: https://github.com/ruby/ruby/commit/3cf7d1b57e3622430065f6a6ce8cbd5548d3d894
-  ###
-  def http_request(method, uri_string, credentials=nil, headers={}, 
-      data=nil, attempts_limit=10, open_timeout=31, read_timeout=31)
-
-    response = nil
-    begin
-
-      attempts=0
-      max_attempts=attempts_limit
-      found = false
-
-      uri = URI.parse uri_string
-
-      unless uri
-        _log error "Unable to parse URI from: #{uri_string}"
-        return
-      end
-
-      until( found || attempts >= max_attempts)
-       @task_result.logger.log "Getting #{uri}, attempt #{attempts}" if @task_result
-       attempts+=1
-
-       if Intrigue::Config::GlobalConfig.config["http_proxy"]
-         proxy_addr = Intrigue::Config::GlobalConfig.config["http_proxy"]["host"]
-         proxy_port = Intrigue::Config::GlobalConfig.config["http_proxy"]["port"]
-         proxy_user = Intrigue::Config::GlobalConfig.config["http_proxy"]["user"]
-         proxy_pass = Intrigue::Config::GlobalConfig.config["http_proxy"]["pass"]
-       end
-
-       # set options
-       opts = {}
-       if uri.instance_of? URI::HTTPS
-         opts[:use_ssl] = true
-         opts[:verify_mode] = OpenSSL::SSL::VERIFY_NONE
-       end
-
-       http = Net::HTTP.start(uri.host, uri.port, proxy_addr, proxy_port, opts)
-       #http.set_debug_output($stdout) if _get_system_config "debug"
-       http.read_timeout = read_timeout
-       http.open_timeout = open_timeout
-
-       path = "#{uri.path}"
-       path = "/" if path==""
-
-       # add in the query parameters
-       if uri.query
-         path += "?#{uri.query}"
-       end
-
-       ### ALLOW DIFFERENT VERBS HERE
-       if method == :get
-         request = Net::HTTP::Get.new(uri)
-       elsif method == :post
-         # see: https://coderwall.com/p/c-mu-a/http-posts-in-ruby
-         request = Net::HTTP::Post.new(uri)
-         request.body = data
-       elsif method == :head
-         request = Net::HTTP::Head.new(uri)
-       elsif method == :propfind
-         request = Net::HTTP::Propfind.new(uri.request_uri)
-         request.body = "Here's the body." # Set your body (data)
-         request["Depth"] = "1" # Set your headers: one header per line.
-       elsif method == :options
-         request = Net::HTTP::Options.new(uri.request_uri)
-       elsif method == :trace
-         request = Net::HTTP::Trace.new(uri.request_uri)
-         request.body = "intrigue"
-       end
-       ### END VERBS
-
-      # set user agent unless one was provided
-      unless headers["User-Agent"]
-        headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1)" +
-        " AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36"
-      end
-
-
-       # set the user-specified headers
-       headers.each do |k,v|
-         request[k] = v
-       end
-
-       # handle credentials
-       if credentials
-         request.basic_auth(credentials[:username],credentials[:password])
-       end
-
-       # USE THIS TO PRINT HTTP REQUEST
-       #puts
-       #puts 
-       #puts "===== BEGIN REQUEST ====="
-       #puts "Endpoint: #{request.method} http://#{uri}"
-       #puts "Headers:\n"
-       #request.each_header do |key, value|
-       # puts "\t#{key}: #{value}"
-       #end
-       #puts "POST Data:\n#{request.body}" if request.method == 'POST'
-       #puts "=====  END  REQUEST ====="
-       #puts
-       #puts 
-       # END USE THIS TO PRINT HTTP REQUEST
-
-       # get the response
-       response = http.request(request)
-
-       if response.code=="200"
-         break
-       end
-
-       if (response.header['location']!=nil)
-         newuri=URI.parse(response.header['location'])
-         if(newuri.relative?)
-             #@task_result.logger.log "url was relative" if @task_result
-             newuri=uri+response.header['location']
-         end
-         uri=newuri
-
-       else
-         found=true #resp was 404, etc
-       end #end if location
-     end #until
-
-    ### TODO - this code may be be called outside the context of a task,
-    ###  meaning @task_result is not available to it. Below, we check to
-    ###  make sure that it exists before attempting to log anything,
-    ###  but there may be a cleaner way to do this (hopefully?). Maybe a
-    ###  global logger or logging queue?
-    ###
-    #rescue TypeError
-    #  # https://github.com/jaimeiniesta/metainspector/issues/125
-    #  @task_result.logger.log_error "TypeError - unknown failure" if @task_result
-    rescue Errno::EMFILE
-    rescue ArgumentError => e
-      @task_result.logger.log_error "Unable to open connection: #{e}" if @task_result
-    rescue Net::OpenTimeout => e
-      @task_result.logger.log_error "OpenTimeout Timeout : #{e}" if @task_result
-    rescue Net::ReadTimeout => e
-      @task_result.logger.log_error "ReadTimeout Timeout : #{e}" if @task_result
-    rescue Errno::ETIMEDOUT => e
-      @task_result.logger.log_error "ETIMEDOUT Timeout : #{e}" if @task_result
-    rescue Errno::EINVAL => e
-      @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
-    rescue Errno::ENETUNREACH => e
-      @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
-    rescue Errno::EHOSTUNREACH => e
-      @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
-    rescue URI::InvalidURIError => e
-      #
-      # XXX - This is an issue. We should catch this and ensure it's not
-      # due to an underscore / other acceptable character in the URI
-      # http://stackoverflow.com/questions/5208851/is-there-a-workaround-to-open-urls-containing-underscores-in-ruby
-      #
-      @task_result.logger.log_error "Unable to request URI: #{uri} #{e}" if @task_result
-    rescue OpenSSL::SSL::SSLError => e
-      @task_result.logger.log_error "SSL connect error : #{e}" if @task_result
-    rescue Errno::ECONNREFUSED => e
-      @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
-    rescue Errno::ECONNRESET => e
-      @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
-    rescue Net::HTTPBadResponse => e
-      @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
-    rescue Zlib::BufError => e
-      @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
-    rescue Zlib::DataError => e # "incorrect header check - may be specific to ruby 2.0"
-      @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
-    rescue EOFError => e
-      @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
-    rescue SocketError => e
-      @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
-    #rescue SystemCallError => e
-    #  @task_result.logger.log_error "Unable to connect: #{e}" if @task_result
-    #rescue ArgumentError => e
-    #  @task_result.logger.log_error "Argument Error: #{e}" if @task_result
-    rescue Encoding::InvalidByteSequenceError => e
-      @task_result.logger.log_error "Encoding error: #{e}" if @task_result
-    rescue Encoding::UndefinedConversionError => e
-      @task_result.logger.log_error "Encoding error: #{e}" if @task_result
+    # set user agent unless one was provided
+    unless headers["User-Agent"]
+      headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36"
     end
 
+    begin 
+
+      options = {}
+
+      # always
+      options[:timeout] = timeout
+      options[:ssl_verifyhost] = 0
+      options[:ssl_verifypeer] = false 
+
+      # follow redirects if we're told
+      if follow_redirects 
+        options[:followlocation] = true
+      end
+
+      # if we're a post, set our body 
+      if method == :post || method == :put
+        options[:body] = data
+      end
+
+      # merge in credentials, must be in format :user => 'username', :password => 'password'
+      if credentials
+        options[:userpwd] = "#{credentials[:user]}:#{credentials[:password]}"
+      end
+
+      # create a request
+      request = Typhoeus::Request.new(uri_string, {
+        method: method,
+        headers: headers
+      }.merge!(options))
+
+      # run the request 
+      response = request.run
+
+    # catch th
+    rescue Typhoeus::Errors::TyphoeusError => e
+      @task_result.logger.log_error "Request Error: #{e}" if @task_result
+      puts "Request Error: #{e}" unless @task_result
+    end
+
+    # fail unless we get a response
+    unless response
+      if @task_result
+        @task_result.logger.log_error "Unable to get a response"
+      else
+        puts "Unable to get a response"
+      end
+      return nil 
+    end
+    
   response
   end
 
-
-   def download_and_extract_metadata(uri,extract_content=true)
-
-     begin
-       # Download file and store locally before parsing. This helps prevent mime-type confusion
-       # Note that we don't care who it is, we'll download indescriminently.
-       file = open(uri, {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE})
-
-       # Parse the file
-       yomu = Yomu.new file
-
-       # create a uri for everything
-       #_create_entity "Document", {
-       #    "content_type" => file.content_type,
-       #    "name" => "#{uri}",
-       #    "uri" => "#{uri}",
-       # =>     "metadata" => yomu.metadata }
-       @task_result.logger.log "Parsing #{file}"
-       @task_result.logger.log "Metadata #{yomu.metadata}"
-
-       # Handle audio files
-       if yomu.metadata["Content-Type"] == "audio/mpeg" # Handle MP3/4
-         _create_entity "Person", {"name" => yomu.metadata["meta:author"], "origin" => uri }
-         _create_entity "Person", {"name" => yomu.metadata["creator"], "origin" => uri }
-         _create_entity "Person", {"name" => yomu.metadata["xmpDM:artist"], "origin" => uri }
-
-       elsif yomu.metadata["Content-Type"] == "application/pdf" # Handle PDF
-         _create_entity "Person", {"name" => yomu.metadata["Author"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["Author"]
-         _create_entity "Person", {"name" => yomu.metadata["meta:author"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["meta:author"]
-         _create_entity "Person", {"name" => yomu.metadata["dc:creator"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["dc:creator"]
-         _create_entity "Organization", {"name" => yomu.metadata["Company"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["Company"]
-         #_create_entity "SoftwarePackage", {"name" => yomu.metadata["producer"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["producer"]
-         _create_entity "SoftwarePackage", {"name" => yomu.metadata["xmp:CreatorTool"], "origin" => uri, "modified" => yomu.metadata["Last-Modified"] } if yomu.metadata["Company"]
-       end
-
-       # Look for entities in the text of the entity
-       parse_entities_from_content(uri,yomu.text) if extract_content
-
-     # Don't die if we lose our connection to the tika server
-     rescue StandardError => e
-       @task_result.logger.log_error "Unable to parse file: #{e}"
-     rescue EOFError => e
-       @task_result.logger.log_error "Unable to parse file: #{e}"
-     rescue OpenURI::HTTPError => e     # don't die if we can't find the file
-       @task_result.logger.log_error "Unable to download file: #{e}"
-     rescue URI::InvalidURIError => e     # handle invalid uris
-       @task_result.logger.log_error "Unable to download file: #{e}"
-     rescue Errno::EPIPE => e
-       @task_result.logger.log_error "Unable to contact Tika: #{e}"
-     rescue JSON::ParserError => e
-       @task_result.logger.log_error "Unable to parse file: #{e}"
-     end
-
-   end
-
-
-
-   def check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content, positive_regex=nil)
+  def check_uri_exists(request_uri, missing_page_test, missing_page_code="404", missing_page_content="", success_cases=nil)
 
      to_return = false
 
-     _log "Attempting #{request_uri}"
      response = http_request :get, request_uri
      return false unless response
 
+     # try again if we got a backoff
+     while response.kind_of? Net::HTTPTooManyRequests do 
+      _log "Got a backoff, sleeping ~60s"
+      sleep 30 + rand(60)
+      response = http_request :get, request_uri
+     end
+
+     return false if response.kind_of? Net::HTTPNotFound
+
      # try again if we got a blank page (some WAFs seem to do this?)
-     if response.body = ""
-       10.times do
-         _log "Re-attempting #{request_uri}... verifying we should really have a blank page"
-         response = http_request :get, request_uri
+     if !response.code == "404" && response.body_utf8 == ""
+       2.times do
+         _log "Re-attempting #{request_uri}... verifying we should really have a blank page" if @task_result
+         response = http_request :get, request_uri 
          next unless response
-         break if response.body != ""
+         break if response.body_utf8 != ""
        end
      end
 
-     # make sure we have a valid response
+     # again make sure we have a valid response
      return false unless response
 
      ######### BEST CASE IS WHEN WE KNOW WHAT IT SHOULD LOOK LIKE
-     # if we have a positive regex, always check that first and just return it if it matches 
-     if positive_regex
-       if response.body =~ positive_regex        
-         _log_good "Matched positive regex!!! #{positive_regex}"
-         return {
-           name: request_uri,
-           uri: request_uri,
-           response_code: response.code,
-           response_body: response.body
-         }
-       else 
-         _log "Didn't match our positive regex, skipping"
-         return false 
+     # if we have a positive regex, always check that first and just return it if it matches
+     if success_cases
+
+      #_log "Checking success cases: #{success_cases}"
+
+       if success_cases[:body_regex]
+         if response.body_utf8 =~ success_cases[:body_regex] 
+          
+          out = {
+            name: request_uri,
+            uri: request_uri,
+            response_code: response.code,
+            response_body: response.body_utf8
+          }
+
+          # check to make sure we're not part of our excluded 
+          if success_cases[:exclude_body_regex] && response.body_utf8 =~ success_cases[:exclude_body_regex] 
+            _log_error "Matched exclude body regex!!! #{success_cases[:exlude_body_regex]}" if @task_result
+            return nil
+          else
+            _log_good "Matched positive body regex!!! #{success_cases[:body_regex]}" if @task_result
+            return out
+          end
+
+         else
+           #_log "Didn't match our positive body regex, skipping"
+           return nil
+         end
+
+       elsif success_cases[:header_regex]
+         response.each do |header|
+          _log "Checking header: '#{header}: #{response[header]}'"
+          if "#{header}: #{response[header]}" =~ success_cases[:header_regex]   ### ALWAYS LOWERCASE!!!!
+           _log_good "Matched positive header regex!!! #{success_cases[:header_regex]}" if @task_result
+           return {
+             name: request_uri,
+             uri: request_uri,
+             response_code: response.code,
+             response_body: response.body_utf8
+           }
+          end
+        end
+       return nil
        end
      end
-     ##############
+    ##############
 
-     # otherwise fall through into our more generic checking.
-
-     # always check for content...
-     ["404", "forbidden", "Request Rejected"].each do |s|
-       if (response.body =~ /#{s}/i )
-         _log "Skipping #{request_uri}, contains a missing page string: #{s}"
-         return false
-       end
-     end
+    # otherwise fall through into our more generic checking.
 
      #_log "Response.code is a #{response.code.class}"
 
      # always check code
-     if ( response.code == "301" || response.code == "302" || 
+     if ( response.code == "301" || response.code == "302" ||
           "#{response.code}" =~ /^4\d\d/ ||  "#{response.code}" =~ /^5\d\d/ )
-       _log "Ignoring #{request_uri} based on code: #{response.code}"
+        
+        # often will be redirected or 500'd and that doesnt count as existence 
+       _log "Ignoring #{request_uri} based on redirect code: #{response.code}" if @task_result
        return false
      end
 
@@ -724,38 +570,47 @@ module Task
      if missing_page_test == :code
        case response.code
          when "200"
-           _log_good "Clean 200 for #{request_uri}"
+           _log_good "Clean 200 for #{request_uri}" if @task_result
            to_return = {
              name: request_uri,
              uri: request_uri,
              response_code: response.code,
-             response_body: response.body
+             response_body: response.body_utf8
            }
          when missing_page_code
-           _log "Got code: #{response.code}. Same as missing page code: #{missing_page_code}. Ignoring!"
+           _log "Got code: #{response.code}. Same as missing page code: #{missing_page_code}. Ignoring!" if @task_result
          else
-           _log "Flagging #{request_uri} because of response code #{response.code}!"
+           _log "Flagging #{request_uri} because of response code #{response.code}!" if @task_result
            to_return = {
              name: request_uri,
              uri: request_uri,
              response_code: response.code,
-             response_body: response.body
+             response_body: response.body_utf8
            }
        end
 
      ## Otherwise, let's guess based on the content. Does this page look
      ## like a missing page?
      elsif missing_page_test == :content
-       if response.body[0..100] == missing_page_content[0..100]
-         _log "Skipping #{request_uri} based on page content"
+
+       # check for default content...
+       ["404", "forbidden", "Request Rejected"].each do |s|
+         if (response.body_utf8 =~ /#{s}/i )
+           _log "Skipping #{request_uri}, contains a missing page string: #{s}" if @task_result
+           return false
+         end
+       end
+
+       if response.body_utf8[0..100] == missing_page_content[0..100]
+         _log "Skipping #{request_uri} based on page content" if @task_result
 
        else
-         _log "Flagging #{request_uri} because of content!"
+         _log "Flagging #{request_uri} because of content!" if @task_result
          to_return = {
            name: request_uri,
            uri: request_uri,
            response_code: response.code,
-           response_body: response.body
+           response_body: response.body_utf8
           }
        end
      end

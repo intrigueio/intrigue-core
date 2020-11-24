@@ -7,7 +7,7 @@ class GenerateGraphWorker
   def perform(id)
 
     # Get the right object
-    project = Intrigue::Model::Project.where(:id => id).first
+    project = Intrigue::Core::Model::Project.where(:id => id).first
 
     begin
       puts "Starting graph generation for #{project.name}!"
@@ -23,7 +23,6 @@ class GenerateGraphWorker
       puts "Done with graph generation for #{project.name}!"
       puts "Length: #{project.graph_json.length}"
     ensure
-      puts "Failed to generate graph for #{project.name}!"
       project.graph_generation_in_progress = false
       project.save
     end

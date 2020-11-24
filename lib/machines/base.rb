@@ -2,7 +2,8 @@ module Intrigue
 module Machine
   class Base
 
-    extend Intrigue::Task::Helper
+    extend Intrigue::Core::System::Helpers
+    extend Intrigue::Task::Data
 
     def self.inherited(base)
       MachineFactory.register(base)
@@ -23,7 +24,7 @@ module Machine
       project = old_task_result.project
 
       # check to see if it already exists, return nil if it does
-      existing_task_result = Intrigue::Model::TaskResult.first(
+      existing_task_result = Intrigue::Core::Model::TaskResult.first(
         :project => project,
         :task_name => "#{task_name}",
         :base_entity_id => entity.id
@@ -37,8 +38,9 @@ module Machine
         task_class = Intrigue::TaskFactory.create_by_name(task_name).class
         forced_queue = task_class.metadata[:queue]
 
-        new_task_result = start_task(forced_queue || "task_autoscheduled", project,
-                            old_task_result.scan_result,
+        new_task_result = start_task(forced_queue || "task_autoscheduled", 
+                            project,
+                            old_task_result.scan_result.id,
                             task_name,
                             entity,
                             old_task_result.depth - 1,

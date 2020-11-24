@@ -9,7 +9,7 @@ class DnsPermute < BaseTask
       :name => "dns_permute",
       :pretty_name => "DNS Permute",
       :authors => ["jcran"],
-      :description => "Given a DnsRecord, find others that are like it",
+      :description => "Given a Domain or DnsRecord, find others that are like it",
       :references => [],
       :type => "discovery",
       :passive => false,
@@ -42,7 +42,7 @@ class DnsPermute < BaseTask
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)
 
-    wildcard_ips = _check_wildcard(brute_domain)
+    wildcard_ips = check_wildcard(brute_domain)
 
     # Create a queue to hold our list of attempts
     work_q = Queue.new
@@ -166,79 +166,7 @@ class DnsPermute < BaseTask
     end; "ok"
     workers.map(&:join); "ok"
   end
-
-
-  # Check for wildcard DNS
-  def _check_wildcard(basename)
-    _log "Checking for wildcards on #{basename}."
-
-    all_discovered_wildcards = []
-
-    # First we look for a single address that won't exist
-    10.times do
-      random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{basename}"
-      resolved_address = resolve_name(random_string)
-
-      # keep track of it unless we already have it
-      unless resolved_address.nil? || all_discovered_wildcards.include?(resolved_address)
-        all_discovered_wildcards << resolved_address
-      end
-    end
-
-    # also - sometimes there appears to be a regex pattern that only matches our original
-
-    # If that resolved, we know that we're in a wildcard situation.
-    #
-    # Some domains have a pool of IPs that they'll resolve to, so
-    # let's go ahead and test a bunch of different domains to try
-    # and collect those IPs
-    if all_discovered_wildcards.uniq.count > 1
-      _log "Multiple wildcard ips for #{basename} after resolving these: #{all_discovered_wildcards}."
-      _log "Trying to create an exhaustive list."
-
-      # Now we have to test for things that return a block of addresses as a wildcard.
-      # we to be adaptive (to a point), so let's keep looking in chuncks until we find
-      # no new ones...
-      no_new_wildcards = false
-
-      until no_new_wildcards
-        _log "Testing #{all_discovered_wildcards.count * 20} new entries..."
-        newly_discovered_wildcards = []
-
-        (all_discovered_wildcards.count * 20).times do |x|
-          random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{basename}"
-          resolved_address = resolve(random_string)
-
-          # keep track of it unless we already have it
-          unless resolved_address.nil? || newly_discovered_wildcards.include?(resolved_address)
-            newly_discovered_wildcards << resolved_address
-          end
-        end
-
-        # check if our newly discovered is a subset of all
-        if (newly_discovered_wildcards - all_discovered_wildcards).empty?
-          _log "Hurray! No new wildcards in #{newly_discovered_wildcards}. Finishing up!"
-          no_new_wildcards = true
-        else
-          _log "Continuing to search, found: #{(newly_discovered_wildcards - all_discovered_wildcards).count} new results."
-          all_discovered_wildcards += newly_discovered_wildcards.uniq
-        end
-
-        _log "Known wildcard count: #{all_discovered_wildcards.uniq.count}"
-        _log "Known wildcards: #{all_discovered_wildcards.uniq}"
-      end
-
-
-    elsif all_discovered_wildcards.uniq.count == 1
-      _log "Only a single wildcard ip: #{all_discovered_wildcards.sort.uniq}"
-    else
-      _log "No wildcard detected! Moving on!"
-    end
-
-  all_discovered_wildcards.uniq # if it's not a wildcard, this will be an empty array.
-  end
-
-
+  
 end
 end
 end

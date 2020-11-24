@@ -2,7 +2,6 @@ module Intrigue
 module Task
 class SaasTrelloCheck < BaseTask
 
-
   def self.metadata
     {
       :name => "saas_trello_check",
@@ -42,35 +41,35 @@ class SaasTrelloCheck < BaseTask
 
     begin
       session = create_browser_session
-      document = capture_document session, url
-      if document
-        title = document[:title]
-        body = document[:contents]
+
+      if session # make sure we're enabled
+
+        document = capture_document session, url
+        if document
+          title = document[:title]
+          body = document[:contents]
+        else 
+          _log "No response"
+        end
+
       else 
-        _log "No response"
+        _log "No browser session created. Is the browser enabled in global options?"
       end
+
     ensure
       destroy_browser_session(session)
     end
 
-    service_name = "trello.com"
+    service_name = "trello"
 
     if body =~ /BoardsMembers/
       _log "The #{name} org exists!"
-      _create_entity "WebAccount", {
-        "name" => "#{service_name}: #{name}",
-        "uri" => url,
-        "username" => "#{name}",
-        "service" => service_name
-      }
+      _create_normalized_webaccount service_name, name, url
+
     elsif body =~ /ProfileCardsTeamsActivity/
       _log "The #{name} member account exists!"
-      _create_entity "WebAccount", {
-        "name" => "#{service_name}: #{name}",
-        "uri" => url,
-        "username" => "#{name}",
-        "service" => service_name
-      }
+      _create_normalized_webaccount service_name, name, url
+
     else
       _log "Nothing found for #{name}"
     end

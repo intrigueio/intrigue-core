@@ -11,124 +11,50 @@ module Intrigue
 module Task
   module Browser
 
-    def create_browser_session
-      # Start a new session
-      Capybara::Session.new(:headless_chrome)
+    def capture_screenshot_and_requests(uri)
+      return {} unless Intrigue::Core::System::Config.config["browser_enabled"]
+
+      # First, make sure we can actually connect to it in reasonable time 
+      response = http_request(:get, uri, nil, {}, nil, true, 10)
+      return {} unless response
+
+      begin 
+        _log "Browser Navigating to #{uri}"
+        c = Intrigue::ChromeBrowser.new
+        browser_response = c.navigate_and_capture(uri)  
+      rescue Errno::ECONNREFUSED => e 
+        _log_error "Unable to connect to chrome browser. Is it running as a service?"
+      end
+  
+      if browser_response && browser_response["requests"]
+
+        to_return = { 
+          "extended_screenshot_contents" => browser_response["encoded_screenshot"],
+          "request_hosts" => browser_response["requests"].map{|x| x["hostname"] }.compact.uniq.sort,
+          "extended_browser_requests" => browser_response["requests"],
+          "extended_browser_responses" => browser_response["responses"],
+          "extended_browser_wsresponses" => browser_response["wsresponses"]
+        }
+
+      else 
+        to_return = {}
+      end
+
+    to_return
     end
-
-    def destroy_browser_session(session)
-
-      # get the full group id (driver + browser)
-      begin
-
-        # HACK HACK HACK- get the chromedriver process before we quit
-        driver_pid = session.driver.browser.instance_variable_get(:@service).instance_variable_get(:@process).pid
-
-        # attempt to quit gracefully...
-        session.driver.quit
-
-        pgid = Process.getpgid(driver_pid)
-
-        # violent delights have violent ends
-        Process.kill('KILL', -pgid )
-        Process.kill('KILL', driver_pid )
-
-      rescue Errno::ESRCH => e
-          # already dead
-        _log_error "Error trying to kill our browser session #{e}"
-      rescue Net::ReadTimeout => e
-        _log_error "Timed out trying to close our session.. #{e}"
-      end
-
-    end
-
-    def safe_browser_action
-      begin
-
-        results = yield
-
-      rescue Errno::EMFILE => e
-        _log_error "Too many open files: #{e}" if @task_result
-      rescue Addressable::URI::InvalidURIError => e
-        _log_error "Invalid URI: #{e}" if @task_result
-      rescue Capybara::ElementNotFound => e
-        _log_error "Element not found: #{e}" if @task_result
-      rescue Net::ReadTimeout => e
-        _log_error "Timed out, moving on" if @task_result
-      rescue Selenium::WebDriver::Error::WebDriverError => e
-        # skip simple errors where we're testing JS libs
-        unless ("#{e}" =~ /is not defined/ || "#{e}" =~ /Cannot read property/)
-          _log_error "Webdriver issue #{e}" if @task_result
-        end
-      rescue Selenium::WebDriver::Error::NoSuchWindowError => e
-        _log_error "Lost our window #{e}" if @task_result
-      rescue Selenium::WebDriver::Error::UnknownError => e
-        # skip simple errors where we're testing JS libs
-        unless ("#{e}" =~ /is not defined/ || "#{e}" =~ /Cannot read property/)
-          _log_error "#{e}" if @task_result
-        end
-      rescue Selenium::WebDriver::Error::UnhandledAlertError => e
-        _log_error "Unhandled alert open: #{e}" if @task_result
-      rescue Selenium::WebDriver::Error::NoSuchElementError
-        _log_error "No such element #{e}, moving on" if @task_result
-      rescue Selenium::WebDriver::Error::StaleElementReferenceError
-        _log_error "No such element ref #{e}, moving on" if @task_result
-      end
-    results
-    end
-
-    def capture_document(session, uri)
-      # browse to our target
-      safe_browser_action do
-        # visit the page
-        session.visit(uri)
-        # Capture Title
-        page_title = session.document.title
-        # Capture Body Text
-        page_contents = session.document.text(:all)
-        # Capture DOM
-        rendered_page = session.evaluate_script("document.documentElement.innerHTML",[])
-
-        # return our hash
-        return { :title => page_title, :contents => page_contents, :rendered => rendered_page }
-
-      end
-  end
-
-    def capture_screenshot(session, uri)
-      # browse to our target
-      safe_browser_action do
-        session.visit(uri)
-      end
-
-      # wait for the page to render
-      #sleep 5
-
-      #
-      # Capture a screenshot
-      #
-      base64_image_contents = nil
-      safe_browser_action do
-        tempfile = Tempfile.new(['screenshot', '.png'])
-        session.save_screenshot(tempfile.path)
-        _log "Saved Screenshot to #{tempfile.path}"
-        # open and read the file's contents, and base64 encode them
-        base64_image_contents = Base64.encode64(File.read(tempfile.path))
-        # cleanup
-        tempfile.close
-        tempfile.unlink
-      end
-    base64_image_contents
-    end
-
+    
+    # TODO
+    # TODO ... convert this to new way of controlling browser
+    # TODO 
     def gather_javascript_libraries(session, uri)
+      return [] unless Intrigue::Core::System::Config.config["browser_enabled"]
 
       # Test site: https://www.jetblue.com/plan-a-trip/#/
       # Examples: https://builtwith.angularjs.org/
       # Examples: https://www.madewithangular.com/
 
       safe_browser_action do
-        session.visit(uri)
+        session.navigate.to(uri)
       end
 
       libraries = []
@@ -213,11 +139,11 @@ module Task
 
       checks.each do |check|
 
-        hacky_javascript = "#{check[:script]};"
+        hacky_javascript = "return #{check[:script]};"
 
         # run our script in a browser
         version = safe_browser_action do
-          session.evaluate_script(hacky_javascript, check[:arguments] || [])
+          session.execute_script(hacky_javascript)
         end
 
         if version

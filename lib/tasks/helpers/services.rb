@@ -13,6 +13,22 @@ module Services
 
   include Intrigue::Task::Web
 
+  def _create_vhost_entities(lookup_name)
+    ### For each associated IpAddress, make sure we create any additional
+    ### uris if we already have scan results
+    ###
+    @entity.aliases.each do |a|
+      next unless a.type_string == "IpAddress" #  only ips
+      existing_ports = a.get_detail("ports")
+      if existing_ports
+        existing_ports.each do |p|
+          _log "Creating network service on #{a.name} #{p["number"]} #{p["protocol"]}"
+          _create_network_service_entity(a, p["number"], p["protocol"],{}) 
+        end
+      end
+    end
+  end
+
   def _create_network_service_entity(ip_entity,port_num,protocol="tcp",generic_details={})
 
     # first, save the port details on the ip_entity
@@ -20,7 +36,12 @@ module Services
     updated_ports = ports.append({"number" => port_num, "protocol" => protocol}).uniq
     ip_entity.set_detail("ports", updated_ports)
 
-    ssl = true if [443, 8443].include?(port_num)
+    weak_tcp_services = [21, 23]  #possibly 25, but STARTTLS support is currently unclear
+    weak_udp_services = [60, 1900, 5000]
+
+    # set sssl if we end in 443 or are in our includeed list 
+    ssl = true if port_num.to_s =~ /443$/
+    ssl = true if [10000].include?(port_num)
 
     # Ensure we always save our host and key details.
     # note that we might add service specifics to this below
@@ -30,193 +51,182 @@ module Services
       "protocol" => protocol,
       "ip_address" => ip_entity.name,
       "asn" => ip_entity.get_detail("asn"),
+      "net_name" => ip_entity.get_detail("net_name"),
+      "net_country_code" => ip_entity.get_detail("net_country_code"),
       "host_id" => ip_entity.id
     })
 
-    # if this is an ssl port, let's get the CNs and create
-    # dns records
+    # if this is an ssl port, let's get the CNs and create dns records
     cert_entities = []
     if ssl
       # connect, grab the socket and make sure we
       # keep track of these details, and create entitie
-      cert_names = connect_ssl_socket_get_cert_names(ip_entity.name,port_num)
-      if cert_names
-        generic_details.merge!({"alt_names" => cert_names})
-        cert_names.uniq do |cn|
+      cert = get_certificate(ip_entity.name,port_num)
 
-          if entity_exists?(ip_entity.project, "DnsRecord", cn)
-            _log "Skipping entity creation for DnsRecord#{cn}, already exists"
-            next 
+      if cert 
+        cert_names = parse_names_from_cert(cert)       
+        generic_details.merge!({
+          "alt_names" => cert_names,
+          "cert" => {
+            "version" => cert.version,
+            "serial" => "#{cert.serial}",
+            "not_before" => "#{cert.not_before}",
+            "not_after" => "#{cert.not_after}",
+            "subject" => "#{cert.subject}",
+            "issuer" => "#{cert.issuer}",
+            #"key_length" => key_size,
+            "signature_algorithm" => "#{cert.signature_algorithm}"
+          }
+        })
+
+        # For each of the discovered cert names, now create a 
+        # DnsRecord, Domain, or IpAddress.
+        if cert_names
+          cert_names.uniq do |cn|
+
+            if cn.is_ip_address?
+              cert_entities << _create_entity("IpAddress", { "name" => cn }, ip_entity )   
+            else
+              # create each entity 
+              cert_entities << create_dns_entity_from_string(cn)
+            end
+            
           end
-
-          # unscope, bc we don't want to scope in the hosting company ... 
-          cert_entities << _create_entity("DnsRecord", { "name" => cn,
-            "unscoped" => true }, ip_entity) 
-          
         end
+
       end
     end
 
     # Grab all the aliases, since we'll want to auto-create services on them
     # (VHOSTS use case)
-    hosts = [ip_entity].concat cert_entities.uniq
+    hosts = [] 
+    # add our ip 
+    hosts << ip_entity
+    # add everything we got from the cert
+    cert_entities.each {|ce| hosts << ce} 
+    
+    # and add our aliases
     if ip_entity.aliases.count > 0
-      ip_entity.aliases.each do |a|
-        next unless a.type_string == "DnsRecord" #  only dns records
-        next if a.hidden # skip hidden
-        hosts << a # add to the list
+      ip_entity.aliases.each do |al|
+        next unless al.type_string == "DnsRecord" || al.type_string == "Domain" #  only dns records
+        next unless al.scoped? # skip blacklisted / unscoped
+        hosts << al # add to the list
       end
     end
-    _log "Creating services on each of: #{hosts.map{|h| h.name } }"
 
-    sister_entity = nil
-    hosts.uniq.each do |h|
-      Thread.new do 
+    create_service_lambda = lambda do |h|
+      try_http_ports = scannable_web_ports
 
-        # Handle web app case first
-        if (protocol == "tcp" && [80,81,443,8000,8080,8081,8443].include?(port_num))
+      # Handle web app case first
+      if (protocol == "tcp" && try_http_ports.include?(port_num))
 
-          # If SSL, use the appropriate prefix
-          prefix = ssl ? "https" : "http" # construct uri
+        # If SSL, use the appropriate prefix
+        prefix = ssl ? "https" : "http" # construct uri
 
-          # Construct the uri
-          uri = "#{prefix}://#{h.name}:#{port_num}"
-
-
-          # if we've never seen this before, go ahead and open it to ensure it's 
-          # something we want to create (this helps eliminate unusable urls). However, 
-          # skip if we have, we want to minimize requests to the services
-          if !entity_exists? ip_entity.project, "Uri", uri
-
-            x = _gather_http_response(uri)
-            http_response = x[:http_response]
-            generic_details.merge!(x[:extra_details])
-
-            unless http_response
-              _log_error "Didn't get a response when we requested one, moving on"
-              next
-            end
-          end
-
-          entity_details = {
-            "name" => uri,
-            "uri" => uri,
-            "service" => prefix
-          }.merge!(generic_details)
-
-          # Create entity and track this entity so we can manage a group of aliases (called sisters here)
-          sister_entity = _create_entity("Uri", entity_details, sister_entity)
-
-        # otherwise, create a network service on the IP, either UDP or TCP - fail otherwise
-        elsif protocol == "tcp" && h.name.is_ip_address?
-
-          service_specific_details = {}
-
-          case port_num
-            when 21
-              service = "FTP"
-            when 22,2222
-              service = "SSH"
-            when 23
-              service = "TELNET"
-            when 25
-              service = "SMTP"
-            when 53
-              service = "DNS"
-            when 79
-              service = "FINGER"
-            when 110
-              service = "POP3"
-            when 111
-              service = "SUNRPC"
-            when 502,503
-              service = "MODBUS"
-            when 1883
-              service = "MQLSDP"
-            when 2181,2888,3888
-              service = "ZOOKEEPER"
-            when 3389
-              service = "RDP"
-            when 5000
-              service = "UPNP"
-            when 5900,5901
-              service = "VNC"
-            when 6379,6380
-              service = "REDIS"
-            when 6443
-              service = "KUBERNETES"
-            when 7001
-              service = "WEBLOGIC"
-            when 8032
-              service = "YARN"
-            when 8278,8291
-              service = "MIKROTIK"
-            when 8883
-              service = "MQTT"
-            when 9200,9201,9300,9301
-              service = "ELASTICSEARCH"
-            when 9091,9092,9094
-              service = "NETSCALER"
-            when 27017,27018,27019
-              service = "MONGODB"
-            else
-              service = "UNKNOWN"
-          end
-
-          # now we have all the details we need, create it
-
-          name = "#{h.name}:#{port_num}"
-
-          entity_details = {
-            "name" => name,
-            "service" => service
-          }
-
-          # merge in all generic details
-          entity_details = entity_details.merge!(generic_details)
-
-          # merge in any service specifics
-          entity_details = entity_details.merge!(service_specific_details)
-
-          sister_entity = _create_entity("NetworkService", entity_details, sister_entity)
-
-        elsif protocol == "udp" && h.name.is_ip_address?
-
-          service_specific_details = {}
-
-          case port_num
-            when 53
-              service = "DNS"
-            when 161
-              service = "SNMP"
-            when 1900
-              service = "UPNP"
-            else
-              service = "UNKNOWN"
-          end
-
-          # now we have all the details we need, create it
-
-          name = "#{h.name}:#{port_num}"
-
-          entity_details = {
-            "name" => name,
-            "service" => service
-          }
-
-          # merge in all generic details
-          entity_details = entity_details.merge!(generic_details)
-
-          # merge in any service specifics
-          entity_details = entity_details.merge!(service_specific_details)
-
-          sister_entity = _create_entity("NetworkService", entity_details, sister_entity)
-
+        # Construct the uri. We check for ipv6 and add brackets, to be compliant with the RFC
+        if "#{h.name.strip}" =~ ipv6_regex
+          uri = "#{prefix}://[#{h.name.strip}]:#{port_num}"
         else
-          raise "Unknown protocol" if h.name.is_ip_address?
+          uri = "#{prefix}://#{h.name.strip}:#{port_num}"
         end
-      end # end thread 
-    end # each hostname
+
+        # if we've never seen this before, go ahead and open it to ensure it's 
+        # something we want to create (this helps eliminate unusable urls). However, 
+        # skip if we have, we want to minimize requests to the services
+        if !entity_exists? ip_entity.project, "Uri", uri
+
+          r = _gather_http_response(uri)
+          http_response = r[:http_response]
+          generic_details.merge!(r[:extra_details])
+
+          unless http_response
+            _log_error "Didn't get a response when we requested one, moving on"
+            next
+          end
+
+        end
+
+        entity_details = {
+          "name" => uri,
+          "uri" => uri,
+          "service" => prefix
+        }.merge!(generic_details)
+
+        # Create entity
+        _create_entity("Uri", entity_details)
+
+      # otherwise, create a network service on the IP, either UDP or TCP - fail otherwise
+      elsif protocol == "tcp" && h.name.strip.is_ip_address?
+
+        service_specific_details = {}
+        service = _map_tcp_port_to_name(port_num)
+
+        name = "#{h.name.strip}:#{port_num}"
+
+        entity_details = {
+          "name" => name,
+          "service" => service
+        }
+
+        # merge in all generic details
+        entity_details = entity_details.merge!(generic_details)
+        # merge in any service specifics
+        entity_details = entity_details.merge!(service_specific_details)
+
+        # now we have all the details we need, create it
+        _create_entity("NetworkService", entity_details)
+
+        # if its a weak service, file an issue
+        if weak_tcp_services.include?(port_num)
+          _create_weak_service_issue(h.name.strip, port_num, service, 'tcp')
+        end
+
+      elsif protocol == "udp" && h.name.strip.is_ip_address?
+
+        service_specific_details = {}
+        service = _map_udp_port_to_name(port_num)
+
+        # now we have all the details we need, create it
+        name = "#{h.name.strip}:#{port_num}"
+
+        entity_details = {
+          "name" => name,
+          "service" => service
+        }
+
+        # merge in all generic details
+        entity_details = entity_details.merge!(generic_details)
+
+        # merge in any service specifics
+        entity_details = entity_details.merge!(service_specific_details)
+
+        _create_entity("NetworkService", entity_details)
+
+        # if its a weak service, file an issue
+        if weak_udp_services.include?(port_num)
+          _create_weak_service_issue(name, port_num, service, 'udp')
+        end
+
+      else
+        raise "Unknown protocol" if h.name.strip.is_ip_address?
+      end
+
+    true
+    end
+
+    # use a generic threaded iteration method to create them,
+    # with the desired number of threads
+    thread_count = (hosts.compact.count / 10) + 1 
+    _log "Creating service (#{port_num}) on #{hosts.compact.map{|x|x.name}} with #{thread_count} threads."
+        
+    # Create our queue of work from the checks in brute_list
+    input_queue = Queue.new
+    hosts.uniq.compact.each do |item|
+      input_queue << item
+    end
+    
+    _threaded_iteration(thread_count, input_queue, create_service_lambda)
+        
   end
 
   ## Default method, subclasses must override this
@@ -299,7 +309,8 @@ module Services
 
       _log "connecting to #{uri}"
 
-      out[:http_response] = http_request(:get, uri)
+
+      out[:http_response] = http_request(:get, uri, nil, {}, nil)
 
       ## TODO ... follow & track location headers?
 
@@ -327,46 +338,6 @@ module Services
     rescue URI::InvalidURIError => e
       _log_error "Error requesting resource, skipping: #{uri} #{e}"
       out[:http_response] = false
-    rescue RestClient::RequestTimeout => e
-      _log_error "Timeout requesting resource, skipping: #{uri} #{e}"
-      out[:http_response] = false
-    rescue RestClient::BadRequest => e
-      _log_error "Error requesting resource, skipping: #{uri} #{e}"
-      out[:http_response] = false
-    rescue RestClient::ResourceNotFound => e
-      _log_error "Error (404) requesting resource, creating anyway: #{uri}"
-      out[:http_response] = true
-    rescue RestClient::MaxRedirectsReached => e
-      _log_error "Error (too many redirects) requesting resource, creating anyway: #{uri}"
-      out[:http_response] = true
-    rescue RestClient::Unauthorized => e
-      _log_error "Error (401) requesting resource, creating anyway: #{uri}"
-      out[:http_response] = true
-      out[:extra_details].merge!("http_server_error" => "#{e}" )
-    rescue RestClient::Forbidden => e
-      _log_error "Error (403) requesting resource, creating anyway: #{uri}"
-      out[:http_response] = true
-      out[:extra_details].merge!("http_server_error" => "#{e}" )
-    rescue RestClient::InternalServerError => e
-      _log_error "Error (500) requesting resource, creating anyway: #{uri}"
-      out[:http_response] = true
-      out[:extra_details].merge!("http_server_error" => "#{e}" )
-    rescue RestClient::BadGateway => e
-      _log_error "Error (Bad Gateway) requesting resource #{uri}, creating anyway."
-      out[:http_response] = true
-      out[:extra_details].merge!("http_server_error" => "#{e}" )
-    rescue RestClient::ServiceUnavailable => e
-      _log_error "Error (Service Unavailable) requesting resource #{uri}, creating anyway."
-      out[:http_response] = true
-      out[:extra_details].merge!("http_server_error" => "#{e}" )
-    rescue RestClient::ServerBrokeConnection => e
-      _log_error "Error (Server broke connection) requesting resource #{uri}, creating anyway."
-      out[:http_response] = true
-      out[:extra_details].merge!("http_server_error" => "#{e}" )
-    rescue RestClient::SSLCertificateNotVerified => e
-      _log_error "Error (SSL Certificate Invalid) requesting resource #{uri}, creating anyway."
-      out[:http_response] = true
-      out[:extra_details].merge!("http_server_error" => "#{e}" )
     rescue OpenSSL::SSL::SSLError => e
       _log_error "Error (SSL Certificate Invalid) requesting resource #{uri}, creating anyway."
       out[:http_response] = true
@@ -375,13 +346,138 @@ module Services
       _log_error "Error (Bad HTTP Response) requesting resource #{uri}, creating anyway."
       out[:http_response] = true
       out[:extra_details].merge!("http_server_error" => "#{e}" )
-    rescue RestClient::ExceptionWithResponse => e
-      _log_error "Unknown error requesting resource #{uri}, skipping"
-      _log_error "#{e}"
     rescue Zlib::GzipFile::Error => e
       _log_error "compression error on #{uri}" => e
     end
   out
+  end
+
+  def _map_tcp_port_to_name(port_num)
+    case port_num
+    when 1 
+      service = "TCPMUX"
+    when 7
+      service = "ECHO"
+    when 9
+      service = "DISCARD"
+    when 13
+      service = "DAYTIME"
+    when 19
+      service = "CHARGEN"
+    when 21
+      service = "FTP"
+    when 22,2222
+      service = "SSH"
+    when 23
+      service = "TELNET"
+    when 25
+      service = "SMTP"
+    when 37
+      service = "TIME"
+    when 42
+      service = "NAMESERVER"
+    when 49
+      service = "TACACS"
+    when 53
+      service = "DNS"
+    when 79
+      service = "FINGER"
+    when 102 
+      service = "TSAP"
+    when 105
+      service = "CCSO"
+    when 109 
+      service = "POP2"
+    when 110
+      service = "POP3"
+    when 111
+      service = "SUNRPC"
+    when 113
+      service = "IDENT"
+    when 135
+      service = "DCERPC"
+    when 143
+      service = "IMAP"
+    when 465
+      service = "SMTPS"
+    when 502,503
+      service = "MODBUS"
+    when 587
+      service = "SMTP" # https://stackoverflow.com/questions/15796530/what-is-the-difference-between-ports-465-and-587
+    when 993
+      service = "IMAPS"
+    when 995
+      service = "POP3S"
+    when 1883
+      service = "MQTT"
+    # https://support.cloudflare.com/hc/en-us/articles/200169156-Identifying-network-ports-compatible-with-Cloudflare-s-proxy
+    when 2052
+      service = "HTTP-CLOUDFLARE"
+    when 2053
+      service = "HTTPS-CLOUDFLARE"
+    when 2082
+      service = "HTTP-CLOUDFLARE"
+    when 2083
+      service = "HTTPS-CLOUDFLARE"
+    when 2086
+      service = "HTTP-CLOUDFLARE"
+    when 2087
+      service = "HTTPS-CLOUDFLARE"
+    when 2095
+      service = "HTTP-CLOUDFLARE"  
+    when 2096
+      service = "HTTPS-CLOUDFLARE"
+    # End cloudflare oddities
+    when 2181,2888,3888 
+      service = "ZOOKEEPER"
+    when 3306
+      service = "MYSQL"
+    when 3389
+      service = "RDP"
+    when 5900,5901
+      service = "VNC"
+    when 6379,6380
+      service = "REDIS"
+    when 6443
+      service = "KUBERNETES"
+    when 7001
+      service = "WEBLOGIC"
+    when 8032
+      service = "YARN"
+    when 8278,8291
+      service = "MIKROTIK"
+    when 8883
+      service = "MQTT-SSL"
+    when 9200,9201,9300,9301
+      service = "ELASTICSEARCH"
+    when 9091,9092,9094
+      service = "NETSCALER"
+    when 27017,27018,27019
+      service = "MONGODB"
+    else
+      service = _service_name_for(port_num, "tcp")
+    end
+  service
+  end
+
+  def _map_udp_port_to_name(port_num)
+    case port_num
+    when 53
+      service = "DNS"
+    when 69
+      service = "TFTP"
+    when 123
+      service = "NTP"
+    when 161
+      service = "SNMP"
+    when 1900
+      service = "UPNP"
+    when 5000
+      service = "UPNP"
+    else
+      service = _service_name_for(port_num, "udp")
+    end
+  service 
   end
 
 

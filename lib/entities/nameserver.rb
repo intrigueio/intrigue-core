@@ -1,50 +1,35 @@
 module Intrigue
 module Entity
-class Nameserver < Intrigue::Model::Entity
+class Nameserver < Intrigue::Core::Model::Entity
+
+  include Intrigue::Task::Dns
 
   def self.metadata
     {
       :name => "Nameserver",
       :description => "A DNS Nameserver",
-      :user_creatable => true
+      :user_creatable => true,
+      :example => "ns1.intrigue.io"
     }
   end
 
   def validate_entity
-    return (name =~ _v4_regex || name =~ _v6_regex || name =~ _dns_regex )
+    return ( name =~ ipv4_regex || name =~ ipv6_regex || name =~ dns_regex )
   end
 
   def enrichment_tasks
     ["enrich/nameserver"]
   end
 
-    ###
+  ###
   ### SCOPING
   ###
   def scoped?(conditions={}) 
+    return true if self.allow_list
+    return false if self.deny_list
 
-    # Check types we'll check for indicators 
-    # of in-scope-ness
-    #
-    scope_check_entity_types = [
-      "Intrigue::Entity::Organization",
-      "Intrigue::Entity::DnsRecord",
-      "Intrigue::Entity::Domain" ]
-
-    ### CHECK OUR SEED ENTITIES TO SEE IF THE TEXT MATCHES
-    ######################################################
-    if self.project.seeds
-      self.project.seeds.each do |s|
-        next unless scope_check_entity_types.include? s["type"]
-        if details["whois_full_text"] =~ /#{Regexp.escape(s["name"])}/
-          #_log "Marking as scoped: SEED ENTITY NAME MATCHED TEXT: #{s["name"]}}"
-          return true
-        end
-      end
-    end
-
-  # always default to whatever was passed to us (could have been set in the task)
-  scoped
+  # if we didnt match the above and we were asked, it's false 
+  false
   end
 
 end

@@ -46,14 +46,14 @@ class DnsTransferZone < BaseTask
         zt.server = nameserver
         zone = zt.transfer(domain_name)
 
-        # create an issue to track this
-        _create_issue({
-          name: "AXFR enabled on #{domain_name} using #{nameserver}",
-          type: "dns_zone_transfer",
-          severity: 4,
+
+        description = "Zone transfer on #{domain_name} using #{nameserver} resulted in leak of #{zone.count} records. AXFR offers no authentication, so any client can ask a DNS server for a copy of the entire zone. which gives them a lot of potential attack vectors over #{domain_name}",
+        
+        _create_linked_issue("dns_zone_transfer", {
           status: "confirmed",
-          description: "Zone transfer on #{domain_name} using #{nameserver} resulted in leak of #{zone.count} records.",
-          details: { records: zone.map{|r| r.name.to_s } }
+          detailed_description: description,
+          proof: "Zone transfer for #{domain_name} on #{nameserver} resulted in #{zone.count} records, starting with: #{zone.first}",
+          references: ["https://www.acunetix.com/blog/articles/dns-zone-transfers-axfr/"]
         })
 
         # Create records for each item in the zone
@@ -69,7 +69,7 @@ class DnsTransferZone < BaseTask
             sanitized_record = record.sanitize_unicode
 
             # only create DNS records
-            next if record.is_ip_address? 
+            next if record.is_ip_address?
 
             # ensure it is a valid address & check for base64 records
             next if sanitized_record =~ /^.*==$/

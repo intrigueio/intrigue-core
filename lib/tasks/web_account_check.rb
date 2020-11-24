@@ -26,56 +26,73 @@ class WebAccountCheck < BaseTask
   def run
     super
 
-    account_name = _get_entity_name
+    if _get_entity_type_string == "WebAccount"
+      entity_name = _get_entity_detail("username")
+    else
+      entity_name = _get_entity_name
+    end
+
     opt_specific_sites = _get_option "specific_sites"
 
     check_file = "data/web_accounts_list/web_accounts_list.json"
 
     unless File.exists? check_file
-      _log_error "#{check_file} does not exist. Did you run the script in data/ ?"
+      _log_error "#{check_file} does not exist. Cannot proceed!"
       return
     end
 
-    account_list_data = File.open(check_file).read
-    account_list = JSON.parse(account_list_data)
+    begin 
+      account_list = JSON.parse(File.open(check_file).read)
 
+      _log "Checking target against #{account_list["sites"].count} possible sites"
 
-    _log "Checking target against #{account_list["sites"].count} possible sites"
+      check_account_names = [
+        URI.escape(entity_name.gsub(" ", "_")),
+        URI.escape(entity_name.gsub(" ", "-"))
+      ].sort.uniq
 
-    account_list["sites"].each do |site|
+      _log "Checking accounts: #{check_account_names}"
 
-      # This allows us to only check specific sites - good for testing
-      unless opt_specific_sites == ""
-        next unless opt_specific_sites.split(",").include? site["name"]
-      end
+      check_account_names.each do  |account_name|
 
-      # craft the uri with our entity's properties
-      account_uri = site["check_uri"].gsub("{account}",account_name)
-      pretty_uri = site["pretty_uri"].gsub("{account}",account_name) if site["pretty_uri"]
+        account_list["sites"].each do |site|
 
-      # Skip if the site tags don't match our type
-      if site["allowed_types"]
-        unless site["allowed_types"].include? @entity.type_string
-          _log "Skipping #{account_uri}, doesn't match our type"
-          next
+          # This allows us to only check specific sites - good for testing
+          unless opt_specific_sites == ""
+            next unless opt_specific_sites.split(",").include? site["name"]
+          end
+
+          # craft the uri with our entity's properties
+          account_uri = site["check_uri"].gsub("{account}",account_name)
+          pretty_uri = site["pretty_uri"].gsub("{account}",account_name) if site["pretty_uri"]
+
+          # Skip if the site tags don't match our type
+          if site["allowed_types"]
+            unless site["allowed_types"].include? @entity.type_string
+              _log "Skipping #{account_uri}, doesn't match our type"
+              next
+            end
+          end
+
+          # Otherwise, go get it
+          _log "Checking #{account_uri}"
+          body = http_get_body(account_uri)
+          next unless body
+
+          # Check the verify string
+          if body.include? site["account_existence_string"]
+            
+            service_name = site["name"].downcase
+            _create_normalized_webaccount(service_name, account_name, pretty_uri || account_uri)
+
+          end
+
         end
+
       end
 
-      # Otherwise, go get it
-      _log "Checking #{account_uri}"
-      body = http_get_body(account_uri)
-      next unless body
-
-      # Check the verify string
-      if body.include? site["account_existence_string"]
-        _create_entity "WebAccount", {
-            "name" => "#{site["name"].downcase}: #{account_name}",
-            "username" => "#{account_name}",
-            "service" => "#{site["name"]}".downcase,
-            "uri" => "#{pretty_uri || account_uri}"
-           }
-      end
-
+    rescue JSON::ParserError => e
+      _log_error "Cannot parse JSON"
     end
 
   end # run()

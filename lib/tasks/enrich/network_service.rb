@@ -14,13 +14,7 @@ class NetworkService < Intrigue::Task::BaseTask
       :passive => false,
       :allowed_types => ["NetworkService"],
       :example_entities => [
-        { "type" => "NetworkService",
-          "details" => {
-            "ip_address" => "1.1.1.1",
-            "port" => 1111,
-            "protocol" => "tcp"
-          }
-        }
+        { "type" => "NetworkService", "details" => { "name" => "1.1.1.1:1111/tcp" } }
       ],
       :allowed_options => [],
       :created_types => []
@@ -31,9 +25,138 @@ class NetworkService < Intrigue::Task::BaseTask
   def run
     _log "Enriching... Network Service: #{_get_entity_name}"
 
-    enrich_ftp if _get_entity_detail("service") == "FTP"
-    enrich_snmp if _get_entity_detail("service") == "SNMP"
+    ###
+    ### First, normalize the nane - split out the various attributes
+    ###
+    entity_name = _get_entity_name
+    ip_address = entity_name.split(":").first
+    port = entity_name.split(":").last.split("/").first.to_i
+    proto = entity_name.split(":").last.split("/").first.upcase
 
+    _set_entity_detail("ip_address", ip_address) unless _get_entity_detail("ip_address")
+    _set_entity_detail("port", port) unless _get_entity_detail("port")
+    _set_entity_detail("proto", proto) unless _get_entity_detail("proto")
+
+    ###
+    ### FINGERPRINTING AND VULNERABILITY CHEkING
+    ###
+    fingerprint = fingerprint_service(ip_address, port, proto) 
+
+    # first, if we hhave any fingerprints that have tags known to be 
+    # associated with an issue, let's crerat them here
+    issues_to_create  = fingerprint_tags_to_issues(fingerprint)
+    _log "Got issues: #{issues_to_create}"
+    issues_to_create.each do |i|
+      _create_linked_issue i.first, i.last, @entity
+    end
+
+    all_checks = []
+    if @project.vulnerability_checks_enabled
+      ###
+      ### Finally, start checks based on FP
+      ###
+      fingerprint.each do |f|
+        vendor_string = f["vendor"]
+        product_string = f["product"]
+        _log "Getting checks for #{vendor_string} #{product_string}"
+        checks_to_be_run = Intrigue::Issue::IssueFactory.checks_for_vendor_product(vendor_string, product_string)
+        all_checks << checks_to_be_run
+      end
+      
+      # kick off all vuln checks for this product 
+      all_checks.flatten.compact.uniq.each do |t|
+        start_task("task_autoscheduled", @project, nil, t, @entity, 1)
+      end
+    end
+
+    # and save'm off
+    _set_entity_detail("additional_checks", all_checks.flatten.compact.uniq)
+
+    
+    ###
+    ### Handle SNMP as a special treat
+    ###
+    enrich_snmp if port == 161 && proto.upcase == "UDP"
+
+    # Unless we could verify futher, consider these noise
+    noise_networks = [
+      "CLOUDFLARENET - CLOUDFLARE, INC., US", 
+      "GOOGLE, US", 
+      "CLOUDFLARENET, US", 
+      "GOOGLE-PRIVATE-CLOUD, US", 
+      "INCAPSULA, US", 
+      "INCAPSULA - INCAPSULA INC, US"
+    ]
+
+    # drop them if we don't have a fingerprint
+    if noise_networks.include?(_get_entity_detail("net_name")) && (_get_entity_detail("fingerprint") || []).empty?
+      @entity.deny_list = true && @entity.hidden = true && @entity.scoped = false
+      @entity.save
+    end
+  
+  end
+
+  def fingerprint_service(ip_address,port=nil, proto="TCP")
+
+    # Use intrigue-ident code to request the banner and fingerprint
+    _log "Grabbing banner and fingerprinting!"
+    ident_matches = nil
+
+    ###
+    ### Go through each known port
+    ###
+    if port == 21 && !ident_matches
+      ident_matches = generate_ftp_request_and_check(ip_address) || {}
+    end
+      
+    if (port == 22 || port == 2222) && !ident_matches
+      ident_matches = generate_ssh_request_and_check(ip_address) || {}
+    end
+      
+    if port == 23 && !ident_matches
+      ident_matches = generate_telnet_request_and_check(ip_address) || {}
+    end
+
+    if (port == 25 || port == 587) && !ident_matches
+      ident_matches = generate_smtp_request_and_check(ip_address) || {}
+    end
+    
+    if port == 53 && !ident_matches
+      ident_matches = generate_dns_request_and_check(ip_address) || {}
+    end
+
+    if port == 161 && !ident_matches
+      ident_matches = generate_snmp_request_and_check(ip_address) || {}
+    end
+
+    if port == 3306 && !ident_matches
+      ident_matches = generate_mysql_request_and_check(ip_address) || {}
+    end
+    
+    ###
+    ### But default to HTTP through each known port
+    ###
+    url = "http://#{ip_address}:#{port}"
+    _log "Checking for HTTP... #{url}"
+    ident_matches = generate_http_requests_and_check(url) || {} unless ident_matches
+    
+    # okay we failed
+    unless ident_matches
+      _log "Unable to fingerprint!"
+      return
+    end
+
+    # if we didnt fail, pull out the FP and match to vulns
+    ident_fingerprints = ident_matches["fingerprint"] || []
+    if ident_fingerprints.count > 0
+      _log "Got #{ident_fingerprints.count} fingerprints!"
+      ident_fingerprints = add_vulns_by_cpe(ident_fingerprints)
+    end
+
+    # set entity details 
+    _set_entity_detail "fingerprint", ident_fingerprints
+  
+  ident_fingerprints
   end
 
   def enrich_snmp
@@ -83,55 +206,6 @@ class NetworkService < Intrigue::Task::BaseTask
       File.delete(temp_file)
     rescue Errno::EPERM
       _log_error "Unable to delete file"
-    end
-  end
-
-  def enrich_ftp
-    # TODO this won't work once we fix the name regex
-    port = _get_entity_detail("port").to_i
-    port = 21 if port == 0 # handle empty port
-    protocol = _get_entity_detail("protocol") ||  "tcp"
-    ip_address = _get_entity_detail("ip_address") || _get_entity_name
-
-    # Check to make sure we have a sane target
-    if protocol.downcase == "tcp" && ip_address && port
-
-      banner = ""
-      begin
-        sockets = Array.new #select() requires an array
-        #fill the first index with a socket
-        sockets[0] = TCPSocket.open(ip_address, port)
-        iterations = 0
-        max_iterations = 100
-        while iterations < max_iterations # loop till we hit max iterations
-        _log "Reading from socket #{iterations}/#{max_iterations}"
-        # listen for a read, timeout 5
-        res = select(sockets, nil, nil, 5)
-          if res != nil  # a nil is a timeout and will break
-            break unless sockets[0]
-            banner << "#{sockets[0].gets()}" # WARNING! THIS PRINTS NIL FOREVER on a server crash
-          else
-            sockets[0].close
-            break
-          end
-          iterations += 1
-        end
-      rescue Errno::ETIMEDOUT => e
-        _log_error "Unable to connect: #{e}"
-      rescue Errno::ECONNRESET => e
-        _log_error "Unable to connect: #{e}"
-      rescue SocketError => e
-        _log_error "Unable to connect: #{e}"
-      end
-
-      if banner.length > 0
-        _log "Got banner for #{ip_address}:#{port}/#{protocol}: #{banner}"
-        _log "updating entity with banner info!"
-        _set_entity_detail "banner", banner
-      else
-        _log "No banner available"
-      end
-
     end
   end
 

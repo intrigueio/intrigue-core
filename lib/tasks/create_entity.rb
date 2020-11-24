@@ -9,7 +9,7 @@ class CreateEntity < BaseTask
       :authors => ["jcran"],
       :description => "This task simply creates an entity.",
       :references => [],
-      :type => "discovery",
+      :type => "creation",
       :passive => true,
       :allowed_types => ["*"],
       :example_entities => [
@@ -26,7 +26,6 @@ class CreateEntity < BaseTask
 
     name = _get_entity_name
     type = _get_entity_type_string
-
     e = _create_entity type, {"name" => name }
 
   end

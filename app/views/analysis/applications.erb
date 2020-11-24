@@ -32,14 +32,14 @@
       <tbody>
       <tr><th>Screenshots</th><th>Names</th><th>Host</th><th>Products</th><th>JQuery</th><th>Verbs</th><th>API</th></tr>
       <% @alias_groups.each do |g| %>
-        <% entities = Intrigue::Model::Entity.where(:alias_group_id => g.id, :type => "Intrigue::Entity::Uri", :hidden => false) %>
+        <% entities = Intrigue::Core::Model::Entity.where(:alias_group_id => g.id, :type => "Intrigue::Entity::Uri", :hidden => false) %>
         <% next unless entities.count > 0 %>
         <tr>
           <td>
             <% entities.map do |x| %>
-              <% if x.has_detail('hidden_screenshot_contents') %>
+              <% if x.has_detail('extended_screenshot_contents') %>
                 <%= "<a href='/#{h @project_name}/entities/#{x.id}'>"%>
-                  <img height=200 width=240 src="data:image/png;base64, <%= h x.get_detail('hidden_screenshot_contents') %>" alt="Screenshot" />
+                  <img height=200 width=240 src="data:image/png;base64, <%= h x.get_detail('extended_screenshot_contents') %>" alt="Screenshot" />
                 </a>
               <% end %>
             <% end %>
@@ -51,7 +51,7 @@
           </td>
           <td>
             <% entities.map do |x| %>
-              <% z = Intrigue::Model::Entity.first(:id => x.get_detail("host_id")) %>
+              <% z = Intrigue::Core::Model::Entity.first(:id => x.get_detail("host_id")) %>
               <%= "<a href='/#{h @project_name}/entities/#{h z.id}'>#{h z}<br/>" if z && z.type == "Intrigue::Entity::IpAddress" %>
             <% end %>
           </td>

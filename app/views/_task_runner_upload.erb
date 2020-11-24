@@ -1,6 +1,6 @@
 
 <div class="col-sm-7">
-<form class="form-horizontal" id="task_runner" enctype="multipart/form-data" target="_self" method="post" action="/<%=@project_name%>/interactive/upload">
+<form class="form-horizontal" id="task_runner" enctype="multipart/form-data" target="_self" method="post" action="/<%=h @project_name%>/interactive/upload">
 
   <div class="form-group">
     <!-- <select name="task" id="task_name"> -->
@@ -23,6 +23,18 @@
         </option>
 
       <% end %>
+    </select>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <!-- <select name="task" id="task_name"> -->
+    <label for="file_format" class="col-xs-4 control-label">File Format</label>
+    <div class="col-xs-8">
+    <select class="form-control input-sm" name="file_format" id="file_format">
+      <option value="entity_list" selected>Entity List (CSV Format: [TYPE,NAME])</option>
+      <option value="intrigueio_fingerprint_csv">Collection Entity List (CSV Format [COLLECTION,TYPE,NAME])</option>
+      <option value="otx_csv">Alienvault OTX (CSV)</option>
     </select>
     </div>
   </div>

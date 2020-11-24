@@ -2,17 +2,15 @@ module Intrigue
 module Task
 class UriBruteFocusedContent < BaseTask
 
-  include Intrigue::Task::Web
-
   def self.metadata
     {
       :name => "uri_brute_focused_content",
       :pretty_name => "URI Brute Focused Content",
       :authors => ["jcran"],
-      :description => "Check for juicy content based on the site's technology stack." + 
-        " Supported Tech: ASP.net, Coldfusion, PHP, Sharepoint, Tomcat, Wordpress" + 
-        " (Some pages can be parsed for additional entities, select the parse_content" + 
-        " option if you'd like this to be done.)",      
+      :description => "Check for juicy content based on the site's technology stack." +
+        " Supported Tech: ASP.net, Coldfusion, PHP, Sharepoint, Tomcat, Wordpress" +
+        " (Some pages can be parsed for additional entities, select the parse_content" +
+        " option if you'd like this to be done.)",
       :references => [],
       :type => "discovery",
       :passive => false,
@@ -24,124 +22,183 @@ class UriBruteFocusedContent < BaseTask
         {:name => "threads", regex: "integer", :default => 1 },
         {:name => "create_url", regex: "boolean", :default => false },
         {:name => "override_fingerprint", regex: "alpha_numeric", :default => "" },
-        {:name => "check_generic_content", regex: "boolean", :default => true }
       ],
       :created_types => ["Uri"]
     }
   end
 
-  def is_product?(product_name)
-
-    # first, if an override fingerprint was specified, just use that
-    override = _get_option("override_fingerprint")
-    if override.length > 0
-      return (override == product_name) ? true : false
-    end
-
-    # okay no override, check the enity's fingerprint
-    return false unless _get_entity_detail("fingerprint")
-    
-    out = _get_entity_detail("fingerprint").any?{|v| v['product'] =~ /#{product_name}/ if v['product']}
-    _log_good "Matched URI to Product: #{product_name} !" if out
-  out
-  end
-
-  def sleep_until_enriched
-    entity_enriched = @entity.enriched?
-    cycles = 30 
-    until entity_enriched || cycles == 0
-      _log "Waiting 10s for entity to be enriched... (#{cycles-=1} / #{cycles})"
-        sleep 10
-      entity_enriched = Intrigue::Model::Entity.first(:id => @entity.id).enriched?
-    end
-  end
-
   def run
     super
 
-    sleep_until_enriched unless _get_option("override_fingerprint").length > 0
-
     uri = _get_entity_name
-    opt_threads = _get_option("threads") 
+    opt_threads = _get_option("threads")
     opt_create_url = _get_option("create_url")
-    opt_generic_content = _get_option("check_generic_content") 
 
-    generic_list = [ 
-      #{ path: "/api", regex: nil },
-      { path: "/.git", severity: 3, regex: /<h1>Index of/ },
-      { path: "/.hg", severity: 3, regex: /<h1>Index of/ },
-      { path: "/.svn", severity: 3, regex: /<h1>Index of/ },
-      { path: "/.bzr", severity: 3, regex: /<h1>Index of/ },
-      #{ path: "/.csv", regex: /<h1>Index of/ },
-      #{ path: "/.bak", regex: /<h1>Index of/ },
-      #{ path: "/crossdomain.xml", regex: /\<cross-domain-policy/, severity: 6, status: "confirmed"}, #tighten regex?
-      #{ path: "/clientaccesspolicy.xml", regex: /\<access-policy/, severity: 6, status: "confirmed"}, #tighten regex?
-      #{ path: "/portal", regex: nil },
-      #{ path: "/admin", regex: nil },
-      #{ path: "/test", regex: nil },
-    ]
+    # first, if an override fingerprint was specified, just use that
+    override = _get_option("override_fingerprint")
 
-    # technology specifics 
+    # we need a FP here, so hold off until
+    require_enrichment unless override.length > 0
+
+    if override
+      _log "Setting Override to #{override}"
+      fingerprint = [{"product" => override }]
+    else
+      fingerprint = _get_entity_detail("fingerprint")
+    end
+
+    # technology specifics
     apache_list = [
-      { path: "/.htaccess", regex: /AuthName/, severity: 3, status: "confirmed" },
-      { path: "/.htaccess.bak", regex: /AuthName/, severity: 3, status: "confirmed" },
-      #{ path: "/.htpasswd", regex: /^\w:.*$/, severity: 1, status: "potential" },
-      { path: "/server-status", regex: /Server Version/i, severity: 4, status: "confirmed" }
+      { issue_type: "apache_server_status", path: "/server-status", body_regex: /Server Version/i, severity: 3, status: "confirmed" },
+      { issue_type: "apache_server_info", path: "/server-info", body_regex: /Apache Server Information/i, severity: 4, status: "confirmed" }
     ]
 
     asp_net_list = [
-      { path: "/elmah.axd", severity: 2, regex: /Error log for/i, status: "confirmed" },
-      { path: "/Trace.axd", severity: 5, regex: /Microsoft \.NET Framework Version/, :status => "confirmed" }
+      { issue_type: "aspnet_elmah_axd", path: "/elmah.axd", severity: 1, body_regex: /Error log for/i, status: "confirmed" },
+      { issue_type: "aspnet_elmah_axd", path: "/errorlog.axd", severity: 1, body_regex: /Error log for/i, status: "confirmed" },
+      { issue_type: "aspnet_trace_axd", path: "/Trace.axd", severity: 5, body_regex: /Microsoft \.NET Framework Version/, :status => "confirmed" }
+      # /páginas/default.aspx
+      # /pages/default.aspx
     ]
 
+    # https://bambootest.ACME.com%2F
+    bamboo_list = [ # https://x.x.x.x?filterView=popular
+      { issue_type: "bamboo_2fa_bypass", path: "/userlogin!doDefault.action?nosso&os_destination=", severity: 3,
+        body_regex: /Log in as a Bamboo user/i, status: "confirmed" }
+    ]
+    # TODO - see: https://foundeo.com/hack-my-cf/coldfusion-security-issues.cfm
+    # TODO - see: metasploit
     coldfusion_list = [
-      { path: "/CFIDE", severity: 5, regex: nil },
-      { path: "/CFIDE/administrator/enter.cfm", severity: 5, regex: nil }
-    ] # TODO see metasploit for more ideas here
+      #{ issue_type: "coldfusion_config", path: "/CFIDE", severity: 5, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/CFIDE/scripts", severity: 4, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/CFIDE/debug/", severity: 1, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/CFIDE/administrator/enter.cfm", severity: 5, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/CFIDE/administrator/aboutcf.cfm", severity: 5, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/CFIDE/administrator/welcome.cfm", severity: 5, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/CFIDE/administrator/index.cfm", severity: 5, body_regex: nil, :status => "potential"  },
+      # Jakarta Virtual Directory Exposed
+      #{ issue_type: "coldfusion_config", path: "/jakarta/isapi_redirect.log", severity: 4, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/jakarta/isapi_redirect.properties", severity: 4, body_regex: nil, :status => "potential"  },
+      # Bitcoin Miner Discovered
+      { issue_type: "coldfusion_cryptominer", path: "/CFIDE/m", severity: 1, body_regex: nil, :status => "potential"  },
+      { issue_type: "coldfusion_cryptominer", path: "/CFIDE/m32", severity: 1, body_regex: nil, :status => "potential"  },
+      { issue_type: "coldfusion_cryptominer", path: "/CFIDE/m64", severity: 1, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/CFIDE/updates.cfm", severity: 1, body_regex: nil, :status => "potential" },
+      # XSS Injection in cfform.js
+      #{ issue_type: "coldfusion_config", path: "/CFIDE/scripts/cfform.js", severity: 3, body_regex: /document\.write/, :status => "confirmed"  },
+      # OpenBD AdminAPI Exposed to the Public
+      #{ issue_type: "coldfusion_config", path: "/bluedragon/adminapi/", severity: 1, body_regex: nil, :status => "potential"  },
+      # ColdFusion Example Applications Installed -
+      #{ issue_type: "coldfusion_config", path: "/cfdocs/exampleapps/", severity: 4, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/CFIDE/gettingstarted/", severity: 4, body_regex: nil, :status => "potential"  },
+      # Svn / git Hidden Directory Exposed
+      #{ issue_type: "coldfusion_config",  path: "/.svn/text-base/index.cfm.svn-base", severity: 4, body_regex: nil, :status => "potential"  },
+      # Lucee Server Context is Public
+      #{ issue_type: "coldfusion_config", path: "/lucee-server/", severity: 3, body_regex: nil, :status => "potential"  },
+      # Lucee Docs are Public -
+      #{ issue_type: "coldfusion_config", path: "/lucee/doc.cfm", severity: 4, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/lucee/doc/index.cfm", severity: 3, body_regex: nil, :status => "potential"  },
+      # Lucee Server Context is Public
+      #{ issue_type: "coldfusion_config", path: "/railo-server-context/", severity: 3, body_regex: nil, :status => "potential"  },
+      # The /cf_scripts/scripts directory is in default location
+      #{ issue_type: "coldfusion_config", path: "/cf_scripts/scripts/", severity: 3, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_config", path: "/cfscripts_2018/", severity: 3, body_regex: nil, :status => "potential"  },
+      # Backdoor Discovered
+      #{ issue_type: "coldfusion_config", path: "/CFIDE/h.cfm", severity: 1, body_regex: nil, :status => "potential"  },
+      # Exposed _mmServerScripts
+      #{ issue_type: "coldfusion_config", path: "/_mmServerScripts", severity: 1, body_regex: nil, :status => "potential"  }
+    ]
 
+    confluence_list = [ # https://x.x.x.x?filterView=popular
+      { issue_type: "confluence_2fa_bypass", path: "/login.action?nosso", severity: 3,
+        body_regex: /com-atlassian-confluence/i, status: "confirmed" }
+    ]
+
+    iis_list = [
+      { issue_type: "exposed_web_config", path: "/web.config", severity: 2, body_regex: /\<configuration\>/i, status: "confirmed" },
+    ]
 
     jenkins_list = [
-      { path: "/view/All/builds", severity: 4, regex: /Jenkins ver./i, status: "confirmed" },
-      { path: "/view/All/newjob",  severity: 4, regex: /Jenkins/i, status: "confirmed" },
-      { path: "/asynchPeople/",  severity: 4, regex: /Jenkins/i, status: "confirmed" },
-      { path: "/userContent/",  severity: 4, regex: /Jenkins/i, status: "confirmed" },
-      { path: "/computer/",  severity: 4, regex: /Jenkins/i, status: "confirmed" },
-      { path: "/pview/",  severity: 4, regex: /Jenkins/i, status: "confirmed" },
-      { path: "/systemInfo",  severity: 4, regex: /Jenkins/i, status: "confirmed" },
-      { path: "/script",  severity: 4, regex: /Jenkins/i, status: "confirmed" },
-      { path: "/signup",  severity: 5, regex: /Jenkins/i, status: "confirmed" },
-      { path: "/securityRealm/createAccount", severity: 4, regex: /Jenkins/i , status: "confirmed"}
+      { issue_type: "jenkins_exposed_path", path: "/view/All/builds", severity: 4, body_regex: /Jenkins ver./i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/view/All/newjob",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/asynchPeople/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/userContent/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/computer/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/pview/",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/systemInfo",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/script",  severity: 4, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/signup",  severity: 5, body_regex: /Jenkins/i, status: "confirmed" },
+      { issue_type: "jenkins_exposed_path", path: "/securityRealm/createAccount", severity: 4, body_regex: /Jenkins/i , status: "confirmed"},
+      { issue_type: "jenkins_create_projects_unauthenticated", path: "/view/all/newJob", severity: 1, body_regex: /form#createItem/i , status: "confirmed"}
     ]
 
     jforum_list = [ # CVE-2019-7550
-      { path: "/register/check/username?username=thisaccountdoesntexist", severity: 4,
-          regex: /^true$/i, status: "confirmed" } # CVE-2019-7550
-    ] 
+      { issue_type: "jforum_user_info_leak", path: "/register/check/username?username=thisaccountdoesntexist", severity: 4,
+          body_regex: /^true$/i, status: "confirmed" } # CVE-2019-7550
+    ]
 
+    jira_list = [ # https://x.x.x.x?filterView=popular
+      { issue_type: "jira_managefilters_info_leak", path: "/secure/ManageFilters.jspa", severity: 3,
+        body_regex: /<title>Manage Filters/i, status: "confirmed" },
+      { issue_type: "jira_2fa_bypass", path: "/login.action?nosso", severity: 3,
+        body_regex: //i, status: "confirmed" },
+      { issue_type: "jira_iconuriservlet_ssrf_cve_2017_9506", 
+        path: "/plugins/servlet/oauth/users/icon-uri?consumerUri=https://ipinfo.io/json", severity: 2,
+        body_regex: /ipinfo.io\/missingauth/i, status: "confirmed" } 
+    ]
+
+    #
+    joomla_list = [   # https://packetstormsecurity.com/files/151619/Joomla-Agora-4.10-Bypass-SQL-Injection.html
+      { issue_type: "vulnerable_joomla_agora", path: "/index.php?option=com_agora&task='", severity: 2, status: "potential" }
+    ]
+
+    jupyter_notebook_list = [
+      { issue_type: "jupyter_exposed_ui_detection", path: "/terminals/1", severity: 1, body_regex: /terminals\/websocket\/1/i, status: "confirmed" }
+    ]
+
+    laravel_list = [             
+      # TODO ... move this to laravel-only.
+      # https://github.com/laravel/laravel/blob/master/.env.example
+      { issue_type: "laravel_env_file", path: "/.env", severity: 1, body_regex: /^APP_(NAME|ENV|KEY|DEBUG|URL)=/, status: "confirmed" }
+    ]
+
+    # TODO https://www.nccgroup.com/globalassets/our-research/uk/whitepapers/hackproofing_lotus_domino_web_server.pdf
+    # TODO https://www.ibm.com/developerworks/lotus/library/ls-Domino_URL_cheat_sheet/index.html
     lotus_domino_list = [
-      { path: "/$defaultview?Readviewentries", severity: 3, regex: /\<viewentries/, status: "confirmed" }
+      { issue_type: "domino_info_leak", path: "/$defaultview?Readviewentries", severity: 3, body_regex: /\<viewentries/, status: "confirmed" }
     ]
 
     php_list =[
-      { path: "/phpinfo.php", severity: 4, regex: /<title>phpinfo\(\)/, status: "confirmed" }
+      { issue_type: "php_info_leak", path: "/phpinfo.php", severity: 4, body_regex: /<title>phpinfo\(\)/, status: "confirmed" }
     ]
 
+    # https://serverfault.com/questions/202822/how-to-thwart-phpmyadmin-attacks
     php_my_admin_list = [
-      { path: "/phpMyAdmin/scripts/setup.php", severity: 4, regex: nil, status: "potential" }
+      { issue_type: "phpmymyadmin_setup_files", path: "/phpMyAdmin/scripts/setup.php", severity: 4, body_regex: nil, status: "potential" }
     ]
 
-    sap_netweaver_list =[ 
-      { path: "/webdynpro/dispatcher/sap.com/caf~eu~gp~example~timeoff~wd/ACreate", 
-        severity: 3, regex: /data-sap-ls-system-platform/, status: "confirmed" }, # https://www.exploit-db.com/exploits/44647
-      { path: "/webdynpro/dispatcher/sap.com/caf~eu~gp~example~timeoff~wd/com.sap.caf.eu.gp.example.timeoff.wd.create.ACreate", 
-        severity: 3, regex: /data-sap-ls-system-platform/, status: "confirmed" }, # https://www.exploit-db.com/exploits/44647
+    # https://know.bishopfox.com/blog/breaching-the-trusted-perimeter
+    pulse_secure_list = [
+      { issue_type: "pulse_secure_info_leak", path: "/dana-na/nc/nc_gina_ver.txt", severity: 3, body_regex: /classid/, status: "confirmed" }, # CVE-2019-11510
+      { issue_type: "vulnerable_pulse_secure", path: "/dana-na/../dana/html5acc/guacamole/../../../../../../etc/passwd?/dana/html5acc/guacamole/", severity: 1, body_regex: nil, status: "confirmed" },
+      #{ path: "/dana-na/../dana/html5acc/guacamole/../../../../../../data/runtime/mtmp/system?/dana/html5acc/guacamole/", severity: 1, body_regex: nil, status: "potential" },
+      #{ path: "/dana-na/../dana/html5acc/guacamole/../../../../../../data/runtime/mtmp/lmdb/dataa/data.mdb?/dana/html5acc/guacamole/", severity: 1, body_regex: nil, status: "potential" },
+      #{ path: "/dana-na/../dana/html5acc/guacamole/../../../../../../data/runtime/mtmp/lmdb/randomVal/data.mdb?/dana/html5acc/guacamole/", severity: 1, body_regex: nil, status: "potential" }
     ]
 
-    sharepoint_list = [ 
-      { path: "/_vti_bin/spsdisco.aspx", regex: /\<discovery/, status: "confirmed" },
-      { path: "/_vti_pvt/service.cnf", regex: /vti_encoding/, status: "confirmed" },
-      #{ path: "/_vti_inf.html", regex: nil },
-      #{ path: "/_vti_bin/", regex: nil },
+    sap_netweaver_list =[
+      { issue_type: "sap_netweaver_info_leak", path: "/webdynpro/dispatcher/sap.com/caf~eu~gp~example~timeoff~wd/ACreate",
+        severity: 3, body_regex: /data-sap-ls-system-platform/, status: "confirmed" }, # https://www.exploit-db.com/exploits/44647
+      { issue_type: "sap_netweaver_info_leak", path: "/webdynpro/dispatcher/sap.com/caf~eu~gp~example~timeoff~wd/com.sap.caf.eu.gp.example.timeoff.wd.create.ACreate",
+        severity: 3, body_regex: /data-sap-ls-system-platform/, status: "confirmed" }, # https://www.exploit-db.com/exploits/44647
+    ]
+
+    sharepoint_list = [
+      { issue_type: "microsoft_sharepoint_info_leak", path: "/_vti_bin/spsdisco.aspx", severity: 4, body_regex: /\<discovery/, status: "confirmed" },
+      { issue_type: "microsoft_sharepoint_info_leak", path: "/_vti_bin/sites.asmx?wsdl", severity: 4, status: "potential" },
+      { issue_type: "microsoft_sharepoint_info_leak", path: "/_vti_pvt/service.cnf", severity: 4, body_regex: /vti_encoding/, status: "confirmed" },
+      #{ path: "/_vti_inf.html", body_regex: nil },
+      #{ path: "/_vti_bin/", body_regex: nil },
       #_vti_bin/shtml.exe/junk_nonexistant.exe
       #_vti_txt/_vti_cnf/
       #_vti_txt/
@@ -165,112 +222,134 @@ class UriBruteFocusedContent < BaseTask
       #_vti_pvt/linkinfo.cnf
     ]
 
+    # https://www.exploit-db.com/exploits/43009 - c
+    #"/solr/gettingstarted/select?q=test"
+
     splunk_list = [
-      { path: "/en-US/splunkd/__raw/services/server/info/server-info?output_mode=json", 
-        regex: /os_name_extended/, severity: 4, status: "confirmed" }, # CVE-2018-11409
+      { issue_type: "splunk_info_leak", path: "/en-US/splunkd/__raw/services/server/info/server-info?output_mode=json",
+        body_regex: /os_name_extended/, severity: 4, status: "confirmed" }, # CVE-2018-11409
     ]
 
     # https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Insecure%20Management%20Interface
     spring_boot_list =[
-      { path: "/trace", severity: 4, regex: nil, status: "potential" },
-      { path: "/env", severity: 4, regex: nil, status: "potential" },
-      { path: "/heapdump", severity: 4, regex: nil, status: "potential" },
-      { path: "/actuator/env", severity: 4, regex: nil, status: "potential" },
-      { path: "/actuator/health", severity: 4, regex: nil, status: "potential" },
+      { issue_type: "spring_info_leak", path: "/trace", severity: 4, body_regex: nil, status: "potential" },
+      { issue_type: "spring_info_leak", path: "/env", severity: 4, body_regex: nil, status: "potential" },
+      { issue_type: "spring_info_leak", path: "/heapdump", severity: 4, body_regex: nil, status: "potential" },
+      { issue_type: "spring_info_leak", path: "/actuator/env", severity: 4, body_regex: nil, status: "potential" },
+      { issue_type: "spring_info_leak", path: "/actuator/health", severity: 4, body_regex: nil, status: "potential" },
     ] # more: https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Insecure%20Management%20Interface/Intruder/springboot_actuator.txt
 
-    tomcat_list = [ 
-      { path: '/status', severity: 4, regex: /<p> Free memory:/ },
-      { path: '/web-console', severity: 4, regex: nil },
-      { path: '/jmx-console', severity: 4, regex: nil },
-      { path: '/admin-console', severity: 4, regex: nil },
-      { path: '/manager/html', severity: 4, regex: nil },
-      { path: '/tomcat/manager/html', severity: 4, regex: nil },
-      { path: '/host-manager/html', severity: 4, regex: nil },
-      { path: '/server-manager/html', severity: 4, regex: nil },
-      { path: '/web-console/Invoker', severity: 4, regex: nil },
-      { path: '/jmx-console/HtmlAdaptor', severity: 4, regex: nil },
-      { path: '/invoker/JMXInvokerServlet', severity: 4, regex: nil}
+    tomcat_list = [
+      { issue_type: "tomcat_info_leak", path: '/status', severity: 4, body_regex: /<p> Free memory:/ },
+      { issue_type: "tomcat_config", path: '/web-console', severity: 4, body_regex: nil },
+      { issue_type: "tomcat_config", path: '/admin-console', severity: 4, body_regex: nil },
+      { issue_type: "tomcat_config", path: '/manager/html', severity: 4, body_regex: nil },
+      { issue_type: "tomcat_config", path: '/tomcat/manager/html', severity: 4, body_regex: nil },
+      { issue_type: "tomcat_config", path: '/host-manager/html', severity: 4, body_regex: nil },
+      { issue_type: "tomcat_config", path: '/server-manager/html', severity: 4, body_regex: nil },
+      { issue_type: "vulnerable_tomcat_jmx_console", path: '/jmx-console', severity: 2, body_regex: nil },
+      { issue_type: "vulnerable_tomcat_jmx_console", path: '/web-console/Invoker', severity: 1, body_regex: nil },
+      { issue_type: "vulnerable_tomcat_jmx_console", path: '/jmx-console/HtmlAdaptor', severity: 2, body_regex: nil },
+      { issue_type: "vulnerable_tomcat_jmx_console", path: '/invoker/JMXInvokerServlet', severity: 1, body_regex: nil}
       # http://[host]:8090/invoker/EJBInvokerServlet
       # https://[host]:8453//invoker/EJBInvokerServlet
-      #{ path: '/invoker/EJBInvokerServlet', severity: 4,  regex: nil} 
+      #{ path: '/invoker/EJBInvokerServlet', severity: 4,  body_regex: nil}
     ]
 
     # VMware Horizon
     vmware_horizon_list = [
-      { path: "/portal/info.jsp", severity: 4, regex: /clientIPAddress/, status: "confirmed" } # CVE-2019-5513
+      { issue_type: "vmware_horizon_info_leak", path: "/portal/info.jsp", severity: 4, body_regex: /clientIPAddress/, status: "confirmed" } # CVE-2019-5513
     ]
 
     # Oracle Weblogic Server
     #  - CVE-2017-10271
     #  - April 2019 0day: http://bit.ly/2ZxYIjS
     weblogic_list = [
-      { path: "/wls-wsat/CoordinatorPortType", severity: 3, regex: /<td>WSDL:/, status: "potential" },
-      { path: "/wls-wsat/RegistrationPortTypeRPC", severity: 3, regex: /<td>WSDL:/, status: "potential" },
-      { path: "/wls-wsat/ParticipantPortType", severity: 3, regex: /<td>WSDL:/, status: "potential" }, 
-      { path: "/wls-wsat/RegistrationRequesterPortType", severity: 3, regex: /<td>WSDL:/, status: "potential" },
-      { path: "/wls-wsat/CoordinatorPortType11", severity: 3, regex: /<td>WSDL:/, status: "potential" },
-      { path: "/wls-wsat/RegistrationPortTypeRPC11", severity: 3, regex: /<td>WSDL:/, status: "potential" }, 
-      { path: "/wls-wsat/ParticipantPortType11", severity: 3, regex: /<td>WSDL:/,status: "potential" }, 
-      { path: "/wls-wsat/RegistrationRequesterPortType11", severity: 3, regex: /<td>WSDL:/, status: "potential" }
+      { issue_type: "oracle_weblogic_vulnerable_paths", path: "/wls-wsat/CoordinatorPortType", severity: 3, body_regex: /<td>WSDL:/, status: "confirmed" },
+      { issue_type: "oracle_weblogic_vulnerable_paths", path: "/wls-wsat/RegistrationPortTypeRPC", severity: 3, body_regex: /<td>WSDL:/, status: "confirmed" },
+      { issue_type: "oracle_weblogic_vulnerable_paths", path: "/wls-wsat/ParticipantPortType", severity: 3, body_regex: /<td>WSDL:/, status: "confirmed" },
+      { issue_type: "oracle_weblogic_vulnerable_paths", path: "/wls-wsat/RegistrationRequesterPortType", severity: 3, body_regex: /<td>WSDL:/, status: "confirmed" },
+      { issue_type: "oracle_weblogic_vulnerable_paths", path: "/wls-wsat/CoordinatorPortType11", severity: 3, body_regex: /<td>WSDL:/, status: "confirmed" },
+      { issue_type: "oracle_weblogic_vulnerable_paths", path: "/wls-wsat/RegistrationPortTypeRPC11", severity: 3, body_regex: /<td>WSDL:/, status: "confirmed" },
+      { issue_type: "oracle_weblogic_vulnerable_paths", path: "/wls-wsat/ParticipantPortType11", severity: 3, body_regex: /<td>WSDL:/,status: "confirmed" },
+      { issue_type: "oracle_weblogic_vulnerable_paths", path: "/wls-wsat/RegistrationRequesterPortType11", severity: 3, body_regex: /<td>WSDL:/, status: "confirmed" }
     ]
 
+    websphere_list = [
+      { issue_type: "websphere_info_leak", path: "/AddressBookJ2WB", severity: 5, status: "potential" },
+      { issue_type: "websphere_info_leak", path: "/AddressBookJ2WE/services/AddressBook", severity: 5, status: "potential" },
+      { issue_type: "websphere_info_leak", path: "/AlbumCatalogWeb", severity: 5, status: "potential" },
+      { issue_type: "websphere_info_leak", path: "/AppManagementStatus", severity: 5, status: "potential" }
+    ] # see more at https://github.com/danielmiessler/SecLists/blob/master/Discovery/Web-Content/websphere.txt
+
     wordpress_list = [
-      { path: '/wp-admin', severity: 5,  regex: /Powered by WordPress/, status: "confirmed" }, # TODO ... confirmed
-      { path: '/xmlrpc.php', severity: 5, status: "confirmed", regex: /XML-RPC server accepts POST requests only./ },
-      # TODO - look for "1.3.9.1" to disprove vulnerability 
-      #{ path: '/wp-content/plugins/easy-wp-smtp/readme.txt', severity: 1,  regex: /Easy WP SMTP/i, status: "potential" },  
-      { path: '/wp-content/plugins/easy-wp-smtp/css/style.css', severity: 2,  regex: /swpsmtp_settings_form/i, status: "potential" },  
-      { path: '/wp-content/plugins/easy-wp-smtp/', severity: 2,  regex: /debug_log/i, status: "potential" },
-      { path: '/wp-content/plugins/easy-wp-smtp/inc/', severity: 2,  regex: /debug_log/i, status: "potential" }
-    ] 
-    
-    # add wordpress plugins list from a file
-    #File.open("#{$intrigue_basedir}/data/wordpress_plugins.list").each_line do |l|
-    #  next if l =~ /^#/
-    #  #_log "Adding Wordpress plugin check: #{l.strip}"
-    #  wordpress_list << { path: "#{l.strip}/" , severity: 5,  regex: nil, status: "potential" }
-    #  wordpress_list << { path: "#{l.strip}/readme.txt" , severity: 5,  regex: /Contributors:/i, status: "confirmed" }
-    #end
+      { issue_type: "wordpress_config_leak", path: "/wp-config.php~", severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },
+      { issue_type: "wordpress_config_leak", path: "/wp-config.php.bak", severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },
+      { issue_type: "wordpress_config_leak", path: "/wp-config.php_bak", severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },
+      { issue_type: "wordpress_config_leak", path: "/wp-config.php.old", severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },
+      { issue_type: "wordpress_config_leak", path: "/wp-config.php.save", severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },
+      { issue_type: "wordpress_config_leak", path: "/wp-config.php.orig", severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },
+      { issue_type: "wordpress_config_leak", path: "/wp-config.php.original", severity: 1,  body_regex: /DB_PASSWORD/, status: "confirmed" },
+      { issue_type: "wordpress_debug_log_leak", path: "/wp-content/debug.log", severity: 2,  header_regex: /text\/plain/, status: "confirmed" },
+      { issue_type: "wordpress_user_info_leak", path: '/wp-json/wp/v2/users', severity: 4,  body_regex: /slug/, status: "confirmed" },
+      { issue_type: "wordpress_admin_login_exposed", path: '/wp-admin', severity: 5,  body_regex: /Powered by WordPress/, status: "confirmed" },
+      { issue_type: "wordpress_api_exposed", path: '/xmlrpc.php', severity: 5, status: "confirmed", body_regex: /XML-RPC server accepts POST requests only./ }
+      #{ path: '/wp-login.php?action=register', severity: 4, status: "potential"} # "User registration is currently not allowed."
+
+      # TODO - look for "1.3.9.1" to disprove vulnerability
+      #{ path: '/wp-content/plugins/easy-wp-smtp/readme.txt', severity: 1,  body_regex: /Easy WP SMTP/i, status: "potential" },
+      #{ path: '/wp-content/plugins/easy-wp-smtp/css/style.css', severity: 2,  body_regex: /swpsmtp_settings_form/i, status: "potential" },
+      #{ path: '/wp-content/plugins/easy-wp-smtp/', severity: 2,  body_regex: /debug_log/i, status: "potential" },
+      #{ path: '/wp-content/plugins/easy-wp-smtp/inc/', severity: 2,  body_regex: /debug_log/i, status: "potential" }
+    ]
+
+    wpengine_list = [
+      { issue_type: "wpengine_config_leak", path: "/_wpeprivate/config.json", severity: 1,  body_regex: /wpengine_apikey/, status: "confirmed" }
+    ]
+
 
     # Create our queue of work from the checks in brute_list
     work_q = Queue.new
-    
+
     #  first handle our specific here (more likely to be interesting)
-    apache_list.each { |x| work_q.push x } if is_product? "HTTP Server"  # Apache
-    asp_net_list.each { |x| work_q.push x } if ( 
-      is_product?("ASP.NET") || is_product?("ASP.NET MVC") )
-
-    coldfusion_list.each { |x| work_q.push x } if is_product? "Coldfusion"  
-    lotus_domino_list.each { |x| work_q.push x } if is_product? "Domino" 
-    jenkins_list.each { |x| work_q.push x } if is_product? "Jenkins" 
-    jforum_list.each { |x| work_q.push x } if is_product? "Jforum" 
-    php_list.each { |x| work_q.push x } if is_product? "PHP" 
-    sharepoint_list.each { |x| work_q.push x } if is_product? "Sharepoint"
-    sap_netweaver_list.each { |x| work_q.push x } if is_product? "NetWeaver"
-    splunk_list.each {|x| work_q.push x } if is_product? "Splunk"
-    spring_boot_list.each { |x| work_q.push x } if is_product? "Spring Boot"
-    tomcat_list.each { |x| work_q.push x } if is_product? "Tomcat" 
-
-    vmware_horizon_list.each { |x| work_q.push x } if (
-      is_product?("VMWare Horizon") || is_product?("VMWare Horizon View") ) 
-
-    weblogic_list.each { |x| work_q.push x } if is_product? "Weblogic Server" 
-    wordpress_list.each { |x| work_q.push x } if is_product? "Wordpress" 
-
-    # then add our "always" stuff:
-    generic_list.each { |x| work_q.push x } if opt_generic_content
+    apache_list.each { |x| work_q.push x } if is_product?(fingerprint,"HTTP Server")  # Apache
+    asp_net_list.each { |x| work_q.push x } if (is_product?(fingerprint,"ASP.NET") || is_product?(fingerprint,"ASP.NET MVC") )
+    bamboo_list.each { |x| work_q.push x } if is_product?(fingerprint,"Bamboo") 
+    coldfusion_list.each { |x| work_q.push x } if is_product?(fingerprint,"Coldfusion") 
+    confluence_list.each { |x| work_q.push x } if is_product?(fingerprint,"Confluence") 
+    iis_list.each { |x| work_q.push x } if is_product?(fingerprint,"Internet Information Services")
+    #globalprotect_list.each { |x| work_q.push x } if is_product?(fingerprint,"GlobalProtect")
+    jenkins_list.each { |x| work_q.push x } if is_product?(fingerprint,"Jenkins")
+    jforum_list.each { |x| work_q.push x } if is_product?(fingerprint,"Jforum")
+    jira_list.each { |x| work_q.push x } if is_product?(fingerprint,"Jira")
+    joomla_list.each { |x| work_q.push x } if is_product?(fingerprint,"Joomla!")
+    jupyter_notebook_list.each { |x| work_q.push x } if is_product?(fingerprint,"Notebook")
+    laravel_list.each { |x| work_q.push x } if is_product?(fingerprint,"Laravel")
+    lotus_domino_list.each { |x| work_q.push x } if is_product?(fingerprint,"Domino")
+    php_list.each { |x| work_q.push x } if is_product?(fingerprint,"PHP")
+    php_my_admin_list.each { |x| work_q.push x } if is_product?(fingerprint,"phpMyAdmin")
+    pulse_secure_list.each { |x| work_q.push x } if is_product?(fingerprint,"Junos Pulse Secure Access Service")
+    sharepoint_list.each { |x| work_q.push x } if is_product?(fingerprint,"Sharepoint")
+    sap_netweaver_list.each { |x| work_q.push x } if is_product?(fingerprint,"NetWeaver")
+    splunk_list.each {|x| work_q.push x } if is_product?(fingerprint,"Splunk")
+    spring_boot_list.each { |x| work_q.push x } if is_product?(fingerprint,"Spring Boot")
+    spring_boot_list.each { |x| work_q.push x } if is_product?(fingerprint,"Spring Framework")
+    tomcat_list.each { |x| work_q.push x } if is_product?(fingerprint,"Tomcat")
+    vmware_horizon_list.each { |x| work_q.push x } if is_product?(fingerprint,"Horizon View")
+    weblogic_list.each { |x| work_q.push x } if is_product?(fingerprint,"Weblogic Server")
+    websphere_list.each { |x| work_q.push x } if is_product?(fingerprint,"WebSphere")
+    wordpress_list.each { |x| work_q.push x } if is_product?(fingerprint,"Wordpress")
+    wpengine_list.each { |x| work_q.push x } if is_product?(fingerprint,"WPEngine")
 
     ###
-    ### Do the work 
+    ### Do the work
     ###
-    make_http_requests_from_queue(uri, work_q, opt_threads, opt_create_url, true) # always create an issue
+    results = make_http_requests_from_queue(uri, work_q, opt_threads, opt_create_url, true) # always create an issue
+
+    _log "Got matches: #{results}"
 
   end # end run method
 
 end
 end
 end
-
-
-

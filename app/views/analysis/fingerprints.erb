@@ -2,13 +2,9 @@
 <div class="row">
   <div id="fingerprints" class="col-sm-6">
     <p>Fingerprints:</p>
-    <p>
-    
-    </p>
+    <p></p>
   </div>
 </div>
-
-
 
 <!-- Statistics! -->
 <div class="row">
@@ -35,15 +31,18 @@
     <table class="sortable" border="1" width=100%>
       <colgroup>
         <col style="width:30%">
-        <col style="width:70%">
+        <col style="width:30%">
+        <col style="width:40%">
       </colgroup>
       <tbody>
-      <tr><th>Fingerprint</th><th>CPE</th></tr>
-      <% @fingerprints.each do |fingerprint| %>
+      <tr><th>Fingerprint</th><th>CPE</th><th>Entity</th></tr>
+      <% @selected_entities.each do |x| %>        
+        <% fingerprint = x.details["fingerprint"] || [] %>
         <% fingerprint.each do |f| %>
         <tr>
           <td><%= h "#{f["vendor"]} #{f["product"]} #{f["version"]}"%> </td>
-          <td><a href="/<%= h @project_name%>/entities?search_string=details:<%=h f["cpe"] %>"><%= h f["cpe"] %></a><br></td>
+          <td><%= h f["cpe"] %></td>
+          <td><a href="/<%=h @project_name %>/entities/<%=x.id%>"><%= h x.name  %></a></td>
         </tr>
        <% end %>
         <% end %>

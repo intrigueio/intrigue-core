@@ -1,20 +1,23 @@
   <p>
-    <a href="/<%=@project_name%>/entities?export=csv&search_string=<%=h @search_string%>&entity_types[]=<%=@entity_types.join(",") if @entity_types%>">Export CSV</a><br/>
-    <a href="/<%=@project_name%>/entities?export=json&search_string=<%=h @search_string%>&entity_types[]=<%=@entity_types.join(",") if @entity_types%>">Export JSON</a><br/>
+    <a href="/<%=h @project_name%>/entities?export=csv&search_string=<%=h @search_string%>&entity_types[]=<%=@entity_types.join(",") if @entity_types%>">Export CSV</a><br/>
+    <a href="/<%=h @project_name%>/entities?export=json&search_string=<%=h @search_string%>&entity_types[]=<%=@entity_types.join(",") if @entity_types%>">Export JSON</a><br/>
   </p>
-  <form class="form-horizontal" id="entity_search" target="_self" method="get" action="/<%=@project_name%>/entities">
+  <form class="form-horizontal" id="entity_search" target="_self" method="get" action="/<%=h @project_name%>/entities">
 
     Search:
     <input type="text" style='width:100%' class="form-control sm" id="search_string" name="search_string" value="<%= h params["search_string"] %>">
     <div class="hint">Hint: Use "name:" and "details:" to search specfic fields. Separate search tokens with a "|" character.</div>
     <br>
     Types:<br>
-    <select size=16 style='height:100%; width:100%; color:#000000;' multiple name="entity_types[]">
-      <% Intrigue::Model::Entity.descendants.map{|x|x.to_s}.sort.each do |d| %>
+    <select size=25 style='height:100%; width:100%; color:#000000;' multiple name="entity_types[]">
+      <% Intrigue::EntityFactory.entity_types.map{|x|x.to_s}.sort.each do |d| %>
         <option value="<%=d%>" <%="selected" if (@entity_types && @entity_types.include?(d.to_s))%>> <%=d%></option>
       <% end %>
     </select><br/>
-    <input id="include_hidden" name="include_hidden" type="checkbox"> Show Hidden <br/>
+    <input id="include_unscoped" name="include_hidden" type="checkbox" <%='checked' if @include_hidden %> > Show Hidden <br/>
+    <input id="include_unscoped" name="include_unscoped" type="checkbox" <%='checked' if @include_unscoped %> > Show Unscoped <br/>
+    <input id="only_enriched" name="only_enriched" type="checkbox"> Only Enriched <br/>
+    <input id="grouped_entities" name="grouped_entities" type="checkbox" <%='checked' if @grouped_entities %> > Group View <br/>
 
     <input class="btn btn-primary" type="submit" value="Search">
   </form>

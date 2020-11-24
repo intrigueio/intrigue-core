@@ -43,15 +43,14 @@ class WhoisLookup < BaseTask
 
       # and edit this netblock
       _log_good "Setting entity details!"
-      _set_entity_details out.merge(@entity.details)
+      _get_and_set_entity_details out
 
     elsif _get_entity_type_string == "IpAddress"
       
       # TODO... there might be a way to shortcut so many lookups... 
       # store on the ipaddress? or create earlier
       #  _get_entity_detail "whois_full_text" # return if we have it
-      
-      
+            
       out = whois_safe _get_entity_name
       return nil unless out
       
@@ -67,7 +66,7 @@ class WhoisLookup < BaseTask
         end
       end
 
-    elsif _get_entity_type_string == "DnsRecord"
+    elsif _get_entity_type_string == "DnsRecord" || _get_entity_type_string == "Domain"
 
       out = whois_safe _get_entity_name
       return nil unless out

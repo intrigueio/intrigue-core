@@ -1,21 +1,17 @@
 module Intrigue
 module Entity
-class NetworkService < Intrigue::Model::Entity
+class NetworkService < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
       :name => "NetworkService",
       :description => "A Generic Network Service",
-      :user_creatable => false
+      :user_creatable => true
     }
   end
 
-
   def validate_entity
-    name =~ /(\w.*):\d{1,5}/ &&
-    details["port"].to_s =~ /^\d{1,5}$/ &&
-    details["service"].to_s =~ /^\w*$/ &&
-    (details["protocol"].to_s == "tcp" || details["protocol"].to_s == "udp")
+    name =~ /[\w\d\.]+:\d{1,5}/
   end
 
   def detail_string
@@ -26,6 +22,12 @@ class NetworkService < Intrigue::Model::Entity
     ["enrich/network_service"]
   end
 
+  def scoped?
+    return true if self.allow_list
+    return false if self.deny_list
+  
+  true
+  end
 
 end
 end
