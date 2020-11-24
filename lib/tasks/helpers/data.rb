@@ -304,11 +304,11 @@ module Data
      
       api_key =  Intrigue::Core::System::Config.config["intrigue_global_module_config"]["ipinfo_api_key"]["value"]
       response = http_get_body "https://ipinfo.io/2a02:250:0:48::11?token=#{api_key}"
-      
+
       # handle the response 
       if response 
         json = JSON.parse(response)
-        if !hash.empty? 
+        if !json.empty? 
           # parse it up 
           hash["city"] = json["city"]
           hash["country_code"] = json["country"]

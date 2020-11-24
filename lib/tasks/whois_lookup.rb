@@ -54,9 +54,7 @@ class WhoisLookup < BaseTask
             
       out = whois_safe _get_entity_name
       return nil if out.empty?
-      
-      require 'pry'; binding.pry
-
+    
       out.each do |wh|
         _create_entity "NetBlock", wh
       end
