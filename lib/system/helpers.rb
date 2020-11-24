@@ -16,6 +16,13 @@ module System
     def start_task(queue, project, existing_scan_result_id, task_name, entity, depth,
           options=[], handlers=[], machine_name="external_discovery_light_active", auto_enrich=true, auto_scope=false)
 
+      # check name of task, if its a nuclei task => use nuclei runner and pass template as option
+      if task_name =~ /^nuclei\:.*/
+        template_name = task_name.split(":")[1]
+        task_name = "nuclei_runner"
+        options = [{name: "template", regex: "alpha_numeric_list", value: template_name}]
+      end
+      
       # Create the task result, and associate our entity and options
       logger = Intrigue::Core::Model::Logger.create(:project_id => project.id)
       task_result = Intrigue::Core::Model::TaskResult.create({
