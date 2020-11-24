@@ -18,8 +18,8 @@
     <%= erb :'/entities/_search', :layout => false %>
   </div>
   <div class="col-sm-10">
-    <a href="<%=@calculated_url%>?page=<%=@page-1%>">previous</a>
-    <a href="<%=@calculated_url%>?page=<%=@page+1%>">next</a>
+    <a href="<%=@calculated_url%>&page=<%=@page-1%>">previous</a>
+    <a href="<%=@calculated_url%>&page=<%=@page+1%>">next</a>
     <%= "Page: #{@page}" %> / <%= "Viewing Results: #{@count * (@page-1)} .. #{@count * @page-1}" %>
   
     <script type="text/javascript" src="/js/sorttable.js"></script>
@@ -81,8 +81,8 @@
         <% end %>
       </tbody>
     </table>
-    <a href="<%=@calculated_url%>?page=<%=@page-1%>">previous</a>
-    <a href="<%=@calculated_url%>?page=<%=@page+1%>">next</a>
+    <a href="<%=@calculated_url%>&page=<%=@page-1%>">previous</a>
+    <a href="<%=@calculated_url%>&page=<%=@page+1%>">next</a>
     <br><br><br>
   <form name="entity_delete_form" method="get"><input type="hidden" id="entity" name="entity"/></form>
   </div>
