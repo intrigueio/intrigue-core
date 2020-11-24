@@ -33,8 +33,8 @@ class EnumerateNameservers < BaseTask
       _set_entity_detail("nameservers", whois_info["nameservers"])
       _set_entity_detail("contacts", whois_info["contacts"])
 
-      if whois_info["nameservers"]
-        whois_info["nameservers"].each do |n|
+      if whois_info["nameservers"] && !whois_info["nameservers"].empty?
+        whois_info["nameservers"].compact.uniq.each do |n|
           # Create a nameserver object
           _create_entity "Nameserver", "name" => n
         end

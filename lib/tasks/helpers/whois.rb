@@ -78,8 +78,8 @@ module Whois
 
     else
       hash = {}
-      hash["contacts"] = _parse_nameservers(parser)
-      hash["nameservers"] = _parse_contacts(parser)
+      hash["contacts"] = _parse_contacts(parser)
+      hash["nameservers"] = _parse_nameservers(parser)
       out << hash
     end
 
@@ -294,14 +294,12 @@ module Whois
         # merge in our details
         out << {
           "exact" => exact,
-          "name" => "#{start_address}/#{x}",
+          "name" => "#{start_address}/#{x.split("/").last}",
           "start_address" => "#{start_address}",
           "end_address" => "#{end_address}",
-          
           # note that this will already be the length if pulled from above, 
           # split is harmless 
-          "cidr" => "#{x}".split("/").last, 
-
+          "cidr" => "#{x.split("/").last}", 
           "rir" => "RIPE",
           #"description" => "#{description}".sanitize_unicode,
           "organization_reference" => "#{netname}".sanitize_unicode,

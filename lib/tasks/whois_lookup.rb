@@ -55,8 +55,8 @@ class WhoisLookup < BaseTask
       out = whois_safe _get_entity_name
       return nil if out.empty?
     
-      out.each do |wh|
-        _create_entity "NetBlock", wh
+      out.each do |nb|
+        _create_entity "NetBlock",  { "name" => nb["name"] } 
       end
 
     elsif _get_entity_type_string == "Organization"
@@ -65,7 +65,7 @@ class WhoisLookup < BaseTask
       out = whois_query_arin_org _get_entity_name
       unless out.empty?
         out.each do |nb|
-          _create_entity "NetBlock", nb
+          _create_entity "NetBlock", {"name" => nb["name"]}
         end
       end
 
@@ -78,7 +78,7 @@ class WhoisLookup < BaseTask
 
         if opt_create_nameservers
           wh["nameservers"].each do |n|
-            _create_entity("DnsRecord",{"name" => "#{n}"})
+            _create_entity("DnsRecord", { "name" => "#{n}" })
           end
         end
 
