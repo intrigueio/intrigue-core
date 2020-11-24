@@ -39,6 +39,8 @@ module Task
       stderr_buffer   = stderr.read
       command_stdout  = stdout_buffer if stdout_buffer.length > 0
       command_stderr  = stderr_buffer if stderr_buffer.length > 0
+      stdout.close
+      stderr.close
       thread.value # Wait for Process::Status object to be returned
     end
     return ShellCommand.new(command_stdout, command_stderr, process)
