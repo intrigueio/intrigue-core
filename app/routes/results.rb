@@ -88,7 +88,6 @@ class CoreApp < Sinatra::Base
 
       task_name = "#{@params["task"]}"
       entity_id = @params["entity_id"]
-      depth = @params["depth"].to_i
       current_project = Intrigue::Core::Model::Project.first(:name => @project_name)
       entity_name = "#{@params["attrib_name"]}"
       auto_scope = true # manually created
@@ -100,11 +99,13 @@ class CoreApp < Sinatra::Base
         handlers = []
       end
 
-      ### Machine definition, make sure we have a valid type
-      if Intrigue::MachineFactory.has_machine? "#{@params["machine"]}"
-        machine_name = "#{@params["machine"]}"
+      ### Workflow definition, make sure we have a valid type
+      if wf = Intrigue::Core::Model::Workflow.first(:name => "#{@params["workflow"]}")
+        workflow_name = wf.name
+        workflow_depth = wf.default_depth
       else
-        machine_name = "external_discovery_light_active"
+        workflow_name = "light_external_active_organization_attack_surface_enumeration"
+        workflow_depth = 0
       end
 
       auto_enrich = @params["auto_enrich"] == "on" ? true : false
@@ -151,7 +152,8 @@ class CoreApp < Sinatra::Base
 
       # Start the task run!
       task_result = start_task("task", current_project, nil, task_name, entity,
-                                depth, options, handlers, machine_name, auto_enrich, auto_scope)
+                                workflow_depth, options, handlers, workflow_name, 
+                                auto_enrich, auto_scope)
 
       entity.task_results << task_result
       entity.save
@@ -168,7 +170,6 @@ class CoreApp < Sinatra::Base
     post '/:project/interactive/upload' do
       task_name = "#{@params["task"]}"
       entity_id = @params["entity_id"]
-      depth = @params["depth"].to_i
       entity_name = "#{@params["attrib_name"]}".strip
       file_format = "#{@params["file_format"]}".strip
 
@@ -292,11 +293,13 @@ class CoreApp < Sinatra::Base
         handlers = []
       end
 
-      ### Machine definition, make sure we have a valid type
-      if Intrigue::MachineFactory.has_machine? "#{@params["machine"]}"
-        machine_name = "#{@params["machine"]}"
+      ### Workflow definition, make sure we have a valid type
+      if wf = Intrigue::Core::Model::Workflow.first(:name => "#{@params["workflow"]}")
+        workflow_name = wf.name
+        workflow_depth = wf.default_depth
       else
-        machine_name = "external_discovery_light_active"
+        workflow_name = "light_external_active_organization_attack_surface_enumeration"
+        workflow_depth = 0
       end
 
       auto_enrich = @params["auto_enrich"] == "on" ? true : false
@@ -331,7 +334,7 @@ class CoreApp < Sinatra::Base
 
         # Start the task run!
         task_result = start_task("task", current_project, nil, task_name, entity,
-                  depth, nil, handlers, machine_name, auto_enrich, auto_scope)
+                  workflow_depth, nil, handlers, workflow_name, auto_enrich, auto_scope)
 
         entity.task_results << task_result
         entity.save
@@ -407,7 +410,7 @@ class CoreApp < Sinatra::Base
       task_name = payload["task"]
       options = payload["options"]
       handlers = payload["handlers"]
-      machine_name = payload["machine_name"]
+      workflow_name = payload["workflow_name"]
       auto_enrich = "#{payload["auto_enrich"]}".to_bool
       auto_scope = true # manually created
 
@@ -420,7 +423,7 @@ class CoreApp < Sinatra::Base
 
       # Start the task_run
       task_result = start_task("task", project, nil, task_name, entity, depth,
-                                  options, handlers, machine_name, auto_enrich, auto_scope)
+                                  options, handlers, workflow_name, auto_enrich, auto_scope)
 
       # manually start enrichment, since we've already created the entity above, it won't auto-enrich ^
       if auto_enrich && !(task_name =~ /^enrich/)

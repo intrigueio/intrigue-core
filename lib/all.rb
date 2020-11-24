@@ -36,14 +36,9 @@ require_relative 'system/json_data_export_file'
 ####
 require_relative 'intrigue-tasks'
 
-####
-## Machines
-####
-require_relative 'machine_factory'
-require_relative 'machines/base'
-machines_folder = File.expand_path('../machines', __FILE__) # get absolute directory
-Dir["#{machines_folder}/*.rb"].each {|f| require_relative f}
-
+###
+### TODO ... load in default workflows here 
+### 
 
 # Client libraries
 require_relative 'client'

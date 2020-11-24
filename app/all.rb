@@ -24,6 +24,7 @@ require_relative "models/project"
 require_relative "models/task_result"
 require_relative "models/scan_result"
 require_relative "models/scoping_log"
+require_relative "models/workflow"
 
 require_relative "workers/generate_graph_worker"
 require_relative "workers/generate_meta_graph_worker"

@@ -106,6 +106,14 @@ module Intrigue
       ### XXX - exception handling? This should return a specific exception.
       raise "No task with the name: #{name}!"
     end
+
+    def self.class_by_name(name)
+      t = @tasks.find{|t| t.metadata[:name] == name }
+         
+      ### XXX - exception handling? This should return a specific exception.
+      raise "No task with the name: #{name}!" unless t
+    t
+    end
   
     #
     # XXX - can :name be set on the class vs the object
@@ -120,8 +128,8 @@ module Intrigue
   
       ### XXX - exception handling? Should this return an exception?
       raise "No task with the name: #{name}!"
-    end
-  
+    end  
+
   end
 end
   
