@@ -67,6 +67,8 @@ class UriCheckHttp2Support < BaseTask
         _log_error "Unable to connect, broken pipe"
       rescue Errno::EHOSTUNREACH => e
         _log_error "Unable to connect, host unreachable"
+      rescue Errno::ECONNREFUSED => e 
+        _log_error "Unable to connect, connection refused"
       rescue Errno::ECONNRESET => e 
         _log_error "Unable to connect, connection reset"
       rescue Errno::ETIMEDOUT => e 

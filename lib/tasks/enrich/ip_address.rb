@@ -96,8 +96,8 @@ class IpAddress < Intrigue::Task::BaseTask
       _log "Skipping lookup, we already have the details"
       out = @entity.details
     else # do the lookup
-      out = whois(lookup_name).first
-      _set_entity_detail "whois_full_text", out["whois_full_text"]
+      out = whois(lookup_name)
+      _set_entity_detail "whois_full_text", out.first["whois_full_text"] if out 
     end
 
     whois_text = _get_entity_detail("whois_full_text")    

@@ -9,31 +9,38 @@ module Whois
   def whois(lookup_string)
 
     out = []
+    tries = 0
+    max_tries = 3
+    answer = nil 
 
-    begin
-      whois = ::Whois::Client.new #(:timeout => 60)
-      answer = whois.lookup(lookup_string)
-    rescue ::Whois::ResponseIsThrottled => e
-      _log_error "Unable to query #{lookup_string}, response throttled, trying again in #{sleep_seconds} secs."
-      sleep_seconds = rand(60)
-      sleep sleep_seconds
-      return whois(lookup_string)
-    rescue ::Whois::ServerNotSupported => e
-      _log_error "Server not supported for #{lookup_string} #{e}"
-    rescue ::Whois::NoInterfaceError => e
-      _log_error "No interface: #{lookup_string} #{e}"
-    rescue ::Whois::WebInterfaceError => e
-      _log_error "TLD has no WHOIS Server, go to the web interface: #{lookup_string} #{e}"
-    rescue ::Whois::AllocationUnknown => e
-      _log_error "Strange. This object is unknown: #{lookup_string} #{e}"
-    rescue ::Whois::ConnectionError => e
-      _log_error "Unable to query whois, connection error: #{lookup_string} #{e}"
-    rescue ::Whois::ServerNotFound => e
-      _log_error "Unable to query whois, server not found: #{lookup_string} #{e}"
-    rescue Errno::ECONNREFUSED => e
-      _log_error "Unable to query whois, connection refused: #{lookup_string} #{e}"
-    rescue Timeout::Error => e
-      _log_error "Unable to query whois, timed out: #{lookup_string} #{e}"
+    until answer || tries > max_tries
+      
+      begin
+        tries +=1 
+        whois = ::Whois::Client.new(:timeout => 20)
+        answer = whois.lookup(lookup_string)
+      
+      rescue ::Whois::ResponseIsThrottled => e
+        sleep_seconds = rand(20)
+        _log_error "Unable to query #{lookup_string}, response throttled, trying again in #{sleep_seconds} secs."
+        sleep sleep_seconds
+      rescue ::Whois::ServerNotSupported => e
+        _log_error "Server not supported for #{lookup_string} #{e}"
+      rescue ::Whois::NoInterfaceError => e
+        _log_error "No interface: #{lookup_string} #{e}"
+      rescue ::Whois::WebInterfaceError => e
+        _log_error "TLD has no WHOIS Server, go to the web interface: #{lookup_string} #{e}"
+      rescue ::Whois::AllocationUnknown => e
+        _log_error "Strange. This object is unknown: #{lookup_string} #{e}"
+      rescue ::Whois::ConnectionError => e
+        _log_error "Unable to query whois, connection error: #{lookup_string} #{e}"
+      rescue ::Whois::ServerNotFound => e
+        _log_error "Unable to query whois, server not found: #{lookup_string} #{e}"
+      rescue Errno::ECONNREFUSED => e
+        _log_error "Unable to query whois, connection refused: #{lookup_string} #{e}"
+      rescue Timeout::Error => e
+        _log_error "Unable to query whois, timed out: #{lookup_string} #{e}"
+      end
     end
 
     unless answer
@@ -286,7 +293,6 @@ module Whois
       # convert the range to cidr format
       unless cidr 
         cidrs = range_to_cidrs(start_address, end_address).map{|x| x.to_cidr }
-        raise "Multiple CIDRs available!!!" if cidrs.count > 1
       end
 
       out = []

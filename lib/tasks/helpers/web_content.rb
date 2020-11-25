@@ -2,57 +2,6 @@
 module Intrigue
 module Task
 module WebContent
-  
-  def extract_and_fingerprint_scripts(script_list, host)
-    components = []
-    script_list.each do |s|
-
-      # skip anything that's not http
-      next unless s =~ /^http/
-
-      begin 
-        uri = URI.parse(s)
-      rescue URI::InvalidURIError => e
-        @task_result.logger.log "Unable to parse improperly formatted URI: #{s}"
-        next # unable to parse 
-      end
-
-      next unless uri.host && uri.port && uri.scheme =~ /^http/
-      ### 
-      ### Determine who's hosting
-      ### 
-      begin
-        if uri.host =~ /#{host}/
-          host_location = "local"
-        else
-          host_location = "remote"
-        end
-      rescue URI::InvalidURIError => e
-        host_location = "unknown"
-      end
-
-      ###
-      ### Match it up with ident  
-      ###
-      ident_matches = generate_http_requests_and_check(s, {'only-check-base-url':true, }) # "#{url}"
-      js_fp_matches = ident_matches["fingerprint"].select{|x| x["tags"] && x["tags"].include?("Javascript") }
-
-      if js_fp_matches.count > 0
-        js_fp_matches.each do |m|
-          components << m.merge({"uri" => s, "relative_host" =>  host_location })
-        end
-      else 
-        # otherwise, we didnt find it, so just stick in a url withoout a name / version
-        components << {"uri" => s, "relative_host" =>  host_location }
-      end
-
-    end
-    
-    ### Maybe re-enable eventually
-    #new_libraries = gather_javascript_libraries(session, uri)
-
-  components.compact
-  end
 
   def html_dom_to_string(body)
     dom_string = ""

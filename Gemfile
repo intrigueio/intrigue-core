@@ -70,13 +70,11 @@ gem 'whoisology',             :git => 'https://github.com/pentestify/whoisology.
 gem 'open3'
 gem 'typhoeus'
 
-# swap these if developing on chrome_remote locally
+# comment if developing on chrome_remote locally
 gem 'chrome_remote',          :git => 'https://github.com/intrigueio/chrome_remote.git'
-#gem 'chrome_remote',          :path => "~/chrome_remote"
 
-# swap these if developing on ident locally
+# comment if developing on ident locally
 gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git', :branch => "main"
-#gem 'intrigue-ident',         :path => "~/intrigue-ident"
 
 # vulndb
 gem 'versionomy'
@@ -95,7 +93,9 @@ gem 'pry-byebug'              # Debugging
 gem 'yard'
 gem "sentry-raven"            # Error tracking (disabled by default)
 
-### Private checks and modules ...  uncomment if running in (dev) hosted configuration
+### Localchecks and modules ... uncomment if needed
+#gem 'chrome_remote',                 :path => "~/chrome_remote"
+#gem 'intrigue-ident',                :path => "~/intrigue-ident"
 #gem 'intrigue-ident-private',        :path => "~/intrigue-ident-private"
 #gem 'intrigue-core-private',         :path => "~/intrigue-core-private"
 #gem 'ruclei',                        :path => "~/ruclei"
