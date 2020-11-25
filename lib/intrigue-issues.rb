@@ -36,7 +36,7 @@ class IssueFactory
     self.issues.each do |h| 
       # generate the instances
       issue_instance = h.generate({})
-      return issue_instance[:name] if issue_instance["check"] =~ /inference:#{cve_id}/i      
+      return issue_instance[:name] if issue_instance[:check] =~ /inference:#{cve_id}/i      
     end
   nil
   end
