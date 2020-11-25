@@ -4,21 +4,23 @@ class BaseTask
 
   # include default helpers
   include Intrigue::Task::Generic
-  include Intrigue::Task::Issue
+  
   include Intrigue::Task::BinaryEdge
   include Intrigue::Task::Browser
   include Intrigue::Task::CloudProviders
   include Intrigue::Task::Data
   include Intrigue::Task::Dns
+  include Intrigue::Task::Ident
+  include Intrigue::Task::Issue
   include Intrigue::Task::Regex
   include Intrigue::Task::Services
+  include Intrigue::Task::TlsHandler
   include Intrigue::Task::VulnCheck
   include Intrigue::Task::VulnDb
   include Intrigue::Task::Web
   include Intrigue::Task::WebContent
   include Intrigue::Task::WebAccount
   include Intrigue::Task::Whois
-  include Intrigue::Task::TlsHandler
 
   include Sidekiq::Worker
   sidekiq_options :queue => "task", :backtrace => true
