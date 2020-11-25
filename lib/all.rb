@@ -150,13 +150,3 @@ begin
 rescue LoadError => e 
   # unable to load gem, presumably unavailable
 end
-
-###
-# load in ruclei if available
-###
-begin
-  require 'ruclei'
-rescue LoadError => e 
-  # unable to load gem, presumably unavailable
-end
-
