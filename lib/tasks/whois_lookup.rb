@@ -53,7 +53,7 @@ class WhoisLookup < BaseTask
       #  _get_entity_detail "whois_full_text" # return if we have it
             
       out = whois_safe _get_entity_name
-      return nil if out.empty?
+      return nil if !out || (out && out.empty?)
     
       out.each do |nb|
         _create_entity "NetBlock",  { "name" => nb["name"] } 
