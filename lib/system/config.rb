@@ -46,6 +46,7 @@ module System
     end
 
     def self.safe_write(path, content)
+      puts "Writing config to #{path}"
       # Create a tempfile and write to it
       temp_file = Tempfile.new 'config'
       File.open(temp_file, 'w+') do |f|

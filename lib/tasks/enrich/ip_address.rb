@@ -42,15 +42,23 @@ class IpAddress < Intrigue::Task::BaseTask
     results.each do |result|
       _log "Creating entity for... #{result["name"]}"
 
+      next unless result
       next unless result["name"]
       next unless result["name"].length > 0
 
       # create a domain for this entity
       entity = create_dns_entity_from_string(result["name"], @entity) if @entity.scoped?
-
-      # always create a for this entity
-      domain_name = parse_domain_name(result["name"])
-      create_dns_entity_from_string(domain_name)
+      
+      if entity && entity.type_string == "Domain"
+        # unscope it right away, since this can cause scope issues 
+        # ... not auto-unscoping it can lead us into trouble (digitalwarlock.com)
+        # ... 67.225.252.85
+        entity.set_scoped!(false, "Domain found during ip lookup, preventing auto-expand")
+        entity.save_changes
+      else  # always create a domain for this entity in case the above was a subdomain
+        domain_name = parse_domain_name(result["name"])
+        create_unscoped_dns_entity_from_string(domain_name)
+      end
 
       # if we're external, let's see if this matches 
       # a known dev or staging server pattern, and if we're internal, just
@@ -70,26 +78,15 @@ class IpAddress < Intrigue::Task::BaseTask
     _create_vhost_entities(lookup_name)
         
     # get ASN
-    # look up the details in team cymru's whois
-    _log "Using Team Cymru's Whois Service..."
-    cymru = cymru_ip_whois_lookup(lookup_name)
-    _set_entity_detail("asn", cymru[:net_asn])
-    _set_entity_detail("net_block", cymru[:net_block])
-    _set_entity_detail("net_country_code", cymru[:net_country_code])
-    _set_entity_detail("net_rir", cymru[:net_rir])
-    _set_entity_detail("net_allocation_date",cymru[:net_allocation_date])
-    _set_entity_detail("net_name",cymru[:net_name])
-    _create_entity("AutonomousSystem", :name => cymru[:net_asn], "unscoped" => true) if @entity.scoped 
+    # whois lookup 
+    _log "Using Whois Service..."
+    out = whois(lookup_name)
+    
+    ### TOOD ...capture ASN here?
 
     # geolocate
     _log "Geolocating..."
     location_hash = geolocate_ip(lookup_name)
-    unless location_hash
-      # fall back on cymru country code 
-      country_code = cymru[:net_country_code]
-      location_hash = {}
-      location_hash[:country_code] = country_code
-    end
     _set_entity_detail("geolocation", location_hash)
 
     ### 
@@ -99,7 +96,7 @@ class IpAddress < Intrigue::Task::BaseTask
       _log "Skipping lookup, we already have the details"
       out = @entity.details
     else # do the lookup
-      out = whois(lookup_name) || {}
+      out = whois(lookup_name).first
       _set_entity_detail "whois_full_text", out["whois_full_text"]
     end
 

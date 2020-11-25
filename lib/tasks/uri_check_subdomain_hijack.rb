@@ -69,7 +69,7 @@ class UriCheckSudomainHijack  < BaseTask
       elsif response_body =~ /\<h1\>Oops\! We couldn\&\#8217\;t find that page\.<\/h1>/i
         _create_hijackable_subdomain_issue "BigCartel", uri, "potential"
 
-      elsif response_body =~ /Repository not found/i || /The page you have requested does not exist/i
+      elsif response_body =~ /Repository not found/i || response_body =~ /The page you have requested does not exist/i
         _create_hijackable_subdomain_issue "Bitbucket", uri, "potential"
 
       elsif response_body =~ /<p class=\"bc-gallery-error-code\">Error Code: 404<\/p>/i
@@ -244,6 +244,9 @@ class UriCheckSudomainHijack  < BaseTask
 
       elsif response_body =~ /Looks like you\'ve traveled too far into cyberspace/i
         _create_hijackable_subdomain_issue "Vend", uri, "potential"
+
+      elsif response_body =~ /The deployment could not be found on Vercel\./i
+        _create_hijackable_subdomain_issue "Vercel", uri, "potential"
 
       elsif response_body =~ /domain is already connected to a Webflow site/i
         _create_hijackable_subdomain_issue "Webflow", uri, "potential" unless (uri =~ /webflow.io/)

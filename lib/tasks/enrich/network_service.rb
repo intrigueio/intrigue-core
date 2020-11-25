@@ -109,7 +109,7 @@ class NetworkService < Intrigue::Task::BaseTask
       ident_matches = generate_ftp_request_and_check(ip_address) || {}
     end
       
-    if port == 22 && !ident_matches
+    if (port == 22 || port == 2222) && !ident_matches
       ident_matches = generate_ssh_request_and_check(ip_address) || {}
     end
       

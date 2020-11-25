@@ -6,7 +6,7 @@
 
 # if these are already set by our parent, use that.. otherwise sensible defaults
 export INTRIGUE_DIRECTORY="${IDIR:=/home/$USER/core}"
-export RUBY_VERSION="${RUBY_VERSION:=2.6.5}"
+export RUBY_VERSION="${RUBY_VERSION:=2.7.2}"
 export DEBIAN_FRONTEND=noninteractive
 
 # Clean up
@@ -124,7 +124,7 @@ sudo apt-get -y --no-install-recommends install make \
   dnsmasq \
   systemd \
   wget \
-  python-minimal && 
+  python3-minimal && 
   rm -rf /var/lib/apt/lists/*
 
 #echo "[+] Installing Postgres 12"

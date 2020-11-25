@@ -27,19 +27,22 @@ class EnumerateNameservers < BaseTask
 
     # grab whois info
     out = whois(lookup_name)
-    if out
-      _set_entity_detail("whois_full_text", out["whois_full_text"])
-      _set_entity_detail("nameservers", out["nameservers"])
-      _set_entity_detail("contacts", out["contacts"])
+    out.each do |whois_info|
 
-      if out["nameservers"]
-        out["nameservers"].each do |n|
+      _set_entity_detail("whois_full_text", whois_info["whois_full_text"])
+      _set_entity_detail("nameservers", whois_info["nameservers"])
+      _set_entity_detail("contacts", whois_info["contacts"])
 
+      if whois_info["nameservers"] && !whois_info["nameservers"].empty?
+        whois_info["nameservers"].compact.uniq.each do |n|
           # Create a nameserver object
           _create_entity "Nameserver", "name" => n
-
         end
       end
+
+      ###
+      ### TODO ... create contacts here
+      ###
 
     end
 

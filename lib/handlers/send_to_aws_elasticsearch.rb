@@ -1,8 +1,9 @@
 require 'faraday_middleware/aws_sigv4'
 
 module Intrigue
+module Core
 module Handler
-  class SendToAwsElasticsearch < Intrigue::Handler::Base
+  class SendToAwsElasticsearch < Intrigue::Core::Handler::Base
 
     def self.metadata
       {
@@ -78,5 +79,6 @@ module Handler
 
 
   end
+end
 end
 end

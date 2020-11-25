@@ -23,7 +23,6 @@ include Intrigue::Core::System::Helpers
 require_relative 'system/dns_helpers'
 #include Intrigue::Core::System::DnsHelpers
 
-
 # Intrigue Export Format
 require_relative 'system/json_data_export_file'
 
@@ -133,3 +132,31 @@ if Intrigue::Core::System::Config.config["intrigue_load_paths"]
 
   end
 end
+
+###
+# load in any private checks if they're available, fail silently if not
+###
+begin
+  require 'intrigue-ident-private'
+rescue LoadError => e 
+  # unable to load gem, presumably unavailable
+end
+
+###
+# load in any private tasks if they're available, fail silently if not
+###
+begin
+  require 'intrigue-core-private'
+rescue LoadError => e 
+  # unable to load gem, presumably unavailable
+end
+
+###
+# load in ruclei if available
+###
+begin
+  require 'ruclei'
+rescue LoadError => e 
+  # unable to load gem, presumably unavailable
+end
+

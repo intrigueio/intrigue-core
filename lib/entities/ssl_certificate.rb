@@ -41,7 +41,6 @@ class SslCertificate < Intrigue::Core::Model::Entity
     ["enrich/ssl_certificate"]
   end
 
-
 end
 end
 end

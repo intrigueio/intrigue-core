@@ -1,6 +1,7 @@
 module Intrigue
+module Core
 module Handler
-  class WriteToFileCsv < Intrigue::Handler::Base
+  class WriteToFileCsv < Intrigue::Core::Handler::Base
 
     def self.metadata
       {
@@ -26,5 +27,6 @@ module Handler
     end
 
   end
+end
 end
 end

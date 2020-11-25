@@ -26,7 +26,6 @@ class String < Intrigue::Core::Model::Entity
   true
   end
 
-
 end
 end
 end

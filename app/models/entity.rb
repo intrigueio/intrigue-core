@@ -69,20 +69,20 @@ module Model
     # default method that scopes / unscoped entities (can be overridden)
     # TODO ... maybe we move the logic of details that exists in entity_manager here?
     def scoped?
-      raise "Method must be oveeridden for #{self.class}!"
+      raise "Method must be overidden for #{self.class}!"
     end
 
     def set_scoped!(bool_val=true, reason=nil)
 
       # always respect the deny list
       if self.project.deny_list_entity?(type_string, name)
-        bool_value = false
+        bool_val = false
         reason = "deny_list_override"
       end
 
       # but always ALWAYS respect the allow list
       if self.project.allow_list_entity?(type_string, name)
-        bool_value = true
+        bool_val = true
         reason = "allow_list_override"
       end
 
@@ -312,14 +312,14 @@ module Model
         <label for="entity_type" class="col-xs-4 control-label">Entity Type</label>
         <div class="col-xs-8">
           <select class="form-control input-sm" id="entity_type" name="entity_type">
-            <option> #{self.type_string} </option>
+            <option> #{URI.encode_www_form_component self.type_string} </option>
           </select>
         </div>
       </div>
       <div class="form-group">
         <label for="attrib_name" class="col-xs-4 control-label">Entity Name</label>
         <div class="col-xs-8">
-          <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name" value="#{self.name}">
+          <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name" placeholder="#{URI.encode_www_form_component self.name}">
         </div>
       </div>}
     end

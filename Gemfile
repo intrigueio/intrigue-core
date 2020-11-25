@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.6.5'
+ruby '2.7.2'
 
 # core
 gem 'sinatra'                 #'~> 2.0.1'
@@ -7,13 +7,11 @@ gem 'sinatra-contrib'         #'~> 2.0.1'
 gem 'puma'                    # Application Server
 gem 'eventmachine'
 gem 'rack-cors'
-
 gem 'redis'                   # Redis
 gem 'redis-namespace'         # Redis
 gem 'sidekiq'                 # Background Tasks
 gem 'sidekiq-failures'        # Background Tasks
 gem 'sidekiq-limit_fetch'     # Dynamic queueing
-
 gem 'thor'                    # CLI
 gem 'elasticsearch'           # Database
 gem 'faraday_middleware-aws-sigv4' # AWS elasticsearch
@@ -51,6 +49,8 @@ gem 'google-api-client'
 gem 'googleauth'
 gem 'google-cloud-storage'
 gem 'googleajax'              # search_google
+gem 'ip_ranger',              :git => "https://github.com/intrigueio/ip_ranger"
+gem 'ipaddr'
 gem 'maxminddb',              :git => "https://github.com/intrigueio/maxminddb"
 gem 'net-dns'                 # dns_cache_snoop
 gem 'net-http2'               # http2 client support
@@ -76,7 +76,7 @@ gem 'chrome_remote',          :git => 'https://github.com/intrigueio/chrome_remo
 
 # swap these if developing on ident locally
 gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git', :branch => "main"
-#gem 'intrigue-ident',         :path => "~/ident/intrigue-ident"
+#gem 'intrigue-ident',         :path => "~/intrigue-ident"
 
 # vulndb
 gem 'versionomy'
@@ -94,3 +94,8 @@ gem 'pry'                     # Debugging
 gem 'pry-byebug'              # Debugging
 gem 'yard'
 gem "sentry-raven"            # Error tracking (disabled by default)
+
+### Private checks and modules ...  uncomment if running in (dev) hosted configuration
+#gem 'intrigue-ident-private',        :path => "~/intrigue-ident-private"
+#gem 'intrigue-core-private',         :path => "~/intrigue-core-private"
+#gem 'ruclei',                        :path => "~/ruclei"

@@ -178,7 +178,6 @@ module Dns
         lookup_types.each do |t|
           Resolv::DNS.open() {|dns|
             dns.timeouts = 5
-
             resources.concat(dns.getresources(lookup_name, t)) 
           }
         end
@@ -404,11 +403,6 @@ module Dns
       end
     end
   txt_records.flatten.uniq
-  end
-
-  def collect_whois_data(lookup_name)
-      _log "Collecting Whois record"
-      whois(lookup_name)
   end
 
   def collect_resolutions(results)

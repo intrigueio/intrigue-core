@@ -10,7 +10,7 @@ To get started quickly and play around with an instance, head on over to the [Ge
 
 ### Using the web interface
 
-To use the web interface, browse to http://127.0.0.1:7777. Once you're able to connect, you can follow the instructions here: http://core.intrigue.io/up-and-running/
+To use the web interface, browse to https://127.0.0.1:7777. Once you're able to connect, you can follow the instructions here: http://core.intrigue.io/up-and-running/
 
 ### Configuring the system
 
@@ -62,6 +62,8 @@ To get help in real time, join our [Intrigue Community slack](https://join.slack
 
 # Key Contributors
 
-Intrigue Core would not be possible without work, time, and attention from the following contributors: 
-
+Intrigue Core would not be possible without the generous time and work from our contributors and maintainers: 
+ 
  * [Anas Ben Salah](https://twitter.com/bensalah_anas)
+ * [Jonathan Cran](https://twitter.com/jcran)
+ * [Shpend Kurtishaj](https://twitter.com/shpendk)

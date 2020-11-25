@@ -50,7 +50,7 @@ module Machine
           start_recursive_task(task_result,"enumerate_nameservers", entity)
   
           # try an nsec walk
-          start_recursive_task(task_result,"dns_nsec_walk", entity ,[], true)
+          #start_recursive_task(task_result,"dns_nsec_walk", entity ,[], true)
   
           # attempt a zone transfer
           start_recursive_task(task_result,"dns_transfer_zone", entity, [], true)
@@ -155,11 +155,6 @@ module Machine
           else
             task_result.log "Cowardly refusing to scan this netblock: #{entity}.. it's not scannable!"
           end
-  
-        elsif entity.type_string == "NetworkService"
-
-          # run a traceroute
-          start_recursive_task(task_result,"tcp_traceroute",entity, [])
   
         elsif entity.type_string == "Organization"
   

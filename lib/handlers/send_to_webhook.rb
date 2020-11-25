@@ -1,6 +1,7 @@
 module Intrigue
+module Core
 module Handler
-  class SendToWebhook < Intrigue::Handler::Base
+  class SendToWebhook < Intrigue::Core::Handler::Base
 
     def self.metadata
       {
@@ -44,5 +45,6 @@ module Handler
     end
 
   end
+end
 end
 end

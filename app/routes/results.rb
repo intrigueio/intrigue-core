@@ -1,5 +1,5 @@
 class CoreApp < Sinatra::Base
-  
+
     # Export All task results
     get '/:project/results.json/?' do
        session[:flash] = "Not implemented"
@@ -172,7 +172,7 @@ class CoreApp < Sinatra::Base
       entity_name = "#{@params["attrib_name"]}".strip
       file_format = "#{@params["file_format"]}".strip
 
-      # first check that our file is sane 
+      # first check that our file is sane
       file_type = @params["entity_file"]["type"]
       puts "Got file of type: #{file_type}"
 
@@ -181,12 +181,12 @@ class CoreApp < Sinatra::Base
         session[:flash] = "Bad file data, ensure we're a text file and valid format: #{file_type}"
         redirect FRONT_PAGE
       end
-      
+
       # get the file
       entity_file = @params["entity_file"]["tempfile"]
       f = File.open entity_file,"r"
       file_lines = f.readlines
-      f.close 
+      f.close
 
       # ensure we're sane  with the data we're bringing in
       file_lines.each do |l|
@@ -218,9 +218,9 @@ class CoreApp < Sinatra::Base
       elsif file_format == "intrigueio_fingerprint_csv"
         puts 'Parsing Intrigue.io Bulks Fingerprint file'
         file_lines.each do |l|
-          
+
           next if l =~ /^collection, entity type, entity name/i
-          
+
           # strip out the data
           split_line = l.split(",").map{|x| x.strip }
           col = split_line[0] # indicator type
@@ -235,9 +235,9 @@ class CoreApp < Sinatra::Base
       elsif file_format == "otx_csv"
         puts 'Parsing Alienvault file'
         file_lines.each do |l|
-          
+
           next if l =~ /^Indicator type,Indicator,Description\r\n$/
-          
+
           # strip out the data
           split_line = l.split(",").map{|x| x.strip }
           et = split_line[0] # indicator type
@@ -245,7 +245,7 @@ class CoreApp < Sinatra::Base
 
           # start here
           modified_et = et.capitalize
-          
+
           # translate
           modified_et = "Uri" if modified_et == "Url"
           modified_et = "DnsRecord" if modified_et == "Hostname"
@@ -254,7 +254,31 @@ class CoreApp < Sinatra::Base
 
           entities << {entity_type: "#{modified_et}", entity_name: "#{en}" }
         end
-      else 
+        ###
+        ### Shodan.io (CSV)
+        ###
+        elsif file_format == "shodan_csv"
+          puts 'Parsing shodan file'
+          file_lines.each do |l|
+
+            next if l =~ /^IpAddress,Indicator\r\n$/
+
+            # strip out the data
+            split_line = l.split(",").map{|x| x.strip }
+            et = split_line[0] # indicator type.
+            en = split_line[1] # indicator
+
+
+            # start here
+            modified_et = et.capitalize
+
+            # translate
+            modified_et = "IpAddress" if modified_et == "Ipv4"
+            modified_et = "IpAddress" if modified_et == "Ipv6"
+
+            entities << {entity_type: "#{modified_et}", entity_name: "#{en}" }
+          end
+      else
         session[:flash] = "Unkown File Format #{file_format}, failing"
         redirect FRONT_PAGE
       end
@@ -282,7 +306,7 @@ class CoreApp < Sinatra::Base
       current_project = Intrigue::Core::Model::Project.first(:name => @project_name)
 
       # for each entity in thefile
-      
+
       entities.each do |e|
         entity_type = e[:entity_type]
         entity_name = e[:entity_name]
@@ -294,7 +318,7 @@ class CoreApp < Sinatra::Base
           project = e[:collection]
           current_project = Intrigue::Core::Model::Project.update_or_create(:name => project)
         end
-      
+
 
         # create the first entity with empty details
         #next unless Intrigue::EntityFactory.entity_types.include?(entity_type)

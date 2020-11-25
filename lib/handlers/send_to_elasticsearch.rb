@@ -1,9 +1,7 @@
-
-
-
 module Intrigue
+module Core
 module Handler
-  class SendToElasticsearch < Intrigue::Handler::Base
+  class SendToElasticsearch < Intrigue::Core::Handler::Base
 
     def self.metadata
       {
@@ -73,5 +71,6 @@ module Handler
 
 
   end
+end
 end
 end

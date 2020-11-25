@@ -133,11 +133,14 @@ class Uri < Intrigue::Task::BaseTask
     if response.code == "200"
 
       # capture cookies
-      set_cookie = response['set-cookie'] || response["Set-Cookie"]
-      _log "Got Cookie: #{set_cookie}" if set_cookie
+      set_cookie = [response.headers['set-cookie'] || response.headers["Set-Cookie"]].flatten.compact
+      _log "Got Cookie: #{set_cookie}" if !set_cookie.empty?
       
       # TODO - cookie scoped to parent domain
-      _log "Domain Cookie: #{set_cookie.split(";").detect{|x| x =~ /Domain:/i }}" if set_cookie
+      if !set_cookie.empty? 
+        domain_cookies = set_cookie.map{|x| x.split(";").detect{|x| x =~ /Domain=/i }}.compact.map{|x|x.strip}
+        _log "Domain Cookies: #{domain_cookies}"
+      end
 
       if scheme == "https"
 
@@ -154,8 +157,8 @@ class Uri < Intrigue::Task::BaseTask
         _log "Got cert's alt names: #{alt_names}"
 
         if set_cookie
-          _log "Secure Cookie: #{set_cookie.split(";").detect{|x| x =~ /secure/i }}"
-          _log "Httponly Cookie: #{set_cookie.split(";").detect{|x| x =~ /httponly/i }}"
+          #_log "Secure Cookie: #{set_cookie.split(";").detect{|x| x =~ /secure/i }}"
+          #_log "Httponly Cookie: #{set_cookie.split(";").detect{|x| x =~ /httponly/i }}"
 
           # check for authentication and if so, bump the severity
           auth_endpoint = ident_content_checks.select{|x|
@@ -163,13 +166,13 @@ class Uri < Intrigue::Task::BaseTask
 
           if auth_endpoint
             # create an issue if not detected
-            if !(set_cookie.split(";").detect{|x| x =~ /httponly/i })
+            if set_cookie.map{|x| x.split(";").detect{|x| x =~ /httponly/i }}.compact.empty?
               # 4 since we only create an issue if it's an auth endpoint
               severity = 4
               _create_missing_cookie_attribute_http_only_issue(uri, set_cookie)
             end
 
-            if !(set_cookie.split(";").detect{|x| x =~ /secure/i } )
+            if set_cookie.map{|x| x.split(";").detect{|x| x =~ /secure/i }}.compact.empty?
               # set a default,4 since we only create an issue if it's an auth endpoint
               severity = 4
               _create_missing_cookie_attribute_secure_issue(uri, set_cookie)
@@ -187,7 +190,7 @@ class Uri < Intrigue::Task::BaseTask
         if accepted_connections && accepted_connections.detect{ |x| x[:weak] == true }
           create_weak_cipher_issue(uri, accepted_connections)
         end
-
+        
         # Create findings if we have a deprecated protocol
         if accepted_connections && accepted_connections.detect{ |x|
             (x[:version] =~ /SSL/ || x[:version] == "TLSv1" ) }
@@ -198,10 +201,9 @@ class Uri < Intrigue::Task::BaseTask
       else # http endpoint, just check for httponly
 
         if set_cookie
-          _log "Httponly Cookie: #{set_cookie.split(";").detect{|x| x =~ /httponly/i }}"
 
           # create an issue if not detected
-          if !set_cookie.split(";").detect{|x| x =~ /httponly/i }
+          if set_cookie.map{|x| x.split(";").detect{|x| x =~ /httponly/i }}.compact.empty?
             _create_missing_cookie_attribute_http_only_issue(uri, set_cookie)
           end
         end
@@ -279,6 +281,7 @@ class Uri < Intrigue::Task::BaseTask
       "alt_names" => alt_names,
       "code" => response.code,
       "cookies" => set_cookie,
+      "domain_cookies" => domain_cookies,
       "favicon_md5" => favicon_md5,
       "favicon_sha1" => favicon_sha1,
       "ip_address" => resolved_ip_address,
@@ -411,7 +414,7 @@ class Uri < Intrigue::Task::BaseTask
 
   def check_options_endpoint(uri)
     response = http_request(:options, uri)
-    (response["allow"] || response["Allow"]) if response
+    (response.headers["allow"] || response.headers["Allow"]) if response
   end
 
   def check_forms(response_body)

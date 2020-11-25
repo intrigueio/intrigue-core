@@ -22,10 +22,6 @@ module Intrigue
     true
     end
   
-    #def enrichment_tasks
-    #  ["enrich/string"]
-    #end
-
 end
 end
 end

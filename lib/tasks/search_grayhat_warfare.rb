@@ -32,7 +32,11 @@ class SearchGrayhatWarfare < BaseTask
     search_uri = "https://buckets.grayhatwarfare.com/api/v1/buckets/0/#{max_buckets}?access_token=#{api_key}&keywords=#{search_string}"
 
     begin 
+      
+      # get it, make sure we don't have an empty response
       output = JSON.parse(http_get_body(search_uri))
+      return unless output 
+
       output["buckets"].each do |b|
         # {"id":21,"bucket":"0x4e84.test.s3-eu-west-1.amazonaws.com"}
         _create_entity "AwsS3Bucket", { 

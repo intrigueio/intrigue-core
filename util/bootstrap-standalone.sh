@@ -6,7 +6,7 @@
 
 # if these are already set by our parent, use that.. otherwise sensible defaults
 export INTRIGUE_DIRECTORY="${IDIR:=/home/$USER/core}"
-export RUBY_VERSION="${RUBY_VERSION:=2.6.5}"
+export RUBY_VERSION="${RUBY_VERSION:=2.7.2}"
 export DEBIAN_FRONTEND=noninteractive
 
 # Clean up
@@ -24,27 +24,27 @@ sudo DEBIAN_FRONTEND=noninteractive \
   apt-get -y -o \
   DPkg::options::="--force-confdef" -o \
   DPkg::options::="--force-confold" \
-  upgrade grub-pc dist-upgrade
+  upgrade grub-pc
 
 echo "[+] Reconfigure Dpkg"
 sudo dpkg --configure -a
+
 
 echo "[+] Installing Apt Essentials"
 sudo apt-get -y install tzdata wget
 sudo apt-get -y install lsb-core software-properties-common dirmngr apt-transport-https lsb-release ca-certificates locales
 
-# chrome repo
+
+# chrome
 echo "[+] Installing Chromium"
-#sudo add-apt-repository ppa:canonical-chromium-builds/stage
-#sudo apt-get update
 sudo apt-get -y install chromium-browser
-##### Install dependencies after update
+
 
 # set locales
-echo "LC_ALL=en_US.UTF-8" >> /etc/environment
-echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
-echo "LANG=en_US.UTF-8" > /etc/locale.conf
-locale-gen en_US.UTF-8
+sudo sh -c 'echo "LC_ALL=en_US.UTF-8" >> /etc/environment'
+sudo sh -c 'echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen'
+sudo sh -c 'echo "LANG=en_US.UTF-8" > /etc/locale.conf'
+sudo locale-gen en_US.UTF-8
 
 # just in case, do the fix-broken flag
 echo "[+] Installing Intrigue Dependencies..."
@@ -122,8 +122,8 @@ sudo apt-get -y --no-install-recommends install make \
   dnsmasq \
   systemd \
   wget \
-  python-minimal && 
-  rm -rf /var/lib/apt/lists/*
+  python3-minimal
+
 
 echo "[+] Installing Postgres 12"
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
@@ -136,8 +136,8 @@ echo "[+] Creating a home for binaries"
 mkdir -p $HOME/bin
 export BINPATH=$HOME/bin
 export PATH=$PATH:$BINPATH
-# and for latere
-echo export PATH=$PATH:$BINPATH ~/.bash_profile
+# and for later
+echo "export PATH=$PATH:$BINPATH" >> ~/.bash_profile
 
 # dnsmorph
 echo "[+] Getting DNSMORPH binaries... "
@@ -156,23 +156,27 @@ sudo apt install -y golang-go
 
 # ensure we have the path
 export GOPATH=$HOME/go
-export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-
+export PATH=$PATH:$GOPATH/bin
 # and for later
 echo export GOPATH=$HOME/go >> ~/.bash_profile
-echo export PATH=$PATH:$GOROOT/bin:$GOPATH/bin >> ~/.bash_profile
+echo export PATH=$PATH:$GOPATH/bin >> ~/.bash_profile
 
 # ffuf
 echo "[+] Getting Ffuf... "
-go get github.com/intrigueio/ffuf
+GO111MODULE=on go get -u -v github.com/ffuf/ffuf
 
 # gitrob
 echo "[+] Getting Gitrob... "
-go get github.com/intrigueio/gitrob
+cd $HOME/bin
+wget https://github.com/michenriksen/gitrob/releases/download/v2.0.0-beta/gitrob_linux_amd64_2.0.0-beta.zip
+unzip gitrob_linux_amd64_2.0.0-beta.zip
+chmod +x gitrob
+rm gitrob_linux_amd64_2.0.0-beta.zip README.md
+cd $HOME
 
 # gobuster
 echo "[+] Getting Gobuster... "
-go get github.com/intrigueio/gobuster.git
+go get github.com/OJ/gobuster
 
 # ghostcat
 echo "[+] Getting Ghostcat Vuln... "
@@ -204,6 +208,9 @@ if [ ! -f /usr/bin/rdpscan ]; then
   rm -rf rdpscan
 fi
 
+# subfinder 
+GO111MODULE=on go get -u -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder
+
 ### Install latest tika
 echo "[+] Installing Apache Tika from public.intrigue.io"
 cd $INTRIGUE_DIRECTORY/tmp
@@ -228,11 +235,12 @@ fi
 echo "bumping file-max settings"
 sudo bash -c "echo fs.file-max = 655355 >> /etc/sysctl.conf"
 
-# disable memory overcommit
+# enable heuristic memory overcommit
 echo "enable memory overcommit"
 sudo bash -c "echo vm.overcommit_memory=0 >> /etc/sysctl.conf"
 sudo sysctl -p
-  
+
+
 echo "Bumping ulimit file/proc settings in /etc/security/limits.conf"
 sudo bash -c "echo 'root hard nofile 524288' >> /etc/security/limits.conf"
 sudo bash -c "echo 'root soft nofile 524288' >> /etc/security/limits.conf"
@@ -253,7 +261,7 @@ sudo -u postgres /usr/lib/postgresql/*/bin/initdb /data/postgres
 
 sudo mkdir /data/redis
 sudo chown redis:redis /data/redis
-sudo chmod 644 /data/redis
+sudo chmod 700 /data/redis
 
 # Set the database to trust
 echo "[+] Updating postgres configuration, moving it to /data"
@@ -261,15 +269,18 @@ sudo sed -i 's/md5/trust/g' /etc/postgresql/*/main/pg_hba.conf
 sudo sed -i 's/peer/trust/g' /etc/postgresql/*/main/pg_hba.conf
 sudo sed -i "s/data_directory = .*/data_directory = \'\/data\/postgres\'/g" /etc/postgresql/*/main/postgresql.conf
 
-sudo systemctl stop redis-server
-
 echo "[+] Updating Redis configuration, moving it to /data"
+sudo systemctl stop redis-server
 # ensure we bind to localhost
 sudo sed -i '/^bind/s/bind.*/bind 127.0.0.1/' /etc/redis/redis.conf
 # change default direectory
 #sudo sed -i '/^dir/s/dir \/var\/lib\/redis/\/data\/redis/' /etc/redis/redis.conf
-sudo sed -i 's/dir \/var\/lib\/redis \/data\/redis/g' /etc/redis/redis.conf
-
+sudo sed -i 's/dir \/var\/lib\/redis/dir \/data\/redis/g' /etc/redis/redis.conf
+sudo mkdir /etc/systemd/system/redis-server.service.d
+sudo touch /etc/systemd/system/redis-server.service.d/override.conf
+sudo sh -c 'echo "[Service]" >> /etc/systemd/system/redis-server.service.d/override.conf'
+sudo sh -c 'echo "ReadWriteDirectories=-/data/redis" >> /etc/systemd/system/redis-server.service.d/override.conf'
+sudo systemctl daemon-reload
 sudo systemctl start redis-server
 
 echo "[+] Creating clean database"
@@ -296,7 +307,9 @@ if [ ! -d ~/.rbenv ]; then
   # manually load it up...
   eval "$(rbenv init -)"
   export PATH="$HOME/.rbenv/bin:$PATH"
-  
+  # for later
+  echo export PATH="$HOME/.rbenv/bin:$PATH" >> ~/.bash_profile
+
   # ruby-build
   mkdir -p ~/.rbenv/plugins
   git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
@@ -338,11 +351,11 @@ cd $INTRIGUE_DIRECTORY
 bundle update --bundler
 bundle install
 
-echo "[+] Running DB Migrations"
-bundle exec rake db:migrate
-
 echo "[+] Running System Setup"
 bundle exec rake setup
+
+echo "[+] Running DB Migrations"
+bundle exec rake db:migrate
 
 # TOOD ... remove this on next major release
 echo "[+] Intrigue services exist, removing... (ec2 legacy)"
@@ -376,6 +389,10 @@ if ! $(grep -q IDIR ~/.bash_profile); then
   echo "export IDIR=$INTRIGUE_DIRECTORY" >> ~/.bash_profile
 fi
 
+
 # Cleaning up
 echo "[+] Cleaning up!"
 sudo apt-get -y clean
+
+# source necessary environment variables and print instructions to start
+source ~/.bash_profile

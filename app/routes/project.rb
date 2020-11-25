@@ -37,6 +37,13 @@ class CoreApp < Sinatra::Base
         @project.vulnerability_checks_enabled = false
       end
 
+      # set country_code
+      if @params["country_code"] == "on"
+        @project.country_code = true
+      else 
+        @project.country_code = false
+      end
+
       # set reenrich
       if @params["allow_entity_reenrich"] == "on"
         @project.allow_reenrich = true

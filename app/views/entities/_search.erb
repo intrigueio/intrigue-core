@@ -14,9 +14,10 @@
         <option value="<%=d%>" <%="selected" if (@entity_types && @entity_types.include?(d.to_s))%>> <%=d%></option>
       <% end %>
     </select><br/>
-    <input id="include_unscoped" name="include_hidden" type="checkbox" <%='checked' if @include_hidden %> > Show Hidden <br/>
-    <input id="include_unscoped" name="include_unscoped" type="checkbox" <%='checked' if @include_unscoped %> > Show Unscoped <br/>
-    <input id="only_enriched" name="only_enriched" type="checkbox"> Only Enriched <br/>
+    <input id="include_hidden" name="include_hidden" type="checkbox" <%='checked' if @include_hidden %> > Show Hidden <br/>
+    <input id="only_scoped" name="only_scoped" type="checkbox" <%='checked' if @only_scoped %> > Only Scoped <br/>
+    <input id="only_enriched" name="only_enriched" type="checkbox" <%='checked' if @only_enriched %>> Only Enriched <br/>
+    <input id="grouped_entities" name="grouped_entities" type="checkbox" <%='checked' if @grouped_entities %> > Group View <br/>
 
     <input class="btn btn-primary" type="submit" value="Search">
   </form>

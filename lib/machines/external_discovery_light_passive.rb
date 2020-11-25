@@ -7,7 +7,7 @@ module Machine
         :name => "external_discovery_light_passive",
         :pretty_name => "External Discovery - Light, Passive",
         :passive => false,
-        :user_selectable => true,
+        :user_selectable => false,
         :authors => ["jcran"],
         :description => "This machine performs a light passive enumeration. Start with a Domain or NetBlock."
       }

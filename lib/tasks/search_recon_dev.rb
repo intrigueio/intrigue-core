@@ -26,21 +26,28 @@ class SearchReconDev < BaseTask
     super
 
     domain = _get_entity_name 
+    recon_dev_key = _get_task_config "recon_dev_api_key"
 
     begin
       
       # grab the response from the api
-      response = http_get_body "https://api.recon.dev/search?domain=#{domain}"
+      response = http_get_body "https://api.recon.dev/search?domain=#{domain}&key=#{recon_dev_key}"
       json = JSON.parse(response)
       
       # check if it exists, since we'll get a 'null' if it doesnt
       if json 
         _log "Parsing #{json.count} results" 
 
+        if json == {"message"=>"Forbidden"}
+          _log_error "Invalid Key?"
+          return
+        end
+
         # grab each one, so we can clean them up individually
         subdomains = []
         urls = []
         json.each do |j|
+          next unless j
           subdomains << "#{j["rawDomain"]}".gsub("*.","")
           urls << "#{j["domain"]}".gsub(".*","")
         end    
@@ -50,7 +57,7 @@ class SearchReconDev < BaseTask
           create_dns_entity_from_string s
         end
 
-        # create subdomains
+        # create uris
         urls.uniq.each do |url|
           _create_entity "Uri", "name" => "#{url}"
         end

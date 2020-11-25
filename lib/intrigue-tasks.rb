@@ -19,7 +19,7 @@ require 'webrick'
 ###
 ### In the case where we're a gem, they're not yet available. add them as deps
 ###
-begin  # try to load runtime deps 
+begin  # try to load runtime deps
   
   require 'aws-sdk-route53'
   require 'aws-sdk-s3'
@@ -32,6 +32,7 @@ begin  # try to load runtime deps
   require 'dnsimple'
   require 'em-resolv-replace'
   require 'flareon'
+  require 'ip_ranger'
   require 'ipaddr'
   require 'maxminddb'
   require 'net-http2'
@@ -58,16 +59,7 @@ begin  # try to load runtime deps
   require 'zip'
 
 rescue LoadError => e 
-  # unable to load private checks, presumable unavailable
-  puts "ERROR! Unable to load some dependencies, functionality may be limited: #{e}"
-end
-
-# only available in hosted service
-begin
-  require 'intrigue-ident-private'
-rescue LoadError => e 
-  # unable to load private checks, presumable unavailable
-  #puts "Unable to load hosted-version-only fingerprints #{e}"
+  puts "ERROR! Unable to load a dep, functionality may be limited: #{e}"
 end
 
 ###
@@ -163,4 +155,3 @@ Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 # Load vuln check tasks
 tasks_folder = File.expand_path('../tasks/vuln', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
-

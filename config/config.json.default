@@ -61,6 +61,12 @@
   },
   "intrigue_global_machine_config": {},
   "intrigue_global_module_config": {
+    "42matters_api_key": {
+      "value": "",
+      "uri": "https://42matters.com/docs/overview",
+      "editable": "true",
+      "comment": ""
+    },
     "aws_region": {
       "value": "us-east-1",
       "editable": "true",
@@ -82,6 +88,12 @@
     "adblockplus_api_key": {
       "value": "",
       "uri": "",
+      "editable": "true",
+      "comment": ""
+    },
+    "apptweak_api_key": {
+      "value": "",
+      "uri": "https://www.apptweak.io/documentation",
       "editable": "true",
       "comment": ""
     },
@@ -301,12 +313,6 @@
       "editable": "true",
       "comment": ""
     },
-    "intrigueio_api_key": {
-      "value": "",
-      "uri": "https://app.intrigue.io/api",
-      "editable": "true",
-      "comment": ""
-    },
     "ibm_x_force_api_key": {
       "value": "",
       "uri": "https://app.intrigue.io/api",
@@ -316,6 +322,18 @@
     "ibm_x_force_password": {
       "value": "",
       "uri": "https://app.intrigue.io/api",
+      "editable": "true",
+      "comment": ""
+    },
+    "intrigueio_api_key": {
+      "value": "",
+      "uri": "https://app.intrigue.io/api",
+      "editable": "true",
+      "comment": ""
+    },
+    "ipinfo_api_key": {
+      "value": "XXX",
+      "uri": "https://ipinfo.io/developers",
       "editable": "true",
       "comment": ""
     },
@@ -370,6 +388,12 @@
     "pulsedive_api_key": {
       "value": "XXX",
       "uri": "https://pulsedive.com/api/",
+      "editable": "true",
+      "comment": ""
+    },
+    "recon_dev_api_key": {
+      "value": "XXX",
+      "uri": "https://recon.dev/api/docs",
       "editable": "true",
       "comment": ""
     },
@@ -430,6 +454,12 @@
     "whoisology_api_key": {
       "value": "",
       "uri": "https://whoisology.com",
+      "editable": "true",
+      "comment": ""
+    },
+    "whoisxmlapi_api_key": {
+      "value": "",
+      "uri": "https://www.whoisxmlapi.com/",
       "editable": "true",
       "comment": ""
     },

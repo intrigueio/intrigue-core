@@ -23,7 +23,6 @@ class PhysicalLocation < Intrigue::Core::Model::Entity
   false
   end
 
-
 end
 end
 end

@@ -5,37 +5,45 @@ class CoreApp < Sinatra::Base
     params[:search_string] == "" ? @search_string = nil : @search_string = params[:search_string]
     params[:entity_types] == "" ? @entity_types = nil : @entity_types = params[:entity_types]
     params[:include_hidden] == "on" ? @include_hidden = true : @include_hidden = false
-    params[:include_unscoped] == "on" ? @include_unscoped = true : @include_unscoped = false
-    params[:only_enriched] == "on" ? @only_enriched = true : @only_enriched = false
+    params[:only_scoped] == "on" ? @only_scoped = true : @only_scoped = false
+    params[:only_enriched] == "on" ? @only_enriched = true : @only_enriched = false 
+    params[:grouped_entities] == "on" ? @grouped_entities = true : @grouped_entities = false
+
     (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
     (params[:count] != "" && params[:count].to_i > 0) ? @count = params[:count].to_i : @count = 100
 
-    selected_entities = Intrigue::Core::Model::Entity.scope_by_project(@project_name)
-    selected_entities = selected_entities.where(:type => @entity_types) if @entity_types
-    selected_entities = _tokenized_search(@search_string, selected_entities) if @search_string
+    @selected_entities = Intrigue::Core::Model::Entity.scope_by_project(@project_name)
+    @selected_entities = @selected_entities.where(:type => @entity_types) if @entity_types
+    @selected_entities = _tokenized_search(@search_string, @selected_entities) if @search_string
+  
+    #
+    @selected_entities = @selected_entities.where(:enriched => true) if @only_enriched
+    @selected_entities = @selected_entities.where(:scoped => true) if @only_scoped
+    @selected_entities = @selected_entities.where(:hidden => false) unless @include_hidden
 
-    selected_entities = selected_entities.where(:enriched => true) if  @only_enriched
+    # create a calculated url with our parameters
+    @calculated_url = "/#{h @project_name}/entities?search_string=#{h @search_string}&include_hidden=#{@include_hidden ? 'on' : 'off'}&only_scoped=#{@only_scoped ? 'on' : 'off'}&grouped_entities=#{@grouped_entities ? 'on' : 'off'}&#{@entity_types.map{|x| "entity_types[]=#{h x}" }.join("&") if @entity_types}"
 
     if params[:export] == "csv"
 
       content_type 'application/csv'
       attachment "#{@project_name}.csv"
-      result = ""
-      selected_entities.paged_each(:rows_per_fetch => 300){ |e| result << "#{e.export_csv}\n" }
-      return result
+      csv_result = ""
+      @selected_entities.paged_each(:rows_per_fetch => 300){ |e| csv_result << "#{e.export_csv}\n" }
+      return csv_result
 
     elsif params[:export] == "json"
 
       content_type 'application/json'
       attachment "#{@project_name}.json"
       result = []
-      selected_entities.paged_each(:rows_per_fetch => 300){ |e| result << "#{e.export_json}" }
+      @selected_entities.paged_each(:rows_per_fetch => 300){ |e| result << "#{e.export_json}" }
       return result.to_json
 
     else # normal page
 
-     selected_entities = selected_entities.paginate(@page, @count).order(:name)
-     alias_group_ids = selected_entities.select_map(:alias_group_id).uniq
+     @selected_entities = @selected_entities.paginate(@page, @count).order(:name)
+     alias_group_ids = @selected_entities.select_map(:alias_group_id).uniq
      @alias_groups = Intrigue::Core::Model::AliasGroup.where({:id => alias_group_ids })
      erb :'entities/index'
 
