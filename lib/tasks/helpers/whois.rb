@@ -286,7 +286,6 @@ module Whois
       # convert the range to cidr format
       unless cidr 
         cidrs = range_to_cidrs(start_address, end_address).map{|x| x.to_cidr }
-        raise "Multiple CIDRs available!!!" if cidrs.count > 1
       end
 
       out = []
