@@ -42,7 +42,7 @@ class SearchAzureBlob < BaseTask
 
     # get entity details
     if entity_type == "Domain"
-      account_name = account_name.split('.', 0)
+      account_name = account_name.split('.')[0]
       _log "Searching results for #{account_name} ..."
     elsif entity_type == "String"
       _log "Searching results for #{account_name} ..."

@@ -6,9 +6,9 @@ class AzureBlobExposedFiles < BaseIssue
   def self.generate(instance_details={})
 
     to_return = {
-      added: "2020-01-01",
+      added: "2020-09-01",
       name: "azure_blob_exposed_files",
-      pretty_name: "Exposed files within an Azure Blob",
+      pretty_name: "Potential exposed files within an Azure Blob",
       severity: 1,
       status: "confirmed",
       category: "misconfiguration",
