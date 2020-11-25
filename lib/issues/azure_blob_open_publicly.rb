@@ -6,9 +6,9 @@ class AzureBLOBOpenPublicly < BaseIssue
   def self.generate(instance_details={})
 
     to_return = {
-      added: "2020-01-01",
+      added: "2020-09-01",
       name: "azure_blob_open_publicly",
-      pretty_name: "Open Azure Blob",
+      pretty_name: "Potential Open Azure Blob",
       severity: 2,
       status: "confirmed",
       category: "misconfiguration",
