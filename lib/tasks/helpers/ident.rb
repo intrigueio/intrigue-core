@@ -12,7 +12,7 @@ module Ident
       next unless fp["vulns"]
       fp["vulns"].each do |vuln|
         # get and create the issue here 
-        issue_name = Intrigue::Issue::IssueFactory.get_issue_by_inferred_cve(vuln["cve"])
+        issue_name = Intrigue::Issue::IssueFactory.get_issue_by_inferred_cve(vuln[:cve])
         next unless issue_name
 
         # if we're here, go ahead and create the linked issue!
@@ -45,8 +45,11 @@ module Ident
     #
     all_checks.flatten.compact.uniq.each do |task|
 
+      # skip inference checks, they are handled in fingerprint_to_inference_issues
+      if task =~ /^inference:.*/
+        next
       # handle nuclei-enabled checks (ruclei)
-      if task =~ /^nuclei:.*/
+      elsif task =~ /^nuclei:.*/
         nuclei_template = t.split(":").last
         task = "nuclei_runner"
         task_options = [{name: "template", regex: "alpha_numeric_list", value: nuclei_template}]
