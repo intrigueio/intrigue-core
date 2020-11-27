@@ -43,22 +43,22 @@ module Ident
 
     # handle nuclei, and cve checks here
     #
-    all_checks.flatten.compact.uniq.each do |task|
+    all_checks.flatten.compact.uniq.each do |check|
 
       # skip inference checks, they are handled in fingerprint_to_inference_issues
-      if task =~ /^inference:.*/
+      if check =~ /^inference:.*/
         next
       # handle nuclei-enabled checks (ruclei)
-      elsif task =~ /^nuclei:.*/
-        nuclei_template = task.split(":").last
-        task = "nuclei_runner"
-        task_options = [{name: "template", regex: "alpha_numeric_list", value: nuclei_template}]
+      elsif check =~ /^nuclei:.*/
+        nuclei_template = check.split(":").last
+        check = "nuclei_runner"
+        check_options = [{name: "template", regex: "alpha_numeric_list", value: nuclei_template}]
       else 
-        task_options = []
+        check_options = []
       end        
 
       # and then kick them off 
-      start_task("task_autoscheduled", entity. project, task_options, task, entity, 1)
+      start_task("task_autoscheduled", entity. project, check_options, check, entity, 1)
     end
 
   # return a list of checks
