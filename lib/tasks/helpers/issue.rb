@@ -170,7 +170,7 @@ module Issue
   ###
 
   # RFC1918 DNS
-  def _internal_system_exposed_via_dns
+  def _internal_system_exposed_via_dns(name)
     _create_linked_issue("internal_system_exposed_via_dns", {
       resolutions: "#{@entity.aliases.map{|x| x.name}}",
       exposed_ports: @entity.details["ports"]

@@ -63,7 +63,9 @@ class IpAddress < Intrigue::Task::BaseTask
       # if we're external, let's see if this matches 
       # a known dev or staging server pattern, and if we're internal, just
       if match_rfc1918_address?(lookup_name)
-        _internal_system_exposed_via_dns(result["name"])
+        _log "Got RFC1918 address!"
+        # TODO ... _internal_system_exposed_via_dns(result["name"])
+        
       else # normal case
         dev_server_name_patterns.each do |p|
           if "#{result["name"]}".split(".").first =~ p
