@@ -67,10 +67,8 @@ class SearchSpyseDomain < BaseTask
 
       # Create related IpAddress, physical location and ISP organization
       if result["dns_records"]
-        result["dns_records"]["A"].each do |ip_result|
-          _create_entity("IpAddress", { "name" => ip_result["ip"], "extended_spyse" => ip_result } ) 
-          _create_entity("PhysicalLocation", "name" => ip_result["country"])
-          _create_entity("Organization", "name" => ip_result["org"])
+        result["dns_records"]["A"].each do |ip_address|
+          _create_entity("IpAddress", { "name" => ip_address, "extended_spyse" => result } ) 
         end
       end
 
