@@ -50,7 +50,7 @@ module Ident
         next
       # handle nuclei-enabled checks (ruclei)
       elsif task =~ /^nuclei:.*/
-        nuclei_template = t.split(":").last
+        nuclei_template = task.split(":").last
         task = "nuclei_runner"
         task_options = [{name: "template", regex: "alpha_numeric_list", value: nuclei_template}]
       else 
