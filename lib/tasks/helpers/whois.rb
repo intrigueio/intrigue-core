@@ -61,25 +61,26 @@ module Whois
 
     if lookup_string.is_ip_address?
 
+      out = []
       # Handle this at the regional internet registry level
       if whois_text =~ /RIPE/
         _log "Querying RIPE"
-        out = _whois_query_ripe_ip(lookup_string) # _whois_query_ripe_ip(lookup_name)
+        out.concat _whois_query_ripe_ip(lookup_string) # _whois_query_ripe_ip(lookup_name)
       
       elsif whois_text =~ /APNIC/
         _log "using RDAP to query APNIC"
-        out <<  _rdap_ip_lookup(lookup_string) # add our hash
+        out.concat _rdap_ip_lookup(lookup_string) # add our hash
         
       elsif whois_text =~ /whois.lacnic.net/ || whois_text =~ /cert\@cert\.br/
         _log "using RDAP to query LACNIC"
-        out <<  _rdap_ip_lookup(lookup_string) # add our hash
+        out.concat _rdap_ip_lookup(lookup_string) # add our hash
         
       elsif whois_text =~ /AFRINIC/
         _log "using RDAP to query AFRINIC"
-        out << _rdap_ip_lookup(lookup_string) # add our hash
+        out.concat _rdap_ip_lookup(lookup_string) # add our hash
 
       else # Default to ARIN
-        out << _whois_query_arin_ip(lookup_string) # add our hash
+        out.concat _whois_query_arin_ip(lookup_string) # add our hash
 
       end
 
@@ -183,32 +184,48 @@ module Whois
 
     return nil unless json
 
-    # This is just terrible. I am ashamed.
-    start_address = json["startAddress"]
-    if response =~ /apnic/
-      regex = Regexp.new(/rdap.apnic.net\/ip\/\d.\d.\d.\d\/(\d*)\",/)
-      match = response.match(regex)
-      cidr_length = match.captures.first.strip if match
-    else # do something sane
-      cidr_length = "#{json["handle"]}".split("/").last
-    end
+    type = "#{json["type"]}"
 
     if json["links"]
       description = "Queried via RDAP: #{json["links"].first["value"]}"
     end
-    
-    type = "#{json["type"]}"
 
-    # return a standard set of info
-    out = {
-      "name" => "#{start_address}/#{cidr_length}",
-      "start_address" => "#{start_address}",
-      "end_address" => "#{json["endAddress"]}",
-      "cidr" => "#{cidr_length}",
-      "description" => "#{description}",
-      "block_type" => "#{type}",
-      "extended_rdap" => response
-    }
+    # This is just terrible. I am ashamed.
+    start_address = json["startAddress"]
+    end_address = json["endAddress"]
+
+    # handle the case of multiple cidrs 
+    if json["cidr0_cidrs"]
+      out = []
+      json["cidr0_cidrs"].each do |c|
+        start_address = c["v4prefix"]
+        cidr_length = c["length"]
+        out << {
+          "name" => "#{start_address}/#{cidr_length}",
+          "start_address" => "#{start_address}",
+          #"end_address" => "#{end_address}",
+          "cidr" => "#{cidr_length}",
+          "description" => "#{description}",
+          "block_type" => "#{type}",
+          "extended_rdap" => json
+        }
+      end
+
+    else # do something sane
+      cidr_length = "#{json["handle"]}".split("/").last
+
+      # return a standard set of info
+      out = [{
+        "name" => "#{start_address}/#{cidr_length}",
+        "start_address" => "#{start_address}",
+        "end_address" => "#{end_address}",
+        "cidr" => "#{cidr_length}",
+        "description" => "#{description}",
+        "block_type" => "#{type}",
+        "extended_rdap" => json
+      }]
+
+    end
 
   out
   end

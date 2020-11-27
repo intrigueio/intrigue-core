@@ -56,7 +56,7 @@ class WhoisLookup < BaseTask
       return nil if !out || (out && out.empty?)
     
       out.each do |nb|
-        _create_entity "NetBlock",  { "name" => nb["name"] } 
+        _create_entity "NetBlock", { "name" => nb["name"] } 
       end
 
     elsif _get_entity_type_string == "Organization"
