@@ -65,22 +65,22 @@ module Whois
       # Handle this at the regional internet registry level
       if whois_text =~ /RIPE/
         _log "Querying RIPE"
-        out.concat _whois_query_ripe_ip(lookup_string) # _whois_query_ripe_ip(lookup_name)
+        out.concat _whois_query_ripe_ip(lookup_string) # concat an array
       
       elsif whois_text =~ /APNIC/
         _log "using RDAP to query APNIC"
-        out.concat _rdap_ip_lookup(lookup_string) # add our hash
+        out.concat _rdap_ip_lookup(lookup_string) # concat an array
         
       elsif whois_text =~ /whois.lacnic.net/ || whois_text =~ /cert\@cert\.br/
         _log "using RDAP to query LACNIC"
-        out.concat _rdap_ip_lookup(lookup_string) # add our hash
+        out.concat _rdap_ip_lookup(lookup_string) # concat an array
         
       elsif whois_text =~ /AFRINIC/
         _log "using RDAP to query AFRINIC"
-        out.concat _rdap_ip_lookup(lookup_string) # add our hash
+        out.concat _rdap_ip_lookup(lookup_string) # concat an array
 
       else # Default to ARIN
-        out.concat _whois_query_arin_ip(lookup_string) # add our hash
+        out << _whois_query_arin_ip(lookup_string) # add our hash to the array
 
       end
 
