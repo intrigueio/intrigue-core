@@ -27,6 +27,13 @@ class EnumerateNameservers < BaseTask
 
     # grab whois info
     out = whois(lookup_name)
+
+    unless out 
+      _log "Empty results!"
+      return
+    end
+      
+
     out.each do |whois_info|
 
       _set_entity_detail("whois_full_text", whois_info["whois_full_text"])
