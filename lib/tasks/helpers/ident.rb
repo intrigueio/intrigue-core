@@ -58,7 +58,7 @@ module Ident
       end        
 
       # and then kick them off 
-      start_task("task_autoscheduled", entity. project, check_options, check, entity, 1)
+      start_task("task_autoscheduled", entity, project, check_options, check, entity, 1)
     end
 
   # return a list of checks
