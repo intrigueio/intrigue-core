@@ -203,14 +203,16 @@ class EntityManager
       unless entity.transform!
         tr.log_error "Transformation of entity failed: #{entity}, rolling back entity creation!!"
         entity.delete
-        raise "Invalid entity attempted: #{entity.type} #{entity.name} #{details}"
+        Intrigue::NotifierFactory.default.each { |x| 
+          x.notify("Invalid entity (transform) attempted: #{entity.type} #{entity.name} #{details}" , tr) }
       end
 
       ### Run Validation
       unless entity.validate_entity
         tr.log_error "Validation of entity failed: #{entity}, rolling back entity creation!!"
         entity.delete
-        raise "Invalid entity attempted: #{entity.type} #{entity.name} #{details}"
+        Intrigue::NotifierFactory.default.each { |x| 
+          x.notify("Invalid entity (validate) attempted: #{entity.type} #{entity.name} #{details}" , tr) }
       end
 
       # Add to our result set for this task
