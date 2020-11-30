@@ -3,8 +3,7 @@ module Core
 module System
   module DnsHelpers
 
-    ###
-    ### TODO ... system helper 
+    ### Parse out a domain, given a domain or dns record.
     ###
     def parse_domain_name(record)
 
@@ -22,9 +21,8 @@ module System
     record.split(".").last(length).join(".")
     end
 
-
-    ###
-    ### TODO ... system helper 
+    ### This helper parses out a tld, given a domain or dnsrecord. handy
+    ### in many contexts 
     ###
     # assumes we get a dns name of arbitrary length
     def parse_tld(record)
