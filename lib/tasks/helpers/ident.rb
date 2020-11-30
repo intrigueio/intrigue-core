@@ -60,9 +60,9 @@ module Ident
 
       # get the scan result id 
       existing_scan_result_id = nil
-      if entity.scan_result
-        existing_scan_result_id = entity.scan_result_id
-      end
+      #if entity.scan_result # TODO ... figure out how to get this reliably
+      #  existing_scan_result_id = entity.scan_result_id
+      #end
 
       # start the task
       start_task("task_autoscheduled", project, existing_scan_result_id, check, entity, 1, check_options)
