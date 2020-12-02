@@ -58,7 +58,6 @@ begin  # try to load runtime deps
   require 'whois-parser'
   require 'whoisology'
   require 'zip'
-  require 'ruclei'
 
 rescue LoadError => e 
   puts "ERROR! Unable to load a dep, functionality may be limited: #{e}"
