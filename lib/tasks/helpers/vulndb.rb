@@ -48,7 +48,6 @@ module VulnDb
 
   class Cpe
     include Intrigue::Task::Web
-    require 'versionomy'
 
     def initialize(cpe_string)
       

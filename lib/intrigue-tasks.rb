@@ -49,7 +49,6 @@ begin  # try to load runtime deps
   require 'resolv-replace'
   require 'rex/sslscan'
   require 'rexml/document'
-  require 'ruclei'
   require 'snmp'
   require 'spidr'
   require 'towerdata_api'
@@ -59,6 +58,7 @@ begin  # try to load runtime deps
   require 'whois-parser'
   require 'whoisology'
   require 'zip'
+  require 'ruclei'
 
 rescue LoadError => e 
   puts "ERROR! Unable to load a dep, functionality may be limited: #{e}"
