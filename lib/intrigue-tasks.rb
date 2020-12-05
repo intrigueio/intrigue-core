@@ -49,7 +49,6 @@ begin  # try to load runtime deps
   require 'resolv-replace'
   require 'rex/sslscan'
   require 'rexml/document'
-  require 'ruclei'
   require 'snmp'
   require 'spidr'
   require 'towerdata_api'
