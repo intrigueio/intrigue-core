@@ -179,10 +179,14 @@ module Whois
     begin
       json = JSON.parse(response)
     rescue JSON::ParserError => e
-      return nil
+      _notify "Got invalid JSON for RDAP lookup on #{ip_address}"
+      return []
     end
 
-    return nil unless json
+    unless json
+      _notify "Got empty JSON for RDAP lookup on #{ip_address}"
+      return [] 
+    end
 
     type = "#{json["type"]}"
 

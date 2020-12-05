@@ -124,6 +124,7 @@ class DnsBruteSubAsync < BaseTask
         found_count:     found.size,
         not_found_count: not_found.size,
     }
+    
     _log "Stats:\n: #{stats}"
   end
 
