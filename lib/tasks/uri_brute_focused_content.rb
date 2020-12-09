@@ -21,7 +21,7 @@ class UriBruteFocusedContent < BaseTask
       :allowed_options => [
         {:name => "threads", regex: "integer", :default => 1 },
         {:name => "create_url", regex: "boolean", :default => false },
-        {:name => "override_fingerprint", regex: "alpha_numeric", :default => "" },
+        {:name => "override_fingerprint", regex: "alpha_numeric", :default => nil },
       ],
       :created_types => ["Uri"]
     }
@@ -37,13 +37,11 @@ class UriBruteFocusedContent < BaseTask
     # first, if an override fingerprint was specified, just use that
     override = _get_option("override_fingerprint")
 
-    # we need a FP here, so hold off until
-    require_enrichment unless override.length > 0
-
     if override
       _log "Setting Override to #{override}"
       fingerprint = [{"product" => override }]
     else
+      require_enrichment # block until we get a fingerprint
       fingerprint = _get_entity_detail("fingerprint")
     end
 

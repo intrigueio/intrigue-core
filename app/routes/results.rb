@@ -142,10 +142,22 @@ class CoreApp < Sinatra::Base
       options = []
       @params.each do |name,value|
         if name =~ /^option/
+
+          clean_option_name = name.gsub("option_","")
+          
+          # handle nil 
+          clean_option_value = value == "null" ? nil : value
+
+          # handle bool 
+          if ["false","true"].include? clean_option_value
+            clean_option_value = clean_option_value.to_bool 
+          end
+        
           options << {
-            "name" => "#{name.gsub("option_","")}",
-            "value" => "#{value}"
-            }
+            "name" => "#{clean_option_name}",
+            "value" => clean_option_value
+          }
+
         end
       end
 

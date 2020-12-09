@@ -72,7 +72,7 @@ module Task
             request_uri = "#{uri}#{request_details[:path]}"
 
             # Do the check
-            #_log "Checking #{request_uri}"
+            _log "Checking #{request_uri}"
 
             # request details will have regexes if we want to check, so just pass it directly
             result = check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content, request_details)
