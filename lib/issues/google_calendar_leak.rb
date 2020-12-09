@@ -15,7 +15,7 @@ class GoogleCalendarLeak < BaseIssue
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
         { type: "remediation", uri: "https://support.google.com/calendar/answer/34580?co=GENIE.Platform%3DDesktop&hl=en" },
       ], 
-      task: "vuln/saas_google_calendar_check"
+      task: "check/saas_google_calendar_check"
     }.merge!(instance_details)
 
   to_return
