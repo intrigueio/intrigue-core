@@ -7,8 +7,8 @@ source $HOME/.bash_profile
 if [ ! -d /data/postgres ]; then
   echo "[+] Configuing postgres"
   sudo mkdir -p /data/postgres
-  sudo chown postgres:postgres /data/postgres
-  sudo -u postgres /usr/lib/postgresql/*/bin/initdb /data/postgres > /dev/null
+  sudo chown postgres:postgres /data/postgres 2>&1 /dev/null
+  sudo -u postgres /usr/lib/postgresql/*/bin/initdb /data/postgres 2>&1 /dev/null
 fi 
 
 # now start the service 
