@@ -121,6 +121,7 @@ sudo apt-get -y --no-install-recommends install make \
   xdg-utils \
   dnsmasq \
   systemd \
+  tcptraceroute \
   wget \
   python3-minimal
 

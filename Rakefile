@@ -180,7 +180,7 @@ task :setup do
     puts "[+] Generating A new self-signed SSL Certificate..."
     Dir.chdir("#{$intrigue_basedir}/config/"){ 
       subject_name = "/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN=intrigue.local"
-      command = "openssl req -subj '#{subject_name}' -new -newkey rsa:2048 -sha256 -days 365 -nodes -x509 -keyout server.key -out server.crt"
+      command = "openssl req -subj '#{subject_name}' -new -newkey rsa:2048 -sha256 -days 365 -nodes -x509 -addext 'extendedKeyUsage = serverAuth' -keyout server.key -out server.crt "
       puts `#{command}`
     }
   else
