@@ -2,12 +2,12 @@ FROM ubuntu:20.04
 MAINTAINER Intrigue Team <hello@intrigue.io>
 ENV DEBIAN_FRONTEND noninteractive
 
-USER root
-
-# Get up to date
 RUN apt-get -y update && apt-get -y install sudo
 
-# Set us up!
+# Set us up a user!
+RUN  useradd ubuntu && echo "ubuntu:ubuntu" | chpasswd && adduser ubuntu sudo
+RUN RUN echo "ubuntu ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+USER ubuntu
 WORKDIR /home/ubuntu/core
 
 # Set up intrigue
@@ -18,8 +18,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # create a volume
 VOLUME /data
-
-USER ubuntu
 
 # copy intrigue code
 COPY . /home/ubuntu/core/
