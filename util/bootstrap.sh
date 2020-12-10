@@ -389,9 +389,13 @@ if ! $(grep -q IDIR ~/.bash_profile); then
   echo "export IDIR=$INTRIGUE_DIRECTORY" >> ~/.bash_profile
 fi
 
+# Cleaning up
+echo "[+] !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+echo "[+] Cleaning up config (it will be generated on start)!"
+rm $INTRIGUE_DIRECTORY/config/config.json
 
 # Cleaning up
-echo "[+] Cleaning up!"
+echo "[+] Cleaning up packages!"
 sudo apt-get -y clean
 
 # source necessary environment variables and print instructions to start
