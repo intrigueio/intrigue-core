@@ -19,7 +19,7 @@ class CoreApp < Sinatra::Base
     post '/system/config' do
 
       Intrigue::Core::System::Config.config["credentials"]["username"] = "#{params["username"]}"
-      Intrigue::Core::System::Config.config["credentials"]["password"] = "#{params["password"]}"
+      Intrigue::Core::System::Config.config["credentials"]["password"] = "#{params["password"]}" unless "#{params["password"]}" =~ /^\*+$/
 
       # save and reload
       Intrigue::Core::System::Config.save
