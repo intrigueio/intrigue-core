@@ -12,7 +12,7 @@ class Person < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name =~ /^[[:word:]]+$/
+    name =~ /^[[[:word:]]\,\s]+$/
   end
 
   def detail_string

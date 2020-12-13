@@ -64,7 +64,7 @@ class CoreApp < Sinatra::Base
 
       # When we create the project, we want to make sure no HTML is
       # stored, as we'll use this for display later on...
-      new_project_name = CGI::escapeHTML(params[:project])
+      new_project_name = params[:project]
       
       if new_project_name.length == 0 
         session[:flash] = "Invalid project name!"
