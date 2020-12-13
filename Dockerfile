@@ -5,10 +5,9 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get -y update && apt-get -y install sudo
 
 # Set us up a user!
-RUN  useradd ubuntu && echo "ubuntu:ubuntu" | chpasswd && adduser ubuntu sudo
-RUN RUN echo "ubuntu ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+RUN useradd -ms /bin/bash ubuntu && echo "ubuntu:ubuntu" | chpasswd && adduser ubuntu sudo && echo "ubuntu ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 USER ubuntu
-WORKDIR /home/ubuntu/core
+WORKDIR /home/ubuntu
 
 # Set up intrigue
 ENV BUNDLE_JOBS=12
@@ -20,13 +19,13 @@ ENV DEBIAN_FRONTEND=noninteractive
 VOLUME /data
 
 # copy intrigue code
-COPY . /home/ubuntu/core/
+COPY . core
 
 # install intrigue-specific software & config
-RUN /bin/bash /home/ubuntu/core/util/bootstrap.sh
+RUN /bin/bash core/util/bootstrap.sh
 
 # Expose the port
 EXPOSE 7777
 
-RUN chmod +x /home/ubuntu/core/util/start.sh
-ENTRYPOINT ["/home/ubuntu/core/util/start.sh"]
+RUN chmod +x ./core/util/start.sh
+ENTRYPOINT ["./core/util/start.sh"]

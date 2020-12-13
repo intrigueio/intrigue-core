@@ -15,8 +15,9 @@ sudo apt-get autoremove
 sudo apt-get --purge remove
 sudo apt-get autoclean
 sudo apt-get clean
+
+echo "[+] Updating Apt"
 sudo apt-get update --fix-missing
-echo "[+] Proceeding with system setup"
 
 # UPGRADE FULLY NON-INTERACTIVE
 echo "[+] Preparing the System by upgrading"
@@ -29,18 +30,24 @@ sudo DEBIAN_FRONTEND=noninteractive \
 echo "[+] Reconfigure Dpkg"
 sudo dpkg --configure -a
 
-
 echo "[+] Installing Apt Essentials"
 sudo apt-get -y install tzdata wget
-sudo apt-get -y install lsb-core software-properties-common dirmngr apt-transport-https lsb-release ca-certificates locales
+sudo apt-get -y install lsb-core software-properties-common dirmngr apt-transport-https lsb-release ca-certificates locales apt-utils
 
+echo "[+] Adding Golang Apt repo"
+sudo add-apt-repository --yes ppa:longsleep/golang-backports
 
-# chrome
-echo "[+] Installing Chromium"
-sudo apt-get -y install chromium-browser
+echo "[+] Adding Chromium repo"
+sudo add-apt-repository ppa:saiarcot895/chromium-dev
 
+echo "[+] Adding Postgres Apt repo"
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list
 
-# set locales
+echo "[+] Updating Apt with new repos"
+sudo apt-get update --fix-missing
+
+# set locales to UTF-8
 sudo sh -c 'echo "LC_ALL=en_US.UTF-8" >> /etc/environment'
 sudo sh -c 'echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen'
 sudo sh -c 'echo "LANG=en_US.UTF-8" > /etc/locale.conf'
@@ -123,38 +130,34 @@ sudo apt-get -y --no-install-recommends install make \
   systemd \
   tcptraceroute \
   wget \
-  python3-minimal
+  python3-minimal \
+  golang-go \
+  postgresql-12 \
+  postgresql-client-12 \
+  postgresql-server-dev-12 \
+  postgresql-12-repack \
+  libpq-dev
 
-
-echo "[+] Installing Postgres 12"
-wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list
-sudo apt-get update
-sudo apt-get -y install postgresql-12 postgresql-client-12 postgresql-server-dev-12 postgresql-12-repack libpq-dev
-sudo systemctl status postgresql
+# NOTE! for whatever reason, this has to be with apt vs apt-get 
+sudo apt -y install chromium-browser
 
 echo "[+] Creating a home for binaries"
 mkdir -p $HOME/bin
 export BINPATH=$HOME/bin
 export PATH=$PATH:$BINPATH
 # and for later
-echo "export PATH=$PATH:$BINPATH" >> ~/.bash_profile
+echo "export PATH=$PATH:$BINPATH" >> $HOME/.bash_profile
 
 # dnsmorph
 echo "[+] Getting DNSMORPH binaries... "
 cd $BINPATH
-wget https://github.com/netevert/dnsmorph/releases/download/v1.2.7/dnsmorph_1.2.7_linux_64-bit.tar.gz
+wget -q https://github.com/netevert/dnsmorph/releases/download/v1.2.7/dnsmorph_1.2.7_linux_64-bit.tar.gz
 tar -zxvf dnsmorph_1.2.7_linux_64-bit.tar.gz
 chmod +x dnsmorph
 rm dnsmorph_1.2.7_linux_64-bit.tar.gz
 cd $HOME
 
-# add go vars (and note that we source this file later as well)
-echo "[+] Installing Golang environment"
-sudo add-apt-repository --yes ppa:longsleep/golang-backports
-sudo apt update
-sudo apt install -y golang-go
-
+# Go is added via apt
 # ensure we have the path
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
@@ -169,7 +172,7 @@ GO111MODULE=on go get -u -v github.com/ffuf/ffuf
 # gitrob
 echo "[+] Getting Gitrob... "
 cd $HOME/bin
-wget https://github.com/michenriksen/gitrob/releases/download/v2.0.0-beta/gitrob_linux_amd64_2.0.0-beta.zip
+wget -q https://github.com/michenriksen/gitrob/releases/download/v2.0.0-beta/gitrob_linux_amd64_2.0.0-beta.zip
 unzip gitrob_linux_amd64_2.0.0-beta.zip
 chmod +x gitrob
 rm gitrob_linux_amd64_2.0.0-beta.zip README.md
@@ -254,7 +257,7 @@ sudo bash -c "echo '* soft nofile 524288' >> /etc/security/limits.conf"
 sudo bash -c "echo session required pam_limits.so >> /etc/pam.d/common-session"
 
 echo "[+] Create /data directories for postgres and redis"
-sudo systemctl stop postgresql
+sudo service postgresql stop
 sudo mkdir -p /data/postgres
 sudo chown postgres:postgres /data/postgres
 sudo chmod 644 /data/postgres
@@ -271,7 +274,7 @@ sudo sed -i 's/peer/trust/g' /etc/postgresql/*/main/pg_hba.conf
 sudo sed -i "s/data_directory = .*/data_directory = \'\/data\/postgres\'/g" /etc/postgresql/*/main/postgresql.conf
 
 echo "[+] Updating Redis configuration, moving it to /data"
-sudo systemctl stop redis-server
+sudo service redis-server stop
 # ensure we bind to localhost
 sudo sed -i '/^bind/s/bind.*/bind 127.0.0.1/' /etc/redis/redis.conf
 # change default direectory
@@ -281,11 +284,10 @@ sudo mkdir /etc/systemd/system/redis-server.service.d
 sudo touch /etc/systemd/system/redis-server.service.d/override.conf
 sudo sh -c 'echo "[Service]" >> /etc/systemd/system/redis-server.service.d/override.conf'
 sudo sh -c 'echo "ReadWriteDirectories=-/data/redis" >> /etc/systemd/system/redis-server.service.d/override.conf'
-sudo systemctl daemon-reload
-sudo systemctl start redis-server
+sudo service redis-server start
 
 echo "[+] Creating clean database"
-sudo systemctl start postgresql
+sudo service postgresql start
 sudo -u postgres createuser intrigue
 sudo -u postgres createdb intrigue_dev --owner intrigue
 
@@ -391,9 +393,12 @@ if ! $(grep -q IDIR ~/.bash_profile); then
 fi
 
 # Cleaning up
-echo "[+] !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-echo "[+] Cleaning up config (it will be generated on start)!"
-rm $INTRIGUE_DIRECTORY/config/config.json
+echo "[+] !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+echo "[+] Cleaning up system-specific config files (they will be generated on start)!"
+sudo rm $INTRIGUE_DIRECTORY/config/config.json
+sudo rm $INTRIGUE_DIRECTORY/config/server.key
+sudo rm $INTRIGUE_DIRECTORY/config/server.crt
+echo "[+] !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 
 # Cleaning up
 echo "[+] Cleaning up packages!"

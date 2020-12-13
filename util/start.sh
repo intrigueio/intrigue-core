@@ -62,9 +62,11 @@ bundle exec rake db:migrate
 echo "[+] Setting up Intrigue Standalone"
 bundle exec rake setup
 
-echo "[+] Enabling Intrigue Services"
-god -c /core/util/god/intrigue.rb
-god start intrigue
+if [ -f /.dockerenv ]; then
+  echo "[+] Starting Intrigue Services"
+  god -c /core/util/god/intrigue.rb
+  god start intrigue
 
-echo "[+] Tailing worker log"
-tail -f /core/log/worker.log
+  echo "[+] Tailing worker log"
+  tail -f /core/log/worker.log
+fi 
