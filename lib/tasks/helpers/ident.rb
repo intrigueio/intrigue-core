@@ -164,52 +164,61 @@ module Ident
     ###
     ### Go through each known port
     ###
-    if port == 21 && !ident_matches
+    if port == 21
       ident_matches = generate_ftp_request_and_check(ip_address) || {}
     end
       
-    if (port == 22 || port == 2222) && !ident_matches
+    if (port == 22 || port == 2222)
       ident_matches = generate_ssh_request_and_check(ip_address) || {}
     end
       
-    if port == 23 && !ident_matches
+    if port == 23
       ident_matches = generate_telnet_request_and_check(ip_address) || {}
     end
 
-    if (port == 25 || port == 587) && !ident_matches
+    if (port == 25 || port == 587)
       ident_matches = generate_smtp_request_and_check(ip_address) || {}
     end
     
-    if port == 53 && !ident_matches
+    if port == 53
       ident_matches = generate_dns_request_and_check(ip_address) || {}
     end
+    
+    if port == 6379 
+      ident_matches = generate_redis_request_and_check(ip_address) || {}
+    end
 
-    if port == 161 && !ident_matches
+    if port == 161
       ident_matches = generate_snmp_request_and_check(ip_address) || {}
     end
 
-    if port == 3306 && !ident_matches
+    if port == 3306
       ident_matches = generate_mysql_request_and_check(ip_address) || {}
     end
     
     ###
     ### But default to HTTP through each known port
     ###
-    unless ident_matches
+    if ident_matches
+      return ident_matches # return right away if we a FP 
+    else
       url = "http://#{ip_address}:#{port}" 
       ident_matches = generate_http_requests_and_check(url) || {}
-    end
-    
-    # okay we failed
-    return unless ident_matches
 
-    # if we didnt fail, pull out the FP and match to vulns
-    ident_fingerprints = ident_matches["fingerprint"] || []
-    if ident_fingerprints.count > 0
-      ident_fingerprints = add_vulns_by_cpe(ident_fingerprints)
-    end    
-  
-  ident_matches.merge({"fingerprint" => ident_fingerprints})
+      # if we didnt fail, pull out the FP and match to vulns
+      ident_fingerprints = ident_matches["fingerprint"] || []
+      
+      # add vulns to the fingerprint
+      if ident_fingerprints.count > 0
+        ident_fingerprints = add_vulns_by_cpe(ident_fingerprints)
+      end    
+      
+      # merge them 
+      out = ident_matches.merge({"fingerprint" => ident_fingerprints})
+
+    end
+   
+  out 
   end
   
   def fingerprint_url(url)
