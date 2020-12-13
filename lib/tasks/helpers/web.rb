@@ -536,7 +536,7 @@ module Task
          end
 
        elsif success_cases[:header_regex]
-         response.each do |header|
+         response.each_header do |header|
           _log "Checking header: '#{header}: #{response[header]}'"
           if "#{header}: #{response[header]}" =~ success_cases[:header_regex]   ### ALWAYS LOWERCASE!!!!
            _log_good "Matched positive header regex!!! #{success_cases[:header_regex]}" if @task_result
