@@ -158,7 +158,7 @@ class CoreApp < Sinatra::Base
     $intrigue_server_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
 
     # Parse out our project
-    directive = URI.encode_www_form_component(request.path_info.split("/")[1] || "Default")
+    directive = URI.decode_www_form_component(request.path_info.split("/")[1] || "Default")
 
     # set flash message if we have one
     if session[:flash]

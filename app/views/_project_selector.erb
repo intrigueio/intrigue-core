@@ -39,6 +39,7 @@ table.sortable thead {
     cursor: default;
 }
 </style>
+
 <div class="row">
 <div class="col-sm-8">
   <form class="form-inline" name="project_select_form" action="/project" method="post">
@@ -66,7 +67,7 @@ Or select an existing project:
     <tbody>
         <% @projects.each do |p| %>
       <tr>
-        <td><a href="/<%=h p.name%>/start"x><%= h p.name %></a></td>
+        <td><a href="/<%= h p.name %>/start"x><%= h p.name %></a></td>
         <td><%= p.entities.count %></td>
         <td><%= p.issues.count %></td>
         <td><%=h p.created_at.to_date %></td>
