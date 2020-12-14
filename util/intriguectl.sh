@@ -3,7 +3,18 @@
 # Set path to include rbenv
 source $HOME/.bash_profile
 
-#!/bin/bash
+# print our welcome message
+Welcome()
+{
+  echo "/****************************************************************************************/"
+  echo "/*                              Welcome to Intrigue Core!                               */"
+  echo "/*                                                                                      */"
+  echo "/* Please file bugs & requests here: https://github.com/intrigueio/intrigue-core/issues */"
+  echo "/*                                                                                      */"
+  echo "/*                 Other comments? Questions? Email hello@intrigue.io.                  */"
+  echo "/****************************************************************************************/"
+}
+
 
 Help()
 {
@@ -21,7 +32,7 @@ Help()
 
 SetPassword()
 {
-    if [ -f "${CORE_PASSWD}" ]; then
+    if [ ! -f "${CORE_PASSWD}" ]; then
       FILE1=~/core/config/config.json
       FILE2=~/core/config/config.json.default
       if [ -f "$FILE1" ]; then
@@ -38,7 +49,7 @@ SetPassword()
 Setup()
 {
     # check if we are a worker (we don't need to setup database if we are)
-    if [[ -z "${WORKER_CONFIG}" ]]; then
+    if [ ! -z "${WORKER_CONFIG}" ]; then
       echo "We are a worker-only configuration!"
       return
     fi
@@ -46,22 +57,22 @@ Setup()
     # else we set up the databases configuration
     echo "[+] Intrigue is starting for the first time! Setting up..."
     # stop postgres service to make configuration changes
-    sudo service postgres stop
+    sudo service postgresql stop
 
     # Set up database if it's not already there 
     if [ ! -d /data/postgres ]; then
       echo "[+] Configuring postgres..."
       sudo mkdir -p /data/postgres
-      sudo chown postgres:postgres /data/postgres 2>&1 /dev/null
-      sudo -u postgres /usr/lib/postgresql/*/bin/initdb /data/postgres 2>&1 /dev/null
+      sudo chown postgres:postgres /data/postgres 
+      sudo -u postgres /usr/lib/postgresql/*/bin/initdb /data/postgres
     fi 
 
     # now start the service 
     sudo service postgresql start
 
     # force user/db creation, just in case
-    sudo -u postgres createuser intrigue 2>&1 /dev/null
-    sudo -u postgres createdb intrigue_dev --owner intrigue 2>&1 /dev/null
+    sudo -u postgres createuser intrigue
+    sudo -u postgres createdb intrigue_dev --owner intrigue
 
     # Adjust and spin up redis
     echo "[+] Configuring redis..."
@@ -96,6 +107,7 @@ Setup()
 # Main program                                                                 #
 ################################################################################
 ################################################################################
+Welcome
 
 cmd=$1
 

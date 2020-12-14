@@ -355,18 +355,10 @@ cd $INTRIGUE_DIRECTORY
 bundle update --bundler
 bundle install
 
-echo "[+] Running DB Migrations"
-bundle exec rake db:migrate
-
 # TOOD ... remove this on next major release
 echo "[+] Intrigue services exist, removing... (ec2 legacy)"
 if [ ! -f /etc/init.d/intrigue ]; then
   rm -rf /etc/init.d/intrigue
-fi
-
-if ! $(grep -q README ~/.bash_profile); then
-  echo "[+] Configuring startup message"
-  echo "boxes -a c $INTRIGUE_DIRECTORY/util/README" >> ~/.bash_profile
 fi
 
 # Cleaning up
