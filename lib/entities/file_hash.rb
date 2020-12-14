@@ -11,17 +11,18 @@ class FileHash < Intrigue::Core::Model::Entity
     }
   end
 
-  def validate_entity
-    # check that our regex for the hash matches
-    !supported_hash_types.select{|x| x[:regex] =~ name }.empty?
-  end
-
   # just a list of supported types and their regexen
-  def supported_hash_types
+  def self.supported_hash_types
     [
       { type:"md5", regex: /^[a-f0-9]{5,32}$/},
-      { type:"sha1", regex: /^[a-f0-9]{5,40}$/}
+      { type:"sha1", regex: /^[a-f0-9]{5,40}$/},
+      { type:"sha2-256", regex: /^\b[A-Fa-f0-9]{64}\b$/}
     ]
+  end
+
+  def validate_entity
+    # check that our regex for the hash matches
+    !self.class.supported_hash_types.select{|x| x[:regex] =~ name }.empty?
   end
 
   def scoped?
