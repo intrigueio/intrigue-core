@@ -39,8 +39,8 @@ if [ -z "${SETUP_DATABASE}" ]
   sudo service postgresql start
 
   # force user/db creation, just in case
-  sudo -u postgres createuser intrigue
-  sudo -u postgres createdb intrigue_dev --owner intrigue
+  sudo -u postgres createuser intrigue 2>&1 /dev/null
+  sudo -u postgres createdb intrigue_dev --owner intrigue 2>&1 /dev/null
 
   ###
   ### Adjust and spin up redis

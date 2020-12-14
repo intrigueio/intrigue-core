@@ -38,7 +38,7 @@ echo "[+] Adding Golang Apt repo"
 sudo add-apt-repository --yes ppa:longsleep/golang-backports
 
 echo "[+] Adding Chromium repo"
-sudo add-apt-repository ppa:saiarcot895/chromium-dev
+sudo add-apt-repository --yes ppa:saiarcot895/chromium-dev
 
 echo "[+] Adding Postgres Apt repo"
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
@@ -379,7 +379,7 @@ else
   echo "[+] Nooooo I'm not inside docker!";
   echo "echo ''" >> ~/.bash_profile
   echo "echo To enable Intrigue services, run the following command:" >> ~/.bash_profile
-  echo "echo '$ cd core && rake setup && god -c $INTRIGUE_DIRECTORY/util/god/intrigue-ec2.rb && god start'" >> ~/.bash_profile
+  echo "echo '$ cd core && rake setup && god -c $INTRIGUE_DIRECTORY/util/god/intrigue.rb && god start'" >> ~/.bash_profile
 fi
 
 # if we're configuring as root, we're probably going to run as root, so
