@@ -217,9 +217,10 @@ GO111MODULE=on go get -u -v github.com/projectdiscovery/subfinder/v2/cmd/subfind
 
 ### Install latest tika
 echo "[+] Installing Apache Tika from public.intrigue.io"
-cd $INTRIGUE_DIRECTORY/tmp
 LATEST_TIKA_VERSION=1.24.1
-wget https://s3.amazonaws.com/public.intrigue.io/tika-server-$LATEST_TIKA_VERSION.jar
+cd $INTRIGUE_DIRECTORY/tmp
+mkdir -p $INTRIGUE_DIRECTORY/tmp/
+wget -q https://s3.amazonaws.com/public.intrigue.io/tika-server-$LATEST_TIKA_VERSION.jar
 mv $INTRIGUE_DIRECTORY/tmp/tika-server-$LATEST_TIKA_VERSION.jar $INTRIGUE_DIRECTORY/tmp/tika-server.jar
 cd $HOME
 
