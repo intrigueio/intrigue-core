@@ -355,9 +355,6 @@ cd $INTRIGUE_DIRECTORY
 bundle update --bundler
 bundle install
 
-echo "[+] Running System Setup"
-bundle exec rake setup
-
 echo "[+] Running DB Migrations"
 bundle exec rake db:migrate
 
@@ -372,38 +369,7 @@ if ! $(grep -q README ~/.bash_profile); then
   echo "boxes -a c $INTRIGUE_DIRECTORY/util/README" >> ~/.bash_profile
 fi
 
-### HANDLE DOCKER STUFF HERE
-if [ -f /.dockerenv ]; then
-  echo "[+] I'm inside docker, i can start services automatically!";
-else
-  echo "[+] Nooooo I'm not inside docker!";
-  echo "echo ''" >> ~/.bash_profile
-  echo "echo To enable Intrigue services, run the following command:" >> ~/.bash_profile
-  echo "echo '$ cd core && rake setup && god -c $INTRIGUE_DIRECTORY/util/god/intrigue.rb && god start'" >> ~/.bash_profile
-fi
-
-# if we're configuring as root, we're probably going to run as root, so
-#   manually force the .bash_profile to be run every login
-if [ $(id -u) = 0 ]; then
-   echo "source ~/.bash_profile" >> ~/.bashrc
-fi
-
-# Handy for future, given this may differ across platforms
-if ! $(grep -q IDIR ~/.bash_profile); then
-  echo "export IDIR=$INTRIGUE_DIRECTORY" >> ~/.bash_profile
-fi
-
-# Cleaning up
-echo "[+] !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-echo "[+] Cleaning up system-specific config files (they will be generated on start)!"
-sudo rm $INTRIGUE_DIRECTORY/config/config.json
-sudo rm $INTRIGUE_DIRECTORY/config/server.key
-sudo rm $INTRIGUE_DIRECTORY/config/server.crt
-echo "[+] !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-
 # Cleaning up
 echo "[+] Cleaning up packages!"
 sudo apt-get -y clean
 
-# source necessary environment variables and print instructions to start
-source ~/.bash_profile
