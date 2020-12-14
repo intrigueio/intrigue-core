@@ -66,12 +66,12 @@ function delete_entity_children(id){
     },
     settings: {
       minNodeSize: 1,
-      maxNodeSize: 6,
+      maxNodeSize: 5,
       defaultNodeColor: '#FFFFFF',
       defaultEdgeColor: '#00B8E6',
       defaultLabelColor:'#FFFFFF',
       defaultLabelSize: 8,
-      labelThreshold: 5,
+      labelThreshold: 3,
       edgeHoverSizeRatio: 10,
       edgeHoverColor: '#ff0000',
       defaultNodeHoverColor: '#ff0000',
@@ -87,20 +87,20 @@ function delete_entity_children(id){
     });
 
     // adjust slowdown based on the size
-    var slowdown = 200;
+    var slowdown = 10;
     if (s.graph.nodes().length > 1000) {
-      slowdown = 20;
+      slowdown = 1;
     }
 
     // start the layout
-    s.startForceAtlas2({gravity:500,scalingRatio:5000,slowDown: slowdown});
+    s.startForceAtlas2({gravity:1000,scalingRatio:20000,slowDown: slowdown});
 
     // adjust our stop time based on size
-    if (s.graph.nodes().length > 1000) {
-      setTimeout(function() { s.stopForceAtlas2(); }, 60000);
+    if (s.graph.nodes().length > 10000) {
+      setTimeout(function() { s.stopForceAtlas2(); }, 120000);
     }
     else {
-      setTimeout(function() { s.stopForceAtlas2(); }, 15000);
+      setTimeout(function() { s.stopForceAtlas2(); }, 10000);
     }
 
     s.bind('clickNode', function(e) {
