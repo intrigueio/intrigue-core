@@ -47,7 +47,7 @@ class RunInvestigationTask < Intrigue::Machine::Base
         start_recursive_task(task_result,"threat/search_quad9_dns", entity)
 
         # Checks IPs vs Talos IP BlackList for threat data
-        start_recursive_task(task_result,"search_talos_blacklist", entity)
+        start_recursive_task(task_result,"threat/search_talos_blacklist", entity)
 
         # Looks up whether hosts are blocked by Yandex DNS
         start_recursive_task(task_result,"threat/search_yandex_dns", entity)
