@@ -16,7 +16,7 @@ God.watch do |w|
   w.env = { "CHROME_PORT" => "9222" }
   w.dir = "#{BASEDIR}" 
   w.log = "#{BASEDIR}/log/worker.log"
-  w.start = "bundle exec sidekiq -C #{BASEDIR}/config/sidekiq.yml -r #{BASEDIR}#{BASEDIR}.rb"
+  w.start = "bundle exec sidekiq -C #{BASEDIR}/config/sidekiq.yml -r #{BASEDIR}/core.rb"
   w.keepalive
 end
 
