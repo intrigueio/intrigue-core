@@ -55,34 +55,30 @@ Setup()
     fi
     
     # else we set up the databases configuration
-    echo "[+] Intrigue is starting for the first time! Setting up..."
-    # stop postgres service to make configuration changes
-    sudo service postgresql stop
+    echo "[+] Intrigue is starting for the first time! Setting up..."    
 
     # Set up database if it's not already there 
     if [ ! -d /data/postgres ]; then
       echo "[+] Configuring postgres..."
+      sudo service postgresql stop
       sudo mkdir -p /data/postgres
       sudo chown postgres:postgres /data/postgres 
-      sudo -u postgres /usr/lib/postgresql/*/bin/initdb /data/postgres
+      sudo -u postgres /usr/lib/postgresql/*/bin/initdb /data/postgres 
+      sudo service postgresql start
     fi 
-
-    # now start the service 
-    sudo service postgresql start
-
+    
     # force user/db creation, just in case
     sudo -u postgres createuser intrigue > /dev/null
     sudo -u postgres createdb intrigue_dev --owner intrigue > /dev/null
 
     # Adjust and spin up redis
-    echo "[+] Configuring redis..."
     if [ ! -d /data/redis ]; then
+      echo "[+] Configuring redis..."
+      sudo service redis-server stop
       sudo mkdir -p /data/redis
       sudo chown redis:redis /data/redis
-    fi 
-
-    # now we can starts services
-    sudo service redis-server start
+      sudo service redis-server start
+    fi
 
     # change to core's directory
     cd ~/core
