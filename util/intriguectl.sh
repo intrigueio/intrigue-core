@@ -32,7 +32,7 @@ Help()
 
 SetPassword()
 {
-    if [ ! -f "${CORE_PASSWD}" ]; then
+    if [ "${CORE_PASSWD}" ]; then
       FILE1=~/core/config/config.json
       FILE2=~/core/config/config.json.default
       if [ -f "$FILE1" ]; then
@@ -49,7 +49,7 @@ SetPassword()
 Setup()
 {
     # check if we are a worker (we don't need to setup database if we are)
-    if [ ! -z "${WORKER_CONFIG}" ]; then
+    if [ "${WORKER_CONFIG}" ]; then
       echo "We are a worker-only configuration!"
       return
     fi
@@ -71,8 +71,8 @@ Setup()
     sudo service postgresql start
 
     # force user/db creation, just in case
-    sudo -u postgres createuser intrigue
-    sudo -u postgres createdb intrigue_dev --owner intrigue
+    sudo -u postgres createuser intrigue > /dev/null
+    sudo -u postgres createdb intrigue_dev --owner intrigue > /dev/null
 
     # Adjust and spin up redis
     echo "[+] Configuring redis..."
@@ -87,13 +87,13 @@ Setup()
     # change to core's directory
     cd ~/core
 
-    # migrade db
-    echo "[+] Migrating Database..."
-    bundle exec rake db:migrate
-
     # run setup
     echo "[+] Setting up Intrigue standalone..."
     bundle exec rake setup
+    
+    # migrade db
+    echo "[+] Migrating Database..."
+    bundle exec rake db:migrate
 
     # configure god
     god -c ~/core/util/god/intrigue.rb
