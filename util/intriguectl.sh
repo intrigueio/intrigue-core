@@ -40,7 +40,7 @@ SetPassword()
       elif [ -f "$FILE2" ]; then
           sed -i "s/\"password\": \".*\"/\"password\": \"${CORE_PASSWD}\"/g" $FILE2
       else
-          echo "Failed to set basic auth password. Check that your installation is in your home directory"
+          echo "[!] Failed to set basic auth password. Check that your installation is in your home directory"
       fi
     fi
     
@@ -50,7 +50,7 @@ Setup()
 {
     # check if we are a worker (we don't need to setup database if we are)
     if [ "${WORKER_CONFIG}" ]; then
-      echo "We are a worker-only configuration!"
+      echo "[+] We are a worker-only configuration!"
       return
     fi
     
@@ -66,10 +66,10 @@ Setup()
       sudo -u postgres /usr/lib/postgresql/*/bin/initdb /data/postgres 
       sudo service postgresql start
     fi 
-    
+
     # force user/db creation, just in case
-    sudo -u postgres createuser intrigue > /dev/null
-    sudo -u postgres createdb intrigue_dev --owner intrigue > /dev/null
+    sudo -u postgres createuser intrigue 2> /dev/null
+    sudo -u postgres createdb intrigue_dev --owner intrigue 2> /dev/null
 
     # Adjust and spin up redis
     if [ ! -d /data/redis ]; then
@@ -93,9 +93,8 @@ Setup()
 
     # configure god
     god -c ~/core/util/god/intrigue.rb
-    touch .setup_complete
     
-    echo "[+] Setup complete! Starting services..."
+    echo "[+] Setup complete!"
 }
 
 ################################################################################
@@ -114,15 +113,9 @@ then
 fi
 
 if [ "$cmd" == "start" ]; then
-    echo "Starting intrigue..."
+    echo "[+] Starting intrigue..."
     # set password
     SetPassword
-
-    # check if setup has already run once
-    FILE=~/core/.setup_complete
-    if [ ! -f "$FILE" ]; then
-       Setup
-    fi
 
     # start services
     cd ~/core
@@ -136,8 +129,11 @@ if [ "$cmd" == "start" ]; then
       tail -f /core/log/worker.log
     fi 
 elif [ "$cmd" == "stop" ]; then
+    echo "[+] Starting intrigue..."
     cd ~/core
     god stop
+elif [ "$cmd" == "setup" ]; then
+    Setup
 else
     echo "Unknown command."
     Help
