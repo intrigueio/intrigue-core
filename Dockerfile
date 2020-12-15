@@ -27,5 +27,5 @@ RUN /bin/bash core/util/bootstrap.sh
 # Expose the port
 EXPOSE 7777
 
-RUN chmod +x ./core/util/intriguectl.sh
+RUN chmod +x core/util/intriguectl.sh
 ENTRYPOINT ["./core/util/intriguectl.sh", "start"]
