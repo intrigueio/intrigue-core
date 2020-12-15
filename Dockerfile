@@ -27,4 +27,9 @@ RUN /bin/bash core/util/bootstrap.sh
 # Expose the port
 EXPOSE 7777
 
-ENTRYPOINT ["./core/util/intriguectl.sh", "start"]
+# create entrypoint file
+touch docker-starter.sh
+echo "/home/ubuntu/core/util/intriguectl.sh setup" >> docker-starter.sh
+echo "/home/ubuntu/core/util/intriguectl.sh start" >> docker-starter.sh
+chmod +x docker-starter.sh
+ENTRYPOINT ["docker-starter.sh"]

@@ -266,7 +266,7 @@ sudo -u postgres /usr/lib/postgresql/*/bin/initdb /data/postgres
 
 sudo mkdir /data/redis
 sudo chown redis:redis /data/redis
-sudo chmod 700 /data/redis
+sudo chmod -R 770 /data/redis
 
 # Set the database to trust
 echo "[+] Updating postgres configuration, moving it to /data"
@@ -286,6 +286,7 @@ sudo touch /etc/systemd/system/redis-server.service.d/override.conf
 sudo sh -c 'echo "[Service]" >> /etc/systemd/system/redis-server.service.d/override.conf'
 sudo sh -c 'echo "ReadWriteDirectories=-/data/redis" >> /etc/systemd/system/redis-server.service.d/override.conf'
 sudo service redis-server start
+sudo systemctl daemon-reload
 
 echo "[+] Creating clean database"
 sudo service postgresql start

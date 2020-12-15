@@ -21,10 +21,11 @@ Help()
     # Display Help
     echo "Intrigue Core Management Script"
     echo
-    echo "Syntax: ./intriguectl [start|stop]"
+    echo "Syntax: ./intriguectl [start|stop|setup]"
     echo "options:"
-    echo "start  start intrigue services"
-    echo "stop   stop intrigue services"
+    echo "setup   initialize intrigue services."
+    echo "start   start intrigue services"
+    echo "stop    stop intrigue services"
     echo
     echo "To set your basic auth password, export variable CORE_PASSWD"
     echo
@@ -52,10 +53,7 @@ Setup()
     if [ "${WORKER_CONFIG}" ]; then
       echo "[+] We are a worker-only configuration!"
       return
-    fi
-    
-    # else we set up the databases configuration
-    echo "[+] Intrigue is starting for the first time! Setting up..."    
+    fi 
 
     # Set up database if it's not already there 
     if [ ! -d /data/postgres ]; then
@@ -78,6 +76,7 @@ Setup()
       sudo mkdir -p /data/redis
       sudo chown redis:redis /data/redis
       sudo service redis-server start
+      sudo systemctl daemon-reload
     fi
 
     # change to core's directory
@@ -129,10 +128,11 @@ if [ "$cmd" == "start" ]; then
       tail -f /core/log/worker.log
     fi 
 elif [ "$cmd" == "stop" ]; then
-    echo "[+] Starting intrigue..."
+    echo "[+] Stopping intrigue..."
     cd ~/core
     god stop
 elif [ "$cmd" == "setup" ]; then
+    echo "[+] Initializing intrigue..."
     Setup
 else
     echo "Unknown command."
