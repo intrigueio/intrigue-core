@@ -257,47 +257,16 @@ sudo bash -c "echo '* hard nofile 524288' >> /etc/security/limits.conf"
 sudo bash -c "echo '* soft nofile 524288' >> /etc/security/limits.conf"
 sudo bash -c "echo session required pam_limits.so >> /etc/pam.d/common-session"
 
-echo "[+] Create /data directories for postgres and redis"
-sudo service postgresql stop
-sudo mkdir -p /data/postgres
-sudo chown postgres:postgres /data/postgres
-sudo chmod 644 /data/postgres
-sudo -u postgres /usr/lib/postgresql/*/bin/initdb /data/postgres
-
-sudo mkdir /data/redis
-sudo chown redis:redis /data/redis
-sudo chmod -R 770 /data/redis
-
 # Set the database to trust
-echo "[+] Updating postgres configuration, moving it to /data"
+echo "[+] Updating postgres configuration"
+sudo service postgresql stop
 sudo sed -i 's/md5/trust/g' /etc/postgresql/*/main/pg_hba.conf
 sudo sed -i 's/peer/trust/g' /etc/postgresql/*/main/pg_hba.conf
-sudo sed -i "s/data_directory = .*/data_directory = \'\/data\/postgres\'/g" /etc/postgresql/*/main/postgresql.conf
-
-echo "[+] Updating Redis configuration, moving it to /data"
-sudo service redis-server stop
-# ensure we bind to localhost
-sudo sed -i '/^bind/s/bind.*/bind 127.0.0.1/' /etc/redis/redis.conf
-# change default direectory
-#sudo sed -i '/^dir/s/dir \/var\/lib\/redis/\/data\/redis/' /etc/redis/redis.conf
-sudo sed -i 's/dir \/var\/lib\/redis/dir \/data\/redis/g' /etc/redis/redis.conf
-sudo mkdir /etc/systemd/system/redis-server.service.d
-sudo touch /etc/systemd/system/redis-server.service.d/override.conf
-sudo sh -c 'echo "[Service]" >> /etc/systemd/system/redis-server.service.d/override.conf'
-sudo sh -c 'echo "ReadWriteDirectories=-/data/redis" >> /etc/systemd/system/redis-server.service.d/override.conf'
-sudo service redis-server start
-sudo systemctl daemon-reload
 
 echo "[+] Creating clean database"
 sudo service postgresql start
 sudo -u postgres createuser intrigue
 sudo -u postgres createdb intrigue_dev --owner intrigue
-
-# remove old data directories
-echo "[+] Cleaning old db directories"
-rm -rf /var/lib/pgsql/*
-rm -rf /var/lib/pgsql/backups/*
-rm -rf /var/lib/pgsql/data/
 
 ##### Install rbenv
 if [ ! -d ~/.rbenv ]; then

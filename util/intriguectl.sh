@@ -27,7 +27,7 @@ Help()
     echo "start   start intrigue services"
     echo "stop    stop intrigue services"
     echo
-    echo "To set your basic auth password, export variable CORE_PASSWD"
+    echo "To set your basic auth password, export variable CORE_PASSWD and (re)run setup"
     echo
 }
 
@@ -54,6 +54,9 @@ Setup()
       echo "[+] We are a worker-only configuration!"
       return
     fi 
+    
+    # set password
+    SetPassword
 
     # Set up database if it's not already there 
     if [ ! -d /data/postgres ]; then
@@ -122,11 +125,6 @@ if [ "$cmd" == "start" ]; then
     sleep 25
     ip=$(ifconfig eth0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
     echo "Browse to https://$ip:7777 and login with user 'intrigue' and the given or pregenerated password"
-
-    # if we're in docker, we'll tail worker log
-    if [ -f /.dockerenv ]; then
-      tail -f /core/log/worker.log
-    fi 
 elif [ "$cmd" == "stop" ]; then
     echo "[+] Stopping intrigue..."
     cd ~/core
