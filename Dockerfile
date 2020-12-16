@@ -71,6 +71,9 @@ RUN printf "#!/bin/bash \
 \n  sudo sh -c 'echo \"ProtectHome=no\" >> /etc/systemd/system/redis-server.service.d/override.conf' \
 \n  sudo service redis-server start > /dev/null \
 \n  # \
+\n else \
+\n  sudo service postgresql start > /dev/null \
+\n  sudo service redis-server start > /dev/null \
 \n fi \
 \n # \
 \n # setup and start commands \
