@@ -449,6 +449,8 @@ GEM
     yajl-ruby (1.4.1)
     yard (0.9.25)
     zeitwerk (2.4.1)
+    zetalytics (0.1.2)
+      json
 
 PLATFORMS
   ruby
@@ -526,6 +528,7 @@ DEPENDENCIES
   whoisology!
   yajl-ruby
   yard
+  zetalytics
 
 RUBY VERSION
    ruby 2.7.2p137
