@@ -142,24 +142,35 @@ module Dns
     
     resources = []
 
+    config = {
+      search: [],
+      ndots: 1,
+      nameserver_port: [['127.0.0.1', 8082],['127.0.0.1', 53]]
+    }
+
     # Handle ip lookup (PTR) first
     if lookup_name.is_ip_address?
       
       # TODO... this should return multiple
       begin   
-        entry = Resolv.new.getname lookup_name
 
-        return [] unless entry && entry.length > 0
+        entry = Resolv::DNS.new(config).getname lookup_name
+
+        unless entry && entry.length > 0
+          _log_error "No response!"
+          return [] 
+        end
 
         out = [{
-          "name" => entry,
+          "name" => "#{entry}",
           "lookup_details" => [{
             "request_record" => lookup_name,
             "response_record_type" => "PTR",
             "response_record_data" => entry 
           }]
         }]
-      rescue Resolv::ResolvError =>e 
+
+      rescue Resolv::ResolvError => e  
         _log_error "Hit exception: #{e}."
       rescue Errno::ENETUNREACH => e
         _log_error "Hit exception: #{e}. Are you sure you're connected?"
@@ -177,7 +188,7 @@ module Dns
 
         # lookup each type
         lookup_types.each do |t|
-          Resolv::DNS.open() {|dns|
+          Resolv::DNS.open(config) {|dns|
             dns.timeouts = 5
             resources.concat(dns.getresources(lookup_name, t)) 
           }
@@ -226,95 +237,6 @@ module Dns
     end 
 
   out || []
-  end
-
-  def resolve_old(lookup_name, lookup_types=nil)
-    lookup_types = [Dnsruby::Types::AAAA, Dnsruby::Types::A, Dnsruby::Types::CNAME, Dnsruby::Types::PTR] unless lookup_types
-
-    config = {
-      :search => [],
-      :retry_times => 3,
-      :retry_delay => 3,
-      :packet_timeout => 30,
-      :query_timeout => 30
-    }
-
-    if _get_system_config("resolvers")
-      config[:nameserver] = _get_system_config("resolvers").split(",")
-    end
-
-    resolver = Dnsruby::Resolver.new(config)
-
-    results = []
-    lookup_types.each do |t|
-
-      begin
-        results << resolver.query(lookup_name, t)
-      rescue Dnsruby::NXDomain => e
-        # silently move on
-      rescue IOError => e
-        _log_error "Error resolving: #{lookup_name}, error: #{e}"
-      rescue Dnsruby::SocketEofResolvError => e
-        _log_error "Error resolving: #{lookup_name}, error: #{e}"
-      rescue Dnsruby::ServFail => e
-        _log_error "Error resolving: #{lookup_name}, error: #{e}"
-      rescue Dnsruby::ResolvTimeout => e
-        _log_error "Error resolving: #{lookup_name}, error: #{e}"
-      end
-    end
-
-    return [] if results.empty?
-
-    begin
-
-      # For each of the found addresses
-      resources = []
-      results.each do |result|
-
-        # Let us know if we got an empty result
-        next if result.answer.empty?
-
-        result.answer.map do |resource|
-
-          #next if resource.type == Dnsruby::Types::NS
-
-          resources << {
-            "name" => resource.address.to_s,
-            "lookup_details" => [{
-              "request_record" => lookup_name,
-              "response_record_type" => resource.type.to_s,
-              "response_record_data" => resource.rdata.to_s,
-              "nameservers" => resolver.config.nameserver }]} if resource.respond_to? :address
-
-          resources << {
-            "name" => resource.domainname.to_s.downcase,
-            "lookup_details" => [{
-              "request_record" => lookup_name,
-              "response_record_type" => resource.type.to_s,
-              "response_record_data" => resource.rdata,
-              "nameservers" => resolver.config.nameserver }]} if resource.respond_to? :domainname
-
-          resources << { # always
-            "name" => resource.name.to_s.downcase,
-            "lookup_details" => [{
-              "request_record" => lookup_name,
-              "response_record_type" => resource.type.to_s,
-              "response_record_data" => resource.rdata,
-              "nameservers" => resolver.config.nameserver }]}
-
-        end # end result.answer
-      end
-    rescue Dnsruby::SocketEofResolvError => e
-      _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
-    rescue Dnsruby::ServFail => e
-      _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
-    rescue Dnsruby::ResolvTimeout => e
-      _log_error "Unable to resolve: #{lookup_name}, timed out: #{e}"
-    rescue Errno::ENETUNREACH => e
-      _log_error "Hit exception: #{e}. Are you sure you're connected?"
-    end
-
-  resources || []
   end
 
   def collect_ns_details(lookup_name)
