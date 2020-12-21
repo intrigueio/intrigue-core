@@ -21,7 +21,7 @@ class Masscan < BaseTask
       :allowed_options => [
         {:name => "tcp_ports", :regex => "numeric_list", :default => "21,80,443,8000,8009,8080,8081,8443" },
         {:name => "udp_ports", :regex => "numeric_list", :default => "161,500,1900" },
-        {:name => "send_rate", :regex => "integer", :default => 100000 },
+        {:name => "send_rate", :regex => "integer", :default => 10000 },
       ],
       :created_types => [ "DnsRecord","IpAddress", "NetworkService", "Uri" ],
       :queue => "task_scan"
@@ -49,7 +49,6 @@ class Masscan < BaseTask
       port_string << "#{opt_udp_ports.split(",").map{|p| "U:#{p}" }.join(",")}" if opt_udp_ports.length > 0
 
       # shell out to masscan and run the scan
-      # TODO - move this to scanner mixin
       masscan_string = "masscan --ports #{port_string} --rate #{opt_send_rate} -oL #{temp_file.path} --range #{to_scan}"
       masscan_string = "sudo #{masscan_string}" unless Process.uid == 0
 

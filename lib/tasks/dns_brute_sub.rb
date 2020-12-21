@@ -134,11 +134,8 @@ class DnsBruteSub < BaseTask
                   found_count += 1
                   _log_good "Resolved address #{resolved_address} for #{fqdn}!"
 
-                  dns_entity = _create_entity("DnsRecord", {"name" => fqdn })
-
-                  # since we can get a CNAME response, check type before creating
-                  create_type = "#{resolved_address}".is_ip_address? ? "IpAddress" : "DnsRecord"
-                  _create_entity(create_type, {"name" => resolved_address }, dns_entity)
+                  # create it!                  
+                  create_dns_entity_from_string fqdn
 
                   #
                   # This section will add permutations to our list, if the
