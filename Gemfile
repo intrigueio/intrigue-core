@@ -95,7 +95,7 @@ gem "sentry-raven"            # Error tracking (disabled by default)
 
 ### Localchecks and modules ... uncomment if needed
 #gem 'chrome_remote',                 :path => "~/chrome_remote"
-gem 'intrigue-ident',                :path => "~/intrigue-ident"
-gem 'intrigue-ident-private',        :path => "~/intrigue-ident-private"
-gem 'intrigue-core-private',         :path => "~/intrigue-core-private"
-gem 'ruclei',                        :path => "~/ruclei"
+#gem 'intrigue-ident',                :path => "~/intrigue-ident"
+#gem 'intrigue-ident-private',        :path => "~/intrigue-ident-private"
+#gem 'intrigue-core-private',         :path => "~/intrigue-core-private"
+#gem 'ruclei',                        :path => "~/ruclei"
