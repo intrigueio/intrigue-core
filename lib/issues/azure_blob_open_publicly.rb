@@ -1,7 +1,7 @@
 
 module Intrigue
 module Issue
-class AzureBLOBOpenPublicly < BaseIssue
+class AzureBlobOpenPublicly < BaseIssue
 
   def self.generate(instance_details={})
 
@@ -10,7 +10,7 @@ class AzureBLOBOpenPublicly < BaseIssue
       name: "azure_blob_open_publicly",
       pretty_name: "Potential Open Azure Blob",
       severity: 2,
-      status: "confirmed",
+      status: "potentiel",
       category: "misconfiguration",
       description: "An azure blob found open publicly",
       remediation: "Investigate whether this azure blob should be exposed, and if not, adjust the settings of the Azure Blob",
