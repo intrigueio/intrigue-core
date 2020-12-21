@@ -6,6 +6,10 @@ require_relative "routes/system"
 # useful to bring in generic helper functions
 require_relative '../lib/system/dns_helpers'
 
+# bring in file formats
+require_relative '../lib/system/parseable_format'
+include Intrigue::Core::System::ParseableFormat
+
 require_relative "routes/analysis"
 require_relative "routes/entities"
 require_relative "routes/issues"

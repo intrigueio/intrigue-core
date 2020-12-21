@@ -30,7 +30,6 @@ begin  # try to load runtime deps
   require 'digest'
   require 'dnsruby'
   require 'dnsimple'
-  require 'em-resolv-replace'
   require 'flareon'
   require 'ip_ranger'
   require 'ipaddr'
