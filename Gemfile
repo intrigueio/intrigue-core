@@ -72,6 +72,7 @@ gem 'whois-parser'            # whois
 gem 'whoisology',             :git => 'https://github.com/pentestify/whoisology.git'
 gem 'open3'
 gem 'typhoeus'
+gem 'zetalytics'
 
 # comment if developing on chrome_remote locally
 gem 'chrome_remote',          :git => 'https://github.com/intrigueio/chrome_remote.git'
