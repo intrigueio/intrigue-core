@@ -1,4 +1,3 @@
-require "pry"
 module Intrigue
 module Task
 class SearchAzureBlob < BaseTask
