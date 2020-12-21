@@ -93,33 +93,6 @@ GIT
     whoisology (0.1.0)
 
 PATH
-  remote: ../../../../intrigue-core-private
-  specs:
-    intrigue-core-private (0.9.3)
-
-PATH
-  remote: ../../../../intrigue-ident-private
-  specs:
-    intrigue-ident-private (4.0.4)
-
-PATH
-  remote: ../../../../intrigue-ident
-  specs:
-    intrigue-ident (4.0.4)
-      dnsruby
-      murmurhash3
-      recog-intrigue
-      snmp
-      socketry
-      typhoeus
-
-PATH
-  remote: ../../../../ruclei
-  specs:
-    ruclei (0.0.3)
-      typhoeus
-
-PATH
   remote: api_client
   specs:
     intrigue_api_client (1.6.0)
@@ -318,7 +291,6 @@ GEM
     multi_json (1.15.0)
     multi_xml (0.6.0)
     multipart-post (2.1.1)
-    murmurhash3 (0.1.6)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
     net-dns (0.9.0)
@@ -358,8 +330,6 @@ GEM
       rack (>= 1.0, < 3)
     rake (13.0.1)
     rb-readline (0.5.5)
-    recog-intrigue (2.3.14)
-      nokogiri
     redis (4.2.5)
     redis-namespace (1.8.0)
       redis (>= 3.0.4)
@@ -492,9 +462,6 @@ DEPENDENCIES
   googleajax
   googleauth
   iconv
-  intrigue-core-private!
-  intrigue-ident!
-  intrigue-ident-private!
   intrigue_api_client!
   ip_ranger!
   ipaddr
@@ -522,7 +489,6 @@ DEPENDENCIES
   rspec
   ruby-nmap!
   rubyzip
-  ruclei!
   sentry-raven
   sequel
   shodan
