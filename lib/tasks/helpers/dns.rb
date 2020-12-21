@@ -145,7 +145,7 @@ module Dns
     config = {
       search: [],
       ndots: 1,
-      nameserver_port: [['127.0.0.1', 8082],['127.0.0.1', 53]]
+      nameserver_port: [['127.0.0.1', 8081]]
     }
 
     # Handle ip lookup (PTR) first
