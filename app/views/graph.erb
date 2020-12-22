@@ -53,9 +53,9 @@ function delete_entity_children(id){
 }
 </script>
 
-<script src="/js/sigma/sigma.min.js"></script>
-<script src="/js/sigma/plugins/sigma.parsers.json.min.js"></script>
-<script src="/js/sigma/plugins/sigma.layout.forceAtlas2.min.js"></script>
+<script src="/node_modules/sigma/build/sigma.min.js"></script>
+<script src="/node_modules/sigma/build/plugins/sigma.parsers.json.min.js"></script>
+<script src="/node_modules/sigma/build/plugins/sigma.layout.forceAtlas2.min.js"></script>
 <script>
 
   sigma.parsers.json("<%= @json_uri %>", {
