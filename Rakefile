@@ -152,7 +152,6 @@ task :setup do
         puts "[+] GENERATING NEW SYSTEM PASSWORD!" 
         config["credentials"]["password"] = system_password # Save it
       end
-    else
       system_password = config["credentials"]["password"]
     end
 
