@@ -1,0 +1,11 @@
+{
+    "dependencies": {
+      "add": "^2.0.6",
+      "bootstrap": "3.3.5",
+      "datatables": "^1.10.11",
+      "highlightjs": "^8.7.0",
+      "jquery": "2.1.4",
+      "yarn": "^1.22.10"
+    }
+  }
+  
