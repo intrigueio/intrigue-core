@@ -5,6 +5,7 @@
       "datatables": "^1.10.11",
       "highlightjs": "^8.7.0",
       "jquery": "2.1.4",
+      "sigma": "1.2.0",
       "yarn": "^1.22.10"
     }
   }
