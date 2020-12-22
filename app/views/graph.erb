@@ -65,14 +65,14 @@ function delete_entity_children(id){
         type: 'canvas'
     },
     settings: {
-      minNodeSize: 1,
+      minNodeSize: 2,
       maxNodeSize: 5,
       defaultNodeColor: '#FFFFFF',
       defaultEdgeColor: '#00B8E6',
       defaultLabelColor:'#FFFFFF',
       defaultLabelSize: 8,
-      labelThreshold: 3,
-      edgeHoverSizeRatio: 10,
+      labelThreshold: 6,
+      edgeHoverSizeRato: 10,
       edgeHoverColor: '#ff0000',
       defaultNodeHoverColor: '#ff0000',
       edgeColor: 'default'
@@ -83,24 +83,24 @@ function delete_entity_children(id){
     s.graph.nodes().forEach(function(node, i, a) {
       node.x = Math.cos(Math.PI * 2 * i / a.length);
       node.y = Math.sin(Math.PI * 2 * i / a.length);
-      node.size = 1;
+      node.size = 2;
     });
 
     // adjust slowdown based on the size
-    var slowdown = 10;
-    if (s.graph.nodes().length > 1000) {
+    var slowdown = 200;
+    if (s.graph.nodes().length > 5000) {
       slowdown = 1;
     }
 
     // start the layout
-    s.startForceAtlas2({gravity:1000,scalingRatio:20000,slowDown: slowdown});
+    s.startForceAtlas2({gravity:1000, scalingRatio:3000, slowDown: slowdown});
 
     // adjust our stop time based on size
     if (s.graph.nodes().length > 10000) {
       setTimeout(function() { s.stopForceAtlas2(); }, 120000);
     }
     else {
-      setTimeout(function() { s.stopForceAtlas2(); }, 10000);
+      setTimeout(function() { s.stopForceAtlas2(); }, 60000);
     }
 
     s.bind('clickNode', function(e) {
