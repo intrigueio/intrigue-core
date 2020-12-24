@@ -79,7 +79,7 @@ module Model
         else
           out = "Missing Logfile: #{logfile}"
         end
-      elsif location == "none"
+      elsif logger.location == "none"
         out = "No log"
       else
         raise "Invalid log location"
