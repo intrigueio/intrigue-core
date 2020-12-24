@@ -237,37 +237,70 @@ module Model
               
       if entity_type == "Domain"
         # this should have gotten caught above... 
+        serchable_type = "Domain"
         searchable_name = parse_domain_name(entity_name)
       elsif entity_type == "DnsRecord"  
+        serchable_type = "Domain"
         searchable_name = parse_domain_name(entity_name)
       elsif entity_type == "EmailAddress"  
+        serchable_type = "Domain"
         searchable_name = parse_domain_name(entity_name.split("@").last)
       elsif entity_type == "Nameserver"  
+        serchable_type = "Domain"
         searchable_name = parse_domain_name(entity_name)
-      elsif entity_type == "Uri"
+      elsif entity_type == "Uri"  || entity_type == "ApiEndpoint"  
+        serchable_type = "Domain"
         searchable_name = parse_domain_name(URI.parse(entity_name).host)
+      
+      ## We can directly compare these types 
+      elsif ( entity_type == "UniqueKeyword" || 
+                entity_type == "UniqueToken"  || 
+                  entity_type =="GithubAccount" || 
+                    entity_type == "GithubRepository" ||
+                      entity_type == "NetBlock" || 
+                      entity_type == "NetworkService" || 
+                        entity_type == "IpAddress" || 
+                        entity_type == "IosApp" || 
+                        entity_type == "AndroidApp" ||
+                        entity_type == "Organization" ) 
+
+        serchable_type = enitty_type
+        searchable_name = entity_name
+      
+      # TODO ... webaccount (which is scoped?)
+
       end
 
       # now form the query, taking into acount the filter if we can
-      if searchable_name
-        found_entity = Intrigue::Core::Model::GlobalEntity.first(:type => "Domain", :name => searchable_name)
-      else
-        global_entities = Intrigue::Core::Model::GlobalEntity.all
+      if searchable_name && searchable_type
+        found_entity = Intrigue::Core::Model::GlobalEntity.first(
+            :type => searchable_type, :name => searchable_name )
+      
+      
+      ###
+      ### This was disabled 12/24/2020 ... as we listed the directly compareable entities above
+      ### and the expense of doing a global lookup / traverse, repeatedly, is significant.
+      ###
 
-        global_entities.each do |ge|
-          # this needs a couple (3) cases:
-          # 1) case where we're an EXACT match (ey.com)
-          # 2) case where we're a subdomain of an exception domain (x.ey.com)
-          # 3) case where we're a uri and should match an exception domain (https://ey.com)
-          # none of these cases should match the case: jcpenney.com
-          if (entity_name.downcase =~ /^#{Regexp.escape(ge.name.downcase)}(:[0-9]*)?$/ ||
-            entity_name.downcase =~ /^.*\.#{Regexp.escape(ge.name.downcase)}(:[0-9]*)?$/ ||
-            entity_name.downcase =~ /^https?:\/\/#{Regexp.escape(ge.name.downcase)}(:[0-9]*)?$/)
-            
-            #okay we found it... now we need to check if it's an allowed project
-            found_entity = ge
-          end
-        end
+      #else
+      #  global_entities = Intrigue::Core::Model::GlobalEntity.all
+      #  
+      #  global_entities.each do |ge|
+      #  
+      #    # this needs a couple (3) cases:
+      #   # 1) case where we're an EXACT match (ey.com)
+      #    # 2) case where we're a subdomain of an exception domain (x.ey.com)
+      #    # 3) case where we're a uri and should match an exception domain (https://ey.com)
+      #    # none of these cases should match the case: jcpenney.com
+      #    if (entity_name.downcase =~ /^#{Regexp.escape(ge.name.downcase)}(:[0-9]*)?$/ ||
+      #      entity_name.downcase =~ /^.*\.#{Regexp.escape(ge.name.downcase)}(:[0-9]*)?$/ ||
+      #      entity_name.downcase =~ /^https?:\/\/#{Regexp.escape(ge.name.downcase)}(:[0-9]*)?$/)
+      #      
+      #      #okay we found it... now we need to check if it's an allowed project
+      #      found_entity = ge
+      #    end
+      #  end
+
       end
 
     if found_entity && !self.allowed_namespaces.empty? # now lets check if we have an allowance for it
