@@ -264,7 +264,7 @@ module Model
                         entity_type == "AndroidApp" ||
                         entity_type == "Organization" ) 
 
-        serchable_type = enitty_type
+        searchable_type = entity_type
         searchable_name = entity_name
       
       # TODO ... webaccount (which is scoped?)
