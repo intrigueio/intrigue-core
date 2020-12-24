@@ -235,7 +235,7 @@ module WebContent
      end
 
      # Scan for phone numbers
-     phone_numbers = content.scan(/((\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4})/)
+     phone_numbers = content.scan(/^(\+[1-9][0-9]*(\([0-9]*\)|-[0-9]*-))?[0]?[1-9][0-9\-\.\s]*$/)
      phone_numbers.each do |phone_number|
        x = _create_entity("PhoneNumber", { "name" => "#{phone_number[0]}", "origin" => source_uri})
      end

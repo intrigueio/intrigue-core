@@ -1,4 +1,3 @@
-#require 'em/pure_ruby'
 require 'logger'
 require 'sinatra'
 require 'sinatra/contrib'
@@ -237,8 +236,9 @@ require_relative "lib/all"
 if (Intrigue::Core::System::Config.config && Intrigue::Core::System::Config.config["sentry_dsn"])
   require "raven"
   puts "!!! Configuring Sentry error reporting to: #{Intrigue::Core::System::Config.config["sentry_dsn"]}"
-
   Raven.configure do |config|
     config.dsn = Intrigue::Core::System::Config.config["sentry_dsn"]
   end
 end
+
+

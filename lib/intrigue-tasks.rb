@@ -58,7 +58,6 @@ begin  # try to load runtime deps
   require 'whoisology'
   require 'zip'
   require 'zetalytics'
-
 rescue LoadError => e 
   puts "ERROR! Unable to load a dep, functionality may be limited: #{e}"
 end
