@@ -218,7 +218,7 @@ module WebContent
      end
 
      # Scan for dns records
-     dns_records = content.scan(/^[A-Za-z0-9]+\.[A-Za-z0-9]+\.[a-zA-Z]{2,6}$/)
+     dns_records = content.scan(dns_regex)
      dns_records.each do |dns_record|
        x = _create_entity("DnsRecord", {"name" => dns_record, "origin" => source_uri})
      end
@@ -235,7 +235,7 @@ module WebContent
      end
 
      # Scan for phone numbers
-     phone_numbers = content.scan(/^(\+[1-9][0-9]*(\([0-9]*\)|-[0-9]*-))?[0]?[1-9][0-9\-\.\s]*$/)
+     phone_numbers = content.scan(phone_number_regex)
      phone_numbers.each do |phone_number|
        x = _create_entity("PhoneNumber", { "name" => "#{phone_number[0]}", "origin" => source_uri})
      end
@@ -276,6 +276,11 @@ module WebContent
        _create_normalized_webaccount "facebook", account_name, url
 
      # Handle LinkedIn public profiles
+     elsif url =~ /^https?:\/\/www.linkedin.com\/in\/(\w).*$/
+        account_name = url.split("/")[5]
+        _create_normalized_webaccount "linkedin", account_name, url
+     
+       # Handle LinkedIn public profiles
      elsif url =~ /^https?:\/\/www.linkedin.com\/in\/pub\/.*$/
          account_name = url.split("/")[5]
          _create_normalized_webaccount "linkedin", account_name, url

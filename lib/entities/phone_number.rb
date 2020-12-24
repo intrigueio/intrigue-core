@@ -12,7 +12,7 @@ class PhoneNumber < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name =~ /^(\+[1-9][0-9]*(\([0-9]*\)|-[0-9]*-))?[0]?[1-9][0-9\-\.\s]*$/
+    name =~ phone_number_regex
   end
 
   def detail_string

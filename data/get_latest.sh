@@ -35,6 +35,12 @@ if [ ! -f public_suffix_list.dat ]; then
   rm public_suffix_list.dat
 fi
 
+# tika 
+if [ ! -f ../tmp/tika-server.jar ]; then
+  echo "[+] Getting Tika"
+  wget -N -q https://apache.osuosl.org/tika/tika-server-1.25.jar -O ../tmp/tika-server.jar
+fi
+
 # retirejs data 
 if [ ! -f retirejs.json ]; then
   echo "[+] Getting latest Retire.js"

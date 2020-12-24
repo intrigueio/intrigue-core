@@ -23,7 +23,7 @@ class UriSpider < BaseTask
         {:name => "extract_dns_records", :regex => "boolean", :default => true },
         {:name => "extract_dns_record_pattern", :regex => "alpha_numeric_list", :default => "(current domain)" },
         {:name => "extract_email_addresses", :regex => "boolean", :default => true },
-        {:name => "extract_phone_numbers", :regex => "boolean", :default => false },
+        {:name => "extract_phone_numbers", :regex => "boolean", :default => true },
         {:name => "parse_file_metadata", :regex => "boolean", :default => true },
         {:name => "extract_uris", :regex => "boolean", :default => false }
       ],
