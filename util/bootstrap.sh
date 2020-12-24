@@ -335,3 +335,9 @@ fi
 echo "[+] Cleaning up packages!"
 sudo apt-get -y clean
 
+# add welcome message
+if ! $(grep -q README ~/.bash_profile); then
+  echo "[+] Configuring startup message"
+  echo "boxes -a c $INTRIGUE_DIRECTORY/util/README" >> ~/.bash_profile
+fi
+

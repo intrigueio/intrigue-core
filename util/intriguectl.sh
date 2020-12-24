@@ -3,19 +3,6 @@
 # Set path to include rbenv
 source $HOME/.bash_profile
 
-# print our welcome message
-Welcome()
-{
-  echo "/****************************************************************************************/"
-  echo "/*                              Welcome to Intrigue Core!                               */"
-  echo "/*                                                                                      */"
-  echo "/* Please file bugs & requests here: https://github.com/intrigueio/intrigue-core/issues */"
-  echo "/*                                                                                      */"
-  echo "/*                 Other comments? Questions? Email hello@intrigue.io.                  */"
-  echo "/****************************************************************************************/"
-}
-
-
 Help()
 {
     # Display Help
@@ -70,13 +57,11 @@ cmd=$1
 
 if [ -z "$cmd" ];
 then
-    Welcome
     Help
     exit
 fi
 
 if [ "$cmd" == "start" ]; then
-    Welcome
     echo "[+] Starting intrigue..."
     # start services
     cd ~/core
