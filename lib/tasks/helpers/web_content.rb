@@ -200,7 +200,7 @@ module WebContent
      end
 
      # Scan for email addresses
-     addrs = content.scan(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,8}/)
+     addrs = content.scan(email_address_regex)
      addrs.each do |addr|
        x = _create_entity("EmailAddress", {"name" => addr, "origin" => source_uri}) unless addr =~ /.png$|.jpg$|.gif$|.bmp$|.jpeg$/
      end
@@ -218,10 +218,18 @@ module WebContent
      end
 
      # Scan for dns records
-     dns_records = content.scan(dns_regex)
-     dns_records.each do |dns_record|
-       x = _create_entity("DnsRecord", {"name" => dns_record, "origin" => source_uri})
+     potential_dns_records = content.scan(dns_regex)
+
+     potential_dns_records.each do |potential_dns_record|
+       next unless potential_dns_record # skip empty? 
+
+       # check that we have a valid TLD, to avoid stuff like image.png or file.css or page.aspx
+       if parse_tld(potential_dns_record)
+        create_dns_entity_from_string potential_dns_record, nil, false, { "origin" => source_uri }
+       end
+
      end
+
    end
 
    def parse_phone_numbers_from_content(source_uri, content)
