@@ -76,6 +76,8 @@ RUN printf "#!/bin/bash \
 \n  sudo service redis-server start > /dev/null \
 \n fi \
 \n # \
+\n # Remove instructions because we're in Docker\
+\n sed -i \"s/boxes -a c .*//\" ~/.bash_profile \
 \n # setup and start commands \
 \n /home/ubuntu/core/util/intriguectl.sh setup \
 \n /home/ubuntu/core/util/intriguectl.sh start \
