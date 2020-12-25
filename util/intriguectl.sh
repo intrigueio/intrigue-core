@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # Set path to include rbenv
-source $HOME/.bash_profile
+source $HOME/.bash_profile >> /dev/null
 
 Help()
 {
@@ -40,11 +40,8 @@ Setup()
     # migrade db
     echo "[+] Migrating Database..."
     bundle exec rake db:migrate
-
-    # configure god
-    god -c ~/core/util/god/intrigue.rb
     
-    echo "[+] Setup complete!"
+    echo "[+] Setup complete! To start intrigue, run 'intriguectl.sh start'"
 }
 
 ################################################################################
@@ -65,6 +62,7 @@ if [ "$cmd" == "start" ]; then
     echo "[+] Starting intrigue..."
     # start services
     cd ~/core
+    god -c ~/core/util/god/intrigue.rb
     god start > /dev/null
     sleep 25
     ip=$(ifconfig eth0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
