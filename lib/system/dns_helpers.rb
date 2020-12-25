@@ -29,7 +29,7 @@ module System
       return nil unless record
 
       # first check if we're not long enough to split, just returning the domain
-      return record if record && record.split(".").length < 2
+      return nil if record && record.split(".").length < 2
 
       # Make sure we're comparing bananas to bananas
       record = "#{record}".downcase
@@ -42,7 +42,7 @@ module System
         # first find all matches
         matches = []
         suffix_list.each do |s|
-          if record =~ /.*#{Regexp.escape(s.strip)}$/i # we have a match ..
+          if record =~ /\.#{Regexp.escape(s.strip)}$/i # we have a match ..
             matches << s.strip
           end
         end
@@ -59,7 +59,7 @@ module System
       end
 
     # unknown tld
-    record
+    nil
     end
 
 

@@ -60,7 +60,7 @@ class UriSpider < BaseTask
     end
 
     # create a default extraction pattern, default to current host
-    @opt_extract_dns_record_pattern = ["#{uri.host}"] if @opt_extract_dns_record_pattern == ["(current domain)"]
+    @opt_extract_dns_record_pattern = [parse_domain_name("#{uri.host}")] if @opt_extract_dns_record_pattern == ["(current domain)"]
 
     # Create a list of whitelist spider regexes from the opt_spider_whitelist options
     whitelist_regexes = @opt_spider_whitelist.gsub("(current domain)","#{uri.host}").split(",").map{|x| Regexp.new("#{x}") }
@@ -95,10 +95,6 @@ class UriSpider < BaseTask
 
           crawled_pages << page.url
 
-          if @opt_extract_uris
-            _create_entity("Uri", { "name" => "#{page.url}", "uri" => "#{page.url}" })
-          end
-
           # If we don't have a body, we can't do anything here.
           next unless page.body
 
@@ -115,34 +111,28 @@ class UriSpider < BaseTask
             URI.extract(encoded_page_body, ["https", "http","ftp"]) do |link|
               # Collect the host
               begin 
-                host = URI(link).host
+                hostname = URI(link).host
               rescue URI::InvalidURIError => e
                 next
               end
 
-              # if we have a valid host
-              if host
-                # check to see if host matches a pattern we'll allow
-                pattern_allowed = false
-                if @opt_extract_dns_record_pattern.include? "*"
-                  pattern_allowed = true
-                else
-                  pattern_allowed = @opt_extract_dns_record_pattern.select{ |x| host =~ /#{x}/ }.count > 0
-                end
+              # skip anythin nil 
+              next unless hostname 
 
-                # if we got a pass, check to make sure we don't already have it, and add it
-                if pattern_allowed
-                  if host.is_ip_address?
-                    _create_entity("IpAddress", "name" => host )
-                  else
-                    _create_entity("DnsRecord", "name" => host )
-                  end
-                end
-
+              # check to see if host matches a pattern we'll allow
+              pattern_allowed = false
+              if @opt_extract_dns_record_pattern.include? "*"
+                pattern_allowed = true
+              else
+                pattern_allowed = @opt_extract_dns_record_pattern.find{ |x| hostname =~ /#{x}/ }
               end
+
+              # if we got a pass, check to make sure we don't already have it, and add it
+              create_dns_entity_from_string("#{hostname}") if pattern_allowed
+
             end # end dns records 
           end
-
+          
           if @opt_parse_file_metadata
             content_type = "#{page.content_type}".split(";").first
 
@@ -156,13 +146,16 @@ class UriSpider < BaseTask
               _log_good "Parsing document of type #{content_type} @ #{page.url}"
               metadata = download_and_extract_metadata "#{page.url}"
               _set_entity_detail("extended_metadata",metadata)
-            else
-              _log "Parsing as a regular file!"
-              parse_phone_numbers_from_content("#{page.url}", encoded_page_body) if @opt_extract_phone_numbers
-              parse_email_addresses_from_content("#{page.url}", encoded_page_body) if @opt_extract_email_addresses
             end
 
           end
+          
+          # add phone numbers and email addresses if we were requested to do so 
+          parse_phone_numbers_from_content("#{page.url}", encoded_page_body) if @opt_extract_phone_numbers
+          parse_email_addresses_from_content("#{page.url}", encoded_page_body) if @opt_extract_email_addresses
+
+          # add the uri if we were requested to do so 
+          _create_entity("Uri", { "name" => "#{page.url}", "uri" => "#{page.url}" }) if @opt_extract_uris
 
           encoded_page_body = nil      
 
