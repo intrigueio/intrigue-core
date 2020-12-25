@@ -10,8 +10,13 @@ module System
       # sanity check
       return nil unless record 
       return nil if record.is_ip_address?
-      
-      split_tld = parse_tld(record).split(".")
+
+      # try to parse a tld and if we can't parse out a tld, 
+      # just keep going with the base record
+      parsed_record_tld = parse_tld(record)
+      parsed_record_tld = record unless parsed_record_tld 
+
+      split_tld = parsed_record_tld.split(".")
       if (split_tld.last == "com" || split_tld.last == "net") && split_tld.count > 1 # handle cases like amazonaws.com, netlify.com
         length = split_tld.count
       else
