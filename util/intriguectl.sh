@@ -68,7 +68,7 @@ if [ "$cmd" == "start" ]; then
     god start > /dev/null
     sleep 25
     ip=$(ifconfig eth0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
-    echo "Browse to https://$ip:7777 and login with user 'intrigue' and the given or pregenerated password"
+    echo "Browse to https://$ip:7777 and login with user 'intrigue' and the given or pregenerated password" | boxes
 elif [ "$cmd" == "stop" ]; then
     echo "[+] Stopping intrigue..."
     cd ~/core
