@@ -14,7 +14,7 @@ module Notifier
       # Assumes amazon...
       if config_hash["system_base_uri"] == "AMAZON"
         # use the standard endpoint to grab info 
-        system_name = http_get_body("https://169.254.169.254/latest/meta-data/public-hostname")
+        system_name = `hostname`
         @system_base_uri = "https://#{system_name}:7777"
       else # use as is
         @system_base_uri = config_hash["system_base_uri"]
