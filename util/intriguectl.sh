@@ -60,6 +60,11 @@ fi
 
 if [ "$cmd" == "start" ]; then
     echo "[+] Starting intrigue..."
+    # check if setup has ran already
+    if [ ! -f ~/core/config/config.json ]; then
+        echo "[!] Looks like setup hasn't run yet. Please run 'intriguectl.sh setup' first."
+        exit 1
+    fi
     # start services
     cd ~/core
     god -c ~/core/util/god/intrigue.rb
