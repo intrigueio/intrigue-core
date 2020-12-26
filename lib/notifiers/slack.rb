@@ -3,6 +3,7 @@ module Notifier
   class Slack < Intrigue::Notifier::Base
 
     include Intrigue::Task::Web
+    include Intrigue
 
     def self.metadata
       { :type => "slack" }
@@ -14,10 +15,9 @@ module Notifier
       # Assumes amazon...
       if config_hash["system_base_uri"] == "AMAZON"
         # use the standard endpoint to grab info 
-        system_name = `hostname`
-        @system_base_uri = "https://#{system_name}:7777"
+        @system_base_uri = "https://#{hostname}:7777"
       else # use as is
-        @system_base_uri = config_hash["system_base_uri"]
+        @system_base_uri = config_hash["system_base_uri"] || "https://#{hostname}:7777"
       end
 
       @hook_url = config_hash["slack_hook_url"]
