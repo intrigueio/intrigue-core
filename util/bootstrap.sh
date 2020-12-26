@@ -336,9 +336,13 @@ echo "[+] Cleaning up packages!"
 sudo apt-get -y clean
 
 # add welcome message
-if ! $(grep -q README ~/.bash_profile); then
+if ! $(grep -q intriguectl ~/.bash_profile); then
   echo "[+] Configuring startup message"
   echo "boxes -a c $INTRIGUE_DIRECTORY/util/README" >> ~/.bash_profile
   echo "echo \"\"" >> ~/.bash_profile
+
+  echo "[+] Adding intrigue to path"
+  echo "ln -s ~/core/util/intriguectl ~/go/bin/intriguectl 2> /dev/null" >> ~/.bash_profile
+  echo "intriguectl" >> ~/.bash_profile
 fi
 

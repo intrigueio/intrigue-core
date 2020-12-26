@@ -3,12 +3,3 @@
 Please file bugs & requests here: https://github.com/intrigueio/intrigue-core/issues
 
 Other comments? Questions? Email hello@intrigue.io.
-
-To set up intrigue:
-cd ~/core && export INTRIGUE_PASS=mysecretpw && ./util/intriguectl.sh setup
-
-To start intrigue: 
-cd ~/core && ./util/intriguectl.sh start
-
-To stop intrigue:
-cd ~/core && ./util/intriguectl.sh stop
