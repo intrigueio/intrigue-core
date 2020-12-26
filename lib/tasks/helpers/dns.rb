@@ -186,12 +186,29 @@ module Dns
           Resolv::DNS::Resource::IN::A,
           Resolv::DNS::Resource::IN::CNAME] unless lookup_types
 
-        # lookup each type
+        # lookup each type, with a bit of backoff if it doesnt work 
         lookup_types.each do |t|
-          Resolv::DNS.open(config) {|dns|
-            dns.timeouts = 5
-            resources.concat(dns.getresources(lookup_name, t)) 
-          }
+          
+          tries = 0
+          max_tries = 3
+          response = nil 
+
+          until response || tries > max_tries
+            begin 
+              resolver = Resolv::DNS.open(config)
+              resolver.timeouts = 3
+              response = resolver.getresources(lookup_name, t)
+              resources.concat(response) 
+            rescue Errno::ECONNREFUSED => e 
+              tries += 1 
+              sleep tries * 3 
+            end
+          end
+
+          unless response 
+            _notify "WARNING! Skipping DNS resolution #{t} #{lookup_name}, unable to connect after multiple attempts"
+          end
+
         end
 
         # translate results into a ruby hash

@@ -20,7 +20,6 @@ require 'webrick'
 ### In the case where we're a gem, they're not yet available. add them as deps
 ###
 begin  # try to load runtime deps
-  
   require 'aws-sdk-route53'
   require 'aws-sdk-s3'
   require 'aws-sdk-sqs'
@@ -45,7 +44,6 @@ begin  # try to load runtime deps
   require 'opencorporates'
   require 'openssl'
   require 'ostruct'
-  require 'resolv-replace'
   require 'rex/sslscan'
   require 'rexml/document'
   require 'snmp'

@@ -46,7 +46,6 @@ gem 'cloudflare',             :git => 'https://github.com/intrigueio/cloudflare.
 gem 'dnsbl-client',           :git => 'https://github.com/intrigueio/dnsbl-client.git'
 gem 'dnsimple'
 gem 'dnsruby'                 # dns_zone_transfer
-#gem 'em-resolv-replace'       # dns_brute_sub
 gem 'flareon'                 # dns resolution over http
 gem 'google-api-client'
 gem 'googleauth'
