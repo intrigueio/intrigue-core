@@ -1,14 +1,11 @@
 #! /bin/bash
 
-# Set path to include rbenv
-source $HOME/.bash_profile >> /dev/null
-
 Help()
 {
     # Display Help
     echo "Intrigue Core Management Script"
     echo
-    echo "Syntax: ./intriguectl [start|stop|setup]"
+    echo "Syntax: intriguectl [start|stop|setup]"
     echo "options:"
     echo "setup   initialize intrigue services."
     echo "start   start intrigue services"
@@ -41,7 +38,7 @@ Setup()
     echo "[+] Migrating Database..."
     bundle exec rake db:migrate
     
-    echo "[+] Setup complete! To start intrigue, run 'intriguectl.sh start'"
+    echo "[+] Setup complete! To start intrigue, run 'intriguectl start'"
 }
 
 ################################################################################
@@ -62,7 +59,7 @@ if [ "$cmd" == "start" ]; then
     echo "[+] Starting intrigue..."
     # check if setup has ran already
     if [ ! -f ~/core/config/config.json ]; then
-        echo "[!] Looks like setup hasn't run yet. Please run 'intriguectl.sh setup' first."
+        echo "[!] Looks like setup hasn't run yet. Please run 'intriguectl setup' first."
         exit 1
     fi
     # start services
