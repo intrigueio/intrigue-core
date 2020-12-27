@@ -13,11 +13,14 @@
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
       <ul class="navbar-nav">
 
-      <li class="nav-item"><a class="av-link active" href="/">Home</a></li>
+
+      <li class="nav-item">
+        <a href="/<%=h @project_name %>/entities"><span><img width-20 height=20 src="/img/icons/home.png"></span>&nbsp;Home</a>
+      </li>
       
       <li class="nav-item dropdown">
         <a class="dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          Start<span class="caret"></span>
+          <span><img width-20 height=20 src="/img/icons/start.png"></span>&nbsp;Start<span class="caret"></span>
         </a>
         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
           <li><a class="dropdown-item" href="/<%=h @project_name %>/start">Single Task</a></li>
@@ -27,13 +30,17 @@
         </ul>
       </li>
 
-      <li class="nav-item"><a href="/<%=h @project_name %>/entities">Entities</a></li>
-      <li class="nav-item"><a href="/<%=h @project_name %>/issues">Issues</a></li>
-      <li class="nav-item"><a href="/<%=h @project_name %>/results">Results</a></li>
+      <li class="nav-item">
+        <a href="/<%=h @project_name %>/entities"><span><img width-20 height=20 src="/img/icons/entity.png"></span>&nbsp;Entities</a>
+      </li>
+
+      <li class="nav-item">
+        <a href="/<%=h @project_name %>/issues"><span><img width-20 height=20 src="/img/icons/issue.png"></span>&nbsp;Issues</a>
+      </li>
 
       <li class="nav-item dropdown">
         <a class="dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          Analysis<span class="caret"></span>
+        <span><img width-20 height=20 src="/img/icons/analyze.png"></span>&nbsp;Analysis<span class="caret"></span>
         </a>
         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
           <li><a class="dropdown-item" href="/<%=h @project_name %>/graph">Graph</a></li>
@@ -51,17 +58,17 @@
       </li>
       <li class="nav-item dropdown">
         <a class="dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          Export<span class="caret"></span>
+        <span><img width-20 height=20 src="/img/icons/download.png"></span>&nbsp;Export<span class="caret"></span>
         </a>
         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <li><a class="dropdown-item" href="#"><b>Downloads</b></a></li>
+          <li><a class="dropdown-item" href="#"><b>Download</b></a></li>
           <li><a class="dropdown-item" href="/<%=h @project_name %>/export/csv">Download All Entities (CSV)</a></li>
           <li><a class="dropdown-item" href="/<%=h @project_name %>/export/json">Download All Entities (JSON)</a></li>
           <li><a class="dropdown-item" href="/<%=h @project_name %>/export/applications/csv">Download Applications (CSV)</a></li>
           <li><a class="dropdown-item" href="/<%=h @project_name %>/export/issues/csv">Download Issues (CSV)</a></li>
           <li><a class="dropdown-item" href="/<%=h @project_name %>/export/graph_json">Download Project Graph (Graph JSON)</a></li>
           <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="#"><b>Handlers</b></a></li>
+          <li><a class="dropdown-item" href="#"><b>Send To... </b></a></li>
           <% Intrigue::HandlerFactory.handlers.sort_by{|h| h.metadata[:name]}.each do |h| %>
             <% next unless h.metadata[:type] == "export" %>
             <li class="dropdown-item"><a href=/<%= "#{@project_name}/handle/#{h.metadata[:name]}" %>><%= "#{h.metadata[:pretty_name]}" %></a></li>
@@ -69,9 +76,13 @@
         </ul>
       </li>
     
+      <li class="nav-item">
+        <a href="/<%=h @project_name %>/results"><span><img width-20 height=20 src="/img/icons/results.png"></span>&nbsp;Task Logs</a>
+      </li>
+
     <li class="nav-item dropdown">
       <a class="dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-        System<span class="caret"></span>
+        <span><img width-20 height=20 src="/img/icons/configuration.png"></span>&nbsp;System<span class="caret"></span>
       </a>
       <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
         <li><a href="/system/config/tasks">Task Config</a></li>

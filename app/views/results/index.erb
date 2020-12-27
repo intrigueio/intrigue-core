@@ -53,7 +53,7 @@
       <col style="width:10%">
     </colgroup>
     <tbody>
-      <tr><th>Name</th><th>Started At</th><th>Entity Count</th><th>Complete</th>
+      <tr><th>Task Name</th><th>Started At</th><th>Entity Count</th><th>Complete</th>
         <% @results.each do |x| %>
         <tr>
           <td><a href="/<%=h @project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity.to_s %></a> </td>
