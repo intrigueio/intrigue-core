@@ -1,6 +1,6 @@
 body {
-  background-image:url('/img/classy_fabric.png');
-  color:white;
+  /*background-image:url('/img/classy_fabric.png');*/
+  color:black;
   /* padding-top: 60px; /* When using the navbar-top-fixed */
 }
 
@@ -23,15 +23,15 @@ textarea{
 }
 
 a:link {
-  color: #1ab6ff;
+  color: #242424;
 }
 
 a:visited {
-  color: #1ab6ff;
+  color: #242424;
 }
 
 a:hover {
-  color: white;
+  color: #000000;
 }
 
 .table-striped > tbody > tr:nth-child(2n+1) > td, .table-striped > tbody > tr:nth-child(2n+1) > th {
@@ -41,12 +41,11 @@ a:hover {
 .like-pre-dark {
   white-space: pre-wrap;
   font-size: 10px;
-  font-family: monospace;
+  font-family: inherit;
   display: block;
-  background-color: black;
-  color: #44FF43;
-  border-style: dashed;
-  border-color: grey;
+  border: 1;
+  background-color: rgb(0, 0, 0);
+  color: #ffffff;
 }
 
 .center {
@@ -65,6 +64,10 @@ a:hover {
 
 .hljs {
   padding: 5px;
+}
+
+.main-body {
+  padding-top: 10px;
 }
 
 .navbar-brand {

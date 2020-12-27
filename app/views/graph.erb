@@ -17,18 +17,16 @@
   #overlay {
     position: absolute;
     z-index: 100;
-    top:60px;
+    top:80px;
     left: 30px;
-    width: 270px;
+    width: 430px;
     border: 2px solid grey;
-    color: white;
-    background-color: black;
-    opacity: 0.75;
+    color: black;
+    opacity: 0.9;
   }
-  #overlay a { color: lightblue};
 </style>
 
-<div id="master">
+<div class="container-fluid"  id="master">
   <div id="container"></div>
   <div id="overlay">Current graph generated at: <%= @graph_generated_at.strftime("%I:%M%p") if @graph_generated_at %>.<br/></div>
 </div>
@@ -67,9 +65,9 @@ function delete_entity_children(id){
     settings: {
       minNodeSize: 2,
       maxNodeSize: 5,
-      defaultNodeColor: '#FFFFFF',
-      defaultEdgeColor: '#00B8E6',
-      defaultLabelColor:'#FFFFFF',
+      defaultNodeColor: '#000000',
+      defaultEdgeColor: '#000000',
+      defaultLabelColor:'#000000',
       defaultLabelSize: 8,
       labelThreshold: 6,
       edgeHoverSizeRato: 10,
@@ -87,16 +85,16 @@ function delete_entity_children(id){
     });
 
     // adjust slowdown based on the size
-    var slowdown = 200;
-    if (s.graph.nodes().length > 5000) {
-      slowdown = 1;
+    var slowdown = 2000;
+    if (s.graph.nodes().length > 1000) {
+      slowdown = 200;
     }
 
     // start the layout
-    s.startForceAtlas2({gravity:1000, scalingRatio:3000, slowDown: slowdown});
+    s.startForceAtlas2({gravity:100, scalingRatio:3000, slowDown: slowdown});
 
     // adjust our stop time based on size
-    if (s.graph.nodes().length > 10000) {
+    if (s.graph.nodes().length > 5000) {
       setTimeout(function() { s.stopForceAtlas2(); }, 120000);
     }
     else {
@@ -110,23 +108,18 @@ function delete_entity_children(id){
 
       $.getJSON(entity_location, function(data){
         $('#overlay').html('<p>Current graph generated at: <%= @graph_generated_at.strftime("%I:%M%p") if @graph_generated_at %>.</p>Node: <a target="_blank" href=entities/' + e.data.node.id + '>'+ e.data.node.type + ": " + e.data.node.label + '</a><br/>');
-        // Aliases
-        $('#overlay').append("<p>Aliases:<ul>")
-        for (let x of data["aliases"])
-        {
-            // Do something
-            $('#overlay').append('<li><a target="_blank" href=entities/' + x.id + '>'+ x.name + '</a></li>');
-        }
+        
         // Task Runs
-        $('#overlay').append("<p>Found By:<ul>")
+        $('#overlay').append("<p>Found By:")
         for (let x of data["task_results"])
         {
             // Do something
-            $('#overlay').append('<li><a target="_blank" href=results/' + x.id + '>'+ x.name + '</a></li>');
+            $('#overlay').append('<a target="_blank" href=results/' + x.id + '> - '+ x.name + '</a><br>');
         }
-
-        $('#overlay').append("</ul></p>")
-        $('#overlay').append("<p><a href=javascript:delete_entity_children("+ e.data.node.id +")>(Delete children)</a></p>")
+        $('#overlay').append("</p>")
+        
+        // Management
+        //$('#overlay').append("<p><a href=javascript:delete_entity_children("+ e.data.node.id +")>(Delete children)</a></p>")
       });
     });
     //s.bind('overNode outNode clickNode doubleClickNode rightClickNode', function(e) {

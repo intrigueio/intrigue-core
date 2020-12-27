@@ -1,7 +1,5 @@
-<p>
-Total Count: <%= Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>
-Selected Count: <%= @result_count %><br/>
-</p>
+
+<div class="row">
 
 <div class="col-sm-2">
   <form class="form-horizontal" id="result_search" target="_self" method="get" action="/<%=h @project_name%>/results">
@@ -16,7 +14,10 @@ Selected Count: <%= @result_count %><br/>
     <input id="only_complete" name="only_complete" type="checkbox"> Only Complete <br/>
     <input class="btn btn-primary" type="submit" value="Search">
   </form>
-
+  <br>
+  <p>
+  Result Count: <%= Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>
+  </p>
 </div>
 
 <div class="col-sm-10">
@@ -46,26 +47,28 @@ Selected Count: <%= @result_count %><br/>
   <p></p>
   <table class="sortable" border="1" width=100%>
     <colgroup>
-      <col style="width:20%">
       <col style="width:40%">
+      <col style="width:20%">
       <col style="width:10%">
       <col style="width:10%">
     </colgroup>
     <tbody>
-      <tr><th>timestamp</th><th>result</th><th>entity count</th><th>complete</th>
+      <tr><th>Name</th><th>Started At</th><th>Entity Count</th><th>Complete</th>
         <% @results.each do |x| %>
         <tr>
-          <td><%= h x.timestamp_start %> </td>
           <td><a href="/<%=h @project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity.to_s %></a> </td>
+          <td><%= h x.timestamp_start %> </td>
           <td><%= h x.entities.uniq.count %> </td>
           <td><%= x.complete ? "complete" : "incomplete" %></td>
         </tr>
         <% end %>
     </tbody>
   </table>
-  <div class="row">
-    <div class="col-xs-11">&nbsp;</div>
+  <div class="row">       
+   <div class="col-xs-11">&nbsp;</div>
     <div class="col-xs-1">
       <p><a href="<%=request.path%>/all/cancel">Cancel All</a></p>
     </div>
   </div>
+
+</div>

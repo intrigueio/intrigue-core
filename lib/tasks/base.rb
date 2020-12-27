@@ -79,27 +79,16 @@ class BaseTask
     ###
     return_early = false 
     if @task_result.scan_result
-      our_task_result_name = @task_result.name
+      our_task_result_name = "#{@task_result.name}"
       
       # query existing results, limit to those that have been started
-      existing_task_results = Intrigue::Core::Model::TaskResult.scope_by_project(@project.name).where({
-        :name => "#{our_task_result_name}"}).exclude(:timestamp_start => nil)
-
-      # good for debugging 
-      _log "Got existing results for '#{our_task_result_name}': #{existing_task_results.map{|x| x.id }.join(", ")}"
+      existing_task_results = Intrigue::Core::Model::TaskResult.scope_by_project(@project.name).where(
+        name: our_task_result_name).exclude(timestamp_start: nil).exclude(id: @task_result.id)
 
       # if we've already completed another one, return eearly
-      if existing_task_results.count > 1 && existing_task_results.exclude(:timestamp_end => nil).count > 1
-      
-        _log "This task has already been completed in this scan, returning w/o running!"
-        return_early = true 
-      
-      # if we've already even started another one, return eearly
-      elsif existing_task_results.count > 1 
-      
-        _log "This task is currently in progress in this scan, returning w/o running!"
-        return_early = true 
-      
+      if existing_task_results
+        _log "WARNING! This task is in progress, or has already been completed in this scan, returning w/o running!"
+        return_early = true
       end
     end
 

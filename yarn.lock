@@ -4,42 +4,37 @@
 
 add@^2.0.6:
   version "2.0.6"
-  resolved "https://registry.yarnpkg.com/add/-/add-2.0.6.tgz#248f0a9f6e5a528ef2295dbeec30532130ae2235"
+  resolved "https://registry.npmjs.org/add/-/add-2.0.6.tgz"
   integrity sha1-JI8Kn25aUo7yKV2+7DBTITCuIjU=
 
-bootstrap@3.4.1:
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-3.4.1.tgz#c3a347d419e289ad11f4033e3c4132b87c081d72"
-  integrity sha512-yN5oZVmRCwe5aKwzRj6736nSmKDX7pLYwsXiCj/EYmo16hODaBiT4En5btW/jhBF/seV+XMx3aYwukYC3A49DA==
+bootstrap@^5.0.0-beta1:
+  version "5.0.0-beta1"
+  resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-5.0.0-beta1.tgz#18135001a452b3ec38b344ac638a1f9549285ee7"
+  integrity sha512-UrHApw/WRmT7l2rlDdn5iXr7Jps/LlMZtJlLn9G41aGDfss48hyDeYyHtX1C6NHKVcmdUarGG+ve0LZB5iHyTQ==
 
 datatables@^1.10.11:
   version "1.10.18"
-  resolved "https://registry.yarnpkg.com/datatables/-/datatables-1.10.18.tgz#fee16e82aa70b17c5faf1a6954ac68f404f33a70"
+  resolved "https://registry.npmjs.org/datatables/-/datatables-1.10.18.tgz"
   integrity sha512-ntatMgS9NN6UMpwbmO+QkYJuKlVeMA2Mi0Gu/QxyIh+dW7ZjLSDhPT2tWlzjpIWEkDYgieDzS9Nu7bdQCW0sbQ==
   dependencies:
     jquery ">=1.7"
 
 highlightjs@^8.7.0:
   version "8.7.0"
-  resolved "https://registry.yarnpkg.com/highlightjs/-/highlightjs-8.7.0.tgz#13397cd8dd8ad7d4cfe77adffb8088a10ee3b708"
+  resolved "https://registry.npmjs.org/highlightjs/-/highlightjs-8.7.0.tgz"
   integrity sha1-Ezl82N2K19TP53rf+4CIoQ7jtwg=
 
-jquery@2.1.4:
-  version "2.1.4"
-  resolved "https://registry.yarnpkg.com/jquery/-/jquery-2.1.4.tgz#228bde698a0c61431dc2630a6a154f15890d2317"
-  integrity sha1-IoveaYoMYUMdwmMKahVPFYkNIxc=
-
-jquery@>=1.7:
+jquery@>=1.7, jquery@^3.5.1:
   version "3.5.1"
-  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.5.1.tgz#d7b4d08e1bfdb86ad2f1a3d039ea17304717abb5"
+  resolved "https://registry.npmjs.org/jquery/-/jquery-3.5.1.tgz"
   integrity sha512-XwIBPqcMn57FxfT+Go5pzySnm4KWkT1Tv7gjrpT1srtf8Weynl6R273VJ5GjkRb51IzMp5nbaPjJXMWeju2MKg==
 
 sigma@1.2.0:
   version "1.2.0"
-  resolved "https://registry.yarnpkg.com/sigma/-/sigma-1.2.0.tgz#69140de43fc858f58a70c9821ce4423d30d04871"
+  resolved "https://registry.npmjs.org/sigma/-/sigma-1.2.0.tgz"
   integrity sha1-aRQN5D/IWPWKcMmCHORCPTDQSHE=
 
 yarn@^1.22.10:
   version "1.22.10"
-  resolved "https://registry.yarnpkg.com/yarn/-/yarn-1.22.10.tgz#c99daa06257c80f8fa2c3f1490724e394c26b18c"
+  resolved "https://registry.npmjs.org/yarn/-/yarn-1.22.10.tgz"
   integrity sha512-IanQGI9RRPAN87VGTF7zs2uxkSyQSrSPsju0COgbsKQOOXr5LtcVPeyXWgwVa0ywG3d8dg6kSYKGBuYK021qeA==

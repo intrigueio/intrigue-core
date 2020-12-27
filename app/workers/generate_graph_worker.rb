@@ -40,6 +40,7 @@ class GenerateGraphWorker
 
       # add the base entity first (provided it hasn't been deleted)
       b = t.base_entity
+      next unless b
 
       unless b.deleted?
         x = { 
@@ -48,15 +49,16 @@ class GenerateGraphWorker
           :type => b.type_string }
 
           # set the color
-          x[:color] = "#ffffa0" if b.issues.count > 0
-          x[:color] = "#ff0000" if b.issues.count > 0 && b.issues.find{|i| i.severity < 3 }
-          x[:color] = "#808080" unless b.scoped
-
+          x[:color] = "#d3d3d3" unless b.scoped
+          x[:color] = "#d5b60a" if b.issues.count > 0
+          x[:color] = "#B22222" if b.issues.count > 0 && b.issues.find{|i| i.severity < 3 }
+          
         nodes << x
       end
     
       # then for each of the entities, generate the node and edges. skip if deleted.
       t.entities.each do |e|
+        next unless e
         next if e.deleted?
 
         x = { 
@@ -65,9 +67,10 @@ class GenerateGraphWorker
           :type => e.type_string } 
 
         # set the color
-        x[:color] = "#ffffa0" if e.issues.count > 0
-        x[:color] = "#ff0000" if e.issues.count > 0 && e.issues.find{|i| i.severity < 3 }
-        x[:color] = "#808080" unless e.scoped
+        x[:color] = "#d3d3d3" unless b.scoped
+        x[:color] = "#d5b60a" if b.issues.count > 0
+        x[:color] = "#B22222" if b.issues.count > 0 && b.issues.find{|i| i.severity < 3 }
+        
 
         nodes << x 
 

@@ -1,82 +1,92 @@
+<div class="container-fluid">
 
-<script language="JavaScript" type="text/javascript">
-<!--
-function set_project( name )
-{
-  document.project_select_form.project.value = name;
-  document.project_select_form.submit() ;
-}
-
-function delete_project( name )
-{
-  var check = confirm('Are you sure?');
-  if (check == true) {
-      document.project_delete_form.project.value = name;
-      document.project_delete_form.submit();
-      return true;
+  <script language="JavaScript" type="text/javascript">
+  <!--
+  function set_project( name )
+  {
+    document.project_select_form.project.value = name;
+    document.project_select_form.submit() ;
   }
-  else {
-      return false;
+
+  function delete_project( name )
+  {
+    var check = confirm('Are you sure?');
+    if (check == true) {
+        document.project_delete_form.project.value = name;
+        document.project_delete_form.submit();
+        return true;
+    }
+    else {
+        return false;
+    }
   }
-}
--->
-</script>
-<script type="text/javascript" src="/js/sorttable.js"></script>
-<style>
-/* Sortable tables */
-table.sortable {
-  width: 100%;
-  border: 0;
-  table-layout:fixed;
-  word-wrap:break-word;
-  border-collapse:collapse;
-}
+  -->
+  </script>
+  <script type="text/javascript" src="/js/sorttable.js"></script>
+  <style>
+  /* Sortable tables */
+  table.sortable {
+    width: 100%;
+    border: 0;
+    table-layout:fixed;
+    word-wrap:break-word;
+    border-collapse:collapse;
+  }
 
-table.sortable thead {
-    background-color:#eee;
-    color:#666666;
-    font-weight: bold;
-    cursor: default;
-}
-</style>
+  table.sortable thead {
+      background-color:#eee;
+      color:#666666;
+      font-weight: bold;
+      cursor: default;
+  }
+  
+  .project-submit {
+    margin-left: 10px;
+    vertical-align: middle;
+  }
+  
+  .new-project{
+    padding-bottom: 20px;
+  }
 
-<div class="row">
-<div class="col-sm-8">
-  <form class="form-inline" name="project_select_form" action="/project" method="post">
-    <div class="form-group">
-      <label for="project" class="control-label">Create a new project:</label>
-      <input type="text" class="form-control input-sm" id="project" name="project" value=""/>
-      <input class="btn btn-primary btn-sm" type="submit" value="Submit" />
+  </style>
+
+  <div class="row">
+    <div class="new-project">
+    <form class="form-inline" name="project_select_form" action="/project" method="post">
+      <div class="form-group">
+        <input type="text" class="form-control" id="project" name="project" placeholder="Create A New Project" value=""/>
+      </div>
+      <input class="btn btn-primary btn-sm project-submit" type="submit" value="Submit" />
+    </form>
+    <form name="project_delete_form" action="/project/delete" method="post"><input type="hidden" id="project" name="project"/></form>
     </div>
-  </form>
-  <form name="project_delete_form" action="/project/delete" method="post"><input type="hidden" id="project" name="project"/></form>
-
-<p>
-Or select an existing project:
-<div class="projects-table">
-  <table id="projects" class="sortable display responsive" border="1" width=100%>
-    <thead>
-      <tr>
-        <th class="centered-text">Name</th>
-        <th class="centered-text">Entities</th>
-        <th class="centered-text">Issues</th>
-        <th class="centered-text">Created</th>
-        <th class="centered-text">Manage</th>
-      </tr>
-    </thead>
-    <tbody>
-        <% @projects.each do |p| %>
-      <tr>
-        <td><a href="/<%= h p.name %>/start"x><%= h p.name %></a></td>
-        <td><%= p.entities.count %></td>
-        <td><%= p.issues.count %></td>
-        <td><%=h p.created_at.to_date %></td>
-        <td>&nbsp;<a href="javascript:delete_project('<%=h p.name%>')">[delete]</a></td>
-      </tr>
-      <% end %>
-    </tbody>
-  </table>
-</div>
-</p>
-</div>
+  </div>
+  <div class = "row">  
+    Or select an existing project:
+    <div class="projects-table">
+      <table id="projects" class="sortable display responsive" border="1" width=100%>
+        <thead>
+          <tr>
+            <th class="centered-text">Name</th>
+            <th class="centered-text">Entities</th>
+            <th class="centered-text">Issues</th>
+            <th class="centered-text">Created</th>
+            <th class="centered-text">Manage</th>
+          </tr>
+        </thead>
+        <tbody>
+            <% @projects.each do |p| %>
+          <tr>
+            <td><a href="/<%= h p.name %>/start"x><%= h p.name %></a></td>
+            <td><%= p.entities.count %></td>
+            <td><%= p.issues.count %></td>
+            <td><%=h p.created_at.to_date %></td>
+            <td>&nbsp;<a href="javascript:delete_project('<%=h p.name%>')">[delete]</a></td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>        
+  </div>
 </div>

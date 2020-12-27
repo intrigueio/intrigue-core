@@ -22,7 +22,12 @@ class CoreApp < Sinatra::Base
     @selected_entities = @selected_entities.where(:hidden => false) unless @include_hidden
 
     # create a calculated url with our parameters
-    @calculated_url = "/#{h @project_name}/entities?search_string=#{h @search_string}&include_hidden=#{@include_hidden ? 'on' : 'off'}&only_scoped=#{@only_scoped ? 'on' : 'off'}&grouped_entities=#{@grouped_entities ? 'on' : 'off'}&#{@entity_types.map{|x| "entity_types[]=#{h x}" }.join("&") if @entity_types}"
+    @calculated_url = "/#{h @project_name}/entities?search_string=#{h @search_string}" + 
+                      "&include_hidden=#{@include_hidden ? 'on' : 'off'}" + 
+                      "&only_enriched=#{@only_enriched ? 'on' : 'off'}" + 
+                      "&only_scoped=#{@only_scoped ? 'on' : 'off'}" + 
+                      "&grouped_entities=#{@grouped_entities ? 'on' : 'off'}" + 
+                      "&#{@entity_types.map{|x| "entity_types[]=#{h x}" }.join("&") if @entity_types}"
 
     if params[:export] == "csv"
 

@@ -1,78 +1,82 @@
-<!-- name -->
-<div class="col-sm-7">
-<h3>
-<% if @entity.details["uri"] %>
- <p><a href="<%= h @entity.details["uri"] %>"><%= h @entity %></a><br/></p>
-<% else %>
-   <%= h @entity %>
-<% end %>
-</h3>
+<div class="container-fluid">
+  <div class="row">
+  <div class="col-sm-7">
+  <h3>
+  <% if @entity.details["uri"] %>
+  <p><a href="<%= h @entity.details["uri"] %>"><%= h @entity %></a><br/></p>
+  <% else %>
+    <%= h @entity %>
+  <% end %>
+  </h3>
 
-Enriched: <%= @entity.enriched %> <br/>
-Traversable: <%= @entity.traversable %> <br/>
-Hidden: <%= @entity.hidden %> <br/>
-Scoped: <%= @entity.scoped %> <br/>
-Deny List Status: <%= @entity.deny_list %> <br/>
-Allow List Status: <%= @entity.allow_list %> <br/>
+  Enriched: <%= @entity.enriched %> <br/>
+  Traversable: <%= @entity.traversable %> <br/>
+  Hidden: <%= @entity.hidden %> <br/>
+  Scoped: <%= @entity.scoped %> <br/>
+  Deny List Status: <%= @entity.deny_list %> <br/>
+  Allow List Status: <%= @entity.allow_list %> <br/>
 
-<br/>
+  <br/>
 
-<div class="panel-group">
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" href="#collapse1">Details</a>
-      </h4>
-    </div>
-    <div id="collapse1" class="panel-collapse collapse in">
-      <div class="panel-body"><pre class="prettyprint"><%=h JSON.pretty_generate @entity.short_details %></pre></div>
+  <div class="panel-group">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" href="#collapse1">Details</a>
+        </h4>
+      </div>
+      <div id="collapse1" class="panel-collapse collapse in">
+        <div class="panel-body"><pre class="prettyprint"><%=h JSON.pretty_generate @entity.short_details %></pre></div>
+      </div>
     </div>
   </div>
+
+  Discovered Issues:<br/>
+  <ul>
+  <%=out = []; results = @entity.issues.uniq.sort_by{|x|x.name}; results.each {|x| out << "<li><a href='/#{h @project_name}/issues/#{x.id}'>#{h x}</a></li>"; } if results; out.uniq.join("") %>
+  </ul>
+
+  Alias Group: <%= @entity.alias_group.id %> <br/>
+  Aliases: <br/>
+  <ul>
+  <%=out = []; results = @entity.aliases.uniq.sort_by{|x|x.name}; results.each {|x| out << "<li><a href='/#{h @project_name}/entities/#{x.id}'>#{h x}</a></li>"; } if results; out.uniq.join("") %>
+  </ul>
+
+  Ancestors: <ul><% @entity.ancestors.each do |a|%> <%="<li><a href='/#{h @project_name}/entities/#{a.id}'>#{h a}</a></li>"%> <% end %> </ul><br/>
+
+  Tasks that created this entity:<br/>
+  <ul>
+  <%= out = []; @entity.task_results.each {|x| out << "<li><a href='/#{h @project_name}/results/#{x.id}'>#{h x.task_name} (#{h x.base_entity})</a></li>" }; out.uniq.join("") %>
+  </ul>
+
+  Tasks run on this entity:<br/>
+  <ul>
+  <%= out = []; results = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => @entity); results.each {|r| out << "<li><a href='/#{h @project_name}/results/#{r.id}'>#{h r.task_name} (#{h r.base_entity})</a></li>"; }; out.uniq.join("") %>
+  </ul>
+
+  Entities discovered from this entity: <br/>
+  <ul>
+  <%=out = []; results = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => @entity); results.each {|r| r.entities.each {|x| out << "<li><a href='/#{h @project_name}/entities/#{x.id}'>#{h x}</a></li>"; }}; out.uniq.join("") %>
+  </ul>
+
+  </div>
+
+  <div class="col-sm-5">
+    <% if @entity.type_string == "Uri" && @entity.has_detail('extended_screenshot_contents') %>
+      Image: <br/>
+      <div id="screenie">
+        <img height=300 width=400 src="data:image/png;base64, <%= @entity.get_detail('extended_screenshot_contents') %>" alt="Screenshot" />
+      </div>
+      <br>
+      <br>
+    <% end %>
+    
+    <p>Run a task on this entity:</p>
+    <%= erb :'_task_runner' %>
+
+  </div>
+
+  
 </div>
-
-Discovered Issues:<br/>
-<ul>
-<%=out = []; results = @entity.issues.uniq.sort_by{|x|x.name}; results.each {|x| out << "<li><a href='/#{h @project_name}/issues/#{x.id}'>#{h x}</a></li>"; } if results; out.uniq.join("") %>
-</ul>
-
-Alias Group: <%= @entity.alias_group.id %> <br/>
-Aliases: <br/>
-<ul>
-<%=out = []; results = @entity.aliases.uniq.sort_by{|x|x.name}; results.each {|x| out << "<li><a href='/#{h @project_name}/entities/#{x.id}'>#{h x}</a></li>"; } if results; out.uniq.join("") %>
-</ul>
-
-Ancestors: <ul><% @entity.ancestors.each do |a|%> <%="<li><a href='/#{h @project_name}/entities/#{a.id}'>#{h a}</a></li>"%> <% end %> </ul><br/>
-
-Tasks that created this entity:<br/>
-<ul>
-<%= out = []; @entity.task_results.each {|x| out << "<li><a href='/#{h @project_name}/results/#{x.id}'>#{h x.task_name} (#{h x.base_entity})</a></li>" }; out.uniq.join("") %>
-</ul>
-
-Tasks run on this entity:<br/>
-<ul>
-<%= out = []; results = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => @entity); results.each {|r| out << "<li><a href='/#{h @project_name}/results/#{r.id}'>#{h r.task_name} (#{h r.base_entity})</a></li>"; }; out.uniq.join("") %>
-</ul>
-
-Entities discovered from this entity: <br/>
-<ul>
-<%=out = []; results = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => @entity); results.each {|r| r.entities.each {|x| out << "<li><a href='/#{h @project_name}/entities/#{x.id}'>#{h x}</a></li>"; }}; out.uniq.join("") %>
-</ul>
-
 </div>
-
-<div class="col-sm-5">
-
-  Image: <br/>
-  <div id="screenie">
-  <% if @entity.type_string == "Uri" && @entity.has_detail('extended_screenshot_contents') %>
-  <img height=300 width=400 src="data:image/png;base64, <%= @entity.get_detail('extended_screenshot_contents') %>" alt="Screenshot" />
-  <% end %>
-  </div><br>
-  <br>
-
-  <p>Run a task on this entity:</p>
-<%= erb :'_task_runner' %>
-
-</div>
-
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>

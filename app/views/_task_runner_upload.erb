@@ -1,4 +1,5 @@
-
+<div class="container-fluid">
+<div class="row">
 <div class="col-sm-7">
 <form class="form-horizontal" id="task_runner" enctype="multipart/form-data" target="_self" method="post" action="/<%=h @project_name%>/interactive/upload">
 
@@ -49,7 +50,7 @@
 
   <div id="machine">
     <div class="form-group">
-      <label for="attrib_name" class="col-xs-4 control-label">Machine</label>
+      <label for="attrib_name" class="col-xs-4 control-label">Workflow</label>
       <div class="col-xs-8">
         <select class="form-control input-sm" name="machine" id="machine">
           <!-- iterate through stategies -->
@@ -61,7 +62,7 @@
             </option>
           <% end %>
         </select>
-        <div class="hint">'Machine' specifies the post-processor for each new entity.</div>
+        <div class="hint">'Workflow' specifies the post-processor for each new entity.</div>
       </div>
     </div>
   </div>
@@ -121,3 +122,5 @@
 </p>
 </div>
 <script type="text/javascript" src="/js/task.js"></script>
+</div>
+</div>
