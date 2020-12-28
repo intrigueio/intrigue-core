@@ -76,6 +76,7 @@ class EntityManager
         #####
         ### END ... USER- or TASK- PROVIDED SCOPING
         ###
+
         ### ENTITIES can SELF-SCOPE, however, for more info on that
         ### see the individual entity file
         #####
@@ -281,10 +282,12 @@ class EntityManager
 
     # ENRICHMENT LAUNCH (this may re-run if an entity has just been scoped in)
     if tr.auto_enrich && !entity.deny_list && (!entity_already_existed || project.allow_reenrich)
-      # Check if we've alrady run first and return gracefully if so
+      
+      # Check if we've already run first and return gracefully if so
       if entity.enriched && !project.allow_reenrich
-        tr.log "Skipping enrichment... already completed and re-enrich disabled!"
+        tr.log "Skipping enrichment... already completed and re-enrich not enabled!"
       else
+
         # starts a new background task... so anything that needs to happen from
         # this point should happen in that new background task
         if entity.enriched
@@ -295,7 +298,7 @@ class EntityManager
       end
     else
       tr.log "Skipping enrichment... enrich not enabled!" unless tr.auto_enrich
-      tr.log "Skipping enrichment... entity exists!" if entity_already_existed
+      tr.log "Skipping enrichment... entity #{entity.name} already exists!" if entity_already_existed
       tr.log "Skipping enrichment... entity on deny list!" if entity.deny_list
     end
 

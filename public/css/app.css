@@ -71,7 +71,7 @@ a:hover {
 }
 
 .navbar-brand {
-  padding: 10px;
+  padding: 5px;
 }
 
 .btn {
@@ -82,4 +82,16 @@ a:hover {
 .hint {
  color: light-grey;
  font-size: 10px;
+}
+
+.td-words {
+  text-align:left;
+}
+
+.td-numbers {
+  text-align:right;
+}
+
+.td-images {
+  text-align:center;
 }

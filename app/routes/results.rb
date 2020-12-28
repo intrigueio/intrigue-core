@@ -86,8 +86,6 @@ class CoreApp < Sinatra::Base
     # Helper to construct the request to the API when the application is used interactively
     post '/:project/interactive/single/?' do
 
-      
-
       task_name = "#{@params["task"]}"
       entity_id = @params["entity_id"]
       depth = @params["depth"].to_i
@@ -105,8 +103,9 @@ class CoreApp < Sinatra::Base
       ### Machine definition, make sure we have a valid type
       if Intrigue::MachineFactory.has_machine? "#{@params["machine"]}"
         machine_name = "#{@params["machine"]}"
-      else
-        machine_name = "external_discovery_light_active"
+      else # default to none 
+        machine_name = nil
+        depth = nil
       end
 
       auto_enrich = @params["auto_enrich"] == "on" ? true : false
@@ -131,7 +130,6 @@ class CoreApp < Sinatra::Base
 
         # create the first entity
         entity = Intrigue::EntityManager.create_first_entity(@project_name,entity_type,entity_name,entity_details)
-
       end
 
       unless entity
@@ -172,7 +170,6 @@ class CoreApp < Sinatra::Base
 
       # Manually starting enrichment here
       if auto_enrich && !(task_name =~ /^enrich/)
-        task_result.log "User-created entity, manually creating and enriching!"
         entity.enrich(task_result)
       end
 

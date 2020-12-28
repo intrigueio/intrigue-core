@@ -17,9 +17,11 @@ class IpAddress < Intrigue::Core::Model::Entity
 
   def detail_string
     out = ""
-    out << "#{details["geolocation"]["city_name"]} #{details["geolocation"]["country_name"]} | " if details["geolocation"]
-    out << "#{details["ports"].count.to_s} Ports " if details["ports"]
-    out << "| DNS: #{details["dns_entries"].each.map{|h| h["response_data"] }.join(" | ")}" if details["dns_entries"]
+    out << "#{details["geolocation"]["city"]} #{details["geolocation"]["country_code"]}" if details["geolocation"]
+    out << " | " unless out == ""
+    out << " Open Ports: #{details["ports"].count}" if details["ports"] && details["ports"].count > 0
+    out << " | " unless out == ""
+    out << " PTR: #{details["resolutions"].each.map{|h| h["response_data"] }.join(" | ")}" if details["resolutions"]
   out
   end
 

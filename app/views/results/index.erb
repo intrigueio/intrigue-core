@@ -21,11 +21,17 @@
 </div>
 
 <div class="col-sm-10">
-  <%= "Page: #{@page}" %>
-  <%= "Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %>
+
+  <div class="float-left">
   <a href="<%=h request.path%>?page=<%=@page-1%>&search_string=<%=@search_string%>">previous</a>
   <a href="<%=h request.path%>?page=<%=@page+1%>&search_string=<%=h @search_string%>">next</a>
+  </div>
 
+  <div class="float-right">  
+    <%= "Page: #{@page} / Viewing Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %>
+  </div>
+    
+  
   <script src="/js/sorttable.js"></script>
   <style>
   /* Sortable tables */
@@ -43,23 +49,44 @@
       font-weight: bold;
       cursor: default;
   }
+
   </style>
   <p></p>
   <table class="sortable" border="1" width=100%>
     <colgroup>
-      <col style="width:40%">
-      <col style="width:20%">
-      <col style="width:10%">
-      <col style="width:10%">
+      <col style="width:20%">  
+      <col style="width:65%">
+      <col style="width:9%">
+      <col style="width:9%">
     </colgroup>
     <tbody>
-      <tr><th>Task Name</th><th>Started At</th><th>Entity Count</th><th>Complete</th>
+      <tr><th>Started At</th><th>Task Name</th><th>Entity Count</th><th>Complete</th>
         <% @results.each do |x| %>
         <tr>
-          <td><a href="/<%=h @project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity.to_s %></a> </td>
-          <td><%= h x.timestamp_start %> </td>
-          <td><%= h x.entities.uniq.count %> </td>
-          <td><%= x.complete ? "complete" : "incomplete" %></td>
+          <td>
+          <div class='td-words'>
+            <%= h x.timestamp_start %> 
+          </div>
+          </td>
+          <td>
+            <div class='td-words'>
+              <a href="/<%=h @project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity.to_s %></a>
+            </div>
+          </td>
+          <td>
+            <div class='td-numbers'>
+              <%= h x.entities.uniq.count %> 
+            </div>
+          </td>
+          <td>
+            <div class='td-images'>
+            <% if  x.complete %>
+              <img width=12 height=12 src='/img/icons/checkmark.png'>
+            <% else %>
+              <img width=12 height=12 src='/img/icons/xmark.png'>
+            <% end %>
+            </div>
+          </td>
         </tr>
         <% end %>
     </tbody>
