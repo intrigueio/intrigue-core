@@ -105,7 +105,7 @@ class CoreApp < Sinatra::Base
         machine_name = "#{@params["machine"]}"
       else # default to none 
         machine_name = nil
-        depth = nil
+        depth = 1
       end
 
       auto_enrich = @params["auto_enrich"] == "on" ? true : false
@@ -219,8 +219,6 @@ class CoreApp < Sinatra::Base
         session[:flash] = "Unkown File Format #{file_format}, failing"
         redirect FRONT_PAGE
       end
-
-      puts "Got entities: #{entities}"
 
       ### Handler definition, make sure we have a valid handler type
       if Intrigue::HandlerFactory.include? "#{@params["handler"]}"
