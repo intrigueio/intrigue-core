@@ -1,4 +1,3 @@
-
 <nav class="navbar navbar-expand-lg main-navbar bg-light p-3">
   <div class="container-fluid">
     
@@ -14,7 +13,11 @@
       <ul class="navbar-nav">
 
       <li class="nav-item">
-        <a href="/<%=h @project_name %>/entities"><span><img width-20 height=20 src="/img/icons/home.png"></span>&nbsp;Home</a>
+        <a href="/"><span><img width-20 height=20 src="/img/icons/home.png"></span>&nbsp;Home</a>
+      </li>
+      
+      <li class="nav-item">
+        [<%= @project_name %>]
       </li>
       
       <li class="nav-item dropdown">
@@ -91,7 +94,8 @@
         <li><a href="/sidekiq">Sidekiq</a></li>
       </ul>
     </li>
-      
     </div>
+
   </div>
+
 </nav>
