@@ -36,13 +36,13 @@ module Notifier
           :text => constructed_message
         }.to_json,{content_type: :json, accept: :json}
     
-  
+      rescue RestClient::TooManyRequests => e
+        puts "ERROR! #{e}"
       rescue RestClient::BadRequest => e
         puts "ERROR! #{e}"
       rescue SocketError => e
         puts "ERROR! #{e}"    
       rescue Errno::EADDRNOTAVAIL => e
-        # fail silently? :(
         puts "ERROR! #{e}"
       rescue RestClient::Exceptions::OpenTimeout => e
         puts "ERROR! Timed out attempting to notify: #{e}"

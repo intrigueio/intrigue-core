@@ -399,7 +399,6 @@ module Task
   end
 
   def http_post(uri, data, params)
-    #RestClient.post(uri, data, params)
     http_request(:post, uri, nil, params, data)
   end
 
