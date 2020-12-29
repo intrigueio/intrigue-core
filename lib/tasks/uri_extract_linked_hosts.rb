@@ -33,19 +33,10 @@ class UriExtractLinkedHosts  < BaseTask
     end
 
     ###
-    ### Now, parse out all links and do analysis on the individual links
+    ### Now, parse out all links and do analysis on 
+    ### the individual links
     ###
-    URI.extract(contents, ["https","http"] ) do |link|
-      begin
-
-        # Collect the host
-        host = URI(link).host
-        create_dns_entity_from_string host
-
-      rescue URI::InvalidURIError => e
-        _log_error "Error, unable to parse #{link}"
-      end
-    end
+    parse_dns_records_from_content(uri, contents)
 
   end
 

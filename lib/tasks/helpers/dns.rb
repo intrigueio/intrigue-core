@@ -206,7 +206,7 @@ module Dns
           end
 
           unless response 
-            _notify "WARNING! Skipping DNS resolution #{t} #{lookup_name}, unable to connect after multiple attempts"
+            _log_error "WARNING! Skipping DNS resolution #{t} #{lookup_name}, unable to connect after multiple attempts"
           end
 
         end
@@ -359,7 +359,6 @@ module Dns
       xtype = result["lookup_details"].first["response_record_type"].to_s.sanitize_unicode
       lookup_details = result["lookup_details"].first["response_record_data"]
       
-      _log "Sanitizing String or Array"
       xdata = result["lookup_details"].first["response_record_data"].to_s.sanitize_unicode
 
       dns_entries << { "response_data" => xdata, "response_type" => xtype }
