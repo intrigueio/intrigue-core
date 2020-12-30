@@ -1,5 +1,6 @@
 <div class="container-fluid">
-
+<div class="card">
+<div class="card-body">
   <script language="JavaScript" type="text/javascript">
   <!--
   function set_project( name )
@@ -50,43 +51,49 @@
   }
 
   </style>
-
-  <div class="row">
-    <div class="new-project">
-    <form class="form-inline" name="project_select_form" action="/project" method="post">
-      <div class="form-group">
-        <input type="text" class="form-control" id="project" name="project" placeholder="Create A New Project" value=""/>
-      </div>
-      <input class="btn btn-primary btn-sm project-submit" type="submit" value="Submit" />
-    </form>
-    <form name="project_delete_form" action="/project/delete" method="post"><input type="hidden" id="project" name="project"/></form>
-    </div>
-  </div>
   <div class = "row">  
-    Or select an existing project:
+    Select An Existing Project:
     <div class="projects-table">
       <table id="projects" class="sortable display responsive" border="1" width=100%>
         <thead>
           <tr>
-            <th class="centered-text">Name</th>
-            <th class="centered-text">Entities</th>
-            <th class="centered-text">Issues</th>
-            <th class="centered-text">Created</th>
-            <th class="centered-text">Manage</th>
+            <th class="td-words">Name</th>
+            <th class="td-numbers">Entities</th>
+            <th class="td-numbers">Issues</th>
+            <th class="td-images">Created</th>
+            <th class="td-images">Manage</th>
           </tr>
         </thead>
         <tbody>
             <% @projects.each do |p| %>
           <tr>
-            <td><a href="/<%= h p.name %>/start"x><%= h p.name %></a></td>
-            <td><%= p.entities.count %></td>
-            <td><%= p.issues.count %></td>
-            <td><%=h p.created_at.to_date %></td>
-            <td>&nbsp;<a href="javascript:delete_project('<%=h p.name%>')">[delete]</a></td>
+            <td class="td-words"><a href="/<%= h p.name %>/start"x><%= h p.name %></a></td>
+            <td class="td-numbers"><%= p.issues.count %></td>
+            <td class="td-numbers"><%= p.entities.count %></td>
+            <td class="td-images"><%=h p.created_at.to_date %></td>
+            <td class='td-images'><a href="javascript:delete_project('<%=h p.name%>')">
+              <img width=10 height=10 src="img/icons/xmark.png"></a>
+            </td>
           </tr>
           <% end %>
         </tbody>
       </table>
     </div>        
   </div>
+  <div class="row">
+    <p><hr/></p>
+    <div class="new-project">
+    <form class="form-inline" name="project_select_form" action="/project" method="post">
+      <div class="form-group mb-2">
+        <input type="text" class="form-control" id="project" name="project" placeholder="..or create a new project" value=""/>
+      </div>
+      <input class="btn btn-primary project-submit" type="submit" value="Submit" />
+    </form>
+    <form name="project_delete_form" action="/project/delete" method="post"><input type="hidden" id="project" name="project"/></form>
+    </div>
+  </div>
+
+
+</div>
+</div>
 </div>

@@ -1,8 +1,6 @@
-<!-- Statistics! -->
 <div class="container-fluid">
 <div class="row">
   <div class="col-sm-9">
-    <h3>Start</h3>
     <% if "#{request.path_info}" =~ /\/start\/upload$/ %>
       <%= erb :'_task_runner_upload' %>
     <% else %>

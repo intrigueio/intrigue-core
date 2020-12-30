@@ -16,21 +16,18 @@
   </form>
   <br>
   <p>
-  Result Count: <%= Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>
+  Result Count: <%= Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).all.count %><br/><br/>
+  <a href="<%=request.path%>/all/cancel">Cancel All Tasks</a>
   </p>
 </div>
 
 <div class="col-sm-10">
 
-  <div class="float-left">
-  <a href="<%=h request.path%>?page=<%=@page-1%>&search_string=<%=@search_string%>">previous</a>
-  <a href="<%=h request.path%>?page=<%=@page+1%>&search_string=<%=h @search_string%>">next</a>
-  </div>
-
-  <div class="float-right">  
+  <div class="float-right">
+    <a href="<%=h request.path%>?page=<%=@page-1%>&search_string=<%=@search_string%>">prev</a> | 
+    <a href="<%=h request.path%>?page=<%=@page+1%>&search_string=<%=h @search_string%>">next</a> | 
     <%= "Page: #{@page} / Viewing Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %>
   </div>
-    
   
   <script src="/js/sorttable.js"></script>
   <style>
@@ -60,7 +57,12 @@
       <col style="width:9%">
     </colgroup>
     <tbody>
-      <tr><th>Started At</th><th>Task Name</th><th>Entity Count</th><th>Complete</th>
+      <tr>
+        <th>Started At</th>
+        <th>Task Name</th>
+        <th>Entity Count</th>
+        <th>Complete</th>
+      </tr>
         <% @results.each do |x| %>
         <tr>
           <td>
@@ -91,11 +93,5 @@
         <% end %>
     </tbody>
   </table>
-  <div class="row">       
-   <div class="col-xs-11">&nbsp;</div>
-    <div class="col-xs-1">
-      <p><a href="<%=request.path%>/all/cancel">Cancel All</a></p>
-    </div>
-  </div>
 
 </div>

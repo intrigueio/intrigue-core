@@ -1,24 +1,28 @@
-<div class="container-fluid">
-  <h3>Statistics</h3>
-  Total Entities: <%= Intrigue::Core::Model::Entity.scope_by_project(@project_name).count %> entities
-  <p>
-    <ul>
-      <% Intrigue::EntityFactory.entity_types.sort_by{|x| x.to_s }.each do |d| %>
-      <% count = Intrigue::Core::Model::Entity.scope_by_project_and_type(@project_name,d.to_s).count %>
-      <% next unless count > 0 %>
-      <li>
-        <a href="/<%=h @project_name%>/entities?entity_types[]=<%=d.to_s%>">
-        <%= d.to_s.gsub(/^.*::/, '') %></a>:
-        <%= count %>
-      </li>
-      <% end %>
-    </ul>
-  </p>
+<div class="card">
+  <div class="card-body">
+  <div class="container-fluid">
+    <h3>Statistics</h3>
+    Total Entities: <%= Intrigue::Core::Model::Entity.scope_by_project(@project_name).count %> entities
+    <p>
+      <ul>
+        <% Intrigue::EntityFactory.entity_types.sort_by{|x| x.to_s }.each do |d| %>
+        <% count = Intrigue::Core::Model::Entity.scope_by_project_and_type(@project_name,d.to_s).count %>
+        <% next unless count > 0 %>
+        <li>
+          <a href="/<%=h @project_name%>/entities?entity_types[]=<%=d.to_s%>">
+          <%= d.to_s.gsub(/^.*::/, '') %></a>:
+          <%= count %>
+        </li>
+        <% end %>
+      </ul>
+    </p>
 
-  <h3>Issues</h3>
-  <p><a href="/<%=h @project_name%>/issues"><%= Intrigue::Core::Model::Issue.scope_by_project(@project_name).count %> issues</a></p>
+    <h3>Issues</h3>
+    <p><a href="/<%=h @project_name%>/issues"><%= Intrigue::Core::Model::Issue.scope_by_project(@project_name).count %> issues</a></p>
 
-  <h3>Seeds</h3>
-  <% seeds = Intrigue::Core::Model::Project.first(name: @project_name).seeds || []%>
-  <p><a href="/<%=h @project_name%>/seeds"><%= seeds.count %> seeds</a></p>
+    <h3>Seeds</h3>
+    <% seeds = Intrigue::Core::Model::Project.first(name: @project_name).seeds || []%>
+    <p><a href="/<%=h @project_name%>/seeds"><%= seeds.count %> seeds</a></p>
+  </div>
+</div>
 </div>

@@ -1,50 +1,10 @@
-body {
-  /*background-image:url('/img/classy_fabric.png');*/
-  color:black;
-  /* padding-top: 60px; /* When using the navbar-top-fixed */
-}
-
-h3 {
-  margin-top: 0;
-}
-
-pre {
-  white-space: pre-wrap;
-  padding: 0;
-  border-radius: 0;
-  border: 0;
-}
-
-textarea{
- background-color: white;
- color:black;
- font-family: inherit;
- font-size: inherit;
-}
-
-a:link {
-  color: #242424;
-}
-
-a:visited {
-  color: #242424;
-}
-
-a:hover {
-  color: #000000;
-}
-
-.table-striped > tbody > tr:nth-child(2n+1) > td, .table-striped > tbody > tr:nth-child(2n+1) > th {
-   background-color: black;
-}
-
 .like-pre-dark {
   white-space: pre-wrap;
   font-size: 10px;
   font-family: inherit;
   display: block;
   border: 1;
-  background-color: rgb(0, 0, 0);
+  background-color: rgb(34, 34, 34);
   color: #ffffff;
 }
 
@@ -54,11 +14,15 @@ a:hover {
   margin-right: auto;
 }
 
-.centercontents {
+.center-contents {
   text-align: center !important;
 }
 
-.alignrightcontents {
+.align-left-contents {
+  text-align: left !important;
+}
+
+.align-right-contents {
   text-align: right !important;
 }
 

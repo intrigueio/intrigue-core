@@ -36,3 +36,5 @@ require_relative "api/v1/helpers"
 require_relative "api/v1/project"
 require_relative "api/v1/task_result"
 require_relative "api/v1/system"
+
+require_relative "view_helpers"

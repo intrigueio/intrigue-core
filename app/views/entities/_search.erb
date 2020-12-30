@@ -1,19 +1,18 @@
-  <p>
-    <a href="/<%=h @project_name%>/entities?export=csv&search_string=<%=h @search_string%>&entity_types[]=<%=@entity_types.join(",") if @entity_types%>">Export CSV</a> | 
-    <a href="/<%=h @project_name%>/entities?export=json&search_string=<%=h @search_string%>&entity_types[]=<%=@entity_types.join(",") if @entity_types%>">Export JSON</a>
-  </p>
+
   <form class="form-horizontal" id="entity_search" target="_self" method="get" action="/<%=h @project_name%>/entities">
 
     Search:
     <input type="text" style='width:100%' class="form-control sm" id="search_string" name="search_string" value="<%= h params["search_string"] %>">
-    <div class="hint">Hint: Use "name:" and "details:" to search specfic fields. Separate search tokens with a "|" character.</div>
+    <div class="hint">Search entities by name.</div>
     <br>
     Types:<br>
     <select size=25 style='height:100%; width:100%; color:#000000;' multiple name="entity_types[]">
       <% Intrigue::EntityFactory.entity_types.map{|x|x.to_s}.sort.each do |d| %>
         <option value="<%=d%>" <%="selected" if (@entity_types && @entity_types.include?(d.to_s))%>> <%=d%></option>
       <% end %>
-    </select><br/>
+    </select>
+    <br/><br/>
+
     <input id="include_hidden" name="include_hidden" type="checkbox" <%='checked' if @include_hidden %> > Show Hidden <br/>
     <input id="only_scoped" name="only_scoped" type="checkbox" <%='checked' if @only_scoped %> > Only Scoped <br/>
     <input id="only_enriched" name="only_enriched" type="checkbox" <%='checked' if @only_enriched %>> Only Enriched <br/>
