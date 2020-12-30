@@ -10,7 +10,7 @@ class AzureBlobExposedFiles < BaseIssue
       name: "azure_blob_exposed_files",
       pretty_name: "Potential exposed files within an Azure Blob",
       severity: 1,
-      status: "confirmed",
+      status: "potential",
       category: "misconfiguration",
       description: "An azure blob found open publicly with exposed files ",
       remediation: "Investigate whether those files in the azure blob should be exposed, and if it contains critical files, adjust the settings of the Azure Blob",
