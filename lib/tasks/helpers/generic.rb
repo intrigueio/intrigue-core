@@ -102,39 +102,41 @@ module Generic
   end
 
 
-  def _unsafe_system_timed(command, timeout, tick=1)
+  def _unsafe_system_timed(command, timeout, workingdir = "/tmp", tick=1)
     output = ''
-    begin
-      # Start task in another thread, which spawns a process
-      stdin, stderrout, thread = Open3.popen2e(command)
-      # Get the pid of the spawned process
-      pid = thread[:pid]
-      start = Time.now
+    Dir.chdir workingdir do
+      begin
+        # Start task in another thread, which spawns a process
+        stdin, stderrout, thread = Open3.popen2e(command)
+        # Get the pid of the spawned process
+        pid = thread[:pid]
+        start = Time.now
 
-      while (Time.now - start) < timeout and thread.alive?
-        # Wait up to `tick` seconds for output/error data
-        Kernel.select([stderrout], nil, nil, tick)
-        # Try to read the data
-        begin
-          output << stderrout.read_nonblock(4096)
-        rescue IO::WaitReadable
-          # A read would block, so loop around for another select
-        rescue EOFError
-          # Command has completed, not really an error...
-          break
+        while (Time.now - start) < timeout and thread.alive?
+          # Wait up to `tick` seconds for output/error data
+          Kernel.select([stderrout], nil, nil, tick)
+          # Try to read the data
+          begin
+            output << stderrout.read_nonblock(4096)
+          rescue IO::WaitReadable
+            # A read would block, so loop around for another select
+          rescue EOFError
+            # Command has completed, not really an error...
+            break
+          end
         end
-      end
-      # Give Ruby time to clean up the other thread
-      sleep 1
+        # Give Ruby time to clean up the other thread
+        sleep 1
 
-      if thread.alive?
-        # We need to kill the process, because killing the thread leaves
-        # the process alive but detached, annoyingly enough.
-        Process.kill("TERM", pid)
+        if thread.alive?
+          # We need to kill the process, because killing the thread leaves
+          # the process alive but detached, annoyingly enough.
+          Process.kill("TERM", pid)
+        end
+      ensure
+        stdin.close if stdin
+        stderrout.close if stderrout
       end
-    ensure
-      stdin.close if stdin
-      stderrout.close if stderrout
     end
     return output
   end

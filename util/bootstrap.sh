@@ -172,10 +172,13 @@ GO111MODULE=on go get -u -v github.com/ffuf/ffuf
 # gitrob
 echo "[+] Getting Gitrob... "
 cd $HOME/bin
-wget -q https://github.com/michenriksen/gitrob/releases/download/v2.0.0-beta/gitrob_linux_amd64_2.0.0-beta.zip
-unzip gitrob_linux_amd64_2.0.0-beta.zip
+wget -q https://github.com/codeEmitter/gitrob/releases/download/v3.4.1-beta/gitrob_linux_amd64_3.4.1-beta.zip
+unzip gitrob_linux_amd64_3.4.1-beta.zip
 chmod +x gitrob
-rm gitrob_linux_amd64_2.0.0-beta.zip README.md
+mkdir data
+mkdir data/gitrob
+mv *.json data/gitrob
+rm gitrob_linux_amd64_3.4.1-beta.zip README.md
 cd $HOME
 
 # gobuster
