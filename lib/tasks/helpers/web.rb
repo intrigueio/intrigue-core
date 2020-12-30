@@ -11,6 +11,26 @@ module Intrigue
 module Task
   module Web
 
+  def make_threaded_http_requests_from_queue(work_q, threads=10)
+    # Create a pool of worker threads to work on the queue
+    responses = []
+    workers = (0...threads).map do
+      Thread.new do
+        begin
+          #_log "Getting request"
+          while request_uri = work_q.pop(true)
+            result = http_request :get, request_uri
+            responses.append(result)
+          end # end while
+        rescue ThreadError
+        end
+      end
+    end; "ok"
+    workers.map(&:join); "ok"
+
+    return responses
+  end
+
   def make_http_requests_from_queue(uri, work_q, threads=1, create_url=false, create_issue=false)
 
     ###

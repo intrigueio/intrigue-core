@@ -7,7 +7,7 @@ class SearchAzureBlob < BaseTask
       :name => "search_azure_blob",
       :pretty_name => "Search Azure Blob",
       :authors => ["Anas ben salah"],
-      :description => "This task takes a UniqueKeyword or Domain name to determine if there is any exposed Azure blob and lists its files if possible",
+      :description => "This task takes a UniqueKeyword or Domain name to determine if there is any exposed Azure blob and attempts to lists its files",
       :references => [],
       :type => "Discovery",
       :passive => true,
@@ -108,7 +108,7 @@ class SearchAzureBlob < BaseTask
     list_to_bruteforce=["#{account_name}"]
 
     # Load permutation wordlist
-    file = File.open "#{$intrigue_basedir}/data/permutations.json"
+    file = File.open "#{$intrigue_basedir}/data/azure_permutations.json"
     permut = JSON.load file
 
     # Combining user input and permutations list
@@ -131,7 +131,7 @@ class SearchAzureBlob < BaseTask
     end
 
     # run requests and get responses
-    responses = make_http_requests(work_q, 20)
+    responses = make_threaded_http_requests_from_queue(work_q, 20)
 
     # Creating a list of valid responses   
     responses.each do |r| 
@@ -144,27 +144,6 @@ class SearchAzureBlob < BaseTask
     #return a list of valid accounts
     return valid_account_list
 
-  end
-
-  #handling multithread respones 
-  def make_http_requests(work_q, threads=1)
-    # Create a pool of worker threads to work on the queue
-    responses = []
-    workers = (0...threads).map do
-      Thread.new do
-        begin
-          #_log "Getting request"
-          while request_uri = work_q.pop(true)
-            result = http_request :get, request_uri
-            responses.append(result)
-          end # end while
-        rescue ThreadError
-        end
-      end
-    end; "ok"
-    workers.map(&:join); "ok"
-
-    return responses
   end
 
   # Create a brute list combining valid blob uri and container_brute_force list
@@ -194,7 +173,7 @@ class SearchAzureBlob < BaseTask
     end
 
     # return multiples responses 
-    responses = make_http_requests(work_q, 20)
+    responses = make_threaded_http_requests_from_queue(work_q, 20)
 
     # Brute force azure container for extracting files
     responses.each do |r|
