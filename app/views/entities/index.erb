@@ -16,11 +16,11 @@
   
 <div class="container-fluid">
   <div class="row">
-    <div class="col-sm-3">
+    <div class="col-md-2">
       <%= erb :'/entities/_search', :layout => false %>
     </div>
 
-    <div class="col-sm-9">      
+    <div class="col-md-10">      
       <b><a href="<%=@calculated_url%>&page=<%=@page-1%>"> << previous</a> |
       <a href="<%=@calculated_url%>&page=<%=@page+1%>">next >> </a></b>
       <script type="text/javascript" src="/js/sorttable.js"></script>

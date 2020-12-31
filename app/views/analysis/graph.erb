@@ -52,7 +52,7 @@ function delete_entity_children(id){
     container: 'graph-container',
     renderer: {
       container: document.getElementById('graph-container'),
-      type: 'canvas'
+      type: 'webgl'
     },
     settings: {
       minNodeSize: 2,
@@ -77,20 +77,20 @@ function delete_entity_children(id){
     });
 
     // adjust slowdown based on the size
-    var slowdown = 2000;
-    if (s.graph.nodes().length > 1000) {
-      slowdown = 200;
+    var slowdown = 20;
+    if (s.graph.nodes().length > 3000) {
+      slowdown = 0;
     }
 
     // start the layout
-    s.startForceAtlas2({gravity:100, scalingRatio:3000, slowDown: slowdown});
+    s.startForceAtlas2({gravity:100, scalingRatio:30000, slowDown: slowdown});
 
     // adjust our stop time based on size
     if (s.graph.nodes().length > 5000) {
-      setTimeout(function() { s.stopForceAtlas2(); }, 120000);
+      setTimeout(function() { s.stopForceAtlas2(); }, 160000);
     }
     else {
-      setTimeout(function() { s.stopForceAtlas2(); }, 60000);
+      setTimeout(function() { s.stopForceAtlas2(); }, 90000);
     }
 
     s.bind('clickNode', function(e) {
