@@ -50,7 +50,7 @@ window.setInterval(function(){
 getResultJson(<%=@result.id%>);
 </script>
 <div class="row">
-<div class="col-sm-5">
+<div class="col-sm-6">
   <h3>Task Result: <a href="<%=h @rerun_uri || nil%>"><%=h @result.task_name %></a> </h3>
   <p>ID: <%=@result.id %> </p>
   <p>Start: <%=@result.timestamp_start %> </p>
@@ -64,7 +64,7 @@ getResultJson(<%=@result.id%>);
   <p>Cancelled: <%= @result.cancelled %> (<a href="<%=h request.path%>/cancel">Cancel</a>)</p>
   <p>Complete: <%= @result.complete %></p>
   <p>Entity Count: <%= @result.entities.count %></p>
-  <p>Machine: <%= @result.scan_result.machine if @result.scan_result %></p>
+  <p>Workflow: <%= @result.scan_result.machine if @result.scan_result %></p>
   <p>Max Depth: <%=@result.scan_result.depth if @result.scan_result %> </p>
 
   Export:
@@ -80,8 +80,10 @@ getResultJson(<%=@result.id%>);
   <div id="entities">
     <p>[Gathering entities...]</p>
   </div>
+
 </div>
-<div class="col-sm-5">
+<div class="col-sm-6">
+
 <%= erb :_log, :layout => false %>
 </div>
 </div>

@@ -34,3 +34,5 @@ config/server.key
 data/*.db
 data/retirejs.json
 .bundle
+node_modules
+app/assets/scss/bootstrap

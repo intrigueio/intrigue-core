@@ -16,9 +16,10 @@
 
       // get the specific task JSON and set the allowed / default fields
       var form = $("form")[0]
-      var attrib_name = form.attrib_name.value
+     
       var task_json = location.origin + "/tasks/" + encodeURI(task_name) + ".json"
       console.log("Requesting... " + task_json)
+      
       $.getJSON(task_json, function(data) {
         if ((window.location.href.indexOf("entities/")) +
             (window.location.href.indexOf("entity_id=")) +
@@ -26,9 +27,12 @@
               // This is a form that doesn't have an entity already filled out, let's provide an example
               parseAllowedEntityTypes(data);
               setDefaultEntity(data);
-        }
-        else {
+        } else if (window.location.href.indexOf("upload")) {
+          // do nothing 
+          console.log("skipping setting entity / type");
+        } else {
           //Disabling form since we're on a pre-populated form
+          var attrib_name = form.attrib_name.value
           $('#attrib_name').attr('readonly', true);
           $('#entity_type').attr('readonly', true);
         }

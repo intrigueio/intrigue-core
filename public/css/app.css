@@ -1,10 +1,19 @@
+
+body {
+  background-image: url(/img/kindajean.png);
+}
+
+.transparent-card {
+  background-image: url(/img/kindajean.png);
+}
+
 .like-pre-dark {
   white-space: pre-wrap;
-  font-size: 10px;
-  font-family: inherit;
+  font-size: 12px;
+  font-family: monospace;
   display: block;
-  border: 1;
-  background-color: rgb(34, 34, 34);
+  border: 2;
+  background-color: rgb(40, 40, 40);
   color: #ffffff;
 }
 

@@ -45,7 +45,7 @@ module Dns
     # my*
     check_wordpress_list = []
     ["www.doesntexist.#{suffix}","ww01.#{suffix}","web1.#{suffix}","hometeam.#{suffix}","myc.#{suffix}"].each do |d|
-      resolved_address = _resolve(d)
+      resolved_address = resolve(d)
       check_wordpress_list << resolved_address
       #unless resolved_address.nil? || all_discovered_wildcards.include?(resolved_address)
       #  all_discovered_wildcards << resolved_address
@@ -64,7 +64,7 @@ module Dns
       # do the resolution
       # www.shopping.intrigue.io - 198.105.244.228
       # www.search.intrigue.io - 198.105.254.228
-      resolved_address = _resolve(random_string)
+      resolved_address = resolve(random_string)
 
       # keep track of it unless we already have it
       unless resolved_address.nil? || all_discovered_wildcards.include?(resolved_address)
@@ -93,7 +93,7 @@ module Dns
 
         (all_discovered_wildcards.count * 20).times do |x|
           random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}"
-          resolved_address = _resolve(random_string)
+          resolved_address = resolve(random_string)
 
           # keep track of it unless we already have it
           unless resolved_address.nil? || newly_discovered_wildcards.include?(resolved_address)
@@ -102,25 +102,25 @@ module Dns
         end
 
         # check if our newly discovered is a subset of all
-        if (newly_discovered_wildcards - all_discovered_wildcards).empty?
+        if (newly_discovered_wildcards - all_discovered_wildcards).flatten.empty?
           _log "Hurray! No new wildcards in #{newly_discovered_wildcards}. Finishing up!"
           no_new_wildcards = true
         else
-          _log "Continuing to search, found: #{(newly_discovered_wildcards - all_discovered_wildcards).count} new results."
+          _log "Continuing to search, found: #{(newly_discovered_wildcards - all_discovered_wildcards).flatten.count} new results."
           all_discovered_wildcards += newly_discovered_wildcards.uniq
         end
 
-        _log "Known wildcard count: #{all_discovered_wildcards.uniq.count}"
-        _log "Known wildcards: #{all_discovered_wildcards.uniq}"
+        _log "Known wildcard count: #{all_discovered_wildcards.flatten.uniq.count}"
+        _log "Known wildcards: #{all_discovered_wildcards.flatten.uniq}"
       end
 
-    elsif all_discovered_wildcards.uniq.count == 1
-      _log "Only a single wildcard ip: #{all_discovered_wildcards.sort.uniq}"
+    elsif all_discovered_wildcards.flatten.uniq.count == 1
+      _log "Only a single wildcard ip: #{all_discovered_wildcards.flatten.sort.uniq}"
     else
       _log "No wildcard detected! Moving on!"
     end
 
-  all_discovered_wildcards.uniq # if it's not a wildcard, this will be an empty array.
+  all_discovered_wildcards.flatten.uniq # if it's not a wildcard, this will be an empty array.
   end
 
   # convenience method to just send back name

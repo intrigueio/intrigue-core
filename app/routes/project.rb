@@ -3,6 +3,7 @@ class CoreApp < Sinatra::Base
     # Main Page
     get '/:project/?' do
       @projects = Intrigue::Core::Model::Project.order(:created_at).reverse.all
+      @project_name = nil
       erb :index
     end
 

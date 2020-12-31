@@ -21,15 +21,9 @@
     </div>
 
     <div class="col-sm-9">
-    <div class="container-fluid">
-      <div class="float-right">
-        <a href="<%=@calculated_url%>&page=<%=@page-1%>">previous</a> | 
-        <a href="<%=@calculated_url%>&page=<%=@page+1%>">next</a> | 
-        <a href="<%=@calculated_url%>&export=csv">Export CSV</a> | 
-        <a href="<%=@calculated_url%>&export=json">Export JSON</a> | 
-        <%= "Page: #{@page}" %> / <%= "Viewing Results: #{@count * (@page-1)} .. #{@count * @page-1}" %>
-      </div>
-    </div>
+      <a href="<%=@calculated_url%>&page=<%=@page-1%>">previous</a> | 
+      <a href="<%=@calculated_url%>&page=<%=@page+1%>">next</a> | 
+      <%= "Page: #{@page}" %> / <%= "Viewing Results: #{@count * (@page-1)} .. #{@count * @page-1}" %>
       <script type="text/javascript" src="/js/sorttable.js"></script>
 
       <style>
