@@ -58,6 +58,8 @@ class TomcatPutJsp < BaseTask
         _create_linked_issue "vuln/tomcat_put_jsp_cve_2017_12615"
       end
 
+    rescue Errno::ECONNRESET => e 
+      _log_error "connection reset on #{uri}: #{e}"
     rescue RestClient::MovedPermanently => e
       _log_error "301 on #{uri}: #{e}"
     rescue RestClient::MethodNotAllowed => e
