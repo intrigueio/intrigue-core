@@ -19,7 +19,6 @@ class RunInvestigationTask < Intrigue::Machine::Base
       project = entity.project
       seed_list = project.seeds.map{|s| s.name }.join(",")
 
-
       if entity.type_string == "IpAddress"
 
         # Search Apility API for IP address and domain reputation

@@ -89,17 +89,20 @@ class BaseTask
       _log "Got existing results for '#{our_task_result_name}': #{existing_task_results.map{|x| x.id }.join(", ")}"
 
       # if we've already completed another one, return eearly
-      if existing_task_results.count > 1 && existing_task_results.exclude(:timestamp_end => nil).count > 1
-      
-        _log "This task has already been completed in this scan, returning w/o running!"
-        return_early = true 
-      
-      # if we've already even started another one, return eearly
-      elsif existing_task_results.count > 1 
-      
-        _log "This task is currently in progress in this scan, returning w/o running!"
-        return_early = true 
-      
+      if existing_task_results.count > 0
+        _log "This task is in progress, or has already been completed in this project"
+        
+        # we want to be able to intelligently re-run flows we havent seen before... this is a way to do that 
+        if @task_result.autoscheduled == false || (@task_result.name =~/^enrich\/.*/ && @project.allow_reenrich)
+          _log_good "Allowing re-run, this is a user-scheduled task and re-enrich is enabled"
+          return_early = false
+        
+        # but default to failing on running stuff we havent yet seen. ... 
+        # there is probably a better way to do this by caching results and snagging them... TODO
+        else 
+          _log_error "Returning, this task was already scheduled or run!"
+          return_early = true
+        end
       end
     end
 
@@ -174,13 +177,12 @@ class BaseTask
         end
         @entity.save_changes 
         
-
         ###
         ## NOW, KICK OFF MACHINES for SCOPED ENTiTIES ONLY
         ###
 
-        # technically socped shoudl handle but it doesnt
-        if @entity.enriched && @entity.scoped? #&& !@entity.hidden 
+        # technically socped should handle but it doesnt
+        if @entity.enriched && @entity.scoped
 
           # MACHINE LAUNCH (ONLY IF WE ARE ATTACHED TO A MACHINE) 
           # if this is part of a scan and we're in depth
@@ -202,8 +204,7 @@ class BaseTask
           else
             @task_result.log "No machine configured for #{@entity.name}!"
           end
-
-
+          
           scan_result = @task_result.scan_result
           if scan_result
             scan_result.decrement_task_count

@@ -18,7 +18,7 @@ module System
     ### Helper method for starting a task run
     ###
     def start_task(queue, project, existing_scan_result_id, task_name, entity, depth,
-          options=[], handlers=[], machine_name="external_discovery_light_active", auto_enrich=true, auto_scope=false)
+          options=[], handlers=[], machine_name="external_discovery_light_active", auto_enrich=true, auto_scope=true)
       
       # Create the task result, and associate our entity and options
       logger = Intrigue::Core::Model::Logger.create(:project_id => project.id)

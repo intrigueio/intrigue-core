@@ -65,7 +65,7 @@ module Intrigue
 
         # create entities
         res_json["domainsList"].each do |domain|
-          _create_entity "Domain", {"name" => domain}
+          _create_entity "Domain", {"name" => domain, "scoped" => true }
         end
 
       end
