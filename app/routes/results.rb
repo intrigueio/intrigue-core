@@ -27,7 +27,6 @@ class CoreApp < Sinatra::Base
       result.export_json if result
     end
 
-
     get '/:project/results' do
       paginate_count = 100
 

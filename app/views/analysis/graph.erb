@@ -1,0 +1,122 @@
+<style type="text/css">
+
+  #graph-container {
+    position:relative;
+    top:10px;
+  }
+
+  #overlay {
+    position: absolute;
+    z-index: 10;
+    top:120px;
+    left: 30px;
+    width: 430px;
+    border: 2px solid grey;
+    color: black;
+    opacity: 0.95;
+  }
+
+</style>
+
+<div class="container-fluid vh-100 min-vh-100" id="graph-container"></div>
+<div id="overlay">
+  Current graph generated at: <%= @graph_generated_at.strftime("%I:%M%p") if @graph_generated_at %>.<br/>
+</div>
+
+<script language="javascript" type="text/javascript">
+function delete_entity_children(id){
+  var XHR = new XMLHttpRequest();
+
+  // We define what will happen if the data are successfully sent
+  XHR.addEventListener('load', function(event) {
+    alert('Succesfully deleted, please reload the graph (it will regenerate).');
+  });
+
+  // We define what will happen in case of error
+  XHR.addEventListener('error', function(event) {
+    alert('Oups! Something goes wrong.');
+  });
+
+  // We setup our request & send it
+  XHR.open('GET', "/<%=h @project_name%>/entities/" + id + "/delete_children");
+  XHR.send();
+}
+</script>
+
+<script src="/js/sigma.min.js"></script>
+<script src="/js/sigma.parsers.json.min.js"></script>
+<script src="/js/sigma.layout.forceAtlas2.min.js"></script>
+<script>
+
+  sigma.parsers.json("<%= @json_uri %>", {
+    container: 'graph-container',
+    renderer: {
+      container: document.getElementById('graph-container'),
+      type: 'canvas'
+    },
+    settings: {
+      minNodeSize: 2,
+      maxNodeSize: 5,
+      defaultNodeColor: '#000000',
+      defaultEdgeColor: '#000000',
+      defaultLabelColor:'#000000',
+      defaultLabelSize: 8,
+      labelThreshold: 6,
+      edgeHoverSizeRato: 10,
+      edgeHoverColor: '#ff0000',
+      defaultNodeHoverColor: '#ff0000',
+      edgeColor: 'default'
+    }
+
+  }, function(s) {
+
+    s.graph.nodes().forEach(function(node, i, a) {
+      node.x = Math.cos(Math.PI * 2 * i / a.length);
+      node.y = Math.sin(Math.PI * 2 * i / a.length);
+      node.size = 2;
+    });
+
+    // adjust slowdown based on the size
+    var slowdown = 2000;
+    if (s.graph.nodes().length > 1000) {
+      slowdown = 200;
+    }
+
+    // start the layout
+    s.startForceAtlas2({gravity:100, scalingRatio:3000, slowDown: slowdown});
+
+    // adjust our stop time based on size
+    if (s.graph.nodes().length > 5000) {
+      setTimeout(function() { s.stopForceAtlas2(); }, 120000);
+    }
+    else {
+      setTimeout(function() { s.stopForceAtlas2(); }, 60000);
+    }
+
+    s.bind('clickNode', function(e) {
+      //console.log(e.type, e.data.node.label, e.data.captor);
+      //get the list of tasks and rewrite the task
+      var entity_location = "/<%=@project_name%>/entities/" + e.data.node.id + ".json";
+
+      $.getJSON(entity_location, function(data){
+        $('#overlay').html('<p>Current graph generated at: <%= @graph_generated_at.strftime("%I:%M%p") if @graph_generated_at %>.</p>Node: <a target="_blank" href=/<%=@project_name%>/entities/' + e.data.node.id + '>'+ e.data.node.type + ": " + e.data.node.label + '</a><br/>');
+        
+        // Task Runs
+        $('#overlay').append("Found By:<br/>")
+        for (let x of data["task_results"])
+        {
+            // Do something
+            $('#overlay').append('&nbsp;&nbsp;&nbsp;- <a target="_blank" href=results/' + x.id + '>'+ x.name + '</a><br/>');
+        }
+        $('#overlay').append("<br/>")
+        
+        // Management
+        //$('#overlay').append("<p><a href=javascript:delete_entity_children("+ e.data.node.id +")>(Delete children)</a></p>")
+      });
+    });
+    //s.bind('overNode outNode clickNode doubleClickNode rightClickNode', function(e) {
+    //    console.log(e.type, e.data.node.label, e.data.captor);
+    //});
+  }
+ );
+</script>

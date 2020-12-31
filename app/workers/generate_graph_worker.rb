@@ -49,7 +49,7 @@ class GenerateGraphWorker
           :type => b.type_string }
 
           # set the color
-          x[:color] = "#d3d3d3" unless b.scoped
+          x[:color] = "#a9a9a9" unless b.scoped
           x[:color] = "#d5b60a" if b.issues.count > 0
           x[:color] = "#B22222" if b.issues.count > 0 && b.issues.find{|i| i.severity < 3 }
           
@@ -67,7 +67,7 @@ class GenerateGraphWorker
           :type => e.type_string } 
 
         # set the color
-        x[:color] = "#d3d3d3" unless b.scoped
+        x[:color] = "#a9a9a9" unless b.scoped
         x[:color] = "#d5b60a" if b.issues.count > 0
         x[:color] = "#B22222" if b.issues.count > 0 && b.issues.find{|i| i.severity < 3 }
         

@@ -15,13 +15,16 @@
     <link href="/font/font-awesome.min.css" rel="stylesheet">
     
     <!-- CSS Files -->
-    <!--<link href="/css/bootstrap.css" rel="stylesheet" />-->
+    <link href="/css/bootstrap.css" rel="stylesheet" />
+    <link href="/css/bootstrap/bootstrap-utilities.css" rel="stylesheet" />
+    <link href="/css/bootstrap/bootstrap-grid.css" rel="stylesheet" />
     <link href="/css/core.css" rel="stylesheet" />
     <link href="/css/app.css" rel="stylesheet" />
     <!-- End CSS Files -->
 
     <!-- JavaScript Bundle with Popper -->
-    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" 
+      integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
 
     <!-- HighlightJS -->
     <script type="text/javascript" src="/js/highlight.pack.js"></script>
@@ -35,7 +38,7 @@
     <%= erb :_navbar, :layout => false %>
     <%= erb :_flash, :layout => false %>
       
-    <div class="container-fluid main-body">
+    <div class="container-fluid main-body d-flex flex-column">
       <%= yield %>
     </div>
     

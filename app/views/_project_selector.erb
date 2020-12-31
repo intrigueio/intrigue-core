@@ -58,8 +58,8 @@
         <thead>
           <tr>
             <th class="td-words">Name</th>
-            <th class="td-numbers">Entities</th>
             <th class="td-numbers">Issues</th>
+            <th class="td-numbers">Entities</th>
             <th class="td-images">Created</th>
             <th class="td-images">Manage</th>
           </tr>
@@ -80,16 +80,19 @@
       </table>
     </div>        
   </div>
+  <p><hr/></p>
   <div class="row">
-    <p><hr/></p>
     <div class="new-project">
-    <form class="form-inline" name="project_select_form" action="/project" method="post">
-      <div class="form-group mb-2">
-        <input type="text" class="form-control" id="project" name="project" placeholder="..or create a new project" value=""/>
-      </div>
-      <input class="btn btn-primary project-submit" type="submit" value="Submit" />
-    </form>
-    <form name="project_delete_form" action="/project/delete" method="post"><input type="hidden" id="project" name="project"/></form>
+    
+      <form class="form-inline" name="project_select_form" action="/project" method="post">
+        <div style="width:400px;"  class="input-group">
+          <input type="text" class="form-control mb-2" id="project" name="project" placeholder="..or create a new project" value=""/>
+          <input class="btn btn-primary btn-md mb-2" type="submit" value="Submit" />
+        </div>
+      </form>
+
+      <form name="project_delete_form" action="/project/delete" method="post"><input type="hidden" id="project" name="project"/></form>
+
     </div>
   </div>
 

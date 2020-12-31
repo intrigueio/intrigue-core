@@ -50,7 +50,7 @@ window.setInterval(function(){
 getResultJson(<%=@result.id%>);
 </script>
 <div class="row">
-<div class="col-sm-6">
+<div class="col-sm-5">
   <h3>Task Result: <a href="<%=h @rerun_uri || nil%>"><%=h @result.task_name %></a> </h3>
   <p>ID: <%=@result.id %> </p>
   <p>Start: <%=@result.timestamp_start %> </p>
@@ -82,7 +82,7 @@ getResultJson(<%=@result.id%>);
   </div>
 
 </div>
-<div class="col-sm-6">
+<div class="col-sm-7">
 
 <%= erb :_log, :layout => false %>
 </div>

@@ -190,7 +190,8 @@ class CoreApp < Sinatra::Base
   end
 
   not_found do
-    "Unable to find this content."
+    status 404
+    erb :oops
   end
 
   ###                                  ###

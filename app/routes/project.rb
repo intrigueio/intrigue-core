@@ -134,61 +134,6 @@ class CoreApp < Sinatra::Base
     redirect "/#{@project_name}/start"
     end
 
-    #### GRAPH ####
-
-    # Project Graph
-    get '/:project/graph.json/?' do
-      content_type 'application/json'
-      project = Intrigue::Core::Model::Project.first(:name => @project_name)
-
-      # Start a new generation
-      unless project.graph_generation_in_progress
-        Intrigue::Workers::GenerateGraphWorker.perform_async(project.id)
-      end
-
-    project.graph_json || "Currently generating..."
-    end
-
-    get '/:project/graph/meta.json/?' do
-      content_type 'application/json'
-      project = Intrigue::Core::Model::Project.first(:name => @project_name)
-
-      # Start a new generation
-      unless project.graph_generation_in_progress
-        Intrigue::Workers::GenerateMetaGraphWorker.perform_async(project.id)
-      end
-
-    project.graph_json || "Currently generating..."
-    end
-
-
-    # graph
-    get '/:project/graph' do
-      @json_uri = "#{request.url}.json"
-      @graph_generated_at = Intrigue::Core::Model::Project.first(:name => @project_name).graph_generated_at
-      erb :'graph'
-    end
-
-    # graph
-    get '/:project/graph/generated_at' do
-      "#{Intrigue::Core::Model::Project.first(:name => @project_name).graph_generated_at}"
-    end
-
-    # graph
-    get '/:project/graph/meta' do
-      @json_uri = "#{request.url}.json"
-      @graph_generated_at = Intrigue::Core::Model::Project.first(:name => @project_name).graph_generated_at
-      erb :'graph'
-    end
-
-    get '/:project/graph/reset' do
-      p= Intrigue::Core::Model::Project.first(:name => @project_name)
-      p.graph_generation_in_progress = false
-      p.save
-      redirect "/#{@project_name}/graph"
-    end
-
-
     ### EXPORT
     get '/:project/export/json' do
       content_type 'application/json'

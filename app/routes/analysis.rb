@@ -70,9 +70,52 @@ class CoreApp < Sinatra::Base
     erb :'analysis/domains'
   end
 
-  get '/:project/analysis/info' do
-    @infos = Intrigue::Core::Model::Entity.scope_by_project(@project_name).where(type: "Intrigue::Entity::Info")
-    erb :'analysis/info'
+  #### GRAPH ####
+
+  # Main graph
+  get '/:project/analysis/graph/?' do
+    @json_uri = "#{request.url}.json"
+    @graph_generated_at = Intrigue::Core::Model::Project.first(:name => @project_name).graph_generated_at
+    erb :'analysis/graph'
+  end
+
+  # Project Graph JSON
+  get '/:project/analysis/graph.json/?' do
+    content_type 'application/json'
+    project = Intrigue::Core::Model::Project.first(:name => @project_name)
+
+    # Start a new generation
+    unless project.graph_generation_in_progress
+      Intrigue::Workers::GenerateGraphWorker.perform_async(project.id)
+    end
+
+  project.graph_json || "{ 'message' : 'Currently generating...' } "
+  end
+
+  #get '/:project/analysis/graph/meta.json/?' do
+  #  content_type 'application/json'
+  #  project = Intrigue::Core::Model::Project.first(:name => @project_name)
+  #
+  #  # Start a new generation
+  #  unless project.graph_generation_in_progress
+  #    Intrigue::Workers::GenerateMetaGraphWorker.perform_async(project.id)
+  #  end
+  #
+  #project.graph_json || "{ 'message' : 'Currently generating...' } "
+  #end
+
+  # graph
+  #get '/:project/analysis/graph/meta' do
+  #  @json_uri = "#{request.url}.json"
+  #  @graph_generated_at = Intrigue::Core::Model::Project.first(:name => @project_name).graph_generated_at
+  #  erb :'graph'
+  #end
+
+  get '/:project/analysis/graph/reset' do
+    p= Intrigue::Core::Model::Project.first(:name => @project_name)
+    p.graph_generation_in_progress = false
+    p.save
+    redirect "/#{@project_name}/graph"
   end
 
   get '/:project/analysis/services' do
@@ -80,21 +123,6 @@ class CoreApp < Sinatra::Base
     erb :'analysis/services'
   end
 
-
-  get '/:project/analysis/javascripts' do
-    @javascripts = []
-    Intrigue::Core::Model::Entity.scope_by_project(@project_name).where(type: "Intrigue::Entity::Uri").each do |u|
-      libs = u.get_detail("javascript")
-      next unless libs
-
-      # capture name, version, sites here ... only select detected stuff
-      @javascripts.concat libs.map{|x| x.merge(
-        {"name" => "#{x["library"]} #{x["version"]}", "site" => u.name, "id" => u.id}
-      )}
-    end
-
-    erb :'analysis/javascripts'
-  end
 
   get '/:project/analysis/systems' do
     @entities = Intrigue::Core::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::IpAddress").sort_by{|x| x.name }
@@ -135,7 +163,8 @@ class CoreApp < Sinatra::Base
   end
 
   get '/:project/analysis/fingerprints' do
-    @selected_entities = Intrigue::Core::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::Uri").order(:name)
+    @selected_entities = Intrigue::Core::Model::Entity.scope_by_project(@project_name).where(
+      :type => "Intrigue::Entity::Uri").order(:name)
 
     erb :'analysis/fingerprints'
   end

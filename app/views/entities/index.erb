@@ -21,8 +21,8 @@
     </div>
 
     <div class="col-sm-9">      
-      <a href="<%=@calculated_url%>&page=<%=@page-1%>"> << previous</a> |
-      <a href="<%=@calculated_url%>&page=<%=@page+1%>">next >> </a>
+      <b><a href="<%=@calculated_url%>&page=<%=@page-1%>"> << previous</a> |
+      <a href="<%=@calculated_url%>&page=<%=@page+1%>">next >> </a></b>
       <script type="text/javascript" src="/js/sorttable.js"></script>
 
       <style>
@@ -82,7 +82,7 @@
           <% end %>
         </tbody>
       </table> 
-      <%= "Page: #{@page}" %> / <%= "Viewing Results: #{@count * (@page-1)} .. #{@count * @page-1}" %>
+      <b><%= "Page: #{@page}" %> / <%= "Viewing Results: #{@count * (@page-1)} .. #{@count * @page-1}" %></b>
       <br><br><br>
     <form name="entity_delete_form" method="get"><input type="hidden" id="entity" name="entity"/></form>
     </div>

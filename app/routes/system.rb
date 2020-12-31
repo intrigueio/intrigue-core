@@ -28,6 +28,12 @@ class CoreApp < Sinatra::Base
     end
 
     # get config
+    get '/system/config/?' do
+      @global_config = Intrigue::Core::System::Config
+      erb :"system/system_config"
+    end
+
+    # get config
     get '/system/config/tasks/?' do
       @global_config = Intrigue::Core::System::Config
       erb :"system/task_config"

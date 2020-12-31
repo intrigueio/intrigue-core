@@ -1,9 +1,18 @@
 
+.fill {
+  min-height: 100%;
+  height: 100%; 
+}
+
+.transparent-card {
+  background-image: url(/img/kindajean.png);
+}
+
 body {
   background-image: url(/img/kindajean.png);
 }
 
-.transparent-card {
+.modal-content {
   background-image: url(/img/kindajean.png);
 }
 
@@ -67,4 +76,8 @@ body {
 
 .td-images {
   text-align:center;
+}
+
+.input-group > * {
+  padding:5px;
 }

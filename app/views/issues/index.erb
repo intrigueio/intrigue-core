@@ -21,16 +21,17 @@
     }
     </style>
     <p></p>
-    <a href="/<%=h @project_name%>/issues?page=<%=@page-1%>"><< previous</a> | 
-    <a href="/<%=h @project_name%>/issues?page=<%=@page+1%>">next >> </a>
-    <table class="sortable" border="1" width=100%>
+
+    <b><a href="/<%=h @project_name%>/issues?page=<%=@page-1%>"><< previous</a> | 
+    <a href="/<%=h @project_name%>/issues?page=<%=@page+1%>">next >> </a></b>
+    
+    <table class="sortable" border="1" width=100%>  
       <colgroup>
         <col style="width:20%">
         <col style="width:40%">
         <col style="width:20%">
         <col style="width:5%">
-        <col style="width:5%">
-        
+        <col style="width:5%">  
       </colgroup>
       <tbody>
       <tr>
@@ -42,11 +43,11 @@
       </tr>
       <% @issues.each do |issue| %>
         <tr>
-          <td><a href="<%="/#{h @project_name}/issues/#{h issue.id}"%>"><%= h issue.name %></a></td>
+          <td><a href="<%="/#{h @project_name}/issues/#{h issue.id }"%>"><%= h issue.pretty_name %></a></td>
           <td><%=issue.entity.name%><br><%issue.entity.aliases{ |x|%> <%=h x.name%> <br><%}%></td>
           <td><%=issue.status%></td>
           <td><%=issue.severity%></td>
-          <td><%=issue.scoped%></td>
+          <td><%=issue.scoped ? checkmark_image : xmark_image %></td>
         </tr>
       <% end %>
       </tbody>

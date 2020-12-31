@@ -32,7 +32,7 @@ This page lists the entities currently available in the instance, and a few deta
       <col style="width:12%">
     </colgroup>
     <tbody>
-      <tr><th>Count</th><th>Type</th><th>Description</th><th>Example</th><th>User Creatable</th><th>Enrichment Tasks</th></tr>
+      <tr><th>Type</th><th>Description</th><th>Example</th><th>User Creatable</th><th>Enrichment Tasks</th></tr>
       <% @entities.sort_by{|x| x.to_s }.each do |e| %>
         <tr>
           <td><%= "#{e} <a href='https://github.com/intrigueio/intrigue-core/tree/main/lib/entities/#{e.metadata[:name].downcase}.rb'> [code] </a>" %></td> 
