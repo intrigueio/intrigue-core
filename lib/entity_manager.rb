@@ -77,14 +77,6 @@ class EntityManager
       ### END ... USER- or TASK- PROVIDED SCOPING
       ###
 
-<<<<<<< Updated upstream
-        #####
-        ### END ... USER- or TASK- PROVIDED SCOPING
-        ###
-        ### ENTITIES can SELF-SCOPE, however, for more info on that
-        ### see the individual entity file
-        #####
-=======
       ### ENTITIES can SELF-SCOPE, however, for more info on that
       ### see the individual entity file
       #####
@@ -92,7 +84,6 @@ class EntityManager
       # also we can now mark it as a seed
       entity.seed = true 
       entity.save 
->>>>>>> Stashed changes
 
     else
       # Create a new entity, validating the attributes
