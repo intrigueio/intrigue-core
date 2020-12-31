@@ -1,15 +1,14 @@
-
-.fill {
-  min-height: 100%;
-  height: 100%; 
-}
-
 .transparent-card {
   background-image: url(/img/kindajean.png);
 }
 
 body {
   background-image: url(/img/kindajean.png);
+}
+
+.tableish {
+  color: #000;
+  background: url(/img/kindajean.png);
 }
 
 .modal-content {
@@ -81,3 +80,4 @@ body {
 .input-group > * {
   padding:5px;
 }
+

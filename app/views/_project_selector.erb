@@ -1,8 +1,57 @@
 <div class="container-fluid">
 <div class="card transparent-card">
 <div class="card-body">
-  <script language="JavaScript" type="text/javascript">
-  <!--
+
+  <div class="row">  
+    Select An Existing Project:
+    <div class="table-responsive">
+      <table id="projects-table" class="tableish" width='90%' >
+        <thead class="tableish">
+          <tr>
+            <th class="td-words tableish">Name</th>
+            <th class="td-numbers tableish">Issues</th>
+            <th class="td-numbers tableish">Entities</th>
+            <th class="td-images tableish">Created</th>
+            <th class="td-images tableish">Manage</th>
+          </tr>
+        </thead>
+        <tbody class="tableish ">
+          <% @projects.each do |p| %>
+            <tr class="tableish">
+              <td class="td-words tableish">
+                <a href="/<%= h p.name %>/start">
+                <%= h p.name %></a>
+              </td>
+              <td class="td-numbers tableish"><%= p.issues.count %></td>
+              <td class="td-numbers tableish"><%= p.entities.count %></td>
+              <td class="td-images tableish"><%=h p.created_at.to_date %></td>
+              <td class='td-images tableish'><a href="javascript:delete_project('<%=h p.name%>')">
+                <img width=10 height=10 src="img/icons/xmark.png"></a>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p><hr/></p>
+  <div class="row">
+    <div class="new-project">
+      <form class="form-inline" name="project_select_form" action="/project" method="post">
+        <div style="width:80%;"  class="input-group">
+          <input type="text" class="form-control mb-2" id="project" name="project" placeholder="..or create a new project" value=""/>
+          <input class="btn btn-primary btn-md mb-2" type="submit" value="Submit" />
+        </div>
+      </form>
+      <form name="project_delete_form" action="/project/delete" method="post"><input type="hidden" id="project" name="project"/></form>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<script language="JavaScript" type="text/javascript">
+
   function set_project( name )
   {
     document.project_select_form.project.value = name;
@@ -21,82 +70,39 @@
         return false;
     }
   }
-  -->
-  </script>
-  <script type="text/javascript" src="/js/sorttable.js"></script>
-  <style>
-  /* Sortable tables */
-  table.sortable {
-    width: 100%;
-    border: 0;
-    table-layout:fixed;
-    word-wrap:break-word;
-    border-collapse:collapse;
-  }
+</script>
 
-  table.sortable thead {
-      background-color:#eee;
-      color:#666666;
-      font-weight: bold;
-      cursor: default;
-  }
-  
-  .project-submit {
-    margin-left: 10px;
-    vertical-align: middle;
-  }
-  
-  .new-project{
-    padding-bottom: 20px;
-  }
+<style>
 
-  </style>
-  <div class = "row">  
-    Select An Existing Project:
-    <div class="projects-table">
-      <table id="projects" class="sortable display responsive" border="1" width=100%>
-        <thead>
-          <tr>
-            <th class="td-words">Name</th>
-            <th class="td-numbers">Issues</th>
-            <th class="td-numbers">Entities</th>
-            <th class="td-images">Created</th>
-            <th class="td-images">Manage</th>
-          </tr>
-        </thead>
-        <tbody>
-            <% @projects.each do |p| %>
-          <tr>
-            <td class="td-words"><a href="/<%= h p.name %>/start"x><%= h p.name %></a></td>
-            <td class="td-numbers"><%= p.issues.count %></td>
-            <td class="td-numbers"><%= p.entities.count %></td>
-            <td class="td-images"><%=h p.created_at.to_date %></td>
-            <td class='td-images'><a href="javascript:delete_project('<%=h p.name%>')">
-              <img width=10 height=10 src="img/icons/xmark.png"></a>
-            </td>
-          </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>        
-  </div>
-  <p><hr/></p>
-  <div class="row">
-    <div class="new-project">
-    
-      <form class="form-inline" name="project_select_form" action="/project" method="post">
-        <div style="width:400px;"  class="input-group">
-          <input type="text" class="form-control mb-2" id="project" name="project" placeholder="..or create a new project" value=""/>
-          <input class="btn btn-primary btn-md mb-2" type="submit" value="Submit" />
-        </div>
-      </form>
+.project-submit {
+  margin-left: 10px;
+  vertical-align: middle;
+}
 
-      <form name="project_delete_form" action="/project/delete" method="post"><input type="hidden" id="project" name="project"/></form>
+.new-project{
+  padding-bottom: 20px;
+}
 
-    </div>
-  </div>
+</style>
 
-
-</div>
-</div>
-</div>
+<script>
+$(document).ready( function () {
+  $('#projects-table').DataTable({
+    "searching": false,
+    "responsive": true,
+    "autoWidth": true,
+    "stateSave": true,
+    "scrollY": false,
+    "scrollX": false,      
+    "scrollCollapse": true,
+    "paging": false,
+    "info" : false,
+    'columnDefs': [
+      {'width': '50%', 'targets': 0},
+      {'width': '20%', 'targets': 1},
+      {'width': '20%', 'targets': 2},
+      {'width': '10%', 'targets': 3}
+    ]
+  });
+});
+</script>
