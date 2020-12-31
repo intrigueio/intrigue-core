@@ -19,9 +19,13 @@
 
         <% if @project_name %> 
 
+          <li class="nav-item">&nbsp;&nbsp;&nbsp;&nbsp;</li>
+
           <li class="nav-item">
             <b><a class="nav-link" href="/<%=h @project_name %>/start">[ <%= @project_name %> ] </a></b>
           </li>  
+
+          <li class="nav-item">&nbsp;&nbsp;&nbsp;&nbsp;</li>
 
           <li class="nav-item dropdown">
             <a class="dropdown-toggle nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -97,9 +101,10 @@
               <li><a class="dropdown-item" href="#"><b>System</b></a></li>
               <li><a class="dropdown-item nav-link" href="/system/config/tasks">Task Config</a></li>
               <!--<li><a class="dropdown-item nav-link" href="/system/config/handlers">Handler Config</a></li>-->
-              <li><a class="dropdown-item nav-link" href="/system/entities">Entity List</a></li>
-              <li><a class="dropdown-item nav-link" href="/system/tasks">Task List</a></li>
-              <li><a class="dropdown-item nav-link" href="/sidekiq">Sidekiq</a></li>
+              <li><a class="dropdown-item nav-link" href="/system/entities">Entity Definitions</a></li>
+              <li><a class="dropdown-item nav-link" href="/system/issues">Issue Definitions</a></li>
+              <li><a class="dropdown-item nav-link" href="/system/tasks">Task Definitions</a></li>
+              <!--<li><a class="dropdown-item nav-link" href="/sidekiq">Sidekiq</a></li>-->
             </ul>
           </li>
 

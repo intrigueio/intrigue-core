@@ -36,8 +36,6 @@ class CoreApp < Sinatra::Base
 
    end
 
-
-
   get '/:project/issues/:id' do
     @issue = Intrigue::Core::Model::Issue.scope_by_project(@project_name).first(:id => params[:id].to_i)
     erb :'issues/detail'

@@ -43,6 +43,11 @@ class CoreApp < Sinatra::Base
       erb :"system/entities"
     end
 
+    get "/system/issues" do
+      @issues = Intrigue::Issue::IssueFactory.issues
+      erb :"system/issues"
+    end
+
     get "/system/tasks" do
       @tasks = Intrigue::TaskFactory.list
       erb :"system/tasks"

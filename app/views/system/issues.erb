@@ -1,0 +1,47 @@
+<h3>Issues</h3>
+
+This page lists the issues currently available in the instance, and a few details about them. For help getting started, make sure to have a look at the <a href="http://core.intrigue.io/up-and-running/">Up and Running with Intrigue Core</a> Guide.
+
+<%i=0%>
+
+  <script type="text/javascript" src="/js/sorttable.js"></script>
+  <style>
+  /* Sortable tables */
+  table.sortable {
+    width: 100%;
+    border: 1;
+    table-layout:fixed;
+    word-wrap:break-word;
+    border-collapse:collapse;
+  }
+
+  table.sortable thead {
+      background-color:#eee;
+      color:#666666;
+      font-weight: bold;
+      cursor: default;
+  }
+  </style>
+  <p></p>
+  <table class="sortable" border="1" width=100%>
+    <colgroup>
+      <col style="width:10%">
+      <col style="width:20%">
+      <col style="width:50%">
+      <col style="width:10%">      
+    </colgroup>
+    <tbody>
+      <tr>
+        <th>Added</th><th>Name</th><th>Description</th><th>Severity</th></tr>
+      <% @issues.sort_by{|x| x.generate({})["pretty_name"] }.each do |ic| %>
+        <% i = ic.generate({}) %>
+        <tr>
+          <td><%= "#{i[:added]}" %></td> 
+          <td><%= "#{i[:pretty_name]}" %></td> 
+          <td><%= "#{i[:description]}" %></td>
+          <td><%= "#{i[:severity]}" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <br><br>
