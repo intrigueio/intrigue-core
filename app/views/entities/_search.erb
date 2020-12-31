@@ -8,7 +8,7 @@
     <div class="hint">Search entities by name.</div>
     <br>
     Types:<br>
-    <select size=25 style='height:100%; width:100%; color:#000000;' multiple name="entity_types[]">
+    <select size=15 style='height:100%; width:100%; color:#000000;' multiple name="entity_types[]">
       <% Intrigue::EntityFactory.entity_types.map{|x|x.to_s}.sort.each do |d| %>
         <option value="<%=h d%>" <%="selected" if (@entity_types && @entity_types.include?(d.to_s))%>> <%=h d.split(':').last%></option>
       <% end %>

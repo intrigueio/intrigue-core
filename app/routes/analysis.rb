@@ -113,9 +113,10 @@ class CoreApp < Sinatra::Base
 
   get '/:project/analysis/graph/reset' do
     p= Intrigue::Core::Model::Project.first(:name => @project_name)
+    p.graph_generated_at = nil
     p.graph_generation_in_progress = false
-    p.save
-    redirect "/#{@project_name}/graph"
+    p.save_changes
+    redirect "/#{@project_name}/analysis/graph"
   end
 
   get '/:project/analysis/services' do
