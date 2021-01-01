@@ -50,8 +50,8 @@ class GenerateGraphWorker
 
           # set the color
           x[:color] = "#a9a9a9" unless b.scoped
-          x[:color] = "#d5b60a" if b.issues.count > 0
-          x[:color] = "#B22222" if b.issues.count > 0 && b.issues.find{|i| i.severity < 3 }
+          x[:color] = "#e1bb22" if b.issues.count > 0
+          x[:color] = "#e15c22" if b.issues.count > 0 && b.issues.find{|i| i.severity < 4 }
           
         nodes << x
       end
@@ -68,8 +68,8 @@ class GenerateGraphWorker
 
         # set the color
         x[:color] = "#a9a9a9" unless b.scoped
-        x[:color] = "#d5b60a" if b.issues.count > 0
-        x[:color] = "#B22222" if b.issues.count > 0 && b.issues.find{|i| i.severity < 3 }
+        x[:color] = "#e1bb22" if b.issues.count > 0
+        x[:color] = "#e15c22" if b.issues.count > 0 && b.issues.find{|i| i.severity < 4 }
         
 
         nodes << x 

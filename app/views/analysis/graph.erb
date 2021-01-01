@@ -12,7 +12,7 @@
     left: 30px;
     width: 430px;
     border: 2px solid grey;
-    color: black;
+    color: white;
     opacity: 0.95;
   }
 
@@ -57,15 +57,14 @@ function delete_entity_children(id){
     settings: {
       minNodeSize: 2,
       maxNodeSize: 5,
-      defaultNodeColor: '#000000',
-      defaultEdgeColor: '#000000',
-      defaultLabelColor:'#000000',
-      defaultLabelSize: 8,
-      labelThreshold: 6,
+      defaultNodeColor: '#ffffff',
+      defaultEdgeColor: '#d3d3d3',
+      defaultLabelColor:'#22bce1',
+      defaultLabelSize: 18,
+      labelThreshold: 7,
       edgeHoverSizeRato: 10,
-      edgeHoverColor: '#ff0000',
-      defaultNodeHoverColor: '#ff0000',
-      edgeColor: 'default'
+      edgeHoverColor: '#a9a9a9',
+      defaultNodeHoverColor: '#000000'
     }
 
   }, function(s) {
@@ -77,9 +76,9 @@ function delete_entity_children(id){
     });
 
     // adjust slowdown based on the size
-    var slowdown = 20;
+    var slowdown = 200;
     if (s.graph.nodes().length > 3000) {
-      slowdown = 0;
+      slowdown = 10;
     }
 
     // start the layout
@@ -96,17 +95,17 @@ function delete_entity_children(id){
     s.bind('clickNode', function(e) {
       //console.log(e.type, e.data.node.label, e.data.captor);
       //get the list of tasks and rewrite the task
-      var entity_location = "/<%=@project_name%>/entities/" + e.data.node.id + ".json";
+      var entity_location = "/<%=h @project_name%>/entities/" + e.data.node.id + ".json";
 
       $.getJSON(entity_location, function(data){
-        $('#overlay').html('<p>Current graph generated at: <%= @graph_generated_at.strftime("%I:%M%p") if @graph_generated_at %>.</p>Node: <a target="_blank" href=/<%=@project_name%>/entities/' + e.data.node.id + '>'+ e.data.node.type + ": " + e.data.node.label + '</a><br/>');
+        $('#overlay').html('<p>Current graph generated at: <%= @graph_generated_at.strftime("%I:%M%p") if @graph_generated_at %>.</p>Node: <a target="_blank" href=/<%=h @project_name%>/entities/' + e.data.node.id + '>'+ e.data.node.type + ": " + e.data.node.label + '</a><br/>');
         
         // Task Runs
         $('#overlay').append("Found By:<br/>")
         for (let x of data["task_results"])
         {
             // Do something
-            $('#overlay').append('&nbsp;&nbsp;&nbsp;- <a target="_blank" href=results/' + x.id + '>'+ x.name + '</a><br/>');
+            $('#overlay').append('&nbsp;&nbsp;&nbsp;- <a target="_blank" href=<%=h @project_name%>/results/' + x.id + '>'+ x.name + '</a><br/>');
         }
         $('#overlay').append("<br/>")
         
