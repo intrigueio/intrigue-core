@@ -13,7 +13,6 @@ $enable-gradients: true;
 $body-color: #ffffff;  //this is the text color
 $body-bg: #000000; //this is the background color
 
-
 // Changing the border radius of buttons
 //$border-radius: 15px;
 
@@ -66,7 +65,7 @@ $navbar-dark-hover-color: $white;
 $color: $white;
 
 //links 
-$link-color:                              $white;
+$link-color:                              $core-color-5;
 $link-decoration:                         none;
 $link-hover-color:                        $white;
 $link-hover-decoration:                   underline;
