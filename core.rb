@@ -170,7 +170,7 @@ class CoreApp < Sinatra::Base
     # Allow certain requests without a project string... these are systemwide,
     # and do not depend on a specific project
     pass if [ "api", "entity_types.json", "engine", "favicon.ico",
-              "project", "tasks", "tasks.json",
+              "project", "tasks", "tasks.json", "help",
               "version.json", "system", nil ].include? directive
     pass if request.path_info =~ /\.js$/ # all js
     pass if request.path_info =~ /\.css$/ # all css
