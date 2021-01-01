@@ -198,10 +198,6 @@ class EntityManager
       # necessary to relookup?
       entity = Intrigue::Core::Model::Entity.find(:id => entity.id)
 
-      # if this wasnt auto-scheduled, mark us as a seed
-      entity.seed = true unless tr.autoscheduled
-      entity.save_changes 
-
       ### Ensure we have an entity
       unless entity
         tr.log_error "Unable to create or find entity: #{type}##{downcased_name}, failing!!"
