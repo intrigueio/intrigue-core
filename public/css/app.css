@@ -7,38 +7,38 @@
   background-color: #ffffffec;
 }
 
-textarea{
- background-color: white;
- color:black;
- font-family: inherit;
- font-size: inherit;
+.transparent-card {
+  background-image: url(/img/classy_fabric.png);
+  color: #ffffff;
 }
 
-a:link {
-  color: #1ab6ff;
+.transparent-card-light {
+  color: #000000;
+  background-color: #e8e8e8;
 }
 
-a:visited {
-  color: #1ab6ff;
+body {
+  background-image: url(/img/classy_fabric.png);
+  color: #ffffff;
 }
 
-a:hover {
-  color: white;
+.tableish {
+  background: url(/img/classy_fabric.png);
+  color: #ffffff;
 }
 
-.table-striped > tbody > tr:nth-child(2n+1) > td, .table-striped > tbody > tr:nth-child(2n+1) > th {
-   background-color: black;
+.modal-content {
+  background-image: url(/img/classy_fabric.png);
 }
 
 .like-pre-dark {
   white-space: pre-wrap;
-  font-size: 10px;
+  font-size: 12px;
   font-family: monospace;
   display: block;
-  background-color: black;
-  color: #44FF43;
-  border-style: dashed;
-  border-color: grey;
+  border: 2;
+  background-color: rgb(40, 40, 40);
+  color: #ffffff;
 }
 
 .center {
@@ -47,16 +47,24 @@ a:hover {
   margin-right: auto;
 }
 
-.centercontents {
+.center-contents {
   text-align: center !important;
 }
 
-.alignrightcontents {
+.align-left-contents {
+  text-align: left !important;
+}
+
+.align-right-contents {
   text-align: right !important;
 }
 
 .hljs {
   padding: 5px;
+}
+
+.main-body {
+  padding-top: 10px;
 }
 
 .navbar-brand {
@@ -72,3 +80,21 @@ a:hover {
  color: light-grey;
  font-size: 10px;
 }
+
+.td-words {
+  text-align:left;
+}
+
+.td-numbers {
+  text-align:right;
+}
+
+.td-images {
+  text-align:center;
+}
+
+.input-group > * {
+  padding:5px;
+}
+
+

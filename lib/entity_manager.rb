@@ -299,7 +299,7 @@ class EntityManager
       
       # Check if we've already run first and return gracefully if so
       if entity.enriched && !project.allow_reenrich
-        tr.log "Skipping enrichment... already completed and re-enrich disabled!"
+        tr.log "Skipping enrichment... already completed and re-enrich not enabled!"
       else
         
         # starts a new background task... so anything that needs to happen from
@@ -312,7 +312,7 @@ class EntityManager
       end
     else
       tr.log "Skipping enrichment... enrich not enabled!" unless tr.auto_enrich
-      tr.log "Skipping enrichment... entity exists!" if entity_already_existed
+      tr.log "Skipping enrichment... entity #{entity.name} already exists!" if entity_already_existed
       tr.log "Skipping enrichment... entity on deny list!" if entity.deny_list
     end
 

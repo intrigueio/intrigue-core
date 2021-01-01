@@ -1,12 +1,24 @@
 {
-    "dependencies": {
-      "add": "^2.0.6",
-      "bootstrap": "3.4.1",
-      "datatables": "^1.10.11",
-      "highlightjs": "^8.7.0",
-      "jquery": "2.1.4",
-      "sigma": "1.2.0",
-      "yarn": "^1.22.10"
-    }
-  }
-  
+	"name": "intrigue-core",
+	"version": "0.8.0",
+	"scripts": {
+		"scss": "node-sass ./app/assets/scss -o ./public/css"
+	},
+	"dependencies": {
+		"add": "^2.0.6",
+		"autoprefixer": "^10.1.0",
+		"bootstrap": "^5.0.0-beta1",
+		"datatables": "^1.10.11",
+		"gulp": "^4.0.2",
+		"gulp-clean-css": "^4.3.0",
+		"gulp-postcss": "^9.0.0",
+		"gulp-rename": "^2.0.0",
+		"gulp-sass": "^4.1.0",
+		"gulp-sourcemaps": "^3.0.0",
+		"highlightjs": "^8.7.0",
+		"jquery": "^3.5.1",
+		"node-sass": "^5.0.0",
+		"sigma": "1.2.0",
+		"yarn": "^1.22.10"
+	}
+}

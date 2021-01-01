@@ -27,7 +27,6 @@ class CoreApp < Sinatra::Base
       result.export_json if result
     end
 
-
     get '/:project/results' do
       paginate_count = 100
 
@@ -59,6 +58,13 @@ class CoreApp < Sinatra::Base
       @result_count = selected_results.count
       @results = selected_results.extension(:pagination).paginate(@page,paginate_count)
 
+      @calculated_url = "/#{@project_name}/results?search_string=#{@search_string}" +
+        "inverse=#{params[:inverse]}&" + 
+        "hide_enrichment=#{params[:hide_enrichment]}&" + 
+        "hide_autoscheduled=#{params[:hide_autoscheduled]}&" + 
+        "hide_cancelled=#{params[:hide_cancelled]}&" + 
+        "only_complete=#{params[:only_complete]}"
+
       erb :'results/index'
     end
 
@@ -86,8 +92,6 @@ class CoreApp < Sinatra::Base
     # Helper to construct the request to the API when the application is used interactively
     post '/:project/interactive/single/?' do
 
-      
-
       task_name = "#{@params["task"]}"
       entity_id = @params["entity_id"]
       depth = @params["depth"].to_i
@@ -105,8 +109,9 @@ class CoreApp < Sinatra::Base
       ### Machine definition, make sure we have a valid type
       if Intrigue::MachineFactory.has_machine? "#{@params["machine"]}"
         machine_name = "#{@params["machine"]}"
-      else
-        machine_name = "external_discovery_light_active"
+      else # default to none 
+        machine_name = nil
+        depth = 1
       end
 
       auto_enrich = @params["auto_enrich"] == "on" ? true : false
@@ -131,12 +136,11 @@ class CoreApp < Sinatra::Base
 
         # create the first entity
         entity = Intrigue::EntityManager.create_first_entity(@project_name,entity_type,entity_name,entity_details)
-
       end
 
       unless entity
         session[:flash] = "Unable to create entity, check your parameters: #{entity_name} #{entity_type}!" +
-        " For more help see <a href=\"/system/entities\">Entity Help</a>"
+        " For more help see the Entity Definitions under 'Help'!"
         redirect FRONT_PAGE
       end
 
@@ -172,7 +176,6 @@ class CoreApp < Sinatra::Base
 
       # Manually starting enrichment here
       if auto_enrich && !(task_name =~ /^enrich/)
-        task_result.log "User-created entity, manually creating and enriching!"
         entity.enrich(task_result)
       end
 
@@ -222,8 +225,6 @@ class CoreApp < Sinatra::Base
         session[:flash] = "Unkown File Format #{file_format}, failing"
         redirect FRONT_PAGE
       end
-
-      puts "Got entities: #{entities}"
 
       ### Handler definition, make sure we have a valid handler type
       if Intrigue::HandlerFactory.include? "#{@params["handler"]}"

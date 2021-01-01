@@ -1,4 +1,10 @@
+<div class="container-fluid">
 
+<div class="card transparent-card">
+<div class="card-title"><h4>Start A New Task</h4></div>
+<div class="card-body">
+
+<div class="row">
 <div class="col-sm-7">
 <form class="form-horizontal" id="task_runner" enctype="multipart/form-data" target="_self" method="post" action="/<%=h @project_name%>/interactive/upload">
 
@@ -46,44 +52,27 @@
       <div class="col-xs-8"><input type="file" name=entity_file></div>
     </div>
   </div>
-
   <div id="machine">
     <div class="form-group">
-      <label for="attrib_name" class="col-xs-4 control-label">Machine</label>
+      <label for="machine" class="col-xs-4 control-label"></label>
       <div class="col-xs-8">
         <select class="form-control input-sm" name="machine" id="machine">
-          <!-- iterate through stategies -->
+          <option value="none" selected='selected'>No Workflow Configured</option>
+          <!-- iterate through workflows -->
           <% Intrigue::MachineFactory.list.each do |machine_class| %>
            <% next unless machine_class.metadata[:user_selectable] %>
-            <option value="<%= machine_class.metadata[:name] %>"
-              <%= "selected='selected'" if machine_class.metadata[:name] == "org_asset_discovery_active" %> >
-              <%= machine_class.metadata[:pretty_name] %>
+            <option value="<%= h machine_class.metadata[:name] %>">
+              <%= h machine_class.metadata[:pretty_name] %>
             </option>
           <% end %>
         </select>
-        <div class="hint">'Machine' specifies the post-processor for each new entity.</div>
+        <div class="hint"> 'Workflow' specifies the set of tasks which will be automatically started for each new entity.</div>
       </div>
     </div>
   </div>
+            
+  <input type="hidden" name="depth" id="depth" value="6">
 
-  <div id="scan">
-    <div class="form-group">
-      <label for="attrib_name" class="col-xs-4 control-label">Iterations</label>
-      <div class="col-xs-8">
-        <select class="form-control input-sm" name="depth" id="depth">
-          <option value=1 selected="true">None</option>
-          <option value=2>2 Iterations</option>
-          <option value=3>3 Iterations</option>
-          <option value=4>4 Iterations</option>
-          <option value=5>5 Iterations</option>
-          <option value=6>6 Iterations</option>
-          <option value=7>7 Iterations</option>
-          <option value=8>8 Iterations</option>
-        </select>
-        <div class="hint">'Iterations' specifies the depth to which the machine is run.</div>
-      </div>
-    </div>
-  </div>
 
 <!--
   <div id="handler">
@@ -120,4 +109,10 @@
 <div id="links" name="links">[links]</div>
 </p>
 </div>
+
 <script type="text/javascript" src="/js/task.js"></script>
+
+</div>
+</div>
+</div>
+</div>

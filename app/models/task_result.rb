@@ -18,7 +18,7 @@ module Model
 
     def self.scope_by_project(project_name)
       named_project = Intrigue::Core::Model::Project.first(:name => project_name)
-      where(:project => named_project)
+      where(:project_id => named_project.id)
     end
 
     def validate

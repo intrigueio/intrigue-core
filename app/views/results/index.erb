@@ -1,7 +1,5 @@
-<p>
-Total Count: <%= Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).all.count %><br/>
-Selected Count: <%= @result_count %><br/>
-</p>
+
+<div class="row">
 
 <div class="col-sm-2">
   <form class="form-horizontal" id="result_search" target="_self" method="get" action="/<%=h @project_name%>/results">
@@ -16,56 +14,88 @@ Selected Count: <%= @result_count %><br/>
     <input id="only_complete" name="only_complete" type="checkbox"> Only Complete <br/>
     <input class="btn btn-primary" type="submit" value="Search">
   </form>
-
+  <br>
+  <p>
+  Result Count: <%= Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).all.count %><br/><br/>
+  <a href="<%=request.path%>/all/cancel">Cancel All Tasks</a>
+  </p>
 </div>
 
 <div class="col-sm-10">
-  <%= "Page: #{@page}" %>
-  <%= "Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %>
-  <a href="<%=h request.path%>?page=<%=@page-1%>&search_string=<%=@search_string%>">previous</a>
-  <a href="<%=h request.path%>?page=<%=@page+1%>&search_string=<%=h @search_string%>">next</a>
 
-  <script src="/js/sorttable.js"></script>
-  <style>
-  /* Sortable tables */
-  table.sortable {
-    width: 100%;
-    border: 0;
-    table-layout:fixed;
-    word-wrap:break-word;
-    border-collapse:collapse;
-  }
+  <div class="float-right">
+    <b><a href="<%=@calculated_url%>?page=<%=@page+1%>"><< previous</a></b> | 
+    <b><a href="<%=@calculated_url%>?page=<%=@page-1%>">next >> </a></b>
+  </div>
+  
+    <table id="results-table" class="tableish row-border">
 
-  table.sortable thead {
-      background-color:#eee;
-      color:#666666;
-      font-weight: bold;
-      cursor: default;
-  }
-  </style>
-  <p></p>
-  <table class="sortable" border="1" width=100%>
-    <colgroup>
-      <col style="width:20%">
-      <col style="width:40%">
-      <col style="width:10%">
-      <col style="width:10%">
-    </colgroup>
-    <tbody>
-      <tr><th>timestamp</th><th>result</th><th>entity count</th><th>complete</th>
+    <thead class='tableish'>
+      <tr class='tableish'>
+        <th>Started At</th>
+        <th>Task Name</th>
+        <th>Entity Count</th>
+        <th>Complete</th>
+      </tr>
+    </thead>
+    <tbody class='tableish'>
         <% @results.each do |x| %>
-        <tr>
-          <td><%= h x.timestamp_start %> </td>
-          <td><a href="/<%=h @project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity.to_s %></a> </td>
-          <td><%= h x.entities.uniq.count %> </td>
-          <td><%= x.complete ? "complete" : "incomplete" %></td>
+        <tr class='tableish'>
+          <td>
+          <div class='td-words'>
+            <%= h x.timestamp_start %> 
+          </div>
+          </td>
+          <td>
+            <div class='td-words'>
+              <a href="/<%=h @project_name%>/results/<%=x.id%>"><%= h x.task_name %> on <%= h x.base_entity.to_s %></a>
+            </div>
+          </td>
+          <td>
+            <div class='td-numbers'>
+              <%= h x.entities.uniq.count %> 
+            </div>
+          </td>
+          <td>
+            <div class='td-images'>
+            <% if  x.complete %>
+              <img width=12 height=12 src='/img/icons/checkmark-white.png'>
+            <% else %>
+              <img width=12 height=12 src='/img/icons/xmark-white.png'>
+            <% end %>
+            </div>
+          </td>
         </tr>
         <% end %>
     </tbody>
   </table>
-  <div class="row">
-    <div class="col-xs-11">&nbsp;</div>
-    <div class="col-xs-1">
-      <p><a href="<%=request.path%>/all/cancel">Cancel All</a></p>
-    </div>
-  </div>
+  <b><%= "Page: #{@page} / Viewing Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %></b>
+</div>
+
+<!--
+<colgroup>
+<col style="width:20%">  
+<col style="width:65%">
+<col style="width:9%">
+<col style="width:9%">
+</colgroup>
+-->
+
+<script>
+$(document).ready( function () {
+  $('#results-table').DataTable({
+    "searching": false,
+    "responsive": true,
+    "stateSave": true,  
+    "scrollCollapse": true,
+    "paging": false,
+    "info" : false,
+    'columnDefs': [
+      {'width': '20%', 'targets': 0},
+      {'width': '60%', 'targets': 1},
+      {'width': '10%', 'targets': 2},
+      {'width': '10%', 'targets': 3}
+    ]
+  });
+});
+</script>

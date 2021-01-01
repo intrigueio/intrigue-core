@@ -157,7 +157,9 @@ class CoreApp < Sinatra::Base
     $intrigue_server_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
 
     # Parse out our project
-    directive = URI.decode_www_form_component(request.path_info.split("/")[1] || "Default")
+    if request.path_info.split("/")[1]
+      directive = URI.decode_www_form_component(request.path_info.split("/")[1])
+    end
 
     # set flash message if we have one
     if session[:flash]
@@ -176,23 +178,20 @@ class CoreApp < Sinatra::Base
 
     # Set the project based on the directive
     project = Intrigue::Core::Model::Project.first(:name => directive)
+    @project_name = project.name if project 
 
-    # If we haven't resolved a project, let's handle it
-    unless project
-      # Creating a default project since it doesn't appear to exist (it should always exist)
-      if directive == "Default"
-        project = Intrigue::Core::Model::Project.create(:name => "Default", :created_at => Time.now.utc )
-      else
-        redirect "/"
-      end
-    end
-
-    # Set it so we can use it going forward
-    @project_name = project.name
+    #if !directive && !project
+    #  #   # Creating a default project since it doesn't appear to exist (it should always exist)
+    #  
+    #    project = Intrigue::Core::Model::Project.create(:name => "Default", :created_at => Time.now.utc )
+    #  
+    #end
+    
   end
 
   not_found do
-    "Unable to find this content."
+    status 404
+    erb :oops
   end
 
   ###                                  ###

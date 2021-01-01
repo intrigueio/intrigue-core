@@ -18,6 +18,10 @@ class UniqueToken < Intrigue::Core::Model::Entity
   # Also Handy: https://gist.github.com/nullenc0de/2473b1d49dfe4b94088304d542eb3760
   def self.supported_token_types
     
+
+    #
+    # 13e49d785d8d4f828038b6136f3b48ba
+    #
     tokens = [
       { 
         "provider" => "aws_access_key", 

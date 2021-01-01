@@ -28,6 +28,12 @@ class CoreApp < Sinatra::Base
     end
 
     # get config
+    get '/system/config/?' do
+      @global_config = Intrigue::Core::System::Config
+      erb :"system/system_config"
+    end
+
+    # get config
     get '/system/config/tasks/?' do
       @global_config = Intrigue::Core::System::Config
       erb :"system/task_config"
@@ -41,6 +47,11 @@ class CoreApp < Sinatra::Base
     get "/system/entities" do
       @entities = Intrigue::EntityFactory.entity_types
       erb :"system/entities"
+    end
+
+    get "/system/issues" do
+      @issues = Intrigue::Issue::IssueFactory.issues
+      erb :"system/issues"
     end
 
     get "/system/tasks" do

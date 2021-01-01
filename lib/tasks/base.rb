@@ -49,7 +49,7 @@ class BaseTask
     @task_result.timestamp_start = start_time
 
     ###
-    ### Check santity
+    ### Alias things to make task access easier
     ###
     @entity = @task_result.base_entity
     @project = @task_result.project
@@ -79,14 +79,11 @@ class BaseTask
     ###
     return_early = false 
     if @task_result.scan_result
-      our_task_result_name = @task_result.name
+      our_task_result_name = "#{@task_result.name}"
       
       # query existing results, limit to those that have been started
-      existing_task_results = Intrigue::Core::Model::TaskResult.scope_by_project(@project.name).where({
-        :name => "#{our_task_result_name}"}).exclude(:timestamp_start => nil)
-
-      # good for debugging 
-      _log "Got existing results for '#{our_task_result_name}': #{existing_task_results.map{|x| x.id }.join(", ")}"
+      existing_task_results = Intrigue::Core::Model::TaskResult.scope_by_project(@project.name).where(
+        name: our_task_result_name).exclude(timestamp_start: nil).exclude(id: @task_result.id)
 
       # if we've already completed another one, return eearly
       if existing_task_results.count > 0
@@ -241,10 +238,6 @@ class BaseTask
           _log "Entity not scoped, no machine will be run."
         end 
 
-
-
-
-
       else
         _log "Not an enrichment task, skipping machine generation"
       end
@@ -256,12 +249,12 @@ class BaseTask
         ###
         ## CLEAN UP HERE. 
         ###
-
         @task_result.complete = true
         @task_result.timestamp_end = end_time
         @task_result.logger.save_changes
         @task_result.save_changes
         _log "Task complete. Ship it!"
+
       rescue Sequel::NoExistingObject => e
         puts "Failing to update task_result: #{task_result_id}"
       end
@@ -289,7 +282,7 @@ class BaseTask
 
     allowed_options = self.class.metadata[:allowed_options]
     @user_options = []
-    if user_options
+    if user_options && user_options.kind_of?(Array)
       #_log "Got user options list: #{user_options}"
       # for each of the user-supplied options
       user_options.each do |user_option| # should be an array of hashes
