@@ -58,6 +58,13 @@ class CoreApp < Sinatra::Base
       @result_count = selected_results.count
       @results = selected_results.extension(:pagination).paginate(@page,paginate_count)
 
+      @calculated_url = "/#{@project_name}/results?search_string=#{@search_string}" +
+        "inverse=#{params[:inverse]}&" + 
+        "hide_enrichment=#{params[:hide_enrichment]}&" + 
+        "hide_autoscheduled=#{params[:hide_autoscheduled]}&" + 
+        "hide_cancelled=#{params[:hide_cancelled]}&" + 
+        "only_complete=#{params[:only_complete]}"
+
       erb :'results/index'
     end
 
@@ -133,7 +140,7 @@ class CoreApp < Sinatra::Base
 
       unless entity
         session[:flash] = "Unable to create entity, check your parameters: #{entity_name} #{entity_type}!" +
-        " For more help see <a href=\"/system/entities\">Entity Help</a>"
+        " For more help see the Entity Definitions under 'Help'!"
         redirect FRONT_PAGE
       end
 

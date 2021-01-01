@@ -1,13 +1,11 @@
 
 <div class="container-fluid">
-  
-  
 
   <div class="row">
     <div class="col-sm-9">
       <h3>
       <% if @entity.details["uri"] %>
-      <p><a href="<%= h @entity.details["uri"] %>"><%= h @entity %></a><br/></p>
+      <p><%= h @entity %><a href="<%= h @entity.details["uri"] %>"><img width=24px src="/img/icons/external-link-white.png"></a><br/></p>
       <% else %>
         <%= h @entity %>
       <% end %>
@@ -31,7 +29,7 @@
   </div>  
 
   <div class="row"> 
-    <div class="col-sm-6">
+    <div class="col-sm-3">
     
       <% if @entity.type_string == "Uri" && @entity.has_detail('extended_screenshot_contents') %>
       <div class="card transparent-card" >
@@ -43,7 +41,6 @@
         </div>
       </div>
       <% end %>
-
 
       <div class="card transparent-card">
       <div class="card-title h5">Discovery Context</div>
@@ -86,7 +83,7 @@
 
     </div>
 
-    <div class="col-sm-6">
+    <div class="col-sm-9">
 
       <div class="card transparent-card-light">
       <div class="card-body">

@@ -13,7 +13,7 @@
         <% if @flash.kind_of?(Hash) %>
           <%= h @flash[:message] %>   
         <% else # old way %> 
-          <%= @flash %>
+          <%= h @flash %>
         <% end %>
 
       </div>

@@ -24,46 +24,23 @@
 <div class="col-sm-10">
 
   <div class="float-right">
-    <b><a href="<%=h request.path%>?page=<%=@page-1%>&search_string=<%=@search_string%>"><< previous</a> | 
-    <a href="<%=h request.path%>?page=<%=@page+1%>&search_string=<%=h @search_string%>">next >></a> </b>
+    <b><a href="<%=@calculated_url%>?page=<%=@page+1%>"><< previous</a></b> | 
+    <b><a href="<%=@calculated_url%>?page=<%=@page-1%>">next >> </a></b>
   </div>
   
-  <script src="/js/sorttable.js"></script>
-  <style>
-  /* Sortable tables */
-  table.sortable {
-    width: 100%;
-    border: 0;
-    table-layout:fixed;
-    word-wrap:break-word;
-    border-collapse:collapse;
-  }
+    <table id="results-table" class="tableish row-border">
 
-  table.sortable thead {
-      background-color:#eee;
-      color:#666666;
-      font-weight: bold;
-      cursor: default;
-  }
-
-  </style>
-  <p></p>
-  <table class="sortable" border="1" width=100%>
-    <colgroup>
-      <col style="width:20%">  
-      <col style="width:65%">
-      <col style="width:9%">
-      <col style="width:9%">
-    </colgroup>
-    <tbody>
-      <tr>
+    <thead class='tableish'>
+      <tr class='tableish'>
         <th>Started At</th>
         <th>Task Name</th>
         <th>Entity Count</th>
         <th>Complete</th>
       </tr>
+    </thead>
+    <tbody class='tableish'>
         <% @results.each do |x| %>
-        <tr>
+        <tr class='tableish'>
           <td>
           <div class='td-words'>
             <%= h x.timestamp_start %> 
@@ -82,9 +59,9 @@
           <td>
             <div class='td-images'>
             <% if  x.complete %>
-              <img width=12 height=12 src='/img/icons/checkmark.png'>
+              <img width=12 height=12 src='/img/icons/checkmark-white.png'>
             <% else %>
-              <img width=12 height=12 src='/img/icons/xmark.png'>
+              <img width=12 height=12 src='/img/icons/xmark-white.png'>
             <% end %>
             </div>
           </td>
@@ -93,6 +70,32 @@
     </tbody>
   </table>
   <b><%= "Page: #{@page} / Viewing Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %></b>
-
-
 </div>
+
+<!--
+<colgroup>
+<col style="width:20%">  
+<col style="width:65%">
+<col style="width:9%">
+<col style="width:9%">
+</colgroup>
+-->
+
+<script>
+$(document).ready( function () {
+  $('#results-table').DataTable({
+    "searching": false,
+    "responsive": true,
+    "stateSave": true,  
+    "scrollCollapse": true,
+    "paging": false,
+    "info" : false,
+    'columnDefs': [
+      {'width': '20%', 'targets': 0},
+      {'width': '60%', 'targets': 1},
+      {'width': '10%', 'targets': 2},
+      {'width': '10%', 'targets': 3}
+    ]
+  });
+});
+</script>

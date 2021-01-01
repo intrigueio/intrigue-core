@@ -64,12 +64,12 @@
               <% end %>
             
             <% else %>
-                <% @selected_entities.each do |e| %>
-                <tr class="tableish">
-                  <td><a href="/<%=h @project_name%>/entities/<%=e.id%>"> <%= h e %> </a></td>
-                  <td><%= h e.detail_string %></td>
-                </tr>
-                <% end %> 
+              <% @selected_entities.each do |e| %>
+              <tr class="tableish">
+                <td><a href="/<%=h @project_name%>/entities/<%=e.id%>"> <%= h e %> </a></td>
+                <td><%= h e.detail_string %></td>
+              </tr>
+              <% end %> 
             <% end %>
 
           </tbody>

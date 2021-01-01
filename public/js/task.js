@@ -77,6 +77,7 @@
 
       // Check to see if we have a "*" type
       if (task_hash["allowed_types"].indexOf("*") != -1) {
+        
         // get the full entity_types.json
         $.getJSON(location.origin + "/entity_types.json", function(data) {
           $.each(data, function(key, value) {
