@@ -28,16 +28,8 @@ module Machine
   
       # Recurse should receive a fully enriched object from the creator task
       def self.recurse(entity, task_result)
-  
-        project = entity.project
-        return unless project
-  
-        seed_list = project.seeds.map{|s| s.name }.join(",")
-  
-        ###
-        # Don't go any further unless we're scoped!
-        ###
-        return unless entity.scoped?
+
+        seed_list = entity.project.seeds.map{|s| s.name }.join(",")
   
         if entity.type_string == "AwsS3Bucket"
   

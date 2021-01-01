@@ -18,18 +18,6 @@ module Machine
 
       project = entity.project
       seed_list = project.seeds.map{|s| s.name }.join(",")
-      
-      ### 
-      # Don't go any further unless we're scoped! 
-      ### 
-      traversable = false # default to no traverse
-      # This is a little trixy, allows for runtime scoping since we're dynamically checking
-      traversable = true if entity.scoped? && !entity.hidden # true if we're scoped and not hidden      
-      # LOG THE CHOICE
-      return unless traversable 
-      ###
-      #  End scoping madness 
-      ###
 
       if entity.type_string == "AwsS3Bucket"
         

@@ -22,11 +22,10 @@ module Intrigue
   
     def run
   
+      # always create domain as an unscoped
       email_address = _get_entity_name.strip
       domain = email_address.split("@").last
-  
-      # always create the relevant domain
-      _create_entity "Domain", "name" => domain
+      create_unscoped_dns_entity_from_string domain
       
     end
   

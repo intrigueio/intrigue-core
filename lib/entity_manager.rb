@@ -62,24 +62,28 @@ class EntityManager
 
       entity.set_details(details.to_h.deep_merge(entity.details.to_h))
 
-        #####
-        ### HANDLE USER- or TASK- PROVIDED SCOPING
-        #####
+      #####
+      ### HANDLE USER- or TASK- PROVIDED SCOPING
+      #####
 
-          # remove any scope details (though i'm not sure this condition could ever exist on a
-          # manually created entity)
-          details = details.tap { |h| h.delete("unscoped") }
-          details = details.tap { |h| h.delete("scoped") }
-          entity.set_scoped!(true, "first_entity")
-          entity.save_changes
+      # remove any scope details (though i'm not sure this condition could ever exist on a
+      # manually created entity)
+      details = details.tap { |h| h.delete("unscoped") }
+      details = details.tap { |h| h.delete("scoped") }
+      entity.set_scoped!(true, "first_entity")
+      entity.save_changes
 
-        #####
-        ### END ... USER- or TASK- PROVIDED SCOPING
-        ###
+      #####
+      ### END ... USER- or TASK- PROVIDED SCOPING
+      ###
 
-        ### ENTITIES can SELF-SCOPE, however, for more info on that
-        ### see the individual entity file
-        #####
+      ### ENTITIES can SELF-SCOPE, however, for more info on that
+      ### see the individual entity file
+      #####
+
+      # also we can now mark it as a seed
+      entity.seed = true 
+      entity.save 
 
     else
       # Create a new entity, validating the attributes
@@ -194,6 +198,10 @@ class EntityManager
       # necessary to relookup?
       entity = Intrigue::Core::Model::Entity.find(:id => entity.id)
 
+      # if this wasnt auto-scheduled, mark us as a seed
+      entity.seed = true unless tr.autoscheduled
+      entity.save_changes 
+
       ### Ensure we have an entity
       unless entity
         tr.log_error "Unable to create or find entity: #{type}##{downcased_name}, failing!!"
@@ -218,7 +226,6 @@ class EntityManager
 
       # Add to our result set for this task
       tr.add_entity entity
-    
     end
 
     ###
@@ -240,7 +247,7 @@ class EntityManager
     # that is (or at least should be) specific to that task... this 
     # is usually specific to enrichment tasks
     if tr.auto_scope
-      tr.log "Task result scoped this entity based on auto_scope."
+      #tr.log "Task result scoped this entity based on auto_scope."
       scope_request = "true"
     else # otherwise default to false, (and let the entity scoping handle it below) 
       tr.log "No specific scope request from the task result or the entity creation"
@@ -281,17 +288,24 @@ class EntityManager
     #####
 
     # ENRICHMENT LAUNCH (this may re-run if an entity has just been scoped in)
-    if tr.auto_enrich && !entity.deny_list && (!entity_already_existed || project.allow_reenrich)
+    if !tr.autoscheduled # manally scheuduled, automatically enrich 
+
+      if entity.enriched
+        tr.log "Re-scheduling enrichment for existing entity (manually run)!"
+      end
+      entity.enrich(tr)
+
+    elsif tr.auto_enrich && !entity.deny_list && (!entity_already_existed || project.allow_reenrich)
       
       # Check if we've already run first and return gracefully if so
       if entity.enriched && !project.allow_reenrich
         tr.log "Skipping enrichment... already completed and re-enrich not enabled!"
       else
-
+        
         # starts a new background task... so anything that needs to happen from
         # this point should happen in that new background task
         if entity.enriched
-          tr.log "Re-scheduling enrichement for entity!"
+          tr.log "Re-scheduling enrichment for existing entity (re-enrich enabled)!"
         end
 
         entity.enrich(tr)

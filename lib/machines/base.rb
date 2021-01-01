@@ -12,7 +12,24 @@ module Machine
     def self.start(entity, task_result)
 
       # sanity check before sending us off
-      return unless entity && task_result
+      unless entity && task_result
+        puts "Refusing to run #{metadata[:name]}, entity or task result is missing!"
+        return 
+      end
+
+      unless entity.project
+        puts "Refusing to run #{metadata[:name]} on entity: #{entity.name}, project is missing!"
+        return 
+      end
+
+      ###
+      # Don't go any further unless we're scoped!
+      ###
+      unless entity.scoped
+        puts "Refusing to run #{metadata[:name]} on unscoped entity: #{entity.name}"
+        return 
+      end
+
 
       recurse(entity, task_result)
     end
@@ -30,8 +47,9 @@ module Machine
         :base_entity_id => entity.id
       )
 
-      if existing_task_result && (existing_task_result.options == options)
+      if existing_task_result && existing_task_result.options == options
         # Don't schedule a new one, just notify that it's already scheduled.
+        puts "Not Running, existing task run in this project! #{existing_task_result.name}"
         return nil
       else
 
