@@ -2,7 +2,6 @@ module Intrigue
 module Task
 module BinaryEdge
 
-
   def search_binaryedge_by_ip(entity_name, api_key)
     begin
       # formulate and make the request

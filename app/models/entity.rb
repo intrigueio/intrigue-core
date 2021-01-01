@@ -319,7 +319,7 @@ module Model
       <div class="form-group">
         <label for="attrib_name" class="col-xs-4 control-label">Entity Name</label>
         <div class="col-xs-8">
-          <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name" placeholder="#{URI.encode_www_form_component self.name}">
+          <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name" placeholder="#{self.name}">
         </div>
       </div>}
     end

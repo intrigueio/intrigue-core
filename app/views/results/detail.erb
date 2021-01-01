@@ -37,8 +37,6 @@ function getResultJson(id){
     entity_string += "</ul>";
     //console.log(entity_string);
     $( "#issues" ).append(entity_string);
-
-
   });
 }
 
@@ -51,7 +49,7 @@ getResultJson(<%=@result.id%>);
 </script>
 <div class="row">
 <div class="col-sm-5">
-  <h3>Task Result: <a href="<%=h @rerun_uri || nil%>"><%=h @result.task_name %></a> </h3>
+  <h3>Task Result: <%=h @result.task_name %>&nbsp;<a href=<%="#{@rerun_uri}"%>><img width=20px src='/img/icons/cycle-white.png'></a></h3>
   <p>ID: <%=@result.id %> </p>
   <p>Start: <%=@result.timestamp_start %> </p>
   <p>End: <%= @result.timestamp_end %> </p>

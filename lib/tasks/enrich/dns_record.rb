@@ -29,7 +29,7 @@ class DnsRecord < Intrigue::Task::BaseTask
     lookup_name = _get_entity_name
 
     # always create a domain 
-    create_dns_entity_from_string(parse_domain_name(lookup_name)) if @entity.scoped?
+    create_dns_entity_from_string(parse_domain_name(lookup_name)) #if @entity.scoped?
 
     # Do a lookup and keep track of all aliases
     _log "Resolving: #{lookup_name}"

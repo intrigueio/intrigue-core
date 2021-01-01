@@ -20,7 +20,7 @@
       <% @issues.each do |issue| %>
         <tr class="tableish">
           <td><a href="<%="/#{h @project_name}/issues/#{h issue.id }"%>"><%= h issue.pretty_name %></a></td>
-          <td><%=issue.entity.name%><br><%issue.entity.aliases{ |x|%> <%=h x.name%> <br><%}%></td>
+          <td><%=h issue.entity.name%><br><%issue.entity.aliases{ |x|%> <%=h x.name %> <br><%}%></td>
           <td><%=issue.status%></td>
           <td><%=issue.severity%></td>
           <td><%=issue.scoped ? checkmark_image : xmark_image %></td>

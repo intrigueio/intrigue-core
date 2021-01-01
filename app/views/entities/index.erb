@@ -28,16 +28,16 @@
 
       <div class="table-responsive">
         
-        <table id="entities-table" class="tableish row-border">
+        <table id="entities-table" class="tableish table-striped table-bordered" style="width:100%">
           
-          <thead class="tableish">
-            <tr class="tableish">
+          <thead>
+            <tr>
               <th>name</th>
               <th>details</th>
             </tr>
           </thead>
 
-          <tbody class="tableish">
+          <tbody>
             
             <% if @grouped_entities %>
               <% @alias_groups.each do |group| %>
@@ -45,7 +45,7 @@
                 <% grouped_entities = grouped_entities.reject{|x| !x.scoped } unless @include_unscoped %>
                 <% grouped_entities = grouped_entities.reject{|x| x.hidden } unless @include_hidden %>
                 <% next if grouped_entities.empty? %>
-                <tr class="tableish">
+                <tr>
                   <td>
                     <ul>
                     <% grouped_entities.each do |e| %>
@@ -65,7 +65,7 @@
             
             <% else %>
               <% @selected_entities.each do |e| %>
-              <tr class="tableish">
+              <tr>
                 <td><a href="/<%=h @project_name%>/entities/<%=e.id%>"> <%= h e %> </a></td>
                 <td><%= h e.detail_string %></td>
               </tr>

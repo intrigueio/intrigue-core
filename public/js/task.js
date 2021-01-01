@@ -27,9 +27,9 @@
               // This is a form that doesn't have an entity already filled out, let's provide an example
               parseAllowedEntityTypes(data);
               setDefaultEntity(data);
-        } else if (window.location.href.indexOf("upload")) {
+        } else if (window.location.href.indexOf("upload") != -1) {
           // do nothing 
-          console.log("skipping setting entity / type");
+          console.log("skipping setting entity / type, this is an upload form");
         } else {
           //Disabling form since we're on a pre-populated form
           var attrib_name = form.attrib_name.value
@@ -63,6 +63,7 @@
 
     // set the name
     $("#attrib_name").attr("placeholder", entity_name);
+    //$("#attrib_name").attr("value", entity_name);
 
     // set the type
     $("#entity_type option[value=\""+entity_type+"\"]").prop('selected', true);

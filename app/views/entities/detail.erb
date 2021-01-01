@@ -2,6 +2,7 @@
 <div class="container-fluid">
 
   <div class="row">
+
     <div class="col-sm-9">
       <h3>
       <% if @entity.details["uri"] %>
@@ -11,6 +12,7 @@
       <% end %>
       </h3>
     </div>
+
     <div class="col-sm-3">
       <div class="container">
         <div class="d-flex justify-content-between">
@@ -29,7 +31,18 @@
   </div>  
 
   <div class="row"> 
-    <div class="col-sm-3">
+    
+    <div class="col-sm-7">
+
+      <div class="card transparent-card-light">
+      <div class="card-body">
+        <div class="card-title h5">Entity Details</div>
+          <div><pre class="prettyprint"><%=h JSON.pretty_generate @entity.short_details %></pre></div>
+        </div>
+      </div>
+      </div>
+    
+    <div class="col-sm-5">
     
       <% if @entity.type_string == "Uri" && @entity.has_detail('extended_screenshot_contents') %>
       <div class="card transparent-card" >
@@ -39,8 +52,23 @@
           <img height=300 width=400 src="data:image/png;base64, <%= @entity.get_detail('extended_screenshot_contents') %>" alt="Screenshot" />
         </div>
         </div>
-      </div>
+        </div>
       <% end %>
+
+      <div class="card transparent-card" >
+      <div class="card-title h5">Issues</div>
+      <div class="card-body">
+      <% if @entity.issues.count > 0 %>
+        <ul>
+        <% @entity.issues.sort_by{|x| x.severity}.reverse.each do |i| %>
+          <li>[Sev: <%= i.severity %>] <a href='/<%=@project_name%>/issues/<%=i.id%>'><%= i.pretty_name %></a></li>
+        <% end %>
+        </ul>
+      <% else %>
+        <ul><li>No associated issues</li></ul>
+      <% end %>
+      </div>
+      </div>
 
       <div class="card transparent-card">
       <div class="card-title h5">Discovery Context</div>
@@ -82,18 +110,6 @@
       </div>
 
     </div>
-
-    <div class="col-sm-9">
-
-      <div class="card transparent-card-light">
-      <div class="card-body">
-        <div class="card-title h5">Entity Details</div>
-          <div><pre class="prettyprint"><%=h JSON.pretty_generate @entity.short_details %></pre></div>
-        </div>
-      </div>
-      </div>
-    </div>
-    
   </div>
 </div>
 

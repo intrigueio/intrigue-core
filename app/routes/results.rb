@@ -58,12 +58,12 @@ class CoreApp < Sinatra::Base
       @result_count = selected_results.count
       @results = selected_results.extension(:pagination).paginate(@page,paginate_count)
 
-      @calculated_url = "/#{@project_name}/results?search_string=#{@search_string}" +
-        "inverse=#{params[:inverse]}&" + 
-        "hide_enrichment=#{params[:hide_enrichment]}&" + 
-        "hide_autoscheduled=#{params[:hide_autoscheduled]}&" + 
-        "hide_cancelled=#{params[:hide_cancelled]}&" + 
-        "only_complete=#{params[:only_complete]}"
+      @calculated_url = "/#{h @project_name}/results?search_string=#{h @search_string}" +
+        "&inverse=#{params[:inverse]}" + 
+        "&hide_enrichment=#{params[:hide_enrichment]}" + 
+        "&hide_autoscheduled=#{params[:hide_autoscheduled]}" + 
+        "&hide_cancelled=#{params[:hide_cancelled]}" + 
+        "&only_complete=#{params[:only_complete]}"
 
       erb :'results/index'
     end
@@ -298,7 +298,7 @@ class CoreApp < Sinatra::Base
 
       # Assuming it's available, display it
       if @result
-        @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/#{@project_name}/start?result_id=#{@result.id}"
+        @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/#{h @project_name}/start?result_id=#{@result.id}"
         @elapsed_time = "#{(@result.timestamp_end - @result.timestamp_start).to_i}" if @result.timestamp_end
       end
 
