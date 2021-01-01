@@ -6,9 +6,9 @@
     <b><a href="/<%=h @project_name%>/issues?page=<%=@page-1%>"><< previous</a> | 
     <a href="/<%=h @project_name%>/issues?page=<%=@page+1%>">next >> </a></b>
     
-    <table id="issues-table" class="tableish row-border">
+    <table id="issues-table" class="table table-striped">
       <thead>
-      <tr class="tableish">
+      <tr >
         <th>Name</th>
         <th>Entity</th>
         <th>Status</th>
@@ -18,7 +18,7 @@
       </thead>
       <tbody>
       <% @issues.each do |issue| %>
-        <tr class="tableish">
+        <tr>
           <td><a href="<%="/#{h @project_name}/issues/#{h issue.id }"%>"><%= h issue.pretty_name %></a></td>
           <td><%=h issue.entity.name%><br><%issue.entity.aliases{ |x|%> <%=h x.name %> <br><%}%></td>
           <td><%=issue.status%></td>
@@ -38,12 +38,16 @@
 <script>
 $(document).ready( function () {
   $('#issues-table').DataTable({
-    "searching": false,
+    "searching": true,
+    "ordering" : true,
+    'autoWidth': true,
+    'headers' : false,
     "responsive": true,
-    "stateSave": true,  
     "scrollCollapse": true,
     "paging": false,
     "info" : false,
+    "stateSave": true,  
+    "order": [[ 3, "asc" ]],
     'columnDefs': [
       {'width': '30%', 'targets': 0},
       {'width': '30%', 'targets': 1},

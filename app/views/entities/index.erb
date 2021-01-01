@@ -28,7 +28,7 @@
 
       <div class="table-responsive">
         
-        <table id="entities-table" class="tableish table-striped table-bordered" style="width:100%">
+        <table id="entities-table" class="table table-striped" style="width:100%">
           
           <thead>
             <tr>
@@ -89,11 +89,15 @@
 $(document).ready( function () {
   $('#entities-table').DataTable({
     "searching": false,
+    "ordering" : true,
+    'autoWidth': true,
+    'headers' : false,
     "responsive": true,
-    "stateSave": true,  
     "scrollCollapse": true,
     "paging": false,
     "info" : false,
+    "stateSave": true,  
+    "order": [[ 0, "desc" ]],
     'columnDefs': [
       {'width': '40%', 'targets': 0},
       {'width': '60%', 'targets': 1}

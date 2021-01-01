@@ -1,12 +1,12 @@
 <!-- name -->
 <div class="col-sm-7">
 <h3>
-<% if @issue.details && @issue.details["uri"] %>
-<% uri = @issue.details["uri"] %>
- <p><a href="<%= h uri  %>"><%= h @issue.details["pretty_name"] || @issue.name %></a><br/></p>
-<% else %>
-   <%= h (@issue.details["pretty_name"] || @issue.name) %>
-<% end %>
+  <% if @issue.details && @issue.details["uri"] %>
+  <% uri = @issue.details["uri"] %>
+  <p><%= h @issue.details["pretty_name"] || @issue.name %><a href="<%= h uri %>"><img width=24px src="/img/icons/external-link-white.png"></a><br/></p>
+  <% else %>
+  <%= h (@issue.details["pretty_name"] || @issue.name) %>
+  <% end %>
 </h3>
 
 <ul>

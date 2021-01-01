@@ -2,14 +2,31 @@
 <div class="card transparent-card">
 <div class="card-body">
 
+  <div class="row">
+    <div class="new-project">
+      
+      <form name="project_delete_form" action="/project/delete" method="post">
+        <input type="hidden" id="project" name="project"/>
+      </form>
+
+      <form class="form-inline" name="project_select_form" action="/project" method="post">
+        <div style="width:60%;"  class="input-group">
+          <input type="text" class="form-control mb-2" id="project" name="project" placeholder="Create a New Project" value=""/>
+          &nbsp;
+          <input class="btn btn-primary btn-md mb-2" type="submit" value="Submit" />
+        </div>
+      </form>
+    </div>
+  </div>
+  
   <div class="row">  
-    Select An Existing Project:
+    Or Select An Existing Project:
     
     <div class="table-responsive">
       
-      <table id="projects-table" class="tableish row-border" width='100%'>
+      <table id="projects-table" class="table table-striped borderless dark-header" width='100%'>
         
-        <thead class="tableish">
+        <thead>
           <tr>
             <th class="td-words">Name</th>
             <th class="td-numbers">Issues</th>
@@ -19,12 +36,11 @@
           </tr>
         </thead>
 
-        <tbody class="tableish">
+        <tbody>
           <% @projects.each do |p| %>
-            <tr class="tableish">
+            <tr>
               <td class="td-words">
-                <a href="/<%= h p.name %>/start">
-                <%= h p.name %></a>
+                <a href="/<%= h p.name %>/start"><%= h p.name %></b>
               </td>
               <td class="td-numbers"><%= p.issues.count %></td>
               <td class="td-numbers"><%= p.entities.count %></td>
@@ -41,19 +57,7 @@
     </div>
 
   </div>
-  <p><hr/></p>
-  <div class="row">
-    <div class="new-project">
-      <form class="form-inline" name="project_select_form" action="/project" method="post">
-        <div style="width:80%;"  class="input-group">
-          <input type="text" class="form-control mb-2" id="project" name="project" placeholder="..or create a new project" value=""/>
-          &nbsp;
-          <input class="btn btn-primary btn-lg mb-2" type="submit" value="Submit" />
-        </div>
-      </form>
-      <form name="project_delete_form" action="/project/delete" method="post"><input type="hidden" id="project" name="project"/></form>
-    </div>
-  </div>
+  
 </div>
 </div>
 </div>
@@ -97,16 +101,21 @@
 $(document).ready( function () {
   $('#projects-table').DataTable({
     "searching": false,
+    "ordering" : true,
+    'autoWidth': true,
+    'headers' : false,
     "responsive": true,
-    "stateSave": true,  
     "scrollCollapse": true,
     "paging": false,
     "info" : false,
+    "stateSave": true,  
+    "order": [[ 3, "desc" ]],
     'columnDefs': [
       {'width': '40%', 'targets': 0},
       {'width': '20%', 'targets': 1},
       {'width': '20%', 'targets': 2},
-      {'width': '20%', 'targets': 3}
+      {'width': '20%', 'targets': 3},
+      {'width': '20%', 'targets': 4}
     ]
   });
 });

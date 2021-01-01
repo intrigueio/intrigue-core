@@ -22,11 +22,6 @@ body {
   color: #ffffff;
 }
 
-.tableish {
-  background: url(/img/classy_fabric.png);
-  color: #ffffff;
-}
-
 .modal-content {
   background-image: url(/img/classy_fabric.png);
 }
@@ -45,15 +40,7 @@ body {
   white-space: pre-wrap;
   display: block;
   border: 2;
-}
-
-table.dataTable tr {
-  padding: 0px;
-}
-
-table.dataTable td {
-  padding: 0px;
-}
+} 
 
 .center {
   float: none;
@@ -111,4 +98,8 @@ table.dataTable td {
   padding:5px;
 }
 
+table.dataTable thead . {background-color:rgb(28, 28, 28);}
 
+.borderless td, .borderless th {
+  border: none;
+}
