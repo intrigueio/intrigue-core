@@ -7,12 +7,19 @@
   color: #ffffff;
 }
 
+.transparent-card-light {
+  color: #000000;
+  background-color: #e8e8e8;
+}
+
 body {
   background-image: url(/img/classy_fabric.png);
+  color: #ffffff;
 }
 
 .tableish {
   background: url(/img/classy_fabric.png);
+  color: #ffffff;
 }
 
 .modal-content {
@@ -56,7 +63,7 @@ body {
 }
 
 .navbar-brand {
-  padding: 5px;
+  padding: 10px;
 }
 
 .btn {

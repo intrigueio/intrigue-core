@@ -24,13 +24,14 @@
       </div>
     </div>
   </div>
+
   <div class="row">
     <div class="col-sm">&nbsp;</div>
     <div class="col-sm">&nbsp;</div>  
   </div>  
 
   <div class="row"> 
-    <div class="col-sm-5">
+    <div class="col-sm-6">
     
       <% if @entity.type_string == "Uri" && @entity.has_detail('extended_screenshot_contents') %>
       <div class="card transparent-card" >
@@ -85,9 +86,9 @@
 
     </div>
 
-    <div class="col-sm-7">
+    <div class="col-sm-6">
 
-      <div class="card transparent-card">
+      <div class="card transparent-card-light">
       <div class="card-body">
         <div class="card-title h5">Entity Details</div>
           <div><pre class="prettyprint"><%=h JSON.pretty_generate @entity.short_details %></pre></div>

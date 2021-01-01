@@ -9,8 +9,10 @@ $enable-shadows: false;
 $enable-gradients: true;
 
 // Changing the body background and text
-//$body-bg: #919191;
-//$body-color: #151417;
+/* make changes to the !default Bootstrap variables */
+$body-color: #ffffff;  //this is the text color
+$body-bg: #000000; //this is the background color
+
 
 // Changing the border radius of buttons
 //$border-radius: 15px;

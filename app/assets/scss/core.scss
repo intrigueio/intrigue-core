@@ -15,8 +15,7 @@
 /* here you can change the default colors, for example, text-danger. */
 //$theme-colors: ( "primary": $core-color-2, "danger": orange );
 
-@import 'custom-styles';
-
 /* finally, import Bootstrap to set the changes! */
 @import "bootstrap/bootstrap.scss";
 
+@import 'custom-styles';
