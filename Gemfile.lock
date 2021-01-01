@@ -33,10 +33,10 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: a616a3067ae2ecb1b2e6a984b6215495ac5dd1fa
+  revision: b19ca80e430cccde652d6c2e88c3d365cc24c84a
   branch: main
   specs:
-    intrigue-ident (4.0.5)
+    intrigue-ident (4.0.6)
       dnsruby
       murmurhash3
       recog-intrigue
@@ -123,13 +123,13 @@ GEM
       zeitwerk (~> 2.3)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
-    async (1.27.0)
+    async (1.28.2)
       console (~> 1.10)
       nio4r (~> 2.3)
       timers (~> 4.1)
     async-dns (1.2.5)
       async-io (~> 1.15)
-    async-http (0.53.1)
+    async-http (0.54.0)
       async (~> 1.25)
       async-io (~> 1.28)
       async-pool (~> 0.2)
@@ -144,7 +144,7 @@ GEM
       async-http (~> 0.42)
       protocol-http (~> 0.7)
     aws-eventstream (1.1.0)
-    aws-partitions (1.412.0)
+    aws-partitions (1.414.0)
     aws-sdk-core (3.110.0)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
@@ -378,20 +378,20 @@ GEM
       rspec-core (~> 3.10.0)
       rspec-expectations (~> 3.10.0)
       rspec-mocks (~> 3.10.0)
-    rspec-core (3.10.0)
+    rspec-core (3.10.1)
       rspec-support (~> 3.10.0)
-    rspec-expectations (3.10.0)
+    rspec-expectations (3.10.1)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.10.0)
-    rspec-mocks (3.10.0)
+    rspec-mocks (3.10.1)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.10.0)
-    rspec-support (3.10.0)
+    rspec-support (3.10.1)
     ruby2_keywords (0.0.2)
     rubyzip (2.3.0)
     sentry-raven (2.13.0)
       faraday (>= 0.7.6, < 1.0)
-    sequel (5.39.0)
+    sequel (5.40.0)
     shodan (1.0.0)
       json (>= 1.4.6)
     sidekiq (6.1.2)
@@ -423,7 +423,7 @@ GEM
     socketry (0.5.1)
       hitimes (~> 1.2)
     sqlite3 (1.4.2)
-    test-unit (3.3.7)
+    test-unit (3.3.9)
       power_assert
     thor (1.0.1)
     tilt (2.0.10)
@@ -447,7 +447,7 @@ GEM
       activesupport (>= 4)
       whois (>= 4.0.7)
     yajl-ruby (1.4.1)
-    yard (0.9.25)
+    yard (0.9.26)
     zeitwerk (2.4.2)
     zetalytics (0.1.2)
       json
