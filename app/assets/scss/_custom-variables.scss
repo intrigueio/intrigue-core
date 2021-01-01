@@ -45,18 +45,18 @@ $green: #18BC9C;
 $teal: #20c997;
 $cyan: #3498DB;
 
-$primary: $black;
-$secondary: $core-color-2;
+$primary: $core-color-4;
+$secondary: $core-color-1;
 $success: $green;
 $info: $cyan;
 $warning: $yellow;
 $danger: $red;
-$light: $core-color-2;
+$light: $core-color-3;
 $dark: $core-color-1;
 
 $dropdown-link-color: $white;
 $dropdown-link-hover-color: $white;
-$dropdown-link-hover-bg: $core-color-1;
+$dropdown-link-hover-bg: $core-color-3;
 
 $navbar-dark-color: $white;
 $navbar-dark-hover-color: $white;
@@ -72,10 +72,20 @@ $link-hover-decoration:                   underline;
 $dropdown-bg:                       $core-color-1;
 
 $nav-link-color:                    #FFFFFF;
-$nav-link-hover-color:             $core-color-2;
+$nav-link-hover-color:             $core-color-3;
 
 
 // Adding (!) an additional theme color (ex. classes btn-cool, bg-cool)
 //$theme-colors: (
 //  "cool": #4d3fa3
 //);
+
+
+//** `<input>` background color
+$input-bg:                       $gray-300;
+
+//** Text color for `<input>`s
+$input-color:                    #000;
+
+//** Placeholder text color
+$input-placeholder-color:        rgb(53, 53, 53);  // You probably want this to be a little different color. Maybe #999;

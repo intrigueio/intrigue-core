@@ -1,20 +1,17 @@
+.form-inline .form-group {
+  margin-right:4px;
+}
+
 .transparent-card {
   background-image: url(/img/classy_fabric.png);
   color: #ffffff;
 }
 
-.modal-wide {
-  width: 50%;
-  margin: auto;
-}
-
 body {
   background-image: url(/img/classy_fabric.png);
-  color: #ffffff;
 }
 
 .tableish {
-  color: #ffffff;
   background: url(/img/classy_fabric.png);
 }
 
@@ -87,4 +84,5 @@ body {
 .input-group > * {
   padding:5px;
 }
+
 

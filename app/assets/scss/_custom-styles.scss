@@ -14,15 +14,15 @@
 //fonts
 // These are the defaults, but you can override any values
 $font-family-sans-serif:
-  "Montserrat",
+  //"Montserrat",
   // Safari for OS X and iOS (San Francisco)
-  -apple-system,
+  //-apple-system,
   // Chrome < 56 for OS X (San Francisco)
-  BlinkMacSystemFont,
+  //BlinkMacSystemFont,
   // Windows
-  "Segoe UI",
+  //"Segoe UI",
   // Android
-  "Roboto",
+  //"Roboto",
   // Basic web fallback
   "Helvetica Neue", Arial, sans-serif,
   // Emoji fonts
@@ -31,3 +31,10 @@ $font-family-sans-serif:
 $font-family-serif:      Georgia, "Times New Roman", Times, serif;
 $font-family-monospace:  Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 $font-family-base:       $font-family-sans-serif ;
+
+
+
+/* make changes to the !default Bootstrap variables */
+$body-color: #fff;  //this is the text color
+$body-bg: #000000; //this is the background color
+$input-focus-border-color: $core-color-3;

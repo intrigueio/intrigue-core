@@ -6,11 +6,6 @@
 @import 'custom-variables';
 
 
-/* make changes to the !default Bootstrap variables */
-$body-color: #ffffff;  //this is the text color
-$body-bg: #000000; //this is the background color
-$input-focus-border-color: $core-color-3;
-
 // Typography
 //$font-size-base: 12px; // this changes the font-size throughout bootstrap
 //$font-family-sans-serif: "Raleway", sans-serif;
@@ -20,7 +15,8 @@ $input-focus-border-color: $core-color-3;
 /* here you can change the default colors, for example, text-danger. */
 //$theme-colors: ( "primary": $core-color-2, "danger": orange );
 
+@import 'custom-styles';
+
 /* finally, import Bootstrap to set the changes! */
 @import "bootstrap/bootstrap.scss";
 
-@import 'custom-styles';
