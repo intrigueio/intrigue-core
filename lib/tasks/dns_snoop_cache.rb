@@ -26,12 +26,16 @@ class DnsSnoopCache < BaseTask
       :name => "dns_snoop_cache",
       :pretty_name => "DNS Cache Snoop",
       :authors => ["Felipe Molina (@felmoltor)", "jcran"],
-      :description => "Query a DNS server for a list of domains and check if there is a recent visit of this domain in their cache..",
-      :references => [],
+      :description => "Query a DNS server for a list of domains and check if there is a" + 
+        "recent visit of this domain in their cache. Based on the original tool, DNSSnoopDogg.",
+      :references => [
+        "https://github.com/felmoltor/DNSSnoopDogg",
+        "https://www.cs.unc.edu/~fabian/course_papers/cache_snooping.pdf"
+      ],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["Domain","DnsService"],
-      :example_entities => [{"type" => "DnsService", "details" => {"name" => "129.186.88.249"}}],
+      :allowed_types => ["Nameserver", "DnsRecord"],
+      :example_entities => [{"type" => "Nameserver", "details" => {"name" => "192.168.1.1"} }],
       :allowed_options => [
         { :name => "method", :default => "R", :regex => "alpha_numeric" }
       ],

@@ -1,18 +1,10 @@
-body {
-  background-image:url('/img/classy_fabric.png');
-  color:white;
-  /* padding-top: 60px; /* When using the navbar-top-fixed */
+.form-inline .form-group {
+  margin-right:20px;
 }
 
-h3 {
-  margin-top: 0;
-}
-
-pre {
-  white-space: pre-wrap;
-  padding: 0;
-  border-radius: 0;
-  border: 0;
+.transparent-card-light {
+  color: #000000;
+  background-color: #ffffffec;
 }
 
 textarea{
