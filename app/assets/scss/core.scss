@@ -4,5 +4,23 @@
  *  Built with the Bootstrap Theme Kit by HackerThemes (https://hackerthemes.com)
  */
 @import 'custom-variables';
-@import 'bootstrap/bootstrap';
+
+
+/* make changes to the !default Bootstrap variables */
+$body-color: #ffffff;  //this is the text color
+$body-bg: #000000; //this is the background color
+$input-focus-border-color: $core-color-3;
+
+// Typography
+//$font-size-base: 12px; // this changes the font-size throughout bootstrap
+//$font-family-sans-serif: "Raleway", sans-serif;
+//$font-size-base: 1rem;
+//$line-height-base: 1.2;
+
+/* here you can change the default colors, for example, text-danger. */
+//$theme-colors: ( "primary": $core-color-2, "danger": orange );
+
+/* finally, import Bootstrap to set the changes! */
+@import "bootstrap/bootstrap.scss";
+
 @import 'custom-styles';

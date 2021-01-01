@@ -1,18 +1,25 @@
 .transparent-card {
-  background-image: url(/img/kindajean.png);
+  background-image: url(/img/classy_fabric.png);
+  color: #ffffff;
+}
+
+.modal-wide {
+  width: 50%;
+  margin: auto;
 }
 
 body {
-  background-image: url(/img/kindajean.png);
+  background-image: url(/img/classy_fabric.png);
+  color: #ffffff;
 }
 
 .tableish {
-  color: #000;
-  background: url(/img/kindajean.png);
+  color: #ffffff;
+  background: url(/img/classy_fabric.png);
 }
 
 .modal-content {
-  background-image: url(/img/kindajean.png);
+  background-image: url(/img/classy_fabric.png);
 }
 
 .like-pre-dark {

@@ -45,54 +45,34 @@ $green: #18BC9C;
 $teal: #20c997;
 $cyan: #3498DB;
 
-$primary: $core-color-4;
+$primary: $black;
 $secondary: $core-color-2;
 $success: $green;
 $info: $cyan;
 $warning: $yellow;
 $danger: $red;
-$light: $core-color-3;
+$light: $core-color-2;
 $dark: $core-color-1;
 
-$dropdown-link-color: $gray-700;
+$dropdown-link-color: $white;
 $dropdown-link-hover-color: $white;
 $dropdown-link-hover-bg: $core-color-1;
 
 $navbar-dark-color: $white;
 $navbar-dark-hover-color: $white;
 
+$color: $white;
+
 //links 
-$link-color:                              #000000;
-$link-hover-color:                        $core-color-2;
-$link-hover-decoration:                   null;
+$link-color:                              $white;
+$link-decoration:                         none;
+$link-hover-color:                        $white;
+$link-hover-decoration:                   underline;
 
 $dropdown-bg:                       $core-color-1;
 
 $nav-link-color:                    #FFFFFF;
 $nav-link-hover-color:             $core-color-2;
-
-
-//fonts 
-// These are the defaults, but you can override any values
-
-$font-family-sans-serif:
-  //"Montserrat",
-  // Safari for OS X and iOS (San Francisco)
-  -apple-system,
-  // Chrome < 56 for OS X (San Francisco)
-  BlinkMacSystemFont,
-  // Windows
-  "Segoe UI",
-  // Android
-  "Roboto",
-  // Basic web fallback
-  "Helvetica Neue", Arial, sans-serif,
-  // Emoji fonts
-  "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !default;
-
-$font-family-serif:      Georgia, "Times New Roman", Times, serif;
-$font-family-monospace:  Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-$font-family-base:       $font-family-sans-serif ;
 
 
 // Adding (!) an additional theme color (ex. classes btn-cool, bg-cool)
