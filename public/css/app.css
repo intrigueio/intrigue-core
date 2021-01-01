@@ -1,5 +1,10 @@
 .form-inline .form-group {
-  margin-right:4px;
+  margin-right:20px;
+}
+
+.transparent-card-light {
+  color: #000000;
+  background-color: #ffffffec;
 }
 
 .transparent-card {

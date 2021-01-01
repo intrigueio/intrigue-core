@@ -308,7 +308,7 @@ module Data
       # handle the response 
       if response 
         json = JSON.parse(response)
-        if !json.empty? 
+        if json
           # parse it up 
           hash["city"] = json["city"]
           hash["country_code"] = json["country"]

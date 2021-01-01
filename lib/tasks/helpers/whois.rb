@@ -58,6 +58,7 @@ module Whois
     ### Note that we need to handle the potential for multiple ranges here, since a 
     ### RIPE range can be split into many CIDRs
     ###
+    hash = {}
 
     if lookup_string.is_ip_address?
 
@@ -93,6 +94,7 @@ module Whois
 
     # add in whois text for all 
     out.each do |hash|
+      hash = {} unless hash 
       hash["whois_full_text"] = whois_text
     end
 
@@ -347,12 +349,14 @@ module Whois
   # returns a hash that can create a netblock
   def _whois_query_arin_ip(lookup_string,out={})
     begin
+      
       # EX: http://whois.arin.net/rest/ip/72.30.35.9.json
       json = JSON.parse http_get_body("http://whois.arin.net/rest/ip/#{lookup_string}.json")
+      return nil unless json
 
       # verify we have something usable
       doc = json["net"]
-      return unless doc
+      return nil unless doc
 
       # organization details
       if doc["orgRef"]

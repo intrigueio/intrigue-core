@@ -35,8 +35,8 @@ class SaasGoogleCalendarCheck < BaseTask
     
     require_enrichment
 
-    # chek if domain type, and build a test list
-    if @entity.kind_of? Intrigue::Entity::Domain
+    # check type, and build a test list
+    if _get_entity_type_string == "Domain"
       domain = _get_entity_name
       alias_list =  _get_option("alias_list").split(",")
       alias_list.each do |a|
@@ -50,6 +50,9 @@ class SaasGoogleCalendarCheck < BaseTask
 
 
   def check_email(email_address)
+
+    domain = email_address.split("@").last
+
     uri = "https://calendar.google.com/calendar/htmlembed?src=#{email_address}"
     response = http_request :get, uri
 
