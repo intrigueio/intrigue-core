@@ -291,7 +291,7 @@ module Model
     end
 
     def to_s
-      "#{type_string}: #{name}#{' <Hidden>' if hidden} #{' <Unscoped>' unless scoped}"
+      "#{type_string}: #{name}"
     end
 
     def type_string

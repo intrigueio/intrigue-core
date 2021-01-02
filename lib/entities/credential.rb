@@ -11,10 +11,15 @@ class Credential < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name =~ /^[\w\s\d\.\-\_\&\;\:\,\@]+$/ &&
-    details["username"].to_s =~ /^\w.*$/ &&
-    details["password"].to_s =~ /^\w.*$/ &&
-    details["uri"].to_s =~ /^http:.*$/
+    out1 = name =~ /^[\w\s\d\.\-\_\&\;\:\,\@]+$/ 
+
+    if details 
+      out2 = details["username"].to_s =~ /^\w.*$/ &&
+      details["password"].to_s =~ /^\w.*$/ &&
+      details["uri"].to_s =~ /^http:.*$/
+    end
+
+  out1 && out2 
   end
 
   def scoped?

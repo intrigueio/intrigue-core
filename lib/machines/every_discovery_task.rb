@@ -8,7 +8,7 @@ module Machine
         :pretty_name => "Run Every Discovery Task",
         :passive => false,
         :user_selectable => false,
-        :authors => ["jcran","AnasBenSalah"],
+        :authors => ["jcran", "AnasBenSalah"],
         :description => "This machine runs all tasks for a given entity."
       }
     end
@@ -32,7 +32,6 @@ module Machine
       end
 
     end
-
 
     def self.get_runnable_tasks_for_type(entity_type)
 

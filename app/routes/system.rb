@@ -44,21 +44,6 @@ class CoreApp < Sinatra::Base
       erb :"system/handler_config"
     end
 
-    get "/system/entities" do
-      @entities = Intrigue::EntityFactory.entity_types
-      erb :"system/entities"
-    end
-
-    get "/system/issues" do
-      @issues = Intrigue::Issue::IssueFactory.issues
-      erb :"system/issues"
-    end
-
-    get "/system/tasks" do
-      @tasks = Intrigue::TaskFactory.list
-      erb :"system/tasks"
-    end
-
     # save the config
     post '/system/config/tasks' do
       # Update our config if one of the fields have been changed. Note that we use ***

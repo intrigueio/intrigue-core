@@ -22,7 +22,7 @@ module Dns
       
       # clean it up and create 
       entity_details["name"] = "#{s}".strip.gsub(/^\*\./,"").gsub(/\.$/,"")
-      if entity_details["name"].split(".").length == 2
+      if parse_domain_name(entity_details["name"]) == entity_details["name"]
         e = _create_entity "Domain", entity_details, alias_entity
       else 
         e = _create_entity "DnsRecord", entity_details, alias_entity

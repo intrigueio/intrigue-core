@@ -4,7 +4,7 @@ module Machine
 
     def self.metadata
       {
-        :name => "internal_light_discovery_active",
+        :name => "internal_discovery_light_active",
         :pretty_name => "Internal Discovery - Light, Active",
         :passive => false,
         :user_selectable => false,
@@ -19,12 +19,7 @@ module Machine
       project = entity.project
       seed_list = project.seeds.map{|s| s.name }.join(",")
 
-      if entity.type_string == "AwsS3Bucket"
-        
-        # test out a put file 
-        start_recursive_task(task_result, "aws_s3_put_file", entity)
-
-      elsif entity.type_string == "Domain"
+      if entity.type_string == "Domain"
 
         # get the nameservers
         start_recursive_task(task_result,"enumerate_nameservers", entity)
@@ -57,15 +52,15 @@ module Machine
           # and we might as well scan to cover any new info
           # and we might as well scan to cover any new info
           start_recursive_task(task_result,"naabu_scan",entity, [
-            {"name"=> "tcp_ports", "value" => scannable_tcp_ports},
-            {"name"=> "udp_ports", "value" => scannable_udp_ports}])
+            {"name"=> "tcp_ports", "value" => scannable_tcp_ports.join(",")},
+            {"name"=> "udp_ports", "value" => scannable_udp_ports.join(",")}])
         end
 
       elsif entity.type_string == "NetBlock"
 
         start_recursive_task(task_result,"masscan_scan",entity,[
-          {"name"=> "tcp_ports", "value" => scannable_tcp_ports},
-          {"name"=> "udp_ports", "value" => scannable_udp_ports}])
+          {"name"=> "tcp_ports", "value" => scannable_tcp_ports.join(",")},
+          {"name"=> "udp_ports", "value" => scannable_udp_ports.join(",")}])
 
       elsif entity.type_string == "NetworkService"
 
@@ -74,6 +69,19 @@ module Machine
         ## Grab the SSL Certificate
         start_recursive_task(task_result,"uri_gather_ssl_certificate",entity, []) if entity.name =~ /^https/
 
+        # check api endpoint 
+        start_recursive_task(task_result,"uri_check_api_endpoint",entity, [])
+
+        # check http2 
+        start_recursive_task(task_result,"uri_check_http2_support",entity, [])
+        
+        start_recursive_task(task_result,"uri_brute_generic_content",entity, [])
+
+        start_recursive_task(task_result,"uri_extract_tokens",entity, [])
+
+        # extract links 
+        start_recursive_task(task_result,"uri_extract_linked_hosts",entity, []) 
+        
         # if we're going deeper 
         unless entity.created_by?("uri_spider")
           # Super-lite spider, looking for metadata

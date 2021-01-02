@@ -28,12 +28,13 @@
 
       <div class="table-responsive">
         
-        <table id="entities-table" class="table table-striped" style="width:100%">
+        <table id="entities-table" class="table table-striped borderless compact" style="width:100%">
           
           <thead>
             <tr>
               <th>name</th>
               <th>details</th>
+              <th>scoped</th>
             </tr>
           </thead>
 
@@ -45,11 +46,11 @@
                 <% grouped_entities = grouped_entities.reject{|x| !x.scoped } unless @include_unscoped %>
                 <% grouped_entities = grouped_entities.reject{|x| x.hidden } unless @include_hidden %>
                 <% next if grouped_entities.empty? %>
-                <tr>
+                <tr class="transparent-table">
                   <td>
                     <ul>
                     <% grouped_entities.each do |e| %>
-                      <li>[<a href="/<%=h @project_name%>/entities/<%=e.id%>"> <%= h e %> </a>]</li>
+                      <li>[<a href="/<%=h @project_name%>/entities/<%=e.id%>"> <%= h "#{e}" %> </a>]</li>
                     <% end %>
                       </ul>
                     </td>
@@ -60,14 +61,26 @@
                     <% end %>
                     </ul>
                   </td>
+                  <td>
+                    <ul>
+                    <% grouped_entities.each do |e| %>
+                      <li><%= e.scoped ? checkmark_image : xmark_image %> </li>
+                    <% end %>
+                    </ul>
+                  </td>
                 </tr>
               <% end %>
             
             <% else %>
               <% @selected_entities.each do |e| %>
-              <tr>
+              <tr class="transparent-table">
                 <td><a href="/<%=h @project_name%>/entities/<%=e.id%>"> <%= h e %> </a></td>
                 <td><%= h e.detail_string %></td>
+                <td>
+                  <div class='td-images'>
+                    <%=  e.scoped ? checkmark_image : xmark_image %>
+                  </div>
+                </td>
               </tr>
               <% end %> 
             <% end %>

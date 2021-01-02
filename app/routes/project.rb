@@ -69,7 +69,7 @@ class CoreApp < Sinatra::Base
       
       if new_project_name.length == 0 
         session[:flash] = "Invalid project name!"
-        redirect "/#{new_project_name}/start" # handy if we're in a browser
+        redirect "/#{new_project_name}/start/workflow" # handy if we're in a browser
       end
 
       # create the project unless it exists
@@ -77,7 +77,7 @@ class CoreApp < Sinatra::Base
         Intrigue::Core::Model::Project.create(:name => new_project_name, :created_at => Time.now.utc)
       end
 
-      redirect "/#{new_project_name}/start" # handy if we're in a browser
+      redirect "/#{new_project_name}/start/workflow" # handy if we're in a browser
     end
 
     # save the config
@@ -100,7 +100,24 @@ class CoreApp < Sinatra::Base
       redirect '/' # handy if we're in a browser
     end
 
-    get '/:project/start' do
+    ###
+    ### Start is contextual... 
+    ###
+    get '/:project/start/?' do
+      @project = Intrigue::Core::Model::Project.first(:name => @project_name)
+      if @project && @project.entities.count > 0
+        redirect "#{@project_name}/entities"
+      else # start workflow
+        redirect "#{@project_name}/start/workflow" # handy if we're in a browser
+      end
+    end
+
+    get '/:project/start/workflow/?' do
+      @project = Intrigue::Core::Model::Project.first(:name => @project_name)
+      erb :'start_workflow'
+    end
+
+    get '/:project/start/task' do
       @project = Intrigue::Core::Model::Project.first(:name => @project_name)
 
       # if we receive an entity_id or a task_result_id, instanciate the object
@@ -115,13 +132,13 @@ class CoreApp < Sinatra::Base
       end
 
       @task_classes = Intrigue::TaskFactory.list
-      erb :'start'
+      erb :'start_task'
     end
 
-    get '/:project/start/upload' do
+    get '/:project/start/task/upload' do
       @project = Intrigue::Core::Model::Project.first(:name => @project_name)
       @task_classes = Intrigue::TaskFactory.list
-      erb :'start'
+      erb :'start_task'
     end
 
     # Run a specific handler on all scan results
@@ -131,7 +148,9 @@ class CoreApp < Sinatra::Base
       project = Intrigue::Core::Model::Project.first(:name => @project_name)
       project.handle(handler_name)
 
-    redirect "/#{@project_name}/start"
+      session[:flash] = "Handler #{handler_name} has been started!"
+
+    redirect "/#{@project_name}"
     end
 
     ### EXPORT
