@@ -6,7 +6,7 @@
     <b><a href="/<%=h @project_name%>/issues?page=<%=@page-1%>"><< previous</a> | 
     <a href="/<%=h @project_name%>/issues?page=<%=@page+1%>">next >> </a></b>
     
-    <table id="issues-table" class="table table-striped">
+    <table id="issues-table" class="table table-striped borderless compact">
       <thead>
       <tr >
         <th>Name</th>
@@ -18,7 +18,7 @@
       </thead>
       <tbody>
       <% @issues.each do |issue| %>
-        <tr>
+        <tr class="transparent-table">
           <td><a href="<%="/#{h @project_name}/issues/#{h issue.id }"%>"><%= h issue.pretty_name %></a></td>
           <td><%=h issue.entity.name%><br><%issue.entity.aliases{ |x|%> <%=h x.name %> <br><%}%></td>
           <td><%=issue.status%></td>

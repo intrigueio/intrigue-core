@@ -1,15 +1,16 @@
 module Intrigue
 module Machine
-class RunInvestigationTask < Intrigue::Machine::Base
+class ThreatInvestigationPassive < Intrigue::Machine::Base
 
     def self.metadata
       {
-        :name => "threat_investigation",
-        :pretty_name => "Threat Investigation",
+        :name => "threat_investigation_passive",
+        :pretty_name => "Threat Investigation (Passive)",
         :passive => true,
         :user_selectable => true,
         :authors => ["Anas Ben Salah"],
-        :description => "This machine is for gathering data on an IoC or suspected IoC. It gathers data from many different threat sources."
+        :description => "This machine is for gathering data on an IoC or suspected IoC. " + 
+          "It gathers data from many different threat sources."
       }
     end
 
@@ -54,16 +55,8 @@ class RunInvestigationTask < Intrigue::Machine::Base
         # This task searches AlienVault OTX via API and checks for related Hostnames, IpAddresses
         start_recursive_task(task_result,"threat/search_alienvault_otx", entity)
 
-        # This task hits the BinaryEdge API and provides a risk score detail for a given IPAddress.
-        # start_recursive_task(task_result,"search_binaryedge_risk_score", entity)
-
         # This task hits the BinaryEdge API for a given IP, and tells us if the address has seen activity consistent with torrenting
         start_recursive_task(task_result,"search_binaryedge_torrents", entity)
-
-        # This task hits the Dehashed for leaked accounts
-        #start_recursive_task(task_result,"search_dehashed", entity)
-
-
 
       else
         task_result.log "No actions for entity: #{entity.type}##{entity.name}"

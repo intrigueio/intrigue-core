@@ -24,7 +24,7 @@
     
     <div class="table-responsive">
       
-      <table id="projects-table" class="table table-striped borderless dark-header" width='100%'>
+      <table id="projects-table" class="table borderless compact" width='100%'>
         
         <thead>
           <tr>
@@ -38,13 +38,13 @@
 
         <tbody>
           <% @projects.each do |p| %>
-            <tr>
+            <tr class="transparent-table">
               <td class="td-words">
                 <a href="/<%= h p.name %>/start"><%= h p.name %></b>
               </td>
               <td class="td-numbers"><%= p.issues.count %></td>
               <td class="td-numbers"><%= p.entities.count %></td>
-              <td class="td-images"><%=h p.created_at.to_date %></td>
+              <td class="td-images"><%=h "#{p.created_at.strftime('%Y-%m-%d %H:%M')}" %></td>
               <td class='td-images'><a href="javascript:delete_project('<%=h p.name%>')">
                 <img width=10 height=10 src="img/icons/xmark-white.png"></a>
               </td>
@@ -102,7 +102,7 @@ $(document).ready( function () {
   $('#projects-table').DataTable({
     "searching": false,
     "ordering" : true,
-    'autoWidth': true,
+    'autoWidth': false,
     'headers' : false,
     "responsive": true,
     "scrollCollapse": true,
@@ -112,10 +112,10 @@ $(document).ready( function () {
     "order": [[ 3, "desc" ]],
     'columnDefs': [
       {'width': '40%', 'targets': 0},
-      {'width': '20%', 'targets': 1},
-      {'width': '20%', 'targets': 2},
-      {'width': '20%', 'targets': 3},
-      {'width': '20%', 'targets': 4}
+      {'width': '10%', 'targets': 1},
+      {'width': '10%', 'targets': 2},
+      {'width': '30%', 'targets': 3},
+      {'width': '10%', 'targets': 4}
     ]
   });
 });

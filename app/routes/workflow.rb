@@ -6,11 +6,13 @@ class CoreApp < Sinatra::Base
     depth = (@params["depth"] || 6).to_i
     workflow = "#{@params["workflow"]}"
 
+    puts "DEBUG.. params: #{@params}"
+
     ###
     ### Standard file type (entity list)
     ###
     entities = "#{@params["entitylist"]}".split("\n").map do |x| 
-      { entity_name: "#{x}".strip.downcase }
+      "#{x}".strip.downcase
     end
 
     ### Machine definition, make sure we have a valid type
@@ -27,12 +29,13 @@ class CoreApp < Sinatra::Base
     # for each entity in the list
     entities.each do |e|
       
-      entity_name = e[:entity_name]
+      entity_name = e
       entity_type = discern_entity_types_from_name(entity_name).first
 
       # create the first entity with empty details
       #next unless Intrigue::EntityFactory.entity_types.include?(entity_type)
-      entity = Intrigue::EntityManager.create_first_entity(@project_name, entity_type ,entity_name, {})
+      entity = Intrigue::EntityManager.create_first_entity(
+        @project_name, entity_type, entity_name, {})
 
       # skip anything we can't parse, silently fail today :[
       unless entity

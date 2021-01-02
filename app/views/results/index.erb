@@ -28,19 +28,19 @@
     <b><a href="<%=@calculated_url%>&page=<%=@page-1%>">next >> </a></b>
   </div>
   
-    <table id="results-table" class="tableish row-border">
+    <table id="results-table" class="table table-striped borderless compact">
 
-    <thead class='tableish'>
-      <tr class='tableish'>
+    <thead>
+      <tr>
         <th>Started At</th>
         <th>Task Name</th>
         <th>Entity Count</th>
         <th>Complete</th>
       </tr>
     </thead>
-    <tbody class='tableish'>
+    <tbody>
         <% @results.each do |x| %>
-        <tr class='tableish'>
+        <tr class='transparent-table'>
           <td>
           <div class='td-words'>
             <%= h x.timestamp_start %> 

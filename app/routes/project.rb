@@ -100,8 +100,16 @@ class CoreApp < Sinatra::Base
       redirect '/' # handy if we're in a browser
     end
 
+    ###
+    ### Start is contextual... 
+    ###
     get '/:project/start/?' do
-      redirect "#{@project_name}/start/workflow" # handy if we're in a browser
+      @project = Intrigue::Core::Model::Project.first(:name => @project_name)
+      if @project && @project.entities.count > 0
+        redirect "#{@project_name}/entities"
+      else # start workflow
+        redirect "#{@project_name}/start/workflow" # handy if we're in a browser
+      end
     end
 
     get '/:project/start/workflow/?' do

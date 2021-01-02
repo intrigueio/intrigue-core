@@ -57,18 +57,21 @@ function delete_entity_children(id){
     },
     settings: {
       minNodeSize: 2,
-      maxNodeSize: 8,
+      maxNodeSize: 6,
       defaultNodeColor: '#1f1f1f',
       defaultEdgeColor: '#1f1f1f',
       defaultLabelColor:'#22bce1',
       defaultLabelSize: 10,
-      labelThreshold: 9,
-      edgeHoverSizeRato: 10,
-      edgeHoverColor: '#a9a9a9',
-      defaultNodeHoverColor: '#000000'
+      labelThreshold: 10
     }
 
   }, function(s) {
+
+    // adjust slowdown based on the size
+    var slowdown = 2000;
+    if (s.graph.nodes().length > 3000) {
+      slowdown = 200;
+    }
 
     s.graph.nodes().forEach(function(node, i, a) {
       node.x = Math.cos(Math.PI * 2 * i / a.length);
@@ -76,21 +79,15 @@ function delete_entity_children(id){
       node.size = 2;
     });
 
-    // adjust slowdown based on the size
-    var slowdown = 200;
-    if (s.graph.nodes().length > 3000) {
-      slowdown = 20;
-    }
-
     // start the layout
-    s.startForceAtlas2({gravity:10, scalingRatio:10, slowDown: slowdown});
+    s.startForceAtlas2({gravity:100, scalingRatio:1000, slowDown: slowdown});
 
     // adjust our stop time based on size
     if (s.graph.nodes().length > 4000) {
-      setTimeout(function() { s.stopForceAtlas2(); }, 160000);
+      setTimeout(function() { s.stopForceAtlas2(); }, 60000);
     }
     else {
-      setTimeout(function() { s.stopForceAtlas2(); }, 90000);
+      setTimeout(function() { s.stopForceAtlas2(); }, 20000);
     }
 
     s.bind('clickNode', function(e) {
@@ -114,9 +111,11 @@ function delete_entity_children(id){
         //$('#overlay').append("<p><a href=javascript:delete_entity_children("+ e.data.node.id +")>(Delete children)</a></p>")
       });
     });
-    //s.bind('overNode outNode clickNode doubleClickNode rightClickNode', function(e) {
-    //    console.log(e.type, e.data.node.label, e.data.captor);
-    //});
+    
+    s.bind('overNode outNode clickNode doubleClickNode rightClickNode', function(e) {
+        console.log(e.type, e.data.node.label, e.data.captor);
+    });
+
   }
  );
 </script>

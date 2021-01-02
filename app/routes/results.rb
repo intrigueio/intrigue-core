@@ -289,7 +289,7 @@ class CoreApp < Sinatra::Base
 
       # Assuming it's available, display it
       if @result
-        @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/#{h @project_name}/run?result_id=#{@result.id}"
+        @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/#{h @project_name}/start/task?result_id=#{@result.id}"
         @elapsed_time = "#{(@result.timestamp_end - @result.timestamp_start).to_i}" if @result.timestamp_end
       end
 
