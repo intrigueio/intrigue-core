@@ -1,7 +1,7 @@
 <div class="container-fluid">
 <div class="row">
   <div class="col-sm-9">
-    <% if "#{request.path_info}" =~ /\/start\/upload$/ %>
+    <% if "#{request.path_info}" =~ /\/start\/task\/upload$/ %>
       <%= erb :'_task_runner_upload' %>
     <% else %>
       <%= erb :'_task_runner' %>

@@ -68,15 +68,6 @@ class CoreApp < Sinatra::Base
       erb :'results/index'
     end
 
-=begin
-    # Kick off a task
-    get '/:project/results/?' do
-      search_string = params["search_string"]
-      # get a list of task_results
-      erb :'results/index'
-    end
-=end
-
     # Allow cancellation
     get '/:project/results/:id/cancel' do
       id = params[:id]
@@ -298,7 +289,7 @@ class CoreApp < Sinatra::Base
 
       # Assuming it's available, display it
       if @result
-        @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/#{h @project_name}/start?result_id=#{@result.id}"
+        @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/#{h @project_name}/run?result_id=#{@result.id}"
         @elapsed_time = "#{(@result.timestamp_end - @result.timestamp_start).to_i}" if @result.timestamp_end
       end
 

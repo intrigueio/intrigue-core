@@ -71,6 +71,10 @@ class EntityManager
       details = details.tap { |h| h.delete("unscoped") }
       details = details.tap { |h| h.delete("scoped") }
       entity.set_scoped!(true, "first_entity")
+      
+      # also we can now mark it as a seed!
+      entity.seed = true
+
       entity.save_changes
 
       #####
@@ -80,10 +84,6 @@ class EntityManager
       ### ENTITIES can SELF-SCOPE, however, for more info on that
       ### see the individual entity file
       #####
-
-      # also we can now mark it as a seed
-      entity.seed = true 
-      entity.save 
 
     else
       # Create a new entity, validating the attributes

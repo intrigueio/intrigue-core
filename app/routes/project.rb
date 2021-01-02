@@ -101,10 +101,15 @@ class CoreApp < Sinatra::Base
     end
 
     get '/:project/start/?' do
-      redirect '/<%=@project_name%>/start/workflow' # handy if we're in a browser
+      redirect "#{@project_name}/start/workflow" # handy if we're in a browser
     end
 
     get '/:project/start/workflow/?' do
+      @project = Intrigue::Core::Model::Project.first(:name => @project_name)
+      erb :'start_workflow'
+    end
+
+    get '/:project/start/task' do
       @project = Intrigue::Core::Model::Project.first(:name => @project_name)
 
       # if we receive an entity_id or a task_result_id, instanciate the object
@@ -119,7 +124,7 @@ class CoreApp < Sinatra::Base
       end
 
       @task_classes = Intrigue::TaskFactory.list
-      erb :'start'
+      erb :'start_task'
     end
 
     get '/:project/start/task/upload' do
@@ -135,7 +140,9 @@ class CoreApp < Sinatra::Base
       project = Intrigue::Core::Model::Project.first(:name => @project_name)
       project.handle(handler_name)
 
-    redirect "/#{@project_name}/start"
+      session[:flash] = "Handler #{handler_name} has been started!"
+
+    redirect "/#{@project_name}"
     end
 
     ### EXPORT
