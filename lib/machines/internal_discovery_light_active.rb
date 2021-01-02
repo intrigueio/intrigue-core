@@ -4,7 +4,7 @@ module Machine
 
     def self.metadata
       {
-        :name => "internal_light_discovery_active",
+        :name => "internal_discovery_light_active",
         :pretty_name => "Internal Discovery - Light, Active",
         :passive => false,
         :user_selectable => false,

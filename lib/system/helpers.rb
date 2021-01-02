@@ -3,6 +3,29 @@ module Core
 module System
   module Helpers
 
+    def discern_entity_types_from_name_all(str)
+      out = Intrigue::EntityFactory.entity_types.map { |et|
+        et.metadata[:name] if et.new(name: str).validate_entity
+    }.uniq.compact.sort
+
+    out -= ["GithubAccount", "GithubSearchResult", "Mailserver", "Nameserver", "Organization", "PhysicalLocation", "SoftwarePackage", "SslCertificate", "String"]
+    end
+
+
+    def discern_entity_types_from_name(str)
+      if str.is_ip_address?
+        ["IpAddress"]
+      elsif str =~ dns_regex && (parse_domain_name(str) == str)
+        ["Domain"]
+      elsif str =~ dns_regex 
+        ["DnsRecord"]
+      elsif str =~ netblock_regex || netblock_regex_two 
+        ["NetBlock"]
+      else 
+        ["UniqueKeyword"]
+      end
+    end
+
     def hostname
       system_name = `hostname`.strip
     end

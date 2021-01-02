@@ -26,7 +26,7 @@
         <div class="card transparent-card">
           <div class="card-body">
           <img width=100px src="/img/icons/threat-white.png"><br><br>
-            <a href="#" class="btn btn-primary" data-bs-target="#workflow_modal" data-bs-toggle="modal" role="button">
+            <a href="#" class="btn btn-primary" data-bs-target="#workflow_modal_threat" data-bs-toggle="modal" role="button">
               <h5>Investigate A Threat</h5></a>
           </div>
         </div>
@@ -35,7 +35,7 @@
         <div class="card transparent-card">
           <div class="card-body">
           <img width=100px src="/img/icons/networks-white.png"><br><br>
-          <a href="#" class="btn btn-primary" data-bs-target="#workflow_modal" data-bs-toggle="modal" role="button" >
+          <a href="#" class="btn btn-primary" data-bs-target="#workflow_modal_internal" data-bs-toggle="modal" role="button" >
             <h5>Scan An Internal Network</h5></a>
         </div>
       </div>
@@ -46,3 +46,7 @@
 </div>
 
 <%= erb :'_workflow_modal_external' %>
+
+<%= erb :'_workflow_modal_threat' %>
+
+<%= erb :'_workflow_modal_internal' %>

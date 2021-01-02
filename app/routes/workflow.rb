@@ -9,8 +9,8 @@ class CoreApp < Sinatra::Base
     ###
     ### Standard file type (entity list)
     ###
-    entities = @params["entitylist"].split("\n").map do |x| 
-      { entity_type: "Domain", entity_name: "#{x}".strip.downcase }
+    entities = "#{@params["entitylist"]}".split("\n").map do |x| 
+      { entity_name: "#{x}".strip.downcase }
     end
 
     ### Machine definition, make sure we have a valid type
@@ -26,8 +26,9 @@ class CoreApp < Sinatra::Base
 
     # for each entity in the list
     entities.each do |e|
-      entity_type = e[:entity_type]
+      
       entity_name = e[:entity_name]
+      entity_type = discern_entity_types_from_name(entity_name).first
 
       # create the first entity with empty details
       #next unless Intrigue::EntityFactory.entity_types.include?(entity_type)
