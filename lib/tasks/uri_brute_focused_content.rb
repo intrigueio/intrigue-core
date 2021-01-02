@@ -61,8 +61,8 @@ class UriBruteFocusedContent < BaseTask
 
     # https://bambootest.ACME.com%2F
     bamboo_list = [ # https://x.x.x.x?filterView=popular
-      { issue_type: "bamboo_2fa_bypass", path: "/userlogin!doDefault.action?nosso&os_destination=", severity: 3,
-        body_regex: /Log in as a Bamboo user/i, status: "confirmed" }
+    #  { issue_type: "bamboo_2fa_bypass", path: "/userlogin!doDefault.action?nosso&os_destination=", severity: 3,
+    #    body_regex: /Log in as a Bamboo user/i, status: "confirmed" }
     ]
     # TODO - see: https://foundeo.com/hack-my-cf/coldfusion-security-issues.cfm
     # TODO - see: metasploit
@@ -108,8 +108,8 @@ class UriBruteFocusedContent < BaseTask
     ]
 
     confluence_list = [ # https://x.x.x.x?filterView=popular
-      { issue_type: "confluence_2fa_bypass", path: "/login.action?nosso", severity: 3,
-        body_regex: /com-atlassian-confluence/i, status: "confirmed" }
+      #{ issue_type: "confluence_2fa_bypass", path: "/login.action?nosso", severity: 3,
+      #  body_regex: /com-atlassian-confluence/i, status: "confirmed" }
     ]
 
     iis_list = [
@@ -138,8 +138,8 @@ class UriBruteFocusedContent < BaseTask
     jira_list = [ # https://x.x.x.x?filterView=popular
       { issue_type: "jira_managefilters_info_leak", path: "/secure/ManageFilters.jspa", severity: 3,
         body_regex: /<title>Manage Filters/i, status: "confirmed" },
-      { issue_type: "jira_2fa_bypass", path: "/login.action?nosso", severity: 3,
-        body_regex: //i, status: "confirmed" },
+      #{ issue_type: "jira_2fa_bypass", path: "/login.action?nosso", severity: 3,
+      #  body_regex: //i, status: "confirmed" },
       { issue_type: "jira_iconuriservlet_ssrf_cve_2017_9506", 
         path: "/plugins/servlet/oauth/users/icon-uri?consumerUri=https://ipinfo.io/json", severity: 2,
         body_regex: /ipinfo.io\/missingauth/i, status: "confirmed" } 
