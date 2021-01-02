@@ -23,8 +23,8 @@ class IssueFactory
   #
   # Provide the full list of issues
   #
-  def self.issue_by_type(type)
-    x = self.issues.find{|x| x if x.generate({})[:name] == type }
+  def self.issue_by_type(name)
+    x = self.issues.find{|x| x if x.generate({})[:name] == name }
   x.generate({}) if x 
   end
 
@@ -96,8 +96,8 @@ class IssueFactory
   #
   # Check to see if this handler exists (check by type)
   #
-  def self.include?(type)
-    @issue_types.each { |h| return true if "#{h.generate({})[:name]}" == "#{type}" }
+  def self.include?(name)
+    @issue_types.each { |h| return true if "#{h.generate({})[:name]}" == "#{name}" }
   false
   end
 
