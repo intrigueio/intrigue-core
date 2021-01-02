@@ -324,14 +324,26 @@ class EntityManager
         # Alias to the parent
         pid = primary_entity.alias_group_id
         tr.log "Aliasing #{entity.name} #{entity.alias_group_id} to #{primary_entity.name}'s existing group: #{pid}"
-        entity.alias_to(pid)
+        
+        if pid < entity.alias_group_id 
+          entity.alias_to(pid)
 
-        # alias all others to the parent
-        entity.aliases.each do |a|
-          next if a == primary_entity
-          next if a.alias_group_id == primary_entity.alias_group_id
-          tr.log "Aliasing #{a.name} #{a.alias_group_id} to #{primary_entity.name}'s existing group: #{pid}"
-          a.alias_to(pid)
+          # alias all others to the parent
+          entity.aliases.each do |a|
+            next if a == primary_entity || a == entity
+            tr.log "Aliasing #{a.name} #{a.alias_group_id} to #{primary_entity.name}'s existing group: #{pid}"
+            a.alias_to(pid)
+          end
+
+        else # Go the other way, we already had a lower id 
+          primary_entity.alias_to(entity.alias_group_id)
+
+          primary_entity.aliases.each do |a|
+            next if a == primary_entity || a == entity
+            tr.log "Aliasing #{a.name} #{a.alias_group_id} to #{entity.name}'s existing group: #{entity.alias_group_id}"
+            a.alias_to(entity.alias_group_id)
+          end
+
         end
 
       end

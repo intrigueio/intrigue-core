@@ -30,7 +30,7 @@ class Domain < Intrigue::Task::BaseTask
     unless _get_entity_detail("resolutions")
 
       results = resolve(lookup_name)
-      #_create_aliases results
+      _create_aliases results
 
       resolutions = collect_resolutions(results)
       _set_entity_detail("resolutions", resolutions )
