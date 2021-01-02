@@ -21,7 +21,18 @@ class Nameserver < Intrigue::Task::BaseTask
 
   def run
     super
-    _log "Enriching... Nameserver: #{_get_entity_name}"
+    
+    lookup_name = _get_entity_name
+    _log "Enriching... Nameserver: #{lookup_name}"
+
+    # Do a lookup
+    _log "Resolving: #{lookup_name}"
+    results = resolve(lookup_name)
+
+    _log "Grabbing resolutions"
+    resolutions = collect_resolutions(results)
+
+    _set_entity_detail("resolutions", resolutions)
 
   end # end run
 

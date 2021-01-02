@@ -24,13 +24,15 @@ class IpGeolocate < BaseTask
 
     ip_address = _get_entity_name
     location_hash = geolocate_ip(ip_address)
-    location_hash_with_name = {"name" => "#{location_hash["city_name"]} #{location_hash["country_name"]}"}.merge(location_hash)
+
+    _set_entity_detail "geolocation", location_hash
+
+    location_hash_with_name = {"name" => "#{location_hash["city"]} #{location_hash["country"]}"}.merge(location_hash)
 
     begin
       if location_hash
-      _log "creating location for #{ip_address}: #{location_hash["city_name"]} #{location_hash["country_name"]}"
-      _create_entity("PhysicalLocation", location_hash_with_name)
-
+        _log "creating location for #{ip_address}: #{location_hash["city_name"]} #{location_hash["country_name"]}"
+        _create_entity("PhysicalLocation", location_hash_with_name)
       end
     rescue ArgumentError => e
       _log "Argument Error #{e}"

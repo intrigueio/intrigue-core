@@ -36,7 +36,7 @@ class SearchWhoisology < BaseTask
     
       if result["domains"]
         result["domains"].each {|d| 
-          _create_entity "Domain", {"name" => d["domain_name"]} }
+          _create_entity "Domain", {"name" => d["domain_name"]}, "scoped" => true }
       else
         _log_error "No domains, do we have API credits?"
       end
@@ -63,7 +63,7 @@ class SearchWhoisology < BaseTask
     
       if result["domains"]
         result["domains"].each {|d| 
-          _create_entity "Domain", {"name" => d["domain_name"]} }
+          _create_entity "Domain", {"name" => d["domain_name"]}, "scoped" => true }
       else
         _log_error "No domains, do we have API credits?"
       end

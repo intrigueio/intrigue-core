@@ -17,18 +17,19 @@ module Dns
     entity_details.merge!(more_deets)
 
     if s.is_ip_address?
-      _create_entity("IpAddress", entity_details, alias_entity)
+      e = _create_entity("IpAddress", entity_details, alias_entity)
     else
       
       # clean it up and create 
       entity_details["name"] = "#{s}".strip.gsub(/^\*\./,"").gsub(/\.$/,"")
-      if entity_details["name"].split(".").length == 2
-        _create_entity "Domain", entity_details, alias_entity
+      if parse_domain_name(entity_details["name"]) == entity_details["name"]
+        e = _create_entity "Domain", entity_details, alias_entity
       else 
-        _create_entity "DnsRecord", entity_details, alias_entity
+        e = _create_entity "DnsRecord", entity_details, alias_entity
       end
 
     end
+  e
   end
 
   # Check for wildcard DNS
@@ -44,7 +45,7 @@ module Dns
     # my*
     check_wordpress_list = []
     ["www.doesntexist.#{suffix}","ww01.#{suffix}","web1.#{suffix}","hometeam.#{suffix}","myc.#{suffix}"].each do |d|
-      resolved_address = _resolve(d)
+      resolved_address = resolve(d)
       check_wordpress_list << resolved_address
       #unless resolved_address.nil? || all_discovered_wildcards.include?(resolved_address)
       #  all_discovered_wildcards << resolved_address
@@ -63,7 +64,7 @@ module Dns
       # do the resolution
       # www.shopping.intrigue.io - 198.105.244.228
       # www.search.intrigue.io - 198.105.254.228
-      resolved_address = _resolve(random_string)
+      resolved_address = resolve(random_string)
 
       # keep track of it unless we already have it
       unless resolved_address.nil? || all_discovered_wildcards.include?(resolved_address)
@@ -92,7 +93,7 @@ module Dns
 
         (all_discovered_wildcards.count * 20).times do |x|
           random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}"
-          resolved_address = _resolve(random_string)
+          resolved_address = resolve(random_string)
 
           # keep track of it unless we already have it
           unless resolved_address.nil? || newly_discovered_wildcards.include?(resolved_address)
@@ -101,25 +102,25 @@ module Dns
         end
 
         # check if our newly discovered is a subset of all
-        if (newly_discovered_wildcards - all_discovered_wildcards).empty?
+        if (newly_discovered_wildcards - all_discovered_wildcards).flatten.empty?
           _log "Hurray! No new wildcards in #{newly_discovered_wildcards}. Finishing up!"
           no_new_wildcards = true
         else
-          _log "Continuing to search, found: #{(newly_discovered_wildcards - all_discovered_wildcards).count} new results."
+          _log "Continuing to search, found: #{(newly_discovered_wildcards - all_discovered_wildcards).flatten.count} new results."
           all_discovered_wildcards += newly_discovered_wildcards.uniq
         end
 
-        _log "Known wildcard count: #{all_discovered_wildcards.uniq.count}"
-        _log "Known wildcards: #{all_discovered_wildcards.uniq}"
+        _log "Known wildcard count: #{all_discovered_wildcards.flatten.uniq.count}"
+        _log "Known wildcards: #{all_discovered_wildcards.flatten.uniq}"
       end
 
-    elsif all_discovered_wildcards.uniq.count == 1
-      _log "Only a single wildcard ip: #{all_discovered_wildcards.sort.uniq}"
+    elsif all_discovered_wildcards.flatten.uniq.count == 1
+      _log "Only a single wildcard ip: #{all_discovered_wildcards.flatten.sort.uniq}"
     else
       _log "No wildcard detected! Moving on!"
     end
 
-  all_discovered_wildcards.uniq # if it's not a wildcard, this will be an empty array.
+  all_discovered_wildcards.flatten.uniq # if it's not a wildcard, this will be an empty array.
   end
 
   # convenience method to just send back name
@@ -141,24 +142,35 @@ module Dns
     
     resources = []
 
+    config = {
+      search: [],
+      ndots: 1,
+      nameserver_port: [['127.0.0.1', 8081]]
+    }
+
     # Handle ip lookup (PTR) first
     if lookup_name.is_ip_address?
       
       # TODO... this should return multiple
       begin   
-        entry = Resolv.new.getname lookup_name
 
-        return [] unless entry && entry.length > 0
+        entry = Resolv::DNS.new(config).getname lookup_name
+
+        unless entry && entry.length > 0
+          _log_error "No response!"
+          return [] 
+        end
 
         out = [{
-          "name" => entry,
+          "name" => "#{entry}",
           "lookup_details" => [{
             "request_record" => lookup_name,
             "response_record_type" => "PTR",
             "response_record_data" => entry 
           }]
         }]
-      rescue Resolv::ResolvError =>e 
+
+      rescue Resolv::ResolvError => e  
         _log_error "Hit exception: #{e}."
       rescue Errno::ENETUNREACH => e
         _log_error "Hit exception: #{e}. Are you sure you're connected?"
@@ -174,12 +186,29 @@ module Dns
           Resolv::DNS::Resource::IN::A,
           Resolv::DNS::Resource::IN::CNAME] unless lookup_types
 
-        # lookup each type
+        # lookup each type, with a bit of backoff if it doesnt work 
         lookup_types.each do |t|
-          Resolv::DNS.open() {|dns|
-            dns.timeouts = 5
-            resources.concat(dns.getresources(lookup_name, t)) 
-          }
+          
+          tries = 0
+          max_tries = 3
+          response = nil 
+
+          until response || tries > max_tries
+            begin 
+              resolver = Resolv::DNS.open(config)
+              resolver.timeouts = 3
+              response = resolver.getresources(lookup_name, t)
+              resources.concat(response) 
+            rescue Errno::ECONNREFUSED => e 
+              tries += 1 
+              sleep tries * 3 
+            end
+          end
+
+          unless response 
+            _log_error "WARNING! Skipping DNS resolution #{t} #{lookup_name}, unable to connect after multiple attempts"
+          end
+
         end
 
         # translate results into a ruby hash
@@ -225,95 +254,6 @@ module Dns
     end 
 
   out || []
-  end
-
-  def resolve_old(lookup_name, lookup_types=nil)
-    lookup_types = [Dnsruby::Types::AAAA, Dnsruby::Types::A, Dnsruby::Types::CNAME, Dnsruby::Types::PTR] unless lookup_types
-
-    config = {
-      :search => [],
-      :retry_times => 3,
-      :retry_delay => 3,
-      :packet_timeout => 30,
-      :query_timeout => 30
-    }
-
-    if _get_system_config("resolvers")
-      config[:nameserver] = _get_system_config("resolvers").split(",")
-    end
-
-    resolver = Dnsruby::Resolver.new(config)
-
-    results = []
-    lookup_types.each do |t|
-
-      begin
-        results << resolver.query(lookup_name, t)
-      rescue Dnsruby::NXDomain => e
-        # silently move on
-      rescue IOError => e
-        _log_error "Error resolving: #{lookup_name}, error: #{e}"
-      rescue Dnsruby::SocketEofResolvError => e
-        _log_error "Error resolving: #{lookup_name}, error: #{e}"
-      rescue Dnsruby::ServFail => e
-        _log_error "Error resolving: #{lookup_name}, error: #{e}"
-      rescue Dnsruby::ResolvTimeout => e
-        _log_error "Error resolving: #{lookup_name}, error: #{e}"
-      end
-    end
-
-    return [] if results.empty?
-
-    begin
-
-      # For each of the found addresses
-      resources = []
-      results.each do |result|
-
-        # Let us know if we got an empty result
-        next if result.answer.empty?
-
-        result.answer.map do |resource|
-
-          #next if resource.type == Dnsruby::Types::NS
-
-          resources << {
-            "name" => resource.address.to_s,
-            "lookup_details" => [{
-              "request_record" => lookup_name,
-              "response_record_type" => resource.type.to_s,
-              "response_record_data" => resource.rdata.to_s,
-              "nameservers" => resolver.config.nameserver }]} if resource.respond_to? :address
-
-          resources << {
-            "name" => resource.domainname.to_s.downcase,
-            "lookup_details" => [{
-              "request_record" => lookup_name,
-              "response_record_type" => resource.type.to_s,
-              "response_record_data" => resource.rdata,
-              "nameservers" => resolver.config.nameserver }]} if resource.respond_to? :domainname
-
-          resources << { # always
-            "name" => resource.name.to_s.downcase,
-            "lookup_details" => [{
-              "request_record" => lookup_name,
-              "response_record_type" => resource.type.to_s,
-              "response_record_data" => resource.rdata,
-              "nameservers" => resolver.config.nameserver }]}
-
-        end # end result.answer
-      end
-    rescue Dnsruby::SocketEofResolvError => e
-      _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
-    rescue Dnsruby::ServFail => e
-      _log_error "Unable to resolve: #{lookup_name}, error: #{e}"
-    rescue Dnsruby::ResolvTimeout => e
-      _log_error "Unable to resolve: #{lookup_name}, timed out: #{e}"
-    rescue Errno::ENETUNREACH => e
-      _log_error "Hit exception: #{e}. Are you sure you're connected?"
-    end
-
-  resources || []
   end
 
   def collect_ns_details(lookup_name)
@@ -405,11 +345,6 @@ module Dns
   txt_records.flatten.uniq
   end
 
-  def collect_whois_data(lookup_name)
-      _log "Collecting Whois record"
-      whois(lookup_name)
-  end
-
   def collect_resolutions(results)
     ####
     ### Set details for this entity
@@ -424,7 +359,6 @@ module Dns
       xtype = result["lookup_details"].first["response_record_type"].to_s.sanitize_unicode
       lookup_details = result["lookup_details"].first["response_record_data"]
       
-      _log "Sanitizing String or Array"
       xdata = result["lookup_details"].first["response_record_data"].to_s.sanitize_unicode
 
       dns_entries << { "response_data" => xdata, "response_type" => xtype }

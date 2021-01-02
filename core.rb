@@ -1,4 +1,3 @@
-require 'eventmachine'
 require 'logger'
 require 'sinatra'
 require 'sinatra/contrib'
@@ -158,7 +157,9 @@ class CoreApp < Sinatra::Base
     $intrigue_server_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
 
     # Parse out our project
-    directive = URI.unescape(request.path_info.split("/")[1] || "Default")
+    if request.path_info.split("/")[1]
+      directive = URI.decode_www_form_component(request.path_info.split("/")[1])
+    end
 
     # set flash message if we have one
     if session[:flash]
@@ -169,7 +170,7 @@ class CoreApp < Sinatra::Base
     # Allow certain requests without a project string... these are systemwide,
     # and do not depend on a specific project
     pass if [ "api", "entity_types.json", "engine", "favicon.ico",
-              "project", "tasks", "tasks.json",
+              "project", "tasks", "tasks.json", "help",
               "version.json", "system", nil ].include? directive
     pass if request.path_info =~ /\.js$/ # all js
     pass if request.path_info =~ /\.css$/ # all css
@@ -177,23 +178,20 @@ class CoreApp < Sinatra::Base
 
     # Set the project based on the directive
     project = Intrigue::Core::Model::Project.first(:name => directive)
+    @project_name = project.name if project 
 
-    # If we haven't resolved a project, let's handle it
-    unless project
-      # Creating a default project since it doesn't appear to exist (it should always exist)
-      if directive == "Default"
-        project = Intrigue::Core::Model::Project.create(:name => "Default", :created_at => Time.now.utc )
-      else
-        redirect "/"
-      end
-    end
-
-    # Set it so we can use it going forward
-    @project_name = project.name
+    #if !directive && !project
+    #  #   # Creating a default project since it doesn't appear to exist (it should always exist)
+    #  
+    #    project = Intrigue::Core::Model::Project.create(:name => "Default", :created_at => Time.now.utc )
+    #  
+    #end
+    
   end
 
   not_found do
-    "Unable to find this content."
+    status 404
+    erb :oops
   end
 
   ###                                  ###
@@ -233,12 +231,17 @@ end
 # Core libraries
 require_relative "lib/all"
 
+puts "Loading Default Workflows..."
+Intrigue::Core::Model::Workflow.load_default_workflows
+puts "Available Workflows: #{Intrigue::Core::Model::Workflow.all.map{|x| x.name }.join(',')}"
+
 #configure sentry.io error reporting (only if a key was provided)
 if (Intrigue::Core::System::Config.config && Intrigue::Core::System::Config.config["sentry_dsn"])
   require "raven"
   puts "!!! Configuring Sentry error reporting to: #{Intrigue::Core::System::Config.config["sentry_dsn"]}"
-
   Raven.configure do |config|
     config.dsn = Intrigue::Core::System::Config.config["sentry_dsn"]
   end
 end
+
+

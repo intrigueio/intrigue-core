@@ -6,11 +6,19 @@ require_relative "routes/system"
 # useful to bring in generic helper functions
 require_relative '../lib/system/dns_helpers'
 
+# bring in file formats
+require_relative '../lib/system/parseable_format'
+include Intrigue::Core::System::ParseableFormat
+
+require_relative "view_helpers"
+
+require_relative "routes/help"
 require_relative "routes/analysis"
 require_relative "routes/entities"
 require_relative "routes/issues"
 require_relative "routes/project"
 require_relative "routes/results"
+require_relative "routes/workflow"
 
 require_relative "models/mixins/handleable"
 require_relative "models/mixins/path_traversal"
@@ -33,3 +41,4 @@ require_relative "api/v1/helpers"
 require_relative "api/v1/project"
 require_relative "api/v1/task_result"
 require_relative "api/v1/system"
+

@@ -2,57 +2,6 @@
 module Intrigue
 module Task
 module WebContent
-  
-  def extract_and_fingerprint_scripts(script_list, host)
-    components = []
-    script_list.each do |s|
-
-      # skip anything that's not http
-      next unless s =~ /^http/
-
-      begin 
-        uri = URI.parse(s)
-      rescue URI::InvalidURIError => e
-        @task_result.logger.log "Unable to parse improperly formatted URI: #{s}"
-        next # unable to parse 
-      end
-
-      next unless uri.host && uri.port && uri.scheme =~ /^http/
-      ### 
-      ### Determine who's hosting
-      ### 
-      begin
-        if uri.host =~ /#{host}/
-          host_location = "local"
-        else
-          host_location = "remote"
-        end
-      rescue URI::InvalidURIError => e
-        host_location = "unknown"
-      end
-
-      ###
-      ### Match it up with ident  
-      ###
-      ident_matches = generate_http_requests_and_check(s, {'only-check-base-url':true, }) # "#{url}"
-      js_fp_matches = ident_matches["fingerprint"].select{|x| x["tags"] && x["tags"].include?("Javascript") }
-
-      if js_fp_matches.count > 0
-        js_fp_matches.each do |m|
-          components << m.merge({"uri" => s, "relative_host" =>  host_location })
-        end
-      else 
-        # otherwise, we didnt find it, so just stick in a url withoout a name / version
-        components << {"uri" => s, "relative_host" =>  host_location }
-      end
-
-    end
-    
-    ### Maybe re-enable eventually
-    #new_libraries = gather_javascript_libraries(session, uri)
-
-  components.compact
-  end
 
   def html_dom_to_string(body)
     dom_string = ""
@@ -251,7 +200,7 @@ module WebContent
      end
 
      # Scan for email addresses
-     addrs = content.scan(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,8}/)
+     addrs = content.scan(email_address_regex)
      addrs.each do |addr|
        x = _create_entity("EmailAddress", {"name" => addr, "origin" => source_uri}) unless addr =~ /.png$|.jpg$|.gif$|.bmp$|.jpeg$/
      end
@@ -269,10 +218,18 @@ module WebContent
      end
 
      # Scan for dns records
-     dns_records = content.scan(/^[A-Za-z0-9]+\.[A-Za-z0-9]+\.[a-zA-Z]{2,6}$/)
-     dns_records.each do |dns_record|
-       x = _create_entity("DnsRecord", {"name" => dns_record, "origin" => source_uri})
+     potential_dns_records = content.scan(dns_regex)
+
+     potential_dns_records.each do |potential_dns_record|
+       next unless potential_dns_record # skip empty? 
+
+       # check that we have a valid TLD, to avoid stuff like image.png or file.css or page.aspx
+       if parse_tld(potential_dns_record)
+        create_dns_entity_from_string potential_dns_record, nil, false, { "origin" => source_uri }
+       end
+
      end
+
    end
 
    def parse_phone_numbers_from_content(source_uri, content)
@@ -286,7 +243,7 @@ module WebContent
      end
 
      # Scan for phone numbers
-     phone_numbers = content.scan(/((\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4})/)
+     phone_numbers = content.scan(phone_number_regex)
      phone_numbers.each do |phone_number|
        x = _create_entity("PhoneNumber", { "name" => "#{phone_number[0]}", "origin" => source_uri})
      end
@@ -327,6 +284,11 @@ module WebContent
        _create_normalized_webaccount "facebook", account_name, url
 
      # Handle LinkedIn public profiles
+     elsif url =~ /^https?:\/\/www.linkedin.com\/in\/(\w).*$/
+        account_name = url.split("/")[5]
+        _create_normalized_webaccount "linkedin", account_name, url
+     
+       # Handle LinkedIn public profiles
      elsif url =~ /^https?:\/\/www.linkedin.com\/in\/pub\/.*$/
          account_name = url.split("/")[5]
          _create_normalized_webaccount "linkedin", account_name, url

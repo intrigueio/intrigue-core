@@ -145,8 +145,8 @@ module Model
       scan_result_id = task_result.scan_result.id if task_result.scan_result 
       task_result_depth = task_result.depth 
 
-      # if a machine exists, grab it
-      machine_name = task_result.scan_result ? task_result.scan_result.machine : nil
+      # if a workflow exists, grab it
+      workflow_name = task_result.scan_result ? task_result.scan_result.workflow : nil
 
       # if this entity has any configured enrichment tasks..
       if enrichment_tasks.count > 0
@@ -156,17 +156,17 @@ module Model
 
           # if task doesnt exist, mark it enriched using the task of that name
           # ensure we always mark an entity enriched, and then can continue on
-          # with the machine
+          # with the workflow
           unless Intrigue::TaskFactory.include? task_name
-            start_task("task_enrichment", self.project, scan_result_id, "enrich/generic", self, task_result_depth, [], [], machine_name, true)
+            start_task("task_enrichment", self.project, scan_result_id, "enrich/generic", self, task_result_depth, [], [], workflow_name, true)
             next
           end
 
-          start_task("task_enrichment", self.project, scan_result_id, task_name, self, task_result_depth, [], [], machine_name, true)
+          start_task("task_enrichment", self.project, scan_result_id, task_name, self, task_result_depth, [], [], workflow_name, true)
         end
 
       else # always enrich, even if something is not configured
-        start_task("task_enrichment", self.project, scan_result_id, "enrich/generic", self, task_result_depth, [], [], machine_name, true)
+        start_task("task_enrichment", self.project, scan_result_id, "enrich/generic", self, task_result_depth, [], [], workflow_name, true)
       end
 
     end
@@ -291,7 +291,7 @@ module Model
     end
 
     def to_s
-      "#{type_string}: #{name}#{' <Hidden>' if hidden} #{' <Unscoped>' unless scoped}"
+      "#{type_string}: #{name}"
     end
 
     def type_string
@@ -312,14 +312,14 @@ module Model
         <label for="entity_type" class="col-xs-4 control-label">Entity Type</label>
         <div class="col-xs-8">
           <select class="form-control input-sm" id="entity_type" name="entity_type">
-            <option> #{URI.escape self.type_string} </option>
+            <option> #{URI.encode_www_form_component self.type_string} </option>
           </select>
         </div>
       </div>
       <div class="form-group">
         <label for="attrib_name" class="col-xs-4 control-label">Entity Name</label>
         <div class="col-xs-8">
-          <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name" value="#{URI.escape self.name}">
+          <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name" placeholder="#{self.name}">
         </div>
       </div>}
     end

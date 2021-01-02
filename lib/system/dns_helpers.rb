@@ -3,16 +3,20 @@ module Core
 module System
   module DnsHelpers
 
-    ###
-    ### TODO ... system helper 
+    ### Parse out a domain, given a domain or dns record.
     ###
     def parse_domain_name(record)
 
       # sanity check
-      return nil if record.is_ip_address?
       return nil unless record 
+      return nil if record.is_ip_address?
 
-      split_tld = parse_tld(record).split(".")
+      # try to parse a tld and if we can't parse out a tld, 
+      # just keep going with the base record
+      parsed_record_tld = parse_tld(record)
+      parsed_record_tld = record unless parsed_record_tld 
+
+      split_tld = parsed_record_tld.split(".")
       if (split_tld.last == "com" || split_tld.last == "net") && split_tld.count > 1 # handle cases like amazonaws.com, netlify.com
         length = split_tld.count
       else
@@ -22,16 +26,15 @@ module System
     record.split(".").last(length).join(".")
     end
 
-
-    ###
-    ### TODO ... system helper 
+    ### This helper parses out a tld, given a domain or dnsrecord. handy
+    ### in many contexts 
     ###
     # assumes we get a dns name of arbitrary length
     def parse_tld(record)
       return nil unless record
 
       # first check if we're not long enough to split, just returning the domain
-      return record if record && record.split(".").length < 2
+      return nil if record && record.split(".").length < 2
 
       # Make sure we're comparing bananas to bananas
       record = "#{record}".downcase
@@ -44,7 +47,7 @@ module System
         # first find all matches
         matches = []
         suffix_list.each do |s|
-          if record =~ /.*#{Regexp.escape(s.strip)}$/i # we have a match ..
+          if record =~ /\.#{Regexp.escape(s.strip)}$/i # we have a match ..
             matches << s.strip
           end
         end
@@ -61,7 +64,7 @@ module System
       end
 
     # unknown tld
-    record
+    nil
     end
 
 

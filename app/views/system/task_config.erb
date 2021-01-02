@@ -1,13 +1,3 @@
-<h3>Global Configuration</h3>
-
-<h4> System Configuration </h4>
-<form action="/system/config/tasks" method="post">
-  Username: <input class="form-control" style="width:150px" type="text" name="username" value="<%=h @global_config.config["credentials"]["username"]%>">
-  Password: <input class="form-control" style="width:150px" type="password" name="password" value="<%="**********#{h @global_config.config["credentials"]["password"]}"%>">
-  
-  <input class="btn btn-primary" type="submit">
-</form>
-<hr>
 <h4> Task Configuration </h4>
 <form action="/system/config/tasks" method="post">
   <table class="table">

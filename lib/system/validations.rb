@@ -4,10 +4,6 @@ module Core
 module System
   module Validations
 
-    def netblock_regex
-      /^\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}\/\d{1,2}$/
-    end
-
     ### Standard Validations, for use throughout the platform
     # https://tools.ietf.org/html/rfc1123
     def ipv4_regex
@@ -19,7 +15,23 @@ module System
     end
 
     def dns_regex 
-      /(?=^.{1,253}$)(^((?!-)[\_a-zA-Z0-9-]{0,62}[a-zA-Z0-9]\.)*[a-zA-Z]{1,63}$)|^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{,63}(?<!-)$/
+      /\b[[a-z0-9]+(-[a-z0-9]+)*\.]+\.[a-z]{2,}\b/
+    end
+
+    def netblock_regex
+      /^\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}\/\d{1,2}$/
+    end
+
+    def netblock_regex_two
+      /^[\d\:\.]+\/\d{1,2}$/
+    end
+
+    def phone_number_regex
+      /^\d+?[\.\s-]?\(?(\d{3})\)?[\.\s-]?\d{3}[\.\s-]?\d{4}$/
+    end
+
+    def email_address_regex
+      /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,8}/
     end
 
   end

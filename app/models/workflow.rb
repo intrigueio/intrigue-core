@@ -9,8 +9,12 @@ class Workflow < Sequel::Model
 
   def validate
     super
-    #validates_unique([:name])
+    validates_unique([:name])
   end
+
+  ###
+  ### ###################################################################
+  ###
 
   def self.load_default_workflows
     Dir.glob("#{$intrigue_basedir}/data/workflows/*.json").each do |f|
@@ -25,7 +29,7 @@ class Workflow < Sequel::Model
   def self.create_from_template(template)
     
     # set a sensible default
-    template["default_depth"] = 5 unless template["default_depth"]
+    template["depth"] = 5 unless template["depth"]
 
     # create a worfklow from the template, note that symbolize only gets the 
     # top level hash keys 
@@ -33,15 +37,19 @@ class Workflow < Sequel::Model
     w = Intrigue::Core::Model::Workflow.update_or_create(t.except(:definition))
     w.definition = t[:definition]
     w.save_changes
-
   end
+
+  ###
+  ### ###################################################################
+  ###
 
   ###
   ### Returns a calculated value based on all tasks
   ###
   def passive?
+
     # only if know how to handle this
-    return false unless type == "recursive"
+    #return false unless flow == "recursive"
   
     out = false # default
     
@@ -52,19 +60,33 @@ class Workflow < Sequel::Model
   out
   end
   
+  def to_hash
+    {
+      name: name,
+      pretty_name: pretty_name,
+      user_selectable: user_selectable,
+      maintainer: maintainer,
+      description: description,
+      flow: flow, 
+      passive: self.passive?,
+      definition: definition
+    }
+  end
+
   def start(entity, task_result)
     # sanity check before sending us off
     return unless entity && task_result
 
     # lookup what we need to do in the definition, and do the right thing
     if type == "recursive"
+      
       tasks_to_call = definition[entity.type_string]
 
       # now go through each task to call and call it 
       tasks_to_call.each do |t|
         task_name = t["task"]
         options = t["options"]
-        auto_scope = t["options"]["auto_scope"]
+        auto_scope =  t["auto_scope"]
 
         # start the task
         Intrigue::Core::Model::Workflow.start_recursive_task(
@@ -104,7 +126,7 @@ class Workflow < Sequel::Model
                           old_task_result.depth - 1,
                           options,
                           old_task_result.handlers,
-                          old_task_result.scan_result.machine,
+                          old_task_result.scan_result.workflow,
                           old_task_result.auto_enrich,
                           auto_scope)
 
@@ -120,17 +142,16 @@ class Workflow < Sequel::Model
    - change flow -> type
    - change recurse -> definition
    - remove passive (should be calculated)
-  
 
 	"name": "intrigueio_precollection",
 	"pretty_name": "Intrigue.io Pre-Collection",
 	"passive": true,
 	"user_selectable": false,
 	"authors": ["jcran"],
-	"description": "This machine performs a VERY light passive enumeration for organizations. Start with a Domain or NetBlock.",
+	"description": "This workflow performs a VERY light passive enumeration for organizations. Start with a Domain or NetBlock.",
   "flow" : "recursive",
   "depth": 4,
-	"recurse": {
+	"definition": {
 		"AwsS3Bucket": [],
 		"Domain": [{
 				"task": "enumerate_nameservers",

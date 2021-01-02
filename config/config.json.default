@@ -307,15 +307,15 @@
       "editable": "true",
       "comment": ""
     },
-    "hunter_io_api_key": {
+    "hostio_api_key": {
       "value": "",
-      "uri": "https://hunter.io/api_keys",
+      "uri": "https://host.io/docs",
       "editable": "true",
       "comment": ""
     },
-    "intrigueio_api_key": {
+    "hunter_io_api_key": {
       "value": "",
-      "uri": "https://app.intrigue.io/api",
+      "uri": "https://hunter.io/api_keys",
       "editable": "true",
       "comment": ""
     },
@@ -328,6 +328,18 @@
     "ibm_x_force_password": {
       "value": "",
       "uri": "https://app.intrigue.io/api",
+      "editable": "true",
+      "comment": ""
+    },
+    "intrigueio_api_key": {
+      "value": "",
+      "uri": "https://app.intrigue.io/api",
+      "editable": "true",
+      "comment": ""
+    },
+    "ipinfo_api_key": {
+      "value": "XXX",
+      "uri": "https://ipinfo.io/developers",
       "editable": "true",
       "comment": ""
     },
@@ -376,6 +388,12 @@
     "pipl_api_key": {
       "value": "XXX",
       "uri": "http://dev.pipl.com/choosekey",
+      "editable": "true",
+      "comment": ""
+    },
+    "publicwww_api_key": {
+      "value": "XXX",
+      "uri": "https://publicwww.com/",
       "editable": "true",
       "comment": ""
     },

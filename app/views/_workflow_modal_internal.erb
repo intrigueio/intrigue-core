@@ -1,0 +1,43 @@
+
+<div class="modal fade" id="workflow_modal_internal" tabindex="-1" role="dialog" aria-labelledby="taskModalTitle" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+  <div class="modal-content">
+
+    <div class="modal-header">
+      <div class="modal-title" id="taskModalTitle"><h4>Scan An Internal Network</h4></div>
+      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+
+      <form method="POST" id='workflow-internal-form' action="/<%=@project_name%>/workflow">
+        
+        <input type="hidden" name="workflow" value="internal_discovery_light_active">
+        <input type="hidden" name="depth" value="6">
+
+        <div class="mb-3">
+          <label for="entities" class="form-label">Enter Reachable Network Ranges, Domains, and Hosts:</label>
+          <textarea class="form-control" name="entitylist" rows="5" form="workflow-internal-form" placeholder="10.1.1.0/24\n10.0.0.0/16\nsite.internal"></textarea>
+          <small id="passwordHelpBlock" class="form-text text-muted">
+            This active workflow accepts domains, hostnames, and ip_addresses. Enter as many as you can find for the network, one per line.
+          </small>
+        </div>
+
+        <input class="btn btn-primary" type="Submit" value="Submit">
+
+      </form>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+var textAreas = document.getElementsByTagName('textarea');
+
+Array.prototype.forEach.call(textAreas, function(elem) {
+    elem.placeholder = elem.placeholder.replace(/\\n/g, '\n');
+});
+</script>

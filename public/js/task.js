@@ -16,9 +16,10 @@
 
       // get the specific task JSON and set the allowed / default fields
       var form = $("form")[0]
-      var attrib_name = form.attrib_name.value
+     
       var task_json = location.origin + "/tasks/" + encodeURI(task_name) + ".json"
       console.log("Requesting... " + task_json)
+      
       $.getJSON(task_json, function(data) {
         if ((window.location.href.indexOf("entities/")) +
             (window.location.href.indexOf("entity_id=")) +
@@ -26,9 +27,12 @@
               // This is a form that doesn't have an entity already filled out, let's provide an example
               parseAllowedEntityTypes(data);
               setDefaultEntity(data);
-        }
-        else {
+        } else if (window.location.href.indexOf("upload") != -1) {
+          // do nothing 
+          console.log("skipping setting entity / type, this is an upload form");
+        } else {
           //Disabling form since we're on a pre-populated form
+          var attrib_name = form.attrib_name.value
           $('#attrib_name').attr('readonly', true);
           $('#entity_type').attr('readonly', true);
         }
@@ -58,7 +62,8 @@
     //console.log("DEBUG: Setting type to " + entity_type);
 
     // set the name
-    $("#attrib_name").attr("value", entity_name);
+    $("#attrib_name").attr("placeholder", entity_name);
+    //$("#attrib_name").attr("value", entity_name);
 
     // set the type
     $("#entity_type option[value=\""+entity_type+"\"]").prop('selected', true);
@@ -73,6 +78,7 @@
 
       // Check to see if we have a "*" type
       if (task_hash["allowed_types"].indexOf("*") != -1) {
+        
         // get the full entity_types.json
         $.getJSON(location.origin + "/entity_types.json", function(data) {
           $.each(data, function(key, value) {

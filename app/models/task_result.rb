@@ -18,7 +18,7 @@ module Model
 
     def self.scope_by_project(project_name)
       named_project = Intrigue::Core::Model::Project.first(:name => project_name)
-      where(:project => named_project)
+      where(:project_id => named_project.id)
     end
 
     def validate
@@ -79,7 +79,7 @@ module Model
         else
           out = "Missing Logfile: #{logfile}"
         end
-      elsif location == "none"
+      elsif logger.location == "none"
         out = "No log"
       else
         raise "Invalid log location"
@@ -88,8 +88,8 @@ module Model
     end
     # END EXPOSE LOGGING METHODS
 
-    def machine
-      return scan_result.machine if scan_result
+    def workflow
+      return scan_result.workflow if scan_result
     nil
     end
 
@@ -111,8 +111,8 @@ module Model
       else # just the light version
         {
           "id" => self.id,
-          "name" =>  URI.escape(self.name),
-          "task_name" => URI.escape(self.task_name),
+          "name" =>  URI.encode_www_form_component(self.name),
+          "task_name" => URI.encode_www_form_component(self.task_name),
           "timestamp_start" => self.timestamp_start,
           "timestamp_end" => self.timestamp_end,
           "options" => self.options,
@@ -125,8 +125,8 @@ module Model
       {
         "id" => self.id,
         "job_id" => self.job_id,
-        "name" =>  URI.escape(self.name),
-        "task_name" => URI.escape(self.task_name),
+        "name" =>  URI.encode_www_form_component(self.name),
+        "task_name" => URI.encode_www_form_component(self.task_name),
         "timestamp_start" => self.timestamp_start,
         "timestamp_end" => self.timestamp_end,
         "project" => self.project.name,

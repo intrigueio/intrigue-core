@@ -7,7 +7,7 @@ module Typhoeus
     end
 
     def each_header
-      self.response_headers.map{|x,y| x }
+      self.response_headers.split("\r\n").map{|x,y| y }
     end
 
     def [](key)
@@ -15,7 +15,7 @@ module Typhoeus
     end
 
     def reason
-      response_headers.split("\n").first.split(" ")[2..-1].join(" ")
+      response_headers.split("\r\n").first.split(" ")[2..-1].join(" ")
     end
 
     def body_utf8

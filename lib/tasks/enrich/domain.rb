@@ -30,7 +30,7 @@ class Domain < Intrigue::Task::BaseTask
     unless _get_entity_detail("resolutions")
 
       results = resolve(lookup_name)
-      #_create_aliases results
+      _create_aliases results
 
       resolutions = collect_resolutions(results)
       _set_entity_detail("resolutions", resolutions )
@@ -52,9 +52,9 @@ class Domain < Intrigue::Task::BaseTask
       # grab whois info & all nameservers
       if soa_details
         out = whois(lookup_name)
-        if out
-          _set_entity_detail("whois_full_text", out["whois_full_text"])
-          _set_entity_detail("contacts", out["contacts"])
+        if out && out.first
+          _set_entity_detail("whois_full_text", out.first["whois_full_text"])
+          _set_entity_detail("contacts", out.first["contacts"])
         end
       end
 

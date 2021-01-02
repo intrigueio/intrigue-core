@@ -19,12 +19,18 @@ class CoreApp < Sinatra::Base
     post '/system/config' do
 
       Intrigue::Core::System::Config.config["credentials"]["username"] = "#{params["username"]}"
-      Intrigue::Core::System::Config.config["credentials"]["password"] = "#{params["password"]}"
+      Intrigue::Core::System::Config.config["credentials"]["password"] = "#{params["password"]}" unless "#{params["password"]}" =~ /^\*+$/
 
       # save and reload
       Intrigue::Core::System::Config.save
 
       redirect "/#{@project_name}"  # handy if we're in a browser
+    end
+
+    # get config
+    get '/system/config/?' do
+      @global_config = Intrigue::Core::System::Config
+      erb :"system/system_config"
     end
 
     # get config
@@ -36,16 +42,6 @@ class CoreApp < Sinatra::Base
     get '/system/config/handlers/?' do
       @global_config = Intrigue::Core::System::Config
       erb :"system/handler_config"
-    end
-
-    get "/system/entities" do
-      @entities = Intrigue::EntityFactory.entity_types
-      erb :"system/entities"
-    end
-
-    get "/system/tasks" do
-      @tasks = Intrigue::TaskFactory.list
-      erb :"system/tasks"
     end
 
     # save the config

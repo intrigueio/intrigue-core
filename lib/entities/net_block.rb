@@ -12,7 +12,7 @@ class NetBlock < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name =~ netblock_regex || name =~ /^[a-z\d\:]+\/\d{1,2}$/
+    name =~ netblock_regex || name =~ netblock_regex_two
   end
 
   def detail_string

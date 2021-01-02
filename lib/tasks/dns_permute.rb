@@ -37,7 +37,11 @@ class DnsPermute < BaseTask
     # "1.test.2.yahoo.com" < 3 permutation points?
     # "1.2.3.4.yahoo.com" < 5 permutation points?
     baselist = basename.split(".")
-    brute_domain = baselist[1..-1].join(".")
+    if parse_domain_name(basename) == basename
+      brute_domain = basename
+    else 
+      brute_domain = baselist[1..-1].join(".")
+    end
 
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)

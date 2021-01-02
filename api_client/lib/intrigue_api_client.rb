@@ -39,7 +39,7 @@ class IntrigueCoreApi
       "1.6.0"
     end
 
-    def initialize(uri="http://127.0.0.1:7777",key="")
+    def initialize(uri="https://127.0.0.1:7777",key="")
       @intrigue_basedir = File.dirname(__FILE__)
       @server_uri = uri
     end
@@ -59,17 +59,17 @@ class IntrigueCoreApi
       RestClient.post "#{@server_uri}/project", { "project" => project_name }
     end
 
-    def background(project_name,task_name,entity_hash,depth=1,options_list=nil,handler_list=nil, machine_name=nil, auto_enrich=true)
+    def background(project_name,task_name,entity_hash,depth=1,options_list=nil,handler_list=nil, workflow_name=nil, auto_enrich=true)
       # Construct the request
-      task_id = _start_and_background(project_name,task_name,entity_hash,depth,options_list,handler_list, machine_name, auto_enrich)
+      task_id = _start_and_background(project_name,task_name,entity_hash,depth,options_list,handler_list, workflow_name, auto_enrich)
     end
 
 
     # Start a task and wait for the result
-    def start(project_name,task_name,entity_hash,depth=1,options_list=nil,handler_list=nil, machine_name=nil, auto_enrich=true)
+    def start(project_name,task_name,entity_hash,depth=1,options_list=nil,handler_list=nil, workflow_name=nil, auto_enrich=true)
 
       # Construct the request
-      task_id = _start_and_background(project_name,task_name,entity_hash,depth,options_list,handler_list, machine_name, auto_enrich)
+      task_id = _start_and_background(project_name,task_name,entity_hash,depth,options_list,handler_list, workflow_name, auto_enrich)
 
       if task_id == "" # technically a nil is returned , but becomes an empty string
         #puts "[-] Task not started. Unknown Error. Exiting"
@@ -116,7 +116,7 @@ class IntrigueCoreApi
     # options_list - list of options:  [
     #   {:name => "resolver", :value => "8.8.8.8" }
     # ]
-    def _start_and_background(project_name,task_name,entity_hash,depth,options_list,handler_list, machine_name, auto_enrich)
+    def _start_and_background(project_name,task_name,entity_hash,depth,options_list,handler_list, workflow_name, auto_enrich)
 
       payload = {
         "project_name" => project_name,
@@ -125,7 +125,7 @@ class IntrigueCoreApi
         "handlers" => handler_list,
         "entity" => entity_hash,
         "depth" => depth,
-        "machine_name" => machine_name,
+        "workflow_name" => workflow_name,
         "auto_enrich" => auto_enrich
       }
 

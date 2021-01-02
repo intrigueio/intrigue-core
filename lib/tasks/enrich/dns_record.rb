@@ -29,7 +29,8 @@ class DnsRecord < Intrigue::Task::BaseTask
     lookup_name = _get_entity_name
 
     # always create a domain 
-    create_dns_entity_from_string(parse_domain_name(lookup_name)) if @entity.scoped?
+    domain_name = parse_domain_name(lookup_name)
+    create_unscoped_dns_entity_from_string(domain_name) #if @entity.scoped?
 
     # Do a lookup and keep track of all aliases
     _log "Resolving: #{lookup_name}"
@@ -73,7 +74,7 @@ class DnsRecord < Intrigue::Task::BaseTask
       _log "Grabbing MX"
       mx_records = collect_mx_records(lookup_name)
       _set_entity_detail("mx_records", mx_records)
-      mx_records.each{|mx| create_dns_entity_from_string(mx["host"]) }
+      mx_records.each{|mx| create_unscoped_dns_entity_from_string(mx["host"]) }
 
       # collect TXT records (useful for random things)
       _log "Grabbing TXT"

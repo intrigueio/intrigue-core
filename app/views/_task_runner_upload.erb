@@ -1,4 +1,10 @@
+<div class="container-fluid">
 
+<div class="card transparent-card">
+<div class="card-title"><h4>Create A New Task</h4></div>
+<div class="card-body">
+
+<div class="row">
 <div class="col-sm-7">
 <form class="form-horizontal" id="task_runner" enctype="multipart/form-data" target="_self" method="post" action="/<%=h @project_name%>/interactive/upload">
 
@@ -35,6 +41,7 @@
       <option value="entity_list" selected>Entity List (CSV Format: [TYPE,NAME])</option>
       <option value="intrigueio_fingerprint_csv">Collection Entity List (CSV Format [COLLECTION,TYPE,NAME])</option>
       <option value="otx_csv">Alienvault OTX (CSV)</option>
+      <option value="binary_edge_json">BinaryEdge (JSON)</option>
     </select>
     </div>
   </div>
@@ -49,6 +56,8 @@
   <div class="form-group">
     <div id="options"></div>
   </div>
+            
+  <input type="hidden" name="depth" id="depth" value="6">
 
   <div id="workflow">
     <div class="form-group">
@@ -104,4 +113,10 @@
 <div id="links" name="links">[links]</div>
 </p>
 </div>
+
 <script type="text/javascript" src="/js/task.js"></script>
+
+</div>
+</div>
+</div>
+</div>

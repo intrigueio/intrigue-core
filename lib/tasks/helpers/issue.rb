@@ -2,31 +2,11 @@ module Intrigue
 module Task
 module Issue
 
-  def fingerprint_tags_to_issues(fps)
-
-    out = []
-    # iterate through the fingerprints and create
-    # issues for each known tag
-    fps.each do |fp|
-      next unless fp && fp["tags"]
-      fp["tags"].each do |t|
-        if t =~ /webcam/i
-          out << ["exposed_webcam_interface", fp]
-        elsif t =~ /DatabaseService/i
-          out << ["exposed_database_service", fp]
-        end
-      end
-
-    end
-
-  out
-  end
-
   ###
   ### DEPRECATED!!!! Generic helper method to create issues
   ###
   def _create_issue(issue_hash)
-    puts "DEPRECATED METHOD (_create_issue) called on #{issue_hash}"
+    puts "ERROR! DEPRECATED METHOD (_create_issue) called on #{issue_hash}"
 
     issue = issue_hash.merge({  entity_id: @entity.id,
                                 scoped: @entity.scoped,
@@ -48,7 +28,6 @@ module Issue
     issue[:details][:pretty_name] = temp_pretty_name
     issue[:details][:name] = temp_name
 
-    _log_good "Creating issue: #{temp_pretty_name}"
   Intrigue::Core::Model::Issue.create(_encode_hash(issue))
   end
 
@@ -191,7 +170,7 @@ module Issue
   ###
 
   # RFC1918 DNS
-  def _internal_system_exposed_via_dns
+  def _internal_system_exposed_via_dns(name)
     _create_linked_issue("internal_system_exposed_via_dns", {
       resolutions: "#{@entity.aliases.map{|x| x.name}}",
       exposed_ports: @entity.details["ports"]

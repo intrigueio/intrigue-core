@@ -69,7 +69,7 @@ class UriCheckSudomainHijack  < BaseTask
       elsif response_body =~ /\<h1\>Oops\! We couldn\&\#8217\;t find that page\.<\/h1>/i
         _create_hijackable_subdomain_issue "BigCartel", uri, "potential"
 
-      elsif response_body =~ /Repository not found/i || response_body =~ /The page you have requested does not exist/i
+      elsif response_body =~ /Repository not found/i
         _create_hijackable_subdomain_issue "Bitbucket", uri, "potential"
 
       elsif response_body =~ /<p class=\"bc-gallery-error-code\">Error Code: 404<\/p>/i

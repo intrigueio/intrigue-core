@@ -110,11 +110,6 @@ if Intrigue::Core::System::Config.config["intrigue_load_paths"]
       require_relative file
     end
 
-    Dir["#{load_path}/machines/*.rb"].each do |file|
-      #puts "Adding user machine from: #{file}"
-      require_relative file
-    end
-
     Dir["#{load_path}/notifiers/*.rb"].each do |file|
       #puts "Adding user notifier from: #{file}"
       require_relative file
@@ -146,3 +141,11 @@ rescue LoadError => e
   # unable to load gem, presumably unavailable
 end
 
+###
+# load in ruclei if available, fail silently if not
+###
+begin
+  require 'ruclei'
+rescue LoadError => e 
+  # unable to load gem, presumably unavailable
+end

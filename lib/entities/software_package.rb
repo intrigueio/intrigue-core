@@ -12,7 +12,7 @@ class SoftwarePackage < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name =~ /[\&\\s\.\w\d\,\/\\\-]+$/
+    name =~ /^[[[:word:]]\,\.\s\(\)\[\]\®\™]+$/
   end
 
   def detail_string

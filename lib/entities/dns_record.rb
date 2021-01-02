@@ -19,7 +19,9 @@ class DnsRecord < Intrigue::Core::Model::Entity
 
   def detail_string
     return "" unless details["resolutions"]
-    details["resolutions"].each.group_by{|k| k["response_type"] }.map{|k,v| "#{k}: #{v.length}"}.join("| ")
+    out = "Resolutions: "
+    out << details["resolutions"].each.group_by{|k| k["response_type"] }.map{|k,v| "#{k}: #{v.length}"}.join(" | ")
+  out
   end
 
   def enrichment_tasks

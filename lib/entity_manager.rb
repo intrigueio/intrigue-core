@@ -62,23 +62,28 @@ class EntityManager
 
       entity.set_details(details.to_h.deep_merge(entity.details.to_h))
 
-        #####
-        ### HANDLE USER- or TASK- PROVIDED SCOPING
-        #####
+      #####
+      ### HANDLE USER- or TASK- PROVIDED SCOPING
+      #####
 
-          # remove any scope details (though i'm not sure this condition could ever exist on a
-          # manually created entity)
-          details = details.tap { |h| h.delete("unscoped") }
-          details = details.tap { |h| h.delete("scoped") }
-          entity.set_scoped!(true, "first_entity")
-          entity.save_changes
+      # remove any scope details (though i'm not sure this condition could ever exist on a
+      # manually created entity)
+      details = details.tap { |h| h.delete("unscoped") }
+      details = details.tap { |h| h.delete("scoped") }
+      entity.set_scoped!(true, "first_entity")
+      
+      # also we can now mark it as a seed!
+      entity.seed = true
 
-        #####
-        ### END ... USER- or TASK- PROVIDED SCOPING
-        ###
-        ### ENTITIES can SELF-SCOPE, however, for more info on that
-        ### see the individual entity file
-        #####
+      entity.save_changes
+
+      #####
+      ### END ... USER- or TASK- PROVIDED SCOPING
+      ###
+
+      ### ENTITIES can SELF-SCOPE, however, for more info on that
+      ### see the individual entity file
+      #####
 
     else
       # Create a new entity, validating the attributes
@@ -112,7 +117,7 @@ class EntityManager
   new_entity
   end
 
-  # This method creates a new entity, and kicks off a machine
+  # This method creates a new entity, and kicks off a workflow
   def self.create_or_merge_entity(task_result_id,type_string,name,details,primary_entity=nil)
 
     # Deal with canceled tasks and deleted projects!
@@ -203,19 +208,20 @@ class EntityManager
       unless entity.transform!
         tr.log_error "Transformation of entity failed: #{entity}, rolling back entity creation!!"
         entity.delete
-        raise "Invalid entity attempted: #{entity.type} #{entity.name}"
+        Intrigue::NotifierFactory.default.each { |x| 
+          x.notify("Invalid entity (transform) attempted: #{entity.type} #{entity.name} #{details}" , tr) }
       end
 
       ### Run Validation
       unless entity.validate_entity
         tr.log_error "Validation of entity failed: #{entity}, rolling back entity creation!!"
         entity.delete
-        raise "Invalid entity attempted: #{entity.type} #{entity.name}"
+        Intrigue::NotifierFactory.default.each { |x| 
+          x.notify("Invalid entity (validate) attempted: #{entity.type} #{entity.name} #{details}" , tr) }
       end
 
       # Add to our result set for this task
       tr.add_entity entity
-    
     end
 
     ###
@@ -237,7 +243,7 @@ class EntityManager
     # that is (or at least should be) specific to that task... this 
     # is usually specific to enrichment tasks
     if tr.auto_scope
-      tr.log "Task result scoped this entity based on auto_scope."
+      #tr.log "Task result scoped this entity based on auto_scope."
       scope_request = "true"
     else # otherwise default to false, (and let the entity scoping handle it below) 
       tr.log "No specific scope request from the task result or the entity creation"
@@ -278,22 +284,31 @@ class EntityManager
     #####
 
     # ENRICHMENT LAUNCH (this may re-run if an entity has just been scoped in)
-    if tr.auto_enrich && !entity.deny_list && (!entity_already_existed || project.allow_reenrich)
-      # Check if we've alrady run first and return gracefully if so
+    if !tr.autoscheduled # manally scheuduled, automatically enrich 
+
+      if entity.enriched
+        tr.log "Re-scheduling enrichment for existing entity (manually run)!"
+      end
+      entity.enrich(tr)
+
+    elsif tr.auto_enrich && !entity.deny_list && (!entity_already_existed || project.allow_reenrich)
+      
+      # Check if we've already run first and return gracefully if so
       if entity.enriched && !project.allow_reenrich
-        tr.log "Skipping enrichment... already completed and re-enrich disabled!"
+        tr.log "Skipping enrichment... already completed and re-enrich not enabled!"
       else
+        
         # starts a new background task... so anything that needs to happen from
         # this point should happen in that new background task
         if entity.enriched
-          tr.log "Re-scheduling enrichement for entity!"
+          tr.log "Re-scheduling enrichment for existing entity (re-enrich enabled)!"
         end
 
         entity.enrich(tr)
       end
     else
       tr.log "Skipping enrichment... enrich not enabled!" unless tr.auto_enrich
-      tr.log "Skipping enrichment... entity exists!" if entity_already_existed
+      tr.log "Skipping enrichment... entity #{entity.name} already exists!" if entity_already_existed
       tr.log "Skipping enrichment... entity on deny list!" if entity.deny_list
     end
 
@@ -309,14 +324,26 @@ class EntityManager
         # Alias to the parent
         pid = primary_entity.alias_group_id
         tr.log "Aliasing #{entity.name} #{entity.alias_group_id} to #{primary_entity.name}'s existing group: #{pid}"
-        entity.alias_to(pid)
+        
+        if pid < entity.alias_group_id 
+          entity.alias_to(pid)
 
-        # alias all others to the parent
-        entity.aliases.each do |a|
-          next if a == primary_entity
-          next if a.alias_group_id == primary_entity.alias_group_id
-          tr.log "Aliasing #{a.name} #{a.alias_group_id} to #{primary_entity.name}'s existing group: #{pid}"
-          a.alias_to(pid)
+          # alias all others to the parent
+          entity.aliases.each do |a|
+            next if a == primary_entity || a == entity
+            tr.log "Aliasing #{a.name} #{a.alias_group_id} to #{primary_entity.name}'s existing group: #{pid}"
+            a.alias_to(pid)
+          end
+
+        else # Go the other way, we already had a lower id 
+          primary_entity.alias_to(entity.alias_group_id)
+
+          primary_entity.aliases.each do |a|
+            next if a == primary_entity || a == entity
+            tr.log "Aliasing #{a.name} #{a.alias_group_id} to #{entity.name}'s existing group: #{entity.alias_group_id}"
+            a.alias_to(entity.alias_group_id)
+          end
+
         end
 
       end

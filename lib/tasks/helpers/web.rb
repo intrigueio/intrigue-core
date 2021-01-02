@@ -11,6 +11,26 @@ module Intrigue
 module Task
   module Web
 
+  def make_threaded_http_requests_from_queue(work_q, threads=10)
+    # Create a pool of worker threads to work on the queue
+    responses = []
+    workers = (0...threads).map do
+      Thread.new do
+        begin
+          #_log "Getting request"
+          while request_uri = work_q.pop(true)
+            result = http_request :get, request_uri
+            responses.append(result)
+          end # end while
+        rescue ThreadError
+        end
+      end
+    end; "ok"
+    workers.map(&:join); "ok"
+
+    return responses
+  end
+
   def make_http_requests_from_queue(uri, work_q, threads=1, create_url=false, create_issue=false)
 
     ###
@@ -72,7 +92,7 @@ module Task
             request_uri = "#{uri}#{request_details[:path]}"
 
             # Do the check
-            #_log "Checking #{request_uri}"
+            _log "Checking #{request_uri}"
 
             # request details will have regexes if we want to check, so just pass it directly
             result = check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content, request_details)
@@ -399,7 +419,6 @@ module Task
   end
 
   def http_post(uri, data, params)
-    #RestClient.post(uri, data, params)
     http_request(:post, uri, nil, params, data)
   end
 
@@ -536,7 +555,7 @@ module Task
          end
 
        elsif success_cases[:header_regex]
-         response.each do |header|
+         response.each_header do |header|
           _log "Checking header: '#{header}: #{response[header]}'"
           if "#{header}: #{response[header]}" =~ success_cases[:header_regex]   ### ALWAYS LOWERCASE!!!!
            _log_good "Matched positive header regex!!! #{success_cases[:header_regex]}" if @task_result

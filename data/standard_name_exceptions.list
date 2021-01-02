@@ -141,6 +141,7 @@
 /^.*\.mpmsx.net(:[0-9]*)?$/
 /^.*\.mtsvc.net(:[0-9]*)?$/
 /^.*\.msn.com(:[0-9]*)?$/
+/^.*\.myshopify.com(:[0-9]*)?$/
 /^.*\.oclc.org(:[0-9]*)?$/
 /^.*\.office.com(:[0-9]*)?$/
 /^.*\.office.net(:[0-9]*)?$/
@@ -167,6 +168,7 @@
 /^.*\.secureserver.net(:[0-9]*)?$/
 /^.*\.sharepoint.com(:[0-9]*)?$/
 /^.*\.sharepointonline.com(:[0-9]*)?$/
+/^.*\.shopify.com(:[0-9]*)?$/
 /^.*\.siftscience.com(:[0-9]*)?$/
 /^.*\.silverpop.com(:[0-9]*)?$/
 /^.*\.splashthatd.com(:[0-9]*)?$/

@@ -54,7 +54,7 @@ module Generic
 
     # just in case we were given a hash with symbolized keys, convert to strings for
     # our purposes... bitten by the bug a bunch lately
-    hash = hash.collect{|k,v| [k.to_s, v]}.to_h
+    hash = hash.collect{|k,v| [k.to_s, v] }.to_h
 
     # No need for a name in the hash now, remove it & pull out the name from the hash
     name = hash.delete("name")
@@ -101,6 +101,45 @@ module Generic
     end
   end
 
+
+  def _unsafe_system_timed(command, timeout, workingdir = "/tmp", tick=1)
+    output = ''
+    Dir.chdir workingdir do
+      begin
+        # Start task in another thread, which spawns a process
+        stdin, stderrout, thread = Open3.popen2e(command)
+        # Get the pid of the spawned process
+        pid = thread[:pid]
+        start = Time.now
+
+        while (Time.now - start) < timeout and thread.alive?
+          # Wait up to `tick` seconds for output/error data
+          Kernel.select([stderrout], nil, nil, tick)
+          # Try to read the data
+          begin
+            output << stderrout.read_nonblock(4096)
+          rescue IO::WaitReadable
+            # A read would block, so loop around for another select
+          rescue EOFError
+            # Command has completed, not really an error...
+            break
+          end
+        end
+        # Give Ruby time to clean up the other thread
+        sleep 1
+
+        if thread.alive?
+          # We need to kill the process, because killing the thread leaves
+          # the process alive but detached, annoyingly enough.
+          Process.kill("TERM", pid)
+        end
+      ensure
+        stdin.close if stdin
+        stderrout.close if stderrout
+      end
+    end
+    return output
+  end
   ###
   ### Helpers for handling encoding
   ###
@@ -176,7 +215,7 @@ module Generic
 
   def _get_task_config(key)
     begin
-      Intrigue::Core::System::Config.load_config
+      #Intrigue::Core::System::Config.load_config
       config = Intrigue::Core::System::Config.config["intrigue_global_module_config"]
       value = config[key]["value"]
       unless value && value != ""

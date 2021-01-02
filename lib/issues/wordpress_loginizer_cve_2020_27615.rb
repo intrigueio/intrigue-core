@@ -1,6 +1,6 @@
 module Intrigue
     module Issue
-    class WordpressUserInfoLeak < BaseIssue
+    class WordpressLoginizerPluginSqlInjection < BaseIssue
     
       def self.generate(instance_details={})
         {

@@ -48,14 +48,6 @@ class Uri < Intrigue::Task::BaseTask
 
     response_data_hash = Digest::SHA256.base64digest(response.body_utf8)
 
-    # we can check the existing response, so send that
-    _log "Checking if Forms"
-    contains_forms = check_forms(response.body_utf8)
-
-    # we'll need to make another request
-    _log "Checking OPTIONS"
-    verbs_enabled = check_options_endpoint(uri)
-
     # grab all script_references, normalize to include full uri if needed 
     _log "Parsing out Scripts"
     temp_script_links = response.body_utf8.scan(/<script.*?src=["|'](.*?)["|']/).map{ |x| x.first if x }
@@ -64,57 +56,46 @@ class Uri < Intrigue::Task::BaseTask
     # add base_url where appropriate
     script_links = temp_script_links.map { |x| x =~ /^\// ? "#{uri}#{x}" : x }
 
-    # Parse out, and fingeprint the componentes 
-    _log "Extracting and fingerprinting scripts"
-    script_components = extract_and_fingerprint_scripts(script_links, hostname)
-    _log "Got fingerprinted script components: #{script_components.map{|x| x["product"] }}"
-
-    ### Check for vulns in included scripts
-    fingerprint = []
-    if script_components.count > 0
-      fingerprint.concat(add_vulns_by_cpe(script_components))
-    end
-
     # Save the Headers
     headers = []
     _log "Saving Headers"
     headers = response.headers.map{|x,y| "#{x}: #{y}"}
-
+    
     # Use intrigue-ident code to request all of the pages we
-    # need to properly fingerprint
-    _log "Attempting to fingerprint (without the browser)!"
-    ident_matches = generate_http_requests_and_check(uri,{:enable_browser => false}) || {}
+    # need to properly fingerprint...  use ident to fingerprint
+    _log "Fingerprinting endpoint!"
+    ident_result = fingerprint_url(uri)
 
-    ident_fingerprints = ident_matches["fingerprint"] || []
-    ident_content_checks = ident_matches["content"] || []
-    _log "Got #{ident_fingerprints.count} fingerprints!"
+    # fingerprint our javascript components
+    _log "Fingerprinting endpoint's linked scripts"
+     script_fingerprint = fingerprint_links(script_links, hostname)
+     ident_result["fingerprint"].concat script_fingerprint
+    
+    # split out the individual ident components
+    ident_fingerprint = ident_result["fingerprint"]
+    _log "Got fingerprinted components: #{ident_fingerprint.map{|x| x["product"] }}"
+
+    ident_configuration = ident_result["content"]
+    ident_responses = ident_result["responses"]
+
+    # Log our fingerprint count
+    _log "Got #{ident_fingerprint.count} fingerprints!"
 
     # get the request/response we made so we can keep track of redirects
-    ident_responses = ident_matches["responses"]
     _log "Received #{ident_responses.count} responses for fingerprints!"
 
-    ###
-    ### Check for issues / vulns based on Ident FPs
-    ###
-    if ident_fingerprints.count > 0
+    # parse through the issues create issues if we have a known tag
+    create_issues_from_fingerprint_tags(ident_fingerprint, @entity)
 
-      # first, if we have any fingerprints that have tags known to be 
-      # associated with an issue, let's crerat them here
-      issues_to_create = fingerprint_tags_to_issues(ident_fingerprints)
-      _log "Got issues: #{issues_to_create}"
-      issues_to_create.each do |i|
-        _create_linked_issue i.first, i.last, @entity
-      end
-      
-      # now add vulns based on CPE 
-      fingerprint.concat(add_vulns_by_cpe(ident_fingerprints))
-    end
-
-    # process interesting fingeprints and content checks that requested an issue be created
-    issues_to_be_created = ident_content_checks.concat(ident_fingerprints).collect{|x| x["issues"] }.flatten.compact.uniq
-    _log "Issues to be created: #{issues_to_be_created}"
-    (issues_to_be_created || []).each do |c|
-      _create_linked_issue c
+    ##
+    ## Process interesting content checks that requested an issue be created
+    ## ** Note that this is currently specific to URI's only. **
+    ##
+    issues_to_be_created = ident_configuration.concat(
+      ident_fingerprint).collect{ |x| x["issues"] }.flatten.compact.uniq
+      _log "Issues to be created: #{issues_to_be_created}"
+      (issues_to_be_created || []).each do |c|
+        _create_linked_issue c
     end
 
     # if we ever match something we know the user won't
@@ -122,11 +103,31 @@ class Uri < Intrigue::Task::BaseTask
     # and hide the entity... meaning no recursion and it shouldn't show up in
     # the UI / queries if any of the matches told us to hide the entity, do it.
     # EXAMPLE TEST CASE: http://103.24.203.121:80 (cpanel missing page)
-    if fingerprint.detect{|x| x["hide"] == true }
+    # 
+    # ** Currently specific to URIs ** 
+    #
+    if ident_fingerprint.detect{|x| x["hide"] == true }
       _log "Entity hidden and unscoped based on fingerprint!"
       @entity.hidden = true
       @entity.save_changes
     end
+
+    # we can check the existing response, so send that
+    _log "Checking if Forms"
+    contains_forms = check_forms(ident_configuration)
+
+    # we can check the existing response, so send that
+    _log "Checking if Authenticated"
+    contains_auth = check_auth(ident_configuration)
+    
+    # we can check the existing response, so send that
+    _log "Checking if 2FA Identified"
+    contains_auth_2fa = check_auth_2fa(ident_configuration)
+
+    # we'll need to make another request
+    _log "Checking OPTIONS"
+    verbs_enabled = check_options_endpoint(uri)
+
 
     # figure out ciphers if this is an ssl connection
     # only create issues if we're getting a 200
@@ -157,28 +158,20 @@ class Uri < Intrigue::Task::BaseTask
         _log "Got cert's alt names: #{alt_names}"
 
         if set_cookie
-          #_log "Secure Cookie: #{set_cookie.split(";").detect{|x| x =~ /secure/i }}"
-          #_log "Httponly Cookie: #{set_cookie.split(";").detect{|x| x =~ /httponly/i }}"
 
-          # check for authentication and if so, bump the severity
-          auth_endpoint = ident_content_checks.select{|x|
-            x["result"]}.join(" ") =~ /Authentication/
-
-          if auth_endpoint
-            # create an issue if not detected
-            if set_cookie.map{|x| x.split(";").detect{|x| x =~ /httponly/i }}.compact.empty?
-              # 4 since we only create an issue if it's an auth endpoint
-              severity = 4
-              _create_missing_cookie_attribute_http_only_issue(uri, set_cookie)
-            end
-
-            if set_cookie.map{|x| x.split(";").detect{|x| x =~ /secure/i }}.compact.empty?
-              # set a default,4 since we only create an issue if it's an auth endpoint
-              severity = 4
-              _create_missing_cookie_attribute_secure_issue(uri, set_cookie)
-            end
-
+          # create an issue if not detected
+          if set_cookie.map{|x| x.split(";").detect{|x| x =~ /httponly/i }}.compact.empty?
+            # 4 since we only create an issue if it's an auth endpoint
+            severity = 4
+            _create_missing_cookie_attribute_http_only_issue(uri, set_cookie)
           end
+
+          if set_cookie.map{|x| x.split(";").detect{|x| x =~ /secure/i }}.compact.empty?
+            # set a default,4 since we only create an issue if it's an auth endpoint
+            severity = 4
+            _create_missing_cookie_attribute_secure_issue(uri, set_cookie)
+          end
+
 
         end
 
@@ -216,7 +209,7 @@ class Uri < Intrigue::Task::BaseTask
     end
 
     ###
-    ### get the favicon & hash it
+    ### get the favicon & hash it (TODO ... add murmurhash)
     ###
     _log "Getting Favicon"
     favicon_response = http_request(:get, "#{uri}/favicon.ico")
@@ -225,26 +218,7 @@ class Uri < Intrigue::Task::BaseTask
       favicon_data = Base64.strict_encode64(favicon_response.body_utf8)
       favicon_md5 = Digest::MD5.hexdigest(favicon_response.body_utf8)
       favicon_sha1 = Digest::SHA1.hexdigest(favicon_response.body_utf8)
-    # else
-    #
-    # <link rel="shortcut icon" href="https://static.dyn.com/static/ico/favicon.1d6c21680db4.ico"/>
-    # try link in the body
-    # TODO... maybe this should be the other way around?
-    #
     end
-
-    ###
-    ### Fingerprint the app server
-    ###
-    app_stack = []
-    _log "Inferring app stack from fingerprints!"
-    ident_app_stack = fingerprint.map do |x|
-      version_string = "#{x["vendor"]} #{x["product"]}"
-      version_string += " #{x["version"]}" if x["version"]
-    version_string
-    end
-    app_stack.concat(ident_app_stack)
-    _log "Setting app stack to #{app_stack.uniq}"
 
     ###
     ### grab the page attributes
@@ -267,6 +241,9 @@ class Uri < Intrigue::Task::BaseTask
     end
 
     # look up the details in team cymru's whois, for ASN etc
+    ###
+    ### TODO ... move to whois!!!!
+    ###
     if resolved_ip_address.is_ip_address?
       resp = cymru_ip_whois_lookup(resolved_ip_address)
       net_geo = resp[:net_country_code]
@@ -279,6 +256,8 @@ class Uri < Intrigue::Task::BaseTask
     # set up the new details
     new_details = {
       "alt_names" => alt_names,
+      "auth.any" => contains_auth,
+      "auth.2fa" => contains_auth_2fa,
       "code" => response.code,
       "cookies" => set_cookie,
       "domain_cookies" => domain_cookies,
@@ -287,7 +266,7 @@ class Uri < Intrigue::Task::BaseTask
       "ip_address" => resolved_ip_address,
       "net_name" => net_name,
       "net_geo" => net_geo,
-      "fingerprint" => fingerprint.uniq,
+      "fingerprint" => ident_fingerprint.uniq,
       "forms" => contains_forms,
       "generator" => generator_string,
       "headers" => headers,
@@ -298,11 +277,11 @@ class Uri < Intrigue::Task::BaseTask
       "dom_sha1" => dom_sha1,
       "title" => title,
       "verbs" => verbs_enabled,
-      "scripts" => script_components,
-      "extended_content" => ident_content_checks.uniq,
-      "extended_ciphers" => accepted_connections,             # new ciphers field
-      "extended_configuration" => ident_content_checks.uniq,  # new content field
-      "extended_full_responses" => ident_responses,           # includes all the redirects etc
+      "scripts" => script_fingerprint,
+      #"extended_content" => ident_content_checks.uniq,
+      "extended_ciphers" => accepted_connections,                  # new ciphers field
+      "extended_configuration" => ident_configuration.uniq,        # new content field
+      "extended_full_responses" => ident_responses.uniq,           # includes all the redirects etc
       "extended_favicon_data" => favicon_data,
       "extended_response_body" => response.body_utf8
     }
@@ -338,7 +317,7 @@ class Uri < Intrigue::Task::BaseTask
         end
         
         # check fingeprint
-        unless fingerprint.uniq.map{|x| 
+        unless ident_fingerprint.uniq.map{ |x| 
           "#{x["vendor"]} #{x["product"]} #{x["version"]}"} == e.get_detail("fingerprint").map{ |x| 
             "#{x["vendor"]} #{x["product"]} #{x["version"]}" }
           _log "Skipping #{e.name}, fingerprint doesnt match"
@@ -355,11 +334,6 @@ class Uri < Intrigue::Task::BaseTask
         if diffs.empty?
           _log "No difference, match found!! Attaching to entity: #{e.name}"
           e.alias_to @entity.alias_group_id
-        else
-          _log  "HTML Content Diffs for #{e.name}"
-          #diffs.each do |d|
-          #  _log "DIFF #{d}"
-          #end
         end
 
         e = nil 
@@ -376,37 +350,22 @@ class Uri < Intrigue::Task::BaseTask
     _set_entity_detail("cloud_hosted",  !cloud_providers.empty?)
 
     ###
+    ### Create issues for any vulns that are version-only inference
+    ###
+    fingerprint_to_inference_issues(ident_fingerprint, @entity)
+
+    ###
     ### Kick off vuln checks if enabled for the project 
     ###
-
     all_checks = []
     if @project.vulnerability_checks_enabled
-      
-      ###
-      ### Finally, start checks based on FP
-      ###
-      fingerprint.each do |f|
-        vendor_string = f["vendor"]
-        product_string = f["product"]
-        _log "Getting checks for #{vendor_string} #{product_string}"
-        checks_to_be_run = Intrigue::Issue::IssueFactory.checks_for_vendor_product(vendor_string, product_string)
-        all_checks << checks_to_be_run
-      end
-      
-      # kick off all vuln checks for this product 
-      all_checks.flatten.compact.uniq.each do |t|
-        start_task("task_autoscheduled", @project, nil, t, @entity, 1)
-      end
-
+      vuln_checks = run_vuln_checks_from_fingerprint(ident_fingerprint, @entity)
+      _set_entity_detail("vuln_checks", vuln_checks)
     end
-
-    # and save'm off
-    _set_entity_detail("additional_checks", all_checks.flatten.compact.uniq)
 
   end
 
   def _gather_supported_ciphers(hostname,port)
-    require 'rex/sslscan'
     scanner = Rex::SSLScan::Scanner.new(hostname, port)
     result = scanner.scan
   result.ciphers.to_a
@@ -416,9 +375,35 @@ class Uri < Intrigue::Task::BaseTask
     response = http_request(:options, uri)
     (response.headers["allow"] || response.headers["Allow"]) if response
   end
+  
+  # checks to see if we had an auth config return true
+  def check_forms(configuration)
+    configuration.each do |c| 
+      if c["name"] =~ /^Form Detected$/ && "#{c["value"]}".to_bool
+        return true
+      end
+    end
+  false
+  end
 
-  def check_forms(response_body)
-    return true if response_body =~ /<form/i
+
+  # checks to see if we had an auth config return true
+  def check_auth(configuration)
+    configuration.each do |c| 
+      if c["name"] =~ /^Auth\ \-.*$/ && "#{c["value"]}".to_bool
+        return true
+      end
+    end
+  false
+  end
+
+  # checks to see if we had an auth config return true
+  def check_auth_2fa(fingerprint)
+    fingerprint.each do |fp| 
+      if (fp["tags"]||[]).map(&:upcase).include?(["IAM","SSO","MFA","2FA"])
+        return true
+      end
+    end
   false
   end
 

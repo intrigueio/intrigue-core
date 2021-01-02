@@ -4,21 +4,23 @@ class BaseTask
 
   # include default helpers
   include Intrigue::Task::Generic
-  include Intrigue::Task::Issue
+  
   include Intrigue::Task::BinaryEdge
   include Intrigue::Task::Browser
   include Intrigue::Task::CloudProviders
   include Intrigue::Task::Data
   include Intrigue::Task::Dns
+  include Intrigue::Task::Ident
+  include Intrigue::Task::Issue
   include Intrigue::Task::Regex
   include Intrigue::Task::Services
+  include Intrigue::Task::TlsHandler
   include Intrigue::Task::VulnCheck
   include Intrigue::Task::VulnDb
   include Intrigue::Task::Web
   include Intrigue::Task::WebContent
   include Intrigue::Task::WebAccount
   include Intrigue::Task::Whois
-  include Intrigue::Task::TlsHandler
 
   include Sidekiq::Worker
   sidekiq_options :queue => "task", :backtrace => true
@@ -30,7 +32,7 @@ class BaseTask
   def perform(task_result_id)
     ### This method is used by a couple different TYPES...
     # normal tasks... which are simple, just run and exit
-    # enrichment tasks.. which must notify when done, and will launch a machine!!!
+    # enrichment tasks.. which must notify when done, and will launch a workflow!!!
 
     # Get the task result and fail if we can't
     @task_result = Intrigue::Core::Model::TaskResult.first(:id => task_result_id)
@@ -47,7 +49,7 @@ class BaseTask
     @task_result.timestamp_start = start_time
 
     ###
-    ### Check santity
+    ### Alias things to make task access easier
     ###
     @entity = @task_result.base_entity
     @project = @task_result.project
@@ -77,27 +79,27 @@ class BaseTask
     ###
     return_early = false 
     if @task_result.scan_result
-      our_task_result_name = @task_result.name
+      our_task_result_name = "#{@task_result.name}"
       
       # query existing results, limit to those that have been started
-      existing_task_results = Intrigue::Core::Model::TaskResult.scope_by_project(@project.name).where({
-        :name => "#{our_task_result_name}"}).exclude(:timestamp_start => nil)
-
-      # good for debugging 
-      _log "Got existing results for '#{our_task_result_name}': #{existing_task_results.map{|x| x.id }.join(", ")}"
+      existing_task_results = Intrigue::Core::Model::TaskResult.scope_by_project(@project.name).where(
+        name: our_task_result_name).exclude(timestamp_start: nil).exclude(id: @task_result.id)
 
       # if we've already completed another one, return eearly
-      if existing_task_results.count > 1 && existing_task_results.exclude(:timestamp_end => nil).count > 1
-      
-        _log "This task has already been completed in this scan, returning w/o running!"
-        return_early = true 
-      
-      # if we've already even started another one, return eearly
-      elsif existing_task_results.count > 1 
-      
-        _log "This task is currently in progress in this scan, returning w/o running!"
-        return_early = true 
-      
+      if existing_task_results.count > 0
+        _log "This task is in progress, or has already been completed in this project"
+        
+        # we want to be able to intelligently re-run flows we havent seen before... this is a way to do that 
+        if @task_result.autoscheduled == false || (@task_result.name =~/^enrich\/.*/ && @project.allow_reenrich)
+          _log_good "Allowing re-run, this is a user-scheduled task and re-enrich is enabled"
+          return_early = false
+        
+        # but default to failing on running stuff we havent yet seen. ... 
+        # there is probably a better way to do this by caching results and snagging them... TODO
+        else 
+          _log_error "Returning, this task was already scheduled or run!"
+          return_early = true
+        end
       end
     end
 
@@ -172,36 +174,34 @@ class BaseTask
         end
         @entity.save_changes 
         
-
         ###
-        ## NOW, KICK OFF MACHINES for SCOPED ENTiTIES ONLY
+        ## NOW, KICK OFF WORKFLOWS for SCOPED ENTiTIES ONLY
         ###
 
-        # technically socped shoudl handle but it doesnt
-        if @entity.enriched && @entity.scoped? #&& !@entity.hidden 
+        # technically socped should handle but it doesnt
+        if @entity.enriched && @entity.scoped
 
-          # MACHINE LAUNCH (ONLY IF WE ARE ATTACHED TO A MACHINE) 
+          # WORKFLOW LAUNCH (ONLY IF WE ARE ATTACHED TO A WORKFLOW) 
           # if this is part of a scan and we're in depth
           if @task_result.scan_result && @task_result.depth > 0
 
-            machine_name = @task_result.scan_result.machine
-            @task_result.log "Launching machine #{machine_name} on #{@entity.name}"
-            machine = Intrigue::MachineFactory.create_by_name(machine_name)
+            workflow_name = @task_result.scan_result.workflow
+            @task_result.log "Launching workflow #{workflow_name} on #{@entity.name}"
+            workflow = Intrigue::Core::Model::Workflow.first(name: workflow_name)
 
-            unless machine
-              raise "Unable to continue, missing machine: #{machine_name}!!!"
+            unless workflow
+              raise "Unable to continue, missing workflow: #{workflow_name}!!!"
             end
             
             ## 
-            ## Start the machine!
+            ## Start the workflow!
             ##
-            machine.start(@entity, @task_result)
+            workflow.start(@entity, @task_result)
 
           else
-            @task_result.log "No machine configured for #{@entity.name}!"
+            @task_result.log "No workflow configured for #{@entity.name}!"
           end
-
-
+          
           scan_result = @task_result.scan_result
           if scan_result
             scan_result.decrement_task_count
@@ -235,15 +235,11 @@ class BaseTask
             end
           end
         else 
-          _log "Entity not scoped, no machine will be run."
+          _log "Entity not scoped, no workflow will be run."
         end 
 
-
-
-
-
       else
-        _log "Not an enrichment task, skipping machine generation"
+        _log "Not an enrichment task, skipping workflow generation"
       end
 
       
@@ -253,12 +249,12 @@ class BaseTask
         ###
         ## CLEAN UP HERE. 
         ###
-
         @task_result.complete = true
         @task_result.timestamp_end = end_time
         @task_result.logger.save_changes
         @task_result.save_changes
         _log "Task complete. Ship it!"
+
       rescue Sequel::NoExistingObject => e
         puts "Failing to update task_result: #{task_result_id}"
       end
@@ -286,7 +282,7 @@ class BaseTask
 
     allowed_options = self.class.metadata[:allowed_options]
     @user_options = []
-    if user_options
+    if user_options && user_options.kind_of?(Array)
       #_log "Got user options list: #{user_options}"
       # for each of the user-supplied options
       user_options.each do |user_option| # should be an array of hashes
