@@ -38,6 +38,10 @@ class Masscan < BaseTask
     opt_udp_ports = _get_option("udp_ports")
     opt_send_rate = _get_option("send_rate")
 
+    # allow us to programmatically set based on what we know how to scan
+    opt_tcp_ports = scannable_tcp_ports.join(",") if opt_tcp_ports == "scannable"
+    opt_udp_ports = scannable_udp_ports.join(",") if opt_udp_ports == "scannable"
+
     begin
 
       # Create a tempfile to store result

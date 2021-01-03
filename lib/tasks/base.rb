@@ -282,12 +282,13 @@ class BaseTask
 
     allowed_options = self.class.metadata[:allowed_options]
     @user_options = []
-    if user_options && user_options.kind_of?(Array)
-      #_log "Got user options list: #{user_options}"
+    if user_options && user_options.kind_of?(Array) && !user_options.empty?
       # for each of the user-supplied options
       user_options.each do |user_option| # should be an array of hashes
+
         # go through the allowed options
         allowed_options.each do |allowed_option|
+
           # If we have a match of an allowed option & one of the user-specified options
           if "#{user_option["name"]}" == "#{allowed_option[:name]}"
 
@@ -353,13 +354,16 @@ class BaseTask
 
             # Hurray, we can accept this value
             @user_options << { allowed_option[:name] => user_option["value"] }
+          else 
+            _log_error "Unused option provided: #{user_option}"
           end
+
         end
 
       end
-      _log "Options: #{@user_options}"
+      _log "User options accepted: #{@user_options}"
     else
-      _log "No User options"
+      _log "No user options set"
     end
 
   true

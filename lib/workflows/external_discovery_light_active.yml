@@ -1,0 +1,69 @@
+---
+depth: 5
+name: external_discovery_light_active
+pretty_name: Attack Surface Discovery (Light, Active)
+user_selectable: true
+maintainer: jcran
+flow: recursive
+description: Performs a light active attack surface discovery for organizations. Start with a Domain or NetBlock.
+definition:
+  AwsS3Bucket: 
+  - task: aws_s3_put_file
+  Domain:
+  - task: dns_brute_sub
+    options:
+    - brute_alphanumeric_size: 2
+    - use_file: true 
+    auto_scope: true
+  - task: dns_lookup_dkim
+    options:
+    - create_domain: true
+  - task: dns_morph
+  - task: dns_recurse_spf
+  - task: dns_transfer_zone
+    auto_scope: true
+  - task: enumerate_nameservers
+  - task: dns_recurse_spf
+  - task: dns_search_sonar
+    auto_scope: true
+  - task: dns_search_tls_cert_names
+    auto_scope: true
+  - task: email_brute_gmail_glxu
+  - task: search_crt
+    options: 
+    - extract_pattern: __seed_list__
+    auto_scope: true
+  - task: search_certspotter
+    options: 
+    - extract_pattern: __seed_list__
+    auto_scope: true
+  - task: search_recon_dev
+  - task: search_sublister
+  - task: search_threatcrowd
+  DnsRecord: 
+  - task: threat/search_opendns
+  EmailAddress: 
+  - task: vuln/saas_google_calendar_check
+  GithubAccount:
+  - task: gitrob
+  IpAddress:
+  - task: naabu_scan
+  NetBlock:
+  - task: masscan_scan
+    options: 
+    - tcp_ports: scannable
+    - udp_ports: scannable
+  Organization:
+  - task: saas_jira_check
+  - task: search_bgp
+  - task: web_account_check
+  - task: whois_lookup
+  Uri:
+  - task: uri_check_api_endpoint
+  - task: uri_brute_generic_content
+  - task: uri_check_http2_support
+  - task: uri_check_subdomain_hijack
+  - task: uri_extract_linked_hosts
+  - task: uri_extract_tokens
+  - task: uri_gather_ssl_certificate
+

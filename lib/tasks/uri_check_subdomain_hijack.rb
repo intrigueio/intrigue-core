@@ -42,7 +42,7 @@ class UriCheckSudomainHijack  < BaseTask
     ###
     if response_body
 
-      if response_body =~ /The specified bucket does not exist/i
+      if response_body =~ /The specified bucket does not exist/i && (uri =~ /amazonaws.com/ || uri =~ /aws.amazon.com/)
         _create_hijackable_subdomain_issue "AWS S3", uri, "potential"
 
       elsif response_body =~ /If you are an Acquia Cloud customer and expect to see your site/i
