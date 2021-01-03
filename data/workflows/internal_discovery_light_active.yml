@@ -2,7 +2,7 @@
 depth: 5
 name: internal_discovery_light_active
 pretty_name: Light Internal Network Scan
-user_selectable: false
+user_selectable: true
 maintainer: jcran
 flow: recursive
 description: Performs a light active scan on a network. Start with a NetBlock.

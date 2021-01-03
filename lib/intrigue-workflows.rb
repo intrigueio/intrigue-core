@@ -59,6 +59,7 @@ module Intrigue
       if flow == "recursive"
         
         tasks_to_schedule = definition[entity.type_string]
+        return unless tasks_to_schedule 
 
         # now go through each task to call and call it 
         tasks_to_schedule.each do |t|
@@ -122,13 +123,19 @@ end
 module Intrigue
   class WorkflowFactory
 
+    $intrigue_core_workflow_directory =  "#{$intrigue_basedir}/data/workflows"
+
     # Provide the full list of workflows
-    def self.workflow_definitions(check_user_definitions=true, load_paths=["#{$intrigue_basedir}/data/workflows/*.yml"])
+    def self.workflow_definitions(check_user_definitions=true, load_paths=[])
       out = []
+
+      # add default paths 
+      load_paths << $intrigue_core_workflow_directory
+      load_paths << $intrigue_core_private_workflow_directory if $intrigue_core_private_workflow_directory
 
       # Load default templates
       load_paths.each do |path|
-        Dir.glob(path).each do |f|
+        Dir.glob("#{path}/*.yml").each do |f|
           template = YAML.load_file(f)
           out << template.symbolize_keys
         end
@@ -146,6 +153,10 @@ module Intrigue
     def self.create_workflow_by_name(name)
       wf = workflow_definitions.find{|x| x[:name] == name }
     Intrigue::Workflow.new(wf) if wf
+    end
+
+    def self.user_selectable_workflows
+      wf = workflow_definitions.select{|x| x[:user_selectable] }.map{|wf| Intrigue::Workflow.new(wf) }
     end
 
 =begin

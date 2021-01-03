@@ -1,12 +1,11 @@
 ---
 depth: 5
 name: external_discovery_light_active
-pretty_name: Light External Active Organizational Attack Surface Enumeration
-user_selectable: false
+pretty_name: Attack Surface Discovery (Light, Active)
+user_selectable: true
 maintainer: jcran
 flow: recursive
-description: Performs a light active enumeration for organizations. Start with
-  a Domain or NetBlock.
+description: Performs a light active attack surface discovery for organizations. Start with a Domain or NetBlock.
 definition:
   AwsS3Bucket: []
   Domain:
@@ -23,7 +22,6 @@ definition:
     auto_scope: true
   - task: search_certspotter
     options: []
-    auto_scope: true
     auto_scope: true
   - task: dns_search_sonar
     options: []

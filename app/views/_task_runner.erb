@@ -60,9 +60,9 @@
       <label for="attrib_name" class="col-xs-4 control-label">Workflow</label>
       <div class="col-xs-8">
         <select class="form-control input-sm" name="Workflow" id="workflow">
-          <option> None </option>
+          <option> [No Workflow Selected] </option>
           <!-- iterate through workflows -->
-          <% Intrigue::Core::Model::Workflow.where(:user_selectable => true).each do |wf| %>
+          <% Intrigue::WorkflowFactory.user_selectable_workflows.each do |wf| %>
             <option value="<%= h wf.name %>"> <%= h wf.pretty_name || wf.name %> </option>
           <% end %>
         </select>
@@ -113,4 +113,5 @@
 
 <script type="text/javascript" src="/js/task.js"></script>
 
+</div>
 </div>
