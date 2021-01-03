@@ -52,9 +52,9 @@ class Uri < Intrigue::Task::BaseTask
     _log "Parsing out Scripts"
     temp_script_links = response.body_utf8.scan(/<script.*?src=["|'](.*?)["|']/).map{ |x| x.first if x }
     # add http/https where appropriate
-    temp_script_links = temp_script_links.map { |x| x =~ /^\/\// ? "#{scheme}:#{x}" : x }
+    temp_script_links = temp_script_links.map { |x| x.match(/^\/\//) ? "#{scheme}:#{x}" : x }
     # add base_url where appropriate
-    script_links = temp_script_links.map { |x| x =~ /^\// ? "#{uri}#{x}" : x }
+    script_links = temp_script_links.map { |x| x.match(/^\//) ? "#{uri}#{x}" : x }
 
     # Save the Headers
     headers = []
@@ -139,7 +139,7 @@ class Uri < Intrigue::Task::BaseTask
       
       # TODO - cookie scoped to parent domain
       if !set_cookie.empty? 
-        domain_cookies = set_cookie.map{|x| x.split(";").detect{|x| x =~ /Domain=/i }}.compact.map{|x|x.strip}
+        domain_cookies = set_cookie.map{|x| x.split(";").detect{|x| x.match(/Domain=/i) }}.compact.map{|x|x.strip}
         _log "Domain Cookies: #{domain_cookies}"
       end
 
@@ -160,13 +160,13 @@ class Uri < Intrigue::Task::BaseTask
         if set_cookie
 
           # create an issue if not detected
-          if set_cookie.map{|x| x.split(";").detect{|x| x =~ /httponly/i }}.compact.empty?
+          if set_cookie.map{|x| x.split(";").detect{|x| x.match(/httponly/i) }}.compact.empty?
             # 4 since we only create an issue if it's an auth endpoint
             severity = 4
             _create_missing_cookie_attribute_http_only_issue(uri, set_cookie)
           end
 
-          if set_cookie.map{|x| x.split(";").detect{|x| x =~ /secure/i }}.compact.empty?
+          if set_cookie.map{|x| x.split(";").detect{|x| x.match(/secure/i) }}.compact.empty?
             # set a default,4 since we only create an issue if it's an auth endpoint
             severity = 4
             _create_missing_cookie_attribute_secure_issue(uri, set_cookie)
@@ -186,7 +186,7 @@ class Uri < Intrigue::Task::BaseTask
         
         # Create findings if we have a deprecated protocol
         if accepted_connections && accepted_connections.detect{ |x|
-            (x[:version] =~ /SSL/ || x[:version] == "TLSv1" ) }
+            ("#{x[:version]}".match(/SSL/) || "#{x[:version]}" == "TLSv1" ) }
             
           _create_deprecated_protocol_issue(uri, accepted_connections)
         end
@@ -196,7 +196,7 @@ class Uri < Intrigue::Task::BaseTask
         if set_cookie
 
           # create an issue if not detected
-          if set_cookie.map{|x| x.split(";").detect{|x| x =~ /httponly/i }}.compact.empty?
+          if set_cookie.map{|x| x.split(";").detect{|x| x.match(/httponly/i) }}.compact.empty?
             _create_missing_cookie_attribute_http_only_issue(uri, set_cookie)
           end
         end
@@ -379,7 +379,7 @@ class Uri < Intrigue::Task::BaseTask
   # checks to see if we had an auth config return true
   def check_forms(configuration)
     configuration.each do |c| 
-      if c["name"] =~ /^Form Detected$/ && "#{c["value"]}".to_bool
+      if "#{c["name"]}".match(/^Form Detected$/) && "#{c["value"]}".to_bool
         return true
       end
     end
@@ -390,7 +390,7 @@ class Uri < Intrigue::Task::BaseTask
   # checks to see if we had an auth config return true
   def check_auth(configuration)
     configuration.each do |c| 
-      if c["name"] =~ /^Auth\ \-.*$/ && "#{c["value"]}".to_bool
+      if "#{c["name"]}".match(/^Auth\ \-.*$/) && "#{c["value"]}".to_bool
         return true
       end
     end

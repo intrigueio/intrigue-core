@@ -64,19 +64,19 @@ module Whois
 
       out = []
       # Handle this at the regional internet registry level
-      if whois_text =~ /RIPE/
+      if whois_text.match(/RIPE/)
         _log "Querying RIPE"
         out.concat _whois_query_ripe_ip(lookup_string) # concat an array
       
-      elsif whois_text =~ /APNIC/
+      elsif whois_text.match(/APNIC/)
         _log "using RDAP to query APNIC"
         out.concat _rdap_ip_lookup(lookup_string) # concat an array
         
-      elsif whois_text =~ /whois.lacnic.net/ || whois_text =~ /cert\@cert\.br/
+      elsif whois_text.match(/whois.lacnic.net/) || whois_text.match(/cert\@cert\.br/)
         _log "using RDAP to query LACNIC"
         out.concat _rdap_ip_lookup(lookup_string) # concat an array
         
-      elsif whois_text =~ /AFRINIC/
+      elsif whois_text.match(/AFRINIC/)
         _log "using RDAP to query AFRINIC"
         out.concat _rdap_ip_lookup(lookup_string) # concat an array
 
@@ -240,7 +240,7 @@ module Whois
   # returns a hash that can create a netblock
   def _whois_query_ripe_ip(lookup_string,out=[])
 
-    if lookup_string =~ /:/
+    if lookup_string.match(/:/)
       ripe_uri = "https://stat.ripe.net/data/address-space-hierarchy/data.json?resource=#{lookup_string}/64"
     else
       ripe_uri = "https://stat.ripe.net/data/address-space-hierarchy/data.json?resource=#{lookup_string}/32"

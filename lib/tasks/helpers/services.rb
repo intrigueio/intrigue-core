@@ -124,7 +124,7 @@ module Services
         prefix = ssl ? "https" : "http" # construct uri
 
         # Construct the uri. We check for ipv6 and add brackets, to be compliant with the RFC
-        if "#{h.name.strip}" =~ ipv6_regex
+        if "#{h.name.strip}".match(ipv6_regex)
           uri = "#{prefix}://[#{h.name.strip}]:#{port_num}"
         else
           uri = "#{prefix}://#{h.name.strip}:#{port_num}"
@@ -265,7 +265,7 @@ module Services
       f = File.open(temp_file.path).each_line do |line|
 
         # Skip comments
-        next if line =~ /^#.*/
+        next if line.match(/^#.*/)
         next if line.nil?
 
         # PARSE
@@ -293,7 +293,7 @@ module Services
 
   def check_external_dependencies
     # Check to see if masscan is in the path, and raise an error if not
-    return false unless _unsafe_system("masscan") =~ /^usage/
+    return false unless _unsafe_system("masscan").match(/^usage/i)
   true
   end
 

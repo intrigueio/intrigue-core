@@ -320,7 +320,7 @@ module Dns
     response.each do |r|
       r["lookup_details"].each do |record|
         next unless record["response_record_type"] == "TXT"
-        next unless record["response_record_data"] =~ /spf/i
+        next unless record["response_record_data"].match(/spf/i)
         spf_records << record["response_record_data"]
       end
     end
@@ -395,9 +395,9 @@ module Dns
   # RFC1918 (internal) address
   def match_rfc1918_address?(range_or_ip)
     return true if ( 
-      range_or_ip =~ /^172\.16\.\d\.\d/
-      range_or_ip =~ /^192\.168\.\d\.\d/
-      range_or_ip =~ /^10\.\d\.\d\.\d/)
+      range_or_ip.match(/^172\.16\.\d\.\d/) || 
+      range_or_ip.match(/^192\.168\.\d\.\d/) || 
+      range_or_ip.match(/^10\.\d\.\d\.\d/) )
   false 
   end
 

@@ -46,10 +46,10 @@ module Ident
     all_checks.flatten.compact.uniq.each do |check|
 
       # skip inference checks, they are handled in fingerprint_to_inference_issues
-      if check =~ /^inference:.*/
+      if check.match(/^inference:.*/)
         next
       # handle nuclei-enabled checks (ruclei)
-      elsif check =~ /^nuclei:.*/
+      elsif check.match(/^nuclei:.*/) || check.match(/^ruclei:.*/)
         nuclei_template = check.split(":").last
         check = "nuclei_runner"
         check_options = [{name: "template", regex: "alpha_numeric_list", value: nuclei_template}]
@@ -58,11 +58,8 @@ module Ident
         check_options = []
       end        
 
-      # get the scan result id 
+      # get the scan result id ... TODO, ideally we'd track this. 
       existing_scan_result_id = nil
-      #if entity.scan_result # TODO ... figure out how to get this reliably
-      #  existing_scan_result_id = entity.scan_result_id
-      #end
 
       # start the task
       start_task("task_autoscheduled", project, existing_scan_result_id, check, entity, 1, check_options)
@@ -80,9 +77,9 @@ module Ident
     fingerprint.each do |fp|
       next unless fp && fp["tags"]
       fp["tags"].each do |t|
-        if t =~ /webcam/i
+        if t.match(/webcam/i)
           issues_to_create << ["exposed_webcam_interface", fp]
-        elsif t =~ /DatabaseService/i
+        elsif t.match(/DatabaseService/i)
           issues_to_create << ["exposed_database_service", fp]
         end
       end
@@ -128,7 +125,7 @@ module Ident
       ### Determine who's hosting
       ### 
       begin
-        if uri.host =~ /#{host}/
+        if uri.host.match(/#{host}/)
           host_location = "local"
         else
           host_location = "remote"

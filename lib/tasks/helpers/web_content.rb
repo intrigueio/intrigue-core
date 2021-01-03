@@ -53,7 +53,7 @@ module WebContent
       diffs = diffs.map do |d|
         
         matched_skip_regex = skip_regexes.map{ |s| 
-          d if "#{d[:node1] || d[:node2]}" =~ s }.include?(d)
+          d if "#{d[:node1] || d[:node2]}".match(s) }.include?(d)
         
         out = nil if matched_skip_regex
         out = d if !matched_skip_regex
@@ -140,28 +140,28 @@ module WebContent
         "modified" => last_modified }.merge(additional_details)
 
       # there's a bunch of stuff we know is just software
-      if create_string =~ /adobe/i                    ||  
-         create_string =~ /apeosport-v/i              ||
-         create_string =~ /canon/i                    ||
-         create_string =~ /coreldraw/i                ||
-         create_string =~ /exe/i                      ||
-         create_string =~ /hewlett packard/i          ||
-         create_string =~ /hp/i                       ||
-         create_string =~ /lexmark/i                  ||
-         create_string =~ /microsoft/i                || 
-         create_string =~ /pdf/i                      ||
-         create_string =~ /postscript/i               ||
-         create_string =~ /pscript/i                  ||
-         create_string =~ /scansnap/i                 ||
-         create_string =~ /softquad/i                 ||
-         create_string =~ /snagit/i                   ||
-         create_string =~ /twain/i                    ||
-         create_string =~ /winver/i                   ||
-         create_string =~ /^word$/i                   ||
-         create_string =~ /workcentre/i
+      if create_string.match(/adobe/i)                    ||  
+         create_string.match(/apeosport-v/i)              ||
+         create_string.match(/canon/i)                    ||
+         create_string.match(/coreldraw/i)                ||
+         create_string.match(/exe/i)                      ||
+         create_string.match(/hewlett packard/i)          ||
+         create_string.match(/hp/i)                       ||
+         create_string.match(/lexmark/i)                  ||
+         create_string.match(/microsoft/i)                || 
+         create_string.match(/pdf/i)                      ||
+         create_string.match(/postscript/i)               ||
+         create_string.match(/pscript/i)                  ||
+         create_string.match(/scansnap/i)                 ||
+         create_string.match(/softquad/i)                 ||
+         create_string.match(/snagit/i)                   ||
+         create_string.match(/twain/i)                    ||
+         create_string.match(/winver/i)                   ||
+         create_string.match(/^word$/i)                   ||
+         create_string.match(/workcentre/i)
 
         _create_entity "SoftwarePackage", to_create
-      elsif create_string =~ /\d+/i || create_string.length == 0
+      elsif create_string.match(/\d+/i) || create_string.length == 0
         # do nothing
       else
         _create_entity "Person", to_create
@@ -202,7 +202,8 @@ module WebContent
      # Scan for email addresses
      addrs = content.scan(email_address_regex)
      addrs.each do |addr|
-       x = _create_entity("EmailAddress", {"name" => addr, "origin" => source_uri}) unless addr =~ /.png$|.jpg$|.gif$|.bmp$|.jpeg$/
+       details = {"name" => addr, "origin" => source_uri}
+       x = _create_entity("EmailAddress", details) unless addr.match(/.png$|.jpg$|.gif$|.bmp$|.jpeg$/)
      end
 
    end
@@ -220,14 +221,20 @@ module WebContent
      # Scan for dns records
      potential_dns_records = content.scan(dns_regex)
 
-     potential_dns_records.each do |potential_dns_record|
-       next unless potential_dns_record # skip empty? 
+     potential_dns_records.compact.each do |potential_dns_record|
+
+       # TODO .. skip common javascript conventions
+       next if potential_dns_record.match /[\(\)]+/
+       next if potential_dns_record.match /\.target$/
+       next if potential_dns_record.match /\.analytics$/
+       next if potential_dns_record.match /\.page$/
+       next if potential_dns_record.match /\.call$/
+       next if potential_dns_record.match /\.id$/
 
        # check that we have a valid TLD, to avoid stuff like image.png or file.css or page.aspx
-       if parse_tld(potential_dns_record)
-        create_dns_entity_from_string potential_dns_record, nil, false, { "origin" => source_uri }
-       end
+       next unless parse_tld(potential_dns_record) && potential_dns_record.match(dns_regex)
 
+      create_dns_entity_from_string potential_dns_record, nil, false, { "origin" => source_uri }
      end
 
    end
@@ -269,37 +276,37 @@ module WebContent
 
    def parse_web_account_from_uri(url)
      # Handle Twitter search results
-     if url =~ /https?:\/\/twitter.com\/.*$/
+     if url.match /https?:\/\/twitter.com\/.*$/
        account_name = url.split("/")[3]
        _create_normalized_webaccount "twitter", account_name, url
        
      # Handle Facebook public profile  results
-     elsif url =~ /https?:\/\/www.facebook.com\/(public|pages)\/.*$/
+     elsif url.match /https?:\/\/www.facebook.com\/(public|pages)\/.*$/
        account_name = url.split("/")[4]
        _create_normalized_webaccount "facebook", account_name, url
 
      # Handle Facebook search results
-     elsif url =~ /https?:\/\/www.facebook.com\/.*$/
+     elsif url.match /https?:\/\/www.facebook.com\/.*$/
        account_name = url.split("/")[3]
        _create_normalized_webaccount "facebook", account_name, url
 
      # Handle LinkedIn public profiles
-     elsif url =~ /^https?:\/\/www.linkedin.com\/in\/(\w).*$/
+     elsif url.match /^https?:\/\/www.linkedin.com\/in\/(\w).*$/
         account_name = url.split("/")[5]
         _create_normalized_webaccount "linkedin", account_name, url
      
        # Handle LinkedIn public profiles
-     elsif url =~ /^https?:\/\/www.linkedin.com\/in\/pub\/.*$/
+     elsif url.match /^https?:\/\/www.linkedin.com\/in\/pub\/.*$/
          account_name = url.split("/")[5]
          _create_normalized_webaccount "linkedin", account_name, url
 
      # Handle LinkedIn public directory search results
-     elsif url =~ /^https?:\/\/www.linkedin.com\/pub\/dir\/.*$/
+     elsif url.match /^https?:\/\/www.linkedin.com\/pub\/dir\/.*$/
        account_name = "#{url.split("/")[5]} #{url.split("/")[6]}"
        _create_normalized_webaccount "linkedin", account_name, url
 
      # Handle LinkedIn world-wide directory results
-     elsif url =~ /^http:\/\/[\w]*.linkedin.com\/pub\/.*$/
+     elsif url.match /^http:\/\/[\w]*.linkedin.com\/pub\/.*$/
 
      # Parses these URIs:
      #  - http://za.linkedin.com/pub/some-one/36/57b/514
@@ -309,22 +316,22 @@ module WebContent
        _create_normalized_webaccount "linkedin", account_name, url
 
      # Handle LinkedIn profile search results
-     elsif url =~ /^https?:\/\/www.linkedin.com\/in\/.*$/
+     elsif url.match /^https?:\/\/www.linkedin.com\/in\/.*$/
        account_name = url.split("/")[4]
        _create_normalized_webaccount "linkedin", account_name, url
 
      # Handle Google Plus search results
-     elsif url =~ /https?:\/\/plus.google.com\/.*$/
+     elsif url.match /https?:\/\/plus.google.com\/.*$/
        account_name = url.split("/")[3]
        _create_normalized_webaccount "google", account_name, url
 
      # Handle Hackerone search results
-     elsif url =~ /https?:\/\/hackerone.com\/.*$/
+     elsif url.match /https?:\/\/hackerone.com\/.*$/
        account_name = url.split("/")[3]
        _create_normalized_webaccount "hackerone", account_name, url
 
     # Handle Bugcrowd search results
-    elsif url =~ /https?:\/\/bugcrowd.com\/.*$/
+    elsif url.match /https?:\/\/bugcrowd.com\/.*$/
       account_name = url.split("/")[3]
       _create_normalized_webaccount "bugcrowd", account_name, url
       

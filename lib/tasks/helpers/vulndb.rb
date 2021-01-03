@@ -220,7 +220,7 @@ module VulnDb
       update = "#{m[4]}".strip
 
       # if version has parens, only use the stuff priior (apache, nginx, etc)
-      if version =~ /\(/
+      if version.match(/\(/)
         old_version = version
         puts "DEBUG Splitting Version: #{version}"
 

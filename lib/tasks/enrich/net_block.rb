@@ -58,13 +58,13 @@ class NetBlock < Intrigue::Task::BaseTask
       end
 
       # check transferred
-      if whois_text =~ /Early Registrations, Transferred to/
+      if whois_text.match /Early Registrations, Transferred to/
         _set_entity_detail "transferred", true
       end
     end
 
     # check ipv6
-    if _get_entity_name =~ /::/
+    if _get_entity_name.match /::/
       _set_entity_detail "ipv6", true
     end
 

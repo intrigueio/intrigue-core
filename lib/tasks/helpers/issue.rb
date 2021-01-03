@@ -85,7 +85,7 @@ module Issue
     
     # skip this for anything other than hostnames 
     hostname = URI(uri).hostname
-    return if hostname =~ ipv4_regex || hostname =~ /ipv6_regex/
+    return if hostname.match(ipv4_regex) || hostname.match(ipv6_regex)
     
     addtl_details = { cookie: cookie }
     _create_linked_issue("insecure_cookie_httponly_attribute", addtl_details)
@@ -95,7 +95,7 @@ module Issue
     
     # skip this for anything other than hostnames 
     hostname = URI(uri).hostname
-    return if hostname =~ ipv4_regex || hostname =~ /ipv6_regex/
+    return if hostname.match(ipv4_regex) || hostname.match(ipv6_regex)
     
     addtl_details = { cookie: cookie }
     _create_linked_issue("insecure_cookie_secure_attribute", addtl_details)
@@ -112,12 +112,12 @@ module Issue
   def _check_request_hosts_for_suspicious_request(uri, request_hosts)
 
     # don't flag on actual localhost
-    return if uri =~ /:\/\/127\.0\.0\./
-    return if uri =~ /:\/\/localhost/
+    return if uri.match /:\/\/127\.0\.0\./
+    return if uri.match /:\/\/localhost/
 
     if  ( request_hosts.include?("localhost") ||
           request_hosts.include?("0.0.0.0") ||
-          !request_hosts.select{|x| x =~ /^127\.\d\.\d\.\d$/ }.empty?)
+          !request_hosts.select{|x| x.match(/^127\.\d\.\d\.\d$/) }.empty?)
 
         _create_linked_issue("suspicious_web_resource_requested",{ 
           requests: request_hosts,
@@ -143,25 +143,28 @@ module Issue
       resource_url = req["url"]
 
       # skip data 
-      return if uri =~ /^data:.*$/
+      return if uri.match(/^data:.*$/)
 
       # skip this for anything other than hostnames 
       begin 
         hostname = URI(resource_url).hostname
+        return unless hostname
       rescue URI::InvalidURIError => e 
         @task_result.logger.log_error "Unable to parse URI: #{resource_url}"
         return 
       end
-      
-      return if hostname =~ ipv4_regex || hostname =~ /ipv6_regex/
 
-      if resource_url =~ /^http:.*$/ 
+      # avoid doubling up
+      return if hostname.match(ipv4_regex) || hostname.match(ipv6_regex)
+
+      if resource_url.match(/^http:\/\/.*$/)
         _create_linked_issue("insecure_content_loaded", {
           uri: uri,
           insecure_resource_url: resource_url,
           request: req
         })
       end
+
     end
   end
 

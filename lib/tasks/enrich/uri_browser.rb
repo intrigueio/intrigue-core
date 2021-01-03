@@ -55,7 +55,7 @@ class UriBrowser < BaseTask
     if _get_option("create_endpoints")
 
       # look for mixed content
-      if uri =~ /^https/
+      if uri.match(/^https/)
         _log "Since we're here (and https), checking for mixed content..."
         _check_requests_for_mixed_content(uri, browser_data_hash["extended_browser_requests"])
       end
@@ -74,7 +74,7 @@ class UriBrowser < BaseTask
       if browser_responses = browser_data_hash["extended_browser_responses"]
         _log "Creating #{browser_responses.count} endpoints"
         browser_responses.each do |r|
-          next unless "#{r["uri"]}" =~ /^http/i
+          next unless "#{r["uri"]}".match(/^http.*$/i)
           _create_entity "Uri", "name" => r["uri"]
         end
       else 
@@ -87,7 +87,7 @@ class UriBrowser < BaseTask
     if _get_option("create_wsendpoints")
       if browser_responses = browser_data_hash["extended_browser_wsresponses"]
         browser_responses.each do |r|
-          next unless "#{r["uri"]}" =~ /^http/i
+          next unless "#{r["uri"]}".match(/^http.*$/i)
           _create_entity("ApiEndpoint", {"name" => r["url"] })
         end
       else 
@@ -96,7 +96,6 @@ class UriBrowser < BaseTask
     else 
       _log "Skipping webservice browser responses"
     end
-
 
     # now merge them together and set as the new details
     _get_and_set_entity_details browser_data_hash

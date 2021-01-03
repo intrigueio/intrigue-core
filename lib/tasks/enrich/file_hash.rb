@@ -25,7 +25,7 @@ module Intrigue
       file_hash = _get_entity_name.strip
       
       # determine the type based on regex 
-      method = Intrigue::Entity::FileHash.supported_hash_types.find{|x| x[:regex] =~ file_hash }
+      method = Intrigue::Entity::FileHash.supported_hash_types.find{|x| file_hash.match(x[:regex]) }
       if method
         our_type = method[:type]
       else 

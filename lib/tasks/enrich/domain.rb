@@ -85,7 +85,7 @@ class Domain < Intrigue::Task::BaseTask
       _set_entity_detail("spf_record", spf_details)
       spf_details.each do |record|
         record.split(" ").each do |spf|
-          next unless spf =~ /^include:/
+          next unless spf.match(/^include:/)
           domain_name = spf.split("include:").last
           _log "Found Associated SPF Domain: #{domain_name}"
           create_dns_entity_from_string(domain_name)
@@ -105,7 +105,7 @@ class Domain < Intrigue::Task::BaseTask
         dmarc_details.split(";").each do |component|
           
           # https://dmarcian.com/rua-vs-ruf/
-          if component.strip =~ /^rua/ || component.strip =~ /^ruf/
+          if component.strip.match(/^rua/) || component.strip.match(/^ruf/)
             component.split("mailto:").last.split(",").each do |address|
               _create_entity "EmailAddress", :name => address
             end

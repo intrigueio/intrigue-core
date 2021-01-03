@@ -25,7 +25,7 @@ class IpAddress < Intrigue::Task::BaseTask
     lookup_name = _get_entity_name.strip
 
     # Set IP version
-    if @entity.name =~ /:/
+    if @entity.name.match(/:/)
       _set_entity_detail("version",6)
     else
       _set_entity_detail("version",4)
@@ -68,7 +68,7 @@ class IpAddress < Intrigue::Task::BaseTask
         
       else # normal case
         dev_server_name_patterns.each do |p|
-          if "#{result["name"]}".split(".").first =~ p
+          if "#{result["name"]}".split(".").first.match(p)
             _exposed_server_identified(p, result["name"])
           end
         end
@@ -120,13 +120,13 @@ class IpAddress < Intrigue::Task::BaseTask
       end
 
       # check transferred
-      if whois_text =~ /Early Registrations, Transferred to/
+      if whois_text.match(/Early Registrations, Transferred to/)
         _set_entity_detail "transferred", true
       end
     end
 
     # check ipv6
-    if _get_entity_name =~ /::/
+    if _get_entity_name.match(/::/)
       _set_entity_detail "ipv6", true
     end
 
