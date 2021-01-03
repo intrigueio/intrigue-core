@@ -111,7 +111,7 @@ module Ident
     link_list.each do |s|
 
       # skip anything that's not http
-      next unless s =~ /^http/
+      next unless s.match(/^http/)
 
       begin 
         uri = URI.parse(s)
@@ -120,7 +120,7 @@ module Ident
         next # unable to parse 
       end
 
-      next unless uri.host && uri.port && uri.scheme =~ /^http/
+      next unless uri.host && uri.port && uri.scheme.match(/^http/)
       ### 
       ### Determine who's hosting
       ### 
