@@ -22,7 +22,7 @@ class FileHash < Intrigue::Core::Model::Entity
 
   def validate_entity
     # check that our regex for the hash matches
-    !self.class.supported_hash_types.select{|x| x[:regex] =~ name }.empty?
+    !self.class.supported_hash_types.select{|x| x[:regex].match(name) }.empty?
   end
 
   def scoped?

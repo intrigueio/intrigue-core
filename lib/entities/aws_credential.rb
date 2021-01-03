@@ -27,7 +27,7 @@ class AwsCredential < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name =~ /.*\*\*\*$/ &&
+    name.match(/.*\*\*\*$/) &&
     details["hidden_access_id"] &&
     details["hidden_secret_key"]
   end

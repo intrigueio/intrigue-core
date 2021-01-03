@@ -14,7 +14,7 @@ class Nameserver < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    return ( name =~ ipv4_regex || name =~ ipv6_regex || name =~ dns_regex )
+    return name.match(ipv4_regex) || name.match(ipv6_regex) || name.match(dns_regex) 
   end
 
   def enrichment_tasks

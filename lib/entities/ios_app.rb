@@ -13,8 +13,8 @@ class IosApp < Intrigue::Core::Model::Entity
 
   def validate_entity
     # only limit is a maximum of 30 characters, as per https://developer.apple.com/app-store/review/guidelines/
-    #name =~ /^.{1,30}$/ || name =~ /[\w\s\-\_\.]+/
-    name =~ /^[a-zA-Z]+[a-zA-Z0-9_\-]*\.[a-zA-Z]+[a-zA-Z0-9_\-]*\.?([a-zA-Z0-9_\-]*\.*)*$/
+    #name.match /^.{1,30}$/ || name.match /[\w\s\-\_\.]+/
+    name.match /^[a-zA-Z]+[a-zA-Z0-9_\-]*\.[a-zA-Z]+[a-zA-Z0-9_\-]*\.?([a-zA-Z0-9_\-]*\.*)*$/
   end
 
   def scoped?

@@ -12,7 +12,7 @@ class AutonomousSystem < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name =~ /^(as|AS).?[0-9].*$/
+    name.match /^(as|AS).?[0-9].*$/
   end
 
   def scoped?

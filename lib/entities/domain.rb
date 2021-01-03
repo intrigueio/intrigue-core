@@ -12,7 +12,7 @@ class Domain < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name =~ dns_regex
+    name.match dns_regex
   end
 
   def detail_string

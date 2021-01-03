@@ -12,7 +12,7 @@ class Organization < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name =~ /^[\w\s\d\.\-\_\&\;\:\,\@]{3,}$/
+    name.match /^[\w\s\d\.\-\_\&\;\:\,\@]{3,}$/
   end
 
   def enrichment_tasks

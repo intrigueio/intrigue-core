@@ -229,7 +229,13 @@ module WebContent
        next if potential_dns_record.match /\.analytics$/
        next if potential_dns_record.match /\.page$/
        next if potential_dns_record.match /\.call$/
-       next if potential_dns_record.match /\.id$/
+       next if potential_dns_record.match /\.style$/
+       next if potential_dns_record.match /\.show$/
+       next if potential_dns_record.match /\.top$/
+       next if potential_dns_record.match /\.name/
+       next if potential_dns_record.match /\.data/
+       next if potential_dns_record.match /\.stream/
+       next if potential_dns_record.match /\.video/
 
        # check that we have a valid TLD, to avoid stuff like image.png or file.css or page.aspx
        next unless parse_tld(potential_dns_record) && potential_dns_record.match(dns_regex)

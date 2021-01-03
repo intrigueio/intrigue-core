@@ -11,7 +11,7 @@ class SslCertificate < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name =~ /^[\w\s\d\.\-\_\&\;\:\,\@\(\)\*\/\?\=]+$/
+    name.match /^[\w\s\d\.\-\_\&\;\:\,\@\(\)\*\/\?\=]+$/
   end
 
   ###

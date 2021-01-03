@@ -11,7 +11,7 @@ class AwsIamAccount < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name =~ /^(user\/|group\/)[\.\w\-\\\/]+$/ && ["user","group"].include?(details["account_type"]) && details["organization"] != nil
+    name.match(/^(user\/|group\/)[\.\w\-\\\/]+$/) && ["user","group"].include?(details["account_type"]) && details["organization"] != nil
   end
 
   def detail_string

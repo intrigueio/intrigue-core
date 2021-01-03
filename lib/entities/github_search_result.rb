@@ -10,7 +10,7 @@ class GithubSearchResult < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name =~ /^.*$/
+    name.match /^([\.\w\d\ \-\(\)\\\/]+)$/
   end
 
   def enrichment_tasks

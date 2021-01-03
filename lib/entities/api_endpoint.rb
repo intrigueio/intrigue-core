@@ -12,7 +12,7 @@ class ApiEndpoint < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name =~ /^https?:\/\/.*$/
+    name.match /^https?:\/\/.*$/
   end
 
   def detail_string

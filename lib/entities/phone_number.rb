@@ -12,7 +12,7 @@ class PhoneNumber < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name =~ phone_number_regex
+    name.match phone_number_regex
   end
 
   def detail_string

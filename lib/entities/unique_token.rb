@@ -108,7 +108,7 @@ class UniqueToken < Intrigue::Core::Model::Entity
     # check that our regex for the hash matches
     supported_type = self.class.supported_token_types.select{ |x| 
       regex = x["regex"]; regex = Regexp.new(regex) unless regex.kind_of?(Regexp)
-      regex =~ name 
+      name.match(regex)
     }
 
     valid = !supported_type.empty?

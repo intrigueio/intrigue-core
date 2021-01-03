@@ -11,7 +11,7 @@ class WebAccount < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name =~ /^[\w\d\.\-\(\)\\\/\_]+:\s?[\w\d\.\-\(\)\\\/\_]+$/ 
+    name.match /^[\w\d\.\-\(\)\\\/\_]+:\s?[\w\d\.\-\(\)\\\/\_]+$/ 
   end
 
   def transform!

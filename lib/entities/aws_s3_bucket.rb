@@ -12,7 +12,7 @@ class AwsS3Bucket < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name =~ /s3/ && name =~ /.amazonaws.com/
+    name.match(/s3/) && name.match(/\.amazonaws\.com/)
   end
 
   def detail_string
