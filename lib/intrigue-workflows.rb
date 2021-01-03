@@ -51,6 +51,24 @@ module Intrigue
     out
     end
 
+    def pre_process_options(options=[], entity, task_result)
+      out = options.map do |hash|
+
+        k = hash.keys.first
+        v = hash.values.first
+        
+        ### Our accepted variables
+        if v =~ /^__seed_list__$/ ## current seed list 
+          v = entity.project.seeds.map{|x| x.name }.join(", ")
+        end
+
+        # Options shoudl be in his format for a task 
+        { "name" => k, "value" => v }
+
+      end
+    out 
+    end
+
     def start(entity, task_result)
       # sanity check before sending us off
       return unless entity && task_result
@@ -65,7 +83,13 @@ module Intrigue
         tasks_to_schedule.each do |t|
 
           task_name = t["task"]
-          options = t["options"]
+          task_options = t["options"] || []
+          
+          options = pre_process_options(task_options, entity, task_result)
+
+          # add a spurious option for testing 
+          options << { "name" => "extra_juice", "value" => false }
+
           auto_scope =  t["auto_scope"]
 
           # start the task

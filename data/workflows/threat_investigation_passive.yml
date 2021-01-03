@@ -1,5 +1,5 @@
 ---
-depth: 5
+depth: 1
 name: threat_investigation_passive
 pretty_name: Threat Investigation Passive
 user_selectable: true
@@ -7,4 +7,42 @@ maintainer: jcran
 flow: recursive
 description: Performa a passive threat investigation on all provided IoCs
 definition:
-  Domain: []
+  DnsRecord: 
+  - task: threat/search_apility
+  - task: threat/search_blcheck_list
+  - task: threat/search_cleanbrowsing_dns
+  - task: threat/search_comodo_dns
+  - task: threat/search_emerging_threats
+  - task: threat/search_fraudguard
+  - task: threat/search_opendns
+  - task: threat/search_quad9_dns
+  - task: threat/search_talos_blacklist
+  - task: threat/search_yandex_dns
+  - task: threat/search_alienvault_otx
+  - task: search_binaryedge_torrents
+  Domain:
+  - task: threat/search_apility
+  - task: threat/search_blcheck_list
+  - task: threat/search_cleanbrowsing_dns
+  - task: threat/search_comodo_dns
+  - task: threat/search_emerging_threats
+  - task: threat/search_fraudguard
+  - task: threat/search_opendns
+  - task: threat/search_quad9_dns
+  - task: threat/search_talos_blacklist
+  - task: threat/search_yandex_dns
+  - task: threat/search_alienvault_otx
+  - task: search_binaryedge_torrents
+  IpAddress: 
+  - task: threat/search_apility
+  - task: threat/search_blcheck_list
+  - task: threat/search_cleanbrowsing_dns
+  - task: threat/search_comodo_dns
+  - task: threat/search_emerging_threats
+  - task: threat/search_fraudguard
+  - task: threat/search_opendns
+  - task: threat/search_quad9_dns
+  - task: threat/search_talos_blacklist
+  - task: threat/search_yandex_dns
+  - task: threat/search_alienvault_otx
+  - task: search_binaryedge_torrents

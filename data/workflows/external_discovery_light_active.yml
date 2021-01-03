@@ -7,62 +7,63 @@ maintainer: jcran
 flow: recursive
 description: Performs a light active attack surface discovery for organizations. Start with a Domain or NetBlock.
 definition:
-  AwsS3Bucket: []
+  AwsS3Bucket: 
+  - task: aws_s3_put_file
   Domain:
-  - task: enumerate_nameservers
-    options: []
-  - task: dns_transfer_zone
-    options: []
+  - task: dns_brute_sub
+    options:
+    - brute_alphanumeric_size: 2
+    - use_file: true 
     auto_scope: true
   - task: dns_lookup_dkim
     options:
     - create_domain: true
+  - task: dns_morph
+  - task: dns_recurse_spf
+  - task: dns_transfer_zone
+    auto_scope: true
+  - task: enumerate_nameservers
+  - task: dns_recurse_spf
+  - task: dns_search_sonar
+    auto_scope: true
+  - task: dns_search_tls_cert_names
+    auto_scope: true
+  - task: email_brute_gmail_glxu
   - task: search_crt
-    options: []
+    options: 
+    - extract_pattern: __seed_list__
     auto_scope: true
   - task: search_certspotter
-    options: []
+    options: 
+    - extract_pattern: __seed_list__
     auto_scope: true
-  - task: dns_search_sonar
-    options: []
-    auto_scope: true
-  - task: search_threatcrowd
-    options: []
-  - task: dns_recurse_spf
-    options: []
-  - task: dns_morph
-    options: []
-  - task: dns_brute_sub
-    options: []
-    auto_scope: true
+  - task: recon_dev
   - task: search_sublister
-    options: []
-  DnsRecord: []
-  EmailAddress: []
-  GithubAccount: []
+  - task: search_threatcrowd
+  DnsRecord: 
+  - task: threat/search_opendns
+  EmailAddress: 
+  - task: vuln/saas_google_calendar_check
+  GithubAccount:
+  - task: gitrob
   IpAddress:
   - task: naabu_scan
-    options: []
-  Nameserver: []
   NetBlock:
   - task: masscan_scan
-    options: []
-  NetworkService: []
+    options: 
+    - tcp_ports: scannable
+    - udp_ports: scannable
   Organization:
-  - task: whois_lookup
-    options: []
-  - task: search_bgp
-    options: []
   - task: saas_jira_check
-    options: []
+  - task: search_bgp
   - task: web_account_check
-    options: []
+  - task: whois_lookup
   Uri:
   - task: uri_check_api_endpoint
-    options: []
-  - task: uri_extract_linked_hosts
-    options: []
-  - task: uri_gather_ssl_certificate
-    options: []
+  - task: uri_brute_generic_content
+  - task: uri_check_http2_support
   - task: uri_check_subdomain_hijack
-    options: []
+  - task: uri_extract_linked_hosts
+  - task: uri_extract_tokens
+  - task: uri_gather_ssl_certificate
+
