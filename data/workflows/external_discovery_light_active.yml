@@ -37,7 +37,7 @@ definition:
     options: 
     - extract_pattern: __seed_list__
     auto_scope: true
-  - task: recon_dev
+  - task: search_recon_dev
   - task: search_sublister
   - task: search_threatcrowd
   DnsRecord: 
