@@ -81,6 +81,15 @@ module Issue
     _create_linked_issue("content_issue", { uri: uri, check: check })
   end
 
+  def _create_wide_scoped_cookie_issue(uri, cookie, severity=5)
+    hostname = URI(uri).hostname
+    return if hostname.match(ipv4_regex) || hostname.match(ipv6_regex)
+    
+    addtl_details = { cookie: cookie }
+    _create_linked_issue("insecure_cookie_widescoped", addtl_details)
+  end
+
+
   def _create_missing_cookie_attribute_http_only_issue(uri, cookie, severity=5)
     
     # skip this for anything other than hostnames 

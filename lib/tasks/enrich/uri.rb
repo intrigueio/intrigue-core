@@ -140,7 +140,8 @@ class Uri < Intrigue::Task::BaseTask
       # TODO - cookie scoped to parent domain
       if !set_cookie.empty? 
         domain_cookies = set_cookie.map{|x| x.split(";").detect{|x| x.match(/Domain=/i) }}.compact.map{|x|x.strip}
-        _log "Domain Cookies: #{domain_cookies}"
+        
+        
       end
 
       if scheme == "https"
@@ -158,6 +159,10 @@ class Uri < Intrigue::Task::BaseTask
         _log "Got cert's alt names: #{alt_names}"
 
         if set_cookie
+
+          if set_cookie.map{|x| x.split(";").detect{|x| x.match(/Domain=".#{parse_domain_name(uri)}"/i)}}
+            _create_wide_scoped_cookie_issue(uri, set_cookie)
+          end
 
           # create an issue if not detected
           if set_cookie.map{|x| x.split(";").detect{|x| x.match(/httponly/i) }}.compact.empty?
