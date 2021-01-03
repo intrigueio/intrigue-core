@@ -37,7 +37,6 @@ definition:
     options: 
     - extract_pattern: __seed_list__
     auto_scope: true
-  - task: search_recon_dev
   - task: search_sublister
   - task: search_threatcrowd
   DnsRecord: 
@@ -54,6 +53,11 @@ definition:
     - tcp_ports: scannable
     - udp_ports: scannable
   Organization:
+  - task: saas_jira_check
+  - task: search_bgp
+  - task: web_account_check
+  - task: whois_lookup
+  UniqueKeyword:
   - task: saas_jira_check
   - task: search_bgp
   - task: web_account_check
