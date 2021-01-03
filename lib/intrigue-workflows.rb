@@ -109,9 +109,6 @@ module Intrigue
 
           options = pre_process_options(task_options, entity, task_result)
 
-          # add a spurious option for testing 
-          options << { "name" => "extra_juice", "value" => false }
-
           auto_scope =  t["auto_scope"]
 
           # start the task

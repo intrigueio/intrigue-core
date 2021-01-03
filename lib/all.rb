@@ -21,7 +21,7 @@ include Intrigue::Core::System::Helpers
 
 # Intrigue System-wide Helpers (both app and backend) 
 require_relative 'system/dns_helpers'
-#include Intrigue::Core::System::DnsHelpers
+include Intrigue::Core::System::DnsHelpers
 
 # Intrigue Export Format
 require_relative 'system/json_data_export_file'

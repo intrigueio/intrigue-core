@@ -39,8 +39,6 @@ module System
     #
     def standard_no_traverse?(entity_name, type_string="Domain", skip_exceptions=[])
 
-      include Intrigue::Core::System::DnsHelpers
-
       out = false
 
       if type_string == "IpAddress"

@@ -102,7 +102,7 @@ class CoreApp < Sinatra::Base
         workflow_depth = wf.depth || 5 
       else # default to none 
         workflow_name = nil
-        depth = 1
+        workflow_depth = 1
       end
 
       auto_enrich = @params["auto_enrich"] == "on" ? true : false
@@ -308,9 +308,10 @@ class CoreApp < Sinatra::Base
     #payload = {
     #  "project_name" => project_name,
     #  "handlers" => []
-    #  "task" => task_name,
-    #  "entity" => entity_hash,
-    #  "options" => options_list,
+    #  "task" => "task_name",
+    #  "workflow_name" => "intrigueio_test_workflow",
+    #  "entity" => { "type" : "Domain", "name" : "test" },
+    #  "options" => [],
     #  "auto_enrich" => false
     #}.to_json
     post '/:project/results/?' do
@@ -326,21 +327,26 @@ class CoreApp < Sinatra::Base
       type_string = payload["entity"]["type"]
       name = payload["entity"]["name"]
 
-      # Collect the depth (which can kick off a recursive "scan", but default to a single)
-      depth = payload["depth"] || 1
-
       resolved_type = Intrigue::EntityManager.resolve_type_from_string type_string
 
       attributes = payload["entity"].merge(
         "type" => resolved_type.to_s,
         "name" => "#{name}"
       )
+      ### Workflow definition, make sure we have a valid type
+      if wf = Intrigue::Core::Model::Workflow.first(:name => "#{@params["workflow_name"]}")
+        workflow_name = wf.name
+        workflow_depth = wf.default_depth
+      else
+        workflow_name = nil
+        workflow_depth = 1
+      end
+
 
       # Get the details from the payload
       task_name = payload["task"]
       options = payload["options"]
       handlers = payload["handlers"]
-      workflow_name = payload["workflow_name"]
       auto_enrich = "#{payload["auto_enrich"]}".to_bool
       auto_scope = true # manually created
 
@@ -352,7 +358,7 @@ class CoreApp < Sinatra::Base
       project = Intrigue::Core::Model::Project.create(:name => @project_name) unless project
 
       # Start the task_run
-      task_result = start_task("task", project, nil, task_name, entity, depth,
+      task_result = start_task("task", project, nil, task_name, entity, workflow_depth,
                                   options, handlers, workflow_name, auto_enrich, auto_scope)
 
       # manually start enrichment, since we've already created the entity above, it won't auto-enrich ^
