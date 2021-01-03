@@ -40,8 +40,8 @@ module System
     ###
     ### Helper method for starting a task run
     ###
-    def start_task(queue, project, existing_scan_result_id, task_name, entity, depth,
-          options=[], handlers=[], machine_name="external_discovery_light_active", auto_enrich=true, auto_scope=false)
+    def start_task(queue, project, existing_scan_result_id, task_name, entity, depth=1,
+          options=[], handlers=[], workflow_name=nil, auto_enrich=true, auto_scope=false)
       
       # Create the task result, and associate our entity and options
       logger = Intrigue::Core::Model::Logger.create(:project_id => project.id)
@@ -84,12 +84,12 @@ module System
       if !existing_scan_result_id && depth > 1
         logger = Intrigue::Core::Model::Logger.create(:project => project)
         new_scan_result = Intrigue::Core::Model::ScanResult.create({
-          :name => "#{machine_name}_on_#{entity.name}",
+          :name => "#{workflow_name}_on_#{entity.name}",
           :project => project,
           :base_entity_id => entity.id,
           :logger_id => logger.id,
           :depth => depth,
-          :machine => machine_name,
+          :workflow => workflow_name,
           :whitelist_strings => ["#{entity.name}"], # this is a list of strings that we know are good
           :blacklist_strings => [],
           :handlers => handlers,

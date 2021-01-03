@@ -56,7 +56,6 @@ module System
 
         (standard_name_exceptions - skip_exceptions).each do |exception|
           if exception.match(".#{parsed_name}")
-            puts "Matched #{exception}"
             return exception
           end
         end

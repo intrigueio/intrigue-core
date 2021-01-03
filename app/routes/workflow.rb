@@ -3,10 +3,7 @@ class CoreApp < Sinatra::Base
   post '/:project_name/workflow/?' do
 
     # then set up the initial task results 
-    depth = (@params["depth"] || 6).to_i
-    workflow = "#{@params["workflow"]}"
-
-    puts "DEBUG.. params: #{@params}"
+    workflow_name = "#{@params["workflow"]}"
 
     ###
     ### Standard file type (entity list)
@@ -15,10 +12,11 @@ class CoreApp < Sinatra::Base
       "#{x}".strip.downcase
     end
 
-    ### Machine definition, make sure we have a valid type
-    if Intrigue::MachineFactory.has_machine? workflow
-      machine_name = workflow
-    else 
+    ### Workflow definition, make sure we have a valid type
+    if wf = Intrigue::WorkflowFactory.create_workflow_by_name(workflow_name)
+      workflow_name = wf.name
+      workflow_depth = wf.depth
+    else
       session[:flash] = "Invalid workflow!"
       redirect FRONT_PAGE
     end
@@ -44,13 +42,12 @@ class CoreApp < Sinatra::Base
 
       task_name = "create_entity"
       handlers = []
-      depth = depth
       auto_enrich = true 
       auto_scope = true  
 
       # Start the task run!
       task_result = start_task("task", current_project, nil, task_name, entity,
-                depth, nil, handlers, machine_name, auto_enrich, auto_scope)
+        workflow_depth, nil, handlers, workflow_name, auto_enrich, auto_scope)
 
       entity.task_results << task_result
       entity.save

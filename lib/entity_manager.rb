@@ -117,7 +117,7 @@ class EntityManager
   new_entity
   end
 
-  # This method creates a new entity, and kicks off a machine
+  # This method creates a new entity, and kicks off a workflow
   def self.create_or_merge_entity(task_result_id,type_string,name,details,primary_entity=nil)
 
     # Deal with canceled tasks and deleted projects!

@@ -88,8 +88,8 @@ module Model
     end
     # END EXPOSE LOGGING METHODS
 
-    def machine
-      return scan_result.machine if scan_result
+    def workflow
+      return scan_result.workflow if scan_result
     nil
     end
 

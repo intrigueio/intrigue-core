@@ -55,26 +55,18 @@
       </div>
     <% end %>
 
+  <div id="workflow">
     <div class="form-group">
-      <div id="options"></div>
-    </div>
-
-    <div id="machine">
-      <div class="form-group">
-        <label for="machine" class="col-xs-4 control-label"></label>
-        <div class="col-xs-8">
-          <select class="form-control input-sm" name="machine" id="machine">
-            <option value="none" selected='selected' >No Workflow Configured</option>
-            <!-- iterate through stategies -->
-            <% Intrigue::MachineFactory.list.each do |machine_class| %>
-            <% next unless machine_class.metadata[:user_selectable] %>
-              <option value="<%= h machine_class.metadata[:name] %>">
-                <%= h machine_class.metadata[:pretty_name] %>
-              </option>
-            <% end %>
-          </select>
-          <div class="hint"> 'Workflow' specifies the set of tasks which will be automatically started for each new entity.</div>
-        </div>
+      <label for="attrib_name" class="col-xs-4 control-label">Workflow</label>
+      <div class="col-xs-8">
+        <select class="form-control input-sm" name="Workflow" id="workflow">
+          <option> [No Workflow Selected] </option>
+          <!-- iterate through workflows -->
+          <% Intrigue::WorkflowFactory.user_selectable_workflows.each do |wf| %>
+            <option value="<%= h wf.name %>"> <%= h wf.pretty_name || wf.name %> </option>
+          <% end %>
+        </select>
+        <div class="hint">'Workflow' specifies what we do with each discovered entity type. (Optional)</div>
       </div>
     </div>
 
@@ -121,4 +113,5 @@
 
 <script type="text/javascript" src="/js/task.js"></script>
 
+</div>
 </div>

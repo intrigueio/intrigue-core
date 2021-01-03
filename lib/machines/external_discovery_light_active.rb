@@ -164,9 +164,6 @@ module Machine
   
         elsif entity.type_string == "Uri"
   
-          # run a traceroute
-          #start_recursive_task(task_result,"tcp_traceroute",entity, [])
-  
           ## Grab the SSL Certificate
           start_recursive_task(task_result,"uri_gather_ssl_certificate",entity, []) if entity.name =~ /^https/
   

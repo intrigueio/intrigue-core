@@ -62,8 +62,6 @@ module Machine
           {"name"=> "tcp_ports", "value" => scannable_tcp_ports.join(",")},
           {"name"=> "udp_ports", "value" => scannable_udp_ports.join(",")}])
 
-      elsif entity.type_string == "NetworkService"
-
       elsif entity.type_string == "Uri"
 
         ## Grab the SSL Certificate

@@ -58,10 +58,10 @@
           </td>
           <td>
             <div class='td-images'>
-            <% if  x.complete %>
-              <img width=12 height=12 src='/img/icons/checkmark-white.png'>
+            <% if x.complete %>
+              <%= checkmark_image %>
             <% else %>
-              <img width=12 height=12 src='/img/icons/xmark-white.png'>
+              <%= xmark_image %>
             <% end %>
             </div>
           </td>

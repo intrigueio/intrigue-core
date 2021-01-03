@@ -105,7 +105,7 @@ module Model
         "name" => URI.escape(name),
         "depth" => depth,
         "complete" => complete,
-        "machine" => machine,
+        "workflow" => workflow,
         "timestamp_start" => timestamp_start,
         "timestamp_end" => timestamp_end,
         "whitelist_strings" => whitelist_strings,

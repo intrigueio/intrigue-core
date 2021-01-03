@@ -39,17 +39,18 @@ class CoreApp < Sinatra::Base
   wrapped_api_response(nil, tasks_metadata)
   end
 
-  # Export All Task Metadata
-  get "/api/v1/machines" do
+  # Export All Workflows
+  get "/api/v1/workflows" do
     content_type 'application/json'
 
     halt_unless_authenticated!
 
-    machine_metadata = Intrigue::MachineFactory.list.map{ |t| t.metadata }.sort_by{|m| m[:name] }
-  wrapped_api_response(nil, machine_metadata)
+    workflow_metadata = Intrigue::Core::Model::Workflow.all.map{ |t| t.to_hash }.sort_by{|m| m[:name] }
+
+  wrapped_api_response(nil, workflow_metadata)
   end
 
-  # Export All Task Metadata
+  # Export All Handlers
   get "/api/v1/handlers" do
     content_type 'application/json'
 

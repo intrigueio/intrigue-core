@@ -62,7 +62,7 @@ getResultJson(<%=@result.id%>);
   <p>Cancelled: <%= @result.cancelled %> (<a href="<%=h request.path%>/cancel">Cancel</a>)</p>
   <p>Complete: <%= @result.complete %></p>
   <p>Entity Count: <%= @result.entities.count %></p>
-  <p>Workflow: <%= @result.scan_result.machine if @result.scan_result %></p>
+  <p>Workflow: <%= @result.scan_result.workflow if @result.scan_result %></p>
   <p>Max Depth: <%=@result.scan_result.depth if @result.scan_result %> </p>
 
   Export:

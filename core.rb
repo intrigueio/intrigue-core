@@ -115,7 +115,6 @@ class CoreApp < Sinatra::Base
   set :allow_headers, "content-type,if-modified-since,allow"
   set :expose_headers, "location,link"
   set :allow_credentials, true
-
   set :sessions => true
   set :root, "#{$intrigue_basedir}"
   set :views, "#{$intrigue_basedir}/app/views"
@@ -126,7 +125,7 @@ class CoreApp < Sinatra::Base
   end
 
   ###
-  ### Helpers
+  ## Helpers
   ###
   helpers do
     def h(text)
@@ -135,7 +134,7 @@ class CoreApp < Sinatra::Base
   end
 
   ###
-  ### (Very) Simple Auth
+  ## Enable Basic Auth
   ###
   if Intrigue::Core::System::Config.config
     if Intrigue::Core::System::Config.config["http_security"]
@@ -178,14 +177,12 @@ class CoreApp < Sinatra::Base
 
     # Set the project based on the directive
     project = Intrigue::Core::Model::Project.first(:name => directive)
-    @project_name = project.name if project 
-
-    #if !directive && !project
-    #  #   # Creating a default project since it doesn't appear to exist (it should always exist)
-    #  
-    #    project = Intrigue::Core::Model::Project.create(:name => "Default", :created_at => Time.now.utc )
-    #  
-    #end
+    if project 
+      @project_name = project.name 
+    else 
+      session[:flash] = "Missing Project!?"
+      redirect FRONT_PAGE
+    end
     
   end
 
@@ -231,6 +228,10 @@ end
 # Core libraries
 require_relative "lib/all"
 
+###
+## Relevant to hosted/managed configurations, load in a Sentry DSN from 
+##   the so we can report errors to a Sentry instance
+###
 #configure sentry.io error reporting (only if a key was provided)
 if (Intrigue::Core::System::Config.config && Intrigue::Core::System::Config.config["sentry_dsn"])
   require "raven"

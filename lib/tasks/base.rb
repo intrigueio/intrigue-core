@@ -32,7 +32,7 @@ class BaseTask
   def perform(task_result_id)
     ### This method is used by a couple different TYPES...
     # normal tasks... which are simple, just run and exit
-    # enrichment tasks.. which must notify when done, and will launch a machine!!!
+    # enrichment tasks.. which must notify when done, and will launch a workflow!!!
 
     # Get the task result and fail if we can't
     @task_result = Intrigue::Core::Model::TaskResult.first(:id => task_result_id)
@@ -175,31 +175,31 @@ class BaseTask
         @entity.save_changes 
         
         ###
-        ## NOW, KICK OFF MACHINES for SCOPED ENTiTIES ONLY
+        ## NOW, KICK OFF WORKFLOWS for SCOPED ENTiTIES ONLY
         ###
 
         # technically socped should handle but it doesnt
         if @entity.enriched && @entity.scoped
 
-          # MACHINE LAUNCH (ONLY IF WE ARE ATTACHED TO A MACHINE) 
+          # WORKFLOW LAUNCH (ONLY IF WE ARE ATTACHED TO A WORKFLOW) 
           # if this is part of a scan and we're in depth
           if @task_result.scan_result && @task_result.depth > 0
 
-            machine_name = @task_result.scan_result.machine
-            @task_result.log "Launching machine #{machine_name} on #{@entity.name}"
-            machine = Intrigue::MachineFactory.create_by_name(machine_name)
+            workflow_name = @task_result.scan_result.workflow
+            @task_result.log "Launching workflow #{workflow_name} on #{@entity.name}"
+            workflow = Intrigue::WorkflowFactory.create_workflow_by_name(workflow_name)
 
-            unless machine
-              raise "Unable to continue, missing machine: #{machine_name}!!!"
+            unless workflow
+              raise "Unable to continue, missing workflow: #{workflow_name}!!!"
             end
             
             ## 
-            ## Start the machine!
+            ## Start the workflow!
             ##
-            machine.start(@entity, @task_result)
+            workflow.start(@entity, @task_result)
 
           else
-            @task_result.log "No machine configured for #{@entity.name}!"
+            @task_result.log "No workflow configured for #{@entity.name}!"
           end
           
           scan_result = @task_result.scan_result
@@ -235,11 +235,11 @@ class BaseTask
             end
           end
         else 
-          _log "Entity not scoped, no machine will be run."
+          _log "Entity not scoped, no workflow will be run."
         end 
 
       else
-        _log "Not an enrichment task, skipping machine generation"
+        _log "Not an enrichment task, skipping workflow generation"
       end
 
       
