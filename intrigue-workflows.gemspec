@@ -4,7 +4,7 @@ Gem::Specification.new do |s|
   s.version     = '0.5.1'
   s.date        = '2021-01-03'
   s.summary     = "Intrigue Core Workflows"
-  s.description = "Intrigue Core Task Library"
+  s.description = "Intrigue Core Workflow Library"
   s.authors     = ["jcran"]
   s.email       = 'jcran@intrigue.io'
   s.files       = Dir.glob("lib/intrigue-workflows.rb").concat Dir.glob("lib/workflows/*.yml")
