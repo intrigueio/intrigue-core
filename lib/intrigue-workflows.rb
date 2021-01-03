@@ -33,6 +33,28 @@ module Intrigue
     def user_selectable 
       @hash[:user_selectable]
     end
+
+    # Example: 
+    # 
+    #   "name": "intrigueio_precollection",
+    #   "pretty_name": "Intrigue.io Pre-Collection",
+    #   "passive": true,
+    #   "user_selectable": false,
+    #   "authors": ["jcran"],
+    #   "description": "This workflow performs a VERY light passive ...",
+    #   "flow" : "recursive",
+    #   "depth": 4,
+    #   "definition": {
+    #     "AwsS3Bucket": [],
+    #     "Domain": [{
+    #       "task": "enumerate_nameservers",
+    #       "options": []
+    #     }
+    #   ...
+    # 
+    def to_h
+      @hash
+    end
     
     ###
     ### Returns a calculated value based on all tasks
@@ -84,7 +106,7 @@ module Intrigue
 
           task_name = t["task"]
           task_options = t["options"] || []
-          
+
           options = pre_process_options(task_options, entity, task_result)
 
           # add a spurious option for testing 
@@ -147,14 +169,12 @@ end
 module Intrigue
   class WorkflowFactory
 
-    $intrigue_core_workflow_directory =  "#{$intrigue_basedir}/data/workflows"
-
     # Provide the full list of workflows
     def self.workflow_definitions(check_user_definitions=true, load_paths=[])
       out = []
 
-      # add default paths 
-      load_paths << $intrigue_core_workflow_directory
+      # add default paths (accounting for private if it exists)
+      load_paths << "#{File.dirname(__FILE__)}/workflows"
       load_paths << $intrigue_core_private_workflow_directory if $intrigue_core_private_workflow_directory
 
       # Load default templates
@@ -164,9 +184,17 @@ module Intrigue
           out << template.symbolize_keys
         end
       end
-      
-      # pull user workflows 
-      if check_user_definitions
+
+      #
+      # pull user workflows (requires core)
+      #
+      begin
+        mod = Required::Module::const_get "Intrigue::Core::Model"
+      rescue NameError
+        #Doesn't exist
+      end
+
+      if mod
         out.concat(Intrigue::Core::Model::Workflow.all.map{|x| x.to_h })
       end
     
@@ -180,40 +208,9 @@ module Intrigue
     end
 
     def self.user_selectable_workflows
-      wf = workflow_definitions.select{|x| x[:user_selectable] }.map{|wf| Intrigue::Workflow.new(wf) }
+      wf = workflow_definitions.select{|x| 
+        x[:user_selectable] }.map{|wf| Intrigue::Workflow.new(wf) }
     end
-
-=begin
-
-  TODO... 
-   - change flow -> type
-   - change recurse -> definition
-   - remove passive (should be calculated)
-
-	"name": "intrigueio_precollection",
-	"pretty_name": "Intrigue.io Pre-Collection",
-	"passive": true,
-	"user_selectable": false,
-	"authors": ["jcran"],
-	"description": "This workflow performs a VERY light passive enumeration for organizations. Start with a Domain or NetBlock.",
-  "flow" : "recursive",
-  "depth": 4,
-	"definition": {
-		"AwsS3Bucket": [],
-		"Domain": [{
-				"task": "enumerate_nameservers",
-				"options": []
-			},
-=end
-
-=begin
-    extend Intrigue::Core::System::Helpers
-    extend Intrigue::Task::Data
-
-    
-=end
-
-
 
   end
 end

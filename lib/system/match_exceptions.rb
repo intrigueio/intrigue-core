@@ -3,8 +3,6 @@ module Core
 module System
   module MatchExceptions
 
-    include Intrigue::Core::System::DnsHelpers
-
     def standard_name_exceptions
       File.open("#{$intrigue_basedir}/data/standard_name_exceptions.list").readlines.map{|x| eval(x.strip) if x }
     end
@@ -40,6 +38,9 @@ module System
     # RETURNS A STRING (THE EXCEPTION) OR FALSE
     #
     def standard_no_traverse?(entity_name, type_string="Domain", skip_exceptions=[])
+
+      include Intrigue::Core::System::DnsHelpers
+
       out = false
 
       if type_string == "IpAddress"

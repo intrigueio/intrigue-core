@@ -1,5 +1,5 @@
 ---
-depth: 1
+depth: 3
 name: threat_investigation_passive
 pretty_name: Threat Investigation Passive
 user_selectable: true
