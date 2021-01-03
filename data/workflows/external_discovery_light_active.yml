@@ -1,0 +1,70 @@
+---
+depth: 5
+name: external_discovery_light_active
+pretty_name: Light External Active Organizational Attack Surface Enumeration
+user_selectable: false
+maintainer: jcran
+flow: recursive
+description: Performs a light active enumeration for organizations. Start with
+  a Domain or NetBlock.
+definition:
+  AwsS3Bucket: []
+  Domain:
+  - task: enumerate_nameservers
+    options: []
+  - task: dns_transfer_zone
+    options: []
+    auto_scope: true
+  - task: dns_lookup_dkim
+    options:
+    - create_domain: true
+  - task: search_crt
+    options: []
+    auto_scope: true
+  - task: search_certspotter
+    options: []
+    auto_scope: true
+    auto_scope: true
+  - task: dns_search_sonar
+    options: []
+    auto_scope: true
+  - task: search_threatcrowd
+    options: []
+  - task: dns_recurse_spf
+    options: []
+  - task: dns_morph
+    options: []
+  - task: dns_brute_sub
+    options: []
+    auto_scope: true
+  - task: search_sublister
+    options: []
+  DnsRecord: []
+  EmailAddress: []
+  GithubAccount: []
+  IpAddress:
+  - task: naabu_scan
+    options: []
+  Nameserver: []
+  NetBlock:
+  - task: masscan_scan
+    options: []
+  NetworkService: []
+  Organization:
+  - task: whois_lookup
+    options: []
+  - task: search_bgp
+    options: []
+  - task: saas_jira_check
+    options: []
+  - task: web_account_check
+    options: []
+  Uri:
+  - task: uri_check_api_endpoint
+    options: []
+  - task: uri_extract_linked_hosts
+    options: []
+  - task: uri_gather_ssl_certificate
+    options: []
+  - task: uri_check_subdomain_hijack
+    options: []

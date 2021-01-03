@@ -187,7 +187,7 @@ class BaseTask
 
             workflow_name = @task_result.scan_result.workflow
             @task_result.log "Launching workflow #{workflow_name} on #{@entity.name}"
-            workflow = Intrigue::Core::Model::Workflow.first(name: workflow_name)
+            workflow = Intrigue::WorkflowFactory.create_workflow_by_name(workflow_name)
 
             unless workflow
               raise "Unable to continue, missing workflow: #{workflow_name}!!!"

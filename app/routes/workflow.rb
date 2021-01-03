@@ -3,7 +3,7 @@ class CoreApp < Sinatra::Base
   post '/:project_name/workflow/?' do
 
     # then set up the initial task results 
-    workflow = "#{@params["workflow"]}"
+    workflow_name = "#{@params["workflow"]}"
 
     ###
     ### Standard file type (entity list)
@@ -13,7 +13,7 @@ class CoreApp < Sinatra::Base
     end
 
     ### Workflow definition, make sure we have a valid type
-    if wf = Intrigue::Core::Model::Workflow.first(:name => "#{workflow}")
+    if wf = Intrigue::WorkflowFactory.create_workflow_by_name(workflow_name)
       workflow_name = wf.name
       workflow_depth = wf.depth
     else
