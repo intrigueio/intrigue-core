@@ -5,13 +5,13 @@
   <form class="form-horizontal" id="result_search" target="_self" method="get" action="/<%=h @project_name%>/results">
 
     Search:
-    <input type="text" style='width:100%' class="form-control sm" id="search_string" name="search_string">
-    <input id="inverse" name="inverse" type="checkbox"> Inverse <br/>
+    <input type="text" style='width:100%' class="form-control sm" id="search_string" name="search_string" value='<%= @search_string ? @search_string : nil %>'>
+    <input id="inverse" name="inverse" type="checkbox" <%= @inverse ? 'checked' : nil%>> Inverse <br/>
     <br/><br/>
-    <input id="hide_cancelled" name="hide_cancelled" type="checkbox"> Hide Cancelled <br/>
-    <input id="hide_enrichment" name="hide_enrichment" type="checkbox"> Hide Enrichment <br/>
-    <input id="hide_autoscheduled" name="hide_autoscheduled" type="checkbox"> Hide Autoscheduled <br/>
-    <input id="only_complete" name="only_complete" type="checkbox"> Only Complete <br/>
+    <input id="hide_cancelled" name="hide_cancelled" type="checkbox" <%= @hide_cancelled ? 'checked' : nil%>> Hide Cancelled <br/>
+    <input id="hide_enrichment" name="hide_enrichment" type="checkbox" <%= @hide_enrichment ? 'checked' : nil%>> Hide Enrichment <br/>
+    <input id="hide_autoscheduled" name="hide_autoscheduled" type="checkbox" <%= @hide_autoscheduled ? 'checked' : nil%>> Hide Autoscheduled <br/>
+    <input id="only_complete" name="only_complete" type="checkbox" <%= @only_complete ? 'checked' : nil%>> Only Complete <br/>
     <input class="btn btn-primary" type="submit" value="Search">
   </form>
   <br>
@@ -38,6 +38,7 @@
         <th>Complete</th>
       </tr>
     </thead>
+
     <tbody>
         <% @results.each do |x| %>
         <tr class='transparent-table'>
@@ -68,6 +69,7 @@
         </tr>
         <% end %>
     </tbody>
+    
   </table>
   <b><%= "Page: #{@page} / Viewing Results: #{@result_count * (@page-1)} .. #{@result_count * @page-1}" %></b>
 </div>
