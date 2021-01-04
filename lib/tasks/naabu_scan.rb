@@ -26,7 +26,7 @@ module Intrigue
 
       command = "naabu -host #{ip_address} -ports #{scannable_tcp_ports.join(",")} -silent -json"
       _log "Running: #{command}"
-      out = _unsafe_system_timed(command,120)
+      out = _unsafe_system(command,120)
       
       # handle the no-result case
       unless out 

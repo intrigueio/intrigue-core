@@ -78,8 +78,9 @@ elif [ "$cmd" == "setup" ]; then
     echo "[+] Initializing intrigue..."
     Setup
 elif [ "$cmd" == "update" ]; then
-    echo "[+] Updating intrigue with latest changes from https://github.com/intrigueio/intrigue-core..."
+    echo "[+] Updating intrigue..."
     cd ~/core
+    echo "[+] Pulling https://github.com/intrigueio/intrigue-core"
     git pull > /dev/null 2>&1
     bundle install > /dev/null 2>&1
     echo "[+] Update complete! Please restart intrigue for changes to take effect."
