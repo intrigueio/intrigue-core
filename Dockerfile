@@ -79,8 +79,8 @@ RUN printf "#!/bin/bash \
 \n # Remove instructions because we're in Docker\
 \n sed -i \"s/boxes -a c .*//\" ~/.bash_profile \
 \n # setup and start commands \
-\n /home/ubuntu/core/util/intriguectl.sh setup \
-\n /home/ubuntu/core/util/intriguectl.sh start \
+\n /home/ubuntu/core/util/intriguectl setup \
+\n /home/ubuntu/core/util/intriguectl start \
 \n tail -f /home/ubuntu/core/log/worker.log" >> docker-entrypoint.sh
 
 RUN chmod +x docker-entrypoint.sh
