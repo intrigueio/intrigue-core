@@ -49,7 +49,7 @@ if [ ! -f retirejs.json ]; then
 fi
 
 # NVD feeds
-NVD_YEARS="2019 2018 2017"
+NVD_YEARS="2021 2020 2019 2018 2017"
 
 # nvd download function
 function get_nvd_json() {
