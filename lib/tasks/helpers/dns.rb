@@ -192,7 +192,7 @@ module Dns
 
               # Try without our async resolver 
               _log "Trying to resolve w/o async on #{lookup_name}"
-              resolver = Resolv::DNS.open(configß.except(:nameserver_port))
+              resolver = Resolv::DNS.open(config.except(:nameserver_port))
               resolver.timeouts = 3
               response = resolver.getresources(lookup_name, t)
               resources.concat(response) 
