@@ -354,8 +354,8 @@ class BaseTask
 
             # Hurray, we can accept this value
             @user_options << { allowed_option[:name] => user_option["value"] }
-          else 
-            _log_error "Unused option provided: #{user_option}"
+          #else 
+          #  _log_error "Unused option provided: #{user_option}"
           end
 
         end
