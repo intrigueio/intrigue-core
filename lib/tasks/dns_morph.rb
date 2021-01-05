@@ -35,8 +35,9 @@ class DnsMorph < BaseTask
     # parse output
     begin
       output = JSON.parse(json_output)
-      
-      _log_good "Created #{output["results"].count} permutations!"
+      return unless output && output["results"]
+
+      _log_good "Got #{output["results"].count} permutations!"
 
       # select only those that resovled
       resolved_domains = output["results"].select{|x| x["a_record"] != "" }
@@ -62,7 +63,7 @@ class DnsMorph < BaseTask
       x
       end
 
-      _log_good "resolved #{resolved_domains.count} domains!"
+      _log_good "resolved #{resolved_domains.count} domains!" if resolved_domains
 
     rescue JSON::ParserError => e
       _log_error "Unable to parse!"
