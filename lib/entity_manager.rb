@@ -201,21 +201,21 @@ class EntityManager
       ### Ensure we have an entity
       unless entity
         tr.log_error "Unable to create or find entity: #{type}##{downcased_name}, failing!!"
-        return nil
+        raise InvalidEntityError.new("Invalid entity, unable to find: #{entity}")
       end
 
       ### Run transformation (to hide attributes... HACK)
       unless entity.transform!
         tr.log_error "Transformation of entity failed: #{entity}, rolling back entity creation!!"
         entity.delete
-        raise InvalidEntityError.new("Invalid entity: #{entity}")
+        raise InvalidEntityError.new("Invalid entity, unable to transform: #{entity}")
       end
 
       ### Run Validation
       unless entity.validate_entity
         tr.log_error "Validation of entity failed: #{entity}, rolling back entity creation!!"
         entity.delete
-        raise InvalidEntityError.new("Invalid entity: #{entity}")
+        raise InvalidEntityError.new("Invalid entity, unable to validate: #{entity}")
       end
 
       # Add to our result set for this task
