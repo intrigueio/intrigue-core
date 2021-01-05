@@ -3,8 +3,8 @@ module Task
 class BaseTask
 
   # include default helpers
+  include Intrigue::Task::Popen
   include Intrigue::Task::Generic
-  
   include Intrigue::Task::BinaryEdge
   include Intrigue::Task::Browser
   include Intrigue::Task::CloudProviders
