@@ -4,6 +4,7 @@ module Generic
 
    def self.included(base)
      include Intrigue::Task::Web
+     include Intrigue::Task::Popen
    end
 
    def require_enrichment
@@ -98,10 +99,6 @@ module Generic
   # default working directory is /tmp
   #  !!!! Don't send anything to this without first whitelisting user input!!!
   def _unsafe_system(command, timeout = 600, workingdir = "/tmp")
-    
-    # only we should use this 
-    include Intrigue::Task::Popen
-
     stdout, stderr, exit_status = popen_with_timeout([command])
 
   # return only the stuff we care about 
