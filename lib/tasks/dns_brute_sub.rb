@@ -67,7 +67,8 @@ class DnsBruteSub < BaseTask
 
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)
-    unless gather_wildcard_resolutions(suffix).empty?
+    wildcard_ips = gather_wildcard_resolutions(suffix).map{|x| x["name"]}
+    unless wildcard_ips.empty?
       _log_error "Unable to continue, this is a wildcard"
       _set_entity_detail "wildcard_brute_error", true
       return
@@ -185,7 +186,7 @@ class DnsBruteSub < BaseTask
     _log "Checking invalid permutation: #{invalid_name}"
 
     if invalid_address == original_address
-      _log_error "Looks like we found a pattern matching DNS server, lets skip this: #{subdomain}.#{suffix}"
+      _log_error "Looks like we found a pattern matching DNS server, lets skip permutations on: #{subdomain}.#{suffix}"
       return
     else
       _log_good "Looks like we are not pattern matching, continuing on with permutation checking!"
