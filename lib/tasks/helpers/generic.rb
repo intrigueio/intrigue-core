@@ -98,21 +98,35 @@ module Generic
   # default working directory is /tmp
   #  !!!! Don't send anything to this without first whitelisting user input!!!
   def _unsafe_system(command, timeout = 300, workingdir = "/tmp", tick=1)
-    output = ''
+    
+    command_stdout = nil
+    command_stderr = nil
+
     Dir.chdir workingdir do
       begin
+
         # Start task in another thread, which spawns a process
-        stdin, stderrout, thread = Open3.popen2e(ENV, command)
+        process = ::Open3.popen3(ENV, command + ';') do |stdin, stdout, stderr, thread|
+          stdin.close
+          stdout_buffer   = stdout.read
+          stderr_buffer   = stderr.read
+          command_stdout  = stdout_buffer if stdout_buffer.length > 0
+          command_stderr  = stderr_buffer if stderr_buffer.length > 0
+          stdout.close
+          stderr.close
+          thread.value # Wait for Process::Status object to be returned
+        end
+
         # Get the pid of the spawned process
-        pid = thread[:pid]
+        pid = process.pid
         start = Time.now
 
-        while (Time.now - start) < timeout and thread.alive?
+        while (Time.now - start) < timeout and !process.exited?
           # Wait up to `tick` seconds for output/error data
           Kernel.select([stderrout], nil, nil, tick)
           # Try to read the data
           begin
-            output << stderrout.read_nonblock(4096)
+            sleep 1
           rescue IO::WaitReadable
             # A read would block, so loop around for another select
           rescue EOFError
@@ -120,21 +134,22 @@ module Generic
             break
           end
         end
+
         # Give Ruby time to clean up the other thread
         sleep 1
 
-        if thread.alive?
+        unless process.exited?
           # We need to kill the process, because killing the thread leaves
           # the process alive but detached, annoyingly enough.
           puts "Timeout exceeded! Killing thread..."
           Process.kill("TERM", pid)
         end
-      ensure
-        stdin.close if stdin
-        stderrout.close if stderrout
+
       end
+      
     end
-    return output
+
+  command_stdout
   end
   ###
   ### Helpers for handling encoding
