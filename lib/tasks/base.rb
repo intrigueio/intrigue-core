@@ -148,7 +148,11 @@ class BaseTask
             ###
             ## RUN IT - THE TASK'S MAGIC HAPPENS HRE
             ###
-            run # Run the task, which will update @task_result
+            begin 
+              run # Run the task, which will update @task_result
+            rescue MissingApiKeyError => e 
+              _log_error "Missing API Key, please check configuration for this task"
+            end
 
             end_time = Time.now.getutc
             _log "Task run finished at #{end_time}!"

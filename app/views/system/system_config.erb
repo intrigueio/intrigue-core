@@ -1,8 +1,14 @@
 <h4> System Configuration </h4>
 <form action="/system/config" method="post">
-  Username: <input class="form-control" style="width:150px" type="text" name="username" value="<%=h @global_config.config["credentials"]["username"]%>">
-  Password: <input class="form-control" style="width:150px" type="password" name="password" value="<%="**********"%>">
+  Username: <input class="form-control" style="width:300px" type="text" name="username" value="<%=h @global_config.config["credentials"]["username"]%>">
+  Password: <input class="form-control" style="width:300px" type="password" name="password" value="<%="**********"%>">
   
   <input class="btn btn-primary" type="submit">
 </form>
+<br>
 <hr>
+<br>
+<h4> System Management </h4>
+<form action="/system/sidekiq/clear" method="get">
+  <input class="btn btn-primary" type="submit" value="Clear Sidekiq Queue">
+</form>

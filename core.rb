@@ -26,6 +26,7 @@ Encoding.default_internal="UTF-8"
 
 # System-level Monkey patches
 require_relative 'lib/initialize/array'
+require_relative 'lib/initialize/exceptions'
 require_relative 'lib/initialize/hash'
 require_relative 'lib/initialize/json_export_file'
 require_relative 'lib/initialize/queue'

@@ -27,6 +27,14 @@ class CoreApp < Sinatra::Base
       redirect "/#{@project_name}"  # handy if we're in a browser
     end
 
+
+    # get config
+    get '/system/sidekiq/clear/?' do
+      out = `redis-cli flushall`
+      session[:flash] = "Sidekiq cache cleared: #{out}!"
+      redirect "/system/config"
+    end
+
     # get config
     get '/system/config/?' do
       @global_config = Intrigue::Core::System::Config
@@ -117,7 +125,6 @@ class CoreApp < Sinatra::Base
   content_type "application/json"
   output.to_json
   end
-
 
 
 end
