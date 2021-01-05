@@ -150,8 +150,8 @@ class BaseTask
             ###
             begin 
               run # Run the task, which will update @task_result
-            rescue MissingApiKeyError => e 
-              _log_error "Missing API Key, please check configuration for this task"
+            rescue MissingTaskConfigurationError => e 
+              _log_error "Missing task configuration, please check configuration for this task: #{e}"
             end
 
             end_time = Time.now.getutc

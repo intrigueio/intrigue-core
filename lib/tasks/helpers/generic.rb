@@ -217,12 +217,10 @@ module Generic
     begin
       
       #Intrigue::Core::System::Config.load_config
-      error_message = "Error, invalid task config key requested. Please configure #{key} in the Configure -> Task Configuration"
+      error_message = "Please enter your #{key} setting in 'Configure -> Task Configuration'"
       config = Intrigue::Core::System::Config.config["intrigue_global_module_config"]
       value = config[key]["value"]
-      
-      require 'pry'; binding.pry 
-
+    
       unless value && value != ""
         raise MissingTaskConfigurationError.new error_message
       end
