@@ -97,62 +97,15 @@ module Generic
   # by default, timesout after 5 minutes (300 seconds)
   # default working directory is /tmp
   #  !!!! Don't send anything to this without first whitelisting user input!!!
-  def _unsafe_system(command, timeout = 300, workingdir = "/tmp", tick=1)
+  def _unsafe_system(command, timeout = 600, workingdir = "/tmp")
     
-    command_stdout = nil
-    command_stderr = nil
+    # only we should use this 
+    include Intrigue::Task::Popen
 
-    Dir.chdir workingdir do
-      begin
+    stdout, stderr, exit_status = popen_with_timeout([command])
 
-        # Start task in another thread, which spawns a process
-        process = ::Open3.popen3(ENV, command + ';') do |stdin, stdout, stderr, thread|
-          stdin.close
-          stdout_buffer   = stdout.read
-          stderr_buffer   = stderr.read
-          command_stdout  = stdout_buffer if stdout_buffer.length > 0
-          command_stderr  = stderr_buffer if stderr_buffer.length > 0
-          stdout.close
-          stderr.close
-          thread.value # Wait for Process::Status object to be returned
-        end
-
-        # Get the pid of the spawned process
-        pid = process.pid
-        start = Time.now
-
-        sleep 2  # give it time to open the stream
-        if command_stdout # if we're still poteniall getting output
-          while (Time.now - start) < timeout and !process.exited?
-            # Wait up to `tick` seconds for output/error data
-            Kernel.select([command_stdout], nil, nil, tick) 
-            # Try to read the data
-            begin
-              sleep 1
-            rescue IO::WaitReadable
-              # A read would block, so loop around for another select
-            rescue EOFError
-              # Command has completed, not really an error...
-              break
-            end
-          end
-        end
-
-        # Give Ruby time to clean up the other thread
-        sleep 1
-
-        unless process.exited?
-          # We need to kill the process, because killing the thread leaves
-          # the process alive but detached, annoyingly enough.
-          puts "Timeout exceeded! Killing thread..."
-          Process.kill("TERM", pid)
-        end
-
-      end
-      
-    end
-
-  command_stdout
+  # return only the stuff we care about 
+  stdout
   end
   ###
   ### Helpers for handling encoding

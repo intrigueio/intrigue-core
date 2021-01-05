@@ -12,7 +12,7 @@ class InvalidTaskConfigurationError < StandardError
 end
 
 class InvalidEntityError < StandardError
-  def initialize(msg="Invalid dntity attempted")
+  def initialize(msg="Invalid entity attempted")
     super
   end
 end
