@@ -159,20 +159,20 @@ class Uri < Intrigue::Task::BaseTask
 
         if set_cookie
 
-          if set_cookie.map{|x| x.split(";").detect{|x| x.match(/Domain=".#{parse_domain_name(uri)}"/i)}}
+          # wide scoped cookie 
+          if set_cookie.map{|x| x.split(";").find{ |x| 
+                    x =~ /Domain=".#{parse_domain_name(uri)};"/i }}
             _create_wide_scoped_cookie_issue(uri, set_cookie)
           end
 
           # create an issue if not detected
-          if set_cookie.map{|x| x.split(";").detect{|x| x.match(/httponly/i) }}.compact.empty?
+          unless set_cookie.map{|x| x.split(";").find{|x| x =~ /httponly/i }}
             # 4 since we only create an issue if it's an auth endpoint
-            severity = 4
             _create_missing_cookie_attribute_http_only_issue(uri, set_cookie)
           end
 
-          if set_cookie.map{|x| x.split(";").detect{|x| x.match(/secure/i) }}.compact.empty?
+          unless set_cookie.map{|x| x.split(";").detect{|x| x =~ /secure/i }}
             # set a default,4 since we only create an issue if it's an auth endpoint
-            severity = 4
             _create_missing_cookie_attribute_secure_issue(uri, set_cookie)
           end
 

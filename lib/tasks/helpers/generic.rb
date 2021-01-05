@@ -121,17 +121,20 @@ module Generic
         pid = process.pid
         start = Time.now
 
-        while (Time.now - start) < timeout and !process.exited?
-          # Wait up to `tick` seconds for output/error data
-          Kernel.select([command_stdout], nil, nil, tick)
-          # Try to read the data
-          begin
-            sleep 1
-          rescue IO::WaitReadable
-            # A read would block, so loop around for another select
-          rescue EOFError
-            # Command has completed, not really an error...
-            break
+        sleep 2  # give it time to open the stream
+        if command_stdout # if we're still poteniall getting output
+          while (Time.now - start) < timeout and !process.exited?
+            # Wait up to `tick` seconds for output/error data
+            Kernel.select([command_stdout], nil, nil, tick) 
+            # Try to read the data
+            begin
+              sleep 1
+            rescue IO::WaitReadable
+              # A read would block, so loop around for another select
+            rescue EOFError
+              # Command has completed, not really an error...
+              break
+            end
           end
         end
 
