@@ -102,17 +102,17 @@ module Generic
     Dir.chdir workingdir do
       begin
         # Start task in another thread, which spawns a process
-        stdin, stderrout, thread = Open3.popen2e(ENV, command)
+        stdin, stdout, stderr, thread = Open3.popen3(ENV, command)
         # Get the pid of the spawned process
         pid = thread[:pid]
         start = Time.now
 
         while (Time.now - start) < timeout and thread.alive?
           # Wait up to `tick` seconds for output/error data
-          Kernel.select([stderrout], nil, nil, tick)
+          Kernel.select([stdout], nil, nil, tick)
           # Try to read the data
           begin
-            output << stderrout.read_nonblock(4096)
+            output << stdout.read_nonblock(4096)
           rescue IO::WaitReadable
             # A read would block, so loop around for another select
           rescue EOFError
@@ -131,7 +131,8 @@ module Generic
         end
       ensure
         stdin.close if stdin
-        stderrout.close if stderrout
+        stdout.close if stdout
+        stderr.close if stderr
       end
     end
     return output

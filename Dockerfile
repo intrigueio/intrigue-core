@@ -78,7 +78,7 @@ RUN printf "#!/bin/bash \
 \n # \
 \n # Remove instructions because we're in Docker\
 \n sed -i \"s/boxes -a c .*//\" ~/.bash_profile \
-\n sed -i \"s/Browse to https:\/\/\\$ip:7777/Browse to https:\/\/localhost:7777/\" /home/ubuntu/core/util/intriguectl \
+\n sed -i \"s/Browse to https:\/\/.ip:7777/Browse to https:\/\/localhost:7777/\" /home/ubuntu/core/util/intriguectl \
 \n sed -i \"s/To start intrigue, run 'intriguectl start'//\" /home/ubuntu/core/util/intriguectl \
 \n source ~/.bash_profile \
 \n # setup and start commands \
