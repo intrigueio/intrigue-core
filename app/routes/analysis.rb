@@ -75,7 +75,8 @@ class CoreApp < Sinatra::Base
   # Main graph
   get '/:project/analysis/graph/?' do
     @json_uri = "#{request.url}.json"
-    @graph_generated_at = Intrigue::Core::Model::Project.first(:name => @project_name).graph_generated_at
+     @project = Intrigue::Core::Model::Project.first(:name => @project_name)
+     @graph_generated_at = @project.graph_generated_at
     erb :'analysis/graph'
   end
 

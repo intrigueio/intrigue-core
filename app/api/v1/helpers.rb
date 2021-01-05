@@ -36,9 +36,9 @@ class CoreApp < Sinatra::Base
   out
   end
 
-  def wrap_core_api_response(message,result=nil)
+  def wrapped_api_response(message,result=nil)
     {
-      success: !result.nil?,
+      success: !message.nil?,
       message: message,
       result: result
     }.to_json

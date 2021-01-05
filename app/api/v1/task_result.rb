@@ -37,7 +37,7 @@ class CoreApp < Sinatra::Base
     
     # fail unless we have these 
     unless project_name && task_name && entity_type_string && entity_name
-      return wrap_core_api_response "Unable to create task result, missing required parameter"
+      return wrapped_api_response "Unable to create task result, missing required parameter"
     end
 
     # optional / defaulted parameters
@@ -56,19 +56,19 @@ class CoreApp < Sinatra::Base
     # determine our type from the type string
     project_object = Intrigue::Core::Model::Project.first :name => project_name
     unless project_object
-      return wrap_core_api_response "Invalid project"
+      return wrapped_api_response "Invalid project"
     end      
 
     # determine our type from the type string
     resolved_type = Intrigue::EntityManager.resolve_type_from_string entity_type_string
     unless resolved_type
-      return wrap_core_api_response "Invalid type"
+      return wrapped_api_response "Invalid type"
     end      
 
     # create the entity
     entity_object = Intrigue::EntityManager.create_first_entity(project_name, entity_type_string, entity_name, entity_details)
     unless entity_object
-      return wrap_core_api_response "Unable to create entity"
+      return wrapped_api_response "Unable to create entity"
     end      
 
     # Start the task_run
@@ -82,7 +82,7 @@ class CoreApp < Sinatra::Base
     end
 
     # woo success
-    wrap_core_api_response "Task result created!", { task_result_id: task_result.id } 
+    wrapped_api_response nil, { task_result_id: task_result.id } 
   end
 
   ###

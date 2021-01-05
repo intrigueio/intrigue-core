@@ -1,23 +1,34 @@
 class CoreApp < Sinatra::Base
 
-  def wrapped_api_response(error, result=nil)
-    success = error.nil?
-  {success: success, error: error, result: result}.to_json
-  end
+  # System status
+  get "/api/v1/health/?" do
 
-  # Export All Entity Types
-  get "/api/v1/health" do
     content_type 'application/json'
     
     halt_unless_authenticated!
 
-    out = {}
-    out[:memory] = `free -h`
-    out[:processes] = `god status`
-    out[:disk] = `df -h`
+    sidekiq_stats = Sidekiq::Stats.new
+    project_listing = Intrigue::Core::Model::Project.all.map { |p|
+        { :name => "#{p.name}", :entities => "#{p.entities.count}" } }
 
-  wrapped_api_response(nil, out)
+    output = {
+      :version => IntrigueApp.version,
+      :projects => project_listing,
+      :tasks => {
+        :processed => sidekiq_stats.processed,
+        :failed => sidekiq_stats.failed,
+        :queued => sidekiq_stats.queues
+      }
+    }
+
+    output[:memory] = `free -h`
+    output[:processes] = `god status`
+    output[:disk] = `df -h`
+
+
+  wrapped_api_response(nil, output)
   end
+
 
   # Export All Entity Types
   get "/api/v1/entities" do
