@@ -123,7 +123,7 @@ module Generic
 
         while (Time.now - start) < timeout and !process.exited?
           # Wait up to `tick` seconds for output/error data
-          Kernel.select([stderrout], nil, nil, tick)
+          Kernel.select([command_stdout], nil, nil, tick)
           # Try to read the data
           begin
             sleep 1
