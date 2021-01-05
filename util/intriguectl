@@ -10,6 +10,7 @@ Help()
     echo "setup   initialize intrigue services."
     echo "start   start intrigue services"
     echo "stop    stop intrigue services"
+    echo "update  update intrigue to the latest changes on default branch"
     echo
     echo "To set your basic auth password, export variable INTRIGUE_PASS and (re)run setup"
     echo
@@ -76,6 +77,13 @@ elif [ "$cmd" == "stop" ]; then
 elif [ "$cmd" == "setup" ]; then
     echo "[+] Initializing intrigue..."
     Setup
+elif [ "$cmd" == "update" ]; then
+    echo "[+] Updating intrigue..."
+    cd ~/core
+    echo "[+] Pulling https://github.com/intrigueio/intrigue-core"
+    git pull > /dev/null 2>&1
+    bundle install > /dev/null 2>&1
+    echo "[+] Update complete! Please restart intrigue for changes to take effect."
 else
     echo "Unknown command."
     Help

@@ -32,7 +32,7 @@ class Gitrob < BaseTask
     command_string = "gitrob -github-access-token #{token} -save #{temp_file} -exit-on-finish -no-expand-orgs -commit-depth 20 --threads 20 -in-mem-clone #{github_account}"
     # gitrob tends to hang so we set a timeout of 5 minutes (300 seconds)
     # the gitrob fork we use requires two files in the current working directory, hence setting working dir to ~/bin/data/gitrob
-    _unsafe_system_timed command_string, 300, "#{Dir.home}/bin/data/gitrob"
+    _unsafe_system command_string, 300, "#{Dir.home}/bin/data/gitrob"
     _log "Gitrob finished on #{github_account}!"
 
     # parse output

@@ -94,20 +94,15 @@ module Generic
   end
 
   # Convenience Method to execute a system command semi-safely
+  # by default, timesout after 5 minutes (300 seconds)
+  # default working directory is /tmp
   #  !!!! Don't send anything to this without first whitelisting user input!!!
-  def _unsafe_system(command)
-    Dir.chdir Dir::tmpdir do
-      ShellCommand::execute(command).stdout
-    end
-  end
-
-
-  def _unsafe_system_timed(command, timeout, workingdir = "/tmp", tick=1)
+  def _unsafe_system(command, timeout = 300, workingdir = "/tmp", tick=1)
     output = ''
     Dir.chdir workingdir do
       begin
         # Start task in another thread, which spawns a process
-        stdin, stderrout, thread = Open3.popen2e(command)
+        stdin, stderrout, thread = Open3.popen2e(ENV, command)
         # Get the pid of the spawned process
         pid = thread[:pid]
         start = Time.now
@@ -131,6 +126,7 @@ module Generic
         if thread.alive?
           # We need to kill the process, because killing the thread leaves
           # the process alive but detached, annoyingly enough.
+          puts "Timeout exceeded! Killing thread..."
           Process.kill("TERM", pid)
         end
       ensure
