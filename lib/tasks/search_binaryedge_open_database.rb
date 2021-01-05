@@ -1,18 +1,20 @@
 module Intrigue
 module Task
-class SearchOpenDataBase < BaseTask
+class SearchBinaryEdgeOpenDataBase < BaseTask
 
   def self.metadata
     {
-      :name => "search_opendatabase",
-      :pretty_name => "Search OpenDatabase",
+      :name => "search_binaryedge_open_database",
+      :pretty_name => "Search BinaryEdge OpenDatabase",
       :authors => ["Anas Ben Salah"],
-      :description => "This task hits the BinaryEdge for open databases",
+      :description => "This task hits the BinaryEdge API, looking for for open databases and creating the entities",
       :references => [],
       :type => "discovery",
       :passive => true,
       :allowed_types => ["String"],
-      :example_entities => [],
+      :example_entities => [
+        {"type" => "String", "details" => {"name" => "unused option"}}
+      ],
       :allowed_options => [
         {:name => "elastic", :regex => "boolean", :default => true },
         {:name => "mongodb",:regex => "boolean", :default => false },
@@ -50,11 +52,10 @@ class SearchOpenDataBase < BaseTask
     opt_rethink = _get_option("rethink")
 
     # Set the range of research
-    first_page = _get_option("first_page")
-    last_page = _get_option("last_page")
+    first_page = _get_option("first_page") || 1
+    last_page = _get_option("last_page") || 20
 
     range = first_page..last_page
-
 
     elastic_query = "type:%22elasticsearch%22"
     mongodb_query = "type:%22mongodb%22"
@@ -68,8 +69,6 @@ class SearchOpenDataBase < BaseTask
     cassandra_query = "type:%22cassandra%22"
     rethink_query = "type:%22rethinkdb%22"
 
-
-
     entity_name = _get_entity_name
     entity_type = _get_entity_type_string
 
@@ -77,61 +76,62 @@ class SearchOpenDataBase < BaseTask
 
     # Make sure the key is set
     api_key = _get_task_config("binary_edge_api_key")
+    
     # Set the headers
     headers = { "X-Key" =>  "#{api_key}" }
 
     if opt_elastic == true
       query = elastic_query
 	    range.each do |page_num|
-   	    result = binaryedge_query(query,headers,entity_name,page_num)
-        check_elastic(result)
+   	    result = search_binaryedge_string_query(query,headers,entity_name,page_num)
+        check_elastic_results(result)
       end
     end
 
     if opt_kibana == true
       query = kibana_query
 	    range.each do |page_num|
-   	    result = binaryedge_query(query,headers,entity_name,page_num)
-        check_kibana(result)
+   	    result = search_binaryedge_string_query(query,headers,entity_name,page_num)
+        check_kibana_results(result)
       end
     end
 
     if opt_rsync == true
       query = rsync_query
       range.each do |page_num|
-        result = binaryedge_query(query,headers,entity_name,page_num)
-        check_rsync(result)
+        result = search_binaryedge_string_query(query,headers,entity_name,page_num)
+        check_rsync_results(result)
       end
     end
 
     if opt_jenkins == true
       query = jenkins_query
       range.each do |page_num|
-        result = binaryedge_query(query,headers,entity_name,page_num)
-        check_jenkins(result)
+        result = search_binaryedge_string_query(query,headers,entity_name,page_num)
+        check_jenkins_results(result)
       end
     end
 
     if opt_gitlab == true
       query = gitlab_query
       range.each do |page_num|
-        result = binaryedge_query(query,headers,entity_name,page_num)
-        check_gitlab(result)
+        result = search_binaryedge_string_query(query,headers,entity_name,page_num)
+        check_gitlab_results(result)
       end
     end
 
     if opt_sonarqube == true
       query = sonarqube_query
       range.each do |page_num|
-        result = binaryedge_query(query,headers,entity_name,page_num)
-        check_sonarqube(result)
+        result = search_binaryedge_string_query(query,headers,entity_name,page_num)
+        check_sonarqube_results(result)
       end
     end
 
     if opt_mongodb == true
       query = mongodb_query
       range.each do |page_num|
-        result = binaryedge_query(query,headers,entity_name,page_num)
+        result = search_binaryedge_string_query(query,headers,entity_name,page_num)
         check_mongodb(result)
       end
     end
@@ -139,31 +139,28 @@ class SearchOpenDataBase < BaseTask
     if opt_cassandra == true
       query = cassandra_query
       range.each do |page_num|
-        result = binaryedge_query(query,headers,entity_name,page_num)
-        check_cassandra(result)
+        result = search_binaryedge_string_query(query,headers,entity_name,page_num)
+        check_cassandra_results(result)
       end
     end
 
     if opt_couchdb == true
       query = couchdb_query
       range.each do |page_num|
-        result = binaryedge_query(query,headers,entity_name,page_num)
-        check_couchdb(result)
+        result = search_binaryedge_string_query(query,headers,entity_name,page_num)
+        check_couchdb_results(result)
       end
     end
 
     if opt_rethink == true
       query = rethink_query
       range.each do |page_num|
-        result = binaryedge_query(query,headers,entity_name,page_num)
-        check_rethinkdb(result)
+        result = search_binaryedge_string_query(query,headers,entity_name,page_num)
+        check_rethinkdb_results(result)
       end
     end
 
   end
-
-
-
 
   # end
 end

@@ -149,20 +149,29 @@ class BaseTask
             ## RUN IT - THE TASK'S MAGIC HAPPENS HRE
             ###
             begin 
+
               run # Run the task, which will update @task_result
+
+            ###
+            ## Robust error handling is a must 
+            ###
             rescue MissingTaskConfigurationError => e 
+
               _log_error "Missing task configuration, please check configuration for this task: #{e}"
-            
-              # if configured, notify! 
-              Intrigue::NotifierFactory.default.each { |x| 
+              Intrigue::NotifierFactory.default.each { |x|  # if configured, notify! 
                 x.notify("Missing Task Configuration: #{@entity.type} #{@entity.name}" , @task_result) }
 
+            rescue  InvalidTaskConfigurationError => e 
+  
+              _log_error "Invalid task configuration, please check configuration for this task: #{e}"
+              Intrigue::NotifierFactory.default.each { |x| # if configured, notify! 
+                x.notify("Invalid Task Configuration: #{@entity.type} #{@entity.name}" , @task_result) }
+
             rescue InvalidEntityError => e 
+             
               _log_error "Invalid entity attempted #{e}"
               _log_error "Probably a bug, report at: https://github.com/intrigueio/intrigue-core/issues"
-             
-              # if configured, notify! 
-              Intrigue::NotifierFactory.default.each { |x| 
+              Intrigue::NotifierFactory.default.each { |x| # if configured, notify! 
                 x.notify("Invalid entity attempted: #{@entity.type} #{@entity.name}" , @task_result) }
         
             end
@@ -182,21 +191,21 @@ class BaseTask
       if Intrigue::TaskFactory.create_by_name(@task_result.task_name).class.metadata[:type] == "enrichment"
         
         ### NOW WE CAN SET ENRICHED!
-        @entity.enriched = true 
-  
-        ### NOW WE CAN DECIDE SCOPE BASED ON COMPLETE ENTITY (unless we were already scoped in!)
-        unless @entity.scoped
-          @entity.set_scoped!(@entity.scoped?, "entity_scoping_rules") #always fall back to our entity-specific logic if there was no request
+        @entity.enriched = true   
+        @entity.save_changes 
+
+        ### AND WE CAN DECIDE SCOPE BASED ON COMPLETE ENTITY (unless we were already scoped in!)
+        if check_scope = @entity.scoped?
+          @entity.set_scoped!(check_scope, "entity_scoping_rules") #always fall back to our entity-specific logic if there was no request
           #_log_good "POST-ENRICH AUTOMATED ENTITY SCOPE: #{@entity.scoped}"
         end
-        @entity.save_changes 
         
         ###
         ## NOW, KICK OFF WORKFLOWS for SCOPED ENTiTIES ONLY
         ###
+        if @entity.scoped  
 
-        # technically socped should handle but it doesnt
-        if @entity.enriched && @entity.scoped
+          puts "ENRICHED AND SCOPED, WORKFLOW HAPPENING: #{@entity.name}"
 
           # WORKFLOW LAUNCH (ONLY IF WE ARE ATTACHED TO A WORKFLOW) 
           # if this is part of a scan and we're in depth
