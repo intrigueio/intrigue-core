@@ -99,7 +99,11 @@ class IpAddress < Intrigue::Task::BaseTask
       out = @entity.details
     else # do the lookup
       out = whois(lookup_name)
-      _set_entity_detail "whois_full_text", out.first["whois_full_text"] if out 
+      if out != nil
+        if out.first != nil
+          _set_entity_detail "whois_full_text", out.first["whois_full_text"]  
+        end
+      end
     end
 
     whois_text = _get_entity_detail("whois_full_text")    

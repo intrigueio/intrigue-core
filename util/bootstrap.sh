@@ -11,10 +11,10 @@ export DEBIAN_FRONTEND=noninteractive
 
 # Clean up
 echo "[+] Ensuring Apt is clean"
-sudo apt-get autoremove
+sudo apt-get -y autoremove
 sudo apt-get --purge remove
-sudo apt-get autoclean
-sudo apt-get clean
+sudo apt-get -y autoclean
+sudo apt-get -y clean
 
 echo "[+] Updating Apt"
 sudo apt-get update --fix-missing
@@ -202,8 +202,7 @@ fi
 
 # naabu
 echo "[+] Getting Naabu... "
-GO111MODULE=on go get -v github.com/projectdiscovery/naabu/cmd/naabu
-
+GO111MODULE=on go get -v github.com/projectdiscovery/naabu/v2/cmd/naabu
 # rdpscan
 echo "[+] Installing Rdpscan"
 if [ ! -f /usr/bin/rdpscan ]; then
