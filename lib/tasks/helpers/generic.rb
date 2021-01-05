@@ -99,7 +99,7 @@ module Generic
   # default working directory is /tmp
   #  !!!! Don't send anything to this without first whitelisting user input!!!
   def _unsafe_system(command, timeout = 600, workingdir = "/tmp")
-    stdout, stderr, exit_status = popen_with_timeout([command])
+    stdout, stderr, exit_status = popen_with_timeout([command], timeout, workingdir)
 
   # return only the stuff we care about 
   stdout
