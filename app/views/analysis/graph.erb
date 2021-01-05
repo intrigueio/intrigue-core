@@ -53,7 +53,7 @@ function delete_entity_children(id){
     container: 'graph-container',
     renderer: {
       container: document.getElementById('graph-container'),
-      type: '<%= @project.entities.count > 1000 ? "webgl" : "svg" %>'
+      type: '<%= @project.entities.count > 1000 ? "webgl" : "canvas" %>'
     },
     settings: {
       minNodeSize: 2,
