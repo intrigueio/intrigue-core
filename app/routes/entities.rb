@@ -48,10 +48,11 @@ class CoreApp < Sinatra::Base
     else # normal page
 
      @selected_entities = @selected_entities.paginate(@page, @count).order(:name)
-     alias_group_ids = @selected_entities.select_map(:alias_group_id).uniq
-     @alias_groups = Intrigue::Core::Model::AliasGroup.where({:id => alias_group_ids })
+     
+     alias_group_ids = @selected_entities.select_map(:alias_group_id).uniq    
+     @alias_groups = Intrigue::Core::Model::AliasGroup.where({ id: alias_group_ids })
+     
      erb :'entities/index'
-
     end
 
    end

@@ -56,7 +56,7 @@
   function setDefaultEntity(data) {
     //console.log(data);
     var entity_type = data["example_entities"][0]["type"];
-    var entity_name = data["example_entities"][0]["details"]["name"]
+    var entity_name = data["example_entities"][0]["details"]["name"];
 
     //console.log("DEBUG: Setting name to " + entity_name);
     //console.log("DEBUG: Setting type to " + entity_type);

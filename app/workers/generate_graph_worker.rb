@@ -22,6 +22,7 @@ class GenerateGraphWorker
 
       puts "Done with graph generation for #{project.name}!"
       puts "Length: #{project.graph_json.length}"
+
     ensure
       project.graph_generation_in_progress = false
       project.save
@@ -48,10 +49,17 @@ class GenerateGraphWorker
           :label => "#{b.name}", 
           :type => b.type_string }
 
+
+          scoped = b.scoped
+          has_issue = b.issues.count > 0
+          has_high_sev_issue = b.issues.find{|i| i.severity < 3 }
+
           # set the color
-          x[:color] = "#a9a9a9" unless b.scoped
-          x[:color] = "#e1bb22" if b.issues.count > 0
-          x[:color] = "#e15c22" if b.issues.count > 0 && b.issues.find{|i| i.severity < 4 }
+          x[:color] = "#b7c0c7" unless scoped
+          x[:color] = "#e1bb22" if has_issue
+          x[:color] = "#8a7212" if has_issue && !scoped
+          x[:color] = "#e15c22" if has_high_sev_issue
+          x[:color] = "#752e0f" if has_high_sev_issue && !scoped
           
         nodes << x
       end
@@ -66,10 +74,16 @@ class GenerateGraphWorker
           :label => "#{e.name}", 
           :type => e.type_string } 
 
-        # set the color
-        x[:color] = "#a9a9a9" unless b.scoped
-        x[:color] = "#e1bb22" if b.issues.count > 0
-        x[:color] = "#e15c22" if b.issues.count > 0 && b.issues.find{|i| i.severity < 4 }
+          scoped = e.scoped
+          has_issue = e.issues.count > 0 
+          has_high_sev_issue = e.issues.find{|i| i.severity < 3 }
+
+          # set the color
+          x[:color] = "#b7c0c7" unless scoped
+          x[:color] = "#e1bb22" if has_issue 
+          x[:color] = "#8a7212" if has_issue && !scoped
+          x[:color] = "#e15c22" if has_high_sev_issue
+          x[:color] = "#752e0f" if has_high_sev_issue && !scoped
         
 
         nodes << x 

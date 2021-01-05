@@ -187,12 +187,9 @@ module Intrigue
       #
       begin
         mod = Required::Module::const_get "Intrigue::Core::Model"
-      rescue NameError
-        #Doesn't exist
-      end
-
-      if mod
         out.concat(Intrigue::Core::Model::Workflow.all.map{|x| x.to_h })
+      rescue NameError
+        #Doesn't exist, dont try to load them again
       end
     
     out 

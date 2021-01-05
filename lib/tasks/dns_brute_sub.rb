@@ -67,11 +67,9 @@ class DnsBruteSub < BaseTask
 
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)
-    wildcard_ips = check_wildcard(suffix)
-
-    unless wildcard_ips
-      _log_error "Unable to continue, we can't verify wildcard status"
-      @entity.set_detail "wildcard_brute_error", true
+    unless gather_wildcard_resolutions(suffix).empty?
+      _log_error "Unable to continue, this is a wildcard"
+      _set_entity_detail "wildcard_brute_error", true
       return
     end
 
@@ -227,7 +225,7 @@ class DnsBruteSub < BaseTask
     ]
 
     # test to first make sure we don't have a subdomain specific wildcard
-    subdomain_wildcard_ips = check_wildcard("#{subdomain}.#{suffix}")
+    subdomain_wildcard_ips = gather_wildcard_resolutions("#{subdomain}.#{suffix}").map{|x| x["name"]}.uniq
 
     # Before we iterate on this subdomain, let's make sure it's not a wildcard
     if subdomain_wildcard_ips.empty?

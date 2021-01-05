@@ -33,52 +33,35 @@ module Dns
   end
 
   # Check for wildcard DNS
-  def check_wildcard(suffix)
+  def gather_wildcard_resolutions(suffix, create_exhaustive_list=false)
     _log "Checking for wildcards on #{suffix}."
     all_discovered_wildcards = []
 
-    # first, check wordpress....
-    # www*
-    # ww01*
-    # web*
-    # home*
-    # my*
-    check_wordpress_list = []
-    ["www.doesntexist.#{suffix}","ww01.#{suffix}","web1.#{suffix}","hometeam.#{suffix}","myc.#{suffix}"].each do |d|
-      resolved_address = resolve(d)
-      check_wordpress_list << resolved_address
-      #unless resolved_address.nil? || all_discovered_wildcards.include?(resolved_address)
-      #  all_discovered_wildcards << resolved_address
-      #end
-    end
-
-    if check_wordpress_list.compact.count == 5
-      _log "Looks like a wordpress-connected domain"
-      all_discovered_wildcards = check_wordpress_list
-    end
-
-    # Now check for wildcards
-    10.times do
+    # Now check for more rando-wildcards
+    5.times do
       random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}"
 
       # do the resolution
       # www.shopping.intrigue.io - 198.105.244.228
       # www.search.intrigue.io - 198.105.254.228
-      resolved_address = resolve(random_string)
+      resolved_addresses = resolve(random_string)
 
-      # keep track of it unless we already have it
-      unless resolved_address.nil? || all_discovered_wildcards.include?(resolved_address)
-        all_discovered_wildcards << resolved_address
+      # keep track of it (unless we already have it)
+      unless resolved_addresses.empty? && (all_discovered_wildcards - resolved_addresses).empty?
+        all_discovered_wildcards.concat resolved_addresses
       end
 
     end
+
+    # all discovered wildcards 
+    return [] if all_discovered_wildcards.empty?
 
     # If that resolved, we know that we're in a wildcard situation.
     #
     # Some domains have a pool of IPs that they'll resolve to, so
     # let's go ahead and test a bunch of different domains to try
     # and collect those IPs
-    if all_discovered_wildcards.uniq.count > 1
+    if all_discovered_wildcards.uniq.count > 1 && create_exhaustive_list
       _log "Multiple wildcard ips for #{suffix} after resolving these: #{all_discovered_wildcards}."
       _log "Trying to create an exhaustive list."
 
@@ -91,14 +74,15 @@ module Dns
         _log "Testing #{all_discovered_wildcards.count * 20} new entries..."
         newly_discovered_wildcards = []
 
-        (all_discovered_wildcards.count * 20).times do |x|
+        (all_discovered_wildcards.count * 2).times do |x|
           random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}"
-          resolved_address = resolve(random_string)
+          resolved_addresses = resolve(random_string)
 
           # keep track of it unless we already have it
-          unless resolved_address.nil? || newly_discovered_wildcards.include?(resolved_address)
-            newly_discovered_wildcards << resolved_address
+          unless resolved_addresses.empty? || (newly_discovered_wildcards - resolved_addresses).empty?
+            newly_discovered_wildcards.concat resolved_addresses
           end
+
         end
 
         # check if our newly discovered is a subset of all
@@ -116,8 +100,6 @@ module Dns
 
     elsif all_discovered_wildcards.flatten.uniq.count == 1
       _log "Only a single wildcard ip: #{all_discovered_wildcards.flatten.sort.uniq}"
-    else
-      _log "No wildcard detected! Moving on!"
     end
 
   all_discovered_wildcards.flatten.uniq # if it's not a wildcard, this will be an empty array.
@@ -138,6 +120,11 @@ module Dns
   names.uniq
   end
 
+
+  ###
+  ### Main DNS resolution function, uses Async EventMachine based resolution, and 
+  ### falls back to non async if it fails 
+  ###
   def resolve(lookup_name, lookup_types=nil)
     
     resources = []
@@ -202,6 +189,14 @@ module Dns
             rescue Errno::ECONNREFUSED => e 
               tries += 1 
               sleep tries * 3 
+
+              # Try without our async resolver 
+              _log "Trying to resolve w/o async on #{lookup_name}"
+              resolver = Resolv::DNS.open(configß.except(:nameserver_port))
+              resolver.timeouts = 3
+              response = resolver.getresources(lookup_name, t)
+              resources.concat(response) 
+
             end
           end
 

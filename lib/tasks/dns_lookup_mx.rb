@@ -23,25 +23,12 @@ class DnsLookupMx < BaseTask
   def run
     super
 
-    name = _get_entity_name
+    resources = collect_mx_records _get_entity_name
 
-    begin
-      resources = collect_mx_records
-
-      resources.each do |r|
-        # Create a DNS record
-        if r["name"].is_ip_address?
-          _create_entity("IpAddress", { "name" => r["name"]}) 
-        else
-          _create_entity("DnsRecord", { "name" => r["name"]})
-        end
-      end
-
-    rescue Errno::ENETUNREACH => e
-      _log_error "Hit exception: #{e}. Are you sure you're connected?"
-    rescue Exception => e
-      _log_error "Hit exception: #{e}"
+    resources.each do |r|
+      create_dns_entity_from_string r["name"]
     end
+
   end
 
 end

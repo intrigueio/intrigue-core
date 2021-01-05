@@ -26,11 +26,6 @@ class DnsPermute < BaseTask
     # Set the basename
     basename = _get_entity_name
 
-    # XXX - use the resolver option if we have it.
-    # Note that we have to specify an empty search list, otherwise we end up
-    # searching .local by default on osx.
-    @resolver = Resolv.new([Resolv::DNS.new(:search => [])])
-
     # figure out all of our permutation points here.
     # "google.com" < 1 permutation point?
     # "1.yahoo.com"  < 2 permutation points?
@@ -45,8 +40,9 @@ class DnsPermute < BaseTask
 
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)
+    wildcard_ips = gather_wildcard_resolutions(brute_domain).map{|x| x["name"] }.uniq
+    _log "Using wildcard ips as: #{wildcard_ips}"
 
-    wildcard_ips = check_wildcard(brute_domain)
 
     # Create a queue to hold our list of attempts
     work_q = Queue.new
@@ -147,6 +143,7 @@ class DnsPermute < BaseTask
         begin
           while work_item = work_q.pop(true)
             begin
+
               fqdn = "#{work_item[:generated_permutation]}"
               permutation = "#{work_item[:permutation]}"
               depth = work_item[:depth]
@@ -155,6 +152,8 @@ class DnsPermute < BaseTask
               resolved_address = resolve_name(fqdn)
 
               if resolved_address # If we resolved, create the right entities
+                _log "Resolved: #{fqdn} to #{resolved_address}"
+
 
                 unless wildcard_ips.include?(resolved_address)
                   _log_good "Resolved address #{resolved_address} for #{fqdn} and it wasn't in our wildcard list."

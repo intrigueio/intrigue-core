@@ -68,14 +68,11 @@ class DnsBruteSubOverHttp < BaseTask
 
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)
-    wildcard_ips = check_wildcard(suffix)
+    wildcard_ips = gather_wildcard_resolutions(suffix).map{|x| x["name"] }.uniq
 
     if wildcard_ips
-      _log "Known wildcards: #{wildcard_ips}"
-    else
-      _log_error "Unable to continue, we can't verify wildcard status"
-      @entity.set_detail "wildcard_brute_error", true
-      return
+      _log "Wildcard Domain, resolved to the following: #{wildcard_ips}"
+      _log "Cowardly refusing to continue!"
     end
 
     # Generate alphanumeric list of hostnames and add them to the end of the list
@@ -130,10 +127,6 @@ class DnsBruteSubOverHttp < BaseTask
         found_count:     results.map{|r| r["Answer"]}.compact.count
     }
     _log "Stats:\n: #{stats}"
-  end
-
-  def _resolve(hostname)
-    resolve_name(hostname)
   end
 
 end

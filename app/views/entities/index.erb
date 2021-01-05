@@ -41,9 +41,9 @@
           <tbody>
             
             <% if @grouped_entities %>
-              <% @alias_groups.each do |group| %>
-                <% grouped_entities = group.entities %>
-                <% grouped_entities = grouped_entities.reject{|x| !x.scoped } unless @include_unscoped %>
+              <% @alias_groups.each do |ag| %>
+                <% grouped_entities = ag.entities %>
+                <% grouped_entities = grouped_entities.reject{|x| !x.scoped } if @only_scoped %>
                 <% grouped_entities = grouped_entities.reject{|x| x.hidden } unless @include_hidden %>
                 <% next if grouped_entities.empty? %>
                 <tr class="transparent-table">
@@ -72,6 +72,7 @@
               <% end %>
             
             <% else %>
+              
               <% @selected_entities.each do |e| %>
               <tr class="transparent-table">
                 <td><a href="/<%=h @project_name%>/entities/<%=e.id%>"> <%= h e %> </a></td>
@@ -83,6 +84,7 @@
                 </td>
               </tr>
               <% end %> 
+
             <% end %>
 
           </tbody>

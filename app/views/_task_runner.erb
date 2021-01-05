@@ -55,12 +55,14 @@
       </div>
     <% end %>
 
+  <div id="options"></div>
+
   <div id="workflow">
     <div class="form-group">
       <label for="attrib_name" class="col-xs-4 control-label">Workflow</label>
       <div class="col-xs-8">
         <select class="form-control input-sm" name="Workflow" id="workflow">
-          <option> [No Workflow Selected] </option>
+          <option> [No Additional Workflow] </option>
           <!-- iterate through workflows -->
           <% Intrigue::WorkflowFactory.user_selectable_workflows.each do |wf| %>
             <option value="<%= h wf.name %>"> <%= h wf.pretty_name || wf.name %> </option>
@@ -70,7 +72,18 @@
       </div>
     </div>
 
+    <!--<div id="enrich">
+    <div class="form-group">
+      <label for="options" class="col-xs-4 control-label">&nbsp;</label>
+      <div class="col-xs-6">
+        <input id="auto_enrich" name="auto_enrich" type="checkbox" checked> Automatially Enrich Entity <br/>
+        <div class="hint"> If selected, the user-supplied entity will be futher enriched. </div>
+      </div>
+    </div>
+    </div>-->
+
     <input type="hidden" name="depth" id="depth" value="6">
+    <input type="hidden" name="auto_enrich" id="auto_enrich" value="on">
 
   <!--
     <div id="handler">
@@ -85,17 +98,11 @@
       </div>
     </div>
   -->
-
-    <div id="enrich">
-      <div class="form-group">
-        <label for="options" class="col-xs-4 control-label">&nbsp;</label>
-        <div class="col-xs-6">
-          <input id="auto_enrich" name="auto_enrich" type="checkbox" checked> Auto Enrich <br/>
-        </div>
-      </div>
-    </div>
+    <Br>
     <input class="btn btn-primary" type="submit" value="Run Task">          
+  
   </form>
+
   </div>
   </div>
   
