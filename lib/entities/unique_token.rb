@@ -5,7 +5,7 @@ class UniqueToken < Intrigue::Core::Model::Entity
   def self.metadata
     {
       :name => "UniqueToken",
-      :description => "Unique Token - could be api key or analytics id",
+      :description => "An api key or analytics id",
       :user_creatable => true,
       :example => "UA-34505845"
     }

@@ -5,7 +5,7 @@ class ApiEndpoint < Intrigue::Core::Model::Entity
   def self.metadata
     {
       :name => "ApiEndpoint",
-      :description => "A http based api endpoint",
+      :description => "A HTTP based api endpoint",
       :user_creatable => true,
       :example => "https://app.intrigue.io/api"
     }

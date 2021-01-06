@@ -11,7 +11,7 @@ module Intrigue
         :references => [],
         :type => "discovery",
         :passive => false,
-        :allowed_types => ["IpAddress"],
+        :allowed_types => ["IpAddress", "Domain", "DnsRecord"],
         :example_entities => [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
         :allowed_options => [],
         :created_types => [ "DnsRecord", "IpAddress", "NetworkService", "Uri" ]
@@ -23,6 +23,11 @@ module Intrigue
       super
 
       ip_address = _get_entity_name
+
+      unless ip_address =~ ipv4_regex
+        _log_error "Unable to support non-ipv4 addresses!"
+        return 
+      end
 
       command = "naabu -host #{ip_address} -p #{scannable_tcp_ports.join(",")} -silent -json"
       _log "Running: #{command}"
