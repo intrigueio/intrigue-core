@@ -23,8 +23,8 @@ class BaseTask
   include Intrigue::Task::Whois
 
   include Sidekiq::Worker
-  sidekiq_options :queue => "task", :backtrace => true
-
+  sidekiq_options queue: "task", backtrace: true
+  
   def self.inherited(base)
     ::Intrigue::TaskFactory.register(base)
   end

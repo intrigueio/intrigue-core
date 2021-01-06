@@ -25,7 +25,7 @@ module Model
       super
     end
 
-    def start(requested_queue=nil)
+    def start(requested_queue=nil, retries=3)
 
       task_class = Intrigue::TaskFactory.create_by_name(task_name).class
       forced_queue = task_class.metadata[:queue]
@@ -35,7 +35,7 @@ module Model
       sjid = sidekiq_client.push({
         "class" => task_class.to_s,
         "queue" => forced_queue || requested_queue || "task",
-        "retry" => true,
+        "retry" => retries,
         "args" => [id]
       })
       

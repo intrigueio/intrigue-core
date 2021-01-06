@@ -24,7 +24,8 @@ class UriBrowser < BaseTask
         {:name => "create_wsendpoints", :regex => "boolean", :default => true },
       ],
       :created_types =>  [],
-      :queue => "task_browser"
+      :queue => "task_browser",
+      :retries => 1
     }
   end
 
