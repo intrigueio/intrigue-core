@@ -5,7 +5,7 @@ class SearchBinaryEdgeOpenDataBase < BaseTask
   def self.metadata
     {
       :name => "search_binaryedge_open_database",
-      :pretty_name => "Search BinaryEdge OpenDatabase",
+      :pretty_name => "Search BinaryEdge Open Databases",
       :authors => ["Anas Ben Salah"],
       :description => "This task hits the BinaryEdge API, looking for for open databases and creating the entities",
       :references => [],

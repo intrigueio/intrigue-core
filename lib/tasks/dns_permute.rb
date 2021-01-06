@@ -40,7 +40,7 @@ class DnsPermute < BaseTask
 
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)
-    wildcard_ips = gather_wildcard_resolutions(brute_domain).map{|x| x["name"] }.uniq
+    wildcard_ips = gather_wildcard_resolutions(brute_domain, true).map{|x| x["name"] }.uniq
     _log "Using wildcard ips as: #{wildcard_ips}"
 
 
