@@ -26,6 +26,16 @@ class DnsPermute < BaseTask
     # Set the basename
     basename = _get_entity_name
 
+
+    # gracefully decline to permute these.. 
+    skip_regexes = [ /^.*s3.*\.amazonaws.com$/ ]
+    skip_regexes.each do |r|
+      if basename =~ /r/
+        _log_error "Unable to permute, too many false positives to make it worthwhile"
+        return 
+      end
+    end
+
     # figure out all of our permutation points here.
     # "google.com" < 1 permutation point?
     # "1.yahoo.com"  < 2 permutation points?

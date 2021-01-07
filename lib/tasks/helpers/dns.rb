@@ -62,19 +62,22 @@ module Dns
     # let's go ahead and test a bunch of different domains to try
     # and collect those IPs
     if all_discovered_wildcards.uniq.count > 1 && create_exhaustive_list
-      _log "Multiple wildcard ips for #{suffix} after resolving these: #{all_discovered_wildcards}."
+      _log "Multiple wildcard ips for #{suffix} after resolving these: #{ all_discovered_wildcards.map{|x| x["name"]} }."
       _log "Trying to create an exhaustive list."
 
       # Now we have to test for things that return a block of addresses as a wildcard.
       # we to be adaptive (to a point), so let's keep looking in chuncks until we find
       # no new ones...
       no_new_wildcards = false
+      attempts = 1
+      max_attempts = 3
 
-      until no_new_wildcards
-        _log "Testing #{all_discovered_wildcards.count * 20} new entries..."
+      until no_new_wildcards || attempts > max_attempts
+        _log "Testing #{all_discovered_wildcards.count * 20} new entries, attempt #{attempts}"
         newly_discovered_wildcards = []
 
-        (all_discovered_wildcards.count * 2).times do |x|
+        (all_discovered_wildcards.count * 20).times do |x|
+
           random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}"
           resolved_addresses = resolve(random_string)
 
@@ -97,6 +100,8 @@ module Dns
         _log "Known wildcard count: #{all_discovered_wildcards.flatten.uniq.count}"
         _log "Known wildcards: #{all_discovered_wildcards.flatten.uniq}"
       end
+
+      attempts += 1
 
     elsif all_discovered_wildcards.flatten.uniq.count == 1
       _log "Only a single wildcard ip: #{all_discovered_wildcards.flatten.sort.uniq}"
