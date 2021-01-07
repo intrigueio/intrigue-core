@@ -67,8 +67,8 @@ class DnsBruteSub < BaseTask
 
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)
-    wildcard_ips = gather_wildcard_resolutions(suffix).map{|x| x["name"]}
-    unless wildcard_ips.empty?
+    wildcards = gather_wildcard_resolutions(suffix)
+    unless wildcards.empty?
       _log_error "Unable to continue, this is a wildcard"
       _set_entity_detail "wildcard_brute_error", true
       return
@@ -226,10 +226,10 @@ class DnsBruteSub < BaseTask
     ]
 
     # test to first make sure we don't have a subdomain specific wildcard
-    subdomain_wildcard_ips = gather_wildcard_resolutions("#{subdomain}.#{suffix}").map{|x| x["name"]}.uniq
+    subdomain_wildcards = gather_wildcard_resolutions("#{subdomain}.#{suffix}").uniq
 
     # Before we iterate on this subdomain, let's make sure it's not a wildcard
-    if subdomain_wildcard_ips.empty?
+    if subdomain_wildcards.empty?
       _log "Adding permutations: #{permutation_list.join(", ")}"
       permutation_list.each do |p|
         queue.push({:subdomain => "#{p}", :fqdn => "#{p}.#{suffix}", :depth => depth+1})

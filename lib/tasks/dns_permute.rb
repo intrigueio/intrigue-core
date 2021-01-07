@@ -26,9 +26,8 @@ class DnsPermute < BaseTask
     # Set the basename
     basename = _get_entity_name
 
-
     # gracefully decline to permute these.. 
-    skip_regexes = [ /^.*s3.*\.amazonaws.com$/ ]
+    skip_regexes = [ /^.*s3.*\.amazonaws.com$/,  ]
     skip_regexes.each do |r|
       if basename =~ /r/
         _log_error "Unable to permute, too many false positives to make it worthwhile"
@@ -50,7 +49,7 @@ class DnsPermute < BaseTask
 
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)
-    wildcard_ips = gather_wildcard_resolutions(brute_domain, true).map{|x| x["name"] }.uniq
+    wildcard_responses = gather_wildcard_resolutions(brute_domain, true)
     _log "Using wildcard ips as: #{wildcard_ips}"
 
 
@@ -165,7 +164,7 @@ class DnsPermute < BaseTask
                 _log "Resolved: #{fqdn} to #{resolved_address}"
 
 
-                unless wildcard_ips.include?(resolved_address)
+                unless wildcard_responses.include?(resolved_address)
                   _log_good "Resolved address #{resolved_address} for #{fqdn} and it wasn't in our wildcard list."
                   main_entity = _create_entity("DnsRecord", {"name" => fqdn })
                 end

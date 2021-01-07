@@ -32,6 +32,13 @@ module Dns
   e
   end
 
+  # simpler function for the genreal case, just returns the ips/cnames
+  # we need / want to avoid
+  def gather_wildcard_ips(suffix, create_exhaustive_list=false)
+    rs = gather_wildcard_resolutions(suffix, create_exhaustive_list)
+  rs.map{|x| x["lookup_details"].map{|x| x["response_record_data"]} }.flatten.uniq
+  end
+
   # Check for wildcard DNS
   def gather_wildcard_resolutions(suffix, create_exhaustive_list=false)
     _log "Checking for wildcards on #{suffix}."

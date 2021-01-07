@@ -68,9 +68,9 @@ class DnsBruteSubOverHttp < BaseTask
 
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)
-    wildcard_ips = gather_wildcard_resolutions(suffix).map{|x| x["name"] }.uniq
+    wildcards = gather_wildcard_resolutions(suffix)
 
-    if wildcard_ips
+    if wildcards
       _log "Wildcard Domain, resolved to the following: #{wildcard_ips}"
       _log "Cowardly refusing to continue!"
     end
