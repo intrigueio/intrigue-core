@@ -129,6 +129,7 @@ class DnsBruteSub < BaseTask
 
               if resolved_address # If we resolved, create the right entities
 
+                wildcard_ips = wildcards.map{|x| x["lookup_details"].map{|x| x["response_record_data"]} }.flatten.uniq
                 unless wildcard_ips.include?(resolved_address)
                   found_count += 1
                   _log_good "Resolved address #{resolved_address} for #{fqdn}!"
