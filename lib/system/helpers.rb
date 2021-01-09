@@ -15,6 +15,8 @@ module System
     def discern_entity_types_from_name(str)
       if str.is_ip_address?
         ["IpAddress"]
+      elsif str =~ asn_regex 
+        ["AutonomousSystem"]
       elsif str =~ dns_regex && (parse_domain_name(str) == str)
         ["Domain"]
       elsif str =~ dns_regex 

@@ -7,6 +7,8 @@ maintainer: jcran
 flow: recursive
 description: Performs a light active attack surface discovery for organizations. Start with a Domain or NetBlock.
 definition:
+  AutonomousSystem: 
+  - task: asn_to_netblocks
   AwsS3Bucket: 
   - task: aws_s3_put_file
   Domain:
