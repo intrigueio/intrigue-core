@@ -6,7 +6,7 @@ module Intrigue
       {
         :name => "asn_to_netblocks",
         :pretty_name => "ASN to Netblocks",
-        :authors => ["jcran", ],
+        :authors => ["jcran", "Punisher876"],
         :description => "Use BGP Data to find Networks for a given ASN.",
         :references => [],
         :type => "discovery",
