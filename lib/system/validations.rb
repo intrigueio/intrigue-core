@@ -5,6 +5,11 @@ module System
   module Validations
 
     ### Standard Validations, for use throughout the platform
+    
+    def asn_regex
+      /^(as|AS).?[0-9].*$/
+    end
+    
     # https://tools.ietf.org/html/rfc1123
     def ipv4_regex
       /(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/
