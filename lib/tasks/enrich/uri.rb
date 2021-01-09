@@ -159,11 +159,12 @@ class Uri < Intrigue::Task::BaseTask
 
         if set_cookie
 
+          # temporarily disabled to address false positives - jcran
           # wide scoped cookie 
-          if set_cookie.map{|x| x.split(";").find{ |x| 
-                    x =~ /Domain=".#{parse_domain_name(uri)};"/i }}
-            _create_wide_scoped_cookie_issue(uri, set_cookie)
-          end
+          #if set_cookie.map{|x| x.split(";").find{ |x| 
+          #          x =~ /Domain=".#{parse_domain_name(uri)};"/i }}
+          #  _create_wide_scoped_cookie_issue(uri, set_cookie)
+          #end
 
           # create an issue if not detected
           unless set_cookie.map{|x| x.split(";").find{|x| x =~ /httponly/i }}
