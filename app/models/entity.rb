@@ -257,6 +257,18 @@ module Model
       nil
     end
 
+    # Short string with fingeprint details. overriden by specific types.
+    #
+    # @return [String] light details about this entity
+    def short_fingerprint_string(fingerprint)
+      fingerprint_array = fingerprint.map do |x| 
+        "#{x['vendor']} #{x['version']} #{x['update']}".strip # start with just vendor + version
+        # if vendor and product arenot the same, add product
+        "#{x['vendor']} #{x['product']} #{x['version']} #{x['update']}".strip unless x['vendor'] == x['product']
+      end
+      out = "Fingerprint: #{fingerprint_array.sort.uniq.join("; ")}" if details["fingerprint"]
+    end
+
     # Marks the entity and aliases as deleted (but doesnt actually delete)
     #
     # @return [TrueClass] true if successful

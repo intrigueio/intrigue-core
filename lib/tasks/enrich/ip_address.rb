@@ -64,6 +64,7 @@ class IpAddress < Intrigue::Task::BaseTask
       # a known dev or staging server pattern, and if we're internal, just
       if match_rfc1918_address?(lookup_name)
         _log "Got RFC1918 address!"
+
         # TODO ... _internal_system_exposed_via_dns(result["name"])
         
       else # normal case
@@ -73,6 +74,7 @@ class IpAddress < Intrigue::Task::BaseTask
           end
         end
       end
+
     end
 
     # Create new entities if we found vhosts / aliases
@@ -80,12 +82,17 @@ class IpAddress < Intrigue::Task::BaseTask
     _create_vhost_entities(lookup_name)
         
     # get ASN
-    # whois lookup 
-    _log "Using Whois Service..."
-    out = whois(lookup_name)
-    
-    ### TOOD ...capture ASN here?
+    cymru = cymru_ip_whois_lookup(lookup_name)
+    _set_entity_detail "net_name", cymru[:net_name] # legacy 
 
+    # Go forward detail naming scheme
+    _set_entity_detail "network.allocation_date", cymru[:net_allocation_date] 
+    _set_entity_detail "network.asn", cymru[:net_asn]
+    _set_entity_detail "network.block", cymru[:net_block]
+    _set_entity_detail "network.country_code", cymru[:net_country_code]
+    _set_entity_detail "network.name", cymru[:net_name]
+    _set_entity_detail "network.rir", cymru[:net_rir]
+    
     # geolocate
     _log "Geolocating..."
     location_hash = geolocate_ip(lookup_name)

@@ -48,24 +48,10 @@ class IpAddress < Intrigue::Core::Model::Entity
     return true if created_by?("masscan_scan")
     return true if created_by?("nmap_scan")
 
-    # if we have aliases and they're all false, we don't really want this thing
-    if self.aliases.count > 0
-      
-      # first set scoped if any of the aliases match. If we depend on'm, 
-      # we gotta take care of them
-      self.aliases.each do |a|
-        next if a.scoped # never go back 
-        a.scoped = true if self.aliases.select{ |x| x if x.allow_list }.count > 0
-        a.save_changes
-      end
+    # if we have aliases and theyre scoped, we can scope us
+    return true if self.aliases.count > 0 && aliases.select{ |x| x if x.allow_list }.count > 0
 
-      return true if self.aliases.select{ |x| x if x.allow_list }.count > 0
-    end
-
-    # do the same thing for all aliases 
-    
-
-  # if we didnt match the above and we were asked, default to falsse
+  # if we didnt match the above and we were asked, default to false
   false
   end 
 

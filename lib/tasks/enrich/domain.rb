@@ -126,12 +126,16 @@ class Domain < Intrigue::Task::BaseTask
 
     end
 
+
     ###
-    ### Scope all aliases if we're scoped
+    ### Scope all aliases if we're scoped ... note this might be unnecessary
+    ###  / duplicative of what's happening in the IpAddress entity scoping logic 
+    ###  itself. TODO ... investigate 
     ###
     if @entity.scoped? 
       @entity.aliases.each do |a|
         next if a.id == @entity.id # we're already scoped. 
+        next unless a.type_string == "IpAddress" # only proceed for ip address
         _log "Setting #{a.name} scoped!"
         a.set_scoped!(true, "alias_of_entity_#{@task_result.name}")
       end

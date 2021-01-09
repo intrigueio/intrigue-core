@@ -38,7 +38,7 @@ module Bootstrap
       # Set exclusion setting
       task_name = p["task_name"] || "create_entity"
       options = p["task_options"] || []
-      workflow = p["workflow"] || p["machine"] || "external_discovery_light_active"
+      workflow = p["workflow"]
       depth = p["depth"] || 5
       scan_handlers = p["scan_handlers"] || []
       auto_enrich = p["auto_enrich"] || true

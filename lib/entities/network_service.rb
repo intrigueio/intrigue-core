@@ -15,7 +15,13 @@ class NetworkService < Intrigue::Core::Model::Entity
   end
 
   def detail_string
-    "#{details["service"]}"
+
+    out = ""
+
+    # create fingerprint details string
+    out = "#{short_fingerprint_string(details["fingerprint"])} | " if details["fingerprint"]
+      
+    out << "Port: #{details["service"]}"
   end
 
   def enrichment_tasks
