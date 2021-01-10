@@ -76,7 +76,8 @@ module Intrigue
     end
   
     def self.allowed_tasks_for_entity_type(entity_type)
-      @tasks.select {|task_class| task_class if task_class.metadata[:allowed_types].include? entity_type}
+      @tasks.select{ |task_class| 
+        task_class if task_class.metadata[:allowed_types].include? entity_type}
     end
     #
     # XXX - can :name be set on the class vs the object
@@ -106,7 +107,7 @@ module Intrigue
     end
 
     def self.class_by_name(name)
-      t = @tasks.find{|t| t.metadata[:name] == name }
+      t = @tasks.find{ |t| t.metadata[:name] == name }
          
       ### XXX - exception handling? This should return a specific exception.
       raise "No task with the name: #{name}!" unless t

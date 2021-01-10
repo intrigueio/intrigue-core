@@ -218,9 +218,11 @@ class EntityManager
         raise InvalidEntityError.new("Invalid entity, unable to validate: #{entity}")
       end
 
-      # Add to our result set for this task
-      tr.add_entity entity
     end
+
+
+    # Always add to our result set for this task
+    tr.add_entity entity
 
     ###
     ### SCOPING SHOULD ALWAYS RE-RUN

@@ -46,6 +46,11 @@ class Uri < Intrigue::Task::BaseTask
       return
     end
 
+    # parse out the hostname and parent domains, and create them
+    create_dns_entity_from_string hostname
+    create_dns_entity_from_string parse_domain_name(hostname)
+
+    # Sha256 the body response, in case it's helpful later ont
     response_data_hash = Digest::SHA256.base64digest(response.body_utf8)
 
     # grab all script_references, normalize to include full uri if needed 
@@ -134,12 +139,13 @@ class Uri < Intrigue::Task::BaseTask
     if response.code == "200"
 
       # capture cookies
-      set_cookie = [response.headers['set-cookie'] || response.headers["Set-Cookie"]].flatten.compact
+      set_cookie = [ response.headers['set-cookie'] || response.headers["Set-Cookie"] ].flatten.compact
       _log "Got Cookie: #{set_cookie}" if !set_cookie.empty?
       
       # TODO - cookie scoped to parent domain
       if !set_cookie.empty? 
-        domain_cookies = set_cookie.map{|x| x.split(";").detect{|x| x.match(/Domain=/i) }}.compact.map{|x|x.strip}
+        domain_cookies = set_cookie.map{|x| 
+          x.split(";").detect{|x| x.match(/Domain=/i) }}.compact.map{|x|x.strip}
         _log "Domain Cookies: #{domain_cookies}"
       end
 
@@ -151,6 +157,9 @@ class Uri < Intrigue::Task::BaseTask
         cert = get_certificate(hostname,port)
         if cert 
           alt_names = parse_names_from_cert(cert)
+          alt_names.each do |an|
+            create_dns_entity_from_string an
+          end
         else
           alt_names = []
         end
