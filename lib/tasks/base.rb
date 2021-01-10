@@ -159,20 +159,21 @@ class BaseTask
 
               _log_error "Missing task configuration, please check configuration for this task: #{e}"
               Intrigue::NotifierFactory.default.each { |x|  # if configured, notify! 
-                x.notify("Missing Task Configuration: #{@entity.type} #{@entity.name}" , @task_result) }
+                x.notify("Missing Task Configuration: #{@entity.type} #{@entity.name} #{e}" , @task_result) }
 
             rescue  InvalidTaskConfigurationError => e 
   
               _log_error "Invalid task configuration, please check configuration for this task: #{e}"
               Intrigue::NotifierFactory.default.each { |x| # if configured, notify! 
-                x.notify("Invalid Task Configuration: #{@entity.type} #{@entity.name}" , @task_result) }
+                x.notify("Invalid Task Configuration: #{@entity.type} #{@entity.name} #{e}" , @task_result) }
 
             rescue InvalidEntityError => e 
              
               _log_error "Invalid entity attempted #{e}"
               _log_error "Probably a bug, report at: https://github.com/intrigueio/intrigue-core/issues"
+              
               Intrigue::NotifierFactory.default.each { |x| # if configured, notify! 
-                x.notify("Invalid entity attempted: #{@entity.type} #{@entity.name}" , @task_result) }
+                x.notify("Invalid entity attempted: #{@entity.type} #{@entity.name} #{e}" , @task_result) }
         
             end
 
