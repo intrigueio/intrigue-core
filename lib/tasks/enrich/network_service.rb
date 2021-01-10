@@ -76,12 +76,10 @@ class NetworkService < Intrigue::Task::BaseTask
     # drop them if we don't have a fingerprint
     if noise_networks.include?(_get_entity_detail("net_name")) &&
          (_get_entity_detail("fingerprint") || []).empty?
-      @entity.deny_list = true && @entity.hidden = true && @entity.scoped = false
-      @entity.save
+      @entity.set_scoped!("false", "Known noise")
     end
   
   end
-
 
   def enrich_snmp
     _log "Enriching... SNMP service: #{_get_entity_name}"

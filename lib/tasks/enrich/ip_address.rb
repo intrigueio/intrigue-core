@@ -50,11 +50,13 @@ class IpAddress < Intrigue::Task::BaseTask
       entity = create_dns_entity_from_string(result["name"], @entity) if @entity.scoped?
       
       if entity && entity.type_string == "Domain"
+        
         # unscope it right away, since this can cause scope issues 
         # ... not auto-unscoping it can lead us into trouble (digitalwarlock.com)
         # ... 67.225.252.85
         entity.set_scoped!(false, "Domain found during ip lookup, preventing auto-expand")
         entity.save_changes
+
       else  # always create a domain for this entity in case the above was a subdomain
         domain_name = parse_domain_name(result["name"])
         create_unscoped_dns_entity_from_string(domain_name)

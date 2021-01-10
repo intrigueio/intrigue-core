@@ -136,8 +136,13 @@ class Domain < Intrigue::Task::BaseTask
       @entity.aliases.each do |a|
         next if a.id == @entity.id # we're already scoped. 
         next unless a.type_string == "IpAddress" # only proceed for ip address
-        _log "Setting #{a.name} scoped!"
-        a.set_scoped!(true, "alias_of_entity_#{@task_result.name}")
+        
+        # set scoped unless this belongs to a known global entity
+        unless a.deny_list || parse_domain_name(a).deny_list
+          _log "Setting #{a.name} scoped!"
+          a.set_scoped!(true, "alias_of_entity_#{@task_result.name}") 
+        end
+
       end
     end 
 

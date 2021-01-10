@@ -69,27 +69,27 @@
 
       Ancestors: <ul><% @entity.ancestors.each do |a|%> <%="<li><a href='/#{h @project_name}/entities/#{a.id}'>#{h a}</a></li>"%> <% end %> </ul>
 
-      Aliased Entities: <br/>
+      Aliased Entities (Last 10): <br/>
       <ul>
-      <%=out = []; results = @entity.aliases.uniq.sort_by{|x|x.name}; results.each {|x| 
+      <%=out = []; results = @entity.aliases.last(10).uniq.sort_by{|x|x.name}; results.each {|x| 
         out << "<li><a href='/#{h @project_name}/entities/#{x.id}'>#{h x}</a></li>"; } if results; out.uniq.join("") %>
       </ul>
 
-      Tasks that created this entity:<br/>
+      Tasks that created this entity (Last 10):<br/>
       <ul>
-      <%= out = []; @entity.task_results.each {|x| 
+      <%= out = []; @entity.task_results.last(10).each {|x| 
         out << "<li><a href='/#{h @project_name}/results/#{x.id}'>#{h x.task_name} (#{h x.base_entity})</a></li>" }; out.uniq.join("") %>
       </ul>
 
-      Tasks run on this entity:<br/>
+      Tasks run on this entity (Last 10):<br/>
       <ul>
-      <%= out = []; results = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => @entity); results.each {|r| 
+      <%= out = []; results = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => @entity).last(10); results.each {|r| 
         out << "<li><a href='/#{h @project_name}/results/#{r.id}'>#{h r.task_name} (#{h r.base_entity})</a></li>"; }; out.uniq.join("") %>
       </ul>
 
       Entities discovered from this entity: <br/>
       <ul>
-      <%=out = []; results = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => @entity); results.each {|r| 
+      <%=out = []; results = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).where(:base_entity => @entity).last(10); results.each {|r| 
         r.entities.each {|x| out << "<li><a href='/#{h @project_name}/entities/#{x.id}'>#{h x}</a></li>"; }}; out.uniq.join("") %>
       </ul>
 
