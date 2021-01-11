@@ -220,12 +220,15 @@ class EntityManager
 
     end
 
-
-    # Always add to our result set for this task
-    tr.add_entity entity
+    ###
+    ###
+    ###
+    
+    # Add the first 10 entities to our task result
+    tr.add_entity(entity) unless tr.entities.count > 5
 
     ###
-    ### SCOPING SHOULD ALWAYS RE-RUN
+    ### SCOPING MUST ALWAYS RE-RUN
     ###
 
     #####
@@ -273,6 +276,7 @@ class EntityManager
     end
 
     #####
+    ###
     ### END ... USER- or TASK- PROVIDED SCOPING
     ###
     ### ENTITIES can SELF-SCOPE, however, for more info on that
