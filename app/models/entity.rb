@@ -98,9 +98,19 @@ module Model
     end
 
     def seed?
-      true if self.project.seeds.map{|x| self.name == x.name }
+      true if project.seeds.map{|x| self.name == x.name }
     false
     end
+    
+    def deny_list
+      return nil unless project
+      project.allow_list_entity?(self.type_string, self.name)
+    end
+
+    def allow_list
+      return nil unless project
+      project.deny_list_entity?(self.type_string, self.name)
+    end 
 
     def validate
       super
@@ -347,8 +357,6 @@ module Model
           :deleted => deleted,
           :hidden => hidden,
           :scoped => scoped,
-          :allow_list => allow_list,
-          :deny_list => deny_list,
           :alias_group => alias_group_id,
           :detail_string => detail_string
         }
@@ -377,8 +385,6 @@ module Model
         :scoped => scoped,
         :scoped_at => scoped_at,
         :scoped_reason => scoped_reason,
-        :allow_list => allow_list,
-        :deny_list => deny_list,
         :alias_group => alias_group_id,
         :detail_string => detail_string,
         :details => export_details,

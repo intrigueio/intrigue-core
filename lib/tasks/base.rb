@@ -175,6 +175,18 @@ class BaseTask
               Intrigue::NotifierFactory.default.each { |x| # if configured, notify! 
                 x.notify("Invalid entity attempted: #{@entity.type} #{@entity.name} #{e}" , @task_result) }
         
+            rescue SystemResourceMissing => e
+
+              _log_error "Missing system resource (external program?): #{e}"
+              Intrigue::NotifierFactory.default.each { |x| # if configured, notify! 
+                x.notify("Missing system resource (external program?): #{@entity.type} #{@entity.name} #{e}" , @task_result) }
+
+            rescue TimeoutError => e
+
+              _log_error "System timed out running a task: #{e}"
+              Intrigue::NotifierFactory.default.each { |x| # if configured, notify! 
+                x.notify("System timed out running a task: #{@entity.type} #{@entity.name} #{e}" , @task_result) }
+
             end
 
             end_time = Time.now.getutc
