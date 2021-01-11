@@ -218,15 +218,10 @@ class EntityManager
         raise InvalidEntityError.new("Invalid entity, unable to validate: #{entity}")
       end
 
+      # Add the first one to our task result
+      tr.add_entity(entity) 
     end
-
-    ###
-    ###
-    ###
     
-    # Add the first 10 entities to our task result
-    tr.add_entity(entity) unless tr.entities.count > 5
-
     ###
     ### SCOPING MUST ALWAYS RE-RUN
     ###
