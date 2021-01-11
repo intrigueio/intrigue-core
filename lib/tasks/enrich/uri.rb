@@ -156,7 +156,7 @@ class Uri < Intrigue::Task::BaseTask
         # grab and parse the certificate
         cert = get_certificate(hostname,port)
         if cert 
-          alt_names = parse_names_from_cert(cert)
+          alt_names = parse_names_from_cert(cert) || []
           alt_names.each do |an|
             create_dns_entity_from_string an
           end

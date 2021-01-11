@@ -43,11 +43,14 @@ module Intrigue
           
           # return stdout, stderr and exit status
           [cmd_output, err_output, status.exitstatus]
+        
         rescue Errno::ENOENT => e
           raise SystemResourceMissing, e
+
         rescue TimeoutError => e
           kill_process_group_for_pid(pid)
           raise e
+        
         ensure
           wout.close unless wout.closed?
           werr.close unless werr.closed?
