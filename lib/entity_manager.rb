@@ -221,7 +221,8 @@ class EntityManager
       # Add the first one to our task result
       tr.add_entity(entity) 
     end
-    
+
+
     ###
     ### SCOPING MUST ALWAYS RE-RUN
     ###
