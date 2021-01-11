@@ -252,6 +252,19 @@ module Dns
             }]
           }
         end
+      
+        begin
+          out.each do |o|
+            if o["lookup_details"].find{ |d|
+                d["response_record_data"] == "127.0.0.1" && 
+                d["request_record"] != "127.0.0.1" && 
+                d["request_record"] != "localhost"}
+                  _create_linked_issue("resolves_to_localhost", {details: o})
+            end
+          end
+        rescue PG::UniqueViolation
+          # ignore this error since it is thrown when the issue already exists
+        end
 
       rescue Resolv::ResolvError => e 
         _log_error "Hit exception: #{e}."
