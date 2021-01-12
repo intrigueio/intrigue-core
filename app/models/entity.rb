@@ -102,12 +102,12 @@ module Model
     false
     end
     
-    def deny_list
+    def allow_list
       return nil unless project
       project.allow_list_entity?(self.type_string, self.name)
     end
 
-    def allow_list
+    def deny_list
       return nil unless project
       project.deny_list_entity?(self.type_string, self.name)
     end 

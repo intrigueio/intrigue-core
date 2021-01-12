@@ -286,7 +286,7 @@ class EntityManager
     #####
 
     # ENRICHMENT LAUNCH (this may re-run if an entity has just been scoped in)
-    if !tr.autoscheduled # manally scheuduled, automatically enrich 
+    if !tr.autoscheduled && !entity.deny_list # manally scheuduled, automatically enrich 
 
       if entity.enriched
         tr.log "Re-scheduling enrichment for existing entity (manually run)!"

@@ -39,7 +39,7 @@ class SecurityTrailsSubdomainSearch < BaseTask
       _log "Got #{json["subdomains"].count} subdomains!"
 
       json["subdomains"].each do |x|
-        create_dns_entity_from_string _create_entity "#{x}.#{entity_name}"
+        create_dns_entity_from_string "#{x}.#{entity_name}"
       end
 
     rescue JSON::ParserError => e
