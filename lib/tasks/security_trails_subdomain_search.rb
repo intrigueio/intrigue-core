@@ -33,12 +33,13 @@ class SecurityTrailsSubdomainSearch < BaseTask
 
       unless json && json["subdomains"]
         _log_error "Unable to get a valid response"
+        return
       end
 
       _log "Got #{json["subdomains"].count} subdomains!"
 
       json["subdomains"].each do |x|
-        _create_entity "DnsRecord", "name" => "#{x}.#{entity_name}"
+        create_dns_entity_from_string _create_entity "#{x}.#{entity_name}"
       end
 
     rescue JSON::ParserError => e
