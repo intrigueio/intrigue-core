@@ -36,7 +36,7 @@ module Services
     updated_ports = ports.append({"number" => port_num, "protocol" => protocol}).uniq
     ip_entity.set_detail("ports", updated_ports)
 
-    weak_tcp_services = [21, 23]  #possibly 25, but STARTTLS support is currently unclear
+    weak_tcp_services = [21, 23]  # possibly 25, but STARTTLS support is currently unclear
     weak_udp_services = [60, 1900, 5000]
 
     # set sssl if we end in 443 or are in our includeed list 
@@ -84,13 +84,16 @@ module Services
         if cert_names
           cert_names.uniq do |cn|
 
+            create = false 
             if cn.is_ip_address?
-              cert_entities << _create_entity("IpAddress", { "name" => cn }, ip_entity )   
-            else
-              # create each entity 
-              cert_entities << create_dns_entity_from_string(cn)
+              create = true unless entity_exists? ip_entity.project, "IpAddress", cn
+            elsif cn.is_domain?
+              create = true unless entity_exists? ip_entity.project, "Domain", cn
+            else 
+              create = true unless entity_exists? ip_entity.project, "DnsRecord", cn
             end
-            
+
+            cert_entities << create_dns_entity_from_string(cn)
           end
         end
 
@@ -103,12 +106,13 @@ module Services
     # add our ip 
     hosts << ip_entity
     # add everything we got from the cert
-    cert_entities.each {|ce| hosts << ce} 
+    cert_entities.each {|ce| hosts << ce } 
     
     # and add our aliases
     if ip_entity.aliases.count > 0
       ip_entity.aliases.each do |al|
         next unless al.type_string == "DnsRecord" || al.type_string == "Domain" #  only dns records
+        next if entity_exists? ip_entity.project, al.type_string, al.name
         next unless al.scoped? # skip blacklisted / unscoped
         hosts << al # add to the list
       end
@@ -133,7 +137,7 @@ module Services
         # if we've never seen this before, go ahead and open it to ensure it's 
         # something we want to create (this helps eliminate unusable urls). However, 
         # skip if we have, we want to minimize requests to the services
-        if !entity_exists? ip_entity.project, "Uri", uri
+        if !entity_exists?(ip_entity.project, "Uri", uri)
 
           r = _gather_http_response(uri)
           http_response = r[:http_response]
@@ -144,6 +148,8 @@ module Services
             next
           end
 
+        else 
+          _log "Skipping Page grab, entity already exists"
         end
 
         entity_details = {

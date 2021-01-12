@@ -295,6 +295,7 @@ class EntityManager
       # Check if we've already run first and return gracefully if so
       if entity.enriched && !project.allow_reenrich
         tr.log "Skipping enrichment... already completed and re-enrich not enabled!"
+      
       else
 
         # starts a new background task... so anything that needs to happen from
