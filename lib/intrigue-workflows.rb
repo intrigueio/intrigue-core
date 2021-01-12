@@ -81,7 +81,7 @@ module Intrigue
         
         ### Our accepted variables
         if v =~ /^__seed_list__$/ ## current seed list 
-          v = entity.project.seeds.map{|x| x.name }.join(", ")
+          v = entity.project.seeds.select_map(:name).join(",")
         end
 
         # Options shoudl be in his format for a task 

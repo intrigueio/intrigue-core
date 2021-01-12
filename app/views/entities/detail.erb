@@ -23,6 +23,7 @@
       </div>
     </div>
   </div> 
+
   <div class="row"> 
     <div class="col-sm-5">&nbsp;</div>
     <div class="col-sm-7">&nbsp;</div>
@@ -63,7 +64,7 @@
 
     <ul>
       <li>Enriched: <%= @entity.enriched ? checkmark_image : xmark_image %></li>
-      <li>Scoped: <%= @entity.scoped ? checkmark_image : xmark_image %></li>
+      <li>Scoped: <%= @entity.scoped ? checkmark_image : xmark_image %> (<%=h @entity.scoped_reason%>)</li>
       <li>Hidden: <%= @entity.hidden ? checkmark_image : xmark_image %></li>
     </ul>
 

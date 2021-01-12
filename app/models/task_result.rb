@@ -95,7 +95,7 @@ module Model
 
     # Matches based on type and the attribute "name"
     def has_entity? entity
-      entities.paged_each(rows_per_fetch: 100){|e| return true if e.match?(entity) }
+      return true if self.entities_dataset.where(:name => entity.name, :type => entity.type).first
     false
     end
 

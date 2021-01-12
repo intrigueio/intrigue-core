@@ -30,7 +30,7 @@ class DnsRecord < Intrigue::Task::BaseTask
 
     # always create a domain 
     domain_name = parse_domain_name(lookup_name)
-    create_unscoped_dns_entity_from_string(domain_name) #if @entity.scoped?
+    create_unscoped_dns_entity_from_string(domain_name) if @entity.scoped?
 
     # Do a lookup and keep track of all aliases
     _log "Resolving: #{lookup_name}"
@@ -53,8 +53,9 @@ class DnsRecord < Intrigue::Task::BaseTask
     _log "Grabbing SOA"
     soa_details = collect_soa_details(lookup_name)
     _set_entity_detail("soa_record", soa_details)
+    
     if soa_details && soa_details["primary_name_server"] && soa_details["primary_name_server"].length > 0
-      _create_entity "Nameserver", "name" => soa_details["primary_name_server"]
+      _create_entity "Nameserver", "name" => soa_details["primary_name_server"] if @entity.scoped?
     end
 
     # Checking dev test 
@@ -106,9 +107,6 @@ class DnsRecord < Intrigue::Task::BaseTask
         
       end
     end 
-
-    # now, we need to go back through all affiliated ips and create the port
-    # on any affiliated IPs, as this vhost might matter 
 
     ###
     ### Finally, cloud provider determination

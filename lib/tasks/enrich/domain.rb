@@ -64,7 +64,7 @@ class Domain < Intrigue::Task::BaseTask
       
       # make sure we create affiliated domains
       ns_records.each do |ns|
-        if @entity.scoped
+        if @entity.scoped?
           _create_entity "Nameserver", "name" => ns
         end
       end
@@ -88,7 +88,7 @@ class Domain < Intrigue::Task::BaseTask
           next unless spf.match(/^include:/)
           domain_name = spf.split("include:").last
           _log "Found Associated SPF Domain: #{domain_name}"
-          create_dns_entity_from_string(domain_name)
+          create_dns_entity_from_string(domain_name) if @entity.scoped?
         end
       end
 
@@ -107,7 +107,7 @@ class Domain < Intrigue::Task::BaseTask
           # https://dmarcian.com/rua-vs-ruf/
           if component.strip.match(/^rua/) || component.strip.match(/^ruf/)
             component.split("mailto:").last.split(",").each do |address|
-              _create_entity "EmailAddress", :name => address
+              _create_entity "EmailAddress", :name => address if @entity.scoped?
             end
           end
 
@@ -118,7 +118,7 @@ class Domain < Intrigue::Task::BaseTask
         _set_entity_detail("dmarc", nil) 
 
         # if we have mx records and we're scoped, create an issue
-        if mx_records.count > 0
+        if mx_records.count > 0 && @entity.scoped?
           _create_dmarc_issues(mx_records, dmarc_details)
         end
 
@@ -148,6 +148,8 @@ class Domain < Intrigue::Task::BaseTask
 
   end
 
+  private
+
   def _create_aliases(results)
     ####
     ### Create aliased entities
@@ -155,13 +157,13 @@ class Domain < Intrigue::Task::BaseTask
     results.each do |result|
       next if @entity.name == result["name"]
       _log "Creating entity for... #{result}"
-      if "#{result["name"]}".is_ip_address?
-        _create_entity("IpAddress", { "name" => result["name"] }, @entity)
-      else
-        _create_entity("Domain", { "name" => result["name"] }, @entity)
-      end
+    
+      # create a domain for this entity
+      entity = create_dns_entity_from_string(result["name"], @entity)
     end
+
   end
+
 
 end
 end

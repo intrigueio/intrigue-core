@@ -223,22 +223,30 @@ module WebContent
 
      potential_dns_records.compact.each do |potential_dns_record|
 
-       # TODO .. skip common javascript conventions
-       next if potential_dns_record.match /[\(\)]+/
-       next if potential_dns_record.match /\.target$/
-       next if potential_dns_record.match /\.analytics$/
-       next if potential_dns_record.match /\.page$/
-       next if potential_dns_record.match /\.call$/
-       next if potential_dns_record.match /\.style$/
-       next if potential_dns_record.match /\.show$/
-       next if potential_dns_record.match /\.top$/
-       next if potential_dns_record.match /\.name/
-       next if potential_dns_record.match /\.data/
-       next if potential_dns_record.match /\.stream/
-       next if potential_dns_record.match /\.video/
-
        # check that we have a valid TLD, to avoid stuff like image.png or file.css or page.aspx
        next unless parse_tld(potential_dns_record) && potential_dns_record.match(dns_regex)
+
+       # TODO .. skip common javascript conventions
+       next if potential_dns_record.match /[\(\)]+/
+       next if potential_dns_record.match /\.analytics$/
+       next if potential_dns_record.match /\.call$/
+       next if potential_dns_record.match /\.click$/
+       next if potential_dns_record.match /\.data$/
+       next if potential_dns_record.match /\.map$/
+       next if potential_dns_record.match /\.name$/
+       next if potential_dns_record.match /\.next$/
+       next if potential_dns_record.match /\.now$/
+       next if potential_dns_record.match /\.open$/
+       next if potential_dns_record.match /\.page$/
+       next if potential_dns_record.match /\.prototype$/
+       next if potential_dns_record.match /\.sc$/
+       next if potential_dns_record.match /\.search$/
+       next if potential_dns_record.match /\.show$/
+       next if potential_dns_record.match /\.stream$/
+       next if potential_dns_record.match /\.style$/
+       next if potential_dns_record.match /\.target$/
+       next if potential_dns_record.match /\.top$/
+       next if potential_dns_record.match /\.video$/
 
       create_dns_entity_from_string potential_dns_record, nil, false, { "origin" => source_uri }
      end

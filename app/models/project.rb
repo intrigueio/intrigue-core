@@ -36,13 +36,11 @@ module Model
     end
 
     def seeds
-      Intrigue::Core::Model::Entity.scope_by_project(self.name).where(seed: true).all || [] 
+      Intrigue::Core::Model::Entity.scope_by_project(self.name).where(seed: true)
     end
 
     def seed_entity?(type_string, entity_name)
-      seeds.compact.each do |s|
-        return true if s.match_entity_string?(type_string, entity_name)
-      end
+      return true if seeds.first(name: entity_name, type: "Intrigue::Entity::#{type_string}")
     false
     end
 
@@ -70,7 +68,6 @@ module Model
 
     out
     end
-
 
     def export_hash
       {
@@ -346,7 +343,8 @@ module Model
       # skip anything else thats not verifiable!!
       return false unless scope_check_entity_types.include? "Intrigue::Entity::#{type_string}"
 
-      seeds.each do |s| 
+ 
+      seeds.where(Sequel.ilike(:name, "%#{entity_name}%")).all.each do |s| 
         if entity_name =~ /[\.\s\@]#{Regexp.escape(s.name)}/i
           return true # matches a seed pattern, it's whitelisted
         end
@@ -385,7 +383,7 @@ module Model
 
       # if it's an explicit seed, it's not blacklisted 
       return false if seed_entity?(type_string,entity_name)
-      return false unless Intrigue::Core::Model::GlobalEntity.count > 0
+      return false unless Intrigue::Core::Model::GlobalEntity.first
 
       ### CHECK OUR SEED ENTITIES TO SEE IF THE TEXT MATCHES A DOMAIN
       ######################################################
@@ -402,7 +400,7 @@ module Model
       # not blacklisted if we're not one of the check types
       return false unless scope_check_entity_types.include? "Intrigue::Entity::#{type_string}"
 
-      seeds.each do |s|
+      seeds.where(Sequel.ilike(:name, "%#{entity_name}%")).all.each do |s| 
         if entity_name =~ /[\.\s\@]#{Regexp.escape(s.name)}/i
           return false # not blacklisted if we're matching a seed derivative
         end

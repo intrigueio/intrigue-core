@@ -69,7 +69,7 @@ class NetBlock < Intrigue::Core::Model::Entity
 
     ### Now check our seed entities for a match
     ######################################################
-    if self.project.seeds
+    if self.project.seeds.count > 0
       self.project.seeds.each do |s|
         next unless scope_check_entity_types.include? "#{s.type}"
         if whois_text.match /@#{Regexp.escape(s.name)}/i
