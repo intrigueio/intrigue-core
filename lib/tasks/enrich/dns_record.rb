@@ -30,7 +30,7 @@ class DnsRecord < Intrigue::Task::BaseTask
 
     # always create a domain 
     domain_name = parse_domain_name(lookup_name)
-    create_unscoped_dns_entity_from_string(domain_name) if @entity.scoped?
+    create_unscoped_dns_entity_from_string(domain_name) #if @entity.scoped?
 
     # Do a lookup and keep track of all aliases
     _log "Resolving: #{lookup_name}"
@@ -94,19 +94,22 @@ class DnsRecord < Intrigue::Task::BaseTask
     ###  / duplicative of what's happening in the IpAddress entity scoping logic 
     ###  itself. TODO ... investigate 
     ###
-    if @entity.scoped?
-      @entity.aliases.each do |a|
-        next if a.id == @entity.id # we're already scoped. 
-        next unless a.type_string == "IpAddress" #only proceed for ip addresses
-        
-        # set scoped unless this belongs to a known global entity
-        unless a.deny_list || a.project.deny_list_entity?("Domain", parse_domain_name(a.name))
-          _log "Setting #{a.name} scoped!"
-          a.set_scoped!(true, "alias_of_entity_#{@task_result.name}") 
-        end
-        
-      end
-    end 
+    #if @entity.scoped? && self.aliases.count > 0
+    #  @entity.aliases.each do |a|
+    #    next if a.id == @entity.id # we're already scoped. 
+    #    next unless a.type_string == "IpAddress" #only proceed for ip addresses
+    #    
+    #    # set scoped unless this belongs to a known global entity
+    #      _log "Setting #{a.name} scoped!"
+    #      a.set_scoped!(true, "alias_of_entity_#{@task_result.name}") 
+    #    end
+    #    
+    #  end
+    #end 
+
+
+    # now, we need to go back through all affiliated ips and create the port
+    # on any affiliated IPs, as this vhost might matter 
 
     ###
     ### Finally, cloud provider determination
