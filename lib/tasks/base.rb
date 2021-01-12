@@ -86,7 +86,7 @@ class BaseTask
         name: our_task_result_name).exclude(timestamp_start: nil).exclude(id: @task_result.id)
 
       # if we've already completed another one, return eearly
-      if existing_task_results.count > 0
+      if existing_task_results.first
         _log "This task is in progress, or has already been completed in this project"
         
         # we want to be able to intelligently re-run flows we havent seen before... this is a way to do that 
