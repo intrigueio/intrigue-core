@@ -195,7 +195,7 @@ class BaseTask
           _log_error "Task setup failed, bailing out w/o running!"
         end
       end
-  
+
       ###
       ## FINALIZE ENRICHMENT
       ###
@@ -218,10 +218,6 @@ class BaseTask
         ###
         if @entity.scoped?
 
-          # add it to our task result 
-          unless @task_result.has_entity?(@entity)
-            @task_result.add_entity(@entity)
-          end
 
           # WORKFLOW LAUNCH (ONLY IF WE ARE ATTACHED TO A WORKFLOW) 
           # if this is part of a scan and we're in depth

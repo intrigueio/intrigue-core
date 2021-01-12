@@ -353,10 +353,6 @@ class EntityManager
     end
 
 
-    ####
-    #### Finally, set scope, enrichment has run 
-    ####
-
     ### if the entity has specific scoping instructions (now that we have an entity)
     ##
     ##  the default method on the base class simply sets what was available previously
@@ -369,7 +365,11 @@ class EntityManager
       entity.save_changes
     end
 
-  # return the entity, with enrichment now scheduled
+    # finally, add the new entity to our task result unless it's already there
+    # OR ... we just know for a fact we dont want it (don't waste the DB query) 
+    tr.add_entity(entity) unless tr.has_entity?(entity) || !entity.deny_list
+      
+  # return the entity with enrichment now scheduled if appropriate
   entity
   end
 
