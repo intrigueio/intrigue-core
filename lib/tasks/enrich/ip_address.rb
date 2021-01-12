@@ -155,7 +155,6 @@ class IpAddress < Intrigue::Task::BaseTask
 
       dns_entries << { "response_data" => xdata, "response_type" => xtype }
     end
-
     _set_entity_detail("resolutions", dns_entries.uniq )
 
     ###
@@ -169,6 +168,8 @@ class IpAddress < Intrigue::Task::BaseTask
 
   end
 
+
+  
 
 end
 end

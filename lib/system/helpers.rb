@@ -35,8 +35,7 @@ module System
     def entity_exists?(project, entity_type, entity_name)
       return false unless project
       entities = Intrigue::Core::Model::Entity.scope_by_project_and_type(project.name, entity_type)
-      return entities.first(:name => entity_name) if entities
-    false
+      return entities.first(:name => entity_name)
     end
 
     ###
@@ -55,7 +54,7 @@ module System
         :options => options,
         :handlers => [],
         :base_entity => entity,
-        :autoscheduled => (queue == "task_autoscheduled" || queue == "task_enrichment"),
+        :autoscheduled => !(queue == "task"),
         :auto_enrich => auto_enrich,
         :auto_scope => auto_scope,
         :depth => depth

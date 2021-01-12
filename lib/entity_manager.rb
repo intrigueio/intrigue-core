@@ -221,7 +221,7 @@ class EntityManager
     end
 
     # Add the first one to our task result
-    unless tr.has_entity? entity
+    unless tr.has_entity?(entity) && entity.task_results.count < 10
       tr.add_entity(entity) if entity.scoped?
     end
     
@@ -301,6 +301,7 @@ class EntityManager
       if entity.enriched && !project.allow_reenrich
         tr.log "Skipping enrichment... already completed and re-enrich not enabled!"
       else
+
         # starts a new background task... so anything that needs to happen from
         # this point should happen in that new background task
         if entity.enriched

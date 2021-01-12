@@ -65,13 +65,6 @@ module Generic
   end
 
   ###
-  ### Helper method .. should this check with the entity manager?
-  ###
-  def _entity_exists?(type,name)
-    entity_exists?(@entity.project, type, name)
-  end
-
-  ###
   ### Logging helpers
   ###
   def _log(message)

@@ -267,14 +267,16 @@ module Model
       nil
     end
 
-    # Short string with fingeprint details. overriden by specific types.
+    # Short string with fingeprint details.
     #
-    # @return [String] light details about this entity
+    # @return [String]  Semicolon delimted list of fingeprrints
     def short_fingerprint_string(fingerprint)
       fingerprint_array = fingerprint.map do |x| 
-        "#{x['vendor']} #{x['version']} #{x['update']}".strip # start with just vendor + version
-        # if vendor and product arenot the same, add product
-        "#{x['vendor']} #{x['product']} #{x['version']} #{x['update']}".strip unless x['vendor'] == x['product']
+        if x['vendor'] == x['product']
+          fp = "#{x['vendor']} #{x['version']} #{x['update']}".strip # start with just vendor + version
+        else # if vendor and product arenot the same, add product
+          fp = "#{x['vendor']} #{x['product']} #{x['version']} #{x['update']}".strip
+        end
       end
       out = "Fingerprint: #{fingerprint_array.sort.uniq.join("; ")}" if details["fingerprint"]
     end
