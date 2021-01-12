@@ -229,9 +229,11 @@ module WebContent
        # TODO .. skip common javascript conventions
        next if potential_dns_record.match /[\(\)]+/
        next if potential_dns_record.match /\.analytics$/
+       next if potential_dns_record.match /\.app$/
        next if potential_dns_record.match /\.call$/
        next if potential_dns_record.match /\.click$/
        next if potential_dns_record.match /\.data$/
+       next if potential_dns_record.match /\.id$/
        next if potential_dns_record.match /\.map$/
        next if potential_dns_record.match /\.name$/
        next if potential_dns_record.match /\.next$/
