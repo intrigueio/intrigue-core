@@ -33,6 +33,7 @@ class AwsCredential < Intrigue::Core::Model::Entity
   end
 
   def scoped?
+    return true if scoped
     return true if self.allow_list
     return false if self.deny_list
   true # otherwise just default to true

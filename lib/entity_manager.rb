@@ -219,11 +219,6 @@ class EntityManager
       end
 
     end
-
-    # Add the first one to our task result
-    unless tr.has_entity?(entity) && entity.task_results.count < 10
-      tr.add_entity(entity) if entity.scoped?
-    end
     
     ###
     ### SCOPING MUST ALWAYS RE-RUN

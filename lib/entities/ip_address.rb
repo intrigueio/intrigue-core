@@ -50,7 +50,7 @@ class IpAddress < Intrigue::Core::Model::Entity
     return true if created_by?("nmap_scan")
 
     # if we have aliases and theyre scoped, we can scope us
-    return true if self.aliases.count > 0 && aliases.select{ |x| x if x.allow_list }.count > 0
+    return true if self.aliases.count > 1 && aliases.select{ |x| x if x.allow_list }.count > 0
 
   # if we didnt match the above and we were asked, default to false
   false

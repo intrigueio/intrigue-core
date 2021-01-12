@@ -5,7 +5,7 @@ pretty_name: Threat Investigation Passive
 user_selectable: true
 maintainer: jcran
 flow: recursive
-description: Performa a passive threat investigation on all provided IoCs
+description: Performa a light threat investigation on all provided IoCs
 definition:
   DnsRecord: 
   - task: threat/search_apility
@@ -46,3 +46,6 @@ definition:
   - task: threat/search_yandex_dns
   - task: threat/search_alienvault_otx
   - task: search_binaryedge_torrents
+  - task: naabu_scan
+  Uri: 
+  - task: uri_screenshot

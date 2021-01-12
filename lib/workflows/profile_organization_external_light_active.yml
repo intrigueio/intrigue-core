@@ -71,5 +71,6 @@ definition:
   - task: uri_check_subdomain_hijack
   - task: uri_extract_linked_hosts
   - task: uri_extract_tokens
+  - task: uri_screenshot
   - task: uri_gather_ssl_certificate
 

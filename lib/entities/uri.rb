@@ -40,6 +40,7 @@ class Uri < Intrigue::Core::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
+    return true if scoped
     return true if self.allow_list
     return false if self.deny_list
 
@@ -61,7 +62,7 @@ class Uri < Intrigue::Core::Model::Entity
   end
 
   def enrichment_tasks
-    ["enrich/uri", "enrich/uri_browser"]
+    ["enrich/uri"]
   end
 
 end
