@@ -219,7 +219,7 @@ module WebContent
      end
 
      # Scan for dns records
-     potential_dns_records = content.scan(dns_regex)
+     potential_dns_records = URI.decode(content).scan(dns_regex)
 
      potential_dns_records.compact.each do |potential_dns_record|
 
