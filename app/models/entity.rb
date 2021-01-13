@@ -108,8 +108,9 @@ module Model
     end
 
     def deny_list
-      return nil unless project
-      project.deny_list_entity?(self.type_string, self.name)
+      return nil unless project 
+      out = project.deny_list_entity?(self.type_string, self.name)
+    out
     end 
 
     def validate
@@ -150,6 +151,16 @@ module Model
     end
 
     def enrich(task_result)
+
+      # immediately fail if this is not autoscheduled 
+      ###
+      ### Optimization put in place 2020-01-12 ... note that this may not 
+      ### work for every use case and should be revisited at a later date
+      ###
+      if self.deny_list
+        task_result.log "Cowardly refusing to enrich enitty on our deny list! ... #{task_result.name} #{self.name}"
+        return nil
+      end
 
       # grab the task result
       scan_result_id = task_result.scan_result.id if task_result.scan_result 

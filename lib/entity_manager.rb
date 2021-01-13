@@ -196,30 +196,36 @@ class EntityManager
       end
 
       # necessary to relookup?
-      entity = Intrigue::Core::Model::Entity.find(:id => entity.id)
+      entity = Intrigue::Core::Model::Entity.first(id: entity.id)
 
       ### Ensure we have an entity
       unless entity
-        tr.log_error "Unable to create or find entity: #{type}##{downcased_name}, failing!!"
-        raise InvalidEntityError.new("Invalid entity, unable to find: #{entity}")
+        tr.log_error "Unable to create or find entity: #{type_string}##{downcased_name}, failing!!"
+        raise InvalidEntityError.new("Invalid entity, unable to create!: #{type_string}##{downcased_name}")
       end
 
       ### Run transformation (to hide attributes... HACK)
       unless entity.transform!
         tr.log_error "Transformation of entity failed: #{entity}, rolling back entity creation!!"
         entity.delete
-        raise InvalidEntityError.new("Invalid entity, unable to transform: #{entity}")
+        raise InvalidEntityError.new("Invalid entity, unable to transform: #{type_string}##{downcased_name}")
       end
 
       ### Run Validation
       unless entity.validate_entity
         tr.log_error "Validation of entity failed: #{entity}, rolling back entity creation!!"
         entity.delete
-        raise InvalidEntityError.new("Invalid entity, unable to validate: #{entity}")
+        raise InvalidEntityError.new("Invalid entity, unable to validate: #{type_string}##{downcased_name}")
       end
 
     end
-    
+
+    ###
+    ### make a connection to the task result
+    ###
+    tr.add_entity(entity)
+
+
     ###
     ### SCOPING MUST ALWAYS RE-RUN
     ###
@@ -268,6 +274,16 @@ class EntityManager
 
     end
 
+    ### If the entity has specific scoping instructions (now that we have an entity)
+    ##
+    ##  The default method on the base class simply sets what was available previously
+    ##  See the inidivdiual entity files for this logic.
+    ##
+    if scope_request
+      entity.set_scoped!(scope_request.to_bool, "entity_scope_request_during_#{tr.name}")
+      entity.save_changes # SAVE IT
+    end
+
     #####
     ###
     ### END ... USER- or TASK- PROVIDED SCOPING
@@ -280,8 +296,8 @@ class EntityManager
     ###
     #####
 
-    # ENRICHMENT LAUNCH (this may re-run if an entity has just been scoped in)
-    if !tr.autoscheduled && !entity.deny_list # manally scheuduled, automatically enrich 
+    # ENRICHMENT LAUNCH (this may re-run if an entity has just been scoped in
+    if !entity.deny_list && !tr.autoscheduled # manally scheuduled, automatically enrich 
 
       if entity.enriched
         tr.log "Re-scheduling enrichment for existing entity (manually run)!"
@@ -290,7 +306,7 @@ class EntityManager
       tr.log "Manually scheduling enrich: #{entity.name}"
       entity.enrich(tr)
 
-    elsif tr.auto_enrich && !entity.deny_list && (!entity_already_existed || project.allow_reenrich)
+    elsif !entity.deny_list && tr.auto_enrich && (!entity_already_existed || project.allow_reenrich)
       
       # Check if we've already run first and return gracefully if so
       if entity.enriched && !project.allow_reenrich
@@ -309,9 +325,11 @@ class EntityManager
       end
       
     else
+
+      tr.log "Skipping enrichment... entity on deny list!" if entity.deny_list
       tr.log "Skipping enrichment... enrich not enabled!" unless tr.auto_enrich
       tr.log "Skipping enrichment... entity #{entity.name} already exists!" if entity_already_existed
-      tr.log "Skipping enrichment... entity on deny list!" if entity.deny_list
+
     end
 
     # Attach the alias.. this can be confusing....
@@ -351,23 +369,6 @@ class EntityManager
       end
 
     end
-
-
-    ### if the entity has specific scoping instructions (now that we have an entity)
-    ##
-    ##  the default method on the base class simply sets what was available previously
-    ##  See the inidivdiual entity files for this logic.
-    ##
-    if scope_request
-      entity.set_scoped!(scope_request.to_bool, "entity_scope_request_during_#{tr.name}")
-      
-      # SAVE IT
-      entity.save_changes
-    end
-
-    # finally, add the new entity to our task result unless it's already there
-    # OR ... we just know for a fact we dont want it (don't waste the DB query) 
-    tr.add_entity(entity) unless tr.has_entity?(entity) || !entity.deny_list
       
   # return the entity with enrichment now scheduled if appropriate
   entity

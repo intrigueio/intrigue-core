@@ -83,16 +83,6 @@ module Services
         # DnsRecord, Domain, or IpAddress.
         if cert_names
           cert_names.uniq do |cn|
-
-            create = false 
-            if cn.is_ip_address?
-              create = true unless entity_exists? ip_entity.project, "IpAddress", cn
-            elsif cn.is_domain?
-              create = true unless entity_exists? ip_entity.project, "Domain", cn
-            else 
-              create = true unless entity_exists? ip_entity.project, "DnsRecord", cn
-            end
-
             cert_entities << create_dns_entity_from_string(cn)
           end
         end
@@ -112,7 +102,6 @@ module Services
     if ip_entity.aliases.count > 0
       ip_entity.aliases.each do |al|
         next unless al.type_string == "DnsRecord" || al.type_string == "Domain" #  only dns records
-        next if entity_exists? ip_entity.project, al.type_string, al.name
         next unless al.scoped? # skip blacklisted / unscoped
         hosts << al # add to the list
       end
