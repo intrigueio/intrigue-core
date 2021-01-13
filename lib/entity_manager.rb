@@ -218,12 +218,19 @@ class EntityManager
         raise InvalidEntityError.new("Invalid entity, unable to validate: #{type_string}##{downcased_name}")
       end
 
+      ###
+      ### make a connection to the task result on the first one
+      ###
+      tr.add_entity(entity)
+
     end
 
+
     ###
-    ### make a connection to the task result
+    ### Always stick the task name on the entity 
     ###
-    tr.add_entity(entity)
+    task_list = (entity.get_detail("source_task_list") || []) << tr.name
+    entity.set_detail "source_task_list", task_list
 
 
     ###

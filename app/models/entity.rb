@@ -158,7 +158,7 @@ module Model
       ### work for every use case and should be revisited at a later date
       ###
       if self.deny_list
-        task_result.log "Cowardly refusing to enrich enitty on our deny list! ... #{task_result.name} #{self.name}"
+        task_result.log "Cowardly refusing to enrich enitty on our deny list!: #{task_result.name} #{self.name}"
         return nil
       end
 

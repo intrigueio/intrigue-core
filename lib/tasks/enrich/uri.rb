@@ -47,10 +47,10 @@ class Uri < Intrigue::Task::BaseTask
     end
 
     # parse out the hostname and parent domains, and create them
-    unless hostname.is_ip_address?
-      create_dns_entity_from_string hostname
+    #unless hostname.is_ip_address?
+    #  create_dns_entity_from_string hostname
       create_dns_entity_from_string parse_domain_name(hostname)
-    end
+    #end
 
     # Sha256 the body response, in case it's helpful later ont
     response_data_hash = Digest::SHA256.base64digest(response.body_utf8)
