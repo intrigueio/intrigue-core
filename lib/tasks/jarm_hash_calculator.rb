@@ -46,6 +46,8 @@ module Intrigue
             jarm_hash = jarm_parts[2].delete!("\n")
         end
 
+        _log "Found jarm_hash for entity: #{jarm_hash}"
+
         # attach hash to entity
         if jarm_hash && jarm_hash != "" && !(jarm_hash =~ /^0+$/)
             _set_entity_detail "jarm_hash", jarm_hash
