@@ -168,13 +168,6 @@ class Uri < Intrigue::Task::BaseTask
 
         _log "Got cert's alt names: #{alt_names}"
 
-        # create jarm hash
-        jarm_res = _unsafe_system "jarmscan #{uri}"
-        jarm_parts = jarm_res.split("\t")
-        if jarm_parts[2]
-          jarm_hash = jarm_parts[2].delete!("\n")
-        end 
-
         if set_cookie
 
           # temporarily disabled to address false positives - jcran
@@ -306,8 +299,7 @@ class Uri < Intrigue::Task::BaseTask
       "extended_configuration" => ident_configuration.uniq,        # new content field
       "extended_full_responses" => ident_responses.uniq,           # includes all the redirects etc
       "extended_favicon_data" => favicon_data,
-      "extended_response_body" => response.body_utf8,
-      "jarm_hash" => "#{jarm_hash}"
+      "extended_response_body" => response.body_utf8
     }
 
     # Set the details, and make sure raw response data is a hidden (not searchable) detail
