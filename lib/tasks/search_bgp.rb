@@ -11,7 +11,7 @@ class SearchBgp < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["IpAddress","NetBlock","Organization", "String"],
+      :allowed_types => ["IpAddress","NetBlock","Organization", "String", "UniqueKeyword"],
       :example_entities => [
         {"type" => "String", "details" => {"name" => "intrigue"}}
       ],
