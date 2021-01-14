@@ -60,7 +60,9 @@ class UriSpider < BaseTask
     end
 
     # create a default extraction pattern, default to current domain
-    @opt_extract_dns_record_pattern = [parse_domain_name("#{uri.host}")] if @opt_extract_dns_record_pattern == ["(current domain)"]
+    if @opt_extract_dns_record_pattern == ["(current domain)"]
+      @opt_extract_dns_record_pattern = [parse_domain_name("#{uri.host}")] 
+    end
 
     # Create a list of whitelist spider regexes from the opt_spider_whitelist options
     whitelist_regexes = @opt_spider_whitelist.gsub("(current domain)",
@@ -115,7 +117,7 @@ class UriSpider < BaseTask
           if @opt_extract_dns_records
 
             _log "Extracting DNS records from #{page.url}"
-            URI.extract(encoded_page_body, ["https", "http", "ftp"]) do |link|
+            URI.extract(encoded_page_body, ["https", "http", "ftp"]).uniq do |link|
               
               # Collect the host
               begin 

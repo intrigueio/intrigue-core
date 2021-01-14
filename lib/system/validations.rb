@@ -32,7 +32,7 @@ module System
     end
 
     def phone_number_regex
-      /^\d+?[\.\s-]?\(?(\d{3})\)?[\.\s-]?\d{3}[\.\s-]?\d{4}$/
+      /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/
     end
 
     def email_address_regex
