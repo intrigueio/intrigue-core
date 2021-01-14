@@ -181,6 +181,15 @@ mv *.json data/gitrob
 rm gitrob_linux_amd64_3.4.1-beta.zip README.md
 cd $HOME
 
+# jarmscan
+echo "[+] Getting Jarmscan... "
+cd $HOME/bin
+wget -q https://github.com/RumbleDiscovery/jarm-go/releases/download/v0.0.5/jarm-go_0.0.5_Linux_x86_64.tar.gz
+tar xzf jarm-go_0.0.5_Linux_x86_64.tar.gz
+chmod +x jarmscan
+rm jarm-go_0.0.5_Linux_x86_64.tar.gz LICENSE.txt
+cd $HOME
+
 # gobuster
 echo "[+] Getting Gobuster... "
 go get github.com/OJ/gobuster

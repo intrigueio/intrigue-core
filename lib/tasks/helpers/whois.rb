@@ -247,7 +247,11 @@ module Whois
     end
 
     json = JSON.parse(http_get_body(ripe_uri))
-    data = json["data"]
+    if json && json["data"]
+      data = json["data"]
+    else
+      data = {}
+    end
 
     # parse out ranges
     if data["last_updated"]
