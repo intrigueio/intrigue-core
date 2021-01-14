@@ -219,7 +219,8 @@ module WebContent
      end
 
      # Scan for dns records
-     potential_dns_records = content.scan(dns_regex)
+     # CGI::unescape does not throw errors according to docs: https://www.rubydoc.info/stdlib/cgi/CGI/Escape#unescape-instance_method
+     potential_dns_records = CGI::unescape(content).scan(dns_regex)
 
      potential_dns_records.compact.each do |potential_dns_record|
 
