@@ -8,9 +8,9 @@ module System
     
     def asn_regex(anchored=true)
       if anchored 
-        /\A(as|AS).?[0-9].*\z/
+        /\A(as|AS).?[0-9].*\z/i
       else 
-        /(as|AS).?[0-9].*/
+        /(as|AS).?[0-9].*/i
       end
     end
     
@@ -33,17 +33,17 @@ module System
 
     def dns_regex(anchored=true)
       if anchored 
-        /\A\b[[a-z0-9]+(-[a-z0-9]+)*\.]+\.[a-z]{2,}\b\z/
+        /\A\b[[a-z0-9]+([\-a-z0-9]+)*\.]+\.[a-z]{2,}\b\z/i
       else 
-        /\b[[a-z0-9]+(-[a-z0-9]+)*\.]+\.[a-z]{2,}\b/
+        /\b[[a-z0-9]+([\-a-z0-9]+)*\.]+\.[a-z]{2,}\b/i
       end
     end
 
     def netblock_regex(anchored=true)
       if anchored 
-        /\A\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}\/\d{1,2}\z/
+        /\A\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}\/\d{1,2}\z/i
       else 
-        /\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}\/\d{1,2}/
+        /\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}\/\d{1,2}/i
       end
     end
 
@@ -65,17 +65,17 @@ module System
 
     def email_address_regex(anchored=true)
       if anchored 
-        /\A[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,8}\z/
+        /\A[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,8}\z/i
       else 
-        /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,8}/
+        /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,8}/i
       end
     end
 
     def url_regex(anchored=true)
       if anchored 
-        /\Ahttps?:\/\/[\S]+\z/
+        /\Ahttps?:\/\/[\S]+\z/i
       else
-        /https?:\/\/[\S]+/
+        /https?:\/\/[\S]+/i
       end
     end
 

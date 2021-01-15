@@ -25,7 +25,7 @@ module Model
       super
     end
 
-    def start(requested_queue=nil, retries=3)
+    def start(requested_queue=nil, retries=true)
 
       task_class = Intrigue::TaskFactory.create_by_name(task_name).class
       forced_queue = task_class.metadata[:queue]
