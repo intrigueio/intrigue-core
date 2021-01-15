@@ -33,9 +33,9 @@ module System
 
     def dns_regex(anchored=true)
       if anchored 
-        /\A\b[[a-z0-9]+([\-a-z0-9]+)*\.]+\.[a-z]{2,}\b\z/i
+        /\A\b[[a-z0-9]+([\_\-a-z0-9]+)*\.]+\.[a-z]{2,}\b\z/i
       else 
-        /\b[[a-z0-9]+([\-a-z0-9]+)*\.]+\.[a-z]{2,}\b/i
+        /\b[[a-z0-9]+([\_\-a-z0-9]+)*\.]+\.[a-z]{2,}\b/i
       end
     end
 
