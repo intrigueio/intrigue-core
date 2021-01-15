@@ -180,29 +180,28 @@ module WebContent
    end
 
    ###
-   ### Parses out entities AND creates them.
+   ### Parses out entities AND creates them. only create  if we were not given a specific pattern and/or no pattern
    ###
    def parse_and_create_entities_from_content(source_uri, content, match_patterns=[])
 
-    parse_email_addresses_from_content(source_uri, content, match_patterns)
+    potential_email_addresses = parse_email_addresses_from_content(source_uri, content, match_patterns)
     potential_email_addresses.each do |e| 
       x = _create_entity "EmailAddress", e 
     end         
 
-    parse_dns_records_from_content(source_uri, content, match_patterns)
-    # Create it if we were not given a specific pattern and/or we matched 
+    potential_dns_records = parse_dns_records_from_content(source_uri, content, match_patterns)
     potential_dns_records.each do |d|
-      create_dns_entity_from_string d["name"], nil, false, d 
+      create_dns_entity_from_string d["name"], nil, false, d
     end
 
-    parse_phone_numbers_from_content(source_uri, content, match_patterns)
+    potential_phone_numbers = parse_phone_numbers_from_content(source_uri, content, match_patterns)
     potential_phone_numbers.each do |p|
       x = _create_entity "PhoneNumber", p
     end
 
     potential_urls = parse_uris_from_content(source_uri, content, match_patterns)
-    potential_phone_numbers.each do |p|
-      x = _create_entity "Uri", p
+    potential_urls.each do |u|
+      x = _create_entity "Uri", u
     end
 
     parse_web_account_from_content(content).each do |wa|
@@ -212,6 +211,34 @@ module WebContent
    end
 
    def parse_email_addresses_from_content(source_uri, content, match_patterns=[])
+    out=[]
+    @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
+
+    # Make sure we have something to parse
+    unless content
+      @task_result.logger.log_error "No content to parse, returning" if @task_result
+      return nil
+    end
+
+    # Scan for email addresses
+    addrs = content.scan(email_address_regex(false))
+
+    addrs.each do |addr|
+      next if addr.match(/.png$|.jpg$|.gif$|.bmp$|.jpeg$/)
+
+       # if we got a pattern list, check it for matching
+       create=false
+       match_patterns.each do |p|
+         create = true if addr.strip =~ /#{p}/
+       end
+
+      out << {"name" => addr, "origin" => source_uri} if match_patterns.empty? || create 
+    end
+
+  out 
+  end
+
+  def parse_dns_records_from_content(source_uri, content, match_patterns=[])
      out=[]
      @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
 
@@ -221,167 +248,175 @@ module WebContent
        return nil
      end
 
-     # Scan for email addresses
-     addrs = content.scan(email_address_regex)
-     addrs.each do |addr|
-       next if addr.match(/.png$|.jpg$|.gif$|.bmp$|.jpeg$/)
-       out << {"name" => addr, "origin" => source_uri}
+     # Scan for dns records
+     potential_dns_records = content.scan(dns_regex(false))
+     potential_dns_records.each do |potential_dns_record|
+
+       # check that we have a valid TLD, to avoid stuff like image.png or file.css or page.aspx
+       next unless parse_tld(potential_dns_record) && potential_dns_record.match(dns_regex)
+
+       if match_patterns.empty?
+        # ... limit to common TLDs unless we got a pattern to match
+        next if potential_dns_record.match /[\(\)]+/
+        next if potential_dns_record.match /\.analytics$/
+        next if potential_dns_record.match /\.app$/
+        next if potential_dns_record.match /\.call$/
+        next if potential_dns_record.match /\.click$/
+        next if potential_dns_record.match /\.data$/
+        next if potential_dns_record.match /\.id$/
+        next if potential_dns_record.match /\.map$/
+        next if potential_dns_record.match /\.name$/
+        next if potential_dns_record.match /\.next$/
+        next if potential_dns_record.match /\.now$/
+        next if potential_dns_record.match /\.off$/
+        next if potential_dns_record.match /\.open$/
+        next if potential_dns_record.match /\.page$/
+        next if potential_dns_record.match /\.prototype$/
+        next if potential_dns_record.match /\.sc$/
+        next if potential_dns_record.match /\.search$/
+        next if potential_dns_record.match /\.show$/
+        next if potential_dns_record.match /\.stream$/
+        next if potential_dns_record.match /\.style$/
+        next if potential_dns_record.match /\.target$/
+        next if potential_dns_record.match /\.top$/
+        next if potential_dns_record.match /\.video$/
+      end
+
+       # if we got a pattern list, check it for matching
+       create=false
+       match_patterns.each do |p|
+         create = true if potential_dns_record.strip =~ /#{p}/
+       end
+
+       out << { "name" => potential_dns_record, "origin" => source_uri} if match_patterns.empty? || create 
      end
 
    out 
-   end
+  end
 
-   def parse_dns_records_from_content(source_uri, content, match_patterns=[])
-      out=[]
-      @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
-
-      # Make sure we have something to parse
-      unless content
-        @task_result.logger.log_error "No content to parse, returning" if @task_result
-        return nil
-      end
-
-      # Scan for dns records
-      potential_dns_records = content.scan(dns_regex).compact
-      potential_dns_records.each do |potential_dns_record|
-
-        # check that we have a valid TLD, to avoid stuff like image.png or file.css or page.aspx
-        next unless parse_tld(potential_dns_record) && potential_dns_record.match(dns_regex)
-
-        # if we got a pattern list, check it for matching
-        create=false
-        match_patterns.each do |p|
-          create = true if potential_dns_record =~ /#{p}/
-        end
-
-        out << { "name" => potential_dns_record, "origin" => source_uri}
-      end
-
-    out 
-   end
-
-   def parse_phone_numbers_from_content(source_uri, content, match_patterns=[])
-     out = []
-     @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
-
-     # Make sure we have something to parse
-     unless content
-       @task_result.logger.log_error "No content to parse, returning" if @task_result
-       return nil
-     end
-
-     # Scan for phone numbers
-     phone_numbers = content.scan(phone_number_regex)
-     phone_numbers.each do |phone_number|
-
-      # if we got a pattern list, check it for matching
-      create=false
-      match_patterns.each do |p|
-        create = true if potential_dns_record =~ /#{p}/
-      end
-
-      out << phone_number if match_patterns.empty? || create 
-     end
-
-   out 
-   end
-
-   def parse_uris_from_content(source_uri, content, match_patterns=[])
-     out = []
-     @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
-
-     # Make sure we have something to parse
-     unless content
-       @task_result.logger.log_error "No content to parse, returning" if @task_result
-       return nil
-     end
-
-     # Scan for uris
-     urls = content.scan(/https?:\/\/[\S]+/)
-
-     urls.each do |u|
-      # if we got a pattern list, check it for matching
-      create=false
-      match_patterns.each do |p|
-        create = true if potential_dns_record =~ /#{p}/
-      end
-
-      out << {"name" => u, "origin" => source_uri } if match_patterns.empty? || create 
-     end
-
-   out 
-
-   end
-
-   def parse_web_account_from_content(content)
+  def parse_phone_numbers_from_content(source_uri, content, match_patterns=[])
     out = []
-    urls = content.scan(/https?:\/\/[\S]+/)
+    @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
 
-    urls.each do |url|
-        # Handle Twitter search results
-        if url.match /https?:\/\/twitter.com\/.*$/
-          account_name = url.split("/")[3]
-          out << ["twitter", account_name, url]
+    # Make sure we have something to parse
+    unless content
+      @task_result.logger.log_error "No content to parse, returning" if @task_result
+      return nil
+    end
 
-        # Handle Facebook public profile  results
-        elsif url.match /https?:\/\/www.facebook.com\/(public|pages)\/.*$/
-          account_name = url.split("/")[4]
-          out << ["facebook", account_name, url]
+    # Scan for phone numbers
+    phone_numbers = content.scan(phone_number_regex(false))
+    phone_numbers.each do |phone_number|
 
-        # Handle Facebook search results
-        elsif url.match /https?:\/\/www.facebook.com\/.*$/
-          account_name = url.split("/")[3]
-          out << ["facebook", account_name, url]
+     # if we got a pattern list, check it for matching
+     create=false
+     match_patterns.each do |p|
+       create = true if phone_number.strip =~ /#{p}/
+     end
 
-        # Handle LinkedIn public profiles
-        elsif url.match /^https?:\/\/www.linkedin.com\/in\/(\w).*$/
-          account_name = url.split("/")[5]
-          out << ["linkedin", account_name, url]
-        
-          # Handle LinkedIn public profiles
-        elsif url.match /^https?:\/\/www.linkedin.com\/in\/pub\/.*$/
-          account_name = url.split("/")[5]
-          out << ["linkedin", account_name, url]
+     out << {"name" => phone_number.strip, "origin" => source_uri } if match_patterns.empty? || create 
+    end
 
-        # Handle LinkedIn public directory search results
-        elsif url.match /^https?:\/\/www.linkedin.com\/pub\/dir\/.*$/
-          account_name = "#{url.split("/")[5]} #{url.split("/")[6]}"
-          out << ["linkedin", account_name, url]
+  out 
+  end
 
-        # Handle LinkedIn world-wide directory results
-        elsif url.match /^http:\/\/[\w]*.linkedin.com\/pub\/.*$/
+  def parse_uris_from_content(source_uri, content, match_patterns=[])
+    out = []
+    @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
 
-        # Parses these URIs:
-        #  - http://za.linkedin.com/pub/some-one/36/57b/514
-        #  - http://uk.linkedin.com/pub/some-one/78/8b/151
+    # Make sure we have something to parse
+    unless content
+      @task_result.logger.log_error "No content to parse, returning" if @task_result
+      return nil
+    end
 
-          account_name = url.split("/")[4]
-          out << ["linkedin", account_name, url]
+    # Scan for uris
+    urls = content.scan(url_regex(false))
 
-        # Handle LinkedIn profile search results
-        elsif url.match /^https?:\/\/www.linkedin.com\/in\/.*$/
-          account_name = url.split("/")[4]
-          out << ["linkedin", account_name, url]
+    urls.each do |u|
+     
+      # if we got a pattern list, check it for matching
+     create=false
+     match_patterns.each do |p|
+       create = true if u.strip =~ /#{p}/
+     end
 
-        # Handle Google Plus search results
-        elsif url.match /https?:\/\/plus.google.com\/.*$/
-          account_name = url.split("/")[3]
-          out << ["google", account_name, url]
+     out << {"name" => u, "origin" => source_uri } if match_patterns.empty? || create 
+    end
 
-        # Handle Hackerone search results
-        elsif url.match /https?:\/\/hackerone.com\/.*$/
-          account_name = url.split("/")[3]
-          out << ["hackerone", account_name, url]
+  out 
 
-        # Handle Bugcrowd search results
-        elsif url.match /https?:\/\/bugcrowd.com\/.*$/
-          account_name = url.split("/")[3]
-          out << ["bugcrowd", account_name, url]
-          
-        end
-     end 
+  end
 
-   end
+  def parse_web_account_from_content(content)
+   out = []
+   urls = content.scan(/https?:\/\/[\S]+/)
+
+   urls.each do |url|
+       # Handle Twitter search results
+       if url.match /https?:\/\/twitter.com\/.*$/
+         account_name = url.split("/")[3]
+         out << ["twitter", account_name, url]
+
+       # Handle Facebook public profile  results
+       elsif url.match /https?:\/\/www.facebook.com\/(public|pages)\/.*$/
+         account_name = url.split("/")[4]
+         out << ["facebook", account_name, url]
+
+       # Handle Facebook search results
+       elsif url.match /https?:\/\/www.facebook.com\/.*$/
+         account_name = url.split("/")[3]
+         out << ["facebook", account_name, url]
+
+       # Handle LinkedIn public profiles
+       elsif url.match /^https?:\/\/www.linkedin.com\/in\/(\w).*$/
+         account_name = url.split("/")[5]
+         out << ["linkedin", account_name, url]
+       
+         # Handle LinkedIn public profiles
+       elsif url.match /^https?:\/\/www.linkedin.com\/in\/pub\/.*$/
+         account_name = url.split("/")[5]
+         out << ["linkedin", account_name, url]
+
+       # Handle LinkedIn public directory search results
+       elsif url.match /^https?:\/\/www.linkedin.com\/pub\/dir\/.*$/
+         account_name = "#{url.split("/")[5]} #{url.split("/")[6]}"
+         out << ["linkedin", account_name, url]
+
+       # Handle LinkedIn world-wide directory results
+       elsif url.match /^http:\/\/[\w]*.linkedin.com\/pub\/.*$/
+
+       # Parses these URIs:
+       #  - http://za.linkedin.com/pub/some-one/36/57b/514
+       #  - http://uk.linkedin.com/pub/some-one/78/8b/151
+
+         account_name = url.split("/")[4]
+         out << ["linkedin", account_name, url]
+
+       # Handle LinkedIn profile search results
+       elsif url.match /^https?:\/\/www.linkedin.com\/in\/.*$/
+         account_name = url.split("/")[4]
+         out << ["linkedin", account_name, url]
+
+       # Handle Google Plus search results
+       elsif url.match /https?:\/\/plus.google.com\/.*$/
+         account_name = url.split("/")[3]
+         out << ["google", account_name, url]
+
+       # Handle Hackerone search results
+       elsif url.match /https?:\/\/hackerone.com\/.*$/
+         account_name = url.split("/")[3]
+         out << ["hackerone", account_name, url]
+
+       # Handle Bugcrowd search results
+       elsif url.match /https?:\/\/bugcrowd.com\/.*$/
+         account_name = url.split("/")[3]
+         out << ["bugcrowd", account_name, url]
+         
+       end
+    end 
+
+  end
 
 
 end

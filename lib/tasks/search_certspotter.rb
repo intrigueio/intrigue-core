@@ -29,7 +29,7 @@ class SearchCertSpotter < BaseTask
 
     # default to our name for the extract pattern
     if _get_option("extract_patterns") != "default"
-      extract_patterns = _get_option("extract_patterns")
+      extract_patterns = _get_option("extract_patterns").split(",")
     else
       extract_patterns = [search_domain]
     end
