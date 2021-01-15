@@ -249,8 +249,9 @@ module WebContent
      end
 
      # Scan for dns records
-     potential_dns_records = content.scan(dns_regex(false))
-     potential_dns_records.each do |potential_dns_record|
+     # CGI::unescape does not throw errors according to docs: https://www.rubydoc.info/stdlib/cgi/CGI/Escape#unescape-instance_method
+     potential_dns_records = CGI::unescape(content).scan(dns_regex)
+     potential_dns_records.compact.each do |potential_dns_record|
 
        # check that we have a valid TLD, to avoid stuff like image.png or file.css or page.aspx
        next unless parse_tld(potential_dns_record) && potential_dns_record.match(dns_regex)

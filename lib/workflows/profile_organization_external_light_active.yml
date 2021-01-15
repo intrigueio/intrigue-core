@@ -73,4 +73,5 @@ definition:
   - task: uri_extract_tokens
   - task: uri_screenshot
   - task: uri_gather_ssl_certificate
+  - task: jarm_hash_calculator
 

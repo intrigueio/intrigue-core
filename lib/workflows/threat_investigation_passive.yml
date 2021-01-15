@@ -49,3 +49,4 @@ definition:
   - task: naabu_scan
   Uri: 
   - task: uri_screenshot
+  - task: jarm_hash_calculator
