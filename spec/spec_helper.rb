@@ -1,4 +1,4 @@
-require_relative '../core.rb'
+require_relative '../core'
 require 'intrigue_api_client'
 require 'rack/test'
 

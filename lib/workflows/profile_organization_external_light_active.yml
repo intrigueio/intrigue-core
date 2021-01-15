@@ -33,11 +33,11 @@ definition:
   - task: email_brute_gmail_glxu
   - task: search_crt
     options: 
-    - extract_pattern: __seed_list__
+    - extract_patterns: __seed_list__
     auto_scope: true
   - task: search_certspotter
     options: 
-    - extract_pattern: __seed_list__
+    - extract_patterns: __seed_list__
     auto_scope: true
   - task: search_sublister
   - task: search_threatcrowd
