@@ -5,6 +5,24 @@ module Dns
   include Intrigue::Task::Generic
   include Intrigue::Core::System::DnsHelpers # parse_tld, parse_domain_name
 
+  # method is used across the dns/domain/ip enrich methods 
+  # to create aliases
+  def create_dns_aliases(results)
+
+    results.each do |result|
+      next if @entity.name == result["name"]
+      _log "Creating entity for... #{result}"
+    
+      # create the domain 
+      domain_name = parse_domain_name(result["name"])
+      create_unscoped_dns_entity_from_string(domain_name)  
+
+      # create a domain for this entity
+      entity = create_dns_entity_from_string(result["name"], @entity)
+    end
+
+  end
+
   def create_unscoped_dns_entity_from_string(s)
     create_dns_entity_from_string(s, nil, true)
   end

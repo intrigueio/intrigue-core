@@ -39,29 +39,9 @@ class IpAddress < Intrigue::Task::BaseTask
     ####
     ### Create aliased entities
     #### 
+    create_dns_aliases(results)
+
     results.each do |result|
-      _log "Creating entity for... #{result["name"]}"
-
-      next unless result
-      next unless result["name"]
-      next unless result["name"].length > 0
-
-      # create a domain for this entity
-      entity = create_dns_entity_from_string(result["name"], @entity) if @entity.scoped?
-      
-      if entity && entity.type_string == "Domain"
-        
-        # unscope it right away, since this can cause scope issues 
-        # ... not auto-unscoping it can lead us into trouble (digitalwarlock.com)
-        # ... 67.225.252.85
-        entity.set_scoped!(false, "Domain found during ip lookup, preventing auto-expand")
-        entity.save_changes
-
-      else  # always create a domain for this entity in case the above was a subdomain
-        domain_name = parse_domain_name(result["name"])
-        create_unscoped_dns_entity_from_string(domain_name)
-      end
-
       # if we're external, let's see if this matches 
       # a known dev or staging server pattern, and if we're internal, just
       if match_rfc1918_address?(lookup_name)
@@ -78,10 +58,6 @@ class IpAddress < Intrigue::Task::BaseTask
       end
 
     end
-
-    # Create new entities if we found vhosts / aliases
-    _log "Creating services for all aliases (vhosts) of #{lookup_name}"
-    _create_vhost_entities(lookup_name)
         
     # get ASN
     cymru = cymru_ip_whois_lookup(lookup_name)
@@ -130,6 +106,7 @@ class IpAddress < Intrigue::Task::BaseTask
         if @entity.scoped
           _create_entity "NetBlock", { "name" => "#{netblock}", "unscoped" => true }
         end
+        
       end
 
       # check transferred

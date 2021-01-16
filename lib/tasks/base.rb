@@ -218,7 +218,6 @@ class BaseTask
         ###
         if @entity.scoped?
 
-
           # WORKFLOW LAUNCH (ONLY IF WE ARE ATTACHED TO A WORKFLOW) 
           # if this is part of a scan and we're in depth
           if @task_result.scan_result && @task_result.depth > 0

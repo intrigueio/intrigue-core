@@ -41,6 +41,7 @@ class IpAddress < Intrigue::Core::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
+    return true if scoped
     return true if self.allow_list
     return false if self.deny_list
 
