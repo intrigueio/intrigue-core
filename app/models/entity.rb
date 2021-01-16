@@ -98,7 +98,7 @@ module Model
     end
 
     def seed?
-      true if project.seeds.map{|x| self.name == x.name }
+      true if project.seeds.first(:name => self.name)
     false
     end
     
