@@ -193,7 +193,8 @@ class EntityManager
         # 
         entity.allow_list = project.allow_list_entity?(entity)
         entity.deny_list = project.deny_list_entity?(entity)
-        entity.traversable = project.traversable_entity?(entity)
+        traversable = project.traversable_entity?(entity)
+        entity.traversable = traversable
         entity.hidden = !traversable
         entity.save_changes
 
@@ -207,7 +208,7 @@ class EntityManager
       end
 
       # necessary to relookup?
-      entity = Intrigue::Core::Model::Entity.first(id: entity.id)
+      entity = Intrigue::Core::Model::Entity.last(id: entity.id)
 
       ### Ensure we have an entity
       unless entity

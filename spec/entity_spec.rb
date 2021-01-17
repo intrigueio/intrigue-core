@@ -53,7 +53,6 @@ describe "Entity" do
     expect(@p.traversable_entity?(@e)).to eq(true)
   end 
 
-
   it "will find alreadyclaimed.com not traversable since it is not in an allowed namespace" do
     
     # create the entity 
