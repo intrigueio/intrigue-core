@@ -54,7 +54,15 @@ module Bootstrap
       end
       
       project.use_standard_exceptions = p["use_standard_exceptions"] || true
-      project.allowed_namespaces = p["allowed_namespaces"] || []
+
+      project.allowed_namespaces = p["allowed_namespaces"]
+
+      # in the case where this is [], we want this to be handled like 
+      # anything that's claimed as a standard or global exception, so let's 
+      # just set our project name as the default ... TODO... hosted service 
+      # should also behave like this?
+      project.allowed_namespaces = [project.name] if project.allowed_namespaces == []
+
       project.uuid = p["collection_run_uuid"]
       project.save 
 

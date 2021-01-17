@@ -197,55 +197,17 @@ module Model
     out
     end
 
-    def globally_traversable_entity?(entity)
+    def globally_traversable_entity?(entity_name, type_string)
         
       # by default things are not traversable
       out = false
 
-      # first check to see if we know about this exact entity (type matters too)
-      #puts "Looking for global entity: #{entity_type} #{entity_name}"
-      global_entity = Intrigue::Core::Model::GlobalEntity.first(:name => entity.name, :type => entity.type_string)
-
-      ###
-      ## Handle the case of an exact match 
-      ###
-
-      # If we know it exists, is it in our project (cool) or someone else (no traverse!)
-      if global_entity
-        
-        # we need to have a namespace to validate against
-        if self.allowed_namespaces
-          self.allowed_namespaces.each do |namespace|
-            # if the entity's' namespace matches one of ours, we're good!
-            if global_entity.namespace.downcase == namespace.downcase 
-              puts "Matches our namespace!"
-              return true # we can immediately return 
-            end
-          end
-        else
-          puts "No allowed namespaces, and this is a claimed entity but not a seed!"
-          return false
-        end
-
-      end
-
-      ###
-      ## Handle the case of a near match 
-      ###
-
-      # okay so if we made it this far, we may or may not have a matching entiy, so now 
-      # we need to find if it matches based on regex... since entities can have a couple
-      # different forms (uri, dns_record, domain, etc)
-
-      # then check each for a match 
-      found_entity = nil
-
       # now form the query, taking into acount the filter if we can
       found_entity = Intrigue::Core::Model::GlobalEntity.first(
-          :type => entity.type_string, :name => entity.name )
-    
+          :type => type_string, :name => entity_name )
 
-      if found_entity && !self.allowed_namespaces.empty? # now lets check if we have an allowance for it
+      # now lets check if we have an allowance for it
+      if found_entity && !self.allowed_namespaces.empty? 
 
         # check our namespaces for a match! 
         (self.allowed_namespaces || []).each do |namespace|
@@ -280,19 +242,11 @@ module Model
 
         # if it's an explicit seed, it's whitelisted 
         return true if seed_entity?(type_string,entity_name)
-        #return true unless Intrigue::Core::Model::GlobalEntity.count > 0
-  
-        seeds.where(Sequel.ilike(:name, "%#{entity_name}%")).all.each do |s| 
-          if entity_name =~ /[\.\s\@]#{Regexp.escape(s.name)}/i
-            return true # matches a seed pattern, it's whitelisted
-          end
-        end
       
         # Check standard exceptions (hardcoded list) first if we
         #  show up here (and we werent' a seed), we should skip
         if use_standard_exceptions
           if standard_no_traverse?(entity_name, type_string)
-            #puts 'Matched a standard exception, not whitelisted'
             return false 
           end
         end
@@ -301,7 +255,7 @@ module Model
         if svt.include? type_string
           # if we don't have a list, safe to return false now, otherwise proceed to 
           # additional exceptions which are provided as an attribute on the object
-          unless globally_traversable_entity?(entity)
+          unless globally_traversable_entity?(entity_name, type_string)
             puts 'Global intel says not traversable, returning false'
             return false 
           end
@@ -320,7 +274,7 @@ module Model
     ### Use this when you wan to scope out stuff based on rules or global intel
     ###
     def deny_list_entity?(entity)
-
+      
       our_scope_verification_list = entity.scope_verification_list
 
       svt = Intrigue::Core::Model::GlobalEntity.scope_verification_types
@@ -337,12 +291,6 @@ module Model
         return false if seed_entity?(type_string,entity_name)
         return false unless Intrigue::Core::Model::GlobalEntity.first
 
-        seeds.where(Sequel.ilike(:name, "%#{entity_name}%")).all.each do |s| 
-          if entity_name =~ /[\.\s\@]#{Regexp.escape(s.name)}/i
-            return false # not blacklisted if we're matching a seed derivative
-          end
-        end
-      
         # Check standard exceptions (hardcoded list) first if we 
         # show up here (and we werent' a seed), we should skip
         if use_standard_exceptions
@@ -354,7 +302,7 @@ module Model
         # now check the global intel 
         # if we don't have a list, safe to return false now, otherwise proceed to 
         # additional exceptions which are provided as an attribute on the object
-        if !globally_traversable_entity?(entity)
+        if !globally_traversable_entity?(entity_name, type_string)
           puts 'Global intel says not traversable so we are blacklisted, returning true'
           return true 
         end

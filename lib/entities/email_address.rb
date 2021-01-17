@@ -2,8 +2,6 @@ module Intrigue
 module Entity
 class EmailAddress < Intrigue::Core::Model::Entity
 
-
-
   def self.metadata
     {
       :name => "EmailAddress",
@@ -28,10 +26,6 @@ class EmailAddress < Intrigue::Core::Model::Entity
     return true if scoped
     return true if self.allow_list
     return false if self.deny_list
-
-    # Check the domain
-    domain_name = self.name.split("@").last
-    return true if self.project.allow_list_entity?("Domain", domain_name)
 
   false
   end

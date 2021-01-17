@@ -50,8 +50,8 @@ class IpAddress < Intrigue::Core::Model::Entity
     return true if created_by?("masscan_scan")
     return true if created_by?("nmap_scan")
 
-    # if we have aliases and theyre scoped, we can scope us
-    #return false if aliases && aliases.select{ |x| !x.scoped }.count > 0
+    # while it might be nice to scope out stuff on third paries, we still need 
+    # to keep it in to scan, as we'll want all associated URLs
 
   # if we didnt match the above and we were asked, default to true as we'll
   #  we'll want to scope things in before we have a full set of aliases (?)
