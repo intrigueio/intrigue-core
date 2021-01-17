@@ -12,13 +12,13 @@ describe "Entity" do
     @ge2 = Intrigue::Core::Model::GlobalEntity.update_or_create type: "Domain", name: "alreadyclaimed.com", namespace: "BBB"
     
     # project 
-    @p = Intrigue::Core::Model::Project.update_or_create(name: "test")
+    @p = Intrigue::Core::Model::Project.update_or_create(name: "testx")
     
     # entity 
     typex = "Intrigue::Entity::Domain"
     namex = "test.com"
-    Intrigue::Core::Model::Entity.update_or_create(project: @p, type: typex, name: namex)
-    @e = Intrigue::Core::Model::Entity.first type: typex, name: namex   
+    Intrigue::Core::Model::Entity.update_or_create(project_id: @p.id, type: typex, name: namex)
+    @e = Intrigue::Core::Model::Entity.last type: typex, name: namex   
 
     # alias groups 
     @ag = Intrigue::Core::Model::AliasGroup.update_or_create(project_id: @p.id, name: "xyz");
@@ -28,25 +28,33 @@ describe "Entity" do
   after(:each) do  
     @ge1.delete
     @ge2.delete
+    
+    # deletes all the things associated with the project
     @p.delete!
   end
 
   it "can be created" do
-    expect(@e.project.name).to eq("AAA")
     expect(@e.name).to eq("test.com")
+    expect(@e.project.name).to eq("testx")
   end
 
   it "can be added to an entity group" do
     @ag.add_entity @e;
     expect(@ag.name).to eq("xyz")
+    expect(@ag.entities.first.id).to eq(@e.id)
     # TODO... more verification needed here 
   end
 
-  it "will find test.com traversable" do
+  it "will find test.com traversable since there is no namespace associated" do
     expect(@p.traversable_entity?(@e)).to eq(true)
   end 
 
-  it "will find alreadyclaimed.com not traversable" do
+  it "will find test.com traversable since there is no namespace associated" do
+    expect(@p.traversable_entity?(@e)).to eq(true)
+  end 
+
+
+  it "will find alreadyclaimed.com not traversable since it is not in an allowed namespace" do
     
     # create the entity 
     t = "Intrigue::Entity::Domain"
