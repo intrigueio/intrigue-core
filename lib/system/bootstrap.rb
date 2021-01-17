@@ -56,13 +56,6 @@ module Bootstrap
       project.use_standard_exceptions = p["use_standard_exceptions"] || true
 
       project.allowed_namespaces = p["allowed_namespaces"]
-
-      # in the case where this is [], we want this to be handled like 
-      # anything that's claimed as a standard or global exception, so let's 
-      # just set our project name as the default ... TODO... hosted service 
-      # should also behave like this?
-      project.allowed_namespaces = [project.name] if project.allowed_namespaces == []
-
       project.uuid = p["collection_run_uuid"]
       project.save 
 
@@ -71,7 +64,6 @@ module Bootstrap
       if config["additional_exception_list"]
         _add_no_traverse_entities(project.id, config["additional_exception_list"].sort.to_a)
       end
-      puts "Done!"
 
       # parse up the seeds
       parsed_seeds = p["seeds"].map{|s| _parse_entity s["entity"] }

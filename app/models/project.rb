@@ -199,26 +199,24 @@ module Model
 
     def globally_traversable_entity?(entity_name, type_string)
         
-      # by default things are not traversable
-      out = false
+      out = true  # allow traverse, until we have something that we can verify
 
       # now form the query, taking into acount the filter if we can
       found_entity = Intrigue::Core::Model::GlobalEntity.first(
           :type => type_string, :name => entity_name )
 
       # now lets check if we have an allowance for it
-      if found_entity && !self.allowed_namespaces.empty? 
+      if found_entity
 
-        # check our namespaces for a match! 
+        out = false # we found it, default is now no-traverse ... unless... 
+
+        # we have a matching namespace
         (self.allowed_namespaces || []).each do |namespace|
           if found_entity.namespace.downcase == namespace.downcase # Good! 
-            return true 
+            return true # boom match, return immediately
           end
         end
 
-        out = false
-      else # we never found it or we don't care (no namespaces)! 
-        out = true 
       end
 
     out 
@@ -245,20 +243,14 @@ module Model
       
         # Check standard exceptions (hardcoded list) first if we
         #  show up here (and we werent' a seed), we should skip
-        if use_standard_exceptions
-          if standard_no_traverse?(entity_name, type_string)
-            return false 
-          end
-        end
+        return false if use_standard_exceptions && 
+          standard_no_traverse?(entity_name, type_string)
 
-        # now check the global intel 
-        if svt.include? type_string
-          # if we don't have a list, safe to return false now, otherwise proceed to 
-          # additional exceptions which are provided as an attribute on the object
-          unless globally_traversable_entity?(entity_name, type_string)
-            puts 'Global intel says not traversable, returning false'
-            return false 
-          end
+        # if we don't have a list, safe to return false now, otherwise proceed to 
+        # additional exceptions which are provided as an attribute on the object
+        unless globally_traversable_entity?(entity_name, type_string)
+          puts "Global intel says not traversable, denying: #{type_string} #{entity_name}"
+          return false 
         end
         
       end 
@@ -291,19 +283,16 @@ module Model
         return false if seed_entity?(type_string,entity_name)
         return false unless Intrigue::Core::Model::GlobalEntity.first
 
-        # Check standard exceptions (hardcoded list) first if we 
-        # show up here (and we werent' a seed), we should skip
-        if use_standard_exceptions
-          if standard_no_traverse?(entity_name, type_string)
-            return true  # matched a blacklist 
-          end
-        end
+        # Check standard exceptions (hardcoded list) first if we
+        #  show up here (and we werent' a seed), we should skip
+        return true if use_standard_exceptions && 
+          standard_no_traverse?(entity_name, type_string)
 
         # now check the global intel 
         # if we don't have a list, safe to return false now, otherwise proceed to 
         # additional exceptions which are provided as an attribute on the object
-        if !globally_traversable_entity?(entity_name, type_string)
-          puts 'Global intel says not traversable so we are blacklisted, returning true'
+        unless globally_traversable_entity?(entity_name, type_string)
+          puts "Global intel says not traversable, denying: #{type_string} #{entity_name}"
           return true 
         end
       
