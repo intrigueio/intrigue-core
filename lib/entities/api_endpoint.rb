@@ -51,6 +51,15 @@ class ApiEndpoint < Intrigue::Core::Model::Entity
     ["enrich/api_endpoint"]
   end
 
+  def scope_verification_list
+    [
+      { type_string: self.type_string, name: self.name },
+      { type_string: "DnsRecord", name:  URI.parse(self.name).host },
+      { type_string: "Domain", name:  parse_domain_name(URI.parse(self.name).host) }
+    ]
+  end
+
+
 end
 end
 end
