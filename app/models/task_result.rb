@@ -14,6 +14,8 @@ module Model
     many_to_one :project
     many_to_one :base_entity, :class => :'Intrigue::Core::Model::Entity', :key => :base_entity_id
 
+    #self.raise_on_save_failure = true
+
     include Intrigue::Core::ModelMixins::Handleable
 
     def self.scope_by_project(project_name)

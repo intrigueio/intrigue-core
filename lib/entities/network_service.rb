@@ -36,6 +36,13 @@ class NetworkService < Intrigue::Core::Model::Entity
   true
   end
 
+  def scope_verification_list
+    [
+      { type_string: self.type_string, name: self.name },
+      { type_string: "IpAddress", name:  self.name.split(":").first }
+    ]
+  end
+
 end
 end
 end

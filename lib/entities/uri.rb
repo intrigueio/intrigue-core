@@ -47,15 +47,20 @@ class Uri < Intrigue::Core::Model::Entity
     # only scope in stuff that's not hidden (hnm, is this still needed?)
     return false if self.hidden
 
-    # grab the URL, parse it and get the hostname. Check if this hostname is 
-    # in the deny list... this will stop stuff like sites for known top level domain https://hosting-company.com
-    # from becoming scoped, but keeps us from missing stuff that like https://company.hosting-company.com
-    uri = URI.parse(self.name)
-    hostname = uri.hostname
-    # note - this may not be a domain, but that's okay, we only want to search 'Domain'.
-    if !self.project.traversable_entity?("Domain", hostname) 
-      return false
-    end
+    ###
+    ### These should move to ident and set the hidden attribute 
+    ### 
+    shared_infra_titles = [
+      "404 Not Found",
+      "404 Vhost unknown", # http://217.70.185.65:80
+      "Google",
+      "Not Found Medium", # https://52.1.147.205:443
+      "Sign in to Outlook", # http://40.97.160.2:80
+      "Sign in to your account", # https://104.47.55.138:443
+    ]
+
+    return false if "#{URI.parse(self.name).host}".is_ip_address? && 
+      shared_infra_titles.include?(self.get_detail("title"))
 
   # if we didnt match the above and we were asked, it's still true
   true
@@ -63,6 +68,14 @@ class Uri < Intrigue::Core::Model::Entity
 
   def enrichment_tasks
     ["enrich/uri"]
+  end
+
+  def scope_verification_list
+    [
+      { type_string: self.type_string, name: self.name },
+      { type_string: "DnsRecord", name:  URI.parse(self.name).host },
+      { type_string: "Domain", name:  parse_domain_name(URI.parse(self.name).host) }
+    ]
   end
 
 end

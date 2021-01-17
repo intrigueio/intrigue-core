@@ -19,7 +19,7 @@ class EntityManager
 
     #note this will be nil if we didn't match
     unless matches.first
-      raise "Unable to match to a known entity. Failing on #{type_string}."
+      raise InvalidEntityError, "Unable to match to a known entity. Failing on #{type_string}."
     end
 
   # only return the first (and best) match
@@ -155,48 +155,60 @@ class EntityManager
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
 
-      allowed_list = project.allow_list_entity?(type_string, downcased_name)
-      denied_list = project.deny_list_entity?(type_string, downcased_name)
-
-      entity_details = {
+      base_entity_details = {
         :name => downcased_name,
         :project_id => project.id,
         :type => type.to_s,
-        :details => details,
-        :allow_list => allowed_list,
-        :deny_list => denied_list,
-        :traversable => project.traversable_entity?(type_string, downcased_name) ? true : false, 
-        :hidden => (project.traversable_entity?(type_string, downcased_name) ? false : true )
+        :details => details
       }
 
       # handle alias group
       if primary_entity
-        entity_details[:alias_group_id] = primary_entity.alias_group_id
+        base_entity_details[:alias_group_id] = primary_entity.alias_group_id
       else
         g = Intrigue::Core::Model::AliasGroup.create(:project_id => project.id)
-        entity_details[:alias_group_id] = g.id
+        base_entity_details[:alias_group_id] = g.id
       end
 
       begin
         # Create a new entity in that group
         entity = Intrigue::Core::Model::Entity.update_or_create(
-          {name: downcased_name, type: type.to_s, project: project}, entity_details)
+          {name: downcased_name, type: type.to_s, project: project}, base_entity_details)
 
         unless entity
-          tr.log_fatal "Unable to create entity: #{entity_details}"
+          tr.log_fatal "Unable to create entity: #{base_entity_details}"
           return nil
         end
 
+
+        # 
+        # ok, now let's add the contextual attributes which will 
+        # help us understand how to manage this going forward, primarily
+        # as it pertains to scoping.
+        # 
+        # allow_list
+        # deny_list
+        # traversable
+        # hidden
+        # 
+        entity.allow_list = project.allow_list_entity?(entity)
+        entity.deny_list = project.deny_list_entity?(entity)
+        traversable = project.traversable_entity?(entity)
+        entity.traversable = traversable
+        entity.hidden = !traversable
+        entity.save_changes
+
+
       rescue Encoding::UndefinedConversionError => e
-        tr.log_fatal "Unable to create entity:#{entity_details}\n #{e}"
+        tr.log_fatal "Unable to create entity:#{base_entity_details}\n #{e}"
         return nil
       rescue Sequel::DatabaseError => e
-        tr.log_fatal "Unable to create entity:#{entity_details}\n #{e}"
+        tr.log_fatal "Unable to create entity:#{base_entity_details}\n #{e}"
         return nil
       end
 
       # necessary to relookup?
-      entity = Intrigue::Core::Model::Entity.first(id: entity.id)
+      entity = Intrigue::Core::Model::Entity.last(id: entity.id)
 
       ### Ensure we have an entity
       unless entity
@@ -218,13 +230,11 @@ class EntityManager
         raise InvalidEntityError.new("Invalid entity, unable to validate: #{type_string}##{downcased_name}")
       end
 
-      ###
-      ### make a connection to the task result on the first one
-      ###
-      tr.add_entity(entity)
-
+    ###
+    ### make a connection to the task result on the first one
+    ###
+    tr.add_entity(entity)
     end
-
 
     ###
     ### Always stick the task name on the entity 
@@ -232,9 +242,10 @@ class EntityManager
     task_list = (entity.get_detail("source_task_list") || []) << tr.name
     entity.set_detail "source_task_list", task_list
 
-
     ###
-    ### SCOPING MUST ALWAYS RE-RUN
+    ### Scoping must always run, because the task run we're inside may have 
+    ### auto_scope = true .. or the entity may have been created with an attribute
+    ### that specifies how we should be scopoed
     ###
 
     #####
@@ -263,6 +274,7 @@ class EntityManager
     # note that we delete the detail since we no longer need it
     # TODO... is this used today?
     if (details["scoped"] == true || details["scoped"] == "true")
+
       tr.log "Entity was specifically requested to be scoped"
       details = details.tap{ |h| h.delete("scoped") }
       scope_request = "true"
@@ -304,16 +316,16 @@ class EntityManager
     #####
 
     # ENRICHMENT LAUNCH (this may re-run if an entity has just been scoped in
-    if !entity.deny_list && !tr.autoscheduled # manally scheuduled, automatically enrich 
+    if !tr.autoscheduled && !entity.deny_list # manally scheuduled, automatically enrich 
 
-      if entity.enriched
+      if entity.enriched?
         tr.log "Re-scheduling enrichment for existing entity (manually run)!"
       end
 
       tr.log "Manually scheduling enrich: #{entity.name}"
       entity.enrich(tr)
 
-    elsif !entity.deny_list && tr.auto_enrich && (!entity_already_existed || project.allow_reenrich)
+    elsif tr.auto_enrich && !entity.deny_list && (!entity_already_existed || project.allow_reenrich)
       
       # Check if we've already run first and return gracefully if so
       if entity.enriched && !project.allow_reenrich

@@ -173,6 +173,9 @@
 /^.*\.silverpop.com(:[0-9]*)?$/
 /^.*\.splashthatd.com(:[0-9]*)?$/
 /^.*\.squarespace.com(:[0-9]*)?$/
+/^.*\.squarespace-mail.com(:[0-9]*)?$/
+/^.*\.sqspcdn.com(:[0-9]*)?$/
+/^.*\.sqsp.net(:[0-9]*)?$/
 /^.*\.statuscake.io(:[0-9]*)?$/
 /^.*\.statuspage.io(:[0-9]*)?$/
 /^.*\.statusio.com(:[0-9]*)?$/

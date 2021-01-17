@@ -208,15 +208,13 @@ class BaseTask
         @entity.save_changes 
 
         ### AND WE CAN DECIDE SCOPE BASED ON COMPLETE ENTITY (unless we were already scoped in!)
-        if check_scope = @entity.scoped?
-          @entity.set_scoped!(check_scope, "entity_scoping_rules") #always fall back to our entity-specific logic if there was no request
-          #_log_good "POST-ENRICH AUTOMATED ENTITY SCOPE: #{@entity.scoped}"
-        end
-        
+        ### .. always fall back to our entity-specific logic if there was no request
+        @entity.set_scoped!(@entity.scoped?, "entity_scoping_rules") 
+      
         ###
         ## NOW, KICK OFF WORKFLOWS for SCOPED ENTiTIES ONLY
         ###
-        if @entity.scoped?
+        if @entity.scoped
 
           # WORKFLOW LAUNCH (ONLY IF WE ARE ATTACHED TO A WORKFLOW) 
           # if this is part of a scan and we're in depth
@@ -233,6 +231,7 @@ class BaseTask
             ## 
             ## Start the workflow!
             ##
+            puts "LAUNCHING WORKFLOW on #{@entity.name} after #{@task_result.name}"
             workflow.start(@entity, @task_result)
 
           else
