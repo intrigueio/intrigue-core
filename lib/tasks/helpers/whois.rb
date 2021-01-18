@@ -69,8 +69,9 @@ module Whois
         out.concat _whois_query_ripe_ip(lookup_string) # concat an array
       
       elsif whois_text.match(/APNIC/)
+        puts "Querying #{lookup_string} using APNIC"
         _log "using RDAP to query APNIC"
-        out.concat _rdap_ip_lookup(lookup_string) # concat an array
+        out.concat _rdap_ip_lookup(lookup_string, "apnic") # concat an array
         
       elsif whois_text.match(/whois.lacnic.net/) || whois_text.match(/cert\@cert\.br/)
         _log "using RDAP to query LACNIC"
@@ -81,6 +82,7 @@ module Whois
         out.concat _rdap_ip_lookup(lookup_string) # concat an array
 
       else # Default to ARIN
+        puts "Querying #{lookup_string} using ARIN"
         out << _whois_query_arin_ip(lookup_string) # add our hash to the array
 
       end
@@ -175,8 +177,12 @@ module Whois
   private  # helper methods for parsing
 
   # use RDAP to query an IP
-  def _rdap_ip_lookup(ip_address)
-    response = http_get_body "https://rdap.arin.net/registry/ip/#{ip_address}"
+  def _rdap_ip_lookup(ip_address, type="arin")
+    if type == "apnic"
+      response = http_get_body "https://rdap.apnic.net/ip/#{ip_address}"
+    else # default is arin
+      response = http_get_body "https://rdap.arin.net/registry/ip/#{ip_address}"
+    end
 
     begin
       json = JSON.parse(response)
