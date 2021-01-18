@@ -17,8 +17,11 @@ module Dns
       domain_name = parse_domain_name(result["name"])
       create_unscoped_dns_entity_from_string(domain_name)  
 
-      # create a domain for this entity
-      entity = create_dns_entity_from_string(result["name"], @entity)
+      # create an entity for this entity
+      unless domain_name == result["name"]
+        entity = create_dns_entity_from_string(result["name"], @entity)
+      end
+      
     end
 
   end

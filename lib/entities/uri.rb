@@ -41,10 +41,10 @@ class Uri < Intrigue::Core::Model::Entity
   ###
   def scoped?(conditions={}) 
     return true if scoped
-    return true if self.allow_list
-    return false if self.deny_list
+    return true if self.allow_list || self.project.allow_list_entity?(self) 
+    return false if self.deny_list || self.project.deny_list_entity?(self)
 
-    # only scope in stuff that's not hidden (hnm, is this still needed?)
+    # only scope in stuff that's not hidden 
     return false if self.hidden
 
   # if we didnt match the above and we were asked, it's still true

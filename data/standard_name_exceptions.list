@@ -16,6 +16,7 @@
 /^.*\.akamaized-staging.net(:[0-9]*)?$/
 /^.*\.akamaized.net(:[0-9]*)?$/
 /^.*\.amazonaws.com(:[0-9]*)?$/
+/^.*\.amazonses.com(:[0-9]*)?$/
 /^.*\.android.clients.google.com(:[0-9]*)?$/
 /^.*\.android.com(:[0-9]*)?$/
 /^.*\.anubisnetworks.com(:[0-9]*)?$/
@@ -49,6 +50,7 @@
 /^.*\.dmarcian.org(:[0-9]*)?$/
 /^.*\.dmarcian.com(:[0-9]*)?$/
 /^.*\.dreamhost.com(:[0-9]*)?$/
+/^.*\.dreamhostps.com(:[0-9]*)?$/
 /^.*\.drupal.org(:[0-9]*)?$/
 /^.*\.ed[0-9]+.com(:[0-9]*)?$/
 /^.*\.edgecastcdn.net(:[0-9]*)?$/
@@ -142,6 +144,7 @@
 /^.*\.mtsvc.net(:[0-9]*)?$/
 /^.*\.msn.com(:[0-9]*)?$/
 /^.*\.myshopify.com(:[0-9]*)?$/
+/^.*\.namecheaphosting.com(:[0-9]*)?$/
 /^.*\.oclc.org(:[0-9]*)?$/
 /^.*\.office.com(:[0-9]*)?$/
 /^.*\.office.net(:[0-9]*)?$/
@@ -161,6 +164,7 @@
 /^.*\.q4web.com(:[0-9]*)?$/
 /^.*\.rdfs.org(:[0-9]*)?$/
 /^.*\.readmessl.com(:[0-9]*)?$/
+/^.*\.registrar-servers.com(:[0-9]*)?$/
 /^.*\.root-servers.net(:[0-9]*)?$/
 /^.*\.schema.org(:[0-9]*)?$/
 /^.*\.salesforce.com(:[0-9]*)?$/
@@ -171,6 +175,7 @@
 /^.*\.shopify.com(:[0-9]*)?$/
 /^.*\.siftscience.com(:[0-9]*)?$/
 /^.*\.silverpop.com(:[0-9]*)?$/
+/^.*\.smtp.goog(:[0-9]*)?$/
 /^.*\.splashthatd.com(:[0-9]*)?$/
 /^.*\.squarespace.com(:[0-9]*)?$/
 /^.*\.squarespace-mail.com(:[0-9]*)?$/
@@ -190,13 +195,15 @@
 /^.*\.v0cdn.net(:[0-9]*)?$/
 /^.*\.volusion.com(:[0-9]*)?$/
 /^.*\.w3.org(:[0-9]*)?$/
+/^.*\.web-hosting.com(:[0-9]*)?$/
 /^.*\.websitewelcome.com(:[0-9]*)?$/
 /^.*\.weebly.com(:[0-9]*)?$/
+/^.*\.whoisguard.com(:[0-9]*)?$/
 /^.*\.windows.net(:[0-9]*)?$/
 /^.*\.windowsphone-int.net(:[0-9]*)?$/
 /^.*\.windowsphone.com(:[0-9]*)?$/
 /^.*\.wordpress.com(:[0-9]*)?$/
-/^.*\.wpengine.com(:[0-9]*)?$/
+/^.*\.wpengine.com(:[0-9]*)?$/  
 /^.*\.www.goo.gl(:[0-9]*)?$/
 /^.*\.xmlns.com(:[0-9]*)?$/
 /^.*\.youtu.be(:[0-9]*)?$/

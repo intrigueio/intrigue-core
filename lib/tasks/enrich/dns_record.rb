@@ -26,11 +26,16 @@ class DnsRecord < Intrigue::Task::BaseTask
   end
 
   def run
+    # cache this to save lookups, and note that we can't use the 
+    # stored value for scoped yet, as it is not yet fully determined
+    # so... we'll use the best info available, by checking the scoped? method
+    entity_scoped = @entity.scoped? 
+
     lookup_name = _get_entity_name
 
     # always create a domain 
     domain_name = parse_domain_name(lookup_name)
-    create_unscoped_dns_entity_from_string(domain_name) #if @entity.scoped?
+    create_dns_entity_from_string(domain_name) if entity_scoped
 
     # Do a lookup and keep track of all aliases
     _log "Resolving: #{lookup_name}"
@@ -50,7 +55,7 @@ class DnsRecord < Intrigue::Task::BaseTask
     _set_entity_detail("soa_record", soa_details)
     
     if soa_details && soa_details["primary_name_server"] && soa_details["primary_name_server"].length > 0
-      _create_entity "Nameserver", "name" => soa_details["primary_name_server"] if @entity.scoped?
+      _create_entity "Nameserver", "name" => soa_details["primary_name_server"] if entity_scoped
     end
 
     # Checking dev test 
@@ -70,7 +75,9 @@ class DnsRecord < Intrigue::Task::BaseTask
       _log "Grabbing MX"
       mx_records = collect_mx_records(lookup_name)
       _set_entity_detail("mx_records", mx_records)
-      mx_records.each{|mx| create_unscoped_dns_entity_from_string(mx["host"]) unless mx["host"].is_ip_address? }
+      mx_records.each{|mx| 
+        # Note that this can miss stuff (IPs), but we don't have an easy way to manage for now
+        create_dns_entity_from_string(mx["host"]) unless "#{mx["host"]}".is_ip_address? }
 
       # collect TXT records (useful for random things)
       _log "Grabbing TXT"
@@ -87,7 +94,7 @@ class DnsRecord < Intrigue::Task::BaseTask
     ###
     ### Scope all aliases if we're scoped ... note this might be unnecessary
     ###
-    if @entity.scoped? && @entity.aliases.count > 1
+    if entity_scoped
       @entity.aliases.each do |a|
         next if a.id == @entity.id # we're already scoped. 
         next unless a.type_string == "IpAddress" #only proceed for ip addresses

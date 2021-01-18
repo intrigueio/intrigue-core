@@ -47,17 +47,12 @@ module System
           return exception if exception.match(entity_name)
         end
 
-      elsif (type_string == "Domain" || type_string == "DnsRecord" || type_string == "Uri" )
-
-        parsed_name = entity_name if type_string == "Domain"
-        parsed_name = parse_domain_name(entity_name) if type_string == "DnsRecord"
-        parsed_name = parse_domain_name(URI(entity_name).host) if type_string == "Uri"
+      else
 
         (standard_name_exceptions - skip_exceptions).each do |exception|
-          if exception.match(".#{parsed_name}")
-            return exception
-          end
+          return exception if exception =~ entity_name 
         end
+        
       end
 
     out

@@ -24,21 +24,27 @@ class Domain < Intrigue::Task::BaseTask
 
   def run
 
+    # cache this to save lookups, and note that we can't use the 
+    # stored value for scoped yet, as it is not yet fully determined
+    # so... we'll use the best info available, by checking the scoped? method
+    entity_scoped = @entity.scoped? 
+
     lookup_name = _get_entity_name
-  
+
+    # get our resolutiosn
     results = resolve(lookup_name)
   
     ####
     ### Create aliased entities
     #### 
-    create_dns_aliases(results)
+    create_dns_aliases(results) if entity_scoped
 
     resolutions = collect_resolutions(results)
     _set_entity_detail("resolutions", resolutions )
     
     resolutions.each do |r|
       # create unscoped domains for all CNAMEs
-      if r["response_type"] == "CNAME"
+      if r["response_type"] == "CNAME" && entity_scoped
         create_dns_entity_from_string(r["response_data"]) 
       end
     end
@@ -47,7 +53,7 @@ class Domain < Intrigue::Task::BaseTask
     _log "Grabbing SOA"
     soa_details = collect_soa_details(lookup_name)
     _set_entity_detail("soa_record", soa_details)
-    if soa_details && soa_details["primary_name_server"] && @entity.scoped?
+    if soa_details && soa_details["primary_name_server"] && entity_scoped
       _create_entity "Nameserver", "name" => soa_details["primary_name_server"]
     end
 
@@ -66,9 +72,7 @@ class Domain < Intrigue::Task::BaseTask
     
     # make sure we create affiliated domains
     ns_records.each do |ns|
-      if @entity.scoped?
-        _create_entity "Nameserver", "name" => ns
-      end
+      _create_entity "Nameserver", "name" => ns if entity_scoped
     end
 
     # grab any / all MX records (useful to see who accepts mail)
@@ -90,7 +94,7 @@ class Domain < Intrigue::Task::BaseTask
         next unless spf.match(/^include:/)
         domain_name = spf.split("include:").last
         _log "Found Associated SPF Domain: #{domain_name}"
-        create_dns_entity_from_string(domain_name) if @entity.scoped?
+        create_dns_entity_from_string(domain_name) if entity_scoped
       end
     end
 
@@ -109,7 +113,7 @@ class Domain < Intrigue::Task::BaseTask
         # https://dmarcian.com/rua-vs-ruf/
         if component.strip.match(/^rua/) || component.strip.match(/^ruf/)
           component.split("mailto:").last.split(",").each do |address|
-            _create_entity "EmailAddress", :name => address if @entity.scoped?
+            _create_entity "EmailAddress", :name => address if entity_scoped
           end
         end
 
@@ -120,7 +124,7 @@ class Domain < Intrigue::Task::BaseTask
       _set_entity_detail("dmarc", nil) 
 
       # if we have mx records and we're scoped, create an issue
-      if mx_records.count > 0 && @entity.scoped?
+      if mx_records.count > 0 && entity_scoped
         _create_dmarc_issues(mx_records, dmarc_details)
       end
 
@@ -129,7 +133,7 @@ class Domain < Intrigue::Task::BaseTask
     ###
     ### Scope all aliases if we're scoped ... note this might be unnecessary
     ###
-    if @entity.scoped? && @entity.aliases.count > 1
+    if entity_scoped
       @entity.aliases.each do |a|
         next if a.id == @entity.id # we're already scoped. 
         next unless a.type_string == "IpAddress" #only proceed for ip addresses

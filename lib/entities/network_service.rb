@@ -30,8 +30,8 @@ class NetworkService < Intrigue::Core::Model::Entity
 
   def scoped?
     return true if scoped
-    return true if self.allow_list
-    return false if self.deny_list
+    return true if self.allow_list || self.project.allow_list_entity?(self) 
+    return false if self.deny_list || self.project.deny_list_entity?(self)
   
   true
   end
@@ -39,7 +39,7 @@ class NetworkService < Intrigue::Core::Model::Entity
   def scope_verification_list
     [
       { type_string: self.type_string, name: self.name },
-      { type_string: "IpAddress", name:  self.name.split(":").first }
+      { type_string: "IpAddress", name: self.name.split(":").first }
     ]
   end
 

@@ -237,28 +237,26 @@ module Model
 
         # skip anything else thats not verifiable!!
         next unless svt.include? type_string
-
-        # if it's an explicit seed, it's whitelisted 
-        return true if seed_entity?(type_string,entity_name)
-      
+        
         # Check standard exceptions (hardcoded list) first if we
         #  show up here (and we werent' a seed), we should skip
         return false if use_standard_exceptions && 
           standard_no_traverse?(entity_name, type_string)
 
+        # if it's an explicit seed, it's whitelisted 
+        return true if seed_entity?(type_string,entity_name)
+
         # if we don't have a list, safe to return false now, otherwise proceed to 
         # additional exceptions which are provided as an attribute on the object
         unless globally_traversable_entity?(entity_name, type_string)
-          puts "Global intel says not traversable, denying: #{type_string} #{entity_name}"
           return false 
         end
         
       end 
 
     ###
-    # Defaulting to not traversable (Whitelist approach!)
+    # returning false because it wasnt explicitly allowed
     ###
-
     false
     end
 
@@ -279,29 +277,26 @@ module Model
         # skip anything else thats not verifiable!!
         next unless svt.include? "#{type_string}"
 
-        # if it's an explicit seed, it's not blacklisted 
-        return false if seed_entity?(type_string,entity_name)
-        return false unless Intrigue::Core::Model::GlobalEntity.first
-
         # Check standard exceptions (hardcoded list) first if we
         #  show up here (and we werent' a seed), we should skip
         return true if use_standard_exceptions && 
           standard_no_traverse?(entity_name, type_string)
 
+        # if it's an explicit seed, it's not blacklisted 
+        return false if seed_entity?(type_string,entity_name)
+
         # now check the global intel 
         # if we don't have a list, safe to return false now, otherwise proceed to 
         # additional exceptions which are provided as an attribute on the object
         unless globally_traversable_entity?(entity_name, type_string)
-          puts "Global intel says not traversable, denying: #{type_string} #{entity_name}"
           return true 
         end
       
       end
 
     ###
-    # we made it this far, not blacklisted!
+    # returning false because it wasnt explicitly disallowed
     ###
-
     false
     end
 

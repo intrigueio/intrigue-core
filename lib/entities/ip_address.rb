@@ -42,8 +42,8 @@ class IpAddress < Intrigue::Core::Model::Entity
   ###
   def scoped?(conditions={}) 
     return true if scoped
-    return true if self.allow_list
-    return false if self.deny_list
+    return true if self.allow_list || self.project.allow_list_entity?(self) 
+    return false if self.deny_list || self.project.deny_list_entity?(self)
 
     # scanner use case 
     # TODO ... this should be handled in the workflow! 
@@ -52,7 +52,7 @@ class IpAddress < Intrigue::Core::Model::Entity
 
     # while it might be nice to scope out stuff on third paries, we still need 
     # to keep it in to scan, as we'll want all associated URLs
-    return false unless self.aliases.select{ |x| }
+    #return false unless self.aliases.select{ |x|  }
 
   # if we didnt match the above and we were asked, default to true as we'll
   #  we'll want to scope things in before we have a full set of aliases (?)
