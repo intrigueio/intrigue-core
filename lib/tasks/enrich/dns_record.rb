@@ -70,7 +70,7 @@ class DnsRecord < Intrigue::Task::BaseTask
       _log "Grabbing MX"
       mx_records = collect_mx_records(lookup_name)
       _set_entity_detail("mx_records", mx_records)
-      mx_records.each{|mx| create_unscoped_dns_entity_from_string(mx["host"]) }
+      mx_records.each{|mx| create_unscoped_dns_entity_from_string(mx["host"]) unless mx["host"].is_ip_address? }
 
       # collect TXT records (useful for random things)
       _log "Grabbing TXT"
