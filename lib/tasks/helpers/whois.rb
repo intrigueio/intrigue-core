@@ -82,7 +82,6 @@ module Whois
         out.concat _rdap_ip_lookup(lookup_string) # concat an array
 
       else # Default to ARIN
-        puts "Querying #{lookup_string} using ARIN"
         out << _whois_query_arin_ip(lookup_string) # add our hash to the array
 
       end

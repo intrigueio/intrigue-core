@@ -4,10 +4,10 @@ module Intrigue
   
     def self.metadata
       {
-        :name => "asn_lookup",
-        :pretty_name => "ASN Lookup",
+        :name => "search_asn_lookup",
+        :pretty_name => "Search ASN Lookup",
         :authors => ["m-q-t", "yassineaboukir"],
-        :description => "Uses http://asnlookup.com API to return netblocks belonging to Organization.",
+        :description => "Retrieves netblocks using the http://asnlookup.com API.",
         :references => ["http://asnlookup.com"],
         :type => "discovery",
         :passive => true,
@@ -46,7 +46,11 @@ module Intrigue
     def org_to_netblocks(org)
       begin
         resp = http_get_body "http://asnlookup.com/api/lookup?org=#{URI.escape(org)}"
-
+        if resp =~ /\[\]/ # response is empty
+          _log_error "#{org} does not have an ASN."
+          return
+        end
+        puts resp
         json_resp = JSON.parse resp
       rescue JSON::ParserError => e
         _log_error "Error parsing: #{e}"
