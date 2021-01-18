@@ -30,9 +30,10 @@ module Model
         "EmailAddress",
         "Organization",
         "Nameserver",
+        "NetBlock",
         "Uri",
         "UniqueKeyword",
-        "UniqueToken",
+        "UniqueToken"
       ]
     end
 

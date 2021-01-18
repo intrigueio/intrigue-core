@@ -4,12 +4,17 @@ describe "Intrigue" do
 describe "Models" do
 describe "Entity" do
 
+  before(:all) do 
+    Intrigue::Core::Model::Project.truncate
+    Intrigue::Core::Model::Entity.truncate
+    Intrigue::Core::Model::GlobalEntity.truncate
+  end
+
   #https://relishapp.com/rspec/rspec-core/v/2-0/docs/hooks/before-and-after-hooks
   before(:each) do 
     
     # global entities
-    @ge1 = Intrigue::Core::Model::GlobalEntity.update_or_create type: "Domain", name: "test.com", namespace: "AAA"
-    @ge2 = Intrigue::Core::Model::GlobalEntity.update_or_create type: "Domain", name: "alreadyclaimed.com", namespace: "BBB"
+    @ge = Intrigue::Core::Model::GlobalEntity.update_or_create type: "Domain", name: "alreadyclaimed.com", namespace: "BBB"
     
     # project 
     @p = Intrigue::Core::Model::Project.update_or_create(name: "testx")
@@ -26,8 +31,7 @@ describe "Entity" do
   end
 
   after(:each) do  
-    @ge1.delete
-    @ge2.delete
+    @ge.delete
     
     # deletes all the things associated with the project
     @p.delete!
@@ -44,10 +48,6 @@ describe "Entity" do
     expect(@ag.entities.first.id).to eq(@e.id)
     # TODO... more verification needed here 
   end
-
-  it "will find test.com traversable since there is no namespace associated" do
-    expect(@p.traversable_entity?(@e)).to eq(true)
-  end 
 
   it "will find test.com traversable since there is no namespace associated" do
     expect(@p.traversable_entity?(@e)).to eq(true)

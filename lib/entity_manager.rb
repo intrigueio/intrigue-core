@@ -278,7 +278,7 @@ class EntityManager
     # If we're told this thing is scoped, let's just mark it scoped
     # note that we delete the detail since we no longer need it
     # TODO... is this used today?
-    if (details["scoped"] == true || details["scoped"] == "true")
+    if (details["scoped"] == true || details["scoped"] == "true") # TODO! Which is correct
 
       tr.log "Entity was specifically requested to be scoped"
       details = details.tap{ |h| h.delete("scoped") }
@@ -321,7 +321,7 @@ class EntityManager
     #####
 
     # ENRICHMENT LAUNCH (this may re-run if an entity has just been scoped in
-    if !tr.autoscheduled && !entity.deny_list # manally scheuduled, automatically enrich 
+    if !tr.autoscheduled # manally scheuduled, automatically enrich 
 
       if entity.enriched?
         tr.log "Re-scheduling enrichment for existing entity (manually run)!"

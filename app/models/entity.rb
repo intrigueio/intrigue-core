@@ -153,20 +153,10 @@ module Model
 
     # overridden in the individual entities
     def enrichment_tasks
-      []
+      ["enrich/generic"]
     end
 
     def enrich(task_result)
-
-      # immediately fail if this is not autoscheduled 
-      ###
-      ### Optimization put in place 2020-01-12 ... note that this may not 
-      ### work for every use case and should be revisited at a later date
-      ###
-      if self.deny_list
-        task_result.log "Cowardly refusing to enrich enitty on our deny list!: #{task_result.name} #{self.name}"
-        return nil
-      end
 
       # grab the task result
       scan_result_id = task_result.scan_result.id if task_result.scan_result 
@@ -191,9 +181,6 @@ module Model
 
           start_task("task_enrichment", self.project, scan_result_id, task_name, self, task_result_depth, [], [], workflow_name, true)
         end
-
-      else # always enrich, even if something is not configured
-        start_task("task_enrichment", self.project, scan_result_id, "enrich/generic", self, task_result_depth, [], [], workflow_name, true)
       end
 
     end
