@@ -50,7 +50,6 @@ module Intrigue
           _log_error "#{org} does not have an ASN."
           return
         end
-        puts resp
         json_resp = JSON.parse resp
       rescue JSON::ParserError => e
         _log_error "Error parsing: #{e}"
