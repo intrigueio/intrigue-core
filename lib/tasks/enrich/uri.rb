@@ -137,7 +137,12 @@ class Uri < Intrigue::Task::BaseTask
       "403 - Forbidden: Access is denied.", # http://104.47.66.10:80  
       "404 Not Found",
       "404 Vhost unknown", # http://217.70.185.65:80
+      "Amazon.com.au: Shop online for Electronics, Apparel, Toys, Books, DVDs & more", # http://52.119.170.38:80  	
+      "Amazon.co.uk: Low Prices in Electronics, Books, Sports Equipment & more", 
+      "Amazon.de: Gnstige Preise fr Elektronik & Foto, Filme, Musik, Bcher, Games, Spielzeug & mehr", # http://52.95.115.154:80
+      "Cloud Object Storage | Store &amp; Retrieve Data Anywhere | Amazon Simple Storage Service (S3)", # http://52.217.12.131:80  
       "Google", # http://172.217.14.165:80
+      "Not Found on Accelerator", # http://208.109.192.71:80
       "Not Found Medium", # https://52.1.147.205:443
       "Sign in to Outlook", # http://40.97.160.2:80
       "Sign in to your account", # https://104.47.55.138:443

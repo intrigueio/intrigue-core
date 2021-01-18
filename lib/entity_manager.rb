@@ -239,7 +239,12 @@ class EntityManager
     ###
     ### Always stick the task name on the entity 
     ###
-    task_list = (entity.get_detail("source_task_list") || []) << tr.name
+    task_list = (entity.get_detail("source_task_list") || []) << { 
+      task_name: tr.name, 
+      entity_name: tr.base_entity.name, 
+      entity_type: tr.base_entity.type_string
+    }
+    
     entity.set_detail "source_task_list", task_list
 
     ###
