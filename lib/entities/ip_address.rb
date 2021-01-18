@@ -52,6 +52,7 @@ class IpAddress < Intrigue::Core::Model::Entity
 
     # while it might be nice to scope out stuff on third paries, we still need 
     # to keep it in to scan, as we'll want all associated URLs
+    return false unless self.aliases.select{ |x| }
 
   # if we didnt match the above and we were asked, default to true as we'll
   #  we'll want to scope things in before we have a full set of aliases (?)

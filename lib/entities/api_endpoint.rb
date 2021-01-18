@@ -59,7 +59,6 @@ class ApiEndpoint < Intrigue::Core::Model::Entity
     ]
   end
 
-
 end
 end
 end

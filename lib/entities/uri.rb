@@ -47,21 +47,6 @@ class Uri < Intrigue::Core::Model::Entity
     # only scope in stuff that's not hidden (hnm, is this still needed?)
     return false if self.hidden
 
-    ###
-    ### These should move to ident and set the hidden attribute 
-    ### 
-    shared_infra_titles = [
-      "404 Not Found",
-      "404 Vhost unknown", # http://217.70.185.65:80
-      "Google",
-      "Not Found Medium", # https://52.1.147.205:443
-      "Sign in to Outlook", # http://40.97.160.2:80
-      "Sign in to your account", # https://104.47.55.138:443
-    ]
-
-    return false if "#{URI.parse(self.name).host}".is_ip_address? && 
-      shared_infra_titles.include?(self.get_detail("title"))
-
   # if we didnt match the above and we were asked, it's still true
   true
   end

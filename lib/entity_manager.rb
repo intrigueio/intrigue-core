@@ -195,7 +195,7 @@ class EntityManager
         entity.deny_list = project.deny_list_entity?(entity)
         traversable = project.traversable_entity?(entity)
         entity.traversable = traversable
-        entity.hidden = !traversable
+        #entity.hidden = !traversable
         entity.save_changes
 
 

@@ -23,6 +23,12 @@ class InvalidEntityError < StandardError
   end
 end
 
+class InvalidWorkflowError < StandardError
+  def initialize(msg="Missing or Invalid workflow attempted")
+    super
+  end
+end
+
 class SystemResourceMissing < StandardError
 def initialize(msg="Missing system resource")
   super

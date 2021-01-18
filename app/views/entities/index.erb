@@ -35,6 +35,7 @@
               <th>name</th>
               <th>details</th>
               <th>enriched</th>
+              <th>hidden</th>
               <th>scoped</th>
             </tr>
           </thead>
@@ -68,14 +69,21 @@
                     <li><%= e.enriched ? checkmark_image : xmark_image %> </li>
                   <% end %>
                   </ul>
-                </td>
-                <td>
-                <ul>
-                  <% grouped_entities.each do |e| %>
-                    <li><%= e.scoped ? checkmark_image : xmark_image %> </li>
-                  <% end %>
-                </ul>
-              </td>
+                  </td>
+                  <td>
+                  <ul>
+                    <% grouped_entities.each do |e| %>
+                      <li><%= e.hidden ? checkmark_image : xmark_image %> </li>
+                    <% end %>
+                  </ul>
+                  </td>
+                  <td>
+                  <ul>
+                    <% grouped_entities.each do |e| %>
+                      <li><%= e.scoped ? checkmark_image : xmark_image %> </li>
+                    <% end %>
+                  </ul>
+                  </td>
                 </tr>
               <% end %>
             
@@ -88,6 +96,11 @@
                 <td>
                   <div class='td-images'>
                     <%=  e.enriched ? checkmark_image : xmark_image %>
+                  </div>
+                </td>
+                <td>
+                  <div class='td-images'>
+                    <%=  e.hidden ? checkmark_image : xmark_image %>
                   </div>
                 </td>
                 <td>

@@ -196,9 +196,10 @@ class BaseTask
         end
       end
 
-      ###
-      ## FINALIZE ENRICHMENT
-      ###
+      ##########################################
+      # Finalize Enrichment and Start Workflow #
+      ##########################################
+      
       # Now, if this is an enrichment type task, we want to mark our enrichemnt complete 
       # if it's true, we can set it and launch our followon-work!
       if Intrigue::TaskFactory.create_by_name(@task_result.task_name).class.metadata[:type] == "enrichment"
@@ -225,7 +226,7 @@ class BaseTask
             workflow = Intrigue::WorkflowFactory.create_workflow_by_name(workflow_name)
 
             unless workflow
-              raise "Unable to continue, missing workflow: #{workflow_name}!!!"
+              raise InvalidWorkflowError, "Unable to continue, missing workflow: #{workflow_name}!!!"
             end
             
             ## 
@@ -238,13 +239,14 @@ class BaseTask
             @task_result.log "No workflow configured for #{@entity.name}!"
           end
           
+
+          #####################
+          #   Call Handlers   #
+          #####################
+          
           scan_result = @task_result.scan_result
           if scan_result
             scan_result.decrement_task_count
-
-            #####################
-            #   Call Handlers   #
-            #####################
 
             ### Task Result Handlers
             if @task_result.handlers.count > 0
