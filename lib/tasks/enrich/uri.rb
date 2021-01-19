@@ -130,12 +130,15 @@ class Uri < Intrigue::Task::BaseTask
       @entity.save_changes
     end
 
-
     # drop them if we are a lookup by ip and just got a reset 
     #
-    if _get_entity_detail("fingerprint") && 
-        _get_entity_detail("fingerprint").first.product == "Connection Reset (attempted HTTP connection)" && 
-        "#{URI.parse(@entity.name).host}".is_ip_address?
+    #  ... note that this /could/ be a hide check if it weren't 
+    #  also used on network services. basically special cased 
+    #  for this reason alone. 
+    # 
+    if "#{URI.parse(@entity.name).host}".is_ip_address? &&
+      ident_fingerprint.detect{|x| 
+        x["product"] == "Connection Reset (attempted HTTP connection)" } 
       hide_value = true
       hide_reason = "reset when connecting"
     end
