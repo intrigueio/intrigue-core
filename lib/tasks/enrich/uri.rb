@@ -130,13 +130,23 @@ class Uri < Intrigue::Task::BaseTask
       @entity.save_changes
     end
 
+
+    # drop them if we are a lookup by ip and just got a reset 
+    #
+    if _get_entity_detail("fingerprint") && 
+        _get_entity_detail("fingerprint").first.product == "Connection Reset (attempted HTTP connection)" && 
+        "#{URI.parse(@entity.name).host}".is_ip_address?
+      hide_value = true
+      hide_reason = "reset when connecting"
+    end
+
     ###
     ### These should move to ident and set the hidden attribute 
     ### 
     shared_infra_titles = [
       # "403 - Forbidden: Access is denied.", # http://104.47.66.10:80  
       # "404 Not Found",
-      "Dmarcian - Protect Your Email and Domain with DMARC"
+      "Dmarcian - Protect Your Email and Domain with DMARC",
       "404 Vhost unknown", # http://217.70.185.65:80
       "Amazon.com.au: Shop online for Electronics, Apparel, Toys, Books, DVDs & more", # http://52.119.170.38:80  	
       "Amazon.co.uk: Low Prices in Electronics, Books, Sports Equipment & more", 
@@ -152,7 +162,7 @@ class Uri < Intrigue::Task::BaseTask
     ]
 
     # hide if we get an ip address
-    if title && "#{URI.parse(@entity.name).host}".is_ip_address? && 
+    if "#{URI.parse(@entity.name).host}".is_ip_address? && 
           shared_infra_titles.include?(title)
       @entity.hidden = true
       @entity.save_changes 

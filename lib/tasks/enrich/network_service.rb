@@ -29,14 +29,21 @@ class NetworkService < Intrigue::Task::BaseTask
     ### First, normalize the nane - split out the various attributes
     ###
     entity_name = _get_entity_name
-    ip_address = entity_name.split(":").first
+
+    # grab the ip, handling ipv6 gracefully
+    if ip_address =~ /:/ 
+      ip_address = entity_name.split(":")[0..-2].join(":")
+    else 
+      ip_address = entity_name.split(":").first
+    end
+
     port = entity_name.split(":").last.split("/").first.to_i
     proto = entity_name.split(":").last.split("/").first.upcase
     net_name = _get_entity_detail("net_name")
 
-    _set_entity_detail("ip_address", ip_address) unless _get_entity_detail("ip_address")
-    _set_entity_detail("port", port) unless _get_entity_detail("port")
-    _set_entity_detail("proto", proto) unless _get_entity_detail("proto")
+    _set_entity_detail("ip_address", ip_address)
+    _set_entity_detail("port", port)
+    _set_entity_detail("proto", proto)
 
     # Use Ident to fingerprint
     _log "Grabbing banner and fingerprinting!"
