@@ -7,7 +7,7 @@ class Pastebin < BaseIssue
       added: "2020-01-15",
       name: "suspicious_pastebin",
       pretty_name: "Pastebin Data Detected",
-      severity: 3,
+      severity: 5,
       status: "confirmed",
       category: "leak",
       description: "Related account found in pastebin page",

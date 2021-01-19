@@ -24,47 +24,38 @@ class SearchPsbdmp < BaseTask
   def run
     super
 
-      #get entity name and type
+      #get entity name 
       entity_name = _get_entity_name
-      entity_type = _get_entity_type_string
-
+   
       #headers
       headers = { "Accept" =>  "application/json"}
+      
+      # Get responce
+      response = http_get_body("https://psbdmp.ws/api/v3/search/#{entity_name}",nil,headers) 
+      result = JSON.parse(response)
+      
+      if result["data"]
+        result["data"].each do |e|
+          
+          response_body = http_get_body("https://pastebin.com/#{e["id"]}")
+          
+          # Create an issue if we have visible data 
+          if !response_body.include? "Forbidden (#403)" and !response_body.include? "Not Found (#404)"  
+            
+            # Check for specific keyword if it is included in the paste to increase the severity level  
+            if response_body.include? "password" or response_body.include? "cvv" or response_body.include? "card" or 
+               response_body.include? "breach" or response_body.include? "account" 
 
-      #accepted entity type 
-      valid_entities = ["Domain", "EmailAddress", "UniqueKeyword"] 
+               _create_linked_issue "suspicious_pastebin", e.merge({source: "https://pastebin.com/#{e["id"]}" }, severity: 3)
+            else
+              _create_linked_issue "suspicious_pastebin", e.merge({source: "https://pastebin.com/#{e["id"]}" })
+            
+            end        
+          end      
+        end   
+      end 
 
-      if valid_entities.include? (entity_type)
-        search_pastebin entity_name,headers
-      else
-        _log_error "Unsupported entity type"
-      end
   end #end run
-
-
-
-  def search_pastebin(entity_name,headers)
-    # Get responce
-    response = http_get_body("https://psbdmp.ws/api/v3/search/#{entity_name}",nil,headers) 
-    result = JSON.parse(response)
-    
-    if result["data"]
-      result["data"].each do |e|
-        
-        response_body = http_get_body("https://pastebin.com/#{e["id"]}")
-        
-        # Create an issue if we have visible data 
-        if !response_body.include? "Forbidden (#403)" and !response_body.include? "Not Found (#404)"           
-          _create_linked_issue("suspicious_pastebin", {
-            status: "confirmed",
-            description: "related pastebin found in this Url: https://pastebin.com/#{e["id"]}",
-            details: e,
-            source: "https://pastebin.com/#{e["id"]}"
-          })
-        end 
-      end
-    end   
-  end #end search_pastebin 
 
 
 end
