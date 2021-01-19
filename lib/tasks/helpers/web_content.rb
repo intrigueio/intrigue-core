@@ -3,6 +3,8 @@ module Intrigue
 module Task
 module WebContent
 
+  include Intrigue::Task::Generic # for _log 
+
   def html_dom_to_string(body)
     dom_string = ""
     document = Nokogiri::HTML(body);nil
@@ -110,7 +112,7 @@ module WebContent
        end
 
        # Look for entities in the text of the entity
-       parse_and_create_entities_from_content(uri,metadata["X-TIKA:content"]) if extract_content
+       parse_and_create_entities_from_content(uri,"#{metadata["X-TIKA:content"]}".sanitize_unicode) if extract_content
 
      rescue RuntimeError => e
       @task_result.logger.log_error "Runtime error: #{e}"
@@ -208,15 +210,72 @@ module WebContent
       _create_normalized_webaccount wa[0], wa[1], wa[2]
     end 
 
-   end
+  end
 
-   def parse_email_addresses_from_content(source_uri, content, match_patterns=[])
+
+  def parse_dns_records_from_content(source_uri, content, match_patterns=[])    
     out=[]
-    @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
+    _log "Parsing text from #{source_uri}"
 
     # Make sure we have something to parse
     unless content
-      @task_result.logger.log_error "No content to parse, returning" if @task_result
+      _log_error "No content to parse, returning"
+      return nil
+    end
+
+    # Scan for dns records
+    potential_dns_records = content.scan(dns_regex(false))
+    potential_dns_records.each do |potential_dns_record|
+
+      # check that we have a valid TLD, to avoid stuff like image.png or file.css or page.aspx
+      next unless potential_dns_record.match(dns_regex) && parse_tld(potential_dns_record)
+
+      # ... try to pull out JS crap unless we got a specific pattern to match
+      if match_patterns.empty?
+       next if potential_dns_record.match /[\(\)]+/
+       next if potential_dns_record.match /\.analytics$/
+       next if potential_dns_record.match /\.app$/
+       next if potential_dns_record.match /\.call$/
+       next if potential_dns_record.match /\.click$/
+       next if potential_dns_record.match /\.data$/
+       next if potential_dns_record.match /\.id$/
+       next if potential_dns_record.match /\.map$/
+       next if potential_dns_record.match /\.name$/
+       next if potential_dns_record.match /\.next$/
+       next if potential_dns_record.match /\.now$/
+       next if potential_dns_record.match /\.off$/
+       next if potential_dns_record.match /\.open$/
+       next if potential_dns_record.match /\.page$/
+       next if potential_dns_record.match /\.prototype$/
+       next if potential_dns_record.match /\.sc$/
+       next if potential_dns_record.match /\.search$/
+       next if potential_dns_record.match /\.show$/
+       next if potential_dns_record.match /\.stream$/
+       next if potential_dns_record.match /\.style$/
+       next if potential_dns_record.match /\.target$/
+       next if potential_dns_record.match /\.top$/
+       next if potential_dns_record.match /\.video$/
+     end
+
+      # if we got a pattern list, check it for matching
+      create=false
+      match_patterns.each do |p|
+        create = true if potential_dns_record.strip =~ /#{Regexp.escape(p)}/
+      end
+
+      out << { "name" => potential_dns_record, "origin" => source_uri} if match_patterns.empty? || create 
+    end
+
+  out 
+ end
+
+   def parse_email_addresses_from_content(source_uri, content, match_patterns=[])
+    out=[]
+    _log "Parsing text from #{source_uri}" 
+
+    # Make sure we have something to parse
+    unless content
+      _log_error "No content to parse, returning" 
       return nil
     end
 
@@ -238,70 +297,13 @@ module WebContent
   out 
   end
 
-  def parse_dns_records_from_content(source_uri, content, match_patterns=[])
-     out=[]
-     @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
-
-     # Make sure we have something to parse
-     unless content
-       @task_result.logger.log_error "No content to parse, returning" if @task_result
-       return nil
-     end
-
-     # Scan for dns records
-     # CGI::unescape does not throw errors according to docs: https://www.rubydoc.info/stdlib/cgi/CGI/Escape#unescape-instance_method
-     potential_dns_records = CGI::unescape(content).scan(dns_regex)
-     potential_dns_records.compact.each do |potential_dns_record|
-
-       # check that we have a valid TLD, to avoid stuff like image.png or file.css or page.aspx
-       next unless parse_tld(potential_dns_record) && potential_dns_record.match(dns_regex)
-
-       if match_patterns.empty?
-        # ... limit to common TLDs unless we got a pattern to match
-        next if potential_dns_record.match /[\(\)]+/
-        next if potential_dns_record.match /\.analytics$/
-        next if potential_dns_record.match /\.app$/
-        next if potential_dns_record.match /\.call$/
-        next if potential_dns_record.match /\.click$/
-        next if potential_dns_record.match /\.data$/
-        next if potential_dns_record.match /\.id$/
-        next if potential_dns_record.match /\.map$/
-        next if potential_dns_record.match /\.name$/
-        next if potential_dns_record.match /\.next$/
-        next if potential_dns_record.match /\.now$/
-        next if potential_dns_record.match /\.off$/
-        next if potential_dns_record.match /\.open$/
-        next if potential_dns_record.match /\.page$/
-        next if potential_dns_record.match /\.prototype$/
-        next if potential_dns_record.match /\.sc$/
-        next if potential_dns_record.match /\.search$/
-        next if potential_dns_record.match /\.show$/
-        next if potential_dns_record.match /\.stream$/
-        next if potential_dns_record.match /\.style$/
-        next if potential_dns_record.match /\.target$/
-        next if potential_dns_record.match /\.top$/
-        next if potential_dns_record.match /\.video$/
-      end
-
-       # if we got a pattern list, check it for matching
-       create=false
-       match_patterns.each do |p|
-         create = true if potential_dns_record.strip =~ /#{p}/
-       end
-
-       out << { "name" => potential_dns_record, "origin" => source_uri} if match_patterns.empty? || create 
-     end
-
-   out 
-  end
-
   def parse_phone_numbers_from_content(source_uri, content, match_patterns=[])
     out = []
-    @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
+    _log "Parsing text from #{source_uri}" 
 
     # Make sure we have something to parse
     unless content
-      @task_result.logger.log_error "No content to parse, returning" if @task_result
+      _log_error "No content to parse, returning" 
       return nil
     end
 
@@ -323,11 +325,11 @@ module WebContent
 
   def parse_uris_from_content(source_uri, content, match_patterns=[])
     out = []
-    @task_result.logger.log "Parsing text from #{source_uri}" if @task_result
+    _log "Parsing text from #{source_uri}"
 
     # Make sure we have something to parse
     unless content
-      @task_result.logger.log_error "No content to parse, returning" if @task_result
+      _log_error "No content to parse, returning"
       return nil
     end
 
