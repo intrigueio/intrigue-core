@@ -162,7 +162,6 @@ class IpAddress < Intrigue::Task::BaseTask
     ###
     ### ASN pattern matching 
     ### 
-    
     known_asns = [
       "AS8068", # MICROSOFT-CORP-MSN-AS-BLOCK, US
       "AS8075", # MICROSOFT-CORP-MSN-AS-BLOCK, US

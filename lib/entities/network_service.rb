@@ -33,6 +33,9 @@ class NetworkService < Intrigue::Core::Model::Entity
     return true if self.allow_list || self.project.allow_list_entity?(self) 
     return false if self.deny_list || self.project.deny_list_entity?(self)
   
+    # only scope in stuff that's not hidden 
+    return false if self.hidden
+
   true
   end
 
