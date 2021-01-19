@@ -31,7 +31,7 @@ class NetworkService < Intrigue::Task::BaseTask
     entity_name = _get_entity_name
 
     # grab the ip, handling ipv6 gracefully
-    if ip_address =~ /:/ 
+    if entity_name =~ /:/ 
       ip_address = entity_name.split(":")[0..-2].join(":")
     else 
       ip_address = entity_name.split(":").first
