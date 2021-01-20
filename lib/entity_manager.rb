@@ -144,7 +144,7 @@ class EntityManager
     entity_already_existed = false
     if entity
 
-      entity.set_details(details.to_h.deep_merge(entity.details.to_h))
+      entity.set_details(details.to_h.deep_merge(entity.details.to_h || {}))
 
       # if it already exists, it'll have an alias group ID and we'll
       # want to use that to preserve pre-existing relatiohships

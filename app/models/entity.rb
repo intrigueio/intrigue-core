@@ -224,7 +224,7 @@ module Model
       aliases.select{|x| x.name unless x.hidden }.sort_by{|x| x.name }.uniq
     end
 
-    def has_detail(key)
+    def has_detail?(key)
       return nil unless self.details
       details[key] != nil
     end
