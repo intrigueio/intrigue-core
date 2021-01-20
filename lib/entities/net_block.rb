@@ -12,7 +12,7 @@ class NetBlock < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name.match(netblock_regex) || name.match(netblock_regex_two)
+    name.match(netblock_regex(true)) || name.match(netblock_regex_two(true))
   end
 
   def detail_string

@@ -186,15 +186,20 @@ module WebContent
    ###
    def parse_and_create_entities_from_content(source_uri, content, match_patterns=[])
 
-    potential_email_addresses = parse_email_addresses_from_content(source_uri, content, match_patterns)
-    potential_email_addresses.each do |e| 
-      x = _create_entity "EmailAddress", e 
-    end         
+    potential_credit_cards = parse_credit_cards_from_content(source_uri, content, match_patterns)
+    potential_credit_cards.each do |cc|
+      x = _create_entity "CreditCard", cc
+    end
 
     potential_dns_records = parse_dns_records_from_content(source_uri, content, match_patterns)
     potential_dns_records.each do |d|
       create_dns_entity_from_string d["name"], nil, false, d
     end
+
+    potential_email_addresses = parse_email_addresses_from_content(source_uri, content, match_patterns)
+    potential_email_addresses.each do |e| 
+      x = _create_entity "EmailAddress", e 
+    end         
 
     potential_phone_numbers = parse_phone_numbers_from_content(source_uri, content, match_patterns)
     potential_phone_numbers.each do |p|
@@ -212,10 +217,37 @@ module WebContent
 
   end
 
+  def parse_credit_cards_from_content(source_uri, content, match_patterns=[])
+    out=[]
+
+    # Make sure we have something to parse
+    unless content
+      _log_error "No content to parse, returning" 
+      return nil
+    end
+
+    # Scan for email addresses
+    ccs = content.scan(credit_card_regex(false))
+
+    ccs.each do |cc|
+      next unless cc.strip && cc.strip.length > 9
+
+       # if we got a pattern list, check it for matching
+       create=false
+       match_patterns.each do |p|
+         create = true if addr.strip =~ /#{p}/
+       end
+
+      out << {"name" => cc, "origin" => source_uri} if match_patterns.empty? || create 
+    end
+
+  out 
+  end
+
 
   def parse_dns_records_from_content(source_uri, content, match_patterns=[])    
     out=[]
-    _log "Parsing text from #{source_uri}"
+    _log "Parsing content from #{source_uri}"
 
     # Make sure we have something to parse
     unless content
