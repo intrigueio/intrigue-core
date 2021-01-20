@@ -17,7 +17,7 @@ module Model
     plugin :single_table_inheritance, :type
     plugin :timestamps
 
-    self.raise_on_save_failure = false
+    #self.raise_on_save_failure = false
 
     many_to_one  :alias_group
     many_to_many :task_results
