@@ -11,7 +11,7 @@ class NetworkService < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name.match /[\w\d\.]+:\d{1,5}/
+    name.match network_service_regex(true)
   end
 
   def detail_string

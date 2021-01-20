@@ -230,22 +230,18 @@ class EntityManager
         raise InvalidEntityError.new("Invalid entity, unable to validate: #{type_string}##{downcased_name}")
       end
 
-    ###
-    ### make a connection to the task result on the first one
-    ###
-    tr.add_entity(entity)
     end
 
-    ###
-    ### Always stick the task name on the entity 
-    ###
-    task_list = (entity.get_detail("source_task_list") || []) << { 
-      task_name: tr.name, 
+    ### make a connection to the task result on every unique tr <> entity match
+    tr.add_entity(entity) unless (entity.get_detail("source_task_list") || []).detect{|x| x["task_result_name"] == tr.name } 
+
+    # set our source_task list with this one added
+    entity.set_detail "source_task_list", (entity.get_detail("source_task_list") || []) << { 
+      task_result_name: tr.name, 
+      task_name: tr.task_name,
       entity_name: tr.base_entity.name, 
       entity_type: tr.base_entity.type_string
     }
-    
-    entity.set_detail "source_task_list", task_list
 
     ###
     ### Scoping must always run, because the task run we're inside may have 

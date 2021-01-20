@@ -99,11 +99,16 @@ class NetworkService < Intrigue::Task::BaseTask
     end
 
     known_ports = [
-      { port: 2082, net_name: "CLOUDFLARENET, US" },  
-      { port: 2083, net_name: "CLOUDFLARENET, US" },  
-      { port: 2086, net_name: "CLOUDFLARENET, US" },
-      { port: 2087, net_name: "CLOUDFLARENET, US" },
-      { port: 2095, net_name: "CLOUDFLARENET, US" }, 
+      { port: 2082, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::" },  
+      { port: 2083, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },  
+      { port: 2086, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
+      { port: 2087, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
+      { port: 2095, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  }, 
+      { port: 2082, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::" },  
+      { port: 2083, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },  
+      { port: 2086, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
+      { port: 2087, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
+      { port: 2095, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  }, 
       { port: 25, net_name: "GOOGLE, US" }
     ]
     if known_ports.select{ |x| x[:port] == port && x[:net_name] == net_name }

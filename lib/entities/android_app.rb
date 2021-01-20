@@ -13,7 +13,7 @@ class AndroidApp < Intrigue::Core::Model::Entity
 
   def validate_entity
     # regex based on app id naming rules as per https://developer.android.com/studio/build/application-id
-    name.match /^[a-zA-Z]+[a-zA-Z0-9_\-]*\.[a-zA-Z]+[a-zA-Z0-9_\-]*\.?([a-zA-Z0-9_\-]*\.*)*$/
+    name =~ android_app_regex(true)
   end
 
   def scoped?
