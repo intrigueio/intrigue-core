@@ -11,7 +11,7 @@ class Pastebin < BaseIssue
       status: "confirmed",
       category: "leak",
       description: "Related account found in pastebin page",
-      remediation: "Mention in Pastebin should be investigated by your team it might contain leaked data or some private data related to your company",
+      remediation: "Mention in pastebin should be investigated by your team it might contain leaked data or some private data related to your company",
       references: []
     }.merge!(instance_details)
 
