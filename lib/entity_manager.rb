@@ -263,19 +263,19 @@ class EntityManager
     # If we're told this thing is scoped, let's just mark it scoped
     # note that we delete the detail since we no longer need it
     # TODO... is this used today?
-    if (details_hash["scoped"] == true || details_hash["scoped"] == "true") # TODO! Which is correct
+    if "#{details_hash["scoped"]}".to_bool # TODO! Which is correct
 
       tr.log "Entity was specifically requested to be scoped"
-      details = details.tap{ |h| h.delete("scoped") }
+      entity.delete_detail("scoped")
       scope_request = "true"
 
     # otherwise if we've specifically decided to unscope
     # note that we delete the detail since we no longer need it
-    elsif (details_hash["unscoped"] == true || details_hash["unscoped"] == "true")
+    elsif "#{details_hash["unscoped"]}".to_bool 
 
       unless entity.seed? 
         tr.log "Entity was specifically requested to be unscoped"
-        details = details.tap{ |h| h.delete("unscoped") }
+        entity.delete_detail("unscoped")
         scope_request = "false"
       else
         tr.log "Entity was specifically requested to be unscoped, but it's a seed, so we refused!"
@@ -381,19 +381,6 @@ class EntityManager
       
   # return the entity with enrichment now scheduled if appropriate
   entity
-  end
-
-  private
-
-  def self._encode_string(string)
-    return string unless string.kind_of? String
-    string.encode("UTF-8", :undef => :replace, :invalid => :replace, :replace => "?")
-  end
-
-  def self._encode_hash(hash)
-    return hash unless hash.kind_of? Hash
-    hash.each {|k,v| hash[k] = _encode_string(v) if v.kind_of? String }
-  hash
   end
 
 end

@@ -229,6 +229,11 @@ module Model
       details[key] != nil
     end
 
+    def delete_detail(key)
+      details = details.except(key)
+      details.save
+    end
+
     def get_detail(key)
       return nil unless self.details
       details[key]
