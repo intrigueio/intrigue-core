@@ -32,6 +32,19 @@ GIT
     dnsbl-client (1.0.4)
 
 GIT
+  remote: https://github.com/intrigueio/intrigue-ident.git
+  revision: 5e2b7653c553b7730dfe78b377678b68efc84151
+  branch: main
+  specs:
+    intrigue-ident (4.1.2)
+      dnsruby
+      murmurhash3
+      recog-intrigue
+      snmp
+      socketry
+      typhoeus
+
+GIT
   remote: https://github.com/intrigueio/ip_ranger
   revision: e1e4080070cf699cd0b80c5c8d6d5dddfc19d4b8
   specs:
@@ -309,6 +322,7 @@ GEM
     multi_json (1.15.0)
     multi_xml (0.6.0)
     multipart-post (2.1.1)
+    murmurhash3 (0.1.6)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
     net-dns (0.9.0)
@@ -350,6 +364,8 @@ GEM
       rack (>= 1.0, < 3)
     rake (13.0.3)
     rb-readline (0.5.5)
+    recog-intrigue (2.3.14)
+      nokogiri
     redis (4.2.5)
     redis-namespace (1.8.0)
       redis (>= 3.0.4)
@@ -483,6 +499,7 @@ DEPENDENCIES
   googleajax
   googleauth
   iconv
+  intrigue-ident!
   intrigue_api_client!
   ip_ranger!
   ipaddr

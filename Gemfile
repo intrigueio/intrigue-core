@@ -77,7 +77,7 @@ gem 'zetalytics'
 gem 'chrome_remote',          :git => 'https://github.com/intrigueio/chrome_remote.git'
 
 # comment if developing on ident locally
-#gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git', :branch => "main"
+gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git', :branch => "main"
 
 # vulndb
 gem 'versionomy'
