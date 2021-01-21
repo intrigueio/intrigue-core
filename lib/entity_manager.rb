@@ -26,18 +26,22 @@ class EntityManager
   matches.first
   end
 
-  def self.create_bulk_entity(project_id,entity_type_string,entity_name,details={})
+  def self.create_bulk_entity(project_id,entity_type_string,entity_name,details_hash={})
     
     # create a group
     g = Intrigue::Core::Model::AliasGroup.create(:project_id => project_id)
 
+    # Save the original and downcase our name
+    details_hash["hidden_original"] = name
+    downcased_name = name.downcase.strip
+
     # create the entity
     klass = Intrigue::EntityManager.resolve_type_from_string(entity_type_string)
     e = klass.create({
-      :name => entity_name.downcase,
+      :name => downcased_entity_name,
       :project_id => project_id,
       :type => entity_type_string,
-      :details => details,
+      :details => details_hash,
       :hidden => false,
       :scoped => true,
       :allow_list => true,
@@ -50,7 +54,7 @@ class EntityManager
 
     # Save the original and downcase our name
     details_hash["hidden_original"] = name
-    downcased_name = name.downcase
+    downcased_name = name.downcase.strip
 
     # Try to find our project and create it if it doesn't exist
     project = Intrigue::Core::Model::Project.find_or_create(:name => project_name)
@@ -88,7 +92,7 @@ class EntityManager
         :deny_list => false,
         :alias_group_id => g.id,
         :seed => true
-        })
+      })
         
     end
 
@@ -131,6 +135,7 @@ class EntityManager
 
     # Check if there's an existing entity, if so, merge and move forward
     entity_already_existed = false
+    
     if entity
 
       entity.set_details(details_hash.to_h.deep_merge(entity.details.to_h))
@@ -145,10 +150,10 @@ class EntityManager
       type = resolve_type_from_string(type_string)
 
       base_entity_details = {
-        :name => downcased_name,
-        :project_id => project.id,
-        :type => type.to_s,
-        :details => details_hash
+        name: downcased_name,
+        project_id: project.id,
+        type: type.to_s,
+        details: details_hash
       }
 
       # handle alias group
@@ -160,15 +165,9 @@ class EntityManager
       end
 
       begin
+
         # Create a new entity in that group
-        entity = Intrigue::Core::Model::Entity.update_or_create(
-          {name: downcased_name, type: type.to_s, project: project}, base_entity_details)
-
-        unless entity
-          tr.log_fatal "Unable to create entity: #{base_entity_details}"
-          return nil
-        end
-
+        entity = Intrigue::Core::Model::Entity.update_or_create(base_entity_details)
 
         # 
         # ok, now let's add the contextual attributes which will 
@@ -225,12 +224,12 @@ class EntityManager
     tr.add_entity(entity) unless (entity.get_detail("source_task_list") || []).detect{|x| x["task_result_name"] == tr.name } 
 
     # set our source_task list with this one added
-    entity.set_detail "source_task_list", (entity.get_detail("source_task_list") || []) << { 
+    entity.set_detail "source_task_list", ((entity.get_detail("source_task_list") || []) << { 
       task_result_name: tr.name, 
       task_name: tr.task_name,
       entity_name: tr.base_entity.name, 
       entity_type: tr.base_entity.type_string
-    }
+    }).uniq
 
     ###
     ### Scoping must always run, because the task run we're inside may have 

@@ -3,6 +3,7 @@ module Intrigue
 module Core
 module Model
 class EntitiesTaskResults < Sequel::Model
+  self.raise_on_save_failure = false
 end
 end
 end
@@ -230,8 +231,8 @@ module Model
     end
 
     def delete_detail(key)
-      details = details.except(key)
-      details.save
+      details = self.details.except(key)
+      save_changes
     end
 
     def get_detail(key)
