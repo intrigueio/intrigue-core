@@ -47,10 +47,21 @@ class Uri < Intrigue::Task::BaseTask
     end
 
     # parse out the hostname and parent domains, and create them
-    #unless hostname.is_ip_address?
-    #  create_dns_entity_from_string hostname
+    unless hostname.is_ip_address?
       create_dns_entity_from_string parse_domain_name(hostname)
-    #end
+
+      # seemingly, you would want to enable hostname here, but it 
+      # can create issues with some pages that will simply repeat 
+      # whatever their givn hostname is, and thus, we need to find
+      # a way to detect that... ala 2f2f2f2f2www.org.com
+      #  create_dns_entity_from_string hostname
+      
+    end
+
+    ###
+    ### grab the page title
+    match = response.body_utf8.match(/<title>(.*?)<\/title>/i)
+    title = match.captures.first if match
 
     # Sha256 the body response, in case it's helpful later ont
     response_data_hash = Digest::SHA256.base64digest(response.body_utf8)
@@ -119,6 +130,47 @@ class Uri < Intrigue::Task::BaseTask
       @entity.save_changes
     end
 
+    # drop them if we are a lookup by ip and just got a reset 
+    #
+    #  ... note that this /could/ be a hide check if it weren't 
+    #  also used on network services. basically special cased 
+    #  for this reason alone. 
+    # 
+    if "#{URI.parse(@entity.name).host}".is_ip_address? &&
+      ident_fingerprint.detect{|x| 
+        x["product"] == "Connection Reset (attempted HTTP connection)" } 
+      hide_value = true
+      hide_reason = "reset when connecting"
+    end
+
+    ###
+    ### These should move to ident and set the hidden attribute 
+    ### 
+    shared_infra_titles = [
+      # "403 - Forbidden: Access is denied.", # http://104.47.66.10:80  
+      # "404 Not Found",
+      "Dmarcian - Protect Your Email and Domain with DMARC",
+      "404 Vhost unknown", # http://217.70.185.65:80
+      "Amazon.com.au: Shop online for Electronics, Apparel, Toys, Books, DVDs & more", # http://52.119.170.38:80  	
+      "Amazon.co.uk: Low Prices in Electronics, Books, Sports Equipment & more", 
+      "Amazon.de: Gnstige Preise fr Elektronik & Foto, Filme, Musik, Bcher, Games, Spielzeug & mehr", # http://52.95.115.154:80
+      "Cloud Object Storage | Store &amp; Retrieve Data Anywhere | Amazon Simple Storage Service (S3)", # http://52.217.12.131:80  
+      "Google", # http://172.217.14.165:80
+      "Not Found on Accelerator", # http://208.109.192.71:80
+      "Not Found Medium", # https://52.1.147.205:443
+      "Sign in to Outlook", # http://40.97.160.2:80
+      "Sign in to your account", # https://104.47.55.138:443
+      "Oracle.com Outage", # http://156.151.59.19:80
+      "My Dyn Account" # http://162.88.175.1:80
+    ]
+
+    # hide if we get an ip address
+    if "#{URI.parse(@entity.name).host}".is_ip_address? && 
+          shared_infra_titles.include?(title)
+      @entity.hidden = true
+      @entity.save_changes 
+    end
+
     # we can check the existing response, so send that
     _log "Checking if Forms"
     contains_forms = check_forms(ident_configuration)
@@ -134,7 +186,6 @@ class Uri < Intrigue::Task::BaseTask
     # we'll need to make another request
     _log "Checking OPTIONS"
     verbs_enabled = check_options_endpoint(uri)
-
 
     # figure out ciphers if this is an ssl connection
     # only create issues if we're getting a 200
@@ -235,11 +286,6 @@ class Uri < Intrigue::Task::BaseTask
       favicon_md5 = Digest::MD5.hexdigest(favicon_response.body_utf8)
       favicon_sha1 = Digest::SHA1.hexdigest(favicon_response.body_utf8)
     end
-
-    ###
-    ### grab the page attributes
-    match = response.body_utf8.match(/<title>(.*?)<\/title>/i)
-    title = match.captures.first if match
 
     # save off the generator string
     generator_match = response.body_utf8.match(/<meta name=\"?generator\"? content=\"?(.*?)\"?\/>/i)
@@ -381,6 +427,8 @@ class Uri < Intrigue::Task::BaseTask
 
   end
 
+
+  
   def _gather_supported_ciphers(hostname,port)
     scanner = Rex::SSLScan::Scanner.new(hostname, port)
     result = scanner.scan
@@ -401,7 +449,6 @@ class Uri < Intrigue::Task::BaseTask
     end
   false
   end
-
 
   # checks to see if we had an auth config return true
   def check_auth(configuration)

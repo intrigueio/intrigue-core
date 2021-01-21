@@ -6,7 +6,7 @@ class MobileIronCve202015506 < BaseTask
     {
       :name => "vuln/mobileiron_multiple_cves",
       :pretty_name => "Vuln Check - MobileIron Multiple CVEs (CVE-2020-15505, CVE-2020-15506, CVE-2020-15507) ",
-      :authors => ["shpendk","jcran"],
+      :authors => ["shpendk", "jcran"],
       :identifiers => [{ "cve" =>  "CVE-2020-15505" }, { "cve" =>  "CVE-2020-15506" }, { "cve" =>  "CVE-2020-15507" }],
       :description => "This task does a version check for multiple MobileIron vulnerabilities",
       :references => ["https://nvd.nist.gov/vuln/search/results?form_type=Advanced&cves=on&cpe_version=cpe%3a%2fa%3amobileiron%3acore%3a10.6"],

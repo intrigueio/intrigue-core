@@ -16,10 +16,10 @@ describe "WebContent" do
     x = {"name" => item, "origin" => site}
 
     # do the work 
-    emails = parse_dns_records_from_content(site, content)
+    items = parse_dns_records_from_content(site, content)
     
     # check it 
-    expect(emails).to include(x)
+    expect(items).to include(x)
     
   end
 
@@ -32,10 +32,10 @@ describe "WebContent" do
     x = {"name" => item, "origin" => site}
 
     # do the work 
-    emails = parse_email_addresses_from_content(site, content)
+    items = parse_email_addresses_from_content(site, content)
     
     # check it 
-    expect(emails).to include(x)
+    expect(items).to include(x)
     
   end
 
@@ -49,10 +49,10 @@ describe "WebContent" do
     x = {"name" => item, "origin" => site}
 
     # do the work 
-    emails = parse_phone_numbers_from_content(site, content)
+    items = parse_phone_numbers_from_content(site, content)
     
     # check it 
-    expect(emails).to include(x)
+    expect(items).to include(x)
 
   end
 
@@ -65,10 +65,10 @@ describe "WebContent" do
     x = {"name" => item, "origin" => site}
 
     # do the work 
-    emails = parse_uris_from_content(site, content)
+    items = parse_uris_from_content(site, content)
     
     # check it 
-    expect(emails).to include(x)
+    expect(items).to include(x)
     
   end
 

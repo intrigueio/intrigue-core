@@ -68,23 +68,23 @@ module Generic
   ### Logging helpers
   ###
   def _log(message)
-    @task_result.logger.log message
+    @task_result.logger.log message if @task_result
   end
 
   def _log_debug(message)
-    @task_result.logger.log_debug message
+    @task_result.logger.log_debug message if @task_result
   end
 
   def _log_error(message)
-    @task_result.logger.log_error message
+    @task_result.logger.log_error message if @task_result
   end
 
   def _log_fatal(message)
-    @task_result.logger.log_fatal message
+    @task_result.logger.log_fatal message if @task_result
   end
 
   def _log_good(message)
-    @task_result.logger.log_good message
+    @task_result.logger.log_good message if @task_result
   end
 
   # Convenience Method to execute a system command semi-safely

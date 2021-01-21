@@ -23,6 +23,9 @@ module Model
     many_to_many :task_results
     many_to_one  :project
     one_to_many  :issues
+
+    include Intrigue::Core::System::DnsHelpers
+    include Intrigue::Core::System::Validations
     
     def self.inherited(base)
       EntityFactory.register(base)
@@ -75,13 +78,13 @@ module Model
     def set_scoped!(bool_val=true, reason=nil)
 
       # always respect the deny list
-      if self.project.deny_list_entity?(type_string, name)
+      if project.deny_list_entity?(self)
         bool_val = false
         reason = "deny_list_override"
       end
 
       # but always ALWAYS respect the allow list
-      if self.project.allow_list_entity?(type_string, name)
+      if project.allow_list_entity?(self)
         bool_val = true
         reason = "allow_list_override"
       end
@@ -98,20 +101,9 @@ module Model
     end
 
     def seed?
-      true if project.seeds.map{|x| self.name == x.name }
+      true if project.seeds.first(:name => self.name)
     false
     end
-    
-    def allow_list
-      return nil unless project
-      project.allow_list_entity?(self.type_string, self.name)
-    end
-
-    def deny_list
-      return nil unless project 
-      out = project.deny_list_entity?(self.type_string, self.name)
-    out
-    end 
 
     def validate
       super
@@ -136,18 +128,32 @@ module Model
       extended_details.count > 1 # hidden_name will always exist...
     end
 
+    # 
+    # This method allows us to easily specify a list of type / name pairs for the 
+    # purpose of verifying scope. The default, is just our own type/name, but consider
+    # the example of a URI ... we want to verify the URI itself, the hostname (if
+    # not an IP), AND the domain
+    #
+    #
+    def scope_verification_list
+      [
+        { type_string: self.type_string, name: self.name }
+      ]
+    end
+
     # override me... see: lib/entities/aws_credential.rb
     def transform!
       true
     end
 
+    # this is just a convenience method 
     def enriched?
       self.enriched
     end
 
     # overridden in the individual entities
     def enrichment_tasks
-      []
+      ['enrich/generic']
     end
 
     def enrich(task_result)
@@ -186,10 +192,8 @@ module Model
           start_task("task_enrichment", self.project, scan_result_id, task_name, self, task_result_depth, [], [], workflow_name, true)
         end
 
-      else # always enrich, even if something is not configured
-        start_task("task_enrichment", self.project, scan_result_id, "enrich/generic", self, task_result_depth, [], [], workflow_name, true)
-      end
-
+      end 
+      
     end
 
     def alias_to(new_id)

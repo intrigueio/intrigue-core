@@ -25,8 +25,8 @@ class AwsS3Bucket < Intrigue::Core::Model::Entity
 
   def scoped?(conditions={})
     return true if scoped
-    return true if self.allow_list
-    return false if self.deny_list
+    return true if self.allow_list || self.project.allow_list_entity?(self) 
+    return false if self.deny_list || self.project.deny_list_entity?(self)
 
   true # otherwise just default to true
   end

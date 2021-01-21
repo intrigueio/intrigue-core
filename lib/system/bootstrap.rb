@@ -54,7 +54,8 @@ module Bootstrap
       end
       
       project.use_standard_exceptions = p["use_standard_exceptions"] || true
-      project.allowed_namespaces = p["allowed_namespaces"] || []
+
+      project.allowed_namespaces = p["allowed_namespaces"]
       project.uuid = p["collection_run_uuid"]
       project.save 
 
@@ -63,7 +64,6 @@ module Bootstrap
       if config["additional_exception_list"]
         _add_no_traverse_entities(project.id, config["additional_exception_list"].sort.to_a)
       end
-      puts "Done!"
 
       # parse up the seeds
       parsed_seeds = p["seeds"].map{|s| _parse_entity s["entity"] }

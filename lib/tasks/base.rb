@@ -196,9 +196,10 @@ class BaseTask
         end
       end
 
-      ###
-      ## FINALIZE ENRICHMENT
-      ###
+      ##########################################
+      # Finalize Enrichment and Start Workflow #
+      ##########################################
+      
       # Now, if this is an enrichment type task, we want to mark our enrichemnt complete 
       # if it's true, we can set it and launch our followon-work!
       if Intrigue::TaskFactory.create_by_name(@task_result.task_name).class.metadata[:type] == "enrichment"
@@ -208,16 +209,13 @@ class BaseTask
         @entity.save_changes 
 
         ### AND WE CAN DECIDE SCOPE BASED ON COMPLETE ENTITY (unless we were already scoped in!)
-        if check_scope = @entity.scoped?
-          @entity.set_scoped!(check_scope, "entity_scoping_rules") #always fall back to our entity-specific logic if there was no request
-          #_log_good "POST-ENRICH AUTOMATED ENTITY SCOPE: #{@entity.scoped}"
-        end
-        
+        ### .. always fall back to our entity-specific logic if there was no request
+        @entity.set_scoped!(@entity.scoped?, "entity_scoping_rules") 
+      
         ###
         ## NOW, KICK OFF WORKFLOWS for SCOPED ENTiTIES ONLY
         ###
-        if @entity.scoped?
-
+        if @entity.scoped
 
           # WORKFLOW LAUNCH (ONLY IF WE ARE ATTACHED TO A WORKFLOW) 
           # if this is part of a scan and we're in depth
@@ -228,25 +226,27 @@ class BaseTask
             workflow = Intrigue::WorkflowFactory.create_workflow_by_name(workflow_name)
 
             unless workflow
-              raise "Unable to continue, missing workflow: #{workflow_name}!!!"
+              raise InvalidWorkflowError, "Unable to continue, missing workflow: #{workflow_name}!!!"
             end
             
             ## 
             ## Start the workflow!
             ##
+            puts "LAUNCHING WORKFLOW on #{@entity.name} after #{@task_result.name}"
             workflow.start(@entity, @task_result)
 
           else
             @task_result.log "No workflow configured for #{@entity.name}!"
           end
           
+
+          #####################
+          #   Call Handlers   #
+          #####################
+          
           scan_result = @task_result.scan_result
           if scan_result
             scan_result.decrement_task_count
-
-            #####################
-            #   Call Handlers   #
-            #####################
 
             ### Task Result Handlers
             if @task_result.handlers.count > 0
