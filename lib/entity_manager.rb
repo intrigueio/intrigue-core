@@ -38,15 +38,15 @@ class EntityManager
     # create the entity
     klass = Intrigue::EntityManager.resolve_type_from_string(entity_type_string)
     e = klass.create({
-      :name => downcased_entity_name,
-      :project_id => project_id,
-      :type => entity_type_string,
-      :details => details_hash,
-      :hidden => false,
-      :scoped => true,
-      :allow_list => true,
-      :deny_list => false,
-      :alias_group_id => g.id
+      name: downcased_entity_name,
+      project_id: project_id,
+      type: entity_type_string,
+      details: details_hash,
+      hidden: false,
+      scoped: true,
+      allow_list: true,
+      deny_list: false,
+      alias_group_id: g.id
     })
   end
 
@@ -82,16 +82,16 @@ class EntityManager
       type = resolve_type_from_string(type_string)
       g = Intrigue::Core::Model::AliasGroup.create(:project_id => project.id)
       entity = Intrigue::Core::Model::Entity.create({
-        :name =>  downcased_name,
-        :project => project,
-        :type => type,
-        :details => details_hash,
-        :hidden => false, # first entity should NEVER be hidden - it was intentional
-        :scoped => true,  # first entity should ALWAYS be in scope - it was intentional
-        :allow_list => true,
-        :deny_list => false,
-        :alias_group_id => g.id,
-        :seed => true
+        name: downcased_name,
+        project: project,
+        type: type,
+        details: details_hash,
+        hidden: false, # first entity should NEVER be hidden - it was intentional
+        scoped: true,  # first entity should ALWAYS be in scope - it was intentional
+        allow_list: true,
+        deny_list: false,
+        alias_group_id: g.id,
+        seed: true
       })
         
     end
@@ -111,7 +111,7 @@ class EntityManager
   end
 
   # This method creates a new entity, and kicks off a workflow
-  def self.create_or_merge_entity(task_result_id, type_string, name, details_hash, primary_entity=nil)
+  def self.create_or_merge_entity(task_result_id, type_string, name, details_hash={}, primary_entity=nil)
 
     # Deal with canceled tasks and deleted projects!
     # Do a lookup to make sure we have the latest...
@@ -149,25 +149,30 @@ class EntityManager
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
 
-      base_entity_details = {
-        name: downcased_name,
-        project_id: project.id,
-        type: type.to_s,
-        details: details_hash
-      }
-
       # handle alias group
       if primary_entity
-        base_entity_details[:alias_group_id] = primary_entity.alias_group_id
+        alias_group_id = primary_entity.alias_group_id
       else
         g = Intrigue::Core::Model::AliasGroup.create(:project_id => project.id)
-        base_entity_details[:alias_group_id] = g.id
+        alias_group_id = g.id
       end
 
       begin
 
         # Create a new entity in that group
-        entity = Intrigue::Core::Model::Entity.update_or_create(base_entity_details)
+        # https://sequel.jeremyevans.net/rdoc-plugins/classes/Sequel/Plugins/UpdateOrCreate.html
+        entity = Intrigue::Core::Model::Entity.update_or_create(
+          {
+            name: downcased_name, 
+            type: type.to_s, 
+            project_id: project.id, 
+          },
+          { name: downcased_name, 
+            type: type.to_s, 
+            project_id: project.id, 
+            details: details_hash, 
+            alias_group_id: alias_group_id 
+          })
 
         # 
         # ok, now let's add the contextual attributes which will 
@@ -188,10 +193,10 @@ class EntityManager
 
 
       rescue Encoding::UndefinedConversionError => e
-        tr.log_fatal "Unable to create entity:#{base_entity_details}\n #{e}"
+        tr.log_fatal "Unable to create entity: #{type} #{name}\n #{e}"
         return nil
       rescue Sequel::DatabaseError => e
-        tr.log_fatal "Unable to create entity:#{base_entity_details}\n #{e}"
+        tr.log_fatal "Unable to create entity: #{type} #{name}\n #{e}"
         return nil
       end
 
@@ -221,7 +226,7 @@ class EntityManager
     end
 
     ### make a connection to the task result on every unique tr <> entity match
-    tr.add_entity(entity) unless (entity.get_detail("source_task_list") || []).detect{|x| x["task_result_name"] == tr.name } 
+    tr.add_entity(entity) unless tr.has_entity? entity
 
     # set our source_task list with this one added
     entity.set_detail "source_task_list", ((entity.get_detail("source_task_list") || []) << { 

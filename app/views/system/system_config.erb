@@ -12,3 +12,17 @@
 <form action="/system/sidekiq/clear" method="get">
   <input class="btn btn-primary" type="submit" value="Clear Sidekiq Queue">
 </form>
+<br>
+<hr>
+<br>
+<% if Intrigue::Core::Model::GlobalEntity.first %>
+<h4> Global Entities </h4>
+Total Global Entities <%= Intrigue::Core::Model::GlobalEntity.count %><br>
+<br>
+Global Entities By Type:
+<ul>
+<% Intrigue::Core::Model::GlobalEntity.group_and_count(:type).sort_by{|x|x[:count]}.reverse.each do |t| %>
+  <li><%=t[:type]%>: <%=t[:count]%></li>
+<% end %>
+</ul>
+<% end %>

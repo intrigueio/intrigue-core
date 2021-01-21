@@ -21,7 +21,7 @@ module Dns
       unless domain_name == result["name"]
         entity = create_dns_entity_from_string(result["name"], @entity)
       end
-      
+
     end
 
   end
@@ -190,6 +190,8 @@ module Dns
           }]
         }]
 
+      rescue Errno::EHOSTUNREACH => e 
+        _log_error "Hit exception: #{e}."
       rescue Resolv::ResolvError => e  
         _log_error "Hit exception: #{e}."
       rescue Errno::ENETUNREACH => e
@@ -274,6 +276,8 @@ module Dns
           }
         end
 
+      rescue Errno::EHOSTUNREACH => e 
+        _log_error "Hit exception: #{e}."
       rescue Resolv::ResolvError => e 
         _log_error "Hit exception: #{e}."
       rescue Errno::ENETUNREACH => e
