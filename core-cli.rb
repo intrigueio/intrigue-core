@@ -18,10 +18,10 @@ class CoreCli < Thor
     # now uses https by default
     username = $config["credentials"]["username"]
     password = $config["credentials"]["password"]
-    password = $config["credentials"]["endpoint"] || "127.0.0.1:7777"
+    endpoint = $config["credentials"]["endpoint"] || "127.0.0.1:7777"
     scheme = $config["http_security"] ? "https" : "http"
 
-    @server_uri = ENV.fetch("INTRIGUE_API_URI", "#{scheme}://#{username}:#{password}@")
+    @server_uri = ENV.fetch("INTRIGUE_API_URI", "#{scheme}://#{username}:#{password}@#{endpoint}")
     @delim = ","
     @debug = true
 
