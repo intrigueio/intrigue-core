@@ -163,9 +163,11 @@ class IpAddress < Intrigue::Task::BaseTask
     ### ASN pattern matching 
     ### 
     known_asns = [
-      "AS8068", # MICROSOFT-CORP-MSN-AS-BLOCK, US
-      "AS8075", # MICROSOFT-CORP-MSN-AS-BLOCK, US
-      "AS13335" # CLOUDFLARENET, US
+      "AS2635",    # AUTOMATTIC, US
+      "AS8068",    # MICROSOFT-CORP-MSN-AS-BLOCK, US
+      "AS8075",    # MICROSOFT-CORP-MSN-AS-BLOCK, US
+      "AS15169",   # GOOGLE, US 
+      "AS13335"    # CLOUDFLARENET, US
     ]
     if known_asns.select{ |x| x == cymru[:net_name] }
       hide_reason = "Matched Shared Hosting ASN"

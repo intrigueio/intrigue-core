@@ -72,16 +72,14 @@ class Masscan < BaseTask
         ip_address = line.delete("\n").strip.split(" ")[3]
 
         # Get the discovered host (one per line) & create an ip address
-        created_entity = _create_entity("IpAddress", { 
+        ip_entity = _create_entity("IpAddress", { 
           "name" => ip_address, 
-          "scoped" => true,
           "whois_full_text" => _get_entity_detail("whois_full_text")
         })
 
         # this will also add teh the port to the ip address
-        _create_network_service_entity(created_entity,
+        _create_network_service_entity(ip_entity,
           port, protocol, { 
-            "scoped" => true,
             "extended_masscan" => masscan_string 
         })
 

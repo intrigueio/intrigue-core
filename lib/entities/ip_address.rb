@@ -45,17 +45,11 @@ class IpAddress < Intrigue::Core::Model::Entity
     return true if self.allow_list || self.project.allow_list_entity?(self) 
     return false if self.deny_list || self.project.deny_list_entity?(self)
 
-    # scanner use case 
-    # TODO ... this should be handled in the workflow! 
-    return true if created_by?("masscan_scan")
-    return true if created_by?("nmap_scan")
-
     # while it might be nice to scope out stuff on third paries, we still need 
-    # to keep it in to scan, as we'll want all associated URLs
-    #return false unless self.aliases.select{ |x|  }
+    # to keep it in to scan, so we'll need to check scope at that level
 
   # if we didnt match the above and we were asked, default to true as we'll
-  #  we'll want to scope things in before we have a full set of aliases (?)
+  #  we'll want to scope things in before we have a full set of aliases
   true
   end 
 

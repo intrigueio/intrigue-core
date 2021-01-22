@@ -30,9 +30,9 @@ module WebContent
       ignore_comments: true
     })
 
-    ###########################################
-    # now filter down stuff we know we can skip 
-    ##########################################
+    #############################################
+    # now filter down stuff we know we can skip #
+    #############################################
     if diffs.count > 0
 
       skip_regexes = [
@@ -241,7 +241,7 @@ module WebContent
       out << {"name" => cc, "origin" => source_uri} if match_patterns.empty? || create 
     end
 
-  out 
+  out.uniq 
   end
 
 
@@ -292,13 +292,13 @@ module WebContent
       # if we got a pattern list, check it for matching
       create=false
       match_patterns.each do |p|
-        create = true if potential_dns_record.strip =~ /#{Regexp.escape(p)}/
+        create = true if potential_dns_record.strip =~ /#{p}/
       end
 
       out << { "name" => potential_dns_record, "origin" => source_uri} if match_patterns.empty? || create 
     end
 
-  out 
+  out.uniq
  end
 
    def parse_email_addresses_from_content(source_uri, content, match_patterns=[])
@@ -326,7 +326,7 @@ module WebContent
       out << {"name" => addr, "origin" => source_uri} if match_patterns.empty? || create 
     end
 
-  out 
+  out.uniq
   end
 
   def parse_phone_numbers_from_content(source_uri, content, match_patterns=[])
@@ -352,7 +352,7 @@ module WebContent
      out << {"name" => phone_number.strip, "origin" => source_uri } if match_patterns.empty? || create 
     end
 
-  out 
+  out.uniq 
   end
 
   def parse_uris_from_content(source_uri, content, match_patterns=[])
@@ -379,8 +379,7 @@ module WebContent
      out << {"name" => u, "origin" => source_uri } if match_patterns.empty? || create 
     end
 
-  out 
-
+  out.uniq
   end
 
   def parse_web_account_from_content(content)
