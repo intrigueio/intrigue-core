@@ -30,6 +30,7 @@ class BaseTask
   end
 
   def perform(task_result_id)
+
     ### This method is used by a couple different TYPES...
     # normal tasks... which are simple, just run and exit
     # enrichment tasks.. which must notify when done, and will launch a workflow!!!
@@ -40,6 +41,7 @@ class BaseTask
     # gracefully handle situations where the task result has gone missing
     # usually this is a deleted project
     return nil unless @task_result
+    
 
     ###########################
     #  Setup the task result  #
@@ -55,10 +57,17 @@ class BaseTask
     @project = @task_result.project
     options = @task_result.options
 
-    # we must have these things to continue (if they're missing, fail)
-    unless @task_result && @project && @entity
-      _log_error "Unable to find task_result. Bailing." unless @task_result
+    # at any time, our project can go missing, and it's best if we just 
+    # return without going any further 
+    unless @project
       _log_error "Unable to find project. Bailing." unless @project
+      return nil 
+    end 
+
+    # we must have these things to continue - something went seriously 
+    # wrong if they're missing 
+    unless @task_result &&  @entity
+      _log_error "Unable to find task_result. Bailing." unless @task_result
       _log_error "Unable to find entity. Bailing." unless @entity
       return 
     end

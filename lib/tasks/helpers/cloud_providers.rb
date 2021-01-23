@@ -59,7 +59,7 @@ module CloudProviders
     ###
     ### USE ASN / NET_NAME
     ###
-    cloud_providers << "fastly" if "#{_get_entity_detail("net_name")}".match /FASTLY/
+    #cloud_providers << "fastly" if "#{_get_entity_detail("net_name")}".match /FASTLY/
     cloud_providers << "cloudflare" if "#{_get_entity_detail("net_name")}".match /CLOUDFLARENET/
     cloud_providers << "amazon" if "#{_get_entity_detail("net_name")}".match /AMAZON/
 
