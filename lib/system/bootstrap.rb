@@ -27,7 +27,7 @@ module Bootstrap
     config["projects"].each do |p|
 
       Intrigue::NotifierFactory.default.each do |x|
-        x.notify("#{p["name"]} collection starting with #{p["seeds"].count if p["seeds"]} seeds!")
+        x.notify("#{p["name"]} collection starting with #{p["seeds"].count if p["seeds"]} seeds, using workflow: #{p["workflow_name"]}!")
       end
 
       project_name = p["name"]
@@ -38,7 +38,7 @@ module Bootstrap
       # Set exclusion setting
       task_name = p["task_name"] || "create_entity"
       options = p["task_options"] || []
-      workflow = p["workflow_name"]
+      workflow_name = p["workflow_name"]
       depth = p["depth"] || 5
       scan_handlers = p["scan_handlers"] || []
       auto_enrich = p["auto_enrich"] || true
@@ -57,7 +57,7 @@ module Bootstrap
 
       project.allowed_namespaces = p["allowed_namespaces"]
       project.uuid = p["collection_run_uuid"]
-      project.save 
+      project.save
 
       # Add our exceptions
       puts "Adding exceptions to the database"
@@ -99,7 +99,7 @@ module Bootstrap
 
               # Kick off the task (don't set handler on the task)
               task_result = start_task(nil, project, nil, task_name,
-                created_entity, depth, options, scan_handlers, workflow, auto_enrich, auto_scope)
+                created_entity, depth, options, scan_handlers, workflow_name, auto_enrich, auto_scope)
 
               # Manually start enrichment for the first entity
               created_entity.enrich(task_result) if auto_enrich
