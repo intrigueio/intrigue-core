@@ -450,7 +450,10 @@ module Task
       # always
       options[:timeout] = timeout
       options[:ssl_verifyhost] = 0
-      options[:ssl_verifypeer] = false 
+      options[:ssl_verifypeer] = false
+      
+      # avoid many open sockets in CLOSE_WAIT state
+      options[:forbid_reuse] = true 
 
       # follow redirects if we're told
       if follow_redirects 
