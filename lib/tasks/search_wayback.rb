@@ -45,7 +45,7 @@ class SearchWayBack < BaseTask
 
     hosts.each do |h|
       unless h.nil? 
-        _create_entity "Domain", "name" => "#{h}"
+        create_dns_entity_from_string h
       end
     end
   end
