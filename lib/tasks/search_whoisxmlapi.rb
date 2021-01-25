@@ -32,7 +32,7 @@ module Intrigue
         headers = { 'X-Authentication-Token': "#{api_key}" }
         
         # perpare search terms
-        search = {"include": [search_string]}
+        search = {"include": ["\"#{search_string}\""]}
         #if exclude_term != nil
         #    search["exclude"] = [exclude_term]
         #end
