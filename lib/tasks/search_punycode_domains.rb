@@ -12,9 +12,9 @@ module Intrigue
         :references => [],
         :type => "discovery",
         :passive => true,
-        :allowed_types => ["String"],
+        :allowed_types => ["String","Domain"],
         :example_entities => [{"type" => "Domain", "details" => {"name" => "München.de"}}],
-        :allowed_options => [{:name => "country_code",:regex => "alpha_numeric", :default => "de" }],
+        :allowed_options => [{:name => "country_code",:regex => "alpha_numeric", :default => "deu" }],
         :created_types => ["Domain"]
       }
     end
