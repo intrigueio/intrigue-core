@@ -15,7 +15,7 @@ module Intrigue
         :allowed_types => ["Domain","EmailAddress","UniqueKeyword"],
         :example_entities => [{"type" => "Domain", "details" => {"name" => "intrigue.io"}}],
         :allowed_options => [],
-        :created_types => []
+        :created_types => ["EmailAddress"]
       }
     end
   
@@ -45,7 +45,7 @@ module Intrigue
 
     # search scylla by a full email address 
     def search_scylla_by_email(entity_name, headers)
-    # Get responce
+    # Get response
       response = http_get_body("https://scylla.so/search?q=email:#{entity_name}&size=50&start=0",nil,headers) 
       results = JSON.parse(response)
       
@@ -56,7 +56,7 @@ module Intrigue
             name: "Email Account Found In a Public Breach Data",
             severity: 3,
             description: "Account found in publicly leaked data: #{result["fields"]["domain"]} ",
-            source: "#{result["fields"]["email"]}/#{result["fields"]["domain"]}",
+            source: "#{result["fields"]["domain"]}/#{result["fields"]["email"]}",
             details: result
           }) 
         end  
@@ -65,7 +65,7 @@ module Intrigue
 
     # search scylla for a domain name 
     def search_scylla_by_domain(entity_name, headers)
-      # Get responce
+      # Get response
       response = http_get_body("https://scylla.so/search?q=email:*#{entity_name}&size=10000&start=0",nil,headers) 
       results = JSON.parse(response)
       
@@ -75,16 +75,18 @@ module Intrigue
             name: "Email Account Found In a Public Breach Data",
             severity: 3,
             description: "Account found in publicly leaked data: #{result["fields"]["domain"]} ",
-            source: "#{result["fields"]["email"]}/#{result["fields"]["domain"]}",
+            source: "#{result["fields"]["domain"]}/#{result["fields"]["email"]}",
             details: result
           }) 
+
+          _create_entity "EmailAddress" , "name" => result["fields"]["email"]
         end  
       end   
     end 
 
     # search scylla for specific keyword 
     def search_scylla_by_uniquekeyword(entity_name, headers)
-      # Get responce
+      # Get response
       response = http_get_body("https://scylla.so/search?q=email:#{entity_name}*&size=10000&start=0",nil,headers) 
       results = JSON.parse(response)
       
@@ -94,9 +96,12 @@ module Intrigue
             name: "Email Account Found In a Public Breach Data",
             severity: 3,
             description: "Account found in publicly leaked data: #{result["fields"]["domain"]} ",
-            source: "#{result["fields"]["email"]}/#{result["fields"]["domain"]}",
+            source: "#{result["fields"]["domain"]}/#{result["fields"]["email"]}",
             details: result
           }) 
+
+          _create_entity "EmailAddress" , "name" => result["fields"]["email"]
+
         end  
       end   
     end 
