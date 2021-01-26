@@ -5,7 +5,7 @@ class NextjsPathTraversalCve20205284 < BaseTask
   def self.metadata
     {
       :name => "vuln/nextjs_path_traversal_cve_2020_5284",
-      :pretty_name => "Next.js ./next Path Traversal",
+      :pretty_name => "Vuln Check - Next.js ./next Path Traversal",
       :authors => ["jcran"],
       :identifiers => [{ "cve" => "CVE-2020-5284" }],
       :description => "Determines if the endpoint is vulnerable to CVE-2020-5284.",

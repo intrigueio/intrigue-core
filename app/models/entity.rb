@@ -3,6 +3,7 @@ module Intrigue
 module Core
 module Model
 class EntitiesTaskResults < Sequel::Model
+  self.raise_on_save_failure = false
 end
 end
 end
@@ -224,9 +225,14 @@ module Model
       aliases.select{|x| x.name unless x.hidden }.sort_by{|x| x.name }.uniq
     end
 
-    def has_detail(key)
+    def has_detail?(key)
       return nil unless self.details
       details[key] != nil
+    end
+
+    def delete_detail(key)
+      details = self.details.except(key)
+      save_changes
     end
 
     def get_detail(key)

@@ -26,31 +26,35 @@ class EntityManager
   matches.first
   end
 
-  def self.create_bulk_entity(project_id,entity_type_string,entity_name,details)
+  def self.create_bulk_entity(project_id,entity_type_string,entity_name,details_hash={})
     
     # create a group
     g = Intrigue::Core::Model::AliasGroup.create(:project_id => project_id)
 
+    # Save the original and downcase our name
+    details_hash["hidden_original"] = name
+    downcased_name = name.downcase.strip
+
     # create the entity
     klass = Intrigue::EntityManager.resolve_type_from_string(entity_type_string)
     e = klass.create({
-      :name => entity_name.downcase,
-      :project_id => project_id,
-      :type => entity_type_string,
-      :details => details,
-      :hidden => false,
-      :scoped => true,
-      :allow_list => true,
-      :deny_list => false,
-      :alias_group_id => g.id
+      name: downcased_entity_name,
+      project_id: project_id,
+      type: entity_type_string,
+      details: details_hash,
+      hidden: false,
+      scoped: true,
+      allow_list: true,
+      deny_list: false,
+      alias_group_id: g.id
     })
   end
 
-  def self.create_first_entity(project_name,type_string,name,details)
+  def self.create_first_entity(project_name,type_string,name,details_hash={})
 
     # Save the original and downcase our name
-    details["hidden_original"] = name
-    downcased_name = name.downcase
+    details_hash["hidden_original"] = name
+    downcased_name = name.downcase.strip
 
     # Try to find our project and create it if it doesn't exist
     project = Intrigue::Core::Model::Project.find_or_create(:name => project_name)
@@ -60,26 +64,14 @@ class EntityManager
 
     if entity # already exists, but now it's created by us... let's clean it up
 
-      entity.set_details(details.to_h.deep_merge(entity.details.to_h))
+      entity.set_details(details_hash.to_h.deep_merge(entity.details.to_h))
 
-      #####
-      ### HANDLE USER- or TASK- PROVIDED SCOPING
-      #####
-
-      # remove any scope details (though i'm not sure this condition could ever exist on a
-      # manually created entity)
-      details = details.tap { |h| h.delete("unscoped") }
-      details = details.tap { |h| h.delete("scoped") }
+      # always scoped
       entity.set_scoped!(true, "first_entity")
       
       # also we can now mark it as a seed!
       entity.seed = true
-
       entity.save_changes
-
-      #####
-      ### END ... USER- or TASK- PROVIDED SCOPING
-      ###
 
       ### ENTITIES can SELF-SCOPE, however, for more info on that
       ### see the individual entity file
@@ -90,17 +82,18 @@ class EntityManager
       type = resolve_type_from_string(type_string)
       g = Intrigue::Core::Model::AliasGroup.create(:project_id => project.id)
       entity = Intrigue::Core::Model::Entity.create({
-        :name =>  downcased_name,
-        :project => project,
-        :type => type,
-        :details => details,
-        :hidden => false, # first entity should NEVER be hidden - it was intentional
-        :scoped => true,  # first entity should ALWAYS be in scope - it was intentional
-        :allow_list => true,
-        :deny_list => false,
-        :alias_group_id => g.id,
-        :seed => true
-        })
+        name: downcased_name,
+        project: project,
+        type: type,
+        details: details_hash,
+        hidden: false, # first entity should NEVER be hidden - it was intentional
+        scoped: true,  # first entity should ALWAYS be in scope - it was intentional
+        allow_list: true,
+        deny_list: false,
+        alias_group_id: g.id,
+        seed: true
+      })
+        
     end
 
     # necessary because of our single table inheritance?
@@ -108,7 +101,7 @@ class EntityManager
 
     ### Ensure we have an entity
     unless new_entity && new_entity.transform! && new_entity.validate_entity
-      puts "Error creating entity: #{new_entity}." + "Entity: #{type_string}##{name} #{details}"
+      puts "Error creating entity: #{new_entity}." + "Entity: #{type_string}##{name} #{details_hash}"
       return nil
     end
 
@@ -118,7 +111,7 @@ class EntityManager
   end
 
   # This method creates a new entity, and kicks off a workflow
-  def self.create_or_merge_entity(task_result_id,type_string,name,details,primary_entity=nil)
+  def self.create_or_merge_entity(task_result_id, type_string, name, details_hash={}, primary_entity=nil)
 
     # Deal with canceled tasks and deleted projects!
     # Do a lookup to make sure we have the latest...
@@ -134,7 +127,7 @@ class EntityManager
     project = tr.project
 
     # Save the original and downcase our name
-    details["hidden_original"] = "#{name}".strip
+    details_hash["hidden_original"] = "#{name}".strip
     downcased_name = "#{name}".strip.downcase
 
     # Find the details if it already exists
@@ -142,9 +135,10 @@ class EntityManager
 
     # Check if there's an existing entity, if so, merge and move forward
     entity_already_existed = false
+    
     if entity
 
-      entity.set_details(details.to_h.deep_merge(entity.details.to_h))
+      entity.set_details(details_hash.to_h.deep_merge(entity.details.to_h))
 
       # if it already exists, it'll have an alias group ID and we'll
       # want to use that to preserve pre-existing relatiohships
@@ -155,31 +149,30 @@ class EntityManager
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
 
-      base_entity_details = {
-        :name => downcased_name,
-        :project_id => project.id,
-        :type => type.to_s,
-        :details => details
-      }
-
       # handle alias group
       if primary_entity
-        base_entity_details[:alias_group_id] = primary_entity.alias_group_id
+        alias_group_id = primary_entity.alias_group_id
       else
         g = Intrigue::Core::Model::AliasGroup.create(:project_id => project.id)
-        base_entity_details[:alias_group_id] = g.id
+        alias_group_id = g.id
       end
 
       begin
+
         # Create a new entity in that group
+        # https://sequel.jeremyevans.net/rdoc-plugins/classes/Sequel/Plugins/UpdateOrCreate.html
         entity = Intrigue::Core::Model::Entity.update_or_create(
-          {name: downcased_name, type: type.to_s, project: project}, base_entity_details)
-
-        unless entity
-          tr.log_fatal "Unable to create entity: #{base_entity_details}"
-          return nil
-        end
-
+          {
+            name: downcased_name, 
+            type: type.to_s, 
+            project_id: project.id, 
+          },
+          { name: downcased_name, 
+            type: type.to_s, 
+            project_id: project.id, 
+            details: details_hash, 
+            alias_group_id: alias_group_id 
+          })
 
         # 
         # ok, now let's add the contextual attributes which will 
@@ -200,10 +193,10 @@ class EntityManager
 
 
       rescue Encoding::UndefinedConversionError => e
-        tr.log_fatal "Unable to create entity:#{base_entity_details}\n #{e}"
+        tr.log_fatal "Unable to create entity: #{type} #{name}\n #{e}"
         return nil
       rescue Sequel::DatabaseError => e
-        tr.log_fatal "Unable to create entity:#{base_entity_details}\n #{e}"
+        tr.log_fatal "Unable to create entity: #{type} #{name}\n #{e}"
         return nil
       end
 
@@ -230,22 +223,18 @@ class EntityManager
         raise InvalidEntityError.new("Invalid entity, unable to validate: #{type_string}##{downcased_name}")
       end
 
-    ###
-    ### make a connection to the task result on the first one
-    ###
-    tr.add_entity(entity)
     end
 
-    ###
-    ### Always stick the task name on the entity 
-    ###
-    task_list = (entity.get_detail("source_task_list") || []) << { 
-      task_name: tr.name, 
+    ### make a connection to the task result on every unique tr <> entity match
+    tr.add_entity(entity) unless tr.has_entity? entity
+
+    # set our source_task list with this one added
+    entity.set_detail "source_task_list", ((entity.get_detail("source_task_list") || []) << { 
+      task_result_name: tr.name, 
+      task_name: tr.task_name,
       entity_name: tr.base_entity.name, 
       entity_type: tr.base_entity.type_string
-    }
-    
-    entity.set_detail "source_task_list", task_list
+    }).uniq
 
     ###
     ### Scoping must always run, because the task run we're inside may have 
@@ -278,19 +267,19 @@ class EntityManager
     # If we're told this thing is scoped, let's just mark it scoped
     # note that we delete the detail since we no longer need it
     # TODO... is this used today?
-    if (details["scoped"] == true || details["scoped"] == "true") # TODO! Which is correct
+    if "#{details_hash["scoped"]}".to_bool # TODO! Which is correct
 
       tr.log "Entity was specifically requested to be scoped"
-      details = details.tap{ |h| h.delete("scoped") }
+      entity.delete_detail("scoped")
       scope_request = "true"
 
     # otherwise if we've specifically decided to unscope
     # note that we delete the detail since we no longer need it
-    elsif (details["unscoped"] == true || details["unscoped"] == "true")
+    elsif "#{details_hash["unscoped"]}".to_bool 
 
       unless entity.seed? 
         tr.log "Entity was specifically requested to be unscoped"
-        details = details.tap{ |h| h.delete("unscoped") }
+        entity.delete_detail("unscoped")
         scope_request = "false"
       else
         tr.log "Entity was specifically requested to be unscoped, but it's a seed, so we refused!"
@@ -396,19 +385,6 @@ class EntityManager
       
   # return the entity with enrichment now scheduled if appropriate
   entity
-  end
-
-  private
-
-  def self._encode_string(string)
-    return string unless string.kind_of? String
-    string.encode("UTF-8", :undef => :replace, :invalid => :replace, :replace => "?")
-  end
-
-  def self._encode_hash(hash)
-    return hash unless hash.kind_of? Hash
-    hash.each {|k,v| hash[k] = _encode_string(v) if v.kind_of? String }
-  hash
   end
 
 end
