@@ -4,7 +4,7 @@ module Intrigue
 
     def self.metadata
       {
-        :name => "search_Hostio",
+        :name => "search_hostio",
         :pretty_name => "Search Hostio",
         :authors => ["Anas Ben Salah"],
         :description => "This task hits the Host.io API for Metadata scraped from a domain homepage, DNS records, AnalyticsId and related domains",

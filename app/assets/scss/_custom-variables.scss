@@ -1,0 +1,92 @@
+// Overwrite Bootstrap's variables here
+// You can find them in node_modules/bootstrap/scss/_variables.scss
+// Copy the variables you need into this file, don't modify files under node_modules/
+
+// Some example variables that you can uncomment:
+
+// Enabling shadows and gradients
+$enable-shadows: false;
+$enable-gradients: true;
+
+// Changing the body background and text
+/* make changes to the !default Bootstrap variables */
+$body-color: #ffffff;  //this is the text color
+$body-bg: #000000; //this is the background color
+
+// Changing the border radius of buttons
+//$border-radius: 15px;
+
+// our custom colors
+$core-color-1:    #100a41;
+$core-color-2:    #0c2678;
+$core-color-3:    #a7b2d4;
+$core-color-4:    #0074c6;
+$core-color-5:    #22bce1;
+
+// Changing the theme colors
+$white: #fff;
+$gray-100: #f8f9fa;
+$gray-200: #ecf0f1;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #b4bcc2;
+$gray-600: #95a5a6;
+$gray-700: #7b8a8b;
+$gray-800: #343a40;
+$gray-900: #212529;
+$black: #000;
+$blue: #2C3E50;
+$indigo: #6610f2;
+$purple: #6f42c1;
+$pink: #e83e8c;
+$red: #E74C3C;
+$orange: #fd7e14;
+$yellow: #F39C12;
+$green: #18BC9C;
+$teal: #20c997;
+$cyan: #3498DB;
+
+$primary: $core-color-4;
+$secondary: $core-color-1;
+$success: $green;
+$info: $cyan;
+$warning: $yellow;
+$danger: $red;
+$light: $core-color-3;
+$dark: $core-color-1;
+
+$dropdown-link-color: $white;
+$dropdown-link-hover-color: $white;
+$dropdown-link-hover-bg: $core-color-3;
+
+$navbar-dark-color: $white;
+$navbar-dark-hover-color: $white;
+
+$color: $white;
+
+//links 
+$link-color:                              $core-color-5;
+$link-decoration:                         none;
+$link-hover-color:                        $white;
+$link-hover-decoration:                   underline;
+
+$dropdown-bg:                       $core-color-1;
+
+$nav-link-color:                    #FFFFFF;
+$nav-link-hover-color:             $core-color-3;
+
+
+// Adding (!) an additional theme color (ex. classes btn-cool, bg-cool)
+//$theme-colors: (
+//  "cool": #4d3fa3
+//);
+
+
+//** `<input>` background color
+$input-bg:                       $gray-300;
+
+//** Text color for `<input>`s
+$input-color:                    #000;
+
+//** Placeholder text color
+$input-placeholder-color:        rgb(53, 53, 53);  // You probably want this to be a little different color. Maybe #999;

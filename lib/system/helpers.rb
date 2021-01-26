@@ -3,19 +3,47 @@ module Core
 module System
   module Helpers
 
+    def discern_entity_types_from_name_all(str)
+      out = Intrigue::EntityFactory.entity_types.map { |et|
+        et.metadata[:name] if et.new(name: str).validate_entity
+    }.uniq.compact.sort
+
+    out -= ["GithubAccount", "GithubSearchResult", "Mailserver", "Nameserver", "Organization", "PhysicalLocation", "SoftwarePackage", "SslCertificate", "String"]
+    end
+
+
+    def discern_entity_types_from_name(str)
+      if str.is_ip_address?
+        ["IpAddress"]
+      elsif str =~ asn_regex 
+        ["AutonomousSystem"]
+      elsif str =~ dns_regex && (parse_domain_name(str) == str)
+        ["Domain"]
+      elsif str =~ dns_regex 
+        ["DnsRecord"]
+      elsif str =~ netblock_regex || netblock_regex_two 
+        ["NetBlock"]
+      else 
+        ["UniqueKeyword"]
+      end
+    end
+
+    def hostname
+      system_name = `hostname`.strip
+    end
+
     def entity_exists?(project, entity_type, entity_name)
       return false unless project
       entities = Intrigue::Core::Model::Entity.scope_by_project_and_type(project.name, entity_type)
-      return entities.first(:name => entity_name) if entities
-    false
+      return entities.first(:name => entity_name)
     end
 
     ###
     ### Helper method for starting a task run
     ###
-    def start_task(queue, project, existing_scan_result_id, task_name, entity, depth,
-          options=[], handlers=[], machine_name="external_discovery_light_active", auto_enrich=true, auto_scope=false)
-
+    def start_task(queue, project, existing_scan_result_id, task_name, entity, depth=1,
+          options=[], handlers=[], workflow_name=nil, auto_enrich=true, auto_scope=false)
+      
       # Create the task result, and associate our entity and options
       logger = Intrigue::Core::Model::Logger.create(:project_id => project.id)
       task_result = Intrigue::Core::Model::TaskResult.create({
@@ -26,7 +54,7 @@ module System
         :options => options,
         :handlers => [],
         :base_entity => entity,
-        :autoscheduled => (queue == "task_autoscheduled" || queue == "task_enrichment"),
+        :autoscheduled => !(queue == "task"),
         :auto_enrich => auto_enrich,
         :auto_scope => auto_scope,
         :depth => depth
@@ -57,12 +85,12 @@ module System
       if !existing_scan_result_id && depth > 1
         logger = Intrigue::Core::Model::Logger.create(:project => project)
         new_scan_result = Intrigue::Core::Model::ScanResult.create({
-          :name => "#{machine_name}_on_#{entity.name}",
+          :name => "#{workflow_name}_on_#{entity.name}",
           :project => project,
           :base_entity_id => entity.id,
           :logger_id => logger.id,
           :depth => depth,
-          :machine => machine_name,
+          :workflow => workflow_name,
           :whitelist_strings => ["#{entity.name}"], # this is a list of strings that we know are good
           :blacklist_strings => [],
           :handlers => handlers,

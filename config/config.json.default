@@ -74,7 +74,7 @@
       "comment": "the region to which all aws connections will be made"
     },
     "apility_api_key": {
-      "value": "XXX",
+      "value": "",
       "editable": "true",
       "uri": "https://apility.io/",
       "comment": ""
@@ -98,13 +98,13 @@
       "comment": ""
     },
     "aws_access_key_id": {
-      "value": "XXX",
+      "value": "",
       "editable": "true",
       "uri": "https://aws.amazon.com/",
       "comment": ""
     },
     "aws_secret_access_key": {
-      "value": "XXX",
+      "value": "",
       "editable": "true",
       "uri": "https://aws.amazon.com/",
       "comment": ""
@@ -116,7 +116,7 @@
       "comment": ""
     },
     "bing_api_key": {
-      "value": "XXX",
+      "value": "",
       "editable": "true",
       "uri": "https://www.microsoft.com/cognitive-services/en-us/bing-web-search-api",
       "comment": ""
@@ -128,13 +128,13 @@
       "comment": ""
     },
     "c99_subdomainfinder_api_key": {
-      "value": "XXX",
+      "value": "",
       "uri": "https://api.c99.nl/api_overview",
       "editable": "true",
       "comment": ""
     },
     "carrierlookup_api_key": {
-      "value": "XXX",
+      "value": "",
       "uri": "https://www.carrierlookup.com",
       "editable": "true",
       "comment": ""
@@ -158,25 +158,25 @@
       "comment": ""
     },
     "cloudflare_username": {
-      "value": "XXX",
+      "value": "",
       "uri": "",
       "editable": "true",
       "comment": ""
     },
     "cloudflare_api_key": {
-      "value": "XXX",
+      "value": "",
       "uri": "",
       "editable": "true",
       "comment": ""
     },
     "corpwatch_api_key": {
-      "value": "XXX",
+      "value": "",
       "uri": "http://api.corpwatch.org/register.php",
       "editable": "true",
       "comment": ""
     },
     "data_gov_api_key": {
-      "value": "XXX",
+      "value": "",
       "uri": "https://api.data.gov/signup/",
       "editable": "true",
       "comment": ""
@@ -230,7 +230,7 @@
       "comment": ""
     },
     "fullcontact_api_key": {
-      "value": "XXX",
+      "value": "",
       "uri": "https://www.fullcontact.com/developer",
       "editable": "true",
       "comment": "https://github.com/intrigueio/intrigue-core/issues/6"
@@ -254,7 +254,7 @@
       "comment": ""
     },
     "greynoise_api_key": {
-      "value": "XXX",
+      "value": "",
       "uri": "https://docs.greynoise.io/#greynoise-api",
       "editable": "true",
       "comment": ""
@@ -266,31 +266,31 @@
       "comment": ""
     },
     "google_project_id": {
-      "value": "XXX",
+      "value": "",
       "uri": "",
       "editable": "true",
       "comment": ""
     },
     "google_client_secret": {
-      "value": "XXX",
+      "value": "",
       "uri": "",
       "editable": "true",
       "comment": ""
     },
     "google_project_name": {
-      "value": "XXX",
+      "value": "",
       "uri": "https://developers.google.com/safe-browsing/lookup_guide#GettingStarted",
       "editable": "true",
       "comment": ""
     },
     "google_safebrowsing_lookup_key": {
-      "value": "XXX",
+      "value": "",
       "uri": "https://developers.google.com/safe-browsing/lookup_guide#GettingStarted",
       "editable": "true",
       "comment": ""
     },
     "google_refresh_token": {
-      "value": "XXX",
+      "value": "",
       "uri": "",
       "editable": "true",
       "comment": ""
@@ -319,12 +319,6 @@
       "editable": "true",
       "comment": ""
     },
-    "intrigueio_api_key": {
-      "value": "",
-      "uri": "https://app.intrigue.io/api",
-      "editable": "true",
-      "comment": ""
-    },
     "ibm_x_force_api_key": {
       "value": "",
       "uri": "https://app.intrigue.io/api",
@@ -334,6 +328,18 @@
     "ibm_x_force_password": {
       "value": "",
       "uri": "https://app.intrigue.io/api",
+      "editable": "true",
+      "comment": ""
+    },
+    "intrigueio_api_key": {
+      "value": "OPENENGINEAPICLIENT",
+      "uri": "https://app.intrigue.io/api",
+      "editable": "true",
+      "comment": ""
+    },
+    "ipinfo_api_key": {
+      "value": "",
+      "uri": "https://ipinfo.io/developers",
       "editable": "true",
       "comment": ""
     },
@@ -356,13 +362,13 @@
       "comment": ""
     },
     "otx_api_key": {
-      "value": "XXX",
+      "value": "",
       "uri": "https://otx.alienvault.com/api",
       "editable": "true",
       "comment": ""
     },
     "peoplegraph_api_key": {
-      "value": "XXX",
+      "value": "",
       "uri": "http://dev.peoplegraph.io/console",
       "editable": "true",
       "comment": "https://github.com/intrigueio/intrigue-core/issues/3"
@@ -380,31 +386,31 @@
       "comment": "this is your phishtank username"
     },
     "pipl_api_key": {
-      "value": "XXX",
+      "value": "",
       "uri": "http://dev.pipl.com/choosekey",
       "editable": "true",
       "comment": ""
     },
     "publicwww_api_key": {
-      "value": "XXX",
+      "value": "",
       "uri": "https://publicwww.com/",
       "editable": "true",
       "comment": ""
     },
     "pulsedive_api_key": {
-      "value": "XXX",
+      "value": "",
       "uri": "https://pulsedive.com/api/",
       "editable": "true",
       "comment": ""
     },
     "recon_dev_api_key": {
-      "value": "XXX",
+      "value": "",
       "uri": "https://recon.dev/api/docs",
       "editable": "true",
       "comment": ""
     },
     "shodan_api_key": {
-      "value": "XXX",
+      "value": "",
       "uri": "https://account.shodan.io/login",
       "editable": "true",
       "comment": ""
@@ -416,13 +422,13 @@
       "comment": ""
     },
     "spyonweb_api_key": {
-      "value": "XXX",
+      "value": "",
       "uri": "https://api.spyonweb.com/",
       "editable": "true",
       "comment": ""
     },
     "spyse_api_key": {
-      "value": "XXX",
+      "value": "",
       "uri": "https://spyse.com/tools/api",
       "editable": "true",
       "comment": ""
@@ -434,25 +440,25 @@
       "comment": ""
     },
     "twitter_consumer_key": {
-      "value": "XXX",
+      "value": "",
       "uri": "https://dev.twitter.com",
       "editable": "true",
       "comment": ""
     },
     "twitter_consumer_secret": {
-      "value": "XXX",
+      "value": "",
       "uri": "https://dev.twitter.com",
       "editable": "true",
       "comment": ""
     },
     "twitter_access_token": {
-      "value": "XXX",
+      "value": "",
       "uri": "https://dev.twitter.com",
       "editable": "true",
       "comment": ""
     },
     "twitter_access_token_secret": {
-      "value": "XXX",
+      "value": "",
       "uri": "https://dev.twitter.com",
       "editable": "true",
       "comment": ""
@@ -470,14 +476,20 @@
       "comment": ""
     },
     "viewdns_api_key": {
-      "value": "XXX",
+      "value": "",
       "uri": "https://viewdns.info/api",
       "editable": "true",
       "comment": ""
     },
     "virustotal_api_key": {
-      "value": "XXX",
+      "value": "",
       "uri": "https://developers.virustotal.com/reference",
+      "editable": "true",
+      "comment": ""
+    },
+    "zetalytics_api_key": {
+      "value": "",
+      "uri": "https://zetalytics.com/",
       "editable": "true",
       "comment": ""
     }

@@ -20,7 +20,6 @@ require 'webrick'
 ### In the case where we're a gem, they're not yet available. add them as deps
 ###
 begin  # try to load runtime deps
-  
   require 'aws-sdk-route53'
   require 'aws-sdk-s3'
   require 'aws-sdk-sqs'
@@ -30,7 +29,6 @@ begin  # try to load runtime deps
   require 'digest'
   require 'dnsruby'
   require 'dnsimple'
-  require 'em-resolv-replace'
   require 'flareon'
   require 'ip_ranger'
   require 'ipaddr'
@@ -46,7 +44,7 @@ begin  # try to load runtime deps
   require 'opencorporates'
   require 'openssl'
   require 'ostruct'
-  require 'resolv-replace'
+  require 'rex/sslscan'
   require 'rexml/document'
   require 'snmp'
   require 'spidr'
@@ -57,7 +55,7 @@ begin  # try to load runtime deps
   require 'whois-parser'
   require 'whoisology'
   require 'zip'
-
+  require 'zetalytics'
 rescue LoadError => e 
   puts "ERROR! Unable to load a dep, functionality may be limited: #{e}"
 end
@@ -78,7 +76,8 @@ module Intrigue
     end
   
     def self.allowed_tasks_for_entity_type(entity_type)
-      @tasks.select {|task_class| task_class if task_class.metadata[:allowed_types].include? entity_type}
+      @tasks.select{ |task_class| 
+        task_class if task_class.metadata[:allowed_types].include? entity_type}
     end
     #
     # XXX - can :name be set on the class vs the object
@@ -106,6 +105,14 @@ module Intrigue
       ### XXX - exception handling? This should return a specific exception.
       raise "No task with the name: #{name}!"
     end
+
+    def self.class_by_name(name)
+      t = @tasks.find{ |t| t.metadata[:name] == name }
+         
+      ### XXX - exception handling? This should return a specific exception.
+      raise "No task with the name: #{name}!" unless t
+    t
+    end
   
     #
     # XXX - can :name be set on the class vs the object
@@ -120,8 +127,8 @@ module Intrigue
   
       ### XXX - exception handling? Should this return an exception?
       raise "No task with the name: #{name}!"
-    end
-  
+    end  
+
   end
 end
   
@@ -130,6 +137,7 @@ system_folder = File.expand_path('../system', __FILE__) # get absolute directory
 Dir["#{system_folder}/*.rb"].each { |file| require_relative file }
 
 ### Mixins with common task functionality
+require_relative 'tasks/helpers/popen'
 require_relative 'tasks/helpers/generic'
 require_relative 'tasks/helpers/web'
 tasks_folder = File.expand_path('../tasks/helpers', __FILE__) # get absolute directory

@@ -15,7 +15,6 @@ class DefaultWebServerPageExposed < BaseIssue
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
         { type: "remediation", uri: "https://httpd.apache.org/docs/2.4/misc/security_tips.html"}
       ],
-      # task: handled in ident
     }.merge!(instance_details)
 
   to_return

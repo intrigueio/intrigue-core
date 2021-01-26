@@ -30,7 +30,7 @@ module Data
     ranges = []
     file = File.open("#{$intrigue_basedir}/data/iana/ipv4-address-space.csv","r")
     file.read.split("\n").each do |line|
-      next unless line =~ /#{filter}/
+      next unless line.match /#{filter}/
       range = line.split(",").first
       ranges << range.gsub(/^0*/,"").gsub("/8",".0.0.0/8")
     end

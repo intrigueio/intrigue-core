@@ -16,7 +16,7 @@ class WebAccountCheck < BaseTask
       :allowed_types => ["String","Person","Organization","Username","WebAccount"],
       :example_entities => [{"type" => "String", "details" => {"name" => "intrigueio"}}],
       :allowed_options => [
-        {:name => "specific_sites", :regex => "alpha_numeric_list", :default => "" }
+        {:name => "specific_sites", :regex => "alpha_numeric_list", :default => nil }
       ],
       :created_types => ["WebAccount"]
     }
@@ -58,7 +58,7 @@ class WebAccountCheck < BaseTask
         account_list["sites"].each do |site|
 
           # This allows us to only check specific sites - good for testing
-          unless opt_specific_sites == ""
+          unless opt_specific_sites
             next unless opt_specific_sites.split(",").include? site["name"]
           end
 

@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.6.5'
+ruby '2.7.2'
 
 # core
 gem 'sinatra'                 #'~> 2.0.1'
@@ -33,6 +33,9 @@ gem 'sequel'
 gem 'sqlite3'
 gem 'pg'
 
+# Async DNS 
+gem 'async-dns'
+
 # Tasks
 gem 'json', '>= 2.3.0'
 gem 'aws-sdk-sqs'             #,        '~> 3'
@@ -43,7 +46,6 @@ gem 'cloudflare',             :git => 'https://github.com/intrigueio/cloudflare.
 gem 'dnsbl-client',           :git => 'https://github.com/intrigueio/dnsbl-client.git'
 gem 'dnsimple'
 gem 'dnsruby'                 # dns_zone_transfer
-gem 'em-resolv-replace'       # dns_brute_sub
 gem 'flareon'                 # dns resolution over http
 gem 'google-api-client'
 gem 'googleauth'
@@ -70,14 +72,13 @@ gem 'whois-parser'            # whois
 gem 'whoisology',             :git => 'https://github.com/pentestify/whoisology.git'
 gem 'open3'
 gem 'typhoeus'
+gem 'zetalytics'
 
-# swap these if developing on chrome_remote locally
+# comment if developing on chrome_remote locally
 gem 'chrome_remote',          :git => 'https://github.com/intrigueio/chrome_remote.git'
-#gem 'chrome_remote',          :path => "~/chrome_remote"
 
-# swap these if developing on ident locally
+# comment if developing on ident locally
 gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git', :branch => "main"
-#gem 'intrigue-ident',         :path => "~/intrigue-ident"
 
 # vulndb
 gem 'versionomy'
@@ -96,7 +97,9 @@ gem 'pry-byebug'              # Debugging
 gem 'yard'
 gem "sentry-raven"            # Error tracking (disabled by default)
 
-
-# Private checks and modules ... uncomment if needed
-gem 'intrigue-ident-private',        :path => "~/Desktop/intrigue-ident-private"
-gem 'intrigue-core-private',         :path => "~/Desktop/intrigue-core-private"
+### Localchecks and modules ... uncomment if needed
+#gem 'chrome_remote',                 :path => "~/chrome_remote"
+#gem 'intrigue-ident',                :path => "~/intrigue-ident"
+#gem 'intrigue-ident-private',        :path => "~/intrigue-ident-private"
+#gem 'intrigue-core-private',         :path => "~/intrigue-core-private"
+#gem 'ruclei',                        :path => "~/ruclei"

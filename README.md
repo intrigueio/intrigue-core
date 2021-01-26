@@ -2,7 +2,7 @@
 
 Intrigue Core is an open framework for discovering and enumerating the attack surface of organizations. It can be used with a human-in-the-loop running individual tasks, or fully automated through the use of machine files. With a flexible entity model and deep enrichment system, it is the most full-featured open source framework for discovering attack surface.
 
-If you'd like assistance getting started or have development-related questions, feel free to join us in our [Intrigue Community slack](https://join.slack.com/t/intrigue-community/shared_invite/zt-fcljntms-rc1Lh_M~Q9iyaLT7d0zLIA) channel. For all other questions, you can simply drop an email to hello-at-intrigue.io
+If you'd like assistance getting started or have development-related questions, feel free to join us in our [Intrigue Community slack](https://join.slack.com/t/intrigue-community/shared_invite/zt-gh42ghi8-P~Z6wf1Bj5097vLLuqen6g) channel. For all other questions, you can simply drop an email to hello-at-intrigue.io
 
 # Users
 
@@ -53,7 +53,7 @@ You'll probably want to take a look at the following resources:
 
 # Intrigue Community Slack (User and Development Support)
 
-To get help in real time, join our [Intrigue Community slack](https://join.slack.com/t/intrigue-community/shared_invite/zt-fcljntms-rc1Lh_M~Q9iyaLT7d0zLIA) , where you'll be able to interact directly with the develpment team. Please post a brief 1-2 linee introduction in #general when you arrive. 
+To get help in real time, join our [Intrigue Community slack](https://join.slack.com/t/intrigue-community/shared_invite/zt-gh42ghi8-P~Z6wf1Bj5097vLLuqen6g), where you'll be able to interact directly with the develpment team. Please post a brief 1-2 linee introduction in #general when you arrive. 
 
   - For immediate (user) help, join the #core-help channel
   - For immediate (dev) help, join the #core-dev channel
@@ -62,6 +62,8 @@ To get help in real time, join our [Intrigue Community slack](https://join.slack
 
 # Key Contributors
 
-Intrigue Core would not be possible without work, time, and attention from the following contributors: 
-
+Intrigue Core would not be possible without the generous time and work from our contributors and maintainers: 
+ 
  * [Anas Ben Salah](https://twitter.com/bensalah_anas)
+ * [Jonathan Cran](https://twitter.com/jcran)
+ * [Shpend Kurtishaj](https://twitter.com/shpendk)

@@ -36,10 +36,10 @@ module Intrigue
         data["content"].each do |app|
             is_match = false
 
-            if app["title"] =~ /#{match_string}/i
+            if "#{app["title"]}".match /#{match_string}/i
                 #_log "Found matching app #{app}"
                 is_match = true
-            elsif app["developer"] =~ /#{match_string}/i
+            elsif "#{app["developer"]}".match /#{match_string}/i
                 is_match = true
             end
 

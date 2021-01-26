@@ -6,7 +6,10 @@ module Model
     plugin :serialization, :json, :options, :handlers, :allowed_namespaces
     plugin :timestamps
 
+    self.raise_on_save_failure = true
+
     one_to_many :logger
+    one_to_many :alias_groups
     one_to_many :task_results
     one_to_many :scan_results
     one_to_many :issues
@@ -22,9 +25,12 @@ module Model
     def delete!
       self.scan_results.each{|x| x.delete }
       self.task_results.each{|x| x.delete }
-      self.entities.each{|x| x.delete }
+      self.alias_groups.each{ |x| x.delete}
       self.issues.each{|x| x.delete }
+      self.entities.each{ |x| x.remove_all_task_results}
+      self.entities.each{|x| x.delete }
       self.delete
+    true 
     end
 
     def issues
@@ -36,13 +42,11 @@ module Model
     end
 
     def seeds
-      Intrigue::Core::Model::Entity.scope_by_project(self.name).where(seed: true).all || [] 
+      Intrigue::Core::Model::Entity.scope_by_project(self.name).where(seed: true)
     end
 
     def seed_entity?(type_string, entity_name)
-      seeds.compact.each do |s|
-        return true if s.match_entity_string?(type_string, entity_name)
-      end
+      return true if seeds.first(name: entity_name, type: "Intrigue::Entity::#{type_string}")
     false
     end
 
@@ -70,7 +74,6 @@ module Model
 
     out
     end
-
 
     def export_hash
       {
@@ -194,153 +197,65 @@ module Model
     out
     end
 
-    def globally_traversable_entity?(entity_type, entity_name)
+    def globally_traversable_entity?(entity_name, type_string)
         
-      # by default things are not traversable
-      out = false
-
-      # first check to see if we know about this exact entity (type matters too)
-      #puts "Looking for global entity: #{entity_type} #{entity_name}"
-      global_entity = Intrigue::Core::Model::GlobalEntity.first(:name => entity_name, :type => entity_type)
-
-      # If we know it exists, is it in our project (cool) or someone else (no traverse!)
-      if global_entity
-        #puts "Global entity found: #{entity_type} #{entity_name}!"
-        
-        # we need to have a namespace to validate against
-        if self.allowed_namespaces
-          self.allowed_namespaces.each do |namespace|
-            # if the entity's' namespace matches one of ours, we're good!
-            if global_entity.namespace.downcase == namespace.downcase 
-              puts "Matches our namespace!"
-              return true # we can immediately return 
-            end
-          end
-        else
-          puts "No allowed namespaces, and this is a claimed entity but not a seed!"
-          return false
-        end
-
-      else 
-        #puts "No Global entity found, trying harder!"
-      end
-
-      # okay so if we made it this far, we may or may not have a matching entiy, so now 
-      # we need to find if it matches based on regex... since entities can have a couple
-      # different forms (uri, dns_record, domain, etc)
-
-      # then check each for a match 
-      found_entity = nil
-
-      ## Okay let's get smart by getting down to the smallest searchable unit first
-      searchable_name = nil
-              
-      if entity_type == "Domain"
-        # this should have gotten caught above... 
-        searchable_name = parse_domain_name(entity_name)
-      elsif entity_type == "DnsRecord"  
-        searchable_name = parse_domain_name(entity_name)
-      elsif entity_type == "EmailAddress"  
-        searchable_name = parse_domain_name(entity_name.split("@").last)
-      elsif entity_type == "Nameserver"  
-        searchable_name = parse_domain_name(entity_name)
-      elsif entity_type == "Uri"
-        searchable_name = parse_domain_name(URI.parse(entity_name).host)
-      end
+      out = true  # allow traverse, until we have something that we can verify
 
       # now form the query, taking into acount the filter if we can
-      if searchable_name
-        found_entity = Intrigue::Core::Model::GlobalEntity.first(:type => "Domain", :name => searchable_name)
-      else
-        global_entities = Intrigue::Core::Model::GlobalEntity.all
+      found_entity = Intrigue::Core::Model::GlobalEntity.first(
+          :type => type_string, :name => entity_name )
 
-        global_entities.each do |ge|
-          # this needs a couple (3) cases:
-          # 1) case where we're an EXACT match (ey.com)
-          # 2) case where we're a subdomain of an exception domain (x.ey.com)
-          # 3) case where we're a uri and should match an exception domain (https://ey.com)
-          # none of these cases should match the case: jcpenney.com
-          if (entity_name.downcase =~ /^#{Regexp.escape(ge.name.downcase)}(:[0-9]*)?$/ ||
-            entity_name.downcase =~ /^.*\.#{Regexp.escape(ge.name.downcase)}(:[0-9]*)?$/ ||
-            entity_name.downcase =~ /^https?:\/\/#{Regexp.escape(ge.name.downcase)}(:[0-9]*)?$/)
-            
-            #okay we found it... now we need to check if it's an allowed project
-            found_entity = ge
+      # now lets check if we have an allowance for it
+      if found_entity
+
+        out = false # we found it, default is now no-traverse ... unless... 
+
+        # we have a matching namespace
+        (self.allowed_namespaces || []).each do |namespace|
+          if found_entity.namespace.downcase == namespace.downcase # Good! 
+            return true # boom match, return immediately
           end
         end
+
       end
-
-    if found_entity && !self.allowed_namespaces.empty? # now lets check if we have an allowance for it
-
-        (self.allowed_namespaces || []).each do |namespace|
-        if found_entity.namespace.downcase == namespace.downcase # Good! 
-          return true 
-        end
-      end
-
-      out = false
-    else # we never found it or we don't care (no namespaces)! 
-      out = true 
-    end
-
-    #puts "Result for: #{entity_type} #{entity_name} in project #{project.name}: #{out}" 
 
     out 
     end
 
-
     ###
     ### Use this when you want to scope in stuff, but generally prefer 'traversable_entity?'
     ###
-    def allow_list_entity?(type_string, entity_name)
-      
-      # if it's an explicit seed, it's whitelisted 
-      return true if seed_entity?(type_string,entity_name)
-      #return true unless Intrigue::Core::Model::GlobalEntity.count > 0
+    def allow_list_entity?(entity)      
+      our_scope_verification_list = entity.scope_verification_list
 
-      ### CHECK OUR SEED ENTITIES TO SEE IF THE TEXT MATCHES A DOMAIN
-      ######################################################
-      # if it matches an explicit seed pattern, it's always traversable
-      scope_check_entity_types = [
-        "Intrigue::Entity::DnsRecord",
-        "Intrigue::Entity::Domain",
-        "Intrigue::Entity::EmailAddress",
-        "Intrigue::Entity::Organization",
-        "Intrigue::Entity::Nameserver",
-        "Intrigue::Entity::Uri" 
-      ]
+      svt = Intrigue::Core::Model::GlobalEntity.scope_verification_types
 
-      # skip anything else thats not verifiable!!
-      return false unless scope_check_entity_types.include? "Intrigue::Entity::#{type_string}"
+      our_scope_verification_list.each do |h|
 
-      seeds.each do |s| 
-        if entity_name =~ /[\.\s\@]#{Regexp.escape(s.name)}/i
-          return true # matches a seed pattern, it's whitelisted
-        end
-      end
-    
-      # Check standard exceptions (hardcoded list) first if we
-      #  show up here (and we werent' a seed), we should skip
-      if use_standard_exceptions
-        if standard_no_traverse?(entity_name, type_string)
-          #puts 'Matched a standard exception, not whitelisted'
-          return false 
-        end
-      end
+        type_string = h[:type_string]
+        entity_name = h[:name]
 
-      # now check the global intel 
-      verifiable_entity_types = ["DnsRecord", "Domain", "EmailAddress", "NameServer" "Uri"]
-      if verifiable_entity_types.include? type_string
+        # skip anything else thats not verifiable!!
+        next unless svt.include? type_string
+        
+        # Check standard exceptions (hardcoded list) first if we
+        #  show up here (and we werent' a seed), we should skip
+        return false if use_standard_exceptions && 
+          standard_no_traverse?(entity_name, type_string)
+
+        # if it's an explicit seed, it's whitelisted 
+        return true if seed_entity?(type_string,entity_name)
+
         # if we don't have a list, safe to return false now, otherwise proceed to 
         # additional exceptions which are provided as an attribute on the object
-        unless globally_traversable_entity?(type_string, entity_name)
-          puts 'Global intel says not traversable, returning false'
+        unless globally_traversable_entity?(entity_name, type_string)
           return false 
         end
-      end
-      
+        
+      end 
+
     ###
-    # Defaulting to not traversable (Whitelist approach!)
+    # returning false because it wasnt explicitly allowed
     ###
     false
     end
@@ -348,56 +263,40 @@ module Model
     ###
     ### Use this when you wan to scope out stuff based on rules or global intel
     ###
-    def deny_list_entity?(type_string, entity_name)
+    def deny_list_entity?(entity)
+      
+      our_scope_verification_list = entity.scope_verification_list
 
-      # if it's an explicit seed, it's not blacklisted 
-      return false if seed_entity?(type_string,entity_name)
-      return false unless Intrigue::Core::Model::GlobalEntity.count > 0
+      svt = Intrigue::Core::Model::GlobalEntity.scope_verification_types
 
-      ### CHECK OUR SEED ENTITIES TO SEE IF THE TEXT MATCHES A DOMAIN
-      ######################################################
-      # if it matches an explicit seed pattern
-      scope_check_entity_types = [
-        "Intrigue::Entity::DnsRecord",
-        "Intrigue::Entity::Domain",
-        "Intrigue::Entity::EmailAddress",
-        "Intrigue::Entity::Organization",
-        "Intrigue::Entity::Nameserver",
-        "Intrigue::Entity::Uri" 
-      ]
+      our_scope_verification_list.each do |h|
 
-      # not blacklisted if we're not one of the check types
-      return false unless scope_check_entity_types.include? "Intrigue::Entity::#{type_string}"
+        type_string = h[:type_string]
+        entity_name = h[:name]
 
-      seeds.each do |s|
-        if entity_name =~ /[\.\s\@]#{Regexp.escape(s.name)}/i
-          return false # not blacklisted if we're matching a seed derivative
-        end
-      end
-    
-      # Check standard exceptions (hardcoded list) first if we 
-      # show up here (and we werent' a seed), we should skip
-      if use_standard_exceptions
-        if standard_no_traverse?(entity_name, type_string)
-          return true  # matched a blacklist 
-        end
-      end
+        # skip anything else thats not verifiable!!
+        next unless svt.include? "#{type_string}"
 
-      # now check the global intel 
-      verifiable_entity_types = ["DnsRecord", "Domain", "EmailAddress", "NameServer" "Uri"]
-      if verifiable_entity_types.include? type_string
+        # Check standard exceptions (hardcoded list) first if we
+        #  show up here (and we werent' a seed), we should skip
+        return true if use_standard_exceptions && 
+          standard_no_traverse?(entity_name, type_string)
+
+        # if it's an explicit seed, it's not blacklisted 
+        return false if seed_entity?(type_string,entity_name)
+
+        # now check the global intel 
         # if we don't have a list, safe to return false now, otherwise proceed to 
         # additional exceptions which are provided as an attribute on the object
-        if !globally_traversable_entity?(type_string, entity_name)
-          puts 'Global intel says not traversable so we are blacklisted, returning true'
+        unless globally_traversable_entity?(entity_name, type_string)
           return true 
         end
-      end
       
-    ###
-    # we made it this far, not blacklisted!
-    ###
+      end
 
+    ###
+    # returning false because it wasnt explicitly disallowed
+    ###
     false
     end
 
@@ -408,9 +307,10 @@ module Model
     ###
     ### DEFAULTS TO FALSE!!! WHITELIST APPROACH
     ###
-    def traversable_entity?(type_string, entity_name)
-      return true if allow_list_entity?(type_string, entity_name)
-      return false if deny_list_entity?(type_string, entity_name)
+    def traversable_entity?(entity)
+
+      return true if allow_list_entity?(entity)
+      return false if deny_list_entity?(entity)
     
     # otherwise, permissive
     true

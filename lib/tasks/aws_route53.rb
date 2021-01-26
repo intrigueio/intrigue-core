@@ -5,7 +5,7 @@ class AWSroute53 < BaseTask
   def self.metadata
     {
       :name => "aws_route53",
-      :pretty_name => "AWS Route53",
+      :pretty_name => "AWS Route53 Zone Pull",
       :authors => ["Anas Ben Salah"],
       :description => "This task hits the Route53 API for enumerating Dns Records for a specific domain",
       :references => ["https://docs.aws.amazon.com/Route53/latest/APIReference/Welcome.html"],

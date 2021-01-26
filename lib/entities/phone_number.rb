@@ -12,7 +12,7 @@ class PhoneNumber < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name =~ /^\D*([2-9]\d{2})(\D*)([2-9]\d{2})(\D*)(\d{4})\D*$/
+    name.match phone_number_regex
   end
 
   def detail_string
@@ -20,8 +20,9 @@ class PhoneNumber < Intrigue::Core::Model::Entity
   end
   
   def scoped?
-    return true if self.allow_list
-    return false if self.deny_list
+    return true if scoped
+    return true if self.allow_list || self.project.allow_list_entity?(self) 
+    return false if self.deny_list || self.project.deny_list_entity?(self)
  
   true
   end

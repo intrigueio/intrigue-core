@@ -1,0 +1,90 @@
+#! /bin/bash
+
+Help()
+{
+    # Display Help
+    echo "Intrigue Core Management Script"
+    echo
+    echo "Syntax: intriguectl [start|stop|setup]"
+    echo "options:"
+    echo "setup   initialize intrigue services."
+    echo "start   start intrigue services"
+    echo "stop    stop intrigue services"
+    echo "update  update intrigue to the latest changes on default branch"
+    echo
+    echo "To set your basic auth password, export variable INTRIGUE_PASS and (re)run setup"
+    echo
+}
+
+Setup()
+{
+    # check if we are a worker (we don't need to setup database if we are)
+    if [ "${WORKER_CONFIG}" ]; then
+      echo "[+] We are a worker-only configuration!"
+      return
+    fi
+
+    # force user/db creation, just in case
+    sudo -u postgres createuser intrigue 2> /dev/null
+    sudo -u postgres createdb intrigue_dev --owner intrigue 2> /dev/null
+
+    # change to core's directory
+    cd ~/core
+
+    # run setup
+    echo "[+] Setting up Intrigue standalone..."
+    bundle exec rake setup
+    
+    # migrade db
+    echo "[+] Migrating Database..."
+    bundle exec rake db:migrate
+    
+    echo "[+] Setup complete! To start intrigue, run 'intriguectl start'"
+}
+
+################################################################################
+################################################################################
+# Main program                                                                 #
+################################################################################
+################################################################################
+
+cmd=$1
+
+if [ -z "$cmd" ];
+then
+    Help
+    exit
+fi
+
+if [ "$cmd" == "start" ]; then
+    echo "[+] Starting intrigue..."
+    # check if setup has ran already
+    if [ ! -f ~/core/config/config.json ]; then
+        echo "[!] Looks like setup hasn't run yet. Please run 'intriguectl setup' first."
+        exit 1
+    fi
+    # start services
+    cd ~/core
+    god -c ~/core/util/god/intrigue.rb
+    god start > /dev/null
+    sleep 25
+    ip=$(ifconfig eth0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
+    printf "Browse to https://$ip:7777 and login with:\nUsername: intrigue\nPassword: given or pregenerated value\n" | boxes
+elif [ "$cmd" == "stop" ]; then
+    echo "[+] Stopping intrigue..."
+    cd ~/core
+    god stop > /dev/null
+elif [ "$cmd" == "setup" ]; then
+    echo "[+] Initializing intrigue..."
+    Setup
+elif [ "$cmd" == "update" ]; then
+    echo "[+] Updating intrigue..."
+    cd ~/core
+    echo "[+] Pulling https://github.com/intrigueio/intrigue-core"
+    git pull > /dev/null 2>&1
+    bundle install > /dev/null 2>&1
+    echo "[+] Update complete! Please restart intrigue for changes to take effect."
+else
+    echo "Unknown command."
+    Help
+fi

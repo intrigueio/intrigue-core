@@ -21,7 +21,7 @@ include Intrigue::Core::System::Helpers
 
 # Intrigue System-wide Helpers (both app and backend) 
 require_relative 'system/dns_helpers'
-#include Intrigue::Core::System::DnsHelpers
+include Intrigue::Core::System::DnsHelpers
 
 # Intrigue Export Format
 require_relative 'system/json_data_export_file'
@@ -36,14 +36,9 @@ require_relative 'system/json_data_export_file'
 ####
 require_relative 'intrigue-tasks'
 
-####
-## Machines
-####
-require_relative 'machine_factory'
-require_relative 'machines/base'
-machines_folder = File.expand_path('../machines', __FILE__) # get absolute directory
-Dir["#{machines_folder}/*.rb"].each {|f| require_relative f}
-
+###
+### TODO ... load in default workflows here 
+### 
 
 # Client libraries
 require_relative 'client'
@@ -91,6 +86,11 @@ require_relative 'notifiers/base'
 notifiers_folder = File.expand_path('../notifiers', __FILE__) # get absolute directory
 Dir["#{notifiers_folder}/*.rb"].each {|f| require_relative f}
 
+####
+# Workflow libraries
+####
+require_relative 'intrigue-workflows'
+
 ###
 ### User-specified directories
 ###
@@ -112,11 +112,6 @@ if Intrigue::Core::System::Config.config["intrigue_load_paths"]
 
     Dir["#{load_path}/issues/*.rb"].each do |file|
       #puts "Adding user notifier from: #{file}"
-      require_relative file
-    end
-
-    Dir["#{load_path}/machines/*.rb"].each do |file|
-      #puts "Adding user machine from: #{file}"
       require_relative file
     end
 
@@ -151,3 +146,11 @@ rescue LoadError => e
   # unable to load gem, presumably unavailable
 end
 
+###
+# load in ruclei if available, fail silently if not
+###
+begin
+  require 'ruclei'
+rescue LoadError => e 
+  # unable to load gem, presumably unavailable
+end

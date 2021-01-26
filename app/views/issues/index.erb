@@ -1,54 +1,59 @@
+<div class="container-fluid">
 <div class="row">
-  <div id="findings-table" class="col-sm-12">
-    <script type="text/javascript" src="/js/sorttable.js"></script>
-    <style>
-    /* Sortable tables */
-    table.sortable {
-      width: 100%;
-      border: 0;
-      table-layout:fixed;
-      word-wrap:break-word;
-      border-collapse:collapse;
-    }
+  <div class="container-fluid">
+  <div id="findings-table" class="col-sm-19">
 
-    table.sortable thead {
-        background-color:#eee;
-        color:#666666;
-        font-weight: bold;
-        cursor: default;
-    }
-    </style>
-    <p></p>
-    <a href="/<%=h @project_name%>/issues?page=<%=@page-1%>">previous</a>
-    <a href="/<%=h @project_name%>/issues?page=<%=@page+1%>">next</a>
-    <table class="sortable" border="1" width=100%>
-      <colgroup>
-        <col style="width:10%">
-        <col style="width:20%">
-        <col style="width:10%">
-        <col style="width:5%">
-        <col style="width:5%">
-        <col style="width:10%">
-        <col style="width:35%">
-        <col style="width:5%">
-      </colgroup>
+    <b><a href="/<%=h @project_name%>/issues?page=<%=@page-1%>"><< previous</a> | 
+    <a href="/<%=h @project_name%>/issues?page=<%=@page+1%>">next >> </a></b>
+    
+    <table id="issues-table" class="table table-striped borderless compact">
+      <thead>
+      <tr >
+        <th>Name</th>
+        <th>Entity</th>
+        <th>Status</th>
+        <th>Severity</th>
+        <th>Scoped</th>
+      </tr>
+      </thead>
       <tbody>
-      <tr><th>Name</th><th>Entity</th><th>Status</th><th>Severity</th><th>Scoped</th><th>Category</th><th>Description</th><th>Source</th></tr>
       <% @issues.each do |issue| %>
-        <tr>
-          <td><a href="<%="/#{h @project_name}/issues/#{h issue.id}"%>"><%= h issue.name %></a></td>
-          <td><%=issue.entity.name%><br><%issue.entity.aliases{ |x|%> <%=h x.name%> <br><%}%></td>
+        <tr class="transparent-table">
+          <td><a href="<%="/#{h @project_name}/issues/#{h issue.id }"%>"><%= h issue.pretty_name %></a></td>
+          <td><%=h issue.entity.name%><br><%issue.entity.aliases{ |x|%> <%=h x.name %> <br><%}%></td>
           <td><%=issue.status%></td>
           <td><%=issue.severity%></td>
-          <td><%=issue.scoped%></td>
-          <td><%=issue.category%></td>
-          <td><%=issue.description%></td>
-          <td><%=issue.source%></td>
+          <td><%=issue.scoped ? checkmark_image : xmark_image %></td>
         </tr>
       <% end %>
+
       </tbody>
     </table>
-    <a href="/<%=h @project_name%>/issues?page=<%=@page-1%>">previous</a>
-    <a href="/<%=h @project_name%>/issues?page=<%=@page+1%>">next</a>
+
+  </div>
   </div>
 </div>
+</div>
+
+<script>
+$(document).ready( function () {
+  $('#issues-table').DataTable({
+    "ordering" : true,
+    'autoWidth': true,
+    'headers' : false,
+    "responsive": true,
+    "scrollCollapse": true,
+    "paging": false,
+    "info" : false,
+    "stateSave": true,  
+    "order": [[ 3, "asc" ]],
+    'columnDefs': [
+      {'width': '30%', 'targets': 0},
+      {'width': '30%', 'targets': 1},
+      {'width': '30%', 'targets': 2},
+      {'width': '30%', 'targets': 3},
+      {'width': '30%', 'targets': 4}
+    ]
+  });
+});
+</script>

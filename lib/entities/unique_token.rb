@@ -5,7 +5,7 @@ class UniqueToken < Intrigue::Core::Model::Entity
   def self.metadata
     {
       :name => "UniqueToken",
-      :description => "Unique Token - could be api key or analytics id",
+      :description => "An api key or analytics id",
       :user_creatable => true,
       :example => "UA-34505845"
     }
@@ -17,7 +17,9 @@ class UniqueToken < Intrigue::Core::Model::Entity
   # Also Handy: https://raw.githubusercontent.com/random-robbie/keywords/master/keywords.txt
   # Also Handy: https://gist.github.com/nullenc0de/2473b1d49dfe4b94088304d542eb3760
   def self.supported_token_types
-    
+    #
+    # 13e49d785d8d4f828038b6136f3b48ba
+    #
     tokens = [
       { 
         "provider" => "aws_access_key", 
@@ -104,7 +106,7 @@ class UniqueToken < Intrigue::Core::Model::Entity
     # check that our regex for the hash matches
     supported_type = self.class.supported_token_types.select{ |x| 
       regex = x["regex"]; regex = Regexp.new(regex) unless regex.kind_of?(Regexp)
-      regex =~ name 
+      name.match(regex)
     }
 
     valid = !supported_type.empty?
@@ -119,8 +121,8 @@ class UniqueToken < Intrigue::Core::Model::Entity
   end
 
   def scoped?
-    return true if self.allow_list
-    return false if self.deny_list
+    return true if self.allow_list || self.project.allow_list_entity?(self) 
+    return false if self.deny_list || self.project.deny_list_entity?(self)
   
   true # otherwise just default to true
   end

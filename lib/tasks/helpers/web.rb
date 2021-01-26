@@ -11,6 +11,26 @@ module Intrigue
 module Task
   module Web
 
+  def make_threaded_http_requests_from_queue(work_q, threads=10)
+    # Create a pool of worker threads to work on the queue
+    responses = []
+    workers = (0...threads).map do
+      Thread.new do
+        begin
+          #_log "Getting request"
+          while request_uri = work_q.pop(true)
+            result = http_request :get, request_uri
+            responses.append(result)
+          end # end while
+        rescue ThreadError
+        end
+      end
+    end; "ok"
+    workers.map(&:join); "ok"
+
+    return responses
+  end
+
   def make_http_requests_from_queue(uri, work_q, threads=1, create_url=false, create_issue=false)
 
     ###
@@ -72,7 +92,7 @@ module Task
             request_uri = "#{uri}#{request_details[:path]}"
 
             # Do the check
-            #_log "Checking #{request_uri}"
+            _log "Checking #{request_uri}"
 
             # request details will have regexes if we want to check, so just pass it directly
             result = check_uri_exists(request_uri, missing_page_test, missing_page_code, missing_page_content, request_details)
@@ -263,7 +283,7 @@ module Task
 
     # Check the subjectAltName property, and if we have names, here, parse them.
     cert.extensions.each do |ext|
-      if "#{ext.oid}" =~ /subjectAltName/
+      if "#{ext.oid}".match(/subjectAltName/)
 
         alt_names = ext.value.split(",").collect do |x|
           "#{x}".gsub(/DNS:/,"").gsub("IP Address:","").strip.gsub("*.","")
@@ -281,7 +301,7 @@ module Task
           universal_cert_domains = get_universal_cert_domains
 
           universal_cert_domains.each do |cert_domain|
-            if (alt_name =~ /#{cert_domain}$/ )
+            if alt_name.match(/#{cert_domain}$/) 
               _log "This is a universal #{cert_domain} certificate, no entity creation"
               return
             end
@@ -399,7 +419,6 @@ module Task
   end
 
   def http_post(uri, data, params)
-    #RestClient.post(uri, data, params)
     http_request(:post, uri, nil, params, data)
   end
 
@@ -431,7 +450,10 @@ module Task
       # always
       options[:timeout] = timeout
       options[:ssl_verifyhost] = 0
-      options[:ssl_verifypeer] = false 
+      options[:ssl_verifypeer] = false
+      
+      # avoid many open sockets in CLOSE_WAIT state
+      options[:forbid_reuse] = true 
 
       # follow redirects if we're told
       if follow_redirects 
@@ -512,7 +534,7 @@ module Task
       #_log "Checking success cases: #{success_cases}"
 
        if success_cases[:body_regex]
-         if response.body_utf8 =~ success_cases[:body_regex] 
+         if response.body_utf8.match(success_cases[:body_regex])
           
           out = {
             name: request_uri,
@@ -522,7 +544,7 @@ module Task
           }
 
           # check to make sure we're not part of our excluded 
-          if success_cases[:exclude_body_regex] && response.body_utf8 =~ success_cases[:exclude_body_regex] 
+          if success_cases[:exclude_body_regex] && response.body_utf8.match(success_cases[:exclude_body_regex])
             _log_error "Matched exclude body regex!!! #{success_cases[:exlude_body_regex]}" if @task_result
             return nil
           else
@@ -536,9 +558,9 @@ module Task
          end
 
        elsif success_cases[:header_regex]
-         response.each do |header|
+         response.each_header do |header|
           _log "Checking header: '#{header}: #{response[header]}'"
-          if "#{header}: #{response[header]}" =~ success_cases[:header_regex]   ### ALWAYS LOWERCASE!!!!
+          if "#{header}: #{response[header]}".match(success_cases[:header_regex])   ### ALWAYS LOWERCASE!!!!
            _log_good "Matched positive header regex!!! #{success_cases[:header_regex]}" if @task_result
            return {
              name: request_uri,
@@ -559,7 +581,7 @@ module Task
 
      # always check code
      if ( response.code == "301" || response.code == "302" ||
-          "#{response.code}" =~ /^4\d\d/ ||  "#{response.code}" =~ /^5\d\d/ )
+          "#{response.code}".match(/^4\d\d/) ||  "#{response.code}".match(/^5\d\d/) )
         
         # often will be redirected or 500'd and that doesnt count as existence 
        _log "Ignoring #{request_uri} based on redirect code: #{response.code}" if @task_result
@@ -595,7 +617,7 @@ module Task
 
        # check for default content...
        ["404", "forbidden", "Request Rejected"].each do |s|
-         if (response.body_utf8 =~ /#{s}/i )
+         if (response.body_utf8.match(/#{s}/i) )
            _log "Skipping #{request_uri}, contains a missing page string: #{s}" if @task_result
            return false
          end

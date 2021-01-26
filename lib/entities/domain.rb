@@ -2,6 +2,7 @@ module Intrigue
 module Entity
 class Domain < Intrigue::Core::Model::Entity
 
+
   def self.metadata
     {
       :name => "Domain",
@@ -12,7 +13,7 @@ class Domain < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name =~ dns_regex
+    name.match dns_regex(true)
   end
 
   def detail_string
@@ -29,8 +30,9 @@ class Domain < Intrigue::Core::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
-    return true if self.allow_list
-    return false if self.deny_list
+    return true if scoped
+    return true if self.allow_list || self.project.allow_list_entity?(self) 
+    return false if self.deny_list || self.project.deny_list_entity?(self)
 
   # if we didnt match the above and we were asked, let's not allow it 
   false

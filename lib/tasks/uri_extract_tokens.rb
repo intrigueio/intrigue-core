@@ -47,19 +47,14 @@ module Intrigue
         pattern = Regexp.new(pattern) unless pattern.kind_of? Regexp
         
         if contents =~ pattern
-
           _log "Matched: #{pattern}"
-
           # grab it 
           match_data = pattern.match(contents) do |m|
             _log "Got: #{m[1]}"
             _create_entity "UniqueToken", "name" => "#{m[1]}"
           end
-        
         else 
-
           _log "No match for: #{pattern}"
-
         end
 
       end

@@ -44,7 +44,6 @@ class UriCheckApiEndpoint < BaseTask
       api_reason = "fingerprint"
     end
 
-
     # first get a standard response
     standard_response = http_request :get, url
     return unless standard_response
@@ -52,17 +51,21 @@ class UriCheckApiEndpoint < BaseTask
     ####
     # next just check keywords in the url, but of course, sanity check this.
     ###
-    if (  url =~ /api\./ ||
-          url =~ /apis\./ ||
-          url =~ /\/api/ ||
-          url =~ /\/json/ ||
-          url =~ /\.json/ ||
-          url =~ /\.xml/ ||
-          url =~ /skiptoken/ ||
-          url =~ /\/restapis/
-         )
+    if (  url.match(/api\./)     ||
+          url.match(/apis\./)    ||
+          url.match(/\/api/)     ||
+          url.match(/\/json/)    ||
+          url.match(/\.json/)    ||
+          url.match(/\.xml/)     ||
+          url.match(/skiptoken/) ||
+          url.match(/\/restapis/) )
 
-      unless ((url =~ /googleapis/) or (url =~ /\.amazonaws\.com/) or (standard_response.body_utf8 =~/^<HTML>/i) or (standard_response.body_utf8 =~/HTTP Status 404/i) or (standard_response.body_utf8 =~/NoSuchBucket/i)) # this be html
+      unless (
+          url.match(/googleapis/) ||
+          url.match(/\.amazonaws\.com/) ||
+          standard_response.body_utf8.match(/^<HTML>/i) ||
+          standard_response.body_utf8.match(/HTTP Status 404/i) ||
+          standard_response.body_utf8.match(/NoSuchBucket/i) ) 
         api_endpoint = true
         api_reason = "url"
       end
@@ -127,9 +130,9 @@ class UriCheckApiEndpoint < BaseTask
       ###
       ### Check for known strings
       ###
-      if (response.body_utf8 =~ /swagger-section/ ||
-          response.body_utf8 =~ /swaggerhub.com/ ||
-          response.body_utf8 =~ /soapenv:Envelope/)
+      if (response.body_utf8.match(/swagger-section/) ||
+          response.body_utf8.match(/swaggerhub.com/) ||
+          response.body_utf8.match(/soapenv:Envelope/) )
         # break and create it
         api_reason = "response_body"
         api_endpoint = u
@@ -142,12 +145,12 @@ class UriCheckApiEndpoint < BaseTask
       if headers
         ct = headers.find{|x, y| x if x =~ /^content-type/i }
         if ct
-          api_endpoint = u if "#{headers[ct]}" =~ /^application\/xml/i
-          api_endpoint = u if "#{headers[ct]}" =~ /^application\/json/i
-          api_endpoint = u if "#{headers[ct]}" =~ /^application\/ld+json/i
-          api_endpoint = u if "#{headers[ct]}" =~ /^application\/x-protobuf/i
-          api_endpoint = u if "#{headers[ct]}" =~ /^application\/octet-stream/i
-          api_endpoint = u if "#{headers[ct]}" =~ /^text\/csv/i
+          api_endpoint = u if "#{headers[ct]}".match(/^application\/xml/i)
+          api_endpoint = u if "#{headers[ct]}".match(/^application\/json/i)
+          api_endpoint = u if "#{headers[ct]}".match(/^application\/ld+json/i)
+          api_endpoint = u if "#{headers[ct]}".match(/^application\/x-protobuf/i)
+          api_endpoint = u if "#{headers[ct]}".match(/^application\/octet-stream/i)
+          api_endpoint = u if "#{headers[ct]}".match(/^text\/csv/i)
 
           # break and create it
           if api_endpoint

@@ -38,20 +38,21 @@ module System
     # RETURNS A STRING (THE EXCEPTION) OR FALSE
     #
     def standard_no_traverse?(entity_name, type_string="Domain", skip_exceptions=[])
+
       out = false
-      #puts "Working on #{type_string} #{entity_name}"
 
       if type_string == "IpAddress"
+        
         (standard_ip_exceptions - skip_exceptions).each do |exception|
-          out = exception if exception.match(entity_name)
+          return exception if exception.match(entity_name)
         end
-      elsif (type_string == "Domain" || type_string == "DnsRecord" || type_string == "Uri" )
+
+      else
+
         (standard_name_exceptions - skip_exceptions).each do |exception|
-          if exception.match(entity_name) || exception.match(".#{entity_name}")
-            #puts "Matched #{exception}"
-            out = exception 
-          end
+          return exception if exception =~ entity_name 
         end
+        
       end
 
     out

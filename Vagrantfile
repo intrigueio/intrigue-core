@@ -3,7 +3,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "intrigue-core" do |x|
 
-    x.vm.provision :shell, privileged: false, path: "util/bootstrap-standalone.sh"
+    x.vm.provision :shell, privileged: false, path: "util/bootstrap.sh"
 	x.vm.provision "shell", privileged: false, inline: <<-SHELL
 		cd /home/ubuntu/core
 		sudo -u postgres createuser vagrant -s

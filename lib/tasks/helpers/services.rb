@@ -13,22 +13,6 @@ module Services
 
   include Intrigue::Task::Web
 
-  def _create_vhost_entities(lookup_name)
-    ### For each associated IpAddress, make sure we create any additional
-    ### uris if we already have scan results
-    ###
-    @entity.aliases.each do |a|
-      next unless a.type_string == "IpAddress" #  only ips
-      existing_ports = a.get_detail("ports")
-      if existing_ports
-        existing_ports.each do |p|
-          _log "Creating network service on #{a.name} #{p["number"]} #{p["protocol"]}"
-          _create_network_service_entity(a, p["number"], p["protocol"],{}) 
-        end
-      end
-    end
-  end
-
   def _create_network_service_entity(ip_entity,port_num,protocol="tcp",generic_details={})
 
     # first, save the port details on the ip_entity
@@ -36,7 +20,7 @@ module Services
     updated_ports = ports.append({"number" => port_num, "protocol" => protocol}).uniq
     ip_entity.set_detail("ports", updated_ports)
 
-    weak_tcp_services = [21, 23]  #possibly 25, but STARTTLS support is currently unclear
+    weak_tcp_services = [21, 23, 79]  # possibly 25, but STARTTLS support is currently unclear
     weak_udp_services = [60, 1900, 5000]
 
     # set sssl if we end in 443 or are in our includeed list 
@@ -83,14 +67,7 @@ module Services
         # DnsRecord, Domain, or IpAddress.
         if cert_names
           cert_names.uniq do |cn|
-
-            if cn.is_ip_address?
-              cert_entities << _create_entity("IpAddress", { "name" => cn }, ip_entity )   
-            else
-              # create each entity 
-              cert_entities << create_dns_entity_from_string(cn)
-            end
-            
+            cert_entities << create_dns_entity_from_string(cn)
           end
         end
 
@@ -102,18 +79,13 @@ module Services
     hosts = [] 
     # add our ip 
     hosts << ip_entity
-    # add everything we got from the cert
-    cert_entities.each {|ce| hosts << ce} 
     
-    # and add our aliases
-    if ip_entity.aliases.count > 0
-      ip_entity.aliases.each do |al|
-        next unless al.type_string == "DnsRecord" || al.type_string == "Domain" #  only dns records
-        next unless al.scoped? # skip blacklisted / unscoped
-        hosts << al # add to the list
-      end
-    end
-
+    # add everything we got from the cert
+    hosts.concat(cert_entities)
+    
+    # add in our aliases 
+    hosts.concat(ip_entity.aliases)
+    
     create_service_lambda = lambda do |h|
       try_http_ports = scannable_web_ports
 
@@ -123,13 +95,17 @@ module Services
         # If SSL, use the appropriate prefix
         prefix = ssl ? "https" : "http" # construct uri
 
-        # Construct the uri
-        uri = "#{prefix}://#{h.name.strip}:#{port_num}"
+        # Construct the uri. We check for ipv6 and add brackets, to be compliant with the RFC
+        if "#{h.name.strip}".match(ipv6_regex)
+          uri = "#{prefix}://[#{h.name.strip}]:#{port_num}"
+        else
+          uri = "#{prefix}://#{h.name.strip}:#{port_num}"
+        end
 
         # if we've never seen this before, go ahead and open it to ensure it's 
         # something we want to create (this helps eliminate unusable urls). However, 
         # skip if we have, we want to minimize requests to the services
-        if !entity_exists? ip_entity.project, "Uri", uri
+        if !entity_exists?(ip_entity.project, "Uri", uri)
 
           r = _gather_http_response(uri)
           http_response = r[:http_response]
@@ -140,6 +116,8 @@ module Services
             next
           end
 
+        else 
+          _log "Skipping Page grab, entity already exists"
         end
 
         entity_details = {
@@ -213,7 +191,7 @@ module Services
     # use a generic threaded iteration method to create them,
     # with the desired number of threads
     thread_count = (hosts.compact.count / 10) + 1 
-    _log "Creating service (#{port_num}) on #{hosts.compact.map{|x|x.name}} with #{thread_count} threads."
+    _log "Creating service (#{port_num}) on #{hosts.compact.map{|x| x.name }} with #{thread_count} threads."
         
     # Create our queue of work from the checks in brute_list
     input_queue = Queue.new
@@ -261,7 +239,7 @@ module Services
       f = File.open(temp_file.path).each_line do |line|
 
         # Skip comments
-        next if line =~ /^#.*/
+        next if line.match(/^#.*/)
         next if line.nil?
 
         # PARSE
@@ -289,7 +267,7 @@ module Services
 
   def check_external_dependencies
     # Check to see if masscan is in the path, and raise an error if not
-    return false unless _unsafe_system("masscan") =~ /^usage/
+    return false unless _unsafe_system("masscan").match(/^usage/i)
   true
   end
 
@@ -304,7 +282,6 @@ module Services
       out[:extra_details] = {}
 
       _log "connecting to #{uri}"
-
 
       out[:http_response] = http_request(:get, uri, nil, {}, nil)
 

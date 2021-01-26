@@ -1,4 +1,3 @@
-require 'eventmachine'
 require 'logger'
 require 'sinatra'
 require 'sinatra/contrib'
@@ -27,6 +26,7 @@ Encoding.default_internal="UTF-8"
 
 # System-level Monkey patches
 require_relative 'lib/initialize/array'
+require_relative 'lib/initialize/exceptions'
 require_relative 'lib/initialize/hash'
 require_relative 'lib/initialize/json_export_file'
 require_relative 'lib/initialize/queue'
@@ -116,7 +116,6 @@ class CoreApp < Sinatra::Base
   set :allow_headers, "content-type,if-modified-since,allow"
   set :expose_headers, "location,link"
   set :allow_credentials, true
-
   set :sessions => true
   set :root, "#{$intrigue_basedir}"
   set :views, "#{$intrigue_basedir}/app/views"
@@ -127,7 +126,7 @@ class CoreApp < Sinatra::Base
   end
 
   ###
-  ### Helpers
+  ## Helpers
   ###
   helpers do
     def h(text)
@@ -136,7 +135,7 @@ class CoreApp < Sinatra::Base
   end
 
   ###
-  ### (Very) Simple Auth
+  ## Enable Basic Auth
   ###
   if Intrigue::Core::System::Config.config
     if Intrigue::Core::System::Config.config["http_security"]
@@ -158,7 +157,9 @@ class CoreApp < Sinatra::Base
     $intrigue_server_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
 
     # Parse out our project
-    directive = URI.unescape(request.path_info.split("/")[1] || "Default")
+    if request.path_info.split("/")[1]
+      directive = URI.decode_www_form_component(request.path_info.split("/")[1])
+    end
 
     # set flash message if we have one
     if session[:flash]
@@ -169,7 +170,7 @@ class CoreApp < Sinatra::Base
     # Allow certain requests without a project string... these are systemwide,
     # and do not depend on a specific project
     pass if [ "api", "entity_types.json", "engine", "favicon.ico",
-              "project", "tasks", "tasks.json",
+              "project", "tasks", "tasks.json", "help",
               "version.json", "system", nil ].include? directive
     pass if request.path_info =~ /\.js$/ # all js
     pass if request.path_info =~ /\.css$/ # all css
@@ -177,23 +178,18 @@ class CoreApp < Sinatra::Base
 
     # Set the project based on the directive
     project = Intrigue::Core::Model::Project.first(:name => directive)
-
-    # If we haven't resolved a project, let's handle it
-    unless project
-      # Creating a default project since it doesn't appear to exist (it should always exist)
-      if directive == "Default"
-        project = Intrigue::Core::Model::Project.create(:name => "Default", :created_at => Time.now.utc )
-      else
-        redirect "/"
-      end
+    if project 
+      @project_name = project.name 
+    else 
+      session[:flash] = "Missing Project!?"
+      redirect FRONT_PAGE
     end
-
-    # Set it so we can use it going forward
-    @project_name = project.name
+    
   end
 
   not_found do
-    "Unable to find this content."
+    status 404
+    erb :oops
   end
 
   ###                                  ###
@@ -233,12 +229,17 @@ end
 # Core libraries
 require_relative "lib/all"
 
+###
+## Relevant to hosted/managed configurations, load in a Sentry DSN from 
+##   the so we can report errors to a Sentry instance
+###
 #configure sentry.io error reporting (only if a key was provided)
 if (Intrigue::Core::System::Config.config && Intrigue::Core::System::Config.config["sentry_dsn"])
   require "raven"
   puts "!!! Configuring Sentry error reporting to: #{Intrigue::Core::System::Config.config["sentry_dsn"]}"
-
   Raven.configure do |config|
     config.dsn = Intrigue::Core::System::Config.config["sentry_dsn"]
   end
 end
+
+

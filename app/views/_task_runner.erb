@@ -1,127 +1,125 @@
+<div class="container-fluid">
 
-<div class="col-sm-7">
-<form class="form-horizontal" id="task_runner" enctype="multipart/form-data" target="_self" method="post" action="/<%= h @project_name%>/interactive/single">
-  <div class="form-group">
-    <!-- <select name="task" id="task_name"> -->
-    <label for="task_name" class="col-xs-4 control-label">Task</label>
-    <div class="col-xs-8">
-    <select class="form-control input-sm" name="task" id="task_name">
+<div class="card transparent-card">
+<div class="card-title"><h4>Schedule A New Task</h4></div>
+<div class="card-body">
+  
+  <div class="row">
+  <div class="col-sm-7">
 
-      <!-- iterate through the tasks an create each one, checking to see if it matches our entity -->
-      <% @task_classes.sort_by { |obj| obj.metadata[:pretty_name] }.each do |task_class|
+  <form class="form-horizontal" id="task_runner" enctype="multipart/form-data" target="_self" method="post" action="/<%= h @project_name%>/interactive/single">
+    <div class="form-group">
+      <!-- <select name="task" id="task_name"> -->
+      <label for="task_name" class="col-xs-4 control-label">Task</label>
+      <div class="col-xs-8">
+      <select class="form-control input-sm" name="task" id="task_name">
 
-            # Skip to the next task unless the current type is allowed
-            next unless ( @entity.allowed_tasks.include?(task_class) ||
-                          task_class.metadata[:allowed_types].include?("*") ) if @entity
-        %>
+        <!-- iterate through the tasks an create each one, checking to see if it matches our entity -->
+        <% @task_classes.sort_by { |obj| obj.metadata[:pretty_name] }.each do |task_class|
 
-        <!-- set up the task in an option box, default to create_entity -->
-        <option value="<%= h task_class.metadata[:name] %>"
-          <% if @task_result %>
-            <%= "selected='selected'" if @task_result.task_name == task_class.metadata[:name] %>
-          <% else %>
-            <%= "selected='selected'" if task_class.metadata[:name] == "create_entity" %>
+              # Skip to the next task unless the current type is allowed
+              next unless ( @entity.allowed_tasks.include?(task_class) ||
+                            task_class.metadata[:allowed_types].include?("*") ) if @entity
+          %>
+
+          <!-- set up the task in an option box, default to create_entity -->
+          <option value="<%= h task_class.metadata[:name] %>"
+            <% if @task_result %>
+              <%= "selected='selected'" if @task_result.task_name == task_class.metadata[:name] %>
+            <% else %>
+              <%= "selected='selected'" if task_class.metadata[:name] == "create_entity" %>
+            <% end %>
+            ><%= h task_class.metadata[:pretty_name] %>
+          </option>
+
+        <% end %>
+      </select>
+      </div>
+    </div>
+    <!-- Get all attributes and use this to create an entity -->
+    <% if @entity %>
+        <%= @entity.form %>
+        <input type="hidden" name="entity_id" value="<%=h @entity.id %>">
+    <% else %>
+      <div class="form-group">
+        <label for="entity_type" class="col-xs-4 control-label">Entity Type</label>  
+        <div class="col-xs-8">  
+          <select class="form-control input-sm" id="entity_type" name="entity_type"></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="attrib_name" class="col-xs-4 control-label">Entity Name</label>
+        <div class="col-xs-8">
+          <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name">
+        </div>
+      </div>
+    <% end %>
+
+  <div id="options"></div>
+
+  <div id="workflow">
+    <div class="form-group">
+      <label for="attrib_name" class="col-xs-4 control-label">Workflow</label>
+      <div class="col-xs-8">
+        <select class="form-control input-sm" name="Workflow" id="workflow">
+          <option> [No Additional Workflow] </option>
+          <!-- iterate through workflows -->
+          <% Intrigue::WorkflowFactory.user_selectable_workflows.each do |wf| %>
+            <option value="<%= h wf.name %>"> <%= h wf.pretty_name || wf.name %> </option>
           <% end %>
-          ><%= h task_class.metadata[:pretty_name] %>
-        </option>
-
-      <% end %>
-    </select>
-    </div>
-  </div>
-  <!-- Get all attributes and use this to create an entity -->
-  <% if @entity %>
-      <%= @entity.form  %>
-      <input type="hidden" name="entity_id" value="<%=h @entity.id%>">
-  <% else %>
-    <div class="form-group">
-      <label for="entity_type" class="col-xs-4 control-label">Entity Type</label>
-      <div class="col-xs-8">
-        <select class="form-control input-sm" id="entity_type" name="entity_type"></select>
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="attrib_name" class="col-xs-4 control-label">Entity Name</label>
-      <div class="col-xs-8">
-        <input type="text" class="form-control input-sm" id="attrib_name" name="attrib_name">
-      </div>
-    </div>
-  <% end %>
-
-  <div class="form-group">
-    <div id="options"></div>
-  </div>
-
-  <div id="machine">
-    <div class="form-group">
-      <label for="attrib_name" class="col-xs-4 control-label">Machine</label>
-      <div class="col-xs-8">
-        <select class="form-control input-sm" name="machine" id="machine">
-          <!-- iterate through stategies -->
-          <% Intrigue::MachineFactory.list.each do |machine_class| %>
-           <% next unless machine_class.metadata[:user_selectable] %>
-            <option value="<%= h machine_class.metadata[:name] %>"
-              <%= "selected='selected'" if machine_class.metadata[:name] == "org_asset_discovery_active" %> >
-              <%= h machine_class.metadata[:pretty_name] %>
-            </option>
-          <% end %>
         </select>
-        <div class="hint">'Machine' specifies the post-processor for each new entity.</div>
+        <div class="hint">'Workflow' specifies what we do with each discovered entity type. (Optional)</div>
       </div>
     </div>
-  </div>
 
-  <div id="scan">
-    <div class="form-group">
-      <label for="attrib_name" class="col-xs-4 control-label">Iterations</label>
-      <div class="col-xs-8">
-        <select class="form-control input-sm" name="depth" id="depth">
-          <option value=1 selected="true">None</option>
-          <option value=2>2 Iterations</option>
-          <option value=3>3 Iterations</option>
-          <option value=4>4 Iterations</option>
-          <option value=5>5 Iterations</option>
-          <option value=6>6 Iterations</option>
-          <option value=7>7 Iterations</option>
-          <option value=8>8 Iterations</option>
-        </select>
-        <div class="hint">'Iterations' specifies the depth to which the machine is run.</div>
-      </div>
-    </div>
-  </div>
-
-<!--
-  <div id="handler">
-    <div class="form-group">
-      <label for="handler" class="col-xs-4 control-label">Handlers</label>
-      <div class="col-xs-6">
-        <select class="form-control input-sm" name="handler" id="handler">
-          <option value="none" selected="true">None</option>
-          <option value="s3_json">S3 JSON</option>
-        </select>
-      </div>
-    </div>
-  </div>
--->
-
-  <div id="enrich">
+    <!--<div id="enrich">
     <div class="form-group">
       <label for="options" class="col-xs-4 control-label">&nbsp;</label>
       <div class="col-xs-6">
-        <input id="auto_enrich" name="auto_enrich" type="checkbox" checked> Auto Enrich <br/>
+        <input id="auto_enrich" name="auto_enrich" type="checkbox" checked> Automatially Enrich Entity <br/>
+        <div class="hint"> If selected, the user-supplied entity will be futher enriched. </div>
       </div>
     </div>
+    </div>-->
+
+    <input type="hidden" name="depth" id="depth" value="6">
+    <input type="hidden" name="auto_enrich" id="auto_enrich" value="on">
+
+  <!--
+    <div id="handler">
+      <div class="form-group">
+        <label for="handler" class="col-xs-4 control-label">Handlers</label>
+        <div class="col-xs-6">
+          <select class="form-control input-sm" name="handler" id="handler">
+            <option value="none" selected="true">None</option>
+            <option value="s3_json">S3 JSON</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  -->
+    <Br>
+    <input class="btn btn-primary" type="submit" value="Run Task">          
+  
+  </form>
+
   </div>
-  <hr></hr>
-  <input class="btn btn-primary" type="submit" value="Run Task">
-</form>
+  </div>
+  
+  <div class="col-sm-5">
+    <p>
+      <div id="description" name="description">[description]</div>
+    </p>
+    <p>
+      <div id="links" name="links">[links]</div>
+    </p>
+  </div>
+  </div>
+
 </div>
-<div class="col-sm-5">
-<p>
-<div id="description" name="description">[description]</div>
-</p>
-<p>
-<div id="links" name="links">[links]</div>
-</p>
 </div>
+
 <script type="text/javascript" src="/js/task.js"></script>
+
+</div>
+

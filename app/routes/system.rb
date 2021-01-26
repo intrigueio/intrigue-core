@@ -19,12 +19,26 @@ class CoreApp < Sinatra::Base
     post '/system/config' do
 
       Intrigue::Core::System::Config.config["credentials"]["username"] = "#{params["username"]}"
-      Intrigue::Core::System::Config.config["credentials"]["password"] = "#{params["password"]}"
+      Intrigue::Core::System::Config.config["credentials"]["password"] = "#{params["password"]}" unless "#{params["password"]}" =~ /^\*+$/
 
       # save and reload
       Intrigue::Core::System::Config.save
 
       redirect "/#{@project_name}"  # handy if we're in a browser
+    end
+
+
+    # get config
+    get '/system/sidekiq/clear/?' do
+      out = `redis-cli flushall`
+      session[:flash] = "Sidekiq cache cleared: #{out}!"
+      redirect "/system/config"
+    end
+
+    # get config
+    get '/system/config/?' do
+      @global_config = Intrigue::Core::System::Config
+      erb :"system/system_config"
     end
 
     # get config
@@ -36,16 +50,6 @@ class CoreApp < Sinatra::Base
     get '/system/config/handlers/?' do
       @global_config = Intrigue::Core::System::Config
       erb :"system/handler_config"
-    end
-
-    get "/system/entities" do
-      @entities = Intrigue::EntityFactory.entity_types
-      erb :"system/entities"
-    end
-
-    get "/system/tasks" do
-      @tasks = Intrigue::TaskFactory.list
-      erb :"system/tasks"
     end
 
     # save the config
@@ -81,7 +85,6 @@ class CoreApp < Sinatra::Base
         next unless Intrigue::Core::System::Config.config["intrigue_handlers"][handler_name]
 
         unless v =~ /^\*\*\*/
-          puts "Setting config for #{handler_name} #{parameter_name}"
           Intrigue::Core::System::Config.config["intrigue_handlers"][handler_name][parameter_name] = v 
         end
       end
@@ -95,33 +98,6 @@ class CoreApp < Sinatra::Base
   ###
   #### engine api
   ###
-
-  #
-  # status
-  #
-  get "/engine/?" do
-
-    sidekiq_stats = Sidekiq::Stats.new
-    project_listing = Intrigue::Core::Model::Project.all.map { |p|
-        { :name => "#{p.name}", :entities => "#{p.entities.count}" } }
-
-    output = {
-      :version => IntrigueApp.version,
-      :projects => project_listing,
-      :tasks => {
-        :processed => sidekiq_stats.processed,
-        :failed => sidekiq_stats.failed,
-        :queued => sidekiq_stats.queues
-      }
-    }
-
-  headers 'Access-Control-Allow-Origin' => '*',
-          'Access-Control-Allow-Methods' => ['OPTIONS','GET']
-
-  content_type "application/json"
-  output.to_json
-  end
-
 
 
 end

@@ -41,7 +41,8 @@ module Intrigue
       lines.each do |l|
         j = JSON.parse(l)
         subdomain = j["host"]
-        create_dns_entity_from_string subdomain # { "upstream_source" => j["source"] }
+        create_dns_entity_from_string(
+          subdomain, nil, false, { "subfinder_upstream_source" => j["source"] })
       end
 
     end

@@ -12,7 +12,7 @@ class AwsS3Bucket < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    name =~ /s3/ && name =~ /.amazonaws.com/
+    name.match(/s3/) && name.match(/\.amazonaws\.com/)
   end
 
   def detail_string
@@ -24,8 +24,10 @@ class AwsS3Bucket < Intrigue::Core::Model::Entity
   end
 
   def scoped?(conditions={})
-    return true if self.allow_list
-    return false if self.deny_list
+    return true if scoped
+    return true if self.allow_list || self.project.allow_list_entity?(self) 
+    return false if self.deny_list || self.project.deny_list_entity?(self)
+
   true # otherwise just default to true
   end
 

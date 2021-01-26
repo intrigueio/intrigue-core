@@ -3,7 +3,7 @@ module Task
 module Regex
 
   def match_regex(type, input)
-    "#{input}" =~ _get_regex(type)
+    "#{input}".match _get_regex(type)
   end
 
   private

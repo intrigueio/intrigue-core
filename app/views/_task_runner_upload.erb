@@ -1,4 +1,10 @@
+<div class="container-fluid">
 
+<div class="card transparent-card">
+<div class="card-title"><h4>Create A New Task</h4></div>
+<div class="card-body">
+
+<div class="row">
 <div class="col-sm-7">
 <form class="form-horizontal" id="task_runner" enctype="multipart/form-data" target="_self" method="post" action="/<%=h @project_name%>/interactive/upload">
 
@@ -35,6 +41,7 @@
       <option value="entity_list" selected>Entity List (CSV Format: [TYPE,NAME])</option>
       <option value="intrigueio_fingerprint_csv">Collection Entity List (CSV Format [COLLECTION,TYPE,NAME])</option>
       <option value="otx_csv">Alienvault OTX (CSV)</option>
+      <option value="binary_edge_json">BinaryEdge (JSON)</option>
     </select>
     </div>
   </div>
@@ -46,43 +53,30 @@
     </div>
   </div>
 
-  <div id="machine">
+  <div class="form-group">
+    <div id="options"></div>
+  </div>
+            
+  <input type="hidden" name="depth" id="depth" value="6">
+
+  <div id="workflow">
     <div class="form-group">
-      <label for="attrib_name" class="col-xs-4 control-label">Machine</label>
+      <label for="attrib_name" class="col-xs-4 control-label">Workflow</label>
       <div class="col-xs-8">
-        <select class="form-control input-sm" name="machine" id="machine">
-          <!-- iterate through stategies -->
-          <% Intrigue::MachineFactory.list.each do |machine_class| %>
-           <% next unless machine_class.metadata[:user_selectable] %>
-            <option value="<%= machine_class.metadata[:name] %>"
-              <%= "selected='selected'" if machine_class.metadata[:name] == "org_asset_discovery_active" %> >
-              <%= machine_class.metadata[:pretty_name] %>
-            </option>
+        <select class="form-control input-sm" name="Workflow" id="workflow">
+          <option> None </option>
+          <!-- iterate through workflows -->
+          <% Intrigue::Core::Model::Workflow.all.each do |wf| %>
+           <% next unless wf.metadata[:user_selectable] %>
+            <option value="<%= h wf.name %>"> <%= h wf.pretty_name %> </option>
           <% end %>
         </select>
-        <div class="hint">'Machine' specifies the post-processor for each new entity.</div>
+        <div class="hint">'Workflow' specifies what we do with each discovered entity type. (Optional)</div>
       </div>
     </div>
   </div>
 
-  <div id="scan">
-    <div class="form-group">
-      <label for="attrib_name" class="col-xs-4 control-label">Iterations</label>
-      <div class="col-xs-8">
-        <select class="form-control input-sm" name="depth" id="depth">
-          <option value=1 selected="true">None</option>
-          <option value=2>2 Iterations</option>
-          <option value=3>3 Iterations</option>
-          <option value=4>4 Iterations</option>
-          <option value=5>5 Iterations</option>
-          <option value=6>6 Iterations</option>
-          <option value=7>7 Iterations</option>
-          <option value=8>8 Iterations</option>
-        </select>
-        <div class="hint">'Iterations' specifies the depth to which the machine is run.</div>
-      </div>
-    </div>
-  </div>
+  
 
 <!--
   <div id="handler">
@@ -111,6 +105,7 @@
   <input class="btn btn-primary" type="submit" value="Run Task">
 </form>
 </div>
+
 <div class="col-sm-5">
 <p>
 <div id="description" name="description">[description]</div>
@@ -119,4 +114,10 @@
 <div id="links" name="links">[links]</div>
 </p>
 </div>
+
 <script type="text/javascript" src="/js/task.js"></script>
+
+</div>
+</div>
+</div>
+</div>

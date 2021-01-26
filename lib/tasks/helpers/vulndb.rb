@@ -9,8 +9,12 @@ module Intrigue
       def add_vulns_by_cpe(component_list)
 
         # Make sure the key is set before querying intrigue api
-        intrigueio_api_key = _get_task_config "intrigueio_api_key"
-        use_api = intrigueio_api_key && intrigueio_api_key.length > 0
+        begin
+          intrigueio_api_key = _get_task_config "intrigueio_api_key"
+          use_api = true
+        rescue MissingTaskConfigurationError
+          use_api = false
+        end
 
         # for ech fingerprint, map vulns 
         component_list = component_list.map do |fp|
@@ -220,7 +224,7 @@ module VulnDb
       update = "#{m[4]}".strip
 
       # if version has parens, only use the stuff priior (apache, nginx, etc)
-      if version =~ /\(/
+      if version.match(/\(/)
         old_version = version
         puts "DEBUG Splitting Version: #{version}"
 

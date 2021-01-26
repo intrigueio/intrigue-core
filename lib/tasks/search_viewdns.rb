@@ -40,6 +40,7 @@ class SearchViewdns < BaseTask
         # create the domain
         _create_entity "Domain", { 
           "name" => m["domain"], 
+          "scoped" => true,
           "viewdns_info" => {
             "created_date" => m["created_date"], 
             "registrar" => m["registrar"] 
