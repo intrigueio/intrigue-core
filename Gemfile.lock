@@ -1,5 +1,5 @@
 GIT
-  remote: https://github.com/NeutrinoAPI/NeutrinoAPI-Ruby.git
+  remote: https://github.com/intrigueio/NeutrinoAPI-Ruby.git
   revision: b2d0648773bc852d75ab41c321b55695b690e131
   specs:
     neutrino_api (3.4.5)
@@ -337,7 +337,7 @@ GEM
     os (1.1.1)
     parallel (1.12.1)
     pg (1.2.3)
-    power_assert (1.2.0)
+    power_assert (2.0.0)
     protocol-hpack (1.4.2)
     protocol-http (0.21.0)
     protocol-http1 (0.13.2)

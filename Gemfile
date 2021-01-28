@@ -1,6 +1,45 @@
 source 'https://rubygems.org'
 ruby '2.7.2'
 
+###
+### Depending on the environment we have to make a few adjustments to our dependencies
+### since we'll want to have Sidekiq Pro (Licensing matters!) and a few other 
+### capabilities which are held back for the hosted service (at least for some time)
+###
+if ENV["APP_ENV"] == "production-engine"
+  
+  ### Sidekiq Pro
+  source "https://gems.contribsys.com/" do
+    gem 'sidekiq-pro'
+  end
+
+  # Capabilities only available to hosted service for now
+  source 'https://gem.fury.io/intrigueio/' do
+    gem 'intrigue-ident-private'
+    gem 'intrigue-core-private'
+    gem 'ruclei'
+  end
+
+elsif  ENV["APP_ENV"] == "development"
+  
+  # enable regular sidekiq, and link to local gems 
+  gem 'sidekiq'
+
+  ###
+  ### Handy for local dev, just here to make it easy/obvious where to put these 
+  ###
+  #gem 'intrigue-ident',                :path => "~/intrigue-ident"
+  #gem 'intrigue-ident-private',        :path => "~/intrigue-ident-private"
+  #gem 'intrigue-core-private',         :path => "~/intrigue-core-private"
+  #gem 'ruclei',                        :path => "~/ruclei"
+
+else # every other environment, including prodcution-oss
+  gem 'sidekiq'
+end
+
+gem 'sidekiq-failures'        # Background Tasks
+gem 'sidekiq-limit_fetch'     # Dynamic queueing
+
 # core
 gem 'sinatra'                 #'~> 2.0.1'
 gem 'sinatra-contrib'         #'~> 2.0.1'
@@ -9,9 +48,6 @@ gem 'eventmachine'
 gem 'rack-cors'
 gem 'redis'                   # Redis
 gem 'redis-namespace'         # Redis
-gem 'sidekiq'                 # Background Tasks
-gem 'sidekiq-failures'        # Background Tasks
-gem 'sidekiq-limit_fetch'     # Dynamic queueing
 gem 'thor'                    # CLI
 gem 'elasticsearch'           # Database
 gem 'faraday_middleware-aws-sigv4' # AWS elasticsearch
@@ -22,11 +58,6 @@ gem 'intrigue_api_client',    :path => "api_client"
 gem 'yajl-ruby'
 gem 'nokogiri'                # Client::Search::*Scraper
 gem 'compare-xml'
-
-# Testing
-gem 'rake'                    # Testing
-gem 'rspec'                   # Testing
-gem 'rack-test'               # Testing
 
 # Database
 gem 'sequel'
@@ -56,7 +87,7 @@ gem 'ipaddr'
 gem 'maxminddb',              :git => "https://github.com/intrigueio/maxminddb"
 gem 'net-dns'                 # dns_cache_snoop
 gem 'net-http2'               # http2 client support
-gem 'neutrino_api',           :git => 'https://github.com/NeutrinoAPI/NeutrinoAPI-Ruby.git'
+gem 'neutrino_api',           :git => 'https://github.com/intrigueio/NeutrinoAPI-Ruby.git'
 gem 'opencorporates',         :git => 'https://github.com/pentestify/opencorporates.git'
 gem 'rex'
 gem 'rex-sslscan',            :git => 'https://github.com/intrigueio/rex-sslscan.git'
@@ -89,16 +120,12 @@ gem 'fog-aws'
 # production process management
 gem 'god'
 
-# Development
+# Development 
 gem 'foreman'
 gem 'pry'                     # Debugging
 gem 'pry-byebug'              # Debugging
 gem 'yard'
 gem "sentry-raven"            # Error tracking (disabled by default)
-
-### Localchecks and modules ... uncomment if needed
-#gem 'chrome_remote',                 :path => "~/chrome_remote"
-#gem 'intrigue-ident',                :path => "~/intrigue-ident"
-#gem 'intrigue-ident-private',        :path => "~/intrigue-ident-private"
-#gem 'intrigue-core-private',         :path => "~/intrigue-core-private"
-#gem 'ruclei',                        :path => "~/ruclei"
+gem 'rake'                    # Testing
+gem 'rspec'                   # Testing
+gem 'rack-test'               # Testing

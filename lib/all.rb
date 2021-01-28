@@ -25,7 +25,6 @@ include Intrigue::Core::System::DnsHelpers
 
 # Intrigue Export Format
 require_relative 'system/json_data_export_file'
-
 ###
 ### END SYSTEM HELPERS
 ###
