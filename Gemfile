@@ -28,10 +28,10 @@ elsif  ENV["APP_ENV"] == "development"
   ###
   ### Handy for local dev, just here to make it easy/obvious where to put these 
   ###
-  #gem 'intrigue-ident',                :path => "~/intrigue-ident"
-  #gem 'intrigue-ident-private',        :path => "~/intrigue-ident-private"
-  #gem 'intrigue-core-private',         :path => "~/intrigue-core-private"
-  #gem 'ruclei',                        :path => "~/ruclei"
+  gem 'intrigue-ident',                :path => "~/intrigue-ident"
+  gem 'intrigue-ident-private',        :path => "~/intrigue-ident-private"
+  gem 'intrigue-core-private',         :path => "~/intrigue-core-private"
+  gem 'ruclei',                        :path => "~/ruclei"
 
 else # every other environment, including prodcution-oss
   gem 'sidekiq'
