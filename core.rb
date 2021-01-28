@@ -11,11 +11,21 @@ require 'shellwords' # shell escapin'
 require 'yajl'
 require 'yajl/json_gem'
 
-# Sidekiq
-require 'sidekiq'
+###
+# Sidekiq - load in sidekiq pro if available
+###
+begin
+  require 'sidekiq-pro'
+  require 'sidekiq/pro/web'
+rescue LoadError => e   # fall back to normal sidekiq
+  require 'sidekiq'
+  require 'sidekiq/web'
+end
+
+# always 
 require 'sidekiq/api'
-require 'sidekiq/web'
 require 'sidekiq-limit_fetch'
+
 
 # Global vars
 $intrigue_basedir = File.dirname(__FILE__)
@@ -84,6 +94,7 @@ def setup_redis
 
   # Pull sidekiq config from the environment if it's available (see docker config)
   Sidekiq.configure_server do |config|
+
     puts "Connecting to Redis Server at: #{$redis_connect_string}"
     # if password is present, use it
     if $redis_pass
@@ -91,7 +102,16 @@ def setup_redis
     else
       config.redis = { url: $redis_connect_string}
     end
+
+    begin 
+      puts "Configuring reliable fetch if it's available!"
+      config.super_fetch!
+    rescue NoMethodError => e
+      # No reliable fetch available
+    end
+
   end
+
   # configure the client
   Sidekiq.configure_client do |config|
     puts "Configuring Redis Client for: #{$redis_connect_string}"
