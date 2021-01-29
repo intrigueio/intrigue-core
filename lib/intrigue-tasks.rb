@@ -68,11 +68,11 @@ module Intrigue
   
     def self.register(klass)
       @tasks = [] unless @tasks
-      @tasks << klass
+      @tasks << klass 
     end
   
     def self.list
-      @tasks
+      @tasks # only send if we have metadata
     end
   
     def self.allowed_tasks_for_entity_type(entity_type)
