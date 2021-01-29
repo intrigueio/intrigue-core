@@ -4,10 +4,10 @@ class AwsS3Bucket < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "AwsS3Bucket",
-      :description => "An S3 Bucket",
-      :user_creatable => true,
-      :example => "http://s3.amazonaws.com/bucket/"
+      name: "AwsS3Bucket",
+      description: "An S3 Bucket",
+      user_creatable: true,
+      example: "http://s3.amazonaws.com/bucket/"
     }
   end
 

@@ -4,10 +4,10 @@ class Uri < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "Uri",
-      :description => "A link to a website or webpage",
-      :user_creatable => true,
-      :example => "https://intrigue.io"
+      name: "Uri",
+      description: "A link to a website or webpage",
+      user_creatable: true,
+      example: "https://intrigue.io"
     }
   end
 

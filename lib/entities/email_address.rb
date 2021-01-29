@@ -4,10 +4,10 @@ class EmailAddress < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "EmailAddress",
-      :description => "An Email Address",
-      :user_creatable => true,
-      :example => "no-reply@intrigue.io"
+      name: "EmailAddress",
+      description: "An Email Address",
+      user_creatable: true,
+      example: "no-reply@intrigue.io"
     }
   end
 

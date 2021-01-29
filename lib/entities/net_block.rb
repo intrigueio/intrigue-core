@@ -4,10 +4,10 @@ class NetBlock < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "NetBlock",
-      :description => "A Block of IPs",
-      :user_creatable => true,
-      :example => "1.1.1.1/24"
+      name: "NetBlock",
+      description: "A Block of IPs",
+      user_creatable: true,
+      example: "1.1.1.1/24"
     }
   end
 

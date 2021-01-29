@@ -6,10 +6,10 @@ class Nameserver < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "Nameserver",
-      :description => "A DNS Nameserver",
-      :user_creatable => true,
-      :example => "ns1.intrigue.io"
+      name: "Nameserver",
+      description: "A DNS Nameserver",
+      user_creatable: true,
+      example: "ns1.intrigue.io"
     }
   end
 

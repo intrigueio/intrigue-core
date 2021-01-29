@@ -4,9 +4,10 @@ class NetworkService < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "NetworkService",
-      :description => "A Generic Network Service",
-      :user_creatable => true
+      name: "NetworkService",
+      description: "A Generic Network Service",
+      user_creatable: true,
+      example: "1.1.1.1:80/tcp"
     }
   end
 
