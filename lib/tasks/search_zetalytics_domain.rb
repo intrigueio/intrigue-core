@@ -4,7 +4,7 @@ class SearchZetalyticsByDomain < BaseTask
 
   def self.metadata
     {
-      :name => "search_zetalytics_by_domain",
+      :name => "search_zetalytics_domain",
       :pretty_name => "Search Zetalytics By Domain",
       :authors => ["Anas Ben Salah"],
       :description => "This task search Zetalytics for a given domain name and returns related entities such as DnsRecords, related IPs and EmailAddress.",
