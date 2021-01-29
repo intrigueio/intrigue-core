@@ -44,6 +44,34 @@ module VulnCheck
     result
   end
 
+  def run_nuclei_template(uri, template)
+    # run ruclei with entity name and template
+    _log "Running #{template} against #{uri}"
+    begin
+      temp = Ruclei::Parser.new("#{template}", "#{uri}")
+    rescue Errno::ENOENT
+      _log_error "Could not find template #{template}"
+      return false
+    end
+
+    _log "Result of nuclei scan: #{temp.vulnerable}"
+    # check results of ruclei
+    proof = nil
+    if temp.vulnerable
+      # add every request url and match conditions
+      temp.results.each do |r|
+        proof = [] unless proof
+        proof << {:url_tested => r[:response].request.base_url, :matched_conditions => r[:matchers]}
+      end
+    end
+
+  proof
+  end
+  
+  def get_vulndb_matches(cpe)
+    # if you have a key, go to api.intrigue.db
+  end
+
 end
 end
 end
