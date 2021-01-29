@@ -26,14 +26,12 @@ class SearchZetalyticsByDomain < BaseTask
     super
 
     begin
-      entity_name = _get_entity_name
-      entity_type = _get_entity_type_string
 
       # Make sure the key is set
       api_key = _get_task_config("zetalytics_api_key")
 
       # search it 
-      result = search_zetalytics_by_domain(api_key, entity_name)
+      result = search_zetalytics_by_domain(api_key, _get_entity_name)
       
       # create our entities 
       create_entities(result) if result
