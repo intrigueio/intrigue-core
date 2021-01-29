@@ -66,7 +66,7 @@ module Dns
     all_discovered_wildcards = []
 
     # Now check for more rando-wildcards
-    5.times do
+    10.times do
       random_string = "#{(0...8).map { (65 + rand(26)).chr }.join.downcase}.#{suffix}"
 
       # do the resolution
@@ -75,11 +75,13 @@ module Dns
       resolved_addresses = resolve(random_string)
 
       # keep track of it (unless we already have it)
-      unless resolved_addresses.empty? && (all_discovered_wildcards - resolved_addresses).empty?
+      unless resolved_addresses.empty?
         all_discovered_wildcards.concat resolved_addresses
       end
 
     end
+
+    all_discovered_wildcards = all_discovered_wildcards.flatten.uniq
 
     # all discovered wildcards 
     return [] if all_discovered_wildcards.empty?
@@ -89,7 +91,7 @@ module Dns
     # Some domains have a pool of IPs that they'll resolve to, so
     # let's go ahead and test a bunch of different domains to try
     # and collect those IPs
-    if all_discovered_wildcards.uniq.count > 1 && create_exhaustive_list
+    if all_discovered_wildcards.count > 1 && create_exhaustive_list
       _log "Multiple wildcard ips for #{suffix} after resolving these: #{ all_discovered_wildcards.map{|x| x["name"]} }."
       _log "Trying to create an exhaustive list."
 
@@ -110,32 +112,37 @@ module Dns
           resolved_addresses = resolve(random_string)
 
           # keep track of it unless we already have it
-          unless resolved_addresses.empty? || (newly_discovered_wildcards - resolved_addresses).empty?
+          unless resolved_addresses.empty?
             newly_discovered_wildcards.concat resolved_addresses
           end
 
         end
 
+        newly_discovered_wildcards = newly_discovered_wildcards.flatten.uniq
+
         # check if our newly discovered is a subset of all
-        if (newly_discovered_wildcards - all_discovered_wildcards).flatten.empty?
+        if (newly_discovered_wildcards - all_discovered_wildcards).empty?
           _log "Hurray! No new wildcards in #{newly_discovered_wildcards}. Finishing up!"
           no_new_wildcards = true
         else
-          _log "Continuing to search, found: #{(newly_discovered_wildcards - all_discovered_wildcards).flatten.count} new results."
-          all_discovered_wildcards += newly_discovered_wildcards.uniq
+          _log "Continuing to search, found: #{(newly_discovered_wildcards.count)} results."
+          all_discovered_wildcards += newly_discovered_wildcards
+          all_discovered_wildcards = all_discovered_wildcards.flatten.uniq
         end
 
-        _log "Known wildcard count: #{all_discovered_wildcards.flatten.uniq.count}"
-        _log "Known wildcards: #{all_discovered_wildcards.flatten.uniq}"
+        _log "Known wildcard count: #{all_discovered_wildcards.count}"
+        _log "Known wildcards: #{all_discovered_wildcards.uniq}"
       end
 
       attempts += 1
 
-    elsif all_discovered_wildcards.flatten.uniq.count == 1
-      _log "Only a single wildcard ip: #{all_discovered_wildcards.flatten.sort.uniq}"
+    elsif all_discovered_wildcards.count == 1
+      _log "Only a single wildcard ip: #{all_discovered_wildcards.sort}"
     end
 
-  all_discovered_wildcards.flatten.uniq # if it's not a wildcard, this will be an empty array.
+    _log "Got: #{all_discovered_wildcards}" unless create_exhaustive_list
+
+  all_discovered_wildcards # if it's not a wildcard, this will be an empty array.
   end
 
   # convenience method to just send back name
