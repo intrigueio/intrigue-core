@@ -111,7 +111,7 @@ class NetworkService < Intrigue::Task::BaseTask
       { port: 2095, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  }, 
       { port: 25, net_name: "GOOGLE, US" }
     ]
-    if known_ports.select{ |x| x[:port] == port && x[:net_name] == net_name }
+    if known_ports.find{ |x| x[:port] == port && x[:net_name] == net_name }
       hide_reason = "Matched known hidden service"
       hide_value = true 
     end
@@ -158,7 +158,6 @@ class NetworkService < Intrigue::Task::BaseTask
     rescue NoMethodError => e
       _log_error "Unable to find attribute: output"
     end
-
 
     _log "Got SNMP details:#{script_output}"
 
