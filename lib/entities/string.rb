@@ -4,10 +4,10 @@ class String < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "String",
-      :description => "A Generic Search String",
-      :user_creatable => true,
-      :example => "Literally any @#$%$!!$^'n old thing!"
+      name: "String",
+      description: "A Generic Search String",
+      user_creatable: true,
+      example: "Literally any @#$%$!!$^'n old thing!"
     }
   end
 

@@ -4,10 +4,10 @@ class AutonomousSystem < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "AutonomousSystem",
-      :description => "Unique number that's available globally to exchange network routes",
-      :user_creatable => true,
-      :example => "AS1234"
+      name: "AutonomousSystem",
+      description: "Unique number that's available globally to exchange network routes",
+      user_creatable: true,
+      example: "AS1234"
     }
   end
 

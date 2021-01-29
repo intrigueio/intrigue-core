@@ -4,9 +4,10 @@ class AwsIamAccount < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "AwsIamAccount",
-      :description => "An AWS IAM Account",
-      :user_creatable => false
+      name: "AwsIamAccount",
+      description: "An AWS IAM Account",
+      user_creatable: false,
+      example: "testtesttest"
     }
   end
 

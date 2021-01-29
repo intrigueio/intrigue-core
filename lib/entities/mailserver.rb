@@ -6,10 +6,10 @@ class Mailserver < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "Mailserver",
-      :description => "A Mailserver (MX)",
-      :user_creatable => true,
-      :example => "ns1.intrigue.io"
+      name: "Mailserver",
+      description: "A Mailserver (MX)",
+      user_creatable: true,
+      example: "ns1.intrigue.io"
     }
   end
 

@@ -4,10 +4,10 @@ class IpAddress < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "IpAddress",
-      :description => "An IP Address",
-      :user_creatable => true,
-      :example => "1.1.1.1"
+      name: "IpAddress",
+      description: "An IP Address",
+      user_creatable: true,
+      example: "1.1.1.1"
     }
   end
 

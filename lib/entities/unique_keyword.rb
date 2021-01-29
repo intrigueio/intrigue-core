@@ -4,10 +4,10 @@ module Intrigue
   
     def self.metadata
       {
-        :name => "UniqueKeyword",
-        :description => "A globally unique keyword that can be reliably searched",
-        :user_creatable => true,
-        :example => "Intrigue.io"
+        name: "UniqueKeyword",
+        description: "A globally unique keyword that can be reliably searched",
+        user_creatable: true,
+        example: "Intrigue.io"
       }
     end
   

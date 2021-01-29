@@ -4,9 +4,9 @@ class WebAccount < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "WebAccount",
-      :description => "An account identified for a specific hosted service in the format \"service: username\" ",
-      :user_creatable => true
+      name: "WebAccount",
+      description: "An account identified for a specific hosted service in the format \"service: username\" ",
+      user_creatable: true
     }
   end
 
@@ -25,10 +25,10 @@ class WebAccount < Intrigue::Core::Model::Entity
 
     # grab the username / service
     set_details(
-      { "name" => "#{service_name}: #{username}",
-        "hidden_original" => "#{service_name}: #{username}".downcase,
-        "username" => username,
-        "service" => service_name })
+      { "name": "#{service_name}: #{username}",
+        "hidden_original": "#{service_name}: #{username}".downcase,
+        "username": username,
+        "service": service_name })
 
     save_changes
   true

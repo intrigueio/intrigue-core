@@ -4,9 +4,9 @@ class PhysicalLocation < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "PhysicalLocation",
-      :description => "A Physical Location",
-      :user_creatable => false
+      name: "PhysicalLocation",
+      description: "A Physical Location",
+      user_creatable: false
     }
   end
 

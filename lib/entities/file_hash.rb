@@ -4,10 +4,10 @@ class FileHash < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "FileHash",
-      :description => "A hash of a file. SHA1 and MD5 supported.",
-      :user_creatable => true,
-      :example => "912ec803b2ce49e4a541068d495ab570"
+      name: "FileHash",
+      description: "A hash of a file. SHA1 and MD5 supported.",
+      user_creatable: true,
+      example: "912ec803b2ce49e4a541068d495ab570"
     }
   end
 
