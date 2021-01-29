@@ -79,7 +79,10 @@ class Domain < Intrigue::Task::BaseTask
     _log "Grabbing MX"
     mx_records = collect_mx_records(lookup_name)
     _set_entity_detail("mx_records", mx_records)
-    mx_records.each{|mx| create_unscoped_dns_entity_from_string(mx["host"]) unless mx["host"].is_ip_address? }
+    mx_records.each{|mx| 
+      next unless entity_scoped
+      create_unscoped_dns_entity_from_string(mx["host"])
+    }
 
     # collect TXT records (useful for random things)
     _log "Grabbing TXT Records"
@@ -91,10 +94,11 @@ class Domain < Intrigue::Task::BaseTask
     _set_entity_detail("spf_record", spf_details)
     spf_details.each do |record|
       record.split(" ").each do |spf|
+        next unless entity_scoped
         next unless spf.match(/^include:/)
         domain_name = spf.split("include:").last
         _log "Found Associated SPF Domain: #{domain_name}"
-        create_dns_entity_from_string(domain_name) if entity_scoped
+        create_unscoped_dns_entity_from_string(domain_name)
       end
     end
 
@@ -113,7 +117,8 @@ class Domain < Intrigue::Task::BaseTask
         # https://dmarcian.com/rua-vs-ruf/
         if component.strip.match(/^rua/) || component.strip.match(/^ruf/)
           component.split("mailto:").last.split(",").each do |address|
-            _create_entity "EmailAddress", :name => address if entity_scoped
+            next unless entity_scoped
+            _create_entity "EmailAddress", :name => address
           end
         end
 
@@ -133,24 +138,24 @@ class Domain < Intrigue::Task::BaseTask
     ###
     ### Scope all aliases if we're scoped ... note this might be unnecessary
     ###
-    if entity_scoped
-      @entity.aliases.each do |a|
-        next if a.id == @entity.id # we're already scoped. 
-        next unless a.type_string == "IpAddress" #only proceed for ip addresses
-        
-        # set scoped unless this belongs to a known global entity
-        #_log "Setting #{a.name} scoped!"
-        #a.set_scoped!(true, "alias_of_entity_#{@task_result.name}")         
+    @entity.aliases.each do |a|
+      next if entity_scoped
+      next if a.id == @entity.id # we're already scoped. 
+      next unless a.type_string == "IpAddress" #only proceed for ip addresses
+      
+      # set scoped unless this belongs to a known global entity
+      #_log "Setting #{a.name} scoped!"
+      #a.set_scoped!(true, "alias_of_entity_#{@task_result.name}")         
 
-        # now re-create all network services, since we'll have a new hosname
-        next unless a.get_detail("ports")
-        a.get_detail("ports").each do |p|
-          next unless scannable_web_ports.include? p["number"]
-          _create_network_service_entity a, p["number"], p["protocol"] 
-        end 
-          
-      end
-    end 
+      # now re-create all network services, since we'll have a new hosname
+      next unless a.get_detail("ports")
+      a.get_detail("ports").each do |p|
+        next unless scannable_web_ports.include? p["number"]
+        _create_network_service_entity a, p["number"], p["protocol"] 
+      end 
+        
+    end
+     
 
   end
 
