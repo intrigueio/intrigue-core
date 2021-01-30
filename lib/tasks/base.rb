@@ -1,7 +1,25 @@
 module Intrigue
 module Task
 class BaseTask
-
+  # include default helpers
+  include Intrigue::Task::Popen
+  include Intrigue::Task::Generic
+  include Intrigue::Task::BinaryEdge
+  include Intrigue::Task::Browser
+  include Intrigue::Task::CloudProviders
+  include Intrigue::Task::Data
+  include Intrigue::Task::Dns
+  include Intrigue::Task::Ident
+  include Intrigue::Task::Issue
+  include Intrigue::Task::Regex
+  include Intrigue::Task::Services
+  include Intrigue::Task::TlsHandler
+  include Intrigue::Task::VulnCheck
+  include Intrigue::Task::VulnDb
+  include Intrigue::Task::Web
+  include Intrigue::Task::WebContent
+  include Intrigue::Task::WebAccount
+  include Intrigue::Task::Whois
   include Sidekiq::Worker
   sidekiq_options queue: "task", backtrace: true
   
@@ -10,25 +28,7 @@ class BaseTask
   end
 
   def perform(task_result_id)
-    # include default helpers
-    include Intrigue::Task::Popen
-    include Intrigue::Task::Generic
-    include Intrigue::Task::BinaryEdge
-    include Intrigue::Task::Browser
-    include Intrigue::Task::CloudProviders
-    include Intrigue::Task::Data
-    include Intrigue::Task::Dns
-    include Intrigue::Task::Ident
-    include Intrigue::Task::Issue
-    include Intrigue::Task::Regex
-    include Intrigue::Task::Services
-    include Intrigue::Task::TlsHandler
-    include Intrigue::Task::VulnCheck
-    include Intrigue::Task::VulnDb
-    include Intrigue::Task::Web
-    include Intrigue::Task::WebContent
-    include Intrigue::Task::WebAccount
-    include Intrigue::Task::Whois
+
 
     ### This method is used by a couple different TYPES...
     # normal tasks... which are simple, just run and exit

@@ -38,7 +38,7 @@ module Intrigue
         uri = _get_entity_name
         template = "vulnerabilities/moodle-filter-jmol-lfi"
         
-        run_nuclei_template
+        run_nuclei_template uri, template
       end
   
       end
