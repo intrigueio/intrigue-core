@@ -4,10 +4,10 @@ class Organization < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "Organization",
-      :description => "An organization",
-      :user_creatable => true,
-      :example => "Intrigue Corporation"
+      name: "Organization",
+      description: "An organization",
+      user_creatable: true,
+      example: "Intrigue Corp"
     }
   end
 

@@ -4,10 +4,10 @@ class GithubAccount < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "GithubAccount",
-      :description => "A Github Account",
-      :user_creatable => true,
-      :example => "intrigueio"
+      name: "GithubAccount",
+      description: "A Github Account",
+      user_creatable: true,
+      example: "intrigueio"
     }
   end
 

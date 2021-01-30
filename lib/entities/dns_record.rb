@@ -6,10 +6,10 @@ class DnsRecord < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "DnsRecord",
-      :description => "A Dns Record",
-      :user_creatable => true,
-      :example => "test.intrigue.io"
+      name: "DnsRecord",
+      description: "A Dns Record",
+      user_creatable: true,
+      example: "test.intrigue.io"
     }
   end
 

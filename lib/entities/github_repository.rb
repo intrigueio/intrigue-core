@@ -4,10 +4,10 @@ class GithubRepository < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "GithubRepository",
-      :description => "A Github Repository",
-      :user_creatable => true,
-      :example => "intrigueio/intrigue-core"
+      name: "GithubRepository",
+      description: "A Github Repository",
+      user_creatable: true,
+      example: "intrigueio/intrigue-core"
     }
   end
 
