@@ -44,7 +44,7 @@ class DnsRecord < Intrigue::Task::BaseTask
     ####
     ### Create aliased entities
     #### 
-    create_dns_aliases(results)
+    create_dns_aliases(results, @entity, !entity_scoped)
 
     _log "Grabbing resolutions"
     resolutions = collect_resolutions(results)

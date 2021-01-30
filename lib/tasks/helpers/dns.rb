@@ -7,19 +7,21 @@ module Dns
 
   # method is used across the dns/domain/ip enrich methods 
   # to create aliases
-  def create_dns_aliases(results)
+  def create_dns_aliases(results, entity_obj, unscoped=false)
 
     results.each do |result|
-      next if @entity.name == result["name"]
+      #skip any resolution to ourselves
+      next if entity_obj.name == result["name"] 
+      
       _log "Creating entity for... #{result}"
     
-      # create the domain 
+      # create the domain, always unscoped
       domain_name = parse_domain_name(result["name"])
-      create_unscoped_dns_entity_from_string(domain_name)  
+      create_dns_entity_from_string(domain_name, entity_obj, true)
 
-      # create an entity for this entity
+      # create an entity, use the scoping status of the thing we resolved
       unless domain_name == result["name"]
-        entity = create_dns_entity_from_string(result["name"], @entity)
+        new_entity = create_dns_entity_from_string(result["name"], entity_obj, unscoped)
       end
 
     end
