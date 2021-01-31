@@ -1,6 +1,6 @@
 module Intrigue
 module Task
-class SearchZetalyticsByDomain < BaseTask
+class SearchZetalyticsDomain < BaseTask
 
   def self.metadata
     {
