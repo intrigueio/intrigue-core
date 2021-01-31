@@ -94,8 +94,11 @@ class NetworkService < Intrigue::Task::BaseTask
     #
     if noise_networks.include?(net_name) &&
          (_get_entity_detail("fingerprint") || []).empty?
-      hide_value = true
-      hide_reason = "noise_network"
+      # always allow these ports even if we dont have a fingeprint
+      unless (port == 80 || port == 443) 
+        hide_value = true 
+        hide_reason = "noise_network"
+      end
     end
 
     known_ports = [
