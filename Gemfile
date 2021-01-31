@@ -34,10 +34,14 @@ elsif  ENV["APP_ENV"] == "development"
   gem 'ruclei',                        :path => "~/ruclei"
 
 else # every other environment, including prodcution-oss
+  
+  # no sidekiq pro, so fall back to oss sidekiq
   gem 'sidekiq'
+  
+  # pull prod ident 
+  gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git', :branch => "main"
+  
 end
-
-
 
 gem 'sidekiq-failures'        # Background Tasks
 gem 'sidekiq-limit_fetch'     # Dynamic queueing
@@ -108,9 +112,6 @@ gem 'zetalytics'
 
 # comment if developing on chrome_remote locally
 gem 'chrome_remote',          :git => 'https://github.com/intrigueio/chrome_remote.git'
-
-# comment if developing on ident locally
-gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git', :branch => "main"
 
 # vulndb
 gem 'versionomy'

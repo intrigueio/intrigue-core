@@ -26,7 +26,6 @@ end
 require 'sidekiq/api'
 require 'sidekiq-limit_fetch'
 
-
 # Global vars
 $intrigue_basedir = File.dirname(__FILE__)
 $intrigue_environment = ENV.fetch("INTRIGUE_ENV","development")
