@@ -68,8 +68,24 @@ module VulnCheck
   proof
   end
   
-  def get_vulndb_matches(cpe)
+  #def get_vulndb_matches(cpe)
     # if you have a key, go to api.intrigue.db
+  #end
+
+  def get_version_for_vendor_product(entity, vendor, product)
+    fingerprints = entity.get_detail("fingerprint")
+    return nil unless fingerprints
+
+    version = nil
+    fingerprints.each do |f|
+      if f["vendor"] == vendor && f["product"] == product && f["version"] != "" && f["version"] != nil
+        version = f["version"]
+        break
+      end
+    end
+
+    version
+
   end
 
 end

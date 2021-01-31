@@ -14,7 +14,9 @@ class BaseCheck < BaseTask
 
   def self.metadata
     return nil unless issue_class    
-    issue_class.generate.merge!(check_metadata) 
+    issue_metadata = issue_class.generate
+    issue_metadata[:pretty_name] = "Vuln Check - #{issue_metadata[:pretty_name]}"
+    return issue_metadata.merge!(check_metadata) 
   end
 
   def run 
