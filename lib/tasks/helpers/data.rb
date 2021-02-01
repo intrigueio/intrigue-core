@@ -79,7 +79,14 @@ module Data
     ]   
   end
 
-
+  # Some domains provide a cert which is valid for many other domains
+  # this is, sometimes, very annoying, as you can't really be sure if the 
+  # other domains are related to your organization. We know the following 
+  # domains below are those that will host a single "universal" certificate
+  # and thus, this list exists to scope those out of the normal collection 
+  # process. More here: 
+  # - https://blog.cloudflare.com/introducing-universal-ssl/ 
+  #
   def get_universal_cert_domains
     [
       "acquia-sites.com",
@@ -90,6 +97,7 @@ module Data
       "cloudflaressl.com",
       "distilnetworks.com",
       "edgecastcdn.net",
+      "edlio.net", # https://edlio.com/
       "helloworld.com",
       "hexagon-cdn.com",# TODO - worth revisiting,may include related hosts
       "fastly.net",
