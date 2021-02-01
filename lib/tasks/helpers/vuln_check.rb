@@ -67,10 +67,6 @@ module VulnCheck
 
   proof
   end
-  
-  #def get_vulndb_matches(cpe)
-    # if you have a key, go to api.intrigue.db
-  #end
 
   def get_version_for_vendor_product(entity, vendor, product)
     fingerprints = entity.get_detail("fingerprint")
