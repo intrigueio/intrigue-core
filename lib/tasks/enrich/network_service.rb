@@ -58,7 +58,7 @@ class NetworkService < Intrigue::Task::BaseTask
     create_issues_from_fingerprint_tags(fingerprint, @entity)
     
     # Create issues for any vulns that are version-only inference
-    fingerprint_to_inference_issues(fingerprint, @entity)
+    get_issue_by_cve_identifier(fingerprint, @entity)
 
     # Okay, now kick off vulnerability checks (if project allows)
     if @project.vulnerability_checks_enabled

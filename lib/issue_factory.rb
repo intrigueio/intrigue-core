@@ -31,14 +31,19 @@ module Intrigue
       #
       # Returns an issue name if the check matches a inference:[CVE_ID]
       #
-      def self.get_issue_by_inferred_cve(cve_id)
+      def self.get_issue_by_cve_identifier(cve_id)
         # First, get all issues with a named CVE 
+        issue_name = nil
         self.issues.each do |h| 
           # generate the instances
           issue_instance = h.generate({})
-          return issue_instance[:name] if issue_instance[:check] =~ /inference:#{cve_id}/i      
+          if issue_instance[:identifiers]
+            if issue_instance[:identifiers].include?({type: "CVE", name: "#{cve_id}"})
+              issue_name = issue_instance[:name]
+            end
+          end
         end
-      nil
+      issue_name
       end
     
       #
