@@ -15,7 +15,7 @@ module Intrigue
         description: "A Java deserialization vulnerability exists in Liferay Portal's JSON Web Services (JSONWS). Success exploitation allows an unauthorized attacker to perform remote code execution in Liferay Portal versions 7.2.0 and earlier",
         remediation: "Update to the latest Liferay Portal version.",
         affected_software: [
-            { :vendor => "Liferay", :product => "Portal"}
+            { :vendor => "Liferay", :product => "Liferay Portal"}
         ],
         references: [
             { type: "description", uri: "https://portal.liferay.dev/learn/security/known-vulnerabilities/-/asset_publisher/HbL5mxmVrnXW/content/id/117954271" },

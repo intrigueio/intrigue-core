@@ -12,9 +12,8 @@ module Ident
       next unless fp["vulns"]
       fp["vulns"].each do |vuln|
         # get and create the issue here 
-        issue_name = Intrigue::Issue::IssueFactory.get_issue_by_inferred_cve(vuln[:cve])
+        issue_name = Intrigue::Issue::IssueFactory.get_issue_by_cve_identifier(vuln["cve"])
         next unless issue_name
-
         # if we're here, go ahead and create the linked issue!
         _create_linked_issue issue_name, { "proof" => fp }
       end
