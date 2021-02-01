@@ -38,9 +38,6 @@ else # every other environment, including prodcution-oss
   # no sidekiq pro, so fall back to oss sidekiq
   gem 'sidekiq'
   
-  # pull prod ident 
-  gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git', :branch => "main"
-  
 end
 
 gem 'sidekiq-failures'        # Background Tasks
@@ -109,6 +106,9 @@ gem 'whoisology',             :git => 'https://github.com/pentestify/whoisology.
 gem 'open3'
 gem 'typhoeus'
 gem 'zetalytics'
+
+# pull prod ident 
+gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git', :branch => "main"
 
 # comment if developing on chrome_remote locally
 gem 'chrome_remote',          :git => 'https://github.com/intrigueio/chrome_remote.git'
