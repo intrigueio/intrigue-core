@@ -14,6 +14,7 @@ Vagrant.configure("2") do |config|
       bundle install
       bundle exec setup
       bundle exec rake db:migrate
+      rbenv rehash
       foreman start
     SHELL
  
