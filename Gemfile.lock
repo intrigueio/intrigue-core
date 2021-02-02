@@ -32,6 +32,19 @@ GIT
     dnsbl-client (1.0.4)
 
 GIT
+  remote: https://github.com/intrigueio/intrigue-ident.git
+  revision: 968de916dd02adc0e51a81fdba22ec6401357374
+  branch: main
+  specs:
+    intrigue-ident (4.1.7)
+      dnsruby
+      murmurhash3
+      recog-intrigue
+      snmp
+      socketry
+      typhoeus
+
+GIT
   remote: https://github.com/intrigueio/ip_ranger
   revision: e1e4080070cf699cd0b80c5c8d6d5dddfc19d4b8
   specs:
@@ -91,33 +104,6 @@ GIT
   revision: e143ac84c6b1baf72ea7cb8a3d8bdfb260f96e36
   specs:
     whoisology (0.1.0)
-
-PATH
-  remote: ../../../../intrigue-core-private
-  specs:
-    intrigue-core-private (1.3.8)
-
-PATH
-  remote: ../../../../intrigue-ident-private
-  specs:
-    intrigue-ident-private (4.1.2)
-
-PATH
-  remote: ../../../../intrigue-ident
-  specs:
-    intrigue-ident (4.1.7)
-      dnsruby
-      murmurhash3
-      recog-intrigue
-      snmp
-      socketry
-      typhoeus
-
-PATH
-  remote: ../../../../ruclei
-  specs:
-    ruclei (0.0.3)
-      typhoeus
 
 PATH
   remote: api_client
@@ -515,9 +501,7 @@ DEPENDENCIES
   googleajax
   googleauth
   iconv
-  intrigue-core-private!
   intrigue-ident!
-  intrigue-ident-private!
   intrigue_api_client!
   ip_ranger!
   ipaddr
@@ -545,7 +529,6 @@ DEPENDENCIES
   rspec
   ruby-nmap!
   rubyzip
-  ruclei!
   sentry-raven
   sequel
   shodan
