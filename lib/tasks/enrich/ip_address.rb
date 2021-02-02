@@ -44,7 +44,7 @@ class IpAddress < Intrigue::Task::BaseTask
     ####
     ### Create aliased entities
     #### 
-    create_dns_aliases(results, @entity, true) if entity_scoped
+    create_dns_aliases(results, @entity) if entity_scoped
 
     results.each do |result|
       # if we're external, let's see if this matches 
