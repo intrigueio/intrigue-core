@@ -4,7 +4,9 @@ Vagrant.configure("2") do |config|
   config.vm.define "intrigue-core" do |x|
 
     # install all deps 
-    x.vm.provision :shell, privileged: false, path: "util/bootstrap.sh"
+    x.vm.provision :shell, privileged: false, inline: <<-SHELL
+      /home/ubuntu/util/bootstrap.sh development
+    SHELL
 
     # run setup and start the service
     x.vm.provision "shell", privileged: false, inline: <<-SHELL
