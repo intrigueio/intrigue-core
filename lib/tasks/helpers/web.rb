@@ -164,11 +164,14 @@ module Task
 
       # first initiate the TCP socket
       begin
+
         # Initiate the socket connection in the background. If it doesn't fail
         # immediately it will raise an IO::WaitWritable (Errno::EINPROGRESS)
         # indicating the connection is in progress.
-          tcp_socket.connect_nonblock(sockaddr)
+        tcp_socket.connect_nonblock(sockaddr)
+        
       rescue IO::WaitWritable
+        
         # select will block until the socket is writable or the timeout
         # is exceeded, whichever comes first.
         unless _select_with_timeout(tcp_socket, :connect_write, timeout)
@@ -195,34 +198,41 @@ module Task
         # Initiate the socket connection in the background. If it doesn't fail
         # immediately it will raise an IO::WaitWritable (Errno::EINPROGRESS)
         # indicating the connection is in progress.
+        
         # Unlike waiting for a tcp socket to connect, you can't time out ssl socket
         # connections during the connect phase properly, because IO.select only partially works.
         # Instead, you have to retry.
+
         ssl_socket.connect_nonblock
+
       rescue Errno::EAGAIN, Errno::EWOULDBLOCK, IO::WaitReadable
+        
         if _select_with_timeout(ssl_socket, :connect_read, timeout)
           _log "retrying... attempt: #{attempts}/#{max_attempts}"
-          retry unless attempts == max_attempts
+          retry unless attempts >= max_attempts
         else
           ssl_socket.close
           tcp_socket.close
           raise Errno::ETIMEDOUT
         end
+
       rescue IO::WaitWritable
+        
         if _select_with_timeout(ssl_socket, :connect_write, timeout)
           _log "retrying... attempt: #{attempts}/#{max_attempts}"
-          retry unless attempts == max_attempts
+          retry unless attempts >= max_attempts
         else
           ssl_socket.close
           tcp_socket.close
           raise Errno::ETIMEDOUT
         end
+
       end
 
     rescue OpenSSL::SSL::SSLError => e
       _log_error "Error requesting resource, skipping: #{hostname} #{port}: #{e}"
       _log "retrying... attempt: #{attempts}/#{max_attempts}"
-      retry unless attempts == max_attempts
+      retry unless attempts >= max_attempts
     rescue SocketError => e
       _log_error "Error requesting resource, skipping: #{hostname} #{port}: #{e}"
     rescue Errno::EINVAL => e
@@ -239,7 +249,7 @@ module Task
       _log_error "Error requesting cert - refused, skipping: #{hostname} #{port}: #{e}"
       _log_error "Error requesting resource, skipping: #{hostname} #{port}"
       _log "retrying... attempt: #{attempts}/#{max_attempts}"
-      retry unless attempts == max_attempts
+      retry unless attempts >= max_attempts
     rescue Errno::ENETUNREACH
       # unable to connect
       _log_error "Error requesting cert, skipping: #{hostname} #{port}: #{e}"
@@ -247,7 +257,7 @@ module Task
       _log_error "Error requesting cert - timed out, timeout: #{hostname} #{port}: #{e}"
       _log_error "Error requesting resource, skipping: #{hostname} #{port}"
       _log "retrying... attempt: #{attempts}/#{max_attempts}"
-      retry unless attempts == max_attempts
+      retry unless attempts >= max_attempts
     rescue Errno::EHOSTUNREACH => e
       _log_error "Error requesting cert, skipping: #{hostname} #{port}: #{e}"
     ensure

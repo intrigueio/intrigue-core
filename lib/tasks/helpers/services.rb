@@ -135,18 +135,18 @@ module Services
             next
           end
 
+          entity_details = {
+            "name" => uri,
+            "uri" => uri,
+            "service" => prefix
+          }.merge!(generic_details)
+  
+          # Create entity
+          _create_entity("Uri", entity_details)  
+
         else 
-          _log "Skipping Page grab, entity already exists"
+          _log "Skipping Page grab, entity: #{ip_entity.name} already exists"
         end
-
-        entity_details = {
-          "name" => uri,
-          "uri" => uri,
-          "service" => prefix
-        }.merge!(generic_details)
-
-        # Create entity
-        _create_entity("Uri", entity_details)
 
       # otherwise, create a network service on the IP, either UDP or TCP - fail otherwise
       elsif protocol == "tcp" && h.name.strip.is_ip_address?
