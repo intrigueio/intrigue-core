@@ -12,6 +12,19 @@ module Task
 module Services
 
   include Intrigue::Task::Web
+  
+  def get_certificate(hostname, port, timeout=30)
+    # connect
+    socket = connect_ssl_socket(hostname,port,timeout)
+    return nil unless socket && socket.peer_cert
+    # Grab the cert
+    cert = OpenSSL::X509::Certificate.new(socket.peer_cert)
+    # parse the cert
+    socket.sysclose
+    # get the names
+    cert
+  end
+
 
   def _create_network_service_entity(ip_entity,port_num,protocol="tcp",generic_details={})
 
@@ -48,7 +61,10 @@ module Services
       cert = get_certificate(ip_entity.name,port_num)
 
       if cert 
-        cert_names = parse_names_from_cert(cert)       
+        
+        # grabs cert names, if not a universal cert 
+        cert_names = parse_names_from_cert(cert)    
+
         generic_details.merge!({
           "alt_names" => cert_names,
           "cert" => {
@@ -67,7 +83,7 @@ module Services
         # DnsRecord, Domain, or IpAddress.
         if cert_names
           cert_names.uniq do |cn|
-            cert_entities << create_dns_entity_from_string(cn)
+            cert_entities << create_dns_entity_from_string(cn) 
           end
         end
 
@@ -203,6 +219,8 @@ module Services
         
   end
 
+
+  
   ## Default method, subclasses must override this
   def _masscan_netblock(range,tcp_ports,udp_ports,max_rate=1000)
 

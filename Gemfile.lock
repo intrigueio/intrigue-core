@@ -32,19 +32,6 @@ GIT
     dnsbl-client (1.0.4)
 
 GIT
-  remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: fc51a8e61d0de7cdbe943fd8572ee568a9da157c
-  branch: main
-  specs:
-    intrigue-ident (4.1.7)
-      dnsruby
-      murmurhash3
-      recog-intrigue
-      snmp
-      socketry
-      typhoeus
-
-GIT
   remote: https://github.com/intrigueio/ip_ranger
   revision: e1e4080070cf699cd0b80c5c8d6d5dddfc19d4b8
   specs:
@@ -104,6 +91,33 @@ GIT
   revision: e143ac84c6b1baf72ea7cb8a3d8bdfb260f96e36
   specs:
     whoisology (0.1.0)
+
+PATH
+  remote: ../../../../intrigue-core-private
+  specs:
+    intrigue-core-private (1.3.8)
+
+PATH
+  remote: ../../../../intrigue-ident-private
+  specs:
+    intrigue-ident-private (4.1.2)
+
+PATH
+  remote: ../../../../intrigue-ident
+  specs:
+    intrigue-ident (4.1.7)
+      dnsruby
+      murmurhash3
+      recog-intrigue
+      snmp
+      socketry
+      typhoeus
+
+PATH
+  remote: ../../../../ruclei
+  specs:
+    ruclei (0.0.3)
+      typhoeus
 
 PATH
   remote: api_client
@@ -203,7 +217,7 @@ GEM
     ethon (0.12.0)
       ffi (>= 1.3.0)
     eventmachine (1.2.7)
-    excon (0.78.1)
+    excon (0.79.0)
     faraday (0.17.3)
       multipart-post (>= 1.2, < 3)
     faraday-http-cache (1.3.1)
@@ -411,7 +425,7 @@ GEM
     rubyzip (2.3.0)
     sentry-raven (2.13.0)
       faraday (>= 0.7.6, < 1.0)
-    sequel (5.40.0)
+    sequel (5.41.0)
     shodan (1.0.0)
       json (>= 1.4.6)
     sidekiq (6.1.3)
@@ -501,7 +515,9 @@ DEPENDENCIES
   googleajax
   googleauth
   iconv
+  intrigue-core-private!
   intrigue-ident!
+  intrigue-ident-private!
   intrigue_api_client!
   ip_ranger!
   ipaddr
@@ -529,6 +545,7 @@ DEPENDENCIES
   rspec
   ruby-nmap!
   rubyzip
+  ruclei!
   sentry-raven
   sequel
   shodan

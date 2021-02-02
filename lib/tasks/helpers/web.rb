@@ -134,7 +134,7 @@ module Task
   end
 
   # See: https://raw.githubusercontent.com/zendesk/ruby-kafka/master/lib/kafka/ssl_socket_with_timeout.rb
-  def connect_ssl_socket(hostname, port, timeout=15, max_attempts=3)
+  def connect_ssl_socket(hostname, port, timeout=10, max_attempts=1)
     # Create a socket and connect
     # https://apidock.com/ruby/Net/HTTP/connect
     attempts=0
@@ -276,7 +276,7 @@ module Task
     end
   end
 
-  def parse_names_from_cert(cert, skip_hosted=true)
+  def parse_names_from_cert(cert, skip_suspicious=true)
 
     # default to empty alt_names
     alt_names = []
@@ -302,14 +302,14 @@ module Task
 
           universal_cert_domains.each do |cert_domain|
             if alt_name.match(/#{cert_domain}$/) 
-              _log "This is a universal #{cert_domain} certificate, no entity creation"
-              return
+              _log "This is a universal #{cert_domain} certificate, returning empty list"
+              return []
             end
           end
 
         end
 
-        if skip_hosted
+        if skip_suspicious
           # Generically try to find certs that aren't useful to us
           suspicious_count = 20
           # Check to see if we have over suspicious_count top level domains in this cert
@@ -317,8 +317,8 @@ module Task
             # and then check to make sure none of the domains are greate than a quarter
             _log "This looks suspiciously like a third party cert... over #{suspicious_count} unique TLDs: #{tlds.uniq.count}"
             _log "Total Unique Domains: #{alt_names.uniq.count}"
-            _log "Bailing!"
-            return
+            _log "Returning empty list"
+            return []
           end
         end
       end
