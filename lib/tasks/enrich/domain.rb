@@ -37,7 +37,7 @@ class Domain < Intrigue::Task::BaseTask
     ####
     ### Create aliased entities
     #### 
-    create_dns_aliases(results, @entity, !entity_scoped)
+    create_dns_aliases(results, @entity, true) if entity_scoped
 
     resolutions = collect_resolutions(results)
     _set_entity_detail("resolutions", resolutions )
