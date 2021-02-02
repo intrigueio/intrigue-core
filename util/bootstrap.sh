@@ -352,6 +352,9 @@ sudo apt-get -y clean
 ###
 if [ "$BOOTSTRAP_ENV" == "production" ] && !$(grep -q intriguectl ~/.bash_profile); then
 
+  echo "echo \"Welcome to Intrigue Core! For help, join the community at https://core.intrigue.io\"" >> ~/.bash_profile
+  echo "echo \"\"" >> ~/.bash_profile
+
   # add welcome message
   echo "[+] Adding intrigue to path"
   ln -s ~/core/util/intriguectl ~/go/bin/intriguectl 2> /dev/null
