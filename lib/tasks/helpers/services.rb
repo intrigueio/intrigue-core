@@ -101,6 +101,9 @@ module Services
     
     # add in our aliases 
     hosts.concat(ip_entity.aliases)
+
+    # remove out deny list entities, no sense in wasting time on them
+    hosts = hosts.select{|x| !x.project.deny_list_entity?(item) } 
     
     create_service_lambda = lambda do |h|
       try_http_ports = scannable_web_ports
