@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
       sudo -u postgres createuser intrigue -s
       sudo -u postgres createdb intrigue_dev
       bundle install
-      bundle exec setup
+      bundle exec rake setup
       bundle exec rake db:migrate
       rbenv rehash
       foreman start
