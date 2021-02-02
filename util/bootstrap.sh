@@ -5,6 +5,14 @@
 #####
 
 # if these are already set by our parent, use that.. otherwise sensible defaults
+if [ "$1" == "development" ]; then
+  echo "Dev Bootstrap Starting!"; 
+  BOOTSTRAP_ENV=development
+else 
+  echo "Production Bootstrap Starting!";
+  BOOTSTRAP_ENV=production
+fi 
+
 export INTRIGUE_DIRECTORY="${IDIR:=/home/$USER/core}"
 export RUBY_VERSION="${RUBY_VERSION:=2.7.2}"
 export DEBIAN_FRONTEND=noninteractive
@@ -256,7 +264,6 @@ echo "enable memory overcommit"
 sudo bash -c "echo vm.overcommit_memory=0 >> /etc/sysctl.conf"
 sudo sysctl -p
 
-
 echo "Bumping ulimit file/proc settings in /etc/security/limits.conf"
 sudo bash -c "echo 'root hard nofile 524288' >> /etc/security/limits.conf"
 sudo bash -c "echo 'root soft nofile 524288' >> /etc/security/limits.conf"
@@ -336,24 +343,26 @@ cd $INTRIGUE_DIRECTORY
 bundle update --bundler
 bundle install
 
-# TOOD ... remove this on next major release
-echo "[+] Intrigue services exist, removing... (ec2 legacy)"
-if [ ! -f /etc/init.d/intrigue ]; then
-  rm -rf /etc/init.d/intrigue
-fi
-
 # Cleaning up
 echo "[+] Cleaning up packages!"
 sudo apt-get -y clean
 
-# add welcome message
-if ! $(grep -q intriguectl ~/.bash_profile); then
-  echo "[+] Configuring startup message"
-  echo "boxes -a c $INTRIGUE_DIRECTORY/util/README" >> ~/.bash_profile
+###
+### Only in production should we continue on to do this
+###
+if [ "$BOOTSTRAP_ENV" == "production" ] && !$(grep -q intriguectl ~/.bash_profile); then
+
+  echo "echo \"Welcome to Intrigue Core! For help, join the community at https://core.intrigue.io\"" >> ~/.bash_profile
   echo "echo \"\"" >> ~/.bash_profile
 
+  # add welcome message
   echo "[+] Adding intrigue to path"
-  echo "ln -s ~/core/util/intriguectl ~/go/bin/intriguectl 2> /dev/null" >> ~/.bash_profile
+  ln -s ~/core/util/intriguectl ~/go/bin/intriguectl 2> /dev/null
+  
+  # always tell the user they have intriguectl 
   echo "intriguectl" >> ~/.bash_profile
+
+else
+  echo "echo \"CORE DEVEOPMENT ENVIRONMENT! Use foreman to manage services!\"" >> ~/.bash_profile  
 fi
 
