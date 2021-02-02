@@ -1,6 +1,6 @@
 # Welcome!
 
-Intrigue Core is an open framework for discovering and enumerating the attack surface of organizations. It can be used with a human-in-the-loop running individual tasks, or fully automated through the use of machine files. With a flexible entity model and deep enrichment system, it is the most full-featured open source framework for discovering attack surface.
+Intrigue Core is the open attack surface enumeration engine. It discovers security relevant assets and exposures for a given organization and can be used with a human-in-the-loop running individual tasks, or fully automated through the use of workflows. With a flexible asset model and deep enrichment system, it is the most full-featured open source framework of its kind.
 
 If you'd like assistance getting started or have development-related questions, feel free to join us in our [Intrigue Community slack](https://join.slack.com/t/intrigue-community/shared_invite/zt-gh42ghi8-P~Z6wf1Bj5097vLLuqen6g) channel. For all other questions, you can simply drop an email to hello-at-intrigue.io
 
