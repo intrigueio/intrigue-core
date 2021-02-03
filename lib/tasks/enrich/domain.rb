@@ -136,26 +136,22 @@ class Domain < Intrigue::Task::BaseTask
     end
 
     ###
-    ### Scope all aliases if we're scoped ... note this might be unnecessary
+    ### Create vhost by creating network service entity (which 
+    ### will automatically look at all aliases of this entity)
     ###
-    @entity.aliases.each do |a|
-      next if entity_scoped
-      next if a.id == @entity.id # we're already scoped. 
-      next unless a.type_string == "IpAddress" #only proceed for ip addresses
-      
-      # set scoped unless this belongs to a known global entity
-      #_log "Setting #{a.name} scoped!"
-      #a.set_scoped!(true, "alias_of_entity_#{@task_result.name}")         
-
-      # now re-create all network services, since we'll have a new hosname
-      next unless a.get_detail("ports")
-      a.get_detail("ports").each do |p|
+    if entity_scoped
+      (_get_entity_detail("ports") || [] ).each do |p|
+        
+        # only web ports 
         next unless scannable_web_ports.include? p["number"]
+      
+        # skip if we already have a uri
+        proto = "#{p["number"]}" =~ /443/ ? "https" : "http"
+        next if entity_exists?(@project, "Uri", "#{proto}://#{lookup_name}:#{p["number"]}")
+        
         _create_network_service_entity a, p["number"], p["protocol"] 
       end 
-        
     end
-     
 
   end
 
