@@ -32,12 +32,15 @@ module Intrigue
       }
     end
 
+    # return truthy value to create an issue
     def check
-
+      
       # run a nuclei 
       uri = _get_entity_name
       template = "vulnerabilities/moodle-filter-jmol-lfi"
       
+      # if this returns truthy value, an issue will be raised
+      # the truthy value will be added as proof to the issue
       run_nuclei_template uri, template
     end
 

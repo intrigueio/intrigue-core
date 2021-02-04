@@ -84,6 +84,21 @@ module VulnCheck
 
   end
 
+  def fingerprint_to_inference_issues(fingerprint)
+    fingerprint.each do |fp| 
+      next unless fp["vulns"]
+      fp["vulns"].each do |vuln|
+        # get and create the issue here 
+        issue_metadata = Intrigue::Issue::IssueFactory.get_issue_by_cve_identifier(vuln["cve"])
+        next unless issue_metadata
+        
+        # if we have an issue who has that cve as an identifiger, run the check task
+        task_name = issue_metadata[:name]
+        start_task("task_autoscheduled", @project, @task_result.scan_result_id, task_name, @entity, 1)
+      end
+    end
+  end
+
 end
 end
 end
