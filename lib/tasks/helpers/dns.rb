@@ -406,14 +406,10 @@ module Dns
     end
 
     # create issues for resolutions to localhost
-    begin
-      dns_entries.uniq.each do |o|
-        if o["response_data"] == "127.0.0.1"
-          _create_linked_issue("resolves_to_localhost", {details: o})
-        end
+    dns_entries.uniq.each do |o|
+      if o["response_data"] == "127.0.0.1"
+        _create_linked_issue("resolves_to_localhost", {details: o})
       end
-    rescue PG::UniqueViolation
-      # ignore this error since it is thrown when the issue already exists
     end
   
   dns_entries.uniq
