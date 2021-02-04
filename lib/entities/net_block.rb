@@ -4,15 +4,15 @@ class NetBlock < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "NetBlock",
-      :description => "A Block of IPs",
-      :user_creatable => true,
-      :example => "1.1.1.1/24"
+      name: "NetBlock",
+      description: "A Block of IPs",
+      user_creatable: true,
+      example: "1.1.1.1/24"
     }
   end
 
   def validate_entity
-    name.match(netblock_regex) || name.match(netblock_regex_two)
+    name.match(netblock_regex(true)) || name.match(netblock_regex_two(true))
   end
 
   def detail_string
@@ -27,8 +27,9 @@ class NetBlock < Intrigue::Core::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
-    return true if self.allow_list
-    return false if self.deny_list
+    return true if scoped
+    return true if self.allow_list || self.project.allow_list_entity?(self) 
+    return false if self.deny_list || self.project.deny_list_entity?(self)
 
     our_ip = self.name.split("/").first
     our_route = self.name.split("/").last.to_i
@@ -69,13 +70,17 @@ class NetBlock < Intrigue::Core::Model::Entity
 
     ### Now check our seed entities for a match
     ######################################################
-    if self.project.seeds
-      self.project.seeds.each do |s|
-        next unless scope_check_entity_types.include? "#{s.type}"
-        if whois_text.match /@#{Regexp.escape(s.name)}/i
+    if self.project.seeds.first
+      self.project.seeds.select_map([:type,:name]).each do |x|
+        xtype = x.first; xname = x.last
+
+        next unless scope_check_entity_types.include? "#{xtype}"
+        if whois_text.match /@#{Regexp.escape(xname)}/i
           
           # Log our scope change
-          log_string = " - [#{s.project.name}] Entity #{s.type} #{s.name} set scoped on #{self.name} to true, reason: whois text matched #{s.name}"
+          log_string = " - [#{self.project.name}] Entity #{xtype} #{xname} set scoped on #{self.name} " + 
+                        "to true, reason: whois text matched #{xname}"
+
           Intrigue::Core::Model::ScopingLog.log log_string
 
           return true

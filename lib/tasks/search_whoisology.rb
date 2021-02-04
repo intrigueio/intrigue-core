@@ -11,7 +11,7 @@ class SearchWhoisology < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["Domain","DnsRecord", "EmailAddress", "UniqueKeyword"],
+      :allowed_types => ["Domain", "DnsRecord", "EmailAddress", "UniqueKeyword"],
       :example_entities => [{"type" => "EmailAddress", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [],
       :created_types => ["DnsRecord","Info"]
@@ -35,8 +35,9 @@ class SearchWhoisology < BaseTask
       _log_good "Creating entities for #{result["count"]} results."
     
       if result["domains"]
-        result["domains"].each {|d| 
-          _create_entity "Domain", {"name" => d["domain_name"]}, "scoped" => true }
+        result["domains"].each do |d| 
+          _create_entity "Domain", { "name" => d["domain_name"], "scoped" => true }
+        end
       else
         _log_error "No domains, do we have API credits?"
       end
@@ -62,8 +63,9 @@ class SearchWhoisology < BaseTask
       _log_good "Creating entities for #{result["count"]} results."
     
       if result["domains"]
-        result["domains"].each {|d| 
-          _create_entity "Domain", {"name" => d["domain_name"]}, "scoped" => true }
+        result["domains"].each do |d| 
+          _create_entity "Domain", {"name" => d["domain_name"], "scoped" => true } 
+        end 
       else
         _log_error "No domains, do we have API credits?"
       end

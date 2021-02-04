@@ -11,7 +11,7 @@ class SearchBgp < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["IpAddress","NetBlock","Organization", "String"],
+      :allowed_types => ["IpAddress","NetBlock","Organization", "String", "UniqueKeyword"],
       :example_entities => [
         {"type" => "String", "details" => {"name" => "intrigue"}}
       ],
@@ -55,7 +55,7 @@ class SearchBgp < BaseTask
 
     begin
       lookup_name = entity_name.split("/").first
-      json_resp = JSON.parse http_get_body "https://intrigue.io/api/bgp/netblock/search/#{lookup_name}"
+      json_resp = JSON.parse http_get_body "https://app.intrigue.io/api/bgp/netblock/search/#{lookup_name}"
 
       json_resp.each do |r|
 

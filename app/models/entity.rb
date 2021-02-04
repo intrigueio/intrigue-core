@@ -3,6 +3,7 @@ module Intrigue
 module Core
 module Model
 class EntitiesTaskResults < Sequel::Model
+  self.raise_on_save_failure = false
 end
 end
 end
@@ -23,6 +24,9 @@ module Model
     many_to_many :task_results
     many_to_one  :project
     one_to_many  :issues
+
+    include Intrigue::Core::System::DnsHelpers
+    include Intrigue::Core::System::Validations
     
     def self.inherited(base)
       EntityFactory.register(base)
@@ -75,13 +79,13 @@ module Model
     def set_scoped!(bool_val=true, reason=nil)
 
       # always respect the deny list
-      if self.project.deny_list_entity?(type_string, name)
+      if project.deny_list_entity?(self)
         bool_val = false
         reason = "deny_list_override"
       end
 
       # but always ALWAYS respect the allow list
-      if self.project.allow_list_entity?(type_string, name)
+      if project.allow_list_entity?(self)
         bool_val = true
         reason = "allow_list_override"
       end
@@ -98,7 +102,7 @@ module Model
     end
 
     def seed?
-      true if self.project.seeds.map{|x| self.name == x.name }
+      true if project.seeds.first(:name => self.name)
     false
     end
 
@@ -125,21 +129,45 @@ module Model
       extended_details.count > 1 # hidden_name will always exist...
     end
 
+    # 
+    # This method allows us to easily specify a list of type / name pairs for the 
+    # purpose of verifying scope. The default, is just our own type/name, but consider
+    # the example of a URI ... we want to verify the URI itself, the hostname (if
+    # not an IP), AND the domain
+    #
+    #
+    def scope_verification_list
+      [
+        { type_string: self.type_string, name: self.name }
+      ]
+    end
+
     # override me... see: lib/entities/aws_credential.rb
     def transform!
       true
     end
 
+    # this is just a convenience method 
     def enriched?
       self.enriched
     end
 
     # overridden in the individual entities
     def enrichment_tasks
-      []
+      ['enrich/generic']
     end
 
     def enrich(task_result)
+
+      # immediately fail if this is not autoscheduled 
+      ###
+      ### Optimization put in place 2020-01-12 ... note that this may not 
+      ### work for every use case and should be revisited at a later date
+      ###
+      if self.deny_list
+        task_result.log "Cowardly refusing to enrich enitty on our deny list!: #{task_result.name} #{self.name}"
+        return nil
+      end
 
       # grab the task result
       scan_result_id = task_result.scan_result.id if task_result.scan_result 
@@ -165,10 +193,8 @@ module Model
           start_task("task_enrichment", self.project, scan_result_id, task_name, self, task_result_depth, [], [], workflow_name, true)
         end
 
-      else # always enrich, even if something is not configured
-        start_task("task_enrichment", self.project, scan_result_id, "enrich/generic", self, task_result_depth, [], [], workflow_name, true)
-      end
-
+      end 
+      
     end
 
     def alias_to(new_id)
@@ -199,9 +225,14 @@ module Model
       aliases.select{|x| x.name unless x.hidden }.sort_by{|x| x.name }.uniq
     end
 
-    def has_detail(key)
+    def has_detail?(key)
       return nil unless self.details
       details[key] != nil
+    end
+
+    def delete_detail(key)
+      details = self.details.except(key)
+      save_changes
     end
 
     def get_detail(key)
@@ -255,6 +286,20 @@ module Model
     # @return [String] light details about this entity
     def detail_string
       nil
+    end
+
+    # Short string with fingeprint details.
+    #
+    # @return [String]  Semicolon delimted list of fingeprrints
+    def short_fingerprint_string(fingerprint)
+      fingerprint_array = fingerprint.map do |x| 
+        if x['vendor'] == x['product']
+          fp = "#{x['vendor']} #{x['version']} #{x['update']}".strip # start with just vendor + version
+        else # if vendor and product arenot the same, add product
+          fp = "#{x['vendor']} #{x['product']} #{x['version']} #{x['update']}".strip
+        end
+      end
+      out = "Fingerprint: #{fingerprint_array.sort.uniq.join("; ")}" if details["fingerprint"]
     end
 
     # Marks the entity and aliases as deleted (but doesnt actually delete)
@@ -335,8 +380,6 @@ module Model
           :deleted => deleted,
           :hidden => hidden,
           :scoped => scoped,
-          :allow_list => allow_list,
-          :deny_list => deny_list,
           :alias_group => alias_group_id,
           :detail_string => detail_string
         }
@@ -365,8 +408,6 @@ module Model
         :scoped => scoped,
         :scoped_at => scoped_at,
         :scoped_reason => scoped_reason,
-        :allow_list => allow_list,
-        :deny_list => deny_list,
         :alias_group => alias_group_id,
         :detail_string => detail_string,
         :details => export_details,

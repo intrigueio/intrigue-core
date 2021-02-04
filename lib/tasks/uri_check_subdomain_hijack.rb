@@ -42,7 +42,7 @@ class UriCheckSudomainHijack  < BaseTask
     ###
     if response_body
 
-      if response_body.match(/The specified bucket does not exist/i) && !(uri =~ /amazonaws.com/ || uri =~ /aws.amazon.com/)
+      if response_body.match(/The specified bucket does not exist/i) && !(uri =~ /amazonaws.com/ || uri =~ /aws.amazon.com/ || uri =~ /googleapis.com/)
         _create_hijackable_subdomain_issue "AWS S3", uri, "potential"
 
       elsif response_body.match /If you are an Acquia Cloud customer and expect to see your site/i
@@ -223,9 +223,6 @@ class UriCheckSudomainHijack  < BaseTask
 
       elsif response_body.match /Oops \- We didn\'t find your site/i
         _create_hijackable_subdomain_issue "Teamwork", uri, "potential"
-
-      elsif response_body.match /You may have mistyped the address or the page may have moved/i
-        _create_hijackable_subdomain_issue "Thinkific", uri, "potential"
 
       elsif response_body.match(/Building a brand of your own\?/) || 
               response_body.match(/to target URL\: \<a href\=\"https\:\/\/tictail\.com/) || 

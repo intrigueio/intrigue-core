@@ -30,6 +30,7 @@ class BaseTask
   end
 
   def perform(task_result_id)
+
     ### This method is used by a couple different TYPES...
     # normal tasks... which are simple, just run and exit
     # enrichment tasks.. which must notify when done, and will launch a workflow!!!
@@ -40,6 +41,7 @@ class BaseTask
     # gracefully handle situations where the task result has gone missing
     # usually this is a deleted project
     return nil unless @task_result
+    
 
     ###########################
     #  Setup the task result  #
@@ -55,10 +57,17 @@ class BaseTask
     @project = @task_result.project
     options = @task_result.options
 
-    # we must have these things to continue (if they're missing, fail)
-    unless @task_result && @project && @entity
-      _log_error "Unable to find task_result. Bailing." unless @task_result
+    # at any time, our project can go missing, and it's best if we just 
+    # return without going any further 
+    unless @project
       _log_error "Unable to find project. Bailing." unless @project
+      return nil 
+    end 
+
+    # we must have these things to continue - something went seriously 
+    # wrong if they're missing 
+    unless @task_result &&  @entity
+      _log_error "Unable to find task_result. Bailing." unless @task_result
       _log_error "Unable to find entity. Bailing." unless @entity
       return 
     end
@@ -86,7 +95,7 @@ class BaseTask
         name: our_task_result_name).exclude(timestamp_start: nil).exclude(id: @task_result.id)
 
       # if we've already completed another one, return eearly
-      if existing_task_results.count > 0
+      if existing_task_results.first
         _log "This task is in progress, or has already been completed in this project"
         
         # we want to be able to intelligently re-run flows we havent seen before... this is a way to do that 
@@ -159,21 +168,34 @@ class BaseTask
 
               _log_error "Missing task configuration, please check configuration for this task: #{e}"
               Intrigue::NotifierFactory.default.each { |x|  # if configured, notify! 
-                x.notify("Missing Task Configuration: #{@entity.type} #{@entity.name}" , @task_result) }
+                x.notify("Missing Task Configuration: #{@entity.type} #{@entity.name} #{e}" , @task_result) }
 
             rescue  InvalidTaskConfigurationError => e 
   
               _log_error "Invalid task configuration, please check configuration for this task: #{e}"
               Intrigue::NotifierFactory.default.each { |x| # if configured, notify! 
-                x.notify("Invalid Task Configuration: #{@entity.type} #{@entity.name}" , @task_result) }
+                x.notify("Invalid Task Configuration: #{@entity.type} #{@entity.name} #{e}" , @task_result) }
 
             rescue InvalidEntityError => e 
              
               _log_error "Invalid entity attempted #{e}"
               _log_error "Probably a bug, report at: https://github.com/intrigueio/intrigue-core/issues"
+              
               Intrigue::NotifierFactory.default.each { |x| # if configured, notify! 
-                x.notify("Invalid entity attempted: #{@entity.type} #{@entity.name}" , @task_result) }
+                x.notify("Invalid entity attempted: #{@entity.type} #{@entity.name} #{e}" , @task_result) }
         
+            rescue SystemResourceMissing => e
+
+              _log_error "Missing system resource (external program?): #{e}"
+              Intrigue::NotifierFactory.default.each { |x| # if configured, notify! 
+                x.notify("Missing system resource (external program?): #{@entity.type} #{@entity.name} #{e}" , @task_result) }
+
+            rescue TimeoutError => e
+
+              _log_error "System timed out running a task: #{e}"
+              Intrigue::NotifierFactory.default.each { |x| # if configured, notify! 
+                x.notify("System timed out running a task: #{@entity.type} #{@entity.name} #{e}" , @task_result) }
+
             end
 
             end_time = Time.now.getutc
@@ -182,10 +204,11 @@ class BaseTask
           _log_error "Task setup failed, bailing out w/o running!"
         end
       end
-    
-      ###
-      ## FINALIZE ENRICHMENT
-      ###
+
+      ##########################################
+      # Finalize Enrichment and Start Workflow #
+      ##########################################
+      
       # Now, if this is an enrichment type task, we want to mark our enrichemnt complete 
       # if it's true, we can set it and launch our followon-work!
       if Intrigue::TaskFactory.create_by_name(@task_result.task_name).class.metadata[:type] == "enrichment"
@@ -195,15 +218,13 @@ class BaseTask
         @entity.save_changes 
 
         ### AND WE CAN DECIDE SCOPE BASED ON COMPLETE ENTITY (unless we were already scoped in!)
-        if check_scope = @entity.scoped?
-          @entity.set_scoped!(check_scope, "entity_scoping_rules") #always fall back to our entity-specific logic if there was no request
-          #_log_good "POST-ENRICH AUTOMATED ENTITY SCOPE: #{@entity.scoped}"
-        end
-        
+        ### .. always fall back to our entity-specific logic if there was no request
+        @entity.set_scoped!(@entity.scoped?, "entity_scoping_rules") 
+      
         ###
         ## NOW, KICK OFF WORKFLOWS for SCOPED ENTiTIES ONLY
         ###
-        if @entity.scoped  
+        if @entity.scoped
 
           # WORKFLOW LAUNCH (ONLY IF WE ARE ATTACHED TO A WORKFLOW) 
           # if this is part of a scan and we're in depth
@@ -214,25 +235,27 @@ class BaseTask
             workflow = Intrigue::WorkflowFactory.create_workflow_by_name(workflow_name)
 
             unless workflow
-              raise "Unable to continue, missing workflow: #{workflow_name}!!!"
+              raise InvalidWorkflowError, "Unable to continue, missing workflow: #{workflow_name}!!!"
             end
             
             ## 
             ## Start the workflow!
             ##
+            puts "LAUNCHING WORKFLOW on #{@entity.name} after #{@task_result.name}"
             workflow.start(@entity, @task_result)
 
           else
             @task_result.log "No workflow configured for #{@entity.name}!"
           end
           
+
+          #####################
+          #   Call Handlers   #
+          #####################
+          
           scan_result = @task_result.scan_result
           if scan_result
             scan_result.decrement_task_count
-
-            #####################
-            #   Call Handlers   #
-            #####################
 
             ### Task Result Handlers
             if @task_result.handlers.count > 0

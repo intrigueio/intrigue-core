@@ -65,33 +65,26 @@ module Generic
   end
 
   ###
-  ### Helper method .. should this check with the entity manager?
-  ###
-  def _entity_exists?(type,name)
-    entity_exists?(@entity.project, type, name)
-  end
-
-  ###
   ### Logging helpers
   ###
   def _log(message)
-    @task_result.logger.log message
+    @task_result.logger.log message if @task_result
   end
 
   def _log_debug(message)
-    @task_result.logger.log_debug message
+    @task_result.logger.log_debug message if @task_result
   end
 
   def _log_error(message)
-    @task_result.logger.log_error message
+    @task_result.logger.log_error message if @task_result
   end
 
   def _log_fatal(message)
-    @task_result.logger.log_fatal message
+    @task_result.logger.log_fatal message if @task_result
   end
 
   def _log_good(message)
-    @task_result.logger.log_good message
+    @task_result.logger.log_good message if @task_result
   end
 
   # Convenience Method to execute a system command semi-safely
@@ -158,7 +151,6 @@ module Generic
     @entity.get_details
   end
 
-  # Deprecated, use... 
   def _get_and_set_entity_details(hash)
     @entity.get_and_set_details hash
   end

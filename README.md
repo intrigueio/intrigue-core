@@ -1,6 +1,6 @@
 # Welcome!
 
-Intrigue Core is an open framework for discovering and enumerating the attack surface of organizations. It can be used with a human-in-the-loop running individual tasks, or fully automated through the use of machine files. With a flexible entity model and deep enrichment system, it is the most full-featured open source framework for discovering attack surface.
+Intrigue Core is the open attack surface enumeration engine. It discovers security relevant assets and exposures for a given organization and can be used with a human-in-the-loop running individual tasks, or fully automated through the use of workflows. With a flexible asset model and deep enrichment system, it is the most full-featured open source framework of its kind.
 
 If you'd like assistance getting started or have development-related questions, feel free to join us in our [Intrigue Community slack](https://join.slack.com/t/intrigue-community/shared_invite/zt-gh42ghi8-P~Z6wf1Bj5097vLLuqen6g) channel. For all other questions, you can simply drop an email to hello-at-intrigue.io
 
@@ -37,21 +37,18 @@ Got entity: {"type"=>"DnsRecord", "name"=>"intrigue.io", "details"=>{"name"=>"in
 Task Result: {"result_id":66103}
 ```
 
-# Setting up a Development environment
+# Developers
 
 To get started setting up a development environment, follow the instructions below:
 
-While you can build a local setup and develop, we'd suggest starting with one of the following setup guides:
-
- * Docker: https://core.intrigue.io/2017/03/07/using-intrigue-core-with-docker/
- * Vagrant: http://core.intrigue.io/getting-started-with-intrigue-core-on-vagrant-virtualbox/
- * Direct install on Ubuntu/Debian: https://github.com/intrigueio/intrigue-core/wiki/Setting-up-a-Test-Environment-on-Ubuntu-Linux
+While you can build a local setup on any OST or linux-compatible system, we'd suggest starting with our Vagrant setup guide: http://core.intrigue.io/getting-started-with-intrigue-core-on-vagrant-virtualbox/
 
 You'll probably want to take a look at the following resources: 
 
  * Key System Files: https://github.com/intrigueio/intrigue-core/wiki/Understanding-Intrigue-Core%3A-Key-System-Files
+ * Manual install steps: https://github.com/intrigueio/intrigue-core/wiki/Setting-up-a-Test-Environment-on-Ubuntu-Linux
 
-# Intrigue Community Slack (User and Development Support)
+# Getting Support
 
 To get help in real time, join our [Intrigue Community slack](https://join.slack.com/t/intrigue-community/shared_invite/zt-gh42ghi8-P~Z6wf1Bj5097vLLuqen6g), where you'll be able to interact directly with the develpment team. Please post a brief 1-2 linee introduction in #general when you arrive. 
 
@@ -66,4 +63,6 @@ Intrigue Core would not be possible without the generous time and work from our 
  
  * [Anas Ben Salah](https://twitter.com/bensalah_anas)
  * [Jonathan Cran](https://twitter.com/jcran)
+ * [Maxim Gofnung](https://github.com/m-q-t)
  * [Shpend Kurtishaj](https://twitter.com/shpendk)
+

@@ -4,10 +4,10 @@ class Person < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "Person",
-      :description => "A Person",
-      :user_creatable => true,
-      :example => "Bazooka Joe"
+      name: "Person",
+      description: "A Person",
+      user_creatable: true,
+      example: "Bazooka Joe"
     }
   end
 
@@ -20,8 +20,9 @@ class Person < Intrigue::Core::Model::Entity
   end
 
   def scoped?
-    return true if self.allow_list
-    return false if self.deny_list
+    return true if scoped
+    return true if self.allow_list || self.project.allow_list_entity?(self) 
+    return false if self.deny_list || self.project.deny_list_entity?(self)
   
   true
   end

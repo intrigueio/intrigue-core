@@ -6,15 +6,15 @@ class DnsRecord < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "DnsRecord",
-      :description => "A Dns Record",
-      :user_creatable => true,
-      :example => "test.intrigue.io"
+      name: "DnsRecord",
+      description: "A Dns Record",
+      user_creatable: true,
+      example: "test.intrigue.io"
     }
   end
 
   def validate_entity
-    name.match dns_regex
+    name.match dns_regex(true)
   end
 
   def detail_string
@@ -32,15 +32,19 @@ class DnsRecord < Intrigue::Core::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
-    return true if self.allow_list
-    return false if self.deny_list
-
-    # Check the domain
-    domain_name = parse_domain_name(self.name)
-    return true if self.project.allow_list_entity?("Domain", domain_name)
+    return true if scoped
+    return true if self.allow_list || self.project.allow_list_entity?(self) 
+    return false if self.deny_list || self.project.deny_list_entity?(self)
 
   # if we didnt match the above and we were asked, default to false
-  false
+  true
+  end
+
+  def scope_verification_list
+    [
+      { type_string: self.type_string, name: self.name },
+      { type_string: "Domain", name: parse_domain_name(self.name) }
+    ]
   end
 
 end

@@ -28,6 +28,6 @@ definition:
   - task: uri_check_subdomain_hijack
   - task: uri_extract_linked_hosts
   - task: uri_extract_tokens
-
   - task: uri_gather_ssl_certificate
-
+  - task: uri_screenshot
+  - task: jarm_hash_calculator

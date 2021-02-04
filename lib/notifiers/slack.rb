@@ -12,12 +12,15 @@ module Notifier
     def initialize(config_hash)
       #puts "Creating new slack notifier with config: #{config_hash}"
 
+
       # Assumes amazon...
       if config_hash["system_base_uri"] == "AMAZON"
         # use the standard endpoint to grab info 
+        hostname = `curl -s http://instance-data.ec2.internal/latest/meta-data/public-hostname`.strip
         @system_base_uri = "https://#{hostname}:7777"
       else # use as is
-        @system_base_uri = config_hash["system_base_uri"] || "https://#{hostname}:7777"
+        hostname = `hostname`
+        @system_base_uri = config_hash["system_base_uri"] || hostname
       end
 
       @hook_url = config_hash["slack_hook_url"]

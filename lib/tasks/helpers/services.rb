@@ -12,22 +12,19 @@ module Task
 module Services
 
   include Intrigue::Task::Web
-
-  def _create_vhost_entities(lookup_name)
-    ### For each associated IpAddress, make sure we create any additional
-    ### uris if we already have scan results
-    ###
-    @entity.aliases.each do |a|
-      next unless a.type_string == "IpAddress" #  only ips
-      existing_ports = a.get_detail("ports")
-      if existing_ports
-        existing_ports.each do |p|
-          _log "Creating network service on #{a.name} #{p["number"]} #{p["protocol"]}"
-          _create_network_service_entity(a, p["number"], p["protocol"],{}) 
-        end
-      end
-    end
+  
+  def get_certificate(hostname, port, timeout=30)
+    # connect
+    socket = connect_ssl_socket(hostname,port,timeout)
+    return nil unless socket && socket.peer_cert
+    # Grab the cert
+    cert = OpenSSL::X509::Certificate.new(socket.peer_cert)
+    # parse the cert
+    socket.sysclose
+    # get the names
+    cert
   end
+
 
   def _create_network_service_entity(ip_entity,port_num,protocol="tcp",generic_details={})
 
@@ -36,7 +33,7 @@ module Services
     updated_ports = ports.append({"number" => port_num, "protocol" => protocol}).uniq
     ip_entity.set_detail("ports", updated_ports)
 
-    weak_tcp_services = [21, 23]  #possibly 25, but STARTTLS support is currently unclear
+    weak_tcp_services = [21, 23, 79]  # possibly 25, but STARTTLS support is currently unclear
     weak_udp_services = [60, 1900, 5000]
 
     # set sssl if we end in 443 or are in our includeed list 
@@ -64,7 +61,10 @@ module Services
       cert = get_certificate(ip_entity.name,port_num)
 
       if cert 
-        cert_names = parse_names_from_cert(cert)       
+        
+        # grabs cert names, if not a universal cert 
+        cert_names = parse_names_from_cert(cert)    
+
         generic_details.merge!({
           "alt_names" => cert_names,
           "cert" => {
@@ -83,14 +83,7 @@ module Services
         # DnsRecord, Domain, or IpAddress.
         if cert_names
           cert_names.uniq do |cn|
-
-            if cn.is_ip_address?
-              cert_entities << _create_entity("IpAddress", { "name" => cn }, ip_entity )   
-            else
-              # create each entity 
-              cert_entities << create_dns_entity_from_string(cn)
-            end
-            
+            cert_entities << create_dns_entity_from_string(cn) 
           end
         end
 
@@ -102,18 +95,16 @@ module Services
     hosts = [] 
     # add our ip 
     hosts << ip_entity
-    # add everything we got from the cert
-    cert_entities.each {|ce| hosts << ce} 
     
-    # and add our aliases
-    if ip_entity.aliases.count > 0
-      ip_entity.aliases.each do |al|
-        next unless al.type_string == "DnsRecord" || al.type_string == "Domain" #  only dns records
-        next unless al.scoped? # skip blacklisted / unscoped
-        hosts << al # add to the list
-      end
-    end
+    # add everything we got from the cert
+    hosts.concat(cert_entities)
+    
+    # add in our aliases 
+    hosts.concat(ip_entity.aliases)
 
+    # remove out deny list entities, no sense in wasting time on them
+    hosts = hosts.select{|x| !x.project.deny_list_entity?(x) } 
+    
     create_service_lambda = lambda do |h|
       try_http_ports = scannable_web_ports
 
@@ -133,7 +124,7 @@ module Services
         # if we've never seen this before, go ahead and open it to ensure it's 
         # something we want to create (this helps eliminate unusable urls). However, 
         # skip if we have, we want to minimize requests to the services
-        if !entity_exists? ip_entity.project, "Uri", uri
+        if !entity_exists?(ip_entity.project, "Uri", uri)
 
           r = _gather_http_response(uri)
           http_response = r[:http_response]
@@ -144,16 +135,18 @@ module Services
             next
           end
 
+          entity_details = {
+            "name" => uri,
+            "uri" => uri,
+            "service" => prefix
+          }.merge!(generic_details)
+  
+          # Create entity
+          _create_entity("Uri", entity_details)  
+
+        else 
+          _log "Skipping Page grab, entity: #{ip_entity.name} already exists"
         end
-
-        entity_details = {
-          "name" => uri,
-          "uri" => uri,
-          "service" => prefix
-        }.merge!(generic_details)
-
-        # Create entity
-        _create_entity("Uri", entity_details)
 
       # otherwise, create a network service on the IP, either UDP or TCP - fail otherwise
       elsif protocol == "tcp" && h.name.strip.is_ip_address?
@@ -217,7 +210,7 @@ module Services
     # use a generic threaded iteration method to create them,
     # with the desired number of threads
     thread_count = (hosts.compact.count / 10) + 1 
-    _log "Creating service (#{port_num}) on #{hosts.compact.map{|x|x.name}} with #{thread_count} threads."
+    _log "Creating service (#{port_num}) on #{hosts.compact.map{|x| x.name }} with #{thread_count} threads."
         
     # Create our queue of work from the checks in brute_list
     input_queue = Queue.new
@@ -229,6 +222,8 @@ module Services
         
   end
 
+
+  
   ## Default method, subclasses must override this
   def _masscan_netblock(range,tcp_ports,udp_ports,max_rate=1000)
 
@@ -308,7 +303,6 @@ module Services
       out[:extra_details] = {}
 
       _log "connecting to #{uri}"
-
 
       out[:http_response] = http_request(:get, uri, nil, {}, nil)
 

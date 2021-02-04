@@ -6,10 +6,10 @@ class Nameserver < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "Nameserver",
-      :description => "A DNS Nameserver",
-      :user_creatable => true,
-      :example => "ns1.intrigue.io"
+      name: "Nameserver",
+      description: "A DNS Nameserver",
+      user_creatable: true,
+      example: "ns1.intrigue.io"
     }
   end
 
@@ -25,12 +25,22 @@ class Nameserver < Intrigue::Core::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
-    return true if self.allow_list
-    return false if self.deny_list
+    return true if scoped
+    return true if self.allow_list || self.project.allow_list_entity?(self) 
+    return false if self.deny_list || self.project.deny_list_entity?(self)
 
   # if we didnt match the above and we were asked, it's false 
   false
   end
+
+  def scope_verification_list
+    [
+      { type_string: self.type_string, name: self.name },
+      { type_string: "DnsRecord", name:  self.name },
+      { type_string: "Domain", name:  parse_domain_name(self.name) }
+    ]
+  end
+
 
 end
 end

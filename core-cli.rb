@@ -13,15 +13,15 @@ class CoreCli < Thor
   def initialize(*args)
     super
     $intrigue_basedir = File.dirname(__FILE__)
-    $config = JSON.parse File.open("#{$intrigue_basedir}/config/config.json").read
+    $config = JSON.parse(File.open("#{$intrigue_basedir}/config/config.json").read)
     
     # now uses https by default
     username = $config["credentials"]["username"]
     password = $config["credentials"]["password"]
-    password = $config["credentials"]["endpoint"] || "127.0.0.1:7777"
-    scheme = $config["http_security"] ? "https" : "http"
+    endpoint = $config["credentials"]["endpoint"] || "127.0.0.1:7777"
+    scheme = "https"
 
-    @server_uri = ENV.fetch("INTRIGUE_API_URI", "#{scheme}://#{username}:#{password}@")
+    @server_uri = ENV.fetch("INTRIGUE_API_URI", "#{scheme}://#{username}:#{password}@#{endpoint}")
     @delim = ","
     @debug = true
 

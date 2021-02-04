@@ -19,17 +19,17 @@ module Intrigue
         
         FileUtils.mkdir_p(path) unless File.directory?(path)
 
-        # Create pipes we can read 
-        rout, wout = IO.pipe
-        rerr, werr = IO.pipe
-
-        pid = Process.spawn(vars, *cmd, out: wout, err: werr, chdir: path, pgroup: true)
-        # stderr and stdout pipes can block if stderr/stdout aren't drained: https://bugs.ruby-lang.org/issues/9082
-        # Mimic what Ruby does with capture3: https://github.com/ruby/ruby/blob/1ec544695fa02d714180ef9c34e755027b6a2103/lib/open3.rb#L257-L273
-        out_reader = Thread.new { rout.read }
-        err_reader = Thread.new { rerr.read }
-
         begin
+          # Create pipes we can read 
+          rout, wout = IO.pipe
+          rerr, werr = IO.pipe
+
+          pid = Process.spawn(vars, *cmd, out: wout, err: werr, chdir: path, pgroup: true)
+          # stderr and stdout pipes can block if stderr/stdout aren't drained: https://bugs.ruby-lang.org/issues/9082
+          # Mimic what Ruby does with capture3: https://github.com/ruby/ruby/blob/1ec544695fa02d714180ef9c34e755027b6a2103/lib/open3.rb#L257-L273
+          out_reader = Thread.new { rout.read }
+          err_reader = Thread.new { rerr.read }
+        
           # close write ends so we could read them
           wout.close
           werr.close
@@ -43,9 +43,14 @@ module Intrigue
           
           # return stdout, stderr and exit status
           [cmd_output, err_output, status.exitstatus]
+        
+        rescue Errno::ENOENT => e
+          raise SystemResourceMissing, e
+
         rescue TimeoutError => e
           kill_process_group_for_pid(pid)
           raise e
+        
         ensure
           wout.close unless wout.closed?
           werr.close unless werr.closed?
@@ -53,10 +58,10 @@ module Intrigue
           # rout is shared with out_reader. To prevent an exception in that
           # thread, kill the thread before closing rout. The same goes for rerr
           # below.
-          out_reader.kill
+          out_reader.kill if out_reader
           rout.close
 
-          err_reader.kill
+          err_reader.kill if err_reader
           rerr.close
         end
       end

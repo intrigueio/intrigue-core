@@ -486,6 +486,12 @@
       "uri": "https://developers.virustotal.com/reference",
       "editable": "true",
       "comment": ""
+    },
+    "zetalytics_api_key": {
+      "value": "",
+      "uri": "https://zetalytics.com/",
+      "editable": "true",
+      "comment": ""
     }
   }
 }

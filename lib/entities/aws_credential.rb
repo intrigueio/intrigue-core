@@ -4,9 +4,10 @@ class AwsCredential < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "AwsCredential",
-      :description => "AWS Credential in the format... AccessID:SecretKey",
-      :user_creatable => false
+      name: "AwsCredential",
+      description: "AWS Credential in the format... AccessID:SecretKey",
+      user_creatable: false,
+      example: "AKIAIOSFODNN7EXAMPLE:wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
     }
   end
 
@@ -33,8 +34,9 @@ class AwsCredential < Intrigue::Core::Model::Entity
   end
 
   def scoped?
-    return true if self.allow_list
-    return false if self.deny_list
+    return true if scoped
+    return true if self.allow_list || self.project.allow_list_entity?(self) 
+    return false if self.deny_list || self.project.deny_list_entity?(self)
   true # otherwise just default to true
   end
 

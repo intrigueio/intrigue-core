@@ -13,7 +13,7 @@ class CoreApp < Sinatra::Base
   #  :entity_details => {}, # hash of values, usually empty  
   #  :task_options => [{name: "value1", name2: "value2"}],  # hash of values # TODO... verify this format
   #  :handler_names => [], # list of strings, see /api/v1/handlers for a list of possible values 
-  #  :workflow_name => "external_discovery_light_active", # string, a valid workflow name, see /api/v1/workflows for a list of valid values
+  #  :workflow_name => "profile_organization_external_light_active", # string, a valid workflow name, see /api/v1/workflows for a list of valid values
   #  :workflow_name => 1, # integer, max depth (can be 1-5)
   #  :auto_enrich => 1, # bool, specifies whether to run the automatic entity enrichment 
   #  :auto_scope => 1, # bool, specifies whether to automatically scope this entity in

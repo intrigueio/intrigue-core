@@ -1,13 +1,14 @@
 module Intrigue
 module Task
-class SearchZetalyticsByDomain < BaseTask
+class SearchZetalyticsDomain < BaseTask
 
   def self.metadata
     {
-      :name => "search_zetalytics_by_domain",
+      :name => "search_zetalytics_domain",
       :pretty_name => "Search Zetalytics By Domain",
       :authors => ["Anas Ben Salah"],
-      :description => "This task search Zetalytics for a given domain name and returns related entities such as DnsRecords, related IPs and EmailAddress.",
+      :description => "This task search Zetalytics for a given domain name and returns " + 
+        "related entities such as DnsRecords, related IPs and EmailAddress.",
       :references => [],
       :type => "discovery",
       :passive => true,
@@ -25,36 +26,22 @@ class SearchZetalyticsByDomain < BaseTask
     super
 
     begin
-      entity_name = _get_entity_name
-      entity_type = _get_entity_type_string
-
-      # make sure values are set
-      unless entity_name
-        # Something went wrong with the lookup?
-        _log "Unable to get entity value"
-        return
-      end
 
       # Make sure the key is set
       api_key = _get_task_config("zetalytics_api_key")
 
-      unless api_key
-        _log_error "No credentials?"
-        return
-      end
+      # search it 
+      result = search_zetalytics_by_domain(api_key, _get_entity_name)
+      
+      # create our entities 
+      create_entities(result) if result
 
-      if entity_type =="Domain"
-        search_zetalytics_by_domain(api_key, entity_name)
-      # log error if Unsupported entity type
-      else
-        _log_error "Unsupported entity type"
-      end #end if
     end
   end #end run
 
   # search zetalytics for a specific domain name
   def search_zetalytics_by_domain(api_key, domain)
-    _log "Searching zetalytics by domain"
+    _log "Searching zetalytics by domain: #{domain}"
     begin
       # Initialize Zetalytics API with api key
       zetalytics = Zetalytics::Api.new(api_key)
@@ -84,8 +71,7 @@ class SearchZetalyticsByDomain < BaseTask
       #create_entities result_glue
 
       # Search passive dns by domain for a list of subdomains from any record type.
-      result_subdomain = zetalytics.search_subdomains domain
-      create_entities result_subdomain
+      result = zetalytics.search_subdomains domain
 
       # Search for domains sharing a known registered email address or SOA email from passive
       #result_email_address = zetalytics.search_email_address domain
@@ -98,30 +84,30 @@ class SearchZetalyticsByDomain < BaseTask
     rescue RestClient::Forbidden => e
       _log_error "Error when querying zetalytics (forbidden)"
     end
+
+  result
   end
 
 
-  def create_entities (result)
-    return unless result != nil
-
+  def create_entities(result)
     # these are possible keys that can be found in the api response.
     # the value of these keys can be a dns record, ip or email address
     # the regex will match the correct entity type and create the entity
     keys_to_check = ["qname", "hname", "ip", "value", "d", "addr"]
+
     # Mapping all the related entities to the domain name
     result["results"].each do |e|
       keys_to_check.each do |k|
         if e.key?(k)
-          if e[k] =~ ipv4_regex or e[k] =~ ipv6_regex
-            _create_entity("IpAddress", "name" => e[k])
-          elsif e[k] =~ dns_regex
-            _create_entity("DnsRecord", "name" => e[k], "zetalytics_details" => e)
-          elsif e[k] =~ /[a-zA-Z0-9\.\_\%\+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,12}/
+          if e[k] =~ /[a-zA-Z0-9\.\_\%\+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,12}/
             _create_entity("EmailAddress", "name" => e[k])
+          else 
+            create_dns_entity_from_string(e[k], nil, false, e)
           end
         end
       end
     end
+
   end
 
 end

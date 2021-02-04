@@ -40,7 +40,7 @@ module Intrigue
         json = JSON.parse(response.body_utf8)
   
         # Create forward dns entries
-        if json["Results"]
+        if json && json["Results"]
           
           # get the hostnames so we can uniq
           hostnames = []

@@ -7,8 +7,10 @@ class CreateEntity < BaseTask
       :name => "create_entity",
       :pretty_name => "Create Entity",
       :authors => ["jcran"],
-      :description => "This task simply creates an entity.",
-      :references => [],
+      :description => "This task simply creates an entity and enriches it. If a workflow is attached, it will automatically run the workflow when enrichment completes.",
+      :references => [
+        "https://core.intrigue.io/concepts-what-is-an-entity/",
+      ],
       :type => "creation",
       :passive => true,
       :allowed_types => ["*"],
@@ -23,11 +25,9 @@ class CreateEntity < BaseTask
   ## Default method, subclasses must override this
   def run
     super
-
     name = _get_entity_name
     type = _get_entity_type_string
     e = _create_entity type, {"name" => name }
-
   end
 
 end

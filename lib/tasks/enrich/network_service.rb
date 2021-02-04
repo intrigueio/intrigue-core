@@ -29,13 +29,21 @@ class NetworkService < Intrigue::Task::BaseTask
     ### First, normalize the nane - split out the various attributes
     ###
     entity_name = _get_entity_name
-    ip_address = entity_name.split(":").first
+
+    # grab the ip, handling ipv6 gracefully
+    if entity_name =~ /:/ 
+      ip_address = entity_name.split(":")[0..-2].join(":")
+    else 
+      ip_address = entity_name.split(":").first
+    end
+
     port = entity_name.split(":").last.split("/").first.to_i
     proto = entity_name.split(":").last.split("/").first.upcase
+    net_name = _get_entity_detail("net_name")
 
-    _set_entity_detail("ip_address", ip_address) unless _get_entity_detail("ip_address")
-    _set_entity_detail("port", port) unless _get_entity_detail("port")
-    _set_entity_detail("proto", proto) unless _get_entity_detail("proto")
+    _set_entity_detail("ip_address", ip_address)
+    _set_entity_detail("port", port)
+    _set_entity_detail("proto", proto)
 
     # Use Ident to fingerprint
     _log "Grabbing banner and fingerprinting!"
@@ -63,7 +71,14 @@ class NetworkService < Intrigue::Task::BaseTask
     ###
     enrich_snmp if port == 161 && proto.upcase == "UDP"
 
-    # Unless we could verify futher, consider these noise
+    ###
+    ### Hide Some services based on their attributes
+    ###
+
+    hide_value = false
+    hide_reason = "default"
+
+    # consider these noise
     noise_networks = [
       "CLOUDFLARENET - CLOUDFLARE, INC., US", 
       "GOOGLE, US", 
@@ -74,14 +89,42 @@ class NetworkService < Intrigue::Task::BaseTask
     ]
 
     # drop them if we don't have a fingerprint
-    if noise_networks.include?(_get_entity_detail("net_name")) &&
+    #
+    # TODO ... this might need to be checked for a generic reset now
+    #
+    if noise_networks.include?(net_name) &&
          (_get_entity_detail("fingerprint") || []).empty?
-      @entity.deny_list = true && @entity.hidden = true && @entity.scoped = false
-      @entity.save
+      # always allow these ports even if we dont have a fingeprint
+      unless (port == 80 || port == 443) 
+        hide_value = true
+        hide_reason = "noise_network"
+      end
     end
+
+    known_ports = [
+      { port: 2082, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::" },  
+      { port: 2083, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },  
+      { port: 2086, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
+      { port: 2087, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
+      { port: 2095, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  }, 
+      { port: 2082, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::" },  
+      { port: 2083, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },  
+      { port: 2086, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
+      { port: 2087, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
+      { port: 2095, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  }, 
+      { port: 25, net_name: "GOOGLE, US" }
+    ]
+    if known_ports.find{ |x| x[:port] == port && x[:net_name] == net_name }
+      hide_reason = "Matched known hidden service"
+      hide_value = true 
+    end
+
+    # Okay now hide based on our value 
+    _log "Setting Hidden to: #{hide_value}, for reason: #{hide_reason}"
+    @entity.hidden = hide_value 
+    @entity.save_changes
   
   end
-
 
   def enrich_snmp
     _log "Enriching... SNMP service: #{_get_entity_name}"

@@ -14,6 +14,8 @@ module Model
     many_to_one :project
     many_to_one :base_entity, :class => :'Intrigue::Core::Model::Entity', :key => :base_entity_id
 
+    #self.raise_on_save_failure = true
+
     include Intrigue::Core::ModelMixins::Handleable
 
     def self.scope_by_project(project_name)
@@ -25,7 +27,7 @@ module Model
       super
     end
 
-    def start(requested_queue=nil, retries=3)
+    def start(requested_queue=nil, retries=true)
 
       task_class = Intrigue::TaskFactory.create_by_name(task_name).class
       forced_queue = task_class.metadata[:queue]
@@ -95,7 +97,7 @@ module Model
 
     # Matches based on type and the attribute "name"
     def has_entity? entity
-      entities.paged_each(rows_per_fetch: 100){|e| return true if e.match?(entity) }
+      return true if self.entities_dataset.where(:name => entity.name, :type => entity.type).first
     false
     end
 
