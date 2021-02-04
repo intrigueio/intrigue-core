@@ -21,8 +21,7 @@ module Services
     cert = OpenSSL::X509::Certificate.new(socket.peer_cert)
     # parse the cert
     socket.sysclose
-    # get the names
-    cert
+  cert
   end
 
 
