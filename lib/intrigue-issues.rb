@@ -81,7 +81,6 @@ class IssueFactory
   # Find issue based on check value
   #
   def self.find_issue_by_check(check)
-
     self.issues.each do |h| 
       # generate the instances
       hi = h.generate({});
@@ -92,6 +91,12 @@ class IssueFactory
     nil
   end
 
+  #
+  # Does this issue exist for this entity
+  #
+  def self.entity_has_issue(entity, issue_name)
+    issue = Intrigue::Core::Model::Issue.find(:entity_id=> entity.id, name: issue_name)
+  end
 
   #
   # Check to see if this handler exists (check by type)
@@ -124,7 +129,7 @@ class IssueFactory
     # add in the fields we want to use when querying... 
     issue_model = issue_model_details.merge({
       name: issue_instance_details[:name],
-      source: issue_instance_details[:source]
+      source: issue_instance_details[:source] || "intrigue"
     })
 
     # then create the darn thing

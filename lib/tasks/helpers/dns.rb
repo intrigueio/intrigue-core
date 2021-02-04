@@ -405,6 +405,13 @@ module Dns
       dns_entries << { "response_data" => xdata, "response_type" => xtype }
     end
 
+    # create issues for resolutions to localhost
+    dns_entries.uniq.each do |o|
+      if o["response_data"] == "127.0.0.1"
+        _create_linked_issue("resolves_to_localhost", {details: o})
+      end
+    end
+  
   dns_entries.uniq
   end
 
