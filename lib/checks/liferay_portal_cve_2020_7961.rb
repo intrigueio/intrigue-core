@@ -42,7 +42,7 @@ module Intrigue
 
       def check
         # get version for product
-        version = get_version_for_vendor_product(@entity, "Liferay", "Portal")
+        version = get_version_for_vendor_product(@entity, "Liferay", "Liferay Portal")
         return false unless version
 
         # remove update part of if present
@@ -68,7 +68,7 @@ module Intrigue
             is_vulnerable = compare_versions_by_operator(version, "7.2.1" , "<")
           end
         end
-
+        
         return is_vulnerable
       end
 
