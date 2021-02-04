@@ -7,6 +7,7 @@ class BaseTask
   include Intrigue::Task::Generic
   include Intrigue::Task::BinaryEdge
   include Intrigue::Task::Browser
+  include Intrigue::Task::Certificate
   include Intrigue::Task::CloudProviders
   include Intrigue::Task::Data
   include Intrigue::Task::Dns
@@ -14,7 +15,6 @@ class BaseTask
   include Intrigue::Task::Issue
   include Intrigue::Task::Regex
   include Intrigue::Task::Services
-  include Intrigue::Task::TlsHandler
   include Intrigue::Task::VulnCheck
   include Intrigue::Task::VulnDb
   include Intrigue::Task::Web
