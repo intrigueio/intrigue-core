@@ -16,7 +16,7 @@ module Intrigue
         :allowed_types => ["Uri"],
         :example_entities => [{"type" => "Uri", "details" => {"name" => "https://intrigue.io"}}],
         :allowed_options => [],
-        :created_types => ["DnsRecord"]
+        :created_types => ["UniqueToken"]
       }
     end
   
