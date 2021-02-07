@@ -5,7 +5,12 @@ module Intrigue
     def get_certificate_details(hostname, port)
       
       # connect
-      socket = connect_ssl_socket(hostname,port,timeout=30)
+      # def initialize(host, port,  connect_timeout=10, timeout=10, ssl_context=nil)
+      begin
+        socket = connect_ssl_socket(hostname,port)
+      rescue OpenSSL::SSL::SSLError => e 
+        _log_error "Unable to connnect ssl certificate"
+      end
           
       unless socket && socket.peer_cert 
         _log_error "Failed to extract certificate."

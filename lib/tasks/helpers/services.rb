@@ -14,8 +14,14 @@ module Services
   include Intrigue::Task::Web
   
   def get_certificate(hostname, port, timeout=30)
-    # connect
-    socket = connect_ssl_socket(hostname,port,timeout)
+    
+    begin 
+      # connect
+      socket = connect_ssl_socket(hostname,port,timeout)
+    rescue OpenSSL::SSL::SSLError => e 
+      _log_error "Unable to connnect ssl certificate"
+    end
+    
     return nil unless socket && socket.peer_cert
     # Grab the cert
     cert = OpenSSL::X509::Certificate.new(socket.peer_cert)

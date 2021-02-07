@@ -30,7 +30,17 @@ module Intrigue
 
       @connect_timeout = connect_timeout || 10
       @timeout = timeout || 10
-      ssl_context = OpenSSL::SSL::SSLContext.new unless ssl_context
+
+      unless ssl_context 
+        # create ssl_context 
+        ssl_context = OpenSSL::SSL::SSLContext.new
+        #self.options |= OpenSSL::SSL::OP_ALL
+        #ssl_context.ssl_version = OpenSSL::SSL::TLS1_2_VERSION
+        #ssl_context.ciphers = "ALL"
+        ssl_context.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        ssl_context.verify_hostname = false
+      end
+      
 
       @tcp_socket = Socket.new(Socket.const_get(addr[0][0]), Socket::SOCK_STREAM, 0)
       @tcp_socket.setsockopt(Socket::IPPROTO_TCP, Socket::TCP_NODELAY, 1)
@@ -61,6 +71,8 @@ module Intrigue
 
       # once that's connected, we can start initiating the ssl socket
       @ssl_socket = OpenSSL::SSL::SSLSocket.new(@tcp_socket, ssl_context)
+      
+      # set the hostname to account for SNI 
       @ssl_socket.hostname = host
 
       begin
