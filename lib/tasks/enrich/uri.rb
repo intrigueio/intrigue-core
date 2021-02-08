@@ -70,9 +70,9 @@ class Uri < Intrigue::Task::BaseTask
     _log "Parsing out Scripts"
     temp_script_links = response.body_utf8.scan(/<script.*?src=["|'](.*?)["|']/).map{ |x| x.first if x }
     # add http/https where appropriate
-    temp_script_links = temp_script_links.map { |x| x.match(/^\/\//) ? "#{scheme}:#{x}" : x }
+    temp_script_links = temp_script_links.map{ |x| x.match(/^\/\//) ? "#{scheme}:#{x}" : x }
     # add base_url where appropriate
-    script_links = temp_script_links.map { |x| x.match(/^\//) ? "#{uri}#{x}" : x }
+    script_links = temp_script_links.map{ |x| x.match(/^\//) ? "#{uri}#{x}" : x }
 
     # Save the Headers
     headers = []
@@ -339,7 +339,7 @@ class Uri < Intrigue::Task::BaseTask
       "dom_sha1" => dom_sha1,
       "title" => title,
       "verbs" => verbs_enabled,
-      "scripts" => script_fingerprint,
+      "scripts" => script_links,
       #"extended_content" => ident_content_checks.uniq,
       "extended_ciphers" => accepted_connections,                  # new ciphers field
       "extended_configuration" => ident_configuration.uniq,        # new content field
