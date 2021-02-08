@@ -70,28 +70,72 @@ module Intrigue
       scripts = _get_entity_detail("scripts")
       scripts.each do |s|
 
-        #_log "Working on script: #{s}"
-        file_content = http_get_body s["uri"]
+        _log "Working on script: #{s}"
+
+        file_content = http_get_body s
 
         # now traverse the list
-        checks.each do |name, check| 
-          #_log "Checking... #{name}"
+        checks.each do |name, check|
 
-          ###
-          ### In order to be able to effectively regex, we need the version
-          ###
+          # missing this attribute in some cases
+          next unless check["vulnerabilities"]
 
-          # get the content extractors
-          content_extractors = check["extractors"]["filecontent"]
-          next unless content_extractors
-          
-          # now for each extractor, add the version and test
-          content_extractors.each do |fc|
-            if file_content =~ /#{fc.gsub("§§version§§", version)}/
-              _log "Got a match: #{name} #{fc}!"
+          check["vulnerabilities"].each do |v|
+
+            identifiers = v["identifiers"]
+            next unless identifiers 
+
+            summary = identifiers["summary"]
+            cve = identifiers["CVE"]
+
+            below_version = v["below"] || "1000000000000"
+            at_or_above_version = v["atOrAbove"] || "0"
+
+            #_log "Checking for: #{identifiers} on #{s}"
+
+            ###
+            ### In order to be able to effectively regex, we need the version
+            ###
+
+            # get the content extractors
+            content_extractors = check["extractors"]["filecontent"]
+            next unless content_extractors
+            
+            # now for each extractor, add the version and test
+            content_extractors.each do |fc|
+
+              extractor = fc.gsub("§§version§§", "[\\d\\.]+")
+
+              #_log "Extraction Regex: #{extractor}"
+
+              regex = Regexp.new(extractor)
+              if m = regex.match(file_content)
+                
+                # snag the version if we got a match
+                version = m[0]
+
+                # Got a match, tell the user.
+                _log_good "Product match for #{name} #{version}!"
+
+                # Now check it! 
+                above_result = compare_versions_by_operator version, at_or_above_version, ">="
+                below_result = compare_versions_by_operator version, below_version, "<="
+                
+                # now handle it! 
+                if above_result && below_result
+                  _log_good "Got a match!"
+                  found << identifiers
+                else 
+                  _log "Not a vulnerability match match."
+                  _log "Must be above #{at_or_above_version}: #{above_result}" 
+                  _log "Must be below #{below_version}: #{below_result}" 
+                end
+
+              end
+
             end
-          end
 
+          end
         end
   
       end 
@@ -99,7 +143,7 @@ module Intrigue
       _log "Found: #{found}"
 
       # now merge them together and set as the new details
-      #_set_entity_detail("retirejs",found)
+      _set_entity_detail("retirejs", found)
   
     end
   
