@@ -12,6 +12,12 @@ class Domain < Intrigue::Core::Model::Entity
     }
   end
 
+  # gets called before entity is created
+  def self.transform_before_save(name, details_hash)
+    name = SimpleIDN.to_ascii(name)
+    return name, details_hash
+  end
+  
   def validate_entity
     name.match dns_regex(true)
   end
