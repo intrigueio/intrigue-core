@@ -26,7 +26,7 @@ module Intrigue
 
         compromised_endpoints = [
             "courier/about.html",
-            "courter/oauth.api",
+            "courier/oauth.api",
             "log/adminpl.log"
         ]
 
