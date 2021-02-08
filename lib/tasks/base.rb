@@ -6,6 +6,7 @@ class BaseTask
   include Intrigue::Task::Generic
   include Intrigue::Task::BinaryEdge
   include Intrigue::Task::Browser
+  include Intrigue::Task::Certificate
   include Intrigue::Task::CloudProviders
   include Intrigue::Task::Data
   include Intrigue::Task::Dns
@@ -13,7 +14,6 @@ class BaseTask
   include Intrigue::Task::Issue
   include Intrigue::Task::Regex
   include Intrigue::Task::Services
-  include Intrigue::Task::TlsHandler
   include Intrigue::Task::VulnCheck
   include Intrigue::Task::VulnDb
   include Intrigue::Task::Web
@@ -209,17 +209,26 @@ class BaseTask
       ##########################################
       
       # Now, if this is an enrichment type task, we want to mark our enrichemnt complete 
-      # if it's true, we can set it and launch our followon-work!
-      if Intrigue::TaskFactory.create_by_name(@task_result.task_name).class.metadata[:type] == "enrichment"
+      # if it's true, we can set it and launch our workflow!
+      t = Intrigue::TaskFactory.create_by_name(@task_result.task_name)
+      if t.class.metadata[:type] == "enrichment"
         
-        ### NOW WE CAN SET ENRICHED!
+        # Now, set enriched since this is our final enrichment task!
         @entity.enriched = true   
         @entity.save_changes 
 
-        ### AND WE CAN DECIDE SCOPE BASED ON COMPLETE ENTITY (unless we were already scoped in!)
-        ### .. always fall back to our entity-specific logic if there was no request
+        ### AND we can decide scope based on complete information now, 
+        # note that does take into account the previously-set status 
+        # ... for more info, (see the entity's scoped? method )
         @entity.set_scoped!(@entity.scoped?, "entity_scoping_rules") 
       
+        # In order to ensure all linked issues take our entity's scoped status, we 
+        # iterate through them, setting the entity's scoped status on them
+        @entity.issues.each do |i|
+          i.scoped = @entity.scoped
+          i.save_changes
+        end
+
         ###
         ## NOW, KICK OFF WORKFLOWS for SCOPED ENTiTIES ONLY
         ###

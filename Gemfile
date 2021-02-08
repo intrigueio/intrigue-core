@@ -14,13 +14,17 @@ if ENV["APP_ENV"] == "production-engine"
   end
 
   # Capabilities only available to hosted service for now
+  # prod gems
   source 'https://gem.fury.io/intrigueio/' do
     gem 'intrigue-ident-private'
     gem 'intrigue-core-private'
     gem 'ruclei'
   end
 
-elsif  ENV["APP_ENV"] == "development"
+  # prod ident
+  gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git', :branch => "main"
+
+elsif ENV["APP_ENV"] == "development"
   
   # enable regular sidekiq, and link to local gems 
   gem 'sidekiq'
@@ -28,16 +32,21 @@ elsif  ENV["APP_ENV"] == "development"
   ###
   ### Handy for local dev, just here to make it easy/obvious where to put these 
   ###
+  # dev gems
   gem 'intrigue-ident',                :path => "~/intrigue-ident"
   gem 'intrigue-ident-private',        :path => "~/intrigue-ident-private"
   gem 'intrigue-core-private',         :path => "~/intrigue-core-private"
   gem 'ruclei',                        :path => "~/ruclei"
 
-else # every other environment, including prodcution-oss
+else # every other environment, including production-oss
+  
+  # no sidekiq pro, so fall back to oss sidekiq
   gem 'sidekiq'
+
+  # prod gems 
+  gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git', :branch => "main"
+
 end
-
-
 
 gem 'sidekiq-failures'        # Background Tasks
 gem 'sidekiq-limit_fetch'     # Dynamic queueing
@@ -106,14 +115,11 @@ gem 'open3'
 gem 'typhoeus'
 gem 'zetalytics'
 
-# comment if developing on chrome_remote locally
-gem 'chrome_remote',          :git => 'https://github.com/intrigueio/chrome_remote.git'
-
-# comment if developing on ident locally
-gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git', :branch => "main"
-
 # vulndb
 gem 'versionomy'
+
+# comment if developing on chrome_remote locally
+gem 'chrome_remote',          :git => 'https://github.com/intrigueio/chrome_remote.git'
 
 # Handlers
 gem 'couchrest'
@@ -131,3 +137,5 @@ gem "sentry-raven"            # Error tracking (disabled by default)
 gem 'rake'                    # Testing
 gem 'rspec'                   # Testing
 gem 'rack-test'               # Testing
+
+

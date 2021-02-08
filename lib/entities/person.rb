@@ -4,10 +4,10 @@ class Person < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "Person",
-      :description => "A Person",
-      :user_creatable => true,
-      :example => "Bazooka Joe"
+      name: "Person",
+      description: "A Person",
+      user_creatable: true,
+      example: "Bazooka Joe"
     }
   end
 

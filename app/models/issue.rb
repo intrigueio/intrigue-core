@@ -18,15 +18,12 @@ module Model
 
     def validate
       super
-      validates_unique([:entity_id, :name, :project_id, :source], allow_nil: true)
+      validates_unique([:entity_id, :name, :project_id, :source])
     end
 
     def uuid
       project_name = self.project.name if self.project
       project_name = "missing_project" unless project_name
-
-      source = source if source
-      source = 'intrigue' unless source
 
       out = "#{project_name}##{self.name}#{source}##{entity.uuid}"
       
@@ -49,7 +46,7 @@ module Model
           :severity => severity,
           :status => status,
           :scoped => scoped,
-          :source => source || "intrigue",
+          :source => source,
           :pretty_name => details["pretty_name"],
           :entity_type => entity.type,
           :entity_name => entity.name
@@ -67,7 +64,7 @@ module Model
         :severity => severity,
         :status => status,
         :scoped => scoped,
-        :source => source || "intrigue",
+        :source => source,
         :description =>  description,
         :pretty_name => details["pretty_name"],
         :identifiers =>  details["identifiers"],

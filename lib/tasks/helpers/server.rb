@@ -1,7 +1,6 @@
 module Intrigue
 module Task
 module Server
-
 module Listeners
 
   def start_tcp_listener(port)
@@ -28,7 +27,7 @@ module Listeners
 
   def start_ssl_listener(port)
 
-    cert = Intrigue::Task::SelfSignedCertificate.new
+    cert = Intrigue::SelfSignedCertificate.new
     cert_output = cert.generate
     begin
       server = TCPServer.new(port)

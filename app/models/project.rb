@@ -202,8 +202,7 @@ module Model
       out = true  # allow traverse, until we have something that we can verify
 
       # now form the query, taking into acount the filter if we can
-      found_entity = Intrigue::Core::Model::GlobalEntity.first(
-          :type => type_string, :name => entity_name )
+      found_entity = Intrigue::Core::Model::GlobalEntity.exists?(type_string, entity_name)
 
       # now lets check if we have an allowance for it
       if found_entity

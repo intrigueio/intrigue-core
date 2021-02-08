@@ -4,10 +4,10 @@ class SoftwarePackage < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "SoftwarePackage",
-      :description => "A Detected Software Package",
-      :user_creatable => false,
-      :example => "Microsoft Office Word 2016"
+      name: "SoftwarePackage",
+      description: "A Detected Software Package",
+      user_creatable: false,
+      example: "Microsoft Office Word 2016"
     }
   end
 

@@ -5,10 +5,10 @@ class Domain < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "Domain",
-      :description => "A Top-Level Domain",
-      :user_creatable => true,
-      :example => "intrigue.io"
+      name: "Domain",
+      description: "A Top-Level Domain",
+      user_creatable: true,
+      example: "intrigue.io"
     }
   end
 

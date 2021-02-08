@@ -4,10 +4,10 @@ class AndroidApp < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "AndroidApp",
-      :description => "Android Mobile Application",
-      :user_creatable => true,
-      :example => "com.example.myapp"
+      name: "AndroidApp",
+      description: "Android Mobile Application",
+      user_creatable: true,
+      example: "com.example.myapp"
     }
   end
 

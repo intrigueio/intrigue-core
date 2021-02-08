@@ -4,9 +4,10 @@ module Intrigue
   
     def self.metadata
       {
-        :name => "CreditCard",
-        :description => "A Credit Card",
-        :user_creatable => false
+        name: "CreditCard",
+        description: "A Credit Card",
+        user_creatable: false, 
+        example: "4111111111111111"
       }
     end
   
