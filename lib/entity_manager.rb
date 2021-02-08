@@ -80,6 +80,8 @@ class EntityManager
     else
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
+      # execure "before" transformations before entity is created
+      downcased_name, details_hash = type.transform_before_save(downcased_name, details_hash)
       g = Intrigue::Core::Model::AliasGroup.create(:project_id => project.id)
       entity = Intrigue::Core::Model::Entity.create({
         name: downcased_name,
@@ -148,6 +150,8 @@ class EntityManager
 
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
+      # execure "before" transformations before entity is created
+      downcased_name, details_hash = type.transform_before_save(downcased_name, details_hash)
 
       # handle alias group
       if primary_entity

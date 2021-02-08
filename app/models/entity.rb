@@ -142,6 +142,11 @@ module Model
       ]
     end
 
+    # override me... see: lib/entities/domain.rb
+    def self.transform_before_save(name, details)
+      return name, details
+    end
+    
     # override me... see: lib/entities/aws_credential.rb
     def transform!
       true
