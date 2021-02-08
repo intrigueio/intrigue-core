@@ -4,24 +4,6 @@ module Task
 module Ident
 
   ###
-  ### This method will find all the CVEs that are named as issues and can be 
-  ### created purely on version 
-  ###
-  def fingerprint_to_inference_issues(fingerprint, entity)
-    fingerprint.each do |fp| 
-      next unless fp["vulns"]
-      fp["vulns"].each do |vuln|
-        # get and create the issue here 
-        issue_name = Intrigue::Issue::IssueFactory.get_issue_by_inferred_cve(vuln[:cve])
-        next unless issue_name
-
-        # if we're here, go ahead and create the linked issue!
-        _create_linked_issue issue_name, { "proof" => fp }
-      end
-    end
-  end
-
-  ###
   ### Use the issue factory to find vulnerasbility checks we can run 
   ### and kick them off
   ###
@@ -45,18 +27,8 @@ module Ident
     #
     all_checks.flatten.compact.uniq.each do |check|
 
-      # skip inference checks, they are handled in fingerprint_to_inference_issues
-      if check.match(/^inference:.*/)
-        next
-      # handle nuclei-enabled checks (ruclei)
-      elsif check.match(/^nuclei:.*/) || check.match(/^ruclei:.*/)
-        nuclei_template = check.split(":").last
-        check = "nuclei_runner"
-        check_options = [{name: "template", regex: "alpha_numeric_list", value: nuclei_template}]
-      # otherwise, just run it with blank options
-      else 
-        check_options = []
-      end        
+      # if we want to pass check options based on some fingerprint crtieria
+      check_options = []   
 
       # get the scan result id ... TODO, ideally we'd track this. 
       existing_scan_result_id = nil

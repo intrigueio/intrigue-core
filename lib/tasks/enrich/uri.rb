@@ -414,7 +414,7 @@ class Uri < Intrigue::Task::BaseTask
     ###
     ### Create issues for any vulns that are version-only inference
     ###
-    fingerprint_to_inference_issues(ident_fingerprint, @entity)
+    fingerprint_to_inference_issues(ident_fingerprint)
 
     ###
     ### Kick off vuln checks if enabled for the project 

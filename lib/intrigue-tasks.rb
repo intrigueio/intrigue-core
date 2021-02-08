@@ -59,78 +59,6 @@ begin  # try to load runtime deps
 rescue LoadError => e 
   puts "ERROR! Unable to load a dep, functionality may be limited: #{e}"
 end
-
-###
-### Task factory: Standardize the creation and validation of tasks
-###
-module Intrigue
-  class TaskFactory
-  
-    def self.register(klass)
-      @tasks = [] unless @tasks
-      @tasks << klass
-    end
-  
-    def self.list
-      @tasks
-    end
-  
-    def self.allowed_tasks_for_entity_type(entity_type)
-      @tasks.select{ |task_class| 
-        task_class if task_class.metadata[:allowed_types].include? entity_type}
-    end
-    #
-    # XXX - can :name be set on the class vs the object
-    # to prevent the need to call "new" ?
-    #
-    def self.include?(name)
-      @tasks.each do |t|
-        if (t.metadata[:name] == name)
-          return true
-        end
-      end
-    false
-    end
-  
-    #
-    # XXX - can :name be set on the class vs the object
-    # to prevent the need to call "new" ?
-    #
-    def self.create_by_name(name)
-      @tasks.each do |t|
-        if (t.metadata[:name] == name)
-          return t.new # Create a new object and send it back
-        end
-      end
-      ### XXX - exception handling? This should return a specific exception.
-      raise "No task with the name: #{name}!"
-    end
-
-    def self.class_by_name(name)
-      t = @tasks.find{ |t| t.metadata[:name] == name }
-         
-      ### XXX - exception handling? This should return a specific exception.
-      raise "No task with the name: #{name}!" unless t
-    t
-    end
-  
-    #
-    # XXX - can :name be set on the class vs the object
-    # to prevent the need to call "new" ?
-    #
-    def self.create_by_pretty_name(pretty_name)
-      @tasks.each do |t|
-        if (t.metadata[:pretty_name] == pretty_name)
-          return t.new # Create a new object and send it back
-        end
-      end
-  
-      ### XXX - exception handling? Should this return an exception?
-      raise "No task with the name: #{name}!"
-    end  
-
-  end
-end
   
 # system helpers
 system_folder = File.expand_path('../system', __FILE__) # get absolute directory
@@ -143,12 +71,13 @@ require_relative 'tasks/helpers/web'
 tasks_folder = File.expand_path('../tasks/helpers', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
+require_relative 'all_base'
+
 # Load all discovery tasks
-require_relative 'tasks/base'
 tasks_folder = File.expand_path('../tasks', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
-# Load enrichment functfions
+# Load enrichment functions
 tasks_folder = File.expand_path('../tasks/enrich', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
@@ -162,4 +91,8 @@ Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
 # Load vuln check tasks
 tasks_folder = File.expand_path('../tasks/vuln', __FILE__) # get absolute directory
+Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
+
+# Load all checks
+tasks_folder = File.expand_path('../checks', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }

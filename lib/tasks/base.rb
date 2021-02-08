@@ -1,7 +1,6 @@
 module Intrigue
 module Task
 class BaseTask
-
   # include default helpers
   include Intrigue::Task::Popen
   include Intrigue::Task::Generic
@@ -21,7 +20,6 @@ class BaseTask
   include Intrigue::Task::WebContent
   include Intrigue::Task::WebAccount
   include Intrigue::Task::Whois
-
   include Sidekiq::Worker
   sidekiq_options queue: "task", backtrace: true
   
@@ -30,6 +28,7 @@ class BaseTask
   end
 
   def perform(task_result_id)
+
 
     ### This method is used by a couple different TYPES...
     # normal tasks... which are simple, just run and exit

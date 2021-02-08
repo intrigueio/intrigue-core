@@ -44,6 +44,61 @@ module VulnCheck
     result
   end
 
+  def run_nuclei_template(uri, template)
+    # run ruclei with entity name and template
+    _log "Running #{template} against #{uri}"
+    begin
+      temp = Ruclei::Parser.new("#{template}", "#{uri}")
+    rescue Errno::ENOENT
+      _log_error "Could not find template #{template}"
+      return false
+    end
+
+    _log "Result of nuclei scan: #{temp.vulnerable}"
+    # check results of ruclei
+    proof = nil
+    if temp.vulnerable
+      # add every request url and match conditions
+      temp.results.each do |r|
+        proof = [] unless proof
+        proof << {:url_tested => r[:response].request.base_url, :matched_conditions => r[:matchers]}
+      end
+    end
+
+  proof
+  end
+
+  def get_version_for_vendor_product(entity, vendor, product)
+    fingerprints = entity.get_detail("fingerprint")
+    return nil unless fingerprints
+
+    version = nil
+    fingerprints.each do |f|
+      if f["vendor"] == vendor && f["product"] == product && f["version"] != "" && f["version"] != nil
+        version = f["version"]
+        break
+      end
+    end
+
+    version
+
+  end
+
+  def fingerprint_to_inference_issues(fingerprint)
+    fingerprint.each do |fp| 
+      next unless fp["vulns"]
+      fp["vulns"].each do |vuln|
+        # get and create the issue here 
+        issue_metadata = Intrigue::Issue::IssueFactory.get_issue_by_cve_identifier(vuln["cve"])
+        next unless issue_metadata
+        
+        # if we have an issue who has that cve as an identifiger, run the check task
+        task_name = issue_metadata[:name]
+        start_task("task_autoscheduled", @project, @task_result.scan_result_id, task_name, @entity, 1)
+      end
+    end
+  end
+
 end
 end
 end
