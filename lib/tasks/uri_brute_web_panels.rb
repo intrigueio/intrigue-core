@@ -7,7 +7,7 @@ module Intrigue
         :name => "uri_brute_web_panels",
         :pretty_name => "URI Brute Web Panels",
         :authors => ["jcran"],
-        :description => "Check for commonly exposed web panels by requesting and checking the content."
+        :description => "Check for commonly exposed web panels by requesting and checking the content.",
         :references => [],
         :type => "vulnerability",
         :passive => false,
