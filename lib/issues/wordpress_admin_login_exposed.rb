@@ -11,7 +11,7 @@ module Intrigue
         category: "misconfiguration",
         status: "confirmed",
         description: "This Wordpress site is exposing its admin login.",
-        remediation: "Disable access to this login for unauthenticated users. Consider whiteelisting.",
+        remediation: "Disable access to this login for unauthenticated users. Consider whitelisting.",
         affected_software: [{ :vendor => "Wordpress", :product => "Wordpress" }],
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel
           { type: "remediation", uri: "https://pagely.com/blog/hiding-wordpress-login-page/" }
