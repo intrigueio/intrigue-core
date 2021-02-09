@@ -6,7 +6,7 @@ class ExposedAdminPanelUnauthenticated < BaseIssue
     {
       added: "2020-01-01",
       name: "exposed_admin_panel_unauthenticated",
-      pretty_name: "Exposed Admin Panel (Unauthenticated)",
+      pretty_name: "Exposed Admin Panel",
       severity: 4, # default
       category: "misconfiguration",
       status: "confirmed",
