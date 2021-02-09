@@ -51,7 +51,12 @@ class EntityManager
   end
 
   def self.create_first_entity(project_name,type_string,name,details_hash={})
+    # get type of entity
+    type = resolve_type_from_string(type_string)
 
+    # execure "before" transformations before entity is created
+    name, details_hash = type.transform_before_save(name, details_hash)
+    
     # Save the original and downcase our name
     details_hash["hidden_original"] = name
     downcased_name = name.downcase.strip
@@ -79,9 +84,6 @@ class EntityManager
 
     else
       # Create a new entity, validating the attributes
-      type = resolve_type_from_string(type_string)
-      # execure "before" transformations before entity is created
-      downcased_name, details_hash = type.transform_before_save(downcased_name, details_hash)
       g = Intrigue::Core::Model::AliasGroup.create(:project_id => project.id)
       entity = Intrigue::Core::Model::Entity.create({
         name: downcased_name,
@@ -114,6 +116,11 @@ class EntityManager
 
   # This method creates a new entity, and kicks off a workflow
   def self.create_or_merge_entity(task_result_id, type_string, name, details_hash={}, primary_entity=nil)
+    # get type of entity
+    type = resolve_type_from_string(type_string)
+    
+    # execure "before" transformations before entity is created
+    name, details_hash = type.transform_before_save(name, details_hash)
 
     # Deal with canceled tasks and deleted projects!
     # Do a lookup to make sure we have the latest...
@@ -147,11 +154,6 @@ class EntityManager
       # also... prevents an enrichment loop
       entity_already_existed = true
     else
-
-      # Create a new entity, validating the attributes
-      type = resolve_type_from_string(type_string)
-      # execure "before" transformations before entity is created
-      downcased_name, details_hash = type.transform_before_save(downcased_name, details_hash)
 
       # handle alias group
       if primary_entity
