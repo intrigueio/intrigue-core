@@ -1,6 +1,6 @@
 module Intrigue
   module Task
-  class UriBruteFocusedContent < BaseTask
+  class UriBruteWebPanels < BaseTask
   
     def self.metadata
       {
