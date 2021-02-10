@@ -1,7 +1,7 @@
 # coding: utf-8
 Gem::Specification.new do |s|
   s.name        = 'intrigue-issues'
-  s.version     = '0.8.3'
+  s.version     = '0.8.4'
   s.date        = '2021-01-03'
   s.summary     = "Intrigue Core Issues"
   s.description = "Intrigue Core Issues"
@@ -9,6 +9,7 @@ Gem::Specification.new do |s|
   s.email       = 'jcran@intrigue.io'
   s.files       = Dir.glob("lib/issues*.rb").concat 
                   Dir.glob("lib/checks/*.rb").concat 
+                  Dir.glob("lib/tasks/*/*.rb").concat 
                   Dir.glob("lib/tasks/base.rb").concat 
                   Dir.glob("lib/issues/base.rb").concat
                   Dir.glob("lib/task_factory.rb").concat
