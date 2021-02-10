@@ -1,6 +1,7 @@
 module Intrigue
 module Task
 class BaseTask
+  
   # include default helpers
   include Intrigue::Task::Popen
   include Intrigue::Task::Generic
