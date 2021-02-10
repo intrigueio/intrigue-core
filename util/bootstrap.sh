@@ -363,6 +363,6 @@ if [ "$BOOTSTRAP_ENV" == "production" ] && [ !$(grep -q intriguectl ~/.bash_prof
   echo "intriguectl" >> ~/.bash_profile
 
 else
-  echo "echo \"CORE DEVEOPMENT ENVIRONMENT! Use foreman to manage services!\"" >> ~/.bash_profile  
+  echo "echo \"CORE DEVELOPMENT ENVIRONMENT! Use foreman to manage services!\"" >> ~/.bash_profile  
 fi
 
