@@ -1,21 +1,5 @@
-####
-### These /should/ always be availble 
 ###
-require 'base64'
-require 'date'
-require 'digest'
-require 'ident'
-require 'json'
-require 'net/http'
-require 'resolv'
-require 'socket'
-require 'tempfile'
-require 'thread'
-require 'uri'
-require 'webrick'
-
-###
-### These may / may not be available so let's wrap them  
+### These task-specific gems may / may not be available so let's wrap them  
 ###
 ### In the case where we're a gem, they're not yet available. add them as deps
 ###
@@ -63,13 +47,6 @@ end
 # system helpers
 system_folder = File.expand_path('../system', __FILE__) # get absolute directory
 Dir["#{system_folder}/*.rb"].each { |file| require_relative file }
-
-### Mixins with common task functionality
-require_relative 'tasks/helpers/popen'
-require_relative 'tasks/helpers/generic'
-require_relative 'tasks/helpers/web'
-tasks_folder = File.expand_path('../tasks/helpers', __FILE__) # get absolute directory
-Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
 require_relative 'all_base'
 
