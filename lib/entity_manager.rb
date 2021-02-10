@@ -234,14 +234,6 @@ class EntityManager
     ### make a connection to the task result on every unique tr <> entity match
     tr.add_entity(entity) unless tr.has_entity? entity
 
-    # set our source_task list with this one added
-    entity.set_detail "source_task_list", ((entity.get_detail("source_task_list") || []) << { 
-      task_result_name: tr.name, 
-      task_name: tr.task_name,
-      entity_name: tr.base_entity.name, 
-      entity_type: tr.base_entity.type_string
-    }).uniq
-
     ###
     ### Scoping must always run, because the task run we're inside may have 
     ### auto_scope = true .. or the entity may have been created with an attribute
