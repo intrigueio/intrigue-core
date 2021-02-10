@@ -53,6 +53,7 @@ require_relative 'issues/base'
 ## since checks now have 'tasks' in them, and inheirt from base task
 ## 
 require_relative 'tasks/helpers/generic'
+require_relative 'tasks/helpers/web'
 tasks_folder = File.expand_path('../tasks/helpers', __FILE__) 
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
