@@ -71,12 +71,17 @@ module Intrigue
         self.issues.each do |h| 
           # generate the instances
           hi = h.generate({}); 
-          # then geet all instaces of affected software with issues names
+          # then get all instaces of affected software with issues names
           as = (hi[:affected_software] || [])
           mapped_issues << as.map{|x| x.merge({ :check => (hi[:check]||hi[:name]) }) }
         end
+
+
+        ## pull out only items that have an affected software that matches our 
+        ## passed-in vendor / product and only return the name of the task/check to be run 
+        tasks_or_checks = mapped_issues.flatten.select{|x| x[:vendor] == vendor && x[:product] == product}.map{|x| x[:check]}
     
-      mapped_issues.flatten.select{|x| x[:vendor] == vendor && x[:product] == product}.map{|x| x[:check] }.uniq.compact
+      tasks_or_checks.map{|x| x if Intrigue::TaskFactory.include?(x)}.uniq.compact
       end
     
       #
