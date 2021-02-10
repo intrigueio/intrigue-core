@@ -1,34 +1,4 @@
 
-###
-### SYSTEM HELPERS (for use everywhere)
-###
-
-# Intrigue System-wide Bootstrap
-require_relative 'system/bootstrap'
-include Intrigue::Core::System::Bootstrap
-
-# Intrigue System-wide Match Exeptions
-require_relative 'system/match_exceptions'
-include Intrigue::Core::System::MatchExceptions
-
-# Intrigue System-wide Validations 
-require_relative 'system/validations'
-include Intrigue::Core::System::Validations
-
-# Intrigue System-wide Helpers (both app and backend) 
-require_relative 'system/helpers'
-include Intrigue::Core::System::Helpers
-
-# Intrigue System-wide Helpers (both app and backend) 
-require_relative 'system/dns_helpers'
-include Intrigue::Core::System::DnsHelpers
-
-# Intrigue Export Format
-require_relative 'system/json_data_export_file'
-###
-### END SYSTEM HELPERS
-###
-
 
 ####
 # Task-specific libraries
