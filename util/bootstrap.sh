@@ -350,7 +350,7 @@ sudo apt-get -y clean
 ###
 ### Only in production should we continue on to do this
 ###
-if [ "$BOOTSTRAP_ENV" == "production" ] && !$(grep -q intriguectl ~/.bash_profile); then
+if [ "$BOOTSTRAP_ENV" == "production" ] && [ !$(grep -q intriguectl ~/.bash_profile) ]; then
 
   echo "echo \"Welcome to Intrigue Core! For help, join the community at https://core.intrigue.io\"" >> ~/.bash_profile
   echo "echo \"\"" >> ~/.bash_profile
