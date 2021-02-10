@@ -52,6 +52,7 @@ require_relative 'issues/base'
 ## Mixin task helper functionality ... these are now part of the common base
 ## since checks now have 'tasks' in them, and inheirt from base task
 ## 
+require_relative 'tasks/helpers/popen'
 require_relative 'tasks/helpers/generic'
 require_relative 'tasks/helpers/web'
 tasks_folder = File.expand_path('../tasks/helpers', __FILE__) 
