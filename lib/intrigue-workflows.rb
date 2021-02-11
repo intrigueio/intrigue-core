@@ -171,7 +171,7 @@ module Intrigue
       out = []
 
       # add default paths (accounting for private if it exists)
-      load_paths << "#{File.dirname(__FILE__)}/workflows"
+      load_paths << "#{$intrigue_basedir}/lib/workflows"
       load_paths << $intrigue_core_private_workflow_directory if $intrigue_core_private_workflow_directory
 
       # Load default templates

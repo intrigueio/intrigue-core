@@ -97,7 +97,7 @@ class CoreApp < Sinatra::Base
       end
 
       ### Workflow definition, make sure we have a valid type
-      if wf = Intrigue::Core::Model::Workflow.first(:name => "#{@params["workflow"]}")
+      if wf = Intrigue::WorkflowFactory.create_workflow_by_name(workflow_name_string)
         workflow_name = wf.name
         workflow_depth = wf.depth || 5 
       else # default to none 
@@ -225,7 +225,8 @@ class CoreApp < Sinatra::Base
       end
 
       ### Workflow definition, make sure we have a valid type
-      if wf = Intrigue::Core::Model::Workflow.first(:name => "#{@params["workflow"]}")
+      workflow_name_string = "#{@params["workflow"]}".strip
+      if wf = Intrigue::WorkflowFactory.create_workflow_by_name(workflow_name_string)
         workflow_name = wf.name
         workflow_depth = wf.default_depth
       else
@@ -234,7 +235,7 @@ class CoreApp < Sinatra::Base
       end
 
       auto_enrich = @params["auto_enrich"] == "on" ? true : false
-      auto_scope = true  # manually created
+      auto_scope = true # manually created
 
       # set our project (default)
       current_project = Intrigue::Core::Model::Project.first(:name => @project_name)
@@ -318,10 +319,9 @@ class CoreApp < Sinatra::Base
 
       # Parse the incoming request
       payload = JSON.parse(request.body.read) if (request.content_type == "application/json" && request.body)
-      puts "Got payload: #{payload}"
 
       ### don't take any shit
-      return "No payload!" unless payload
+      raise InvalidEntityError, "Empty Payload?" unless payload
 
       # Construct an entity from the entity_hash provided
       type_string = payload["entity"]["type"]
@@ -333,7 +333,9 @@ class CoreApp < Sinatra::Base
         "type" => resolved_type.to_s,
         "name" => "#{name}"
       )
+
       ### Workflow definition, make sure we have a valid type
+      workflow_name_string = "#{@params["workflow"]}".strip
       if wf = Intrigue::Core::Model::Workflow.first(:name => "#{@params["workflow_name"]}")
         workflow_name = wf.name
         workflow_depth = wf.default_depth
