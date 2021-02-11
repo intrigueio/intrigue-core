@@ -335,6 +335,7 @@ class CoreApp < Sinatra::Base
         "name" => "#{name}"
       )
       ### Workflow definition, make sure we have a valid type
+      workflow_name_string = "#{@params["workflow"]}".strip
       if wf = Intrigue::Core::Model::Workflow.first(:name => "#{@params["workflow_name"]}")
         workflow_name = wf.name
         workflow_depth = wf.default_depth
