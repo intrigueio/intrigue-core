@@ -171,10 +171,16 @@ module Dns
     
     resources = []
 
+    additional_nameservers = (Intrigue::Core::System::Config.config["resolvers"] || "").split(",")
+
+    ### 
+    ### First nameserver port is our local async DNS ... in case that's not up, 
+    ### fall back to any configured resolvers in teh global config 
+    ###
     config = {
       search: [],
       ndots: 1,
-      nameserver_port: [['127.0.0.1', 8081]]
+      nameserver_port: [['127.0.0.1', 8081]].concat(additional_nameservers.map{|x| [x,53] })
     }
 
     # Handle ip lookup (PTR) first
