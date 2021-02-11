@@ -97,6 +97,7 @@ class CoreApp < Sinatra::Base
       end
 
       ### Workflow definition, make sure we have a valid type
+      workflow_name_string = "#{@params["workflow"]}".strip
       if wf = Intrigue::WorkflowFactory.create_workflow_by_name(workflow_name_string)
         workflow_name = wf.name
         workflow_depth = wf.depth || 5 
