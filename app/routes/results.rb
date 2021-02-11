@@ -97,7 +97,7 @@ class CoreApp < Sinatra::Base
       end
 
       ### Workflow definition, make sure we have a valid type
-      if wf = Intrigue::Core::Model::Workflow.first(:name => "#{@params["workflow"]}")
+      if wf = Intrigue::WorkflowFactory.create_workflow_by_name(workflow_name_string)
         workflow_name = wf.name
         workflow_depth = wf.depth || 5 
       else # default to none 
@@ -225,7 +225,8 @@ class CoreApp < Sinatra::Base
       end
 
       ### Workflow definition, make sure we have a valid type
-      if wf = Intrigue::Core::Model::Workflow.first(:name => "#{@params["workflow"]}")
+      workflow_name_string = "#{@params["workflow"]}".strip
+      if wf = Intrigue::WorkflowFactory.create_workflow_by_name(workflow_name_string)
         workflow_name = wf.name
         workflow_depth = wf.default_depth
       else
@@ -234,7 +235,7 @@ class CoreApp < Sinatra::Base
       end
 
       auto_enrich = @params["auto_enrich"] == "on" ? true : false
-      auto_scope = true  # manually created
+      auto_scope = true # manually created
 
       # set our project (default)
       current_project = Intrigue::Core::Model::Project.first(:name => @project_name)
