@@ -319,10 +319,9 @@ class CoreApp < Sinatra::Base
 
       # Parse the incoming request
       payload = JSON.parse(request.body.read) if (request.content_type == "application/json" && request.body)
-      puts "Got payload: #{payload}"
 
       ### don't take any shit
-      return "No payload!" unless payload
+      raise InvalidEntityError, "Empty Payload?" unless payload
 
       # Construct an entity from the entity_hash provided
       type_string = payload["entity"]["type"]
@@ -334,6 +333,7 @@ class CoreApp < Sinatra::Base
         "type" => resolved_type.to_s,
         "name" => "#{name}"
       )
+
       ### Workflow definition, make sure we have a valid type
       workflow_name_string = "#{@params["workflow"]}".strip
       if wf = Intrigue::Core::Model::Workflow.first(:name => "#{@params["workflow_name"]}")

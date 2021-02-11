@@ -39,7 +39,7 @@ class BaseTask
 
     # Get the task result and fail if we can't
     @task_result = Intrigue::Core::Model::TaskResult.first(:id => task_result_id)
-    raise Intrigue::InvalidTaskConfigurationError, "Missing task result?" unless @task_result    
+    raise InvalidTaskConfigurationError, "Missing task result?" unless @task_result    
 
     ###########################
     #  Setup the task result  #
@@ -56,8 +56,8 @@ class BaseTask
     options = @task_result.options
 
     # if project was deleted, raise an exception
-    raise Intrigue::MissingProjectError, "Missing πroject, possibly deleted?" unless @project    
-    raise Intrigue::InvalidEntityError, "Missing Entity" unless @entity
+    raise MissingProjectError, "Missing πroject, possibly deleted?" unless @project    
+    raise InvalidEntityError, "Missing Entity" unless @entity
 
     ###
     ### Handle cancellation
