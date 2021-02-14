@@ -35,7 +35,8 @@ This page lists the entities currently available in the instance, and a few deta
       <tr><th>Type</th><th>Description</th><th>Example</th><th>User Creatable</th><th>Enrichment Tasks</th></tr>
       <% @entities.sort_by{|x| x.to_s }.each do |e| %>
         <tr>
-          <td><%= "#{e} <a href='https://github.com/intrigueio/intrigue-core/tree/main/lib/entities/#{e.metadata[:name].downcase}.rb'> [code] </a>" %></td> 
+          <% filename = e.metadata[:name].gsub(/([A-Z])/, '_\1').downcase.gsub(/^_/,"") << ".rb" %>
+          <td><%= "#{e} <a href='https://github.com/intrigueio/intrigue-core/tree/main/lib/entities/#{filename}'> [code] </a>" %></td> 
           <td><%= e.metadata[:description] %></td>
           <td><%= e.metadata[:example] || "-" %></td>
           <td><%= e.metadata[:user_creatable] %></td>
