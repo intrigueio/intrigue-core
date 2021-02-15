@@ -29,8 +29,7 @@ module Model
       self.issues.each{|x| x.delete }
       self.entities.each{ |x| x.remove_all_task_results }
       self.entities.each{|x| x.delete }
-      self.loggers.each{|x| x.delete }
-
+      self.logger.each{|x| x.delete }
       self.delete
     true 
     end
