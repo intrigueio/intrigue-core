@@ -91,20 +91,21 @@ module Data
     [
       "acquia-sites.com",
       "careers.talemetry.com",
-      "chinanetcenter.com",
       "chinacloudsites.cn",
+      "chinanetcenter.com",
       "cloudflare.com",
       "cloudflaressl.com",
       "distilnetworks.com",
       "edgecastcdn.net",
       "edlio.net", # https://edlio.com/
-      "helloworld.com",
-      "hexagon-cdn.com",# TODO - worth revisiting,may include related hosts
       "fastly.net",
       "freshdesk.com",
-      "jiveon.com",
+      "helloworld.com",
+      "hexagon-cdn.com",# TODO - worth revisiting,may include related hosts
       "incapsula.com",
+      "jiveon.com",
       "lithium.com",
+      "pantheon.io",
       "sucuri.net",
       "swagcache.com",
       "wpengine.com",
