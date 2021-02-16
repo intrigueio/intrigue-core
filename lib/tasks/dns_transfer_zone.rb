@@ -42,6 +42,7 @@ class DnsTransferZone < BaseTask
 
         # Do the actual zone transfer
         zt = Dnsruby::ZoneTransfer.new
+        zt.connect_timeout = 60
         zt.transfer_type = Dnsruby::Types.AXFR
         zt.server = nameserver
         zone = zt.transfer(domain_name)

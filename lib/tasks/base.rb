@@ -2,11 +2,15 @@ module Intrigue
 module Task
 class BaseTask
 
+  include Sidekiq::Worker
+  sidekiq_options queue: "task", backtrace: true
+  
   # include default helpers
   include Intrigue::Task::Popen
   include Intrigue::Task::Generic
   include Intrigue::Task::BinaryEdge
   include Intrigue::Task::Browser
+  include Intrigue::Task::Certificate
   include Intrigue::Task::CloudProviders
   include Intrigue::Task::Data
   include Intrigue::Task::Dns
@@ -14,40 +18,43 @@ class BaseTask
   include Intrigue::Task::Issue
   include Intrigue::Task::Regex
   include Intrigue::Task::Services
-  include Intrigue::Task::TlsHandler
   include Intrigue::Task::VulnCheck
   include Intrigue::Task::VulnDb
   include Intrigue::Task::Web
   include Intrigue::Task::WebContent
   include Intrigue::Task::WebAccount
   include Intrigue::Task::Whois
-
-  include Sidekiq::Worker
-  sidekiq_options queue: "task", backtrace: true
+  
   
   def self.inherited(base)
     ::Intrigue::TaskFactory.register(base)
   end
 
+  ### This method is used by a couple different TYPES...
+  #  - normal tasks... which are simple, just run and exit
+  #  - enrichment tasks.. which must notify when done, and will launch a workflow!!!
+  #  - checks.. which just need to return a result or false
+  #
   def perform(task_result_id)
-
-    ### This method is used by a couple different TYPES...
-    # normal tasks... which are simple, just run and exit
-    # enrichment tasks.. which must notify when done, and will launch a workflow!!!
+    start_time = Time.now.getutc
 
     # Get the task result and fail if we can't
     @task_result = Intrigue::Core::Model::TaskResult.first(:id => task_result_id)
-
-    # gracefully handle situations where the task result has gone missing
-    # usually this is a deleted project
-    return nil unless @task_result
     
+    # While it would be sensible to raise an error here, because we currently 
+    # dont have a limit on retries, this leads to task results for deleted projects
+    # getting stuck in 'zombie' mode, where they keep retrying and failing. 
+    if @task_result
+      puts "[#{start_time}] Running task result #{@task_result.name} in project: #{@task_result.project.name}"
+    else  #raise InvalidTaskConfigurationError, "Missing task result?" 
+      puts "[#{start_time}] WARNING! Unable to find missing task result: #{task_result_id}, failing!"
+      return nil
+    end
 
     ###########################
     #  Setup the task result  #
     ###########################
     @task_result.task_name = self.class.metadata[:name]
-    start_time = Time.now.getutc
     @task_result.timestamp_start = start_time
 
     ###
@@ -57,20 +64,9 @@ class BaseTask
     @project = @task_result.project
     options = @task_result.options
 
-    # at any time, our project can go missing, and it's best if we just 
-    # return without going any further 
-    unless @project
-      _log_error "Unable to find project. Bailing." unless @project
-      return nil 
-    end 
-
-    # we must have these things to continue - something went seriously 
-    # wrong if they're missing 
-    unless @task_result &&  @entity
-      _log_error "Unable to find task_result. Bailing." unless @task_result
-      _log_error "Unable to find entity. Bailing." unless @entity
-      return 
-    end
+    # if project was deleted, raise an exception
+    raise MissingProjectError, "Missing πroject, possibly deleted?" unless @project    
+    raise InvalidEntityError, "Missing Entity" unless @entity
 
     ###
     ### Handle cancellation
@@ -210,17 +206,26 @@ class BaseTask
       ##########################################
       
       # Now, if this is an enrichment type task, we want to mark our enrichemnt complete 
-      # if it's true, we can set it and launch our followon-work!
-      if Intrigue::TaskFactory.create_by_name(@task_result.task_name).class.metadata[:type] == "enrichment"
+      # if it's true, we can set it and launch our workflow!
+      t = Intrigue::TaskFactory.create_by_name(@task_result.task_name)
+      if t.class.metadata[:type] == "enrichment"
         
-        ### NOW WE CAN SET ENRICHED!
+        # Now, set enriched since this is our final enrichment task!
         @entity.enriched = true   
         @entity.save_changes 
 
-        ### AND WE CAN DECIDE SCOPE BASED ON COMPLETE ENTITY (unless we were already scoped in!)
-        ### .. always fall back to our entity-specific logic if there was no request
+        ### AND we can decide scope based on complete information now, 
+        # note that does take into account the previously-set status 
+        # ... for more info, (see the entity's scoped? method )
         @entity.set_scoped!(@entity.scoped?, "entity_scoping_rules") 
       
+        # In order to ensure all linked issues take our entity's scoped status, we 
+        # iterate through them, setting the entity's scoped status on them
+        @entity.issues.each do |i|
+          i.scoped = @entity.scoped
+          i.save_changes
+        end
+
         ###
         ## NOW, KICK OFF WORKFLOWS for SCOPED ENTiTIES ONLY
         ###
@@ -241,7 +246,7 @@ class BaseTask
             ## 
             ## Start the workflow!
             ##
-            puts "LAUNCHING WORKFLOW on #{@entity.name} after #{@task_result.name}"
+            @task_result.log "Launching workflow on #{@entity.name} after #{@task_result.name}"
             workflow.start(@entity, @task_result)
 
           else

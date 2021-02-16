@@ -4,7 +4,8 @@ module System
   module MatchExceptions
 
     def standard_name_exceptions
-      File.open("#{$intrigue_basedir}/data/standard_name_exceptions.list").readlines.map{|x| eval(x.strip) if x }
+      sne_file = "#{$intrigue_basedir}/data/standard_name_exceptions.list" 
+    File.open(sne_file).readlines.map{ |x| /^.*\.#{x.strip}(:[0-9]*)?$/ }
     end
 
     def standard_ip_exceptions

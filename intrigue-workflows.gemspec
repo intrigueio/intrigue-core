@@ -1,8 +1,8 @@
 # coding: utf-8
 Gem::Specification.new do |s|
   s.name        = 'intrigue-workflows'
-  s.version     = '0.8.1'
-  s.date        = '2021-01-03'
+  s.version     = '0.8.5'
+  s.date        = '2021-02-10'
   s.summary     = "Intrigue Core Workflows"
   s.description = "Intrigue Core Workflow Library"
   s.authors     = ["jcran"]

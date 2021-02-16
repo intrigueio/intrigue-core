@@ -33,10 +33,10 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: b3007e1788e1e788f58e622f4c6725288924e5d9
+  revision: affdc252428619df5f8d21fec5eff66947aba0f8
   branch: main
   specs:
-    intrigue-ident (4.1.4)
+    intrigue-ident (4.2.0)
       dnsruby
       murmurhash3
       recog-intrigue
@@ -123,7 +123,7 @@ GEM
       zeitwerk (~> 2.3)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
-    async (1.28.4)
+    async (1.28.5)
       console (~> 1.10)
       nio4r (~> 2.3)
       timers (~> 4.1)
@@ -144,7 +144,7 @@ GEM
       async-http (~> 0.42)
       protocol-http (~> 0.7)
     aws-eventstream (1.1.0)
-    aws-partitions (1.420.0)
+    aws-partitions (1.422.0)
     aws-sdk-core (3.111.2)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
@@ -203,7 +203,7 @@ GEM
     ethon (0.12.0)
       ffi (>= 1.3.0)
     eventmachine (1.2.7)
-    excon (0.78.1)
+    excon (0.79.0)
     faraday (0.17.3)
       multipart-post (>= 1.2, < 3)
     faraday-http-cache (1.3.1)
@@ -403,15 +403,15 @@ GEM
     rspec-expectations (3.10.1)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.10.0)
-    rspec-mocks (3.10.1)
+    rspec-mocks (3.10.2)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.10.0)
-    rspec-support (3.10.1)
+    rspec-support (3.10.2)
     ruby2_keywords (0.0.4)
     rubyzip (2.3.0)
     sentry-raven (2.13.0)
       faraday (>= 0.7.6, < 1.0)
-    sequel (5.40.0)
+    sequel (5.41.0)
     shodan (1.0.0)
       json (>= 1.4.6)
     sidekiq (6.1.3)
@@ -443,7 +443,7 @@ GEM
     socketry (0.5.1)
       hitimes (~> 1.2)
     sqlite3 (1.4.2)
-    test-unit (3.3.9)
+    test-unit (3.4.0)
       power_assert
     thor (1.1.0)
     tilt (2.0.10)

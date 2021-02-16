@@ -16,7 +16,7 @@ module Intrigue
         :allowed_types => ["Uri"],
         :example_entities => [{"type" => "Uri", "details" => {"name" => "https://intrigue.io"}}],
         :allowed_options => [],
-        :created_types => ["DnsRecord"]
+        :created_types => ["UniqueToken"]
       }
     end
   
@@ -42,6 +42,11 @@ module Intrigue
 
         # use matcher if it exists, but fall back to regex
         pattern = p["matcher"] || p["regex"]
+        
+        unless pattern
+          _log_error "unable to use this pattern: #{p}"
+          next
+        end
 
         # if we're handed a string, convert it to a regex
         pattern = Regexp.new(pattern) unless pattern.kind_of? Regexp

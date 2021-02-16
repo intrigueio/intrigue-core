@@ -50,8 +50,16 @@ class EntityManager
     })
   end
 
+  ###
+  ### Use this when creating the first entity (without a task)
+  ###
   def self.create_first_entity(project_name,type_string,name,details_hash={})
+    # get type of entity
+    type = resolve_type_from_string(type_string)
 
+    # execure "before" transformations before entity is created
+    name, details_hash = type.transform_before_save(name, details_hash)
+    
     # Save the original and downcase our name
     details_hash["hidden_original"] = name
     downcased_name = name.downcase.strip
@@ -79,7 +87,6 @@ class EntityManager
 
     else
       # Create a new entity, validating the attributes
-      type = resolve_type_from_string(type_string)
       g = Intrigue::Core::Model::AliasGroup.create(:project_id => project.id)
       entity = Intrigue::Core::Model::Entity.create({
         name: downcased_name,
@@ -99,19 +106,28 @@ class EntityManager
     # necessary because of our single table inheritance?
     new_entity = Intrigue::Core::Model::Entity.find(:id => entity.id)
 
-    ### Ensure we have an entity
+    # Ensure we have an entity
     unless new_entity && new_entity.transform! && new_entity.validate_entity
       puts "Error creating entity: #{new_entity}." + "Entity: #{type_string}##{name} #{details_hash}"
       return nil
     end
 
+    ###
     # ENRICHMENT MUST BE STARTED MANUALLY!!!!!
+    ###
 
   new_entity
   end
 
-  # This method creates a new entity, and kicks off a workflow
+  ###
+  ### Use this when creating an entity with an associated task result
+  ###
   def self.create_or_merge_entity(task_result_id, type_string, name, details_hash={}, primary_entity=nil)
+    # get type of entity
+    type = resolve_type_from_string(type_string)
+    
+    # execure "before" transformations before entity is created
+    name, details_hash = type.transform_before_save(name, details_hash)
 
     # Deal with canceled tasks and deleted projects!
     # Do a lookup to make sure we have the latest...
@@ -145,9 +161,6 @@ class EntityManager
       # also... prevents an enrichment loop
       entity_already_existed = true
     else
-
-      # Create a new entity, validating the attributes
-      type = resolve_type_from_string(type_string)
 
       # handle alias group
       if primary_entity
@@ -227,14 +240,6 @@ class EntityManager
 
     ### make a connection to the task result on every unique tr <> entity match
     tr.add_entity(entity) unless tr.has_entity? entity
-
-    # set our source_task list with this one added
-    entity.set_detail "source_task_list", ((entity.get_detail("source_task_list") || []) << { 
-      task_result_name: tr.name, 
-      task_name: tr.task_name,
-      entity_name: tr.base_entity.name, 
-      entity_type: tr.base_entity.type_string
-    }).uniq
 
     ###
     ### Scoping must always run, because the task run we're inside may have 

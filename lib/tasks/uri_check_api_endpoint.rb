@@ -169,18 +169,19 @@ class UriCheckApiEndpoint < BaseTask
         body = standard_response.body_utf8
         if body
           json = JSON.parse(body)
-          if json
-            unless
-               # now check for common error scenarios, and if we pass
-              (standard_response.code == "404" && json["error"] ==  "Not Found") ||
-              (standard_response.code == "404" && json["response"] == "Content was not found.")
 
-              # create it as an api endpoint
-              api_endpoint = u
-              api_reason = "json_body"
-              break
-            end
+          if json
+            # now check for common error scenarios, and proceed if we pass
+            break if json.kind_of?(Hash) && 
+              ((standard_response.code == "404" && json["error"] ==  "Not Found") ||
+              (standard_response.code == "404" && json["response"] == "Content was not found."))
+            
+            # create it as an api endpoint
+            api_endpoint = u
+            api_reason = "json_body"
+            break
           end
+
         end
       rescue JSON::ParserError
         _log "No body!"

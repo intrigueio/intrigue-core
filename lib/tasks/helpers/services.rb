@@ -12,6 +12,24 @@ module Task
 module Services
 
   include Intrigue::Task::Web
+  
+  def get_certificate(hostname, port, timeout=30)
+    
+    begin 
+      # connect
+      socket = connect_ssl_socket(hostname,port,timeout)
+    rescue OpenSSL::SSL::SSLError => e 
+      _log_error "Unable to connnect ssl certificate"
+    end
+    
+    return nil unless socket && socket.peer_cert
+    # Grab the cert
+    cert = OpenSSL::X509::Certificate.new(socket.peer_cert)
+    # parse the cert
+    socket.sysclose
+  cert
+  end
+
 
   def _create_network_service_entity(ip_entity,port_num,protocol="tcp",generic_details={})
 
@@ -48,7 +66,10 @@ module Services
       cert = get_certificate(ip_entity.name,port_num)
 
       if cert 
-        cert_names = parse_names_from_cert(cert)       
+        
+        # grabs cert names, if not a universal cert 
+        cert_names = parse_names_from_cert(cert)    
+
         generic_details.merge!({
           "alt_names" => cert_names,
           "cert" => {
@@ -67,7 +88,7 @@ module Services
         # DnsRecord, Domain, or IpAddress.
         if cert_names
           cert_names.uniq do |cn|
-            cert_entities << create_dns_entity_from_string(cn)
+            cert_entities << create_dns_entity_from_string(cn) 
           end
         end
 
@@ -85,6 +106,9 @@ module Services
     
     # add in our aliases 
     hosts.concat(ip_entity.aliases)
+
+    # remove out deny list entities, no sense in wasting time on them
+    hosts = hosts.select{|x| !x.project.deny_list_entity?(x) } 
     
     create_service_lambda = lambda do |h|
       try_http_ports = scannable_web_ports
@@ -116,18 +140,18 @@ module Services
             next
           end
 
+          entity_details = {
+            "name" => uri,
+            "uri" => uri,
+            "service" => prefix
+          }.merge!(generic_details)
+  
+          # Create entity
+          _create_entity("Uri", entity_details)  
+
         else 
-          _log "Skipping Page grab, entity already exists"
+          _log "Skipping Page grab, entity: #{ip_entity.name} already exists"
         end
-
-        entity_details = {
-          "name" => uri,
-          "uri" => uri,
-          "service" => prefix
-        }.merge!(generic_details)
-
-        # Create entity
-        _create_entity("Uri", entity_details)
 
       # otherwise, create a network service on the IP, either UDP or TCP - fail otherwise
       elsif protocol == "tcp" && h.name.strip.is_ip_address?
@@ -203,6 +227,8 @@ module Services
         
   end
 
+
+  
   ## Default method, subclasses must override this
   def _masscan_netblock(range,tcp_ports,udp_ports,max_rate=1000)
 

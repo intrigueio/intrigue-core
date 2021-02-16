@@ -58,7 +58,7 @@ class NetworkService < Intrigue::Task::BaseTask
     create_issues_from_fingerprint_tags(fingerprint, @entity)
     
     # Create issues for any vulns that are version-only inference
-    fingerprint_to_inference_issues(fingerprint, @entity)
+    fingerprint_to_inference_issues(fingerprint)
 
     # Okay, now kick off vulnerability checks (if project allows)
     if @project.vulnerability_checks_enabled
@@ -94,8 +94,11 @@ class NetworkService < Intrigue::Task::BaseTask
     #
     if noise_networks.include?(net_name) &&
          (_get_entity_detail("fingerprint") || []).empty?
-      hide_value = true
-      hide_reason = "noise_network"
+      # always allow these ports even if we dont have a fingeprint
+      unless (port == 80 || port == 443) 
+        hide_value = true
+        hide_reason = "noise_network"
+      end
     end
 
     known_ports = [
@@ -111,7 +114,7 @@ class NetworkService < Intrigue::Task::BaseTask
       { port: 2095, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  }, 
       { port: 25, net_name: "GOOGLE, US" }
     ]
-    if known_ports.select{ |x| x[:port] == port && x[:net_name] == net_name }
+    if known_ports.find{ |x| x[:port] == port && x[:net_name] == net_name }
       hide_reason = "Matched known hidden service"
       hide_value = true 
     end

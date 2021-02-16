@@ -11,8 +11,20 @@ class MissingTaskConfigurationError < StandardError
   end
 end
 
+class MissingProjectError < StandardError
+  def initialize(msg="Project cannot be found")
+    super
+  end
+end
+
+class InvalidEntityError < StandardError
+  def initialize(msg="Entity was empty or invalid")
+    super
+  end
+end
+
 class InvalidTaskConfigurationError < StandardError
-  def initialize(msg="Invalid API key, please check configuration")
+  def initialize(msg="Invalid task configuration, please check on the parameters of this task")
     super
   end
 end
