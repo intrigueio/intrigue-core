@@ -1,17 +1,16 @@
 ---
 depth: 5
-name: profile_organization_external_light_active
-pretty_name: Externally Profile An Organization (Light, Active)
+name: profile_organization_external_light_passive
+pretty_name: Externally Profile An Organization (Light, Passive)
 user_selectable: true
 maintainer: jcran
 flow: recursive
-description: Performs a light active attack surface discovery for organizations. Start with a Domain or NetBlock.
+description: Performs a light passive attack surface discovery for organizations. Start with a Domain or NetBlock.
 definition:
   AutonomousSystem: 
   - task: asn_to_netblocks
-  AwsS3Bucket: 
-  - task: aws_s3_put_file
   Domain:
+  - task: aws_s3_brute
   - task: dns_brute_sub
     options:
     - brute_alphanumeric_size: 2
@@ -43,23 +42,21 @@ definition:
   - task: search_threatcrowd
   DnsRecord: 
   - task: threat/search_opendns
+  - task: search_grayhat_warfare
   EmailAddress: 
   - task: vuln/saas_google_calendar_check
   GithubAccount:
   - task: gitrob
   IpAddress:
   - task: naabu_scan
+    options: 
+    - tcp_ports: 80,443
   NetBlock:
   - task: masscan_scan
     options: 
-    - tcp_ports: scannable
-    - udp_ports: scannable
-  Organization:
-  - task: saas_jira_check
-  - task: search_bgp
-  - task: web_account_check
-  - task: whois_lookup
+    - tcp_ports: 80,443
   UniqueKeyword:
+  - task: aws_s3_brute
   - task: saas_jira_check
   - task: search_bgp
   - task: web_account_check
