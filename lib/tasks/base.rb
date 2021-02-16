@@ -36,16 +36,25 @@ class BaseTask
   #  - checks.. which just need to return a result or false
   #
   def perform(task_result_id)
+    start_time = Time.now.getutc
 
     # Get the task result and fail if we can't
     @task_result = Intrigue::Core::Model::TaskResult.first(:id => task_result_id)
-    raise InvalidTaskConfigurationError, "Missing task result?" unless @task_result    
+    
+    # While it would be sensible to raise an error here, because we currently 
+    # dont have a limit on retries, this leads to task results for deleted projects
+    # getting stuck in 'zombie' mode, where they keep retrying and failing. 
+    if @task_result
+      puts "[#{start_time}] Running task result #{@task_result.name} in project: #{@task_result.project.name}"
+    else  #raise InvalidTaskConfigurationError, "Missing task result?" 
+      puts "[#{start_time}] WARNING! Unable to find missing task result: #{task_result_id}, failing!"
+      return nil
+    end
 
     ###########################
     #  Setup the task result  #
     ###########################
     @task_result.task_name = self.class.metadata[:name]
-    start_time = Time.now.getutc
     @task_result.timestamp_start = start_time
 
     ###
