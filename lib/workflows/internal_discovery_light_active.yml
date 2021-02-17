@@ -1,0 +1,33 @@
+---
+depth: 5
+name: internal_discovery_light_active
+pretty_name: Light Internal Network Scan
+user_selectable: true
+maintainer: jcran
+flow: recursive
+description: Performs a light active scan on a network. Start with a NetBlock.
+definition:
+  DnsRecord: 
+  - task: dns_brute_sub
+    options:
+    - brute_alphanumeric_size: 2
+    - use_file: true 
+    auto_scope: true
+  Domain: 
+  - task: dns_brute_sub
+    options:
+    - brute_alphanumeric_size: 2
+    - use_file: true 
+    auto_scope: true
+  NetBlock:
+  - task: masscan_scan
+  Uri:
+  - task: uri_check_api_endpoint
+  - task: uri_brute_generic_content
+  - task: uri_check_http2_support
+  - task: uri_check_subdomain_hijack
+  - task: uri_extract_linked_hosts
+  - task: uri_extract_tokens
+  - task: uri_gather_ssl_certificate
+  - task: uri_screenshot
+  - task: jarm_hash_calculator

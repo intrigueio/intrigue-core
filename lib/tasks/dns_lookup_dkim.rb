@@ -55,7 +55,7 @@ main statements that can be published:
     if dkim_records
 
       dkim_records.each do |d|
-        next unless d["record"] =~ /DKIM/
+        next unless "#{d["record"]}".match(/DKIM/)
 
         # save them 
         _set_entity_detail "dkim_records", dkim_records

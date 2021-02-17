@@ -31,12 +31,14 @@ class NetBlock < Intrigue::Task::BaseTask
       _log "Skipping lookup, we already have the details"
       out = @entity.details
     else # do the lookup
-      out = whois(lookup_string) || {}
-      # make sure not to overwrite the name in the details
-      out = out.merge({"name" => netblock_string, "_hidden_name" => netblock_string})
-      # lazy but easier than setting invidually
-      _log "Setting entity details to... #{out}"
-      _get_and_set_entity_details out
+      out = whois(lookup_string)
+      if out 
+        # make sure not to overwrite the name in the details
+        netblock_hash = out.first.merge({"name" => netblock_string, "_hidden_name" => netblock_string})
+        # lazy but easier than setting invidually
+        _log "Setting entity details to... #{netblock_hash}"
+        _get_and_set_entity_details netblock_hash
+      end
     end
 
 
@@ -56,13 +58,13 @@ class NetBlock < Intrigue::Task::BaseTask
       end
 
       # check transferred
-      if whois_text =~ /Early Registrations, Transferred to/
+      if whois_text.match /Early Registrations, Transferred to/
         _set_entity_detail "transferred", true
       end
     end
 
     # check ipv6
-    if _get_entity_name =~ /::/
+    if _get_entity_name.match /::/
       _set_entity_detail "ipv6", true
     end
 

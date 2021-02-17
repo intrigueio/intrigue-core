@@ -12,7 +12,7 @@ class SearchSublister < BaseTask
       :references => ["https://github.com/aboul3la/Sublist3r/"],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["Domain","DnsRecord"],
+      :allowed_types => ["Domain", "DnsRecord"],
       :example_entities => [ {"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}} ],
       :allowed_options => [
         {:name => "extract_pattern", :regex => "alpha_numeric", :default => false }
@@ -24,7 +24,7 @@ class SearchSublister < BaseTask
   def run
     super
 
-    opt_extract_pattern = _get_option("extract_pattern") == "false"
+    opt_extract_pattern = _get_option("extract_pattern") == false
 
     # Check Sublist3r API & create domains from returned JSON
     search_domain = _get_entity_name

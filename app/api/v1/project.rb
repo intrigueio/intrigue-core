@@ -96,19 +96,19 @@ class CoreApp < Sinatra::Base
     
     # don't allow empty project names
     if new_project_name.length == 0
-      out = wrap_core_api_response "Unable to create unnamed project: #{new_project_name}"
+      out = wrapped_api_response "Unable to create unnamed project: #{new_project_name}"
     end
 
     # create the project unless it exists
     if Intrigue::Core::Model::Project.first(:name => new_project_name)
-      out = wrap_core_api_response "Project exists!"
+      out = wrapped_api_response "Project exists!", nil
     else
       Intrigue::Core::Model::Project.create(:name => new_project_name, :created_at => Time.now.utc)
     end
 
     unless out 
       # woo success
-      out = wrap_core_api_response "Project created!", { project: "#{new_project_name}"} 
+      out = wrapped_api_response nil, { project: "#{new_project_name}"} 
     end
 
   out 

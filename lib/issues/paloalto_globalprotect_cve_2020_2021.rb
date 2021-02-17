@@ -5,7 +5,7 @@ module Intrigue
     def self.generate(instance_details={})
       {
         added: "2020-07-03",
-        name: "paloalto_globalprotect_cve_2019_2021",
+        name: "paloalto_globalprotect_check_cve_2020_2021",
         pretty_name: "PaloAlto GlobalProtect Vulnerability (CVE-2020-2021)",
         identifiers: [
           { type: "CVE", name: "CVE-2020-2021" }
@@ -22,7 +22,7 @@ module Intrigue
         affected_software: [
           { :vendor => "PaloAltoNetworks", :product => "GlobalProtect" },
         ],
-        check: "vuln/paloalto_globalprotect_check_cve2020_2021"
+        check: "vuln/paloalto_globalprotect_check_cve_2020_2021"
       }.merge!(instance_details)
     end
   

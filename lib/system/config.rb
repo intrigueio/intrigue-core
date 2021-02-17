@@ -25,6 +25,8 @@ module System
 
       # save to persist it in case we reboot
       save
+      
+      _reload_running_config
     end
 
     def self.config
@@ -35,14 +37,13 @@ module System
       _reload_running_config
     end
 
+    # Generate the JSON and move to the config file location
+    # Use safe_write since there are other processes using the config
+    # file at the same time we're writing it (TODO.. handle this...)
     def self.save
-      # Generate the JSON and move to the config file location
-      # Use safe_write since there are other processes using the config
-      # file at the same time we're writing it (TODO.. handle this...)
       json_config = JSON.pretty_generate(@@config)
       safe_write "#{@@config_file}", json_config
       _reload_running_config
-    
     end
 
     def self.safe_write(path, content)

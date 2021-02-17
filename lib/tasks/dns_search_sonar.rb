@@ -40,7 +40,7 @@ class DnsSearchSonar < BaseTask
       json = JSON.parse(response.body_utf8)
 
       # Create forward dns entries
-      if json["FDNS_A"]
+      if json && json["FDNS_A"]
         json["FDNS_A"].each do |entry|
           # format: "199.34.228.55,red-buddha-american-apparel-llc.company.com",
           next if entry.split(",").last =~ /mail\.mail/

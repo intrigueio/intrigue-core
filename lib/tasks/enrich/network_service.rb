@@ -29,56 +29,56 @@ class NetworkService < Intrigue::Task::BaseTask
     ### First, normalize the nane - split out the various attributes
     ###
     entity_name = _get_entity_name
-    ip_address = entity_name.split(":").first
+
+    # grab the ip, handling ipv6 gracefully
+    if entity_name =~ /:/ 
+      ip_address = entity_name.split(":")[0..-2].join(":")
+    else 
+      ip_address = entity_name.split(":").first
+    end
+
     port = entity_name.split(":").last.split("/").first.to_i
     proto = entity_name.split(":").last.split("/").first.upcase
+    net_name = _get_entity_detail("net_name")
 
-    _set_entity_detail("ip_address", ip_address) unless _get_entity_detail("ip_address")
-    _set_entity_detail("port", port) unless _get_entity_detail("port")
-    _set_entity_detail("proto", proto) unless _get_entity_detail("proto")
+    _set_entity_detail("ip_address", ip_address)
+    _set_entity_detail("port", port)
+    _set_entity_detail("proto", proto)
 
-    ###
-    ### FINGERPRINTING AND VULNERABILITY CHEkING
-    ###
-    fingerprint = fingerprint_service(ip_address, port, proto) 
-
-    # first, if we hhave any fingerprints that have tags known to be 
-    # associated with an issue, let's crerat them here
-    issues_to_create  = fingerprint_tags_to_issues(fingerprint)
-    _log "Got issues: #{issues_to_create}"
-    issues_to_create.each do |i|
-      _create_linked_issue i.first, i.last, @entity
-    end
-
-    all_checks = []
-    if @project.vulnerability_checks_enabled
-      ###
-      ### Finally, start checks based on FP
-      ###
-      fingerprint.each do |f|
-        vendor_string = f["vendor"]
-        product_string = f["product"]
-        _log "Getting checks for #{vendor_string} #{product_string}"
-        checks_to_be_run = Intrigue::Issue::IssueFactory.checks_for_vendor_product(vendor_string, product_string)
-        all_checks << checks_to_be_run
-      end
-      
-      # kick off all vuln checks for this product 
-      all_checks.flatten.compact.uniq.each do |t|
-        start_task("task_autoscheduled", @project, nil, t, @entity, 1)
-      end
-    end
-
-    # and save'm off
-    _set_entity_detail("additional_checks", all_checks.flatten.compact.uniq)
-
+    # Use Ident to fingerprint
+    _log "Grabbing banner and fingerprinting!"
+    ident_response = fingerprint_service(ip_address, port, proto) 
     
+    fingerprint = ident_response["fingerprint"]
+
+    # set entity details 
+    _set_entity_detail "fingerprint", fingerprint
+
+    # Translate ident fingerprint (tags) into known issues
+    create_issues_from_fingerprint_tags(fingerprint, @entity)
+    
+    # Create issues for any vulns that are version-only inference
+    fingerprint_to_inference_issues(fingerprint)
+
+    # Okay, now kick off vulnerability checks (if project allows)
+    if @project.vulnerability_checks_enabled
+      vuln_checks = run_vuln_checks_from_fingerprint(fingerprint, @entity)
+      _set_entity_detail("vuln_checks", vuln_checks)
+    end
+
     ###
     ### Handle SNMP as a special treat
     ###
     enrich_snmp if port == 161 && proto.upcase == "UDP"
 
-    # Unless we could verify futher, consider these noise
+    ###
+    ### Hide Some services based on their attributes
+    ###
+
+    hide_value = false
+    hide_reason = "default"
+
+    # consider these noise
     noise_networks = [
       "CLOUDFLARENET - CLOUDFLARE, INC., US", 
       "GOOGLE, US", 
@@ -89,74 +89,41 @@ class NetworkService < Intrigue::Task::BaseTask
     ]
 
     # drop them if we don't have a fingerprint
-    if noise_networks.include?(_get_entity_detail("net_name")) && (_get_entity_detail("fingerprint") || []).empty?
-      @entity.deny_list = true && @entity.hidden = true && @entity.scoped = false
-      @entity.save
+    #
+    # TODO ... this might need to be checked for a generic reset now
+    #
+    if noise_networks.include?(net_name) &&
+         (_get_entity_detail("fingerprint") || []).empty?
+      # always allow these ports even if we dont have a fingeprint
+      unless (port == 80 || port == 443) 
+        hide_value = true
+        hide_reason = "noise_network"
+      end
     end
+
+    known_ports = [
+      { port: 2082, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::" },  
+      { port: 2083, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },  
+      { port: 2086, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
+      { port: 2087, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
+      { port: 2095, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  }, 
+      { port: 2082, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::" },  
+      { port: 2083, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },  
+      { port: 2086, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
+      { port: 2087, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
+      { port: 2095, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  }, 
+      { port: 25, net_name: "GOOGLE, US" }
+    ]
+    if known_ports.find{ |x| x[:port] == port && x[:net_name] == net_name }
+      hide_reason = "Matched known hidden service"
+      hide_value = true 
+    end
+
+    # Okay now hide based on our value 
+    _log "Setting Hidden to: #{hide_value}, for reason: #{hide_reason}"
+    @entity.hidden = hide_value 
+    @entity.save_changes
   
-  end
-
-  def fingerprint_service(ip_address,port=nil, proto="TCP")
-
-    # Use intrigue-ident code to request the banner and fingerprint
-    _log "Grabbing banner and fingerprinting!"
-    ident_matches = nil
-
-    ###
-    ### Go through each known port
-    ###
-    if port == 21 && !ident_matches
-      ident_matches = generate_ftp_request_and_check(ip_address) || {}
-    end
-      
-    if (port == 22 || port == 2222) && !ident_matches
-      ident_matches = generate_ssh_request_and_check(ip_address) || {}
-    end
-      
-    if port == 23 && !ident_matches
-      ident_matches = generate_telnet_request_and_check(ip_address) || {}
-    end
-
-    if (port == 25 || port == 587) && !ident_matches
-      ident_matches = generate_smtp_request_and_check(ip_address) || {}
-    end
-    
-    if port == 53 && !ident_matches
-      ident_matches = generate_dns_request_and_check(ip_address) || {}
-    end
-
-    if port == 161 && !ident_matches
-      ident_matches = generate_snmp_request_and_check(ip_address) || {}
-    end
-
-    if port == 3306 && !ident_matches
-      ident_matches = generate_mysql_request_and_check(ip_address) || {}
-    end
-    
-    ###
-    ### But default to HTTP through each known port
-    ###
-    url = "http://#{ip_address}:#{port}"
-    _log "Checking for HTTP... #{url}"
-    ident_matches = generate_http_requests_and_check(url) || {} unless ident_matches
-    
-    # okay we failed
-    unless ident_matches
-      _log "Unable to fingerprint!"
-      return
-    end
-
-    # if we didnt fail, pull out the FP and match to vulns
-    ident_fingerprints = ident_matches["fingerprint"] || []
-    if ident_fingerprints.count > 0
-      _log "Got #{ident_fingerprints.count} fingerprints!"
-      ident_fingerprints = add_vulns_by_cpe(ident_fingerprints)
-    end
-
-    # set entity details 
-    _set_entity_detail "fingerprint", ident_fingerprints
-  
-  ident_fingerprints
   end
 
   def enrich_snmp

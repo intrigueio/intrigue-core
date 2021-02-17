@@ -4,15 +4,15 @@ class Organization < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "Organization",
-      :description => "An organization",
-      :user_creatable => true,
-      :example => "Intrigue Corporation"
+      name: "Organization",
+      description: "An organization",
+      user_creatable: true,
+      example: "Intrigue Corp"
     }
   end
 
   def validate_entity
-    name =~ /^[\w\s\d\.\-\_\&\;\:\,\@]{3,}$/
+    name.match /^[\w\s\d\.\-\_\&\;\:\,\@]{3,}$/
   end
 
   def enrichment_tasks
@@ -20,8 +20,9 @@ class Organization < Intrigue::Core::Model::Entity
   end
 
   def scoped?
-    return true if self.allow_list
-    return false if self.deny_list
+    return true if scoped
+    return true if self.allow_list || self.project.allow_list_entity?(self) 
+    return false if self.deny_list || self.project.deny_list_entity?(self)
   
   false
   end

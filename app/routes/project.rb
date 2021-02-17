@@ -3,6 +3,7 @@ class CoreApp < Sinatra::Base
     # Main Page
     get '/:project/?' do
       @projects = Intrigue::Core::Model::Project.order(:created_at).reverse.all
+      @project_name = nil
       erb :index
     end
 
@@ -64,11 +65,11 @@ class CoreApp < Sinatra::Base
 
       # When we create the project, we want to make sure no HTML is
       # stored, as we'll use this for display later on...
-      new_project_name = CGI::escapeHTML(params[:project])
+      new_project_name = params[:project]
       
       if new_project_name.length == 0 
         session[:flash] = "Invalid project name!"
-        redirect "/#{new_project_name}/start" # handy if we're in a browser
+        redirect "/#{new_project_name}/start/workflow" # handy if we're in a browser
       end
 
       # create the project unless it exists
@@ -76,7 +77,7 @@ class CoreApp < Sinatra::Base
         Intrigue::Core::Model::Project.create(:name => new_project_name, :created_at => Time.now.utc)
       end
 
-      redirect "/#{new_project_name}/start" # handy if we're in a browser
+      redirect "/#{new_project_name}/start/workflow" # handy if we're in a browser
     end
 
     # save the config
@@ -99,7 +100,24 @@ class CoreApp < Sinatra::Base
       redirect '/' # handy if we're in a browser
     end
 
-    get '/:project/start' do
+    ###
+    ### Start is contextual... 
+    ###
+    get '/:project/start/?' do
+      @project = Intrigue::Core::Model::Project.first(:name => @project_name)
+      if @project && @project.entities.count > 0
+        redirect "#{@project_name}/entities"
+      else # start workflow
+        redirect "#{@project_name}/start/workflow" # handy if we're in a browser
+      end
+    end
+
+    get '/:project/start/workflow/?' do
+      @project = Intrigue::Core::Model::Project.first(:name => @project_name)
+      erb :'start_workflow'
+    end
+
+    get '/:project/start/task' do
       @project = Intrigue::Core::Model::Project.first(:name => @project_name)
 
       # if we receive an entity_id or a task_result_id, instanciate the object
@@ -114,13 +132,13 @@ class CoreApp < Sinatra::Base
       end
 
       @task_classes = Intrigue::TaskFactory.list
-      erb :'start'
+      erb :'start_task'
     end
 
-    get '/:project/start/upload' do
+    get '/:project/start/task/upload' do
       @project = Intrigue::Core::Model::Project.first(:name => @project_name)
       @task_classes = Intrigue::TaskFactory.list
-      erb :'start'
+      erb :'start_task'
     end
 
     # Run a specific handler on all scan results
@@ -130,63 +148,10 @@ class CoreApp < Sinatra::Base
       project = Intrigue::Core::Model::Project.first(:name => @project_name)
       project.handle(handler_name)
 
-    redirect "/#{@project_name}/start"
+      session[:flash] = "Handler #{handler_name} has been started!"
+
+    redirect "/#{@project_name}"
     end
-
-    #### GRAPH ####
-
-    # Project Graph
-    get '/:project/graph.json/?' do
-      content_type 'application/json'
-      project = Intrigue::Core::Model::Project.first(:name => @project_name)
-
-      # Start a new generation
-      unless project.graph_generation_in_progress
-        Intrigue::Workers::GenerateGraphWorker.perform_async(project.id)
-      end
-
-    project.graph_json || "Currently generating..."
-    end
-
-    get '/:project/graph/meta.json/?' do
-      content_type 'application/json'
-      project = Intrigue::Core::Model::Project.first(:name => @project_name)
-
-      # Start a new generation
-      unless project.graph_generation_in_progress
-        Intrigue::Workers::GenerateMetaGraphWorker.perform_async(project.id)
-      end
-
-    project.graph_json || "Currently generating..."
-    end
-
-
-    # graph
-    get '/:project/graph' do
-      @json_uri = "#{request.url}.json"
-      @graph_generated_at = Intrigue::Core::Model::Project.first(:name => @project_name).graph_generated_at
-      erb :'graph'
-    end
-
-    # graph
-    get '/:project/graph/generated_at' do
-      "#{Intrigue::Core::Model::Project.first(:name => @project_name).graph_generated_at}"
-    end
-
-    # graph
-    get '/:project/graph/meta' do
-      @json_uri = "#{request.url}.json"
-      @graph_generated_at = Intrigue::Core::Model::Project.first(:name => @project_name).graph_generated_at
-      erb :'graph'
-    end
-
-    get '/:project/graph/reset' do
-      p= Intrigue::Core::Model::Project.first(:name => @project_name)
-      p.graph_generation_in_progress = false
-      p.save
-      redirect "/#{@project_name}/graph"
-    end
-
 
     ### EXPORT
     get '/:project/export/json' do

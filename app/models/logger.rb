@@ -54,7 +54,7 @@ module Model
       # if method is set to none, don't log anything
       return if location == "none"
 
-      encoded_out = message.encode("UTF-8", undef: :replace, invalid: :replace, replace: "?")
+      encoded_out = message.sanitize_unicode
 
       if location == "database"
         begin
@@ -64,8 +64,9 @@ module Model
         rescue Sequel::DatabaseError => e
           puts "ERROR WRITING LOG FOR #{self}: #{e}"
         end
+
       elsif location == "file"
-        File.open("#{$intrigue_basedir}/log/#{task_result.id}.log","a"){|f| f.puts "#{encoded_out}"; f.flush } 
+        File.open("#{$intrigue_basedir}/log/#{task_result.id}.log","a"){|f| f.puts "#{encoded_out}"; } 
       else
         raise "Fatal! Unknown value for intrigue_task_log_location: #{intrigue_task_log_location}"
       end

@@ -42,11 +42,11 @@ class DnsTransferZone < BaseTask
 
         # Do the actual zone transfer
         zt = Dnsruby::ZoneTransfer.new
+        zt.connect_timeout = 60
         zt.transfer_type = Dnsruby::Types.AXFR
         zt.server = nameserver
         zone = zt.transfer(domain_name)
-
-
+        
         description = "Zone transfer on #{domain_name} using #{nameserver} resulted in leak of #{zone.count} records. AXFR offers no authentication, so any client can ask a DNS server for a copy of the entire zone. which gives them a lot of potential attack vectors over #{domain_name}",
         
         _create_linked_issue("dns_zone_transfer", {

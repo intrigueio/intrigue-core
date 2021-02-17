@@ -93,11 +93,11 @@ class AwsS3Bucket < Intrigue::Task::BaseTask
     interesting_files = []
 
     doc = Nokogiri::HTML(resp)
-    if  ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
-          doc.xpath("//code").text =~ /InvalidBucketName/ ||
-          doc.xpath("//code").text =~ /AllAccessDisabled/ ||
-          doc.xpath("//code").text =~ /AccessDenied/
-          doc.xpath("//code").text =~ /PermanentRedirect/ )
+    if  ( doc.xpath("//code").text.match(/NoSuchBucket/)          ||
+          doc.xpath("//code").text.match(/InvalidBucketName/)     ||
+          doc.xpath("//code").text.match(/AllAccessDisabled/)     ||
+          doc.xpath("//code").text.match(/AccessDenied/)          || 
+          doc.xpath("//code").text.match(/PermanentRedirect/)  )
       _log_error "Got response: #{doc.xpath("//code").text} (#{s3_uri})"
 
     else # check each file size
@@ -160,7 +160,7 @@ class AwsS3Bucket < Intrigue::Task::BaseTask
       /^.*\.tif$/i,
       /^.*\.wmv$/i
     ].each do |regex|
-      return true if uri =~ regex
+      return true if uri.match(regex)
     end
 
   false

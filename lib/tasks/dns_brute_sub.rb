@@ -67,11 +67,10 @@ class DnsBruteSub < BaseTask
 
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)
-    wildcard_ips = check_wildcard(suffix)
-
-    unless wildcard_ips
-      _log_error "Unable to continue, we can't verify wildcard status"
-      @entity.set_detail "wildcard_brute_error", true
+    wildcards = gather_wildcard_resolutions(suffix)
+    unless wildcards.empty?
+      _log_error "Unable to continue, this is a wildcard"
+      _set_entity_detail "wildcard_brute_error", true
       return
     end
 
@@ -130,15 +129,13 @@ class DnsBruteSub < BaseTask
 
               if resolved_address # If we resolved, create the right entities
 
+                wildcard_ips = wildcards.map{|x| x["lookup_details"].map{|x| x["response_record_data"]} }.flatten.uniq
                 unless wildcard_ips.include?(resolved_address)
                   found_count += 1
                   _log_good "Resolved address #{resolved_address} for #{fqdn}!"
 
-                  dns_entity = _create_entity("DnsRecord", {"name" => fqdn })
-
-                  # since we can get a CNAME response, check type before creating
-                  create_type = "#{resolved_address}".is_ip_address? ? "IpAddress" : "DnsRecord"
-                  _create_entity(create_type, {"name" => resolved_address }, dns_entity)
+                  # create it!                  
+                  create_dns_entity_from_string fqdn
 
                   #
                   # This section will add permutations to our list, if the
@@ -190,7 +187,7 @@ class DnsBruteSub < BaseTask
     _log "Checking invalid permutation: #{invalid_name}"
 
     if invalid_address == original_address
-      _log_error "Looks like we found a pattern matching DNS server, lets skip this: #{subdomain}.#{suffix}"
+      _log_error "Looks like we found a pattern matching DNS server, lets skip permutations on: #{subdomain}.#{suffix}"
       return
     else
       _log_good "Looks like we are not pattern matching, continuing on with permutation checking!"
@@ -230,10 +227,10 @@ class DnsBruteSub < BaseTask
     ]
 
     # test to first make sure we don't have a subdomain specific wildcard
-    subdomain_wildcard_ips = check_wildcard("#{subdomain}.#{suffix}")
+    subdomain_wildcards = gather_wildcard_resolutions("#{subdomain}.#{suffix}").uniq
 
     # Before we iterate on this subdomain, let's make sure it's not a wildcard
-    if subdomain_wildcard_ips.empty?
+    if subdomain_wildcards.empty?
       _log "Adding permutations: #{permutation_list.join(", ")}"
       permutation_list.each do |p|
         queue.push({:subdomain => "#{p}", :fqdn => "#{p}.#{suffix}", :depth => depth+1})

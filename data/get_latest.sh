@@ -35,6 +35,12 @@ if [ ! -f public_suffix_list.dat ]; then
   rm public_suffix_list.dat
 fi
 
+# tika 
+if [ ! -f ../tmp/tika-server.jar ]; then
+  echo "[+] Getting Tika"
+  wget -N -q https://apache.osuosl.org/tika/tika-server-1.25.jar -O ../tmp/tika-server.jar
+fi
+
 # retirejs data 
 if [ ! -f retirejs.json ]; then
   echo "[+] Getting latest Retire.js"
@@ -43,7 +49,7 @@ if [ ! -f retirejs.json ]; then
 fi
 
 # NVD feeds
-NVD_YEARS="2019 2018 2017"
+NVD_YEARS="2021 2020 2019 2018 2017"
 
 # nvd download function
 function get_nvd_json() {

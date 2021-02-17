@@ -13,8 +13,8 @@ class CoreApp < Sinatra::Base
   #  :entity_details => {}, # hash of values, usually empty  
   #  :task_options => [{name: "value1", name2: "value2"}],  # hash of values # TODO... verify this format
   #  :handler_names => [], # list of strings, see /api/v1/handlers for a list of possible values 
-  #  :machine_name => "external_discovery_light_active", # string, a valid machine name, see /api/v1/machines for a list of valid values
-  #  :machine_depth => 1, # integer, max depth (can be 1-5)
+  #  :workflow_name => "profile_organization_external_light_active", # string, a valid workflow name, see /api/v1/workflows for a list of valid values
+  #  :workflow_name => 1, # integer, max depth (can be 1-5)
   #  :auto_enrich => 1, # bool, specifies whether to run the automatic entity enrichment 
   #  :auto_scope => 1, # bool, specifies whether to automatically scope this entity in
   #  :queue_name => "task", # string specifying which queue to place the task in. best left as 'task'  
@@ -37,7 +37,7 @@ class CoreApp < Sinatra::Base
     
     # fail unless we have these 
     unless project_name && task_name && entity_type_string && entity_name
-      return wrap_core_api_response "Unable to create task result, missing required parameter"
+      return wrapped_api_response "Unable to create task result, missing required parameter"
     end
 
     # optional / defaulted parameters
@@ -46,8 +46,8 @@ class CoreApp < Sinatra::Base
     
     handler_names = payload["handler_names"] || []
     
-    machine_name = payload["machine_name"] || nil
-    machine_depth = payload["machine_depth"] || 1
+    workflow_name = payload["workflow_name"] || nil
+    workflow_depth = payload["workflow_depth"] || 1
 
     auto_enrich = payload["auto_enrich"] || true
     auto_scope = payload["auto_scope"] || false
@@ -56,24 +56,24 @@ class CoreApp < Sinatra::Base
     # determine our type from the type string
     project_object = Intrigue::Core::Model::Project.first :name => project_name
     unless project_object
-      return wrap_core_api_response "Invalid project"
+      return wrapped_api_response "Invalid project"
     end      
 
     # determine our type from the type string
     resolved_type = Intrigue::EntityManager.resolve_type_from_string entity_type_string
     unless resolved_type
-      return wrap_core_api_response "Invalid type"
+      return wrapped_api_response "Invalid type"
     end      
 
     # create the entity
     entity_object = Intrigue::EntityManager.create_first_entity(project_name, entity_type_string, entity_name, entity_details)
     unless entity_object
-      return wrap_core_api_response "Unable to create entity"
+      return wrapped_api_response "Unable to create entity"
     end      
 
     # Start the task_run
-    scan_result_id = nil # only applicable if we're called from a machine
-    task_result = start_task(queue_name, project_object, scan_result_id, task_name, entity_object, machine_depth, task_options, handler_names, machine_name, auto_enrich, auto_scope)
+    scan_result_id = nil # only applicable if we're called from a workflow
+    task_result = start_task(queue_name, project_object, scan_result_id, task_name, entity_object, workflow_depth, task_options, handler_names, workflow_name, auto_enrich, auto_scope)
 
     # manually start enrichment, since we've already created the entity above, it won't auto-enrich
     if auto_enrich && !(task_name =~ /^enrich/)
@@ -82,7 +82,7 @@ class CoreApp < Sinatra::Base
     end
 
     # woo success
-    wrap_core_api_response "Task result created!", { task_result_id: task_result.id } 
+    wrapped_api_response nil, { task_result_id: task_result.id } 
   end
 
   ###

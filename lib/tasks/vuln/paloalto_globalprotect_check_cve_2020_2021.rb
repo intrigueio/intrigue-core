@@ -4,7 +4,7 @@ module Intrigue
   
     def self.metadata
       {
-        :name => "vuln/paloalto_globalprotect_cve_2019_2021",
+        :name => "vuln/paloalto_globalprotect_check_cve_2020_2021",
         :pretty_name => "Vuln Check - PaloAlto GlobalProtect Auth Bypass (CVE-2020-2021)",
         :authors => ["jcran"],
         :identifiers => [{ "cve" =>  "CVE-2020-2021" }],

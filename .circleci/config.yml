@@ -1,9 +1,17 @@
 version: 2.1
 orbs:
   ruby: circleci/ruby@0.1.2
+  slack: circleci/slack@4.1.3 
+
+workflows:
+  build:
+    jobs:
+      - build-core:
+          context:
+              - Build Context (Low Security)
 
 jobs:
-  build:
+  build-core:
     docker:
       - image: circleci/ruby:2.7.2
         environment:
@@ -19,5 +27,33 @@ jobs:
             INTRIGUE_ENV=test bundle install
             INTRIGUE_ENV=test bundle exec rake setup
             INTRIGUE_ENV=test bundle exec rake db:migrate
-            INTRIGUE_ENV=test bundle exec rspec spec/*.rb   
+            INTRIGUE_ENV=test bundle exec rspec spec/*.rb
+      - slack/notify:
+          event: fail
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "@here Job *${CIRCLE_JOB}* in branch `<< pipeline.git.branch >>` by committer ${CIRCLE_USERNAME} has *failed* :warning:. View job <${CIRCLE_BUILD_URL}|here>."
+                  }
+                }
+              ]
+            }
+      - slack/notify:
+          event: pass
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Job *${CIRCLE_JOB}* in branch `<< pipeline.git.branch >>` by committer ${CIRCLE_USERNAME} successful :white_check_mark:. View job <${CIRCLE_BUILD_URL}|here>."
+                  }
+                }
+              ]
+            }  
     

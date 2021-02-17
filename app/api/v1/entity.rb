@@ -27,7 +27,7 @@ class CoreApp < Sinatra::Base
 
     end
 
-  out.to_json
+  wrapped_api_response, nil, out
   end
 
 end

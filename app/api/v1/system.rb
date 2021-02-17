@@ -1,13 +1,40 @@
 class CoreApp < Sinatra::Base
 
-  def wrapped_api_response(error, result=nil)
-    success = error.nil?
-  {success: success, error: error, result: result}.to_json
+  # System status
+  get "/api/v1/health/?" do
+
+    content_type 'application/json'
+    
+    halt_unless_authenticated!
+
+    sidekiq_stats = Sidekiq::Stats.new
+    project_listing = Intrigue::Core::Model::Project.all.map { |p|
+        { :name => "#{p.name}", :entities => "#{p.entities.count}" } }
+
+    output = {
+      :version => IntrigueApp.version,
+      :projects => project_listing,
+      :tasks => {
+        :processed => sidekiq_stats.processed,
+        :failed => sidekiq_stats.failed,
+        :queued => sidekiq_stats.queues
+      }
+    }
+
+    output[:memory] = `free -h`
+    output[:processes] = `god status`
+    output[:disk] = `df -h`
+
+
+  wrapped_api_response(nil, output)
   end
+
 
   # Export All Entity Types
   get "/api/v1/entities" do
     content_type 'application/json'
+
+    halt_unless_authenticated!
     
     entity_metadata = Intrigue::EntityFactory.entity_types.map{ |e| e.metadata }.sort_by{|m| m[:name] }
   wrapped_api_response(nil, entity_metadata)
@@ -17,22 +44,29 @@ class CoreApp < Sinatra::Base
   get "/api/v1/tasks" do
     content_type 'application/json'
 
+    halt_unless_authenticated!
+
     tasks_metadata = Intrigue::TaskFactory.list.map{ |t| t.metadata }.sort_by{|m| m[:name] }
   wrapped_api_response(nil, tasks_metadata)
   end
 
-  # Export All Task Metadata
-  get "/api/v1/machines" do
+  # Export All Workflows
+  get "/api/v1/workflows" do
     content_type 'application/json'
 
-    machine_metadata = Intrigue::MachineFactory.list.map{ |t| t.metadata }.sort_by{|m| m[:name] }
-  wrapped_api_response(nil, machine_metadata)
+    halt_unless_authenticated!
+
+    workflow_metadata = Intrigue::Core::Model::Workflow.all.map{ |t| t.to_hash }.sort_by{|m| m[:name] }
+
+  wrapped_api_response(nil, workflow_metadata)
   end
 
-
-  # Export All Task Metadata
+  # Export All Handlers
   get "/api/v1/handlers" do
     content_type 'application/json'
+
+    halt_unless_authenticated!
+
     handler_metadata = Intrigue::HandlerFactory.list.map{ |t| t.metadata }.sort_by{|m| m[:name] }
   wrapped_api_response(nil, handler_metadata)
   end
@@ -40,6 +74,8 @@ class CoreApp < Sinatra::Base
   # Export a specific Task's metadataa
   get "/api/v1/tasks/:task_name" do
     content_type 'application/json'
+
+    halt_unless_authenticated!
 
     task_name = params[:task_name]
 

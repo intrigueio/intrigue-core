@@ -111,18 +111,14 @@ task :setup do
 
   ## Copy puma config into place
   puts "[+] Copying Procfile...."
-  if File.exist? procfile_file
-    puts "[ ] File already exists, skipping: #{procfile_file}"
-  else
+  unless File.exist? procfile_file
     puts "[+] Creating.... #{procfile_file}"
     FileUtils.cp "#{procfile_file}.default", procfile_file
   end
 
   ## Copy puma config into place
   puts "[+] Copying puma config...."
-  if File.exist? puma_config_file
-    puts "[ ] File already exists, skipping: #{puma_config_file}"
-  else
+  unless File.exist? puma_config_file
     puts "[+] Creating.... #{puma_config_file}"
     FileUtils.cp "#{puma_config_file}.default", puma_config_file
   end
@@ -152,7 +148,6 @@ task :setup do
         puts "[+] GENERATING NEW SYSTEM PASSWORD!" 
         config["credentials"]["password"] = system_password # Save it
       end
-    else
       system_password = config["credentials"]["password"]
     end
 
@@ -176,11 +171,11 @@ task :setup do
   end
 
   # Create SSL Cert  
-  if !(File.exist?("#{$intrigue_basedir}/config/server.key") || File.exist?("#{$intrigue_basedir}/config/server.crt"))
+  unless (File.exist?("#{$intrigue_basedir}/config/server.key") || File.exist?("#{$intrigue_basedir}/config/server.crt"))
     puts "[+] Generating A new self-signed SSL Certificate..."
     Dir.chdir("#{$intrigue_basedir}/config/"){ 
       subject_name = "/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN=intrigue.local"
-      command = "openssl req -subj '#{subject_name}' -new -newkey rsa:2048 -sha256 -days 365 -nodes -x509 -keyout server.key -out server.crt"
+      command = "openssl req -subj '#{subject_name}' -new -newkey rsa:2048 -sha256 -days 365 -nodes -x509 -addext 'extendedKeyUsage = serverAuth' -keyout server.key -out server.crt > /dev/null 2>&1"
       puts `#{command}`
     }
   else
@@ -189,9 +184,7 @@ task :setup do
 
   ## Copy database config into place
   puts "[+] Copying database config."
-  if File.exist? database_config_file
-    puts "[ ] File already exists, skipping: #{database_config_file}"
-  else
+  unless File.exist? database_config_file
     puts "[+] Creating.... #{database_config_file}"
     FileUtils.cp "#{database_config_file}.default", database_config_file
 
@@ -204,9 +197,7 @@ task :setup do
 
   ## Copy redis config into place
   puts "[+] Copying redis config."
-  if File.exist? redis_config_file
-    puts "[ ] File already exists, skipping: #{redis_config_file}"
-  else
+  unless File.exist? redis_config_file
     puts "[+] Creating.... #{redis_config_file}"
     FileUtils.cp "#{redis_config_file}.default", redis_config_file
   end
@@ -221,8 +212,6 @@ task :setup do
     unless File.exist?(wc)
       puts "[+] Copying: #{wc}.default"
       FileUtils.cp "#{wc}.default", wc
-    else
-      puts "[+] #{wc} already exists!"
     end
   end
   # end worker config placement

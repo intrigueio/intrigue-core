@@ -20,8 +20,8 @@ class Masscan < BaseTask
       :example_entities => [{"type" => "NetBlock", "details" => {"name" => "10.0.0.0/24"}}],
       :allowed_options => [
         {:name => "tcp_ports", :regex => "numeric_list", :default => "21,80,443,8000,8009,8080,8081,8443" },
-        {:name => "udp_ports", :regex => "numeric_list", :default => "161,500,1900" },
-        {:name => "send_rate", :regex => "integer", :default => 100000 },
+        {:name => "udp_ports", :regex => "numeric_list", :default => "53,161,500,1900" },
+        {:name => "send_rate", :regex => "integer", :default => 10000 },
       ],
       :created_types => [ "DnsRecord","IpAddress", "NetworkService", "Uri" ],
       :queue => "task_scan"
@@ -38,6 +38,10 @@ class Masscan < BaseTask
     opt_udp_ports = _get_option("udp_ports")
     opt_send_rate = _get_option("send_rate")
 
+    # allow us to programmatically set based on what we know how to scan
+    opt_tcp_ports = scannable_tcp_ports.join(",") if opt_tcp_ports == "scannable"
+    opt_udp_ports = scannable_udp_ports.join(",") if opt_udp_ports == "scannable"
+
     begin
 
       # Create a tempfile to store result
@@ -49,7 +53,6 @@ class Masscan < BaseTask
       port_string << "#{opt_udp_ports.split(",").map{|p| "U:#{p}" }.join(",")}" if opt_udp_ports.length > 0
 
       # shell out to masscan and run the scan
-      # TODO - move this to scanner mixin
       masscan_string = "masscan --ports #{port_string} --rate #{opt_send_rate} -oL #{temp_file.path} --range #{to_scan}"
       masscan_string = "sudo #{masscan_string}" unless Process.uid == 0
 
@@ -69,16 +72,14 @@ class Masscan < BaseTask
         ip_address = line.delete("\n").strip.split(" ")[3]
 
         # Get the discovered host (one per line) & create an ip address
-        created_entity = _create_entity("IpAddress", { 
+        ip_entity = _create_entity("IpAddress", { 
           "name" => ip_address, 
-          "scoped" => true,
           "whois_full_text" => _get_entity_detail("whois_full_text")
         })
 
         # this will also add teh the port to the ip address
-        _create_network_service_entity(created_entity,
+        _create_network_service_entity(ip_entity,
           port, protocol, { 
-            "scoped" => true,
             "extended_masscan" => masscan_string 
         })
 
