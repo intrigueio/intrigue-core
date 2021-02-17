@@ -91,6 +91,7 @@ module Data
     [
       "acquia-sites.com",
       "careers.talemetry.com",
+      "cdn.myqcloud.com", 
       "chinacloudsites.cn",
       "chinanetcenter.com",
       "cloudflare.com",
