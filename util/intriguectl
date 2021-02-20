@@ -83,6 +83,7 @@ elif [ "$cmd" == "update" ]; then
     echo "[+] Pulling https://github.com/intrigueio/intrigue-core"
     git pull > /dev/null 2>&1
     bundle install > /dev/null 2>&1
+    bundle exec rake db:migrate > /dev/null 2>&1
     echo "[+] Update complete! Please restart intrigue for changes to take effect."
 else
     echo "Unknown command."
