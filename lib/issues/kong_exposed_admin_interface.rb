@@ -20,7 +20,7 @@ module Intrigue
             { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2020-11710" },
             { type: "Exploit", uri: "https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/multi/http/kong_gateway_admin_api_rce.rb" } 
           ], 
-          check: "vuln/kong_exposed_admin_interface"
+          task: "vuln/kong_exposed_admin_interface"
         }.merge!(instance_details)
       end
     

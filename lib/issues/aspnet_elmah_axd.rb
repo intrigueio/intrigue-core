@@ -21,7 +21,7 @@ module Intrigue
           { type: "remediation", uri: "https://blog.elmah.io/elmah-security-and-allowremoteaccess-explained/" }, 
           { type: "remediation", uri: "https://www.netsparker.com/web-vulnerability-scanner/vulnerabilities/elmahaxd--errorlogaxd-detected/" }
         ], 
-        check: "uri_brute_focused_content"
+        task: "uri_brute_focused_content"
       }.merge!(instance_details)
     end
   

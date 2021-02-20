@@ -16,7 +16,7 @@ class NextjsPathTraversalCve20205284 < BaseIssue
       references: [
         { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2020-5284" }
       ],
-      check: "vuln/nextjs_path_traversal_cve_2020_5284"
+      task: "vuln/nextjs_path_traversal_cve_2020_5284"
     }.merge!(instance_details)
 
   to_return

@@ -19,7 +19,7 @@ module Intrigue
           { type: "description", uri: "https://dev.to/_shahroznawaz/laravel-env-files-exposed-in-browsers-28l" },
           { type: "remediation", uri: "https://laracasts.com/discuss/channels/laravel/in-shared-hosting-environment-how-to-hide-env-file-from-public" } 
         ], 
-        check: "uri_brute_focused_content"
+        task: "uri_brute_focused_content"
       }.merge!(instance_details)
     end
   

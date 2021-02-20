@@ -25,7 +25,7 @@ module Intrigue
           {:type => "threat_intel", :uri => "https://twitter.com/n0x08/status/1278812795031523328"}, 
           {:type => "exploit", :uri => "https://github.com/Critical-Start/Team-Ares/blob/master/CVE-2020-5902/CVE-2020-5902.sh"}
         ],
-        check: "vuln/f5_bigip_configuration_utility_cve_2020_5902"
+        task: "vuln/f5_bigip_configuration_utility_cve_2020_5902"
       }.merge!(instance_details)
     end
   

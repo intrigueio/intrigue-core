@@ -20,7 +20,7 @@ module Intrigue
           { type: "description", uri: "https://github.com/advisories/GHSA-8h56-v53h-5hhj" },
           { type: "description", uri: "https://support.sonatype.com/hc/en-us/articles/360044882533-CVE-2020-10199-Nexus-Repository-Manager-3-Remote-Code-Execution-2020-03-31" }
         ],
-        check: "vuln/sonatype_nexus_cve_2020_10204"
+        task: "vuln/sonatype_nexus_cve_2020_10204"
       }.merge(instance_details)
       
     to_return

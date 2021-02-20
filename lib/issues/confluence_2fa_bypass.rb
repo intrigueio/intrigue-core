@@ -19,7 +19,7 @@ class Confluence2faBypass < BaseIssue
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
         { type: "description", uri: "https://community.atlassian.com/t5/Confluence-questions/Bypass-SSO-Confluence/qaq-p/1078755" }
       ], 
-      check: "uri_brute_focused_content"
+      task: "uri_brute_focused_content"
     }.merge(instance_details)
     
   to_return

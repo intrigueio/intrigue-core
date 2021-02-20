@@ -68,19 +68,26 @@ module Intrigue
         
         ### First, get all issues with their affected software
         mapped_issues = []
-        self.issues.each do |h| 
+        self.issues.each do |h|
           # generate the instances
-          hi = h.generate({}); 
+          hi = h.generate({});
           # then get all instaces of affected software with issues names
           as = (hi[:affected_software] || [])
-          mapped_issues << as.map{|x| x.merge({ :check => (hi[:check]||hi[:name]) }) }
+          
+          # first check to see if there's an explicit task specified in the issue
+          # and if there's not default to the name of the issue (it's probably a check and 
+          # ... checks are automatically named by their issue thanks to introspection magic) 
+          mapped_issues << as.map{|x| x.merge({ check: (hi[:task]||hi[:name]) }) }
         end
 
 
         ## pull out only items that have an affected software that matches our 
         ## passed-in vendor / product and only return the name of the task/check to be run 
-        tasks_or_checks = mapped_issues.flatten.select{|x| x[:vendor] == vendor && x[:product] == product}.map{|x| x[:check]}
+        tasks_or_checks = mapped_issues.flatten.select{|x| x[:vendor] == vendor && x[:product] == product}.map{|x| x[:check] }
     
+      # return only those checks that actually exist. this is due to the magical 
+      # nature of how we select tasks above - which might mean that we pulled in an 
+      # issue that did not have a corresponding check or task 
       tasks_or_checks.map{|x| x if Intrigue::TaskFactory.include?(x)}.uniq.compact
       end
     

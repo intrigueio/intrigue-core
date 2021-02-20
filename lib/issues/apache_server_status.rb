@@ -19,7 +19,7 @@ module Intrigue
           { type: "description", uri: "https://httpd.apache.org/docs/2.4/mod/mod_status.html" },
           { type: "remediation", uri: "https://httpd.apache.org/docs/2.4/mod/mod_status.html" }
         ], 
-        check: "uri_brute_focused_content"
+        task: "uri_brute_focused_content"
       }.merge!(instance_details)
     end
   

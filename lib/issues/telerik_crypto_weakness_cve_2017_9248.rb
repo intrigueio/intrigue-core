@@ -21,7 +21,7 @@ module Intrigue
           { type: "description", uri: "https://www.telerik.com/support/kb/aspnet-ajax/details/cryptographic-weakness" },
           { type: "exploit", uri: "https://captmeelo.com/pentest/2018/08/03/pwning-with-telerik.html"}
         ], 
-        check: "vuln/telerik_crypto_weakness_cve_2017_9248"
+        task: "vuln/telerik_crypto_weakness_cve_2017_9248"
       }.merge!(instance_details)
     end
   
