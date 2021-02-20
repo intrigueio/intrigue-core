@@ -19,7 +19,7 @@ module Intrigue
           { type: "description", uri: "https://securityaffairs.co/wordpress/52978/hacking/sap-systems-flawed.html" },
           { type: "exploit", uri: "https://www.exploit-db.com/exploits/44647"}
         ], 
-        check: "uri_brute_focused_content"
+        task: "uri_brute_focused_content"
       }.merge!(instance_details)
     end
   

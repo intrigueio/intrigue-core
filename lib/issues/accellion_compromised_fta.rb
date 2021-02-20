@@ -18,7 +18,7 @@ module Intrigue
         references: [
           { type: "description", uri: "https://www.itnews.com.au/news/accellion-hack-behind-reserve-bank-of-nz-data-breach-559642" },
         ], 
-        check: "vuln/accellion_compromised_fta"
+        task: "vuln/accellion_compromised_fta"
       }.merge!(instance_details)
     end
     end

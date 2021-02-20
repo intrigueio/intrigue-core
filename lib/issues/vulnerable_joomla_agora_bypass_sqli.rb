@@ -18,7 +18,7 @@ class JoomlaAgoraBypassSqli < BaseIssue
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
         { type: "description", uri: "https://packetstormsecurity.com/files/151619/Joomla-Agora-4.10-Bypass-SQL-Injection.html" },
       ], 
-      check: "uri_brute_focused_content"
+      task: "uri_brute_focused_content"
     }.merge!(instance_details)
   end
 

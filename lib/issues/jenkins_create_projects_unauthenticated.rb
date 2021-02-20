@@ -17,7 +17,7 @@ class JenkinsCreateProjectsUnauthenticated < BaseIssue
       description:  "Unauthenticated Jenkins instance allows anonymous users to create arbitrary" +
                     " projects, which usually leads to code downloading from the internet" +
                     " and remote code executions.", 
-      check: "uri_brute_focused_content"
+      task: "uri_brute_focused_content"
     }.merge!(instance_details)
 
   to_return

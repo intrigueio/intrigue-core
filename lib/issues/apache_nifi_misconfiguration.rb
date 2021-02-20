@@ -19,7 +19,7 @@ module Intrigue
           { type: "description", uri: "https://labs.f-secure.com/tools/metasploit-modules-for-rce-in-apache-nifi-and-kong-api-gateway/" },
           { type: "exploit", uri: "https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/multi/http/apache_nifi_processor_rce.rb" }
         ], 
-        check: "vuln/apache_nifi_misconfiguration"
+        task: "vuln/apache_nifi_misconfiguration"
       }.merge!(instance_details)
     end
     end

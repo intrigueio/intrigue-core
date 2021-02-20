@@ -19,7 +19,7 @@ module Intrigue
             { type: "description", uri: "https://ssd-disclosure.com/ssd-advisory-orientdb-code-execution/" },
             { type: "exploit", uri: "https://www.exploit-db.com/exploits/42965" },
           ],
-          check: "vuln/orientdb_rce"
+          task: "vuln/orientdb_rce"
         }.merge!(instance_details)
       end
     

@@ -17,7 +17,7 @@ module Intrigue
           { :vendor => "PulseSecure", :product => "Pulse Connect Secure" }
         ],
         references: [],
-        check: "uri_brute_focused_content"
+        task: "uri_brute_focused_content"
       }.merge!(instance_details)
     end
   

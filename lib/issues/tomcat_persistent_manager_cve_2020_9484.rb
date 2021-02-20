@@ -28,7 +28,7 @@ module Intrigue
           { type: "vulnerable_target", uri: "https://github.com/masahiro331/CVE-2020-9484" },
           { type: "remediation", uri: "https://stackoverflow.com/questions/35917945/tomcat-how-to-persist-a-session-immediately-to-disk-using-persistentmanager" }
         ],
-        check: "vuln/tomcat_persistent_manager_cve_2020_9484"
+        task: "vuln/tomcat_persistent_manager_cve_2020_9484"
       }.merge!(instance_details)
     end
   

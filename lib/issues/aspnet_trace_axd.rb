@@ -19,7 +19,7 @@ module Intrigue
           { type: "description", uri: "https://hackerone.com/reports/519418" },
           { type: "remediation", uri: "https://www.netsparker.com/web-vulnerability-scanner/vulnerabilities/traceaxd-detected/" }
         ], 
-        check: "uri_brute_focused_content"
+        task: "uri_brute_focused_content"
       }.merge!(instance_details)
     end
   

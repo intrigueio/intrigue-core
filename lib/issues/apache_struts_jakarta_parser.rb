@@ -26,7 +26,7 @@ class VulnApacheStrutsJakartaParser20175638 < BaseIssue
         { type: "exploit", uri: "https://packetstormsecurity.com/files/141494" },
         { type: "threat_intel", uri: "https://blog.rapid7.com/2017/03/09/apache-jakarta-vulnerability-attacks-in-the-wild/" }
       ],
-      check: "vuln/apache_struts_jakarta_parser"
+      task: "vuln/apache_struts_jakarta_parser"
     }.merge!(instance_details)
   end
 

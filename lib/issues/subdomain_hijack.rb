@@ -20,7 +20,7 @@ class SubdomainHijack < BaseIssue
         { type: "remediation", uri: "http://claudijd.github.io/2017/02/06/preventing-subdomain-takeover/" },
         { type: "remediation", uri: "https://www.firecompass.com/blog/2-ways-to-identify-prevent-subdomain-takeover-vulnerability/" }
       ],
-      check: "uri_check_subdomain_hijack"
+      task: "uri_check_subdomain_hijack"
     }.merge!(instance_details)
   end
 

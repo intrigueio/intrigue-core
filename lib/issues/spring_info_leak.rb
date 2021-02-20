@@ -19,7 +19,7 @@ module Intrigue
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel
           { type: "description", uri: "https://howtodoinjava.com/spring-boot/actuator-endpoints-example/" }
         ], 
-        check: "uri_brute_focused_content"
+        task: "uri_brute_focused_content"
       }.merge!(instance_details)
     end
   

@@ -41,7 +41,7 @@ class CitrixNetscalerCve201919871 < BaseIssue
         { type: "threat_intel", uri: "https://www.trustedsec.com/blog/netscaler-remote-code-execution-forensics" },
         { type: "threat_intel", uri: "https://blog.fox-it.com/2020/07/01/a-second-look-at-cve-2019-19781-citrix-netscaler-adc/" }
       ],
-      check: "vuln/citrix_netscaler_rce_cve_2019_19781"
+      task: "vuln/citrix_netscaler_rce_cve_2019_19781"
     }.merge!(instance_details)
   end
 

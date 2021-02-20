@@ -16,7 +16,7 @@ module Intrigue
           { type: "description", uri: "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-9757" },
           { type: "description", uri: "https://github.com/giany/CVE/blob/master/CVE-2020-9757.txt" }
         ],
-        check: "craft_cms_seomatic_cve_2020_9757"
+        task: "craft_cms_seomatic_cve_2020_9757"
       }.merge!(instance_details)
   
     to_return
