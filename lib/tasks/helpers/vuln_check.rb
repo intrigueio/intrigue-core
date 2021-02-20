@@ -93,7 +93,7 @@ module VulnCheck
         next unless issue_metadata
         
         # if we have an issue who has that cve as an identifiger, run the check task
-        task_name = issue_metadata[:name]
+        task_name = issue_metadata[:task] || issue_metadata[:name]
         start_task("task_autoscheduled", @project, @task_result.scan_result_id, task_name, @entity, 1)
       end
     end
