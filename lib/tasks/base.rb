@@ -44,10 +44,10 @@ class BaseTask
     # While it would be sensible to raise an error here, because we currently 
     # dont have a limit on retries, this leads to task results for deleted projects
     # getting stuck in 'zombie' mode, where they keep retrying and failing. 
-    if @task_result
+    if @task_result && @task_result.project
       puts "[#{start_time}] Running task result #{@task_result.name} in project: #{@task_result.project.name}"
     else  #raise InvalidTaskConfigurationError, "Missing task result?" 
-      puts "[#{start_time}] WARNING! Unable to find missing task result: #{task_result_id}, failing!"
+      puts "[#{start_time}] WARNING! Unable to run missing task result: #{task_result_id}, failing!"
       return nil
     end
 
