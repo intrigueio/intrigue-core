@@ -231,7 +231,7 @@ class CoreApp < Sinatra::Base
     halt_unless_authenticated!
 
     @project_name = @params[:project_name]
-    headers["Content-Disposition"] = "attachment;filename=#{@project_name}.entities.csv"
+    headers["Content-Disposition"] = "attachment;filename=#{@project_name}.issues.csv"
 
     @project = Intrigue::Core::Model::Project.first(:name => @project_name)
     @project.export_issues_csv
