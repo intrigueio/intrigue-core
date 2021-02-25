@@ -14,7 +14,7 @@ module Intrigue
           description: "Vmware ESXi, vCenter Server and Cloud Foundation are vulnerable to an unauthenticated remote code execution. A malicious actor with network access to port 443 may exploit this issue to execute commands with unrestricted privileges on the underlying operating system.",
           affected_software: [ 
             { :vendor => "VMware", :product => "VMware" },
-            { :vendor => "VMware", :product => "VCLOUD" }
+            { :vendor => "VMware", :product => "vSphere" }
           ],
           remediation: "Check Vmware's description and update to the latest version.",
           references: [
