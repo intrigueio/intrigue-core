@@ -47,11 +47,27 @@ class Hash
   end
 
   def stringify_keys!
-    self.transform_keys(&:to_s)
+    deep_transform_keys!(self){ |key| key.to_s rescue key }
   end
 
   def symbolize_keys!
-    self.transform_keys(&:to_sym)
+    deep_transform_keys!(self){ |key| key.to_sym rescue key }
   end
+
+  def deep_transform_keys!(object, &block)
+    case object
+    when Hash
+      object.keys.each do |key|
+        value = object.delete(key)
+        object[yield(key)] = deep_transform_keys!(value, &block)
+      end
+      object
+    when Array
+      object.map! { |e| deep_transform_keys!(e, &block) }
+    else
+      object
+    end
+  end
+
 
 end
