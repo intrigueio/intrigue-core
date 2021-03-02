@@ -47,25 +47,16 @@ module VulnCheck
   def run_nuclei_template(uri, template)
     # run ruclei with entity name and template
     _log "Running #{template} against #{uri}"
+    result = false
     begin
-      temp = Ruclei::Parser.new("#{template}", "#{uri}")
+      ruclei = Ruclei::Ruclei.new
+      ruclei.load_template(template)
+      result = ruclei.run(uri)
     rescue Errno::ENOENT
       _log_error "Could not find template #{template}"
-      return false
     end
-
-    _log "Result of nuclei scan: #{temp.vulnerable}"
-    # check results of ruclei
-    proof = nil
-    if temp.vulnerable
-      # add every request url and match conditions
-      temp.results.each do |r|
-        proof = [] unless proof
-        proof << {:url_tested => r[:response].request.base_url, :matched_conditions => r[:matchers]}
-      end
-    end
-
-  proof
+  
+  result
   end
 
   def get_version_for_vendor_product(entity, vendor, product)
