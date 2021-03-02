@@ -44,16 +44,21 @@ module VulnCheck
     result
   end
 
+  # this helper function runs a nuclei template
+  # templates are automatically loaded from data/nuclei-templates directory
   def run_nuclei_template(uri, template)
     # run ruclei with entity name and template
     _log "Running #{template} against #{uri}"
     result = false
     begin
       ruclei = Ruclei::Ruclei.new
-      ruclei.load_template(template)
-      result = ruclei.run(uri)
-    rescue Errno::ENOENT
-      _log_error "Could not find template #{template}"
+      ruclei.load_template("data/nuclei-templates/#{template}")
+      res = ruclei.run(uri)
+      result = res.results
+    rescue Errno::ENOENT # cannot find template
+      _log_error 'ERROR: Cannot find template at specified path.'
+    rescue Psych::SyntaxError # non-yaml file passed
+      _log_error 'ERROR: Specified template does not appear to be in YAML format.'
     end
   
   result
