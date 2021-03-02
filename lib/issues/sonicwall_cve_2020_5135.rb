@@ -23,7 +23,7 @@ module Intrigue
           { type: "description", uri: "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-5135"},
           { type: "description", uri: "https://www.tenable.com/blog/cve-2020-5135-critical-sonicwall-vpn-portal-stack-based-buffer-overflow-vulnerability"},
         ],
-        check: "vuln/sonicwall_cve_2020_5135"
+        task: "vuln/sonicwall_cve_2020_5135"
       }.merge!(instance_details)
     end
 

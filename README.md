@@ -24,8 +24,6 @@ To get help in real time, join our [Intrigue Community slack](https://join.slack
 
   - For immediate (user) help, join the #core-help channel
   - For immediate (dev) help, join the #core-dev channel
-  - For updates of development activity, join the #core-updates channel
-  - For an ongoing view of the core roadmap, join the #core-roadmap channel
 
 # Key Contributors
 

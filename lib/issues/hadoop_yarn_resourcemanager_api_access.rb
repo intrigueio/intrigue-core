@@ -21,7 +21,7 @@ module Intrigue
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel
           { type: "description", uri: "https://github.com/google/tsunami-security-scanner-plugins/blob/master/google/detectors/exposedui/hadoop/yarn/src/main/java/com/google/tsunami/plugins/detectors/exposedui/hadoop/yarn/YarnExposedManagerApiDetector.java" }
         ], 
-        check: "vuln/hadoop_yarn_unauthenticated_check"
+        task: "vuln/hadoop_yarn_unauthenticated_check"
       }.merge!(instance_details)
     end
   

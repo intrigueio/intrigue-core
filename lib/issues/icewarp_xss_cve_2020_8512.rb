@@ -22,7 +22,7 @@ module Intrigue
           { type: "description", uri: "https://owasp.org/www-community/attacks/xss/" },
           { type: "exploit", uri: "https://www.exploit-db.com/exploits/47988" }
         ],
-        check: "vuln/icewarp_xss_cve_2020_8512"
+        task: "vuln/icewarp_xss_cve_2020_8512"
       }.merge!(instance_details)
     end
 

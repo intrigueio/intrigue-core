@@ -16,7 +16,7 @@ module Intrigue
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel
           { type: "remediation", uri: "https://www.greengeeks.com/tutorials/article/how-to-enable-and-disable-xmlrpc-php-in-wordpress-and-why/" }
         ], 
-        check: "uri_brute_focused_content"
+        task: "uri_brute_focused_content"
       }.merge!(instance_details)
     end
   

@@ -17,7 +17,7 @@ module Intrigue
           { type: "description", uri: "https://blog.detectify.com/2020/02/26/gehaxelt-how-wordpress-plugins-leak-sensitive-information-without-you-noticing/"}, 
           { type: "description", uri: "https://hackernoon.com/database-security-vs-web-app-leaks-26cd35d9ce5a" }
         ],
-        check: "uri_brute_focused_content"
+        task: "uri_brute_focused_content"
       }.merge!(instance_details)
     end
   

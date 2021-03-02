@@ -4,7 +4,7 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
-        added: "2020-05-01",
+        added: "2020-05-01", # vulnerability_tomcat_ghostcat_cve_2020_1938
         name: "vulnerability_tomcat_ghostcat_cve_2020_1938",
         pretty_name: "Vulnerable Tomcat - Ghostcat (CVE-2020-1938)",
         identifiers: [
@@ -36,7 +36,7 @@ module Intrigue
           { type: "detection_rule", uri: "https://github.com/Neo23x0/signature-base/blob/master/yara/vul_cve_2020_1938.yar" }, 
           { type: "detection_rule", uri: "https://raw.githubusercontent.com/bhdresh/SnortRules/master/Exploit/CVE-2020-1938.rules" }, 
         ],
-        check: "vuln/tomcat_ghostcat_cve_2020_1938"
+        task: "vuln/tomcat_ghostcat_cve_2020_1938"
       }.merge!(instance_details)
     end
   

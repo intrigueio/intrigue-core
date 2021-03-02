@@ -21,7 +21,7 @@ module Intrigue
             { type: "description", uri: "https://cyber.dhs.gov/ed/21-01/" },
             { type: "description", uri: "https://www.zdnet.com/article/microsoft-fireeye-confirm-solarwinds-supply-chain-attack/" }
           ],
-          check: "vuln/solarwinds_orion_code_compromise"
+          task: "vuln/solarwinds_orion_code_compromise"
         }.merge(instance_details)
         
       to_return

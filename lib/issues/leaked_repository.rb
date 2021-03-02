@@ -16,7 +16,7 @@ module Intrigue
           { type: "description", uri: "https://royduineveld.nl/hacking-public-git-repositories/"},
           { type: "description", uri: "https://pentester.land/tutorials/2018/10/25/source-code-disclosure-via-exposed-git-folder.html"},
         ], 
-        check: "uri_brute_focused_content"
+        task: "uri_brute_focused_content"
       }.merge!(instance_details)
     to_return
     end

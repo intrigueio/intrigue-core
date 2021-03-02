@@ -20,7 +20,7 @@ module Intrigue
           { type: "description", uri: "https://tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-asaftd-ro-path-KJuQhB86" }, 
           { type: "description", uri: "https://twitter.com/ptswarm/status/1285974719821500423/photo/1" }
         ], 
-        check: "vuln/cisco_asa_limited_file_read_cve_2020_3452"
+        task: "vuln/cisco_asa_limited_file_read_cve_2020_3452"
       }.merge(instance_details)
     end
   

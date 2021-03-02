@@ -19,7 +19,7 @@ module Intrigue
           { type: "description", uri: "https://gitlab.com/gitlab-org/gitlab-foss/issues/66124"},
           { type: "remediation", uri: "https://computingforgeeks.com/how-to-disable-user-creation-signup-on-gitlab-welcome-page/"}
         ], 
-        check: "vuln/saas_gitlab_open_reg_check"
+        task: "vuln/saas_gitlab_open_reg_check"
       }.merge!(instance_details)
   
     to_return

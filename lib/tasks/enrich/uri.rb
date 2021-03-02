@@ -426,8 +426,6 @@ class Uri < Intrigue::Task::BaseTask
     end
 
   end
-
-
   
   def _gather_supported_ciphers(hostname,port)
     scanner = Rex::SSLScan::Scanner.new(hostname, port)
