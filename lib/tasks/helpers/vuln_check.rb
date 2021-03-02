@@ -52,7 +52,7 @@ module VulnCheck
     result = false
     begin
       ruclei = Ruclei::Ruclei.new
-      ruclei.load_template("data/nuclei-templates/#{template}")
+      ruclei.load_template("data/nuclei-templates/#{template}.yaml")
       res = ruclei.run(uri)
       result = res.results
     rescue Errno::ENOENT # cannot find template

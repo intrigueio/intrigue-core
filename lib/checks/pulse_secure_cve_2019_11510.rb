@@ -37,7 +37,7 @@ module Intrigue
       
       # run a nuclei 
       uri = _get_entity_name
-      template = "cves/CVE-2019-11510"
+      template = "cves/2019/CVE-2019-11510"
       
       # if this returns truthy value, an issue will be raised
       # the truthy value will be added as proof to the issue
