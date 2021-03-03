@@ -6,14 +6,22 @@ module Intrigue
         def self.generate(instance_details={})
         {
           added: "2021-03-02",
-          name: "microsoft_exchange_cve_2021_26855",
-          pretty_name: "Mictosoft Exchange RCE (CVE-2021-26855)",
-          identifiers: [{ type: "CVE", name: "CVE-2021-26855" }],
+          name: "microsoft_exchange_multiple_cve_2021_26855.rb",
+          pretty_name: "Microsoft Exchange Multple RCE CVEs",
+          identifiers: [
+            { type: "CVE", name: "CVE-2021-26412" },
+            { type: "CVE", name: "CVE-2021-26854" },
+            { type: "CVE", name: "CVE-2021-26855" },
+            { type: "CVE", name: "CVE-2021-26857" },
+            { type: "CVE", name: "CVE-2021-26858" },
+            { type: "CVE", name: "CVE-2021-27065" },
+            { type: "CVE", name: "CVE-2021-27078" },
+          ],
           severity: 1,
           status: "potential",
           category: "vulnerability",
-          description: "Microsoft Exchange Server Remote Code Execution Vulnerability",
-          remediation: "Install the latest security update for the specific product.",
+          description: "A chain of multiple remote code execution vulnerabilities have been identified being exploited in the wild. The vulnerabilities affect on-premise MS exchange servers, and require the ability to make an untrusted connection port 443.",
+          remediation: "Install the latest security update for the specific products or limit connection on port 443 to trusted sources.",
           affected_software: [
             { :vendor => "Microsoft", :product => "Exchange Server", :version => "2013", :update => "Cumulative Update 23" },
             { :vendor => "Microsoft", :product => "Exchange Server", :version => "2016", :update => "Cumulative Update 18" },
@@ -22,8 +30,9 @@ module Intrigue
             { :vendor => "Microsoft", :product => "Exchange Server", :version => "2019", :update => "Cumulative Update 8" }
           ],
           references: [
-              { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2021-26855" },
-              { type: "description", uri: "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-26855" },
+            { type: "description", uri: "https://msrc-blog.microsoft.com/2021/03/02/multiple-security-updates-released-for-exchange-server/" },
+            { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2021-26855" },
+            { type: "description", uri: "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-26855" },
           ],
           authors: ["shpendk", "Volexity", "orange_8361", "MSTIC"]
         }.merge!(instance_details)
@@ -47,8 +56,7 @@ module Intrigue
             # first, ensure we're fingerprinted
             require_enrichment
             fingerprint = _get_entity_detail("fingerprint")
-            
-            require 'pry'; binding.pry
+
             if is_product?(fingerprint, "Exchange Server")
               if is_vulnerable_version?(fingerprint)
                   return true
