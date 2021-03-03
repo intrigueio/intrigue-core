@@ -31,6 +31,7 @@ module Intrigue
           ],
           references: [
             { type: "description", uri: "https://msrc-blog.microsoft.com/2021/03/02/multiple-security-updates-released-for-exchange-server/" },
+            { type: "description", uri: "https://www.microsoft.com/security/blog/2021/03/02/hafnium-targeting-exchange-servers/"}
             { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2021-26855" },
             { type: "description", uri: "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-26855" },
           ],
@@ -65,29 +66,29 @@ module Intrigue
         end
 
         def is_vulnerable_version?(fingerprint)
-            # check the fingerprints
-            fp = fingerprint.select{|v| v['product'] == "Exchange Server" }.first
-            return false unless fp
-        
-            vulnerable_versions.include?({version: fp["version"], update: fp["update"]})
+          vulnerable_versions = [
+            # 2013
+            { version: "2013", update: "Cumulative Update 23" },
+            # 2016
+            #{ version: "2016", update: "Cumulative Update 18" },
+            { version: "2016", update: "Cumulative Update 19" },
+            # 2019
+            #{ version: "2019", update: "Cumulative Update 7" },
+            { version: "2019", update: "Cumulative Update 8" },
+          ]
+
+          # get the fingerprint
+          fp = fingerprint.select{|v| v['product'] == "Exchange Server" }.first
+          return false unless fp
+
+          # get the vulnerable version for fingerprint
+          vv = vulnerable_versions.select{|v| v[:version] == fp["version"]}.first
+          return false unless vv
+
+          if compare_versions_by_operator(fp["update"], vv[:update], "<=")
+            return true
+          end
         end
-        
-        def vulnerable_versions
-            vulnerable_versions = [
-        
-                # 2013
-                { version: "2013", update: "Cumulative Update 23" },
-                
-                # 2016
-                { version: "2016", update: "Cumulative Update 18" },
-                { version: "2016", update: "Cumulative Update 19" },
-        
-                # 2019
-                { version: "2019", update: "Cumulative Update 7" },
-                { version: "2019", update: "Cumulative Update 8" },
-            ]
-        end
-  
       end
     end
   
