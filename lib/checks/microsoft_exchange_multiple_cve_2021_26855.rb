@@ -31,7 +31,7 @@ module Intrigue
           ],
           references: [
             { type: "description", uri: "https://msrc-blog.microsoft.com/2021/03/02/multiple-security-updates-released-for-exchange-server/" },
-            { type: "description", uri: "https://www.microsoft.com/security/blog/2021/03/02/hafnium-targeting-exchange-servers/"}
+            { type: "description", uri: "https://www.microsoft.com/security/blog/2021/03/02/hafnium-targeting-exchange-servers/"},
             { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2021-26855" },
             { type: "description", uri: "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-26855" },
           ],
