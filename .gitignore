@@ -15,6 +15,7 @@ data/iana/ipv4-address-space.csv
 data/iana/service-names-port-numbers.csv
 data/web_accounts_list/web_accounts_list.json
 data/asn_info/*
+data/nuclei-templates
 tmp/
 log/
 .env

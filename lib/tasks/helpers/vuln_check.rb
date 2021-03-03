@@ -44,28 +44,24 @@ module VulnCheck
     result
   end
 
+  # this helper function runs a nuclei template
+  # templates are automatically loaded from data/nuclei-templates directory
   def run_nuclei_template(uri, template)
     # run ruclei with entity name and template
     _log "Running #{template} against #{uri}"
+    result = false
     begin
-      temp = Ruclei::Parser.new("#{template}", "#{uri}")
-    rescue Errno::ENOENT
-      _log_error "Could not find template #{template}"
-      return false
+      ruclei = Ruclei::Ruclei.new
+      ruclei.load_template("data/nuclei-templates/#{template}.yaml")
+      res = ruclei.run(uri)
+      result = res.results
+    rescue Errno::ENOENT # cannot find template
+      _log_error 'ERROR: Cannot find template at specified path.'
+    rescue Psych::SyntaxError # non-yaml file passed
+      _log_error 'ERROR: Specified template does not appear to be in YAML format.'
     end
-
-    _log "Result of nuclei scan: #{temp.vulnerable}"
-    # check results of ruclei
-    proof = nil
-    if temp.vulnerable
-      # add every request url and match conditions
-      temp.results.each do |r|
-        proof = [] unless proof
-        proof << {:url_tested => r[:response].request.base_url, :matched_conditions => r[:matchers]}
-      end
-    end
-
-  proof
+  
+  result
   end
 
   def get_version_for_vendor_product(entity, vendor, product)
