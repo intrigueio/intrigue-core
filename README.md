@@ -16,7 +16,7 @@ While you can build a local setup on any OSX or \*nix system, we'd suggest start
 
 You'll  want to take a look at the following resources to better understand the system: 
  * Key System Files: https://github.com/intrigueio/intrigue-core/wiki/Understanding-Intrigue-Core%3A-Key-System-Files
- * Manual install steps: https://github.com/intrigueio/intrigue-core/wiki/Setting-up-a-Test-Environment-on-Ubuntu-Linux
+ * Manual install steps: https://github.com/intrigueio/intrigue-core/wiki/Setting-up-a-Development-Environment-(on-Ubuntu,-Kali,-Debian)
 
 # Getting Support
 
