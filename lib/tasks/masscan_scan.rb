@@ -21,7 +21,7 @@ class Masscan < BaseTask
       :allowed_options => [
         {:name => "tcp_ports", :regex => "alpha_numeric_list", :default => "21,80,443,8000,8009,8080,8081,8443" },
         {:name => "udp_ports", :regex => "alpha_numeric_list", :default => "53,161,500,1900" },
-        {:name => "send_rate", :regex => "integer", :default => 10000 },
+        {:name => "send_rate", :regex => "integer", :default => 5000 },
       ],
       :created_types => [ "DnsRecord","IpAddress", "NetworkService", "Uri" ],
       :queue => "task_scan"
