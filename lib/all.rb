@@ -69,6 +69,11 @@ if Intrigue::Core::System::Config.config["intrigue_load_paths"]
   Intrigue::Core::System::Config.config["intrigue_load_paths"].each do |load_path|
     load_path = "#{load_path}" unless load_path[0] == "/"
 
+    Dir["#{load_path}/checks/*.rb"].each do |file|
+      #puts "Adding user handler from: #{file}"
+      require_relative file
+    end
+
     Dir["#{load_path}/entities/*.rb"].each do |file|
       #puts "Adding user entity from: #{file}"
       require_relative file
@@ -93,6 +98,11 @@ if Intrigue::Core::System::Config.config["intrigue_load_paths"]
       #puts "Adding user task from: #{file}"
       require_relative file
     end
+
+    #Dir["#{load_path}/workflows/*.rb"].each do |file|
+    #  #puts "Adding user task from: #{file}"
+    #  require_relative file
+    #end
 
   end
 end
