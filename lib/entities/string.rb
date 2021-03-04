@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class String < Intrigue::Model::Entity
+class String < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
@@ -12,7 +12,7 @@ class String < Intrigue::Model::Entity
   end
 
   def validate_entity
-    name =~ /^\w.*$/
+    name =~ /^([\.\w\d\ \-\(\)\\\/]+)$/
   end
 
   def enrichment_tasks
@@ -20,11 +20,11 @@ class String < Intrigue::Model::Entity
   end
 
   def scoped?
-    return true if self.seed
-    return false if self.hidden
-  true # otherwise just default to true
+    return true if self.allow_list
+    return false if self.deny_list
+  
+  true
   end
-
 
 end
 end

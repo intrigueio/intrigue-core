@@ -5,7 +5,7 @@
 #####
 
 # if these are already set by our parent, use that.. otherwise sensible defaults
-export INTRIGUE_DIRECTORY="${IDIR:=//home/ubuntu/core}"
+export INTRIGUE_DIRECTORY="${IDIR:=/home/$USER/core}"
 export RUBY_VERSION="${RUBY_VERSION:=2.6.5}"
 export DEBIAN_FRONTEND=noninteractive
 
@@ -37,9 +37,8 @@ sudo apt-get -y install lsb-core software-properties-common dirmngr apt-transpor
 
 # chrome repo
 echo "[+] Installing Chromium"
-#sudo apt-get install software-properties-common
-sudo add-apt-repository -y ppa:canonical-chromium-builds/stage
-sudo apt-get update
+#sudo add-apt-repository ppa:canonical-chromium-builds/stage
+#sudo apt-get update
 sudo apt-get -y install chromium-browser
 ##### Install dependencies after update
 
@@ -51,7 +50,7 @@ locale-gen en_US.UTF-8
 
 # just in case, do the fix-broken flag
 echo "[+] Installing Intrigue Dependencies..."
-sudo apt-get -y --fix-broken --no-install-recommends install make \
+sudo apt-get -y --no-install-recommends install make \
   git \
   git-core \
   bzip2 \
@@ -69,9 +68,8 @@ sudo apt-get -y --fix-broken --no-install-recommends install make \
   libffi-dev \
   libsqlite3-dev \
   net-tools \
-  libpq-dev \
+  #redis-server \
   boxes \
-  ssh \
   nmap \
   zmap \
   default-jre \
@@ -114,20 +112,28 @@ sudo apt-get -y --fix-broken --no-install-recommends install make \
   libxrandr2 \
   libxrender1 \
   libxss1 \
-  libxtst6 
+  libxtst6 \
   ca-certificates \
   fonts-liberation \
   fonts-thai-tlwg \
   libappindicator1 \
   libnss3 \
+  zip \
   lsb-release \
   xdg-utils \
-  golang-go \
   dnsmasq \
   systemd \
   wget \
-  python-minimal &&
+  python3-minimal && 
   rm -rf /var/lib/apt/lists/*
+
+#echo "[+] Installing Postgres 12"
+#wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+#echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list
+#sudo apt-get update
+#sudo apt-get -y install postgresql-12 postgresql-client-12 postgresql-server-dev-12 postgresql-12-repack libpq-dev
+sudo apt-get -y install libpq-dev
+#sudo systemctl status postgresql
 
 echo "[+] Creating a home for binaries"
 mkdir -p $HOME/bin
@@ -147,6 +153,9 @@ cd $HOME
 
 # add go vars (and note that we source this file later as well)
 echo "[+] Installing Golang environment"
+sudo add-apt-repository --yes ppa:longsleep/golang-backports
+sudo apt update
+sudo apt install golang-go
 
 # ensure we have the path
 export GOPATH=$HOME/go
@@ -156,13 +165,21 @@ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 echo export GOPATH=$HOME/go >> ~/.bash_profile
 echo export PATH=$PATH:$GOROOT/bin:$GOPATH/bin >> ~/.bash_profile
 
+# ffuf
+echo "[+] Getting Ffuf... "
+go get github.com/intrigueio/ffuf
+
 # gitrob
 echo "[+] Getting Gitrob... "
-go get github.com/intrigueio/gitrob
+GO111MODULE=on go get github.com/intrigueio/gitrob
 
 # gobuster
 echo "[+] Getting Gobuster... "
 go get github.com/intrigueio/gobuster.git
+
+# ghostcat
+echo "[+] Getting Ghostcat Vuln... "
+go get github.com/intrigueio/tomcat-cve-2020-1938-check
 
 # masscan
 echo "[+] Installing Masscan"
@@ -174,6 +191,10 @@ if [ ! -f /usr/bin/masscan ]; then
   cd ..
   rm -rf masscan
 fi
+
+# naabu
+echo "[+] Getting Naabu... "
+GO111MODULE=on go get -v github.com/projectdiscovery/naabu/cmd/naabu
 
 # rdpscan
 echo "[+] Installing Rdpscan"
@@ -187,10 +208,11 @@ if [ ! -f /usr/bin/rdpscan ]; then
 fi
 
 ### Install latest tika
-echo "[+] Installing Apache Tika"
+echo "[+] Installing Apache Tika from public.intrigue.io"
 cd $INTRIGUE_DIRECTORY/tmp
-LATEST_TIKA_VERSION=1.24
-wget http://apache.mirrors.hoobly.com/tika/$LATEST_TIKA_VERSION.jar
+LATEST_TIKA_VERSION=1.24.1
+wget https://s3.amazonaws.com/public.intrigue.io/tika-server-$LATEST_TIKA_VERSION.jar
+mv $INTRIGUE_DIRECTORY/tmp/tika-server-$LATEST_TIKA_VERSION.jar $INTRIGUE_DIRECTORY/tmp/tika-server.jar
 cd $HOME
 
 # update sudoers
@@ -206,10 +228,14 @@ else
 fi
 
 # bump file limits
-echo "bumping file-max setting"
-sudo bash -c "echo fs.file-max = 65535 >> /etc/sysctl.conf"
-sudo sysctl -p
+echo "bumping file-max settings"
+sudo bash -c "echo fs.file-max = 655355 >> /etc/sysctl.conf"
 
+# disable memory overcommit
+echo "enable memory overcommit"
+sudo bash -c "echo vm.overcommit_memory=0 >> /etc/sysctl.conf"
+sudo sysctl -p
+  
 echo "Bumping ulimit file/proc settings in /etc/security/limits.conf"
 sudo bash -c "echo 'root hard nofile 524288' >> /etc/security/limits.conf"
 sudo bash -c "echo 'root soft nofile 524288' >> /etc/security/limits.conf"
@@ -221,10 +247,49 @@ sudo bash -c "echo '* hard nofile 524288' >> /etc/security/limits.conf"
 sudo bash -c "echo '* soft nofile 524288' >> /etc/security/limits.conf"
 sudo bash -c "echo session required pam_limits.so >> /etc/pam.d/common-session"
 
-##### Install rbenv
-echo "[+] Installing & Configuring rbenv"
-if [ ! -d ~/.rbenv ]; then
+#echo "[+] Create /data directories for postgres and redis"
+#sudo systemctl stop postgresql
+#sudo mkdir -p /data/postgres
+#sudo chown postgres:postgres /data/postgres
+#sudo chmod 644 /data/postgres
+#sudo -u postgres /usr/lib/postgresql/*/bin/initdb /data/postgres
 
+#sudo mkdir /data/redis
+#sudo chown redis:redis /data/redis
+#sudo chmod 644 /data/redis
+
+# Set the database to trust
+#echo "[+] Updating postgres configuration, moving it to /data"
+#sudo sed -i 's/md5/trust/g' /etc/postgresql/*/main/pg_hba.conf
+#sudo sed -i 's/peer/trust/g' /etc/postgresql/*/main/pg_hba.conf
+#sudo sed -i "s/data_directory = .*/data_directory = \'\/data\/postgres\'/g" /etc/postgresql/*/main/postgresql.conf
+
+#sudo systemctl stop redis-server
+
+#echo "[+] Updating Redis configuration, moving it to /data"
+# ensure we bind to localhost
+#sudo sed -i '/^bind/s/bind.*/bind 127.0.0.1/' /etc/redis/redis.conf
+# change default direectory
+#sudo sed -i '/^dir/s/dir \/var\/lib\/redis/\/data\/redis/' /etc/redis/redis.conf
+#sudo sed -i 's/dir \/var\/lib\/redis \/data\/redis/g' /etc/redis/redis.conf
+
+#sudo systemctl start redis-server
+
+#echo "[+] Creating clean database"
+#sudo systemctl start postgresql
+#sudo -u postgres createuser intrigue
+#sudo -u postgres createdb intrigue_dev --owner intrigue
+
+# remove old data directories
+#echo "[+] Cleaning old db directories"
+#rm -rf /var/lib/pgsql/*
+#rm -rf /var/lib/pgsql/backups/*
+#rm -rf /var/lib/pgsql/data/
+
+##### Install rbenv
+if [ ! -d ~/.rbenv ]; then
+  echo "[+] Installing & Configuring rbenv"
+  
   git clone https://github.com/rbenv/rbenv.git ~/.rbenv
   cd ~/.rbenv && src/configure && make -C src
   echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bash_profile
@@ -234,6 +299,7 @@ if [ ! -d ~/.rbenv ]; then
   # manually load it up...
   eval "$(rbenv init -)"
   export PATH="$HOME/.rbenv/bin:$PATH"
+  
   # ruby-build
   mkdir -p ~/.rbenv/plugins
   git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
@@ -264,7 +330,7 @@ echo "Ruby version: `ruby -v`"
 
 # Install bundler
 echo "[+] Installing Latest Bundler"
-gem install bundler:2.0.2 --no-document
+gem install bundler:2.1.4 --no-document
 rbenv rehash
 
 #####
@@ -275,11 +341,11 @@ cd $INTRIGUE_DIRECTORY
 bundle update --bundler
 bundle install
 
-echo "[+] Running System Setup"
-bundle exec rake setup
-
 echo "[+] Running DB Migrations"
 bundle exec rake db:migrate
+
+echo "[+] Running System Setup"
+bundle exec rake setup
 
 # TOOD ... remove this on next major release
 echo "[+] Intrigue services exist, removing... (ec2 legacy)"
@@ -299,7 +365,7 @@ else
   echo "[+] Nooooo I'm not inside docker!";
   echo "echo ''" >> ~/.bash_profile
   echo "echo To enable Intrigue services, run the following command:" >> ~/.bash_profile
-  echo "echo '$ cd core && god -c $INTRIGUE_DIRECTORY/util/god/intrigue-ec2.rb && god start'" >> ~/.bash_profile
+  echo "echo '$ cd core && rake setup && god -c $INTRIGUE_DIRECTORY/util/god/intrigue-ec2.rb && god start'" >> ~/.bash_profile
 fi
 
 # if we're configuring as root, we're probably going to run as root, so

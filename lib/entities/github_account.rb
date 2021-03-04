@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class GithubAccount < Intrigue::Model::Entity
+class GithubAccount < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
@@ -20,9 +20,10 @@ class GithubAccount < Intrigue::Model::Entity
   end
 
   def scoped?
-    return true if self.seed
-    return false if self.hidden
-  true # otherwise just default to true
+    return true if self.allow_list
+    return false if self.deny_list
+  
+  true
   end
 
 end

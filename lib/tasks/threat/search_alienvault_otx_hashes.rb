@@ -55,7 +55,7 @@ class SearchAlienvaultOtxHashes < BaseTask
     begin
       # get the initial response for the hash
       url = "https://otx.alienvault.com/api/v1/indicators/file/#{hash}/general"
-      response = http_get_body("#{url}", headers: headers)
+      response = http_get_body("#{url}", nil, headers)
       result = JSON.parse(response)
     rescue JSON::ParserError => e
       _log_error "unable to parse json!"

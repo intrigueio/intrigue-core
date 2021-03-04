@@ -23,7 +23,7 @@ class SearchHunterIo < BaseTask
     super
 
     api_key = _get_task_config("hunter_io_api_key")
-    unless api_key 
+    unless "#{api_key}".length > 0
       _log_error "unable to proceed, no API key for hunter.io provided"
       return
     end
@@ -32,11 +32,28 @@ class SearchHunterIo < BaseTask
 
     url = "https://api.hunter.io/v2/domain-search?domain=#{domain_name}&api_key=#{api_key}&limit=1000" 
 
-    response = http_get_body(url)
-    JSON.parse(response)["data"]["emails"].each do |e|
-      _create_entity "EmailAddress", "name" => e["value"], "hunterio" => e
-    end
+    begin 
+      response = http_get_body(url)
+      
+      # sanity check 
+      unless response && response["data"]
+        _log "Unable to get a response"
+        return  
+      end
 
+      # sanity check 
+      unless response["data"]["emails"]
+        _log "Unable to get emails"
+        return
+      end
+
+      JSON.parse(response)["data"]["emails"].each do |e|
+        next unless e 
+        _create_entity "EmailAddress", "name" => e["value"], "hunterio" => e
+      end
+    rescue JSON::ParserError => e 
+      _log "Unable to parse!"
+    end
   end # end run()
 
 end # end Class

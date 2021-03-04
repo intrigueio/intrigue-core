@@ -1,5 +1,3 @@
-require 'resolv'
-
 module Intrigue
 module Task
 class SearchQuad9Dns < BaseTask

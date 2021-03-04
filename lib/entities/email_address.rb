@@ -1,6 +1,8 @@
 module Intrigue
 module Entity
-class EmailAddress < Intrigue::Model::Entity
+class EmailAddress < Intrigue::Core::Model::Entity
+
+  include Intrigue::Task::Dns
 
   def self.metadata
     {
@@ -19,15 +21,22 @@ class EmailAddress < Intrigue::Model::Entity
     details["origin"] if details && details["origin"]
   end
 
+  def enrichment_tasks
+    ["enrich/email_address"]
+  end
+
   ###
   ### SCOPING
   ###
   def scoped?(conditions={}) 
-    return true if self.seed
-    return false if self.hidden
+    return true if self.allow_list
+    return false if self.deny_list
 
-  # if we didnt match the above and we were asked, let's just allow it 
-  true
+    # Check the domain
+    domain_name = self.name.split("@").last
+    return true if self.project.allow_list_entity?("Domain", domain_name)
+
+  false
   end
 
 

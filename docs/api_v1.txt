@@ -9,13 +9,13 @@
 # Authentication
 #
 
-In order to authenticate, all endpoints must accept and verify a single parameter, provided as a header: "X-INTRIGUE-CORE-TOKEN"
+In order to authenticate, all endpoints must accept and verify a single parameter, provided as a key (key) or a parameter: "X-INTRIGUE-CORE-TOKEN"
 
 #
-# System level Endpoints 
+# System level Endpoints  
 #
-GET api/v1/tasks - list all system tasks  **
-GET api/v1/entities - list all system entities
+GET api/v1/tasks - list all system tasks  **  (unauth'd)
+GET api/v1/entities - list all system entities (unauth'd)
 GET api/v1/projects - list all projects
 GET api/v1/configuration - list system configuation
 

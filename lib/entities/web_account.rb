@@ -1,26 +1,44 @@
 module Intrigue
 module Entity
-class WebAccount < Intrigue::Model::Entity
+class WebAccount < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
       :name => "WebAccount",
-      :description => "An account identified for a specific hosted service",
-      :user_creatable => false
+      :description => "An account identified for a specific hosted service in the format \"service: username\" ",
+      :user_creatable => true
     }
   end
 
   def validate_entity
-    name =~ /^\w*:\s?\w*$/ &&
-    details["username"] =~ /^\w*$/
-    details["service"] =~ /^\w*$/
-    details["uri"] =~ /^http.*$/
+    name =~ /^[\w\d\.\-\(\)\\\/\_]+:\s?[\w\d\.\-\(\)\\\/\_]+$/ 
   end
 
+  def transform!
+    
+    username = details["hidden_original"].split(":").last.strip
+    service_name = details["hidden_original"].split(":").first.strip
+
+    # force a space 
+    self.name = "#{service_name}: #{username}"
+    save_changes
+
+    # grab the username / service
+    set_details(
+      { "name" => "#{service_name}: #{username}",
+        "hidden_original" => "#{service_name}: #{username}".downcase,
+        "username" => username,
+        "service" => service_name })
+
+    save_changes
+  true
+  end
+
+  
   def scoped?
-    return true if self.seed
-    return false if self.hidden
-  true # otherwise just default to true
+    return true if self.allow_list
+    return false if self.deny_list
+  true
   end
 
 end

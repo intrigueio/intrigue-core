@@ -1,4 +1,3 @@
-require 'neutrino_api'
 module Intrigue
 module Task
 class SearchNeutrinoAPI < BaseTask

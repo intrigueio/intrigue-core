@@ -8,17 +8,25 @@ require_relative 'core'
 
 class CoreCli < Thor
 
-  include Intrigue::System
+  include Intrigue::Core::System
 
   def initialize(*args)
     super
     $intrigue_basedir = File.dirname(__FILE__)
     $config = JSON.parse File.open("#{$intrigue_basedir}/config/config.json").read
-    @server_uri = ENV.fetch("INTRIGUE_API_URI", "http://#{$config["credentials"]["username"]}:#{$config["credentials"]["password"]}@127.0.0.1:7777")
-    @delim = "#"
+    
+    # now uses https by default
+    username = $config["credentials"]["username"]
+    password = $config["credentials"]["password"]
+    password = $config["credentials"]["endpoint"] || "127.0.0.1:7777"
+    scheme = $config["http_security"] ? "https" : "http"
+
+    @server_uri = ENV.fetch("INTRIGUE_API_URI", "#{scheme}://#{username}:#{password}@")
+    @delim = ","
     @debug = true
+
     # Connect to Intrigue API
-    @api = IntrigueApi.new(@server_uri)
+    @api = IntrigueCoreApi.new(@server_uri)
   end
 
   desc "create_project [project_name]", "Create a project"
@@ -107,7 +115,7 @@ class CoreCli < Thor
   ###
   desc "local_handle_all_projects [Handler] [Prefix (optional)]", "Manually run a handler on a project's scan results"
   def local_handle_all_projects(handler_type, prefix=nil)
-    Intrigue::Model::Project.each do |p|
+    Intrigue::Core::Model::Project.each do |p|
       next unless p.entities.count > 0
       puts "Running #{handler_type} on #{p.name}"
       p.handle(handler_type,prefix)
@@ -116,7 +124,7 @@ class CoreCli < Thor
 
   desc "local_handle_all_scan_results [Handler] [Prefix (optional)]", "Manually run a handler on a project's scan results"
   def local_handle_all_scan_results(handler_type, prefix=nil)
-    Intrigue::Model::Project.each do |p|
+    Intrigue::Core::Model::Project.each do |p|
       next unless p.entities.count > 0
       puts "Working in project: #{p.name}..."
       p.scan_results.each {|s| s.handle(handler_type, prefix) }
@@ -126,14 +134,14 @@ class CoreCli < Thor
   desc "local_handle_project [Project] [Handler] [Prefix (optional)]", "Manually run a handler on a project's scan results"
   def local_handle_project(project, handler_type, prefix=nil)
     puts "Working on project #{project}..."
-    Intrigue::Model::Project.first(:name => project).handle(handler_type, prefix)
+    Intrigue::Core::Model::Project.first(:name => project).handle(handler_type, prefix)
   end
 
   desc "local_handle_scan_results [Project] [Handler] [Prefix (optional)]", "Manually run a handler on a project's scan results"
   def local_handle_scan_results(project, handler_type, prefix=nil)
 
     ### handle scan results
-    Intrigue::Model::Project.each do |p|
+    Intrigue::Core::Model::Project.each do |p|
       next unless p.name == project || project == "-"
       p.scan_results.each do |s|
         puts "[x] Handling... #{s.name}"
@@ -147,7 +155,7 @@ class CoreCli < Thor
   def local_handle_task_results(project,handler_type, prefix=nil)
 
     ### handle task results
-    Intrigue::Model::Project.each do |p|
+    Intrigue::Core::Model::Project.each do |p|
       next unless p.name == project || project == "-"
       s = p.task_results.each do |t|
         puts "[x] Handling... #{t.name}"
@@ -169,7 +177,7 @@ class CoreCli < Thor
 
     # Load in the main core file for direct access to TaskFactory and the Tasks
     # This makes this super speedy.
-    extend Intrigue::Task::Helper
+    #extend Intrigue::Task::Helper
 
     File.open(filename,"r").each_line do  |line|
       line.chomp!
@@ -180,9 +188,9 @@ class CoreCli < Thor
       depth = depth.to_i
 
       if project_name == "-"
-        p = Intrigue::Model::Project.find_or_create(:name => entity["project_name"])
+        p = Intrigue::Core::Model::Project.find_or_create(:name => entity["project_name"])
       else
-        p = Intrigue::Model::Project.find_or_create(:name => project_name)
+        p = Intrigue::Core::Model::Project.find_or_create(:name => project_name)
       end
 
       # Create the entity
@@ -212,15 +220,15 @@ class CoreCli < Thor
     lines.each do |line|
       line.chomp!
 
-      if project_name == "-"
-        p = Intrigue::Model::Project.find_or_create(:name => entity["project_name"])
-      else
-        p = Intrigue::Model::Project.find_or_create(:name => project_name)
-      end
-
       # prep the entity
       parsed_entity = _parse_entity line
       next unless parsed_entity
+
+      if project_name == "-"
+        p = Intrigue::Core::Model::Project.find_or_create(:name => parsed_entity["project_name"])
+      else
+        p = Intrigue::Core::Model::Project.find_or_create(:name => project_name)
+      end
 
       parsed_entity["details"].merge!({
         "hidden_original": parsed_entity["name"],
@@ -234,7 +242,7 @@ class CoreCli < Thor
       end
 
       # create a group
-      g = Intrigue::Model::AliasGroup.create(:project_id => p.id)
+      g = Intrigue::Core::Model::AliasGroup.create(:project_id => p.id)
 
       # create the entity
       klass = Intrigue::EntityManager.resolve_type_from_string(entity_type_string)

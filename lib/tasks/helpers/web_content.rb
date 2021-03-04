@@ -2,9 +2,69 @@
 module Intrigue
 module Task
 module WebContent
+  
+  def extract_and_fingerprint_scripts(script_list, host)
+    components = []
+    script_list.each do |s|
 
-  # compare_html response.body.sanitize_unicode, e.details["hidden_response_data"]
+      # skip anything that's not http
+      next unless s =~ /^http/
 
+      begin 
+        uri = URI.parse(s)
+      rescue URI::InvalidURIError => e
+        @task_result.logger.log "Unable to parse improperly formatted URI: #{s}"
+        next # unable to parse 
+      end
+
+      next unless uri.host && uri.port && uri.scheme =~ /^http/
+      ### 
+      ### Determine who's hosting
+      ### 
+      begin
+        if uri.host =~ /#{host}/
+          host_location = "local"
+        else
+          host_location = "remote"
+        end
+      rescue URI::InvalidURIError => e
+        host_location = "unknown"
+      end
+
+      ###
+      ### Match it up with ident  
+      ###
+      ident_matches = generate_http_requests_and_check(s, {'only-check-base-url':true, }) # "#{url}"
+      js_fp_matches = ident_matches["fingerprint"].select{|x| x["tags"] && x["tags"].include?("Javascript") }
+
+      if js_fp_matches.count > 0
+        js_fp_matches.each do |m|
+          components << m.merge({"uri" => s, "relative_host" =>  host_location })
+        end
+      else 
+        # otherwise, we didnt find it, so just stick in a url withoout a name / version
+        components << {"uri" => s, "relative_host" =>  host_location }
+      end
+
+    end
+    
+    ### Maybe re-enable eventually
+    #new_libraries = gather_javascript_libraries(session, uri)
+
+  components.compact
+  end
+
+  def html_dom_to_string(body)
+    dom_string = ""
+    document = Nokogiri::HTML(body);nil
+    document.traverse do |node|
+      next unless node.is_a?(Nokogiri::XML::Element)
+      dom_string << "<#{node.name}>"
+    end
+  dom_string
+  end
+
+  # compare_html response.body_utf8.sanitize_unicode, e.details["hidden_response_data"]  
   def parse_html_diffs(texta, textb)
     # parse our content with Nokogiri
     our_doc = Nokogiri::HTML(texta)
@@ -245,6 +305,7 @@ module WebContent
      # Scan for uris
      urls = content.scan(/https?:\/\/[\S]+/)
      urls.each do |url|
+       parse_web_account_from_uri(url)
        _create_entity("Uri", {"name" => url, "uri" => url, "origin" => source_uri })
      end
    end
@@ -253,52 +314,27 @@ module WebContent
      # Handle Twitter search results
      if url =~ /https?:\/\/twitter.com\/.*$/
        account_name = url.split("/")[3]
-       _create_entity("WebAccount", {
-         "domain" => "twitter.com",
-         "name" => account_name,
-         "uri" => "#{url}",
-         "type" => "full"
-       })
-
+       _create_normalized_webaccount "twitter", account_name, url
+       
      # Handle Facebook public profile  results
      elsif url =~ /https?:\/\/www.facebook.com\/(public|pages)\/.*$/
        account_name = url.split("/")[4]
-       _create_entity("WebAccount", {
-         "domain" => "facebook.com",
-         "name" => account_name,
-         "uri" => "#{url}",
-         "type" => "public"
-       })
+       _create_normalized_webaccount "facebook", account_name, url
 
      # Handle Facebook search results
      elsif url =~ /https?:\/\/www.facebook.com\/.*$/
        account_name = url.split("/")[3]
-       _create_entity("WebAccount", {
-         "domain" => "facebook.com",
-         "name" => account_name,
-         "uri" => "#{url}",
-         "type" => "full"
-       })
+       _create_normalized_webaccount "facebook", account_name, url
 
      # Handle LinkedIn public profiles
      elsif url =~ /^https?:\/\/www.linkedin.com\/in\/pub\/.*$/
          account_name = url.split("/")[5]
-         _create_entity("WebAccount", {
-           "domain" => "linkedin.com",
-           "name" => account_name,
-           "uri" => "#{url}",
-           "type" => "public"
-         })
+         _create_normalized_webaccount "linkedin", account_name, url
 
      # Handle LinkedIn public directory search results
      elsif url =~ /^https?:\/\/www.linkedin.com\/pub\/dir\/.*$/
        account_name = "#{url.split("/")[5]} #{url.split("/")[6]}"
-       _create_entity("WebAccount", {
-         "domain" => "linkedin.com",
-         "name" => account_name,
-         "uri" => "#{url}",
-         "type" => "public"
-       })
+       _create_normalized_webaccount "linkedin", account_name, url
 
      # Handle LinkedIn world-wide directory results
      elsif url =~ /^http:\/\/[\w]*.linkedin.com\/pub\/.*$/
@@ -308,39 +344,30 @@ module WebContent
      #  - http://uk.linkedin.com/pub/some-one/78/8b/151
 
        account_name = url.split("/")[4]
-       _create_entity("WebAccount", {
-         "domain" => "linkedin.com",
-         "name" => account_name,
-         "uri" => "#{url}",
-         "type" => "public" })
+       _create_normalized_webaccount "linkedin", account_name, url
 
      # Handle LinkedIn profile search results
      elsif url =~ /^https?:\/\/www.linkedin.com\/in\/.*$/
        account_name = url.split("/")[4]
-       _create_entity("WebAccount", {
-         "domain" => "linkedin.com",
-         "name" => account_name,
-         "uri" => "#{url}",
-         "type" => "public" })
+       _create_normalized_webaccount "linkedin", account_name, url
 
      # Handle Google Plus search results
      elsif url =~ /https?:\/\/plus.google.com\/.*$/
        account_name = url.split("/")[3]
-       _create_entity("WebAccount", {
-         "domain" => "google.com",
-         "name" => account_name,
-         "uri" => "#{url}",
-         "type" => "full" })
+       _create_normalized_webaccount "google", account_name, url
 
      # Handle Hackerone search results
      elsif url =~ /https?:\/\/hackerone.com\/.*$/
        account_name = url.split("/")[3]
-       _create_entity("WebAccount", {
-         "domain" => "hackerone.com",
-         "name" => account_name,
-         "uri" => url,
-         "type" => "full" }) unless account_name == "reports"
-     end
+       _create_normalized_webaccount "hackerone", account_name, url
+
+    # Handle Bugcrowd search results
+    elsif url =~ /https?:\/\/bugcrowd.com\/.*$/
+      account_name = url.split("/")[3]
+      _create_normalized_webaccount "bugcrowd", account_name, url
+      
+
+    end
    end
 
 

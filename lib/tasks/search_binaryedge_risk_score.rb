@@ -8,8 +8,8 @@ class SearchBinaryedgeRiskScore < BaseTask
       :pretty_name => "Search BinaryEdge Risk Score",
       :authors => ["Anas Ben Salah"],
       :description => "This task hits the BinaryEdge API and provides " +
-                      "a risk score detail for a given IPAddress. It can optionally " +
-                      "create an issue for high risk IPs.",
+                      "a risk score detail for a given IPAddress. It currently prints" +
+                      "this information to the log.",
       :references => [],
       :type => "discovery",
       :passive => true,
@@ -18,8 +18,8 @@ class SearchBinaryedgeRiskScore < BaseTask
         {"type" => "IpAddress", "details" => {"name" => "1.1.1.1"}}
       ],
       :allowed_options => [
-        {:name => "create_issue", :regex => "boolean", :default => true },
-        {:name => "create_issue_greater_than_sev", :regex=> "integer", :default => 3 },
+        #{:name => "create_issue", :regex => "boolean", :default => true },
+        #{:name => "create_issue_greater_than_sev", :regex=> "integer", :default => 3 },
       ],
       :created_types => []
     }
@@ -60,46 +60,30 @@ class SearchBinaryedgeRiskScore < BaseTask
         calculated_sev = 1
       end
 
-      if _get_option("create_issue") && calculated_sev > _get_option("create_issue_greater_than_sev")
-        ############################################
-        ###      Old Issue                      ###
-        ###########################################
-        # _create_issue({
-        #   name: "High Risk Asset in BinaryEdge",
-        #   type: "binaryedge_score",
-        #   severity: calculated_sev,
-        #   status: "confirmed",
-        #   description: "
-        #     Overall score:#{result["normalized_ip_score"]} || Detailed IP Score: Cve: #{result["normalized_ip_score_detailed"]["cve"]}\n
-        #     Attack Surface: #{result["normalized_ip_score_detailed"]["attack_surface"]}\n
-        #     Encryption: #{result["normalized_ip_score_detailed"]["encryption"]}\n
-        #     Remote management service: #{result["normalized_ip_score_detailed"]["rms"]}\n
-        #     Storage: #{result["normalized_ip_score_detailed"]["storage"]}\n
-        #     Web: #{result["normalized_ip_score_detailed"]["web"]}\n
-        #     Torrent: #{result["normalized_ip_score_detailed"]["torrents"]} ",
-        #   references: ["https://binaryedge.com/"],
-        #   details: result
-        # })
-        ############################################
-        ###         New Issue                   ###
-        ###########################################
-        _create_linked_issue("binaryedge_score",{
-          severity: calculated_sev,
-          detailed_description:
-          " High Risk Asset in BinaryEdge related to #{entity_name}\n
-            Overall score:#{result["normalized_ip_score"]} || Detailed IP Score: Cve: #{result["normalized_ip_score_detailed"]["cve"]}\n
-            Attack Surface: #{result["normalized_ip_score_detailed"]["attack_surface"]}\n
-            Encryption: #{result["normalized_ip_score_detailed"]["encryption"]}\n
-            Remote management service: #{result["normalized_ip_score_detailed"]["rms"]}\n
-            Storage: #{result["normalized_ip_score_detailed"]["storage"]}\n
-            Web: #{result["normalized_ip_score_detailed"]["web"]}\n
-            Torrent: #{result["normalized_ip_score_detailed"]["torrents"]} ",
-          references: ["https://binaryedge.com/"],
-          details: result
-        })
-      else
-        _log "Issue creation disabled for severity #{calculated_sev} asset"
-      end
+      out = {
+        severity: calculated_sev,
+        detailed_description: " High Risk Asset in BinaryEdge related to #{entity_name}\n
+        Overall score:#{result["normalized_ip_score"]} || Detailed IP Score: Cve: #{result["normalized_ip_score_detailed"]["cve"]}\n
+        Attack Surface: #{result["normalized_ip_score_detailed"]["attack_surface"]}\n
+        Encryption: #{result["normalized_ip_score_detailed"]["encryption"]}\n
+        Remote_management_service: #{result["normalized_ip_score_detailed"]["rms"]}\n
+        Storage: #{result["normalized_ip_score_detailed"]["storage"]}\n
+        Web: #{result["normalized_ip_score_detailed"]["web"]}\n
+        Torrent: #{result["normalized_ip_score_detailed"]["torrents"]} ",
+        references: ["https://binaryedge.com/"],
+        details: result
+      }
+
+      _log out 
+
+      ###
+      ### Issue Creation (needs a re-think)
+      ###
+      #if _get_option("create_issue") && calculated_sev > _get_option("create_issue_greater_than_sev")
+      #  _create_linked_issue("binaryedge_score",result)
+      #else
+      #  _log "Issue creation disabled for severity #{calculated_sev} asset"
+      #end
 
     rescue JSON::ParserError => e
       _log_error "Unable to parse JSON: #{e}"

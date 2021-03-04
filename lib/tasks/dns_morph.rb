@@ -12,7 +12,7 @@ class DnsMorph < BaseTask
       :references => ["https://github.com/netevert/dnsmorph"],
       :passive => true,
       :allowed_types => ["Domain"],
-      :example_entities => [ {"type" => "Domain", "attributes" => {"name" => "intrigue.io"}} ],
+      :example_entities => [ {"type" => "Domain", "details" => {"name" => "intrigue.io"}} ],
       :allowed_options => [
         {:name => "create_domains", :regex => "boolean", :default => false },
         {:name => "unscope_domains", :regex => "boolean", :default => true },

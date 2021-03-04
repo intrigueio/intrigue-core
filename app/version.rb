@@ -1,5 +1,5 @@
 class IntrigueApp
   def self.version
-    "0.80-latest"
+    "0.7.2"
   end
 end

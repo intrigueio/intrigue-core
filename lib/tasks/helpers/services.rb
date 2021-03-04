@@ -13,6 +13,22 @@ module Services
 
   include Intrigue::Task::Web
 
+  def _create_vhost_entities(lookup_name)
+    ### For each associated IpAddress, make sure we create any additional
+    ### uris if we already have scan results
+    ###
+    @entity.aliases.each do |a|
+      next unless a.type_string == "IpAddress" #  only ips
+      existing_ports = a.get_detail("ports")
+      if existing_ports
+        existing_ports.each do |p|
+          _log "Creating network service on #{a.name} #{p["number"]} #{p["protocol"]}"
+          _create_network_service_entity(a, p["number"], p["protocol"],{}) 
+        end
+      end
+    end
+  end
+
   def _create_network_service_entity(ip_entity,port_num,protocol="tcp",generic_details={})
 
     # first, save the port details on the ip_entity
@@ -45,7 +61,7 @@ module Services
     if ssl
       # connect, grab the socket and make sure we
       # keep track of these details, and create entitie
-      cert = connect_ssl_socket_get_cert(ip_entity.name,port_num)
+      cert = get_certificate(ip_entity.name,port_num)
 
       if cert 
         cert_names = parse_names_from_cert(cert)       
@@ -64,12 +80,17 @@ module Services
         })
 
         # For each of the discovered cert names, now create a 
-        # DnsRecord. Note that we need to first ensure that this dns record doesn't 
-        # match our hidden list 
+        # DnsRecord, Domain, or IpAddress.
         if cert_names
           cert_names.uniq do |cn|
-            # create each entity 
-            cert_entities << _create_entity("DnsRecord", { "name" => cn }, ip_entity )   
+
+            if cn.is_ip_address?
+              cert_entities << _create_entity("IpAddress", { "name" => cn }, ip_entity )   
+            else
+              # create each entity 
+              cert_entities << create_dns_entity_from_string(cn)
+            end
+            
           end
         end
 
@@ -79,21 +100,22 @@ module Services
     # Grab all the aliases, since we'll want to auto-create services on them
     # (VHOSTS use case)
     hosts = [] 
+    # add our ip 
     hosts << ip_entity
+    # add everything we got from the cert
     cert_entities.each {|ce| hosts << ce} 
-
+    
+    # and add our aliases
     if ip_entity.aliases.count > 0
       ip_entity.aliases.each do |al|
-        next unless al.type_string == "DnsRecord" #  only dns records
+        next unless al.type_string == "DnsRecord" || al.type_string == "Domain" #  only dns records
         next unless al.scoped? # skip blacklisted / unscoped
         hosts << al # add to the list
       end
     end
 
     create_service_lambda = lambda do |h|
-      try_http_ports = [  80,81,82,83,84,85,88,443,888,3000,6443,7443,
-                          8000,8080,8081,8087,8088,8089,8090,8095,
-                          8098,8161,8180,8443,8880,8888,9443,10000 ] 
+      try_http_ports = scannable_web_ports
 
       # Handle web app case first
       if (protocol == "tcp" && try_http_ports.include?(port_num))
@@ -121,7 +143,6 @@ module Services
         end
 
         entity_details = {
-          "scoped" => true, # always scope in
           "name" => uri,
           "uri" => uri,
           "service" => prefix
@@ -139,7 +160,6 @@ module Services
         name = "#{h.name.strip}:#{port_num}"
 
         entity_details = {
-          "scoped" => true, # always scope in
           "name" => name,
           "service" => service
         }
@@ -166,7 +186,6 @@ module Services
         name = "#{h.name.strip}:#{port_num}"
 
         entity_details = {
-          "scoped" => true, # always scope in
           "name" => name,
           "service" => service
         }
@@ -198,7 +217,7 @@ module Services
         
     # Create our queue of work from the checks in brute_list
     input_queue = Queue.new
-    hosts.compact.each do |item|
+    hosts.uniq.compact.each do |item|
       input_queue << item
     end
     
@@ -286,7 +305,8 @@ module Services
 
       _log "connecting to #{uri}"
 
-      out[:http_response] = http_request(:get, uri, nil, {}, nil, attempts_limit=2, open_timeout=5, read_timeout=5)
+
+      out[:http_response] = http_request(:get, uri, nil, {}, nil)
 
       ## TODO ... follow & track location headers?
 
@@ -314,46 +334,6 @@ module Services
     rescue URI::InvalidURIError => e
       _log_error "Error requesting resource, skipping: #{uri} #{e}"
       out[:http_response] = false
-    rescue RestClient::RequestTimeout => e
-      _log_error "Timeout requesting resource, skipping: #{uri} #{e}"
-      out[:http_response] = false
-    rescue RestClient::BadRequest => e
-      _log_error "Error requesting resource, skipping: #{uri} #{e}"
-      out[:http_response] = false
-    rescue RestClient::ResourceNotFound => e
-      _log_error "Error (404) requesting resource, creating anyway: #{uri}"
-      out[:http_response] = true
-    rescue RestClient::MaxRedirectsReached => e
-      _log_error "Error (too many redirects) requesting resource, creating anyway: #{uri}"
-      out[:http_response] = true
-    rescue RestClient::Unauthorized => e
-      _log_error "Error (401) requesting resource, creating anyway: #{uri}"
-      out[:http_response] = true
-      out[:extra_details].merge!("http_server_error" => "#{e}" )
-    rescue RestClient::Forbidden => e
-      _log_error "Error (403) requesting resource, creating anyway: #{uri}"
-      out[:http_response] = true
-      out[:extra_details].merge!("http_server_error" => "#{e}" )
-    rescue RestClient::InternalServerError => e
-      _log_error "Error (500) requesting resource, creating anyway: #{uri}"
-      out[:http_response] = true
-      out[:extra_details].merge!("http_server_error" => "#{e}" )
-    rescue RestClient::BadGateway => e
-      _log_error "Error (Bad Gateway) requesting resource #{uri}, creating anyway."
-      out[:http_response] = true
-      out[:extra_details].merge!("http_server_error" => "#{e}" )
-    rescue RestClient::ServiceUnavailable => e
-      _log_error "Error (Service Unavailable) requesting resource #{uri}, creating anyway."
-      out[:http_response] = true
-      out[:extra_details].merge!("http_server_error" => "#{e}" )
-    rescue RestClient::ServerBrokeConnection => e
-      _log_error "Error (Server broke connection) requesting resource #{uri}, creating anyway."
-      out[:http_response] = true
-      out[:extra_details].merge!("http_server_error" => "#{e}" )
-    rescue RestClient::SSLCertificateNotVerified => e
-      _log_error "Error (SSL Certificate Invalid) requesting resource #{uri}, creating anyway."
-      out[:http_response] = true
-      out[:extra_details].merge!("http_server_error" => "#{e}" )
     rescue OpenSSL::SSL::SSLError => e
       _log_error "Error (SSL Certificate Invalid) requesting resource #{uri}, creating anyway."
       out[:http_response] = true
@@ -362,9 +342,6 @@ module Services
       _log_error "Error (Bad HTTP Response) requesting resource #{uri}, creating anyway."
       out[:http_response] = true
       out[:extra_details].merge!("http_server_error" => "#{e}" )
-    rescue RestClient::ExceptionWithResponse => e
-      _log_error "Unknown error requesting resource #{uri}, skipping"
-      _log_error "#{e}"
     rescue Zlib::GzipFile::Error => e
       _log_error "compression error on #{uri}" => e
     end

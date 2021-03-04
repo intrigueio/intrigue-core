@@ -11,7 +11,7 @@ class SaasJiraCheck < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["Domain","Organization", "String"],
+      :allowed_types => ["Domain","Organization", "String", "WebAccount"],
       :example_entities => [
         {"type" => "String", "details" => {"name" => "intrigue"}}
       ],
@@ -47,12 +47,8 @@ class SaasJiraCheck < BaseTask
       _log_good "The #{name} org exists!"
 
       service_name = "atlassian.net"
-      _create_entity "WebAccount", {
-        "name" => "#{service_name}: #{name}",
-        "uri" => url,
-        "username" => "#{name}",
-        "service" => service_name
-      }
+      _create_normalized_webaccount(service_name, name, url)
+
     elsif body =~ /Your Atlassian Cloud site is currently unavailable./
       _log_error "Nothing found for #{name}"
     else

@@ -1,6 +1,8 @@
 module Intrigue
 module Entity
-class Nameserver < Intrigue::Model::Entity
+class Nameserver < Intrigue::Core::Model::Entity
+
+  include Intrigue::Task::Dns
 
   def self.metadata
     {
@@ -19,21 +21,13 @@ class Nameserver < Intrigue::Model::Entity
     ["enrich/nameserver"]
   end
 
-    ###
+  ###
   ### SCOPING
   ###
   def scoped?(conditions={}) 
-    return true if self.seed
-    return false if self.hidden # hit our blacklist so definitely false
+    return true if self.allow_list
+    return false if self.deny_list
 
-    #
-    # Check types we'll check for indicators of in-scope-ness
-    scope_check_entity_types = [ "Intrigue::Entity::Domain" ]
-
-    self.project.seeds.each do |s|
-      return true if self.name =~ /[\.\s\@]#{Regexp.escape(s.name)}/i
-    end
-    
   # if we didnt match the above and we were asked, it's false 
   false
   end

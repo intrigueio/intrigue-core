@@ -1,0 +1,734 @@
+[
+	{
+		"dnsbl": "0spam-killlist.fusionzero.com",
+		"query": false,
+		"reference": "https://0spam.org/check/?ipaddr=",
+		"confidence": 4
+	},
+	{
+		"dnsbl": "0spam.fusionzero.com",
+		"query": false,
+		"reference": "https://0spam.org/check/?ipaddr=",
+		"confidence": 4
+	},
+	{
+		"dnsbl": "access.redhawk.org",
+		"query": false,
+		"reference": "https://www.redhawk.org/SpamHawk/query.php",
+		"confidence": 1
+	},
+	{
+		"dnsbl": "all.rbl.jp",
+		"query": false,
+		"reference": "http://www.rbl.jp/allrbl-e.html",
+		"confidence": 1
+	},
+	{
+		"dnsbl": "all.spam-rbl.fr",
+		"query": false,
+		"reference": "https://spam-rbl.fr/bl.php?ip=",
+		"confidence": 4
+	},
+	{
+		"dnsbl": "all.spamrats.com",
+		"query": false,
+		"reference": "http://spamrats.com/lookup.php?ip=",
+		"confidence": 4
+	},
+	{
+		"dnsbl": "aspews.ext.sorbs.net",
+		"query": false,
+		"reference": "http://www.sorbs.net/lookup.shtml",
+		"confidence": 4
+	},
+	{
+		"dnsbl": "b.barracudacentral.org",
+		"query": false,
+		"reference": "http://www.barracudacentral.org/lookups/lookup-reputation",
+		"confidence": 4
+	},
+	{
+		"dnsbl": "backscatter.spameatingmonkey.net",
+		"query": false,
+		"reference": "https://spameatingmonkey.com/lookup/",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "badnets.spameatingmonkey.net",
+		"query": false,
+		"reference": "https://spameatingmonkey.com/lookup/",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "bb.barracudacentral.org",
+		"query": false,
+		"reference": "http://www.barracudacentral.org/lookups/lookup-reputation",
+		"confidence": 4
+	},
+	{
+		"dnsbl": "bl.drmx.org",
+		"query": false,
+		"reference": "http://www.drmx.org/index.php?id=",
+		"confidence": 1
+	},
+	{
+		"dnsbl": "bl.konstant.no",
+		"query": false,
+		"reference": "https://bl.konstant.no/search.php?address=",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "bl.nszones.com",
+		"query": false,
+		"reference": "https://www.nszones.com/",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "bl.spamcannibal.org",
+		"query": false,
+		"reference": "https://www.dnsbl.info/dnsbl-details.php?dnsbl=bl.spamcannibal.org",
+		"confidence": 4
+	},
+	{
+		"dnsbl": "bl.spamcop.net",
+		"query": false,
+		"reference": "https://www.spamcop.net/w3m?action=checkblock&ip=",
+		"confidence": 4
+	},
+	{
+		"dnsbl": "bl.spameatingmonkey.net",
+		"query": false,
+		"reference": "https://spameatingmonkey.com/lookup/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "bl.spamstinks.com",
+		"query": false,
+		"reference": "http://spamstinks.com/",
+		"confidence": 1
+	},
+	{
+		"dnsbl": "black.junkemailfilter.com",
+		"query": false,
+		"reference": "https://ipadmin.junkemailfilter.com/remove.php",
+		"confidence": ""
+	},
+	{
+		"dnsbl": "blacklist.sci.kun.nl",
+		"query": false,
+		"reference": "https://wiki.cncz.science.ru.nl/Email_spam",
+		"confidence": ""
+	},
+	{
+		"dnsbl": "blacklist.woody.ch",
+		"query": false,
+		"reference": "http://www.woody.ch/rblcheck.php3",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "bogons.cymru.com",
+		"query": false,
+		"reference": "http://www.team-cymru.org/Services/Bogons/",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "bsb.empty.us",
+		"query": false,
+		"reference": "http://bsb.empty.us",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "bsb.spamlookup.net",
+		"query": false,
+		"reference": "http://multirbl.valli.org/detail/bsb.spamlookup.net.html",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "cart00ney.surriel.com",
+		"query": false,
+		"reference": "https://cart00ney.surriel.com/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "cbl.abuseat.org",
+		"query": false,
+		"reference": "http://cbl.abuseat.org/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "cblplus.anti-spam.org.cn",
+		"query": false,
+		"reference": "http://www.anti-spam.org.cn/CBL",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "cdl.anti-spam.org.cn",
+		"query": false,
+		"reference": "www.anti-spam.org.cn/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "cblless.anti-spam.org.cn",
+		"query": false,
+		"reference": "www.anti-spam.org.cn/",
+		"confidence": 2
+	},
+		{
+		"dnsbl": "cidr.bl.mcafee.com",
+		"query": false,
+		"reference": "https://kc.mcafee.com/corporate/index?page=content&id=KB53783",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "combined.rbl.msrbl.net",
+		"query": false,
+		"reference": "http://www.msrbl.com/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "db.wpbl.info",
+		"query": false,
+		"reference": "http://www.wpbl.info/cgi-bin/detail.cgi?ip=",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "dev.null.dk",
+		"query": false,
+		"reference": "http://dev.null.dk/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "dialups.visi.com",
+		"query": false,
+		"reference": "http://www.pan-am.ca/pdl/",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "dnsbl-0.uceprotect.net",
+		"query": false,
+		"reference": "http://www.uceprotect.net/en/rblcheck.php",
+		"confidence": 5
+	},
+	{
+		"dnsbl": "dnsbl-1.uceprotect.net",
+		"query": false,
+		"reference": "http://www.uceprotect.net/en/rblcheck.php",
+		"confidence": 5
+	},
+	{
+		"dnsbl": "dnsbl-2.uceprotect.net",
+		"query": false,
+		"reference": "http://www.uceprotect.net/en/rblcheck.php",
+		"confidence": 5
+	},
+	{
+		"dnsbl": "dnsbl-3.uceprotect.net",
+		"query": false,
+		"reference": "http://www.uceprotect.net/en/rblcheck.php",
+		"confidence": 5
+	},
+	{
+		"dnsbl": "dnsbl.anticaptcha.net",
+		"query": false,
+		"reference": "http://www.anticaptcha.net/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "dnsbl.aspnet.hu",
+		"query": false,
+		"reference": "http://dnsbl.aspnet.hu/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "dnsbl.dronebl.org",
+		"query": true,
+		"reference": "https://www.dronebl.org/lookup?ip=",
+		"confidence": 4
+	},
+	{
+		"dnsbl": "dnsbl.inps.de",
+		"query": false,
+		"reference": "http://dnsbl.inps.de/",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "dnsbl.justspam.org",
+		"query": false,
+		"reference": "http://www.justspam.org/check-an-ip",
+		"confidence": 4
+	},
+	{
+		"dnsbl": "dnsbl.madavi.de",
+		"query": false,
+		"reference": "https://www.madavi.de/?id=39&type=0",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "dnsbl.mailshell.net",
+		"query": false,
+		"reference": "http://www50.mailshell.com/live_feed/livefeed_lookup.php",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "dnsbl.rizon.net",
+		"query": false,
+		"reference": "http://dnsbl.rizon.net/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "dnsbl.rv-soft.info",
+		"query": false,
+		"reference": "http://dnsbl.rv-soft.info/index.php",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "dnsbl.rymsho.ru",
+		"query": false,
+		"reference": "http://spam.rymsho.ru/",
+		"confidence": 2
+	},
+		{
+		"dnsbl": "dnsbl.sorbs.net",
+		"query": false,
+		"reference": "http://www.sorbs.net/",
+		"confidence": 4
+	},
+	{
+		"dnsbl": "dnsbl.zapbl.net",
+		"query": false,
+		"reference": "https://zapbl.net/lookup.php?ip=",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "dnsbl.spfbl.net",
+		"query": false,
+		"reference": "https://spfbl.net/en/delist",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "dnsrbl.swinog.ch",
+		"query": false,
+		"reference": "https://antispam.imp.ch/",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "dul.pacifier.net",
+		"query": false,
+		"reference": "ht tp://www.stopspam.org/rblcheck/index.php",
+		"confidence": 4
+	},
+	{
+		"dnsbl": "drone.abuse.ch",
+		"query": false,
+		"reference": "https://abuse.ch/",
+		"confidence": 4
+	},
+	{
+		"dnsbl": "dyn.nszones.com",
+		"query": false,
+		"reference": "https://www.nszones.com/bl?ip=",
+		"confidence": 4
+	},
+	{
+		"dnsbl": "dyna.spamrats.com",
+		"query": false,
+		"reference": "http://www.spamrats.com/lookup.php?ip=",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "fnrbl.fast.net",
+		"query": false,
+		"reference": "http://www.fast.net/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "fresh.spameatingmonkey.net",
+		"query": false,
+		"reference": "https://spameatingmonkey.com/services",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "hostkarma.junkemailfilter.com",
+		"query": false,
+		"reference": "https://ipadmin.junkemailfilter.com/remove.php",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "httpbl.abuse.ch",
+		"query": false,
+		"reference": "https://abuse.ch/",
+		"confidence": 4
+	},
+	{
+		"dnsbl": "images.rbl.msrbl.net",
+		"query": false,
+		"reference": "http://msrbl.blogspot.com/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "ips.backscatterer.org",
+		"query": false,
+		"reference": "http://www.backscatterer.org/?target=test",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "ips.whitelisted.org",
+		"query": false,
+		"reference": "http://www.whitelisted.org/",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "ix.dnsbl.manitu.net",
+		"query": false,
+		"reference": "http://www.dnsbl.manitu.net/lookup.php?language=en&value=",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "korea.services.net",
+		"query": false,
+		"reference": "http://korea.services.net/blocked.phtml?addr=",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "l2.bbfh.ext.sorbs.net",
+		"query": false,
+		"reference": "http://www.bbfh.org/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "l3.bbfh.ext.sorbs.net",
+		"query": false,
+		"reference": "http://www.bbfh.org/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "l4.bbfh.ext.sorbs.net",
+		"query": false,
+		"reference": "http://www.bbfh.org/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "list.bbfh.org",
+		"query": false,
+		"reference": "http://www.bbfh.org/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "list.blogspambl.com",
+		"query": false,
+		"reference": "https://spameatingmonkey.com/lookup/",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "multi.uribl.com",
+		"query": false,
+		"reference": "http://uribl.com/",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "multi.surbl.org",
+		"query": false,
+		"reference": "http://www.surbl.org/surbl-analysis",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "netbl.spameatingmonkey.net",
+		"query": false,
+		"reference": "https://spameatingmonkey.com/lookup/",
+		"confidence": 4
+	},
+	{
+		"dnsbl": "netscan.rbl.blockedservers.com",
+		"query": false,
+		"reference": "https://www.blockedservers.com/",
+		"confidence": 1
+	},
+	{
+		"dnsbl": "no-more-funn.moensted.dk",
+		"query": false,
+		"reference": "https://moensted.dk/spam/no-more-funn/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "noptr.spamrats.com",
+		"query": false,
+		"reference": "http://www.spamrats.com/lookup.php?ip=",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "orvedb.aupads.org",
+		"query": false,
+		"reference": "http://www.aupads.org/",
+		"confidence": 1
+	},
+	{
+		"dnsbl": "pbl.spamhaus.org",
+		"query": false,
+		"reference": "https://www.spamhaus.org/query/ip/",
+		"confidence": 4
+	},
+	{
+		"dnsbl": "phishing.rbl.msrbl.net",
+		"query": false,
+		"reference": "http://www.msrbl.com/check?ip=",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "pofon.foobar.hu",
+		"query": false,
+		"reference": "https://rbl.foobar.hu/pofon/bl?",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "psbl.surriel.com",
+		"query": false,
+		"reference": "https://psbl.org/listing?ip=",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "rbl.abuse.ro",
+		"query": false,
+		"reference": "https://www.abuse.ro/",
+		"confidence": 4
+	},
+	{
+		"dnsbl": "rbl.blockedservers.com",
+		"query": false,
+		"reference": "https://www.blockedservers.com/",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "rbl.dns-servicios.com",
+		"query": false,
+		"reference": "http://rbl.dns-servicios.com/delist.php?ip=",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "rbl.efnet.org",
+		"query": false,
+		"reference": "https://rbl.efnetrbl.org/",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "rbl.efnetrbl.org",
+		"query": false,
+		"reference": "https://rbl.efnetrbl.org/",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "rbl.schulte.org/",
+		"query": false,
+		"reference": "https://rbl.schulte.org/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "rbl.talkactive.net",
+		"query": false,
+		"reference": "http://www.talkactive.net/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "rbl2.triumf.ca",
+		"query": false,
+		"reference": "http://trmail.triumf.ca/cgi-bin/rbl2/",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "rsbl.aupads.org",
+		"query": false,
+		"reference": "http://www.aupads.org/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "sbl-xbl.spamhaus.org",
+		"query": true,
+		"reference": "https://www.spamhaus.org/query/ip/",
+		"confidence": 5
+	},
+	{
+		"dnsbl": "sbl.nszones.com",
+		"query": true,
+		"reference": "https://www.nszones.com/bl?ip=",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "sbl.spamhaus.org",
+		"query": true,
+		"reference": "https://www.spamhaus.org/query/ip/",
+		"confidence": 5
+	},
+	{
+		"dnsbl": "short.rbl.jp",
+		"query": false,
+		"reference": "http://www.rbl.jp/allrbl-e.html",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "spam.abuse.ch",
+		"query": false,
+		"reference": "http://www.abuse.ch/",
+		"confidence": 5
+	},
+	{
+		"dnsbl": "spam.dnsbl.anonmails.de",
+		"query": false,
+		"reference": "https://anonmails.de/dnsbl.php",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "spam.pedantic.org",
+		"query": true,
+		"reference": "http://www.pedantic.org/cgi-bin/showspam?ip=",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "spam.rbl.blockedservers.com",
+		"query": false,
+		"reference": "https://www.blockedservers.com/",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "spam.rbl.msrbl.net",
+		"query": false,
+		"reference": "http://msrbl.blogspot.com/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "spam.spamrats.com",
+		"query": false,
+		"reference": "http://www.spamrats.com/rats-spam.php",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "spamrbl.imp.ch",
+		"query": false,
+		"reference": "https://antispam.imp.ch/",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "spamsources.fabel.dk",
+		"query": false,
+		"reference": "https://www.spamsources.fabel.dk/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "st.technovision.dk",
+		"query": false,
+		"reference": "https://st.technovision.dk/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "tor.dan.me.uk",
+		"query": false,
+		"reference": "https://www.dan.me.uk/dnsbl",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "tor.dnsbl.sectoor.de",
+		"query": false,
+		"reference": "http://www.sectoor.de/tor.php",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "rbl.efnetrbl.org",
+		"query": false,
+		"reference": "https://rbl.efnetrbl.org/",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "torexit.dan.me.uk",
+		"query": false,
+		"reference": "https://www.dan.me.uk/dnsbl",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "truncate.gbudb.net",
+		"query": false,
+		"reference": "http://www.gbudb.com/truncate/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "ubl.unsubscore.com",
+		"query": false,
+		"reference": "https://blacklist.lashback.com/",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "uribl.spameatingmonkey.net",
+		"query": false,
+		"reference": "https://spameatingmonkey.com/services",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "urired.spameatingmonkey.net",
+		"query": false,
+		"reference": "https://spameatingmonkey.com/services",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "virbl.dnsbl.bit.nl",
+		"query": false,
+		"reference": "https://virbl.bit.nl/",
+		"confidence": ""
+	},
+	{
+		"dnsbl": "virus.rbl.jp",
+		"query": false,
+		"reference": "http://www.rbl.jp/allrbl-e.html",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "virus.rbl.msrbl.net",
+		"query": true,
+		"reference": "http://msrbl.com/check?ip=",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "vote.drbl.caravan.ru",
+		"query": false,
+		"reference": "http://drbl.caravan.ru/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "vote.drbl.gremlin.ru",
+		"query": false,
+		"reference": "http://gremlin.ru/drbl/en/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "web.rbl.msrbl.net",
+		"query": true,
+		"reference": "http://www.msrbl.com/check?ip=",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "work.drbl.caravan.ru",
+		"query": false,
+		"reference": "http://drbl.caravan.ru/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "work.drbl.gremlin.ru",
+		"query": false,
+		"reference": "http://gremlin.ru/drbl/en/",
+		"confidence": 2
+	},
+	{
+		"dnsbl": "wormrbl.imp.ch",
+		"query": false,
+		"reference": "https://antispam.imp.ch/",
+		"confidence": 3
+	},
+	{
+		"dnsbl": "xbl.spamhaus.org",
+		"query": true,
+		"reference": "https://www.spamhaus.org/query/ip/",
+		"confidence": 5
+	},
+	{
+		"dnsbl": "zen.spamhaus.org",
+		"query": true,
+		"reference": "https://www.spamhaus.org/query/ip/",
+		"confidence": 5
+	}
+]

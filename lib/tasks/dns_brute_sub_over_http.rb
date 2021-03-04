@@ -1,5 +1,3 @@
-require 'flareon'
-
 module Intrigue
 module Task
 class DnsBruteSubOverHttp < BaseTask

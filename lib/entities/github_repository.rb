@@ -1,6 +1,6 @@
 module Intrigue
 module Entity
-class GithubRepository < Intrigue::Model::Entity
+class GithubRepository < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
@@ -12,13 +12,14 @@ class GithubRepository < Intrigue::Model::Entity
   end
 
   def validate_entity
-    name =~ /^[\d\w]+\/[\d\w]+/
+    name =~ /^[\d\w\-]+\/[\d\w\-]+/
   end
 
   def scoped?
-    return true if self.seed
-    return false if self.hidden
-  true # otherwise just default to true
+    return true if self.allow_list
+    return false if self.deny_list
+
+  true
   end
 
 end

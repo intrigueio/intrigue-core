@@ -1,5 +1,3 @@
-require 'pry'
-
 module Intrigue
 module Task
 module CloudProviders
@@ -119,10 +117,10 @@ module CloudProviders
     ### FINGERPRINT
     ###
     _get_entity_detail("fingerprint").each do |fp|
-      cloud_providers << "#{fp["product"]}".downcase if fp["tags"].include?("Cloud")
-      cloud_providers << "#{fp["product"]}".downcase if fp["tags"].include?("SaaS")
-      cloud_providers << "#{fp["product"]}".downcase if fp["tags"].include?("IaaS")
-      cloud_providers << "#{fp["product"]}".downcase if fp["tags"].include?("PaaS")
+      #cloud_providers << "#{fp["product"]}".downcase if fp["tags"] && fp["tags"].include?("Cloud")
+      cloud_providers << "#{fp["product"]}".downcase if fp["tags"] && fp["tags"].include?("SaaS")
+      cloud_providers << "#{fp["product"]}".downcase if fp["tags"] && fp["tags"].include?("IaaS")
+      cloud_providers << "#{fp["product"]}".downcase if fp["tags"] && fp["tags"].include?("PaaS")
     end
     
   cloud_providers

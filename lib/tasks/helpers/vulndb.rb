@@ -1,17 +1,59 @@
-require 'versionomy'
+module Intrigue
+  module Task
+    module VulnDb
+      
+      #
+      # This method assumes we get a list of objects with a CPE we can parse
+      # and use for a vuln lookup based on the configured methdo
+      #
+      def add_vulns_by_cpe(component_list)
+
+        # Make sure the key is set before querying intrigue api
+        intrigueio_api_key = _get_task_config "intrigueio_api_key"
+        use_api = intrigueio_api_key && intrigueio_api_key.length > 0
+
+        # for ech fingerprint, map vulns 
+        component_list = component_list.map do |fp|
+          next unless fp 
+
+          vulns = []
+          if fp["type"] == "fingerprint" && fp["inference"]
+            cpe = Intrigue::VulnDb::Cpe.new(fp["cpe"])
+            if use_api # get vulns via intrigue API
+              _log "Matching vulns for #{fp["cpe"]} via Intrigue API"
+              vulns = cpe.query_intrigue_vulndb_api(intrigueio_api_key)
+            else
+              vulns = cpe.query_local_nvd_json
+            end
+
+            # merge it in 
+            fp.merge!({"vulns" => vulns })
+          else 
+            _log "Inference disallowed on: #{fp["cpe"]}" if fp["cpe"]
+            _log "Returning un-enriched fps"
+            fp if fp["type"] == "fingerprint"
+          end
+
+        end
+
+      component_list.compact
+      end
+
+    end
+  end
+end
 
 module Intrigue
-module Vulndb
+module VulnDb
 
   class Cpe
-
     include Intrigue::Task::Web
 
     def initialize(cpe_string)
-      #puts "Creating CPE with CPE: #{cpe_string}"
+      
       @cpe = cpe_string
+      
       x = _parse_cpe(@cpe)
-
       return nil unless x
 
       @vendor = x[:vendor]
@@ -21,36 +63,25 @@ module Vulndb
 
     end
 
-    #def vulns
-    #  #query_intrigue_vulndb_api
-    #  query_local_nvd_json
-    #end
-
     def query_intrigue_vulndb_api(api_key)
 
       #puts "Querying VulnDB API!"
       #puts "https://intrigue.io/api/vulndb/match/#{@vendor}/#{@product}/#{@version}"
 
       begin
-        vendor_string = URI.escape(@vendor)
-        product_string = URI.escape(@product)
-        version_string = @version ? URI.escape(@version) : ""
-        update_string = @update ? URI.escape(@update) : ""
 
-        # not enough information otherwise
-        return [] unless vendor_string && product_string && version_string
-
-        uri = "https://app.intrigue.io/api/vulndb/match/#{vendor_string}/#{product_string}"
-        uri << "/#{version_string}" if version_string
-        uri << "/#{update_string}" if update_string
+        
+        uri = "https://app.intrigue.io/api/vulndb/match_cpe/#{@cpe}"
         uri << "?key=#{api_key}"
 
+        puts "Requesting Vulns for CPE: #{@cpe}"
+        
         response = http_request :get, uri
 
         # if the API is down, we'll get a nil response, so handle that case gracefully
         return [] unless response
 
-        result = JSON.parse(response.body)
+        result = JSON.parse(response.body_utf8)
 
         # return our normal hash
       rescue JSON::ParserError => e
@@ -140,13 +171,12 @@ module Vulndb
                   if v["impact"]
 
                     cvss_v2 = v["impact"]["baseMetricV2"]["cvssV2"]
-                    cvss_v3 = v["impact"]["baseMetricV3"]["cvssV3"]
-
                     cvss_v2_score = v["impact"]["baseMetricV2"]["cvssV2"]["baseScore"]
                     cvss_v2_vector = v["impact"]["baseMetricV2"]["cvssV2"]["vectorString"]
 
                     # v3 only goes back to 2016
                     if v["impact"]["baseMetricV3"]
+                      cvss_v3 = v["impact"]["baseMetricV3"]["cvssV3"]
                       cvss_v3_score = v["impact"]["baseMetricV3"]["cvssV3"]["baseScore"]
                       cvss_v3_vector = v["impact"]["baseMetricV3"]["cvssV3"]["vectorString"]
                     end

@@ -6,7 +6,6 @@ module Whois
 
   include Intrigue::Task::Web
 
-
   def whois(lookup_string)
 
     begin
@@ -138,7 +137,13 @@ module Whois
   out
   end
 
+  def range_to_cidrs(lower, upper)
+  
+    ip_range = IPRanger::IPRange.new(lower, upper)
+    cidrs = ip_range.cidrs
 
+  cidrs
+  end
 
   private  # helper methods for parsing
 
@@ -177,7 +182,8 @@ module Whois
       "end_address" => "#{json["endAddress"]}",
       "cidr" => "#{cidr_length}",
       "description" => "#{description}",
-      "block_type" => "#{type}"
+      "block_type" => "#{type}",
+      "extended_rdap" => response
     }
 
   out
@@ -189,11 +195,37 @@ module Whois
     ripe_uri = "https://stat.ripe.net/data/address-space-hierarchy/data.json?resource=#{lookup_string}/32"
     json = JSON.parse(http_get_body(ripe_uri))
 
+    # parse out ranges
     data = json["data"]
     if data["last_updated"]
       range = data["last_updated"].first["ip_space"]
+      start_address = range.split("/").first.strip
+      cidr = range.split("/").last.strip
+      exact = false
+    elsif !data["exact"].empty? # RIPE
+      range = data["exact"].first["inetnum"]
+      start_address = range.split("-").first.strip
+      end_address = range.split("-").last.strip
+      netname = data["exact"].first["netname"]
+      org = data["exact"].first["org"]
+      exact = true 
+    elsif !data["more_specific"].empty? && data["more_specific"].first["inetnum"] # RIPE
+      range = data["more_specific"].first["inetnum"]
+      start_address = range.split("-").first.strip
+      end_address = range.split("-").last.strip
+      netname = data["more_specific"].first["netname"]
+      org = data["more_specific"].first["org"]
+      exact = false
+    elsif !data["less_specific"].empty? && data["less_specific"].first["inetnum"] # RIPE
+      range = data["less_specific"].first["inetnum"]
+      start_address = range.split("-").first.strip
+      end_address = range.split("-").last.strip
+      netname = data["less_specific"].first["netname"]
+      org = data["less_specific"].first["org"]
+      exact = false
     else
-      _log_error "Bad response, unable to continue: #{json}"
+      _log_error "Unknown response , unable to continue"
+      _log "Got: #{data}"
       return nil
     end
 
@@ -205,21 +237,22 @@ module Whois
         description = less_specific_hash.first["descr"]
       end
 
-      # parse out netname
-      if less_specific_hash && less_specific_hash.first["netname"]
-        netname = less_specific_hash.first["netname"]
-      end
+      # convert the range to cidr format
+      cidrs = range_to_cidrs(start_address, end_address).map{|x| x.to_cidr}
+      raise "Multiple CIDRs available!!!" if cidrs.count > 1
 
-      out = out.merge({
-        "name" => "#{range}",
-        "start_address" => "#{range.split("/").first}",
-        "cidr" => "#{range.split('/').last}",
-        "description" => "#{description}".force_encoding('ISO-8859-1').sanitize_unicode,
+      # merge in our details
+      out.merge!({
+        "exact" => exact,
+        "name" => "#{cidrs.first}",
+        "start_address" => "#{start_address}",
+        "end_address" => "#{end_address}",
+        "cidr" => "#{cidr}",
         "rir" => "RIPE",
-        "rir_parsed" => "#{json["data"]["rir"]}",
         "organization_reference" => "#{netname}".sanitize_unicode,
-        "organization_name" => "#{description}".sanitize_unicode,
-        "provider" =>  "#{description}".force_encoding('ISO-8859-1').sanitize_unicode })
+        "organization_name" => "#{org}".sanitize_unicode,
+        "provider" => "#{org}".sanitize_unicode
+        })
 
     rescue TypeError => e
       _log_error "PARSING ERROR! Unable to get details from #{less_specific_hash} #{e}"

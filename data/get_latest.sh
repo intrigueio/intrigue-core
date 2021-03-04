@@ -35,14 +35,21 @@ if [ ! -f public_suffix_list.dat ]; then
   rm public_suffix_list.dat
 fi
 
+# retirejs data 
+if [ ! -f retirejs.json ]; then
+  echo "[+] Getting latest Retire.js"
+  wget -N -q https://raw.githubusercontent.com/pentestify/retire.js/master/repository/jsrepository.json 
+  mv jsrepository.json retirejs.json
+fi
+
 # NVD feeds
 NVD_YEARS="2019 2018 2017"
 
 # nvd download function
 function get_nvd_json() {
   echo "[+] Getting latest NVD JSON Feed: $YEAR"
-  wget -N -q https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-$YEAR.json.gz -O nvdcve-1.0-$YEAR.json.gz
-  gunzip nvdcve-1.0-$YEAR.json.gz
+  wget -N -q https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-$YEAR.json.gz -O nvdcve-1.1-$YEAR.json.gz
+  gunzip nvdcve-1.1-$YEAR.json.gz
 }
 
 if [ -d "nvd" ]; then

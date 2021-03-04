@@ -1,0 +1,3437 @@
+[
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^access[_-]?key[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^zhuliang[_-]?gh[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^app[_-]?bucket[_-]?perm(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^apigw[_-]?access[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^apiary[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^api[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^api[_-]?key[_-]?sid(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^api[_-]?key[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^aos[_-]?sec(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^aos[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ansible[_-]?vault[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^android[_-]?docs[_-]?deploy[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^anaconda[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^amazon[_-]?secret[_-]?access[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^amazon[_-]?bucket[_-]?name(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^alicloud[_-]?secret[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^alicloud[_-]?access[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^alias[_-]?pass(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^algolia[_-]?search[_-]?key[_-]?1(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^algolia[_-]?search[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^algolia[_-]?search[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^algolia[_-]?api[_-]?key[_-]?search(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^algolia[_-]?api[_-]?key[_-]?mcm(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^algolia[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^algolia[_-]?admin[_-]?key[_-]?mcm(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^algolia[_-]?admin[_-]?key[_-]?2(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^algolia[_-]?admin[_-]?key[_-]?1(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^adzerk[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^admin[_-]?email(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^account[_-]?sid(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^access[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^access[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^yangshun[_-]?gh[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^yangshun[_-]?gh[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^wpt[_-]?ssh[_-]?private[_-]?key[_-]?base64(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^wpt[_-]?ssh[_-]?connect(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^wpt[_-]?report[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^wpt[_-]?prepare[_-]?dir(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^wpt[_-]?db[_-]?user(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^wpt[_-]?db[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^wporg[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^wpjm[_-]?phpunit[_-]?google[_-]?geocode[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^wordpress[_-]?db[_-]?user(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^wordpress[_-]?db[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^wincert[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^widget[_-]?test[_-]?server(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^widget[_-]?fb[_-]?password[_-]?3(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^widget[_-]?fb[_-]?password[_-]?2(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^widget[_-]?fb[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^widget[_-]?basic[_-]?password[_-]?5(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^widget[_-]?basic[_-]?password[_-]?4(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^widget[_-]?basic[_-]?password[_-]?3(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^widget[_-]?basic[_-]?password[_-]?2(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^widget[_-]?basic[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^watson[_-]?conversation[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^wakatime[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^vscetoken(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^visual[_-]?recognition[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^virustotal[_-]?apikey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^v[_-]?sfdc[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^v[_-]?sfdc[_-]?client[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^usertravis(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^user[_-]?assets[_-]?secret[_-]?access[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^user[_-]?assets[_-]?access[_-]?key[_-]?id(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^use[_-]?ssh(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^us[_-]?east[_-]?1[_-]?elb[_-]?amazonaws[_-]?com(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^urban[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^urban[_-]?master[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^urban[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^twine[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^trex[_-]?okta[_-]?client[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^trex[_-]?client[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^travis[_-]?gh[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^travis[_-]?e2e[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^travis[_-]?com[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^travis[_-]?branch(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^travis[_-]?api[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^travis[_-]?access[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^token[_-]?core[_-]?java(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^thera[_-]?oss[_-]?access[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^tester[_-]?keys[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^test[_-]?test(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^test[_-]?github[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^tesco[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^svn[_-]?pass(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^surge[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^surge[_-]?login(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^stripe[_-]?public(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^stripe[_-]?private(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^strip[_-]?secret[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^strip[_-]?publishable[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^stormpath[_-]?api[_-]?key[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^stormpath[_-]?api[_-]?key[_-]?id(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^starship[_-]?auth[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^starship[_-]?account[_-]?sid(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^star[_-]?test[_-]?secret[_-]?access[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^star[_-]?test[_-]?location(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^star[_-]?test[_-]?bucket(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^star[_-]?test[_-]?aws[_-]?access[_-]?key[_-]?id(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^staging[_-]?base[_-]?url[_-]?runscope(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ssmtp[_-]?config(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sshpass(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^srcclr[_-]?api[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^square[_-]?reader[_-]?sdk[_-]?repository[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sqssecretkey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sqsaccesskey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^spring[_-]?mail[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^spotify[_-]?api[_-]?client[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^spotify[_-]?api[_-]?access[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^spaces[_-]?secret[_-]?access[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^spaces[_-]?access[_-]?key[_-]?id(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^soundcloud[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^soundcloud[_-]?client[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sonatypepassword(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sonatype[_-]?token[_-]?user(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sonatype[_-]?token[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sonatype[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sonatype[_-]?pass(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sonatype[_-]?nexus[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sonatype[_-]?gpg[_-]?passphrase(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sonatype[_-]?gpg[_-]?key[_-]?name(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sonar[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sonar[_-]?project[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sonar[_-]?organization[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^socrata[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^socrata[_-]?app[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^snyk[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^snyk[_-]?api[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^snoowrap[_-]?refresh[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^snoowrap[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^snoowrap[_-]?client[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^slate[_-]?user[_-]?email(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^slash[_-]?developer[_-]?space[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^slash[_-]?developer[_-]?space(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^signing[_-]?key[_-]?sid(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^signing[_-]?key[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^signing[_-]?key[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^signing[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^setsecretkey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^setdstsecretkey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^setdstaccesskey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ses[_-]?secret[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ses[_-]?access[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^service[_-]?account[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sentry[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sentry[_-]?endpoint(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sentry[_-]?default[_-]?org(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sentry[_-]?auth[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sendwithus[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sendgrid[_-]?username(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sendgrid[_-]?user(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sendgrid[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sendgrid[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sendgrid[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sendgrid(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^selion[_-]?selenium[_-]?host(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^selion[_-]?log[_-]?level[_-]?dev(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^segment[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^secretkey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^secretaccesskey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^secret[_-]?key[_-]?base(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^secret[_-]?9(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^secret[_-]?8(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^secret[_-]?7(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^secret[_-]?6(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^secret[_-]?5(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^secret[_-]?4(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^secret[_-]?3(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^secret[_-]?2(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^secret[_-]?11(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^secret[_-]?10(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^secret[_-]?1(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^secret[_-]?0(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sdr[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^scrutinizer[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sauce[_-]?access[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sandbox[_-]?aws[_-]?secret[_-]?access[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sandbox[_-]?aws[_-]?access[_-]?key[_-]?id(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sandbox[_-]?access[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^salesforce[_-]?bulk[_-]?test[_-]?security[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^salesforce[_-]?bulk[_-]?test[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sacloud[_-]?api(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sacloud[_-]?access[_-]?token[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^sacloud[_-]?access[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^s3[_-]?user[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^s3[_-]?secret[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^s3[_-]?secret[_-]?assets(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^s3[_-]?secret[_-]?app[_-]?logs(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^s3[_-]?key[_-]?assets(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^s3[_-]?key[_-]?app[_-]?logs(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^s3[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^s3[_-]?external[_-]?3[_-]?amazonaws[_-]?com(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^s3[_-]?bucket[_-]?name[_-]?assets(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^s3[_-]?bucket[_-]?name[_-]?app[_-]?logs(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^s3[_-]?access[_-]?key[_-]?id(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^s3[_-]?access[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^rubygems[_-]?auth[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^rtd[_-]?store[_-]?pass(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^rtd[_-]?key[_-]?pass(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^route53[_-]?access[_-]?key[_-]?id(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ropsten[_-]?private[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^rinkeby[_-]?private[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^rest[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^repotoken(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^reporting[_-]?webdav[_-]?url(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^reporting[_-]?webdav[_-]?pwd(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^release[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^release[_-]?gh[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^registry[_-]?secure(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^registry[_-]?pass(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^refresh[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^rediscloud[_-]?url(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^redis[_-]?stunnel[_-]?urls(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^randrmusicapiaccesstoken(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^rabbitmq[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^quip[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^qiita[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^pypi[_-]?passowrd(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^pushover[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^publish[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^publish[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^publish[_-]?access(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^project[_-]?config(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^prod[_-]?secret[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^prod[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^prod[_-]?access[_-]?key[_-]?id(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^private[_-]?signing[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^pring[_-]?mail[_-]?username(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^preferred[_-]?username(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^prebuild[_-]?auth(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^postgresql[_-]?pass(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^postgresql[_-]?db(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^postgres[_-]?env[_-]?postgres[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^postgres[_-]?env[_-]?postgres[_-]?db(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^plugin[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^plotly[_-]?apikey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^places[_-]?apikey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^places[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^pg[_-]?host(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^pg[_-]?database(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^personal[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^personal[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^percy[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^percy[_-]?project(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^paypal[_-]?client[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^passwordtravis(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^parse[_-]?js[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^pagerduty[_-]?apikey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^packagecloud[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ossrh[_-]?username(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ossrh[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ossrh[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ossrh[_-]?pass(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ossrh[_-]?jira[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^os[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^os[_-]?auth[_-]?url(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^org[_-]?project[_-]?gradle[_-]?sonatype[_-]?nexus[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^org[_-]?gradle[_-]?project[_-]?sonatype[_-]?nexus[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^openwhisk[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^open[_-]?whisk[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^onesignal[_-]?user[_-]?auth[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^onesignal[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^omise[_-]?skey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^omise[_-]?pubkey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^omise[_-]?pkey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^omise[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^okta[_-]?oauth2[_-]?clientsecret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^okta[_-]?oauth2[_-]?client[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^okta[_-]?client[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ofta[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ofta[_-]?region(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ofta[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^octest[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^octest[_-]?app[_-]?username(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^octest[_-]?app[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^oc[_-]?pass(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^object[_-]?store[_-]?creds(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^object[_-]?store[_-]?bucket(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^object[_-]?storage[_-]?region[_-]?name(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^object[_-]?storage[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^oauth[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^numbers[_-]?service[_-]?pass(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^nuget[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^nuget[_-]?apikey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^nuget[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^npm[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^npm[_-]?secret[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^npm[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^npm[_-]?email(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^npm[_-]?auth[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^npm[_-]?api[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^npm[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^now[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^non[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^node[_-]?pre[_-]?gyp[_-]?secretaccesskey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^node[_-]?pre[_-]?gyp[_-]?github[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^node[_-]?pre[_-]?gyp[_-]?accesskeyid(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^node[_-]?env(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ngrok[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ngrok[_-]?auth[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^nexuspassword(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^nexus[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^new[_-]?relic[_-]?beta[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^netlify[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^nativeevents(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mysqlsecret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mysqlmasteruser(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mysql[_-]?username(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mysql[_-]?user(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mysql[_-]?root[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mysql[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mysql[_-]?hostname(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mysql[_-]?database(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^my[_-]?secret[_-]?env(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^multi[_-]?workspace[_-]?sid(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^multi[_-]?workflow[_-]?sid(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^multi[_-]?disconnect[_-]?sid(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^multi[_-]?connect[_-]?sid(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^multi[_-]?bob[_-]?sid(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^minio[_-]?secret[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^minio[_-]?access[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mile[_-]?zero[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mh[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mh[_-]?apikey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mg[_-]?public[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mg[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mapboxaccesstoken(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mapbox[_-]?aws[_-]?secret[_-]?access[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mapbox[_-]?aws[_-]?access[_-]?key[_-]?id(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mapbox[_-]?api[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mapbox[_-]?access[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^manifest[_-]?app[_-]?url(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^manifest[_-]?app[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mandrill[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^managementapiaccesstoken(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^management[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^manage[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^manage[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mailgun[_-]?secret[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mailgun[_-]?pub[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mailgun[_-]?pub[_-]?apikey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mailgun[_-]?priv[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mailgun[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mailgun[_-]?apikey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mailgun[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mailer[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mailchimp[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mailchimp[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^mail[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^magento[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^magento[_-]?auth[_-]?username (=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^magento[_-]?auth[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^lottie[_-]?upload[_-]?cert[_-]?key[_-]?store[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^lottie[_-]?upload[_-]?cert[_-]?key[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^lottie[_-]?s3[_-]?secret[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^lottie[_-]?happo[_-]?secret[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^lottie[_-]?happo[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^looker[_-]?test[_-]?runner[_-]?client[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ll[_-]?shared[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ll[_-]?publish[_-]?url(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^linux[_-]?signing[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^linkedin[_-]?client[_-]?secretor lottie[_-]?s3[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^lighthouse[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^lektor[_-]?deploy[_-]?username(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^lektor[_-]?deploy[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^leanplum[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^kxoltsn3vogdop92m(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^kubeconfig(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^kubecfg[_-]?s3[_-]?path(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^kovan[_-]?private[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^keystore[_-]?pass(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^kafka[_-]?rest[_-]?url(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^kafka[_-]?instance[_-]?name(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^kafka[_-]?admin[_-]?url(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^jwt[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^jdbc:mysql(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^jdbc[_-]?host(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^jdbc[_-]?databaseurl(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^itest[_-]?gh[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ios[_-]?docs[_-]?deploy[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^internal[_-]?secrets(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^integration[_-]?test[_-]?appid(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^integration[_-]?test[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^index[_-]?name(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ij[_-]?repo[_-]?username(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ij[_-]?repo[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^hub[_-]?dxia2[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^homebrew[_-]?github[_-]?api[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^hockeyapp[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^heroku[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^heroku[_-]?email(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^heroku[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^hb[_-]?codesign[_-]?key[_-]?pass(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^hb[_-]?codesign[_-]?gpg[_-]?pass(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^hab[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^hab[_-]?auth[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^grgit[_-]?user(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gren[_-]?github[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gradle[_-]?signing[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gradle[_-]?signing[_-]?key[_-]?id(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gradle[_-]?publish[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gradle[_-]?publish[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gpg[_-]?secret[_-]?keys(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gpg[_-]?private[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gpg[_-]?passphrase(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gpg[_-]?ownertrust(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gpg[_-]?keyname(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gpg[_-]?key[_-]?name(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^google[_-]?private[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^google[_-]?maps[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^google[_-]?client[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^google[_-]?client[_-]?id(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^google[_-]?client[_-]?email(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^google[_-]?account[_-]?type(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gogs[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gitlab[_-]?user[_-]?email(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^github[_-]?tokens(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^github[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^github[_-]?repo(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^github[_-]?release[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^github[_-]?pwd(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^github[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^github[_-]?oauth[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^github[_-]?oauth(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^github[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^github[_-]?hunter[_-]?username(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^github[_-]?hunter[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^github[_-]?deployment[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^github[_-]?deploy[_-]?hb[_-]?doc[_-]?pass(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^github[_-]?client[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^github[_-]?auth[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^github[_-]?auth(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^github[_-]?api[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^github[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^github[_-]?access[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^git[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^git[_-]?name(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^git[_-]?email(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^git[_-]?committer[_-]?name(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^git[_-]?committer[_-]?email(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^git[_-]?author[_-]?name(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^git[_-]?author[_-]?email(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ghost[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ghb[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gh[_-]?unstable[_-]?oauth[_-]?client[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gh[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gh[_-]?repo[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gh[_-]?oauth[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gh[_-]?oauth[_-]?client[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gh[_-]?next[_-]?unstable[_-]?oauth[_-]?client[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gh[_-]?next[_-]?unstable[_-]?oauth[_-]?client[_-]?id(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gh[_-]?next[_-]?oauth[_-]?client[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gh[_-]?email(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gh[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gcs[_-]?bucket(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gcr[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gcloud[_-]?service[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gcloud[_-]?project(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^gcloud[_-]?bucket(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ftp[_-]?username(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ftp[_-]?user(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ftp[_-]?pw(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ftp[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ftp[_-]?login(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ftp[_-]?host(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^fossa[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^flickr[_-]?api[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^flickr[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^flask[_-]?secret[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^firefox[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^firebase[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^firebase[_-]?project[_-]?develop(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^firebase[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^firebase[_-]?api[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^firebase[_-]?api[_-]?json(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^file[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^exp[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^eureka[_-]?awssecretkey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^env[_-]?sonatype[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^env[_-]?secret[_-]?access[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^env[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^env[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^env[_-]?heroku[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^env[_-]?github[_-]?oauth[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^end[_-]?user[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^encryption[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^elasticsearch[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^elastic[_-]?cloud[_-]?auth(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^dsonar[_-]?projectkey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^dsonar[_-]?login(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^droplet[_-]?travis[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^dropbox[_-]?oauth[_-]?bearer(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^doordash[_-]?auth[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^dockerhubpassword(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^dockerhub[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^docker[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^docker[_-]?postgres[_-]?url(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^docker[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^docker[_-]?passwd(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^docker[_-]?pass(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^docker[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^docker[_-]?hub[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^digitalocean[_-]?ssh[_-]?key[_-]?ids(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^digitalocean[_-]?ssh[_-]?key[_-]?body(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^digitalocean[_-]?access[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^dgpg[_-]?passphrase(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^deploy[_-]?user(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^deploy[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^deploy[_-]?secure(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^deploy[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ddgc[_-]?github[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ddg[_-]?test[_-]?email[_-]?pw(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ddg[_-]?test[_-]?email(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^db[_-]?username(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^db[_-]?user(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^db[_-]?pw(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^db[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^db[_-]?host(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^db[_-]?database(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^db[_-]?connection(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^datadog[_-]?app[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^datadog[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^database[_-]?username(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^database[_-]?user(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^database[_-]?port(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^database[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^database[_-]?name(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^database[_-]?host(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^danger[_-]?github[_-]?api[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cypress[_-]?record[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^coverity[_-]?scan[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^coveralls[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^coveralls[_-]?repo[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^coveralls[_-]?api[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cos[_-]?secrets(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^conversation[_-]?username(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^conversation[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^contentful[_-]?v2[_-]?access[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^contentful[_-]?test[_-]?org[_-]?cma[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^contentful[_-]?php[_-]?management[_-]?test[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^contentful[_-]?management[_-]?api[_-]?access[_-]?token[_-]?new(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^contentful[_-]?management[_-]?api[_-]?access[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^contentful[_-]?integration[_-]?management[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^contentful[_-]?cma[_-]?test[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^contentful[_-]?access[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^consumerkey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^consumer[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^conekta[_-]?apikey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^coding[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^codecov[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^codeclimate[_-]?repo[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^codacy[_-]?project[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cocoapods[_-]?trunk[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cocoapods[_-]?trunk[_-]?email(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cn[_-]?secret[_-]?access[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cn[_-]?access[_-]?key[_-]?id(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^clu[_-]?ssh[_-]?private[_-]?key[_-]?base64(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^clu[_-]?repo[_-]?url(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cloudinary[_-]?url[_-]?staging(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cloudinary[_-]?url(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cloudflare[_-]?email(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cloudflare[_-]?auth[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cloudflare[_-]?auth[_-]?email(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cloudflare[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cloudant[_-]?service[_-]?database(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cloudant[_-]?processed[_-]?database(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cloudant[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cloudant[_-]?parsed[_-]?database(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cloudant[_-]?order[_-]?database(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cloudant[_-]?instance(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cloudant[_-]?database(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cloudant[_-]?audited[_-]?database(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cloudant[_-]?archived[_-]?database(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cloud[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^clojars[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^client[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cli[_-]?e2e[_-]?cma[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^claimr[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^claimr[_-]?superuser(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^claimr[_-]?db(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^claimr[_-]?database(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ci[_-]?user[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ci[_-]?server[_-]?name(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ci[_-]?registry[_-]?user(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ci[_-]?project[_-]?url(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^ci[_-]?deploy[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^chrome[_-]?refresh[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^chrome[_-]?client[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cheverny[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cf[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^certificate[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^censys[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cattle[_-]?secret[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cattle[_-]?agent[_-]?instance[_-]?auth(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cattle[_-]?access[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cargo[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^cache[_-]?s3[_-]?secret[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^bx[_-]?username(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^bx[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^bundlesize[_-]?github[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^built[_-]?branch[_-]?deploy[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^bucketeer[_-]?aws[_-]?secret[_-]?access[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^bucketeer[_-]?aws[_-]?access[_-]?key[_-]?id(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^browserstack[_-]?access[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^browser[_-]?stack[_-]?access[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^brackets[_-]?repo[_-]?oauth[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^bluemix[_-]?username(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^bluemix[_-]?pwd(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^bluemix[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^bluemix[_-]?pass[_-]?prod(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^bluemix[_-]?pass(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^bluemix[_-]?auth(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^bluemix[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^bintraykey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^bintray[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^bintray[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^bintray[_-]?gpg[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^bintray[_-]?apikey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^bintray[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^b2[_-]?bucket(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^b2[_-]?app[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^awssecretkey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^awscn[_-]?secret[_-]?access[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^awscn[_-]?access[_-]?key[_-]?id(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^awsaccesskeyid(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^aws[_-]?ses[_-]?secret[_-]?access[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^aws[_-]?ses[_-]?access[_-]?key[_-]?id(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^aws[_-]?secrets(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^aws[_-]?secret[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^aws[_-]?secret[_-]?access[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^aws[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^aws[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^aws[_-]?config[_-]?secretaccesskey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^aws[_-]?config[_-]?accesskeyid(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^aws[_-]?access[_-]?key[_-]?id(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^aws[_-]?access[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^aws[_-]?access(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^author[_-]?npm[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^author[_-]?email[_-]?addr(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^auth0[_-]?client[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^auth0[_-]?api[_-]?clientsecret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^auth[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^assistant[_-]?iam[_-]?apikey(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^artifacts[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^artifacts[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^artifacts[_-]?bucket(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^artifacts[_-]?aws[_-]?secret[_-]?access[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^artifacts[_-]?aws[_-]?access[_-]?key[_-]?id(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^artifactory[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^argos[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^apple[_-]?id[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^appclientsecret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^app[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^app[_-]?secrete(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "api_key",
+    "regex": "(?-mix:^app[_-]?report[_-]?token[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "github",
+    "regex": "(?-mix:^vip[_-]?github[_-]?build[_-]?repo[_-]?deploy[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "github",
+    "regex": "(?-mix:^vip[_-]?github[_-]?deploy[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "github",
+    "regex": "(?-mix:^vip[_-]?github[_-]?deploy[_-]?key[_-]?pass(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "google",
+    "regex": "(?-mix:^www[_-]?googleapis[_-]?com(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "sonatype",
+    "regex": "(?-mix:^zensonatypepassword(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "travisci",
+    "regex": "(?-mix:^travis[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "travisci",
+    "regex": "(?-mix:^travis[_-]?secure[_-]?env[_-]?vars(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "travisci",
+    "regex": "(?-mix:^travis[_-]?pull[_-]?request(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "twilio",
+    "regex": "(?-mix:^twilio[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "twilio",
+    "regex": "(?-mix:^twilio[_-]?sid(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "twilio",
+    "regex": "(?-mix:^twilio[_-]?configuration[_-]?sid(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "twilio",
+    "regex": "(?-mix:^twilio[_-]?chat[_-]?account[_-]?api[_-]?service(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "twilio",
+    "regex": "(?-mix:^twilio[_-]?api[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "twilio",
+    "regex": "(?-mix:^twilio[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "twitter",
+    "regex": "(?-mix:^twitteroauthaccesstoken(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "twitter",
+    "regex": "(?-mix:^twitteroauthaccesssecret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "twitter",
+    "regex": "(?-mix:^twitter[_-]?consumer[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "twitter",
+    "regex": "(?-mix:^twitter[_-]?consumer[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "unity",
+    "regex": "(?-mix:^unity[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "unity",
+    "regex": "(?-mix:^unity[_-]?serial(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "watson",
+    "regex": "(?-mix:^watson[_-]?device[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "watson",
+    "regex": "(?-mix:^watson[_-]?password(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "youtube",
+    "regex": "(?-mix:^yt[_-]?account[_-]?refresh[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "youtube",
+    "regex": "(?-mix:^yt[_-]?client[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "youtube",
+    "regex": "(?-mix:^yt[_-]?partner[_-]?client[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "youtube",
+    "regex": "(?-mix:^yt[_-]?partner[_-]?refresh[_-]?token(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "youtube",
+    "regex": "(?-mix:^yt[_-]?server[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "youtube",
+    "regex": "(?-mix:^yt[_-]?api[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "youtube",
+    "regex": "(?-mix:^yt[_-]?account[_-]?client[_-]?secret(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "zendesk",
+    "regex": "(?-mix:^zopim[_-]?account[_-]?key(=| =|:| :))",
+    "sensitive": true
+  },
+  {
+    "provider": "zendesk",
+    "regex": "(?-mix:^zendesk[_-]?travis[_-]?github(=| =|:| :))",
+    "sensitive": true
+  }
+]

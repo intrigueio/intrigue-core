@@ -1,30 +1,35 @@
 module Intrigue
 class EntityManager
-  extend Intrigue::Task::Helper
+  
+  extend Intrigue::Core::System::Helpers
   extend Intrigue::Task::Data
 
+  ###
+  ### Resolves a type from a type_string (which is the last part of the type's 
+  ### name as a string.
+  ###
   def self.resolve_type_from_string(type_string)
-    raise "INVALID TYPE TO RESOLVE: #{type_string}. DID YOU SEND A STRING? FAILING!" unless type_string.kind_of? String
+    raise "#{type_string} must be a string. FAILING!" unless type_string.kind_of? String
 
     # Check full namespace first
-    matches = EntityFactory.entity_types.select{|x| x.to_s == type_string }
+    matches = EntityFactory.entity_types.select{|x| "#{x}" == type_string }
 
     # Then check all namespaces underneath
-    matches.concat(EntityFactory.entity_types.select{|x|x.to_s.split(":").last.to_s == type_string })
+    matches.concat(EntityFactory.entity_types.select{|x| "#{x}".split(":").last == type_string })
 
     #note this will be nil if we didn't match
     unless matches.first
       raise "Unable to match to a known entity. Failing on #{type_string}."
     end
 
-  #only return the first (and best) match
+  # only return the first (and best) match
   matches.first
   end
 
   def self.create_bulk_entity(project_id,entity_type_string,entity_name,details)
     
     # create a group
-    g = Intrigue::Model::AliasGroup.create(:project_id => project_id)
+    g = Intrigue::Core::Model::AliasGroup.create(:project_id => project_id)
 
     # create the entity
     klass = Intrigue::EntityManager.resolve_type_from_string(entity_type_string)
@@ -35,6 +40,8 @@ class EntityManager
       :details => details,
       :hidden => false,
       :scoped => true,
+      :allow_list => true,
+      :deny_list => false,
       :alias_group_id => g.id
     })
   end
@@ -46,7 +53,7 @@ class EntityManager
     downcased_name = name.downcase
 
     # Try to find our project and create it if it doesn't exist
-    project = Intrigue::Model::Project.find_or_create(:name => project_name)
+    project = Intrigue::Core::Model::Project.find_or_create(:name => project_name)
 
     # Merge the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name)
@@ -63,7 +70,7 @@ class EntityManager
           # manually created entity)
           details = details.tap { |h| h.delete("unscoped") }
           details = details.tap { |h| h.delete("scoped") }
-          entity.scoped = true
+          entity.set_scoped!(true, "first_entity")
           entity.save_changes
 
         #####
@@ -76,21 +83,23 @@ class EntityManager
     else
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
-      g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
-      entity = Intrigue::Model::Entity.create({
+      g = Intrigue::Core::Model::AliasGroup.create(:project_id => project.id)
+      entity = Intrigue::Core::Model::Entity.create({
         :name =>  downcased_name,
         :project => project,
         :type => type,
         :details => details,
         :hidden => false, # first entity should NEVER be hidden - it was intentional
         :scoped => true,  # first entity should ALWAYS be in scope - it was intentional
+        :allow_list => true,
+        :deny_list => false,
         :alias_group_id => g.id,
         :seed => true
         })
     end
 
     # necessary because of our single table inheritance?
-    new_entity = Intrigue::Model::Entity.find(:id => entity.id)
+    new_entity = Intrigue::Core::Model::Entity.find(:id => entity.id)
 
     ### Ensure we have an entity
     unless new_entity && new_entity.transform! && new_entity.validate_entity
@@ -108,7 +117,7 @@ class EntityManager
 
     # Deal with canceled tasks and deleted projects!
     # Do a lookup to make sure we have the latest...
-    tr = Intrigue::Model::TaskResult.first(:id => task_result_id)
+    tr = Intrigue::Core::Model::TaskResult.first(:id => task_result_id)
     return nil unless tr
 
     if tr.cancelled
@@ -120,23 +129,15 @@ class EntityManager
     project = tr.project
 
     # Save the original and downcase our name
-    details["hidden_original"] = "#{name}"
-    downcased_name = "#{name}".downcase
+    details["hidden_original"] = "#{name}".strip
+    downcased_name = "#{name}".strip.downcase
 
     # Find the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name)
 
-    # check if this is actually a no-traverse for this proj
-    if entity
-      traversable = entity.hidden
-    else
-      # checks to see if we should be hidden or not
-      traversable = project.traversable_entity?(name, type_string)
-    end
-
     # Check if there's an existing entity, if so, merge and move forward
+    entity_already_existed = false
     if entity
-      tr.log_good "Existing Entity: #{type_string} #{name}. Traversable: #{traversable}"
 
       entity.set_details(details.to_h.deep_merge(entity.details.to_h))
 
@@ -144,70 +145,36 @@ class EntityManager
       # want to use that to preserve pre-existing relatiohships
       # also... prevents an enrichment loop
       entity_already_existed = true
-
     else
-      tr.log_good "New Entity: #{type_string} #{name}. Traversable: #{traversable}"
 
       # Create a new entity, validating the attributes
       type = resolve_type_from_string(type_string)
 
-      # Create a new alias group
-      g = Intrigue::Model::AliasGroup.create(:project_id => project.id)
+      allowed_list = project.allow_list_entity?(type_string, downcased_name)
+      denied_list = project.deny_list_entity?(type_string, downcased_name)
+
       entity_details = {
         :name => downcased_name,
         :project_id => project.id,
         :type => type.to_s,
         :details => details,
-        :hidden => (traversable ? false : true ),
-        :alias_group_id => g.id
+        :allow_list => allowed_list,
+        :deny_list => denied_list,
+        :traversable => project.traversable_entity?(type_string, downcased_name) ? true : false, 
+        :hidden => (project.traversable_entity?(type_string, downcased_name) ? false : true )
       }
 
-      #####
-      ### HANDLE USER- or TASK- PROVIDED SCOPING
-      #####
-
-      # this will help us handle cases of explicit scoping
-      # three possible values - nil, "true", "false"
-      # will bec converted into a boolean down below
-      scope_request = nil
-
-      # if we're told this thing is scoped, let's just mark it scoped
-      # note that we delete the detail since we no longer need it
-      # TODO... is this used today?
-      if (details["scoped"] == true || details["scoped"] == "true")
-        tr.log "Entity was specifically requested to be scoped"
-        details = details.tap{ |h| h.delete("scoped") }
-        scope_request = "true"
-
-      # otherwise if we've specifically decided to unscoped
-      # note that we delete the detail since we no longer need it
-      elsif (details["unscoped"] == true || details["unscoped"] == "true")
-        tr.log "Entity was specifically requested to be unscoped"
-        details = details.tap{ |h| h.delete("unscoped") }
-        scope_request = "false"
-
-      # if it's set, rely on the task result's auto_scope setting
-      # - which is set when the entity is created, based on context
-      # that is (or at least should be) specific to that task
-      elsif tr.auto_scope
-        tr.log "Task result scoped this entity based on auto_scope"
-        scope_request = "true"
-      # otherwise default to false, (and let the entity scoping handle it below) 
+      # handle alias group
+      if primary_entity
+        entity_details[:alias_group_id] = primary_entity.alias_group_id
       else
-        tr.log "No specific scope request from the task result"
-        #entity_details[:scoped] = false
+        g = Intrigue::Core::Model::AliasGroup.create(:project_id => project.id)
+        entity_details[:alias_group_id] = g.id
       end
-
-      #####
-      ### END ... USER- or TASK- PROVIDED SCOPING
-      ###
-      ### ENTITIES can SELF-SCOPE, however, for more info on that
-      ### see the individual entity file
-      #####
 
       begin
         # Create a new entity in that group
-        entity = Intrigue::Model::Entity.update_or_create(
+        entity = Intrigue::Core::Model::Entity.update_or_create(
           {name: downcased_name, type: type.to_s, project: project}, entity_details)
 
         unless entity
@@ -223,48 +190,112 @@ class EntityManager
         return nil
       end
 
+      # necessary to relookup?
+      entity = Intrigue::Core::Model::Entity.find(:id => entity.id)
+
+      ### Ensure we have an entity
+      unless entity
+        tr.log_error "Unable to create or find entity: #{type}##{downcased_name}, failing!!"
+        return nil
+      end
+
+      ### Run transformation (to hide attributes... HACK)
+      unless entity.transform!
+        tr.log_error "Transformation of entity failed: #{entity}, rolling back entity creation!!"
+        entity.delete
+        raise "Invalid entity attempted: #{entity.type} #{entity.name}"
+      end
+
+      ### Run Validation
+      unless entity.validate_entity
+        tr.log_error "Validation of entity failed: #{entity}, rolling back entity creation!!"
+        entity.delete
+        raise "Invalid entity attempted: #{entity.type} #{entity.name}"
+      end
+
+      # Add to our result set for this task
+      tr.add_entity entity
+    
     end
 
-    # necessary to relookup?
-    entity = Intrigue::Model::Entity.find(:id => entity.id)
+    ###
+    ### SCOPING SHOULD ALWAYS RE-RUN
+    ###
 
-    ### Ensure we have an entity
-    unless entity
-      tr.log_error "Unable to create or find entity: #{type}##{downcased_name}, failing!!"
-      return nil
+    #####
+    ### HANDLE TASK DRIVEN ENTITY SCOPING - which can be applied to existing entities
+    ### ... first, deal with USER- or TASK-PROVIDED SCOPING
+    #####
+
+    # this will help us handle cases of explicit scoping
+    # three possible values - nil, "true", "false"
+    # will bec converted into a boolean down below
+    scope_request = nil
+
+    # if it's set, rely on the task result's auto_scope setting
+    # - which is set when the entity is created, based on context
+    # that is (or at least should be) specific to that task... this 
+    # is usually specific to enrichment tasks
+    if tr.auto_scope
+      tr.log "Task result scoped this entity based on auto_scope."
+      scope_request = "true"
+    else # otherwise default to false, (and let the entity scoping handle it below) 
+      tr.log "No specific scope request from the task result or the entity creation"
+      #entity_details[:scoped] = false
     end
 
-    ### final scoping in case the entity has specific scoping instructions
-    ##   (now that we have an entity)
-    ##
-    ##  the default method on the base class simply sets what was available previously
-    ##  See the inidivdiual entity files for this logic.
-    ##
-    if scope_request
-      entity.scoped = scope_request.to_bool
+    # If we're told this thing is scoped, let's just mark it scoped
+    # note that we delete the detail since we no longer need it
+    # TODO... is this used today?
+    if (details["scoped"] == true || details["scoped"] == "true")
+      tr.log "Entity was specifically requested to be scoped"
+      details = details.tap{ |h| h.delete("scoped") }
+      scope_request = "true"
+
+    # otherwise if we've specifically decided to unscope
+    # note that we delete the detail since we no longer need it
+    elsif (details["unscoped"] == true || details["unscoped"] == "true")
+
+      unless entity.seed? 
+        tr.log "Entity was specifically requested to be unscoped"
+        details = details.tap{ |h| h.delete("unscoped") }
+        scope_request = "false"
+      else
+        tr.log "Entity was specifically requested to be unscoped, but it's a seed, so we refused!"
+      end
+
+    end
+
+    #####
+    ### END ... USER- or TASK- PROVIDED SCOPING
+    ###
+    ### ENTITIES can SELF-SCOPE, however, for more info on that
+    ### see the individual entity file's scoped? method
+    ###
+    ### this is the default case when entities are created by 
+    ### normal tasks
+    ###
+    #####
+
+    # ENRICHMENT LAUNCH (this may re-run if an entity has just been scoped in)
+    if tr.auto_enrich && !entity.deny_list && (!entity_already_existed || project.allow_reenrich)
+      # Check if we've alrady run first and return gracefully if so
+      if entity.enriched && !project.allow_reenrich
+        tr.log "Skipping enrichment... already completed and re-enrich disabled!"
+      else
+        # starts a new background task... so anything that needs to happen from
+        # this point should happen in that new background task
+        if entity.enriched
+          tr.log "Re-scheduling enrichement for entity!"
+        end
+
+        entity.enrich(tr)
+      end
     else
-      entity.scoped = entity.scoped? #always fall back to our entity-specific logic.
-      tr.log "Using entity scoping logic, got #{entity.scoped}"
+      tr.log "Skipping enrichment... enrich not enabled!" unless tr.auto_enrich
+      tr.log "Skipping enrichment... entity exists!" if entity_already_existed
+      tr.log "Skipping enrichment... entity on deny list!" if entity.deny_list
     end
-    entity.save_changes
-    tr.log "Final scoping decision for #{entity.name}: #{entity.scoped}"
-
-    ### Run Data transformation (to hide attributes... HACK)
-    unless entity.transform!
-      tr.log_error "Transformation of entity failed: #{entity}, rolling back entity creation!!"
-      entity.delete
-      raise "Invalid entity attempted: #{entity.type} #{entity.name}!"
-    end
-
-    ### Run Validation
-    unless entity.validate_entity
-      tr.log_error "Validation of entity failed: #{entity}, rolling back entity creation!!"
-      entity.delete
-      raise "Invalid entity attempted: #{entity.type} #{entity.name}!"
-    end
-
-    # Add to our result set for this task
-    tr.add_entity entity
 
     # Attach the alias.. this can be confusing....
     # ----
@@ -273,31 +304,43 @@ class EntityManager
     # ip address
     if primary_entity
 
-      tr.log "Aliasing #{entity.name} to existing group: #{primary_entity.alias_group_id}"
+      $db.transaction do
+        
+        # Alias to the parent
+        pid = primary_entity.alias_group_id
+        tr.log "Aliasing #{entity.name} #{entity.alias_group_id} to #{primary_entity.name}'s existing group: #{pid}"
+        entity.alias_to(pid)
 
-      # Take the smaller group id, and use that to alias together
-      cid = entity.alias_group_id
-      pid = primary_entity.alias_group_id
-      cid > pid ? entity.alias_to(pid) : primary_entity.alias_to(cid)
+        # alias all others to the parent
+        entity.aliases.each do |a|
+          next if a == primary_entity
+          next if a.alias_group_id == primary_entity.alias_group_id
+          tr.log "Aliasing #{a.name} #{a.alias_group_id} to #{primary_entity.name}'s existing group: #{pid}"
+          a.alias_to(pid)
+        end
 
-    end
-
-    # ENRICHMENT LAUNCH
-    if tr.auto_enrich && !entity_already_existed
-      # Check if we've alrady run first and return gracefully if so
-      if entity.enriched
-        tr.log "Skipping enrichment... already completed!"
-      else
-        # starts a new background task... so anything that needs to happen from
-        # this point should happen in that new background task
-        entity.enrich(tr)
       end
-    else
-      tr.log "Skipping enrichment... enrich not enabled!" unless tr.auto_enrich
-      tr.log "Skipping enrichment... entity exists!" if entity_already_existed
+
     end
 
-  # return the entity
+
+    ####
+    #### Finally, set scope, enrichment has run 
+    ####
+
+    ### if the entity has specific scoping instructions (now that we have an entity)
+    ##
+    ##  the default method on the base class simply sets what was available previously
+    ##  See the inidivdiual entity files for this logic.
+    ##
+    if scope_request
+      entity.set_scoped!(scope_request.to_bool, "entity_scope_request_during_#{tr.name}")
+      
+      # SAVE IT
+      entity.save_changes
+    end
+
+  # return the entity, with enrichment now scheduled
   entity
   end
 

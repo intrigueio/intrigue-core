@@ -7,7 +7,7 @@ module Machine
         :name => "external_discovery_light_passive",
         :pretty_name => "External Discovery - Light, Passive",
         :passive => false,
-        :user_selectable => true,
+        :user_selectable => false,
         :authors => ["jcran"],
         :description => "This machine performs a light passive enumeration. Start with a Domain or NetBlock."
       }
@@ -66,7 +66,6 @@ module Machine
         start_recursive_task(task_result,"dns_brute_sub",entity,[
           {"name" => "brute_alphanumeric_size", "value" => 1 }], true)
 
-        start_recursive_task(task_result,"saas_google_groups_check",entity,[])
         
         #start_recursive_task(task_result,"saas_trello_check",entity,[])
         start_recursive_task(task_result,"saas_jira_check",entity,[])
@@ -90,10 +89,8 @@ module Machine
        #   {"name" => "use_creds", "value" => true},
        #   {"name" => "additional_buckets", "value" => generated_names.join(",")}])
         
-        if project.get_option("authorized")
-          task_result.log_good "Project authorized, so searching hunter.io!"
-          start_recursive_task(task_result,"search_hunter_io",entity,[])
-        end
+       start_recursive_task(task_result,"vuln/saas_google_groups_check",entity,[])
+       start_recursive_task(task_result,"vuln/saas_google_calendar_check",entity,[])
 
       elsif entity.type_string == "DnsRecord"
 
@@ -104,7 +101,7 @@ module Machine
         start_recursive_task(task_result,"search_have_i_been_pwned",entity,[
           {"name" => "only_sensitive", "value" => true }])
   
-        start_recursive_task(task_result,"saas_google_calendar_check",entity,[])
+        start_recursive_task(task_result,"vuln/saas_google_calendar_check",entity,[])
 
       elsif entity.type_string == "GithubAccount"
 
@@ -117,7 +114,13 @@ module Machine
 
         # use shodan to "scan" and create ports 
         start_recursive_task(task_result,"search_shodan",entity, [])
-      
+        
+        # use shodan to "scan" and create ports 
+        start_recursive_task(task_result,"search_censys",entity, [])
+
+        # use shodan to "scan" and create ports 
+        start_recursive_task(task_result,"search_binaryedge",entity, [])
+
       elsif entity.type_string == "Nameserver"
 
         start_recursive_task(task_result,"security_trails_nameserver_search",entity, [], true)

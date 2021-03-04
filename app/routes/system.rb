@@ -1,15 +1,15 @@
-class IntrigueApp < Sinatra::Base
+class CoreApp < Sinatra::Base
 
     ###
     ### version
     ###
     get "/version.json" do
-      { :version => IntrigueApp.version }.to_json
+      { :version => CoreApp.version }.to_json
     end
 
     # Main Page
     get '/?' do
-      @projects = Intrigue::Model::Project.order(:created_at).reverse.all
+      @projects = Intrigue::Core::Model::Project.order(:created_at).reverse.all
       erb :index
     end
 
@@ -18,20 +18,24 @@ class IntrigueApp < Sinatra::Base
     ###                  ###
     post '/system/config' do
 
-      Intrigue::System::Config.config["credentials"]["username"] = "#{params["username"]}"
-      Intrigue::System::Config.config["credentials"]["password"] = "#{params["password"]}"
+      Intrigue::Core::System::Config.config["credentials"]["username"] = "#{params["username"]}"
+      Intrigue::Core::System::Config.config["credentials"]["password"] = "#{params["password"]}"
 
       # save and reload
-      Intrigue::System::Config.save
-
+      Intrigue::Core::System::Config.save
 
       redirect "/#{@project_name}"  # handy if we're in a browser
     end
 
     # get config
-    get '/system/config/?' do
-      @global_config = Intrigue::System::Config
-      erb :"system/config"
+    get '/system/config/tasks/?' do
+      @global_config = Intrigue::Core::System::Config
+      erb :"system/task_config"
+    end
+
+    get '/system/config/handlers/?' do
+      @global_config = Intrigue::Core::System::Config
+      erb :"system/handler_config"
     end
 
     get "/system/entities" do
@@ -52,14 +56,40 @@ class IntrigueApp < Sinatra::Base
       params.each do |k,v|
         # skip unless we already know about this config setting, helps us avoid
         # other parameters sent to this page (splat, project, etc)
-        next unless Intrigue::System::Config.config["intrigue_global_module_config"][k]
-        Intrigue::System::Config.config["intrigue_global_module_config"][k]["value"] = v unless v =~ /^\*\*\*/
+        next unless Intrigue::Core::System::Config.config["intrigue_global_module_config"][k]
+        Intrigue::Core::System::Config.config["intrigue_global_module_config"][k]["value"] = v unless v =~ /^\*\*\*/
       end
 
       # save and reload
-      Intrigue::System::Config.save
+      Intrigue::Core::System::Config.save
 
-      redirect "/system/config"  # handy if we're in a browser
+      redirect "/system/config/tasks"  # handy if we're in a browser
+    end
+
+    # save the handler config
+    post '/system/config/handlers' do
+      # Update our config if one of the fields have been changed. Note that we use ***
+      # as a way to mask out the full details in the view. If we have one that doesn't lead with ***
+      # go ahead and update it
+      params.each do |k,v|
+
+        handler_name = k.split("____").first.strip
+        parameter_name = k.split("____").last.strip
+
+        # skip unless we already know about this config setting, helps us avoid
+        # other parameters sent to this page (splat, project, etc)
+        next unless Intrigue::Core::System::Config.config["intrigue_handlers"][handler_name]
+
+        unless v =~ /^\*\*\*/
+          puts "Setting config for #{handler_name} #{parameter_name}"
+          Intrigue::Core::System::Config.config["intrigue_handlers"][handler_name][parameter_name] = v 
+        end
+      end
+
+      # save and reload
+      Intrigue::Core::System::Config.save
+
+      redirect "/system/config/handlers"  # handy if we're in a browser
     end
 
   ###
@@ -72,7 +102,7 @@ class IntrigueApp < Sinatra::Base
   get "/engine/?" do
 
     sidekiq_stats = Sidekiq::Stats.new
-    project_listing = Intrigue::Model::Project.all.map { |p|
+    project_listing = Intrigue::Core::Model::Project.all.map { |p|
         { :name => "#{p.name}", :entities => "#{p.entities.count}" } }
 
     output = {

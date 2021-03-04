@@ -3,53 +3,32 @@ module Task
 module Dns
 
   include Intrigue::Task::Generic
+  include Intrigue::Core::System::DnsHelpers # parse_tld, parse_domain_name
 
-  def parse_domain_name(record)
-    split_tld = parse_tld(record).split(".")
-    if (split_tld.last == "com" || split_tld.last == "net") && split_tld.count > 1 # handle cases like amazonaws.com, netlify.com
-      length = split_tld.count
-    else
-      length = split_tld.count + 1
-    end
-    
-  record.split(".").last(length).join(".")
+  def create_unscoped_dns_entity_from_string(s)
+    create_dns_entity_from_string(s, nil, true)
   end
 
-  # assumes we get a dns name of arbitrary length
-  def parse_tld(record)
+  def create_dns_entity_from_string(s, alias_entity=nil, unscoped=false, more_deets={})
+    return nil unless s && s.length > 0
 
-    # first check if we're not long enough to split, just returning the domain
-    return record if record.split(".").length < 2
+    entity_details = { "name" => s.gsub("domain: ","").gsub("*.","") }
+    entity_details.merge!({"unscoped" => true }) if unscoped
+    entity_details.merge!(more_deets)
 
-    # Make sure we're comparing bananas to bananas
-    record = record.downcase
-
-    # now one at a time, check all known TLDs and match
-    begin
-      raw_suffix_list = File.open("#{$intrigue_basedir}/data/public_suffix_list.clean.txt").read.split("\n")
-      suffix_list = raw_suffix_list.map{|l| "#{l.downcase}".strip }
-
-      # first find all matches
-      matches = []
-      suffix_list.each do |s|
-        if record =~ /.*#{Regexp.escape(s.strip)}$/i # we have a match ..
-          matches << s.strip
-        end
+    if s.is_ip_address?
+      _create_entity("IpAddress", entity_details, alias_entity)
+    else
+      
+      # clean it up and create 
+      entity_details["name"] = "#{s}".strip.gsub(/^\*\./,"").gsub(/\.$/,"")
+      if entity_details["name"].split(".").length == 2
+        _create_entity "Domain", entity_details, alias_entity
+      else 
+        _create_entity "DnsRecord", entity_details, alias_entity
       end
 
-      # then find the longest match
-      if matches.count > 0
-        longest_match = matches.sort_by{|x| x.split(".").length }.sort_by{|x| x.length }.last
-        return longest_match
-      end
-
-    rescue Errno::ENOENT => e
-      _log_error "Unable to locate public suffix list, failing to check / create domain for #{lookup_name}"
-      return nil
     end
-
-  # unknown tld
-  record
   end
 
   # Check for wildcard DNS
@@ -169,6 +148,8 @@ module Dns
       begin   
         entry = Resolv.new.getname lookup_name
 
+        return [] unless entry && entry.length > 0
+
         out = [{
           "name" => entry,
           "lookup_details" => [{
@@ -197,7 +178,6 @@ module Dns
         lookup_types.each do |t|
           Resolv::DNS.open() {|dns|
             dns.timeouts = 5
-
             resources.concat(dns.getresources(lookup_name, t)) 
           }
         end
@@ -364,7 +344,7 @@ module Dns
   def collect_soa_details(lookup_name)
     _log "Checking start of authority"
     response = resolve(lookup_name, [Resolv::DNS::Resource::IN::SOA])
-    return {} unless response && !response.empty?
+    return nil unless response && !response.empty?
 
     data = response.first["lookup_details"].first["response_record_data"]
 
@@ -428,18 +408,19 @@ module Dns
 
   def collect_txt_records(lookup_name)
     _log "Collecting TXT records"
-    response = resolve(lookup_name, [Resolv::DNS::Resource::IN::TXT])
-    return [] unless response && !response.empty?
-
     txt_records = []
-    response.each do |r|
-      r["lookup_details"].each do |record|
-        next unless record["response_record_type"] == "TXT"
-        txt_records << record["response_record_data"]
+    5.times do 
+      response = resolve(lookup_name, [Resolv::DNS::Resource::IN::TXT])
+      return [] unless response && !response.empty?
+
+      response.each do |r|
+        r["lookup_details"].each do |record|
+          next unless record["response_record_type"] == "TXT"
+          txt_records << record["response_record_data"]
+        end
       end
     end
-
-  txt_records
+  txt_records.flatten.uniq
   end
 
   def collect_whois_data(lookup_name)
@@ -480,7 +461,7 @@ module Dns
       
       # since we are creating an identical domain, send up the details
       e = _create_entity "Domain", {
-        "unscoped" => true,
+        #"unscoped" => true,
         "name" => "#{domain_name}",
         "resolutions" => _get_entity_detail("resolutions"),
         "soa_record" => _get_entity_detail("soa_record"),

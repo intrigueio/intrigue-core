@@ -1,20 +1,27 @@
 module Intrigue
+module Core
 module System
 module Bootstrap
 
   def bootstrap_system(config)
-    extend Intrigue::Task::Helper
+    extend Intrigue::Core::System::Helpers
 
     return nil unless config && config["projects"]
 
+    ###
+    ### TODO ... handle system configuration here
+    ###
     ### Set any system configuration
 
+    ###
+    ### TODO ... handle task configuration here
+    ###
     ### Set any task configuration
-    if config["task_configuration"]
-      config["task_configuration"].each do |k,v|
-        Intrigue::System::Config.set_task_config(k,v)
-      end
-    end
+    #if config["task_configuration"]
+    #  config["task_configuration"].each do |k,v|
+    #    Intrigue::Core::System::Config.set_task_config(k,v)
+    #  end
+    #end
 
     # XXX - Assumes we start at a clean system!!!!
     config["projects"].each do |p|
@@ -26,7 +33,7 @@ module Bootstrap
       project_name = p["name"]
       @task_result.log "Working on project: #{project_name}" if @task_result
 
-      project = Intrigue::Model::Project.find_or_create(:name => "#{project_name}")
+      project = Intrigue::Core::Model::Project.find_or_create(:name => "#{project_name}")
 
       # Set exclusion setting
       task_name = p["task_name"] || "create_entity"
@@ -38,8 +45,17 @@ module Bootstrap
       auto_scope = true
 
       project.options = p["project_options"] || []
+      
+      # vulnerability checks must be enabled at the project level
+      if p["vulnerability_checks_enabled"]
+        project.vulnerability_checks_enabled = true
+      else 
+        project.vulnerability_checks_enabled = false
+      end
+      
       project.use_standard_exceptions = p["use_standard_exceptions"] || true
       project.allowed_namespaces = p["allowed_namespaces"] || []
+      project.uuid = p["collection_run_uuid"]
       project.save 
 
       # Add our exceptions
@@ -144,6 +160,7 @@ module Bootstrap
   handler_list
   end
 
+end
 end
 end
 end

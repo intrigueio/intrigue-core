@@ -1,7 +1,8 @@
 module Intrigue
 module Entity
-class DnsRecord < Intrigue::Model::Entity
-  include Intrigue::Task::Helper
+class DnsRecord < Intrigue::Core::Model::Entity
+  
+  include Intrigue::Task::Dns
 
   def self.metadata
     {
@@ -29,12 +30,15 @@ class DnsRecord < Intrigue::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
-    return true if self.seed
-    return false if self.hidden # hit our blacklist so definitely false
+    return true if self.allow_list
+    return false if self.deny_list
 
-  # if we didnt match the above and we were asked, return whatever we got
-  # during the creation process
-  self.scoped
+    # Check the domain
+    domain_name = parse_domain_name(self.name)
+    return true if self.project.allow_list_entity?("Domain", domain_name)
+
+  # if we didnt match the above and we were asked, default to false
+  false
   end
 
 end
