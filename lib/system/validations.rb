@@ -91,9 +91,9 @@ module System
 
     def network_service_regex(anchored=true)
       if anchored
-        /^[\w\d\.\:]+:\d{1,5}$/
+        /^[\w\d\.\:]+:\d{1,5}\/tcp|udp$/
       else 
-        /\b[\w\d\.\:]+:\d{1,5}\b/
+        /\b[\w\d\.\:]+:\d{1,5}\/tcp|udp\b/
       end
     end
 
