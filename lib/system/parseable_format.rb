@@ -50,15 +50,35 @@ module ParseableFormat
   entities 
   end
 
-  def binary_edge_json_to_entities(filename)
+  # Lines!
+  def binary_edge_jsonl_to_entities(filename)
     entities = []
-    json = parse_json_file filename
-    return unless json
+    lines = File.readlines(filename)
   
     # do ip_adress
-    json["target"].each do |t|
-      entities << {entity_type: "Intrigue::Entity::IpAddress", entity_name: "#{t["ip"]}", }
-      entities << {entity_type: "Intrigue::Entity::NetworkService", entity_name: "#{t["ip"]}:#{t["port"]}/#{t["protocol"]}", }
+    lines.each do |l|
+
+      json  = JSON.parse(l)
+      t = json["target"]
+      
+      #entities << {entity_type: "Intrigue::Entity::IpAddress", entity_name: "#{t["ip"]}", }
+
+      if "#{t["port"]}" =~ /80$/ || t["port"] =~ /443$/
+        scheme = "http"
+        scheme = "https" if t["port"] == ~/443$/
+
+        # ipv6 
+        if t["ip"] =~ /:/
+          ip = "[#{t["ip"]}]"
+        else 
+          ip = t["ip"]
+        end
+
+        entities << {entity_type: "Intrigue::Entity::Uri", entity_name: "#{scheme}://#{ip}:#{t["port"]}" }
+      else 
+        entities << {entity_type: "Intrigue::Entity::NetworkService", entity_name: "#{t["ip"]}:#{t["port"]}/#{t["protocol"]}" }
+      end
+      
     end
   
   entities

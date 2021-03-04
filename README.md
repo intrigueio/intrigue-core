@@ -1,6 +1,6 @@
 # Welcome!
 
-Intrigue Core is the open Attack Surface Mapping Engine. It discovers security-relevant assets and exposures for a given organization and can be used with a human-in-the-loop running individual tasks, and/or easily automated through the use of workflows. With a flexible entity model and an incredibly deep enrichment system, it is the most full-featured open source project its kind.
+Intrigue Core is a framework for discovering attack surface. It discovers security-relevant assets and exposures within the context of projects and can be used with a human-in-the-loop running individual tasks, and/or automated through the use of workflows. With a flexible entity model and an incredibly deep enrichment system, it is the most full-featured attack surface discovery framework of its kind.
 
 If you'd like assistance getting started or have development-related questions, feel free to join us in our [Intrigue Community slack](https://join.slack.com/t/intrigue-community/shared_invite/zt-gh42ghi8-P~Z6wf1Bj5097vLLuqen6g) channel. For all other questions, you can simply drop an email to hello-at-intrigue.io
 
@@ -16,7 +16,7 @@ While you can build a local setup on any OSX or \*nix system, we'd suggest start
 
 You'll  want to take a look at the following resources to better understand the system: 
  * Key System Files: https://github.com/intrigueio/intrigue-core/wiki/Understanding-Intrigue-Core%3A-Key-System-Files
- * Manual install steps: https://github.com/intrigueio/intrigue-core/wiki/Setting-up-a-Test-Environment-on-Ubuntu-Linux
+ * Manual install steps: https://github.com/intrigueio/intrigue-core/wiki/Setting-up-a-Development-Environment-(on-Ubuntu,-Kali,-Debian)
 
 # Getting Support
 
