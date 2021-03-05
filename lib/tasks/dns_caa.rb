@@ -6,7 +6,7 @@ class DnsLookupCAA < BaseTask
 
   def self.metadata
     {
-      :name => "dns_lookup_caa",
+      :name => "dns_caa",
       :pretty_name => "DNS CAA Lookup",
       :authors => ["jen140"],
       :description => "Look up the CAA records of the given DNS record.",
@@ -34,7 +34,7 @@ class DnsLookupCAA < BaseTask
       _log "CAA found, skipping"
     else 
       _log "No CAA on the domain!"
-                _create_linked_issue("dns_caa_missing", {
+                _create_linked_issue("dns_caa", {
                   status: "confirmed"})
     end
   end
