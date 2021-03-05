@@ -7,16 +7,13 @@ class UriCheckHttp2Support < BaseTask
       :name => "uri_check_http2_support",
       :pretty_name => "URI Check HTTP/2 Support",
       :authors => ["jcran"],
-      :description =>   "This task checks for ",
+      :description =>   "This task checks for http2 protocol support",
       :references => [ "https://github.com/ostinelli/net-http2" ],
       :type => "discovery",
       :passive => false,
       :allowed_types => ["Uri"],
       :example_entities => [
-        { 
-          "type" => "Uri", 
-          "details" => {"name" => "http://www.intrigue.io"} 
-        }
+        { "type" => "Uri", "details" => {"name" => "http://www.intrigue.io"} }
       ],
       :allowed_options => [
          {:name => "connect_timeout", regex: "integer", :default => 10 },
@@ -43,23 +40,43 @@ class UriCheckHttp2Support < BaseTask
 
   def check_h2_sync(uri)
 
-      # create a client
-      timeout = _get_option("connect_timeout")
-      
-      client = ::NetHttp2::Client.new(uri, connect_timeout: timeout)
+      begin 
 
-      # error handling 
-      client.on :error do |e|
-       _log "Client encountered an error:"
-       _log e
+        # create a client
+        timeout = _get_option("connect_timeout")
+        
+        client = ::NetHttp2::Client.new(uri, connect_timeout: timeout)
+
+        # error handling 
+        client.on :error do |e|
+        _log "Client encountered an error:"
+        _log e
+        end
+
+        # send request
+        response = client.call(:get, '/')
+
+        # close the connection
+        client.close
+
+      rescue TypeError => e  # IS there a better way to do this?
+        _log_error "Unable to connect"
+      rescue OpenSSL::SSL::SSLError => e 
+        _log_error "Unable to connect, ssl error"
+      rescue Errno::EPIPE => e 
+        _log_error "Unable to connect, broken pipe"
+      rescue Errno::EHOSTUNREACH => e
+        _log_error "Unable to connect, host unreachable"
+      rescue Errno::ECONNREFUSED => e 
+        _log_error "Unable to connect, connection refused"
+      rescue Errno::ECONNRESET => e 
+        _log_error "Unable to connect, connection reset"
+      rescue Errno::ETIMEDOUT => e 
+        _log_error "Unable to connect, timed out"
+      rescue SocketError => e
+        _log_error "Unable to connect, socket error"
       end
 
-      # send request
-      response = client.call(:get, '/')
-
-      # close the connection
-      client.close
-   
       # just fail
       return [nil,nil,nil] unless response
 

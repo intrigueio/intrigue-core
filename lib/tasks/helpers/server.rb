@@ -1,10 +1,6 @@
-require 'webrick'
-require 'socket'
-
 module Intrigue
 module Task
 module Server
-
 module Listeners
 
   def start_tcp_listener(port)
@@ -31,7 +27,7 @@ module Listeners
 
   def start_ssl_listener(port)
 
-    cert = Intrigue::Task::SelfSignedCertificate.new
+    cert = Intrigue::SelfSignedCertificate.new
     cert_output = cert.generate
     begin
       server = TCPServer.new(port)
@@ -93,7 +89,7 @@ class SsrfResponderServerBehavior < ::WEBrick::HTTPServlet::AbstractServlet
     #
     task_result_id = request.query["int_id"]
     parameter = request.query["int_param"]
-    t = Intrigue::Model::TaskResult.first(:id => task_result_id )
+    t = Intrigue::Core::Model::TaskResult.first(:id => task_result_id )
     t.log_good "VULNERABLE! #{parameter}"
     #t.log_good "REQUEST: #{request.inspect}"
 
@@ -115,7 +111,7 @@ class SsrfResponderServerBehavior < ::WEBrick::HTTPServlet::AbstractServlet
     #
     task_result_id = request.query["int_id"]
     parameter = request.query["int_param"]
-    t = Intrigue::Model::TaskResult.first(:id => task_result_id )
+    t = Intrigue::Core::Model::TaskResult.first(:id => task_result_id )
     t.log_good "VULNERABLE! #{parameter}"
     #t.log_good "REQUEST: #{request.inpect}"
 

@@ -15,14 +15,7 @@ class NetworkServiceFuzz < BaseTask
       :type => "discovery",
       :passive => false,
       :allowed_types => ["NetworkService"],
-      :example_entities => [
-        {"type" => "NetworkService", "details" => {
-          "ip_address" => "1.1.1.1",
-          "port" => 1111,
-          "protocol" => "tcp"
-          }
-        }
-      ],
+      :example_entities => [ {"type" => "NetworkService", "details" => { "name" => "1.1.1.1:79/tcp"}} ],
       :allowed_options => [
         #{:name => "port_num", :type => "Integer", :regex => "integer", :default => 111 }
       ],

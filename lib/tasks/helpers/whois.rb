@@ -6,33 +6,41 @@ module Whois
 
   include Intrigue::Task::Web
 
-
   def whois(lookup_string)
 
-    begin
-      whois = ::Whois::Client.new #(:timeout => 60)
-      answer = whois.lookup(lookup_string)
-    rescue ::Whois::ResponseIsThrottled => e
-      _log_error "Unable to query #{lookup_string}, response throttled, trying again in #{sleep_seconds} secs."
-      sleep_seconds = rand(60)
-      sleep sleep_seconds
-      return whois(lookup_string)
-    rescue ::Whois::ServerNotSupported => e
-      _log_error "Server not supported for #{lookup_string} #{e}"
-    rescue ::Whois::NoInterfaceError => e
-      _log_error "No interface: #{lookup_string} #{e}"
-    rescue ::Whois::WebInterfaceError => e
-      _log_error "TLD has no WHOIS Server, go to the web interface: #{lookup_string} #{e}"
-    rescue ::Whois::AllocationUnknown => e
-      _log_error "Strange. This object is unknown: #{lookup_string} #{e}"
-    rescue ::Whois::ConnectionError => e
-      _log_error "Unable to query whois, connection error: #{lookup_string} #{e}"
-    rescue ::Whois::ServerNotFound => e
-      _log_error "Unable to query whois, server not found: #{lookup_string} #{e}"
-    rescue Errno::ECONNREFUSED => e
-      _log_error "Unable to query whois, connection refused: #{lookup_string} #{e}"
-    rescue Timeout::Error => e
-      _log_error "Unable to query whois, timed out: #{lookup_string} #{e}"
+    out = []
+    tries = 0
+    max_tries = 3
+    answer = nil 
+
+    until answer || tries > max_tries
+      
+      begin
+        tries +=1 
+        whois = ::Whois::Client.new(:timeout => 20)
+        answer = whois.lookup(lookup_string)
+      
+      rescue ::Whois::ResponseIsThrottled => e
+        sleep_seconds = rand(20)
+        _log_error "Unable to query #{lookup_string}, response throttled, trying again in #{sleep_seconds} secs."
+        sleep sleep_seconds
+      rescue ::Whois::ServerNotSupported => e
+        _log_error "Server not supported for #{lookup_string} #{e}"
+      rescue ::Whois::NoInterfaceError => e
+        _log_error "No interface: #{lookup_string} #{e}"
+      rescue ::Whois::WebInterfaceError => e
+        _log_error "TLD has no WHOIS Server, go to the web interface: #{lookup_string} #{e}"
+      rescue ::Whois::AllocationUnknown => e
+        _log_error "Strange. This object is unknown: #{lookup_string} #{e}"
+      rescue ::Whois::ConnectionError => e
+        _log_error "Unable to query whois, connection error: #{lookup_string} #{e}"
+      rescue ::Whois::ServerNotFound => e
+        _log_error "Unable to query whois, server not found: #{lookup_string} #{e}"
+      rescue Errno::ECONNREFUSED => e
+        _log_error "Unable to query whois, connection refused: #{lookup_string} #{e}"
+      rescue Timeout::Error => e
+        _log_error "Unable to query whois, timed out: #{lookup_string} #{e}"
+      end
     end
 
     unless answer
@@ -43,34 +51,54 @@ module Whois
     # grab the parser so we can get specific fields
     parser = answer.parser
 
-    out = {}
-    out["whois_full_text"] = "#{answer.content}".force_encoding('ISO-8859-1').sanitize_unicode
+    # store whois text so we can get to the right RIR
+    whois_text = "#{answer.content}".force_encoding('ISO-8859-1').sanitize_unicode
+    
+    ###
+    ### Note that we need to handle the potential for multiple ranges here, since a 
+    ### RIPE range can be split into many CIDRs
+    ###
+    hash = {}
 
     if lookup_string.is_ip_address?
+
+      out = []
       # Handle this at the regional internet registry level
-      if out["whois_full_text"] =~ /RIPE/
-        out = _whois_query_ripe_ip(lookup_string, out)
-      elsif out["whois_full_text"] =~ /APNIC/
+      if whois_text.match(/RIPE/)
+        _log "Querying RIPE"
+        out.concat _whois_query_ripe_ip(lookup_string) # concat an array
+      
+      elsif whois_text.match(/APNIC/)
         _log "using RDAP to query APNIC"
-        rdap_info = _rdap_ip_lookup lookup_string
-        out = out.merge(rdap_info)
-      elsif out["whois_full_text"] =~ /whois.lacnic.net/ || out["whois_full_text"] =~ /cert\@cert\.br/
+        out.concat _rdap_ip_lookup(lookup_string) # concat an array
+        
+      elsif whois_text.match(/whois.lacnic.net/) || whois_text.match(/cert\@cert\.br/)
         _log "using RDAP to query LACNIC"
-        rdap_info = _rdap_ip_lookup lookup_string
-        out = out.merge(rdap_info) if rdap_info
-      elsif out["whois_full_text"] =~ /AFRINIC/
+        out.concat _rdap_ip_lookup(lookup_string) # concat an array
+        
+      elsif whois_text.match(/AFRINIC/)
         _log "using RDAP to query AFRINIC"
-        rdap_info = _rdap_ip_lookup lookup_string
-        out = out.merge(rdap_info)
+        out.concat _rdap_ip_lookup(lookup_string) # concat an array
+
       else # Default to ARIN
-        out = _whois_query_arin_ip(lookup_string, out)
+        out << _whois_query_arin_ip(lookup_string) # add our hash to the array
+
       end
+
     else
-      _parse_nameservers(parser,out)
-      _parse_contacts(parser,out)
+      hash = {}
+      hash["contacts"] = _parse_contacts(parser)
+      hash["nameservers"] = _parse_nameservers(parser)
+      out << hash
     end
 
-  out
+    # add in whois text for all 
+    out.each do |hash|
+      hash = {} unless hash 
+      hash["whois_full_text"] = whois_text
+    end
+
+  out # NOTE THAT THIS IS AN ARRAY
   end
 
   # Returns an array of netblocks related to this org
@@ -138,7 +166,11 @@ module Whois
   out
   end
 
-
+  def range_to_cidrs(lower, upper)
+    ip_range = IPRanger::IPRange.new(lower, upper)
+    cidrs = ip_range.cidrs
+  cidrs
+  end
 
   private  # helper methods for parsing
 
@@ -149,80 +181,169 @@ module Whois
     begin
       json = JSON.parse(response)
     rescue JSON::ParserError => e
-      return nil
+      _notify "Got invalid JSON for RDAP lookup on #{ip_address}"
+      return []
     end
 
-    return nil unless json
-
-    # This is just terrible. I am ashamed.
-    start_address = json["startAddress"]
-    if response =~ /apnic/
-      regex = Regexp.new(/rdap.apnic.net\/ip\/\d.\d.\d.\d\/(\d*)\",/)
-      match = response.match(regex)
-      cidr_length = match.captures.first.strip if match
-    else # do something sane
-      cidr_length = "#{json["handle"]}".split("/").last
+    unless json
+      _notify "Got empty JSON for RDAP lookup on #{ip_address}"
+      return [] 
     end
+
+    type = "#{json["type"]}"
 
     if json["links"]
       description = "Queried via RDAP: #{json["links"].first["value"]}"
     end
-    
-    type = "#{json["type"]}"
 
-    # return a standard set of info
-    out = {
-      "name" => "#{start_address}/#{cidr_length}",
-      "start_address" => "#{start_address}",
-      "end_address" => "#{json["endAddress"]}",
-      "cidr" => "#{cidr_length}",
-      "description" => "#{description}",
-      "block_type" => "#{type}"
-    }
+    # This is just terrible. I am ashamed.
+    start_address = json["startAddress"]
+    end_address = json["endAddress"]
+
+    # handle the case of multiple cidrs 
+    if json["cidr0_cidrs"]
+      out = []
+      json["cidr0_cidrs"].each do |c|
+        start_address = c["v4prefix"]
+        cidr_length = c["length"]
+        out << {
+          "name" => "#{start_address}/#{cidr_length}",
+          "start_address" => "#{start_address}",
+          #"end_address" => "#{end_address}",
+          "cidr" => "#{cidr_length}",
+          "description" => "#{description}",
+          "block_type" => "#{type}",
+          "extended_rdap" => json
+        }
+      end
+
+    else # do something sane
+      cidr_length = "#{json["handle"]}".split("/").last
+
+      # return a standard set of info
+      out = [{
+        "name" => "#{start_address}/#{cidr_length}",
+        "start_address" => "#{start_address}",
+        "end_address" => "#{end_address}",
+        "cidr" => "#{cidr_length}",
+        "description" => "#{description}",
+        "block_type" => "#{type}",
+        "extended_rdap" => json
+      }]
+
+    end
 
   out
   end
 
 
   # returns a hash that can create a netblock
-  def _whois_query_ripe_ip(lookup_string,out={})
-    ripe_uri = "https://stat.ripe.net/data/address-space-hierarchy/data.json?resource=#{lookup_string}/32"
-    json = JSON.parse(http_get_body(ripe_uri))
+  def _whois_query_ripe_ip(lookup_string,out=[])
 
-    data = json["data"]
+    if lookup_string.match(/:/)
+      ripe_uri = "https://stat.ripe.net/data/address-space-hierarchy/data.json?resource=#{lookup_string}/64"
+    else
+      ripe_uri = "https://stat.ripe.net/data/address-space-hierarchy/data.json?resource=#{lookup_string}/32"
+    end
+
+    json = JSON.parse(http_get_body(ripe_uri))
+    if json && json["data"]
+      data = json["data"]
+    else
+      data = {}
+    end
+
+    # parse out ranges
     if data["last_updated"]
       range = data["last_updated"].first["ip_space"]
+      start_address = range.split("/").first.strip
+      cidr = range.split("/").last.strip
+      exact = false
+    elsif !data["exact"].empty? && data["more_specific"].empty?  # RIPE
+      range = data["exact"].first["inetnum"]
+      start_address = range.split("-").first.strip
+      end_address = range.split("-").last.strip
+      netname = data["exact"].first["netname"]
+      org = data["exact"].first["org"]
+      exact = true 
+    elsif !data["more_specific"].empty? && data["more_specific"].first["inetnum"] # IPv4 CASE
+      range = data["more_specific"].first["inetnum"]
+      start_address = range.split("-").first.strip
+      end_address = range.split("-").last.strip
+      netname = data["more_specific"].first["netname"]
+      org = data["more_specific"].first["org"]
+      exact = false
+    elsif !data["more_specific"].empty? && data["more_specific"].first["inet6num"] # IPV6 CASE!
+      range = data["more_specific"].first["inet6num"]
+      start_address = range.split("/").first.strip
+      cidr = range.split("/").last.strip
+      netname = data["more_specific"].first["netname"]
+      org = data["more_specific"].first["org"]
+      exact = false
+    elsif !data["less_specific"].empty? && data["less_specific"].first["inetnum"] # IPv4 CASE
+      range = data["less_specific"].first["inetnum"]
+      start_address = range.split("-").first.strip
+      end_address = range.split("-").last.strip
+      netname = data["less_specific"].first["netname"]
+      org = data["less_specific"].first["org"]
+      exact = false
+    elsif !data["less_specific"].empty? && data["less_specific"].first["inet6num"] # IPV6 CASE!
+      range = data["less_specific"].first["inet6num"]
+      start_address = range.split("/").first.strip
+      cidr = range.split("/").last.strip
+      netname = data["less_specific"].first["netname"]
+      org = data["less_specific"].first["org"]
+      exact = false
     else
-      _log_error "Bad response, unable to continue: #{json}"
-      return nil
+      _log_error "Unknown response, unable to continue"
+      _log "Got: #{data}"
+      return []
     end
 
     # parse out description
     begin
-      less_specific_hash = data["less_specific"]
-      if less_specific_hash && less_specific_hash.first["descr"]
-        _log "less_specific_hash: #{less_specific_hash}"
-        description = less_specific_hash.first["descr"]
+
+      #more_specific_hash = data["more_specific"]
+      #less_specific_hash = data["less_specific"]
+      #if more_specific_hash
+      #  if more_specific_hash && more_specific_hash["descr"]
+      #    _log "more specific hash: #{more_specific_hash}"
+      #    description = more_specific_hash.first["descr"]
+      ##  end
+      #elsif less_specific_hash
+      #  if less_specific_hash && less_specific_hash["descr"]
+      #    _log "less_specific_hash: #{less_specific_hash}"
+      #    description = less_specific_hash.first["descr"]
+      #  end
+      #end
+
+      # convert the range to cidr format
+      unless cidr 
+        cidrs = range_to_cidrs(start_address, end_address).map{|x| x.to_cidr }
       end
 
-      # parse out netname
-      if less_specific_hash && less_specific_hash.first["netname"]
-        netname = less_specific_hash.first["netname"]
+      out = []
+      (cidrs || [cidr]).each do  |x|
+        # merge in our details
+        out << {
+          "exact" => exact,
+          "name" => "#{start_address}/#{x.split("/").last}",
+          "start_address" => "#{start_address}",
+          "end_address" => "#{end_address}",
+          # note that this will already be the length if pulled from above, 
+          # split is harmless 
+          "cidr" => "#{x.split("/").last}", 
+          "rir" => "RIPE",
+          #"description" => "#{description}".sanitize_unicode,
+          "organization_reference" => "#{netname}".sanitize_unicode,
+          "organization_name" => "#{org}".sanitize_unicode,
+          "provider" => "#{org}".sanitize_unicode,
+          "multiple_cidrs" => (cidrs || []).count > 1
+        }
       end
-
-      out = out.merge({
-        "name" => "#{range}",
-        "start_address" => "#{range.split("/").first}",
-        "cidr" => "#{range.split('/').last}",
-        "description" => "#{description}".force_encoding('ISO-8859-1').sanitize_unicode,
-        "rir" => "RIPE",
-        "rir_parsed" => "#{json["data"]["rir"]}",
-        "organization_reference" => "#{netname}".sanitize_unicode,
-        "organization_name" => "#{description}".sanitize_unicode,
-        "provider" =>  "#{description}".force_encoding('ISO-8859-1').sanitize_unicode })
 
     rescue TypeError => e
-      _log_error "PARSING ERROR! Unable to get details from #{less_specific_hash} #{e}"
+      _log_error "PARSING ERROR! Unable to get RIPE details for #{lookup_string} #{e}"
     end
 
   out
@@ -232,12 +353,14 @@ module Whois
   # returns a hash that can create a netblock
   def _whois_query_arin_ip(lookup_string,out={})
     begin
+      
       # EX: http://whois.arin.net/rest/ip/72.30.35.9.json
       json = JSON.parse http_get_body("http://whois.arin.net/rest/ip/#{lookup_string}.json")
+      return nil unless json
 
       # verify we have something usable
       doc = json["net"]
-      return unless doc
+      return nil unless doc
 
       # organization details
       if doc["orgRef"]
@@ -298,9 +421,9 @@ module Whois
     # handle domain contacts
     begin
       _log "Parsing: #{parser.contacts.count} contacts."
-      hash["contacts"] = []
+      contacts = []
       parser.contacts.each do |contact|\
-        hash["contacts"] << {
+        contacts << {
           "name" => "#{contact.name}",
           "email" => "#{contact.email}"
         }
@@ -310,17 +433,17 @@ module Whois
     rescue ::Whois::ParserError => e
       _log_error "Unable to parse attribute: #{e}"
     end
-  hash
+  contacts
   end
 
   def _parse_nameservers(parser, hash={})
     # handle nameservers
+    nameservers = []
     begin
       _log "Parsing: #{parser.nameservers.count} nameservers."
-      hash["nameservers"] = []
       parser.nameservers.each do |nameserver|
         _log "Parsed nameserver: #{nameserver}"
-        hash["nameservers"] << "#{nameserver}"
+        nameservers << "#{nameserver}"
       end
     rescue ::Whois::AttributeNotImplemented => e
       _log_error "Unable to parse attribute: #{e}"
@@ -329,7 +452,7 @@ module Whois
     rescue ::Whois::ResponseIsThrottled => e
       _log_error "Unable to parse attribute: #{e}"
     end
-  hash
+  nameservers
   end
 
 

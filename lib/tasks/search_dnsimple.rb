@@ -1,5 +1,3 @@
-require "dnsimple"
-require "date"
 module Intrigue
 module Task
 class SearchDnsimple < BaseTask
@@ -7,9 +5,9 @@ class SearchDnsimple < BaseTask
     def self.metadata
       {
         :name => "search_dnsimple",
-        :pretty_name => "Search DnSimple",
+        :pretty_name => "Search DnSimple Zone",
         :authors => ["Anas Ben Salah"],
-        :description => "This task hits Dnsimple API for getting all the DnsRecord and Domains related the domain to investigate ",
+        :description => "This task queries Dnsimple API for DnsRecord and Domains related the domain to investigate ",
         :references => [],
         :type => "discovery",
         :passive => true,

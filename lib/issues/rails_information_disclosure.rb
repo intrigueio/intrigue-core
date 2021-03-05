@@ -4,6 +4,7 @@ class RailsInformationDisclosure < BaseIssue
 
   def self.generate(instance_details={})
     {
+      added: "2020-01-01",
       name: "rails_information_disclosure_cve_2019_5418",
       pretty_name: "Rails Sensitive File Disclosure (CVE-2019-5418)",
       severity: 1,
@@ -13,9 +14,13 @@ class RailsInformationDisclosure < BaseIssue
        " to gather internal files from the affected system, up to and including the" +
        " /etc/shadow file, depending on permissions. The 'render' command must be" +
        " used to render a file from disk in order to be vulnerable",
+      affected_software: [ 
+        { :vendor => "Ruby", :product => "Rails" }
+      ],
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
         { type: "description", uri: "https://github.com/mpgn/Rails-doubletap-RCE" }
-      ]
+      ], 
+      task: "vuln/rails_file_exposure"
     }.merge!(instance_details)
   end
 

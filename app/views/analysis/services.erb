@@ -1,3 +1,4 @@
+<div class="container-fluid">
 <div class="row">
   <div id="aflkj" class="col-sm-12">
     <script type="text/javascript" src="/js/sorttable.js"></script>
@@ -30,11 +31,12 @@
       <% @services.each do |x| %>
         <tr>
           <td><a href="<%="/#{h @project_name}/entities/#{h x.id}"%>"><%= h x %></a></td>
-          <td><a href="<%="/#{h @project_name}/entities/#{h x.get_detail("host_id")}"%>"> <%= h Intrigue::Model::Entity.first(:id => x.get_detail("host_id"))  %></a></td>
+          <td><a href="<%="/#{h @project_name}/entities/#{h x.get_detail("host_id")}"%>"> <%= h Intrigue::Core::Model::Entity.first(:id => x.get_detail("host_id"))  %></a></td>
           <td><pre><%=h x.details%></pre></td>
         </tr>
       <% end %>
       </tbody>
     </table>
   </div>
+</div>
 </div>

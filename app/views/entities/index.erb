@@ -1,103 +1,148 @@
 <script language="javascript" type="text/javascript">
-function delete_entity(id)
-{
-  var check = confirm('Are you sure?');
-  if (check == true) {
-      document.entity_delete_form.entity.value = id;
-      document.entity_delete_form.action = "/<%=@project_name%>/meta_entities/" + id + "/delete"
-      document.entity_delete_form.submit();
-      return true;
+  function delete_entity(id)
+  {
+    var check = confirm('Are you sure?');
+    if (check == true) {
+        document.entity_delete_form.entity.value = id;
+        document.entity_delete_form.action = "/<%=h @project_name%>/meta_entities/" + id + "/delete"
+        document.entity_delete_form.submit();
+        return true;
+    }
+    else {
+        return false;
+    }
   }
-  else {
-      return false;
-  }
-}
-</script>
+  </script>
+  
+<div class="container-fluid">
+  <div class="row">
 
-<div class="col-sm-2">
-  <%= erb :'/entities/_search', :layout => false %>
-</div>
-<div class="col-sm-10">
-  <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&include_hidden=<%= @include_hidden ? 'on' : 'off' %>&include_unscoped=<%=@include_unscoped ? 'on' : 'off'%>&correlate=on&page=<%=@page-1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">previous</a>
-  <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&include_hidden=<%= @include_hidden ? 'on' : 'off' %>&include_unscoped=<%=@include_unscoped ? 'on' : 'off'%>&correlate=on&page=<%=@page+1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">next</a>
-    <%= "Page: #{@page}" %> / <%= "Viewing Results: #{@count * (@page-1)} .. #{@count * @page-1}" %>
+    <div class="col-md-2">
+      <%= erb :'/entities/_search', :layout => false %>
+    </div>
 
-  <script type="text/javascript" src="/js/sorttable.js"></script>
-  <style>
-  /* Sortable tables */
-  table.sortable {
-    width: 100%;
-    border: 0;
-    table-layout:fixed;
-    word-wrap:break-word;
-    border-collapse:collapse;
-  }
+    <div class="col-md-10">      
 
-  table.sortable thead {
-      background-color:#eee;
-      color:#666666;
-      font-weight: bold;
-      cursor: default;
-  }
-  </style>
-  <p></p>
-  <table class="sortable" border="1" width=100%>
-    <colgroup>
-      <col style="width:40%">
-      <col style="width:60%">
-    </colgroup>
-    <tbody>
-      <tr><th>name</th><th>details</th></tr>
-      <% @alias_groups.each do |group| %>
-        <% next if group.entities.empty? %>
-        <tr>
-          <td>
-            <ul>
-          <% group.entities.each do |e| %>
-            <%
+      <b><a href="<%=@calculated_url%>&page=<%=@page-1%>"> << previous</a> |
+      <a href="<%=@calculated_url%>&page=<%=@page+1%>">next >> </a></b>
 
-              # skip hidden unless we allow it
-              unless @include_hidden
-                next if e.hidden
-              end
+      <div class="table-responsive">
+        
+        <table id="entities-table" class="table table-striped borderless compact" style="width:100%">
+          
+          <thead>
+            <tr>
+              <th>name</th>
+              <th>details</th>
+              <th>enriched</th>
+              <th>hidden</th>
+              <th>scoped</th>
+            </tr>
+          </thead>
 
-              # skip unscoped unless we allow it
-              unless @include_unscoped
-               next unless e.scoped
-              end
-
-            %>
-                <li>[<a href="/<%=@project_name%>/entities/<%=e.id%>"> <%= h e %> </a>]</li>
-          <% end %>
-              </ul>
-            </td>
-            <td>
-              <ul>
-          <% group.entities.each do |e| %>
-            <%
+          <tbody>
+            
+            <% if @grouped_entities %>
+              <% @alias_groups.each do |ag| %>
+                <% grouped_entities = ag.entities %>
+                <% grouped_entities = grouped_entities.reject{|x| !x.scoped } if @only_scoped %>
+                <% grouped_entities = grouped_entities.reject{|x| x.hidden } unless @include_hidden %>
+                <% next if grouped_entities.empty? %>
+                <tr class="transparent-table">
+                  <td>
+                    <ul>
+                    <% grouped_entities.each do |e| %>
+                      <li>[<a href="/<%=h @project_name%>/entities/<%=e.id%>"> <%= h "#{e}" %> </a>]</li>
+                    <% end %>
+                      </ul>
+                    </td>
+                    <td>
+                      <ul>
+                    <% grouped_entities.each do |e| %>
+                      <li><a href="/<%=h @project_name%>/entities/<%=e.id%>"> <%= h e.detail_string %> </a></li>
+                    <% end %>
+                    </ul>
+                  </td>
+                  <td>
+                  <ul>
+                  <% grouped_entities.each do |e| %>
+                    <li><%= e.enriched ? checkmark_image : xmark_image %> </li>
+                  <% end %>
+                  </ul>
+                  </td>
+                  <td>
+                  <ul>
+                    <% grouped_entities.each do |e| %>
+                      <li><%= e.hidden ? checkmark_image : xmark_image %> </li>
+                    <% end %>
+                  </ul>
+                  </td>
+                  <td>
+                  <ul>
+                    <% grouped_entities.each do |e| %>
+                      <li><%= e.scoped ? checkmark_image : xmark_image %> </li>
+                    <% end %>
+                  </ul>
+                  </td>
+                </tr>
+              <% end %>
+            
+            <% else %>
               
-              # skip hidden unless we allow it
-              unless @include_hidden
-                next if e.hidden
-              end
+              <% @selected_entities.each do |e| %>
+              <tr class="transparent-table">
+                <td><a href="/<%=h @project_name%>/entities/<%=e.id%>"> <%= h e %> </a></td>
+                <td><%= h e.detail_string %></td>
+                <td>
+                  <div class='td-images'>
+                    <%=  e.enriched ? checkmark_image : xmark_image %>
+                  </div>
+                </td>
+                <td>
+                  <div class='td-images'>
+                    <%=  e.hidden ? checkmark_image : xmark_image %>
+                  </div>
+                </td>
+                <td>
+                  <div class='td-images'>
+                    <%=  e.scoped ? checkmark_image : xmark_image %>
+                  </div>
+                </td>
+              </tr>
+              <% end %> 
 
-              # skip hidden unless we allow it
-              unless @include_unscoped
-               next unless e.scoped
-              end
+            <% end %>
 
-            %>
-              <li><a href="/<%=@project_name%>/entities/<%=e.id%>"> <%= h e.detail_string %> </a></li>
-        <% end %>
-            </ul>
-          </td>
-        </tr>
-      <% end %>
+          </tbody>
+        </table> 
+      </div>
 
-    </tbody>
-  </table>
-  <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&include_hidden=<%= @include_hidden ? 'on' : 'off' %>&include_unscoped=<%=@include_unscoped ? 'on' : 'off'%>&correlate=on&page=<%=@page-1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">previous</a>
-  <a href="/<%=@project_name%>/entities?search_string=<%=@search_string%>&include_hidden=<%= @include_hidden ? 'on' : 'off' %>&include_unscoped=<%=@include_unscoped ? 'on' : 'off'%>&correlate=on&page=<%=@page+1%>&<%=@entity_types.map{|x| "entity_types[]=#{x}" }.join("&") if @entity_types %>">next</a>
-  <br><br><br>
-<form name="entity_delete_form" method="get"><input type="hidden" id="entity" name="entity"/></form>
+      <b><%= "Page: #{@page}" %> / <%= "Viewing Results: #{@count * (@page-1)} .. #{@count * @page-1}" %></b>
+      <br><br><br>
+
+    <form name="entity_delete_form" method="get"><input type="hidden" id="entity" name="entity"/></form>
+    
+    </div>
+  </div>
 </div>
+
+<script>
+$(document).ready( function () {
+  $('#entities-table').DataTable({
+    "searching": false,
+    "ordering" : true,
+    'autoWidth': true,
+    'headers' : false,
+    "responsive": true,
+    "scrollCollapse": true,
+    "paging": false,
+    "info" : false,
+    "stateSave": true,  
+    "order": [[ 0, "desc" ]],
+    'columnDefs': [
+      {'width': '40%', 'targets': 0},
+      {'width': '60%', 'targets': 1}
+    ]
+  });
+});
+</script>

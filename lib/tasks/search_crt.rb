@@ -87,7 +87,7 @@ class SearchCrt < BaseTask
   end
 
   def http_get_large_body(uri)
-    r = http_request(:get, uri, nil, {}, nil,240,240,240)
+    r = http_request(:get, uri, nil, {}, nil, true, 240)
   r.body if r
   end
 

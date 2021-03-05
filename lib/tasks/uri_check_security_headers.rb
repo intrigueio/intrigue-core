@@ -45,9 +45,9 @@ class UriCheckSecurityHeaders < BaseTask
       "strict-transport-security",
       "x-frame-options",
       "x-xss-protection",
-      "x-content-type-options",
-      "feature-policy",
-      "x-content-type-options"
+      #"x-content-type-options",
+      #"feature-policy",
+      #"x-content-type-options"
     ]
 
     # TODO - check for optional headers ?
@@ -58,32 +58,17 @@ class UriCheckSecurityHeaders < BaseTask
     found_headers = []
 
     # iterate through and find the ones we have
-    response.each_header do |name,value|
-      found_headers << name if required_headers.include? name
+    response.each_header do |name|
+      found_headers << name if required_headers.include?(name.downcase)
     end # end each_header
 
     # If we have identified any headers...
     if found_headers.count != required_headers.count
       missing_headers = required_headers - found_headers
-      # report the headers that are missing
-      ############################################
-      ###      Old Issue                      ###
       ###########################################
-      # _create_issue({
-      #   name: "Missing security headers",
-      #   type: "missing_security_headers",
-      #   severity: 5,
-      #   status: "confirmed",
-      #   detailed_description:  "One or more security headers was missing from #{uri}. ",
-      #   details: {
-      #     uri: uri,
-      #     missing:  missing_headers
-      #   }
-      # })
-      ############################################
       ###      New Issue                      ###
       ###########################################
-      _create_linked_issue("missing_security_headers",{
+      _create_linked_issue("missing_important_security_headers",{
         detailed_description:  "One or more security headers was missing from #{uri}. ",
         details: {
           uri: uri,

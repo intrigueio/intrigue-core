@@ -1,25 +1,35 @@
 module Intrigue
 module Entity
-class IpAddress < Intrigue::Model::Entity
+class IpAddress < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "IpAddress",
-      :description => "An IP Address",
-      :user_creatable => true,
-      :example => "1.1.1.1"
+      name: "IpAddress",
+      description: "An IP Address",
+      user_creatable: true,
+      example: "1.1.1.1"
     }
   end
 
   def validate_entity
-    return ( name =~ ipv4_regex || name =~ ipv6_regex )
+    return name.match(ipv4_regex) || name.match(ipv6_regex)
   end
 
   def detail_string
     out = ""
-    out << "#{details["geolocation"]["city_name"]} #{details["geolocation"]["country_name"]} | " if details["geolocation"]
-    out << "#{details["ports"].count.to_s} Ports " if details["ports"]
-    out << "| DNS: #{details["dns_entries"].each.map{|h| h["response_data"] }.join(" | ")}" if details["dns_entries"]
+
+    if details["geolocation"] && details["geolocation"]["country_code"]
+      out << "#{details["geolocation"]["city"]} #{details["geolocation"]["country_code"]} | " 
+    end
+
+    if details["ports"] && details["ports"].count > 0
+      out << " Open Ports: #{details["ports"].count} | "
+    end
+
+    if details["resolutions"]
+      out << " PTR: #{details["resolutions"].each.map{|h| h["response_data"] }.join(" | ")}"
+    end
+    
   out
   end
 
@@ -31,51 +41,16 @@ class IpAddress < Intrigue::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
-    return true if self.seed
-    return false if self.hidden
+    return true if scoped
+    return true if self.allow_list || self.project.allow_list_entity?(self) 
+    return false if self.deny_list || self.project.deny_list_entity?(self)
 
-    # Check types we'll check for indicators 
-    # of in-scope-ness
-    #
-    scope_check_entity_types = [
-      "Intrigue::Entity::Organization",
-      "Intrigue::Entity::DnsRecord",
-      "Intrigue::Entity::Domain" ]
+    # while it might be nice to scope out stuff on third paries, we still need 
+    # to keep it in to scan, so we'll need to check scope at that level
 
-    ### CHECK OUR SEED ENTITIES TO SEE IF THE TEXT MATCHES
-    ######################################################
-    if self.project.seeds
-      self.project.seeds.each do |s|
-        next unless scope_check_entity_types.include?(s.type.to_s) 
-        
-        # only if it's a domain
-        if s["type"] == "Intrigue::Entity::Domain" # try the basename )
-          base_name = s["name"].split(".").first # x.com -> x
-          return true if ("#{details["whois_full_text"]}" =~ /#{Regexp.escape(base_name)}/i)
-        end
-      end
-    end
-
-    ### CHECK OUR IN-PROJECT DISCOVERED ENTITIES TO SEE IF THE TEXT MATCHES 
-    #######################################################################
-    self.project.entities.where(scoped: true, type: scope_check_entity_types ).each do |e|
-
-      # make sure we skip any dns entries that are not fqdns. this will prevent
-      # auto-scoping on a single name like "log" or even a number like "1"
-      next if (e.type == "DnsRecord" || e.type == "Domain") && e.name.split(".").count == 1
-
-      # Now, check to see if the entity's name matches something in our # whois text, 
-      # and especially make sure 
-      if "#{details["whois_full_text"]}" =~ /[\s@]#{Regexp.escape(e.name)}/i
-        #_log "Marking as scoped: PROJECT ENTITY MATCHED TEXT: #{e.type}##{e.name}"
-        return true
-      end
-
-    end
-
-  # if we didnt match the above and we were asked, return whatever we got
-  # during the creation process
-  self.scoped
+  # if we didnt match the above and we were asked, default to true as we'll
+  #  we'll want to scope things in before we have a full set of aliases
+  true
   end 
 
 end

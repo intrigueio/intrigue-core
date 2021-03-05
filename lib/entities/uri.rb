@@ -1,20 +1,18 @@
 module Intrigue
 module Entity
-class Uri < Intrigue::Model::Entity
-
-  include Intrigue::Task::Dns # TODO ... move parse_domain_name up in the heirarchy
+class Uri < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      :name => "Uri",
-      :description => "A link to a website or webpage",
-      :user_creatable => true,
-      :example => "https://intrigue.io"
+      name: "Uri",
+      description: "A link to a website or webpage",
+      user_creatable: true,
+      example: "https://intrigue.io"
     }
   end
 
   def validate_entity
-    name =~ /^https?:\/\/.*$/
+    name.match /^https?:\/\/.*$/
   end
 
   def detail_string
@@ -24,7 +22,7 @@ class Uri < Intrigue::Model::Entity
       fingerprint_array = details["fingerprint"].map do |x| 
         "#{x['vendor']} #{x['product'] unless x['vendor'] == x['product']} #{x['version']}".strip
       end
-      out = "Fingerprint: #{fingerprint_array.join("; ")}" if details["fingerprint"]
+      out = "Fingerprint: #{fingerprint_array.sort.uniq.join("; ")}" if details["fingerprint"]
     else
       out = ""
     end
@@ -42,22 +40,27 @@ class Uri < Intrigue::Model::Entity
   ### SCOPING
   ###
   def scoped?(conditions={}) 
-    return true if self.seed
+    return true if scoped
+    return true if self.allow_list || self.project.allow_list_entity?(self) 
+    return false if self.deny_list || self.project.deny_list_entity?(self)
 
-    ## CHECK IF DOMAIN NAME IS KNOWN
-    # =================================    
-    host = URI.parse(self.name).host.to_s
-    if !host.is_ip_address?
-      domain_name = parse_domain_name(host)
-      return false unless self.project.traversable_entity?(domain_name, "Domain")
-    end
-      
+    # only scope in stuff that's not hidden 
+    return false if self.hidden
+
   # if we didnt match the above and we were asked, it's still true
   true
   end
 
   def enrichment_tasks
     ["enrich/uri"]
+  end
+
+  def scope_verification_list
+    [
+      { type_string: self.type_string, name: self.name },
+      { type_string: "DnsRecord", name:  URI.parse(self.name).host },
+      { type_string: "Domain", name:  parse_domain_name(URI.parse(self.name).host) }
+    ]
   end
 
 end

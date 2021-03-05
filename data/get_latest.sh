@@ -35,14 +35,27 @@ if [ ! -f public_suffix_list.dat ]; then
   rm public_suffix_list.dat
 fi
 
+# tika 
+if [ ! -f ../tmp/tika-server.jar ]; then
+  echo "[+] Getting Tika"
+  wget -N -q https://apache.osuosl.org/tika/tika-server-1.25.jar -O ../tmp/tika-server.jar
+fi
+
+# retirejs data 
+if [ ! -f retirejs.json ]; then
+  echo "[+] Getting latest Retire.js"
+  wget -N -q https://raw.githubusercontent.com/pentestify/retire.js/master/repository/jsrepository.json 
+  mv jsrepository.json retirejs.json
+fi
+
 # NVD feeds
-NVD_YEARS="2019 2018 2017"
+NVD_YEARS="2021 2020 2019 2018 2017"
 
 # nvd download function
 function get_nvd_json() {
   echo "[+] Getting latest NVD JSON Feed: $YEAR"
-  wget -N -q https://nvd.nist.gov/feeds/json/cve/1.0/nvdcve-1.0-$YEAR.json.gz -O nvdcve-1.0-$YEAR.json.gz
-  gunzip nvdcve-1.0-$YEAR.json.gz
+  wget -N -q https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-$YEAR.json.gz -O nvdcve-1.1-$YEAR.json.gz
+  gunzip nvdcve-1.1-$YEAR.json.gz
 }
 
 if [ -d "nvd" ]; then
@@ -59,6 +72,17 @@ for YEAR in $NVD_YEARS; do
   cd ..
 
 done
+
+if [ ! -d "nuclei-templates"  ]; then
+  echo "[+] Getting nuclei templates"
+  git clone https://github.com/projectdiscovery/nuclei-templates 2> /dev/null
+else
+  echo "[+] Updating nuclei templates"
+  cd nuclei-templates
+  git pull 2> /dev/null
+  cd ..
+fi
+
 
 echo "[+] Data Update Complete!"
 

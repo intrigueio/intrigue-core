@@ -1,83 +1,123 @@
-<nav class="navbar navbar-inverse" style="position:relative; top:0; width:100%;">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="/"><img src="/img/logo.png" width="36px" height="36px" alt="intrigue"></a>
-        </div>
+<nav class="navbar navbar-expand-md bg-dark navbar-dark p-1">
+    
+    <a class="navbar-brand" href="/">
+      <img src="/img/logo-white.png" width="32px" height="32px" alt="intrigue">
+    </a>
 
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-             
-             <% if @project_name %>
-                <li><a href="/<%= @project_name %>/start">[<%= @project_name %>]</a></li>
-                
-                <li class="dropdown">
-                  <a class="dropdown-toggle" data-toggle="dropdown" href="/<%= @project_name %>/start">Start<span class="caret"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="/<%= @project_name %>/start">Single Task</a></li>
-                    <li><a href="/<%= @project_name %>/start/upload">Upload File</a></li>
-                    <li><a href="/<%= @project_name %>/config">Configuration</a></li>
-                    <li><a href="/<%= @project_name %>/seeds">Seeds</a></li>
-                  </ul>
-                </li>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navvynav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="navvynav">
 
-                <li><a href="/<%= @project_name %>/entities">Entities</a></li>
-                <li><a href="/<%= @project_name %>/results">Results</a></li>
-                <li><a href="/<%= @project_name %>/issues">Issues</a></li>
-                <li class="dropdown">
-                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">Analysis<span class="caret"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="/<%= @project_name %>/graph">Graph</a></li>
-                    <li><a href="/<%= @project_name %>/analysis/domains?length=2">Domains</a></li>
-                    <li><a href="/<%= @project_name %>/analysis/systems">Systems</a></li>
-                    <li><a href="/<%= @project_name %>/analysis/services">Services</a></li>
-                    <li><hr></li>
-                    <li><a href="/<%= @project_name %>/analysis/applications">Apps</a></li>
-                    <li><a href="/<%= @project_name %>/analysis/certificates">App Certificates</a></li>
-                    <li><a href="/<%= @project_name %>/analysis/ciphers">App Ciphers</a></li>
-                    <li><a href="/<%= @project_name %>/analysis/cves">App Vulns (CVE)</a></li>
-                    <li><a href="/<%= @project_name %>/analysis/javascripts">App Javascript</a></li>
-                    <li><a href="/<%= @project_name %>/analysis/fingerprints">App Technology</a></li>
-                  </ul>
-                </li>
-                <li class="dropdown">
-                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">Export<span class="caret"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href=""><b>Default</b></a></li>
-                    <li><a href="/<%= @project_name %>/export/json">Export Project (JSON)</a></li>
-                    <li><a href="/<%= @project_name %>/export/applications/csv">Export Applications (CSV)</a></li>
-                    <li><a href="/<%= @project_name %>/export/csv">Export Entities (CSV)</a></li>
-                    <li><a href="/<%= @project_name %>/export/issues/csv">Export Issues (CSV)</a></li>
-                    <li><a href="/<%= @project_name %>/export/gexf">Export Project Graph (Gephi XML)</a></li>
-                    <li><a href="/<%= @project_name %>/export/graph_json">Export Project Graph (Graph JSON)</a></li>
-                    <li><a href=""><b>Dynamic</b></a></li>
-                    <% Intrigue::HandlerFactory.handlers.each do |h| %>
-                      <% next unless h.metadata[:type] == "export" %>
-                      <li><a href=/<%= "#{@project_name}/handle/#{h.metadata[:name]}" %>><%= "#{h.metadata[:pretty_name]}" %></a></li>
-                    <% end %>
-                  </ul>
-                </li>
-              <% else %>
-                <li><a href="/">Project List</a></li>
-              <% end %>
-              <!--<li><a href="/<%= @project_name %>/findings">Findings</a></li>-->
-              <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">System<span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                  <li><a href="/system/config">Configuration</a></li>
-                  <li><a href="/system/entities">Entity List</a></li>
-                  <li><a href="/system/tasks">Task List</a></li>
-                  <li><a href="/sidekiq">Sidekiq</a></li>
-                </ul>
-              </li>
-            </ul>
-        </div><!-- /.navbar-collapse -->
-    </div><!-- /.container-fluid -->
+      <ul class="navbar-nav">
+
+      <li class="nav-item">
+        <a class="nav-link" href="/"><span><img width='20' height='20' src="/img/icons/home-white.png"></span>&nbsp;Home</a>
+      </li>
+
+
+      <% if @project_name %> 
+
+      <li class="nav-item">
+        <b><a class="nav-link" href="/<%=h @project_name %>/start">[<%= h @project_name %>]</a></b>
+      </li>  
+
+      <li class="nav-item dropdown">
+        <a class="dropdown-toggle nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <span><img width-20 height=20 src="/img/icons/start-white.png"></span>&nbsp;Start
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/start/workflow">Start A Workflow</a></li>  
+          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/start/task">Run Single Task</a></li>
+          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/start/task/upload">Upload Entities</a></li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="/<%=h @project_name %>/entities"><span><img width-20 height=20 src="/img/icons/entity-white.png"></span>&nbsp;Entities</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="/<%=h @project_name %>/issues"><span><img width-20 height=20 src="/img/icons/issue-white.png"></span>&nbsp;Issues</a>
+      </li>
+
+      <li class="nav-item dropdown">
+        <a class="dropdown-toggle nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <span><img width-20 height=20 src="/img/icons/analyze-white.png"></span>&nbsp;Analysis
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/analysis/graph">Graph</a></li>
+          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/analysis/domains?length=2">Domains</a></li>
+          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/analysis/systems">Systems</a></li>
+          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/analysis/services">Services</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/analysis/applications">Apps</a></li>
+          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/analysis/certificates">App Certificates</a></li>
+          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/analysis/ciphers">App Ciphers</a></li>
+          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/analysis/cves">App Vulns (CVE)</a></li>
+          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/analysis/javascripts">App Javascript</a></li>
+          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/analysis/fingerprints">App Technology</a></li>
+        </ul>
+      </li>
+
+      <li class="nav-item dropdown">
+        <a class="dropdown-toggle nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <span><img width-20 height=20 src="/img/icons/download-white.png"></span>&nbsp;Export
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <li><a class="dropdown-item" href="#"><b>Download</b></a></li>
+          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/export/csv">Download All Entities (CSV)</a></li>
+          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/export/json">Download All Entities (JSON)</a></li>
+          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/export/applications/csv">Download Applications (CSV)</a></li>
+          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/export/issues/csv">Download Issues (CSV)</a></li>
+          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/export/graph_json">Download Project Graph (Graph JSON)</a></li>
+          <li><hr class="dropdown-divider nav-link"></li>
+          <li><a class="dropdown-item" href="#"><b>Send To... </b></a></li>
+          <% Intrigue::HandlerFactory.handlers.sort_by{|h| h.metadata[:name]}.each do |h| %>
+            <% next unless h.metadata[:type] == "export" %>
+            <li><a class="dropdown-item nav-link" href=/<%= h "#{@project_name}/handle/#{h.metadata[:name]}" %>><%= "#{h.metadata[:pretty_name]}" %></a></li>
+          <% end %>
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="/<%=h @project_name %>/results"><span><img width-20 height=20 src="/img/icons/results-white.png"></span>&nbsp;Logs</a>
+      </li>
+      <% end %>
+
+      <li class="nav-item dropdown">
+        <a class="dropdown-toggle nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <span><img width-20 height=20 src="/img/icons/configuration-white.png"></span>&nbsp;Config
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <% if @project_name %>
+            <li><a class="dropdown-item" href="#"><b>Project</b></a></li>  
+            <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/config">Project Config</a></li>
+            <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/seeds">Seeds</a></li>
+          <% end %>
+          <li><a class="dropdown-item" href="#"><b>System</b></a></li>
+          <li><a class="dropdown-item nav-link" href="/system/config">System Config</a></li>
+          <li><a class="dropdown-item nav-link" href="/system/config/tasks">Task Config</a></li>
+          <!--<li><a class="dropdown-item nav-link" href="/system/config/handlers">Handler Config</a></li>-->
+          <li><a class="dropdown-item nav-link" href="/sidekiq">Sidekiq</a></li>
+        </ul>
+      </li>
+      </ul>
+
+      <!-- right side navbar --> 
+      <ul class="navbar-nav">
+      <li class="nav-item dropdown">
+        <a class="dropdown-toggle nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <span><img width-20 height=20 src="/img/icons/help-white.png"></span>&nbsp;Help
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <li><a class="dropdown-item nav-link" href="/help/entities">Entity Definitions</a></li>
+          <li><a class="dropdown-item nav-link" href="/help/issues">Issue Definitions</a></li>
+          <li><a class="dropdown-item nav-link" href="/help/tasks">Task Definitions</a></li>
+        </ul>
+      </li>
+      </ul>
+      
+  </div>
 </nav>

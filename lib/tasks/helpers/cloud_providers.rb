@@ -1,5 +1,3 @@
-require 'pry'
-
 module Intrigue
 module Task
 module CloudProviders
@@ -61,9 +59,9 @@ module CloudProviders
     ###
     ### USE ASN / NET_NAME
     ###
-    cloud_providers << "fastly" if _get_entity_detail("net_name") =~ /FASTLY/
-    cloud_providers << "cloudflare" if _get_entity_detail("net_name") =~ /CLOUDFLARENET/
-    cloud_providers << "amazon" if _get_entity_detail("net_name") =~ /AMAZON/
+    #cloud_providers << "fastly" if "#{_get_entity_detail("net_name")}".match /FASTLY/
+    cloud_providers << "cloudflare" if "#{_get_entity_detail("net_name")}".match /CLOUDFLARENET/
+    cloud_providers << "amazon" if "#{_get_entity_detail("net_name")}".match /AMAZON/
 
   cloud_providers
   end
@@ -84,9 +82,9 @@ module CloudProviders
     ###
     ### USE DNS
     ###
-    cloud_providers << "amazon_ec2" if _get_entity_name =~ /amazonaws.com/
-    cloud_providers << "google_gcp" if _get_entity_name =~ /bc.googleusercontent.com/
-    cloud_providers << "microsoft_azure" if _get_entity_name =~ /cloudapp.azure.com/
+    cloud_providers << "amazon_ec2" if _get_entity_name.match /amazonaws.com/
+    cloud_providers << "google_gcp" if _get_entity_name.match /bc.googleusercontent.com/
+    cloud_providers << "microsoft_azure" if _get_entity_name.match /cloudapp.azure.com/
     
   cloud_providers
   end
@@ -104,22 +102,22 @@ module CloudProviders
     ###
     ### USE DNS
     ###
-    cloud_providers << "amazon_ec2" if _get_entity_name =~ /amazonaws.com/
-    cloud_providers << "google_gcp" if _get_entity_name =~ /bc.googleusercontent.com/
-    cloud_providers << "microsoft_azure" if _get_entity_name =~ /cloudapp.azure.com/
+    cloud_providers << "amazon_ec2" if _get_entity_name.match /amazonaws.com/
+    cloud_providers << "google_gcp" if _get_entity_name.match /bc.googleusercontent.com/
+    cloud_providers << "microsoft_azure" if _get_entity_name.match /cloudapp.azure.com/
 
     ###
     ### USE ASN / NET_NAME
     ###
     #cloud_providers << "fastly" if _get_entity_detail("net_name") == "FASTLY, US"
-    cloud_providers << "amazon" if _get_entity_detail("net_name") =~ /AMAZON/
+    cloud_providers << "amazon" if "#{_get_entity_detail("net_name")}".match /AMAZON/
 
 
     ###
     ### FINGERPRINT
     ###
     _get_entity_detail("fingerprint").each do |fp|
-      cloud_providers << "#{fp["product"]}".downcase if fp["tags"] && fp["tags"].include?("Cloud")
+      #cloud_providers << "#{fp["product"]}".downcase if fp["tags"] && fp["tags"].include?("Cloud")
       cloud_providers << "#{fp["product"]}".downcase if fp["tags"] && fp["tags"].include?("SaaS")
       cloud_providers << "#{fp["product"]}".downcase if fp["tags"] && fp["tags"].include?("IaaS")
       cloud_providers << "#{fp["product"]}".downcase if fp["tags"] && fp["tags"].include?("PaaS")

@@ -4,10 +4,11 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "invalid_certificate_algorithm",
         pretty_name: "Invalid Certificate (Algorithm)",
         severity: 3,
-        category: "application",
+        category: "misconfiguration",
         status: "confirmed",
         description: "This certificate was found to be with an ineffective algorithm.",
         remediation: "Replace the certificate and/oor de-provision the service",

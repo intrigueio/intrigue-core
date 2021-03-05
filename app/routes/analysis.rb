@@ -1,27 +1,27 @@
-class IntrigueApp < Sinatra::Base
+class CoreApp < Sinatra::Base
 
   ###                      ###
   ### Analysis Views       ###
   ###                      ###
 
   get '/:project/analysis/applications' do
-    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::Uri").order(:name)
+    selected_entities = Intrigue::Core::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::Uri").order(:name)
 
     ## Filter by type
     alias_group_ids = selected_entities.map{|x| x.alias_group_id }.uniq
-    @alias_groups = Intrigue::Model::AliasGroup.where(:id => alias_group_ids)
+    @alias_groups = Intrigue::Core::Model::AliasGroup.where(:id => alias_group_ids)
 
     erb :'analysis/applications'
   end
 
   get '/:project/analysis/certificates' do
-    @certificates = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::SslCertificate").sort_by{|x| x.name }
+    @certificates = Intrigue::Core::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::SslCertificate").sort_by{|x| x.name }
     erb :'analysis/certificates'
   end
 
   get '/:project/analysis/ciphers' do
     cipher_arrays = []
-    Intrigue::Model::Entity.scope_by_project(@project_name).where(type: "Intrigue::Entity::Uri").each do |u|
+    Intrigue::Core::Model::Entity.scope_by_project(@project_name).where(type: "Intrigue::Entity::Uri").each do |u|
       c = u.get_detail("ciphers")
       next unless c
 
@@ -36,13 +36,14 @@ class IntrigueApp < Sinatra::Base
 
   get '/:project/analysis/cves' do
     @cves = []
-    Intrigue::Model::Entity.scope_by_project(@project_name).where(type: "Intrigue::Entity::Uri").each do |u|
+    Intrigue::Core::Model::Entity.scope_by_project(@project_name).where(type: "Intrigue::Entity::Uri").each do |u|
       fps = u.get_detail("fingerprint")
       next unless fps
 
       # capture only select selected fields
       @cves.concat(
         fps.map { |fp|
+          next unless fp["vulns"]
             fp["vulns"].map { |v|
               {
                 "cpe" => "#{fp["cpe"]}",
@@ -54,7 +55,7 @@ class IntrigueApp < Sinatra::Base
                 "id" => u.id
               }
             }
-          }.flatten
+          }.flatten.compact
         )
     end
 
@@ -63,70 +64,100 @@ class IntrigueApp < Sinatra::Base
 
   get '/:project/analysis/domains' do
     length = params["length"].to_i
-    @domains = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::DnsRecord").sort_by{|x| x.name }
+    @domains = Intrigue::Core::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::DnsRecord").sort_by{|x| x.name }
     @tlds = @domains.map { |d| d.name.split(".").last(length).join(".") }.group_by{|e| e}.map{|k, v| [k, v.length]}.sort_by{|k,v| v}.reverse.to_h
 
     erb :'analysis/domains'
   end
 
-  get '/:project/analysis/info' do
-    @infos = Intrigue::Model::Entity.scope_by_project(@project_name).where(type: "Intrigue::Entity::Info")
-    erb :'analysis/info'
+  #### GRAPH ####
+
+  # Main graph
+  get '/:project/analysis/graph/?' do
+    @json_uri = "#{request.url}.json"
+     @project = Intrigue::Core::Model::Project.first(:name => @project_name)
+     @graph_generated_at = @project.graph_generated_at
+    erb :'analysis/graph'
+  end
+
+  # Project Graph JSON
+  get '/:project/analysis/graph.json/?' do
+    content_type 'application/json'
+    project = Intrigue::Core::Model::Project.first(:name => @project_name)
+
+    # Start a new generation
+    unless project.graph_generation_in_progress
+      Intrigue::Workers::GenerateGraphWorker.perform_async(project.id)
+    end
+
+  project.graph_json || "{ 'message' : 'Currently generating...' } "
+  end
+
+  #get '/:project/analysis/graph/meta.json/?' do
+  #  content_type 'application/json'
+  #  project = Intrigue::Core::Model::Project.first(:name => @project_name)
+  #
+  #  # Start a new generation
+  #  unless project.graph_generation_in_progress
+  #    Intrigue::Workers::GenerateMetaGraphWorker.perform_async(project.id)
+  #  end
+  #
+  #project.graph_json || "{ 'message' : 'Currently generating...' } "
+  #end
+
+  # graph
+  #get '/:project/analysis/graph/meta' do
+  #  @json_uri = "#{request.url}.json"
+  #  @graph_generated_at = Intrigue::Core::Model::Project.first(:name => @project_name).graph_generated_at
+  #  erb :'graph'
+  #end
+
+  get '/:project/analysis/graph/reset' do
+    p= Intrigue::Core::Model::Project.first(:name => @project_name)
+    p.graph_generated_at = nil
+    p.graph_generation_in_progress = false
+    p.save_changes
+    redirect "/#{@project_name}/analysis/graph"
   end
 
   get '/:project/analysis/services' do
-    @services = Intrigue::Model::Entity.scope_by_project(@project_name).all.select{|x| x.type.to_s =~ /Service$/}
+    @services = Intrigue::Core::Model::Entity.scope_by_project(@project_name).all.select{|x| x.type.to_s =~ /Service$/}
     erb :'analysis/services'
   end
 
 
-  get '/:project/analysis/javascripts' do
-    @javascripts = []
-    Intrigue::Model::Entity.scope_by_project(@project_name).where(type: "Intrigue::Entity::Uri").each do |u|
-      libs = u.get_detail("javascript")
-      next unless libs
-
-      # capture name, version, sites here ... only select detected stuff
-      @javascripts.concat libs.map{|x| x.merge(
-        {"name" => "#{x["library"]} #{x["version"]}", "site" => u.name, "id" => u.id}
-      )}
-    end
-
-    erb :'analysis/javascripts'
-  end
-
   get '/:project/analysis/systems' do
-    @entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::IpAddress").sort_by{|x| x.name }
+    @entities = Intrigue::Core::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::IpAddress").sort_by{|x| x.name }
 
     # Grab providers & analyse
-    @asns = {}
+    @networks = {}
     @entities.each do |e|
-      aname = e.get_detail("asn") || "Unknown"
+      aname = e.get_detail("net_name") || "Unknown"
 
       aname = "Unknown" if aname.length == 0
 
-      if @asns[aname]
-        @asns[aname] << e
+      if @networks[aname]
+        @networks[aname] << e
       else
-        @asns[aname] = [e]
+        @networks[aname] = [e]
       end
     end
 
     # Grab providers & analyse
-    @os = {}
+    @geos = {}
     @entities.each do |e|
       # Get the key for the hash
-      if e.get_detail("os").to_a.first
-        os_string = e.get_detail("os").to_a.first["name"]
+      if e.details["geolocation"]
+        geo = e.details["geolocation"]["country_code"]
       else
-        os_string = "None"
+        geo = "Unknown"
       end
 
       # Set the value
-      if @os[os_string]
-        @os[os_string] << e
+      if @geos[geo]
+        @geos[geo] << e
       else
-        @os[os_string] = [e]
+        @geos[geo] = [e]
       end
     end
 
@@ -134,9 +165,8 @@ class IntrigueApp < Sinatra::Base
   end
 
   get '/:project/analysis/fingerprints' do
-    selected_entities = Intrigue::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::Uri").order(:name)
-
-    @fingerprints = selected_entities.map{|x| x.details["fingerprint"] }.compact
+    @selected_entities = Intrigue::Core::Model::Entity.scope_by_project(@project_name).where(
+      :type => "Intrigue::Entity::Uri").order(:name)
 
     erb :'analysis/fingerprints'
   end

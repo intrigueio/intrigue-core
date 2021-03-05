@@ -112,7 +112,7 @@ class SearchCensys < BaseTask
 
   def search_for_individual_ip(ip_address)
     ## Grab IPv4 Results
-    results = @client.search_ipv4_index("ip:#{ip_address}","ipv4")
+    results = @client.search_ipv4_index("ip:#{ip_address}")
     return unless results 
 
     results.each do |r|
@@ -123,13 +123,17 @@ class SearchCensys < BaseTask
         ip = r["ip"]
         ip_entity = _create_entity "IpAddress", { "name" => "#{ip}", "extended_censys" => r }
 
+        _log "Got protocols: #{r["protocols"]}"
+
         # Where we can, let's create additional entities from the scan results
         if r["protocols"]
           r["protocols"].each do |p|
+            
+            _log "Working on #{p}"
 
             # Pull out the protocol
             port = p.split("/").first.to_i # format is like "80/http"
-            _create_network_service_entity(@entity, port, "tcp", {
+            _create_network_service_entity(ip_entity, port, "tcp", {
               "extended_censys" => r
             })
 

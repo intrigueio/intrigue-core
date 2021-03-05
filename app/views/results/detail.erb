@@ -2,7 +2,7 @@
 // super hacky ajax
 function getResultJson(id){
   //get the list of tasks and rewrite the task
-  $.getJSON(location.origin + "/<%=@project_name%>/results/"+ id +".json", function(data) {
+  $.getJSON(location.origin + "/<%=h @project_name%>/results/"+ id +".json", function(data) {
     
     //console.log(data);
     $( "#entities" ).empty();
@@ -12,7 +12,7 @@ function getResultJson(id){
     $.each(data["entities"], function(id, hash) {
       type = hash["type"].split(':')[4];
       name = hash["name"];
-      entity_string += "<li><a href='/<%=@project_name%>/entities/" + hash["id"] + "'> " + type + ": " + name + "</a> ";
+      entity_string += "<li><a href='/<%=h @project_name%>/entities/" + hash["id"] + "'> " + type + ": " + name + "</a> ";
       if ("uri" in hash["details"]){
         entity_string += ("<a target='_blank' href='" + hash["details"]["uri"] + "'>[link]</a>");
       };
@@ -28,7 +28,7 @@ function getResultJson(id){
     $.each(data["issues"], function(id, hash) {
       name = hash["name"];
       //pretty_name = hash["details"]["pretty_name"];
-      entity_string += "<li><a href='/<%=@project_name%>/issues/" + hash["id"] + "'> " + name + "</a> ";
+      entity_string += "<li><a href='/<%=h @project_name%>/issues/" + hash["id"] + "'> " + name + "</a> ";
       if (hash["uri"]){
         entity_string += ("<a target='_blank' href='" + hash["uri"] + "'>[link]</a>");
       };
@@ -37,13 +37,11 @@ function getResultJson(id){
     entity_string += "</ul>";
     //console.log(entity_string);
     $( "#issues" ).append(entity_string);
-
-
   });
 }
 
 window.setInterval(function(){
-  getEntities(<%=@result.id%>);  //calling every 2 seconds
+  getResultJson(<%=@result.id%>);  //calling every 2 seconds
 }, 2000);
 
 //call right away
@@ -51,7 +49,7 @@ getResultJson(<%=@result.id%>);
 </script>
 <div class="row">
 <div class="col-sm-5">
-  <h3>Task Result: <a href="<%=@rerun_uri || nil%>"><%=@result.task_name %></a> </h3>
+  <h3>Task Result: <%=h @result.task_name %>&nbsp;<a href=<%="#{@rerun_uri}"%>><img width=20px src='/img/icons/cycle-white.png'></a></h3>
   <p>ID: <%=@result.id %> </p>
   <p>Start: <%=@result.timestamp_start %> </p>
   <p>End: <%= @result.timestamp_end %> </p>
@@ -59,12 +57,12 @@ getResultJson(<%=@result.id%>);
   <p>Job ID: <%= @result.job_id %> </p>
   <p>Handlers: <%= @result.handlers %></p>
   <p>Depth: <%=@result.depth %> </p>
-  <p>Entity: <a href="/<%=@project_name%>/entities/<%=@result.base_entity.id if @result.base_entity %>"><%= h "#{@result.base_entity}" %></a></p>
+  <p>Entity: <a href="/<%=h @project_name%>/entities/<%=h @result.base_entity.id if @result.base_entity %>"><%= h "#{@result.base_entity}" %></a></p>
   <p>Options: <%=@result.options %> </p>
-  <p>Cancelled: <%= @result.cancelled %> (<a href="<%=request.path%>/cancel">Cancel</a>)</p>
+  <p>Cancelled: <%= @result.cancelled %> (<a href="<%=h request.path%>/cancel">Cancel</a>)</p>
   <p>Complete: <%= @result.complete %></p>
   <p>Entity Count: <%= @result.entities.count %></p>
-  <p>Machine: <%= @result.scan_result.machine if @result.scan_result %></p>
+  <p>Workflow: <%= @result.scan_result.workflow if @result.scan_result %></p>
   <p>Max Depth: <%=@result.scan_result.depth if @result.scan_result %> </p>
 
   Export:
@@ -80,8 +78,10 @@ getResultJson(<%=@result.id%>);
   <div id="entities">
     <p>[Gathering entities...]</p>
   </div>
+
 </div>
-<div class="col-sm-5">
+<div class="col-sm-7">
+
 <%= erb :_log, :layout => false %>
 </div>
 </div>

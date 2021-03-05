@@ -1,6 +1,6 @@
 module Intrigue
-module Model
-module Mixins
+module Core
+module ModelMixins
 module Handleable
 
   def handle(handler_type, prefix=nil)
@@ -12,7 +12,6 @@ module Handleable
     handler = Intrigue::HandlerFactory.create_by_type(handler_type)
     handler.perform("#{self.class}", self.id, prefix)
   end
-
 
   def handle_attached(prefix=nil)
     self.handlers.each do |handler_type|

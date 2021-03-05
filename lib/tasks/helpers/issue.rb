@@ -6,14 +6,14 @@ module Issue
   ### DEPRECATED!!!! Generic helper method to create issues
   ###
   def _create_issue(issue_hash)
-    puts "DEPRECATED METHOD (_create_issue) called on #{issue_hash}"
+    puts "ERROR! DEPRECATED METHOD (_create_issue) called on #{issue_hash}"
 
     issue = issue_hash.merge({  entity_id: @entity.id,
                                 scoped: @entity.scoped,
                                 task_result_id: @task_result.id,
                                 project_id: @project.id })
 
-    _notify("CI Sev #{issue[:severity]}!```#{issue[:name]}```") if issue[:severity] <= 3
+    _notify("CI Sev #{issue[:severity]}!```#{issue[:name]}```") if issue[:severity] <= 2
 
     # adjust naming per new schema
     temp_name = issue[:type]
@@ -28,8 +28,7 @@ module Issue
     issue[:details][:pretty_name] = temp_pretty_name
     issue[:details][:name] = temp_name
 
-    _log_good "Creating issue: #{temp_pretty_name}"
-  Intrigue::Model::Issue.create(_encode_hash(issue))
+  Intrigue::Core::Model::Issue.create(_encode_hash(issue))
   end
 
   def _linkable_issue_exists(issue_type)
@@ -47,12 +46,12 @@ module Issue
       project_id: @project.id, 
       scoped: linked_entity.scoped,
     }
-    
+
     issue = Intrigue::Issue::IssueFactory.create_instance_by_type(
-      issue_type, issue_model_details, _encode_hash(instance_specifics))
-  
+    issue_type, issue_model_details, _encode_hash(instance_specifics))
+    
     # Notify 
-    _notify("LI Sev #{issue[:severity]}!```#{issue[:name]}```") if issue[:severity] <= 3
+    _notify("LI Sev #{issue[:severity]}!```#{issue[:name]}```") if issue[:severity] <= 2
 
   issue 
   end
@@ -75,16 +74,38 @@ module Issue
   ### Application oriented issues
   ###
 
+  ###
+  ### Generic finding coming from ident. 
+  ###
   def _create_content_issue(uri, check)
     _create_linked_issue("content_issue", { uri: uri, check: check })
   end
 
+  def _create_wide_scoped_cookie_issue(uri, cookie, severity=5)
+    hostname = URI(uri).hostname
+    return if hostname.match(ipv4_regex) || hostname.match(ipv6_regex)
+    
+    addtl_details = { cookie: cookie }
+    _create_linked_issue("insecure_cookie_widescoped", addtl_details)
+  end
+
+
   def _create_missing_cookie_attribute_http_only_issue(uri, cookie, severity=5)
+    
+    # skip this for anything other than hostnames 
+    hostname = URI(uri).hostname
+    return if hostname.match(ipv4_regex) || hostname.match(ipv6_regex)
+    
     addtl_details = { cookie: cookie }
     _create_linked_issue("insecure_cookie_httponly_attribute", addtl_details)
   end
 
   def _create_missing_cookie_attribute_secure_issue(uri, cookie, severity=5)
+    
+    # skip this for anything other than hostnames 
+    hostname = URI(uri).hostname
+    return if hostname.match(ipv4_regex) || hostname.match(ipv6_regex)
+    
     addtl_details = { cookie: cookie }
     _create_linked_issue("insecure_cookie_secure_attribute", addtl_details)
   end
@@ -100,12 +121,12 @@ module Issue
   def _check_request_hosts_for_suspicious_request(uri, request_hosts)
 
     # don't flag on actual localhost
-    return if uri =~ /:\/\/127\.0\.0\./
-    return if uri =~ /:\/\/localhost/
+    return if uri.match /:\/\/127\.0\.0\./
+    return if uri.match /:\/\/localhost/
 
     if  ( request_hosts.include?("localhost") ||
           request_hosts.include?("0.0.0.0") ||
-          !request_hosts.select{|x| x =~ /^127\.\d\.\d\.\d$/ }.empty?)
+          !request_hosts.select{|x| x.match(/^127\.\d\.\d\.\d$/) }.empty?)
 
         _create_linked_issue("suspicious_web_resource_requested",{ 
           requests: request_hosts,
@@ -130,13 +151,29 @@ module Issue
 
       resource_url = req["url"]
 
-      if resource_url =~ /^http:.*$/ 
+      # skip data 
+      return if uri.match(/^data:.*$/)
+
+      # skip this for anything other than hostnames 
+      begin 
+        hostname = URI(resource_url).hostname
+        return unless hostname
+      rescue URI::InvalidURIError => e 
+        @task_result.logger.log_error "Unable to parse URI: #{resource_url}"
+        return 
+      end
+
+      # avoid doubling up
+      return if hostname.match(ipv4_regex) || hostname.match(ipv6_regex)
+
+      if resource_url.match(/^http:\/\/.*$/)
         _create_linked_issue("insecure_content_loaded", {
           uri: uri,
           insecure_resource_url: resource_url,
           request: req
         })
       end
+
     end
   end
 
@@ -144,8 +181,16 @@ module Issue
   ### Network and Host oriented issues
   ###
 
+  # RFC1918 DNS
+  def _internal_system_exposed_via_dns(name)
+    _create_linked_issue("internal_system_exposed_via_dns", {
+      resolutions: "#{@entity.aliases.map{|x| x.name}}",
+      exposed_ports: @entity.details["ports"]
+    })
+  end
+
   # Development or Staging
-  def _exposed_server_identified(regex, name=nil, type="Development")
+  def _exposed_server_identified(regex, name=nil)
     exposed_name = name || @entity.name
     _create_linked_issue("development_system_identified", {
       matched_regex: "#{regex}",

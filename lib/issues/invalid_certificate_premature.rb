@@ -4,10 +4,11 @@ module Intrigue
   
     def self.generate(instance_details={})
       {
+        added: "2020-01-01",
         name: "invalid_certificate_premature",
         pretty_name: "Invalid (Premature) Certificate",
         severity: 3,
-        category: "application",
+        category: "misconfiguration",
         status: "confirmed",
         description: "This certificate was found to be not valid until a date in the future",
         remediation: "Replace the certificate and/oor de-provision the service",

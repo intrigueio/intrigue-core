@@ -66,24 +66,8 @@ class AwsS3Bucket < Intrigue::Task::BaseTask
     _log "interesting files: #{interesting_files}"
     _log "downloadable files: #{downloadable_files}"
 
-    # this should be a "Finding" or some sort of success event ?
     if interesting_files.sort.uniq.count > 0
-      #_notify("Interesting Files: #{interesting_files}")
-      ############################################
-      ###      Old Issue                      ###
       ###########################################
-      # _create_issue({
-      #   name: "S3 Bucket Data Leak",
-      #   type: "s3_bucket_data_leak",
-      #   severity: 4,
-      #   status: "confirmed",
-      #   description: "Interesting files located in #{bucket_uri}",
-      #   details: {
-      #     interesting_files: interesting_files,
-      #     uri: bucket_uri
-      #   }
-      # })
-      ############################################
       ###      New Issue                      ###
       ###########################################
       _create_linked_issue("aws_s3_bucket_data_leak", {
@@ -109,11 +93,11 @@ class AwsS3Bucket < Intrigue::Task::BaseTask
     interesting_files = []
 
     doc = Nokogiri::HTML(resp)
-    if  ( doc.xpath("//code").text =~ /NoSuchBucket/ ||
-          doc.xpath("//code").text =~ /InvalidBucketName/ ||
-          doc.xpath("//code").text =~ /AllAccessDisabled/ ||
-          doc.xpath("//code").text =~ /AccessDenied/
-          doc.xpath("//code").text =~ /PermanentRedirect/ )
+    if  ( doc.xpath("//code").text.match(/NoSuchBucket/)          ||
+          doc.xpath("//code").text.match(/InvalidBucketName/)     ||
+          doc.xpath("//code").text.match(/AllAccessDisabled/)     ||
+          doc.xpath("//code").text.match(/AccessDenied/)          || 
+          doc.xpath("//code").text.match(/PermanentRedirect/)  )
       _log_error "Got response: #{doc.xpath("//code").text} (#{s3_uri})"
 
     else # check each file size
@@ -176,7 +160,7 @@ class AwsS3Bucket < Intrigue::Task::BaseTask
       /^.*\.tif$/i,
       /^.*\.wmv$/i
     ].each do |regex|
-      return true if uri =~ regex
+      return true if uri.match(regex)
     end
 
   false

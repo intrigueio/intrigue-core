@@ -14,13 +14,7 @@ class NetworkService < Intrigue::Task::BaseTask
       :passive => false,
       :allowed_types => ["NetworkService"],
       :example_entities => [
-        { "type" => "NetworkService",
-          "details" => {
-            "ip_address" => "1.1.1.1",
-            "port" => 1111,
-            "protocol" => "tcp"
-          }
-        }
+        { "type" => "NetworkService", "details" => { "name" => "1.1.1.1:1111/tcp" } }
       ],
       :allowed_options => [],
       :created_types => []
@@ -31,9 +25,105 @@ class NetworkService < Intrigue::Task::BaseTask
   def run
     _log "Enriching... Network Service: #{_get_entity_name}"
 
-    enrich_ftp if _get_entity_detail("service") == "FTP"
-    enrich_snmp if _get_entity_detail("service") == "SNMP"
+    ###
+    ### First, normalize the nane - split out the various attributes
+    ###
+    entity_name = _get_entity_name
 
+    # grab the ip, handling ipv6 gracefully
+    if entity_name =~ /:/ 
+      ip_address = entity_name.split(":")[0..-2].join(":")
+    else 
+      ip_address = entity_name.split(":").first
+    end
+
+    port = entity_name.split(":").last.split("/").first.to_i
+    proto = entity_name.split(":").last.split("/").first.upcase
+    net_name = _get_entity_detail("net_name")
+
+    _set_entity_detail("ip_address", ip_address)
+    _set_entity_detail("port", port)
+    _set_entity_detail("proto", proto)
+
+    # Use Ident to fingerprint
+    _log "Grabbing banner and fingerprinting!"
+    ident_response = fingerprint_service(ip_address, port, proto) 
+    
+    fingerprint = ident_response["fingerprint"]
+
+    # set entity details 
+    _set_entity_detail "fingerprint", fingerprint
+
+    # Translate ident fingerprint (tags) into known issues
+    create_issues_from_fingerprint_tags(fingerprint, @entity)
+    
+    # Create issues for any vulns that are version-only inference
+    fingerprint_to_inference_issues(fingerprint)
+
+    # Okay, now kick off vulnerability checks (if project allows)
+    if @project.vulnerability_checks_enabled
+      vuln_checks = run_vuln_checks_from_fingerprint(fingerprint, @entity)
+      _set_entity_detail("vuln_checks", vuln_checks)
+    end
+
+    ###
+    ### Handle SNMP as a special treat
+    ###
+    enrich_snmp if port == 161 && proto.upcase == "UDP"
+
+    ###
+    ### Hide Some services based on their attributes
+    ###
+
+    hide_value = false
+    hide_reason = "default"
+
+    # consider these noise
+    noise_networks = [
+      "CLOUDFLARENET - CLOUDFLARE, INC., US", 
+      "GOOGLE, US", 
+      "CLOUDFLARENET, US", 
+      "GOOGLE-PRIVATE-CLOUD, US", 
+      "INCAPSULA, US", 
+      "INCAPSULA - INCAPSULA INC, US"
+    ]
+
+    # drop them if we don't have a fingerprint
+    #
+    # TODO ... this might need to be checked for a generic reset now
+    #
+    if noise_networks.include?(net_name) &&
+         (_get_entity_detail("fingerprint") || []).empty?
+      # always allow these ports even if we dont have a fingeprint
+      unless (port == 80 || port == 443) 
+        hide_value = true
+        hide_reason = "noise_network"
+      end
+    end
+
+    known_ports = [
+      { port: 2082, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::" },  
+      { port: 2083, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },  
+      { port: 2086, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
+      { port: 2087, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
+      { port: 2095, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  }, 
+      { port: 2082, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::" },  
+      { port: 2083, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },  
+      { port: 2086, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
+      { port: 2087, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
+      { port: 2095, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  }, 
+      { port: 25, net_name: "GOOGLE, US" }
+    ]
+    if known_ports.find{ |x| x[:port] == port && x[:net_name] == net_name }
+      hide_reason = "Matched known hidden service"
+      hide_value = true 
+    end
+
+    # Okay now hide based on our value 
+    _log "Setting Hidden to: #{hide_value}, for reason: #{hide_reason}"
+    @entity.hidden = hide_value 
+    @entity.save_changes
+  
   end
 
   def enrich_snmp
@@ -83,55 +173,6 @@ class NetworkService < Intrigue::Task::BaseTask
       File.delete(temp_file)
     rescue Errno::EPERM
       _log_error "Unable to delete file"
-    end
-  end
-
-  def enrich_ftp
-    # TODO this won't work once we fix the name regex
-    port = _get_entity_detail("port").to_i
-    port = 21 if port == 0 # handle empty port
-    protocol = _get_entity_detail("protocol") ||  "tcp"
-    ip_address = _get_entity_detail("ip_address") || _get_entity_name
-
-    # Check to make sure we have a sane target
-    if protocol.downcase == "tcp" && ip_address && port
-
-      banner = ""
-      begin
-        sockets = Array.new #select() requires an array
-        #fill the first index with a socket
-        sockets[0] = TCPSocket.open(ip_address, port)
-        iterations = 0
-        max_iterations = 100
-        while iterations < max_iterations # loop till we hit max iterations
-        _log "Reading from socket #{iterations}/#{max_iterations}"
-        # listen for a read, timeout 5
-        res = select(sockets, nil, nil, 5)
-          if res != nil  # a nil is a timeout and will break
-            break unless sockets[0]
-            banner << "#{sockets[0].gets()}" # WARNING! THIS PRINTS NIL FOREVER on a server crash
-          else
-            sockets[0].close
-            break
-          end
-          iterations += 1
-        end
-      rescue Errno::ETIMEDOUT => e
-        _log_error "Unable to connect: #{e}"
-      rescue Errno::ECONNRESET => e
-        _log_error "Unable to connect: #{e}"
-      rescue SocketError => e
-        _log_error "Unable to connect: #{e}"
-      end
-
-      if banner.length > 0
-        _log "Got banner for #{ip_address}:#{port}/#{protocol}: #{banner}"
-        _log "updating entity with banner info!"
-        _set_entity_detail "banner", banner
-      else
-        _log "No banner available"
-      end
-
     end
   end
 

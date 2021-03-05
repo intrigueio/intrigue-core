@@ -12,10 +12,8 @@ class Gitrob < BaseTask
       :references => ["https://github.com/michenriksen/gitrob"],
       :passive => true,
       :allowed_types => ["GithubAccount"],
-      :example_entities => [
-        {"type" => "GithubAccount", "attributes" => {"name" => "intrigueio"}}
-      ],
-      :allowed_options => [ ],
+      :example_entities => [{"type" => "GithubAccount", "details" => {"name" => "intrigueio"}}],
+      :allowed_options => [],
       :created_types => ["GithubRepository"]
     }
   end
@@ -31,8 +29,10 @@ class Gitrob < BaseTask
 
     # task assumes gitrob is in our path and properly configured
     _log "Starting Gitrob on #{github_account}, saving to #{temp_file}!"
-    command_string = "gitrob -github-access-token #{token} -save #{temp_file} #{github_account}"
-    _unsafe_system command_string
+    command_string = "gitrob -github-access-token #{token} -save #{temp_file} -exit-on-finish -no-expand-orgs -commit-depth 20 --threads 20 -in-mem-clone #{github_account}"
+    # gitrob tends to hang so we set a timeout of 5 minutes (300 seconds)
+    # the gitrob fork we use requires two files in the current working directory, hence setting working dir to ~/bin/data/gitrob
+    _unsafe_system command_string, 300, "#{Dir.home}/bin/data/gitrob"
     _log "Gitrob finished on #{github_account}!"
 
     # parse output
@@ -82,6 +82,7 @@ class Gitrob < BaseTask
     end
 
     # create findings
+    suspicious_commits = []
     if output["Findings"]
       finding_hash = {}
       output["Findings"].each do |f|
@@ -89,39 +90,26 @@ class Gitrob < BaseTask
         # skip if credentials or password is used in the fileurl
         next if (f["Description"] == "Contains word: credential" && f["FilePath"] =~ /credential.html/i )
         next if (f["Description"] == "Contains word: password" && f["FilePath"] =~ /password.html/i )
+        sp = {}
+        sp["Commit URL"] = "#{f["CommitUrl"]}"
+        sp["Repository URL"] = "#{f['RepositoryUrl']}"
+        sp["Commit Author"] = "#{f["CommitAuthor"]}"
+        sp["Commit Message"] = "#{f["CommitMessage"]}"
+        sp["Action"] = "#{f["Action"]}"
+        sp["File URL"] = "#{f["FileUrl"]}"
 
-        ############################################
-        ###      Old Issue                      ###
-        ###########################################
-        # _create_issue({
-        #   name: "Suspicious #{f["Action"]} Commit Found In Github Repository",
-        #   type: "suspicious_commit",
-        #   severity: 4,
-        #   status: "potential",
-        #   description:  "A suspicious commit was found in a public Github repository.\n" +
-        #                 "Repository URL: #{f['RepositoryUrl']}\n" +
-        #                 "Commit Author: #{f["CommitAuthor"]}\n" +
-        #                 "Commit Message #{f["CommitMessage"]}\n" +
-        #                 "Details: #{f["Action"]} #{f["Description"]} at #{f["FileUrl"]}\n\n#{f["Comment"]}",
-        #   details: f.merge({uri: "#{f["CommitUrl"]}"})
-        # })
-
-        ############################################
-        ###      New Issue                      ###
-        ###########################################
-        _create_linked_issue({
-          name: "Suspicious #{f["Action"]} Commit Found In Github Repository",
-          detailed_description:  "A suspicious commit was found in a public Github repository.\n" +
-                        "Repository URL: #{f['RepositoryUrl']}\n" +
-                        "Commit Author: #{f["CommitAuthor"]}\n" +
-                        "Commit Message #{f["CommitMessage"]}\n" +
-                        "Details: #{f["Action"]} #{f["Description"]} at #{f["FileUrl"]}\n\n#{f["Comment"]}",
-          details: f.merge({uri: "#{f["CommitUrl"]}"})
-        })
+        suspicious_commits.append(sp)
       end
-
     else
       _log "No findings!"
+    end
+
+    if suspicious_commits.length > 0
+      _create_linked_issue("suspicious_commit", {
+        name: "Suspicious commit(s) found in Github Repository",
+        detailed_description:  "One or more suspicious commits were found in a public Github repository",
+        details: suspicious_commits
+      })
     end
 
     # clean up

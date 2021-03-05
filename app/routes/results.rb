@@ -1,5 +1,4 @@
-class IntrigueApp < Sinatra::Base
-  include Intrigue::Task::Helper
+class CoreApp < Sinatra::Base
 
     # Export All task results
     get '/:project/results.json/?' do
@@ -10,24 +9,23 @@ class IntrigueApp < Sinatra::Base
     # Show the results in a CSV format
     get '/:project/results/:id.csv/?' do
       content_type 'text/plain'
-      task_result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
+      task_result = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       task_result.export_csv
     end
 
     # Show the results in a CSV format
     get '/:project/results/:id.tsv/?' do
       content_type 'text/plain'
-      task_result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
+      task_result = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       task_result.export_tsv
     end
 
     # Show the results in a JSON format
     get '/:project/results/:id.json/?' do
       content_type 'application/json'
-      result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
+      result = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       result.export_json if result
     end
-
 
     get '/:project/results' do
       paginate_count = 100
@@ -41,7 +39,7 @@ class IntrigueApp < Sinatra::Base
 
       (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
 
-      selected_results = Intrigue::Model::TaskResult.scope_by_project(@project_name).reverse(:timestamp_start)
+      selected_results = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).reverse(:timestamp_start)
 
       if @search_string
         if @inverse
@@ -60,26 +58,24 @@ class IntrigueApp < Sinatra::Base
       @result_count = selected_results.count
       @results = selected_results.extension(:pagination).paginate(@page,paginate_count)
 
-      erb :'results/index'
-    end
+      @calculated_url = "/#{h @project_name}/results?search_string=#{h @search_string}" +
+        "&inverse=#{params[:inverse]}" + 
+        "&hide_enrichment=#{params[:hide_enrichment]}" + 
+        "&hide_autoscheduled=#{params[:hide_autoscheduled]}" + 
+        "&hide_cancelled=#{params[:hide_cancelled]}" + 
+        "&only_complete=#{params[:only_complete]}"
 
-=begin
-    # Kick off a task
-    get '/:project/results/?' do
-      search_string = params["search_string"]
-      # get a list of task_results
       erb :'results/index'
     end
-=end
 
     # Allow cancellation
     get '/:project/results/:id/cancel' do
       id = params[:id]
       if id == "all"
-        Intrigue::Model::TaskResult.scope_by_project(@project_name).paged_each(:rows_per_fetch => 500) {|x| x.cancel! }
+        Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).paged_each(:rows_per_fetch => 500) {|x| x.cancel! }
         redirect "/#{@project_name}/results"
       else
-        Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id]).cancel!
+        Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id]).cancel!
         redirect "/#{@project_name}/results/#{params[:id]}"
       end
     end
@@ -89,8 +85,7 @@ class IntrigueApp < Sinatra::Base
 
       task_name = "#{@params["task"]}"
       entity_id = @params["entity_id"]
-      depth = @params["depth"].to_i
-      current_project = Intrigue::Model::Project.first(:name => @project_name)
+      current_project = Intrigue::Core::Model::Project.first(:name => @project_name)
       entity_name = "#{@params["attrib_name"]}"
       auto_scope = true # manually created
 
@@ -101,11 +96,14 @@ class IntrigueApp < Sinatra::Base
         handlers = []
       end
 
-      ### Machine definition, make sure we have a valid type
-      if Intrigue::MachineFactory.has_machine? "#{@params["machine"]}"
-        machine_name = "#{@params["machine"]}"
-      else
-        machine_name = "external_discovery_light_active"
+      ### Workflow definition, make sure we have a valid type
+      workflow_name_string = "#{@params["workflow"]}".strip
+      if wf = Intrigue::WorkflowFactory.create_workflow_by_name(workflow_name_string)
+        workflow_name = wf.name
+        workflow_depth = wf.depth || 5 
+      else # default to none 
+        workflow_name = nil
+        workflow_depth = 1
       end
 
       auto_enrich = @params["auto_enrich"] == "on" ? true : false
@@ -123,19 +121,18 @@ class IntrigueApp < Sinatra::Base
 
       # Construct an entity from the data we have
       if entity_id
-        entity = Intrigue::Model::Entity.scope_by_project(@project_name).first(:id => entity_id)
+        entity = Intrigue::Core::Model::Entity.scope_by_project(@project_name).first(:id => entity_id)
       else
         entity_type = @params["entity_type"]
         return unless entity_type
 
         # create the first entity
         entity = Intrigue::EntityManager.create_first_entity(@project_name,entity_type,entity_name,entity_details)
-
       end
 
       unless entity
         session[:flash] = "Unable to create entity, check your parameters: #{entity_name} #{entity_type}!" +
-        " For more help see <a href=\"/system/entities\">Entity Help</a>"
+        " For more help see the Entity Definitions under 'Help'!"
         redirect FRONT_PAGE
       end
 
@@ -143,23 +140,35 @@ class IntrigueApp < Sinatra::Base
       options = []
       @params.each do |name,value|
         if name =~ /^option/
+
+          clean_option_name = name.gsub("option_","")
+          
+          # handle nil 
+          clean_option_value = value == "null" ? nil : value
+
+          # handle bool 
+          if ["false","true"].include? clean_option_value
+            clean_option_value = clean_option_value.to_bool 
+          end
+        
           options << {
-            "name" => "#{name.gsub("option_","")}",
-            "value" => "#{value}"
-            }
+            "name" => "#{clean_option_name}",
+            "value" => clean_option_value
+          }
+
         end
       end
 
       # Start the task run!
       task_result = start_task("task", current_project, nil, task_name, entity,
-                                depth, options, handlers, machine_name, auto_enrich, auto_scope)
+                                workflow_depth, options, handlers, workflow_name, 
+                                auto_enrich, auto_scope)
 
       entity.task_results << task_result
       entity.save
 
       # Manually starting enrichment here
       if auto_enrich && !(task_name =~ /^enrich/)
-        task_result.log "User-created entity, manually creating and enriching!"
         entity.enrich(task_result)
       end
 
@@ -169,12 +178,10 @@ class IntrigueApp < Sinatra::Base
     post '/:project/interactive/upload' do
       task_name = "#{@params["task"]}"
       entity_id = @params["entity_id"]
-      depth = @params["depth"].to_i
-      current_project = Intrigue::Model::Project.first(:name => @project_name)
       entity_name = "#{@params["attrib_name"]}".strip
       file_format = "#{@params["file_format"]}".strip
 
-      # first check that our file is sane 
+      # first check that our file is sane
       file_type = @params["entity_file"]["type"]
       puts "Got file of type: #{file_type}"
 
@@ -183,68 +190,33 @@ class IntrigueApp < Sinatra::Base
         session[:flash] = "Bad file data, ensure we're a text file and valid format: #{file_type}"
         redirect FRONT_PAGE
       end
-      
+
       # get the file
       entity_file = @params["entity_file"]["tempfile"]
-      f = File.open entity_file,"r"
-      file_lines = f.readlines
-      f.close 
-
-      # ensure we're sane  with the data we're bringing in
-      file_lines.each do |l|
-        unless l =~ /[\w\d\s\_\-\:\\\/\#\.]+/ # check for entity sanity
-          session[:flash] = "Unacceptable entity: #{l}, failing"
-          redirect FRONT_PAGE
-        end
-      end
-
 
       ###
       ### Standard file type (entity list)
       ###
-      entities = []
+
       # handle file if we got it
       if file_format == "entity_list"
-        puts 'Parsing Standard entity file'
-        file_lines.each do |l|
-          next if l[0] == "#" # skip comment lines
-
-          # strip out the data
-          et, en = l.split("#").map{|x| x.strip}
-
-          entities << {entity_type: "#{et}", entity_name: "#{en}", }
-        end
-      ###
+        entities = core_csv_to_entities(entity_file)
+      ### Intrigue.io Bulk FP
+      elsif file_format == "intrigueio_fingerprint_csv"
+        entities = intrigueio_csv_to_entities(entity_file)
       ### Alienvault OTX (CSV)
-      ###
       elsif file_format == "otx_csv"
-        puts 'Parsing Alienvault file'
-        file_lines.each do |l|
-          
-          next if l =~ /^Indicator type,Indicator,Description\r\n$/
-          
-          # strip out the data
-          split_line = l.split(",").map{|x| x.strip }
-          et = split_line[0] # indicator type
-          en = split_line[1] # indicator
-
-          # start here
-          modified_et = et.capitalize
-          
-          # translate
-          modified_et = "Uri" if modified_et == "Url"
-          modified_et = "DnsRecord" if modified_et == "Hostname"
-          modified_et = "IpAddress" if modified_et == "Ipv4"
-          modified_et = "IpAddress" if modified_et == "Ipv6"
-
-          entities << {entity_type: "#{modified_et}", entity_name: "#{en}" }
-        end
-      else 
+        entities = alienvault_otx_csv_to_entities(entity_file)
+      ### BinaryEdge (JSON)
+      elsif file_format == "binary_edge_jsonl"
+        entities = binary_edge_jsonl_to_entities(entity_file)
+      ### Shodan.io (CSV)
+      elsif file_format == "shodan_csv"
+        entities = shodan_csv_to_entities(filename)
+      else
         session[:flash] = "Unkown File Format #{file_format}, failing"
         redirect FRONT_PAGE
       end
-
-      puts "Got entities: #{entities}"
 
       ### Handler definition, make sure we have a valid handler type
       if Intrigue::HandlerFactory.include? "#{@params["handler"]}"
@@ -253,34 +225,48 @@ class IntrigueApp < Sinatra::Base
         handlers = []
       end
 
-      ### Machine definition, make sure we have a valid type
-      if Intrigue::MachineFactory.has_machine? "#{@params["machine"]}"
-        machine_name = "#{@params["machine"]}"
+      ### Workflow definition, make sure we have a valid type
+      workflow_name_string = "#{@params["workflow"]}".strip
+      if wf = Intrigue::WorkflowFactory.create_workflow_by_name(workflow_name_string)
+        workflow_name = wf.name
+        workflow_depth = wf.default_depth
       else
-        machine_name = "external_discovery_light_active"
+        workflow_name = nil
+        workflow_depth = 1
       end
 
       auto_enrich = @params["auto_enrich"] == "on" ? true : false
-      auto_scope = true  # manually created
+      auto_scope = true # manually created
+
+      # set our project (default)
+      current_project = Intrigue::Core::Model::Project.first(:name => @project_name)
 
       # for each entity in thefile
+
       entities.each do |e|
         entity_type = e[:entity_type]
         entity_name = e[:entity_name]
 
+        ###
+        ### If collection was set, overried the project on a per-entity basis
+        ###
+        if e[:collection]
+          project = e[:collection]
+          current_project = Intrigue::Core::Model::Project.update_or_create(:name => project)
+        end
+
         # create the first entity with empty details
         #next unless Intrigue::EntityFactory.entity_types.include?(entity_type)
-        entity = Intrigue::EntityManager.create_first_entity(@project_name,entity_type,entity_name,{})
+        entity = Intrigue::EntityManager.create_first_entity(current_project.name ,entity_type,entity_name,{})
 
-        # skip anything we can't parse, but throw an error
+        # skip anything we can't parse, silently fail today :[
         unless entity
-          task_result.log_error "Could not create entity!!"
           next
         end
 
         # Start the task run!
         task_result = start_task("task", current_project, nil, task_name, entity,
-                  depth, nil, handlers, machine_name, auto_enrich, auto_scope)
+                  workflow_depth, nil, handlers, workflow_name, auto_enrich, auto_scope)
 
         entity.task_results << task_result
         entity.save
@@ -301,12 +287,12 @@ class IntrigueApp < Sinatra::Base
       task_result_id = params[:id].to_i
 
       # Get the task result from the database, and fail cleanly if it doesn't exist
-      @result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => task_result_id)
+      @result = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).first(:id => task_result_id)
       return "Unknown Task Result" unless @result
 
       # Assuming it's available, display it
       if @result
-        @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/#{@project_name}/start?result_id=#{@result.id}"
+        @rerun_uri = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/#{h @project_name}/start/task?result_id=#{@result.id}"
         @elapsed_time = "#{(@result.timestamp_end - @result.timestamp_start).to_i}" if @result.timestamp_end
       end
 
@@ -324,26 +310,23 @@ class IntrigueApp < Sinatra::Base
     #payload = {
     #  "project_name" => project_name,
     #  "handlers" => []
-    #  "task" => task_name,
-    #  "entity" => entity_hash,
-    #  "options" => options_list,
+    #  "task" => "task_name",
+    #  "workflow_name" => "intrigueio_test_workflow",
+    #  "entity" => { "type" : "Domain", "name" : "test" },
+    #  "options" => [],
     #  "auto_enrich" => false
     #}.to_json
     post '/:project/results/?' do
 
       # Parse the incoming request
       payload = JSON.parse(request.body.read) if (request.content_type == "application/json" && request.body)
-      puts "Got payload: #{payload}"
 
       ### don't take any shit
-      return "No payload!" unless payload
+      raise InvalidEntityError, "Empty Payload?" unless payload
 
       # Construct an entity from the entity_hash provided
       type_string = payload["entity"]["type"]
       name = payload["entity"]["name"]
-
-      # Collect the depth (which can kick off a recursive "scan", but default to a single)
-      depth = payload["depth"] || 1
 
       resolved_type = Intrigue::EntityManager.resolve_type_from_string type_string
 
@@ -352,11 +335,21 @@ class IntrigueApp < Sinatra::Base
         "name" => "#{name}"
       )
 
+      ### Workflow definition, make sure we have a valid type
+      workflow_name_string = "#{@params["workflow"]}".strip
+      if wf = Intrigue::Core::Model::Workflow.first(:name => "#{@params["workflow_name"]}")
+        workflow_name = wf.name
+        workflow_depth = wf.default_depth
+      else
+        workflow_name = nil
+        workflow_depth = 1
+      end
+
+
       # Get the details from the payload
       task_name = payload["task"]
       options = payload["options"]
       handlers = payload["handlers"]
-      machine_name = payload["machine_name"]
       auto_enrich = "#{payload["auto_enrich"]}".to_bool
       auto_scope = true # manually created
 
@@ -364,12 +357,12 @@ class IntrigueApp < Sinatra::Base
       entity = Intrigue::EntityManager.create_first_entity(@project_name,type_string,name,{})
 
       # create the project if it doesn't exist
-      project = Intrigue::Model::Project.first(:name => @project_name)
-      project = Intrigue::Model::Project.create(:name => @project_name) unless project
+      project = Intrigue::Core::Model::Project.first(:name => @project_name)
+      project = Intrigue::Core::Model::Project.create(:name => @project_name) unless project
 
       # Start the task_run
-      task_result = start_task("task", project, nil, task_name, entity, depth,
-                                  options, handlers, machine_name, auto_enrich, auto_scope)
+      task_result = start_task("task", project, nil, task_name, entity, workflow_depth,
+                                  options, handlers, workflow_name, auto_enrich, auto_scope)
 
       # manually start enrichment, since we've already created the entity above, it won't auto-enrich ^
       if auto_enrich && !(task_name =~ /^enrich/)
@@ -387,7 +380,7 @@ class IntrigueApp < Sinatra::Base
     # Determine if the task run is complete
     get '/:project/results/:id/complete/?' do
       # Get the task result and return unless it's false
-      x = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
+      x = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       return false unless x
 
       # if we got it, and it's complete, return true
@@ -400,7 +393,7 @@ class IntrigueApp < Sinatra::Base
     # Get the task log
     get '/:project/results/:id/log/?' do
       content_type 'application/json'
-      result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
+      result = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).first(:id => params[:id])
       return unless result
 
       {:data => result.get_log}.to_json
@@ -414,7 +407,7 @@ class IntrigueApp < Sinatra::Base
       result_id = params[:id].to_i
 
       # Get the result from the database, and fail cleanly if it doesn't exist
-      result = Intrigue::Model::TaskResult.scope_by_project(@project_name).first(:id => result_id)
+      result = Intrigue::Core::Model::TaskResult.scope_by_project(@project_name).first(:id => result_id)
 
       # run the handler(s) we set up
       result.handle(handler_name)

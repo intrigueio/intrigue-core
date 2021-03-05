@@ -7,7 +7,7 @@ module Intrigue
         :name => "check_public_cloud_status",
         :pretty_name => "Check Public Cloud Status",
         :authors => ["jcran"],
-        :description => "This task checks whether an entity is known to be hosted in the public cloud.",
+        :description => "This task checks whether an entity is known to be hosted in the public cloud using a variety of techniques (known ip range, dns, asn, etc).",
         :references => [],
         :type => "discovery",
         :passive => true,

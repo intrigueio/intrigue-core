@@ -26,10 +26,14 @@ class DnsPermute < BaseTask
     # Set the basename
     basename = _get_entity_name
 
-    # XXX - use the resolver option if we have it.
-    # Note that we have to specify an empty search list, otherwise we end up
-    # searching .local by default on osx.
-    @resolver = Resolv.new([Resolv::DNS.new(:search => [])])
+    # gracefully decline to permute these.. 
+    skip_regexes = [ /^.*s3.*\.amazonaws.com$/,  ]
+    skip_regexes.each do |r|
+      if basename =~ /r/
+        _log_error "Unable to permute, too many false positives to make it worthwhile"
+        return 
+      end
+    end
 
     # figure out all of our permutation points here.
     # "google.com" < 1 permutation point?
@@ -37,12 +41,17 @@ class DnsPermute < BaseTask
     # "1.test.2.yahoo.com" < 3 permutation points?
     # "1.2.3.4.yahoo.com" < 5 permutation points?
     baselist = basename.split(".")
-    brute_domain = baselist[1..-1].join(".")
+    if parse_domain_name(basename) == basename
+      brute_domain = basename
+    else 
+      brute_domain = baselist[1..-1].join(".")
+    end
 
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)
+    wildcard_responses = gather_wildcard_resolutions(brute_domain, true)
+    _log "Using wildcard ips as: #{wildcard_ips}"
 
-    wildcard_ips = check_wildcard(brute_domain)
 
     # Create a queue to hold our list of attempts
     work_q = Queue.new
@@ -143,6 +152,7 @@ class DnsPermute < BaseTask
         begin
           while work_item = work_q.pop(true)
             begin
+
               fqdn = "#{work_item[:generated_permutation]}"
               permutation = "#{work_item[:permutation]}"
               depth = work_item[:depth]
@@ -151,8 +161,10 @@ class DnsPermute < BaseTask
               resolved_address = resolve_name(fqdn)
 
               if resolved_address # If we resolved, create the right entities
+                _log "Resolved: #{fqdn} to #{resolved_address}"
 
-                unless wildcard_ips.include?(resolved_address)
+
+                unless wildcard_responses.include?(resolved_address)
                   _log_good "Resolved address #{resolved_address} for #{fqdn} and it wasn't in our wildcard list."
                   main_entity = _create_entity("DnsRecord", {"name" => fqdn })
                 end

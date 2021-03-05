@@ -1,3 +1,4 @@
+<div class="container-fluid">
 <div class="row">
   <div id="aflkj" class="col-sm-12">
     <script type="text/javascript" src="/js/sorttable.js"></script>
@@ -29,10 +30,11 @@
       <% @javascripts.each do |x| %>
         <tr>
           <td><%=h x["name"] %></td>
-          <td><a href="<%=h "/#{@project_name}/entities/#{x["id"]}"%>"><%= h x["site"] %></a></td>
+          <td><a href="<%="/#{h @project_name}/entities/#{x["id"]}"%>"><%= h x["site"] %></a></td>
         </tr>
       <% end %>
       </tbody>
     </table>
   </div>
+</div>
 </div>

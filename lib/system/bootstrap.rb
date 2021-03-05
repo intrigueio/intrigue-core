@@ -1,53 +1,69 @@
 module Intrigue
+module Core
 module System
 module Bootstrap
 
   def bootstrap_system(config)
-    extend Intrigue::Task::Helper
+    extend Intrigue::Core::System::Helpers
 
     return nil unless config && config["projects"]
 
+    ###
+    ### TODO ... handle system configuration here
+    ###
     ### Set any system configuration
 
+    ###
+    ### TODO ... handle task configuration here
+    ###
     ### Set any task configuration
-    if config["task_configuration"]
-      config["task_configuration"].each do |k,v|
-        Intrigue::System::Config.set_task_config(k,v)
-      end
-    end
+    #if config["task_configuration"]
+    #  config["task_configuration"].each do |k,v|
+    #    Intrigue::Core::System::Config.set_task_config(k,v)
+    #  end
+    #end
 
     # XXX - Assumes we start at a clean system!!!!
     config["projects"].each do |p|
 
       Intrigue::NotifierFactory.default.each do |x|
-        x.notify("#{p["name"]} collection starting with #{p["seeds"].count if p["seeds"]} seeds!")
+        x.notify("#{p["name"]} collection starting with #{p["seeds"].count if p["seeds"]} seeds, using workflow: #{p["workflow_name"]}!")
       end
 
       project_name = p["name"]
       @task_result.log "Working on project: #{project_name}" if @task_result
 
-      project = Intrigue::Model::Project.find_or_create(:name => "#{project_name}")
+      project = Intrigue::Core::Model::Project.find_or_create(:name => "#{project_name}")
 
       # Set exclusion setting
       task_name = p["task_name"] || "create_entity"
       options = p["task_options"] || []
-      machine = p["machine"] || "external_discovery_light_active"
+      workflow_name = p["workflow_name"]
       depth = p["depth"] || 5
       scan_handlers = p["scan_handlers"] || []
       auto_enrich = p["auto_enrich"] || true
       auto_scope = true
 
       project.options = p["project_options"] || []
+      
+      # vulnerability checks must be enabled at the project level
+      if p["vulnerability_checks_enabled"]
+        project.vulnerability_checks_enabled = true
+      else 
+        project.vulnerability_checks_enabled = false
+      end
+      
       project.use_standard_exceptions = p["use_standard_exceptions"] || true
-      project.allowed_namespaces = p["allowed_namespaces"] || []
-      project.save 
+
+      project.allowed_namespaces = p["allowed_namespaces"]
+      project.uuid = p["collection_run_uuid"]
+      project.save
 
       # Add our exceptions
       puts "Adding exceptions to the database"
       if config["additional_exception_list"]
         _add_no_traverse_entities(project.id, config["additional_exception_list"].sort.to_a)
       end
-      puts "Done!"
 
       # parse up the seeds
       parsed_seeds = p["seeds"].map{|s| _parse_entity s["entity"] }
@@ -83,7 +99,7 @@ module Bootstrap
 
               # Kick off the task (don't set handler on the task)
               task_result = start_task(nil, project, nil, task_name,
-                created_entity, depth, options, scan_handlers, machine, auto_enrich, auto_scope)
+                created_entity, depth, options, scan_handlers, workflow_name, auto_enrich, auto_scope)
 
               # Manually start enrichment for the first entity
               created_entity.enrich(task_result) if auto_enrich
@@ -144,6 +160,7 @@ module Bootstrap
   handler_list
   end
 
+end
 end
 end
 end

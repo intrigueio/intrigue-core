@@ -7,13 +7,13 @@
         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
         
         <% if @flash.kind_of?(Hash) %>
-          <h4 class="alert-heading"><%=@flash[:heading]%></h4>
+          <h4 class="alert-heading"><%=h @flash[:heading]%></h4>
         <% end %>
 
         <% if @flash.kind_of?(Hash) %>
-          <%= @flash[:message] %>   
+          <%= h @flash[:message] %>   
         <% else # old way %> 
-          <%= @flash %>
+          <%= h @flash %>
         <% end %>
 
       </div>

@@ -55,7 +55,7 @@ main statements that can be published:
     if dkim_records
 
       dkim_records.each do |d|
-        next unless d["record"] =~ /DKIM/
+        next unless "#{d["record"]}".match(/DKIM/)
 
         # save them 
         _set_entity_detail "dkim_records", dkim_records
@@ -64,7 +64,9 @@ main statements that can be published:
         _create_entity "DnsRecord", d
 
         # optionally create a domain
-        _create_entity "Domain", d["domain"] if _get_option("create_domain")
+        if _get_option("create_domain") && "#{d["domain"]}".length > 0
+          _create_entity "Domain", d["domain"] 
+        end
       end
 
     end

@@ -1,4 +1,4 @@
-class IntrigueApp < Sinatra::Base
+class CoreApp < Sinatra::Base
 
   ###                      ###
   ### Analysis Views       ###
@@ -9,7 +9,7 @@ class IntrigueApp < Sinatra::Base
     (params[:page] != "" && params[:page].to_i > 0) ? @page = params[:page].to_i : @page = 1
     (params[:count] != "" && params[:count].to_i > 0) ? @count = params[:count].to_i : @count = 100
 
-    issues = Intrigue::Model::Issue.scope_by_project(@project_name)
+    issues = Intrigue::Core::Model::Issue.scope_by_project(@project_name)
     
     if params[:export] == "csv"
 
@@ -36,10 +36,8 @@ class IntrigueApp < Sinatra::Base
 
    end
 
-
-
   get '/:project/issues/:id' do
-    @issue = Intrigue::Model::Issue.scope_by_project(@project_name).first(:id => params[:id].to_i)
+    @issue = Intrigue::Core::Model::Issue.scope_by_project(@project_name).first(:id => params[:id].to_i)
     erb :'issues/detail'
   end
 

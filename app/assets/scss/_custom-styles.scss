@@ -1,0 +1,33 @@
+// Add additional styles here. For example, overwrite certain styles or add new components.
+// Tip: You can use bootstrap's powerful mixins here!
+
+//.alert-myalert {
+//  @include alert-variant(#60667d, #1d1d1d, #f4fdff);
+//}
+
+//@each $color, $value in $theme-colors {
+//  .alert-#{$color} {
+//    box-shadow: 3px 3px theme-color-level($color, -3);
+//  }
+//}
+
+//fonts
+// These are the defaults, but you can override any values
+$font-family-sans-serif:
+  //"Montserrat",
+  // Safari for OS X and iOS (San Francisco)
+  //-apple-system,
+  // Chrome < 56 for OS X (San Francisco)
+  //BlinkMacSystemFont,
+  // Windows
+  //"Segoe UI",
+  // Android
+  //"Roboto",
+  // Basic web fallback
+  "Helvetica Neue", Arial, sans-serif,
+  // Emoji fonts
+  "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !default;
+
+$font-family-serif:      Georgia, "Times New Roman", Times, serif;
+$font-family-monospace:  Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+$font-family-base:       $font-family-sans-serif ;

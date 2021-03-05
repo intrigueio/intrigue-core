@@ -9,11 +9,11 @@ class Hash
     new_hash = {}
     self.each_pair do |k,v|
       if v.is_a?(String)
-        new_hash.merge!({
-          k.encode('UTF-8', invalid: :replace, undef: :replace, replace: '?') => v.encode('UTF-8', invalid: :replace, undef: :replace, replace: '?')
-        })
+        new_hash.merge!({ k.sanitize_unicode => v.sanitize_unicode })
+      elsif v.is_a?(Hash) # recurse
+        new_hash.merge!({ k.sanitize_unicode => v.sanitize_unicode })
       else
-        new_hash.merge!({k.encode('UTF-8', invalid: :replace, undef: :replace, replace: '?') => v})
+        new_hash.merge!({ k.sanitize_unicode => v })
       end
     end
 
@@ -45,5 +45,29 @@ class Hash
     keys.each { |key| delete(key) }
     self
   end
+
+  def stringify_keys!
+    deep_transform_keys!(self){ |key| key.to_s rescue key }
+  end
+
+  def symbolize_keys!
+    deep_transform_keys!(self){ |key| key.to_sym rescue key }
+  end
+
+  def deep_transform_keys!(object, &block)
+    case object
+    when Hash
+      object.keys.each do |key|
+        value = object.delete(key)
+        object[yield(key)] = deep_transform_keys!(value, &block)
+      end
+      object
+    when Array
+      object.map! { |e| deep_transform_keys!(e, &block) }
+    else
+      object
+    end
+  end
+
 
 end

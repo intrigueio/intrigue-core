@@ -1,23 +1,52 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Intrigue Core</title>
-<link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
-<link rel="icon" href="/img/favicon.ico" type="image/x-icon">
-<link href="/bower_components/bootstrap/dist/css/bootstrap.min.css"rel="stylesheet">
-<link href="/bower_components/highlightjs/styles/railscasts.css" rel="stylesheet">
-<link href="/css/app.css" rel="stylesheet">
+<!doctype html>
+<html lang="en">
+  <head>
 
-<script type="text/javascript" src="/bower_components/jquery/dist/jquery.min.js"></script>
-<script type="text/javascript" src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="/bower_components/highlightjs/highlight.pack.js"></script>
-</head>
-<body>
-  <%= erb :_navbar, :layout => false %>
-  <%= erb :_flash, :layout => false %>
-  <div class="container-fluid">
-	   <%= yield %>
-  </div>
-</body>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Intrigue Core</title>
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+
+    <!-- Fonts and icons -->
+    <link href="/font/monserrat.css" rel="stylesheet" />
+    <link href="/font/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- CSS Files -->
+    <!--<link href="/css/bootstrap.css" rel="stylesheet" />-->
+    <!--<link href="/css/bootstrap/bootstrap-utilities.css" rel="stylesheet" />-->
+    <!--<link href="/css/bootstrap/bootstrap-grid.css" rel="stylesheet" />-->
+    <link href="/css/core.css" rel="stylesheet" />
+    <link href="/css/app.css" rel="stylesheet" />
+    <!-- End CSS Files -->
+
+    <!-- JavaScript Bundle with Popper -->
+    <script src="/js/bootstrap.bundle.min.js" ></script>
+
+    <!-- HighlightJS -->
+    <script type="text/javascript" src="/js/highlight.pack.js"></script>
+
+    <!-- JQUERY -->
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+
+    <!-- datatables -->
+    <link href="/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="/js/dataTables.bootstrap5.min.js"></script>
+
+  </head>
+  <body>
+  
+    <%= erb :_navbar, :layout => false %>
+    <%= erb :_flash, :layout => false %>
+      
+    <div class="container-fluid main-body d-flex flex-column">
+      <%= yield %>
+    </div>
+    
+  </body>
+
 </html>

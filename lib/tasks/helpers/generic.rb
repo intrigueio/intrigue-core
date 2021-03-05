@@ -2,9 +2,27 @@ module Intrigue
 module Task
 module Generic
 
-  def self.included(base)
+   def self.included(base)
      include Intrigue::Task::Web
+     include Intrigue::Task::Popen
    end
+
+   def require_enrichment
+    
+    entity_enriched = @entity.enriched?
+    cycles = 200 
+    max_cycles = cycles
+
+    until entity_enriched || cycles == 0
+      _log "Waiting up to 10m for entity to be enriched... (#{cycles-=1} / #{max_cycles})"
+      sleep 3
+      entity_enriched = Intrigue::Core::Model::Entity.first(:id => @entity.id).enriched?
+    end
+
+    # re-pull
+    @entity = Intrigue::Core::Model::Entity.first(:id => @entity.id)
+    
+  end
 
   private
 
@@ -37,7 +55,7 @@ module Generic
 
     # just in case we were given a hash with symbolized keys, convert to strings for
     # our purposes... bitten by the bug a bunch lately
-    hash = hash.collect{|k,v| [k.to_s, v]}.to_h
+    hash = hash.collect{|k,v| [k.to_s, v] }.to_h
 
     # No need for a name in the hash now, remove it & pull out the name from the hash
     name = hash.delete("name")
@@ -47,43 +65,38 @@ module Generic
   end
 
   ###
-  ### Helper method .. should this check with the entity manager?
-  ###
-  def _entity_exists?(type,name)
-    entity_exists?(@entity.project, type, name)
-  end
-
-  ###
   ### Logging helpers
   ###
   def _log(message)
-    @task_result.logger.log message
+    @task_result.logger.log message if @task_result
   end
 
   def _log_debug(message)
-    @task_result.logger.log_debug message
+    @task_result.logger.log_debug message if @task_result
   end
 
   def _log_error(message)
-    @task_result.logger.log_error message
+    @task_result.logger.log_error message if @task_result
   end
 
   def _log_fatal(message)
-    @task_result.logger.log_fatal message
+    @task_result.logger.log_fatal message if @task_result
   end
 
   def _log_good(message)
-    @task_result.logger.log_good message
+    @task_result.logger.log_good message if @task_result
   end
 
   # Convenience Method to execute a system command semi-safely
+  # by default, timesout after 5 minutes (300 seconds)
+  # default working directory is /tmp
   #  !!!! Don't send anything to this without first whitelisting user input!!!
-  def _unsafe_system(command)
-    Dir.chdir Dir::tmpdir do
-      ShellCommand::execute(command).stdout
-    end
-  end
+  def _unsafe_system(command, timeout = 600, workingdir = "/tmp")
+    stdout, stderr, exit_status = popen_with_timeout([command], timeout, workingdir)
 
+  # return only the stuff we care about 
+  stdout
+  end
   ###
   ### Helpers for handling encoding
   ###
@@ -138,8 +151,8 @@ module Generic
     @entity.get_details
   end
 
-  def _set_entity_details(hash)
-    @entity.set_details hash
+  def _get_and_set_entity_details(hash)
+    @entity.get_and_set_details hash
   end
 
   def _get_entity_name
@@ -152,23 +165,24 @@ module Generic
 
   ### GLOBAL CONFIG INTERFACE
   def _get_system_config(key)
-    Intrigue::System::Config.load_config
-    value = Intrigue::System::Config.config[key]
+    Intrigue::Core::System::Config.load_config
+    value = Intrigue::Core::System::Config.config[key]
   end
 
   def _get_task_config(key)
     begin
-      Intrigue::System::Config.load_config
-      config = Intrigue::System::Config.config["intrigue_global_module_config"]
+      
+      Intrigue::Core::System::Config.load_config
+      error_message = "Please enter your #{key} setting in 'Configure -> Task Configuration'"
+      config = Intrigue::Core::System::Config.config["intrigue_global_module_config"]
       value = config[key]["value"]
+    
       unless value && value != ""
-        _log "Module config (#{key}) is blank or missing!"
-        _log_error "Invalid value for #{key}!"
-        _log "Please configure #{key} in the 'System -> Configure' section!"
+        raise MissingTaskConfigurationError.new error_message
       end
-    rescue NoMethodError => e
-      _log "Error, invalid config key requested (#{key}) #{e}"
+
     end
+
   value
   end
 

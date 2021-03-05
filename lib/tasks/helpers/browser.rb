@@ -11,8 +11,12 @@ module Intrigue
 module Task
   module Browser
 
-    def capture_screenshot_and_request_hosts(uri)
-      return {} unless Intrigue::System::Config.config["browser_enabled"]
+    def capture_screenshot_and_requests(uri)
+      return {} unless Intrigue::Core::System::Config.config["browser_enabled"]
+
+      # First, make sure we can actually connect to it in reasonable time 
+      response = http_request(:get, uri, nil, {}, nil, true, 10)
+      return {} unless response
 
       begin 
         _log "Browser Navigating to #{uri}"
@@ -22,29 +26,16 @@ module Task
         _log_error "Unable to connect to chrome browser. Is it running as a service?"
       end
   
-      if browser_response 
-  
-        # look for mixed content
-        if uri =~ /^https/
-          _log "Since we're here (and https), checking for mixed content..."
-          _check_requests_for_mixed_content(uri, browser_response["requests"])
-        end
-  
-        # split out request hosts, and then verify them
-        if browser_response["requests"]
-          request_hosts = browser_response["requests"].map{|x| x["hostname"] }.compact.uniq.sort
-          _log "Since we're here (and https), checking for mixed content..."
-          _check_request_hosts_for_suspicious_request(uri, request_hosts)
-          _check_request_hosts_for_exernally_hosted_resources(uri,request_hosts)
-        else
-          request_hosts = []
-        end
+      if browser_response && browser_response["requests"]
 
         to_return = { 
           "extended_screenshot_contents" => browser_response["encoded_screenshot"],
-          "request_hosts" => request_hosts,
-          "extended_requests" => browser_response["requests"]
+          "request_hosts" => browser_response["requests"].map{|x| x["hostname"] }.compact.uniq.sort,
+          "extended_browser_requests" => browser_response["requests"],
+          "extended_browser_responses" => browser_response["responses"],
+          "extended_browser_wsresponses" => browser_response["wsresponses"]
         }
+
       else 
         to_return = {}
       end
@@ -56,7 +47,7 @@ module Task
     # TODO ... convert this to new way of controlling browser
     # TODO 
     def gather_javascript_libraries(session, uri)
-      return [] unless Intrigue::System::Config.config["browser_enabled"]
+      return [] unless Intrigue::Core::System::Config.config["browser_enabled"]
 
       # Test site: https://www.jetblue.com/plan-a-trip/#/
       # Examples: https://builtwith.angularjs.org/

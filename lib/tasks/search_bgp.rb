@@ -11,7 +11,7 @@ class SearchBgp < BaseTask
       :references => [],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["IpAddress","NetBlock","Organization", "String"],
+      :allowed_types => ["IpAddress","NetBlock","Organization", "String", "UniqueKeyword"],
       :example_entities => [
         {"type" => "String", "details" => {"name" => "intrigue"}}
       ],
@@ -28,17 +28,21 @@ class SearchBgp < BaseTask
     if entity_type == "Organization" || entity_type == "String"
       search_by_org_name entity_name
     elsif entity_type == "IpAddress"
+      
       # lookup the netblock
       out = whois entity_name
-      if out["start_address"]
-        netblock_name = out["start_address"]
-        # lookup the BGP data by netblock
-        _log_good "Searching Netblocks for: #{netblock_name}"
-        search_netblocks netblock_name
-      else
-        _log_error "Didn't get a start address, printing full text"
-        _log out["whois_full_text"]
+      out.each do |hash|
+        if hash["start_address"]
+          netblock_name = hash["start_address"]
+          # lookup the BGP data by netblock
+          _log_good "Searching Netblocks for: #{netblock_name}"
+          search_netblocks netblock_name
+        else
+          _log_error "Didn't get a start address, printing full text"
+          _log hash["whois_full_text"]
+        end
       end
+
     elsif entity_type == "NetBlock"
       search_netblocks entity_name
     else
@@ -51,7 +55,7 @@ class SearchBgp < BaseTask
 
     begin
       lookup_name = entity_name.split("/").first
-      json_resp = JSON.parse http_get_body "https://intrigue.io/api/bgp/netblock/search/#{lookup_name}"
+      json_resp = JSON.parse http_get_body "https://app.intrigue.io/api/bgp/netblock/search/#{lookup_name}"
 
       json_resp.each do |r|
 
@@ -84,7 +88,7 @@ class SearchBgp < BaseTask
           r["netblocks"].each do |nb|
             _create_entity "NetBlock", {
               "name" => "#{nb}", 
-              "organization" => org_string, 
+              "organization_name" => org_string, 
               "as_number" => as_number_string,
               "scoped" => true
             }

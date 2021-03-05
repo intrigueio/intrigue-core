@@ -31,10 +31,15 @@ class SecurityTrailsSubdomainSearch < BaseTask
       resp = http_get_body uri, nil, {"APIKEY" => api_key}
       json = JSON.parse(resp)
 
+      unless json && json["subdomains"]
+        _log_error "Unable to get a valid response"
+        return
+      end
+
       _log "Got #{json["subdomains"].count} subdomains!"
 
       json["subdomains"].each do |x|
-        _create_entity "DnsRecord", "name" => "#{x}.#{entity_name}"
+        create_dns_entity_from_string "#{x}.#{entity_name}"
       end
 
     rescue JSON::ParserError => e

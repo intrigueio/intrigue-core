@@ -1,42 +1,46 @@
 module Intrigue
 module Entity
-class Nameserver < Intrigue::Model::Entity
+class Nameserver < Intrigue::Core::Model::Entity
+
+  include Intrigue::Task::Dns
 
   def self.metadata
     {
-      :name => "Nameserver",
-      :description => "A DNS Nameserver",
-      :user_creatable => true,
-      :example => "ns1.intrigue.io"
+      name: "Nameserver",
+      description: "A DNS Nameserver",
+      user_creatable: true,
+      example: "ns1.intrigue.io"
     }
   end
 
   def validate_entity
-    return ( name =~ ipv4_regex || name =~ ipv6_regex || name =~ dns_regex )
+    return name.match(ipv4_regex) || name.match(ipv6_regex) || name.match(dns_regex) 
   end
 
   def enrichment_tasks
     ["enrich/nameserver"]
   end
 
-    ###
+  ###
   ### SCOPING
   ###
   def scoped?(conditions={}) 
-    return true if self.seed
-    return false if self.hidden # hit our blacklist so definitely false
+    return true if scoped
+    return true if self.allow_list || self.project.allow_list_entity?(self) 
+    return false if self.deny_list || self.project.deny_list_entity?(self)
 
-    #
-    # Check types we'll check for indicators of in-scope-ness
-    scope_check_entity_types = [ "Intrigue::Entity::Domain" ]
-
-    self.project.seeds.each do |s|
-      return true if self.name =~ /[\.\s\@]#{Regexp.escape(s.name)}/i
-    end
-    
   # if we didnt match the above and we were asked, it's false 
   false
   end
+
+  def scope_verification_list
+    [
+      { type_string: self.type_string, name: self.name },
+      { type_string: "DnsRecord", name:  self.name },
+      { type_string: "Domain", name:  parse_domain_name(self.name) }
+    ]
+  end
+
 
 end
 end

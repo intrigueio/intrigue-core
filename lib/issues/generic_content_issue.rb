@@ -4,9 +4,10 @@ module Intrigue
   
     def self.generate(instance_details={})
       to_return = { 
+        added: "2020-01-01",
         name: "generic_content_issue",
         pretty_name: "Generic Content Issue",
-        category: "application",
+        category: "misconfiguration",
         source: instance_details["check"],
         severity: 4, 
         status: "confirmed",
@@ -14,10 +15,9 @@ module Intrigue
         references: [],
         details: {
           uri: instance_details["uri"],
-          check: instance_details["check"]
+          task: instance_details["check"]
         }
       }.merge!(instance_details)
-  
     to_return
     end
   

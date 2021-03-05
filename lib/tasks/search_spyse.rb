@@ -11,8 +11,8 @@ class SearchSpyse < BaseTask
       :references => ["https://spyse.com/apidocs"],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["String", "Domain"],
-      :example_entities => [{"type" => "String", "details" => {"name" => "jira"}}],
+      :allowed_types => ["IpAddress","String", "Domain"],
+      :example_entities => [{"type" => "String", "details" => {"name" => "1.1.1.1"}}],
       :allowed_options => [],
       :created_types => ["DnsRecord","IpAddress","Organization","PhysicalLocation"]
     }
@@ -28,64 +28,73 @@ class SearchSpyse < BaseTask
     # Make sure the key is set
     api_key = _get_task_config("spyse_api_key")
     # Set the headers
-    headers = {"api_token" =>  api_key}
+    headers = { "Accept" =>  "application/json", 
+      "Authorization" => "Bearer #{api_key}" }
 
-    # Returns aggregate information by subdomain word : total count of subdomains, list of IPs of subdomains and subdomain count on every IP,
-    # list of countries and subdomain count from it, list of CIDRs /24, /16 and subdomain list on every CIDR.
-    if entity_type == "String"
-      url = "https://api.spyse.com/v1/domains-starts-with-aggregate?sdword=#{entity_name}"
-      get_subdomains entity_name, api_key, headers, url
-
-    # Returns aggregate information by domain: total count of subdomains, list of IPs of subdomains and subdomain count on every IP,
-    # list of countries and subdomain count from it, list of CIDRs /24, /16 and subdomain list on every CIDR.
-    elsif entity_type == "Domain"
-      url = "https://api.spyse.com/v1//subdomains-aggregate?domain=#{entity_name}"
-      get_subdomains entity_name, api_key, headers, url
-
+    if entity_type == "IpAddress"
+      #search Ip for reputation, Open ports, related information
+      #search_ip_reputation entity_name,headers
+      search_open_ports entity_name,headers
     else
       _log_error "Unsupported entity type"
     end
 
-  end #end run
+  end #end
 
+  # Search IP reputation and gathering data
+  def search_ip_reputation(entity_name, headers)
 
-  # Returns aggregate information by subdomain word and domain
-  def get_subdomains entity_name, api_key, headers, url
+    # Set the URL for ip data
+    url = "https://api.spyse.com/v2/data/ip?limit=100&ip=#{entity_name}"
 
-    response = http_get_body(url,nil,headers)
-    json = JSON.parse(response)
+    begin 
+      # make the request
+      response = http_get_body(url,nil,headers)
+      json = JSON.parse(response)
 
-    #check if entries different to null
-    if json["count"] != 0
-      # Create subdomains
-      json["cidr"]["cidr16"]["results"].each do |e|
-        e["data"]["domains"].each do |s|
-          _create_entity("DnsRecord", "name" => s)
+      json["data"]["items"].each do |result|
+
+        # Create an issue if result score indicates a score related to the threat
+        if result["score"] < 100
+          _create_linked_issue("suspicious_activity_detected",{
+            severity: result["score"],
+            references: ["https://spyse.com/"],
+            source: "Spyse",
+            details: result
+          })
         end
-      end
-     # Create subdomains
-      json["cidr"]["cidr24"]["results"].each do |e|
-        e["data"]["domains"].each do |s|
-          _create_entity("DnsRecord", "name" => s)
-        end
-      end
 
-      # Create list of related organizations
-      json["data"]["as"]["results"].each do |e|
-        _create_entity("Organization", "name" => e["entity"]["organization"])
       end
-
-      # Create list of related countrys
-      json["data"]["country"]["results"].each do |e|
-        _create_entity("PhysicalLocation", "name" => e["entity"]["value"])
-      end
-
-      # Create list of related IPs
-      json["data"]["ip"]["results"].each do |e|
-        _create_entity("IpAddress", "name" => e["entity"]["value"])
-      end
+    rescue JSON::ParserError => e
+      _log_error "Error while parsing #{e}"
     end
-  end #end subdomain
+  end
+
+  # Search for open ports
+  def search_open_ports entity_name, headers
+
+    # Set the URL for ip open ports
+    url = "https://api.spyse.com/v3/data/ip/port?limit=100&ip=#{entity_name}"
+
+    begin 
+      # make the request
+      response = http_get_body(url, nil, headers)
+      json = JSON.parse(response)
+
+      if json["data"] && json["data"]["items"]
+        json["data"]["items"].each do |result|
+          _log_good "Creating service on #{entity_name}: #{result["port"]}"
+          _create_network_service_entity(@entity, result["port"], protocol="tcp", 
+            {"extended_spyse" => result})
+        end
+      else
+        _log "Got empty result, returning!"
+      end
+    rescue JSON::ParserError => e
+      _log_error "Error while parsing #{e}"
+    end
+    
+  end
 
 end
 end

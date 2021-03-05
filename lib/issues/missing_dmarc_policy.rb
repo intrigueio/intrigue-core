@@ -4,9 +4,10 @@ class MissingDmarcPolicy < BaseIssue
 
   def self.generate(instance_details={})
     {
+      added: "2020-01-01",
       name: "missing_dmarc_policy",
       pretty_name: "Missing DMARC Policy",
-      category: "email", 
+      category: "misconfiguration", 
       source: "DNS",
       severity: 4,
       status: "confirmed",

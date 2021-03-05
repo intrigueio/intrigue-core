@@ -15,7 +15,7 @@ data/iana/ipv4-address-space.csv
 data/iana/service-names-port-numbers.csv
 data/web_accounts_list/web_accounts_list.json
 data/asn_info/*
-public/
+data/nuclei-templates
 tmp/
 log/
 .env
@@ -32,3 +32,8 @@ data/nvd
 Procfile
 config/server.crt
 config/server.key
+data/*.db
+data/retirejs.json
+.bundle
+node_modules
+app/assets/scss/bootstrap
