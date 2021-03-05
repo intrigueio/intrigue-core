@@ -20,9 +20,9 @@ class AwsS3BucketHttpSplitting < BaseTask
     }
   end
 
-  def verify_vuln(res)
+  def verify_vuln(response)
 
-    if  response.code.to_i == 404 && response.body_utf8 =~  /<BucketName>non-existing-bucket1<\/BucketName>/ && response.body_utf8 =~ /<Code>NosuchBucket<\/Code>/
+    if  response.code.to_i == 404 && response.body_utf8 =~  /non-existing-bucket1/ && response.body_utf8 =~ /NosuchBucket/
       return true
     end
     false
@@ -36,7 +36,7 @@ class AwsS3BucketHttpSplitting < BaseTask
     require_enrichment
     uri = _get_entity_name
 
-    # check if nginx is present
+    #check if nginx is present
     runs_nginx = false 
     fp = _get_entity_detail("fingerprint")
     fp.each do |f|
@@ -50,9 +50,9 @@ class AwsS3BucketHttpSplitting < BaseTask
 
 
     path_list=["/docs/%20HTTP/1.1%0d%0aHost:non-existing-bucket1%0d%0a%0d%0a",
-                "/media/%20HTTP/1.1%0d%0aHost:non-existing-bucket1%0d%0a%0d%0a",
-                "/images/%20HTTP/1.1%0d%0aHost:non-existing-bucket1%0d%0a%0d%0a",
-                "/sitemap/%20HTTP/1.1%0d%0aHost:non-existing-bucket1%0d%0a%0d%0a"
+               "/media/%20HTTP/1.1%0d%0aHost:non-existing-bucket1%0d%0a%0d%0a",
+               "/images/%20HTTP/1.1%0d%0aHost:non-existing-bucket1%0d%0a%0d%0a",
+               "/sitemap/%20HTTP/1.1%0d%0aHost:non-existing-bucket1%0d%0a%0d%0a"
               ]
 
 
