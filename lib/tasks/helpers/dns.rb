@@ -361,7 +361,25 @@ module Dns
 
   mx_records
   end
+  
+  def collect_caa_records(lookup_name)
+    _log "Collecting CAA records"
+    response = resolve(lookup_name, [Resolv::DNS::Resource::IN::CAA])
+    return [] unless response && !response.empty?
+    caa_records = []
+    response.each do |r|
+      r["lookup_details"].each do |record|
+        next unless record["response_record_type"] == "CAA"
+        caa_records << {
+          "flag" => record["response_record_data"]["flag"],
+          "tag" => record["response_record_data"]["tag"],
+          "host" => "#{record["response_record_data"]["value"]}" }
+      end
+    end
 
+  caa_records
+  end
+  
   def collect_spf_details(lookup_name)
     _log "Collecting SPF records"
     response = resolve(lookup_name, [Resolv::DNS::Resource::IN::TXT])
