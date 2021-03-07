@@ -41,8 +41,9 @@ module Intrigue
       patterns.each do |p|
 
         # use matcher if it exists, but fall back to regex
-        pattern = p["matcher"] || p["regex"]
-        
+        # handle the fact that some of this is coming in via json :facepalm:
+        pattern = p["matcher"] ||  p[:matcher] || p["regex"] || p[:regex]
+
         unless pattern
           _log_error "unable to use this pattern: #{p}"
           next
@@ -50,7 +51,7 @@ module Intrigue
 
         # if we're handed a string, convert it to a regex
         pattern = Regexp.new(pattern) unless pattern.kind_of? Regexp
-        
+
         if contents =~ pattern
           _log "Matched: #{pattern}"
           # grab it 
