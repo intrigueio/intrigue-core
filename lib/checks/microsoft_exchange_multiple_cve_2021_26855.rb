@@ -7,7 +7,7 @@ module Intrigue
         {
           added: "2021-03-02",
           name: "microsoft_exchange_multiple_cve_2021_26855.rb",
-          pretty_name: "Microsoft Exchange Multple RCE CVEs",
+          pretty_name: "Microsoft Exchange Multiple RCE CVEs",
           identifiers: [
             { type: "CVE", name: "CVE-2021-26412" },
             { type: "CVE", name: "CVE-2021-26854" },

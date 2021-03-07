@@ -158,7 +158,9 @@ module Services
 
         service_specific_details = {}
         service = _map_tcp_port_to_name(port_num)
-
+       
+        # now we have all the details we need, create it
+        name = "#{h.name.strip}:#{port_num}/#{protocol}"
 
         entity_details = {
           "name" => name,
