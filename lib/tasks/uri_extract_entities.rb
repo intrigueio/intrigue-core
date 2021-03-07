@@ -36,7 +36,7 @@ class UriExtractEntities < BaseTask
       _set_entity_detail("extended_metadata",metadata)
     else 
       body = http_get_body(url)
-      parse_and_create_entities_from_content(url, body)
+      parse_and_create_entities_from_content(url, body.gsub(/%2f/i,""))
     end
     
   end
