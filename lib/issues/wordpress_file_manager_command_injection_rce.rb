@@ -19,7 +19,7 @@ module Intrigue
           { type: "description", uri: "https://www.wordfence.com/blog/2020/09/700000-wordpress-users-affected-by-zero-day-vulnerability-in-file-manager-plugin/" },
           { type: "exploit", uri: "https://github.com/w4fz5uck5/wp-file-manager-0day/blob/master/elFinder.py" },
         ],
-        check: "vuln/wordpress_file_manager_command_injection_rce"
+        task: "vuln/wordpress_file_manager_command_injection_rce"
       }.merge!(instance_details)
     end
   

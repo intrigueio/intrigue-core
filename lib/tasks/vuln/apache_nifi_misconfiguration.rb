@@ -43,7 +43,7 @@ module Intrigue
       def run
         super
 
-        #require_enrichment
+        require_enrichment
         uri = _get_entity_name
 
         # request 1

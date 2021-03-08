@@ -108,7 +108,7 @@ class EntityManager
 
     # Ensure we have an entity
     unless new_entity && new_entity.transform! && new_entity.validate_entity
-      puts "Error creating entity: #{new_entity}." + "Entity: #{type_string}##{name} #{details_hash}"
+      puts "Error creating entity: #{new_entity}. " + "Entity: #{type_string}##{name} #{details_hash}"
       return nil
     end
 

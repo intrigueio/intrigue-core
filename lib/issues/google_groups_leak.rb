@@ -15,7 +15,7 @@ class GoogleGroupsLeak < BaseIssue
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
         { type: "remediation", uri: "https://support.google.com/a/answer/167427?hl=en" }
       ], 
-      check: "vuln/saas_google_groups_check"
+      task: "vuln/saas_google_groups_check"
     }.merge!(instance_details)
 
   to_return

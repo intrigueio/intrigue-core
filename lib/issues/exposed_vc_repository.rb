@@ -17,7 +17,7 @@ module Intrigue
           { type: "description", uri: "https://pentester.land/tutorials/2018/10/25/source-code-disclosure-via-exposed-git-folder.html" },
           { type: "exploit", uri: "https://github.com/internetwache/GitTools/tree/master/Dumper" }
         ], 
-        check: "uri_brute_focused_content"
+        task: "uri_brute_focused_content"
       }.merge!(instance_details)
     to_return
     end

@@ -20,7 +20,7 @@ class RailsInformationDisclosure < BaseIssue
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
         { type: "description", uri: "https://github.com/mpgn/Rails-doubletap-RCE" }
       ], 
-      check: "vuln/rails_file_exposure"
+      task: "vuln/rails_file_exposure"
     }.merge!(instance_details)
   end
 

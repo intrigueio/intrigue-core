@@ -88,6 +88,7 @@ module Intrigue
           /\b[\d\:\.]+\/\d{1,2}\b/
         end
       end
+<<<<<<< HEAD
   
       def network_service_regex(anchored=true)
         if anchored
@@ -95,6 +96,15 @@ module Intrigue
         else 
           /\b[\w\d\.\:]+:\d{1,5}\b/
         end
+=======
+    end
+
+    def network_service_regex(anchored=true)
+      if anchored
+        /^[\w\d\.\:]+:\d{1,5}\/tcp|udp$/
+      else 
+        /\b[\w\d\.\:]+:\d{1,5}\/tcp|udp\b/
+>>>>>>> da59a1350bca6fd92ac1f4d4983a26cb4d813ddf
       end
   
       def phone_number_regex(anchored=true)

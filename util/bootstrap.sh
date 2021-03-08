@@ -134,7 +134,6 @@ sudo apt-get -y --no-install-recommends install make \
   libnss3 \
   lsb-release \
   xdg-utils \
-  dnsmasq \
   systemd \
   tcptraceroute \
   wget \

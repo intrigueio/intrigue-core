@@ -17,7 +17,7 @@ module Intrigue
             { type: "description", uri: "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-27615" },
             {type: "description", uri: "https://wpdeeply.com/loginizer-before-1-6-4-sqli-injection/"}
           ], 
-          check: "vuln/wordpress_loginizer_cve_2020_27615"
+          task: "vuln/wordpress_loginizer_cve_2020_27615"
         }.merge!(instance_details)
       end
     

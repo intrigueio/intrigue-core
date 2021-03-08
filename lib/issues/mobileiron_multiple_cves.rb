@@ -26,7 +26,7 @@ module Intrigue
           { type: "remediation", uri: "https://www.mobileiron.com/en/blog/mobileiron-security-updates-available" },
 
         ],
-        check: "vuln/mobileiron_multiple_cves"
+        task: "vuln/mobileiron_multiple_cves"
       }.merge!(instance_details)
     end
 

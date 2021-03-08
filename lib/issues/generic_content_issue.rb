@@ -15,7 +15,7 @@ module Intrigue
         references: [],
         details: {
           uri: instance_details["uri"],
-          check: instance_details["check"]
+          task: instance_details["check"]
         }
       }.merge!(instance_details)
     to_return

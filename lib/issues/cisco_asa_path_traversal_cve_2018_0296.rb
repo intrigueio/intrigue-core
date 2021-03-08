@@ -21,7 +21,7 @@ module Intrigue
           { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2018-0296" }, 
           { type: "exploit", uri: "https://www.exploit-db.com/exploits/44956" }
         ], 
-        check: "vuln/cisco_asa_path_traversal_cve_2018_0296"
+        task: "vuln/cisco_asa_path_traversal_cve_2018_0296"
       }.merge(instance_details)
     end
   

@@ -16,7 +16,7 @@ module Intrigue
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel
           { type: "description", uri: "https://hackerone.com/reports/356047" }
         ], 
-        check: "uri_brute_focused_content"
+        task: "uri_brute_focused_content"
       }.merge!(instance_details)
     end
   

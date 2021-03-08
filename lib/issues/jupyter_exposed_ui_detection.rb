@@ -19,7 +19,7 @@ module Intrigue
           { type: "description", uri: "https://jupyter-notebook.readthedocs.io/en/stable/security.html" },
           { type: "source", uri: "https://github.com/google/tsunami-security-scanner-plugins/blob/master/google/detectors/exposedui/jupyter/src/main/java/com/google/tsunami/plugins/detectors/exposedui/jupyter/JupyterExposedUiDetector.java"}
         ], 
-        check: "uri_brute_focused_content"
+        task: "uri_brute_focused_content"
       }.merge!(instance_details)
     end
   

@@ -78,9 +78,9 @@ class UriBruteFocusedContent < BaseTask
       #{ issue_type: "coldfusion_config", path: "/jakarta/isapi_redirect.log", severity: 4, body_regex: nil, :status => "potential"  },
       #{ issue_type: "coldfusion_config", path: "/jakarta/isapi_redirect.properties", severity: 4, body_regex: nil, :status => "potential"  },
       # Bitcoin Miner Discovered
-      { issue_type: "coldfusion_cryptominer", path: "/CFIDE/m", severity: 1, body_regex: nil, :status => "potential"  },
-      { issue_type: "coldfusion_cryptominer", path: "/CFIDE/m32", severity: 1, body_regex: nil, :status => "potential"  },
-      { issue_type: "coldfusion_cryptominer", path: "/CFIDE/m64", severity: 1, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_cryptominer", path: "/CFIDE/m", severity: 1, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_cryptominer", path: "/CFIDE/m32", severity: 1, body_regex: nil, :status => "potential"  },
+      #{ issue_type: "coldfusion_cryptominer", path: "/CFIDE/m64", severity: 1, body_regex: nil, :status => "potential"  },
       #{ issue_type: "coldfusion_config", path: "/CFIDE/updates.cfm", severity: 1, body_regex: nil, :status => "potential" },
       # XSS Injection in cfform.js
       #{ issue_type: "coldfusion_config", path: "/CFIDE/scripts/cfform.js", severity: 3, body_regex: /document\.write/, :status => "confirmed"  },

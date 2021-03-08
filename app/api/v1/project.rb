@@ -40,7 +40,7 @@ class CoreApp < Sinatra::Base
   ###
   get "/api/v1/project/:project_name/entities/?" do
     content_type 'application/json'
-    
+
     halt_unless_authenticated!
 
     # get the project and return it
@@ -213,5 +213,27 @@ class CoreApp < Sinatra::Base
   wrapped_api_response(nil, nil)
   end
 
+  get "/api/v1/project/:project_name/entities/csv" do
+    content_type 'application/csv'
 
+    halt_unless_authenticated!
+
+    @project_name = @params[:project_name]
+    headers["Content-Disposition"] = "attachment;filename=#{@project_name}.entities.csv"
+
+    @project = Intrigue::Core::Model::Project.first(:name => @project_name)
+    @project.export_entities_csv
+  end
+
+  get "/api/v1/project/:project_name/issues/csv" do
+    content_type 'application/csv'
+    
+    halt_unless_authenticated!
+
+    @project_name = @params[:project_name]
+    headers["Content-Disposition"] = "attachment;filename=#{@project_name}.issues.csv"
+
+    @project = Intrigue::Core::Model::Project.first(:name => @project_name)
+    @project.export_issues_csv
+  end
 end

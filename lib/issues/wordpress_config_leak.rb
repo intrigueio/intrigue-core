@@ -14,7 +14,7 @@ module Intrigue
         remediation: "Set permissions on the configuration file to prevent anonymous users being able to read it.",
         affected_software: [{ :vendor => "Wordpress", :product => "Wordpress" }],
         references: [ ],  # types: description, remediation, detection_rule, exploit, threat_intel
-        check: "uri_brute_focused_content"
+        task: "uri_brute_focused_content"
       }.merge!(instance_details)
     end
   

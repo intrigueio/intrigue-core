@@ -20,7 +20,7 @@ class AtlassianFisheyeMostactivecommitersVuln < BaseIssue
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
         { type: "description", uri: "https://confluence.atlassian.com/crucible/fisheye-and-crucible-security-advisory-2017-11-29-939939750.html" }
       ], 
-      check: "vuln/atlassian_fisheye_mostactivecommiters_disclosure"
+      task: "vuln/atlassian_fisheye_mostactivecommiters_disclosure"
     }.merge!(instance_details)
   end
 

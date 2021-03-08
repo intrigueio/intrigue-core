@@ -22,7 +22,7 @@ module Intrigue
         affected_software: [
           { :vendor => "PaloAltoNetworks", :product => "GlobalProtect" },
         ],
-        check: "vuln/paloalto_globalprotect_check_cve_2019_1579"
+        task: "vuln/paloalto_globalprotect_check_cve_2019_1579"
       }.merge!(instance_details)
     end
   

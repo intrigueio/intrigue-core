@@ -21,7 +21,7 @@ module Intrigue
         references: [
           { type: "description", uri: "https://www.atredis.com/blog/2019/3/15/cve-2019-5513-information-leaks-in-vmware-horizon" }
         ],
-        check: "vuln/vmware_horizon_info_leak"
+        task: "vuln/vmware_horizon_info_leak"
       }.merge!(instance_details)
     end
   

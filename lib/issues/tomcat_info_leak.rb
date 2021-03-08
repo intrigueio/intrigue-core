@@ -17,7 +17,7 @@ class TomcatInfoLeak < BaseIssue
       ],
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
       ],
-      check: "uri_brute_focused_content"
+      task: "uri_brute_focused_content"
     }.merge!(instance_details)
 
   to_return

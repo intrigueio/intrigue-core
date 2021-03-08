@@ -25,7 +25,7 @@ module Intrigue
           { type: "description", uri: "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2020-16875"},
           { type: "description", uri: "https://srcincite.io/advisories/src-2020-0019/"},
         ],
-        check: "vuln/microsoft_exchange_cve_2020_16875"
+        task: "vuln/microsoft_exchange_cve_2020_16875"
       }.merge!(instance_details)
     end
 
