@@ -13,7 +13,9 @@ module Intrigue
         :passive => true,
         :allowed_types => ["UniqueToken"],
         :example_entities => [{"type" => "UniqueToken", "details" => {"name" => "UA-61330992"}}],
-        :allowed_options => [],
+        :allowed_options => [
+          {:name => "create_entities", :regex => "boolean", :default => true }
+        ],
         :created_types => ["Uri"]
       }
     end
@@ -23,7 +25,8 @@ module Intrigue
       super
 
       entity_name = _get_entity_name
-
+      opt_create_entities = _get_option("create_entities")
+      
       # Make sure the key is set
       api_key = _get_task_config("publicwww_api_key")
 
@@ -40,11 +43,14 @@ module Intrigue
       
       # Download the xport
       download = http_get_body(query_url)
-      
+    
       # read the file results
       download.split("\n").each do |found_url|
-        _create_entity "Uri" , "name" => found_url
+        _create_entity("Uri" , "name" => found_url) if opt_create_entities
       end
+
+      # store links as an extended detail
+      _set_entity_detail("public_www_results", { entity_name => download.split("\n") } )
 
     end
 

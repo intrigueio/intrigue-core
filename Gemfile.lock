@@ -33,7 +33,7 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: 62294e9954f3f56761fc4c545aa8d6b3637f9c7b
+  revision: 4a242e54e09591bec24a2baf323cfef01686cdc2
   branch: main
   specs:
     intrigue-ident (4.2.6)
@@ -144,7 +144,7 @@ GEM
       async-http (~> 0.42)
       protocol-http (~> 0.7)
     aws-eventstream (1.1.1)
-    aws-partitions (1.431.0)
+    aws-partitions (1.431.1)
     aws-sdk-core (3.112.1)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
@@ -213,7 +213,7 @@ GEM
     faraday_middleware-aws-sigv4 (0.5.0)
       aws-sigv4 (~> 1.0)
       faraday (>= 0.15)
-    ffi (1.14.2)
+    ffi (1.15.0)
     fiber-local (1.0.0)
     filesize (0.2.0)
     flareon (1.0.5)
