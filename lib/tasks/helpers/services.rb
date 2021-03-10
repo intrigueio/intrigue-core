@@ -30,7 +30,6 @@ module Services
   cert
   end
 
-
   def _create_network_service_entity(ip_entity,port_num,protocol="tcp",generic_details={})
 
     # first, save the port details on the ip_entity

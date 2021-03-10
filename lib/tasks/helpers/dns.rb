@@ -148,6 +148,8 @@ module Dns
   end
 
   # convenience method to just send back name
+  # returns the ip if resolved
+  # will return nil if it doesnt resolve 
   def resolve_name(lookup_name, lookup_types=nil)
     resolve_names(lookup_name,lookup_types).first
   end

@@ -102,7 +102,7 @@ class SearchZetalyticsDomain < BaseTask
           if e[k] =~ /[a-zA-Z0-9\.\_\%\+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,12}/
             _create_entity("EmailAddress", "name" => e[k])
           else 
-            create_dns_entity_from_string(e[k], nil, false, e)
+            create_dns_entity_from_string(e[k], nil, false, e) if resolve_name e[k]
           end
         end
       end
