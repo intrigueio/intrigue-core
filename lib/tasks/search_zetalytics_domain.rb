@@ -25,18 +25,26 @@ class SearchZetalyticsDomain < BaseTask
   def run
     super
 
-    begin
+    domain_name = _get_entity_name
 
-      # Make sure the key is set
-      api_key = _get_task_config("zetalytics_api_key")
-
-      # search it 
-      result = search_zetalytics_by_domain(api_key, _get_entity_name)
-      
-      # create our entities 
-      create_entities(result) if result
-
+    # first check... if this is a wildcard domain, we cannot continue, 
+    # results will be generally untrustworthy. 
+    # todo... in the future, make a list and we can check against it 
+    if wcs = gather_wildcard_ips(domain_name).count > 1 
+      _log_error "Cowardly refusing to pull data on a wildcard domains"
+      _log_error "wildcards: #{wcs}"
+      return 
     end
+
+    # Make sure the key is set
+    api_key = _get_task_config("zetalytics_api_key")
+
+    # search it 
+    result = search_zetalytics_by_domain(api_key, domain_name)
+    
+    # create our entities 
+    create_entities(result) if result
+
   end #end run
 
   # search zetalytics for a specific domain name
