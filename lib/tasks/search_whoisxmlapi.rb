@@ -65,7 +65,7 @@ module Intrigue
 
         # create entities
         res_json["domainsList"].each do |domain|
-          _create_entity "Domain", {"name" => domain, "scoped" => true }
+          create_dns_entity_from_string domain
         end
 
       end

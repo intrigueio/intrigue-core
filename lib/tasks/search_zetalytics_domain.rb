@@ -7,8 +7,8 @@ class SearchZetalyticsDomain < BaseTask
       :name => "search_zetalytics_domain",
       :pretty_name => "Search Zetalytics By Domain",
       :authors => ["Anas Ben Salah"],
-      :description => "This task search Zetalytics for a given domain name and returns " + 
-        "related entities such as DnsRecords, related IPs and EmailAddress.",
+      :description => "This task searches Zetalytics for a given domain and returns 
+        Domain, DnsRecord and EmailAddress results found via Passive DNS ",
       :references => [],
       :type => "discovery",
       :passive => true,
