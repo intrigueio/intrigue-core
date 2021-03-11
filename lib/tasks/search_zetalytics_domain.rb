@@ -30,9 +30,10 @@ class SearchZetalyticsDomain < BaseTask
     # first check... if this is a wildcard domain, we cannot continue, 
     # results will be generally untrustworthy. 
     # todo... in the future, make a list and we can check against it 
-    if wcs = gather_wildcard_ips(domain_name).count > 1 
+    wildcards = gather_wildcard_ips(domain_name)
+    unless wildcards.empty?
       _log_error "Cowardly refusing to pull data on a wildcard domains"
-      _log_error "wildcards: #{wcs}"
+      _log_error "wildcards: #{wildcards}"
       return 
     end
 
