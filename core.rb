@@ -22,7 +22,7 @@ rescue LoadError => e   # fall back to normal sidekiq
   require 'sidekiq/web'
 end
 
-# always 
+# always
 require 'sidekiq/api'
 require 'sidekiq-limit_fetch'
 
@@ -62,7 +62,7 @@ include Intrigue::Core::System::Helpers
 # Debug
 require 'logger'
 
-# disable annoying redis messages 
+# disable annoying redis messages
 Redis.exists_returns_integer = false
 
 #
@@ -102,9 +102,10 @@ def setup_redis
       config.redis = { url: $redis_connect_string}
     end
 
-    begin 
+    begin
       puts "Configuring reliable fetch if it's available!"
       config.super_fetch!
+      config.reliable_scheduler!
     rescue NoMethodError => e
       # No reliable fetch available
     end
@@ -114,6 +115,15 @@ def setup_redis
   # configure the client
   Sidekiq.configure_client do |config|
     puts "Configuring Redis Client for: #{$redis_connect_string}"
+
+    begin
+      puts "Configuring reliable fetch if it's available!"
+      config.reliable_push! if "#{ENV["APP_ENV"]}".strip == "production-engine"
+    rescue NoMethodError => e
+      # No reliable push available
+    end
+
+
     # if password is present, use it
     if $redis_pass
       config.redis = { url: $redis_connect_string, password: $redis_pass}
@@ -197,13 +207,13 @@ class CoreApp < Sinatra::Base
 
     # Set the project based on the directive
     project = Intrigue::Core::Model::Project.first(:name => directive)
-    if project 
-      @project_name = project.name 
-    else 
+    if project
+      @project_name = project.name
+    else
       session[:flash] = "Missing Project!?"
       redirect FRONT_PAGE
     end
-    
+
   end
 
   not_found do
@@ -249,7 +259,7 @@ end
 require_relative "lib/all"
 
 ###
-## Relevant to hosted/managed configurations, load in a Sentry DSN from 
+## Relevant to hosted/managed configurations, load in a Sentry DSN from
 ##   the so we can report errors to a Sentry instance
 ###
 #configure sentry.io error reporting (only if a key was provided)
