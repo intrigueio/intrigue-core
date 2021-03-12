@@ -7,7 +7,7 @@ module Intrigue
         {
           added: "2021-03-02",
           name: "microsoft_exchange_multiple_cve_2021_26855.rb",
-          pretty_name: "Microsoft Exchange Multiple RCE CVEs",
+          pretty_name: "Microsoft Exchange Multiple RCE CVEs (CVE-2021-26855)",
           identifiers: [
             { type: "CVE", name: "CVE-2021-26412" },
             { type: "CVE", name: "CVE-2021-26854" },
@@ -38,13 +38,13 @@ module Intrigue
           authors: ["shpendk", "Volexity", "orange_8361", "MSTIC"]
         }.merge!(instance_details)
         end
-  
+
       end
-    end  
-    
-  
+    end
+
+
     module Task
-      class MicrosoftExchangeCve202126855 < BaseCheck 
+      class MicrosoftExchangeCve202126855 < BaseCheck
         def self.check_metadata
           {
             allowed_types: ["Uri"],
@@ -52,7 +52,7 @@ module Intrigue
             allowed_options: []
           }
         end
-  
+
         def check
             # first, ensure we're fingerprinted
             require_enrichment
@@ -91,5 +91,5 @@ module Intrigue
         end
       end
     end
-  
+
   end
