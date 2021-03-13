@@ -31,9 +31,9 @@ class NetworkService < Intrigue::Task::BaseTask
     entity_name = _get_entity_name
 
     # grab the ip, handling ipv6 gracefully
-    if entity_name =~ /:/ 
+    if entity_name =~ /:/
       ip_address = entity_name.split(":")[0..-2].join(":")
-    else 
+    else
       ip_address = entity_name.split(":").first
     end
 
@@ -47,16 +47,17 @@ class NetworkService < Intrigue::Task::BaseTask
 
     # Use Ident to fingerprint
     _log "Grabbing banner and fingerprinting!"
-    ident_response = fingerprint_service(ip_address, port, proto) 
-    
+    ident = Intrigue::Ident::Ident.new
+    ident_response = ident.fingerprint_service(ip_address, port)
+
     fingerprint = ident_response["fingerprint"]
 
-    # set entity details 
+    # set entity details
     _set_entity_detail "fingerprint", fingerprint
 
     # Translate ident fingerprint (tags) into known issues
     create_issues_from_fingerprint_tags(fingerprint, @entity)
-    
+
     # Create issues for any vulns that are version-only inference
     fingerprint_to_inference_issues(fingerprint)
 
@@ -80,11 +81,11 @@ class NetworkService < Intrigue::Task::BaseTask
 
     # consider these noise
     noise_networks = [
-      "CLOUDFLARENET - CLOUDFLARE, INC., US", 
-      "GOOGLE, US", 
-      "CLOUDFLARENET, US", 
-      "GOOGLE-PRIVATE-CLOUD, US", 
-      "INCAPSULA, US", 
+      "CLOUDFLARENET - CLOUDFLARE, INC., US",
+      "GOOGLE, US",
+      "CLOUDFLARENET, US",
+      "GOOGLE-PRIVATE-CLOUD, US",
+      "INCAPSULA, US",
       "INCAPSULA - INCAPSULA INC, US"
     ]
 
@@ -95,35 +96,35 @@ class NetworkService < Intrigue::Task::BaseTask
     if noise_networks.include?(net_name) &&
          (_get_entity_detail("fingerprint") || []).empty?
       # always allow these ports even if we dont have a fingeprint
-      unless (port == 80 || port == 443) 
+      unless (port == 80 || port == 443)
         hide_value = true
         hide_reason = "noise_network"
       end
     end
 
     known_ports = [
-      { port: 2082, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::" },  
-      { port: 2083, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },  
+      { port: 2082, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::" },
+      { port: 2083, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
       { port: 2086, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
       { port: 2087, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
-      { port: 2095, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  }, 
-      { port: 2082, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::" },  
-      { port: 2083, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },  
+      { port: 2095, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
+      { port: 2082, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::" },
+      { port: 2083, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
       { port: 2086, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
       { port: 2087, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
-      { port: 2095, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  }, 
+      { port: 2095, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
       { port: 25, net_name: "GOOGLE, US" }
     ]
     if known_ports.find{ |x| x[:port] == port && x[:net_name] == net_name }
       hide_reason = "Matched known hidden service"
-      hide_value = true 
+      hide_value = true
     end
 
-    # Okay now hide based on our value 
+    # Okay now hide based on our value
     _log "Setting Hidden to: #{hide_value}, for reason: #{hide_reason}"
-    @entity.hidden = hide_value 
+    @entity.hidden = hide_value
     @entity.save_changes
-  
+
   end
 
   def enrich_snmp
