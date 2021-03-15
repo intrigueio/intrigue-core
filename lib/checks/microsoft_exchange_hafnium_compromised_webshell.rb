@@ -20,7 +20,10 @@ module Issue
       references: [
         { type: "description", uri: "https://github.com/PwnDefend/Exchange-RCE-Detect-Hafnium/blob/main/honeypot_shell_list.txt" },
         { type: "remediation", uri: "https://www.bleepingcomputer.com/news/security/microsofts-msert-tool-now-finds-web-shells-from-exchange-server-attacks/"},
-        { type: "remediation", uri: "https://github.com/microsoft/CSS-Exchange/tree/main/Security"}
+        { type: "remediation", uri: "https://github.com/microsoft/CSS-Exchange/tree/main/Security"},
+        { type: "threat_intel", uri: "https://www.bleepingcomputer.com/news/security/microsofts-msert-tool-now-finds-web-shells-from-exchange-server-attacks/"},
+        { type: "threat_intel", uri: "https://github.com/PwnDefend/Exchange-RCE-Detect-Hafnium/blob/main/honeypot_shell_list.txt"},
+
 
       ],
       authors: ["jcran", "pwndefend"]

@@ -34,6 +34,13 @@ module Intrigue
             { type: "description", uri: "https://www.microsoft.com/security/blog/2021/03/02/hafnium-targeting-exchange-servers/"},
             { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2021-26855" },
             { type: "description", uri: "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-26855" },
+
+            { type: "exploit", uri: "https://www.exploit-db.com/exploits/49637" },
+            { type: "exploit", uri: "https://www.praetorian.com/blog/reproducing-proxylogon-exploit/" },
+            { type: "exploit", uri: "https://twitter.com/irsdl/status/1369811265707778052" },
+
+            { type: "threat_intel", uri: "https://www.crowdstrike.com/blog/falcon-complete-stops-microsoft-exchange-server-zero-day-exploits/" },
+            { type: "threat_intel", uri: "https://www.reddit.com/r/sysadmin/comments/lz1jp4/youve_been_hit_by_youve_been_struck_by_an/" },
           ],
           authors: ["shpendk", "Volexity", "orange_8361", "MSTIC"]
         }.merge!(instance_details)
