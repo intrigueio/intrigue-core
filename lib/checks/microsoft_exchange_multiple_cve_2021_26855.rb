@@ -18,7 +18,7 @@ module Intrigue
             { type: "CVE", name: "CVE-2021-27078" },
           ],
           severity: 1,
-          status: "potential",
+          status: "confirmed",
           category: "vulnerability",
           description: "A chain of multiple remote code execution vulnerabilities have been identified being exploited in the wild. The vulnerabilities affect on-premise MS exchange servers, and require the ability to make an untrusted connection port 443.",
           remediation: "Install the latest security update for the specific products or limit connection on port 443 to trusted sources.",
@@ -61,7 +61,34 @@ module Intrigue
         end
 
         def check
-            # first, ensure we're fingerprinted
+            # check if we can perform SSRF
+            uri = "#{_get_entity_name}"
+            headers = {
+              "User-Agent" => "Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0",
+              "Cookie" => "X-AnonResource=true; X-AnonResource-Backend=localhost/ecp/default.flt?~3; X-BEResource=localhost/owa/auth/logon.aspx?~3;"
+            }
+            
+            res = http_request :get, uri, nil, headers
+            if res.code.to_i == 500 && res.body_utf8 =~ /NegotiateSecurityContext/
+              _log "Vulnerable! SSRF successful and this is a confirmed issue."
+              return res.body_utf8
+            end
+
+            # if original URI didn't work, lets try the default url
+            _log "Testing at /owa/auth/x.js"
+            uri_obj = URI(uri)
+            endpoint = "#{uri_obj.scheme}://#{uri_obj.hostname}:#{uri_obj.port}/owa/auth/x.js"
+            res = http_request :get, endpoint, nil, headers
+            if res.code.to_i == 500 && res.body_utf8 =~ /NegotiateSecurityContext/
+              _log "Vulnerable! SSRF successful and this is a confirmed issue."
+              return res.body_utf8
+            end
+
+            ################################################
+            ### SSRF failed, fallback to version comparison
+            ################################################
+
+            # ensure we're fingerprinted
             require_enrichment
             fingerprint = _get_entity_detail("fingerprint")
 
