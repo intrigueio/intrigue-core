@@ -1,4 +1,3 @@
-
 module Intrigue
 module Issue
   class MicrosoftExchangeHafniumCompromisedWebshell < BaseIssue
@@ -6,7 +5,7 @@ module Issue
     {
       added: "2021-03-10",
       name: "microsoft_exchange_hafnium_compromised_webshell",
-      pretty_name: "Microsoft Exchange Halfnium Compromised Webshell",
+      pretty_name: "Microsoft Exchange Hafnium Compromised Webshell",
       identifiers: [
       ],
       severity: 1,
@@ -23,6 +22,11 @@ module Issue
         { type: "remediation", uri: "https://github.com/microsoft/CSS-Exchange/tree/main/Security"},
         { type: "threat_intel", uri: "https://www.bleepingcomputer.com/news/security/microsofts-msert-tool-now-finds-web-shells-from-exchange-server-attacks/"},
         { type: "threat_intel", uri: "https://github.com/PwnDefend/Exchange-RCE-Detect-Hafnium/blob/main/honeypot_shell_list.txt"},
+        { type: "threat_intel", uri: "https://redcanary.com/blog/microsoft-exchange-attacks/"},
+        { type: "threat_intel", uri: "https://gist.github.com/JohnHammond/0b4a45cad4f4ed3324939d72dc599883"},
+        { type: "threat_intel", uri: "https://www.bankinfosecurity.com/at-least-10-apt-groups-exploiting-exchange-flaws-a-16166"},
+
+
 
 
       ],
@@ -65,19 +69,35 @@ module Task
 /aspnet_client/iispage.aspx
 /aspnet_client/system_web/log.aspx
 /aspnet_client/load.aspx
-      eos
+eos
 
       # default value for the check response
       out = false
 
+      # first test that we can get something
+      contents = http_get_body "#{_get_entity_name}"
+      _log_error "failing, unable to get a response" unless contents
+
       # check all paths for a non-error response
       known_webshell_paths.split("\n").each do |webshell_path|
         _log "Getting: #{webshell_path}"
-        contents = http_get_body "#{_get_entity_name}#{webshell_path}"
-        _log "Got: #{contents}"
-        unless contents =~ /The resource cannot be found/
-          out = { proof: { url: webshell_path, contents: contents } }
+
+        full_path = "#{_get_entity_name}#{webshell_path}"
+
+        # get the body
+        resp = http_request :get, full_path
+
+        # make sure we got a response
+        if resp.body.empty?
+          _log_error "No response for #{full_path}! #{contents}"
+          next
         end
+
+        # check for a missing page
+        unless resp.body =~ /The resource cannot be found/
+          out = { url: full_path, contents: contents }
+        end
+
       end
 
     out
