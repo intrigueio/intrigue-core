@@ -25,10 +25,7 @@ module Issue
         { type: "threat_intel", uri: "https://redcanary.com/blog/microsoft-exchange-attacks/"},
         { type: "threat_intel", uri: "https://gist.github.com/JohnHammond/0b4a45cad4f4ed3324939d72dc599883"},
         { type: "threat_intel", uri: "https://www.bankinfosecurity.com/at-least-10-apt-groups-exploiting-exchange-flaws-a-16166"},
-
-
-
-
+        { type: "threat_intel", uri: "https://www.welivesecurity.com/2021/03/10/exchange-servers-under-siege-10-apt-groups/"}
       ],
       authors: ["jcran", "pwndefend"]
     }.merge!(instance_details)
