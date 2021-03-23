@@ -36,7 +36,7 @@ module Socket
   ##
   ## @param addr [Numeric] The address as a number
   ## @param v6 [Boolean] Whether +addr+ is IPv6
-  def self.addr_iton(addr, v6=false)
+  def addr_iton(addr, v6=false)
     if(addr < 0x100000000 && !v6)
       return [addr].pack('N')
     else
