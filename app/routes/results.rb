@@ -208,8 +208,8 @@ class CoreApp < Sinatra::Base
       elsif file_format == "otx_csv"
         entities = alienvault_otx_csv_to_entities(entity_file)
       ### BinaryEdge (JSON)
-      elsif file_format == "binary_edge_json"
-        entities = binary_edge_json_to_entities(entity_file)
+      elsif file_format == "binary_edge_jsonl"
+        entities = binary_edge_jsonl_to_entities(entity_file)
       ### Shodan.io (CSV)
       elsif file_format == "shodan_csv"
         entities = shodan_csv_to_entities(filename)

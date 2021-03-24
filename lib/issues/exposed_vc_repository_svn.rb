@@ -16,7 +16,7 @@ module Intrigue
           { type: "description", uri: "https://medium.com/@ghostlulzhacks/exposed-source-code-c16fac0032ff"}, 
           { type: "exploit", uri: "https://github.com/anantshri/svn-extractor"},
         ], 
-        check: "uri_brute_focused_content"
+        task: "uri_brute_focused_content"
       }.merge!(instance_details)
     to_return
     end

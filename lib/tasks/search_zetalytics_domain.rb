@@ -7,8 +7,8 @@ class SearchZetalyticsDomain < BaseTask
       :name => "search_zetalytics_domain",
       :pretty_name => "Search Zetalytics By Domain",
       :authors => ["Anas Ben Salah"],
-      :description => "This task search Zetalytics for a given domain name and returns " + 
-        "related entities such as DnsRecords, related IPs and EmailAddress.",
+      :description => "This task searches Zetalytics for a given domain and returns 
+        Domain, DnsRecord and EmailAddress results found via Passive DNS ",
       :references => [],
       :type => "discovery",
       :passive => true,
@@ -25,18 +25,27 @@ class SearchZetalyticsDomain < BaseTask
   def run
     super
 
-    begin
+    domain_name = _get_entity_name
 
-      # Make sure the key is set
-      api_key = _get_task_config("zetalytics_api_key")
-
-      # search it 
-      result = search_zetalytics_by_domain(api_key, _get_entity_name)
-      
-      # create our entities 
-      create_entities(result) if result
-
+    # first check... if this is a wildcard domain, we cannot continue, 
+    # results will be generally untrustworthy. 
+    # todo... in the future, make a list and we can check against it 
+    wildcards = gather_wildcard_ips(domain_name)
+    unless wildcards.empty?
+      _log_error "Cowardly refusing to pull data on a wildcard domains"
+      _log_error "wildcards: #{wildcards}"
+      return 
     end
+
+    # Make sure the key is set
+    api_key = _get_task_config("zetalytics_api_key")
+
+    # search it 
+    result = search_zetalytics_by_domain(api_key, domain_name)
+    
+    # create our entities 
+    create_entities(result) if result
+
   end #end run
 
   # search zetalytics for a specific domain name
@@ -102,7 +111,7 @@ class SearchZetalyticsDomain < BaseTask
           if e[k] =~ /[a-zA-Z0-9\.\_\%\+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,12}/
             _create_entity("EmailAddress", "name" => e[k])
           else 
-            create_dns_entity_from_string(e[k], nil, false, e)
+            create_dns_entity_from_string(e[k], nil, false, e) if resolve_name e[k]
           end
         end
       end

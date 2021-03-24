@@ -8,7 +8,7 @@ module Intrigue
         :pretty_name => "Vuln Check - Sonatype Nexus RCE (CVE-2020-10204)",
         :authors => ["jcran"],
         :identifiers => [{ "cve" =>  "CVE-2020-10204" }],
-        :description => "Pull info from VMWare Horizon.",
+        :description => "Sonatype Nexus Repository before 3.21.2 allows Remote Code Execution.",
         :references => [
           "https://github.com/advisories/GHSA-8h56-v53h-5hhj",
           "https://support.sonatype.com/hc/en-us/articles/360044882533-CVE-2020-10199-Nexus-Repository-Manager-3-Remote-Code-Execution-2020-03-31",

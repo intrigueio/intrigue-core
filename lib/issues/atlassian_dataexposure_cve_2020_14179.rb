@@ -23,7 +23,7 @@ module Intrigue
             { type: "remediation", uri: "https://jira.atlassian.com/browse/JRASERVER-71536" },
   
           ],
-          check: "vuln/atlassian_dataexposure_cve_2020_14179"
+          task: "vuln/atlassian_dataexposure_cve_2020_14179"
         }.merge!(instance_details)
       end
   

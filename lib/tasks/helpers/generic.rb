@@ -2,26 +2,26 @@ module Intrigue
 module Task
 module Generic
 
-   def self.included(base)
+  def self.included(base)
      include Intrigue::Task::Web
      include Intrigue::Task::Popen
-   end
+  end
 
-   def require_enrichment
-    
+  def require_enrichment
+
     entity_enriched = @entity.enriched?
-    cycles = 200 
+    cycles = 200
     max_cycles = cycles
 
-    until entity_enriched || cycles == 0
-      _log "Waiting up to 10m for entity to be enriched... (#{cycles-=1} / #{max_cycles})"
+    until entity_enriched || cycles.zero?
+      _log "Waiting up to 10m for entity to be enriched... (#{cycles -= 1} / #{max_cycles})"
       sleep 3
-      entity_enriched = Intrigue::Core::Model::Entity.first(:id => @entity.id).enriched?
+      entity_enriched = Intrigue::Core::Model::Entity.first(id: @entity.id).enriched?
     end
 
     # re-pull
-    @entity = Intrigue::Core::Model::Entity.first(:id => @entity.id)
-    
+    @entity = Intrigue::Core::Model::Entity.first(id: @entity.id)
+
   end
 
   private
@@ -44,9 +44,7 @@ module Generic
       end
     end; "ok"
     workers.map(&:join); "ok"
-
-  #output_queue
-  end # end run method
+  end
 
   ###
   ### Helper method to reach out to the entity manager
@@ -94,7 +92,7 @@ module Generic
   def _unsafe_system(command, timeout = 600, workingdir = "/tmp")
     stdout, stderr, exit_status = popen_with_timeout([command], timeout, workingdir)
 
-  # return only the stuff we care about 
+  # return only the stuff we care about
   stdout
   end
   ###
@@ -120,7 +118,7 @@ module Generic
     if Intrigue::NotifierFactory.default
       _log "Notifying via default channels"
       Intrigue::NotifierFactory.default.each { |x| x.notify(message, @task_result) }
-    else 
+    else
       _log "Unable to notify on default channels!"
     end
   end
@@ -171,12 +169,12 @@ module Generic
 
   def _get_task_config(key)
     begin
-      
+
       Intrigue::Core::System::Config.load_config
       error_message = "Please enter your #{key} setting in 'Configure -> Task Configuration'"
       config = Intrigue::Core::System::Config.config["intrigue_global_module_config"]
       value = config[key]["value"]
-    
+
       unless value && value != ""
         raise MissingTaskConfigurationError.new error_message
       end

@@ -19,7 +19,7 @@ class PhpmyadminSetupFiles < BaseIssue
         { type: "remediation", uri: "https://security.stackexchange.com/questions/40291/strange-requests-to-web-server" },
         { type: "remediation", uri: "https://serverfault.com/questions/202822/how-to-thwart-phpmyadmin-attacks"}
       ], 
-      check: "uri_brute_focused_content"
+      task: "uri_brute_focused_content"
     }.merge!(instance_details)
   end
 

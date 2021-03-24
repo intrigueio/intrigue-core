@@ -24,19 +24,18 @@ if ENV["APP_ENV"] == "production-engine"
   # prod ident
   gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git', :branch => "main"
 
-elsif ENV["APP_ENV"] == "development"
+elsif ENV["APP_ENV"] == "development-engine"
   
   # enable regular sidekiq, and link to local gems 
   gem 'sidekiq'
 
   ###
-  ### Handy for local dev, just here to make it easy/obvious where to put these 
+  ### Handy for local dev, just here to make it easy/obvious where to put these
   ###
-  # dev gems
-  gem 'intrigue-ident',                :path => "~/intrigue-ident"
-  gem 'intrigue-ident-private',        :path => "~/intrigue-ident-private"
-  gem 'intrigue-core-private',         :path => "~/intrigue-core-private"
-  gem 'ruclei',                        :path => "~/ruclei"
+  gem 'intrigue-ident',                :path => "~/intrigue/ident"
+  gem 'intrigue-ident-private',        :path => "~/intrigue/ident-private"
+  gem 'intrigue-core-private',         :path => "~/intrigue/core-private"
+  gem 'ruclei',                        :path => "~/intrigue/ruclei"
 
 else # every other environment, including production-oss
   
@@ -137,5 +136,4 @@ gem "sentry-raven"            # Error tracking (disabled by default)
 gem 'rake'                    # Testing
 gem 'rspec'                   # Testing
 gem 'rack-test'               # Testing
-
 

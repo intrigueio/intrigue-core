@@ -23,7 +23,7 @@ module Intrigue
           { type: "exploit", uri: "https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/multi/http/tomcat_jsp_upload_bypass.rb" },
           { type: "exploit", uri: "https://www.exploit-db.com/exploits/42966" }
         ],
-        check: "vuln/tomcat_put_jsp_cve_2017_12615"
+        task: "vuln/tomcat_put_jsp_cve_2017_12615"
       }.merge!(instance_details)
     end
   

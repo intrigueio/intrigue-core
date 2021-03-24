@@ -21,7 +21,7 @@ class MicrosoftSharepointInfoLeak < BaseIssue
         { type: "remediation", uri: "https://sharepoint.stackexchange.com/questions/11504/sharepoint-2010-disable-hide-references-to-spsdisco-aspx" },
         { type: "remediation", uri: "https://social.msdn.microsoft.com/Forums/vstudio/en-US/df090d4b-ba9b-4212-a524-e3e2bb50cacc/hiding-asmxwsdl?forum=wcf" }  
       ], 
-      check: "uri_brute_focused_content"
+      task: "uri_brute_focused_content"
     }.merge!(instance_details)
   end
 

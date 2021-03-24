@@ -16,7 +16,7 @@ class OracleWeblogicVulnerablePaths < BaseIssue
         { :vendor => "Oracle", :product => "Weblogic Server" }
       ],
       references: [],
-      check: "uri_brute_focused_content"
+      task: "uri_brute_focused_content"
     }.merge!(instance_details)
   end
 

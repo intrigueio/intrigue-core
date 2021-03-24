@@ -29,7 +29,7 @@ class Uri < Intrigue::Core::Model::Entity
 
     if details["title"]
       out << " | " if out.length > 0
-      out << " Title: #{details["title"]}" 
+      out << " Title: #{details["title"]}"
     end
 
   out

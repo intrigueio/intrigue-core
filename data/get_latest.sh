@@ -73,6 +73,17 @@ for YEAR in $NVD_YEARS; do
 
 done
 
+if [ ! -d "nuclei-templates"  ]; then
+  echo "[+] Getting nuclei templates"
+  git clone https://github.com/projectdiscovery/nuclei-templates 2> /dev/null
+else
+  echo "[+] Updating nuclei templates"
+  cd nuclei-templates
+  git pull 2> /dev/null
+  cd ..
+fi
+
+
 echo "[+] Data Update Complete!"
 
 

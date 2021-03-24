@@ -47,7 +47,7 @@ class UriExtractLinkedHosts  < BaseTask
     ### Now, parse out all links and do analysis on 
     ### the individual links
     ###
-    out = parse_dns_records_from_content(uri, contents, extract_patterns)
+    out = parse_dns_records_from_content(uri, contents.gsub(/%2f/i,""), extract_patterns)
     out.each do |d|
       create_dns_entity_from_string d["name"], nil, false, d
     end

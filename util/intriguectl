@@ -68,7 +68,7 @@ if [ "$cmd" == "start" ]; then
     god -c ~/core/util/god/intrigue.rb
     god start > /dev/null
     sleep 25
-    ip=$(ifconfig eth0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
+    ip=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
     printf "Browse to https://$ip:7777 and login with:\nUsername: intrigue\nPassword: given or pregenerated value\n" | boxes
 elif [ "$cmd" == "stop" ]; then
     echo "[+] Stopping intrigue..."
@@ -83,6 +83,7 @@ elif [ "$cmd" == "update" ]; then
     echo "[+] Pulling https://github.com/intrigueio/intrigue-core"
     git pull > /dev/null 2>&1
     bundle install > /dev/null 2>&1
+    bundle exec rake db:migrate > /dev/null 2>&1
     echo "[+] Update complete! Please restart intrigue for changes to take effect."
 else
     echo "Unknown command."

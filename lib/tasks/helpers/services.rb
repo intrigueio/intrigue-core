@@ -30,7 +30,6 @@ module Services
   cert
   end
 
-
   def _create_network_service_entity(ip_entity,port_num,protocol="tcp",generic_details={})
 
     # first, save the port details on the ip_entity
@@ -158,8 +157,9 @@ module Services
 
         service_specific_details = {}
         service = _map_tcp_port_to_name(port_num)
-
-        name = "#{h.name.strip}:#{port_num}"
+       
+        # now we have all the details we need, create it
+        name = "#{h.name.strip}:#{port_num}/#{protocol}"
 
         entity_details = {
           "name" => name,
@@ -185,7 +185,7 @@ module Services
         service = _map_udp_port_to_name(port_num)
 
         # now we have all the details we need, create it
-        name = "#{h.name.strip}:#{port_num}"
+        name = "#{h.name.strip}:#{port_num}/#{protocol}"
 
         entity_details = {
           "name" => name,

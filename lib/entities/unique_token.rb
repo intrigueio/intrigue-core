@@ -21,13 +21,13 @@ class UniqueToken < Intrigue::Core::Model::Entity
     # 13e49d785d8d4f828038b6136f3b48ba
     #
     tokens = [
-      { 
+      {
         "provider": "aws_access_key", 
         "regex": /^(A3T[A-Z0-9]|AKIA|AGPA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Za-z0-9]{16}$/i, 
         "matcher":  /((A3T[A-Z0-9]|AKIA|AGPA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Za-z0-9]{16})/, 
         "sensitive":  true 
       },
-      { 
+      {
         "provider": "amazon_mws", 
         "regex": /^amzn\\.mws\\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, 
         "matcher":  /(amzn\\.mws\\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i, 
@@ -105,7 +105,8 @@ class UniqueToken < Intrigue::Core::Model::Entity
   def validate_entity
     # check that our regex for the hash matches
     supported_type = self.class.supported_token_types.select{ |x| 
-      regex = x["regex"]; regex = Regexp.new(regex) unless regex.kind_of?(Regexp)
+      regex = x["regex"] || x[:regex]
+      regex = Regexp.new(regex) unless regex.kind_of?(Regexp)
       name.match(regex)
     }
 

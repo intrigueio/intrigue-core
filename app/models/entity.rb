@@ -27,7 +27,7 @@ module Model
 
     include Intrigue::Core::System::DnsHelpers
     include Intrigue::Core::System::Validations
-    
+
     def self.inherited(base)
       EntityFactory.register(base)
       super
@@ -61,14 +61,14 @@ module Model
     end
 
     def match_entity_string?(entity_type, entity_name)
-      
+
       # just in case (handles a current error)
       return false unless entity_type && entity_name && self.name
 
       #puts "Attempting to match #{entity_type} #{entity_name} to #{self.type_string} #{self.name}"
       return true if (self.type_string.downcase == entity_type.downcase && self.name.downcase == entity_name.downcase)
     false
-    end 
+    end
 
     # default method that scopes / unscoped entities (can be overridden)
     # TODO ... maybe we move the logic of details that exists in entity_manager here?
@@ -129,8 +129,8 @@ module Model
       extended_details.count > 1 # hidden_name will always exist...
     end
 
-    # 
-    # This method allows us to easily specify a list of type / name pairs for the 
+    #
+    # This method allows us to easily specify a list of type / name pairs for the
     # purpose of verifying scope. The default, is just our own type/name, but consider
     # the example of a URI ... we want to verify the URI itself, the hostname (if
     # not an IP), AND the domain
@@ -146,13 +146,13 @@ module Model
     def self.transform_before_save(name, details)
       return name, details
     end
-    
+
     # override me... see: lib/entities/aws_credential.rb
     def transform!
       true
     end
 
-    # this is just a convenience method 
+    # this is just a convenience method
     def enriched?
       self.enriched
     end
@@ -164,9 +164,9 @@ module Model
 
     def enrich(task_result)
 
-      # immediately fail if this is not autoscheduled 
+      # immediately fail if this is not autoscheduled
       ###
-      ### Optimization put in place 2020-01-12 ... note that this may not 
+      ### Optimization put in place 2020-01-12 ... note that this may not
       ### work for every use case and should be revisited at a later date
       ###
       if self.deny_list
@@ -175,8 +175,8 @@ module Model
       end
 
       # grab the task result
-      scan_result_id = task_result.scan_result.id if task_result.scan_result 
-      task_result_depth = task_result.depth 
+      scan_result_id = task_result.scan_result.id if task_result.scan_result
+      task_result_depth = task_result.depth
 
       # if a workflow exists, grab it
       workflow_name = task_result.scan_result ? task_result.scan_result.workflow : nil
@@ -198,8 +198,8 @@ module Model
           start_task("task_enrichment", self.project, scan_result_id, task_name, self, task_result_depth, [], [], workflow_name, true)
         end
 
-      end 
-      
+      end
+
     end
 
     def alias_to(new_id)
@@ -247,7 +247,7 @@ module Model
 
     def set_detail(key, value)
       begin
-        $db.transaction do 
+        $db.transaction do
           refresh
           self.set(:details => details.merge({key => value}.sanitize_unicode))
           save
@@ -297,7 +297,7 @@ module Model
     #
     # @return [String]  Semicolon delimted list of fingeprrints
     def short_fingerprint_string(fingerprint)
-      fingerprint_array = fingerprint.map do |x| 
+      fingerprint_array = fingerprint.map do |x|
         if x['vendor'] == x['product']
           fp = "#{x['vendor']} #{x['version']} #{x['update']}".strip # start with just vendor + version
         else # if vendor and product arenot the same, add product
@@ -377,7 +377,7 @@ module Model
     def to_v1_api_hash(full=false)
       if full
         export_hash
-      else 
+      else
         {
           :id => id,
           :type => type,
@@ -395,12 +395,12 @@ module Model
     ### Export!
     ###
     def export_hash(include_extended=true)
-      
-      # check if extended details are allowed to 
+
+      # check if extended details are allowed to
       # be exported. if not, use short details.
       if include_extended
-        export_details = details 
-      else 
+        export_details = details
+      else
         export_details = short_details
       end
 
@@ -423,7 +423,7 @@ module Model
             #:task_type => t.task_type,
             :base_entity_name => t.base_entity.name,
             :base_entity_type => t.base_entity.type  }
-        }, 
+        },
         :generated_at => Time.now.utc
       }
     end

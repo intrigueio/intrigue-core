@@ -19,9 +19,10 @@ def self.generate(instance_details={})
       { type: "description", uri: "https://httpd.apache.org/docs/2.4/mod/mod_info.html" },
       { type: "remediation", uri: "https://httpd.apache.org/docs/2.4/mod/mod_info.html" }
     ], 
-    check: "uri_brute_focused_content"
+    task: "uri_brute_focused_content"
   }.merge!(instance_details)
 end
+
 end
 end
 end
