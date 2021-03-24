@@ -12,11 +12,8 @@ module Intrigue
         {
           :name => "f5_bigip_cookie_decoder",
           :pretty_name => "F5 BigIP Cookie Decoder",
-          :authors => ["jcran", "jhawthorn"],
-          :identifiers => [{ "cve" =>  "CVE-2019-5418" }],
-          :description => "Rails < 6.0.0.beta3, 5.2.2.1, 5.1.6.2, 5.0.7.2, 4.2.11.1 is subject to" + 
-            " an information disclosure vulnerability which can be triggered by a specially crafted" +
-            " accept header.",
+          :authors => ["jcran", "jhawthorn", "maxim"],
+          :description => "Decodes a F5 BigIP Cookie in order to leak information about the backend such as the Pool Name, IP Address, and Port.",
           :references => [
             "http://support.f5.com/kb/en-us/solutions/public/6000/900/sol6917.html",
             "http://support.f5.com/kb/en-us/solutions/public/7000/700/sol7784.html?sr=14607726"
@@ -28,7 +25,7 @@ module Intrigue
             {"type" => "Uri", "details" => {"name" => "https://intrigue.io"}}
           ],
           :allowed_options => [],
-          :created_types => []
+          :created_types => ["IpAddress"]
         }
       end
 
@@ -77,7 +74,8 @@ module Intrigue
           port = nil
         end
 
-        decoded[:hostname] = cookie_value.match(/BIGipServer(.*)=/i).captures.first
+        # decoded[:hostname] = cookie_value.match(/BIGipServer(.*)=/i).captures.first
+        decoded[:poolname] = cookie_value.match(/BIGipServer(.*)=/i).captures.first
         decoded[:ip_address] = ip_address.nil? ? nil : ip_address
         decoded[:port] = port.nil? ? nil : port
         decoded
@@ -90,7 +88,7 @@ module Intrigue
 
         decoded_cookies = []
 
-        5.times do # send 5 requests as each request may return a decoded cookie with a different ip address
+        10.times do # send 10 requests as each request may return a decoded cookie with a different ip address
           response = http_request :get, uri
           set_cookie = response.headers['set-cookie']
 
@@ -109,7 +107,8 @@ module Intrigue
       end
 
       def create_entities(decoded_arr)
-        _create_entity 'Hostname', 'name' => decoded_arr.first[:hostname]
+        # _create_entity 'Hostname', 'name' => decoded_arr.first[:hostname].gsub('~', '-') # bigip hostnames have ~ so we convert to dashes (as ~ is not valid for hostname)
+        _set_entity_detail 'F5 Decoded Big IP Cookie', decoded_arr
 
         decoded_arr.each do |d|
           _create_entity 'IpAddress', 'name' => d[:ip_address]
