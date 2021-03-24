@@ -2,7 +2,6 @@ module Intrigue
   module Task
   class BigipCookieDecoder < BaseTask
     
-    include Intrigue::Task::Socket
     # MSF-provided Functionality credit: 
     # 'Thanat0s <thanspam[at]trollprod.org>',
     # 'Oleg Broslavsky <ovbroslavsky[at]gmail.com>',
@@ -83,37 +82,37 @@ module Intrigue
       decoded[:port] = port.nil? ? nil : port
       decoded
     end
-  
-  
-  
-    ## Default method, subclasses must override this
+
     def run
       super
-  
+
       uri = _get_entity_name
       begin
         hostname = URI.parse(uri).host
-        port = URI.parse(uri).port
       rescue URI::InvalidURIError => e
         _log_error "Error parsing... #{uri}"
         return nil
       end
-  
+
       # Grab the full response
       response = http_request :get, uri
   
       # get the bigip cookie if it exists
       set_cookie = response.headers['set-cookie']
-  
-      # check if we have the cookie, and if so, decode/log 
-      cookie = set_cookie.split(";").select{|c| c =~ /bigipserver/i }
-      cookie = cookie.first
+
+      unless set_cookie.nil?
+        # if multiple cookies are returned in response - extract the bipipserver cookie
+        set_cookie = set_cookie.select { |c| c =~ /BIGipServer(.*)=/i } if set_cookie.is_a?(Array)
+        return nil if set_cookie.empty?
+
+        cookie = set_cookie.split(';').select { |c| c =~ /BIGipServer(.*)=/i }.first # only one cookie so its a string
+      end
+
       if cookie 
         _log_good "Got: #{bigip_cookie_decode(cookie)}"
       end
-  
+
     end
-  
   end
-  end
-  end
+end
+end

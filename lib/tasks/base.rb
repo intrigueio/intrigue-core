@@ -18,12 +18,7 @@ class BaseTask
   include Intrigue::Task::Issue
   include Intrigue::Task::Regex
   include Intrigue::Task::Services
-<<<<<<< HEAD
   include Intrigue::Task::Socket
-=======
-  include Intrigue::Task::VulnCheck
-  include Intrigue::Task::VulnDb
->>>>>>> develop
   include Intrigue::Task::Web
   include Intrigue::Task::WebContent
   include Intrigue::Task::WebAccount
