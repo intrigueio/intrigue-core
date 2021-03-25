@@ -112,7 +112,7 @@ module Intrigue
       ##
       # creates the linked issue + entities
       def create_issue_entities(decoded_arr)
-        _create_linked_issue 'f5_bigip_cookie_decoded', 'Decoded Cookie' => decoded_arr
+        _create_linked_issue 'f5_bigip_cookie_decoder', 'Decoded Cookie' => decoded_arr
 
         decoded_arr.each do |d|
           _create_entity 'IpAddress', 'name' => d[:ip_address]

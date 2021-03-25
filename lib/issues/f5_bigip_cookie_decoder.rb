@@ -3,7 +3,7 @@ module Intrigue
     class F5BigIpCookieDecoder < BaseIssue
       def self.generate(instance_details = {})
         {
-          name: "f5_bigip_cookie_decoded",
+          name: "f5_bigip_cookie_decoder",
           pretty_name: "F5 BigIP Cookie Decoded",
           severity: 5,
           status: "confirmed",
