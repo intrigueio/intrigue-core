@@ -125,6 +125,14 @@ task :setup do
     FileUtils.cp "#{puma_config_file}.default", puma_config_file
   end
 
+  ## Copy puma config into place
+  puts "[+] Copying god config...."
+  unless File.exist? god_config_file
+    puts "[+] Creating.... #{god_config_file}"
+    FileUtils.cp "#{god_config_file}.default", god_config_file
+  end
+
+
   ## Copy system config into place
   puts "[+] Copying system config...."
 
