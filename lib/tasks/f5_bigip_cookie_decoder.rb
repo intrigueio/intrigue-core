@@ -1,13 +1,13 @@
 module Intrigue
   module Task
     class F5BigIpCookieDecoder < BaseTask
-    
+
       # MSF-provided Functionality credit: 
       # 'Thanat0s <thanspam[at]trollprod.org>',
       # 'Oleg Broslavsky <ovbroslavsky[at]gmail.com>',
       # 'Nikita Oleksov <neoleksov[at]gmail.com>',
       # 'Denis Kolegov <dnkolegov[at]gmail.com>'
-    
+
       def self.metadata
         {
           :name => "f5_bigip_cookie_decoder",
@@ -88,7 +88,10 @@ module Intrigue
 
         decoded_cookies = []
 
-        10.times do # send 10 requests as each request may return a decoded cookie with a different ip address
+        10.times do |i| # send 10 requests as each request may return a decoded cookie with a different ip address
+          # cookie was not found in the second request ; stop sending additional requests & exhaust the loop
+          next if i > 1 && decoded_cookies.empty?
+
           response = http_request :get, uri
           set_cookie = response.headers['set-cookie']
 
@@ -103,11 +106,12 @@ module Intrigue
           decoded_cookies << bigip_cookie_decode(cookie) if cookie
         end
         # create IP Address entities & Hostname Entity from the cookie
-        create_entities decoded_cookies.uniq unless decoded_cookies.empty?
+        create_issue_entities decoded_cookies.uniq unless decoded_cookies.empty?
       end
 
-      def create_entities(decoded_arr)
-        # _create_entity 'Hostname', 'name' => decoded_arr.first[:hostname].gsub('~', '-') # bigip hostnames have ~ so we convert to dashes (as ~ is not valid for hostname)
+      ##
+      # creates the linked issue + entities
+      def create_issue_entities(decoded_arr)
         _create_linked_issue 'f5_bigip_cookie_decoded', 'Decoded Cookie' => decoded_arr
 
         decoded_arr.each do |d|
