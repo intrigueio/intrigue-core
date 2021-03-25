@@ -37,8 +37,12 @@ require_relative "models/workflow"
 require_relative "workers/generate_graph_worker"
 require_relative "workers/generate_meta_graph_worker"
 
+###
+### v1 api
+###
 require_relative "api/v1/helpers"
 require_relative "api/v1/project"
-require_relative "api/v1/task_result"
+require_relative "api/v1/project_download"
+require_relative "api/v1/project_task_results"
 require_relative "api/v1/system"
 
