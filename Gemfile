@@ -3,11 +3,11 @@ ruby '2.7.2'
 
 ###
 ### Depending on the environment we have to make a few adjustments to our dependencies
-### since we'll want to have Sidekiq Pro (Licensing matters!) and a few other 
+### since we'll want to have Sidekiq Pro (Licensing matters!) and a few other
 ### capabilities which are held back for the hosted service (at least for some time)
 ###
 if ENV["APP_ENV"] == "production-engine"
-  
+
   ### Sidekiq Pro
   source "https://gems.contribsys.com/" do
     gem 'sidekiq-pro'
@@ -22,11 +22,11 @@ if ENV["APP_ENV"] == "production-engine"
   end
 
   # prod ident
-  gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git', :branch => "main"
+  gem 'intrigue-ident', :git => 'https://github.com/intrigueio/intrigue-ident.git', :branch => "main"
 
 elsif ENV["APP_ENV"] == "development-engine"
-  
-  # enable regular sidekiq, and link to local gems 
+
+  # enable regular sidekiq, and link to local gems
   gem 'sidekiq'
 
   ###
@@ -38,11 +38,11 @@ elsif ENV["APP_ENV"] == "development-engine"
   gem 'ruclei',                        :path => "~/intrigue/ruclei"
 
 else # every other environment, including production-oss
-  
+
   # no sidekiq pro, so fall back to oss sidekiq
   gem 'sidekiq'
 
-  # prod gems 
+  # prod gems
   gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git', :branch => "main"
 
 end
@@ -74,7 +74,7 @@ gem 'sequel'
 gem 'sqlite3'
 gem 'pg'
 
-# Async DNS 
+# Async DNS
 gem 'async-dns'
 
 # Tasks
@@ -127,7 +127,7 @@ gem 'fog-aws'
 # production process management
 gem 'god'
 
-# Development 
+# Development
 gem 'foreman'
 gem 'pry'                     # Debugging
 gem 'pry-byebug'              # Debugging

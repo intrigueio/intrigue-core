@@ -33,10 +33,10 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: a539df581599eb5f1cf4da42aa7ed364d3f19d22
+  revision: 2b30aaece18864488229a7270e47a387cfc83cff
   branch: main
   specs:
-    intrigue-ident (5.0.0)
+    intrigue-ident (5.0.1)
       dnsruby
       mongo
       murmurhash3
@@ -145,7 +145,7 @@ GEM
       async-http (~> 0.42)
       protocol-http (~> 0.7)
     aws-eventstream (1.1.1)
-    aws-partitions (1.432.0)
+    aws-partitions (1.435.0)
     aws-sdk-core (3.113.0)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
@@ -154,14 +154,14 @@ GEM
     aws-sdk-kms (1.43.0)
       aws-sdk-core (~> 3, >= 3.112.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-route53 (1.47.0)
+    aws-sdk-route53 (1.48.0)
       aws-sdk-core (~> 3, >= 3.112.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-s3 (1.91.0)
+    aws-sdk-s3 (1.93.0)
       aws-sdk-core (~> 3, >= 3.112.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.1)
-    aws-sdk-sqs (1.37.0)
+    aws-sdk-sqs (1.38.0)
       aws-sdk-core (~> 3, >= 3.112.0)
       aws-sigv4 (~> 1.1)
     aws-sigv4 (1.2.3)
@@ -222,7 +222,7 @@ GEM
       command_lion (= 2.0.1)
       httparty (~> 0.16.2)
       parallel (~> 1.12.1)
-    fog-aws (3.9.0)
+    fog-aws (3.10.0)
       fog-core (~> 2.1)
       fog-json (~> 1.1)
       fog-xml (~> 0.1)
@@ -319,7 +319,7 @@ GEM
     mime-types (3.3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2021.0225)
-    mini_mime (1.0.2)
+    mini_mime (1.0.3)
     mini_portile2 (2.5.0)
     minitest (5.14.4)
     mongo (2.14.0)
@@ -392,7 +392,7 @@ GEM
       nokogiri (~> 1)
       rb-readline (~> 0)
     rex-core (0.1.16)
-    rex-socket (0.1.26)
+    rex-socket (0.1.29)
       rex-core
     rex-text (0.2.33)
     rexml (3.2.4)
@@ -418,7 +418,7 @@ GEM
     sequel (5.42.0)
     shodan (1.0.0)
       json (>= 1.4.6)
-    sidekiq (6.1.3)
+    sidekiq (6.2.0)
       connection_pool (>= 2.2.2)
       rack (~> 2.0)
       redis (>= 4.2.0)
