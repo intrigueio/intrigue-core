@@ -1,3 +1,4 @@
+require 'timeout'
 module Intrigue
 module Task
 class UriCheckHttp2Support < BaseTask
@@ -54,7 +55,9 @@ class UriCheckHttp2Support < BaseTask
         end
 
         # send request
-        response = client.call(:get, '/')
+        Timeout::timeout(timeout) {
+          response = client.call(:get, '/')
+        }
 
         # close the connection
         client.close
