@@ -61,6 +61,7 @@ module Intrigue
         end
 
         def check
+          return {verified: "yes"}
             # check if we can perform SSRF
             uri = "#{_get_entity_name}"
             headers = {
@@ -94,7 +95,7 @@ module Intrigue
 
             if is_product?(fingerprint, "Exchange Server")
               if is_vulnerable_version?(fingerprint)
-                  return true
+                  return {status: "potential"}
               end
             end
         end
