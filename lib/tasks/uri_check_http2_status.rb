@@ -25,14 +25,14 @@ class UriCheckHttp2Support < BaseTask
 
   def run
 
-    # Check Synchronous request / response  
+    # Check Synchronous request / response
     valid, code, headers = check_h2_sync(_get_entity_name)
     if valid
       _log "Response?: #{valid}"
       _log "Response Code: #{code}"
       _log "Response Headers: #{headers}"
       _set_entity_detail "http2", true
-    else 
+    else
       _log_error "Unsupported!"
       _set_entity_detail "http2", false
     end
@@ -41,50 +41,68 @@ class UriCheckHttp2Support < BaseTask
 
   def check_h2_sync(uri)
 
-      begin 
+    require_enrichment
 
-        # create a client
-        timeout = _get_option("connect_timeout")
-        
-        client = ::NetHttp2::Client.new(uri, connect_timeout: timeout)
+    if _get_entity_detail("code") == "0"
+      _log_error "unable to proceed, connection reset"
+      return
+    end
 
-        # error handling 
-        client.on :error do |e|
-        _log "Client encountered an error:"
-        _log e
-        end
 
-        # send request
-        Timeout::timeout(timeout) {
-          response = client.call(:get, '/')
-        }
 
-        # close the connection
-        client.close
+    begin
 
-      rescue TypeError => e  # IS there a better way to do this?
-        _log_error "Unable to connect"
-      rescue OpenSSL::SSL::SSLError => e 
-        _log_error "Unable to connect, ssl error"
-      rescue Errno::EPIPE => e 
-        _log_error "Unable to connect, broken pipe"
-      rescue Errno::EHOSTUNREACH => e
-        _log_error "Unable to connect, host unreachable"
-      rescue Errno::ECONNREFUSED => e 
-        _log_error "Unable to connect, connection refused"
-      rescue Errno::ECONNRESET => e 
-        _log_error "Unable to connect, connection reset"
-      rescue Errno::ETIMEDOUT => e 
-        _log_error "Unable to connect, timed out"
-      rescue SocketError => e
-        _log_error "Unable to connect, socket error"
+      # create a client
+      timeout = "#{_get_option("connect_timeout")}".to_i
+
+      client = ::NetHttp2::Client.new(uri, connect_timeout: timeout)
+
+      error = false
+      # error handling
+      client.on :error do |e|
+        _log_error "Client encountered an error:"
+        _log_error e
+        error = true
       end
 
-      # just fail
-      return [nil,nil,nil] unless response
+      # send request
+      response = client.call(:get, _get_entity_name)
+      return unless response
+      return if error
+
+      # read the response
+      response.ok?      # => true
+      response.status   # => '200'
+      response.headers  # => {":status"=>"200"}
+      response.body     # => "A body"
+
+
+      # close the connection
+      client.close
+
+    rescue TypeError => e  # IS there a better way to do this?
+      _log_error "Unable to connect"
+    rescue OpenSSL::SSL::SSLError => e
+      _log_error "Unable to connect, ssl error"
+    rescue Errno::EPIPE => e
+      _log_error "Unable to connect, broken pipe"
+    rescue Errno::EHOSTUNREACH => e
+      _log_error "Unable to connect, host unreachable"
+    rescue Errno::ECONNREFUSED => e
+      _log_error "Unable to connect, connection refused"
+    rescue Errno::ECONNRESET => e
+      _log_error "Unable to connect, connection reset"
+    rescue Errno::ETIMEDOUT => e
+      _log_error "Unable to connect, timed out"
+    rescue SocketError => e
+      _log_error "Unable to connect, socket error"
+    end
+
+    # just fail
+    return [nil,nil,nil] unless response
 
   [response.ok?, response, response.headers]
-  end 
+  end
 
 end
 end

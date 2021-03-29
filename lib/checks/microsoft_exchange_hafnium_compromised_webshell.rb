@@ -25,7 +25,10 @@ module Issue
         { type: "threat_intel", uri: "https://redcanary.com/blog/microsoft-exchange-attacks/"},
         { type: "threat_intel", uri: "https://gist.github.com/JohnHammond/0b4a45cad4f4ed3324939d72dc599883"},
         { type: "threat_intel", uri: "https://www.bankinfosecurity.com/at-least-10-apt-groups-exploiting-exchange-flaws-a-16166"},
-        { type: "threat_intel", uri: "https://www.welivesecurity.com/2021/03/10/exchange-servers-under-siege-10-apt-groups/"}
+        { type: "threat_intel", uri: "https://www.welivesecurity.com/2021/03/10/exchange-servers-under-siege-10-apt-groups/"},
+        { type: "threat_intel", uri: "https://www.shadowserver.org/news/shadowserver-special-report-exchange-scanning-5/"},
+        { type: "threat_intel", uri: "https://github.com/cert-lv/exchange_webshell_detection/blob/main/detect_webshells.ps1"},
+
       ],
       authors: ["jcran", "pwndefend"]
     }.merge!(instance_details)
