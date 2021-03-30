@@ -1,16 +1,16 @@
 module Intrigue
   module Issue
-  class WordpressAdminLoginExposed < BaseIssue
+  class WordpressLoginPanelExposed < BaseIssue
   
     def self.generate(instance_details={})
       {
         added: "2020-01-01",
         name: "wordpress_admin_login_exposed",
-        pretty_name: "Wordpress Admin Login Exposed",
+        pretty_name: "Wordpress Login Panel Exposed",
         severity: 5,
         category: "misconfiguration",
         status: "confirmed",
-        description: "This Wordpress site is exposing its admin login.",
+        description: "This Wordpress site is exposing its login panel.",
         remediation: "Disable access to this login for unauthenticated users. Consider whitelisting.",
         affected_software: [{ :vendor => "Wordpress", :product => "Wordpress" }],
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel

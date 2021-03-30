@@ -29,10 +29,10 @@ class Gitrob < BaseTask
 
     # task assumes gitrob is in our path and properly configured
     _log "Starting Gitrob on #{github_account}, saving to #{temp_file}!"
-    command_string = "gitrob -github-access-token #{token} -save #{temp_file} -exit-on-finish -no-expand-orgs -commit-depth 20 --threads 20 -in-mem-clone #{github_account}"
-    # gitrob tends to hang so we set a timeout of 5 minutes (300 seconds)
+    command_string = "gitrob -github-access-token #{token} -save #{temp_file} -exit-on-finish -no-expand-orgs -commit-depth 20 --threads 1 -in-mem-clone #{github_account}"
+    # gitrob tends to hang so we set a timeout of 10 minutes (600 seconds)
     # the gitrob fork we use requires two files in the current working directory, hence setting working dir to ~/bin/data/gitrob
-    _unsafe_system command_string, 300, "#{Dir.home}/bin/data/gitrob"
+    _unsafe_system command_string, 600, "#{Dir.home}/bin/data/gitrob"
     _log "Gitrob finished on #{github_account}!"
 
     # parse output
@@ -88,28 +88,24 @@ class Gitrob < BaseTask
       output["Findings"].each do |f|
 
         # skip if credentials or password is used in the fileurl
-        next if (f["Description"] == "Contains word: credential" && f["FilePath"] =~ /credential.html/i )
-        next if (f["Description"] == "Contains word: password" && f["FilePath"] =~ /password.html/i )
-        sp = {}
-        sp["Commit URL"] = "#{f["CommitUrl"]}"
-        sp["Repository URL"] = "#{f['RepositoryUrl']}"
-        sp["Commit Author"] = "#{f["CommitAuthor"]}"
-        sp["Commit Message"] = "#{f["CommitMessage"]}"
-        sp["Action"] = "#{f["Action"]}"
-        sp["File URL"] = "#{f["FileUrl"]}"
+        next if (f["Description"] == "Contains word: credential" && f["FilePath"] =~ /credential\.\w{2,5}/i )
+        next if (f["Description"] == "Contains word: password" && f["FilePath"] =~ /password\.\w{2,5}/i )
+        next if (f["Description"] == "Contains word: password" && f["FilePath"] =~ /password_reset_done\.\w{2,5}/i )
+        next if (f["Description"] == "Contains word: password" && f["FilePath"] =~ /password_reset_confirm\.\w{2,5}/i )
+        next if (f["Description"] == "Contains word: password" && f["FilePath"] =~ /password_reset_complete\.\w{2,5}/i )
+        next if (f["Description"] == "Contains word: password" && f["FilePath"] =~ /password_reset_form\.\w{2,5}/i )
+        next if (f["Description"] == "Contains word: password" && f["FilePath"] =~ /password_reset_email\.\w{2,5}/i )
 
-        suspicious_commits.append(sp)
+        # add it to our output
+        suspicious_commits << f
       end
+
     else
       _log "No findings!"
     end
 
-    if suspicious_commits.length > 0
-      _create_linked_issue("suspicious_commit", {
-        name: "Suspicious commit(s) found in Github Repository",
-        detailed_description:  "One or more suspicious commits were found in a public Github repository",
-        details: suspicious_commits
-      })
+    suspicious_commits.each do |sc|
+      _create_linked_issue( "suspicious_commit", { source: sc["Id"] }.merge(sc))
     end
 
     # clean up

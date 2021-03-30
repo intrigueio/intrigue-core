@@ -197,8 +197,8 @@ class UriCheckSudomainHijack  < BaseTask
       elsif response_body.match /We can\'t find this \<a href=\"https\:\/\/simplebooklet\.com/i
         _create_hijackable_subdomain_issue "Simplebooklet", uri, "potential"
 
-      elsif response_body.match(/Job Board Is Unavailable/) || 
-              response_body.match(/This job board website is either expired/) || 
+      elsif response_body.match(/Job Board Is Unavailable/) ||
+              response_body.match(/This job board website is either expired/) ||
               response_body.match(/This job board website is either expired or its domain name is invalid/)
         _create_hijackable_subdomain_issue "Smartjob", uri, "potential"
 
@@ -224,8 +224,8 @@ class UriCheckSudomainHijack  < BaseTask
       elsif response_body.match /Oops \- We didn\'t find your site/i
         _create_hijackable_subdomain_issue "Teamwork", uri, "potential"
 
-      elsif response_body.match(/Building a brand of your own\?/) || 
-              response_body.match(/to target URL\: \<a href\=\"https\:\/\/tictail\.com/) || 
+      elsif response_body.match(/Building a brand of your own\?/) ||
+              response_body.match(/to target URL\: \<a href\=\"https\:\/\/tictail\.com/) ||
               response_body.match(/Start selling on Tictail/)
         _create_hijackable_subdomain_issue "Tictail", uri, "potential"
 
@@ -247,7 +247,7 @@ class UriCheckSudomainHijack  < BaseTask
         _create_hijackable_subdomain_issue "Vend", uri, "potential"
 
       elsif response_body.match /The deployment could not be found on Vercel\./i
-        _create_hijackable_subdomain_issue "Vercel", uri, "potential"
+        _create_hijackable_subdomain_issue "Vercel", uri, "potential" unless uri =~ /vercel-dns.com/
 
       elsif response_body.match /domain is already connected to a Webflow site/i
         _create_hijackable_subdomain_issue "Webflow", uri, "potential" unless (uri =~ /webflow.io/)
@@ -265,7 +265,7 @@ class UriCheckSudomainHijack  < BaseTask
       elsif response_body.match /Company not found/i
         _create_hijackable_subdomain_issue "Worksites", uri, "potential"
 
-      elsif response_body.match(/Profile not found/) || 
+      elsif response_body.match(/Profile not found/) ||
               response_body.match(/Hmmm\.\.\.\.something is not right/)
         _create_hijackable_subdomain_issue "Wufoo", uri, "potential"
 

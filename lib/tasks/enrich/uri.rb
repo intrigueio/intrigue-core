@@ -3,8 +3,6 @@ module Task
 module Enrich
 class Uri < Intrigue::Task::BaseTask
 
-  include Intrigue::Ident
-
   def self.metadata
     {
       :name => "enrich/uri",
@@ -50,12 +48,12 @@ class Uri < Intrigue::Task::BaseTask
     unless hostname.is_ip_address?
       create_dns_entity_from_string parse_domain_name(hostname)
 
-      # seemingly, you would want to enable hostname here, but it 
-      # can create issues with some pages that will simply repeat 
+      # seemingly, you would want to enable hostname here, but it
+      # can create issues with some pages that will simply repeat
       # whatever their givn hostname is, and thus, we need to find
       # a way to detect that... ala 2f2f2f2f2www.org.com
       #  create_dns_entity_from_string hostname
-      
+
     end
 
     ###
@@ -66,7 +64,7 @@ class Uri < Intrigue::Task::BaseTask
     # Sha256 the body response, in case it's helpful later ont
     response_data_hash = Digest::SHA256.base64digest(response.body_utf8)
 
-    # grab all script_references, normalize to include full uri if needed 
+    # grab all script_references, normalize to include full uri if needed
     _log "Parsing out Scripts"
     temp_script_links = response.body_utf8.scan(/<script.*?src=["|'](.*?)["|']/).map{ |x| x.first if x }
     # add http/https where appropriate
@@ -78,7 +76,7 @@ class Uri < Intrigue::Task::BaseTask
     headers = []
     _log "Saving Headers"
     headers = response.headers.map{|x,y| "#{x}: #{y}"}
-    
+
     # Use intrigue-ident code to request all of the pages we
     # need to properly fingerprint...  use ident to fingerprint
     _log "Fingerprinting endpoint!"
@@ -88,12 +86,12 @@ class Uri < Intrigue::Task::BaseTask
     _log "Fingerprinting endpoint's linked scripts"
      script_fingerprint = fingerprint_links(script_links, hostname)
      ident_result["fingerprint"].concat script_fingerprint
-    
+
     # split out the individual ident components
     ident_fingerprint = ident_result["fingerprint"]
     _log "Got fingerprinted components: #{ident_fingerprint.map{|x| x["product"] }}"
 
-    ident_configuration = ident_result["content"]
+    ident_content = ident_result["content"]
     ident_responses = ident_result["responses"]
 
     # Log our fingerprint count
@@ -109,7 +107,7 @@ class Uri < Intrigue::Task::BaseTask
     ## Process interesting content checks that requested an issue be created
     ## ** Note that this is currently specific to URI's only. **
     ##
-    issues_to_be_created = ident_configuration.concat(
+    issues_to_be_created = ident_content.concat(
       ident_fingerprint).collect{ |x| x["issues"] }.flatten.compact.uniq
       _log "Issues to be created: #{issues_to_be_created}"
       (issues_to_be_created || []).each do |c|
@@ -121,8 +119,8 @@ class Uri < Intrigue::Task::BaseTask
     # and hide the entity... meaning no recursion and it shouldn't show up in
     # the UI / queries if any of the matches told us to hide the entity, do it.
     # EXAMPLE TEST CASE: http://103.24.203.121:80 (cpanel missing page)
-    # 
-    # ** Currently specific to URIs ** 
+    #
+    # ** Currently specific to URIs **
     #
     if ident_fingerprint.detect{|x| x["hide"] == true }
       _log "Entity hidden and unscoped based on fingerprint!"
@@ -130,31 +128,31 @@ class Uri < Intrigue::Task::BaseTask
       @entity.save_changes
     end
 
-    # drop them if we are a lookup by ip and just got a reset 
+    # drop them if we are a lookup by ip and just got a reset
     #
-    #  ... note that this /could/ be a hide check if it weren't 
-    #  also used on network services. basically special cased 
-    #  for this reason alone. 
-    # 
+    #  ... note that this /could/ be a hide check if it weren't
+    #  also used on network services. basically special cased
+    #  for this reason alone.
+    #
     if "#{URI.parse(@entity.name).host}".is_ip_address? &&
-      ident_fingerprint.detect{|x| 
-        x["product"] == "Connection Reset (attempted HTTP connection)" } 
+      ident_fingerprint.detect{|x|
+        x["product"] == "Connection Reset (attempted HTTP connection)" }
       hide_value = true
       hide_reason = "reset when connecting"
     end
 
     ###
-    ### These should move to ident and set the hidden attribute 
-    ### 
+    ### These should move to ident and set the hidden attribute
+    ###
     shared_infra_titles = [
-      # "403 - Forbidden: Access is denied.", # http://104.47.66.10:80  
+      # "403 - Forbidden: Access is denied.", # http://104.47.66.10:80
       # "404 Not Found",
       "Dmarcian - Protect Your Email and Domain with DMARC",
       "404 Vhost unknown", # http://217.70.185.65:80
-      "Amazon.com.au: Shop online for Electronics, Apparel, Toys, Books, DVDs & more", # http://52.119.170.38:80  	
-      "Amazon.co.uk: Low Prices in Electronics, Books, Sports Equipment & more", 
+      "Amazon.com.au: Shop online for Electronics, Apparel, Toys, Books, DVDs & more", # http://52.119.170.38:80
+      "Amazon.co.uk: Low Prices in Electronics, Books, Sports Equipment & more",
       "Amazon.de: Gnstige Preise fr Elektronik & Foto, Filme, Musik, Bcher, Games, Spielzeug & mehr", # http://52.95.115.154:80
-      "Cloud Object Storage | Store &amp; Retrieve Data Anywhere | Amazon Simple Storage Service (S3)", # http://52.217.12.131:80  
+      "Cloud Object Storage | Store &amp; Retrieve Data Anywhere | Amazon Simple Storage Service (S3)", # http://52.217.12.131:80
       "Google", # http://172.217.14.165:80
       "Not Found on Accelerator", # http://208.109.192.71:80
       "Not Found Medium", # https://52.1.147.205:443
@@ -165,23 +163,23 @@ class Uri < Intrigue::Task::BaseTask
     ]
 
     # hide if we get an ip address
-    if "#{URI.parse(@entity.name).host}".is_ip_address? && 
+    if "#{URI.parse(@entity.name).host}".is_ip_address? &&
           shared_infra_titles.include?(title)
       @entity.hidden = true
-      @entity.save_changes 
+      @entity.save_changes
     end
 
     # we can check the existing response, so send that
     _log "Checking if Forms"
-    contains_forms = check_forms(ident_configuration)
+    contains_forms = check_forms(ident_content)
 
     # we can check the existing response, so send that
     _log "Checking if Authenticated"
-    contains_auth = check_auth(ident_configuration)
-    
+    contains_auth = check_auth(ident_content)
+
     # we can check the existing response, so send that
     _log "Checking if 2FA Identified"
-    contains_auth_2fa = check_auth_2fa(ident_configuration)
+    contains_auth_2fa = check_auth_2fa(ident_content)
 
     # we'll need to make another request
     _log "Checking OPTIONS"
@@ -194,10 +192,10 @@ class Uri < Intrigue::Task::BaseTask
       # capture cookies
       set_cookie = [ response.headers['set-cookie'] || response.headers["Set-Cookie"] ].flatten.compact
       _log "Got Cookie: #{set_cookie}" if !set_cookie.empty?
-      
+
       # TODO - cookie scoped to parent domain
-      if !set_cookie.empty? 
-        domain_cookies = set_cookie.map{|x| 
+      if !set_cookie.empty?
+        domain_cookies = set_cookie.map{|x|
           x.split(";").detect{|x| x.match(/Domain=/i) }}.compact.map{|x|x.strip}
         _log "Domain Cookies: #{domain_cookies}"
       end
@@ -208,7 +206,7 @@ class Uri < Intrigue::Task::BaseTask
 
         # grab and parse the certificate
         cert = get_certificate(hostname,port)
-        if cert 
+        if cert
           alt_names = parse_names_from_cert(cert) || []
           alt_names.each do |an|
             create_dns_entity_from_string an
@@ -222,8 +220,8 @@ class Uri < Intrigue::Task::BaseTask
         if set_cookie
 
           # temporarily disabled to address false positives - jcran
-          # wide scoped cookie 
-          #if set_cookie.map{|x| x.split(";").find{ |x| 
+          # wide scoped cookie
+          #if set_cookie.map{|x| x.split(";").find{ |x|
           #          x =~ /Domain=".#{parse_domain_name(uri)};"/i }}
           #  _create_wide_scoped_cookie_issue(uri, set_cookie)
           #end
@@ -250,11 +248,11 @@ class Uri < Intrigue::Task::BaseTask
         if accepted_connections && accepted_connections.detect{ |x| x[:weak] == true }
           create_weak_cipher_issue(uri, accepted_connections)
         end
-        
+
         # Create findings if we have a deprecated protocol
         if accepted_connections && accepted_connections.detect{ |x|
             ("#{x[:version]}".match(/SSL/) || "#{x[:version]}" == "TLSv1" ) }
-            
+
           _create_deprecated_protocol_issue(uri, accepted_connections)
         end
 
@@ -271,7 +269,7 @@ class Uri < Intrigue::Task::BaseTask
         alt_names = []
 
       end
-    else 
+    else
       _log "Did not receive 200, got #{response.code}!"
     end
 
@@ -294,11 +292,11 @@ class Uri < Intrigue::Task::BaseTask
     # resolve until we hit an ip address
     _log "Looking up network and hostname"
     hostname = URI(uri).hostname
-    resolved_ip_address = ""
+    resolved_ip_address = hostname if hostname.is_ip_address?
     tries = 0; max_tries=5
-    until resolved_ip_address.is_ip_address? || (tries > max_tries)
+    until "#{resolved_ip_address}".is_ip_address? || (tries > max_tries)
       tries +=1
-      ### TODO ... keep track of load balancers etc here. 
+      ### TODO ... keep track of load balancers etc here.
       resolved_ip_address = "#{resolve_name(hostname)}"
     end
 
@@ -332,7 +330,6 @@ class Uri < Intrigue::Task::BaseTask
       "forms" => contains_forms,
       "generator" => generator_string,
       "headers" => headers,
-      "hidden_favicon_data" => favicon_data,
       "hidden_response_data" => response.body_utf8,
       "redirect_chain" => ident_responses.first[:response_urls] || [],
       "response_data_hash" => response_data_hash,
@@ -340,9 +337,8 @@ class Uri < Intrigue::Task::BaseTask
       "title" => title,
       "verbs" => verbs_enabled,
       "scripts" => script_links,
-      #"extended_content" => ident_content_checks.uniq,
       "extended_ciphers" => accepted_connections,                  # new ciphers field
-      "extended_configuration" => ident_configuration.uniq,        # new content field
+      "extended_configuration" => ident_content.uniq,        # new content field
       "extended_full_responses" => ident_responses.uniq,           # includes all the redirects etc
       "extended_favicon_data" => favicon_data,
       "extended_response_body" => response.body_utf8
@@ -350,7 +346,7 @@ class Uri < Intrigue::Task::BaseTask
 
     # Set the details, and make sure raw response data is a hidden (not searchable) detail
     _get_and_set_entity_details new_details
-      
+
     ###
     ### Alias Grouping
     ###
@@ -371,23 +367,23 @@ class Uri < Intrigue::Task::BaseTask
           _log "Skipping #{e.name}, title doesnt match (#{old_title})"
           next
         end
-        
-        # check response code  
+
+        # check response code
         unless response.code == e.get_detail("code")
           _log "Skipping #{e.name}, code doesnt match"
           next
         end
-        
+
         # check fingeprint
-        unless ident_fingerprint.uniq.map{ |x| 
-          "#{x["vendor"]} #{x["product"]} #{x["version"]}"} == e.get_detail("fingerprint").map{ |x| 
+        unless ident_fingerprint.uniq.map{ |x|
+          "#{x["vendor"]} #{x["product"]} #{x["version"]}"} == e.get_detail("fingerprint").map{ |x|
             "#{x["vendor"]} #{x["product"]} #{x["version"]}" }
           _log "Skipping #{e.name}, fingerprint doesnt match"
           next
         end
 
         # if we made it this far, parse them & compare them
-        # TODO ... is this overkill? 
+        # TODO ... is this overkill?
         their_doc = e.details["hidden_response_data"]
         diffs = parse_html_diffs(our_doc, their_doc)
         their_doc = nil
@@ -398,12 +394,12 @@ class Uri < Intrigue::Task::BaseTask
           e.alias_to @entity.alias_group_id
         end
 
-        e = nil 
+        e = nil
       end
     end
 
     ###
-    ### Do the cloud provider determination 
+    ### Do the cloud provider determination
     ###
 
     # Now that we have our core details, check cloud statusi
@@ -417,7 +413,7 @@ class Uri < Intrigue::Task::BaseTask
     fingerprint_to_inference_issues(ident_fingerprint)
 
     ###
-    ### Kick off vuln checks if enabled for the project 
+    ### Kick off vuln checks if enabled for the project
     ###
     all_checks = []
     if @project.vulnerability_checks_enabled
@@ -426,7 +422,7 @@ class Uri < Intrigue::Task::BaseTask
     end
 
   end
-  
+
   def _gather_supported_ciphers(hostname,port)
     scanner = Rex::SSLScan::Scanner.new(hostname, port)
     result = scanner.scan
@@ -437,10 +433,10 @@ class Uri < Intrigue::Task::BaseTask
     response = http_request(:options, uri)
     (response.headers["allow"] || response.headers["Allow"]) if response
   end
-  
+
   # checks to see if we had an auth config return true
   def check_forms(configuration)
-    configuration.each do |c| 
+    configuration.each do |c|
       if "#{c["name"]}".match(/^Form Detected$/) && "#{c["value"]}".to_bool
         return true
       end
@@ -450,7 +446,7 @@ class Uri < Intrigue::Task::BaseTask
 
   # checks to see if we had an auth config return true
   def check_auth(configuration)
-    configuration.each do |c| 
+    configuration.each do |c|
       if "#{c["name"]}".match(/^Auth\ \-.*$/) && "#{c["value"]}".to_bool
         return true
       end
@@ -460,7 +456,7 @@ class Uri < Intrigue::Task::BaseTask
 
   # checks to see if we had an auth config return true
   def check_auth_2fa(fingerprint)
-    fingerprint.each do |fp| 
+    fingerprint.each do |fp|
       if (fp["tags"]||[]).map(&:upcase).include?(["IAM","SSO","MFA","2FA"])
         return true
       end
@@ -468,7 +464,7 @@ class Uri < Intrigue::Task::BaseTask
   false
   end
 
- 
+
 end
 end
 end

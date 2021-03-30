@@ -31,7 +31,7 @@ module Model
       self.entities.each{|x| x.delete }
       self.logger.each{|x| x.delete }
       self.delete
-    true 
+    true
     end
 
     def issues
@@ -69,7 +69,7 @@ module Model
 
       if full_details
         out.merge!(
-          {}  
+          {}
         )
       end
 
@@ -109,9 +109,9 @@ module Model
       static_heading_count = 6
 
       entities = Intrigue::Core::Model::Entity.scope_by_project_and_type(self.name, "Intrigue::Entity::Uri")
-      
+
       # this is pretty hacky... take the content of the first entity that has content
-      # and use the keys of that field as additional headings. See below, 
+      # and use the keys of that field as additional headings. See below,
       # we'll ask every application for this same set of fields
       #content_entities = entities.select{|x| x.get_detail("content").kind_of?(Array) and x.get_detail("content").count > 0 }
       # puts "Got content entities: #{content_entities.count} #{content_entities.first}"
@@ -122,7 +122,7 @@ module Model
         headings.concat(content_entity_headings)
       end
 
-      out = headings.join(", ") 
+      out = headings.join(", ")
       out << "\n"
 
       entities.sort_by{|e| e.name }.each do |x|
@@ -199,7 +199,7 @@ module Model
     end
 
     def globally_traversable_entity?(entity_name, type_string)
-        
+
       out = true  # allow traverse, until we have something that we can verify
 
       # now form the query, taking into acount the filter if we can
@@ -208,24 +208,24 @@ module Model
       # now lets check if we have an allowance for it
       if found_entity
 
-        out = false # we found it, default is now no-traverse ... unless... 
+        out = false # we found it, default is now no-traverse ... unless...
 
         # we have a matching namespace
         (self.allowed_namespaces || []).each do |namespace|
-          if found_entity.namespace.downcase == namespace.downcase # Good! 
+          if found_entity.namespace.downcase == namespace.downcase # Good!
             return true # boom match, return immediately
           end
         end
 
       end
 
-    out 
+    out
     end
 
     ###
     ### Use this when you want to scope in stuff, but generally prefer 'traversable_entity?'
     ###
-    def allow_list_entity?(entity)      
+    def allow_list_entity?(entity)
       our_scope_verification_list = entity.scope_verification_list
 
       svt = Intrigue::Core::Model::GlobalEntity.scope_verification_types
@@ -237,22 +237,22 @@ module Model
 
         # skip anything else thats not verifiable!!
         next unless svt.include? type_string
-        
-        # Check standard exceptions (hardcoded list) first if we
-        #  show up here (and we werent' a seed), we should skip
-        return false if use_standard_exceptions && 
-          standard_no_traverse?(entity_name, type_string)
 
-        # if it's an explicit seed, it's whitelisted 
+        # if it's an explicit seed, it's whitelisted
         return true if seed_entity?(type_string,entity_name)
 
-        # if we don't have a list, safe to return false now, otherwise proceed to 
+        # Check standard exceptions (hardcoded list) first if we
+        #  show up here (and we werent' a seed), we should skip
+        return false if use_standard_exceptions &&
+          standard_no_traverse?(entity_name, type_string)
+
+        # if we don't have a list, safe to return false now, otherwise proceed to
         # additional exceptions which are provided as an attribute on the object
-        unless globally_traversable_entity?(entity_name, type_string)
-          return false 
+        if !globally_traversable_entity?(entity_name, type_string)
+          return false
         end
-        
-      end 
+
+      end
 
     ###
     # returning false because it wasnt explicitly allowed
@@ -264,7 +264,7 @@ module Model
     ### Use this when you wan to scope out stuff based on rules or global intel
     ###
     def deny_list_entity?(entity)
-      
+
       our_scope_verification_list = entity.scope_verification_list
 
       svt = Intrigue::Core::Model::GlobalEntity.scope_verification_types
@@ -277,21 +277,21 @@ module Model
         # skip anything else thats not verifiable!!
         next unless svt.include? "#{type_string}"
 
-        # Check standard exceptions (hardcoded list) first if we
-        #  show up here (and we werent' a seed), we should skip
-        return true if use_standard_exceptions && 
-          standard_no_traverse?(entity_name, type_string)
-
-        # if it's an explicit seed, it's not blacklisted 
+        # if it's an explicit seed, it's not blacklisted
         return false if seed_entity?(type_string,entity_name)
 
-        # now check the global intel 
-        # if we don't have a list, safe to return false now, otherwise proceed to 
+        # Check standard exceptions (hardcoded list) first if we
+        #  show up here (and we werent' a seed), we should skip
+        return true if use_standard_exceptions &&
+          standard_no_traverse?(entity_name, type_string)
+
+        # now check the global intel
+        # if we don't have a list, safe to return false now, otherwise proceed to
         # additional exceptions which are provided as an attribute on the object
         unless globally_traversable_entity?(entity_name, type_string)
-          return true 
+          return true
         end
-      
+
       end
 
     ###
@@ -311,12 +311,12 @@ module Model
 
       return true if allow_list_entity?(entity)
       return false if deny_list_entity?(entity)
-    
+
     # otherwise, permissive
     true
     end
 
-    # TODO - there must be a cleaner way? 
+    # TODO - there must be a cleaner way?
     def get_option(option_name)
       opt = options.detect{|h| h[option_name] } if options
       opt.each{|k,v| return v } if opt

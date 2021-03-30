@@ -1,12 +1,12 @@
 module Intrigue
 module Task
-class DnsLookupCAA < BaseTask
+class DnsCaaPolicyLookup < BaseTask
 
   include Intrigue::Task::Dns
 
   def self.metadata
     {
-      :name => "dns_caa",
+      :name => "dns_caa_policy_lookup",
       :pretty_name => "DNS CAA Lookup",
       :authors => ["jen140"],
       :description => "Look up the CAA records of the given DNS record.",
@@ -32,9 +32,9 @@ class DnsLookupCAA < BaseTask
     # If we got a success to the query.
     if res_answer.count > 0
       _log "CAA found, skipping"
-    else 
+    else
       _log "No CAA on the domain!"
-                _create_linked_issue("dns_caa", {
+                _create_linked_issue("dns_caa_policy_missing", {
                   status: "confirmed"})
     end
   end

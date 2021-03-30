@@ -4,16 +4,17 @@ module Task
 module Ident
 
   ###
-  ### Use the issue factory to find vulnerasbility checks we can run 
+  ### Use the issue factory to find vulnerasbility checks we can run
   ### and kick them off
   ###
   def run_vuln_checks_from_fingerprint(fingerprint, entity)
-  
+
     all_checks = []
-    project = entity.project 
+    project = entity.project
 
     fingerprint.each do |f|
-      ### Get a list of actual vulnerability checks based on issues 
+
+      ### Get a list of actual vulnerability checks based on issues
       vendor_string = f["vendor"]
       product_string = f["product"]
 
@@ -28,9 +29,9 @@ module Ident
     all_checks.flatten.compact.uniq.each do |check|
 
       # if we want to pass check options based on some fingerprint crtieria
-      check_options = []   
+      check_options = []
 
-      # get the scan result id ... TODO, ideally we'd track this. 
+      # get the scan result id ... TODO, ideally we'd track this.
       existing_scan_result_id = nil
 
       # start the task
@@ -38,7 +39,7 @@ module Ident
     end
 
   # return a list of checks
-  all_checks.flatten.compact.uniq 
+  all_checks.flatten.compact.uniq
   end
 
   def create_issues_from_fingerprint_tags(fingerprint, entity)
@@ -64,11 +65,11 @@ module Ident
   end
 
   ###
-  ### Parse out, and fingerprint the individual components 
+  ### Parse out, and fingerprint the individual components
   ###
   def fingerprint_links(links, hostname)
     script_components = extract_and_fingerprint_links(links, hostname)
-    
+
     ### Check for vulns in included scripts
     fingerprint = []
     if script_components.count > 0
@@ -85,17 +86,17 @@ module Ident
       # skip anything that's not http
       next unless s.match(/^http/)
 
-      begin 
+      begin
         uri = URI.parse(s)
       rescue URI::InvalidURIError => e
         @task_result.logger.log "Unable to parse improperly formatted URI: #{s}"
-        next # unable to parse 
+        next # unable to parse
       end
 
       next unless uri.host && uri.port && uri.scheme.match(/^http/)
-      ### 
+      ###
       ### Determine who's hosting
-      ### 
+      ###
       begin
         if uri.host.match(/#{host}/)
           host_location = "local"
@@ -107,95 +108,34 @@ module Ident
       end
 
       ###
-      ### Match it up with ident  
+      ### Match it up with ident
       ###
-      ident_matches = generate_http_requests_and_check(s, {'only-check-base-url': true }) 
+      ident = Intrigue::Ident::Ident.new
+      ident_matches = ident.fingerprint_uri(s, {'only-check-base-url': true })
       js_fp_matches = ident_matches["fingerprint"].select{|x| x["tags"] && x["tags"].include?("Javascript") }
 
       if js_fp_matches.count > 0
         js_fp_matches.each do |m|
           components << m.merge({"uri" => s, "relative_host" =>  host_location })
         end
-      else 
+      else
         # otherwise, we didnt find it, so just stick in a url withoout a name / version
         components << {"uri" => s, "relative_host" =>  host_location }
       end
     end
-  
+
   components.compact
   end
 
-  def fingerprint_service(ip_address,port=nil, proto="TCP")
 
-    # Use intrigue-ident code to request fingerprint
-    ident_matches = nil
 
-    ###
-    ### Go through each known port
-    ###
-    if port == 21
-      ident_matches = generate_ftp_request_and_check(ip_address) || {}
-    end
-      
-    if (port == 22 || port == 2222)
-      ident_matches = generate_ssh_request_and_check(ip_address) || {}
-    end
-      
-    if port == 23
-      ident_matches = generate_telnet_request_and_check(ip_address) || {}
-    end
-
-    if (port == 25 || port == 587)
-      ident_matches = generate_smtp_request_and_check(ip_address) || {}
-    end
-    
-    if port == 53
-      ident_matches = generate_dns_request_and_check(ip_address) || {}
-    end
-    
-    if port == 6379 
-      ident_matches = generate_redis_request_and_check(ip_address) || {}
-    end
-
-    if port == 161
-      ident_matches = generate_snmp_request_and_check(ip_address) || {}
-    end
-
-    if port == 3306
-      ident_matches = generate_mysql_request_and_check(ip_address) || {}
-    end
-    
-    ###
-    ### But default to HTTP through each known port
-    ###
-    if ident_matches
-      return ident_matches # return right away if we a FP 
-    else
-      url = "http://#{ip_address}:#{port}" 
-      ident_matches = generate_http_requests_and_check(url) || {}
-
-      # if we didnt fail, pull out the FP and match to vulns
-      ident_fingerprints = ident_matches["fingerprint"] || []
-      
-      # add vulns to the fingerprint
-      if ident_fingerprints.count > 0
-        ident_fingerprints = add_vulns_by_cpe(ident_fingerprints)
-      end    
-      
-      # merge them 
-      out = ident_matches.merge({"fingerprint" => ident_fingerprints})
-
-    end
-   
-  out 
-  end
-  
   def fingerprint_url(url)
      ###
     ### But default to HTTP through each known port
     ###
-    ident_matches = generate_http_requests_and_check(url) || {} 
-    
+    ident = Intrigue::Ident::Ident.new
+    ident_matches = ident.fingerprint_uri(url) || {}
+
     # okay we failed
     return unless ident_matches
 
@@ -204,7 +144,7 @@ module Ident
     if ident_fingerprints.count > 0
       ident_fingerprints = add_vulns_by_cpe(ident_fingerprints)
     end
-  
+
   ident_matches.merge({"fingerprint" => ident_fingerprints})
   end
 

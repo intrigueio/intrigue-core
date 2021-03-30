@@ -8,10 +8,10 @@ class SuspiciousCommit< BaseIssue
       name: "suspicious_commit",
       pretty_name: "Suspicious Commit in Code Repository",
       severity: 2,
-      status: "confirmed",
-      category: "misconfiguration",
+      status: "potential",
+      category: "leak",
       description: "A suspicious commit was found in a public Github repository.",
-      remediation: "verify the GitHub repository and delete the file or the comment which expose sensitive information",
+      remediation: "Verify the GitHub repository and delete the file or the comment which expose sensitive information.",
       references: []
     }.merge!(instance_details)
 

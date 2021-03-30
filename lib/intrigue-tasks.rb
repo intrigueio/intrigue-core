@@ -28,6 +28,7 @@ begin  # try to load runtime deps
   require 'opencorporates'
   require 'openssl'
   require 'ostruct'
+  require 'rex'
   require 'rex/sslscan'
   require 'rexml/document'
   require 'snmp'

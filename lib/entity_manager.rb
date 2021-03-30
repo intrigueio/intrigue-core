@@ -1,11 +1,11 @@
 module Intrigue
 class EntityManager
-  
+
   extend Intrigue::Core::System::Helpers
   extend Intrigue::Task::Data
 
   ###
-  ### Resolves a type from a type_string (which is the last part of the type's 
+  ### Resolves a type from a type_string (which is the last part of the type's
   ### name as a string.
   ###
   def self.resolve_type_from_string(type_string)
@@ -27,7 +27,7 @@ class EntityManager
   end
 
   def self.create_bulk_entity(project_id,entity_type_string,entity_name,details_hash={})
-    
+
     # create a group
     g = Intrigue::Core::Model::AliasGroup.create(:project_id => project_id)
 
@@ -59,7 +59,7 @@ class EntityManager
 
     # execure "before" transformations before entity is created
     name, details_hash = type.transform_before_save(name, details_hash)
-    
+
     # Save the original and downcase our name
     details_hash["hidden_original"] = name
     downcased_name = name.downcase.strip
@@ -76,7 +76,7 @@ class EntityManager
 
       # always scoped
       entity.set_scoped!(true, "first_entity")
-      
+
       # also we can now mark it as a seed!
       entity.seed = true
       entity.save_changes
@@ -100,7 +100,7 @@ class EntityManager
         alias_group_id: g.id,
         seed: true
       })
-        
+
     end
 
     # necessary because of our single table inheritance?
@@ -125,7 +125,7 @@ class EntityManager
   def self.create_or_merge_entity(task_result_id, type_string, name, details_hash={}, primary_entity=nil)
     # get type of entity
     type = resolve_type_from_string(type_string)
-    
+
     # execure "before" transformations before entity is created
     name, details_hash = type.transform_before_save(name, details_hash)
 
@@ -151,7 +151,7 @@ class EntityManager
 
     # Check if there's an existing entity, if so, merge and move forward
     entity_already_existed = false
-    
+
     if entity
 
       entity.set_details(details_hash.to_h.deep_merge(entity.details.to_h))
@@ -176,27 +176,27 @@ class EntityManager
         # https://sequel.jeremyevans.net/rdoc-plugins/classes/Sequel/Plugins/UpdateOrCreate.html
         entity = Intrigue::Core::Model::Entity.update_or_create(
           {
-            name: downcased_name, 
-            type: type.to_s, 
-            project_id: project.id, 
+            name: downcased_name,
+            type: type.to_s,
+            project_id: project.id,
           },
-          { name: downcased_name, 
-            type: type.to_s, 
-            project_id: project.id, 
-            details: details_hash, 
-            alias_group_id: alias_group_id 
+          { name: downcased_name,
+            type: type.to_s,
+            project_id: project.id,
+            details: details_hash,
+            alias_group_id: alias_group_id
           })
 
-        # 
-        # ok, now let's add the contextual attributes which will 
+        #
+        # ok, now let's add the contextual attributes which will
         # help us understand how to manage this going forward, primarily
         # as it pertains to scoping.
-        # 
+        #
         # allow_list
         # deny_list
         # traversable
         # hidden
-        # 
+        #
         entity.allow_list = project.allow_list_entity?(entity)
         entity.deny_list = project.deny_list_entity?(entity)
         traversable = project.traversable_entity?(entity)
@@ -242,7 +242,7 @@ class EntityManager
     tr.add_entity(entity) unless tr.has_entity? entity
 
     ###
-    ### Scoping must always run, because the task run we're inside may have 
+    ### Scoping must always run, because the task run we're inside may have
     ### auto_scope = true .. or the entity may have been created with an attribute
     ### that specifies how we should be scopoed
     ###
@@ -259,12 +259,12 @@ class EntityManager
 
     # if it's set, rely on the task result's auto_scope setting
     # - which is set when the entity is created, based on context
-    # that is (or at least should be) specific to that task... this 
+    # that is (or at least should be) specific to that task... this
     # is usually specific to enrichment tasks
     if tr.auto_scope
       #tr.log "Task result scoped this entity based on auto_scope."
       scope_request = "true"
-    else # otherwise default to false, (and let the entity scoping handle it below) 
+    else # otherwise default to false, (and let the entity scoping handle it below)
       tr.log "No specific scope request from the task result or the entity creation"
       #entity_details[:scoped] = false
     end
@@ -280,9 +280,9 @@ class EntityManager
 
     # otherwise if we've specifically decided to unscope
     # note that we delete the detail since we no longer need it
-    elsif "#{details_hash["unscoped"]}".to_bool 
+    elsif "#{details_hash["unscoped"]}".to_bool
 
-      unless entity.seed? 
+      unless entity.seed?
         tr.log "Entity was specifically requested to be unscoped"
         entity.delete_detail("unscoped")
         scope_request = "false"
@@ -309,13 +309,13 @@ class EntityManager
     ### ENTITIES can SELF-SCOPE, however, for more info on that
     ### see the individual entity file's scoped? method
     ###
-    ### this is the default case when entities are created by 
+    ### this is the default case when entities are created by
     ### normal tasks
     ###
     #####
 
     # ENRICHMENT LAUNCH (this may re-run if an entity has just been scoped in
-    if !tr.autoscheduled # manally scheuduled, automatically enrich 
+    if !tr.autoscheduled # manally scheuduled, automatically enrich
 
       if entity.enriched?
         tr.log "Re-scheduling enrichment for existing entity (manually run)!"
@@ -325,11 +325,11 @@ class EntityManager
       entity.enrich(tr)
 
     elsif tr.auto_enrich && !entity.deny_list && (!entity_already_existed || project.allow_reenrich)
-      
+
       # Check if we've already run first and return gracefully if so
       if entity.enriched && !project.allow_reenrich
         tr.log "Skipping enrichment... already completed and re-enrich not enabled!"
-      
+
       else
 
         # starts a new background task... so anything that needs to happen from
@@ -341,7 +341,7 @@ class EntityManager
         tr.log "Automatically scheduling enrich: #{entity.name}"
         entity.enrich(tr)
       end
-      
+
     else
 
       tr.log "Skipping enrichment... entity on deny list!" if entity.deny_list
@@ -357,37 +357,37 @@ class EntityManager
     # ip address
     if primary_entity
 
-      $db.transaction do
-        
-        # Alias to the parent
-        pid = primary_entity.alias_group_id
-        tr.log "Aliasing #{entity.name} #{entity.alias_group_id} to #{primary_entity.name}'s existing group: #{pid}"
-        
-        if pid < entity.alias_group_id 
-          entity.alias_to(pid)
+      # Alias to the parent
+      pid = primary_entity.alias_group_id
+      tr.log "Aliasing #{entity.name} #{entity.alias_group_id} to #{primary_entity.name}'s existing group: #{pid}"
 
-          # alias all others to the parent
-          entity.aliases.each do |a|
-            next if a == primary_entity || a == entity
-            tr.log "Aliasing #{a.name} #{a.alias_group_id} to #{primary_entity.name}'s existing group: #{pid}"
-            a.alias_to(pid)
-          end
+      if pid < entity.alias_group_id
 
-        else # Go the other way, we already had a lower id 
-          primary_entity.alias_to(entity.alias_group_id)
+        # parent has the lowest id, so we can just grab that
+        entity.alias_to(pid)
 
-          primary_entity.aliases.each do |a|
-            next if a == primary_entity || a == entity
-            tr.log "Aliasing #{a.name} #{a.alias_group_id} to #{entity.name}'s existing group: #{entity.alias_group_id}"
-            a.alias_to(entity.alias_group_id)
-          end
+        # alias all others to the parent
+        entity.aliases.each do |a|
+          next if a == primary_entity || a == entity
+          tr.log "Aliasing #{a.name} #{a.alias_group_id} to #{primary_entity.name}'s existing group: #{pid}"
+          a.alias_to(pid)
+        end
 
+      else
+
+        # Go the other way, we already had a lower id
+        primary_entity.alias_to(entity.alias_group_id)
+
+        primary_entity.aliases.each do |a|
+          next if a == primary_entity || a == entity
+          tr.log "Aliasing #{a.name} #{a.alias_group_id} to #{entity.name}'s existing group: #{entity.alias_group_id}"
+          a.alias_to(entity.alias_group_id)
         end
 
       end
 
     end
-      
+
   # return the entity with enrichment now scheduled if appropriate
   entity
   end

@@ -5,7 +5,7 @@ class CoreApp < Sinatra::Base
   ###
   get "/api/v1/projects/?" do
     content_type 'application/json'
-    
+
     halt_unless_authenticated!
 
     projects = Intrigue::Core::Model::Project.order(
@@ -19,7 +19,7 @@ class CoreApp < Sinatra::Base
   ###
   get "/api/v1/project/:project_name/task_results/?" do
     content_type 'application/json'
-    
+
     halt_unless_authenticated!
 
     # get the project and return it
@@ -61,7 +61,7 @@ class CoreApp < Sinatra::Base
   ###
   get "/api/v1/project/:project_name/issues/?" do
     content_type 'application/json'
-    
+
     halt_unless_authenticated!
 
     # get the project and return it
@@ -78,7 +78,7 @@ class CoreApp < Sinatra::Base
   end
 
   # Create  - DONE
-  # Read    - DONE 
+  # Read    - DONE
   # Update  - DONE
   # Delete  - DONE
 
@@ -86,16 +86,16 @@ class CoreApp < Sinatra::Base
   post '/api/v1/project/?' do
 
     content_type "application/json"
-    
+
     halt_unless_authenticated!
 
     # When we create the project, we want to make sure no HTML is
     # stored, as we'll use this for display later on...
     project_name = get_json_payload["name"]
     new_project_name = CGI::escapeHTML(project_name)
-    
+
     # don't allow empty project names
-    if new_project_name.length == 0
+    if new_project_name.length.zero?
       out = wrapped_api_response "Unable to create unnamed project: #{new_project_name}"
     end
 
@@ -106,18 +106,18 @@ class CoreApp < Sinatra::Base
       Intrigue::Core::Model::Project.create(:name => new_project_name, :created_at => Time.now.utc)
     end
 
-    unless out 
+    unless out
       # woo success
-      out = wrapped_api_response nil, { project: "#{new_project_name}"} 
+      out = wrapped_api_response nil, { project: "#{new_project_name}"}
     end
 
-  out 
+  out
   end
 
   # Read a specific project
   get "/api/v1/project/:project_name/?" do
     content_type 'application/json'
-    
+
     halt_unless_authenticated!
 
     # get the project and return it
@@ -133,7 +133,7 @@ class CoreApp < Sinatra::Base
 
   patch "/api/v1/project/:project_name/?" do
     content_type 'application/json'
-    
+
     halt_unless_authenticated!
 
     # get the project and return it
@@ -163,7 +163,7 @@ class CoreApp < Sinatra::Base
 
     # set allowed namespaces
     project.allowed_namespaces = config["allowed_namespaces"]
-    
+
     ###
     # First, verify seeds, and bail out if they're not all valid
     ###
@@ -172,9 +172,9 @@ class CoreApp < Sinatra::Base
       resolved_type = Intrigue::EntityManager.resolve_type_from_string "#{s["type"]}"
       unless resolved_type
         return wrapped_api_response("Invalid type in: #{s}")
-      end      
+      end
     end
-    
+
     ###
     # Then, create seeds
     ###
@@ -197,7 +197,7 @@ class CoreApp < Sinatra::Base
   # Read a specific project
   delete "/api/v1/project/:project_name/?" do
     content_type 'application/json'
-    
+
     halt_unless_authenticated!
 
     # get the project and return it
@@ -213,27 +213,5 @@ class CoreApp < Sinatra::Base
   wrapped_api_response(nil, nil)
   end
 
-  get "/api/v1/project/:project_name/entities/csv" do
-    content_type 'application/csv'
 
-    halt_unless_authenticated!
-
-    @project_name = @params[:project_name]
-    headers["Content-Disposition"] = "attachment;filename=#{@project_name}.entities.csv"
-
-    @project = Intrigue::Core::Model::Project.first(:name => @project_name)
-    @project.export_entities_csv
-  end
-
-  get "/api/v1/project/:project_name/issues/csv" do
-    content_type 'application/csv'
-    
-    halt_unless_authenticated!
-
-    @project_name = @params[:project_name]
-    headers["Content-Disposition"] = "attachment;filename=#{@project_name}.issues.csv"
-
-    @project = Intrigue::Core::Model::Project.first(:name => @project_name)
-    @project.export_issues_csv
-  end
 end

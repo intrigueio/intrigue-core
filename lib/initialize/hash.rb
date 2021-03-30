@@ -8,12 +8,16 @@ class Hash
 
     new_hash = {}
     self.each_pair do |k,v|
+
+      key = k
+      key = k.sanitize_unicode if k.kind_of? String
+
       if v.is_a?(String)
-        new_hash.merge!({ k.sanitize_unicode => v.sanitize_unicode })
+        new_hash.merge!({ key => v.sanitize_unicode })
       elsif v.is_a?(Hash) # recurse
-        new_hash.merge!({ k.sanitize_unicode => v.sanitize_unicode })
+        new_hash.merge!({ key => v.sanitize_unicode })
       else
-        new_hash.merge!({ k.sanitize_unicode => v })
+        new_hash.merge!({ key => v })
       end
     end
 
