@@ -165,6 +165,12 @@ class CoreApp < Sinatra::Base
   end
 
   ###
+  ## Enable CSRF Protection
+  ###
+  Sidekiq::Web.use(Rack::Session::Cookie, secret: ENV['SESSION_SECRET'] || SecureRandom.hex(60) )
+  Sidekiq::Web.use Rack::Protection::AuthenticityToken
+
+  ###
   ## Enable Basic Auth
   ###
   if Intrigue::Core::System::Config.config
