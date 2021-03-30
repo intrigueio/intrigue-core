@@ -10,8 +10,9 @@ module Dns
   def create_dns_aliases(results, entity_obj=nil, unscoped=false)
 
     results.each do |result|
+
       #skip any resolution to ourselves
-      next if entity_obj.name == result["name"]
+      next if entity_obj && entity_obj.name == result["name"]
 
       _log "Creating entity for... #{result}"
 
