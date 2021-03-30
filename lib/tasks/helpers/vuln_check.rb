@@ -49,19 +49,18 @@ module VulnCheck
   def run_nuclei_template(uri, template)
     # run ruclei with entity name and template
     _log "Running #{template} against #{uri}"
-    result = false
     begin
       ruclei = Ruclei::Ruclei.new
       ruclei.load_template("data/nuclei-templates/#{template}.yaml")
       res = ruclei.run(uri)
-      result = res.results
+      return { proof: res.results } unless res.nil?
     rescue Errno::ENOENT # cannot find template
       _log_error 'ERROR: Cannot find template at specified path.'
     rescue Psych::SyntaxError # non-yaml file passed
       _log_error 'ERROR: Specified template does not appear to be in YAML format.'
     end
   
-  result
+  return nil
   end
 
   def run_nuclei_template_from_string(uri, template_string)
