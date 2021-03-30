@@ -74,11 +74,10 @@ class SslCertificate < Intrigue::Task::BaseTask
     # https://www.globalsign.com/en/blog/moving-from-sha-1-to-sha-256
     algo = _get_entity_detail("algorithm")
     invalid_algos = ["MD5", "SHA1"]
-    if algo && invalid_algos.include? algo
+    if algo && invalid_algos.include?(algo)
       _log "Creating issue for certificate with invalid algorithm"
       _create_linked_issue "invalid_certificate_algorithm", {
         proof: "Configured Alorigthm is: #{algo}, included in: #{invalid_algos}" }
-      }
     end
 
   end

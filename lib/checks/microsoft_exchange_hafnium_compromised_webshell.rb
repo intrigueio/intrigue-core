@@ -78,24 +78,30 @@ eos
       contents = http_get_body "#{_get_entity_name}"
       _log_error "failing, unable to get a response" unless contents
 
+      # get a missing page, and sha the dom
+      benign_contents = http_get_body "#{_get_entity_name}/aspnet_client/#{rand(10000000)}.aspx"
+      benign_content_sha = Digest::SHA1.hexdigest(html_dom_to_string(benign_contents))
+
       # check all paths for a non-error response
       known_webshell_paths.split("\n").each do |webshell_path|
         _log "Getting: #{webshell_path}"
 
         full_path = "#{_get_entity_name}#{webshell_path}"
 
-        # get the body
-        resp = http_request :get, full_path
+        # get the body and do the same thing as above
+        contents = http_get_body full_path
+        our_sha = Digest::SHA1.hexdigest(html_dom_to_string(contents))
 
-        # make sure we got a response
-        if resp.body.empty?
-          _log_error "No response for #{full_path}! #{contents}"
-          next
-        end
-
-        # check for a missing page
-        unless resp.body =~ /The resource cannot be found/
-          out = { url: full_path, contents: contents }
+        # now check them
+        if our_sha != benign_content_sha
+          _log "Odd contents for #{full_path}!, flagging"
+          out = {
+            url: full_path,
+            contents: contents,
+            benign_contents: benign_contents,
+            proof: "Check diff of contents vs benign contents" }
+        else
+          _log "Got same content for missing page, probably okay"
         end
 
       end
