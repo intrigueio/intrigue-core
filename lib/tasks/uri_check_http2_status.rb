@@ -48,8 +48,6 @@ class UriCheckHttp2Support < BaseTask
       return
     end
 
-
-
     begin
 
       # create a client
