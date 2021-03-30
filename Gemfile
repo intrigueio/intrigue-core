@@ -96,9 +96,11 @@ gem 'ip_ranger',              :git => "https://github.com/intrigueio/ip_ranger"
 gem 'ipaddr'
 gem 'maxminddb',              :git => "https://github.com/intrigueio/maxminddb"
 gem 'net-dns'                 # dns_cache_snoop
-gem 'net-http2'               # http2 client support
+gem 'net-http2'               
+gem 'http-2'               # http2 client support
 gem 'neutrino_api',           :git => 'https://github.com/intrigueio/NeutrinoAPI-Ruby.git'
 gem 'opencorporates',         :git => 'https://github.com/pentestify/opencorporates.git'
+gem 'openssl'
 gem 'rex'
 gem 'rex-sslscan',            :git => 'https://github.com/intrigueio/rex-sslscan.git'
 gem 'ruby-nmap',              :git => 'https://github.com/pentestify/ruby-nmap.git'
