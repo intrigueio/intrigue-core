@@ -61,7 +61,6 @@ module Intrigue
         end
 
         def check
-          return {verified: "yes"}
             # check if we can perform SSRF
             uri = "#{_get_entity_name}"
             headers = {
@@ -98,6 +97,7 @@ module Intrigue
                   return {status: "potential"}
               end
             end
+        return nil
         end
 
         def is_vulnerable_version?(fingerprint)
