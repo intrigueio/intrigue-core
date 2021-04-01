@@ -7,9 +7,9 @@ module Intrigue
         {
           added: "2020-11-19",
           name: "spring_cloud_config_cve_2019_3799",
-          pretty_name: "Spring Cloud Config Server Directory Traversal Vulnerability (CVE-2919-3799)",
+          pretty_name: "Spring Cloud Config Server Directory Traversal Vulnerability (CVE-2019-3799)",
           identifiers: [
-            { type: "CVE", name: "CVE-2919-3799" }
+            { type: "CVE", name: "CVE-2019-3799" }
           ],
           severity: 1,
           category: "vulnerability",
