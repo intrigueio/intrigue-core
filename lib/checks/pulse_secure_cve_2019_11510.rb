@@ -7,7 +7,10 @@ module Intrigue
       {
         added: "2020-11-19",
         name: "pulse_secure_cve_2019_11510",
-        pretty_name: "Pulse Secure Arbitrary File Reading CVE-2019-11510",
+        pretty_name: "Pulse Secure Arbitrary File Reading (CVE-2019-11510)",
+        identifiers: [
+          { type: "CVE", name: "CVE-2019-11510" }
+        ],
         severity: 1,
         category: "vulnerability",
         status: "confirmed",
