@@ -71,9 +71,7 @@ module VulnCheck
     ruclei = Ruclei::Ruclei.new
     ruclei.parse_template template_string
     res = ruclei.run(uri)
-    result = res.results
-  rescue Errno::ENOENT # cannot find template
-    _log_error 'ERROR: Cannot find template at specified path.'
+    return { proof: res.results } unless res.nil?
   rescue Psych::SyntaxError # non-yaml file passed
     _log_error 'ERROR: Specified template does not appear to be in YAML format.'
   end
