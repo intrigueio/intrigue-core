@@ -7,7 +7,7 @@ module Intrigue
       {
         added: "2021-03-30",
         name: "oracle_weblogic_rce_cve_2019_2725",
-        pretty_name: "Oracle WebLogic Server RCE (CVE-2019-2725)",
+        pretty_name: "Oracle WebLogic Server Remote Code Execution (CVE-2019-2725)",
         severity: 1,
         category: "vulnerability",
         status: "confirmed",
@@ -18,7 +18,7 @@ module Intrigue
         references: [
           { type: "description", uri: "https://nvd.nist.gov/vuln/detail/cve-2019-2725" }
         ],
-        authors: ["maxim"]
+        authors: ["Badcode", "Hongwei Pan", "Icematcha", "icez", "Liao Xinxi", "Lin Zheng", "Song Keya", "Tianlei Li", "Xu Yuanzhen", "ZengShuai Hao", "Zhiyi Zhang", "dwisiswant0", "maxim"]
       }.merge!(instance_details)
       end
     end

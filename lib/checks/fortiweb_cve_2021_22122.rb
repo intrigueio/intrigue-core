@@ -6,8 +6,8 @@ module Intrigue
       def self.generate(instance_details={})
       {
         added: "2021-03-30",
-        name: "fortiweb_cve_2021_21975",
-        pretty_name: "FortiWeb Reflected XSS (CVE-2021-21975)",
+        name: "fortiweb_cve_2021_22122",
+        pretty_name: "FortiWeb Reflected XSS (CVE-2021-22122)",
         severity: 3,
         category: "vulnerability",
         status: "confirmed",
@@ -18,7 +18,7 @@ module Intrigue
         references: [
           { type: "description", uri: "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-22122" }
         ],
-        authors: ["maxim"]
+        authors: ["Andrey Medov (ptsecurity)", "dwisiswant0", "maxim"]
       }.merge!(instance_details)
       end
     end

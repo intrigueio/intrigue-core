@@ -18,7 +18,7 @@ module Intrigue
         references: [
           { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2021-21975" }
         ],
-        authors: ["maxim"]
+        authors: ["Egor Dimitrenko (Positive Technologies)", "luci", "maxim"]
       }.merge!(instance_details)
       end
     end

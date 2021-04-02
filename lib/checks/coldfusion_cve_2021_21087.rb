@@ -2,30 +2,30 @@
 module Intrigue
 
   module Issue
-    class AtlassianCve20193402 < BaseIssue
+    class ColdfusionCve202121087 < BaseIssue
       def self.generate(instance_details={})
       {
         added: "2021-03-30",
-        name: "atlassian_jira_cve_2019_3402",
-        pretty_name: "Atlassian Jira Reflected XSS (CVE-2019-3402)",
+        name: "coldfusion_cve_2021_21087",
+        pretty_name: "Apache Coldfusion Arbitrary Code Execution (CVE-2021-21087)",
         severity: 3,
         category: "vulnerability",
         status: "confirmed",
-        description: "The ConfigurePortalPages.jspa resource in Jira before version 7.13.3 and from version 8.0.0 before version 8.1.1 allows remote attackers to inject arbitrary HTML or JavaScript via a cross site scripting (XSS) vulnerability in the searchOwnerUserName parameter.",
+        description: "The vulnerability exists due to insufficient validation of user-supplied input. A remote non-authenticated attacker can send specially crafted data to the application and execute arbitrary code on the system.",
         affected_software: [ 
-          { :vendor => "Atlassian", :product => "Jira" }
+          { :vendor => "Adobe", :product => "Coldfusion" }
         ],
         references: [
-          { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-3402" }
+          { type: "description", uri: "https://helpx.adobe.com/security/products/coldfusion/apsb21-16.html" }
         ],
-        authors: ["pdteam", "maxim"]
+        authors: ["Josh Lane", "Daviey", "maxim"]
       }.merge!(instance_details)
       end
     end
   end
 
   module Task
-    class AtlassianCve20193402 < BaseCheck
+    class ColdfusionCve202121087 < BaseCheck
       def self.check_metadata
         {
           allowed_types: ['Uri']
@@ -37,7 +37,7 @@ module Intrigue
 
         # run a nuclei
         uri = _get_entity_name
-        template = 'cves/2019/CVE-2019-3402'
+        template = 'miscellaneous/unpatched-coldfusion'
 
         # if this returns truthy value, an issue will be raised
         # the truthy value will be added as proof to the issue
