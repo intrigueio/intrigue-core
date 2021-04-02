@@ -24,7 +24,7 @@ module Intrigue
         end
       end
     end
-  
+
     module Task
       class ZimbraCollaborationSuiteCve20199670 < BaseCheck 
       def self.check_metadata
@@ -32,20 +32,20 @@ module Intrigue
           allowed_types: ["Uri"]
         }
       end
-  
+
       # return truthy value to create an issue
       def check
-        
+
         # run a nuclei 
         uri = _get_entity_name
         template = "cves/2019/CVE-2019-9670"
-        
+
         # if this returns truthy value, an issue will be raised
         # the truthy value will be added as proof to the issue
         run_nuclei_template uri, template
       end
-  
+
       end
     end
-    
-    end
+
+    end 
