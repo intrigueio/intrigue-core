@@ -7,8 +7,8 @@ module Intrigue
       {
         added: "2021-03-30",
         name: "coldfusion_cve_2021_21087",
-        pretty_name: "Apache Coldfusion Arbitrary Code Execution (CVE-2021-21087)",
-        severity: 3,
+        pretty_name: "Adobe Coldfusion Arbitrary Code Execution (CVE-2021-21087)",
+        severity: 1,
         category: "vulnerability",
         status: "confirmed",
         description: "The vulnerability exists due to insufficient validation of user-supplied input. A remote non-authenticated attacker can send specially crafted data to the application and execute arbitrary code on the system.",

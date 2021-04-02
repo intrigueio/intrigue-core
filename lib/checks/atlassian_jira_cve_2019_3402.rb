@@ -7,7 +7,7 @@ module Intrigue
       {
         added: "2021-03-30",
         name: "atlassian_jira_cve_2019_3402",
-        pretty_name: "Atlassian Jira Reflected XSS (CVE-2019-3402)",
+        pretty_name: "Atlassian Jira Reflected Cross-Site Scripting (CVE-2019-3402)",
         severity: 3,
         category: "vulnerability",
         status: "confirmed",

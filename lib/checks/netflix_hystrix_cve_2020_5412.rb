@@ -7,7 +7,7 @@ module Intrigue
       {
         added: "2021-03-30",
         name: "netflix_hystrix_cve_2020_5412",
-        pretty_name: "Netflix Hystrix Dashboard Full-Read Server Side Request Forgery (CVE-2020-5412)",
+        pretty_name: "Netflix Hystrix Dashboard Server Side Request Forgery (CVE-2020-5412)",
         severity: 1,
         category: "vulnerability",
         status: "confirmed",
