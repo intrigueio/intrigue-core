@@ -7,7 +7,7 @@ module Intrigue
       {
         added: "2021-03-30",
         name: "vmware_vrealize_operations_manager_cve_2021_21975",
-        pretty_name: "VMWare vRealize Operations Manager API SSRF (CVE-2021-21975)",
+        pretty_name: "VMWare vRealize Operations Manager API Server Side Request Forgery (CVE-2021-21975)",
         severity: 1,
         category: "vulnerability",
         status: "confirmed",

@@ -7,7 +7,7 @@ module Intrigue
       {
         added: "2021-03-30",
         name: "fortiweb_cve_2021_22122",
-        pretty_name: "FortiWeb Reflected XSS (CVE-2021-22122)",
+        pretty_name: "FortiWeb Reflected Cross-Site Scripting (CVE-2021-22122)",
         severity: 3,
         category: "vulnerability",
         status: "confirmed",
