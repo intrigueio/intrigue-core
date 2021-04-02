@@ -64,19 +64,19 @@ module VulnCheck
   end
 
   def run_nuclei_template_from_string(uri, template_string)
-  # run ruclei with entity name and template
-  _log "Running template against #{uri}"
-  result = false
-  begin
-    ruclei = Ruclei::Ruclei.new
-    ruclei.parse_template template_string
-    res = ruclei.run(uri)
-    return { proof: res.results } unless res.nil?
-  rescue Psych::SyntaxError # non-yaml file passed
-    _log_error 'ERROR: Specified template does not appear to be in YAML format.'
-  end
+    # run ruclei with entity name and template
+    _log "Running template against #{uri}"
+    result = false
+    begin
+      ruclei = Ruclei::Ruclei.new
+      ruclei.parse_template template_string
+      res = ruclei.run(uri)
+      return { proof: res.results } unless res.nil?
+    rescue Psych::SyntaxError # non-yaml file passed
+      _log_error 'ERROR: Specified template does not appear to be in YAML format.'
+    end
 
-result
+  return nil
   end
 
 
