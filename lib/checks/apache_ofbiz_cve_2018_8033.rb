@@ -5,7 +5,7 @@ module Intrigue
       {
         added: "2021-04-02",
         name: "apache_ofbiz_cve_2018_8033",
-        pretty_name: "Apache OFBiz XML-RPC Java Deserialization (CVE-2018-8033)",
+        pretty_name: "Apache OFBiz XML External Entity Vulnerability (CVE-2018-8033)",
         identifiers: [
           { type: "CVE", name: "CVE-2018-8033" }
         ],
