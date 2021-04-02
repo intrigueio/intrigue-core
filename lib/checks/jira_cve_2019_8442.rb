@@ -17,7 +17,7 @@ module Intrigue
           ],
           references: [
             { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-8442" },
-            { type: "reference", uri: "https://jira.atlassian.com/browse/JRASERVER-69241" }
+            { type: "description", uri: "https://jira.atlassian.com/browse/JRASERVER-69241" }
           ],
           authors: ["siLLyDaddy", "jen140"]
         }.merge!(instance_details)
