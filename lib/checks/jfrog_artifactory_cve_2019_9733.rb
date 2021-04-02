@@ -7,7 +7,7 @@ module Intrigue
         {
           added: "2021-03-30",
           name: "jfrog_artifactory_cve_2019_9733",
-          pretty_name: "Jfrog Artifactory unauthenticated admin password reset CVE-2019-9733",
+          pretty_name: "Jfrog Artifactory Unauthenticated Admininistrator Password Reset (CVE-2019-9733)",
           severity: 1,
           category: "vulnerability",
           status: "confirmed",
@@ -17,9 +17,9 @@ module Intrigue
           ],
           references: [
             { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-9733" },
-            { type: "POC", uri: "https://packetstormsecurity.com/files/152172/JFrog-Artifactory-Administrator-Authentication-Bypass.html" }
+            { type: "exploit", uri: "https://packetstormsecurity.com/files/152172/JFrog-Artifactory-Administrator-Authentication-Bypass.html" }
           ],
-          authors: ["jen140"]
+          authors: ["akshansh", "CipherTechs Red Team", "jen140"]
         }.merge!(instance_details)
         end
       end

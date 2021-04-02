@@ -6,8 +6,8 @@ module Intrigue
         def self.generate(instance_details={})
         {
           added: "2021-03-30",
-          name: "total_js_cve_2019_8903 ",
-          pretty_name: "Total.js path traversal vulnerability with CVE-2019-8903.",
+          name: "total_js_cve_2019_8903",
+          pretty_name: "Total.js Path Traversal (CVE-2019-8903)",
           severity: 1,
           category: "vulnerability",
           status: "confirmed",
@@ -16,9 +16,10 @@ module Intrigue
             { :vendor => "Total.js", :product => "Total.js Platform" }
           ],
           references: [
-            { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-8903" }
+            { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-8903" },
+            { type: "exploit", uri: "https://blog.certimetergroup.com/it/articolo/security/total.js-directory-traversal-cve-2019-8903" }
           ],
-          authors: ["jen140"]
+          authors: ["madrobot","Riccardo Krauter", "jen140"]
         }.merge!(instance_details)
         end
       end

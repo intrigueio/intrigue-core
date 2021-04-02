@@ -6,9 +6,9 @@ module Intrigue
         def self.generate(instance_details={})
         {
           added: "2021-03-30",
-          name: "jira_cve_2019_8442 ",
-          pretty_name: "Jira Server META-INF directory exposure with CVE-2019-8442.",
-          severity: 1,
+          name: "jira_cve_2019_8442",
+          pretty_name: "Jira Server META-INF Directory Exposure (CVE-2019-8442)",
+          severity: 3,
           category: "vulnerability",
           status: "confirmed",
           description: "The CachingResourceDownloadRewriteRule class in Jira before version 7.13.4, and from version 8.0.0 before version 8.0.4, and from version 8.1.0 before version 8.1.1 allows remote attackers to access files in the Jira webroot under the META-INF directory via a lax path access check.",
@@ -16,9 +16,10 @@ module Intrigue
             { :vendor => "Atlassian", :product => "Jira Software" }
           ],
           references: [
-            { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-8442" }
+            { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-8442" },
+            { type: "reference", uri: "https://jira.atlassian.com/browse/JRASERVER-69241" }
           ],
-          authors: ["jen140"]
+          authors: ["siLLyDaddy", "jen140"]
         }.merge!(instance_details)
         end
       end

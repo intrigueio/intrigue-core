@@ -6,9 +6,9 @@ module Intrigue
         def self.generate(instance_details={})
         {
           added: "2021-03-30",
-          name: "jira_cve_2019_8449 ",
-          pretty_name: "Jira username enumeration vulnerability with CVE-2019-8449.",
-          severity: 1,
+          name: "jira_cve_2019_8449",
+          pretty_name: "Jira Username Enumeration (CVE-2019-8449)",
+          severity: 3,
           category: "vulnerability",
           status: "confirmed",
           description: "The /rest/api/latest/groupuserpicker resource in Jira before version 8.4.0 allows remote attackers to enumerate usernames via an information disclosure vulnerability.",
@@ -17,9 +17,9 @@ module Intrigue
           ],
           references: [
             { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-8449" },
-            { type: "POC", uri: "https://packetstormsecurity.com/files/156172/Jira-8.3.4-Information-Disclosure.html" }
+            { type: "exploit", uri: "https://packetstormsecurity.com/files/156172/Jira-8.3.4-Information-Disclosure.html" }
           ],
-          authors: ["jen140"]
+          authors: ["Harsh Bothra", "Mufeed VH" ,"jen140"]
         }.merge!(instance_details)
         end
       end

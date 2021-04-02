@@ -6,8 +6,8 @@ module Intrigue
         def self.generate(instance_details={})
         {
           added: "2021-03-30",
-          name: "drupal_cve_2019_6340 ",
-          pretty_name: "Drupal RCE with CVE-2019-6340.",
+          name: "drupal_cve_2019_6340",
+          pretty_name: "Drupal RCE (CVE-2019-6340)",
           severity: 1,
           category: "vulnerability",
           status: "confirmed",
@@ -16,9 +16,10 @@ module Intrigue
             { :vendor => "Drupal", :product => "Drupal" }
           ],
           references: [
-            { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-6340" }
+            { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-6340" },
+            { type: "exploit", uri: "https://www.exploit-db.com/exploits/46459" }
           ],
-          authors: ["jen140"]
+          authors: ["madrobot", "LEONJZA", "jen140"]
         }.merge!(instance_details)
         end
       end

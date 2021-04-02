@@ -6,8 +6,8 @@ module Intrigue
         def self.generate(instance_details={})
         {
           added: "2021-03-30",
-          name: "w3_total_cache_cve_2019_6715 ",
-          pretty_name: "W3 Total Cache Wordpress Plugin Arbitrary file read with CVE-2019-6715.",
+          name: "w3_total_cache_cve_2019_6715",
+          pretty_name: "W3 Total Cache Wordpress Plugin Arbitrary File Read (CVE-2019-6715)",
           severity: 1,
           category: "vulnerability",
           status: "confirmed",
@@ -17,9 +17,9 @@ module Intrigue
           ],
           references: [
             { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-6715" },
-            { type: "POC", uri: "https://packetstormsecurity.com/files/160674/WordPress-W3-Total-Cache-0.9.3-File-Read-Directory-Traversal.html" }
+            { type: "exploit", uri: "https://packetstormsecurity.com/files/160674/WordPress-W3-Total-Cache-0.9.3-File-Read-Directory-Traversal.html" }
           ],
-          authors: ["jen140"]
+          authors: ["randomrobbie", "VinhJAXT", "Hoa Nguyen", "jen140"]
         }.merge!(instance_details)
         end
       end
