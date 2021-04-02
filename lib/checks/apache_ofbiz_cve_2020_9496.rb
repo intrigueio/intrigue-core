@@ -3,7 +3,7 @@ module Intrigue
     class ApacheOfbizCve20209496 < BaseIssue
       def self.generate(instance_details = {})
       {
-        added: "2021-04-01",
+        added: "2021-04-02",
         name: "apache_ofbiz_cve_2020_9496",
         pretty_name: "Apache OFBiz XML-RPC Java Deserialization (CVE-2020-9496)",
         identifiers: [
