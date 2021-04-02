@@ -118,7 +118,9 @@ class UriCheckSudomainHijack  < BaseTask
       elsif response_body.match /There isn\'t a Github Pages site here/i
         _create_hijackable_subdomain_issue("Github", uri, "potential") unless (uri =~ /github.com/ || uri =~ /github.io/)
 
-      ####
+      # https://hackerone.com/reports/1034023
+      elsif response_body.match(/There is no helpdesk here/i) && response_body.match(/Maybe this is still fresh/i)
+        _create_hijackable_subdomain_issue("Freshdesk", uri, "potential") unless uri =~ /freshdesk.com/
 
       #elsif response_body.match /404 Blog is not found/i
       #  _create_hijackable_subdomain_issue "", uri, "potential"
@@ -165,6 +167,10 @@ class UriCheckSudomainHijack  < BaseTask
 
       elsif response_body.match /Unrecognized domain/i
         _create_hijackable_subdomain_issue "Mashery", uri, "potential" unless (uri =~ /mashery.com/ || uri =~ /amazonaws.com/)
+
+      # https://hackerone.com/reports/1034023
+      elsif response_body.match /Oops\! We couldn\’t find that page\. Sorry about that\./i
+        _create_hijackable_subdomain_issue "Medium", uri, "potential" unless uri =~ /medium.com/
 
       elsif response_body.match(/ngrok\.io not found/) || response_body.match(/Tunnel \*\.ngrok\.io not found/)
         _create_hijackable_subdomain_issue "Ngrok", uri, "potential"
