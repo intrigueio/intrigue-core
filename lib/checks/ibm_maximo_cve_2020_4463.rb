@@ -7,7 +7,7 @@ module Intrigue
       {
         added: "2021-03-30",
         name: "ibm_maximo_cve_2020_4463",
-        pretty_name: "IBM Maximo XXE (CVE-2020-4463)",
+        pretty_name: "IBM Maximo XML External Entity Injection (CVE-2020-4463)",
         severity: 1,
         category: "vulnerability",
         status: "confirmed",
