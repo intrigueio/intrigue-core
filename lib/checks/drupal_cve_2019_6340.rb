@@ -7,7 +7,7 @@ module Intrigue
         {
           added: "2021-03-30",
           name: "drupal_cve_2019_6340",
-          pretty_name: "Drupal RCE (CVE-2019-6340)",
+          pretty_name: "Drupal Remote Code Execution (CVE-2019-6340)",
           severity: 1,
           category: "vulnerability",
           status: "confirmed",
