@@ -30,7 +30,7 @@ module Intrigue
   end
 
   module Task
-    class IBM_MaximoCve20204463 < BaseCheck
+    class IBMMaximoCve20204463 < BaseCheck
       def self.check_metadata
         {
           allowed_types: ['Uri']
