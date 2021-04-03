@@ -60,13 +60,12 @@ module VulnCheck
       _log_error 'ERROR: Specified template does not appear to be in YAML format.'
     end
   
-  return nil
+    return nil
   end
 
   def run_nuclei_template_from_string(uri, template_string)
     # run ruclei with entity name and template
     _log "Running template against #{uri}"
-    result = false
     begin
       ruclei = Ruclei::Ruclei.new
       ruclei.parse_template template_string
@@ -76,7 +75,7 @@ module VulnCheck
       _log_error 'ERROR: Specified template does not appear to be in YAML format.'
     end
 
-  return nil
+    return nil
   end
 
 
