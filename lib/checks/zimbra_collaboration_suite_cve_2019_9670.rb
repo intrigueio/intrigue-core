@@ -15,6 +15,9 @@ module Intrigue
           affected_software: [ 
             { :vendor => "Zimbra", :product => "Collaboration Suite" }
           ],
+          identifiers: [
+            { type: "CVE", name: "CVE-2019-9670" }
+          ],
           references: [
             { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-9670" },
             { type: "exploit", uri: "https://packetstormsecurity.com/files/152487/Zimbra-Collaboration-Autodiscover-Servlet-XXE-ProxyServlet-SSRF.html" }
