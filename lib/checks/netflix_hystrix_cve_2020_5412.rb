@@ -12,11 +12,15 @@ module Intrigue
         category: "vulnerability",
         status: "confirmed",
         description: "Spring Cloud Netflix, versions 2.2.x prior to 2.2.4, versions 2.1.x prior to 2.1.6, and older unsupported versions allow applications to use the Hystrix Dashboard proxy.stream endpoint to make requests to any server reachable by the server hosting the dashboard. A malicious user, or attacker, can send a request to other servers that should not be exposed publicly.",
+        identifiers: [
+          { type: "CVE", name: "CVE-2020-5412" }
+        ],
         affected_software: [ 
           { :vendor => "Netflix", :product => "Hystrix Dashboard" }
         ],
         references: [
-          { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2020-5412" }
+          { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2020-5412" },
+          { type: "description", uri: "https://tanzu.vmware.com/security/cve-2020-5412" }
         ],
         authors: ["Vern", "dwisiswant0", "maxim"]
       }.merge!(instance_details)

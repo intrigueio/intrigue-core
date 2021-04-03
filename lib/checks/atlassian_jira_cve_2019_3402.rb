@@ -12,11 +12,16 @@ module Intrigue
         category: "vulnerability",
         status: "confirmed",
         description: "The ConfigurePortalPages.jspa resource in Jira before version 7.13.3 and from version 8.0.0 before version 8.1.1 allows remote attackers to inject arbitrary HTML or JavaScript via a cross site scripting (XSS) vulnerability in the searchOwnerUserName parameter.",
+        identifiers: [
+          { type: "CVE", name: "CVE-2019-3402" }
+        ],
         affected_software: [ 
           { :vendor => "Atlassian", :product => "Jira" }
         ],
         references: [
-          { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-3402" }
+          { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-3402" },
+          { type: "description", uri: "https://jira.atlassian.com/browse/JRASERVER-69243?src=confmacro" },
+          { type: "exploit", uri: "https://github.com/daffainfo/AllAboutBugBounty/blob/master/Misc/Unauthenticated%20Jira%20CVE.md" }
         ],
         authors: ["pdteam", "maxim"]
       }.merge!(instance_details)

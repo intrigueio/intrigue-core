@@ -12,11 +12,17 @@ module Intrigue
         category: "vulnerability",
         status: "confirmed",
         description: "Server Side Request Forgery in vRealize Operations Manager API (CVE-2021-21975) prior to 8.4 may allow a malicious actor with network access to the vRealize Operations Manager API can perform a Server Side Request Forgery attack to steal administrative credentials.",
+        identifiers: [
+          { type: "CVE", name: "CVE-2021-21975" }
+        ],
         affected_software: [ 
           { :vendor => "VMware", :product => "vRealize Operations Manager" }
         ],
         references: [
-          { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2021-21975" }
+          { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2021-21975" },
+          { type: "description", uri: "https://www.vmware.com/security/advisories/VMSA-2021-0004.html" },
+          { type: "exploit", uri: "https://github.com/GuayoyoCyber/CVE-2021-21975" }
+
         ],
         authors: ["Egor Dimitrenko (Positive Technologies)", "luci", "maxim"]
       }.merge!(instance_details)

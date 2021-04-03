@@ -12,11 +12,15 @@ module Intrigue
         category: "vulnerability",
         status: "confirmed",
         description: "The vulnerability exists due to insufficient validation of user-supplied input. A remote non-authenticated attacker can send specially crafted data to the application and execute arbitrary code on the system.",
+        identifiers: [
+          { type: "CVE", name: "CVE-2021-21087" }
+        ],
         affected_software: [ 
           { :vendor => "Adobe", :product => "Coldfusion" }
         ],
         references: [
-          { type: "description", uri: "https://helpx.adobe.com/security/products/coldfusion/apsb21-16.html" }
+          { type: "description", uri: "https://helpx.adobe.com/security/products/coldfusion/apsb21-16.html" },
+          { type: "description", uri: "https://cve.mitre.org/cgi-bin/cvename.cgi?name=2021-21087"} 
         ],
         authors: ["Josh Lane", "Daviey", "maxim"]
       }.merge!(instance_details)

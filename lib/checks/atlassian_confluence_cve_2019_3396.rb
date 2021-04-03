@@ -12,11 +12,16 @@ module Intrigue
         category: "vulnerability",
         status: "confirmed",
         description: "The Widget Connector macro in Atlassian Confluence Server before version 6.6.12 (the fixed version for 6.6.x), from version 6.7.0 before 6.12.3 (the fixed version for 6.12.x), from version 6.13.0 before 6.13.3 (the fixed version for 6.13.x), and from version 6.14.0 before 6.14.2 (the fixed version for 6.14.x), allows remote attackers to achieve path traversal and remote code execution on a Confluence Server or Data Center instance via server-side template injection.",
+        identifiers: [
+          { type: "CVE", name: "CVE-2019-3396" }
+        ],
         affected_software: [ 
           { :vendor => "Atlassian", :product => "Confluence" }
         ],
         references: [
-          { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-3396" }
+          { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-3396" },
+          { type: "description", uri: "https://confluence.atlassian.com/doc/confluence-security-advisory-2019-03-20-966660264.html" },
+          { type: "exploit", uri: "https://github.com/jas502n/CVE-2019-3396" }
         ],
         authors: ["Harsh Bothra", "maxim"]
       }.merge!(instance_details)

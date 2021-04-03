@@ -12,11 +12,15 @@ module Intrigue
         category: "vulnerability",
         status: "confirmed",
         description: "An improper neutralization of input during web page generation in FortiWeb GUI interface 6.3.0 through 6.3.7 and version before 6.2.4 may allow an unauthenticated, remote attacker to perform a reflected cross site scripting attack (XSS) by injecting malicious payload in different vulnerable API end-points.",
+        identifiers: [
+          { type: "CVE", name: "CVE-2021-22122" }
+        ],
         affected_software: [ 
           { :vendor => "Fortinet", :product => "FortiWeb" }
         ],
         references: [
-          { type: "description", uri: "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-22122" }
+          { type: "description", uri: "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-22122" },
+          { type: "description", uri: "https://www.fortiguard.com/psirt/FG-IR-20-122" },
         ],
         authors: ["Andrey Medov (ptsecurity)", "dwisiswant0", "maxim"]
       }.merge!(instance_details)

@@ -2,7 +2,7 @@
 module Intrigue
 
   module Issue
-    class IBM_MaximoCve20204463 < BaseIssue
+    class IBMMaximoCve20204463 < BaseIssue
       def self.generate(instance_details={})
       {
         added: "2021-03-30",
@@ -12,11 +12,16 @@ module Intrigue
         category: "vulnerability",
         status: "confirmed",
         description: "IBM Maximo Asset Management 7.6.0.1 and 7.6.0.2 is vulnerable to an XML External Entity Injection (XXE) attack when processing XML data. A remote attacker could exploit this vulnerability to expose sensitive information or consume memory resources. IBM X-Force ID: 181484.",
+        identifiers: [
+          { type: "CVE", name: "CVE-2020-4463" }
+        ],
         affected_software: [ 
           { :vendor => "IBM", :product => "Maximo" }
         ],
         references: [
-          { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2020-4463" }
+          { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2020-4463" },
+          { type: "description", uri: "https://www.ibm.com/support/pages/security-bulletin-ibm-maximo-asset-management-vulnerable-information-disclosure-cve-2020-4463" },
+          { type: "exploit", uri: "https://github.com/Ibonok/CVE-2020-4463" }
         ],
         authors: ["Michael Wollner", "dwisiswant0", "maxim"]
       }.merge!(instance_details)

@@ -12,11 +12,16 @@ module Intrigue
         category: "vulnerability",
         status: "confirmed",
         description: "Apache Druid includes the ability to execute user-provided JavaScript code embedded in various types of requests. This functionality is intended for use in high-trust environments, and is disabled by default. However, in Druid 0.20.0 and earlier, it is possible for an authenticated user to send a specially-crafted request that forces Druid to run user-provided JavaScript code for that request, regardless of server configuration. This can be leveraged to execute code on the target machine with the privileges of the Druid server process.",
+        identifiers: [
+          { type: "CVE", name: "CVE-2021-25646" }
+        ],
         affected_software: [ 
           { :vendor => "Apache", :product => "Druid" }
         ],
         references: [
-          { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2021-25646" }
+          { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2021-25646" },
+          { type: "description", uri: "https://blogs.juniper.net/en-us/threat-research/cve-2021-25646-apache-druid-embedded-javascript-remote-code-execution" },
+          { type: "exploit", uri: "https://github.com/lp008/CVE-2021-25646" }
         ],
         authors: ["Litch1", "pikpikcu", "maxim"]
       }.merge!(instance_details)

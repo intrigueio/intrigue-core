@@ -12,11 +12,15 @@ module Intrigue
         category: "vulnerability",
         status: "confirmed",
         description: "The /rest/api/2/user/picker rest resource in Jira before version 7.13.3, from version 8.0.0 before version 8.0.4, and from version 8.1.0 before version 8.1.1 allows remote attackers to enumerate usernames via an incorrect authorisation check.",
+        identifiers: [
+          { type: "CVE", name: "CVE-2019-3403" }
+        ],
         affected_software: [ 
           { :vendor => "Atlassian", :product => "Jira" }
         ],
         references: [
-          { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-3403" }
+          { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-3403" },
+          { type: "description", uri: "https://jira.atlassian.com/browse/JRASERVER-69242" }
         ],
         authors: ["Ganofins", "maxim"]
       }.merge!(instance_details)
