@@ -48,24 +48,23 @@ module Intrigue
 
       ## Modified version of MSF function
       def bigip_cookie_decode(cookie_value)
-        decoded = {}
-        case
-        when cookie_value =~ /(\d{8,10})\.(\d{1,5})\./
+
+        if cookie_value =~ /(\d{8,10})\.(\d{1,5})\./
           ip_address = Regexp.last_match(1).to_i
           port = Regexp.last_match(2).to_i
           ip_address = change_endianness(ip_address)
           ip_address = addr_itoa(ip_address)
           port = change_endianness(port, 2)
-        when cookie_value.downcase =~ /rd\d+o0{20}f{4}([a-f0-9]{8})o(\d{1,5})/
+        elsif cookie_value.downcase =~ /rd\d+o0{20}f{4}([a-f0-9]{8})o(\d{1,5})/
           ip_address = Regexp.last_match(1).to_i(16)
           port = Regexp.last_match(2).to_i
           ip_address = addr_itoa(ip_address)
-        when cookie_value.downcase =~ /vi([a-f0-9]{32})\.(\d{1,5})/
+        elsif cookie_value.downcase =~ /vi([a-f0-9]{32})\.(\d{1,5})/
           ip_address = Regexp.last_match(1).to_i(16)
           port = Regexp.last_match(2).to_i
           ip_address = addr_itoa(ip_address, true)
           port = change_endianness(port, 2)
-        when cookie_value.downcase =~ /rd\d+o([a-f0-9]{32})o(\d{1,5})/
+        elsif cookie_value.downcase =~ /rd\d+o([a-f0-9]{32})o(\d{1,5})/
           ip_address = Regexp.last_match(1).to_i(16)
           port = Regexp.last_match(2).to_i
           ip_address = addr_itoa(ip_address, true)
@@ -74,11 +73,13 @@ module Intrigue
           port = nil
         end
 
-        # decoded[:hostname] = cookie_value.match(/BIGipServer(.*)=/i).captures.first
-        decoded[:poolname] = cookie_value.match(/BIGipServer(.*)=/i).captures.first
-        decoded[:ip_address] = ip_address.nil? ? nil : ip_address
-        decoded[:port] = port.nil? ? nil : port
-        decoded
+        unless ip_address.nil?
+          decoded = {}
+          decoded[:poolname] = cookie_value.match(/BIGipServer(.*)=/i).captures.first
+          decoded[:ip_address] = ip_address
+          decoded[:port] = port
+          return decoded
+        end
       end
 
       def run
@@ -90,7 +91,7 @@ module Intrigue
 
         10.times do |i| # send 10 requests as each request may return a decoded cookie with a different ip address
           # cookie was not found in the second request ; stop sending additional requests & exhaust the loop
-          next if i > 1 && decoded_cookies.empty?
+          next if i > 1 && decoded_cookies.compact.empty?
 
           response = http_request :get, uri
           set_cookie = response.headers['set-cookie']
@@ -105,8 +106,9 @@ module Intrigue
 
           decoded_cookies << bigip_cookie_decode(cookie) if cookie
         end
+
         # create IP Address entities & Hostname Entity from the cookie
-        create_issue_entities decoded_cookies.uniq unless decoded_cookies.empty?
+        create_issue_entities decoded_cookies.compact.uniq unless decoded_cookies.compact.empty?
       end
 
       ##
