@@ -15,6 +15,9 @@ module Intrigue
           affected_software: [ 
             { :vendor => "Elastic", :product => "Kibana" }
           ],
+          identifiers: [
+            { type: "CVE", name: "CVE-2019-7609" }
+          ],
           references: [
             { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-7609" },
             { type: "description", uri: "https://discuss.elastic.co/t/elastic-stack-6-6-1-and-5-6-15-security-update/169077" }

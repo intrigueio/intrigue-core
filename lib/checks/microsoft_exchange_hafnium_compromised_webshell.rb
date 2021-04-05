@@ -28,7 +28,6 @@ module Issue
         { type: "threat_intel", uri: "https://www.welivesecurity.com/2021/03/10/exchange-servers-under-siege-10-apt-groups/"},
         { type: "threat_intel", uri: "https://www.shadowserver.org/news/shadowserver-special-report-exchange-scanning-5/"},
         { type: "threat_intel", uri: "https://github.com/cert-lv/exchange_webshell_detection/blob/main/detect_webshells.ps1"},
-
       ],
       authors: ["jcran", "pwndefend"]
     }.merge!(instance_details)
@@ -92,21 +91,39 @@ eos
         contents = http_get_body full_path
         our_sha = Digest::SHA1.hexdigest(html_dom_to_string(contents))
 
-        # now check them
-        if our_sha != benign_content_sha
-          _log "Odd contents for #{full_path}!, flagging"
-          out = {
-            url: full_path,
-            contents: contents,
-            benign_contents: benign_contents,
-            proof: "Check diff of contents vs benign contents" }
-        else
-          _log "Got same content for missing page, probably okay"
+        ###
+
+        if contents =~ /OAB \(Default Web Site\)/
+
+          out = construct_positive_match(full_path, contents, benign_contents, false)
+
+        else # rely on heuristics
+
+          # now check them
+          four_oh_four_content = /Please review the following URL/
+          if our_sha != benign_content_sha && !contents =~ four_oh_four_content
+            _log "Odd contents for #{full_path}!, flagging"
+            out = construct_positive_match(full_path, contents, benign_contents, true)
+          else
+            _log "Got same content for missing page, probably okay"
+          end
+
         end
 
       end
 
     out
+    end
+
+    def construct_positive_match(full_path, contents, benign_contents, heuristic_match)
+      confidence_str = heuristic_match ? "confirmed" : "potential"
+      out = {
+        confidence: confidence_str,
+        url: full_path,
+        heuristic_match: heuristic_match,
+        contents: contents,
+        benign_contents: benign_contents,
+        details: "Check diff of contents vs benign contents" }
     end
   end
 end

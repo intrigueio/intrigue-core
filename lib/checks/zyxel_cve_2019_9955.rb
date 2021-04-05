@@ -8,7 +8,7 @@ module Intrigue
           added: "2021-03-30",
           name: "zyxel_cve_2019_9955",
           pretty_name: "Zyxel Reflected XSS (CVE-2019-9955)",
-          severity: 1,
+          severity: 3,
           category: "vulnerability",
           status: "confirmed",
           description: "On Zyxel ATP200, ATP500, ATP800, USG20-VPN, USG20W-VPN, USG40, USG40W, USG60, USG60W, USG110, USG210, USG310, USG1100, USG1900, USG2200-VPN, ZyWALL 110, ZyWALL 310, ZyWALL 1100 devices, the security firewall login page is vulnerable to Reflected XSS via the unsanitized 'mp_idx' parameter.",
@@ -31,6 +31,9 @@ module Intrigue
             { :vendor => "Zyxel", :product => "ZyWALL 110" },
             { :vendor => "Zyxel", :product => "ZyWALL 310" },
             { :vendor => "Zyxel", :product => "ZyWALL 1100" }
+          ],
+          identifiers: [
+            { type: "CVE", name: "CVE-2019-9955" }
           ],
           references: [
             { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-9955" },
