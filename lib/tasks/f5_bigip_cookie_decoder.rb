@@ -2,7 +2,7 @@ module Intrigue
   module Task
     class F5BigIpCookieDecoder < BaseTask
 
-      # MSF-provided Functionality credit: 
+      # MSF-provided Functionality credit:
       # 'Thanat0s <thanspam[at]trollprod.org>',
       # 'Oleg Broslavsky <ovbroslavsky[at]gmail.com>',
       # 'Nikita Oleksov <neoleksov[at]gmail.com>',
@@ -36,7 +36,7 @@ module Intrigue
       ## 2. IPv4 pool members in non-default routed domains - "BIGipServerWEB=rd5o00000000000000000000ffffc0000201o80",
       ## 3. IPv6 pool members - "BIGipServerWEB=vi20010112000000000000000000000030.20480",
       ## 4. IPv6 pool members in non-default route domains - "BIGipServerWEB=rd3o20010112000000000000000000000030o80"
-      ## 
+      ##
       ##  regexp = /
       ##    ([~_\.\-\w\d]+)=(((?:\d+\.){2}\d+)|
       ##    (rd\d+o0{20}f{4}\w+o\d{1,5})|
@@ -73,13 +73,13 @@ module Intrigue
           port = nil
         end
 
-        unless ip_address.nil?
-          decoded = {}
-          decoded[:poolname] = cookie_value.match(/BIGipServer(.*)=/i).captures.first
-          decoded[:ip_address] = ip_address
-          decoded[:port] = port
-          return decoded
-        end
+
+        decoded = {}
+        decoded[:poolname] = cookie_value.match(/BIGipServer(.+?)=/i).captures.first
+        decoded[:ip_address] = ip_address
+        decoded[:port] = port
+
+      decoded
       end
 
       def run
@@ -90,21 +90,32 @@ module Intrigue
         decoded_cookies = []
 
         10.times do |i| # send 10 requests as each request may return a decoded cookie with a different ip address
-          # cookie was not found in the second request ; stop sending additional requests & exhaust the loop
+          # cookie was not found in the fourth request ; stop sending additional requests & exhaust the loop
           next if i > 1 && decoded_cookies.compact.empty?
 
           response = http_request :get, uri
-          set_cookie = response.headers['set-cookie']
 
-          unless set_cookie.nil?
-            # if multiple cookies are returned in response - extract the bipipserver cookie
-            set_cookie = set_cookie.select { |c| c =~ /BIGipServer(.*)=/i }.first if set_cookie.is_a?(Array)
-            return nil if set_cookie.empty?
+          # grab the cookie in a case-insensitive way, but we're not yet sure we have a bigipserver cookie
+          set_cookie_header = response.headers.select{|x,y| x.downcase  == "set-cookie" }
+          key = set_cookie_header.keys.first
+          set_cookie = set_cookie_header[key] if key
 
-            cookie = set_cookie.split(';').select { |c| c =~ /BIGipServer(.*)=/i }.first # only one cookie so its a string
+          # okay we have cookies
+          if set_cookie
+
+            # only one cookie so its a string
+            cookie_string = set_cookie.find{|x| x =~ /BIGipServer/i }
+            _log_error "We have cookies, but nothing that looks like a BIGIP cookie" unless cookie_string
+
+            bigip_cookie_string = cookie_string.split(';').find{ |c| c =~ /BIGipServer(.*)=/i }
+
+            _log_error "Unable to extract BIGIP cookie!" unless bigip_cookie_string
+
+            decoded_cookies << bigip_cookie_decode(bigip_cookie_string) if bigip_cookie_string
+          else
+            _log_error "No cookies set!!"
           end
 
-          decoded_cookies << bigip_cookie_decode(cookie) if cookie
         end
 
         # create IP Address entities & Hostname Entity from the cookie
@@ -116,7 +127,9 @@ module Intrigue
       def create_issue_entities(decoded_arr)
         _create_linked_issue 'f5_bigip_cookie_decoder', 'Decoded Cookie' => decoded_arr
 
+        # create ip addresses
         decoded_arr.each do |d|
+          next unless d[:ip_address]
           _create_entity 'IpAddress', 'name' => d[:ip_address]
         end
       end
