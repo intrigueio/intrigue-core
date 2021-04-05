@@ -90,7 +90,8 @@ module Intrigue
         decoded_cookies = []
 
         10.times do |i| # send 10 requests as each request may return a decoded cookie with a different ip address
-          # cookie was not found in the fourth request ; stop sending additional requests & exhaust the loop
+
+          # cookie was not found in the second request; stop sending additional requests & exhaust the loop
           next if i > 1 && decoded_cookies.compact.empty?
 
           response = http_request :get, uri
@@ -107,10 +108,11 @@ module Intrigue
             cookie_string = set_cookie.find{|x| x =~ /BIGipServer/i }
             _log_error "We have cookies, but nothing that looks like a BIGIP cookie" unless cookie_string
 
+            # grab our bigip cookie
             bigip_cookie_string = cookie_string.split(';').find{ |c| c =~ /BIGipServer(.*)=/i }
-
             _log_error "Unable to extract BIGIP cookie!" unless bigip_cookie_string
 
+            # decode it, and save into our array of results
             decoded_cookies << bigip_cookie_decode(bigip_cookie_string) if bigip_cookie_string
           else
             _log_error "No cookies set!!"
