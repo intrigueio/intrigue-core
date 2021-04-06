@@ -16,10 +16,10 @@ class Uri < Intrigue::Core::Model::Entity
   end
 
   def detail_string
-    
+
     # create fingerprint
     if details["fingerprint"]
-      fingerprint_array = details["fingerprint"].map do |x| 
+      fingerprint_array = details["fingerprint"].map do |x|
         "#{x['vendor']} #{x['product'] unless x['vendor'] == x['product']} #{x['version']}".strip
       end
       out = "Fingerprint: #{fingerprint_array.sort.uniq.join("; ")}" if details["fingerprint"]
@@ -39,12 +39,12 @@ class Uri < Intrigue::Core::Model::Entity
   ###
   ### SCOPING
   ###
-  def scoped?(conditions={}) 
-    return true if scoped
-    return true if self.allow_list || self.project.allow_list_entity?(self) 
+  def scoped?(conditions={})
+    return scoped unless scoped.nil?
+    return true if self.allow_list || self.project.allow_list_entity?(self)
     return false if self.deny_list || self.project.deny_list_entity?(self)
 
-    # only scope in stuff that's not hidden 
+    # only scope in stuff that's not hidden
     return false if self.hidden
 
   # if we didnt match the above and we were asked, it's still true
