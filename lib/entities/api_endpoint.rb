@@ -1,7 +1,7 @@
 module Intrigue
 module Entity
 class ApiEndpoint < Intrigue::Core::Model::Entity
-  
+
   def self.metadata
     {
       name: "ApiEndpoint",
@@ -16,10 +16,10 @@ class ApiEndpoint < Intrigue::Core::Model::Entity
   end
 
   def detail_string
-    
+
     # create fingerprint
     if details["fingerprint"]
-      fingerprint_array = details["fingerprint"].map do |x| 
+      fingerprint_array = details["fingerprint"].map do |x|
         "#{x['vendor']} #{x['product'] unless x['vendor'] == x['product']} #{x['version']}".strip
       end
       out = "Fingerprint: #{fingerprint_array.sort.uniq.join("; ")}" if details["fingerprint"]
@@ -29,7 +29,7 @@ class ApiEndpoint < Intrigue::Core::Model::Entity
 
     if details["title"]
       out << " | " if out.length > 0
-      out << " Title: #{details["title"]}" 
+      out << " Title: #{details["title"]}"
     end
 
   out
@@ -38,9 +38,9 @@ class ApiEndpoint < Intrigue::Core::Model::Entity
   ###
   ### SCOPING
   ###
-  def scoped?(conditions={}) 
-    return true if scoped
-    return true if self.allow_list || self.project.allow_list_entity?(self) 
+  def scoped?(conditions={})
+    return scoped unless scoped.nil?
+    return true if self.allow_list || self.project.allow_list_entity?(self)
     return false if self.deny_list || self.project.deny_list_entity?(self)
 
   # if we didnt match the above and we were asked, it's still true

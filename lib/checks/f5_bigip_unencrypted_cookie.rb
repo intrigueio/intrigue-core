@@ -1,32 +1,43 @@
 module Intrigue
-  module Task
-    class F5BigIpCookieDecoder < BaseTask
+  module Issue
+    class F5BigIpUnencryptedCookie < BaseIssue
 
-      # MSF-provided Functionality credit:
+      # MSF-sourced functionality credit:
       # 'Thanat0s <thanspam[at]trollprod.org>',
       # 'Oleg Broslavsky <ovbroslavsky[at]gmail.com>',
       # 'Nikita Oleksov <neoleksov[at]gmail.com>',
       # 'Denis Kolegov <dnkolegov[at]gmail.com>'
 
-      def self.metadata
-        {
-          :name => "f5_bigip_cookie_decoder",
-          :pretty_name => "F5 BigIP Cookie Decoder",
-          :authors => ["jcran", "jhawthorn", "maxim"],
-          :description => "Decodes a F5 BigIP Cookie in order to leak information about the backend such as the Pool Name, IP Address, and Port.",
-          :references => [
-            "http://support.f5.com/kb/en-us/solutions/public/6000/900/sol6917.html",
-            "http://support.f5.com/kb/en-us/solutions/public/7000/700/sol7784.html?sr=14607726"
-          ],
-          :type => "discovery",
-          :passive => false,
-          :allowed_types => ["Uri"],
-          :example_entities => [
-            {"type" => "Uri", "details" => {"name" => "https://intrigue.io"}}
-          ],
-          :allowed_options => [],
-          :created_types => ["IpAddress"]
-        }
+      def self.generate(instance_details={})
+      {
+        added: "2021-03-04",
+        name: "f5_bigip_unencrypted_cookie",
+        pretty_name: "F5 BigIP Unencrypted Cookie",
+        severity: 4,
+        category: "misconfiguration",
+        status: "confirmed",
+        description: "Decodes a F5 BigIP Cookie in order to leak information about the backend such as the Pool Name, IP Address, and Port.",
+        references: [
+          { type: "description", uri: "http://support.f5.com/kb/en-us/solutions/public/6000/900/sol6917.html" },
+          { type: "description", uri: "http://support.f5.com/kb/en-us/solutions/public/7000/700/sol7784.html?sr=14607726" }
+        ],
+        affected_software: [
+          { :vendor => "F5", :product => "BIG-IP Configuration Utility" },
+          { :vendor => "F5", :product => "BIG-IP Access Policy Manager" },
+          { :vendor => "F5", :product => "BIG-IP Application Security Manager" },
+          { :vendor => "F5", :product => "BIG-IP Local Traffic Manager" }
+        ],
+        authors: ["maxim", "jcran", "jhawthorn"]
+      }.merge!(instance_details)
+      end
+    end
+  end
+
+  module Task
+    class F5BigIpUnencryptedCookie < BaseCheck
+
+      def self.check_metadata
+        { allowed_types: ["Uri"] }
       end
 
       ## Cookies to match
@@ -69,21 +80,17 @@ module Intrigue
           port = Regexp.last_match(2).to_i
           ip_address = addr_itoa(ip_address, true)
         else
-          ip_address = nil
-          port = nil
+          return nil
         end
 
-
-        decoded = {}
-        decoded[:poolname] = cookie_value.match(/BIGipServer(.+?)=/i).captures.first
-        decoded[:ip_address] = ip_address
-        decoded[:port] = port
-
-      decoded
+        {
+          poolname: cookie_value.match(/BIGipServer(.+?)=/i).captures.first,
+          ip_address: ip_address,
+          port: port
+        }
       end
 
-      def run
-        super
+      def check
 
         uri = _get_entity_name
 
@@ -98,22 +105,35 @@ module Intrigue
 
           # grab the cookie in a case-insensitive way, but we're not yet sure we have a bigipserver cookie
           set_cookie_header = response.headers.select{|x,y| x.downcase  == "set-cookie" }
-          key = set_cookie_header.keys.first
-          set_cookie = set_cookie_header[key] if key
 
-          # okay we have cookies
+          unless !set_cookie_header.empty?
+            _log_error "Missing a set-cookie header, failing"
+            return
+          end
+
+          # okay we got one, grab our cookie by accessing by our key
+          #   (which may/may not have been lowercase - handled above)
+          #
+          # Since we could get a string or an array back, make sure it's a single array
+          # by forcing and calling flatten
+          #
+          key = set_cookie_header.keys.first
+          set_cookie = [set_cookie_header[key]].flatten if key
+
+          # we have cooooooookiees!!!
           if set_cookie
 
-            # only one cookie so its a string
+            # find will only return only one item so we definitely have a string
             cookie_string = set_cookie.find{|x| x =~ /BIGipServer/i }
             _log_error "We have cookies, but nothing that looks like a BIGIP cookie" unless cookie_string
 
-            # grab our bigip cookie
+            # grab our specific bigip cookie out of the string
             bigip_cookie_string = cookie_string.split(';').find{ |c| c =~ /BIGipServer(.*)=/i }
             _log_error "Unable to extract BIGIP cookie!" unless bigip_cookie_string
 
             # decode it, and save into our array of results
             decoded_cookies << bigip_cookie_decode(bigip_cookie_string) if bigip_cookie_string
+
           else
             _log_error "No cookies set!!"
           end
@@ -121,19 +141,16 @@ module Intrigue
         end
 
         # create IP Address entities & Hostname Entity from the cookie
-        create_issue_entities decoded_cookies.compact.uniq unless decoded_cookies.compact.empty?
-      end
+        return false if decoded_cookies.compact.empty?
 
-      ##
-      # creates the linked issue + entities
-      def create_issue_entities(decoded_arr)
-        _create_linked_issue 'f5_bigip_cookie_decoder', 'Decoded Cookie' => decoded_arr
-
-        # create ip addresses
-        decoded_arr.each do |d|
+        # create ip addresses if we have anything
+        decoded_cookies.compact.each do |d|
           next unless d[:ip_address]
-          _create_entity 'IpAddress', 'name' => d[:ip_address]
+          _create_entity 'IpAddress', 'name' => d[:ip_address], 'f5_cookie_info_leak' => d
         end
+
+      # return decoded cookies array as proof
+      { decoded_cookies: decoded_cookies.compact.uniq }
       end
 
     end
