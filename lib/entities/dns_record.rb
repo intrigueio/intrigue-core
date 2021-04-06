@@ -1,7 +1,7 @@
 module Intrigue
 module Entity
 class DnsRecord < Intrigue::Core::Model::Entity
-  
+
   include Intrigue::Task::Dns
 
   def self.metadata
@@ -37,9 +37,9 @@ class DnsRecord < Intrigue::Core::Model::Entity
   ###
   ### SCOPING
   ###
-  def scoped?(conditions={}) 
-    return true if scoped
-    return true if self.allow_list || self.project.allow_list_entity?(self) 
+  def scoped?(conditions={})
+    return scoped unless scoped.nil?
+    return true if self.allow_list || self.project.allow_list_entity?(self)
     return false if self.deny_list || self.project.deny_list_entity?(self)
 
   # if we didnt match the above and we were asked, default to false
