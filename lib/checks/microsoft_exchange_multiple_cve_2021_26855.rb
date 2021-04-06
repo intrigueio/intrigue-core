@@ -23,11 +23,9 @@ module Intrigue
           description: "A chain of multiple remote code execution vulnerabilities have been identified being exploited in the wild. The vulnerabilities affect on-premise MS exchange servers, and require the ability to make an untrusted connection port 443.",
           remediation: "Install the latest security update for the specific products or limit connection on port 443 to trusted sources.",
           affected_software: [
-            { :vendor => "Microsoft", :product => "Exchange Server", :version => "2013", :update => "Cumulative Update 23" },
-            { :vendor => "Microsoft", :product => "Exchange Server", :version => "2016", :update => "Cumulative Update 18" },
-            { :vendor => "Microsoft", :product => "Exchange Server", :version => "2016", :update => "Cumulative Update 19" },
-            { :vendor => "Microsoft", :product => "Exchange Server", :version => "2019", :update => "Cumulative Update 7" },
-            { :vendor => "Microsoft", :product => "Exchange Server", :version => "2019", :update => "Cumulative Update 8" }
+            { :vendor => "Microsoft", :product => "Exchange Server", :version => "2013", :update => "Cumulative Update 22" },
+            { :vendor => "Microsoft", :product => "Exchange Server", :version => "2016", :update => "Cumulative Update 17" },
+            { :vendor => "Microsoft", :product => "Exchange Server", :version => "2019", :update => "Cumulative Update 6" }
           ],
           references: [
             { type: "description", uri: "https://msrc-blog.microsoft.com/2021/03/02/multiple-security-updates-released-for-exchange-server/" },
@@ -101,15 +99,16 @@ module Intrigue
         end
 
         def is_vulnerable_version?(fingerprint)
+          # taken from https://support.microsoft.com/en-us/topic/description-of-the-security-update-for-microsoft-exchange-server-2019-2016-and-2013-march-2-2021-kb5000871-9800a6bb-0a21-4ee7-b9da-fa85b3e1d23b
           vulnerable_versions = [
             # 2013
-            { version: "2013", update: "Cumulative Update 23" },
+            { version: "2013", update: "Cumulative Update 22" },
             # 2016
             #{ version: "2016", update: "Cumulative Update 18" },
-            { version: "2016", update: "Cumulative Update 19" },
+            { version: "2016", update: "Cumulative Update 17" },
             # 2019
             #{ version: "2019", update: "Cumulative Update 7" },
-            { version: "2019", update: "Cumulative Update 8" },
+            { version: "2019", update: "Cumulative Update 6" },
           ]
 
           # get the fingerprint
