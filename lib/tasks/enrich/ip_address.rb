@@ -137,55 +137,6 @@ class IpAddress < Intrigue::Task::BaseTask
     _set_entity_detail("resolutions", dns_entries.uniq )
 
     ###
-    ### Hide Some IP Addresses based on their attributes
-    ###
-
-    ###
-    ### DNS Pattern Matching
-    ###
-
-    hide_value = false
-    hide_reason = "default"
-
-    known_ptrs = [
-      #/.*\.amazonaws\.com$/
-      /.*\.cloudfront\.net$/,
-      #/.*\.dslextreme\.com$/
-      #/.*\.linode\.com$/
-      /.*\.msedge\.net$/,
-      /.*\.networksolutions\.com$/,
-      /.*\.pphosted\.com$/,
-      /.*\.1e100\.net$/,
-      #/.*\.secureserver\.net$/
-    ]
-    if dns_entries.select{ |e|
-          known_ptrs.select{ |x| e["response_type"] == "PTR" && e["response_data"] =~ x } }
-      hide_reason = "Matched Shared Hosting PTR"
-      hide_value = true
-    end
-
-    ###
-    ### ASN pattern matching
-    ###
-    known_asns = [
-      "AS2635",    # AUTOMATTIC, US
-      "AS8068",    # MICROSOFT-CORP-MSN-AS-BLOCK, US
-      "AS8075",    # MICROSOFT-CORP-MSN-AS-BLOCK, US
-      "AS15169",   # GOOGLE, US
-      "AS13335"    # CLOUDFLARENET, US
-    ]
-    if !known_asns.select{ |x| x == cymru[:net_name] }.empty?
-      hide_reason = "Matched Shared Hosting ASN"
-      hide_value = true
-    end
-
-    # Okay now hide based on our value
-    _log "Setting Hidden to: #{hide_value}, for reason: #{hide_reason}"
-    @entity.hidden = hide_value
-    @entity.save_changes
-
-
-    ###
     ### Finally, cloud provider determination
     ###
 
