@@ -25,9 +25,9 @@ class SaasServicenowCheck < BaseTask
     super
 
     if _get_entity_type_string == "WebAccount"
-      account_name = _get_entity_detail("username")      
-    else 
-      account_name = _get_entity_name
+      account_name = _get_entity_detail("username")
+    else
+      account_name = "#{_get_entity_name}".santize_unicode
     end
 
     # try a couple variations
@@ -45,7 +45,7 @@ class SaasServicenowCheck < BaseTask
     url = "https://#{account_name}.service-now.com"
     # https://company.service-now.com/kb_view_customer.do?sysparm_article=KB00xxxx
 
-    # grab the page 
+    # grab the page
     body = http_get_body url
 
     if body

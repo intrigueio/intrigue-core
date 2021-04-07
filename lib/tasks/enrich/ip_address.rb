@@ -174,7 +174,7 @@ class IpAddress < Intrigue::Task::BaseTask
       "AS15169",   # GOOGLE, US
       "AS13335"    # CLOUDFLARENET, US
     ]
-    if known_asns.select{ |x| x == cymru[:net_name] }
+    if !known_asns.select{ |x| x == cymru[:net_name] }.empty?
       hide_reason = "Matched Shared Hosting ASN"
       hide_value = true
     end

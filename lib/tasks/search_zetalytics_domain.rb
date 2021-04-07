@@ -109,7 +109,7 @@ class SearchZetalyticsDomain < BaseTask
       keys_to_check.each do |k|
         if e.key?(k)
           safe_name = "#{e[k]}".sanitize_unicode
-          if e[k] =~ /[a-zA-Z0-9\.\_\%\+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,12}/
+          if safe_name =~ /[a-zA-Z0-9\.\_\%\+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,12}/
             _create_entity("EmailAddress", "name" => safe_name )
           else
             create_dns_entity_from_string(safe_name, nil, false, e) if resolve_name safe_name
