@@ -25,10 +25,10 @@ class SearchBgp < BaseTask
     entity_name = _get_entity_name
     entity_type = _get_entity_type_string
 
-    if entity_type == "Organization" || entity_type == "String"
+    if entity_type == "Organization" || entity_type == "String" || entity_type == "UniqueKeyword"
       search_by_org_name entity_name
     elsif entity_type == "IpAddress"
-      
+
       # lookup the netblock
       out = whois entity_name
       out.each do |hash|
@@ -87,8 +87,8 @@ class SearchBgp < BaseTask
         if r["netblocks"]
           r["netblocks"].each do |nb|
             _create_entity "NetBlock", {
-              "name" => "#{nb}", 
-              "organization_name" => org_string, 
+              "name" => "#{nb}",
+              "organization_name" => org_string,
               "as_number" => as_number_string,
               "scoped" => true
             }
