@@ -284,8 +284,8 @@ class EntityManager
 
       unless entity.seed?
         tr.log "Entity was specifically requested to be unscoped"
-        entity.delete_detail("unscoped")
         scope_request = "false"
+        entity.delete_detail("unscoped")
       else
         tr.log "Entity was specifically requested to be unscoped, but it's a seed, so we refused!"
       end

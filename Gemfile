@@ -128,12 +128,14 @@ gem 'fog-aws'
 gem 'god'
 
 # Development
-gem 'foreman'
-gem 'pry'                     # Debugging
-gem 'pry-byebug'              # Debugging
-gem 'yard'
-gem "sentry-raven"            # Error tracking (disabled by default)
-gem 'rake'                    # Testing
-gem 'rspec'                   # Testing
-gem 'rack-test'               # Testing
-
+group :development, :test do
+  gem 'gem-licenses'
+  gem 'foreman'
+  gem 'pry'                     # Debugging
+  gem 'pry-byebug'              # Debugging
+  gem 'yard'
+  gem "sentry-raven"            # Error tracking (disabled by default)
+  gem 'rake'                    # Testing
+  gem 'rspec'                   # Testing
+  gem 'rack-test'               # Testing
+end

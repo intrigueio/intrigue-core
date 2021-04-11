@@ -119,8 +119,10 @@ class UriCheckSudomainHijack  < BaseTask
         _create_hijackable_subdomain_issue("Github", uri, "potential") unless (uri =~ /github.com/ || uri =~ /github.io/)
 
       # https://hackerone.com/reports/1034023
-      elsif response_body.match(/There is no helpdesk here/i) && response_body.match(/Maybe this is still fresh/i)
-        _create_hijackable_subdomain_issue("Freshdesk", uri, "potential") unless uri =~ /freshdesk.com/
+      # No longer possible, commenting...
+      # https://support.freshdesk.com/support/solutions/articles/37590-using-a-vanity-support-url-and-pointing-the-cname
+      #elsif response_body.match(/There is no helpdesk here/i) && response_body.match(/Maybe this is still fresh/i)
+      #  _create_hijackable_subdomain_issue("Freshdesk", uri, "potential") unless uri =~ /freshdesk.com/
 
       #elsif response_body.match /404 Blog is not found/i
       #  _create_hijackable_subdomain_issue "", uri, "potential"

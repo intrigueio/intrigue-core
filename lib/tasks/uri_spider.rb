@@ -22,12 +22,13 @@ class UriSpider < BaseTask
         {:name => "spider_whitelist", :regex => "alpha_numeric_list", :default => "(current domain)" },
         {:name => "extract_dns_records", :regex => "boolean", :default => true },
         {:name => "extract_dns_record_pattern", :regex => "alpha_numeric_list", :default => "(current domain)" },
-        {:name => "extract_email_addresses", :regex => "boolean", :default => true },
-        {:name => "extract_phone_numbers", :regex => "boolean", :default => true },
-        {:name => "parse_file_metadata", :regex => "boolean", :default => true },
+        {:name => "extract_email_addresses", :regex => "boolean", :default => false },
+        {:name => "extract_phone_numbers", :regex => "boolean", :default => false },
+        {:name => "parse_file_metadata", :regex => "boolean", :default => false },
         {:name => "extract_uris", :regex => "boolean", :default => false }
       ],
-      :created_types =>  ["DnsRecord", "EmailAddress", "File", "Info", "Person", "PhoneNumber", "SoftwarePackage"],
+      :created_types =>  ["DnsRecord", "EmailAddress", "File",
+       "CreditCard", "Person", "PhoneNumber", "SoftwarePackage"],
       :queue => "task_spider"
     }
   end
@@ -61,7 +62,7 @@ class UriSpider < BaseTask
 
     # create a default extraction pattern, default to current domain
     if @opt_extract_dns_record_pattern == ["(current domain)"]
-      @opt_extract_dns_record_pattern = [parse_domain_name("#{uri.host}")] 
+      @opt_extract_dns_record_pattern = [parse_domain_name("#{uri.host}")]
     end
 
     # Create a list of whitelist spider regexes from the opt_spider_whitelist options
@@ -99,7 +100,7 @@ class UriSpider < BaseTask
 
       begin
         # spider each page
-        spider.every_page do |page|         
+        spider.every_page do |page|
 
           next if crawled_pages.include? page.url
 
@@ -118,16 +119,16 @@ class UriSpider < BaseTask
 
             _log "Extracting DNS records from #{page.url}"
             URI.extract(encoded_page_body, ["https", "http", "ftp"]).uniq do |link|
-              
+
               # Collect the host
-              begin 
+              begin
                 hostname = URI(link).host
               rescue URI::InvalidURIError => e
                 next
               end
 
-              # skip anythin nil 
-              next unless hostname 
+              # skip anythin nil
+              next unless hostname
 
               # check to see if host matches a pattern we'll allow
               pattern_allowed = false
@@ -140,16 +141,16 @@ class UriSpider < BaseTask
               # if we got a pass, check to make sure we don't already have it, and add it
               create_dns_entity_from_string("#{hostname}") if pattern_allowed
 
-            end # end dns records 
+            end # end dns records
           end
-          
+
           if @opt_parse_file_metadata
             content_type = "#{page.content_type}".split(";").first
 
             ignore_types = [
               "application/javascript", "text/xml", "application/atom+xml",
               "application/rss+xml", "application/x-javascript", "application/xml",
-              "image/jpeg", "image/png", "image/svg+xml", "image/vnd.microsoft.icon", 
+              "image/jpeg", "image/png", "image/svg+xml", "image/vnd.microsoft.icon",
               "image/x-icon", "text/css", "text/html", "text/javascript", "text/plain" ]
 
             unless ignore_types.include? content_type
@@ -159,21 +160,21 @@ class UriSpider < BaseTask
             end
 
           end
-          
-          # add phone numbers and email addresses if we were requested to do so 
+
+          # add phone numbers and email addresses if we were requested to do so
           parse_phone_numbers_from_content("#{page.url}", encoded_page_body) if @opt_extract_phone_numbers
           parse_email_addresses_from_content("#{page.url}", encoded_page_body) if @opt_extract_email_addresses
 
-          # add the uri if we were requested to do so 
+          # add the uri if we were requested to do so
           _create_entity("Uri", { "name" => "#{page.url}", "uri" => "#{page.url}" }) if @opt_extract_uris
 
-          encoded_page_body = nil      
+          encoded_page_body = nil
 
-        end # end every page 
+        end # end every page
 
       rescue URI::InvalidURIError => e
         _log_error "#{e} ... #{page.url}"
-      end # end begin 
+      end # end begin
 
     end # end start_at
 

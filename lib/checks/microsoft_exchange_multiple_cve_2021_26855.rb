@@ -23,11 +23,9 @@ module Intrigue
           description: "A chain of multiple remote code execution vulnerabilities have been identified being exploited in the wild. The vulnerabilities affect on-premise MS exchange servers, and require the ability to make an untrusted connection port 443.",
           remediation: "Install the latest security update for the specific products or limit connection on port 443 to trusted sources.",
           affected_software: [
-            { :vendor => "Microsoft", :product => "Exchange Server", :version => "2013", :update => "Cumulative Update 23" },
-            { :vendor => "Microsoft", :product => "Exchange Server", :version => "2016", :update => "Cumulative Update 18" },
-            { :vendor => "Microsoft", :product => "Exchange Server", :version => "2016", :update => "Cumulative Update 19" },
-            { :vendor => "Microsoft", :product => "Exchange Server", :version => "2019", :update => "Cumulative Update 7" },
-            { :vendor => "Microsoft", :product => "Exchange Server", :version => "2019", :update => "Cumulative Update 8" }
+            { :vendor => "Microsoft", :product => "Exchange Server", :version => "2013"},
+            { :vendor => "Microsoft", :product => "Exchange Server", :version => "2016"},
+            { :vendor => "Microsoft", :product => "Exchange Server", :version => "2019"}
           ],
           references: [
             { type: "description", uri: "https://msrc-blog.microsoft.com/2021/03/02/multiple-security-updates-released-for-exchange-server/" },
@@ -71,6 +69,8 @@ module Intrigue
             res = http_request :get, uri, nil, headers
             if res.code.to_i == 500 && res.body_utf8 =~ /NegotiateSecurityContext/
               _log "Vulnerable! SSRF successful and this is a confirmed issue."
+              require 'pry';
+              binding.pry
               return res.body_utf8
             end
 
@@ -84,45 +84,7 @@ module Intrigue
               return res.body_utf8
             end
 
-            ################################################
-            ### SSRF failed, fallback to version comparison
-            ################################################
-
-            # ensure we're fingerprinted
-            require_enrichment
-            fingerprint = _get_entity_detail("fingerprint")
-
-            if is_product?(fingerprint, "Exchange Server")
-              if is_vulnerable_version?(fingerprint)
-                  return {status: "potential"}
-              end
-            end
         return nil
-        end
-
-        def is_vulnerable_version?(fingerprint)
-          vulnerable_versions = [
-            # 2013
-            { version: "2013", update: "Cumulative Update 23" },
-            # 2016
-            #{ version: "2016", update: "Cumulative Update 18" },
-            { version: "2016", update: "Cumulative Update 19" },
-            # 2019
-            #{ version: "2019", update: "Cumulative Update 7" },
-            { version: "2019", update: "Cumulative Update 8" },
-          ]
-
-          # get the fingerprint
-          fp = fingerprint.select{|v| v['product'] == "Exchange Server" }.first
-          return false unless fp
-
-          # get the vulnerable version for fingerprint
-          vv = vulnerable_versions.select{|v| v[:version] == fp["version"]}.first
-          return false unless vv
-
-          if compare_versions_by_operator(fp["update"], vv[:update], "<=")
-            return true
-          end
         end
       end
     end
