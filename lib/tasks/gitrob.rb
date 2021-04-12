@@ -68,9 +68,10 @@ class Gitrob < BaseTask
     #end
 
     # create respositories
+    repo_entities = []
     if output["Repositories"]
       output["Repositories"].each do |r|
-        _create_entity "GithubRepository", {
+        repo_entities << _create_entity "GithubRepository", {
           "name" => "#{r["FullName"]}",
           "uri" => "#{r["URL"]}",
           "description" => "#{r["description"]}",
@@ -104,8 +105,18 @@ class Gitrob < BaseTask
       _log "No findings!"
     end
 
+    repo
+
     suspicious_commits.each do |sc|
-      _create_linked_issue( "suspicious_commit", { source: sc["Id"] }.merge(sc))
+      repo_name = "#{sc["RepositoryUrl"]}".gsub("https://github.com/")
+      e = repo_entities.find{|x| x.name == repo_name }
+      _create_linked_issue("suspicious_commit", {
+        source: sc["Id"],
+        proof: {
+          sig: sc["FileSignatureDescription"],
+          commit: sc["CommitUrl"]
+        }
+      }.merge(sc), e )
     end
 
     # clean up
