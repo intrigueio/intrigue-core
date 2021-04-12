@@ -71,12 +71,12 @@ class Gitrob < BaseTask
     repo_entities = []
     if output["Repositories"]
       output["Repositories"].each do |r|
-        repo_entities << _create_entity "GithubRepository", {
+        repo_entities << _create_entity("GithubRepository", {
           "name" => "#{r["FullName"]}",
           "uri" => "#{r["URL"]}",
           "description" => "#{r["description"]}",
           "raw" => r
-        }
+        })
       end
     else
       _log "No repositories!"
