@@ -74,8 +74,8 @@ module VulnDb
 
       begin
 
-        
-        uri = "https://app.intrigue.io/api/vulndb/match_cpe/#{@cpe}"
+        intrigueio_api = _get_task_config "intrigueio_api_hostname"
+        uri = "#{intrigueio_api}/api/vulndb/match_cpe/#{@cpe}"
         uri << "?key=#{api_key}"
 
         puts "Requesting Vulns for CPE: #{@cpe}"
