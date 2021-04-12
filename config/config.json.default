@@ -330,6 +330,12 @@
       "editable": "true",
       "comment": ""
     },
+    "intrigueio_api_hostname": {
+      "value": "https://api.intrigue.io",
+      "uri": "https://api.intrigue.io",
+      "editable": "true",
+      "comment": ""
+    },
     "intrigueio_api_key": {
       "value": "OPENENGINEAPICLIENT",
       "uri": "https://api.intrigue.io/api",

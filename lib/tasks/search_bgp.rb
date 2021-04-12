@@ -55,7 +55,8 @@ class SearchBgp < BaseTask
 
     begin
       lookup_name = entity_name.split("/").first
-      json_resp = JSON.parse http_get_body "https://api.intrigue.io/api/bgp/netblock/search/#{lookup_name}"
+      intrigueio_api = _get_task_config "intrigueio_api_hostname"
+      json_resp = JSON.parse http_get_body "#{intrigueio_api}/api/bgp/netblock/search/#{lookup_name}"
 
       json_resp.each do |r|
 
