@@ -28,7 +28,7 @@ module CloudProviders
     end
 
     begin 
-      api_url = "https://app.intrigue.io/api/cloudclassifier/search/ip/#{ip_address}?key=#{intrigueio_api_key}"
+      api_url = "https://api.intrigue.io/api/cloudclassifier/search/ip/#{ip_address}?key=#{intrigueio_api_key}"
       resp = http_get_body(api_url)
 
       json = JSON.parse(resp) if resp

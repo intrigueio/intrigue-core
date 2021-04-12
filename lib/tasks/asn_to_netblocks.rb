@@ -51,7 +51,7 @@ module Intrigue
   
     def asn_to_netblocks(entity_name)
       begin
-        resp = http_get_body "https://app.intrigue.io/api/bgp/asn/#{URI.escape(entity_name)}"
+        resp = http_get_body "https://api.intrigue.io/api/bgp/asn/#{URI.escape(entity_name)}"
 
         json_resp = JSON.parse resp
       rescue JSON::ParserError => e
