@@ -63,7 +63,7 @@ task :update do
 end
 
 def _get_global_entities
-  uri = "#{intrigueio_api_hostname}/api/system/entities/global/entities/?key=#{$intrigueio_api_key}"
+  uri = "#{$intrigueio_api_hostname}/api/system/entities/global/entities/?key=#{$intrigueio_api_key}"
   begin
     puts "[+] Making request for global entities!"
     response = RestClient.get(uri)
