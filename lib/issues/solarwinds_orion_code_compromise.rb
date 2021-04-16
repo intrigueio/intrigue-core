@@ -1,14 +1,14 @@
 module Intrigue
     module Issue
     class SolarWindsOrionCodeCompromise < BaseIssue
-    
+
       def self.generate(instance_details={})
-    
+
         to_return = {
           added: "2020-12-14",
           name: "solarwinds_orion_code_compromise",
           pretty_name: "SolarWinds Orion Code Compromise",
-          category: "vulnerability",
+          category: "compromise",
           severity: 1,
           status: "confirmed",
           description: "SolarWinds Orion products with versions 2019.4 through 2020.2.1 HF1 have been compromised and backdoored.",
@@ -23,10 +23,10 @@ module Intrigue
           ],
           task: "vuln/solarwinds_orion_code_compromise"
         }.merge(instance_details)
-        
+
       to_return
       end
-    
+
     end
     end
     end
