@@ -16,7 +16,7 @@ class UriCheckHttp2Support < BaseTask
         { "type" => "Uri", "details" => {"name" => "http://www.intrigue.io"} }
       ],
       :allowed_options => [
-         {:name => "connect_timeout", regex: "integer", :default => 10 },
+         {:name => "connect_timeout", regex: "integer", :default => 4 },
       ],
       :created_types => []
     }
@@ -56,12 +56,14 @@ class UriCheckHttp2Support < BaseTask
       _log_error "Connection timeout!"
       return [nil,nil,nil]
     rescue Errno::ENETUNREACH
-      _log_error "Network unreachable!"
-      return [nil,nil,nil]
+      # catch and ignore network unreachable errors
+      # happens because a domain might resolve to multiple ip addresses, including ipv6 ones
     rescue SocketError
       _log_error "Cannot resolve hostname!"
       return [nil,nil,nil]
     end
+
+    return [nil,nil,nil] unless tcp
 
     if uri.scheme == 'https'
       ctx = OpenSSL::SSL::SSLContext.new
@@ -118,15 +120,13 @@ class UriCheckHttp2Support < BaseTask
 
     _log 'Sending HTTP 2.0 GET request'
     stream.headers(head, end_stream: true)
+    
     while !sock.closed? && !sock.eof?
       data = sock.read_nonblock(1024)
       # puts "Received bytes: #{data.unpack("H*").first}"
-
       begin
         conn << data
-      rescue StandardError => e
-        # puts "#{e.class} exception: #{e.message} - closing socket."
-        e.backtrace.each { |l| puts "\t" + l }
+      rescue StandardError
         sock.close
       end
     end
