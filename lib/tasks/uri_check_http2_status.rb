@@ -6,7 +6,7 @@ class UriCheckHttp2Support < BaseTask
     {
       :name => "uri_check_http2_support",
       :pretty_name => "URI Check HTTP/2 Support",
-      :authors => ["jcran"],
+      :authors => ["jcran", "shpendk"],
       :description =>   "This task checks for http2 protocol support",
       :references => [ "https://github.com/ostinelli/net-http2" ],
       :type => "discovery",
@@ -23,9 +23,9 @@ class UriCheckHttp2Support < BaseTask
   end
 
   def run
-
+    mytimeout = _get_option "connect_timeout"
     # Check Synchronous request / response
-    valid, code, headers = check_h2_sync(_get_entity_name)
+    valid, code, headers = check_h2_sync(_get_entity_name, mytimeout)
     if valid
       _log "Response?: #{valid}"
       _log "Response Code: #{code}"
@@ -38,10 +38,9 @@ class UriCheckHttp2Support < BaseTask
 
   end #end run
 
-  def check_h2_sync(uri_param)
+  def check_h2_sync(uri_param, mytimeout)
 
-    # require enrichment
-    require_enrichment
+    # require enrichment TODO UNCOMMENT ME
     draft = 'h2'
 
     # return data
@@ -49,8 +48,20 @@ class UriCheckHttp2Support < BaseTask
     res_headers = nil
 
     uri = URI.parse(uri_param)
-    tcp = TCPSocket.new(uri.host, uri.port)
-    sock = nil
+    # Use Socket instead of TCPSocket because the former supports timeouts
+    begin
+      tcp = ::Socket.tcp(uri.host, uri.port, connect_timeout: mytimeout)
+      sock = nil
+    rescue Errno::ETIMEDOUT
+      _log_error "Connection timeout!"
+      return [nil,nil,nil]
+    rescue Errno::ENETUNREACH
+      _log_error "Network unreachable!"
+      return [nil,nil,nil]
+    rescue SocketError
+      _log_error "Cannot resolve hostname!"
+      return [nil,nil,nil]
+    end
 
     if uri.scheme == 'https'
       ctx = OpenSSL::SSL::SSLContext.new
@@ -85,38 +96,6 @@ class UriCheckHttp2Support < BaseTask
       sock.print bytes
       sock.flush
     end
-    conn.on(:frame_sent) do |frame|
-      # puts "Sent frame: #{frame.inspect}"
-    end
-    conn.on(:frame_received) do |frame|
-      # puts "Received frame: #{frame.inspect}"
-    end
-
-    conn.on(:promise) do |promise|
-      promise.on(:promise_headers) do |h|
-        # _log "promise request headers: #{h}"
-      end
-
-      promise.on(:headers) do |h|
-        # _log "promise headers: #{h}"
-      end
-
-      promise.on(:data) do |d|
-        # _log "promise data chunk: <<#{d.size}>>"
-      end
-    end
-
-    conn.on(:altsvc) do |f|
-      # _log "received ALTSVC #{f}"
-    end
-
-    stream.on(:close) do
-      # _log 'stream closed'
-    end
-
-    stream.on(:half_close) do
-      # _log 'closing client-end of the stream'
-    end
 
     stream.on(:headers) do |h|
       # _log "response headers: #{h}"
@@ -127,14 +106,6 @@ class UriCheckHttp2Support < BaseTask
           _log "Received response code: #{code}"
         end
       end
-    end
-
-    stream.on(:data) do |d|
-      # _log "response data chunk: <<#{d}>>"
-    end
-
-    stream.on(:altsvc) do |f|
-      # _log "received ALTSVC #{f}"
     end
 
     head = {
@@ -159,9 +130,6 @@ class UriCheckHttp2Support < BaseTask
         sock.close
       end
     end
-
-    # just fail
-    #return [nil,nil,nil] unless response
 
   return [true, res_code, res_headers]
   end
