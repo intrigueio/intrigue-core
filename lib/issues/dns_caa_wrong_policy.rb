@@ -3,14 +3,14 @@ module Intrigue
     class DNSCAA < BaseIssue
       def self.generate(instance_details = {})
         {
-          added: '2021-03-04',
-          name: 'dns_caa_policy_missing',
-          pretty_name: 'Domain is missing a CAA record',
+          added: '2021-21-04',
+          name: 'dns_caa_wrong_policy',
+          pretty_name: 'Domain has an invalid CAA policy',
           severity: 5,
           category: 'misconfiguration',
           status: 'confirmed',
-          description: 'Any CA is able to generate a certificate for this domain, increasing the risk of exposure if that CA is compromised.',
-          remediation: 'Add a CAA record, setting the policy for this domain.',
+          description: 'CAA information from this domain differs from the information in the certificate.',
+          remediation: 'Add a correct CAA record, setting the policy for this domain.',
           references: [ # types: description, remediation, detection_rule, exploit, threat_intel
             { type: 'description', uri: 'https://en.wikipedia.org/wiki/DNS_Certification_Authority_Authorization' },
             { type: 'remediation', uri: 'https://sslmate.com/caa/' }

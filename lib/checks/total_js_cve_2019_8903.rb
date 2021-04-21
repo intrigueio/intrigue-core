@@ -15,6 +15,9 @@ module Intrigue
           affected_software: [ 
             { :vendor => "Total.js", :product => "Total.js Platform" }
           ],
+          identifiers: [
+            { type: "CVE", name: "CVE-2019-8903" }
+          ],
           references: [
             { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-8903" },
             { type: "exploit", uri: "https://blog.certimetergroup.com/it/articolo/security/total.js-directory-traversal-cve-2019-8903" }

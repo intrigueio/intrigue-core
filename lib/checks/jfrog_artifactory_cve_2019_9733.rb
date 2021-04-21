@@ -15,6 +15,9 @@ module Intrigue
           affected_software: [ 
             { :vendor => "Jfrog", :product => "Artifactory" }
           ],
+          identifiers: [
+            { type: "CVE", name: "CVE-2019-9733" }
+          ],
           references: [
             { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-9733" },
             { type: "exploit", uri: "https://packetstormsecurity.com/files/152172/JFrog-Artifactory-Administrator-Authentication-Bypass.html" }

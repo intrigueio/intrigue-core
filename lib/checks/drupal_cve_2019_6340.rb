@@ -15,6 +15,9 @@ module Intrigue
           affected_software: [ 
             { :vendor => "Drupal", :product => "Drupal" }
           ],
+          identifiers: [
+            { type: "CVE", name: "CVE-2019-6340" }
+          ],
           references: [
             { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-6340" },
             { type: "exploit", uri: "https://www.exploit-db.com/exploits/46459" }

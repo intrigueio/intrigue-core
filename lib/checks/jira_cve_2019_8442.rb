@@ -15,6 +15,9 @@ module Intrigue
           affected_software: [ 
             { :vendor => "Atlassian", :product => "Jira Software" }
           ],
+          identifiers: [
+            { type: "CVE", name: "CVE-2019-8442" }
+          ],
           references: [
             { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-8442" },
             { type: "description", uri: "https://jira.atlassian.com/browse/JRASERVER-69241" }

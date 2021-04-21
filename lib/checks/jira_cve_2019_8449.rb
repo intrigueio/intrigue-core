@@ -15,6 +15,9 @@ module Intrigue
           affected_software: [ 
             { :vendor => "Atlassian", :product => "Jira Software" }
           ],
+          identifiers: [
+            { type: "CVE", name: "CVE-2019-8449" }
+          ],
           references: [
             { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-8449" },
             { type: "exploit", uri: "https://packetstormsecurity.com/files/156172/Jira-8.3.4-Information-Disclosure.html" }

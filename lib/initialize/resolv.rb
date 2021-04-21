@@ -1,10 +1,10 @@
-require "resolv"
+require 'resolv'
 class Resolv::DNS::Resource::IN::CAA < Resolv::DNS::Resource
-    TypeValue = 257
-    ClassValue = IN::ClassValue
-    ClassHash[[TypeValue, ClassValue]] = self
+  TypeValue = 257
+  ClassValue = IN::ClassValue
+  ClassHash[[TypeValue, ClassValue]] = self
 
-    def initialize(flags, tag, value)
+  def initialize(flags, tag, value)
     # https://tools.ietf.org/html/rfc8659#section-4.1
     #    +0-1-2-3-4-5-6-7-|0-1-2-3-4-5-6-7-|
     #    | Flags          | Tag Length = n |
@@ -17,33 +17,29 @@ class Resolv::DNS::Resource::IN::CAA < Resolv::DNS::Resource
     @flags = flags
     @tag = tag
     @value = value
-    end
+  end
 
-    ##
-    # Critical Flag
+  ##
+  # Critical Flag
 
-    attr_reader :flags
+  attr_reader :flags, :tag, :value
 
-    ##
-    # Property identifier
+  ##
+  # Property identifier
 
-    attr_reader :tag
+  ##
+  # A sequence of octets representing the Property Value
 
-    ##
-    # A sequence of octets representing the Property Value
-
-    attr_reader :value
-
-    def encode_rdata(msg)
+  def encode_rdata(msg)
     msg.put_bytes(@flags)
     msg.put_string(@tag)
     msg.put_bytes(@value)
-    end
+  end
 
-    def self.decode_rdata(msg)
+  def self.decode_rdata(msg)
     flags = msg.get_bytes(1)
     tag = msg.get_string
     value = msg.get_bytes
     new(flags, tag, value)
-    end
- end
+  end
+end

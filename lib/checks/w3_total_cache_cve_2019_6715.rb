@@ -15,6 +15,9 @@ module Intrigue
           affected_software: [ 
             { :vendor => "BoldGrid", :product => "W3 Total Cache" }
           ],
+          identifiers: [
+            { type: "CVE", name: "CVE-2019-6715" }
+          ],
           references: [
             { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2019-6715" },
             { type: "exploit", uri: "https://packetstormsecurity.com/files/160674/WordPress-W3-Total-Cache-0.9.3-File-Read-Directory-Traversal.html" }
