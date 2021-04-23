@@ -5,12 +5,12 @@ module Issue
     def self.generate(instance_details={})
     {
       added: "2021-04-04",
-      name: "kubernetes_default_path_exposed",
-      pretty_name: "Kubernetes Default Path Exposed",
+      name: "kubernetes_sensitive_content_exposed",
+      pretty_name: "Kubernetes Sensitive Content Exposed",
       severity: 2,
       category: "misconfiguration",
       status: "confirmed",
-      description: "A Kubernetes instance is exposing content at a default / known path.",
+      description: "A Kubernetes instance is exposing sensitive content at a publicly available path.",
       affected_software: [
         { :vendor => "Kubernetes", :product => "Kubernetes" }
       ],
