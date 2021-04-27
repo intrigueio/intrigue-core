@@ -26,8 +26,9 @@ module Intrigue
 
       # Use intrigue-ident code to request the banner and fingerprint
       _log "Grabbing banner and fingerprinting!"
-      ident_matches = generate_smtp_request_and_check(_get_entity_name) || {}
-      ident_fingerprints = ident_matches["fingerprints"]
+      ident = Intrigue::Ident::Ident.new
+      ident_matches = ident.generate_smtp_request_and_check(_get_entity_name) || {}
+      ident_fingerprints = ident_matches["fingerprints"] || []
       _log "Got #{ident_fingerprints.count} fingerprints!"
 
       # get the request/response we made so we can keep track of redirects
