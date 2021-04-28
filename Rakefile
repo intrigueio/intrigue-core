@@ -13,6 +13,7 @@ include Intrigue::Core::System::Database
 $intrigue_basedir = File.dirname(__FILE__)
 $intrigue_environment = ENV["INTRIGUE_ENV"] || "development"
 $intrigueio_api_key = ENV["INTRIGUEIO_API_KEY"]
+$intrigueio_api_hostname = ENV["INTRIGUEIO_API_HOSTNAME"] || "https://api.intrigue.io"
 
 # Configuration and scripts
 procfile_file = "#{$intrigue_basedir}/Procfile"
@@ -62,7 +63,7 @@ task :update do
 end
 
 def _get_global_entities
-  uri = "https://app.intrigue.io/api/system/entities/global/entities/?key=#{$intrigueio_api_key}"
+  uri = "#{$intrigueio_api_hostname}/api/system/entities/global/entities/?key=#{$intrigueio_api_key}"
   begin
     puts "[+] Making request for global entities!"
     response = RestClient.get(uri)

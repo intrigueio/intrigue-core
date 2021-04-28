@@ -40,11 +40,14 @@ module Issue
 
     _log_good "Creating linked issue of type: #{issue_type}"
 
+    # always pull out source, since this lets the caller have many issues
+    # of the same type, tied to a single entity (think... suspicious_commit)
     issue_model_details = {
       entity_id: linked_entity.id,
       task_result_id: @task_result.id,
       project_id: @project.id,
       scoped: linked_entity.scoped,
+      source: instance_specifics[:source] || instance_specifics['source'] || "intrigue"
     }
 
     issue = Intrigue::Issue::IssueFactory.create_instance_by_type(

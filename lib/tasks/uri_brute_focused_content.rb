@@ -288,16 +288,16 @@ class UriBruteFocusedContent < BaseTask
 
     tomcat_list = [
       { issue_type: "tomcat_info_leak", path: '/status', severity: 4, body_regex: /<p> Free memory:/ },
-      { issue_type: "tomcat_config", path: '/web-console', severity: 4, body_regex: nil },
-      { issue_type: "tomcat_config", path: '/admin-console', severity: 4, body_regex: nil },
-      { issue_type: "tomcat_config", path: '/manager/html', severity: 4, body_regex: nil },
-      { issue_type: "tomcat_config", path: '/tomcat/manager/html', severity: 4, body_regex: nil },
-      { issue_type: "tomcat_config", path: '/host-manager/html', severity: 4, body_regex: nil },
-      { issue_type: "tomcat_config", path: '/server-manager/html', severity: 4, body_regex: nil },
-      { issue_type: "vulnerable_tomcat_jmx_console", path: '/jmx-console', severity: 2, body_regex: nil },
-      { issue_type: "vulnerable_tomcat_jmx_console", path: '/web-console/Invoker', severity: 1, body_regex: nil },
-      { issue_type: "vulnerable_tomcat_jmx_console", path: '/jmx-console/HtmlAdaptor', severity: 2, body_regex: nil },
-      { issue_type: "vulnerable_tomcat_jmx_console", path: '/invoker/JMXInvokerServlet', severity: 1, body_regex: nil}
+      #{ issue_type: "tomcat_config", path: '/web-console', severity: 4, body_regex: nil },
+      #{ issue_type: "tomcat_config", path: '/admin-console', severity: 4, body_regex: nil },
+      #{ issue_type: "tomcat_config", path: '/manager/html', severity: 4, body_regex: nil },
+      #{ issue_type: "tomcat_config", path: '/tomcat/manager/html', severity: 4, body_regex: nil },
+      #{ issue_type: "tomcat_config", path: '/host-manager/html', severity: 4, body_regex: nil },
+      #{ issue_type: "tomcat_config", path: '/server-manager/html', severity: 4, body_regex: nil },
+      #{ issue_type: "vulnerable_tomcat_jmx_console", path: '/jmx-console', severity: 2, body_regex: nil },
+      #{ issue_type: "vulnerable_tomcat_jmx_console", path: '/web-console/Invoker', severity: 1, body_regex: nil },
+      #{ issue_type: "vulnerable_tomcat_jmx_console", path: '/jmx-console/HtmlAdaptor', severity: 2, body_regex: nil },
+      #{ issue_type: "vulnerable_tomcat_jmx_console", path: '/invoker/JMXInvokerServlet', severity: 1, body_regex: nil}
       # http://[host]:8090/invoker/EJBInvokerServlet
       # https://[host]:8453//invoker/EJBInvokerServlet
       #{ path: '/invoker/EJBInvokerServlet', severity: 4,  body_regex: nil}

@@ -25,10 +25,10 @@ class WebAccount < Intrigue::Core::Model::Entity
 
     # grab the username / service
     set_details(
-      { "name": "#{service_name}: #{username}",
-        "hidden_original": "#{service_name}: #{username}".downcase,
-        "username": username,
-        "service": service_name })
+      { "name" => "#{service_name}: #{username}",
+        "hidden_original" => "#{service_name}: #{username}".downcase,
+        "username" => username,
+        "service" => service_name })
 
     save_changes
   true

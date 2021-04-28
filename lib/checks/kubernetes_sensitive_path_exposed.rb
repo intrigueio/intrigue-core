@@ -5,19 +5,20 @@ module Issue
     def self.generate(instance_details={})
     {
       added: "2021-04-04",
-      name: "kubernetes_default_path_exposed",
-      pretty_name: "Kubernetes Default Path Exposed",
+      name: "kubernetes_sensitive_content_exposed",
+      pretty_name: "Kubernetes Sensitive Content Exposed",
       severity: 2,
       category: "misconfiguration",
       status: "confirmed",
-      description: "A Kubernetes instance is exposing content at a default / known path.",
+      description: "A Kubernetes instance is exposing sensitive content at a publicly available path.",
       affected_software: [
         { :vendor => "Kubernetes", :product => "Kubernetes" }
       ],
       references: [
         { type: "description", uri: "http://blog.madhukaraphatak.com/understanding-k8s-api-part-2/" },
         { type: "description", uri: "https://github.com/aquasecurity/kube-hunter" },
-        { type: "description", uri: "https://gist.github.com/oomichi/bc0044624443b4b596bdb4c83dd4ad4b"}
+        { type: "description", uri: "https://gist.github.com/oomichi/bc0044624443b4b596bdb4c83dd4ad4b"}, 
+        { type: "description", uri: "https://github.com/random-robbie/bruteforce-lists/blob/master/k8s.txt"}
       ],
       authors: ["jcran"]
     }.merge!(instance_details)
@@ -78,6 +79,62 @@ module Task
 /api/v1/namespaces/default/secrets/
 /apis/extensions/v1beta1/namespaces/default/deployments
 /apis/extensions/v1beta1/namespaces/default/daemonsets
+ca-key.pem
+token_auth.csv
+ca.pem
+config.seen
+cloud-provider.yaml
+apiserver.pem
+10-flannel.conf
+config.source
+audit.log
+config.hash
+apiserver-key.pem
+cni-conf.json
+kube-proxy.log
+apiserver-aggregator-ca.cert
+apiserver-aggregator.cert
+server.cert
+ca.key
+etcd-events.log
+kube-scheduler.log
+node-role.kubernetes.io
+kube-apiserver.log
+basic_auth.csv
+dns.alpha.kubernetes.io
+apiserver-aggregator.key
+etcd.log
+known_tokens.csv
+kube-controller-manager.log
+ca.crt
+server.key
+run.sh
+etcd-apiserver-client.key
+etcd-ca.crt
+admission_controller_config.yaml
+serviceaccount.crt
+apiserver-client.crt
+ca-certificates.crt
+apiserver.crt
+kube-addons.sh
+gce.conf
+pv-recycler-template.yaml
+etcd-apiserver-client.crt
+proxy_client.crt
+apiserver.key
+etcd-apiserver-server.crt
+etcd-apiserver-ca.crt
+etcd-apiserver-server.key
+serviceaccount.key
+etcd-peer.key
+aggr_ca.crt
+migrate-if-needed.sh
+apiserver-client.key
+proxy_client.key
+etcd-peer.crt
+kube-addon-manager.log
+kube-apiserver-audit.log
+glbc.log
 eos
 
 

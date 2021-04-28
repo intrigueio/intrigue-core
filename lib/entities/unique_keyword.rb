@@ -12,7 +12,7 @@ module Intrigue
     end
 
     def validate_entity
-      name.match /^([\,\w\d\ \-\(\)\\\/]+)$/
+      name.match /^([\@\.\,\w\d\ \-\(\)\\\/]+)$/
     end
 
     def scoped?
