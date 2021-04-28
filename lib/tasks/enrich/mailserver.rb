@@ -22,7 +22,6 @@ module Intrigue
     def run
       super
       _log "Enriching... Nameserver: #{_get_entity_name}"
-  
 
       # Use intrigue-ident code to request the banner and fingerprint
       _log "Grabbing banner and fingerprinting!"
