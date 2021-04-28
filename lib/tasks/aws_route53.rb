@@ -5,9 +5,9 @@ class AwsRoute53 < BaseTask
   def self.metadata
     {
       :name => 'aws_route53',
-      :pretty_name => 'AWS Route53 Zone Pull',
+      :pretty_name => 'AWS Route53 Gather Records',
       :authors => ['Anas Ben Salah', 'maxim'],
-      :description => 'This task hits the Route53 API for enumerating Dns Records for a specific domain. Please ensure the following policy perimssions are set:<br /> - maxim<br /> - maxim<br> <b>Please note that if no Hosted Zone ID is provided; this task will retrieve records for all accessible Hosted Zones.</b>',
+      :description => 'This task hits the Route53 API for enumerating DNS Records. Please ensure the <i>ListResourceRecordSets</i> permission is set in the policy for which the keys are associated with in order to retrieve records from a Hosted Zone. <br/><br/><b>Please note that if no Hosted Zone ID is provided; this task will retrieve records for all accessible Hosted Zones.</b>',
       :references => ['https://docs.aws.amazon.com/Route53/latest/APIReference/Welcome.html'],
       :type => 'discovery',
       :passive => true,
