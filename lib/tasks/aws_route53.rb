@@ -84,7 +84,7 @@ class AwsRoute53 < BaseTask
         when 'NS'
           # only save the values
           nameservers = item.resource_records.map(&:value)
-          _log_good "Retrieved #{nameservers.size} NS records."
+          _log_good "Retrieved #{nameservers.size} NS records associated with #{item.name}"
           nameservers.compact.uniq.each { |n| _create_entity 'Nameserver', 'name' => n.scan(subdomain_regex).last.first }
         when 'MX'
           # only save the values -> may save the record name as well however most of the time its set for the domain rather than a specific subdomain
