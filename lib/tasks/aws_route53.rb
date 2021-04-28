@@ -7,16 +7,16 @@ class AwsRoute53 < BaseTask
       :name => 'aws_route53',
       :pretty_name => 'AWS Route53 Zone Pull',
       :authors => ['Anas Ben Salah', 'maxim'],
-      :description => 'This task hits the Route53 API for enumerating Dns Records for a specific domain. Please ensure the following policy perimssions are set:<br /> - maxim<br /> - maxim<br> Please note that if no Hosted Zone ID is provided; this task will retrieve records for all accessible Hosted Zones.',
+      :description => 'This task hits the Route53 API for enumerating Dns Records for a specific domain. Please ensure the following policy perimssions are set:<br /> - maxim<br /> - maxim<br> <b>Please note that if no Hosted Zone ID is provided; this task will retrieve records for all accessible Hosted Zones.</b>',
       :references => ['https://docs.aws.amazon.com/Route53/latest/APIReference/Welcome.html'],
       :type => 'discovery',
       :passive => true,
-      :allowed_types => ['String'],
-      :example_entities => [{ 'type' => 'String', 'details' => { 'name' => 'Hosted Zone ID (Optional)' } }],
+      :allowed_types => ['AwsCredential'],
+      :example_entities => [{ 'type' => 'String', 'details' => { 'name' => 'AKIAOKZ52BOMZQ9WNUZ2:zc3w4zt5TU0/ItZ+OlzvaIdytJEz352fzH21ZonO9' } }],
       :allowed_options => [
-       # { :name => 'Hosted Zone ID (Optional)', :regex => "alpha_numeric", :default => '' }
+        { :name => 'Hosted Zone ID', :regex => "alpha_numeric", :default => '' }
       ],
-      :created_types => []
+      :created_types => ['DnsRecord', 'Mailserver', 'Nameserver']
     }
   end
 
@@ -24,45 +24,50 @@ class AwsRoute53 < BaseTask
   def run
     super
 
-    r53 = Aws::Route53::Client.new(
-      {
-        region: _get_task_config('aws_region'),
-        access_key_id: _get_task_config('aws_access_key_id'),
-        secret_access_key: _get_task_config('aws_secret_access_key')
-      }
-    )
-    begin
-      # get an invalid hosted zone id to check if keys are valid
-      r53.get_hosted_zone({ id: 'INVALIDZONE' })
-    rescue Aws::Route53::Errors::InvalidClientTokenId
-      _log_error 'Invalid Access Key ID.'
-      return nil
-    rescue Aws::Route53::Errors::SignatureDoesNotMatch
-      _log_error 'Secret Access Key does not match Access Key ID.'
-      return nil
-    rescue Aws::Route53::Errors::NoSuchHostedZone
-      # pass we expect this to happen if keys are correct
-    end
+    aws_access_key = @entity.details['hidden_access_id']
+    aws_secret_key = @entity.details['hidden_secret_key']
+    hosted_zone_id = _get_option 'Hosted Zone ID'
+
+    r53 = Aws::Route53::Client.new({ region: 'us-east-1', access_key_id: aws_access_key, secret_access_key: aws_secret_key })
+
+    return nil unless access_key_valid? r53
 
     zone_ids = []
     record_sets = []
 
-    if _get_entity_name =~ /^Z[a-z0-9]*$/i # hosted zone always begins with a Z (there is no set amount of chars)
-      zone_ids << _get_entity_name
+    if hosted_zone_id =~ /^Z[a-z0-9]*$/i
+      zone_ids << hosted_zone_id
     else
       zone_ids = retrieve_all_hosted_zone_ids r53
     end
 
-    zone_ids.each do |zid|
-      record_sets << r53.list_resource_record_sets({ :hosted_zone_id => zid })
-    rescue Aws::Route53::Errors::AccessDenied
-      _log_error "API Key lacks permission to retrieve records from Zone: #{zid}."
-    rescue Aws::Route53::Errors::NoSuchHostedZone
-      _log_error "Invalid Host Zone ID: #{zid}."
+    unless zone_ids.nil?
+      zone_ids.each do |zid|
+        record_sets << r53.list_resource_record_sets({ 'hosted_zone_id': zid })
+      rescue Aws::Route53::Errors::AccessDenied
+        _log_error "API Key lacks permission to retrieve records from Zone: #{zid}."
+      rescue Aws::Route53::Errors::NoSuchHostedZone
+        _log_error "Invalid Host Zone ID: #{zid}."
+      end
     end
 
     record_sets.each { |set| retrieve_record_names(set) } # maybe unless set.nil?
-  end # end run
+  end
+
+  # TODO: check if key is valid
+  def access_key_valid?(r53)
+    # get an invalid hosted zone id to check if keys are valid
+    r53.get_hosted_zone({ id: 'INVALIDZONE' })
+  rescue Aws::Route53::Errors::InvalidClientTokenId
+    _log_error 'Invalid Access Key ID.'
+    false
+  rescue Aws::Route53::Errors::SignatureDoesNotMatch
+    _log_error 'Secret Access Key does not match Access Key ID.'
+    false
+  rescue Aws::Route53::Errors::NoSuchHostedZone
+    # pass we expect this to happen if keys are correct
+    true
+  end
 
   # NO HOSTED ZONE PROVIDED - CALL THIS
   def retrieve_all_hosted_zone_ids(r53)
@@ -72,7 +77,6 @@ class AwsRoute53 < BaseTask
       _log_error 'API Key lacks permission to List Hosted Zones. Ensure the ListHostedZones permission is set or provide a Hosted Zone ID.'
       return nil
     end
-    # what if there are no hosted zones? need to create new aws account to test this out
     response.hosted_zones.map { |hz| hz.id.split('/')[2] if hz }
   end
 
