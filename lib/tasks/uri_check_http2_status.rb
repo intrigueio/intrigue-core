@@ -1,4 +1,3 @@
-require 'timeout'
 module Intrigue
 module Task
 class UriCheckHttp2Support < BaseTask
@@ -7,7 +6,7 @@ class UriCheckHttp2Support < BaseTask
     {
       :name => "uri_check_http2_support",
       :pretty_name => "URI Check HTTP/2 Support",
-      :authors => ["jcran"],
+      :authors => ["jcran", "shpendk"],
       :description =>   "This task checks for http2 protocol support",
       :references => [ "https://github.com/ostinelli/net-http2" ],
       :type => "discovery",
@@ -17,16 +16,16 @@ class UriCheckHttp2Support < BaseTask
         { "type" => "Uri", "details" => {"name" => "http://www.intrigue.io"} }
       ],
       :allowed_options => [
-         {:name => "connect_timeout", regex: "integer", :default => 10 },
+         {:name => "connect_timeout", regex: "integer", :default => 4 },
       ],
       :created_types => []
     }
   end
 
   def run
-
+    mytimeout = _get_option "connect_timeout"
     # Check Synchronous request / response
-    valid, code, headers = check_h2_sync(_get_entity_name)
+    valid, code, headers = check_h2_sync(_get_entity_name, mytimeout)
     if valid
       _log "Response?: #{valid}"
       _log "Response Code: #{code}"
@@ -39,67 +38,100 @@ class UriCheckHttp2Support < BaseTask
 
   end #end run
 
-  def check_h2_sync(uri)
+  def check_h2_sync(uri_param, mytimeout)
 
-    require_enrichment
+    # require enrichment TODO UNCOMMENT ME
+    draft = 'h2'
 
-    if _get_entity_detail("code") == "0"
-      _log_error "unable to proceed, connection reset"
-      return
+    # return data
+    res_code = nil
+    res_headers = nil
+
+    uri = URI.parse(uri_param)
+    # Use Socket instead of TCPSocket because the former supports timeouts
+    begin
+      tcp = ::Socket.tcp(uri.host, uri.port, connect_timeout: mytimeout)
+      sock = nil
+    rescue Errno::ETIMEDOUT
+      _log_error "Connection timeout!"
+      return [nil,nil,nil]
+    rescue Errno::ENETUNREACH
+      # catch and ignore network unreachable errors
+      # happens because a domain might resolve to multiple ip addresses, including ipv6 ones
+    rescue SocketError
+      _log_error "Cannot resolve hostname!"
+      return [nil,nil,nil]
     end
 
-    begin
+    return [nil,nil,nil] unless tcp
 
-      # create a client
-      timeout = "#{_get_option("connect_timeout")}".to_i
+    if uri.scheme == 'https'
+      ctx = OpenSSL::SSL::SSLContext.new
+      ctx.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
-      client = ::NetHttp2::Client.new(uri, connect_timeout: timeout)
+      # For ALPN support, Ruby >= 2.3 and OpenSSL >= 1.0.2 are required
 
-      error = false
-      # error handling
-      client.on :error do |e|
-        _log_error "Client encountered an error:"
-        _log_error e
-        error = true
+      ctx.alpn_protocols = [draft]
+      ctx.alpn_select_cb = lambda do |protocols|
+        # puts "ALPN protocols supported by server: #{protocols}"
+        draft if protocols.include? draft
       end
 
-      # send request
-      response = client.call(:get, _get_entity_name)
-      return unless response
-      return if error
+      sock = OpenSSL::SSL::SSLSocket.new(tcp, ctx)
+      sock.sync_close = true
+      sock.hostname = uri.hostname
+      sock.connect
 
-      # read the response
-      response.ok?      # => true
-      response.status   # => '200'
-      response.headers  # => {":status"=>"200"}
-      response.body     # => "A body"
-
-
-      # close the connection
-      client.close
-
-    rescue TypeError => e  # IS there a better way to do this?
-      _log_error "Unable to connect"
-    rescue OpenSSL::SSL::SSLError => e
-      _log_error "Unable to connect, ssl error"
-    rescue Errno::EPIPE => e
-      _log_error "Unable to connect, broken pipe"
-    rescue Errno::EHOSTUNREACH => e
-      _log_error "Unable to connect, host unreachable"
-    rescue Errno::ECONNREFUSED => e
-      _log_error "Unable to connect, connection refused"
-    rescue Errno::ECONNRESET => e
-      _log_error "Unable to connect, connection reset"
-    rescue Errno::ETIMEDOUT => e
-      _log_error "Unable to connect, timed out"
-    rescue SocketError => e
-      _log_error "Unable to connect, socket error"
+      if sock.alpn_protocol != draft
+        # puts "Failed to negotiate #{draft} via ALPN"
+        return [nil, nil, nil]
+      end
+    else
+      sock = tcp
     end
 
-    # just fail
-    return [nil,nil,nil] unless response
+    conn = HTTP2::Client.new
+    stream = conn.new_stream
 
-  [response.ok?, response, response.headers]
+    conn.on(:frame) do |bytes|
+      # puts "Sending bytes: #{bytes.unpack("H*").first}"
+      sock.print bytes
+      sock.flush
+    end
+
+    stream.on(:headers) do |h|
+      # _log "response headers: #{h}"
+      res_headers = h
+      h.each do |hh|
+        if hh[0] == ":status"
+          res_code = hh[1]
+          _log "Received response code: #{code}"
+        end
+      end
+    end
+
+    head = {
+      ':scheme' => uri.scheme,
+      ':method' => 'GET',
+      ':authority' => [uri.host, uri.port].join(':'),
+      ':path' => uri.path,
+      'accept' => '*/*'
+    }
+
+    _log 'Sending HTTP 2.0 GET request'
+    stream.headers(head, end_stream: true)
+    
+    while !sock.closed? && !sock.eof?
+      data = sock.read_nonblock(1024)
+      # puts "Received bytes: #{data.unpack("H*").first}"
+      begin
+        conn << data
+      rescue StandardError
+        sock.close
+      end
+    end
+
+  return [true, res_code, res_headers]
   end
 
 end
