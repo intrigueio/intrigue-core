@@ -340,6 +340,7 @@ GEM
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
     open3 (0.1.1)
+    openssl (2.2.0)
     os (1.1.1)
     parallel (1.12.1)
     pg (1.2.3)
@@ -506,6 +507,7 @@ DEPENDENCIES
   google-cloud-storage
   googleajax
   googleauth
+  http-2
   iconv
   intrigue-ident!
   intrigue_api_client!
@@ -519,6 +521,7 @@ DEPENDENCIES
   nokogiri
   open3
   opencorporates!
+  openssl
   pg
   pry
   pry-byebug
