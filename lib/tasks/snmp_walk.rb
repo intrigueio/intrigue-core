@@ -9,7 +9,7 @@ class SnmpWalk < BaseTask
       :authors => ["jcran"],
       :description => "Simple SNMP Walk",
       :references => ["https://community.rapid7.com/community/services/blog/2016/05/05/snmp-data-harvesting-during-penetration-testing"],
-      :type => "enrichment",
+      :type => "discovery",
       :passive => false,
       :allowed_types => ["NetworkService"],
       :example_entities => [{"type" => "NetworkService", "details" => { "name" => "1.1.1.1:79/tcp"}}],

@@ -87,7 +87,7 @@ module Model
     end
 
     def export_json
-      export_hash.merge("generated_at" => "#{Time.now.utc}").to_json
+      export_hash.merge("generated_at" => "#{Time.now.utc.iso8601}").to_json
     end
 
     def export_entities_csv
@@ -226,33 +226,34 @@ module Model
     ### Use this when you want to scope in stuff, but generally prefer 'traversable_entity?'
     ###
     def allow_list_entity?(entity)
+
       our_scope_verification_list = entity.scope_verification_list
 
       svt = Intrigue::Core::Model::GlobalEntity.scope_verification_types
 
-      our_scope_verification_list.each do |h|
+        our_scope_verification_list.each do |h|
 
-        type_string = h[:type_string]
-        entity_name = h[:name]
+          type_string = h[:type_string]
+          entity_name = h[:name]
 
-        # skip anything else thats not verifiable!!
-        next unless svt.include? type_string
+          # skip anything else thats not verifiable!!
+          next unless svt.include? type_string
 
-        # if it's an explicit seed, it's whitelisted
-        return true if seed_entity?(type_string,entity_name)
+          # if it's an explicit seed, it's whitelisted
+          return true if seed_entity?(type_string,entity_name)
 
-        # Check standard exceptions (hardcoded list) first if we
-        #  show up here (and we werent' a seed), we should skip
-        return false if use_standard_exceptions &&
-          standard_no_traverse?(entity_name, type_string)
+          # Check standard exceptions (hardcoded list) first if we
+          #  show up here (and we werent' a seed), we should skip
+          return false if use_standard_exceptions &&
+            standard_no_traverse?(entity_name, type_string)
 
-        # if we don't have a list, safe to return false now, otherwise proceed to
-        # additional exceptions which are provided as an attribute on the object
-        if !globally_traversable_entity?(entity_name, type_string)
-          return false
+          # if we don't have a list, safe to return false now, otherwise proceed to
+          # additional exceptions which are provided as an attribute on the object
+          if !globally_traversable_entity?(entity_name, type_string)
+            return false
+          end
+
         end
-
-      end
 
     ###
     # returning false because it wasnt explicitly allowed

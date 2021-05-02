@@ -7,17 +7,17 @@ maintainer: jcran
 flow: recursive
 description: Performs a light active scan on a network. Start with a NetBlock.
 definition:
-  DnsRecord: 
+  DnsRecord:
   - task: dns_brute_sub
     options:
     - brute_alphanumeric_size: 2
-    - use_file: true 
+    - use_file: true
     auto_scope: true
-  Domain: 
+  Domain:
   - task: dns_brute_sub
     options:
     - brute_alphanumeric_size: 2
-    - use_file: true 
+    - use_file: true
     auto_scope: true
   NetBlock:
   - task: masscan_scan
@@ -29,5 +29,4 @@ definition:
   - task: uri_extract_linked_hosts
   - task: uri_extract_tokens
   - task: uri_gather_ssl_certificate
-  - task: uri_screenshot
   - task: jarm_hash_calculator

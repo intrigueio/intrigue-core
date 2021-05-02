@@ -52,12 +52,12 @@ class Uri < Intrigue::Core::Model::Entity
   end
 
   def enrichment_tasks
-    ["enrich/uri"]
+    ["enrich/uri", "uri_browser_analysis"]
   end
 
   def scope_verification_list
     [
-      { type_string: self.type_string, name: self.name },
+      { type_string: "#{self.type_string}", name: "#{self.name}" },
       { type_string: "DnsRecord", name:  URI.parse(self.name).host },
       { type_string: "Domain", name:  parse_domain_name(URI.parse(self.name).host) }
     ]

@@ -103,7 +103,7 @@ class CoreApp < Sinatra::Base
     if Intrigue::Core::Model::Project.first(:name => new_project_name)
       out = wrapped_api_response "Project exists!", nil
     else
-      Intrigue::Core::Model::Project.create(:name => new_project_name, :created_at => Time.now.utc)
+      Intrigue::Core::Model::Project.create(:name => new_project_name, :created_at => Time.now.utc.iso8601)
     end
 
     unless out

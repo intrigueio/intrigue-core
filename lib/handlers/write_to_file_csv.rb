@@ -16,14 +16,14 @@ module Handler
       puts "Local CSV Handler called on #{result_type}: #{result.name}"
 
       # write to a tempfile first
-      timestamp = "#{Time.now.strftime("%Y%m%d%H%M%S")}"
+      timestamp = "#{Time.now.utc.iso8601}"
       file = File.open("#{$intrigue_basedir}/tmp/#{result.name}.entities.#{timestamp}.csv", "a")
-      
+
       result.entities.paged_each(rows_per_fetch: 500) do |e|
         file.write("#{e.export_csv}\n")
       end
 
-      file.close 
+      file.close
     end
 
   end

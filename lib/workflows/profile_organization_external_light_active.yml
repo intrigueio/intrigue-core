@@ -6,16 +6,19 @@ user_selectable: true
 maintainer: jcran
 flow: recursive
 description: Performs a light active attack surface discovery for organizations. Start with a Domain or NetBlock.
+#enrichment:
+#  DnsRecord: ["enrich/dns_record"]
+#  Domain: ["enrich/domain"]
 definition:
-  AutonomousSystem: 
+  AutonomousSystem:
   - task: asn_to_netblocks
-  AwsS3Bucket: 
+  AwsS3Bucket:
   - task: aws_s3_put_file
   Domain:
   - task: dns_brute_sub
     options:
     - brute_alphanumeric_size: 2
-    - use_file: true 
+    - use_file: true
     auto_scope: true
   - task: dns_lookup_dkim
     options:
@@ -32,18 +35,18 @@ definition:
     auto_scope: true
   - task: email_brute_gmail_glxu
   - task: search_crt
-    options: 
+    options:
     - extract_patterns: __seed_list__
     auto_scope: true
   - task: search_certspotter
-    options: 
+    options:
     - extract_patterns: __seed_list__
     auto_scope: true
   - task: search_sublister
   - task: search_threatcrowd
-  DnsRecord: 
+  DnsRecord:
   - task: threat/search_opendns
-  EmailAddress: 
+  EmailAddress:
   - task: vuln/saas_google_calendar_check
   GithubAccount:
   - task: gitrob
@@ -51,7 +54,7 @@ definition:
   - task: naabu_scan
   NetBlock:
   - task: masscan_scan
-    options: 
+    options:
     - tcp_ports: scannable
     - udp_ports: scannable
   Organization:
@@ -71,7 +74,6 @@ definition:
   - task: uri_check_subdomain_hijack
   - task: uri_extract_linked_hosts
   - task: uri_extract_tokens
-  - task: uri_screenshot
   - task: uri_gather_ssl_certificate
   - task: jarm_hash_calculator
 
