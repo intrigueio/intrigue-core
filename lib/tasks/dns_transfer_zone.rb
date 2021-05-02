@@ -40,7 +40,15 @@ class DnsTransferZone < BaseTask
         zt.connect_timeout = 5
         zt.transfer_type = Dnsruby::Types.AXFR
         zt.server = nameserver
-        zone = zt.transfer(domain_name)
+
+        begin
+          _log "Beginning transfer!"
+          Timeout.timeout(120) do
+            zone = zt.transfer(domain_name)
+          end
+        rescue Timeout::Error => e
+          _log_error "Timed out!"
+        end
 
         unless zone
           _log "Unable to transfer, bailing out!"
