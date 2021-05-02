@@ -4,7 +4,7 @@ class BaseTask
 
   include Sidekiq::Worker
   sidekiq_options queue: "task", backtrace: true
-  
+
   # include default helpers
   include Intrigue::Task::Popen
   include Intrigue::Task::Generic
@@ -25,8 +25,8 @@ class BaseTask
   include Intrigue::Task::WebContent
   include Intrigue::Task::WebAccount
   include Intrigue::Task::Whois
-  
-  
+
+
   def self.inherited(base)
     ::Intrigue::TaskFactory.register(base)
   end
@@ -37,17 +37,17 @@ class BaseTask
   #  - checks.. which just need to return a result or false
   #
   def perform(task_result_id)
-    start_time = Time.now.getutc
+    start_time = Time.now.getutc.iso8601
 
     # Get the task result and fail if we can't
     @task_result = Intrigue::Core::Model::TaskResult.first(:id => task_result_id)
-    
-    # While it would be sensible to raise an error here, because we currently 
+
+    # While it would be sensible to raise an error here, because we currently
     # dont have a limit on retries, this leads to task results for deleted projects
-    # getting stuck in 'zombie' mode, where they keep retrying and failing. 
+    # getting stuck in 'zombie' mode, where they keep retrying and failing.
     if @task_result && @task_result.project
       puts "[#{start_time}] Running task result #{@task_result.name} in project: #{@task_result.project.name}"
-    else  #raise InvalidTaskConfigurationError, "Missing task result?" 
+    else  #raise InvalidTaskConfigurationError, "Missing task result?"
       puts "[#{start_time}] WARNING! Unable to run missing task result: #{task_result_id}, failing!"
       return nil
     end
@@ -66,7 +66,7 @@ class BaseTask
     options = @task_result.options
 
     # if project was deleted, raise an exception
-    raise MissingProjectError, "Missing πroject, possibly deleted?" unless @project    
+    raise MissingProjectError, "Missing πroject, possibly deleted?" unless @project
     raise InvalidEntityError, "Missing Entity" unless @entity
 
     ###
@@ -76,17 +76,17 @@ class BaseTask
       _log "Cancelled, returning without running!"
       return
     end
-    
+
     ###
-    ### Handle already finished or already started results with the e
+    ### Handle already finished or already started results with the
     ### same name in the same scan. Check for existing "same" task results
-    ### that havec already started or completed, and bail early 
+    ### that havec already started or completed, and bail early
     ### if that's the case
     ###
-    return_early = false 
+    return_early = false
     if @task_result.scan_result
       our_task_result_name = "#{@task_result.name}"
-      
+
       # query existing results, limit to those that have been started
       existing_task_results = Intrigue::Core::Model::TaskResult.scope_by_project(@project.name).where(
         name: our_task_result_name).exclude(timestamp_start: nil).exclude(id: @task_result.id)
@@ -94,15 +94,15 @@ class BaseTask
       # if we've already completed another one, return eearly
       if existing_task_results.first
         _log "This task is in progress, or has already been completed in this project"
-        
-        # we want to be able to intelligently re-run flows we havent seen before... this is a way to do that 
-        if @task_result.autoscheduled == false || (@task_result.name =~/^enrich\/.*/ && @project.allow_reenrich)
+
+        # we want to be able to intelligently re-run flows we havent seen before... this is a way to do that
+        if @task_result.autoscheduled == false || (@entity.enrichment_tasks.include?(@task_result.name) && @project.allow_reenrich)
           _log_good "Allowing re-run, this is a user-scheduled task and re-enrich is enabled"
           return_early = false
-        
-        # but default to failing on running stuff we havent yet seen. ... 
+
+        # but default to failing on running stuff we havent yet seen. ...
         # there is probably a better way to do this by caching results and snagging them... TODO
-        else 
+        else
           _log_error "Returning, this task was already scheduled or run!"
           return_early = true
         end
@@ -111,11 +111,11 @@ class BaseTask
 
     if return_early
       @task_result.complete = true
-      @task_result.timestamp_end = Time.now.getutc
+      @task_result.timestamp_end = Time.now.getutc.iso8601
       @task_result.logger.save_changes
       @task_result.save_changes
-      _log "Task returning early!"
-      return 
+      _log "Returning early, we already have this result."
+      return
     end
 
     # We need a flag to skip the actual setup, run, cleanup of the task if
@@ -154,48 +154,48 @@ class BaseTask
             ###
             ## RUN IT - THE TASK'S MAGIC HAPPENS HRE
             ###
-            begin 
+            begin
 
               run # Run the task, which will update @task_result
 
             ###
-            ## Robust error handling is a must 
+            ## Robust error handling is a must
             ###
-            rescue MissingTaskConfigurationError => e 
+            rescue MissingTaskConfigurationError => e
 
               _log_error "Missing task configuration, please check configuration for this task: #{e}"
-              Intrigue::NotifierFactory.default.each { |x|  # if configured, notify! 
+              Intrigue::NotifierFactory.default.each { |x|  # if configured, notify!
                 x.notify("Missing Task Configuration: #{@entity.type} #{@entity.name} #{e}" , @task_result) }
 
-            rescue  InvalidTaskConfigurationError => e 
-  
+            rescue  InvalidTaskConfigurationError => e
+
               _log_error "Invalid task configuration, please check configuration for this task: #{e}"
-              Intrigue::NotifierFactory.default.each { |x| # if configured, notify! 
+              Intrigue::NotifierFactory.default.each { |x| # if configured, notify!
                 x.notify("Invalid Task Configuration: #{@entity.type} #{@entity.name} #{e}" , @task_result) }
 
-            rescue InvalidEntityError => e 
-             
+            rescue InvalidEntityError => e
+
               _log_error "Invalid entity attempted #{e}"
               _log_error "Probably a bug, report at: https://github.com/intrigueio/intrigue-core/issues"
-              
-              Intrigue::NotifierFactory.default.each { |x| # if configured, notify! 
+
+              Intrigue::NotifierFactory.default.each { |x| # if configured, notify!
                 x.notify("Invalid entity attempted: #{@entity.type} #{@entity.name} #{e}" , @task_result) }
-        
+
             rescue SystemResourceMissing => e
 
               _log_error "Missing system resource (external program?): #{e}"
-              Intrigue::NotifierFactory.default.each { |x| # if configured, notify! 
+              Intrigue::NotifierFactory.default.each { |x| # if configured, notify!
                 x.notify("Missing system resource (external program?): #{@entity.type} #{@entity.name} #{e}" , @task_result) }
 
             rescue TimeoutError => e
 
               _log_error "System timed out running a task: #{e}"
-              Intrigue::NotifierFactory.default.each { |x| # if configured, notify! 
+              Intrigue::NotifierFactory.default.each { |x| # if configured, notify!
                 x.notify("System timed out running a task: #{@entity.type} #{@entity.name} #{e}" , @task_result) }
 
             end
 
-            end_time = Time.now.getutc
+            end_time = Time.now.getutc.iso8601
             _log "Task run finished at #{end_time}!"
         else
           _log_error "Task setup failed, bailing out w/o running!"
@@ -205,22 +205,53 @@ class BaseTask
       ##########################################
       # Finalize Enrichment and Start Workflow #
       ##########################################
-      
-      # Now, if this is an enrichment type task, we want to mark our enrichemnt complete 
-      # if it's true, we can set it and launch our workflow!
-      t = Intrigue::TaskFactory.create_by_name(@task_result.task_name)
-      if t.class.metadata[:type] == "enrichment"
-        
-        # Now, set enriched since this is our final enrichment task!
-        @entity.enriched = true   
-        @entity.save_changes 
 
-        ### AND we can decide scope based on complete information now, 
-        # note that does take into account the previously-set status 
+      # grab metadata to check if this is enrichment tasks
+      is_enrichment_task = @entity.enrichment_tasks.include? "#{@task_result.task_name}"
+      # first update enriched count (do it in a transaction so the read/write happens together)
+
+      is_fully_enriched = false #default
+      if is_enrichment_task
+
+        # do this in a transaction so we don't accidentally miss one completing in another thread
+        $db.transaction do
+          # get it
+          etc = @entity.enrichment_tasks_completed
+          etc << @task_result.task_name
+          # set it
+          @entity.enrichment_tasks_completed = etc
+          @entity.save
+        end
+
+        # now check it
+        is_fully_enriched = @entity.enrichment_tasks_completed.count == @entity.enrichment_tasks.count
+        puts "DEBUG: Checking if fully enriched: #{@task_result.task_name} (#{is_enrichment_task})"
+        puts "DEBUG: #{@entity.name}, Completed: #{@entity.enrichment_tasks_completed} (#{@entity.enrichment_tasks_completed.count}), #{@entity.enrichment_tasks.count}"
+      end
+
+      # Now, if this is an enrichment type task, we want to mark our enrichemnt complete
+      # if it's true, we can set it and launch our workflow!
+      #
+      # ... if we have multiple, we need to compare counts
+      #
+      # ... but only if we're fully enriched will we need to go through this flow.
+      #
+      # note that we dont want to kick off enrichment multiple times, so let's just check
+      # for equivalence here vs >=
+      #
+      if is_enrichment_task && is_fully_enriched
+
+        # Now, set enriched since this is our final enrichment task!
+        puts "DEBUG: Setting enriched!"
+        @entity.enriched = true
+        @entity.save
+
+        ### AND we can decide scope based on complete information now,
+        # note that does take into account the previously-set status
         # ... for more info, (see the entity's scoped? method )
-        @entity.set_scoped!(@entity.scoped?, "entity_scoping_rules") 
-      
-        # In order to ensure all linked issues take our entity's scoped status, we 
+        @entity.set_scoped!(@entity.scoped?, 'entity_scoping_rules')
+
+        # In order to ensure all linked issues take our entity's scoped status, we
         # iterate through them, setting the entity's scoped status on them
         @entity.issues.each do |i|
           i.scoped = @entity.scoped
@@ -228,11 +259,11 @@ class BaseTask
         end
 
         ###
-        ## NOW, KICK OFF WORKFLOWS for SCOPED ENTiTIES ONLY
+        ## NOW, KICK OFF WORKFLOWS for SCOPED ENTITIES ONLY
         ###
         if @entity.scoped
 
-          # WORKFLOW LAUNCH (ONLY IF WE ARE ATTACHED TO A WORKFLOW) 
+          # WORKFLOW LAUNCH (ONLY IF WE ARE ATTACHED TO A WORKFLOW)
           # if this is part of a scan and we're in depth
           if @task_result.scan_result && @task_result.depth > 0
 
@@ -243,8 +274,8 @@ class BaseTask
             unless workflow
               raise InvalidWorkflowError, "Unable to continue, missing workflow: #{workflow_name}!!!"
             end
-            
-            ## 
+
+            ##
             ## Start the workflow!
             ##
             @task_result.log "Launching workflow on #{@entity.name} after #{@task_result.name}"
@@ -253,12 +284,12 @@ class BaseTask
           else
             @task_result.log "No workflow configured for #{@entity.name}!"
           end
-          
+
 
           #####################
           #   Call Handlers   #
           #####################
-          
+
           scan_result = @task_result.scan_result
           if scan_result
             scan_result.decrement_task_count
@@ -287,20 +318,20 @@ class BaseTask
               _log "No scan result handlers configured."
             end
           end
-        else 
+        else
           _log "Entity not scoped, no workflow will be run."
-        end 
+        end
 
       else
         _log "Not an enrichment task, skipping workflow generation"
       end
 
-      
+
     ensure
       begin
 
         ###
-        ## CLEAN UP HERE. 
+        ## CLEAN UP HERE.
         ###
         @task_result.complete = true
         @task_result.timestamp_end = end_time
@@ -312,8 +343,6 @@ class BaseTask
         puts "Failing to update task_result: #{task_result_id}"
       end
     end
-
-
   end
 
   #########################################################
@@ -407,7 +436,7 @@ class BaseTask
 
             # Hurray, we can accept this value
             @user_options << { allowed_option[:name] => user_option["value"] }
-          #else 
+          #else
           #  _log_error "Unused option provided: #{user_option}"
           end
 

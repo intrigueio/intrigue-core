@@ -15,6 +15,7 @@ module Model
 
   class Entity < Sequel::Model
     plugin :validation_helpers
+    plugin :serialization, :json, :enrichment_tasks_completed
     plugin :single_table_inheritance, :type
     plugin :timestamps
 
@@ -95,7 +96,7 @@ module Model
       Intrigue::Core::Model::ScopingLog.log log_string
 
       self.scoped = bool_val
-      self.scoped_at = Time.now.utc
+      self.scoped_at = Time.now.utc.iso8601
       self.scoped_reason = reason
       save_changes
 
@@ -157,20 +158,20 @@ module Model
       self.enriched
     end
 
-    # overridden in the individual entities
+    # first checks the current workflow, if nothing provided, use our
+    # enrichment_tasks_default method
     def enrichment_tasks
       ['enrich/generic']
     end
 
     def enrich(task_result)
 
-      # immediately fail if this is not autoscheduled
       ###
       ### Optimization put in place 2020-01-12 ... note that this may not
       ### work for every use case and should be revisited at a later date
       ###
-      if self.deny_list
-        task_result.log "Cowardly refusing to enrich enitty on our deny list!: #{task_result.name} #{self.name}"
+      if self.deny_list #|| self.hidden
+        task_result.log "Cowardly refusing to enrich entity on our deny list!: #{task_result.name} #{self.name}"
         return nil
       end
 
@@ -181,11 +182,23 @@ module Model
       # if a workflow exists, grab it
       workflow_name = task_result.scan_result ? task_result.scan_result.workflow : nil
 
+      # in order to get the correct enrichment tasks for this entity, we need ot check the current workflow
+      # and see if enrichment tasks were specified. If not, we can just use our default.
+      our_enrichment_tasks = nil
+      wf = Intrigue::WorkflowFactory.create_workflow_by_name(workflow_name)
+
+      if wf.enrichment_defined?
+        our_enrichment_tasks = wf.enrichment_for_entity_type(self.type_string)
+      else
+        # default
+        our_enrichment_tasks = enrichment_tasks
+      end
+
       # if this entity has any configured enrichment tasks..
-      if enrichment_tasks.count > 0
+      if our_enrichment_tasks.count > 0
 
         # Run each one
-        enrichment_tasks.each do |task_name|
+        our_enrichment_tasks.each do |task_name|
 
           # if task doesnt exist, mark it enriched using the task of that name
           # ensure we always mark an entity enriched, and then can continue on
@@ -424,7 +437,8 @@ module Model
             :base_entity_name => t.base_entity.name,
             :base_entity_type => t.base_entity.type  }
         },
-        :generated_at => Time.now.utc
+        :enrichment_tasks => enrichment_tasks,
+        :generated_at => Time.now.utc.iso8601
       }
     end
 

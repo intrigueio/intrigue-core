@@ -19,6 +19,10 @@ class IpAddress < Intrigue::Core::Model::Entity
   def detail_string
     out = ""
 
+    if details["network.name"]
+      out << "#{details["network.name"]} | "
+    end
+
     if details["geolocation"] && details["geolocation"]["country_code"]
       out << "#{details["geolocation"]["city"]} #{details["geolocation"]["country_code"]} | "
     end
@@ -46,7 +50,7 @@ class IpAddress < Intrigue::Core::Model::Entity
     return true if self.allow_list || self.project.allow_list_entity?(self)
     return false if self.deny_list || self.project.deny_list_entity?(self)
 
-    # while it might be nice to scope out stuff on third paries, we still need
+    # while it might be nice to scope out stuff on third parties, we still need
     # to keep it in to scan, so we'll need to check scope at that level
 
   # if we didnt match the above and we were asked, default to true as we'll

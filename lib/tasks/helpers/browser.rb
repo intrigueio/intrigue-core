@@ -14,38 +14,40 @@ module Task
     def capture_screenshot_and_requests(uri)
       return {} unless Intrigue::Core::System::Config.config["browser_enabled"]
 
-      # First, make sure we can actually connect to it in reasonable time 
+      # First, make sure we can actually connect to it in reasonable time
       response = http_request(:get, uri, nil, {}, nil, true, 10)
       return {} unless response
 
-      begin 
+      begin
         _log "Browser Navigating to #{uri}"
         c = Intrigue::ChromeBrowser.new
-        browser_response = c.navigate_and_capture(uri)  
-      rescue Errno::ECONNREFUSED => e 
+        browser_response = c.navigate_and_capture(uri)
+      rescue Errno::ECONNREFUSED => e
         _log_error "Unable to connect to chrome browser. Is it running as a service?"
       end
-  
+
       if browser_response && browser_response["requests"]
 
-        to_return = { 
+        to_return = {
           "extended_screenshot_contents" => browser_response["encoded_screenshot"],
           "request_hosts" => browser_response["requests"].map{|x| x["hostname"] }.compact.uniq.sort,
+          "extended_browser_request_urls" => browser_response["requests"].map{|x| x["url"] }.compact.uniq.sort,
           "extended_browser_requests" => browser_response["requests"],
           "extended_browser_responses" => browser_response["responses"],
-          "extended_browser_wsresponses" => browser_response["wsresponses"]
+          "extended_browser_wsresponses" => browser_response["wsresponses"],
+          "extended_browser_page_capture" => browser_response["page_capture"]
         }
 
-      else 
+      else
         to_return = {}
       end
 
     to_return
     end
-    
+
     # TODO
     # TODO ... convert this to new way of controlling browser
-    # TODO 
+    # TODO
     def gather_javascript_libraries(session, uri)
       return [] unless Intrigue::Core::System::Config.config["browser_enabled"]
 

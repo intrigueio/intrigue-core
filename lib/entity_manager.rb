@@ -242,9 +242,9 @@ class EntityManager
     tr.add_entity(entity) unless tr.has_entity? entity
 
     ###
-    ### Scoping must always run, because the task run we're inside may have
-    ### auto_scope = true .. or the entity may have been created with an attribute
-    ### that specifies how we should be scopoed
+    ## Scoping must always run, because the task run we're inside may have
+    ## auto_scope = true .. or the entity may have been created with an attribute
+    ## that specifies how we should be scopoed
     ###
 
     #####
