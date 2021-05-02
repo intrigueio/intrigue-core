@@ -174,7 +174,6 @@ module Dns
 
     resources = []
 
-
     ###
     ### First nameserver port is our local async DNS ... in case that's not up,
     ### fall back to any configured resolvers in teh global config
@@ -238,6 +237,7 @@ module Dns
           response = nil
 
           until response || tries > max_tries
+
             begin
               resolver = Resolv::DNS.open(config)
               resolver.timeouts = 3
@@ -253,7 +253,6 @@ module Dns
               resolver.timeouts = 3
               response = resolver.getresources(lookup_name, t)
               resources.concat(response)
-
             end
           end
 

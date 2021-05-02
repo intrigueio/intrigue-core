@@ -187,7 +187,7 @@ module Model
       our_enrichment_tasks = nil
       wf = Intrigue::WorkflowFactory.create_workflow_by_name(workflow_name)
 
-      if wf.enrichment_defined?
+      if wf && wf.enrichment_defined?
         our_enrichment_tasks = wf.enrichment_for_entity_type(self.type_string)
       else
         # default
