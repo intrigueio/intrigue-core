@@ -46,6 +46,8 @@ class DnsTransferZone < BaseTask
           Timeout.timeout(120) do
             zone = zt.transfer(domain_name)
           end
+        rescue Errno::ENETUNREACH => e
+          _log_error "Unable to connect"
         rescue Timeout::Error => e
           _log_error "Timed out!"
         end
