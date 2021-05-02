@@ -41,6 +41,7 @@ class DnsTransferZone < BaseTask
         zt.transfer_type = Dnsruby::Types.AXFR
         zt.server = nameserver
 
+        zone = nil
         begin
           _log "Beginning transfer!"
           Timeout.timeout(120) do
@@ -52,7 +53,7 @@ class DnsTransferZone < BaseTask
           _log_error "Timed out!"
         end
 
-        unless zone
+        if zone.nil?
           _log "Unable to transfer, bailing out!"
           return
         end
