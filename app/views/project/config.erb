@@ -4,23 +4,23 @@ Project Created at: <%= @project.created_at %><br>
 <br>
 
 <form method=POST action="/<%= h @project_name%>/config">
-  
+
   <br>
   <label class="inline">Country Code </label><input type="text" name="country_code" class="text" value=<%=h @project.country_code %>><br>
-  <label class="checkbox-inline"><input type="checkbox" name="use_standard_exceptions" class="checkbox" <%= "checked" if @project.use_standard_exceptions %>> Use Standard Exceptions? <br>
-  <i>Note: Standard exceptions can be found in the file: <%=$intrigue_basedir%>/data/standard_name_exceptions.list</i></label>  <br>
+  <label class="checkbox-inline"><input type="checkbox" name="use_standard_exceptions" class="checkbox" <%= "checked" if @project.use_standard_exceptions %>> Use Standard Domain Exceptions? <br>
+  <i>Note: Domain exceptions can be found in the file: <%=$intrigue_basedir%>/data/standard_domain_exceptions.list</i></label>  <br>
   <label class="checkbox-inline"><input type="checkbox" name="vulnerability_checks_enabled" class="checkbox" <%= "checked" if @project.vulnerability_checks_enabled %>> Exposure Checks Enabled? </label>  <br>
-  <label class="checkbox-inline"><input type="checkbox" name="allow_entity_reenrich" class="checkbox" <%= "checked" if @project.allow_reenrich %>> Allow Entity Re-enrich?</label> 
-  
+  <label class="checkbox-inline"><input type="checkbox" name="allow_entity_reenrich" class="checkbox" <%= "checked" if @project.allow_reenrich %>> Allow Entity Re-enrich?</label>
+
   <br>
   <br>
 
   Allowed Global Namespaces for scoping (one per line):<br>
 	<textarea name=allowed_namespaces rows="5" cols="80"><%= "#{h @project.allowed_namespaces.join("\n") if @project.allowed_namespaces}" %> </textarea><br><br>
-    
+
 
   <input type="submit" value="Submit" class="btn btn-primary">
   <br><br>
 
 </form>
-  
+
