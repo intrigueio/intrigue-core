@@ -118,7 +118,6 @@ class UniqueToken < Intrigue::Core::Model::Entity
       # set the detail here
       set_detail("provider", supported_type[:provider] || supported_type["provider"] )
       set_detail("sensitive", supported_type[:sensitive] || supported_type["sensitive"] )
-      set_detail("proof", "Matched #{supported_type[:provider] || supported_type["provider"]} regex.")
     end
 
   !supported_type.nil?
