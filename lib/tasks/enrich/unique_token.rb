@@ -36,7 +36,8 @@ module Intrigue
       # we should do additional testing here to ensure that the key is valid / not revoked etc
       #
       #_create_linked_issue("leaked_token", {
-      #  proof: "Matched #{_get_entity_detail("provider")} regex and considered sensitive."
+      #  proof: "Matched #{_get_entity_detail("provider")} regex and considered sensitive. " +
+      #  " Visit the associated entity page to see all places where this token was located. "
       #}) if _get_entity_detail("sensitive")
 
 
