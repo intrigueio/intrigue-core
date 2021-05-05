@@ -30,10 +30,10 @@ module Intrigue
         begin
           groups = iam.list_groups
           users = iam.list_users
-        rescue Aws::Route53::Errors::InvalidClientTokenId
+        rescue Aws::IAM::Errors::InvalidClientTokenId
           _log_error 'Invalid Access Key ID.'
           return nil
-        rescue Aws::Route53::Errors::SignatureDoesNotMatch
+        rescue Aws::IAM::Errors::SignatureDoesNotMatch
           _log_error 'Secret Access Key does not match Access Key ID.'
           return nil
         rescue Aws::IAM::Errors::AccessDenied
