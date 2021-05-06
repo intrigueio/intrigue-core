@@ -242,9 +242,9 @@ class EntityManager
     tr.add_entity(entity) unless tr.has_entity? entity
 
     ###
-    ### Scoping must always run, because the task run we're inside may have
-    ### auto_scope = true .. or the entity may have been created with an attribute
-    ### that specifies how we should be scopoed
+    ## Scoping must always run, because the task run we're inside may have
+    ## auto_scope = true .. or the entity may have been created with an attribute
+    ## that specifies how we should be scopoed
     ###
 
     #####
@@ -318,23 +318,21 @@ class EntityManager
     if !tr.autoscheduled # manally scheuduled, automatically enrich
 
       if entity.enriched?
-        tr.log "Re-scheduling enrichment for existing entity (manually run)!"
+        tr.log "Re-scheduling enrichment for existing entity #{entity.name} (manually run)!"
       end
-
-      tr.log "Manually scheduling enrich: #{entity.name}"
       entity.enrich(tr)
 
     elsif tr.auto_enrich && !entity.deny_list && (!entity_already_existed || project.allow_reenrich)
 
       # Check if we've already run first and return gracefully if so
-      if entity.enriched && !project.allow_reenrich
+      if entity.enriched? && !project.allow_reenrich
         tr.log "Skipping enrichment... already completed and re-enrich not enabled!"
 
       else
 
         # starts a new background task... so anything that needs to happen from
         # this point should happen in that new background task
-        if entity.enriched
+        if entity.enriched?
           tr.log "Re-scheduling enrichment for existing entity #{entity.name} (re-enrich enabled)!"
         end
 

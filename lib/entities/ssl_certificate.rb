@@ -47,7 +47,7 @@ class SslCertificate < Intrigue::Core::Model::Entity
   def scope_verification_list
     hostname = "#{self.name}".split(" ").first.gsub("*.","")
     [
-      { type_string: self.type_string, name: self.name },
+      { type_string: "#{self.type_string}", name: "#{self.name}" },
       { type_string: "DnsRecord", name: hostname },
       { type_string: "Domain", name:  parse_domain_name(hostname) }
     ]

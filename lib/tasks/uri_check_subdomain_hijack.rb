@@ -186,6 +186,9 @@ class UriCheckSudomainHijack  < BaseTask
       elsif response_body.match /If you need immediate assistance, please contact \<a href\=\"mailto\:support\@proposify\.biz/
         _create_hijackable_subdomain_issue "Propsify", uri, "potential"
 
+      elsif response_body.match /Qwilr - Page Not Found/i
+        _create_hijackable_subdomain_issue "Qwilr", uri, "potential" unless (uri =~ /qwilr.com/)
+
       elsif response_body.match /Project doesnt exist... yet!/i
         _create_hijackable_subdomain_issue "Readme.io", uri, "potential" unless (uri =~ /readme.io/ || uri =~ /amazonaws.com/)
 

@@ -15,7 +15,7 @@ class ImportUmbrellaTopDomains < BaseTask
       :type => "import",
       :passive => true,
       :allowed_types => ["*"],
-      :example_entities => [{"type" => "String", "details" => {"name" => "unused"}}],
+      :example_entities => [{"type" => "String", "details" => {"name" => "__IGNORE__"}}],
       :allowed_options => [
         {:name => "threads", :regex => "integer", :default => 1 }
       ],
@@ -36,14 +36,14 @@ class ImportUmbrellaTopDomains < BaseTask
     # unzip
     _log_good "Extracting into memory"
     Zip::File.open(z) do |zip_file|
-      
+
       # Handle entries one by one
       zip_file.each do |entry|
 
-        # Read into memory     
+        # Read into memory
         content = entry.get_input_stream.read
 
-        ### Do the thing 
+        ### Do the thing
 
         _log_good "Parsing out domains"
         domains = content.split("\n").map{|l| l.split(",").last.chomp }
@@ -52,7 +52,7 @@ class ImportUmbrellaTopDomains < BaseTask
 
     end
 
-    # Now really do the thing 
+    # Now really do the thing
     _log_good "Setting up the lambda"
     lammylam = lambda { |d|
       _create_entity "Domain", { "name" => "#{d}" }
@@ -68,7 +68,7 @@ class ImportUmbrellaTopDomains < BaseTask
     domains.each do |item|
       input_queue << item
     end
-    
+
     _threaded_iteration(thread_count, input_queue, lammylam)
 
   end

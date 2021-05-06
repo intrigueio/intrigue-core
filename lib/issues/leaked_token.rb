@@ -1,7 +1,7 @@
 module Intrigue
   module Issue
   class LeakedToken < BaseIssue
-  
+
     def self.generate(instance_details={})
       to_return = {
         added: "2020-01-01",
@@ -15,13 +15,13 @@ module Intrigue
         references: [
           { type: "description", uri: "https://www.kaspersky.com/blog/tokens-on-github/26238/"},
           { type: "description", uri: "https://digitalguardian.com/blog/popular-spell-checking-extension-leaked-authentication-tokens"},
+          { type: "remediation", uri: "https://support.google.com/googleapi/answer/6310037"}
         ]
       }.merge!(instance_details)
-  
+
     to_return
     end
-  
+
   end
   end
   end
-  

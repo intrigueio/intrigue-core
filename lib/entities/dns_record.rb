@@ -48,7 +48,7 @@ class DnsRecord < Intrigue::Core::Model::Entity
 
   def scope_verification_list
     [
-      { type_string: self.type_string, name: self.name },
+      { type_string: "#{self.type_string}", name: "#{self.name}" },
       { type_string: "Domain", name: parse_domain_name(self.name) }
     ]
   end

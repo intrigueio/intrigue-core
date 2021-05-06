@@ -21,8 +21,8 @@ module Model
     def self.load_global_namespace(data)
       (data["entities"] || []).each do |x|
         Intrigue::Core::Model::GlobalEntity.update_or_create({
-          :name => x["name"], 
-          :type => "#{x["type"]}".split(":").last, # shorten to just the type_string 
+          :name => x["name"],
+          :type => "#{x["type"]}".split(":").last, # shorten to just the type_string
           :namespace => x["namespace"]
         })
       end
@@ -43,7 +43,7 @@ module Model
     end
 
   end
-  
+
 end
 end
 end

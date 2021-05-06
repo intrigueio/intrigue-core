@@ -30,6 +30,14 @@ require 'sidekiq-limit_fetch'
 $intrigue_basedir = File.dirname(__FILE__)
 $intrigue_environment = ENV.fetch("INTRIGUE_ENV","development")
 
+## Content and data we simply dont want to keep re-opening. must be useful across all threads, and
+## not be massive overhead. ideally this helps us avoid opening too many files in process.
+$raw_suffix_list = File.open("#{$intrigue_basedir}/data/public_suffix_list.clean.txt").read.split("\n")
+
+# Standard domain exceptions should only be read once
+sne_file = "#{$intrigue_basedir}/data/standard_domain_exceptions.list"
+$standard_domain_exceptions = File.open(sne_file).readlines.map{ |x| "#{x.strip}" }
+
 Encoding.default_external="UTF-8"
 Encoding.default_internal="UTF-8"
 

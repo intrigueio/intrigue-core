@@ -6,6 +6,7 @@ module Intrigue
       @hash = hash
     end
 
+
     def definition
       @hash[:definition]
     end
@@ -14,11 +15,15 @@ module Intrigue
       @hash[:name]
     end
 
-    def depth 
-      @hash[:depth] 
+    def depth
+      @hash[:depth]
     end
 
-    def flow 
+    def enrichment
+      @hash[:enrichment]
+    end
+
+    def flow
       @hash[:flow]
     end
 
@@ -30,12 +35,12 @@ module Intrigue
       @hash[:pretty_name]
     end
 
-    def user_selectable 
+    def user_selectable
       @hash[:user_selectable]
     end
 
-    # Example: 
-    # 
+    # Example:
+    #
     #   "name": "intrigueio_precollection",
     #   "pretty_name": "Intrigue.io Pre-Collection",
     #   "passive": true,
@@ -44,6 +49,11 @@ module Intrigue
     #   "description": "This workflow performs a VERY light passive ...",
     #   "flow" : "recursive",
     #   "depth": 4,
+    #   "enrichment": {
+    #     "AwsS3Bucket": [],
+    #     "Domain": [ "enrich/domain" ]
+    #     ...
+    #   }
     #   "definition": {
     #     "AwsS3Bucket": [],
     #     "Domain": [{
@@ -51,11 +61,19 @@ module Intrigue
     #       "options": []
     #     }
     #   ...
-    # 
+    #
     def to_h
       @hash
     end
-    
+
+    def enrichment_defined?
+      !enrichment.nil?
+    end
+
+    def enrichment_for_entity_type(entity_type_string)
+      enrichment[entity.type_string]
+    end
+
     ###
     ### Returns a calculated value based on all tasks
     ###
@@ -63,13 +81,13 @@ module Intrigue
 
       # only if know how to handle this
       #return false unless flow == "recursive"
-    
+
       out = false # default
-      
+
       # Check if each task is passive by looking at its metadata
       tasks = definition.values.flatten.map{|x| x["task"] }
       out = true if tasks.map{|t| TaskFactory.class_by_name(t).metadata[:passive] }.all? true
-    
+
     out
     end
 
@@ -78,17 +96,17 @@ module Intrigue
 
         k = hash.keys.first
         v = hash.values.first
-        
+
         ### Our accepted variables
-        if v =~ /^__seed_list__$/ ## current seed list 
+        if v =~ /^__seed_list__$/ ## current seed list
           v = entity.project.seeds.select_map(:name).join(",")
         end
 
-        # Options shoudl be in his format for a task 
+        # Options shoudl be in his format for a task
         { "name" => k, "value" => v }
 
       end
-    out 
+    out
     end
 
     def start(entity, task_result)
@@ -97,11 +115,11 @@ module Intrigue
 
       # lookup what we need to do in the definition, and do the right thing
       if flow == "recursive"
-        
-        tasks_to_schedule = definition[entity.type_string]
-        return unless tasks_to_schedule 
 
-        # now go through each task to call and call it 
+        tasks_to_schedule = definition[entity.type_string]
+        return unless tasks_to_schedule
+
+        # now go through each task to call and call it
         tasks_to_schedule.each do |t|
 
           task_name = t["task"]
@@ -115,7 +133,7 @@ module Intrigue
           start_recursive_task(task_result, task_name, entity, options, auto_scope)
         end
 
-      end 
+      end
 
     end
 
@@ -140,7 +158,7 @@ module Intrigue
         task_class = Intrigue::TaskFactory.create_by_name(task_name).class
         task_forced_queue = task_class.metadata[:queue]
 
-        new_task_result = start_task(task_forced_queue || "task_autoscheduled", 
+        new_task_result = start_task(task_forced_queue || "task_autoscheduled",
                             project,
                             old_task_result.scan_result.id,
                             task_name,
@@ -160,7 +178,7 @@ module Intrigue
   end
 end
 
-# 
+#
 # First, a simple factory interface
 #
 module Intrigue
@@ -191,8 +209,8 @@ module Intrigue
       rescue NameError
         #Doesn't exist, dont try to load them again
       end
-    
-    out 
+
+    out
     end
 
     # loads both system and user defined
@@ -202,7 +220,7 @@ module Intrigue
     end
 
     def self.user_selectable_workflows
-      wf = workflow_definitions.select{|x| 
+      wf = workflow_definitions.select{|x|
         x[:user_selectable] }.map{|wf| Intrigue::Workflow.new(wf) }
     end
 

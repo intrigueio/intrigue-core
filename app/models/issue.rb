@@ -26,7 +26,7 @@ module Model
       project_name = "missing_project" unless project_name
 
       out = "#{project_name}##{self.name}#{source}##{entity.uuid}"
-      
+
       Digest::SHA2.hexdigest(out)
     end
 
@@ -34,9 +34,9 @@ module Model
     def to_s
       "#{name} on #{entity.type} #{entity.name}"
     end
-    
+
     def to_v1_api_hash(full=false)
-      if full 
+      if full
         export_hash
       else
         {
@@ -72,7 +72,7 @@ module Model
         :references =>  details["references"],
         :entity_type => entity.type,
         :entity_name => entity.name,
-        :entity_aliases => entity.aliases.map{|a| {"type" => a.type, "name" => a.name} },  
+        :entity_aliases => entity.aliases.map{|a| {"type" => a.type, "name" => a.name} },
         :entity_alias_group_id => entity.alias_group_id,
         :details => details,
         :task_result => "#{task_result.name if task_result}",
@@ -86,7 +86,7 @@ module Model
     end
 
     def export_json
-      export_hash.merge("generated_at" => "#{Time.now.utc}").to_json
+      export_hash.merge("generated_at" => "#{Time.now.utc.iso8601}").to_json
     end
 
 

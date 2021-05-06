@@ -41,8 +41,7 @@ module System
 
       # now one at a time, check all known TLDs and match
       begin
-        raw_suffix_list = File.open("#{$intrigue_basedir}/data/public_suffix_list.clean.txt").read.split("\n")
-        suffix_list = raw_suffix_list.map{|l| "#{l.downcase}".strip }
+        suffix_list = $raw_suffix_list.map{|l| "#{l.downcase}".strip }
 
         # first find all matches
         matches = []

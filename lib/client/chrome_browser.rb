@@ -15,7 +15,7 @@ module Intrigue
       @wsresponses = []
       @max_tries = 3
       @try_timeout = 20
-      
+
       # allow host & port to be set, and respect local config, then env, then default
       chrome_host = options[:host] || ENV["CHROME_HOST"]
       unless chrome_host && chrome_host.length > 0
@@ -25,7 +25,7 @@ module Intrigue
 
       chrome_port = options[:port] || ENV["CHROME_PORT"].to_i
       unless chrome_port && chrome_port > 0
-        chrome_port = 9222 
+        chrome_port = 9222
       end
       options[:port] = chrome_port
 
@@ -35,20 +35,20 @@ module Intrigue
       tries = 0
       until @chrome || tries > @max_tries
         tries += 1
-        begin 
+        begin
           Timeout::timeout(@try_timeout) do
             _connect_and_enable options
           end
-        rescue Timeout::Error => e 
+        rescue Timeout::Error => e
           puts "TIMEOUT killing chrome and trying to connect again"
           _killitwithfire(chrome_port)
-        rescue NoMethodError => e 
+        rescue NoMethodError => e
           puts "ERROR.... nomethoderror exception: #{e} when attempting to screenshot"
           _killitwithfire(chrome_port)
         rescue Socketry::TimeoutError => e
           puts "ERROR.... timeout exception: #{e} when attempting to screenshot"
           _killitwithfire(chrome_port)
-        rescue StandardError => e 
+        rescue StandardError => e
           puts "ERROR.... standard exception: #{e} when attempting to screenshot"
           _killitwithfire(chrome_port)
         end
@@ -64,83 +64,92 @@ module Intrigue
       puts "Chrome navigating and capturing: #{url}"
       out = {}
 
-      begin 
-        
+      begin
+
         Timeout::timeout(timeout) do
-      
+
           # Setup handler to log requests
           @chrome.on "Network.requestWillBeSent" do |params|
 
-            begin 
+            begin
               hostname = URI.parse(params["request"]["url"]).host
             rescue URI::InvalidURIError => e
               hostname = nil
             end
 
-            @requests << { 
-              "hostname" => hostname, 
-              "url" => params["request"]["url"], 
-              "method" => params["request"]["method"], 
+            @requests << {
+              "hostname" => hostname,
+              "url" => params["request"]["url"],
+              "method" => params["request"]["method"],
               "headers" => params["request"]["headers"]
-            } 
+            }
 
           end
 
-          # setup handler for responses 
+          # setup handler for responses
           @chrome.on "Network.responseReceived" do |params|
-            @responses << { 
-              "url" => params["response"]["url"], 
-              "headers" => params["response"]["headers"], 
-              "security" => params["response"]["securityDetails"]
-            } 
-          end 
 
-          # setup handler for websocket responses 
+            # DEBUG
+            #puts "Got response: #{params["response"]["url"]}"
+            #puts "#{params["response"].keys}"
+
+            @responses << {
+              "url" => params["response"]["url"],
+              "headers" => params["response"]["headers"],
+              "security" => params["response"]["securityDetails"]
+            }
+          end
+
+          # setup handler for websocket responses
           @chrome.on "Network.WebSocketRequest" do |params|
             @wsresponses << params
-          end 
+          end
 
           encoded_screenshot=nil
-          
+
           tries = 0
           until encoded_screenshot || (tries > @max_tries)
             tries +=1
-            begin 
+            begin
 
               puts "Attempt: #{tries}"
-              encoded_screenshot = _navigate_and_screenshot(url)
+              out = _navigate_and_screenshot(url)
+              encoded_screenshot = out[:screenshot]
+              page_capture = out[:page]
               sleep 10
 
-              # Tear down the service (it'll auto-restart via process manager...  
-              # so first check that the port number has been set)  
+              # Tear down the service (it'll auto-restart via process manager...
+              # so first check that the port number has been set)
               _killitwithfire(chrome_port)
 
             # WARN: NoMethodError: undefined method `bytesize' for :eof:Symbol
-            rescue NoMethodError => e 
+            rescue NoMethodError => e
               puts "#{chrome_port} ERROR.... nomethoderror exception: #{e} when attempting to screenshot"
               _killitwithfire(chrome_port)
             rescue Socketry::TimeoutError => e
               puts "#{chrome_port} ERROR.... timeout exception: #{e} when attempting to screenshot"
               _killitwithfire(chrome_port)
-            rescue StandardError => e 
+            rescue StandardError => e
               puts "#{chrome_port} ERROR.... standard exception: #{e} when attempting to screenshot"
               _killitwithfire(chrome_port)
             end
           end
 
-          # grab screenshot data - it's possible this was nil, so check 
+          # grab screenshot data - it's possible this was nil, so check
           screenshot_data = encoded_screenshot["data"] if encoded_screenshot
+          page_capture_data = page_capture["data"] if page_capture
 
-          out = { 
-            "requests" => @requests, 
-            "responses" => @responses, 
-            "wsresponses" => @wsresponses, 
-            "encoded_screenshot" => screenshot_data
+          out = {
+            "requests" => @requests,
+            "responses" => @responses,
+            "wsresponses" => @wsresponses,
+            "encoded_screenshot" => screenshot_data,
+            "page_capture" => page_capture_data
           }
 
         end
-       
-      rescue Timeout::Error => e 
+
+      rescue Timeout::Error => e
         puts "timeout when screenshotting -carrying on"
         _killitwithfire(chrome_port)
         out = {}
@@ -152,9 +161,9 @@ module Intrigue
     def _killitwithfire(port)
 
       # relies on sequential worker numbers
-      port = 9222 if port == 0 # just a failsafe 
+      port = 9222 if port == 0 # just a failsafe
       chrome_worker_number = port - 9221
-          
+
       _unsafe_system "pkill -f -9 remote-debugging-port=#{port}; god restart intrigue-chrome-#{chrome_worker_number}"
 
       sleep 10
@@ -175,12 +184,13 @@ module Intrigue
 
         # Take page screenshot
         encoded_screenshot = @chrome.send_cmd "Page.captureScreenshot"
+        page_snapshot = @chrome.send_cmd "Page.captureSnapshot"
       rescue NameError => e
         puts "NameError FIX UPSTREAM :["
         return nil
       end
-      
-    encoded_screenshot
+
+    { screenshot: encoded_screenshot, page: page_snapshot }
     end
 
   end
