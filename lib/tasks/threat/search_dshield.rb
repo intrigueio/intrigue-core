@@ -36,6 +36,7 @@ class SearchDshield < BaseTask
 
       if result["attacks"] != "null" or result["maxrisk"] != "null"
         _create_linked_issue("suspicious_activity_detected", {
+          proof: result,
           status: "confirmed",
           description: "This ip was flagged by Dshield for malicious activites",
           fraudguard_details: result,

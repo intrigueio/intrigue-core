@@ -50,6 +50,7 @@ class SearchIPQSEmailAddress < BaseTask
       #create an issue if this IP related to fraud
       if result["leaked"]== true or result["suspect"] == true or result["spam_trap_score"] != "none"
         _create_linked_issue("suspicious_activity_detected", {
+          proof: result,
           status: "confirmed",
           description: "This Email Address was flagged by IPQualtiyScore for these reasons: Leak:#{result["leaked"]} // suspicious activity:#{result["suspect"]} // Spam:#{result["spam_trap_score"]} ",
           IpQualityScore_details: result,

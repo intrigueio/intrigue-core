@@ -28,7 +28,7 @@ module Intrigue
 
         if is_product?(fingerprint, "SonicOS")
           if is_vulnerable_version?(fingerprint)
-              _create_linked_issue("sonicwall_cve_2020_5135")
+              _create_linked_issue "sonicwall_cve_2020_5135", {proof: fingerprint}
           end
         end
       end
@@ -52,7 +52,7 @@ module Intrigue
         when 0..5
             # "Major version is less than 6. We will automatically assume this is vulnerable"
             _log "Vulnerable!"
-            _create_linked_issue( "sonicwall_cve_2020_5135")
+            _create_linked_issue "sonicwall_cve_2020_5135", {proof: fp}
         when 6
             # Hardest major version to handle
             check_vuln_version_six(version_parts[1],version_parts[2],version_parts[3])

@@ -50,7 +50,7 @@ module Intrigue
       body = http_get_body(url)
 
       if body =~ /href=\"\#register-pane\"/
-        _create_linked_issue "open_gitlab_registration"
+        _create_linked_issue "open_gitlab_registration", {proof: body}
       end
 
     end

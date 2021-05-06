@@ -63,6 +63,7 @@ class SaasGoogleCalendarCheck < BaseTask
       _create_normalized_webaccount(service_name, domain, uri)
 
       _create_linked_issue("google_calendar_leak", {
+        proof: uri,
         "uri" => uri,
         "username" => "#{domain}",
         "service" => service_name})

@@ -66,6 +66,7 @@ class SearchIBMXForce < BaseTask
       # Create issue with meduim severity if IP score between 5 and 8
       if result["score"] > 5 && result["score"] < 8
         _create_linked_issue("suspicious_activity_detected",{
+          proof: result,
           severity: 3,
           references: ["https://exchange.xforce.ibmcloud.com/ip/#{entity_name}"],
           source:"IBM X Force #{result["score"]}",
@@ -76,6 +77,7 @@ class SearchIBMXForce < BaseTask
       # Create issue with meduim severity if IP score over 8
       if result["score"] >= 8
         _create_linked_issue("suspicious_activity_detected",{
+          proof: result,
           severity: 2,
           references: ["https://exchange.xforce.ibmcloud.com/ip/#{entity_name}"],
           source:"IBM X Force #{result["score"]}",

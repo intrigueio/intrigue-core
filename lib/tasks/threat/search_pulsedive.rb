@@ -63,6 +63,7 @@ module Intrigue
             detailed_description = "Location: #{result["properties"]["geo"]["country"]} Threats: \n" + " #{u["name"]} category: #{u["category"]} risk level: #{u["risk"]}"
 
             _create_linked_issue("suspicious_activity_detected",{
+              proof: u,
               source: "Pulsedive",
               severity: sev ,
               detailed_description: detailed_description,
@@ -79,6 +80,7 @@ module Intrigue
         if result["feeds"]
           result["feeds"].each do |v|
             _create_linked_issue("suspicious_activity_detected",{
+              proof: json,
               source: "Pulsedive",
               severity: sev ,
               detailed_description: detailed_description,

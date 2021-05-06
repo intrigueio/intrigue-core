@@ -55,7 +55,7 @@ class TelerikCryptoWeaknessCve20179248 < BaseTask
 
       if ::Versionomy.parse(our_version) <= ::Versionomy.parse("10.0.6412.0")
         _log_good "Vulnerable!"
-        _create_linked_issue "telerik_crypto_weakness_cve_2017_9248"
+        _create_linked_issue "telerik_crypto_weakness_cve_2017_9248", {proof: web_ui_response}
         return 
       end 
       

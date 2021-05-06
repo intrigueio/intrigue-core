@@ -42,6 +42,7 @@ class SearchFraudGuard < BaseTask
 
       if response
         _create_linked_issue("suspicious_activity_detected", {
+          proof: response,
           status: "confirmed",
           description: "This ip was flagged by fraudguard.io for #{response["threat"]} threat with risk level: #{response["risk_level"]} ",
           fraudguard_details: response,

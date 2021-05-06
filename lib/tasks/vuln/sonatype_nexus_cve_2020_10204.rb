@@ -55,7 +55,7 @@ module Intrigue
 
       if ::Versionomy.parse(our_version) <= ::Versionomy.parse("3.21.1")
         _log_good "Vulnerable!"
-        _create_linked_issue "sonatype_nexus_cve_2020_10204"
+        _create_linked_issue "sonatype_nexus_cve_2020_10204", {proof: fp}
         return
       end
 

@@ -51,7 +51,7 @@ module Intrigue
         response = http_get_body uri
         if  is_vuln(response)
             _log "Vulnerable!"
-            _create_linked_issue "kong_exposed_admin_interface", {"response" => JSON.parse(response)}
+            _create_linked_issue "kong_exposed_admin_interface", {proof: JSON.parse(response), "response" => JSON.parse(response)}
             return
         end
   
@@ -62,7 +62,7 @@ module Intrigue
         response = http_get_body endpoint
         if  is_vuln(response)
             _log "Vulnerable!"
-            _create_linked_issue "kong_exposed_admin_interface", {"response" => JSON.parse(response)}
+            _create_linked_issue "kong_exposed_admin_interface", {proof: JSON.parse(response), "response" => JSON.parse(response)}
             return
         end
       end

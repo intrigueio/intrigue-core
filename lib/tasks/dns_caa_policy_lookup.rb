@@ -56,6 +56,7 @@ module Intrigue
           if valid_caa != true
             _log 'Not a valid CAA on the domain!'
             _create_linked_issue('dns_caa_wrong_policy', {
+                                   proof: 'Invalid CAA record',
                                    status: 'confirmed'
                                  })
           else
@@ -64,6 +65,7 @@ module Intrigue
         else
           _log 'No CAA on the domain!'
           _create_linked_issue('dns_caa_policy_missing', {
+                                 proof: 'No CAA record',
                                  status: 'confirmed'
                                })
         end

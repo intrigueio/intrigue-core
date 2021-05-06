@@ -51,7 +51,7 @@ class MicrosoftSmbBluekeepCheck < BaseTask
     elsif output =~ /VULNERABLE/
       _log "Vulnerable! #{output.strip}"
 
-      _create_linked_issue "vulnerability_bluekeep", {rdpscan: output.strip }
+      _create_linked_issue "vulnerability_bluekeep", {proof: output.strip, rdpscan: output.strip }
 
     elsif output =~ /UNKNOWN/        
       _log "Unknown! #{output.strip}"

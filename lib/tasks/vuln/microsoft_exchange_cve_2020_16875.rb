@@ -29,7 +29,7 @@ class MicrosoftExchangeCve202016875 < BaseTask
 
     if is_product?(fingerprint, "Exchange Server")
       if is_vulnerable_version?(fingerprint)
-          _create_linked_issue("microsoft_exchange_cve_2020_16875")
+          _create_linked_issue "microsoft_exchange_cve_2020_16875", {proof: fingerprint}
       end
     end
   end

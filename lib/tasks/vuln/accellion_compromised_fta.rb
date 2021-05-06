@@ -46,7 +46,7 @@ module Intrigue
         
         if  is_vulnerable
             _log "Vulnerable!"
-            _create_linked_issue "accellion_compromised_fta", {"response" => res.body_utf8}
+            _create_linked_issue "accellion_compromised_fta", {proof: res.body_utf8, "response" => res.body_utf8}
             return
         end
       end

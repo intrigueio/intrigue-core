@@ -39,7 +39,7 @@ module Intrigue
         # check response for match
         if res.code == "200" && res.body =~ /16\.0\.10364\.20001/i
             _log "Target is  vulnerable! Creating issue."
-            _create_linked_issue( "microsoft_sharepoint_cve_2020_16952")
+            _create_linked_issue "microsoft_sharepoint_cve_2020_16952", {proof: res.body}
             return
         else
             _log "Not vulnerable, exiting!"

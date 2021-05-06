@@ -74,6 +74,7 @@ class SearchAzureBlob < BaseTask
       _log "HTTP-OK Storage Account"
       #Create an issue if we have a positive response for an open blob
       _create_linked_issue("azure_blob_open_publicly", {
+        proof: "This url: #{response.request.base_url} can be accessed publicly",
         status: "confirmed",
         detailed_description: "This url: #{response.request.base_url} can be accessed publicly",
         details: {
@@ -86,6 +87,7 @@ class SearchAzureBlob < BaseTask
       _log "HTTPS-Only Storage Account"
       #Create an issue if we have a positive response for an open blob
       _create_linked_issue("azure_blob_open_publicly", {
+        proof: "This url: #{response.request.base_url} can be accessed publicly",
         status: "confirmed",
         detailed_description: "This url: #{response.request.base_url} can be accessed publicly",
         details: {

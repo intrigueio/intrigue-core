@@ -37,6 +37,7 @@ class SearchAlienvaultOtxHashes < BaseTask
     result["pulse_info"]["pulses"].each do |e|
       source = "Alienvault OTX"
       _create_linked_issue("suspicious_activity_detected",{
+        proof: e,
         name: "File detected as suspicious in #{source}",
         references: result["pulse_info"]["references"],
         description: "#{e["description"]}",

@@ -49,10 +49,11 @@ module Intrigue
           http_method, vuln_indicator = determine_vulnerable_indicators(uri)
 
           unless http_method.nil? || vuln_indicator.nil? # if http_method returns nil then target is not vulnerable
-            _log_good "Host appears to be vulnerable using the #{http_method.upcase} method with the #{vuln_indicator.keys[0]} as the indicator."
+            proof_msg = "Host appears to be vulnerable using the #{http_method.upcase} method with the #{vuln_indicator.keys[0]} as the indicator."
+            _log_good proof_msg
 
             unless bruteforce
-             _create_linked_issue "iis_shortnames_misconfiguration"
+             _create_linked_issue "iis_shortnames_misconfiguration", {proof: proof_msg}
             else # only run if bruteforce is set to true which will bruteforce and attempt to return the shortnames of files & directories
               possible_items, possible_exts, dupes = determine_valid_chars(uri, http_method, vuln_indicator)
               items, exts = retrieve_shortnames(uri, http_method, vuln_indicator, possible_items, possible_exts)
@@ -379,10 +380,10 @@ module Intrigue
         unless files.blank? && dirs.blank?
           shortname_items = { "files": files, "directories": dirs }
           _log_good "Discovered #{files.size} files and #{dirs.size} directories."
-          _create_linked_issue "iis_shortnames_misconfiguration", { "Discovered Shortname Items": shortname_items }
+          _create_linked_issue "iis_shortnames_misconfiguration", { proof: shortname_items, "Discovered Shortname Items": shortname_items }
         else
           _log "No files or directories were discovered."
-          _create_linked_issue "iis_shortnames_misconfiguration", { "Discovered Shortname Items": "None" }
+          _create_linked_issue "iis_shortnames_misconfiguration", { proof: "No Shortname Items were discovered","Discovered Shortname Items": "None" }
           return
         end
       end

@@ -44,6 +44,7 @@ class SaasGoogleGroupsCheck < BaseTask
       _create_normalized_webaccount(service_name, domain, uri)
 
       _create_linked_issue("google_groups_leak", {
+        proof: uri,
         "uri" => uri,
         "username" => "#{domain}",
         "service" => service_name})

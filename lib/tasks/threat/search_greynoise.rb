@@ -58,6 +58,7 @@ class SearchGreynoisie < BaseTask
 
         if result["classification"] == "malicious"
           _create_linked_issue("suspicious_activity_detected",{
+            proof: result,
              status: "confirmed",
              classification: result["classification"],
              details: result
