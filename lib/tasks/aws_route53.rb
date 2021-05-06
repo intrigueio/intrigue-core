@@ -11,7 +11,7 @@ module Intrigue
           type: 'discovery',
           passive: true,
           allowed_types: ['String'],
-          example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__' } }],
+          example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } }],
           example_entity_placeholder: false,
           allowed_options: [
             { name: 'Hosted Zone ID', regex: 'alpha_numeric', default: '' }

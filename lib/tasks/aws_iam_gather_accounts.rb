@@ -6,12 +6,12 @@ module Intrigue
           name: 'aws_iam_gather_accounts',
           pretty_name: 'AWS IAM Gather Accounts',
           authors: ['jcran', 'maxim'],
-          description: 'Given AWS creds, this task enumerates aws iam accounts.',
+          description: 'This task enumerates users and groups in AWS.',
           references: [],
           type: 'discovery',
           passive: true,
-          allowed_types: ['AwsCredential'],
-          example_entities: [{ 'type' => 'String', 'details' => { 'name' => 'AKIAOKZ52BOMZQ9WNUZ2:zc3w4zt5TU0/ItZ+OlzvaIdytJEz352fzH21ZonO9' } }],
+          allowed_types: ['String'],
+          example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } }],
           allowed_options: [],
           created_types: ['AwsIamAccount']
         }
@@ -21,8 +21,8 @@ module Intrigue
       def run
         super
 
-        aws_access_key = @entity.details['hidden_access_id']
-        aws_secret_key = @entity.details['hidden_secret_key']
+        aws_access_key = _get_task_config('aws_access_key_id')
+        aws_secret_key = _get_task_config('aws_secret_access_key')
 
         # IAM is global so region is not needed
         iam = Aws::IAM::Client.new({ region: 'us-east-1', access_key_id: aws_access_key, secret_access_key: aws_secret_key })
