@@ -15,7 +15,7 @@ class ImportDataFile < BaseTask
       :type => "import",
       :passive => true,
       :allowed_types => ["*"],
-      :example_entities => [{"type" => "String", "details" => {"name" => "unused"}}],
+      :example_entities => [{"type" => "String", "details" => {"name" => "__IGNORE__"}}],
       :allowed_options => [
         {:name => "entity_type", :regex => "alpha_numeric", :default => "String" },
         {:name => "filename", :regex => "alpha_numeric", :default => "cities.list" },

@@ -12,7 +12,8 @@ class IpAddress < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    return name.match(ipv4_regex) || name.match(ipv6_regex)
+    return name.match(ipv4_regex) || name.match(ipv6_regex) &&
+      !name.match(/^127(?:\.[0-9]+){0,2}\.[0-9]+$|^(?:0*\:)*?:?0*1$/)
   end
 
   def detail_string
