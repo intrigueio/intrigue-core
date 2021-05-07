@@ -57,6 +57,7 @@ class SearchSpyse < BaseTask
         # Create an issue if result score indicates a score related to the threat
         if result["score"] < 100
           _create_linked_issue("suspicious_activity_detected",{
+            proof: result,
             severity: result["score"],
             references: ["https://spyse.com/"],
             source: "Spyse",

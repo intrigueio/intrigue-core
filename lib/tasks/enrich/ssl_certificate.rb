@@ -41,7 +41,7 @@ class SslCertificate < Intrigue::Task::BaseTask
     # today aug 20
     if not_before && Time.parse(not_before) > Time.now
       _log "Creating issue for certificate that is not yet valid"
-      _create_linked_issue "invalid_certificate_premature"
+      _create_linked_issue "invalid_certificate_premature", {proof: "Certificate is not yet valid"}
     end
 
     not_after = _get_entity_detail("not_after")
@@ -49,7 +49,7 @@ class SslCertificate < Intrigue::Task::BaseTask
     # today aug 20
     if not_after && Time.parse(not_after) < Time.now
       _log "Creating issue for expired certificate"
-      _create_linked_issue "invalid_certificate_expired"
+      _create_linked_issue "invalid_certificate_expired", {proof: "Certificate has expired"}
     end
 
     if _get_entity_detail("issuer") =~ /Let\'s Encrypt/

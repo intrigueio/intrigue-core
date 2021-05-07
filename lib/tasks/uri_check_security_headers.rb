@@ -69,7 +69,8 @@ class UriCheckSecurityHeaders < BaseTask
       ###      New Issue                      ###
       ###########################################
       _create_linked_issue("missing_important_security_headers",{
-        detailed_description:  "One or more security headers was missing from #{uri}. ",
+        proof: "One or more security headers was missing from #{uri}.",
+        detailed_description:  "One or more security headers was missing from #{uri}.",
         details: {
           uri: uri,
           missing:  missing_headers
