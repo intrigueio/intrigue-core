@@ -54,7 +54,6 @@ class SearchSpyseCert < BaseTask
     json["data"]["items"].each do |result|
       if result["parsed"]["names"]
         _create_linked_issue("domains_registered_with_same_certificate",{
-          proof: result["parsed"],
           references: ["https://spyse.com/"],
           source:"Spyse",
           details: result["parsed"]

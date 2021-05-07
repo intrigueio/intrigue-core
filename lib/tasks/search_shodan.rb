@@ -68,9 +68,8 @@ class SearchShodan < BaseTask
 
       if response_honeyscore == "1.0"
         _create_linked_issue("honeypot_detected",{
-        proof: response,
-        source:"shodan.io" ,
-        references: ["https://honeyscore.shodan.io/"] })
+         source:"shodan.io" ,
+         references: ["https://honeyscore.shodan.io/"] })
       else
         return false
       end

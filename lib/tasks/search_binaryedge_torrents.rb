@@ -60,7 +60,6 @@ class SearchBinaryEdgeTorrents < BaseTask
         ###      New Issue                      ###
         ###########################################
         _create_linked_issue("torrent_affiliated_ip",{
-          proof: t,
           detailed_description: "
             Ip Address: #{entity_name}:#{t["peer"]["port"]}
             Name: #{t["torrent"]["name"]}\n

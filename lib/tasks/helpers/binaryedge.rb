@@ -119,7 +119,6 @@ module BinaryEdge
       if service['result']['data']['indices']
         service['result']['data']['indices'].each do |indice|
           _create_linked_issue("open_database",{
-           proof: service,
            source:"binaryedge" ,
            description: "
            Link: http://#{service['target']['ip']}:#{service['target']['port']}/_cat/indices \n
@@ -134,7 +133,6 @@ module BinaryEdge
         end
       else
         _create_linked_issue("open_database",{
-          proof: service,
           source: "binaryedge" ,
           description: "
           Link: http://#{service['target']['ip']}:#{service['target']['port']}/_cat/indices \n
@@ -151,7 +149,6 @@ module BinaryEdge
       uri ="http://#{service['target']['ip']}:#{service['target']['port']}/app/kibana#/discover?_g=()"
       e =_create_entity("IpAddress", {"name" => "#{service['target']['ip']}" })
       _create_linked_issue("open_database",{
-        proof: service,
         source: "binaryedge" ,
         description: "
         Link: http://#{service['target']['ip']}:#{service['target']['port']}/app/kibana#/discover?_g=()\n
@@ -166,7 +163,6 @@ module BinaryEdge
     result.each do |service|
       e =_create_entity("IpAddress", {"name" => "#{service['target']['ip']}" })
       _create_linked_issue("open_database",{
-        proof: service,
         source: "binaryedge",
         description: "
         Link: http://#{service['target']['ip']}:#{service['target']['port']}\n
@@ -183,7 +179,6 @@ module BinaryEdge
       html_code = service['result']['data']['response']['body']
       if html_code.include? "register"
         _create_linked_issue("open_database",{
-          proof: service,
           source: "binaryedge",
           description: "
           Link: https://#{service['target']['ip']}:#{service['target']['port']}\n
@@ -193,7 +188,6 @@ module BinaryEdge
           },e)
       else
         _create_linked_issue("open_database",{
-          proof: service,
           source: "binaryedge",
           severity: 5,
           description: "
@@ -225,7 +219,6 @@ module BinaryEdge
       e =_create_entity("IpAddress", {"name" => "#{service['target']['ip']}" })
       if service['result']['data']['response']['redirects']
         _create_linked_issue("open_database",{
-          proof: service,
           source: "binaryedge",
           description: "
           Link: http://#{service['target']['ip']}:#{service['target']['port']}\n
@@ -235,7 +228,6 @@ module BinaryEdge
           },e)
       else
         _create_linked_issue("open_database",{
-          proof: service,
           source: "binaryedge",
           description: "
           Link: http://#{service['target']['ip']}:#{service['target']['port']}\n
@@ -252,7 +244,6 @@ module BinaryEdge
       e =_create_entity("IpAddress", {"name" => "#{service['target']['ip']}" })
 
       _create_linked_issue("open_database",{
-        proof: service,
         source: "binaryedge",
         description: "
         Link: http://#{service['target']['ip']}:#{service['target']['port']}\n",
@@ -267,7 +258,6 @@ module BinaryEdge
       e =_create_entity("IpAddress", {"name" => "#{service['target']['ip']}" })
 
       _create_linked_issue("open_database",{
-        proof: service,
         source: "binaryedge",
         description: "
         Link: http://#{service['target']['ip']}:#{service['target']['port']}\n
@@ -284,7 +274,6 @@ module BinaryEdge
       e =_create_entity("IpAddress", {"name" => "#{service['target']['ip']}" })
 
       _create_linked_issue("open_database",{
-        proof: service,
         source: "binaryedge",
         description: "Link: http://#{service['target']['ip']}:#{service['target']['port']}/_utils",
         references: ["https://binaryedge.com/"],
@@ -298,7 +287,6 @@ module BinaryEdge
       e =_create_entity("IpAddress", {"name" => "#{service['target']['ip']}" })
 
       _create_linked_issue("open_database",{
-        proof: service,
         source: "binaryedge",
         description: "
         ReQL: #{service['target']['ip']}:#{service['result']['data']['status'][0]['network']['reql_port']}

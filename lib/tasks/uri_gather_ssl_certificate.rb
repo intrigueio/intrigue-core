@@ -63,7 +63,6 @@ class UriGatherSslCert  < BaseTask
       ####            New Issue               ####
       ############################################
       _create_linked_issue("self_signed_certificate",{
-        proof: "The following site: #{uri} is configured with a self-signed certificate",
         detailed_description: "The following site: #{uri} is configured with a self-signed certificate",
         details: { certificate: certificate_details }
       })

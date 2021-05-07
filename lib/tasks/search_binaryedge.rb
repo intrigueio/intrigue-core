@@ -75,7 +75,6 @@ module Intrigue
         response["groups"].each do |t|
           # create issues if we found any
           _create_linked_issue("leaked_data",{
-            proof: "#{t["count"]} accounts found related to #{entity_name} in #{t["leak"]}",
             detailed_description: "#{t["count"]} accounts found related to #{entity_name} in #{t["leak"]}",
             references:["https://binaryedge.com/",
             "https://askleo.com/account-involved-breach/"] ,
@@ -111,7 +110,6 @@ module Intrigue
           ###      New Issue                      ###
           ###########################################
           _create_linked_issue("leaked_data",{
-            proof: "This Email has been found in this breach: #{u}, via BinaryEdge",
             name: "Email Found in Data Leak #{u}",
             type: "leaked_email",
             detailed_description: "This Email has been found in this breach: #{u}, via BinaryEdge",

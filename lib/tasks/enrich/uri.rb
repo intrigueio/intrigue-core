@@ -111,7 +111,7 @@ class Uri < Intrigue::Task::BaseTask
       ident_fingerprint).collect{ |x| x["issues"] }.flatten.compact.uniq
       _log "Issues to be created: #{issues_to_be_created}"
       (issues_to_be_created || []).each do |c|
-        _create_linked_issue c, {proof: uri}
+        _create_linked_issue c
     end
 
     # if we ever match something we know the user won't

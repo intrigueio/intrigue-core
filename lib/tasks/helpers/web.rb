@@ -104,8 +104,6 @@ module Task
               # dump it into our queue so we can push matches back
               matching_urls.push({ start: request_uri, final: result[:uri] })
 
-              result[:proof]=result[:uri]
-            
               # Create a linked issue if the type exists
               if _linkable_issue_exists "#{request_details[:issue_type]}"
                 _log "Creating linked issue of type: #{request_details[:issue_type]}" if @task_result

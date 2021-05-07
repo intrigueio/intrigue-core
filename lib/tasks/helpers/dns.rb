@@ -438,7 +438,7 @@ module Dns
     # create issues for resolutions to localhost
     dns_entries.uniq.each do |o|
       if o["response_data"] == "127.0.0.1"
-        _create_linked_issue("resolves_to_localhost", {proof: o, details: o})
+        _create_linked_issue("resolves_to_localhost", {details: o})
       end
     end
 

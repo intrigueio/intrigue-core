@@ -68,9 +68,9 @@ class AwsS3PutFile < BaseTask
       _log_good "Successful write to #{public ? "public" : "private"} file: #{url}"
 
       if public 
-        _create_linked_issue "aws_s3_bucket_writable", {proof: url, uri: url, public: false}
+        _create_linked_issue "aws_s3_bucket_writable", {uri: url, public: false}
       else
-        _create_linked_issue "aws_s3_bucket_writable", {proof: url, uri: url, public: true}
+        _create_linked_issue "aws_s3_bucket_writable", {uri: url, public: true}
       end
 
     rescue Excon::Error::Forbidden => e
