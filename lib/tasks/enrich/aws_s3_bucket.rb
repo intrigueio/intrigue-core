@@ -71,6 +71,7 @@ class AwsS3Bucket < Intrigue::Task::BaseTask
       ###      New Issue                      ###
       ###########################################
       _create_linked_issue("aws_s3_bucket_data_leak", {
+        proof: "Interesting files located in #{bucket_uri}",
         status: "confirmed",
         detailed_description: "Interesting files located in #{bucket_uri}",
         details: {

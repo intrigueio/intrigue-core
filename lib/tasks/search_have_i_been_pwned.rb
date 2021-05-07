@@ -55,6 +55,7 @@ class SearchHaveIBeenPwned < BaseTask
     results.each do |result|
 
       _create_linked_issue("leaked_account",{
+        proof: result,
          name: "Email Account Found In HIBP (Public Breach Data)",
          severity: 3,
          description: result["Description"],
@@ -82,6 +83,7 @@ class SearchHaveIBeenPwned < BaseTask
       next if _get_option("only_sensitive") && !result["IsSensitive"]
       # create an issue for each found result
       _create_linked_issue("leaked_account",{
+        proof: result,
         name: "Email Account Found In HIBP (Public Breach Data)",
         severity: 3,
         description: result["Description"],
