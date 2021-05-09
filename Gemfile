@@ -105,6 +105,7 @@ gem 'rex'
 gem 'rex-sslscan',            :git => 'https://github.com/intrigueio/rex-sslscan.git'
 gem 'ruby-nmap',              :git => 'https://github.com/pentestify/ruby-nmap.git'
 gem 'rubyzip'
+gem 'ruby_smb'
 gem 'shodan'                  # search_shodan
 gem 'snmp',                   :git => 'https://github.com/intrigueio/ruby-snmp.git'
 gem 'spidr',                  :git => 'https://github.com/intrigueio/spidr.git'

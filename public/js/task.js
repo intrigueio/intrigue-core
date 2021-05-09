@@ -57,13 +57,18 @@
     //console.log(data);
     var entity_type = data["example_entities"][0]["type"];
     var entity_name = data["example_entities"][0]["details"]["name"];
+    var entity_default_value = data["example_entities"][0]["details"]["default"];
 
     //console.log("DEBUG: Setting name to " + entity_name);
     //console.log("DEBUG: Setting type to " + entity_type);
 
     // set the name
     $("#attrib_name").attr("placeholder", entity_name);
-    //$("#attrib_name").attr("value", entity_name);
+    if (entity_default_value != undefined) {
+      $("#attrib_name").attr("value", entity_default_value);
+    } else {
+      $("#attrib_name").removeAttr("value");
+    }
 
     // set the type
     $("#entity_type option[value=\""+entity_type+"\"]").prop('selected', true);
