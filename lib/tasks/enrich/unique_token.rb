@@ -8,7 +8,7 @@ module Intrigue
         :name => "enrich/unique_token",
         :pretty_name => "Enrich Unique Token",
         :authors => ["jcran"],
-        :description => "Fills in details for a token (aalytics id or api key)",
+        :description => "Fills in details for a token (analytics id or api key)",
         :references => [],
         :type => "enrichment",
         :passive => false,
