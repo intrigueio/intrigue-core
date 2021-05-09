@@ -3,7 +3,7 @@
 <div class="card transparent-card">
 <div class="card-title"><h4>Schedule A New Task</h4></div>
 <div class="card-body">
-  
+
   <div class="row">
   <div class="col-sm-7">
 
@@ -42,8 +42,8 @@
         <input type="hidden" name="entity_id" value="<%=h @entity.id %>">
     <% else %>
       <div class="form-group">
-        <label for="entity_type" class="col-xs-4 control-label">Entity Type</label>  
-        <div class="col-xs-8">  
+        <label for="entity_type" class="col-xs-4 control-label">Entity Type</label>
+        <div class="col-xs-8">
           <select class="form-control input-sm" id="entity_type" name="entity_type"></select>
         </div>
       </div>
@@ -61,7 +61,7 @@
     <div class="form-group">
       <label for="attrib_name" class="col-xs-4 control-label">Workflow</label>
       <div class="col-xs-8">
-        <select class="form-control input-sm" name="Workflow" id="workflow">
+        <select class="form-control input-sm" name="workflow" id="workflow">
           <option> [No Additional Workflow] </option>
           <!-- iterate through workflows -->
           <% Intrigue::WorkflowFactory.user_selectable_workflows.each do |wf| %>
@@ -99,13 +99,13 @@
     </div>
   -->
     <Br>
-    <input class="btn btn-primary" type="submit" value="Run Task">          
-  
+    <input class="btn btn-primary" type="submit" value="Run Task">
+
   </form>
 
   </div>
   </div>
-  
+
   <div class="col-sm-5">
     <p>
       <div id="description" name="description">[description]</div>

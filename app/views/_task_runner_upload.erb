@@ -56,14 +56,14 @@
   <div class="form-group">
     <div id="options"></div>
   </div>
-            
+
   <input type="hidden" name="depth" id="depth" value="6">
 
   <div id="workflow">
     <div class="form-group">
       <label for="attrib_name" class="col-xs-4 control-label">Workflow</label>
       <div class="col-xs-8">
-        <select class="form-control input-sm" name="Workflow" id="workflow">
+        <select class="form-control input-sm" name="workflow" id="workflow">
           <option> None </option>
           <!-- iterate through workflows -->
           <% Intrigue::Core::Model::Workflow.all.each do |wf| %>
@@ -76,7 +76,7 @@
     </div>
   </div>
 
-  
+
 
 <!--
   <div id="handler">

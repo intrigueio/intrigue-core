@@ -59,10 +59,10 @@ class CoreApp < Sinatra::Base
       @results = selected_results.extension(:pagination).paginate(@page,paginate_count)
 
       @calculated_url = "/#{h @project_name}/results?search_string=#{h @search_string}" +
-        "&inverse=#{params[:inverse]}" + 
-        "&hide_enrichment=#{params[:hide_enrichment]}" + 
-        "&hide_autoscheduled=#{params[:hide_autoscheduled]}" + 
-        "&hide_cancelled=#{params[:hide_cancelled]}" + 
+        "&inverse=#{params[:inverse]}" +
+        "&hide_enrichment=#{params[:hide_enrichment]}" +
+        "&hide_autoscheduled=#{params[:hide_autoscheduled]}" +
+        "&hide_cancelled=#{params[:hide_cancelled]}" +
         "&only_complete=#{params[:only_complete]}"
 
       erb :'results/index'
@@ -100,8 +100,8 @@ class CoreApp < Sinatra::Base
       workflow_name_string = "#{@params["workflow"]}".strip
       if wf = Intrigue::WorkflowFactory.create_workflow_by_name(workflow_name_string)
         workflow_name = wf.name
-        workflow_depth = wf.depth || 5 
-      else # default to none 
+        workflow_depth = wf.depth || 5
+      else # default to none
         workflow_name = nil
         workflow_depth = 1
       end
@@ -142,15 +142,15 @@ class CoreApp < Sinatra::Base
         if name =~ /^option/
 
           clean_option_name = name.gsub("option_","")
-          
-          # handle nil 
+
+          # handle nil
           clean_option_value = value == "null" ? nil : value
 
-          # handle bool 
+          # handle bool
           if ["false","true"].include? clean_option_value
-            clean_option_value = clean_option_value.to_bool 
+            clean_option_value = clean_option_value.to_bool
           end
-        
+
           options << {
             "name" => "#{clean_option_name}",
             "value" => clean_option_value
@@ -161,7 +161,7 @@ class CoreApp < Sinatra::Base
 
       # Start the task run!
       task_result = start_task("task", current_project, nil, task_name, entity,
-                                workflow_depth, options, handlers, workflow_name, 
+                                workflow_depth, options, handlers, workflow_name,
                                 auto_enrich, auto_scope)
 
       entity.task_results << task_result
