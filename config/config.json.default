@@ -426,6 +426,12 @@
       "editable": "true",
       "comment": ""
     },
+    "serp_api_key": {
+      "value": "",
+      "uri": "https://serpapi.com/",
+      "editable": "true",
+      "comment": ""
+    },
     "spyonweb_api_key": {
       "value": "",
       "uri": "https://api.spyonweb.com/",
