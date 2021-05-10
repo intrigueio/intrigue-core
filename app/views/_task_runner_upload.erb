@@ -64,19 +64,15 @@
       <label for="attrib_name" class="col-xs-4 control-label">Workflow</label>
       <div class="col-xs-8">
         <select class="form-control input-sm" name="workflow" id="workflow">
-          <option> None </option>
+          <option> [No Additional Workflow] </option>
           <!-- iterate through workflows -->
-          <% Intrigue::Core::Model::Workflow.all.each do |wf| %>
-           <% next unless wf.metadata[:user_selectable] %>
-            <option value="<%= h wf.name %>"> <%= h wf.pretty_name %> </option>
+          <% Intrigue::WorkflowFactory.user_selectable_workflows.each do |wf| %>
+            <option value="<%= h wf.name %>"> <%= h wf.pretty_name || wf.name %> </option>
           <% end %>
         </select>
         <div class="hint">'Workflow' specifies what we do with each discovered entity type. (Optional)</div>
       </div>
     </div>
-  </div>
-
-
 
 <!--
   <div id="handler">
