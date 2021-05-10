@@ -20,15 +20,14 @@ module CloudProviders
   private 
 
   def _cloud_classifier_lookup(ip_address)
-    intrigueio_api = _get_task_config "intrigueio_api_hostname"
-    intrigueio_api_key = _get_task_config "intrigueio_api_key"
-    unless intrigueio_api_key
+    cloudclassifier_api_key = _get_task_config "cloudclassifier_api_key"
+    unless cloudclassifier_api_key
       _log_error "Unable to check, verify you've entered a valid Intrigue.io API key!"
       return nil
     end
 
     begin 
-      api_url = "#{intrigueio_api}/api/cloudclassifier/search/ip/#{ip_address}?key=#{intrigueio_api_key}"
+      api_url = "https://cloudclassifier.intrigue.io/search/ip/#{ip_address}?key=#{cloudclassifier_api_key}"
       resp = http_get_body(api_url)
 
       json = JSON.parse(resp) if resp

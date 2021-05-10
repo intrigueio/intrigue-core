@@ -156,6 +156,12 @@
       "editable": "true",
       "comment": ""
     },
+    "cloudclassifier_api_key": {
+      "value": "",
+      "uri": "https://cloudclassifier.intrigue.io",
+      "editable": "true",
+      "comment": ""
+    },
     "cloudflare_username": {
       "value": "",
       "uri": "",
