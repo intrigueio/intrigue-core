@@ -128,7 +128,7 @@ module Intrigue
             _log_error "We have cookies, but nothing that looks like a BIGIP cookie" unless cookie_string
 
             # grab our specific bigip cookie out of the string
-            bigip_cookie_string = cookie_string.split(';').find{ |c| c =~ /BIGipServer(.*)=/i }
+            bigip_cookie_string = "#{cookie_string}".split(';').find{ |c| c =~ /BIGipServer(.*)=/i }
             _log_error "Unable to extract BIGIP cookie!" unless bigip_cookie_string
 
             # decode it, and save into our array of results
