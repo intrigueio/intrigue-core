@@ -139,7 +139,7 @@ class AwsS3Brute < BaseTask
                 })
               
                 # create a bucket issue
-                _create_linked_issue "aws_s3_bucket_readable", {uri:  s3_uri, public: false}
+                _create_linked_issue "aws_s3_bucket_readable", {proof: s3_uri, uri: s3_uri, public: false}
               end
 
             #########################
@@ -157,7 +157,7 @@ class AwsS3Brute < BaseTask
                 }) 
 
                 # create a bucket issue
-                _create_linked_issue "aws_s3_bucket_readable", {uri:  s3_uri, public: true}
+                _create_linked_issue "aws_s3_bucket_readable", {proof: s3_uri, uri: s3_uri, public: true}
               end
 
               ### and if we got it there, no need to continue
@@ -176,7 +176,7 @@ class AwsS3Brute < BaseTask
                 }) 
 
                 # create a bucket issue
-                _create_linked_issue "aws_s3_bucket_readable", {uri:  s3_uri, public: true}
+                _create_linked_issue "aws_s3_bucket_readable", {proof: s3_uri, uri: s3_uri, public: true}
               end
 
             end # end if opt_use_creds

@@ -295,6 +295,7 @@ class UriCheckSudomainHijack  < BaseTask
 
   def _create_hijackable_subdomain_issue type, uri, status
     _create_linked_issue("subdomain_hijack",{
+      proof: "Subdomain Hijacking Detected (#{type})",
       type: "Subdomain Hijacking Detected (#{type})",
       detailed_description: " This uri #{uri} appears to be unclaimed on a third party host, meaning," +
                             " there's a DNS record at (#{uri}) that points to #{type}, but it" +

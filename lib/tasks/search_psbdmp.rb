@@ -76,7 +76,7 @@ class SearchPsbdmp < BaseTask
         end
 
         # create linked issue
-        _create_linked_issue "suspicious_pastebin", issue_hash
+        _create_linked_issue "suspicious_pastebin",  {proof: issue_hash}
 
       end
     end
