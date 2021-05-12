@@ -29,10 +29,10 @@ module Intrigue
           # no point in having public ip address since DNSRecord enrichment will create it
           private_ip_address = _get_entity_detail('private_ip_address')
 
-          _create_entity 'DNSRecord', 'name' => public_hostname unless public_hostname.empty? || public_hostname.nil?
-          # private ipv4 hostname/address cannot be removed so no need for empty check
-          _create_entity 'DNSRecord', 'name' => private_hostname unless private_hostname.empty? || private_hostname.nil?
-          _create_entity 'IpAddress', 'name' => private_ip_address unless private_ip_address.empty || private_ip_address.nil?
+          # ec2 entity belongs to organization so setting scope to true
+          _create_entity 'DnsRecord', {'name' => public_hostname, 'scoped' => true } unless public_hostname.empty? || public_hostname.nil? 
+          _create_entity 'DnsRecord', 'name' => private_hostname unless private_hostname.empty? || private_hostname.nil?
+          _create_entity 'IpAddress', 'name' => private_ip_address unless private_ip_address.empty? || private_ip_address.nil?
 
         end
 
