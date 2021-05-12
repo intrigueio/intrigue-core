@@ -53,7 +53,7 @@ module Intrigue
             _log_good proof_msg
 
             unless bruteforce
-             _create_linked_issue "iis_shortnames_misconfiguration", {proof: proof_msg}
+             _create_linked_issue "iis_shortnames_misconfiguration", {proof: {"Discovered Shortname Items": shortname_items}}
             else # only run if bruteforce is set to true which will bruteforce and attempt to return the shortnames of files & directories
               possible_items, possible_exts, dupes = determine_valid_chars(uri, http_method, vuln_indicator)
               items, exts = retrieve_shortnames(uri, http_method, vuln_indicator, possible_items, possible_exts)

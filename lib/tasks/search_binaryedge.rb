@@ -111,7 +111,7 @@ module Intrigue
           ###      New Issue                      ###
           ###########################################
           _create_linked_issue("leaked_data",{
-            proof: "This Email has been found in this breach: #{u}, via BinaryEdge",
+            proof: "This Email has been found in this breach: #{u}",
             name: "Email Found in Data Leak #{u}",
             type: "leaked_email",
             detailed_description: "This Email has been found in this breach: #{u}, via BinaryEdge",
