@@ -40,9 +40,7 @@ module Intrigue
 
       patterns.each do |p|
 
-        # use matcher if it exists, but fall back to regex
-        # handle the fact that some of this is coming in via json :facepalm:
-        pattern = p["matcher"] ||  p[:matcher] || p["regex"] || p[:regex]
+        pattern = p["regex"] || p[:regex]
 
         unless pattern
           _log_error "unable to use this pattern: #{p}"
@@ -55,9 +53,10 @@ module Intrigue
         if contents =~ pattern
           _log "Matched: #{pattern}"
           # grab it 
-          match_data = pattern.match(contents) do |m|
-            _log "Got: #{m[1]}"
-            _create_entity "UniqueToken", "name" => "#{m[1]}"
+          pattern.match(contents) do |m|
+            # the last matched group will always be the actual token
+            _log "Got: #{m[-1]}"
+           _create_entity "UniqueToken", {"name" => "#{m[-1]}", "provider" => p["provider"] || p[:provider] }
           end
         else 
           _log "No match for: #{pattern}"
@@ -68,5 +67,5 @@ module Intrigue
   
   end
   end
-  end
+end
   
