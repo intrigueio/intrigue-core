@@ -8,7 +8,7 @@ module Intrigue
           name: 'search_wayback_machine',
           pretty_name: 'Search Wayback Machine',
           authors: ['maxim', 'jcran', 'mhmdiaa'],
-          description: 'Retrieves subdomains using Wayback Machine.',
+          description: 'Retrieves subdomains using the Wayback Machine API.',
           references: ['http://web.archive.org/', 'https://gist.github.com/mhmdiaa/adf6bff70142e5091792841d4b372050'],
           type: 'discovery',
           passive: true,
@@ -23,7 +23,7 @@ module Intrigue
         super
         domain = _get_entity_name
 
-        _log "Getting results for #{domain} from Wayback Machine"
+        _log "Retrieving results for #{domain} from Wayback Machine"
         json = query_wayback(domain) || [] # catch nil
 
         _log_error "No entities were retrieved for #{domain}." if json.empty?

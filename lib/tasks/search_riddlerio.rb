@@ -23,7 +23,7 @@ module Intrigue
         super
         domain = _get_entity_name
 
-        _log "Getting results for #{domain} from Riddler.io"
+        _log "Retrieving results for #{domain} from Riddler.io"
         results = query_riddler(domain) || [] # catch nil
 
         _log_error "No subdomains were retrieved for #{domain}." if results.empty?
