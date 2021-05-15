@@ -10,6 +10,7 @@ begin  # try to load runtime deps
   require 'censys'
   require 'cloudflare'
   require 'compare-xml'
+  require 'csv'
   require 'digest'
   require 'dnsruby'
   require 'dnsimple'
