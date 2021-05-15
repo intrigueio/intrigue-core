@@ -24,10 +24,10 @@ module Intrigue
         domain = _get_entity_name
 
         _log "Getting results for #{domain} from Riddler.io"
-        results = query_riddler(domain)
+        results = query_riddler(domain) || [] # catch nil
 
         _log_error "No subdomains were retrieved for #{domain}." if results.empty?
-        return if results.empty? || results.nil?
+        return if results.empty?
 
         # subdomains were retrieved -> create dns_entities from them
         _log_good "Retrieved #{results.count} results."
@@ -41,11 +41,10 @@ module Intrigue
         url = "https://riddler.io/search/exportcsv?q=pld:#{query}"
         response = http_get_body(url)
 
-        begin
-          # parse out the CSV response
-          fqdns = CSV.parse(response, 'col_sep': ',').map do |row|
-            row[4] unless row[4] == 'FQDN' # remove fqdn column from results
-          end
+        # response will be returned as an empty string if the site cannot be reached 
+        # parse out the CSV response
+        fqdns = CSV.parse(response, 'col_sep': ',').map do |row|
+          row[4] unless row[4] == 'FQDN' # remove fqdn column from results
         rescue CSV::MalformedCSVError
           _log_error 'Unable to parse CSV returned by response.'
           return nil

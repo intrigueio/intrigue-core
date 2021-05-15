@@ -7,53 +7,53 @@ module Intrigue
         {
           name: 'search_wayback_machine',
           pretty_name: 'Search Wayback Machine',
-          authors: ['m-q-t', 'mhmdiaa'],
-          description: 'Retrieves additional subdomains using Wayback Machine.',
+          authors: ['maxim', 'jcran', 'mhmdiaa'],
+          description: 'Retrieves subdomains using Wayback Machine.',
           references: ['http://web.archive.org/', 'https://gist.github.com/mhmdiaa/adf6bff70142e5091792841d4b372050'],
           type: 'discovery',
           passive: true,
           allowed_types: ['Domain'],
           example_entities: [{ 'type' => 'Domain', 'details' => { 'name' => 'intrigue.io' } }],
           allowed_options: [],
-          created_types: ['Domain']
+          created_types: ['Domain', 'DnsRecord']
         }
       end
 
       def run
         super
+        domain = _get_entity_name
 
-        search_string = _get_entity_name
+        _log "Getting results for #{domain} from Wayback Machine"
+        json = query_wayback(domain) || [] # catch nil
 
-        search_string = URI.parse(search_string).host if search_string =~ /^(http|https):/i
+        _log_error "No entities were retrieved for #{domain}." if json.empty?
+        return if json.empty?
 
-        _log "Getting results for #{search_string} from Wayback Machine"
-        json = query_wayback(search_string)
-
-        hosts = []
-        json.flatten.each do |record| # flatten 2d array into 1d
-          hosts << URI.parse(record).host
+        hosts = json.flatten.map do |record|
+          URI.parse(record).host
         rescue URI::InvalidURIError
-          _log_error "Unable to parse record: #{record}. Skipping."
+          log_error "Unable to parse entity: #{record}. Skipping."
           next
         end
 
-        hosts = hosts.uniq # clear out duplicates
+        _log_good "Retrieved #{hosts.compact.uniq.count} entities."
+        hosts.uniq.compact.each { |h| create_dns_entity_from_string h }
 
-        hosts.each do |h|
-          create_dns_entity_from_string h unless h.nil?
-        end
       end
 
-      # Helper function to query thte api
+      # Helper function to query the api
       def query_wayback(query)
         url = "http://web.archive.org/cdx/search/cdx?url=*.#{query}&output=json&fl=original&collapse=urlkey"
+
         begin
           response = http_get_body(url)
-          json = JSON.parse(response)
-        rescue JSON::ParserError => e
-          _log_error "Unable to parse response: #{response}"
+          json = JSON.parse(response) # if nothing is parsed it returns an empty array
+        rescue JSON::ParserError
+          _log_error 'Unable to parse JSON response.'
         end
+
         json
+
       end
     end
   end
