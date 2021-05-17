@@ -16,7 +16,7 @@ module Intrigue
           allowed_options: [
             { name: 'Hosted Zone ID', regex: 'alpha_numeric', default: '' }
           ],
-          created_types: %w[DnsRecord Mailserver Nameserver]
+          created_types: ['DnsRecord', 'Mailserver', 'Nameserver']
         }
       end
 
@@ -55,7 +55,6 @@ module Intrigue
         record_sets.each { |set| retrieve_record_names(set) } # maybe unless set.nil?
       end
 
-      # TODO: check if key is valid
       def access_key_valid?(r53)
         # get an invalid hosted zone id to check if keys are valid
         r53.get_hosted_zone({ id: 'INVALIDZONE' })
