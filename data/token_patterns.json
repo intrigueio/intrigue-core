@@ -1,7 +1,7 @@
 [ 
   {
     "provider": "aws_access_key",
-    "regex": "(?-mix:^((A3T[A-Z0-9]|AKIA|AGPA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Za-z0-9_]{16}$))",
+    "regex": "(?-mix:^(AKIA[A-Za-z0-9_]{16}$|A3T[A-Z0-9][A-Za-z0-9_]{16}$|AGPA[A-Za-z0-9_]{16}$|AROA[A-Za-z0-9_]{16}$|AIPA[A-Za-z0-9_]{16}$|ANPA[A-Za-z0-9_]{16}$|ANVA[A-Za-z0-9_]{16}$|ASIA[A-Za-z0-9_]{16}$))",
     "sensitive": true
   },
   {
@@ -36,7 +36,7 @@
   },
   {
     "provider": "hotjar",
-    "regex": "(?-mix:_hjSettings=\\{hjid:([\\d+]),)",
+    "regex": "(?-mix:_hjSettings=\\{hjid:([\\d]+),)",
     "sensitive": false
   },
   {
