@@ -61,6 +61,13 @@ class NetworkService < Intrigue::Task::BaseTask
     # Create issues for any vulns that are version-only inference
     fingerprint_to_inference_issues(fingerprint)
 
+    # Create issues for fingerprints that request creating an issue
+    issues_from_fingerprints = fingerprint.collect{ |x| x["issues"] }.flatten.compact.uniq
+    _log "Issues to be created: #{issues_from_fingerprints}"  
+    (issues_from_fingerprints || []).each do |c|
+        _create_linked_issue c
+    end
+
     # Okay, now kick off vulnerability checks (if project allows)
     if @project.vulnerability_checks_enabled
       vuln_checks = run_vuln_checks_from_fingerprint(fingerprint, @entity)
