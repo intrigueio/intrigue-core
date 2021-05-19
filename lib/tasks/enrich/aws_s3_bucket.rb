@@ -25,8 +25,14 @@ module Intrigue
         ## Default method, subclasses must override this
         def run
           bucket_uri = _get_entity_detail 'name' || _get_entity_name
-          # set region
+          # set region; if bucket is valid the URI below will work
           region = http_request(:get, bucket_uri).headers['x-amz-bucket-region']
+
+          if region.nil?
+            _log_error 'Unable to determine region of bucket. Bucket most likely does not exist.'
+            return
+          end
+
           _set_entity_detail 'region', region
 
           if _get_entity_detail 'authenticated' == true
