@@ -1,0 +1,56 @@
+module Intrigue
+  module Task
+    class AwsS3GatherBuckets < BaseTask
+      def self.metadata
+        {
+          name: 'aws_s3_gather_buckets',
+          pretty_name: 'AWS S3 Gather Buckets',
+          authors: ['maxim'],
+          description: 'This task enumerates S3 Buckets belonging to an authenticated account.',
+          references: [],
+          type: 'discovery',
+          passive: true,
+          allowed_types: ['String'],
+          example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } }],
+          allowed_options: [],
+          created_types: ['IpAddress']
+        }
+      end
+
+      ## Default method, subclasses must override this
+      def run
+        super
+
+        # Get the AWS Credentials
+        aws_access_key = _get_task_config('aws_access_key_id')
+        aws_secret_key = _get_task_config('aws_secret_access_key')
+        # aws_region = _get_option 'region'
+        # even though s3 buckets work at the region level; the aws console (and API) return all buckets regardless of region
+
+        s3 = Aws::S3::Resource.new(region: 'us-east-1', access_key_id: aws_access_key, secret_access_key: aws_secret_key)
+
+        begin
+          bucket_names = s3.buckets.collect(&:name)
+        rescue Aws::S3::Errors::InvalidAccessKeyId
+          _log_error 'Invalid Access Key ID'
+          return 
+        rescue Aws::S3::Errors::SignatureDoesNotMatch
+          _log_error 'Secret Access Key does not match Access Key ID.'
+          return
+        rescue Aws::S3::Errors::AccessDenied::AccessDenied
+          _log_error 'Credentials lack perimissions to list buckets.'
+          return
+        end
+
+        bucket_names.each do |name|
+          _create_entity 'AwsS3Bucket', {
+            'name' => "https://#{name}.s3.amazonaws.com", # use the new virtual host path since path style will be deprecated,
+            'bucket_name' => name,
+            'authenticated' => true
+          }
+        end
+      end
+
+    end
+  end
+end
