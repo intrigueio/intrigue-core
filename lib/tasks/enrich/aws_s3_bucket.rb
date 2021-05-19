@@ -30,50 +30,61 @@ module Intrigue
           _set_entity_detail 'region', region
 
           if _get_entity_detail 'authenticated' == true
-            get_bucket_contents_authenticated(_get_entity_detail('bucket_name'), region)
+            get_bucket_contents_authenticated _get_entity_detail('bucket_name'), region
           else
-            get_bucket_contents_authenticated(_get_entity_detail('bucket_name'), region)
+            get_bucket_contents_unauthenticated 
           end
-
         end
 
+        # LEFT TO DO:
+        # - Check policy if whole bucket is writeable
+        # - Check policy if whole bucket is readable
         def get_bucket_contents_authenticated(name, region)
           aws_access_key = _get_task_config('aws_access_key_id')
           aws_secret_key = _get_task_config('aws_secret_access_key')
 
-          s3_resource = Aws::S3::Resource.new(region: region, access_key_id: aws_access_key, secret_access_key: aws_secret_key)
-          name = 'cali-bucket1337'
-          require 'pry-remote'; binding.pry_remote
+          s3_client = Aws::S3::Client.new(region: region, access_key_id: aws_access_key, secret_access_key: aws_secret_key)
+
           public_read = []
           public_write = []
 
-=begin
-def check_read(obj)
-  read = false
-  obj.acl.grants.each do |grant|
-    if grant.grantee.uri == "http://acs.amazonaws.com/groups/global/AllUsers"
-      if grant.permission == "READ"
-        # FULL_CONTROL
-        # WRITE
-        read = true
-        end
-      end
-  end
-  read
-end
-=end
+          bucket_keys = s3_client.list_objects_v2(bucket: name).contents.collect(&:key)
 
-          # check if object can be public
-          # in order for object to be public its ACL needs to be set to public along with the top level bucket having some configuration allowing objects to be public
-          # the easy way would be sending http requests per each object to see if you can retrieve response
+          workers = (0...20).map do
+            acl_checks = check_object_perms(s3_client, name, bucket_keys, public_read, public_write)
+            [acl_checks]
+          end
+          workers.flatten.map(&:join)
 
-
-          bucket = s3_resource.bucket(name)
-          s3_client = bucket.client
-          
+          create_issues public_read, public_write unless public_read.empty? || public_write.empty? # this will be changed if the whole bucket is readable/writeable
         end
 
-        def get_bucket_contents_unauthenticated() end
+        def get_bucket_contents_unauthenticated
+          # this is where we bruteforce the actual file names?
+        end
+
+        ### helper methods for tasks above
+
+        def check_object_perms(client, bucket, keys_q, read_collection, write_collection)
+          t = Thread.new do
+            until keys_q.empty?
+              while key = keys_q.shift
+                obj_acl = client.get_object_acl(bucket: bucket, key: key)
+                obj_acl.grants.each do |grant|
+                  if grant.grantee.uri == 'http://acs.amazonaws.com/groups/global/AllUsers'
+                    if grant.permission == 'READ'
+                      read_collection << key
+                    elsif ['FULL_CONTROL', 'WRITE'].include? grant.permission
+                      write_collection << key
+                    end
+                  end
+                end
+              end
+            end
+          end
+          t
+        end
+
       end
     end
   end
