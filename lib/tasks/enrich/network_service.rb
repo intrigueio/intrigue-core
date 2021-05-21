@@ -81,10 +81,10 @@ class NetworkService < Intrigue::Task::BaseTask
 
     # consider these noise
     noise_networks = [
-      "CLOUDFLARENET - CLOUDFLARE, INC., US",
-      "GOOGLE, US",
-      "CLOUDFLARENET, US",
-      "GOOGLE-PRIVATE-CLOUD, US",
+    #  "CLOUDFLARENET - CLOUDFLARE, INC., US",
+    #  "GOOGLE, US",
+    #  "CLOUDFLARENET, US",
+    #  "GOOGLE-PRIVATE-CLOUD, US",
       "INCAPSULA, US",
       "INCAPSULA - INCAPSULA INC, US"
     ]
@@ -93,31 +93,12 @@ class NetworkService < Intrigue::Task::BaseTask
     #
     # TODO ... this might need to be checked for a generic reset now
     #
-    if noise_networks.include?(net_name) &&
-         (_get_entity_detail("fingerprint") || []).empty?
+    if noise_networks.include?(net_name).empty?
       # always allow these ports even if we dont have a fingeprint
       unless (port == 80 || port == 443)
         hide_value = true
         hide_reason = "noise_network"
       end
-    end
-
-    known_ports = [
-      { port: 2082, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::" },
-      { port: 2083, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
-      { port: 2086, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
-      { port: 2087, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
-      { port: 2095, net_name: "CLOUDFLARENET, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
-      { port: 2082, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::" },
-      { port: 2083, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
-      { port: 2086, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
-      { port: 2087, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
-      { port: 2095, net_name: "GOOGLE, US", cpe: "cpe:2.3::generic:connection_reset_(attempted_http_connection)::"  },
-      { port: 25, net_name: "GOOGLE, US" }
-    ]
-    if known_ports.find{ |x| x[:port] == port && x[:net_name] == net_name }
-      hide_reason = "Matched known hidden service"
-      hide_value = true
     end
 
     # Okay now hide based on our value
