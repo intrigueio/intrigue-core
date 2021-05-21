@@ -25,22 +25,14 @@ class UniqueToken < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-
     # check that our regex for the hash matches
-    #supported_type = self.class.supported_token_types.find{ |p|
-    #  regex = p["regex"] || p[:regex]
-    #  regex = Regexp.new(regex) unless regex.kind_of?(Regexp)
-    #  name.match(regex)
-    #}
-
-    #if supported_type
-    #  # set the detail here
-    #  set_detail("provider", supported_type[:provider] || supported_type["provider"] )
-    #  set_detail("sensitive", supported_type[:sensitive] || supported_type["sensitive"] )
-    #end
-
-  #!supported_type.nil?
-  true
+    supported_type = self.class.supported_token_types.find{ |p|
+      regex = p["regex"] || p[:regex]
+      regex = Regexp.new(regex) unless regex.kind_of?(Regexp)
+      snippet = get_detail("snippet")
+      "#{snippet}".match(regex)
+    }
+  !supported_type.nil?
   end
 
   def scoped?

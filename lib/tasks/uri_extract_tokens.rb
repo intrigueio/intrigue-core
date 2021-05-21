@@ -56,7 +56,7 @@ module Intrigue
           pattern.match(contents) do |m|
             # the last matched group will always be the actual token
             _log "Got: #{m[-1]}"
-           _create_entity "UniqueToken", {"name" => "#{m[-1]}", "provider" => p["provider"] || p[:provider] }
+           _create_entity "UniqueToken", {"name" => "#{m[-1]}", "provider" => p["provider"] || p[:provider] , "snippet" => pattern.match(contents)}
           end
         else 
           _log "No match for: #{pattern}"

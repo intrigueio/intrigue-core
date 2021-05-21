@@ -36,7 +36,7 @@
   },
   {
     "provider": "hotjar",
-    "regex": "(?-mix:_hjSettings=\\{hjid:([\\d]+),)",
+    "regex": "(?-mix:hjSettings=\\{hjid:([\\d]+),)",
     "sensitive": false
   },
   {
