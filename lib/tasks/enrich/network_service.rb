@@ -63,7 +63,7 @@ class NetworkService < Intrigue::Task::BaseTask
 
     # Create issues for fingerprints that request creating an issue
     issues_from_fingerprints = fingerprint.collect{ |x| x["issues"] }.flatten.compact.uniq
-    _log "Issues to be created: #{issues_from_fingerprints}"  
+    _log "Issues to be created: #{issues_from_fingerprints}"
     (issues_from_fingerprints || []).each do |c|
         _create_linked_issue c
     end
@@ -100,7 +100,7 @@ class NetworkService < Intrigue::Task::BaseTask
     #
     # TODO ... this might need to be checked for a generic reset now
     #
-    if noise_networks.include?(net_name).empty?
+    if noise_networks.include?(net_name)
       # always allow these ports even if we dont have a fingeprint
       unless (port == 80 || port == 443)
         hide_value = true
