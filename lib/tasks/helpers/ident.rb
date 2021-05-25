@@ -59,7 +59,7 @@ module Ident
     end
 
     issues_to_create.each do |i|
-      _create_linked_issue i.first, i.last, entity
+      _create_linked_issue i.first, i.last, entity, {proof: @entity.name}
     end
 
   end
