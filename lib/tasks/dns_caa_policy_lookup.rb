@@ -35,7 +35,7 @@ class DnsCaaPolicyLookup < BaseTask
     else
       _log "No CAA on the domain!"
                 _create_linked_issue("dns_caa_policy_missing", {
-                  proof: "No CAA record for domain #{domain}",
+                  proof: "No CAA record for domain #{domain_name}",
                   status: "confirmed"})
     end
   end
