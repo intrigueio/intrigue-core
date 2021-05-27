@@ -24,18 +24,16 @@ module Intrigue
         # Get the AWS Credentials
         aws_access_key = _get_task_config('aws_access_key_id')
         aws_secret_key = _get_task_config('aws_secret_access_key')
-        # aws_region = _get_option 'region'
+        #aws_region = _get_option 'region'
         # even though s3 buckets work at the region level; the aws console (and API) return all buckets regardless of region
+        # however it would probably be a good idea to setup a location constraint...
 
         s3 = Aws::S3::Resource.new(region: 'us-east-1', access_key_id: aws_access_key, secret_access_key: aws_secret_key)
 
         begin
           bucket_names = s3.buckets.collect(&:name)
-        rescue Aws::S3::Errors::InvalidAccessKeyId
-          _log_error 'Invalid Access Key ID'
-          return 
-        rescue Aws::S3::Errors::SignatureDoesNotMatch
-          _log_error 'Secret Access Key does not match Access Key ID.'
+        rescue Aws::S3::Errors::InvalidAccessKeyId, Aws::S3::Errors::SignatureDoesNotMatch
+          _log_error 'Invalid AWS Keys.'
           return
         rescue Aws::S3::Errors::AccessDenied::AccessDenied
           _log_error 'Credentials lack perimissions to list buckets.'
@@ -44,9 +42,8 @@ module Intrigue
 
         bucket_names.each do |name|
           _create_entity 'AwsS3Bucket', {
-            'name' => "https://#{name}.s3.amazonaws.com", # use the new virtual host path since path style will be deprecated,
-            'bucket_name' => name,
-            'authenticated' => true
+            'name' => name, # use the new virtual host path since path style will be deprecated,
+            'bucket_host' => "#{name}.s3.amazonaws.com"
           }
         end
       end
