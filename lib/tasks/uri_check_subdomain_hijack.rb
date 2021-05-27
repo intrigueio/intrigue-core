@@ -198,7 +198,7 @@ class UriCheckSudomainHijack  < BaseTask
       #  _create_hijackable_subdomain_issue("Statuspage", uri, "potential") unless (
       #    uri =~ /statuspage.com/ || uri =~ /statuspage.io/ || uri =! /amazonaws.com/)
 
-      elsif response_body.match /Page not found \- Strikingly/i && uri =~ /strikinglydns.com/
+      elsif response_body.match(/Page not found \- Strikingly/i) && uri =~ /strikinglydns.com/
         _create_hijackable_subdomain_issue "Strikingly", uri, "potential"
 
       #elsif response_body.match /We can\'t find this \<a href=\"https\:\/\/simplebooklet\.com/i
