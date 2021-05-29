@@ -7,12 +7,13 @@ class AwsS3Bucket < Intrigue::Core::Model::Entity
       name: "AwsS3Bucket",
       description: "An S3 Bucket",
       user_creatable: true,
-      example: "http://s3.amazonaws.com/bucket/"
+      example: "bucket-name"
     }
   end
 
   def validate_entity
-    name.match(/s3/) && name.match(/\.amazonaws\.com/)
+    s3_regex = /(?=^.{3,63}$)(?!^(\d+\.)+\d+$)(^(([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])$)/
+    name.match(s3_regex)
   end
 
   def detail_string
