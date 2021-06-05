@@ -42,15 +42,13 @@ module Intrigue
 
       def check
         
-        # get version for product
-
         fingerprints = @entity.get_detail("fingerprint")
-
+        
+        # get version for product
         version = get_version_for_vendor_product(@entity, 'Oracle', 'WebLogic Server')
         return false unless version
 
         # list vulnerable versions
-
         vulnerable_versions = [
           '10.3.6.0',
           '10.3.6.0.0',
@@ -65,17 +63,11 @@ module Intrigue
         ]
 
         # compare the version we got to the vulnerable version list
-
-        is_vulnerable = false
-
         vulnerable_versions.each do |vulnerable_version|
-          if compare_versions_by_operator(version, vulnerable_version, '=')
-            is_vulnerable = true
-            return is_vulnerable
-          end
+          return {vulnerable_version_identified: vulnerable_version} if compare_versions_by_operator(version, vulnerable_version, '=')
         end
 
-        return is_vulnerable
+      false
       end
     end
   end
