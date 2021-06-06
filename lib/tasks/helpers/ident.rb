@@ -45,21 +45,31 @@ module Ident
   def create_issues_from_fingerprint_tags(fingerprint, entity)
 
     issues_to_create = []
+    tags = []
+
     # iterate through the fingerprints and create
     # issues for each known tag
     fingerprint.each do |fp|
       next unless fp && fp["tags"]
       fp["tags"].each do |t|
-        if t.match(/webcam/i)
-          issues_to_create << ["exposed_webcam_interface", fp]
-        elsif t.match(/DatabaseService/i)
+        tags << fp["tags"]
+        if  t.match(/Admin Panel/i) || t.match(/Login Panel/i)
+          issues_to_create << ["exposed_admin_panel_unauthenticated", fp]
+        elsif t.match(/DatabaseService/i) || t.match(/Database/i)
           issues_to_create << ["exposed_database_service", fp]
+        elsif t.match(/DefaultPage/i)
+          issues_to_create << ["default_web_server_page_exposed", fp]
+        elsif t.match(/Printer/i)
+          issues_to_create << ["exposed_printer_control_panel", fp]
+        elsif t.match(/Webcam/i)
+          issues_to_create << ["exposed_webcam_interface", fp]
         end
       end
     end
 
     issues_to_create.each do |i|
-      _create_linked_issue i.first, i.last, entity
+      _create_linked_issue i.first, i.last, entity, {
+          proof: "Entity fingerprint contains issue-mapped tag: #{tags.flatten.sort.uniq}" }
     end
 
   end

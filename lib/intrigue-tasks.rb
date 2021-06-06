@@ -16,7 +16,6 @@ begin  # try to load runtime deps
   require 'dnsruby'
   require 'dnsimple'
   require 'google_search_results'
-
   require 'flareon'
   require 'ip_ranger'
   require 'ipaddr'
