@@ -4,6 +4,7 @@
 # Task-specific libraries
 ####
 require_relative 'intrigue-tasks'
+require 'google_search_results'
 
 ###
 ### TODO ... load in default workflows here 

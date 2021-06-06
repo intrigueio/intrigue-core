@@ -94,6 +94,7 @@ gem 'google-api-client'
 gem 'googleauth'
 gem 'google-cloud-storage'
 gem 'googleajax'              # search_google
+gem 'google_search_results'
 gem 'ip_ranger',              :git => "https://github.com/intrigueio/ip_ranger"
 gem 'ipaddr'
 gem 'maxminddb',              :git => "https://github.com/intrigueio/maxminddb"
