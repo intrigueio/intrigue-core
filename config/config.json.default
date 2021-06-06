@@ -58,7 +58,14 @@
       "uri": "http://127.0.0.1:9999/"
     }
   },
-  "intrigue_global_machine_config": {},
+  "intrigue_global_machine_config": {
+    "platform_credentials_api_key": {
+      "value": "",
+      "uri": "https://api.intrigue.io/integrations/credentials",
+      "editable": "true",
+      "comment": ""
+    }
+  },
   "intrigue_global_module_config": {
     "42matters_api_key": {
       "value": "",
