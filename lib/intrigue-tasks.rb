@@ -1,5 +1,5 @@
 ###
-### These task-specific gems may / may not be available so let's wrap them  
+### These task-specific gems may / may not be available so let's wrap them
 ###
 ### In the case where we're a gem, they're not yet available. add them as deps
 ###
@@ -15,6 +15,8 @@ begin  # try to load runtime deps
   require 'digest'
   require 'dnsruby'
   require 'dnsimple'
+  require 'google_search_results'
+
   require 'flareon'
   require 'ip_ranger'
   require 'ipaddr'
@@ -43,10 +45,10 @@ begin  # try to load runtime deps
   require 'whoisology'
   require 'zip'
   require 'zetalytics'
-rescue LoadError => e 
+rescue LoadError => e
   puts "ERROR! Unable to load a dep, functionality may be limited: #{e}"
 end
-  
+
 # system helpers
 system_folder = File.expand_path('../system', __FILE__) # get absolute directory
 Dir["#{system_folder}/*.rb"].each { |file| require_relative file }
