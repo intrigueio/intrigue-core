@@ -68,8 +68,9 @@ module Ident
     end
 
     issues_to_create.each do |i|
-      _create_linked_issue i.first, i.last, entity, {
-          proof: "Entity fingerprint contains issue-mapped tag: #{tags.flatten.sort.uniq}" }
+      instance_specifics = i.last.merge({
+        proof: "Entity fingerprint contains issue-mapped tag: #{tags.flatten.sort.uniq}" })
+      _create_linked_issue i.first, instance_specifics, entity
     end
 
   end
