@@ -1,4 +1,3 @@
-
 module Intrigue
 module Task
 module Ident
@@ -99,7 +98,7 @@ module Ident
 
       begin
         uri = URI.parse(s)
-      rescue URI::InvalidURIError => e
+      rescue URI::InvalidURIError
         @task_result.logger.log "Unable to parse improperly formatted URI: #{s}"
         next # unable to parse
       end
@@ -114,7 +113,7 @@ module Ident
         else
           host_location = "remote"
         end
-      rescue URI::InvalidURIError => e
+      rescue URI::InvalidURIError
         host_location = "unknown"
       end
 
