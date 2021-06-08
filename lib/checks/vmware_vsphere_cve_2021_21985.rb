@@ -5,7 +5,7 @@ module Intrigue
         {
           added: '2021-06-08',
           name: 'vmware_cve_2021_21985',
-          pretty_name: 'VMWare vSphere Client Remote Code Execution (CVE-2021-21985)',
+          pretty_name: 'VMware vSphere Client Remote Code Execution (CVE-2021-21985)',
           severity: 1,
           category: 'vulnerability',
           status: 'confirmed',
