@@ -17,6 +17,7 @@ class BaseTask
   include Intrigue::Task::Ident
   include Intrigue::Task::Issue
   include Intrigue::Task::Regex
+  include Intrigue::Task::Serp
   include Intrigue::Task::Services
   include Intrigue::Task::Socket
   include Intrigue::Task::VulnCheck
