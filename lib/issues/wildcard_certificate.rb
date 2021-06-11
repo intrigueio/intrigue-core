@@ -6,7 +6,7 @@ module Intrigue
           added: '2021-06-11',
           name: 'wildcard_certificate',
           pretty_name: 'Wildcard certificate',
-          severity: 5,
+          severity: 4,
           status: 'confirmed',
           category: 'misconfiguration',
           description: 'A major risk that applies to both wildcard and multi-domain certificates is that you multiply the scope of any potential issues with the certificate. 
