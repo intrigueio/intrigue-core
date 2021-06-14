@@ -1,85 +1,82 @@
 module Intrigue
-module Task
-class AwsIamGatherAccounts < BaseTask
-
-  def self.metadata
-    {
-      :name => "aws_iam_gather_accounts",
-      :pretty_name => "AWS IAM Gather Accounts",
-      :authors => ["jcran"],
-      :description => "Given AWS creds, this task enumerates aws iam accounts.",
-      :references => [],
-      :type => "discovery",
-      :passive => true,
-      :allowed_types => ["AwsCredential"],
-      :example_entities => [{"type" => "String", "details" => {"name" => "intrigue"}}],
-      :allowed_options => [
-        {:name => "region", :regex => "alpha_numeric", :default => "us-east-1" }
-      ],
-      :created_types => ["AwsIamAccount"]
-    }
-  end
-
-  ## Default method, subclasses must override this
-  def run
-    super
-
-    # Get the AWS Credentials
-    aws_access_key = @entity.details["hidden_access_id"]
-    aws_secret_key = @entity.details["hidden_secret_key"]
-
-    # Get the region
-    aws_region = _get_option "region"
-
-    begin
-      # Connect to AWS using fog ...
-      # TODO... prob want to remove the fog dep
-      connection = Fog::AWS::IAM.new({
-        :aws_access_key_id => aws_access_key,
-        :aws_secret_access_key => aws_secret_key,
-        :region => aws_region })
-
-      # Create groups
-      connection.groups.each do |g| 
-        groupname = "#{g.arn}".split(":")[5]
-        _log "Got: #{groupname}"
-
-        # Create the entity
-        _create_entity "AwsIamAccount", { 
-          "account_type" => "group", 
-          "region" => aws_region,
-          "name" => groupname, 
-          "organization" => "#{g.arn}".split(":")[4], 
-          "arn" => "#{g.arn}", 
-          "id" => g.id
+  module Task
+    class AwsIamGatherAccounts < BaseTask
+      def self.metadata
+        {
+          name: 'aws_iam_gather_accounts',
+          pretty_name: 'AWS IAM Gather Accounts',
+          authors: ['jcran', 'maxim'],
+          description: 'This task enumerates users and groups in AWS.',
+          references: [],
+          type: 'discovery',
+          passive: true,
+          allowed_types: ['String'],
+          example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } }],
+          allowed_options: [],
+          created_types: ['AwsIamAccount']
         }
       end
 
-      # Create Users
-      connection.users.each do |u| 
-        username = "#{u.arn}".split(":")[5]
-        _log "Got: #{username}"
+      ## Default method, subclasses must override this
+      def run
+        super
 
-        # Create the entity
-        # TODO .. should be associated with a credential (for enrichment)
-        _create_entity "AwsIamAccount", {  
-          "account_type" => "user", 
-          "name" => username, 
-          "region" => aws_region,
-          "path" => "#{u.path}",
-          "organization" => "#{u.arn}".split(":")[4], 
-          "arn" => "#{u.arn}", 
-          "id" => u.id,
-          "created_at" => "#{u.created_at}"
-        }
+        aws_access_key = _get_task_config('aws_access_key_id')
+        aws_secret_key = _get_task_config('aws_secret_access_key')
+
+        # IAM is global so region is not needed
+        iam = Aws::IAM::Client.new({ region: 'us-east-1', access_key_id: aws_access_key, secret_access_key: aws_secret_key })
+
+        begin
+          groups = iam.list_groups
+          users = iam.list_users
+        rescue Aws::IAM::Errors::InvalidClientTokenId
+          _log_error 'Invalid Access Key ID.'
+          return nil
+        rescue Aws::IAM::Errors::SignatureDoesNotMatch
+          _log_error 'Secret Access Key does not match Access Key ID.'
+          return nil
+        rescue Aws::IAM::Errors::AccessDenied
+          _log_error 'API Key lacks permission to list groups and/or users. Ensure both the ListGroups and ListUsers permissions are set.'
+          return nil
+        end
+
+        create_group_entities groups
+        create_user_entities users
       end
 
-    rescue Fog::AWS::IAM::Error => e
-      _log_error "Error: #{e}"
+      def create_group_entities(group_list)
+        group_list['groups'].each do |group|
+          group_name = group.group_name
+          _log "Retrieved the following group: #{group_name}"
+
+          _create_entity 'AwsIamAccount', {
+            'account_type' => 'group',
+            'name' => "group/#{group_name}",
+            'organization' => group.arn.split(':')[4],
+            'arn' => group.arn,
+            'id' => group.group_id
+          }
+        end
+      end
+
+      def create_user_entities(user_list)
+        user_list['users'].each do |user|
+          username = user.user_name
+          _log "Retrieved the following user: #{username}"
+
+          _create_entity 'AwsIamAccount', {
+            'account_type' => 'user',
+            'name' => "user/#{username}",
+            'path' => user.path,
+            'organization' => user.arn.split(':')[4],
+            'arn' => user.arn,
+            'id' => user.user_id,
+            'created_at' => user.create_date
+          }
+        end
+      end
+
     end
-
   end
-
-end
-end
 end
