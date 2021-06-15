@@ -21,7 +21,7 @@ class AwsS3Bucket < Intrigue::Core::Model::Entity
   end
 
   def enrichment_tasks
-    ["enrich/aws_s3_bucket"]
+    ['tasks/aws_s3_find_public_objects']
   end
 
   def scoped?(conditions={})

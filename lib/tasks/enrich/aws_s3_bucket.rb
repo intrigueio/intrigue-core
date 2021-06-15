@@ -56,8 +56,9 @@ module Intrigue
           client = Aws::S3::Client.new(region: region, access_key_id: aws_access_key, secret_access_key: aws_secret_key)
           api_key_valid?(client, bucket)
         end
-        
-        ## check if AWS keys are in fact valid
+
+        ## check if AWS keys are in fact valid -> theres (possibly) a better way of doing this
+        # https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucket-owner-condition.html
         def api_key_valid?(client, bucket)
           client.get_object({ bucket: bucket, key: "#{SecureRandom.uuid}.txt" })
         rescue Aws::S3::Errors::InvalidAccessKeyId, Aws::S3::Errors::SignatureDoesNotMatch
