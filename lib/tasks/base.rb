@@ -19,6 +19,7 @@ class BaseTask
   include Intrigue::Task::Regex
   include Intrigue::Task::Serp
   include Intrigue::Task::Services
+  #include Intrigue::Task::S3Bucket
   include Intrigue::Task::Socket
   include Intrigue::Task::VulnCheck
   include Intrigue::Task::VulnDb

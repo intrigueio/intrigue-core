@@ -21,10 +21,11 @@ module Intrigue
 
         ## Default method, subclasses must override this
         def run
-          require_enrichment if _get_entity_detail('region').nil?
+          #require_enrichment if _get_entity_detail('region').nil?
 
           bucket_name = _get_entity_detail 'name'
           s3_client = initialize_s3_client bucket_name
+          # s3_client = initialize_s3_client bucket_name
 
           bucket_objects = retrieve_public_objects s3_client, bucket_name
           return if bucket_objects.nil?
