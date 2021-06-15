@@ -168,9 +168,9 @@ class CoreApp < Sinatra::Base
       entity.save
 
       # Manually starting enrichment here
-      if auto_enrich && !(task_name =~ /^enrich/)
-        entity.enrich(task_result)
-      end
+      #if auto_enrich && !(task_name =~ /^enrich/)
+      #  entity.enrich(task_result)
+      #end
 
       redirect "/#{@project_name}/results/#{task_result.id}"
     end
@@ -272,10 +272,10 @@ class CoreApp < Sinatra::Base
         entity.save
 
         # manually start enrichment for the first entity
-        if auto_enrich && !(task_name =~ /^enrich/)
-          task_result.log "User-created entity, manually creating and enriching!"
-          entity.enrich(task_result)
-        end
+        #if auto_enrich && !(task_name =~ /^enrich/)
+        #  task_result.log "User-created entity, manually creating and enriching!"
+        #  entity.enrich(task_result)
+        #end
 
       end
 
@@ -365,10 +365,10 @@ class CoreApp < Sinatra::Base
                                   options, handlers, workflow_name, auto_enrich, auto_scope)
 
       # manually start enrichment, since we've already created the entity above, it won't auto-enrich ^
-      if auto_enrich && !(task_name =~ /^enrich/)
-        task_result.log "User-created entity, manually creating and enriching!"
-        entity.enrich(task_result)
-      end
+      #if auto_enrich && !(task_name =~ /^enrich/)
+      #  task_result.log "User-created entity, manually creating and enriching!"
+      #  entity.enrich(task_result)
+      #end
 
       #status 200 if task_result
 

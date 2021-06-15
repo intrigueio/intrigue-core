@@ -2,13 +2,13 @@ class CoreApp < Sinatra::Base
 
   post '/:project_name/workflow/?' do
 
-    # then set up the initial task results 
+    # then set up the initial task results
     workflow_name = "#{@params["workflow"]}"
 
     ###
     ### Standard file type (entity list)
     ###
-    entities = "#{@params["entitylist"]}".split("\n").map do |x| 
+    entities = "#{@params["entitylist"]}".split("\n").map do |x|
       "#{x}".strip.downcase
     end
 
@@ -26,7 +26,7 @@ class CoreApp < Sinatra::Base
 
     # for each entity in the list
     entities.each do |e|
-      
+
       entity_name = e
       entity_type = discern_entity_types_from_name(entity_name).first
 
@@ -42,8 +42,8 @@ class CoreApp < Sinatra::Base
 
       task_name = "create_entity"
       handlers = []
-      auto_enrich = true 
-      auto_scope = true  
+      auto_enrich = true
+      auto_scope = true
 
       # Start the task run!
       task_result = start_task("task", current_project, nil, task_name, entity,
@@ -53,10 +53,10 @@ class CoreApp < Sinatra::Base
       entity.save
 
       # manually start enrichment for the first entity
-      if auto_enrich && !(task_name =~ /^enrich/)
-        task_result.log "User-created entity, manually creating and enriching!"
-        entity.enrich(task_result)
-      end
+      #if auto_enrich && !(task_name =~ /^enrich/)
+      #  task_result.log "User-created entity, manually creating and enriching!"
+      #  entity.enrich(task_result)
+      #end
 
     end
 
