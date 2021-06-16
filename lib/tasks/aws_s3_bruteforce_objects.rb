@@ -35,20 +35,11 @@ module Intrigue
         public_objects = filter_public_objects(s3_client, bucket_name, objects_list)
         return if public_objects.empty?
 
-        _create_linked_issue 'aws_s3_bucket_data_leak', {
-          proof: "#{bucket_name} contains objects which are readable by any authenticated AWS user and/or everyone.",
-          uri: "https://#{bucket_name}.s3.amazonaws.com",
-          status: 'confirmed',
-          details: {
-            readable_objects: public_objects
-          }
-        }
-
+        create_issue(bucket_name, public_objects)
       end
 
       def parse_objects
-        objects = _get_option('objects_list')
-        objects = objects.split(',') unless objects.is_a? Array
+        objects = _get_option('objects_list').split(',')
         _log_error 'Objects list cannot be empty.' if objects.empty?
         objects
       end
@@ -114,8 +105,6 @@ module Intrigue
         public_objs
       end
 
-      # we also need to check bucket_policy to ese if objects are listable.......
-
       # TEST IF NO LIST PERMISSION KEYS ARE GIVEN BUT GET ARE
       def determine_public_object_via_api(client, bucket, input_q, output_q)
         t = Thread.new do
@@ -171,6 +160,18 @@ module Intrigue
         end
         t
       end
+
+      def create_issue(name, objects)
+        _create_linked_issue 'aws_s3_bucket_data_leak', {
+          proof: "#{name} contains objects which are readable by any authenticated AWS user and/or everyone.",
+          uri: "https://#{name}.s3.amazonaws.com",
+          status: 'confirmed',
+          details: {
+            readable_objects: objects
+          }
+        }
+      end
+
     end
   end
 end
