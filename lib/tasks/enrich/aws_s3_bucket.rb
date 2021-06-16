@@ -54,7 +54,7 @@ module Intrigue
 
           client = Aws::S3::Client.new(region: region, access_key_id: aws_access_key, secret_access_key: aws_secret_key)
           client = api_key_valid?(client, bucket)
-          bucket_belongs_to_api_key?(client, bucket) if client
+          client
         end
 
         ## check if AWS keys are in fact valid -> theres (possibly) a better way of doing this

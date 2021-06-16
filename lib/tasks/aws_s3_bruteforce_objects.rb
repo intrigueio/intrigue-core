@@ -15,7 +15,8 @@ module Intrigue
             { 'type' => 'AwsS3Bucket', 'details' => { 'name' => 'bucket-name' } }
           ],
           allowed_options: [
-            { name: 'objects_list', regex: 'alpha_numeric_list', default: [] }
+            { name: 'objects_list', regex: 'alpha_numeric_list', default: [] },
+            { name: 'use_authentication', regex: 'boolean', default: false }
           ],
           created_types: []
         }
@@ -27,6 +28,7 @@ module Intrigue
         require_enrichment if _get_entity_detail('region').nil?
 
         objects_list = parse_objects
+        # add seclists of 100 most common files
         return if objects_list.empty?
 
         bucket_name = _get_entity_detail 'name'
@@ -58,16 +60,6 @@ module Intrigue
 
       def filter_public_objects(s3_client, bucket, objs)
         public_objs = []
-
-        if _get_entity_detail 'belongs_to_api_key'
-          _log 'Running belongs to api key method'
-          objs = objs.dup
-          workers = (0...20).map do
-            check = determine_public_object_via_acl(s3_client, bucket, objs, public_objs)
-            [check]
-          end
-          workers.flatten.map(&:join)
-        end
 
         ### COMBINE THESE METHODS INTO 2
         if s3_client && _get_entity_detail('belongs_to_api_key').nil?
@@ -122,29 +114,6 @@ module Intrigue
             while key = input_q.shift
               r = http_request :get, "https://#{bucket}.s3.amazonaws.com/#{key}"
               output_q << key if r.code == '200'
-            end
-          end
-        end
-        t
-      end
-
-      def determine_public_object_via_acl(client, bucket, input_q, output_q)
-        acl_groups = ['http://acs.amazonaws.com/groups/global/AuthenticatedUsers', 'http://acs.amazonaws.com/groups/global/AllUsers']
-        t = Thread.new do
-          until input_q.empty?
-            while key = input_q.shift
-
-              begin
-                obj_acl = client.get_object_acl(bucket: bucket, key: key)
-              rescue Aws::S3::Errors::AccessDenied
-                next
-              end
-
-              obj_acl.grants.each do |grant|
-                next unless acl_groups.include? grant.grantee.uri
-
-                output_q << key if %w[READ FULL_CONTROL].include? grant.permission
-              end
             end
           end
         end

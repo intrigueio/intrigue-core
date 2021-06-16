@@ -15,6 +15,7 @@ module Intrigue
           allowed_types: ['AwsS3Bucket'],
           example_entities: [
             { 'type' => 'AwsS3Bucket', 'details' => { 'name' => 'test' } }
+            # add additional keys option
           ],
           allowed_options: [],
           created_types: ['DnsRecord']
