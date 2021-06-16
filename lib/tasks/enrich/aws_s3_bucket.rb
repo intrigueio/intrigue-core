@@ -53,7 +53,8 @@ module Intrigue
           aws_secret_key = _get_task_config('aws_secret_access_key')
 
           client = Aws::S3::Client.new(region: region, access_key_id: aws_access_key, secret_access_key: aws_secret_key)
-          api_key_valid?(client, bucket)
+          client = api_key_valid?(client, bucket)
+          bucket_belongs_to_api_key?(client, bucket) if client
         end
 
         ## check if AWS keys are in fact valid -> theres (possibly) a better way of doing this
@@ -64,7 +65,7 @@ module Intrigue
           _log_error 'AWS Access Keys are not valid; will ignore keys and use unauthenticated techniques for enrichment.'
           _set_entity_detail 'belongs_to_api_key', false # auto set to false since we are unable to check
           nil
-        rescue Aws::S3::Errors::NoSuchKey
+        rescue Aws::S3::Errors::NoSuchKey, Aws::S3::Errors::AccessDenied
           # keys are valid, we are expecting this error
           client
         end

@@ -35,6 +35,7 @@ module Intrigue
         bucket_objects = retrieve_listable_objects s3_client, bucket_name
         return if bucket_objects.nil?
 
+        bucket_objects.reject! { |b| b =~ /.+\/$/ } # remove folder names
         _log_good "Found #{bucket_objects.size} listable object(s)."
         create_issue(bucket_name, bucket_objects)
 
@@ -51,17 +52,6 @@ module Intrigue
         aws_secret_key = _get_task_config('aws_secret_access_key')
 
         client = Aws::S3::Client.new(region: region, access_key_id: aws_access_key, secret_access_key: aws_secret_key)
-        api_key_valid?(client, bucket)
-      end
-
-      def api_key_valid?(client, bucket)
-        client.get_object({ bucket: bucket, key: "#{SecureRandom.uuid}.txt" })
-      rescue Aws::S3::Errors::InvalidAccessKeyId, Aws::S3::Errors::SignatureDoesNotMatch
-        _log_error 'AWS Access Keys are not valid; will ignore keys and use unauthenticated techniques for enrichment.'
-        _set_entity_detail 'belongs_to_api_key', false # auto set to false since we are unable to check
-        nil
-      rescue Aws::S3::Errors::NoSuchKey
-        # keys are valid, we are expecting this error
         client
       end
 
